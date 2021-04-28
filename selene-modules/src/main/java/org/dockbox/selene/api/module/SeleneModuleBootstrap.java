@@ -31,8 +31,8 @@ public abstract class SeleneModuleBootstrap extends SeleneBootstrap {
     private final Set<Consumer<Object>> instanceConsumers = SeleneUtils.emptySet();
     private final Set<Runnable> postInitRunners = SeleneUtils.emptySet();
 
-    protected SeleneModuleBootstrap(InjectConfiguration moduleConfiguration) {
-        super(moduleConfiguration);
+    protected SeleneModuleBootstrap(InjectConfiguration early, InjectConfiguration late) {
+        super(early, late);
     }
 
     public static SeleneModuleBootstrap getInstance() {

@@ -17,10 +17,13 @@
 
 package org.dockbox.selene.api.events;
 
-import org.dockbox.selene.di.Preloadable;
+import org.dockbox.selene.api.BootstrapPhase;
+import org.dockbox.selene.api.Phase;
+import org.dockbox.selene.di.preload.Preloadable;
 import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.util.Reflect;
 
+@Phase(BootstrapPhase.PRE_INIT)
 class EventPreload implements Preloadable {
     @Override
     public void preload() {

@@ -28,11 +28,13 @@ public interface ResourceService {
 
     void init();
 
-    Map<String, String> getResourceMap(Language lang);
+    Map<String, String> translations(Language lang);
 
-    Map<Language, String> getTranslations(Resource entry);
+    Map<Language, String> translations(Resource entry);
 
     String createValidKey(String raw);
 
-    Exceptional<ResourceEntry> getResource(String key);
+    Exceptional<ResourceEntry> get(String key);
+
+    ResourceEntry getOrCreate(String key, String value);
 }

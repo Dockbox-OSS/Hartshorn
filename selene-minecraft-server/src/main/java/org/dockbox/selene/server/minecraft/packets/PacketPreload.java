@@ -17,16 +17,20 @@
 
 package org.dockbox.selene.server.minecraft.packets;
 
+import org.dockbox.selene.api.BootstrapPhase;
+import org.dockbox.selene.api.Phase;
 import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.events.EventBus;
 import org.dockbox.selene.api.events.parents.Event;
-import org.dockbox.selene.di.Preloadable;
+import org.dockbox.selene.di.preload.Preloadable;
 import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.server.minecraft.events.packet.PacketEvent;
 import org.dockbox.selene.server.minecraft.packets.annotations.Packet;
 import org.dockbox.selene.util.Reflect;
 
+@Phase(BootstrapPhase.CONSTRUCT)
 class PacketPreload implements Preloadable {
+
     @Override
     public void preload() {
         EventBus bus = Provider.provide(EventBus.class);

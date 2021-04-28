@@ -19,7 +19,7 @@ package org.dockbox.selene.commands.registration;
 
 import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.domain.Identifiable;
-import org.dockbox.selene.api.i18n.entry.DefaultResource;
+import org.dockbox.selene.api.i18n.common.ResourceEntry;
 import org.dockbox.selene.commands.annotations.Command;
 import org.dockbox.selene.commands.context.CommandContext;
 import org.dockbox.selene.commands.source.CommandSource;
@@ -52,7 +52,7 @@ public abstract class AbstractRegistrationContext {
         return this.command;
     }
 
-    public abstract Exceptional<DefaultResource> call(CommandSource source, CommandContext context);
+    public abstract Exceptional<ResourceEntry> call(CommandSource source, CommandContext context);
 
     public String getPrimaryAlias() {
         return this.getAliases().get(0);

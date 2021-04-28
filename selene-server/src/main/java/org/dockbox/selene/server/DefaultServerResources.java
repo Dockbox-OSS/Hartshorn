@@ -89,4 +89,7 @@ public interface DefaultServerResources {
 
     @Resource(value = "$2Details for '$1{0}$2'", key = "selene.info.module.hover")
     ResourceEntry getModuleRowHover(String name);
+
+    @Resource(value = "$4This command can only be used by players", key = "selene.invalid.source")
+    ResourceEntry getWrongSource();
 }

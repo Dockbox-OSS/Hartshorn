@@ -20,7 +20,7 @@ package org.dockbox.selene.test;
 import org.dockbox.selene.api.i18n.MessageReceiver;
 import org.dockbox.selene.api.i18n.common.Language;
 import org.dockbox.selene.api.i18n.common.ResourceEntry;
-import org.dockbox.selene.api.i18n.entry.DefaultResource;
+import org.dockbox.selene.api.i18n.entry.DefaultResources;
 import org.dockbox.selene.server.minecraft.players.Player;
 import org.dockbox.selene.util.SeleneUtils;
 
@@ -41,7 +41,7 @@ public enum TestResources implements ResourceEntry {
     }
 
     public static String parse(CharSequence input) {
-        return DefaultResource.NONE.parseColors(input.toString());
+        return DefaultResources.instance().getNone().parseColors(input.toString());
     }
 
     public String getValue(Player player) {

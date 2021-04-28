@@ -20,10 +20,12 @@ package org.dockbox.selene.test;
 import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.SeleneBootstrap;
 import org.dockbox.selene.di.InjectConfiguration;
+import org.dockbox.selene.server.Server;
 import org.dockbox.selene.server.minecraft.MinecraftServerBootstrap;
 import org.dockbox.selene.server.minecraft.MinecraftServerType;
 import org.dockbox.selene.server.minecraft.MinecraftVersion;
 import org.dockbox.selene.test.util.JUnitInjector;
+import org.dockbox.selene.test.util.JUnitServer;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -38,12 +40,15 @@ public class JUnit5Bootstrap extends MinecraftServerBootstrap {
      * to {@link SeleneBootstrap#construct()} once verified.
      */
     protected JUnit5Bootstrap() throws IOException {
-        super(new JUnitInjector());
+        super(new JUnitInjector(), null);
         this.information = new JUnitInformation();
     }
 
     public static void prepareBootstrap() throws IOException {
-        if (getInstance() == null) new JUnit5Bootstrap();
+        if (getInstance() == null) {
+            JUnit5Bootstrap jUnit5Bootstrap = new JUnit5Bootstrap();
+            jUnit5Bootstrap.init();
+        }
     }
 
     public static JUnit5Bootstrap getInstance() {
@@ -63,6 +68,17 @@ public class JUnit5Bootstrap extends MinecraftServerBootstrap {
     @Override
     public MinecraftVersion getMinecraftVersion() {
         return MinecraftVersion.INDEV;
+    }
+
+    @Override
+    protected void init() {
+        super.init();
+        this.getInjector().bind(Server.class, JUnitServer.class);
+    }
+    
+    @Override
+    protected void handleMissingBinding(Class<?> type) {
+        Selene.log().warn("Ignoring missing binding for " + type.getSimpleName());
     }
 
     public JUnitInformation getInformation() {

@@ -20,9 +20,9 @@ package org.dockbox.selene.api;
 import org.dockbox.selene.api.exceptions.Except;
 import org.dockbox.selene.di.InjectConfiguration;
 import org.dockbox.selene.di.InjectableBootstrap;
-import org.dockbox.selene.di.Preloadable;
 import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.di.annotations.RequiresBinding;
+import org.dockbox.selene.di.preload.Preloadable;
 import org.dockbox.selene.util.Reflect;
 import org.jetbrains.annotations.NotNull;
 
@@ -46,12 +46,16 @@ public abstract class SeleneBootstrap extends InjectableBootstrap {
      * InjectConfiguration}. Also verifies dependency artifacts and injector bindings. Proceeds
      * to {@link SeleneBootstrap#construct()} once verified.
      *
-     * @param moduleConfiguration
+     * @param early
      *         the injector provided by the Selene implementation
      */
-    protected SeleneBootstrap(InjectConfiguration moduleConfiguration) {
+    protected SeleneBootstrap(InjectConfiguration early, InjectConfiguration late) {
+        this.enter(BootstrapPhase.PRE_CONSTRUCT);
         super.getInjector().bind(SeleneInformation.PACKAGE_PREFIX);
-        super.getInjector().bind(moduleConfiguration);
+        super.getInjector().bind(early);
+
+        this.enter(BootstrapPhase.CONSTRUCT);
+        super.getInjector().bind(late);
         this.construct();
     }
 
@@ -77,8 +81,6 @@ public abstract class SeleneBootstrap extends InjectableBootstrap {
         }
 
         this.version = version;
-
-        InjectableBootstrap.setInstance(this);
     }
 
     public static boolean isConstructed() {
@@ -112,15 +114,16 @@ public abstract class SeleneBootstrap extends InjectableBootstrap {
         Selene.log().info("\u00A7b`------'");
         Selene.log().info("\u00A77Initiating \u00A7bSelene " + this.getVersion());
 
-        // Register pre-loadable types early on, these typically modify initialisation logic
-        Reflect.subTypes(SeleneInformation.PACKAGE_PREFIX, Preloadable.class)
-                .forEach(t -> Provider.provide(t).preload());
         // Ensure all services requiring a platform implementation have one present
         Reflect.annotatedTypes(SeleneInformation.PACKAGE_PREFIX, RequiresBinding.class).forEach(type -> {
             if (Reflect.subTypes(SeleneInformation.PACKAGE_PREFIX, type).isEmpty()) {
-                throw new IllegalStateException("No implementation exists for [" + type.getCanonicalName() + "], this will cause functionality to misbehave or not function!");
+                this.handleMissingBinding(type);
             }
         });
+    }
+
+    protected void handleMissingBinding(Class<?> type) {
+        throw new IllegalStateException("No implementation exists for [" + type.getCanonicalName() + "], this will cause functionality to misbehave or not function!");
     }
 
     /**
@@ -150,5 +153,14 @@ public abstract class SeleneBootstrap extends InjectableBootstrap {
      * @return The platform version
      */
     public abstract String getPlatformVersion();
+
+    protected void enter(BootstrapPhase phase) {
+        Selene.log().info("Selene changed phase to " + phase);
+        // Register pre-loadable types early on, these typically modify initialisation logic
+        Reflect.subTypes(SeleneInformation.PACKAGE_PREFIX, Preloadable.class)
+                .stream()
+                .filter(t -> t.isAnnotationPresent(Phase.class) && t.getAnnotation(Phase.class).value().equals(phase))
+                .forEach(t -> Provider.provide(t).preload());
+    }
 
 }

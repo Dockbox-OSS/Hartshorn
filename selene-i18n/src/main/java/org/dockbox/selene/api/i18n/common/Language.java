@@ -19,16 +19,20 @@ package org.dockbox.selene.api.i18n.common;
 
 import org.dockbox.selene.persistence.PersistentCapable;
 
+import java.util.Locale;
+
 public enum Language implements PersistentCapable<PersistentLanguageModel> {
-    EN_US("en_US", "English", "US"),
-    NL_NL("nl_NL", "Dutch", "Nederlands"),
-    FR_FR("fr_FR", "French", "Français"),
-    DE_DE("en_US", "German", "Deutsch");
+    EN_US(new Locale("en", "US"), "en_US", "English", "US"),
+    NL_NL(new Locale("nl", "NL"), "nl_NL", "Dutch", "Nederlands"),
+    FR_FR(Locale.FRANCE, "fr_FR", "French", "Français"),
+    DE_DE(Locale.GERMANY, "de_DE", "German", "Deutsch");
     private final String code;
     private final String nameEnglish;
     private final String nameLocalized;
+    private final Locale locale;
 
-    Language(String code, String nameEnglish, String nameLocalized) {
+    Language(Locale locale, String code, String nameEnglish, String nameLocalized) {
+        this.locale = locale;
         this.code = code;
         this.nameEnglish = nameEnglish;
         this.nameLocalized = nameLocalized;
@@ -55,6 +59,10 @@ public enum Language implements PersistentCapable<PersistentLanguageModel> {
 
     public String getNameLocalized() {
         return this.nameLocalized;
+    }
+
+    public Locale getLocale() {
+        return this.locale;
     }
 
     @Override

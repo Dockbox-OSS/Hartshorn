@@ -17,12 +17,15 @@
 
 package org.dockbox.selene.commands;
 
+import org.dockbox.selene.api.BootstrapPhase;
+import org.dockbox.selene.api.Phase;
 import org.dockbox.selene.api.SeleneInformation;
 import org.dockbox.selene.commands.annotations.ArgumentProvider;
-import org.dockbox.selene.di.Preloadable;
+import org.dockbox.selene.di.preload.Preloadable;
 import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.util.Reflect;
 
+@Phase(BootstrapPhase.PRE_INIT)
 class ArgumentProvisionScanner implements Preloadable {
 
     @Override

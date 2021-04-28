@@ -24,13 +24,13 @@ import org.dockbox.selene.api.i18n.common.ResourceEntry;
 @Resources(CommandParameters.class)
 public interface CommandParameterResources {
 
-    @Resource(value = "Not enough arguments.", key = "selene.command.missing_args")
+    @Resource(value = "Not enough arguments.", key = "missing_args")
     ResourceEntry getNotEnoughArgs();
 
-    @Resource(value = "Pattern has to be formatted as #type[arg1][arg2][etc.]", key = "selene.command.hashtag.wrong_format")
+    @Resource(value = "Pattern has to be formatted as #type[arg1][arg2][etc.]", key = "hashtag.wrong_format")
     ResourceEntry getWrongHashtagPatternFormat();
 
-    @Resource(value = "Parameter of type {0} has no register converter", key = "selene.command.missing_converter")
+    @Resource(value = "Parameter of type {0} has no register converter", key = "missing_converter")
     ResourceEntry getMissingConverter(String type);
 
 }

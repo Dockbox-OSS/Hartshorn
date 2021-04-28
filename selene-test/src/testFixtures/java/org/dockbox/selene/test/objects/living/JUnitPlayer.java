@@ -130,7 +130,7 @@ public class JUnitPlayer extends Player implements JUnitPersistentDataHolder {
 
     @Override
     public void setLocation(Location location) {
-        ((JUnitWorld) this.getWorld()).destroyEntity(this.getUniqueId());
+        if (this.location != null) ((JUnitWorld) this.getWorld()).destroyEntity(this.getUniqueId());
         this.location = location;
         ((JUnitWorld) this.getWorld()).addEntity(this);
     }

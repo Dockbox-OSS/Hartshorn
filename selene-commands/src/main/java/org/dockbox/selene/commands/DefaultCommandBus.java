@@ -21,9 +21,11 @@ import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.domain.AbstractIdentifiable;
 import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.domain.Identifiable;
+import org.dockbox.selene.api.entity.annotations.Metadata;
 import org.dockbox.selene.api.events.parents.Cancellable;
 import org.dockbox.selene.api.exceptions.Except;
-import org.dockbox.selene.api.i18n.entry.DefaultResource;
+import org.dockbox.selene.api.i18n.common.ResourceEntry;
+import org.dockbox.selene.api.i18n.entry.DefaultResources;
 import org.dockbox.selene.api.i18n.text.Text;
 import org.dockbox.selene.api.i18n.text.actions.HoverAction;
 import org.dockbox.selene.commands.annotations.Command;
@@ -53,8 +55,14 @@ import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.inject.Inject;
+
+@Metadata(alias = "commands", serializable = false)
 @SuppressWarnings("RegExpUnnecessaryNonCapturingGroup")
 public abstract class DefaultCommandBus<E> implements CommandBus {
+
+    @Inject
+    protected CommandResources resources;
 
     /**
      * Represents the default type for command elements matched by {@link DefaultCommandBus#FLAG} or
@@ -128,7 +136,7 @@ public abstract class DefaultCommandBus<E> implements CommandBus {
     private static final Map<String, AbstractRegistrationContext> registrations = SeleneUtils.emptyConcurrentMap();
     private static final Map<String, List<CommandInheritanceContext>> queuedAliases = SeleneUtils.emptyConcurrentMap();
 
-    protected static void callCommandContext(
+    protected void callCommandContext(
             AbstractRegistrationContext registrationContext,
             String command,
             CommandSource sender,
@@ -145,18 +153,18 @@ public abstract class DefaultCommandBus<E> implements CommandBus {
             ConfirmableQueueItem queueItem = new ConfirmableQueueItem((AbstractIdentifiable) sender, ctx, registrationContext);
             DefaultCommandBus.queueConfirmable(registrationId, queueItem);
 
-            Text confirmText = DefaultResource.CONFIRM_COMMAND_MESSAGE.asText();
-            confirmText.onHover(HoverAction.showText(DefaultResource.CONFIRM_COMMAND_MESSAGE_HOVER.asText()));
+            Text confirmText = this.resources.getConfirmCommand().asText();
+            confirmText.onHover(HoverAction.showText(this.resources.getConfirmCommandHover().asText()));
             confirmText.onClick(RunCommandAction.runCommand("/selene confirm " + registrationId));
 
             sender.sendWithPrefix(confirmText);
 
         }
         else {
-            Exceptional<DefaultResource> response = DefaultCommandBus.callCommandWithEvents(sender, ctx, command, registrationContext);
+            Exceptional<ResourceEntry> response = DefaultCommandBus.callCommandWithEvents(sender, ctx, command, registrationContext);
 
             if (response.caught())
-                sender.sendWithPrefix(DefaultResource.UNKNOWN_ERROR.format(response.error().getMessage()));
+                sender.sendWithPrefix(DefaultResources.instance().getUnknownError(response.error().getMessage()));
         }
     }
 
@@ -164,7 +172,7 @@ public abstract class DefaultCommandBus<E> implements CommandBus {
         DefaultCommandBus.confirmQueue.put(identifier, queueItem);
     }
 
-    private static Exceptional<DefaultResource> callCommandWithEvents(
+    private static Exceptional<ResourceEntry> callCommandWithEvents(
             CommandSource sender,
             CommandContext context,
             String command,
@@ -177,7 +185,7 @@ public abstract class DefaultCommandBus<E> implements CommandBus {
         Cancellable ceb = new CommandEvent.Before(sender, context).post();
 
         if (!ceb.isCancelled()) {
-            Exceptional<DefaultResource> response = registrationContext.call(sender, context);
+            Exceptional<ResourceEntry> response = registrationContext.call(sender, context);
             new CommandEvent.After(sender, context).post();
             return response;
         }
@@ -189,7 +197,7 @@ public abstract class DefaultCommandBus<E> implements CommandBus {
         for (Object obj : objs) {
             if (null == obj) continue;
             if (!(obj instanceof Class<?>)) obj = obj.getClass();
-            List<AbstractRegistrationContext> contexts = DefaultCommandBus.createContexts((Class<?>) obj);
+            List<AbstractRegistrationContext> contexts = this.createContexts((Class<?>) obj);
 
             for (AbstractRegistrationContext context : contexts) {
                 for (String alias : context.getAliases()) {
@@ -206,7 +214,7 @@ public abstract class DefaultCommandBus<E> implements CommandBus {
         }
     }
 
-    private static List<AbstractRegistrationContext> createContexts(Class<?> parent) {
+    private List<AbstractRegistrationContext> createContexts(Class<?> parent) {
         List<AbstractRegistrationContext> contexts = SeleneUtils.emptyList();
 
         /*
@@ -217,7 +225,7 @@ public abstract class DefaultCommandBus<E> implements CommandBus {
         */
         boolean isParentRegistration = parent.isAnnotationPresent(Command.class);
         if (isParentRegistration)
-            contexts.add(DefaultCommandBus.extractCommandInheritanceContext(parent));
+            contexts.add(this.extractCommandInheritanceContext(parent));
 
         @NotNull
         @Unmodifiable
@@ -261,9 +269,9 @@ public abstract class DefaultCommandBus<E> implements CommandBus {
         return false;
     }
 
-    private static CommandInheritanceContext extractCommandInheritanceContext(Class<?> parent) {
+    private CommandInheritanceContext extractCommandInheritanceContext(Class<?> parent) {
         Command command = parent.getAnnotation(Command.class);
-        CommandInheritanceContext context = new CommandInheritanceContext(command);
+        CommandInheritanceContext context = new CommandInheritanceContext(command, this.resources.getMissingArguments());
 
         /*
         Inherited methods are only stored inside the CommandInheritanceContext and not in

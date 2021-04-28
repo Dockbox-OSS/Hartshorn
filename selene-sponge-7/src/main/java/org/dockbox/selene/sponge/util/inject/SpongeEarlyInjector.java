@@ -15,25 +15,21 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.sponge.util;
+package org.dockbox.selene.sponge.util.inject;
 
 import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.domain.FileTypes;
 import org.dockbox.selene.api.i18n.text.pagination.PaginationBuilder;
 import org.dockbox.selene.api.task.TaskRunner;
 import org.dockbox.selene.api.task.ThreadUtils;
-import org.dockbox.selene.commands.CommandBus;
 import org.dockbox.selene.commands.source.DiscordCommandSource;
 import org.dockbox.selene.commands.values.AbstractFlagCollection;
 import org.dockbox.selene.di.InjectConfiguration;
 import org.dockbox.selene.di.binding.Bindings;
-import org.dockbox.selene.discord.DiscordUtils;
 import org.dockbox.selene.nms.packets.NMSChangeGameStatePacket;
 import org.dockbox.selene.nms.packets.NMSSpawnEntityPacket;
 import org.dockbox.selene.persistence.FileManager;
 import org.dockbox.selene.plots.PlotService;
-import org.dockbox.selene.server.DefaultServer;
-import org.dockbox.selene.server.Server;
 import org.dockbox.selene.server.minecraft.Console;
 import org.dockbox.selene.server.minecraft.bossbar.Bossbar;
 import org.dockbox.selene.server.minecraft.dimension.Worlds;
@@ -61,20 +57,22 @@ import org.dockbox.selene.sponge.objects.item.maps.SpongeCustomMapService;
 import org.dockbox.selene.sponge.objects.targets.SpongeConsole;
 import org.dockbox.selene.sponge.plotsquared.SpongePlotSquaredService;
 import org.dockbox.selene.sponge.text.navigation.SpongePaginationBuilder;
-import org.dockbox.selene.sponge.util.command.SpongeCommandBus;
+import org.dockbox.selene.sponge.util.SpongePlayers;
+import org.dockbox.selene.sponge.util.SpongeTaskRunner;
+import org.dockbox.selene.sponge.util.SpongeThreadUtils;
+import org.dockbox.selene.sponge.util.SpongeWorldEditService;
+import org.dockbox.selene.sponge.util.SpongeWorlds;
 import org.dockbox.selene.sponge.util.command.values.SpongeFlagCollection;
 import org.dockbox.selene.sponge.util.files.SpongeConfigurateManager;
 import org.dockbox.selene.sponge.util.files.SpongeXStreamManager;
 import org.dockbox.selene.worldedit.WorldEditService;
 import org.slf4j.Logger;
 
-public class SpongeInjector extends InjectConfiguration {
+public class SpongeEarlyInjector extends InjectConfiguration {
 
     @SuppressWarnings("OverlyCoupledMethod")
     @Override
     public final void collect() {
-        this.bind(Server.class, DefaultServer.class);
-
         // Tasks
         this.bind(TaskRunner.class, SpongeTaskRunner.class);
         this.bind(ThreadUtils.class, SpongeThreadUtils.class);
@@ -91,9 +89,7 @@ public class SpongeInjector extends InjectConfiguration {
         this.bind(CustomMapService.class, SpongeCustomMapService.class);
         this.bind(PlotService.class, SpongePlotSquaredService.class);
 
-        // Internal services
-        // Event- and command bus keep static references, and can thus be recreated
-        this.bind(CommandBus.class, new SpongeCommandBus());
+        // Command services
         this.bind(AbstractFlagCollection.class, SpongeFlagCollection.class);
 
         // Builder types
@@ -119,8 +115,5 @@ public class SpongeInjector extends InjectConfiguration {
         // Packets
         this.bind(ChangeGameStatePacket.class, NMSChangeGameStatePacket.class);
         this.bind(SpawnEntityPacket.class, NMSSpawnEntityPacket.class);
-
-        // Discord
-        this.bind(DiscordUtils.class, SpongeDiscordUtils.class);
     }
 }

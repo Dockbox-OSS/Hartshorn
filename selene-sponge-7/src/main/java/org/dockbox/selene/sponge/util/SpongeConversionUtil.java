@@ -38,7 +38,7 @@ import org.dockbox.selene.api.domain.Identifiable;
 import org.dockbox.selene.api.domain.Target;
 import org.dockbox.selene.api.domain.tuple.Tristate;
 import org.dockbox.selene.api.domain.tuple.Vector3N;
-import org.dockbox.selene.api.i18n.entry.DefaultResource;
+import org.dockbox.selene.api.i18n.entry.DefaultResources;
 import org.dockbox.selene.api.i18n.permissions.PermissionContext;
 import org.dockbox.selene.api.i18n.text.actions.ClickAction;
 import org.dockbox.selene.api.i18n.text.actions.HoverAction;
@@ -268,7 +268,7 @@ public enum SpongeConversionUtil {
             // from TextSerializers won't be needed, but to ensure no trailing codes are left we use
             // it here anyway.
             pb.append(TextSerializers.FORMATTING_CODE.deserialize(
-                    DefaultResource.parse(part.toLegacy())));
+                    DefaultResources.instance().getNone().parseColors(part.toLegacy())));
 
             Exceptional<org.spongepowered.api.text.action.ClickAction<?>> clickAction = toSponge(part.getClickAction());
             clickAction.present(pb::onClick);
@@ -328,7 +328,7 @@ public enum SpongeConversionUtil {
                     fromSponge(commandSource).present(consumer).rethrow();
                 }
                 catch (Throwable throwable) {
-                    commandSource.sendMessage(Text.of(DefaultResource.UNKNOWN_ERROR.format(throwable.getMessage())));
+                    commandSource.sendMessage(Text.of(DefaultResources.instance().getUnknownError(throwable.getMessage())));
                 }
             }));
         }

@@ -197,11 +197,15 @@ public class GuiceInjector implements Injector {
     public void bind(String prefix) {
         Map<Key<?>, Class<?>> scannedBinders = this.scan(prefix);
         this.modules.add(new GuicePrefixScannerModule(scannedBinders));
+        this.reset();
     }
 
     @Override
     public void bind(InjectConfiguration configuration) {
-        this.modules.add(new InjectConfigurationModule(configuration));
+        if (configuration != null) {
+            this.modules.add(new InjectConfigurationModule(configuration));
+            this.reset();
+        }
     }
 
     private com.google.inject.Injector rebuild() {
