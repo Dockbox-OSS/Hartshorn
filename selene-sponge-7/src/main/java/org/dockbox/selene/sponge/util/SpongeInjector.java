@@ -32,8 +32,6 @@ import org.dockbox.selene.nms.packets.NMSChangeGameStatePacket;
 import org.dockbox.selene.nms.packets.NMSSpawnEntityPacket;
 import org.dockbox.selene.persistence.FileManager;
 import org.dockbox.selene.plots.PlotService;
-import org.dockbox.selene.server.DefaultServer;
-import org.dockbox.selene.server.Server;
 import org.dockbox.selene.server.minecraft.Console;
 import org.dockbox.selene.server.minecraft.bossbar.Bossbar;
 import org.dockbox.selene.server.minecraft.dimension.Worlds;
@@ -73,8 +71,6 @@ public class SpongeInjector extends InjectConfiguration {
     @SuppressWarnings("OverlyCoupledMethod")
     @Override
     public final void collect() {
-        this.bind(Server.class, DefaultServer.class);
-
         // Tasks
         this.bind(TaskRunner.class, SpongeTaskRunner.class);
         this.bind(ThreadUtils.class, SpongeThreadUtils.class);
