@@ -62,7 +62,7 @@ import javax.inject.Inject;
 public abstract class DefaultCommandBus<E> implements CommandBus {
 
     @Inject
-    private CommandResources resources;
+    protected CommandResources resources;
 
     /**
      * Represents the default type for command elements matched by {@link DefaultCommandBus#FLAG} or
