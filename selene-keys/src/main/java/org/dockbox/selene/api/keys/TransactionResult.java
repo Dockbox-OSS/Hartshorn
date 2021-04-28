@@ -19,10 +19,11 @@ package org.dockbox.selene.api.keys;
 
 import org.dockbox.selene.api.i18n.common.ResourceEntry;
 import org.dockbox.selene.api.i18n.entry.DefaultResources;
+import org.dockbox.selene.api.i18n.entry.FakeResource;
 
 public final class TransactionResult {
 
-    private static final TransactionResult SUCCESS = new TransactionResult(Status.SUCCESS, DefaultResources.instance().getNone());
+    private static final TransactionResult SUCCESS = new TransactionResult(Status.SUCCESS, new FakeResource(""));
     private final Status status;
     private final ResourceEntry message;
 
