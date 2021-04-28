@@ -20,10 +20,12 @@ package org.dockbox.selene.test;
 import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.SeleneBootstrap;
 import org.dockbox.selene.di.InjectConfiguration;
+import org.dockbox.selene.server.Server;
 import org.dockbox.selene.server.minecraft.MinecraftServerBootstrap;
 import org.dockbox.selene.server.minecraft.MinecraftServerType;
 import org.dockbox.selene.server.minecraft.MinecraftVersion;
 import org.dockbox.selene.test.util.JUnitInjector;
+import org.dockbox.selene.test.util.JUnitServer;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -74,6 +76,11 @@ public class JUnit5Bootstrap extends MinecraftServerBootstrap {
         this.getInjector().bind(Server.class, JUnitServer.class);
     }
     
+    @Override
+    protected void handleMissingBinding(Class<?> type) {
+        Selene.log().warn("Ignoring missing binding for " + type.getSimpleName());
+    }
+
     public JUnitInformation getInformation() {
         return this.information;
     }
