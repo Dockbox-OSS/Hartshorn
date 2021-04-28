@@ -50,8 +50,10 @@ public abstract class SeleneBootstrap extends InjectableBootstrap {
      *         the injector provided by the Selene implementation
      */
     protected SeleneBootstrap(InjectConfiguration moduleConfiguration) {
+        this.enter(BootstrapPhase.PRE_CONSTRUCT);
         super.getInjector().bind(SeleneInformation.PACKAGE_PREFIX);
         super.getInjector().bind(moduleConfiguration);
+        this.enter(BootstrapPhase.CONSTRUCT);
         this.construct();
     }
 
@@ -150,5 +152,14 @@ public abstract class SeleneBootstrap extends InjectableBootstrap {
      * @return The platform version
      */
     public abstract String getPlatformVersion();
+
+    protected void enter(BootstrapPhase phase) {
+        Selene.log().info("Selene changed phase to " + phase);
+        // Register pre-loadable types early on, these typically modify initialisation logic
+        Reflect.subTypes(SeleneInformation.PACKAGE_PREFIX, Preloadable.class)
+                .stream()
+                .filter(t -> t.isAnnotationPresent(Phase.class) && t.getAnnotation(Phase.class).value().equals(phase))
+                .forEach(t -> Provider.provide(t).preload());
+    }
 
 }

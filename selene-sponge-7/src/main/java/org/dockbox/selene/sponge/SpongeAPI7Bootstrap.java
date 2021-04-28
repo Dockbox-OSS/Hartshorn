@@ -155,9 +155,11 @@ public class SpongeAPI7Bootstrap extends MinecraftServerBootstrap {
      */
     @Listener
     public void on(GameInitializationEvent event) {
-        super.init();
+            super.enter(BootstrapPhase.PRE_INIT);
+            super.init();
 
-        this.getInjector().bind(Server.class, DefaultServer.class);
+            super.enter(BootstrapPhase.INIT);
+            this.getInjector().bind(Server.class, DefaultServer.class);
 
         this.registerSpongeListeners(
                 Provider.provide(SpongeCommandListener.class),
