@@ -17,16 +17,19 @@
 
 package org.dockbox.selene.commands.parameter;
 
+import org.dockbox.selene.api.BootstrapPhase;
+import org.dockbox.selene.api.Phase;
 import org.dockbox.selene.api.SeleneInformation;
 import org.dockbox.selene.api.module.annotations.Module;
 import org.dockbox.selene.commands.annotations.CustomParameter;
 import org.dockbox.selene.commands.convert.DynamicPatternConverter;
-import org.dockbox.selene.di.Preloadable;
+import org.dockbox.selene.di.preload.Preloadable;
 import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.util.Reflect;
 
 import java.util.Collection;
 
+@Phase(BootstrapPhase.PRE_INIT)
 @Module(id = "commandparameters", name = "Command Parameters", description = "Allows annotated types to be command parameters", authors = "GuusLieben")
 public class CommandParameters implements Preloadable {
 

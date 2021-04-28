@@ -17,6 +17,8 @@
 
 package org.dockbox.selene.api.i18n;
 
+import org.dockbox.selene.api.BootstrapPhase;
+import org.dockbox.selene.api.Phase;
 import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.SeleneInformation;
 import org.dockbox.selene.api.domain.Exceptional;
@@ -25,7 +27,7 @@ import org.dockbox.selene.api.domain.TypedOwner;
 import org.dockbox.selene.api.i18n.annotations.Resource;
 import org.dockbox.selene.api.i18n.annotations.Resources;
 import org.dockbox.selene.api.i18n.common.ResourceEntry;
-import org.dockbox.selene.di.Preloadable;
+import org.dockbox.selene.di.preload.Preloadable;
 import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.proxy.ProxyProperty;
 import org.dockbox.selene.proxy.handle.ProxyHandler;
@@ -33,6 +35,7 @@ import org.dockbox.selene.util.Reflect;
 
 import java.lang.reflect.Method;
 
+@Phase(BootstrapPhase.CONSTRUCT)
 public class I18NPreload implements Preloadable {
 
     @SuppressWarnings("unchecked")
