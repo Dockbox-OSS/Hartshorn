@@ -15,10 +15,11 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.di;
+package org.dockbox.selene.di.preload;
 
 @FunctionalInterface
 public interface Preloadable {
 
     void preload();
+
 }
