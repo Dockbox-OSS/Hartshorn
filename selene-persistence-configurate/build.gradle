@@ -27,5 +27,7 @@ dependencies {
     compile "org.spongepowered:configurate-xml:$configurateVersion"
 
     testImplementation project(':selene-parent')
+    testImplementation project(':selene-persistence')
+    testImplementation project(':selene-i18n')
     testImplementation "org.spongepowered:configurate-core:$configurateVersion"
 }

@@ -22,6 +22,9 @@ package org.dockbox.selene.api.util.files;
 
 import com.google.common.collect.Lists;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.dockbox.selene.api.util.files.persistent.PersistentCapableType;
+import org.dockbox.selene.api.util.files.persistent.PersistentModelType;
 import org.dockbox.selene.persistence.configurate.serialize.SeleneTypeSerializers;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -122,4 +125,27 @@ public class SeleneTypeSerializersTests {
         Assertions.assertEquals(4, ls[0]);
         Assertions.assertEquals(ls[1], -2);
     }
+
+    @Test
+    public void testThatPersistentCapableCanBeSerialised() throws SerializationException {
+        PersistentCapableType type = new PersistentCapableType("test");
+
+        TestConfigurationLoader tl = this.getTestLoader();
+        ConfigurationNode cn = tl.createNode().set(TypeToken.get(PersistentCapableType.class), type);
+
+        PersistentCapableType ct = cn.get(TypeToken.get(PersistentCapableType.class));
+        Assertions.assertEquals("model:test", ct.getCapable());
+    }
+
+    @Test
+    public void testThatPersistentCapableScalarIsModel() throws SerializationException {
+        PersistentCapableType type = new PersistentCapableType("test");
+
+        TestConfigurationLoader tl = this.getTestLoader();
+        ConfigurationNode cn = tl.createNode().set(TypeToken.get(PersistentCapableType.class), type);
+
+        @Nullable Object o = cn.rawScalar();
+        Assertions.assertTrue(o instanceof PersistentModelType);
+    }
+
 }
