@@ -43,7 +43,10 @@ public class JUnit5Bootstrap extends MinecraftServerBootstrap {
     }
 
     public static void prepareBootstrap() throws IOException {
-        if (getInstance() == null) new JUnit5Bootstrap();
+        if (getInstance() == null) {
+            JUnit5Bootstrap jUnit5Bootstrap = new JUnit5Bootstrap();
+            jUnit5Bootstrap.init();
+        }
     }
 
     public static JUnit5Bootstrap getInstance() {
