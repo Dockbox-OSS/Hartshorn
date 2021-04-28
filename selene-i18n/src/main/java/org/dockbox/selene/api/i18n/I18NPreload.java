@@ -39,7 +39,7 @@ public class I18NPreload implements Preloadable {
     @Override
     public void preload() {
         for (Class<?> annotatedType : Reflect.annotatedTypes(SeleneInformation.PACKAGE_PREFIX, Resources.class)) {
-            Selene.getServer().getInjector().provide((Class<Object>) annotatedType, () -> this.createResourceProxy(annotatedType));
+            Selene.getServer().getInjector().bind((Class<Object>) annotatedType, this.createResourceProxy(annotatedType));
         }
         Reflect.registerModulePostInit(Provider.provide(ResourceService.class)::init);
     }
@@ -57,13 +57,10 @@ public class I18NPreload implements Preloadable {
 
         for (Method annotatedMethod : Reflect.annotatedMethods(type, Resource.class)) {
             String key = prefix + this.extractKey(annotatedMethod);
+            Resource annotation = annotatedMethod.getAnnotation(Resource.class);
 
             ProxyProperty<?, ResourceEntry> property = ProxyProperty.of(type, annotatedMethod, (instance, args) -> {
-                Exceptional<ResourceEntry> entryExceptional = Provider.provide(ResourceService.class).getResource(key);
-                return entryExceptional.map(resource -> (ResourceEntry) resource.format(args)).then(() -> {
-                    Resource annotation = annotatedMethod.getAnnotation(Resource.class);
-                    return new org.dockbox.selene.api.i18n.entry.Resource(annotation.value(), annotation.key()).format(args);
-                }).orNull();
+                return Provider.provide(ResourceService.class).getOrCreate(key, annotation.value()).format(args);
             });
 
             handler.delegate((ProxyProperty<Object, ?>) property);
