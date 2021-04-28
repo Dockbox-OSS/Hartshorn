@@ -20,9 +20,9 @@ package org.dockbox.selene.api;
 import org.dockbox.selene.api.exceptions.Except;
 import org.dockbox.selene.di.InjectConfiguration;
 import org.dockbox.selene.di.InjectableBootstrap;
-import org.dockbox.selene.di.Preloadable;
 import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.di.annotations.RequiresBinding;
+import org.dockbox.selene.di.preload.Preloadable;
 import org.dockbox.selene.util.Reflect;
 import org.jetbrains.annotations.NotNull;
 
@@ -46,14 +46,16 @@ public abstract class SeleneBootstrap extends InjectableBootstrap {
      * InjectConfiguration}. Also verifies dependency artifacts and injector bindings. Proceeds
      * to {@link SeleneBootstrap#construct()} once verified.
      *
-     * @param moduleConfiguration
+     * @param early
      *         the injector provided by the Selene implementation
      */
-    protected SeleneBootstrap(InjectConfiguration moduleConfiguration) {
+    protected SeleneBootstrap(InjectConfiguration early, InjectConfiguration late) {
         this.enter(BootstrapPhase.PRE_CONSTRUCT);
         super.getInjector().bind(SeleneInformation.PACKAGE_PREFIX);
-        super.getInjector().bind(moduleConfiguration);
+        super.getInjector().bind(early);
+
         this.enter(BootstrapPhase.CONSTRUCT);
+        super.getInjector().bind(late);
         this.construct();
     }
 
@@ -79,8 +81,6 @@ public abstract class SeleneBootstrap extends InjectableBootstrap {
         }
 
         this.version = version;
-
-        InjectableBootstrap.setInstance(this);
     }
 
     public static boolean isConstructed() {
@@ -114,9 +114,6 @@ public abstract class SeleneBootstrap extends InjectableBootstrap {
         Selene.log().info("\u00A7b`------'");
         Selene.log().info("\u00A77Initiating \u00A7bSelene " + this.getVersion());
 
-        // Register pre-loadable types early on, these typically modify initialisation logic
-        Reflect.subTypes(SeleneInformation.PACKAGE_PREFIX, Preloadable.class)
-                .forEach(t -> Provider.provide(t).preload());
         // Ensure all services requiring a platform implementation have one present
         Reflect.annotatedTypes(SeleneInformation.PACKAGE_PREFIX, RequiresBinding.class).forEach(type -> {
             if (Reflect.subTypes(SeleneInformation.PACKAGE_PREFIX, type).isEmpty()) {
