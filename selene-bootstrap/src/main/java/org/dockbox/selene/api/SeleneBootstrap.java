@@ -117,9 +117,13 @@ public abstract class SeleneBootstrap extends InjectableBootstrap {
         // Ensure all services requiring a platform implementation have one present
         Reflect.annotatedTypes(SeleneInformation.PACKAGE_PREFIX, RequiresBinding.class).forEach(type -> {
             if (Reflect.subTypes(SeleneInformation.PACKAGE_PREFIX, type).isEmpty()) {
-                throw new IllegalStateException("No implementation exists for [" + type.getCanonicalName() + "], this will cause functionality to misbehave or not function!");
+                this.handleMissingBinding(type);
             }
         });
+    }
+
+    protected void handleMissingBinding(Class<?> type) {
+        throw new IllegalStateException("No implementation exists for [" + type.getCanonicalName() + "], this will cause functionality to misbehave or not function!");
     }
 
     /**
