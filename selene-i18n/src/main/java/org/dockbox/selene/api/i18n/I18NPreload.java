@@ -63,7 +63,9 @@ public class I18NPreload implements Preloadable {
             Resource annotation = annotatedMethod.getAnnotation(Resource.class);
 
             ProxyProperty<?, ResourceEntry> property = ProxyProperty.of(type, annotatedMethod, (instance, args) -> {
-                return Provider.provide(ResourceService.class).getOrCreate(key, annotation.value()).format(args);
+                // Prevents NPE when formatting cached resources without arguments
+                Object[] objects = null == args ? new Object[0] : args;
+                return Provider.provide(ResourceService.class).getOrCreate(key, annotation.value()).format(objects);
             });
 
             handler.delegate((ProxyProperty<Object, ?>) property);
