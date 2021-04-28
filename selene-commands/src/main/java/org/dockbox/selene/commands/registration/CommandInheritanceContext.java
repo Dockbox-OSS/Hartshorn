@@ -18,7 +18,7 @@
 package org.dockbox.selene.commands.registration;
 
 import org.dockbox.selene.api.domain.Exceptional;
-import org.dockbox.selene.api.i18n.entry.DefaultResource;
+import org.dockbox.selene.api.i18n.common.ResourceEntry;
 import org.dockbox.selene.commands.annotations.Command;
 import org.dockbox.selene.commands.context.CommandContext;
 import org.dockbox.selene.commands.source.CommandSource;
@@ -29,17 +29,19 @@ import java.util.List;
 public class CommandInheritanceContext extends AbstractRegistrationContext {
 
     private final List<MethodCommandContext> inheritedCommands = SeleneUtils.emptyConcurrentList();
+    private final ResourceEntry missingArgumentResource;
 
-    public CommandInheritanceContext(Command command) {
+    public CommandInheritanceContext(Command command, ResourceEntry missingArgumentResource) {
         super(command);
+        this.missingArgumentResource = missingArgumentResource;
     }
 
     @Override
-    public Exceptional<DefaultResource> call(CommandSource source, CommandContext context) {
+    public Exceptional<ResourceEntry> call(CommandSource source, CommandContext context) {
         Exceptional<MethodCommandContext> inheritedCommand = this.getParentExecutor();
         inheritedCommand.present(ctx -> ctx.call(source, context));
         return inheritedCommand.absent()
-                ? Exceptional.of(DefaultResource.MISSING_ARGUMENTS)
+                ? Exceptional.of(this.missingArgumentResource)
                 : Exceptional.none();
     }
 

@@ -21,7 +21,7 @@ import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.domain.Identifiable;
 import org.dockbox.selene.api.exceptions.Except;
-import org.dockbox.selene.api.i18n.entry.DefaultResource;
+import org.dockbox.selene.api.i18n.common.ResourceEntry;
 import org.dockbox.selene.commands.CommandInterface;
 import org.dockbox.selene.commands.CommandUser;
 import org.dockbox.selene.commands.annotations.Command;
@@ -49,7 +49,7 @@ public class MethodCommandContext extends AbstractRegistrationContext {
     }
 
     @Override
-    public Exceptional<DefaultResource> call(CommandSource source, CommandContext context) {
+    public Exceptional<ResourceEntry> call(CommandSource source, CommandContext context) {
         try {
             List<Object> args = this.prepareArguments(source, context);
             Object instance = this.prepareInstance();
