@@ -38,7 +38,7 @@ public class JUnit5Bootstrap extends MinecraftServerBootstrap {
      * to {@link SeleneBootstrap#construct()} once verified.
      */
     protected JUnit5Bootstrap() throws IOException {
-        super(new JUnitInjector());
+        super(new JUnitInjector(), null);
         this.information = new JUnitInformation();
     }
 

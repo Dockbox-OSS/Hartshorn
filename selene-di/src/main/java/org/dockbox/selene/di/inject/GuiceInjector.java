@@ -202,8 +202,10 @@ public class GuiceInjector implements Injector {
 
     @Override
     public void bind(InjectConfiguration configuration) {
-        this.modules.add(new InjectConfigurationModule(configuration));
-        this.reset();
+        if (configuration != null) {
+            this.modules.add(new InjectConfigurationModule(configuration));
+            this.reset();
+        }
     }
 
     private com.google.inject.Injector rebuild() {
