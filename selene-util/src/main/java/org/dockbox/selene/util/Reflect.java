@@ -40,6 +40,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -51,6 +52,8 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+
+import javassist.util.proxy.ProxyFactory;
 
 @SuppressWarnings({ "unused", "OverlyComplexClass" })
 public final class Reflect {
@@ -178,26 +181,6 @@ public final class Reflect {
         }
     }
 
-    @SuppressWarnings("unchecked")
-    public static <T> Exceptional<T> runMethod(
-            Class<?> methodHolder,
-            Object instance,
-            String method,
-            Class<T> expectedType) {
-        try {
-            Method m = methodHolder.getDeclaredMethod(method);
-            if (!m.isAccessible()) m.setAccessible(true);
-            T value = (T) m.invoke(instance);
-            return Exceptional.of(value);
-        }
-        catch (ClassCastException
-                | NoSuchMethodException
-                | InvocationTargetException
-                | IllegalAccessException e) {
-            return Exceptional.of(e);
-        }
-    }
-
     @Contract("null, _ -> false; !null, null -> false")
     public static <T> boolean isGenericInstanceOf(T instance, Class<?> type) {
         return null != instance && Reflect.assignableFrom(type, instance.getClass());
@@ -261,6 +244,12 @@ public final class Reflect {
         return primitiveWrapperMap.get(primitive) == targetClass;
     }
 
+    @NotNull
+    @Unmodifiable
+    public static <A extends Annotation> Collection<Method> annotatedMethods(Class<?> clazz, Class<A> annotation) {
+        return Reflect.annotatedMethods(clazz, annotation, t -> true);
+    }
+
     /**
      * Gets all methods annotated by a given annotation, which match the given rule, inside a class.
      * If the method is not annotated with the given annotation, or does not match the given rule, it
@@ -281,12 +270,6 @@ public final class Reflect {
     @Unmodifiable
     public static <A extends Annotation> Collection<Method> annotatedMethods(Class<?> clazz, Class<A> annotation, Predicate<A> rule) {
         return Reflect.annotatedMethods(clazz, annotation, rule, false);
-    }
-
-    @NotNull
-    @Unmodifiable
-    public static <A extends Annotation> Collection<Method> annotatedMethods(Class<?> clazz, Class<A> annotation) {
-        return Reflect.annotatedMethods(clazz, annotation, t -> true);
     }
 
     /**
@@ -565,6 +548,10 @@ public final class Reflect {
         }
     }
 
+    public static boolean serverAvailable() {
+        return lookup(serverClassName) != null;
+    }
+
     public static Class<?> lookup(String className) {
         try {
             return Class.forName(className);
@@ -574,10 +561,6 @@ public final class Reflect {
         }
     }
 
-    public static boolean serverAvailable() {
-        return lookup(serverClassName) != null;
-    }
-
     @SuppressWarnings("unchecked")
     private static <A> Object createField(Field field, Provision provision, Function<A, Object> valueCollector) {
         if (Provision.FIELD == provision) return valueCollector.apply((A) field);
@@ -585,6 +568,20 @@ public final class Reflect {
             String fieldName = Reflect.fieldName(field);
             return valueCollector.apply((A) fieldName);
         }
+    }
+
+    /**
+     * Gets field property name.
+     *
+     * @param field
+     *         the field
+     *
+     * @return the field property name
+     */
+    public static String fieldName(Field field) {
+        return field.isAnnotationPresent(Property.class)
+                ? field.getAnnotation(Property.class).value()
+                : field.getName();
     }
 
     private static <T> boolean canUseSetter(Class<T> type, T instance, Field field, Object value)
@@ -602,20 +599,6 @@ public final class Reflect {
             }
         }
         return false;
-    }
-
-    /**
-     * Gets field property name.
-     *
-     * @param field
-     *         the field
-     *
-     * @return the field property name
-     */
-    public static String fieldName(Field field) {
-        return field.isAnnotationPresent(Property.class)
-                ? field.getAnnotation(Property.class).value()
-                : field.getName();
     }
 
     /**
@@ -791,7 +774,27 @@ public final class Reflect {
         Class<?> moduleBootstrap = Reflect.lookup("org.dockbox.selene.api.module.SeleneModuleBootstrap");
         if (moduleBootstrap != null) {
             Reflect.runMethod(moduleBootstrap, null, "getInstance", moduleBootstrap)
-                    .present(bootstrap -> Reflect.runMethod(moduleBootstrap, bootstrap, "registerInitBus", null, new Class[]{Consumer.class}, consumer));
+                    .present(bootstrap -> Reflect.runMethod(moduleBootstrap, bootstrap, "registerInitBus", null, new Class[]{ Consumer.class }, consumer));
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> Exceptional<T> runMethod(
+            Class<?> methodHolder,
+            Object instance,
+            String method,
+            Class<T> expectedType) {
+        try {
+            Method m = methodHolder.getDeclaredMethod(method);
+            if (!m.isAccessible()) m.setAccessible(true);
+            T value = (T) m.invoke(instance);
+            return Exceptional.of(value);
+        }
+        catch (ClassCastException
+                | NoSuchMethodException
+                | InvocationTargetException
+                | IllegalAccessException e) {
+            return Exceptional.of(e);
         }
     }
 
@@ -799,8 +802,12 @@ public final class Reflect {
         Class<?> moduleBootstrap = Reflect.lookup("org.dockbox.selene.api.module.SeleneModuleBootstrap");
         if (moduleBootstrap != null) {
             Reflect.runMethod(moduleBootstrap, null, "getInstance", moduleBootstrap).present(bootstrap -> {
-                Reflect.runMethod(moduleBootstrap, bootstrap, "registerPostInit", null, new Class[]{Runnable.class}, runnable);
+                Reflect.runMethod(moduleBootstrap, bootstrap, "registerPostInit", null, new Class[]{ Runnable.class }, runnable);
             });
         }
+    }
+
+    public static boolean isProxy(Object o) {
+        return o != null && (ProxyFactory.isProxyClass(o.getClass()) || Proxy.isProxyClass(o.getClass()));
     }
 }
