@@ -20,20 +20,25 @@ package org.dockbox.selene.test.util;
 import org.dockbox.selene.api.domain.AbstractIdentifiable;
 import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.i18n.MessageReceiver;
-import org.dockbox.selene.api.i18n.entry.DefaultResource;
 import org.dockbox.selene.commands.CommandBus;
 import org.dockbox.selene.commands.context.CommandContext;
 import org.dockbox.selene.commands.context.CommandParameter;
 import org.dockbox.selene.di.Provider;
+import org.dockbox.selene.server.DefaultServerResources;
 import org.dockbox.selene.server.Server;
 import org.dockbox.selene.test.TestResources;
 
+import javax.inject.Inject;
+
 public class JUnitServer implements Server {
+
+    @Inject
+    private DefaultServerResources resources;
 
     @Override
     public void confirm(MessageReceiver src, CommandContext ctx) {
         if (!(src instanceof AbstractIdentifiable)) {
-            src.send(DefaultResource.CONFIRM_WRONG_SOURCE);
+            src.send(this.resources.getWrongSource());
             return;
         }
         Exceptional<CommandParameter<String>> optionalCooldownId = ctx.argument("cooldownId");
