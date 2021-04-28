@@ -29,6 +29,8 @@ import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.discord.DiscordUtils;
 import org.dockbox.selene.nms.packets.NMSPacket;
 import org.dockbox.selene.nms.properties.NativePacketProperty;
+import org.dockbox.selene.server.DefaultServer;
+import org.dockbox.selene.server.Server;
 import org.dockbox.selene.server.minecraft.MinecraftServerBootstrap;
 import org.dockbox.selene.server.minecraft.MinecraftServerType;
 import org.dockbox.selene.server.minecraft.MinecraftVersion;
@@ -153,7 +155,10 @@ public class SpongeAPI7Bootstrap extends MinecraftServerBootstrap {
      */
     @Listener
     public void on(GameInitializationEvent event) {
+        super.init();
+
         this.getInjector().bind(Server.class, DefaultServer.class);
+
         this.registerSpongeListeners(
                 Provider.provide(SpongeCommandListener.class),
                 Provider.provide(SpongeServerListener.class),
@@ -162,8 +167,6 @@ public class SpongeAPI7Bootstrap extends MinecraftServerBootstrap {
                 Provider.provide(SpongeEntityListener.class),
                 Provider.provide(PlotSquaredEventListener.class)
         );
-
-        super.init();
 
         Optional<PacketGate> packetGate = Sponge.getServiceManager().provide(PacketGate.class);
         if (packetGate.isPresent()) {
