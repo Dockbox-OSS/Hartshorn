@@ -17,8 +17,10 @@
 
 package org.dockbox.selene.api.i18n.entry;
 
+import org.dockbox.selene.api.i18n.MessageReceiver;
 import org.dockbox.selene.api.i18n.common.Language;
 import org.dockbox.selene.api.i18n.common.ResourceEntry;
+import org.dockbox.selene.api.i18n.text.Text;
 
 public class FakeResource implements ResourceEntry {
 
@@ -34,6 +36,11 @@ public class FakeResource implements ResourceEntry {
     }
 
     @Override
+    public Text asText() {
+        return Text.of(this.fake);
+    }
+
+    @Override
     public String asString() {
         return this.fake;
     }
@@ -44,7 +51,27 @@ public class FakeResource implements ResourceEntry {
     }
 
     @Override
+    public ResourceEntry translate(MessageReceiver receiver) {
+        return this;
+    }
+
+    @Override
     public ResourceEntry translate(Language lang) {
         return this;
+    }
+
+    @Override
+    public ResourceEntry translate() {
+        return this;
+    }
+
+    @Override
+    public ResourceEntry format(Object... args) {
+        return this;
+    }
+
+    @Override
+    public Language getLanguage() {
+        return Language.EN_US;
     }
 }

@@ -18,49 +18,25 @@
 package org.dockbox.selene.api.i18n.common;
 
 import org.dockbox.selene.api.i18n.MessageReceiver;
-import org.dockbox.selene.api.i18n.entry.ResourceColors;
 import org.dockbox.selene.api.i18n.text.Text;
 
 public interface ResourceEntry extends Formattable {
 
-    static String plain(String value) {
-        return value.replaceAll("[$|&][0-9a-fklmnor]", "");
-    }
-
     String getKey();
 
-    default Text asText() {
-        return Text.of(this.asString());
-    }
+    Text asText();
 
     String asString();
 
     String plain();
 
-    default ResourceEntry translate(MessageReceiver receiver) {
-        return this.translate(receiver.getLanguage());
-    }
+    ResourceEntry translate(MessageReceiver receiver);
 
     ResourceEntry translate(Language lang);
 
-    default ResourceEntry translate() {
-        return this.translate(Language.EN_US);
-    }
+    ResourceEntry translate();
 
-    default String parseColors(String m) {
-        String temp = m;
-        char[] nativeFormats = "abcdef1234567890klmnor".toCharArray();
-        for (char c : nativeFormats)
-            temp = temp.replace(String.format("&%s", c), String.format("\u00A7%s", c));
-        return temp
-                .replace("$1", java.lang.String.format("\u00A7%s", ResourceColors.getColorPrimary()))
-                .replace("$2", java.lang.String.format("\u00A7%s", ResourceColors.getColorSecondary()))
-                .replace("$3", java.lang.String.format("\u00A7%s", ResourceColors.getColorMinor()))
-                .replace("$4", java.lang.String.format("\u00A7%s", ResourceColors.getColorError()));
-    }
+    ResourceEntry format(Object... args);
 
-    @SuppressWarnings("ClassReferencesSubclass")
-    default FormattedResource format(Object... args) {
-        return new FormattedResource(this, args);
-    }
+    Language getLanguage();
 }

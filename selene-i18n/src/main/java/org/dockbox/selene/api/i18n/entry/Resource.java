@@ -17,35 +17,75 @@
 
 package org.dockbox.selene.api.i18n.entry;
 
+import org.dockbox.selene.api.i18n.MessageReceiver;
 import org.dockbox.selene.api.i18n.ResourceService;
 import org.dockbox.selene.api.i18n.common.Language;
 import org.dockbox.selene.api.i18n.common.ResourceEntry;
+import org.dockbox.selene.api.i18n.text.Text;
 import org.dockbox.selene.di.Provider;
+import org.dockbox.selene.util.SeleneUtils;
 
 import java.util.Map;
 
 public class Resource implements ResourceEntry {
 
+    private final Language language;
+    private final Object[] formattingArgs;
     private final String key;
     private final Map<Language, String> resourceMap;
     private final String value;
 
     public Resource(String value, String key) {
+        this(value, key, Language.EN_US);
+    }
+
+    public Resource(String value, String key, Language language) {
+        this(value, key, language, new Object[0]);
+    }
+
+    public Resource(String value, String key, Language language, Object... args) {
         this.key = key;
         this.resourceMap = Provider.provide(ResourceService.class).translations(this);
-        this.value = this.resourceMap.getOrDefault(Language.EN_US, value);
+        this.value = this.resourceMap.getOrDefault(language, value);
+        this.language = language;
+        this.formattingArgs = args;
     }
 
     @Override
     public ResourceEntry translate(Language lang) {
         if (this.resourceMap.containsKey(lang))
-            return new Resource(this.resourceMap.get(lang), this.getKey());
+            return new Resource(this.resourceMap.get(lang), this.getKey(), lang, this.formattingArgs);
         return this;
     }
 
     @Override
+    public ResourceEntry translate(MessageReceiver receiver) {
+        return this.translate(receiver.getLanguage());
+    }
+
+    @Override
+    public ResourceEntry translate() {
+        return this.translate(Language.EN_US);
+    }
+
+    @Override
+    public Language getLanguage() {
+        return this.language;
+    }
+
+    @Override
+    public Text asText() {
+        return Text.of(this.asString());
+    }
+
+    @Override
+    public ResourceEntry format(Object... args) {
+        return new Resource(this.value, this.key, this.language, args);
+    }
+
+    @Override
     public String asString() {
-        return this.parseColors(this.value);
+        return this.formatCustom();
     }
 
     @Override
@@ -55,7 +95,22 @@ public class Resource implements ResourceEntry {
 
     @Override
     public String plain() {
-        return ResourceEntry.plain(this.value);
+        return this.formatCustom().replaceAll("[$|&][0-9a-fklmnor]", "");
+    }
+
+    private String formatCustom() {
+        String temp = this.value;
+        if (0 == this.formattingArgs.length) return temp;
+        Map<String, String> map = SeleneUtils.emptyMap();
+
+        for (int i = 0; i < this.formattingArgs.length; i++) {
+            String arg = "" + this.formattingArgs[i];
+            if (arg.isEmpty()) map.put(String.format("{%d}", i), "");
+            else map.put(String.format("{%d}", i), arg);
+            if (0 == i) map.put("%s", arg);
+        }
+        temp = this.replaceFromMap(temp, map);
+        return this.parseColors(temp);
     }
 
     public static String parseColors(String m) {
