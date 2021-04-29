@@ -89,7 +89,8 @@ public class SimpleResourceService implements ResourceService {
     @NotNull
     @Override
     public String createValidKey(@NotNull String raw) {
-        return raw.replaceAll("-", "_").replaceAll("\\.", "_").replaceAll("/", "_").toUpperCase();
+        // Replace any dashes, underscores, back- and forward slashes with a period. Convert to lowercase
+        return raw.replaceAll("[-]|[_]|[/]|[\\\\]", ".").toLowerCase();
     }
 
     @NotNull
