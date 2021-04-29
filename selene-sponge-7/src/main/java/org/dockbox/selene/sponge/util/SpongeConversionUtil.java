@@ -39,6 +39,7 @@ import org.dockbox.selene.api.domain.Target;
 import org.dockbox.selene.api.domain.tuple.Tristate;
 import org.dockbox.selene.api.domain.tuple.Vector3N;
 import org.dockbox.selene.api.i18n.entry.DefaultResources;
+import org.dockbox.selene.api.i18n.entry.Resource;
 import org.dockbox.selene.api.i18n.permissions.PermissionContext;
 import org.dockbox.selene.api.i18n.text.actions.ClickAction;
 import org.dockbox.selene.api.i18n.text.actions.HoverAction;
@@ -267,8 +268,7 @@ public enum SpongeConversionUtil {
             // the FormattingCode
             // from TextSerializers won't be needed, but to ensure no trailing codes are left we use
             // it here anyway.
-            pb.append(TextSerializers.FORMATTING_CODE.deserialize(
-                    DefaultResources.instance().getNone().parseColors(part.toLegacy())));
+            pb.append(TextSerializers.FORMATTING_CODE.deserialize(Resource.parseColors(part.toLegacy())));
 
             Exceptional<org.spongepowered.api.text.action.ClickAction<?>> clickAction = toSponge(part.getClickAction());
             clickAction.present(pb::onClick);

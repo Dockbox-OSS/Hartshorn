@@ -57,4 +57,16 @@ public class Resource implements ResourceEntry {
     public String plain() {
         return ResourceEntry.plain(this.value);
     }
+
+    public static String parseColors(String m) {
+        String temp = m;
+        char[] nativeFormats = "abcdef1234567890klmnor".toCharArray();
+        for (char c : nativeFormats)
+            temp = temp.replace(String.format("&%s", c), String.format("\u00A7%s", c));
+        return temp
+                .replace("$1", java.lang.String.format("\u00A7%s", ResourceColors.getColorPrimary()))
+                .replace("$2", java.lang.String.format("\u00A7%s", ResourceColors.getColorSecondary()))
+                .replace("$3", java.lang.String.format("\u00A7%s", ResourceColors.getColorMinor()))
+                .replace("$4", java.lang.String.format("\u00A7%s", ResourceColors.getColorError()));
+    }
 }
