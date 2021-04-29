@@ -17,5 +17,7 @@
 
 dependencies {
     compileOnly project(':selene-core')
-    compileOnly project(':selene-di')
+    compile(project(':selene-di')){
+        exclude module: 'guice'
+    }
 }
