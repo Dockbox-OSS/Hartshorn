@@ -39,7 +39,7 @@ import javax.inject.Singleton;
 @Binds(ResourceService.class)
 public class SimpleResourceService implements ResourceService {
 
-    private static final Map<Language, ResourceBundle> bundles = SeleneUtils.emptyConcurrentMap();
+    protected static final Map<Language, ResourceBundle> bundles = SeleneUtils.emptyConcurrentMap();
 
     @Override
     public void init() {
