@@ -48,7 +48,7 @@ public class JUnitServer implements Server {
         optionalCooldownId.present(cooldownId -> {
             String cid = cooldownId.getValue();
             Provider.provide(CommandBus.class).confirmCommand(cid).absent(() ->
-                    src.send(TestResources.SERVER$CONFIRMED));
-        }).absent(() -> src.send(TestResources.SERVER$NOT_CONFIRMED));
+                    src.send(Provider.provide(TestResources.class).getCommandConfirmed()));
+        }).absent(() -> src.send(Provider.provide(TestResources.class).getCommandNotConfirmed()));
     }
 }

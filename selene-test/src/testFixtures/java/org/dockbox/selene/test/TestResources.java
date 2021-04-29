@@ -17,70 +17,18 @@
 
 package org.dockbox.selene.test;
 
-import org.dockbox.selene.api.i18n.MessageReceiver;
-import org.dockbox.selene.api.i18n.common.Language;
+import org.dockbox.selene.api.Selene;
+import org.dockbox.selene.api.i18n.annotations.Resource;
+import org.dockbox.selene.api.i18n.annotations.Resources;
 import org.dockbox.selene.api.i18n.common.ResourceEntry;
-import org.dockbox.selene.api.i18n.entry.DefaultResources;
-import org.dockbox.selene.server.minecraft.players.Player;
-import org.dockbox.selene.util.SeleneUtils;
 
-import java.util.Map;
+@Resources(Selene.class)
+public interface TestResources {
 
-public enum TestResources implements ResourceEntry {
-    SERVER$CONFIRMED("IntegratedModule::confirm::true", "server.confirm.true"),
-    SERVER$NOT_CONFIRMED("IntegratedModule::confirm::false", "server.confirm.false"),
-    ;
+    @Resource(value = "integrated-confirm-true", key = "server.confirm.true")
+    ResourceEntry getCommandConfirmed();
 
-    private final String key;
-    private final Map<Language, String> translations = SeleneUtils.emptyConcurrentMap();
-    private String value;
-
-    TestResources(String value, String key) {
-        this.value = value;
-        this.key = key;
-    }
-
-    public static String parse(CharSequence input) {
-        return DefaultResources.instance().getNone().parseColors(input.toString());
-    }
-
-    public String getValue(Player player) {
-        return this.translate(player.getLanguage()).asString();
-    }
-
-    @Override
-    public String getKey() {
-        return "TestResource." + this.key;
-    }
-
-    @Override
-    public String asString() {
-        return this.parseColors(this.value);
-    }
-
-    @Override
-    public String plain() {
-        return ResourceEntry.plain(this.value);
-    }
-
-    @Override
-    public ResourceEntry translate(MessageReceiver receiver) {
-        return this;
-    }
-
-
-    @Override
-    public ResourceEntry translate(Language lang) {
-        return this;
-    }
-
-    @Override
-    public ResourceEntry translate() {
-        return this;
-    }
-
-    public void setLanguageValue(Language lang, String value) {
-        this.translations.put(lang, value);
-        if (lang == Language.EN_US) this.value = value;
-    }
+    @Resource(value = "integrated-confirm-false", key = "server.confirm.false")
+    ResourceEntry getCommandNotConfirmed();
+    
 }

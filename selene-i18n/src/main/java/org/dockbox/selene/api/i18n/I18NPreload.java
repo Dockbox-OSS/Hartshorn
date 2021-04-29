@@ -27,6 +27,8 @@ import org.dockbox.selene.api.domain.TypedOwner;
 import org.dockbox.selene.api.i18n.annotations.Resource;
 import org.dockbox.selene.api.i18n.annotations.Resources;
 import org.dockbox.selene.api.i18n.common.ResourceEntry;
+import org.dockbox.selene.api.i18n.exceptions.ProxyFactoryBindingException;
+import org.dockbox.selene.api.i18n.exceptions.ProxyMethodBindingException;
 import org.dockbox.selene.di.preload.Preloadable;
 import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.proxy.ProxyProperty;
@@ -42,6 +44,9 @@ public class I18NPreload implements Preloadable {
     @Override
     public void preload() {
         for (Class<?> annotatedType : Reflect.annotatedTypes(SeleneInformation.PACKAGE_PREFIX, Resources.class)) {
+            if (!annotatedType.isInterface())
+                throw new ProxyFactoryBindingException(annotatedType);
+
             Selene.getServer().getInjector().bind((Class<Object>) annotatedType, this.createResourceProxy(annotatedType));
         }
         Reflect.registerModulePostInit(Provider.provide(ResourceService.class)::init);
@@ -59,6 +64,9 @@ public class I18NPreload implements Preloadable {
         }
 
         for (Method annotatedMethod : Reflect.annotatedMethods(type, Resource.class)) {
+            if (!Reflect.assignableFrom(ResourceEntry.class, annotatedMethod.getReturnType()))
+                throw new ProxyMethodBindingException(annotatedMethod);
+
             String key = this.extractKey(annotatedMethod, prefix);
             Resource annotation = annotatedMethod.getAnnotation(Resource.class);
 

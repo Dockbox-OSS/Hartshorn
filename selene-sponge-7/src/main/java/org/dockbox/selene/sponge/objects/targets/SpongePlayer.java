@@ -26,6 +26,7 @@ import org.dockbox.selene.api.events.EventBus;
 import org.dockbox.selene.api.i18n.common.Language;
 import org.dockbox.selene.api.i18n.common.ResourceEntry;
 import org.dockbox.selene.api.i18n.entry.DefaultResources;
+import org.dockbox.selene.api.i18n.entry.Resource;
 import org.dockbox.selene.api.i18n.permissions.Permission;
 import org.dockbox.selene.api.i18n.permissions.PermissionContext;
 import org.dockbox.selene.api.i18n.text.Text;
@@ -211,7 +212,7 @@ public class SpongePlayer extends Player implements SpongeComposite, Wrapper<org
 
     @Override
     public void send(@NotNull ResourceEntry text) {
-        String formattedValue = DefaultResources.instance().getNone().parseColors(text.translate(this.getLanguage()).asString());
+        String formattedValue = Resource.parseColors(text.translate(this.getLanguage()).asString());
         this.send(Text.of(formattedValue));
     }
 
@@ -226,7 +227,7 @@ public class SpongePlayer extends Player implements SpongeComposite, Wrapper<org
 
     @Override
     public void sendWithPrefix(@NotNull ResourceEntry text) {
-        String formattedValue = DefaultResources.instance().getNone().parseColors(text.translate(this.getLanguage()).asString());
+        String formattedValue = Resource.parseColors(text.translate(this.getLanguage()).asString());
         this.sendWithPrefix(Text.of(formattedValue));
     }
 

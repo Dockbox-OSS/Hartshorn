@@ -15,9 +15,14 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-dependencies {
-    compileOnly project(':selene-core')
-    compile(project(':selene-di')){
-        exclude module: 'guice'
+package org.dockbox.selene.api.i18n.exceptions;
+
+import java.lang.reflect.Method;
+
+public class ProxyMethodBindingException extends RuntimeException {
+
+    public ProxyMethodBindingException(Method method) {
+        super("Factory method proxies should return (a subtype of) ResourceEntry, " + method.getName() + " returned " + method.getReturnType() == null ? "void" : method.getReturnType().getSimpleName());
     }
+
 }

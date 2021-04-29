@@ -15,9 +15,12 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-dependencies {
-    compileOnly project(':selene-core')
-    compile(project(':selene-di')){
-        exclude module: 'guice'
+package org.dockbox.selene.api.i18n.exceptions;
+
+public class ProxyFactoryBindingException extends RuntimeException {
+
+    public ProxyFactoryBindingException(Class<?> type) {
+        super("Factory proxies should be interfaces, " + type.getCanonicalName() + " is not an interface");
     }
+
 }
