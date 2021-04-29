@@ -72,6 +72,42 @@ public class ResourceServiceTests {
     }
 
     @Test
+    public void testResourceReturnsCopyOnTranslate() {
+        Exceptional<ResourceEntry> demo = service.get("demo");
+        Assertions.assertTrue(demo.present());
+
+        ResourceEntry entry = demo.get();
+        ResourceEntry formatted = entry.translate();
+
+        Assertions.assertNotSame(entry, formatted);
+    }
+
+    @Test
+    public void testResourceReturnsCopyOnTranslateLanguage() {
+        Exceptional<ResourceEntry> demo = service.get("demo");
+        Assertions.assertTrue(demo.present());
+
+        ResourceEntry entry = demo.get();
+        ResourceEntry formatted = entry.translate(Language.NL_NL);
+
+        Assertions.assertNotSame(entry, formatted);
+    }
+
+    @Test
+    public void testResourceReturnsCopyOnTranslateMessageReceiver() {
+        Exceptional<ResourceEntry> demo = service.get("demo");
+        Assertions.assertTrue(demo.present());
+
+        MessageReceiver mock = Mockito.mock(MessageReceiver.class);
+        Mockito.when(mock.getLanguage()).thenReturn(Language.NL_NL);
+
+        ResourceEntry entry = demo.get();
+        ResourceEntry formatted = entry.translate(mock);
+
+        Assertions.assertNotSame(entry, formatted);
+    }
+
+    @Test
     public void testResourceBundleUsesBundle() {
         Exceptional<ResourceEntry> demo = this.service.get("demo");
         Assertions.assertTrue(demo.present());
