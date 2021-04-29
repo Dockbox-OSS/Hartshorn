@@ -28,11 +28,13 @@ import java.util.function.Consumer;
 
 public abstract class SeleneModuleBootstrap extends SeleneBootstrap {
 
-    private final Set<Consumer<Object>> instanceConsumers = SeleneUtils.emptySet();
-    private final Set<Runnable> postInitRunners = SeleneUtils.emptySet();
+    private Set<Consumer<Object>> instanceConsumers;
+    private Set<Runnable> postInitRunners;
 
     protected SeleneModuleBootstrap(InjectConfiguration early, InjectConfiguration late) {
         super(early, late);
+        this.preparePostInitRunners();
+        this.prepareInstanceConsumers();
     }
 
     public static SeleneModuleBootstrap getInstance() {
@@ -72,10 +74,19 @@ public abstract class SeleneModuleBootstrap extends SeleneBootstrap {
     }
 
     public void registerPostInit(Runnable runnable) {
+        this.preparePostInitRunners();
         this.postInitRunners.add(runnable);
     }
 
     public void registerInitBus(Consumer<Object> registerAction) {
+        this.prepareInstanceConsumers();
         this.instanceConsumers.add(registerAction);
+    }
+
+    private void preparePostInitRunners() {
+        if (null == this.postInitRunners) this.postInitRunners = SeleneUtils.emptySet();
+    }
+    private void prepareInstanceConsumers() {
+        if (null == this.instanceConsumers) this.instanceConsumers = SeleneUtils.emptySet();
     }
 }
