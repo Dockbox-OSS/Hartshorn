@@ -55,6 +55,23 @@ public class ResourceServiceTests {
     }
 
     @Test
+    public void testResourcesCanBeFormatted() {
+        ResourceEntry entry = new Resource("Hello {0}!", "demo.formatted");
+        ResourceEntry formatted = entry.format("world");
+
+        Assertions.assertNotNull(formatted);
+        Assertions.assertEquals("Hello world!", formatted.plain());
+    }
+
+    @Test
+    public void testResourceReturnsCopyOnFormat() {
+        ResourceEntry entry = new Resource("Hello {0}!", "demo.formatted");
+        ResourceEntry formatted = entry.format("world");
+
+        Assertions.assertNotSame(entry, formatted);
+    }
+
+    @Test
     public void testResourceBundleUsesBundle() {
         Exceptional<ResourceEntry> demo = this.service.get("demo");
         Assertions.assertTrue(demo.present());
