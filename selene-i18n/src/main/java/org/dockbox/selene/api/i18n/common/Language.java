@@ -22,9 +22,9 @@ import org.dockbox.selene.persistence.PersistentCapable;
 import java.util.Locale;
 
 public enum Language implements PersistentCapable<PersistentLanguageModel> {
-    EN_US(new Locale("en", "US"), "en_US", "English", "US"),
-    NL_NL(new Locale("nl", "NL"), "nl_NL", "Dutch", "Nederlands"),
-    FR_FR(Locale.FRANCE, "fr_FR", "French", "Français"),
+    EN_US(Locale.ENGLISH, "en_US", "English", "US"),
+    NL_NL(new Locale("nl"), "nl_NL", "Dutch", "Nederlands"),
+    FR_FR(Locale.FRENCH, "fr_FR", "French", "Français"),
     DE_DE(Locale.GERMANY, "de_DE", "German", "Deutsch");
     private final String code;
     private final String nameEnglish;
