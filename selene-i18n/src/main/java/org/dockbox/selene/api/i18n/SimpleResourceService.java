@@ -18,6 +18,7 @@
 package org.dockbox.selene.api.i18n;
 
 import org.dockbox.selene.api.domain.Exceptional;
+import org.dockbox.selene.api.exceptions.Except;
 import org.dockbox.selene.api.i18n.common.Language;
 import org.dockbox.selene.api.i18n.common.ResourceEntry;
 import org.dockbox.selene.api.i18n.entry.Resource;
@@ -27,7 +28,6 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Enumeration;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.MissingResourceException;
@@ -39,14 +39,17 @@ import javax.inject.Singleton;
 @Binds(ResourceService.class)
 public class SimpleResourceService implements ResourceService {
 
-    private final Map<Language, ResourceBundle> bundles = SeleneUtils.emptyConcurrentMap();
-    private final List<ResourceEntry> knownEntries = SeleneUtils.emptyConcurrentList();
+    private static final Map<Language, ResourceBundle> bundles = SeleneUtils.emptyConcurrentMap();
 
     @Override
     public void init() {
         for (Language language : Language.values()) {
-            ResourceBundle bundle = ResourceBundle.getBundle("selene.translations", language.getLocale());
-            this.bundles.put(language, bundle);
+            try {
+                ResourceBundle bundle = ResourceBundle.getBundle("selene.translations", language.getLocale());
+                SimpleResourceService.bundles.put(language, bundle);
+            } catch (Throwable e) {
+                Except.handle(e);
+            }
         }
     }
 
@@ -54,8 +57,8 @@ public class SimpleResourceService implements ResourceService {
     @Override
     public Map<String, String> translations(@NotNull Language lang) {
         Map<String, String> translations = SeleneUtils.emptyMap();
-        if (this.bundles.containsKey(lang)) {
-            ResourceBundle bundle = this.bundles.get(lang);
+        if (SimpleResourceService.bundles.containsKey(lang)) {
+            ResourceBundle bundle = SimpleResourceService.bundles.get(lang);
             Enumeration<String> keys = bundle.getKeys();
             while (keys.hasMoreElements()) {
                 String key = keys.nextElement();
@@ -72,9 +75,8 @@ public class SimpleResourceService implements ResourceService {
     @NotNull
     @Override
     public Map<Language, String> translations(@NotNull Resource entry) {
-        this.knownEntries.add(entry);
         Map<Language, String> translations = SeleneUtils.emptyMap();
-        for (Entry<Language, ResourceBundle> bundle : this.bundles.entrySet()) {
+        for (Entry<Language, ResourceBundle> bundle : SimpleResourceService.bundles.entrySet()) {
             try {
                 String string = bundle.getValue().getString(entry.getKey());
                 translations.put(bundle.getKey(), string);
@@ -105,16 +107,14 @@ public class SimpleResourceService implements ResourceService {
         @NonNls
         @NotNull
         String finalKey = this.createValidKey(key);
-        return Exceptional.of(this.knownEntries.stream().filter(entry -> entry.getKey().equals(finalKey)).findFirst()).then(() -> {
+        return Exceptional.of(() -> {
             Map<String, String> translations = this.translations(Language.EN_US);
             if (translations.containsKey(finalKey)) {
-                String string = translations.get(finalKey);
-                return new Resource(string, finalKey);
+                String knownValue = translations.get(finalKey);
+                return new Resource(knownValue, finalKey);
             } else {
-                if (createIfAbsent || null == value) {
-                    ResourceEntry resource = new Resource(value, key);
-                    this.knownEntries.add(resource);
-                    return resource;
+                if (createIfAbsent && null != value) {
+                    return new Resource(value, key);
                 } else {
                     throw new IllegalStateException("Missing translation for " + finalKey);
                 }
