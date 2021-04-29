@@ -23,6 +23,8 @@ import com.google.inject.Key;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.inject.Singleton;
+
 public class GuicePrefixScannerModule extends AbstractModule {
 
     private final Map<Key<?>, Class<?>> bindings;
@@ -31,11 +33,15 @@ public class GuicePrefixScannerModule extends AbstractModule {
         this.bindings = bindings;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     protected void configure() {
         for (Entry<Key<?>, Class<?>> entry : this.bindings.entrySet()) {
-            //noinspection unchecked
-            this.bind((Key<Object>) entry.getKey()).to(entry.getValue());
+            if (entry.getKey().getTypeLiteral().getRawType().isAnnotationPresent(Singleton.class)) {
+                this.bind((Key<Object>) entry.getKey()).to(entry.getValue()).asEagerSingleton();
+            } else {
+                this.bind((Key<Object>) entry.getKey()).to(entry.getValue());
+            }
         }
     }
 }
