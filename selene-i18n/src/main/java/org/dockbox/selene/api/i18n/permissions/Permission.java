@@ -20,16 +20,15 @@ package org.dockbox.selene.api.i18n.permissions;
 import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.i18n.common.Formattable;
 import org.dockbox.selene.di.Provider;
-import org.dockbox.selene.di.SeleneFactory;
 
 public interface Permission extends Formattable {
 
     static Permission of(String node) {
-        return Provider.provide(Permission.class, SeleneFactory.use(node));
+        return Provider.provide(Permission.class, node);
     }
 
     static Permission of(String key, PermissionContext context) {
-        return Provider.provide(Permission.class, SeleneFactory.use(key, context));
+        return Provider.provide(Permission.class, key, context);
     }
 
     String get();

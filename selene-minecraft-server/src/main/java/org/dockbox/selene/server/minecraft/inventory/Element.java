@@ -18,7 +18,6 @@
 package org.dockbox.selene.server.minecraft.inventory;
 
 import org.dockbox.selene.di.Provider;
-import org.dockbox.selene.di.SeleneFactory;
 import org.dockbox.selene.server.minecraft.item.Item;
 import org.dockbox.selene.server.minecraft.players.Player;
 
@@ -56,7 +55,7 @@ public interface Element {
      * @return The element.
      */
     static Element of(Item item, Consumer<Player> onClick) {
-        return Provider.provide(Element.class, SeleneFactory.use(item, onClick));
+        return Provider.provide(Element.class, item, onClick);
     }
 
     /**

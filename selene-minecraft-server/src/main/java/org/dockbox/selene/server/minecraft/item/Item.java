@@ -22,11 +22,10 @@ import org.dockbox.selene.api.i18n.text.Text;
 import org.dockbox.selene.api.keys.KeyHolder;
 import org.dockbox.selene.api.keys.PersistentDataHolder;
 import org.dockbox.selene.di.Provider;
-import org.dockbox.selene.di.SeleneFactory;
+import org.dockbox.selene.persistence.PersistentCapable;
 import org.dockbox.selene.server.minecraft.item.persistence.PersistentItemModel;
 import org.dockbox.selene.server.minecraft.item.storage.MinecraftItems;
 import org.dockbox.selene.server.minecraft.players.Profile;
-import org.dockbox.selene.persistence.PersistentCapable;
 import org.jetbrains.annotations.NonNls;
 
 import java.util.List;
@@ -60,7 +59,7 @@ public interface Item extends KeyHolder<Item>, PersistentDataHolder, PersistentC
      */
     @Deprecated
     static Item of(String id, int meta) {
-        return Provider.provide(Item.class, SeleneFactory.use(id, meta));
+        return Provider.provide(Item.class, id, meta);
     }
 
     boolean isAir();

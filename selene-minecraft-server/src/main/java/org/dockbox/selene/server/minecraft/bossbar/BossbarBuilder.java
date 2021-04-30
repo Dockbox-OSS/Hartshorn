@@ -19,7 +19,6 @@ package org.dockbox.selene.server.minecraft.bossbar;
 
 import org.dockbox.selene.api.i18n.text.Text;
 import org.dockbox.selene.di.Provider;
-import org.dockbox.selene.di.SeleneFactory;
 
 import java.util.UUID;
 
@@ -72,6 +71,6 @@ public final class BossbarBuilder {
     }
 
     public Bossbar build() {
-        return Provider.provide(Bossbar.class, SeleneFactory.use(this.id, this.percent, this.text, this.color, this.style));
+        return Provider.provide(Bossbar.class, this.id, this.percent, this.text, this.color, this.style);
     }
 }
