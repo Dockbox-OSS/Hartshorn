@@ -43,7 +43,7 @@ public class PermissionContext {
     }
 
     public Permission toPermission(String key) {
-        return Provider.provide(SeleneFactory.class).create(Permission.class, key, this);
+        return Provider.provide(Permission.class, SeleneFactory.use(key, this));
     }
 
     @Override

@@ -72,6 +72,6 @@ public final class BossbarBuilder {
     }
 
     public Bossbar build() {
-        return Provider.provide(SeleneFactory.class).create(Bossbar.class, this.id, this.percent, this.text, this.color, this.style);
+        return Provider.provide(Bossbar.class, SeleneFactory.use(this.id, this.percent, this.text, this.color, this.style));
     }
 }

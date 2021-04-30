@@ -145,7 +145,7 @@ public class DaveModule implements InjectableType {
     public void on(DiscordChatReceivedEvent chatEvent) {
         if (chatEvent.getChannel().getId().equals(this.config.getChannel().getId())) {
             DaveUtils.findMatching(this.triggers, chatEvent.getMessage().getContentRaw()).present(trigger -> Provider.provide(TaskRunner.class).acceptDelayed(() -> DaveUtils.performTrigger(
-                    Provider.provide(SeleneFactory.class).create(DiscordCommandSource.class, chatEvent.getChannel()),
+                    Provider.provide(DiscordCommandSource.class, SeleneFactory.use(chatEvent.getChannel())),
                     chatEvent.getAuthor().getName(),
                     trigger,
                     chatEvent.getMessage().getContentRaw(),

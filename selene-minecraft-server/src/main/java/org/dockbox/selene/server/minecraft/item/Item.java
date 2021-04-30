@@ -60,7 +60,7 @@ public interface Item extends KeyHolder<Item>, PersistentDataHolder, PersistentC
      */
     @Deprecated
     static Item of(String id, int meta) {
-        return Provider.provide(SeleneFactory.class).create(Item.class, id, meta);
+        return Provider.provide(Item.class, SeleneFactory.use(id, meta));
     }
 
     boolean isAir();

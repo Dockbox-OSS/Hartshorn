@@ -25,11 +25,11 @@ import org.dockbox.selene.di.SeleneFactory;
 public interface Permission extends Formattable {
 
     static Permission of(String node) {
-        return Provider.provide(SeleneFactory.class).create(Permission.class, node);
+        return Provider.provide(Permission.class, SeleneFactory.use(node));
     }
 
     static Permission of(String key, PermissionContext context) {
-        return Provider.provide(SeleneFactory.class).create(Permission.class, key, context);
+        return Provider.provide(Permission.class, SeleneFactory.use(key, context));
     }
 
     String get();
