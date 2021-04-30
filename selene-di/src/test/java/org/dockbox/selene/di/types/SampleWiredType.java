@@ -18,10 +18,18 @@
 package org.dockbox.selene.di.types;
 
 import org.dockbox.selene.di.annotations.AutoWired;
+import org.dockbox.selene.di.properties.InjectableType;
+import org.dockbox.selene.di.properties.InjectorProperty;
 
-public class SampleWiredType implements SampleInterface {
+import javax.inject.Inject;
+
+public class SampleWiredType implements SampleInterface, InjectableType {
 
     private final String name;
+
+    @Inject
+    private SampleField field;
+    private boolean enabled = false;
 
     @AutoWired
     public SampleWiredType(String name) {
@@ -31,5 +39,18 @@ public class SampleWiredType implements SampleInterface {
     @Override
     public String name() {
         return this.name;
+    }
+
+    @Override
+    public void stateEnabling(InjectorProperty<?>... properties) {
+        this.enabled = true;
+    }
+
+    public SampleField field() {
+        return this.field;
+    }
+
+    public boolean enabled() {
+        return this.enabled;
     }
 }

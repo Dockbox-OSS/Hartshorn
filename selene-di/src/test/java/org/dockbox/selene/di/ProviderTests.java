@@ -26,6 +26,8 @@ import org.dockbox.selene.di.properties.BindingMetaProperty;
 import org.dockbox.selene.di.types.InvalidSampleWiredType;
 import org.dockbox.selene.di.types.NameProperty;
 import org.dockbox.selene.di.types.PopulatedType;
+import org.dockbox.selene.di.types.SampleField;
+import org.dockbox.selene.di.types.SampleFieldImplementation;
 import org.dockbox.selene.di.types.scan.SampleAnnotatedImplementation;
 import org.dockbox.selene.di.types.SampleEnablingType;
 import org.dockbox.selene.di.types.SampleImplementation;
@@ -349,6 +351,31 @@ public class ProviderTests {
         Assertions.assertEquals(SampleWiredType.class, providedClass);
 
         Assertions.assertEquals("FactoryTyped", provided.name());
+    }
+
+    @Test
+    public void varargProvidedTypesAreEnabled() throws IllegalAccessException {
+        injector(true).wire(SampleInterface.class, SampleWiredType.class);
+        injector(false).bind(SeleneFactory.class, SimpleSeleneFactory.class);
+        injector(false).bind(SampleField.class, SampleFieldImplementation.class);
+
+        SampleInterface provided = Provider.provide(SampleInterface.class, "FactoryTyped");
+        Assertions.assertNotNull(provided);
+        Assertions.assertTrue(provided instanceof SampleWiredType);
+        Assertions.assertTrue(((SampleWiredType) provided).enabled());
+    }
+
+    @Test
+    public void varargProvidedTypesArePopulated() throws IllegalAccessException {
+        injector(true).wire(SampleInterface.class, SampleWiredType.class);
+        injector(false).bind(SeleneFactory.class, SimpleSeleneFactory.class);
+        injector(false).bind(SampleField.class, SampleFieldImplementation.class);
+
+        SampleInterface provided = Provider.provide(SampleInterface.class, "FactoryTyped");
+        Assertions.assertNotNull(provided);
+        Assertions.assertTrue(provided instanceof SampleWiredType);
+        Assertions.assertNotNull(((SampleWiredType) provided).field());
+        Assertions.assertTrue(((SampleWiredType) provided).field() instanceof SampleFieldImplementation);
     }
 
     private static Injector injector(boolean reset) throws IllegalAccessException {
