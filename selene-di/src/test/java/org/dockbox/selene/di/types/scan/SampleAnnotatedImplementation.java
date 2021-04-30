@@ -15,9 +15,10 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.di.types;
+package org.dockbox.selene.di.types.scan;
 
 import org.dockbox.selene.di.annotations.Binds;
+import org.dockbox.selene.di.types.SampleInterface;
 
 @Binds(SampleInterface.class)
 public class SampleAnnotatedImplementation implements SampleInterface {

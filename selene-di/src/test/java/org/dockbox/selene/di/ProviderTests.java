@@ -26,7 +26,7 @@ import org.dockbox.selene.di.properties.BindingMetaProperty;
 import org.dockbox.selene.di.types.InvalidSampleWiredType;
 import org.dockbox.selene.di.types.NameProperty;
 import org.dockbox.selene.di.types.PopulatedType;
-import org.dockbox.selene.di.types.SampleAnnotatedImplementation;
+import org.dockbox.selene.di.types.scan.SampleAnnotatedImplementation;
 import org.dockbox.selene.di.types.SampleEnablingType;
 import org.dockbox.selene.di.types.SampleImplementation;
 import org.dockbox.selene.di.types.SampleInterface;
@@ -165,7 +165,8 @@ public class ProviderTests {
 
     @Test
     public void testScannedBindingCanBeProvided() throws IllegalAccessException {
-        injector(true).bind("org.dockbox.selene.di.types");
+        // sub-package *.scan was added to prevent scan conflicts
+        injector(true).bind("org.dockbox.selene.di.types.scan");
         SampleInterface provided = Provider.provide(SampleInterface.class);
         Assertions.assertNotNull(provided);
 
@@ -177,7 +178,7 @@ public class ProviderTests {
 
     @Test
     public void testScannedMetaBindingsCanBeProvided() throws IllegalAccessException {
-        // sub-package *.meta was added to prevent SampleAnnotatedImplementation from being scanned
+        // sub-package *.meta was added to prevent scan conflicts
         injector(true).bind("org.dockbox.selene.di.types.meta");
         Assertions.assertThrows(ProvisionFailure.class, () -> Provider.provide(SampleInterface.class));
 
@@ -192,7 +193,7 @@ public class ProviderTests {
 
     @Test
     public void testScannedMultiBindingsCanBeProvided() throws IllegalAccessException {
-        // sub-package *.multi was added to prevent SampleAnnotatedImplementation from being scanned
+        // sub-package *.multi was added to prevent scan conflicts
         injector(true).bind("org.dockbox.selene.di.types.multi");
 
         SampleInterface provided = Provider.provide(SampleInterface.class);
@@ -206,7 +207,7 @@ public class ProviderTests {
 
     @Test
     public void testScannedMultiMetaBindingsCanBeProvided() throws IllegalAccessException {
-        // sub-package *.multi was added to prevent SampleAnnotatedImplementation from being scanned
+        // sub-package *.multi was added to prevent scan conflicts
         injector(true).bind("org.dockbox.selene.di.types.multi");
 
         SampleInterface provided = Provider.provide(SampleInterface.class, BindingMetaProperty.of(Bindings.meta("meta")));
@@ -309,7 +310,7 @@ public class ProviderTests {
 
     @Test
     public void testScannedWiredBindingsCanBeProvided() throws IllegalAccessException {
-        // sub-package *.wired was added to prevent SampleAnnotatedImplementation from being scanned
+        // sub-package *.wired was added to prevent scan conflicts
         injector(true).bind("org.dockbox.selene.di.types.wired");
         injector(false).bind(SeleneFactory.class, SimpleSeleneFactory.class);
 
