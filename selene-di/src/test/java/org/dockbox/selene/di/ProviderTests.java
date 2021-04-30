@@ -34,6 +34,7 @@ import org.dockbox.selene.di.types.SamplePreloads;
 import org.dockbox.selene.di.types.SampleWiredType;
 import org.dockbox.selene.di.types.meta.SampleMetaAnnotatedImplementation;
 import org.dockbox.selene.di.types.multi.SampleMultiAnnotatedImplementation;
+import org.dockbox.selene.di.types.wired.SampleWiredAnnotatedImplementation;
 import org.dockbox.selene.test.SeleneJUnit5Runner;
 import org.dockbox.selene.util.SeleneUtils;
 import org.junit.jupiter.api.Assertions;
@@ -46,12 +47,16 @@ import java.lang.reflect.Field;
 public class ProviderTests {
 
     private static final Field modules;
+    private static final Field bindings;
     private static final Field injectionPoints;
 
     static {
         try {
             modules = GuiceInjector.class.getDeclaredField("modules");
             modules.setAccessible(true);
+
+            bindings = GuiceInjector.class.getDeclaredField("bindings");
+            bindings.setAccessible(true);
 
             injectionPoints = InjectableBootstrap.class.getDeclaredField("injectionPoints");
             injectionPoints.setAccessible(true);
@@ -302,10 +307,40 @@ public class ProviderTests {
         Assertions.assertEquals("Enabled", provided.name());
     }
 
+    @Test
+    public void testScannedWiredBindingsCanBeProvided() throws IllegalAccessException {
+        // sub-package *.wired was added to prevent SampleAnnotatedImplementation from being scanned
+        injector(true).bind("org.dockbox.selene.di.types.wired");
+        injector(false).bind(SeleneFactory.class, SimpleSeleneFactory.class);
+
+        SampleInterface provided = Provider.provide(SeleneFactory.class).create(SampleInterface.class, "WiredAnnotated");
+        Assertions.assertNotNull(provided);
+
+        Class<? extends SampleInterface> providedClass = provided.getClass();
+        Assertions.assertEquals(SampleWiredAnnotatedImplementation.class, providedClass);
+
+        Assertions.assertEquals("WiredAnnotated", provided.name());
+    }
+
+    @Test
+    public void wiredTypesCanBeProvidedThroughFactoryProperty() throws IllegalAccessException {
+        injector(true).wire(SampleInterface.class, SampleWiredType.class);
+        injector(false).bind(SeleneFactory.class, SimpleSeleneFactory.class);
+
+        SampleInterface provided = Provider.provide(SampleInterface.class, SeleneFactory.use("FactoryTyped"));
+        Assertions.assertNotNull(provided);
+
+        Class<? extends SampleInterface> providedClass = provided.getClass();
+        Assertions.assertEquals(SampleWiredType.class, providedClass);
+
+        Assertions.assertEquals("FactoryTyped", provided.name());
+    }
+
     private static Injector injector(boolean reset) throws IllegalAccessException {
         Injector injector = SeleneBootstrap.getInstance().getInjector();
         if (reset) {
             modules.set(injector, SeleneUtils.emptyConcurrentSet());
+            bindings.set(injector, SeleneUtils.emptyConcurrentSet());
             injectionPoints.set(SeleneBootstrap.getInstance(), SeleneUtils.emptyConcurrentSet());
             injector.reset();
         }
