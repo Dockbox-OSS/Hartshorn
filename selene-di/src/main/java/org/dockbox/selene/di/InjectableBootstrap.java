@@ -81,12 +81,12 @@ public abstract class InjectableBootstrap {
 
         @Nullable Exceptional<Object[]> value = Bindings.value(UseFactory.KEY, Object[].class, additionalProperties);
         if (value.present()) {
-            return this.getInstance(SeleneFactory.class).create(type, value.get());
+            typeInstance = this.getInstance(SeleneFactory.class).create(type, value.get());
+        } else {
+            // Type instance can be present if it is a module. These instances are also created using Guice
+            // injectors and therefore do not need late member injection here.
+            typeInstance = this.createInstanceOf(type, typeInstance, additionalProperties);
         }
-
-        // Type instance can be present if it is a module. These instances are also created using Guice
-        // injectors and therefore do not need late member injection here.
-        typeInstance = this.createInstanceOf(type, typeInstance, additionalProperties);
 
         if (null != typeInstance) typeInstance = this.applyInjectionPoints(type, typeInstance);
 
