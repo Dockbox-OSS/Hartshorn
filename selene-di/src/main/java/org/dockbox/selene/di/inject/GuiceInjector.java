@@ -23,24 +23,26 @@ import com.google.inject.Guice;
 import com.google.inject.Key;
 import com.google.inject.ProvisionException;
 import com.google.inject.internal.LinkedBindingImpl;
+import com.google.inject.spi.InstanceBinding;
+import com.google.inject.spi.LinkedKeyBinding;
 
 import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.domain.tuple.Tuple;
-import org.dockbox.selene.di.binding.BindingData;
-import org.dockbox.selene.di.binding.Bindings;
 import org.dockbox.selene.di.InjectConfiguration;
 import org.dockbox.selene.di.annotations.AutoWired;
 import org.dockbox.selene.di.annotations.BindingMeta;
 import org.dockbox.selene.di.annotations.Binds;
 import org.dockbox.selene.di.annotations.MultiBinds;
+import org.dockbox.selene.di.binding.BindingData;
+import org.dockbox.selene.di.binding.Bindings;
 import org.dockbox.selene.di.inject.modules.GuicePrefixScannerModule;
 import org.dockbox.selene.di.inject.modules.InjectConfigurationModule;
 import org.dockbox.selene.di.inject.modules.InstanceMetaModule;
-import org.dockbox.selene.di.inject.modules.StaticMetaModule;
-import org.dockbox.selene.di.inject.modules.ProvisionMetaModule;
-import org.dockbox.selene.di.inject.modules.StaticModule;
 import org.dockbox.selene.di.inject.modules.InstanceModule;
+import org.dockbox.selene.di.inject.modules.ProvisionMetaModule;
 import org.dockbox.selene.di.inject.modules.ProvisionModule;
+import org.dockbox.selene.di.inject.modules.StaticMetaModule;
+import org.dockbox.selene.di.inject.modules.StaticModule;
 import org.dockbox.selene.di.properties.AnnotationProperty;
 import org.dockbox.selene.di.properties.BindingMetaProperty;
 import org.dockbox.selene.di.properties.InjectorProperty;
@@ -285,12 +287,16 @@ public class GuiceInjector implements Injector {
         return Tuple.of(key, binder);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public <T, I extends T> Exceptional<Class<I>> getStaticBinding(Class<T> type) {
         for (Entry<Key<?>, Binding<?>> binding : this.getAllBindings().entrySet()) {
             if (binding.getKey().getTypeLiteral().getRawType().equals(type)) {
-                //noinspection unchecked
-                return Exceptional.of((Class<I>) binding.getValue().getKey().getTypeLiteral().getRawType());
+                if (binding.getValue() instanceof LinkedKeyBinding) {
+                    return Exceptional.of(() -> (Class<I>) ((LinkedKeyBinding<?>) binding.getValue()).getLinkedKey().getTypeLiteral().getRawType());
+                } else if (binding.getValue() instanceof InstanceBinding) {
+                    return Exceptional.of(() -> (Class<I>) ((InstanceBinding<?>) binding.getValue()).getInstance().getClass());
+                }
             }
         }
         return Exceptional.none();
