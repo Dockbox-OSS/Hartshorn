@@ -70,6 +70,6 @@ public abstract class InjectConfiguration implements Binder {
 
     @Override
     public <C, T extends C> void wire(Class<C> contract, Class<? extends T> implementation) {
-        this.getBinder().bind(contract, implementation);
+        this.getBinder().wire(contract, implementation);
     }
 }
