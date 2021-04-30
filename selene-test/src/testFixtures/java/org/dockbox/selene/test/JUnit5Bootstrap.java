@@ -17,6 +17,7 @@
 
 package org.dockbox.selene.test;
 
+import org.dockbox.selene.api.BootstrapPhase;
 import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.SeleneBootstrap;
 import org.dockbox.selene.di.InjectConfiguration;
@@ -73,7 +74,9 @@ public class JUnit5Bootstrap extends MinecraftServerBootstrap {
 
     @Override
     protected void init() {
+        super.enter(BootstrapPhase.PRE_INIT);
         super.init();
+        super.enter(BootstrapPhase.INIT);
         this.getInjector().bind(Server.class, JUnitServer.class);
     }
     
