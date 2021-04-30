@@ -19,7 +19,6 @@ package org.dockbox.selene.test.objects;
 
 import org.dockbox.selene.api.i18n.common.Language;
 import org.dockbox.selene.api.i18n.text.Text;
-import org.dockbox.selene.di.binding.Bindings;
 import org.dockbox.selene.di.annotations.AutoWired;
 import org.dockbox.selene.server.minecraft.item.Enchant;
 import org.dockbox.selene.server.minecraft.item.Item;
@@ -45,10 +44,6 @@ public class JUnitItem implements Item, JUnitPersistentDataHolder {
     private int amount = 1;
     private Text displayName;
     private boolean treatAsBlock = false;
-
-    JUnitItem() {
-        throw Bindings.requireAutowiring();
-    }
 
     @AutoWired
     public JUnitItem(String id, int meta) {

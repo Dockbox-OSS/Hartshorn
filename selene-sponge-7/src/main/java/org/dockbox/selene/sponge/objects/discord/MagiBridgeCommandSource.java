@@ -25,7 +25,6 @@ import org.dockbox.selene.api.i18n.common.ResourceEntry;
 import org.dockbox.selene.api.i18n.text.Text;
 import org.dockbox.selene.api.i18n.text.pagination.Pagination;
 import org.dockbox.selene.commands.source.DiscordCommandSource;
-import org.dockbox.selene.di.binding.Bindings;
 import org.dockbox.selene.di.annotations.AutoWired;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.jetbrains.annotations.NotNull;
@@ -34,10 +33,6 @@ import org.spongepowered.api.Sponge;
 public class MagiBridgeCommandSource implements DiscordCommandSource {
 
     private final BridgeCommandSource bridge;
-
-    MagiBridgeCommandSource() {
-        throw Bindings.requireAutowiring();
-    }
 
     @AutoWired
     public MagiBridgeCommandSource(TextChannel channel) {

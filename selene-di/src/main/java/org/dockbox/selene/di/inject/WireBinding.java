@@ -17,28 +17,21 @@
 
 package org.dockbox.selene.di.inject;
 
-import org.dockbox.selene.api.domain.Exceptional;
-import org.dockbox.selene.di.InjectConfiguration;
-import org.dockbox.selene.di.binding.BindingData;
-import org.dockbox.selene.di.properties.InjectorProperty;
+class WireBinding<T, I extends T> {
 
-import java.util.List;
+    private final Class<T> contract;
+    private final Class<I> implementation;
 
-public interface Injector extends Binder {
+    WireBinding(Class<T> contract, Class<I> implementation) {
+        this.contract = contract;
+        this.implementation = implementation;
+    }
 
-    void reset();
+    Class<T> getContract() {
+        return this.contract;
+    }
 
-    <T> Exceptional<T> get(Class<T> type, InjectorProperty<?>... additionalProperties);
-
-    void bind(InjectConfiguration configuration);
-
-    void bind(String prefix);
-
-    <T, I extends T> Exceptional<Class<I>> findWire(Class<T> contract);
-
-    List<BindingData> getBindingData();
-
-    <T> T populate(T type);
-
-    <T, I extends T> Exceptional<Class<I>> getStaticBinding(Class<T> type);
+    Class<I> getImplementation() {
+        return this.implementation;
+    }
 }

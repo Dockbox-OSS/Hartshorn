@@ -29,6 +29,7 @@ import org.dockbox.selene.api.domain.tuple.Tuple;
 import org.dockbox.selene.di.binding.BindingData;
 import org.dockbox.selene.di.binding.Bindings;
 import org.dockbox.selene.di.InjectConfiguration;
+import org.dockbox.selene.di.annotations.AutoWired;
 import org.dockbox.selene.di.annotations.BindingMeta;
 import org.dockbox.selene.di.annotations.Binds;
 import org.dockbox.selene.di.annotations.MultiBinds;
@@ -61,6 +62,7 @@ import javax.inject.Named;
 
 public class GuiceInjector implements Injector {
 
+    private final transient Set<WireBinding<?, ?>> bindings = SeleneUtils.emptyConcurrentSet();
     private final transient Set<AbstractModule> modules = SeleneUtils.emptyConcurrentSet();
     private com.google.inject.Injector internalInjector;
 
@@ -201,9 +203,28 @@ public class GuiceInjector implements Injector {
     }
 
     @Override
+    public <T, I extends T> void wire(Class<T> contract, Class<? extends I> implementation) {
+        if (Reflect.annotatedConstructors(AutoWired.class, implementation).isEmpty())
+            throw new IllegalArgumentException("Implementation should contain at least one constructor annotated with @AutoWired");
+
+        this.bindings.add(new WireBinding<>(contract, implementation));
+    }
+
+    @Override
+    public <T, I extends T> Exceptional<Class<I>> findWire(Class<T> contract) {
+        for (WireBinding<?, ?> binding : this.bindings) {
+            if (binding.getContract().equals(contract)) {
+                //noinspection unchecked
+                return Exceptional.of((Class<I>) binding.getImplementation());
+            }
+        }
+        return Exceptional.none();
+    }
+
+    @Override
     public void bind(InjectConfiguration configuration) {
         if (configuration != null) {
-            this.modules.add(new InjectConfigurationModule(configuration));
+            this.modules.add(new InjectConfigurationModule(configuration, this));
             this.reset();
         }
     }

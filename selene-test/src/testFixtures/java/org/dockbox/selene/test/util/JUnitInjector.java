@@ -67,12 +67,12 @@ public class JUnitInjector extends InjectConfiguration {
         this.bind(CustomMapService.class, JUnitCustomMapService.class);
 
         // Wired types - do NOT call directly!
-        this.bind(Item.class, JUnitItem.class);
-        this.bind(Bossbar.class, JUnitBossbar.class);
-        this.bind(Profile.class, JUnitProfile.class);
-        this.bind(ItemFrame.class, JUnitItemFrame.class);
-        this.bind(ArmorStand.class, JUnitArmorStand.class);
-        this.bind(DiscordCommandSource.class, JUnitDiscordCommandSource.class);
+        this.wire(Item.class, JUnitItem.class);
+        this.wire(Bossbar.class, JUnitBossbar.class);
+        this.wire(Profile.class, JUnitProfile.class);
+        this.wire(ItemFrame.class, JUnitItemFrame.class);
+        this.wire(ArmorStand.class, JUnitArmorStand.class);
+        this.wire(DiscordCommandSource.class, JUnitDiscordCommandSource.class);
 
         // Log is created from LoggerFactory externally
         this.bind(Logger.class, Selene.log());

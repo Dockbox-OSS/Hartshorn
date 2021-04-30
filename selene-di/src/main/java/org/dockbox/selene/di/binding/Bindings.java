@@ -33,11 +33,6 @@ public class Bindings {
         return new BindingMetaImpl(value);
     }
 
-    public static UnsupportedOperationException requireAutowiring() {
-        return new UnsupportedOperationException("This type should be instantiated through autowiring only!");
-    }
-
-
     /**
      * Looks up a {@link InjectorProperty} based on a given {@code key}. If a property with that key
      * is present, and matches the expected type it is returned. If no property is present, or the
