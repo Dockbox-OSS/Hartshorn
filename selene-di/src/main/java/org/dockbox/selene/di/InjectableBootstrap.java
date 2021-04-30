@@ -17,12 +17,15 @@
 
 package org.dockbox.selene.di;
 
+import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.entity.annotations.DoNotEnable;
+import org.dockbox.selene.di.binding.Bindings;
 import org.dockbox.selene.di.inject.InjectSource;
 import org.dockbox.selene.di.inject.Injector;
 import org.dockbox.selene.di.inject.InjectorAdapter;
 import org.dockbox.selene.di.properties.InjectableType;
 import org.dockbox.selene.di.properties.InjectorProperty;
+import org.dockbox.selene.di.properties.UseFactory;
 import org.dockbox.selene.util.Reflect;
 import org.dockbox.selene.util.SeleneUtils;
 import org.jetbrains.annotations.Nullable;
@@ -75,6 +78,11 @@ public abstract class InjectableBootstrap {
      */
     public <T> T getInstance(Class<T> type, InjectorProperty<?>... additionalProperties) {
         T typeInstance = null;
+
+        @Nullable Exceptional<Object[]> value = Bindings.value(UseFactory.KEY, Object[].class, additionalProperties);
+        if (value.present()) {
+            return this.getInstance(SeleneFactory.class).create(type, value.get());
+        }
 
         // Type instance can be present if it is a module. These instances are also created using Guice
         // injectors and therefore do not need late member injection here.

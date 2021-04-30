@@ -15,16 +15,13 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.di;
+package org.dockbox.selene.di.properties;
 
-import org.dockbox.selene.di.properties.UseFactory;
+public class UseFactory extends SimpleProperty<Object[]> {
 
-public interface SeleneFactory {
+    public static final String KEY = "InternalFactoryBindingKey";
 
-    <T> T create(Class<T> type, Object... arguments);
-
-    static UseFactory use(Object... varargs) {
-        return new UseFactory(varargs);
+    public UseFactory(Object... use) {
+        super(use, KEY);
     }
-
 }
