@@ -378,6 +378,20 @@ public class ProviderTests {
         Assertions.assertTrue(((SampleWiredType) provided).field() instanceof SampleFieldImplementation);
     }
 
+    @Test
+    public void injectionPointsAreAppliedToVarargProviders() throws IllegalAccessException {
+        injector(true).wire(SampleInterface.class, SampleWiredType.class);
+        injector(false).bind(SeleneFactory.class, SimpleSeleneFactory.class);
+        injector(false).bind(SampleField.class, SampleFieldImplementation.class);
+
+        InjectionPoint<SampleInterface> point = InjectionPoint.of(SampleInterface.class, $ -> new SampleImplementation());
+        SeleneBootstrap.getInstance().injectAt(point);
+
+        SampleInterface provided = Provider.provide(SampleInterface.class, "FactoryTyped");
+        Assertions.assertFalse(provided instanceof SampleWiredType);
+        Assertions.assertTrue(provided instanceof SampleImplementation);
+    }
+
     private static Injector injector(boolean reset) throws IllegalAccessException {
         Injector injector = SeleneBootstrap.getInstance().getInjector();
         if (reset) {
