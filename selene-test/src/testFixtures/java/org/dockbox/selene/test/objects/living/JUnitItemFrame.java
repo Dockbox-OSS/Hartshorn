@@ -18,7 +18,6 @@
 package org.dockbox.selene.test.objects.living;
 
 import org.dockbox.selene.api.domain.Exceptional;
-import org.dockbox.selene.di.binding.Bindings;
 import org.dockbox.selene.di.annotations.AutoWired;
 import org.dockbox.selene.server.minecraft.dimension.position.BlockFace;
 import org.dockbox.selene.server.minecraft.dimension.position.Location;
@@ -32,11 +31,6 @@ public class JUnitItemFrame extends JUnitEntity<ItemFrame> implements ItemFrame,
     private Item displayItem;
     private Rotation rotation = Rotation.TOP;
     private BlockFace blockFace = BlockFace.NORTH;
-
-    JUnitItemFrame() {
-        super(null);
-        throw Bindings.requireAutowiring();
-    }
 
     public JUnitItemFrame(UUID uuid) {
         super(uuid);

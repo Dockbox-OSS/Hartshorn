@@ -31,7 +31,7 @@ public class SimpleSeleneFactory implements SeleneFactory {
 
     @Override
     public <T> T create(Class<T> type, Object... arguments) {
-        Exceptional<Class<T>> binding = InjectableBootstrap.getInstance().getInjector().getStaticBinding(type);
+        Exceptional<Class<T>> binding = InjectableBootstrap.getInstance().getInjector().findWire(type);
         if (binding.absent()) throw new IllegalStateException("Could not autowire " + type.getCanonicalName() + " as there is no active binding for it");
 
         Class<?>[] argumentTypes = Arrays.stream(arguments).map(Object::getClass).toArray(Class<?>[]::new);

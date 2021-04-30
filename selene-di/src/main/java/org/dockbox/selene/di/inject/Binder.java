@@ -30,5 +30,6 @@ public interface Binder {
     <C, T extends C, A extends Annotation> void bind(Class<C> contract, Class<? extends T> implementation, BindingMeta meta);
     <C, T extends C> void bind(Class<C> contract, T instance);
     <C, T extends C> void bind(Class<C> contract, T instance, BindingMeta meta);
+    <C, T extends C> void wire(Class<C> contract, Class<? extends T> implementation);
 
 }

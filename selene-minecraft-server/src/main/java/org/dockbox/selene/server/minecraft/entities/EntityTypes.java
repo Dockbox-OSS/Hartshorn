@@ -60,7 +60,7 @@ public final class EntityTypes {
          * @return The new {@link Entity} instance.
          */
         public T create(Location location) {
-            return Provider.provide(SeleneFactory.class).create(this.provider, location);
+            return Provider.provide(this.provider, SeleneFactory.use(location));
         }
     }
 }

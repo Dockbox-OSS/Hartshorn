@@ -23,10 +23,18 @@ import org.dockbox.selene.di.annotations.BindingMeta;
 public class BindingMetaProperty implements InjectorProperty<BindingMeta> {
 
     public static final String KEY = "SeleneInternalBindingMetaProperty";
-    private final String value;
+    private final BindingMeta value;
 
     public BindingMetaProperty(String value) {
+        this.value = Bindings.meta(value);
+    }
+
+    public BindingMetaProperty(BindingMeta value) {
         this.value = value;
+    }
+
+    public static BindingMetaProperty of(BindingMeta meta) {
+        return new BindingMetaProperty(meta);
     }
 
     @Override
@@ -36,6 +44,6 @@ public class BindingMetaProperty implements InjectorProperty<BindingMeta> {
 
     @Override
     public BindingMeta getObject() {
-        return Bindings.meta(this.value);
+        return this.value;
     }
 }

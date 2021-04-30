@@ -34,6 +34,8 @@ public interface Injector extends Binder {
 
     void bind(String prefix);
 
+    <T, I extends T> Exceptional<Class<I>> findWire(Class<T> contract);
+
     List<BindingData> getBindingData();
 
     <T> T populate(T type);

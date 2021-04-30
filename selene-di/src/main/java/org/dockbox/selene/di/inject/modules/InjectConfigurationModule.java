@@ -22,6 +22,7 @@ import com.google.inject.AbstractModule;
 import org.dockbox.selene.di.InjectConfiguration;
 import org.dockbox.selene.di.annotations.BindingMeta;
 import org.dockbox.selene.di.inject.Binder;
+import org.dockbox.selene.di.inject.Injector;
 
 import java.lang.annotation.Annotation;
 import java.util.function.Supplier;
@@ -29,9 +30,11 @@ import java.util.function.Supplier;
 public class InjectConfigurationModule extends AbstractModule implements Binder {
 
     private final InjectConfiguration configuration;
+    private final Injector injector;
 
-    public InjectConfigurationModule(InjectConfiguration configuration) {
+    public InjectConfigurationModule(InjectConfiguration configuration, Injector injector) {
         this.configuration = configuration;
+        this.injector = injector;
     }
 
     @Override
@@ -68,5 +71,10 @@ public class InjectConfigurationModule extends AbstractModule implements Binder 
     @Override
     public <C, T extends C> void bind(Class<C> contract, T instance, BindingMeta meta) {
         this.bind(contract).annotatedWith(meta).toInstance(instance);
+    }
+
+    @Override
+    public <C, T extends C> void wire(Class<C> contract, Class<? extends T> implementation) {
+        this.injector.wire(contract, implementation);
     }
 }

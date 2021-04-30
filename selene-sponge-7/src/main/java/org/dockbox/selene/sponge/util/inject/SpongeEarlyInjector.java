@@ -99,12 +99,12 @@ public class SpongeEarlyInjector extends InjectConfiguration {
         this.bind(StaticPaneBuilder.class, SpongeStaticPaneBuilder.class);
 
         // Wired types - do NOT call directly!
-        this.bind(Item.class, SpongeItem.class);
-        this.bind(Bossbar.class, SpongeBossbar.class);
-        this.bind(Profile.class, SpongeProfile.class);
-        this.bind(ItemFrame.class, SpongeItemFrame.class);
-        this.bind(ArmorStand.class, SpongeArmorStand.class);
-        this.bind(DiscordCommandSource.class, MagiBridgeCommandSource.class);
+        this.wire(Item.class, SpongeItem.class);
+        this.wire(Bossbar.class, SpongeBossbar.class);
+        this.wire(Profile.class, SpongeProfile.class);
+        this.wire(ItemFrame.class, SpongeItemFrame.class);
+        this.wire(ArmorStand.class, SpongeArmorStand.class);
+        this.wire(DiscordCommandSource.class, MagiBridgeCommandSource.class);
 
         // Log is created from LoggerFactory externally
         this.bind(Logger.class, Selene.log());

@@ -56,7 +56,7 @@ public interface Element {
      * @return The element.
      */
     static Element of(Item item, Consumer<Player> onClick) {
-        return Provider.provide(SeleneFactory.class).create(Element.class, item, onClick);
+        return Provider.provide(Element.class, SeleneFactory.use(item, onClick));
     }
 
     /**

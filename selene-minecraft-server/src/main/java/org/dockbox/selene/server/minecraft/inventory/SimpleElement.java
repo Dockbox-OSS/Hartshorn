@@ -17,7 +17,6 @@
 
 package org.dockbox.selene.server.minecraft.inventory;
 
-import org.dockbox.selene.di.binding.Bindings;
 import org.dockbox.selene.di.annotations.AutoWired;
 import org.dockbox.selene.di.annotations.Binds;
 import org.dockbox.selene.server.minecraft.item.Item;
@@ -30,10 +29,6 @@ public class SimpleElement implements Element {
 
     private final Item item;
     private Consumer<Player> onClick;
-
-    SimpleElement() {
-        throw Bindings.requireAutowiring();
-    }
 
     @AutoWired
     public SimpleElement(Item item, Consumer<Player> onClick) {

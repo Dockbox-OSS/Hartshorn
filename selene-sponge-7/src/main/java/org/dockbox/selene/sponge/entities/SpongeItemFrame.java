@@ -20,7 +20,6 @@ package org.dockbox.selene.sponge.entities;
 import net.minecraft.entity.item.EntityItemFrame;
 
 import org.dockbox.selene.api.domain.Exceptional;
-import org.dockbox.selene.di.binding.Bindings;
 import org.dockbox.selene.di.annotations.AutoWired;
 import org.dockbox.selene.server.minecraft.dimension.position.BlockFace;
 import org.dockbox.selene.server.minecraft.dimension.position.Location;
@@ -37,10 +36,6 @@ import org.spongepowered.api.util.Direction;
 public class SpongeItemFrame extends SpongeCloneableEntity<EntityItemFrame, ItemFrame> implements ItemFrame {
 
     private final org.spongepowered.api.entity.hanging.ItemFrame representation;
-
-    SpongeItemFrame() {
-        throw Bindings.requireAutowiring();
-    }
 
     public SpongeItemFrame(org.spongepowered.api.entity.hanging.ItemFrame representation) {
         this.representation = representation;

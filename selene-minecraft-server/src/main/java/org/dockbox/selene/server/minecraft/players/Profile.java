@@ -28,11 +28,11 @@ import java.util.UUID;
 public interface Profile {
 
     static Profile of(UUID uuid) {
-        return Provider.provide(SeleneFactory.class).create(Profile.class, uuid);
+        return Provider.provide(Profile.class, SeleneFactory.use(uuid));
     }
 
     static Profile of(Profile profile) {
-        return Provider.provide(SeleneFactory.class).create(Profile.class, profile);
+        return Provider.provide(Profile.class, SeleneFactory.use(profile));
     }
 
     UUID getUuid();
