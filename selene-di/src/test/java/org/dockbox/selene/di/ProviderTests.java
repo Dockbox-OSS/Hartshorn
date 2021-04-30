@@ -337,6 +337,20 @@ public class ProviderTests {
         Assertions.assertEquals("FactoryTyped", provided.name());
     }
 
+    @Test
+    public void providerRedirectsVarargs() throws IllegalAccessException {
+        injector(true).wire(SampleInterface.class, SampleWiredType.class);
+        injector(false).bind(SeleneFactory.class, SimpleSeleneFactory.class);
+
+        SampleInterface provided = Provider.provide(SampleInterface.class, "FactoryTyped");
+        Assertions.assertNotNull(provided);
+
+        Class<? extends SampleInterface> providedClass = provided.getClass();
+        Assertions.assertEquals(SampleWiredType.class, providedClass);
+
+        Assertions.assertEquals("FactoryTyped", provided.name());
+    }
+
     private static Injector injector(boolean reset) throws IllegalAccessException {
         Injector injector = SeleneBootstrap.getInstance().getInjector();
         if (reset) {
