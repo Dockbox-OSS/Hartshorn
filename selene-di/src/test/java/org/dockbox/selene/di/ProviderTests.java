@@ -24,8 +24,10 @@ import org.dockbox.selene.di.inject.GuiceInjector;
 import org.dockbox.selene.di.inject.Injector;
 import org.dockbox.selene.di.properties.BindingMetaProperty;
 import org.dockbox.selene.di.types.InvalidSampleWiredType;
+import org.dockbox.selene.di.types.NameProperty;
 import org.dockbox.selene.di.types.PopulatedType;
 import org.dockbox.selene.di.types.SampleAnnotatedImplementation;
+import org.dockbox.selene.di.types.SampleEnablingType;
 import org.dockbox.selene.di.types.SampleImplementation;
 import org.dockbox.selene.di.types.SampleInterface;
 import org.dockbox.selene.di.types.SamplePreloads;
@@ -288,6 +290,16 @@ public class ProviderTests {
         SampleInterface wired = Provider.provide(SeleneFactory.class).create(SampleInterface.class, "WiredSelene");
         Assertions.assertNotNull(wired);
         Assertions.assertEquals("WiredSelene", wired.name());
+    }
+
+    @Test
+    public void injectableTypesAreEnabled() throws IllegalAccessException {
+        injector(true).bind(SampleInterface.class, SampleEnablingType.class);
+
+        SampleInterface provided = Provider.provide(SampleInterface.class, new NameProperty("Enabled"));
+        Assertions.assertNotNull(provided);
+        Assertions.assertNotNull(provided.name());
+        Assertions.assertEquals("Enabled", provided.name());
     }
 
     private static Injector injector(boolean reset) throws IllegalAccessException {
