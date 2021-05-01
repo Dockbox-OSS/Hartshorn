@@ -17,6 +17,7 @@ org.dockbox.selene.api.i18n
 org.dockbox.selene.api.i18n.annotations
 org.dockbox.selene.api.i18n.common
 org.dockbox.selene.api.i18n.entry
+org.dockbox.selene.api.i18n.exceptions
 org.dockbox.selene.api.i18n.permissions
 org.dockbox.selene.api.i18n.text
 org.dockbox.selene.api.i18n.text.actions
@@ -25,6 +26,7 @@ org.dockbox.selene.api.i18n.text.persistence
 org.dockbox.selene.api.keys
 org.dockbox.selene.api.module
 org.dockbox.selene.api.module.annotations
+org.dockbox.selene.api.module.lookup
 org.dockbox.selene.api.task
 org.dockbox.selene.api.task.pipeline
 org.dockbox.selene.api.task.pipeline.exceptions
@@ -50,7 +52,10 @@ org.dockbox.selene.dave
 org.dockbox.selene.dave.models
 org.dockbox.selene.di
 org.dockbox.selene.di.annotations
-org.dockbox.selene.di.modules
+org.dockbox.selene.di.binding
+org.dockbox.selene.di.inject
+org.dockbox.selene.di.inject.modules
+org.dockbox.selene.di.preload
 org.dockbox.selene.di.properties
 org.dockbox.selene.discord
 org.dockbox.selene.discord.annotations
@@ -141,6 +146,7 @@ org.dockbox.selene.sponge.util
 org.dockbox.selene.sponge.util.command
 org.dockbox.selene.sponge.util.command.values
 org.dockbox.selene.sponge.util.files
+org.dockbox.selene.sponge.util.inject
 org.dockbox.selene.toolbinding
 org.dockbox.selene.util
 org.dockbox.selene.util.exceptions
