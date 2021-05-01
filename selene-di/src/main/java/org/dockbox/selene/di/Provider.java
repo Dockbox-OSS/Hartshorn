@@ -27,6 +27,10 @@ public class Provider {
         return InjectableBootstrap.getInstance().getInstance(type, additionalProperties);
     }
 
+    public static <T> T provide(Class<T> type, Object... varargs) {
+        return provide(type, SeleneFactory.use(varargs));
+    }
+
     /**
      * Run with module.
      *

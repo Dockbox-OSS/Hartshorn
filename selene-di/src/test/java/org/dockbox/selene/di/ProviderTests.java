@@ -26,14 +26,17 @@ import org.dockbox.selene.di.properties.BindingMetaProperty;
 import org.dockbox.selene.di.types.InvalidSampleWiredType;
 import org.dockbox.selene.di.types.NameProperty;
 import org.dockbox.selene.di.types.PopulatedType;
-import org.dockbox.selene.di.types.scan.SampleAnnotatedImplementation;
 import org.dockbox.selene.di.types.SampleEnablingType;
+import org.dockbox.selene.di.types.SampleField;
+import org.dockbox.selene.di.types.SampleFieldImplementation;
 import org.dockbox.selene.di.types.SampleImplementation;
 import org.dockbox.selene.di.types.SampleInterface;
 import org.dockbox.selene.di.types.SamplePreloads;
+import org.dockbox.selene.di.types.SampleWiredPopulatedType;
 import org.dockbox.selene.di.types.SampleWiredType;
 import org.dockbox.selene.di.types.meta.SampleMetaAnnotatedImplementation;
 import org.dockbox.selene.di.types.multi.SampleMultiAnnotatedImplementation;
+import org.dockbox.selene.di.types.scan.SampleAnnotatedImplementation;
 import org.dockbox.selene.di.types.wired.SampleWiredAnnotatedImplementation;
 import org.dockbox.selene.test.SeleneJUnit5Runner;
 import org.dockbox.selene.util.SeleneUtils;
@@ -326,6 +329,7 @@ public class ProviderTests {
     @Test
     public void wiredTypesCanBeProvidedThroughFactoryProperty() throws IllegalAccessException {
         injector(true).wire(SampleInterface.class, SampleWiredType.class);
+        injector(true).wire(SampleInterface.class, SampleWiredType.class);
         injector(false).bind(SeleneFactory.class, SimpleSeleneFactory.class);
 
         SampleInterface provided = Provider.provide(SampleInterface.class, SeleneFactory.use("FactoryTyped"));
@@ -335,6 +339,59 @@ public class ProviderTests {
         Assertions.assertEquals(SampleWiredType.class, providedClass);
 
         Assertions.assertEquals("FactoryTyped", provided.name());
+    }
+
+    @Test
+    public void providerRedirectsVarargs() throws IllegalAccessException {
+        injector(true).wire(SampleInterface.class, SampleWiredType.class);
+        injector(false).bind(SeleneFactory.class, SimpleSeleneFactory.class);
+
+        SampleInterface provided = Provider.provide(SampleInterface.class, "FactoryTyped");
+        Assertions.assertNotNull(provided);
+
+        Class<? extends SampleInterface> providedClass = provided.getClass();
+        Assertions.assertEquals(SampleWiredType.class, providedClass);
+
+        Assertions.assertEquals("FactoryTyped", provided.name());
+    }
+
+    @Test
+    public void varargProvidedTypesAreEnabled() throws IllegalAccessException {
+        injector(true).wire(SampleInterface.class, SampleWiredPopulatedType.class);
+        injector(false).bind(SeleneFactory.class, SimpleSeleneFactory.class);
+        injector(false).bind(SampleField.class, SampleFieldImplementation.class);
+
+        SampleInterface provided = Provider.provide(SampleInterface.class, "FactoryTyped");
+        Assertions.assertNotNull(provided);
+        Assertions.assertTrue(provided instanceof SampleWiredPopulatedType);
+        Assertions.assertTrue(((SampleWiredPopulatedType) provided).enabled());
+    }
+
+    @Test
+    public void varargProvidedTypesArePopulated() throws IllegalAccessException {
+        injector(true).wire(SampleInterface.class, SampleWiredPopulatedType.class);
+        injector(false).bind(SeleneFactory.class, SimpleSeleneFactory.class);
+        injector(false).bind(SampleField.class, SampleFieldImplementation.class);
+
+        SampleInterface provided = Provider.provide(SampleInterface.class, "FactoryTyped");
+        Assertions.assertNotNull(provided);
+        Assertions.assertTrue(provided instanceof SampleWiredPopulatedType);
+        Assertions.assertNotNull(((SampleWiredPopulatedType) provided).field());
+        Assertions.assertTrue(((SampleWiredPopulatedType) provided).field() instanceof SampleFieldImplementation);
+    }
+
+    @Test
+    public void injectionPointsAreAppliedToVarargProviders() throws IllegalAccessException {
+        injector(true).wire(SampleInterface.class, SampleWiredType.class);
+        injector(false).bind(SeleneFactory.class, SimpleSeleneFactory.class);
+        injector(false).bind(SampleField.class, SampleFieldImplementation.class);
+
+        InjectionPoint<SampleInterface> point = InjectionPoint.of(SampleInterface.class, $ -> new SampleImplementation());
+        SeleneBootstrap.getInstance().injectAt(point);
+
+        SampleInterface provided = Provider.provide(SampleInterface.class, "FactoryTyped");
+        Assertions.assertFalse(provided instanceof SampleWiredType);
+        Assertions.assertTrue(provided instanceof SampleImplementation);
     }
 
     private static Injector injector(boolean reset) throws IllegalAccessException {

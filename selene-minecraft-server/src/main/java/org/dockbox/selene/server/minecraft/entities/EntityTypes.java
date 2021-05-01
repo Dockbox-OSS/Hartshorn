@@ -18,7 +18,6 @@
 package org.dockbox.selene.server.minecraft.entities;
 
 import org.dockbox.selene.di.Provider;
-import org.dockbox.selene.di.SeleneFactory;
 import org.dockbox.selene.server.minecraft.dimension.position.Location;
 
 /**
@@ -60,7 +59,7 @@ public final class EntityTypes {
          * @return The new {@link Entity} instance.
          */
         public T create(Location location) {
-            return Provider.provide(this.provider, SeleneFactory.use(location));
+            return Provider.provide(this.provider, location);
         }
     }
 }

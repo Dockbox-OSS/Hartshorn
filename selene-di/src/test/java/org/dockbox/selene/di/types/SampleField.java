@@ -15,23 +15,7 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.api.i18n.permissions;
+package org.dockbox.selene.di.types;
 
-import org.dockbox.selene.api.domain.Exceptional;
-import org.dockbox.selene.api.i18n.common.Formattable;
-import org.dockbox.selene.di.Provider;
-
-public interface Permission extends Formattable {
-
-    static Permission of(String node) {
-        return Provider.provide(Permission.class, node);
-    }
-
-    static Permission of(String key, PermissionContext context) {
-        return Provider.provide(Permission.class, key, context);
-    }
-
-    String get();
-    Exceptional<PermissionContext> getContext();
-    Permission withContext(PermissionContext context);
+public interface SampleField {
 }

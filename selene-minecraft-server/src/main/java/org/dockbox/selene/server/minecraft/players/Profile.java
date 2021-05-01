@@ -19,7 +19,6 @@ package org.dockbox.selene.server.minecraft.players;
 
 import org.dockbox.selene.api.domain.tuple.Tuple;
 import org.dockbox.selene.di.Provider;
-import org.dockbox.selene.di.SeleneFactory;
 
 import java.util.Collection;
 import java.util.Map;
@@ -28,11 +27,11 @@ import java.util.UUID;
 public interface Profile {
 
     static Profile of(UUID uuid) {
-        return Provider.provide(Profile.class, SeleneFactory.use(uuid));
+        return Provider.provide(Profile.class, uuid);
     }
 
     static Profile of(Profile profile) {
-        return Provider.provide(Profile.class, SeleneFactory.use(profile));
+        return Provider.provide(Profile.class, profile);
     }
 
     UUID getUuid();
