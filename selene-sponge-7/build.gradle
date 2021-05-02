@@ -50,6 +50,10 @@ repositories {
         url 'https://repo.drnaylor.co.uk/artifactory/list/minecraft'
     }
     maven {
+        name 'fawe'
+        url 'https://ci.athion.net/job/FastAsyncWorldEdit/ws/mvn/'
+    }
+    maven {
         name 'sk89q'
         url 'https://maven.enginehub.org/repo/'
     }
