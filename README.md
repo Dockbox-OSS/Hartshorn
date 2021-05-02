@@ -1,7 +1,7 @@
 <p align="center">
-	<img alt="Kangaroo Logo" src="./selene-assembly/images/logo.png" />
+	<img alt="Kangaroo Logo" src="./selene-assembly/images/logo.png" height="175" />
 	<h3 align="center">Selene</h3>
-	<p align="center">Agnostic plugin/extension framework</p>
+	<p align="center">Agnostic plugin/extension framework.</p>
 	<p align="center">
 		<a href="https://guuslieben.github.io/Selene/"><img src="https://github.com/GuusLieben/Selene/workflows/JavaDocs/badge.svg"></a>
 		<img src="https://github.com/GuusLieben/Selene/workflows/Build/badge.svg">
