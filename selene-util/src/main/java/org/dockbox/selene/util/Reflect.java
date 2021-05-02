@@ -35,6 +35,8 @@ import org.jetbrains.annotations.Unmodifiable;
 import org.reflections.Reflections;
 
 import java.lang.annotation.Annotation;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodHandles.Lookup;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -76,6 +78,8 @@ public final class Reflect {
             String.class, List.class, Map.class);
 
     private static final String serverClassName = "org.dockbox.selene.server.Server";
+
+    private static Lookup LOOKUP;
 
     private Reflect() {}
 
@@ -809,5 +813,20 @@ public final class Reflect {
 
     public static boolean isProxy(Object o) {
         return o != null && (ProxyFactory.isProxyClass(o.getClass()) || Proxy.isProxyClass(o.getClass()));
+    }
+
+    public static Lookup getTrustedLookup(Class<?> in) {
+        if (Reflect.LOOKUP == null) {
+            try {
+                final Lookup original = MethodHandles.lookup();
+                final Field internal = Lookup.class.getDeclaredField("IMPL_LOOKUP");
+                internal.setAccessible(true);
+                Reflect.LOOKUP = (Lookup) internal.get(original);
+            }
+            catch (NoSuchFieldException | IllegalAccessException e) {
+                throw new RuntimeException("Could not access trusted lookup", e);
+            }
+        }
+        return Reflect.LOOKUP.in(in);
     }
 }
