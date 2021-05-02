@@ -1,12 +1,14 @@
+# Generic build outputs
 build
+target
+# Project specifics
 .gradle/
 .idea/
-dist
-target
-dependency-reduced-pom.xml
 *.iml
 *.hprof
-module/src/test/resources/storage.db-journal
+dependency-reduced-pom.xml
+# Generated directories
 servers
-/logs
-selene-assembly
+selene-assembly/distributions
+# Test resources
+module/src/test/resources/storage.db-journal
