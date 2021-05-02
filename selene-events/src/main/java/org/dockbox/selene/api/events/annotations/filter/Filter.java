@@ -39,9 +39,7 @@ import java.lang.annotation.Target;
 public @interface Filter {
     String param();
 
-    String value() default "";
-
-    Class<?> target() default Void.class;
+    String value();
 
     FilterTypes type() default FilterTypes.EQUALS;
 }

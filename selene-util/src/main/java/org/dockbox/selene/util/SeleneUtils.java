@@ -171,7 +171,7 @@ public final class SeleneUtils {
         return new Tuple<>(k, v);
     }
 
-    public static <T> Collection<T> singletonList(T mockWorld) {
+    public static <T> List<T> singletonList(T mockWorld) {
         return Collections.singletonList(mockWorld);
     }
 
