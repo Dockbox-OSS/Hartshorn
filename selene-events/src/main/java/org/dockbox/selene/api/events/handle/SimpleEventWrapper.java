@@ -18,10 +18,7 @@
 package org.dockbox.selene.api.events.handle;
 
 import org.dockbox.selene.api.Selene;
-import org.dockbox.selene.api.events.EventBus;
-import org.dockbox.selene.api.events.EventStage;
 import org.dockbox.selene.api.events.EventWrapper;
-import org.dockbox.selene.api.events.SkipEventException;
 import org.dockbox.selene.api.events.annotations.Async;
 import org.dockbox.selene.api.events.annotations.IsCancelled;
 import org.dockbox.selene.api.events.annotations.filter.Filter;
@@ -29,23 +26,18 @@ import org.dockbox.selene.api.events.annotations.filter.Filters;
 import org.dockbox.selene.api.events.parents.Cancellable;
 import org.dockbox.selene.api.events.parents.Event;
 import org.dockbox.selene.api.events.parents.Filterable;
-import org.dockbox.selene.api.events.processing.AbstractEventParamProcessor;
 import org.dockbox.selene.api.exceptions.Except;
 import org.dockbox.selene.api.task.ThreadUtils;
 import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.util.Reflect;
 import org.dockbox.selene.util.SeleneUtils;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.lang.annotation.Annotation;
 import java.lang.invoke.LambdaMetafactory;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles.Lookup;
 import java.lang.invoke.MethodType;
 import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
@@ -238,56 +230,6 @@ public final class SimpleEventWrapper implements Comparable<SimpleEventWrapper>,
     public int getPriority() {
         return this.priority;
     }
-
-    @NotNull
-    private Collection<Object> getEventArgs(Event event) throws SkipEventException {
-        EventBus bus = Provider.provide(EventBus.class);
-
-        Collection<Object> args = SeleneUtils.emptyList();
-        for (Parameter parameter : this.method.getParameters()) {
-            /*
-            Arguments always default to null if it is not assignable from the event type provided, and should be
-            populated by annotation processors.
-            */
-            Object argument = null;
-            if (Reflect.assignableFrom(parameter.getType(), event.getClass())) argument = event;
-
-            /*
-            To allow for the addition of future stages, we only use the enum values provided directly. This way we can
-            avoid having to modify this type if future stages are added to EventStage.
-            */
-            for (EventStage stage : EventStage.values()) {
-                argument = this.processObjectForStage(argument, parameter, event, stage, bus);
-            }
-            args.add(argument);
-        }
-
-        return args;
-    }
-
-    private Object processObjectForStage(@Nullable Object argument, Parameter parameter, Event event, EventStage stage, EventBus bus)
-            throws SkipEventException {
-        for (Annotation annotation : parameter.getAnnotations()) {
-            /*
-            A annotation may be decorative or provide meta-data, rather than be a processor indicator. If no processor
-            is available continue looking up the next annotation (if any).
-            */
-            @SuppressWarnings("unchecked")
-            AbstractEventParamProcessor<Annotation> processor =
-                    bus.getParamProcessor((Class<Annotation>) annotation.getClass(), stage);
-            if (null == processor) continue;
-
-            /*
-            Ensure we are in the expected stage for the processor, as different processors may wish to act on different
-            stages of the event construction for the same parameter annotation.
-            */
-            EventStage targetStage = processor.targetStage();
-            if (targetStage != stage) continue;
-            argument = processor.process(argument, annotation, event, parameter, this);
-        }
-        return argument;
-    }
-
     @Override
     public int compareTo(@NotNull SimpleEventWrapper o) {
         return COMPARATOR.compare(this, o);
