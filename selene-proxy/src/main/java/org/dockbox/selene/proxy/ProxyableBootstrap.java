@@ -149,7 +149,7 @@ public final class ProxyableBootstrap {
 
     private static Object[] prepareArguments(Method method, Object[] args, Object instance) {
         List<Object> arguments = SeleneUtils.emptyList();
-        if (method.getParameters()[0].isAnnotationPresent(Instance.class)) {
+        if (method.getParameterCount() >= 1 && method.getParameters()[0].isAnnotationPresent(Instance.class)) {
             arguments.add(instance);
         }
         arguments.addAll(Arrays.asList(args));
