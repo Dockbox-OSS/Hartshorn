@@ -22,6 +22,7 @@ import org.dockbox.selene.server.events.ServerReloadEvent;
 import org.dockbox.selene.server.events.ServerStartedEvent;
 import org.dockbox.selene.server.events.ServerStartingEvent;
 import org.dockbox.selene.server.events.ServerStoppingEvent;
+import org.dockbox.selene.server.events.ServerUpdateEvent;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.GameReloadEvent;
 import org.spongepowered.api.event.game.state.GameLoadCompleteEvent;
@@ -39,11 +40,13 @@ public class SpongeServerListener {
     @Listener
     public void on(GameStartedServerEvent event) {
         new ServerStartedEvent().post();
+        new ServerUpdateEvent().post();
     }
 
     @Listener
     public void on(GameReloadEvent event) {
         new ServerReloadEvent().post();
+        new ServerUpdateEvent().post();
     }
 
     @Listener

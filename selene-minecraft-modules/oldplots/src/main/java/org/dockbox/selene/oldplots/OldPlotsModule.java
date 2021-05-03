@@ -35,8 +35,7 @@ import org.dockbox.selene.domain.table.Table;
 import org.dockbox.selene.persistence.FileManager;
 import org.dockbox.selene.persistence.FileType;
 import org.dockbox.selene.persistence.FileTypeProperty;
-import org.dockbox.selene.server.events.ServerReloadEvent;
-import org.dockbox.selene.server.events.ServerStartedEvent;
+import org.dockbox.selene.server.events.ServerUpdateEvent;
 import org.dockbox.selene.server.minecraft.dimension.position.Location;
 import org.dockbox.selene.server.minecraft.players.Player;
 import org.dockbox.selene.util.SeleneUtils;
@@ -65,7 +64,7 @@ public class OldPlotsModule {
     private PlotWorldModelList modelList = new PlotWorldModelList();
 
     @Listener
-    public void on(ServerStartedEvent serverStartedEvent, ServerReloadEvent reloadEvent) {
+    public void on(ServerUpdateEvent event) {
         Path worldConfig = this.fileManager.getConfigFile(OldPlotsModule.class, "worlds");
         this.fileManager.copyDefaultFile("oldplots_worlds.yml", worldConfig);
         Exceptional<PlotWorldModelList> exceptionalList = this.fileManager.read(worldConfig, PlotWorldModelList.class);

@@ -23,8 +23,7 @@ import org.dockbox.selene.api.events.annotations.Listener;
 import org.dockbox.selene.api.exceptions.Except;
 import org.dockbox.selene.api.module.annotations.Module;
 import org.dockbox.selene.persistence.FileManager;
-import org.dockbox.selene.server.events.ServerReloadEvent;
-import org.dockbox.selene.server.events.ServerStartedEvent;
+import org.dockbox.selene.server.events.ServerUpdateEvent;
 
 import java.io.IOException;
 import java.nio.file.FileSystems;
@@ -57,7 +56,7 @@ public class LogArchival {
     private FileManager fileManager;
 
     @Listener
-    public void on(ServerStartedEvent serverStartedEvent, ServerReloadEvent reloadEvent) {
+    public void on(ServerUpdateEvent event) {
         this.logPath = this.fileManager.getLogsDir();
         try {
             Selene.log().info("Checking for logs to archive in {}", this.logPath);
