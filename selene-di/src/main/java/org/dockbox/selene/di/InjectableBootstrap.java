@@ -89,7 +89,7 @@ public abstract class InjectableBootstrap {
             typeInstance = this.createInstanceOf(type, typeInstance, additionalProperties);
         }
 
-        if (null != typeInstance) typeInstance = this.applyInjectionPoints(type, typeInstance);
+        if (null != typeInstance) typeInstance = this.applyInjectionPoints(type, typeInstance, additionalProperties);
 
         // Enables all fields which are not annotated with @Module or @DoNotEnable
         this.enableInjectionPoints(typeInstance);
@@ -117,12 +117,12 @@ public abstract class InjectableBootstrap {
         return typeInstance;
     }
 
-    private <T> T applyInjectionPoints(Class<T> type, T typeInstance) {
+    private <T> T applyInjectionPoints(Class<T> type, T typeInstance, InjectorProperty<?>... properties) {
         for (InjectionPoint<?> injectionPoint : this.injectionPoints) {
             if (injectionPoint.accepts(type)) {
                 try {
                     //noinspection unchecked
-                    typeInstance = ((InjectionPoint<T>) injectionPoint).apply(typeInstance);
+                    typeInstance = ((InjectionPoint<T>) injectionPoint).apply(typeInstance, properties);
                 }
                 catch (ClassCastException e) {
                     log.warn("Attempted to apply injection point to incompatible type [" + type.getCanonicalName() + "]");

@@ -17,21 +17,27 @@
 
 package org.dockbox.selene.di;
 
+import org.dockbox.selene.di.properties.InjectorProperty;
 import org.dockbox.selene.util.Reflect;
 
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public final class InjectionPoint<T> {
 
     private final Class<T> type;
-    private final Function<T, T> point;
+    private final BiFunction<T, InjectorProperty<?>[], T> point;
 
-    private InjectionPoint(Class<T> type, Function<T, T> point) {
+    private InjectionPoint(Class<T> type, BiFunction<T, InjectorProperty<?>[], T> point) {
         this.type = type;
         this.point = point;
     }
 
     public static <T> InjectionPoint<T> of(Class<T> type, Function<T, T> point) {
+        return new InjectionPoint<>(type, (instance, properties) -> point.apply(instance));
+    }
+
+    public static <T> InjectionPoint<T> of(Class<T> type, BiFunction<T, InjectorProperty<?>[], T> point) {
         return new InjectionPoint<>(type, point);
     }
 
@@ -40,6 +46,10 @@ public final class InjectionPoint<T> {
     }
 
     public T apply(T instance) {
-        return this.point.apply(instance);
+        return this.apply(instance, new InjectorProperty[0]);
+    }
+
+    public T apply(T instance, InjectorProperty<?>... properties) {
+        return this.point.apply(instance, properties);
     }
 }
