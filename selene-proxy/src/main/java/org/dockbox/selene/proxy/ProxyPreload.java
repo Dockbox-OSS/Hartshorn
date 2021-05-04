@@ -19,7 +19,14 @@ package org.dockbox.selene.proxy;
 
 import org.dockbox.selene.api.BootstrapPhase;
 import org.dockbox.selene.api.Phase;
+import org.dockbox.selene.api.exceptions.Except;
+import org.dockbox.selene.di.InjectableBootstrap;
+import org.dockbox.selene.di.InjectionPoint;
 import org.dockbox.selene.di.preload.Preloadable;
+import org.dockbox.selene.di.properties.InjectorProperty;
+import org.dockbox.selene.proxy.handle.ProxyHandler;
+
+import java.lang.reflect.InvocationTargetException;
 
 @Phase(BootstrapPhase.PRE_CONSTRUCT)
 public class ProxyPreload implements Preloadable {
@@ -27,5 +34,25 @@ public class ProxyPreload implements Preloadable {
     @Override
     public void preload() {
         ProxyableBootstrap.boostrapDelegates();
+        InjectableBootstrap.getInstance().injectAt(InjectionPoint.of(Object.class, (instance, properties) -> {
+            ProxyHandler<Object> handler = new ProxyHandler<>(instance);
+            boolean proxy = false;
+            for (InjectorProperty<?> property : properties) {
+                if (property instanceof ProxyProperty) {
+                    //noinspection unchecked
+                    handler.delegate((ProxyProperty<Object, ?>) property);
+                    proxy = true;
+                }
+            }
+            if (proxy) {
+                try {
+                    return handler.proxy();
+                }
+                catch (InvocationTargetException | NoSuchMethodException | InstantiationException | IllegalAccessException e) {
+                    Except.handle(e);
+                }
+            }
+            return instance;
+        }));
     }
 }
