@@ -17,14 +17,10 @@
 
 package org.dockbox.selene.proxy.types;
 
-import org.dockbox.selene.proxy.annotations.Proxy;
+public class GlobalProxyTarget {
 
-@Proxy(GlobalProxyTarget.class)
-public class GlobalProxy {
-
-    @Proxy.Target
     public String getName() {
-        return "GlobalSelene";
+        return "NotSelene";
     }
 
 }

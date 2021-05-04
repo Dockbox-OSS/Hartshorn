@@ -65,7 +65,7 @@ public class ProxyTests {
 
     @Test
     void testGlobalProxiesCanApply() {
-        ConcreteProxyTarget target = Provider.provide(ConcreteProxyTarget.class);
+        GlobalProxyTarget target = Provider.provide(GlobalProxyTarget.class);
         Assertions.assertTrue(Reflect.isProxy(target));
         Assertions.assertEquals("GlobalSelene", target.getName());
     }
