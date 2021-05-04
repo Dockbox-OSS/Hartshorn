@@ -21,6 +21,7 @@ import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.proxy.handle.ProxyHandler;
 import org.dockbox.selene.proxy.types.ConcreteProxyTarget;
 import org.dockbox.selene.proxy.types.FinalProxyTarget;
+import org.dockbox.selene.proxy.types.GlobalProxyTarget;
 import org.dockbox.selene.test.SeleneJUnit5Runner;
 import org.dockbox.selene.util.Reflect;
 import org.junit.jupiter.api.Assertions;
@@ -61,6 +62,19 @@ public class ProxyTests {
         Assertions.assertNotNull(proxy.getName());
         Assertions.assertNotEquals("Selene", proxy.getName());
         Assertions.assertEquals("NotSelene", proxy.getName());
+    }
+
+    @Test
+    void testProviderPropertiesAreApplied() throws NoSuchMethodException {
+        ProxyProperty<ConcreteProxyTarget, String> property = ProxyProperty.of(
+                ConcreteProxyTarget.class,
+                ConcreteProxyTarget.class.getMethod("getName"),
+                (instance, args, holder) -> "Selene");
+        ConcreteProxyTarget proxy = Provider.provide(ConcreteProxyTarget.class, property);
+
+        Assertions.assertNotNull(proxy);
+        Assertions.assertNotNull(proxy.getName());
+        Assertions.assertEquals("Selene", proxy.getName());
     }
 
     @Test
