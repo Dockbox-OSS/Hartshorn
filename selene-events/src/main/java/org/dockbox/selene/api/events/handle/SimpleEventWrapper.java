@@ -95,7 +95,7 @@ public final class SimpleEventWrapper implements Comparable<SimpleEventWrapper>,
             ).getTarget().invokeExact();
         }
         catch (Throwable e) {
-            Selene.log().warn("Could not prepare meta factory for " + method.getName() + " in " + listener.getClass().getSimpleName() + ", behavior will default to unoptimized reflective operations.");
+            Selene.log().warn("Could not prepare meta factory for method '" + method.getName() + "' in " + listener.getClass().getSimpleName() + ", behavior will default to unoptimized reflective operations.");
             operator = null;
         }
         this.operator = operator;
