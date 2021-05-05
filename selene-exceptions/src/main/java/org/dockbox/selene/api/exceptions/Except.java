@@ -23,15 +23,15 @@ import java.util.concurrent.Callable;
 
 public class Except {
 
-    private static ExceptionLevels level = ExceptionLevels.FRIENDLY;
-    private static boolean stacktraces = true;
+    private static ExceptionHandle handle = ExceptionLevels.FRIENDLY;
+    private static boolean stackTraces = true;
 
-    public static void setStacktraces(boolean stacktraces) {
-        Except.stacktraces = stacktraces;
+    public static void useStackTraces(boolean stackTraces) {
+        Except.stackTraces = stackTraces;
     }
 
-    public static void setLevel(ExceptionLevels level) {
-        Except.level = level;
+    public static void with(ExceptionHandle handle) {
+        Except.handle = handle;
     }
 
     public static <T> T handle(Callable<T> callable) {
@@ -45,7 +45,7 @@ public class Except {
     }
 
     public static void handle(Throwable e) {
-        handle(getFirstCauseMessage(e), e);
+        handle(firstMessage(e), e);
     }
 
     /**
@@ -57,10 +57,10 @@ public class Except {
      *         Zero or more exceptions (varargs)
      */
     public static void handle(@Nullable String msg, @Nullable Throwable... e) {
-        for (Throwable throwable : e) level.handle(msg, throwable, stacktraces);
+        for (Throwable throwable : e) handle.handle(msg, throwable, stackTraces);
     }
 
-    public static String getFirstCauseMessage(Throwable throwable) {
+    public static String firstMessage(Throwable throwable) {
         final String noCause = "No message provided";
         if (null == throwable) return noCause;
         while (true) {
