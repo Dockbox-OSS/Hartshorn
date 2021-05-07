@@ -647,7 +647,7 @@ public enum BlockIdentifier implements RegistryIdentifier {
     AIR("minecraft:air:0");
 
     private static final Map<String, BlockIdentifier> idMappings = SeleneUtils.emptyConcurrentMap();
-    private String[] ids;
+    private final String[] ids;
 
     static {
         for (BlockIdentifier blockIdentifier : values()) {

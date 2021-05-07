@@ -65,7 +65,7 @@ public abstract class BlockRegistryParser {
         return items;
     }
 
-    public List<String> generateBlockIdentifiers(List<String> rawIDs) {
+    public List<String> generateBlockIdentifiers(Iterable<String> rawIDs) {
         List<String> blockIdentifiers = SeleneUtils.emptyList();
 
         for (String rawID : rawIDs) {
@@ -86,7 +86,7 @@ public abstract class BlockRegistryParser {
         return blockIdentifiers;
     }
 
-    public String generateBlockIdentifierEnumFile(List<String> blockIdentifiers) {
+    public String generateBlockIdentifierEnumFile(Iterable<String> blockIdentifiers) {
         StringBuilder blockIdentifierEnum = new StringBuilder();
         for (String blockIdentifier : blockIdentifiers) {
             blockIdentifierEnum.append(blockIdentifier).append(",\n");
