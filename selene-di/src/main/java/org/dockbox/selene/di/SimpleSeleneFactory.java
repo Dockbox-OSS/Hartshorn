@@ -36,6 +36,7 @@ public class SimpleSeleneFactory implements SeleneFactory {
 
         Class<?>[] argumentTypes = Arrays.stream(arguments).map(Object::getClass).toArray(Class<?>[]::new);
         try {
+            // TODO: Downcast primitive wrappers (include testing)
             Constructor<T> constructor = binding.get().getConstructor(argumentTypes);
             if (constructor.isAnnotationPresent(AutoWired.class)) {
                 return constructor.newInstance(arguments);

@@ -1,0 +1,7 @@
+selene:
+  version: "4.0.0"
+  exceptions:
+    stacktraces: true
+    level: "friendly"
+  discord:
+    logging-channel: "123...789"
