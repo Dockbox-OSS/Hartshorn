@@ -20,6 +20,7 @@ package org.dockbox.selene.di;
 import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.entity.annotations.DoNotEnable;
 import org.dockbox.selene.di.binding.Bindings;
+import org.dockbox.selene.di.exceptions.ApplicationException;
 import org.dockbox.selene.di.inject.InjectSource;
 import org.dockbox.selene.di.inject.Injector;
 import org.dockbox.selene.di.inject.InjectorAdapter;
@@ -95,8 +96,13 @@ public abstract class InjectableBootstrap {
         this.enableInjectionPoints(typeInstance);
 
         // Inject properties if applicable
-        if (typeInstance instanceof InjectableType && ((InjectableType) typeInstance).canEnable())
-            ((InjectableType) typeInstance).stateEnabling(additionalProperties);
+        if (typeInstance instanceof InjectableType && ((InjectableType) typeInstance).canEnable()) {
+            try {
+                ((InjectableType) typeInstance).stateEnabling(additionalProperties);
+            } catch (ApplicationException e) {
+                throw new RuntimeException(e);
+            }
+        }
 
         // May be null, but we have used all possible injectors, it's up to the developer now
         return typeInstance;
@@ -149,7 +155,13 @@ public abstract class InjectableBootstrap {
                 .filter(Objects::nonNull)
                 .map(fieldInstance -> (InjectableType) fieldInstance)
                 .filter(InjectableType::canEnable)
-                .forEach(InjectableType::stateEnabling);
+                .forEach(injectableType -> {
+                    try {
+                        injectableType.stateEnabling();
+                    } catch (ApplicationException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
     }
 
     public Injector getInjector() {
