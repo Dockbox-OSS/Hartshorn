@@ -54,6 +54,7 @@ public class SimpleConfiguration implements Configuration, InjectableType {
                 continue;
             }
             else if (i == keys.length -1) {
+                //noinspection unchecked
                 return (T) value;
             } else {
                 throw new EndOfPropertyException(key, s);
@@ -62,6 +63,10 @@ public class SimpleConfiguration implements Configuration, InjectableType {
         return null;
     }
 
+    @Override
+    public boolean canEnable() {
+        return this.cache == null || this.cache.isEmpty();
+    }
 
     @Override
     public void stateEnabling(InjectorProperty<?>... properties) throws ApplicationException {
