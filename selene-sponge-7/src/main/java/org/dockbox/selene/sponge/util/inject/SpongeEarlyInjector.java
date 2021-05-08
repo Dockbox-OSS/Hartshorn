@@ -24,7 +24,11 @@ import org.dockbox.selene.api.task.TaskRunner;
 import org.dockbox.selene.api.task.ThreadUtils;
 import org.dockbox.selene.commands.source.DiscordCommandSource;
 import org.dockbox.selene.commands.values.AbstractFlagCollection;
+import org.dockbox.selene.config.Configuration;
+import org.dockbox.selene.config.SimpleConfiguration;
 import org.dockbox.selene.di.InjectConfiguration;
+import org.dockbox.selene.di.SeleneFactory;
+import org.dockbox.selene.di.SimpleSeleneFactory;
 import org.dockbox.selene.di.binding.Bindings;
 import org.dockbox.selene.nms.packets.NMSChangeGameStatePacket;
 import org.dockbox.selene.nms.packets.NMSSpawnEntityPacket;
@@ -73,6 +77,9 @@ public class SpongeEarlyInjector extends InjectConfiguration {
     @SuppressWarnings("OverlyCoupledMethod")
     @Override
     public final void collect() {
+        // Factory creation
+        this.bind(SeleneFactory.class, SimpleSeleneFactory.class);
+
         // Tasks
         this.bind(TaskRunner.class, SpongeTaskRunner.class);
         this.bind(ThreadUtils.class, SpongeThreadUtils.class);
@@ -105,6 +112,7 @@ public class SpongeEarlyInjector extends InjectConfiguration {
         this.wire(ItemFrame.class, SpongeItemFrame.class);
         this.wire(ArmorStand.class, SpongeArmorStand.class);
         this.wire(DiscordCommandSource.class, MagiBridgeCommandSource.class);
+        this.wire(Configuration.class, SimpleConfiguration.class);
 
         // Log is created from LoggerFactory externally
         this.bind(Logger.class, Selene.log());
