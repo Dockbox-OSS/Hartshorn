@@ -18,12 +18,22 @@
 package org.dockbox.selene.config;
 
 import org.dockbox.selene.di.annotations.AutoWired;
+import org.dockbox.selene.di.exceptions.ApplicationException;
+import org.dockbox.selene.di.properties.InjectableType;
+import org.dockbox.selene.di.properties.InjectorProperty;
+import org.dockbox.selene.util.SeleneUtils;
+import org.yaml.snakeyaml.Yaml;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
 
-public class SimpleConfiguration implements Configuration {
+public class SimpleConfiguration implements Configuration, InjectableType {
 
-    private Path path;
+    private final Path path;
+    private Map<String, Object> cache;
 
     @AutoWired
     public SimpleConfiguration(Path path) {
@@ -32,7 +42,39 @@ public class SimpleConfiguration implements Configuration {
 
     @Override
     public <T> T get(String key) {
-        // TODO: Implementation
+        String[] keys = key.split("\\.");
+        Map<String, Object> next = new HashMap<>(this.cache);
+        for (int i = 0; i < keys.length; i++) {
+            String s = keys[i];
+            Object value = next.getOrDefault(s, null);
+            if (value == null) return null;
+            else if (value instanceof Map) {
+                //noinspection unchecked
+                next = (Map<String, Object>) value;
+                continue;
+            }
+            else if (i == keys.length -1) {
+                return (T) value;
+            } else {
+                throw new EndOfPropertyException(key, s);
+            }
+        }
         return null;
+    }
+
+
+    @Override
+    public void stateEnabling(InjectorProperty<?>... properties) throws ApplicationException {
+        try {
+            FileInputStream fileInputStream = new FileInputStream(this.path.toFile());
+            Yaml yaml = new Yaml();
+            this.cache = yaml.load(fileInputStream);
+            if (this.cache == null) {
+                this.cache = SeleneUtils.emptyMap();
+            }
+        }
+        catch (FileNotFoundException e) {
+            throw new ApplicationException(e);
+        }
     }
 }

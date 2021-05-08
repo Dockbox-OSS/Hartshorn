@@ -32,13 +32,16 @@ import java.lang.reflect.Field;
 import java.nio.file.Path;
 import java.util.Collection;
 
-@Phase(BootstrapPhase.CONSTRUCT)
+@Phase(BootstrapPhase.PRE_INIT)
 public class ConfigurationPreload implements Preloadable {
 
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
     public void preload() {
         InjectionPoint<?> point = InjectionPoint.of(Object.class, (instance, properties) -> {
             Collection<Field> fields = Reflect.annotatedFields(Value.class, instance.getClass());
+            if (fields.isEmpty()) return instance;
+
             String file = "selene.yml";
             Class<?> owner = Selene.class;
             if (instance.getClass().isAnnotationPresent(Source.class)) {
@@ -48,20 +51,27 @@ public class ConfigurationPreload implements Preloadable {
             }
 
             FileManager fileManager = Provider.provide(FileManager.class);
-            Path config = fileManager.getConfigFile(owner, file);
+            Path config = fileManager.getModuleConfigDir(owner).resolve(file);
 
             Configuration configuration = Provider.provide(Configuration.class, config);
 
             for (Field field : fields) {
                 field.setAccessible(true);
                 Value value = field.getAnnotation(Value.class);
-                // TODO: Convert primitives and enums
                 Object fieldValue = configuration.get(value.value());
-                // TODO: handle
-                field.set(instance, fieldValue);
+
+                if (field.getType().isEnum()) {
+                    fieldValue = Enum.valueOf(
+                            (Class<? extends Enum>) field.getType(),
+                            String.valueOf(fieldValue).toUpperCase()
+                    );
+                }
+
+                Reflect.set(field, instance, fieldValue);
             }
 
             return instance;
         });
+        Selene.getServer().injectAt(point);
     }
 }
