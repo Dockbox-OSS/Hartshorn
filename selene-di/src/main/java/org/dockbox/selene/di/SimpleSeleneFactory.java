@@ -19,10 +19,12 @@ package org.dockbox.selene.di;
 
 import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.di.annotations.AutoWired;
+import org.dockbox.selene.util.Reflect;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
+import java.util.Collection;
 
 public class SimpleSeleneFactory implements SeleneFactory {
 
@@ -37,16 +39,39 @@ public class SimpleSeleneFactory implements SeleneFactory {
         Class<?>[] argumentTypes = Arrays.stream(arguments).map(Object::getClass).toArray(Class<?>[]::new);
         try {
             // TODO: Downcast primitive wrappers (include testing)
-            Constructor<T> constructor = binding.get().getConstructor(argumentTypes);
-            if (constructor.isAnnotationPresent(AutoWired.class)) {
-                return constructor.newInstance(arguments);
+            Collection<Constructor<T>> constructors = Reflect.annotatedConstructors(AutoWired.class, binding.get());
+            Constructor<T> ctor = null;
+            for (Constructor<T> constructor : constructors) {
+                boolean valid = true;
+                for (int i = 0; i < constructor.getParameterTypes().length; i++) {
+                    Class<?> parameterType = constructor.getParameterTypes()[i];
+                    Object argument = arguments[i];
+                    if (argument == null) {
+                        throw new IllegalArgumentException("Autowired parameters can not be null");
+                    }
+                    if (!Reflect.assignableFrom(parameterType, argument.getClass())) {
+                        valid = false;
+                    }
+                }
+                if (valid){
+                    ctor = constructor;
+                    break;
+                }
+            }
+
+            if (ctor == null) {
+                throw new NoSuchMethodException("Available constructors do not meet expected parameter types");
+            }
+
+            if (ctor.isAnnotationPresent(AutoWired.class)) {
+                return ctor.newInstance(arguments);
             }
             else {
                 throw new IllegalArgumentException("Could not autowire " + type.getCanonicalName() + " as the applicable constructor is not marked with @AutoWired");
             }
         }
         catch (InvocationTargetException | NoSuchMethodException | InstantiationException | IllegalAccessException e) {
-            throw new IllegalArgumentException("Could not autowire " + type.getCanonicalName() + ", no constructor could be accessed");
+            throw new IllegalArgumentException("Could not autowire " + type.getCanonicalName() + ", no constructor could be accessed", e);
         }
     }
 }
