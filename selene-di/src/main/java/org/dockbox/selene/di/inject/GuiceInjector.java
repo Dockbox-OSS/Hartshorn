@@ -29,6 +29,7 @@ import com.google.inject.spi.LinkedKeyBinding;
 import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.domain.tuple.Tuple;
 import org.dockbox.selene.di.InjectConfiguration;
+import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.di.annotations.AutoWired;
 import org.dockbox.selene.di.annotations.BindingMeta;
 import org.dockbox.selene.di.annotations.Binds;
@@ -51,6 +52,7 @@ import org.dockbox.selene.util.SeleneUtils;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -60,6 +62,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.Supplier;
 
+import javax.inject.Inject;
 import javax.inject.Named;
 
 public class GuiceInjector implements Injector {
@@ -209,9 +212,15 @@ public class GuiceInjector implements Injector {
     }
 
     @Override
-    public <T> T populate(T type) {
-        if (null != type) this.rebuild().injectMembers(type);
-        return type;
+    public <T> T populate(T instance) {
+        if (null != instance) {
+            this.rebuild().injectMembers(instance);
+            for (Field field : Reflect.annotatedFields(Inject.class, instance.getClass())) {
+                Object fieldInstance = Provider.provide(field.getType());
+                Reflect.set(field, instance, fieldInstance);
+            }
+        }
+        return instance;
     }
 
     @SuppressWarnings("unchecked")
