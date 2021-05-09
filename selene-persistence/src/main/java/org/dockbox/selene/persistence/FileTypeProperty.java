@@ -17,16 +17,17 @@
 
 package org.dockbox.selene.persistence;
 
-import org.dockbox.selene.di.properties.AnnotationProperty;
+import org.dockbox.selene.di.binding.Bindings;
+import org.dockbox.selene.di.properties.BindingMetaProperty;
 
 import java.lang.annotation.Annotation;
 
-public final class FileTypeProperty<T extends Annotation> extends AnnotationProperty<T> {
+public final class FileTypeProperty<T extends Annotation> extends BindingMetaProperty {
 
     private final FileType fileType;
 
     private FileTypeProperty(FileType fileType) {
-        super(null);
+        super(Bindings.meta(fileType.getExtension()));
         this.fileType = fileType;
     }
 
@@ -36,16 +37,5 @@ public final class FileTypeProperty<T extends Annotation> extends AnnotationProp
 
     public FileType getFileType() {
         return this.fileType;
-    }
-
-    @Override
-    public String getKey() {
-        return KEY;
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public Class<T> getObject() {
-        return (Class<T>) this.fileType.getFormat();
     }
 }
