@@ -8,7 +8,7 @@ selene:
 modules:
   player-actions:
     whitelist:
-      - "69,69"
+      - "sample"
   world-management:
     target:
       world: "worlds"
