@@ -34,13 +34,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
 import java.util.Objects;
 import java.util.Set;
 
 import javax.inject.Inject;
-
-import sun.misc.Unsafe;
 
 @SuppressWarnings("AbstractClassWithoutAbstractMethods")
 public abstract class InjectableBootstrap {
@@ -49,7 +46,6 @@ public abstract class InjectableBootstrap {
     private static InjectableBootstrap instance;
     private final transient Set<InjectionPoint<?>> injectionPoints = SeleneUtils.emptyConcurrentSet();
     private final InjectorAdapter adapter;
-    private Unsafe unsafe;
 
     protected InjectableBootstrap() {
         this.adapter = new InjectorAdapter(InjectSource.GUICE);
@@ -184,8 +180,7 @@ public abstract class InjectableBootstrap {
     private <T> @Nullable T getUnsafeInstance(Class<T> type) {
         log.warn("Attempting to get instance of [" + type.getCanonicalName() + "] through Unsafe");
         try {
-            @SuppressWarnings("unchecked")
-            T t = (T) this.getUnsafe().allocateInstance(type);
+            T t = Reflect.unsafeInstance(type);
             this.getInjector().populate(t);
             return t;
         }
@@ -196,20 +191,6 @@ public abstract class InjectableBootstrap {
 
     public InjectorAdapter getAdapter() {
         return this.adapter;
-    }
-
-    private Unsafe getUnsafe() {
-        if (null == this.unsafe) {
-            try {
-                Field f = Unsafe.class.getDeclaredField("theUnsafe");
-                f.setAccessible(true);
-                this.unsafe = (Unsafe) f.get(null);
-            }
-            catch (ReflectiveOperationException e) {
-                throw new ProvisionFailure("Could not access 'theUnsafe' field", e);
-            }
-        }
-        return this.unsafe;
     }
 
     public void injectAt(InjectionPoint<?> property) {

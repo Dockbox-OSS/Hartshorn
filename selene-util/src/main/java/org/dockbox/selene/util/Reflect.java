@@ -59,6 +59,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import javassist.util.proxy.ProxyFactory;
+import sun.misc.Unsafe;
 
 @SuppressWarnings({ "unused", "OverlyComplexClass" })
 public final class Reflect {
@@ -93,6 +94,7 @@ public final class Reflect {
     private static final String serverClassName = "org.dockbox.selene.server.Server";
 
     private static Lookup LOOKUP;
+    private static Unsafe UNSAFE;
 
     private Reflect() {}
 
@@ -747,6 +749,7 @@ public final class Reflect {
                 setter.invoke(to, value);
                 return;
             }
+            if (!field.isAccessible()) field.setAccessible(true);
             field.set(to, value);
         }
         catch (IllegalArgumentException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
@@ -861,8 +864,27 @@ public final class Reflect {
                     return (T) converter.apply(value);
                 }
             }
-        } catch (Throwable t) {
+        }
+        catch (Throwable t) {
             throw new TypeConversionException(type, value);
         }
+    }
+
+    public static <T> T unsafeInstance(Class<T> type) throws InstantiationException {
+        try {
+            //noinspection unchecked
+            return (T) getUnsafe().allocateInstance(type);
+        } catch (ReflectiveOperationException e) {
+            throw new InstantiationException("Could not access Unsafe instance");
+        }
+    }
+
+    private static Unsafe getUnsafe() throws ReflectiveOperationException {
+        if (null == Reflect.UNSAFE) {
+            Field f = Unsafe.class.getDeclaredField("theUnsafe");
+            f.setAccessible(true);
+            Reflect.UNSAFE = (Unsafe) f.get(null);
+        }
+        return Reflect.UNSAFE;
     }
 }
