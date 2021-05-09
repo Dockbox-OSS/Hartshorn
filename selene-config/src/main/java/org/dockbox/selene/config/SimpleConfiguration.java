@@ -33,17 +33,25 @@ import java.util.Map;
 public class SimpleConfiguration implements Configuration, InjectableType {
 
     private final Path path;
-    private Map<String, Object> cache;
+    private final String fileKey;
+    private final Map<String, Map<String, Object>> cache = SeleneUtils.emptyConcurrentMap();
 
     @AutoWired
     public SimpleConfiguration(Path path) {
         this.path = path;
+        this.fileKey = this.getFileKey();
+    }
+
+    private String getFileKey() {
+        String fileName = this.path.getFileName().toString();
+        String root = this.path.getParent().getFileName().toString();
+        return root + ':' + fileName + '/';
     }
 
     @Override
     public <T> T get(String key) {
         String[] keys = key.split("\\.");
-        Map<String, Object> next = new HashMap<>(this.cache);
+        Map<String, Object> next = new HashMap<>(this.cache.get(this.fileKey));
         for (int i = 0; i < keys.length; i++) {
             String s = keys[i];
             Object value = next.getOrDefault(s, null);
@@ -53,10 +61,11 @@ public class SimpleConfiguration implements Configuration, InjectableType {
                 next = (Map<String, Object>) value;
                 continue;
             }
-            else if (i == keys.length -1) {
+            else if (i == keys.length - 1) {
                 //noinspection unchecked
                 return (T) value;
-            } else {
+            }
+            else {
                 throw new EndOfPropertyException(key, s);
             }
         }
@@ -65,17 +74,20 @@ public class SimpleConfiguration implements Configuration, InjectableType {
 
     @Override
     public boolean canEnable() {
-        return this.cache == null || this.cache.isEmpty();
+        return !this.cache.containsKey(this.fileKey);
     }
 
     @Override
     public void stateEnabling(InjectorProperty<?>... properties) throws ApplicationException {
         try {
-            FileInputStream fileInputStream = new FileInputStream(this.path.toFile());
-            Yaml yaml = new Yaml();
-            this.cache = yaml.load(fileInputStream);
-            if (this.cache == null) {
-                this.cache = SeleneUtils.emptyMap();
+            if (!this.cache.containsKey(this.fileKey)) {
+                FileInputStream fileInputStream = new FileInputStream(this.path.toFile());
+                Yaml yaml = new Yaml();
+                Map<String, Object> localCache = yaml.load(fileInputStream);
+                if (localCache == null) {
+                    localCache = SeleneUtils.emptyMap();
+                }
+                this.cache.put(this.fileKey, localCache);
             }
         }
         catch (FileNotFoundException e) {
