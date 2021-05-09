@@ -17,12 +17,14 @@
 
 package org.dockbox.selene.api.module;
 
+import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.module.annotations.Module;
 import org.dockbox.selene.api.domain.TypedOwner;
 
 public class ModuleContainer implements TypedOwner {
 
     private final ModuleContext context;
+    private Object instance;
 
     public ModuleContainer(ModuleContext context) {
         this.context = context;
@@ -59,6 +61,14 @@ public class ModuleContainer implements TypedOwner {
 
     public Module module() {
         return this.context.getModule();
+    }
+
+    public Exceptional<Object> instance() {
+        return Exceptional.of(this.instance);
+    }
+
+    protected void instance(Object instance) {
+        this.instance = instance;
     }
 
     public void status(Class<?> clazz, ModuleStatus status) {

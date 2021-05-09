@@ -26,13 +26,12 @@ import org.dockbox.selene.api.module.annotations.Disabled;
 import org.dockbox.selene.api.module.annotations.Module;
 import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.di.annotations.Binds;
+import org.dockbox.selene.di.properties.InjectableType;
 import org.dockbox.selene.util.Reflect;
 import org.dockbox.selene.util.SeleneUtils;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -177,27 +176,29 @@ public class SimpleModuleManager implements ModuleManager {
 
             if (null == instance) {
                 try {
-                    Constructor<T> defaultConstructor = entry.getConstructor();
-                    defaultConstructor.setAccessible(true);
-                    instance = defaultConstructor.newInstance();
+                    // This will skip the constructor so fields are not evaluated beforehand.
+                    // Modules should always wait with explicit logic until stateEnabling is called.
+                    instance = Reflect.unsafeInstance(entry);
+
+                    // Ensures fields are correctly repopulated
                     SimpleModuleManager.populate(instance, container);
+
+                    if (instance instanceof InjectableType && ((InjectableType) instance).canEnable()) {
+                        ((InjectableType) instance).stateEnabling();
+                    }
 
                     container.status(entry, ModuleStatus.LOADED);
                     Selene.getServer().getInjector().bind(entry, instance);
                 }
-                catch (NoSuchMethodException | IllegalAccessException e) {
-                    container.status(entry, ModuleStatus.FAILED);
-                    Selene.log().warn("No default accessible constructor available for [" + entry.getCanonicalName() + ']');
-                    return false;
-                }
-                catch (InstantiationException | InvocationTargetException e) {
+                catch (InstantiationException e) {
                     container.status(entry, ModuleStatus.ERRORED);
-                    Selene.log().warn("Failed to instantiate default constructor for [" + entry.getCanonicalName() + "]. Proceeding to look for injectable constructors.");
+                    Selene.log().warn("Failed to instantiate [" + entry.getCanonicalName() + "].");
                     return false;
                 }
             }
 
             instanceMappings.put(header.id(), instance);
+            container.instance(instance);
             return true;
         } catch (Exception e) {
             Except.handle(e);
