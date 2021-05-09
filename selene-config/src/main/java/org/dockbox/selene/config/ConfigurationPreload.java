@@ -40,7 +40,7 @@ import java.lang.reflect.Field;
 import java.nio.file.Path;
 import java.util.Collection;
 
-@Phase(BootstrapPhase.PRE_INIT)
+@Phase(BootstrapPhase.CONSTRUCT)
 public class ConfigurationPreload implements Preloadable {
 
     @Override
