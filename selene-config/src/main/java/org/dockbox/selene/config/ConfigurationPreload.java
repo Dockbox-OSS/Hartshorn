@@ -20,12 +20,15 @@ package org.dockbox.selene.config;
 import org.dockbox.selene.api.BootstrapPhase;
 import org.dockbox.selene.api.Phase;
 import org.dockbox.selene.api.Selene;
+import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.config.annotations.Source;
 import org.dockbox.selene.config.annotations.Value;
 import org.dockbox.selene.di.InjectionPoint;
 import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.di.preload.Preloadable;
 import org.dockbox.selene.persistence.FileManager;
+import org.dockbox.selene.persistence.FileType;
+import org.dockbox.selene.persistence.FileTypeProperty;
 import org.dockbox.selene.util.Reflect;
 
 import java.lang.reflect.Field;
@@ -42,7 +45,7 @@ public class ConfigurationPreload implements Preloadable {
             Collection<Field> fields = Reflect.annotatedFields(Value.class, instance.getClass());
             if (fields.isEmpty()) return instance;
 
-            String file = "selene.yml";
+            String file = "selene";
             Class<?> owner = Selene.class;
             if (instance.getClass().isAnnotationPresent(Source.class)) {
                 Source source = instance.getClass().getAnnotation(Source.class);
@@ -50,15 +53,15 @@ public class ConfigurationPreload implements Preloadable {
                 owner = source.owner().value();
             }
 
-            FileManager fileManager = Provider.provide(FileManager.class);
-            Path config = fileManager.getModuleConfigDir(owner).resolve(file);
+            FileManager fileManager = Provider.provide(FileManager.class, FileTypeProperty.of(FileType.YAML));
+            Path config = fileManager.getConfigFile(owner, file);
 
             Configuration configuration = Provider.provide(Configuration.class, config);
 
             for (Field field : fields) {
                 field.setAccessible(true);
                 Value value = field.getAnnotation(Value.class);
-                Object fieldValue = configuration.get(value.value());
+                Object fieldValue = Exceptional.of(() -> configuration.get(value.value())).or(value.or());
 
                 if (field.getType().isEnum()) {
                     fieldValue = Enum.valueOf(
