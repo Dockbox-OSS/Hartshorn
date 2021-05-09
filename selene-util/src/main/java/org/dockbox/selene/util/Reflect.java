@@ -28,6 +28,8 @@ import org.dockbox.selene.api.entity.annotations.Rejects;
 import org.dockbox.selene.util.SeleneUtils.Provision;
 import org.dockbox.selene.util.exceptions.EnumException;
 import org.dockbox.selene.util.exceptions.FieldAccessException;
+import org.dockbox.selene.util.exceptions.NotPrimitiveException;
+import org.dockbox.selene.util.exceptions.TypeConversionException;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -48,6 +50,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -70,6 +73,16 @@ public final class Reflect {
             SeleneUtils.entry(int.class, Integer.class),
             SeleneUtils.entry(long.class, Long.class),
             SeleneUtils.entry(short.class, Short.class));
+
+    private static final Map<?, Function<String, ?>> nativeFromStringSuppliers = SeleneUtils.ofEntries(
+            SeleneUtils.entry(boolean.class, Boolean::valueOf),
+            SeleneUtils.entry(char.class, s -> s.charAt(0)),
+            SeleneUtils.entry(double.class, Double::valueOf),
+            SeleneUtils.entry(float.class, Float::valueOf),
+            SeleneUtils.entry(int.class, Integer::valueOf),
+            SeleneUtils.entry(long.class, Long::valueOf),
+            SeleneUtils.entry(short.class, Short::valueOf)
+    );
 
     private static final List<Class<?>> nativeSupportedTypes = SeleneUtils.asList(
             boolean.class, byte.class, short.class,
@@ -828,5 +841,28 @@ public final class Reflect {
             }
         }
         return Reflect.LOOKUP.in(in);
+    }
+
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    public static <T> T primitiveFromString(Class<?> type, String value) throws TypeConversionException {
+        try {
+            if (type.isEnum()) {
+                return (T) Enum.valueOf((Class<? extends Enum>) type, String.valueOf(value).toUpperCase());
+            }
+            else {
+                if (!type.isPrimitive()) {
+                    for (Entry<Class<?>, Class<?>> entry : primitiveWrapperMap.entrySet()) {
+                        if (isPrimitiveWrapper(type, entry.getKey())) type = entry.getKey();
+                    }
+                }
+                if (!type.isPrimitive()) throw new NotPrimitiveException(type);
+                else {
+                    Function<String, ?> converter = nativeFromStringSuppliers.get(type);
+                    return (T) converter.apply(value);
+                }
+            }
+        } catch (Throwable t) {
+            throw new TypeConversionException(type, value);
+        }
     }
 }

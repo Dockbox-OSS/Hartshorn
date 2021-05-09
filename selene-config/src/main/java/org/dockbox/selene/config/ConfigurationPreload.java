@@ -21,6 +21,7 @@ import org.dockbox.selene.api.BootstrapPhase;
 import org.dockbox.selene.api.Phase;
 import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.domain.Exceptional;
+import org.dockbox.selene.api.exceptions.Except;
 import org.dockbox.selene.config.annotations.Source;
 import org.dockbox.selene.config.annotations.Value;
 import org.dockbox.selene.di.InjectionPoint;
@@ -30,6 +31,9 @@ import org.dockbox.selene.persistence.FileManager;
 import org.dockbox.selene.persistence.FileType;
 import org.dockbox.selene.persistence.FileTypeProperty;
 import org.dockbox.selene.util.Reflect;
+import org.dockbox.selene.util.exceptions.FieldAccessException;
+import org.dockbox.selene.util.exceptions.NotPrimitiveException;
+import org.dockbox.selene.util.exceptions.TypeConversionException;
 
 import java.lang.reflect.Field;
 import java.nio.file.Path;
@@ -59,18 +63,19 @@ public class ConfigurationPreload implements Preloadable {
             Configuration configuration = Provider.provide(Configuration.class, config);
 
             for (Field field : fields) {
-                field.setAccessible(true);
-                Value value = field.getAnnotation(Value.class);
-                Object fieldValue = Exceptional.of(() -> configuration.get(value.value())).or(value.or());
+                try {
+                    field.setAccessible(true);
+                    Value value = field.getAnnotation(Value.class);
+                    Object fieldValue = Exceptional.of(() -> configuration.get(value.value())).or(value.or());
 
-                if (field.getType().isEnum()) {
-                    fieldValue = Enum.valueOf(
-                            (Class<? extends Enum>) field.getType(),
-                            String.valueOf(fieldValue).toUpperCase()
-                    );
+                    if ((!Reflect.assignableFrom(String.class, field.getType())) && (fieldValue instanceof String)) {
+                        fieldValue = Reflect.primitiveFromString(field.getType(), (String) fieldValue);
+                    }
+
+                    Reflect.set(field, instance, fieldValue);
+                } catch (FieldAccessException | TypeConversionException | NotPrimitiveException e) {
+                    Except.handle(e);
                 }
-
-                Reflect.set(field, instance, fieldValue);
             }
 
             return instance;
