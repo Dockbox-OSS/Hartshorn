@@ -42,7 +42,6 @@ import java.util.Collection;
 @Phase(BootstrapPhase.PRE_INIT)
 public class ConfigurationPreload implements Preloadable {
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
     public void preload() {
         InjectionPoint<?> point = InjectionPoint.of(Object.class, (instance, properties) -> {
