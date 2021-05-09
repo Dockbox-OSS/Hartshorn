@@ -24,6 +24,7 @@ import net.dv8tion.jda.api.JDAInfo;
 
 import org.dockbox.selene.api.BootstrapPhase;
 import org.dockbox.selene.api.Selene;
+import org.dockbox.selene.api.SeleneInformation;
 import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.events.EventBus;
 import org.dockbox.selene.api.exceptions.Except;
@@ -82,8 +83,8 @@ import eu.crushedpixel.sponge.packetgate.api.registry.PacketGate;
 
 /** Sponge API 7.x implementation of Selene, using events to initiate startup tasks. */
 @Plugin(
-        id = "selene",
-        name = "Selene Server",
+        id = SeleneInformation.PROJECT_ID,
+        name = SeleneInformation.PROJECT_NAME,
         description = "Custom plugins and modifications combined into a single source",
         url = "https://github.com/GuusLieben/Selene",
         authors = "GuusLieben",

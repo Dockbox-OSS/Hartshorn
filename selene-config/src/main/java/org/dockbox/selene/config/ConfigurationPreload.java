@@ -20,6 +20,7 @@ package org.dockbox.selene.config;
 import org.dockbox.selene.api.BootstrapPhase;
 import org.dockbox.selene.api.Phase;
 import org.dockbox.selene.api.Selene;
+import org.dockbox.selene.api.SeleneInformation;
 import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.exceptions.Except;
 import org.dockbox.selene.config.annotations.Source;
@@ -48,7 +49,7 @@ public class ConfigurationPreload implements Preloadable {
             Collection<Field> fields = Reflect.annotatedFields(Value.class, instance.getClass());
             if (fields.isEmpty()) return instance;
 
-            String file = "selene";
+            String file = SeleneInformation.PROJECT_ID;
             Class<?> owner = Selene.class;
             if (instance.getClass().isAnnotationPresent(Source.class)) {
                 Source source = instance.getClass().getAnnotation(Source.class);
