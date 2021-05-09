@@ -5,3 +5,20 @@ selene:
     level: "friendly"
   discord:
     logging-channel: "123...789"
+modules:
+  player-actions:
+    whitelist:
+      - "69,69"
+  world-management:
+    target:
+      world: "worlds"
+      position:
+        x: 0
+        y: 64
+        z: 0
+    unload:
+      max: 10
+      blacklist:
+        - "0,0"
+        - "worlds"
+      delay: 2
