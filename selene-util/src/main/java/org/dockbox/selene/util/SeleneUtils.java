@@ -23,8 +23,6 @@ import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.domain.tuple.Triad;
 import org.dockbox.selene.api.domain.tuple.Tuple;
 import org.dockbox.selene.api.domain.tuple.Vector3N;
-import org.dockbox.selene.api.entity.annotations.Accessor;
-import org.dockbox.selene.api.entity.annotations.Extract;
 import org.dockbox.selene.util.exceptions.ImpossibleFileException;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NonNls;
@@ -35,7 +33,6 @@ import org.jetbrains.annotations.UnmodifiableView;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Array;
-import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.nio.file.Files;
@@ -948,29 +945,6 @@ public final class SeleneUtils {
             return null;
         }
         return array.clone();
-    }
-
-    /**
-     * Copies fields from one object to another of the same type. If the type is annotated with {@link
-     * Extract} the default behavior will be used depending on the given {@link Extract#value()}. If
-     * fields carry the {@link Accessor} annotation that will be used to attempt to get and/or set the
-     * values, otherwise direct field access will be used.
-     *
-     * @param from
-     *         The object to copy from
-     * @param to
-     *         The object to copy to
-     * @param <T>
-     *         The type of both objects
-     */
-    public static <T> void shallowCopy(T from, T to) {
-        if (to == null || from == null) return;
-        Collection<Field> fields = Reflect.accessibleFields(from.getClass());
-        for (Field field : fields) {
-            field.setAccessible(true);
-            Object value = Reflect.fieldValue(field, from).orNull();
-            Reflect.set(field, to, value);
-        }
     }
 
     @Contract(value = "null -> false", pure = true)

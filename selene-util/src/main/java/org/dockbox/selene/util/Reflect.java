@@ -20,12 +20,8 @@ package org.dockbox.selene.util;
 import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.entity.TypeRejectedException;
 import org.dockbox.selene.api.entity.annotations.Accessor;
-import org.dockbox.selene.api.entity.annotations.Extract;
-import org.dockbox.selene.api.entity.annotations.Extract.Behavior;
-import org.dockbox.selene.api.entity.annotations.Ignore;
 import org.dockbox.selene.api.entity.annotations.Property;
 import org.dockbox.selene.api.entity.annotations.Rejects;
-import org.dockbox.selene.util.SeleneUtils.Provision;
 import org.dockbox.selene.util.exceptions.EnumException;
 import org.dockbox.selene.util.exceptions.FieldAccessException;
 import org.dockbox.selene.util.exceptions.NotPrimitiveException;
@@ -56,7 +52,6 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import javassist.util.proxy.ProxyFactory;
 import sun.misc.Unsafe;
@@ -77,6 +72,7 @@ public final class Reflect {
 
     private static final Map<?, Function<String, ?>> nativeFromStringSuppliers = SeleneUtils.ofEntries(
             SeleneUtils.entry(boolean.class, Boolean::valueOf),
+            SeleneUtils.entry(byte.class, Byte::valueOf),
             SeleneUtils.entry(char.class, s -> s.charAt(0)),
             SeleneUtils.entry(double.class, Double::valueOf),
             SeleneUtils.entry(float.class, Float::valueOf),
@@ -103,8 +99,7 @@ public final class Reflect {
         try {
             Field declaredField = fieldHolder.getDeclaredField(field);
             declaredField.setAccessible(true);
-            T value = (T) fieldValue(declaredField, instance);
-            return Exceptional.of(value);
+            return (Exceptional<T>) fieldValue(declaredField, instance);
         }
         catch (ClassCastException | ReflectiveOperationException e) {
             return Exceptional.of(e);
@@ -112,6 +107,7 @@ public final class Reflect {
     }
 
     public static Exceptional<?> fieldValue(Field field, Object instance) {
+        if (!field.isAccessible()) field.setAccessible(true);
         if (field.isAnnotationPresent(Accessor.class)) {
             Accessor accessor = field.getAnnotation(Accessor.class);
             if (!accessor.getter().equals("")) {
@@ -580,15 +576,6 @@ public final class Reflect {
         }
     }
 
-    @SuppressWarnings("unchecked")
-    private static <A> Object createField(Field field, Provision provision, Function<A, Object> valueCollector) {
-        if (Provision.FIELD == provision) return valueCollector.apply((A) field);
-        else {
-            String fieldName = Reflect.fieldName(field);
-            return valueCollector.apply((A) fieldName);
-        }
-    }
-
     /**
      * Gets field property name.
      *
@@ -669,10 +656,8 @@ public final class Reflect {
         Class<?> original = type;
         while (null != type) {
             try {
-                if (field.contains("*") && !field.contains("?")) {
-                    type.getDeclaredField(field);
-                    return true;
-                }
+                type.getDeclaredField(field);
+                return true;
             }
             catch (ReflectiveOperationException e) {
                 type = type.getSuperclass();
@@ -704,40 +689,6 @@ public final class Reflect {
             consumer.accept(type, declaredField);
         }
         if (null != type.getSuperclass()) Reflect.fields(type.getSuperclass(), consumer);
-    }
-
-    public static Collection<Field> accessibleFields(Class<?> type) {
-        if (type.isAnnotationPresent(Extract.class)) {
-            Extract extract = type.getAnnotation(Extract.class);
-            Behavior behavior = extract.value();
-            if (behavior == Behavior.KEEP) {
-                return nonSkippedFields(type);
-            }
-            else if (behavior == Behavior.SKIP) return keptFields(type);
-            else throw new IllegalArgumentException("Unsupported behavior " + behavior);
-        }
-        else return keptFields(type);
-    }
-
-    private static Collection<Field> nonSkippedFields(Class<?> type) {
-        Collection<Field> fields = SeleneUtils.emptySet();
-        for (Field field : type.getDeclaredFields()) {
-            if (field.isAnnotationPresent(Extract.class)) {
-                Extract extract = field.getAnnotation(Extract.class);
-                if (extract.value() == Behavior.KEEP) fields.add(field);
-            }
-            else if (!field.isAnnotationPresent(Ignore.class)) {
-                fields.add(field);
-            }
-        }
-        return fields;
-    }
-
-    private static Collection<Field> keptFields(Class<?> type) {
-        return Arrays.stream(type.getDeclaredFields())
-                .filter(field -> field.isAnnotationPresent(Extract.class))
-                .filter(field -> field.getAnnotation(Extract.class).value() == Behavior.KEEP)
-                .collect(Collectors.toSet());
     }
 
     public static void set(Field field, Object to, Object value) {
@@ -874,7 +825,8 @@ public final class Reflect {
         try {
             //noinspection unchecked
             return (T) getUnsafe().allocateInstance(type);
-        } catch (ReflectiveOperationException e) {
+        }
+        catch (ReflectiveOperationException e) {
             throw new InstantiationException("Could not access Unsafe instance");
         }
     }
