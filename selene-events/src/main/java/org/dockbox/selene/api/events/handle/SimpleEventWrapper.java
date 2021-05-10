@@ -33,14 +33,16 @@ import org.dockbox.selene.util.Reflect;
 import org.dockbox.selene.util.SeleneUtils;
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.invoke.CallSite;
 import java.lang.invoke.LambdaMetafactory;
 import java.lang.invoke.MethodHandle;
-import java.lang.invoke.MethodHandles.Lookup;
+import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.lang.reflect.Method;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.BiConsumer;
 
 /**
  * Wrapper type for future invokation of a {@link Method} listening for {@link Event} posting. This
@@ -67,7 +69,7 @@ public final class SimpleEventWrapper implements Comparable<SimpleEventWrapper>,
     private final Class<? extends Event> eventType;
     private final Method method;
     private final int priority;
-    private final EventOperator operator;
+    private final BiConsumer<Object, ? super Event> operator;
 
     private SimpleEventWrapper(Object listener, Class<? extends Event> eventType, Method method, int priority) {
         this.listener = listener;
@@ -81,24 +83,26 @@ public final class SimpleEventWrapper implements Comparable<SimpleEventWrapper>,
             this.method.setAccessible(true);
         }
 
-        EventOperator operator;
+        this.operator = this.createLambda();
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T> BiConsumer<T, ? super Event> createLambda() {
         try {
-            Lookup lookup = Reflect.getTrustedLookup(listener.getClass());
-            MethodHandle mh = lookup.unreflect(method);
-            operator = (EventOperator) LambdaMetafactory.metafactory(
-                    lookup,
-                    "apply",
-                    MethodType.methodType(EventOperator.class),
-                    MethodType.methodType(void.class, Event.class),
-                    mh,
-                    mh.type()
-            ).getTarget().invokeExact();
+            MethodHandles.Lookup caller = MethodHandles.lookup();
+            CallSite site = LambdaMetafactory.metafactory(caller,
+                    "accept",
+                    MethodType.methodType(BiConsumer.class),
+                    MethodType.methodType(void.class, Object.class, Object.class),
+                    caller.findVirtual(this.listener.getClass(), this.method.getName(),
+                            MethodType.methodType(void.class, this.method.getParameterTypes()[0])),
+                    MethodType.methodType(void.class, this.listener.getClass(), this.method.getParameterTypes()[0]));
+            MethodHandle factory = site.getTarget();
+            return (BiConsumer<T, ? super Event>) factory.invoke();
+        } catch (Throwable e) {
+            Selene.log().warn("Could not prepare meta factory for method '" + this.method.getName() + "' in " + this.listener.getClass().getSimpleName() + ", behavior will default to unoptimized reflective operations.");
+            return null;
         }
-        catch (Throwable e) {
-            Selene.log().warn("Could not prepare meta factory for method '" + method.getName() + "' in " + listener.getClass().getSimpleName() + ", behavior will default to unoptimized reflective operations.");
-            operator = null;
-        }
-        this.operator = operator;
     }
 
     /**
@@ -132,7 +136,7 @@ public final class SimpleEventWrapper implements Comparable<SimpleEventWrapper>,
             Runnable eventRunner = () -> {
                 try {
                     if (this.operator != null)
-                        this.operator.apply(event);
+                        this.operator.accept(this.listener, event);
                     else
                         this.method.invoke(this.listener, event);
                 }
