@@ -18,7 +18,6 @@
 package org.dockbox.selene.api.module;
 
 import org.dockbox.selene.api.SeleneBootstrap;
-import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.di.InjectConfiguration;
 import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.util.SeleneUtils;
@@ -59,18 +58,11 @@ public abstract class SeleneModuleBootstrap extends SeleneBootstrap {
     }
 
     private Consumer<ModuleContainer> getModuleConsumer() {
-        return (ModuleContainer ctx) -> {
-            Class<?> type = ctx.type();
-            Exceptional<?> oi = Exceptional.of(super.getInstance(type));
-
-            oi.present(i -> {
-                for (Consumer<Object> instanceConsumer : this.instanceConsumers) {
-                    //noinspection unchecked
-                    super.getInjector().bind((Class<? super Object>) type, i);
-                    instanceConsumer.accept(i);
-                }
-            });
-        };
+        return (ModuleContainer ctx) -> ctx.instance().present(i -> {
+            for (Consumer<Object> instanceConsumer : this.instanceConsumers) {
+                instanceConsumer.accept(i);
+            }
+        });
     }
 
     public void registerPostInit(Runnable runnable) {

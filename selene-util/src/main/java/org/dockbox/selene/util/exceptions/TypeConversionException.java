@@ -15,16 +15,11 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.di.properties;
+package org.dockbox.selene.util.exceptions;
 
-import org.dockbox.selene.di.exceptions.ApplicationException;
+public class TypeConversionException extends Exception {
 
-@FunctionalInterface
-public interface InjectableType {
-
-    default boolean canEnable() {
-        return true;
+    public TypeConversionException(Class<?> type, String value) {
+        super("Could not convert '" + value + "' to type " + type.getSimpleName());
     }
-
-    void stateEnabling(InjectorProperty<?>... properties) throws ApplicationException;
 }

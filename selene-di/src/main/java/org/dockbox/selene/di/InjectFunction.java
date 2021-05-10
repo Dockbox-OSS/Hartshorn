@@ -15,16 +15,13 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.di.properties;
+package org.dockbox.selene.di;
 
-import org.dockbox.selene.di.exceptions.ApplicationException;
+import org.dockbox.selene.di.properties.InjectorProperty;
 
 @FunctionalInterface
-public interface InjectableType {
+public interface InjectFunction<T> {
 
-    default boolean canEnable() {
-        return true;
-    }
+    T apply(T instance, Class<T> type, InjectorProperty<?>... properties);
 
-    void stateEnabling(InjectorProperty<?>... properties) throws ApplicationException;
 }

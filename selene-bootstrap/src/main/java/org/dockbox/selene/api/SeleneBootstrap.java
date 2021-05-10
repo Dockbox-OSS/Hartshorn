@@ -17,6 +17,7 @@
 
 package org.dockbox.selene.api;
 
+import org.dockbox.selene.api.config.GlobalConfig;
 import org.dockbox.selene.api.exceptions.Except;
 import org.dockbox.selene.di.InjectConfiguration;
 import org.dockbox.selene.di.InjectableBootstrap;

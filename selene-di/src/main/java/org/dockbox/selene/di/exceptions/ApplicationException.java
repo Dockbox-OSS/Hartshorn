@@ -15,16 +15,19 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.di.properties;
+package org.dockbox.selene.di.exceptions;
 
-import org.dockbox.selene.di.exceptions.ApplicationException;
+public class ApplicationException extends Exception {
 
-@FunctionalInterface
-public interface InjectableType {
-
-    default boolean canEnable() {
-        return true;
+    public ApplicationException(String message) {
+        super(message);
     }
 
-    void stateEnabling(InjectorProperty<?>... properties) throws ApplicationException;
+    public ApplicationException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public ApplicationException(Throwable cause) {
+        super(cause);
+    }
 }

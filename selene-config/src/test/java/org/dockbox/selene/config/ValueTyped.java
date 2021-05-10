@@ -15,16 +15,23 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.di.properties;
+package org.dockbox.selene.config;
 
-import org.dockbox.selene.di.exceptions.ApplicationException;
+import org.dockbox.selene.config.annotations.Value;
 
-@FunctionalInterface
-public interface InjectableType {
+public class ValueTyped {
 
-    default boolean canEnable() {
-        return true;
+    @Value("demo")
+    private String string;
+
+    @Value("nested.demo")
+    private String nestedString;
+
+    public String getString() {
+        return this.string;
     }
 
-    void stateEnabling(InjectorProperty<?>... properties) throws ApplicationException;
+    public String getNestedString() {
+        return this.nestedString;
+    }
 }

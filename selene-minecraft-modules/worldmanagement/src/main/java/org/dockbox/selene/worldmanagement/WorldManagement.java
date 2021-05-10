@@ -21,13 +21,12 @@ import org.dockbox.selene.api.events.annotations.Listener;
 import org.dockbox.selene.api.module.annotations.Module;
 import org.dockbox.selene.api.task.TaskRunner;
 import org.dockbox.selene.commands.annotations.Command;
-import org.dockbox.selene.commands.source.CommandSource;
 import org.dockbox.selene.di.Provider;
+import org.dockbox.selene.server.events.ServerReloadEvent;
+import org.dockbox.selene.server.events.ServerStartedEvent;
 import org.dockbox.selene.server.minecraft.dimension.Worlds;
 import org.dockbox.selene.server.minecraft.dimension.position.Location;
 import org.dockbox.selene.server.minecraft.dimension.world.World;
-import org.dockbox.selene.server.events.ServerReloadEvent;
-import org.dockbox.selene.server.events.ServerStartedEvent;
 import org.dockbox.selene.server.minecraft.events.player.PlayerPortalEvent;
 
 import java.util.concurrent.TimeUnit;
@@ -60,17 +59,6 @@ public class WorldManagement {
         if (event.usesPortal() && event.getNewLocation().getWorld().getName().equals(this.config.getPortalWorldTarget())) {
             event.setUsePortal(false);
             event.setNewLocation(new Location(this.config.getPortalPosition(), event.getNewLocation().getWorld()));
-        }
-    }
-
-    @Command(aliases = "blacklist", usage = "blacklist <world{String}>", permission = WorldManagement.WORLD_MANAGER)
-    public void blacklist(CommandSource src, String world) {
-        if (Provider.provide(Worlds.class).hasWorld(world)) {
-            this.config.getUnloadBlacklist().add(world);
-            this.config.save();
-            src.send(this.resources.getBlacklistAdded(world));
-        } else {
-            src.send(this.resources.getBlacklistFailure(world));
         }
     }
 

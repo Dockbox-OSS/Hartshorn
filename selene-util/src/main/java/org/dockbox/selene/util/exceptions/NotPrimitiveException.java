@@ -15,16 +15,11 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.di.properties;
+package org.dockbox.selene.util.exceptions;
 
-import org.dockbox.selene.di.exceptions.ApplicationException;
+public class NotPrimitiveException extends RuntimeException {
 
-@FunctionalInterface
-public interface InjectableType {
-
-    default boolean canEnable() {
-        return true;
+    public NotPrimitiveException(Class<?> type) {
+        super(type.getSimpleName() + " is not a primitive type");
     }
-
-    void stateEnabling(InjectorProperty<?>... properties) throws ApplicationException;
 }

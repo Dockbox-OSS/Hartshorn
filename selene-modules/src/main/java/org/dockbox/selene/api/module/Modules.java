@@ -20,7 +20,7 @@ package org.dockbox.selene.api.module;
 import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.SeleneBootstrap;
 import org.dockbox.selene.api.domain.Exceptional;
-import org.dockbox.selene.api.module.annotations.OwnedBy;
+import org.dockbox.selene.api.annotations.OwnedBy;
 import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.util.Reflect;
 import org.jetbrains.annotations.Nullable;

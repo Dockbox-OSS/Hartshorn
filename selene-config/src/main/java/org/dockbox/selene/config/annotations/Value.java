@@ -15,16 +15,16 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.di.properties;
+package org.dockbox.selene.config.annotations;
 
-import org.dockbox.selene.di.exceptions.ApplicationException;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-@FunctionalInterface
-public interface InjectableType {
-
-    default boolean canEnable() {
-        return true;
-    }
-
-    void stateEnabling(InjectorProperty<?>... properties) throws ApplicationException;
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.FIELD)
+public @interface Value {
+    String value();
+    String or() default  "";
 }

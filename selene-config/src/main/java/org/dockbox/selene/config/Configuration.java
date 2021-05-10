@@ -15,16 +15,18 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.di.properties;
+package org.dockbox.selene.config;
 
-import org.dockbox.selene.di.exceptions.ApplicationException;
+import org.dockbox.selene.di.Provider;
 
-@FunctionalInterface
-public interface InjectableType {
+import java.nio.file.Path;
 
-    default boolean canEnable() {
-        return true;
+public interface Configuration {
+
+    <T> T get(String key);
+
+    static Configuration of(Path path) {
+        return Provider.provide(Configuration.class, path);
     }
 
-    void stateEnabling(InjectorProperty<?>... properties) throws ApplicationException;
 }

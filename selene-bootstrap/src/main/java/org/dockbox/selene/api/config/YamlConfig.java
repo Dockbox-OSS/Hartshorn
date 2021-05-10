@@ -15,16 +15,29 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.di.properties;
+package org.dockbox.selene.api.config;
 
-import org.dockbox.selene.di.exceptions.ApplicationException;
+import org.dockbox.selene.api.exceptions.ExceptionLevels;
 
-@FunctionalInterface
-public interface InjectableType {
+public class YamlConfig implements GlobalConfig {
 
-    default boolean canEnable() {
-        return true;
+    @Override
+    public boolean getStacktracesAllowed() {
+        return false;
     }
 
-    void stateEnabling(InjectorProperty<?>... properties) throws ApplicationException;
+    @Override
+    public ExceptionLevels getExceptionLevel() {
+        return null;
+    }
+
+    @Override
+    public Environment getEnvironment() {
+        return null;
+    }
+
+    @Override
+    public String getDiscordLoggingCategoryId() {
+        return null;
+    }
 }

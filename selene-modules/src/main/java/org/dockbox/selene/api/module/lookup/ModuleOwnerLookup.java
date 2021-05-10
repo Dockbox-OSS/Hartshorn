@@ -17,6 +17,8 @@
 
 package org.dockbox.selene.api.module.lookup;
 
+import org.dockbox.selene.api.Selene;
+import org.dockbox.selene.api.SeleneInformation;
 import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.domain.OwnerLookup;
 import org.dockbox.selene.api.domain.SimpleTypedOwner;
@@ -38,6 +40,8 @@ public class ModuleOwnerLookup implements OwnerLookup {
                         return SimpleTypedOwner.of(type.getAnnotation(Module.class).id());
                     } else if (type.isAnnotationPresent(Metadata.class)) {
                         return SimpleTypedOwner.of(type.getAnnotation(Metadata.class).alias());
+                    } else if (Selene.class.equals(type)) {
+                        return SimpleTypedOwner.of(SeleneInformation.PROJECT_ID);
                     }
                     return null;
                 }).orNull();

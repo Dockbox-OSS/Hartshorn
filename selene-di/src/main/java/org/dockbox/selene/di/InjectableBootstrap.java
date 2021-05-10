@@ -20,6 +20,7 @@ package org.dockbox.selene.di;
 import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.entity.annotations.DoNotEnable;
 import org.dockbox.selene.di.binding.Bindings;
+import org.dockbox.selene.di.exceptions.ApplicationException;
 import org.dockbox.selene.di.inject.InjectSource;
 import org.dockbox.selene.di.inject.Injector;
 import org.dockbox.selene.di.inject.InjectorAdapter;
@@ -33,13 +34,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
 import java.util.Objects;
 import java.util.Set;
 
 import javax.inject.Inject;
-
-import sun.misc.Unsafe;
 
 @SuppressWarnings("AbstractClassWithoutAbstractMethods")
 public abstract class InjectableBootstrap {
@@ -48,7 +46,6 @@ public abstract class InjectableBootstrap {
     private static InjectableBootstrap instance;
     private final transient Set<InjectionPoint<?>> injectionPoints = SeleneUtils.emptyConcurrentSet();
     private final InjectorAdapter adapter;
-    private Unsafe unsafe;
 
     protected InjectableBootstrap() {
         this.adapter = new InjectorAdapter(InjectSource.GUICE);
@@ -89,14 +86,23 @@ public abstract class InjectableBootstrap {
             typeInstance = this.createInstanceOf(type, typeInstance, additionalProperties);
         }
 
-        if (null != typeInstance) typeInstance = this.applyInjectionPoints(type, typeInstance, additionalProperties);
+        // Recreating field instances ensures all fields are created through bootstrapping, allowing injection
+        // points to apply correctly
+        this.getInjector().populate(typeInstance);
+
+        typeInstance = this.applyInjectionPoints(type, typeInstance, additionalProperties);
 
         // Enables all fields which are not annotated with @Module or @DoNotEnable
         this.enableInjectionPoints(typeInstance);
 
         // Inject properties if applicable
-        if (typeInstance instanceof InjectableType && ((InjectableType) typeInstance).canEnable())
-            ((InjectableType) typeInstance).stateEnabling(additionalProperties);
+        if (typeInstance instanceof InjectableType && ((InjectableType) typeInstance).canEnable()) {
+            try {
+                ((InjectableType) typeInstance).stateEnabling(additionalProperties);
+            } catch (ApplicationException e) {
+                throw new RuntimeException(e);
+            }
+        }
 
         // May be null, but we have used all possible injectors, it's up to the developer now
         return typeInstance;
@@ -122,7 +128,7 @@ public abstract class InjectableBootstrap {
             if (injectionPoint.accepts(type)) {
                 try {
                     //noinspection unchecked
-                    typeInstance = ((InjectionPoint<T>) injectionPoint).apply(typeInstance, properties);
+                    typeInstance = ((InjectionPoint<T>) injectionPoint).apply(typeInstance, type, properties);
                 }
                 catch (ClassCastException e) {
                     log.warn("Attempted to apply injection point to incompatible type [" + type.getCanonicalName() + "]");
@@ -149,7 +155,13 @@ public abstract class InjectableBootstrap {
                 .filter(Objects::nonNull)
                 .map(fieldInstance -> (InjectableType) fieldInstance)
                 .filter(InjectableType::canEnable)
-                .forEach(InjectableType::stateEnabling);
+                .forEach(injectableType -> {
+                    try {
+                        injectableType.stateEnabling();
+                    } catch (ApplicationException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
     }
 
     public Injector getInjector() {
@@ -172,8 +184,7 @@ public abstract class InjectableBootstrap {
     private <T> @Nullable T getUnsafeInstance(Class<T> type) {
         log.warn("Attempting to get instance of [" + type.getCanonicalName() + "] through Unsafe");
         try {
-            @SuppressWarnings("unchecked")
-            T t = (T) this.getUnsafe().allocateInstance(type);
+            T t = Reflect.unsafeInstance(type);
             this.getInjector().populate(t);
             return t;
         }
@@ -184,20 +195,6 @@ public abstract class InjectableBootstrap {
 
     public InjectorAdapter getAdapter() {
         return this.adapter;
-    }
-
-    private Unsafe getUnsafe() {
-        if (null == this.unsafe) {
-            try {
-                Field f = Unsafe.class.getDeclaredField("theUnsafe");
-                f.setAccessible(true);
-                this.unsafe = (Unsafe) f.get(null);
-            }
-            catch (ReflectiveOperationException e) {
-                throw new ProvisionFailure("Could not access 'theUnsafe' field", e);
-            }
-        }
-        return this.unsafe;
     }
 
     public void injectAt(InjectionPoint<?> property) {

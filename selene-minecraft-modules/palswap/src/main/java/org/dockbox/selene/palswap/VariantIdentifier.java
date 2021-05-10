@@ -85,7 +85,7 @@ public enum VariantIdentifier implements RegistryIdentifier {
         }
     }
 
-    public static ItemData getOverridenBlockNames() {
+    public static ItemData getOverriddenBlockNames() {
         if (null == overridenBlockNames) {
             if (!SeleneBootstrap.isConstructed()) return (overridenBlockNames = new ItemData());
 
@@ -106,9 +106,7 @@ public enum VariantIdentifier implements RegistryIdentifier {
     }
 
     VariantIdentifier() {
-        this.identifiers = new HashSet<>();
-        this.identifiers.add(this.name().toLowerCase().replaceAll("_", ""));
-        this.identifiers.add(this.name().toLowerCase().replaceAll("_", " "));
+        this(new String[0]);
     }
 
     public static Exceptional<VariantIdentifier> of(String identifier) {
@@ -124,7 +122,7 @@ public enum VariantIdentifier implements RegistryIdentifier {
     }
 
     public static String getBlockNameWithoutVariant(String name) {
-        name = getOverridenBlockNames().getItemRegistry().getOrDefault(name.replace(" ", "_"), name.replaceAll("_", " "));
+        name = getOverriddenBlockNames().getItemRegistry().getOrDefault(name.replace(" ", "_"), name.replaceAll("_", " "));
 
         Matcher matcher = blockNameIdentifierRegex.matcher(prepareForMatcher(name));
 
@@ -145,7 +143,7 @@ public enum VariantIdentifier implements RegistryIdentifier {
     }
 
     public static Exceptional<VariantIdentifier> ofName(String name) {
-        name = getOverridenBlockNames().getItemRegistry().getOrDefault(name.replace(" ", "_"), name);
+        name = getOverriddenBlockNames().getItemRegistry().getOrDefault(name.replace(" ", "_"), name);
 
         Matcher matcher = blockNameIdentifierRegex.matcher(prepareForMatcher(name));
         Exceptional<VariantIdentifier> variant = Exceptional.none();

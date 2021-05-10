@@ -15,15 +15,17 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.api.module.annotations;
+package org.dockbox.selene.api.config;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import org.dockbox.selene.api.exceptions.ExceptionLevels;
 
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-public @interface OwnedBy {
-    Class<?> value();
+public interface GlobalConfig {
+
+    boolean getStacktracesAllowed();
+
+    ExceptionLevels getExceptionLevel();
+
+    Environment getEnvironment();
+
+    String getDiscordLoggingCategoryId();
 }

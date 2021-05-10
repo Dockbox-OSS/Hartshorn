@@ -15,17 +15,14 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.api;
+package org.dockbox.selene.api.config;
 
-import org.dockbox.selene.api.config.Environment;
 import org.dockbox.selene.api.exceptions.Except;
 import org.dockbox.selene.api.exceptions.ExceptionLevels;
-import org.dockbox.selene.di.annotations.Binds;
 
 import java.io.InputStream;
 import java.util.Properties;
 
-@Binds(GlobalConfig.class)
 public class PropertiesGlobalConfig implements GlobalConfig {
 
     private static final String STACKTRACES = "stacktraces";

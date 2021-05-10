@@ -22,7 +22,10 @@ import org.dockbox.selene.api.domain.FileTypes;
 import org.dockbox.selene.api.task.TaskRunner;
 import org.dockbox.selene.api.task.ThreadUtils;
 import org.dockbox.selene.commands.source.DiscordCommandSource;
+import org.dockbox.selene.config.Configuration;
 import org.dockbox.selene.di.InjectConfiguration;
+import org.dockbox.selene.di.SeleneFactory;
+import org.dockbox.selene.di.SimpleSeleneFactory;
 import org.dockbox.selene.di.binding.Bindings;
 import org.dockbox.selene.persistence.FileManager;
 import org.dockbox.selene.server.minecraft.Console;
@@ -52,6 +55,9 @@ public class JUnitInjector extends InjectConfiguration {
 
     @Override
     public void collect() {
+        // Factory creation
+        this.bind(SeleneFactory.class, SimpleSeleneFactory.class);
+
         // Tasks
         this.bind(TaskRunner.class, JUnitTaskRunner.class);
         this.bind(ThreadUtils.class, JUnitThreadUtils.class);
@@ -73,6 +79,7 @@ public class JUnitInjector extends InjectConfiguration {
         this.wire(ItemFrame.class, JUnitItemFrame.class);
         this.wire(ArmorStand.class, JUnitArmorStand.class);
         this.wire(DiscordCommandSource.class, JUnitDiscordCommandSource.class);
+        this.wire(Configuration.class, JUnitConfiguration.class);
 
         // Log is created from LoggerFactory externally
         this.bind(Logger.class, Selene.log());

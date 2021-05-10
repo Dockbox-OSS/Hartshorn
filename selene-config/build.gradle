@@ -15,16 +15,10 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.di.properties;
+dependencies {
+    compileOnly project(':selene-parent')
+    compileOnly project(':selene-bootstrap')
+    compileOnly project(':selene-persistence')
 
-import org.dockbox.selene.di.exceptions.ApplicationException;
-
-@FunctionalInterface
-public interface InjectableType {
-
-    default boolean canEnable() {
-        return true;
-    }
-
-    void stateEnabling(InjectorProperty<?>... properties) throws ApplicationException;
+    compile "org.yaml:snakeyaml:${snakeYamlVersion}"
 }

@@ -205,6 +205,18 @@ task relocateSeleneDistribution(dependsOn: build) {
 
 task runDevServer(dependsOn: relocateSeleneDistribution) {
     doLast {
+        def configDir = new File("${rootDir}/servers/sponge-112/config/modules/selene")
+
+        delete fileTree(configDir).matching {
+            include 'selene.yml'
+        }
+
+        copy {
+            from rootDir
+            into configDir
+            include 'selene.yml'
+        }
+
         javaexec {
             workingDir = "${project.rootDir}/servers/sponge-112"
             main = '-jar'
