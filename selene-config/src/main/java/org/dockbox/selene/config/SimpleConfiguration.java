@@ -42,7 +42,7 @@ public class SimpleConfiguration implements Configuration, InjectableType {
         this.fileKey = this.getFileKey();
     }
 
-    private String getFileKey() {
+    protected String getFileKey() {
         String fileName = this.path.getFileName().toString();
         String root = this.path.getParent().getFileName().toString();
         return root + ':' + fileName + '/';
@@ -51,7 +51,7 @@ public class SimpleConfiguration implements Configuration, InjectableType {
     @Override
     public <T> T get(String key) {
         String[] keys = key.split("\\.");
-        Map<String, Object> next = new HashMap<>(this.cache.get(this.fileKey));
+        Map<String, Object> next = new HashMap<>(this.getCache().get(this.fileKey));
         for (int i = 0; i < keys.length; i++) {
             String s = keys[i];
             Object value = next.getOrDefault(s, null);
@@ -93,5 +93,9 @@ public class SimpleConfiguration implements Configuration, InjectableType {
         catch (FileNotFoundException e) {
             throw new ApplicationException(e);
         }
+    }
+
+    protected Map<String, Map<String, Object>> getCache() {
+        return this.cache;
     }
 }
