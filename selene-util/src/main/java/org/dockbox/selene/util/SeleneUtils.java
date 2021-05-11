@@ -848,8 +848,6 @@ public final class SeleneUtils {
     /**
      * Merge t [ ].
      *
-     * @param <T>
-     *         the type parameter
      * @param arrayOne
      *         the array one
      * @param arrayTwo
@@ -857,21 +855,8 @@ public final class SeleneUtils {
      *
      * @return the t [ ]
      */
-    public static <T> T[] merge(T[] arrayOne, T[] arrayTwo) {
-        Object[] merged = Stream.of(arrayOne, arrayTwo).flatMap(Stream::of).toArray(Object[]::new);
-        return SeleneUtils.convertGenericArray(merged);
-    }
-
-    @SuppressWarnings("unchecked")
-    private static <T> T[] convertGenericArray(Object[] array) {
-        try {
-            Class<T> type = (Class<T>) array.getClass().getComponentType();
-            T[] finalArray = (T[]) Array.newInstance(type, 0);
-            return (T[]) SeleneUtils.addAll(finalArray, array);
-        }
-        catch (ClassCastException e) {
-            return (T[]) new Object[0];
-        }
+    public static Object[] merge(Object[] arrayOne, Object[] arrayTwo) {
+        return Stream.of(arrayOne, arrayTwo).flatMap(Stream::of).toArray(Object[]::new);
     }
 
     /**
@@ -1121,12 +1106,12 @@ public final class SeleneUtils {
     }
 
     @SafeVarargs
-    public static <T, R> R[] getAll(Function<T, R> function, T... input) {
+    public static <T, R> Object[] getAll(Function<T, R> function, T... input) {
         List<R> out = SeleneUtils.emptyList();
         for (T t : input) {
             out.add(function.apply(t));
         }
-        return convertGenericArray(out.toArray());
+        return out.toArray();
     }
 
     public static <T> Stream<T> stream(Iterable<T> iterable) {

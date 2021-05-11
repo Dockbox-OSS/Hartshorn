@@ -88,6 +88,7 @@ public class SimpleCommandContext implements CommandContext {
     @Override
     public <T> T get(@NonNls String key) {
         return Arrays.stream(SeleneUtils.merge(this.args, this.flags))
+                .map(CommandParameter.class::cast)
                 .filter(arg -> arg.getKey().equals(key))
                 .findFirst()
                 .map(arg -> (T) arg.getValue())
@@ -111,6 +112,7 @@ public class SimpleCommandContext implements CommandContext {
     @Override
     public boolean has(@NonNls @NotNull String key) {
         return Arrays.stream(SeleneUtils.merge(this.args, this.flags))
+                .map(CommandParameter.class::cast)
                 .anyMatch(arg -> arg.getKey().equals(key));
     }
 
