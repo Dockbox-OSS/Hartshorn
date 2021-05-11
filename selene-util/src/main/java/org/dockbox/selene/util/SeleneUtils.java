@@ -361,36 +361,6 @@ public final class SeleneUtils {
         return path.lastIndexOf(ch);
     }
 
-    @SuppressWarnings("MagicNumber")
-    public static byte[] decode(CharSequence s) {
-        int len = s.length();
-        if (0 != len % 2) {
-            return new byte[0];
-        }
-
-        byte[] bytes = new byte[len / 2];
-        int pos = 0;
-
-        for (int i = 0; i < len; i += 2) {
-            byte hi = (byte) Character.digit(s.charAt(i), 16);
-            byte lo = (byte) Character.digit(s.charAt(i + 1), 16);
-            bytes[pos++] = (byte) (hi * 16 + lo);
-        }
-
-        return bytes;
-    }
-
-    @NotNull
-    @SuppressWarnings("MagicNumber")
-    public static String encode(byte[] bytes) {
-        StringBuilder sb = new StringBuilder(bytes.length << 1);
-        for (byte aByte : bytes) {
-            sb.append(SeleneUtils.convertDigit(aByte >> 4));
-            sb.append(SeleneUtils.convertDigit(aByte & 0x0f));
-        }
-        return sb.toString();
-    }
-
     @Contract(pure = true)
     @SuppressWarnings("MagicNumber")
     public static char convertDigit(int value) {
@@ -413,7 +383,7 @@ public final class SeleneUtils {
 
     public static String shorten(String string, int maxLength) {
         if (string.length() < maxLength) return string;
-        return string.substring(0, maxLength - 1);
+        return string.substring(0, maxLength);
     }
 
     @NotNull
@@ -715,8 +685,9 @@ public final class SeleneUtils {
     }
 
     @Contract(value = "_, _, _ -> new", pure = true)
+    // Both start and end are inclusive
     public static <T> T[] getArraySubset(T[] array, int start, int end) {
-        return Arrays.copyOfRange(array, start, end);
+        return Arrays.copyOfRange(array, start, end+1);
     }
 
     @SuppressWarnings({ "unchecked", "SuspiciousToArrayCall" })
