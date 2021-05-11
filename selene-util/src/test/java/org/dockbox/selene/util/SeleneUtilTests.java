@@ -17,6 +17,7 @@
 
 package org.dockbox.selene.util;
 
+import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.domain.tuple.Tuple;
 import org.dockbox.selene.api.domain.tuple.Vector3N;
 import org.junit.jupiter.api.Assertions;
@@ -25,8 +26,13 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.time.Duration;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
@@ -410,9 +416,310 @@ public class SeleneUtilTests {
 
     @ParameterizedTest
     @MethodSource("getRegionValues")
-    void testIsInCuboidRegion(Vector3N min, Vector3N max, Vector3N vec, boolean inside) {
+    void testIsInCuboidRegionVector(Vector3N min, Vector3N max, Vector3N vec, boolean inside) {
         Assertions.assertEquals(inside, SeleneUtils.isInCuboidRegion(min, max, vec));
     }
 
-    // CONTINUE FROM ISINCUBOIDREGION(INT...)
+    @ParameterizedTest
+    @MethodSource("getRegionValues")
+    void testIsInCuboidRegionInt(Vector3N min, Vector3N max, Vector3N vec, boolean inside) {
+        Assertions.assertEquals(inside, SeleneUtils.isInCuboidRegion(
+                min.getXi(), max.getXi(),
+                min.getYi(), max.getYi(),
+                min.getZi(), max.getZi(),
+                vec.getXi(), vec.getYi(), vec.getZi()));
+    }
+
+    private static Stream<Arguments> getMinimumValues() {
+        return Stream.of(
+                Arguments.of(Vector3N.of(0,0,0), Vector3N.of(10,10,10), Vector3N.of(0,0,0)),
+                Arguments.of(Vector3N.of(0,10,10), Vector3N.of(10,0,0), Vector3N.of(0,0,0)),
+                Arguments.of(Vector3N.of(10,10,10), Vector3N.of(10,10,10), Vector3N.of(10,10,10))
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("getMinimumValues")
+    void testMinimumPoint(Vector3N pos1, Vector3N pos2, Vector3N min) {
+        Vector3N minimumPoint = SeleneUtils.getMinimumPoint(pos1, pos2);
+        Assertions.assertEquals(min, minimumPoint);
+    }
+
+    private static Stream<Arguments> getMaximumValues() {
+        return Stream.of(
+                Arguments.of(Vector3N.of(0,0,0), Vector3N.of(10,10,10), Vector3N.of(10,10,10)),
+                Arguments.of(Vector3N.of(0,10,10), Vector3N.of(10,0,0), Vector3N.of(10,10,10)),
+                Arguments.of(Vector3N.of(10,10,10), Vector3N.of(10,10,10), Vector3N.of(10,10,10))
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("getMaximumValues")
+    void testMaximumPoint(Vector3N pos1, Vector3N pos2, Vector3N max) {
+        Vector3N maximumPoint = SeleneUtils.getMaximumPoint(pos1, pos2);
+        Assertions.assertEquals(max, maximumPoint);
+    }
+
+    @Test
+    void testToLocalDateTimeIsCorrect() {
+        Instant instant = Instant.ofEpochSecond(((20 * 365) + 5) * 24 * 60 * 60);// 20 years after 1970, correcting for 5x February 29
+        LocalDateTime expectedDate = LocalDateTime.of(1990, 1, 1, 1, 0);
+        LocalDateTime dateTime = SeleneUtils.toLocalDateTime(instant);
+        Assertions.assertNotNull(dateTime);
+        Assertions.assertEquals(expectedDate, dateTime);
+    }
+
+    @Test
+    void testArrayMerge() {
+        Object[] arr1 = {1,2,3};
+        Object[] arr2 = {4,5,6};
+        Object[] merged = SeleneUtils.merge(arr1, arr2);
+        for (int i = 0; i < 6; i++) {
+            Assertions.assertEquals(i+1, (int) merged[i]);
+        }
+    }
+
+    @Test
+    void testCollectionMerge() {
+        Collection<Integer> col1 = Arrays.asList(1,2,3);
+        Collection<Integer> col2 = Arrays.asList(4,5,6);
+        Collection<?> merged = SeleneUtils.merge(col1, col2);
+
+        Assertions.assertEquals(6, merged.size());
+        Assertions.assertTrue(merged.containsAll(Arrays.asList(1,2,3,4,5,6)));
+    }
+
+    @Test
+    void testArrayShallowCopy() {
+        Object[] arr1 = {1,2,3};
+        Object[] arr2 = SeleneUtils.shallowCopy(arr1);
+        Assertions.assertNotSame(arr1, arr2);
+        Assertions.assertArrayEquals(arr1, arr2);
+    }
+
+    private static Stream<Arguments> getEmptyValues() {
+        return Stream.of(
+                Arguments.of(null, true),
+                Arguments.of("", true),
+                Arguments.of("value", false),
+                Arguments.of(SeleneUtils.emptyList(), true),
+                Arguments.of(SeleneUtils.emptySet(), true),
+                Arguments.of(SeleneUtils.emptyConcurrentList(), true),
+                Arguments.of(SeleneUtils.emptyConcurrentSet(), true),
+                Arguments.of(SeleneUtils.asList("value"), false),
+                Arguments.of(SeleneUtils.emptyMap(), true),
+                Arguments.of(SeleneUtils.emptyConcurrentMap(), true),
+                Arguments.of(SeleneUtils.ofEntries(Tuple.of(1, "two")), false),
+                Arguments.of(new EmptyType(), true),
+                Arguments.of(new RejectingType(), false)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("getEmptyValues")
+    void testIsEmpty(Object obj, boolean empty) {
+        System.out.println("Got: " + obj);
+        Assertions.assertEquals(empty, SeleneUtils.isEmpty(obj));
+    }
+
+    private static Stream<Arguments> getStringEqualityValues() {
+        return Stream.of(
+                Arguments.of("value", "value", true),
+                Arguments.of("value", "VALUE", false)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("getStringEqualityValues")
+    void testEqualsStrings(String s1, String s2, boolean equal) {
+        Assertions.assertEquals(equal, SeleneUtils.equals(s1, s2));
+    }
+
+    private static Stream<Arguments> getStringEqualityIgnoreCaseValues() {
+        return Stream.of(
+                Arguments.of("value", "value", true),
+                Arguments.of("value", "VALUE", true),
+                Arguments.of("value", "other", false)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("getStringEqualityIgnoreCaseValues")
+    void testEqualsIgnoreCaseStrings(String s1, String s2, boolean equal) {
+        Assertions.assertEquals(equal, SeleneUtils.equalsIgnoreCase(s1, s2));
+    }
+
+    private static Stream<Arguments> getStringEqualityTrimValues() {
+        return Stream.of(
+                Arguments.of("value", "value", true),
+                Arguments.of("value", " value ", true),
+                Arguments.of("value", " value", true),
+                Arguments.of("value", "value ", true),
+                Arguments.of("value", "other", false)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("getStringEqualityTrimValues")
+    void testEqualsTrimStrings(String s1, String s2, boolean equal) {
+        Assertions.assertEquals(equal, SeleneUtils.equalsWithTrim(s1, s2));
+    }
+
+    private static Stream<Arguments> getStringEqualityTrimIgnoreCaseValues() {
+        return Stream.of(
+                Arguments.of("value", "value", true),
+                Arguments.of("value", " value ", true),
+                Arguments.of("value", " value", true),
+                Arguments.of("value", "value ", true),
+                Arguments.of("value", "VALUE ", true),
+                Arguments.of("value", " VALUE", true),
+                Arguments.of("value", " VALUE ", true),
+                Arguments.of("value", "other", false)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("getStringEqualityTrimIgnoreCaseValues")
+    void testEqualsTrimIgnoreCaseStrings(String s1, String s2, boolean equal) {
+        Assertions.assertEquals(equal, SeleneUtils.equalsIgnoreCaseWithTrim(s1, s2));
+    }
+
+    private static Stream<Arguments> getNonEqualValues() {
+        return Stream.of(
+                Arguments.of("value", "value", false),
+                Arguments.of("value", "VALUE", true),
+                Arguments.of("value", 1, true),
+                Arguments.of(1.2D, 1, true)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("getNonEqualValues")
+    void testNotEqual(Object o1, Object o2, boolean expected) {
+        Assertions.assertEquals(expected, SeleneUtils.notEqual(o1, o2));
+    }
+
+    private static Stream<Arguments> getEqualValues() {
+        return Stream.of(
+                Arguments.of("value", "value", true),
+                Arguments.of(null, null, false),
+                Arguments.of(null, "value", false),
+                Arguments.of("value", "VALUE", false),
+                Arguments.of("value", 1, false),
+                Arguments.of(1.2D, 1, false)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("getEqualValues")
+    void testEqual(Object o1, Object o2, boolean expected) {
+        Assertions.assertEquals(expected, SeleneUtils.equal(o1, o2));
+    }
+
+    private static Stream<Arguments> getSameValues() {
+        return Stream.of(
+                Arguments.of("value"),
+                Arguments.of(new ArrayList<>()),
+                Arguments.of(-1),
+                Arguments.of((Object) null)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("getSameValues")
+    void testSame(Object obj) {
+        Assertions.assertTrue(SeleneUtils.same(obj, obj));
+    }
+
+    private static Stream<Arguments> getContentValues() {
+        return Stream.of(
+                Arguments.of("value", true),
+                Arguments.of("value ", true),
+                Arguments.of("", false),
+                Arguments.of("  ", false),
+                Arguments.of(null, false)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("getContentValues")
+    void testHasContent(String s, boolean content) {
+        Assertions.assertEquals(content, SeleneUtils.hasContent(s));
+    }
+
+    @Test
+    void testDoesNotThrow() {
+        Assertions.assertTrue(SeleneUtils.doesNotThrow(() -> {
+            int i = 1+1;
+        }));
+        Assertions.assertFalse(SeleneUtils.doesNotThrow(() -> {
+            throw new Exception("error");
+        }));
+    }
+
+    @Test
+    void testDoesNotThrowSpecific() {
+        Assertions.assertTrue(SeleneUtils.doesNotThrow(() -> {
+            int i = 1+1;
+        }, Exception.class));
+        Assertions.assertFalse(SeleneUtils.doesNotThrow(() -> {
+            throw new UnsupportedOperationException("error");
+        }, UnsupportedOperationException.class));
+        Assertions.assertTrue(SeleneUtils.doesNotThrow(() -> {
+            throw new IllegalArgumentException("error");
+        }, UnsupportedOperationException.class));
+    }
+
+    @Test
+    void testThrowsSpecific() {
+        Assertions.assertFalse(SeleneUtils.throwsException(() -> {
+            int i = 1+1;
+        }, Exception.class));
+        Assertions.assertTrue(SeleneUtils.throwsException(() -> {
+            throw new UnsupportedOperationException("error");
+        }, UnsupportedOperationException.class));
+        Assertions.assertFalse(SeleneUtils.throwsException(() -> {
+            throw new IllegalArgumentException("error");
+        }, UnsupportedOperationException.class));
+    }
+
+    private static final int minute = 60;
+    private static final int hour = 60*minute;
+    private static final int day = 24*hour;
+    private static final int week = 7*day;
+
+    private static Stream<Arguments> getDurations() {
+        return Stream.of(
+                Arguments.of("1s", 1),
+                Arguments.of("1m", minute),
+                Arguments.of("1h", hour),
+                Arguments.of("1d", day),
+                Arguments.of("1w", week),
+                Arguments.of("1w1d1h1m1s", week + day + hour + minute + 1),
+                Arguments.of("2w3d", (2*week) + (3*day)),
+                Arguments.of("2w3d5h", (2*week) + (3*day) + (5*hour)),
+                Arguments.of("17h21m13s", (17*hour) + (21*minute) + 13)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("getDurations")
+    void testDurationOf(String in, long expected) {
+        Exceptional<Duration> duration = SeleneUtils.durationOf(in);
+        Assertions.assertTrue(duration.present());
+        Assertions.assertEquals(expected, duration.get().getSeconds());
+    }
+
+    @Test
+    void testToTableString() {
+        List<List<String>> rows = SeleneUtils.emptyList();
+        rows.add(SeleneUtils.asList("h1", "h2", "h3"));
+        rows.add(SeleneUtils.asList("v1", "v2", "v3"));
+        String table = SeleneUtils.asTable(rows);
+
+        Assertions.assertNotNull(table);
+        Assertions.assertEquals("h1  h2  h3  \n" +
+                        "v1  v2  v3  \n",
+                table);
+    }
 }
