@@ -29,6 +29,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -463,7 +464,7 @@ public class SeleneUtilTests {
     @Test
     void testToLocalDateTimeIsCorrect() {
         Instant instant = Instant.ofEpochSecond(((20 * 365) + 5) * 24 * 60 * 60);// 20 years after 1970, correcting for 5x February 29
-        LocalDateTime expectedDate = LocalDateTime.of(1990, 1, 1, 1, 0);
+        LocalDateTime expectedDate = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
         LocalDateTime dateTime = SeleneUtils.toLocalDateTime(instant);
         Assertions.assertNotNull(dateTime);
         Assertions.assertEquals(expectedDate, dateTime);
