@@ -18,6 +18,7 @@
 package org.dockbox.selene.sponge.util.inject;
 
 import org.dockbox.selene.api.Selene;
+import org.dockbox.selene.api.config.GlobalConfig;
 import org.dockbox.selene.api.domain.FileTypes;
 import org.dockbox.selene.api.i18n.text.pagination.PaginationBuilder;
 import org.dockbox.selene.api.task.TaskRunner;
@@ -26,6 +27,7 @@ import org.dockbox.selene.commands.source.DiscordCommandSource;
 import org.dockbox.selene.commands.values.AbstractFlagCollection;
 import org.dockbox.selene.config.Configuration;
 import org.dockbox.selene.config.SimpleConfiguration;
+import org.dockbox.selene.config.TargetGlobalConfig;
 import org.dockbox.selene.di.InjectConfiguration;
 import org.dockbox.selene.di.SeleneFactory;
 import org.dockbox.selene.di.SimpleSeleneFactory;
@@ -123,5 +125,7 @@ public class SpongeEarlyInjector extends InjectConfiguration {
         // Packets
         this.bind(ChangeGameStatePacket.class, NMSChangeGameStatePacket.class);
         this.bind(SpawnEntityPacket.class, NMSSpawnEntityPacket.class);
+
+        this.bind(GlobalConfig.class, TargetGlobalConfig.class);
     }
 }

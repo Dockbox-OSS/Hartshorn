@@ -26,6 +26,7 @@ import org.dockbox.selene.di.annotations.RequiresBinding;
 import org.dockbox.selene.di.preload.Preloadable;
 import org.dockbox.selene.util.Reflect;
 import org.jetbrains.annotations.NotNull;
+import org.reflections.Reflections;
 
 import java.io.IOException;
 import java.time.ZoneId;
@@ -41,6 +42,7 @@ public abstract class SeleneBootstrap extends InjectableBootstrap {
 
     private static SeleneBootstrap instance;
     private String version;
+    private final GlobalConfig config;
 
     /**
      * Instantiates {@link Selene}, creating a local injector based on the provided {@link
@@ -51,9 +53,13 @@ public abstract class SeleneBootstrap extends InjectableBootstrap {
      *         the injector provided by the Selene implementation
      */
     protected SeleneBootstrap(InjectConfiguration early, InjectConfiguration late) {
+        Reflections.log = null; // Don't output Reflections
         this.enter(BootstrapPhase.PRE_CONSTRUCT);
         super.getInjector().bind(SeleneInformation.PACKAGE_PREFIX);
         super.getInjector().bind(early);
+        this.config = Provider.provide(GlobalConfig.class);
+        Except.useStackTraces(this.config.getStacktracesAllowed());
+        Except.with(this.config.getExceptionLevel());
 
         this.enter(BootstrapPhase.CONSTRUCT);
         super.getInjector().bind(late);
@@ -107,13 +113,7 @@ public abstract class SeleneBootstrap extends InjectableBootstrap {
      * appropriate instances where required.
      */
     protected void init() {
-        Selene.log().info("\u00A7b.------.)");
-        Selene.log().info("\u00A7b|S.--. |");
-        Selene.log().info("\u00A7b| :/\\: |");
-        Selene.log().info("\u00A7b| :\\/: |");
-        Selene.log().info("\u00A7b| '--'S|");
-        Selene.log().info("\u00A7b`------'");
-        Selene.log().info("\u00A77Initiating \u00A7bSelene " + this.getVersion());
+        Selene.log().info("Initiating Selene " + this.getVersion());
 
         // Ensure all services requiring a platform implementation have one present
         Reflect.annotatedTypes(SeleneInformation.PACKAGE_PREFIX, RequiresBinding.class).forEach(type -> {
@@ -155,13 +155,20 @@ public abstract class SeleneBootstrap extends InjectableBootstrap {
      */
     public abstract String getPlatformVersion();
 
+    public GlobalConfig getConfig() {
+        return this.config;
+    }
+
     protected void enter(BootstrapPhase phase) {
         Selene.log().info("Selene changed phase to " + phase);
         // Register pre-loadable types early on, these typically modify initialisation logic
         Reflect.subTypes(SeleneInformation.PACKAGE_PREFIX, Preloadable.class)
                 .stream()
                 .filter(t -> t.isAnnotationPresent(Phase.class) && t.getAnnotation(Phase.class).value().equals(phase))
-                .forEach(t -> Provider.provide(t).preload());
+                .forEach(t -> {
+                    Selene.log().info("Preloading " + t.getSimpleName());
+                    Provider.provide(t).preload();
+                });
     }
 
 }
