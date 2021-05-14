@@ -22,7 +22,6 @@ import org.dockbox.selene.api.Phase;
 import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.SeleneInformation;
 import org.dockbox.selene.api.domain.Exceptional;
-import org.dockbox.selene.api.exceptions.Except;
 import org.dockbox.selene.config.annotations.Source;
 import org.dockbox.selene.config.annotations.Value;
 import org.dockbox.selene.di.InjectionPoint;
@@ -74,7 +73,7 @@ public class ConfigurationPreload implements Preloadable {
 
                     Reflect.set(field, instance, fieldValue);
                 } catch (FieldAccessException | TypeConversionException | NotPrimitiveException e) {
-                    Except.handle(e);
+                    Selene.log().warn("Could not prepare value field " + field.getName() + " in " + instance.getClass().getSimpleName());
                 }
             }
 

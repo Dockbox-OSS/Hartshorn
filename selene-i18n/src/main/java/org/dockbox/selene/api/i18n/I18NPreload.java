@@ -49,7 +49,9 @@ public class I18NPreload implements Preloadable {
 
             Selene.getServer().getInjector().bind((Class<Object>) annotatedType, this.createResourceProxy(annotatedType));
         }
-        Reflect.registerModulePostInit(Provider.provide(ResourceService.class)::init);
+        if (!Reflect.registerModulePostInit(Provider.provide(ResourceService.class)::init)) {
+            Selene.log().error("Could not register post-init action");
+        }
     }
 
     @SuppressWarnings("unchecked")

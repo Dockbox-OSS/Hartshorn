@@ -1148,6 +1148,12 @@ public final class SeleneUtils {
         return result.toString();
     }
 
+    public static String wrap(String fullName, int max) {
+        int start = fullName.length() - max;
+        if (start < 0) return fullName + repeat(" ", -start);
+        else return fullName.substring(start);
+    }
+
     public enum Provision {
         /** Uses the field name to process field information. */
         FIELD,

@@ -157,7 +157,7 @@ public class SimpleModuleManager implements ModuleManager {
                 // are not encapsulated, so it is possible to reuse this to look up classes in the future.
                 Object pkg = this.getClass().getClassLoader().getResource(formattedDependency);
                 if (null == pkg) {
-                    Selene.log().warn("Dependent package '" + dependency + " (" + formattedDependency + ")' is not present, failing " + header.name());
+                    Selene.log().warn("Dependent package '" + dependency + " (" + formattedDependency + ")' is not present, failing module '" + header.name() + '\'');
                     // Do not instantiate entries which require dependencies which are not present.
                     container.status(entry, ModuleStatus.FAILED);
                     return false;

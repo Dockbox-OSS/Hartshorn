@@ -19,6 +19,7 @@ package org.dockbox.selene.api.events;
 
 import org.dockbox.selene.api.BootstrapPhase;
 import org.dockbox.selene.api.Phase;
+import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.di.preload.Preloadable;
 import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.util.Reflect;
@@ -28,6 +29,8 @@ class EventPreload implements Preloadable {
     @Override
     public void preload() {
         EventBus bus = Provider.provide(EventBus.class);
-        Reflect.registerModuleInitBus(bus::subscribe);
+        if (!Reflect.registerModuleInitBus(bus::subscribe)) {
+            Selene.log().error("Could not apply module subscriptions");
+        }
     }
 }

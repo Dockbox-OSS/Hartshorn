@@ -18,6 +18,7 @@
 package org.dockbox.selene.api;
 
 import org.dockbox.selene.api.domain.Exceptional;
+import org.dockbox.selene.util.SeleneUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,9 +28,12 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Map;
 
 /** The global {@link Selene} instance used to grant access to various components. */
 public final class Selene {
+
+    private static final Map<String, Logger> LOGGERS = SeleneUtils.emptyConcurrentMap();
 
     private Selene() {}
 
@@ -49,8 +53,21 @@ public final class Selene {
      */
     public static Logger log() {
         StackTraceElement element = Thread.currentThread().getStackTrace()[2];
-        String[] qualifiedClassName = element.getClassName().split("\\.");
-        return LoggerFactory.getLogger(SeleneInformation.PROJECT_NAME + '/' + qualifiedClassName[qualifiedClassName.length - 1]);
+        String className = element.getClassName();
+        if (LOGGERS.containsKey(className)) return LOGGERS.get(className);
+
+        String[] qualifiedClassName = className.split("\\.");
+        StringBuilder fullName = new StringBuilder();
+        for (int i = 0; i < qualifiedClassName.length; i++) {
+            String part = qualifiedClassName[i];
+            if (i > 0) fullName.append('.');
+            if (i == qualifiedClassName.length-1) fullName.append(part);
+            else fullName.append(part.charAt(0));
+        }
+        String name = SeleneUtils.wrap(fullName.toString(), 35);
+        Logger logger = LoggerFactory.getLogger(name);
+        LOGGERS.put(className, logger);
+        return logger;
     }
 
     /**

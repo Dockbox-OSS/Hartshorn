@@ -741,11 +741,14 @@ public final class Reflect {
         return lookup(serverClassName);
     }
 
-    public static void registerModuleInitBus(Consumer<Object> consumer) {
+    public static boolean registerModuleInitBus(Consumer<Object> consumer) {
         Class<?> moduleBootstrap = Reflect.lookup("org.dockbox.selene.api.module.SeleneModuleBootstrap");
         if (moduleBootstrap != null) {
-            Reflect.runMethod(moduleBootstrap, null, "getInstance", moduleBootstrap)
-                    .present(bootstrap -> Reflect.runMethod(moduleBootstrap, bootstrap, "registerInitBus", null, new Class[]{ Consumer.class }, consumer));
+            return !Reflect.runMethod(moduleBootstrap, null, "getInstance", moduleBootstrap)
+                    .map(bootstrap -> Reflect.runMethod(moduleBootstrap, bootstrap, "registerInitBus", null, new Class[]{ Consumer.class }, consumer).rethrow().get())
+                    .caught();
+        } else {
+            return false;
         }
     }
 
@@ -769,12 +772,15 @@ public final class Reflect {
         }
     }
 
-    public static void registerModulePostInit(Runnable runnable) {
+    public static boolean registerModulePostInit(Runnable runnable) {
         Class<?> moduleBootstrap = Reflect.lookup("org.dockbox.selene.api.module.SeleneModuleBootstrap");
         if (moduleBootstrap != null) {
-            Reflect.runMethod(moduleBootstrap, null, "getInstance", moduleBootstrap).present(bootstrap -> {
-                Reflect.runMethod(moduleBootstrap, bootstrap, "registerPostInit", null, new Class[]{ Runnable.class }, runnable);
-            });
+            return !Reflect.runMethod(moduleBootstrap, null, "getInstance", moduleBootstrap)
+                    .map(bootstrap -> Reflect.runMethod(moduleBootstrap, bootstrap, "registerPostInit", null, new Class[]{ Runnable.class }, runnable).rethrow().get())
+                    .caught();
+        }
+        else {
+            return false;
         }
     }
 

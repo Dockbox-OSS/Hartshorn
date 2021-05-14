@@ -19,6 +19,7 @@ package org.dockbox.selene.commands;
 
 import org.dockbox.selene.api.BootstrapPhase;
 import org.dockbox.selene.api.Phase;
+import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.SeleneInformation;
 import org.dockbox.selene.commands.annotations.ArgumentProvider;
 import org.dockbox.selene.di.preload.Preloadable;
@@ -31,8 +32,12 @@ class ArgumentProvisionScanner implements Preloadable {
     @Override
     public void preload() {
         CommandBus bus = Provider.provide(CommandBus.class);
-        Reflect.registerModuleInitBus(bus::register);
-        Reflect.registerModulePostInit(bus::apply);
+        if (!Reflect.registerModuleInitBus(bus::register)) {
+            Selene.log().error("Could not apply module registrations");
+        }
+        if (!Reflect.registerModulePostInit(bus::apply)) {
+            Selene.log().error("Could not register post-init action");
+        }
 
         // Register additional argument types early on, before modules are constructed
         Reflect.annotatedTypes(SeleneInformation.PACKAGE_PREFIX, ArgumentProvider.class)
