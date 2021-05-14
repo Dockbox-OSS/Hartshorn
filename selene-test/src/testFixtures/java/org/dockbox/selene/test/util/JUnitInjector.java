@@ -18,11 +18,13 @@
 package org.dockbox.selene.test.util;
 
 import org.dockbox.selene.api.Selene;
+import org.dockbox.selene.api.config.GlobalConfig;
 import org.dockbox.selene.api.domain.FileTypes;
 import org.dockbox.selene.api.task.TaskRunner;
 import org.dockbox.selene.api.task.ThreadUtils;
 import org.dockbox.selene.commands.source.DiscordCommandSource;
 import org.dockbox.selene.config.Configuration;
+import org.dockbox.selene.config.TargetGlobalConfig;
 import org.dockbox.selene.di.InjectConfiguration;
 import org.dockbox.selene.di.SeleneFactory;
 import org.dockbox.selene.di.SimpleSeleneFactory;
@@ -86,5 +88,7 @@ public class JUnitInjector extends InjectConfiguration {
 
         // Console is a constant singleton, to avoid recreation
         this.bind(Console.class, new JUnitConsole());
+
+        this.bind(GlobalConfig.class, JUnitGlobalConfig.class);
     }
 }
