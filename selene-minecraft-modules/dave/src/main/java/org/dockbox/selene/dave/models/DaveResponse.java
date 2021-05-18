@@ -19,24 +19,17 @@ package org.dockbox.selene.dave.models;
 
 import org.dockbox.selene.api.entity.annotations.Metadata;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 @Metadata(alias = "dave-response")
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor
 public class DaveResponse {
 
     private String message;
     private ResponseType type;
 
-    public DaveResponse() {}
-
-    public DaveResponse(String message, ResponseType type) {
-        this.message = message;
-        this.type = type;
-    }
-
-    public String getMessage() {
-        return this.message;
-    }
-
-    public ResponseType getType() {
-        return this.type;
-    }
 }

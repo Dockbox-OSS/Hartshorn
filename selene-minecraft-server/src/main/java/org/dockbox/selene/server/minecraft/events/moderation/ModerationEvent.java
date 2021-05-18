@@ -21,16 +21,15 @@ import org.dockbox.selene.api.events.AbstractTargetEvent;
 import org.dockbox.selene.commands.source.CommandSource;
 import org.dockbox.selene.server.minecraft.players.Player;
 
+import lombok.Getter;
+
 public abstract class ModerationEvent extends AbstractTargetEvent {
 
+    @Getter
     private final CommandSource source;
 
     protected ModerationEvent(Player player, CommandSource source) {
         super(player);
         this.source = source;
-    }
-
-    public CommandSource getSource() {
-        return this.source;
     }
 }

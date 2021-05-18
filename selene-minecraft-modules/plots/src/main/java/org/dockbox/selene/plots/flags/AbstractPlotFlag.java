@@ -21,25 +21,16 @@ import org.dockbox.selene.api.i18n.common.ResourceEntry;
 
 import java.util.Objects;
 
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class AbstractPlotFlag<T> implements PlotFlag<T> {
 
     private final String id;
     private final ResourceEntry description;
-
-    protected AbstractPlotFlag(String id, ResourceEntry description) {
-        this.id = id;
-        this.description = description;
-    }
-
-    @Override
-    public String getId() {
-        return this.id;
-    }
-
-    @Override
-    public ResourceEntry getDescription() {
-        return this.description;
-    }
 
     @Override
     public boolean equals(Object o) {

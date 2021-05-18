@@ -21,8 +21,11 @@ import org.dockbox.selene.api.domain.tuple.Vector3N;
 import org.dockbox.selene.server.minecraft.dimension.world.World;
 import org.dockbox.selene.util.SeleneUtils;
 
+import lombok.Getter;
+
 public class CuboidRegion implements Region {
 
+    @Getter
     private final World world;
     private final Vector3N from;
     private final Vector3N to;
@@ -66,10 +69,5 @@ public class CuboidRegion implements Region {
     @Override
     public int getLength() {
         return this.getMaximumPoint().getZi() - this.getMinimumPoint().getZi();
-    }
-
-    @Override
-    public World getWorld() {
-        return this.world;
     }
 }

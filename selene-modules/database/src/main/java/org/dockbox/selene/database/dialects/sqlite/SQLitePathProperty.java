@@ -21,21 +21,18 @@ import org.dockbox.selene.di.properties.InjectorProperty;
 
 import java.nio.file.Path;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@AllArgsConstructor
 public class SQLitePathProperty implements InjectorProperty<Path> {
 
-    private final Path path;
-
-    public SQLitePathProperty(Path path) {
-        this.path = path;
-    }
+    @Getter
+    private final Path object;
 
     @Override
     public String getKey() {
         return SQLiteMan.PATH_KEY;
     }
 
-    @Override
-    public Path getObject() {
-        return this.path;
-    }
 }

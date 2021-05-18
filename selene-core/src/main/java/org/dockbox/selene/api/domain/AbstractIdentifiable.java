@@ -19,24 +19,15 @@ package org.dockbox.selene.api.domain;
 
 import java.util.UUID;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@AllArgsConstructor
+@Getter
 @SuppressWarnings("AbstractClassWithoutAbstractMethods") // Type is used to extract side-effects of identifiable types
 public abstract class AbstractIdentifiable implements Identifiable, Target {
 
     protected UUID uniqueId;
     protected String name;
 
-    protected AbstractIdentifiable(UUID uniqueId, String name) {
-        this.uniqueId = uniqueId;
-        this.name = name;
-    }
-
-    @Override
-    public UUID getUniqueId() {
-        return this.uniqueId;
-    }
-
-    @Override
-    public String getName() {
-        return this.name;
-    }
 }

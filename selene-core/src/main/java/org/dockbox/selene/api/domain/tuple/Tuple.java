@@ -18,44 +18,22 @@
 package org.dockbox.selene.api.domain.tuple;
 
 import java.util.Map.Entry;
-import java.util.Objects;
 
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter @Setter
+@AllArgsConstructor
+@EqualsAndHashCode
 public class Tuple<K, V> implements Entry<K, V> {
 
     private final K key;
     private final V value;
 
-    public Tuple(K key, V value) {
-        this.key = key;
-        this.value = value;
-    }
-
     public static <K, V> Tuple<K, V> of(K key, V value) {
         return new Tuple<>(key, value);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(this.getKey(), this.getValue());
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Tuple)) return false;
-        Tuple<?, ?> tuple = (Tuple<?, ?>) o;
-        return this.getKey().equals(tuple.getKey())
-                && Objects.equals(this.getValue(), tuple.getValue());
-    }
-
-    @Override
-    public K getKey() {
-        return this.key;
-    }
-
-    @Override
-    public V getValue() {
-        return this.value;
     }
 
     @Override

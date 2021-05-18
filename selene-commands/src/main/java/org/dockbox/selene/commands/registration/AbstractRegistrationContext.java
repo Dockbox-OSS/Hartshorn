@@ -31,6 +31,9 @@ import org.dockbox.selene.util.SeleneUtils;
 import java.util.List;
 import java.util.UUID;
 
+import lombok.Getter;
+
+@Getter
 public abstract class AbstractRegistrationContext {
 
     private final List<String> aliases = SeleneUtils.emptyConcurrentList();
@@ -53,21 +56,9 @@ public abstract class AbstractRegistrationContext {
         return uuid + "$" + alias;
     }
 
-    public Command getCommand() {
-        return this.command;
-    }
-
     public abstract Exceptional<ResourceEntry> call(CommandSource source, CommandContext context);
 
     public String getPrimaryAlias() {
         return this.getAliases().get(0);
-    }
-
-    public List<String> getAliases() {
-        return this.aliases;
-    }
-
-    public TypedOwner getOwner() {
-        return this.owner;
     }
 }

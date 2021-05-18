@@ -17,6 +17,9 @@
 
 package org.dockbox.selene.api.domain.tuple;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
 /**
  * Represents a triad of values
  *
@@ -30,29 +33,13 @@ package org.dockbox.selene.api.domain.tuple;
  * @param <C>
  *         type of the third value.
  */
+@Getter
+@AllArgsConstructor
 public class Triad<A, B, C> {
 
     private final A first;
     private final B second;
     private final C third;
-
-    public Triad(A first, B second, C third) {
-        this.first = first;
-        this.second = second;
-        this.third = third;
-    }
-
-    public A getFirst() {
-        return this.first;
-    }
-
-    public B getSecond() {
-        return this.second;
-    }
-
-    public C getThird() {
-        return this.third;
-    }
 
     @Override
     public String toString() {

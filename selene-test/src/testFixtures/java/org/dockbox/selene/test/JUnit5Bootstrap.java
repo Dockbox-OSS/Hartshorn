@@ -32,8 +32,11 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 
+import lombok.Getter;
+
 public class JUnit5Bootstrap extends MinecraftServerBootstrap {
 
+    @Getter
     private final JUnitInformation information;
 
     /**
@@ -54,7 +57,7 @@ public class JUnit5Bootstrap extends MinecraftServerBootstrap {
     }
 
     public static JUnit5Bootstrap getInstance() {
-        return (JUnit5Bootstrap) SeleneBootstrap.getInstance();
+        return (JUnit5Bootstrap) SeleneBootstrap.instance();
     }
 
     @Override
@@ -83,9 +86,5 @@ public class JUnit5Bootstrap extends MinecraftServerBootstrap {
     @Override
     protected void handleMissingBinding(Class<?> type) {
         Selene.log().warn("Ignoring missing binding for " + type.getSimpleName());
-    }
-
-    public JUnitInformation getInformation() {
-        return this.information;
     }
 }

@@ -17,17 +17,14 @@
 
 package org.dockbox.selene.domain.table.behavior;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
 public enum Order {
     ASC(1),
     DESC(-1);
 
     private final int order;
-
-    Order(int order) {
-        this.order = order;
-    }
-
-    public int getOrder() {
-        return this.order;
-    }
 }

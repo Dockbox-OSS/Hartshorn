@@ -20,22 +20,15 @@ package org.dockbox.selene.discord.events;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
 @SuppressWarnings("AbstractClassWithoutAbstractMethods")
+@Getter
+@AllArgsConstructor
 public abstract class DiscordGuildUserEvent extends DiscordEvent {
 
     private final User user;
     private final Guild guild;
 
-    protected DiscordGuildUserEvent(User user, Guild guild) {
-        this.user = user;
-        this.guild = guild;
-    }
-
-    public User getUser() {
-        return this.user;
-    }
-
-    public Guild getGuild() {
-        return this.guild;
-    }
 }

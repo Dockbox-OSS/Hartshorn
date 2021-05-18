@@ -71,7 +71,7 @@ public final class DaveUtils {
 
     public static Exceptional<DaveTrigger> findMatching(DaveTriggers triggers, String message) {
         for (DaveTrigger trigger : triggers.getTriggers()) {
-            for (String rawTrigger : trigger.getRawTriggers()) {
+            for (String rawTrigger : trigger.getTriggers()) {
                 boolean containsAll = true;
 
                 for (String keyword : rawTrigger.split(","))

@@ -21,19 +21,16 @@ import org.dockbox.selene.di.annotations.RequiresBinding;
 import org.dockbox.selene.server.minecraft.entities.Entity;
 import org.dockbox.selene.server.minecraft.packets.Packet;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
+@EqualsAndHashCode(callSuper = true)
 @SuppressWarnings("AbstractClassWithoutAbstractMethods")
 @RequiresBinding
+@Data
 public abstract class SpawnEntityPacket extends Packet {
 
     private Entity entity;
-
-    public Entity getEntity() {
-        return this.entity;
-    }
-
-    public void setEntity(Entity entity) {
-        this.entity = entity;
-    }
 
     @Override
     protected Class<?> internalGetPacketType() throws ClassNotFoundException {

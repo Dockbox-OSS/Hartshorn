@@ -23,7 +23,7 @@ import org.dockbox.selene.di.types.SampleInterface;
 @Binds(SampleInterface.class)
 public class SampleAnnotatedImplementation implements SampleInterface {
     @Override
-    public String name() {
+    public String getName() {
         return "AnnotatedSelene";
     }
 }

@@ -19,7 +19,7 @@ package org.dockbox.selene.di.types;
 
 public class SampleImplementation implements SampleInterface {
     @Override
-    public String name() {
+    public String getName() {
         return "Selene";
     }
 }

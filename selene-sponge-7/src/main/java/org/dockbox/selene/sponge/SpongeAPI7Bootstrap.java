@@ -126,8 +126,8 @@ public class SpongeAPI7Bootstrap extends MinecraftServerBootstrap {
         System.exit(8);
     }
 
-    public static PluginContainer getContainer() {
-        return ((SpongeAPI7Bootstrap) getInstance()).container;
+    public static PluginContainer container() {
+        return ((SpongeAPI7Bootstrap) instance()).container;
     }
 
     @SuppressWarnings({ "AnonymousInnerClassMayBeStatic", "UnstableApiUsage" })

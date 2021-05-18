@@ -21,22 +21,21 @@ import org.dockbox.selene.persistence.PersistentCapable;
 
 import java.util.Locale;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
 public enum Language implements PersistentCapable<PersistentLanguageModel> {
     EN_US(Locale.ENGLISH, "en_US", "English", "US"),
     NL_NL(new Locale("nl"), "nl_NL", "Dutch", "Nederlands"),
     FR_FR(Locale.FRENCH, "fr_FR", "French", "Français"),
     DE_DE(Locale.GERMANY, "de_DE", "German", "Deutsch");
+
+    private final Locale locale;
     private final String code;
     private final String nameEnglish;
     private final String nameLocalized;
-    private final Locale locale;
-
-    Language(Locale locale, String code, String nameEnglish, String nameLocalized) {
-        this.locale = locale;
-        this.code = code;
-        this.nameEnglish = nameEnglish;
-        this.nameLocalized = nameLocalized;
-    }
 
     public static Language of(String language) {
         for (Language value : Language.values()) {
@@ -47,22 +46,6 @@ public enum Language implements PersistentCapable<PersistentLanguageModel> {
             }
         }
         return Language.EN_US;
-    }
-
-    public String getCode() {
-        return this.code;
-    }
-
-    public String getNameEnglish() {
-        return this.nameEnglish;
-    }
-
-    public String getNameLocalized() {
-        return this.nameLocalized;
-    }
-
-    public Locale getLocale() {
-        return this.locale;
     }
 
     @Override

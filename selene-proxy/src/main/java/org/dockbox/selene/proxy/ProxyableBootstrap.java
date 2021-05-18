@@ -125,7 +125,7 @@ public final class ProxyableBootstrap {
                 //noinspection ReturnOfNull
                 return null;
             });
-            property.setTarget(target.at());
+            property.setPhase(target.at());
             property.setPriority(target.priority());
             property.setOverwriteResult(target.overwrite());
             InjectionPoint<C> point = InjectionPoint.of(proxyTargetClass, instance -> {

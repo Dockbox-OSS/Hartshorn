@@ -103,6 +103,10 @@ allprojects {
             // Compile/source dependencies
             compileOnly("org.jetbrains:annotations:$jetbrainsAnnotationsVersion")
 
+            // Lombok
+            compileOnly 'org.projectlombok:lombok:1.18.20'
+            annotationProcessor 'org.projectlombok:lombok:1.18.20'
+
             // Testing requirements
             testCompile "org.junit.jupiter:junit-jupiter-api:$junitVersion"
             testCompile "org.junit.jupiter:junit-jupiter-params:$junitVersion"
@@ -117,6 +121,9 @@ allprojects {
             testImplementation "com.google.guava:guava:$guavaVersion"
             testImplementation "org.slf4j:slf4j-api:$slf4jVersion"
             testImplementation "org.slf4j:slf4j-simple:$slf4jVersion"
+
+            testCompileOnly 'org.projectlombok:lombok:1.18.20'
+            testAnnotationProcessor 'org.projectlombok:lombok:1.18.20'
         }
 
         test {

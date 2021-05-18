@@ -20,17 +20,18 @@ package org.dockbox.selene.di.properties;
 import org.dockbox.selene.di.binding.Bindings;
 import org.dockbox.selene.di.annotations.BindingMeta;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@AllArgsConstructor
 public class BindingMetaProperty implements InjectorProperty<BindingMeta> {
 
     public static final String KEY = "SeleneInternalBindingMetaProperty";
-    private final BindingMeta value;
+    @Getter
+    private final BindingMeta object;
 
     public BindingMetaProperty(String value) {
-        this.value = Bindings.meta(value);
-    }
-
-    public BindingMetaProperty(BindingMeta value) {
-        this.value = value;
+        this.object = Bindings.meta(value);
     }
 
     public static BindingMetaProperty of(BindingMeta meta) {
@@ -40,10 +41,5 @@ public class BindingMetaProperty implements InjectorProperty<BindingMeta> {
     @Override
     public String getKey() {
         return KEY;
-    }
-
-    @Override
-    public BindingMeta getObject() {
-        return this.value;
     }
 }

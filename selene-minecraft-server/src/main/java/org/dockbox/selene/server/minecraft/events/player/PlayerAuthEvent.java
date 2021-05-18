@@ -21,7 +21,10 @@ import org.dockbox.selene.api.domain.Target;
 
 import java.net.InetSocketAddress;
 
+import lombok.Getter;
+
 /** The event fired when a remote location is attempting to authenticate to the server. */
+@Getter
 public class PlayerAuthEvent extends PlayerConnectionEvent {
     private final InetSocketAddress address;
     private final InetSocketAddress host;
@@ -30,14 +33,6 @@ public class PlayerAuthEvent extends PlayerConnectionEvent {
         super(null);
         this.address = address;
         this.host = host;
-    }
-
-    public InetSocketAddress getAddress() {
-        return this.address;
-    }
-
-    public InetSocketAddress getHost() {
-        return this.host;
     }
 
     @Override

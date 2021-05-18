@@ -20,43 +20,16 @@ package org.dockbox.selene.server.minecraft.dimension;
 import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.server.minecraft.dimension.position.Location;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@AllArgsConstructor
+@Getter
 public class SimpleWarp implements Warp {
 
     private final Exceptional<String> description;
     private final Exceptional<String> category;
     private final Location location;
     private final String name;
-
-    public SimpleWarp(
-            Exceptional<String> description,
-            Exceptional<String> category,
-            Location location,
-            String name
-    ) {
-        this.description = description;
-        this.category = category;
-        this.location = location;
-        this.name = name;
-    }
-
-    @Override
-    public Exceptional<String> getDescription() {
-        return this.description;
-    }
-
-    @Override
-    public Exceptional<String> getCategory() {
-        return this.category;
-    }
-
-    @Override
-    public Location getLocation() {
-        return this.location;
-    }
-
-    @Override
-    public String getName() {
-        return this.name;
-    }
 
 }

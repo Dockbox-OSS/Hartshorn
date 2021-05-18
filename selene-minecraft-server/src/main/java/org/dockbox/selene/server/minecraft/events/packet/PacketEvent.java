@@ -24,6 +24,8 @@ import org.dockbox.selene.server.minecraft.packets.Packet;
 import org.dockbox.selene.server.minecraft.players.Player;
 import org.jetbrains.annotations.NotNull;
 
+import lombok.Getter;
+
 /**
  * The event fired when the server <b>sends</b> a packet to a player.
  *
@@ -31,8 +33,11 @@ import org.jetbrains.annotations.NotNull;
  */
 public class PacketEvent<T extends Packet> extends AbstractCancellableEvent {
 
+    @Getter
     private final Player target;
+    @Getter
     private T packet;
+    @Getter
     private boolean isModified;
 
     public PacketEvent(T packet, Player target) {
@@ -40,21 +45,9 @@ public class PacketEvent<T extends Packet> extends AbstractCancellableEvent {
         this.target = target;
     }
 
-    public T getPacket() {
-        return this.packet;
-    }
-
     public void setPacket(T packet) {
         this.isModified = true;
         this.packet = packet;
-    }
-
-    public Player getTarget() {
-        return this.target;
-    }
-
-    public boolean isModified() {
-        return this.isModified;
     }
 
     @Override

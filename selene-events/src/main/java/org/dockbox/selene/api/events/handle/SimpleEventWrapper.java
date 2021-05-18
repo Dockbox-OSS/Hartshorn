@@ -44,6 +44,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.BiConsumer;
 
+import lombok.Getter;
+
 /**
  * Wrapper type for future invokation of a {@link Method} listening for {@link Event} posting. This
  * type is responsible for filtering and invoking a {@link Method} when a supported {@link Event} is
@@ -65,9 +67,13 @@ public final class SimpleEventWrapper implements Comparable<SimpleEventWrapper>,
         // aren't equal
     };
 
+    @Getter
     private final Object listener;
+    @Getter
     private final Class<? extends Event> eventType;
+    @Getter
     private final Method method;
+    @Getter
     private final int priority;
     private final BiConsumer<Object, ? super Event> operator;
 
@@ -215,25 +221,6 @@ public final class SimpleEventWrapper implements Comparable<SimpleEventWrapper>,
         return false;
     }
 
-    @Override
-    public Object getListener() {
-        return this.listener;
-    }
-
-    @Override
-    public Class<? extends Event> getEventType() {
-        return this.eventType;
-    }
-
-    @Override
-    public Method getMethod() {
-        return this.method;
-    }
-
-    @Override
-    public int getPriority() {
-        return this.priority;
-    }
     @Override
     public int compareTo(@NotNull SimpleEventWrapper o) {
         return COMPARATOR.compare(this, o);

@@ -46,7 +46,7 @@ public class SpongeStaticPaneBuilder extends StaticPaneBuilder {
 
     @Override
     public StaticPane build() {
-        View view = this.builder.build(SpongeAPI7Bootstrap.getContainer());
+        View view = this.builder.build(SpongeAPI7Bootstrap.container());
         view.define(this.layout.getLayout());
         return new SpongeStaticPane(view);
     }
@@ -55,7 +55,7 @@ public class SpongeStaticPaneBuilder extends StaticPaneBuilder {
     public void stateEnabling(InjectorProperty<?>... properties) {
         Bindings.value(InventoryTypeProperty.KEY, InventoryLayout.class, properties)
                 .present(layout -> {
-                    this.builder = View.builder(SpongeConversionUtil.toSponge(layout.getIventoryType()));
+                    this.builder = View.builder(SpongeConversionUtil.toSponge(layout.getInventoryType()));
                     this.layout(layout);
                 })
                 .absent(() -> {

@@ -26,10 +26,16 @@ import org.dockbox.selene.server.minecraft.item.Item;
 
 import java.util.UUID;
 
+import lombok.Getter;
+import lombok.Setter;
+
 public class JUnitItemFrame extends JUnitEntity<ItemFrame> implements ItemFrame, org.dockbox.selene.test.objects.JUnitPersistentDataHolder {
 
-    private Item displayItem;
+    @Setter
+    private Item displayedItem;
+    @Getter @Setter
     private Rotation rotation = Rotation.TOP;
+    @Getter @Setter
     private BlockFace blockFace = BlockFace.NORTH;
 
     public JUnitItemFrame(UUID uuid) {
@@ -49,31 +55,6 @@ public class JUnitItemFrame extends JUnitEntity<ItemFrame> implements ItemFrame,
 
     @Override
     public Exceptional<Item> getDisplayedItem() {
-        return Exceptional.of(this.displayItem);
-    }
-
-    @Override
-    public void setDisplayedItem(Item stack) {
-        this.displayItem = stack;
-    }
-
-    @Override
-    public Rotation getRotation() {
-        return this.rotation;
-    }
-
-    @Override
-    public void setRotation(Rotation rotation) {
-        this.rotation = rotation;
-    }
-
-    @Override
-    public BlockFace getBlockFace() {
-        return this.blockFace;
-    }
-
-    @Override
-    public void setBlockFace(BlockFace blockFace) {
-        this.blockFace = blockFace;
+        return Exceptional.of(this.displayedItem);
     }
 }

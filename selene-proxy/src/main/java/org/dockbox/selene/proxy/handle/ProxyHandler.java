@@ -32,11 +32,15 @@ import java.util.List;
 
 import javassist.util.proxy.MethodHandler;
 import javassist.util.proxy.ProxyFactory;
+import lombok.AccessLevel;
+import lombok.Getter;
 
 public class ProxyHandler<T> implements MethodHandler {
 
     private final Multimap<Method, ProxyProperty<T, ?>> handlers = ArrayListMultimap.create();
     private final T instance;
+
+    @Getter(AccessLevel.PROTECTED)
     private final Class<T> type;
 
     public ProxyHandler(T instance) {
@@ -56,7 +60,7 @@ public class ProxyHandler<T> implements MethodHandler {
     }
 
     public void delegate(ProxyProperty<T, ?> property) {
-        this.handlers.put(property.getTargetMethod(), property);
+        this.handlers.put(property.getTarget(), property);
     }
 
     @Override
@@ -95,7 +99,7 @@ public class ProxyHandler<T> implements MethodHandler {
         // Used to ensure the target is performed if there is no OVERWRITE phase hook
         boolean target = true;
         for (ProxyProperty<T, ?> property : properties) {
-            if (at == property.getTarget()) {
+            if (at == property.getPhase()) {
                 Object result = property.delegate(this.instance, args);
                 if (property.overwriteResult() && !Void.TYPE.equals(thisMethod.getReturnType())) {
                     // A proxy returning null typically indicates the use of a non-returning function, for
@@ -128,9 +132,5 @@ public class ProxyHandler<T> implements MethodHandler {
         //noinspection unchecked
 
         return (T) factory.create(new Class<?>[0], new Object[0], this);
-    }
-
-    protected Class<T> type() {
-        return this.type;
     }
 }

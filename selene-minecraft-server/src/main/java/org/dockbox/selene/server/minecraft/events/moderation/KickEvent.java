@@ -21,6 +21,9 @@ import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.commands.source.CommandSource;
 import org.dockbox.selene.server.minecraft.players.Player;
 
+import lombok.Getter;
+
+@Getter
 public class KickEvent extends ModerationEvent {
 
     private final Exceptional<String> reason;
@@ -38,9 +41,5 @@ public class KickEvent extends ModerationEvent {
     public KickEvent(Player player, CommandSource source, Exceptional<String> reason) {
         super(player, source);
         this.reason = reason;
-    }
-
-    public Exceptional<String> getReason() {
-        return this.reason;
     }
 }

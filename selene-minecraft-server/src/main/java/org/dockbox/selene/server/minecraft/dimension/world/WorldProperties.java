@@ -22,7 +22,15 @@ import org.dockbox.selene.server.minecraft.players.Gamemode;
 
 import java.util.Map;
 
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+
 /** Represents the properties or metadata of a world. */
+@Getter
+@Setter
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class WorldProperties {
 
     private boolean loadOnStartup;
@@ -30,46 +38,7 @@ public abstract class WorldProperties {
     private long seed;
     private Gamemode defaultGamemode;
 
-    protected WorldProperties(boolean loadOnStartup, Vector3N spawnPosition, long seed, Gamemode defaultGamemode) {
-        this.loadOnStartup = loadOnStartup;
-        this.spawnPosition = spawnPosition;
-        this.seed = seed;
-        this.defaultGamemode = defaultGamemode;
-    }
-
     public abstract void setGamerule(String key, String value);
-
-    public boolean getLoadOnStartup() {
-        return this.loadOnStartup;
-    }
-
-    public void setLoadOnStartup(boolean loadOnStartup) {
-        this.loadOnStartup = loadOnStartup;
-    }
-
-    public Vector3N getSpawnPosition() {
-        return this.spawnPosition;
-    }
-
-    public void setSpawnPosition(Vector3N spawnPosition) {
-        this.spawnPosition = spawnPosition;
-    }
-
-    public long getSeed() {
-        return this.seed;
-    }
-
-    public void setSeed(long seed) {
-        this.seed = seed;
-    }
-
-    public Gamemode getDefaultGamemode() {
-        return this.defaultGamemode;
-    }
-
-    public void setDefaultGamemode(Gamemode defaultGamemode) {
-        this.defaultGamemode = defaultGamemode;
-    }
 
     public abstract Map<String, String> getGamerules();
 }

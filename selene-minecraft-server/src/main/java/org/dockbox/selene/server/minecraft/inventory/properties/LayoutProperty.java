@@ -20,22 +20,18 @@ package org.dockbox.selene.server.minecraft.inventory.properties;
 import org.dockbox.selene.server.minecraft.inventory.InventoryLayout;
 import org.dockbox.selene.di.properties.InjectorProperty;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@AllArgsConstructor
 public class LayoutProperty implements InjectorProperty<InventoryLayout> {
 
     public static final String KEY = "SeleneInternalInventoryTypeKey";
-    private final InventoryLayout layout;
-
-    public LayoutProperty(InventoryLayout layout) {
-        this.layout = layout;
-    }
+    @Getter
+    private final InventoryLayout object;
 
     @Override
     public String getKey() {
         return LayoutProperty.KEY;
-    }
-
-    @Override
-    public InventoryLayout getObject() {
-        return this.layout;
     }
 }

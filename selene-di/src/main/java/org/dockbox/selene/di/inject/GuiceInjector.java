@@ -273,7 +273,7 @@ public class GuiceInjector implements Injector {
     private Map.Entry<Key<?>, Class<?>> handleScanned(Class<?> binder, Class<?> binds, Binds bindAnnotation) {
         BindingMeta meta = bindAnnotation.meta();
         Key<?> key;
-        if (!"".equals(meta.value())) {
+        if (!"".equals(meta.getValue())) {
             key = Key.get(binds, meta);
         }
         else {

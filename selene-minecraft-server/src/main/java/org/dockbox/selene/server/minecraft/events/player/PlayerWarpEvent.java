@@ -20,16 +20,15 @@ package org.dockbox.selene.server.minecraft.events.player;
 import org.dockbox.selene.api.domain.Target;
 import org.dockbox.selene.server.minecraft.dimension.Warp;
 
+import lombok.Getter;
+
 /** The event fired when a player is teleported using a {@link Warp}. */
+@Getter
 public class PlayerWarpEvent extends PlayerMoveEvent {
     private final Warp warp;
 
     public PlayerWarpEvent(Target target, Warp warp) {
         super(target);
         this.warp = warp;
-    }
-
-    public Warp getWarp() {
-        return this.warp;
     }
 }

@@ -19,6 +19,11 @@ package org.dockbox.selene.server.minecraft.players;
 
 import org.dockbox.selene.server.minecraft.inventory.Slot;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@AllArgsConstructor
+@Getter
 public enum Hand {
     MAIN_HAND(Slot.MAIN_HAND),
     OFF_HAND(Slot.OFF_HAND),
@@ -26,11 +31,4 @@ public enum Hand {
 
     private final Slot slot;
 
-    Hand(Slot slot) {
-        this.slot = slot;
-    }
-
-    public Slot getSlot() {
-        return this.slot;
-    }
 }

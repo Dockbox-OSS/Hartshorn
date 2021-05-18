@@ -22,8 +22,11 @@ import org.dockbox.selene.server.minecraft.players.Player;
 
 import java.time.LocalDateTime;
 
+import lombok.Getter;
+
 public class PlayerWarnedEvent extends WarnEvent {
 
+    @Getter
     private final LocalDateTime created;
 
     /**
@@ -42,9 +45,5 @@ public class PlayerWarnedEvent extends WarnEvent {
             Player player, CommandSource source, String reason, LocalDateTime created) {
         super(player, source, reason);
         this.created = created;
-    }
-
-    public LocalDateTime getCreated() {
-        return this.created;
     }
 }

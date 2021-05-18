@@ -17,13 +17,15 @@
 
 package org.dockbox.selene.commands.values;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter @Setter
+@AllArgsConstructor
 public abstract class AbstractArgumentElement<T> {
 
     private T reference;
-
-    protected AbstractArgumentElement(T reference) {
-        this.reference = reference;
-    }
 
     @SafeVarargs
     protected AbstractArgumentElement(AbstractArgumentElement<T>... elements) {
@@ -33,14 +35,6 @@ public abstract class AbstractArgumentElement<T> {
     protected abstract void ofElements(AbstractArgumentElement<T>[] elements);
 
     protected AbstractArgumentElement() {}
-
-    public T getReference() {
-        return this.reference;
-    }
-
-    public void setReference(T reference) {
-        this.reference = reference;
-    }
 
     public abstract AbstractArgumentElement<T> asOptional();
 }

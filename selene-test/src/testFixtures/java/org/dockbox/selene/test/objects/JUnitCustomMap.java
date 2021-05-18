@@ -21,18 +21,16 @@ import org.dockbox.selene.api.domain.Identifiable;
 import org.dockbox.selene.server.minecraft.item.maps.CustomMap;
 import org.dockbox.selene.server.minecraft.item.storage.MinecraftItems;
 
+import lombok.Getter;
+
 public class JUnitCustomMap extends JUnitItem implements CustomMap {
 
+    @Getter
     private final Identifiable owner;
 
     public JUnitCustomMap(Identifiable owner, int id) {
         super(MinecraftItems.getInstance().getFilledMap().getId(), id);
         this.owner = owner;
-    }
-
-    @Override
-    public Identifiable getOwner() {
-        return this.owner;
     }
 
     @Override

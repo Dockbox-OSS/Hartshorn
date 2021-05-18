@@ -17,25 +17,15 @@
 
 package org.dockbox.selene.di.properties;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
 public class SimpleProperty<T> implements InjectorProperty<T> {
 
     private final T object;
     private final String key;
-
-    public SimpleProperty(T object, String key) {
-        this.object = object;
-        this.key = key;
-    }
-
-    @Override
-    public String getKey() {
-        return this.key;
-    }
-
-    @Override
-    public T getObject() {
-        return this.object;
-    }
 
     @SuppressWarnings("unchecked")
     public Class<T> getType() {

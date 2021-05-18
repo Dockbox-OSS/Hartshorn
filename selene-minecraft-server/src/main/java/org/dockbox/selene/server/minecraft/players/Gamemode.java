@@ -17,6 +17,11 @@
 
 package org.dockbox.selene.server.minecraft.players;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
 public enum Gamemode {
     SURVIVAL(0),
     CREATIVE(1),
@@ -26,11 +31,4 @@ public enum Gamemode {
 
     private final int value;
 
-    Gamemode(int value) {
-        this.value = value;
-    }
-
-    public int intValue() {
-        return this.value;
-    }
 }

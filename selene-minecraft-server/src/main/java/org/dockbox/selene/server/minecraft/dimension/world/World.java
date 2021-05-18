@@ -38,6 +38,9 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Predicate;
 
+import lombok.Getter;
+
+@Getter
 public abstract class World extends WorldProperties implements BlockDimension, EntityHolding, ChunkHolder {
 
     protected UUID worldUniqueId;
@@ -79,19 +82,6 @@ public abstract class World extends WorldProperties implements BlockDimension, E
         if (!(o instanceof World)) return false;
         World world = (World) o;
         return this.getWorldUniqueId().equals(world.getWorldUniqueId()) && this.getName().equals(world.getName());
-    }
-
-    public UUID getWorldUniqueId() {
-        return this.worldUniqueId;
-    }
-
-    public String getName() {
-        return this.name;
-    }
-
-    @Override
-    public String toString() {
-        return "World{" + "worldUniqueId=" + this.worldUniqueId + ", name='" + this.name + '\'' + '}';
     }
 
     private static final class EmptyWorld extends World {

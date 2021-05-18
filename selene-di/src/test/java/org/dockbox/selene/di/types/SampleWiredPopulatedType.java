@@ -23,6 +23,9 @@ import org.dockbox.selene.di.properties.InjectorProperty;
 
 import javax.inject.Inject;
 
+import lombok.Getter;
+
+@Getter
 public class SampleWiredPopulatedType implements SampleInterface, InjectableType {
 
     private final String name;
@@ -37,20 +40,8 @@ public class SampleWiredPopulatedType implements SampleInterface, InjectableType
     }
 
     @Override
-    public String name() {
-        return this.name;
-    }
-
-    @Override
     public void stateEnabling(InjectorProperty<?>... properties) {
         this.enabled = true;
     }
 
-    public SampleField field() {
-        return this.field;
-    }
-
-    public boolean enabled() {
-        return this.enabled;
-    }
 }

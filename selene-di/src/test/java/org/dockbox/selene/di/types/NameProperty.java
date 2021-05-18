@@ -19,22 +19,20 @@ package org.dockbox.selene.di.types;
 
 import org.dockbox.selene.di.properties.InjectorProperty;
 
+import lombok.Getter;
+
 public class NameProperty implements InjectorProperty<String> {
 
     public static final String KEY = "JUnitNameProperty";
-    private final String name;
+    @Getter
+    private final String object;
 
     public NameProperty(String name) {
-        this.name = name;
+        this.object = name;
     }
 
     @Override
     public String getKey() {
         return KEY;
-    }
-
-    @Override
-    public String getObject() {
-        return this.name;
     }
 }

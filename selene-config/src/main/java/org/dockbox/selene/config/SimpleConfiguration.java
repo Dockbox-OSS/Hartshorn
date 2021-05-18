@@ -30,10 +30,13 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
+import lombok.Getter;
+
 public class SimpleConfiguration implements Configuration, InjectableType {
 
     private final Path path;
     private final String fileKey;
+    @Getter
     private final Map<String, Map<String, Object>> cache = SeleneUtils.emptyConcurrentMap();
 
     @AutoWired
@@ -93,9 +96,5 @@ public class SimpleConfiguration implements Configuration, InjectableType {
         catch (FileNotFoundException e) {
             throw new ApplicationException(e);
         }
-    }
-
-    protected Map<String, Map<String, Object>> getCache() {
-        return this.cache;
     }
 }

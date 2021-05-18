@@ -22,18 +22,24 @@ import org.dockbox.selene.di.annotations.AutoWired;
 import org.dockbox.selene.server.minecraft.dimension.position.Location;
 import org.dockbox.selene.server.minecraft.entities.ArmorStand;
 import org.dockbox.selene.server.minecraft.entities.ArmorStandInventory;
-import org.dockbox.selene.server.minecraft.inventory.Inventory;
 import org.dockbox.selene.test.objects.inventory.JUnitArmorStandInventory;
 import org.dockbox.selene.util.SeleneUtils;
 
 import java.util.Map;
 import java.util.UUID;
 
+import lombok.Getter;
+import lombok.Setter;
+
 public class JUnitArmorStand extends JUnitEntity<ArmorStand> implements ArmorStand, org.dockbox.selene.test.objects.JUnitPersistentDataHolder {
 
+    @Setter
     private boolean baseplate = true;
+    @Setter
     private boolean arms = false;
+    @Getter @Setter
     private boolean small = false;
+    @Getter
     private final ArmorStandInventory inventory = new JUnitArmorStandInventory();
     private final Map<Limbs, Vector3N> limbs = SeleneUtils.emptyMap();
 
@@ -63,37 +69,12 @@ public class JUnitArmorStand extends JUnitEntity<ArmorStand> implements ArmorSta
     }
 
     @Override
-    public void setBaseplate(boolean baseplate) {
-        this.baseplate = baseplate;
-    }
-
-    @Override
-    public boolean isSmall() {
-        return this.small;
-    }
-
-    @Override
-    public void setSmall(boolean small) {
-        this.small = small;
-    }
-
-    @Override
     public boolean hasArms() {
         return this.arms;
     }
 
     @Override
-    public void setArms(boolean arms) {
-        this.arms = arms;
-    }
-
-    @Override
     public ArmorStand copy() {
         return new JUnitArmorStand(UUID.randomUUID());
-    }
-
-    @Override
-    public Inventory getInventory() {
-        return this.inventory;
     }
 }

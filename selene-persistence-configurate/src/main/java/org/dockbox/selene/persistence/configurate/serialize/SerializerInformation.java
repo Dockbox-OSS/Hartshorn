@@ -21,8 +21,11 @@ import org.spongepowered.configurate.serialize.TypeSerializer;
 
 import java.util.function.Supplier;
 
+import lombok.Getter;
+
 public class SerializerInformation<T> {
 
+    @Getter
     private final Class<T> type;
     private final Supplier<TypeSerializer<?>> serializer;
 
@@ -30,10 +33,6 @@ public class SerializerInformation<T> {
         this.type = type;
         this.serializer = serializer;
         SeleneTypeSerializers.addSerializerInformation(this);
-    }
-
-    public Class<T> getType() {
-        return this.type;
     }
 
     public TypeSerializer<?> getTypeSerializer() {

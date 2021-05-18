@@ -39,24 +39,28 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
+import lombok.Getter;
+
 @SuppressWarnings("AbstractClassWithoutAbstractMethods")
 public abstract class InjectableBootstrap {
 
     private static final Logger log = LoggerFactory.getLogger("selene-di");
     private static InjectableBootstrap instance;
     private final transient Set<InjectionPoint<?>> injectionPoints = SeleneUtils.emptyConcurrentSet();
+
+    @Getter
     private final InjectorAdapter adapter;
 
     protected InjectableBootstrap() {
         this.adapter = new InjectorAdapter(InjectSource.GUICE);
-        setInstance(this);
+        instance(this);
     }
 
-    public static InjectableBootstrap getInstance() {
+    public static InjectableBootstrap instance() {
         return instance;
     }
 
-    protected static void setInstance(InjectableBootstrap bootstrap) {
+    protected static void instance(InjectableBootstrap bootstrap) {
         InjectableBootstrap.instance = bootstrap;
     }
 
@@ -73,12 +77,12 @@ public abstract class InjectableBootstrap {
      *
      * @return The instance, if present. Otherwise returns null
      */
-    public <T> T getInstance(Class<T> type, InjectorProperty<?>... additionalProperties) {
+    public <T> T instance(Class<T> type, InjectorProperty<?>... additionalProperties) {
         T typeInstance = null;
 
         @Nullable Exceptional<Object[]> value = Bindings.value(UseFactory.KEY, Object[].class, additionalProperties);
         if (value.present()) {
-            typeInstance = this.getInstance(SeleneFactory.class).create(type, value.get());
+            typeInstance = this.instance(SeleneFactory.class).create(type, value.get());
             this.getInjector().populate(typeInstance);
         } else {
             // Type instance can be present if it is a module. These instances are also created using Guice
@@ -191,10 +195,6 @@ public abstract class InjectableBootstrap {
         catch (Exception e) {
             throw new ProvisionFailure("Could not create instance of [" + type.getCanonicalName() + "] through injected, raw or unsafe construction", e);
         }
-    }
-
-    public InjectorAdapter getAdapter() {
-        return this.adapter;
     }
 
     public void injectAt(InjectionPoint<?> property) {

@@ -17,7 +17,11 @@
 
 package org.dockbox.selene.web;
 
+import lombok.Getter;
+
 public class FileFormatNotSupportedException extends Exception {
+
+    @Getter
     private final String format;
 
     public FileFormatNotSupportedException(String format) {
@@ -27,9 +31,5 @@ public class FileFormatNotSupportedException extends Exception {
     public FileFormatNotSupportedException(String format, Throwable cause) {
         super("File format '" + format + "' is not supported", cause);
         this.format = format;
-    }
-
-    public String getFormat() {
-        return this.format;
     }
 }

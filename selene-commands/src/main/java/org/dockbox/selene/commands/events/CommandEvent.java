@@ -21,17 +21,16 @@ import org.dockbox.selene.commands.context.CommandContext;
 import org.dockbox.selene.commands.source.CommandSource;
 import org.dockbox.selene.api.events.AbstractTargetCancellableEvent;
 
+import lombok.Getter;
+
 public abstract class CommandEvent extends AbstractTargetCancellableEvent {
 
+    @Getter
     private final CommandContext context;
 
     protected CommandEvent(CommandSource source, CommandContext context) {
         super(source);
         this.context = context;
-    }
-
-    public CommandContext getContext() {
-        return this.context;
     }
 
     public static class Before extends CommandEvent {

@@ -20,20 +20,17 @@ package org.dockbox.selene.server.minecraft.events.moderation;
 import org.dockbox.selene.commands.source.CommandSource;
 import org.dockbox.selene.server.minecraft.players.Player;
 
+import lombok.Getter;
+import lombok.Setter;
+
 public abstract class WarnEvent extends ModerationEvent {
 
+    @Getter
+    @Setter
     private String reason;
 
     protected WarnEvent(Player player, CommandSource source, String reason) {
         super(player, source);
-        this.reason = reason;
-    }
-
-    public String getReason() {
-        return this.reason;
-    }
-
-    public void setReason(String reason) {
         this.reason = reason;
     }
 

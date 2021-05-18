@@ -21,13 +21,14 @@ import net.minecraft.entity.Entity;
 
 import org.spongepowered.api.entity.EntityType;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
 public class SpongeGenericEntity extends SpongeEntity<Entity, SpongeGenericEntity> implements org.dockbox.selene.server.minecraft.entities.Entity {
 
     private final org.spongepowered.api.entity.Entity representation;
-
-    public SpongeGenericEntity(org.spongepowered.api.entity.Entity representation) {
-        this.representation = representation;
-    }
 
     @Override
     protected EntityType getEntityType() {
@@ -37,10 +38,5 @@ public class SpongeGenericEntity extends SpongeEntity<Entity, SpongeGenericEntit
     @Override
     protected SpongeGenericEntity from(org.spongepowered.api.entity.Entity clone) {
         return new SpongeGenericEntity(clone);
-    }
-
-    @Override
-    protected org.spongepowered.api.entity.Entity getRepresentation() {
-        return this.representation;
     }
 }

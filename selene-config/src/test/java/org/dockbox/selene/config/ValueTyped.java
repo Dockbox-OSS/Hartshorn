@@ -19,6 +19,9 @@ package org.dockbox.selene.config;
 
 import org.dockbox.selene.config.annotations.Value;
 
+import lombok.Getter;
+
+@Getter
 public class ValueTyped {
 
     @Value("demo")
@@ -27,11 +30,4 @@ public class ValueTyped {
     @Value("nested.demo")
     private String nestedString;
 
-    public String getString() {
-        return this.string;
-    }
-
-    public String getNestedString() {
-        return this.nestedString;
-    }
 }

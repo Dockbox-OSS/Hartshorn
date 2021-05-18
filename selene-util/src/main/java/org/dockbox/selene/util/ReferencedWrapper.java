@@ -23,9 +23,13 @@ import org.jetbrains.annotations.NotNull;
 import java.lang.ref.WeakReference;
 import java.util.function.Function;
 
+import lombok.Getter;
+import lombok.Setter;
+
 public abstract class ReferencedWrapper<T> implements Wrapper<T> {
 
-    private transient WeakReference<T> reference;
+    @Getter @Setter
+    private transient WeakReference<T> internalReference;
 
     protected ReferencedWrapper() {
         this.setReference(this.constructInitialReference());
@@ -50,15 +54,7 @@ public abstract class ReferencedWrapper<T> implements Wrapper<T> {
         return this.getUpdateReferenceTask().apply(this.getInternalReference().get());
     }
 
-    protected WeakReference<T> getInternalReference() {
-        return this.reference;
-    }
-
     public Function<T, Exceptional<T>> getUpdateReferenceTask() {
         return value -> Exceptional.of(value).then(() -> constructInitialReference().orNull());
-    }
-
-    protected void setInternalReference(WeakReference<T> reference) {
-        this.reference = reference;
     }
 }

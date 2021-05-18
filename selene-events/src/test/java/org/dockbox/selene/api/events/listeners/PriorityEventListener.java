@@ -22,8 +22,11 @@ import org.dockbox.selene.api.events.annotations.Listener;
 import org.dockbox.selene.api.events.annotations.Listener.Priority;
 import org.junit.jupiter.api.Assertions;
 
+import lombok.Getter;
+
 public class PriorityEventListener {
 
+    @Getter
     private Priority last = null;
 
     @Listener(Priority.FIRST)
@@ -54,9 +57,5 @@ public class PriorityEventListener {
     public void onLast(SampleEvent event) {
         Assertions.assertEquals(this.last, Priority.LATE);
         this.last = Priority.LAST;
-    }
-
-    public Priority getLast() {
-        return this.last;
     }
 }

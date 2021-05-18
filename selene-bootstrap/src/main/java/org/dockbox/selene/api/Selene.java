@@ -43,7 +43,7 @@ public final class Selene {
      * @return The {@link Selene} instance
      */
     public static SeleneBootstrap getServer() {
-        return SeleneBootstrap.getInstance();
+        return SeleneBootstrap.instance();
     }
 
     /**

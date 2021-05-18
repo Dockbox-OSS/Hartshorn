@@ -21,37 +21,15 @@ import net.dv8tion.jda.api.entities.User;
 
 import org.dockbox.selene.api.domain.Exceptional;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
 public class DiscordUserNicknameChangedEvent extends DiscordEvent {
 
     private final User user;
     private final Exceptional<String> oldNickname;
     private final Exceptional<String> newNickname;
 
-    /**
-     * The event fired when a user's nickname is changed.
-     *
-     * @param user
-     *         The user of which the nickname changed
-     * @param oldNickname
-     *         The previous value of the nickname
-     * @param newNickname
-     *         The new (and current) value of the nickname
-     */
-    public DiscordUserNicknameChangedEvent(User user, Exceptional<String> oldNickname, Exceptional<String> newNickname) {
-        this.user = user;
-        this.oldNickname = oldNickname;
-        this.newNickname = newNickname;
-    }
-
-    public User getUser() {
-        return this.user;
-    }
-
-    public Exceptional<String> getOldNickname() {
-        return this.oldNickname;
-    }
-
-    public Exceptional<String> getNewNickname() {
-        return this.newNickname;
-    }
 }

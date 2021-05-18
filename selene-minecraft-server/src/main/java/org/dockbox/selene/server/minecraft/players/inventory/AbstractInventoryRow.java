@@ -22,17 +22,17 @@ import org.dockbox.selene.server.minecraft.item.storage.MinecraftItems;
 
 import java.util.function.Supplier;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
 public abstract class AbstractInventoryRow implements InventoryRow {
 
     public static final Supplier<Item> AIR = () -> MinecraftItems.getInstance().getAir();
 
     private final int rowIndex;
     private final PlayerInventory inventory;
-
-    public AbstractInventoryRow(int rowIndex, PlayerInventory inventory) {
-        this.rowIndex = rowIndex;
-        this.inventory = inventory;
-    }
 
     @Override
     public Item getSlot(int row, int column) {
@@ -44,15 +44,6 @@ public abstract class AbstractInventoryRow implements InventoryRow {
     public void setSlot(Item item, int row, int column) {
         if (row != this.rowIndex) return;
         this.setSlot(item, column);
-    }
-
-    protected int getRowIndex() {
-        return this.rowIndex;
-    }
-
-    @Override
-    public PlayerInventory getInventory() {
-        return this.inventory;
     }
 
     @Override

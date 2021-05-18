@@ -60,10 +60,10 @@ public class DefaultMinecraftServer {
 
     @Command(value = "platform", permission = DefaultServer.SELENE_ADMIN)
     public void platform(MessageReceiver src) {
-        MinecraftServerType st = MinecraftServerBootstrap.getInstance().getServerType();
+        MinecraftServerType st = MinecraftServerBootstrap.instance().getServerType();
         String platformVersion = Selene.getServer().getPlatformVersion();
 
-        String mcVersion = MinecraftServerBootstrap.getInstance().getMinecraftVersion().getReadableVersionString();
+        String mcVersion = MinecraftServerBootstrap.instance().getMinecraftVersion().getReadableVersionString();
 
         Object[] system = SeleneUtils.getAll(System::getProperty,
                 "java.version", "java.vendor", "java.vm.version", "java.vm.name", "java.vm.vendor", "java.runtime.version", "java.class.version");

@@ -23,6 +23,9 @@ import org.dockbox.selene.server.minecraft.players.ClickType;
 import org.dockbox.selene.server.minecraft.players.Hand;
 import org.dockbox.selene.server.minecraft.players.Player;
 
+import lombok.Getter;
+
+@Getter
 public final class PlayerInteractEntityEvent extends PlayerInteractEvent {
 
     private final Entity entity;
@@ -32,13 +35,5 @@ public final class PlayerInteractEntityEvent extends PlayerInteractEvent {
         super(player, Hand.EITHER, ClickType.SECONDARY);
         this.entity = entity;
         this.interactionPoint = interactionPoint;
-    }
-
-    public Vector3N getInteractionPoint() {
-        return this.interactionPoint;
-    }
-
-    public Entity getEntity() {
-        return this.entity;
     }
 }

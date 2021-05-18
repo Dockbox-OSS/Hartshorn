@@ -17,16 +17,14 @@
 
 package org.dockbox.selene.api.i18n.text.actions;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
 @SuppressWarnings("AbstractClassWithoutAbstractMethods")
+@Getter
+@AllArgsConstructor
 public abstract class TextAction<R> {
 
     private final R result;
 
-    protected TextAction(R result) {
-        this.result = result;
-    }
-
-    public R getResult() {
-        return this.result;
-    }
 }

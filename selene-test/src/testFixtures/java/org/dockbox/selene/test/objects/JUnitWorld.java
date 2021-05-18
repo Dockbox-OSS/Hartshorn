@@ -37,11 +37,16 @@ import java.util.UUID;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import lombok.Getter;
+
 public class JUnitWorld extends World {
 
     private final Map<Vector3N, Item> blocks = SeleneUtils.emptyMap();
     private final Map<UUID, Entity> entities = SeleneUtils.emptyMap();
+
+    @Getter
     private final Map<String, String> gamerules = SeleneUtils.emptyMap();
+    @Getter
     private boolean isLoaded;
 
     public JUnitWorld(UUID worldUniqueId, String name, boolean loadOnStartup, @NotNull Vector3N spawnPosition, long seed, Gamemode defaultGamemode) {
@@ -123,18 +128,8 @@ public class JUnitWorld extends World {
     }
 
     @Override
-    public boolean isLoaded() {
-        return this.isLoaded;
-    }
-
-    @Override
     public void setGamerule(String key, String value) {
         this.gamerules.put(key, value);
-    }
-
-    @Override
-    public Map<String, String> getGamerules() {
-        return this.gamerules;
     }
 
     public void addEntity(Entity entity) {

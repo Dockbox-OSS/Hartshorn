@@ -19,11 +19,11 @@ package org.dockbox.selene.api.keys;
 
 public interface PersistentDataKey<T> {
 
-    Class<T> getDataType();
+    Class<T> getType();
 
     String getOwnerId();
 
-    String getDataKeyId();
+    String getId();
 
-    String getDataKeyName();
+    String getName();
 }

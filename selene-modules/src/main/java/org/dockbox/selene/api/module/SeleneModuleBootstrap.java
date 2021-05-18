@@ -36,8 +36,8 @@ public abstract class SeleneModuleBootstrap extends SeleneBootstrap {
         this.prepareInstanceConsumers();
     }
 
-    public static SeleneModuleBootstrap getInstance() {
-        return (SeleneModuleBootstrap) SeleneBootstrap.getInstance();
+    public static SeleneModuleBootstrap instance() {
+        return (SeleneModuleBootstrap) SeleneBootstrap.instance();
     }
 
     @Override

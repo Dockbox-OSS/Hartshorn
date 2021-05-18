@@ -21,22 +21,17 @@ import org.dockbox.selene.api.events.parents.Cancellable;
 import org.dockbox.selene.plots.Plot;
 import org.jetbrains.annotations.NotNull;
 
+import lombok.Getter;
+import lombok.Setter;
+
 public abstract class CancellablePlotEvent extends PlotEvent implements Cancellable {
 
+    @Getter
+    @Setter
     private boolean cancelled = false;
 
     protected CancellablePlotEvent(Plot plot) {
         super(plot);
-    }
-
-    @Override
-    public boolean isCancelled() {
-        return this.cancelled;
-    }
-
-    @Override
-    public void setCancelled(boolean cancelled) {
-        this.cancelled = cancelled;
     }
 
     @Override

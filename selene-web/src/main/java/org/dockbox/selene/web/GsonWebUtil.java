@@ -32,7 +32,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 
 @Binds(WebUtil.class)
-@Binds(value = WebUtil.class, meta = @BindingMeta(FileTypes.JSON))
+@Binds(value = WebUtil.class, meta = @BindingMeta(getValue = FileTypes.JSON))
 public class GsonWebUtil extends DefaultWebUtil {
 
     @Override

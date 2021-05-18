@@ -17,16 +17,20 @@
 
 package org.dockbox.selene.api.domain;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+@AllArgsConstructor
 public final class SimpleTypedOwner implements TypedOwner {
 
     private final String id;
 
-    private SimpleTypedOwner(String id) {
-        this.id = id;
-    }
-
-    public final String id() {
-        return this.id;
+    @Override
+    public String id() {
+        return this.getId();
     }
 
     public static TypedOwner of(String id) {

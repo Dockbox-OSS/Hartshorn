@@ -24,6 +24,11 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+
+@Data
+@AllArgsConstructor
 public class SpongePagination implements Pagination {
 
     private Text padding;
@@ -33,83 +38,8 @@ public class SpongePagination implements Pagination {
     private Text title;
     private List<Text> content;
 
-    SpongePagination(
-            Text padding, int linesPerPage, Text header, Text footer, Text title, List<Text> content) {
-        this.padding = padding;
-        this.linesPerPage = linesPerPage;
-        this.header = header;
-        this.footer = footer;
-        this.title = title;
-        this.content = content;
-    }
-
     @Override
     public void send(@NotNull MessageReceiver receiver) {
         receiver.send(this);
-    }
-
-    @NotNull
-    @Override
-    public Text getPadding() {
-        return this.padding;
-    }
-
-    @Override
-    public void setPadding(@NotNull Text padding) {
-        this.padding = padding;
-    }
-
-    @Override
-    public int getLinesPerPage() {
-        return this.linesPerPage;
-    }
-
-    @Override
-    public void setLinesPerPage(int linesPerPage) {
-        this.linesPerPage = linesPerPage;
-    }
-
-    @NotNull
-    @Override
-    public Text getHeader() {
-        return this.header;
-    }
-
-    @Override
-    public void setHeader(@NotNull Text header) {
-        this.header = header;
-    }
-
-    @NotNull
-    @Override
-    public Text getFooter() {
-        return this.footer;
-    }
-
-    @Override
-    public void setFooter(@NotNull Text footer) {
-        this.footer = footer;
-    }
-
-    @NotNull
-    @Override
-    public Text getTitle() {
-        return this.title;
-    }
-
-    @Override
-    public void setTitle(@NotNull Text title) {
-        this.title = title;
-    }
-
-    @NotNull
-    @Override
-    public List<Text> getContent() {
-        return this.content;
-    }
-
-    @Override
-    public void setContent(@NotNull List<Text> content) {
-        this.content = content;
     }
 }

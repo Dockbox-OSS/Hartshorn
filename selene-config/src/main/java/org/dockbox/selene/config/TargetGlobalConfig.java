@@ -22,37 +22,25 @@ import org.dockbox.selene.api.config.GlobalConfig;
 import org.dockbox.selene.api.exceptions.ExceptionLevels;
 import org.dockbox.selene.config.annotations.Value;
 
+import lombok.Getter;
+
+@Getter
 public class TargetGlobalConfig implements GlobalConfig {
 
     @Value(value = "selene.exceptions.stacktraces", or = "false")
-    private boolean stacktraces;
+    private boolean stacktracesAllowed;
 
     @Value(value = "selene.exceptions.level", or = "NATIVE")
-    private ExceptionLevels level;
+    private ExceptionLevels exceptionLevel;
 
     @Value(value = "selene.environment", or = "DEVELOPMENT")
     private Environment environment;
 
     @Value("selene.discord.logging-channel")
-    private String loggingCategoryId;
+    private String discordLoggingCategoryId;
 
     @Override
     public boolean getStacktracesAllowed() {
-        return this.stacktraces;
-    }
-
-    @Override
-    public ExceptionLevels getExceptionLevel() {
-        return this.level;
-    }
-
-    @Override
-    public Environment getEnvironment() {
-        return this.environment;
-    }
-
-    @Override
-    public String getDiscordLoggingCategoryId() {
-        return this.loggingCategoryId;
+        return this.stacktracesAllowed;
     }
 }

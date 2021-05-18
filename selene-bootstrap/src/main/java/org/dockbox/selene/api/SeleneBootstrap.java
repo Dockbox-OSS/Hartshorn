@@ -34,14 +34,17 @@ import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 import java.util.Properties;
 
+import lombok.Getter;
+
 /**
  * The global bootstrapping component which instantiates all configured modules and provides access
  * to server information.
  */
 public abstract class SeleneBootstrap extends InjectableBootstrap {
 
-    private static SeleneBootstrap instance;
+    @Getter
     private String version;
+    @Getter
     private final GlobalConfig config;
 
     /**
@@ -91,11 +94,11 @@ public abstract class SeleneBootstrap extends InjectableBootstrap {
     }
 
     public static boolean isConstructed() {
-        return getInstance() != null;
+        return instance() != null;
     }
 
-    public static SeleneBootstrap getInstance() {
-        return (SeleneBootstrap) InjectableBootstrap.getInstance();
+    public static SeleneBootstrap instance() {
+        return (SeleneBootstrap) InjectableBootstrap.instance();
     }
 
     /**
@@ -128,16 +131,6 @@ public abstract class SeleneBootstrap extends InjectableBootstrap {
     }
 
     /**
-     * Gets the {@link Selene} version, based on the injected value in {@link #construct()}.
-     *
-     * @return The version
-     */
-    @NotNull
-    public String getVersion() {
-        return this.version;
-    }
-
-    /**
      * Gets the {@link GlobalConfig} instance as injected by the {@link Selene} implementation.
      *
      * @return The global config
@@ -154,10 +147,6 @@ public abstract class SeleneBootstrap extends InjectableBootstrap {
      * @return The platform version
      */
     public abstract String getPlatformVersion();
-
-    public GlobalConfig getConfig() {
-        return this.config;
-    }
 
     protected void enter(BootstrapPhase phase) {
         Selene.log().info("Selene changed phase to " + phase);

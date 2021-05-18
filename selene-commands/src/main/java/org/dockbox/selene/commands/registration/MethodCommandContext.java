@@ -39,8 +39,11 @@ import java.lang.reflect.Parameter;
 import java.util.Collection;
 import java.util.List;
 
+import lombok.Getter;
+
 public class MethodCommandContext extends AbstractRegistrationContext {
 
+    @Getter
     private final Method method;
 
     public MethodCommandContext(Command command, Method method) {
@@ -108,10 +111,6 @@ public class MethodCommandContext extends AbstractRegistrationContext {
         return instance;
     }
 
-    public Method getMethod() {
-        return this.method;
-    }
-
     private static CommandSource lookupCommandSource(Class<?> parameterType, CommandSource source) {
         if (Reflect.assignableFrom(CommandUser.class, parameterType) && !(source instanceof CommandUser))
             throw new IllegalSourceException("Command can only be ran by players");
@@ -124,10 +123,10 @@ public class MethodCommandContext extends AbstractRegistrationContext {
         if (parameter.isAnnotationPresent(FromSource.class)) {
             Class<?> parameterType = parameter.getType();
             if (Reflect.assignableFrom(CommandUser.class, parameterType)) {
-                if (context.sender() instanceof CommandUser) finalArgs.add(context.sender());
+                if (context.getSender() instanceof CommandUser) finalArgs.add(context.getSender());
             }
             else if (Reflect.assignableFrom(CommandSource.class, parameterType)) {
-                finalArgs.add(context.sender());
+                finalArgs.add(context.getSender());
             }
             else {
                 Selene.log().warn("Parameter '" + parameter.getName() + "' has @FromSource annotation but cannot be provided [" + parameterType

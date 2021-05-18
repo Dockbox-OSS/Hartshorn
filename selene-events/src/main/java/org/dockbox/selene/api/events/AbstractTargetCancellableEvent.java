@@ -21,7 +21,11 @@ import org.dockbox.selene.api.domain.Target;
 import org.dockbox.selene.api.events.parents.Cancellable;
 import org.dockbox.selene.api.events.parents.Targetable;
 
+import lombok.Getter;
+import lombok.Setter;
+
 @SuppressWarnings("AbstractClassWithoutAbstractMethods")
+@Getter @Setter
 public abstract class AbstractTargetCancellableEvent implements Cancellable, Targetable {
 
     private boolean isCancelled;
@@ -31,23 +35,4 @@ public abstract class AbstractTargetCancellableEvent implements Cancellable, Tar
         this.target = target;
     }
 
-    @Override
-    public boolean isCancelled() {
-        return this.isCancelled;
-    }
-
-    @Override
-    public void setCancelled(boolean cancelled) {
-        this.isCancelled = cancelled;
-    }
-
-    @Override
-    public Target getTarget() {
-        return this.target;
-    }
-
-    @Override
-    public void setTarget(Target target) {
-        this.target = target;
-    }
 }

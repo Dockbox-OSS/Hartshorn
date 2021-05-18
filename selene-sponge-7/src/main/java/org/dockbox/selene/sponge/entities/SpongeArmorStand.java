@@ -37,6 +37,8 @@ import org.spongepowered.api.entity.EntityTypes;
 
 import java.util.Map;
 
+import lombok.Getter;
+
 public class SpongeArmorStand extends SpongeCloneableEntity<EntityArmorStand, ArmorStand> implements ArmorStand {
 
     // Creates cached bindings for the limb keys
@@ -47,6 +49,7 @@ public class SpongeArmorStand extends SpongeCloneableEntity<EntityArmorStand, Ar
             SeleneUtils.entry(Limbs.LEFT_LEG, Keys.LEFT_LEG_ROTATION),
             SeleneUtils.entry(Limbs.RIGHT_LEG, Keys.RIGHT_LEG_ROTATION));
 
+    @Getter
     private final org.spongepowered.api.entity.living.ArmorStand representation;
 
     public SpongeArmorStand(org.spongepowered.api.entity.living.ArmorStand representation) {
@@ -66,11 +69,6 @@ public class SpongeArmorStand extends SpongeCloneableEntity<EntityArmorStand, Ar
     @Override
     protected ArmorStand from(Entity clone) {
         return new SpongeArmorStand((org.spongepowered.api.entity.living.ArmorStand) clone);
-    }
-
-    @Override
-    protected org.spongepowered.api.entity.living.ArmorStand getRepresentation() {
-        return this.representation;
     }
 
     @Override

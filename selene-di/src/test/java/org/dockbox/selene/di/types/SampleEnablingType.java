@@ -22,8 +22,11 @@ import org.dockbox.selene.di.binding.Bindings;
 import org.dockbox.selene.di.properties.InjectableType;
 import org.dockbox.selene.di.properties.InjectorProperty;
 
+import lombok.Getter;
+
 public class SampleEnablingType implements SampleInterface, InjectableType {
 
+    @Getter
     private String name;
 
     @Override
@@ -32,8 +35,4 @@ public class SampleEnablingType implements SampleInterface, InjectableType {
         value.present(name -> this.name = name);
     }
 
-    @Override
-    public String name() {
-        return this.name;
-    }
 }

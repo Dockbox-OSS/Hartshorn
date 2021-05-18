@@ -26,14 +26,24 @@ import org.dockbox.selene.test.objects.JUnitWorld;
 
 import java.util.UUID;
 
+import lombok.Getter;
+import lombok.Setter;
+
 public abstract class JUnitEntity<T extends Entity> implements Entity, PersistentDataHolder {
 
+    @Getter
     private Text displayName;
+    @Getter @Setter
     private double health = 20;
+    @Getter
     private Location location;
+    @Getter @Setter
     private boolean invisible = false;
+    @Getter @Setter
     private boolean invulnerable = false;
+    @Setter
     private boolean gravity = true;
+    @Getter
     private final UUID uuid;
 
     public JUnitEntity(UUID uuid) {
@@ -54,33 +64,8 @@ public abstract class JUnitEntity<T extends Entity> implements Entity, Persisten
     }
 
     @Override
-    public UUID getUniqueId() {
-        return this.uuid;
-    }
-
-    @Override
     public String getName() {
         return this.getDisplayName().toPlain();
-    }
-
-    @Override
-    public Text getDisplayName() {
-        return this.displayName;
-    }
-
-    @Override
-    public void setDisplayName(Text displayName) {
-        this.displayName = displayName;
-    }
-
-    @Override
-    public double getHealth() {
-        return this.health;
-    }
-
-    @Override
-    public void setHealth(double health) {
-        this.health = health;
     }
 
     @Override
@@ -89,38 +74,8 @@ public abstract class JUnitEntity<T extends Entity> implements Entity, Persisten
     }
 
     @Override
-    public boolean isInvisible() {
-        return this.invisible;
-    }
-
-    @Override
-    public void setInvisible(boolean invisible) {
-        this.invisible = invisible;
-    }
-
-    @Override
-    public boolean isInvulnerable() {
-        return this.invulnerable;
-    }
-
-    @Override
-    public void setInvulnerable(boolean invulnerable) {
-        this.invulnerable = invulnerable;
-    }
-
-    @Override
     public boolean hasGravity() {
         return this.gravity;
-    }
-
-    @Override
-    public void setGravity(boolean gravity) {
-        this.gravity = gravity;
-    }
-
-    @Override
-    public Location getLocation() {
-        return this.location;
     }
 
     @Override

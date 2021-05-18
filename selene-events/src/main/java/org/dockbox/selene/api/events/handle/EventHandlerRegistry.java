@@ -22,8 +22,11 @@ import org.dockbox.selene.util.SeleneUtils;
 
 import java.util.Map;
 
+import lombok.Getter;
+
 public final class EventHandlerRegistry {
 
+    @Getter
     private final Map<Class<? extends Event>, EventHandler> handlers = SeleneUtils.emptyMap();
 
     public EventHandler getHandler(Class<? extends Event> type) {
@@ -46,9 +49,5 @@ public final class EventHandlerRegistry {
                 associationFound |= handler.addSupertypeHandler(subject);
             }
         }
-    }
-
-    public Map<Class<? extends Event>, EventHandler> getHandlers() {
-        return this.handlers;
     }
 }

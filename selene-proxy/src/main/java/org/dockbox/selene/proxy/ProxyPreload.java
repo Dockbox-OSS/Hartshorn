@@ -34,7 +34,7 @@ public class ProxyPreload implements Preloadable {
     @Override
     public void preload() {
         ProxyableBootstrap.boostrapDelegates();
-        InjectableBootstrap.getInstance().injectAt(InjectionPoint.of(Object.class, (instance, properties) -> {
+        InjectableBootstrap.instance().injectAt(InjectionPoint.of(Object.class, (instance, properties) -> {
             ProxyHandler<Object> handler = new ProxyHandler<>(instance);
             boolean proxy = false;
             for (InjectorProperty<?> property : properties) {

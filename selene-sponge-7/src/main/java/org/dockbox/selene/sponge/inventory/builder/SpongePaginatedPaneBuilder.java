@@ -57,7 +57,7 @@ public class SpongePaginatedPaneBuilder extends PaginatedPaneBuilder {
 
     @Override
     public PaginatedPane build() {
-        Page page = this.builder.build(SpongeAPI7Bootstrap.getContainer());
+        Page page = this.builder.build(SpongeAPI7Bootstrap.container());
         page.define(this.elements.stream()
                 .map(SpongeConversionUtil::toSponge)
                 .collect(Collectors.toList())
@@ -69,7 +69,7 @@ public class SpongePaginatedPaneBuilder extends PaginatedPaneBuilder {
     public void stateEnabling(InjectorProperty<?>... properties) {
         Bindings.value(InventoryTypeProperty.KEY, InventoryLayout.class, properties)
                 .present(layout -> {
-                    this.builder = Page.builder(SpongeConversionUtil.toSponge(layout.getIventoryType()));
+                    this.builder = Page.builder(SpongeConversionUtil.toSponge(layout.getInventoryType()));
                     this.layout(layout);
                 })
                 .absent(() -> {

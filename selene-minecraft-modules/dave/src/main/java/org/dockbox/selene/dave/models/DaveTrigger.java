@@ -21,7 +21,14 @@ import org.dockbox.selene.api.entity.annotations.Metadata;
 
 import java.util.List;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 @Metadata(alias = "trigger")
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
 public class DaveTrigger {
 
     private String id;
@@ -30,39 +37,4 @@ public class DaveTrigger {
     private List<DaveResponse> responses;
     private String permission;
 
-    public DaveTrigger() {}
-
-    public DaveTrigger(
-            String id,
-            List<String> triggers,
-            boolean important,
-            List<DaveResponse> responses,
-            String permission
-    ) {
-        this.id = id;
-        this.triggers = triggers;
-        this.important = important;
-        this.responses = responses;
-        this.permission = permission;
-    }
-
-    public String getId() {
-        return this.id;
-    }
-
-    public List<String> getRawTriggers() {
-        return this.triggers;
-    }
-
-    public boolean isImportant() {
-        return this.important;
-    }
-
-    public List<DaveResponse> getResponses() {
-        return this.responses;
-    }
-
-    public String getPermission() {
-        return this.permission;
-    }
 }

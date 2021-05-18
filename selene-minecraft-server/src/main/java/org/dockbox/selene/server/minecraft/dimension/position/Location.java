@@ -25,9 +25,12 @@ import org.dockbox.selene.server.minecraft.players.Profile;
 
 import java.util.Objects;
 
+import lombok.Getter;
+
 public class Location implements KeyHolder<Location> {
 
     private final Vector3N vectorLoc;
+    @Getter
     private final World world;
 
     public Location(double x, double y, double z, World world) {
@@ -65,10 +68,6 @@ public class Location implements KeyHolder<Location> {
 
     public Location expand(Vector3N vector) {
         return new Location(this.vectorLoc.expand(vector), this.getWorld());
-    }
-
-    public World getWorld() {
-        return this.world;
     }
 
     public Location expandY(double y) {

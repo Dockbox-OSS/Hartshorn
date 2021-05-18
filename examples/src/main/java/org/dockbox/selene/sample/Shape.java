@@ -19,40 +19,26 @@ package org.dockbox.selene.sample;
 
 import org.dockbox.selene.commands.annotations.CustomParameter;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.ToString;
+
 @CustomParameter("shape")
+@AllArgsConstructor
+@Getter
+@ToString
 public class Shape {
 
     private final String name;
     private final int sides;
 
     private Shape() {
-        name = "circle";
-        sides = 1;
+        this.name = "circle";
+        this.sides = 1;
     }
 
     public Shape(int sides) {
         this.name = sides + "-sided shape";
         this.sides = sides;
-    }
-
-    public Shape(String name, int sides) {
-        this.name = name;
-        this.sides = sides;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public int getSides() {
-        return sides;
-    }
-
-    @Override
-    public String toString() {
-        return "Shape{" +
-                "name='" + name + '\'' +
-                ", sides=" + sides +
-                '}';
     }
 }

@@ -17,16 +17,13 @@
 
 package org.dockbox.selene.di.types;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
 public class InvalidSampleWiredType implements SampleInterface {
 
     private final String name;
 
-    public InvalidSampleWiredType(String name) {
-        this.name = name;
-    }
-
-    @Override
-    public String name() {
-        return this.name;
-    }
 }

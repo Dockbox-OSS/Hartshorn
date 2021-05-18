@@ -63,7 +63,7 @@ public class ToolBinding {
         String bindingId = UUID.randomUUID().toString();
 
         TransactionResult result = item.set(PERSISTENT_TOOL, bindingId);
-        if (result.isSuccessfull()) {
+        if (result.isSuccessful()) {
             this.registry.put(bindingId, tool);
             tool.prepare(item);
         }
@@ -109,7 +109,7 @@ public class ToolBinding {
                 itemInHand,
                 tool,
                 event.getHand(),
-                event.getClientClickType(),
+                event.getClickType(),
                 event.getTarget().isSneaking() ? Sneaking.SNEAKING : Sneaking.STANDING);
 
         if (tool.accepts(toolInteractionEvent)) {

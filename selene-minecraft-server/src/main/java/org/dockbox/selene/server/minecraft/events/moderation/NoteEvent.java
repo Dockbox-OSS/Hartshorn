@@ -20,6 +20,11 @@ package org.dockbox.selene.server.minecraft.events.moderation;
 import org.dockbox.selene.commands.source.CommandSource;
 import org.dockbox.selene.server.minecraft.players.Player;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public abstract class NoteEvent extends ModerationEvent {
 
     private String note;
@@ -38,13 +43,4 @@ public abstract class NoteEvent extends ModerationEvent {
         super(player, source);
         this.note = note;
     }
-
-    public String getNote() {
-        return this.note;
-    }
-
-    public void setNote(String note) {
-        this.note = note;
-    }
-
 }

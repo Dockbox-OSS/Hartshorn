@@ -40,16 +40,19 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import lombok.Getter;
+
+@Getter
 public class SpongePlot extends ReferencedWrapper<Plot> implements org.dockbox.selene.plots.Plot {
 
     private final Location center;
-    private final int x;
-    private final int y;
+    private final int plotX;
+    private final int plotY;
 
     public SpongePlot(Plot plot) {
         this.center = SpongeConversionUtil.fromPlotSquared(plot.getCenter());
-        this.x = plot.getId().x;
-        this.y = plot.getId().y;
+        this.plotX = plot.getId().x;
+        this.plotY = plot.getId().y;
         plot.getCenter();
         this.setReference(this.constructInitialReference());
     }
@@ -62,7 +65,7 @@ public class SpongePlot extends ReferencedWrapper<Plot> implements org.dockbox.s
             UUID ownerUuid = plot.getOwners().iterator().next();
             return Provider.provide(Players.class).getPlayer(ownerUuid);
         }
-        throw new IllegalStateException("Reference plot at " + this.center.getWorld().getName() + ";" + this.x + "," + this.y + " could not be found");
+        throw new IllegalStateException("Reference plot at " + this.center.getWorld().getName() + ";" + this.plotX + "," + this.plotY + " could not be found");
     }
 
     @Override
@@ -120,26 +123,11 @@ public class SpongePlot extends ReferencedWrapper<Plot> implements org.dockbox.s
     }
 
     @Override
-    public int getPlotX() {
-        return this.x;
-    }
-
-    @Override
-    public int getPlotY() {
-        return this.y;
-    }
-
-    @Override
     public Location getHome() {
         if (this.getReference().present()) {
             return SpongeConversionUtil.fromPlotSquared(this.getReference().get().getHome());
         }
         return Location.empty();
-    }
-
-    @Override
-    public Location getCenter() {
-        return this.center;
     }
 
     @Override
@@ -187,6 +175,6 @@ public class SpongePlot extends ReferencedWrapper<Plot> implements org.dockbox.s
         if (this == o) return true;
         if (!(o instanceof SpongePlot)) return false;
         SpongePlot that = (SpongePlot) o;
-        return this.x == that.x && this.y == that.y && Objects.equals(this.center, that.center);
+        return this.plotX == that.plotX && this.plotY == that.plotY && Objects.equals(this.center, that.center);
     }
 }

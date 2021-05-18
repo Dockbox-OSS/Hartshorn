@@ -38,7 +38,7 @@ public interface Profile {
 
     void setUuid(UUID uuid);
 
-    Map<String, Collection<Tuple<String, String>>> getAdditionalProperties();
+    Map<String, Collection<Tuple<String, String>>> getProperties();
 
     void setProperty(String property, String key, String value);
 

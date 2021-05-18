@@ -17,21 +17,14 @@
 
 package org.dockbox.selene.di.inject;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
 class WireBinding<T, I extends T> {
 
     private final Class<T> contract;
     private final Class<I> implementation;
 
-    WireBinding(Class<T> contract, Class<I> implementation) {
-        this.contract = contract;
-        this.implementation = implementation;
-    }
-
-    Class<T> getContract() {
-        return this.contract;
-    }
-
-    Class<I> getImplementation() {
-        return this.implementation;
-    }
 }

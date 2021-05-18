@@ -19,6 +19,9 @@ package org.dockbox.selene.exceptions;
 
 import org.dockbox.selene.api.exceptions.ExceptionHandle;
 
+import lombok.Getter;
+
+@Getter
 public class TestExceptionHandle implements ExceptionHandle {
 
     private boolean stacktrace;
@@ -30,17 +33,5 @@ public class TestExceptionHandle implements ExceptionHandle {
         this.message = message;
         this.exception = exception;
         this.stacktrace = stacktrace;
-    }
-
-    public boolean isStacktrace() {
-        return this.stacktrace;
-    }
-
-    public String getMessage() {
-        return this.message;
-    }
-
-    public Throwable getException() {
-        return this.exception;
     }
 }

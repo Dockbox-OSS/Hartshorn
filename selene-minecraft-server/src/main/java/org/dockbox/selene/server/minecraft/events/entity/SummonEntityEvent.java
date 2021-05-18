@@ -20,21 +20,13 @@ package org.dockbox.selene.server.minecraft.events.entity;
 import org.dockbox.selene.api.events.AbstractCancellableEvent;
 import org.dockbox.selene.server.minecraft.entities.Entity;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
 public class SummonEntityEvent extends AbstractCancellableEvent {
 
     private final Entity entity;
     private final SpawnSource source;
-
-    public SummonEntityEvent(Entity entity, SpawnSource source) {
-        this.entity = entity;
-        this.source = source;
-    }
-
-    public Entity getEntity() {
-        return this.entity;
-    }
-
-    public SpawnSource getSource() {
-        return this.source;
-    }
 }

@@ -566,7 +566,7 @@ public enum SpongeConversionUtil {
 
     public static Element toSponge(org.dockbox.selene.server.minecraft.inventory.Element element) {
         if (element instanceof SimpleElement) {
-            return Element.of(toSponge(element.item()),
+            return Element.of(toSponge(element.getItem()),
                     a -> ((SimpleElement) element).perform(fromSponge(a.getPlayer()))
             );
         }

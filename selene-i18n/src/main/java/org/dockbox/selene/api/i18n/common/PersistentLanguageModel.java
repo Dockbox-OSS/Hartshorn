@@ -21,21 +21,17 @@ import org.dockbox.selene.api.entity.annotations.Accessor;
 import org.dockbox.selene.api.entity.annotations.Metadata;
 import org.dockbox.selene.persistence.PersistentModel;
 
+import lombok.Getter;
+import lombok.Setter;
+
 @Metadata(alias = "language")
 public class PersistentLanguageModel implements PersistentModel<Language> {
 
     @Accessor(getter = "getCode", setter = "getCode")
+    @Getter @Setter
     private String code;
 
     public PersistentLanguageModel(String code) {
-        this.code = code;
-    }
-
-    public String getCode() {
-        return this.code;
-    }
-
-    public void setCode(String code) {
         this.code = code;
     }
 

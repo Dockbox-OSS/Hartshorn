@@ -17,15 +17,14 @@
 
 package org.dockbox.selene.server.minecraft.events.world;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
 /** The event fired when a new world is being created. */
+@Getter
+@AllArgsConstructor
 public class WorldCreatingEvent extends WorldEvent {
+
     private final WorldCreatingProperties properties;
 
-    public WorldCreatingEvent(WorldCreatingProperties properties) {
-        this.properties = properties;
-    }
-
-    public WorldCreatingProperties getProperties() {
-        return this.properties;
-    }
 }

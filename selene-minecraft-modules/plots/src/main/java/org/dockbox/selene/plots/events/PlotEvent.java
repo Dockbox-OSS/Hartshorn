@@ -22,17 +22,14 @@ import org.dockbox.selene.api.events.parents.Event;
 import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.plots.Plot;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
 public abstract class PlotEvent implements Event {
 
     private final Plot plot;
-
-    public PlotEvent(Plot plot) {
-        this.plot = plot;
-    }
-
-    public Plot getPlot() {
-        return this.plot;
-    }
 
     @Override
     public PlotEvent post() {

@@ -25,6 +25,11 @@ import org.jetbrains.annotations.NonNls;
 
 import java.util.Objects;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
 public class TypedPersistentDataKey<T> implements PersistentDataKey<T> {
 
     @NonNls
@@ -34,31 +39,9 @@ public class TypedPersistentDataKey<T> implements PersistentDataKey<T> {
     private final TypedOwner owner;
     private final Class<T> type;
 
-    public TypedPersistentDataKey(String name, String id, TypedOwner owner, Class<T> type) {
-        this.name = name;
-        this.id = id;
-        this.owner = owner;
-        this.type = type;
-    }
-
-    @Override
-    public Class<T> getDataType() {
-        return this.type;
-    }
-
     @Override
     public String getOwnerId() {
         return this.owner.id();
-    }
-
-    @Override
-    public String getDataKeyId() {
-        return this.id;
-    }
-
-    @Override
-    public String getDataKeyName() {
-        return this.name;
     }
 
     @Override
