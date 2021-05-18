@@ -22,12 +22,15 @@ import org.dockbox.selene.commands.annotations.Command;
 import org.dockbox.selene.commands.registration.AbstractRegistrationContext;
 import org.dockbox.selene.commands.registration.CommandInheritanceContext;
 import org.dockbox.selene.commands.registration.MethodCommandContext;
+import org.dockbox.selene.test.SeleneJUnit5Runner;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.Optional;
 
+@ExtendWith(SeleneJUnit5Runner.class)
 class DefaultCommandBusTests {
 
     private static final CommandBus bus = new TestCommandBus();
@@ -99,7 +102,7 @@ class DefaultCommandBusTests {
     @Command(value = "sample", extend = true)
     private static class ExampleExtendingCommandClass {
 
-        @Command(value = "extended")
+        @Command("extended")
         public void extendedCommand() {}
     }
 }
