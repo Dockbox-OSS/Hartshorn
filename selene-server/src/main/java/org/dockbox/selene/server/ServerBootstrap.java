@@ -61,7 +61,7 @@ public abstract class ServerBootstrap extends SeleneModuleBootstrap {
         AtomicInteger unprovisionedTypes = new AtomicInteger();
 
         for (BindingData binding : this.getInjector().getBindingData()) {
-            String meta = binding.getMeta().present() ? " (meta: " + binding.getMeta().get().getValue() + ")" : "";
+            String meta = binding.getMeta().present() ? " (meta: " + binding.getMeta().get().value() + ")" : "";
             Selene.log().info("  - \u00A77" + binding.getSource().getSimpleName() + meta + ": \u00A78" + binding.getTarget().getSimpleName());
         }
 

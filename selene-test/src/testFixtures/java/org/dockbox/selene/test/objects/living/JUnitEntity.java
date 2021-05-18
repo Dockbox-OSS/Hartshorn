@@ -31,7 +31,7 @@ import lombok.Setter;
 
 public abstract class JUnitEntity<T extends Entity> implements Entity, PersistentDataHolder {
 
-    @Getter
+    @Getter @Setter
     private Text displayName;
     @Getter @Setter
     private double health = 20;
@@ -44,10 +44,10 @@ public abstract class JUnitEntity<T extends Entity> implements Entity, Persisten
     @Setter
     private boolean gravity = true;
     @Getter
-    private final UUID uuid;
+    private final UUID uniqueId;
 
-    public JUnitEntity(UUID uuid) {
-        this.uuid = uuid;
+    public JUnitEntity(UUID uniqueId) {
+        this.uniqueId = uniqueId;
     }
 
     @Override

@@ -34,10 +34,10 @@ public abstract class BanEvent<T> extends AbstractCancellableEvent {
 
     private final T target;
     private final CommandSource source;
-    private final LocalDateTime creation;
     @Setter
     private Exceptional<String> reason;
     @Setter
     private Exceptional<LocalDateTime> expiration;
+    private final LocalDateTime creation;
 
 }

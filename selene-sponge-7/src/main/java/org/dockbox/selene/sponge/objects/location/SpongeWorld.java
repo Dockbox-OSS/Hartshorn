@@ -116,7 +116,7 @@ public class SpongeWorld extends World implements Wrapper<org.spongepowered.api.
     }
 
     @Override
-    public boolean getLoadOnStartup() {
+    public boolean isLoadOnStartup() {
         if (this.referenceExists()) {
             return this.getReference().get().getProperties().loadOnStartup();
         }

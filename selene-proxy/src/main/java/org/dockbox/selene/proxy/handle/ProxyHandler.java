@@ -124,11 +124,11 @@ public class ProxyHandler<T> implements MethodHandler {
     }
 
     public T proxy() throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
-        if (this.type().isInterface()) {
+        if (this.getType().isInterface()) {
             return new ProxyInterfaceHandler<>(this).proxy();
         }
         ProxyFactory factory = new ProxyFactory();
-        factory.setSuperclass(this.type());
+        factory.setSuperclass(this.getType());
         //noinspection unchecked
 
         return (T) factory.create(new Class<?>[0], new Object[0], this);

@@ -26,7 +26,7 @@ import lombok.Getter;
 
 @Binds(SampleInterface.class)
 @Getter
-@AllArgsConstructor(onConstructor_ = { Wired.class})
+@AllArgsConstructor(onConstructor_ = @Wired)
 public class SampleWiredAnnotatedImplementation implements SampleInterface {
 
     private final String name;

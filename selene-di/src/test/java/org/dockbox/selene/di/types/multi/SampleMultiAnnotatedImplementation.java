@@ -22,7 +22,7 @@ import org.dockbox.selene.di.annotations.Binds;
 import org.dockbox.selene.di.types.SampleInterface;
 
 @Binds(SampleInterface.class)
-@Binds(value = SampleInterface.class, meta = @BindingMeta(getValue = "meta"))
+@Binds(value = SampleInterface.class, meta = @BindingMeta("meta"))
 public class SampleMultiAnnotatedImplementation implements SampleInterface {
     @Override
     public String getName() {

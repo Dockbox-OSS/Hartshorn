@@ -39,7 +39,7 @@ public class JUnitConfiguration extends SimpleConfiguration {
     }
 
     @Override
-    protected Map<String, Map<String, Object>> getCache() {
+    public Map<String, Map<String, Object>> getCache() {
         return SeleneUtils.ofEntries(
                 SeleneUtils.entry(this.getFileKey(), cache)
         );

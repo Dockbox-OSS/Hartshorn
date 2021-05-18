@@ -28,7 +28,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Binds(Element.class)
-@AllArgsConstructor(onConstructor_ = { Wired.class })
+@AllArgsConstructor(onConstructor_ = @Wired)
 public class SimpleElement implements Element {
 
     @Getter

@@ -23,7 +23,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
-@AllArgsConstructor(onConstructor_ = { Wired.class})
+@AllArgsConstructor(onConstructor_ = @Wired)
 public class SampleWiredType implements SampleInterface {
 
     private final String name;

@@ -19,6 +19,7 @@ package org.dockbox.selene.api.i18n.permissions;
 
 import org.dockbox.selene.di.Provider;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -26,6 +27,7 @@ import lombok.Setter;
 
 @Getter @Setter
 @Builder
+@AllArgsConstructor
 @EqualsAndHashCode
 public class PermissionContext {
 

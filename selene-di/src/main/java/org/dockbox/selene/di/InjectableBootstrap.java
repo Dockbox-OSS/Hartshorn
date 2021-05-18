@@ -169,7 +169,7 @@ public abstract class InjectableBootstrap {
     }
 
     public Injector getInjector() {
-        return this.getAdapter().get();
+        return this.getAdapter().getInjector();
     }
 
     private <T> T getRawInstance(Class<T> type) throws ProvisionFailure {

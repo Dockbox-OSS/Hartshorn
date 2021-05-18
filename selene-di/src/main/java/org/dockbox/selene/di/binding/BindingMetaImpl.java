@@ -22,12 +22,10 @@ import org.dockbox.selene.di.annotations.BindingMeta;
 import java.lang.annotation.Annotation;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 
 @SuppressWarnings("ClassExplicitlyAnnotation")
-@Getter
 @AllArgsConstructor
-class BindingMetaImpl implements BindingMeta {
+public class BindingMetaImpl implements BindingMeta {
 
     private final String value;
 
@@ -47,10 +45,15 @@ class BindingMetaImpl implements BindingMeta {
         }
 
         BindingMeta other = (BindingMeta) o;
-        return this.value.equals(other.getValue());
+        return this.value.equals(other.value());
     }
 
     public String toString() {
         return "@" + BindingMeta.class.getName() + "(value=" + this.value + ")";
+    }
+
+    @Override
+    public String value() {
+        return this.value;
     }
 }

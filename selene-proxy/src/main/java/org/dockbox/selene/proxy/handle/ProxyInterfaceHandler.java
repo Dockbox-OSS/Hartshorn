@@ -36,6 +36,6 @@ public class ProxyInterfaceHandler<T> implements InvocationHandler {
 
     public T proxy() {
         //noinspection unchecked
-        return (T) Proxy.newProxyInstance(this.getClass().getClassLoader(), new Class[] { this.handler.type() }, this);
+        return (T) Proxy.newProxyInstance(this.getClass().getClassLoader(), new Class[] { this.handler.getType() }, this);
     }
 }

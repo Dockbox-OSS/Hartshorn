@@ -24,7 +24,7 @@ import lombok.Getter;
 @Getter
 public class CommandParameter<T> {
 
-    private final String key;
     private final T value;
+    private final String key;
 
 }

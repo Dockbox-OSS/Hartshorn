@@ -27,11 +27,11 @@ import lombok.Getter;
 public abstract class PlotPlayerEvent extends PlotEvent implements Targetable {
 
     @Getter
-    private final Player player;
+    private final Player target;
 
     public PlotPlayerEvent(Plot plot, Player player) {
         super(plot);
-        this.player = player;
+        this.target = player;
     }
 
     @Override
