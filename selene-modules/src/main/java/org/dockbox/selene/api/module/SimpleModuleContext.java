@@ -45,12 +45,13 @@ public class SimpleModuleContext implements ModuleContext {
         if (typeName.endsWith("Module")) {
             typeName = typeName.substring(0, typeName.length()-6); // Remove module suffix
         }
-        if ("".equals(module.name())) {
-            this.name = String.join(" ", SeleneUtils.splitCapitals(typeName));
-        }
-        if ("".equals(module.id())) {
-            this.id = String.join("-", SeleneUtils.splitCapitals(typeName)).toLowerCase(Locale.ROOT);
-        }
+        this.name = "".equals(module.name())
+                ? String.join(" ", SeleneUtils.splitCapitals(typeName))
+                : module.name();
+
+        this.id = "".equals(module.id())
+                ? String.join("-", SeleneUtils.splitCapitals(typeName)).toLowerCase(Locale.ROOT)
+                : module.id();
     }
 
     @NotNull
