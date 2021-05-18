@@ -35,11 +35,7 @@ import java.util.UUID;
 
 import javax.inject.Inject;
 
-@Module(
-        id = "toolbinding",
-        name = "Tool Binding",
-        description = "Adds the ability to provide commands to tools and items",
-        authors = "GuusLieben")
+@Module
 public class ToolBinding {
 
     @Inject

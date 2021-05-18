@@ -23,6 +23,7 @@ import org.dockbox.selene.util.SeleneUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Locale;
 import java.util.Map;
 
 public class SimpleModuleContext implements ModuleContext {
@@ -32,25 +33,24 @@ public class SimpleModuleContext implements ModuleContext {
     // only contain one value, however external modules multiple classes marked as @Module may be
     // present.
     private final Map<Class<?>, ModuleStatus> entryStatus = SeleneUtils.emptyConcurrentMap();
-    private String source;
     private Class<?> moduleType;
     private Module module;
+    private String id;
+    private String name;
 
-    public SimpleModuleContext(String source, Class<?> moduleType, Module module) {
-        this.setSource(source);
+    public SimpleModuleContext(Class<?> moduleType, Module module) {
         this.setType(moduleType);
         this.setModule(module);
-    }
-
-    @NotNull
-    @Override
-    public String getSource() {
-        return this.source;
-    }
-
-    @Override
-    public void setSource(@NotNull String source) {
-        this.source = source;
+        String typeName = moduleType.getSimpleName();
+        if (typeName.endsWith("Module")) {
+            typeName = typeName.substring(0, typeName.length()-6); // Remove module suffix
+        }
+        if ("".equals(module.name())) {
+            this.name = String.join(" ", SeleneUtils.splitCapitals(typeName));
+        }
+        if ("".equals(module.id())) {
+            this.id = String.join("-", SeleneUtils.splitCapitals(typeName)).toLowerCase(Locale.ROOT);
+        }
     }
 
     @NotNull
@@ -83,6 +83,16 @@ public class SimpleModuleContext implements ModuleContext {
         if (clazz.isAnnotationPresent(Deprecated.class))
             this.entryStatus.put(clazz, ModuleStatus.of(-status.getIntValue()));
         else this.entryStatus.put(clazz, status);
+    }
+
+    @Override
+    public String name() {
+        return this.name;
+    }
+
+    @Override
+    public String id() {
+        return this.id;
     }
 
     @Nullable

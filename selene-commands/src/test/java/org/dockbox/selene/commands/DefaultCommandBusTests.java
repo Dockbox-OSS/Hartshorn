@@ -83,25 +83,23 @@ class DefaultCommandBusTests {
         Assertions.assertFalse(inheritedCommandContext.isPresent());
     }
 
-    @Command(
-            aliases = { "example", "sample" },
-            usage = "example", permission = "example")
+    @Command({ "example", "sample" })
     private static class ExampleCommandClass {
 
-        @Command(aliases = "", usage = "", permission = "example")
+        @Command
         public void mainCommand() {}
 
-        @Command(aliases = "child", usage = "child", permission = "example")
+        @Command("child")
         public void subCommand() {}
 
-        @Command(aliases = "noninherit", usage = "noninherit", inherit = false, permission = "example")
+        @Command(value = "noninherit", inherit = false)
         public void nonInheritedChild() {}
     }
 
-    @Command(aliases = "sample", usage = "sample", extend = true, permission = "example")
+    @Command(value = "sample", extend = true)
     private static class ExampleExtendingCommandClass {
 
-        @Command(aliases = "extended", usage = "extended", permission = "example")
+        @Command(value = "extended")
         public void extendedCommand() {}
     }
 }

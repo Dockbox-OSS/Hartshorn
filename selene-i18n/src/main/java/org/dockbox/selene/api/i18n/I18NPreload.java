@@ -34,6 +34,7 @@ import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.proxy.ProxyProperty;
 import org.dockbox.selene.proxy.handle.ProxyHandler;
 import org.dockbox.selene.util.Reflect;
+import org.dockbox.selene.util.SeleneUtils;
 
 import java.lang.reflect.Method;
 
@@ -90,7 +91,7 @@ public class I18NPreload implements Preloadable {
         }
         String keyJoined = method.getName();
         if (keyJoined.startsWith("get")) keyJoined = keyJoined.substring(3);
-        String[] r = keyJoined.split("(?=\\p{Lu})");
+        String[] r = SeleneUtils.splitCapitals(keyJoined);
         return prefix + String.join(".", r).toLowerCase();
     }
 }

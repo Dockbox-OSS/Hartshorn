@@ -29,6 +29,6 @@ import org.dockbox.selene.commands.context.CommandContext;
 @SuppressWarnings("InterfaceMayBeAnnotatedFunctional")
 public interface Server {
 
-    @Command(aliases = "confirm", usage = "confirm <cooldownId{String}>", permission = SeleneInformation.GLOBAL_PERMITTED)
+    @Command(value = "confirm", arguments = "<cooldownId{String}>", permission = SeleneInformation.GLOBAL_PERMITTED)
     void confirm(MessageReceiver src, CommandContext ctx);
 }

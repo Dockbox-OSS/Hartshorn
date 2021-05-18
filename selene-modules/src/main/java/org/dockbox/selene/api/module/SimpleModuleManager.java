@@ -114,7 +114,7 @@ public class SimpleModuleManager implements ModuleManager {
         return annotatedTypes.stream()
                 .filter(type -> !type.isAnnotationPresent(Disabled.class))
                 .map(type -> {
-                    SimpleModuleContext context = new SimpleModuleContext(type.getCanonicalName(), type, type.getAnnotation(Module.class));
+                    SimpleModuleContext context = new SimpleModuleContext(type, type.getAnnotation(Module.class));
                     return new Tuple<>(new ModuleContainer(context), type);
                 })
                 .filter(tuple -> {
@@ -132,18 +132,17 @@ public class SimpleModuleManager implements ModuleManager {
     }
 
     private <T> boolean createComponentInstance(Class<T> entry, ModuleContainer container) {
-        Module header = entry.getAnnotation(Module.class);
-        List<Module> existingHeaders = SeleneUtils.emptyList();
-        moduleContainers.forEach(c -> existingHeaders.add(c.module()));
+        List<ModuleContainer> existingHeaders = SeleneUtils.emptyList();
+        existingHeaders.addAll(moduleContainers);
         //noinspection CallToSuspiciousStringMethod
-        if (existingHeaders.stream().anyMatch(e -> e.id().equals(header.id()))) {
-            Selene.log().warn("Module with unique ID " + header.id() + " already present!");
+        if (existingHeaders.stream().anyMatch(ec -> ec.id().equals(container.id()))) {
+            Selene.log().warn("Module with unique ID " + container.id() + " already present!");
             return false;
         }
 
-        assert null != header : "@Module header missing from previously checked type [" + entry.getCanonicalName() + "]! This should not be possible!";
+        assert null != container.module() : "@Module header missing from previously checked type [" + entry.getCanonicalName() + "]! This should not be possible!";
 
-        String[] dependencies = header.dependencies();
+        String[] dependencies = container.dependencies();
         for (String dependency : dependencies) {
             try {
                 String formattedDependency = SimpleModuleManager.convertDependencyName(dependency);
@@ -157,7 +156,7 @@ public class SimpleModuleManager implements ModuleManager {
                 // are not encapsulated, so it is possible to reuse this to look up classes in the future.
                 Object pkg = this.getClass().getClassLoader().getResource(formattedDependency);
                 if (null == pkg) {
-                    Selene.log().warn("Dependent package '" + dependency + " (" + formattedDependency + ")' is not present, failing module '" + header.name() + '\'');
+                    Selene.log().warn("Dependent package '" + dependency + " (" + formattedDependency + ")' is not present, failing module '" + container.name() + '\'');
                     // Do not instantiate entries which require dependencies which are not present.
                     container.status(entry, ModuleStatus.FAILED);
                     return false;
@@ -197,7 +196,7 @@ public class SimpleModuleManager implements ModuleManager {
                 }
             }
 
-            instanceMappings.put(header.id(), instance);
+            instanceMappings.put(container.id(), instance);
             container.instance(instance);
             return true;
         } catch (Exception e) {

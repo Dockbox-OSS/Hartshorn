@@ -40,11 +40,7 @@ import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 
-@Module(
-        id = "logarchival",
-        name = "Log Archival",
-        description = "Automatically organises old server logs",
-        authors = "GuusLieben")
+@Module
 public class LogArchival {
 
     private final PathMatcher filter = FileSystems.getDefault().getPathMatcher("glob:*.log.gz");

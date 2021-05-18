@@ -34,29 +34,14 @@ public @interface Module {
      *
      * @return the identifier
      */
-    String id();
+    String id() default "";
 
     /**
      * The human-readable name of the module.
      *
      * @return the name
      */
-    String name();
-
-    /**
-     * The human-readable description of the module.
-     *
-     * @return the human-readable description
-     */
-    String description();
-
-    /**
-     * The authors of the module. Preferably using GitHub usernames, though real names or other
-     * aliases are permitted.
-     *
-     * @return the authors of the module
-     */
-    String[] authors();
+    String name() default "";
 
     /**
      * The qualified names of packages required to be present by the module. For example {@code

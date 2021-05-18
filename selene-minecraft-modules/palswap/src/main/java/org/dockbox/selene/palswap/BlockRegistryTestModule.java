@@ -31,9 +31,7 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
 @Disabled(reason = "Demo module")
-@Module(id = "blockregistry", name = "Block Registry",
-        description = "Block Registry Testing",
-        authors = "pumbas600")
+@Module
 public class BlockRegistryTestModule {
 
     private static BlockRegistryTestModule instance;
@@ -44,7 +42,7 @@ public class BlockRegistryTestModule {
         instance = this;
     }
 
-    @Command(aliases = "blockid", usage = "blockid <id>", permission = SeleneInformation.GLOBAL_BYPASS)
+    @Command(value = "blockid", arguments = "<id>", permission = SeleneInformation.GLOBAL_BYPASS)
     public void blockID(@NotNull Player player, CommandContext context) {
         Exceptional<CommandParameter<String>> eID = context.argument("id");
 
@@ -58,7 +56,7 @@ public class BlockRegistryTestModule {
         player.getInventory().give(Item.of(id));
     }
 
-    @Command(aliases = "blockmeta", usage = "blockmeta <id> <meta{Integer}>", permission = SeleneInformation.GLOBAL_BYPASS)
+    @Command(value = "blockmeta", arguments = "<id> <meta{Integer}>", permission = SeleneInformation.GLOBAL_BYPASS)
     public void blockMeta(@NotNull Player player, CommandContext context) {
 
         String id = context.get("id");

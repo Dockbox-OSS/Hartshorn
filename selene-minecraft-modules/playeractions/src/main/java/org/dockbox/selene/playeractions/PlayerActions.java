@@ -39,8 +39,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-@Module(id = "playeractions", name = "Player Actions", description = "Intercepts and verifies the validity of several player actions",
-        authors = "GuusLieben")
+@Module
 public class PlayerActions {
 
     @Inject

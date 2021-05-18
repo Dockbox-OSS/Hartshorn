@@ -31,7 +31,6 @@ import org.dockbox.selene.commands.source.CommandSource;
 import org.dockbox.selene.commands.source.DiscordCommandSource;
 import org.dockbox.selene.dave.models.DaveTriggers;
 import org.dockbox.selene.di.Provider;
-import org.dockbox.selene.di.SeleneFactory;
 import org.dockbox.selene.di.properties.InjectableType;
 import org.dockbox.selene.di.properties.InjectorProperty;
 import org.dockbox.selene.discord.events.DiscordChatReceivedEvent;
@@ -47,8 +46,8 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
-@Command(aliases = "dave", usage = "dave", permission = "dave")
-@Module(id = "dave", name = "Dave", description = "", authors = "GuusLieben")
+@Command(value = "dave")
+@Module
 public class DaveModule implements InjectableType {
 
     private static final int msTick = 20;
@@ -63,12 +62,12 @@ public class DaveModule implements InjectableType {
     @Inject
     private DaveResources resources;
 
-    @Command(aliases = "mute", usage = "mute", permission = DaveModule.DAVE_MUTE)
+    @Command(value = "mute", permission = DaveModule.DAVE_MUTE)
     public void mute(Player player) {
         DaveUtils.toggleMute(player);
     }
 
-    @Command(aliases = "triggers", usage = "triggers", permission = DaveModule.DAVE_TRIGGERS)
+    @Command(value = "triggers", permission = DaveModule.DAVE_TRIGGERS)
     public void triggers(CommandSource source) {
         Provider.provide(PaginationBuilder.class)
                 .title(this.resources.getTriggerHeader().asText())
@@ -82,7 +81,7 @@ public class DaveModule implements InjectableType {
                 .send(source);
     }
 
-    @Command(aliases = "run", usage = "run <trigger{String}>", permission = DaveModule.DAVE_TRIGGER_RUN)
+    @Command(value = "run", arguments = "<trigger{String}>", permission = DaveModule.DAVE_TRIGGER_RUN)
     public void run(Player source, CommandContext context) {
         String triggerId = context.get("trigger");
         this.triggers.findById(triggerId)
@@ -90,7 +89,7 @@ public class DaveModule implements InjectableType {
                 .absent(() -> source.send(this.resources.getTriggerNotfound(triggerId)));
     }
 
-    @Command(aliases = "refresh", usage = "refresh", permission = DaveModule.DAVE_REFRESH)
+    @Command(value = "refresh", permission = DaveModule.DAVE_REFRESH)
     public void refresh(CommandSource source) {
         this.stateEnabling();
         source.sendWithPrefix(this.resources.getReload());

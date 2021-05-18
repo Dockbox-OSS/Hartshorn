@@ -271,7 +271,7 @@ public abstract class DefaultCommandBus<E> implements CommandBus {
 
     private CommandInheritanceContext extractCommandInheritanceContext(Class<?> parent) {
         Command command = parent.getAnnotation(Command.class);
-        CommandInheritanceContext context = new CommandInheritanceContext(command, this.resources.getMissingArguments());
+        CommandInheritanceContext context = new CommandInheritanceContext(command, this.resources.getMissingArguments(), parent);
 
         /*
         Inherited methods are only stored inside the CommandInheritanceContext and not in
@@ -317,7 +317,7 @@ public abstract class DefaultCommandBus<E> implements CommandBus {
     static MethodCommandContext extractInheritedContext(Method method, CommandInheritanceContext parentContext) {
         Command command = method.getAnnotation(Command.class);
         if (!command.inherit()) return null;
-        for (String alias : command.aliases()) {
+        for (String alias : command.value()) {
             if (parentContext.getInheritedCommands().stream().anyMatch(cmd -> cmd.getAliases().contains(alias))) {
                 /*
                 If a parent has two sub-commands with the same alias(es), a warning is thrown. Typically methods calling

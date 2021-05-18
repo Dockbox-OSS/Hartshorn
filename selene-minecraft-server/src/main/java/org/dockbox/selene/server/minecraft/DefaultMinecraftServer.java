@@ -32,13 +32,13 @@ import org.dockbox.selene.util.SeleneUtils;
 import javax.inject.Inject;
 
 @Metadata(alias = "minecraft", serializable = false)
-@Command(aliases = SeleneInformation.PROJECT_ID, usage = SeleneInformation.PROJECT_ID, permission = DefaultServer.SELENE_ADMIN, extend = true)
+@Command(value = SeleneInformation.PROJECT_ID, permission = DefaultServer.SELENE_ADMIN, extend = true)
 public class DefaultMinecraftServer {
 
     @Inject
     private DefaultServerResources resources;
 
-    @Command(aliases = { "lang", "language" }, usage = "language <language{Language}> [player{Player}]", inherit = false, permission = SeleneInformation.GLOBAL_PERMITTED)
+    @Command(value = { "lang", "language" }, arguments = "<language{Language}> [player{Player}]", inherit = false, permission = SeleneInformation.GLOBAL_PERMITTED)
     public void switchLang(MessageReceiver src, CommandContext ctx, Language language, Player player) {
         if (null == player) {
             if (src instanceof Player) {
@@ -58,7 +58,7 @@ public class DefaultMinecraftServer {
         player.sendWithPrefix(this.resources.getLanguageUpdated(languageLocalized));
     }
 
-    @Command(aliases = "platform", usage = "platform", permission = DefaultServer.SELENE_ADMIN)
+    @Command(value = "platform", permission = DefaultServer.SELENE_ADMIN)
     public void platform(MessageReceiver src) {
         MinecraftServerType st = MinecraftServerBootstrap.getInstance().getServerType();
         String platformVersion = Selene.getServer().getPlatformVersion();

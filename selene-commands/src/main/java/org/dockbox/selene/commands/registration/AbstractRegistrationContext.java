@@ -19,10 +19,13 @@ package org.dockbox.selene.commands.registration;
 
 import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.domain.Identifiable;
+import org.dockbox.selene.api.domain.OwnerLookup;
+import org.dockbox.selene.api.domain.TypedOwner;
 import org.dockbox.selene.api.i18n.common.ResourceEntry;
 import org.dockbox.selene.commands.annotations.Command;
 import org.dockbox.selene.commands.context.CommandContext;
 import org.dockbox.selene.commands.source.CommandSource;
+import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.util.SeleneUtils;
 
 import java.util.List;
@@ -32,10 +35,12 @@ public abstract class AbstractRegistrationContext {
 
     private final List<String> aliases = SeleneUtils.emptyConcurrentList();
     private final Command command;
+    private final TypedOwner owner;
 
-    protected AbstractRegistrationContext(Command command) {
+    protected AbstractRegistrationContext(Command command, Class<?> owner) {
         this.command = command;
-        for (String alias : command.aliases()) this.addAlias(alias);
+        for (String alias : command.value()) this.addAlias(alias);
+        this.owner = Provider.provide(OwnerLookup.class).lookup(owner);
     }
 
     public void addAlias(String alias) {
@@ -60,5 +65,9 @@ public abstract class AbstractRegistrationContext {
 
     public List<String> getAliases() {
         return this.aliases;
+    }
+
+    public TypedOwner getOwner() {
+        return this.owner;
     }
 }

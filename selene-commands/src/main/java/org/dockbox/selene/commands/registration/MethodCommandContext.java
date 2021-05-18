@@ -44,7 +44,7 @@ public class MethodCommandContext extends AbstractRegistrationContext {
     private final Method method;
 
     public MethodCommandContext(Command command, Method method) {
-        super(command);
+        super(command, method.getDeclaringClass());
         this.method = method;
     }
 

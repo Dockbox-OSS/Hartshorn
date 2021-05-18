@@ -17,13 +17,10 @@
 
 package org.dockbox.selene.api.module;
 
+import org.dockbox.selene.api.domain.TypedOwner;
 import org.dockbox.selene.api.module.annotations.Module;
 
-public interface ModuleContext {
-
-    String getSource();
-
-    void setSource(String source);
+public interface ModuleContext extends TypedOwner {
 
     Class<?> getType();
 
@@ -34,6 +31,10 @@ public interface ModuleContext {
     void setModule(Module module);
 
     void addStatus(Class<?> clazz, ModuleStatus status);
+
+    String name();
+
+    String id();
 
     ModuleStatus getStatus(Class<?> clazz);
 }

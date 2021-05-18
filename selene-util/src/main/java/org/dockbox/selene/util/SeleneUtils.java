@@ -1154,6 +1154,10 @@ public final class SeleneUtils {
         else return fullName.substring(start);
     }
 
+    public static String[] splitCapitals(String s) {
+        return s.split("(?=\\p{Lu})");
+    }
+
     public enum Provision {
         /** Uses the field name to process field information. */
         FIELD,

@@ -33,8 +33,8 @@ import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
-@Command(aliases = {"unloader", "wu"}, usage = "unloader", permission = WorldManagement.WORLD_MANAGER)
-@Module(id = "worldmanagement", name = "World Management", description = "Manages several aspects of the various worlds on a server", authors = "GuusLieben")
+@Command(value = {"unloader", "wu"}, permission = WorldManagement.WORLD_MANAGER)
+@Module
 public class WorldManagement {
 
     @Inject

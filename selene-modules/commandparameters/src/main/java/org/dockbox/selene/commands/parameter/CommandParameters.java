@@ -30,7 +30,7 @@ import org.dockbox.selene.util.Reflect;
 import java.util.Collection;
 
 @Phase(BootstrapPhase.PRE_INIT)
-@Module(id = "commandparameters", name = "Command Parameters", description = "Allows annotated types to be command parameters", authors = "GuusLieben")
+@Module
 public class CommandParameters implements Preloadable {
 
     @Override

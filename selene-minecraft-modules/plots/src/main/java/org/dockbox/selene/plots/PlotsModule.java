@@ -19,6 +19,6 @@ package org.dockbox.selene.plots;
 
 import org.dockbox.selene.api.module.annotations.Module;
 
-@Module(id = "plots", name = "Plots", description = "Provides access to plot plugin information", authors = "GuusLieben")
-public class PlotModule {
+@Module
+public class PlotsModule {
 }

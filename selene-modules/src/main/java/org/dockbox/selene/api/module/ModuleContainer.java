@@ -32,27 +32,15 @@ public class ModuleContainer implements TypedOwner {
 
     @Override
     public String id() {
-        return this.module().id();
+        return this.context.id();
     }
 
     public String name() {
-        return this.module().name();
-    }
-
-    public String description() {
-        return this.module().description();
-    }
-
-    public String[] authors() {
-        return this.module().authors();
+        return this.context.name();
     }
 
     public String[] dependencies() {
         return this.module().dependencies();
-    }
-
-    public String source() {
-        return this.context.getSource();
     }
 
     public Class<?> type() {

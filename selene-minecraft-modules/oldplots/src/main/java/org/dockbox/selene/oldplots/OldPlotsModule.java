@@ -47,12 +47,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-@Module(
-        id = "oldplots",
-        name = "OldPlots",
-        description = "Provides a easy way to interact with old plot worlds and registrations",
-        authors = "GuusLieben",
-        dependencies = "org.dockbox.selene.database")
+@Module(dependencies = "org.dockbox.selene.database")
 public class OldPlotsModule {
 
     @Inject
@@ -71,7 +66,7 @@ public class OldPlotsModule {
         exceptionalList.present(modelList -> this.modelList = modelList);
     }
 
-    @Command(aliases = "oldplots", usage = "oldplots <player{Player}>", permission = "selene.oldplots.list")
+    @Command(value = "oldplots", arguments = "<player{Player}>", permission = "selene.oldplots.list")
     public void oldPlotsCommand(Player source, CommandContext ctx) throws InvalidConnectionException {
         if (!ctx.has("player")) {
             source.sendWithPrefix(this.resources.getPlayerError());
@@ -125,7 +120,7 @@ public class OldPlotsModule {
                 new SQLColumnProperty("world", OldPlotsIdentifiers.WORLD));
     }
 
-    @Command(aliases = "optp", usage = "optp <id{Int}>", permission = "selene.oldplots.teleport")
+    @Command(value = "optp", arguments = "<id{Int}>", permission = "selene.oldplots.teleport")
     public void teleportCommand(Player source, CommandContext context)
             throws InvalidConnectionException {
         Integer id = context.get("id");

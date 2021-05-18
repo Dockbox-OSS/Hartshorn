@@ -29,12 +29,9 @@ public interface DefaultServerResources {
     @Resource(value = "&m$2====================\n" +
             "$2Name : $1{0}\n" +
             "$2ID : $1{1}\n" +
-            "$2Description : $1{2}\n" +
-            "$2Dependencies : $1{3}\n" +
-            "$2Author(s) : $1{4}\n" +
-            "$2Source : $1{5}\n" +
+            "$2Dependencies : $1{2}\n" +
             "&m$2====================\n")
-    ResourceEntry getInfoModuleBlock(String name, String id, String description, String dependencies, String authors, String source);
+    ResourceEntry getInfoModuleBlock(String name, String id, String dependencies);
 
     @Resource(value = "$4Could not find module with ID '{0}'")
     ResourceEntry getInfoModuleUnknown();

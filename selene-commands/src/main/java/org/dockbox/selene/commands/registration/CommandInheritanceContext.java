@@ -31,8 +31,8 @@ public class CommandInheritanceContext extends AbstractRegistrationContext {
     private final List<MethodCommandContext> inheritedCommands = SeleneUtils.emptyConcurrentList();
     private final ResourceEntry missingArgumentResource;
 
-    public CommandInheritanceContext(Command command, ResourceEntry missingArgumentResource) {
-        super(command);
+    public CommandInheritanceContext(Command command, ResourceEntry missingArgumentResource, Class<?> type) {
+        super(command, type);
         this.missingArgumentResource = missingArgumentResource;
     }
 
