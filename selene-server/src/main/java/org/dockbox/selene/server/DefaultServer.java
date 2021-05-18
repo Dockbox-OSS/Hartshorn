@@ -36,12 +36,11 @@ import org.dockbox.selene.commands.annotations.Command;
 import org.dockbox.selene.commands.context.CommandContext;
 import org.dockbox.selene.commands.context.CommandParameter;
 import org.dockbox.selene.di.Provider;
+import org.dockbox.selene.di.annotations.Wired;
 import org.dockbox.selene.server.events.ServerReloadEvent;
 import org.dockbox.selene.util.SeleneUtils;
 
 import java.util.List;
-
-import javax.inject.Inject;
 
 @Module(id = SeleneInformation.PROJECT_ID, name = SeleneInformation.PROJECT_NAME)
 @Command(value = SeleneInformation.PROJECT_ID, permission = DefaultServer.SELENE_ADMIN)
@@ -49,7 +48,7 @@ public class DefaultServer implements Server {
 
     public static final String SELENE_ADMIN = SeleneInformation.PROJECT_ID + ".admin";
 
-    @Inject
+    @Wired
     private DefaultServerResources resources;
 
     // Parent command

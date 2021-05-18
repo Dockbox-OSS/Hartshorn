@@ -29,6 +29,7 @@ import org.dockbox.selene.commands.annotations.Command;
 import org.dockbox.selene.commands.context.CommandContext;
 import org.dockbox.selene.commands.source.CommandSource;
 import org.dockbox.selene.di.Provider;
+import org.dockbox.selene.di.annotations.Wired;
 import org.dockbox.selene.domain.registry.Registry;
 import org.dockbox.selene.palswap.fileparsers.BlockRegistryParser;
 import org.dockbox.selene.persistence.FileManager;
@@ -46,16 +47,14 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
 
-import javax.inject.Inject;
-
 @Disabled(reason = "Under development")
-@Command(value = "registry")
+@Command("registry")
 @Module
 public class BlockRegistryModule {
 
     private static Registry<Registry<Item>> blockRegistry = new Registry<>();
     private final String itemRegistryFile = "itemdata";
-    @Inject
+    @Wired
     private Logger logger;
     private BlockRegistryParser blockRegistryParser;
 

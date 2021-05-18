@@ -22,6 +22,7 @@ import org.dockbox.selene.api.module.annotations.Module;
 import org.dockbox.selene.api.task.TaskRunner;
 import org.dockbox.selene.commands.annotations.Command;
 import org.dockbox.selene.di.Provider;
+import org.dockbox.selene.di.annotations.Wired;
 import org.dockbox.selene.server.events.ServerReloadEvent;
 import org.dockbox.selene.server.events.ServerStartedEvent;
 import org.dockbox.selene.server.minecraft.dimension.Worlds;
@@ -31,15 +32,13 @@ import org.dockbox.selene.server.minecraft.events.player.PlayerPortalEvent;
 
 import java.util.concurrent.TimeUnit;
 
-import javax.inject.Inject;
-
 @Command(value = {"unloader", "wu"}, permission = WorldManagement.WORLD_MANAGER)
 @Module
 public class WorldManagement {
 
-    @Inject
+    @Wired
     private WorldManagementConfig config;
-    @Inject
+    @Wired
     private WorldManagementResources resources;
 
     protected static final String WORLD_MANAGER = "selene.worlds";

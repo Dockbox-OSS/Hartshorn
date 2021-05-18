@@ -31,6 +31,7 @@ import org.dockbox.selene.commands.source.CommandSource;
 import org.dockbox.selene.commands.source.DiscordCommandSource;
 import org.dockbox.selene.dave.models.DaveTriggers;
 import org.dockbox.selene.di.Provider;
+import org.dockbox.selene.di.annotations.Wired;
 import org.dockbox.selene.di.properties.InjectableType;
 import org.dockbox.selene.di.properties.InjectorProperty;
 import org.dockbox.selene.discord.events.DiscordChatReceivedEvent;
@@ -44,9 +45,7 @@ import java.nio.file.Path;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import javax.inject.Inject;
-
-@Command(value = "dave")
+@Command("dave")
 @Module
 public class DaveModule implements InjectableType {
 
@@ -59,7 +58,7 @@ public class DaveModule implements InjectableType {
     public static final String DAVE_TRIGGERS = "dave.triggers.list";
     public static final String DAVE_TRIGGER_RUN = "dave.triggers.run";
 
-    @Inject
+    @Wired
     private DaveResources resources;
 
     @Command(value = "mute", permission = DaveModule.DAVE_MUTE)

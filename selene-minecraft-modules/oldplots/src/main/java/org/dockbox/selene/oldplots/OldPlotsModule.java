@@ -31,6 +31,7 @@ import org.dockbox.selene.database.dialects.sqlite.SQLitePathProperty;
 import org.dockbox.selene.database.exceptions.InvalidConnectionException;
 import org.dockbox.selene.database.properties.SQLColumnProperty;
 import org.dockbox.selene.di.Provider;
+import org.dockbox.selene.di.annotations.Wired;
 import org.dockbox.selene.domain.table.Table;
 import org.dockbox.selene.persistence.FileManager;
 import org.dockbox.selene.persistence.FileType;
@@ -45,14 +46,12 @@ import org.jetbrains.annotations.NotNull;
 import java.nio.file.Path;
 import java.util.List;
 
-import javax.inject.Inject;
-
 @Module(dependencies = "org.dockbox.selene.database")
 public class OldPlotsModule {
 
-    @Inject
+    @Wired
     private FileManager fileManager;
-    @Inject
+    @Wired
     private OldPlotsResources resources;
 
     // Avoid null

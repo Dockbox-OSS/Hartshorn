@@ -30,10 +30,10 @@ import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.domain.tuple.Tuple;
 import org.dockbox.selene.di.InjectConfiguration;
 import org.dockbox.selene.di.Provider;
-import org.dockbox.selene.di.annotations.Wired;
 import org.dockbox.selene.di.annotations.BindingMeta;
 import org.dockbox.selene.di.annotations.Binds;
 import org.dockbox.selene.di.annotations.MultiBinds;
+import org.dockbox.selene.di.annotations.Wired;
 import org.dockbox.selene.di.binding.BindingData;
 import org.dockbox.selene.di.binding.Bindings;
 import org.dockbox.selene.di.inject.modules.GuicePrefixScannerModule;
@@ -62,7 +62,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.Supplier;
 
-import javax.inject.Inject;
 import javax.inject.Named;
 
 public class GuiceInjector implements Injector {
@@ -215,7 +214,7 @@ public class GuiceInjector implements Injector {
     public <T> T populate(T instance) {
         if (null != instance) {
             this.rebuild().injectMembers(instance);
-            for (Field field : Reflect.annotatedFields(Inject.class, instance.getClass())) {
+            for (Field field : Reflect.annotatedFields(Wired.class, instance.getClass())) {
                 Object fieldInstance = Provider.provide(field.getType());
                 Reflect.set(field, instance, fieldInstance);
             }
@@ -273,7 +272,7 @@ public class GuiceInjector implements Injector {
     private Map.Entry<Key<?>, Class<?>> handleScanned(Class<?> binder, Class<?> binds, Binds bindAnnotation) {
         BindingMeta meta = bindAnnotation.meta();
         Key<?> key;
-        if (!"".equals(meta.getValue())) {
+        if (!"".equals(meta.value())) {
             key = Key.get(binds, meta);
         }
         else {

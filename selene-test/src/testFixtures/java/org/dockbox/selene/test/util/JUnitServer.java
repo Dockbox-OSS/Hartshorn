@@ -24,15 +24,14 @@ import org.dockbox.selene.commands.CommandBus;
 import org.dockbox.selene.commands.context.CommandContext;
 import org.dockbox.selene.commands.context.CommandParameter;
 import org.dockbox.selene.di.Provider;
+import org.dockbox.selene.di.annotations.Wired;
 import org.dockbox.selene.server.DefaultServerResources;
 import org.dockbox.selene.server.Server;
 import org.dockbox.selene.test.TestResources;
 
-import javax.inject.Inject;
-
 public class JUnitServer implements Server {
 
-    @Inject
+    @Wired
     private DefaultServerResources resources;
 
     @Override

@@ -21,6 +21,7 @@ import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.events.annotations.Listener;
 import org.dockbox.selene.api.module.annotations.Module;
 import org.dockbox.selene.config.annotations.Value;
+import org.dockbox.selene.di.annotations.Wired;
 import org.dockbox.selene.plots.Plot;
 import org.dockbox.selene.plots.PlotKeys;
 import org.dockbox.selene.plots.PlotMembership;
@@ -37,14 +38,12 @@ import org.dockbox.selene.server.minecraft.players.Player;
 
 import java.util.List;
 
-import javax.inject.Inject;
-
 @Module
 public class PlayerActions {
 
-    @Inject
+    @Wired
     private Worlds worlds;
-    @Inject
+    @Wired
     private PlayerActionResources resources;
 
     @Value("modules.player-actions.whitelist")

@@ -29,6 +29,7 @@ import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.events.EventBus;
 import org.dockbox.selene.api.exceptions.Except;
 import org.dockbox.selene.di.Provider;
+import org.dockbox.selene.di.annotations.Wired;
 import org.dockbox.selene.discord.DiscordUtils;
 import org.dockbox.selene.nms.packets.NMSPacket;
 import org.dockbox.selene.nms.properties.NativePacketProperty;
@@ -50,8 +51,8 @@ import org.dockbox.selene.sponge.objects.composite.CompositeDataManipulatorBuild
 import org.dockbox.selene.sponge.objects.composite.ImmutableCompositeData;
 import org.dockbox.selene.sponge.objects.composite.MutableCompositeData;
 import org.dockbox.selene.sponge.plotsquared.PlotSquaredEventListener;
-import org.dockbox.selene.sponge.util.inject.SpongeEarlyInjector;
 import org.dockbox.selene.sponge.util.SpongeTaskRunner;
+import org.dockbox.selene.sponge.util.inject.SpongeEarlyInjector;
 import org.dockbox.selene.sponge.util.inject.SpongeLateInjector;
 import org.dockbox.selene.util.Reflect;
 import org.dockbox.selene.util.SeleneUtils;
@@ -74,8 +75,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import javax.inject.Inject;
-
 import eu.crushedpixel.sponge.packetgate.api.listener.PacketListener.ListenerPriority;
 import eu.crushedpixel.sponge.packetgate.api.listener.PacketListenerAdapter;
 import eu.crushedpixel.sponge.packetgate.api.registry.PacketConnection;
@@ -96,7 +95,7 @@ import eu.crushedpixel.sponge.packetgate.api.registry.PacketGate;
 public class SpongeAPI7Bootstrap extends MinecraftServerBootstrap {
 
     private final SpongeDiscordListener discordListener = new SpongeDiscordListener();
-    @Inject
+    @Wired
     private PluginContainer container;
 
     /**

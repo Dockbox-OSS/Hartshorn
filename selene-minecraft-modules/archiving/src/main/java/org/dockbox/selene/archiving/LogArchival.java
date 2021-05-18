@@ -22,6 +22,7 @@ import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.events.annotations.Listener;
 import org.dockbox.selene.api.exceptions.Except;
 import org.dockbox.selene.api.module.annotations.Module;
+import org.dockbox.selene.di.annotations.Wired;
 import org.dockbox.selene.persistence.FileManager;
 import org.dockbox.selene.server.events.ServerUpdateEvent;
 
@@ -38,8 +39,6 @@ import java.time.Month;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.inject.Inject;
-
 @Module
 public class LogArchival {
 
@@ -48,7 +47,7 @@ public class LogArchival {
     private final Pattern namePattern = Pattern.compile("(.*?)(-(\\d+))?.log.gz");
     private Path logPath;
 
-    @Inject
+    @Wired
     private FileManager fileManager;
 
     @Listener

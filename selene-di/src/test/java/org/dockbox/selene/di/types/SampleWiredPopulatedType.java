@@ -17,11 +17,10 @@
 
 package org.dockbox.selene.di.types;
 
+import org.dockbox.selene.config.annotations.Value;
 import org.dockbox.selene.di.annotations.Wired;
 import org.dockbox.selene.di.properties.InjectableType;
 import org.dockbox.selene.di.properties.InjectorProperty;
-
-import javax.inject.Inject;
 
 import lombok.Getter;
 
@@ -30,7 +29,7 @@ public class SampleWiredPopulatedType implements SampleInterface, InjectableType
 
     private final String name;
 
-    @Inject
+    @Wired
     private SampleField field;
     private boolean enabled = false;
 

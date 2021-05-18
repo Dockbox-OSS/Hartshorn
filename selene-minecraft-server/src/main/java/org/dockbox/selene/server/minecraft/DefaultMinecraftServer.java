@@ -24,18 +24,17 @@ import org.dockbox.selene.api.i18n.MessageReceiver;
 import org.dockbox.selene.api.i18n.common.Language;
 import org.dockbox.selene.commands.annotations.Command;
 import org.dockbox.selene.commands.context.CommandContext;
+import org.dockbox.selene.di.annotations.Wired;
 import org.dockbox.selene.server.DefaultServer;
 import org.dockbox.selene.server.DefaultServerResources;
 import org.dockbox.selene.server.minecraft.players.Player;
 import org.dockbox.selene.util.SeleneUtils;
 
-import javax.inject.Inject;
-
 @Metadata(alias = "minecraft", serializable = false)
 @Command(value = SeleneInformation.PROJECT_ID, permission = DefaultServer.SELENE_ADMIN, extend = true)
 public class DefaultMinecraftServer {
 
-    @Inject
+    @Wired
     private DefaultServerResources resources;
 
     @Command(value = { "lang", "language" }, arguments = "<language{Language}> [player{Player}]", inherit = false, permission = SeleneInformation.GLOBAL_PERMITTED)
