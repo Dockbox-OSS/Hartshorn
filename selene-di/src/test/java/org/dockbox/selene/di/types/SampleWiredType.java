@@ -17,13 +17,13 @@
 
 package org.dockbox.selene.di.types;
 
-import org.dockbox.selene.di.annotations.AutoWired;
+import org.dockbox.selene.di.annotations.Wired;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
-@AllArgsConstructor(onConstructor_ = { AutoWired.class})
+@AllArgsConstructor(onConstructor_ = { Wired.class})
 public class SampleWiredType implements SampleInterface {
 
     private final String name;

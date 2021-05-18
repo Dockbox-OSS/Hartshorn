@@ -18,7 +18,7 @@
 package org.dockbox.selene.test.objects.living;
 
 import org.dockbox.selene.api.domain.tuple.Vector3N;
-import org.dockbox.selene.di.annotations.AutoWired;
+import org.dockbox.selene.di.annotations.Wired;
 import org.dockbox.selene.server.minecraft.dimension.position.Location;
 import org.dockbox.selene.server.minecraft.entities.ArmorStand;
 import org.dockbox.selene.server.minecraft.entities.ArmorStandInventory;
@@ -47,7 +47,7 @@ public class JUnitArmorStand extends JUnitEntity<ArmorStand> implements ArmorSta
         super(uuid);
     }
 
-    @AutoWired
+    @Wired
     public JUnitArmorStand(Location location) {
         super(UUID.randomUUID());
         this.setLocation(location);

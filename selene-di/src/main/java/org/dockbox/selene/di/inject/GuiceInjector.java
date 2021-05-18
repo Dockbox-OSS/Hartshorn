@@ -30,7 +30,7 @@ import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.domain.tuple.Tuple;
 import org.dockbox.selene.di.InjectConfiguration;
 import org.dockbox.selene.di.Provider;
-import org.dockbox.selene.di.annotations.AutoWired;
+import org.dockbox.selene.di.annotations.Wired;
 import org.dockbox.selene.di.annotations.BindingMeta;
 import org.dockbox.selene.di.annotations.Binds;
 import org.dockbox.selene.di.annotations.MultiBinds;
@@ -260,7 +260,7 @@ public class GuiceInjector implements Injector {
 
     private void handleBinder(Map<Key<?>, Class<?>> bindings, Class<?> binder, Binds annotation) {
         Class<?> binds = annotation.value();
-        if (Reflect.annotatedConstructors(AutoWired.class, binder).isEmpty()) {
+        if (Reflect.annotatedConstructors(Wired.class, binder).isEmpty()) {
             Entry<Key<?>, Class<?>> entry = this.handleScanned(binder, binds, annotation);
             bindings.put(entry.getKey(), entry.getValue());
         }
@@ -314,7 +314,7 @@ public class GuiceInjector implements Injector {
 
     @Override
     public <T, I extends T> void wire(Class<T> contract, Class<? extends I> implementation) {
-        if (Reflect.annotatedConstructors(AutoWired.class, implementation).isEmpty())
+        if (Reflect.annotatedConstructors(Wired.class, implementation).isEmpty())
             throw new IllegalArgumentException("Implementation should contain at least one constructor annotated with @AutoWired");
 
         this.bindings.add(new WireBinding<>(contract, implementation));

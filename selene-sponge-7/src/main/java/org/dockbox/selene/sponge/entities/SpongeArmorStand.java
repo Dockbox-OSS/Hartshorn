@@ -22,7 +22,7 @@ import com.flowpowered.math.vector.Vector3d;
 import net.minecraft.entity.item.EntityArmorStand;
 
 import org.dockbox.selene.api.domain.tuple.Vector3N;
-import org.dockbox.selene.di.annotations.AutoWired;
+import org.dockbox.selene.di.annotations.Wired;
 import org.dockbox.selene.server.minecraft.dimension.position.Location;
 import org.dockbox.selene.server.minecraft.entities.ArmorStand;
 import org.dockbox.selene.server.minecraft.inventory.Inventory;
@@ -56,7 +56,7 @@ public class SpongeArmorStand extends SpongeCloneableEntity<EntityArmorStand, Ar
         this.representation = representation;
     }
 
-    @AutoWired
+    @Wired
     public SpongeArmorStand(Location location) {
         this.representation = super.create(location);
     }

@@ -18,7 +18,7 @@
 package org.dockbox.selene.test.objects.living;
 
 import org.dockbox.selene.api.domain.Exceptional;
-import org.dockbox.selene.di.annotations.AutoWired;
+import org.dockbox.selene.di.annotations.Wired;
 import org.dockbox.selene.server.minecraft.dimension.position.BlockFace;
 import org.dockbox.selene.server.minecraft.dimension.position.Location;
 import org.dockbox.selene.server.minecraft.entities.ItemFrame;
@@ -42,7 +42,7 @@ public class JUnitItemFrame extends JUnitEntity<ItemFrame> implements ItemFrame,
         super(uuid);
     }
 
-    @AutoWired
+    @Wired
     public JUnitItemFrame(Location location) {
         super(UUID.randomUUID());
         this.setLocation(location);

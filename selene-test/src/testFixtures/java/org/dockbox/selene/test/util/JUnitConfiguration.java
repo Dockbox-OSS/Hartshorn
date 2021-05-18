@@ -18,7 +18,7 @@
 package org.dockbox.selene.test.util;
 
 import org.dockbox.selene.config.SimpleConfiguration;
-import org.dockbox.selene.di.annotations.AutoWired;
+import org.dockbox.selene.di.annotations.Wired;
 import org.dockbox.selene.util.SeleneUtils;
 
 import java.nio.file.Path;
@@ -28,7 +28,7 @@ public class JUnitConfiguration extends SimpleConfiguration {
 
     private static Map<String, Object> cache = SeleneUtils.emptyConcurrentMap();
 
-    @AutoWired
+    @Wired
     public JUnitConfiguration(Path path) {
         super(path);
         // Path is typically stored to obtain values from, during testing this is not required.

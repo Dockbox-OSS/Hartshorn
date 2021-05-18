@@ -18,7 +18,7 @@
 package org.dockbox.selene.di;
 
 import org.dockbox.selene.api.domain.Exceptional;
-import org.dockbox.selene.di.annotations.AutoWired;
+import org.dockbox.selene.di.annotations.Wired;
 import org.dockbox.selene.util.Reflect;
 
 import java.lang.reflect.Constructor;
@@ -39,7 +39,7 @@ public class SimpleSeleneFactory implements SeleneFactory {
         Class<?>[] argumentTypes = Arrays.stream(arguments).map(Object::getClass).toArray(Class<?>[]::new);
         try {
             // TODO: Downcast primitive wrappers (include testing)
-            Collection<Constructor<T>> constructors = Reflect.annotatedConstructors(AutoWired.class, binding.get());
+            Collection<Constructor<T>> constructors = Reflect.annotatedConstructors(Wired.class, binding.get());
             Constructor<T> ctor = null;
             for (Constructor<T> constructor : constructors) {
                 boolean valid = true;
@@ -63,7 +63,7 @@ public class SimpleSeleneFactory implements SeleneFactory {
                 throw new NoSuchMethodException("Available constructors do not meet expected parameter types");
             }
 
-            if (ctor.isAnnotationPresent(AutoWired.class)) {
+            if (ctor.isAnnotationPresent(Wired.class)) {
                 return ctor.newInstance(arguments);
             }
             else {

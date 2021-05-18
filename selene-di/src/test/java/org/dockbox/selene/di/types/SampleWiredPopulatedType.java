@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.di.types;
 
-import org.dockbox.selene.di.annotations.AutoWired;
+import org.dockbox.selene.di.annotations.Wired;
 import org.dockbox.selene.di.properties.InjectableType;
 import org.dockbox.selene.di.properties.InjectorProperty;
 
@@ -34,7 +34,7 @@ public class SampleWiredPopulatedType implements SampleInterface, InjectableType
     private SampleField field;
     private boolean enabled = false;
 
-    @AutoWired
+    @Wired
     public SampleWiredPopulatedType(String name) {
         this.name = name;
     }

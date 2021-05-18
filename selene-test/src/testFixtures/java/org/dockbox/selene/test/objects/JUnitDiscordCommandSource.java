@@ -23,13 +23,13 @@ import org.dockbox.selene.api.i18n.common.ResourceEntry;
 import org.dockbox.selene.api.i18n.text.Text;
 import org.dockbox.selene.api.i18n.text.pagination.Pagination;
 import org.dockbox.selene.commands.source.DiscordCommandSource;
-import org.dockbox.selene.di.annotations.AutoWired;
+import org.dockbox.selene.di.annotations.Wired;
 
 public class JUnitDiscordCommandSource implements DiscordCommandSource {
 
     private final TextChannel textChannel;
 
-    @AutoWired
+    @Wired
     public JUnitDiscordCommandSource(TextChannel textChannel) {
         this.textChannel = textChannel;
     }

@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.config;
 
-import org.dockbox.selene.di.annotations.AutoWired;
+import org.dockbox.selene.di.annotations.Wired;
 import org.dockbox.selene.di.exceptions.ApplicationException;
 import org.dockbox.selene.di.properties.InjectableType;
 import org.dockbox.selene.di.properties.InjectorProperty;
@@ -39,7 +39,7 @@ public class SimpleConfiguration implements Configuration, InjectableType {
     @Getter
     private final Map<String, Map<String, Object>> cache = SeleneUtils.emptyConcurrentMap();
 
-    @AutoWired
+    @Wired
     public SimpleConfiguration(Path path) {
         this.path = path;
         this.fileKey = this.getFileKey();

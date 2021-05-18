@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.server.minecraft.inventory;
 
-import org.dockbox.selene.di.annotations.AutoWired;
+import org.dockbox.selene.di.annotations.Wired;
 import org.dockbox.selene.di.annotations.Binds;
 import org.dockbox.selene.server.minecraft.item.Item;
 import org.dockbox.selene.server.minecraft.players.Player;
@@ -28,7 +28,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Binds(Element.class)
-@AllArgsConstructor(onConstructor_ = { AutoWired.class })
+@AllArgsConstructor(onConstructor_ = { Wired.class })
 public class SimpleElement implements Element {
 
     @Getter

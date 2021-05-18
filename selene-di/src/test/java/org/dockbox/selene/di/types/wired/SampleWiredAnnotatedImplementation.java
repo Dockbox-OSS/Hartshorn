@@ -18,7 +18,7 @@
 package org.dockbox.selene.di.types.wired;
 
 import org.dockbox.selene.di.annotations.Binds;
-import org.dockbox.selene.di.annotations.AutoWired;
+import org.dockbox.selene.di.annotations.Wired;
 import org.dockbox.selene.di.types.SampleInterface;
 
 import lombok.AllArgsConstructor;
@@ -26,7 +26,7 @@ import lombok.Getter;
 
 @Binds(SampleInterface.class)
 @Getter
-@AllArgsConstructor(onConstructor_ = { AutoWired.class})
+@AllArgsConstructor(onConstructor_ = { Wired.class})
 public class SampleWiredAnnotatedImplementation implements SampleInterface {
 
     private final String name;

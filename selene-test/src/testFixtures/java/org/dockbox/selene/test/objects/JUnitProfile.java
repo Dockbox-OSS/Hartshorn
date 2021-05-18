@@ -19,7 +19,7 @@ package org.dockbox.selene.test.objects;
 
 import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.domain.tuple.Tuple;
-import org.dockbox.selene.di.annotations.AutoWired;
+import org.dockbox.selene.di.annotations.Wired;
 import org.dockbox.selene.server.minecraft.players.Profile;
 import org.dockbox.selene.util.SeleneUtils;
 
@@ -39,12 +39,12 @@ public class JUnitProfile implements Profile {
     @Getter
     private Map<String, Collection<Tuple<String, String>>> properties = SeleneUtils.emptyMap();
 
-    @AutoWired
+    @Wired
     public JUnitProfile(UUID uuid) {
         this.uuid = uuid;
     }
 
-    @AutoWired
+    @Wired
     public JUnitProfile(Profile profile) {
         this(profile.getUuid());
         if (profile instanceof JUnitProfile) this.properties = new HashMap<>(((JUnitProfile) profile).properties);
