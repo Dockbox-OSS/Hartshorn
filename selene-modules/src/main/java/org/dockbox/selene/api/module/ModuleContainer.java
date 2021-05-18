@@ -44,11 +44,11 @@ public class ModuleContainer implements TypedOwner {
     }
 
     public Class<?> type() {
-        return this.context.getType();
+        return this.context.type();
     }
 
     public Module module() {
-        return this.context.getModule();
+        return this.context.module();
     }
 
     public Exceptional<Object> instance() {
@@ -60,6 +60,6 @@ public class ModuleContainer implements TypedOwner {
     }
 
     public void status(Class<?> clazz, ModuleStatus status) {
-        this.context.addStatus(clazz, status);
+        this.context.status(clazz, status);
     }
 }

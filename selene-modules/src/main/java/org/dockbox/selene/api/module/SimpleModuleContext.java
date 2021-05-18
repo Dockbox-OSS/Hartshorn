@@ -39,8 +39,8 @@ public class SimpleModuleContext implements ModuleContext {
     private String name;
 
     public SimpleModuleContext(Class<?> moduleType, Module module) {
-        this.setType(moduleType);
-        this.setModule(module);
+        this.type(moduleType);
+        this.module(module);
         String typeName = moduleType.getSimpleName();
         if (typeName.endsWith("Module")) {
             typeName = typeName.substring(0, typeName.length()-6); // Remove module suffix
@@ -55,28 +55,28 @@ public class SimpleModuleContext implements ModuleContext {
 
     @NotNull
     @Override
-    public Class<?> getType() {
+    public Class<?> type() {
         return this.moduleType;
     }
 
     @Override
-    public void setType(@NotNull Class<?> module) {
+    public void type(@NotNull Class<?> module) {
         this.moduleType = module;
     }
 
     @NotNull
     @Override
-    public Module getModule() {
+    public Module module() {
         return this.module;
     }
 
     @Override
-    public void setModule(@NotNull Module module) {
+    public void module(@NotNull Module module) {
         this.module = module;
     }
 
     @Override
-    public void addStatus(@NotNull Class<?> clazz, @NotNull ModuleStatus status) {
+    public void status(@NotNull Class<?> clazz, @NotNull ModuleStatus status) {
         if (0 > status.getIntValue())
             Selene.log().warn("Manually assigning deprecated status to [" + clazz.getCanonicalName() + "]! Deprecated statuses should only be assigned automatically on annotation presence!");
 
@@ -97,7 +97,7 @@ public class SimpleModuleContext implements ModuleContext {
 
     @Nullable
     @Override
-    public ModuleStatus getStatus(@NotNull Class<?> clazz) {
+    public ModuleStatus status(@NotNull Class<?> clazz) {
         return this.entryStatus.getOrDefault(clazz, null);
     }
 }
