@@ -49,7 +49,7 @@ public class TaskRunnerTests {
         Task task = () -> activated[0] = true;
         runner.acceptDelayed(task, 5, TimeUnit.MILLISECONDS);
 
-        this.lock.await(10, TimeUnit.MILLISECONDS);
+        this.lock.await(25, TimeUnit.MILLISECONDS);
 
         Assertions.assertTrue(activated[0]);
     }
