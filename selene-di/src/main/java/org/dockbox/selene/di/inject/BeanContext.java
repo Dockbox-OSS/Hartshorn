@@ -15,31 +15,20 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.di.inject.modules;
+package org.dockbox.selene.di.inject;
 
-import com.google.inject.AbstractModule;
 import com.google.inject.Key;
+import com.google.inject.Provider;
 
-import java.util.function.Supplier;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
-public class ProvisionModule<T> extends AbstractModule {
+@Getter
+@RequiredArgsConstructor
+public class BeanContext<T, C extends T> {
 
-    private final Key<T> target;
-    private final Supplier<? extends T> supplier;
+    private final Key<T> key;
+    private final boolean singleton;
+    private final Provider<C> provider;
 
-    public ProvisionModule(Class<T> target, Supplier<? extends T> supplier) {
-        this.target = Key.get(target);
-        this.supplier = supplier;
-    }
-
-    @SuppressWarnings("unchecked")
-    public ProvisionModule(Key<?> target, Supplier<? extends T> supplier) {
-        this.target = (Key<T>) target;
-        this.supplier = supplier;
-    }
-
-    @Override
-    protected void configure() {
-        this.bind(this.target).toProvider(ProvisionModule.this.supplier::get);
-    }
 }

@@ -22,6 +22,7 @@ import org.dockbox.selene.di.InjectConfiguration;
 import org.dockbox.selene.di.binding.BindingData;
 import org.dockbox.selene.di.properties.InjectorProperty;
 
+import java.lang.reflect.Method;
 import java.util.List;
 
 public interface Injector extends Binder {
@@ -39,6 +40,8 @@ public interface Injector extends Binder {
     List<BindingData> getBindingData();
 
     <T> T populate(T type);
+
+    <T> T invoke(Method method);
 
     <T, I extends T> Exceptional<Class<I>> getStaticBinding(Class<T> type);
 }

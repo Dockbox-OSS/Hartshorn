@@ -15,30 +15,14 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.di.inject.modules;
+package org.dockbox.selene.di.annotations;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Key;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-public class InstanceModule<T> extends AbstractModule {
-
-    private final Key<T> target;
-    private final T instance;
-
-    public InstanceModule(Class<T> target, T instance) {
-        this.target = Key.get(target);
-        this.instance = instance;
-    }
-
-    @SuppressWarnings("unchecked")
-    public InstanceModule(Key<?> key, T instance) {
-        this.target = (Key<T>) key;
-        this.instance = instance;
-    }
-
-    @Override
-    protected void configure() {
-        super.configure();
-        this.bind(this.target).toInstance(this.instance);
-    }
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
+public @interface Service {
 }
