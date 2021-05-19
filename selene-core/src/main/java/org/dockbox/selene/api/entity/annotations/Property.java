@@ -39,7 +39,7 @@ public @interface Property {
      *
      * @return the alternative identifier for the field
      */
-    String value();
+    String value() default "";
 
     /**
      * The alternative setter for the field. When defined dynamic instance creators are able to
@@ -59,6 +59,8 @@ public @interface Property {
      * @return the name of the setter
      */
     String setter() default "";
+
+    String getter() default "";
 
     /**
      * Marks the accepted value of the field. When defined this allows {@link Property#setter()} to

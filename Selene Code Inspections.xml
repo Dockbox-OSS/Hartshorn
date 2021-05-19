@@ -15,13 +15,6 @@
     <option name="DONT_REPORT_TRUE_ASSERT_STATEMENTS" value="false" />
   </inspection_tool>
   <inspection_tool class="FieldCanBeLocal" enabled="true" level="WARNING" enabled_by_default="true">
-    <option name="EXCLUDE_ANNOS">
-      <value>
-        <list size="1">
-          <item index="0" class="java.lang.String" itemvalue="org.dockbox.selene.api.entity.annotations.Accessor" />
-        </list>
-      </value>
-    </option>
     <option name="IGNORE_FIELDS_USED_IN_MULTIPLE_METHODS" value="true" />
   </inspection_tool>
   <inspection_tool class="InstanceofThis" enabled="true" level="WARNING" enabled_by_default="true" />

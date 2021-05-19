@@ -19,9 +19,8 @@ package org.dockbox.selene.util;
 
 import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.entity.TypeRejectedException;
-import org.dockbox.selene.api.entity.annotations.Accessor;
+import org.dockbox.selene.api.entity.annotations.Entity;
 import org.dockbox.selene.api.entity.annotations.Property;
-import org.dockbox.selene.api.entity.annotations.Rejects;
 import org.dockbox.selene.util.exceptions.EnumException;
 import org.dockbox.selene.util.exceptions.FieldAccessException;
 import org.dockbox.selene.util.exceptions.NotPrimitiveException;
@@ -108,10 +107,10 @@ public final class Reflect {
 
     public static Exceptional<?> fieldValue(Field field, Object instance) {
         if (!field.isAccessible()) field.setAccessible(true);
-        if (field.isAnnotationPresent(Accessor.class)) {
-            Accessor accessor = field.getAnnotation(Accessor.class);
-            if (!accessor.getter().equals("")) {
-                return runMethod(instance, accessor.getter(), field.getType());
+        if (field.isAnnotationPresent(Property.class)) {
+            Property property = field.getAnnotation(Property.class);
+            if (!property.getter().equals("")) {
+                return runMethod(instance, property.getter(), field.getType());
             }
         }
         try {
@@ -585,9 +584,11 @@ public final class Reflect {
      * @return the field property name
      */
     public static String fieldName(Field field) {
-        return field.isAnnotationPresent(Property.class)
-                ? field.getAnnotation(Property.class).value()
-                : field.getName();
+        if (field.isAnnotationPresent(Property.class)) {
+            String name = field.getAnnotation(Property.class).value();
+            if (!"".equals(name)) return name;
+        }
+        return field.getName();
     }
 
     private static <T> boolean canUseSetter(Class<T> type, T instance, Field field, Object value)
@@ -671,11 +672,11 @@ public final class Reflect {
     }
 
     public static boolean rejects(Class<?> holder, Class<?> potentialReject, boolean throwIfRejected) {
-        if (holder.isAnnotationPresent(Rejects.class)) {
-            Rejects rejects = holder.getAnnotation(Rejects.class);
+        if (holder.isAnnotationPresent(Entity.class)) {
+            Entity rejects = holder.getAnnotation(Entity.class);
 
             boolean rejected = false;
-            for (Class<?> rejectedType : rejects.value())
+            for (Class<?> rejectedType : rejects.rejects())
                 if (potentialReject.isAssignableFrom(rejectedType)) rejected = true;
 
             if (rejected && throwIfRejected) throw new TypeRejectedException(potentialReject, holder);
@@ -693,9 +694,9 @@ public final class Reflect {
 
     public static void set(Field field, Object to, Object value) {
         try {
-            if (field.isAnnotationPresent(Accessor.class)) {
-                Accessor accessor = field.getAnnotation(Accessor.class);
-                Method setter = to.getClass().getDeclaredMethod(accessor.setter(), value.getClass());
+            if (field.isAnnotationPresent(Property.class)) {
+                Property property = field.getAnnotation(Property.class);
+                Method setter = to.getClass().getDeclaredMethod(property.setter(), value.getClass());
                 setter.setAccessible(true);
                 setter.invoke(to, value);
                 return;

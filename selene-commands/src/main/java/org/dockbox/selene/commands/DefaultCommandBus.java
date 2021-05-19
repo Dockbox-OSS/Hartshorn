@@ -21,7 +21,7 @@ import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.domain.AbstractIdentifiable;
 import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.domain.Identifiable;
-import org.dockbox.selene.api.entity.annotations.Metadata;
+import org.dockbox.selene.api.entity.annotations.Entity;
 import org.dockbox.selene.api.events.parents.Cancellable;
 import org.dockbox.selene.api.exceptions.Except;
 import org.dockbox.selene.api.i18n.common.ResourceEntry;
@@ -57,7 +57,7 @@ import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 
-@Metadata(alias = "commands", serializable = false)
+@Entity(value = "commands", serializable = false)
 @SuppressWarnings("RegExpUnnecessaryNonCapturingGroup")
 public abstract class DefaultCommandBus<E> implements CommandBus {
 

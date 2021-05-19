@@ -18,7 +18,7 @@
 package org.dockbox.selene.oldplots;
 
 import org.dockbox.selene.api.domain.Exceptional;
-import org.dockbox.selene.api.entity.annotations.Metadata;
+import org.dockbox.selene.api.entity.annotations.Entity;
 import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.server.minecraft.dimension.Worlds;
 import org.dockbox.selene.server.minecraft.dimension.position.Location;
@@ -27,7 +27,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Metadata(alias = "plot-world-model")
+@Entity(value = "plot-world-model")
 @AllArgsConstructor
 @NoArgsConstructor
 public class PlotWorldModel {

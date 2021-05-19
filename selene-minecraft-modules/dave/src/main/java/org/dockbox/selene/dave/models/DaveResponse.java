@@ -17,13 +17,13 @@
 
 package org.dockbox.selene.dave.models;
 
-import org.dockbox.selene.api.entity.annotations.Metadata;
+import org.dockbox.selene.api.entity.annotations.Entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Metadata(alias = "dave-response")
+@Entity(value = "dave-response")
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor

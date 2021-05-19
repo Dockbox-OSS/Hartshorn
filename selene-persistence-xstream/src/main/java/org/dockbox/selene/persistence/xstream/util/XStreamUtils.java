@@ -28,7 +28,7 @@ import com.thoughtworks.xstream.security.PrimitiveTypePermission;
 
 import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.SeleneInformation;
-import org.dockbox.selene.api.entity.annotations.Metadata;
+import org.dockbox.selene.api.entity.annotations.Entity;
 import org.dockbox.selene.api.exceptions.Except;
 import org.dockbox.selene.util.Reflect;
 import org.dockbox.selene.util.SeleneUtils;
@@ -124,14 +124,14 @@ public final class XStreamUtils {
     private static void configureXStream(XStream xstream) {
         if (null == aliasedTypes) {
             aliasedTypes = SeleneUtils.emptyConcurrentMap();
-            Collection<Class<?>> annotatedTypes = Reflect.annotatedTypes(SeleneInformation.PACKAGE_PREFIX, Metadata.class);
+            Collection<Class<?>> annotatedTypes = Reflect.annotatedTypes(SeleneInformation.PACKAGE_PREFIX, Entity.class);
             annotatedTypes.forEach(type -> {
-                Metadata metadata = type.getAnnotation(Metadata.class);
-                if (aliasedTypes.containsKey(metadata.alias()))
-                    Selene.log().warn("Attempting to register a duplicate entity alias '" + metadata.alias() + "'");
-                xstream.alias(metadata.alias(), type);
+                Entity entity = type.getAnnotation(Entity.class);
+                if (aliasedTypes.containsKey(entity.value()))
+                    Selene.log().warn("Attempting to register a duplicate entity alias '" + entity.value() + "'");
+                xstream.alias(entity.value(), type);
                 // Put the alias last, so if xstream.alias ever throws a Exception this won't be called
-                aliasedTypes.put(metadata.alias(), type);
+                aliasedTypes.put(entity.value(), type);
             });
         }
 

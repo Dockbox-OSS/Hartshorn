@@ -18,7 +18,7 @@
 package org.dockbox.selene.oldplots;
 
 import org.dockbox.selene.api.domain.Exceptional;
-import org.dockbox.selene.api.entity.annotations.Metadata;
+import org.dockbox.selene.api.entity.annotations.Entity;
 import org.dockbox.selene.util.SeleneUtils;
 import org.jetbrains.annotations.NonNls;
 
@@ -26,7 +26,7 @@ import java.util.List;
 
 import lombok.Getter;
 
-@Metadata(alias = "plot-world-models")
+@Entity(value = "plot-world-models")
 class PlotWorldModelList {
 
     @Getter

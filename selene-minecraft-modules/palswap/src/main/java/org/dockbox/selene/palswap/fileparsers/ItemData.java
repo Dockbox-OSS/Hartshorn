@@ -17,19 +17,19 @@
 
 package org.dockbox.selene.palswap.fileparsers;
 
-import org.dockbox.selene.api.entity.annotations.Accessor;
-import org.dockbox.selene.api.entity.annotations.Metadata;
+import org.dockbox.selene.api.entity.annotations.Entity;
+import org.dockbox.selene.api.entity.annotations.Property;
 import org.dockbox.selene.util.SeleneUtils;
 
 import java.util.Map;
 
-@Metadata(alias = "itemdata")
+@Entity(value = "itemdata")
 public class ItemData {
 
-    @Accessor(getter = "getItemRegistry")
+    @Property(getter = "getItemRegistry")
     private Map<String, String> itemRegistry = SeleneUtils.emptyConcurrentMap();
 
-    @Accessor(getter = "getBlockIdentifierIDs")
+    @Property(getter = "getBlockIdentifierIDs")
     private Map<String, String> blockIdentifierIds = SeleneUtils.emptyConcurrentMap();
 
     public static ItemData of(Map<String, String> itemRegistry, Map<String, String> blockIdentifierIDs) {

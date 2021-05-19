@@ -25,12 +25,12 @@ import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 
 import org.dockbox.selene.api.domain.Exceptional;
-import org.dockbox.selene.api.entity.annotations.Metadata;
+import org.dockbox.selene.api.entity.annotations.Entity;
 import org.dockbox.selene.api.i18n.common.ResourceEntry;
 import org.dockbox.selene.api.i18n.text.Text;
 import org.dockbox.selene.discord.templates.Template;
 
-@Metadata(alias = "discord", serializable = false)
+@Entity(value = "discord", serializable = false)
 public interface DiscordUtils {
 
     Exceptional<JDA> getJDA();

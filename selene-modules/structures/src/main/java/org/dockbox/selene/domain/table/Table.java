@@ -19,7 +19,7 @@ package org.dockbox.selene.domain.table;
 
 import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.entity.annotations.Ignore;
-import org.dockbox.selene.api.entity.annotations.Metadata;
+import org.dockbox.selene.api.entity.annotations.Entity;
 import org.dockbox.selene.api.entity.annotations.Property;
 import org.dockbox.selene.domain.table.behavior.Merge;
 import org.dockbox.selene.domain.table.behavior.Order;
@@ -56,7 +56,7 @@ import lombok.Getter;
  * @since feature/S124
  */
 @SuppressWarnings({ "unchecked", "rawtypes" })
-@Metadata(alias = "table")
+@Entity(value = "table")
 public class Table {
 
     private final List<TableRow> rows;
@@ -153,7 +153,7 @@ public class Table {
                     // Try to grab the column identifier from the Identifier annotation of the field (if
                     // present)
                     Property identifier = field.getAnnotation(Property.class);
-                    if (null != identifier) columnIdentifier = this.getIdentifier(identifier.value());
+                    if (null != identifier && !"".equals(identifier.value())) columnIdentifier = this.getIdentifier(identifier.value());
 
                     // If no Identifier annotation was present, try to grab it using the field name
                     if (null == columnIdentifier) columnIdentifier = this.getIdentifier(field.getName());

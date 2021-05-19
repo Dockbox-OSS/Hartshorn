@@ -19,7 +19,7 @@ package org.dockbox.selene.persistence.configurate;
 
 import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.domain.TypedOwner;
-import org.dockbox.selene.api.entity.annotations.Metadata;
+import org.dockbox.selene.api.entity.annotations.Entity;
 import org.dockbox.selene.persistence.DefaultAbstractFileManager;
 import org.dockbox.selene.persistence.FileManager;
 import org.dockbox.selene.persistence.FileType;
@@ -158,8 +158,8 @@ public abstract class DefaultConfigurateManager extends DefaultAbstractFileManag
                         .registerAll(SeleneTypeSerializers.collection())
                         .register(type -> {
                             AnnotatedType annotatedType = GenericTypeReflector.annotate(type);
-                            return annotatedType.isAnnotationPresent(Metadata.class)
-                                    && annotatedType.getAnnotation(Metadata.class).serializable();
+                            return annotatedType.isAnnotationPresent(Entity.class)
+                                    && annotatedType.getAnnotation(Entity.class).serializable();
                         }, ObjectMapper.factory().asTypeSerializer()))
                 ).build();
     }

@@ -19,13 +19,13 @@ package org.dockbox.selene.dave;
 
 import net.dv8tion.jda.api.entities.TextChannel;
 
-import org.dockbox.selene.api.entity.annotations.Metadata;
+import org.dockbox.selene.api.entity.annotations.Entity;
 import org.dockbox.selene.api.i18n.text.Text;
 import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.discord.DiscordUtils;
 
 @SuppressWarnings({ "FieldCanBeLocal", "FieldMayBeFinal" })
-@Metadata(alias = "dave-config")
+@Entity(value = "dave-config")
 public class DaveConfig {
 
     private String channelId = "424884086230876161";

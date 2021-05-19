@@ -18,7 +18,7 @@
 package org.dockbox.selene.dave.models;
 
 import org.dockbox.selene.api.domain.Exceptional;
-import org.dockbox.selene.api.entity.annotations.Metadata;
+import org.dockbox.selene.api.entity.annotations.Entity;
 import org.dockbox.selene.dave.DaveUtils;
 import org.dockbox.selene.util.SeleneUtils;
 import org.jetbrains.annotations.NonNls;
@@ -27,7 +27,7 @@ import java.util.List;
 
 import lombok.Getter;
 
-@Metadata(alias = "triggers")
+@Entity(value = "triggers")
 public class DaveTriggers {
 
     @Getter

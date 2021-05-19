@@ -23,12 +23,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.FIELD, ElementType.TYPE })
-public @interface Extract {
-    Behavior value() default Behavior.KEEP;
-
-    enum Behavior {
-        SKIP,
-        KEEP
-    }
+@Target(ElementType.TYPE)
+public @interface Entity {
+    String value();
+    boolean serializable() default true;
+    Class<?>[] rejects() default {};
 }

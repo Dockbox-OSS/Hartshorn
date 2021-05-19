@@ -18,8 +18,7 @@
 package org.dockbox.selene.domain.registry;
 
 import org.dockbox.selene.api.domain.Exceptional;
-import org.dockbox.selene.api.entity.annotations.Metadata;
-import org.dockbox.selene.api.entity.annotations.Rejects;
+import org.dockbox.selene.api.entity.annotations.Entity;
 import org.dockbox.selene.persistence.configurate.DefaultConfigurateManager;
 import org.dockbox.selene.util.SeleneUtils;
 import org.jetbrains.annotations.NotNull;
@@ -32,8 +31,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 @SuppressWarnings({ "UnusedReturnValue", "unused" })
-@Rejects(DefaultConfigurateManager.class)
-@Metadata(alias = "column")
+@Entity(value = "column", rejects = DefaultConfigurateManager.class)
 public class RegistryColumn<T> {
 
     private List<T> data = SeleneUtils.emptyList();
