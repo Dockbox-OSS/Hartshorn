@@ -18,7 +18,7 @@
 package org.dockbox.selene.worldedit;
 
 import org.dockbox.selene.api.domain.Exceptional;
-import org.dockbox.selene.di.annotations.RequiresBinding;
+import org.dockbox.selene.di.annotations.Required;
 import org.dockbox.selene.server.minecraft.item.Item;
 import org.dockbox.selene.server.minecraft.players.Player;
 import org.dockbox.selene.worldedit.region.Clipboard;
@@ -28,7 +28,7 @@ import org.dockbox.selene.worldedit.region.Region;
 
 import java.util.Collection;
 
-@RequiresBinding
+@Required
 public interface WorldEditService {
 
     Exceptional<Region> getPlayerSelection(Player player);

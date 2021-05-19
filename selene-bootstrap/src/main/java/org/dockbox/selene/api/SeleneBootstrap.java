@@ -22,7 +22,7 @@ import org.dockbox.selene.api.exceptions.Except;
 import org.dockbox.selene.di.InjectConfiguration;
 import org.dockbox.selene.di.InjectableBootstrap;
 import org.dockbox.selene.di.Provider;
-import org.dockbox.selene.di.annotations.RequiresBinding;
+import org.dockbox.selene.di.annotations.Required;
 import org.dockbox.selene.di.preload.Preloadable;
 import org.dockbox.selene.util.Reflect;
 import org.jetbrains.annotations.NotNull;
@@ -119,7 +119,7 @@ public abstract class SeleneBootstrap extends InjectableBootstrap {
         Selene.log().info("Initiating Selene " + this.getVersion());
 
         // Ensure all services requiring a platform implementation have one present
-        Reflect.annotatedTypes(SeleneInformation.PACKAGE_PREFIX, RequiresBinding.class).forEach(type -> {
+        Reflect.annotatedTypes(SeleneInformation.PACKAGE_PREFIX, Required.class).forEach(type -> {
             if (Reflect.subTypes(SeleneInformation.PACKAGE_PREFIX, type).isEmpty()) {
                 this.handleMissingBinding(type);
             }
