@@ -25,7 +25,6 @@ import org.dockbox.selene.api.i18n.common.ResourceEntry;
 import org.dockbox.selene.commands.CommandInterface;
 import org.dockbox.selene.commands.CommandUser;
 import org.dockbox.selene.commands.annotations.Command;
-import org.dockbox.selene.commands.annotations.FromSource;
 import org.dockbox.selene.commands.context.CommandContext;
 import org.dockbox.selene.commands.exceptions.IllegalSourceException;
 import org.dockbox.selene.commands.source.CommandSource;
@@ -91,7 +90,6 @@ public class MethodCommandContext extends AbstractRegistrationContext {
             else if (Reflect.eitherAssignsFrom(CommandContext.class, parameterType))
                 finalArgs.add(context);
 
-            else if (MethodCommandContext.processFromSourceParameters(parameter, context, finalArgs)) continue;
             else if (MethodCommandContext.processFlagParameters(parameter, context, finalArgs)) continue;
             else if (MethodCommandContext.processArgumentParameters(parameter, context, finalArgs)) continue;
 
@@ -117,25 +115,6 @@ public class MethodCommandContext extends AbstractRegistrationContext {
         else if (Reflect.assignableFrom(CommandInterface.class, parameterType) && !(source instanceof CommandInterface))
             throw new IllegalSourceException("Command can only be ran by the console");
         return source;
-    }
-
-    private static boolean processFromSourceParameters(Parameter parameter, CommandContext context, Collection<Object> finalArgs) {
-        if (parameter.isAnnotationPresent(FromSource.class)) {
-            Class<?> parameterType = parameter.getType();
-            if (Reflect.assignableFrom(CommandUser.class, parameterType)) {
-                if (context.getSender() instanceof CommandUser) finalArgs.add(context.getSender());
-            }
-            else if (Reflect.assignableFrom(CommandSource.class, parameterType)) {
-                finalArgs.add(context.getSender());
-            }
-            else {
-                Selene.log().warn("Parameter '" + parameter.getName() + "' has @FromSource annotation but cannot be provided [" + parameterType
-                        .getCanonicalName() + "]");
-                finalArgs.add(null);
-            }
-            return true;
-        }
-        return false;
     }
 
     private static boolean processFlagParameters(Parameter parameter, CommandContext context, Collection<Object> finalArgs) {
