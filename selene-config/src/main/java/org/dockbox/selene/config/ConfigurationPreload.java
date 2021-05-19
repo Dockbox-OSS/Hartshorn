@@ -53,7 +53,7 @@ public class ConfigurationPreload implements Preloadable {
             if (instance.getClass().isAnnotationPresent(Source.class)) {
                 Source source = instance.getClass().getAnnotation(Source.class);
                 file = source.value();
-                owner = source.owner().value();
+                owner = source.owner().owner();
             }
 
             FileManager fileManager = Provider.provide(FileManager.class, FileTypeProperty.of(FileType.YAML));

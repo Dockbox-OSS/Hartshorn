@@ -18,7 +18,7 @@
 package org.dockbox.selene.config.annotations;
 
 import org.dockbox.selene.api.Selene;
-import org.dockbox.selene.api.annotations.OwnedBy;
+import org.dockbox.selene.di.annotations.Service;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -29,5 +29,5 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 public @interface Source {
     String value();
-    OwnedBy owner() default @OwnedBy(Selene.class);
+    Service owner() default @Service(owner = Selene.class);
 }
