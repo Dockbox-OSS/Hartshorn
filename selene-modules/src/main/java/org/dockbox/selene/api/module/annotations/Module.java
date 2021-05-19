@@ -50,4 +50,6 @@ public @interface Module {
      * @return the packages requires by the module.
      */
     String[] dependencies() default {};
+
+    boolean disabled() default false;
 }

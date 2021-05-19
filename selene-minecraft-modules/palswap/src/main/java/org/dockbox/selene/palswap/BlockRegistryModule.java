@@ -23,7 +23,6 @@ import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.events.annotations.Listener;
 import org.dockbox.selene.api.exceptions.Except;
 import org.dockbox.selene.api.i18n.common.Language;
-import org.dockbox.selene.api.module.annotations.Disabled;
 import org.dockbox.selene.api.module.annotations.Module;
 import org.dockbox.selene.commands.annotations.Command;
 import org.dockbox.selene.commands.context.CommandContext;
@@ -47,9 +46,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
 
-@Disabled(reason = "Under development")
 @Command("registry")
-@Module
+@Module(disabled = true)
 public class BlockRegistryModule {
 
     private static Registry<Registry<Item>> blockRegistry = new Registry<>();

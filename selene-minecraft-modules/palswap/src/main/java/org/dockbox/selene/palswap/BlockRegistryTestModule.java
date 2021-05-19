@@ -20,7 +20,6 @@ package org.dockbox.selene.palswap;
 import org.dockbox.selene.api.SeleneInformation;
 import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.i18n.common.Language;
-import org.dockbox.selene.api.module.annotations.Disabled;
 import org.dockbox.selene.api.module.annotations.Module;
 import org.dockbox.selene.commands.annotations.Command;
 import org.dockbox.selene.commands.context.CommandContext;
@@ -30,8 +29,7 @@ import org.dockbox.selene.server.minecraft.players.Player;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
-@Disabled(reason = "Demo module")
-@Module
+@Module(disabled = true)
 public class BlockRegistryTestModule {
 
     private static BlockRegistryTestModule instance;
