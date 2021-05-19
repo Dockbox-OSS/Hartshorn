@@ -696,10 +696,12 @@ public final class Reflect {
         try {
             if (field.isAnnotationPresent(Property.class)) {
                 Property property = field.getAnnotation(Property.class);
-                Method setter = to.getClass().getDeclaredMethod(property.setter(), value.getClass());
-                setter.setAccessible(true);
-                setter.invoke(to, value);
-                return;
+                if (!"".equals(property.setter())) {
+                    Method setter = to.getClass().getDeclaredMethod(property.setter(), value.getClass());
+                    setter.setAccessible(true);
+                    setter.invoke(to, value);
+                    return;
+                }
             }
             if (!field.isAccessible()) field.setAccessible(true);
             field.set(to, value);
