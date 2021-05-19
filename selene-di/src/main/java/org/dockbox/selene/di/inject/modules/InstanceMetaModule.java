@@ -19,15 +19,15 @@ package org.dockbox.selene.di.inject.modules;
 
 import com.google.inject.AbstractModule;
 
-import org.dockbox.selene.di.annotations.BindingMeta;
+import org.dockbox.selene.di.annotations.Named;
 
 public class InstanceMetaModule<T> extends AbstractModule {
 
     private final Class<T> target;
     private final T instance;
-    private final BindingMeta meta;
+    private final Named meta;
 
-    public InstanceMetaModule(Class<T> target, T instance,  BindingMeta meta) {
+    public InstanceMetaModule(Class<T> target, T instance,  Named meta) {
         this.target = target;
         this.instance = instance;
         this.meta = meta;

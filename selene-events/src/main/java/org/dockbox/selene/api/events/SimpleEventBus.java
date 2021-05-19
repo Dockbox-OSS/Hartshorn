@@ -37,7 +37,7 @@ import java.util.function.Function;
  * A simple default implementation of {@link EventBus}, used for internal event posting and
  * handling.
  */
-@SuppressWarnings({ "EqualsWithItself", "unchecked" })
+@SuppressWarnings("EqualsWithItself")
 @Binds(EventBus.class)
 public class SimpleEventBus implements EventBus {
 

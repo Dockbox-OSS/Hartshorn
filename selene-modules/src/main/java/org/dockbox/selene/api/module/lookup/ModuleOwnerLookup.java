@@ -23,7 +23,7 @@ import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.domain.OwnerLookup;
 import org.dockbox.selene.api.domain.SimpleTypedOwner;
 import org.dockbox.selene.api.domain.TypedOwner;
-import org.dockbox.selene.api.entity.annotations.Metadata;
+import org.dockbox.selene.api.entity.annotations.Entity;
 import org.dockbox.selene.api.module.Modules;
 import org.dockbox.selene.api.module.SimpleModuleContext;
 import org.dockbox.selene.api.module.annotations.Module;
@@ -39,8 +39,8 @@ public class ModuleOwnerLookup implements OwnerLookup {
                     // In case modules have not been scanned yet, typically only caused by preloads accessing headers
                     if (type.isAnnotationPresent(Module.class)) {
                         return new SimpleModuleContext(type, type.getAnnotation(Module.class));
-                    } else if (type.isAnnotationPresent(Metadata.class)) {
-                        return SimpleTypedOwner.of(type.getAnnotation(Metadata.class).alias());
+                    } else if (type.isAnnotationPresent(Entity.class)) {
+                        return SimpleTypedOwner.of(type.getAnnotation(Entity.class).value());
                     } else if (Selene.class.equals(type)) {
                         return SimpleTypedOwner.of(SeleneInformation.PROJECT_ID);
                     }

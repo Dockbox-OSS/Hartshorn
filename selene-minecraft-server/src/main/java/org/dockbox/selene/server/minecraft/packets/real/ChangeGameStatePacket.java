@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.server.minecraft.packets.real;
 
-import org.dockbox.selene.di.annotations.RequiresBinding;
+import org.dockbox.selene.di.annotations.Required;
 import org.dockbox.selene.server.minecraft.packets.Packet;
 import org.dockbox.selene.server.minecraft.packets.data.Weather;
 
@@ -25,7 +25,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 @EqualsAndHashCode(callSuper = true)
-@RequiresBinding
+@Required
 @SuppressWarnings("AbstractClassWithoutAbstractMethods")
 @Data
 public abstract class ChangeGameStatePacket extends Packet {

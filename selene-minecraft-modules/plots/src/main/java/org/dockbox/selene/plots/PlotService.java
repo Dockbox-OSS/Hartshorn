@@ -19,14 +19,14 @@ package org.dockbox.selene.plots;
 
 import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.i18n.text.Text;
-import org.dockbox.selene.di.annotations.RequiresBinding;
+import org.dockbox.selene.di.annotations.Required;
 import org.dockbox.selene.server.minecraft.dimension.position.Location;
 import org.dockbox.selene.server.minecraft.dimension.world.World;
 import org.dockbox.selene.server.minecraft.item.Item;
 import org.dockbox.selene.server.minecraft.players.Player;
 import org.dockbox.selene.plots.flags.PlotFlag;
 
-@RequiresBinding
+@Required
 public interface PlotService {
 
     Exceptional<Plot> getPlotAt(Location location);

@@ -17,9 +17,7 @@
 
 package org.dockbox.selene.server.minecraft.item;
 
-import org.dockbox.selene.api.entity.annotations.Extract;
-import org.dockbox.selene.api.entity.annotations.Extract.Behavior;
-import org.dockbox.selene.api.entity.annotations.Metadata;
+import org.dockbox.selene.api.entity.annotations.Entity;
 import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.server.minecraft.item.maps.CustomMap;
 import org.dockbox.selene.server.minecraft.item.maps.CustomMapService;
@@ -27,8 +25,7 @@ import org.dockbox.selene.server.minecraft.item.maps.CustomMapService;
 import javax.inject.Singleton;
 
 @Singleton
-@Extract(Behavior.KEEP)
-@Metadata(alias = "map")
+@Entity(value = "map")
 public class SimplePersistentCustomMapModel extends SimplePersistentItemModel {
 
     public SimplePersistentCustomMapModel(CustomMap map) {

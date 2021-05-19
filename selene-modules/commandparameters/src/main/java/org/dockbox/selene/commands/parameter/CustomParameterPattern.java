@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.commands.parameter;
 
-import org.dockbox.selene.commands.annotations.CustomParameter;
+import org.dockbox.selene.commands.annotations.Parameter;
 import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.commands.context.ArgumentConverter;
 import org.dockbox.selene.commands.convert.ArgumentConverterRegistry;
@@ -30,7 +30,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 /**
- * The type used to provide a argument pattern which can be used to construct types annotated with {@link CustomParameter}, typically done
+ * The type used to provide a argument pattern which can be used to construct types annotated with {@link Parameter}, typically done
  * through the {@link org.dockbox.selene.commands.convert.DynamicPatternConverter}, though this is not a requirement.
  */
 public interface CustomParameterPattern {

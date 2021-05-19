@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.server.minecraft.packets.real;
 
-import org.dockbox.selene.di.annotations.RequiresBinding;
+import org.dockbox.selene.di.annotations.Required;
 import org.dockbox.selene.server.minecraft.entities.Entity;
 import org.dockbox.selene.server.minecraft.packets.Packet;
 
@@ -26,7 +26,7 @@ import lombok.EqualsAndHashCode;
 
 @EqualsAndHashCode(callSuper = true)
 @SuppressWarnings("AbstractClassWithoutAbstractMethods")
-@RequiresBinding
+@Required
 @Data
 public abstract class SpawnEntityPacket extends Packet {
 

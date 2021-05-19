@@ -15,14 +15,28 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.di.annotations;
+package org.dockbox.selene.commands.annotations;
+
+import org.dockbox.selene.commands.parameter.CustomParameterPattern;
+import org.dockbox.selene.commands.parameter.HashtagParameterPattern;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * Used to indicate that a type can be provided to command definitions. When a type is annotated with this annotation, it can be automatically
+ * constructed using its available constructors.
+ *
+ * <p>Also see <a href="https://github.com/GuusLieben/Selene/wiki/Command-Arguments>Selene/Command Arguments</a>.
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface RequiresBinding {
+public @interface Parameter {
+
+    Class<? extends CustomParameterPattern> pattern() default HashtagParameterPattern.class;
+    String value();
+    String usage() default "";
+
 }

@@ -15,20 +15,18 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.api.entity.annotations;
+package org.dockbox.selene.config;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import org.dockbox.selene.di.Provider;
 
-@Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.FIELD, ElementType.TYPE })
-public @interface Extract {
-    Behavior value() default Behavior.KEEP;
+import java.nio.file.Path;
 
-    enum Behavior {
-        SKIP,
-        KEEP
+public interface ConfigurationManager {
+
+    <T> T get(String key);
+
+    static ConfigurationManager of(Path path) {
+        return Provider.provide(ConfigurationManager.class, path);
     }
+
 }

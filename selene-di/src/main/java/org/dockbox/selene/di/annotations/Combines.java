@@ -15,18 +15,15 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.commands.annotations;
+package org.dockbox.selene.di.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-/**
- * The interface to mark a method parameter to be injected from the source of a command. Typically
- * this is only used when calling command methods.
- */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.PARAMETER)
-public @interface FromSource {
+@Target(ElementType.TYPE)
+public @interface Combines {
+    Binds[] value();
 }

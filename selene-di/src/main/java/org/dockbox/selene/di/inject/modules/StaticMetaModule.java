@@ -19,15 +19,15 @@ package org.dockbox.selene.di.inject.modules;
 
 import com.google.inject.AbstractModule;
 
-import org.dockbox.selene.di.annotations.BindingMeta;
+import org.dockbox.selene.di.annotations.Named;
 
 public class StaticMetaModule<T> extends AbstractModule {
 
     private final Class<T> target;
     private final Class<? extends T> implementation;
-    private final BindingMeta meta;
+    private final Named meta;
 
-    public StaticMetaModule(Class<T> target, Class<? extends T> implementation, BindingMeta meta) {
+    public StaticMetaModule(Class<T> target, Class<? extends T> implementation, Named meta) {
         this.target = target;
         this.implementation = implementation;
         this.meta = meta;

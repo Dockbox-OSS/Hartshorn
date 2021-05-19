@@ -18,7 +18,6 @@
 package org.dockbox.selene.di;
 
 import org.dockbox.selene.api.domain.Exceptional;
-import org.dockbox.selene.api.entity.annotations.DoNotEnable;
 import org.dockbox.selene.di.annotations.Wired;
 import org.dockbox.selene.di.binding.Bindings;
 import org.dockbox.selene.di.exceptions.ApplicationException;
@@ -144,7 +143,7 @@ public abstract class InjectableBootstrap {
     private <T> void enableInjectionPoints(T typeInstance) {
         if (typeInstance == null) return;
         SeleneUtils.merge(Reflect.annotatedFields(Wired.class, typeInstance.getClass())).stream()
-                .filter(field -> field.isAnnotationPresent(DoNotEnable.class))
+                .filter(field -> field.getAnnotation(Wired.class).enable())
                 .filter(field -> Reflect.assignableFrom(InjectableType.class, field.getType()))
                 .map(field -> {
                     try {

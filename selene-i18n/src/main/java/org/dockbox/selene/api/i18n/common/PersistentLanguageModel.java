@@ -17,17 +17,17 @@
 
 package org.dockbox.selene.api.i18n.common;
 
-import org.dockbox.selene.api.entity.annotations.Accessor;
-import org.dockbox.selene.api.entity.annotations.Metadata;
+import org.dockbox.selene.api.entity.annotations.Entity;
+import org.dockbox.selene.api.entity.annotations.Property;
 import org.dockbox.selene.persistence.PersistentModel;
 
 import lombok.Getter;
 import lombok.Setter;
 
-@Metadata(alias = "language")
+@Entity(value = "language")
 public class PersistentLanguageModel implements PersistentModel<Language> {
 
-    @Accessor(getter = "getCode", setter = "getCode")
+    @Property(getter = "getCode", setter = "getCode")
     @Getter @Setter
     private String code;
 

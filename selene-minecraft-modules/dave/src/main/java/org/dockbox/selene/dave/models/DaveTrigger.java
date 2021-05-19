@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.dave.models;
 
-import org.dockbox.selene.api.entity.annotations.Metadata;
+import org.dockbox.selene.api.entity.annotations.Entity;
 
 import java.util.List;
 
@@ -25,7 +25,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Metadata(alias = "trigger")
+@Entity(value = "trigger")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter

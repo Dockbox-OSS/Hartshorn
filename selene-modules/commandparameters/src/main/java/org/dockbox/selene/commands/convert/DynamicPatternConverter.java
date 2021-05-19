@@ -18,7 +18,7 @@
 package org.dockbox.selene.commands.convert;
 
 import org.dockbox.selene.api.domain.Exceptional;
-import org.dockbox.selene.commands.annotations.CustomParameter;
+import org.dockbox.selene.commands.annotations.Parameter;
 import org.dockbox.selene.commands.parameter.CustomParameterPattern;
 import org.dockbox.selene.commands.context.CommandParameter;
 import org.dockbox.selene.commands.source.CommandSource;
@@ -28,7 +28,7 @@ import java.util.Collection;
 
 /**
  * The default converter for any type which can be constructed with a {@link CustomParameterPattern}. Typically
- * this only applies to types annotated with {@link CustomParameter},
+ * this only applies to types annotated with {@link Parameter},
  * however this is not a requirement.
  *
  * @param <T> The generic type

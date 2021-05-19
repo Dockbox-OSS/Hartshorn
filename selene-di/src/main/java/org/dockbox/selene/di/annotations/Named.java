@@ -15,17 +15,18 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.api.entity.annotations;
+package org.dockbox.selene.di.annotations;
+
+import com.google.inject.BindingAnnotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+@BindingAnnotation
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.FIELD)
-public @interface Accessor {
-    String getter() default "";
-
-    String setter() default "";
+@Target({ ElementType.FIELD, ElementType.PARAMETER, ElementType.METHOD })
+public @interface Named {
+    String value();
 }

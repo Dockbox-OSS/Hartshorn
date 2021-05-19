@@ -19,16 +19,11 @@ package org.dockbox.selene.api.events.handle;
 
 import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.events.EventWrapper;
-import org.dockbox.selene.api.events.annotations.Async;
-import org.dockbox.selene.api.events.annotations.IsCancelled;
 import org.dockbox.selene.api.events.annotations.filter.Filter;
 import org.dockbox.selene.api.events.annotations.filter.Filters;
-import org.dockbox.selene.api.events.parents.Cancellable;
 import org.dockbox.selene.api.events.parents.Event;
 import org.dockbox.selene.api.events.parents.Filterable;
 import org.dockbox.selene.api.exceptions.Except;
-import org.dockbox.selene.api.task.ThreadUtils;
-import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.util.Reflect;
 import org.dockbox.selene.util.SeleneUtils;
 import org.jetbrains.annotations.NotNull;
@@ -138,7 +133,7 @@ public final class SimpleEventWrapper implements Comparable<SimpleEventWrapper>,
 
     @Override
     public void invoke(Event event) throws SecurityException {
-        if (this.filtersMatch(event) && this.acceptsState(event)) {
+        if (this.filtersMatch(event)) {
             Runnable eventRunner = () -> {
                 try {
                     if (this.operator != null)
@@ -156,13 +151,7 @@ public final class SimpleEventWrapper implements Comparable<SimpleEventWrapper>,
                 }
             };
 
-            ThreadUtils tu = Provider.provide(ThreadUtils.class);
-            if (this.method.isAnnotationPresent(Async.class)) {
-                tu.performAsync(eventRunner);
-            }
-            else {
-                eventRunner.run();
-            }
+            eventRunner.run();
         }
     }
 
@@ -186,29 +175,6 @@ public final class SimpleEventWrapper implements Comparable<SimpleEventWrapper>,
                     }
                 }
             }
-        }
-        return true;
-    }
-
-    private boolean acceptsState(Event event) {
-        /*
-        If a event can be cancelled, listeners can indicate their preference on whether or not they wish to listen for
-        events which are cancelled or non-cancelled, or either. If the event cannot be cancelled this always returns
-        true.
-        */
-        if (event instanceof Cancellable) {
-            Cancellable cancellable = (Cancellable) event;
-            if (this.method.isAnnotationPresent(IsCancelled.class)) {
-                switch (this.method.getAnnotation(IsCancelled.class).value()) {
-                    case TRUE:
-                        return cancellable.isCancelled();
-                    case FALSE: // Default behavior
-                        return !cancellable.isCancelled();
-                    case UNDEFINED: // Either is accepted
-                        return true;
-                }
-            }
-            else return !cancellable.isCancelled();
         }
         return true;
     }

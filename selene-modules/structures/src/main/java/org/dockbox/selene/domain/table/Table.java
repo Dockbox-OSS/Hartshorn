@@ -18,8 +18,7 @@
 package org.dockbox.selene.domain.table;
 
 import org.dockbox.selene.api.domain.Exceptional;
-import org.dockbox.selene.api.entity.annotations.Ignore;
-import org.dockbox.selene.api.entity.annotations.Metadata;
+import org.dockbox.selene.api.entity.annotations.Entity;
 import org.dockbox.selene.api.entity.annotations.Property;
 import org.dockbox.selene.domain.table.behavior.Merge;
 import org.dockbox.selene.domain.table.behavior.Order;
@@ -56,7 +55,7 @@ import lombok.Getter;
  * @since feature/S124
  */
 @SuppressWarnings({ "unchecked", "rawtypes" })
-@Metadata(alias = "table")
+@Entity(value = "table")
 public class Table {
 
     private final List<TableRow> rows;
@@ -127,8 +126,9 @@ public class Table {
      * the table. If the field is annotated with {@link Property} the contained {@link
      * ColumnIdentifier} is used instead.
      *
-     * <p>If the field is annotated with {@link Ignore} the field will not be converted to a column
-     * entry in the row. One attempt will be made to make the field accessible if it is not already.
+     * <p>If the field is annotated with {@link Property} with {@link Property#ignore()} set to {@code true}
+     * the field will not be converted to a column entry in the row. One attempt will be made to make the
+     * field accessible if it is not already.
      *
      * @param object
      *         Object to "try to" add as a row to the table
@@ -146,14 +146,14 @@ public class Table {
 
         for (Field field : object.getClass().getFields()) {
             if (!field.isAccessible()) field.setAccessible(true);
-            if (!field.isAnnotationPresent(Ignore.class)) {
+            if (!(field.isAnnotationPresent(Property.class) && field.getAnnotation(Property.class).ignore())) {
                 try {
                     ColumnIdentifier columnIdentifier = null;
 
                     // Try to grab the column identifier from the Identifier annotation of the field (if
                     // present)
                     Property identifier = field.getAnnotation(Property.class);
-                    if (null != identifier) columnIdentifier = this.getIdentifier(identifier.value());
+                    if (null != identifier && !"".equals(identifier.value())) columnIdentifier = this.getIdentifier(identifier.value());
 
                     // If no Identifier annotation was present, try to grab it using the field name
                     if (null == columnIdentifier) columnIdentifier = this.getIdentifier(field.getName());

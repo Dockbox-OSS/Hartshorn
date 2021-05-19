@@ -23,8 +23,7 @@ import org.dockbox.selene.api.domain.FileTypes;
 import org.dockbox.selene.api.task.TaskRunner;
 import org.dockbox.selene.api.task.ThreadUtils;
 import org.dockbox.selene.commands.source.DiscordCommandSource;
-import org.dockbox.selene.config.Configuration;
-import org.dockbox.selene.config.TargetGlobalConfig;
+import org.dockbox.selene.config.ConfigurationManager;
 import org.dockbox.selene.di.InjectConfiguration;
 import org.dockbox.selene.di.SeleneFactory;
 import org.dockbox.selene.di.SimpleSeleneFactory;
@@ -66,8 +65,8 @@ public class JUnitInjector extends InjectConfiguration {
 
         // Persistence
         this.bind(FileManager.class, JUnitConfigurateManager.class);
-        this.bind(FileManager.class, JUnitConfigurateManager.class, Bindings.meta(FileTypes.YAML));
-        this.bind(FileManager.class, JUnitXStreamManager.class, Bindings.meta(FileTypes.XML));
+        this.bind(FileManager.class, JUnitConfigurateManager.class, Bindings.named(FileTypes.YAML));
+        this.bind(FileManager.class, JUnitXStreamManager.class, Bindings.named(FileTypes.XML));
 
         // Services
         this.bind(Players.class, JUnitPlayers.class);
@@ -81,7 +80,7 @@ public class JUnitInjector extends InjectConfiguration {
         this.wire(ItemFrame.class, JUnitItemFrame.class);
         this.wire(ArmorStand.class, JUnitArmorStand.class);
         this.wire(DiscordCommandSource.class, JUnitDiscordCommandSource.class);
-        this.wire(Configuration.class, JUnitConfiguration.class);
+        this.wire(ConfigurationManager.class, JUnitConfigurationManager.class);
 
         // Log is created from LoggerFactory externally
         this.bind(Logger.class, Selene.log());

@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.di.binding;
 
-import org.dockbox.selene.di.annotations.BindingMeta;
+import org.dockbox.selene.di.annotations.Named;
 
 import java.lang.annotation.Annotation;
 
@@ -25,13 +25,13 @@ import lombok.AllArgsConstructor;
 
 @SuppressWarnings("ClassExplicitlyAnnotation")
 @AllArgsConstructor
-public class BindingMetaImpl implements BindingMeta {
+public class NamedImpl implements Named {
 
     private final String value;
 
     @Override
     public Class<? extends Annotation> annotationType() {
-        return BindingMeta.class;
+        return Named.class;
     }
 
     public int hashCode() {
@@ -40,16 +40,16 @@ public class BindingMetaImpl implements BindingMeta {
     }
 
     public boolean equals(Object o) {
-        if (!(o instanceof BindingMeta)) {
+        if (!(o instanceof Named)) {
             return false;
         }
 
-        BindingMeta other = (BindingMeta) o;
+        Named other = (Named) o;
         return this.value.equals(other.value());
     }
 
     public String toString() {
-        return "@" + BindingMeta.class.getName() + "(value=" + this.value + ")";
+        return "@" + Named.class.getName() + "(value=" + this.value + ")";
     }
 
     @Override

@@ -32,7 +32,7 @@ import java.util.Map;
 
 import lombok.Getter;
 
-public class SimpleConfiguration implements Configuration, InjectableType {
+public class SimpleConfigurationManager implements ConfigurationManager, InjectableType {
 
     private final Path path;
     private final String fileKey;
@@ -40,7 +40,7 @@ public class SimpleConfiguration implements Configuration, InjectableType {
     private final Map<String, Map<String, Object>> cache = SeleneUtils.emptyConcurrentMap();
 
     @Wired
-    public SimpleConfiguration(Path path) {
+    public SimpleConfigurationManager(Path path) {
         this.path = path;
         this.fileKey = this.getFileKey();
     }

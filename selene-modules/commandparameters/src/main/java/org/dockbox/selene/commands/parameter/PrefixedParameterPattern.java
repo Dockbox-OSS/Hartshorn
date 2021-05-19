@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.commands.parameter;
 
-import org.dockbox.selene.commands.annotations.CustomParameter;
+import org.dockbox.selene.commands.annotations.Parameter;
 import org.dockbox.selene.commands.source.CommandSource;
 import org.dockbox.selene.api.i18n.common.ResourceEntry;
 import org.dockbox.selene.api.domain.Exceptional;
@@ -32,7 +32,7 @@ public abstract class PrefixedParameterPattern implements CustomParameterPattern
         return Exceptional.of(() -> {
                     String prefix = this.getPrefix() + "";
                     if (this.requiresTypeName()) {
-                        String parameterName = type.getAnnotation(CustomParameter.class).value();
+                        String parameterName = type.getAnnotation(Parameter.class).value();
                         prefix = this.getPrefix() + parameterName;
                     }
                     return raw.startsWith(prefix);

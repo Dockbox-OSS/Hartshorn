@@ -18,28 +18,28 @@
 package org.dockbox.selene.di.properties;
 
 import org.dockbox.selene.di.binding.Bindings;
-import org.dockbox.selene.di.annotations.BindingMeta;
+import org.dockbox.selene.di.annotations.Named;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
-public class BindingMetaProperty implements InjectorProperty<BindingMeta> {
+public class BindingMetaProperty implements InjectorProperty<Named> {
 
     public static final String KEY = "SeleneInternalBindingMetaProperty";
     @Getter
-    private final BindingMeta object;
+    private final Named object;
 
     private BindingMetaProperty(String value) {
-        this.object = Bindings.meta(value);
+        this.object = Bindings.named(value);
     }
 
     public static BindingMetaProperty of(String value) {
         return new BindingMetaProperty(value);
     }
 
-    public static BindingMetaProperty of(BindingMeta meta) {
+    public static BindingMetaProperty of(Named meta) {
         return new BindingMetaProperty(meta);
     }
 

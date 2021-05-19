@@ -96,8 +96,8 @@ public class ProviderTests {
 
     @Test
     public void testStaticBindingWithMetaCanBeProvided() throws IllegalAccessException {
-        injector(true).bind(SampleInterface.class, SampleImplementation.class, Bindings.meta("demo"));
-        SampleInterface provided = Provider.provide(SampleInterface.class, BindingMetaProperty.of(Bindings.meta("demo")));
+        injector(true).bind(SampleInterface.class, SampleImplementation.class, Bindings.named("demo"));
+        SampleInterface provided = Provider.provide(SampleInterface.class, BindingMetaProperty.of(Bindings.named("demo")));
         Assertions.assertNotNull(provided);
 
         Class<? extends SampleInterface> providedClass = provided.getClass();
@@ -129,8 +129,8 @@ public class ProviderTests {
 
     @Test
     public void testInstanceBindingWithMetaCanBeProvided() throws IllegalAccessException {
-        injector(true).bind(SampleInterface.class, new SampleImplementation(), Bindings.meta("demo"));
-        SampleInterface provided = Provider.provide(SampleInterface.class, BindingMetaProperty.of(Bindings.meta("demo")));
+        injector(true).bind(SampleInterface.class, new SampleImplementation(), Bindings.named("demo"));
+        SampleInterface provided = Provider.provide(SampleInterface.class, BindingMetaProperty.of(Bindings.named("demo")));
         Assertions.assertNotNull(provided);
 
         Class<? extends SampleInterface> providedClass = provided.getClass();
@@ -161,8 +161,8 @@ public class ProviderTests {
 
     @Test
     public void testProviderBindingWithMetaCanBeProvided() throws IllegalAccessException {
-        injector(true).provide(SampleInterface.class, SampleImplementation::new, Bindings.meta("demo"));
-        SampleInterface provided = Provider.provide(SampleInterface.class, BindingMetaProperty.of(Bindings.meta("demo")));
+        injector(true).provide(SampleInterface.class, SampleImplementation::new, Bindings.named("demo"));
+        SampleInterface provided = Provider.provide(SampleInterface.class, BindingMetaProperty.of(Bindings.named("demo")));
         Assertions.assertNotNull(provided);
 
         Class<? extends SampleInterface> providedClass = provided.getClass();
@@ -190,7 +190,7 @@ public class ProviderTests {
         injector(true).bind("org.dockbox.selene.di.types.meta");
         Assertions.assertThrows(ProvisionFailure.class, () -> Provider.provide(SampleInterface.class));
 
-        SampleInterface provided = Provider.provide(SampleInterface.class, BindingMetaProperty.of(Bindings.meta("meta")));
+        SampleInterface provided = Provider.provide(SampleInterface.class, BindingMetaProperty.of(Bindings.named("meta")));
         Assertions.assertNotNull(provided);
 
         Class<? extends SampleInterface> providedClass = provided.getClass();
@@ -218,7 +218,7 @@ public class ProviderTests {
         // sub-package *.multi was added to prevent scan conflicts
         injector(true).bind("org.dockbox.selene.di.types.multi");
 
-        SampleInterface provided = Provider.provide(SampleInterface.class, BindingMetaProperty.of(Bindings.meta("meta")));
+        SampleInterface provided = Provider.provide(SampleInterface.class, BindingMetaProperty.of(Bindings.named("meta")));
         Assertions.assertNotNull(provided);
 
         Class<? extends SampleInterface> providedClass = provided.getClass();
@@ -416,7 +416,7 @@ public class ProviderTests {
 
         if (field) {
             if (fieldMeta == null) {injector(false).bind(SampleField.class, SampleFieldImplementation.class);}
-            else {injector(false).bind(SampleField.class, SampleFieldImplementation.class, Bindings.meta(fieldMeta));}
+            else {injector(false).bind(SampleField.class, SampleFieldImplementation.class, Bindings.named(fieldMeta));}
         }
 
         BeanInterface provided;

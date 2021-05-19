@@ -17,12 +17,12 @@
 
 package org.dockbox.selene.api.i18n;
 
-import org.dockbox.selene.api.entity.annotations.Metadata;
+import org.dockbox.selene.api.entity.annotations.Entity;
 import org.dockbox.selene.api.i18n.annotations.Resource;
 import org.dockbox.selene.api.i18n.annotations.Resources;
 import org.dockbox.selene.api.i18n.common.ResourceEntry;
 
-@Metadata(alias = "resource")
+@Entity(value = "resource")
 @Resources(TestResources.class)
 public interface TestResources {
 

@@ -19,7 +19,7 @@ package org.dockbox.selene.server.minecraft;
 
 import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.SeleneInformation;
-import org.dockbox.selene.api.entity.annotations.Metadata;
+import org.dockbox.selene.api.entity.annotations.Entity;
 import org.dockbox.selene.api.i18n.MessageReceiver;
 import org.dockbox.selene.api.i18n.common.Language;
 import org.dockbox.selene.commands.annotations.Command;
@@ -30,7 +30,7 @@ import org.dockbox.selene.server.DefaultServerResources;
 import org.dockbox.selene.server.minecraft.players.Player;
 import org.dockbox.selene.util.SeleneUtils;
 
-@Metadata(alias = "minecraft", serializable = false)
+@Entity(value = "minecraft", serializable = false)
 @Command(value = SeleneInformation.PROJECT_ID, permission = DefaultServer.SELENE_ADMIN, extend = true)
 public class DefaultMinecraftServer {
 

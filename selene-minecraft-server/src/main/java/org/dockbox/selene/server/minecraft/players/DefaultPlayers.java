@@ -19,7 +19,7 @@ package org.dockbox.selene.server.minecraft.players;
 
 import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.domain.Exceptional;
-import org.dockbox.selene.api.entity.annotations.Metadata;
+import org.dockbox.selene.api.entity.annotations.Entity;
 import org.dockbox.selene.api.i18n.common.Language;
 import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.persistence.FileManager;
@@ -56,7 +56,7 @@ public abstract class DefaultPlayers implements Players {
         cm.write(file, userData);
     }
 
-    @Metadata(alias = "userdata")
+    @Entity(value = "userdata")
     private static class UserDataModel {
         private Language language = Language.EN_US;
     }

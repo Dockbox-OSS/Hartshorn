@@ -18,8 +18,6 @@
 package org.dockbox.selene.worldmanagement;
 
 import org.dockbox.selene.api.domain.tuple.Vector3N;
-import org.dockbox.selene.api.entity.annotations.Extract;
-import org.dockbox.selene.api.entity.annotations.Extract.Behavior;
 import org.dockbox.selene.config.annotations.Value;
 import org.dockbox.selene.persistence.FileManager;
 
@@ -30,7 +28,6 @@ import javax.inject.Inject;
 public class WorldManagementConfig {
 
     @Inject
-    @Extract(Behavior.SKIP)
     private transient FileManager fileManager;
 
     @Value(value = "modules.world-management.target.position.x", or = "0")

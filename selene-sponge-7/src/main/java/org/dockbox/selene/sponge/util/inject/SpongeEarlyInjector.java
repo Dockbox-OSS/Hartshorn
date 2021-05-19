@@ -25,8 +25,8 @@ import org.dockbox.selene.api.task.TaskRunner;
 import org.dockbox.selene.api.task.ThreadUtils;
 import org.dockbox.selene.commands.source.DiscordCommandSource;
 import org.dockbox.selene.commands.values.AbstractFlagCollection;
-import org.dockbox.selene.config.Configuration;
-import org.dockbox.selene.config.SimpleConfiguration;
+import org.dockbox.selene.config.ConfigurationManager;
+import org.dockbox.selene.config.SimpleConfigurationManager;
 import org.dockbox.selene.config.TargetGlobalConfig;
 import org.dockbox.selene.di.InjectConfiguration;
 import org.dockbox.selene.di.SeleneFactory;
@@ -88,8 +88,8 @@ public class SpongeEarlyInjector extends InjectConfiguration {
 
         // Persistence
         this.bind(FileManager.class, SpongeConfigurateManager.class);
-        this.bind(FileManager.class, SpongeConfigurateManager.class, Bindings.meta(FileTypes.YAML));
-        this.bind(FileManager.class, SpongeXStreamManager.class, Bindings.meta(FileTypes.XML));
+        this.bind(FileManager.class, SpongeConfigurateManager.class, Bindings.named(FileTypes.YAML));
+        this.bind(FileManager.class, SpongeXStreamManager.class, Bindings.named(FileTypes.XML));
 
         // Services
         this.bind(Players.class, SpongePlayers.class);
@@ -114,7 +114,7 @@ public class SpongeEarlyInjector extends InjectConfiguration {
         this.wire(ItemFrame.class, SpongeItemFrame.class);
         this.wire(ArmorStand.class, SpongeArmorStand.class);
         this.wire(DiscordCommandSource.class, MagiBridgeCommandSource.class);
-        this.wire(Configuration.class, SimpleConfiguration.class);
+        this.wire(ConfigurationManager.class, SimpleConfigurationManager.class);
 
         // Log is created from LoggerFactory externally
         this.bind(Logger.class, Selene.log());

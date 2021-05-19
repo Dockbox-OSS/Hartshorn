@@ -20,11 +20,9 @@ package org.dockbox.selene.api.events;
 import org.dockbox.selene.api.events.annotations.Listener.Priority;
 import org.dockbox.selene.api.events.annotations.filter.Filter;
 import org.dockbox.selene.api.events.listeners.BasicEventListener;
-import org.dockbox.selene.api.events.listeners.CancelledOnlyEventListener;
 import org.dockbox.selene.api.events.listeners.FilteredEventListener;
 import org.dockbox.selene.api.events.listeners.PriorityEventListener;
 import org.dockbox.selene.api.events.listeners.StaticEventListener;
-import org.dockbox.selene.api.events.parents.Cancellable;
 import org.dockbox.selene.api.events.processing.FilterTypes;
 import org.dockbox.selene.test.SeleneJUnit5Runner;
 import org.junit.jupiter.api.AfterEach;
@@ -71,29 +69,6 @@ public class EventBusTests {
         bus.subscribe(listener);
         bus.post(new SampleEvent());
         Assertions.assertEquals(Priority.LAST, listener.getLast());
-    }
-
-    @Test
-    public void testCancelledOnlyListeners() {
-        EventBus bus = this.bus();
-        CancelledOnlyEventListener listener = new CancelledOnlyEventListener();
-        bus.subscribe(listener);
-        Cancellable cancellable = new SampleCancellable();
-        cancellable.setCancelled(true);
-        bus.post(cancellable);
-        Assertions.assertTrue(cancellable.isCancelled());
-        Assertions.assertTrue(CancelledOnlyEventListener.fired);
-    }
-
-    @Test
-    public void testCancelledOnlyDoesNotInvokeNonCancelledListeners() {
-        EventBus bus = this.bus();
-        CancelledOnlyEventListener listener = new CancelledOnlyEventListener();
-        bus.subscribe(listener);
-        Cancellable cancellable = new SampleCancellable();
-        Assertions.assertFalse(cancellable.isCancelled());
-        bus.post(cancellable);
-        Assertions.assertFalse(CancelledOnlyEventListener.fired);
     }
 
     @Test
@@ -158,7 +133,6 @@ public class EventBusTests {
     public void reset() {
         BasicEventListener.fired = false;
         StaticEventListener.fired = false;
-        CancelledOnlyEventListener.fired = false;
         FilteredEventListener.fired = false;
     }
 

@@ -15,7 +15,10 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.api.entity.annotations;
+package org.dockbox.selene.config.annotations;
+
+import org.dockbox.selene.api.Selene;
+import org.dockbox.selene.di.annotations.Service;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -24,6 +27,7 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface Rejects {
-    Class<?>[] value() default Void.class;
+public @interface Configuration {
+    String value();
+    Service service() default @Service(owner = Selene.class);
 }

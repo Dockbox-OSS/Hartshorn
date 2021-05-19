@@ -20,11 +20,11 @@ package org.dockbox.selene.server.minecraft;
 import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.domain.tuple.Vector3N;
-import org.dockbox.selene.commands.annotations.ArgumentProvider;
 import org.dockbox.selene.commands.context.ArgumentConverter;
 import org.dockbox.selene.commands.convert.CommandValueConverter;
 import org.dockbox.selene.commands.convert.DefaultArgumentConverters;
 import org.dockbox.selene.di.Provider;
+import org.dockbox.selene.di.annotations.Service;
 import org.dockbox.selene.di.properties.InjectableType;
 import org.dockbox.selene.di.properties.InjectorProperty;
 import org.dockbox.selene.server.minecraft.dimension.Worlds;
@@ -37,7 +37,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @SuppressWarnings({ "unused", "ClassWithTooManyFields" })
-@ArgumentProvider
+@Service
 public final class MinecraftArgumentConverters implements InjectableType {
 
     public static final ArgumentConverter<World> WORLD = new CommandValueConverter<>(World.class, in -> {

@@ -17,9 +17,7 @@
 
 package org.dockbox.selene.server.minecraft.item;
 
-import org.dockbox.selene.api.entity.annotations.Extract;
-import org.dockbox.selene.api.entity.annotations.Extract.Behavior;
-import org.dockbox.selene.api.entity.annotations.Metadata;
+import org.dockbox.selene.api.entity.annotations.Entity;
 import org.dockbox.selene.api.i18n.text.Text;
 import org.dockbox.selene.api.keys.PersistentDataKey;
 import org.dockbox.selene.api.keys.StoredPersistentKey;
@@ -37,8 +35,7 @@ import lombok.Getter;
 
 @SuppressWarnings("FieldMayBeFinal")
 @Singleton
-@Extract(Behavior.KEEP)
-@Metadata(alias = "item")
+@Entity(value = "item")
 @Getter
 public class SimplePersistentItemModel extends PersistentItemModel {
 

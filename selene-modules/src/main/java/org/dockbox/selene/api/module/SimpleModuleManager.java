@@ -22,7 +22,6 @@ import org.dockbox.selene.api.SeleneInformation;
 import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.domain.tuple.Tuple;
 import org.dockbox.selene.api.exceptions.Except;
-import org.dockbox.selene.api.module.annotations.Disabled;
 import org.dockbox.selene.api.module.annotations.Module;
 import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.di.annotations.Binds;
@@ -112,7 +111,7 @@ public class SimpleModuleManager implements ModuleManager {
         Collection<Class<?>> annotatedTypes = Reflect.annotatedTypes(SeleneInformation.PACKAGE_PREFIX, Module.class);
         Selene.log().info("Found " + annotatedTypes.size() + " integrated modules.");
         return annotatedTypes.stream()
-                .filter(type -> !type.isAnnotationPresent(Disabled.class))
+                .filter(type -> !type.getAnnotation(Module.class).disabled())
                 .map(type -> {
                     SimpleModuleContext context = new SimpleModuleContext(type, type.getAnnotation(Module.class));
                     return new Tuple<>(new ModuleContainer(context), type);

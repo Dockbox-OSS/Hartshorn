@@ -20,8 +20,8 @@ package org.dockbox.selene.api.module;
 import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.SeleneBootstrap;
 import org.dockbox.selene.api.domain.Exceptional;
-import org.dockbox.selene.api.annotations.OwnedBy;
 import org.dockbox.selene.di.Provider;
+import org.dockbox.selene.di.annotations.Service;
 import org.dockbox.selene.util.Reflect;
 import org.jetbrains.annotations.Nullable;
 
@@ -44,9 +44,9 @@ public class Modules {
             }
         }
 
-        if (type.isAnnotationPresent(OwnedBy.class)) {
-            OwnedBy owner = type.getAnnotation(OwnedBy.class);
-            return Modules.module(owner.value());
+        if (type.isAnnotationPresent(Service.class)) {
+            Service service = type.getAnnotation(Service.class);
+            return Modules.module(service.owner());
         }
 
         return Exceptional.of(Provider.provide(ModuleManager.class))

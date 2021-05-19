@@ -18,9 +18,7 @@
 package org.dockbox.selene.api.i18n.text.persistence;
 
 import org.dockbox.selene.api.Selene;
-import org.dockbox.selene.api.entity.annotations.Extract;
-import org.dockbox.selene.api.entity.annotations.Extract.Behavior;
-import org.dockbox.selene.api.entity.annotations.Metadata;
+import org.dockbox.selene.api.entity.annotations.Entity;
 import org.dockbox.selene.api.i18n.text.Text;
 import org.dockbox.selene.api.i18n.text.actions.ClickAction;
 import org.dockbox.selene.api.i18n.text.actions.CommandAction;
@@ -33,8 +31,7 @@ import org.dockbox.selene.util.Reflect;
 import lombok.Getter;
 
 @SuppressWarnings("FieldMayBeFinal")
-@Extract(Behavior.KEEP)
-@Metadata(alias = "text")
+@Entity(value = "text")
 @Getter
 public class PersistentTextModel implements PersistentModel<Text> {
 

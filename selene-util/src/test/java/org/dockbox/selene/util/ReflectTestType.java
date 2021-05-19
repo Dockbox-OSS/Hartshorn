@@ -17,16 +17,15 @@
 
 package org.dockbox.selene.util;
 
-import org.dockbox.selene.api.entity.annotations.Accessor;
+import org.dockbox.selene.api.entity.annotations.Entity;
 import org.dockbox.selene.api.entity.annotations.Property;
-import org.dockbox.selene.api.entity.annotations.Rejects;
 import org.dockbox.selene.util.annotations.Demo;
 import org.junit.jupiter.api.Assertions;
 
 import java.util.Locale;
 
 @Demo
-@Rejects(RejectingType.class)
+@Entity(value = "test", rejects = RejectingType.class)
 public class ReflectTestType extends ParentTestType {
 
     @Demo
@@ -42,7 +41,7 @@ public class ReflectTestType extends ParentTestType {
     public static String publicStaticField = "publicStaticField";
     private static String privateStaticField = "privateStaticField";
 
-    @Accessor(getter = "getField", setter = "setField")
+    @Property(getter = "getField", setter = "setField")
     private String accessorField;
 
     public String getField() {

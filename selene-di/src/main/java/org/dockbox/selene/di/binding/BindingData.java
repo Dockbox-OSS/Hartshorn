@@ -18,7 +18,7 @@
 package org.dockbox.selene.di.binding;
 
 import org.dockbox.selene.api.domain.Exceptional;
-import org.dockbox.selene.di.annotations.BindingMeta;
+import org.dockbox.selene.di.annotations.Named;
 
 import lombok.Getter;
 
@@ -28,21 +28,21 @@ public class BindingData {
     private final Class<?> source;
     @Getter
     private final Class<?> target;
-    private final BindingMeta meta;
+    private final Named named;
 
-    public BindingData(Class<?> source, Class<?> target, BindingMeta meta) {
+    public BindingData(Class<?> source, Class<?> target, Named named) {
         this.source = source;
         this.target = target;
-        this.meta = meta;
+        this.named = named;
     }
 
     public BindingData(Class<?> source, Class<?> target) {
         this.source = source;
         this.target = target;
-        this.meta = null;
+        this.named = null;
     }
 
-    public Exceptional<BindingMeta> getMeta() {
-        return Exceptional.of(this.meta);
+    public Exceptional<Named> getName() {
+        return Exceptional.of(this.named);
     }
 }

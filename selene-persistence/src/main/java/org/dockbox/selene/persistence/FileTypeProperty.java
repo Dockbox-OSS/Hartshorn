@@ -27,7 +27,7 @@ public final class FileTypeProperty<T extends Annotation> extends BindingMetaPro
     private final FileType fileType;
 
     private FileTypeProperty(FileType fileType) {
-        super(Bindings.meta(fileType.getExtension()));
+        super(Bindings.named(fileType.getExtension()));
         this.fileType = fileType;
     }
 
