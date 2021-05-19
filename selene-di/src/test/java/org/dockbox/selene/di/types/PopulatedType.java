@@ -17,11 +17,11 @@
 
 package org.dockbox.selene.di.types;
 
-import javax.inject.Inject;
+import org.dockbox.selene.di.annotations.Wired;
 
 public class PopulatedType {
 
-    @Inject
+    @Wired
     SampleInterface sampleInterface;
 
     public SampleInterface getSampleInterface() {

@@ -34,6 +34,7 @@ import org.dockbox.selene.di.types.SampleInterface;
 import org.dockbox.selene.di.types.SamplePreloads;
 import org.dockbox.selene.di.types.SampleWiredPopulatedType;
 import org.dockbox.selene.di.types.SampleWiredType;
+import org.dockbox.selene.di.types.bean.BeanInterface;
 import org.dockbox.selene.di.types.meta.SampleMetaAnnotatedImplementation;
 import org.dockbox.selene.di.types.multi.SampleMultiAnnotatedImplementation;
 import org.dockbox.selene.di.types.scan.SampleAnnotatedImplementation;
@@ -43,8 +44,12 @@ import org.dockbox.selene.util.SeleneUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.lang.reflect.Field;
+import java.util.stream.Stream;
 
 @ExtendWith(SeleneJUnit5Runner.class)
 public class ProviderTests {
@@ -392,6 +397,44 @@ public class ProviderTests {
         SampleInterface provided = Provider.provide(SampleInterface.class, "FactoryTyped");
         Assertions.assertFalse(provided instanceof SampleWiredType);
         Assertions.assertTrue(provided instanceof SampleImplementation);
+    }
+
+    private static Stream<Arguments> getBeans() {
+        return Stream.of(
+                Arguments.of(null, "Bean", false, null, false),
+                Arguments.of("named", "NamedBean", false, null, false),
+                Arguments.of("field", "FieldBean", true, null, false),
+                Arguments.of("namedField", "NamedFieldBean", true, "named", false),
+                Arguments.of("singleton", "SingletonBean", false, null, true)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("getBeans")
+    void testBeansCanSupply(String meta, String name, boolean field, String fieldMeta, boolean singleton) throws IllegalAccessException {
+        injector(true).bind("org.dockbox.selene.di.types.bean");
+
+        if (field) {
+            if (fieldMeta == null) {injector(false).bind(SampleField.class, SampleFieldImplementation.class);}
+            else {injector(false).bind(SampleField.class, SampleFieldImplementation.class, Bindings.meta(fieldMeta));}
+        }
+
+        BeanInterface provided;
+        if (meta == null) provided = Provider.provide(BeanInterface.class);
+        else provided = Provider.provide(BeanInterface.class, BindingMetaProperty.of(meta));
+        Assertions.assertNotNull(provided);
+
+        String actual = provided.getName();
+        Assertions.assertNotNull(name);
+        Assertions.assertEquals(name, actual);
+
+        if (singleton) {
+            BeanInterface second;
+            if (meta == null) second = Provider.provide(BeanInterface.class);
+            else second = Provider.provide(BeanInterface.class, BindingMetaProperty.of(meta));
+            Assertions.assertNotNull(second);
+            Assertions.assertSame(provided, second);
+        }
     }
 
     private static Injector injector(boolean reset) throws IllegalAccessException {

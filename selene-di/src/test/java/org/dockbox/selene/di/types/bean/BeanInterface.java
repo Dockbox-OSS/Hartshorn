@@ -15,31 +15,11 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.di.types;
+package org.dockbox.selene.di.types.bean;
 
-import org.dockbox.selene.di.annotations.Wired;
-import org.dockbox.selene.di.properties.InjectableType;
-import org.dockbox.selene.di.properties.InjectorProperty;
+import org.dockbox.selene.di.types.SampleInterface;
 
-import lombok.Getter;
-
-@Getter
-public class SampleWiredPopulatedType implements SampleInterface, InjectableType {
-
-    private final String name;
-
-    @Wired
-    private SampleField field;
-    private boolean enabled = false;
-
-    @Wired
-    public SampleWiredPopulatedType(String name) {
-        this.name = name;
-    }
-
-    @Override
-    public void stateEnabling(InjectorProperty<?>... properties) {
-        this.enabled = true;
-    }
+// Middle interface to avoid JUnit runner conflicts
+public interface BeanInterface extends SampleInterface {
 
 }
