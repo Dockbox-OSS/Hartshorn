@@ -20,17 +20,17 @@ package org.dockbox.selene.server;
 import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.module.ModuleContainer;
 import org.dockbox.selene.api.module.ModuleManager;
-import org.dockbox.selene.commands.annotations.ArgumentProvider;
 import org.dockbox.selene.commands.context.ArgumentConverter;
 import org.dockbox.selene.commands.convert.CommandValueConverter;
 import org.dockbox.selene.di.Provider;
+import org.dockbox.selene.di.annotations.Service;
 import org.dockbox.selene.di.properties.InjectableType;
 import org.dockbox.selene.di.properties.InjectorProperty;
 
 import java.util.stream.Collectors;
 
 @SuppressWarnings({ "unused", "ClassWithTooManyFields" })
-@ArgumentProvider
+@Service
 public class ServerArgumentConverters  implements InjectableType {
 
     public static final ArgumentConverter<ModuleContainer> MODULE = new CommandValueConverter<>(ModuleContainer.class, in -> Provider.provide(ModuleManager.class)

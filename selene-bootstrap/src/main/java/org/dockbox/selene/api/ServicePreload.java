@@ -15,14 +15,19 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.commands.annotations;
+package org.dockbox.selene.api;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import org.dockbox.selene.di.Provider;
+import org.dockbox.selene.di.annotations.Service;
+import org.dockbox.selene.di.preload.Preloadable;
+import org.dockbox.selene.util.Reflect;
 
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-public @interface ArgumentProvider {
+@Phase(BootstrapPhase.PRE_INIT)
+public class ServicePreload implements Preloadable {
+    @Override
+    public void preload() {
+        // Register additional services early on, before modules are constructed
+        Reflect.annotatedTypes(SeleneInformation.PACKAGE_PREFIX, Service.class)
+                .forEach(Provider::provide);
+    }
 }

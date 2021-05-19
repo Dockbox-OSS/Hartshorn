@@ -24,9 +24,9 @@ import org.dockbox.selene.api.i18n.ResourceService;
 import org.dockbox.selene.api.i18n.common.Language;
 import org.dockbox.selene.api.i18n.common.ResourceEntry;
 import org.dockbox.selene.api.i18n.text.Text;
-import org.dockbox.selene.commands.annotations.ArgumentProvider;
 import org.dockbox.selene.commands.context.ArgumentConverter;
 import org.dockbox.selene.di.Provider;
+import org.dockbox.selene.di.annotations.Service;
 import org.dockbox.selene.di.properties.InjectableType;
 import org.dockbox.selene.di.properties.InjectorProperty;
 import org.dockbox.selene.util.SeleneUtils;
@@ -40,7 +40,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @SuppressWarnings({ "unused", "ClassWithTooManyFields" })
-@ArgumentProvider
+@Service
 public final class DefaultArgumentConverters implements InjectableType {
 
     public static final ArgumentConverter<String> STRING = new CommandValueConverter<>(String.class, (Function<String, Exceptional<String>>) Exceptional::of, "string");
