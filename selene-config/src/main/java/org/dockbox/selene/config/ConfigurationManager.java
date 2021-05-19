@@ -15,19 +15,18 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.config.annotations;
+package org.dockbox.selene.config;
 
-import org.dockbox.selene.api.Selene;
-import org.dockbox.selene.di.annotations.Service;
+import org.dockbox.selene.di.Provider;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.nio.file.Path;
 
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-public @interface Source {
-    String value();
-    Service owner() default @Service(owner = Selene.class);
+public interface ConfigurationManager {
+
+    <T> T get(String key);
+
+    static ConfigurationManager of(Path path) {
+        return Provider.provide(ConfigurationManager.class, path);
+    }
+
 }

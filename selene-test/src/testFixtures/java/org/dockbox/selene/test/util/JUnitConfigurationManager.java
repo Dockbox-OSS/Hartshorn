@@ -17,19 +17,19 @@
 
 package org.dockbox.selene.test.util;
 
-import org.dockbox.selene.config.SimpleConfiguration;
+import org.dockbox.selene.config.SimpleConfigurationManager;
 import org.dockbox.selene.di.annotations.Wired;
 import org.dockbox.selene.util.SeleneUtils;
 
 import java.nio.file.Path;
 import java.util.Map;
 
-public class JUnitConfiguration extends SimpleConfiguration {
+public class JUnitConfigurationManager extends SimpleConfigurationManager {
 
     private static Map<String, Object> cache = SeleneUtils.emptyConcurrentMap();
 
     @Wired
-    public JUnitConfiguration(Path path) {
+    public JUnitConfigurationManager(Path path) {
         super(path);
         // Path is typically stored to obtain values from, during testing this is not required.
     }

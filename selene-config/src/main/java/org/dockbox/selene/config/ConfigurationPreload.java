@@ -22,7 +22,7 @@ import org.dockbox.selene.api.Phase;
 import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.SeleneInformation;
 import org.dockbox.selene.api.domain.Exceptional;
-import org.dockbox.selene.config.annotations.Source;
+import org.dockbox.selene.config.annotations.Configuration;
 import org.dockbox.selene.config.annotations.Value;
 import org.dockbox.selene.di.InjectionPoint;
 import org.dockbox.selene.di.Provider;
@@ -50,22 +50,22 @@ public class ConfigurationPreload implements Preloadable {
 
             String file = SeleneInformation.PROJECT_ID;
             Class<?> owner = Selene.class;
-            if (instance.getClass().isAnnotationPresent(Source.class)) {
-                Source source = instance.getClass().getAnnotation(Source.class);
-                file = source.value();
-                owner = source.owner().owner();
+            if (instance.getClass().isAnnotationPresent(Configuration.class)) {
+                Configuration configuration = instance.getClass().getAnnotation(Configuration.class);
+                file = configuration.value();
+                owner = configuration.service().owner();
             }
 
             FileManager fileManager = Provider.provide(FileManager.class, FileTypeProperty.of(FileType.YAML));
             Path config = fileManager.getConfigFile(owner, file);
 
-            Configuration configuration = Provider.provide(Configuration.class, config);
+            ConfigurationManager configurationManager = Provider.provide(ConfigurationManager.class, config);
 
             for (Field field : fields) {
                 try {
                     field.setAccessible(true);
                     Value value = field.getAnnotation(Value.class);
-                    Object fieldValue = Exceptional.of(() -> configuration.get(value.value())).or(value.or());
+                    Object fieldValue = Exceptional.of(() -> configurationManager.get(value.value())).or(value.or());
 
                     if ((!Reflect.assignableFrom(String.class, field.getType())) && (fieldValue instanceof String)) {
                         fieldValue = Reflect.primitiveFromString(field.getType(), (String) fieldValue);
