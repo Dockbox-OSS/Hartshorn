@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.di;
 
-import org.dockbox.selene.di.annotations.BindingMeta;
+import org.dockbox.selene.di.annotations.Named;
 import org.dockbox.selene.di.inject.Binder;
 
 import java.lang.annotation.Annotation;
@@ -44,7 +44,7 @@ public abstract class InjectConfiguration implements Binder {
     }
 
     @Override
-    public final <C, T extends C, A extends Annotation> void provide(Class<C> contract, Supplier<? extends T> supplier, BindingMeta meta) {
+    public final <C, T extends C, A extends Annotation> void provide(Class<C> contract, Supplier<? extends T> supplier, Named meta) {
         this.getBinder().provide(contract, supplier, meta);
     }
 
@@ -54,7 +54,7 @@ public abstract class InjectConfiguration implements Binder {
     }
 
     @Override
-    public final <C, T extends C> void bind(Class<C> contract, Class<? extends T> implementation, BindingMeta meta) {
+    public final <C, T extends C> void bind(Class<C> contract, Class<? extends T> implementation, Named meta) {
         this.getBinder().bind(contract, implementation, meta);
     }
 
@@ -64,7 +64,7 @@ public abstract class InjectConfiguration implements Binder {
     }
 
     @Override
-    public final <C, T extends C> void bind(Class<C> contract, T instance, BindingMeta meta) {
+    public final <C, T extends C> void bind(Class<C> contract, T instance, Named meta) {
         this.getBinder().bind(contract, instance, meta);
     }
 

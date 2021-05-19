@@ -19,7 +19,7 @@ package org.dockbox.selene.di.inject.modules;
 
 import com.google.inject.AbstractModule;
 
-import org.dockbox.selene.di.annotations.BindingMeta;
+import org.dockbox.selene.di.annotations.Named;
 
 import java.util.function.Supplier;
 
@@ -27,9 +27,9 @@ public class ProvisionMetaModule<T> extends AbstractModule {
 
     private final Class<T> target;
     private final Supplier<? extends T> supplier;
-    private final BindingMeta meta;
+    private final Named meta;
 
-    public ProvisionMetaModule(Class<T> target, Supplier<? extends T> supplier, BindingMeta meta) {
+    public ProvisionMetaModule(Class<T> target, Supplier<? extends T> supplier, Named meta) {
         this.target = target;
         this.supplier = supplier;
         this.meta = meta;

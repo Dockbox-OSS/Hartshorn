@@ -31,7 +31,7 @@ import org.dockbox.selene.api.domain.tuple.Tuple;
 import org.dockbox.selene.di.InjectConfiguration;
 import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.di.annotations.Bean;
-import org.dockbox.selene.di.annotations.BindingMeta;
+import org.dockbox.selene.di.annotations.Named;
 import org.dockbox.selene.di.annotations.Binds;
 import org.dockbox.selene.di.annotations.Combines;
 import org.dockbox.selene.di.annotations.Service;
@@ -67,7 +67,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.Supplier;
 
-import javax.inject.Named;
 import javax.inject.Singleton;
 
 public class GuiceInjector implements Injector {
@@ -83,7 +82,7 @@ public class GuiceInjector implements Injector {
     }
 
     @Override
-    public <C, T extends C, A extends Annotation> void provide(Class<C> contract, Supplier<? extends T> supplier, BindingMeta meta) {
+    public <C, T extends C, A extends Annotation> void provide(Class<C> contract, Supplier<? extends T> supplier, Named meta) {
         this.modules.add(new ProvisionMetaModule<>(contract, supplier, meta));
         this.reset();
     }
@@ -124,7 +123,7 @@ public class GuiceInjector implements Injector {
                 return (T) this.rebuild().getInstance(Key.get(type, annotation.get()));
             }
             else {
-                @Nullable Exceptional<BindingMeta> meta = Bindings.value(BindingMetaProperty.KEY, BindingMeta.class, additionalProperties);
+                @Nullable Exceptional<Named> meta = Bindings.value(BindingMetaProperty.KEY, Named.class, additionalProperties);
                 if (meta.present()) {
                     return this.rebuild().getInstance(Key.get(type, meta.get()));
                 }
@@ -159,7 +158,7 @@ public class GuiceInjector implements Injector {
                 Bean annotation = bean.getAnnotation(Bean.class);
                 Key<?> key = "".equals(annotation.value())
                         ? Key.get(bean.getReturnType())
-                        : Key.get(bean.getReturnType(), Bindings.meta(annotation.value()));
+                        : Key.get(bean.getReturnType(), Bindings.named(annotation.value()));
                 boolean singleton = bean.isAnnotationPresent(Singleton.class);
                 BeanContext<?, ?> context = new BeanContext<>(key, singleton, () -> this.invoke(bean));
                 contexts.add(context);
@@ -200,14 +199,14 @@ public class GuiceInjector implements Injector {
             Annotation annotation = key.getAnnotation();
             Class<?> rawBinding = bindingKey.getTypeLiteral().getRawType();
 
-            if (annotation instanceof BindingMeta) {
-                data.add(new BindingData(rawKey, rawBinding, (BindingMeta) annotation));
+            if (annotation instanceof Named) {
+                data.add(new BindingData(rawKey, rawBinding, (Named) annotation));
             }
-            else if (annotation instanceof Named) {
-                data.add(new BindingData(rawKey, rawBinding, Bindings.meta(((Named) annotation).value())));
+            else if (annotation instanceof javax.inject.Named) {
+                data.add(new BindingData(rawKey, rawBinding, Bindings.named(((javax.inject.Named) annotation).value())));
             }
             else if (annotation instanceof com.google.inject.name.Named) {
-                data.add(new BindingData(rawKey, rawBinding, Bindings.meta(((com.google.inject.name.Named) annotation).value())));
+                data.add(new BindingData(rawKey, rawBinding, Bindings.named(((com.google.inject.name.Named) annotation).value())));
             }
             else {
                 data.add(new BindingData(rawKey, rawBinding));
@@ -258,8 +257,8 @@ public class GuiceInjector implements Injector {
         Object[] invokingParameters = new Object[parameters.length];
         for (int i = 0; i < parameters.length; i++) {
             Parameter parameter = parameters[i];
-            if (parameter.isAnnotationPresent(BindingMeta.class)) {
-                invokingParameters[i] = Provider.provide(parameter.getType(), BindingMetaProperty.of(parameter.getAnnotation(BindingMeta.class)));
+            if (parameter.isAnnotationPresent(Named.class)) {
+                invokingParameters[i] = Provider.provide(parameter.getType(), BindingMetaProperty.of(parameter.getAnnotation(Named.class)));
             } else {
                 invokingParameters[i] = Provider.provide(parameter.getType());
             }
@@ -321,7 +320,7 @@ public class GuiceInjector implements Injector {
     }
 
     private Map.Entry<Key<?>, Class<?>> handleScanned(Class<?> binder, Class<?> binds, Binds bindAnnotation) {
-        BindingMeta meta = bindAnnotation.meta();
+        Named meta = bindAnnotation.named();
         Key<?> key;
         if (!"".equals(meta.value())) {
             key = Key.get(binds, meta);
@@ -342,7 +341,7 @@ public class GuiceInjector implements Injector {
     }
 
     @Override
-    public <C, T extends C> void bind(Class<C> contract, Class<? extends T> implementation, BindingMeta meta) {
+    public <C, T extends C> void bind(Class<C> contract, Class<? extends T> implementation, Named meta) {
         AbstractModule localModule = new StaticMetaModule<>(contract, implementation, meta);
         this.modules.add(localModule);
         this.reset();
@@ -356,7 +355,7 @@ public class GuiceInjector implements Injector {
     }
 
     @Override
-    public <C, T extends C> void bind(Class<C> contract, T instance, BindingMeta meta) {
+    public <C, T extends C> void bind(Class<C> contract, T instance, Named meta) {
         AbstractModule localModule = new InstanceMetaModule<>(contract, instance, meta);
         this.modules.add(localModule);
         this.reset();

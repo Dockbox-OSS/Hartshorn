@@ -18,7 +18,7 @@
 package org.dockbox.selene.di.binding;
 
 import org.dockbox.selene.api.domain.Exceptional;
-import org.dockbox.selene.di.annotations.BindingMeta;
+import org.dockbox.selene.di.annotations.Named;
 import org.dockbox.selene.di.properties.InjectorProperty;
 import org.dockbox.selene.util.Reflect;
 import org.dockbox.selene.util.SeleneUtils;
@@ -29,8 +29,8 @@ import java.util.List;
 
 public class Bindings {
 
-    public static BindingMeta meta(String value) {
-        return new BindingMetaImpl(value);
+    public static Named named(String value) {
+        return new NamedImpl(value);
     }
 
     /**

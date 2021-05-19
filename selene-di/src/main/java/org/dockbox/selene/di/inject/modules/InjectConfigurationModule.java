@@ -20,7 +20,7 @@ package org.dockbox.selene.di.inject.modules;
 import com.google.inject.AbstractModule;
 
 import org.dockbox.selene.di.InjectConfiguration;
-import org.dockbox.selene.di.annotations.BindingMeta;
+import org.dockbox.selene.di.annotations.Named;
 import org.dockbox.selene.di.inject.Binder;
 import org.dockbox.selene.di.inject.Injector;
 
@@ -49,7 +49,7 @@ public class InjectConfigurationModule extends AbstractModule implements Binder 
     }
 
     @Override
-    public <C, T extends C, A extends Annotation> void provide(Class<C> contract, Supplier<? extends T> supplier, BindingMeta meta) {
+    public <C, T extends C, A extends Annotation> void provide(Class<C> contract, Supplier<? extends T> supplier, Named meta) {
         this.bind(contract).annotatedWith(meta).toProvider(supplier::get);
     }
 
@@ -59,7 +59,7 @@ public class InjectConfigurationModule extends AbstractModule implements Binder 
     }
 
     @Override
-    public <C, T extends C> void bind(Class<C> contract, Class<? extends T> implementation, BindingMeta meta) {
+    public <C, T extends C> void bind(Class<C> contract, Class<? extends T> implementation, Named meta) {
         this.bind(contract).annotatedWith(meta).to(implementation);
     }
 
@@ -69,7 +69,7 @@ public class InjectConfigurationModule extends AbstractModule implements Binder 
     }
 
     @Override
-    public <C, T extends C> void bind(Class<C> contract, T instance, BindingMeta meta) {
+    public <C, T extends C> void bind(Class<C> contract, T instance, Named meta) {
         this.bind(contract).annotatedWith(meta).toInstance(instance);
     }
 

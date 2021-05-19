@@ -23,7 +23,7 @@ import com.google.gson.JsonSyntaxException;
 
 import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.domain.FileTypes;
-import org.dockbox.selene.di.annotations.BindingMeta;
+import org.dockbox.selene.di.annotations.Named;
 import org.dockbox.selene.di.annotations.Binds;
 
 import java.io.BufferedReader;
@@ -32,7 +32,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 
 @Binds(WebUtil.class)
-@Binds(value = WebUtil.class, meta = @BindingMeta(value = FileTypes.JSON))
+@Binds(value = WebUtil.class, named = @Named(value = FileTypes.JSON))
 public class GsonWebUtil extends DefaultWebUtil {
 
     @Override

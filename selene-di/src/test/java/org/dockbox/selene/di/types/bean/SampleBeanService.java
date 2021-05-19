@@ -18,7 +18,7 @@
 package org.dockbox.selene.di.types.bean;
 
 import org.dockbox.selene.di.annotations.Bean;
-import org.dockbox.selene.di.annotations.BindingMeta;
+import org.dockbox.selene.di.annotations.Named;
 import org.dockbox.selene.di.annotations.Service;
 import org.dockbox.selene.di.types.SampleField;
 
@@ -43,7 +43,7 @@ public class SampleBeanService {
     }
 
     @Bean("namedField")
-    public BeanInterface getWithNamedField(@BindingMeta("named") SampleField field) {
+    public BeanInterface getWithNamedField(@Named("named") SampleField field) {
         return () -> "NamedFieldBean";
     }
 

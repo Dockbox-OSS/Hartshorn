@@ -88,8 +88,8 @@ public class SpongeEarlyInjector extends InjectConfiguration {
 
         // Persistence
         this.bind(FileManager.class, SpongeConfigurateManager.class);
-        this.bind(FileManager.class, SpongeConfigurateManager.class, Bindings.meta(FileTypes.YAML));
-        this.bind(FileManager.class, SpongeXStreamManager.class, Bindings.meta(FileTypes.XML));
+        this.bind(FileManager.class, SpongeConfigurateManager.class, Bindings.named(FileTypes.YAML));
+        this.bind(FileManager.class, SpongeXStreamManager.class, Bindings.named(FileTypes.XML));
 
         // Services
         this.bind(Players.class, SpongePlayers.class);

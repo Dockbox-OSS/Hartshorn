@@ -17,11 +17,11 @@
 
 package org.dockbox.selene.di.types.meta;
 
-import org.dockbox.selene.di.annotations.BindingMeta;
+import org.dockbox.selene.di.annotations.Named;
 import org.dockbox.selene.di.annotations.Binds;
 import org.dockbox.selene.di.types.SampleInterface;
 
-@Binds(value = SampleInterface.class, meta = @BindingMeta(value = "meta"))
+@Binds(value = SampleInterface.class, named = @Named(value = "meta"))
 public class SampleMetaAnnotatedImplementation implements SampleInterface {
     @Override
     public String getName() {

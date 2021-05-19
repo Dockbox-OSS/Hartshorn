@@ -18,7 +18,7 @@
 package org.dockbox.selene.persistence;
 
 import org.dockbox.selene.api.domain.FileTypes;
-import org.dockbox.selene.di.annotations.BindingMeta;
+import org.dockbox.selene.di.annotations.Named;
 
 import java.lang.annotation.Annotation;
 import java.nio.file.Path;
@@ -83,6 +83,6 @@ public enum FileType {
     }
 
     public Class<? extends Annotation> getFormat() {
-        return BindingMeta.class;
+        return Named.class;
     }
 }

@@ -17,12 +17,12 @@
 
 package org.dockbox.selene.di.types.multi;
 
-import org.dockbox.selene.di.annotations.BindingMeta;
+import org.dockbox.selene.di.annotations.Named;
 import org.dockbox.selene.di.annotations.Binds;
 import org.dockbox.selene.di.types.SampleInterface;
 
 @Binds(SampleInterface.class)
-@Binds(value = SampleInterface.class, meta = @BindingMeta("meta"))
+@Binds(value = SampleInterface.class, named = @Named("meta"))
 public class SampleMultiAnnotatedImplementation implements SampleInterface {
     @Override
     public String getName() {

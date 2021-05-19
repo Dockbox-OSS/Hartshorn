@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.di.inject;
 
-import org.dockbox.selene.di.annotations.BindingMeta;
+import org.dockbox.selene.di.annotations.Named;
 
 import java.lang.annotation.Annotation;
 import java.util.function.Supplier;
@@ -25,11 +25,11 @@ import java.util.function.Supplier;
 public interface Binder {
 
     <C, T extends C, A extends Annotation> void provide(Class<C> contract, Supplier<? extends T> supplier);
-    <C, T extends C, A extends Annotation> void provide(Class<C> contract, Supplier<? extends T> supplier, BindingMeta meta);
+    <C, T extends C, A extends Annotation> void provide(Class<C> contract, Supplier<? extends T> supplier, Named meta);
     <C, T extends C> void bind(Class<C> contract, Class<? extends T> implementation);
-    <C, T extends C> void bind(Class<C> contract, Class<? extends T> implementation, BindingMeta meta);
+    <C, T extends C> void bind(Class<C> contract, Class<? extends T> implementation, Named meta);
     <C, T extends C> void bind(Class<C> contract, T instance);
-    <C, T extends C> void bind(Class<C> contract, T instance, BindingMeta meta);
+    <C, T extends C> void bind(Class<C> contract, T instance, Named meta);
     <C, T extends C> void wire(Class<C> contract, Class<? extends T> implementation);
 
 }

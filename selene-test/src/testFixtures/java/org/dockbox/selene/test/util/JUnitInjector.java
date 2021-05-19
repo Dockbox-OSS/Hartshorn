@@ -65,8 +65,8 @@ public class JUnitInjector extends InjectConfiguration {
 
         // Persistence
         this.bind(FileManager.class, JUnitConfigurateManager.class);
-        this.bind(FileManager.class, JUnitConfigurateManager.class, Bindings.meta(FileTypes.YAML));
-        this.bind(FileManager.class, JUnitXStreamManager.class, Bindings.meta(FileTypes.XML));
+        this.bind(FileManager.class, JUnitConfigurateManager.class, Bindings.named(FileTypes.YAML));
+        this.bind(FileManager.class, JUnitXStreamManager.class, Bindings.named(FileTypes.XML));
 
         // Services
         this.bind(Players.class, JUnitPlayers.class);

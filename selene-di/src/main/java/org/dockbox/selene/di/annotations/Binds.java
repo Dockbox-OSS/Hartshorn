@@ -28,5 +28,5 @@ import java.lang.annotation.Target;
 @Repeatable(Combines.class)
 public @interface Binds {
     Class<?> value();
-    BindingMeta meta() default @BindingMeta(value = "");
+    Named named() default @Named(value = "");
 }
