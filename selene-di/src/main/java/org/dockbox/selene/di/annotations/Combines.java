@@ -24,6 +24,6 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface MultiBinds {
+public @interface Combines {
     Binds[] value();
 }

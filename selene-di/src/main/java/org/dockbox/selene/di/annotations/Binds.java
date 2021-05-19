@@ -25,7 +25,7 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-@Repeatable(MultiBinds.class)
+@Repeatable(Combines.class)
 public @interface Binds {
     Class<?> value();
     BindingMeta meta() default @BindingMeta(value = "");

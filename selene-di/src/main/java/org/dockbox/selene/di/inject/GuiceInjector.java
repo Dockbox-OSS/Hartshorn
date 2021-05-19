@@ -33,7 +33,7 @@ import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.di.annotations.Bean;
 import org.dockbox.selene.di.annotations.BindingMeta;
 import org.dockbox.selene.di.annotations.Binds;
-import org.dockbox.selene.di.annotations.MultiBinds;
+import org.dockbox.selene.di.annotations.Combines;
 import org.dockbox.selene.di.annotations.Service;
 import org.dockbox.selene.di.annotations.Wired;
 import org.dockbox.selene.di.binding.BindingData;
@@ -298,9 +298,9 @@ public class GuiceInjector implements Injector {
             this.handleBinder(bindings, binder, bindAnnotation);
         }
 
-        Collection<Class<?>> multiBinders = Reflect.annotatedTypes(prefix, MultiBinds.class);
+        Collection<Class<?>> multiBinders = Reflect.annotatedTypes(prefix, Combines.class);
         for (Class<?> binder : multiBinders) {
-            MultiBinds bindAnnotation = binder.getAnnotation(MultiBinds.class);
+            Combines bindAnnotation = binder.getAnnotation(Combines.class);
             for (Binds annotation : bindAnnotation.value()) {
                 this.handleBinder(bindings, binder, annotation);
             }
