@@ -69,4 +69,6 @@ public @interface Property {
      * @return the type to accept
      */
     Class<?> accepts() default Void.class;
+
+    boolean ignore() default false;
 }

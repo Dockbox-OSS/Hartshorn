@@ -18,7 +18,6 @@
 package org.dockbox.selene.domain.table;
 
 import org.dockbox.selene.api.domain.Exceptional;
-import org.dockbox.selene.api.entity.annotations.Ignore;
 import org.dockbox.selene.api.entity.annotations.Entity;
 import org.dockbox.selene.api.entity.annotations.Property;
 import org.dockbox.selene.domain.table.behavior.Merge;
@@ -127,8 +126,9 @@ public class Table {
      * the table. If the field is annotated with {@link Property} the contained {@link
      * ColumnIdentifier} is used instead.
      *
-     * <p>If the field is annotated with {@link Ignore} the field will not be converted to a column
-     * entry in the row. One attempt will be made to make the field accessible if it is not already.
+     * <p>If the field is annotated with {@link Property} with {@link Property#ignore()} set to {@code true}
+     * the field will not be converted to a column entry in the row. One attempt will be made to make the
+     * field accessible if it is not already.
      *
      * @param object
      *         Object to "try to" add as a row to the table
@@ -146,7 +146,7 @@ public class Table {
 
         for (Field field : object.getClass().getFields()) {
             if (!field.isAccessible()) field.setAccessible(true);
-            if (!field.isAnnotationPresent(Ignore.class)) {
+            if (!(field.isAnnotationPresent(Property.class) && field.getAnnotation(Property.class).ignore())) {
                 try {
                     ColumnIdentifier columnIdentifier = null;
 

@@ -18,7 +18,7 @@
 package org.dockbox.selene.persistence.xstream;
 
 import org.dockbox.selene.api.domain.Exceptional;
-import org.dockbox.selene.api.entity.annotations.Ignore;
+import org.dockbox.selene.api.entity.annotations.Property;
 import org.dockbox.selene.persistence.DefaultAbstractFileManager;
 import org.dockbox.selene.persistence.FileType;
 import org.dockbox.selene.persistence.PersistentCapable;
@@ -79,7 +79,7 @@ public abstract class DefaultXStreamManager extends DefaultAbstractFileManager {
 
     private static void omitIgnoredFields(Class<?> type, XStreamBuilder builder) {
         Reflect.fields(type, (declaringType, field) -> {
-            if (field.isAnnotationPresent(Ignore.class))
+            if (field.isAnnotationPresent(Property.class) && field.getAnnotation(Property.class).ignore())
                 builder.omitField(declaringType, field.getName());
         });
     }

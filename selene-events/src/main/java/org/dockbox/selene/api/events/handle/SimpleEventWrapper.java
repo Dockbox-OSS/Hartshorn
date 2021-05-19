@@ -19,14 +19,11 @@ package org.dockbox.selene.api.events.handle;
 
 import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.events.EventWrapper;
-import org.dockbox.selene.api.events.annotations.Async;
 import org.dockbox.selene.api.events.annotations.filter.Filter;
 import org.dockbox.selene.api.events.annotations.filter.Filters;
 import org.dockbox.selene.api.events.parents.Event;
 import org.dockbox.selene.api.events.parents.Filterable;
 import org.dockbox.selene.api.exceptions.Except;
-import org.dockbox.selene.api.task.ThreadUtils;
-import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.util.Reflect;
 import org.dockbox.selene.util.SeleneUtils;
 import org.jetbrains.annotations.NotNull;
@@ -154,13 +151,7 @@ public final class SimpleEventWrapper implements Comparable<SimpleEventWrapper>,
                 }
             };
 
-            ThreadUtils tu = Provider.provide(ThreadUtils.class);
-            if (this.method.isAnnotationPresent(Async.class)) {
-                tu.performAsync(eventRunner);
-            }
-            else {
-                eventRunner.run();
-            }
+            eventRunner.run();
         }
     }
 
