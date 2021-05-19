@@ -30,9 +30,11 @@ import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.domain.tuple.Tuple;
 import org.dockbox.selene.di.InjectConfiguration;
 import org.dockbox.selene.di.Provider;
+import org.dockbox.selene.di.annotations.Bean;
 import org.dockbox.selene.di.annotations.BindingMeta;
 import org.dockbox.selene.di.annotations.Binds;
 import org.dockbox.selene.di.annotations.MultiBinds;
+import org.dockbox.selene.di.annotations.Service;
 import org.dockbox.selene.di.annotations.Wired;
 import org.dockbox.selene.di.binding.BindingData;
 import org.dockbox.selene.di.binding.Bindings;
@@ -53,6 +55,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -63,6 +68,7 @@ import java.util.Set;
 import java.util.function.Supplier;
 
 import javax.inject.Named;
+import javax.inject.Singleton;
 
 public class GuiceInjector implements Injector {
 
@@ -141,7 +147,31 @@ public class GuiceInjector implements Injector {
     public void bind(String prefix) {
         Map<Key<?>, Class<?>> scannedBinders = this.scan(prefix);
         this.modules.add(new GuicePrefixScannerModule(scannedBinders));
+        this.beans(prefix);
         this.reset();
+    }
+
+    private void beans(String prefix) {
+        List<BeanContext<?, ?>> contexts = SeleneUtils.emptyList();
+        for (Class<?> type : Reflect.annotatedTypes(prefix, Service.class)) {
+            Collection<Method> beans = Reflect.annotatedMethods(type, Bean.class);
+            for (Method bean : beans) {
+                Bean annotation = bean.getAnnotation(Bean.class);
+                Key<?> key = "".equals(annotation.value())
+                        ? Key.get(bean.getReturnType())
+                        : Key.get(bean.getReturnType(), Bindings.meta(annotation.value()));
+                boolean singleton = bean.isAnnotationPresent(Singleton.class);
+                BeanContext<?, ?> context = new BeanContext<>(key, singleton, () -> this.invoke(bean));
+                contexts.add(context);
+            }
+        }
+        contexts.forEach(context -> {
+            if (context.isSingleton()) {
+                this.modules.add(new InstanceModule<>(context.getKey(), context.getProvider().get()));
+            } else {
+                this.modules.add(new ProvisionModule<>(context.getKey(), () -> context.getProvider().get()));
+            }
+        });
     }
 
     @Override
@@ -222,6 +252,27 @@ public class GuiceInjector implements Injector {
         return instance;
     }
 
+    @Override
+    public <T> T invoke(Method method) {
+        Parameter[] parameters = method.getParameters();
+        Object[] invokingParameters = new Object[parameters.length];
+        for (int i = 0; i < parameters.length; i++) {
+            Parameter parameter = parameters[i];
+            if (parameter.isAnnotationPresent(BindingMeta.class)) {
+                invokingParameters[i] = Provider.provide(parameter.getType(), BindingMetaProperty.of(parameter.getAnnotation(BindingMeta.class)));
+            } else {
+                invokingParameters[i] = Provider.provide(parameter.getType());
+            }
+        }
+        try {
+            //noinspection unchecked
+            return (T) method.invoke(Provider.provide(method.getDeclaringClass()), invokingParameters);
+        }
+        catch (InvocationTargetException | IllegalAccessException | ClassCastException e) {
+            return null;
+        }
+    }
+
     @SuppressWarnings("unchecked")
     @Override
     public <T, I extends T> Exceptional<Class<I>> getStaticBinding(Class<T> type) {
@@ -291,7 +342,7 @@ public class GuiceInjector implements Injector {
     }
 
     @Override
-    public <C, T extends C, A extends Annotation> void bind(Class<C> contract, Class<? extends T> implementation, BindingMeta meta) {
+    public <C, T extends C> void bind(Class<C> contract, Class<? extends T> implementation, BindingMeta meta) {
         AbstractModule localModule = new StaticMetaModule<>(contract, implementation, meta);
         this.modules.add(localModule);
         this.reset();

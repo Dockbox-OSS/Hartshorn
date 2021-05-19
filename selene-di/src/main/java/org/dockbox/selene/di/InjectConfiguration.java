@@ -54,7 +54,7 @@ public abstract class InjectConfiguration implements Binder {
     }
 
     @Override
-    public final <C, T extends C, A extends Annotation> void bind(Class<C> contract, Class<? extends T> implementation, BindingMeta meta) {
+    public final <C, T extends C> void bind(Class<C> contract, Class<? extends T> implementation, BindingMeta meta) {
         this.getBinder().bind(contract, implementation, meta);
     }
 

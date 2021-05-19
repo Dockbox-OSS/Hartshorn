@@ -18,14 +18,21 @@
 package org.dockbox.selene.di.inject.modules;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.Key;
 
 public class InstanceModule<T> extends AbstractModule {
 
-    private final Class<T> target;
+    private final Key<T> target;
     private final T instance;
 
     public InstanceModule(Class<T> target, T instance) {
-        this.target = target;
+        this.target = Key.get(target);
+        this.instance = instance;
+    }
+
+    @SuppressWarnings("unchecked")
+    public InstanceModule(Key<?> key, T instance) {
+        this.target = (Key<T>) key;
         this.instance = instance;
     }
 

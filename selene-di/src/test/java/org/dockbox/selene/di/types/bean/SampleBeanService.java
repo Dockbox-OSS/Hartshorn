@@ -15,36 +15,42 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.di.properties;
+package org.dockbox.selene.di.types.bean;
 
-import org.dockbox.selene.di.binding.Bindings;
+import org.dockbox.selene.di.annotations.Bean;
 import org.dockbox.selene.di.annotations.BindingMeta;
+import org.dockbox.selene.di.annotations.Service;
+import org.dockbox.selene.di.types.SampleField;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import javax.inject.Singleton;
 
-@AllArgsConstructor(access = AccessLevel.PROTECTED)
-public class BindingMetaProperty implements InjectorProperty<BindingMeta> {
+@Service
+public class SampleBeanService {
 
-    public static final String KEY = "SeleneInternalBindingMetaProperty";
-    @Getter
-    private final BindingMeta object;
-
-    private BindingMetaProperty(String value) {
-        this.object = Bindings.meta(value);
+    @Bean
+    public BeanInterface get() {
+        return () -> "Bean";
     }
 
-    public static BindingMetaProperty of(String value) {
-        return new BindingMetaProperty(value);
+    @Bean("named")
+    public BeanInterface getNamed() {
+        return () -> "NamedBean";
     }
 
-    public static BindingMetaProperty of(BindingMeta meta) {
-        return new BindingMetaProperty(meta);
+    @Bean("field")
+    public BeanInterface getWithField(SampleField field) {
+        return () -> "FieldBean";
     }
 
-    @Override
-    public String getKey() {
-        return KEY;
+    @Bean("namedField")
+    public BeanInterface getWithNamedField(@BindingMeta("named") SampleField field) {
+        return () -> "NamedFieldBean";
     }
+
+    @Singleton
+    @Bean("singleton")
+    public BeanInterface getSingleton() {
+        return () -> "SingletonBean";
+    }
+
 }
