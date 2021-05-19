@@ -42,12 +42,43 @@ Builds are versioned by date and by commit hash, with the artifact following the
 ## Contributing
 See [CONTRIBUTING.md](https://github.com/GuusLieben/Selene/blob/selene-main/CONTRIBUTING.md) for instructions on how to contribute to the project.
 
-### Aggregated documentation
+## Documentation
 Documentation is typically pre-built in `/docs/` in this repository, and is available at 
 [https://guuslieben.github.io/Selene/](https://guuslieben.github.io/Selene/). This contains the aggregated JavaDocs for
-all sources within Selene. To generate these JavaDocs yourself, use `gradle aggregatedJavadocs`.
+all sources within Selene. To generate these JavaDocs yourself, use `gradle aggregatedJavadocs`.  
+Additionally, the [wiki](https://github.com/GuusLieben/Selene/wiki) contains documentation for specific core, utility, and platform APIs.
 
-### Development Server
+## Testing
+### General
+- Tests cover relevant use-cases
+- The target coverage for all tests is 60%
+- Tests are performed using [Java](https://www.oracle.com/java/technologies/javase/javase-jdk8-downloads.html) 8
+
+### Unit Testing
+- Tests are located in `src/test/java`
+- Test packages are equal to the package of the target class
+- Test classes follow the naming convention `${TestedClass}Tests`
+- Tests follow the [AAA pattern](https://medium.com/@pjbgf/title-testing-code-ocd-and-the-aaa-pattern-df453975ab80)
+- Tests use JUnit 5 (`org.junit.jupiter.api`)
+
+For example, `org.dockbox.selene.common.ClassX` is tested in `org.dockbox.selene.common.ClassXTests`
+
+### Run Testing
+- Tests are performed using the [predefined Selene Servers](https://github.com/GuusLieben/Selene-Servers)
+- Tests are performed against the latest (supported) version of relevant platforms
+- Servers are activated using the [Selene development server configurations](https://github.com/GuusLieben/Selene/wiki/Gradle#development-server)
+
+### Embedded server
+Selene offers a embedded server which can be used when testing higher level components. To apply the embedded server to your tests, annotate your class as follows:
+```java
+@ExtendWith(SeleneJUnit5Runner.class)
+public class ComponentTests {
+    @Test
+    public void testHighLevelComponent() {...}
+}
+```
+
+## Development Server
 Selene contains pre-made servers for its supported platforms, with automatic build distributions towards those platforms. 
 These servers can be generated using the appropriate download task for each relevant platform module.
 ```bash
