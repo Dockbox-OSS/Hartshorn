@@ -291,7 +291,7 @@ public class GuiceInjector implements Injector {
     }
 
     @Override
-    public <C, T extends C, A extends Annotation> void bind(Class<C> contract, Class<? extends T> implementation, BindingMeta meta) {
+    public <C, T extends C> void bind(Class<C> contract, Class<? extends T> implementation, BindingMeta meta) {
         AbstractModule localModule = new StaticMetaModule<>(contract, implementation, meta);
         this.modules.add(localModule);
         this.reset();
