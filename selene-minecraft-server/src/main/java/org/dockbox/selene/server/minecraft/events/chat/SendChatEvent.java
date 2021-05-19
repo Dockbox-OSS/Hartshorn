@@ -21,21 +21,17 @@ import org.dockbox.selene.api.events.AbstractTargetCancellableEvent;
 import org.dockbox.selene.api.i18n.MessageReceiver;
 import org.dockbox.selene.api.i18n.text.Text;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /** The event fired when a player sends a message in chat. */
 public class SendChatEvent extends AbstractTargetCancellableEvent {
 
+    @Getter @Setter
     private Text message;
 
     public SendChatEvent(MessageReceiver target, Text message) {
         super(target);
-        this.message = message;
-    }
-
-    public Text getMessage() {
-        return this.message;
-    }
-
-    public void setMessage(Text message) {
         this.message = message;
     }
 }

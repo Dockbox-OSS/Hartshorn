@@ -86,7 +86,7 @@ public class ProviderTests {
         Class<? extends SampleInterface> providedClass = provided.getClass();
         Assertions.assertEquals(SampleImplementation.class, providedClass);
 
-        Assertions.assertEquals("Selene", provided.name());
+        Assertions.assertEquals("Selene", provided.getName());
     }
 
     @Test
@@ -98,7 +98,7 @@ public class ProviderTests {
         Class<? extends SampleInterface> providedClass = provided.getClass();
         Assertions.assertEquals(SampleImplementation.class, providedClass);
 
-        Assertions.assertEquals("Selene", provided.name());
+        Assertions.assertEquals("Selene", provided.getName());
     }
 
     @Test
@@ -119,7 +119,7 @@ public class ProviderTests {
         Class<? extends SampleInterface> providedClass = provided.getClass();
         Assertions.assertEquals(SampleImplementation.class, providedClass);
 
-        Assertions.assertEquals("Selene", provided.name());
+        Assertions.assertEquals("Selene", provided.getName());
     }
 
     @Test
@@ -131,7 +131,7 @@ public class ProviderTests {
         Class<? extends SampleInterface> providedClass = provided.getClass();
         Assertions.assertEquals(SampleImplementation.class, providedClass);
 
-        Assertions.assertEquals("Selene", provided.name());
+        Assertions.assertEquals("Selene", provided.getName());
     }
 
     @Test
@@ -151,7 +151,7 @@ public class ProviderTests {
         Class<? extends SampleInterface> providedClass = provided.getClass();
         Assertions.assertEquals(SampleImplementation.class, providedClass);
 
-        Assertions.assertEquals("Selene", provided.name());
+        Assertions.assertEquals("Selene", provided.getName());
     }
 
     @Test
@@ -163,7 +163,7 @@ public class ProviderTests {
         Class<? extends SampleInterface> providedClass = provided.getClass();
         Assertions.assertEquals(SampleImplementation.class, providedClass);
 
-        Assertions.assertEquals("Selene", provided.name());
+        Assertions.assertEquals("Selene", provided.getName());
     }
 
     @Test
@@ -176,7 +176,7 @@ public class ProviderTests {
         Class<? extends SampleInterface> providedClass = provided.getClass();
         Assertions.assertEquals(SampleAnnotatedImplementation.class, providedClass);
 
-        Assertions.assertEquals("AnnotatedSelene", provided.name());
+        Assertions.assertEquals("AnnotatedSelene", provided.getName());
     }
 
     @Test
@@ -191,7 +191,7 @@ public class ProviderTests {
         Class<? extends SampleInterface> providedClass = provided.getClass();
         Assertions.assertEquals(SampleMetaAnnotatedImplementation.class, providedClass);
 
-        Assertions.assertEquals("MetaAnnotatedSelene", provided.name());
+        Assertions.assertEquals("MetaAnnotatedSelene", provided.getName());
     }
 
     @Test
@@ -205,7 +205,7 @@ public class ProviderTests {
         Class<? extends SampleInterface> providedClass = provided.getClass();
         Assertions.assertEquals(SampleMultiAnnotatedImplementation.class, providedClass);
 
-        Assertions.assertEquals("MultiAnnotatedSelene", provided.name());
+        Assertions.assertEquals("MultiAnnotatedSelene", provided.getName());
     }
 
     @Test
@@ -219,7 +219,7 @@ public class ProviderTests {
         Class<? extends SampleInterface> providedClass = provided.getClass();
         Assertions.assertEquals(SampleMultiAnnotatedImplementation.class, providedClass);
 
-        Assertions.assertEquals("MultiAnnotatedSelene", provided.name());
+        Assertions.assertEquals("MultiAnnotatedSelene", provided.getName());
     }
 
     @Test
@@ -231,7 +231,7 @@ public class ProviderTests {
         Class<? extends SampleInterface> providedClass = provided.getClass();
         Assertions.assertEquals(SampleImplementation.class, providedClass);
 
-        Assertions.assertEquals("Selene", provided.name());
+        Assertions.assertEquals("Selene", provided.getName());
     }
 
     @Test
@@ -242,7 +242,7 @@ public class ProviderTests {
 
         injector(false).populate(populatedType);
         Assertions.assertNotNull(populatedType.getSampleInterface());
-        Assertions.assertEquals("Selene", populatedType.getSampleInterface().name());
+        Assertions.assertEquals("Selene", populatedType.getSampleInterface().getName());
     }
 
     @Test
@@ -257,7 +257,7 @@ public class ProviderTests {
     public void injectionPointsArePrioritised() throws IllegalArgumentException, IllegalAccessException {
         injector(true).bind(SampleInterface.class, SampleImplementation.class);
         InjectionPoint<SampleInterface> point = InjectionPoint.of(SampleInterface.class, $ -> new SampleAnnotatedImplementation());
-        SeleneBootstrap.getInstance().injectAt(point);
+        SeleneBootstrap.instance().injectAt(point);
 
         SampleInterface provided = Provider.provide(SampleInterface.class);
         Assertions.assertNotNull(provided);
@@ -298,7 +298,7 @@ public class ProviderTests {
 
         SampleInterface wired = Provider.provide(SeleneFactory.class).create(SampleInterface.class, "WiredSelene");
         Assertions.assertNotNull(wired);
-        Assertions.assertEquals("WiredSelene", wired.name());
+        Assertions.assertEquals("WiredSelene", wired.getName());
     }
 
     @Test
@@ -307,8 +307,8 @@ public class ProviderTests {
 
         SampleInterface provided = Provider.provide(SampleInterface.class, new NameProperty("Enabled"));
         Assertions.assertNotNull(provided);
-        Assertions.assertNotNull(provided.name());
-        Assertions.assertEquals("Enabled", provided.name());
+        Assertions.assertNotNull(provided.getName());
+        Assertions.assertEquals("Enabled", provided.getName());
     }
 
     @Test
@@ -323,7 +323,7 @@ public class ProviderTests {
         Class<? extends SampleInterface> providedClass = provided.getClass();
         Assertions.assertEquals(SampleWiredAnnotatedImplementation.class, providedClass);
 
-        Assertions.assertEquals("WiredAnnotated", provided.name());
+        Assertions.assertEquals("WiredAnnotated", provided.getName());
     }
 
     @Test
@@ -338,7 +338,7 @@ public class ProviderTests {
         Class<? extends SampleInterface> providedClass = provided.getClass();
         Assertions.assertEquals(SampleWiredType.class, providedClass);
 
-        Assertions.assertEquals("FactoryTyped", provided.name());
+        Assertions.assertEquals("FactoryTyped", provided.getName());
     }
 
     @Test
@@ -352,7 +352,7 @@ public class ProviderTests {
         Class<? extends SampleInterface> providedClass = provided.getClass();
         Assertions.assertEquals(SampleWiredType.class, providedClass);
 
-        Assertions.assertEquals("FactoryTyped", provided.name());
+        Assertions.assertEquals("FactoryTyped", provided.getName());
     }
 
     @Test
@@ -364,7 +364,7 @@ public class ProviderTests {
         SampleInterface provided = Provider.provide(SampleInterface.class, "FactoryTyped");
         Assertions.assertNotNull(provided);
         Assertions.assertTrue(provided instanceof SampleWiredPopulatedType);
-        Assertions.assertTrue(((SampleWiredPopulatedType) provided).enabled());
+        Assertions.assertTrue(((SampleWiredPopulatedType) provided).isEnabled());
     }
 
     @Test
@@ -376,8 +376,8 @@ public class ProviderTests {
         SampleInterface provided = Provider.provide(SampleInterface.class, "FactoryTyped");
         Assertions.assertNotNull(provided);
         Assertions.assertTrue(provided instanceof SampleWiredPopulatedType);
-        Assertions.assertNotNull(((SampleWiredPopulatedType) provided).field());
-        Assertions.assertTrue(((SampleWiredPopulatedType) provided).field() instanceof SampleFieldImplementation);
+        Assertions.assertNotNull(((SampleWiredPopulatedType) provided).getField());
+        Assertions.assertTrue(((SampleWiredPopulatedType) provided).getField() instanceof SampleFieldImplementation);
     }
 
     @Test
@@ -387,7 +387,7 @@ public class ProviderTests {
         injector(false).bind(SampleField.class, SampleFieldImplementation.class);
 
         InjectionPoint<SampleInterface> point = InjectionPoint.of(SampleInterface.class, $ -> new SampleImplementation());
-        SeleneBootstrap.getInstance().injectAt(point);
+        SeleneBootstrap.instance().injectAt(point);
 
         SampleInterface provided = Provider.provide(SampleInterface.class, "FactoryTyped");
         Assertions.assertFalse(provided instanceof SampleWiredType);
@@ -395,11 +395,11 @@ public class ProviderTests {
     }
 
     private static Injector injector(boolean reset) throws IllegalAccessException {
-        Injector injector = SeleneBootstrap.getInstance().getInjector();
+        Injector injector = SeleneBootstrap.instance().getInjector();
         if (reset) {
             modules.set(injector, SeleneUtils.emptyConcurrentSet());
             bindings.set(injector, SeleneUtils.emptyConcurrentSet());
-            injectionPoints.set(SeleneBootstrap.getInstance(), SeleneUtils.emptyConcurrentSet());
+            injectionPoints.set(SeleneBootstrap.instance(), SeleneUtils.emptyConcurrentSet());
             injector.reset();
         }
         return injector;

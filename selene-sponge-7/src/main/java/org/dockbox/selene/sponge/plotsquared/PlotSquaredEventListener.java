@@ -35,10 +35,7 @@ import com.plotsquared.sponge.events.PlotFlagRemoveEvent;
 import com.plotsquared.sponge.events.PlotUnlinkEvent;
 
 import org.dockbox.selene.api.events.parents.Cancellable;
-import org.dockbox.selene.server.minecraft.dimension.Worlds;
-import org.dockbox.selene.server.minecraft.dimension.position.Direction;
-import org.dockbox.selene.server.minecraft.dimension.world.World;
-import org.dockbox.selene.server.minecraft.players.Players;
+import org.dockbox.selene.di.annotations.Wired;
 import org.dockbox.selene.plots.Plot;
 import org.dockbox.selene.plots.PlotMembership;
 import org.dockbox.selene.plots.PlotProperties;
@@ -53,6 +50,10 @@ import org.dockbox.selene.plots.events.merge.PlotMergeEvent;
 import org.dockbox.selene.plots.events.movement.EnterPlotEvent;
 import org.dockbox.selene.plots.events.movement.LeavePlotEvent;
 import org.dockbox.selene.plots.events.movement.TeleportToPlotEvent;
+import org.dockbox.selene.server.minecraft.dimension.Worlds;
+import org.dockbox.selene.server.minecraft.dimension.position.Direction;
+import org.dockbox.selene.server.minecraft.dimension.world.World;
+import org.dockbox.selene.server.minecraft.players.Players;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.spongepowered.api.event.Listener;
 
@@ -61,15 +62,13 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import javax.inject.Inject;
-
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class PlotSquaredEventListener {
 
-    @Inject
+    @Wired
     private Players players;
 
-    @Inject
+    @Wired
     private Worlds worlds;
 
     @Listener

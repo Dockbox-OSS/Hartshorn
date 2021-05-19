@@ -18,8 +18,7 @@
 package org.dockbox.selene.commands.parameter;
 
 import org.dockbox.selene.api.i18n.common.ResourceEntry;
-
-import javax.inject.Inject;
+import org.dockbox.selene.di.annotations.Wired;
 
 /**
  * Converts Hashtag-patterns into type instances used by command executors. The pattern follows the HashtagPatternParser from WorldEdit.
@@ -34,7 +33,7 @@ import javax.inject.Inject;
  */
 public class HashtagParameterPattern extends PrefixedParameterPattern {
 
-    @Inject
+    @Wired
     private CommandParameterResources resources;
 
     @Override

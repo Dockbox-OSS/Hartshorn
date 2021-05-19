@@ -28,10 +28,15 @@ import org.dockbox.selene.util.SeleneUtils;
 import java.util.Arrays;
 import java.util.List;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * The event fired when a command is executed natively through the implemented platform. This
  * typically includes both external commands and commands defined within Selene.
  */
+@Getter
+@Setter
 public class NativeCommandEvent extends AbstractTargetCancellableEvent implements Filterable {
 
     private String alias;
@@ -64,22 +69,6 @@ public class NativeCommandEvent extends AbstractTargetCancellableEvent implement
             }
         }
         return false;
-    }
-
-    public String getAlias() {
-        return this.alias;
-    }
-
-    public void setAlias(String alias) {
-        this.alias = alias;
-    }
-
-    public String[] getArguments() {
-        return this.arguments;
-    }
-
-    public void setArguments(String[] arguments) {
-        this.arguments = arguments;
     }
 
     @Override

@@ -17,16 +17,15 @@
 
 package org.dockbox.selene.di.inject;
 
+import lombok.Getter;
+
+@Getter
 public final class InjectorAdapter {
 
     private final Injector injector;
 
     public InjectorAdapter(InjectSource source) {
         this.injector = source.create();
-    }
-
-    public Injector get() {
-        return this.injector;
     }
 
 }

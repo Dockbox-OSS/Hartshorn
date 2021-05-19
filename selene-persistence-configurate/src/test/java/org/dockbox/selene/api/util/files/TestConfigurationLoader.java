@@ -33,12 +33,16 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.Writer;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * Largely taken from
  * https://github.com/zml2008/configurate/blob/master/configurate-core/src/test/java/ninja/leaping/configurate/loader/TestConfigurationLoader.java
  */
 public class TestConfigurationLoader extends AbstractConfigurationLoader<BasicConfigurationNode> {
 
+    @Getter @Setter
     private ConfigurationNode result = BasicConfigurationNode.root();
 
     protected TestConfigurationLoader(Builder builder) {
@@ -67,14 +71,6 @@ public class TestConfigurationLoader extends AbstractConfigurationLoader<BasicCo
         catch (IOException e) {
             Except.handle(e);
         }
-    }
-
-    public ConfigurationNode getNode() {
-        return this.result;
-    }
-
-    public void setNode(ConfigurationNode node) {
-        this.result = node;
     }
 
     /**

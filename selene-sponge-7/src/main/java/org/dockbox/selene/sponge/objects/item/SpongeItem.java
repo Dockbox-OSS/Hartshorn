@@ -26,7 +26,7 @@ import org.dockbox.selene.api.i18n.entry.DefaultResources;
 import org.dockbox.selene.api.i18n.text.Text;
 import org.dockbox.selene.api.keys.PersistentDataKey;
 import org.dockbox.selene.api.keys.TransactionResult;
-import org.dockbox.selene.di.annotations.AutoWired;
+import org.dockbox.selene.di.annotations.Wired;
 import org.dockbox.selene.server.minecraft.item.Enchant;
 import org.dockbox.selene.server.minecraft.item.Item;
 import org.dockbox.selene.server.minecraft.item.ReferencedItem;
@@ -66,7 +66,7 @@ public class SpongeItem extends ReferencedItem<ItemStack> implements SpongeCompo
         super(initialValue);
     }
 
-    @AutoWired
+    @Wired
     public SpongeItem(String id, int meta) {
         super(id, meta);
     }

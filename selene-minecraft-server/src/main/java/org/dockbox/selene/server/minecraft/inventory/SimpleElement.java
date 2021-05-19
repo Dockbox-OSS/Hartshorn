@@ -17,29 +17,23 @@
 
 package org.dockbox.selene.server.minecraft.inventory;
 
-import org.dockbox.selene.di.annotations.AutoWired;
+import org.dockbox.selene.di.annotations.Wired;
 import org.dockbox.selene.di.annotations.Binds;
 import org.dockbox.selene.server.minecraft.item.Item;
 import org.dockbox.selene.server.minecraft.players.Player;
 
 import java.util.function.Consumer;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
 @Binds(Element.class)
+@AllArgsConstructor(onConstructor_ = @Wired)
 public class SimpleElement implements Element {
 
+    @Getter
     private final Item item;
     private Consumer<Player> onClick;
-
-    @AutoWired
-    public SimpleElement(Item item, Consumer<Player> onClick) {
-        this.item = item;
-        this.onClick = onClick;
-    }
-
-    @Override
-    public Item item() {
-        return this.item;
-    }
 
     @Override
     public void onClick(Consumer<Player> onClick) {

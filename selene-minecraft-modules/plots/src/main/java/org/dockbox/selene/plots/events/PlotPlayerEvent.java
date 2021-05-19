@@ -22,18 +22,16 @@ import org.dockbox.selene.api.events.parents.Targetable;
 import org.dockbox.selene.server.minecraft.players.Player;
 import org.dockbox.selene.plots.Plot;
 
+import lombok.Getter;
+
 public abstract class PlotPlayerEvent extends PlotEvent implements Targetable {
 
-    private final Player player;
+    @Getter
+    private final Player target;
 
     public PlotPlayerEvent(Plot plot, Player player) {
         super(plot);
-        this.player = player;
-    }
-
-    @Override
-    public Target getTarget() {
-        return this.player;
+        this.target = player;
     }
 
     @Override

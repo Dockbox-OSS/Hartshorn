@@ -28,5 +28,5 @@ import java.lang.annotation.Target;
 @Repeatable(MultiBinds.class)
 public @interface Binds {
     Class<?> value();
-    BindingMeta meta() default @BindingMeta("");
+    BindingMeta meta() default @BindingMeta(value = "");
 }

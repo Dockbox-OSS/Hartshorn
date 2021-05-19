@@ -20,26 +20,20 @@ package org.dockbox.selene.server.minecraft.events.player;
 import org.dockbox.selene.api.domain.Target;
 import org.dockbox.selene.server.minecraft.dimension.position.Location;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /** The event fired when a player is teleported to another location */
+@Getter
 public class PlayerTeleportEvent extends PlayerMoveEvent {
     private final Location oldLocation;
+
+    @Setter
     private Location newLocation;
 
     public PlayerTeleportEvent(Target target, Location oldLocation, Location newLocation) {
         super(target);
         this.oldLocation = oldLocation;
-        this.newLocation = newLocation;
-    }
-
-    public Location getOldLocation() {
-        return this.oldLocation;
-    }
-
-    public Location getNewLocation() {
-        return this.newLocation;
-    }
-
-    public void setNewLocation(Location newLocation) {
         this.newLocation = newLocation;
     }
 }

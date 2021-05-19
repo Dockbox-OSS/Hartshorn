@@ -24,10 +24,12 @@ import net.dv8tion.jda.api.JDAInfo;
 
 import org.dockbox.selene.api.BootstrapPhase;
 import org.dockbox.selene.api.Selene;
+import org.dockbox.selene.api.SeleneInformation;
 import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.events.EventBus;
 import org.dockbox.selene.api.exceptions.Except;
 import org.dockbox.selene.di.Provider;
+import org.dockbox.selene.di.annotations.Wired;
 import org.dockbox.selene.discord.DiscordUtils;
 import org.dockbox.selene.nms.packets.NMSPacket;
 import org.dockbox.selene.nms.properties.NativePacketProperty;
@@ -49,8 +51,8 @@ import org.dockbox.selene.sponge.objects.composite.CompositeDataManipulatorBuild
 import org.dockbox.selene.sponge.objects.composite.ImmutableCompositeData;
 import org.dockbox.selene.sponge.objects.composite.MutableCompositeData;
 import org.dockbox.selene.sponge.plotsquared.PlotSquaredEventListener;
-import org.dockbox.selene.sponge.util.inject.SpongeEarlyInjector;
 import org.dockbox.selene.sponge.util.SpongeTaskRunner;
+import org.dockbox.selene.sponge.util.inject.SpongeEarlyInjector;
 import org.dockbox.selene.sponge.util.inject.SpongeLateInjector;
 import org.dockbox.selene.util.Reflect;
 import org.dockbox.selene.util.SeleneUtils;
@@ -73,8 +75,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import javax.inject.Inject;
-
 import eu.crushedpixel.sponge.packetgate.api.listener.PacketListener.ListenerPriority;
 import eu.crushedpixel.sponge.packetgate.api.listener.PacketListenerAdapter;
 import eu.crushedpixel.sponge.packetgate.api.registry.PacketConnection;
@@ -82,8 +82,8 @@ import eu.crushedpixel.sponge.packetgate.api.registry.PacketGate;
 
 /** Sponge API 7.x implementation of Selene, using events to initiate startup tasks. */
 @Plugin(
-        id = "selene",
-        name = "Selene Server",
+        id = SeleneInformation.PROJECT_ID,
+        name = SeleneInformation.PROJECT_NAME,
         description = "Custom plugins and modifications combined into a single source",
         url = "https://github.com/GuusLieben/Selene",
         authors = "GuusLieben",
@@ -95,7 +95,7 @@ import eu.crushedpixel.sponge.packetgate.api.registry.PacketGate;
 public class SpongeAPI7Bootstrap extends MinecraftServerBootstrap {
 
     private final SpongeDiscordListener discordListener = new SpongeDiscordListener();
-    @Inject
+    @Wired
     private PluginContainer container;
 
     /**
@@ -125,8 +125,8 @@ public class SpongeAPI7Bootstrap extends MinecraftServerBootstrap {
         System.exit(8);
     }
 
-    public static PluginContainer getContainer() {
-        return ((SpongeAPI7Bootstrap) getInstance()).container;
+    public static PluginContainer container() {
+        return ((SpongeAPI7Bootstrap) instance()).container;
     }
 
     @SuppressWarnings({ "AnonymousInnerClassMayBeStatic", "UnstableApiUsage" })

@@ -56,7 +56,7 @@ public abstract class ServerBootstrap extends SeleneModuleBootstrap {
      *         The server event indicating the server started
      */
     @Listener
-    protected void debugRegisteredInstances(ServerStartedEvent event) {
+    public void debugRegisteredInstances(ServerStartedEvent event) {
         Selene.log().info("\u00A77(\u00A7bSelene\u00A77) \u00A7fLoaded bindings: ");
         AtomicInteger unprovisionedTypes = new AtomicInteger();
 

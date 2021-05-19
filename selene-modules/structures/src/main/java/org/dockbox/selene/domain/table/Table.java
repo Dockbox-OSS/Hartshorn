@@ -39,6 +39,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Consumer;
 
+import lombok.Getter;
+
 /**
  * A relational table type which can easily create weak relations to other tables. Relations are
  * non-strict references so either table can be disposed of without affecting the origin.
@@ -58,6 +60,7 @@ import java.util.function.Consumer;
 public class Table {
 
     private final List<TableRow> rows;
+    @Getter
     private final ColumnIdentifier<?>[] identifiers;
 
     /**
@@ -405,15 +408,6 @@ public class Table {
         }
         catch (IdentifierMismatchException ignored) {
         }
-    }
-
-    /**
-     * Gets the table's column identifiers.
-     *
-     * @return Return the table's identifiers
-     */
-    public ColumnIdentifier<?>[] getIdentifiers() {
-        return this.identifiers;
     }
 
     /**

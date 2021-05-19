@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 
-public enum ExceptionLevels {
+public enum ExceptionLevels implements ExceptionHandle {
     FRIENDLY((message, exception, stacktrace) -> {
         Provider.provide(ExceptionHelper.class).printFriendly(message, exception, stacktrace);
     }),
@@ -43,6 +43,7 @@ public enum ExceptionLevels {
         this.consumer = consumer;
     }
 
+    @Override
     public void handle(String message, Throwable exception, boolean stacktrace) {
         this.consumer.accept(message, exception, stacktrace);
     }

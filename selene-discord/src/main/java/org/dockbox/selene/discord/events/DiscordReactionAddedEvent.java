@@ -21,8 +21,11 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageReaction;
 import net.dv8tion.jda.api.entities.User;
 
+import lombok.Getter;
+
 public class DiscordReactionAddedEvent extends DiscordMessageAuthorEvent {
 
+    @Getter
     private final MessageReaction reaction;
 
     /**
@@ -47,10 +50,6 @@ public class DiscordReactionAddedEvent extends DiscordMessageAuthorEvent {
      */
     public String getEmoteId() {
         return this.getReaction().getReactionEmote().getId();
-    }
-
-    public MessageReaction getReaction() {
-        return this.reaction;
     }
 
     /**

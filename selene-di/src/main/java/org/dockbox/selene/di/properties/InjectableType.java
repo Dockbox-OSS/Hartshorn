@@ -17,6 +17,8 @@
 
 package org.dockbox.selene.di.properties;
 
+import org.dockbox.selene.di.exceptions.ApplicationException;
+
 @FunctionalInterface
 public interface InjectableType {
 
@@ -24,5 +26,5 @@ public interface InjectableType {
         return true;
     }
 
-    void stateEnabling(InjectorProperty<?>... properties);
+    void stateEnabling(InjectorProperty<?>... properties) throws ApplicationException;
 }

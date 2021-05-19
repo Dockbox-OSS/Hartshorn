@@ -21,27 +21,15 @@ import org.dockbox.selene.api.domain.AbstractIdentifiable;
 import org.dockbox.selene.commands.context.CommandContext;
 import org.dockbox.selene.commands.registration.AbstractRegistrationContext;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
 public class ConfirmableQueueItem {
 
     private final AbstractIdentifiable source;
     private final CommandContext context;
     private final AbstractRegistrationContext command;
 
-    public ConfirmableQueueItem(AbstractIdentifiable source, CommandContext context, AbstractRegistrationContext command) {
-        this.source = source;
-        this.context = context;
-        this.command = command;
-    }
-
-    public AbstractIdentifiable getSource() {
-        return this.source;
-    }
-
-    public CommandContext getContext() {
-        return this.context;
-    }
-
-    public AbstractRegistrationContext getCommand() {
-        return this.command;
-    }
 }

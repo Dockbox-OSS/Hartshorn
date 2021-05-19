@@ -34,7 +34,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 
-@Binds(value = WebUtil.class, meta = @BindingMeta(FileTypes.XML))
+@Binds(value = WebUtil.class, meta = @BindingMeta(value = FileTypes.XML))
 public class GsonXmlWebUtil extends DefaultWebUtil {
 
     @Override

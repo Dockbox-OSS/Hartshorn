@@ -24,13 +24,13 @@ import org.jetbrains.annotations.NonNls;
 
 import java.util.List;
 
+import lombok.Getter;
+
 @Metadata(alias = "plot-world-models")
 class PlotWorldModelList {
-    private final List<PlotWorldModel> worlds = SeleneUtils.emptyList();
 
-    public List<PlotWorldModel> getWorlds() {
-        return this.worlds;
-    }
+    @Getter
+    private final List<PlotWorldModel> worlds = SeleneUtils.emptyList();
 
     public void addWorld(PlotWorldModel model) {
         this.worlds.add(model);

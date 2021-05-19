@@ -17,22 +17,14 @@
 
 package org.dockbox.selene.commands.context;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@AllArgsConstructor
+@Getter
 public class CommandParameter<T> {
 
-    private final String key;
     private final T value;
-
-    public CommandParameter(T value, String key) {
-        this.key = key;
-        this.value = value;
-    }
-
-    public String getKey() {
-        return this.key;
-    }
-
-    public T getValue() {
-        return this.value;
-    }
+    private final String key;
 
 }

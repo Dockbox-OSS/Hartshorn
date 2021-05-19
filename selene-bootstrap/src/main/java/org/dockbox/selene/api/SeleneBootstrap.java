@@ -17,6 +17,7 @@
 
 package org.dockbox.selene.api;
 
+import org.dockbox.selene.api.config.GlobalConfig;
 import org.dockbox.selene.api.exceptions.Except;
 import org.dockbox.selene.di.InjectConfiguration;
 import org.dockbox.selene.di.InjectableBootstrap;
@@ -25,6 +26,7 @@ import org.dockbox.selene.di.annotations.RequiresBinding;
 import org.dockbox.selene.di.preload.Preloadable;
 import org.dockbox.selene.util.Reflect;
 import org.jetbrains.annotations.NotNull;
+import org.reflections.Reflections;
 
 import java.io.IOException;
 import java.time.ZoneId;
@@ -32,14 +34,18 @@ import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 import java.util.Properties;
 
+import lombok.Getter;
+
 /**
  * The global bootstrapping component which instantiates all configured modules and provides access
  * to server information.
  */
 public abstract class SeleneBootstrap extends InjectableBootstrap {
 
-    private static SeleneBootstrap instance;
+    @Getter
     private String version;
+    @Getter
+    private final GlobalConfig config;
 
     /**
      * Instantiates {@link Selene}, creating a local injector based on the provided {@link
@@ -50,9 +56,13 @@ public abstract class SeleneBootstrap extends InjectableBootstrap {
      *         the injector provided by the Selene implementation
      */
     protected SeleneBootstrap(InjectConfiguration early, InjectConfiguration late) {
+        Reflections.log = null; // Don't output Reflections
         this.enter(BootstrapPhase.PRE_CONSTRUCT);
         super.getInjector().bind(SeleneInformation.PACKAGE_PREFIX);
         super.getInjector().bind(early);
+        this.config = Provider.provide(GlobalConfig.class);
+        Except.useStackTraces(this.config.getStacktracesAllowed());
+        Except.with(this.config.getExceptionLevel());
 
         this.enter(BootstrapPhase.CONSTRUCT);
         super.getInjector().bind(late);
@@ -84,11 +94,11 @@ public abstract class SeleneBootstrap extends InjectableBootstrap {
     }
 
     public static boolean isConstructed() {
-        return getInstance() != null;
+        return instance() != null;
     }
 
-    public static SeleneBootstrap getInstance() {
-        return (SeleneBootstrap) InjectableBootstrap.getInstance();
+    public static SeleneBootstrap instance() {
+        return (SeleneBootstrap) InjectableBootstrap.instance();
     }
 
     /**
@@ -106,13 +116,7 @@ public abstract class SeleneBootstrap extends InjectableBootstrap {
      * appropriate instances where required.
      */
     protected void init() {
-        Selene.log().info("\u00A7b.------.)");
-        Selene.log().info("\u00A7b|S.--. |");
-        Selene.log().info("\u00A7b| :/\\: |");
-        Selene.log().info("\u00A7b| :\\/: |");
-        Selene.log().info("\u00A7b| '--'S|");
-        Selene.log().info("\u00A7b`------'");
-        Selene.log().info("\u00A77Initiating \u00A7bSelene " + this.getVersion());
+        Selene.log().info("Initiating Selene " + this.getVersion());
 
         // Ensure all services requiring a platform implementation have one present
         Reflect.annotatedTypes(SeleneInformation.PACKAGE_PREFIX, RequiresBinding.class).forEach(type -> {
@@ -124,16 +128,6 @@ public abstract class SeleneBootstrap extends InjectableBootstrap {
 
     protected void handleMissingBinding(Class<?> type) {
         throw new IllegalStateException("No implementation exists for [" + type.getCanonicalName() + "], this will cause functionality to misbehave or not function!");
-    }
-
-    /**
-     * Gets the {@link Selene} version, based on the injected value in {@link #construct()}.
-     *
-     * @return The version
-     */
-    @NotNull
-    public String getVersion() {
-        return this.version;
     }
 
     /**
@@ -160,7 +154,10 @@ public abstract class SeleneBootstrap extends InjectableBootstrap {
         Reflect.subTypes(SeleneInformation.PACKAGE_PREFIX, Preloadable.class)
                 .stream()
                 .filter(t -> t.isAnnotationPresent(Phase.class) && t.getAnnotation(Phase.class).value().equals(phase))
-                .forEach(t -> Provider.provide(t).preload());
+                .forEach(t -> {
+                    Selene.log().info("Preloading " + t.getSimpleName());
+                    Provider.provide(t).preload();
+                });
     }
 
 }

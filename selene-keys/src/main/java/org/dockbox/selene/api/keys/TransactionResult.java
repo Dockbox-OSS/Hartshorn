@@ -21,16 +21,16 @@ import org.dockbox.selene.api.i18n.common.ResourceEntry;
 import org.dockbox.selene.api.i18n.entry.DefaultResources;
 import org.dockbox.selene.api.i18n.entry.FakeResource;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
 public final class TransactionResult {
 
     private static final TransactionResult SUCCESS = new TransactionResult(Status.SUCCESS, new FakeResource(""));
     private final Status status;
     private final ResourceEntry message;
-
-    private TransactionResult(Status status, ResourceEntry message) {
-        this.status = status;
-        this.message = message;
-    }
 
     public static TransactionResult success() {
         return TransactionResult.SUCCESS;
@@ -44,16 +44,8 @@ public final class TransactionResult {
         return new TransactionResult(Status.FAILURE, DefaultResources.instance().getException(cause.getMessage()));
     }
 
-    public ResourceEntry getMessage() {
-        return this.message;
-    }
-
-    public boolean isSuccessfull() {
+    public boolean isSuccessful() {
         return Status.SUCCESS == this.getStatus();
-    }
-
-    public Status getStatus() {
-        return this.status;
     }
 
     public enum Status {

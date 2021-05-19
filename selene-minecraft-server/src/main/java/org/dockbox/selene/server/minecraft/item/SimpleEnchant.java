@@ -17,26 +17,16 @@
 
 package org.dockbox.selene.server.minecraft.item;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+
+@AllArgsConstructor
 public class SimpleEnchant implements Enchant {
 
+    @Getter
     private final Enchantment enchantment;
+    @Getter @Setter
     private int level;
-
-    public SimpleEnchant(Enchantment enchantment, int level) {
-        this.enchantment = enchantment;
-        this.level = level;
-    }
-
-    public Enchantment getEnchantment() {
-        return this.enchantment;
-    }
-
-    public int getLevel() {
-        return this.level;
-    }
-
-    public void setLevel(int level) {
-        this.level = level;
-    }
 
 }

@@ -24,21 +24,20 @@ import org.dockbox.selene.api.i18n.MessageReceiver;
 import org.dockbox.selene.api.i18n.common.Language;
 import org.dockbox.selene.commands.annotations.Command;
 import org.dockbox.selene.commands.context.CommandContext;
+import org.dockbox.selene.di.annotations.Wired;
 import org.dockbox.selene.server.DefaultServer;
 import org.dockbox.selene.server.DefaultServerResources;
 import org.dockbox.selene.server.minecraft.players.Player;
 import org.dockbox.selene.util.SeleneUtils;
 
-import javax.inject.Inject;
-
 @Metadata(alias = "minecraft", serializable = false)
-@Command(aliases = SeleneInformation.PROJECT_ID, usage = SeleneInformation.PROJECT_ID, permission = DefaultServer.SELENE_ADMIN, extend = true)
+@Command(value = SeleneInformation.PROJECT_ID, permission = DefaultServer.SELENE_ADMIN, extend = true)
 public class DefaultMinecraftServer {
 
-    @Inject
+    @Wired
     private DefaultServerResources resources;
 
-    @Command(aliases = { "lang", "language" }, usage = "language <language{Language}> [player{Player}]", inherit = false, permission = SeleneInformation.GLOBAL_PERMITTED)
+    @Command(value = { "lang", "language" }, arguments = "<language{Language}> [player{Player}]", inherit = false, permission = SeleneInformation.GLOBAL_PERMITTED)
     public void switchLang(MessageReceiver src, CommandContext ctx, Language language, Player player) {
         if (null == player) {
             if (src instanceof Player) {
@@ -58,12 +57,12 @@ public class DefaultMinecraftServer {
         player.sendWithPrefix(this.resources.getLanguageUpdated(languageLocalized));
     }
 
-    @Command(aliases = "platform", usage = "platform", permission = DefaultServer.SELENE_ADMIN)
+    @Command(value = "platform", permission = DefaultServer.SELENE_ADMIN)
     public void platform(MessageReceiver src) {
-        MinecraftServerType st = MinecraftServerBootstrap.getInstance().getServerType();
+        MinecraftServerType st = MinecraftServerBootstrap.instance().getServerType();
         String platformVersion = Selene.getServer().getPlatformVersion();
 
-        String mcVersion = MinecraftServerBootstrap.getInstance().getMinecraftVersion().getReadableVersionString();
+        String mcVersion = MinecraftServerBootstrap.instance().getMinecraftVersion().getReadableVersionString();
 
         Object[] system = SeleneUtils.getAll(System::getProperty,
                 "java.version", "java.vendor", "java.vm.version", "java.vm.name", "java.vm.vendor", "java.runtime.version", "java.class.version");

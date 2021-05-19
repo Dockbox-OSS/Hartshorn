@@ -25,11 +25,7 @@ import org.dockbox.selene.server.minecraft.events.packet.PacketEvent;
 import org.dockbox.selene.server.minecraft.packets.annotations.Packet;
 import org.dockbox.selene.server.minecraft.packets.real.ChangeGameStatePacket;
 
-@Module(
-        id = "sample",
-        name = "Selene Sample Module",
-        description = "A sample module, providing examples on various tasks",
-        authors = "GuusLieben")
+@Module
 public final class SampleModule {
 
     private SampleModule() {}
@@ -47,7 +43,7 @@ public final class SampleModule {
     }
 
     // Uses the Custom Parameter from the Cuboid class, with a nested Shape parameter
-    @Command(aliases = "demo", usage = "demo <cuboid{Cuboid}>", permission = "selene.demo")
+    @Command(value = "demo", arguments = "<cuboid{Cuboid}>")
     public void buildCuboid(Cuboid cuboid) {
         Selene.log().info("Cuboid: " + cuboid);
     }

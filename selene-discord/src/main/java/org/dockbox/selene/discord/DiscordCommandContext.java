@@ -26,6 +26,11 @@ import org.dockbox.selene.di.Provider;
 
 import java.time.LocalDateTime;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
 public class DiscordCommandContext {
 
     private final User author;
@@ -34,26 +39,8 @@ public class DiscordCommandContext {
     private final String command;
     private final String[] arguments;
 
-    public DiscordCommandContext(
-            User author,
-            MessageChannel channel,
-            LocalDateTime timeReceived,
-            String command,
-            String[] arguments
-    ) {
-        this.author = author;
-        this.channel = channel;
-        this.timeReceived = timeReceived;
-        this.command = command;
-        this.arguments = arguments;
-    }
-
     public void sendToChannel(Text text) {
         Provider.provide(DiscordUtils.class).sendToTextChannel(text, this.getChannel());
-    }
-
-    public MessageChannel getChannel() {
-        return this.channel;
     }
 
     public void sendToChannel(ResourceEntry text) {
@@ -64,23 +51,7 @@ public class DiscordCommandContext {
         Provider.provide(DiscordUtils.class).sendToUser(text, this.getAuthor());
     }
 
-    public User getAuthor() {
-        return this.author;
-    }
-
     public void sendToAuthor(ResourceEntry text) {
         Provider.provide(DiscordUtils.class).sendToUser(text, this.getAuthor());
-    }
-
-    public LocalDateTime getTimeReceived() {
-        return this.timeReceived;
-    }
-
-    public String getCommand() {
-        return this.command;
-    }
-
-    public String[] getArguments() {
-        return this.arguments;
     }
 }

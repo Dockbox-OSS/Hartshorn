@@ -17,6 +17,11 @@
 
 package org.dockbox.selene.server.minecraft.inventory;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
 public enum InventoryType {
     CHEST(3, 9),
     DOUBLE_CHEST(6, 9),
@@ -25,17 +30,4 @@ public enum InventoryType {
 
     private final int rows;
     private final int columns;
-
-    InventoryType(int rows, int columns) {
-        this.rows = rows;
-        this.columns = columns;
-    }
-
-    public int getRows() {
-        return this.rows;
-    }
-
-    public int getColumns() {
-        return this.columns;
-    }
 }

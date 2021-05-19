@@ -45,19 +45,35 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
+import lombok.Getter;
+import lombok.Setter;
+
 public class JUnitPlayer extends Player implements JUnitPersistentDataHolder {
 
+    @Getter
     private final PlayerInventory inventory = new JUnitInventory();
+    @Getter @Setter
     private boolean online = true;
+
+    @Getter @Setter
     private Gamemode gamemode = Gamemode.CREATIVE;
+    @Getter @Setter
     private Language language = Language.EN_US;
+    @Getter @Setter
     private boolean sneaking = false;
+    @Setter
     private Location lookingAt = null;
+    @Getter @Setter
     private Text displayName;
+    @Getter @Setter
     private double health = 20;
+    @Getter
     private Location location;
+    @Getter @Setter
     private boolean invisible = false;
+    @Getter @Setter
     private boolean invulnerable = false;
+    @Setter
     private boolean gravity = true;
 
     public JUnitPlayer(@NotNull UUID uniqueId, @NotNull String name) {
@@ -69,63 +85,13 @@ public class JUnitPlayer extends Player implements JUnitPersistentDataHolder {
     }
 
     @Override
-    public Text getDisplayName() {
-        return this.displayName;
-    }
-
-    @Override
-    public void setDisplayName(Text displayName) {
-        this.displayName = displayName;
-    }
-
-    @Override
-    public double getHealth() {
-        return this.health;
-    }
-
-    @Override
-    public void setHealth(double health) {
-        this.health = health;
-    }
-
-    @Override
     public boolean isAlive() {
         return this.getHealth() > 0;
     }
 
     @Override
-    public boolean isInvisible() {
-        return this.invisible;
-    }
-
-    @Override
-    public void setInvisible(boolean invisible) {
-        this.invisible = invisible;
-    }
-
-    @Override
-    public boolean isInvulnerable() {
-        return this.invulnerable;
-    }
-
-    @Override
-    public void setInvulnerable(boolean invulnerable) {
-        this.invulnerable = invulnerable;
-    }
-
-    @Override
     public boolean hasGravity() {
         return this.gravity;
-    }
-
-    @Override
-    public void setGravity(boolean gravity) {
-        this.gravity = gravity;
-    }
-
-    @Override
-    public Location getLocation() {
-        return this.location;
     }
 
     @Override
@@ -146,37 +112,8 @@ public class JUnitPlayer extends Player implements JUnitPersistentDataHolder {
     }
 
     @Override
-    public boolean isOnline() {
-        return this.online;
-    }
-
-    public void setOnline(boolean online) {
-        this.online = online;
-    }
-
-    @Override
     public void kick(Text reason) {
         this.online = false;
-    }
-
-    @Override
-    public Gamemode getGamemode() {
-        return this.gamemode;
-    }
-
-    @Override
-    public void setGamemode(Gamemode gamemode) {
-        this.gamemode = gamemode;
-    }
-
-    @Override
-    public Language getLanguage() {
-        return this.language;
-    }
-
-    @Override
-    public void setLanguage(Language language) {
-        this.language = language;
     }
 
     @Override
@@ -195,15 +132,6 @@ public class JUnitPlayer extends Player implements JUnitPersistentDataHolder {
     }
 
     @Override
-    public boolean isSneaking() {
-        return this.sneaking;
-    }
-
-    public void setSneaking(boolean sneaking) {
-        this.sneaking = sneaking;
-    }
-
-    @Override
     public Profile getProfile() {
         return new JUnitProfile(this.getUniqueId());
     }
@@ -212,16 +140,6 @@ public class JUnitPlayer extends Player implements JUnitPersistentDataHolder {
     public Exceptional<Location> getLookingAtBlockPos() {
         return Exceptional.of(this.lookingAt);
     }
-
-    @Override
-    public PlayerInventory getInventory() {
-        return this.inventory;
-    }
-
-    public void setLookingAt(Location lookingAt) {
-        this.lookingAt = lookingAt;
-    }
-
 
     @Override
     public void send(ResourceEntry text) {

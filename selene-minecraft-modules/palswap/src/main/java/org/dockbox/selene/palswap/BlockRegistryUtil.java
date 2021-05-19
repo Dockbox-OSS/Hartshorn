@@ -29,7 +29,7 @@ public final class BlockRegistryUtil {
 
     public static Class<? extends BlockRegistryParser> getBlockRegistryParserClass() {
         //noinspection SwitchStatementWithTooFewBranches
-        switch (MinecraftServerBootstrap.getInstance().getMinecraftVersion()) {
+        switch (MinecraftServerBootstrap.instance().getMinecraftVersion()) {
             default:
                 return MC1_12BlockRegistryParser.class;
         }

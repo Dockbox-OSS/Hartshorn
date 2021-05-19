@@ -22,12 +22,15 @@ import org.dockbox.selene.commands.annotations.Command;
 import org.dockbox.selene.commands.registration.AbstractRegistrationContext;
 import org.dockbox.selene.commands.registration.CommandInheritanceContext;
 import org.dockbox.selene.commands.registration.MethodCommandContext;
+import org.dockbox.selene.test.SeleneJUnit5Runner;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.Optional;
 
+@ExtendWith(SeleneJUnit5Runner.class)
 class DefaultCommandBusTests {
 
     private static final CommandBus bus = new TestCommandBus();
@@ -83,25 +86,23 @@ class DefaultCommandBusTests {
         Assertions.assertFalse(inheritedCommandContext.isPresent());
     }
 
-    @Command(
-            aliases = { "example", "sample" },
-            usage = "example", permission = "example")
+    @Command({ "example", "sample" })
     private static class ExampleCommandClass {
 
-        @Command(aliases = "", usage = "", permission = "example")
+        @Command
         public void mainCommand() {}
 
-        @Command(aliases = "child", usage = "child", permission = "example")
+        @Command("child")
         public void subCommand() {}
 
-        @Command(aliases = "noninherit", usage = "noninherit", inherit = false, permission = "example")
+        @Command(value = "noninherit", inherit = false)
         public void nonInheritedChild() {}
     }
 
-    @Command(aliases = "sample", usage = "sample", extend = true, permission = "example")
+    @Command(value = "sample", extend = true)
     private static class ExampleExtendingCommandClass {
 
-        @Command(aliases = "extended", usage = "extended", permission = "example")
+        @Command("extended")
         public void extendedCommand() {}
     }
 }

@@ -30,9 +30,12 @@ import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.persistence.PersistentModel;
 import org.dockbox.selene.util.Reflect;
 
+import lombok.Getter;
+
 @SuppressWarnings("FieldMayBeFinal")
 @Extract(Behavior.KEEP)
 @Metadata(alias = "text")
+@Getter
 public class PersistentTextModel implements PersistentModel<Text> {
 
     // Legacy formatted
@@ -79,34 +82,6 @@ public class PersistentTextModel implements PersistentModel<Text> {
         this.hoverActionResult = String.valueOf(hoverAction.getResult());
         if (hoverAction instanceof HoverAction.ShowText) this.hoverAction = ActionTypes.SHOW_TEXT;
         else this.hoverAction = ActionTypes.NONE;
-    }
-
-    public String getContent() {
-        return this.content;
-    }
-
-    public ActionTypes getClickAction() {
-        return this.clickAction;
-    }
-
-    public String getClickActionResult() {
-        return this.clickActionResult;
-    }
-
-    public ActionTypes getShiftClickAction() {
-        return this.shiftClickAction;
-    }
-
-    public String getShiftClickActionResult() {
-        return this.shiftClickActionResult;
-    }
-
-    public ActionTypes getHoverAction() {
-        return this.hoverAction;
-    }
-
-    public String getHoverActionResult() {
-        return this.hoverActionResult;
     }
 
     @Override

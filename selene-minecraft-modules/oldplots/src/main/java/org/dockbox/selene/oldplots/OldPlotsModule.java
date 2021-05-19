@@ -31,12 +31,12 @@ import org.dockbox.selene.database.dialects.sqlite.SQLitePathProperty;
 import org.dockbox.selene.database.exceptions.InvalidConnectionException;
 import org.dockbox.selene.database.properties.SQLColumnProperty;
 import org.dockbox.selene.di.Provider;
+import org.dockbox.selene.di.annotations.Wired;
 import org.dockbox.selene.domain.table.Table;
 import org.dockbox.selene.persistence.FileManager;
 import org.dockbox.selene.persistence.FileType;
 import org.dockbox.selene.persistence.FileTypeProperty;
-import org.dockbox.selene.server.events.ServerReloadEvent;
-import org.dockbox.selene.server.events.ServerStartedEvent;
+import org.dockbox.selene.server.events.ServerUpdateEvent;
 import org.dockbox.selene.server.minecraft.dimension.position.Location;
 import org.dockbox.selene.server.minecraft.players.Player;
 import org.dockbox.selene.util.SeleneUtils;
@@ -46,33 +46,26 @@ import org.jetbrains.annotations.NotNull;
 import java.nio.file.Path;
 import java.util.List;
 
-import javax.inject.Inject;
-
-@Module(
-        id = "oldplots",
-        name = "OldPlots",
-        description = "Provides a easy way to interact with old plot worlds and registrations",
-        authors = "GuusLieben",
-        dependencies = "org.dockbox.selene.database")
+@Module(dependencies = "org.dockbox.selene.database")
 public class OldPlotsModule {
 
-    @Inject
+    @Wired
     private FileManager fileManager;
-    @Inject
+    @Wired
     private OldPlotsResources resources;
 
     // Avoid null
     private PlotWorldModelList modelList = new PlotWorldModelList();
 
     @Listener
-    public void on(ServerStartedEvent serverStartedEvent, ServerReloadEvent reloadEvent) {
+    public void on(ServerUpdateEvent event) {
         Path worldConfig = this.fileManager.getConfigFile(OldPlotsModule.class, "worlds");
         this.fileManager.copyDefaultFile("oldplots_worlds.yml", worldConfig);
         Exceptional<PlotWorldModelList> exceptionalList = this.fileManager.read(worldConfig, PlotWorldModelList.class);
         exceptionalList.present(modelList -> this.modelList = modelList);
     }
 
-    @Command(aliases = "oldplots", usage = "oldplots <player{Player}>", permission = "selene.oldplots.list")
+    @Command(value = "oldplots", arguments = "<player{Player}>", permission = "selene.oldplots.list")
     public void oldPlotsCommand(Player source, CommandContext ctx) throws InvalidConnectionException {
         if (!ctx.has("player")) {
             source.sendWithPrefix(this.resources.getPlayerError());
@@ -126,7 +119,7 @@ public class OldPlotsModule {
                 new SQLColumnProperty("world", OldPlotsIdentifiers.WORLD));
     }
 
-    @Command(aliases = "optp", usage = "optp <id{Int}>", permission = "selene.oldplots.teleport")
+    @Command(value = "optp", arguments = "<id{Int}>", permission = "selene.oldplots.teleport")
     public void teleportCommand(Player source, CommandContext context)
             throws InvalidConnectionException {
         Integer id = context.get("id");

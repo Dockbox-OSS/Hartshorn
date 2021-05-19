@@ -29,9 +29,11 @@ import org.spongepowered.api.data.merge.MergeFunction;
 import java.util.Map;
 import java.util.Optional;
 
-public class MutableCompositeData
-        extends AbstractData<MutableCompositeData, ImmutableCompositeData> {
+import lombok.Getter;
 
+public class MutableCompositeData extends AbstractData<MutableCompositeData, ImmutableCompositeData> {
+
+    @Getter
     private final Map<String, Object> data = SeleneUtils.emptyMap();
 
     public MutableCompositeData() {
@@ -93,9 +95,5 @@ public class MutableCompositeData
     @Override
     public int getContentVersion() {
         return 1;
-    }
-
-    public Map<String, Object> getData() {
-        return this.data;
     }
 }

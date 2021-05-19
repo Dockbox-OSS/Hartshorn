@@ -24,6 +24,11 @@ import org.dockbox.selene.server.minecraft.players.Hand;
 import org.dockbox.selene.server.minecraft.players.Player;
 import org.dockbox.selene.server.minecraft.players.Sneaking;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
 public class ToolInteractionEvent extends AbstractCancellableEvent {
 
     private final Player player;
@@ -34,36 +39,4 @@ public class ToolInteractionEvent extends AbstractCancellableEvent {
     private final ClickType type;
     private final Sneaking sneaking;
 
-    public ToolInteractionEvent(Player player, Item item, ItemTool tool, Hand hand, ClickType type, Sneaking sneaking) {
-        this.player = player;
-        this.item = item;
-        this.tool = tool;
-        this.hand = hand;
-        this.type = type;
-        this.sneaking = sneaking;
-    }
-
-    public Player getPlayer() {
-        return this.player;
-    }
-
-    public Item getItem() {
-        return this.item;
-    }
-
-    public ItemTool getTool() {
-        return this.tool;
-    }
-
-    public Hand getHand() {
-        return this.hand;
-    }
-
-    public ClickType getType() {
-        return this.type;
-    }
-
-    public Sneaking getSneaking() {
-        return this.sneaking;
-    }
 }

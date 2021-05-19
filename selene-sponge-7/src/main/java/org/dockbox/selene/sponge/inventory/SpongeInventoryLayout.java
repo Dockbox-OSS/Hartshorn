@@ -26,16 +26,15 @@ import org.dockbox.selene.util.SeleneUtils;
 import java.util.Map;
 
 import dev.flashlabs.flashlibs.inventory.Layout;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
+@Getter
+@AllArgsConstructor
 public class SpongeInventoryLayout implements InventoryLayout {
 
     private final Layout layout;
     private final InventoryType inventoryType;
-
-    public SpongeInventoryLayout(Layout initialLayout, InventoryType inventoryType) {
-        this.layout = initialLayout;
-        this.inventoryType = inventoryType;
-    }
 
     @Override
     public Map<Integer, Element> getElements() {
@@ -44,14 +43,5 @@ public class SpongeInventoryLayout implements InventoryLayout {
                 .getElements()
                 .forEach((index, element) -> elements.put(index, SpongeConversionUtil.fromSponge(element)));
         return SeleneUtils.asUnmodifiableMap(elements);
-    }
-
-    @Override
-    public InventoryType getIventoryType() {
-        return this.inventoryType;
-    }
-
-    public Layout getLayout() {
-        return this.layout;
     }
 }

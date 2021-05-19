@@ -24,6 +24,7 @@ dependencies {
 
     // Provide access to persistence and entity models
     compile project(':selene-persistence')
+    compile project(':selene-config')
 
     // Provide access to event and command listeners, which
     // cover 50% of the module use-cases

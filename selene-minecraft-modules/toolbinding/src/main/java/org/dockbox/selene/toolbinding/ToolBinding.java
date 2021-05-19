@@ -24,6 +24,7 @@ import org.dockbox.selene.api.keys.PersistentDataKey;
 import org.dockbox.selene.api.keys.RemovableKey;
 import org.dockbox.selene.api.keys.TransactionResult;
 import org.dockbox.selene.api.module.annotations.Module;
+import org.dockbox.selene.di.annotations.Wired;
 import org.dockbox.selene.server.minecraft.events.player.interact.PlayerInteractEvent;
 import org.dockbox.selene.server.minecraft.item.Item;
 import org.dockbox.selene.server.minecraft.item.storage.MinecraftItems;
@@ -33,16 +34,10 @@ import org.dockbox.selene.util.SeleneUtils;
 import java.util.Map;
 import java.util.UUID;
 
-import javax.inject.Inject;
-
-@Module(
-        id = "toolbinding",
-        name = "Tool Binding",
-        description = "Adds the ability to provide commands to tools and items",
-        authors = "GuusLieben")
+@Module
 public class ToolBinding {
 
-    @Inject
+    @Wired
     private ToolBindingResources resources;
 
     static final PersistentDataKey<String> PERSISTENT_TOOL = Keys.persistent(String.class, "Tool Binding", ToolBinding.class);
@@ -67,7 +62,7 @@ public class ToolBinding {
         String bindingId = UUID.randomUUID().toString();
 
         TransactionResult result = item.set(PERSISTENT_TOOL, bindingId);
-        if (result.isSuccessfull()) {
+        if (result.isSuccessful()) {
             this.registry.put(bindingId, tool);
             tool.prepare(item);
         }
@@ -113,7 +108,7 @@ public class ToolBinding {
                 itemInHand,
                 tool,
                 event.getHand(),
-                event.getClientClickType(),
+                event.getClickType(),
                 event.getTarget().isSneaking() ? Sneaking.SNEAKING : Sneaking.STANDING);
 
         if (tool.accepts(toolInteractionEvent)) {

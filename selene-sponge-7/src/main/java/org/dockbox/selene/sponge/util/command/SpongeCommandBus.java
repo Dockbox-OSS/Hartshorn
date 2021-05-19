@@ -20,18 +20,21 @@ package org.dockbox.selene.sponge.util.command;
 import com.google.common.collect.Multimap;
 
 import org.dockbox.selene.api.Selene;
+import org.dockbox.selene.api.SeleneInformation;
 import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.exceptions.Except;
 import org.dockbox.selene.commands.DefaultCommandBus;
 import org.dockbox.selene.commands.context.SimpleCommandContext;
 import org.dockbox.selene.commands.registration.AbstractRegistrationContext;
 import org.dockbox.selene.commands.registration.CommandInheritanceContext;
+import org.dockbox.selene.commands.registration.MethodCommandContext;
 import org.dockbox.selene.commands.source.CommandSource;
 import org.dockbox.selene.commands.values.AbstractArgumentElement;
 import org.dockbox.selene.commands.values.ArgumentValue;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.dockbox.selene.sponge.util.command.values.SpongeArgumentElement;
 import org.dockbox.selene.sponge.util.command.values.SpongeArgumentValue;
+import org.dockbox.selene.util.SeleneUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.api.Sponge;
@@ -73,7 +76,7 @@ public class SpongeCommandBus extends DefaultCommandBus<Builder> {
             CommandSource sender = SpongeConversionUtil.fromSponge(src)
                     .cause(() -> new IllegalArgumentException("Command sender is not a convertable source type, did a plugin call me?"));
             SimpleCommandContext ctx = this.createCommandContext(args, sender, command);
-            callCommandContext(registrationContext, command, sender, ctx);
+            this.callCommandContext(registrationContext, command, sender, ctx);
             return CommandResult.success();
         };
     }
@@ -137,7 +140,19 @@ public class SpongeCommandBus extends DefaultCommandBus<Builder> {
     protected CommandSpec.Builder buildContextExecutor(AbstractRegistrationContext context, String alias) {
         CommandSpec.Builder builder = CommandSpec.builder();
 
-        List<AbstractArgumentElement<?>> elements = super.parseArgumentElements(context.getCommand().usage(), context.getCommand().permission());
+        String permission = context.getCommand().permission();
+        if ("".equals(permission)) {
+            permission = SeleneInformation.PROJECT_ID + '.' + context.getOwner().id().replaceAll("\\-", "");
+            if (context instanceof MethodCommandContext) {
+                permission += '.' + alias;
+            }
+        }
+
+        String usage = context.getCommand().arguments();
+        List<AbstractArgumentElement<?>> elements = SeleneUtils.emptyList();
+        if (!"".equals(usage)) {
+            elements = super.parseArgumentElements(context.getCommand().arguments(), permission);
+        }
         List<CommandElement> commandElements = elements.stream()
                 .filter(SpongeArgumentElement.class::isInstance)
                 .map(SpongeArgumentElement.class::cast)
@@ -145,7 +160,7 @@ public class SpongeCommandBus extends DefaultCommandBus<Builder> {
                 .collect(Collectors.toList());
         if (!elements.isEmpty()) builder.arguments(commandElements.toArray(new CommandElement[0]));
 
-        builder.permission(context.getCommand().permission());
+        builder.permission(permission);
         builder.executor(this.buildExecutor(context, alias));
 
         return builder;

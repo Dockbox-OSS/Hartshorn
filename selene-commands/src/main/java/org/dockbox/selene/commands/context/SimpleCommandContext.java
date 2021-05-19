@@ -25,7 +25,11 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
 @SuppressWarnings("unchecked")
+@AllArgsConstructor
 public class SimpleCommandContext implements CommandContext {
 
     public static final SimpleCommandContext EMPTY = new SimpleCommandContext(
@@ -38,27 +42,15 @@ public class SimpleCommandContext implements CommandContext {
     private final String usage;
     private final CommandParameter<?>[] args;
     private final CommandParameter<?>[] flags;
-    private final String[] permissions;
 
     // Location and world are snapshots of the location of our CommandSource at the time the command
     // was processed.
     // This way developers can ensure location data does not change while the command is being
     // performed.
+    @Getter
     private final CommandSource sender;
-
-    public SimpleCommandContext(
-            String usage,
-            CommandParameter<?>[] args,
-            CommandParameter<?>[] flags,
-            CommandSource sender,
-            String[] permissions
-    ) {
-        this.usage = usage;
-        this.args = args;
-        this.flags = flags;
-        this.sender = sender;
-        this.permissions = permissions;
-    }
+    @Getter
+    private final String[] permissions;
 
     @NotNull
     @Override
@@ -88,6 +80,7 @@ public class SimpleCommandContext implements CommandContext {
     @Override
     public <T> T get(@NonNls String key) {
         return Arrays.stream(SeleneUtils.merge(this.args, this.flags))
+                .map(CommandParameter.class::cast)
                 .filter(arg -> arg.getKey().equals(key))
                 .findFirst()
                 .map(arg -> (T) arg.getValue())
@@ -111,16 +104,7 @@ public class SimpleCommandContext implements CommandContext {
     @Override
     public boolean has(@NonNls @NotNull String key) {
         return Arrays.stream(SeleneUtils.merge(this.args, this.flags))
+                .map(CommandParameter.class::cast)
                 .anyMatch(arg -> arg.getKey().equals(key));
-    }
-
-    @Override
-    public CommandSource sender() {
-        return this.sender;
-    }
-
-    @Override
-    public String[] permissions() {
-        return this.permissions;
     }
 }

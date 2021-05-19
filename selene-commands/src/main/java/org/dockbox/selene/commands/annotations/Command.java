@@ -36,23 +36,24 @@ public @interface Command {
      *
      * @return the aliases
      */
-    String[] aliases();
+    String[] value() default "";
 
     /**
-     * The usage context for the command.
+     * The arguments context for the command. If the default value is used no arguments will be validated,
+     * delivering the same result as making it equal to the primary alias.
      *
-     * @return the usage context for the command.
+     * @return the arguments context for the command.
      * @see <a
-     *         href="https://github.com/GuusLieben/Selene/wiki/Commands#defining-command-usage">Commands#defining-command-usage</a>
+     *         href="https://github.com/GuusLieben/Selene/wiki/Commands#defining-command-usage">Commands#defining-command-arguments</a>
      */
-    String usage();
+    String arguments() default "";
 
     /**
      * The permissions for the command.
      *
      * @return the permission required for the command.
      */
-    String permission();
+    String permission() default "";
 
     /**
      * The duration in the {@link Command#cooldownUnit() cooldown unit}. Defaults to -1 if not

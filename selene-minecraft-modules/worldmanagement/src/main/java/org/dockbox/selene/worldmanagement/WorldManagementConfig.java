@@ -18,46 +18,42 @@
 package org.dockbox.selene.worldmanagement;
 
 import org.dockbox.selene.api.domain.tuple.Vector3N;
-import org.dockbox.selene.api.entity.annotations.Accessor;
 import org.dockbox.selene.api.entity.annotations.Extract;
 import org.dockbox.selene.api.entity.annotations.Extract.Behavior;
-import org.dockbox.selene.api.entity.annotations.Metadata;
-import org.dockbox.selene.persistence.AbstractConfiguration;
+import org.dockbox.selene.config.annotations.Value;
 import org.dockbox.selene.persistence.FileManager;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
-@SuppressWarnings("FieldMayBeFinal")
-@Singleton
-@Extract(Behavior.KEEP)
-@Metadata(alias = "worldmanagement")
-public class WorldManagementConfig extends AbstractConfiguration<WorldManagementConfig> {
+public class WorldManagementConfig {
 
     @Inject
     @Extract(Behavior.SKIP)
     private transient FileManager fileManager;
 
-    @Accessor(getter = "getPortalPosition")
-    private Vector3N portalPosition = Vector3N.of(0, 64, 0);
+    @Value(value = "modules.world-management.target.position.x", or = "0")
+    private long x;
+    @Value(value = "modules.world-management.target.position.y", or = "64")
+    private long y;
+    @Value(value = "modules.world-management.target.position.z", or = "0")
+    private long z;
 
-    @Accessor(getter = "getPortalWorldTarget")
-    private String portalWorldTarget = "worlds";
+    @Value(value = "modules.world-management.target.world", or = "worlds")
+    private String portalWorldTarget;
 
-    @Accessor(getter = "getMaximumWorldsToUnload")
-    private int maximumWorldsToUnload = 10;
+    @Value(value = "modules.world-management.unload.max", or = "10")
+    private int maximumWorldsToUnload;
 
-    @Accessor(getter = "getUnloadBlacklist")
-    private List<String> unloadBlacklist = new ArrayList<>();
+    @Value("modules.world-management.unload.blacklist")
+    private List<String> unloadBlacklist;
 
-    @Accessor(getter = "getUnloadDelay")
-    private int unloadDelay = 2;
+    @Value(value = "modules.world-management.unload.delay", or = "2")
+    private int unloadDelay;
 
     public Vector3N getPortalPosition() {
-        return this.portalPosition;
+        return Vector3N.of(this.x, this.y, this.z);
     }
 
     public String getPortalWorldTarget() {
@@ -72,13 +68,7 @@ public class WorldManagementConfig extends AbstractConfiguration<WorldManagement
         return this.unloadBlacklist;
     }
 
-
     public int getUnloadDelay() {
         return this.unloadDelay;
-    }
-
-    @Override
-    protected Class<?> getOwnerType() {
-        return WorldManagement.class;
     }
 }

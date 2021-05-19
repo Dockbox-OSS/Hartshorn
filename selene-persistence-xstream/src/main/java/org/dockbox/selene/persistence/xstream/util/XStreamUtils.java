@@ -50,6 +50,8 @@ import java.util.Map;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
+import lombok.Getter;
+
 /**
  * Utility class which configures XStream with some default settings and permissions. For simple
  * usage (custom configuration file with only standard fields and collections):
@@ -273,6 +275,7 @@ public final class XStreamUtils {
     @SuppressWarnings("UnusedReturnValue")
     public static final class XStreamBuilder {
 
+        @Getter
         private final XStream stream;
 
         private boolean classLoaderSet;
@@ -590,16 +593,6 @@ public final class XStreamUtils {
                 this.objectClassLoader(object);
             }
             toXmlQuietly(this.stream, object, file);
-        }
-
-        /**
-         * Avoid using this method unless really needed, for example, to configure the stream with
-         * properties not supported by the builder or trying to load a legacy xml file.
-         *
-         * @return the actual {@link XStream} configured so far
-         */
-        public XStream getStream() {
-            return this.stream;
         }
     }
 }

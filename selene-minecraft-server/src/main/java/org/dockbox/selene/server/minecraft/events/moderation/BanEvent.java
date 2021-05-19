@@ -23,68 +23,21 @@ import org.dockbox.selene.commands.source.CommandSource;
 
 import java.time.LocalDateTime;
 
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class BanEvent<T> extends AbstractCancellableEvent {
 
     private final T target;
     private final CommandSource source;
-    private final LocalDateTime creation;
+    @Setter
     private Exceptional<String> reason;
+    @Setter
     private Exceptional<LocalDateTime> expiration;
-
-    /**
-     * The abstract type which can be used to listen to all ban related events.
-     *
-     * @param target
-     *         The target being banned
-     * @param reason
-     *         The reason of the ban
-     * @param source
-     *         The {@link CommandSource} executing the ban
-     * @param expiration
-     *         The {@link LocalDateTime} of when the ban expires, if present
-     * @param creation
-     *         The {@link LocalDateTime} of when the ban was issued.
-     */
-    protected BanEvent(
-            T target,
-            CommandSource source,
-            Exceptional<String> reason,
-            Exceptional<LocalDateTime> expiration,
-            LocalDateTime creation
-    ) {
-        this.target = target;
-        this.source = source;
-        this.reason = reason;
-        this.expiration = expiration;
-        this.creation = creation;
-    }
-
-    public Exceptional<String> getReason() {
-        return this.reason;
-    }
-
-    public void setReason(Exceptional<String> reason) {
-        this.reason = reason;
-    }
-
-    public Exceptional<LocalDateTime> getExpiration() {
-        return this.expiration;
-    }
-
-    public void setExpiration(Exceptional<LocalDateTime> expiration) {
-        this.expiration = expiration;
-    }
-
-    public LocalDateTime getCreation() {
-        return this.creation;
-    }
-
-    public T getTarget() {
-        return this.target;
-    }
-
-    public CommandSource getSource() {
-        return this.source;
-    }
+    private final LocalDateTime creation;
 
 }

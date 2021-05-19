@@ -19,7 +19,7 @@ package org.dockbox.selene.test.objects;
 
 import org.dockbox.selene.api.i18n.common.Language;
 import org.dockbox.selene.api.i18n.text.Text;
-import org.dockbox.selene.di.annotations.AutoWired;
+import org.dockbox.selene.di.annotations.Wired;
 import org.dockbox.selene.server.minecraft.item.Enchant;
 import org.dockbox.selene.server.minecraft.item.Item;
 import org.dockbox.selene.server.minecraft.item.SimplePersistentItemModel;
@@ -32,20 +32,29 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+import lombok.Getter;
+import lombok.Setter;
+
 public class JUnitItem implements Item, JUnitPersistentDataHolder {
 
+    @Getter
     private final String id;
+    @Getter
     private final int meta;
     private final UUID persistentDataId = UUID.randomUUID();
     private final Set<Enchant> enchants = SeleneUtils.emptySet();
+    @Getter
     private final List<Text> lore = SeleneUtils.emptyList();
 
+    @Getter
     private Profile profile;
+    @Getter @Setter
     private int amount = 1;
+    @Getter @Setter
     private Text displayName;
     private boolean treatAsBlock = false;
 
-    @AutoWired
+    @Wired
     public JUnitItem(String id, int meta) {
         this.id = id;
         this.meta = meta;
@@ -63,34 +72,14 @@ public class JUnitItem implements Item, JUnitPersistentDataHolder {
     }
 
     @Override
-    public List<Text> getLore() {
-        return this.lore;
-    }
-
-    @Override
     public void setLore(List<Text> lore) {
         this.lore.clear();
         this.lore.addAll(lore);
     }
 
     @Override
-    public int getAmount() {
-        return this.amount;
-    }
-
-    @Override
-    public void setAmount(int amount) {
-        this.amount = amount;
-    }
-
-    @Override
     public void removeDisplayName() {
         this.displayName = Text.of(this.getId());
-    }
-
-    @Override
-    public String getId() {
-        return this.id;
     }
 
     @Override
@@ -120,7 +109,7 @@ public class JUnitItem implements Item, JUnitPersistentDataHolder {
 
     @Override
     public boolean isBlock() {
-        return treatAsBlock;
+        return this.treatAsBlock;
     }
 
     public Item treatAsBlock() {
@@ -158,11 +147,6 @@ public class JUnitItem implements Item, JUnitPersistentDataHolder {
     }
 
     @Override
-    public int getMeta() {
-        return this.meta;
-    }
-
-    @Override
     public int getIdNumeric() {
         return -1;
     }
@@ -175,16 +159,6 @@ public class JUnitItem implements Item, JUnitPersistentDataHolder {
     @Override
     public String getName() {
         return this.getDisplayName().toString();
-    }
-
-    @Override
-    public Text getDisplayName() {
-        return this.displayName;
-    }
-
-    @Override
-    public void setDisplayName(Text displayName) {
-        this.displayName = displayName;
     }
 
     @Override

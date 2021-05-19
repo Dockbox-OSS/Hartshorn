@@ -34,10 +34,10 @@ public class PlotMembershipChangedEvent extends PlotPlayerEvent {
     }
 
     public Player getInitiator() {
-        return initiator;
+        return this.initiator;
     }
 
     public PlotMembership getMembership() {
-        return membership;
+        return this.membership;
     }
 }

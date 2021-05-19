@@ -19,30 +19,17 @@ package org.dockbox.selene.sample;
 
 import org.dockbox.selene.commands.annotations.CustomParameter;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.ToString;
+
 @CustomParameter("cuboid")
+@AllArgsConstructor
+@Getter
+@ToString
 public class Cuboid {
 
     private final String name;
     private final Shape shape;
 
-    public Cuboid(String name, Shape shape) {
-        this.name = name;
-        this.shape = shape;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public Shape getShape() {
-        return shape;
-    }
-
-    @Override
-    public String toString() {
-        return "Cuboid{" +
-                "name='" + name + '\'' +
-                ", shape=" + shape +
-                '}';
-    }
 }

@@ -25,9 +25,12 @@ import org.jetbrains.annotations.NonNls;
 
 import java.util.List;
 
+import lombok.Getter;
+
 @Metadata(alias = "triggers")
 public class DaveTriggers {
 
+    @Getter
     private final List<DaveTrigger> triggers = SeleneUtils.emptyList();
 
     public DaveTriggers() {}
@@ -45,9 +48,5 @@ public class DaveTriggers {
             if (trigger.getId().equals(id)) return Exceptional.of(trigger);
         }
         return Exceptional.none();
-    }
-
-    public List<DaveTrigger> getTriggers() {
-        return this.triggers;
     }
 }

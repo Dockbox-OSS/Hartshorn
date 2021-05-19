@@ -25,6 +25,8 @@ import org.dockbox.selene.util.SeleneUtils;
 
 import java.util.Map;
 
+import lombok.Getter;
+
 public enum BlockIdentifier implements RegistryIdentifier {
 
     RED_BRICK_BOX_FRAME_CONNECTED("conquest:stone_full_5:13"),
@@ -647,7 +649,8 @@ public enum BlockIdentifier implements RegistryIdentifier {
     AIR("minecraft:air:0");
 
     private static final Map<String, BlockIdentifier> idMappings = SeleneUtils.emptyConcurrentMap();
-    private String[] ids;
+    @Getter
+    private final String[] ids;
 
     static {
         for (BlockIdentifier blockIdentifier : values()) {
@@ -661,10 +664,6 @@ public enum BlockIdentifier implements RegistryIdentifier {
 
     BlockIdentifier(String... ids) {
         this.ids = ids;
-    }
-
-    public String[] getIds() {
-        return this.ids;
     }
 
     public boolean isAir() {

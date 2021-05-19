@@ -36,29 +36,23 @@ import org.dockbox.selene.commands.annotations.Command;
 import org.dockbox.selene.commands.context.CommandContext;
 import org.dockbox.selene.commands.context.CommandParameter;
 import org.dockbox.selene.di.Provider;
+import org.dockbox.selene.di.annotations.Wired;
 import org.dockbox.selene.server.events.ServerReloadEvent;
 import org.dockbox.selene.util.SeleneUtils;
 
 import java.util.List;
 
-import javax.inject.Inject;
-
-@Module(
-        id = SeleneInformation.PROJECT_ID,
-        name = SeleneInformation.PROJECT_NAME,
-        description = "Integrated features of Selene",
-        authors = "GuusLieben"
-)
-@Command(aliases = SeleneInformation.PROJECT_ID, usage = SeleneInformation.PROJECT_ID, permission = DefaultServer.SELENE_ADMIN)
+@Module(id = SeleneInformation.PROJECT_ID, name = SeleneInformation.PROJECT_NAME)
+@Command(value = SeleneInformation.PROJECT_ID, permission = DefaultServer.SELENE_ADMIN)
 public class DefaultServer implements Server {
 
     public static final String SELENE_ADMIN = SeleneInformation.PROJECT_ID + ".admin";
 
-    @Inject
+    @Wired
     private DefaultServerResources resources;
 
     // Parent command
-    @Command(aliases = "", usage = "", permission = DefaultServer.SELENE_ADMIN)
+    @Command(permission = DefaultServer.SELENE_ADMIN)
     public void debugModules(MessageReceiver source) {
         Provider.with(ModuleManager.class, em -> {
             PaginationBuilder pb = Provider.provide(PaginationBuilder.class);
@@ -95,18 +89,18 @@ public class DefaultServer implements Server {
         return line;
     }
 
-    @Command(aliases = "module", usage = "module <id{Module}>", permission = DefaultServer.SELENE_ADMIN)
+    @Command(value = "module", arguments = "<id{Module}>", permission = DefaultServer.SELENE_ADMIN)
     public void debugModule(MessageReceiver src, CommandContext ctx) {
         ModuleContainer container = ctx.get("id");
 
         src.send(this.resources.getInfoModuleBlock(
-                container.name(), container.id(), container.description(),
-                0 == container.dependencies().length ? "None" : String.join("$3, $1", container.dependencies()),
-                String.join("$3, $1", container.authors()), container.source()
+                container.name(),
+                container.id(),
+                0 == container.dependencies().length ? "None" : String.join("$3, $1", container.dependencies())
         ));
     }
 
-    @Command(aliases = "reload", usage = "reload [id{Module}]", confirm = true, permission = DefaultServer.SELENE_ADMIN)
+    @Command(value = "reload", arguments = "[id{Module}]", confirm = true, permission = DefaultServer.SELENE_ADMIN)
     public void reload(MessageReceiver src, CommandContext ctx) {
         EventBus eb = Provider.provide(EventBus.class);
         if (ctx.has("id")) {
@@ -126,7 +120,7 @@ public class DefaultServer implements Server {
     }
 
     @Override
-    @Command(aliases = "confirm", usage = "confirm <cooldownId{String}>", permission = SeleneInformation.GLOBAL_PERMITTED)
+    @Command(value = "confirm", arguments = "<cooldownId{String}>", permission = SeleneInformation.GLOBAL_PERMITTED)
     public void confirm(MessageReceiver src, CommandContext ctx) {
         if (!(src instanceof AbstractIdentifiable)) {
             src.send(this.resources.getConfirmInvalidSource());

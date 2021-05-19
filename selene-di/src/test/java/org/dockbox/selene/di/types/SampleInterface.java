@@ -19,6 +19,6 @@ package org.dockbox.selene.di.types;
 
 public interface SampleInterface {
 
-    String name();
+    String getName();
 
 }

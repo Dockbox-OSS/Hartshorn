@@ -43,10 +43,10 @@ public interface SpongeComposite extends PersistentDataHolder {
         if (result.absent()) return Exceptional.none();
 
         MutableCompositeData data = result.get();
-        if (!data.getData().containsKey(dataKey.getDataKeyId())) return Exceptional.none();
+        if (!data.getData().containsKey(dataKey.getId())) return Exceptional.none();
 
-        Object value = data.getData().get(dataKey.getDataKeyId());
-        if (Reflect.assignableFrom(dataKey.getDataType(), value.getClass()))
+        Object value = data.getData().get(dataKey.getId());
+        if (Reflect.assignableFrom(dataKey.getType(), value.getClass()))
             // If a CCE is thrown, it'll be captured by the Exceptional because of the Callable
             //noinspection unchecked
             return Exceptional.of(() -> (T) value);
@@ -61,7 +61,7 @@ public interface SpongeComposite extends PersistentDataHolder {
                     .get(MutableCompositeData.class)
                     .orElse(new MutableCompositeData())
                     .getData();
-            data.put(dataKey.getDataKeyId(), value);
+            data.put(dataKey.getId(), value);
 
             MutableCompositeData compositeData = new MutableCompositeData();
             compositeData.fillData(data);
@@ -79,9 +79,9 @@ public interface SpongeComposite extends PersistentDataHolder {
             if (!result.isPresent()) return; // No data to remove
 
             MutableCompositeData data = result.get();
-            if (!data.getData().containsKey(dataKey.getDataKeyId())) return; // Already removed
+            if (!data.getData().containsKey(dataKey.getId())) return; // Already removed
 
-            data.getData().remove(dataKey.getDataKeyId());
+            data.getData().remove(dataKey.getId());
 
             composite.offer(data);
         });

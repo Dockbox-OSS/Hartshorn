@@ -31,7 +31,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-@Binds(value = SQLMan.class, meta = @BindingMeta(FileTypes.SQLITE))
+@Binds(value = SQLMan.class, meta = @BindingMeta(value = FileTypes.SQLITE))
 public class SQLiteMan extends SQLMan<Path> {
 
     public static final String PATH_KEY = "sqliteFilePath";

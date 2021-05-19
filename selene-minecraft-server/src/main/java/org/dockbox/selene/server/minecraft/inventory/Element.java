@@ -63,7 +63,7 @@ public interface Element {
      *
      * @return The represented item.
      */
-    Item item();
+    Item getItem();
 
     /**
      * Sets the action to perform when a player interacts with the element.

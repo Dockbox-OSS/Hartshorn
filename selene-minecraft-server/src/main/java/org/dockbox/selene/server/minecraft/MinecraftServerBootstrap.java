@@ -42,8 +42,8 @@ public abstract class MinecraftServerBootstrap extends ServerBootstrap {
         super(early, late);
     }
 
-    public static MinecraftServerBootstrap getInstance() {
-        return (MinecraftServerBootstrap) ServerBootstrap.getInstance();
+    public static MinecraftServerBootstrap instance() {
+        return (MinecraftServerBootstrap) ServerBootstrap.instance();
     }
 
     /**

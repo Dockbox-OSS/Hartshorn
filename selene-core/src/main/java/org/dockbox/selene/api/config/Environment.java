@@ -19,7 +19,8 @@ package org.dockbox.selene.api.config;
 
 public enum Environment {
     PRODUCTION(false),
-    DEVELOPMENT(true);
+    DEVELOPMENT(true),
+    JUNIT(true);
 
     private final boolean allowsDebugging;
 

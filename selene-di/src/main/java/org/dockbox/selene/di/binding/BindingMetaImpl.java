@@ -21,19 +21,13 @@ import org.dockbox.selene.di.annotations.BindingMeta;
 
 import java.lang.annotation.Annotation;
 
+import lombok.AllArgsConstructor;
+
 @SuppressWarnings("ClassExplicitlyAnnotation")
-class BindingMetaImpl implements BindingMeta {
+@AllArgsConstructor
+public class BindingMetaImpl implements BindingMeta {
 
     private final String value;
-
-    public BindingMetaImpl(String value) {
-        this.value = value;
-    }
-
-    @Override
-    public String value() {
-        return this.value;
-    }
 
     @Override
     public Class<? extends Annotation> annotationType() {
@@ -56,5 +50,10 @@ class BindingMetaImpl implements BindingMeta {
 
     public String toString() {
         return "@" + BindingMeta.class.getName() + "(value=" + this.value + ")";
+    }
+
+    @Override
+    public String value() {
+        return this.value;
     }
 }

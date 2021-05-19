@@ -26,19 +26,28 @@ import java.lang.reflect.Method;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 
+import lombok.Getter;
+import lombok.Setter;
+
 public final class ProxyProperty<T, R> implements InjectorProperty<Class<T>> {
 
     public static final String KEY = "SeleneInternalProxyKey";
-    private final Class<T> type;
+    @Getter
+    private final Class<T> object;
+    @Getter
     private final Method target;
     private final ProxyFunction<T, R> delegate;
     private final ProxyHolder holder = new ProxyHolder();
+
+    @Getter @Setter
     private Phase phase = Phase.OVERWRITE;
+    @Setter
     private boolean overwriteResult = true;
+    @Getter @Setter
     private int priority = 10;
 
     private ProxyProperty(Class<T> type, Method target, ProxyFunction<T, R> delegate) {
-        this.type = type;
+        this.object = type;
         this.target = target;
         this.delegate = delegate;
     }
@@ -64,25 +73,8 @@ public final class ProxyProperty<T, R> implements InjectorProperty<Class<T>> {
         return KEY;
     }
 
-    @Override
-    public Class<T> getObject() {
-        return this.type;
-    }
-
     public Class<?> getTargetClass() {
-        return this.getTargetMethod().getDeclaringClass();
-    }
-
-    public Method getTargetMethod() {
-        return this.target;
-    }
-
-    public Phase getTarget() {
-        return this.phase;
-    }
-
-    public void setTarget(Phase phase) {
-        this.phase = phase;
+        return this.getTarget().getDeclaringClass();
     }
 
     public R delegate(T instance, Object... args) {
@@ -99,18 +91,6 @@ public final class ProxyProperty<T, R> implements InjectorProperty<Class<T>> {
     }
 
     public boolean isVoid() {
-        return Void.TYPE.equals(this.getTargetMethod().getReturnType());
-    }
-
-    public void setOverwriteResult(boolean overwriteResult) {
-        this.overwriteResult = overwriteResult;
-    }
-
-    public int getPriority() {
-        return this.priority;
-    }
-
-    public void setPriority(int priority) {
-        this.priority = priority;
+        return Void.TYPE.equals(this.getTarget().getReturnType());
     }
 }

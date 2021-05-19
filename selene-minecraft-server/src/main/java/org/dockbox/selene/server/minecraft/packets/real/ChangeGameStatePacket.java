@@ -21,19 +21,16 @@ import org.dockbox.selene.di.annotations.RequiresBinding;
 import org.dockbox.selene.server.minecraft.packets.Packet;
 import org.dockbox.selene.server.minecraft.packets.data.Weather;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
+@EqualsAndHashCode(callSuper = true)
 @RequiresBinding
 @SuppressWarnings("AbstractClassWithoutAbstractMethods")
+@Data
 public abstract class ChangeGameStatePacket extends Packet {
 
     private Weather weather = Weather.CLEAR;
-
-    public Weather getWeather() {
-        return this.weather;
-    }
-
-    public void setWeather(Weather weather) {
-        this.weather = weather;
-    }
 
     @Override
     protected Class<?> internalGetPacketType() throws ClassNotFoundException {

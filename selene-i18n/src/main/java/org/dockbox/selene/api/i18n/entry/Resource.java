@@ -27,10 +27,14 @@ import org.dockbox.selene.util.SeleneUtils;
 
 import java.util.Map;
 
+import lombok.Getter;
+
 public class Resource implements ResourceEntry {
 
+    @Getter
     private final Language language;
     private final Object[] formattingArgs;
+    @Getter
     private final String key;
     private final Map<Language, String> resourceMap;
     private final String value;
@@ -69,11 +73,6 @@ public class Resource implements ResourceEntry {
     }
 
     @Override
-    public Language getLanguage() {
-        return this.language;
-    }
-
-    @Override
     public Text asText() {
         return Text.of(this.asString());
     }
@@ -86,11 +85,6 @@ public class Resource implements ResourceEntry {
     @Override
     public String asString() {
         return this.formatCustom();
-    }
-
-    @Override
-    public String getKey() {
-        return this.key;
     }
 
     @Override
@@ -110,7 +104,7 @@ public class Resource implements ResourceEntry {
             if (0 == i) map.put("%s", arg);
         }
         temp = this.replaceFromMap(temp, map);
-        return this.parseColors(temp);
+        return Resource.parseColors(temp);
     }
 
     public static String parseColors(String m) {

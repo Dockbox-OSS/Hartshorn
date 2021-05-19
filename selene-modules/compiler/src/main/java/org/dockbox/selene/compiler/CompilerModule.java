@@ -22,7 +22,7 @@ import org.dockbox.selene.api.module.annotations.Module;
 
 import java.util.Map;
 
-@Module(id = "compiler", name = "Compiler", description = "Dynamic runtime Java compiler", authors = "GuusLieben")
+@Module
 public class CompilerModule {
 
     public Exceptional<Class<?>> compile(String source) {

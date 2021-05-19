@@ -23,26 +23,23 @@ import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.server.minecraft.dimension.Worlds;
 import org.dockbox.selene.server.minecraft.dimension.position.Location;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 @Metadata(alias = "plot-world-model")
+@AllArgsConstructor
+@NoArgsConstructor
 public class PlotWorldModel {
 
+    @Getter
     private String name;
+    @Getter
+    private int height;
     private int size;
     private int road;
     private int zeroX;
     private int zeroZ;
-    private int height;
-
-    public PlotWorldModel() {}
-
-    public PlotWorldModel(String name, int size, int road, int zeroX, int zeroZ, int height) {
-        this.name = name;
-        this.size = size;
-        this.road = road;
-        this.zeroX = zeroX;
-        this.zeroZ = zeroZ;
-        this.height = height;
-    }
 
     public Exceptional<Location> getLocation(int plotX, int plotZ) {
         return Provider.provide(Worlds.class)
@@ -50,16 +47,8 @@ public class PlotWorldModel {
                 .map(world -> new Location(this.getHomeX(plotX), this.getHeight(), this.getHomeZ(plotZ), world));
     }
 
-    public String getName() {
-        return this.name;
-    }
-
     public int getHomeX(int plotX) {
         return this.zeroX + (plotX * (this.size + this.road));
-    }
-
-    public int getHeight() {
-        return this.height;
     }
 
     public int getHomeZ(int plotZ) {

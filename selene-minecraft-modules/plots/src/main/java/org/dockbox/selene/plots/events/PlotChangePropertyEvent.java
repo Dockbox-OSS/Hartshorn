@@ -20,16 +20,15 @@ package org.dockbox.selene.plots.events;
 import org.dockbox.selene.plots.Plot;
 import org.dockbox.selene.plots.PlotProperties;
 
+import lombok.Getter;
+
 public class PlotChangePropertyEvent extends PlotEvent {
 
+    @Getter
     private final PlotProperties property;
 
     public PlotChangePropertyEvent(Plot plot, PlotProperties property) {
         super(plot);
         this.property = property;
-    }
-
-    public PlotProperties getProperty() {
-        return this.property;
     }
 }

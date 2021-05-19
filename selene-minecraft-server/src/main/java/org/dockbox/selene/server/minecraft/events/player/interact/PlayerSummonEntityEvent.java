@@ -22,16 +22,15 @@ import org.dockbox.selene.server.minecraft.players.Player;
 import org.dockbox.selene.server.minecraft.events.entity.SpawnSource;
 import org.dockbox.selene.server.minecraft.events.entity.SummonEntityEvent;
 
+import lombok.Getter;
+
 public class PlayerSummonEntityEvent extends SummonEntityEvent {
 
+    @Getter
     private final Player player;
 
     public PlayerSummonEntityEvent(Entity entity, SpawnSource source, Player player) {
         super(entity, source);
         this.player = player;
-    }
-
-    public Player getPlayer() {
-        return this.player;
     }
 }

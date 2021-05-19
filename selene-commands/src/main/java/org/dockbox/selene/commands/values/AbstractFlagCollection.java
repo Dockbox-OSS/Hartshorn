@@ -19,23 +19,17 @@ package org.dockbox.selene.commands.values;
 
 import java.util.List;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter @Setter
+@AllArgsConstructor
 public abstract class AbstractFlagCollection<T> {
 
     private T reference;
 
-    protected AbstractFlagCollection(T reference) {
-        this.reference = reference;
-    }
-
     protected AbstractFlagCollection() {}
-
-    public T getReference() {
-        return this.reference;
-    }
-
-    public void setReference(T reference) {
-        this.reference = reference;
-    }
 
     public abstract void addNamedFlag(String name);
 

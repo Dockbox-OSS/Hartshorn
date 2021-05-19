@@ -59,4 +59,8 @@ dependencies {
     testFixturesCompile "org.hamcrest:java-hamcrest:$hamcrestVersion"
 
     testFixturesCompile "org.mockito:mockito-all:$mockitoVersion"
+
+
+    testFixturesCompile 'org.projectlombok:lombok:1.18.20'
+    testFixturesAnnotationProcessor 'org.projectlombok:lombok:1.18.20'
 }

@@ -33,7 +33,7 @@ public abstract class MinecraftItems {
     private static final Map<MinecraftVersion, Map<String, Supplier<Item>>> customItems = SeleneUtils.emptyConcurrentMap();
 
     public static MinecraftItems getInstance() {
-        return MinecraftServerBootstrap.getInstance().getMinecraftVersion().getItems();
+        return MinecraftServerBootstrap.instance().getMinecraftVersion().getItems();
     }
 
     public Item getCustom(String identifier) {

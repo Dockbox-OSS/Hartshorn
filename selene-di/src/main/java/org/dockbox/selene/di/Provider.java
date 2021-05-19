@@ -24,7 +24,7 @@ import java.util.function.Consumer;
 public class Provider {
 
     public static <T> T provide(Class<T> type, InjectorProperty<?>... additionalProperties) {
-        return InjectableBootstrap.getInstance().getInstance(type, additionalProperties);
+        return InjectableBootstrap.instance().instance(type, additionalProperties);
     }
 
     public static <T> T provide(Class<T> type, Object... varargs) {

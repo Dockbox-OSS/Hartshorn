@@ -53,5 +53,5 @@ public interface InventoryLayout {
      *
      * @return The iventory type.
      */
-    InventoryType getIventoryType();
+    InventoryType getInventoryType();
 }

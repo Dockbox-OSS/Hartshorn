@@ -125,7 +125,7 @@ public final class ProxyableBootstrap {
                 //noinspection ReturnOfNull
                 return null;
             });
-            property.setTarget(target.at());
+            property.setPhase(target.at());
             property.setPriority(target.priority());
             property.setOverwriteResult(target.overwrite());
             InjectionPoint<C> point = InjectionPoint.of(proxyTargetClass, instance -> {
@@ -149,7 +149,7 @@ public final class ProxyableBootstrap {
 
     private static Object[] prepareArguments(Method method, Object[] args, Object instance) {
         List<Object> arguments = SeleneUtils.emptyList();
-        if (method.getParameters()[0].isAnnotationPresent(Instance.class)) {
+        if (method.getParameterCount() >= 1 && method.getParameters()[0].isAnnotationPresent(Instance.class)) {
             arguments.add(instance);
         }
         arguments.addAll(Arrays.asList(args));

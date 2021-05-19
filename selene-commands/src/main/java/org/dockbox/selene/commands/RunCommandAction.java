@@ -18,7 +18,7 @@
 package org.dockbox.selene.commands;
 
 import org.dockbox.selene.api.i18n.text.actions.CommandAction;
-import org.dockbox.selene.di.annotations.AutoWired;
+import org.dockbox.selene.di.annotations.Wired;
 
 public class RunCommandAction {
 
@@ -28,7 +28,7 @@ public class RunCommandAction {
 
     public static final class RunCommand extends CommandAction<String> {
 
-        @AutoWired
+        @Wired
         private RunCommand(String result) {
             super(result);
         }

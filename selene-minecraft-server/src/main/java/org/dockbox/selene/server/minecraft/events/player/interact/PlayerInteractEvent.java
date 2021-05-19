@@ -24,29 +24,20 @@ import org.dockbox.selene.server.minecraft.players.Hand;
 import org.dockbox.selene.server.minecraft.players.Player;
 import org.dockbox.selene.server.minecraft.players.Sneaking;
 
+import lombok.Getter;
+
+@Getter
 public abstract class PlayerInteractEvent extends AbstractTargetCancellableEvent {
 
-    private final Sneaking sneaking;
+    private final Sneaking crouching;
     private final Hand hand;
     private final ClickType clickType;
 
     protected PlayerInteractEvent(Player player, Hand hand, ClickType clickType) {
         super(player);
-        this.sneaking = player.isSneaking() ? Sneaking.SNEAKING : Sneaking.STANDING;
+        this.crouching = player.isSneaking() ? Sneaking.SNEAKING : Sneaking.STANDING;
         this.hand = hand;
         this.clickType = clickType;
-    }
-
-    public Sneaking getCrouching() {
-        return this.sneaking;
-    }
-
-    public ClickType getClientClickType() {
-        return this.clickType;
-    }
-
-    public Hand getHand() {
-        return this.hand;
     }
 
     @Override

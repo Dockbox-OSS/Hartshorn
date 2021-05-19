@@ -33,10 +33,13 @@ import java.util.Map.Entry;
 
 import javax.inject.Singleton;
 
+import lombok.Getter;
+
 @SuppressWarnings("FieldMayBeFinal")
 @Singleton
 @Extract(Behavior.KEEP)
 @Metadata(alias = "item")
+@Getter
 public class SimplePersistentItemModel extends PersistentItemModel {
 
     private String id;
@@ -56,20 +59,8 @@ public class SimplePersistentItemModel extends PersistentItemModel {
         this.enchantments = new ArrayList<>(item.getEnchantments());
         this.persistentData = SeleneUtils.emptyMap();
         for (Entry<PersistentDataKey<?>, Object> persistentEntry : item.getPersistentData().entrySet()) {
-            this.persistentData.put(persistentEntry.getKey().getDataKeyId(), persistentEntry.getValue());
+            this.persistentData.put(persistentEntry.getKey().getId(), persistentEntry.getValue());
         }
-    }
-
-    public int getMeta() {
-        return this.meta;
-    }
-
-    public String getId() {
-        return this.id;
-    }
-
-    public Map<String, Object> getPersistentData() {
-        return this.persistentData;
     }
 
     @Override
@@ -91,21 +82,5 @@ public class SimplePersistentItemModel extends PersistentItemModel {
         for (Entry<String, Object> persistentEntry : this.persistentData.entrySet())
             item.set(StoredPersistentKey.of(persistentEntry.getKey()), persistentEntry.getValue());
         return item;
-    }
-
-    public Text getTitle() {
-        return this.title;
-    }
-
-    public List<Text> getLore() {
-        return this.lore;
-    }
-
-    public int getAmount() {
-        return this.amount;
-    }
-
-    public List<Enchant> getEnchantments() {
-        return this.enchantments;
     }
 }

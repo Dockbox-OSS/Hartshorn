@@ -64,11 +64,11 @@ public class Vector3N extends Vector2N {
         if (this == o) return true;
         if (!(o instanceof Vector3N)) return false;
         Vector3N vector3N = (Vector3N) o;
-        return y.equals(vector3N.y) && getXd() == vector3N.getXd() && getZd() == vector3N.getZd();
+        return this.getYf() == vector3N.getYf() && this.getXf() == vector3N.getXf() && this.getZf() == vector3N.getZf();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(y);
+        return Objects.hash(this.getXd(), this.getYd(), this.getZd());
     }
 }

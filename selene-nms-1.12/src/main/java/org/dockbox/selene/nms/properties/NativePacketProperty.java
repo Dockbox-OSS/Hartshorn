@@ -21,6 +21,9 @@ import net.minecraft.network.Packet;
 
 import org.dockbox.selene.di.properties.InjectorProperty;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
 /**
  * Provides a native {@link Packet} to a property holder, typically this is only used for {@link
  * org.dockbox.selene.nms.packets.NMSPacket NMSPackets}.
@@ -28,22 +31,15 @@ import org.dockbox.selene.di.properties.InjectorProperty;
  * @param <T>
  *         The type of the native packet.
  */
+@AllArgsConstructor
 public class NativePacketProperty<T extends Packet<?>> implements InjectorProperty<T> {
 
     public static final String KEY = "SeleneSpongeNativePacket";
-    private final T packet;
-
-    public NativePacketProperty(T packet) {
-        this.packet = packet;
-    }
+    @Getter
+    private final T object;
 
     @Override
     public String getKey() {
         return NativePacketProperty.KEY;
-    }
-
-    @Override
-    public T getObject() {
-        return this.packet;
     }
 }

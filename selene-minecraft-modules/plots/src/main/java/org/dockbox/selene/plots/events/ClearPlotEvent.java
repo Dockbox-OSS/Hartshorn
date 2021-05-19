@@ -20,27 +20,15 @@ package org.dockbox.selene.plots.events;
 import org.dockbox.selene.api.events.AbstractCancellableEvent;
 import org.dockbox.selene.server.minecraft.dimension.world.World;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
 public class ClearPlotEvent extends AbstractCancellableEvent {
 
     private final World world;
     private final int x;
     private final int y;
 
-    public ClearPlotEvent(World world, int x, int y) {
-        this.world = world;
-        this.x = x;
-        this.y = y;
-    }
-
-    public World getWorld() {
-        return this.world;
-    }
-
-    public int getX() {
-        return this.x;
-    }
-
-    public int getY() {
-        return this.y;
-    }
 }

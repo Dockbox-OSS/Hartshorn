@@ -19,9 +19,7 @@ package org.dockbox.selene.api.events;
 
 import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.events.parents.Event;
-import org.dockbox.selene.api.events.processing.AbstractEventParamProcessor;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.Set;
@@ -38,10 +36,6 @@ public interface EventBus {
     void post(Event event);
 
     Map<Object, Set<EventWrapper>> getListenersToInvokers();
-
-    void registerProcessors(AbstractEventParamProcessor<?>... processors);
-
-    <T extends Annotation> AbstractEventParamProcessor<T> getParamProcessor(Class<T> annotation, EventStage stage);
 
     void addValidationRule(Function<Method, Exceptional<Boolean>> validator);
 }

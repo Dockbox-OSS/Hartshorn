@@ -20,7 +20,7 @@ package org.dockbox.selene.sponge.objects;
 import com.google.common.collect.Multimap;
 
 import org.dockbox.selene.api.domain.tuple.Tuple;
-import org.dockbox.selene.di.annotations.AutoWired;
+import org.dockbox.selene.di.annotations.Wired;
 import org.dockbox.selene.server.minecraft.players.Profile;
 import org.dockbox.selene.util.SeleneUtils;
 import org.spongepowered.api.profile.GameProfile;
@@ -36,12 +36,12 @@ public class SpongeProfile implements Profile {
 
     private GameProfile gameProfile;
 
-    @AutoWired
+    @Wired
     public SpongeProfile(UUID uuid) {
         this.gameProfile = GameProfile.of(uuid);
     }
 
-    @AutoWired
+    @Wired
     public SpongeProfile(Profile initialValue) {
         if (initialValue instanceof SpongeProfile)
             this.gameProfile = ((SpongeProfile) initialValue).getGameProfile();
@@ -71,7 +71,7 @@ public class SpongeProfile implements Profile {
     }
 
     @Override
-    public Map<String, Collection<Tuple<String, String>>> getAdditionalProperties() {
+    public Map<String, Collection<Tuple<String, String>>> getProperties() {
         Map<String, Collection<ProfileProperty>> properties = this.gameProfile.getPropertyMap().asMap();
         Map<String, Collection<Tuple<String, String>>> convertedProperties = SeleneUtils.emptyMap();
         properties.forEach((key, propertyCollection) -> {

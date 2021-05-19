@@ -25,13 +25,16 @@ import org.dockbox.selene.util.SeleneUtils;
 import java.util.Map;
 import java.util.UUID;
 
+import lombok.Getter;
+
 /** The available properties used when a world is being created or generated. */
+@Getter
 public class WorldCreatingProperties extends WorldProperties {
 
     private final String name;
     private final UUID uniqueId;
 
-    private final Map<String, String> rules = SeleneUtils.emptyConcurrentMap();
+    private final Map<String, String> gamerules = SeleneUtils.emptyConcurrentMap();
 
     public WorldCreatingProperties(
             String name,
@@ -50,23 +53,6 @@ public class WorldCreatingProperties extends WorldProperties {
 
     @Override
     public void setGamerule(String key, String value) {
-        this.rules.put(key, value);
-    }
-
-    @Override
-    public Map<String, String> getGamerules() {
-        return this.rules;
-    }
-
-    public String getName() {
-        return this.name;
-    }
-
-    public UUID getUniqueId() {
-        return this.uniqueId;
-    }
-
-    public Map<String, String> getRules() {
-        return this.rules;
+        this.gamerules.put(key, value);
     }
 }

@@ -23,18 +23,18 @@ import org.dockbox.selene.server.minecraft.players.Player;
 import org.dockbox.selene.worldedit.WorldEditKeys;
 import org.dockbox.selene.worldedit.region.Region;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
 /**
  * Cancellable event which is executed when a player performs a copy action using WorldEdit. Note
  * that this event is fired <i>before</i> the clipboard is populated.
  */
+@Getter
+@AllArgsConstructor
 public class WorldEditCopyEvent extends AbstractCancellableEvent {
 
     private final Player player;
-
-    public WorldEditCopyEvent(Player player) {
-        this.player = player;
-    }
-
     /**
      * Gets the selection of the executing {@link Player}
      *
@@ -42,14 +42,5 @@ public class WorldEditCopyEvent extends AbstractCancellableEvent {
      */
     public Exceptional<Region> getSelection() {
         return this.player.get(WorldEditKeys.SELECTION);
-    }
-
-    /**
-     * Gets the executing {@link Player}
-     *
-     * @return The player
-     */
-    public Player getPlayer() {
-        return this.player;
     }
 }

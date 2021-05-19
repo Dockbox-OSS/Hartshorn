@@ -18,7 +18,7 @@
 package org.dockbox.selene.test.objects.living;
 
 import org.dockbox.selene.api.domain.Exceptional;
-import org.dockbox.selene.di.annotations.AutoWired;
+import org.dockbox.selene.di.annotations.Wired;
 import org.dockbox.selene.server.minecraft.dimension.position.BlockFace;
 import org.dockbox.selene.server.minecraft.dimension.position.Location;
 import org.dockbox.selene.server.minecraft.entities.ItemFrame;
@@ -26,17 +26,23 @@ import org.dockbox.selene.server.minecraft.item.Item;
 
 import java.util.UUID;
 
+import lombok.Getter;
+import lombok.Setter;
+
 public class JUnitItemFrame extends JUnitEntity<ItemFrame> implements ItemFrame, org.dockbox.selene.test.objects.JUnitPersistentDataHolder {
 
-    private Item displayItem;
+    @Setter
+    private Item displayedItem;
+    @Getter @Setter
     private Rotation rotation = Rotation.TOP;
+    @Getter @Setter
     private BlockFace blockFace = BlockFace.NORTH;
 
     public JUnitItemFrame(UUID uuid) {
         super(uuid);
     }
 
-    @AutoWired
+    @Wired
     public JUnitItemFrame(Location location) {
         super(UUID.randomUUID());
         this.setLocation(location);
@@ -49,31 +55,6 @@ public class JUnitItemFrame extends JUnitEntity<ItemFrame> implements ItemFrame,
 
     @Override
     public Exceptional<Item> getDisplayedItem() {
-        return Exceptional.of(this.displayItem);
-    }
-
-    @Override
-    public void setDisplayedItem(Item stack) {
-        this.displayItem = stack;
-    }
-
-    @Override
-    public Rotation getRotation() {
-        return this.rotation;
-    }
-
-    @Override
-    public void setRotation(Rotation rotation) {
-        this.rotation = rotation;
-    }
-
-    @Override
-    public BlockFace getBlockFace() {
-        return this.blockFace;
-    }
-
-    @Override
-    public void setBlockFace(BlockFace blockFace) {
-        this.blockFace = blockFace;
+        return Exceptional.of(this.displayedItem);
     }
 }

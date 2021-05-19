@@ -19,18 +19,17 @@ package org.dockbox.selene.server.minecraft.events.world;
 
 import org.dockbox.selene.server.minecraft.dimension.world.World;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
 /**
  * The abstract type which can be used to listen to all world events holding a existing {@link
  * World} instance.
  */
+@Getter
+@AllArgsConstructor
 public abstract class WorldHoldingEvent extends WorldEvent {
+
     private final World world;
 
-    protected WorldHoldingEvent(World world) {
-        this.world = world;
-    }
-
-    public World getWorld() {
-        return this.world;
-    }
 }

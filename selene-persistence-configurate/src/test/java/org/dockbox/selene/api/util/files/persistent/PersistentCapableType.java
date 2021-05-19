@@ -19,17 +19,14 @@ package org.dockbox.selene.api.util.files.persistent;
 
 import org.dockbox.selene.persistence.PersistentCapable;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@AllArgsConstructor
+@Getter
 public class PersistentCapableType implements PersistentCapable<PersistentModelType> {
 
     private final String capable;
-
-    public PersistentCapableType(String capable) {
-        this.capable = capable;
-    }
-
-    public String getCapable() {
-        return this.capable;
-    }
 
     @Override
     public Class<? extends PersistentModelType> getModelClass() {

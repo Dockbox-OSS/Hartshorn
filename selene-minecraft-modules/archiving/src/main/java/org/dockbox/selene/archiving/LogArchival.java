@@ -22,9 +22,9 @@ import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.events.annotations.Listener;
 import org.dockbox.selene.api.exceptions.Except;
 import org.dockbox.selene.api.module.annotations.Module;
+import org.dockbox.selene.di.annotations.Wired;
 import org.dockbox.selene.persistence.FileManager;
-import org.dockbox.selene.server.events.ServerReloadEvent;
-import org.dockbox.selene.server.events.ServerStartedEvent;
+import org.dockbox.selene.server.events.ServerUpdateEvent;
 
 import java.io.IOException;
 import java.nio.file.FileSystems;
@@ -39,13 +39,7 @@ import java.time.Month;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.inject.Inject;
-
-@Module(
-        id = "logarchival",
-        name = "Log Archival",
-        description = "Automatically organises old server logs",
-        authors = "GuusLieben")
+@Module
 public class LogArchival {
 
     private final PathMatcher filter = FileSystems.getDefault().getPathMatcher("glob:*.log.gz");
@@ -53,11 +47,11 @@ public class LogArchival {
     private final Pattern namePattern = Pattern.compile("(.*?)(-(\\d+))?.log.gz");
     private Path logPath;
 
-    @Inject
+    @Wired
     private FileManager fileManager;
 
     @Listener
-    public void on(ServerStartedEvent serverStartedEvent, ServerReloadEvent reloadEvent) {
+    public void on(ServerUpdateEvent event) {
         this.logPath = this.fileManager.getLogsDir();
         try {
             Selene.log().info("Checking for logs to archive in {}", this.logPath);

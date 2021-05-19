@@ -20,22 +20,15 @@ package org.dockbox.selene.discord.events;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
 @SuppressWarnings("AbstractClassWithoutAbstractMethods")
+@AllArgsConstructor
+@Getter
 public abstract class DiscordMessageAuthorEvent extends DiscordEvent {
 
     private final User author;
     private final Message message;
 
-    protected DiscordMessageAuthorEvent(User author, Message message) {
-        this.author = author;
-        this.message = message;
-    }
-
-    public User getAuthor() {
-        return this.author;
-    }
-
-    public Message getMessage() {
-        return this.message;
-    }
 }

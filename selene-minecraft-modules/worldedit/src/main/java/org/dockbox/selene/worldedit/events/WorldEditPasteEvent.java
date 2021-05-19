@@ -24,14 +24,15 @@ import org.dockbox.selene.worldedit.WorldEditKeys;
 import org.dockbox.selene.worldedit.region.Clipboard;
 import org.dockbox.selene.worldedit.region.Region;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
 /** Cancellable event which is executed when a player performs a paste action using WorldEdit. */
+@Getter
+@AllArgsConstructor
 public class WorldEditPasteEvent extends AbstractCancellableEvent {
 
     private final Player player;
-
-    public WorldEditPasteEvent(Player player) {
-        this.player = player;
-    }
 
     /**
      * Gets the selection of the executing {@link Player}
@@ -50,14 +51,5 @@ public class WorldEditPasteEvent extends AbstractCancellableEvent {
      */
     public Exceptional<Clipboard> getClipboard() {
         return this.player.get(WorldEditKeys.CLIPBOARD);
-    }
-
-    /**
-     * Gets the executing {@link Player}
-     *
-     * @return The player
-     */
-    public Player getPlayer() {
-        return this.player;
     }
 }

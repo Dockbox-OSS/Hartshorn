@@ -22,9 +22,12 @@ import org.dockbox.selene.commands.context.ArgumentConverter;
 import java.util.Arrays;
 import java.util.List;
 
+import lombok.Getter;
+
 public abstract class AbstractArgumentConverter<T> implements ArgumentConverter<T> {
 
     private final String[] keys;
+    @Getter
     private final Class<T> type;
 
     protected AbstractArgumentConverter(Class<T> type, String... keys) {
@@ -37,9 +40,5 @@ public abstract class AbstractArgumentConverter<T> implements ArgumentConverter<
 
     public List<String> getKeys() {
         return Arrays.asList(this.keys);
-    }
-
-    public Class<T> getType() {
-        return this.type;
     }
 }

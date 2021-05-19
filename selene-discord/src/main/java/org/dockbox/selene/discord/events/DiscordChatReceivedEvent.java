@@ -22,6 +22,9 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 
+import lombok.Getter;
+
+@Getter
 public class DiscordChatReceivedEvent extends DiscordMessageAuthorEvent {
 
     private final Guild guild;
@@ -43,13 +46,5 @@ public class DiscordChatReceivedEvent extends DiscordMessageAuthorEvent {
         super(author, message);
         this.guild = guild;
         this.channel = channel;
-    }
-
-    public Guild getGuild() {
-        return this.guild;
-    }
-
-    public TextChannel getChannel() {
-        return this.channel;
     }
 }

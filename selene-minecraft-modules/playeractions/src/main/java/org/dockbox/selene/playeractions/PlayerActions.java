@@ -20,32 +20,34 @@ package org.dockbox.selene.playeractions;
 import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.events.annotations.Listener;
 import org.dockbox.selene.api.module.annotations.Module;
-import org.dockbox.selene.server.minecraft.dimension.Worlds;
-import org.dockbox.selene.server.minecraft.dimension.position.Location;
-import org.dockbox.selene.server.minecraft.entities.Entity;
-import org.dockbox.selene.server.minecraft.players.Gamemode;
-import org.dockbox.selene.server.minecraft.players.Player;
+import org.dockbox.selene.config.annotations.Value;
+import org.dockbox.selene.di.annotations.Wired;
 import org.dockbox.selene.plots.Plot;
 import org.dockbox.selene.plots.PlotKeys;
 import org.dockbox.selene.plots.PlotMembership;
+import org.dockbox.selene.server.minecraft.dimension.Worlds;
+import org.dockbox.selene.server.minecraft.dimension.position.Location;
+import org.dockbox.selene.server.minecraft.entities.Entity;
 import org.dockbox.selene.server.minecraft.events.entity.SpawnSource;
 import org.dockbox.selene.server.minecraft.events.player.PlayerMoveEvent;
 import org.dockbox.selene.server.minecraft.events.player.PlayerTeleportEvent;
 import org.dockbox.selene.server.minecraft.events.player.interact.PlayerInteractEntityEvent;
 import org.dockbox.selene.server.minecraft.events.player.interact.PlayerSummonEntityEvent;
+import org.dockbox.selene.server.minecraft.players.Gamemode;
+import org.dockbox.selene.server.minecraft.players.Player;
 
-import javax.inject.Inject;
+import java.util.List;
 
-@Module(id = "playeractions", name = "Player Actions", description = "Intercepts and verifies the validity of several player actions",
-        authors = "GuusLieben")
+@Module
 public class PlayerActions {
 
-    @Inject
-    private PlayerActionConfiguration configuration;
-    @Inject
+    @Wired
     private Worlds worlds;
-    @Inject
+    @Wired
     private PlayerActionResources resources;
+
+    @Value("modules.player-actions.whitelist")
+    private List<String> whitelist;
 
     @Listener
     public void on(PlayerTeleportEvent event) {
@@ -56,7 +58,7 @@ public class PlayerActions {
     private void verifySpectatorTeleportation(PlayerTeleportEvent event) {
         if (event.getTarget().getGamemode() == Gamemode.SPECTATOR) {
             if (event.getTarget().hasPermission(PlayerActionPermissions.SPECTATOR_BYPASS)) return;
-            if (this.configuration.getTeleportWhitelist().contains(event.getOldLocation().getWorld().getName())) return;
+            if (this.whitelist.contains(event.getOldLocation().getWorld().getName())) return;
 
             event.setCancelled(true);
             event.getTarget().sendWithPrefix(this.resources.getSpectatorNotAllowed());

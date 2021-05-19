@@ -23,7 +23,11 @@ import org.dockbox.selene.di.annotations.BindingMeta;
 import java.lang.annotation.Annotation;
 import java.nio.file.Path;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
 /** Enumerated values containing the file extensions for several commonly used file types. */
+@AllArgsConstructor
 public enum FileType {
     // Compiled Java formats
     CLASS(FileTypes.CLASS),
@@ -38,13 +42,9 @@ public enum FileType {
     CONFIG(FileTypes.CONFIG)
     ;
 
+    @Getter
     private final String extension;
     private final Class<? extends Annotation> format;
-
-    FileType(String extension, Class<? extends Annotation> format) {
-        this.extension = extension;
-        this.format = format;
-    }
 
     FileType(String extension) {
         this.extension = extension;
@@ -80,10 +80,6 @@ public enum FileType {
      */
     public String asFileName(String file) {
         return file + '.' + this.extension;
-    }
-
-    public String getExtension() {
-        return this.extension;
     }
 
     public Class<? extends Annotation> getFormat() {

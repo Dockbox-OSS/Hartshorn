@@ -19,29 +19,19 @@ package org.dockbox.selene.domain.table.column;
 
 import java.util.Objects;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
 public class SimpleColumnIdentifier<T> implements ColumnIdentifier<T> {
 
-    private final String fieldName;
+    private final String columnName;
     private final Class<T> type;
-
-    public SimpleColumnIdentifier(String fieldName, Class<T> type) {
-        this.fieldName = fieldName;
-        this.type = type;
-    }
-
-    @Override
-    public String getColumnName() {
-        return this.fieldName;
-    }
-
-    @Override
-    public Class<T> getType() {
-        return this.type;
-    }
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.fieldName, this.getType());
+        return Objects.hash(this.columnName, this.getType());
     }
 
     @Override
@@ -49,12 +39,12 @@ public class SimpleColumnIdentifier<T> implements ColumnIdentifier<T> {
         if (this == o) return true;
         if (!(o instanceof SimpleColumnIdentifier)) return false;
         SimpleColumnIdentifier<?> that = (SimpleColumnIdentifier<?>) o;
-        return Objects.equals(this.fieldName, that.fieldName)
+        return Objects.equals(this.columnName, that.columnName)
                 && Objects.equals(this.getType(), that.getType());
     }
 
     @Override
     public String toString() {
-        return "SimpleColumnIdentifier{" + "fieldName='" + this.fieldName + '\'' + ", type=" + this.type + '}';
+        return "SimpleColumnIdentifier{" + "fieldName='" + this.columnName + '\'' + ", type=" + this.type + '}';
     }
 }

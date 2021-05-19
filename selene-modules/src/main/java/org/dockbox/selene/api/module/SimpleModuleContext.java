@@ -23,6 +23,7 @@ import org.dockbox.selene.util.SeleneUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Locale;
 import java.util.Map;
 
 public class SimpleModuleContext implements ModuleContext {
@@ -32,51 +33,51 @@ public class SimpleModuleContext implements ModuleContext {
     // only contain one value, however external modules multiple classes marked as @Module may be
     // present.
     private final Map<Class<?>, ModuleStatus> entryStatus = SeleneUtils.emptyConcurrentMap();
-    private String source;
     private Class<?> moduleType;
     private Module module;
+    private String id;
+    private String name;
 
-    public SimpleModuleContext(String source, Class<?> moduleType, Module module) {
-        this.setSource(source);
-        this.setType(moduleType);
-        this.setModule(module);
+    public SimpleModuleContext(Class<?> moduleType, Module module) {
+        this.type(moduleType);
+        this.module(module);
+        String typeName = moduleType.getSimpleName();
+        if (typeName.endsWith("Module")) {
+            typeName = typeName.substring(0, typeName.length()-6); // Remove module suffix
+        }
+        this.name = "".equals(module.name())
+                ? String.join(" ", SeleneUtils.splitCapitals(typeName))
+                : module.name();
+
+        this.id = "".equals(module.id())
+                ? String.join("-", SeleneUtils.splitCapitals(typeName)).toLowerCase(Locale.ROOT)
+                : module.id();
     }
 
     @NotNull
     @Override
-    public String getSource() {
-        return this.source;
-    }
-
-    @Override
-    public void setSource(@NotNull String source) {
-        this.source = source;
-    }
-
-    @NotNull
-    @Override
-    public Class<?> getType() {
+    public Class<?> type() {
         return this.moduleType;
     }
 
     @Override
-    public void setType(@NotNull Class<?> module) {
+    public void type(@NotNull Class<?> module) {
         this.moduleType = module;
     }
 
     @NotNull
     @Override
-    public Module getModule() {
+    public Module module() {
         return this.module;
     }
 
     @Override
-    public void setModule(@NotNull Module module) {
+    public void module(@NotNull Module module) {
         this.module = module;
     }
 
     @Override
-    public void addStatus(@NotNull Class<?> clazz, @NotNull ModuleStatus status) {
+    public void status(@NotNull Class<?> clazz, @NotNull ModuleStatus status) {
         if (0 > status.getIntValue())
             Selene.log().warn("Manually assigning deprecated status to [" + clazz.getCanonicalName() + "]! Deprecated statuses should only be assigned automatically on annotation presence!");
 
@@ -85,9 +86,19 @@ public class SimpleModuleContext implements ModuleContext {
         else this.entryStatus.put(clazz, status);
     }
 
+    @Override
+    public String name() {
+        return this.name;
+    }
+
+    @Override
+    public String id() {
+        return this.id;
+    }
+
     @Nullable
     @Override
-    public ModuleStatus getStatus(@NotNull Class<?> clazz) {
+    public ModuleStatus status(@NotNull Class<?> clazz) {
         return this.entryStatus.getOrDefault(clazz, null);
     }
 }

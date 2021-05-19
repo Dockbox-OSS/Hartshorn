@@ -17,23 +17,24 @@
 
 package org.dockbox.selene.api.module;
 
+import org.dockbox.selene.api.domain.TypedOwner;
 import org.dockbox.selene.api.module.annotations.Module;
 
-public interface ModuleContext {
+public interface ModuleContext extends TypedOwner {
 
-    String getSource();
+    Class<?> type();
 
-    void setSource(String source);
+    void type(Class<?> module);
 
-    Class<?> getType();
+    Module module();
 
-    void setType(Class<?> module);
+    void module(Module module);
 
-    Module getModule();
+    void status(Class<?> clazz, ModuleStatus status);
 
-    void setModule(Module module);
+    String name();
 
-    void addStatus(Class<?> clazz, ModuleStatus status);
+    String id();
 
-    ModuleStatus getStatus(Class<?> clazz);
+    ModuleStatus status(Class<?> clazz);
 }

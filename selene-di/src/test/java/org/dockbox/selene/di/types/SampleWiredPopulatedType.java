@@ -17,28 +17,25 @@
 
 package org.dockbox.selene.di.types;
 
-import org.dockbox.selene.di.annotations.AutoWired;
+import org.dockbox.selene.config.annotations.Value;
+import org.dockbox.selene.di.annotations.Wired;
 import org.dockbox.selene.di.properties.InjectableType;
 import org.dockbox.selene.di.properties.InjectorProperty;
 
-import javax.inject.Inject;
+import lombok.Getter;
 
+@Getter
 public class SampleWiredPopulatedType implements SampleInterface, InjectableType {
 
     private final String name;
 
-    @Inject
+    @Wired
     private SampleField field;
     private boolean enabled = false;
 
-    @AutoWired
+    @Wired
     public SampleWiredPopulatedType(String name) {
         this.name = name;
-    }
-
-    @Override
-    public String name() {
-        return this.name;
     }
 
     @Override
@@ -46,11 +43,4 @@ public class SampleWiredPopulatedType implements SampleInterface, InjectableType
         this.enabled = true;
     }
 
-    public SampleField field() {
-        return this.field;
-    }
-
-    public boolean enabled() {
-        return this.enabled;
-    }
 }

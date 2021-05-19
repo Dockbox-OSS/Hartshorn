@@ -21,22 +21,15 @@ import org.dockbox.selene.api.domain.Target;
 import org.dockbox.selene.api.events.parents.Event;
 import org.dockbox.selene.api.events.parents.Targetable;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+
 @SuppressWarnings("AbstractClassWithoutAbstractMethods")
+@AllArgsConstructor
+@Getter @Setter
 public abstract class AbstractTargetEvent implements Event, Targetable {
 
     private Target target;
 
-    protected AbstractTargetEvent(Target target) {
-        this.target = target;
-    }
-
-    @Override
-    public Target getTarget() {
-        return this.target;
-    }
-
-    @Override
-    public void setTarget(Target target) {
-        this.target = target;
-    }
 }

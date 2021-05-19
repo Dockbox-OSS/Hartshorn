@@ -24,23 +24,18 @@ import org.dockbox.selene.server.minecraft.item.persistence.PersistentItemModel;
 import org.dockbox.selene.util.ReferencedWrapper;
 import org.jetbrains.annotations.NotNull;
 
+import lombok.Getter;
+import lombok.Setter;
+
 public abstract class ReferencedItem<T> extends ReferencedWrapper<T> implements Item {
 
     public static final int DEFAULT_STACK_SIZE = 64;
+    @Getter @Setter
     private String id;
 
     protected ReferencedItem(@NotNull T reference) {
         this.id = this.getId();
         this.setReference(Exceptional.of(reference));
-    }
-
-    @Override
-    public String getId() {
-        return this.id;
-    }
-
-    protected void setId(String id) {
-        this.id = id;
     }
 
     @Override

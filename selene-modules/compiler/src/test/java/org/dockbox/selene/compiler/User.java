@@ -17,39 +17,13 @@
 
 package org.dockbox.selene.compiler;
 
-/**
- * Sample class as JavaBean.
- * 
- * @author michael
- */
+import lombok.Data;
+
+@Data
 public class User {
 
 	private String id;
 	private String name;
 	private long created;
-
-	public String getId() {
-		return this.id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
-
-	public String getName() {
-		return this.name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public long getCreated() {
-		return this.created;
-	}
-
-	public void setCreated(long created) {
-		this.created = created;
-	}
 
 }

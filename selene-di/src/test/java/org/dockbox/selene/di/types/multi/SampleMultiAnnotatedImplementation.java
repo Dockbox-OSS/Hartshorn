@@ -25,7 +25,7 @@ import org.dockbox.selene.di.types.SampleInterface;
 @Binds(value = SampleInterface.class, meta = @BindingMeta("meta"))
 public class SampleMultiAnnotatedImplementation implements SampleInterface {
     @Override
-    public String name() {
+    public String getName() {
         return "MultiAnnotatedSelene";
     }
 }

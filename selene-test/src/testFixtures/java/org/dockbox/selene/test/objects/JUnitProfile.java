@@ -19,7 +19,7 @@ package org.dockbox.selene.test.objects;
 
 import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.domain.tuple.Tuple;
-import org.dockbox.selene.di.annotations.AutoWired;
+import org.dockbox.selene.di.annotations.Wired;
 import org.dockbox.selene.server.minecraft.players.Profile;
 import org.dockbox.selene.util.SeleneUtils;
 
@@ -28,36 +28,27 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import lombok.Getter;
+import lombok.Setter;
+
 public class JUnitProfile implements Profile {
 
+    @Getter
+    @Setter
     private UUID uuid;
+    @Getter
     private Map<String, Collection<Tuple<String, String>>> properties = SeleneUtils.emptyMap();
 
-    @AutoWired
+    @Wired
     public JUnitProfile(UUID uuid) {
         this.uuid = uuid;
     }
 
-    @AutoWired
+    @Wired
     public JUnitProfile(Profile profile) {
         this(profile.getUuid());
         if (profile instanceof JUnitProfile) this.properties = new HashMap<>(((JUnitProfile) profile).properties);
         else Selene.log().warn("Could not copy profile properties as the provided profile is not an instance of JUnitProfile");
-    }
-
-    @Override
-    public UUID getUuid() {
-        return this.uuid;
-    }
-
-    @Override
-    public void setUuid(UUID uuid) {
-        this.uuid = uuid;
-    }
-
-    @Override
-    public Map<String, Collection<Tuple<String, String>>> getAdditionalProperties() {
-        return this.properties;
     }
 
     @Override

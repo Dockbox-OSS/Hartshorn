@@ -38,7 +38,7 @@ public interface CommandContext {
 
     boolean has(String key);
 
-    CommandSource sender();
+    CommandSource getSender();
 
-    String[] permissions();
+    String[] getPermissions();
 }

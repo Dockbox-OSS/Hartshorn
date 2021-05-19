@@ -22,15 +22,11 @@ import org.dockbox.selene.api.events.annotations.Listener;
 import org.dockbox.selene.api.events.handle.EventHandlerRegistry;
 import org.dockbox.selene.api.events.handle.SimpleEventWrapper;
 import org.dockbox.selene.api.events.parents.Event;
-import org.dockbox.selene.api.events.processing.AbstractEventParamProcessor;
-import org.dockbox.selene.api.events.processors.DefaultParamProcessors;
 import org.dockbox.selene.di.annotations.Binds;
 import org.dockbox.selene.util.Reflect;
 import org.dockbox.selene.util.SeleneUtils;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Map;
@@ -53,9 +49,6 @@ public class SimpleEventBus implements EventBus {
     /** The internal registry of handlers for each event. */
     protected static final EventHandlerRegistry handlerRegistry = new EventHandlerRegistry();
 
-    /** The internal map of {@link AbstractEventParamProcessor}s per annotation per stage. */
-    protected static final Map<Class<? extends Annotation>, Map<EventStage, AbstractEventParamProcessor<?>>> parameterProcessors = SeleneUtils.emptyMap();
-
     public SimpleEventBus() {
         // Event listeners need a @Listener annotation
         this.addValidationRule(method -> {
@@ -72,21 +65,12 @@ public class SimpleEventBus implements EventBus {
             }
             return Exceptional.of(true);
         });
-        // Event listeners need at least one parameter
+        // Event listeners must have one and only parameter which is a subclass of Event
         this.addValidationRule(method -> {
-            if (0 == method.getParameterCount()) {
-                return Exceptional.of(false, new IllegalArgumentException("Must have at least one parameter: " + method.toGenericString()));
+            if (1 != method.getParameterCount() || !Reflect.assignableFrom(Event.class, method.getParameterTypes()[0])) {
+                return Exceptional.of(false, new IllegalArgumentException("Must have one (and only one) parameter, which is a subclass of Event: " + method.toGenericString()));
             }
             return Exceptional.of(true);
-        });
-        // Event listeners must have one parameter which is a subclass of Event
-        this.addValidationRule(method -> {
-            for (Class<?> param : method.getParameterTypes()) {
-                if (Reflect.assignableFrom(Event.class, param)) {
-                    return Exceptional.of(true);
-                }
-            }
-            return Exceptional.of(false, new IllegalArgumentException("Parameter must be a subclass of the Event class: " + method.toGenericString()));
         });
     }
 
@@ -147,32 +131,6 @@ public class SimpleEventBus implements EventBus {
     @Override
     public Map<Object, Set<EventWrapper>> getListenersToInvokers() {
         return listenerToInvokers;
-    }
-
-    @Override
-    public void registerProcessors(@NotNull AbstractEventParamProcessor<?> @NotNull ... processors) {
-        for (AbstractEventParamProcessor<?> processor : processors) {
-            parameterProcessors.putIfAbsent(processor.getAnnotationClass(), SeleneUtils.emptyMap());
-            parameterProcessors
-                    .get(processor.getAnnotationClass())
-                    .put(processor.targetStage(), processor);
-        }
-    }
-
-    @Nullable
-    @Override
-    public <T extends Annotation> AbstractEventParamProcessor<T> getParamProcessor(
-            @NotNull Class<T> annotation, EventStage stage) {
-        if (SimpleEventBus.parameterProcessors.isEmpty()) {
-            for (DefaultParamProcessors processor : DefaultParamProcessors.values()) {
-                this.registerProcessors(processor.getProcessor());
-            }
-        }
-
-        if (parameterProcessors.containsKey(annotation)) {
-            return (AbstractEventParamProcessor<T>) parameterProcessors.get(annotation).get(stage);
-        }
-        return null;
     }
 
     @Override

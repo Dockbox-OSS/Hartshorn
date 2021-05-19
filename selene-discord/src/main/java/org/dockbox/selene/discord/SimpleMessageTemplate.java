@@ -27,21 +27,15 @@ import org.dockbox.selene.util.SeleneUtils;
 
 import java.util.Map;
 
+import lombok.Getter;
+import lombok.Setter;
+
 @Binds(MessageTemplate.class)
 public class SimpleMessageTemplate implements MessageTemplate {
 
     private final Map<String, String> filledPlaceholders = SeleneUtils.emptyMap();
+    @Getter @Setter
     private Text content = Text.of();
-
-    @Override
-    public Text getContent() {
-        return this.content;
-    }
-
-    @Override
-    public void setContent(Text content) {
-        this.content = content;
-    }
 
     @Override
     public MessageTemplate copy() {

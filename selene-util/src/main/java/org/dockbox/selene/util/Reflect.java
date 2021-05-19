@@ -20,14 +20,12 @@ package org.dockbox.selene.util;
 import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.entity.TypeRejectedException;
 import org.dockbox.selene.api.entity.annotations.Accessor;
-import org.dockbox.selene.api.entity.annotations.Extract;
-import org.dockbox.selene.api.entity.annotations.Extract.Behavior;
-import org.dockbox.selene.api.entity.annotations.Ignore;
 import org.dockbox.selene.api.entity.annotations.Property;
 import org.dockbox.selene.api.entity.annotations.Rejects;
-import org.dockbox.selene.util.SeleneUtils.Provision;
 import org.dockbox.selene.util.exceptions.EnumException;
 import org.dockbox.selene.util.exceptions.FieldAccessException;
+import org.dockbox.selene.util.exceptions.NotPrimitiveException;
+import org.dockbox.selene.util.exceptions.TypeConversionException;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -35,6 +33,8 @@ import org.jetbrains.annotations.Unmodifiable;
 import org.reflections.Reflections;
 
 import java.lang.annotation.Annotation;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodHandles.Lookup;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -46,14 +46,15 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import javassist.util.proxy.ProxyFactory;
+import sun.misc.Unsafe;
 
 @SuppressWarnings({ "unused", "OverlyComplexClass" })
 public final class Reflect {
@@ -69,6 +70,17 @@ public final class Reflect {
             SeleneUtils.entry(long.class, Long.class),
             SeleneUtils.entry(short.class, Short.class));
 
+    private static final Map<?, Function<String, ?>> nativeFromStringSuppliers = SeleneUtils.ofEntries(
+            SeleneUtils.entry(boolean.class, Boolean::valueOf),
+            SeleneUtils.entry(byte.class, Byte::valueOf),
+            SeleneUtils.entry(char.class, s -> s.charAt(0)),
+            SeleneUtils.entry(double.class, Double::valueOf),
+            SeleneUtils.entry(float.class, Float::valueOf),
+            SeleneUtils.entry(int.class, Integer::valueOf),
+            SeleneUtils.entry(long.class, Long::valueOf),
+            SeleneUtils.entry(short.class, Short::valueOf)
+    );
+
     private static final List<Class<?>> nativeSupportedTypes = SeleneUtils.asList(
             boolean.class, byte.class, short.class,
             int.class, long.class, float.class, double.class,
@@ -77,6 +89,9 @@ public final class Reflect {
 
     private static final String serverClassName = "org.dockbox.selene.server.Server";
 
+    private static Lookup LOOKUP;
+    private static Unsafe UNSAFE;
+
     private Reflect() {}
 
     @SuppressWarnings("unchecked")
@@ -84,8 +99,7 @@ public final class Reflect {
         try {
             Field declaredField = fieldHolder.getDeclaredField(field);
             declaredField.setAccessible(true);
-            T value = (T) fieldValue(declaredField, instance);
-            return Exceptional.of(value);
+            return (Exceptional<T>) fieldValue(declaredField, instance);
         }
         catch (ClassCastException | ReflectiveOperationException e) {
             return Exceptional.of(e);
@@ -93,6 +107,7 @@ public final class Reflect {
     }
 
     public static Exceptional<?> fieldValue(Field field, Object instance) {
+        if (!field.isAccessible()) field.setAccessible(true);
         if (field.isAnnotationPresent(Accessor.class)) {
             Accessor accessor = field.getAnnotation(Accessor.class);
             if (!accessor.getter().equals("")) {
@@ -561,15 +576,6 @@ public final class Reflect {
         }
     }
 
-    @SuppressWarnings("unchecked")
-    private static <A> Object createField(Field field, Provision provision, Function<A, Object> valueCollector) {
-        if (Provision.FIELD == provision) return valueCollector.apply((A) field);
-        else {
-            String fieldName = Reflect.fieldName(field);
-            return valueCollector.apply((A) fieldName);
-        }
-    }
-
     /**
      * Gets field property name.
      *
@@ -650,10 +656,8 @@ public final class Reflect {
         Class<?> original = type;
         while (null != type) {
             try {
-                if (field.contains("*") && !field.contains("?")) {
-                    type.getDeclaredField(field);
-                    return true;
-                }
+                type.getDeclaredField(field);
+                return true;
             }
             catch (ReflectiveOperationException e) {
                 type = type.getSuperclass();
@@ -687,40 +691,6 @@ public final class Reflect {
         if (null != type.getSuperclass()) Reflect.fields(type.getSuperclass(), consumer);
     }
 
-    public static Collection<Field> accessibleFields(Class<?> type) {
-        if (type.isAnnotationPresent(Extract.class)) {
-            Extract extract = type.getAnnotation(Extract.class);
-            Behavior behavior = extract.value();
-            if (behavior == Behavior.KEEP) {
-                return nonSkippedFields(type);
-            }
-            else if (behavior == Behavior.SKIP) return keptFields(type);
-            else throw new IllegalArgumentException("Unsupported behavior " + behavior);
-        }
-        else return keptFields(type);
-    }
-
-    private static Collection<Field> nonSkippedFields(Class<?> type) {
-        Collection<Field> fields = SeleneUtils.emptySet();
-        for (Field field : type.getDeclaredFields()) {
-            if (field.isAnnotationPresent(Extract.class)) {
-                Extract extract = field.getAnnotation(Extract.class);
-                if (extract.value() == Behavior.KEEP) fields.add(field);
-            }
-            else if (!field.isAnnotationPresent(Ignore.class)) {
-                fields.add(field);
-            }
-        }
-        return fields;
-    }
-
-    private static Collection<Field> keptFields(Class<?> type) {
-        return Arrays.stream(type.getDeclaredFields())
-                .filter(field -> field.isAnnotationPresent(Extract.class))
-                .filter(field -> field.getAnnotation(Extract.class).value() == Behavior.KEEP)
-                .collect(Collectors.toSet());
-    }
-
     public static void set(Field field, Object to, Object value) {
         try {
             if (field.isAnnotationPresent(Accessor.class)) {
@@ -730,6 +700,7 @@ public final class Reflect {
                 setter.invoke(to, value);
                 return;
             }
+            if (!field.isAccessible()) field.setAccessible(true);
             field.set(to, value);
         }
         catch (IllegalArgumentException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
@@ -770,11 +741,14 @@ public final class Reflect {
         return lookup(serverClassName);
     }
 
-    public static void registerModuleInitBus(Consumer<Object> consumer) {
+    public static boolean registerModuleInitBus(Consumer<Object> consumer) {
         Class<?> moduleBootstrap = Reflect.lookup("org.dockbox.selene.api.module.SeleneModuleBootstrap");
         if (moduleBootstrap != null) {
-            Reflect.runMethod(moduleBootstrap, null, "getInstance", moduleBootstrap)
-                    .present(bootstrap -> Reflect.runMethod(moduleBootstrap, bootstrap, "registerInitBus", null, new Class[]{ Consumer.class }, consumer));
+            return !Reflect.runMethod(moduleBootstrap, null, "getInstance", moduleBootstrap)
+                    .map(bootstrap -> Reflect.runMethod(moduleBootstrap, bootstrap, "registerInitBus", null, new Class[]{ Consumer.class }, consumer).rethrow().get())
+                    .caught();
+        } else {
+            return false;
         }
     }
 
@@ -798,16 +772,77 @@ public final class Reflect {
         }
     }
 
-    public static void registerModulePostInit(Runnable runnable) {
+    public static boolean registerModulePostInit(Runnable runnable) {
         Class<?> moduleBootstrap = Reflect.lookup("org.dockbox.selene.api.module.SeleneModuleBootstrap");
         if (moduleBootstrap != null) {
-            Reflect.runMethod(moduleBootstrap, null, "getInstance", moduleBootstrap).present(bootstrap -> {
-                Reflect.runMethod(moduleBootstrap, bootstrap, "registerPostInit", null, new Class[]{ Runnable.class }, runnable);
-            });
+            return !Reflect.runMethod(moduleBootstrap, null, "getInstance", moduleBootstrap)
+                    .map(bootstrap -> Reflect.runMethod(moduleBootstrap, bootstrap, "registerPostInit", null, new Class[]{ Runnable.class }, runnable).rethrow().get())
+                    .caught();
+        }
+        else {
+            return false;
         }
     }
 
     public static boolean isProxy(Object o) {
         return o != null && (ProxyFactory.isProxyClass(o.getClass()) || Proxy.isProxyClass(o.getClass()));
+    }
+
+    public static Lookup getTrustedLookup(Class<?> in) {
+        if (Reflect.LOOKUP == null) {
+            try {
+                final Lookup original = MethodHandles.lookup();
+                final Field internal = Lookup.class.getDeclaredField("IMPL_LOOKUP");
+                internal.setAccessible(true);
+                Reflect.LOOKUP = (Lookup) internal.get(original);
+            }
+            catch (NoSuchFieldException | IllegalAccessException e) {
+                throw new RuntimeException("Could not access trusted lookup", e);
+            }
+        }
+        return Reflect.LOOKUP.in(in);
+    }
+
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    public static <T> T primitiveFromString(Class<?> type, String value) throws TypeConversionException {
+        try {
+            if (type.isEnum()) {
+                return (T) Enum.valueOf((Class<? extends Enum>) type, String.valueOf(value).toUpperCase());
+            }
+            else {
+                if (!type.isPrimitive()) {
+                    for (Entry<Class<?>, Class<?>> entry : primitiveWrapperMap.entrySet()) {
+                        if (isPrimitiveWrapper(type, entry.getKey())) type = entry.getKey();
+                    }
+                }
+                if (!type.isPrimitive()) throw new NotPrimitiveException(type);
+                else {
+                    Function<String, ?> converter = nativeFromStringSuppliers.get(type);
+                    return (T) converter.apply(value);
+                }
+            }
+        }
+        catch (Throwable t) {
+            throw new TypeConversionException(type, value);
+        }
+    }
+
+    public static <T> T unsafeInstance(Class<T> type) throws InstantiationException {
+        try {
+            //noinspection unchecked
+            return (T) getUnsafe().allocateInstance(type);
+        }
+        catch (ReflectiveOperationException e) {
+            throw new InstantiationException("Could not access Unsafe instance");
+        }
+    }
+
+    private static Unsafe getUnsafe() throws ReflectiveOperationException {
+        if (null == Reflect.UNSAFE) {
+            Field f = Unsafe.class.getDeclaredField("theUnsafe");
+            f.setAccessible(true);
+            Reflect.UNSAFE = (Unsafe) f.get(null);
+        }
+        return Reflect.UNSAFE;
     }
 }

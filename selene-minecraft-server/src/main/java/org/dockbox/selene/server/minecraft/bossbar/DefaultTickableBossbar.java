@@ -23,6 +23,11 @@ import org.dockbox.selene.util.ReferencedWrapper;
 
 import java.util.Collection;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
 public abstract class DefaultTickableBossbar<T> extends ReferencedWrapper<T> implements Bossbar {
 
     private final String id;
@@ -30,14 +35,6 @@ public abstract class DefaultTickableBossbar<T> extends ReferencedWrapper<T> imp
     private Text text;
     private BossbarColor color;
     private BossbarStyle style;
-
-    protected DefaultTickableBossbar(String id, float percent, Text text, BossbarColor color, BossbarStyle style) {
-        this.id = id;
-        this.percent = percent;
-        this.text = text;
-        this.color = color;
-        this.style = style;
-    }
 
     public void showTo(Collection<Player> players) {
         players.forEach(this::showTo);
@@ -47,14 +44,6 @@ public abstract class DefaultTickableBossbar<T> extends ReferencedWrapper<T> imp
         players.forEach(this::hideFrom);
     }
 
-    public String getId() {
-        return this.id;
-    }
-
-    public float getPercent() {
-        return this.percent;
-    }
-
     public void setPercent(float percent) {
         this.percent = percent;
         this.tick();
@@ -62,26 +51,14 @@ public abstract class DefaultTickableBossbar<T> extends ReferencedWrapper<T> imp
 
     public abstract void tick();
 
-    public Text getText() {
-        return this.text;
-    }
-
     public void setText(Text text) {
         this.text = text;
         this.tick();
     }
 
-    public BossbarColor getColor() {
-        return this.color;
-    }
-
     public void setColor(BossbarColor color) {
         this.color = color;
         this.tick();
-    }
-
-    public BossbarStyle getStyle() {
-        return this.style;
     }
 
     public void setStyle(BossbarStyle style) {

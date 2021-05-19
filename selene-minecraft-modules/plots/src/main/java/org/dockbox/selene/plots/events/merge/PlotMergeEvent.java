@@ -21,6 +21,9 @@ import org.dockbox.selene.server.minecraft.dimension.position.Direction;
 import org.dockbox.selene.plots.Plot;
 import org.dockbox.selene.plots.events.CancellablePlotEvent;
 
+import lombok.Getter;
+
+@Getter
 public class PlotMergeEvent extends CancellablePlotEvent {
 
     private final Direction direction;
@@ -30,13 +33,5 @@ public class PlotMergeEvent extends CancellablePlotEvent {
         super(plot);
         this.direction = direction;
         this.otherPlot = plot.getRelative(direction).orNull();
-    }
-
-    public Direction getDirection() {
-        return this.direction;
-    }
-
-    public Plot getOtherPlot() {
-        return this.otherPlot;
     }
 }

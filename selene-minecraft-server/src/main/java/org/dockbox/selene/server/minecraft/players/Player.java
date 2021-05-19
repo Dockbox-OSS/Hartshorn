@@ -131,7 +131,7 @@ public abstract class Player extends AbstractIdentifiable implements CommandSour
             return GLOBAL;
         } else {
             return PermissionContext.builder()
-                    .forWorld(this.getWorld().getName())
+                    .world(this.getWorld().getName())
                     .build();
         }
     }

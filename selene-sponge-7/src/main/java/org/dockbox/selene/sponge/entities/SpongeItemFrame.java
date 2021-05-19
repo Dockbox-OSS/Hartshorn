@@ -20,7 +20,7 @@ package org.dockbox.selene.sponge.entities;
 import net.minecraft.entity.item.EntityItemFrame;
 
 import org.dockbox.selene.api.domain.Exceptional;
-import org.dockbox.selene.di.annotations.AutoWired;
+import org.dockbox.selene.di.annotations.Wired;
 import org.dockbox.selene.server.minecraft.dimension.position.BlockFace;
 import org.dockbox.selene.server.minecraft.dimension.position.Location;
 import org.dockbox.selene.server.minecraft.entities.ItemFrame;
@@ -33,15 +33,16 @@ import org.spongepowered.api.entity.EntityTypes;
 import org.spongepowered.api.item.inventory.ItemStackSnapshot;
 import org.spongepowered.api.util.Direction;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
 public class SpongeItemFrame extends SpongeCloneableEntity<EntityItemFrame, ItemFrame> implements ItemFrame {
 
     private final org.spongepowered.api.entity.hanging.ItemFrame representation;
 
-    public SpongeItemFrame(org.spongepowered.api.entity.hanging.ItemFrame representation) {
-        this.representation = representation;
-    }
-
-    @AutoWired
+    @Wired
     public SpongeItemFrame(Location location) {
         this.representation = super.create(location);
     }
@@ -94,10 +95,5 @@ public class SpongeItemFrame extends SpongeCloneableEntity<EntityItemFrame, Item
     @Override
     protected ItemFrame from(Entity clone) {
         return new SpongeItemFrame((org.spongepowered.api.entity.hanging.ItemFrame) clone);
-    }
-
-    @Override
-    protected Entity getRepresentation() {
-        return this.representation;
     }
 }
