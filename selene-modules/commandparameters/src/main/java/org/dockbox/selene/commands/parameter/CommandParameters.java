@@ -21,7 +21,7 @@ import org.dockbox.selene.api.BootstrapPhase;
 import org.dockbox.selene.api.Phase;
 import org.dockbox.selene.api.SeleneInformation;
 import org.dockbox.selene.api.module.annotations.Module;
-import org.dockbox.selene.commands.annotations.CustomParameter;
+import org.dockbox.selene.commands.annotations.Parameter;
 import org.dockbox.selene.commands.convert.DynamicPatternConverter;
 import org.dockbox.selene.di.preload.Preloadable;
 import org.dockbox.selene.di.Provider;
@@ -35,9 +35,9 @@ public class CommandParameters implements Preloadable {
 
     @Override
     public void preload() {
-        Collection<Class<?>> customParameters = Reflect.annotatedTypes(SeleneInformation.PACKAGE_PREFIX, CustomParameter.class);
+        Collection<Class<?>> customParameters = Reflect.annotatedTypes(SeleneInformation.PACKAGE_PREFIX, Parameter.class);
         for (Class<?> customParameter : customParameters) {
-            CustomParameter meta = customParameter.getAnnotation(CustomParameter.class);
+            Parameter meta = customParameter.getAnnotation(Parameter.class);
             CustomParameterPattern pattern = Provider.provide(meta.pattern());
             String key = meta.value();
             // Automatically registers to the ArgumentConverterRegistry

@@ -17,13 +17,13 @@
 
 package org.dockbox.selene.sample;
 
-import org.dockbox.selene.commands.annotations.CustomParameter;
+import org.dockbox.selene.commands.annotations.Parameter;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;
 
-@CustomParameter("cuboid")
+@Parameter("cuboid")
 @AllArgsConstructor
 @Getter
 @ToString

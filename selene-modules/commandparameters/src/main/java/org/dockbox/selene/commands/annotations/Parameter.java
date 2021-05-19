@@ -33,7 +33,7 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface CustomParameter {
+public @interface Parameter {
 
     Class<? extends CustomParameterPattern> pattern() default HashtagParameterPattern.class;
     String value();
