@@ -26,7 +26,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 @ExtendWith(SeleneJUnit5Runner.class)
-public class I18NPreloadTests {
+public class I18NServiceModifierTests {
 
     @Test
     public void testResourceServiceIsProxied() {

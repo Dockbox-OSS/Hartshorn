@@ -17,8 +17,6 @@
 
 package org.dockbox.selene.api.i18n;
 
-import org.dockbox.selene.api.BootstrapPhase;
-import org.dockbox.selene.api.Phase;
 import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.domain.OwnerLookup;
@@ -26,39 +24,31 @@ import org.dockbox.selene.api.domain.TypedOwner;
 import org.dockbox.selene.api.i18n.annotations.Resource;
 import org.dockbox.selene.api.i18n.common.ResourceEntry;
 import org.dockbox.selene.api.i18n.exceptions.ProxyMethodBindingException;
-import org.dockbox.selene.di.InjectionPoint;
 import org.dockbox.selene.di.annotations.Service;
-import org.dockbox.selene.di.preload.Preloadable;
+import org.dockbox.selene.di.context.ApplicationContext;
+import org.dockbox.selene.di.properties.InjectorProperty;
+import org.dockbox.selene.di.services.ServiceModifier;
 import org.dockbox.selene.proxy.ProxyProperty;
 import org.dockbox.selene.proxy.handle.ProxyHandler;
 import org.dockbox.selene.util.Reflect;
 import org.dockbox.selene.util.SeleneUtils;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Collection;
 
-@Phase(BootstrapPhase.CONSTRUCT)
-public class I18NPreload implements Preloadable {
-
-    // TODO #260: Refqactor to use injection points so @Resources can be replaced with @Service
-
+public class I18NServiceModifier implements ServiceModifier {
     @Override
-    public void preload() {
-        Selene.context().add(InjectionPoint.of(Object.class, (instance, type, properties) -> {
-            if (!type.isAnnotationPresent(Service.class)) return instance;
-
-            final Collection<Method> methods = Reflect.annotatedMethods(type, Resource.class);
-            final Collection<Field> fields = Reflect.annotatedFields(type, Resource.class);
-            if (methods.isEmpty() && fields.isEmpty()) return instance;
-
-            return this.createResourceProxy(instance, type);
-        }));
+    public <T> boolean preconditions(Class<T> type, @Nullable T instance, InjectorProperty<?>... properties) {
+        final Collection<Method> methods = Reflect.annotatedMethods(type, Resource.class);
+        final Collection<Field> fields = Reflect.annotatedFields(type, Resource.class);
+        return !(methods.isEmpty() && fields.isEmpty());
     }
 
-    @SuppressWarnings("unchecked")
-    private <T, C extends T> C createResourceProxy(T self, Class<T> type) {
-        ProxyHandler<Object> handler = new ProxyHandler<>(self, (Class<Object>) type);
+    @Override
+    public <T> T process(ApplicationContext context, Class<T> type, @Nullable T instance, InjectorProperty<?>... properties) {
+        ProxyHandler<T> handler = new ProxyHandler<>(instance, type);
 
         String prefix = "";
         if (type.isAnnotationPresent(Service.class)) {
@@ -73,15 +63,15 @@ public class I18NPreload implements Preloadable {
             String key = this.extractKey(annotatedMethod, prefix);
             Resource annotation = annotatedMethod.getAnnotation(Resource.class);
 
-            ProxyProperty<?, ResourceEntry> property = ProxyProperty.of(type, annotatedMethod, (instance, args) -> {
+            ProxyProperty<T, ResourceEntry> property = ProxyProperty.of(type, annotatedMethod, (self, args) -> {
                 // Prevents NPE when formatting cached resources without arguments
                 Object[] objects = null == args ? new Object[0] : args;
                 return Selene.context().get(ResourceService.class).getOrCreate(key, annotation.value()).format(objects);
             });
 
-            handler.delegate((ProxyProperty<Object, ?>) property);
+            handler.delegate(property);
         }
-        return Exceptional.of(handler::proxy).map(p -> (C) p).orNull();
+        return Exceptional.of(handler::proxy).orNull();
     }
 
     private String extractKey(Method method, String prefix) {
