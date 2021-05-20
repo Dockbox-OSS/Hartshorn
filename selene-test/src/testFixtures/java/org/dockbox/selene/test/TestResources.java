@@ -17,12 +17,11 @@
 
 package org.dockbox.selene.test;
 
-import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.i18n.annotations.Resource;
-import org.dockbox.selene.api.i18n.annotations.Resources;
 import org.dockbox.selene.api.i18n.common.ResourceEntry;
+import org.dockbox.selene.di.annotations.Service;
 
-@Resources(Selene.class)
+@Service
 public interface TestResources {
 
     @Resource(value = "integrated-confirm-true", key = "server.confirm.true")

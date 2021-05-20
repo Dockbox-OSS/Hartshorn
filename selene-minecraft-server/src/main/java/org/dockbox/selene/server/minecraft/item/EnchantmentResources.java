@@ -18,11 +18,10 @@
 package org.dockbox.selene.server.minecraft.item;
 
 import org.dockbox.selene.api.i18n.annotations.Resource;
-import org.dockbox.selene.api.i18n.annotations.Resources;
 import org.dockbox.selene.api.i18n.common.ResourceEntry;
-import org.dockbox.selene.server.minecraft.DefaultMinecraftServer;
+import org.dockbox.selene.di.annotations.Service;
 
-@Resources(DefaultMinecraftServer.class)
+@Service
 public interface EnchantmentResources {
 
     @Resource(value = "Aqua Affinity", key = "minecraft.enchant.aquaaffinity")

@@ -19,10 +19,10 @@ package org.dockbox.selene.api.i18n.entry;
 
 import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.i18n.annotations.Resource;
-import org.dockbox.selene.api.i18n.annotations.Resources;
 import org.dockbox.selene.api.i18n.common.ResourceEntry;
+import org.dockbox.selene.di.annotations.Service;
 
-@Resources(Selene.class)
+@Service(owner = Selene.class)
 public interface DefaultResources {
 
     @Resource(value = "$3[] $1", key = "prefix")

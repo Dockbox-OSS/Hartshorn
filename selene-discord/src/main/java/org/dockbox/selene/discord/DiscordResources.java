@@ -18,10 +18,10 @@
 package org.dockbox.selene.discord;
 
 import org.dockbox.selene.api.i18n.annotations.Resource;
-import org.dockbox.selene.api.i18n.annotations.Resources;
 import org.dockbox.selene.api.i18n.common.ResourceEntry;
+import org.dockbox.selene.di.annotations.Service;
 
-@Resources(DiscordUtils.class)
+@Service(owner = DiscordUtils.class)
 public interface DiscordResources {
 
     @Resource("Sorry, I don't know what to do with that command!")

@@ -44,6 +44,7 @@ public class Modules {
 
         if (type.isAnnotationPresent(Service.class)) {
             Service service = type.getAnnotation(Service.class);
+            if (service.owner().equals(type) || service.owner().equals(Void.class)) return null;
             return Modules.module(service.owner());
         }
 

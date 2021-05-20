@@ -17,19 +17,14 @@
 
 package org.dockbox.selene.api.i18n;
 
-import org.dockbox.selene.api.entity.annotations.Entity;
 import org.dockbox.selene.api.i18n.annotations.Resource;
-import org.dockbox.selene.api.i18n.annotations.Resources;
 import org.dockbox.selene.api.i18n.common.ResourceEntry;
+import org.dockbox.selene.di.annotations.Service;
 
-@Entity(value = "resource")
-@Resources(TestResources.class)
-public interface TestResources {
+@Service
+public class TestResources {
 
     @Resource("Hello world!")
-    ResourceEntry getTestEntry();
-
-    @Resource("Hello {0}!")
-    ResourceEntry getParameterTestEntry(String name);
+    public ResourceEntry getTestEntry() {return null;}
 
 }

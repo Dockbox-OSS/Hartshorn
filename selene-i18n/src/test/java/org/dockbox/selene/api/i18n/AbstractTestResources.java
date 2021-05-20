@@ -15,22 +15,21 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.commands;
+package org.dockbox.selene.api.i18n;
 
+import org.dockbox.selene.api.entity.annotations.Entity;
 import org.dockbox.selene.api.i18n.annotations.Resource;
 import org.dockbox.selene.api.i18n.common.ResourceEntry;
 import org.dockbox.selene.di.annotations.Service;
 
-@Service(owner = DefaultCommandBus.class)
-public interface CommandResources {
+@Entity("class-resources")
+@Service
+public abstract class AbstractTestResources {
 
-    @Resource(value = "$1This command requires confirmation, click $2[here] $1to confirm", key = "confirm.message")
-    ResourceEntry getConfirmCommand();
+    @Resource("Hello concrete world!")
+    public ResourceEntry getConcreteEntry() {return null;}
 
-    @Resource(value = "$1Confirm running command", key = "confirm.message.hover")
-    ResourceEntry getConfirmCommandHover();
-
-    @Resource(value = "$4The command requires arguments", key = "caught.command.missingargs")
-    ResourceEntry getMissingArguments();
+    @Resource("Hello abstract world!")
+    abstract ResourceEntry getAbstractEntry();
 
 }

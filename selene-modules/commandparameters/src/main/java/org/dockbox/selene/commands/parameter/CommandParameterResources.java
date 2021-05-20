@@ -18,10 +18,10 @@
 package org.dockbox.selene.commands.parameter;
 
 import org.dockbox.selene.api.i18n.annotations.Resource;
-import org.dockbox.selene.api.i18n.annotations.Resources;
 import org.dockbox.selene.api.i18n.common.ResourceEntry;
+import org.dockbox.selene.di.annotations.Service;
 
-@Resources(CommandParameters.class)
+@Service(owner = CommandParameters.class)
 public interface CommandParameterResources {
 
     @Resource(value = "Not enough arguments.", key = "missing_args")

@@ -22,6 +22,7 @@ import org.dockbox.selene.di.InjectConfiguration;
 import org.dockbox.selene.di.ProvisionFailure;
 import org.dockbox.selene.di.SeleneFactory;
 import org.dockbox.selene.di.annotations.Named;
+import org.dockbox.selene.di.annotations.Service;
 import org.dockbox.selene.di.binding.Bindings;
 import org.dockbox.selene.di.exceptions.ApplicationException;
 import org.dockbox.selene.di.inject.Binder;
@@ -34,6 +35,7 @@ import org.dockbox.selene.di.properties.InjectorProperty;
 import org.dockbox.selene.di.properties.UseFactory;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.reflect.Modifier;
 import java.util.function.Consumer;
 
 import lombok.Getter;
@@ -107,17 +109,17 @@ public class InjectorAwareContext extends ManagedSeleneContext {
 
     @Nullable
     public <T> T create(Class<T> type, T typeInstance, InjectorProperty<?>[] additionalProperties) {
-        if (null == typeInstance) {
-            typeInstance = this.injector().get(type, additionalProperties).then(() -> {
-                try {
-                    return this.raw(type);
-                }
-                catch (ProvisionFailure e) {
-                    return this.getUnsafeInstance(type);
-                }
-            }).rethrow().get();
+        try {
+            if (null == typeInstance) {
+                typeInstance = this.injector().get(type, additionalProperties).then(() -> this.raw(type)).rethrow().get();
+            }
+            return typeInstance;
+        } catch (ProvisionFailure e) {
+            // Services can have no explicit implementation even if they are abstract.
+            // Typically these services are expected to be populated through injection points later in time.
+            if ((type.isInterface() || Modifier.isAbstract(type.getModifiers())) && type.isAnnotationPresent(Service.class)) return null;
+            throw e;
         }
-        return typeInstance;
     }
 
     @Override

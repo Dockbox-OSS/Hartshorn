@@ -25,7 +25,6 @@ import org.dockbox.selene.di.properties.InjectableType;
 import org.dockbox.selene.di.properties.InjectorProperty;
 import org.dockbox.selene.util.Reflect;
 import org.dockbox.selene.util.SeleneUtils;
-import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,7 +61,7 @@ public abstract class ManagedSeleneContext implements ApplicationContext {
 
     public <T> void enable(T typeInstance) {
         if (typeInstance == null) return;
-        SeleneUtils.merge(Reflect.annotatedFields(Wired.class, typeInstance.getClass())).stream()
+        SeleneUtils.merge(Reflect.annotatedFields(typeInstance.getClass(), Wired.class)).stream()
                 .filter(field -> field.getAnnotation(Wired.class).enable())
                 .filter(field -> Reflect.assignableFrom(InjectableType.class, field.getType()))
                 .map(field -> {
@@ -96,18 +95,6 @@ public abstract class ManagedSeleneContext implements ApplicationContext {
         }
         catch (Exception e) {
             throw new ProvisionFailure("Could not provide raw instance", e);
-        }
-    }
-
-    protected <T> @Nullable T getUnsafeInstance(Class<T> type) {
-        log.warn("Attempting to get instance of [" + type.getCanonicalName() + "] through Unsafe");
-        try {
-            T t = Reflect.unsafeInstance(type);
-            this.populate(t);
-            return t;
-        }
-        catch (Exception e) {
-            throw new ProvisionFailure("Could not create instance of [" + type.getCanonicalName() + "] through injected, raw or unsafe construction", e);
         }
     }
 

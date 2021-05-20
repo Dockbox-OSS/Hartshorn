@@ -260,7 +260,7 @@ public class GuiceInjector implements Injector {
     public <T> T populate(T instance) {
         if (null != instance) {
             this.rebuild().injectMembers(instance);
-            for (Field field : Reflect.annotatedFields(Wired.class, instance.getClass())) {
+            for (Field field : Reflect.annotatedFields(instance.getClass(), Wired.class)) {
                 Object fieldInstance = ApplicationContextAware.instance().getContext().get(field.getType());
                 Reflect.set(field, instance, fieldInstance);
             }
@@ -326,7 +326,7 @@ public class GuiceInjector implements Injector {
 
     private void handleBinder(Map<Key<?>, Class<?>> bindings, Class<?> binder, Binds annotation) {
         Class<?> binds = annotation.value();
-        if (Reflect.annotatedConstructors(Wired.class, binder).isEmpty()) {
+        if (Reflect.annotatedConstructors(binder, Wired.class).isEmpty()) {
             Entry<Key<?>, Class<?>> entry = this.handleScanned(binder, binds, annotation);
             bindings.put(entry.getKey(), entry.getValue());
         }
@@ -385,7 +385,7 @@ public class GuiceInjector implements Injector {
 
     @Override
     public <C, T extends C> void wire(Class<C> contract, Class<? extends T> implementation, Named meta) {
-        if (Reflect.annotatedConstructors(Wired.class, implementation).isEmpty())
+        if (Reflect.annotatedConstructors(implementation, Wired.class).isEmpty())
             throw new IllegalArgumentException("Implementation should contain at least one constructor annotated with @AutoWired");
 
         this.bindings.add(new ConstructorWireContext<>(contract, implementation, meta.value()));

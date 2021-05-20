@@ -43,14 +43,14 @@ public class ConfigurationPreload implements Preloadable {
 
     @Override
     public void preload() {
-        InjectionPoint<?> point = InjectionPoint.of(Object.class, (instance, properties) -> {
-            Collection<Field> fields = Reflect.annotatedFields(Value.class, instance.getClass());
+        InjectionPoint<?> point = InjectionPoint.of(Object.class, (instance, type, properties) -> {
+            Collection<Field> fields = Reflect.annotatedFields(type, Value.class);
             if (fields.isEmpty()) return instance;
 
             String file = SeleneInformation.PROJECT_ID;
             Class<?> owner = Selene.class;
-            if (instance.getClass().isAnnotationPresent(Configuration.class)) {
-                Configuration configuration = instance.getClass().getAnnotation(Configuration.class);
+            if (type.isAnnotationPresent(Configuration.class)) {
+                Configuration configuration = type.getAnnotation(Configuration.class);
                 file = configuration.value();
                 owner = configuration.service().owner();
             }
@@ -72,7 +72,7 @@ public class ConfigurationPreload implements Preloadable {
 
                     Reflect.set(field, instance, fieldValue);
                 } catch (FieldAccessException | TypeConversionException | NotPrimitiveException e) {
-                    Selene.log().warn("Could not prepare value field " + field.getName() + " in " + instance.getClass().getSimpleName());
+                    Selene.log().warn("Could not prepare value field " + field.getName() + " in " + type.getSimpleName());
                 }
             }
 

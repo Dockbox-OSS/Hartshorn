@@ -18,10 +18,10 @@
 package org.dockbox.selene.playeractions;
 
 import org.dockbox.selene.api.i18n.annotations.Resource;
-import org.dockbox.selene.api.i18n.annotations.Resources;
 import org.dockbox.selene.api.i18n.common.ResourceEntry;
+import org.dockbox.selene.di.annotations.Service;
 
-@Resources(PlayerActions.class)
+@Service(owner = PlayerActions.class)
 public interface PlayerActionResources {
     
     @Resource(value = "$4You are not allowed to teleport while in spectator mode", key = "playeractions.spectator.notallowed")

@@ -18,10 +18,10 @@
 package org.dockbox.selene.dave;
 
 import org.dockbox.selene.api.i18n.annotations.Resource;
-import org.dockbox.selene.api.i18n.annotations.Resources;
 import org.dockbox.selene.api.i18n.common.ResourceEntry;
+import org.dockbox.selene.di.annotations.Service;
 
-@Resources(DaveModule.class)
+@Service(owner = DaveModule.class)
 public interface DaveResources {
 
     @Resource("Here's a useful link, $1{0}")

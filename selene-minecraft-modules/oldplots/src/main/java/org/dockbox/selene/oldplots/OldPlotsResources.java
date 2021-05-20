@@ -18,11 +18,11 @@
 package org.dockbox.selene.oldplots;
 
 import org.dockbox.selene.api.i18n.annotations.Resource;
-import org.dockbox.selene.api.i18n.annotations.Resources;
 import org.dockbox.selene.api.i18n.common.ResourceEntry;
+import org.dockbox.selene.di.annotations.Service;
 import org.jetbrains.annotations.NotNull;
 
-@Resources(OldPlotsModule.class)
+@Service(owner = OldPlotsModule.class)
 public interface OldPlotsResources {
 
     @Resource(value = "$3 - $1{0}$2, $1{1}, {2}", key = "oldplots.list.single")

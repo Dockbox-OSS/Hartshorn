@@ -711,16 +711,16 @@ public final class Reflect {
         }
     }
 
-    public static Collection<Field> annotatedFields(Class<? extends Annotation> annotation, Class<?> type) {
+    public static Collection<Field> annotatedFields(Class<?> type, Class<? extends Annotation> annotation) {
         Collection<Field> fields = new ArrayList<>();
         for (Field declaredField : type.getDeclaredFields()) {
             if (declaredField.isAnnotationPresent(annotation)) fields.add(declaredField);
         }
-        if (type.getSuperclass() != null) fields.addAll(annotatedFields(annotation, type.getSuperclass()));
+        if (type.getSuperclass() != null) fields.addAll(annotatedFields(type.getSuperclass(), annotation));
         return fields;
     }
 
-    public static <T> Collection<Constructor<T>> annotatedConstructors(Class<? extends Annotation> annotation, Class<T> type) {
+    public static <T> Collection<Constructor<T>> annotatedConstructors(Class<T> type, Class<? extends Annotation> annotation) {
         Collection<Constructor<T>> constructors = SeleneUtils.emptyList();
         //noinspection unchecked
         for (Constructor<T> constructor : (Constructor<T>[]) type.getDeclaredConstructors()) {

@@ -41,7 +41,7 @@ public class ConstructorWireContext<T, I extends T> implements WireContext<T, I>
         Class<?>[] argumentTypes = Arrays.stream(arguments).map(Object::getClass).toArray(Class<?>[]::new);
         try {
             // TODO: Downcast primitive wrappers (include testing)
-            Collection<Constructor<I>> constructors = Reflect.annotatedConstructors(Wired.class, this.getImplementation());
+            Collection<Constructor<I>> constructors = Reflect.annotatedConstructors(this.getImplementation(), Wired.class);
             Constructor<I> ctor = null;
             for (Constructor<I> constructor : constructors) {
                 boolean valid = true;
