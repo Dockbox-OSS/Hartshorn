@@ -98,16 +98,4 @@ public abstract class ManagedSeleneContext implements ApplicationContext {
         }
     }
 
-    protected <T> @Nullable T getUnsafeInstance(Class<T> type) {
-        log.warn("Attempting to get instance of [" + type.getCanonicalName() + "] through Unsafe");
-        try {
-            T t = Reflect.unsafeInstance(type);
-            this.populate(t);
-            return t;
-        }
-        catch (Exception e) {
-            throw new ProvisionFailure("Could not create instance of [" + type.getCanonicalName() + "] through injected, raw or unsafe construction", e);
-        }
-    }
-
 }
