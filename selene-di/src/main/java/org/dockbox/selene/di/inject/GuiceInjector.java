@@ -76,6 +76,7 @@ public class GuiceInjector implements Injector {
 
     private final transient Set<WireContext<?, ?>> bindings = SeleneUtils.emptyConcurrentSet();
     private final transient Set<AbstractModule> modules = SeleneUtils.emptyConcurrentSet();
+
     private com.google.inject.Injector internalInjector;
 
     @Override

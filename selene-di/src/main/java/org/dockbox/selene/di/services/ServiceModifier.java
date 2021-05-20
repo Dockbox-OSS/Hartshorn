@@ -15,30 +15,15 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.di.context;
+package org.dockbox.selene.di.services;
 
-import org.dockbox.selene.di.InjectionPoint;
-import org.dockbox.selene.di.ProvisionFailure;
-import org.dockbox.selene.di.inject.Injector;
+import org.dockbox.selene.di.context.ApplicationContext;
 import org.dockbox.selene.di.properties.InjectorProperty;
-import org.dockbox.selene.di.services.ServiceModifier;
-import org.dockbox.selene.di.services.ServiceProcessor;
+import org.jetbrains.annotations.Nullable;
 
-public interface ApplicationContext extends ApplicationBinder, SeleneContext {
+public interface ServiceModifier {
 
-    void add(InjectionPoint<?> property);
-
-    <T> T create(Class<T> type, T typeInstance, InjectorProperty<?>... properties);
-
-    <T> T inject(Class<T> type, T typeInstance, InjectorProperty<?>... properties);
-
-    <T> void enable(T typeInstance);
-
-    <T> T raw(Class<T> type) throws ProvisionFailure;
-
-    Injector injector();
-
-    void add(ServiceProcessor processor);
-    void add(ServiceModifier modifier);
+    <T> boolean preconditions(Class<T> type, @Nullable T instance, InjectorProperty<?>... properties);
+    <T> T process(ApplicationContext context, Class<T> type, @Nullable T instance, InjectorProperty<?>... properties);
 
 }

@@ -26,13 +26,13 @@ import org.dockbox.selene.di.annotations.Service;
 import org.dockbox.selene.di.binding.Bindings;
 import org.dockbox.selene.di.exceptions.ApplicationException;
 import org.dockbox.selene.di.inject.Binder;
-import org.dockbox.selene.di.inject.InjectSource;
 import org.dockbox.selene.di.inject.Injector;
-import org.dockbox.selene.di.inject.InjectorAdapter;
 import org.dockbox.selene.di.inject.wired.WireContext;
 import org.dockbox.selene.di.properties.InjectableType;
 import org.dockbox.selene.di.properties.InjectorProperty;
 import org.dockbox.selene.di.properties.UseFactory;
+import org.dockbox.selene.di.services.ServiceLocator;
+import org.dockbox.selene.di.services.ServiceModifier;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Modifier;
@@ -43,10 +43,10 @@ import lombok.Getter;
 public class InjectorAwareContext extends ManagedSeleneContext {
 
     @Getter
-    private final InjectorAdapter adapter;
+    private final ContextAdapter adapter;
 
-    public InjectorAwareContext(InjectSource source) {
-        this.adapter = new InjectorAdapter(source);
+    public InjectorAwareContext(InjectSource inject, ServiceSource service) {
+        this.adapter = new ContextAdapter(inject, service);
         this.bind(ApplicationContext.class, this);
     }
 
@@ -69,6 +69,13 @@ public class InjectorAwareContext extends ManagedSeleneContext {
         this.injector().populate(typeInstance);
 
         typeInstance = this.inject(type, typeInstance, additionalProperties);
+
+        if (type.isAnnotationPresent(Service.class)) {
+            for (ServiceModifier serviceModifier : this.serviceModifiers) {
+                if (serviceModifier.preconditions(type, typeInstance, additionalProperties))
+                    typeInstance = serviceModifier.process(this, type, typeInstance, additionalProperties);
+            }
+        }
 
         // Enables all fields which are not annotated with @Module or @DoNotEnable
         this.enable(typeInstance);
@@ -120,6 +127,11 @@ public class InjectorAwareContext extends ManagedSeleneContext {
             if ((type.isInterface() || Modifier.isAbstract(type.getModifiers())) && type.isAnnotationPresent(Service.class)) return null;
             throw e;
         }
+    }
+
+    @Override
+    protected ServiceLocator locator() {
+        return this.adapter.getLocator();
     }
 
     @Override
