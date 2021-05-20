@@ -34,8 +34,8 @@ public class ProxyPreload implements Preloadable {
     @Override
     public void preload() {
         ProxyableBootstrap.boostrapDelegates();
-        Selene.context().add(InjectionPoint.of(Object.class, (instance, properties) -> {
-            ProxyHandler<Object> handler = new ProxyHandler<>(instance);
+        Selene.context().add(InjectionPoint.of(Object.class, (instance, type, properties) -> {
+            ProxyHandler<Object> handler = new ProxyHandler<>(instance, type);
             boolean proxy = false;
             for (InjectorProperty<?> property : properties) {
                 if (property instanceof ProxyProperty) {
