@@ -104,6 +104,14 @@ public abstract class ManagedSeleneContext implements ApplicationContext {
         }
     }
 
+    protected void process(String prefix) {
+        final Collection<Class<?>> services = this.locator().locate(prefix);
+        for (ServiceProcessor serviceProcessor : this.serviceProcessors) {
+            for (Class<?> service : services) {
+                if (serviceProcessor.preconditions(service)) serviceProcessor.process(this, service);
+            }
+        }
+    }
 
     @Override
     public void add(ServiceProcessor processor) {

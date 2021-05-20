@@ -147,6 +147,7 @@ public class InjectorAwareContext extends ManagedSeleneContext {
     @Override
     public void bind(String prefix) {
         this.injector().bind(prefix);
+        super.process(prefix);
     }
 
     @Override
