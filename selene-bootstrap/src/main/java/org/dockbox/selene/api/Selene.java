@@ -18,6 +18,7 @@
 package org.dockbox.selene.api;
 
 import org.dockbox.selene.api.domain.Exceptional;
+import org.dockbox.selene.di.context.ApplicationContext;
 import org.dockbox.selene.util.SeleneUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,8 +43,12 @@ public final class Selene {
      *
      * @return The {@link Selene} instance
      */
-    public static SeleneBootstrap getServer() {
+    public static SeleneBootstrap server() {
         return SeleneBootstrap.instance();
+    }
+
+    public static ApplicationContext context() {
+        return server().getContext();
     }
 
     /**

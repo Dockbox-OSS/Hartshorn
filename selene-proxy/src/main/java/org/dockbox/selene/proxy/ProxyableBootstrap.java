@@ -139,7 +139,7 @@ public final class ProxyableBootstrap {
                 }
                 return instance;
             });
-            Selene.getServer().injectAt(point);
+            Selene.context().add(point);
         }
         catch (NoSuchMethodException e) {
             Selene.log().warn("Proxy target does not have declared method '" + methodName + "(" + Arrays.toString(arguments) + ") [" + proxyClass
