@@ -28,12 +28,12 @@ import com.google.inject.spi.LinkedKeyBinding;
 
 import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.domain.tuple.Tuple;
+import org.dockbox.selene.di.ApplicationContextAware;
 import org.dockbox.selene.di.InjectConfiguration;
-import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.di.annotations.Bean;
-import org.dockbox.selene.di.annotations.Named;
 import org.dockbox.selene.di.annotations.Binds;
 import org.dockbox.selene.di.annotations.Combines;
+import org.dockbox.selene.di.annotations.Named;
 import org.dockbox.selene.di.annotations.Service;
 import org.dockbox.selene.di.annotations.Wired;
 import org.dockbox.selene.di.binding.BindingData;
@@ -244,7 +244,7 @@ public class GuiceInjector implements Injector {
         if (null != instance) {
             this.rebuild().injectMembers(instance);
             for (Field field : Reflect.annotatedFields(Wired.class, instance.getClass())) {
-                Object fieldInstance = Provider.provide(field.getType());
+                Object fieldInstance = ApplicationContextAware.instance().getContext().get(field.getType());
                 Reflect.set(field, instance, fieldInstance);
             }
         }
@@ -258,14 +258,14 @@ public class GuiceInjector implements Injector {
         for (int i = 0; i < parameters.length; i++) {
             Parameter parameter = parameters[i];
             if (parameter.isAnnotationPresent(Named.class)) {
-                invokingParameters[i] = Provider.provide(parameter.getType(), BindingMetaProperty.of(parameter.getAnnotation(Named.class)));
+                invokingParameters[i] = ApplicationContextAware.instance().getContext().get(parameter.getType(), BindingMetaProperty.of(parameter.getAnnotation(Named.class)));
             } else {
-                invokingParameters[i] = Provider.provide(parameter.getType());
+                invokingParameters[i] = ApplicationContextAware.instance().getContext().get(parameter.getType());
             }
         }
         try {
             //noinspection unchecked
-            return (T) method.invoke(Provider.provide(method.getDeclaringClass()), invokingParameters);
+            return (T) method.invoke(ApplicationContextAware.instance().getContext().get(method.getDeclaringClass()), invokingParameters);
         }
         catch (InvocationTargetException | IllegalAccessException | ClassCastException e) {
             return null;

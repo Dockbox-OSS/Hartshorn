@@ -15,25 +15,31 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.di.inject;
+package org.dockbox.selene.di;
 
-import org.dockbox.selene.api.domain.Exceptional;
-import org.dockbox.selene.di.binding.BindingData;
-import org.dockbox.selene.di.context.ApplicationBinder;
-import org.dockbox.selene.di.properties.InjectorProperty;
+import org.dockbox.selene.di.context.ApplicationContext;
+import org.dockbox.selene.di.context.InjectorAwareContext;
+import org.dockbox.selene.di.inject.InjectSource;
 
-import java.lang.reflect.Method;
-import java.util.List;
+import lombok.Getter;
 
-public interface Injector extends ApplicationBinder {
+public class ApplicationContextAware {
 
-    void reset();
+    @Getter
+    private final ApplicationContext context;
 
-    <T> Exceptional<T> get(Class<T> type, InjectorProperty<?>... additionalProperties);
+    private static ApplicationContextAware instance;
 
-    List<BindingData> getBindingData();
+    protected ApplicationContextAware(InjectSource source) {
+        this.context = new InjectorAwareContext(source);
+    }
 
-    <T> T invoke(Method method);
+    public static ApplicationContextAware instance() {
+        return instance;
+    }
 
-    <T, I extends T> Exceptional<Class<I>> getStaticBinding(Class<T> type);
+    protected static void instance(ApplicationContextAware bootstrap) {
+        ApplicationContextAware.instance = bootstrap;
+    }
+
 }
