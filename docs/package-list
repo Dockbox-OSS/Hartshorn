@@ -7,11 +7,9 @@ org.dockbox.selene.api.entity.annotations
 org.dockbox.selene.api.events
 org.dockbox.selene.api.events.annotations
 org.dockbox.selene.api.events.annotations.filter
-org.dockbox.selene.api.events.annotations.processing
 org.dockbox.selene.api.events.handle
 org.dockbox.selene.api.events.parents
 org.dockbox.selene.api.events.processing
-org.dockbox.selene.api.events.processors
 org.dockbox.selene.api.exceptions
 org.dockbox.selene.api.i18n
 org.dockbox.selene.api.i18n.annotations
@@ -44,6 +42,8 @@ org.dockbox.selene.commands.registration
 org.dockbox.selene.commands.source
 org.dockbox.selene.commands.values
 org.dockbox.selene.compiler
+org.dockbox.selene.config
+org.dockbox.selene.config.annotations
 org.dockbox.selene.database
 org.dockbox.selene.database.dialects.sqlite
 org.dockbox.selene.database.exceptions
@@ -53,6 +53,8 @@ org.dockbox.selene.dave.models
 org.dockbox.selene.di
 org.dockbox.selene.di.annotations
 org.dockbox.selene.di.binding
+org.dockbox.selene.di.context
+org.dockbox.selene.di.exceptions
 org.dockbox.selene.di.inject
 org.dockbox.selene.di.inject.modules
 org.dockbox.selene.di.preload
