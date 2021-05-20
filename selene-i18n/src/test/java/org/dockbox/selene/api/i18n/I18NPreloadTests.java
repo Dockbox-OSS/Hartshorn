@@ -30,13 +30,13 @@ public class I18NPreloadTests {
 
     @Test
     public void testResourceServiceIsProxied() {
-        TestResources resources = Selene.context().get(TestResources.class);
+        ITestResources resources = Selene.context().get(ITestResources.class);
         Assertions.assertTrue(Reflect.isProxy(resources));
     }
 
     @Test
     public void testResourceServiceReturnsValidResourceKey() {
-        TestResources resources = Selene.context().get(TestResources.class);
+        ITestResources resources = Selene.context().get(ITestResources.class);
         ResourceEntry testEntry = resources.getTestEntry();
 
         Assertions.assertNotNull(testEntry);
@@ -45,7 +45,7 @@ public class I18NPreloadTests {
 
     @Test
     public void testResourceServiceReturnsValidResourceValue() {
-        TestResources resources = Selene.context().get(TestResources.class);
+        ITestResources resources = Selene.context().get(ITestResources.class);
         ResourceEntry testEntry = resources.getTestEntry();
 
         Assertions.assertNotNull(testEntry);
@@ -54,11 +54,37 @@ public class I18NPreloadTests {
 
     @Test
     public void testResourceServiceFormatsParamResource() {
-        TestResources resources = Selene.context().get(TestResources.class);
+        ITestResources resources = Selene.context().get(ITestResources.class);
         ResourceEntry testEntry = resources.getParameterTestEntry("world");
 
         Assertions.assertNotNull(testEntry);
         Assertions.assertEquals("Hello world!", testEntry.plain());
     }
 
+    @Test
+    void testAbstractServiceAbstractMethodIsProxied() {
+        AbstractTestResources resources = Selene.context().get(AbstractTestResources.class);
+        final ResourceEntry testEntry = resources.getAbstractEntry();
+
+        Assertions.assertNotNull(testEntry);
+        Assertions.assertEquals("Hello abstract world!", testEntry.plain());
+    }
+
+    @Test
+    void testAbstractServiceConcreteMethodIsProxied() {
+        AbstractTestResources resources = Selene.context().get(AbstractTestResources.class);
+        final ResourceEntry testEntry = resources.getConcreteEntry();
+
+        Assertions.assertNotNull(testEntry);
+        Assertions.assertEquals("Hello concrete world!", testEntry.plain());
+    }
+
+    @Test
+    void testConcreteServiceMethodIsProxied() {
+        TestResources resources = Selene.context().get(TestResources.class);
+        final ResourceEntry testEntry = resources.getTestEntry();
+
+        Assertions.assertNotNull(testEntry);
+        Assertions.assertEquals("Hello world!", testEntry.plain());
+    }
 }
