@@ -23,6 +23,7 @@ buildscript {
     }
     dependencies {
         classpath 'com.github.jengelman.gradle.plugins:shadow:4.0.4'
+        classpath 'io.franzbecker:gradle-lombok:1.6'
     }
 }
 
@@ -30,6 +31,7 @@ plugins {
     id 'java'
     id 'java-library'
     id 'org.cadixdev.licenser' version '0.5.0'
+    id 'de.lukaskoerfer.gradle.delombok' version '0.2'
 }
 
 static def getVersionName() {
@@ -46,6 +48,7 @@ subprojects { Project subProject ->
     apply plugin: 'maven'
     apply plugin: 'com.github.johnrengelman.shadow'
     apply plugin: 'org.cadixdev.licenser'
+    apply plugin: 'de.lukaskoerfer.gradle.delombok'
 
     license {
         header = rootProject.file("HEADER.txt")
@@ -72,6 +75,10 @@ subprojects { Project subProject ->
         relocate 'org.yaml.snakeyaml', 'org.dockbox.selene.internal.snakeyaml'
     }
 
+    javadoc {
+        dependsOn delombok
+        failOnError = false
+    }
 }
 
 allprojects {
