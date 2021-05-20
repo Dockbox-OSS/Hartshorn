@@ -855,8 +855,10 @@ public final class SeleneUtils {
      *
      * @return the t [ ]
      */
-    public static Object[] merge(Object[] arrayOne, Object[] arrayTwo) {
-        return Stream.of(arrayOne, arrayTwo).flatMap(Stream::of).toArray(Object[]::new);
+    public static <T> T[] merge(T[] arrayOne, T[] arrayTwo) {
+        List<T> merged = SeleneUtils.asList(arrayOne);
+        merged.addAll(SeleneUtils.asList(arrayTwo));
+        return merged.toArray(arrayOne);
     }
 
     /**
