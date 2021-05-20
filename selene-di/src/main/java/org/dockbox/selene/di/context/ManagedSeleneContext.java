@@ -32,6 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Constructor;
+import java.util.Collection;
 import java.util.Objects;
 import java.util.Set;
 
@@ -92,11 +93,16 @@ public abstract class ManagedSeleneContext implements ApplicationContext {
     }
 
     public <T> T raw(Class<T> type) throws ProvisionFailure {
+        return this.raw(type, true);
+    }
+
+    @Override
+    public <T> T raw(Class<T> type, boolean populate) throws ProvisionFailure {
         try {
             Constructor<T> ctor = type.getDeclaredConstructor();
             ctor.setAccessible(true);
             T t = ctor.newInstance();
-            this.populate(t);
+            if (populate) this.populate(t);
             return t;
         }
         catch (Exception e) {
