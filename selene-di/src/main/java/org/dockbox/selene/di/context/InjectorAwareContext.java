@@ -21,10 +21,14 @@ import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.di.InjectConfiguration;
 import org.dockbox.selene.di.ProvisionFailure;
 import org.dockbox.selene.di.SeleneFactory;
+import org.dockbox.selene.di.adapter.ContextAdapter;
+import org.dockbox.selene.di.adapter.InjectSource;
+import org.dockbox.selene.di.adapter.ServiceSource;
 import org.dockbox.selene.di.annotations.Named;
 import org.dockbox.selene.di.annotations.Service;
 import org.dockbox.selene.di.binding.Bindings;
 import org.dockbox.selene.di.exceptions.ApplicationException;
+import org.dockbox.selene.di.inject.BeanContext;
 import org.dockbox.selene.di.inject.Binder;
 import org.dockbox.selene.di.inject.Injector;
 import org.dockbox.selene.di.inject.wired.WireContext;
@@ -137,6 +141,16 @@ public class InjectorAwareContext extends ManagedSeleneContext {
     @Override
     public <T> T populate(T o) {
         return this.injector().populate(o);
+    }
+
+    @Override
+    public void add(WireContext<?, ?> context) {
+        this.injector().add(context);
+    }
+
+    @Override
+    public void add(BeanContext<?, ?> context) {
+        this.injector().add(context);
     }
 
     @Override

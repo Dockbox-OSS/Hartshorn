@@ -270,6 +270,21 @@ public class GuiceInjector implements Injector {
     }
 
     @Override
+    public void add(WireContext<?, ?> context) {
+        this.bindings.add(context);
+    }
+
+    @Override
+    public void add(BeanContext<?, ?> context) {
+        if (context.isSingleton()) {
+            this.modules.add(new InstanceModule<>(context.getKey(), context.getProvider().get()));
+        } else {
+            this.modules.add(new ProvisionModule<>(context.getKey(), () -> context.getProvider().get()));
+        }
+        this.reset();
+    }
+
+    @Override
     public <T> T invoke(Method method) {
         Parameter[] parameters = method.getParameters();
         Object[] invokingParameters = new Object[parameters.length];
