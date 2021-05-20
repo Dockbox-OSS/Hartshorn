@@ -15,16 +15,14 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.di.inject;
+package org.dockbox.selene.di.inject.wired;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import org.dockbox.selene.di.exceptions.ApplicationException;
 
-@Getter
-@AllArgsConstructor
-class WireBinding<T, I extends T> {
+public interface WireContext<T, I extends T> {
 
-    private final Class<T> contract;
-    private final Class<I> implementation;
+    String getName();
+    Class<T> getContract();
+    T create(Object... arguments) throws ApplicationException;
 
 }
