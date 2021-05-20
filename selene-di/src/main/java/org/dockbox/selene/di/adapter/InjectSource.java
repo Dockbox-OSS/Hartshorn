@@ -15,27 +15,23 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.di.context;
+package org.dockbox.selene.di.adapter;
 
-import org.dockbox.selene.di.InjectionPoint;
-import org.dockbox.selene.di.ProvisionFailure;
+import org.dockbox.selene.di.inject.GuiceInjector;
 import org.dockbox.selene.di.inject.Injector;
-import org.dockbox.selene.di.properties.InjectorProperty;
-import org.dockbox.selene.di.services.ServiceProcessor;
 
-public interface ApplicationContext extends ApplicationBinder, SeleneContext {
+import java.util.function.Supplier;
 
-    void add(InjectionPoint<?> property);
+public enum InjectSource {
+    GUICE(GuiceInjector::new);
 
-    <T> T create(Class<T> type, T typeInstance, InjectorProperty<?>... properties);
+    private final Supplier<Injector> supplier;
 
-    <T> T inject(Class<T> type, T typeInstance, InjectorProperty<?>... properties);
+    InjectSource(Supplier<Injector> supplier) {
+        this.supplier = supplier;
+    }
 
-    <T> void enable(T typeInstance);
-
-    <T> T raw(Class<T> type) throws ProvisionFailure;
-
-    Injector injector();
-
-    void add(ServiceProcessor processor);
+    public Injector create() {
+        return this.supplier.get();
+    }
 }

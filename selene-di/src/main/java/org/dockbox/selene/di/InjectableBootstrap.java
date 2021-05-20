@@ -17,7 +17,8 @@
 
 package org.dockbox.selene.di;
 
-import org.dockbox.selene.di.inject.InjectSource;
+import org.dockbox.selene.di.adapter.InjectSource;
+import org.dockbox.selene.di.adapter.ServiceSource;
 import org.dockbox.selene.di.properties.InjectorProperty;
 
 @SuppressWarnings("AbstractClassWithoutAbstractMethods")
@@ -25,8 +26,8 @@ public abstract class InjectableBootstrap extends ApplicationContextAware {
 
     private static InjectableBootstrap instance;
 
-    protected InjectableBootstrap() {
-        super(InjectSource.GUICE);
+    protected InjectableBootstrap(String prefix) {
+        super(InjectSource.GUICE, ServiceSource.DEFAULT);
         instance(this);
     }
 

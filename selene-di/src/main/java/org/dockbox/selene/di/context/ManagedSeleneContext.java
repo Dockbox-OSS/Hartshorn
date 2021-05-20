@@ -23,6 +23,8 @@ import org.dockbox.selene.di.annotations.Wired;
 import org.dockbox.selene.di.exceptions.ApplicationException;
 import org.dockbox.selene.di.properties.InjectableType;
 import org.dockbox.selene.di.properties.InjectorProperty;
+import org.dockbox.selene.di.services.ServiceLocator;
+import org.dockbox.selene.di.services.ServiceProcessor;
 import org.dockbox.selene.util.Reflect;
 import org.dockbox.selene.util.SeleneUtils;
 import org.slf4j.Logger;
@@ -34,9 +36,10 @@ import java.util.Set;
 
 public abstract class ManagedSeleneContext implements ApplicationContext {
 
-    private static final Logger log = LoggerFactory.getLogger("Selene Managed Context");
+    protected static final Logger log = LoggerFactory.getLogger("Selene Managed Context");
     protected final transient Set<InjectionPoint<?>> injectionPoints = SeleneUtils.emptyConcurrentSet();
 
+    protected final transient Set<ServiceProcessor> serviceProcessors = SeleneUtils.emptyConcurrentSet();
     @Override
     public void add(InjectionPoint<?> property) {
         if (null != property) this.injectionPoints.add(property);
@@ -98,4 +101,9 @@ public abstract class ManagedSeleneContext implements ApplicationContext {
         }
     }
 
+
+    @Override
+    public void add(ServiceProcessor processor) {
+        this.serviceProcessors.add(processor);
+    }
 }

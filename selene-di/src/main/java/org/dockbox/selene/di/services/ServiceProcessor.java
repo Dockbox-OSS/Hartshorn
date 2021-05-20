@@ -15,32 +15,13 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.di;
+package org.dockbox.selene.di.services;
 
-import org.dockbox.selene.di.adapter.ServiceSource;
 import org.dockbox.selene.di.context.ApplicationContext;
-import org.dockbox.selene.di.context.InjectorAwareContext;
-import org.dockbox.selene.di.adapter.InjectSource;
 
-import lombok.Getter;
+public interface ServiceProcessor {
 
-public class ApplicationContextAware {
-
-    @Getter
-    private final ApplicationContext context;
-
-    private static ApplicationContextAware instance;
-
-    protected ApplicationContextAware(InjectSource inject, ServiceSource service) {
-        this.context = new InjectorAwareContext(inject, service);
-    }
-
-    public static ApplicationContextAware instance() {
-        return instance;
-    }
-
-    protected static void instance(ApplicationContextAware bootstrap) {
-        ApplicationContextAware.instance = bootstrap;
-    }
+    boolean preconditions(Class<?> type);
+    <T> void process(ApplicationContext context, Class<T> type);
 
 }

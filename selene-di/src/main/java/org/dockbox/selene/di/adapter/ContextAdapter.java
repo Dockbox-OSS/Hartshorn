@@ -15,20 +15,22 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.di.inject;
+package org.dockbox.selene.di.adapter;
 
-import java.util.function.Supplier;
+import org.dockbox.selene.di.inject.Injector;
+import org.dockbox.selene.di.services.ServiceLocator;
 
-public enum InjectSource {
-    GUICE(GuiceInjector::new);
+import lombok.Getter;
 
-    private final Supplier<Injector> supplier;
+@Getter
+public final class ContextAdapter {
 
-    InjectSource(Supplier<Injector> supplier) {
-        this.supplier = supplier;
+    private final Injector injector;
+    private final ServiceLocator locator;
+
+    public ContextAdapter(InjectSource inject, ServiceSource service) {
+        this.injector = inject.create();
+        this.locator = service.create();
     }
 
-    public Injector create() {
-        return this.supplier.get();
-    }
 }
