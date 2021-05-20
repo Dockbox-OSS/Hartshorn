@@ -19,13 +19,16 @@ package org.dockbox.selene.di.context;
 
 import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.di.InjectConfiguration;
+import org.dockbox.selene.di.annotations.Named;
 import org.dockbox.selene.di.inject.Binder;
+import org.dockbox.selene.di.inject.wired.WireContext;
+import org.dockbox.selene.di.properties.InjectorProperty;
 
 public interface ApplicationBinder extends Binder {
 
     void bind(InjectConfiguration configuration);
     void bind(String prefix);
-    <T, I extends T> Exceptional<Class<I>> findWire(Class<T> contract);
+    <T, I extends T> Exceptional<WireContext<T, I>> firstWire(Class<T> contract, InjectorProperty<Named> property);
     <T> T populate(T type);
 
 }
