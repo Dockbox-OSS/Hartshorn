@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.config;
 
-import org.dockbox.selene.di.Provider;
+import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.test.SeleneJUnit5Runner;
 import org.dockbox.selene.test.util.JUnitConfigurationManager;
 import org.junit.jupiter.api.Assertions;
@@ -33,7 +33,7 @@ public class ConfigurationManagerTests {
     @Test
     void testNormalValuesAreAccessible() {
         JUnitConfigurationManager.add("demo", "Selene");
-        ValueTyped typed = Provider.provide(ValueTyped.class);
+        ValueTyped typed = Selene.context().get(ValueTyped.class);
 
         Assertions.assertNotNull(typed.getString());
         Assertions.assertEquals("Selene", typed.getString());
@@ -44,7 +44,7 @@ public class ConfigurationManagerTests {
         Map<String, Object> values = new HashMap<>();
         values.put("demo", "Selene");
         JUnitConfigurationManager.add("nested", values);
-        ValueTyped typed = Provider.provide(ValueTyped.class);
+        ValueTyped typed = Selene.context().get(ValueTyped.class);
 
         Assertions.assertNotNull(typed.getNestedString());
         Assertions.assertEquals("Selene", typed.getNestedString());

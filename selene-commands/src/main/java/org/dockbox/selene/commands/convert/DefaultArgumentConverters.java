@@ -25,7 +25,6 @@ import org.dockbox.selene.api.i18n.common.Language;
 import org.dockbox.selene.api.i18n.common.ResourceEntry;
 import org.dockbox.selene.api.i18n.text.Text;
 import org.dockbox.selene.commands.context.ArgumentConverter;
-import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.di.annotations.Service;
 import org.dockbox.selene.di.properties.InjectableType;
 import org.dockbox.selene.di.properties.InjectorProperty;
@@ -123,13 +122,13 @@ public final class DefaultArgumentConverters implements InjectableType {
     public static final ArgumentConverter<Duration> DURATION = new CommandValueConverter<>(Duration.class, SeleneUtils::durationOf, "duration");
 
     public static final ArgumentConverter<ResourceEntry> RESOURCE = new CommandValueConverter<>(ResourceEntry.class, in -> {
-        ResourceService rs = Provider.provide(ResourceService.class);
+        ResourceService rs = Selene.context().get(ResourceService.class);
         String validKey = rs.createValidKey(in);
 
         Exceptional<? extends ResourceEntry> or = rs.get(validKey);
         if (or.present()) return or.map(ResourceEntry.class::cast);
 
-        return Provider.provide(ResourceService.class).get(validKey);
+        return Selene.context().get(ResourceService.class).get(validKey);
     }, "resource", "i18n", "translation");
 
     public static final ArgumentConverter<Text> TEXT = new CommandValueConverter<>(Text.class, in -> Exceptional.of(Text.of(in)), "text");

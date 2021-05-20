@@ -17,7 +17,6 @@
 
 package org.dockbox.selene.test.objects.inventory;
 
-import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.server.minecraft.inventory.Slot;
 import org.dockbox.selene.server.minecraft.item.Item;

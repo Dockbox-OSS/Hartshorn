@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.api.i18n.permissions;
 
-import org.dockbox.selene.di.Provider;
+import org.dockbox.selene.api.Selene;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -50,6 +50,6 @@ public class PermissionContext {
     }
 
     public Permission toPermission(String key) {
-        return Provider.provide(Permission.class, key, this);
+        return Selene.context().get(Permission.class, key, this);
     }
 }

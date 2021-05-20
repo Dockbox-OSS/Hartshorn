@@ -33,7 +33,7 @@ public class SpongeTaskRunner extends TaskRunner {
                 .execute(task::run)
                 .name("Selene$" + task.getClass().getSimpleName() + '#' + System.currentTimeMillis())
                 .async()
-                .submit(Selene.getServer());
+                .submit(Selene.server());
     }
 
     @Override
@@ -44,6 +44,6 @@ public class SpongeTaskRunner extends TaskRunner {
                 .execute(task::run)
                 .name("Selene$" + task.getClass().getSimpleName() + '#' + System.currentTimeMillis())
                 .async()
-                .submit(Selene.getServer());
+                .submit(Selene.server());
     }
 }

@@ -17,9 +17,9 @@
 
 package org.dockbox.selene.server.minecraft.events.packet;
 
+import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.events.AbstractCancellableEvent;
 import org.dockbox.selene.api.events.EventBus;
-import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.server.minecraft.packets.Packet;
 import org.dockbox.selene.server.minecraft.players.Player;
 import org.jetbrains.annotations.NotNull;
@@ -52,7 +52,7 @@ public class PacketEvent<T extends Packet> extends AbstractCancellableEvent {
 
     @Override
     public @NotNull PacketEvent<T> post() {
-        Provider.provide(EventBus.class).post(this);
+        Selene.context().get(EventBus.class).post(this);
         return this;
     }
 }

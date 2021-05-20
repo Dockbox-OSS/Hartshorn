@@ -18,10 +18,10 @@
 package org.dockbox.selene.api.keys;
 
 import org.dockbox.selene.api.CheckedFunction;
+import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.domain.OwnerLookup;
 import org.dockbox.selene.api.domain.TypedOwner;
-import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.util.Reflect;
 
 import java.util.Locale;
@@ -67,7 +67,7 @@ public final class Keys {
      * @return the persistent data key
      */
     public static <T> PersistentDataKey<T> persistent(Class<T> type, String name, Class<?> owningClass) {
-        return Keys.persistent(type, name, Provider.provide(OwnerLookup.class).lookup(owningClass));
+        return Keys.persistent(type, name, Selene.context().get(OwnerLookup.class).lookup(owningClass));
     }
 
     /**

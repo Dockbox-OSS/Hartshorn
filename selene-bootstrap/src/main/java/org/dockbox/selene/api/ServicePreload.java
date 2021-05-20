@@ -17,7 +17,6 @@
 
 package org.dockbox.selene.api;
 
-import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.di.annotations.Service;
 import org.dockbox.selene.di.preload.Preloadable;
 import org.dockbox.selene.util.Reflect;
@@ -28,6 +27,6 @@ public class ServicePreload implements Preloadable {
     public void preload() {
         // Register additional services early on, before modules are constructed
         Reflect.annotatedTypes(SeleneInformation.PACKAGE_PREFIX, Service.class)
-                .forEach(Provider::provide);
+                .forEach(service -> Selene.context().get(service));
     }
 }

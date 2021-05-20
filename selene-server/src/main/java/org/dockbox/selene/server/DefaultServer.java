@@ -35,8 +35,8 @@ import org.dockbox.selene.commands.RunCommandAction;
 import org.dockbox.selene.commands.annotations.Command;
 import org.dockbox.selene.commands.context.CommandContext;
 import org.dockbox.selene.commands.context.CommandParameter;
-import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.di.annotations.Wired;
+import org.dockbox.selene.di.context.ApplicationContext;
 import org.dockbox.selene.server.events.ServerReloadEvent;
 import org.dockbox.selene.util.SeleneUtils;
 
@@ -50,15 +50,17 @@ public class DefaultServer implements Server {
 
     @Wired
     private DefaultServerResources resources;
+    @Wired
+    private ApplicationContext context;
 
     // Parent command
     @Command(permission = DefaultServer.SELENE_ADMIN)
     public void debugModules(MessageReceiver source) {
-        Provider.with(ModuleManager.class, em -> {
-            PaginationBuilder pb = Provider.provide(PaginationBuilder.class);
+        Selene.context().with(ModuleManager.class, em -> {
+            PaginationBuilder pb = this.context.get(PaginationBuilder.class);
 
             List<Text> content = SeleneUtils.emptyList();
-            content.add(this.resources.getInfoHeader(Selene.getServer().getVersion())
+            content.add(this.resources.getInfoHeader(Selene.server().getVersion())
                     .translate(source).asText()
             );
             content.add(this.resources.getAuthors(String.join(",", SeleneBootstrap.getAuthors()))
@@ -102,10 +104,10 @@ public class DefaultServer implements Server {
 
     @Command(value = "reload", arguments = "[id{Module}]", confirm = true, permission = DefaultServer.SELENE_ADMIN)
     public void reload(MessageReceiver src, CommandContext ctx) {
-        EventBus eb = Provider.provide(EventBus.class);
+        EventBus eb = this.context.get(EventBus.class);
         if (ctx.has("id")) {
             ModuleContainer container = ctx.get("id");
-            Exceptional<?> oi = Provider.provide(ModuleManager.class).getInstance(container.id());
+            Exceptional<?> oi = this.context.get(ModuleManager.class).getInstance(container.id());
 
             oi.present(o -> {
                 eb.post(new ServerReloadEvent(), o.getClass());
@@ -133,7 +135,7 @@ public class DefaultServer implements Server {
         optionalCooldownId
                 .present(cooldownId -> {
                     String cid = cooldownId.getValue();
-                    Provider.provide(CommandBus.class).confirmCommand(cid).absent(() ->
+                    this.context.get(CommandBus.class).confirmCommand(cid).absent(() ->
                             src.send(this.resources.getConfirmInvalidOther()));
                 })
                 .absent(() -> src.send(this.resources.getConfirmInvalidId()));

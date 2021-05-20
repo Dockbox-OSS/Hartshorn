@@ -17,6 +17,7 @@
 
 package org.dockbox.selene.test.objects.living;
 
+import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.domain.tuple.Tristate;
 import org.dockbox.selene.api.i18n.common.Language;
@@ -24,7 +25,6 @@ import org.dockbox.selene.api.i18n.common.ResourceEntry;
 import org.dockbox.selene.api.i18n.permissions.Permission;
 import org.dockbox.selene.api.i18n.text.Text;
 import org.dockbox.selene.api.i18n.text.pagination.Pagination;
-import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.server.minecraft.dimension.Worlds;
 import org.dockbox.selene.server.minecraft.dimension.position.Location;
 import org.dockbox.selene.server.minecraft.dimension.world.World;
@@ -79,7 +79,7 @@ public class JUnitPlayer extends Player implements JUnitPersistentDataHolder {
     public JUnitPlayer(@NotNull UUID uniqueId, @NotNull String name) {
         super(uniqueId, name);
         this.setDisplayName(Text.of(name));
-        Worlds worlds = Provider.provide(Worlds.class);
+        Worlds worlds = Selene.context().get(Worlds.class);
         this.setLocation(new Location(0, 0, 0, worlds.getWorld(worlds.getRootWorldId()).orNull()));
         ((JUnitWorld) this.getWorld()).addEntity(this);
     }

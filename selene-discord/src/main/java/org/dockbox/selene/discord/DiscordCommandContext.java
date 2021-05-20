@@ -20,9 +20,9 @@ package org.dockbox.selene.discord;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.User;
 
+import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.i18n.common.ResourceEntry;
 import org.dockbox.selene.api.i18n.text.Text;
-import org.dockbox.selene.di.Provider;
 
 import java.time.LocalDateTime;
 
@@ -40,18 +40,18 @@ public class DiscordCommandContext {
     private final String[] arguments;
 
     public void sendToChannel(Text text) {
-        Provider.provide(DiscordUtils.class).sendToTextChannel(text, this.getChannel());
+        Selene.context().get(DiscordUtils.class).sendToTextChannel(text, this.getChannel());
     }
 
     public void sendToChannel(ResourceEntry text) {
-        Provider.provide(DiscordUtils.class).sendToTextChannel(text, this.getChannel());
+        Selene.context().get(DiscordUtils.class).sendToTextChannel(text, this.getChannel());
     }
 
     public void sendToAuthor(Text text) {
-        Provider.provide(DiscordUtils.class).sendToUser(text, this.getAuthor());
+        Selene.context().get(DiscordUtils.class).sendToUser(text, this.getAuthor());
     }
 
     public void sendToAuthor(ResourceEntry text) {
-        Provider.provide(DiscordUtils.class).sendToUser(text, this.getAuthor());
+        Selene.context().get(DiscordUtils.class).sendToUser(text, this.getAuthor());
     }
 }

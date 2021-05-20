@@ -20,7 +20,8 @@ package org.dockbox.selene.palswap.fileparsers;
 import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.exceptions.Except;
-import org.dockbox.selene.di.Provider;
+import org.dockbox.selene.di.annotations.Wired;
+import org.dockbox.selene.di.context.ApplicationContext;
 import org.dockbox.selene.palswap.BlockRegistryModule;
 import org.dockbox.selene.persistence.FileManager;
 import org.dockbox.selene.server.minecraft.MinecraftVersion;
@@ -42,6 +43,9 @@ public abstract class BlockRegistryParser {
     //TODO: add command updates ItemData
     protected Map<String, String> itemRegistry;
     protected Map<String, String> blockIdentifierIDs;
+
+    @Wired
+    private ApplicationContext context;
 
     @NotNull
     protected List<String> parseFile(String filename) {
@@ -102,14 +106,14 @@ public abstract class BlockRegistryParser {
     }
 
     public void SaveItemData(String filename) {
-        FileManager fm = Provider.provide(FileManager.class);
+        FileManager fm = this.context.get(FileManager.class);
         Path file = fm.getDataFile(BlockRegistryModule.class, filename);
         fm.write(file, ItemData.of(this.itemRegistry, this.blockIdentifierIDs));
     }
 
     public void LoadItemData(String filename) {
         if (null == this.itemRegistry || null == this.blockIdentifierIDs) {
-            FileManager fm = Provider.provide(FileManager.class);
+            FileManager fm = this.context.get(FileManager.class);
             Path file = fm.getDataFile(BlockRegistryModule.class, filename);
 
             ItemData itemData = fm.read(file, ItemData.class).or(new ItemData());

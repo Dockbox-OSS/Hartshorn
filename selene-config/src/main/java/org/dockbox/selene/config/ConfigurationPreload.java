@@ -25,7 +25,6 @@ import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.config.annotations.Configuration;
 import org.dockbox.selene.config.annotations.Value;
 import org.dockbox.selene.di.InjectionPoint;
-import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.di.preload.Preloadable;
 import org.dockbox.selene.persistence.FileManager;
 import org.dockbox.selene.persistence.FileType;
@@ -56,10 +55,10 @@ public class ConfigurationPreload implements Preloadable {
                 owner = configuration.service().owner();
             }
 
-            FileManager fileManager = Provider.provide(FileManager.class, FileTypeProperty.of(FileType.YAML));
+            FileManager fileManager = Selene.context().get(FileManager.class, FileTypeProperty.of(FileType.YAML));
             Path config = fileManager.getConfigFile(owner, file);
 
-            ConfigurationManager configurationManager = Provider.provide(ConfigurationManager.class, config);
+            ConfigurationManager configurationManager = Selene.context().get(ConfigurationManager.class, config);
 
             for (Field field : fields) {
                 try {
@@ -79,6 +78,6 @@ public class ConfigurationPreload implements Preloadable {
 
             return instance;
         });
-        Selene.getServer().injectAt(point);
+        Selene.context().add(point);
     }
 }

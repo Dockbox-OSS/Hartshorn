@@ -37,7 +37,8 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.events.parents.Event;
-import org.dockbox.selene.di.Provider;
+import org.dockbox.selene.di.annotations.Wired;
+import org.dockbox.selene.di.context.ApplicationContext;
 import org.dockbox.selene.discord.DiscordCommandContext;
 import org.dockbox.selene.discord.DiscordUtils;
 import org.dockbox.selene.discord.events.DiscordBotDisconnectedEvent;
@@ -62,6 +63,9 @@ import java.util.Arrays;
 import java.util.List;
 
 public class SpongeDiscordListener extends ListenerAdapter {
+
+    @Wired
+    private ApplicationContext context;
 
     @Override
     public void onReconnect(@NotNull ReconnectedEvent event) {
@@ -130,7 +134,7 @@ public class SpongeDiscordListener extends ListenerAdapter {
                     alias,
                     arguments.toArray(new String[0])
             );
-            Provider.provide(DiscordUtils.class).post(alias, ctx);
+            this.context.get(DiscordUtils.class).post(alias, ctx);
         }
     }
 

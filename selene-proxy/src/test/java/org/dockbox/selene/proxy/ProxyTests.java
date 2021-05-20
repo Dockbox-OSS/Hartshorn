@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.proxy;
 
-import org.dockbox.selene.di.Provider;
+import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.proxy.handle.ProxyHandler;
 import org.dockbox.selene.proxy.types.ConcreteProxyTarget;
 import org.dockbox.selene.proxy.types.FinalProxyTarget;
@@ -70,7 +70,7 @@ public class ProxyTests {
                 ConcreteProxyTarget.class,
                 ConcreteProxyTarget.class.getMethod("getName"),
                 (instance, args, holder) -> "Selene");
-        ConcreteProxyTarget proxy = Provider.provide(ConcreteProxyTarget.class, property);
+        ConcreteProxyTarget proxy = Selene.context().get(ConcreteProxyTarget.class, property);
 
         Assertions.assertNotNull(proxy);
         Assertions.assertNotNull(proxy.getName());
@@ -79,7 +79,7 @@ public class ProxyTests {
 
     @Test
     void testGlobalProxiesCanApply() {
-        GlobalProxyTarget target = Provider.provide(GlobalProxyTarget.class);
+        GlobalProxyTarget target = Selene.context().get(GlobalProxyTarget.class);
         Assertions.assertTrue(Reflect.isProxy(target));
         Assertions.assertEquals("GlobalSelene", target.getName());
     }

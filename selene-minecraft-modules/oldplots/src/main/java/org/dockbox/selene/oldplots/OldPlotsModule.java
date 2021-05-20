@@ -30,8 +30,8 @@ import org.dockbox.selene.database.SQLMan;
 import org.dockbox.selene.database.dialects.sqlite.SQLitePathProperty;
 import org.dockbox.selene.database.exceptions.InvalidConnectionException;
 import org.dockbox.selene.database.properties.SQLColumnProperty;
-import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.di.annotations.Wired;
+import org.dockbox.selene.di.context.ApplicationContext;
 import org.dockbox.selene.domain.table.Table;
 import org.dockbox.selene.persistence.FileManager;
 import org.dockbox.selene.persistence.FileType;
@@ -53,6 +53,8 @@ public class OldPlotsModule {
     private FileManager fileManager;
     @Wired
     private OldPlotsResources resources;
+    @Wired
+    private ApplicationContext context;
 
     // Avoid null
     private PlotWorldModelList modelList = new PlotWorldModelList();
@@ -72,7 +74,7 @@ public class OldPlotsModule {
         }
         Player player = ctx.get("player");
 
-        SQLMan<?> man = OldPlotsModule.getSQLMan();
+        SQLMan<?> man = this.getSQLMan();
         Table plots = man.getTable("plot");
         plots = plots.where(OldPlotsIdentifiers.UUID, player.getUniqueId().toString());
 
@@ -98,18 +100,18 @@ public class OldPlotsModule {
             }
         });
 
-        Provider.provide(PaginationBuilder.class)
+        this.context.get(PaginationBuilder.class)
                 .content(plotContent)
                 .title(Text.of(this.resources.getListTitle(player.getName()).translate(player)))
                 .build()
                 .send(source);
     }
 
-    private static SQLMan<?> getSQLMan() {
-        Path dataDirectory = Provider.provide(FileManager.class).getDataDir(OldPlotsModule.class);
+    private SQLMan<?> getSQLMan() {
+        Path dataDirectory = this.context.get(FileManager.class).getDataDir(OldPlotsModule.class);
         Path path = dataDirectory.resolve("oldplots.db");
 
-        return Provider.provide(SQLMan.class,
+        return this.context.get(SQLMan.class,
                 FileTypeProperty.of(FileType.SQLITE),
                 new SQLitePathProperty(path),
                 new SQLColumnProperty("id", OldPlotsIdentifiers.PLOT_ID),
@@ -123,7 +125,7 @@ public class OldPlotsModule {
     public void teleportCommand(Player source, CommandContext context)
             throws InvalidConnectionException {
         Integer id = context.get("id");
-        SQLMan<?> man = OldPlotsModule.getSQLMan();
+        SQLMan<?> man = this.getSQLMan();
         Table plots = man.getTable("plot");
         plots = plots.where(OldPlotsIdentifiers.PLOT_ID, id);
         plots.first().present(plot -> {

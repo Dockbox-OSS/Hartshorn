@@ -23,7 +23,6 @@ import org.dockbox.selene.api.i18n.MessageReceiver;
 import org.dockbox.selene.commands.CommandBus;
 import org.dockbox.selene.commands.context.CommandContext;
 import org.dockbox.selene.commands.context.CommandParameter;
-import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.di.annotations.Wired;
 import org.dockbox.selene.server.DefaultServerResources;
 import org.dockbox.selene.server.Server;
@@ -33,6 +32,10 @@ public class JUnitServer implements Server {
 
     @Wired
     private DefaultServerResources resources;
+    @Wired
+    private TestResources testResources;
+    @Wired
+    private CommandBus bus;
 
     @Override
     public void confirm(MessageReceiver src, CommandContext ctx) {
@@ -46,8 +49,8 @@ public class JUnitServer implements Server {
         // argument here is just a confirmation that the source is correct.
         optionalCooldownId.present(cooldownId -> {
             String cid = cooldownId.getValue();
-            Provider.provide(CommandBus.class).confirmCommand(cid).absent(() ->
-                    src.send(Provider.provide(TestResources.class).getCommandConfirmed()));
-        }).absent(() -> src.send(Provider.provide(TestResources.class).getCommandNotConfirmed()));
+            this.bus.confirmCommand(cid).absent(() ->
+                    src.send(this.testResources.getCommandConfirmed()));
+        }).absent(() -> src.send(this.testResources.getCommandNotConfirmed()));
     }
 }

@@ -27,8 +27,8 @@ import org.dockbox.selene.api.module.annotations.Module;
 import org.dockbox.selene.commands.annotations.Command;
 import org.dockbox.selene.commands.context.CommandContext;
 import org.dockbox.selene.commands.source.CommandSource;
-import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.di.annotations.Wired;
+import org.dockbox.selene.di.context.ApplicationContext;
 import org.dockbox.selene.domain.registry.Registry;
 import org.dockbox.selene.palswap.fileparsers.BlockRegistryParser;
 import org.dockbox.selene.persistence.FileManager;
@@ -54,13 +54,15 @@ public class BlockRegistryModule {
     private final String itemRegistryFile = "itemdata";
     @Wired
     private Logger logger;
+    @Wired
+    private ApplicationContext context;
     private BlockRegistryParser blockRegistryParser;
 
     @Listener
     public void on(ServerStartedEvent event) {
-        Selene.getServer().getInjector().bind(BlockRegistryParser.class, BlockRegistryUtil.getBlockRegistryParserClass());
+        Selene.context().bind(BlockRegistryParser.class, BlockRegistryUtil.getBlockRegistryParserClass());
 
-        this.blockRegistryParser = Provider.provide(BlockRegistryParser.class);
+        this.blockRegistryParser = this.context.get(BlockRegistryParser.class);
         this.blockRegistryParser.LoadItemData(this.itemRegistryFile);
 
         blockRegistry = loadBlockRegistry();
@@ -71,7 +73,7 @@ public class BlockRegistryModule {
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public static @Nullable Registry<Registry<Item>> loadBlockRegistry() {
-        FileManager fm = Provider.provide(FileManager.class, FileTypeProperty.of(FileType.XML));
+        FileManager fm = Selene.context().get(FileManager.class, FileTypeProperty.of(FileType.XML));
         Path path = fm.getDataFile(BlockRegistryModule.class, "blockregistry");
 
         Exceptional<Registry> eRegistry = fm.read(path, Registry.class);
@@ -87,7 +89,7 @@ public class BlockRegistryModule {
     public static void saveBlockRegistry() {
         if (null == blockRegistry) return;
 
-        FileManager fm = Provider.provide(FileManager.class, FileTypeProperty.of(FileType.XML));
+        FileManager fm = Selene.context().get(FileManager.class, FileTypeProperty.of(FileType.XML));
         Path path = fm.getDataFile(BlockRegistryModule.class, "blockregistry");
         fm.write(path, blockRegistry);
     }
@@ -95,7 +97,7 @@ public class BlockRegistryModule {
     @Command(value = "generateblockidentifiers", permission = SeleneInformation.GLOBAL_BYPASS)
     public void generateBlockIdentifiers(CommandSource src) {
         try {
-            FileManager fileManager = Provider.provide(FileManager.class);
+            FileManager fileManager = this.context.get(FileManager.class);
             Path path = fileManager.getDataFile(BlockRegistryModule.class, "blockidentifiers");
             FileWriter writer = new FileWriter(path.toFile());
 
@@ -165,7 +167,7 @@ public class BlockRegistryModule {
 
         //Unless the item already exists, write the item name to 'unaddedblocks.yml' so it can be added at a later point.
         try {
-            FileManager fm = Provider.provide(FileManager.class);
+            FileManager fm = Selene.context().get(FileManager.class);
             Path path = fm.getDataFile(BlockRegistryModule.class, "unaddedblocks");
             FileWriter writer = new FileWriter(path.toFile());
 

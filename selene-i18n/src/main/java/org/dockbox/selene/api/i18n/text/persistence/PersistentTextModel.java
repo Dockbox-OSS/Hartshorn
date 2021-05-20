@@ -24,7 +24,6 @@ import org.dockbox.selene.api.i18n.text.actions.ClickAction;
 import org.dockbox.selene.api.i18n.text.actions.CommandAction;
 import org.dockbox.selene.api.i18n.text.actions.HoverAction;
 import org.dockbox.selene.api.i18n.text.actions.ShiftClickAction;
-import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.persistence.PersistentModel;
 import org.dockbox.selene.util.Reflect;
 
@@ -98,7 +97,7 @@ public class PersistentTextModel implements PersistentModel<Text> {
                 break;
             case RUN_COMMAND:
                 // Commands are optional actions if the Command module is present
-                text.onClick(Provider.provide(CommandAction.class, this.clickActionResult));
+                text.onClick(Selene.context().get(CommandAction.class, this.clickActionResult));
                 break;
             case OPEN_URL:
                 text.onClick(ClickAction.openUrl(this.clickActionResult));

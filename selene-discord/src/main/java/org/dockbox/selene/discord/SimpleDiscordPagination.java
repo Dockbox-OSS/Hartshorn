@@ -24,8 +24,9 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
 
 import org.dockbox.selene.api.i18n.text.Text;
-import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.di.annotations.Binds;
+import org.dockbox.selene.di.annotations.Wired;
+import org.dockbox.selene.di.context.ApplicationContext;
 import org.dockbox.selene.discord.templates.MessageTemplate;
 import org.dockbox.selene.util.SeleneUtils;
 
@@ -38,15 +39,17 @@ import java.util.stream.Collectors;
 public class SimpleDiscordPagination implements DiscordPagination {
 
     private final List<Object> pages = SeleneUtils.emptyList();
+    @Wired
+    private ApplicationContext context;
 
     @Override
     public void sendTo(MessageChannel channel) {
-        Provider.provide(DiscordUtils.class).sendToTextChannel(this, channel);
+        this.context.get(DiscordUtils.class).sendToTextChannel(this, channel);
     }
 
     @Override
     public void sendTo(User user) {
-        Provider.provide(DiscordUtils.class).sendToUser(this, user);
+        this.context.get(DiscordUtils.class).sendToUser(this, user);
     }
 
     @Override

@@ -23,7 +23,6 @@ import org.dockbox.selene.api.domain.tuple.Vector3N;
 import org.dockbox.selene.commands.context.ArgumentConverter;
 import org.dockbox.selene.commands.convert.CommandValueConverter;
 import org.dockbox.selene.commands.convert.DefaultArgumentConverters;
-import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.di.annotations.Service;
 import org.dockbox.selene.di.properties.InjectableType;
 import org.dockbox.selene.di.properties.InjectorProperty;
@@ -41,7 +40,7 @@ import java.util.stream.Collectors;
 public final class MinecraftArgumentConverters implements InjectableType {
 
     public static final ArgumentConverter<World> WORLD = new CommandValueConverter<>(World.class, in -> {
-        Worlds wss = Provider.provide(Worlds.class);
+        Worlds wss = Selene.context().get(Worlds.class);
         Exceptional<World> world = wss.getWorld(in);
         return world.then(
                 () -> {
@@ -60,7 +59,7 @@ public final class MinecraftArgumentConverters implements InjectableType {
     }, "location", "position", "pos");
 
     public static final ArgumentConverter<Player> PLAYER = new CommandValueConverter<>(Player.class, in -> {
-        Players pss = Provider.provide(Players.class);
+        Players pss = Selene.context().get(Players.class);
         Exceptional<Player> player = pss.getPlayer(in);
         return player.then(() -> {
             try {
@@ -72,7 +71,7 @@ public final class MinecraftArgumentConverters implements InjectableType {
                 return null;
             }
         });
-    }, in -> Provider.provide(Players.class).getOnlinePlayers().stream()
+    }, in -> Selene.context().get(Players.class).getOnlinePlayers().stream()
             .map(Player::getName)
             .filter(n -> n.startsWith(in))
             .collect(Collectors.toList()),

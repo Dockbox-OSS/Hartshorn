@@ -17,10 +17,10 @@
 
 package org.dockbox.selene.persistence;
 
+import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.domain.OwnerLookup;
 import org.dockbox.selene.api.domain.TypedOwner;
-import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.di.properties.InjectableType;
 
 import java.nio.file.Path;
@@ -301,6 +301,6 @@ public interface FileManager extends InjectableType {
     void requestFileType(FileType fileType);
 
     default TypedOwner owner(Class<?> type) {
-        return Provider.provide(OwnerLookup.class).lookup(type);
+        return Selene.context().get(OwnerLookup.class).lookup(type);
     }
 }

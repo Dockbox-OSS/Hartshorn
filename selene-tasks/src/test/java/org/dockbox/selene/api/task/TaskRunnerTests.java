@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.api.task;
 
-import org.dockbox.selene.di.Provider;
+import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.test.SeleneJUnit5Runner;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -33,7 +33,7 @@ public class TaskRunnerTests {
 
     @Test
     void testTaskRunsSync() {
-        TaskRunner runner = Provider.provide(TaskRunner.class);
+        TaskRunner runner = Selene.context().get(TaskRunner.class);
         final boolean[] activated = { false };
         Task task = () -> activated[0] = true;
         runner.accept(task);
@@ -44,7 +44,7 @@ public class TaskRunnerTests {
     @SuppressWarnings("ResultOfMethodCallIgnored")
     @Test
     void testTaskRunsDelayed() throws InterruptedException {
-        TaskRunner runner = Provider.provide(TaskRunner.class);
+        TaskRunner runner = Selene.context().get(TaskRunner.class);
         final boolean[] activated = { false };
         Task task = () -> activated[0] = true;
         runner.acceptDelayed(task, 5, TimeUnit.MILLISECONDS);

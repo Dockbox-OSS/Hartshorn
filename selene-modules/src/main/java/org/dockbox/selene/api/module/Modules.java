@@ -18,9 +18,7 @@
 package org.dockbox.selene.api.module;
 
 import org.dockbox.selene.api.Selene;
-import org.dockbox.selene.api.SeleneBootstrap;
 import org.dockbox.selene.api.domain.Exceptional;
-import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.di.annotations.Service;
 import org.dockbox.selene.util.Reflect;
 import org.jetbrains.annotations.Nullable;
@@ -39,8 +37,8 @@ public class Modules {
     public static ModuleContainer module(Class<?> type) {
         if (null == type) return null;
         if (type.equals(Selene.class)) {
-            if (Reflect.serverAvailable() && SeleneBootstrap.instance().getInjector().getStaticBinding(Reflect.getServerClass()).present()) {
-                return Modules.module(Provider.provide(Reflect.getServerClass()).getClass());
+            if (Reflect.serverAvailable() && Selene.context().injector().getStaticBinding(Reflect.getServerClass()).present()) {
+                return Modules.module(Selene.context().get(Reflect.getServerClass()).getClass());
             }
         }
 
@@ -49,7 +47,7 @@ public class Modules {
             return Modules.module(service.owner());
         }
 
-        return Exceptional.of(Provider.provide(ModuleManager.class))
+        return Exceptional.of(Selene.context().get(ModuleManager.class))
                 .map(em -> em.getContainer(type).orNull())
                 .orNull();
     }

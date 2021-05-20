@@ -23,8 +23,9 @@ import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.domain.tuple.Tuple;
 import org.dockbox.selene.api.exceptions.Except;
 import org.dockbox.selene.api.module.annotations.Module;
-import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.di.annotations.Binds;
+import org.dockbox.selene.di.annotations.Wired;
+import org.dockbox.selene.di.context.ApplicationContext;
 import org.dockbox.selene.di.properties.InjectableType;
 import org.dockbox.selene.util.Reflect;
 import org.dockbox.selene.util.SeleneUtils;
@@ -41,6 +42,9 @@ public class SimpleModuleManager implements ModuleManager {
 
     private static final Collection<ModuleContainer> moduleContainers = SeleneUtils.emptyConcurrentList();
     private static final Map<String, Object> instanceMappings = SeleneUtils.emptyConcurrentMap();
+
+    @Wired
+    private ApplicationContext context;
 
     @NotNull
     @Override
@@ -170,7 +174,7 @@ public class SimpleModuleManager implements ModuleManager {
         moduleContainers.add(container);
 
         try {
-            T instance = Provider.provide(entry);
+            T instance = this.context.get(entry);
 
             if (null == instance) {
                 try {
@@ -186,7 +190,7 @@ public class SimpleModuleManager implements ModuleManager {
                     }
 
                     container.status(entry, ModuleStatus.LOADED);
-                    Selene.getServer().getInjector().bind(entry, instance);
+                    Selene.context().bind(entry, instance);
                 }
                 catch (InstantiationException e) {
                     container.status(entry, ModuleStatus.ERRORED);
@@ -226,6 +230,6 @@ public class SimpleModuleManager implements ModuleManager {
     }
 
     private static <T> void populate(T instance, ModuleContainer container) {
-        Selene.getServer().getInjector().populate(instance);
+        Selene.context().populate(instance);
     }
 }

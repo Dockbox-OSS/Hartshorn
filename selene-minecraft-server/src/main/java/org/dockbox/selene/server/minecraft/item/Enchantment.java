@@ -17,8 +17,8 @@
 
 package org.dockbox.selene.server.minecraft.item;
 
+import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.i18n.common.ResourceEntry;
-import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.server.minecraft.MinecraftVersion;
 
 import java.util.function.Function;
@@ -246,7 +246,7 @@ public enum Enchantment {
 
     Enchantment(int maximumLevel, Function<EnchantmentResources, ResourceEntry> resource, MinecraftVersion minimumMinecraftVersion) {
         this.maximumLevel = maximumLevel;
-        this.nameResource = resource.apply(Provider.provide(EnchantmentResources.class));
+        this.nameResource = resource.apply(Selene.context().get(EnchantmentResources.class));
         this.minimumMinecraftVersion = minimumMinecraftVersion;
     }
 

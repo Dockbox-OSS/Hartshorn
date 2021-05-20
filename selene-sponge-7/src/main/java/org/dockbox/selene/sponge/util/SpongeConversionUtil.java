@@ -47,7 +47,6 @@ import org.dockbox.selene.api.i18n.text.actions.ShiftClickAction;
 import org.dockbox.selene.api.i18n.text.pagination.Pagination;
 import org.dockbox.selene.commands.RunCommandAction;
 import org.dockbox.selene.commands.source.CommandSource;
-import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.server.minecraft.Console;
 import org.dockbox.selene.server.minecraft.bossbar.BossbarColor;
 import org.dockbox.selene.server.minecraft.bossbar.BossbarStyle;
@@ -657,7 +656,7 @@ public enum SpongeConversionUtil {
     }
 
     public static org.dockbox.selene.server.minecraft.dimension.world.World fromWorldEdit(com.sk89q.worldedit.world.World world) {
-        return Provider.provide(Worlds.class).getWorld(world.getName()).orNull();
+        return Selene.context().get(Worlds.class).getWorld(world.getName()).orNull();
     }
 
     public static Exceptional<BaseBlock> toWorldEdit(Item item, ParserContext context) {
@@ -765,7 +764,7 @@ public enum SpongeConversionUtil {
     }
 
     public static org.dockbox.selene.server.minecraft.dimension.position.Location fromPlotSquared(com.intellectualcrafters.plot.object.Location location) {
-        org.dockbox.selene.server.minecraft.dimension.world.World world = Provider.provide(Worlds.class).getWorld(location.getWorld()).orNull();
+        org.dockbox.selene.server.minecraft.dimension.world.World world = Selene.context().get(Worlds.class).getWorld(location.getWorld()).orNull();
         return new org.dockbox.selene.server.minecraft.dimension.position.Location(
                 location.getX(), location.getY(), location.getZ(), world
         );

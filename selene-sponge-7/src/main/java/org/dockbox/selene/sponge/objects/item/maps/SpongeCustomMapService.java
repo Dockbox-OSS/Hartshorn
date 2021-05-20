@@ -25,7 +25,6 @@ import org.dockbox.selene.database.SQLMan;
 import org.dockbox.selene.database.dialects.sqlite.SQLitePathProperty;
 import org.dockbox.selene.database.exceptions.InvalidConnectionException;
 import org.dockbox.selene.database.exceptions.NoSuchTableException;
-import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.domain.table.Table;
 import org.dockbox.selene.nms.maps.NMSMapUtils;
 import org.dockbox.selene.persistence.FileManager;
@@ -103,7 +102,7 @@ public class SpongeCustomMapService extends DefaultCustomMapService {
                 .first()
                 .map(row -> row.getValue(MapIdentifiers.SOURCE).or(Console.UNIQUE_ID.toString()))
                 .map(uniqueId ->
-                        Provider.provide(Players.class)
+                        Selene.context().get(Players.class)
                                 .getPlayer(UUID.fromString(uniqueId))
                                 .orNull())
                 .map(Identifiable.class::cast)
@@ -123,7 +122,7 @@ public class SpongeCustomMapService extends DefaultCustomMapService {
 
     private static Table getHistoryTable() {
         try {
-            SQLMan<?> sql = Provider.provide(SQLMan.class, FileTypeProperty.of(FileType.SQLITE),
+            SQLMan<?> sql = Selene.context().get(SQLMan.class, FileTypeProperty.of(FileType.SQLITE),
                     new SQLitePathProperty(getHistoryStorePath()));
             return sql.getOrCreateTable(TABLE, SpongeCustomMapService.getEmptyTable());
         }
@@ -135,7 +134,7 @@ public class SpongeCustomMapService extends DefaultCustomMapService {
 
     private static void store(Table table) {
         try {
-            SQLMan<?> sql = Provider.provide(SQLMan.class, FileTypeProperty.of(FileType.SQLITE),
+            SQLMan<?> sql = Selene.context().get(SQLMan.class, FileTypeProperty.of(FileType.SQLITE),
                     new SQLitePathProperty(getHistoryStorePath()));
             sql.store(TABLE, table);
         }
@@ -156,7 +155,7 @@ public class SpongeCustomMapService extends DefaultCustomMapService {
     }
 
     private static Path getHistoryStorePath() {
-        FileManager fileManager = Provider.provide(FileManager.class);
+        FileManager fileManager = Selene.context().get(FileManager.class);
         return fileManager.getDataFile(Selene.class, "maps.db");
     }
 

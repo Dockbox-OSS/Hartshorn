@@ -19,8 +19,8 @@ package org.dockbox.selene.proxy;
 
 import org.dockbox.selene.api.BootstrapPhase;
 import org.dockbox.selene.api.Phase;
+import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.exceptions.Except;
-import org.dockbox.selene.di.InjectableBootstrap;
 import org.dockbox.selene.di.InjectionPoint;
 import org.dockbox.selene.di.preload.Preloadable;
 import org.dockbox.selene.di.properties.InjectorProperty;
@@ -34,7 +34,7 @@ public class ProxyPreload implements Preloadable {
     @Override
     public void preload() {
         ProxyableBootstrap.boostrapDelegates();
-        InjectableBootstrap.instance().injectAt(InjectionPoint.of(Object.class, (instance, properties) -> {
+        Selene.context().add(InjectionPoint.of(Object.class, (instance, properties) -> {
             ProxyHandler<Object> handler = new ProxyHandler<>(instance);
             boolean proxy = false;
             for (InjectorProperty<?> property : properties) {

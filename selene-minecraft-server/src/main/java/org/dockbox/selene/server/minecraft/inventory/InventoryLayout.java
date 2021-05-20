@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.server.minecraft.inventory;
 
-import org.dockbox.selene.di.Provider;
+import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.server.minecraft.inventory.builder.LayoutBuilder;
 import org.dockbox.selene.server.minecraft.inventory.properties.InventoryTypeProperty;
 
@@ -38,7 +38,7 @@ public interface InventoryLayout {
      * @return The builder
      */
     static LayoutBuilder builder(InventoryType inventoryType) {
-        return Provider.provide(LayoutBuilder.class, new InventoryTypeProperty(inventoryType));
+        return Selene.context().get(LayoutBuilder.class, new InventoryTypeProperty(inventoryType));
     }
 
     /**

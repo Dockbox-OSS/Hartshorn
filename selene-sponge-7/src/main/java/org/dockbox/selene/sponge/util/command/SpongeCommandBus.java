@@ -134,7 +134,7 @@ public class SpongeCommandBus extends DefaultCommandBus<Builder> {
 
     @Override
     protected void registerExecutor(Builder executor, String alias) {
-        Sponge.getCommandManager().register(Selene.getServer(), executor.build(), alias);
+        Sponge.getCommandManager().register(Selene.server(), executor.build(), alias);
     }
 
     protected CommandSpec.Builder buildContextExecutor(AbstractRegistrationContext context, String alias) {

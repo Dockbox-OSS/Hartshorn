@@ -30,7 +30,6 @@ import org.dockbox.selene.api.i18n.common.ResourceEntry;
 import org.dockbox.selene.api.i18n.exceptions.ProxyFactoryBindingException;
 import org.dockbox.selene.api.i18n.exceptions.ProxyMethodBindingException;
 import org.dockbox.selene.di.preload.Preloadable;
-import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.proxy.ProxyProperty;
 import org.dockbox.selene.proxy.handle.ProxyHandler;
 import org.dockbox.selene.util.Reflect;
@@ -41,6 +40,8 @@ import java.lang.reflect.Method;
 @Phase(BootstrapPhase.CONSTRUCT)
 public class I18NPreload implements Preloadable {
 
+    // TODO #260: Refqactor to use injection points so @Resources can be replaced with @Service
+
     @SuppressWarnings("unchecked")
     @Override
     public void preload() {
@@ -48,9 +49,9 @@ public class I18NPreload implements Preloadable {
             if (!annotatedType.isInterface())
                 throw new ProxyFactoryBindingException(annotatedType);
 
-            Selene.getServer().getInjector().bind((Class<Object>) annotatedType, this.createResourceProxy(annotatedType));
+            Selene.context().bind((Class<Object>) annotatedType, this.createResourceProxy(annotatedType));
         }
-        if (!Reflect.registerModulePostInit(Provider.provide(ResourceService.class)::init)) {
+        if (!Reflect.registerModulePostInit(Selene.context().get(ResourceService.class)::init)) {
             Selene.log().error("Could not register post-init action");
         }
     }
@@ -62,7 +63,7 @@ public class I18NPreload implements Preloadable {
         String prefix = "";
         if (type.isAnnotationPresent(Resources.class)) {
             Class<?> responsibleClass = type.getAnnotation(Resources.class).value();
-            TypedOwner lookup = Provider.provide(OwnerLookup.class).lookup(responsibleClass);
+            TypedOwner lookup = Selene.context().get(OwnerLookup.class).lookup(responsibleClass);
             if (lookup != null) prefix = lookup.id() + '.';
         }
 
@@ -76,7 +77,7 @@ public class I18NPreload implements Preloadable {
             ProxyProperty<?, ResourceEntry> property = ProxyProperty.of(type, annotatedMethod, (instance, args) -> {
                 // Prevents NPE when formatting cached resources without arguments
                 Object[] objects = null == args ? new Object[0] : args;
-                return Provider.provide(ResourceService.class).getOrCreate(key, annotation.value()).format(objects);
+                return Selene.context().get(ResourceService.class).getOrCreate(key, annotation.value()).format(objects);
             });
 
             handler.delegate((ProxyProperty<Object, ?>) property);

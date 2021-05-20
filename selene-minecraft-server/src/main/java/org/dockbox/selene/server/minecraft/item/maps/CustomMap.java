@@ -17,8 +17,8 @@
 
 package org.dockbox.selene.server.minecraft.item.maps;
 
+import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.domain.Identifiable;
-import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.server.minecraft.item.Item;
 import org.dockbox.selene.util.images.MultiSizedImage;
 
@@ -28,15 +28,15 @@ import java.util.Map;
 public interface CustomMap extends Item {
 
     static CustomMap of(BufferedImage image, Identifiable source) {
-        return Provider.provide(CustomMapService.class).create(image, source);
+        return Selene.context().get(CustomMapService.class).create(image, source);
     }
 
     static CustomMap of(byte[] image, Identifiable source) {
-        return Provider.provide(CustomMapService.class).create(image, source);
+        return Selene.context().get(CustomMapService.class).create(image, source);
     }
 
     static Map<Integer[], CustomMap> of(MultiSizedImage image, Identifiable source) {
-        return Provider.provide(CustomMapService.class).create(image, source);
+        return Selene.context().get(CustomMapService.class).create(image, source);
     }
 
     Identifiable getOwner();
