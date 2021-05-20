@@ -364,7 +364,7 @@ public class ReflectTests {
 
     @Test
     void testAnnotatedFieldsIncludesStatic() {
-        Collection<Field> fields = Reflect.annotatedFields(Demo.class, ReflectTestType.class);
+        Collection<Field> fields = Reflect.annotatedFields(ReflectTestType.class, Demo.class);
         Assertions.assertEquals(2, fields.size());
         int statics = 0;
         for (Field field : fields) {
@@ -375,7 +375,7 @@ public class ReflectTests {
 
     @Test
     void testAnnotatedConstructors() {
-        Collection<Constructor<ReflectTestType>> constructors = Reflect.annotatedConstructors(Demo.class, ReflectTestType.class);
+        Collection<Constructor<ReflectTestType>> constructors = Reflect.annotatedConstructors(ReflectTestType.class, Demo.class);
         Assertions.assertEquals(1, constructors.size());
     }
 

@@ -25,7 +25,6 @@ import org.dockbox.selene.di.properties.InjectableType;
 import org.dockbox.selene.di.properties.InjectorProperty;
 import org.dockbox.selene.util.Reflect;
 import org.dockbox.selene.util.SeleneUtils;
-import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,7 +61,7 @@ public abstract class ManagedSeleneContext implements ApplicationContext {
 
     public <T> void enable(T typeInstance) {
         if (typeInstance == null) return;
-        SeleneUtils.merge(Reflect.annotatedFields(Wired.class, typeInstance.getClass())).stream()
+        SeleneUtils.merge(Reflect.annotatedFields(typeInstance.getClass(), Wired.class)).stream()
                 .filter(field -> field.getAnnotation(Wired.class).enable())
                 .filter(field -> Reflect.assignableFrom(InjectableType.class, field.getType()))
                 .map(field -> {
