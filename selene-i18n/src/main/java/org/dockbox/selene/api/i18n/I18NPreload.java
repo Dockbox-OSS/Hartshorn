@@ -20,50 +20,49 @@ package org.dockbox.selene.api.i18n;
 import org.dockbox.selene.api.BootstrapPhase;
 import org.dockbox.selene.api.Phase;
 import org.dockbox.selene.api.Selene;
-import org.dockbox.selene.api.SeleneInformation;
 import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.domain.OwnerLookup;
 import org.dockbox.selene.api.domain.TypedOwner;
 import org.dockbox.selene.api.i18n.annotations.Resource;
-import org.dockbox.selene.api.i18n.annotations.Resources;
 import org.dockbox.selene.api.i18n.common.ResourceEntry;
-import org.dockbox.selene.api.i18n.exceptions.ProxyFactoryBindingException;
 import org.dockbox.selene.api.i18n.exceptions.ProxyMethodBindingException;
+import org.dockbox.selene.di.InjectionPoint;
+import org.dockbox.selene.di.annotations.Service;
 import org.dockbox.selene.di.preload.Preloadable;
 import org.dockbox.selene.proxy.ProxyProperty;
 import org.dockbox.selene.proxy.handle.ProxyHandler;
 import org.dockbox.selene.util.Reflect;
 import org.dockbox.selene.util.SeleneUtils;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Collection;
 
 @Phase(BootstrapPhase.CONSTRUCT)
 public class I18NPreload implements Preloadable {
 
     // TODO #260: Refqactor to use injection points so @Resources can be replaced with @Service
 
-    @SuppressWarnings("unchecked")
     @Override
     public void preload() {
-        for (Class<?> annotatedType : Reflect.annotatedTypes(SeleneInformation.PACKAGE_PREFIX, Resources.class)) {
-            if (!annotatedType.isInterface())
-                throw new ProxyFactoryBindingException(annotatedType);
+        Selene.context().add(InjectionPoint.of(Object.class, (instance, type, properties) -> {
+            if (!type.isAnnotationPresent(Service.class)) return instance;
 
-            Selene.context().bind((Class<Object>) annotatedType, this.createResourceProxy(annotatedType));
-        }
-        if (!Reflect.registerModulePostInit(Selene.context().get(ResourceService.class)::init)) {
-            Selene.log().error("Could not register post-init action");
-        }
+            final Collection<Method> methods = Reflect.annotatedMethods(type, Resource.class);
+            final Collection<Field> fields = Reflect.annotatedFields(type, Resource.class);
+            if (methods.isEmpty() && fields.isEmpty()) return instance;
+
+            return this.createResourceProxy(instance, type);
+        }));
     }
 
     @SuppressWarnings("unchecked")
-    private <T, C extends T> C createResourceProxy(Class<T> type) {
-        ProxyHandler<Object> handler = new ProxyHandler<>(null, (Class<Object>) type);
+    private <T, C extends T> C createResourceProxy(T self, Class<T> type) {
+        ProxyHandler<Object> handler = new ProxyHandler<>(self, (Class<Object>) type);
 
         String prefix = "";
-        if (type.isAnnotationPresent(Resources.class)) {
-            Class<?> responsibleClass = type.getAnnotation(Resources.class).value();
-            TypedOwner lookup = Selene.context().get(OwnerLookup.class).lookup(responsibleClass);
+        if (type.isAnnotationPresent(Service.class)) {
+            TypedOwner lookup = Selene.context().get(OwnerLookup.class).lookup(type);
             if (lookup != null) prefix = lookup.id() + '.';
         }
 
