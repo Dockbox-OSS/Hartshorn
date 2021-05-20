@@ -18,7 +18,6 @@
 package org.dockbox.selene.api.i18n;
 
 import org.dockbox.selene.api.Selene;
-import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.domain.OwnerLookup;
 import org.dockbox.selene.api.domain.TypedOwner;
 import org.dockbox.selene.api.i18n.annotations.Resource;
@@ -27,28 +26,21 @@ import org.dockbox.selene.api.i18n.exceptions.ProxyMethodBindingException;
 import org.dockbox.selene.di.annotations.Service;
 import org.dockbox.selene.di.context.ApplicationContext;
 import org.dockbox.selene.di.properties.InjectorProperty;
-import org.dockbox.selene.di.services.ServiceModifier;
-import org.dockbox.selene.proxy.ProxyProperty;
-import org.dockbox.selene.proxy.handle.ProxyHandler;
+import org.dockbox.selene.proxy.ServiceAnnotatedMethodModifier;
+import org.dockbox.selene.proxy.handle.ProxyFunction;
 import org.dockbox.selene.util.Reflect;
 import org.dockbox.selene.util.SeleneUtils;
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.Collection;
 
-public class I18NServiceModifier implements ServiceModifier {
-    @Override
-    public <T> boolean preconditions(Class<T> type, @Nullable T instance, InjectorProperty<?>... properties) {
-        final Collection<Method> methods = Reflect.annotatedMethods(type, Resource.class);
-        final Collection<Field> fields = Reflect.annotatedFields(type, Resource.class);
-        return !(methods.isEmpty() && fields.isEmpty());
-    }
+public class I18NServiceModifier implements ServiceAnnotatedMethodModifier<Resource> {
 
+    @SuppressWarnings("unchecked")
     @Override
-    public <T> T process(ApplicationContext context, Class<T> type, @Nullable T instance, InjectorProperty<?>... properties) {
-        ProxyHandler<T> handler = new ProxyHandler<>(instance, type);
+    public <T, R> ProxyFunction<T, R> process(ApplicationContext context, Class<T> type, @Nullable T instance, Method method, InjectorProperty<?>... properties) {
+        if (!Reflect.assignableFrom(ResourceEntry.class, method.getReturnType()))
+            throw new ProxyMethodBindingException(method);
 
         String prefix = "";
         if (type.isAnnotationPresent(Service.class)) {
@@ -56,22 +48,29 @@ public class I18NServiceModifier implements ServiceModifier {
             if (lookup != null) prefix = lookup.id() + '.';
         }
 
-        for (Method annotatedMethod : Reflect.annotatedMethods(type, Resource.class)) {
-            if (!Reflect.assignableFrom(ResourceEntry.class, annotatedMethod.getReturnType()))
-                throw new ProxyMethodBindingException(annotatedMethod);
+        String key = this.extractKey(method, prefix);
+        Resource annotation = method.getAnnotation(Resource.class);
 
-            String key = this.extractKey(annotatedMethod, prefix);
-            Resource annotation = annotatedMethod.getAnnotation(Resource.class);
+        return (self, args, holder) -> {
+            // Prevents NPE when formatting cached resources without arguments
+            Object[] objects = null == args ? new Object[0] : args;
+            return (R) Selene.context().get(ResourceService.class).getOrCreate(key, annotation.value()).format(objects);
+        };
+    }
 
-            ProxyProperty<T, ResourceEntry> property = ProxyProperty.of(type, annotatedMethod, (self, args) -> {
-                // Prevents NPE when formatting cached resources without arguments
-                Object[] objects = null == args ? new Object[0] : args;
-                return Selene.context().get(ResourceService.class).getOrCreate(key, annotation.value()).format(objects);
-            });
+    @Override
+    public <T> boolean preconditions(Class<T> type, @Nullable T instance, Method method, InjectorProperty<?>... properties) {
+        return Reflect.assignableFrom(ResourceEntry.class, method.getReturnType());
+    }
 
-            handler.delegate(property);
-        }
-        return Exceptional.of(handler::proxy).orNull();
+    @Override
+    public boolean failOnPrecondition() {
+        return true;
+    }
+
+    @Override
+    public Class<Resource> annotation() {
+        return Resource.class;
     }
 
     private String extractKey(Method method, String prefix) {
