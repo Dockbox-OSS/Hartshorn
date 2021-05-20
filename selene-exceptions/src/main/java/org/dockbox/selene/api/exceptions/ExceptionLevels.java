@@ -18,7 +18,7 @@
 package org.dockbox.selene.api.exceptions;
 
 import org.dockbox.selene.api.TriConsumer;
-import org.dockbox.selene.di.Provider;
+import org.dockbox.selene.di.ApplicationContextAware;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,10 +26,10 @@ import java.util.Arrays;
 
 public enum ExceptionLevels implements ExceptionHandle {
     FRIENDLY((message, exception, stacktrace) -> {
-        Provider.provide(ExceptionHelper.class).printFriendly(message, exception, stacktrace);
+        ApplicationContextAware.instance().getContext().get(ExceptionHelper.class).printFriendly(message, exception, stacktrace);
     }),
     MINIMAL((message, exception, stacktrace) -> {
-        Provider.provide(ExceptionHelper.class).printMinimal(message, exception, stacktrace);
+        ApplicationContextAware.instance().getContext().get(ExceptionHelper.class).printMinimal(message, exception, stacktrace);
     }),
     NATIVE((message, exception, stacktrace) -> {
         final Logger log = LoggerFactory.getLogger("Selene::native");

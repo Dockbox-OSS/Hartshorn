@@ -41,7 +41,8 @@ import org.dockbox.selene.api.domain.tuple.Triad;
 import org.dockbox.selene.api.exceptions.Except;
 import org.dockbox.selene.api.i18n.common.ResourceEntry;
 import org.dockbox.selene.api.i18n.text.Text;
-import org.dockbox.selene.di.Provider;
+import org.dockbox.selene.di.annotations.Wired;
+import org.dockbox.selene.di.context.ApplicationContext;
 import org.dockbox.selene.discord.annotations.DiscordCommand;
 import org.dockbox.selene.discord.annotations.DiscordCommand.ListeningLevel;
 import org.dockbox.selene.discord.templates.MessageTemplate;
@@ -59,6 +60,9 @@ import java.util.stream.Collectors;
 @SuppressWarnings("ResultOfMethodCallIgnored")
 public abstract class DefaultDiscordUtils implements DiscordUtils {
 
+    @Wired
+    private ApplicationContext context;
+    
     @SuppressWarnings("ConstantDeclaredInAbstractClass")
     public static final String WILDCARD = "*";
     private static final Map<String, Triad<DiscordCommand, Method, Object>> commandMethods = SeleneUtils.emptyConcurrentMap();
@@ -77,7 +81,7 @@ public abstract class DefaultDiscordUtils implements DiscordUtils {
     @Override
     public Exceptional<Category> getLoggingCategory() {
         if (this.getJDA().present())
-            return Exceptional.of(this.getJDA().get().getCategoryById(Selene.getServer().getGlobalConfig().getDiscordLoggingCategoryId()));
+            return Exceptional.of(this.getJDA().get().getCategoryById(Selene.server().getGlobalConfig().getDiscordLoggingCategoryId()));
         return Exceptional.none();
     }
 
@@ -160,7 +164,7 @@ public abstract class DefaultDiscordUtils implements DiscordUtils {
     @Override
     public void registerCommandListener(@NotNull Object instance) {
         Object obj = instance;
-        if (instance instanceof Class) obj = Provider.provide((Class<?>) instance);
+        if (instance instanceof Class) obj = this.context.get((Class<?>) instance);
 
         Arrays.stream(obj.getClass().getDeclaredMethods())
                 .filter(m -> m.isAnnotationPresent(DiscordCommand.class))
@@ -183,7 +187,7 @@ public abstract class DefaultDiscordUtils implements DiscordUtils {
     @Override
     @SuppressWarnings("CallToSuspiciousStringMethod")
     public void post(@NotNull String command, @NotNull DiscordCommandContext context) {
-        DiscordResources resources = Provider.provide(DiscordResources.class);
+        DiscordResources resources = this.context.get(DiscordResources.class);
         if (commandMethods.containsKey(command)) {
             Triad<DiscordCommand, Method, Object> information = commandMethods.get(command);
             DiscordCommand annotation = information.getFirst();

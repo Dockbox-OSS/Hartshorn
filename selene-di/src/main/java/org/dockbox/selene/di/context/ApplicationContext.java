@@ -15,25 +15,25 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.di.inject;
+package org.dockbox.selene.di.context;
 
-import org.dockbox.selene.api.domain.Exceptional;
-import org.dockbox.selene.di.binding.BindingData;
-import org.dockbox.selene.di.context.ApplicationBinder;
+import org.dockbox.selene.di.InjectionPoint;
+import org.dockbox.selene.di.ProvisionFailure;
+import org.dockbox.selene.di.inject.Injector;
 import org.dockbox.selene.di.properties.InjectorProperty;
 
-import java.lang.reflect.Method;
-import java.util.List;
+public interface ApplicationContext extends ApplicationBinder, SeleneContext {
 
-public interface Injector extends ApplicationBinder {
+    void add(InjectionPoint<?> property);
 
-    void reset();
+    <T> T create(Class<T> type, T typeInstance, InjectorProperty<?>... properties);
 
-    <T> Exceptional<T> get(Class<T> type, InjectorProperty<?>... additionalProperties);
+    <T> T inject(Class<T> type, T typeInstance, InjectorProperty<?>... properties);
 
-    List<BindingData> getBindingData();
+    <T> void enable(T typeInstance);
 
-    <T> T invoke(Method method);
+    <T> T raw(Class<T> type) throws ProvisionFailure;
 
-    <T, I extends T> Exceptional<Class<I>> getStaticBinding(Class<T> type);
+    Injector injector();
+
 }

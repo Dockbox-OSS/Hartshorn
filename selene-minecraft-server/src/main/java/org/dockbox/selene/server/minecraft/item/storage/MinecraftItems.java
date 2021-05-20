@@ -18,9 +18,9 @@
 package org.dockbox.selene.server.minecraft.item.storage;
 
 import org.dockbox.selene.api.Selene;
-import org.dockbox.selene.server.minecraft.item.Item;
 import org.dockbox.selene.server.minecraft.MinecraftServerBootstrap;
 import org.dockbox.selene.server.minecraft.MinecraftVersion;
+import org.dockbox.selene.server.minecraft.item.Item;
 import org.dockbox.selene.util.SeleneUtils;
 
 import java.util.Map;

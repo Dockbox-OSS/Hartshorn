@@ -17,10 +17,10 @@
 
 package org.dockbox.selene.palswap;
 
+import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.SeleneBootstrap;
 import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.i18n.common.Language;
-import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.domain.registry.RegistryIdentifier;
 import org.dockbox.selene.palswap.fileparsers.BlockRegistryParser;
 import org.dockbox.selene.palswap.fileparsers.ItemData;
@@ -81,7 +81,7 @@ public enum VariantIdentifier implements RegistryIdentifier {
             }
         }
         if (SeleneBootstrap.isConstructed()) {
-            blockRegistryParser = Provider.provide(BlockRegistryParser.class);
+            blockRegistryParser = Selene.context().get(BlockRegistryParser.class);
         }
     }
 
@@ -89,7 +89,7 @@ public enum VariantIdentifier implements RegistryIdentifier {
         if (null == overridenBlockNames) {
             if (!SeleneBootstrap.isConstructed()) return (overridenBlockNames = new ItemData());
 
-            FileManager fm = Provider.provide(FileManager.class);
+            FileManager fm = Selene.context().get(FileManager.class);
             Path file = fm.getDataFile(BlockRegistryModule.class, "overridenblocknames");
 
             Exceptional<ItemData> mappings = fm.read(file, ItemData.class);

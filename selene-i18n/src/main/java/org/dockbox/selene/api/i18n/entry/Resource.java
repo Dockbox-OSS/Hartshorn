@@ -17,12 +17,12 @@
 
 package org.dockbox.selene.api.i18n.entry;
 
+import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.i18n.MessageReceiver;
 import org.dockbox.selene.api.i18n.ResourceService;
 import org.dockbox.selene.api.i18n.common.Language;
 import org.dockbox.selene.api.i18n.common.ResourceEntry;
 import org.dockbox.selene.api.i18n.text.Text;
-import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.util.SeleneUtils;
 
 import java.util.Map;
@@ -49,7 +49,7 @@ public class Resource implements ResourceEntry {
 
     public Resource(String value, String key, Language language, Object... args) {
         this.key = key;
-        this.resourceMap = Provider.provide(ResourceService.class).translations(this);
+        this.resourceMap = Selene.context().get(ResourceService.class).translations(this);
         this.value = this.resourceMap.getOrDefault(language, value);
         this.language = language;
         this.formattingArgs = args;

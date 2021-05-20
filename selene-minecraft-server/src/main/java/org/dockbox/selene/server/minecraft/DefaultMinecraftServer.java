@@ -60,7 +60,7 @@ public class DefaultMinecraftServer {
     @Command(value = "platform", permission = DefaultServer.SELENE_ADMIN)
     public void platform(MessageReceiver src) {
         MinecraftServerType st = MinecraftServerBootstrap.instance().getServerType();
-        String platformVersion = Selene.getServer().getPlatformVersion();
+        String platformVersion = Selene.server().getPlatformVersion();
 
         String mcVersion = MinecraftServerBootstrap.instance().getMinecraftVersion().getReadableVersionString();
 

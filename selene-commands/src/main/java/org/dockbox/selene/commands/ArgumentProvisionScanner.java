@@ -20,7 +20,6 @@ package org.dockbox.selene.commands;
 import org.dockbox.selene.api.BootstrapPhase;
 import org.dockbox.selene.api.Phase;
 import org.dockbox.selene.api.Selene;
-import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.di.preload.Preloadable;
 import org.dockbox.selene.util.Reflect;
 
@@ -29,7 +28,7 @@ class ArgumentProvisionScanner implements Preloadable {
 
     @Override
     public void preload() {
-        CommandBus bus = Provider.provide(CommandBus.class);
+        CommandBus bus = Selene.context().get(CommandBus.class);
         if (!Reflect.registerModuleInitBus(bus::register)) {
             Selene.log().error("Could not apply module registrations");
         }

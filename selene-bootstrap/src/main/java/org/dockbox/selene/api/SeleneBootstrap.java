@@ -21,7 +21,6 @@ import org.dockbox.selene.api.config.GlobalConfig;
 import org.dockbox.selene.api.exceptions.Except;
 import org.dockbox.selene.di.InjectConfiguration;
 import org.dockbox.selene.di.InjectableBootstrap;
-import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.di.annotations.Required;
 import org.dockbox.selene.di.preload.Preloadable;
 import org.dockbox.selene.util.Reflect;
@@ -58,14 +57,14 @@ public abstract class SeleneBootstrap extends InjectableBootstrap {
     protected SeleneBootstrap(InjectConfiguration early, InjectConfiguration late) {
         Reflections.log = null; // Don't output Reflections
         this.enter(BootstrapPhase.PRE_CONSTRUCT);
-        super.getInjector().bind(SeleneInformation.PACKAGE_PREFIX);
-        super.getInjector().bind(early);
-        this.config = Provider.provide(GlobalConfig.class);
+        super.getContext().bind(SeleneInformation.PACKAGE_PREFIX);
+        super.getContext().bind(early);
+        this.config = this.getContext().get(GlobalConfig.class);
         Except.useStackTraces(this.config.getStacktracesAllowed());
         Except.with(this.config.getExceptionLevel());
 
         this.enter(BootstrapPhase.CONSTRUCT);
-        super.getInjector().bind(late);
+        super.getContext().bind(late);
         this.construct();
     }
 
@@ -138,7 +137,7 @@ public abstract class SeleneBootstrap extends InjectableBootstrap {
     @SuppressWarnings("MethodMayBeStatic")
     @NotNull
     public GlobalConfig getGlobalConfig() {
-        return Provider.provide(GlobalConfig.class);
+        return this.getContext().get(GlobalConfig.class);
     }
 
     /**
@@ -156,7 +155,7 @@ public abstract class SeleneBootstrap extends InjectableBootstrap {
                 .filter(t -> t.isAnnotationPresent(Phase.class) && t.getAnnotation(Phase.class).value().equals(phase))
                 .forEach(t -> {
                     Selene.log().info("Preloading " + t.getSimpleName());
-                    Provider.provide(t).preload();
+                    this.getContext().get(t).preload();
                 });
     }
 

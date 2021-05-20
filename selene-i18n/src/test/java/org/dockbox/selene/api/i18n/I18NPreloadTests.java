@@ -17,8 +17,8 @@
 
 package org.dockbox.selene.api.i18n;
 
+import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.i18n.common.ResourceEntry;
-import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.test.SeleneJUnit5Runner;
 import org.dockbox.selene.util.Reflect;
 import org.junit.jupiter.api.Assertions;
@@ -30,13 +30,13 @@ public class I18NPreloadTests {
 
     @Test
     public void testResourceServiceIsProxied() {
-        TestResources resources = Provider.provide(TestResources.class);
+        TestResources resources = Selene.context().get(TestResources.class);
         Assertions.assertTrue(Reflect.isProxy(resources));
     }
 
     @Test
     public void testResourceServiceReturnsValidResourceKey() {
-        TestResources resources = Provider.provide(TestResources.class);
+        TestResources resources = Selene.context().get(TestResources.class);
         ResourceEntry testEntry = resources.getTestEntry();
 
         Assertions.assertNotNull(testEntry);
@@ -45,7 +45,7 @@ public class I18NPreloadTests {
 
     @Test
     public void testResourceServiceReturnsValidResourceValue() {
-        TestResources resources = Provider.provide(TestResources.class);
+        TestResources resources = Selene.context().get(TestResources.class);
         ResourceEntry testEntry = resources.getTestEntry();
 
         Assertions.assertNotNull(testEntry);
@@ -54,7 +54,7 @@ public class I18NPreloadTests {
 
     @Test
     public void testResourceServiceFormatsParamResource() {
-        TestResources resources = Provider.provide(TestResources.class);
+        TestResources resources = Selene.context().get(TestResources.class);
         ResourceEntry testEntry = resources.getParameterTestEntry("world");
 
         Assertions.assertNotNull(testEntry);

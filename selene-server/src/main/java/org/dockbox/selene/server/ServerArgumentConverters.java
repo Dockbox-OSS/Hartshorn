@@ -22,7 +22,6 @@ import org.dockbox.selene.api.module.ModuleContainer;
 import org.dockbox.selene.api.module.ModuleManager;
 import org.dockbox.selene.commands.context.ArgumentConverter;
 import org.dockbox.selene.commands.convert.CommandValueConverter;
-import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.di.annotations.Service;
 import org.dockbox.selene.di.properties.InjectableType;
 import org.dockbox.selene.di.properties.InjectorProperty;
@@ -33,9 +32,9 @@ import java.util.stream.Collectors;
 @Service
 public class ServerArgumentConverters  implements InjectableType {
 
-    public static final ArgumentConverter<ModuleContainer> MODULE = new CommandValueConverter<>(ModuleContainer.class, in -> Provider.provide(ModuleManager.class)
+    public static final ArgumentConverter<ModuleContainer> MODULE = new CommandValueConverter<>(ModuleContainer.class, in -> Selene.context().get(ModuleManager.class)
             .getContainer(in), in ->
-            Provider.provide(ModuleManager.class).getRegisteredModuleIds().stream()
+            Selene.context().get(ModuleManager.class).getRegisteredModuleIds().stream()
                     .filter(id -> id.toLowerCase().contains(in.toLowerCase()))
                     .collect(Collectors.toList()),
             "module");

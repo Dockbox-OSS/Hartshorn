@@ -40,7 +40,8 @@ import org.dockbox.selene.commands.source.CommandSource;
 import org.dockbox.selene.commands.values.AbstractArgumentElement;
 import org.dockbox.selene.commands.values.AbstractFlagCollection;
 import org.dockbox.selene.commands.values.ArgumentValue;
-import org.dockbox.selene.di.Provider;
+import org.dockbox.selene.di.annotations.Wired;
+import org.dockbox.selene.di.context.ApplicationContext;
 import org.dockbox.selene.util.Reflect;
 import org.dockbox.selene.util.SeleneUtils;
 import org.jetbrains.annotations.NotNull;
@@ -55,14 +56,15 @@ import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.inject.Inject;
-
 @Entity(value = "commands", serializable = false)
 @SuppressWarnings("RegExpUnnecessaryNonCapturingGroup")
 public abstract class DefaultCommandBus<E> implements CommandBus {
 
-    @Inject
+    @Wired
     protected CommandResources resources;
+
+    @Wired
+    protected ApplicationContext context;
 
     /**
      * Represents the default type for command elements matched by {@link DefaultCommandBus#FLAG} or
@@ -471,7 +473,7 @@ public abstract class DefaultCommandBus<E> implements CommandBus {
             String defaultPermission
     ) {
         if (flagMatcher.matches()) {
-            if (null == flagCollection) flagCollection = Provider.provide(AbstractFlagCollection.class);
+            if (null == flagCollection) flagCollection = this.context.get(AbstractFlagCollection.class);
             this.parseFlag(flagCollection, flagMatcher.group(1), flagMatcher.group(2), defaultPermission);
         }
         return flagCollection;

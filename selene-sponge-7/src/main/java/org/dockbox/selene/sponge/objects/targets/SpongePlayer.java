@@ -33,7 +33,8 @@ import org.dockbox.selene.api.i18n.text.Text;
 import org.dockbox.selene.api.i18n.text.pagination.Pagination;
 import org.dockbox.selene.api.keys.PersistentDataKey;
 import org.dockbox.selene.api.keys.TransactionResult;
-import org.dockbox.selene.di.Provider;
+import org.dockbox.selene.di.annotations.Wired;
+import org.dockbox.selene.di.context.ApplicationContext;
 import org.dockbox.selene.nms.packets.NMSPacket;
 import org.dockbox.selene.server.minecraft.dimension.position.Location;
 import org.dockbox.selene.server.minecraft.events.chat.SendMessageEvent;
@@ -76,6 +77,9 @@ import eu.crushedpixel.sponge.packetgate.api.registry.PacketGate;
 @SuppressWarnings({ "ClassWithTooManyMethods", "CodeBlock2Expr" })
 public class SpongePlayer extends Player implements SpongeComposite, Wrapper<org.spongepowered.api.entity.living.player.Player> {
 
+    @Wired
+    private ApplicationContext context;
+    
     private static final double BLOCKRAY_LIMIT = 50d;
     private WeakReference<org.spongepowered.api.entity.living.player.Player> reference = new WeakReference<>(null);
 
@@ -112,12 +116,12 @@ public class SpongePlayer extends Player implements SpongeComposite, Wrapper<org
     @NotNull
     @Override
     public Language getLanguage() {
-        return Provider.provide(Players.class).getLanguagePreference(this.getUniqueId());
+        return this.context.get(Players.class).getLanguagePreference(this.getUniqueId());
     }
 
     @Override
     public void setLanguage(@NotNull Language lang) {
-        Provider.provide(Players.class).setLanguagePreference(this.getUniqueId(), lang);
+        this.context.get(Players.class).setLanguagePreference(this.getUniqueId(), lang);
     }
 
     @Override
@@ -252,7 +256,7 @@ public class SpongePlayer extends Player implements SpongeComposite, Wrapper<org
 
     private Exceptional<Text> postEventPre(Text text) {
         SendMessageEvent event = new SendMessageEvent(this, text);
-        Provider.provide(EventBus.class).post(event);
+        this.context.get(EventBus.class).post(event);
         text = event.getMessage();
         if (event.isCancelled()) return Exceptional.none();
         else return Exceptional.of(text);

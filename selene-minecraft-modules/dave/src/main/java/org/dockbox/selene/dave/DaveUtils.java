@@ -19,6 +19,7 @@ package org.dockbox.selene.dave;
 
 import net.dv8tion.jda.api.entities.TextChannel;
 
+import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.i18n.PermissionHolder;
 import org.dockbox.selene.api.i18n.text.Text;
@@ -31,7 +32,6 @@ import org.dockbox.selene.dave.models.DaveResponse;
 import org.dockbox.selene.dave.models.DaveTrigger;
 import org.dockbox.selene.dave.models.DaveTriggers;
 import org.dockbox.selene.dave.models.ResponseType;
-import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.discord.DiscordUtils;
 import org.dockbox.selene.server.minecraft.Console;
 import org.dockbox.selene.server.minecraft.players.Player;
@@ -52,7 +52,7 @@ public final class DaveUtils {
     private DaveUtils() {}
 
     public static void toggleMute(Player player) {
-        DaveResources resources = Provider.provide(DaveResources.class);
+        DaveResources resources = Selene.context().get(DaveResources.class);
         player.get(mutedKey).present(state -> {
             if (1 == state) {
                 player.remove(mutedKey);
@@ -149,7 +149,7 @@ public final class DaveUtils {
 
     private static void printResponse(
             String response, boolean link, boolean important, DaveConfig config) {
-        DaveResources resources = Provider.provide(DaveResources.class);
+        DaveResources resources = Selene.context().get(DaveResources.class);
         Text message = Text.of(config.getPrefix());
 
         if (link) {
@@ -163,7 +163,7 @@ public final class DaveUtils {
         else message.append(response);
 
         // Regular chat response
-        Players pss = Provider.provide(Players.class);
+        Players pss = Selene.context().get(Players.class);
         pss.getOnlinePlayers().stream()
                 .filter(op -> important || !isMuted(op))
                 .forEach(op -> op.send(message));
@@ -174,7 +174,7 @@ public final class DaveUtils {
         for (String regex : new String[]{ "(&)([a-f])+", "(&)([0-9])+", "&l", "&n", "&o", "&k", "&m", "&r" })
             discordMessage = discordMessage.replaceAll(regex, "");
 
-        Provider.provide(DiscordUtils.class).sendToTextChannel(resources.getDiscordFormat(discordMessage), discordChannel);
+        Selene.context().get(DiscordUtils.class).sendToTextChannel(resources.getDiscordFormat(discordMessage), discordChannel);
     }
 
     public static String parseWebsiteLink(String unparsedLink) {
@@ -187,7 +187,7 @@ public final class DaveUtils {
     public static String parsePlaceHolders(
             String message, String unparsedResponse, String playerName) {
         String parsedResponse = unparsedResponse.replaceAll("<player>", playerName);
-        DiscordUtils du = Provider.provide(DiscordUtils.class);
+        DiscordUtils du = Selene.context().get(DiscordUtils.class);
 
         if (parsedResponse.contains("<mention>")) {
             boolean replaced = false;
@@ -224,7 +224,7 @@ public final class DaveUtils {
     }
 
     private static String parseRandomPlayer(String fullResponse, String playerName) {
-        Players pss = Provider.provide(Players.class);
+        Players pss = Selene.context().get(Players.class);
         int index = new Random().nextInt(pss.getOnlinePlayers().size());
         String randomPlayer = pss.getOnlinePlayers().toArray(new Player[0])[index].getName();
 

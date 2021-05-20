@@ -35,19 +35,19 @@ public class SpongeThreadUtils implements ThreadUtils {
 
     @Override
     public Future<?> performAsync(Runnable runnable) {
-        SpongeExecutorService ses = Sponge.getScheduler().createAsyncExecutor(Selene.getServer());
+        SpongeExecutorService ses = Sponge.getScheduler().createAsyncExecutor(Selene.server());
         return ses.submit(runnable);
     }
 
     @Override
     public Future<?> performSync(Runnable runnable) {
-        SpongeExecutorService ses = Sponge.getScheduler().createSyncExecutor(Selene.getServer());
+        SpongeExecutorService ses = Sponge.getScheduler().createSyncExecutor(Selene.server());
         return ses.submit(runnable);
     }
 
     @Override
     public <T> Exceptional<T> awaitAsync(Callable<T> callable) {
-        SpongeExecutorService ses = Sponge.getScheduler().createAsyncExecutor(Selene.getServer());
+        SpongeExecutorService ses = Sponge.getScheduler().createAsyncExecutor(Selene.server());
         try {
             return Exceptional.of(ses.submit(callable).get());
         }
@@ -58,7 +58,7 @@ public class SpongeThreadUtils implements ThreadUtils {
 
     @Override
     public <T> Exceptional<T> awaitSync(Callable<T> callable) {
-        SpongeExecutorService ses = Sponge.getScheduler().createSyncExecutor(Selene.getServer());
+        SpongeExecutorService ses = Sponge.getScheduler().createSyncExecutor(Selene.server());
         try {
             return Exceptional.of(ses.submit(callable).get());
         }

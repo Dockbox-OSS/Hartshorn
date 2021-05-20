@@ -21,7 +21,6 @@ import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.SeleneBootstrap;
 import org.dockbox.selene.api.events.EventBus;
 import org.dockbox.selene.di.InjectConfiguration;
-import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.server.ServerBootstrap;
 import org.dockbox.selene.server.events.ServerInitEvent;
 import org.jetbrains.annotations.NotNull;
@@ -64,7 +63,7 @@ public abstract class MinecraftServerBootstrap extends ServerBootstrap {
     @Override
     protected void init() {
         super.init();
-        EventBus bus = Provider.provide(EventBus.class);
+        EventBus bus = super.getContext().get(EventBus.class);
         bus.subscribe(this);
         bus.post(new ServerInitEvent());
     }

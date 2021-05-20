@@ -19,7 +19,6 @@ package org.dockbox.selene.api.module;
 
 import org.dockbox.selene.api.SeleneBootstrap;
 import org.dockbox.selene.di.InjectConfiguration;
-import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.util.SeleneUtils;
 
 import java.util.Set;
@@ -43,7 +42,7 @@ public abstract class SeleneModuleBootstrap extends SeleneBootstrap {
     @Override
     protected void init() {
         super.init();
-        SeleneModuleBootstrap.initialiseModules(this.getModuleConsumer());
+        this.initialiseModules(this.getModuleConsumer());
         this.postInitRunners.forEach(Runnable::run);
     }
 
@@ -53,8 +52,8 @@ public abstract class SeleneModuleBootstrap extends SeleneBootstrap {
      * @param consumer
      *         The consumer to apply
      */
-    private static void initialiseModules(Consumer<ModuleContainer> consumer) {
-        Provider.provide(ModuleManager.class).initialiseModules().forEach(consumer);
+    private void initialiseModules(Consumer<ModuleContainer> consumer) {
+        super.getContext().get(ModuleManager.class).initialiseModules().forEach(consumer);
     }
 
     private Consumer<ModuleContainer> getModuleConsumer() {

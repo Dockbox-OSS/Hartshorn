@@ -23,7 +23,6 @@ import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.module.annotations.Module;
 import org.dockbox.selene.di.InjectionPoint;
-import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.di.preload.Preloadable;
 
 @Phase(BootstrapPhase.CONSTRUCT)
@@ -33,11 +32,11 @@ public class ModulePreload implements Preloadable {
     public void preload() {
         InjectionPoint<?> point = InjectionPoint.of(Object.class, (instance, type, properties) -> {
             if (type.isAnnotationPresent(Module.class)) {
-                Exceptional<?> singletonInstance = Provider.provide(ModuleManager.class).getInstance(type);
+                Exceptional<?> singletonInstance = Selene.context().get(ModuleManager.class).getInstance(type);
                 if (singletonInstance.present()) return singletonInstance.get();
             }
             return instance;
         });
-        Selene.getServer().injectAt(point);
+        Selene.context().add(point);
     }
 }

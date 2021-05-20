@@ -21,8 +21,8 @@ import org.dockbox.selene.api.events.annotations.Listener;
 import org.dockbox.selene.api.module.annotations.Module;
 import org.dockbox.selene.api.task.TaskRunner;
 import org.dockbox.selene.commands.annotations.Command;
-import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.di.annotations.Wired;
+import org.dockbox.selene.di.context.ApplicationContext;
 import org.dockbox.selene.server.events.ServerReloadEvent;
 import org.dockbox.selene.server.events.ServerStartedEvent;
 import org.dockbox.selene.server.minecraft.dimension.Worlds;
@@ -40,17 +40,19 @@ public class WorldManagement {
     private WorldManagementConfig config;
     @Wired
     private WorldManagementResources resources;
+    @Wired
+    private ApplicationContext context;
 
     protected static final String WORLD_MANAGER = "selene.worlds";
 
     @Listener
     public void on(ServerReloadEvent event) {
-        this.config = Provider.provide(WorldManagementConfig.class); // Reload from file, clean instance
+        this.config = this.context.get(WorldManagementConfig.class); // Reload from file, clean instance
     }
 
     @Listener
     public void on(ServerStartedEvent event) {
-        Provider.provide(TaskRunner.class).acceptDelayed(this::unloadEmptyWorlds, 5, TimeUnit.MINUTES);
+        this.context.get(TaskRunner.class).acceptDelayed(this::unloadEmptyWorlds, 5, TimeUnit.MINUTES);
     }
 
     @Listener
@@ -62,12 +64,12 @@ public class WorldManagement {
     }
 
     private void unloadEmptyWorlds() {
-        Provider.provide(Worlds.class).getLoadedWorlds()
+        this.context.get(Worlds.class).getLoadedWorlds()
                 .stream()
                 .filter(world -> world.getPlayerCount() == 0)
                 .filter(world -> this.config.getUnloadBlacklist().contains(world.getName()))
                 .limit(this.config.getMaximumWorldsToUnload())
                 .forEach(World::unload);
-        Provider.provide(TaskRunner.class).acceptDelayed(this::unloadEmptyWorlds, this.config.getUnloadDelay(), TimeUnit.MINUTES);
+        this.context.get(TaskRunner.class).acceptDelayed(this::unloadEmptyWorlds, this.config.getUnloadDelay(), TimeUnit.MINUTES);
     }
 }

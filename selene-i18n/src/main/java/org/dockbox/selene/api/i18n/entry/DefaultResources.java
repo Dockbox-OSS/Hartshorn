@@ -21,7 +21,6 @@ import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.i18n.annotations.Resource;
 import org.dockbox.selene.api.i18n.annotations.Resources;
 import org.dockbox.selene.api.i18n.common.ResourceEntry;
-import org.dockbox.selene.di.Provider;
 
 @Resources(Selene.class)
 public interface DefaultResources {
@@ -48,7 +47,7 @@ public interface DefaultResources {
     ResourceEntry getException(String message);
 
     static DefaultResources instance() {
-        return Provider.provide(DefaultResources.class);
+        return Selene.context().get(DefaultResources.class);
     }
 
 }

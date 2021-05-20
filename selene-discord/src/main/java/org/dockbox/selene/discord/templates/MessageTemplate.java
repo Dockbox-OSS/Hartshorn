@@ -19,8 +19,8 @@ package org.dockbox.selene.discord.templates;
 
 import net.dv8tion.jda.api.entities.Message;
 
+import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.i18n.text.Text;
-import org.dockbox.selene.di.Provider;
 
 public interface MessageTemplate extends Template<Message> {
 
@@ -31,7 +31,7 @@ public interface MessageTemplate extends Template<Message> {
     }
 
     static MessageTemplate create() {
-        return Provider.provide(MessageTemplate.class);
+        return Selene.context().get(MessageTemplate.class);
     }
 
     Text getContent();

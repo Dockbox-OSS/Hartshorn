@@ -17,8 +17,8 @@
 
 package org.dockbox.selene.plots.flags;
 
+import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.i18n.common.ResourceEntry;
-import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.plots.PlotService;
 
 public interface PlotFlag<T> {
@@ -34,7 +34,7 @@ public interface PlotFlag<T> {
     Class<T> getType();
 
     default void register() {
-        Provider.provide(PlotService.class).registerFlag(this);
+        Selene.context().get(PlotService.class).registerFlag(this);
     }
 
 }

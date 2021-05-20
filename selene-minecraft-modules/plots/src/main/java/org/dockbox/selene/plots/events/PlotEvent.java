@@ -17,9 +17,9 @@
 
 package org.dockbox.selene.plots.events;
 
+import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.events.EventBus;
 import org.dockbox.selene.api.events.parents.Event;
-import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.plots.Plot;
 
 import lombok.AllArgsConstructor;
@@ -33,7 +33,7 @@ public abstract class PlotEvent implements Event {
 
     @Override
     public PlotEvent post() {
-        Provider.provide(EventBus.class).post(this);
+        Selene.context().get(EventBus.class).post(this);
         return this;
     }
 }

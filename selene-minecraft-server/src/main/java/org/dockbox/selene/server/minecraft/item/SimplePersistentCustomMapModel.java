@@ -17,8 +17,8 @@
 
 package org.dockbox.selene.server.minecraft.item;
 
+import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.entity.annotations.Entity;
-import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.server.minecraft.item.maps.CustomMap;
 import org.dockbox.selene.server.minecraft.item.maps.CustomMapService;
 
@@ -39,6 +39,6 @@ public class SimplePersistentCustomMapModel extends SimplePersistentItemModel {
 
     @Override
     public Item toPersistentCapable() {
-        return this.repopulate(Provider.provide(CustomMapService.class).getById(this.getMeta()));
+        return this.repopulate(Selene.context().get(CustomMapService.class).getById(this.getMeta()));
     }
 }

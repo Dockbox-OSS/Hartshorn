@@ -21,7 +21,6 @@ import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.entity.annotations.Entity;
 import org.dockbox.selene.api.i18n.common.Language;
-import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.persistence.FileManager;
 import org.jetbrains.annotations.NotNull;
 
@@ -44,14 +43,14 @@ public abstract class DefaultPlayers implements Players {
     }
 
     private static UserDataModel getUserData(UUID uuid) {
-        FileManager cm = Provider.provide(FileManager.class);
+        FileManager cm = Selene.context().get(FileManager.class);
         Path file = cm.getDataFile(Selene.class, "userdata/" + uuid);
         Exceptional<UserDataModel> userDataModel = cm.read(file, UserDataModel.class);
         return userDataModel.or(new UserDataModel());
     }
 
     private static void updateUserData(UUID uuid, UserDataModel userData) {
-        FileManager cm = Provider.provide(FileManager.class);
+        FileManager cm = Selene.context().get(FileManager.class);
         Path file = cm.getDataFile(Selene.class, "userdata/" + uuid);
         cm.write(file, userData);
     }

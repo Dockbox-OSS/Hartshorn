@@ -19,9 +19,9 @@ package org.dockbox.selene.dave;
 
 import net.dv8tion.jda.api.entities.TextChannel;
 
+import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.entity.annotations.Entity;
 import org.dockbox.selene.api.i18n.text.Text;
-import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.discord.DiscordUtils;
 
 @SuppressWarnings({ "FieldCanBeLocal", "FieldMayBeFinal" })
@@ -34,7 +34,7 @@ public class DaveConfig {
     public DaveConfig() {}
 
     public TextChannel getChannel() {
-        DiscordUtils du = Provider.provide(DiscordUtils.class);
+        DiscordUtils du = Selene.context().get(DiscordUtils.class);
         return du.getJDA().get().getTextChannelById(this.channelId);
     }
 

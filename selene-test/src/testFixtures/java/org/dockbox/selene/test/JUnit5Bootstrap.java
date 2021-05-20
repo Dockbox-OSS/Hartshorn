@@ -80,7 +80,7 @@ public class JUnit5Bootstrap extends MinecraftServerBootstrap {
         super.enter(BootstrapPhase.PRE_INIT);
         super.init();
         super.enter(BootstrapPhase.INIT);
-        this.getInjector().bind(Server.class, JUnitServer.class);
+        this.getContext().bind(Server.class, JUnitServer.class);
     }
     
     @Override

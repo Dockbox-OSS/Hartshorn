@@ -17,6 +17,7 @@
 
 package org.dockbox.selene.server.minecraft;
 
+import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.domain.Identifiable;
 import org.dockbox.selene.api.domain.tuple.Tristate;
 import org.dockbox.selene.api.i18n.PermissionHolder;
@@ -27,7 +28,6 @@ import org.dockbox.selene.api.i18n.permissions.PermissionContext;
 import org.dockbox.selene.api.i18n.text.Text;
 import org.dockbox.selene.commands.CommandInterface;
 import org.dockbox.selene.commands.source.CommandSource;
-import org.dockbox.selene.di.Provider;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
@@ -44,7 +44,7 @@ public abstract class Console implements CommandSource, PermissionHolder, Identi
     }
 
     public static Console getInstance() {
-        if (null == instance) return Provider.provide(Console.class);
+        if (null == instance) return Selene.context().get(Console.class);
         return instance;
     }
 

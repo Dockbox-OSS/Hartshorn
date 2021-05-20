@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.config;
 
-import org.dockbox.selene.di.Provider;
+import org.dockbox.selene.api.Selene;
 
 import java.nio.file.Path;
 
@@ -26,7 +26,7 @@ public interface ConfigurationManager {
     <T> T get(String key);
 
     static ConfigurationManager of(Path path) {
-        return Provider.provide(ConfigurationManager.class, path);
+        return Selene.context().get(ConfigurationManager.class, path);
     }
 
 }

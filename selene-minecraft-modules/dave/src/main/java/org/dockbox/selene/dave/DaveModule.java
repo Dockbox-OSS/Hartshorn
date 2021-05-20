@@ -30,8 +30,8 @@ import org.dockbox.selene.commands.context.CommandContext;
 import org.dockbox.selene.commands.source.CommandSource;
 import org.dockbox.selene.commands.source.DiscordCommandSource;
 import org.dockbox.selene.dave.models.DaveTriggers;
-import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.di.annotations.Wired;
+import org.dockbox.selene.di.context.ApplicationContext;
 import org.dockbox.selene.di.properties.InjectableType;
 import org.dockbox.selene.di.properties.InjectorProperty;
 import org.dockbox.selene.discord.events.DiscordChatReceivedEvent;
@@ -61,6 +61,9 @@ public class DaveModule implements InjectableType {
     @Wired
     private DaveResources resources;
 
+    @Wired
+    private ApplicationContext context;
+
     @Command(value = "mute", permission = DaveModule.DAVE_MUTE)
     public void mute(Player player) {
         DaveUtils.toggleMute(player);
@@ -68,7 +71,7 @@ public class DaveModule implements InjectableType {
 
     @Command(value = "triggers", permission = DaveModule.DAVE_TRIGGERS)
     public void triggers(CommandSource source) {
-        Provider.provide(PaginationBuilder.class)
+        this.context.get(PaginationBuilder.class)
                 .title(this.resources.getTriggerHeader().asText())
                 .content(this.triggers.getTriggers().stream()
                         .map(trigger -> this.resources.getTriggerSingle(SeleneUtils.shorten(trigger.getResponses().get(0).getMessage(), 75) + " ...")
@@ -96,7 +99,7 @@ public class DaveModule implements InjectableType {
 
     @Override
     public void stateEnabling(InjectorProperty<?>... properties) {
-        FileManager fm = Provider.provide(FileManager.class);
+        FileManager fm = this.context.get(FileManager.class);
         Path triggerFile = fm.getDataFile(DaveModule.class, "triggers");
         if (SeleneUtils.isFileEmpty(triggerFile)) this.restoreTriggerFile(fm, triggerFile);
 
@@ -129,7 +132,7 @@ public class DaveModule implements InjectableType {
     @Listener
     public void on(SendChatEvent sendChatEvent) {
         Player player = (Player) sendChatEvent.getTarget();
-        DaveUtils.findMatching(this.triggers, sendChatEvent.getMessage().toPlain()).present(trigger -> Provider.provide(TaskRunner.class).acceptDelayed(() -> DaveUtils.performTrigger(
+        DaveUtils.findMatching(this.triggers, sendChatEvent.getMessage().toPlain()).present(trigger -> this.context.get(TaskRunner.class).acceptDelayed(() -> DaveUtils.performTrigger(
                 player,
                 player.getName(),
                 trigger,
@@ -142,8 +145,8 @@ public class DaveModule implements InjectableType {
     @Listener
     public void on(DiscordChatReceivedEvent chatEvent) {
         if (chatEvent.getChannel().getId().equals(this.config.getChannel().getId())) {
-            DaveUtils.findMatching(this.triggers, chatEvent.getMessage().getContentRaw()).present(trigger -> Provider.provide(TaskRunner.class).acceptDelayed(() -> DaveUtils.performTrigger(
-                    Provider.provide(DiscordCommandSource.class, chatEvent.getChannel()),
+            DaveUtils.findMatching(this.triggers, chatEvent.getMessage().getContentRaw()).present(trigger -> this.context.get(TaskRunner.class).acceptDelayed(() -> DaveUtils.performTrigger(
+                    this.context.get(DiscordCommandSource.class, chatEvent.getChannel()),
                     chatEvent.getAuthor().getName(),
                     trigger,
                     chatEvent.getMessage().getContentRaw(),

@@ -15,42 +15,28 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.api.task;
+package org.dockbox.selene.di;
 
 import org.dockbox.selene.api.Selene;
+import org.dockbox.selene.di.context.ApplicationContext;
+import org.dockbox.selene.di.types.SampleContextAwareType;
 import org.dockbox.selene.test.SeleneJUnit5Runner;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-
 @ExtendWith(SeleneJUnit5Runner.class)
-public class TaskRunnerTests {
-
-    private final CountDownLatch lock = new CountDownLatch(1);
+public class ContextAwareTests {
 
     @Test
-    void testTaskRunsSync() {
-        TaskRunner runner = Selene.context().get(TaskRunner.class);
-        final boolean[] activated = { false };
-        Task task = () -> activated[0] = true;
-        runner.accept(task);
+    void testApplicationContextIsBound() {
+        final ApplicationContext applicationContext = Selene.context().get(ApplicationContext.class);
+        Assertions.assertNotNull(applicationContext);
 
-        Assertions.assertTrue(activated[0]);
-    }
+        final SampleContextAwareType sampleContextAwareType = Selene.context().get(SampleContextAwareType.class);
+        Assertions.assertNotNull(sampleContextAwareType);
+        Assertions.assertNotNull(sampleContextAwareType.getContext());
 
-    @SuppressWarnings("ResultOfMethodCallIgnored")
-    @Test
-    void testTaskRunsDelayed() throws InterruptedException {
-        TaskRunner runner = Selene.context().get(TaskRunner.class);
-        final boolean[] activated = { false };
-        Task task = () -> activated[0] = true;
-        runner.acceptDelayed(task, 5, TimeUnit.MILLISECONDS);
-
-        this.lock.await(25, TimeUnit.MILLISECONDS);
-
-        Assertions.assertTrue(activated[0]);
+        Assertions.assertSame(applicationContext, sampleContextAwareType.getContext());
     }
 }

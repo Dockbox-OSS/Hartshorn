@@ -20,7 +20,8 @@ package org.dockbox.selene.persistence;
 import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.domain.TypedOwner;
-import org.dockbox.selene.di.Provider;
+import org.dockbox.selene.di.annotations.Wired;
+import org.dockbox.selene.di.context.ApplicationContext;
 import org.dockbox.selene.di.properties.InjectorProperty;
 import org.dockbox.selene.util.Reflect;
 import org.dockbox.selene.util.SeleneUtils;
@@ -33,6 +34,8 @@ import java.nio.file.StandardCopyOption;
 
 public abstract class DefaultAbstractFileManager implements FileManager {
 
+    @Wired
+    private ApplicationContext context;
     private FileType fileType;
 
     protected DefaultAbstractFileManager(FileType fileType) {
@@ -126,7 +129,7 @@ public abstract class DefaultAbstractFileManager implements FileManager {
         if (Reflect.assignableFrom(PersistentCapable.class, type)) {
             // Provision basis is required here, as injected types will typically pass in a interface type. If no injection point is available a
             // regular instance is created (either through available constructors or Unsafe instantiation).
-            Class<? extends PersistentModel<?>> modelType = ((PersistentCapable<?>) Provider.provide(type)).getModelClass();
+            Class<? extends PersistentModel<?>> modelType = ((PersistentCapable<?>) this.context.get(type)).getModelClass();
             @NotNull Exceptional<? extends PersistentModel<?>> model = this.read(file, modelType);
             return model.map(PersistentModel::toPersistentCapable).map(content -> (T) content);
         }

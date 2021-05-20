@@ -1,0 +1,140 @@
+/*
+ * Copyright (C) 2020 Guus Lieben
+ *
+ * This framework is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 2.1 of the
+ * License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See
+ * the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
+ */
+
+package org.dockbox.selene.di.context;
+
+import org.dockbox.selene.api.domain.Exceptional;
+import org.dockbox.selene.di.InjectConfiguration;
+import org.dockbox.selene.di.ProvisionFailure;
+import org.dockbox.selene.di.SeleneFactory;
+import org.dockbox.selene.di.binding.Bindings;
+import org.dockbox.selene.di.exceptions.ApplicationException;
+import org.dockbox.selene.di.inject.Binder;
+import org.dockbox.selene.di.inject.InjectSource;
+import org.dockbox.selene.di.inject.Injector;
+import org.dockbox.selene.di.inject.InjectorAdapter;
+import org.dockbox.selene.di.properties.InjectableType;
+import org.dockbox.selene.di.properties.InjectorProperty;
+import org.dockbox.selene.di.properties.UseFactory;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.function.Consumer;
+
+import lombok.Getter;
+
+public class InjectorAwareContext extends ManagedSeleneContext {
+
+    @Getter
+    private final InjectorAdapter adapter;
+
+    public InjectorAwareContext(InjectSource source) {
+        this.adapter = new InjectorAdapter(source);
+        this.bind(ApplicationContext.class, this);
+    }
+
+    @Override
+    public <T> T get(Class<T> type, InjectorProperty<?>... additionalProperties) {
+        T typeInstance = null;
+
+        @Nullable Exceptional<Object[]> value = Bindings.value(UseFactory.KEY, Object[].class, additionalProperties);
+        if (value.present()) {
+            typeInstance = this.get(SeleneFactory.class).create(type, value.get());
+            this.injector().populate(typeInstance);
+        } else {
+            // Type instance can be present if it is a module. These instances are also created using Guice
+            // injectors and therefore do not need late member injection here.
+            typeInstance = this.create(type, typeInstance, additionalProperties);
+        }
+
+        // Recreating field instances ensures all fields are created through bootstrapping, allowing injection
+        // points to apply correctly
+        this.injector().populate(typeInstance);
+
+        typeInstance = this.inject(type, typeInstance, additionalProperties);
+
+        // Enables all fields which are not annotated with @Module or @DoNotEnable
+        this.enable(typeInstance);
+
+        // Inject properties if applicable
+        if (typeInstance instanceof InjectableType && ((InjectableType) typeInstance).canEnable()) {
+            try {
+                ((InjectableType) typeInstance).stateEnabling(additionalProperties);
+            } catch (ApplicationException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        // May be null, but we have used all possible injectors, it's up to the developer now
+        return typeInstance;
+    }
+
+    @Override
+    public <T> T get(Class<T> type, Object... varargs) {
+        return this.get(type, SeleneFactory.use(varargs));
+    }
+
+    @Override
+    public <T> void with(Class<T> type, Consumer<T> consumer) {
+        final T instance = this.get(type);
+        if (null != instance) consumer.accept(instance);
+    }
+
+    @Override
+    public Binder getBinder() {
+        return this.injector();
+    }
+
+    @Override
+    public Injector injector() {
+        return this.adapter.getInjector();
+    }
+
+    @Nullable
+    public <T> T create(Class<T> type, T typeInstance, InjectorProperty<?>[] additionalProperties) {
+        if (null == typeInstance) {
+            typeInstance = this.injector().get(type, additionalProperties).then(() -> {
+                try {
+                    return this.raw(type);
+                }
+                catch (ProvisionFailure e) {
+                    return this.getUnsafeInstance(type);
+                }
+            }).rethrow().get();
+        }
+        return typeInstance;
+    }
+
+    @Override
+    public <T> T populate(T o) {
+        return this.injector().populate(o);
+    }
+
+    @Override
+    public void bind(InjectConfiguration configuration) {
+        this.injector().bind(configuration);
+    }
+
+    @Override
+    public void bind(String prefix) {
+        this.injector().bind(prefix);
+    }
+
+    @Override
+    public <T, I extends T> Exceptional<Class<I>> findWire(Class<T> contract) {
+        return this.injector().findWire(contract);
+    }
+}

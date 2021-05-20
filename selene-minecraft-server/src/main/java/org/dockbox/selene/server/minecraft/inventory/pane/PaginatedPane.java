@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.server.minecraft.inventory.pane;
 
-import org.dockbox.selene.di.Provider;
+import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.server.minecraft.inventory.Element;
 import org.dockbox.selene.server.minecraft.inventory.InventoryLayout;
 import org.dockbox.selene.server.minecraft.inventory.builder.PaginatedPaneBuilder;
@@ -41,7 +41,7 @@ public interface PaginatedPane extends Pane {
      * @return The builder
      */
     static PaginatedPaneBuilder builder(InventoryLayout layout) {
-        return Provider.provide(PaginatedPaneBuilder.class, new LayoutProperty(layout));
+        return Selene.context().get(PaginatedPaneBuilder.class, new LayoutProperty(layout));
     }
 
     /**

@@ -28,7 +28,6 @@ import org.dockbox.selene.api.SeleneInformation;
 import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.events.EventBus;
 import org.dockbox.selene.api.exceptions.Except;
-import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.di.annotations.Wired;
 import org.dockbox.selene.discord.DiscordUtils;
 import org.dockbox.selene.nms.packets.NMSPacket;
@@ -163,15 +162,15 @@ public class SpongeAPI7Bootstrap extends MinecraftServerBootstrap {
             super.init();
 
             super.enter(BootstrapPhase.INIT);
-            this.getInjector().bind(Server.class, DefaultServer.class);
+            this.getContext().bind(Server.class, DefaultServer.class);
 
             this.registerSpongeListeners(
-                    Provider.provide(SpongeCommandListener.class),
-                    Provider.provide(SpongeServerListener.class),
-                    Provider.provide(SpongeDiscordListener.class),
-                    Provider.provide(SpongePlayerListener.class),
-                    Provider.provide(SpongeEntityListener.class),
-                    Provider.provide(PlotSquaredEventListener.class)
+                    super.getContext().get(SpongeCommandListener.class),
+                    super.getContext().get(SpongeServerListener.class),
+                    super.getContext().get(SpongeDiscordListener.class),
+                    super.getContext().get(SpongePlayerListener.class),
+                    super.getContext().get(SpongeEntityListener.class),
+                    super.getContext().get(PlotSquaredEventListener.class)
             );
 
             Optional<PacketGate> packetGate = Sponge.getServiceManager().provide(PacketGate.class);
@@ -197,7 +196,7 @@ public class SpongeAPI7Bootstrap extends MinecraftServerBootstrap {
     }
 
     private static void preparePacketGateListeners(PacketGate packetGate) {
-        EventBus bus = Provider.provide(EventBus.class);
+        EventBus bus = Selene.context().get(EventBus.class);
         Set<Class<? extends Packet>> adaptedPackets = SeleneUtils.emptySet();
         bus.getListenersToInvokers().forEach((k, v) -> v.forEach(
                 eventWrapper -> {
@@ -210,7 +209,7 @@ public class SpongeAPI7Bootstrap extends MinecraftServerBootstrap {
                         // Adapters post the event globally, so we only need to register it once.
                         // This also avoids double-posting of the same event.
                         if (!adaptedPackets.contains(packet)) {
-                            Packet emptyPacket = Provider.provide(packet);
+                            Packet emptyPacket = Selene.context().get(packet);
                             packetGate.registerListener(
                                     SpongeAPI7Bootstrap.getPacketGateAdapter(packet),
                                     ListenerPriority.DEFAULT,
@@ -225,11 +224,11 @@ public class SpongeAPI7Bootstrap extends MinecraftServerBootstrap {
         return new PacketListenerAdapter() {
             @Override
             public void onPacketWrite(eu.crushedpixel.sponge.packetgate.api.event.PacketEvent packetEvent, PacketConnection connection) {
-                Provider.provide(Players.class)
+                Selene.context().get(Players.class)
                         .getPlayer(connection.getPlayerUUID())
                         .present(player -> {
                             net.minecraft.network.Packet<?> nativePacket = packetEvent.getPacket();
-                            Packet internalPacket = Provider.provide(packet, new NativePacketProperty<>(nativePacket));
+                            Packet internalPacket = Selene.context().get(packet, new NativePacketProperty<>(nativePacket));
 
                             PacketEvent<? extends Packet> event =
                                     new PacketEvent<>(internalPacket, player).post();
@@ -271,7 +270,7 @@ public class SpongeAPI7Bootstrap extends MinecraftServerBootstrap {
      */
     @Listener
     public void on(GameStartedServerEvent event) {
-        Exceptional<JDA> oj = Provider.provide(DiscordUtils.class).getJDA();
+        Exceptional<JDA> oj = super.getContext().get(DiscordUtils.class).getJDA();
         if (oj.present()) {
             JDA jda = oj.get();
             // Avoid registering it twice if the scheduler outside this condition is executing this twice.

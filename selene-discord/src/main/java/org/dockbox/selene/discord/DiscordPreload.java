@@ -21,14 +21,13 @@ import org.dockbox.selene.api.BootstrapPhase;
 import org.dockbox.selene.api.Phase;
 import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.di.preload.Preloadable;
-import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.util.Reflect;
 
 @Phase(BootstrapPhase.INIT)
 class DiscordPreload implements Preloadable {
     @Override
     public void preload() {
-        DiscordUtils du = Provider.provide(DiscordUtils.class);
+        DiscordUtils du = Selene.context().get(DiscordUtils.class);
         if (!Reflect.registerModuleInitBus(du::registerCommandListener)) {
             Selene.log().error("Could not apply command listener registrations");
         }

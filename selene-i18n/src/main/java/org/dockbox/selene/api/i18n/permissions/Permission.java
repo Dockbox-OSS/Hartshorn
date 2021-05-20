@@ -17,18 +17,18 @@
 
 package org.dockbox.selene.api.i18n.permissions;
 
+import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.i18n.common.Formattable;
-import org.dockbox.selene.di.Provider;
 
 public interface Permission extends Formattable {
 
     static Permission of(String node) {
-        return Provider.provide(Permission.class, node);
+        return Selene.context().get(Permission.class, node);
     }
 
     static Permission of(String key, PermissionContext context) {
-        return Provider.provide(Permission.class, key, context);
+        return Selene.context().get(Permission.class, key, context);
     }
 
     String get();

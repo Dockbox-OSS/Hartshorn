@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.server.minecraft.inventory.pane;
 
-import org.dockbox.selene.di.Provider;
+import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.server.minecraft.inventory.Element;
 import org.dockbox.selene.server.minecraft.inventory.InventoryLayout;
 import org.dockbox.selene.server.minecraft.inventory.builder.StaticPaneBuilder;
@@ -36,7 +36,7 @@ public interface StaticPane extends Pane {
      * @return The builder
      */
     static StaticPaneBuilder builder(InventoryLayout layout) {
-        return Provider.provide(StaticPaneBuilder.class, new LayoutProperty(layout));
+        return Selene.context().get(StaticPaneBuilder.class, new LayoutProperty(layout));
     }
 
     /**

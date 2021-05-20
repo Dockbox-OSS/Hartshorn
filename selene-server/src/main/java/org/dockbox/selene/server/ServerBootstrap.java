@@ -25,9 +25,8 @@ import org.dockbox.selene.api.events.annotations.Listener;
 import org.dockbox.selene.api.module.ModuleContainer;
 import org.dockbox.selene.api.module.ModuleManager;
 import org.dockbox.selene.api.module.SeleneModuleBootstrap;
-import org.dockbox.selene.di.binding.BindingData;
 import org.dockbox.selene.di.InjectConfiguration;
-import org.dockbox.selene.di.Provider;
+import org.dockbox.selene.di.binding.BindingData;
 import org.dockbox.selene.server.events.ServerStartedEvent;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -60,13 +59,13 @@ public abstract class ServerBootstrap extends SeleneModuleBootstrap {
         Selene.log().info("\u00A77(\u00A7bSelene\u00A77) \u00A7fLoaded bindings: ");
         AtomicInteger unprovisionedTypes = new AtomicInteger();
 
-        for (BindingData binding : this.getInjector().getBindingData()) {
+        for (BindingData binding : this.getContext().injector().getBindingData()) {
             String meta = binding.getName().present() ? " (meta: " + binding.getName().get().value() + ")" : "";
             Selene.log().info("  - \u00A77" + binding.getSource().getSimpleName() + meta + ": \u00A78" + binding.getTarget().getSimpleName());
         }
 
         Selene.log().info("\u00A77(\u00A7bSelene\u00A77) \u00A7fLoaded modules: ");
-        ModuleManager em = Provider.provide(ModuleManager.class);
+        ModuleManager em = this.getContext().get(ModuleManager.class);
         em.getRegisteredModuleIds().forEach(ext -> {
             Exceptional<ModuleContainer> header = em.getContainer(ext);
             if (header.present()) {
@@ -80,7 +79,7 @@ public abstract class ServerBootstrap extends SeleneModuleBootstrap {
         });
 
         Selene.log().info("\u00A77(\u00A7bSelene\u00A77) \u00A7fLoaded event handlers: ");
-        Provider.provide(EventBus.class).getListenersToInvokers().forEach((listener, invokers) -> {
+        this.getContext().get(EventBus.class).getListenersToInvokers().forEach((listener, invokers) -> {
             Class<?> type;
             if (listener instanceof Class) type = (Class<?>) listener;
             else type = listener.getClass();

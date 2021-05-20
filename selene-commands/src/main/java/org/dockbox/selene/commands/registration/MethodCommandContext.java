@@ -28,7 +28,6 @@ import org.dockbox.selene.commands.annotations.Command;
 import org.dockbox.selene.commands.context.CommandContext;
 import org.dockbox.selene.commands.exceptions.IllegalSourceException;
 import org.dockbox.selene.commands.source.CommandSource;
-import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.util.Reflect;
 import org.dockbox.selene.util.SeleneUtils;
 
@@ -101,10 +100,10 @@ public class MethodCommandContext extends AbstractRegistrationContext {
     private Object prepareInstance() {
         Object instance;
         if (this.getDeclaringClass().equals(Selene.class) || Reflect.assignableFrom(Selene.class, this.getDeclaringClass())) {
-            instance = Selene.getServer();
+            instance = Selene.server();
         }
         else {
-            instance = Provider.provide(this.getDeclaringClass());
+            instance = Selene.context().get(this.getDeclaringClass());
         }
         return instance;
     }

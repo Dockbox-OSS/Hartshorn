@@ -17,9 +17,9 @@
 
 package org.dockbox.selene.plots;
 
+import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.keys.KeyHolder;
-import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.plots.flags.PlotFlag;
 import org.dockbox.selene.server.minecraft.dimension.position.Direction;
 import org.dockbox.selene.server.minecraft.dimension.position.Location;
@@ -58,7 +58,7 @@ public interface Plot extends KeyHolder<Plot> {
     Exceptional<Plot> getRelative(Direction direction);
 
     static Exceptional<Plot> getById(World world, int x, int y) {
-        return Provider.provide(PlotService.class).getPlot(world, x, y);
+        return Selene.context().get(PlotService.class).getPlot(world, x, y);
     }
 
     boolean isWorld();

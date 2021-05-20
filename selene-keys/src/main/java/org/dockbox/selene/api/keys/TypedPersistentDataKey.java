@@ -20,16 +20,13 @@ package org.dockbox.selene.api.keys;
 import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.domain.OwnerLookup;
 import org.dockbox.selene.api.domain.TypedOwner;
-import org.dockbox.selene.di.Provider;
 import org.jetbrains.annotations.NonNls;
 
 import java.util.Objects;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
-@AllArgsConstructor
 public class TypedPersistentDataKey<T> implements PersistentDataKey<T> {
 
     @NonNls
@@ -38,6 +35,16 @@ public class TypedPersistentDataKey<T> implements PersistentDataKey<T> {
     private final String id;
     private final TypedOwner owner;
     private final Class<T> type;
+
+    private final OwnerLookup lookup;
+
+    public TypedPersistentDataKey(String name, String id, TypedOwner owner, Class<T> type) {
+        this.name = name;
+        this.id = id;
+        this.owner = owner;
+        this.type = type;
+        this.lookup = Selene.context().get(OwnerLookup.class);
+    }
 
     @Override
     public String getOwnerId() {
@@ -58,7 +65,7 @@ public class TypedPersistentDataKey<T> implements PersistentDataKey<T> {
 
         if (!this.id.equals(that.id)) return false;
         if (!this.owner.equals(that.owner) &&
-                !this.owner.equals(Provider.provide(OwnerLookup.class).lookup(Selene.class)))
+                !this.owner.equals(this.lookup.lookup(Selene.class)))
             return false;
         return this.type.equals(that.type);
     }
