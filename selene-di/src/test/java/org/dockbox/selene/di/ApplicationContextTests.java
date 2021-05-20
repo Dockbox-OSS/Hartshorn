@@ -438,6 +438,16 @@ public class ApplicationContextTests {
         }
     }
 
+    @Test
+    void testManualWiredBeanCanSupply() throws IllegalAccessException {
+        injector(true).bind("org.dockbox.selene.di.types.bean");
+        injector(false).bind(SeleneFactory.class, SimpleSeleneFactory.class);
+
+        BeanInterface provided = Selene.context().get(BeanInterface.class, BindingMetaProperty.of("wired"), SeleneFactory.use("WiredBean"));
+        Assertions.assertNotNull(provided);
+        Assertions.assertEquals("WiredBean", provided.getName());
+    }
+
     private static Injector injector(boolean reset) throws IllegalAccessException {
         Injector injector = Selene.context().injector();
         if (reset) {

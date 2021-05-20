@@ -20,6 +20,7 @@ package org.dockbox.selene.di.types.bean;
 import org.dockbox.selene.di.annotations.Bean;
 import org.dockbox.selene.di.annotations.Named;
 import org.dockbox.selene.di.annotations.Service;
+import org.dockbox.selene.di.annotations.Wired;
 import org.dockbox.selene.di.types.SampleField;
 
 import javax.inject.Singleton;
@@ -51,6 +52,12 @@ public class SampleBeanService {
     @Bean("singleton")
     public BeanInterface getSingleton() {
         return () -> "SingletonBean";
+    }
+
+    @Bean("wired")
+    @Wired
+    public BeanInterface getManualWired(String name) {
+        return () -> name;
     }
 
 }
