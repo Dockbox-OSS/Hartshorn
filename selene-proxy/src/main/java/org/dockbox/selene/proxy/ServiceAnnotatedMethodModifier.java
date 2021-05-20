@@ -21,6 +21,7 @@ import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.di.context.ApplicationContext;
 import org.dockbox.selene.di.properties.InjectorProperty;
 import org.dockbox.selene.di.services.ServiceModifier;
+import org.dockbox.selene.proxy.exception.ProxyMethodBindingException;
 import org.dockbox.selene.proxy.handle.ProxyFunction;
 import org.dockbox.selene.proxy.handle.ProxyHandler;
 import org.dockbox.selene.util.Reflect;
@@ -48,6 +49,10 @@ public interface ServiceAnnotatedMethodModifier<A extends Annotation> extends Se
                     ProxyProperty<T, ?> property = ProxyProperty.of(type, method, function);
                     handler.delegate(property);
                 }
+            } else {
+                if (this.failOnPrecondition()) {
+                    throw new ProxyMethodBindingException(method);
+                }
             }
         }
         return Exceptional.of(handler::proxy).or(instance);
@@ -56,6 +61,8 @@ public interface ServiceAnnotatedMethodModifier<A extends Annotation> extends Se
     <T, R> ProxyFunction<T, R> process(ApplicationContext context, Class<T> type, @Nullable T instance, Method method, InjectorProperty<?>... properties);
 
     <T> boolean preconditions(Class<T> type, @Nullable T instance, Method method, InjectorProperty<?>... properties);
+
+    boolean failOnPrecondition();
 
     Class<A> annotation();
 }
