@@ -35,6 +35,7 @@ public interface ApplicationContext extends ApplicationBinder, SeleneContext {
     <T> void enable(T typeInstance);
 
     <T> T raw(Class<T> type) throws ProvisionFailure;
+    <T> T raw(Class<T> type, boolean populate) throws ProvisionFailure;
 
     Injector injector();
 
