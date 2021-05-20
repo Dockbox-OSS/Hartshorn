@@ -830,23 +830,6 @@ public final class Reflect {
         }
     }
 
-    public static <T> T unsafeInstance(Class<T> type) throws InstantiationException {
-        try {
-            //noinspection unchecked
-            return (T) getUnsafe().allocateInstance(type);
-        }
-        catch (ReflectiveOperationException e) {
-            throw new InstantiationException("Could not access Unsafe instance");
-        }
-    }
-
-    private static Unsafe getUnsafe() throws ReflectiveOperationException {
-        if (null == Reflect.UNSAFE) {
-            Field f = Unsafe.class.getDeclaredField("theUnsafe");
-            f.setAccessible(true);
-            Reflect.UNSAFE = (Unsafe) f.get(null);
-        }
-        return Reflect.UNSAFE;
     public static List<Field> fieldsWithSuper(Class<?> type, Class<?> superType) {
         Set<Field> fields = SeleneUtils.emptySet();
         for (Field staticField : staticFields(type)) {

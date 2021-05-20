@@ -26,7 +26,6 @@ import org.dockbox.selene.api.module.annotations.Module;
 import org.dockbox.selene.di.annotations.Binds;
 import org.dockbox.selene.di.annotations.Wired;
 import org.dockbox.selene.di.context.ApplicationContext;
-import org.dockbox.selene.di.properties.InjectableType;
 import org.dockbox.selene.util.Reflect;
 import org.dockbox.selene.util.SeleneUtils;
 import org.jetbrains.annotations.NonNls;
@@ -177,31 +176,18 @@ public class SimpleModuleManager implements ModuleManager {
             T instance = this.context.get(entry);
 
             if (null == instance) {
-                try {
-                    // This will skip the constructor so fields are not evaluated beforehand.
-                    // Modules should always wait with explicit logic until stateEnabling is called.
-                    instance = Reflect.unsafeInstance(entry);
+                container.status(entry, ModuleStatus.ERRORED);
+                Selene.log().warn("Failed to instantiate [" + entry.getCanonicalName() + "].");
+                return false;
 
-                    // Ensures fields are correctly repopulated
-                    SimpleModuleManager.populate(instance, container);
+            } else {
+                container.status(entry, ModuleStatus.LOADED);
+                Selene.context().bind(entry, instance);
 
-                    if (instance instanceof InjectableType && ((InjectableType) instance).canEnable()) {
-                        ((InjectableType) instance).stateEnabling();
-                    }
-
-                    container.status(entry, ModuleStatus.LOADED);
-                    Selene.context().bind(entry, instance);
-                }
-                catch (InstantiationException e) {
-                    container.status(entry, ModuleStatus.ERRORED);
-                    Selene.log().warn("Failed to instantiate [" + entry.getCanonicalName() + "].");
-                    return false;
-                }
+                instanceMappings.put(container.id(), instance);
+                container.instance(instance);
+                return true;
             }
-
-            instanceMappings.put(container.id(), instance);
-            container.instance(instance);
-            return true;
         } catch (Exception e) {
             Except.handle(e);
             return false;
