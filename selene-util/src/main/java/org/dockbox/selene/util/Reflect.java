@@ -847,5 +847,14 @@ public final class Reflect {
             Reflect.UNSAFE = (Unsafe) f.get(null);
         }
         return Reflect.UNSAFE;
+    public static List<Field> fieldsWithSuper(Class<?> type, Class<?> superType) {
+        Set<Field> fields = SeleneUtils.emptySet();
+        for (Field staticField : staticFields(type)) {
+            if (Reflect.assignableFrom(superType, staticField.getType())) fields.add(staticField);
+        }
+        fields(type, ($, field) -> {
+            if (Reflect.assignableFrom(superType, field.getType())) fields.add(field);
+        });
+        return SeleneUtils.asUnmodifiableList(fields);
     }
 }
