@@ -380,9 +380,14 @@ public class GuiceInjector implements Injector {
 
     @Override
     public <T, I extends T> void wire(Class<T> contract, Class<? extends I> implementation) {
+        this.wire(contract, implementation, Bindings.named(""));
+    }
+
+    @Override
+    public <C, T extends C> void wire(Class<C> contract, Class<? extends T> implementation, Named meta) {
         if (Reflect.annotatedConstructors(Wired.class, implementation).isEmpty())
             throw new IllegalArgumentException("Implementation should contain at least one constructor annotated with @AutoWired");
 
-        this.bindings.add(new WireBinding<>(contract, implementation));
+        this.bindings.add(new ConstructorWireContext<>(contract, implementation, meta.value()));
     }
 }

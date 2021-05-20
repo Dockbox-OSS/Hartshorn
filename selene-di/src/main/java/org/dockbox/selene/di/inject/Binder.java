@@ -31,5 +31,6 @@ public interface Binder {
     <C, T extends C> void bind(Class<C> contract, T instance);
     <C, T extends C> void bind(Class<C> contract, T instance, Named meta);
     <C, T extends C> void wire(Class<C> contract, Class<? extends T> implementation);
+    <C, T extends C> void wire(Class<C> contract, Class<? extends T> implementation, Named meta);
 
 }
