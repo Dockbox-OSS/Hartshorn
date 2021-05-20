@@ -18,10 +18,10 @@
 package org.dockbox.selene.worldmanagement;
 
 import org.dockbox.selene.api.i18n.annotations.Resource;
-import org.dockbox.selene.api.i18n.annotations.Resources;
 import org.dockbox.selene.api.i18n.common.ResourceEntry;
+import org.dockbox.selene.di.annotations.Service;
 
-@Resources(WorldManagement.class)
+@Service(owner = WorldManagement.class)
 public interface WorldManagementResources {
 
     @Resource(value = "$2{0} $1was added to the blacklist and will not be unloaded", key = "worldmanagement.unloader.blacklist.added")

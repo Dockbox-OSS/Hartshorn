@@ -18,10 +18,10 @@
 package org.dockbox.selene.commands;
 
 import org.dockbox.selene.api.i18n.annotations.Resource;
-import org.dockbox.selene.api.i18n.annotations.Resources;
 import org.dockbox.selene.api.i18n.common.ResourceEntry;
+import org.dockbox.selene.di.annotations.Service;
 
-@Resources(DefaultCommandBus.class)
+@Service(owner = DefaultCommandBus.class)
 public interface CommandResources {
 
     @Resource(value = "$1This command requires confirmation, click $2[here] $1to confirm", key = "confirm.message")

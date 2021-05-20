@@ -18,10 +18,10 @@
 package org.dockbox.selene.toolbinding;
 
 import org.dockbox.selene.api.i18n.annotations.Resource;
-import org.dockbox.selene.api.i18n.annotations.Resources;
 import org.dockbox.selene.api.i18n.common.ResourceEntry;
+import org.dockbox.selene.di.annotations.Service;
 
-@Resources(ToolBinding.class)
+@Service(owner = ToolBinding.class)
 public interface ToolBindingResources {
 
     @Resource(value = "Tool cannot be bound to blocks", key = "toolbinding.caught.block")
