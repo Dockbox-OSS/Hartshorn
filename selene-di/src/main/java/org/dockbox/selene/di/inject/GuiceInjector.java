@@ -46,6 +46,9 @@ import org.dockbox.selene.di.inject.modules.ProvisionMetaModule;
 import org.dockbox.selene.di.inject.modules.ProvisionModule;
 import org.dockbox.selene.di.inject.modules.StaticMetaModule;
 import org.dockbox.selene.di.inject.modules.StaticModule;
+import org.dockbox.selene.di.inject.wired.BeanWireContext;
+import org.dockbox.selene.di.inject.wired.ConstructorWireContext;
+import org.dockbox.selene.di.inject.wired.WireContext;
 import org.dockbox.selene.di.properties.AnnotationProperty;
 import org.dockbox.selene.di.properties.BindingMetaProperty;
 import org.dockbox.selene.di.properties.InjectorProperty;
@@ -71,7 +74,7 @@ import javax.inject.Singleton;
 
 public class GuiceInjector implements Injector {
 
-    private final transient Set<WireBinding<?, ?>> bindings = SeleneUtils.emptyConcurrentSet();
+    private final transient Set<WireContext<?, ?>> bindings = SeleneUtils.emptyConcurrentSet();
     private final transient Set<AbstractModule> modules = SeleneUtils.emptyConcurrentSet();
     private com.google.inject.Injector internalInjector;
 
@@ -155,13 +158,24 @@ public class GuiceInjector implements Injector {
         for (Class<?> type : Reflect.annotatedTypes(prefix, Service.class)) {
             Collection<Method> beans = Reflect.annotatedMethods(type, Bean.class);
             for (Method bean : beans) {
-                Bean annotation = bean.getAnnotation(Bean.class);
-                Key<?> key = "".equals(annotation.value())
-                        ? Key.get(bean.getReturnType())
-                        : Key.get(bean.getReturnType(), Bindings.named(annotation.value()));
                 boolean singleton = bean.isAnnotationPresent(Singleton.class);
-                BeanContext<?, ?> context = new BeanContext<>(key, singleton, () -> this.invoke(bean));
-                contexts.add(context);
+                Bean annotation = bean.getAnnotation(Bean.class);
+
+                if (bean.isAnnotationPresent(Wired.class)) {
+                    if (singleton) throw new IllegalArgumentException("Cannot provide manually wired singleton bean " + bean.getReturnType() + " at " + bean.getName());
+                    else {
+                        WireContext<?, ?> context = new BeanWireContext<>(bean.getReturnType(), bean, annotation.value());
+                        this.bindings.add(context);
+                    }
+                }
+                else {
+                    Key<?> key = "".equals(annotation.value())
+                            ? Key.get(bean.getReturnType())
+                            : Key.get(bean.getReturnType(), Bindings.named(annotation.value()));
+
+                    BeanContext<?, ?> context = new BeanContext<>(key, singleton, () -> this.invoke(bean));
+                    contexts.add(context);
+                }
             }
         }
         contexts.forEach(context -> {
@@ -174,11 +188,14 @@ public class GuiceInjector implements Injector {
     }
 
     @Override
-    public <T, I extends T> Exceptional<Class<I>> findWire(Class<T> contract) {
-        for (WireBinding<?, ?> binding : this.bindings) {
+    public <T, I extends T> Exceptional<WireContext<T, I>> firstWire(Class<T> contract, InjectorProperty<Named> property) {
+        for (WireContext<?, ?> binding : this.bindings) {
             if (binding.getContract().equals(contract)) {
+                if (!"".equals(binding.getName())) {
+                    if (property == null || !binding.getName().equals(property.getObject().value())) continue;
+                }
                 //noinspection unchecked
-                return Exceptional.of((Class<I>) binding.getImplementation());
+                return Exceptional.of((WireContext<T, I>) binding);
             }
         }
         return Exceptional.none();
@@ -363,9 +380,14 @@ public class GuiceInjector implements Injector {
 
     @Override
     public <T, I extends T> void wire(Class<T> contract, Class<? extends I> implementation) {
+        this.wire(contract, implementation, Bindings.named(""));
+    }
+
+    @Override
+    public <C, T extends C> void wire(Class<C> contract, Class<? extends T> implementation, Named meta) {
         if (Reflect.annotatedConstructors(Wired.class, implementation).isEmpty())
             throw new IllegalArgumentException("Implementation should contain at least one constructor annotated with @AutoWired");
 
-        this.bindings.add(new WireBinding<>(contract, implementation));
+        this.bindings.add(new ConstructorWireContext<>(contract, implementation, meta.value()));
     }
 }

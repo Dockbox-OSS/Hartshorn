@@ -77,4 +77,9 @@ public class InjectConfigurationModule extends AbstractModule implements Binder 
     public <C, T extends C> void wire(Class<C> contract, Class<? extends T> implementation) {
         this.injector.wire(contract, implementation);
     }
+
+    @Override
+    public <C, T extends C> void wire(Class<C> contract, Class<? extends T> implementation, Named meta) {
+        this.injector.wire(contract, implementation, meta);
+    }
 }

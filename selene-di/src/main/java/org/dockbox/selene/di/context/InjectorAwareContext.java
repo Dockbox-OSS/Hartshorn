@@ -21,12 +21,14 @@ import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.di.InjectConfiguration;
 import org.dockbox.selene.di.ProvisionFailure;
 import org.dockbox.selene.di.SeleneFactory;
+import org.dockbox.selene.di.annotations.Named;
 import org.dockbox.selene.di.binding.Bindings;
 import org.dockbox.selene.di.exceptions.ApplicationException;
 import org.dockbox.selene.di.inject.Binder;
 import org.dockbox.selene.di.inject.InjectSource;
 import org.dockbox.selene.di.inject.Injector;
 import org.dockbox.selene.di.inject.InjectorAdapter;
+import org.dockbox.selene.di.inject.wired.WireContext;
 import org.dockbox.selene.di.properties.InjectableType;
 import org.dockbox.selene.di.properties.InjectorProperty;
 import org.dockbox.selene.di.properties.UseFactory;
@@ -52,7 +54,7 @@ public class InjectorAwareContext extends ManagedSeleneContext {
 
         @Nullable Exceptional<Object[]> value = Bindings.value(UseFactory.KEY, Object[].class, additionalProperties);
         if (value.present()) {
-            typeInstance = this.get(SeleneFactory.class).create(type, value.get());
+            typeInstance = this.get(SeleneFactory.class).with(additionalProperties).create(type, value.get());
             this.injector().populate(typeInstance);
         } else {
             // Type instance can be present if it is a module. These instances are also created using Guice
@@ -134,7 +136,7 @@ public class InjectorAwareContext extends ManagedSeleneContext {
     }
 
     @Override
-    public <T, I extends T> Exceptional<Class<I>> findWire(Class<T> contract) {
-        return this.injector().findWire(contract);
+    public <T, I extends T> Exceptional<WireContext<T, I>> firstWire(Class<T> contract, InjectorProperty<Named> property) {
+        return this.injector().firstWire(contract, property);
     }
 }

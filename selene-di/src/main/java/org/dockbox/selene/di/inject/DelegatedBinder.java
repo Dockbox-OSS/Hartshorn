@@ -60,5 +60,10 @@ public interface DelegatedBinder extends Binder {
     default  <C, T extends C> void wire(Class<C> contract, Class<? extends T> implementation) {
         this.getBinder().wire(contract, implementation);
     }
+
+    @Override
+    default  <C, T extends C> void wire(Class<C> contract, Class<? extends T> implementation, Named meta) {
+        this.getBinder().wire(contract, implementation, meta);
+    }
     
 }

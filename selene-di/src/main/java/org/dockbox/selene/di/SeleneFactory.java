@@ -17,11 +17,14 @@
 
 package org.dockbox.selene.di;
 
+import org.dockbox.selene.di.properties.InjectorProperty;
 import org.dockbox.selene.di.properties.UseFactory;
 
 public interface SeleneFactory {
 
     <T> T create(Class<T> type, Object... arguments);
+
+    SeleneFactory with(InjectorProperty<?>... properties);
 
     static UseFactory use(Object... varargs) {
         return new UseFactory(varargs);
