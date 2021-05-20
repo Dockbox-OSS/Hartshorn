@@ -17,9 +17,10 @@
 
 package org.dockbox.selene.di;
 
-import org.dockbox.selene.api.SeleneBootstrap;
+import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.di.binding.Bindings;
+import org.dockbox.selene.di.context.ManagedSeleneContext;
 import org.dockbox.selene.di.inject.GuiceInjector;
 import org.dockbox.selene.di.inject.Injector;
 import org.dockbox.selene.di.properties.BindingMetaProperty;
@@ -52,7 +53,7 @@ import java.lang.reflect.Field;
 import java.util.stream.Stream;
 
 @ExtendWith(SeleneJUnit5Runner.class)
-public class ProviderTests {
+public class ApplicationContextTests {
 
     private static final Field modules;
     private static final Field bindings;
@@ -66,7 +67,7 @@ public class ProviderTests {
             bindings = GuiceInjector.class.getDeclaredField("bindings");
             bindings.setAccessible(true);
 
-            injectionPoints = InjectableBootstrap.class.getDeclaredField("injectionPoints");
+            injectionPoints = ManagedSeleneContext.class.getDeclaredField("injectionPoints");
             injectionPoints.setAccessible(true);
         } catch (NoSuchFieldException e) {
             throw new RuntimeException(e);
@@ -85,7 +86,7 @@ public class ProviderTests {
     @Test
     public void testStaticBindingCanBeProvided() throws IllegalAccessException {
         injector(true).bind(SampleInterface.class, SampleImplementation.class);
-        SampleInterface provided = Provider.provide(SampleInterface.class);
+        SampleInterface provided = Selene.context().get(SampleInterface.class);
         Assertions.assertNotNull(provided);
 
         Class<? extends SampleInterface> providedClass = provided.getClass();
@@ -97,7 +98,7 @@ public class ProviderTests {
     @Test
     public void testStaticBindingWithMetaCanBeProvided() throws IllegalAccessException {
         injector(true).bind(SampleInterface.class, SampleImplementation.class, Bindings.named("demo"));
-        SampleInterface provided = Provider.provide(SampleInterface.class, BindingMetaProperty.of(Bindings.named("demo")));
+        SampleInterface provided = Selene.context().get(SampleInterface.class, BindingMetaProperty.of(Bindings.named("demo")));
         Assertions.assertNotNull(provided);
 
         Class<? extends SampleInterface> providedClass = provided.getClass();
@@ -118,7 +119,7 @@ public class ProviderTests {
     @Test
     public void testInstanceBindingCanBeProvided() throws IllegalAccessException {
         injector(true).bind(SampleInterface.class, new SampleImplementation());
-        SampleInterface provided = Provider.provide(SampleInterface.class);
+        SampleInterface provided = Selene.context().get(SampleInterface.class);
         Assertions.assertNotNull(provided);
 
         Class<? extends SampleInterface> providedClass = provided.getClass();
@@ -130,7 +131,7 @@ public class ProviderTests {
     @Test
     public void testInstanceBindingWithMetaCanBeProvided() throws IllegalAccessException {
         injector(true).bind(SampleInterface.class, new SampleImplementation(), Bindings.named("demo"));
-        SampleInterface provided = Provider.provide(SampleInterface.class, BindingMetaProperty.of(Bindings.named("demo")));
+        SampleInterface provided = Selene.context().get(SampleInterface.class, BindingMetaProperty.of(Bindings.named("demo")));
         Assertions.assertNotNull(provided);
 
         Class<? extends SampleInterface> providedClass = provided.getClass();
@@ -150,7 +151,7 @@ public class ProviderTests {
     @Test
     public void testProviderBindingCanBeProvided() throws IllegalAccessException {
         injector(true).provide(SampleInterface.class, SampleImplementation::new);
-        SampleInterface provided = Provider.provide(SampleInterface.class);
+        SampleInterface provided = Selene.context().get(SampleInterface.class);
         Assertions.assertNotNull(provided);
 
         Class<? extends SampleInterface> providedClass = provided.getClass();
@@ -162,7 +163,7 @@ public class ProviderTests {
     @Test
     public void testProviderBindingWithMetaCanBeProvided() throws IllegalAccessException {
         injector(true).provide(SampleInterface.class, SampleImplementation::new, Bindings.named("demo"));
-        SampleInterface provided = Provider.provide(SampleInterface.class, BindingMetaProperty.of(Bindings.named("demo")));
+        SampleInterface provided = Selene.context().get(SampleInterface.class, BindingMetaProperty.of(Bindings.named("demo")));
         Assertions.assertNotNull(provided);
 
         Class<? extends SampleInterface> providedClass = provided.getClass();
@@ -175,7 +176,7 @@ public class ProviderTests {
     public void testScannedBindingCanBeProvided() throws IllegalAccessException {
         // sub-package *.scan was added to prevent scan conflicts
         injector(true).bind("org.dockbox.selene.di.types.scan");
-        SampleInterface provided = Provider.provide(SampleInterface.class);
+        SampleInterface provided = Selene.context().get(SampleInterface.class);
         Assertions.assertNotNull(provided);
 
         Class<? extends SampleInterface> providedClass = provided.getClass();
@@ -188,9 +189,9 @@ public class ProviderTests {
     public void testScannedMetaBindingsCanBeProvided() throws IllegalAccessException {
         // sub-package *.meta was added to prevent scan conflicts
         injector(true).bind("org.dockbox.selene.di.types.meta");
-        Assertions.assertThrows(ProvisionFailure.class, () -> Provider.provide(SampleInterface.class));
+        Assertions.assertThrows(ProvisionFailure.class, () -> Selene.context().get(SampleInterface.class));
 
-        SampleInterface provided = Provider.provide(SampleInterface.class, BindingMetaProperty.of(Bindings.named("meta")));
+        SampleInterface provided = Selene.context().get(SampleInterface.class, BindingMetaProperty.of(Bindings.named("meta")));
         Assertions.assertNotNull(provided);
 
         Class<? extends SampleInterface> providedClass = provided.getClass();
@@ -204,7 +205,7 @@ public class ProviderTests {
         // sub-package *.multi was added to prevent scan conflicts
         injector(true).bind("org.dockbox.selene.di.types.multi");
 
-        SampleInterface provided = Provider.provide(SampleInterface.class);
+        SampleInterface provided = Selene.context().get(SampleInterface.class);
         Assertions.assertNotNull(provided);
 
         Class<? extends SampleInterface> providedClass = provided.getClass();
@@ -218,7 +219,7 @@ public class ProviderTests {
         // sub-package *.multi was added to prevent scan conflicts
         injector(true).bind("org.dockbox.selene.di.types.multi");
 
-        SampleInterface provided = Provider.provide(SampleInterface.class, BindingMetaProperty.of(Bindings.named("meta")));
+        SampleInterface provided = Selene.context().get(SampleInterface.class, BindingMetaProperty.of(Bindings.named("meta")));
         Assertions.assertNotNull(provided);
 
         Class<? extends SampleInterface> providedClass = provided.getClass();
@@ -230,7 +231,7 @@ public class ProviderTests {
     @Test
     public void testConfigBindingCanBeProvided() throws IllegalAccessException {
         injector(true).bind(new SampleConfiguration());
-        SampleInterface provided = Provider.provide(SampleInterface.class);
+        SampleInterface provided = Selene.context().get(SampleInterface.class);
         Assertions.assertNotNull(provided);
 
         Class<? extends SampleInterface> providedClass = provided.getClass();
@@ -253,7 +254,7 @@ public class ProviderTests {
     @Test
     public void unboundTypesCanBeProvided() throws IllegalAccessException {
         injector(true).bind(SampleInterface.class, SampleImplementation.class);
-        PopulatedType provided = Provider.provide(PopulatedType.class);
+        PopulatedType provided = Selene.context().get(PopulatedType.class);
         Assertions.assertNotNull(provided);
         Assertions.assertNotNull(provided.getSampleInterface());
     }
@@ -262,9 +263,9 @@ public class ProviderTests {
     public void injectionPointsArePrioritised() throws IllegalArgumentException, IllegalAccessException {
         injector(true).bind(SampleInterface.class, SampleImplementation.class);
         InjectionPoint<SampleInterface> point = InjectionPoint.of(SampleInterface.class, $ -> new SampleAnnotatedImplementation());
-        SeleneBootstrap.instance().injectAt(point);
+        Selene.context().add(point);
 
-        SampleInterface provided = Provider.provide(SampleInterface.class);
+        SampleInterface provided = Selene.context().get(SampleInterface.class);
         Assertions.assertNotNull(provided);
         Assertions.assertEquals(SampleAnnotatedImplementation.class, provided.getClass());
     }
@@ -301,7 +302,7 @@ public class ProviderTests {
         injector(true).wire(SampleInterface.class, SampleWiredType.class);
         injector(false).bind(SeleneFactory.class, SimpleSeleneFactory.class);
 
-        SampleInterface wired = Provider.provide(SeleneFactory.class).create(SampleInterface.class, "WiredSelene");
+        SampleInterface wired = Selene.context().get(SeleneFactory.class).create(SampleInterface.class, "WiredSelene");
         Assertions.assertNotNull(wired);
         Assertions.assertEquals("WiredSelene", wired.getName());
     }
@@ -310,7 +311,7 @@ public class ProviderTests {
     public void injectableTypesAreEnabled() throws IllegalAccessException {
         injector(true).bind(SampleInterface.class, SampleEnablingType.class);
 
-        SampleInterface provided = Provider.provide(SampleInterface.class, new NameProperty("Enabled"));
+        SampleInterface provided = Selene.context().get(SampleInterface.class, new NameProperty("Enabled"));
         Assertions.assertNotNull(provided);
         Assertions.assertNotNull(provided.getName());
         Assertions.assertEquals("Enabled", provided.getName());
@@ -322,7 +323,7 @@ public class ProviderTests {
         injector(true).bind("org.dockbox.selene.di.types.wired");
         injector(false).bind(SeleneFactory.class, SimpleSeleneFactory.class);
 
-        SampleInterface provided = Provider.provide(SeleneFactory.class).create(SampleInterface.class, "WiredAnnotated");
+        SampleInterface provided = Selene.context().get(SeleneFactory.class).create(SampleInterface.class, "WiredAnnotated");
         Assertions.assertNotNull(provided);
 
         Class<? extends SampleInterface> providedClass = provided.getClass();
@@ -337,7 +338,7 @@ public class ProviderTests {
         injector(true).wire(SampleInterface.class, SampleWiredType.class);
         injector(false).bind(SeleneFactory.class, SimpleSeleneFactory.class);
 
-        SampleInterface provided = Provider.provide(SampleInterface.class, SeleneFactory.use("FactoryTyped"));
+        SampleInterface provided = Selene.context().get(SampleInterface.class, SeleneFactory.use("FactoryTyped"));
         Assertions.assertNotNull(provided);
 
         Class<? extends SampleInterface> providedClass = provided.getClass();
@@ -351,7 +352,7 @@ public class ProviderTests {
         injector(true).wire(SampleInterface.class, SampleWiredType.class);
         injector(false).bind(SeleneFactory.class, SimpleSeleneFactory.class);
 
-        SampleInterface provided = Provider.provide(SampleInterface.class, "FactoryTyped");
+        SampleInterface provided = Selene.context().get(SampleInterface.class, "FactoryTyped");
         Assertions.assertNotNull(provided);
 
         Class<? extends SampleInterface> providedClass = provided.getClass();
@@ -366,7 +367,7 @@ public class ProviderTests {
         injector(false).bind(SeleneFactory.class, SimpleSeleneFactory.class);
         injector(false).bind(SampleField.class, SampleFieldImplementation.class);
 
-        SampleInterface provided = Provider.provide(SampleInterface.class, "FactoryTyped");
+        SampleInterface provided = Selene.context().get(SampleInterface.class, "FactoryTyped");
         Assertions.assertNotNull(provided);
         Assertions.assertTrue(provided instanceof SampleWiredPopulatedType);
         Assertions.assertTrue(((SampleWiredPopulatedType) provided).isEnabled());
@@ -378,7 +379,7 @@ public class ProviderTests {
         injector(false).bind(SeleneFactory.class, SimpleSeleneFactory.class);
         injector(false).bind(SampleField.class, SampleFieldImplementation.class);
 
-        SampleInterface provided = Provider.provide(SampleInterface.class, "FactoryTyped");
+        SampleInterface provided = Selene.context().get(SampleInterface.class, "FactoryTyped");
         Assertions.assertNotNull(provided);
         Assertions.assertTrue(provided instanceof SampleWiredPopulatedType);
         Assertions.assertNotNull(((SampleWiredPopulatedType) provided).getField());
@@ -392,9 +393,9 @@ public class ProviderTests {
         injector(false).bind(SampleField.class, SampleFieldImplementation.class);
 
         InjectionPoint<SampleInterface> point = InjectionPoint.of(SampleInterface.class, $ -> new SampleImplementation());
-        SeleneBootstrap.instance().injectAt(point);
+        Selene.context().add(point);
 
-        SampleInterface provided = Provider.provide(SampleInterface.class, "FactoryTyped");
+        SampleInterface provided = Selene.context().get(SampleInterface.class, "FactoryTyped");
         Assertions.assertFalse(provided instanceof SampleWiredType);
         Assertions.assertTrue(provided instanceof SampleImplementation);
     }
@@ -420,8 +421,8 @@ public class ProviderTests {
         }
 
         BeanInterface provided;
-        if (meta == null) provided = Provider.provide(BeanInterface.class);
-        else provided = Provider.provide(BeanInterface.class, BindingMetaProperty.of(meta));
+        if (meta == null) provided = Selene.context().get(BeanInterface.class);
+        else provided = Selene.context().get(BeanInterface.class, BindingMetaProperty.of(meta));
         Assertions.assertNotNull(provided);
 
         String actual = provided.getName();
@@ -430,19 +431,19 @@ public class ProviderTests {
 
         if (singleton) {
             BeanInterface second;
-            if (meta == null) second = Provider.provide(BeanInterface.class);
-            else second = Provider.provide(BeanInterface.class, BindingMetaProperty.of(meta));
+            if (meta == null) second = Selene.context().get(BeanInterface.class);
+            else second = Selene.context().get(BeanInterface.class, BindingMetaProperty.of(meta));
             Assertions.assertNotNull(second);
             Assertions.assertSame(provided, second);
         }
     }
 
     private static Injector injector(boolean reset) throws IllegalAccessException {
-        Injector injector = SeleneBootstrap.instance().getInjector();
+        Injector injector = Selene.context().injector();
         if (reset) {
             modules.set(injector, SeleneUtils.emptyConcurrentSet());
             bindings.set(injector, SeleneUtils.emptyConcurrentSet());
-            injectionPoints.set(SeleneBootstrap.instance(), SeleneUtils.emptyConcurrentSet());
+            injectionPoints.set(Selene.context(), SeleneUtils.emptyConcurrentSet());
             injector.reset();
         }
         return injector;
