@@ -28,7 +28,7 @@ public class ProxyMethodBindingException extends RuntimeException {
     }
 
     public ProxyMethodBindingException(Method method) {
-        super("Factory method proxies should return (a subtype of) ResourceEntry, " + method.getName() + " returned " + method.getReturnType() == null ? "void" : method.getReturnType().getSimpleName());
+        super("Could not bind proxy to " + method.getName() + " because preconditions failed");
     }
 
 }
