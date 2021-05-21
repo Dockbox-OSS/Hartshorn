@@ -85,7 +85,11 @@ public class ProxyHandler<T> implements MethodHandler {
             // If no handler is known, default to the original method. This is delegated to the instance
             // created, as it
             // is typically created through Selene's injectors and therefore DI dependent.
-            return thisMethod.invoke(this.instance, args);
+            Method target = thisMethod;
+            if (this.instance == null)
+                target = proceed;
+
+            return target.invoke(this.instance, args);
         }
     }
 
