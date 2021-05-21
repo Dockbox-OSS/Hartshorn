@@ -840,4 +840,14 @@ public final class Reflect {
         });
         return SeleneUtils.asUnmodifiableList(fields);
     }
+
+    public static List<Annotation> annotatedAnnotations(Class<?> type, Class<? extends Annotation> annotation) {
+        List<Annotation> annotations = SeleneUtils.emptyList();
+        for (Annotation typeAnnotation : type.getAnnotations()) {
+            if (typeAnnotation.annotationType().isAnnotationPresent(annotation)) {
+                annotations.add(typeAnnotation);
+            }
+        }
+        return annotations;
+    }
 }
