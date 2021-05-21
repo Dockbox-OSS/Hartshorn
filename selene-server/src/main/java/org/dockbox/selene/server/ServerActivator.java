@@ -15,12 +15,19 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-dependencies {
-    compileOnly project(':selene-parent')
+package org.dockbox.selene.server;
 
-    compileOnly project(':selene-events')
-    compileOnly project(':selene-i18n')
-    compileOnly project(':selene-commands')
-    compileOnly project(':selene-modules')
-    compileOnly project(':selene-config')
+import org.dockbox.selene.api.i18n.annotations.UseResources;
+import org.dockbox.selene.commands.annotations.UseCustomArguments;
+import org.dockbox.selene.config.annotations.UseConfigurations;
+import org.dockbox.selene.di.adapter.InjectSource;
+import org.dockbox.selene.di.annotations.Activator;
+import org.dockbox.selene.di.annotations.UseBeanProvision;
+
+@Activator(inject = InjectSource.GUICE)
+@UseBeanProvision
+@UseCustomArguments
+@UseResources
+@UseConfigurations
+public class ServerActivator {
 }
