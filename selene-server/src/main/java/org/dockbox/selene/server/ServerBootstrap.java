@@ -43,8 +43,8 @@ public abstract class ServerBootstrap extends SeleneModuleBootstrap {
      * @param late
      *         the injector provided by the Selene implementation to create in construct phase
      */
-    protected ServerBootstrap(InjectConfiguration early, InjectConfiguration late) {
-        super(early, late, ServerActivator.class);
+    protected ServerBootstrap(InjectConfiguration early, InjectConfiguration late, Class<?> activationSource) {
+        super(early, late, activationSource);
     }
 
     /**

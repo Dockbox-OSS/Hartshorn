@@ -28,6 +28,13 @@ import org.dockbox.selene.api.SeleneInformation;
 import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.events.EventBus;
 import org.dockbox.selene.api.exceptions.Except;
+import org.dockbox.selene.api.i18n.annotations.UseResources;
+import org.dockbox.selene.cache.annotations.UseCaching;
+import org.dockbox.selene.commands.annotations.UseCustomArguments;
+import org.dockbox.selene.config.annotations.UseConfigurations;
+import org.dockbox.selene.di.adapter.InjectSource;
+import org.dockbox.selene.di.annotations.Activator;
+import org.dockbox.selene.di.annotations.UseBeanProvision;
 import org.dockbox.selene.di.annotations.Wired;
 import org.dockbox.selene.discord.DiscordUtils;
 import org.dockbox.selene.nms.packets.NMSPacket;
@@ -91,6 +98,12 @@ import eu.crushedpixel.sponge.packetgate.api.registry.PacketGate;
                 @Dependency(id = "nucleus"),
                 @Dependency(id = "luckperms")
         })
+@Activator(inject = InjectSource.GUICE)
+@UseBeanProvision
+@UseCustomArguments
+@UseResources
+@UseConfigurations
+@UseCaching
 public class SpongeAPI7Bootstrap extends MinecraftServerBootstrap {
 
     private final SpongeDiscordListener discordListener = new SpongeDiscordListener();
@@ -102,7 +115,7 @@ public class SpongeAPI7Bootstrap extends MinecraftServerBootstrap {
      * bindings providing utilities.
      */
     public SpongeAPI7Bootstrap() {
-        super(new SpongeEarlyInjector(), new SpongeLateInjector());
+        super(new SpongeEarlyInjector(), new SpongeLateInjector(), SpongeAPI7Bootstrap.class);
     }
 
     /**

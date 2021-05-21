@@ -37,8 +37,8 @@ public abstract class MinecraftServerBootstrap extends ServerBootstrap {
      * @param late
      *         the injector provided by the Selene implementation to create in construct phase
      */
-    protected MinecraftServerBootstrap(InjectConfiguration early, InjectConfiguration late) {
-        super(early, late);
+    protected MinecraftServerBootstrap(InjectConfiguration early, InjectConfiguration late, Class<?> activationSource) {
+        super(early, late, activationSource);
     }
 
     public static MinecraftServerBootstrap instance() {
