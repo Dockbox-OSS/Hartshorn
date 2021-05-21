@@ -19,10 +19,16 @@ package org.dockbox.selene.proxy.exception;
 
 import org.dockbox.selene.proxy.service.MethodProxyContext;
 
+import java.lang.reflect.Method;
+
 public class ProxyMethodBindingException extends RuntimeException {
 
     public ProxyMethodBindingException(MethodProxyContext<?> ctx) {
-        super("Factory method proxies should return (a subtype of) ResourceEntry, " + ctx.getMethod().getName() + " returned " + ctx.getReturnType() == null ? "void" : ctx.getReturnType().getSimpleName());
+        this(ctx.getMethod());
+    }
+
+    public ProxyMethodBindingException(Method method) {
+        super("Factory method proxies should return (a subtype of) ResourceEntry, " + method.getName() + " returned " + method.getReturnType() == null ? "void" : method.getReturnType().getSimpleName());
     }
 
 }
