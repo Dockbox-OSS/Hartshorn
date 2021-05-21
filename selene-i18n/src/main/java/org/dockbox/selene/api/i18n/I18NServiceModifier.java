@@ -21,35 +21,37 @@ import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.domain.OwnerLookup;
 import org.dockbox.selene.api.domain.TypedOwner;
 import org.dockbox.selene.api.i18n.annotations.Resource;
+import org.dockbox.selene.api.i18n.annotations.UseResources;
 import org.dockbox.selene.api.i18n.common.ResourceEntry;
-import org.dockbox.selene.api.i18n.exceptions.ProxyMethodBindingException;
 import org.dockbox.selene.di.annotations.Service;
 import org.dockbox.selene.di.context.ApplicationContext;
 import org.dockbox.selene.di.properties.InjectorProperty;
-import org.dockbox.selene.proxy.ServiceAnnotatedMethodModifier;
+import org.dockbox.selene.proxy.exception.ProxyMethodBindingException;
 import org.dockbox.selene.proxy.handle.ProxyFunction;
+import org.dockbox.selene.proxy.service.MethodProxyContext;
+import org.dockbox.selene.proxy.service.ServiceAnnotatedMethodModifier;
 import org.dockbox.selene.util.Reflect;
 import org.dockbox.selene.util.SeleneUtils;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Method;
 
-public class I18NServiceModifier implements ServiceAnnotatedMethodModifier<Resource> {
+public class I18NServiceModifier implements ServiceAnnotatedMethodModifier<Resource, UseResources> {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T, R> ProxyFunction<T, R> process(ApplicationContext context, Class<T> type, @Nullable T instance, Method method, InjectorProperty<?>... properties) {
-        if (!Reflect.assignableFrom(ResourceEntry.class, method.getReturnType()))
-            throw new ProxyMethodBindingException(method);
+    public <T, R> ProxyFunction<T, R> process(ApplicationContext context, MethodProxyContext<T> methodContext) {
+        if (!Reflect.assignableFrom(ResourceEntry.class, methodContext.getReturnType()))
+            throw new ProxyMethodBindingException(methodContext);
 
         String prefix = "";
-        if (type.isAnnotationPresent(Service.class)) {
-            TypedOwner lookup = Selene.context().get(OwnerLookup.class).lookup(type);
+        if (methodContext.getType().isAnnotationPresent(Service.class)) {
+            TypedOwner lookup = Selene.context().get(OwnerLookup.class).lookup(methodContext.getType());
             if (lookup != null) prefix = lookup.id() + '.';
         }
 
-        String key = this.extractKey(method, prefix);
-        Resource annotation = method.getAnnotation(Resource.class);
+        String key = this.extractKey(methodContext.getMethod(), prefix);
+        Resource annotation = methodContext.getMethod().getAnnotation(Resource.class);
 
         return (self, args, holder) -> {
             // Prevents NPE when formatting cached resources without arguments
@@ -82,5 +84,10 @@ public class I18NServiceModifier implements ServiceAnnotatedMethodModifier<Resou
         if (keyJoined.startsWith("get")) keyJoined = keyJoined.substring(3);
         String[] r = SeleneUtils.splitCapitals(keyJoined);
         return prefix + String.join(".", r).toLowerCase();
+    }
+
+    @Override
+    public Class<UseResources> activator() {
+        return UseResources.class;
     }
 }
