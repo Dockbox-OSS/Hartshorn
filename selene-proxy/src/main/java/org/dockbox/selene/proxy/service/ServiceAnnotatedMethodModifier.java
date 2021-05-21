@@ -15,12 +15,13 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.proxy;
+package org.dockbox.selene.proxy.service;
 
 import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.di.context.ApplicationContext;
 import org.dockbox.selene.di.properties.InjectorProperty;
 import org.dockbox.selene.di.services.ServiceModifier;
+import org.dockbox.selene.proxy.ProxyProperty;
 import org.dockbox.selene.proxy.exception.ProxyMethodBindingException;
 import org.dockbox.selene.proxy.handle.ProxyFunction;
 import org.dockbox.selene.proxy.handle.ProxyHandler;
@@ -31,7 +32,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.Collection;
 
-public interface ServiceAnnotatedMethodModifier<A extends Annotation> extends ServiceModifier {
+public interface ServiceAnnotatedMethodModifier<M extends Annotation, A extends Annotation> extends ServiceModifier<A> {
 
     @Override
     default <T> boolean preconditions(Class<T> type, @Nullable T instance, InjectorProperty<?>... properties) {
@@ -44,7 +45,8 @@ public interface ServiceAnnotatedMethodModifier<A extends Annotation> extends Se
         ProxyHandler<T> handler = new ProxyHandler<>(instance, type);
         for (Method method : methods) {
             if (this.preconditions(type, instance, method, properties)) {
-                final ProxyFunction<T, Object> function = this.process(context, type, instance, method, properties);
+                MethodProxyContext<T> ctx = new SimpleMethodProxyContext<>(instance, type, method, properties);
+                final ProxyFunction<T, Object> function = this.process(context, ctx);
                 if (function != null) {
                     ProxyProperty<T, ?> property = ProxyProperty.of(type, method, function);
                     handler.delegate(property);
@@ -58,11 +60,13 @@ public interface ServiceAnnotatedMethodModifier<A extends Annotation> extends Se
         return Exceptional.of(handler::proxy).or(instance);
     }
 
-    <T, R> ProxyFunction<T, R> process(ApplicationContext context, Class<T> type, @Nullable T instance, Method method, InjectorProperty<?>... properties);
+    <T, R> ProxyFunction<T, R> process(ApplicationContext context, MethodProxyContext<T> methodContext);
 
     <T> boolean preconditions(Class<T> type, @Nullable T instance, Method method, InjectorProperty<?>... properties);
 
-    boolean failOnPrecondition();
+    default boolean failOnPrecondition() {
+        return false;
+    }
 
-    Class<A> annotation();
+    Class<M> annotation();
 }

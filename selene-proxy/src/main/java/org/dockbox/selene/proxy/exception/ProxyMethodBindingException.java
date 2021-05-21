@@ -17,12 +17,12 @@
 
 package org.dockbox.selene.proxy.exception;
 
-import java.lang.reflect.Method;
+import org.dockbox.selene.proxy.service.MethodProxyContext;
 
 public class ProxyMethodBindingException extends RuntimeException {
 
-    public ProxyMethodBindingException(Method method) {
-        super("Method proxies could not be created as preconditions did not match for " + method.getName());
+    public ProxyMethodBindingException(MethodProxyContext<?> ctx) {
+        super("Factory method proxies should return (a subtype of) ResourceEntry, " + ctx.getMethod().getName() + " returned " + ctx.getReturnType() == null ? "void" : ctx.getReturnType().getSimpleName());
     }
 
 }
