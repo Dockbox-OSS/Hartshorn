@@ -17,8 +17,6 @@
 
 package org.dockbox.selene.di;
 
-import org.dockbox.selene.di.adapter.InjectSource;
-import org.dockbox.selene.di.adapter.ServiceSource;
 import org.dockbox.selene.di.properties.InjectorProperty;
 import org.dockbox.selene.di.services.ServiceModifier;
 import org.dockbox.selene.di.services.ServiceProcessor;
@@ -26,16 +24,34 @@ import org.dockbox.selene.util.Reflect;
 
 import java.util.Collection;
 
-@SuppressWarnings("AbstractClassWithoutAbstractMethods")
+@SuppressWarnings({ "AbstractClassWithoutAbstractMethods", "unchecked", "rawtypes" })
 public abstract class InjectableBootstrap extends ApplicationContextAware {
 
     private static InjectableBootstrap instance;
 
-    protected InjectableBootstrap(String prefix) {
-        super(InjectSource.GUICE, ServiceSource.DEFAULT);
+    protected InjectableBootstrap(String prefix, Class<?> activationSource) {
+        super(activationSource);
         this.lookupProcessors(prefix);
         this.lookupModifiers(prefix);
         instance(this);
+    }
+
+    private void lookupProcessors(String prefix) {
+        final Collection<Class<? extends ServiceProcessor>> processors = Reflect.subTypes(prefix, ServiceProcessor.class);
+        for (Class<? extends ServiceProcessor> processor : processors) {
+            final ServiceProcessor raw = super.getContext().raw(processor, false);
+            if (this.getContext().hasActivator(raw.activator()))
+                super.getContext().add(raw);
+        }
+    }
+
+    private void lookupModifiers(String prefix) {
+        final Collection<Class<? extends ServiceModifier>> modifiers = Reflect.subTypes(prefix, ServiceModifier.class);
+        for (Class<? extends ServiceModifier> modifier : modifiers) {
+            final ServiceModifier raw = super.getContext().raw(modifier, false);
+            if (this.getContext().hasActivator(raw.activator()))
+                super.getContext().add(raw);
+        }
     }
 
     public static InjectableBootstrap instance() {
@@ -57,21 +73,5 @@ public abstract class InjectableBootstrap extends ApplicationContextAware {
      */
     public <T> T instance(Class<T> type, InjectorProperty<?>... additionalProperties) {
         return null;
-    }
-
-    private void lookupProcessors(String prefix) {
-        final Collection<Class<? extends ServiceProcessor>> processors = Reflect.subTypes(prefix, ServiceProcessor.class);
-        for (Class<? extends ServiceProcessor> processor : processors) {
-            final ServiceProcessor raw = super.getContext().raw(processor, false);
-            super.getContext().add(raw);
-        }
-    }
-
-    private void lookupModifiers(String prefix) {
-        final Collection<Class<? extends ServiceModifier>> modifiers = Reflect.subTypes(prefix, ServiceModifier.class);
-        for (Class<? extends ServiceModifier> modifier : modifiers) {
-            final ServiceModifier raw = super.getContext().raw(modifier, false);
-            super.getContext().add(raw);
-        }
     }
 }

@@ -17,10 +17,8 @@
 
 package org.dockbox.selene.di;
 
-import org.dockbox.selene.di.adapter.ServiceSource;
 import org.dockbox.selene.di.context.ApplicationContext;
 import org.dockbox.selene.di.context.InjectorAwareContext;
-import org.dockbox.selene.di.adapter.InjectSource;
 
 import lombok.Getter;
 
@@ -31,8 +29,8 @@ public class ApplicationContextAware {
 
     private static ApplicationContextAware instance;
 
-    protected ApplicationContextAware(InjectSource inject, ServiceSource service) {
-        this.context = new InjectorAwareContext(inject, service);
+    protected ApplicationContextAware(Class<?> activationSource) {
+        this.context = new InjectorAwareContext(activationSource);
     }
 
     public static ApplicationContextAware instance() {

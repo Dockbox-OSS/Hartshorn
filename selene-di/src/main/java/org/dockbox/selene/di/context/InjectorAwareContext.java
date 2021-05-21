@@ -22,8 +22,6 @@ import org.dockbox.selene.di.InjectConfiguration;
 import org.dockbox.selene.di.ProvisionFailure;
 import org.dockbox.selene.di.SeleneFactory;
 import org.dockbox.selene.di.adapter.ContextAdapter;
-import org.dockbox.selene.di.adapter.InjectSource;
-import org.dockbox.selene.di.adapter.ServiceSource;
 import org.dockbox.selene.di.annotations.Named;
 import org.dockbox.selene.di.annotations.Service;
 import org.dockbox.selene.di.binding.Bindings;
@@ -49,8 +47,9 @@ public class InjectorAwareContext extends ManagedSeleneContext {
     @Getter
     private final ContextAdapter adapter;
 
-    public InjectorAwareContext(InjectSource inject, ServiceSource service) {
-        this.adapter = new ContextAdapter(inject, service);
+    public InjectorAwareContext(Class<?> activationSource) {
+        super(activationSource);
+        this.adapter = new ContextAdapter(this.getActivator().inject(), this.getActivator().services());
         this.bind(ApplicationContext.class, this);
     }
 
@@ -75,7 +74,7 @@ public class InjectorAwareContext extends ManagedSeleneContext {
         typeInstance = this.inject(type, typeInstance, additionalProperties);
 
         if (type.isAnnotationPresent(Service.class)) {
-            for (ServiceModifier serviceModifier : this.serviceModifiers) {
+            for (ServiceModifier<?> serviceModifier : this.serviceModifiers) {
                 if (serviceModifier.preconditions(type, typeInstance, additionalProperties))
                     typeInstance = serviceModifier.process(this, type, typeInstance, additionalProperties);
             }

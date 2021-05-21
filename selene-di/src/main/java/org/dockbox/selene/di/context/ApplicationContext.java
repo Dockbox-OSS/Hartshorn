@@ -24,6 +24,9 @@ import org.dockbox.selene.di.properties.InjectorProperty;
 import org.dockbox.selene.di.services.ServiceModifier;
 import org.dockbox.selene.di.services.ServiceProcessor;
 
+import java.lang.annotation.Annotation;
+import java.util.List;
+
 public interface ApplicationContext extends ApplicationBinder, SeleneContext {
 
     void add(InjectionPoint<?> property);
@@ -39,7 +42,11 @@ public interface ApplicationContext extends ApplicationBinder, SeleneContext {
 
     Injector injector();
 
-    void add(ServiceProcessor processor);
-    void add(ServiceModifier modifier);
+    void add(ServiceProcessor<?> processor);
+    void add(ServiceModifier<?> modifier);
+
+    Class<?> getActivationSource();
+    List<Annotation> activators();
+    boolean hasActivator(Class<? extends Annotation> activator);
 
 }

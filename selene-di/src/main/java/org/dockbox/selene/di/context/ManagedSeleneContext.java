@@ -19,6 +19,8 @@ package org.dockbox.selene.di.context;
 
 import org.dockbox.selene.di.InjectionPoint;
 import org.dockbox.selene.di.ProvisionFailure;
+import org.dockbox.selene.di.annotations.Activator;
+import org.dockbox.selene.di.annotations.ServiceActivator;
 import org.dockbox.selene.di.annotations.Wired;
 import org.dockbox.selene.di.exceptions.ApplicationException;
 import org.dockbox.selene.di.properties.InjectableType;
@@ -31,18 +33,39 @@ import org.dockbox.selene.util.SeleneUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
+
+import lombok.AccessLevel;
+import lombok.Getter;
 
 public abstract class ManagedSeleneContext implements ApplicationContext {
 
     protected static final Logger log = LoggerFactory.getLogger("Selene Managed Context");
     protected final transient Set<InjectionPoint<?>> injectionPoints = SeleneUtils.emptyConcurrentSet();
 
-    protected final transient Set<ServiceModifier> serviceModifiers = SeleneUtils.emptyConcurrentSet();
-    protected final transient Set<ServiceProcessor> serviceProcessors = SeleneUtils.emptyConcurrentSet();
+    protected final transient Set<ServiceModifier<?>> serviceModifiers = SeleneUtils.emptyConcurrentSet();
+    protected final transient Set<ServiceProcessor<?>> serviceProcessors = SeleneUtils.emptyConcurrentSet();
+
+    @Getter(AccessLevel.PROTECTED)
+    private final Activator activator;
+    @Getter
+    private final Class<?> activationSource;
+    private final List<Annotation> activators;
+
+    public ManagedSeleneContext(Class<?> activationSource) {
+        if (!activationSource.isAnnotationPresent(Activator.class)) {
+            throw new IllegalStateException("Activation source is not marked with @Activator");
+        }
+        this.activator = activationSource.getAnnotation(Activator.class);
+        this.activationSource = activationSource;
+        this.activators = Reflect.annotatedAnnotations(activationSource, ServiceActivator.class);
+    }
 
     @Override
     public void add(InjectionPoint<?> property) {
@@ -112,7 +135,7 @@ public abstract class ManagedSeleneContext implements ApplicationContext {
 
     protected void process(String prefix) {
         final Collection<Class<?>> services = this.locator().locate(prefix);
-        for (ServiceProcessor serviceProcessor : this.serviceProcessors) {
+        for (ServiceProcessor<?> serviceProcessor : this.serviceProcessors) {
             for (Class<?> service : services) {
                 if (serviceProcessor.preconditions(service)) serviceProcessor.process(this, service);
             }
@@ -120,13 +143,28 @@ public abstract class ManagedSeleneContext implements ApplicationContext {
     }
 
     @Override
-    public void add(ServiceProcessor processor) {
+    public void add(ServiceProcessor<?> processor) {
         this.serviceProcessors.add(processor);
     }
 
     @Override
-    public void add(ServiceModifier modifier) {
+    public void add(ServiceModifier<?> modifier) {
         this.serviceModifiers.add(modifier);
+    }
+
+    @Override
+    public List<Annotation> activators() {
+        return SeleneUtils.asUnmodifiableList(this.activators);
+    }
+
+    @Override
+    public boolean hasActivator(Class<? extends Annotation> activator) {
+        if (!activator.isAnnotationPresent(ServiceActivator.class))
+            throw new IllegalArgumentException("Requested activator " + activator.getSimpleName() + " is not decorated with @ServiceActivator");
+        return this.activators.stream()
+                .map(Annotation::annotationType)
+                .collect(Collectors.toList())
+                .contains(activator);
     }
 
     protected abstract ServiceLocator locator();

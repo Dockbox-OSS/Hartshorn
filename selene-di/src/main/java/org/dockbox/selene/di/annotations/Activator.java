@@ -15,18 +15,19 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.di.services;
+package org.dockbox.selene.di.annotations;
 
-import org.dockbox.selene.di.context.ApplicationContext;
-import org.dockbox.selene.di.properties.InjectorProperty;
-import org.jetbrains.annotations.Nullable;
+import org.dockbox.selene.di.adapter.InjectSource;
+import org.dockbox.selene.di.adapter.ServiceSource;
 
-import java.lang.annotation.Annotation;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-public interface ServiceModifier<A extends Annotation> {
-
-    <T> boolean preconditions(Class<T> type, @Nullable T instance, InjectorProperty<?>... properties);
-    <T> T process(ApplicationContext context, Class<T> type, @Nullable T instance, InjectorProperty<?>... properties);
-    Class<A> activator();
-
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
+public @interface Activator {
+    InjectSource inject();
+    ServiceSource services() default ServiceSource.DEFAULT;
 }
