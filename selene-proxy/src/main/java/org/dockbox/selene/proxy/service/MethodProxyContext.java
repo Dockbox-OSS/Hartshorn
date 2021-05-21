@@ -29,6 +29,6 @@ public interface MethodProxyContext<T> {
     Method getMethod();
     InjectorProperty<?>[] getProperties();
     Annotation[] getAnnotations();
+    <A extends Annotation> A getAnnotation(Class<A> annotation);
     Class<?> getReturnType();
-
 }

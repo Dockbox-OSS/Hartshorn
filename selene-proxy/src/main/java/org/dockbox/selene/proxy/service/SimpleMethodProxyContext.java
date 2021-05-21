@@ -18,6 +18,7 @@
 package org.dockbox.selene.proxy.service;
 
 import org.dockbox.selene.di.properties.InjectorProperty;
+import org.dockbox.selene.util.Reflect;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -41,5 +42,10 @@ public class SimpleMethodProxyContext<T> implements MethodProxyContext<T> {
         this.properties = properties;
         this.annotations = method.getAnnotations();
         this.returnType = method.getReturnType();
+    }
+
+    @Override
+    public <A extends Annotation> A getAnnotation(Class<A> annotation) {
+        return Reflect.annotation(this.method, annotation);
     }
 }
