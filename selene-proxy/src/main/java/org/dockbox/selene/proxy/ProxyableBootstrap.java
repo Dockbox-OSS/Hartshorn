@@ -46,7 +46,7 @@ public final class ProxyableBootstrap {
         Selene.log().info("Scanning for proxy types in " + SeleneInformation.PACKAGE_PREFIX);
         Reflect.annotatedTypes(SeleneInformation.PACKAGE_PREFIX, Proxy.class).forEach(proxy -> {
             Selene.log().info("Processing [" + proxy.getCanonicalName() + "]");
-            if (Modifier.isAbstract(proxy.getModifiers())) {
+            if (!Reflect.isConcrete(proxy)) {
                 Selene.log().warn("Proxy source cannot be abstract [" + proxy.getCanonicalName() + "]");
                 return;
             }

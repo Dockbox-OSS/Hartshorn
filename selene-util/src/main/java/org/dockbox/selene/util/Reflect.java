@@ -850,4 +850,8 @@ public final class Reflect {
         }
         return annotations;
     }
+
+    public static boolean isConcrete(Class<?> type) {
+        return !(type.isInterface() || Modifier.isAbstract(type.getModifiers()));
+    }
 }
