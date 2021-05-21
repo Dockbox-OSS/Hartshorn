@@ -79,7 +79,7 @@ public final class ProxyableBootstrap {
 
         String methodName = source.getName();
 
-        // Used only for method lookup, parameters annotated with @Instance are injected and thus not
+        // Used only for method lookup, parameters decorated with @Instance are injected and thus not
         // present on the
         // target method.
         Class<?>[] arguments = SeleneUtils.asList(source.getParameters()).stream()

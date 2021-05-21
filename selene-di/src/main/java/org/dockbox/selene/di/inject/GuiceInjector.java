@@ -362,7 +362,7 @@ public class GuiceInjector implements Injector {
     @Override
     public <C, T extends C> void wire(Class<C> contract, Class<? extends T> implementation, Named meta) {
         if (Reflect.annotatedConstructors(implementation, Wired.class).isEmpty())
-            throw new IllegalArgumentException("Implementation should contain at least one constructor annotated with @AutoWired");
+            throw new IllegalArgumentException("Implementation should contain at least one constructor decorated with @AutoWired");
 
         this.bindings.add(new ConstructorWireContext<>(contract, implementation, meta.value()));
     }

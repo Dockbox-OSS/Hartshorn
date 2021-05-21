@@ -28,7 +28,7 @@ import java.util.Collection;
 
 /**
  * The default converter for any type which can be constructed with a {@link CustomParameterPattern}. Typically
- * this only applies to types annotated with {@link Parameter},
+ * this only applies to types decorated with {@link Parameter},
  * however this is not a requirement.
  *
  * @param <T> The generic type

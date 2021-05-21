@@ -18,7 +18,7 @@
 package org.dockbox.selene.proxy.exception;
 
 /**
- * The exception to be thrown by methods annotated with {@link
+ * The exception to be thrown by methods decorated with {@link
  * org.dockbox.selene.proxy.annotations.Proxy.Target} to indicate a proxy delegation should be
  * cancelled.
  */

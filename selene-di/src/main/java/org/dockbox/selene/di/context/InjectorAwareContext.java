@@ -81,7 +81,7 @@ public class InjectorAwareContext extends ManagedSeleneContext {
             }
         }
 
-        // Enables all fields which are not annotated with @Module or @DoNotEnable
+        // Enables all fields which are not decorated with @Module or @DoNotEnable
         this.enable(typeInstance);
 
         // Inject properties if applicable

@@ -76,7 +76,7 @@ public class SimpleEventBus implements EventBus {
 
     /**
      * Subscribes all event listeners in a object instance. Typically event listeners are methods
-     * annotated with {@link Listener}.
+     * decorated with {@link Listener}.
      *
      * @param object
      *         The instance of the listener
@@ -162,7 +162,7 @@ public class SimpleEventBus implements EventBus {
      * Checks if a method is a valid listener method. A method is only valid if it:
      *
      * <ul>
-     *   <li>Is annotated with {@link Listener}
+     *   <li>Is decorated with {@link Listener}
      *   <li>Is not static
      *   <li>Is not abstract
      *   <li>Has at least one parameter which is a subcless of {@link Event}
