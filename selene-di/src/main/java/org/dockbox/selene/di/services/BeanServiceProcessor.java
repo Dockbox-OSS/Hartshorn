@@ -20,6 +20,7 @@ package org.dockbox.selene.di.services;
 import com.google.inject.Key;
 
 import org.dockbox.selene.di.annotations.Bean;
+import org.dockbox.selene.di.annotations.UseBeanProvision;
 import org.dockbox.selene.di.annotations.Wired;
 import org.dockbox.selene.di.binding.Bindings;
 import org.dockbox.selene.di.context.ApplicationContext;
@@ -33,7 +34,7 @@ import java.util.Collection;
 
 import javax.inject.Singleton;
 
-public final class BeanServiceProcessor implements ServiceProcessor {
+public final class BeanServiceProcessor implements ServiceProcessor<UseBeanProvision> {
 
     @Override
     public boolean preconditions(Class<?> type) {
@@ -63,5 +64,10 @@ public final class BeanServiceProcessor implements ServiceProcessor {
                 context.add(beanContext);
             }
         }
+    }
+
+    @Override
+    public Class<UseBeanProvision> activator() {
+        return UseBeanProvision.class;
     }
 }
