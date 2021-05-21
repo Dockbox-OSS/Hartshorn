@@ -21,6 +21,7 @@ import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.SeleneInformation;
 import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.config.annotations.Configuration;
+import org.dockbox.selene.config.annotations.UseConfigurations;
 import org.dockbox.selene.config.annotations.Value;
 import org.dockbox.selene.di.context.ApplicationContext;
 import org.dockbox.selene.di.properties.InjectorProperty;
@@ -37,7 +38,7 @@ import org.jetbrains.annotations.Nullable;
 import java.lang.reflect.Field;
 import java.nio.file.Path;
 
-public class ConfigurationServiceModifier implements ServiceModifier {
+public class ConfigurationServiceModifier implements ServiceModifier<UseConfigurations> {
 
     @Override
     public <T> boolean preconditions(Class<T> type, @Nullable T instance, InjectorProperty<?>... properties) {
@@ -76,5 +77,10 @@ public class ConfigurationServiceModifier implements ServiceModifier {
         }
 
         return instance;
+    }
+
+    @Override
+    public Class<UseConfigurations> activator() {
+        return UseConfigurations.class;
     }
 }
