@@ -18,6 +18,7 @@
 package org.dockbox.selene.commands;
 
 import org.dockbox.selene.api.domain.Exceptional;
+import org.dockbox.selene.commands.annotations.UseCustomArguments;
 import org.dockbox.selene.commands.context.ArgumentConverter;
 import org.dockbox.selene.di.context.ApplicationContext;
 import org.dockbox.selene.di.properties.InjectableType;
@@ -27,7 +28,8 @@ import org.dockbox.selene.util.Reflect;
 import java.lang.reflect.Field;
 import java.util.List;
 
-public class ArgumentServiceProcessor implements ServiceProcessor {
+public class ArgumentServiceProcessor implements ServiceProcessor<UseCustomArguments> {
+
     @Override
     public boolean preconditions(Class<?> type) {
         List<Field> fields = Reflect.fieldsWithSuper(type, ArgumentConverter.class);
@@ -44,5 +46,10 @@ public class ArgumentServiceProcessor implements ServiceProcessor {
                 return null; // Captured in Exceptional
             });
         }
+    }
+
+    @Override
+    public Class<UseCustomArguments> activator() {
+        return UseCustomArguments.class;
     }
 }
