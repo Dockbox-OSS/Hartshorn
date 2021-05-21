@@ -65,7 +65,7 @@ public interface ServiceAnnotatedMethodModifier<M extends Annotation, A extends 
     <T> boolean preconditions(Class<T> type, @Nullable T instance, Method method, InjectorProperty<?>... properties);
 
     default boolean failOnPrecondition() {
-        return false;
+        return true;
     }
 
     Class<M> annotation();

@@ -25,14 +25,12 @@ import org.dockbox.selene.api.i18n.annotations.UseResources;
 import org.dockbox.selene.api.i18n.common.ResourceEntry;
 import org.dockbox.selene.di.annotations.Service;
 import org.dockbox.selene.di.context.ApplicationContext;
-import org.dockbox.selene.di.properties.InjectorProperty;
 import org.dockbox.selene.proxy.exception.ProxyMethodBindingException;
 import org.dockbox.selene.proxy.handle.ProxyFunction;
 import org.dockbox.selene.proxy.service.MethodProxyContext;
 import org.dockbox.selene.proxy.service.ServiceAnnotatedMethodModifier;
 import org.dockbox.selene.util.Reflect;
 import org.dockbox.selene.util.SeleneUtils;
-import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Method;
 
@@ -61,13 +59,8 @@ public class I18NServiceModifier implements ServiceAnnotatedMethodModifier<Resou
     }
 
     @Override
-    public <T> boolean preconditions(Class<T> type, @Nullable T instance, Method method, InjectorProperty<?>... properties) {
-        return Reflect.assignableFrom(ResourceEntry.class, method.getReturnType());
-    }
-
-    @Override
-    public boolean failOnPrecondition() {
-        return true;
+    public <T> boolean preconditions(MethodProxyContext<T> context) {
+        return Reflect.assignableFrom(ResourceEntry.class, context.getReturnType());
     }
 
     @Override
