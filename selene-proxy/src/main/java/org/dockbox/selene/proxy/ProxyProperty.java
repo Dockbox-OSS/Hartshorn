@@ -53,11 +53,11 @@ public final class ProxyProperty<T, R> implements InjectorProperty<Class<T>> {
     }
 
     public static <T, R> ProxyProperty<T, R> of(Class<T> type, Method target, BiFunction<T, Object[], R> proxyFunction) {
-        return new ProxyProperty<>(type, target, (instance, args, holder) -> proxyFunction.apply(instance, args));
+        return new ProxyProperty<>(type, target, (instance, args, proxyContext) -> proxyFunction.apply(instance, args));
     }
 
     public static <T, R> ProxyProperty<T, R> of(Class<T> type, Method target, BiConsumer<T, Object[]> proxyFunction) {
-        return new ProxyProperty<>(type, target, (instance, args, holder) -> {
+        return new ProxyProperty<>(type, target, (instance, args, proxyContext) -> {
             proxyFunction.accept(instance, args);
             //noinspection ReturnOfNull
             return null;
@@ -77,9 +77,9 @@ public final class ProxyProperty<T, R> implements InjectorProperty<Class<T>> {
         return this.getTarget().getDeclaringClass();
     }
 
-    public R delegate(T instance, Object... args) {
+    public R delegate(T instance, Method proceed, Object self, Object... args) {
         this.holder.setCancelled(false);
-        return this.delegate.delegate(instance, args, this.holder);
+        return this.delegate.delegate(instance, args, new SimpleProxyContext(proceed, this.holder, self));
     }
 
     public boolean isCancelled() {

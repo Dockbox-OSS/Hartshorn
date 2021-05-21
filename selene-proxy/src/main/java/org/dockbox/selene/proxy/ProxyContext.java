@@ -15,12 +15,17 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.proxy.handle;
+package org.dockbox.selene.proxy;
 
-import org.dockbox.selene.proxy.ProxyContext;
+import org.dockbox.selene.di.exceptions.ApplicationException;
+import org.dockbox.selene.proxy.handle.ProxyHolder;
 
-@FunctionalInterface
-public interface ProxyFunction<T, R> {
+import java.lang.reflect.Method;
 
-    R delegate(T instance, Object[] args, ProxyContext context);
+public interface ProxyContext {
+
+    Method getProceed();
+    ProxyHolder getHolder();
+    <T> T invoke(Object... args) throws ApplicationException;
+
 }

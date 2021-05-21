@@ -77,7 +77,7 @@ public class ProxyHandler<T> implements MethodHandler {
 
             // Phase is sorted in execution order (HEAD, OVERWRITE, TAIL)
             for (Phase phase : Phase.values())
-                returnValue = this.enterPhase(phase, toSort, args, thisMethod, returnValue);
+                returnValue = this.enterPhase(phase, toSort, args, thisMethod, proceed, self, returnValue);
 
             return returnValue;
         }
@@ -94,13 +94,15 @@ public class ProxyHandler<T> implements MethodHandler {
             Iterable<ProxyProperty<T, ?>> properties,
             Object[] args,
             Method thisMethod,
+            Method proceed,
+            Object self,
             Object returnValue
     ) throws InvocationTargetException, IllegalAccessException {
         // Used to ensure the target is performed if there is no OVERWRITE phase hook
         boolean target = true;
         for (ProxyProperty<T, ?> property : properties) {
             if (at == property.getPhase()) {
-                Object result = property.delegate(this.instance, args);
+                Object result = property.delegate(this.instance, proceed, self, args);
                 if (property.overwriteResult() && !Void.TYPE.equals(thisMethod.getReturnType())) {
                     // A proxy returning null typically indicates the use of a non-returning function, for
                     // annotation

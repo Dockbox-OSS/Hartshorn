@@ -110,13 +110,13 @@ public final class ProxyableBootstrap {
                 }
             }
 
-            ProxyProperty<C, ?> property = ProxyProperty.of(proxyTargetClass, targetMethod, (instance, args, holder) -> {
+            ProxyProperty<C, ?> property = ProxyProperty.of(proxyTargetClass, targetMethod, (instance, args, proxyContext) -> {
                 Object[] invokingArgs = ProxyableBootstrap.prepareArguments(source, args, instance);
                 try {
                     return source.invoke(Selene.context().get(proxyClass), invokingArgs);
                 }
                 catch (CancelProxyException e) {
-                    holder.setCancelled(true);
+                    proxyContext.getHolder().setCancelled(true);
                 }
                 catch (Throwable e) {
                     Except.handle(e);

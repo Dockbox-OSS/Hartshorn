@@ -38,7 +38,7 @@ public class ProxyTests {
         ProxyProperty<ConcreteProxyTarget, String> property = ProxyProperty.of(
                 ConcreteProxyTarget.class,
                 ConcreteProxyTarget.class.getMethod("getName"),
-                (instance, args, holder) -> "Selene");
+                (instance, args, proxyContext) -> "Selene");
         ProxyHandler<ConcreteProxyTarget> handler = new ProxyHandler<>(new ConcreteProxyTarget());
         handler.delegate(property);
         ConcreteProxyTarget proxy = handler.proxy();
@@ -53,7 +53,7 @@ public class ProxyTests {
         ProxyProperty<FinalProxyTarget, String> property = ProxyProperty.of(
                 FinalProxyTarget.class,
                 FinalProxyTarget.class.getMethod("getName"),
-                (instance, args, holder) -> "Selene");
+                (instance, args, proxyContext) -> "Selene");
         ProxyHandler<FinalProxyTarget> handler = new ProxyHandler<>(new FinalProxyTarget());
         handler.delegate(property);
         FinalProxyTarget proxy = handler.proxy();
@@ -69,7 +69,7 @@ public class ProxyTests {
         ProxyProperty<ConcreteProxyTarget, String> property = ProxyProperty.of(
                 ConcreteProxyTarget.class,
                 ConcreteProxyTarget.class.getMethod("getName"),
-                (instance, args, holder) -> "Selene");
+                (instance, args, proxyContext) -> "Selene");
         ConcreteProxyTarget proxy = Selene.context().get(ConcreteProxyTarget.class, property);
 
         Assertions.assertNotNull(proxy);
