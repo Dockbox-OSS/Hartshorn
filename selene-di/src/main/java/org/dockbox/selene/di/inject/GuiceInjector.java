@@ -30,11 +30,9 @@ import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.domain.tuple.Tuple;
 import org.dockbox.selene.di.ApplicationContextAware;
 import org.dockbox.selene.di.InjectConfiguration;
-import org.dockbox.selene.di.annotations.Bean;
 import org.dockbox.selene.di.annotations.Binds;
 import org.dockbox.selene.di.annotations.Combines;
 import org.dockbox.selene.di.annotations.Named;
-import org.dockbox.selene.di.annotations.Service;
 import org.dockbox.selene.di.annotations.Wired;
 import org.dockbox.selene.di.binding.BindingData;
 import org.dockbox.selene.di.binding.Bindings;
@@ -46,7 +44,6 @@ import org.dockbox.selene.di.inject.modules.ProvisionMetaModule;
 import org.dockbox.selene.di.inject.modules.ProvisionModule;
 import org.dockbox.selene.di.inject.modules.StaticMetaModule;
 import org.dockbox.selene.di.inject.modules.StaticModule;
-import org.dockbox.selene.di.inject.wired.BeanWireContext;
 import org.dockbox.selene.di.inject.wired.ConstructorWireContext;
 import org.dockbox.selene.di.inject.wired.WireContext;
 import org.dockbox.selene.di.properties.AnnotationProperty;
@@ -70,12 +67,11 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.Supplier;
 
-import javax.inject.Singleton;
-
 public class GuiceInjector implements Injector {
 
     private final transient Set<WireContext<?, ?>> bindings = SeleneUtils.emptyConcurrentSet();
     private final transient Set<AbstractModule> modules = SeleneUtils.emptyConcurrentSet();
+
     private com.google.inject.Injector internalInjector;
 
     @Override
@@ -149,42 +145,7 @@ public class GuiceInjector implements Injector {
     public void bind(String prefix) {
         Map<Key<?>, Class<?>> scannedBinders = this.scan(prefix);
         this.modules.add(new GuicePrefixScannerModule(scannedBinders));
-        this.beans(prefix);
         this.reset();
-    }
-
-    private void beans(String prefix) {
-        List<BeanContext<?, ?>> contexts = SeleneUtils.emptyList();
-        for (Class<?> type : Reflect.annotatedTypes(prefix, Service.class)) {
-            Collection<Method> beans = Reflect.annotatedMethods(type, Bean.class);
-            for (Method bean : beans) {
-                boolean singleton = bean.isAnnotationPresent(Singleton.class);
-                Bean annotation = bean.getAnnotation(Bean.class);
-
-                if (bean.isAnnotationPresent(Wired.class)) {
-                    if (singleton) throw new IllegalArgumentException("Cannot provide manually wired singleton bean " + bean.getReturnType() + " at " + bean.getName());
-                    else {
-                        WireContext<?, ?> context = new BeanWireContext<>(bean.getReturnType(), bean, annotation.value());
-                        this.bindings.add(context);
-                    }
-                }
-                else {
-                    Key<?> key = "".equals(annotation.value())
-                            ? Key.get(bean.getReturnType())
-                            : Key.get(bean.getReturnType(), Bindings.named(annotation.value()));
-
-                    BeanContext<?, ?> context = new BeanContext<>(key, singleton, () -> this.invoke(bean));
-                    contexts.add(context);
-                }
-            }
-        }
-        contexts.forEach(context -> {
-            if (context.isSingleton()) {
-                this.modules.add(new InstanceModule<>(context.getKey(), context.getProvider().get()));
-            } else {
-                this.modules.add(new ProvisionModule<>(context.getKey(), () -> context.getProvider().get()));
-            }
-        });
     }
 
     @Override
@@ -266,6 +227,21 @@ public class GuiceInjector implements Injector {
             }
         }
         return instance;
+    }
+
+    @Override
+    public void add(WireContext<?, ?> context) {
+        this.bindings.add(context);
+    }
+
+    @Override
+    public void add(BeanContext<?, ?> context) {
+        if (context.isSingleton()) {
+            this.modules.add(new InstanceModule<>(context.getKey(), context.getProvider().get()));
+        } else {
+            this.modules.add(new ProvisionModule<>(context.getKey(), () -> context.getProvider().get()));
+        }
+        this.reset();
     }
 
     @Override
@@ -386,7 +362,7 @@ public class GuiceInjector implements Injector {
     @Override
     public <C, T extends C> void wire(Class<C> contract, Class<? extends T> implementation, Named meta) {
         if (Reflect.annotatedConstructors(implementation, Wired.class).isEmpty())
-            throw new IllegalArgumentException("Implementation should contain at least one constructor annotated with @AutoWired");
+            throw new IllegalArgumentException("Implementation should contain at least one constructor decorated with @AutoWired");
 
         this.bindings.add(new ConstructorWireContext<>(contract, implementation, meta.value()));
     }

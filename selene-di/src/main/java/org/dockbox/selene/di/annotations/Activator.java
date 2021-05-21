@@ -15,12 +15,19 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.api.i18n.exceptions;
+package org.dockbox.selene.di.annotations;
 
-public class ProxyFactoryBindingException extends RuntimeException {
+import org.dockbox.selene.di.adapter.InjectSource;
+import org.dockbox.selene.di.adapter.ServiceSource;
 
-    public ProxyFactoryBindingException(Class<?> type) {
-        super("Factory proxies should be interfaces, " + type.getCanonicalName() + " is not an interface");
-    }
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
+public @interface Activator {
+    InjectSource inject();
+    ServiceSource services() default ServiceSource.DEFAULT;
 }

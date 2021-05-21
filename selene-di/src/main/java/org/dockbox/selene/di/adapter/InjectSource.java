@@ -15,12 +15,23 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-dependencies {
-    compileOnly project(':selene-parent')
+package org.dockbox.selene.di.adapter;
 
-    compileOnly project(':selene-events')
-    compileOnly project(':selene-i18n')
-    compileOnly project(':selene-commands')
-    compileOnly project(':selene-modules')
-    compileOnly project(':selene-config')
+import org.dockbox.selene.di.inject.GuiceInjector;
+import org.dockbox.selene.di.inject.Injector;
+
+import java.util.function.Supplier;
+
+public enum InjectSource {
+    GUICE(GuiceInjector::new);
+
+    private final Supplier<Injector> supplier;
+
+    InjectSource(Supplier<Injector> supplier) {
+        this.supplier = supplier;
+    }
+
+    public Injector create() {
+        return this.supplier.get();
+    }
 }

@@ -54,7 +54,8 @@ public abstract class SeleneBootstrap extends InjectableBootstrap {
      * @param early
      *         the injector provided by the Selene implementation
      */
-    protected SeleneBootstrap(InjectConfiguration early, InjectConfiguration late) {
+    protected SeleneBootstrap(InjectConfiguration early, InjectConfiguration late, Class<?> activationSource) {
+        super(SeleneInformation.PACKAGE_PREFIX, activationSource);
         Reflections.log = null; // Don't output Reflections
         this.enter(BootstrapPhase.PRE_CONSTRUCT);
         super.getContext().bind(SeleneInformation.PACKAGE_PREFIX);

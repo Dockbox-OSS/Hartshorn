@@ -266,7 +266,7 @@ public final class Reflect {
 
     /**
      * Gets all methods annotated by a given annotation, which match the given rule, inside a class.
-     * If the method is not annotated with the given annotation, or does not match the given rule, it
+     * If the method is not decorated with the given annotation, or does not match the given rule, it
      * will not be returned. Also collects methods from parent types of the class.
      *
      * @param <A>
@@ -288,7 +288,7 @@ public final class Reflect {
 
     /**
      * Gets all methods annotated by a given annotation, which match the given rule, inside a class.
-     * If the method is not annotated with the given annotation, or does not match the given rule, it
+     * If the method is not decorated with the given annotation, or does not match the given rule, it
      * will not be returned. Also collects methods from parent types of the class if {@code
      * skipParents} is false.
      *
@@ -319,7 +319,7 @@ public final class Reflect {
     }
 
     /**
-     * Gets types annotated with a given annotation, both classes and annotations. The prefix is
+     * Gets types decorated with a given annotation, both classes and annotations. The prefix is
      * typically a package. If the annotation is present on a parent of the type, the highest level
      * member will be included.
      *
@@ -337,7 +337,7 @@ public final class Reflect {
     }
 
     /**
-     * Gets types annotated with a given annotation, both classes and annotations. The prefix is
+     * Gets types decorated with a given annotation, both classes and annotations. The prefix is
      * typically a package. If the annotation is present on a parent of the type, it will only be
      * included if {@code skipParents} is false.
      *
@@ -830,22 +830,24 @@ public final class Reflect {
         }
     }
 
-    public static <T> T unsafeInstance(Class<T> type) throws InstantiationException {
-        try {
-            //noinspection unchecked
-            return (T) getUnsafe().allocateInstance(type);
+    public static List<Field> fieldsWithSuper(Class<?> type, Class<?> superType) {
+        Set<Field> fields = SeleneUtils.emptySet();
+        for (Field staticField : staticFields(type)) {
+            if (Reflect.assignableFrom(superType, staticField.getType())) fields.add(staticField);
         }
-        catch (ReflectiveOperationException e) {
-            throw new InstantiationException("Could not access Unsafe instance");
-        }
+        fields(type, ($, field) -> {
+            if (Reflect.assignableFrom(superType, field.getType())) fields.add(field);
+        });
+        return SeleneUtils.asUnmodifiableList(fields);
     }
 
-    private static Unsafe getUnsafe() throws ReflectiveOperationException {
-        if (null == Reflect.UNSAFE) {
-            Field f = Unsafe.class.getDeclaredField("theUnsafe");
-            f.setAccessible(true);
-            Reflect.UNSAFE = (Unsafe) f.get(null);
+    public static List<Annotation> annotatedAnnotations(Class<?> type, Class<? extends Annotation> annotation) {
+        List<Annotation> annotations = SeleneUtils.emptyList();
+        for (Annotation typeAnnotation : type.getAnnotations()) {
+            if (typeAnnotation.annotationType().isAnnotationPresent(annotation)) {
+                annotations.add(typeAnnotation);
+            }
         }
-        return Reflect.UNSAFE;
+        return annotations;
     }
 }

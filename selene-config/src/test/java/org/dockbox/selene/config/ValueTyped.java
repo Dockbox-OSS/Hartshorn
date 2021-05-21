@@ -18,10 +18,12 @@
 package org.dockbox.selene.config;
 
 import org.dockbox.selene.config.annotations.Value;
+import org.dockbox.selene.di.annotations.Service;
 
 import lombok.Getter;
 
 @Getter
+@Service
 public class ValueTyped {
 
     @Value("demo")

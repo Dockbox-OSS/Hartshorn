@@ -15,20 +15,18 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.di.inject;
+package org.dockbox.selene.di.services;
 
-import java.util.function.Supplier;
+import org.dockbox.selene.di.context.ApplicationContext;
+import org.dockbox.selene.di.properties.InjectorProperty;
+import org.jetbrains.annotations.Nullable;
 
-public enum InjectSource {
-    GUICE(GuiceInjector::new);
+import java.lang.annotation.Annotation;
 
-    private final Supplier<Injector> supplier;
+public interface ServiceModifier<A extends Annotation> {
 
-    InjectSource(Supplier<Injector> supplier) {
-        this.supplier = supplier;
-    }
+    <T> boolean preconditions(Class<T> type, @Nullable T instance, InjectorProperty<?>... properties);
+    <T> T process(ApplicationContext context, Class<T> type, @Nullable T instance, InjectorProperty<?>... properties);
+    Class<A> activator();
 
-    public Injector create() {
-        return this.supplier.get();
-    }
 }

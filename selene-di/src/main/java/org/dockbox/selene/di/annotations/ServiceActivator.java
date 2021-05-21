@@ -15,12 +15,14 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-dependencies {
-    compileOnly project(':selene-parent')
+package org.dockbox.selene.di.annotations;
 
-    compileOnly project(':selene-events')
-    compileOnly project(':selene-i18n')
-    compileOnly project(':selene-commands')
-    compileOnly project(':selene-modules')
-    compileOnly project(':selene-config')
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.ANNOTATION_TYPE)
+public @interface ServiceActivator {
 }

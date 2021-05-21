@@ -220,9 +220,9 @@ public abstract class DefaultCommandBus<E> implements CommandBus {
         List<AbstractRegistrationContext> contexts = SeleneUtils.emptyList();
 
         /*
-        It is possible the class itself is not annotated with @Command, in which case all methods should be registered
-        as individual commands. If the class itself is annotated with @Command, only methods marked as non-inherited
-        should be registered as individual commands, and using all other methods annotated with @Command as
+        It is possible the class itself is not decorated with @Command, in which case all methods should be registered
+        as individual commands. If the class itself is decorated with @Command, only methods marked as non-inherited
+        should be registered as individual commands, and using all other methods decorated with @Command as
         sub-commands of the command defined in the class annotation.
         */
         boolean isParentRegistration = parent.isAnnotationPresent(Command.class);

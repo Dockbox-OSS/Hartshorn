@@ -15,14 +15,19 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.api.i18n.exceptions;
+package org.dockbox.selene.server;
 
-import java.lang.reflect.Method;
+import org.dockbox.selene.api.i18n.annotations.UseResources;
+import org.dockbox.selene.commands.annotations.UseCustomArguments;
+import org.dockbox.selene.config.annotations.UseConfigurations;
+import org.dockbox.selene.di.adapter.InjectSource;
+import org.dockbox.selene.di.annotations.Activator;
+import org.dockbox.selene.di.annotations.UseBeanProvision;
 
-public class ProxyMethodBindingException extends RuntimeException {
-
-    public ProxyMethodBindingException(Method method) {
-        super("Factory method proxies should return (a subtype of) ResourceEntry, " + method.getName() + " returned " + method.getReturnType() == null ? "void" : method.getReturnType().getSimpleName());
-    }
-
+@Activator(inject = InjectSource.GUICE)
+@UseBeanProvision
+@UseCustomArguments
+@UseResources
+@UseConfigurations
+public class ServerActivator {
 }

@@ -123,10 +123,10 @@ public class Table {
     /**
      * Generates a {@link TableRow} from a given object based on the objects {@link Field}s. By
      * default the field name is used to look up a matching column identifier which is present inside
-     * the table. If the field is annotated with {@link Property} the contained {@link
+     * the table. If the field is decorated with {@link Property} the contained {@link
      * ColumnIdentifier} is used instead.
      *
-     * <p>If the field is annotated with {@link Property} with {@link Property#ignore()} set to {@code true}
+     * <p>If the field is decorated with {@link Property} with {@link Property#ignore()} set to {@code true}
      * the field will not be converted to a column entry in the row. One attempt will be made to make the
      * field accessible if it is not already.
      *

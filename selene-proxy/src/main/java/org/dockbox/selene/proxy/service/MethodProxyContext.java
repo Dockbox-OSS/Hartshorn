@@ -15,24 +15,20 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.di.context;
+package org.dockbox.selene.proxy.service;
 
-import org.dockbox.selene.api.domain.Exceptional;
-import org.dockbox.selene.di.InjectConfiguration;
-import org.dockbox.selene.di.annotations.Named;
-import org.dockbox.selene.di.inject.BeanContext;
-import org.dockbox.selene.di.inject.Binder;
-import org.dockbox.selene.di.inject.wired.WireContext;
 import org.dockbox.selene.di.properties.InjectorProperty;
 
-public interface ApplicationBinder extends Binder {
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 
-    void bind(InjectConfiguration configuration);
-    void bind(String prefix);
-    <T, I extends T> Exceptional<WireContext<T, I>> firstWire(Class<T> contract, InjectorProperty<Named> property);
-    <T> T populate(T type);
+public interface MethodProxyContext<T> {
 
-    void add(WireContext<?, ?> context);
-    void add(BeanContext<?, ?> context);
+    T getInstance();
+    Class<T> getType();
+    Method getMethod();
+    InjectorProperty<?>[] getProperties();
+    Annotation[] getAnnotations();
+    Class<?> getReturnType();
 
 }

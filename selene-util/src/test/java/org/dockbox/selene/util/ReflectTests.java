@@ -412,11 +412,4 @@ public class ReflectTests {
         Assertions.assertNotNull(o);
         Assertions.assertEquals(expected, o);
     }
-
-    @Test
-    void testUnsafeInstanceCreation() throws InstantiationException {
-        ReflectTestType instance = Reflect.unsafeInstance(ReflectTestType.class);
-        Assertions.assertNotNull(instance);
-        Assertions.assertFalse(instance.isActivatedConstructor());
-    }
 }

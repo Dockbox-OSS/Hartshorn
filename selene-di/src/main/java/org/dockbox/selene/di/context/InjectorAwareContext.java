@@ -21,18 +21,20 @@ import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.di.InjectConfiguration;
 import org.dockbox.selene.di.ProvisionFailure;
 import org.dockbox.selene.di.SeleneFactory;
+import org.dockbox.selene.di.adapter.ContextAdapter;
 import org.dockbox.selene.di.annotations.Named;
 import org.dockbox.selene.di.annotations.Service;
 import org.dockbox.selene.di.binding.Bindings;
 import org.dockbox.selene.di.exceptions.ApplicationException;
+import org.dockbox.selene.di.inject.BeanContext;
 import org.dockbox.selene.di.inject.Binder;
-import org.dockbox.selene.di.inject.InjectSource;
 import org.dockbox.selene.di.inject.Injector;
-import org.dockbox.selene.di.inject.InjectorAdapter;
 import org.dockbox.selene.di.inject.wired.WireContext;
 import org.dockbox.selene.di.properties.InjectableType;
 import org.dockbox.selene.di.properties.InjectorProperty;
 import org.dockbox.selene.di.properties.UseFactory;
+import org.dockbox.selene.di.services.ServiceLocator;
+import org.dockbox.selene.di.services.ServiceModifier;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Modifier;
@@ -43,10 +45,11 @@ import lombok.Getter;
 public class InjectorAwareContext extends ManagedSeleneContext {
 
     @Getter
-    private final InjectorAdapter adapter;
+    private final ContextAdapter adapter;
 
-    public InjectorAwareContext(InjectSource source) {
-        this.adapter = new InjectorAdapter(source);
+    public InjectorAwareContext(Class<?> activationSource) {
+        super(activationSource);
+        this.adapter = new ContextAdapter(this.getActivator().inject(), this.getActivator().services());
         this.bind(ApplicationContext.class, this);
     }
 
@@ -70,7 +73,14 @@ public class InjectorAwareContext extends ManagedSeleneContext {
 
         typeInstance = this.inject(type, typeInstance, additionalProperties);
 
-        // Enables all fields which are not annotated with @Module or @DoNotEnable
+        if (type.isAnnotationPresent(Service.class)) {
+            for (ServiceModifier<?> serviceModifier : this.serviceModifiers) {
+                if (serviceModifier.preconditions(type, typeInstance, additionalProperties))
+                    typeInstance = serviceModifier.process(this, type, typeInstance, additionalProperties);
+            }
+        }
+
+        // Enables all fields which are not decorated with @Module or @DoNotEnable
         this.enable(typeInstance);
 
         // Inject properties if applicable
@@ -123,8 +133,23 @@ public class InjectorAwareContext extends ManagedSeleneContext {
     }
 
     @Override
+    protected ServiceLocator locator() {
+        return this.adapter.getLocator();
+    }
+
+    @Override
     public <T> T populate(T o) {
         return this.injector().populate(o);
+    }
+
+    @Override
+    public void add(WireContext<?, ?> context) {
+        this.injector().add(context);
+    }
+
+    @Override
+    public void add(BeanContext<?, ?> context) {
+        this.injector().add(context);
     }
 
     @Override
@@ -135,6 +160,7 @@ public class InjectorAwareContext extends ManagedSeleneContext {
     @Override
     public void bind(String prefix) {
         this.injector().bind(prefix);
+        super.process(prefix);
     }
 
     @Override

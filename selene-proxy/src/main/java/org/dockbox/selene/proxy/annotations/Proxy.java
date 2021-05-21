@@ -26,7 +26,7 @@ import java.lang.annotation.Target;
 
 /**
  * The annotation used to mark a type as proxy executor. Proxy methods are still required to be
- * annotated with {@link Proxy.Target}. Any non-annotated method will be ignored.
+ * decorated with {@link Proxy.Target}. Any non-annotated method will be ignored.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
@@ -41,7 +41,7 @@ public @interface Proxy {
     /**
      * The annotation used to mark a method as proxy executor. When {@link #method()} is unchanged,
      * the name of the annotated method will be used when looking up the target method in the target
-     * type. Any parameters not annotated with {@link Instance} will be used during lookup, in the
+     * type. Any parameters not decorated with {@link Instance} will be used during lookup, in the
      * exact order they are defined.
      */
     @Retention(RetentionPolicy.RUNTIME)

@@ -15,12 +15,16 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-dependencies {
-    compileOnly project(':selene-parent')
+package org.dockbox.selene.di.services;
 
-    compileOnly project(':selene-events')
-    compileOnly project(':selene-i18n')
-    compileOnly project(':selene-commands')
-    compileOnly project(':selene-modules')
-    compileOnly project(':selene-config')
+import org.dockbox.selene.di.context.ApplicationContext;
+
+import java.lang.annotation.Annotation;
+
+public interface ServiceProcessor<A extends Annotation> {
+
+    boolean preconditions(Class<?> type);
+    <T> void process(ApplicationContext context, Class<T> type);
+    Class<A> activator();
+
 }

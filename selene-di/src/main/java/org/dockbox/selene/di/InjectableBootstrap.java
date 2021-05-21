@@ -17,17 +17,46 @@
 
 package org.dockbox.selene.di;
 
-import org.dockbox.selene.di.inject.InjectSource;
 import org.dockbox.selene.di.properties.InjectorProperty;
+import org.dockbox.selene.di.services.ServiceModifier;
+import org.dockbox.selene.di.services.ServiceProcessor;
+import org.dockbox.selene.util.Reflect;
 
-@SuppressWarnings("AbstractClassWithoutAbstractMethods")
+import java.lang.reflect.Modifier;
+import java.util.Collection;
+
+@SuppressWarnings({ "AbstractClassWithoutAbstractMethods", "unchecked", "rawtypes" })
 public abstract class InjectableBootstrap extends ApplicationContextAware {
 
     private static InjectableBootstrap instance;
 
-    protected InjectableBootstrap() {
-        super(InjectSource.GUICE);
+    protected InjectableBootstrap(String prefix, Class<?> activationSource) {
+        super(activationSource);
+        this.lookupProcessors(prefix);
+        this.lookupModifiers(prefix);
         instance(this);
+    }
+
+    private void lookupProcessors(String prefix) {
+        final Collection<Class<? extends ServiceProcessor>> processors = Reflect.subTypes(prefix, ServiceProcessor.class);
+        for (Class<? extends ServiceProcessor> processor : processors) {
+            if (processor.isInterface() || Modifier.isAbstract(processor.getModifiers())) continue;
+
+            final ServiceProcessor raw = super.getContext().raw(processor, false);
+            if (this.getContext().hasActivator(raw.activator()))
+                super.getContext().add(raw);
+        }
+    }
+
+    private void lookupModifiers(String prefix) {
+        final Collection<Class<? extends ServiceModifier>> modifiers = Reflect.subTypes(prefix, ServiceModifier.class);
+        for (Class<? extends ServiceModifier> modifier : modifiers) {
+            if (modifier.isInterface() || Modifier.isAbstract(modifier.getModifiers())) continue;
+
+            final ServiceModifier raw = super.getContext().raw(modifier, false);
+            if (this.getContext().hasActivator(raw.activator()))
+                super.getContext().add(raw);
+        }
     }
 
     public static InjectableBootstrap instance() {

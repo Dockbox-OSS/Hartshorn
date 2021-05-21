@@ -21,6 +21,11 @@ import org.dockbox.selene.di.InjectionPoint;
 import org.dockbox.selene.di.ProvisionFailure;
 import org.dockbox.selene.di.inject.Injector;
 import org.dockbox.selene.di.properties.InjectorProperty;
+import org.dockbox.selene.di.services.ServiceModifier;
+import org.dockbox.selene.di.services.ServiceProcessor;
+
+import java.lang.annotation.Annotation;
+import java.util.List;
 
 public interface ApplicationContext extends ApplicationBinder, SeleneContext {
 
@@ -33,7 +38,16 @@ public interface ApplicationContext extends ApplicationBinder, SeleneContext {
     <T> void enable(T typeInstance);
 
     <T> T raw(Class<T> type) throws ProvisionFailure;
+    <T> T raw(Class<T> type, boolean populate) throws ProvisionFailure;
 
     Injector injector();
+
+    void add(ServiceProcessor<?> processor);
+    void add(ServiceModifier<?> modifier);
+
+    Class<?> getActivationSource();
+    List<Annotation> activators();
+    boolean hasActivator(Class<? extends Annotation> activator);
+    <A> A activator(Class<A> activator);
 
 }

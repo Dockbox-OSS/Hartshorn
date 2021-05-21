@@ -30,7 +30,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 /**
- * The type used to provide a argument pattern which can be used to construct types annotated with {@link Parameter}, typically done
+ * The type used to provide a argument pattern which can be used to construct types decorated with {@link Parameter}, typically done
  * through the {@link org.dockbox.selene.commands.convert.DynamicPatternConverter}, though this is not a requirement.
  */
 public interface CustomParameterPattern {

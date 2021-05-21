@@ -20,10 +20,12 @@ package org.dockbox.selene.di;
 import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.di.binding.Bindings;
+import org.dockbox.selene.di.context.ApplicationContext;
 import org.dockbox.selene.di.context.ManagedSeleneContext;
 import org.dockbox.selene.di.inject.GuiceInjector;
 import org.dockbox.selene.di.inject.Injector;
 import org.dockbox.selene.di.properties.BindingMetaProperty;
+import org.dockbox.selene.di.services.BeanServiceProcessor;
 import org.dockbox.selene.di.types.InvalidSampleWiredType;
 import org.dockbox.selene.di.types.NameProperty;
 import org.dockbox.selene.di.types.PopulatedType;
@@ -58,6 +60,8 @@ public class ApplicationContextTests {
     private static final Field modules;
     private static final Field bindings;
     private static final Field injectionPoints;
+    private static final Field serviceModifiers;
+    private static final Field serviceProcessors;
 
     static {
         try {
@@ -69,6 +73,12 @@ public class ApplicationContextTests {
 
             injectionPoints = ManagedSeleneContext.class.getDeclaredField("injectionPoints");
             injectionPoints.setAccessible(true);
+
+            serviceModifiers = ManagedSeleneContext.class.getDeclaredField("serviceModifiers");
+            serviceModifiers.setAccessible(true);
+
+            serviceProcessors = ManagedSeleneContext.class.getDeclaredField("serviceProcessors");
+            serviceProcessors.setAccessible(true);
         } catch (NoSuchFieldException e) {
             throw new RuntimeException(e);
         }
@@ -76,8 +86,8 @@ public class ApplicationContextTests {
 
     @Test
     public void testStaticBindingStoresBinding() throws IllegalAccessException {
-        injector(true).bind(SampleInterface.class, SampleImplementation.class);
-        Exceptional<Class<SampleInterface>> binding = injector(false).getStaticBinding(SampleInterface.class);
+        context(true).bind(SampleInterface.class, SampleImplementation.class);
+        Exceptional<Class<SampleInterface>> binding = context(false).injector().getStaticBinding(SampleInterface.class);
         Assertions.assertTrue(binding.present());
         Class<SampleInterface> bindingClass = binding.get();
         Assertions.assertEquals(SampleImplementation.class, bindingClass);
@@ -85,7 +95,7 @@ public class ApplicationContextTests {
 
     @Test
     public void testStaticBindingCanBeProvided() throws IllegalAccessException {
-        injector(true).bind(SampleInterface.class, SampleImplementation.class);
+        context(true).bind(SampleInterface.class, SampleImplementation.class);
         SampleInterface provided = Selene.context().get(SampleInterface.class);
         Assertions.assertNotNull(provided);
 
@@ -97,7 +107,7 @@ public class ApplicationContextTests {
 
     @Test
     public void testStaticBindingWithMetaCanBeProvided() throws IllegalAccessException {
-        injector(true).bind(SampleInterface.class, SampleImplementation.class, Bindings.named("demo"));
+        context(true).bind(SampleInterface.class, SampleImplementation.class, Bindings.named("demo"));
         SampleInterface provided = Selene.context().get(SampleInterface.class, BindingMetaProperty.of(Bindings.named("demo")));
         Assertions.assertNotNull(provided);
 
@@ -109,8 +119,8 @@ public class ApplicationContextTests {
 
     @Test
     public void testInstanceBindingStoresBinding() throws IllegalAccessException {
-        injector(true).bind(SampleInterface.class, new SampleImplementation());
-        Exceptional<Class<SampleInterface>> binding = injector(false).getStaticBinding(SampleInterface.class);
+        context(true).bind(SampleInterface.class, new SampleImplementation());
+        Exceptional<Class<SampleInterface>> binding = context(false).injector().getStaticBinding(SampleInterface.class);
         Assertions.assertTrue(binding.present());
         Class<SampleInterface> bindingClass = binding.get();
         Assertions.assertEquals(SampleImplementation.class, bindingClass);
@@ -118,7 +128,7 @@ public class ApplicationContextTests {
 
     @Test
     public void testInstanceBindingCanBeProvided() throws IllegalAccessException {
-        injector(true).bind(SampleInterface.class, new SampleImplementation());
+        context(true).bind(SampleInterface.class, new SampleImplementation());
         SampleInterface provided = Selene.context().get(SampleInterface.class);
         Assertions.assertNotNull(provided);
 
@@ -130,7 +140,7 @@ public class ApplicationContextTests {
 
     @Test
     public void testInstanceBindingWithMetaCanBeProvided() throws IllegalAccessException {
-        injector(true).bind(SampleInterface.class, new SampleImplementation(), Bindings.named("demo"));
+        context(true).bind(SampleInterface.class, new SampleImplementation(), Bindings.named("demo"));
         SampleInterface provided = Selene.context().get(SampleInterface.class, BindingMetaProperty.of(Bindings.named("demo")));
         Assertions.assertNotNull(provided);
 
@@ -142,15 +152,15 @@ public class ApplicationContextTests {
 
     @Test
     public void testProviderBindingStoresBinding() throws IllegalAccessException {
-        injector(true).provide(SampleInterface.class, SampleImplementation::new);
-        Exceptional<Class<SampleInterface>> binding = injector(false).getStaticBinding(SampleInterface.class);
+        context(true).provide(SampleInterface.class, SampleImplementation::new);
+        Exceptional<Class<SampleInterface>> binding = context(false).injector().getStaticBinding(SampleInterface.class);
         // Unlike instance and static bindings, providers cannot be evaluated this early
         Assertions.assertTrue(binding.absent());
     }
 
     @Test
     public void testProviderBindingCanBeProvided() throws IllegalAccessException {
-        injector(true).provide(SampleInterface.class, SampleImplementation::new);
+        context(true).provide(SampleInterface.class, SampleImplementation::new);
         SampleInterface provided = Selene.context().get(SampleInterface.class);
         Assertions.assertNotNull(provided);
 
@@ -162,7 +172,7 @@ public class ApplicationContextTests {
 
     @Test
     public void testProviderBindingWithMetaCanBeProvided() throws IllegalAccessException {
-        injector(true).provide(SampleInterface.class, SampleImplementation::new, Bindings.named("demo"));
+        context(true).provide(SampleInterface.class, SampleImplementation::new, Bindings.named("demo"));
         SampleInterface provided = Selene.context().get(SampleInterface.class, BindingMetaProperty.of(Bindings.named("demo")));
         Assertions.assertNotNull(provided);
 
@@ -175,7 +185,7 @@ public class ApplicationContextTests {
     @Test
     public void testScannedBindingCanBeProvided() throws IllegalAccessException {
         // sub-package *.scan was added to prevent scan conflicts
-        injector(true).bind("org.dockbox.selene.di.types.scan");
+        context(true).bind("org.dockbox.selene.di.types.scan");
         SampleInterface provided = Selene.context().get(SampleInterface.class);
         Assertions.assertNotNull(provided);
 
@@ -188,7 +198,7 @@ public class ApplicationContextTests {
     @Test
     public void testScannedMetaBindingsCanBeProvided() throws IllegalAccessException {
         // sub-package *.meta was added to prevent scan conflicts
-        injector(true).bind("org.dockbox.selene.di.types.meta");
+        context(true).bind("org.dockbox.selene.di.types.meta");
         Assertions.assertThrows(ProvisionFailure.class, () -> Selene.context().get(SampleInterface.class));
 
         SampleInterface provided = Selene.context().get(SampleInterface.class, BindingMetaProperty.of(Bindings.named("meta")));
@@ -203,7 +213,7 @@ public class ApplicationContextTests {
     @Test
     public void testScannedMultiBindingsCanBeProvided() throws IllegalAccessException {
         // sub-package *.multi was added to prevent scan conflicts
-        injector(true).bind("org.dockbox.selene.di.types.multi");
+        context(true).bind("org.dockbox.selene.di.types.multi");
 
         SampleInterface provided = Selene.context().get(SampleInterface.class);
         Assertions.assertNotNull(provided);
@@ -217,7 +227,7 @@ public class ApplicationContextTests {
     @Test
     public void testScannedMultiMetaBindingsCanBeProvided() throws IllegalAccessException {
         // sub-package *.multi was added to prevent scan conflicts
-        injector(true).bind("org.dockbox.selene.di.types.multi");
+        context(true).bind("org.dockbox.selene.di.types.multi");
 
         SampleInterface provided = Selene.context().get(SampleInterface.class, BindingMetaProperty.of(Bindings.named("meta")));
         Assertions.assertNotNull(provided);
@@ -230,7 +240,7 @@ public class ApplicationContextTests {
 
     @Test
     public void testConfigBindingCanBeProvided() throws IllegalAccessException {
-        injector(true).bind(new SampleConfiguration());
+        context(true).bind(new SampleConfiguration());
         SampleInterface provided = Selene.context().get(SampleInterface.class);
         Assertions.assertNotNull(provided);
 
@@ -242,18 +252,18 @@ public class ApplicationContextTests {
 
     @Test
     public void testTypesCanBePopulated() throws IllegalAccessException {
-        injector(true).bind(SampleInterface.class, SampleImplementation.class);
+        context(true).bind(SampleInterface.class, SampleImplementation.class);
         PopulatedType populatedType = new PopulatedType();
         Assertions.assertNull(populatedType.getSampleInterface());
 
-        injector(false).populate(populatedType);
+        context(false).populate(populatedType);
         Assertions.assertNotNull(populatedType.getSampleInterface());
         Assertions.assertEquals("Selene", populatedType.getSampleInterface().getName());
     }
 
     @Test
     public void unboundTypesCanBeProvided() throws IllegalAccessException {
-        injector(true).bind(SampleInterface.class, SampleImplementation.class);
+        context(true).bind(SampleInterface.class, SampleImplementation.class);
         PopulatedType provided = Selene.context().get(PopulatedType.class);
         Assertions.assertNotNull(provided);
         Assertions.assertNotNull(provided.getSampleInterface());
@@ -261,7 +271,7 @@ public class ApplicationContextTests {
 
     @Test
     public void injectionPointsArePrioritised() throws IllegalArgumentException, IllegalAccessException {
-        injector(true).bind(SampleInterface.class, SampleImplementation.class);
+        context(true).bind(SampleInterface.class, SampleImplementation.class);
         InjectionPoint<SampleInterface> point = InjectionPoint.of(SampleInterface.class, $ -> new SampleAnnotatedImplementation());
         Selene.context().add(point);
 
@@ -293,14 +303,14 @@ public class ApplicationContextTests {
     @Test
     public void invalidWiredTypesCannotBeBound() {
         Assertions.assertThrows(IllegalArgumentException.class, () ->
-                injector(true).wire(SampleInterface.class, InvalidSampleWiredType.class)
+                context(true).wire(SampleInterface.class, InvalidSampleWiredType.class)
         );
     }
 
     @Test
     public void wiredTypesCanBeProvided() throws IllegalAccessException {
-        injector(true).wire(SampleInterface.class, SampleWiredType.class);
-        injector(false).bind(SeleneFactory.class, SimpleSeleneFactory.class);
+        context(true).wire(SampleInterface.class, SampleWiredType.class);
+        context(false).bind(SeleneFactory.class, SimpleSeleneFactory.class);
 
         SampleInterface wired = Selene.context().get(SeleneFactory.class).create(SampleInterface.class, "WiredSelene");
         Assertions.assertNotNull(wired);
@@ -309,7 +319,7 @@ public class ApplicationContextTests {
 
     @Test
     public void injectableTypesAreEnabled() throws IllegalAccessException {
-        injector(true).bind(SampleInterface.class, SampleEnablingType.class);
+        context(true).bind(SampleInterface.class, SampleEnablingType.class);
 
         SampleInterface provided = Selene.context().get(SampleInterface.class, new NameProperty("Enabled"));
         Assertions.assertNotNull(provided);
@@ -320,8 +330,8 @@ public class ApplicationContextTests {
     @Test
     public void testScannedWiredBindingsCanBeProvided() throws IllegalAccessException {
         // sub-package *.wired was added to prevent scan conflicts
-        injector(true).bind("org.dockbox.selene.di.types.wired");
-        injector(false).bind(SeleneFactory.class, SimpleSeleneFactory.class);
+        context(true).bind("org.dockbox.selene.di.types.wired");
+        context(false).bind(SeleneFactory.class, SimpleSeleneFactory.class);
 
         SampleInterface provided = Selene.context().get(SeleneFactory.class).create(SampleInterface.class, "WiredAnnotated");
         Assertions.assertNotNull(provided);
@@ -334,9 +344,9 @@ public class ApplicationContextTests {
 
     @Test
     public void wiredTypesCanBeProvidedThroughFactoryProperty() throws IllegalAccessException {
-        injector(true).wire(SampleInterface.class, SampleWiredType.class);
-        injector(true).wire(SampleInterface.class, SampleWiredType.class);
-        injector(false).bind(SeleneFactory.class, SimpleSeleneFactory.class);
+        context(true).wire(SampleInterface.class, SampleWiredType.class);
+        context(true).wire(SampleInterface.class, SampleWiredType.class);
+        context(false).bind(SeleneFactory.class, SimpleSeleneFactory.class);
 
         SampleInterface provided = Selene.context().get(SampleInterface.class, SeleneFactory.use("FactoryTyped"));
         Assertions.assertNotNull(provided);
@@ -349,8 +359,8 @@ public class ApplicationContextTests {
 
     @Test
     public void providerRedirectsVarargs() throws IllegalAccessException {
-        injector(true).wire(SampleInterface.class, SampleWiredType.class);
-        injector(false).bind(SeleneFactory.class, SimpleSeleneFactory.class);
+        context(true).wire(SampleInterface.class, SampleWiredType.class);
+        context(false).bind(SeleneFactory.class, SimpleSeleneFactory.class);
 
         SampleInterface provided = Selene.context().get(SampleInterface.class, "FactoryTyped");
         Assertions.assertNotNull(provided);
@@ -363,9 +373,9 @@ public class ApplicationContextTests {
 
     @Test
     public void varargProvidedTypesAreEnabled() throws IllegalAccessException {
-        injector(true).wire(SampleInterface.class, SampleWiredPopulatedType.class);
-        injector(false).bind(SeleneFactory.class, SimpleSeleneFactory.class);
-        injector(false).bind(SampleField.class, SampleFieldImplementation.class);
+        context(true).wire(SampleInterface.class, SampleWiredPopulatedType.class);
+        context(false).bind(SeleneFactory.class, SimpleSeleneFactory.class);
+        context(false).bind(SampleField.class, SampleFieldImplementation.class);
 
         SampleInterface provided = Selene.context().get(SampleInterface.class, "FactoryTyped");
         Assertions.assertNotNull(provided);
@@ -375,9 +385,9 @@ public class ApplicationContextTests {
 
     @Test
     public void varargProvidedTypesArePopulated() throws IllegalAccessException {
-        injector(true).wire(SampleInterface.class, SampleWiredPopulatedType.class);
-        injector(false).bind(SeleneFactory.class, SimpleSeleneFactory.class);
-        injector(false).bind(SampleField.class, SampleFieldImplementation.class);
+        context(true).wire(SampleInterface.class, SampleWiredPopulatedType.class);
+        context(false).bind(SeleneFactory.class, SimpleSeleneFactory.class);
+        context(false).bind(SampleField.class, SampleFieldImplementation.class);
 
         SampleInterface provided = Selene.context().get(SampleInterface.class, "FactoryTyped");
         Assertions.assertNotNull(provided);
@@ -388,9 +398,9 @@ public class ApplicationContextTests {
 
     @Test
     public void injectionPointsAreAppliedToVarargProviders() throws IllegalAccessException {
-        injector(true).wire(SampleInterface.class, SampleWiredType.class);
-        injector(false).bind(SeleneFactory.class, SimpleSeleneFactory.class);
-        injector(false).bind(SampleField.class, SampleFieldImplementation.class);
+        context(true).wire(SampleInterface.class, SampleWiredType.class);
+        context(false).bind(SeleneFactory.class, SimpleSeleneFactory.class);
+        context(false).bind(SampleField.class, SampleFieldImplementation.class);
 
         InjectionPoint<SampleInterface> point = InjectionPoint.of(SampleInterface.class, $ -> new SampleImplementation());
         Selene.context().add(point);
@@ -413,11 +423,11 @@ public class ApplicationContextTests {
     @ParameterizedTest
     @MethodSource("getBeans")
     void testBeansCanSupply(String meta, String name, boolean field, String fieldMeta, boolean singleton) throws IllegalAccessException {
-        injector(true).bind("org.dockbox.selene.di.types.bean");
+        context(true).bind("org.dockbox.selene.di.types.bean");
 
         if (field) {
-            if (fieldMeta == null) {injector(false).bind(SampleField.class, SampleFieldImplementation.class);}
-            else {injector(false).bind(SampleField.class, SampleFieldImplementation.class, Bindings.named(fieldMeta));}
+            if (fieldMeta == null) {context(false).bind(SampleField.class, SampleFieldImplementation.class);}
+            else {context(false).bind(SampleField.class, SampleFieldImplementation.class, Bindings.named(fieldMeta));}
         }
 
         BeanInterface provided;
@@ -440,23 +450,28 @@ public class ApplicationContextTests {
 
     @Test
     void testManualWiredBeanCanSupply() throws IllegalAccessException {
-        injector(true).bind("org.dockbox.selene.di.types.bean");
-        injector(false).bind(SeleneFactory.class, SimpleSeleneFactory.class);
+        context(true).bind("org.dockbox.selene.di.types.bean");
+        context(false).bind(SeleneFactory.class, SimpleSeleneFactory.class);
 
         BeanInterface provided = Selene.context().get(BeanInterface.class, BindingMetaProperty.of("wired"), SeleneFactory.use("WiredBean"));
         Assertions.assertNotNull(provided);
         Assertions.assertEquals("WiredBean", provided.getName());
     }
 
-    private static Injector injector(boolean reset) throws IllegalAccessException {
-        Injector injector = Selene.context().injector();
+    private static ApplicationContext context(boolean reset) throws IllegalAccessException {
+        final ApplicationContext context = Selene.context();
+        Injector injector = context.injector();
         if (reset) {
             modules.set(injector, SeleneUtils.emptyConcurrentSet());
             bindings.set(injector, SeleneUtils.emptyConcurrentSet());
-            injectionPoints.set(Selene.context(), SeleneUtils.emptyConcurrentSet());
+            injectionPoints.set(context, SeleneUtils.emptyConcurrentSet());
+            serviceModifiers.set(context, SeleneUtils.emptyConcurrentSet());
+            serviceProcessors.set(context, SeleneUtils.emptyConcurrentSet());
             injector.reset();
         }
-        return injector;
+        // This is added by the InjectableBootstrap by default, so it can be re-added here.
+        context.add(new BeanServiceProcessor());
+        return context;
     }
 
 }

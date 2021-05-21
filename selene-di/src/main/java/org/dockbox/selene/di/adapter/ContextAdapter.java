@@ -15,12 +15,22 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-dependencies {
-    compileOnly project(':selene-parent')
+package org.dockbox.selene.di.adapter;
 
-    compileOnly project(':selene-events')
-    compileOnly project(':selene-i18n')
-    compileOnly project(':selene-commands')
-    compileOnly project(':selene-modules')
-    compileOnly project(':selene-config')
+import org.dockbox.selene.di.inject.Injector;
+import org.dockbox.selene.di.services.ServiceLocator;
+
+import lombok.Getter;
+
+@Getter
+public final class ContextAdapter {
+
+    private final Injector injector;
+    private final ServiceLocator locator;
+
+    public ContextAdapter(InjectSource inject, ServiceSource service) {
+        this.injector = inject.create();
+        this.locator = service.create();
+    }
+
 }

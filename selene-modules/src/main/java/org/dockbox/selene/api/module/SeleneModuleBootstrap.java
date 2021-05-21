@@ -29,8 +29,8 @@ public abstract class SeleneModuleBootstrap extends SeleneBootstrap {
     private Set<Consumer<Object>> instanceConsumers;
     private Set<Runnable> postInitRunners;
 
-    protected SeleneModuleBootstrap(InjectConfiguration early, InjectConfiguration late) {
-        super(early, late);
+    protected SeleneModuleBootstrap(InjectConfiguration early, InjectConfiguration late, Class<?> activationSource) {
+        super(early, late, activationSource);
         this.preparePostInitRunners();
         this.prepareInstanceConsumers();
     }

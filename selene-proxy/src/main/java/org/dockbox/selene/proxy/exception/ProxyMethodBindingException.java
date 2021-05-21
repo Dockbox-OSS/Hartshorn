@@ -15,18 +15,20 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.api;
+package org.dockbox.selene.proxy.exception;
 
-import org.dockbox.selene.di.annotations.Service;
-import org.dockbox.selene.di.preload.Preloadable;
-import org.dockbox.selene.util.Reflect;
+import org.dockbox.selene.proxy.service.MethodProxyContext;
 
-@Phase(BootstrapPhase.PRE_INIT)
-public class ServicePreload implements Preloadable {
-    @Override
-    public void preload() {
-        // Register additional services early on, before modules are constructed
-        Reflect.annotatedTypes(SeleneInformation.PACKAGE_PREFIX, Service.class)
-                .forEach(service -> Selene.context().get(service));
+import java.lang.reflect.Method;
+
+public class ProxyMethodBindingException extends RuntimeException {
+
+    public ProxyMethodBindingException(MethodProxyContext<?> ctx) {
+        this(ctx.getMethod());
     }
+
+    public ProxyMethodBindingException(Method method) {
+        super("Factory method proxies should return (a subtype of) ResourceEntry, " + method.getName() + " returned " + method.getReturnType() == null ? "void" : method.getReturnType().getSimpleName());
+    }
+
 }

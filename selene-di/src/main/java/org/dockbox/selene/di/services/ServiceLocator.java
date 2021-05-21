@@ -15,12 +15,17 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-dependencies {
-    compileOnly project(':selene-parent')
+package org.dockbox.selene.di.services;
 
-    compileOnly project(':selene-events')
-    compileOnly project(':selene-i18n')
-    compileOnly project(':selene-commands')
-    compileOnly project(':selene-modules')
-    compileOnly project(':selene-config')
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Unmodifiable;
+
+import java.util.Collection;
+
+public interface ServiceLocator {
+
+    @NotNull
+    @Unmodifiable
+    Collection<Class<?>> locate(String prefix);
+
 }
