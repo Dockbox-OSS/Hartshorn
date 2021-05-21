@@ -167,5 +167,11 @@ public abstract class ManagedSeleneContext implements ApplicationContext {
                 .contains(activator);
     }
 
+    @Override
+    public <A> A activator(Class<A> activator) {
+        //noinspection unchecked
+        return (A) this.activators.stream().filter(a -> a.annotationType().equals(activator)).findFirst().orElse(null);
+    }
+
     protected abstract ServiceLocator locator();
 }

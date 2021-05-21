@@ -48,5 +48,6 @@ public interface ApplicationContext extends ApplicationBinder, SeleneContext {
     Class<?> getActivationSource();
     List<Annotation> activators();
     boolean hasActivator(Class<? extends Annotation> activator);
+    <A> A activator(Class<A> activator);
 
 }
