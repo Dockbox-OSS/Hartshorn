@@ -17,11 +17,10 @@
 
 package org.dockbox.selene.cache.modifiers;
 
-import org.dockbox.selene.api.domain.OwnerLookup;
-import org.dockbox.selene.api.domain.TypedOwner;
 import org.dockbox.selene.cache.Cache;
 import org.dockbox.selene.cache.CacheManager;
 import org.dockbox.selene.cache.Expiration;
+import org.dockbox.selene.cache.annotations.CacheService;
 import org.dockbox.selene.cache.annotations.UseCaching;
 import org.dockbox.selene.cache.context.CacheContext;
 import org.dockbox.selene.cache.context.CacheMethodContext;
@@ -42,8 +41,12 @@ public abstract class CacheServiceModifier<A extends Annotation> implements Serv
         final CacheManager manager = context.get(cacheMethodContext.getManager());
         String name = cacheMethodContext.getName();
         if ("".equals(name)) {
-            final TypedOwner owner = context.get(OwnerLookup.class).lookup(methodContext.getType());
-            name = owner.id() + "." + methodContext.getMethod().getName().toLowerCase();
+            if (methodContext.getType().isAnnotationPresent(CacheService.class)) {
+                final CacheService annotation = methodContext.getType().getAnnotation(CacheService.class);
+                name = annotation.value();
+            } else {
+                throw new IllegalStateException("Service " + methodContext.getType() + " contains cache targets but does not provide a valid ID");
+            }
         }
 
         final Expiration expiration = cacheMethodContext.getExpiration();

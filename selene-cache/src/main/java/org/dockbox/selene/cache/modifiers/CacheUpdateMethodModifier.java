@@ -32,7 +32,8 @@ public class CacheUpdateMethodModifier extends CacheServiceModifier<UpdateCache>
     @Override
     protected <T, R> ProxyFunction<T, R> process(ApplicationContext context, MethodProxyContext<T> methodContext, CacheContext cacheContext) {
         return (instance, args, proxyContext) -> {
-            cacheContext.getManager().evict(cacheContext.getName());
+            final Object o = args[0];
+            cacheContext.getManager().update(cacheContext.getName(), o);
             return null; // Should be void anyway
         };
     }
