@@ -17,6 +17,7 @@
 
 package org.dockbox.selene.cache;
 
+import org.dockbox.selene.cache.annotations.CacheService;
 import org.dockbox.selene.cache.annotations.Cached;
 import org.dockbox.selene.cache.annotations.EvictCache;
 import org.dockbox.selene.cache.annotations.UpdateCache;
@@ -26,6 +27,7 @@ import org.dockbox.selene.util.SeleneUtils;
 import java.util.List;
 
 @Service
+@CacheService("sample")
 public abstract class TestCacheService {
 
     @Cached
