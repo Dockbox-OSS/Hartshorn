@@ -32,7 +32,7 @@ public abstract class TestCacheService {
 
     @Cached
     public List<String> getCachedThings() {
-        return SeleneUtils.asList(System.currentTimeMillis() + "");
+        return SeleneUtils.asList(System.nanoTime() + "");
     }
 
     @UpdateCache
