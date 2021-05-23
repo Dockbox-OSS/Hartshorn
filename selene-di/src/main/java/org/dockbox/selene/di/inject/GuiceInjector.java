@@ -55,7 +55,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
@@ -246,6 +245,12 @@ public class GuiceInjector implements Injector {
 
     @Override
     public <T> T invoke(Method method) {
+        return this.invoke(method, ApplicationContextAware.instance().getContext().get(method.getDeclaringClass()));
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T> T invoke(Method method, Object instance) {
         Parameter[] parameters = method.getParameters();
         Object[] invokingParameters = new Object[parameters.length];
         for (int i = 0; i < parameters.length; i++) {
@@ -257,10 +262,9 @@ public class GuiceInjector implements Injector {
             }
         }
         try {
-            //noinspection unchecked
-            return (T) method.invoke(ApplicationContextAware.instance().getContext().get(method.getDeclaringClass()), invokingParameters);
+            return (T) method.invoke(instance, invokingParameters);
         }
-        catch (InvocationTargetException | IllegalAccessException | ClassCastException e) {
+        catch (Throwable e) {
             return null;
         }
     }

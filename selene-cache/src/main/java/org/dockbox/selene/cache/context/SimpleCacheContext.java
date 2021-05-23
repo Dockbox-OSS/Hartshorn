@@ -15,12 +15,32 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.proxy.handle;
+package org.dockbox.selene.cache.context;
 
-import org.dockbox.selene.proxy.ProxyContext;
+import org.dockbox.selene.cache.Cache;
+import org.dockbox.selene.cache.CacheManager;
 
-@FunctionalInterface
-public interface ProxyFunction<T, R> {
+import java.util.function.Supplier;
 
-    R delegate(T instance, Object[] args, ProxyContext context);
+import lombok.Getter;
+
+public class SimpleCacheContext implements CacheContext {
+
+    @Getter
+    private final CacheManager manager;
+    @Getter
+    private final String name;
+    private final Supplier<Cache<?>> supplier;
+
+    public SimpleCacheContext(CacheManager manager, Supplier<Cache<?>> supplier, String name) {
+        this.manager = manager;
+        this.name = name;
+        this.supplier = supplier;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T> Cache<T> getCache() {
+        return (Cache<T>) this.supplier.get();
+    }
 }

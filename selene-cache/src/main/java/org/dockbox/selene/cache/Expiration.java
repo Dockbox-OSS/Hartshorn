@@ -15,12 +15,24 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.proxy.handle;
+package org.dockbox.selene.cache;
 
-import org.dockbox.selene.proxy.ProxyContext;
+import org.dockbox.selene.cache.annotations.Expire;
 
-@FunctionalInterface
-public interface ProxyFunction<T, R> {
+import java.util.concurrent.TimeUnit;
 
-    R delegate(T instance, Object[] args, ProxyContext context);
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
+public class Expiration {
+
+    private final int amount;
+    private final TimeUnit unit;
+
+    public static Expiration of(Expire expire) {
+        return new Expiration(expire.amount(), expire.unit());
+    }
+
 }

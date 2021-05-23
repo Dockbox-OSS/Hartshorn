@@ -35,9 +35,9 @@ import org.dockbox.selene.di.properties.InjectorProperty;
 import org.dockbox.selene.di.properties.UseFactory;
 import org.dockbox.selene.di.services.ServiceLocator;
 import org.dockbox.selene.di.services.ServiceModifier;
+import org.dockbox.selene.util.Reflect;
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.reflect.Modifier;
 import java.util.function.Consumer;
 
 import lombok.Getter;
@@ -127,7 +127,7 @@ public class InjectorAwareContext extends ManagedSeleneContext {
         } catch (ProvisionFailure e) {
             // Services can have no explicit implementation even if they are abstract.
             // Typically these services are expected to be populated through injection points later in time.
-            if ((type.isInterface() || Modifier.isAbstract(type.getModifiers())) && type.isAnnotationPresent(Service.class)) return null;
+            if (!Reflect.isConcrete(type) && type.isAnnotationPresent(Service.class)) return null;
             throw e;
         }
     }

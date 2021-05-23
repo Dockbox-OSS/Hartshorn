@@ -15,12 +15,28 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.proxy.handle;
+package org.dockbox.selene.cache;
 
-import org.dockbox.selene.proxy.ProxyContext;
+import org.dockbox.selene.di.properties.InjectorProperty;
 
-@FunctionalInterface
-public interface ProxyFunction<T, R> {
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
-    R delegate(T instance, Object[] args, ProxyContext context);
+@Getter
+@AllArgsConstructor
+public class ExpirationProperty implements InjectorProperty<Expiration> {
+
+    public static final String KEY = "SeleneInternalCacheExpirationKey";
+
+    private final Expiration expire;
+
+    @Override
+    public String getKey() {
+        return KEY;
+    }
+
+    @Override
+    public Expiration getObject() {
+        return this.expire;
+    }
 }

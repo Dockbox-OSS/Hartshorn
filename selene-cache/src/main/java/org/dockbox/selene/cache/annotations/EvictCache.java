@@ -15,19 +15,19 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.server;
+package org.dockbox.selene.cache.annotations;
 
-import org.dockbox.selene.api.i18n.annotations.UseResources;
-import org.dockbox.selene.commands.annotations.UseCustomArguments;
-import org.dockbox.selene.config.annotations.UseConfigurations;
-import org.dockbox.selene.di.adapter.InjectSource;
-import org.dockbox.selene.di.annotations.Activator;
-import org.dockbox.selene.di.annotations.UseBeanProvision;
+import org.dockbox.selene.cache.CacheManager;
+import org.dockbox.selene.cache.SimpleCacheManager;
 
-@Activator(inject = InjectSource.GUICE)
-@UseBeanProvision
-@UseCustomArguments
-@UseResources
-@UseConfigurations
-public class ServerActivator {
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.METHOD)
+public @interface EvictCache {
+    String value() default "";
+    Class<? extends CacheManager> manager() default SimpleCacheManager.class;
 }

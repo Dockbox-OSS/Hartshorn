@@ -20,7 +20,14 @@ package org.dockbox.selene.test;
 import org.dockbox.selene.api.BootstrapPhase;
 import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.SeleneBootstrap;
+import org.dockbox.selene.api.i18n.annotations.UseResources;
+import org.dockbox.selene.cache.annotations.UseCaching;
+import org.dockbox.selene.commands.annotations.UseCustomArguments;
+import org.dockbox.selene.config.annotations.UseConfigurations;
 import org.dockbox.selene.di.InjectConfiguration;
+import org.dockbox.selene.di.adapter.InjectSource;
+import org.dockbox.selene.di.annotations.Activator;
+import org.dockbox.selene.di.annotations.UseBeanProvision;
 import org.dockbox.selene.server.Server;
 import org.dockbox.selene.server.minecraft.MinecraftServerBootstrap;
 import org.dockbox.selene.server.minecraft.MinecraftServerType;
@@ -34,6 +41,12 @@ import java.io.IOException;
 
 import lombok.Getter;
 
+@Activator(inject = InjectSource.GUICE)
+@UseBeanProvision
+@UseCustomArguments
+@UseResources
+@UseConfigurations
+@UseCaching
 public class JUnit5Bootstrap extends MinecraftServerBootstrap {
 
     @Getter
@@ -45,7 +58,7 @@ public class JUnit5Bootstrap extends MinecraftServerBootstrap {
      * to {@link SeleneBootstrap#construct()} once verified.
      */
     protected JUnit5Bootstrap() throws IOException {
-        super(new JUnitInjector(), new LateJUnitInjector());
+        super(new JUnitInjector(), new LateJUnitInjector(), JUnit5Bootstrap.class);
         this.information = new JUnitInformation();
     }
 

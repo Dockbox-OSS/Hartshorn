@@ -35,5 +35,7 @@ public interface Injector extends ApplicationBinder {
 
     <T> T invoke(Method method);
 
+    <T> T invoke(Method method, Object instance);
+
     <T, I extends T> Exceptional<Class<I>> getStaticBinding(Class<T> type);
 }

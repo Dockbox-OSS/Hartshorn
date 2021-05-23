@@ -15,12 +15,8 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.proxy.handle;
-
-import org.dockbox.selene.proxy.ProxyContext;
-
-@FunctionalInterface
-public interface ProxyFunction<T, R> {
-
-    R delegate(T instance, Object[] args, ProxyContext context);
+dependencies {
+    compileOnly project(':selene-parent')
+    compileOnly project(':selene-proxy')
+    compileOnly project(':selene-tasks')
 }

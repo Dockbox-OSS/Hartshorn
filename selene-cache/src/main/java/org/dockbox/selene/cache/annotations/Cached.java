@@ -15,12 +15,21 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.proxy.handle;
+package org.dockbox.selene.cache.annotations;
 
-import org.dockbox.selene.proxy.ProxyContext;
+import org.dockbox.selene.cache.CacheManager;
+import org.dockbox.selene.cache.SimpleCacheManager;
 
-@FunctionalInterface
-public interface ProxyFunction<T, R> {
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+import java.util.concurrent.TimeUnit;
 
-    R delegate(T instance, Object[] args, ProxyContext context);
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.METHOD)
+public @interface Cached {
+    String value() default "";
+    Expire expires() default @Expire(amount = -1, unit = TimeUnit.NANOSECONDS);
+    Class<? extends CacheManager> manager() default SimpleCacheManager.class;
 }

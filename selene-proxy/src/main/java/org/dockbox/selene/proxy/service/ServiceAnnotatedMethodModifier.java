@@ -42,10 +42,13 @@ public interface ServiceAnnotatedMethodModifier<M extends Annotation, A extends 
     @Override
     default <T> T process(ApplicationContext context, Class<T> type, @Nullable T instance, InjectorProperty<?>... properties) {
         final Collection<Method> methods = Reflect.annotatedMethods(type, this.annotation());
+
         ProxyHandler<T> handler = new ProxyHandler<>(instance, type);
+
         for (Method method : methods) {
-            if (this.preconditions(type, instance, method, properties)) {
-                MethodProxyContext<T> ctx = new SimpleMethodProxyContext<>(instance, type, method, properties);
+            MethodProxyContext<T> ctx = new SimpleMethodProxyContext<>(instance, type, method, properties);
+
+            if (this.preconditions(ctx)) {
                 final ProxyFunction<T, Object> function = this.process(context, ctx);
                 if (function != null) {
                     ProxyProperty<T, ?> property = ProxyProperty.of(type, method, function);
@@ -62,10 +65,10 @@ public interface ServiceAnnotatedMethodModifier<M extends Annotation, A extends 
 
     <T, R> ProxyFunction<T, R> process(ApplicationContext context, MethodProxyContext<T> methodContext);
 
-    <T> boolean preconditions(Class<T> type, @Nullable T instance, Method method, InjectorProperty<?>... properties);
+    <T> boolean preconditions(MethodProxyContext<T> context);
 
     default boolean failOnPrecondition() {
-        return false;
+        return true;
     }
 
     Class<M> annotation();

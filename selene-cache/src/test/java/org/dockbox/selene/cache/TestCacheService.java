@@ -15,12 +15,30 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.proxy.handle;
+package org.dockbox.selene.cache;
 
-import org.dockbox.selene.proxy.ProxyContext;
+import org.dockbox.selene.cache.annotations.CacheService;
+import org.dockbox.selene.cache.annotations.Cached;
+import org.dockbox.selene.cache.annotations.EvictCache;
+import org.dockbox.selene.cache.annotations.UpdateCache;
+import org.dockbox.selene.di.annotations.Service;
+import org.dockbox.selene.util.SeleneUtils;
 
-@FunctionalInterface
-public interface ProxyFunction<T, R> {
+import java.util.List;
 
-    R delegate(T instance, Object[] args, ProxyContext context);
+@Service
+@CacheService("sample")
+public abstract class TestCacheService {
+
+    @Cached
+    public List<String> getCachedThings() {
+        return SeleneUtils.asList(System.nanoTime() + "");
+    }
+
+    @UpdateCache
+    public abstract void updateCache(String s);
+
+    @EvictCache
+    public abstract void evict();
+
 }

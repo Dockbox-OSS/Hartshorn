@@ -15,12 +15,20 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.proxy.handle;
+package org.dockbox.selene.cache.context;
 
-import org.dockbox.selene.proxy.ProxyContext;
+import org.dockbox.selene.cache.CacheManager;
+import org.dockbox.selene.cache.Expiration;
 
-@FunctionalInterface
-public interface ProxyFunction<T, R> {
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
-    R delegate(T instance, Object[] args, ProxyContext context);
+@Getter
+@AllArgsConstructor
+public class SimpleCacheMethodContext implements CacheMethodContext {
+
+    private final Class<? extends CacheManager> manager;
+    private final String name;
+    private final Expiration expiration;
+
 }

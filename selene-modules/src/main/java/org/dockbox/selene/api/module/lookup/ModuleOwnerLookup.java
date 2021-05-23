@@ -28,6 +28,10 @@ import org.dockbox.selene.api.module.Modules;
 import org.dockbox.selene.api.module.SimpleModuleContext;
 import org.dockbox.selene.api.module.annotations.Module;
 import org.dockbox.selene.di.annotations.Binds;
+import org.dockbox.selene.di.annotations.Service;
+import org.dockbox.selene.util.SeleneUtils;
+
+import java.util.Locale;
 
 @Binds(OwnerLookup.class)
 public class ModuleOwnerLookup implements OwnerLookup {
@@ -43,8 +47,18 @@ public class ModuleOwnerLookup implements OwnerLookup {
                         return SimpleTypedOwner.of(type.getAnnotation(Entity.class).value());
                     } else if (Selene.class.equals(type)) {
                         return SimpleTypedOwner.of(SeleneInformation.PROJECT_ID);
+                    } else if (type.isAnnotationPresent(Service.class)) {
+                        return SimpleTypedOwner.of(this.generateId(type));
+                    } else {
+                        return null;
                     }
-                    return null;
                 }).orNull();
+    }
+
+    private String generateId(Class<?> type) {
+        String typeName = type.getSimpleName();
+        if (typeName.endsWith("Service")) typeName = typeName.substring(0, typeName.length() - 7);
+        final String[] parts = SeleneUtils.splitCapitals(typeName);
+        return String.join("-", parts).toLowerCase(Locale.ROOT);
     }
 }

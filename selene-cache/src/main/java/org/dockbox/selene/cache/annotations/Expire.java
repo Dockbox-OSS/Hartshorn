@@ -15,12 +15,14 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.proxy.handle;
+package org.dockbox.selene.cache.annotations;
 
-import org.dockbox.selene.proxy.ProxyContext;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.util.concurrent.TimeUnit;
 
-@FunctionalInterface
-public interface ProxyFunction<T, R> {
-
-    R delegate(T instance, Object[] args, ProxyContext context);
+@Retention(RetentionPolicy.RUNTIME)
+public @interface Expire {
+    int amount();
+    TimeUnit unit();
 }
