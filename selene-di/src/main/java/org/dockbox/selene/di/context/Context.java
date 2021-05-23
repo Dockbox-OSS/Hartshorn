@@ -15,30 +15,7 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.di;
+package org.dockbox.selene.di.context;
 
-import org.dockbox.selene.di.context.ApplicationContext;
-import org.dockbox.selene.di.context.SeleneApplicationContext;
-
-import lombok.Getter;
-
-public class ApplicationContextAware {
-
-    @Getter
-    private final ApplicationContext context;
-
-    private static ApplicationContextAware instance;
-
-    protected ApplicationContextAware(Class<?> activationSource) {
-        this.context = new SeleneApplicationContext(activationSource);
-    }
-
-    public static ApplicationContextAware instance() {
-        return instance;
-    }
-
-    protected static void instance(ApplicationContextAware bootstrap) {
-        ApplicationContextAware.instance = bootstrap;
-    }
-
+public interface Context {
 }

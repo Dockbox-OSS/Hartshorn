@@ -17,9 +17,9 @@
 
 package org.dockbox.selene.di.context;
 
+import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.di.InjectionPoint;
 import org.dockbox.selene.di.ProvisionFailure;
-import org.dockbox.selene.di.inject.Injector;
 import org.dockbox.selene.di.properties.InjectorProperty;
 import org.dockbox.selene.di.services.ServiceModifier;
 import org.dockbox.selene.di.services.ServiceProcessor;
@@ -40,8 +40,6 @@ public interface ApplicationContext extends ApplicationBinder, SeleneContext {
     <T> T raw(Class<T> type) throws ProvisionFailure;
     <T> T raw(Class<T> type, boolean populate) throws ProvisionFailure;
 
-    Injector injector();
-
     void add(ServiceProcessor<?> processor);
     void add(ServiceModifier<?> modifier);
 
@@ -50,4 +48,7 @@ public interface ApplicationContext extends ApplicationBinder, SeleneContext {
     boolean hasActivator(Class<? extends Annotation> activator);
     <A> A activator(Class<A> activator);
 
+    <C extends Context> Exceptional<C> first(Class<C> context);
+    <C extends Context> List<C> all(Class<C> context);
+    <C extends Context> void add(C context);
 }

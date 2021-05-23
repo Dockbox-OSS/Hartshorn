@@ -37,7 +37,7 @@ public class Modules {
     public static ModuleContainer module(Class<?> type) {
         if (null == type) return null;
         if (type.equals(Selene.class)) {
-            if (Reflect.serverAvailable() && Selene.context().injector().getStaticBinding(Reflect.getServerClass()).present()) {
+            if (Reflect.serverAvailable() && Selene.context().type(Reflect.getServerClass()).present()) {
                 return Modules.module(Selene.context().get(Reflect.getServerClass()).getClass());
             }
         }

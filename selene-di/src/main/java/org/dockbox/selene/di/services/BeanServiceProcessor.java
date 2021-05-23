@@ -60,7 +60,7 @@ public final class BeanServiceProcessor implements ServiceProcessor<UseBeanProvi
                         ? Key.get(bean.getReturnType())
                         : Key.get(bean.getReturnType(), Bindings.named(annotation.value()));
 
-                BeanContext<?, ?> beanContext = new BeanContext<>(key, singleton, () -> context.injector().invoke(bean));
+                BeanContext<?, ?> beanContext = new BeanContext<>(key, singleton, () -> context.invoke(bean));
                 context.add(beanContext);
             }
         }

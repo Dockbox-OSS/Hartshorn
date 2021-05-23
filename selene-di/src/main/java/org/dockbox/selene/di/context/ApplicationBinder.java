@@ -25,6 +25,8 @@ import org.dockbox.selene.di.inject.Binder;
 import org.dockbox.selene.di.inject.wired.WireContext;
 import org.dockbox.selene.di.properties.InjectorProperty;
 
+import java.lang.reflect.Method;
+
 public interface ApplicationBinder extends Binder {
 
     void bind(InjectConfiguration configuration);
@@ -35,4 +37,8 @@ public interface ApplicationBinder extends Binder {
     void add(WireContext<?, ?> context);
     void add(BeanContext<?, ?> context);
 
+    <T, I extends T> Exceptional<Class<I>> type(Class<T> type);
+
+    <T> T invoke(Method method);
+    <T> T invoke(Method method, Object instance);
 }

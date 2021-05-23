@@ -271,7 +271,7 @@ public class GuiceInjector implements Injector {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T, I extends T> Exceptional<Class<I>> getStaticBinding(Class<T> type) {
+    public <T, I extends T> Exceptional<Class<I>> type(Class<T> type) {
         for (Entry<Key<?>, Binding<?>> binding : this.getAllBindings().entrySet()) {
             if (binding.getKey().getTypeLiteral().getRawType().equals(type)) {
                 if (binding.getValue() instanceof LinkedKeyBinding) {
