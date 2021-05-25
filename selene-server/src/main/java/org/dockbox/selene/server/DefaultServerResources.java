@@ -31,10 +31,10 @@ public interface DefaultServerResources {
             "$2ID : $1{1}\n" +
             "$2Dependencies : $1{2}\n" +
             "&m$2====================\n")
-    ResourceEntry getInfoModuleBlock(String name, String id, String dependencies);
+    ResourceEntry getInfoServiceBlock(String name, String id, String dependencies);
 
-    @Resource(value = "$4Could not find module with ID '{0}'")
-    ResourceEntry getInfoModuleUnknown();
+    @Resource(value = "$4Could not find service with ID '{0}'")
+    ResourceEntry getInfoServiceUnknown();
 
     @Resource(value = "$1Your preferred language has been switched to: $2{0}", key = "i18n.lang.updated")
     ResourceEntry getLanguageUpdated(String languageLocalized);
@@ -51,7 +51,7 @@ public interface DefaultServerResources {
     @Resource(value = "$4Failed to reload '{0}'", key = "selene.reload.single.fail")
     ResourceEntry getReloadFailed(String name);
 
-    @Resource(value = "$1Successfully reloaded all modules")
+    @Resource(value = "$1Successfully reloaded all services")
     ResourceEntry getReloadAll();
 
     @Resource(value = "$4Could not confirm command: Invalid runner ID")
@@ -75,17 +75,14 @@ public interface DefaultServerResources {
     @Resource(value = "$2Selene $3($1Version$3: $1{0}$3)")
     ResourceEntry getInfoHeader(@NotNull String version);
 
-    @Resource(value = "$2Authors$3: $1{0}", key = "selene.info.authors")
-    ResourceEntry getAuthors(String authors);
+    @Resource(value = "$2Services$3:", key = "selene.info.services")
+    ResourceEntry getServices();
 
-    @Resource(value = "$2Modules$3:", key = "selene.info.modules")
-    ResourceEntry getModules();
+    @Resource(value = "$3 - $1{0} $3- $2{1}", key = "selene.info.service.row")
+    ResourceEntry getServiceRow(String name, String id);
 
-    @Resource(value = "$3 - $1{0} $3- $2{1}", key = "selene.info.module.row")
-    ResourceEntry getModuleRow(String name, String id);
-
-    @Resource(value = "$2Details for '$1{0}$2'", key = "selene.info.module.hover")
-    ResourceEntry getModuleRowHover(String name);
+    @Resource(value = "$2Details for '$1{0}$2'", key = "selene.info.service.hover")
+    ResourceEntry getServiceRowHover(String name);
 
     @Resource(value = "$4This command can only be used by players", key = "selene.invalid.source")
     ResourceEntry getWrongSource();

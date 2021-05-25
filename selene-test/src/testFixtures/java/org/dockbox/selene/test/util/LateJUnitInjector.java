@@ -25,7 +25,6 @@ public class LateJUnitInjector extends InjectConfiguration {
 
     @Override
     public void collect() {
-        this.bind(CommandBus.class, JUnitCommandBus.class);
-        this.bind(DiscordUtils.class, JUnitDiscordUtils.class);
+
     }
 }

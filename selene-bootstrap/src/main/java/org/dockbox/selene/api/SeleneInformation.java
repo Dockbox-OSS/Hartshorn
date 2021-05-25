@@ -32,14 +32,7 @@ public final class SeleneInformation {
             UUID.fromString("cb6411bb-31c9-4d69-8000-b98842ce0a0a"),
             UUID.fromString("b7fb5e32-73ee-4f25-b256-a763c8739192")
     );
-    /**
-     * Constant value holding the GitHub username(s) of the author(s) of {@link Selene}. This does not
-     * include names of module developers.
-     */
-    public static final String[] AUTHORS = { "GuusLieben" };
-
     public static final String PROJECT_NAME = "Selene";
-
     public static final String PROJECT_ID = "selene";
 
     private SeleneInformation() {}

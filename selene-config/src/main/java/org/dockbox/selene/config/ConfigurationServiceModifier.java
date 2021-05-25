@@ -38,10 +38,10 @@ import org.jetbrains.annotations.Nullable;
 import java.lang.reflect.Field;
 import java.nio.file.Path;
 
-public class ConfigurationServiceModifier implements ServiceModifier<UseConfigurations> {
+public class ConfigurationServiceModifier extends ServiceModifier<UseConfigurations> {
 
     @Override
-    public <T> boolean preconditions(Class<T> type, @Nullable T instance, InjectorProperty<?>... properties) {
+    public <T> boolean isModifiable(Class<T> type, @Nullable T instance, InjectorProperty<?>... properties) {
         return !Reflect.annotatedFields(type, Value.class).isEmpty();
     }
 

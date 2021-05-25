@@ -19,7 +19,7 @@ package org.dockbox.selene.test.files;
 
 import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.persistence.FileManager;
-import org.dockbox.selene.test.JUnit5Bootstrap;
+import org.dockbox.selene.test.JUnit5Application;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;
@@ -33,17 +33,12 @@ public interface JUnitFileManager extends FileManager {
 
     @NotNull
     default Path getServerRoot() {
-        return JUnit5Bootstrap.getInstance().getInformation().getFilePath();
+        return JUnit5Application.getInformation().getFilePath();
     }
 
     @NotNull
     default Path getLogsDir() {
         return this.getServerRoot().resolve("logs/");
-    }
-
-    @NotNull
-    default Path getModuleDir() {
-        return this.createPathIfNotExists(this.getServerRoot().resolve("modules/"));
     }
 
     @NotNull
@@ -57,8 +52,8 @@ public interface JUnitFileManager extends FileManager {
     }
 
     @NotNull
-    default Path getModuleConfigsDir() {
-        return this.getServerRoot().resolve("config/modules/");
+    default Path getServiceConfigsDir() {
+        return this.getServerRoot().resolve("config/services/");
     }
 
     @NotNull

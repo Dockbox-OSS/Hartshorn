@@ -36,7 +36,6 @@ import org.dockbox.selene.di.types.SampleField;
 import org.dockbox.selene.di.types.SampleFieldImplementation;
 import org.dockbox.selene.di.types.SampleImplementation;
 import org.dockbox.selene.di.types.SampleInterface;
-import org.dockbox.selene.di.types.SamplePreloads;
 import org.dockbox.selene.di.types.SampleWiredPopulatedType;
 import org.dockbox.selene.di.types.SampleWiredType;
 import org.dockbox.selene.di.types.bean.BeanInterface;
@@ -79,7 +78,7 @@ public class ApplicationContextTests {
             injectionPoints = ManagedSeleneContext.class.getDeclaredField("injectionPoints");
             injectionPoints.setAccessible(true);
 
-            serviceModifiers = ManagedSeleneContext.class.getDeclaredField("serviceModifiers");
+            serviceModifiers = ManagedSeleneContext.class.getDeclaredField("modifiers");
             serviceModifiers.setAccessible(true);
 
             serviceProcessors = ManagedSeleneContext.class.getDeclaredField("serviceProcessors");
@@ -287,26 +286,6 @@ public class ApplicationContextTests {
         SampleInterface provided = Selene.context().get(SampleInterface.class);
         Assertions.assertNotNull(provided);
         Assertions.assertEquals(SampleAnnotatedImplementation.class, provided.getClass());
-    }
-
-    @Test
-    public void preConstructPreloadsAreApplied() {
-        Assertions.assertTrue(SamplePreloads.PreConstructPreload.isApplied());
-    }
-
-    @Test
-    public void constructPreloadsAreApplied() {
-        Assertions.assertTrue(SamplePreloads.ConstructPreload.isApplied());
-    }
-
-    @Test
-    public void preInitPreloadsAreApplied() {
-        Assertions.assertTrue(SamplePreloads.PreInitPreload.isApplied());
-    }
-
-    @Test
-    public void initPreloadsAreApplied() {
-        Assertions.assertTrue(SamplePreloads.InitPreload.isApplied());
     }
 
     @Test

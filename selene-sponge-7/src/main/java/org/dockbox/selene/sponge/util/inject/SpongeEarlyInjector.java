@@ -37,6 +37,8 @@ import org.dockbox.selene.nms.packets.NMSSpawnEntityPacket;
 import org.dockbox.selene.persistence.FileManager;
 import org.dockbox.selene.plots.PlotService;
 import org.dockbox.selene.server.minecraft.Console;
+import org.dockbox.selene.server.minecraft.MinecraftServerType;
+import org.dockbox.selene.server.minecraft.MinecraftVersion;
 import org.dockbox.selene.server.minecraft.bossbar.Bossbar;
 import org.dockbox.selene.server.minecraft.dimension.Worlds;
 import org.dockbox.selene.server.minecraft.entities.ArmorStand;
@@ -127,5 +129,8 @@ public class SpongeEarlyInjector extends InjectConfiguration {
         this.bind(SpawnEntityPacket.class, NMSSpawnEntityPacket.class);
 
         this.bind(GlobalConfig.class, TargetGlobalConfig.class);
+
+        this.bind(MinecraftServerType.class, MinecraftServerType.SPONGE);
+        this.bind(MinecraftVersion.class, MinecraftVersion.MC1_12);
     }
 }

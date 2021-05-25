@@ -36,6 +36,7 @@ import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 
 import org.dockbox.selene.api.Selene;
+import org.dockbox.selene.api.config.GlobalConfig;
 import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.domain.tuple.Triad;
 import org.dockbox.selene.api.exceptions.Except;
@@ -65,7 +66,7 @@ public abstract class DefaultDiscordUtils implements DiscordUtils {
     
     @SuppressWarnings("ConstantDeclaredInAbstractClass")
     public static final String WILDCARD = "*";
-    private static final Map<String, Triad<DiscordCommand, Method, Object>> commandMethods = SeleneUtils.emptyConcurrentMap();
+    private static final Map<String, Triad<DiscordCommand, Method, Class<?>>> commandMethods = SeleneUtils.emptyConcurrentMap();
 
     @Override
     public boolean checkMessageExists(String messageId, String channelId) {
@@ -81,7 +82,7 @@ public abstract class DefaultDiscordUtils implements DiscordUtils {
     @Override
     public Exceptional<Category> getLoggingCategory() {
         if (this.getJDA().present())
-            return Exceptional.of(this.getJDA().get().getCategoryById(Selene.server().getGlobalConfig().getDiscordLoggingCategoryId()));
+            return Exceptional.of(this.getJDA().get().getCategoryById(Selene.context().get(GlobalConfig.class).getDiscordLoggingCategoryId()));
         return Exceptional.none();
     }
 
@@ -162,11 +163,8 @@ public abstract class DefaultDiscordUtils implements DiscordUtils {
     }
 
     @Override
-    public void registerCommandListener(@NotNull Object instance) {
-        Object obj = instance;
-        if (instance instanceof Class) obj = this.context.get((Class<?>) instance);
-
-        Arrays.stream(obj.getClass().getDeclaredMethods())
+    public void registerCommandListener(@NotNull Class<?> type) {
+        Arrays.stream(type.getDeclaredMethods())
                 .filter(m -> m.isAnnotationPresent(DiscordCommand.class))
                 .filter(m -> {
                     boolean correctParameterCount = 1 == m.getParameterCount();
@@ -176,7 +174,7 @@ public abstract class DefaultDiscordUtils implements DiscordUtils {
                 .forEach(method -> {
                     DiscordCommand annotation = method.getAnnotation(DiscordCommand.class);
                     String command = annotation.command();
-                    Triad<DiscordCommand, Method, Object> information = new Triad<>(annotation, method, instance);
+                    Triad<DiscordCommand, Method, Class<?>> information = new Triad<>(annotation, method, type);
 
                     if (commandMethods.containsKey(command))
                         Selene.log().warn("More than one listener registered for Discord command: " + command);
@@ -189,7 +187,7 @@ public abstract class DefaultDiscordUtils implements DiscordUtils {
     public void post(@NotNull String command, @NotNull DiscordCommandContext context) {
         DiscordResources resources = this.context.get(DiscordResources.class);
         if (commandMethods.containsKey(command)) {
-            Triad<DiscordCommand, Method, Object> information = commandMethods.get(command);
+            Triad<DiscordCommand, Method, Class<?>> information = commandMethods.get(command);
             DiscordCommand annotation = information.getFirst();
 
             ListeningLevel level = annotation.listeningLevel();
@@ -222,15 +220,15 @@ public abstract class DefaultDiscordUtils implements DiscordUtils {
             }
 
             Method method = information.getSecond();
-            Object instance = information.getThird();
+            Class<?> type = information.getThird();
 
             try {
-                method.invoke(instance, context);
+                final Object o = this.context.get(type);
+                method.invoke(o, context);
             }
             catch (IllegalAccessException | InvocationTargetException e) {
                 context.sendToChannel(resources.getCommandCaught());
-                Except.handle("Failed to invoke previously checked method [" + method.getName() + "] in [" + instance.getClass()
-                        .getCanonicalName() + "]");
+                Except.handle("Failed to invoke previously checked method [" + method.getName() + "] in [" + type.getCanonicalName() + "]");
             }
         }
         else context.sendToChannel(resources.getCommandUnknown());

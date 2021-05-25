@@ -28,13 +28,13 @@ import org.dockbox.selene.di.binding.Bindings;
 import org.dockbox.selene.di.exceptions.ApplicationException;
 import org.dockbox.selene.di.inject.BeanContext;
 import org.dockbox.selene.di.inject.Binder;
+import org.dockbox.selene.di.inject.InjectionModifier;
 import org.dockbox.selene.di.inject.Injector;
 import org.dockbox.selene.di.inject.wired.WireContext;
 import org.dockbox.selene.di.properties.InjectableType;
 import org.dockbox.selene.di.properties.InjectorProperty;
 import org.dockbox.selene.di.properties.UseFactory;
 import org.dockbox.selene.di.services.ServiceLocator;
-import org.dockbox.selene.di.services.ServiceModifier;
 import org.dockbox.selene.util.Reflect;
 import org.jetbrains.annotations.Nullable;
 
@@ -63,7 +63,7 @@ public class SeleneApplicationContext extends ManagedSeleneContext {
             typeInstance = this.get(SeleneFactory.class).with(additionalProperties).create(type, value.get());
             this.populate(typeInstance);
         } else {
-            // Type instance can be present if it is a module. These instances are also created using Guice
+            // Type instance can be present if it is a service. These instances are also created using Guice
             // injectors and therefore do not need late member injection here.
             typeInstance = this.create(type, typeInstance, additionalProperties);
         }
@@ -74,14 +74,12 @@ public class SeleneApplicationContext extends ManagedSeleneContext {
 
         typeInstance = this.inject(type, typeInstance, additionalProperties);
 
-        if (type.isAnnotationPresent(Service.class)) {
-            for (ServiceModifier<?> serviceModifier : this.serviceModifiers) {
-                if (serviceModifier.preconditions(type, typeInstance, additionalProperties))
-                    typeInstance = serviceModifier.process(this, type, typeInstance, additionalProperties);
-            }
+        for (InjectionModifier<?> serviceModifier : this.modifiers) {
+            if (serviceModifier.preconditions(type, typeInstance, additionalProperties))
+                typeInstance = serviceModifier.process(this, type, typeInstance, additionalProperties);
         }
 
-        // Enables all fields which are not decorated with @Module or @DoNotEnable
+        // Enables all fields which are decorated with @Wired(enable=true)
         this.enable(typeInstance);
 
         // Inject properties if applicable

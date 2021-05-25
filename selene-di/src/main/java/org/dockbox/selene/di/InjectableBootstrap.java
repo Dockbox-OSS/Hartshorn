@@ -17,23 +17,40 @@
 
 package org.dockbox.selene.di;
 
-import org.dockbox.selene.di.properties.InjectorProperty;
-import org.dockbox.selene.di.services.ServiceModifier;
+import com.google.common.collect.Multimap;
+
+import org.dockbox.selene.di.annotations.InjectPhase;
+import org.dockbox.selene.di.context.ManagedSeleneContext;
+import org.dockbox.selene.di.inject.InjectionModifier;
 import org.dockbox.selene.di.services.ServiceProcessor;
 import org.dockbox.selene.util.Reflect;
+import org.reflections.Reflections;
 
+import java.lang.annotation.Annotation;
 import java.util.Collection;
+import java.util.List;
 
 @SuppressWarnings({ "AbstractClassWithoutAbstractMethods", "unchecked", "rawtypes" })
 public abstract class InjectableBootstrap extends ApplicationContextAware {
 
     private static InjectableBootstrap instance;
 
-    protected InjectableBootstrap(String prefix, Class<?> activationSource) {
-        super(activationSource);
+    public abstract void init();
+
+    public void create(String prefix, Class<?> activationSource, List<Annotation> activators, Multimap<InjectPhase, InjectConfiguration> configs) {
+        super.create(activationSource);
+        for (Annotation activator : activators) {
+            ((ManagedSeleneContext) this.getContext()).addActivator(activator);
+        }
+        instance(this);
         this.lookupProcessors(prefix);
         this.lookupModifiers(prefix);
-        instance(this);
+
+        Reflections.log = null; // Don't output Reflections
+
+        for (InjectConfiguration config : configs.get(InjectPhase.EARLY)) super.getContext().bind(config);
+        super.getContext().bind(prefix);
+        for (InjectConfiguration config : configs.get(InjectPhase.LATE)) super.getContext().bind(config);
     }
 
     private void lookupProcessors(String prefix) {
@@ -48,11 +65,11 @@ public abstract class InjectableBootstrap extends ApplicationContextAware {
     }
 
     private void lookupModifiers(String prefix) {
-        final Collection<Class<? extends ServiceModifier>> modifiers = Reflect.subTypes(prefix, ServiceModifier.class);
-        for (Class<? extends ServiceModifier> modifier : modifiers) {
+        final Collection<Class<? extends InjectionModifier>> modifiers = Reflect.subTypes(prefix, InjectionModifier.class);
+        for (Class<? extends InjectionModifier> modifier : modifiers) {
             if (!Reflect.isConcrete(modifier)) continue;
 
-            final ServiceModifier raw = super.getContext().raw(modifier, false);
+            final InjectionModifier raw = super.getContext().raw(modifier, false);
             if (this.getContext().hasActivator(raw.activator()))
                 super.getContext().add(raw);
         }
@@ -60,22 +77,5 @@ public abstract class InjectableBootstrap extends ApplicationContextAware {
 
     public static InjectableBootstrap instance() {
         return (InjectableBootstrap) ApplicationContextAware.instance();
-    }
-
-    /**
-     * Gets an instance of a provided {@link Class} type.
-     *
-     * @param <T>
-     *         The type parameter for the instance to return
-     * @param type
-     *         The type of the instance
-     * @param additionalProperties
-     *         The properties to be passed into the type either during or after
-     *         construction
-     *
-     * @return The instance, if present. Otherwise returns null
-     */
-    public <T> T instance(Class<T> type, InjectorProperty<?>... additionalProperties) {
-        return null;
     }
 }

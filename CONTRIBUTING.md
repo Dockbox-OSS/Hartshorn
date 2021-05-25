@@ -39,12 +39,12 @@ If you have an idea for a feature first check this list. If your idea already ap
 
 Otherwise, open a new issue and describe your proposed feature. Is it related to a problem? Why is it needed? What are possible alternatives?
 
-### Suggesting Modules
+### Suggesting Services
 _[Template](https://github.com/GuusLieben/Selene/blob/selene-main/.github/ISSUE_TEMPLATE/module.md)_  
-Selene comes with a variety of integrated modules to further aid developers in developing against its API. You can view
-the list of proposed modules by filtering the issue tracker by the ["Type: Module"](https://github.com/GuusLieben/Selene/issues?q=is%3Aopen+is%3Aissue+label%3A%22Type%3A+Module%22) 
-and ["Suggested resolution: Module"](https://github.com/GuusLieben/Selene/issues?q=is%3Aopen+is%3Aissue+label%3A%22Suggested+resolution%3A+Module%22) labels.
-If you have an idea for a module first check this list. If your idea already appears then add a +1 to the top most comment.
+Selene comes with a variety of integrated services to further aid developers in developing against its API. You can view
+the list of proposed services by filtering the issue tracker by the ["Type: Service"](https://github.com/GuusLieben/Selene/issues?q=is%3Aopen+is%3Aissue+label%3A%22Type%3A+Service%22) 
+and ["Suggested resolution: Service"](https://github.com/GuusLieben/Selene/issues?q=is%3Aopen+is%3Aissue+label%3A%22Suggested+resolution%3A+Service%22) labels.
+If you have an idea for a service first check this list. If your idea already appears then add a +1 to the top most comment.
 
 Otherwise, open a new issue and describe your proposed module. Is it related to a problem? What are possible alternatives?
 

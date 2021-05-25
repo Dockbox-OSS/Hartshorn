@@ -17,10 +17,10 @@
 
 // All dependencies are compiled so this project can be used as parent for sub projects and modules
 dependencies {
-    compile project(':selene-module-parent')
+    compile project(':selene-service-parent')
 
     compile project(':selene-keys')
     compile project(':selene-server')
-    compile project(':selene-modules')
+    compile project(':selene-services')
     compile project(':selene-commands')
 }

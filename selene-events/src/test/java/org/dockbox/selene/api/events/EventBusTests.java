@@ -33,22 +33,19 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import java.lang.annotation.Annotation;
 
 @ExtendWith(SeleneJUnit5Runner.class)
-@SuppressWarnings("InstantiationOfUtilityClass")
 public class EventBusTests {
 
     @Test
     public void testTypesCanSubscribe() {
         EventBus bus = this.bus();
-        BasicEventListener listener = new BasicEventListener();
-        bus.subscribe(listener);
-        Assertions.assertTrue(bus.getListenersToInvokers().containsKey(listener));
+        bus.subscribe(BasicEventListener.class);
+        Assertions.assertTrue(bus.getListenersToInvokers().containsKey(BasicEventListener.class));
     }
 
     @Test
     public void testNonStaticMethodsCanListen() {
         EventBus bus = this.bus();
-        BasicEventListener listener = new BasicEventListener();
-        bus.subscribe(listener);
+        bus.subscribe(BasicEventListener.class);
         bus.post(new SampleEvent());
         Assertions.assertTrue(BasicEventListener.fired);
     }
@@ -56,8 +53,7 @@ public class EventBusTests {
     @Test
     public void testStaticMethodsCanListen() {
         EventBus bus = this.bus();
-        StaticEventListener listener = new StaticEventListener();
-        bus.subscribe(listener);
+        bus.subscribe(StaticEventListener.class);
         bus.post(new SampleEvent());
         Assertions.assertTrue(StaticEventListener.fired);
     }
@@ -65,17 +61,15 @@ public class EventBusTests {
     @Test
     public void testEventsArePostedInCorrectPriorityOrder() {
         EventBus bus = this.bus();
-        PriorityEventListener listener = new PriorityEventListener();
-        bus.subscribe(listener);
+        bus.subscribe(PriorityEventListener.class);
         bus.post(new SampleEvent());
-        Assertions.assertEquals(Priority.LAST, listener.getLast());
+        Assertions.assertEquals(Priority.LAST, PriorityEventListener.getLast());
     }
 
     @Test
     public void testFilteredListeners() {
         EventBus bus = this.bus();
-        FilteredEventListener listener = new FilteredEventListener();
-        bus.subscribe(listener);
+        bus.subscribe(FilteredEventListener.class);
         SampleFilterableEvent event = new SampleFilterableEvent("Selene");
 
         Assertions.assertEquals(1, event.acceptedFilters().size());
@@ -90,8 +84,7 @@ public class EventBusTests {
     @Test
     public void testIncorrectFilterDoesNoetInvokeFilteredListeners() {
         EventBus bus = this.bus();
-        FilteredEventListener listener = new FilteredEventListener();
-        bus.subscribe(listener);
+        bus.subscribe(FilteredEventListener.class);
         SampleFilterableEvent event = new SampleFilterableEvent("NotSelene");
 
         Assertions.assertEquals(1, event.acceptedFilters().size());
@@ -103,6 +96,7 @@ public class EventBusTests {
         Assertions.assertFalse(FilteredEventListener.fired);
     }
 
+    @SuppressWarnings("SameParameterValue")
     private Filter filter(String param, String value, FilterTypes type) {
         //noinspection OverlyComplexAnonymousInnerClass
         return new Filter() {

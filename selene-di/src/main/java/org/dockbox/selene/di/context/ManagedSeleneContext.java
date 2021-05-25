@@ -24,10 +24,10 @@ import org.dockbox.selene.di.annotations.Activator;
 import org.dockbox.selene.di.annotations.ServiceActivator;
 import org.dockbox.selene.di.annotations.Wired;
 import org.dockbox.selene.di.exceptions.ApplicationException;
+import org.dockbox.selene.di.inject.InjectionModifier;
 import org.dockbox.selene.di.properties.InjectableType;
 import org.dockbox.selene.di.properties.InjectorProperty;
 import org.dockbox.selene.di.services.ServiceLocator;
-import org.dockbox.selene.di.services.ServiceModifier;
 import org.dockbox.selene.di.services.ServiceProcessor;
 import org.dockbox.selene.util.Reflect;
 import org.dockbox.selene.util.SeleneUtils;
@@ -50,10 +50,11 @@ public abstract class ManagedSeleneContext implements ApplicationContext {
     protected static final Logger log = LoggerFactory.getLogger("Selene Managed Context");
     protected final transient Set<InjectionPoint<?>> injectionPoints = SeleneUtils.emptyConcurrentSet();
 
-    protected final transient Set<ServiceModifier<?>> serviceModifiers = SeleneUtils.emptyConcurrentSet();
+    protected final transient Set<InjectionModifier<?>> modifiers = SeleneUtils.emptyConcurrentSet();
     protected final transient Set<ServiceProcessor<?>> serviceProcessors = SeleneUtils.emptyConcurrentSet();
 
     protected final transient Set<Context> contexts = SeleneUtils.emptyConcurrentSet();
+    private final Set<Class<?>> services = SeleneUtils.emptyConcurrentSet();
 
     @Getter(AccessLevel.PROTECTED)
     private final Activator activator;
@@ -68,6 +69,14 @@ public abstract class ManagedSeleneContext implements ApplicationContext {
         this.activator = activationSource.getAnnotation(Activator.class);
         this.activationSource = activationSource;
         this.activators = Reflect.annotatedAnnotations(activationSource, ServiceActivator.class);
+    }
+
+    /**
+     * Non-exposed method which can be used by bootstrapping services to register default activators.
+     */
+    public void addActivator(Annotation annotation) {
+        if (annotation.annotationType().isAnnotationPresent(ServiceActivator.class))
+            this.activators.add(annotation);
     }
 
     @Override
@@ -132,7 +141,7 @@ public abstract class ManagedSeleneContext implements ApplicationContext {
             return t;
         }
         catch (Exception e) {
-            throw new ProvisionFailure("Could not provide raw instance", e);
+            throw new ProvisionFailure("Could not provide raw instance of " + type.getSimpleName(), e);
         }
     }
 
@@ -143,6 +152,7 @@ public abstract class ManagedSeleneContext implements ApplicationContext {
                 if (serviceProcessor.preconditions(service)) serviceProcessor.process(this, service);
             }
         }
+        this.services.addAll(services);
     }
 
     @Override
@@ -151,8 +161,8 @@ public abstract class ManagedSeleneContext implements ApplicationContext {
     }
 
     @Override
-    public void add(ServiceModifier<?> modifier) {
-        this.serviceModifiers.add(modifier);
+    public void add(InjectionModifier<?> modifier) {
+        this.modifiers.add(modifier);
     }
 
     @Override

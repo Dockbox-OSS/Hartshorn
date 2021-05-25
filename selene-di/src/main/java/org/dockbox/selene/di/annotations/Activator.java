@@ -17,6 +17,7 @@
 
 package org.dockbox.selene.di.annotations;
 
+import org.dockbox.selene.di.InjectableBootstrap;
 import org.dockbox.selene.di.adapter.InjectSource;
 import org.dockbox.selene.di.adapter.ServiceSource;
 
@@ -29,5 +30,8 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 public @interface Activator {
     InjectSource inject();
+    Class<? extends InjectableBootstrap> bootstrap();
+    String prefix() default "";
+    InjectConfig[] configs() default {};
     ServiceSource services() default ServiceSource.DEFAULT;
 }

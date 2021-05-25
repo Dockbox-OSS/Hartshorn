@@ -32,15 +32,15 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.Collection;
 
-public interface ServiceAnnotatedMethodModifier<M extends Annotation, A extends Annotation> extends ServiceModifier<A> {
+public abstract class ServiceAnnotatedMethodModifier<M extends Annotation, A extends Annotation> extends ServiceModifier<A> {
 
     @Override
-    default <T> boolean preconditions(Class<T> type, @Nullable T instance, InjectorProperty<?>... properties) {
+    protected <T> boolean isModifiable(Class<T> type, @Nullable T instance, InjectorProperty<?>... properties) {
         return !Reflect.annotatedMethods(type, this.annotation()).isEmpty();
     }
 
     @Override
-    default <T> T process(ApplicationContext context, Class<T> type, @Nullable T instance, InjectorProperty<?>... properties) {
+    public <T> T process(ApplicationContext context, Class<T> type, @Nullable T instance, InjectorProperty<?>... properties) {
         final Collection<Method> methods = Reflect.annotatedMethods(type, this.annotation());
 
         ProxyHandler<T> handler = new ProxyHandler<>(instance, type);
@@ -63,13 +63,13 @@ public interface ServiceAnnotatedMethodModifier<M extends Annotation, A extends 
         return Exceptional.of(handler::proxy).or(instance);
     }
 
-    <T, R> ProxyFunction<T, R> process(ApplicationContext context, MethodProxyContext<T> methodContext);
+    public abstract <T, R> ProxyFunction<T, R> process(ApplicationContext context, MethodProxyContext<T> methodContext);
 
-    <T> boolean preconditions(MethodProxyContext<T> context);
+    public abstract <T> boolean preconditions(MethodProxyContext<T> context);
 
-    default boolean failOnPrecondition() {
+    public boolean failOnPrecondition() {
         return true;
     }
 
-    Class<M> annotation();
+    public abstract Class<M> annotation();
 }

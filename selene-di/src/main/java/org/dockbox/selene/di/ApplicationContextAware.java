@@ -25,11 +25,11 @@ import lombok.Getter;
 public class ApplicationContextAware {
 
     @Getter
-    private final ApplicationContext context;
+    private ApplicationContext context;
 
     private static ApplicationContextAware instance;
 
-    protected ApplicationContextAware(Class<?> activationSource) {
+    public void create(Class<?> activationSource) {
         this.context = new SeleneApplicationContext(activationSource);
     }
 

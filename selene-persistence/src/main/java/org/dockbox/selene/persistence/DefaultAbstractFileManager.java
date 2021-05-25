@@ -75,7 +75,7 @@ public abstract class DefaultAbstractFileManager implements FileManager {
     @NotNull
     @Override
     public Path getConfigFile(@NotNull TypedOwner owner, @NotNull String file) {
-        return this.createFileIfNotExists(this.getFileType().asPath(this.getModuleConfigsDir().resolve(owner.id()), file));
+        return this.createFileIfNotExists(this.getFileType().asPath(this.getServiceConfigsDir().resolve(owner.id()), file));
     }
 
     @NotNull

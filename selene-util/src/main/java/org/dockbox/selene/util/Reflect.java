@@ -48,7 +48,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -744,17 +743,6 @@ public final class Reflect {
         return lookup(serverClassName);
     }
 
-    public static boolean registerModuleInitBus(Consumer<Object> consumer) {
-        Class<?> moduleBootstrap = Reflect.lookup("org.dockbox.selene.api.module.SeleneModuleBootstrap");
-        if (moduleBootstrap != null) {
-            return !Reflect.runMethod(moduleBootstrap, null, "getInstance", moduleBootstrap)
-                    .map(bootstrap -> Reflect.runMethod(moduleBootstrap, bootstrap, "registerInitBus", null, new Class[]{ Consumer.class }, consumer).rethrow().get())
-                    .caught();
-        } else {
-            return false;
-        }
-    }
-
     @SuppressWarnings("unchecked")
     public static <T> Exceptional<T> runMethod(
             Class<?> methodHolder,
@@ -772,18 +760,6 @@ public final class Reflect {
                 | InvocationTargetException
                 | IllegalAccessException e) {
             return Exceptional.of(e);
-        }
-    }
-
-    public static boolean registerModulePostInit(Runnable runnable) {
-        Class<?> moduleBootstrap = Reflect.lookup("org.dockbox.selene.api.module.SeleneModuleBootstrap");
-        if (moduleBootstrap != null) {
-            return !Reflect.runMethod(moduleBootstrap, null, "getInstance", moduleBootstrap)
-                    .map(bootstrap -> Reflect.runMethod(moduleBootstrap, bootstrap, "registerPostInit", null, new Class[]{ Runnable.class }, runnable).rethrow().get())
-                    .caught();
-        }
-        else {
-            return false;
         }
     }
 

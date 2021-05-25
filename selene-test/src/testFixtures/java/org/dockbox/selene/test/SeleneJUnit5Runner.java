@@ -24,6 +24,6 @@ public class SeleneJUnit5Runner implements BeforeAllCallback{
 
     @Override
     public void beforeAll(ExtensionContext context) throws Exception {
-        JUnit5Bootstrap.prepareBootstrap();
+        JUnit5Application.prepareBootstrap();
     }
 }

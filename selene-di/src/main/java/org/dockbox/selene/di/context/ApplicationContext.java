@@ -20,8 +20,8 @@ package org.dockbox.selene.di.context;
 import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.di.InjectionPoint;
 import org.dockbox.selene.di.ProvisionFailure;
+import org.dockbox.selene.di.inject.InjectionModifier;
 import org.dockbox.selene.di.properties.InjectorProperty;
-import org.dockbox.selene.di.services.ServiceModifier;
 import org.dockbox.selene.di.services.ServiceProcessor;
 
 import java.lang.annotation.Annotation;
@@ -41,7 +41,7 @@ public interface ApplicationContext extends ApplicationBinder, SeleneContext {
     <T> T raw(Class<T> type, boolean populate) throws ProvisionFailure;
 
     void add(ServiceProcessor<?> processor);
-    void add(ServiceModifier<?> modifier);
+    void add(InjectionModifier<?> modifier);
 
     Class<?> getActivationSource();
     List<Annotation> activators();

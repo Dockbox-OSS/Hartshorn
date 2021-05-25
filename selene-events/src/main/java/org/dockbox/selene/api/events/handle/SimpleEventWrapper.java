@@ -55,7 +55,7 @@ public final class SimpleEventWrapper implements Comparable<SimpleEventWrapper>,
         if (0 != (c = Integer.compare(o1.priority, o2.priority))) return c;
         if (0 != (c = o1.method.getName().compareTo(o2.method.getName()))) return c;
         if (0 != (c = o1.eventType.getName().compareTo(o2.eventType.getName()))) return c;
-        if (0 != (c = Integer.compare(o1.listener.hashCode(), o2.listener.hashCode()))) return c;
+        if (0 != (c = Integer.compare(o1.listenerType.hashCode(), o2.listenerType.hashCode()))) return c;
         if (0 != (c = Integer.compare(o1.hashCode(), o2.hashCode()))) return c;
 
         throw new AssertionError(); // ensures the comparator will never return 0 if the two wrapper
@@ -63,7 +63,9 @@ public final class SimpleEventWrapper implements Comparable<SimpleEventWrapper>,
     };
 
     @Getter
-    private final Object listener;
+    private Object listener;
+    @Getter
+    private final Class<?> listenerType;
     @Getter
     private final Class<? extends Event> eventType;
     @Getter
@@ -72,8 +74,9 @@ public final class SimpleEventWrapper implements Comparable<SimpleEventWrapper>,
     private final int priority;
     private final BiConsumer<Object, ? super Event> operator;
 
-    private SimpleEventWrapper(Object listener, Class<? extends Event> eventType, Method method, int priority) {
-        this.listener = listener;
+    private SimpleEventWrapper(Class<?> type, Class<? extends Event> eventType, Method method, int priority) {
+        this.listener = null;
+        this.listenerType = type;
         this.eventType = eventType;
         this.method = method;
         this.priority = priority;
@@ -95,13 +98,13 @@ public final class SimpleEventWrapper implements Comparable<SimpleEventWrapper>,
                     "accept",
                     MethodType.methodType(BiConsumer.class),
                     MethodType.methodType(void.class, Object.class, Object.class),
-                    caller.findVirtual(this.listener.getClass(), this.method.getName(),
+                    caller.findVirtual(this.listenerType, this.method.getName(),
                             MethodType.methodType(void.class, this.method.getParameterTypes()[0])),
-                    MethodType.methodType(void.class, this.listener.getClass(), this.method.getParameterTypes()[0]));
+                    MethodType.methodType(void.class, this.listenerType, this.method.getParameterTypes()[0]));
             MethodHandle factory = site.getTarget();
             return (BiConsumer<T, ? super Event>) factory.invoke();
         } catch (Throwable e) {
-            Selene.log().warn("Could not prepare meta factory for method '" + this.method.getName() + "' in " + this.listener.getClass().getSimpleName() + ", behavior will default to unoptimized reflective operations.");
+            Selene.log().warn("Could not prepare meta factory for method '" + this.method.getName() + "' in " + this.listenerType.getSimpleName() + ", behavior will default to unoptimized reflective operations.");
             return null;
         }
     }
@@ -119,13 +122,13 @@ public final class SimpleEventWrapper implements Comparable<SimpleEventWrapper>,
      *
      * @return The list of {@link SimpleEventWrapper}s
      */
-    public static List<SimpleEventWrapper> create(Object instance, Method method, int priority) {
+    public static List<SimpleEventWrapper> create(Class<?> type, Method method, int priority) {
         List<SimpleEventWrapper> invokeWrappers = SeleneUtils.emptyConcurrentList();
         for (Class<?> param : method.getParameterTypes()) {
             if (Reflect.assignableFrom(Event.class, param)) {
                 @SuppressWarnings("unchecked")
                 Class<? extends Event> eventType = (Class<? extends Event>) param;
-                invokeWrappers.add(new SimpleEventWrapper(instance, eventType, method, priority));
+                invokeWrappers.add(new SimpleEventWrapper(type, eventType, method, priority));
             }
         }
         return invokeWrappers;
@@ -134,6 +137,9 @@ public final class SimpleEventWrapper implements Comparable<SimpleEventWrapper>,
     @Override
     public void invoke(Event event) throws SecurityException {
         if (this.filtersMatch(event)) {
+            // Lazy initialisation to allow processors to register first
+            if (this.listener == null) this.listener = Selene.context().get(this.listenerType);
+
             Runnable eventRunner = () -> {
                 try {
                     if (this.operator != null)
@@ -195,7 +201,7 @@ public final class SimpleEventWrapper implements Comparable<SimpleEventWrapper>,
     @Override
     public int hashCode() {
         int n = 1;
-        n = 31 * n + this.listener.hashCode();
+        n = 31 * n + this.listenerType.hashCode();
         n = 31 * n + this.eventType.hashCode();
         n = 31 * n + this.method.hashCode();
         return n;
@@ -209,7 +215,7 @@ public final class SimpleEventWrapper implements Comparable<SimpleEventWrapper>,
     }
 
     private static boolean fastEqual(SimpleEventWrapper o1, SimpleEventWrapper o2) {
-        return Objects.equals(o1.listener, o2.listener)
+        return Objects.equals(o1.listenerType, o2.listenerType)
                 && Objects.equals(o1.eventType, o2.eventType)
                 && Objects.equals(o1.method, o2.method);
     }
@@ -217,8 +223,8 @@ public final class SimpleEventWrapper implements Comparable<SimpleEventWrapper>,
     @Override
     public String toString() {
         return String.format(
-                "InvokeWrapper{listener=%s, eventType=%s, method=%s(%s), priority=%d}",
-                this.listener,
+                "InvokeWrapper{type=%s, eventType=%s, method=%s(%s), priority=%d}",
+                this.listenerType.getSimpleName(),
                 this.eventType.getName(),
                 this.method.getName(),
                 this.eventType.getSimpleName(),

@@ -17,80 +17,50 @@
 
 package org.dockbox.selene.api;
 
+import com.google.common.collect.Multimap;
+
+import org.dockbox.selene.api.annotations.UseBootstrap;
 import org.dockbox.selene.api.config.GlobalConfig;
 import org.dockbox.selene.api.exceptions.Except;
 import org.dockbox.selene.di.InjectConfiguration;
 import org.dockbox.selene.di.InjectableBootstrap;
+import org.dockbox.selene.di.annotations.InjectPhase;
 import org.dockbox.selene.di.annotations.Required;
-import org.dockbox.selene.di.preload.Preloadable;
+import org.dockbox.selene.di.annotations.Service;
 import org.dockbox.selene.util.Reflect;
-import org.jetbrains.annotations.NotNull;
-import org.reflections.Reflections;
+import org.dockbox.selene.util.SeleneUtils;
 
-import java.io.IOException;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.util.Locale;
-import java.util.Properties;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+import java.util.List;
+import java.util.Set;
 
 import lombok.Getter;
 
 /**
- * The global bootstrapping component which instantiates all configured modules and provides access
+ * The global bootstrapping component which instantiates all configured services and provides access
  * to server information.
  */
 public abstract class SeleneBootstrap extends InjectableBootstrap {
 
     @Getter
     private String version;
-    @Getter
-    private final GlobalConfig config;
+    private final Set<Method> postBootstrapActivations = SeleneUtils.emptyConcurrentSet();
 
-    /**
-     * Instantiates {@link Selene}, creating a local injector based on the provided {@link
-     * InjectConfiguration}. Also verifies dependency artifacts and injector bindings. Proceeds
-     * to {@link SeleneBootstrap#construct()} once verified.
-     *
-     * @param early
-     *         the injector provided by the Selene implementation
-     */
-    protected SeleneBootstrap(InjectConfiguration early, InjectConfiguration late, Class<?> activationSource) {
-        super(SeleneInformation.PACKAGE_PREFIX, activationSource);
-        Reflections.log = null; // Don't output Reflections
-        this.enter(BootstrapPhase.PRE_CONSTRUCT);
-        super.getContext().bind(SeleneInformation.PACKAGE_PREFIX);
-        super.getContext().bind(early);
-        this.config = this.getContext().get(GlobalConfig.class);
-        Except.useStackTraces(this.config.getStacktracesAllowed());
-        Except.with(this.config.getExceptionLevel());
+    @Override
+    public void create(String prefix, Class<?> activationSource, List<Annotation> activators, Multimap<InjectPhase, InjectConfiguration> configs) {
+        activators.add(new UseBootstrap() {
+            @Override
+            public Class<? extends Annotation> annotationType() {
+                return UseBootstrap.class;
+            }
+        });
+        super.create(prefix, activationSource, activators, configs);
 
-        this.enter(BootstrapPhase.CONSTRUCT);
-        super.getContext().bind(late);
-        this.construct();
-    }
-
-    /**
-     * Loads various properties from selene.properties, including the latest update and version. Once
-     * done sets the static instance equal to this instance.
-     */
-    protected void construct() {
-        String version = "dev";
-
-        try {
-            Properties properties = new Properties();
-            properties.load(this.getClass().getResourceAsStream("/selene.properties"));
-
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm")
-                    .withLocale(Locale.getDefault())
-                    .withZone(ZoneId.systemDefault());
-
-            version = properties.getOrDefault("version", "dev").toString();
-        }
-        catch (IOException e) {
-            Except.handle("Failed to convert resource file", e);
-        }
-
-        this.version = version;
+        final GlobalConfig globalConfig = this.getContext().get(GlobalConfig.class);
+        Except.useStackTraces(globalConfig.getStacktracesAllowed());
+        Except.with(globalConfig.getExceptionLevel());
+        this.version = globalConfig.getVersion();
     }
 
     public static boolean isConstructed() {
@@ -102,62 +72,35 @@ public abstract class SeleneBootstrap extends InjectableBootstrap {
     }
 
     /**
-     * Gets the array of authors as defined by {@link SeleneInformation#AUTHORS}.
-     *
-     * @return A non-null array of authors
-     */
-    @NotNull
-    public static String @NotNull [] getAuthors() {
-        return SeleneInformation.AUTHORS;
-    }
-
-    /**
-     * Initiates a {@link Selene} instance. Collecting integrated modules and registering them to the
+     * Initiates a {@link Selene} instance. Collecting integrated services and registering them to the
      * appropriate instances where required.
      */
-    protected void init() {
-        Selene.log().info("Initiating Selene " + this.getVersion());
-
+    @Override
+    public void init() {
+        Selene.log().info("Initialising Selene " + this.getVersion());
+        for (Method postBootstrapActivation : this.postBootstrapActivations) {
+            this.getContext().invoke(postBootstrapActivation);
+        }
         // Ensure all services requiring a platform implementation have one present
         Reflect.annotatedTypes(SeleneInformation.PACKAGE_PREFIX, Required.class).forEach(type -> {
             if (Reflect.subTypes(SeleneInformation.PACKAGE_PREFIX, type).isEmpty()) {
                 this.handleMissingBinding(type);
             }
         });
+
     }
 
     protected void handleMissingBinding(Class<?> type) {
         throw new IllegalStateException("No implementation exists for [" + type.getCanonicalName() + "], this will cause functionality to misbehave or not function!");
     }
 
-    /**
-     * Gets the {@link GlobalConfig} instance as injected by the {@link Selene} implementation.
-     *
-     * @return The global config
-     */
-    @SuppressWarnings("MethodMayBeStatic")
-    @NotNull
-    public GlobalConfig getGlobalConfig() {
-        return this.getContext().get(GlobalConfig.class);
-    }
+    void addPostBootstrapActivation(Method method, Class<?> type) {
+        final Service annotation = type.getAnnotation(Service.class);
+        final Class<? extends Annotation> activator = annotation.activator();
+        if (Service.class.equals(activator)) return;
 
-    /**
-     * Gets the used version of the implementation platform.
-     *
-     * @return The platform version
-     */
-    public abstract String getPlatformVersion();
-
-    protected void enter(BootstrapPhase phase) {
-        Selene.log().info("Selene changed phase to " + phase);
-        // Register pre-loadable types early on, these typically modify initialisation logic
-        Reflect.subTypes(SeleneInformation.PACKAGE_PREFIX, Preloadable.class)
-                .stream()
-                .filter(t -> t.isAnnotationPresent(Phase.class) && t.getAnnotation(Phase.class).value().equals(phase))
-                .forEach(t -> {
-                    Selene.log().info("Preloading " + t.getSimpleName());
-                    this.getContext().get(t).preload();
-                });
+        if (this.getContext().hasActivator(activator))
+            this.postBootstrapActivations.add(method);
     }
 
 }

@@ -33,7 +33,7 @@ import org.dockbox.selene.proxy.service.ServiceAnnotatedMethodModifier;
 import java.lang.annotation.Annotation;
 import java.util.function.Supplier;
 
-public abstract class CacheServiceModifier<A extends Annotation> implements ServiceAnnotatedMethodModifier<A, UseCaching> {
+public abstract class CacheServiceModifier<A extends Annotation> extends ServiceAnnotatedMethodModifier<A, UseCaching> {
 
     @Override
     public <T, R> ProxyFunction<T, R> process(ApplicationContext context, MethodProxyContext<T> methodContext) {

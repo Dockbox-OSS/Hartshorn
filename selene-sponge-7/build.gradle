@@ -63,20 +63,20 @@ repositories {
     }
 }
 
-def ignoreProjects = ['examples', 'selene-parent', 'selene-module-parent', 'selene-sponge-7', 'selene-nms-1.12']
+def ignoreProjects = ['examples', 'selene-parent', 'selene-service-parent', 'selene-sponge-7', 'selene-nms-1.12']
 
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraftForge112}"
-    new File(parent.rootDir, 'selene-modules').listFiles().each {
+    new File(parent.rootDir, 'selene-services').listFiles().each {
         if (it.directory && new File(it, 'build.gradle').exists()) {
-            shadow project(":selene-modules:${it.name}")
-            testImplementation project(":selene-modules:${it.name}")
+            shadow project(":selene-services:${it.name}")
+            testImplementation project(":selene-services:${it.name}")
         }
     }
-    new File(parent.rootDir, 'selene-minecraft-modules').listFiles().each {
+    new File(parent.rootDir, 'selene-minecraft-services').listFiles().each {
         if (it.directory && new File(it, 'build.gradle').exists()) {
-            shadow project(":selene-minecraft-modules:${it.name}")
-            testImplementation project(":selene-minecraft-modules:${it.name}")
+            shadow project(":selene-minecraft-services:${it.name}")
+            testImplementation project(":selene-minecraft-services:${it.name}")
         }
     }
 
@@ -106,7 +106,7 @@ dependencies {
 
     compileOnly 'io.netty:netty-all:4.1.24.Final'
 
-    testImplementation project(':selene-modules')
+    testImplementation project(':selene-services')
     testImplementation(project(':selene-nms-1.12')) {
         exclude group: 'net.minecraftforge', module: 'forge'
     }

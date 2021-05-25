@@ -17,7 +17,6 @@
 
 package org.dockbox.selene.server.minecraft;
 
-import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.SeleneInformation;
 import org.dockbox.selene.api.entity.annotations.Entity;
 import org.dockbox.selene.api.i18n.MessageReceiver;
@@ -28,7 +27,6 @@ import org.dockbox.selene.di.annotations.Wired;
 import org.dockbox.selene.server.DefaultServer;
 import org.dockbox.selene.server.DefaultServerResources;
 import org.dockbox.selene.server.minecraft.players.Player;
-import org.dockbox.selene.util.SeleneUtils;
 
 @Entity(value = "minecraft", serializable = false)
 @Command(value = SeleneInformation.PROJECT_ID, permission = DefaultServer.SELENE_ADMIN, extend = true)
@@ -55,20 +53,5 @@ public class DefaultMinecraftServer {
         if (player != src)
             src.sendWithPrefix(this.resources.getOtherLanguageUpdated(player.getName(), languageLocalized));
         player.sendWithPrefix(this.resources.getLanguageUpdated(languageLocalized));
-    }
-
-    @Command(value = "platform", permission = DefaultServer.SELENE_ADMIN)
-    public void platform(MessageReceiver src) {
-        MinecraftServerType st = MinecraftServerBootstrap.instance().getServerType();
-        String platformVersion = Selene.server().getPlatformVersion();
-
-        String mcVersion = MinecraftServerBootstrap.instance().getMinecraftVersion().getReadableVersionString();
-
-        Object[] system = SeleneUtils.getAll(System::getProperty,
-                "java.version", "java.vendor", "java.vm.version", "java.vm.name", "java.vm.vendor", "java.runtime.version", "java.class.version");
-
-        src.send(this.resources.getPlatformInformation(st.getDisplayName(), platformVersion, mcVersion,
-                system[0], system[1], system[2], system[2], system[3], system[4], system[5])
-        );
     }
 }

@@ -169,14 +169,6 @@ public interface FileManager extends InjectableType {
     Path getServerRoot();
 
     /**
-     * Get the base owners directory of a platform file system. The exact location is decided by the
-     * top-level implementation of this type.
-     *
-     * @return A {@link Path} reference to a directory
-     */
-    Path getModuleDir();
-
-    /**
      * Get the base mods directory of a platform file system. The exact location is decided by the
      * top-level implementation of this type.
      *
@@ -195,8 +187,8 @@ public interface FileManager extends InjectableType {
      */
     Path getPluginDir();
 
-    default Path getModuleConfigDir(Class<?> owner) {
-        return this.getModuleConfigDir(this.owner(owner));
+    default Path getServiceConfigDir(Class<?> owner) {
+        return this.getServiceConfigDir(this.owner(owner));
     }
 
     /**
@@ -208,8 +200,8 @@ public interface FileManager extends InjectableType {
      *
      * @return A {@link Path} reference to the configuration directory
      */
-    default Path getModuleConfigDir(TypedOwner owner) {
-        return this.getModuleConfigsDir().resolve(owner.id());
+    default Path getServiceConfigDir(TypedOwner owner) {
+        return this.getServiceConfigsDir().resolve(owner.id());
     }
 
     /**
@@ -218,7 +210,7 @@ public interface FileManager extends InjectableType {
      *
      * @return A {@link Path} reference to a directory
      */
-    Path getModuleConfigsDir();
+    Path getServiceConfigsDir();
 
     /**
      * Get the configuration folder for owners directory of a platform file system. The exact

@@ -77,7 +77,7 @@ public class EventHandler {
         for (SimpleEventWrapper invoker : cache) {
             // Target is null if no specific target should be checked
             // If the target is present we only want to invoke when the listener matches our target
-            if (null == target || invoker.getListener().getClass().equals(target)) invoker.invoke(event);
+            if (null == target || invoker.getListenerType().equals(target)) invoker.invoke(event);
         }
     }
 

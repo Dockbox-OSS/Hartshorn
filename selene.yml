@@ -5,7 +5,7 @@ selene:
     level: "friendly"
   discord:
     logging-channel: "123...789"
-modules:
+services:
   player-actions:
     whitelist:
       - "sample"

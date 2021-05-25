@@ -26,7 +26,7 @@ import org.dockbox.selene.server.minecraft.inventory.InventoryLayout;
 import org.dockbox.selene.server.minecraft.inventory.builder.PaginatedPaneBuilder;
 import org.dockbox.selene.server.minecraft.inventory.pane.PaginatedPane;
 import org.dockbox.selene.server.minecraft.inventory.properties.InventoryTypeProperty;
-import org.dockbox.selene.sponge.SpongeAPI7Bootstrap;
+import org.dockbox.selene.sponge.Sponge7Application;
 import org.dockbox.selene.sponge.inventory.SpongeInventoryLayout;
 import org.dockbox.selene.sponge.inventory.pane.SpongePaginatedPane;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
@@ -57,7 +57,7 @@ public class SpongePaginatedPaneBuilder extends PaginatedPaneBuilder {
 
     @Override
     public PaginatedPane build() {
-        Page page = this.builder.build(SpongeAPI7Bootstrap.container());
+        Page page = this.builder.build(Sponge7Application.container());
         page.define(this.elements.stream()
                 .map(SpongeConversionUtil::toSponge)
                 .collect(Collectors.toList())
