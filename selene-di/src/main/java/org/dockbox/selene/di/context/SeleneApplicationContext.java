@@ -38,16 +38,17 @@ import org.dockbox.selene.di.services.ServiceModifier;
 import org.dockbox.selene.util.Reflect;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.reflect.Method;
 import java.util.function.Consumer;
 
 import lombok.Getter;
 
-public class InjectorAwareContext extends ManagedSeleneContext {
+public class SeleneApplicationContext extends ManagedSeleneContext {
 
     @Getter
     private final ContextAdapter adapter;
 
-    public InjectorAwareContext(Class<?> activationSource) {
+    public SeleneApplicationContext(Class<?> activationSource) {
         super(activationSource);
         this.adapter = new ContextAdapter(this.getActivator().inject(), this.getActivator().services());
         this.bind(ApplicationContext.class, this);
@@ -60,7 +61,7 @@ public class InjectorAwareContext extends ManagedSeleneContext {
         @Nullable Exceptional<Object[]> value = Bindings.value(UseFactory.KEY, Object[].class, additionalProperties);
         if (value.present()) {
             typeInstance = this.get(SeleneFactory.class).with(additionalProperties).create(type, value.get());
-            this.injector().populate(typeInstance);
+            this.populate(typeInstance);
         } else {
             // Type instance can be present if it is a module. These instances are also created using Guice
             // injectors and therefore do not need late member injection here.
@@ -69,7 +70,7 @@ public class InjectorAwareContext extends ManagedSeleneContext {
 
         // Recreating field instances ensures all fields are created through bootstrapping, allowing injection
         // points to apply correctly
-        this.injector().populate(typeInstance);
+        this.populate(typeInstance);
 
         typeInstance = this.inject(type, typeInstance, additionalProperties);
 
@@ -109,11 +110,10 @@ public class InjectorAwareContext extends ManagedSeleneContext {
 
     @Override
     public Binder getBinder() {
-        return this.injector();
+        return this.internalInjector();
     }
-
-    @Override
-    public Injector injector() {
+    
+    protected Injector internalInjector() {
         return this.adapter.getInjector();
     }
 
@@ -121,7 +121,7 @@ public class InjectorAwareContext extends ManagedSeleneContext {
     public <T> T create(Class<T> type, T typeInstance, InjectorProperty<?>[] additionalProperties) {
         try {
             if (null == typeInstance) {
-                typeInstance = this.injector().get(type, additionalProperties).then(() -> this.raw(type)).rethrow().get();
+                typeInstance = this.internalInjector().get(type, additionalProperties).then(() -> this.raw(type)).rethrow().get();
             }
             return typeInstance;
         } catch (ProvisionFailure e) {
@@ -139,32 +139,47 @@ public class InjectorAwareContext extends ManagedSeleneContext {
 
     @Override
     public <T> T populate(T o) {
-        return this.injector().populate(o);
+        return this.internalInjector().populate(o);
     }
 
     @Override
     public void add(WireContext<?, ?> context) {
-        this.injector().add(context);
+        this.internalInjector().add(context);
     }
 
     @Override
     public void add(BeanContext<?, ?> context) {
-        this.injector().add(context);
+        this.internalInjector().add(context);
     }
 
     @Override
     public void bind(InjectConfiguration configuration) {
-        this.injector().bind(configuration);
+        this.internalInjector().bind(configuration);
     }
 
     @Override
     public void bind(String prefix) {
-        this.injector().bind(prefix);
+        this.internalInjector().bind(prefix);
         super.process(prefix);
     }
 
     @Override
     public <T, I extends T> Exceptional<WireContext<T, I>> firstWire(Class<T> contract, InjectorProperty<Named> property) {
-        return this.injector().firstWire(contract, property);
+        return this.internalInjector().firstWire(contract, property);
+    }
+
+    @Override
+    public <T, I extends T> Exceptional<Class<I>> type(Class<T> type) {
+        return this.internalInjector().type(type);
+    }
+
+    @Override
+    public <T> T invoke(Method method) {
+        return this.internalInjector().invoke(method);
+    }
+
+    @Override
+    public <T> T invoke(Method method, Object instance) {
+        return this.internalInjector().invoke(method, instance);
     }
 }

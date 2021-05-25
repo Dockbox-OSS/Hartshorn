@@ -17,6 +17,7 @@
 
 package org.dockbox.selene.di.context;
 
+import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.di.InjectionPoint;
 import org.dockbox.selene.di.ProvisionFailure;
 import org.dockbox.selene.di.annotations.Activator;
@@ -51,6 +52,8 @@ public abstract class ManagedSeleneContext implements ApplicationContext {
 
     protected final transient Set<ServiceModifier<?>> serviceModifiers = SeleneUtils.emptyConcurrentSet();
     protected final transient Set<ServiceProcessor<?>> serviceProcessors = SeleneUtils.emptyConcurrentSet();
+
+    protected final transient Set<Context> contexts = SeleneUtils.emptyConcurrentSet();
 
     @Getter(AccessLevel.PROTECTED)
     private final Activator activator;
@@ -171,6 +174,29 @@ public abstract class ManagedSeleneContext implements ApplicationContext {
     public <A> A activator(Class<A> activator) {
         //noinspection unchecked
         return (A) this.activators.stream().filter(a -> a.annotationType().equals(activator)).findFirst().orElse(null);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public <C extends Context> Exceptional<C> first(Class<C> context) {
+        return Exceptional.of(this.contexts.stream()
+                .filter(c -> c.getClass().equals(context))
+                .findFirst())
+                .map(c -> (C) c);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public <C extends Context> List<C> all(Class<C> context) {
+        return SeleneUtils.asUnmodifiableList(this.contexts.stream()
+                .filter( c -> c.getClass().equals(context))
+                .map(c -> (C) c)
+                .collect(Collectors.toList()));
+    }
+
+    @Override
+    public <C extends Context> void add(C context) {
+        if (context != null) this.contexts.add(context);
     }
 
     protected abstract ServiceLocator locator();
