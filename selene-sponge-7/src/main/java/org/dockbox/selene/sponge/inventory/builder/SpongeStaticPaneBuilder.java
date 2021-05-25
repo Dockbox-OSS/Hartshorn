@@ -25,7 +25,7 @@ import org.dockbox.selene.server.minecraft.inventory.InventoryLayout;
 import org.dockbox.selene.server.minecraft.inventory.builder.StaticPaneBuilder;
 import org.dockbox.selene.server.minecraft.inventory.pane.StaticPane;
 import org.dockbox.selene.server.minecraft.inventory.properties.InventoryTypeProperty;
-import org.dockbox.selene.sponge.SpongeAPI7Bootstrap;
+import org.dockbox.selene.sponge.Sponge7Application;
 import org.dockbox.selene.sponge.inventory.SpongeInventoryLayout;
 import org.dockbox.selene.sponge.inventory.pane.SpongeStaticPane;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
@@ -46,7 +46,7 @@ public class SpongeStaticPaneBuilder extends StaticPaneBuilder {
 
     @Override
     public StaticPane build() {
-        View view = this.builder.build(SpongeAPI7Bootstrap.container());
+        View view = this.builder.build(Sponge7Application.container());
         view.define(this.layout.getLayout());
         return new SpongeStaticPane(view);
     }

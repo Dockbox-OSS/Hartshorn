@@ -80,9 +80,9 @@ import org.spongepowered.api.plugin.PluginContainer;
                 @InjectConfig(SpongeEarlyInjector.class),
                 @InjectConfig(value = SpongeLateInjector.class, phase = InjectPhase.LATE)
         })
-public class SpongeAPI7Bootstrap {
+public class Sponge7Application {
 
-    protected static SpongeAPI7Bootstrap instance;
+    protected static Sponge7Application instance;
     protected final Runnable init;
     // Uses Sponge injection
     @Inject
@@ -92,9 +92,9 @@ public class SpongeAPI7Bootstrap {
      * Creates a new Selene instance using the {@link SpongeEarlyInjector}
      * bindings providing utilities.
      */
-    public SpongeAPI7Bootstrap() {
-        this.init = SeleneApplication.create(SpongeAPI7Bootstrap.class);
-        SpongeAPI7Bootstrap.instance = this;
+    public Sponge7Application() {
+        this.init = SeleneApplication.create(Sponge7Application.class);
+        Sponge7Application.instance = this;
     }
 
     public static PluginContainer container() {

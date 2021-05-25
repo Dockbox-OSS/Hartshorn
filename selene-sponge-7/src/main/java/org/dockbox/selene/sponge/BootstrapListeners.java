@@ -96,7 +96,7 @@ public class BootstrapListeners {
     @Listener
     public void on(GameInitializationEvent event) {
         try {
-            SpongeAPI7Bootstrap.instance.init.run();
+            Sponge7Application.instance.init.run();
 
             this.registerSpongeListeners(
                     Selene.context().get(SpongeCommandListener.class),
