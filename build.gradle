@@ -40,7 +40,7 @@ static def getVersionName() {
 
 version = getVersionName()
 group project.pluginGroup
-description 'Common sources for Selene modules'
+description 'Common sources for Selene services'
 def date = LocalDate.now().toString()
 
 subprojects { Project subProject ->

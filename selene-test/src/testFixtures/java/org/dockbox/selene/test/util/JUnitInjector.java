@@ -22,14 +22,18 @@ import org.dockbox.selene.api.config.GlobalConfig;
 import org.dockbox.selene.api.domain.FileTypes;
 import org.dockbox.selene.api.task.TaskRunner;
 import org.dockbox.selene.api.task.ThreadUtils;
+import org.dockbox.selene.commands.CommandBus;
 import org.dockbox.selene.commands.source.DiscordCommandSource;
 import org.dockbox.selene.config.ConfigurationManager;
 import org.dockbox.selene.di.InjectConfiguration;
 import org.dockbox.selene.di.SeleneFactory;
 import org.dockbox.selene.di.SimpleSeleneFactory;
 import org.dockbox.selene.di.binding.Bindings;
+import org.dockbox.selene.discord.DiscordUtils;
 import org.dockbox.selene.persistence.FileManager;
 import org.dockbox.selene.server.minecraft.Console;
+import org.dockbox.selene.server.minecraft.MinecraftServerType;
+import org.dockbox.selene.server.minecraft.MinecraftVersion;
 import org.dockbox.selene.server.minecraft.bossbar.Bossbar;
 import org.dockbox.selene.server.minecraft.dimension.Worlds;
 import org.dockbox.selene.server.minecraft.entities.ArmorStand;
@@ -89,5 +93,11 @@ public class JUnitInjector extends InjectConfiguration {
         this.bind(Console.class, new JUnitConsole());
 
         this.bind(GlobalConfig.class, JUnitGlobalConfig.class);
+
+        this.bind(MinecraftServerType.class, MinecraftServerType.JUNIT);
+        this.bind(MinecraftVersion.class, MinecraftVersion.INDEV);
+
+        this.bind(CommandBus.class, JUnitCommandBus.class);
+        this.bind(DiscordUtils.class, JUnitDiscordUtils.class);
     }
 }

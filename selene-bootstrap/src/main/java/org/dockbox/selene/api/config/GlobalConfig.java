@@ -28,4 +28,6 @@ public interface GlobalConfig {
     Environment getEnvironment();
 
     String getDiscordLoggingCategoryId();
+
+    String getVersion();
 }

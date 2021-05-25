@@ -44,7 +44,7 @@ public class SimpleEventBus implements EventBus {
     protected static final Set<Function<Method, Exceptional<Boolean>>> validators = SeleneUtils.emptySet();
 
     /** A map of all listening objects with their associated {@link EventWrapper}s. */
-    protected static final Map<Object, Set<EventWrapper>> listenerToInvokers = SeleneUtils.emptyMap();
+    protected static final Map<Class<?>, Set<EventWrapper>> listenerToInvokers = SeleneUtils.emptyMap();
 
     /** The internal registry of handlers for each event. */
     protected static final EventHandlerRegistry handlerRegistry = new EventHandlerRegistry();
@@ -78,21 +78,21 @@ public class SimpleEventBus implements EventBus {
      * Subscribes all event listeners in a object instance. Typically event listeners are methods
      * decorated with {@link Listener}.
      *
-     * @param object
+     * @param type
      *         The instance of the listener
      */
     @Override
-    public void subscribe(Object object) {
-        if (!object.equals(object)) return;
-        if (listenerToInvokers.containsKey(object)) {
+    public void subscribe(Class<?> type) {
+        if (!type.equals(type)) return;
+        if (listenerToInvokers.containsKey(type)) {
             return; // Already registered
         }
 
-        Set<EventWrapper> invokers = getInvokers(object);
+        Set<EventWrapper> invokers = getInvokers(type);
         if (invokers.isEmpty()) {
             return; // Doesn't contain any listener methods
         }
-        listenerToInvokers.put(object, invokers);
+        listenerToInvokers.put(type, invokers);
         for (EventWrapper invoker : invokers) {
             handlerRegistry.getHandler(invoker.getEventType()).subscribe(invoker);
         }
@@ -101,13 +101,13 @@ public class SimpleEventBus implements EventBus {
     /**
      * Unsubscribes all event listeners in a object instance.
      *
-     * @param object
+     * @param type
      *         The instance of the listener
      */
     @Override
-    public void unsubscribe(Object object) {
-        if (!object.equals(object)) return;
-        Set<EventWrapper> invokers = listenerToInvokers.remove(object);
+    public void unsubscribe(Class<?> type) {
+        if (!type.equals(type)) return;
+        Set<EventWrapper> invokers = listenerToInvokers.remove(type);
         if (null == invokers || invokers.isEmpty()) {
             return; // Not registered
         }
@@ -129,7 +129,7 @@ public class SimpleEventBus implements EventBus {
 
     @NotNull
     @Override
-    public Map<Object, Set<EventWrapper>> getListenersToInvokers() {
+    public Map<Class<?>, Set<EventWrapper>> getListenersToInvokers() {
         return listenerToInvokers;
     }
 
@@ -146,13 +146,13 @@ public class SimpleEventBus implements EventBus {
      *
      * @return The invokers
      */
-    protected static Set<EventWrapper> getInvokers(Object object) {
+    protected static Set<EventWrapper> getInvokers(Class<?> type) {
         Set<EventWrapper> result = SeleneUtils.emptySet();
-        for (Method method : Reflect.methods(object.getClass())) {
+        for (Method method : Reflect.methods(type)) {
             Listener annotation = Reflect.annotation(method, Listener.class);
             if (null != annotation) {
                 checkListenerMethod(method);
-                result.addAll(SimpleEventWrapper.create(object, method, annotation.value().getPriority()));
+                result.addAll(SimpleEventWrapper.create(type, method, annotation.value().getPriority()));
             }
         }
         return result;

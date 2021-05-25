@@ -34,7 +34,7 @@ import org.dockbox.selene.util.SeleneUtils;
 
 import java.lang.reflect.Method;
 
-public class I18NServiceModifier implements ServiceAnnotatedMethodModifier<Resource, UseResources> {
+public class I18NServiceModifier extends ServiceAnnotatedMethodModifier<Resource, UseResources> {
 
     @SuppressWarnings("unchecked")
     @Override

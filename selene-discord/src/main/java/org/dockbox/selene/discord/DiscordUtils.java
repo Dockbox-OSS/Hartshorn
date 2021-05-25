@@ -59,7 +59,7 @@ public interface DiscordUtils {
 
     void sendToUser(Template<?> template, User user);
 
-    void registerCommandListener(Object instance);
+    void registerCommandListener(Class<?> type);
 
     void post(String command, DiscordCommandContext context);
 }

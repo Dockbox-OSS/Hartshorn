@@ -41,4 +41,9 @@ public class JUnitGlobalConfig implements GlobalConfig {
     public String getDiscordLoggingCategoryId() {
         throw new UnsupportedOperationException("This feature is not available while running tests");
     }
+
+    @Override
+    public String getVersion() {
+        return "dev";
+    }
 }

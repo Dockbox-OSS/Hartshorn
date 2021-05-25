@@ -17,54 +17,35 @@
 
 package org.dockbox.selene.server.minecraft;
 
-import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.SeleneBootstrap;
 import org.dockbox.selene.api.events.EventBus;
-import org.dockbox.selene.di.InjectConfiguration;
-import org.dockbox.selene.server.ServerBootstrap;
 import org.dockbox.selene.server.events.ServerInitEvent;
-import org.jetbrains.annotations.NotNull;
 
-public abstract class MinecraftServerBootstrap extends ServerBootstrap {
-
-    /**
-     * Instantiates {@link Selene}, creating a local injector based on the provided {@link
-     * InjectConfiguration}. Also verifies dependency artifacts and injector bindings. Proceeds
-     * to {@link SeleneBootstrap#construct()} once verified.
-     *
-     * @param early
-     *         the injector provided by the Selene implementation to create in pre-construct phase
-     * @param late
-     *         the injector provided by the Selene implementation to create in construct phase
-     */
-    protected MinecraftServerBootstrap(InjectConfiguration early, InjectConfiguration late, Class<?> activationSource) {
-        super(early, late, activationSource);
-    }
+public class MinecraftServerBootstrap extends SeleneBootstrap {
 
     public static MinecraftServerBootstrap instance() {
-        return (MinecraftServerBootstrap) ServerBootstrap.instance();
+        return (MinecraftServerBootstrap) SeleneBootstrap.instance();
     }
-
-    /**
-     * Gets the server type as indicated by the {@link Selene} implementation.
-     *
-     * @return the server type
-     */
-    @NotNull
-    public abstract MinecraftServerType getServerType();
-
-    /**
-     * Gets the used Minecraft version.
-     *
-     * @return The Minecraft version
-     */
-    public abstract MinecraftVersion getMinecraftVersion();
+// TODO: Beans/bindings
+//    /**
+//     * Gets the server type as indicated by the {@link Selene} implementation.
+//     *
+//     * @return the server type
+//     */
+//    @NotNull
+//    public abstract MinecraftServerType getServerType();
+//
+//    /**
+//     * Gets the used Minecraft version.
+//     *
+//     * @return The Minecraft version
+//     */
+//    public abstract MinecraftVersion getMinecraftVersion();
 
     @Override
-    protected void init() {
+    public void init() {
         super.init();
         EventBus bus = super.getContext().get(EventBus.class);
-        bus.subscribe(this);
         bus.post(new ServerInitEvent());
     }
 }

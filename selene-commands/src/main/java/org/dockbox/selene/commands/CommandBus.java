@@ -21,7 +21,7 @@ import org.dockbox.selene.api.domain.Exceptional;
 
 public interface CommandBus {
 
-    void register(Object... objs);
+    void register(Class<?>... types);
 
     void apply();
 

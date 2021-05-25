@@ -18,7 +18,6 @@
 package org.dockbox.selene.server.minecraft.item.storage;
 
 import org.dockbox.selene.api.Selene;
-import org.dockbox.selene.server.minecraft.MinecraftServerBootstrap;
 import org.dockbox.selene.server.minecraft.MinecraftVersion;
 import org.dockbox.selene.server.minecraft.item.Item;
 import org.dockbox.selene.util.SeleneUtils;
@@ -33,7 +32,7 @@ public abstract class MinecraftItems {
     private static final Map<MinecraftVersion, Map<String, Supplier<Item>>> customItems = SeleneUtils.emptyConcurrentMap();
 
     public static MinecraftItems getInstance() {
-        return MinecraftServerBootstrap.instance().getMinecraftVersion().getItems();
+        return Selene.context().get(MinecraftVersion.class).getItems();
     }
 
     public Item getCustom(String identifier) {

@@ -20,6 +20,7 @@ dependencies {
     compileOnly project(':selene-bootstrap')
     compileOnly project(':selene-i18n')
     compileOnly project(':selene-events')
+    compileOnly project(':selene-proxy')
 
     testImplementation project(':selene-parent')
     testImplementation project(':selene-bootstrap')

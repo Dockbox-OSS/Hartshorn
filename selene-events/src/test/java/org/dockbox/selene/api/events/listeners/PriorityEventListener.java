@@ -27,35 +27,35 @@ import lombok.Getter;
 public class PriorityEventListener {
 
     @Getter
-    private Priority last = null;
+    private static Priority last = null;
 
     @Listener(Priority.FIRST)
     public void onFirst(SampleEvent event) {
-        Assertions.assertNull(this.last);
-        this.last = Priority.FIRST;
+        Assertions.assertNull(PriorityEventListener.last);
+        PriorityEventListener.last = Priority.FIRST;
     }
 
     @Listener(Priority.EARLY)
     public void onEarly(SampleEvent event) {
-        Assertions.assertEquals(this.last, Priority.FIRST);
-        this.last = Priority.EARLY;
+        Assertions.assertEquals(PriorityEventListener.last, Priority.FIRST);
+        PriorityEventListener.last = Priority.EARLY;
     }
 
     @Listener(Priority.NORMAL)
     public void onNormal(SampleEvent event) {
-        Assertions.assertEquals(this.last, Priority.EARLY);
-        this.last = Priority.NORMAL;
+        Assertions.assertEquals(PriorityEventListener.last, Priority.EARLY);
+        PriorityEventListener.last = Priority.NORMAL;
     }
 
     @Listener(Priority.LATE)
     public void onLate(SampleEvent event) {
-        Assertions.assertEquals(this.last, Priority.NORMAL);
-        this.last = Priority.LATE;
+        Assertions.assertEquals(PriorityEventListener.last, Priority.NORMAL);
+        PriorityEventListener.last = Priority.LATE;
     }
 
     @Listener(Priority.LAST)
     public void onLast(SampleEvent event) {
-        Assertions.assertEquals(this.last, Priority.LATE);
-        this.last = Priority.LAST;
+        Assertions.assertEquals(PriorityEventListener.last, Priority.LATE);
+        PriorityEventListener.last = Priority.LAST;
     }
 }

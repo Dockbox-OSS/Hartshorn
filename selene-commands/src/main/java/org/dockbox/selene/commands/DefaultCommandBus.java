@@ -27,6 +27,7 @@ import org.dockbox.selene.api.exceptions.Except;
 import org.dockbox.selene.api.i18n.common.ResourceEntry;
 import org.dockbox.selene.api.i18n.entry.DefaultResources;
 import org.dockbox.selene.api.i18n.text.Text;
+import org.dockbox.selene.api.i18n.text.actions.ClickAction;
 import org.dockbox.selene.api.i18n.text.actions.HoverAction;
 import org.dockbox.selene.commands.annotations.Command;
 import org.dockbox.selene.commands.context.CommandContext;
@@ -157,8 +158,7 @@ public abstract class DefaultCommandBus<E> implements CommandBus {
 
             Text confirmText = this.resources.getConfirmCommand().asText();
             confirmText.onHover(HoverAction.showText(this.resources.getConfirmCommandHover().asText()));
-            confirmText.onClick(RunCommandAction.runCommand("/selene confirm " + registrationId));
-
+            confirmText.onClick(ClickAction.executeCallback(target -> this.context.get(CommandBus.class).confirmCommand(registrationId)));
             sender.sendWithPrefix(confirmText);
 
         }
@@ -195,11 +195,10 @@ public abstract class DefaultCommandBus<E> implements CommandBus {
     }
 
     @Override
-    public void register(Object... objs) {
-        for (Object obj : objs) {
-            if (null == obj) continue;
-            if (!(obj instanceof Class<?>)) obj = obj.getClass();
-            List<AbstractRegistrationContext> contexts = this.createContexts((Class<?>) obj);
+    public void register(Class<?>... types) {
+        for (Class<?> type : types) {
+            if (null == type) continue;
+            List<AbstractRegistrationContext> contexts = this.createContexts(type);
 
             for (AbstractRegistrationContext context : contexts) {
                 for (String alias : context.getAliases()) {

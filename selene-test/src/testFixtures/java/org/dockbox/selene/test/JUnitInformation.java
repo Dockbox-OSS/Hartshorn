@@ -26,8 +26,12 @@ public class JUnitInformation {
     private final Path filePath;
     private int onlinePlayerCount = 10;
 
-    public JUnitInformation() throws IOException {
-        this.filePath = Files.createTempDirectory("selene-");
+    public JUnitInformation() {
+        try {
+            this.filePath = Files.createTempDirectory("selene-");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public Path getFilePath() {

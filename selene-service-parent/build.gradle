@@ -1,0 +1,36 @@
+/*
+ * Copyright (C) 2020 Guus Lieben
+ *
+ * This framework is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 2.1 of the
+ * License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See
+ * the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
+ */
+
+dependencies {
+    compile project(':selene-parent')
+    compile project(':selene-bootstrap')
+
+    // Provide access to i18n for target communication
+    compile project(':selene-i18n')
+
+    // Provide access to persistence and entity models
+    compile project(':selene-persistence')
+    compile project(':selene-config')
+
+    // Provide access to event and command listeners, which
+    // cover 50% of the module use-cases
+    compile project(':selene-events')
+    compile project(':selene-commands')
+
+    // Provide access to exception handlers
+    compile project(':selene-exceptions')
+}

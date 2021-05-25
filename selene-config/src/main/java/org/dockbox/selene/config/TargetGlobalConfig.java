@@ -39,6 +39,9 @@ public class TargetGlobalConfig implements GlobalConfig {
     @Value("selene.discord.logging-channel")
     private String discordLoggingCategoryId;
 
+    @Value("selene.version")
+    private String version;
+
     @Override
     public boolean getStacktracesAllowed() {
         return this.stacktracesAllowed;

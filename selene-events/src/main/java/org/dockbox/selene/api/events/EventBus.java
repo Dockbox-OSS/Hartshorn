@@ -27,15 +27,15 @@ import java.util.function.Function;
 
 public interface EventBus {
 
-    void subscribe(Object object);
+    void subscribe(Class<?> object);
 
-    void unsubscribe(Object object);
+    void unsubscribe(Class<?> object);
 
     void post(Event event, Class<?> target);
 
     void post(Event event);
 
-    Map<Object, Set<EventWrapper>> getListenersToInvokers();
+    Map<Class<?>, Set<EventWrapper>> getListenersToInvokers();
 
     void addValidationRule(Function<Method, Exceptional<Boolean>> validator);
 }

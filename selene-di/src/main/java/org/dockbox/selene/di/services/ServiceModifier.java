@@ -17,16 +17,19 @@
 
 package org.dockbox.selene.di.services;
 
-import org.dockbox.selene.di.context.ApplicationContext;
+import org.dockbox.selene.di.annotations.Service;
+import org.dockbox.selene.di.inject.InjectionModifier;
 import org.dockbox.selene.di.properties.InjectorProperty;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.annotation.Annotation;
 
-public interface ServiceModifier<A extends Annotation> {
+public abstract class ServiceModifier<A extends Annotation> implements InjectionModifier<A> {
 
-    <T> boolean preconditions(Class<T> type, @Nullable T instance, InjectorProperty<?>... properties);
-    <T> T process(ApplicationContext context, Class<T> type, @Nullable T instance, InjectorProperty<?>... properties);
-    Class<A> activator();
+    public <T> boolean preconditions(Class<T> type, @Nullable T instance, InjectorProperty<?>... properties) {
+        return type.isAnnotationPresent(Service.class) && isModifiable(type, instance, properties);
+    }
+
+    protected abstract <T> boolean isModifiable(Class<T> type, @Nullable T instance, InjectorProperty<?>... properties);
 
 }

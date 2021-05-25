@@ -17,6 +17,9 @@
 
 package org.dockbox.selene.di.annotations;
 
+import org.dockbox.selene.api.config.Environment;
+
+import java.lang.annotation.Annotation;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -25,5 +28,16 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface Service {
+    
+    String id() default "";
+    String name() default "";
+
+    String[] dependencies() default {};
+
+    boolean disabled() default false;
+
     Class<?> owner() default Void.class;
+    Class<? extends Annotation> activator() default Service.class;
+
+    Environment environment() default Environment.PRODUCTION;
 }
