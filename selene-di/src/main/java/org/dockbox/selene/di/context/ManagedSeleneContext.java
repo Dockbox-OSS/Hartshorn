@@ -27,7 +27,6 @@ import org.dockbox.selene.di.exceptions.ApplicationException;
 import org.dockbox.selene.di.inject.InjectionModifier;
 import org.dockbox.selene.di.properties.InjectableType;
 import org.dockbox.selene.di.properties.InjectorProperty;
-import org.dockbox.selene.di.services.ServiceLocator;
 import org.dockbox.selene.di.services.ServiceProcessor;
 import org.dockbox.selene.util.Reflect;
 import org.dockbox.selene.util.SeleneUtils;
@@ -208,6 +207,4 @@ public abstract class ManagedSeleneContext implements ApplicationContext {
     public <C extends Context> void add(C context) {
         if (context != null) this.contexts.add(context);
     }
-
-    protected abstract ServiceLocator locator();
 }

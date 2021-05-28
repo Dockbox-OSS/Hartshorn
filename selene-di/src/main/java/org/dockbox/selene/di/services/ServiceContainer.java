@@ -17,16 +17,24 @@
 
 package org.dockbox.selene.di.services;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Unmodifiable;
+import org.dockbox.selene.api.config.Environment;
 
-import java.util.Collection;
+import java.lang.annotation.Annotation;
+import java.util.List;
 
-public interface ServiceLocator {
+public interface ServiceContainer {
 
-    @NotNull
-    @Unmodifiable
-    Collection<Class<?>> locate(String prefix);
-    Collection<ServiceContainer> containers();
+    String getId();
+    String getName();
+    List<String> getDependencies();
 
+    boolean isEnabled();
+
+    Class<?> getType();
+    Class<?> getOwner();
+
+    Class<? extends Annotation> getActivator();
+    boolean hasActivator();
+
+    Environment getEnvironment();
 }
