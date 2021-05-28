@@ -290,8 +290,6 @@ public interface FileManager extends InjectableType {
      */
     boolean copyDefaultFile(String defaultFileName, Path targetFile);
 
-    void requestFileType(FileType fileType);
-
     default TypedOwner owner(Class<?> type) {
         return Selene.context().get(OwnerLookup.class).lookup(type);
     }
