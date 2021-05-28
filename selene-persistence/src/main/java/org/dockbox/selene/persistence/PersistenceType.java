@@ -17,23 +17,6 @@
 
 package org.dockbox.selene.persistence;
 
-import org.dockbox.selene.di.binding.Bindings;
-import org.dockbox.selene.di.properties.BindingMetaProperty;
-
-public final class FileTypeProperty extends BindingMetaProperty {
-
-    private final FileType fileType;
-
-    private FileTypeProperty(FileType fileType) {
-        super(Bindings.named(fileType.getExtension()));
-        this.fileType = fileType;
-    }
-
-    public static FileTypeProperty of(FileType fileType) {
-        return new FileTypeProperty(fileType);
-    }
-
-    public FileType getFileType() {
-        return this.fileType;
-    }
+public enum PersistenceType {
+    RAW, DATABASE, OTHER
 }

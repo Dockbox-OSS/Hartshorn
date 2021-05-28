@@ -29,26 +29,25 @@ import lombok.Getter;
 /** Enumerated values containing the file extensions for several commonly used file types. */
 @AllArgsConstructor
 public enum FileType {
-    // Compiled Java formats
-    CLASS(FileTypes.CLASS),
-    JAR(FileTypes.JAR),
+    // Database types
+    SQLITE(FileTypes.SQLITE, PersistenceType.DATABASE),
 
-    // Formats with file/web utilities
-    SQLITE(FileTypes.SQLITE),
-    YAML(FileTypes.YAML),
-    JSON(FileTypes.JSON),
-    XML(FileTypes.XML),
-    MOD_CONFIG(FileTypes.MOD_CONFIG),
-    CONFIG(FileTypes.CONFIG)
+    // Raw/text types
+    YAML(FileTypes.YAML, PersistenceType.RAW),
+    JSON(FileTypes.JSON, PersistenceType.RAW),
+    XML(FileTypes.XML, PersistenceType.RAW),
+    TOML(FileTypes.TOML, PersistenceType.RAW),
+    PROPERTIES(FileTypes.PROPERTIES, PersistenceType.RAW)
     ;
 
     @Getter
     private final String extension;
-    private final Class<? extends Annotation> format;
+    @Getter
+    private final PersistenceType type;
 
-    FileType(String extension) {
+    FileType(String extension, PersistenceType type) {
         this.extension = extension;
-        this.format = null;
+        this.type = type;
     }
 
     /**

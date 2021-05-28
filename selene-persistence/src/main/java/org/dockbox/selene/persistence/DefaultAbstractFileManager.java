@@ -140,7 +140,13 @@ public abstract class DefaultAbstractFileManager implements FileManager {
     public void stateEnabling(InjectorProperty<?>... properties) {
         for (InjectorProperty<?> property : properties)
             if (property instanceof FileTypeProperty) {
-                this.requestFileType(((FileTypeProperty<?>) property).getFileType());
+                final FileType fileType = ((FileTypeProperty) property).getFileType();
+
+                if (fileType.getType().equals(PersistenceType.RAW)) {
+                    this.setFileType(fileType);
+                } else {
+                    throw new IllegalArgumentException("Unsupported persistence type: " + fileType.getType() + ", expected: " + PersistenceType.RAW);
+                }
                 break;
             }
     }
