@@ -22,6 +22,7 @@ import org.dockbox.selene.di.InjectionPoint;
 import org.dockbox.selene.di.ProvisionFailure;
 import org.dockbox.selene.di.inject.InjectionModifier;
 import org.dockbox.selene.di.properties.InjectorProperty;
+import org.dockbox.selene.di.services.ServiceLocator;
 import org.dockbox.selene.di.services.ServiceProcessor;
 
 import java.lang.annotation.Annotation;
@@ -51,4 +52,6 @@ public interface ApplicationContext extends ApplicationBinder, SeleneContext {
     <C extends Context> Exceptional<C> first(Class<C> context);
     <C extends Context> List<C> all(Class<C> context);
     <C extends Context> void add(C context);
+
+    ServiceLocator locator();
 }

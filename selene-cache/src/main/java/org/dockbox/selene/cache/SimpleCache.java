@@ -43,7 +43,7 @@ public class SimpleCache<T> implements Cache<T>, InjectableType {
         if (this.content != null) throw new IllegalStateException("Cannot populate existing cache, ensure the existing content is evicted before repopulating.");
         else {
             this.content = content;
-            // TODO: Schedule expiration
+            this.scheduleEviction();
         }
     }
 

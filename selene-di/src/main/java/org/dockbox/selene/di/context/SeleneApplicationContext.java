@@ -131,7 +131,7 @@ public class SeleneApplicationContext extends ManagedSeleneContext {
     }
 
     @Override
-    protected ServiceLocator locator() {
+    public ServiceLocator locator() {
         return this.adapter.getLocator();
     }
 

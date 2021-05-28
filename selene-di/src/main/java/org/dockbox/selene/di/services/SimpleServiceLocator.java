@@ -24,19 +24,33 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class SimpleServiceLocator implements ServiceLocator {
 
-    private static final Map<String, Collection<Class<?>>> cache = SeleneUtils.emptyConcurrentMap();
+    private static final Map<String, Collection<ServiceContainer>> cache = SeleneUtils.emptyConcurrentMap();
 
     @Override
     public @NotNull @Unmodifiable Collection<Class<?>> locate(String prefix) {
         if (SimpleServiceLocator.cache.containsKey(prefix)) {
-            return SimpleServiceLocator.cache.get(prefix);
+            return SimpleServiceLocator.cache.get(prefix).stream()
+                    .map(ServiceContainer::getType)
+                    .collect(Collectors.toList());
         }
         final Collection<Class<?>> types = Reflect.annotatedTypes(prefix, Service.class);
-        SimpleServiceLocator.cache.put(prefix, types);
+
+        final List<ServiceContainer> containers = types.stream()
+                .map(SimpleServiceContainer::new)
+                .collect(Collectors.toList());
+        SimpleServiceLocator.cache.put(prefix, containers);
+
         return SeleneUtils.asUnmodifiableCollection(types);
+    }
+
+    @Override
+    public Collection<ServiceContainer> containers() {
+        return cache.entrySet().stream().flatMap(a -> a.getValue().stream()).collect(Collectors.toList());
     }
 }
