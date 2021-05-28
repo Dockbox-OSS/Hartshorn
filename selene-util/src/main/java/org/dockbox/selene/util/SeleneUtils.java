@@ -50,6 +50,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
@@ -1158,6 +1159,24 @@ public final class SeleneUtils {
 
     public static String[] splitCapitals(String s) {
         return s.split("(?=\\p{Lu})");
+    }
+
+    public static String serviceId(Class<?> type) {
+        String raw = type.getSimpleName();
+        if (raw.endsWith("Service")) {
+            raw = raw.substring(0, raw.length() - 7);
+        }
+        final String[] parts = SeleneUtils.splitCapitals(raw);
+        return String.join("-", parts).toLowerCase(Locale.ROOT);
+    }
+
+    public static String serviceName(Class<?> type) {
+        String raw = type.getSimpleName();
+        if (raw.endsWith("Service")) {
+            raw = raw.substring(0, raw.length() - 7);
+        }
+        final String[] parts = SeleneUtils.splitCapitals(raw);
+        return String.join(" ", parts).toLowerCase(Locale.ROOT);
     }
 
     public enum Provision {

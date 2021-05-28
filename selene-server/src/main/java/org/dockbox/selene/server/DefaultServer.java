@@ -17,15 +17,24 @@
 
 package org.dockbox.selene.server;
 
+import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.SeleneInformation;
 import org.dockbox.selene.api.events.EventBus;
 import org.dockbox.selene.api.i18n.MessageReceiver;
+import org.dockbox.selene.api.i18n.common.ResourceEntry;
+import org.dockbox.selene.api.i18n.text.Text;
+import org.dockbox.selene.api.i18n.text.actions.HoverAction;
+import org.dockbox.selene.api.i18n.text.pagination.PaginationBuilder;
 import org.dockbox.selene.commands.annotations.Command;
 import org.dockbox.selene.commands.context.CommandContext;
 import org.dockbox.selene.di.annotations.Service;
 import org.dockbox.selene.di.annotations.Wired;
 import org.dockbox.selene.di.context.ApplicationContext;
+import org.dockbox.selene.di.services.ServiceContainer;
 import org.dockbox.selene.server.events.ServerReloadEvent;
+import org.dockbox.selene.util.SeleneUtils;
+
+import java.util.List;
 
 @Service(id = SeleneInformation.PROJECT_ID, name = SeleneInformation.PROJECT_NAME)
 @Command(value = SeleneInformation.PROJECT_ID, permission = DefaultServer.SELENE_ADMIN)
@@ -41,57 +50,41 @@ public class DefaultServer {
     // Parent command
     @Command(permission = DefaultServer.SELENE_ADMIN)
     public void allServices(MessageReceiver source) {
-        // TODO: Find something for this
-//        Selene.context().with(ModuleManager.class, em -> {
-//            PaginationBuilder pb = this.context.get(PaginationBuilder.class);
-//
-//            List<Text> content = SeleneUtils.emptyList();
-//            content.add(this.resources.getInfoHeader(Selene.server().getVersion())
-//                    .translate(source).asText()
-//            );
-//            content.add(this.resources.getServices().translate(source).asText());
-//
-//            em.getRegisteredModuleIds().forEach(id -> em.getContainer(id)
-//                    .map(e -> this.generateText(e, source))
-//                    .present(content::add)
-//            );
-//
-//            pb.title(this.resources.getPaginationTitle().translate(source).asText());
-//            pb.content(content);
-//
-//            source.send(pb.build());
-//        });
+        PaginationBuilder paginationBuilder = this.context.get(PaginationBuilder.class);
+
+        List<Text> content = SeleneUtils.emptyList();
+        content.add(this.resources.getInfoHeader(Selene.server().getVersion()).translate(source).asText());
+        content.add(this.resources.getServices().translate(source).asText());
+
+        for (ServiceContainer container : this.context.locator().containers()) {
+            final Text row = this.resources.getServiceRow(container.getName(), container.getId()).translate(source).asText();
+            row.onHover(HoverAction.showText(this.resources.getServiceRowHover(container.getName()).translate(source).asText()));
+            content.add(row);
+        }
+
+        paginationBuilder.title(this.resources.getPaginationTitle().translate(source).asText());
+        paginationBuilder.content(content);
+
+        source.send(paginationBuilder.build());
     }
 
     @Command(value = "service", arguments = "<id{Service}>", permission = DefaultServer.SELENE_ADMIN)
     public void serviceDetails(MessageReceiver src, CommandContext ctx) {
-        // TODO: Migrate
-//        ModuleContainer container = ctx.get("id");
-//
-//        src.send(this.resources.getInfoServiceBlock(
-//                container.name(),
-//                container.id(),
-//                0 == container.dependencies().length ? "None" : String.join("$3, $1", container.dependencies())
-//        ));
+        ServiceContainer container = ctx.get("id");
+
+        final ResourceEntry block = this.resources.getInfoServiceBlock(
+                container.getName(),
+                container.getId(),
+                0 == container.getDependencies().size() ? "None" : String.join("$3, $1", container.getDependencies())
+        );
+
+        src.send(block);
     }
 
-    @Command(value = "reload", arguments = "[id{Service}]", confirm = true, permission = DefaultServer.SELENE_ADMIN)
+    @Command(value = "reload", confirm = true, permission = DefaultServer.SELENE_ADMIN)
     public void reload(MessageReceiver src, CommandContext ctx) {
         EventBus eb = this.context.get(EventBus.class);
-        // TODO: Migrate
-        if (ctx.has("id")) {
-//            ModuleContainer container = ctx.get("id");
-//            Exceptional<?> oi = this.context.get(ModuleManager.class).getInstance(container.id());
-//
-//            oi.present(o -> {
-//                eb.post(new ServerReloadEvent(), o.getClass());
-//                src.send(this.resources.getReloadSuccessful(container.name()));
-//            }).absent(() ->
-//                    src.send(this.resources.getReloadFailed(container.name())));
-        }
-        else {
-            eb.post(new ServerReloadEvent());
-            src.send(this.resources.getReloadAll());
-        }
+        eb.post(new ServerReloadEvent());
+        src.send(this.resources.getReloadAll());
     }
 }
