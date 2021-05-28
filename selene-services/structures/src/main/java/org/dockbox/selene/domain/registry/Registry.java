@@ -18,7 +18,6 @@
 package org.dockbox.selene.domain.registry;
 
 import org.dockbox.selene.api.entity.annotations.Entity;
-import org.dockbox.selene.persistence.configurate.DefaultConfigurateManager;
 import org.dockbox.selene.util.SeleneUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -30,7 +29,7 @@ import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
 @SuppressWarnings({ "UnusedReturnValue", "unused" })
-@Entity(value = "registry", rejects = DefaultConfigurateManager.class)
+@Entity("registry")
 public class Registry<V> {
 
     private final Map<RegistryIdentifier, RegistryColumn<V>> data = SeleneUtils.emptyMap();

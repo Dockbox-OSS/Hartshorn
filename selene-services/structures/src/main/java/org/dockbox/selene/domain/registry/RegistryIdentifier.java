@@ -18,8 +18,7 @@
 package org.dockbox.selene.domain.registry;
 
 import org.dockbox.selene.api.entity.annotations.Entity;
-import org.dockbox.selene.persistence.configurate.DefaultConfigurateManager;
 
-@Entity(value = "identifier", rejects = DefaultConfigurateManager.class)
+@Entity(value = "identifier")
 public interface RegistryIdentifier {
 }

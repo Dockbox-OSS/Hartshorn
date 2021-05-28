@@ -18,7 +18,6 @@
 package org.dockbox.selene.util;
 
 import org.dockbox.selene.api.domain.Exceptional;
-import org.dockbox.selene.api.entity.TypeRejectedException;
 import org.dockbox.selene.api.entity.annotations.Entity;
 import org.dockbox.selene.api.entity.annotations.Property;
 import org.dockbox.selene.util.exceptions.EnumException;
@@ -666,22 +665,15 @@ public final class Reflect {
         return false;
     }
 
-    public static boolean rejects(Class<?> holder, Class<?> potentialReject) {
-        return Reflect.rejects(holder, potentialReject, false);
-    }
-
-    public static boolean rejects(Class<?> holder, Class<?> potentialReject, boolean throwIfRejected) {
+    public static boolean serializable(Class<?> holder, Class<?> potentialReject, boolean throwIfRejected) {
         if (holder.isAnnotationPresent(Entity.class)) {
             Entity rejects = holder.getAnnotation(Entity.class);
-
-            boolean rejected = false;
-            for (Class<?> rejectedType : rejects.rejects())
-                if (potentialReject.isAssignableFrom(rejectedType)) rejected = true;
-
-            if (rejected && throwIfRejected) throw new TypeRejectedException(potentialReject, holder);
-            return rejected;
+            if (!rejects.serializable()) {
+                if (throwIfRejected) throw new RuntimeException(holder.getSimpleName() + " cannot be serialized");
+                else return false;
+            }
         }
-        return false;
+        return true;
     }
 
     public static void fields(Class<?> type, BiConsumer<Class<?>, Field> consumer) {
