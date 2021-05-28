@@ -26,21 +26,6 @@ public class MinecraftServerBootstrap extends SeleneBootstrap {
     public static MinecraftServerBootstrap instance() {
         return (MinecraftServerBootstrap) SeleneBootstrap.instance();
     }
-// TODO: Beans/bindings
-//    /**
-//     * Gets the server type as indicated by the {@link Selene} implementation.
-//     *
-//     * @return the server type
-//     */
-//    @NotNull
-//    public abstract MinecraftServerType getServerType();
-//
-//    /**
-//     * Gets the used Minecraft version.
-//     *
-//     * @return The Minecraft version
-//     */
-//    public abstract MinecraftVersion getMinecraftVersion();
 
     @Override
     public void init() {
