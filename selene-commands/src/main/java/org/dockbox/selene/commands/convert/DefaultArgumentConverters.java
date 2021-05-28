@@ -28,6 +28,7 @@ import org.dockbox.selene.commands.context.ArgumentConverter;
 import org.dockbox.selene.di.annotations.Service;
 import org.dockbox.selene.di.properties.InjectableType;
 import org.dockbox.selene.di.properties.InjectorProperty;
+import org.dockbox.selene.di.services.ServiceContainer;
 import org.dockbox.selene.util.SeleneUtils;
 import org.jetbrains.annotations.NonNls;
 
@@ -132,6 +133,12 @@ public final class DefaultArgumentConverters implements InjectableType {
     }, "resource", "i18n", "translation");
 
     public static final ArgumentConverter<Text> TEXT = new CommandValueConverter<>(Text.class, in -> Exceptional.of(Text.of(in)), "text");
+
+    public static final ArgumentConverter<ServiceContainer> SERVICE = new CommandValueConverter<ServiceContainer>(ServiceContainer.class, in -> Exceptional.of(Selene.context()
+            .locator().containers().stream()
+            .filter(container -> container.getId().equals(in))
+            .findFirst()
+    ), "service");
 
     @Override
     public void stateEnabling(InjectorProperty<?>... properties) {
