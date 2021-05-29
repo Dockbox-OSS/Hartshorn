@@ -21,4 +21,5 @@ import org.dockbox.selene.api.entity.annotations.Entity;
 
 @Entity(value = "identifier")
 public interface RegistryIdentifier {
+    String getKey();
 }

@@ -15,21 +15,15 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.domain;
+package org.dockbox.selene.domain.registry;
 
-import org.dockbox.selene.domain.registry.RegistryIdentifier;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
-public enum TestIdentifier implements RegistryIdentifier {
-    BRICK,
-    SANDSTONE,
-    COBBLESTONE,
-    WOOD,
-    FULLBLOCK,
-    STAIR,
-    SLAB;
+@AllArgsConstructor
+@Getter
+public class SimpleIdentifier implements RegistryIdentifier {
 
-    @Override
-    public String getKey() {
-        return this.name();
-    }
+    private final String key;
+
 }
