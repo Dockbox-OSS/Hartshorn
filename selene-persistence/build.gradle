@@ -30,6 +30,4 @@ dependencies {
 
     compile 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.12.3'
     compile 'org.codehaus.woodstox:woodstox-core-asl:4.4.1'
-
-    compile 'com.xebia:jackson-lombok:1.1'
 }

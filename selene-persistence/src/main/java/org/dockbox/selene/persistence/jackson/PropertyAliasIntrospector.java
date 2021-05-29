@@ -19,13 +19,13 @@ package org.dockbox.selene.persistence.jackson;
 
 import com.fasterxml.jackson.databind.PropertyName;
 import com.fasterxml.jackson.databind.introspect.Annotated;
-import com.xebia.jacksonlombok.JacksonLombokAnnotationIntrospector;
+import com.fasterxml.jackson.databind.introspect.JacksonAnnotationIntrospector;
 
 import org.dockbox.selene.api.entity.annotations.Property;
 
 import java.util.function.Function;
 
-public class PropertyAliasIntrospector extends JacksonLombokAnnotationIntrospector {
+public class PropertyAliasIntrospector extends JacksonAnnotationIntrospector {
 
     @Override
     public PropertyName findNameForSerialization(Annotated a) {
