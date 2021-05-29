@@ -18,6 +18,7 @@
 package org.dockbox.selene.persistence.jackson;
 
 import com.fasterxml.jackson.core.JsonParser.Feature;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -30,16 +31,19 @@ import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.persistence.DefaultAbstractFileManager;
 import org.dockbox.selene.persistence.FileManager;
 import org.dockbox.selene.persistence.FileType;
+import org.dockbox.selene.persistence.GenericType;
 import org.dockbox.selene.persistence.PersistentCapable;
 import org.dockbox.selene.util.Reflect;
-import org.dockbox.selene.util.SeleneUtils;
 
+import java.lang.reflect.AnnotatedElement;
 import java.nio.file.Path;
-import java.util.Map;
 import java.util.function.Supplier;
+
+import lombok.AllArgsConstructor;
 
 public abstract class DefaultJacksonManager extends DefaultAbstractFileManager {
 
+    @AllArgsConstructor
     private enum Mappers {
         JSON(FileType.JSON, ObjectMapper::new),
         YAML(FileType.YAML, YAMLMapper::new),
@@ -48,12 +52,10 @@ public abstract class DefaultJacksonManager extends DefaultAbstractFileManager {
         XML(FileType.XML, XmlMapper::new),
         ;
 
-        Mappers(FileType fileType, Supplier<? super ObjectMapper> mapper) {
-            mappers.put(fileType, mapper);
-        }
+        private final FileType fileType;
+        private final Supplier<? super ObjectMapper> mapper;
     }
 
-    protected static final Map<FileType, Supplier<? super ObjectMapper>> mappers = SeleneUtils.emptyConcurrentMap();
     protected static ObjectMapper mapper;
 
     protected DefaultJacksonManager() {
@@ -71,26 +73,50 @@ public abstract class DefaultJacksonManager extends DefaultAbstractFileManager {
     }
 
     @Override
+    public <T> Exceptional<T> read(Path file, GenericType<T> type) {
+        if (type.getType() instanceof Class) {
+            //noinspection unchecked
+            Exceptional<T> persistentCapable = this.correctPersistentCapable(file, (Class<T>) type.getType());
+            if (persistentCapable.present()) return persistentCapable;
+        }
+
+        if (type.getType() instanceof AnnotatedElement) Reflect.serializable((AnnotatedElement) type.getType(), FileManager.class, true);
+
+        return Exceptional.of(() -> this.configureMapper().readValue(file.toFile(), type));
+    }
+
+    @Override
     public <T> Exceptional<Boolean> write(Path file, T content) {
         if (content instanceof PersistentCapable) return this.write(file, ((PersistentCapable<?>) content).toPersistentModel());
 
         Reflect.serializable(content.getClass(), FileManager.class, true);
 
         return Exceptional.of(() -> {
-            this.configureMapper().writeValue(file.toFile(), content);
+            this.configureMapper().writerWithDefaultPrettyPrinter().writeValue(file.toFile(), content);
             return true;
         }).then(() -> false);
     }
 
     protected ObjectMapper configureMapper() {
         if (null == mapper) {
-            mapper = (ObjectMapper) mappers.get(this.getFileType()).get();
+            mapper = this.getMapper(this.getFileType());
             mapper.setAnnotationIntrospector(new PropertyAliasIntrospector());
             mapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);
             mapper.configure(Feature.ALLOW_COMMENTS, true);
             mapper.configure(Feature.ALLOW_YAML_COMMENTS, true);
             mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
+            mapper.configure(SerializationFeature.WRITE_SINGLE_ELEM_ARRAYS_UNWRAPPED, true);
+            mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+            mapper.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
+            mapper.configure(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS, true);
         }
         return mapper;
+    }
+
+    protected ObjectMapper getMapper(FileType fileType) {
+        for (Mappers mapper : Mappers.values()) {
+            if (mapper.fileType.equals(fileType)) return (ObjectMapper) mapper.mapper.get();
+        }
+        return null; // Do not throw an exception here as subclasses may wish to extend functionality
     }
 }

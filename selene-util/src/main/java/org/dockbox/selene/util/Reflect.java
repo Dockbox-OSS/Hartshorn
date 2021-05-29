@@ -33,6 +33,7 @@ import org.reflections.Reflections;
 import java.lang.annotation.Annotation;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodHandles.Lookup;
+import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -665,11 +666,17 @@ public final class Reflect {
         return false;
     }
 
-    public static boolean serializable(Class<?> holder, Class<?> potentialReject, boolean throwIfRejected) {
+    public static boolean serializable(AnnotatedElement holder, Class<?> potentialReject, boolean throwIfRejected) {
         if (holder.isAnnotationPresent(Entity.class)) {
             Entity rejects = holder.getAnnotation(Entity.class);
             if (!rejects.serializable()) {
-                if (throwIfRejected) throw new RuntimeException(holder.getSimpleName() + " cannot be serialized");
+                if (throwIfRejected) {
+                    String name = "Generic annotated element";
+                    if (holder instanceof Class) {
+                        name = ((Class<?>) holder).getSimpleName();
+                    }
+                    throw new RuntimeException(name + " cannot be serialized");
+                }
                 else return false;
             }
         }
