@@ -45,11 +45,6 @@ public enum FileType {
     @Getter
     private final PersistenceType type;
 
-    FileType(String extension, PersistenceType type) {
-        this.extension = extension;
-        this.type = type;
-    }
-
     /**
      * Converts a given filename (without the file extension present), combined with a {@link Path}
      * reference to a directory, to a new {@link Path} reference to a file. If the file did not yet
