@@ -15,7 +15,7 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.persistence;
+package org.dockbox.selene.persistence.mapping;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 

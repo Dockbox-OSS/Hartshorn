@@ -18,13 +18,13 @@
 package org.dockbox.selene.test.files;
 
 import org.dockbox.selene.api.domain.Exceptional;
-import org.dockbox.selene.persistence.jackson.DefaultJacksonManager;
+import org.dockbox.selene.persistence.DefaultAbstractFileManager;
 import org.dockbox.selene.test.JUnit5Application;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;
 
-public class JUnitFileManager extends DefaultJacksonManager {
+public class JUnitFileManager extends DefaultAbstractFileManager {
 
     @NotNull
     public Path getDataDir() {

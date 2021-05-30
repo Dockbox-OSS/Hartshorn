@@ -21,15 +21,18 @@ import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.domain.registry.Registry;
 import org.dockbox.selene.domain.registry.RegistryColumn;
 import org.dockbox.selene.persistence.FileManager;
-import org.dockbox.selene.persistence.GenericType;
+import org.dockbox.selene.persistence.mapping.GenericType;
+import org.dockbox.selene.test.SeleneJUnit5Runner;
 import org.dockbox.selene.test.files.JUnitFileManager;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 
+@ExtendWith(SeleneJUnit5Runner.class)
 public class DataStructuresSerializersTests {
 
     @Test
@@ -62,7 +65,6 @@ public class DataStructuresSerializersTests {
                         new Registry<String>().addColumn(TestIdentifier.FULLBLOCK, "Cobblestone Fullblock1"));
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Test
     public void testThatRegistryCanBeDeserialised() throws IOException {
         File copy = File.createTempFile("tmp", null);
