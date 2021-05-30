@@ -22,7 +22,7 @@ import org.dockbox.selene.di.properties.InjectorProperty;
 
 import java.util.function.Consumer;
 
-public interface SeleneContext extends DelegatedBinder {
+public interface SeleneContext extends DelegatedBinder, Context {
 
     <T> T get(Class<T> type, InjectorProperty<?>... additionalProperties);
 
