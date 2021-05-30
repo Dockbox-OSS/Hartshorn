@@ -48,7 +48,7 @@ public abstract class ServiceAnnotatedMethodModifier<M extends Annotation, A ext
         for (Method method : methods) {
             MethodProxyContext<T> ctx = new SimpleMethodProxyContext<>(instance, type, method, properties);
 
-            if (this.preconditions(ctx)) {
+            if (this.preconditions(context, ctx)) {
                 final ProxyFunction<T, Object> function = this.process(context, ctx);
                 if (function != null) {
                     ProxyProperty<T, ?> property = ProxyProperty.of(type, method, function);
@@ -65,7 +65,7 @@ public abstract class ServiceAnnotatedMethodModifier<M extends Annotation, A ext
 
     public abstract <T, R> ProxyFunction<T, R> process(ApplicationContext context, MethodProxyContext<T> methodContext);
 
-    public abstract <T> boolean preconditions(MethodProxyContext<T> context);
+    public abstract <T> boolean preconditions(ApplicationContext context, MethodProxyContext<T> methodContext);
 
     public boolean failOnPrecondition() {
         return true;

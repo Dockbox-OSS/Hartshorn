@@ -72,7 +72,7 @@ public abstract class CacheServiceModifier<A extends Annotation> extends Service
     protected abstract CacheMethodContext getContext(MethodProxyContext<?> context);
 
     @Override
-    public <T> boolean preconditions(MethodProxyContext<T> context) {
+    public <T> boolean preconditions(ApplicationContext context, MethodProxyContext<T> methodContext) {
         return true;
     }
 
