@@ -15,20 +15,16 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-repositories {
-    mavenCentral()
-}
+package org.dockbox.selene.persistence.annotations;
 
-dependencies {
-    compileOnly project(':selene-parent')
-    compileOnly project(':selene-bootstrap')
-    compileOnly project(':selene-proxy')
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-    compile 'com.fasterxml.jackson.core:jackson-core:2.12.3'
-    compile 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.12.3'
-    compile 'com.fasterxml.jackson.dataformat:jackson-dataformat-properties:2.12.3'
-    compile 'com.fasterxml.jackson.dataformat:jackson-dataformat-toml:2.12.3'
-
-    compile 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.12.3'
-    compile 'org.codehaus.woodstox:woodstox-core-asl:4.4.1'
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.METHOD)
+public @interface Serialise {
+    Class<?> owner() default Void.class;
+    String file() default "";
 }
