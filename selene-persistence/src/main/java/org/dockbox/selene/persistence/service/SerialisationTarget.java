@@ -15,18 +15,8 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.persistence.annotations;
+package org.dockbox.selene.persistence.service;
 
-import org.dockbox.selene.persistence.FileType;
-
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
-public @interface Serialise {
-    FileType filetype() default FileType.JSON;
-    File value() default @File;
+public enum SerialisationTarget {
+    ANNOTATED_PATH, PARAMETER_PATH, STRING
 }
