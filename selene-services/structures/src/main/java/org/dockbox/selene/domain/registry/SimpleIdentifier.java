@@ -17,6 +17,8 @@
 
 package org.dockbox.selene.domain.registry;
 
+import java.util.Objects;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -26,4 +28,13 @@ public class SimpleIdentifier implements RegistryIdentifier {
 
     private final String key;
 
+    @Override
+    public boolean equals(Object o) {
+        return RegistryIdentifier.super.same(o);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.getKey());
+    }
 }

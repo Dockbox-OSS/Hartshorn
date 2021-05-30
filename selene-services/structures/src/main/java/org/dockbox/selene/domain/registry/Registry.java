@@ -26,7 +26,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 @SuppressWarnings({ "UnusedReturnValue", "unused" })
@@ -45,18 +47,22 @@ public class Registry<V> extends HashMap<String, RegistryColumn<V>> {
      * Adds another Registry to this one. If the added Registry contains the same {@link
      * RegistryIdentifier}s, then that data will be added to the existing columns.
      *
-     * @param otherRegistry
+     * @param other
      *         The other Registry to add to this one.
      *
      * @return Itself.
      */
-    public Registry<V> addRegistry(@NotNull Map<RegistryIdentifier, RegistryColumn<V>> otherRegistry) {
-        otherRegistry.forEach(this::addData);
+    public Registry<V> addRegistry(@NotNull Map<RegistryIdentifier, RegistryColumn<V>> other) {
+        other.forEach(this::addData);
         return this;
     }
 
-    public Registry<V> addRegistry(@NotNull Registry<V> otherRegistry) {
-        this.putAll(otherRegistry);
+    public Registry<V> addRegistry(@NotNull Registry<V> other) {
+        // Iterate over entries instead of using putAll to avoid overwriting existing
+        // column values.
+        for (Entry<String, RegistryColumn<V>> column : other.entrySet()) {
+            this.addData(new SimpleIdentifier(column.getKey()), column.getValue());
+        }
         return this;
     }
 
@@ -343,5 +349,57 @@ public class Registry<V> extends HashMap<String, RegistryColumn<V>> {
                 else builder.append("| ").append(value).append("\n");
             });
         });
+    }
+
+    public RegistryColumn<V> get(RegistryIdentifier identifier) {
+        return super.get(identifier.getKey());
+    }
+
+    public boolean containsKey(RegistryIdentifier key) {
+        return super.containsKey(key.getKey());
+    }
+
+    public RegistryColumn<V> put(RegistryIdentifier key, RegistryColumn<V> value) {
+        return super.put(key.getKey(), value);
+    }
+
+    public RegistryColumn<V> remove(RegistryIdentifier key) {
+        return super.remove(key.getKey());
+    }
+
+    public RegistryColumn<V> getOrDefault(RegistryIdentifier key, RegistryColumn<V> defaultValue) {
+        return super.getOrDefault(key.getKey(), defaultValue);
+    }
+
+    public RegistryColumn<V> putIfAbsent(RegistryIdentifier key, RegistryColumn<V> value) {
+        return super.putIfAbsent(key.getKey(), value);
+    }
+
+    public boolean remove(RegistryIdentifier key, Object value) {
+        return super.remove(key.getKey(), value);
+    }
+
+    public boolean replace(RegistryIdentifier key, RegistryColumn<V> oldValue, RegistryColumn<V> newValue) {
+        return super.replace(key.getKey(), oldValue, newValue);
+    }
+
+    public RegistryColumn<V> replace(RegistryIdentifier key, RegistryColumn<V> value) {
+        return super.replace(key.getKey(), value);
+    }
+
+    public RegistryColumn<V> computeIfAbsent(RegistryIdentifier key, Function<? super String, ? extends RegistryColumn<V>> mappingFunction) {
+        return super.computeIfAbsent(key.getKey(), mappingFunction);
+    }
+
+    public RegistryColumn<V> computeIfPresent(RegistryIdentifier key, BiFunction<? super String, ? super RegistryColumn<V>, ? extends RegistryColumn<V>> remappingFunction) {
+        return super.computeIfPresent(key.getKey(), remappingFunction);
+    }
+
+    public RegistryColumn<V> compute(RegistryIdentifier key, BiFunction<? super String, ? super RegistryColumn<V>, ? extends RegistryColumn<V>> remappingFunction) {
+        return super.compute(key.getKey(), remappingFunction);
+    }
+
+    public RegistryColumn<V> merge(RegistryIdentifier key, RegistryColumn<V> value, BiFunction<? super RegistryColumn<V>, ? super RegistryColumn<V>, ? extends RegistryColumn<V>> remappingFunction) {
+        return super.merge(key.getKey(), value, remappingFunction);
     }
 }

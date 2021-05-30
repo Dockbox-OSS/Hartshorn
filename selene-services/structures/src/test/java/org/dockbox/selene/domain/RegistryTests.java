@@ -23,7 +23,6 @@ import org.dockbox.selene.domain.registry.RegistryColumn;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-// Disabled as Registry storage is being rewritten for XStream
 public class RegistryTests {
 
     @Test
@@ -94,7 +93,7 @@ public class RegistryTests {
     public void testThatRegistryCanBeFilteredByColumn() {
         Registry<Registry<String>> testRegistry = this.buildTestRegistry();
 
-        Registry<Registry<String>> result = testRegistry.removeColumnsIf(i -> TestIdentifier.BRICK == i);
+        Registry<Registry<String>> result = testRegistry.removeColumnsIf(TestIdentifier.BRICK::same);
 
         Assertions.assertTrue(result.containsColumns(TestIdentifier.SANDSTONE, TestIdentifier.COBBLESTONE));
         Assertions.assertFalse(result.containsColumns(TestIdentifier.BRICK));
