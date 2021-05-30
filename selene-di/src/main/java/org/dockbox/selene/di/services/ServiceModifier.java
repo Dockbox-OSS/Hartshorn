@@ -27,7 +27,7 @@ import java.lang.annotation.Annotation;
 public abstract class ServiceModifier<A extends Annotation> implements InjectionModifier<A> {
 
     public <T> boolean preconditions(Class<T> type, @Nullable T instance, InjectorProperty<?>... properties) {
-        return type.isAnnotationPresent(Service.class) && isModifiable(type, instance, properties);
+        return type.isAnnotationPresent(Service.class) && this.isModifiable(type, instance, properties);
     }
 
     protected abstract <T> boolean isModifiable(Class<T> type, @Nullable T instance, InjectorProperty<?>... properties);
