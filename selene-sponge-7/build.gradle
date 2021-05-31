@@ -34,7 +34,7 @@ plugins {
 
 apply plugin: 'net.minecraftforge.gradle'
 
-archivesBaseName = 'selene-sponge-api7'
+archivesBaseName = 'selene-sponge-7'
 group project.pluginGroup
 description 'Sponge API7.x implementation for Selene'
 sponge.plugin.id = pluginId

@@ -18,7 +18,9 @@
 subprojects { Project subProject ->
     dependencies {
         compileOnly project(':selene-service-parent')
-        compileOnly project(':selene-minecraft-server')
+
+        if (subProject.name != 'server')
+            compileOnly project(':selene-minecraft:server')
 
         testCompile project(':selene-service-parent')
     }

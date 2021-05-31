@@ -24,6 +24,6 @@ description 'Sample services for Selene'
 
 dependencies {
     compileOnly project(':selene-service-parent')
-    compileOnly project(':selene-minecraft-server')
-    compileOnly project(':selene-minecraft-services:plots')
+    compileOnly project(':selene-minecraft:server')
+    compileOnly project(':selene-minecraft:plots')
 }

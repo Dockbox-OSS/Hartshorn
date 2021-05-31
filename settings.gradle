@@ -20,7 +20,7 @@ rootProject.name = 'Selene'
 gradle.startParameter.continueOnFailure = true
 
 includeAll(rootDir, '')
-includeAll(new File(rootDir, 'selene-minecraft-services'), ':selene-minecraft-services')
+includeAll(new File(rootDir, 'selene-minecraft'), ':selene-minecraft')
 
 def includeAll(File dir, String prefix) {
     dir.listFiles().each {
