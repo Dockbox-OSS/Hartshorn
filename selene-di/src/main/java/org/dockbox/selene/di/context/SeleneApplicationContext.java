@@ -19,11 +19,13 @@ package org.dockbox.selene.di.context;
 
 import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.di.InjectConfiguration;
+import org.dockbox.selene.di.Modifier;
 import org.dockbox.selene.di.ProvisionFailure;
 import org.dockbox.selene.di.SeleneFactory;
 import org.dockbox.selene.di.adapter.ContextAdapter;
 import org.dockbox.selene.di.annotations.Named;
 import org.dockbox.selene.di.annotations.Service;
+import org.dockbox.selene.di.annotations.ServiceActivator;
 import org.dockbox.selene.di.binding.Bindings;
 import org.dockbox.selene.di.exceptions.ApplicationException;
 import org.dockbox.selene.di.inject.BeanContext;
@@ -36,9 +38,12 @@ import org.dockbox.selene.di.properties.InjectorProperty;
 import org.dockbox.selene.di.properties.UseFactory;
 import org.dockbox.selene.di.services.ServiceLocator;
 import org.dockbox.selene.util.Reflect;
+import org.dockbox.selene.util.SeleneUtils;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.util.List;
 import java.util.function.Consumer;
 
 import lombok.Getter;
@@ -47,11 +52,14 @@ public class SeleneApplicationContext extends ManagedSeleneContext {
 
     @Getter
     private final ContextAdapter adapter;
+    private final List<Modifier> modifiers;
 
-    public SeleneApplicationContext(Class<?> activationSource) {
+
+    public SeleneApplicationContext(Class<?> activationSource, Modifier... modifiers) {
         super(activationSource);
         this.adapter = new ContextAdapter(this.getActivator().inject(), this.getActivator().services());
         this.bind(ApplicationContext.class, this);
+        this.modifiers = SeleneUtils.asUnmodifiableList(modifiers);
     }
 
     @Override
@@ -74,7 +82,7 @@ public class SeleneApplicationContext extends ManagedSeleneContext {
 
         typeInstance = this.inject(type, typeInstance, additionalProperties);
 
-        for (InjectionModifier<?> serviceModifier : this.modifiers) {
+        for (InjectionModifier<?> serviceModifier : this.injectionModifiers) {
             if (serviceModifier.preconditions(type, typeInstance, additionalProperties))
                 typeInstance = serviceModifier.process(this, type, typeInstance, additionalProperties);
         }
@@ -128,6 +136,15 @@ public class SeleneApplicationContext extends ManagedSeleneContext {
             if (!Reflect.isConcrete(type) && type.isAnnotationPresent(Service.class)) return null;
             throw e;
         }
+    }
+
+    @Override
+    public boolean hasActivator(Class<? extends Annotation> activator) {
+        if (!activator.isAnnotationPresent(ServiceActivator.class))
+            throw new IllegalArgumentException("Requested activator " + activator.getSimpleName() + " is not decorated with @ServiceActivator");
+
+        if (this.modifiers.contains(Modifier.ACTIVATE_ALL)) return true;
+        else return super.hasActivator(activator);
     }
 
     @Override

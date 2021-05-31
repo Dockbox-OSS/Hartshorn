@@ -26,10 +26,5 @@ public enum TestIdentifier implements RegistryIdentifier {
     WOOD,
     FULLBLOCK,
     STAIR,
-    SLAB;
-
-    @Override
-    public String getKey() {
-        return this.name();
-    }
+    SLAB
 }

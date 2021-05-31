@@ -78,7 +78,7 @@ public class ApplicationContextTests {
             injectionPoints = ManagedSeleneContext.class.getDeclaredField("injectionPoints");
             injectionPoints.setAccessible(true);
 
-            serviceModifiers = ManagedSeleneContext.class.getDeclaredField("modifiers");
+            serviceModifiers = ManagedSeleneContext.class.getDeclaredField("injectionModifiers");
             serviceModifiers.setAccessible(true);
 
             serviceProcessors = ManagedSeleneContext.class.getDeclaredField("serviceProcessors");

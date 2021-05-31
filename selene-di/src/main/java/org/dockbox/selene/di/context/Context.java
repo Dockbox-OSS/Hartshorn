@@ -17,5 +17,12 @@
 
 package org.dockbox.selene.di.context;
 
+import org.dockbox.selene.api.domain.Exceptional;
+
+import java.util.List;
+
 public interface Context {
+    <C extends Context> Exceptional<C> first(Class<C> context);
+    <C extends Context> List<C> all(Class<C> context);
+    <C extends Context> void add(C context);
 }

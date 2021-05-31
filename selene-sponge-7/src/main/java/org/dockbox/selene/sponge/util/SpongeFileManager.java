@@ -18,14 +18,14 @@
 package org.dockbox.selene.sponge.util;
 
 import org.dockbox.selene.api.domain.Exceptional;
-import org.dockbox.selene.persistence.jackson.DefaultJacksonManager;
+import org.dockbox.selene.persistence.DefaultAbstractFileManager;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
 
 import java.nio.file.Path;
 
 @SuppressWarnings("InterfaceMayBeAnnotatedFunctional")
-public class SpongeFileManager extends DefaultJacksonManager {
+public class SpongeFileManager extends DefaultAbstractFileManager {
 
     @NotNull
     public Path getDataDir() {

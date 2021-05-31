@@ -45,8 +45,8 @@ public class CacheUpdateMethodModifier extends CacheServiceModifier<UpdateCache>
     }
 
     @Override
-    public <T> boolean preconditions(MethodProxyContext<T> context) {
-        final Parameter[] parameters = context.getMethod().getParameters();
+    public <T> boolean preconditions(ApplicationContext context, MethodProxyContext<T> methodContext) {
+        final Parameter[] parameters = methodContext.getMethod().getParameters();
         return parameters.length == 1;
     }
 

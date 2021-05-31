@@ -17,7 +17,6 @@
 
 package org.dockbox.selene.di.context;
 
-import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.di.InjectionPoint;
 import org.dockbox.selene.di.ProvisionFailure;
 import org.dockbox.selene.di.inject.InjectionModifier;
@@ -48,10 +47,6 @@ public interface ApplicationContext extends ApplicationBinder, SeleneContext {
     List<Annotation> activators();
     boolean hasActivator(Class<? extends Annotation> activator);
     <A> A activator(Class<A> activator);
-
-    <C extends Context> Exceptional<C> first(Class<C> context);
-    <C extends Context> List<C> all(Class<C> context);
-    <C extends Context> void add(C context);
 
     ServiceLocator locator();
 }

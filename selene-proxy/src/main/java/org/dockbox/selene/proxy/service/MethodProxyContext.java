@@ -17,12 +17,13 @@
 
 package org.dockbox.selene.proxy.service;
 
+import org.dockbox.selene.di.context.Context;
 import org.dockbox.selene.di.properties.InjectorProperty;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
-public interface MethodProxyContext<T> {
+public interface MethodProxyContext<T> extends Context {
 
     T getInstance();
     Class<T> getType();

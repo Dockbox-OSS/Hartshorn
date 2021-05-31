@@ -19,35 +19,19 @@ package org.dockbox.selene.test;
 
 import org.dockbox.selene.api.SeleneApplication;
 import org.dockbox.selene.api.SeleneInformation;
-import org.dockbox.selene.api.events.annotations.UseEvents;
-import org.dockbox.selene.api.i18n.annotations.UseResources;
-import org.dockbox.selene.cache.annotations.UseCaching;
-import org.dockbox.selene.commands.annotations.UseCommands;
-import org.dockbox.selene.config.annotations.UseConfigurations;
 import org.dockbox.selene.di.ApplicationContextAware;
+import org.dockbox.selene.di.Modifier;
 import org.dockbox.selene.di.adapter.InjectSource;
 import org.dockbox.selene.di.annotations.Activator;
 import org.dockbox.selene.di.annotations.InjectConfig;
 import org.dockbox.selene.di.annotations.InjectPhase;
-import org.dockbox.selene.di.annotations.UseBeanProvision;
-import org.dockbox.selene.discord.annotations.UseDiscordCommands;
-import org.dockbox.selene.proxy.annotations.UseProxying;
 import org.dockbox.selene.test.util.JUnitInjector;
 import org.dockbox.selene.test.util.LateJUnitInjector;
 
-import java.io.IOException;
 import java.lang.reflect.Field;
 
 import lombok.Getter;
 
-@UseBeanProvision
-@UseCommands
-@UseResources
-@UseConfigurations
-@UseCaching
-@UseDiscordCommands
-@UseEvents
-@UseProxying
 @Activator(
         inject = InjectSource.GUICE,
         bootstrap = JUnit5Bootstrap.class,
@@ -61,11 +45,11 @@ public class JUnit5Application {
     @Getter
     private static final JUnitInformation information = new JUnitInformation();
 
-    public static void prepareBootstrap() throws IOException, NoSuchFieldException, IllegalAccessException {
+    public static void prepareBootstrap() throws NoSuchFieldException, IllegalAccessException {
         final Field instance = ApplicationContextAware.class.getDeclaredField("instance");
         instance.setAccessible(true);
         instance.set(null, null);
 
-        SeleneApplication.create(JUnit5Application.class).run();
+        SeleneApplication.create(JUnit5Application.class, Modifier.ACTIVATE_ALL).run();
     }
 }

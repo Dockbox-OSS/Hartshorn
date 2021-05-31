@@ -15,18 +15,31 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.persistence.annotations;
+package org.dockbox.selene.persistence.service;
 
 import org.dockbox.selene.persistence.FileType;
+import org.dockbox.selene.persistence.annotations.Deserialise;
+import org.dockbox.selene.persistence.annotations.File;
+import org.dockbox.selene.persistence.annotations.Serialise;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
-public @interface Serialise {
-    FileType filetype() default FileType.JSON;
-    File value() default @File;
+@AllArgsConstructor
+@Getter
+public class PersistenceAnnotationContext {
+
+    FileType filetype;
+    File file;
+
+    public PersistenceAnnotationContext(Serialise serialise) {
+        this.file = serialise.value();
+        this.filetype = serialise.filetype();
+    }
+
+    public PersistenceAnnotationContext(Deserialise deserialise) {
+        this.file = deserialise.value();
+        this.filetype = deserialise.filetype();
+    }
+
 }

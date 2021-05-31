@@ -20,10 +20,9 @@ package org.dockbox.selene.persistence;
 import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.domain.TypedOwner;
-import org.dockbox.selene.di.annotations.Wired;
-import org.dockbox.selene.di.context.ApplicationContext;
 import org.dockbox.selene.di.properties.InjectorProperty;
-import org.dockbox.selene.util.Reflect;
+import org.dockbox.selene.persistence.mapping.GenericType;
+import org.dockbox.selene.persistence.mapping.ObjectMapper;
 import org.dockbox.selene.util.SeleneUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -34,20 +33,18 @@ import java.nio.file.StandardCopyOption;
 
 public abstract class DefaultAbstractFileManager implements FileManager {
 
-    @Wired
-    private ApplicationContext context;
-    private FileType fileType;
+    private final ObjectMapper mapper;
 
-    protected DefaultAbstractFileManager(FileType fileType) {
-        this.fileType = fileType;
+    protected DefaultAbstractFileManager() {
+        this.mapper = Selene.context().get(ObjectMapper.class);
     }
 
     public FileType getFileType() {
-        return this.fileType;
+        return this.mapper.getFileType();
     }
 
     protected void setFileType(FileType fileType) {
-        this.fileType = fileType;
+        this.mapper.setFileType(fileType);
     }
 
     public Path getDataFile(Class<?> owner) {
@@ -124,18 +121,6 @@ public abstract class DefaultAbstractFileManager implements FileManager {
                 .or(false);
     }
 
-    @SuppressWarnings("unchecked")
-    protected <T> Exceptional<T> correctPersistentCapable(Path file, Class<T> type) {
-        if (Reflect.assignableFrom(PersistentCapable.class, type)) {
-            // Provision basis is required here, as injected types will typically pass in a interface type. If no injection point is available a
-            // regular instance is created through available constructors.
-            Class<? extends PersistentModel<?>> modelType = ((PersistentCapable<?>) this.context.get(type)).getModelClass();
-            @NotNull Exceptional<? extends PersistentModel<?>> model = this.read(file, modelType);
-            return model.map(PersistentModel::toPersistentCapable).map(content -> (T) content);
-        }
-        return Exceptional.none();
-    }
-
     @Override
     public void stateEnabling(InjectorProperty<?>... properties) {
         for (InjectorProperty<?> property : properties)
@@ -149,5 +134,20 @@ public abstract class DefaultAbstractFileManager implements FileManager {
                 }
                 break;
             }
+    }
+
+    @Override
+    public <T> Exceptional<T> read(Path file, Class<T> type) {
+        return this.mapper.read(file, type);
+    }
+
+    @Override
+    public <T> Exceptional<T> read(Path file, GenericType<T> type) {
+        return this.mapper.read(file, type);
+    }
+
+    @Override
+    public <T> Exceptional<Boolean> write(Path file, T content) {
+        return this.mapper.write(file, content);
     }
 }

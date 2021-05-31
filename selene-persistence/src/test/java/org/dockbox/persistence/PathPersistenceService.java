@@ -15,19 +15,21 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.di.context;
+package org.dockbox.persistence;
 
-import org.dockbox.selene.di.inject.DelegatedBinder;
-import org.dockbox.selene.di.properties.InjectorProperty;
+import org.dockbox.selene.di.annotations.Service;
+import org.dockbox.selene.persistence.annotations.Deserialise;
+import org.dockbox.selene.persistence.annotations.Serialise;
 
-import java.util.function.Consumer;
+import java.nio.file.Path;
 
-public interface SeleneContext extends DelegatedBinder, Context {
+@Service
+public interface PathPersistenceService {
 
-    <T> T get(Class<T> type, InjectorProperty<?>... additionalProperties);
+    @Serialise
+    boolean writeToPath(PersistentElement element, Path path);
 
-    <T> T get(Class<T> type, Object... varargs);
-
-    <T> void with(Class<T> type, Consumer<T> consumer);
+    @Deserialise
+    PersistentElement readFromPath(Path path);
 
 }

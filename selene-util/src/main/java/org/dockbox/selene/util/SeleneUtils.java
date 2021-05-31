@@ -994,6 +994,10 @@ public final class SeleneUtils {
         return true;
     }
 
+    public static String strip(String s) {
+        return s.replaceAll("[\n\r ]+", "").trim();
+    }
+
     @Contract("null -> true")
     public static boolean isEmpty(final Object... array) {
         return null == array || 0 == Array.getLength(array);

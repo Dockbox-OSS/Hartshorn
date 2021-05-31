@@ -15,19 +15,18 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.di.context;
+package org.dockbox.selene.persistence.annotations;
 
-import org.dockbox.selene.di.inject.DelegatedBinder;
-import org.dockbox.selene.di.properties.InjectorProperty;
+import org.dockbox.selene.persistence.FileType;
 
-import java.util.function.Consumer;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-public interface SeleneContext extends DelegatedBinder, Context {
-
-    <T> T get(Class<T> type, InjectorProperty<?>... additionalProperties);
-
-    <T> T get(Class<T> type, Object... varargs);
-
-    <T> void with(Class<T> type, Consumer<T> consumer);
-
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.METHOD)
+public @interface Deserialise {
+    FileType filetype() default FileType.JSON;
+    File value() default @File;
 }

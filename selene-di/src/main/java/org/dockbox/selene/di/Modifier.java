@@ -15,13 +15,16 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.persistence;
-
-import com.fasterxml.jackson.core.type.TypeReference;
+package org.dockbox.selene.di;
 
 /**
- * Generic type reference, exposing a self-declared type for API usage while maintaining easy
- * conversion to Jackson dependencies.
- * @param <T> The generic type
+ * Indicates a potential override of existing logic during the bootstrapping process.
  */
-public abstract class GenericType<T> extends TypeReference<T> { }
+public enum Modifier {
+    /*
+     * Makes it so application activators do not need to have service activator
+     * annotations present, and will indicate all activators are present when
+     * requested.
+     */
+    ACTIVATE_ALL
+}

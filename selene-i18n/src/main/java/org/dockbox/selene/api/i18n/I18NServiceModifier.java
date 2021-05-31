@@ -59,8 +59,8 @@ public class I18NServiceModifier extends ServiceAnnotatedMethodModifier<Resource
     }
 
     @Override
-    public <T> boolean preconditions(MethodProxyContext<T> context) {
-        return Reflect.assignableFrom(ResourceEntry.class, context.getReturnType());
+    public <T> boolean preconditions(ApplicationContext context, MethodProxyContext<T> methodContext) {
+        return Reflect.assignableFrom(ResourceEntry.class, methodContext.getReturnType());
     }
 
     @Override

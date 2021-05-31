@@ -15,25 +15,25 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.domain.registry;
+package org.dockbox.selene.persistence.mapping;
 
-import org.dockbox.selene.api.entity.annotations.Entity;
-import org.jetbrains.annotations.NonNls;
+import org.dockbox.selene.persistence.FileType;
 
-@Entity(value = "identifier")
-public interface RegistryIdentifier {
-    @NonNls
-    default String getKey() {
-        if (this.getClass().isEnum()) {
-            return ((Enum<?>) this).name();
-        }
-        throw new UnsupportedOperationException("Non-enum type " + this.getClass().getSimpleName() + " does not override getKey()");
+public abstract class DefaultObjectMapper implements ObjectMapper {
+
+    protected FileType fileType;
+
+    protected DefaultObjectMapper(FileType fileType) {
+        this.fileType = fileType;
     }
 
-    default boolean same(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof RegistryIdentifier)) return false;
-        RegistryIdentifier that = (RegistryIdentifier) o;
-        return this.getKey().equals(that.getKey());
+    @Override
+    public void setFileType(FileType fileType) {
+        this.fileType = fileType;
+    }
+
+    @Override
+    public FileType getFileType() {
+        return this.fileType;
     }
 }

@@ -29,8 +29,8 @@ public class ApplicationContextAware {
 
     private static ApplicationContextAware instance;
 
-    public void create(Class<?> activationSource) {
-        this.context = new SeleneApplicationContext(activationSource);
+    public void create(Class<?> activationSource, Modifier... modifiers) {
+        this.context = new SeleneApplicationContext(activationSource, modifiers);
     }
 
     public static ApplicationContextAware instance() {

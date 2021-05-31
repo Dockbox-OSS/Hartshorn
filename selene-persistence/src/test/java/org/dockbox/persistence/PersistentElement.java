@@ -15,19 +15,17 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.di.context;
+package org.dockbox.persistence;
 
-import org.dockbox.selene.di.inject.DelegatedBinder;
-import org.dockbox.selene.di.properties.InjectorProperty;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import java.util.function.Consumer;
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class PersistentElement {
 
-public interface SeleneContext extends DelegatedBinder, Context {
-
-    <T> T get(Class<T> type, InjectorProperty<?>... additionalProperties);
-
-    <T> T get(Class<T> type, Object... varargs);
-
-    <T> void with(Class<T> type, Consumer<T> consumer);
+    private String name;
 
 }

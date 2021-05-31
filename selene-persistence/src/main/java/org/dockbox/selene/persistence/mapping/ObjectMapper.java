@@ -15,19 +15,25 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.di.context;
+package org.dockbox.selene.persistence.mapping;
 
-import org.dockbox.selene.di.inject.DelegatedBinder;
-import org.dockbox.selene.di.properties.InjectorProperty;
+import org.dockbox.selene.api.domain.Exceptional;
+import org.dockbox.selene.persistence.FileType;
 
-import java.util.function.Consumer;
+import java.nio.file.Path;
 
-public interface SeleneContext extends DelegatedBinder, Context {
+public interface ObjectMapper {
+    
+    <T> Exceptional<T> read(String content, Class<T> type);
+    <T> Exceptional<T> read(Path path, Class<T> type);
 
-    <T> T get(Class<T> type, InjectorProperty<?>... additionalProperties);
+    <T> Exceptional<T> read(String content, GenericType<T> type);
+    <T> Exceptional<T> read(Path path, GenericType<T> type);
 
-    <T> T get(Class<T> type, Object... varargs);
+    <T> Exceptional<Boolean> write(Path path, T content);
+    <T> Exceptional<String> write(T content);
 
-    <T> void with(Class<T> type, Consumer<T> consumer);
+    void setFileType(FileType fileType);
+    FileType getFileType();
 
 }

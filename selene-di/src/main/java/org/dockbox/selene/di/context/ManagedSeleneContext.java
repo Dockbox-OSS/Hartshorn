@@ -17,7 +17,6 @@
 
 package org.dockbox.selene.di.context;
 
-import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.di.InjectionPoint;
 import org.dockbox.selene.di.ProvisionFailure;
 import org.dockbox.selene.di.annotations.Activator;
@@ -44,15 +43,13 @@ import java.util.stream.Collectors;
 import lombok.AccessLevel;
 import lombok.Getter;
 
-public abstract class ManagedSeleneContext implements ApplicationContext {
+public abstract class ManagedSeleneContext extends DefaultContext implements ApplicationContext {
 
     protected static final Logger log = LoggerFactory.getLogger("Selene Managed Context");
     protected final transient Set<InjectionPoint<?>> injectionPoints = SeleneUtils.emptyConcurrentSet();
 
-    protected final transient Set<InjectionModifier<?>> modifiers = SeleneUtils.emptyConcurrentSet();
+    protected final transient Set<InjectionModifier<?>> injectionModifiers = SeleneUtils.emptyConcurrentSet();
     protected final transient Set<ServiceProcessor<?>> serviceProcessors = SeleneUtils.emptyConcurrentSet();
-
-    protected final transient Set<Context> contexts = SeleneUtils.emptyConcurrentSet();
     private final Set<Class<?>> services = SeleneUtils.emptyConcurrentSet();
 
     @Getter(AccessLevel.PROTECTED)
@@ -161,7 +158,7 @@ public abstract class ManagedSeleneContext implements ApplicationContext {
 
     @Override
     public void add(InjectionModifier<?> modifier) {
-        this.modifiers.add(modifier);
+        this.injectionModifiers.add(modifier);
     }
 
     @Override
@@ -173,6 +170,7 @@ public abstract class ManagedSeleneContext implements ApplicationContext {
     public boolean hasActivator(Class<? extends Annotation> activator) {
         if (!activator.isAnnotationPresent(ServiceActivator.class))
             throw new IllegalArgumentException("Requested activator " + activator.getSimpleName() + " is not decorated with @ServiceActivator");
+
         return this.activators.stream()
                 .map(Annotation::annotationType)
                 .collect(Collectors.toList())
@@ -185,26 +183,4 @@ public abstract class ManagedSeleneContext implements ApplicationContext {
         return (A) this.activators.stream().filter(a -> a.annotationType().equals(activator)).findFirst().orElse(null);
     }
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public <C extends Context> Exceptional<C> first(Class<C> context) {
-        return Exceptional.of(this.contexts.stream()
-                .filter(c -> c.getClass().equals(context))
-                .findFirst())
-                .map(c -> (C) c);
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public <C extends Context> List<C> all(Class<C> context) {
-        return SeleneUtils.asUnmodifiableList(this.contexts.stream()
-                .filter( c -> c.getClass().equals(context))
-                .map(c -> (C) c)
-                .collect(Collectors.toList()));
-    }
-
-    @Override
-    public <C extends Context> void add(C context) {
-        if (context != null) this.contexts.add(context);
-    }
 }

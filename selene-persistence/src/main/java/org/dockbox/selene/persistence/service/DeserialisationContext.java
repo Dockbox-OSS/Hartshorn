@@ -15,19 +15,15 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.di.context;
+package org.dockbox.selene.persistence.service;
 
-import org.dockbox.selene.di.inject.DelegatedBinder;
-import org.dockbox.selene.di.properties.InjectorProperty;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
-import java.util.function.Consumer;
+@Getter
+@AllArgsConstructor
+public class DeserialisationContext extends SerialisationContext {
 
-public interface SeleneContext extends DelegatedBinder, Context {
-
-    <T> T get(Class<T> type, InjectorProperty<?>... additionalProperties);
-
-    <T> T get(Class<T> type, Object... varargs);
-
-    <T> void with(Class<T> type, Consumer<T> consumer);
+    private final Class<?> type;
 
 }

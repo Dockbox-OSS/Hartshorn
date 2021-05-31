@@ -22,6 +22,7 @@ import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.domain.OwnerLookup;
 import org.dockbox.selene.api.domain.TypedOwner;
 import org.dockbox.selene.di.properties.InjectableType;
+import org.dockbox.selene.persistence.mapping.GenericType;
 
 import java.nio.file.Path;
 

@@ -15,19 +15,27 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.di.context;
+package org.dockbox.selene.persistence.service;
 
-import org.dockbox.selene.di.inject.DelegatedBinder;
-import org.dockbox.selene.di.properties.InjectorProperty;
+import org.dockbox.selene.di.context.DefaultContext;
+import org.dockbox.selene.persistence.FileType;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.function.Consumer;
+import java.nio.file.Path;
 
-public interface SeleneContext extends DelegatedBinder, Context {
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-    <T> T get(Class<T> type, InjectorProperty<?>... additionalProperties);
+@Getter
+@Setter
+@NoArgsConstructor
+class SerialisationContext extends DefaultContext {
 
-    <T> T get(Class<T> type, Object... varargs);
+    private SerialisationTarget target;
+    private FileType fileType;
 
-    <T> void with(Class<T> type, Consumer<T> consumer);
+    @Nullable
+    private Path predeterminedPath;
 
 }

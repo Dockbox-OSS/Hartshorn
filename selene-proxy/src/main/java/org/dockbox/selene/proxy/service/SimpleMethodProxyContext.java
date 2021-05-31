@@ -17,6 +17,7 @@
 
 package org.dockbox.selene.proxy.service;
 
+import org.dockbox.selene.di.context.DefaultContext;
 import org.dockbox.selene.di.properties.InjectorProperty;
 import org.dockbox.selene.util.Reflect;
 
@@ -26,7 +27,7 @@ import java.lang.reflect.Method;
 import lombok.Getter;
 
 @Getter
-public class SimpleMethodProxyContext<T> implements MethodProxyContext<T> {
+public class SimpleMethodProxyContext<T> extends DefaultContext implements MethodProxyContext<T> {
 
     private final T instance;
     private final Class<T> type;
