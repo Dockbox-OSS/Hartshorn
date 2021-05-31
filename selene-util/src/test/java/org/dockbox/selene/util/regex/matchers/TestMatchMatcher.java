@@ -19,8 +19,8 @@ package org.dockbox.selene.util.regex.matchers;
 
 import org.dockbox.selene.util.VerbalExpression;
 import org.hamcrest.Description;
-import org.hamcrest.Factory;
 import org.hamcrest.TypeSafeMatcher;
+import org.junit.jupiter.api.TestFactory;
 
 // import org.hamcrest.TypeSafeMatcher;
 
@@ -33,7 +33,7 @@ public final class TestMatchMatcher extends TypeSafeMatcher<VerbalExpression> {
         this.toTest = toTest;
     }
 
-    @Factory
+    @TestFactory
     public static TestMatchMatcher matchesTo(String test) {
         return new TestMatchMatcher(test);
     }

@@ -19,8 +19,8 @@ package org.dockbox.selene.util.regex.matchers;
 
 import org.dockbox.selene.util.VerbalExpression;
 import org.hamcrest.Description;
-import org.hamcrest.Factory;
 import org.hamcrest.TypeSafeMatcher;
+import org.junit.jupiter.api.TestFactory;
 
 /** User: lanwen Date: 29.05.14 Time: 20:06 */
 public final class TestsExactMatcher extends TypeSafeMatcher<VerbalExpression> {
@@ -31,7 +31,7 @@ public final class TestsExactMatcher extends TypeSafeMatcher<VerbalExpression> {
         this.toTest = toTest;
     }
 
-    @Factory
+    @TestFactory
     public static TestsExactMatcher matchesExactly(String test) {
         return new TestsExactMatcher(test);
     }

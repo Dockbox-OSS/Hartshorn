@@ -58,7 +58,7 @@ dependencies {
     testFixturesRuntime "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
     testFixturesCompile "org.hamcrest:java-hamcrest:$hamcrestVersion"
 
-    testFixturesCompile "org.mockito:mockito-all:$mockitoVersion"
+    testFixturesCompile "org.mockito:mockito-inline:$mockitoVersion"
 
 
     testFixturesCompile 'org.projectlombok:lombok:1.18.20'

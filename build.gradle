@@ -120,7 +120,7 @@ allprojects {
             testRuntime "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
             testCompile "org.hamcrest:java-hamcrest:$hamcrestVersion"
 
-            testCompile "org.mockito:mockito-all:$mockitoVersion"
+            testCompile "org.mockito:mockito-inline:$mockitoVersion"
 
             testCompile testFixtures(project(":selene-test"))
 
