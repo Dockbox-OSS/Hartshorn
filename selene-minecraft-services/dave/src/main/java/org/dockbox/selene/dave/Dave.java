@@ -36,7 +36,7 @@ import org.dockbox.selene.di.properties.InjectableType;
 import org.dockbox.selene.di.properties.InjectorProperty;
 import org.dockbox.selene.discord.events.DiscordChatReceivedEvent;
 import org.dockbox.selene.persistence.FileManager;
-import org.dockbox.selene.server.events.ServerReloadEvent;
+import org.dockbox.selene.server.minecraft.events.server.ServerReloadEvent;
 import org.dockbox.selene.server.minecraft.events.chat.SendChatEvent;
 import org.dockbox.selene.server.minecraft.players.Player;
 import org.dockbox.selene.util.SeleneUtils;

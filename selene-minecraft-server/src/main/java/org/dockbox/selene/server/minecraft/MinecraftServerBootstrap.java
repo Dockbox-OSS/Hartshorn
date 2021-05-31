@@ -19,7 +19,7 @@ package org.dockbox.selene.server.minecraft;
 
 import org.dockbox.selene.api.SeleneBootstrap;
 import org.dockbox.selene.api.events.EventBus;
-import org.dockbox.selene.server.events.ServerInitEvent;
+import org.dockbox.selene.server.minecraft.events.server.ServerInitEvent;
 
 public class MinecraftServerBootstrap extends SeleneBootstrap {
 

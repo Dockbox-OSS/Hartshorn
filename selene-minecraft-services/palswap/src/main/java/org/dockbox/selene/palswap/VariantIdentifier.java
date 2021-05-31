@@ -21,7 +21,7 @@ import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.SeleneBootstrap;
 import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.i18n.common.Language;
-import org.dockbox.selene.domain.registry.RegistryIdentifier;
+import org.dockbox.selene.persistence.registry.RegistryIdentifier;
 import org.dockbox.selene.palswap.fileparsers.BlockRegistryParser;
 import org.dockbox.selene.palswap.fileparsers.ItemData;
 import org.dockbox.selene.persistence.FileManager;

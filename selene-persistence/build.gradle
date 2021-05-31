@@ -31,4 +31,13 @@ dependencies {
 
     compile 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.12.3'
     compile 'org.codehaus.woodstox:woodstox-core-asl:4.4.1'
+
+
+    // SQL Extension dependencies
+    compile "org.jooq:jooq:$jooqVersion"
+    compile "org.jooq:jooq-meta:$jooqVersion"
+    compile "org.jooq:jooq-codegen:$jooqVersion"
+
+    testRuntime "org.jooq:jooq:$jooqVersion"
+    testCompile "org.xerial:sqlite-jdbc:$xerialSqliteJdbcVersion"
 }

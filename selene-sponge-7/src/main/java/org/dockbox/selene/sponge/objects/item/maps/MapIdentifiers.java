@@ -17,8 +17,8 @@
 
 package org.dockbox.selene.sponge.objects.item.maps;
 
-import org.dockbox.selene.domain.table.column.ColumnIdentifier;
-import org.dockbox.selene.domain.table.column.SimpleColumnIdentifier;
+import org.dockbox.selene.persistence.table.column.ColumnIdentifier;
+import org.dockbox.selene.persistence.table.column.SimpleColumnIdentifier;
 
 public final class MapIdentifiers {
 

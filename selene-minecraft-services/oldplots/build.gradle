@@ -1,4 +1,3 @@
 dependencies {
-    compileOnly project(':selene-services:database')
-    compileOnly project(':selene-services:structures')
+    compileOnly project(':selene-persistence')
 }

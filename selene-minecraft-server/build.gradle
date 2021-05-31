@@ -20,7 +20,5 @@ dependencies {
     compile project(':selene-service-parent')
 
     compile project(':selene-keys')
-    compile project(':selene-server')
-    compile project(':selene-services')
     compile project(':selene-commands')
 }

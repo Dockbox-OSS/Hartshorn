@@ -24,7 +24,7 @@ import org.dockbox.selene.api.exceptions.Except;
 import org.dockbox.selene.di.annotations.Service;
 import org.dockbox.selene.di.annotations.Wired;
 import org.dockbox.selene.persistence.FileManager;
-import org.dockbox.selene.server.events.ServerUpdateEvent;
+import org.dockbox.selene.server.minecraft.events.server.ServerUpdateEvent;
 
 import java.io.IOException;
 import java.nio.file.FileSystems;

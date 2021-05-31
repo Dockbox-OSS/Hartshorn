@@ -26,11 +26,4 @@ dependencies {
     compileOnly project(':selene-service-parent')
     compileOnly project(':selene-minecraft-server')
     compileOnly project(':selene-minecraft-services:plots')
-
-    new File(parent.rootDir, 'selene-services').listFiles().each {
-        if (it.directory && new File(it, 'build.gradle').exists()) {
-            compileOnly project(":selene-services:${it.name}")
-            testImplementation project(":selene-services:${it.name}")
-        }
-    }
 }

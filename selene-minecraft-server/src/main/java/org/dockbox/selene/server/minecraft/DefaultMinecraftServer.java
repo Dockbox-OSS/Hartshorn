@@ -24,8 +24,6 @@ import org.dockbox.selene.api.i18n.common.Language;
 import org.dockbox.selene.commands.annotations.Command;
 import org.dockbox.selene.commands.context.CommandContext;
 import org.dockbox.selene.di.annotations.Wired;
-import org.dockbox.selene.server.DefaultServer;
-import org.dockbox.selene.server.DefaultServerResources;
 import org.dockbox.selene.server.minecraft.players.Player;
 
 @Entity(value = "minecraft", serializable = false)

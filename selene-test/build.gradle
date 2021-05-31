@@ -41,12 +41,6 @@ dependencies {
         }
     }
 
-    new File(rootDir, 'selene-services').listFiles().each {
-        if (it.directory && new File(it, 'build.gradle').exists()) {
-            testFixturesCompile project(":selene-services:${it.name}")
-        }
-    }
-
     new File(rootDir, 'selene-minecraft-services').listFiles().each {
         if (it.directory && new File(it, 'build.gradle').exists()) {
             testFixturesCompile project(":selene-minecraft-services:${it.name}")

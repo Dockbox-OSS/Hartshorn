@@ -17,8 +17,8 @@
 
 package org.dockbox.selene.oldplots;
 
-import org.dockbox.selene.domain.table.column.ColumnIdentifier;
-import org.dockbox.selene.domain.table.column.SimpleColumnIdentifier;
+import org.dockbox.selene.persistence.table.column.ColumnIdentifier;
+import org.dockbox.selene.persistence.table.column.SimpleColumnIdentifier;
 
 public final class OldPlotsIdentifiers {
 
