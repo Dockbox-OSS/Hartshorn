@@ -21,13 +21,15 @@ import org.dockbox.selene.di.annotations.Service;
 import org.dockbox.selene.persistence.annotations.Deserialise;
 import org.dockbox.selene.persistence.annotations.Serialise;
 
+import java.nio.file.Path;
+
 @Service
-public interface PersistenceService {
+public interface PathPersistenceService {
 
     @Serialise
-    String writeToString(PersistentElement element);
+    boolean writeToPath(PersistentElement element, Path path);
 
     @Deserialise
-    PersistentElement readFromString(String raw);
+    PersistentElement readFromPath(Path path);
 
 }

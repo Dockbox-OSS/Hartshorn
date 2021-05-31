@@ -18,11 +18,14 @@
 package org.dockbox.persistence;
 
 import org.dockbox.selene.api.Selene;
+import org.dockbox.selene.persistence.FileManager;
 import org.dockbox.selene.test.SeleneJUnit5Runner;
 import org.dockbox.selene.util.SeleneUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+
+import java.nio.file.Path;
 
 @ExtendWith(SeleneJUnit5Runner.class)
 public class SerialisationTests {
@@ -35,5 +38,64 @@ public class SerialisationTests {
 
         Assertions.assertNotNull(json);
         Assertions.assertEquals("{\"name\":\"sample\"}", SeleneUtils.strip(json));
+    }
+
+    @Test
+    void testFromStringDeserialisation() {
+        final PersistenceService service = Selene.context().get(PersistenceService.class);
+        final String json = "{\"name\":\"sample\"}";
+        final PersistentElement element = service.readFromString(json);
+
+        Assertions.assertNotNull(element);
+        Assertions.assertEquals("sample", element.getName());
+    }
+
+    @Test
+    void testToPathSerialisation() {
+        final PathPersistenceService service = Selene.context().get(PathPersistenceService.class);
+        final PersistentElement element = new PersistentElement("sample");
+        final boolean result = service.writeToPath(element, this.getPath());
+
+        Assertions.assertTrue(result);
+    }
+
+    @Test
+    void testFromPathDeserialisation() {
+        final PathPersistenceService service = Selene.context().get(PathPersistenceService.class);
+        final PersistentElement element = new PersistentElement("sample");
+        final Path path = this.getPath();
+
+        final boolean result = service.writeToPath(element, path);
+        Assertions.assertTrue(result);
+
+        final PersistentElement out = service.readFromPath(path);
+        Assertions.assertNotNull(out);
+        Assertions.assertEquals("sample", out.getName());
+    }
+
+    @Test
+    void testToAnnotationPathSerialisation() {
+        final AnnotationPathPersistenceService service = Selene.context().get(AnnotationPathPersistenceService.class);
+        final PersistentElement element = new PersistentElement("sample");
+        final boolean result = service.writeToPath(element);
+
+        Assertions.assertTrue(result);
+    }
+
+    @Test
+    void testFromAnnotationPathDeserialisation() {
+        final AnnotationPathPersistenceService service = Selene.context().get(AnnotationPathPersistenceService.class);
+        final PersistentElement element = new PersistentElement("sample");
+
+        final boolean result = service.writeToPath(element);
+        Assertions.assertTrue(result);
+
+        final PersistentElement out = service.readFromPath();
+        Assertions.assertNotNull(out);
+        Assertions.assertEquals("sample", out.getName());
+    }
+
+    private Path getPath() {
+        return Selene.context().get(FileManager.class).getDataFile(Selene.class, System.nanoTime() + "-persistence.tmp");
     }
 }

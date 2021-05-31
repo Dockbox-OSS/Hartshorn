@@ -17,17 +17,18 @@
 
 package org.dockbox.persistence;
 
+import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.di.annotations.Service;
 import org.dockbox.selene.persistence.annotations.Deserialise;
 import org.dockbox.selene.persistence.annotations.Serialise;
 
-@Service
-public interface PersistenceService {
+@Service(owner = Selene.class)
+public interface AnnotationPathPersistenceService {
 
     @Serialise
-    String writeToString(PersistentElement element);
+    boolean writeToPath(PersistentElement element);
 
     @Deserialise
-    PersistentElement readFromString(String raw);
+    PersistentElement readFromPath();
 
 }
