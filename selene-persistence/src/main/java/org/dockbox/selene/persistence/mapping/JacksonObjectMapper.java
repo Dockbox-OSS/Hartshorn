@@ -151,14 +151,14 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
         if (null == this.mapper) {
             this.mapper = this.getMapper(this.getFileType());
             this.mapper.setAnnotationIntrospector(new PropertyAliasIntrospector());
-            this.mapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);
-            this.mapper.configure(Feature.ALLOW_COMMENTS, true);
-            this.mapper.configure(Feature.ALLOW_YAML_COMMENTS, true);
-            this.mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
-            this.mapper.configure(SerializationFeature.WRITE_SINGLE_ELEM_ARRAYS_UNWRAPPED, true);
-            this.mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-            this.mapper.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
-            this.mapper.configure(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS, true);
+            this.mapper.enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES);
+            this.mapper.enable(Feature.ALLOW_COMMENTS);
+            this.mapper.enable(Feature.ALLOW_YAML_COMMENTS);
+            this.mapper.enable(SerializationFeature.INDENT_OUTPUT);
+            this.mapper.enable(SerializationFeature.WRITE_SINGLE_ELEM_ARRAYS_UNWRAPPED);
+            this.mapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
+            this.mapper.enable(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS);
+            this.mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         }
         return this.mapper;
     }
