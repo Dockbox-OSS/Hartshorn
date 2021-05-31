@@ -46,7 +46,7 @@ dependencies {
     minecraft "net.minecraftforge:forge:${minecraftForge112}"
     compileOnly project(':selene-parent')
     compileOnly project(':selene-keys')
-    compileOnly project(':selene-minecraft-server')
+    compileOnly project(':selene-minecraft:server')
 }
 
 shadowJar {
