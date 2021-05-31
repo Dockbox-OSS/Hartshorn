@@ -64,8 +64,8 @@ public class CachedMethodModifier extends CacheServiceModifier<Cached> {
     }
 
     @Override
-    public <T> boolean preconditions(MethodProxyContext<T> context) {
-        return Reflect.assignableFrom(Collection.class, context.getReturnType());
+    public <T> boolean preconditions(ApplicationContext context, MethodProxyContext<T> methodContext) {
+        return Reflect.assignableFrom(Collection.class, methodContext.getReturnType());
     }
 
     @Override
