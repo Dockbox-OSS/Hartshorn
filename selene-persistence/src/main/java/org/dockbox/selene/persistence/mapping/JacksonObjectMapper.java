@@ -131,7 +131,8 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
         return this.writeInternal(
                 content,
                 () -> this.write(((PersistentCapable<?>) content).toPersistentModel()),
-                () -> this.configureMapper().writerWithDefaultPrettyPrinter().writeValueAsString(content));
+                () -> this.configureMapper().writerWithDefaultPrettyPrinter().writeValueAsString(content))
+                .map(out -> out.replaceAll("\\r", ""));
     }
 
     private <T, R> Exceptional<R> writeInternal(T content, Supplier<Exceptional<R>> capable, Callable<R> writer) {
