@@ -15,8 +15,9 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.persistence;
+package org.dockbox.persistence.service;
 
+import org.dockbox.persistence.PersistentElement;
 import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.persistence.FileManager;
 import org.dockbox.selene.test.SeleneJUnit5Runner;
