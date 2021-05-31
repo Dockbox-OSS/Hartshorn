@@ -17,15 +17,9 @@
 
 package org.dockbox.persistence;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+public interface Element {
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-public class PersistentElement implements Element {
-
-    private String name;
+    void setName(String name);
+    String getName();
 
 }

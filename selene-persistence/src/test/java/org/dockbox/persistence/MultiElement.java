@@ -24,8 +24,14 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class PersistentElement implements Element {
+public class MultiElement implements Element {
 
     private String name;
+    private String other;
+
+    public void setName(String name) {
+        this.name = name;
+        this.other = name;
+    }
 
 }

@@ -17,6 +17,8 @@
 
 package org.dockbox.persistence;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -24,8 +26,19 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class PersistentElement implements Element {
+public class NestedElement implements Element {
 
-    private String name;
+    private EntityElement child;
 
+    @Override
+    @JsonIgnore
+    public void setName(String name) {
+        this.child.setName(name);
+    }
+
+    @Override
+    @JsonIgnore
+    public String getName() {
+        return this.child.getName();
+    }
 }

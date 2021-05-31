@@ -21,14 +21,19 @@ import com.fasterxml.jackson.core.JsonParser.Feature;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.javaprop.JavaPropsMapper;
 import com.fasterxml.jackson.dataformat.toml.TomlMapper;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLParser;
 
 import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.domain.Exceptional;
+import org.dockbox.selene.api.entity.annotations.Entity;
 import org.dockbox.selene.di.annotations.Binds;
 import org.dockbox.selene.persistence.FileManager;
 import org.dockbox.selene.persistence.FileType;
@@ -41,6 +46,8 @@ import org.jetbrains.annotations.NotNull;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Type;
 import java.nio.file.Path;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -54,7 +61,13 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
     @AllArgsConstructor
     private enum Mappers {
         JSON(FileType.JSON, ObjectMapper::new),
-        YAML(FileType.YAML, YAMLMapper::new),
+        YAML(FileType.YAML, () -> {
+            final YAMLFactory yamlFactory = new YAMLFactory();
+            yamlFactory.enable(YAMLGenerator.Feature.MINIMIZE_QUOTES);
+            yamlFactory.disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER);
+            yamlFactory.disable(YAMLParser.Feature.EMPTY_STRING_AS_NULL);
+            return new YAMLMapper(yamlFactory);
+        }),
         PROPERTIES(FileType.PROPERTIES, JavaPropsMapper::new),
         TOML(FileType.TOML, TomlMapper::new),
         XML(FileType.XML, XmlMapper::new),
@@ -63,6 +76,8 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
         private final FileType fileType;
         private final Supplier<? super ObjectMapper> mapper;
     }
+
+    private static final List<FileType> roots = Collections.singletonList(FileType.XML);
 
     protected ObjectMapper mapper;
 
@@ -121,7 +136,7 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
                 content,
                 () -> this.write(path, ((PersistentCapable<?>) content).toPersistentModel()),
                 () -> {
-                    this.configureMapper().writerWithDefaultPrettyPrinter().writeValue(path.toFile(), content);
+                    this.getWriter(content).writeValue(path.toFile(), content);
                     return true;
                 }).then(() -> false);
     }
@@ -131,8 +146,17 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
         return this.writeInternal(
                 content,
                 () -> this.write(((PersistentCapable<?>) content).toPersistentModel()),
-                () -> this.configureMapper().writerWithDefaultPrettyPrinter().writeValueAsString(content))
+                () -> this.getWriter(content).writeValueAsString(content))
                 .map(out -> out.replaceAll("\\r", ""));
+    }
+
+    private ObjectWriter getWriter(Object content) {
+        ObjectWriter writer = this.configureMapper().writerWithDefaultPrettyPrinter();
+        if (JacksonObjectMapper.roots.contains(this.getFileType()) && content.getClass().isAnnotationPresent(Entity.class)) {
+            final Entity annotation = content.getClass().getAnnotation(Entity.class);
+            writer = writer.withRootName(annotation.value());
+        }
+        return writer;
     }
 
     private <T, R> Exceptional<R> writeInternal(T content, Supplier<Exceptional<R>> capable, Callable<R> writer) {

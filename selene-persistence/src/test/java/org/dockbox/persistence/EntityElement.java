@@ -17,14 +17,17 @@
 
 package org.dockbox.persistence;
 
+import org.dockbox.selene.api.entity.annotations.Entity;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+@Entity("entity")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class PersistentElement implements Element {
+public class EntityElement implements Element {
 
     private String name;
 
