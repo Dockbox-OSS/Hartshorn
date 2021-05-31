@@ -58,7 +58,7 @@ public class CompilerTests {
     }
 
     static final String SINGLE_JAVA = "package org.dockbox.selene.proxy.compiler;"
-            + "import org.dockbox.selene.proxy.compiler.*;"
+            + "import org.dockbox.selene.proxy.*;"
             + "public class UserProxy extends User implements BeanProxy {"
             + "    boolean _dirty = false;"
             + "    public void setId(String id) {"
