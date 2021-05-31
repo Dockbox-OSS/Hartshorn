@@ -68,10 +68,10 @@ def ignoreProjects = ['examples', 'selene-parent', 'selene-service-parent', 'sel
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraftForge112}"
 
-    new File(parent.rootDir, 'selene-minecraft-services').listFiles().each {
+    new File(parent.rootDir, 'selene-minecraft').listFiles().each {
         if (it.directory && new File(it, 'build.gradle').exists()) {
-            shadow project(":selene-minecraft-services:${it.name}")
-            testImplementation project(":selene-minecraft-services:${it.name}")
+            shadow project(":selene-minecraft:${it.name}")
+            testImplementation project(":selene-minecraft:${it.name}")
         }
     }
 
