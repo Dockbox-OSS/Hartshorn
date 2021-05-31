@@ -17,28 +17,14 @@
 
 package org.dockbox.selene.di;
 
-import org.dockbox.selene.di.context.ApplicationContext;
-import org.dockbox.selene.di.context.SeleneApplicationContext;
-
-import lombok.Getter;
-
-public class ApplicationContextAware {
-
-    @Getter
-    private ApplicationContext context;
-
-    private static ApplicationContextAware instance;
-
-    public void create(Class<?> activationSource, Modifier... modifiers) {
-        this.context = new SeleneApplicationContext(activationSource, modifiers);
-    }
-
-    public static ApplicationContextAware instance() {
-        return instance;
-    }
-
-    protected static void instance(ApplicationContextAware bootstrap) {
-        ApplicationContextAware.instance = bootstrap;
-    }
-
+/**
+ * Indicates a potential override of existing logic during the bootstrapping process.
+ */
+public enum Modifier {
+    /*
+     * Makes it so application activators do not need to have service activator
+     * annotations present, and will indicate all activators are present when
+     * requested.
+     */
+    ACTIVATE_ALL
 }

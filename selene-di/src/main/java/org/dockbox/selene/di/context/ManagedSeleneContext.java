@@ -48,7 +48,7 @@ public abstract class ManagedSeleneContext extends DefaultContext implements App
     protected static final Logger log = LoggerFactory.getLogger("Selene Managed Context");
     protected final transient Set<InjectionPoint<?>> injectionPoints = SeleneUtils.emptyConcurrentSet();
 
-    protected final transient Set<InjectionModifier<?>> modifiers = SeleneUtils.emptyConcurrentSet();
+    protected final transient Set<InjectionModifier<?>> injectionModifiers = SeleneUtils.emptyConcurrentSet();
     protected final transient Set<ServiceProcessor<?>> serviceProcessors = SeleneUtils.emptyConcurrentSet();
     private final Set<Class<?>> services = SeleneUtils.emptyConcurrentSet();
 
@@ -158,7 +158,7 @@ public abstract class ManagedSeleneContext extends DefaultContext implements App
 
     @Override
     public void add(InjectionModifier<?> modifier) {
-        this.modifiers.add(modifier);
+        this.injectionModifiers.add(modifier);
     }
 
     @Override
@@ -170,6 +170,7 @@ public abstract class ManagedSeleneContext extends DefaultContext implements App
     public boolean hasActivator(Class<? extends Annotation> activator) {
         if (!activator.isAnnotationPresent(ServiceActivator.class))
             throw new IllegalArgumentException("Requested activator " + activator.getSimpleName() + " is not decorated with @ServiceActivator");
+
         return this.activators.stream()
                 .map(Annotation::annotationType)
                 .collect(Collectors.toList())

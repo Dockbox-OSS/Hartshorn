@@ -20,6 +20,7 @@ package org.dockbox.selene.api;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 
+import org.dockbox.selene.di.Modifier;
 import org.dockbox.selene.api.exceptions.Except;
 import org.dockbox.selene.di.InjectConfiguration;
 import org.dockbox.selene.di.InjectableBootstrap;
@@ -34,8 +35,9 @@ import java.lang.reflect.InvocationTargetException;
 
 public class SeleneApplication {
 
-    public static Runnable create(Class<?> activator) {
+    public static Runnable create(Class<?> activator, Modifier... modifiers) {
         try {
+            final long start = System.currentTimeMillis();
             final Activator annotation = verifyActivator(activator);
             final Class<? extends InjectableBootstrap> bootstrap = annotation.bootstrap();
             final InjectableBootstrap injectableBootstrap = instance(bootstrap);
@@ -47,9 +49,15 @@ public class SeleneApplication {
                 configurations.put(config.phase(), instance(config.value()));
             }
 
-            injectableBootstrap.create(prefix, activator, SeleneUtils.emptyList(), configurations);
+            injectableBootstrap.create(prefix, activator, SeleneUtils.emptyList(), configurations, modifiers);
+            final long creationTime = System.currentTimeMillis() - start;
 
-            return injectableBootstrap::init;
+            return () -> {
+                final long initStart = System.currentTimeMillis();
+                injectableBootstrap.init();
+                final long initTime = System.currentTimeMillis() - initStart;
+                Selene.log().info("Started " + SeleneInformation.PROJECT_NAME + " in " + (creationTime + initTime) + "ms");
+            };
         }
         catch (InvocationTargetException | NoSuchMethodException | InstantiationException | IllegalAccessException e) {
             Except.handle("Could not bootstrap application " + activator.getSimpleName(), e);

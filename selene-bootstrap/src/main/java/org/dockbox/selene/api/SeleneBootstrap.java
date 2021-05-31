@@ -24,6 +24,7 @@ import org.dockbox.selene.api.config.GlobalConfig;
 import org.dockbox.selene.api.exceptions.Except;
 import org.dockbox.selene.di.InjectConfiguration;
 import org.dockbox.selene.di.InjectableBootstrap;
+import org.dockbox.selene.di.Modifier;
 import org.dockbox.selene.di.annotations.InjectPhase;
 import org.dockbox.selene.di.annotations.Required;
 import org.dockbox.selene.di.annotations.Service;
@@ -48,14 +49,14 @@ public abstract class SeleneBootstrap extends InjectableBootstrap {
     private final Set<Method> postBootstrapActivations = SeleneUtils.emptyConcurrentSet();
 
     @Override
-    public void create(String prefix, Class<?> activationSource, List<Annotation> activators, Multimap<InjectPhase, InjectConfiguration> configs) {
+    public void create(String prefix, Class<?> activationSource, List<Annotation> activators, Multimap<InjectPhase, InjectConfiguration> configs, Modifier... modifiers) {
         activators.add(new UseBootstrap() {
             @Override
             public Class<? extends Annotation> annotationType() {
                 return UseBootstrap.class;
             }
         });
-        super.create(prefix, activationSource, activators, configs);
+        super.create(prefix, activationSource, activators, configs, modifiers);
 
         final GlobalConfig globalConfig = this.getContext().get(GlobalConfig.class);
         Except.useStackTraces(globalConfig.getStacktracesAllowed());

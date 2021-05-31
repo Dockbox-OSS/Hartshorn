@@ -37,16 +37,17 @@ public abstract class InjectableBootstrap extends ApplicationContextAware {
 
     public abstract void init();
 
-    public void create(String prefix, Class<?> activationSource, List<Annotation> activators, Multimap<InjectPhase, InjectConfiguration> configs) {
-        super.create(activationSource);
+    public void create(String prefix, Class<?> activationSource, List<Annotation> activators, Multimap<InjectPhase, InjectConfiguration> configs, Modifier... modifiers) {
+        super.create(activationSource, modifiers);
+
+        Reflections.log = null; // Don't output Reflections
+
         for (Annotation activator : activators) {
             ((ManagedSeleneContext) this.getContext()).addActivator(activator);
         }
         instance(this);
         this.lookupProcessors(prefix);
         this.lookupModifiers(prefix);
-
-        Reflections.log = null; // Don't output Reflections
 
         for (InjectConfiguration config : configs.get(InjectPhase.EARLY)) super.getContext().bind(config);
         super.getContext().bind(prefix);
