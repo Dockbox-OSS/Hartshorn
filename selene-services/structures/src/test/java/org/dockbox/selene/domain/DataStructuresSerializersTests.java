@@ -21,6 +21,8 @@ import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.domain.registry.Registry;
 import org.dockbox.selene.domain.registry.RegistryColumn;
 import org.dockbox.selene.persistence.FileManager;
+import org.dockbox.selene.persistence.GenericType;
+import org.dockbox.selene.test.files.JUnitFileManager;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -36,7 +38,7 @@ public class DataStructuresSerializersTests {
             File copy = File.createTempFile("tmp", null);
             Path tempFile = copy.toPath();
 
-            FileManager fm = new TestXStreamFileManager();
+            FileManager fm = new JUnitFileManager();
 
             fm.write(tempFile, this.buildTestRegistry());
         });
@@ -66,13 +68,14 @@ public class DataStructuresSerializersTests {
         File copy = File.createTempFile("tmp", null);
         Path tempFile = copy.toPath();
 
-        FileManager fm = new TestXStreamFileManager();
+        FileManager fm = new JUnitFileManager();
 
         fm.write(tempFile, this.buildTestRegistry());
-        Exceptional<Registry> registry = fm.read(tempFile, Registry.class);
+        Exceptional<Registry<Registry<String>>> registry = fm.read(tempFile, new GenericType<Registry<Registry<String>>>() {
+        });
         Assertions.assertTrue(registry.present());
 
-        Registry<Registry<String>> reg = (Registry<Registry<String>>) registry.get();
+        Registry<Registry<String>> reg = registry.get();
         RegistryColumn<RegistryColumn<String>> result = reg.getMatchingColumns(TestIdentifier.BRICK)
                 .mapTo(r -> r.getMatchingColumns(TestIdentifier.FULLBLOCK));
 

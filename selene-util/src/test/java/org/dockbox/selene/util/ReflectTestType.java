@@ -25,7 +25,7 @@ import org.junit.jupiter.api.Assertions;
 import java.util.Locale;
 
 @Demo
-@Entity(value = "test", rejects = RejectingType.class)
+@Entity(value = "test")
 public class ReflectTestType extends ParentTestType {
 
     @Demo

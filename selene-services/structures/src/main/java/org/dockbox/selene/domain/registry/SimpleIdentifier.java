@@ -15,9 +15,26 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.test.files;
+package org.dockbox.selene.domain.registry;
 
-import org.dockbox.selene.persistence.xstream.DefaultXStreamManager;
+import java.util.Objects;
 
-public class JUnitXStreamManager extends DefaultXStreamManager implements JUnitFileManager {
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@AllArgsConstructor
+@Getter
+public class SimpleIdentifier implements RegistryIdentifier {
+
+    private final String key;
+
+    @Override
+    public boolean equals(Object o) {
+        return RegistryIdentifier.super.same(o);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.getKey());
+    }
 }

@@ -128,7 +128,7 @@ public abstract class DefaultAbstractFileManager implements FileManager {
     protected <T> Exceptional<T> correctPersistentCapable(Path file, Class<T> type) {
         if (Reflect.assignableFrom(PersistentCapable.class, type)) {
             // Provision basis is required here, as injected types will typically pass in a interface type. If no injection point is available a
-            // regular instance is created (either through available constructors or Unsafe instantiation).
+            // regular instance is created through available constructors.
             Class<? extends PersistentModel<?>> modelType = ((PersistentCapable<?>) this.context.get(type)).getModelClass();
             @NotNull Exceptional<? extends PersistentModel<?>> model = this.read(file, modelType);
             return model.map(PersistentModel::toPersistentCapable).map(content -> (T) content);
@@ -140,7 +140,13 @@ public abstract class DefaultAbstractFileManager implements FileManager {
     public void stateEnabling(InjectorProperty<?>... properties) {
         for (InjectorProperty<?> property : properties)
             if (property instanceof FileTypeProperty) {
-                this.requestFileType(((FileTypeProperty<?>) property).getFileType());
+                final FileType fileType = ((FileTypeProperty) property).getObject();
+
+                if (fileType.getType().equals(PersistenceType.RAW)) {
+                    this.setFileType(fileType);
+                } else {
+                    throw new IllegalArgumentException("Unsupported persistence type: " + fileType.getType() + ", expected: " + PersistenceType.RAW);
+                }
                 break;
             }
     }

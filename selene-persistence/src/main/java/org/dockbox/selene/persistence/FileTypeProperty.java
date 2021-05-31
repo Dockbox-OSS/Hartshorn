@@ -17,25 +17,28 @@
 
 package org.dockbox.selene.persistence;
 
-import org.dockbox.selene.di.binding.Bindings;
-import org.dockbox.selene.di.properties.BindingMetaProperty;
+import org.dockbox.selene.di.properties.InjectorProperty;
 
-import java.lang.annotation.Annotation;
+public final class FileTypeProperty implements InjectorProperty<FileType> {
 
-public final class FileTypeProperty<T extends Annotation> extends BindingMetaProperty {
-
+    public static final String KEY = "SeleneInternalFileTypeProperty";
     private final FileType fileType;
 
     private FileTypeProperty(FileType fileType) {
-        super(Bindings.named(fileType.getExtension()));
         this.fileType = fileType;
     }
 
-    public static FileTypeProperty<?> of(FileType fileType) {
-        return new FileTypeProperty<>(fileType);
+    public static FileTypeProperty of(FileType fileType) {
+        return new FileTypeProperty(fileType);
     }
 
-    public FileType getFileType() {
+    @Override
+    public String getKey() {
+        return FileTypeProperty.KEY;
+    }
+
+    @Override
+    public FileType getObject() {
         return this.fileType;
     }
 }

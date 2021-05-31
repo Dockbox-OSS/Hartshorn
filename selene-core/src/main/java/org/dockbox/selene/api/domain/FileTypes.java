@@ -19,13 +19,12 @@ package org.dockbox.selene.api.domain;
 
 public class FileTypes {
 
-    public static final String CLASS = "class";
-    public static final String JAR = "jar";
     public static final String SQLITE = "sqlite";
+
     public static final String YAML = "yml";
     public static final String JSON = "json";
     public static final String XML = "xml";
-    public static final String MOD_CONFIG = "cfg";
-    public static final String CONFIG = "conf";
+    public static final String TOML = "toml";
+    public static final String PROPERTIES = "properties";
 
 }

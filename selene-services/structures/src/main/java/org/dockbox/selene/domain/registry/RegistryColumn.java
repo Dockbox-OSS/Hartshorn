@@ -19,33 +19,23 @@ package org.dockbox.selene.domain.registry;
 
 import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.entity.annotations.Entity;
-import org.dockbox.selene.persistence.configurate.DefaultConfigurateManager;
 import org.dockbox.selene.util.SeleneUtils;
-import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
 @SuppressWarnings({ "UnusedReturnValue", "unused" })
-@Entity(value = "column", rejects = DefaultConfigurateManager.class)
-public class RegistryColumn<T> {
-
-    private List<T> data = SeleneUtils.emptyList();
+@Entity(value = "column")
+public class RegistryColumn<T> extends ArrayList<T> {
 
     public RegistryColumn() {
         super();
     }
 
     public RegistryColumn(Collection<T> values) {
-        this.data = SeleneUtils.asList(values);
-    }
-
-    public RegistryColumn(RegistryColumn<T> column) {
-        this.data = column.data;
+        this.addAll(SeleneUtils.asList(values));
     }
 
     /**
@@ -58,7 +48,7 @@ public class RegistryColumn<T> {
      * @return Itself
      */
     public RegistryColumn<T> removeValueIf(Predicate<? super T> filter) {
-        this.data.removeIf(filter);
+        this.removeIf(filter);
         return this;
     }
 
@@ -76,14 +66,10 @@ public class RegistryColumn<T> {
     public <K> RegistryColumn<K> mapTo(Function<? super T, K> mapper) {
         RegistryColumn<K> result = new RegistryColumn<>();
 
-        for (T value : this.data) {
+        for (T value : this) {
             result.add(mapper.apply(value));
         }
         return result;
-    }
-
-    public boolean add(T t) {
-        return this.data.add(t);
     }
 
     /**
@@ -101,14 +87,10 @@ public class RegistryColumn<T> {
     public <K> RegistryColumn<K> mapToSingleList(Function<? super T, ? extends Collection<K>> mapper) {
         RegistryColumn<K> result = new RegistryColumn<>();
 
-        for (T value : this.data) {
+        for (T value : this) {
             result.addAll(mapper.apply(value));
         }
         return result;
-    }
-
-    public boolean addAll(@NotNull Collection<? extends T> c) {
-        return this.data.addAll(c);
     }
 
     /**
@@ -126,7 +108,7 @@ public class RegistryColumn<T> {
     public <K extends T> RegistryColumn<K> convertTo(Class<K> clazz) {
         RegistryColumn<K> result = new RegistryColumn<>();
 
-        for (T value : this.data) {
+        for (T value : this) {
             if (clazz.isInstance(value)) {
                 @SuppressWarnings("unchecked")
                 K convertedValue = (K) value;
@@ -146,7 +128,7 @@ public class RegistryColumn<T> {
      * @return An {@link Exceptional} containing the value of the first match, if one is found.
      */
     public Exceptional<T> firstMatch(Predicate<? super T> predicate) {
-        for (T value : this.data) {
+        for (T value : this) {
             if (predicate.test(value)) return Exceptional.of(value);
         }
         return Exceptional.none();
@@ -172,42 +154,6 @@ public class RegistryColumn<T> {
      *         RegistryColumn, if one is found.
      */
     public Exceptional<T> getSafely(int index) {
-        return Exceptional.of(() -> this.data.get(index));
-    }
-
-    public int size() {
-        return this.data.size();
-    }
-
-    public boolean contains(Object o) {
-        return this.data.contains(o);
-    }
-
-    public Iterator<T> iterator() {
-        return this.data.iterator();
-    }
-
-    public boolean add(RegistryColumn<T> column) {
-        return this.data.addAll(column.data);
-    }
-
-    public boolean addAll(int index, @NotNull Collection<? extends T> c) {
-        return this.data.addAll(index, c);
-    }
-
-    public boolean addAll(int index, @NotNull RegistryColumn<? extends T> c) {
-        return this.data.addAll(index, c.data);
-    }
-
-    public boolean addAll(@NotNull RegistryColumn<? extends T> c) {
-        return this.data.addAll(c.data);
-    }
-
-    public T get(int index) {
-        return this.data.get(index);
-    }
-
-    public void forEach(Consumer<? super T> action) {
-        this.data.forEach(action);
+        return Exceptional.of(() -> this.get(index));
     }
 }

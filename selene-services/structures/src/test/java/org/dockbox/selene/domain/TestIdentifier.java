@@ -27,4 +27,9 @@ public enum TestIdentifier implements RegistryIdentifier {
     FULLBLOCK,
     STAIR,
     SLAB;
+
+    @Override
+    public String getKey() {
+        return this.name();
+    }
 }

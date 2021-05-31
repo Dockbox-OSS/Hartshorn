@@ -15,16 +15,16 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-dependencies {
-    compileOnly project(':selene-parent')
-    compileOnly project(':selene-bootstrap')
-    compileOnly project(':selene-persistence')
+package org.dockbox.selene.persistence.annotations;
 
-    compile "com.thoughtworks.xstream:xstream:$xstreamVersion"
-    compile "xpp3:xpp3:$xmlPullParserVersion"
-    compile "net.sf.kxml:kxml2:$kxmlVersion"
-    compile "com.fasterxml.woodstox:woodstox-core:$woodstoxVersion"
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-    testImplementation "com.thoughtworks.xstream:xstream:$xstreamVersion"
-    testImplementation "com.fasterxml.woodstox:woodstox-core:$woodstoxVersion"
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.METHOD)
+public @interface Serialise {
+    Class<?> owner() default Void.class;
+    String file() default "";
 }

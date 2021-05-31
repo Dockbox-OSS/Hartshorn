@@ -15,7 +15,20 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
+repositories {
+    mavenCentral()
+}
+
 dependencies {
     compileOnly project(':selene-parent')
     compileOnly project(':selene-bootstrap')
+    compileOnly project(':selene-proxy')
+
+    compile 'com.fasterxml.jackson.core:jackson-core:2.12.3'
+    compile 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.12.3'
+    compile 'com.fasterxml.jackson.dataformat:jackson-dataformat-properties:2.12.3'
+    compile 'com.fasterxml.jackson.dataformat:jackson-dataformat-toml:2.12.3'
+
+    compile 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.12.3'
+    compile 'org.codehaus.woodstox:woodstox-core-asl:4.4.1'
 }

@@ -18,8 +18,18 @@
 package org.dockbox.selene.domain.registry;
 
 import org.dockbox.selene.api.entity.annotations.Entity;
-import org.dockbox.selene.persistence.configurate.DefaultConfigurateManager;
+import org.jetbrains.annotations.NonNls;
 
-@Entity(value = "identifier", rejects = DefaultConfigurateManager.class)
+@FunctionalInterface
+@Entity(value = "identifier")
 public interface RegistryIdentifier {
+    @NonNls
+    String getKey();
+
+    default boolean same(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof RegistryIdentifier)) return false;
+        RegistryIdentifier that = (RegistryIdentifier) o;
+        return this.getKey().equals(that.getKey());
+    }
 }

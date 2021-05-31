@@ -15,57 +15,55 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.sponge.util.files;
+package org.dockbox.selene.sponge.util;
 
 import org.dockbox.selene.api.domain.Exceptional;
-import org.dockbox.selene.persistence.FileManager;
+import org.dockbox.selene.persistence.jackson.DefaultJacksonManager;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
 
 import java.nio.file.Path;
 
 @SuppressWarnings("InterfaceMayBeAnnotatedFunctional")
-public interface SpongeDefaultFileManager extends FileManager {
+public class SpongeFileManager extends DefaultJacksonManager {
 
     @NotNull
-    default Path getDataDir() {
+    public Path getDataDir() {
         return this.getServerRoot().resolve("data/");
     }
 
     @NotNull
-    default Path getServerRoot() {
+    public Path getServerRoot() {
         return Sponge.getGame().getGameDirectory();
     }
 
     @NotNull
-    default Path getLogsDir() {
+    public Path getLogsDir() {
         return this.getServerRoot().resolve("logs/");
     }
 
-    Path createPathIfNotExists(Path path);
-
     @NotNull
-    default Exceptional<Path> getModDir() {
+    public Exceptional<Path> getModDir() {
         return Exceptional.of(this.createPathIfNotExists(this.getServerRoot().resolve("mods/")));
     }
 
     @NotNull
-    default Path getPluginDir() {
+    public Path getPluginDir() {
         return this.createPathIfNotExists(this.getServerRoot().resolve("plugins/"));
     }
 
     @NotNull
-    default Path getServiceConfigsDir() {
+    public Path getServiceConfigsDir() {
         return this.getServerRoot().resolve("config/services/");
     }
 
     @NotNull
-    default Exceptional<Path> getModdedPlatformModsConfigDir() {
+    public Exceptional<Path> getModdedPlatformModsConfigDir() {
         return Exceptional.of(this.getServerRoot().resolve("config/"));
     }
 
     @NotNull
-    default Path getPlatformPluginsConfigDir() {
+    public Path getPlatformPluginsConfigDir() {
         return this.getServerRoot().resolve("config/plugins/");
     }
 }

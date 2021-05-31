@@ -108,6 +108,7 @@ public interface FileManager extends InjectableType {
      *         {@link Throwable}
      */
     <T> Exceptional<T> read(Path file, Class<T> type);
+    <T> Exceptional<T> read(Path file, GenericType<T> type);
 
     /**
      * Write a generic type {@code T} to a given file. The exact file is completely dynamic, though it
@@ -289,8 +290,6 @@ public interface FileManager extends InjectableType {
      * @return true if the file was copied, otherwise false
      */
     boolean copyDefaultFile(String defaultFileName, Path targetFile);
-
-    void requestFileType(FileType fileType);
 
     default TypedOwner owner(Class<?> type) {
         return Selene.context().get(OwnerLookup.class).lookup(type);

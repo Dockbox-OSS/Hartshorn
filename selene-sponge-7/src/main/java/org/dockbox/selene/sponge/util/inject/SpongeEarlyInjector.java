@@ -19,7 +19,6 @@ package org.dockbox.selene.sponge.util.inject;
 
 import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.config.GlobalConfig;
-import org.dockbox.selene.api.domain.FileTypes;
 import org.dockbox.selene.api.i18n.text.pagination.PaginationBuilder;
 import org.dockbox.selene.api.task.TaskRunner;
 import org.dockbox.selene.api.task.ThreadUtils;
@@ -31,7 +30,6 @@ import org.dockbox.selene.config.TargetGlobalConfig;
 import org.dockbox.selene.di.InjectConfiguration;
 import org.dockbox.selene.di.SeleneFactory;
 import org.dockbox.selene.di.SimpleSeleneFactory;
-import org.dockbox.selene.di.binding.Bindings;
 import org.dockbox.selene.nms.packets.NMSChangeGameStatePacket;
 import org.dockbox.selene.nms.packets.NMSSpawnEntityPacket;
 import org.dockbox.selene.persistence.FileManager;
@@ -71,8 +69,7 @@ import org.dockbox.selene.sponge.util.SpongeThreadUtils;
 import org.dockbox.selene.sponge.util.SpongeWorldEditService;
 import org.dockbox.selene.sponge.util.SpongeWorlds;
 import org.dockbox.selene.sponge.util.command.values.SpongeFlagCollection;
-import org.dockbox.selene.sponge.util.files.SpongeConfigurateManager;
-import org.dockbox.selene.sponge.util.files.SpongeXStreamManager;
+import org.dockbox.selene.sponge.util.SpongeFileManager;
 import org.dockbox.selene.worldedit.WorldEditService;
 import org.slf4j.Logger;
 
@@ -89,9 +86,7 @@ public class SpongeEarlyInjector extends InjectConfiguration {
         this.bind(ThreadUtils.class, SpongeThreadUtils.class);
 
         // Persistence
-        this.bind(FileManager.class, SpongeConfigurateManager.class);
-        this.bind(FileManager.class, SpongeConfigurateManager.class, Bindings.named(FileTypes.YAML));
-        this.bind(FileManager.class, SpongeXStreamManager.class, Bindings.named(FileTypes.XML));
+        this.bind(FileManager.class, SpongeFileManager.class);
 
         // Services
         this.bind(Players.class, SpongePlayers.class);

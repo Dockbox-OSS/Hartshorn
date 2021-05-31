@@ -18,7 +18,6 @@
 package org.dockbox.selene.util;
 
 import org.dockbox.selene.api.domain.Exceptional;
-import org.dockbox.selene.api.entity.TypeRejectedException;
 import org.dockbox.selene.util.annotations.Demo;
 import org.dockbox.selene.util.exceptions.TypeConversionException;
 import org.junit.jupiter.api.Assertions;
@@ -310,26 +309,6 @@ public class ReflectTests {
     @MethodSource("getFieldTargets")
     void testHasFieldReturnsTrue(String field) {
         Assertions.assertTrue(Reflect.hasField(ReflectTestType.class, field));
-    }
-
-    @Test
-    void testRejectsReturnsTrueIfTypeIsRejected() {
-        Assertions.assertTrue(Reflect.rejects(ReflectTestType.class, RejectingType.class));
-    }
-
-    @Test
-    void testRejectsReturnsFalseIfTypeIsNotRejected() {
-        Assertions.assertFalse(Reflect.rejects(ReflectTestType.class, String.class));
-    }
-
-    @Test
-    void testRejectThrowsIfTypeIsRejectedAndThrowingEnabled() {
-        Assertions.assertThrows(TypeRejectedException.class, () -> Reflect.rejects(ReflectTestType.class, RejectingType.class, true));
-    }
-
-    @Test
-    void testRejectDoesNotThrowIfTypeIsNotRejectedAndThrowingEnabled() {
-        Assertions.assertDoesNotThrow(() -> Reflect.rejects(ReflectTestType.class, String.class, true));
     }
 
     @ParameterizedTest

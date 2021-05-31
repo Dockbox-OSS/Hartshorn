@@ -15,9 +15,14 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.sponge.util.files;
+package org.dockbox.selene.persistence.annotations;
 
-import org.dockbox.selene.persistence.xstream.DefaultXStreamManager;
+import org.dockbox.selene.di.annotations.ServiceActivator;
 
-public class SpongeXStreamManager extends DefaultXStreamManager implements SpongeDefaultFileManager {
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
+@Retention(RetentionPolicy.RUNTIME)
+@ServiceActivator
+public @interface UsePersistence {
 }

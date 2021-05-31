@@ -15,14 +15,13 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.test.files;
+package org.dockbox.selene.persistence;
 
-import org.dockbox.selene.persistence.FileType;
-import org.dockbox.selene.persistence.configurate.DefaultConfigurateManager;
+import com.fasterxml.jackson.core.type.TypeReference;
 
-public class JUnitConfigurateManager extends DefaultConfigurateManager implements JUnitFileManager {
-
-    public JUnitConfigurateManager() {
-        super(FileType.YAML);
-    }
-}
+/**
+ * Generic type reference, exposing a self-declared type for API usage while maintaining easy
+ * conversion to Jackson dependencies.
+ * @param <T> The generic type
+ */
+public abstract class GenericType<T> extends TypeReference<T> { }

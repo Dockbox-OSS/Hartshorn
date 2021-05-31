@@ -19,7 +19,6 @@ package org.dockbox.selene.test.util;
 
 import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.config.GlobalConfig;
-import org.dockbox.selene.api.domain.FileTypes;
 import org.dockbox.selene.api.task.TaskRunner;
 import org.dockbox.selene.api.task.ThreadUtils;
 import org.dockbox.selene.commands.CommandBus;
@@ -28,7 +27,6 @@ import org.dockbox.selene.config.ConfigurationManager;
 import org.dockbox.selene.di.InjectConfiguration;
 import org.dockbox.selene.di.SeleneFactory;
 import org.dockbox.selene.di.SimpleSeleneFactory;
-import org.dockbox.selene.di.binding.Bindings;
 import org.dockbox.selene.discord.DiscordUtils;
 import org.dockbox.selene.persistence.FileManager;
 import org.dockbox.selene.server.minecraft.Console;
@@ -42,8 +40,7 @@ import org.dockbox.selene.server.minecraft.item.Item;
 import org.dockbox.selene.server.minecraft.item.maps.CustomMapService;
 import org.dockbox.selene.server.minecraft.players.Players;
 import org.dockbox.selene.server.minecraft.players.Profile;
-import org.dockbox.selene.test.files.JUnitConfigurateManager;
-import org.dockbox.selene.test.files.JUnitXStreamManager;
+import org.dockbox.selene.test.files.JUnitFileManager;
 import org.dockbox.selene.test.objects.JUnitBossbar;
 import org.dockbox.selene.test.objects.JUnitConsole;
 import org.dockbox.selene.test.objects.JUnitDiscordCommandSource;
@@ -68,9 +65,7 @@ public class JUnitInjector extends InjectConfiguration {
         this.bind(ThreadUtils.class, JUnitThreadUtils.class);
 
         // Persistence
-        this.bind(FileManager.class, JUnitConfigurateManager.class);
-        this.bind(FileManager.class, JUnitConfigurateManager.class, Bindings.named(FileTypes.YAML));
-        this.bind(FileManager.class, JUnitXStreamManager.class, Bindings.named(FileTypes.XML));
+        this.bind(FileManager.class, JUnitFileManager.class);
 
         // Services
         this.bind(Players.class, JUnitPlayers.class);

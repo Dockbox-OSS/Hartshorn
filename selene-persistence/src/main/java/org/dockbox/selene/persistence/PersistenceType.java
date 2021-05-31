@@ -15,26 +15,8 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.api.util.files.persistent;
+package org.dockbox.selene.persistence;
 
-import org.dockbox.selene.persistence.PersistentCapable;
-
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
-@AllArgsConstructor
-@Getter
-public class PersistentCapableType implements PersistentCapable<PersistentModelType> {
-
-    private final String capable;
-
-    @Override
-    public Class<? extends PersistentModelType> getModelClass() {
-        return PersistentModelType.class;
-    }
-
-    @Override
-    public PersistentModelType toPersistentModel() {
-        return new PersistentModelType("model:" + this.capable);
-    }
+public enum PersistenceType {
+    RAW, DATABASE, OTHER
 }
