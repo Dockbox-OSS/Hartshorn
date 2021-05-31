@@ -703,9 +703,4 @@ public enum BlockIdentifier implements RegistryIdentifier {
                 .replace(" ", "_")
                 .replace("'", "_"));
     }
-
-    @Override
-    public String getKey() {
-        return this.name();
-    }
 }

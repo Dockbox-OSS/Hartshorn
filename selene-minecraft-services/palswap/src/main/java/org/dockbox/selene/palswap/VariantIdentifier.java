@@ -210,9 +210,4 @@ public enum VariantIdentifier implements RegistryIdentifier {
                 .replace(" CTM Round Top", "")
                 .replace(" CTM Elongated", "");
     }
-
-    @Override
-    public String getKey() {
-        return this.name();
-    }
 }

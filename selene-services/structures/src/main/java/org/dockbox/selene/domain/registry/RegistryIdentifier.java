@@ -20,11 +20,15 @@ package org.dockbox.selene.domain.registry;
 import org.dockbox.selene.api.entity.annotations.Entity;
 import org.jetbrains.annotations.NonNls;
 
-@FunctionalInterface
 @Entity(value = "identifier")
 public interface RegistryIdentifier {
     @NonNls
-    String getKey();
+    default String getKey() {
+        if (this.getClass().isEnum()) {
+            return ((Enum<?>) this).name();
+        }
+        throw new UnsupportedOperationException("Non-enum type " + this.getClass().getSimpleName() + " does not override getKey()");
+    }
 
     default boolean same(Object o) {
         if (this == o) return true;
