@@ -15,13 +15,15 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.persistence.annotations;
+package org.dockbox.selene.persistence.service;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
-@Retention(RetentionPolicy.RUNTIME)
-public @interface File {
-    Class<?> owner() default Void.class;
-    String value() default "";
+@Getter
+@AllArgsConstructor
+public class DeserialisationContext extends SerialisationContext {
+
+    private final Class<?> type;
+
 }

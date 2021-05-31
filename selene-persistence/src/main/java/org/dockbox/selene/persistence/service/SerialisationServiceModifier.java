@@ -18,51 +18,23 @@
 package org.dockbox.selene.persistence.service;
 
 import org.dockbox.selene.api.domain.Exceptional;
-import org.dockbox.selene.api.domain.OwnerLookup;
-import org.dockbox.selene.api.domain.TypedOwner;
 import org.dockbox.selene.di.annotations.Service;
 import org.dockbox.selene.di.context.ApplicationContext;
-import org.dockbox.selene.persistence.FileManager;
-import org.dockbox.selene.persistence.FileType;
 import org.dockbox.selene.persistence.PersistenceType;
 import org.dockbox.selene.persistence.annotations.Serialise;
-import org.dockbox.selene.persistence.annotations.UsePersistence;
 import org.dockbox.selene.persistence.mapping.ObjectMapper;
 import org.dockbox.selene.proxy.handle.ProxyFunction;
 import org.dockbox.selene.proxy.service.MethodProxyContext;
-import org.dockbox.selene.proxy.service.ServiceAnnotatedMethodModifier;
 import org.dockbox.selene.util.Reflect;
 
 import java.io.File;
 import java.lang.reflect.Type;
 import java.nio.file.Path;
 
-public class SerialisationServiceModifier extends ServiceAnnotatedMethodModifier<Serialise, UsePersistence> {
+public class SerialisationServiceModifier extends AbstractPersistenceServiceModifier<Serialise, SerialisationContext> {
 
     @Override
-    public Class<UsePersistence> activator() {
-        return UsePersistence.class;
-    }
-
-    @Override
-    public <T, R> ProxyFunction<T, R> process(ApplicationContext context, MethodProxyContext<T> methodContext) {
-        final Exceptional<SerialisationContext> serialisationContext = methodContext.first(SerialisationContext.class);
-        if (serialisationContext.absent()) throw new IllegalStateException("Expected additional context to be present");
-
-        final SerialisationContext ctx = serialisationContext.get();
-        switch (ctx.getTarget()) {
-            case ANNOTATED_PATH:
-                return this.processAnnotatedPath(context, methodContext, ctx);
-            case PARAMETER_PATH:
-                return this.processParameterPath(context, methodContext, ctx);
-            case STRING:
-                return this.processString(context, methodContext, ctx);
-            default:
-                throw new IllegalArgumentException("Unsupported serialisation target: " + ctx.getTarget());
-        }
-    }
-
-    private <T, R> ProxyFunction<T, R> processAnnotatedPath(ApplicationContext context, MethodProxyContext<T> methodContext, SerialisationContext serialisationContext) {
+    protected <T, R> ProxyFunction<T, R> processAnnotatedPath(ApplicationContext context, MethodProxyContext<T> methodContext, SerialisationContext serialisationContext) {
         return (instance, args, proxyContext) -> {
             final Path target = serialisationContext.getPredeterminedPath();
             final Object content = args[0];
@@ -72,7 +44,8 @@ public class SerialisationServiceModifier extends ServiceAnnotatedMethodModifier
         };
     }
 
-    private <T, R> ProxyFunction<T, R> processParameterPath(ApplicationContext context, MethodProxyContext<T> methodContext, SerialisationContext serialisationContext) {
+    @Override
+    protected <T, R> ProxyFunction<T, R> processParameterPath(ApplicationContext context, MethodProxyContext<T> methodContext, SerialisationContext serialisationContext) {
         return (instance, args, proxyContext) -> {
             Path target = null;
             Object content = null;
@@ -90,17 +63,9 @@ public class SerialisationServiceModifier extends ServiceAnnotatedMethodModifier
         };
     }
 
+    @Override
     @SuppressWarnings("unchecked")
-    private <R> R wrapBooleanResult(Exceptional<Boolean> result, MethodProxyContext<?> methodContext) {
-        if (Reflect.assignableFrom(Boolean.class, methodContext.getReturnType())) {
-            return (R) result.or(false);
-        } else {
-            return (R) result;
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    private <T, R> ProxyFunction<T, R> processString(ApplicationContext context, MethodProxyContext<T> methodContext, SerialisationContext serialisationContext) {
+    protected <T, R> ProxyFunction<T, R> processString(ApplicationContext context, MethodProxyContext<T> methodContext, SerialisationContext serialisationContext) {
         return (instance, args, proxyContext) -> {
             final Object content = args[0];
             final ObjectMapper objectMapper = this.getObjectMapper(context, serialisationContext);
@@ -108,17 +73,26 @@ public class SerialisationServiceModifier extends ServiceAnnotatedMethodModifier
             final Exceptional<String> result = objectMapper.write(content);
             if (Reflect.assignableFrom(String.class, methodContext.getReturnType())) {
                 return (R) result.orNull();
-            } else {
+            }
+            else {
                 return (R) result;
             }
         };
     }
 
-    private ObjectMapper getObjectMapper(ApplicationContext context, SerialisationContext serialisationContext) {
-        final ObjectMapper objectMapper = context.get(ObjectMapper.class);
-        final FileType fileType = serialisationContext.getFileType();
-        objectMapper.setFileType(fileType);
-        return objectMapper;
+    @Override
+    protected Class<SerialisationContext> getContextType() {
+        return SerialisationContext.class;
+    }
+
+    @SuppressWarnings("unchecked")
+    private <R> R wrapBooleanResult(Exceptional<Boolean> result, MethodProxyContext<?> methodContext) {
+        if (Reflect.assignableFrom(Boolean.class, methodContext.getReturnType())) {
+            return (R) result.or(false);
+        }
+        else {
+            return (R) result;
+        }
     }
 
     @Override
@@ -141,37 +115,29 @@ public class SerialisationServiceModifier extends ServiceAnnotatedMethodModifier
         methodContext.add(serialisationContext);
 
         if (hasPath) {
-            serialisationContext.setTarget(SerialisationTarget.ANNOTATED_PATH);
-            serialisationContext.setPredeterminedPath(this.determineAnnotationPath(context, methodContext));
-            return this.argumentPathTargetPreconditions(methodContext);
-
-        } else {
-            if (Reflect.isNotVoid(annotation.value().owner())) {
-                serialisationContext.setTarget(SerialisationTarget.PARAMETER_PATH);
+            serialisationContext.setTarget(SerialisationTarget.PARAMETER_PATH);
+            return methodContext.getMethod().getParameterCount() == 2;
+        }
+        else {
+            if (Reflect.isNotVoid(this.getOwner(annotation.value().owner(), methodContext))) {
+                serialisationContext.setTarget(SerialisationTarget.ANNOTATED_PATH);
+                serialisationContext.setPredeterminedPath(this.determineAnnotationPath(
+                        context,
+                        methodContext,
+                        new PersistenceAnnotationContext(annotation))
+                );
                 return methodContext.getMethod().getParameterCount() == 1;
-
-            } else {
+            }
+            else {
                 serialisationContext.setTarget(SerialisationTarget.STRING);
                 return this.stringTargetPreconditions(methodContext);
             }
         }
     }
 
-    private Path determineAnnotationPath(ApplicationContext context, MethodProxyContext<?> methodContext) {
-        final Serialise annotation = methodContext.getAnnotation(Serialise.class);
-        final org.dockbox.selene.persistence.annotations.File file = annotation.value();
-        Class<?> owner = file.owner();
-
-        if (!Reflect.isNotVoid(owner)) {
-            final Service service = methodContext.getMethod().getDeclaringClass().getAnnotation(Service.class);
-            owner = service.owner();
-        }
-
-        final TypedOwner lookup = context.get(OwnerLookup.class).lookup(owner);
-        final FileManager fileManager = context.get(FileManager.class);
-
-        if ("".equals(file.file())) return fileManager.getDataFile(lookup);
-        else return fileManager.getDataFile(lookup, file.file());
+    private Class<?> getOwner(Class<?> annotationOwner, MethodProxyContext<?> context) {
+        if (Reflect.isNotVoid(annotationOwner)) return annotationOwner;
+        return context.getMethod().getDeclaringClass().getAnnotation(Service.class).owner();
     }
 
     private boolean argumentPathTargetPreconditions(MethodProxyContext<?> context) {

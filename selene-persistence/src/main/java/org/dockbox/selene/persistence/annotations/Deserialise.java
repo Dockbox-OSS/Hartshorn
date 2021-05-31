@@ -17,11 +17,16 @@
 
 package org.dockbox.selene.persistence.annotations;
 
+import org.dockbox.selene.persistence.FileType;
+
+import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
-public @interface File {
-    Class<?> owner() default Void.class;
-    String value() default "";
+@Target(ElementType.METHOD)
+public @interface Deserialise {
+    FileType filetype() default FileType.JSON;
+    File value() default @File;
 }
