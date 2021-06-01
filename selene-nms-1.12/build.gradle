@@ -49,8 +49,4 @@ dependencies {
     compileOnly project(':selene-minecraft:server')
 }
 
-shadowJar {
-    configurations = [project.configurations.shadow]
-}
-
 jar.finalizedBy('reobfJar')
