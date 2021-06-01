@@ -220,7 +220,7 @@ public final class SeleneUtils {
     }
 
     public static <T> List<T> asUnmodifiableList(Collection<T> collection) {
-        return Collections.unmodifiableList(SeleneUtils.emptyList());
+        return Collections.unmodifiableList(SeleneUtils.asList(collection));
     }
 
     public static <T> List<T> emptyList() {
