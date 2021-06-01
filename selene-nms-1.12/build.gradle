@@ -27,6 +27,7 @@ plugins {
     id 'java'
 }
 
+apply from: "$rootDir/parent.gradle"
 apply plugin: 'net.minecraftforge.gradle'
 
 archivesBaseName = 'selene-nms-1.12'
@@ -44,7 +45,6 @@ repositories {
 
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraftForge112}"
-    compileOnly project(':selene-parent')
     compileOnly project(':selene-keys')
     compileOnly project(':selene-minecraft:server')
 }

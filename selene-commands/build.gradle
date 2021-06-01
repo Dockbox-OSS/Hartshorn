@@ -15,14 +15,14 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
+apply from: "$rootDir/parent.gradle"
+
 dependencies {
-    compileOnly project(':selene-parent')
     compileOnly project(':selene-bootstrap')
     compileOnly project(':selene-i18n')
     compileOnly project(':selene-events')
     compileOnly project(':selene-proxy')
 
-    testImplementation project(':selene-parent')
     testImplementation project(':selene-bootstrap')
     testImplementation project(':selene-i18n')
     testImplementation project(':selene-events')

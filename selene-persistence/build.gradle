@@ -19,8 +19,9 @@ repositories {
     mavenCentral()
 }
 
+apply from: "$rootDir/parent.gradle"
+
 dependencies {
-    compileOnly project(':selene-parent')
     compileOnly project(':selene-bootstrap')
     compileOnly project(':selene-proxy')
 

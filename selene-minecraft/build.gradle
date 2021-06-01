@@ -16,12 +16,10 @@
  */
 
 subprojects { Project subProject ->
-    dependencies {
-        compileOnly project(':selene-service-parent')
+    apply from: "$rootDir/service-parent.gradle"
 
+    dependencies {
         if (subProject.name != 'server')
             compileOnly project(':selene-minecraft:server')
-
-        testCompile project(':selene-service-parent')
     }
 }

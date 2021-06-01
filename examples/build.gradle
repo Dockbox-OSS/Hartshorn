@@ -22,8 +22,9 @@ plugins {
 group = 'org.dockbox.selene.sample'
 description 'Sample services for Selene'
 
+apply from: "$rootDir/service-parent.gradle"
+
 dependencies {
-    compileOnly project(':selene-service-parent')
     compileOnly project(':selene-minecraft:server')
     compileOnly project(':selene-minecraft:plots')
 }

@@ -15,10 +15,10 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
+apply from: "$rootDir/service-parent.gradle"
+
 // All dependencies are compiled so this project can be used as parent for sub projects and modules
 dependencies {
-    compile project(':selene-service-parent')
-
     compile project(':selene-keys')
     compile project(':selene-commands')
 }
