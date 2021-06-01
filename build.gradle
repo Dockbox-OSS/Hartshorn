@@ -84,6 +84,10 @@ allprojects {
         }
 
         configurations {
+            include
+            compileOnly.extendsFrom(include)
+            testImplementation.extendsFrom(include)
+
             all*.exclude group: 'junit', module: 'junit'
         }
 
@@ -96,14 +100,15 @@ allprojects {
             compile group: 'com.jhlabs', name: 'filters', version: '2.0.235-1'
 
             // Typically included by platforms
-            compileOnly "org.slf4j:slf4j-api:$slf4jVersion"
+            include "org.slf4j:slf4j-api:$slf4jVersion"
 
             // Compile/source dependencies
-            compileOnly("org.jetbrains:annotations:$jetbrainsAnnotationsVersion")
+            include("org.jetbrains:annotations:$jetbrainsAnnotationsVersion")
 
             // Lombok
-            compileOnly 'org.projectlombok:lombok:1.18.20'
+            include 'org.projectlombok:lombok:1.18.20'
             annotationProcessor 'org.projectlombok:lombok:1.18.20'
+            testAnnotationProcessor 'org.projectlombok:lombok:1.18.20'
 
             // Testing requirements
             testCompile "org.junit.jupiter:junit-jupiter-api:$junitVersion"
@@ -115,13 +120,8 @@ allprojects {
 
             testCompile testFixtures(project(":selene-test"))
 
-            testImplementation "com.google.inject:guice:$guiceVersion"
-            testImplementation "com.google.guava:guava:$guavaVersion"
             testImplementation "org.slf4j:slf4j-api:$slf4jVersion"
             testImplementation "org.slf4j:slf4j-simple:$slf4jVersion"
-
-            testCompileOnly 'org.projectlombok:lombok:1.18.20'
-            testAnnotationProcessor 'org.projectlombok:lombok:1.18.20'
         }
 
         test {

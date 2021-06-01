@@ -12,3 +12,6 @@ servers
 selene-assembly/distributions
 # Test resources
 module/src/test/resources/storage.db-journal
+*/.mixin.out
+*/testRuns
+*/logs

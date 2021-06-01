@@ -22,8 +22,8 @@ repositories {
 apply from: "$rootDir/parent.gradle"
 
 dependencies {
-    compileOnly project(':selene-bootstrap')
-    compileOnly project(':selene-proxy')
+    include project(':selene-bootstrap')
+    include project(':selene-proxy')
 
     compile 'com.fasterxml.jackson.core:jackson-core:2.12.3'
     compile 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.12.3'
@@ -33,12 +33,10 @@ dependencies {
     compile 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.12.3'
     compile 'org.codehaus.woodstox:woodstox-core-asl:4.4.1'
 
-
     // SQL Extension dependencies
-    compile "org.jooq:jooq:$jooqVersion"
+    include "org.jooq:jooq:$jooqVersion"
     compile "org.jooq:jooq-meta:$jooqVersion"
     compile "org.jooq:jooq-codegen:$jooqVersion"
 
-    testRuntime "org.jooq:jooq:$jooqVersion"
     testCompile "org.xerial:sqlite-jdbc:$xerialSqliteJdbcVersion"
 }

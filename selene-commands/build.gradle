@@ -18,12 +18,8 @@
 apply from: "$rootDir/parent.gradle"
 
 dependencies {
-    compileOnly project(':selene-bootstrap')
-    compileOnly project(':selene-i18n')
-    compileOnly project(':selene-events')
-    compileOnly project(':selene-proxy')
-
-    testImplementation project(':selene-bootstrap')
-    testImplementation project(':selene-i18n')
-    testImplementation project(':selene-events')
+    include project(':selene-bootstrap')
+    include project(':selene-i18n')
+    include project(':selene-events')
+    include project(':selene-proxy')
 }

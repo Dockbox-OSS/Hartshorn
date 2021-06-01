@@ -16,8 +16,6 @@
  */
 
 dependencies {
-    compileOnly project(':selene-core')
+    include project(':selene-core')
     compile "org.reflections:reflections:$reflectionsVersion"
-
-    testImplementation project(':selene-core')
 }

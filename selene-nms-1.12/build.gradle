@@ -45,8 +45,9 @@ repositories {
 
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraftForge112}"
-    compileOnly project(':selene-keys')
-    compileOnly project(':selene-minecraft:server')
+    include project(':selene-keys')
+    include project(':selene-bootstrap')
+    include project(':selene-minecraft:server')
 }
 
 jar.finalizedBy('reobfJar')

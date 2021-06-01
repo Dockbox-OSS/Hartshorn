@@ -16,17 +16,10 @@
  */
 
 dependencies {
-    compile project(':selene-core')
-    compile project(':selene-util')
-    compile(project(':selene-di')){
+    include project(':selene-core')
+    include project(':selene-util')
+    include(project(':selene-di')){
         exclude module: 'guice'
     }
-    compile project(':selene-exceptions')
-
-    testCompile project(':selene-core')
-    testCompile project(':selene-util')
-    testCompile(project(':selene-di')){
-        exclude module: 'guice'
-    }
-    testCompile project(':selene-exceptions')
+    include project(':selene-exceptions')
 }

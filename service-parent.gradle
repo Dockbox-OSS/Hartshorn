@@ -18,38 +18,20 @@
 apply from: "$rootDir/parent.gradle"
 
 dependencies {
-    compile project(':selene-bootstrap')
+    include project(':selene-bootstrap')
 
     // Provide access to i18n for target communication
-    compile project(':selene-i18n')
+    include project(':selene-i18n')
 
     // Provide access to persistence and entity models
-    compile project(':selene-persistence')
-    compile project(':selene-config')
+    include project(':selene-persistence')
+    include project(':selene-config')
 
     // Provide access to event and command listeners, which
     // cover 50% of the module use-cases
-    compile project(':selene-events')
-    compile project(':selene-commands')
+    include project(':selene-events')
+    include project(':selene-commands')
 
     // Provide access to exception handlers
-    compile project(':selene-exceptions')
-
-    /* Test scope */
-    testCompile project(':selene-bootstrap')
-
-    // Provide access to i18n for target communication
-    testCompile project(':selene-i18n')
-
-    // Provide access to persistence and entity models
-    testCompile project(':selene-persistence')
-    testCompile project(':selene-config')
-
-    // Provide access to event and command listeners, which
-    // cover 50% of the module use-cases
-    testCompile project(':selene-events')
-    testCompile project(':selene-commands')
-
-    // Provide access to exception handlers
-    testCompile project(':selene-exceptions')
+    include project(':selene-exceptions')
 }
