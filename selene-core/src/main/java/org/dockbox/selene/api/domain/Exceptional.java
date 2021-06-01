@@ -176,6 +176,11 @@ public final class Exceptional<T> {
         else return new Exceptional<>(value, throwable);
     }
 
+
+    public static <T> Exceptional<T> of(Supplier<Boolean> condition, Callable<T> ifTrue, Supplier<Throwable> ifFalseException) {
+        return of(condition, ifTrue, () -> null, ifFalseException);
+    }
+
     public static <T> Exceptional<T> of(Supplier<Boolean> condition, Callable<T> ifTrue, Supplier<T> ifFalse, Supplier<Throwable> ifFalseException) {
         if (condition.get()) return of(ifTrue);
         else return of(ifFalse.get(), ifFalseException.get());
