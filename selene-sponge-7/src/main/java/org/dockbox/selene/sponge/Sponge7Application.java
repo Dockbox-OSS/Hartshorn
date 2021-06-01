@@ -83,7 +83,7 @@ import org.spongepowered.api.plugin.PluginContainer;
 public class Sponge7Application {
 
     protected static Sponge7Application instance;
-    protected final Runnable init;
+    protected Runnable init;
     // Uses Sponge injection
     @Inject
     private PluginContainer container;
@@ -93,7 +93,6 @@ public class Sponge7Application {
      * bindings providing utilities.
      */
     public Sponge7Application() {
-        this.init = SeleneApplication.create(Sponge7Application.class);
         Sponge7Application.instance = this;
     }
 
@@ -104,6 +103,8 @@ public class Sponge7Application {
     @SuppressWarnings({ "AnonymousInnerClassMayBeStatic", "UnstableApiUsage" })
     @Listener
     public void on(GamePreInitializationEvent event) {
+        this.init = SeleneApplication.create(Sponge7Application.class);
+
         Composite.ITEM_KEY = Key.builder()
                 .type(new TypeToken<MapValue<String, Object>>() {
                 })
