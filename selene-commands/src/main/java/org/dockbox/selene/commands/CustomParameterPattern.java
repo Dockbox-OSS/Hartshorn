@@ -104,7 +104,8 @@ public interface CustomParameterPattern {
                 Class<?> parameterType = parameterTypes[i];
                 Class<?> requiredType = argumentTypes.get(i);
                 if (requiredType == null) {
-                    Exceptional<?> result = ArgumentConverterRegistry.getConverter(parameterType).convert(source, (String) arguments.get(i));
+                    final ArgumentConverter<?> converter = ArgumentConverterRegistry.getConverter(parameterType);
+                    Exceptional<?> result = converter.convert(source, (String) arguments.get(i));
                     if (result.present()) {
                         arguments.set(i, result.get());
                         continue; // Generic type, will be parsed later

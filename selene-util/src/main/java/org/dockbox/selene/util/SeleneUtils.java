@@ -753,6 +753,10 @@ public final class SeleneUtils {
         return optional.isPresent() && optional.get();
     }
 
+    public static boolean unwrap(Exceptional<Boolean> exceptional) {
+        return exceptional.present() && exceptional.get();
+    }
+
     /**
      * Returns true if {@code vec} is inside the 3D cuboid defined by the two furthest points {@code
      * min} and {@code max}. Assuming <a href="https://i.stack.imgur.com/hYcv0.png">this</a> is your
