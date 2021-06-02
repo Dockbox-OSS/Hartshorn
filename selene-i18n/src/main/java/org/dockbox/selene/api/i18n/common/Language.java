@@ -48,6 +48,13 @@ public enum Language implements PersistentCapable<PersistentLanguageModel> {
         return Language.EN_US;
     }
 
+    public static Language of(Locale locale) {
+        for (Language value : Language.values()) {
+            if (value.getLocale().equals(locale)) return value;
+        }
+        return Language.EN_US;
+    }
+
     @Override
     public Class<PersistentLanguageModel> getModelClass() {
         return PersistentLanguageModel.class;
