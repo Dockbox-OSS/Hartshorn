@@ -19,11 +19,12 @@ package org.dockbox.selene.server.minecraft.events.player;
 
 import org.dockbox.selene.api.domain.Target;
 import org.dockbox.selene.api.events.AbstractTargetEvent;
+import org.dockbox.selene.server.minecraft.players.Player;
 
 /** The abstract type which can be used to listen to all player movement related events. */
 public abstract class PlayerConnectionEvent extends AbstractTargetEvent {
 
-    protected PlayerConnectionEvent(Target target) {
+    protected PlayerConnectionEvent(Player target) {
         super(target);
     }
 
@@ -32,4 +33,8 @@ public abstract class PlayerConnectionEvent extends AbstractTargetEvent {
         throw new UnsupportedOperationException("Cannot change target of connection event");
     }
 
+    @Override
+    public Player getTarget() {
+        return (Player) super.getTarget();
+    }
 }

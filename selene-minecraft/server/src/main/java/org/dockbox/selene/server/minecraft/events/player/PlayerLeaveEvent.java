@@ -17,11 +17,11 @@
 
 package org.dockbox.selene.server.minecraft.events.player;
 
-import org.dockbox.selene.api.domain.Target;
+import org.dockbox.selene.server.minecraft.players.Player;
 
 /** The event fired when a player disconnected from the server. */
 public class PlayerLeaveEvent extends PlayerConnectionEvent {
-    public PlayerLeaveEvent(Target target) {
+    public PlayerLeaveEvent(Player target) {
         super(target);
     }
 }
