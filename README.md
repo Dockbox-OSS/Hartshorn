@@ -5,7 +5,8 @@
 	<p align="center">
 		<a href="https://guuslieben.github.io/Selene/"><img src="https://github.com/GuusLieben/Selene/workflows/JavaDocs/badge.svg"></a>
 		<img src="https://github.com/GuusLieben/Selene/workflows/Build/badge.svg">
-		<img src="https://github.com/GuusLieben/Selene/workflows/Tests/badge.svg">
+		<img src="https://github.com/GuusLieben/Selene/workflows/Tests/badge.svg"><br>
+        <a href="https://www.codefactor.io/repository/github/guuslieben/selene"><img src="https://www.codefactor.io/repository/github/guuslieben/selene/badge?s=4dbef3a95ba6db638d3a86f7ffd5ff08eabdfcf4" alt="CodeFactor" /></a>
 		<a href="https://www.gnu.org/licenses/lgpl-2.1"><img src="https://img.shields.io/badge/License-LGPL%20v2.1-blue.svg"></a>
 	</p>
 </p>
