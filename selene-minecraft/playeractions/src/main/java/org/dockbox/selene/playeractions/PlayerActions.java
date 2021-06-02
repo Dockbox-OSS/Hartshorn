@@ -23,6 +23,8 @@ import org.dockbox.selene.api.i18n.common.Language;
 import org.dockbox.selene.api.i18n.text.Text;
 import org.dockbox.selene.api.i18n.text.actions.ClickAction;
 import org.dockbox.selene.api.i18n.text.actions.HoverAction;
+import org.dockbox.selene.api.keys.Keys;
+import org.dockbox.selene.api.keys.PersistentDataKey;
 import org.dockbox.selene.config.annotations.Value;
 import org.dockbox.selene.di.annotations.Service;
 import org.dockbox.selene.di.annotations.Wired;
@@ -42,6 +44,7 @@ import org.dockbox.selene.server.minecraft.events.player.interact.PlayerSummonEn
 import org.dockbox.selene.server.minecraft.players.GameSettings;
 import org.dockbox.selene.server.minecraft.players.Gamemode;
 import org.dockbox.selene.server.minecraft.players.Player;
+import org.dockbox.selene.util.SeleneUtils;
 
 import java.util.List;
 
@@ -54,6 +57,11 @@ public class PlayerActions {
     private PlayerActionResources resources;
     @Wired
     private DefaultServerResources serverResources;
+
+    // Placeholder for future Player setting, see #283
+    private static final PersistentDataKey<Boolean> ignoringNotifications = Keys.persistent(
+            Boolean.class, "ignoringPlayerNotifications", PlayerActions.class
+    );
 
     @Value("services.player-actions.whitelist")
     private List<String> whitelist;
@@ -132,28 +140,33 @@ public class PlayerActions {
     @Listener
     public void on(PlayerJoinEvent event) {
         final Player target = event.getTarget();
-        final GameSettings gameSettings = target.getGameSettings();
-        final Language settingsLanguage = gameSettings.getLanguage();
-        final Language preferenceLanguage = target.getLanguage();
 
-        if (!settingsLanguage.equals(preferenceLanguage)) {
-            Text notification = this.resources.getLanguageNotification(settingsLanguage.getNameEnglish())
-                    .translate(target)
-                    .asText();
+        final boolean ignoring = SeleneUtils.unwrap(target.get(ignoringNotifications));
 
-            notification.onClick(ClickAction.executeCallback(t -> {
-                target.setLanguage(settingsLanguage);
-                target.send(this.serverResources
-                        .getLanguageUpdated(settingsLanguage.getNameLocalized())
+        if (!ignoring) {
+            final GameSettings gameSettings = target.getGameSettings();
+            final Language settingsLanguage = gameSettings.getLanguage();
+            final Language preferenceLanguage = target.getLanguage();
+
+            if (!settingsLanguage.equals(preferenceLanguage)) {
+                Text notification = this.resources.getLanguageNotification(settingsLanguage.getNameEnglish())
+                        .translate(target)
+                        .asText();
+
+                notification.onClick(ClickAction.executeCallback(t -> {
+                    target.setLanguage(settingsLanguage);
+                    target.send(this.serverResources
+                            .getLanguageUpdated(settingsLanguage.getNameLocalized())
+                    );
+                }));
+
+                notification.onHover(HoverAction.showText(this.resources
+                        .getLanguageNotificationHover(settingsLanguage.getNameEnglish())
+                        .translate(target)
+                        .asText())
                 );
-            }));
-
-            notification.onHover(HoverAction.showText(this.resources
-                    .getLanguageNotificationHover(settingsLanguage.getNameEnglish())
-                    .translate(target)
-                    .asText())
-            );
-            target.sendWithPrefix(notification);
+                target.sendWithPrefix(notification);
+            }
         }
     }
 
