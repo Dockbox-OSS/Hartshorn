@@ -17,9 +17,9 @@
 
 package org.dockbox.selene.sponge.util;
 
-import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.task.Task;
 import org.dockbox.selene.api.task.TaskRunner;
+import org.dockbox.selene.sponge.Sponge7Application;
 import org.spongepowered.api.Sponge;
 
 import java.util.concurrent.TimeUnit;
@@ -33,7 +33,7 @@ public class SpongeTaskRunner extends TaskRunner {
                 .execute(task::run)
                 .name("Selene$" + task.getClass().getSimpleName() + '#' + System.currentTimeMillis())
                 .async()
-                .submit(Selene.server());
+                .submit(Sponge7Application.container());
     }
 
     @Override
@@ -44,6 +44,6 @@ public class SpongeTaskRunner extends TaskRunner {
                 .execute(task::run)
                 .name("Selene$" + task.getClass().getSimpleName() + '#' + System.currentTimeMillis())
                 .async()
-                .submit(Selene.server());
+                .submit(Sponge7Application.container());
     }
 }

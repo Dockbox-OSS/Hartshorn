@@ -17,27 +17,22 @@
 
 package org.dockbox.selene.commands;
 
-import org.dockbox.selene.commands.annotations.Command;
-import org.dockbox.selene.commands.annotations.UseCommands;
+import org.dockbox.selene.api.annotations.PostBootstrap;
+import org.dockbox.selene.api.annotations.UseBootstrap;
+import org.dockbox.selene.di.annotations.Service;
 import org.dockbox.selene.di.context.ApplicationContext;
-import org.dockbox.selene.di.services.ServiceProcessor;
-import org.dockbox.selene.util.Reflect;
+import org.dockbox.selene.di.services.ServiceContainer;
+import org.dockbox.selene.di.services.ServiceLocator;
 
-public class CommandServiceProcessor implements ServiceProcessor<UseCommands> {
+@Service(activator = UseBootstrap.class)
+public class CommandRegistrationService {
 
-    @Override
-    public boolean preconditions(Class<?> type) {
-        return !Reflect.annotatedMethods(type, Command.class).isEmpty();
+    @PostBootstrap
+    public void registerServices(ApplicationContext context) {
+        final ServiceLocator locator = context.locator();
+        final CommandBus bus = context.get(CommandBus.class);
+        for (ServiceContainer container : locator.containers()) {
+            bus.register(container.getType());
+        }
     }
-
-    @Override
-    public <T> void process(ApplicationContext context, Class<T> type) {
-        context.get(CommandBus.class).register(type);
-    }
-
-    @Override
-    public Class<UseCommands> activator() {
-        return UseCommands.class;
-    }
-
 }

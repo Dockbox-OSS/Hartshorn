@@ -122,7 +122,7 @@ public class BootstrapListeners {
 
     private void registerSpongeListeners(Object... listeners) {
         for (Object obj : listeners) {
-            if (null != obj) Sponge.getEventManager().registerListeners(this, obj);
+            if (null != obj) Sponge.getEventManager().registerListeners(Sponge7Application.container(), obj);
             else Selene.log().warn("Attempted to register 'null' listener");
         }
     }

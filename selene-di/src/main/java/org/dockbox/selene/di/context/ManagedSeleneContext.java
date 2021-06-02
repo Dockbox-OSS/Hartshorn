@@ -104,6 +104,9 @@ public abstract class ManagedSeleneContext extends DefaultContext implements App
                 .filter(field -> Reflect.assignableFrom(InjectableType.class, field.getType()))
                 .map(field -> {
                     try {
+                        // As we're enabling fields they may be accessed even if their
+                        // modifier indicates otherwise.
+                        if (!field.isAccessible()) field.setAccessible(true);
                         return field.get(typeInstance);
                     }
                     catch (IllegalAccessException e) {
