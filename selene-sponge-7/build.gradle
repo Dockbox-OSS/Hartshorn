@@ -22,19 +22,23 @@ buildscript {
         maven { url = 'https://files.minecraftforge.net/maven' }
     }
     dependencies {
+        classpath 'com.github.jengelman.gradle.plugins:shadow:4.0.3'
         classpath 'net.minecraftforge.gradle:ForgeGradle:3.+'
     }
 }
 
 plugins {
+    id 'base'
     id 'java'
+    id 'java-test-fixtures'
     id 'org.spongepowered.plugin' version '0.9.0'
     id 'de.undercouch.download' version '4.1.1'
 }
 
 apply plugin: 'net.minecraftforge.gradle'
+apply plugin: 'com.github.johnrengelman.shadow'
 
-archivesBaseName = 'selene-sponge-api7'
+archivesBaseName = 'selene-sponge-7'
 group project.pluginGroup
 description 'Sponge API7.x implementation for Selene'
 sponge.plugin.id = pluginId
@@ -65,25 +69,24 @@ repositories {
 
 def ignoreProjects = ['examples', 'selene-parent', 'selene-service-parent', 'selene-sponge-7', 'selene-nms-1.12']
 
+configurations {
+    includeShadow
+    include.extendsFrom(includeShadow)
+    shadow.extendsFrom(includeShadow)
+}
+
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraftForge112}"
-    new File(parent.rootDir, 'selene-services').listFiles().each {
+
+    new File(parent.rootDir, 'selene-minecraft').listFiles().each {
         if (it.directory && new File(it, 'build.gradle').exists()) {
-            shadow project(":selene-services:${it.name}")
-            testImplementation project(":selene-services:${it.name}")
-        }
-    }
-    new File(parent.rootDir, 'selene-minecraft-services').listFiles().each {
-        if (it.directory && new File(it, 'build.gradle').exists()) {
-            shadow project(":selene-minecraft-services:${it.name}")
-            testImplementation project(":selene-minecraft-services:${it.name}")
+            includeShadow project(":selene-minecraft:${it.name}")
         }
     }
 
     parent.rootDir.listFiles().each {
         if ((!ignoreProjects.contains(it.name)) && it.directory && new File(it, 'build.gradle').exists()) {
-            shadow project(":${it.name}")
-            testImplementation project(":${it.name}")
+            includeShadow project(":${it.name}")
         }
     }
 
@@ -91,39 +94,38 @@ dependencies {
         exclude group: 'net.minecraftforge', module: 'forge'
     }
 
-    compileOnly "me.lucko.luckperms:luckperms-api:$luckPermsVersion"
-    compileOnly("org.spongepowered:spongeapi:$spongeApi7Version") {
+    include "me.lucko.luckperms:luckperms-api:$luckPermsVersion"
+    include("org.spongepowered:spongeapi:$spongeApi7Version") {
         exclude group: "org.spongepowered", module: "configurate**"
     }
-    compileOnly("org.spongepowered:spongecommon:$spongeCommon7Version") {
+    include("org.spongepowered:spongevanilla:$spongeCommon7Version") {
         exclude group: "org.spongepowered", module: "configurate**"
     }
-    compileOnly "com.github.Eufranio:MagiBridge:$magiBridgeVersion"
-    compileOnly "com.github.MultiChat:Development:$multiChatVersion"
-    compileOnly "com.github.flash-labs:FlashLibs:$flashLibsVersion"
-    compileOnly "com.sk89q.worldedit:worldedit-sponge:$worldEditSpongeVersion"
-    compileOnly "io.github.NucleusPowered:Nucleus:$nucleusApiVersion"
+    include "com.github.Eufranio:MagiBridge:$magiBridgeVersion"
+    include "com.github.MultiChat:Development:$multiChatVersion"
+    include "com.github.flash-labs:FlashLibs:$flashLibsVersion"
+    include "com.sk89q.worldedit:worldedit-sponge:$worldEditSpongeVersion"
+    include "io.github.NucleusPowered:Nucleus:$nucleusApiVersion"
 
-    compileOnly 'io.netty:netty-all:4.1.24.Final'
+    include 'io.netty:netty-all:4.1.24.Final'
 
-    testImplementation project(':selene-services')
-    testImplementation(project(':selene-nms-1.12')) {
-        exclude group: 'net.minecraftforge', module: 'forge'
-    }
+    include files('libs/PacketGate-0.1.2.jar')
+    include files('libs/PlotSquared-modified-latest.jar')
 
-    compileOnly files('libs/PacketGate-0.1.2.jar')
-    compileOnly files('libs/PlotSquared-modified-latest.jar')
+    include "com.boydti:fawe-api:$faweVersion"
+    include "com.sk89q.worldedit:worldedit-core:$worldEditCoreVersion"
+}
 
-    // Required plugins for all platforms
-    compileOnly "com.boydti:fawe-api:$faweVersion"
-    compileOnly "com.sk89q.worldedit:worldedit-core:$worldEditCoreVersion"
-
-    testImplementation "com.boydti:fawe-api:$faweVersion"
-    testImplementation "com.sk89q.worldedit:worldedit-core:$worldEditCoreVersion"
+tasks.build {
+    dependsOn tasks.shadowJar
 }
 
 shadowJar {
     configurations = [project.configurations.shadow]
+    relocate 'com.fasterxml.jackson', 'org.dockbox.selene.internal.jackson'
+    relocate 'org.apache.commons', 'org.dockbox.selene.internal.apache.commons'
+    relocate 'org.spongepowered.configurate', 'org.dockbox.selene.internal.configurate'
+    relocate 'org.yaml.snakeyaml', 'org.dockbox.selene.internal.snakeyaml'
 }
 
 task downloadServerCustom(type: Download) {

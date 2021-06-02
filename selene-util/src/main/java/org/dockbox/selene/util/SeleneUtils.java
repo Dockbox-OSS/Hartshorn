@@ -220,7 +220,7 @@ public final class SeleneUtils {
     }
 
     public static <T> List<T> asUnmodifiableList(Collection<T> collection) {
-        return Collections.unmodifiableList(SeleneUtils.emptyList());
+        return Collections.unmodifiableList(SeleneUtils.asList(collection));
     }
 
     public static <T> List<T> emptyList() {
@@ -751,6 +751,10 @@ public final class SeleneUtils {
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     public static boolean unwrap(Optional<Boolean> optional) {
         return optional.isPresent() && optional.get();
+    }
+
+    public static boolean unwrap(Exceptional<Boolean> exceptional) {
+        return exceptional.present() && exceptional.get();
     }
 
     /**

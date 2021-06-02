@@ -17,12 +17,12 @@
 
 package org.dockbox.selene.sponge.listeners;
 
-import org.dockbox.selene.server.events.ServerPostInitEvent;
-import org.dockbox.selene.server.events.ServerReloadEvent;
-import org.dockbox.selene.server.events.ServerStartedEvent;
-import org.dockbox.selene.server.events.ServerStartingEvent;
-import org.dockbox.selene.server.events.ServerStoppingEvent;
-import org.dockbox.selene.server.events.ServerUpdateEvent;
+import org.dockbox.selene.server.minecraft.events.server.ServerPostInitEvent;
+import org.dockbox.selene.server.minecraft.events.server.ServerReloadEvent;
+import org.dockbox.selene.server.minecraft.events.server.ServerStartedEvent;
+import org.dockbox.selene.server.minecraft.events.server.ServerStartingEvent;
+import org.dockbox.selene.server.minecraft.events.server.ServerStoppingEvent;
+import org.dockbox.selene.server.minecraft.events.server.ServerUpdateEvent;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.GameReloadEvent;
 import org.spongepowered.api.event.game.state.GameLoadCompleteEvent;

@@ -22,15 +22,9 @@ plugins {
 group = 'org.dockbox.selene.sample'
 description 'Sample services for Selene'
 
-dependencies {
-    compileOnly project(':selene-service-parent')
-    compileOnly project(':selene-minecraft-server')
-    compileOnly project(':selene-minecraft-services:plots')
+apply from: "$rootDir/service-parent.gradle"
 
-    new File(parent.rootDir, 'selene-services').listFiles().each {
-        if (it.directory && new File(it, 'build.gradle').exists()) {
-            compileOnly project(":selene-services:${it.name}")
-            testImplementation project(":selene-services:${it.name}")
-        }
-    }
+dependencies {
+    compileOnly project(':selene-minecraft:server')
+    compileOnly project(':selene-minecraft:plots')
 }

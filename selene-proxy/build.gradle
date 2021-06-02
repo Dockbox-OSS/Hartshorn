@@ -1,5 +1,6 @@
+apply from: "$rootDir/parent.gradle"
+
 dependencies {
-    compileOnly(project(':selene-parent'))
     compileOnly(project(':selene-exceptions'))
     compileOnly(project(':selene-bootstrap'))
 }

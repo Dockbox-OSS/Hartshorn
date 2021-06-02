@@ -22,7 +22,6 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.github.jengelman.gradle.plugins:shadow:4.0.4'
         classpath 'io.franzbecker:gradle-lombok:1.6'
     }
 }
@@ -46,7 +45,6 @@ def date = LocalDate.now().toString()
 subprojects { Project subProject ->
     apply plugin: 'java'
     apply plugin: 'maven'
-    apply plugin: 'com.github.johnrengelman.shadow'
     apply plugin: 'org.cadixdev.licenser'
     apply plugin: 'de.lukaskoerfer.gradle.delombok'
 
@@ -64,21 +62,14 @@ subprojects { Project subProject ->
 
     tasks.build {
         dependsOn tasks.updateLicenses
-        dependsOn tasks.shadowJar
         finalizedBy tasks.clean
-    }
-
-    shadowJar {
-        relocate 'com.fasterxml.jackson', 'org.dockbox.selene.internal.jackson'
-        relocate 'org.apache.commons', 'org.dockbox.selene.internal.apache.commons'
-        relocate 'org.spongepowered.configurate', 'org.dockbox.selene.internal.configurate'
-        relocate 'org.yaml.snakeyaml', 'org.dockbox.selene.internal.snakeyaml'
     }
 
     javadoc {
         dependsOn delombok
         failOnError = false
     }
+
 }
 
 allprojects {
@@ -93,6 +84,10 @@ allprojects {
         }
 
         configurations {
+            include
+            compileOnly.extendsFrom(include)
+            testImplementation.extendsFrom(include)
+
             all*.exclude group: 'junit', module: 'junit'
         }
 
@@ -105,14 +100,15 @@ allprojects {
             compile group: 'com.jhlabs', name: 'filters', version: '2.0.235-1'
 
             // Typically included by platforms
-            compileOnly "org.slf4j:slf4j-api:$slf4jVersion"
+            include "org.slf4j:slf4j-api:$slf4jVersion"
 
             // Compile/source dependencies
-            compileOnly("org.jetbrains:annotations:$jetbrainsAnnotationsVersion")
+            include("org.jetbrains:annotations:$jetbrainsAnnotationsVersion")
 
             // Lombok
-            compileOnly 'org.projectlombok:lombok:1.18.20'
+            include 'org.projectlombok:lombok:1.18.20'
             annotationProcessor 'org.projectlombok:lombok:1.18.20'
+            testAnnotationProcessor 'org.projectlombok:lombok:1.18.20'
 
             // Testing requirements
             testCompile "org.junit.jupiter:junit-jupiter-api:$junitVersion"
@@ -120,17 +116,12 @@ allprojects {
             testRuntime "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
             testCompile "org.hamcrest:java-hamcrest:$hamcrestVersion"
 
-            testCompile "org.mockito:mockito-all:$mockitoVersion"
+            testCompile "org.mockito:mockito-inline:$mockitoVersion"
 
             testCompile testFixtures(project(":selene-test"))
 
-            testImplementation "com.google.inject:guice:$guiceVersion"
-            testImplementation "com.google.guava:guava:$guavaVersion"
             testImplementation "org.slf4j:slf4j-api:$slf4jVersion"
             testImplementation "org.slf4j:slf4j-simple:$slf4jVersion"
-
-            testCompileOnly 'org.projectlombok:lombok:1.18.20'
-            testAnnotationProcessor 'org.projectlombok:lombok:1.18.20'
         }
 
         test {
