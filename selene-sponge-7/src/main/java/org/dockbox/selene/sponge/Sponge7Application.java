@@ -92,6 +92,7 @@ public class Sponge7Application {
      */
     public Sponge7Application() {
         Sponge7Application.instance = this;
+        this.init = SeleneApplication.create(Sponge7Application.class);
     }
 
     public static PluginContainer container() {
@@ -101,8 +102,6 @@ public class Sponge7Application {
     @SuppressWarnings({ "AnonymousInnerClassMayBeStatic", "UnstableApiUsage" })
     @Listener
     public void on(GamePreInitializationEvent event) {
-        this.init = SeleneApplication.create(Sponge7Application.class);
-
         Composite.ITEM_KEY = Key.builder()
                 .type(new TypeToken<MapValue<String, Object>>() {
                 })
