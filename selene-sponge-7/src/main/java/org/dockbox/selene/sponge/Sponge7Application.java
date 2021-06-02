@@ -27,7 +27,6 @@ import org.dockbox.selene.api.i18n.annotations.UseResources;
 import org.dockbox.selene.cache.annotations.UseCaching;
 import org.dockbox.selene.commands.annotations.UseCommands;
 import org.dockbox.selene.config.annotations.UseConfigurations;
-import org.dockbox.selene.di.adapter.InjectSource;
 import org.dockbox.selene.di.annotations.Activator;
 import org.dockbox.selene.di.annotations.InjectConfig;
 import org.dockbox.selene.di.annotations.InjectPhase;
@@ -73,8 +72,7 @@ import org.spongepowered.api.plugin.PluginContainer;
 @UseEvents
 @UseProxying
 @Activator(
-        inject = InjectSource.GUICE,
-        bootstrap = MinecraftServerBootstrap.class,
+        value = MinecraftServerBootstrap.class,
         prefix = SeleneInformation.PACKAGE_PREFIX,
         configs = {
                 @InjectConfig(SpongeEarlyInjector.class),

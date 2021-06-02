@@ -21,7 +21,6 @@ import org.dockbox.selene.api.SeleneApplication;
 import org.dockbox.selene.api.SeleneInformation;
 import org.dockbox.selene.di.ApplicationContextAware;
 import org.dockbox.selene.di.Modifier;
-import org.dockbox.selene.di.adapter.InjectSource;
 import org.dockbox.selene.di.annotations.Activator;
 import org.dockbox.selene.di.annotations.InjectConfig;
 import org.dockbox.selene.di.annotations.InjectPhase;
@@ -33,8 +32,7 @@ import java.lang.reflect.Field;
 import lombok.Getter;
 
 @Activator(
-        inject = InjectSource.GUICE,
-        bootstrap = JUnit5Bootstrap.class,
+        value = JUnit5Bootstrap.class,
         prefix = SeleneInformation.PACKAGE_PREFIX,
         configs = {
                 @InjectConfig(JUnitInjector.class),

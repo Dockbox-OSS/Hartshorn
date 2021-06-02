@@ -29,8 +29,8 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface Activator {
-    InjectSource inject();
-    Class<? extends InjectableBootstrap> bootstrap();
+    InjectSource inject() default InjectSource.GUICE;
+    Class<? extends InjectableBootstrap> value();
     String prefix() default "";
     InjectConfig[] configs() default {};
     ServiceSource services() default ServiceSource.DEFAULT;

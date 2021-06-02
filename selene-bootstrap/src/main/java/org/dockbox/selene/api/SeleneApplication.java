@@ -39,7 +39,7 @@ public class SeleneApplication {
         try {
             final long start = System.currentTimeMillis();
             final Activator annotation = verifyActivator(activator);
-            final Class<? extends InjectableBootstrap> bootstrap = annotation.bootstrap();
+            final Class<? extends InjectableBootstrap> bootstrap = annotation.value();
             final InjectableBootstrap injectableBootstrap = instance(bootstrap);
 
             String prefix = "".equals(annotation.prefix()) ? activator.getPackage().getName() : annotation.prefix();
