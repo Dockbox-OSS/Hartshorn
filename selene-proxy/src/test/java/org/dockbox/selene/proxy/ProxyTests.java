@@ -22,6 +22,8 @@ import org.dockbox.selene.proxy.handle.ProxyHandler;
 import org.dockbox.selene.proxy.types.ConcreteProxyTarget;
 import org.dockbox.selene.proxy.types.FinalProxyTarget;
 import org.dockbox.selene.proxy.types.GlobalProxyTarget;
+import org.dockbox.selene.proxy.types.ProviderService;
+import org.dockbox.selene.proxy.types.SampleType;
 import org.dockbox.selene.test.SeleneJUnit5Runner;
 import org.dockbox.selene.util.Reflect;
 import org.junit.jupiter.api.Assertions;
@@ -84,4 +86,10 @@ public class ProxyTests {
         Assertions.assertEquals("GlobalSelene", target.getName());
     }
 
+    @Test
+    void testProviderService() {
+        ProviderService service = Selene.context().get(ProviderService.class);
+        final SampleType type = service.get();
+        Assertions.assertNotNull(type);
+    }
 }
