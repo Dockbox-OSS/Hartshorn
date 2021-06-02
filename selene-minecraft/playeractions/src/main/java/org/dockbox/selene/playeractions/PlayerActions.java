@@ -19,20 +19,27 @@ package org.dockbox.selene.playeractions;
 
 import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.events.annotations.Listener;
+import org.dockbox.selene.api.i18n.common.Language;
+import org.dockbox.selene.api.i18n.text.Text;
+import org.dockbox.selene.api.i18n.text.actions.ClickAction;
+import org.dockbox.selene.api.i18n.text.actions.HoverAction;
 import org.dockbox.selene.config.annotations.Value;
 import org.dockbox.selene.di.annotations.Service;
 import org.dockbox.selene.di.annotations.Wired;
 import org.dockbox.selene.plots.Plot;
 import org.dockbox.selene.plots.PlotKeys;
 import org.dockbox.selene.plots.PlotMembership;
+import org.dockbox.selene.server.minecraft.DefaultServerResources;
 import org.dockbox.selene.server.minecraft.dimension.Worlds;
 import org.dockbox.selene.server.minecraft.dimension.position.Location;
 import org.dockbox.selene.server.minecraft.entities.Entity;
 import org.dockbox.selene.server.minecraft.events.entity.SpawnSource;
+import org.dockbox.selene.server.minecraft.events.player.PlayerJoinEvent;
 import org.dockbox.selene.server.minecraft.events.player.PlayerMoveEvent;
 import org.dockbox.selene.server.minecraft.events.player.PlayerTeleportEvent;
 import org.dockbox.selene.server.minecraft.events.player.interact.PlayerInteractEntityEvent;
 import org.dockbox.selene.server.minecraft.events.player.interact.PlayerSummonEntityEvent;
+import org.dockbox.selene.server.minecraft.players.GameSettings;
 import org.dockbox.selene.server.minecraft.players.Gamemode;
 import org.dockbox.selene.server.minecraft.players.Player;
 
@@ -45,6 +52,8 @@ public class PlayerActions {
     private Worlds worlds;
     @Wired
     private PlayerActionResources resources;
+    @Wired
+    private DefaultServerResources serverResources;
 
     @Value("services.player-actions.whitelist")
     private List<String> whitelist;
@@ -117,6 +126,34 @@ public class PlayerActions {
         if (event.getTarget().getWorld().getWorldUniqueId().equals(this.worlds.getRootWorldId())) {
             event.setCancelled(true);
             event.getTarget().send(this.resources.getMoveError());
+        }
+    }
+
+    @Listener
+    public void on(PlayerJoinEvent event) {
+        final Player target = event.getTarget();
+        final GameSettings gameSettings = target.getGameSettings();
+        final Language settingsLanguage = gameSettings.getLanguage();
+        final Language preferenceLanguage = target.getLanguage();
+
+        if (!settingsLanguage.equals(preferenceLanguage)) {
+            Text notification = this.resources.getLanguageNotification(settingsLanguage.getNameEnglish())
+                    .translate(target)
+                    .asText();
+
+            notification.onClick(ClickAction.executeCallback(t -> {
+                target.setLanguage(settingsLanguage);
+                target.send(this.serverResources
+                        .getLanguageUpdated(settingsLanguage.getNameLocalized())
+                );
+            }));
+
+            notification.onHover(HoverAction.showText(this.resources
+                    .getLanguageNotificationHover(settingsLanguage.getNameEnglish())
+                    .translate(target)
+                    .asText())
+            );
+            target.sendWithPrefix(notification);
         }
     }
 
