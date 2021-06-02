@@ -163,4 +163,6 @@ public abstract class Player extends AbstractIdentifiable implements CommandSour
 
     @Override
     public abstract PlayerInventory getInventory();
+
+    public abstract GameSettings getGameSettings();
 }

@@ -41,11 +41,13 @@ import org.dockbox.selene.server.minecraft.events.chat.SendMessageEvent;
 import org.dockbox.selene.server.minecraft.item.Item;
 import org.dockbox.selene.server.minecraft.item.storage.MinecraftItems;
 import org.dockbox.selene.server.minecraft.packets.Packet;
+import org.dockbox.selene.server.minecraft.players.GameSettings;
 import org.dockbox.selene.server.minecraft.players.Gamemode;
 import org.dockbox.selene.server.minecraft.players.Hand;
 import org.dockbox.selene.server.minecraft.players.Player;
 import org.dockbox.selene.server.minecraft.players.Players;
 import org.dockbox.selene.server.minecraft.players.Profile;
+import org.dockbox.selene.server.minecraft.players.SimpleGameSettings;
 import org.dockbox.selene.server.minecraft.players.Sounds;
 import org.dockbox.selene.server.minecraft.players.inventory.PlayerInventory;
 import org.dockbox.selene.sponge.objects.SpongeProfile;
@@ -68,6 +70,7 @@ import org.spongepowered.api.util.Tristate;
 import org.spongepowered.api.util.blockray.BlockRay;
 
 import java.lang.ref.WeakReference;
+import java.util.Locale;
 import java.util.Set;
 import java.util.UUID;
 
@@ -188,6 +191,15 @@ public class SpongePlayer extends Player implements SpongeComposite, Wrapper<org
     @Override
     public PlayerInventory getInventory() {
         return new SpongePlayerInventory(this);
+    }
+
+    @Override
+    public GameSettings getGameSettings() {
+        return this.getSpongePlayer().map(player -> {
+            final Locale locale = player.getLocale();
+            final Language language = Language.of(locale);
+            return new SimpleGameSettings(language);
+        }).then(() -> new SimpleGameSettings(Language.EN_US)).get();
     }
 
     @Override
@@ -371,7 +383,9 @@ public class SpongePlayer extends Player implements SpongeComposite, Wrapper<org
             return SpongeConversionUtil.fromSponge(this.getSpongePlayer().get().getOrElse(Keys.DISPLAY_NAME, org.spongepowered.api.text.Text.EMPTY));
         }
         return Text.of();
-    }    @NotNull
+    }
+
+    @NotNull
     @Override
     public Location getLocation() {
         if (this.referenceExists())
@@ -382,7 +396,9 @@ public class SpongePlayer extends Player implements SpongeComposite, Wrapper<org
     @Override
     public void setDisplayName(Text displayName) {
         if (this.referenceExists()) this.getSpongePlayer().get().offer(Keys.DISPLAY_NAME, SpongeConversionUtil.toSponge(displayName));
-    }    @Override
+    }
+
+    @Override
     public void setLocation(@NotNull Location location) {
         if (this.referenceExists()) {
             SpongeConversionUtil.toSponge(location)
@@ -393,7 +409,7 @@ public class SpongePlayer extends Player implements SpongeComposite, Wrapper<org
     @Override
     public double getHealth() {
         return this.getSpongePlayer().map(player -> player.get(Keys.HEALTH).orElse(0D)).or(0D);
-    }    @NotNull
+    }
 
     @Override
     public void setHealth(double health) {
