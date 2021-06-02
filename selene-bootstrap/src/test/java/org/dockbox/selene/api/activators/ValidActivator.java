@@ -18,9 +18,8 @@
 package org.dockbox.selene.api.activators;
 
 import org.dockbox.selene.api.SampleBootstrap;
-import org.dockbox.selene.di.adapter.InjectSource;
 import org.dockbox.selene.di.annotations.Activator;
 
-@Activator(inject = InjectSource.GUICE, bootstrap = SampleBootstrap.class)
+@Activator(SampleBootstrap.class)
 public class ValidActivator {
 }
