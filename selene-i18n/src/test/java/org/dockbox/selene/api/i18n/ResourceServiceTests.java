@@ -21,6 +21,7 @@ import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.i18n.common.Language;
 import org.dockbox.selene.api.i18n.common.ResourceEntry;
 import org.dockbox.selene.api.i18n.entry.Resource;
+import org.dockbox.selene.di.properties.InjectorProperty;
 import org.dockbox.selene.test.SeleneJUnit5Runner;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -35,13 +36,12 @@ public class ResourceServiceTests {
 
     private final ResourceService service = new SimpleResourceService() {
         @Override
-        public void init() {
-            super.init();
+        public void stateEnabling(InjectorProperty<?>... properties) {
             for (Language value : Language.values()) bundles.put(value, createBundle("demo", "Demo:" + value.getCode()));
         }
 
         {
-            this.init();
+            this.stateEnabling();
         }
     };
 

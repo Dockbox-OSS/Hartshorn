@@ -15,13 +15,12 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.server.minecraft.events.player;
+package org.dockbox.selene.server.minecraft.players;
 
-import org.dockbox.selene.server.minecraft.players.Player;
+import org.dockbox.selene.api.i18n.common.Language;
 
-/** The event fired when a player disconnected from the server. */
-public class PlayerLeaveEvent extends PlayerConnectionEvent {
-    public PlayerLeaveEvent(Player target) {
-        super(target);
-    }
+public interface GameSettings {
+
+    Language getLanguage();
+
 }

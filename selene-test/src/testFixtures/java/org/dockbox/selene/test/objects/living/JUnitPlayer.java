@@ -30,10 +30,12 @@ import org.dockbox.selene.server.minecraft.dimension.position.Location;
 import org.dockbox.selene.server.minecraft.dimension.world.World;
 import org.dockbox.selene.server.minecraft.item.Item;
 import org.dockbox.selene.server.minecraft.packets.Packet;
+import org.dockbox.selene.server.minecraft.players.GameSettings;
 import org.dockbox.selene.server.minecraft.players.Gamemode;
 import org.dockbox.selene.server.minecraft.players.Hand;
 import org.dockbox.selene.server.minecraft.players.Player;
 import org.dockbox.selene.server.minecraft.players.Profile;
+import org.dockbox.selene.server.minecraft.players.SimpleGameSettings;
 import org.dockbox.selene.server.minecraft.players.Sounds;
 import org.dockbox.selene.server.minecraft.players.inventory.PlayerInventory;
 import org.dockbox.selene.test.objects.JUnitPersistentDataHolder;
@@ -57,8 +59,6 @@ public class JUnitPlayer extends Player implements JUnitPersistentDataHolder {
 
     @Getter @Setter
     private Gamemode gamemode = Gamemode.CREATIVE;
-    @Getter @Setter
-    private Language language = Language.EN_US;
     @Getter @Setter
     private boolean sneaking = false;
     @Setter
@@ -139,6 +139,11 @@ public class JUnitPlayer extends Player implements JUnitPersistentDataHolder {
     @Override
     public Exceptional<Location> getLookingAtBlockPos() {
         return Exceptional.of(this.lookingAt);
+    }
+
+    @Override
+    public GameSettings getGameSettings() {
+        return new SimpleGameSettings(Language.EN_US);
     }
 
     @Override

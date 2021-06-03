@@ -17,14 +17,18 @@
 
 package org.dockbox.selene.server.minecraft.players;
 
+import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.domain.AbstractIdentifiable;
 import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.domain.tuple.Tristate;
 import org.dockbox.selene.api.i18n.PermissionHolder;
+import org.dockbox.selene.api.i18n.common.Language;
 import org.dockbox.selene.api.i18n.permissions.Permission;
 import org.dockbox.selene.api.i18n.permissions.PermissionContext;
 import org.dockbox.selene.api.i18n.text.Text;
+import org.dockbox.selene.api.keys.Keys;
 import org.dockbox.selene.api.keys.PersistentDataHolder;
+import org.dockbox.selene.api.keys.PersistentDataKey;
 import org.dockbox.selene.commands.CommandUser;
 import org.dockbox.selene.commands.source.CommandSource;
 import org.dockbox.selene.server.minecraft.dimension.Locatable;
@@ -43,6 +47,7 @@ public abstract class Player extends AbstractIdentifiable implements CommandSour
 
     // An empty context targets only global permissions
     private static final PermissionContext GLOBAL = PermissionContext.builder().build();
+    public static final PersistentDataKey<Integer> LANGUAGE = Keys.persistent(Integer.class, "SelenePlayerLanguage", Selene.class);
 
     protected Player(@NotNull UUID uniqueId, @NotNull String name) {
         super(uniqueId, name);
@@ -136,6 +141,16 @@ public abstract class Player extends AbstractIdentifiable implements CommandSour
         }
     }
 
+    @Override
+    public Language getLanguage() {
+        return this.get(LANGUAGE).map(ordinal -> Language.values()[ordinal]).or(Language.EN_US);
+    }
+
+    @Override
+    public void setLanguage(Language language) {
+        this.set(LANGUAGE, language.ordinal());
+    }
+
     public abstract Item getItemInHand(Hand hand);
 
     public abstract void setItemInHand(Hand hand, Item item);
@@ -163,4 +178,6 @@ public abstract class Player extends AbstractIdentifiable implements CommandSour
 
     @Override
     public abstract PlayerInventory getInventory();
+
+    public abstract GameSettings getGameSettings();
 }

@@ -17,11 +17,13 @@
 
 package org.dockbox.selene.server.minecraft.events.player;
 
-import org.dockbox.selene.api.domain.Target;
+import org.dockbox.selene.server.minecraft.players.Player;
 
 /** The event fired when a player connected to the server. */
 public class PlayerJoinEvent extends PlayerConnectionEvent {
-    public PlayerJoinEvent(Target target) {
+    public PlayerJoinEvent(Player target) {
         super(target);
     }
+
+
 }

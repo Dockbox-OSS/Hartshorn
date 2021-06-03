@@ -31,6 +31,7 @@ import org.dockbox.selene.di.annotations.Activator;
 import org.dockbox.selene.di.annotations.InjectConfig;
 import org.dockbox.selene.di.annotations.InjectPhase;
 import org.dockbox.selene.di.annotations.UseBeanProvision;
+import org.dockbox.selene.di.annotations.UseSingletonServices;
 import org.dockbox.selene.discord.annotations.UseDiscordCommands;
 import org.dockbox.selene.proxy.annotations.UseProxying;
 import org.dockbox.selene.server.minecraft.MinecraftServerBootstrap;
@@ -71,6 +72,7 @@ import org.spongepowered.api.plugin.PluginContainer;
 @UseDiscordCommands
 @UseEvents
 @UseProxying
+@UseSingletonServices
 @Activator(
         value = MinecraftServerBootstrap.class,
         prefix = SeleneInformation.PACKAGE_PREFIX,

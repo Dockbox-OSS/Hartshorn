@@ -19,6 +19,8 @@ package org.dockbox.selene.test.util;
 
 import org.dockbox.selene.config.SimpleConfigurationManager;
 import org.dockbox.selene.di.annotations.Wired;
+import org.dockbox.selene.di.exceptions.ApplicationException;
+import org.dockbox.selene.di.properties.InjectorProperty;
 import org.dockbox.selene.util.SeleneUtils;
 
 import java.nio.file.Path;
@@ -26,7 +28,8 @@ import java.util.Map;
 
 public class JUnitConfigurationManager extends SimpleConfigurationManager {
 
-    private static Map<String, Object> cache = SeleneUtils.emptyConcurrentMap();
+    public static Map<String, Object> cache = SeleneUtils.emptyConcurrentMap();
+    private static boolean enabled = false;
 
     @Wired
     public JUnitConfigurationManager(Path path) {
@@ -38,11 +41,27 @@ public class JUnitConfigurationManager extends SimpleConfigurationManager {
         cache.put(key ,value);
     }
 
+    public static void reset() {
+        cache.clear();
+        enabled = false;
+    }
+
     @Override
     public Map<String, Map<String, Object>> getCache() {
         return SeleneUtils.ofEntries(
                 SeleneUtils.entry(this.getFileKey(), cache)
         );
+    }
+
+    @Override
+    public boolean canEnable() {
+        return !enabled && super.canEnable();
+    }
+
+    @Override
+    public void stateEnabling(InjectorProperty<?>... properties) throws ApplicationException {
+        super.stateEnabling(properties);
+        enabled = true;
     }
 
     @Override

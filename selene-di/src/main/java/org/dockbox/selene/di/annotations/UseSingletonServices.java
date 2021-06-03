@@ -15,19 +15,15 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.commands;
+package org.dockbox.selene.di.annotations;
 
-import org.dockbox.selene.api.Selene;
-import org.dockbox.selene.api.annotations.PostBootstrap;
-import org.dockbox.selene.api.annotations.UseBootstrap;
-import org.dockbox.selene.di.annotations.Service;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-@Service(activator = UseBootstrap.class)
-public class CommandService {
-
-    @PostBootstrap
-    public void activate() {
-        Selene.context().get(CommandBus.class).apply();
-    }
-
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
+@ServiceActivator
+public @interface UseSingletonServices {
 }

@@ -23,9 +23,10 @@ import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.config.annotations.Configuration;
 import org.dockbox.selene.config.annotations.UseConfigurations;
 import org.dockbox.selene.config.annotations.Value;
+import org.dockbox.selene.di.annotations.Service;
 import org.dockbox.selene.di.context.ApplicationContext;
+import org.dockbox.selene.di.inject.InjectionModifier;
 import org.dockbox.selene.di.properties.InjectorProperty;
-import org.dockbox.selene.di.services.ServiceModifier;
 import org.dockbox.selene.persistence.FileManager;
 import org.dockbox.selene.persistence.FileType;
 import org.dockbox.selene.persistence.FileTypeProperty;
@@ -38,19 +39,29 @@ import org.jetbrains.annotations.Nullable;
 import java.lang.reflect.Field;
 import java.nio.file.Path;
 
-public class ConfigurationServiceModifier extends ServiceModifier<UseConfigurations> {
+public class ConfigurationServiceModifier implements InjectionModifier<UseConfigurations> {
 
     @Override
-    public <T> boolean isModifiable(Class<T> type, @Nullable T instance, InjectorProperty<?>... properties) {
-        return !Reflect.annotatedFields(type, Value.class).isEmpty();
+    public <T> boolean preconditions(Class<T> type, @Nullable T instance, InjectorProperty<?>... properties) {
+        Class<?> instanceType = type;
+        if (instance != null) instanceType = instance.getClass();
+        boolean decorated = this.isAnnotated(instanceType);
+        return decorated && !Reflect.annotatedFields(instanceType, Value.class).isEmpty();
+    }
+
+    private boolean isAnnotated(Class<?> type) {
+        return type.isAnnotationPresent(Service.class) || type.isAnnotationPresent(Configuration.class);
     }
 
     @Override
     public <T> T process(ApplicationContext context, Class<T> type, @Nullable T instance, InjectorProperty<?>... properties) {
+        Class<?> instanceType = type;
+        if (instance != null) instanceType = instance.getClass();
+
         String file = SeleneInformation.PROJECT_ID;
         Class<?> owner = Selene.class;
-        if (type.isAnnotationPresent(Configuration.class)) {
-            Configuration configuration = type.getAnnotation(Configuration.class);
+        if (instanceType.isAnnotationPresent(Configuration.class)) {
+            Configuration configuration = instanceType.getAnnotation(Configuration.class);
             file = configuration.value();
             owner = configuration.service().owner();
         }
@@ -60,7 +71,7 @@ public class ConfigurationServiceModifier extends ServiceModifier<UseConfigurati
 
         ConfigurationManager configurationManager = Selene.context().get(ConfigurationManager.class, config);
 
-        for (Field field : Reflect.annotatedFields(type, Value.class)) {
+        for (Field field : Reflect.annotatedFields(instanceType, Value.class)) {
             try {
                 field.setAccessible(true);
                 Value value = field.getAnnotation(Value.class);
@@ -72,7 +83,7 @@ public class ConfigurationServiceModifier extends ServiceModifier<UseConfigurati
 
                 Reflect.set(field, instance, fieldValue);
             } catch (FieldAccessException | TypeConversionException | NotPrimitiveException e) {
-                Selene.log().warn("Could not prepare value field " + field.getName() + " in " + type.getSimpleName());
+                Selene.log().warn("Could not prepare value field " + field.getName() + " in " + instanceType.getSimpleName());
             }
         }
 

@@ -17,7 +17,6 @@
 
 package org.dockbox.selene.server.minecraft.players;
 
-import org.dockbox.selene.api.i18n.common.Language;
 import org.dockbox.selene.api.domain.Exceptional;
 
 import java.util.List;
@@ -30,8 +29,4 @@ public interface Players {
     Exceptional<Player> getPlayer(String name);
 
     Exceptional<Player> getPlayer(UUID uuid);
-
-    void setLanguagePreference(UUID uuid, Language language);
-
-    Language getLanguagePreference(UUID uuid);
 }

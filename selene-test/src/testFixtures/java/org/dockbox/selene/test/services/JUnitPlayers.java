@@ -18,7 +18,6 @@
 package org.dockbox.selene.test.services;
 
 import org.dockbox.selene.api.domain.Exceptional;
-import org.dockbox.selene.api.i18n.common.Language;
 import org.dockbox.selene.server.minecraft.players.Player;
 import org.dockbox.selene.server.minecraft.players.Players;
 import org.dockbox.selene.test.objects.living.JUnitPlayer;
@@ -56,17 +55,5 @@ public class JUnitPlayers implements Players {
         else if (PLAYER_TWO.getUniqueId().equals(uuid)) return Exceptional.of(PLAYER_TWO);
         else if (PLAYER_THREE.getUniqueId().equals(uuid)) return Exceptional.of(PLAYER_THREE);
         return Exceptional.none();
-    }
-
-    @Override
-    public void setLanguagePreference(UUID uuid, Language language) {
-        this.getPlayer(uuid).present(player ->  player.setLanguage(language));
-    }
-
-    @Override
-    public Language getLanguagePreference(UUID uuid) {
-        return this.getPlayer(uuid)
-                .map(Player::getLanguage)
-                .or(Language.EN_US);
     }
 }

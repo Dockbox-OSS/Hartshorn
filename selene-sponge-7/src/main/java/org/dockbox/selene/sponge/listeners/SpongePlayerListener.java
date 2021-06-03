@@ -23,6 +23,7 @@ import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.events.parents.Cancellable;
 import org.dockbox.selene.api.events.parents.Event;
+import org.dockbox.selene.api.i18n.common.Language;
 import org.dockbox.selene.server.minecraft.dimension.Warp;
 import org.dockbox.selene.server.minecraft.dimension.position.Location;
 import org.dockbox.selene.server.minecraft.enums.PortalType;
@@ -41,6 +42,7 @@ import org.dockbox.selene.server.minecraft.events.player.PlayerAuthEvent;
 import org.dockbox.selene.server.minecraft.events.player.PlayerJoinEvent;
 import org.dockbox.selene.server.minecraft.events.player.PlayerLeaveEvent;
 import org.dockbox.selene.server.minecraft.events.player.PlayerPortalEvent;
+import org.dockbox.selene.server.minecraft.events.player.PlayerSettingsChangedEvent;
 import org.dockbox.selene.server.minecraft.events.player.PlayerSwitchWorldEvent;
 import org.dockbox.selene.server.minecraft.events.player.PlayerTeleportEvent;
 import org.dockbox.selene.server.minecraft.events.player.PlayerWarpEvent;
@@ -49,6 +51,7 @@ import org.dockbox.selene.server.minecraft.events.player.interact.PlayerInteract
 import org.dockbox.selene.server.minecraft.events.player.interact.PlayerInteractEntityEvent;
 import org.dockbox.selene.server.minecraft.players.ClickType;
 import org.dockbox.selene.server.minecraft.players.Hand;
+import org.dockbox.selene.server.minecraft.players.SimpleGameSettings;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.dockbox.selene.util.SeleneUtils;
 import org.jetbrains.annotations.NonNls;
@@ -66,6 +69,7 @@ import org.spongepowered.api.event.entity.InteractEntityEvent;
 import org.spongepowered.api.event.entity.MoveEntityEvent;
 import org.spongepowered.api.event.entity.living.humanoid.HandInteractEvent;
 import org.spongepowered.api.event.entity.living.humanoid.player.KickPlayerEvent;
+import org.spongepowered.api.event.entity.living.humanoid.player.PlayerChangeClientSettingsEvent;
 import org.spongepowered.api.event.filter.Getter;
 import org.spongepowered.api.event.filter.IsCancelled;
 import org.spongepowered.api.event.filter.cause.First;
@@ -96,6 +100,11 @@ public class SpongePlayerListener {
     @Listener
     public void on(ClientConnectionEvent.Join joinEvent, @First Player sp) {
         new PlayerJoinEvent(SpongeConversionUtil.fromSponge(sp)).post();
+    }
+
+    @Listener
+    public void on(PlayerChangeClientSettingsEvent settingsEvent, @First Player sp) {
+        new PlayerSettingsChangedEvent(SpongeConversionUtil.fromSponge(sp), new SimpleGameSettings(Language.of(settingsEvent.getLocale()))).post();
     }
 
     @Listener

@@ -21,6 +21,7 @@ import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.test.SeleneJUnit5Runner;
 import org.dockbox.selene.test.util.JUnitConfigurationManager;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -29,6 +30,11 @@ import java.util.Map;
 
 @ExtendWith(SeleneJUnit5Runner.class)
 public class ConfigurationManagerTests {
+
+    @BeforeEach
+    void reset() {
+        JUnitConfigurationManager.reset();
+    }
 
     @Test
     void testNormalValuesAreAccessible() {
@@ -46,6 +52,7 @@ public class ConfigurationManagerTests {
         JUnitConfigurationManager.add("nested", values);
         ValueTyped typed = Selene.context().get(ValueTyped.class);
 
+        Assertions.assertNotNull(typed);
         Assertions.assertNotNull(typed.getNestedString());
         Assertions.assertEquals("Selene", typed.getNestedString());
     }

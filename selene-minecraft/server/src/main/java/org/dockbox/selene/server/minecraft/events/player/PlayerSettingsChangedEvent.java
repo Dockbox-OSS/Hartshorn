@@ -17,11 +17,30 @@
 
 package org.dockbox.selene.server.minecraft.events.player;
 
+import org.dockbox.selene.api.domain.Target;
+import org.dockbox.selene.api.events.AbstractTargetEvent;
+import org.dockbox.selene.server.minecraft.players.GameSettings;
 import org.dockbox.selene.server.minecraft.players.Player;
 
-/** The event fired when a player disconnected from the server. */
-public class PlayerLeaveEvent extends PlayerConnectionEvent {
-    public PlayerLeaveEvent(Player target) {
+import lombok.Getter;
+
+@Getter
+public class PlayerSettingsChangedEvent extends AbstractTargetEvent {
+
+    private final GameSettings settings;
+
+    public PlayerSettingsChangedEvent(Player target, GameSettings settings) {
         super(target);
+        this.settings = settings;
+    }
+
+    @Override
+    public Player getTarget() {
+        return (Player) super.getTarget();
+    }
+
+    @Override
+    public void setTarget(Target target) {
+        throw new UnsupportedOperationException("Cannot change target of player settings event");
     }
 }

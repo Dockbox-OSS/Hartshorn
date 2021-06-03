@@ -39,4 +39,9 @@ public interface PlayerActionResources {
     @Resource(value = "$4You are not permitted to move in this world", key = "playeractions.rootworld")
     ResourceEntry getMoveError();
 
+    @Resource(value = "$1Hi there! We detected you prefer to see messages in {0}, if you would like our commands to send you messages in {0} click on this message to change your language preference.", key = "playeractions.lang.notify")
+    ResourceEntry getLanguageNotification(String languageEnglish);
+
+    @Resource(value = "$1Click here to change your language preference to $2{0}", key = "playeractions.lang.notify.hover")
+    ResourceEntry getLanguageNotificationHover(String languageEnglish);
 }

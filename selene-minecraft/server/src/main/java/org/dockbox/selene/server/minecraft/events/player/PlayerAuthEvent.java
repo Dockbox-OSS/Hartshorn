@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.server.minecraft.events.player;
 
-import org.dockbox.selene.api.domain.Target;
+import org.dockbox.selene.server.minecraft.players.Player;
 
 import java.net.InetSocketAddress;
 
@@ -36,7 +36,7 @@ public class PlayerAuthEvent extends PlayerConnectionEvent {
     }
 
     @Override
-    public Target getTarget() throws UnsupportedOperationException {
+    public Player getTarget() throws UnsupportedOperationException {
         throw new UnsupportedOperationException("Cannot get target while authenticating");
     }
 }

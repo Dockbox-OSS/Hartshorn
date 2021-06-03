@@ -18,8 +18,8 @@
 package org.dockbox.selene.sponge.util;
 
 import org.dockbox.selene.api.domain.Exceptional;
-import org.dockbox.selene.server.minecraft.players.DefaultPlayers;
 import org.dockbox.selene.server.minecraft.players.Player;
+import org.dockbox.selene.server.minecraft.players.Players;
 import org.dockbox.selene.sponge.objects.targets.SpongePlayer;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-public class SpongePlayers extends DefaultPlayers {
+public class SpongePlayers implements Players {
     @NotNull
     @Override
     public List<Player> getOnlinePlayers() {

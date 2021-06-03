@@ -26,8 +26,6 @@ import java.util.Map;
 
 public interface ResourceService {
 
-    void init();
-
     Map<String, String> translations(Language lang);
 
     Map<Language, String> translations(Resource entry);

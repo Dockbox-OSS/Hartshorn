@@ -27,7 +27,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum Language implements PersistentCapable<PersistentLanguageModel> {
-    EN_US(Locale.ENGLISH, "en_US", "English", "US"),
+    EN_US(Locale.ENGLISH, "en_US", "English", "English"),
     NL_NL(new Locale("nl"), "nl_NL", "Dutch", "Nederlands"),
     FR_FR(Locale.FRENCH, "fr_FR", "French", "Français"),
     DE_DE(Locale.GERMANY, "de_DE", "German", "Deutsch");
@@ -44,6 +44,14 @@ public enum Language implements PersistentCapable<PersistentLanguageModel> {
                     || value.nameLocalized.equals(language)) {
                 return value;
             }
+        }
+        return Language.EN_US;
+    }
+
+    public static Language of(Locale locale) {
+        for (Language value : Language.values()) {
+            // Compare based on language, as e.g. NL_NL will not match with Locale(nl, NL)
+            if (value.getLocale().getLanguage().equalsIgnoreCase(locale.getLanguage())) return value;
         }
         return Language.EN_US;
     }

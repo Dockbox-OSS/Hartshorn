@@ -23,6 +23,8 @@ import org.dockbox.selene.api.i18n.common.Language;
 import org.dockbox.selene.api.i18n.common.ResourceEntry;
 import org.dockbox.selene.api.i18n.entry.Resource;
 import org.dockbox.selene.di.annotations.Binds;
+import org.dockbox.selene.di.properties.InjectableType;
+import org.dockbox.selene.di.properties.InjectorProperty;
 import org.dockbox.selene.util.SeleneUtils;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -37,12 +39,17 @@ import javax.inject.Singleton;
 
 @Singleton
 @Binds(ResourceService.class)
-public class SimpleResourceService implements ResourceService {
+public class SimpleResourceService implements ResourceService, InjectableType {
 
     protected static final Map<Language, ResourceBundle> bundles = SeleneUtils.emptyConcurrentMap();
 
     @Override
-    public void init() {
+    public boolean canEnable() {
+        return bundles.isEmpty();
+    }
+
+    @Override
+    public void stateEnabling(InjectorProperty<?>... properties) {
         for (Language language : Language.values()) {
             try {
                 ResourceBundle bundle = ResourceBundle.getBundle("selene.translations", language.getLocale());

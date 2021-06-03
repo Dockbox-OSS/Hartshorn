@@ -23,6 +23,7 @@ import org.dockbox.selene.api.domain.TypedOwner;
 import org.dockbox.selene.api.entity.annotations.Entity;
 import org.dockbox.selene.di.annotations.Binds;
 import org.dockbox.selene.di.annotations.Service;
+import org.dockbox.selene.util.Reflect;
 import org.dockbox.selene.util.SeleneUtils;
 
 @Binds(OwnerLookup.class)
@@ -37,7 +38,9 @@ public class ServiceLookup implements OwnerLookup {
             return SimpleTypedOwner.of(SeleneInformation.PROJECT_ID);
         }
         else if (type.isAnnotationPresent(Service.class)) {
-            return SimpleTypedOwner.of(SeleneUtils.serviceId(type));
+            final Service annotation = type.getAnnotation(Service.class);
+            if (Reflect.isNotVoid(annotation.owner())) return this.lookup(annotation.owner());
+            else return SimpleTypedOwner.of(SeleneUtils.serviceId(type));
         }
         else {
             return null;

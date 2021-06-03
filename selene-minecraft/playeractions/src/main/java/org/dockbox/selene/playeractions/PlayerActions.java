@@ -19,33 +19,47 @@ package org.dockbox.selene.playeractions;
 
 import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.events.annotations.Listener;
+import org.dockbox.selene.api.i18n.common.Language;
+import org.dockbox.selene.api.i18n.text.Text;
+import org.dockbox.selene.api.i18n.text.actions.ClickAction;
+import org.dockbox.selene.api.i18n.text.actions.HoverAction;
+import org.dockbox.selene.api.keys.Keys;
+import org.dockbox.selene.api.keys.PersistentDataKey;
 import org.dockbox.selene.config.annotations.Value;
 import org.dockbox.selene.di.annotations.Service;
 import org.dockbox.selene.di.annotations.Wired;
 import org.dockbox.selene.plots.Plot;
 import org.dockbox.selene.plots.PlotKeys;
 import org.dockbox.selene.plots.PlotMembership;
+import org.dockbox.selene.server.minecraft.DefaultServerResources;
 import org.dockbox.selene.server.minecraft.dimension.Worlds;
 import org.dockbox.selene.server.minecraft.dimension.position.Location;
 import org.dockbox.selene.server.minecraft.entities.Entity;
 import org.dockbox.selene.server.minecraft.events.entity.SpawnSource;
 import org.dockbox.selene.server.minecraft.events.player.PlayerMoveEvent;
+import org.dockbox.selene.server.minecraft.events.player.PlayerSettingsChangedEvent;
 import org.dockbox.selene.server.minecraft.events.player.PlayerTeleportEvent;
 import org.dockbox.selene.server.minecraft.events.player.interact.PlayerInteractEntityEvent;
 import org.dockbox.selene.server.minecraft.events.player.interact.PlayerSummonEntityEvent;
 import org.dockbox.selene.server.minecraft.players.Gamemode;
 import org.dockbox.selene.server.minecraft.players.Player;
+import org.dockbox.selene.util.SeleneUtils;
 
 import java.util.List;
 
 @Service
 public class PlayerActions {
 
+    // Placeholder for future Player setting, see #283
+    private static final PersistentDataKey<Boolean> ignoringNotifications = Keys.persistent(
+            Boolean.class, "ignoringPlayerNotifications", PlayerActions.class
+    );
     @Wired
     private Worlds worlds;
     @Wired
     private PlayerActionResources resources;
-
+    @Wired
+    private DefaultServerResources serverResources;
     @Value("services.player-actions.whitelist")
     private List<String> whitelist;
 
@@ -85,21 +99,13 @@ public class PlayerActions {
         event.setCancelled(this.cancelEvent(player, event.getEntity()));
     }
 
-    @Listener
-    public void on(PlayerSummonEntityEvent event) {
-        Player player = event.getPlayer();
-        SpawnSource source = event.getSource();
-        if (SpawnSource.PLACEMENT.equals(source) || SpawnSource.SPAWN_EGG.equals(source)) {
-            event.setCancelled(this.cancelEvent(player, event.getEntity()));
-        }
-    }
-
     private boolean cancelEvent(Player player, Entity entity) {
         Exceptional<Plot> targetPlot = entity.getLocation().get(PlotKeys.PLOT);
         if (targetPlot.absent()) {
             player.sendWithPrefix(this.resources.getOutsidePlot());
             return true;
-        } else {
+        }
+        else {
             Plot plot = targetPlot.get();
             if (!plot.hasAnyMembership(player, PlotMembership.MEMBER, PlotMembership.TRUSTED, PlotMembership.OWNER)) {
                 player.sendWithPrefix(this.resources.getInteractionError());
@@ -110,6 +116,15 @@ public class PlayerActions {
     }
 
     @Listener
+    public void on(PlayerSummonEntityEvent event) {
+        Player player = event.getPlayer();
+        SpawnSource source = event.getSource();
+        if (SpawnSource.PLACEMENT.equals(source) || SpawnSource.SPAWN_EGG.equals(source)) {
+            event.setCancelled(this.cancelEvent(player, event.getEntity()));
+        }
+    }
+
+    @Listener
     public void on(PlayerMoveEvent event) {
         if (event instanceof PlayerTeleportEvent) return; // Allow players to teleport out of the world
         if (event.getTarget().hasPermission(PlayerActionPermissions.NAVIGATE_DEFAULT_WORLD)) return;
@@ -117,6 +132,38 @@ public class PlayerActions {
         if (event.getTarget().getWorld().getWorldUniqueId().equals(this.worlds.getRootWorldId())) {
             event.setCancelled(true);
             event.getTarget().send(this.resources.getMoveError());
+        }
+    }
+
+    @Listener
+    public void on(PlayerSettingsChangedEvent event) {
+        final Player target = event.getTarget();
+
+        final boolean ignoring = SeleneUtils.unwrap(target.get(ignoringNotifications));
+
+        if (!ignoring) {
+            final Language settingsLanguage = event.getSettings().getLanguage();
+            final Language preferenceLanguage = target.getLanguage();
+
+            if (!settingsLanguage.equals(preferenceLanguage)) {
+                Text notification = this.resources.getLanguageNotification(settingsLanguage.getNameEnglish())
+                        .translate(target)
+                        .asText();
+
+                notification.onClick(ClickAction.executeCallback(t -> {
+                    target.setLanguage(settingsLanguage);
+                    target.send(this.serverResources
+                            .getLanguageUpdated(settingsLanguage.getNameLocalized())
+                    );
+                }));
+
+                notification.onHover(HoverAction.showText(this.resources
+                        .getLanguageNotificationHover(settingsLanguage.getNameEnglish())
+                        .translate(target)
+                        .asText())
+                );
+                target.sendWithPrefix(notification);
+            }
         }
     }
 
