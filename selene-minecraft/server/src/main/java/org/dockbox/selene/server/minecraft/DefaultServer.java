@@ -36,7 +36,7 @@ import org.dockbox.selene.util.SeleneUtils;
 
 import java.util.List;
 
-@Service(id = SeleneInformation.PROJECT_ID, name = SeleneInformation.PROJECT_NAME)
+@Service(id = SeleneInformation.PROJECT_ID, name = SeleneInformation.PROJECT_NAME, owner = Selene.class)
 @Command(value = SeleneInformation.PROJECT_ID, permission = DefaultServer.SELENE_ADMIN)
 public class DefaultServer {
 

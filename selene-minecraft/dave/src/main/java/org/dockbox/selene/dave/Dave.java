@@ -19,7 +19,6 @@ package org.dockbox.selene.dave;
 
 import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.events.annotations.Listener;
-import org.dockbox.selene.api.exceptions.Except;
 import org.dockbox.selene.api.i18n.text.actions.HoverAction;
 import org.dockbox.selene.api.i18n.text.pagination.PaginationBuilder;
 import org.dockbox.selene.api.task.TaskRunner;
@@ -36,8 +35,10 @@ import org.dockbox.selene.di.properties.InjectableType;
 import org.dockbox.selene.di.properties.InjectorProperty;
 import org.dockbox.selene.discord.events.DiscordChatReceivedEvent;
 import org.dockbox.selene.persistence.FileManager;
-import org.dockbox.selene.server.minecraft.events.server.ServerReloadEvent;
+import org.dockbox.selene.persistence.FileType;
+import org.dockbox.selene.persistence.FileTypeProperty;
 import org.dockbox.selene.server.minecraft.events.chat.SendChatEvent;
+import org.dockbox.selene.server.minecraft.events.server.ServerReloadEvent;
 import org.dockbox.selene.server.minecraft.players.Player;
 import org.dockbox.selene.util.SeleneUtils;
 
@@ -99,25 +100,19 @@ public class Dave implements InjectableType {
 
     @Override
     public void stateEnabling(InjectorProperty<?>... properties) {
-        FileManager fm = this.context.get(FileManager.class);
+        FileManager fm = this.context.get(FileManager.class, FileTypeProperty.of(FileType.YAML));
         Path triggerFile = fm.getDataFile(Dave.class, "triggers");
         if (SeleneUtils.isFileEmpty(triggerFile)) this.restoreTriggerFile(fm, triggerFile);
 
         fm.read(triggerFile, DaveTriggers.class).present(triggers -> {
             Selene.log().info("Found " + triggers.getTriggers().size() + " triggers");
             this.triggers = triggers;
-        }).caught(e -> {
-            Selene.log().warn("Could not load triggers for Dave");
-            Except.handle(e);
-        });
+        }).caught(e -> Selene.log().warn("Could not load triggers for Dave"));
 
         Path configFile = fm.getConfigFile(Dave.class);
         fm.read(configFile, DaveConfig.class)
                 .present(config -> this.config = config)
-                .caught(e -> {
-                    Selene.log().warn("Could not load config for Dave");
-                    Except.handle(e);
-                });
+                .caught(e -> Selene.log().warn("Could not load config for Dave"));
     }
 
     private void restoreTriggerFile(FileManager fm, Path triggerFile) {

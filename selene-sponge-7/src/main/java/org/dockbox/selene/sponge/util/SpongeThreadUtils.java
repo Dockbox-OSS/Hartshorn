@@ -17,9 +17,9 @@
 
 package org.dockbox.selene.sponge.util;
 
-import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.task.ThreadUtils;
+import org.dockbox.selene.sponge.Sponge7Application;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.scheduler.SpongeExecutorService;
 
@@ -35,19 +35,19 @@ public class SpongeThreadUtils implements ThreadUtils {
 
     @Override
     public Future<?> performAsync(Runnable runnable) {
-        SpongeExecutorService ses = Sponge.getScheduler().createAsyncExecutor(Selene.server());
+        SpongeExecutorService ses = Sponge.getScheduler().createAsyncExecutor(Sponge7Application.container());
         return ses.submit(runnable);
     }
 
     @Override
     public Future<?> performSync(Runnable runnable) {
-        SpongeExecutorService ses = Sponge.getScheduler().createSyncExecutor(Selene.server());
+        SpongeExecutorService ses = Sponge.getScheduler().createSyncExecutor(Sponge7Application.container());
         return ses.submit(runnable);
     }
 
     @Override
     public <T> Exceptional<T> awaitAsync(Callable<T> callable) {
-        SpongeExecutorService ses = Sponge.getScheduler().createAsyncExecutor(Selene.server());
+        SpongeExecutorService ses = Sponge.getScheduler().createAsyncExecutor(Sponge7Application.container());
         try {
             return Exceptional.of(ses.submit(callable).get());
         }
@@ -58,7 +58,7 @@ public class SpongeThreadUtils implements ThreadUtils {
 
     @Override
     public <T> Exceptional<T> awaitSync(Callable<T> callable) {
-        SpongeExecutorService ses = Sponge.getScheduler().createSyncExecutor(Selene.server());
+        SpongeExecutorService ses = Sponge.getScheduler().createSyncExecutor(Sponge7Application.container());
         try {
             return Exceptional.of(ses.submit(callable).get());
         }

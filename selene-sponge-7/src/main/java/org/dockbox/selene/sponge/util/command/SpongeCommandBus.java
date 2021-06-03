@@ -19,7 +19,6 @@ package org.dockbox.selene.sponge.util.command;
 
 import com.google.common.collect.Multimap;
 
-import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.SeleneInformation;
 import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.exceptions.Except;
@@ -31,6 +30,7 @@ import org.dockbox.selene.commands.registration.MethodCommandContext;
 import org.dockbox.selene.commands.source.CommandSource;
 import org.dockbox.selene.commands.values.AbstractArgumentElement;
 import org.dockbox.selene.commands.values.ArgumentValue;
+import org.dockbox.selene.sponge.Sponge7Application;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.dockbox.selene.sponge.util.command.values.SpongeArgumentElement;
 import org.dockbox.selene.sponge.util.command.values.SpongeArgumentValue;
@@ -134,7 +134,7 @@ public class SpongeCommandBus extends DefaultCommandBus<Builder> {
 
     @Override
     protected void registerExecutor(Builder executor, String alias) {
-        Sponge.getCommandManager().register(Selene.server(), executor.build(), alias);
+        Sponge.getCommandManager().register(Sponge7Application.container(), executor.build(), alias);
     }
 
     protected CommandSpec.Builder buildContextExecutor(AbstractRegistrationContext context, String alias) {
