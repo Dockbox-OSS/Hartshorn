@@ -34,5 +34,6 @@ public class CommandRegistrationService {
         for (ServiceContainer container : locator.containers()) {
             bus.register(container.getType());
         }
+        bus.apply();
     }
 }
