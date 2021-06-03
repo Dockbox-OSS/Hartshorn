@@ -207,7 +207,7 @@ task relocateSeleneDistribution(dependsOn: build) {
 
 task runDevServer(dependsOn: relocateSeleneDistribution) {
     doLast {
-        def configDir = new File("${rootDir}/servers/sponge-112/config/modules/selene")
+        def configDir = new File("${rootDir}/servers/sponge-112/config/services/selene")
 
         delete fileTree(configDir).matching {
             include 'selene.yml'
