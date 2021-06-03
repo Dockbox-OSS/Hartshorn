@@ -36,12 +36,11 @@ import org.dockbox.selene.server.minecraft.dimension.Worlds;
 import org.dockbox.selene.server.minecraft.dimension.position.Location;
 import org.dockbox.selene.server.minecraft.entities.Entity;
 import org.dockbox.selene.server.minecraft.events.entity.SpawnSource;
-import org.dockbox.selene.server.minecraft.events.player.PlayerJoinEvent;
 import org.dockbox.selene.server.minecraft.events.player.PlayerMoveEvent;
+import org.dockbox.selene.server.minecraft.events.player.PlayerSettingsChangedEvent;
 import org.dockbox.selene.server.minecraft.events.player.PlayerTeleportEvent;
 import org.dockbox.selene.server.minecraft.events.player.interact.PlayerInteractEntityEvent;
 import org.dockbox.selene.server.minecraft.events.player.interact.PlayerSummonEntityEvent;
-import org.dockbox.selene.server.minecraft.players.GameSettings;
 import org.dockbox.selene.server.minecraft.players.Gamemode;
 import org.dockbox.selene.server.minecraft.players.Player;
 import org.dockbox.selene.util.SeleneUtils;
@@ -51,18 +50,16 @@ import java.util.List;
 @Service
 public class PlayerActions {
 
+    // Placeholder for future Player setting, see #283
+    private static final PersistentDataKey<Boolean> ignoringNotifications = Keys.persistent(
+            Boolean.class, "ignoringPlayerNotifications", PlayerActions.class
+    );
     @Wired
     private Worlds worlds;
     @Wired
     private PlayerActionResources resources;
     @Wired
     private DefaultServerResources serverResources;
-
-    // Placeholder for future Player setting, see #283
-    private static final PersistentDataKey<Boolean> ignoringNotifications = Keys.persistent(
-            Boolean.class, "ignoringPlayerNotifications", PlayerActions.class
-    );
-
     @Value("services.player-actions.whitelist")
     private List<String> whitelist;
 
@@ -102,21 +99,13 @@ public class PlayerActions {
         event.setCancelled(this.cancelEvent(player, event.getEntity()));
     }
 
-    @Listener
-    public void on(PlayerSummonEntityEvent event) {
-        Player player = event.getPlayer();
-        SpawnSource source = event.getSource();
-        if (SpawnSource.PLACEMENT.equals(source) || SpawnSource.SPAWN_EGG.equals(source)) {
-            event.setCancelled(this.cancelEvent(player, event.getEntity()));
-        }
-    }
-
     private boolean cancelEvent(Player player, Entity entity) {
         Exceptional<Plot> targetPlot = entity.getLocation().get(PlotKeys.PLOT);
         if (targetPlot.absent()) {
             player.sendWithPrefix(this.resources.getOutsidePlot());
             return true;
-        } else {
+        }
+        else {
             Plot plot = targetPlot.get();
             if (!plot.hasAnyMembership(player, PlotMembership.MEMBER, PlotMembership.TRUSTED, PlotMembership.OWNER)) {
                 player.sendWithPrefix(this.resources.getInteractionError());
@@ -124,6 +113,15 @@ public class PlayerActions {
             }
         }
         return false;
+    }
+
+    @Listener
+    public void on(PlayerSummonEntityEvent event) {
+        Player player = event.getPlayer();
+        SpawnSource source = event.getSource();
+        if (SpawnSource.PLACEMENT.equals(source) || SpawnSource.SPAWN_EGG.equals(source)) {
+            event.setCancelled(this.cancelEvent(player, event.getEntity()));
+        }
     }
 
     @Listener
@@ -138,14 +136,13 @@ public class PlayerActions {
     }
 
     @Listener
-    public void on(PlayerJoinEvent event) {
+    public void on(PlayerSettingsChangedEvent event) {
         final Player target = event.getTarget();
 
         final boolean ignoring = SeleneUtils.unwrap(target.get(ignoringNotifications));
 
         if (!ignoring) {
-            final GameSettings gameSettings = target.getGameSettings();
-            final Language settingsLanguage = gameSettings.getLanguage();
+            final Language settingsLanguage = event.getSettings().getLanguage();
             final Language preferenceLanguage = target.getLanguage();
 
             if (!settingsLanguage.equals(preferenceLanguage)) {
