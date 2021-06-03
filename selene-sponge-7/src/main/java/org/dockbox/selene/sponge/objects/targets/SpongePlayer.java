@@ -33,7 +33,6 @@ import org.dockbox.selene.api.i18n.text.Text;
 import org.dockbox.selene.api.i18n.text.pagination.Pagination;
 import org.dockbox.selene.api.keys.PersistentDataKey;
 import org.dockbox.selene.api.keys.TransactionResult;
-import org.dockbox.selene.di.annotations.Wired;
 import org.dockbox.selene.di.context.ApplicationContext;
 import org.dockbox.selene.nms.packets.NMSPacket;
 import org.dockbox.selene.server.minecraft.dimension.position.Location;
@@ -45,7 +44,6 @@ import org.dockbox.selene.server.minecraft.players.GameSettings;
 import org.dockbox.selene.server.minecraft.players.Gamemode;
 import org.dockbox.selene.server.minecraft.players.Hand;
 import org.dockbox.selene.server.minecraft.players.Player;
-import org.dockbox.selene.server.minecraft.players.Players;
 import org.dockbox.selene.server.minecraft.players.Profile;
 import org.dockbox.selene.server.minecraft.players.SimpleGameSettings;
 import org.dockbox.selene.server.minecraft.players.Sounds;
@@ -80,8 +78,7 @@ import eu.crushedpixel.sponge.packetgate.api.registry.PacketGate;
 @SuppressWarnings({ "ClassWithTooManyMethods", "CodeBlock2Expr" })
 public class SpongePlayer extends Player implements SpongeComposite, Wrapper<org.spongepowered.api.entity.living.player.Player> {
 
-    @Wired
-    private ApplicationContext context;
+    private final ApplicationContext context = Selene.context();
     
     private static final double BLOCKRAY_LIMIT = 50d;
     private WeakReference<org.spongepowered.api.entity.living.player.Player> reference = new WeakReference<>(null);
@@ -114,17 +111,6 @@ public class SpongePlayer extends Player implements SpongeComposite, Wrapper<org
     public void setGamemode(@NotNull Gamemode gamemode) {
         if (this.referenceExists())
             this.getReference().get().offer(Keys.GAME_MODE, SpongeConversionUtil.toSponge(gamemode));
-    }
-
-    @NotNull
-    @Override
-    public Language getLanguage() {
-        return this.context.get(Players.class).getLanguagePreference(this.getUniqueId());
-    }
-
-    @Override
-    public void setLanguage(@NotNull Language lang) {
-        this.context.get(Players.class).setLanguagePreference(this.getUniqueId(), lang);
     }
 
     @Override

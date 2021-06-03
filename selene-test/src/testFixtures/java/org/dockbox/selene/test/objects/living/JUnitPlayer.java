@@ -60,8 +60,6 @@ public class JUnitPlayer extends Player implements JUnitPersistentDataHolder {
     @Getter @Setter
     private Gamemode gamemode = Gamemode.CREATIVE;
     @Getter @Setter
-    private Language language = Language.EN_US;
-    @Getter @Setter
     private boolean sneaking = false;
     @Setter
     private Location lookingAt = null;
