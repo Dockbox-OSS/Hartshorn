@@ -20,11 +20,13 @@ package org.dockbox.selene.config;
 import org.dockbox.selene.api.config.Environment;
 import org.dockbox.selene.api.config.GlobalConfig;
 import org.dockbox.selene.api.exceptions.ExceptionLevels;
+import org.dockbox.selene.config.annotations.Configuration;
 import org.dockbox.selene.config.annotations.Value;
 
 import lombok.Getter;
 
 @Getter
+@Configuration("selene")
 public class TargetGlobalConfig implements GlobalConfig {
 
     @Value(value = "selene.exceptions.stacktraces", or = "false")
