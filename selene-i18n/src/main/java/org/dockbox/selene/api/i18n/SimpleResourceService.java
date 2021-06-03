@@ -44,6 +44,11 @@ public class SimpleResourceService implements ResourceService, InjectableType {
     protected static final Map<Language, ResourceBundle> bundles = SeleneUtils.emptyConcurrentMap();
 
     @Override
+    public boolean canEnable() {
+        return bundles.isEmpty();
+    }
+
+    @Override
     public void stateEnabling(InjectorProperty<?>... properties) {
         for (Language language : Language.values()) {
             try {
