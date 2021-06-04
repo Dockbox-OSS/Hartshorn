@@ -94,3 +94,22 @@ The server run task exposes a debugging socket on port 5005. Using IntelliJ IDEA
 ```bash
 ./gradlew runDevServer
 ```
+
+## Contributors
+<table>
+  <tr>
+    <td align="center"><img src="https://avatars.githubusercontent.com/u/10957963?v=4" width="100px;" alt=""/><br /><sub><b>Guus Lieben</b></sub><br /><sup>Lead developer</sup></td>
+    <td align="center"><img src="https://avatars.githubusercontent.com/u/38820160?v=4" width="100px;" alt=""/><br /><sub><b>Pumbas600</b></sub><br /><sup>Developer</sup></td>
+    <td align="center"><img src="https://avatars.githubusercontent.com/u/36117510?v=4" width="100px;" alt=""/><br /><sub><b>Simon Bolduc</b></sub><br /><sup>Developer</sup></td>
+    <td align="center"><img src="https://cdn.discordapp.com/avatars/510472543782830087/00e6c38b98367e59b062f3680ead27c3.png" width="100px;" alt=""/><br /><sub><b>Olik1911</b></sub><br /><sup>Translator, Czech</sup></td>
+    <td align="center"><img src="https://cdn.discordapp.com/avatars/537977071972909057/72b62aec1348be39cc91ccb805fb92dd.png?size=256" width="100px;" alt=""/><br /><sub><b>Anrir</b></sub><br /><sup>Translator, Russian</sup></td>
+    <td align="center"><img src="https://cdn.discordapp.com/avatars/334440446874877982/3624260f35db4533bbf26eb0fe86d3bf.png?size=256" width="100px;" alt=""/><br /><sub><b>Niki</b></sub><br /><sup>Translator, Finnish</sup></td>
+    <td align="center"><img src="https://cdn.discordapp.com/avatars/552210500939677720/84802723782e948ccbd8bb60cf0b31be.png?size=256" width="100px;" alt=""/><br /><sub><b>Igor</b></sub><br /><sup>Translator, Norwegian</sup></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="https://user-images.githubusercontent.com/10957963/120807203-fb09b780-c547-11eb-9d3e-3c29b040a878.png" width="100px;" alt=""/><br /><sub><b>DovahTheExplorer</b></sub><br /><sup>Translator, German</sup></td>
+    <td align="center"><img src="https://cdn.discordapp.com/avatars/683656484726636553/a849bda97aba4801eeda07b8b44c4d58.png?size=256" width="100px;" alt=""/><br /><sub><b>KongTheMonkey</b></sub><br /><sup>Translator, German</sup></td>
+    <td align="center"><img src="https://cdn.discordapp.com/avatars/415885019354234883/2bea4b8c2aaabed874da48580426077b.png?size=256" width="100px;" alt=""/><br /><sub><b>Slolo</b></sub><br /><sup>Translator, German</sup></td>
+    <td align="center"><img src="https://cdn.discordapp.com/avatars/327405323562254336/72286ad9938c42a5c33c7bbe25d647b6.png?size=256" width="100px;" alt=""/><br /><sub><b>Asraya</b></sub><br /><sup>Translator, French</sup></td>
+  </tr>
+</table>
