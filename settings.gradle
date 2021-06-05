@@ -15,12 +15,12 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-rootProject.name = 'Selene'
+rootProject.name = 'Hartshorn'
 
 gradle.startParameter.continueOnFailure = true
 
 includeAll(rootDir, '')
-includeAll(new File(rootDir, 'selene-minecraft'), ':selene-minecraft')
+includeAll(new File(rootDir, 'hartshorn-minecraft'), ':hartshorn-minecraft')
 
 def includeAll(File dir, String prefix) {
     dir.listFiles().each {

@@ -39,7 +39,7 @@ static def getVersionName() {
 
 version = getVersionName()
 group project.pluginGroup
-description 'Common sources for Selene services'
+description 'Common sources for Hartshorn services'
 def date = LocalDate.now().toString()
 
 subprojects { Project subProject ->
@@ -118,7 +118,7 @@ allprojects {
 
             testCompile "org.mockito:mockito-inline:$mockitoVersion"
 
-            testCompile testFixtures(project(":selene-test"))
+            testCompile testFixtures(project(":hartshorn-test"))
 
             testImplementation "org.slf4j:slf4j-api:$slf4jVersion"
             testImplementation "org.slf4j:slf4j-simple:$slf4jVersion"
@@ -132,7 +132,7 @@ allprojects {
 
 task aggregatedJavadocs(type: Javadoc, description: 'Generate javadocs from all submodules', group: 'Documentation') {
     destinationDir = file "./docs"
-    title = "Selene (commit #$version)"
+    title = "Hartshorn (commit #$version)"
     options.author true
     options.links 'http://docs.spring.io/spring/docs/4.3.x/javadoc-api/', 'http://docs.oracle.com/javase/8/docs/api/', 'http://docs.spring.io/spring-ws/docs/2.3.0.RELEASE/api/', 'http://docs.spring.io/spring-security/site/docs/4.0.4.RELEASE/apidocs/'
     options.addStringOption 'Xdoclint:none', '-quiet'
