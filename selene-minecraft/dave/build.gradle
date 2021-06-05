@@ -1,6 +1,0 @@
-description 'An automatic chatbot which watches multiple chat channels for message to reply to automatically'
-
-dependencies {
-    compileOnly project(':selene-discord')
-    compileOnly project(':selene-tasks')
-}

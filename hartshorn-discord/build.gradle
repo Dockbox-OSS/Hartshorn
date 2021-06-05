@@ -1,0 +1,12 @@
+apply from: "$rootDir/parent.gradle"
+
+dependencies {
+    compileOnly project(':hartshorn-bootstrap')
+    compileOnly project(':hartshorn-i18n')
+    compileOnly project(':hartshorn-events')
+
+    compile 'com.github.ygimenez:Pagination-Utils:2.1.1'
+    compile("net.dv8tion:JDA:$jdaVersion") {
+        exclude module: 'opus-java'
+    }
+}

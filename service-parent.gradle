@@ -18,20 +18,20 @@
 apply from: "$rootDir/parent.gradle"
 
 dependencies {
-    include project(':selene-bootstrap')
+    include project(':hartshorn-bootstrap')
 
     // Provide access to i18n for target communication
-    include project(':selene-i18n')
+    include project(':hartshorn-i18n')
 
     // Provide access to persistence and entity models
-    include project(':selene-persistence')
-    include project(':selene-config')
+    include project(':hartshorn-persistence')
+    include project(':hartshorn-config')
 
     // Provide access to event and command listeners, which
     // cover 50% of the module use-cases
-    include project(':selene-events')
-    include project(':selene-commands')
+    include project(':hartshorn-events')
+    include project(':hartshorn-commands')
 
     // Provide access to exception handlers
-    include project(':selene-exceptions')
+    include project(':hartshorn-exceptions')
 }

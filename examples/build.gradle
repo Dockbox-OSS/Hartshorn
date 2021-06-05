@@ -19,12 +19,12 @@ plugins {
     id 'java'
 }
 
-group = 'org.dockbox.selene.sample'
-description 'Sample services for Selene'
+group = 'org.dockbox.hartshorn.sample'
+description 'Sample services for Hartshorn'
 
 apply from: "$rootDir/service-parent.gradle"
 
 dependencies {
-    compileOnly project(':selene-minecraft:server')
-    compileOnly project(':selene-minecraft:plots')
+    compileOnly project(':hartshorn-minecraft:server')
+    compileOnly project(':hartshorn-minecraft:plots')
 }

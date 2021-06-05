@@ -16,10 +16,10 @@
  */
 
 dependencies {
-    include project(':selene-core')
-    include project(':selene-util')
-    include(project(':selene-di')){
+    include project(':hartshorn-core')
+    include project(':hartshorn-util')
+    include(project(':hartshorn-di')){
         exclude module: 'guice'
     }
-    include project(':selene-exceptions')
+    include project(':hartshorn-exceptions')
 }

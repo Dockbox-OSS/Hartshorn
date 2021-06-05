@@ -9,7 +9,7 @@ target
 dependency-reduced-pom.xml
 # Generated directories
 servers
-selene-assembly/distributions
+hartshorn-assembly/distributions
 # Test resources
 module/src/test/resources/storage.db-journal
 */.mixin.out

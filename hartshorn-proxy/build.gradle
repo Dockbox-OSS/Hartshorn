@@ -1,0 +1,6 @@
+apply from: "$rootDir/parent.gradle"
+
+dependencies {
+    compileOnly(project(':hartshorn-exceptions'))
+    compileOnly(project(':hartshorn-bootstrap'))
+}
