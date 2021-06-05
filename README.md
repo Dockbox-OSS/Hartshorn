@@ -6,7 +6,7 @@
 		<a href="https://guuslieben.github.io/Hartshorn/"><img src="https://github.com/GuusLieben/Hartshorn/workflows/JavaDocs/badge.svg"></a>
 		<img src="https://github.com/GuusLieben/Hartshorn/workflows/Build/badge.svg">
 		<img src="https://github.com/GuusLieben/Hartshorn/workflows/Tests/badge.svg"><br>
-        <a href="https://www.codefactor.io/repository/github/guuslieben/hartshorn"><img src="https://www.codefactor.io/repository/github/guuslieben/hartshorn/badge?s=4dbef3a95ba6db638d3a86f7ffd5ff08eabdfcf4" alt="CodeFactor" /></a>
+        <a href="https://www.codefactor.io/repository/github/guuslieben/hartshorn"><img src="https://www.codefactor.io/repository/github/guuslieben/hartshorn/badge?s=5e09ccbb31604049271c18af0d20c1237d9816f2" alt="CodeFactor" /></a>
 		<a href="https://www.gnu.org/licenses/lgpl-2.1"><img src="https://img.shields.io/badge/License-LGPL%20v2.1-blue.svg"></a>
 	</p>
 </p>
