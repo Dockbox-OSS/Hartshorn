@@ -3,7 +3,7 @@ name: Create pre-release
 on:
   pull_request:
     branches:
-      - selene-main
+      - hartshorn-main
     types: [closed]
 
 jobs:
@@ -20,7 +20,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: pre-${{ github.event.pull_request.number }}
-          release_name: Prerelease Selene-${{ github.event.pull_request.number }}
+          release_name: Prerelease Hartshorn-${{ github.event.pull_request.number }}
           body: |
             This is a automatically created pre-release for pull request #${{ github.event.pull_request.number }}
             **Author:** @${{ github.event.sender.login }}

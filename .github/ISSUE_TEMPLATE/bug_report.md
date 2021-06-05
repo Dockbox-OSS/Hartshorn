@@ -11,7 +11,7 @@ assignees: ''
 A clear and concise description of what the bug is.
 
 **Configuration**
-- Selene version: 
+- Hartshorn version: 
 - Platform(s): 
 - JDK version: 
 

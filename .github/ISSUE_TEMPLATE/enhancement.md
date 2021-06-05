@@ -1,6 +1,6 @@
 ---
 name: Enhancement
-about: If you have a potential enhancement for Selene, you can use this template
+about: If you have a potential enhancement for Hartshorn, you can use this template
 title: ''
 labels: 'Type: Enhancement'
 assignees: ''
