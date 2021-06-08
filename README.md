@@ -115,4 +115,8 @@ The server run task exposes a debugging socket on port 5005. Using IntelliJ IDEA
     <td align="center"><img src="https://cdn.discordapp.com/attachments/440964141184843777/850426706090655794/MMXIX.jpg" width="100px;" alt=""/><br /><sub><b>Sekeleton</b></sub><br /><sup>Translator, Turkish</sup></td>
     <td align="center"><img src="https://www.cumbria.ac.uk/media/staff-profile-images/staff_profile_-generic_350x350px.png" width="100px;" alt=""/><br /><sub><b>Dork</b></sub><br /><sup>Translator, Spanish</sup></td>
   </tr>
+  <tr>
+    <td align="center"><img src="https://cdn.discordapp.com/avatars/416672229275992074/f8786cc6a4057fbc4032ec2dd90b8633.png" width="100px;" alt=""/><br /><sub><b>Overlord</b></sub><br /><sup>Translator, German (Switzerland)</sup></td>
+    <td align="center"><img src="https://cdn.discordapp.com/avatars/573518212965072916/00945a45deb5db91dc50b6686fe30602.png" width="100px;" alt=""/><br /><sub><b>Salt</b></sub><br /><sup>Translator, Japanese</sup></td>
+  </tr>
 </table>
