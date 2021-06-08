@@ -93,7 +93,11 @@ allprojects {
 
         compileJava {
             options.compilerArgs << '-parameters'
+            options.encoding = 'UTF-8'
         }
+
+        compileTestJava.options.encoding = 'UTF-8'
+        javadoc.options.encoding = 'UTF-8'
 
         dependencies {
             compile group: 'com.mortennobel', name: 'java-image-scaling', version: '0.8.6'

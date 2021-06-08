@@ -27,8 +27,17 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum Language implements PersistentCapable<PersistentLanguageModel> {
-    EN_US(Locale.ENGLISH, "en_US", "English", "English"),
+    CS_CZ(new Locale("cs"), "cs_CZ", "Czech", "Čeština"),
+    DE_CH(new Locale("de_ch"), "de_CH", "German (Switzerland)", "Deutsch (Schweiz)"),
+    ES_ES(new Locale("es"), "es_ES", "Spanish", "Español"),
+    FI(new Locale("fi"), "fi", "Finnish", "Suomi"),
+    NO_NO(new Locale("no"), "no_no", "Norwegian", "Norsk"),
+    PT_PT(new Locale("pt"), "pt_PT", "Portuguese", "Português"),
+    RU(new Locale("ru"), "ru", "Russian", "Pусский"),
+    SV_SE(new Locale("sv"), "sv_SE", "Swedish", "Svenska"),
+    TR(new Locale("tr"), "tr", "Turkish", "Türk"),
     NL_NL(new Locale("nl"), "nl_NL", "Dutch", "Nederlands"),
+    EN_US(Locale.ENGLISH, "en_US", "English", "English"),
     FR_FR(Locale.FRENCH, "fr_FR", "French", "Français"),
     DE_DE(Locale.GERMANY, "de_DE", "German", "Deutsch");
 
