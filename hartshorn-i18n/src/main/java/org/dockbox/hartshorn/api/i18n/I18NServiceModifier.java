@@ -18,7 +18,7 @@
 package org.dockbox.hartshorn.api.i18n;
 
 import org.dockbox.hartshorn.api.Hartshorn;
-import org.dockbox.hartshorn.api.domain.OwnerLookup;
+import org.dockbox.hartshorn.api.domain.MetaProvider;
 import org.dockbox.hartshorn.api.domain.TypedOwner;
 import org.dockbox.hartshorn.api.i18n.annotations.Resource;
 import org.dockbox.hartshorn.api.i18n.annotations.UseResources;
@@ -44,7 +44,7 @@ public class I18NServiceModifier extends ServiceAnnotatedMethodModifier<Resource
 
         String prefix = "";
         if (methodContext.getType().isAnnotationPresent(Service.class)) {
-            TypedOwner lookup = Hartshorn.context().get(OwnerLookup.class).lookup(methodContext.getType());
+            TypedOwner lookup = Hartshorn.context().get(MetaProvider.class).lookup(methodContext.getType());
             if (lookup != null) prefix = lookup.id() + '.';
         }
 

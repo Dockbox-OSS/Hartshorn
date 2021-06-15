@@ -18,7 +18,7 @@
 package org.dockbox.hartshorn.persistence.service;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.api.domain.OwnerLookup;
+import org.dockbox.hartshorn.api.domain.MetaProvider;
 import org.dockbox.hartshorn.api.domain.TypedOwner;
 import org.dockbox.hartshorn.di.annotations.Service;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
@@ -82,7 +82,7 @@ public abstract class AbstractPersistenceServiceModifier<M extends Annotation, C
             owner = service.owner();
         }
 
-        final TypedOwner lookup = context.get(OwnerLookup.class).lookup(owner);
+        final TypedOwner lookup = context.get(MetaProvider.class).lookup(owner);
         final FileManager fileManager = context.get(FileManager.class);
 
         if ("".equals(annotationContext.getFile().value())) return fileManager.getDataFile(lookup);

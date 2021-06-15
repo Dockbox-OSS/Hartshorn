@@ -306,6 +306,7 @@ public class GuiceInjector implements Injector {
 
     private void handleBinder(Map<Key<?>, Class<?>> bindings, Class<?> binder, Binds annotation) {
         Class<?> binds = annotation.value();
+
         if (Reflect.annotatedConstructors(binder, Wired.class).isEmpty()) {
             Entry<Key<?>, Class<?>> entry = this.handleScanned(binder, binds, annotation);
             bindings.put(entry.getKey(), entry.getValue());

@@ -17,8 +17,9 @@
 
 package org.dockbox.hartshorn.api.domain;
 
-public interface OwnerLookup {
+public interface MetaProvider {
 
     TypedOwner lookup(Class<?> type);
+    boolean isSingleton(Class<?> type);
 
 }

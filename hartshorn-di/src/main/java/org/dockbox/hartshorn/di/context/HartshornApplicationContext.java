@@ -18,6 +18,7 @@
 package org.dockbox.hartshorn.di.context;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.api.domain.MetaProvider;
 import org.dockbox.hartshorn.di.InjectConfiguration;
 import org.dockbox.hartshorn.di.Modifier;
 import org.dockbox.hartshorn.di.ProvisionFailure;
@@ -105,7 +106,9 @@ public class HartshornApplicationContext extends ManagedHartshornContext {
             }
         }
 
-        if (typeInstance != null && Bindings.isSingleton(type)) this.singletons.put(type, typeInstance);
+        if (!Reflect.assignableFrom(MetaProvider.class, type)) {
+            if (typeInstance != null && this.get(MetaProvider.class).isSingleton(type)) this.singletons.put(type, typeInstance);
+        }
 
         // May be null, but we have used all possible injectors, it's up to the developer now
         return typeInstance;
