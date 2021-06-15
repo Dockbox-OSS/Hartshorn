@@ -17,8 +17,8 @@
 
 package org.dockbox.hartshorn.test;
 
+import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.HartshornApplication;
-import org.dockbox.hartshorn.api.HartshornInformation;
 import org.dockbox.hartshorn.di.ApplicationContextAware;
 import org.dockbox.hartshorn.di.Modifier;
 import org.dockbox.hartshorn.di.annotations.Activator;
@@ -33,7 +33,7 @@ import lombok.Getter;
 
 @Activator(
         value = JUnit5Bootstrap.class,
-        prefix = HartshornInformation.PACKAGE_PREFIX,
+        prefix = Hartshorn.PACKAGE_PREFIX,
         configs = {
                 @InjectConfig(JUnitInjector.class),
                 @InjectConfig(value = LateJUnitInjector.class, phase = InjectPhase.LATE)

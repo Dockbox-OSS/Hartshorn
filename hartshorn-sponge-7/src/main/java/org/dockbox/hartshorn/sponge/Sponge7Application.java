@@ -20,8 +20,8 @@ package org.dockbox.hartshorn.sponge;
 import com.google.common.reflect.TypeToken;
 import com.google.inject.Inject;
 
+import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.HartshornApplication;
-import org.dockbox.hartshorn.api.HartshornInformation;
 import org.dockbox.hartshorn.di.Modifier;
 import org.dockbox.hartshorn.di.annotations.Activator;
 import org.dockbox.hartshorn.di.annotations.InjectConfig;
@@ -46,8 +46,8 @@ import org.spongepowered.api.plugin.PluginContainer;
 
 /** Sponge API 7.x implementation of Hartshorn, using events to initiate startup tasks. */
 @Plugin(
-        id = HartshornInformation.PROJECT_ID,
-        name = HartshornInformation.PROJECT_NAME,
+        id = Hartshorn.PROJECT_ID,
+        name = Hartshorn.PROJECT_NAME,
         description = "Custom plugins and modifications combined into a single source",
         url = "https://github.com/GuusLieben/Hartshorn",
         authors = "GuusLieben",
@@ -58,7 +58,7 @@ import org.spongepowered.api.plugin.PluginContainer;
         })
 @Activator(
         value = MinecraftServerBootstrap.class,
-        prefix = HartshornInformation.PACKAGE_PREFIX,
+        prefix = Hartshorn.PACKAGE_PREFIX,
         configs = {
                 @InjectConfig(SpongeEarlyInjector.class),
                 @InjectConfig(value = SpongeLateInjector.class, phase = InjectPhase.LATE)

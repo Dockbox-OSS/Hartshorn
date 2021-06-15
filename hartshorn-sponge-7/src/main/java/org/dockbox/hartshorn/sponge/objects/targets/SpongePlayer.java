@@ -20,7 +20,6 @@ package org.dockbox.hartshorn.sponge.objects.targets;
 import com.flowpowered.math.vector.Vector3d;
 
 import org.dockbox.hartshorn.api.Hartshorn;
-import org.dockbox.hartshorn.api.HartshornInformation;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.events.EventBus;
 import org.dockbox.hartshorn.api.i18n.common.Language;
@@ -262,7 +261,7 @@ public class SpongePlayer extends Player implements SpongeComposite, Wrapper<org
 
     @Override
     public boolean hasPermission(@NotNull String permission) {
-        if (HartshornInformation.GLOBALLY_PERMITTED.contains(this.getUniqueId())) return true;
+        if (Hartshorn.GLOBALLY_PERMITTED.contains(this.getUniqueId())) return true;
         return this.hasPermission(permission, SubjectData.GLOBAL_CONTEXT);
     }
 
@@ -273,7 +272,7 @@ public class SpongePlayer extends Player implements SpongeComposite, Wrapper<org
         }
         else {
             PermissionContext context = permission.getContext().get();
-            if (HartshornInformation.GLOBALLY_PERMITTED.contains(this.getUniqueId())) return true;
+            if (Hartshorn.GLOBALLY_PERMITTED.contains(this.getUniqueId())) return true;
 
             Set<Context> contexts = SpongeConversionUtil.toSponge(context);
             return this.hasPermission(permission.get(), contexts);

@@ -29,10 +29,23 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 /** The global {@link Hartshorn} instance used to grant access to various components. */
 public final class Hartshorn {
+
+    public static final String GLOBAL_BYPASS = "hartshorn.admin.bypass-all";
+    public static final String GLOBAL_PERMITTED = "hartshorn.global.permitted";
+    public static final String PACKAGE_PREFIX = "org.dockbox.hartshorn";
+    public static final List<UUID> GLOBALLY_PERMITTED = HartshornUtils.asList(
+            UUID.fromString("6047d264-7769-4e50-a11e-c8b83f65ccc4"),
+            UUID.fromString("cb6411bb-31c9-4d69-8000-b98842ce0a0a"),
+            UUID.fromString("b7fb5e32-73ee-4f25-b256-a763c8739192")
+    );
+    public static final String PROJECT_NAME = "Hartshorn";
+    public static final String PROJECT_ID = "hartshorn";
 
     private static final Map<String, Logger> LOGGERS = HartshornUtils.emptyConcurrentMap();
 
@@ -63,12 +76,14 @@ public final class Hartshorn {
 
         String[] qualifiedClassName = className.split("\\.");
         StringBuilder fullName = new StringBuilder();
+
         for (int i = 0; i < qualifiedClassName.length; i++) {
             String part = qualifiedClassName[i];
             if (i > 0) fullName.append('.');
             if (i == qualifiedClassName.length-1) fullName.append(part);
             else fullName.append(part.charAt(0));
         }
+
         String name = HartshornUtils.wrap(fullName.toString(), 35);
         Logger logger = LoggerFactory.getLogger(name);
         LOGGERS.put(className, logger);

@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.palswap;
 
-import org.dockbox.hartshorn.api.HartshornInformation;
+import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.i18n.common.Language;
 import org.dockbox.hartshorn.commands.annotations.Command;
@@ -40,7 +40,7 @@ public class BlockRegistryTestService {
         instance = this;
     }
 
-    @Command(value = "blockid", arguments = "<id>", permission = HartshornInformation.GLOBAL_BYPASS)
+    @Command(value = "blockid", arguments = "<id>", permission = Hartshorn.GLOBAL_BYPASS)
     public void blockID(@NotNull Player player, CommandContext context) {
         Exceptional<CommandParameter<String>> eID = context.argument("id");
 
@@ -54,7 +54,7 @@ public class BlockRegistryTestService {
         player.getInventory().give(Item.of(id));
     }
 
-    @Command(value = "blockmeta", arguments = "<id> <meta{Integer}>", permission = HartshornInformation.GLOBAL_BYPASS)
+    @Command(value = "blockmeta", arguments = "<id> <meta{Integer}>", permission = Hartshorn.GLOBAL_BYPASS)
     public void blockMeta(@NotNull Player player, CommandContext context) {
 
         String id = context.get("id");

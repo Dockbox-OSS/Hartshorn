@@ -18,7 +18,6 @@
 package org.dockbox.hartshorn.proxy;
 
 import org.dockbox.hartshorn.api.Hartshorn;
-import org.dockbox.hartshorn.api.HartshornInformation;
 import org.dockbox.hartshorn.api.exceptions.Except;
 import org.dockbox.hartshorn.di.InjectionPoint;
 import org.dockbox.hartshorn.proxy.annotations.Instance;
@@ -26,8 +25,8 @@ import org.dockbox.hartshorn.proxy.annotations.Proxy;
 import org.dockbox.hartshorn.proxy.annotations.Proxy.Target;
 import org.dockbox.hartshorn.proxy.exception.CancelProxyException;
 import org.dockbox.hartshorn.proxy.handle.ProxyHandler;
-import org.dockbox.hartshorn.util.Reflect;
 import org.dockbox.hartshorn.util.HartshornUtils;
+import org.dockbox.hartshorn.util.Reflect;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 
@@ -43,8 +42,8 @@ public final class ProxyableBootstrap {
     private ProxyableBootstrap() {}
 
     static void boostrapDelegates() {
-        Hartshorn.log().info("Scanning for proxy types in " + HartshornInformation.PACKAGE_PREFIX);
-        Reflect.annotatedTypes(HartshornInformation.PACKAGE_PREFIX, Proxy.class).forEach(proxy -> {
+        Hartshorn.log().info("Scanning for proxy types in " + Hartshorn.PACKAGE_PREFIX);
+        Reflect.annotatedTypes(Hartshorn.PACKAGE_PREFIX, Proxy.class).forEach(proxy -> {
             Hartshorn.log().info("Processing [" + proxy.getCanonicalName() + "]");
             if (!Reflect.isConcrete(proxy)) {
                 Hartshorn.log().warn("Proxy source cannot be abstract [" + proxy.getCanonicalName() + "]");
