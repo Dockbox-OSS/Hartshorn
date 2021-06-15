@@ -30,6 +30,7 @@ import lombok.Getter;
 
 @SuppressWarnings("unchecked")
 @AllArgsConstructor
+@Deprecated
 public class SimpleCommandContext implements CommandContext {
 
     public static final SimpleCommandContext EMPTY = new SimpleCommandContext(
