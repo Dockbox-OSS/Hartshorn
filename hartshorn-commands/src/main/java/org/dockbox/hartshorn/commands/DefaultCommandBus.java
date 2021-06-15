@@ -34,17 +34,17 @@ import org.dockbox.hartshorn.commands.context.CommandContext;
 import org.dockbox.hartshorn.commands.context.CommandParameter;
 import org.dockbox.hartshorn.commands.context.SimpleCommandContext;
 import org.dockbox.hartshorn.commands.events.CommandEvent;
-import org.dockbox.hartshorn.commands.registration.AbstractRegistrationContext;
-import org.dockbox.hartshorn.commands.registration.CommandInheritanceContext;
+import org.dockbox.hartshorn.commands.registration.AbstractCommandContext;
 import org.dockbox.hartshorn.commands.registration.MethodCommandContext;
+import org.dockbox.hartshorn.commands.registration.ParentCommandContext;
 import org.dockbox.hartshorn.commands.source.CommandSource;
 import org.dockbox.hartshorn.commands.values.AbstractArgumentElement;
 import org.dockbox.hartshorn.commands.values.AbstractFlagCollection;
 import org.dockbox.hartshorn.commands.values.ArgumentValue;
 import org.dockbox.hartshorn.di.annotations.Wired;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
-import org.dockbox.hartshorn.util.Reflect;
 import org.dockbox.hartshorn.util.HartshornUtils;
+import org.dockbox.hartshorn.util.Reflect;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
@@ -56,6 +56,7 @@ import java.util.Map;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Entity(value = "commands", serializable = false)
 @SuppressWarnings("RegExpUnnecessaryNonCapturingGroup")
@@ -136,11 +137,11 @@ public abstract class DefaultCommandBus<E> implements CommandBus {
 
     private static final Map<String, ConfirmableQueueItem> confirmQueue = HartshornUtils.emptyConcurrentMap();
 
-    private static final Map<String, AbstractRegistrationContext> registrations = HartshornUtils.emptyConcurrentMap();
-    private static final Map<String, List<CommandInheritanceContext>> queuedAliases = HartshornUtils.emptyConcurrentMap();
+    private static final Map<String, AbstractCommandContext> registrations = HartshornUtils.emptyConcurrentMap();
+    private static final Map<String, List<ParentCommandContext>> queuedAliases = HartshornUtils.emptyConcurrentMap();
 
     protected void callCommandContext(
-            AbstractRegistrationContext registrationContext,
+            AbstractCommandContext registrationContext,
             String command,
             CommandSource sender,
             CommandContext ctx
@@ -152,7 +153,7 @@ public abstract class DefaultCommandBus<E> implements CommandBus {
         */
         //noinspection ConstantConditions
         if (registrationContext.getCommand().confirm() && sender instanceof AbstractIdentifiable && !(sender instanceof CommandInterface)) {
-            String registrationId = AbstractRegistrationContext.getRegistrationId((Identifiable) sender, ctx);
+            String registrationId = AbstractCommandContext.getRegistrationId((Identifiable) sender, ctx);
             ConfirmableQueueItem queueItem = new ConfirmableQueueItem((AbstractIdentifiable) sender, ctx, registrationContext);
             DefaultCommandBus.queueConfirmable(registrationId, queueItem);
 
@@ -163,7 +164,7 @@ public abstract class DefaultCommandBus<E> implements CommandBus {
 
         }
         else {
-            Exceptional<ResourceEntry> response = DefaultCommandBus.callCommandWithEvents(sender, ctx, command, registrationContext);
+            Exceptional<ResourceEntry> response = this.callCommandWithEvents(sender, ctx, command, registrationContext);
 
             if (response.caught())
                 sender.sendWithPrefix(DefaultResources.instance().getUnknownError(response.error().getMessage()));
@@ -174,11 +175,11 @@ public abstract class DefaultCommandBus<E> implements CommandBus {
         DefaultCommandBus.confirmQueue.put(identifier, queueItem);
     }
 
-    private static Exceptional<ResourceEntry> callCommandWithEvents(
+    private Exceptional<ResourceEntry> callCommandWithEvents(
             CommandSource sender,
             CommandContext context,
             String command,
-            AbstractRegistrationContext registrationContext
+            AbstractCommandContext registrationContext
     ) {
         /*
         Modules are allowed to modify and/or cancel commands before and after the command has initially been
@@ -198,25 +199,25 @@ public abstract class DefaultCommandBus<E> implements CommandBus {
     public void register(Class<?>... types) {
         for (Class<?> type : types) {
             if (null == type) continue;
-            List<AbstractRegistrationContext> contexts = this.createContexts(type);
+            List<AbstractCommandContext> contexts = this.createContexts(type);
 
-            for (AbstractRegistrationContext context : contexts) {
+            for (AbstractCommandContext context : contexts) {
                 for (String alias : context.getAliases()) {
 
-                    if (context instanceof CommandInheritanceContext
-                            && DefaultCommandBus.prepareInheritanceContext(context, alias)) continue;
+                    if (context instanceof ParentCommandContext
+                            && this.prepareInheritanceContext(context, alias)) continue;
 
-                    if (DefaultCommandBus.registrations.containsKey(alias))
+                    if (DefaultCommandBus.getRegistrations().containsKey(alias))
                         Hartshorn.log().warn("Registering duplicate alias '" + alias + "'");
 
-                    DefaultCommandBus.registrations.put(alias, context);
+                    DefaultCommandBus.getRegistrations().put(alias, context);
                 }
             }
         }
     }
 
-    private List<AbstractRegistrationContext> createContexts(Class<?> parent) {
-        List<AbstractRegistrationContext> contexts = HartshornUtils.emptyList();
+    private List<AbstractCommandContext> createContexts(Class<?> parent) {
+        List<AbstractCommandContext> contexts = HartshornUtils.emptyList();
 
         /*
         It is possible the class itself is not decorated with @Command, in which case all methods should be registered
@@ -230,10 +231,10 @@ public abstract class DefaultCommandBus<E> implements CommandBus {
 
         @NotNull
         @Unmodifiable
-        Collection<Method> nonInheritedMethods = Reflect.annotatedMethods(parent, Command.class, c -> !c.inherit() || !isParentRegistration);
+        Collection<Method> nonInheritedMethods = Reflect.annotatedMethods(parent, Command.class, c -> c.parent().equals(Void.class) && (!c.inherit() || !isParentRegistration));
 
         nonInheritedMethods.forEach(method -> {
-            MethodCommandContext context = DefaultCommandBus.extractNonInheritedContext(method);
+            MethodCommandContext context = this.extractNonInheritedContext(method);
             if (null != context) contexts.add(context);
         });
 
@@ -241,17 +242,17 @@ public abstract class DefaultCommandBus<E> implements CommandBus {
     }
 
     @SuppressWarnings("checkstyle:Indentation")
-    private static boolean prepareInheritanceContext(AbstractRegistrationContext context, String alias) {
+    private boolean prepareInheritanceContext(AbstractCommandContext context, String alias) {
         /*
         If the command 'extends' on the provided alias(es), it should not be registered directly and should instead be
         added to existing registrations. If no existing registration is present (yet), it should be queued so that it
         can be added when the target registration is created.
         */
         if (context.getCommand().extend()) {
-            if (DefaultCommandBus.registrations.containsKey(alias))
-                DefaultCommandBus.addExtendingAliasToRegistration(
-                        alias, (CommandInheritanceContext) context);
-            else DefaultCommandBus.queueAliasRegistration(alias, (CommandInheritanceContext) context);
+            if (DefaultCommandBus.getRegistrations().containsKey(alias))
+                this.addExtendingAliasToRegistration(
+                        alias, (ParentCommandContext) context);
+            else this.queueAliasRegistration(alias, (ParentCommandContext) context);
 
             return true;
         }
@@ -264,15 +265,15 @@ public abstract class DefaultCommandBus<E> implements CommandBus {
             DefaultCommandBus.queuedAliases
                     .getOrDefault(alias, HartshornUtils.emptyConcurrentList())
                     .forEach(extendingContext ->
-                            DefaultCommandBus.addExtendingContextToRegistration(extendingContext, (CommandInheritanceContext) context)
+                            this.addExtendingContextToRegistration(extendingContext, (ParentCommandContext) context)
                     );
         }
         return false;
     }
 
-    private CommandInheritanceContext extractCommandInheritanceContext(Class<?> parent) {
+    private ParentCommandContext extractCommandInheritanceContext(Class<?> parent) {
         Command command = parent.getAnnotation(Command.class);
-        CommandInheritanceContext context = new CommandInheritanceContext(command, this.resources.getMissingArguments(), parent);
+        ParentCommandContext context = new ParentCommandContext(command, this.resources.getMissingArguments(), parent);
 
         /*
         Inherited methods are only stored inside the CommandInheritanceContext and not in
@@ -283,14 +284,14 @@ public abstract class DefaultCommandBus<E> implements CommandBus {
         @Unmodifiable
         Collection<Method> inheritedMethods = Reflect.annotatedMethods(parent, Command.class, Command::inherit);
         inheritedMethods.forEach(method -> context.addInheritedCommand(
-                DefaultCommandBus.extractInheritedContext(method, context))
+                this.extractInheritedContext(parent, method, context))
         );
 
         return context;
     }
-
-    private @Nullable
-    static MethodCommandContext extractNonInheritedContext(Method method) {
+    
+    @Nullable
+    private MethodCommandContext extractNonInheritedContext(Method method) {
         Command command = method.getAnnotation(Command.class);
         if (command.inherit() && method.getDeclaringClass().isAnnotationPresent(Command.class))
             return null;
@@ -298,26 +299,32 @@ public abstract class DefaultCommandBus<E> implements CommandBus {
         return new MethodCommandContext(command, method);
     }
 
-    private static void addExtendingAliasToRegistration(String alias, CommandInheritanceContext extendingContext) {
-        AbstractRegistrationContext context = DefaultCommandBus.registrations.get(alias);
-        DefaultCommandBus.addExtendingContextToRegistration(extendingContext, (CommandInheritanceContext) context);
-        DefaultCommandBus.registrations.put(alias, context);
+    private void addExtendingAliasToRegistration(String alias, ParentCommandContext extendingContext) {
+        AbstractCommandContext context = DefaultCommandBus.getRegistrations().get(alias);
+        this.addExtendingContextToRegistration(extendingContext, (ParentCommandContext) context);
+        DefaultCommandBus.getRegistrations().put(alias, context);
     }
 
-    private static void queueAliasRegistration(String alias, CommandInheritanceContext context) {
-        List<CommandInheritanceContext> contexts = DefaultCommandBus.queuedAliases.getOrDefault(alias, HartshornUtils.emptyConcurrentList());
+    private void queueAliasRegistration(String alias, ParentCommandContext context) {
+        List<ParentCommandContext> contexts = DefaultCommandBus.queuedAliases.getOrDefault(alias, HartshornUtils.emptyConcurrentList());
         contexts.add(context);
         DefaultCommandBus.queuedAliases.put(alias, contexts);
     }
 
-    private static void addExtendingContextToRegistration(CommandInheritanceContext extendingContext, CommandInheritanceContext context) {
+    private void addExtendingContextToRegistration(ParentCommandContext extendingContext, ParentCommandContext context) {
         extendingContext.getInheritedCommands().forEach(context::addInheritedCommand);
     }
 
-    private @Nullable
-    static MethodCommandContext extractInheritedContext(Method method, CommandInheritanceContext parentContext) {
+    @Nullable
+    private AbstractCommandContext extractInheritedContext(Class<?> parent, Method method, ParentCommandContext parentContext) {
         Command command = method.getAnnotation(Command.class);
+
+        final String pkg = parent.getPackage().getName();
+        final Collection<Class<?>> commandsInPackage = Reflect.annotatedTypes(pkg, Command.class);
+
         if (!command.inherit()) return null;
+        AbstractCommandContext context = null;
+
         for (String alias : command.value()) {
             if (parentContext.getInheritedCommands().stream().anyMatch(cmd -> cmd.getAliases().contains(alias))) {
                 /*
@@ -325,9 +332,27 @@ public abstract class DefaultCommandBus<E> implements CommandBus {
                 this method will overwrite any existing sub-commands with the generated context.
                 */
                 Hartshorn.log().warn("Context for '" + parentContext.getPrimaryAlias() + "' has duplicate inherited context for '" + alias + "'.");
+                continue;
             }
+
+            final List<ParentCommandContext> subs = commandsInPackage.stream().filter(type -> {
+                final Command annotation = type.getAnnotation(Command.class);
+                if (!parent.equals(annotation.parent())) return false;
+
+                final String[] aliases = annotation.value();
+                return HartshornUtils.containsEqual(aliases, alias);
+            }).map(this::extractCommandInheritanceContext).collect(Collectors.toList());
+
+            if (subs.isEmpty()) continue;
+            if (context == null) context = new ParentCommandContext(command, this.resources.getMissingArguments(), parent, method);
+
+            for (ParentCommandContext sub : subs) {
+                ((ParentCommandContext) context).addInheritedCommand(sub);
+            }
+
         }
-        return new MethodCommandContext(command, method);
+        if (context == null) context = new MethodCommandContext(command, method);
+        return context;
     }
 
     @Override
@@ -339,7 +364,11 @@ public abstract class DefaultCommandBus<E> implements CommandBus {
         */
         DefaultCommandBus.getRegistrations().forEach((alias, abstractCommand) -> {
             E spec = null;
-            if (abstractCommand instanceof MethodCommandContext) {
+            if (abstractCommand instanceof ParentCommandContext) {
+                ParentCommandContext inheritanceContext = (ParentCommandContext) abstractCommand;
+                spec = this.buildInheritedContextExecutor(inheritanceContext, alias);
+            }
+            else if (abstractCommand instanceof MethodCommandContext) {
                 MethodCommandContext methodContext = (MethodCommandContext) abstractCommand;
                 if (!methodContext.getCommand().inherit()
                         || !methodContext.getDeclaringClass().isAnnotationPresent(Command.class)) {
@@ -349,10 +378,6 @@ public abstract class DefaultCommandBus<E> implements CommandBus {
                     Hartshorn.log().error("Found direct method registration of inherited command! " + methodContext.getLocation());
                 }
 
-            }
-            else if (abstractCommand instanceof CommandInheritanceContext) {
-                CommandInheritanceContext inheritanceContext = (CommandInheritanceContext) abstractCommand;
-                spec = this.buildInheritedContextExecutor(inheritanceContext, alias);
             }
             else {
                 Hartshorn.log().error("Found unknown context type [" + abstractCommand.getClass().getCanonicalName() + "]");
@@ -368,13 +393,13 @@ public abstract class DefaultCommandBus<E> implements CommandBus {
         clearAliasQueue();
     }
 
-    protected static Map<String, AbstractRegistrationContext> getRegistrations() {
+    protected static Map<String, AbstractCommandContext> getRegistrations() {
         return DefaultCommandBus.registrations;
     }
 
-    protected abstract E buildContextExecutor(AbstractRegistrationContext context, String alias);
+    protected abstract E buildContextExecutor(AbstractCommandContext context, String alias);
 
-    protected abstract E buildInheritedContextExecutor(CommandInheritanceContext context, String alias);
+    protected abstract E buildInheritedContextExecutor(ParentCommandContext context, String alias);
 
     protected abstract void registerExecutor(E executor, String alias);
 

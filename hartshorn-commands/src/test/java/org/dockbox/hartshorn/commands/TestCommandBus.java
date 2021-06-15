@@ -19,8 +19,8 @@ package org.dockbox.hartshorn.commands;
 
 import org.dockbox.hartshorn.api.i18n.common.ResourceEntry;
 import org.dockbox.hartshorn.api.i18n.entry.FakeResource;
-import org.dockbox.hartshorn.commands.registration.AbstractRegistrationContext;
-import org.dockbox.hartshorn.commands.registration.CommandInheritanceContext;
+import org.dockbox.hartshorn.commands.registration.AbstractCommandContext;
+import org.dockbox.hartshorn.commands.registration.ParentCommandContext;
 import org.dockbox.hartshorn.commands.values.AbstractArgumentElement;
 import org.dockbox.hartshorn.commands.values.ArgumentValue;
 
@@ -48,12 +48,12 @@ public class TestCommandBus extends DefaultCommandBus<Void> {
     }
 
     @Override
-    protected Void buildContextExecutor(AbstractRegistrationContext context, String alias) {
+    protected Void buildContextExecutor(AbstractCommandContext context, String alias) {
         return null;
     }
 
     @Override
-    protected Void buildInheritedContextExecutor(CommandInheritanceContext context, String alias) {
+    protected Void buildInheritedContextExecutor(ParentCommandContext context, String alias) {
         return null;
     }
 

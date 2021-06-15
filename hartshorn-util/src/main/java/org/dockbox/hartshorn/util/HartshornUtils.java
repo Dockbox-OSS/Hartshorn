@@ -865,6 +865,12 @@ public final class HartshornUtils {
         return merged.toArray(arrayOne);
     }
 
+    public static <T> List<T> merge(Collection<T> collectionOne, Collection<T> collectionTwo) {
+        List<T> merged = HartshornUtils.asList(collectionOne);
+        merged.addAll(HartshornUtils.asList(collectionTwo));
+        return merged;
+    }
+
     /**
      * Add all t [ ].
      *

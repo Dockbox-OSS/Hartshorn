@@ -39,7 +39,7 @@ import java.util.List;
 
 import lombok.Getter;
 
-public class MethodCommandContext extends AbstractRegistrationContext {
+public class MethodCommandContext extends AbstractCommandContext {
 
     @Getter
     private final Method method;
@@ -49,15 +49,22 @@ public class MethodCommandContext extends AbstractRegistrationContext {
         this.method = method;
     }
 
+    public MethodCommandContext(Command command, Class<?> parent) {
+        super(command, parent);
+        this.method = null;
+    }
+
     @Override
     public Exceptional<ResourceEntry> call(CommandSource source, CommandContext context) {
+        if (this.method == null) throw new IllegalStateException("Non-method context called method invocation");
+
         try {
             List<Object> args = this.prepareArguments(source, context);
-            Object instance = this.prepareInstance();
+            Object instance = Hartshorn.context().get(this.getDeclaringClass());
             Command command = this.method.getAnnotation(Command.class);
 
             if (0 < command.cooldownDuration() && source instanceof Identifiable) {
-                String registrationId = AbstractRegistrationContext.getRegistrationId((Identifiable) source, context);
+                String registrationId = AbstractCommandContext.getRegistrationId((Identifiable) source, context);
                 HartshornUtils.cooldown(registrationId, command.cooldownDuration(), command.cooldownUnit());
             }
 
@@ -97,17 +104,6 @@ public class MethodCommandContext extends AbstractRegistrationContext {
         return finalArgs;
     }
 
-    private Object prepareInstance() {
-        Object instance;
-        if (this.getDeclaringClass().equals(Hartshorn.class) || Reflect.assignableFrom(Hartshorn.class, this.getDeclaringClass())) {
-            instance = Hartshorn.server();
-        }
-        else {
-            instance = Hartshorn.context().get(this.getDeclaringClass());
-        }
-        return instance;
-    }
-
     private static CommandSource lookupCommandSource(Class<?> parameterType, CommandSource source) {
         if (Reflect.assignableFrom(CommandUser.class, parameterType) && !(source instanceof CommandUser))
             throw new IllegalSourceException("Command can only be ran by players");
@@ -135,6 +131,7 @@ public class MethodCommandContext extends AbstractRegistrationContext {
     }
 
     public Class<?> getDeclaringClass() {
+        if (this.method == null) return Void.class;
         return this.getMethod().getDeclaringClass();
     }
 
@@ -142,7 +139,7 @@ public class MethodCommandContext extends AbstractRegistrationContext {
         Command command = this.getMethod().getAnnotation(Command.class);
         if (0 >= command.cooldownDuration()) return false;
         if (sender instanceof Identifiable) {
-            String registrationId = AbstractRegistrationContext.getRegistrationId((Identifiable) sender, ctx);
+            String registrationId = AbstractCommandContext.getRegistrationId((Identifiable) sender, ctx);
             return HartshornUtils.isInCooldown(registrationId);
         }
         return false;

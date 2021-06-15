@@ -24,9 +24,9 @@ import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.exceptions.Except;
 import org.dockbox.hartshorn.commands.DefaultCommandBus;
 import org.dockbox.hartshorn.commands.context.SimpleCommandContext;
-import org.dockbox.hartshorn.commands.registration.AbstractRegistrationContext;
-import org.dockbox.hartshorn.commands.registration.CommandInheritanceContext;
+import org.dockbox.hartshorn.commands.registration.AbstractCommandContext;
 import org.dockbox.hartshorn.commands.registration.MethodCommandContext;
+import org.dockbox.hartshorn.commands.registration.ParentCommandContext;
 import org.dockbox.hartshorn.commands.source.CommandSource;
 import org.dockbox.hartshorn.commands.values.AbstractArgumentElement;
 import org.dockbox.hartshorn.commands.values.ArgumentValue;
@@ -66,7 +66,7 @@ public class SpongeCommandBus extends DefaultCommandBus<Builder> {
         }
     }
 
-    private CommandExecutor buildExecutor(AbstractRegistrationContext registrationContext, String command) {
+    private CommandExecutor buildExecutor(AbstractCommandContext registrationContext, String command) {
         return (src, args) -> {
             /*
             Command sources need to be convertable so that they can be identified by command implementations. While it
@@ -121,14 +121,23 @@ public class SpongeCommandBus extends DefaultCommandBus<Builder> {
         );
     }
 
-    protected CommandSpec.Builder buildInheritedContextExecutor(CommandInheritanceContext context, String alias) {
+    protected CommandSpec.Builder buildInheritedContextExecutor(ParentCommandContext context, String alias) {
         CommandSpec.Builder builder = this.buildContextExecutor(context, alias);
-        context.getInheritedCommands().forEach(inheritedContext ->
-                inheritedContext.getAliases().forEach(inheritedAlias ->
-                        builder.child(
-                                this.buildContextExecutor(inheritedContext, inheritedAlias).build(),
-                                inheritedAlias
-                        )));
+        context.getInheritedCommands().forEach(inheritedContext -> inheritedContext.getAliases().forEach(inheritedAlias -> {
+            if (inheritedContext instanceof ParentCommandContext) {
+                builder.child(
+                        this.buildInheritedContextExecutor((ParentCommandContext) inheritedContext, inheritedAlias).build(),
+                        inheritedAlias
+                );
+            } else if (inheritedContext instanceof MethodCommandContext) {
+                builder.child(
+                        this.buildContextExecutor(inheritedContext, inheritedAlias).build(),
+                        inheritedAlias
+                );
+            } else {
+                throw new IllegalArgumentException("Command context type " + inheritedContext.getClass().getSimpleName() + " is not supported");
+            }
+        }));
         return builder;
     }
 
@@ -137,7 +146,7 @@ public class SpongeCommandBus extends DefaultCommandBus<Builder> {
         Sponge.getCommandManager().register(Sponge7Application.container(), executor.build(), alias);
     }
 
-    protected CommandSpec.Builder buildContextExecutor(AbstractRegistrationContext context, String alias) {
+    protected CommandSpec.Builder buildContextExecutor(AbstractCommandContext context, String alias) {
         CommandSpec.Builder builder = CommandSpec.builder();
 
         String permission = context.getCommand().permission();

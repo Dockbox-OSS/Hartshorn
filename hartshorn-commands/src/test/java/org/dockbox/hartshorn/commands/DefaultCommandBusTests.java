@@ -19,8 +19,8 @@ package org.dockbox.hartshorn.commands;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.commands.annotations.Command;
-import org.dockbox.hartshorn.commands.registration.AbstractRegistrationContext;
-import org.dockbox.hartshorn.commands.registration.CommandInheritanceContext;
+import org.dockbox.hartshorn.commands.registration.AbstractCommandContext;
+import org.dockbox.hartshorn.commands.registration.ParentCommandContext;
 import org.dockbox.hartshorn.commands.registration.MethodCommandContext;
 import org.dockbox.hartshorn.test.HartshornRunner;
 import org.junit.jupiter.api.Assertions;
@@ -42,15 +42,15 @@ class DefaultCommandBusTests {
 
     @Test
     public void extendedCommandIsPresent() {
-        AbstractRegistrationContext context = DefaultCommandBus.getRegistrations().get("sample");
-        Assertions.assertTrue(context instanceof CommandInheritanceContext);
+        AbstractCommandContext context = DefaultCommandBus.getRegistrations().get("sample");
+        Assertions.assertTrue(context instanceof ParentCommandContext);
 
-        CommandInheritanceContext inheritanceContext = (CommandInheritanceContext) context;
-        Optional<MethodCommandContext> extendedContextOptional = inheritanceContext.getInheritedCommands().stream()
+        ParentCommandContext inheritanceContext = (ParentCommandContext) context;
+        Optional<AbstractCommandContext> extendedContextOptional = inheritanceContext.getInheritedCommands().stream()
                 .filter(inheritedContext -> inheritedContext.getAliases().contains("extended"))
                 .findFirst();
 
-        Optional<MethodCommandContext> contextOptional = inheritanceContext.getInheritedCommands().stream()
+        Optional<AbstractCommandContext> contextOptional = inheritanceContext.getInheritedCommands().stream()
                 .filter(inheritedContext -> inheritedContext.getAliases().contains("child"))
                 .findFirst();
 
@@ -60,27 +60,27 @@ class DefaultCommandBusTests {
 
     @Test
     public void parentCommandIsPresent() {
-        AbstractRegistrationContext context = DefaultCommandBus.getRegistrations().get("example");
-        Assertions.assertTrue(context instanceof CommandInheritanceContext);
+        AbstractCommandContext context = DefaultCommandBus.getRegistrations().get("example");
+        Assertions.assertTrue(context instanceof ParentCommandContext);
 
-        CommandInheritanceContext inheritanceContext = (CommandInheritanceContext) context;
-        Exceptional<MethodCommandContext> parentContext = inheritanceContext.getParentExecutor();
+        ParentCommandContext inheritanceContext = (ParentCommandContext) context;
+        Exceptional<AbstractCommandContext> parentContext = inheritanceContext.getParentExecutor();
         Assertions.assertTrue(parentContext.present());
     }
 
     @Test
     public void nonInheritedCommandIsPresent() {
-        AbstractRegistrationContext context = DefaultCommandBus.getRegistrations().get("noninherit");
+        AbstractCommandContext context = DefaultCommandBus.getRegistrations().get("noninherit");
         Assertions.assertTrue(context instanceof MethodCommandContext);
     }
 
     @Test
     public void nonInheritedCommandIsNotPresentInParent() {
-        AbstractRegistrationContext sampleContext = DefaultCommandBus.getRegistrations().get("sample");
-        Assertions.assertTrue(sampleContext instanceof CommandInheritanceContext);
+        AbstractCommandContext sampleContext = DefaultCommandBus.getRegistrations().get("sample");
+        Assertions.assertTrue(sampleContext instanceof ParentCommandContext);
 
-        CommandInheritanceContext inheritanceContext = (CommandInheritanceContext) sampleContext;
-        Optional<MethodCommandContext> inheritedCommandContext = inheritanceContext.getInheritedCommands().stream()
+        ParentCommandContext inheritanceContext = (ParentCommandContext) sampleContext;
+        Optional<AbstractCommandContext> inheritedCommandContext = inheritanceContext.getInheritedCommands().stream()
                 .filter(inheritedContext -> inheritedContext.getAliases().contains("noninherit"))
                 .findFirst();
         Assertions.assertFalse(inheritedCommandContext.isPresent());

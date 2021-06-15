@@ -15,21 +15,24 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.commands;
+package org.dockbox.hartshorn.commands.beta.api;
 
-import org.dockbox.hartshorn.api.domain.AbstractIdentifiable;
-import org.dockbox.hartshorn.commands.context.CommandContext;
-import org.dockbox.hartshorn.commands.registration.AbstractCommandContext;
+import org.dockbox.hartshorn.api.i18n.permissions.Permission;
+import org.dockbox.hartshorn.di.context.Context;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import java.time.temporal.ChronoUnit;
+import java.util.List;
 
-@Getter
-@AllArgsConstructor
-public class ConfirmableQueueItem {
+public interface CommandContainerContext extends Context {
 
-    private final AbstractIdentifiable source;
-    private final CommandContext context;
-    private final AbstractCommandContext command;
+    List<String> aliases();
+    String arguments();
+    Permission permission();
+    long cooldown();
+    ChronoUnit cooldownUnit();
+    boolean inherited();
+    boolean extended();
+    boolean confirmation();
+    Class<?> parent();
 
 }

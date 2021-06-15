@@ -92,4 +92,6 @@ public @interface Command {
      * @return true if confirmation is required.
      */
     boolean confirm() default false;
+
+    Class<?> parent() default Void.class;
 }

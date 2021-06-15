@@ -18,8 +18,8 @@
 package org.dockbox.hartshorn.test.util;
 
 import org.dockbox.hartshorn.commands.DefaultCommandBus;
-import org.dockbox.hartshorn.commands.registration.AbstractRegistrationContext;
-import org.dockbox.hartshorn.commands.registration.CommandInheritanceContext;
+import org.dockbox.hartshorn.commands.registration.AbstractCommandContext;
+import org.dockbox.hartshorn.commands.registration.ParentCommandContext;
 import org.dockbox.hartshorn.commands.values.AbstractArgumentElement;
 import org.dockbox.hartshorn.commands.values.ArgumentValue;
 
@@ -27,12 +27,12 @@ import java.util.List;
 
 public class JUnitCommandBus extends DefaultCommandBus {
     @Override
-    protected Object buildContextExecutor(AbstractRegistrationContext context, String alias) {
+    protected Object buildContextExecutor(AbstractCommandContext context, String alias) {
         return null;
     }
 
     @Override
-    protected Object buildInheritedContextExecutor(CommandInheritanceContext context, String alias) {
+    protected Object buildInheritedContextExecutor(ParentCommandContext context, String alias) {
         return null;
     }
 
