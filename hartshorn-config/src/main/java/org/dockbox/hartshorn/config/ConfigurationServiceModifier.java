@@ -18,7 +18,6 @@
 package org.dockbox.hartshorn.config;
 
 import org.dockbox.hartshorn.api.Hartshorn;
-import org.dockbox.hartshorn.api.HartshornInformation;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.config.annotations.Configuration;
 import org.dockbox.hartshorn.config.annotations.UseConfigurations;
@@ -58,7 +57,7 @@ public class ConfigurationServiceModifier implements InjectionModifier<UseConfig
         Class<?> instanceType = type;
         if (instance != null) instanceType = instance.getClass();
 
-        String file = HartshornInformation.PROJECT_ID;
+        String file = Hartshorn.PROJECT_ID;
         Class<?> owner = Hartshorn.class;
         if (instanceType.isAnnotationPresent(Configuration.class)) {
             Configuration configuration = instanceType.getAnnotation(Configuration.class);

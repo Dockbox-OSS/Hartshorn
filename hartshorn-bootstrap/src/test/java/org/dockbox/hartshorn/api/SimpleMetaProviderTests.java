@@ -17,16 +17,16 @@
 
 package org.dockbox.hartshorn.api;
 
-import org.dockbox.hartshorn.api.domain.OwnerLookup;
+import org.dockbox.hartshorn.api.domain.MetaProvider;
 import org.dockbox.hartshorn.api.domain.TypedOwner;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class ServiceLookupTests {
+public class SimpleMetaProviderTests {
 
     @Test
     void testEntityTypeUsesEntityAlias() {
-        final OwnerLookup lookup = new ServiceLookup();
+        final MetaProvider lookup = new SimpleMetaProvider();
         final TypedOwner owner = lookup.lookup(EmptyEntity.class);
         Assertions.assertNotNull(owner);
         Assertions.assertEquals("entity", owner.id());
@@ -34,16 +34,16 @@ public class ServiceLookupTests {
 
     @Test
     void testUsesProjectId() {
-        final OwnerLookup lookup = new ServiceLookup();
+        final MetaProvider lookup = new SimpleMetaProvider();
         final TypedOwner owner = lookup.lookup(Hartshorn.class);
         Assertions.assertNotNull(owner);
-        Assertions.assertEquals(HartshornInformation.PROJECT_ID, owner.id());
+        Assertions.assertEquals(Hartshorn.PROJECT_ID, owner.id());
 
     }
 
     @Test
     void testServiceUsesServiceId() {
-        final OwnerLookup lookup = new ServiceLookup();
+        final MetaProvider lookup = new SimpleMetaProvider();
         final TypedOwner owner = lookup.lookup(EmptyService.class);
         Assertions.assertNotNull(owner);
         Assertions.assertEquals("empty", owner.id());
@@ -51,7 +51,7 @@ public class ServiceLookupTests {
 
     @Test
     void testUnknownIsNull() {
-        final OwnerLookup lookup = new ServiceLookup();
+        final MetaProvider lookup = new SimpleMetaProvider();
         final TypedOwner owner = lookup.lookup(Void.class);
         Assertions.assertNull(owner);
     }

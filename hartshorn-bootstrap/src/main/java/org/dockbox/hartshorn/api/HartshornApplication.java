@@ -56,7 +56,7 @@ public class HartshornApplication {
                 final long initStart = System.currentTimeMillis();
                 injectableBootstrap.init();
                 final long initTime = System.currentTimeMillis() - initStart;
-                Hartshorn.log().info("Started " + HartshornInformation.PROJECT_NAME + " in " + (creationTime + initTime) + "ms");
+                Hartshorn.log().info("Started " + Hartshorn.PROJECT_NAME + " in " + (creationTime + initTime) + "ms");
             };
         }
         catch (InvocationTargetException | NoSuchMethodException | InstantiationException | IllegalAccessException e) {

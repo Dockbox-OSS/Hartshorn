@@ -54,7 +54,6 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 import javassist.util.proxy.ProxyFactory;
-import sun.misc.Unsafe;
 
 @SuppressWarnings({ "unused", "OverlyComplexClass" })
 public final class Reflect {
@@ -90,7 +89,6 @@ public final class Reflect {
     private static final String serverClassName = "org.dockbox.hartshorn.server.Server";
 
     private static Lookup LOOKUP;
-    private static Unsafe UNSAFE;
 
     private Reflect() {}
 

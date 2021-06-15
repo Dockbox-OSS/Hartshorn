@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.sponge.util.command;
 
 import com.google.common.collect.Multimap;
 
-import org.dockbox.hartshorn.api.HartshornInformation;
+import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.exceptions.Except;
 import org.dockbox.hartshorn.commands.DefaultCommandBus;
@@ -142,7 +142,7 @@ public class SpongeCommandBus extends DefaultCommandBus<Builder> {
 
         String permission = context.getCommand().permission();
         if ("".equals(permission)) {
-            permission = HartshornInformation.PROJECT_ID + '.' + context.getOwner().id().replaceAll("\\-", "");
+            permission = Hartshorn.PROJECT_ID + '.' + context.getOwner().id().replaceAll("\\-", "");
             if (context instanceof MethodCommandContext) {
                 permission += '.' + alias;
             }

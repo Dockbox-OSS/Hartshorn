@@ -21,15 +21,13 @@ import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.di.annotations.Named;
 import org.dockbox.hartshorn.di.annotations.Service;
 import org.dockbox.hartshorn.di.properties.InjectorProperty;
-import org.dockbox.hartshorn.util.Reflect;
 import org.dockbox.hartshorn.util.HartshornUtils;
+import org.dockbox.hartshorn.util.Reflect;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Locale;
-
-import javax.inject.Singleton;
 
 public class Bindings {
 
@@ -117,18 +115,6 @@ public class Bindings {
             if (Reflect.assignableFrom(propertyFilter, property.getClass())) values.add((T) property);
         }
         return values;
-    }
-
-
-    public static boolean isSingleton(Class<?> type) {
-        if (type.isAnnotationPresent(Singleton.class)) return true;
-        if (type.isAnnotationPresent(com.google.inject.Singleton.class)) return true;
-
-        boolean serviceSingleton = false;
-        if (type.isAnnotationPresent(Service.class)) {
-            serviceSingleton = type.getAnnotation(Service.class).singleton();
-        }
-        return serviceSingleton;
     }
 
     public static String serviceId(Class<?> type) {

@@ -17,17 +17,18 @@
 
 package org.dockbox.hartshorn.api;
 
-import org.dockbox.hartshorn.api.domain.OwnerLookup;
+import org.dockbox.hartshorn.api.domain.MetaProvider;
 import org.dockbox.hartshorn.api.domain.SimpleTypedOwner;
 import org.dockbox.hartshorn.api.domain.TypedOwner;
 import org.dockbox.hartshorn.api.entity.annotations.Entity;
+import org.dockbox.hartshorn.di.InjectorMetaProvider;
 import org.dockbox.hartshorn.di.annotations.Binds;
 import org.dockbox.hartshorn.di.annotations.Service;
 import org.dockbox.hartshorn.di.binding.Bindings;
 import org.dockbox.hartshorn.util.Reflect;
 
-@Binds(OwnerLookup.class)
-public class ServiceLookup implements OwnerLookup {
+@Binds(MetaProvider.class)
+public class SimpleMetaProvider extends InjectorMetaProvider {
 
     @Override
     public TypedOwner lookup(Class<?> type) {
@@ -35,7 +36,7 @@ public class ServiceLookup implements OwnerLookup {
             return SimpleTypedOwner.of(type.getAnnotation(Entity.class).value());
         }
         else if (Hartshorn.class.equals(type)) {
-            return SimpleTypedOwner.of(HartshornInformation.PROJECT_ID);
+            return SimpleTypedOwner.of(Hartshorn.PROJECT_ID);
         }
         else if (type.isAnnotationPresent(Service.class)) {
             final Service annotation = type.getAnnotation(Service.class);

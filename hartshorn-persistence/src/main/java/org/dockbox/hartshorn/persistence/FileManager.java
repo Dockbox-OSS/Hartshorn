@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.persistence;
 
 import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.api.domain.OwnerLookup;
+import org.dockbox.hartshorn.api.domain.MetaProvider;
 import org.dockbox.hartshorn.api.domain.TypedOwner;
 import org.dockbox.hartshorn.di.properties.InjectableType;
 import org.dockbox.hartshorn.persistence.mapping.GenericType;
@@ -293,6 +293,6 @@ public interface FileManager extends InjectableType {
     boolean copyDefaultFile(String defaultFileName, Path targetFile);
 
     default TypedOwner owner(Class<?> type) {
-        return Hartshorn.context().get(OwnerLookup.class).lookup(type);
+        return Hartshorn.context().get(MetaProvider.class).lookup(type);
     }
 }

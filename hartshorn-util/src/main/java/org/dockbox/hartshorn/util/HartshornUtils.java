@@ -997,6 +997,20 @@ public final class HartshornUtils {
         return true;
     }
 
+    public static <T> boolean contains(T[] objects, T object) {
+        for (T t : objects) {
+            if (same(object, t)) return true;
+        }
+        return false;
+    }
+
+    public static <T> boolean containsEqual(T[] objects, T object) {
+        for (T t : objects) {
+            if (same(object, t) || equal(object, t)) return true;
+        }
+        return false;
+    }
+
     public static String strip(String s) {
         return s.replaceAll("[\n\r ]+", "").trim();
     }

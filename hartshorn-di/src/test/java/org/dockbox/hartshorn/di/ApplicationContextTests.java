@@ -207,7 +207,7 @@ public class ApplicationContextTests {
     public void testScannedMetaBindingsCanBeProvided() throws ApplicationException {
         // sub-package *.meta was added to prevent scan conflicts
         context(true).bind("org.dockbox.hartshorn.di.types.meta");
-        Assertions.assertThrows(ProvisionFailure.class, () -> Hartshorn.context().get(SampleInterface.class));
+        Assertions.assertNull(Hartshorn.context().get(SampleInterface.class));
 
         SampleInterface provided = Hartshorn.context().get(SampleInterface.class, BindingMetaProperty.of(Bindings.named("meta")));
         Assertions.assertNotNull(provided);

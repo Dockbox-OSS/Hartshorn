@@ -20,7 +20,7 @@ package org.dockbox.hartshorn.api.keys;
 import org.dockbox.hartshorn.api.CheckedFunction;
 import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.api.domain.OwnerLookup;
+import org.dockbox.hartshorn.api.domain.MetaProvider;
 import org.dockbox.hartshorn.api.domain.TypedOwner;
 import org.dockbox.hartshorn.util.Reflect;
 
@@ -67,7 +67,7 @@ public final class Keys {
      * @return the persistent data key
      */
     public static <T> PersistentDataKey<T> persistent(Class<T> type, String name, Class<?> owningClass) {
-        return Keys.persistent(type, name, Hartshorn.context().get(OwnerLookup.class).lookup(owningClass));
+        return Keys.persistent(type, name, Hartshorn.context().get(MetaProvider.class).lookup(owningClass));
     }
 
     /**

@@ -18,7 +18,7 @@
 package org.dockbox.hartshorn.api.keys;
 
 import org.dockbox.hartshorn.api.Hartshorn;
-import org.dockbox.hartshorn.api.domain.OwnerLookup;
+import org.dockbox.hartshorn.api.domain.MetaProvider;
 import org.dockbox.hartshorn.api.domain.TypedOwner;
 import org.jetbrains.annotations.NonNls;
 
@@ -36,14 +36,14 @@ public class TypedPersistentDataKey<T> implements PersistentDataKey<T> {
     private final TypedOwner owner;
     private final Class<T> type;
 
-    private final OwnerLookup lookup;
+    private final MetaProvider lookup;
 
     public TypedPersistentDataKey(String name, String id, TypedOwner owner, Class<T> type) {
         this.name = name;
         this.id = id;
         this.owner = owner;
         this.type = type;
-        this.lookup = Hartshorn.context().get(OwnerLookup.class);
+        this.lookup = Hartshorn.context().get(MetaProvider.class);
     }
 
     @Override

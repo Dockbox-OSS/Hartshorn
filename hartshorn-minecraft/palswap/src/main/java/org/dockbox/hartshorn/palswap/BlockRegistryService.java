@@ -18,7 +18,6 @@
 package org.dockbox.hartshorn.palswap;
 
 import org.dockbox.hartshorn.api.Hartshorn;
-import org.dockbox.hartshorn.api.HartshornInformation;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.events.annotations.Listener;
 import org.dockbox.hartshorn.api.exceptions.Except;
@@ -29,11 +28,11 @@ import org.dockbox.hartshorn.commands.source.CommandSource;
 import org.dockbox.hartshorn.di.annotations.Service;
 import org.dockbox.hartshorn.di.annotations.Wired;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
-import org.dockbox.hartshorn.persistence.registry.Registry;
 import org.dockbox.hartshorn.palswap.fileparsers.BlockRegistryParser;
 import org.dockbox.hartshorn.persistence.FileManager;
 import org.dockbox.hartshorn.persistence.FileType;
 import org.dockbox.hartshorn.persistence.FileTypeProperty;
+import org.dockbox.hartshorn.persistence.registry.Registry;
 import org.dockbox.hartshorn.server.minecraft.events.server.ServerStartedEvent;
 import org.dockbox.hartshorn.server.minecraft.events.server.ServerStoppingEvent;
 import org.dockbox.hartshorn.server.minecraft.inventory.Slot;
@@ -94,7 +93,7 @@ public class BlockRegistryService {
         fm.write(path, blockRegistry);
     }
 
-    @Command(value = "generateblockidentifiers", permission = HartshornInformation.GLOBAL_BYPASS)
+    @Command(value = "generateblockidentifiers", permission = Hartshorn.GLOBAL_BYPASS)
     public void generateBlockIdentifiers(CommandSource src) {
         try {
             FileManager fileManager = this.context.get(FileManager.class);
@@ -112,7 +111,7 @@ public class BlockRegistryService {
         }
     }
 
-    @Command(value = "generate", permission = HartshornInformation.GLOBAL_BYPASS)
+    @Command(value = "generate", permission = Hartshorn.GLOBAL_BYPASS)
     public void generateBlockRegistry(CommandSource src) {
         for (BlockIdentifier blockIdentifier : BlockIdentifier.values()) {
             blockRegistry.addColumn(blockIdentifier, new Registry<>());
@@ -133,17 +132,17 @@ public class BlockRegistryService {
         this.logger.info(blockRegistry.toString());
     }
 
-    @Command(value = "save", permission = HartshornInformation.GLOBAL_BYPASS)
+    @Command(value = "save", permission = Hartshorn.GLOBAL_BYPASS)
     public void serializeBlockRegistry(CommandSource src) {
         saveBlockRegistry();
     }
 
-    @Command(value = "load", permission = HartshornInformation.GLOBAL_BYPASS)
+    @Command(value = "load", permission = Hartshorn.GLOBAL_BYPASS)
     public void deserializeBlockRegistry(CommandSource src) {
         blockRegistry = loadBlockRegistry();
     }
 
-    @Command(value = "add", arguments = "<item>", permission = HartshornInformation.GLOBAL_BYPASS)
+    @Command(value = "add", arguments = "<item>", permission = Hartshorn.GLOBAL_BYPASS)
     public void addItem(CommandSource src, CommandContext context) {
         String baseBlock = context.get("item");
         addItem(Item.of(baseBlock));
@@ -182,7 +181,7 @@ public class BlockRegistryService {
         }
     }
 
-    @Command(value = "add", permission = HartshornInformation.GLOBAL_BYPASS)
+    @Command(value = "add", permission = Hartshorn.GLOBAL_BYPASS)
     public void addItemInHand(Player src, CommandSource context) {
         addItem(src.getInventory().getSlot(Slot.MAIN_HAND));
     }

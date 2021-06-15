@@ -15,18 +15,24 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.api.keys;
+package org.dockbox.hartshorn.di;
 
-import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.MetaProvider;
+import org.dockbox.hartshorn.di.annotations.Service;
 
-public class StoredPersistentKey extends TypedPersistentDataKey<Object> {
+import javax.inject.Singleton;
 
-    private StoredPersistentKey(String id) {
-        super(id, id, Hartshorn.context().get(MetaProvider.class).lookup(Hartshorn.class), Object.class);
-    }
+public abstract class InjectorMetaProvider implements MetaProvider {
 
-    public static StoredPersistentKey of(String name) {
-        return new StoredPersistentKey(name);
+    @Override
+    public boolean isSingleton(Class<?> type) {
+        if (type.isAnnotationPresent(Singleton.class)) return true;
+        if (type.isAnnotationPresent(com.google.inject.Singleton.class)) return true;
+
+        boolean serviceSingleton = false;
+        if (type.isAnnotationPresent(Service.class)) {
+            serviceSingleton = type.getAnnotation(Service.class).singleton();
+        }
+        return serviceSingleton;
     }
 }

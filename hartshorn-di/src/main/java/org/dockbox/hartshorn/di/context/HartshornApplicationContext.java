@@ -18,6 +18,7 @@
 package org.dockbox.hartshorn.di.context;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.api.domain.MetaProvider;
 import org.dockbox.hartshorn.di.InjectConfiguration;
 import org.dockbox.hartshorn.di.Modifier;
 import org.dockbox.hartshorn.di.ProvisionFailure;
@@ -105,7 +106,12 @@ public class HartshornApplicationContext extends ManagedHartshornContext {
             }
         }
 
-        if (typeInstance != null && Bindings.isSingleton(type)) this.singletons.put(type, typeInstance);
+        if (!Reflect.assignableFrom(MetaProvider.class, type) && typeInstance != null) {
+            final MetaProvider meta = this.get(MetaProvider.class);
+            // Meta provider may not be registered at this point yet, in which case we wish to skip the meta checks.
+            // Types which are instantiated early on should have their state stored in a context-type.
+            if (meta != null && meta.isSingleton(type)) this.singletons.put(type, typeInstance);
+        }
 
         // May be null, but we have used all possible injectors, it's up to the developer now
         return typeInstance;
@@ -135,7 +141,7 @@ public class HartshornApplicationContext extends ManagedHartshornContext {
     public <T> T create(Class<T> type, T typeInstance, InjectorProperty<?>[] additionalProperties) {
         try {
             if (null == typeInstance) {
-                typeInstance = this.internalInjector().get(type, additionalProperties).then(() -> this.raw(type)).rethrow().get();
+                typeInstance = this.internalInjector().get(type, additionalProperties).then(() -> this.raw(type)).orNull();
             }
             return typeInstance;
         } catch (ProvisionFailure e) {

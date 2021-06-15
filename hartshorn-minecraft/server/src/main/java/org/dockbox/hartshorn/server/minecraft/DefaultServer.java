@@ -18,7 +18,6 @@
 package org.dockbox.hartshorn.server.minecraft;
 
 import org.dockbox.hartshorn.api.Hartshorn;
-import org.dockbox.hartshorn.api.HartshornInformation;
 import org.dockbox.hartshorn.api.events.EventBus;
 import org.dockbox.hartshorn.api.i18n.MessageReceiver;
 import org.dockbox.hartshorn.api.i18n.common.ResourceEntry;
@@ -37,11 +36,11 @@ import org.dockbox.hartshorn.util.HartshornUtils;
 
 import java.util.List;
 
-@Service(id = HartshornInformation.PROJECT_ID, name = HartshornInformation.PROJECT_NAME, owner = Hartshorn.class)
-@Command(value = HartshornInformation.PROJECT_ID, permission = DefaultServer.ADMIN)
+@Service(id = Hartshorn.PROJECT_ID, name = Hartshorn.PROJECT_NAME, owner = Hartshorn.class)
+@Command(value = Hartshorn.PROJECT_ID, permission = DefaultServer.ADMIN)
 public class DefaultServer {
 
-    public static final String ADMIN = HartshornInformation.PROJECT_ID + ".admin";
+    public static final String ADMIN = Hartshorn.PROJECT_ID + ".admin";
 
     @Wired
     private DefaultServerResources resources;
@@ -60,7 +59,7 @@ public class DefaultServer {
         for (ServiceContainer container : this.context.locator().containers()) {
             final Text row = this.resources.getServiceRow(container.getName(), container.getId()).translate(source).asText();
             row.onHover(HoverAction.showText(this.resources.getServiceRowHover(container.getName()).translate(source).asText()));
-            row.onClick(RunCommandAction.runCommand('/' + HartshornInformation.PROJECT_ID + " service " + container.getId()));
+            row.onClick(RunCommandAction.runCommand('/' + Hartshorn.PROJECT_ID + " service " + container.getId()));
             content.add(row);
         }
 
