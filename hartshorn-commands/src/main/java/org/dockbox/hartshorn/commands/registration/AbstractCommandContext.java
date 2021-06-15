@@ -20,7 +20,7 @@ package org.dockbox.hartshorn.commands.registration;
 import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.domain.Identifiable;
-import org.dockbox.hartshorn.api.domain.OwnerLookup;
+import org.dockbox.hartshorn.api.domain.MetaProvider;
 import org.dockbox.hartshorn.api.domain.TypedOwner;
 import org.dockbox.hartshorn.api.i18n.common.ResourceEntry;
 import org.dockbox.hartshorn.commands.annotations.Command;
@@ -34,16 +34,19 @@ import java.util.UUID;
 import lombok.Getter;
 
 @Getter
-public abstract class AbstractRegistrationContext {
+public abstract class AbstractCommandContext {
 
     private final List<String> aliases = HartshornUtils.emptyConcurrentList();
     private final Command command;
     private final TypedOwner owner;
 
-    protected AbstractRegistrationContext(Command command, Class<?> owner) {
+    protected AbstractCommandContext(Command command, Class<?> owner) {
         this.command = command;
         for (String alias : command.value()) this.addAlias(alias);
-        this.owner = Hartshorn.context().get(OwnerLookup.class).lookup(owner);
+        this.owner = Hartshorn.context().get(MetaProvider.class).lookup(owner);
+        if (this.owner == null) {
+            throw new IllegalArgumentException("Could not find owner information for " + owner.getSimpleName());
+        }
     }
 
     public void addAlias(String alias) {
