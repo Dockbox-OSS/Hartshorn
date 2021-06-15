@@ -140,7 +140,8 @@ public abstract class ManagedHartshornContext extends DefaultContext implements 
             return t;
         }
         catch (Exception e) {
-            throw new ProvisionFailure("Could not provide raw instance of " + type.getSimpleName(), e);
+            log.warn("Could not provide raw instance of " + type.getSimpleName() + " (" + e.getMessage() + ")");
+            return null;
         }
     }
 
