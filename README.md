@@ -96,27 +96,7 @@ The server run task exposes a debugging socket on port 5005. Using IntelliJ IDEA
 ```
 
 ## Contributors
-<table>
-  <tr>
-    <td align="center"><img src="https://avatars.githubusercontent.com/u/10957963?v=4" width="100px;" alt=""/><br /><sub><b>Guus Lieben</b></sub><br /><sup>Lead developer</sup></td>
-    <td align="center"><img src="https://avatars.githubusercontent.com/u/38820160?v=4" width="100px;" alt=""/><br /><sub><b>Pumbas600</b></sub><br /><sup>Developer</sup></td>
-    <td align="center"><img src="https://avatars.githubusercontent.com/u/36117510?v=4" width="100px;" alt=""/><br /><sub><b>Simon Bolduc</b></sub><br /><sup>Developer</sup></td>
-    <td align="center"><img src="https://cdn.discordapp.com/avatars/510472543782830087/00e6c38b98367e59b062f3680ead27c3.png" width="100px;" alt=""/><br /><sub><b>Olik1911</b></sub><br /><sup>Translator, Czech</sup></td>
-    <td align="center"><img src="https://cdn.discordapp.com/avatars/537977071972909057/72b62aec1348be39cc91ccb805fb92dd.png?size=256" width="100px;" alt=""/><br /><sub><b>Anrir</b></sub><br /><sup>Translator, Russian</sup></td>
-    <td align="center"><img src="https://cdn.discordapp.com/avatars/334440446874877982/3624260f35db4533bbf26eb0fe86d3bf.png?size=256" width="100px;" alt=""/><br /><sub><b>Niki</b></sub><br /><sup>Translator, Finnish</sup></td>
-    <td align="center"><img src="https://cdn.discordapp.com/avatars/552210500939677720/84802723782e948ccbd8bb60cf0b31be.png?size=256" width="100px;" alt=""/><br /><sub><b>Igor</b></sub><br /><sup>Translator, Norwegian</sup></td>
-  </tr>
-  <tr>
-    <td align="center"><img src="https://user-images.githubusercontent.com/10957963/120807203-fb09b780-c547-11eb-9d3e-3c29b040a878.png" width="100px;" alt=""/><br /><sub><b>DovahTheExplorer</b></sub><br /><sup>Translator, German</sup></td>
-    <td align="center"><img src="https://cdn.discordapp.com/avatars/683656484726636553/a849bda97aba4801eeda07b8b44c4d58.png?size=256" width="100px;" alt=""/><br /><sub><b>KongTheMonkey</b></sub><br /><sup>Translator, German</sup></td>
-    <td align="center"><img src="https://cdn.discordapp.com/avatars/415885019354234883/2bea4b8c2aaabed874da48580426077b.png?size=256" width="100px;" alt=""/><br /><sub><b>Slolo</b></sub><br /><sup>Translator, German</sup></td>
-    <td align="center"><img src="https://cdn.discordapp.com/avatars/327405323562254336/72286ad9938c42a5c33c7bbe25d647b6.png?size=256" width="100px;" alt=""/><br /><sub><b>Asraya</b></sub><br /><sup>Translator, French</sup></td>
-    <td align="center"><img src="https://cdn.discordapp.com/avatars/266193643281448960/d5cdfab3c0009837478748d4a8eb5d4d.png?size=256" width="100px;" alt=""/><br /><sub><b>Kleback</b></sub><br /><sup>Translator, Swedish</sup></td>
-    <td align="center"><img src="https://cdn.discordapp.com/attachments/440964141184843777/850426706090655794/MMXIX.jpg" width="100px;" alt=""/><br /><sub><b>Sekeleton</b></sub><br /><sup>Translator, Turkish</sup></td>
-    <td align="center"><img src="https://www.cumbria.ac.uk/media/staff-profile-images/staff_profile_-generic_350x350px.png" width="100px;" alt=""/><br /><sub><b>Dork</b></sub><br /><sup>Translator, Spanish</sup></td>
-  </tr>
-  <tr>
-    <td align="center"><img src="https://cdn.discordapp.com/avatars/416672229275992074/f8786cc6a4057fbc4032ec2dd90b8633.png" width="100px;" alt=""/><br /><sub><b>Overlord</b></sub><br /><sup>Translator, German (Switzerland)</sup></td>
-    <td align="center"><img src="https://cdn.discordapp.com/avatars/573518212965072916/00945a45deb5db91dc50b6686fe30602.png" width="100px;" alt=""/><br /><sub><b>Salt</b></sub><br /><sup>Translator, Japanese</sup></td>
-  </tr>
-</table>
+**Developers**  
+<img src="https://avatars.githubusercontent.com/u/10957963?v=4" width="30px;" alt="" title="Guus Lieben" /> <img src="https://avatars.githubusercontent.com/u/38820160?v=4" width="30px;" alt="" title="Pumbas600" /> <img src="https://avatars.githubusercontent.com/u/36117510?v=4" width="30px;" alt="" title="Simon Bolduc" />  
+**Translators**  
+<img src="https://user-images.githubusercontent.com/10957963/122446285-c9123f80-cfa2-11eb-9e98-9b683af18147.png" width="30px;" alt="" title="Olik1911" /> <img src="https://user-images.githubusercontent.com/10957963/122446259-c0216e00-cfa2-11eb-8c85-a2a13c401c43.png" width="30px;" alt="" title="Anrir" /> <img src="https://user-images.githubusercontent.com/10957963/122446232-b861c980-cfa2-11eb-9102-ac4847c4dbf5.png" width="30px;" alt="" title="Niki" /> <img src="https://user-images.githubusercontent.com/10957963/122446212-b0a22500-cfa2-11eb-9b10-c365de4c9724.png" width="30px;" alt="" title="Igor" /> <img src="https://user-images.githubusercontent.com/10957963/120807203-fb09b780-c547-11eb-9d3e-3c29b040a878.png" width="30px;" alt="" title="DovahTheExplorer" /> <img src="https://user-images.githubusercontent.com/10957963/122446189-a97b1700-cfa2-11eb-9af7-aa4f04dfef1f.png" width="30px;" alt="" title="KongTheMonkey" /> <img src="https://user-images.githubusercontent.com/10957963/122446159-a2540900-cfa2-11eb-8786-fefab68a7e27.png" width="30px;" alt="" title="Slolo" /> <img src="https://user-images.githubusercontent.com/10957963/122445991-7173d400-cfa2-11eb-97f2-6491cec5036a.png" width="30px;" alt="" title="Asraya" /> <img src="https://user-images.githubusercontent.com/10957963/122446019-7cc6ff80-cfa2-11eb-8350-9dfd40aad7ab.png" width="30px;" alt="" title="Kleback" /> <img src="https://user-images.githubusercontent.com/10957963/122446067-88b2c180-cfa2-11eb-9180-2d87853c7423.png" width="30px;" alt="" title="Sekeleton" /> <img src="https://www.cumbria.ac.uk/media/staff-profile-images/staff_profile_-generic_350x350px.png" width="30px;" alt="" title="Dork" /> <img src="https://user-images.githubusercontent.com/10957963/122446110-9405ed00-cfa2-11eb-821c-ae391101ebcd.png" width="30px;" alt="" title="Overlord" /> <img src="https://user-images.githubusercontent.com/10957963/122446129-9a946480-cfa2-11eb-9be0-b87c301e11ce.png" width="30px;" alt="" title="Salt" />
