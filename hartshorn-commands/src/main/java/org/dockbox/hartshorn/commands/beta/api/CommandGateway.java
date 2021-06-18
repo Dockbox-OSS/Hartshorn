@@ -17,10 +17,12 @@
 
 package org.dockbox.hartshorn.commands.beta.api;
 
+import org.dockbox.hartshorn.commands.source.CommandSource;
+
 public interface CommandGateway {
 
-    void accept(String command);
-    void accept(ParsedContext context);
+    void accept(CommandSource source, String command);
+    void accept(CommandSource source, ParsedContext context);
 
     void register(Class<?> type);
     void register(CommandExecutorContext context);

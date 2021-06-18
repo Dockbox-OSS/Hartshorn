@@ -22,6 +22,7 @@ import org.dockbox.hartshorn.commands.beta.api.ParsedContext;
 import org.dockbox.hartshorn.commands.beta.api.CommandContainerContext;
 import org.dockbox.hartshorn.commands.beta.api.CommandExecutorContext;
 import org.dockbox.hartshorn.commands.beta.api.CommandParser;
+import org.dockbox.hartshorn.commands.source.CommandSource;
 import org.dockbox.hartshorn.commands.values.AbstractArgumentElement;
 import org.dockbox.hartshorn.di.annotations.Binds;
 import org.dockbox.hartshorn.util.HartshornUtils;
@@ -32,7 +33,7 @@ import java.util.List;
 public class SimpleCommandParser implements CommandParser {
 
     @Override
-    public Exceptional<ParsedContext> parse(String command, CommandExecutorContext context) {
+    public Exceptional<ParsedContext> parse(String command, CommandSource source, CommandExecutorContext context) {
         final Exceptional<CommandContainerContext> container = context.first(CommandContainerContext.class);
         if (container.absent()) return Exceptional.none();
 
@@ -45,10 +46,12 @@ public class SimpleCommandParser implements CommandParser {
         // TODO: Implement parsing (reuse DefaultCommandContext for this)
         List<AbstractArgumentElement<?>> elements = containerContext.elements();
 
+        // ... (turn values into args + flags)
+
         return Exceptional.of(new SimpleParsedContext(command,
                 HartshornUtils.emptyList(),
                 HartshornUtils.emptyList(),
-                null, HartshornUtils.singletonList(containerContext.permission())));
+                source, HartshornUtils.singletonList(containerContext.permission())));
     }
 
 

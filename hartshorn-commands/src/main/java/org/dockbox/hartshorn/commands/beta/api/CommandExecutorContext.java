@@ -21,7 +21,6 @@ import org.dockbox.hartshorn.di.context.Context;
 
 public interface CommandExecutorContext extends Context {
 
-
     CommandExecutor executor();
     boolean accepts(String command);
 

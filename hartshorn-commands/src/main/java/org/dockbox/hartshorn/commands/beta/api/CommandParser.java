@@ -18,12 +18,10 @@
 package org.dockbox.hartshorn.commands.beta.api;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.commands.source.CommandSource;
 
 public interface CommandParser {
 
-    // See SpongeCommandDispatcher:355
-    // See CommandSpec:388
-
-    Exceptional<ParsedContext> parse(String command, CommandExecutorContext context);
+    Exceptional<ParsedContext> parse(String command, CommandSource source, CommandExecutorContext context);
 
 }

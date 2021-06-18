@@ -24,6 +24,7 @@ import org.dockbox.hartshorn.commands.beta.api.CommandGateway;
 import org.dockbox.hartshorn.commands.beta.api.CommandParser;
 import org.dockbox.hartshorn.commands.beta.api.ParsedContext;
 import org.dockbox.hartshorn.commands.beta.api.CommandExecutorContext;
+import org.dockbox.hartshorn.commands.source.CommandSource;
 import org.dockbox.hartshorn.di.annotations.Wired;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.dockbox.hartshorn.util.Reflect;
@@ -44,12 +45,12 @@ public class SimpleCommandGateway implements CommandGateway {
     private final transient Set<CommandExecutorContext> contexts = HartshornUtils.emptyConcurrentSet();
 
     @Override
-    public void accept(String command) {
+    public void accept(CommandSource source, String command) {
         for (CommandExecutorContext context : this.contexts) {
             if (context.accepts(command)) {
-                final Exceptional<ParsedContext> commandContext = this.parser.parse(command, context);
+                final Exceptional<ParsedContext> commandContext = this.parser.parse(command, source, context);
                 if (commandContext.present()) {
-                    this.accept(commandContext.get());
+                    this.accept(source, commandContext.get());
                     return;
                 }
             }
@@ -58,7 +59,7 @@ public class SimpleCommandGateway implements CommandGateway {
     }
 
     @Override
-    public void accept(ParsedContext context) {
+    public void accept(CommandSource source, ParsedContext context) {
         final CommandExecutor executor = this.get(context);
         if (executor != null) executor.execute(context);
         else throw new IllegalStateException("No executor registered for command '" + context.alias() + "' with " + context.arguments().size() + " arguments");
