@@ -39,6 +39,7 @@ public class SimpleCommandParser implements CommandParser {
 
         final CommandContainerContext containerContext = container.get();
 
+        // TODO: Review (keep in mind this should have already been validated in the executor, here we should only strip the aliases)
         final String alias = command.split(" ")[0];
         if (!containerContext.aliases().contains(alias)) return Exceptional.none();
 

@@ -19,7 +19,6 @@ package org.dockbox.hartshorn.sponge.util.command;
 
 import com.google.common.collect.Multimap;
 
-import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.exceptions.Except;
 import org.dockbox.hartshorn.commands.DefaultCommandBus;
@@ -149,18 +148,11 @@ public class SpongeCommandBus extends DefaultCommandBus<Builder> {
     protected CommandSpec.Builder buildContextExecutor(AbstractCommandContext context, String alias) {
         CommandSpec.Builder builder = CommandSpec.builder();
 
-        String permission = context.getCommand().permission();
-        if ("".equals(permission)) {
-            permission = Hartshorn.PROJECT_ID + '.' + context.getOwner().id().replaceAll("\\-", "");
-            if (context instanceof MethodCommandContext) {
-                permission += '.' + alias;
-            }
-        }
 
         String usage = context.getCommand().arguments();
         List<AbstractArgumentElement<?>> elements = HartshornUtils.emptyList();
         if (!"".equals(usage)) {
-            elements = super.parseArgumentElements(context.getCommand().arguments(), permission);
+//            elements = super.parseArgumentElements(context.getCommand().arguments(), permission);
         }
         List<CommandElement> commandElements = elements.stream()
                 .filter(SpongeArgumentElement.class::isInstance)
@@ -169,7 +161,7 @@ public class SpongeCommandBus extends DefaultCommandBus<Builder> {
                 .collect(Collectors.toList());
         if (!elements.isEmpty()) builder.arguments(commandElements.toArray(new CommandElement[0]));
 
-        builder.permission(permission);
+//        builder.permission(permission);
         builder.executor(this.buildExecutor(context, alias));
 
         return builder;
