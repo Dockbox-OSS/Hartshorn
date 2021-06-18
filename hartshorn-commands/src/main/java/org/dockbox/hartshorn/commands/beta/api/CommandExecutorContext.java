@@ -23,6 +23,6 @@ public interface CommandExecutorContext extends Context {
 
 
     CommandExecutor executor();
-    boolean canExecute(BetaCommandContext context);
+    boolean accepts(String command);
 
 }

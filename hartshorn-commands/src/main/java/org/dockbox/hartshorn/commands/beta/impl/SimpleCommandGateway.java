@@ -22,7 +22,7 @@ import org.dockbox.hartshorn.commands.annotations.Command;
 import org.dockbox.hartshorn.commands.beta.api.CommandExecutor;
 import org.dockbox.hartshorn.commands.beta.api.CommandGateway;
 import org.dockbox.hartshorn.commands.beta.api.CommandParser;
-import org.dockbox.hartshorn.commands.beta.api.BetaCommandContext;
+import org.dockbox.hartshorn.commands.beta.api.ParsedContext;
 import org.dockbox.hartshorn.commands.beta.api.CommandExecutorContext;
 import org.dockbox.hartshorn.di.annotations.Wired;
 import org.dockbox.hartshorn.util.HartshornUtils;
@@ -46,17 +46,19 @@ public class SimpleCommandGateway implements CommandGateway {
     @Override
     public void accept(String command) {
         for (CommandExecutorContext context : this.contexts) {
-            final Exceptional<BetaCommandContext> commandContext = this.parser.parse(command, context);
-            if (commandContext.present()) {
-                this.accept(commandContext.get());
-                return;
+            if (context.accepts(command)) {
+                final Exceptional<ParsedContext> commandContext = this.parser.parse(command, context);
+                if (commandContext.present()) {
+                    this.accept(commandContext.get());
+                    return;
+                }
             }
         }
         throw new IllegalArgumentException("No supported command handler found for '" + command + "'");
     }
 
     @Override
-    public void accept(BetaCommandContext context) {
+    public void accept(ParsedContext context) {
         final CommandExecutor executor = this.get(context);
         if (executor != null) executor.execute(context);
         else throw new IllegalStateException("No executor registered for command '" + context.alias() + "' with " + context.arguments().size() + " arguments");
@@ -80,9 +82,9 @@ public class SimpleCommandGateway implements CommandGateway {
     }
 
     @Override
-    public CommandExecutor get(BetaCommandContext context) {
+    public CommandExecutor get(ParsedContext context) {
         for (CommandExecutorContext executorContext : this.getContexts()) {
-            if (executorContext.canExecute(context)) return executorContext.executor();
+            if (executorContext.accepts(context.command())) return executorContext.executor();
         }
         return null;
     }

@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.commands.beta.impl;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.i18n.permissions.Permission;
-import org.dockbox.hartshorn.commands.beta.api.BetaCommandContext;
+import org.dockbox.hartshorn.commands.beta.api.ParsedContext;
 import org.dockbox.hartshorn.commands.context.CommandParameter;
 import org.dockbox.hartshorn.commands.source.CommandSource;
 import org.dockbox.hartshorn.di.annotations.Binds;
@@ -33,9 +33,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @SuppressWarnings("unchecked")
-@Binds(BetaCommandContext.class)
+@Binds(ParsedContext.class)
 @AllArgsConstructor
-public class SimpleBetaCommandContext extends DefaultContext implements BetaCommandContext {
+public class SimpleParsedContext extends DefaultContext implements ParsedContext {
 
     private final String command;
     private final List<CommandParameter<?>> args;
@@ -84,6 +84,11 @@ public class SimpleBetaCommandContext extends DefaultContext implements BetaComm
                 .filter(flag -> flag.getKey().equals(key))
                 .findFirst()
         ).map(flag -> (CommandParameter<T>) flag);
+    }
+
+    @Override
+    public String command() {
+        return this.command;
     }
 
     @Override

@@ -24,6 +24,6 @@ public interface CommandParser {
     // See SpongeCommandDispatcher:355
     // See CommandSpec:388
 
-    Exceptional<BetaCommandContext> parse(String command, CommandExecutorContext context);
+    Exceptional<ParsedContext> parse(String command, CommandExecutorContext context);
 
 }

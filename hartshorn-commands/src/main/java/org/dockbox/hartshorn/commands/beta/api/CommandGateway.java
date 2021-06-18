@@ -20,11 +20,11 @@ package org.dockbox.hartshorn.commands.beta.api;
 public interface CommandGateway {
 
     void accept(String command);
-    void accept(BetaCommandContext context);
+    void accept(ParsedContext context);
 
     void register(Class<?> type);
     void register(CommandExecutorContext context);
 
-    CommandExecutor get(BetaCommandContext context);
+    CommandExecutor get(ParsedContext context);
 
 }

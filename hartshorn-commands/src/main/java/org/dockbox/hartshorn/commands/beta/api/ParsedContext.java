@@ -25,7 +25,7 @@ import org.jetbrains.annotations.UnmodifiableView;
 
 import java.util.List;
 
-public interface BetaCommandContext extends ParserContext {
+public interface ParsedContext extends ParserContext {
 
     <T> T get(String key);
 
@@ -42,4 +42,5 @@ public interface BetaCommandContext extends ParserContext {
     @UnmodifiableView
     List<Permission> getPermissions();
 
+    String command();
 }

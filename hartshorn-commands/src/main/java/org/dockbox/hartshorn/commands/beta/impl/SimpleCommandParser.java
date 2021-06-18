@@ -18,26 +18,38 @@
 package org.dockbox.hartshorn.commands.beta.impl;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.commands.beta.api.BetaCommandContext;
+import org.dockbox.hartshorn.commands.beta.api.ParsedContext;
 import org.dockbox.hartshorn.commands.beta.api.CommandContainerContext;
 import org.dockbox.hartshorn.commands.beta.api.CommandExecutorContext;
 import org.dockbox.hartshorn.commands.beta.api.CommandParser;
+import org.dockbox.hartshorn.commands.values.AbstractArgumentElement;
 import org.dockbox.hartshorn.di.annotations.Binds;
+import org.dockbox.hartshorn.util.HartshornUtils;
+
+import java.util.List;
 
 @Binds(CommandParser.class)
 public class SimpleCommandParser implements CommandParser {
 
     @Override
-    public Exceptional<BetaCommandContext> parse(String command, CommandExecutorContext context) {
+    public Exceptional<ParsedContext> parse(String command, CommandExecutorContext context) {
         final Exceptional<CommandContainerContext> container = context.first(CommandContainerContext.class);
         if (container.absent()) return Exceptional.none();
 
         final CommandContainerContext containerContext = container.get();
+
         final String alias = command.split(" ")[0];
 
         if (!containerContext.aliases().contains(alias)) return Exceptional.none();
 
         // TODO: Implement parsing (reuse DefaultCommandContext for this)
-        return null;
+        List<AbstractArgumentElement<?>> elements = containerContext.elements();
+
+        return Exceptional.of(new SimpleParsedContext(command,
+                HartshornUtils.emptyList(),
+                HartshornUtils.emptyList(),
+                null, HartshornUtils.singletonList(containerContext.permission())));
     }
+
+
 }
