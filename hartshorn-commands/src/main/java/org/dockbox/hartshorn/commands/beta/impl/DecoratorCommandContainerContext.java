@@ -21,8 +21,7 @@ import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.i18n.permissions.Permission;
 import org.dockbox.hartshorn.commands.annotations.Command;
 import org.dockbox.hartshorn.commands.beta.api.CommandContainerContext;
-import org.dockbox.hartshorn.commands.registration.MethodCommandContext;
-import org.dockbox.hartshorn.commands.values.AbstractArgumentElement;
+import org.dockbox.hartshorn.commands.context.ArgumentConverter;
 import org.dockbox.hartshorn.commands.values.AbstractFlagCollection;
 import org.dockbox.hartshorn.di.binding.Bindings;
 import org.dockbox.hartshorn.di.context.DefaultContext;
@@ -104,7 +103,7 @@ public class DecoratorCommandContainerContext extends DefaultContext implements 
 
     private final Permission permission;
     private final Command command;
-    private final List<AbstractArgumentElement<?>> elements;
+    private final List<ArgumentConverter<?>> elements;
 
     public DecoratorCommandContainerContext(Command command) {
         this.command = command;
@@ -126,8 +125,9 @@ public class DecoratorCommandContainerContext extends DefaultContext implements 
         return Permission.of(raw);
     }
     
-    protected List<AbstractArgumentElement<?>> parseArgumentElements(CharSequence argString, String defaultPermission) {
-        List<AbstractArgumentElement<?>> elements = HartshornUtils.emptyList();
+    protected List<ArgumentConverter<?>> parseArgumentElements(CharSequence argString, String defaultPermission) {
+        // TODO: Ensure ordered
+        List<ArgumentConverter<?>> elements = HartshornUtils.emptyList();
         AbstractFlagCollection<?> flagCollection = null;
 
         Matcher genericArgumentMatcher = GENERIC_ARGUMENT.matcher(argString);
@@ -136,22 +136,20 @@ public class DecoratorCommandContainerContext extends DefaultContext implements 
             String part = genericArgumentMatcher.group();
             Matcher argumentMatcher = ARGUMENT.matcher(part);
             if (argumentMatcher.matches()) {
-                this.extractArguments(elements, argumentMatcher, defaultPermission);
-
+//                this.extractArguments(elements, argumentMatcher, defaultPermission);
             }
             else {
                 Matcher flagMatcher = FLAG.matcher(part);
-                flagCollection = this.getAbstractFlagCollection(flagCollection, flagMatcher, defaultPermission);
+//                flagCollection = this.getAbstractFlagCollection(flagCollection, flagMatcher, defaultPermission);
             }
         }
 
-        /*
-        Certain platforms may require the flag collection to be parsed together with the wrapped arguments. It is
-        possible that a platform implementation returns a flat list of arguments and flags here, though to avoid
-        incompatibilities the option to build and combine these is provided.
-        */
+        // TODO: Review need
         if (null == flagCollection) return elements;
-        else return flagCollection.buildAndCombines(this.wrapElements(elements));
+        else {
+//            return flagCollection.buildAndCombines(this.wrapElements(elements));
+            return null;
+        }
     }
 
     @Override
@@ -206,7 +204,7 @@ public class DecoratorCommandContainerContext extends DefaultContext implements 
     }
 
     @Override
-    public List<AbstractArgumentElement<?>> elements() {
+    public List<ArgumentConverter<?>> elements() {
         return this.elements;
     }
 }

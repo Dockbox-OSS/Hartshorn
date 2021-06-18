@@ -18,12 +18,12 @@
 package org.dockbox.hartshorn.commands.beta.impl;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.commands.beta.api.ParsedContext;
 import org.dockbox.hartshorn.commands.beta.api.CommandContainerContext;
 import org.dockbox.hartshorn.commands.beta.api.CommandExecutorContext;
 import org.dockbox.hartshorn.commands.beta.api.CommandParser;
+import org.dockbox.hartshorn.commands.beta.api.ParsedContext;
+import org.dockbox.hartshorn.commands.context.ArgumentConverter;
 import org.dockbox.hartshorn.commands.source.CommandSource;
-import org.dockbox.hartshorn.commands.values.AbstractArgumentElement;
 import org.dockbox.hartshorn.di.annotations.Binds;
 import org.dockbox.hartshorn.util.HartshornUtils;
 
@@ -40,11 +40,15 @@ public class SimpleCommandParser implements CommandParser {
         final CommandContainerContext containerContext = container.get();
 
         final String alias = command.split(" ")[0];
-
         if (!containerContext.aliases().contains(alias)) return Exceptional.none();
 
         // TODO: Implement parsing (reuse DefaultCommandContext for this)
-        List<AbstractArgumentElement<?>> elements = containerContext.elements();
+        List<ArgumentConverter<?>> elements = containerContext.elements();
+
+        for (ArgumentConverter<?> element : elements) {
+            // TODO: Handle parts
+            element.convert(source, "");
+        }
 
         // ... (turn values into args + flags)
 

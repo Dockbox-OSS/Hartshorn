@@ -18,7 +18,7 @@
 package org.dockbox.hartshorn.commands.beta.api;
 
 import org.dockbox.hartshorn.api.i18n.permissions.Permission;
-import org.dockbox.hartshorn.commands.values.AbstractArgumentElement;
+import org.dockbox.hartshorn.commands.context.ArgumentConverter;
 import org.dockbox.hartshorn.di.context.Context;
 
 import java.time.temporal.ChronoUnit;
@@ -35,6 +35,6 @@ public interface CommandContainerContext extends Context {
     boolean extended();
     boolean confirmation();
     Class<?> parent();
-    List<AbstractArgumentElement<?>> elements();
+    List<ArgumentConverter<?>> elements();
     boolean matches(String command);
 }
