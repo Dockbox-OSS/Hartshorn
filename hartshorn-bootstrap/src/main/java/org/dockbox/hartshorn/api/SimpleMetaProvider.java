@@ -41,10 +41,7 @@ public class SimpleMetaProvider extends InjectorMetaProvider {
         else if (type.isAnnotationPresent(Service.class)) {
             final Service annotation = type.getAnnotation(Service.class);
             if (Reflect.isNotVoid(annotation.owner())) return this.lookup(annotation.owner());
-            else return SimpleTypedOwner.of(Bindings.serviceId(type));
         }
-        else {
-            return null;
-        }
+        return SimpleTypedOwner.of(Bindings.serviceId(type));
     }
 }
