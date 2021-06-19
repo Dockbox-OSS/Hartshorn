@@ -16,15 +16,14 @@
  */
 
 rootProject.name = 'Hartshorn'
-
 gradle.startParameter.continueOnFailure = true
 
-includeAll(rootDir, '')
+includeAll(rootDir, '', 'hartshorn-sponge-7', 'hartshorn-nms-1.12')
 includeAll(new File(rootDir, 'hartshorn-minecraft'), ':hartshorn-minecraft')
 
-def includeAll(File dir, String prefix) {
+def includeAll(File dir, String prefix, String... blacklist) {
     dir.listFiles().each {
-        if (it.directory && new File(it, 'build.gradle').exists()) {
+        if (!blacklist.contains(it.name) && it.directory && new File(it, 'build.gradle').exists()) {
             include(prefix + ":${it.name}")
         }
     }
