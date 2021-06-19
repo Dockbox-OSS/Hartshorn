@@ -22,7 +22,6 @@ import org.dockbox.hartshorn.api.i18n.permissions.Permission;
 import org.dockbox.hartshorn.commands.beta.api.ParsedContext;
 import org.dockbox.hartshorn.commands.context.CommandParameter;
 import org.dockbox.hartshorn.commands.source.CommandSource;
-import org.dockbox.hartshorn.di.annotations.Binds;
 import org.dockbox.hartshorn.di.context.DefaultContext;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.jetbrains.annotations.UnmodifiableView;
@@ -33,7 +32,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @SuppressWarnings("unchecked")
-@Binds(ParsedContext.class)
 @AllArgsConstructor
 public class SimpleParsedContext extends DefaultContext implements ParsedContext {
 
