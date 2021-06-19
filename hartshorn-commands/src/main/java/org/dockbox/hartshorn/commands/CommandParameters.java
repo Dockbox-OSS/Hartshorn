@@ -18,7 +18,6 @@
 package org.dockbox.hartshorn.commands;
 
 import org.dockbox.hartshorn.api.Hartshorn;
-import org.dockbox.hartshorn.api.HartshornInformation;
 import org.dockbox.hartshorn.api.annotations.PostBootstrap;
 import org.dockbox.hartshorn.api.annotations.UseBootstrap;
 import org.dockbox.hartshorn.commands.annotations.Parameter;
@@ -33,7 +32,7 @@ public class CommandParameters {
 
     @PostBootstrap
     public void preload() {
-        Collection<Class<?>> customParameters = Reflect.annotatedTypes(HartshornInformation.PACKAGE_PREFIX, Parameter.class);
+        Collection<Class<?>> customParameters = Reflect.annotatedTypes(Hartshorn.PACKAGE_PREFIX, Parameter.class);
         for (Class<?> customParameter : customParameters) {
             Parameter meta = customParameter.getAnnotation(Parameter.class);
             CustomParameterPattern pattern = Hartshorn.context().get(meta.pattern());

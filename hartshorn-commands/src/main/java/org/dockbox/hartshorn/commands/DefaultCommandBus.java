@@ -357,10 +357,10 @@ public abstract class DefaultCommandBus<E> implements CommandBus {
     }
 
     protected ArgumentValue<?> generateArgumentValue(String argumentDefinition, String defaultPermission) {
-        String type = DefaultCommandBus.DEFAULT_TYPE;
+        String type = "String";
         String key;
         String permission = defaultPermission;
-        Matcher elementValue = DefaultCommandBus.ELEMENT_VALUE.matcher(argumentDefinition);
+        Matcher elementValue = null;
         if (!elementValue.matches() || 0 == elementValue.groupCount())
             Except.handle("Unknown argument specification " + argumentDefinition + ", use Type or Name{Type} or Name{Type:Permission}");
 
@@ -393,7 +393,7 @@ public abstract class DefaultCommandBus<E> implements CommandBus {
             return this.getArgumentValue(type, permission, key);
         }
         catch (IllegalArgumentException e) {
-            return this.getArgumentValue(DefaultCommandBus.DEFAULT_TYPE, permission, key);
+            return this.getArgumentValue("String", permission, key);
         }
     }
 
@@ -401,20 +401,20 @@ public abstract class DefaultCommandBus<E> implements CommandBus {
         List<AbstractArgumentElement<?>> elements = HartshornUtils.emptyList();
         AbstractFlagCollection<?> flagCollection = null;
 
-        Matcher genericArgumentMatcher = GENERIC_ARGUMENT.matcher(argString);
-        while (genericArgumentMatcher.find()) {
-
-            String part = genericArgumentMatcher.group();
-            Matcher argumentMatcher = ARGUMENT.matcher(part);
-            if (argumentMatcher.matches()) {
-                this.extractArguments(elements, argumentMatcher, defaultPermission);
-
-            }
-            else {
-                Matcher flagMatcher = FLAG.matcher(part);
-                flagCollection = this.getAbstractFlagCollection(flagCollection, flagMatcher, defaultPermission);
-            }
-        }
+//        Matcher genericArgumentMatcher = GENERIC_ARGUMENT.matcher(argString);
+//        while (genericArgumentMatcher.find()) {
+//
+//            String part = genericArgumentMatcher.group();
+//            Matcher argumentMatcher = ARGUMENT.matcher(part);
+//            if (argumentMatcher.matches()) {
+//                this.extractArguments(elements, argumentMatcher, defaultPermission);
+//
+//            }
+//            else {
+//                Matcher flagMatcher = FLAG.matcher(part);
+//                flagCollection = this.getAbstractFlagCollection(flagCollection, flagMatcher, defaultPermission);
+//            }
+//        }
 
         /*
         Certain platforms may require the flag collection to be parsed together with the wrapped arguments. It is
