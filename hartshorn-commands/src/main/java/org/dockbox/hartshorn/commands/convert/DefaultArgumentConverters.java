@@ -47,7 +47,7 @@ public final class DefaultArgumentConverters implements InjectableType {
 
     public static final ArgumentConverter<Character> CHARACTER = new CommandValueConverter<>(Character.class, in -> {
         int length = in.length();
-        return 1 == length ? Exceptional.of(in.charAt(0)) : Exceptional.none();
+        return 1 == length ? Exceptional.of(in.charAt(0)) : Exceptional.empty();
     },
             "char", "character"
     );

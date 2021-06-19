@@ -46,7 +46,7 @@ public class JUnitPlayers implements Players {
         if (PLAYER_ONE_NAME.equals(name)) return Exceptional.of(PLAYER_ONE);
         else if (PLAYER_TWO_NAME.equals(name)) return Exceptional.of(PLAYER_TWO);
         else if (PLAYER_THREE_NAME.equals(name)) return Exceptional.of(PLAYER_THREE);
-        return Exceptional.none();
+        return Exceptional.empty();
     }
 
     @Override
@@ -54,6 +54,6 @@ public class JUnitPlayers implements Players {
         if (PLAYER_ONE.getUniqueId().equals(uuid)) return Exceptional.of(PLAYER_ONE);
         else if (PLAYER_TWO.getUniqueId().equals(uuid)) return Exceptional.of(PLAYER_TWO);
         else if (PLAYER_THREE.getUniqueId().equals(uuid)) return Exceptional.of(PLAYER_THREE);
-        return Exceptional.none();
+        return Exceptional.empty();
     }
 }

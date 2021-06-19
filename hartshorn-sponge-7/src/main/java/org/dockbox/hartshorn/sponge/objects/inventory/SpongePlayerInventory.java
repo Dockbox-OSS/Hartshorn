@@ -156,6 +156,6 @@ public class SpongePlayerInventory extends PlayerInventory implements SpongeInve
         if (4 >= index) {
             return Exceptional.of(new SpongeInventoryRow(this, index, this.player));
         }
-        return Exceptional.none();
+        return Exceptional.empty();
     }
 }

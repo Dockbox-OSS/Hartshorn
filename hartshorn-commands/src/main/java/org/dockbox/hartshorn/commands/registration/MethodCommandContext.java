@@ -69,7 +69,7 @@ public class MethodCommandContext extends AbstractCommandContext {
             }
 
             this.method.invoke(instance, HartshornUtils.toArray(Object.class, args));
-            return Exceptional.none();
+            return Exceptional.empty();
         }
         catch (IllegalSourceException e) {
             return Exceptional.of(e);

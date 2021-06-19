@@ -87,12 +87,12 @@ public class JUnitWorld extends World {
 
     @Override
     public Exceptional<Chunk> getChunk(Location location) {
-        return Exceptional.none();
+        return Exceptional.empty();
     }
 
     @Override
     public Exceptional<Chunk> getChunk(int x, int y) {
-        return Exceptional.none();
+        return Exceptional.empty();
     }
 
     @Override

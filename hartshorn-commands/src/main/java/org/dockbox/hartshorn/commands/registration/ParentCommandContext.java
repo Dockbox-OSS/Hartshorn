@@ -50,7 +50,7 @@ public class ParentCommandContext extends MethodCommandContext {
         if (inheritedCommand.absent()) {
             return super.call(source, context);
         } else {
-            return Exceptional.none();
+            return Exceptional.empty();
         }
     }
 

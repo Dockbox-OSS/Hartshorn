@@ -1115,7 +1115,7 @@ public final class HartshornUtils {
                 return Exceptional.of(Duration.ofSeconds(time));
             }
         }
-        return Exceptional.none();
+        return Exceptional.empty();
     }
 
     private static long durationAmount(@Nullable String g, int multipler) {

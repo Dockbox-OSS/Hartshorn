@@ -53,7 +53,7 @@ public abstract class PlayerInventory implements IndexedInventory, PositionInven
     }
 
     /**
-     * Gets a specific row within the inventory. If the index is out of bounds, {@link Exceptional#none()}
+     * Gets a specific row within the inventory. If the index is out of bounds, {@link Exceptional#empty()}
      * is returned.
      *
      * @param index

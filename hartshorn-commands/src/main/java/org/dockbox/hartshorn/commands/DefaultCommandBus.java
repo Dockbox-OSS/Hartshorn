@@ -126,7 +126,7 @@ public abstract class DefaultCommandBus<E> implements CommandBus {
             new CommandEvent.After(sender, context).post();
             return response;
         }
-        return Exceptional.none();
+        return Exceptional.empty();
     }
 
     @Override
@@ -353,7 +353,7 @@ public abstract class DefaultCommandBus<E> implements CommandBus {
                 return Exceptional.of(true);
             }
         }
-        return Exceptional.none();
+        return Exceptional.empty();
     }
 
     protected ArgumentValue<?> generateArgumentValue(String argumentDefinition, String defaultPermission) {

@@ -47,6 +47,6 @@ public class DaveTriggers {
         for (DaveTrigger trigger : this.triggers) {
             if (trigger.getId().equals(id)) return Exceptional.of(trigger);
         }
-        return Exceptional.none();
+        return Exceptional.empty();
     }
 }

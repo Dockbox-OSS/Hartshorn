@@ -35,13 +35,13 @@ public class SimpleCommandParser implements CommandParser {
     @Override
     public Exceptional<ParsedContext> parse(String command, CommandSource source, CommandExecutorContext context) {
         final Exceptional<CommandContainerContext> container = context.first(CommandContainerContext.class);
-        if (container.absent()) return Exceptional.none();
+        if (container.absent()) return Exceptional.empty();
 
         final CommandContainerContext containerContext = container.get();
 
         // TODO: Review (keep in mind this should have already been validated in the executor, here we should only strip the aliases)
         final String alias = command.split(" ")[0];
-        if (!containerContext.aliases().contains(alias)) return Exceptional.none();
+        if (!containerContext.aliases().contains(alias)) return Exceptional.empty();
 
         // TODO: Implement parsing (reuse DefaultCommandContext for this)
         List<ArgumentConverter<?>> elements = containerContext.elements();

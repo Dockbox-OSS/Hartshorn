@@ -61,7 +61,7 @@ public class SpongePlot extends ReferencedWrapper<Plot> implements org.dockbox.h
     public Exceptional<Player> getOwner() {
         if (this.referenceExists()) {
             Plot plot = this.getReference().get();
-            if (plot.getOwners().isEmpty()) return Exceptional.none();
+            if (plot.getOwners().isEmpty()) return Exceptional.empty();
             UUID ownerUuid = plot.getOwners().iterator().next();
             return Hartshorn.context().get(Players.class).getPlayer(ownerUuid);
         }
@@ -115,11 +115,11 @@ public class SpongePlot extends ReferencedWrapper<Plot> implements org.dockbox.h
     public <T> Exceptional<T> getFlag(PlotFlag<T> flag) {
         if (this.getReference().present()) {
             Flag<?> plotFlag = SpongePlotSquaredService.getPlotSquaredFlag(flag.getId()).orNull();
-            if (plotFlag == null) return Exceptional.none();
+            if (plotFlag == null) return Exceptional.empty();
             //noinspection unchecked
             return Exceptional.of(this.getReference().get().getFlag(plotFlag).transform(value -> (T) value).orNull());
         }
-        return Exceptional.none();
+        return Exceptional.empty();
     }
 
     @Override
@@ -135,7 +135,7 @@ public class SpongePlot extends ReferencedWrapper<Plot> implements org.dockbox.h
         if (this.getReference().present()) {
             return Exceptional.of(new SpongePlot(this.getReference().get().getRelative(direction.ordinal())));
         }
-        return Exceptional.none();
+        return Exceptional.empty();
     }
 
     @Override
@@ -166,7 +166,7 @@ public class SpongePlot extends ReferencedWrapper<Plot> implements org.dockbox.h
 
     @Override
     public Exceptional<Plot> constructInitialReference() {
-        if (this.center == null) return Exceptional.none();
+        if (this.center == null) return Exceptional.empty();
         return Exceptional.of(Plot.getPlot(SpongeConversionUtil.toPlotSquared(this.center)));
     }
 

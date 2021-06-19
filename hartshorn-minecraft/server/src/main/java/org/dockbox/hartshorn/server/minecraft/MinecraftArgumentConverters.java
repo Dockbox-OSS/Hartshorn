@@ -42,7 +42,7 @@ public final class MinecraftArgumentConverters implements InjectableType {
     public static final ArgumentConverter<World> WORLD = new CommandValueConverter<>(World.class, in -> {
         Worlds wss = Hartshorn.context().get(Worlds.class);
         Exceptional<World> world = wss.getWorld(in);
-        return world.then(
+        return world.orElse(
                 () -> {
                     UUID uuid = UUID.fromString(in);
                     return wss.getWorld(uuid).orNull();
@@ -61,7 +61,7 @@ public final class MinecraftArgumentConverters implements InjectableType {
     public static final ArgumentConverter<Player> PLAYER = new CommandValueConverter<>(Player.class, in -> {
         Players pss = Hartshorn.context().get(Players.class);
         Exceptional<Player> player = pss.getPlayer(in);
-        return player.then(() -> {
+        return player.orElse(() -> {
             try {
                 UUID uuid = UUID.fromString(in);
                 return pss.getPlayer(uuid).orNull();

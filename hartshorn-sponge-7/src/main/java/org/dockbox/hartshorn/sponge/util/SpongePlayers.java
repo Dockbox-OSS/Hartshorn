@@ -57,15 +57,15 @@ public class SpongePlayers implements Players {
             return osp.map(p -> new SpongePlayer(p.getUniqueId(), p.getName()));
         }
         else {
-            Exceptional<Player> player = Exceptional.none();
+            Exceptional<Player> player = Exceptional.empty();
             Exceptional<UserStorageService> ouss = Exceptional.of(Sponge.getServiceManager().provide(UserStorageService.class));
             Exceptional<User> ou;
             if (obj instanceof UUID) {
-                ou = ouss.then(uss -> Exceptional.of(uss.get((UUID) obj)));
+                ou = ouss.orElse(uss -> Exceptional.of(uss.get((UUID) obj)));
             }
             else {
                 try {
-                    ou = ouss.then(uss -> Exceptional.of(uss.get(obj.toString())));
+                    ou = ouss.orElse(uss -> Exceptional.of(uss.get(obj.toString())));
                 }
                 catch (IllegalArgumentException e) {
                     // Typically thrown if a username is invalid (length<0 or >=16)

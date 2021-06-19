@@ -138,7 +138,7 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
                 () -> {
                     this.getWriter(content).writeValue(path.toFile(), content);
                     return true;
-                }).then(() -> false);
+                }).orElse(() -> false);
     }
 
     @Override
@@ -210,6 +210,6 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
             @NotNull Exceptional<? extends PersistentModel<?>> model = reader.apply(modelType);
             return model.map(PersistentModel::toPersistentCapable).map(out -> (T) out);
         }
-        return Exceptional.none();
+        return Exceptional.empty();
     }
 }

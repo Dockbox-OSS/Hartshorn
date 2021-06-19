@@ -262,7 +262,7 @@ public class SpongePlayerListener {
                     name,
                     convertedSource,
                     Exceptional.of(reason),
-                    Exceptional.none(),
+                    Exceptional.empty(),
                     LocalDateTime.now()
             ).post();
             if (event.isCancelled()) SpongePlayerListener.logUnsupportedCancel(event);
@@ -393,7 +393,7 @@ public class SpongePlayerListener {
             @Getter("getSource") Object source
     ) {
         SpongePlayerListener.postIfCommandSource(source, convertedSource ->
-                new KickEvent(SpongeConversionUtil.fromSponge(player), convertedSource, Exceptional.none()).post()
+                new KickEvent(SpongeConversionUtil.fromSponge(player), convertedSource, Exceptional.empty()).post()
         );
     }
 

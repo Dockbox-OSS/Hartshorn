@@ -56,14 +56,14 @@ public class JUnitWorlds implements Worlds {
     public Exceptional<World> getWorld(String name) {
         if (ROOT_WORLD.getName().equals(name)) return Exceptional.of(ROOT_WORLD);
         else if (SECOND_WORLD.getName().equals(name)) return Exceptional.of(SECOND_WORLD);
-        else return Exceptional.none();
+        else return Exceptional.empty();
     }
 
     @Override
     public Exceptional<World> getWorld(UUID uuid) {
         if (ROOT_WORLD.getWorldUniqueId().equals(uuid)) return Exceptional.of(ROOT_WORLD);
         else if (SECOND_WORLD.getWorldUniqueId().equals(uuid)) return Exceptional.of(SECOND_WORLD);
-        else return Exceptional.none();
+        else return Exceptional.empty();
     }
 
     @Override

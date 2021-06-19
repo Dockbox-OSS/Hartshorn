@@ -93,7 +93,7 @@ public class SpongeCustomMapService extends DefaultCustomMapService {
         else if (item.getId().equals(MinecraftItems.getInstance().getFilledMap().getId())) {
             return Exceptional.of(this.getById(item.getMeta()));
         }
-        return Exceptional.none();
+        return Exceptional.empty();
     }
 
     private static Identifiable lookupSource(int mapId) {

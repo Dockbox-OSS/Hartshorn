@@ -47,7 +47,7 @@ public interface CustomParameterPattern {
      * @param <T>
      *         The generic type of the target
      *
-     * @return An instance of {@code T}, wrapped in a {@link Exceptional}, or {@link Exceptional#none()} if {@code null}
+     * @return An instance of {@code T}, wrapped in a {@link Exceptional}, or {@link Exceptional#empty()} if {@code null}
      */
     default <T> Exceptional<T> request(Class<T> type, CommandSource source, String raw) {
         Exceptional<Boolean> preconditionsMatch = this.preconditionsMatch(type, source, raw);

@@ -233,7 +233,7 @@ public class SpongeWorldEditService extends MethodCommands implements WorldEditS
         if (player instanceof SpongePlayer) {
             return ((SpongePlayer) player).getReference().map(FawePlayer::wrap);
         }
-        return Exceptional.none();
+        return Exceptional.empty();
     }
 
     @FunctionalInterface

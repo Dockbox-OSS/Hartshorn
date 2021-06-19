@@ -60,7 +60,7 @@ public class SimpleCacheManager implements CacheManager {
     @Override
     public <T> Cache<T> getOrCreate(String name, Expiration expiration) {
         return this.get(name)
-                .then(() -> {
+                .orElse(() -> {
                     final Cache<Object> cache = this.context.get(Cache.class, new ExpirationProperty(expiration));
                     SimpleCacheManager.caches.put(name, cache);
                     return cache;

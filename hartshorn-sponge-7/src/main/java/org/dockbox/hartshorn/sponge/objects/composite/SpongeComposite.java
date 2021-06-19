@@ -40,10 +40,10 @@ public interface SpongeComposite extends PersistentDataHolder {
         Exceptional<MutableCompositeData> result = this.getDataHolder()
                 .map(composite -> composite.get(MutableCompositeData.class).orElse(null));
 
-        if (result.absent()) return Exceptional.none();
+        if (result.absent()) return Exceptional.empty();
 
         MutableCompositeData data = result.get();
-        if (!data.getData().containsKey(dataKey.getId())) return Exceptional.none();
+        if (!data.getData().containsKey(dataKey.getId())) return Exceptional.empty();
 
         Object value = data.getData().get(dataKey.getId());
         if (Reflect.assignableFrom(dataKey.getType(), value.getClass()))
@@ -51,7 +51,7 @@ public interface SpongeComposite extends PersistentDataHolder {
             //noinspection unchecked
             return Exceptional.of(() -> (T) value);
 
-        return Exceptional.none();
+        return Exceptional.empty();
     }
 
     @Override

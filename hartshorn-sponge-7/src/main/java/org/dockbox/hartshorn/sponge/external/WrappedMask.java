@@ -42,6 +42,6 @@ public class WrappedMask implements Mask, Wrapper<com.sk89q.worldedit.function.m
 
     @Override
     public Exceptional<com.sk89q.worldedit.function.mask.Mask> constructInitialReference() {
-        return Exceptional.none();
+        return Exceptional.empty();
     }
 }

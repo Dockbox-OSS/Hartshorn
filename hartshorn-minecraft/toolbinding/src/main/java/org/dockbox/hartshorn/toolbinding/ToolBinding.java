@@ -84,10 +84,10 @@ public class ToolBinding {
 
     private Exceptional<ItemTool> getTool(Item item) {
         Exceptional<String> identifier = item.get(PERSISTENT_TOOL);
-        if (identifier.absent()) return Exceptional.none();
+        if (identifier.absent()) return Exceptional.empty();
 
         String registryIdentifier = identifier.get();
-        if (!this.registry.containsKey(registryIdentifier)) return Exceptional.none();
+        if (!this.registry.containsKey(registryIdentifier)) return Exceptional.empty();
         ItemTool itemTool = this.registry.get(registryIdentifier);
 
         return Exceptional.of(itemTool);

@@ -131,7 +131,7 @@ public abstract class World extends WorldProperties implements BlockDimension, E
 
         @Override
         public Exceptional<Item> getBlock(Vector3N position) {
-            return Exceptional.none();
+            return Exceptional.empty();
         }
 
         @Override
@@ -159,12 +159,12 @@ public abstract class World extends WorldProperties implements BlockDimension, E
 
         @Override
         public Exceptional<Chunk> getChunk(Location location) {
-            return Exceptional.none();
+            return Exceptional.empty();
         }
 
         @Override
         public Exceptional<Chunk> getChunk(int x, int y) {
-            return Exceptional.none();
+            return Exceptional.empty();
         }
 
         @Override

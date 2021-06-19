@@ -158,7 +158,7 @@ public class GuiceInjector implements Injector {
                 return Exceptional.of((WireContext<T, I>) binding);
             }
         }
-        return Exceptional.none();
+        return Exceptional.empty();
     }
 
     @Override
@@ -282,7 +282,7 @@ public class GuiceInjector implements Injector {
                 }
             }
         }
-        return Exceptional.none();
+        return Exceptional.empty();
     }
 
     private Map<Key<?>, Class<?>> scan(String prefix) {

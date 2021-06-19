@@ -67,7 +67,7 @@ public class SpongePlotSquaredService implements PlotService {
         for (com.intellectualcrafters.plot.object.Plot plot : PS.get().getPlots(world.getName())) {
             if (plot.getId().x == x && plot.getId().y == y) return Exceptional.of(new SpongePlot(plot));
         }
-        return Exceptional.none();
+        return Exceptional.empty();
     }
 
     @Override

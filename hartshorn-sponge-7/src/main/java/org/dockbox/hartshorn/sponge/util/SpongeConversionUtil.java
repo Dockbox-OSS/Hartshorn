@@ -200,7 +200,7 @@ public enum SpongeConversionUtil {
         else if (object instanceof Enchantment) {
             return fromSponge((Enchantment) object);
         }
-        return Exceptional.none();
+        return Exceptional.empty();
     }
 
     @NotNull
@@ -230,14 +230,14 @@ public enum SpongeConversionUtil {
     public static Exceptional<? extends org.spongepowered.api.command.CommandSource> toSponge(Target target) {
         if (target instanceof CommandSource) {
             return toSponge((CommandSource) target);
-        } else return Exceptional.none();
+        } else return Exceptional.empty();
     }
 
     @NotNull
     public static Exceptional<? extends org.spongepowered.api.command.CommandSource> toSponge(CommandSource src) {
         if (src instanceof Console) return Exceptional.of(Sponge.getServer().getConsole());
         else if (src instanceof Player) return Exceptional.of(Sponge.getServer().getPlayer(((Player) src).getUniqueId()));
-        return Exceptional.none();
+        return Exceptional.empty();
     }
 
     @NotNull
@@ -286,27 +286,27 @@ public enum SpongeConversionUtil {
 
     @NotNull
     private static Exceptional<org.spongepowered.api.text.action.ShiftClickAction<?>> toSponge(ShiftClickAction<?> action) {
-        if (null == action) return Exceptional.none();
+        if (null == action) return Exceptional.empty();
         Object result = action.getResult();
         if (action instanceof ShiftClickAction.InsertText) {
             return Exceptional.of(TextActions.insertText(((org.dockbox.hartshorn.api.i18n.text.Text) result).toPlain()));
         }
-        return Exceptional.none();
+        return Exceptional.empty();
     }
 
     @NotNull
     private static Exceptional<org.spongepowered.api.text.action.HoverAction<?>> toSponge(HoverAction<?> action) {
-        if (null == action) return Exceptional.none();
+        if (null == action) return Exceptional.empty();
         Object result = action.getResult();
         if (action instanceof HoverAction.ShowText) {
             return Exceptional.of(TextActions.showText(toSponge(((org.dockbox.hartshorn.api.i18n.text.Text) result))));
         }
-        return Exceptional.none();
+        return Exceptional.empty();
     }
 
     @NotNull
     private static Exceptional<org.spongepowered.api.text.action.ClickAction<?>> toSponge(ClickAction<?> action) {
-        if (null == action) return Exceptional.none();
+        if (null == action) return Exceptional.empty();
         Object result = action.getResult();
         if (action instanceof ClickAction.OpenUrl) {
             return Exceptional.of(TextActions.openUrl((URL) result));
@@ -331,14 +331,14 @@ public enum SpongeConversionUtil {
                 }
             }));
         }
-        return Exceptional.none();
+        return Exceptional.empty();
     }
 
     @NotNull
     public static Exceptional<Location<World>> toSponge(org.dockbox.hartshorn.server.minecraft.dimension.position.Location location) {
         Exceptional<World> world = toSponge(location.getWorld());
         if (world.caught()) return Exceptional.of(world.error());
-        if (!world.present()) return Exceptional.none();
+        if (!world.present()) return Exceptional.empty();
         Vector3d vector3d = new Vector3d(
                 location.getVectorLoc().getXd(),
                 location.getVectorLoc().getYd(),
@@ -423,14 +423,14 @@ public enum SpongeConversionUtil {
         if (shiftClickAction instanceof InsertText) {
             return Exceptional.of(ShiftClickAction.insertText(org.dockbox.hartshorn.api.i18n.text.Text.of(((InsertText) shiftClickAction).getResult())));
         }
-        else return Exceptional.none();
+        else return Exceptional.empty();
     }
 
     private static Exceptional<HoverAction<?>> fromSponge(org.spongepowered.api.text.action.HoverAction<?> hoverAction) {
         if (hoverAction instanceof ShowText) {
             return Exceptional.of(HoverAction.showText(fromSponge(((ShowText) hoverAction).getResult())));
         }
-        else return Exceptional.none();
+        else return Exceptional.empty();
     }
 
     private static Exceptional<ClickAction<?>> fromSponge(org.spongepowered.api.text.action.ClickAction<?> clickAction) {
@@ -455,7 +455,7 @@ public enum SpongeConversionUtil {
             );
 
         }
-        else return Exceptional.none();
+        else return Exceptional.empty();
     }
 
     private static String fromSponge(TextColor color) {
@@ -648,7 +648,7 @@ public enum SpongeConversionUtil {
         if (player instanceof SpongePlayer) {
             return ((SpongePlayer) player).getSpongePlayer();
         }
-        return Exceptional.none();
+        return Exceptional.empty();
     }
 
     public static Vector3N fromWorldEdit(Vector vector) {
@@ -782,7 +782,7 @@ public enum SpongeConversionUtil {
     }
 
     public static Exceptional<PlotBlock> toPlotSquared(Item item) {
-        if (!item.isBlock()) return Exceptional.none();
+        if (!item.isBlock()) return Exceptional.empty();
         int id = item.getIdNumeric();
         int meta = item.getMeta();
         // Casting is safe in this use-case, as this is the same approach used by PlotSquared (legacy) in PlotBlock itself

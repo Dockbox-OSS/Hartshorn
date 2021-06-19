@@ -201,7 +201,7 @@ public class SpongeWorld extends World implements Wrapper<org.spongepowered.api.
             Exceptional<org.spongepowered.api.world.Chunk> chunkAtBlock = Exceptional.of(this.getReferenceWorld().getChunkAtBlock(position));
             return chunkAtBlock.map(SpongeConversionUtil::fromSponge);
         }
-        return Exceptional.none();
+        return Exceptional.empty();
     }
 
     @Override
@@ -210,7 +210,7 @@ public class SpongeWorld extends World implements Wrapper<org.spongepowered.api.
             Exceptional<org.spongepowered.api.world.Chunk> exceptional = Exceptional.of(this.getReferenceWorld().getChunk(x, 0, y));
             return exceptional.map(SpongeConversionUtil::fromSponge);
         }
-        return Exceptional.none();
+        return Exceptional.empty();
     }
 
     @Override

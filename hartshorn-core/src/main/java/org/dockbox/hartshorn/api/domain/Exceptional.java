@@ -74,7 +74,7 @@ public final class Exceptional<T> {
     /**
      * Provides a {@code Exceptional} instance based on a provided {@link Optional} instance. If the
      * optional contains a value, it is unwrapped and rewrapped in {@link Exceptional#of(Object)}. If
-     * the optional doesn't contain a value, {@link Exceptional#none()} is returned.
+     * the optional doesn't contain a value, {@link Exceptional#empty()} is returned.
      *
      * @param <T>
      *         The type parameter of the potential value
@@ -85,7 +85,7 @@ public final class Exceptional<T> {
      */
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     public static <T> Exceptional<T> of(Optional<T> optional) {
-        return optional.map(Exceptional::of).orElseGet(Exceptional::none);
+        return optional.map(Exceptional::of).orElseGet(Exceptional::empty);
     }
 
     /**
@@ -113,7 +113,7 @@ public final class Exceptional<T> {
 
     /**
      * Provides a {@code Exceptional} instance which can contain a value in {@link Exceptional#value}.
-     * The value can be null. If the value is null, {@link Exceptional#none()} is returned.
+     * The value can be null. If the value is null, {@link Exceptional#empty()} is returned.
      *
      * @param <T>
      *         The type parameter of the potential value
@@ -123,7 +123,7 @@ public final class Exceptional<T> {
      * @return The {@code Exceptional}
      */
     public static <T> Exceptional<T> of(T value) {
-        return null == value ? none() : new Exceptional<>(value);
+        return null == value ? empty() : new Exceptional<>(value);
     }
 
     /**
@@ -154,7 +154,7 @@ public final class Exceptional<T> {
      *       used to generate the instance.
      *   <li>If the value is not null and the throwable is null, {@link Exceptional#of(Object)} is
      *       used to generate the instance.
-     *   <li>If both the value and the throwable are null, {@link Exceptional#none()} is used to
+     *   <li>If both the value and the throwable are null, {@link Exceptional#empty()} is used to
      *       generate the new instance.
      *   <li>If neither the value and the throwable are null, {@link Exceptional#of(Object,
      *       Throwable)} is used to generate the new instance.
@@ -170,7 +170,7 @@ public final class Exceptional<T> {
      * @return The {@code Exceptional}
      */
     public static <T> Exceptional<T> of(T value, Throwable throwable) {
-        if (null == value && null == throwable) return none();
+        if (null == value && null == throwable) return empty();
         else if (null == value) return of(throwable);
         else if (null == throwable) return of(value);
         else return new Exceptional<>(value, throwable);
@@ -196,7 +196,7 @@ public final class Exceptional<T> {
      *
      * @return The none {@code Exceptional}
      */
-    public static <T> Exceptional<T> none() {
+    public static <T> Exceptional<T> empty() {
         @SuppressWarnings("unchecked")
         Exceptional<T> t = (Exceptional<T>) EMPTY;
         return t;
@@ -318,7 +318,7 @@ public final class Exceptional<T> {
 
     /**
      * If a value is present, apply the provided {@code Exceptional}-bearing mapping function to it,
-     * return that result, otherwise return {@link Exceptional#none()}. This method is similar to
+     * return that result, otherwise return {@link Exceptional#empty()}. This method is similar to
      * {@link Exceptional#map(Function)}, but the provided mapper is one whose result is already an
      * {@code Exceptional}, and if invoked, {@code then} does not wrap it with an additional {@code
      * Exceptional}.
@@ -329,13 +329,13 @@ public final class Exceptional<T> {
      *         A mapping function to apply to the value, if present
      *
      * @return The result of applying an {@code Exceptional}-bearing mapping function to the value of
-     *         this {@code Exceptional}, if a value is present, otherwise {@link Exceptional#none()}
+     *         this {@code Exceptional}, if a value is present, otherwise {@link Exceptional#empty()}
      * @throws NullPointerException
      *         If the mapping function is null or returns a null result
      */
-    public <U> Exceptional<U> then(Function<? super T, Exceptional<U>> mapper) {
+    public <U> Exceptional<U> orElse(Function<? super T, Exceptional<U>> mapper) {
         Objects.requireNonNull(mapper);
-        if (!this.present()) return this.caught() ? of(this.throwable) : none();
+        if (!this.present()) return this.caught() ? of(this.throwable) : empty();
         else {
             return Objects.requireNonNull(mapper.apply(this.value));
         }
@@ -344,8 +344,8 @@ public final class Exceptional<T> {
     /**
      * If a value is present, apply the provided {@code Exceptional}-bearing mapping function to both
      * the value and throwable described by this {@code Exceptional}, return that result, otherwise
-     * return {@link Exceptional#none()}. This method is similar to {@link
-     * Exceptional#then(Function)}, but the provided mapper is one whose input is both a {@code
+     * return {@link Exceptional#empty()}. This method is similar to {@link
+     * Exceptional#orElse(Function)}, but the provided mapper is one whose input is both a {@code
      * Throwable} and a value of type {@code T}.
      *
      * @param <U>
@@ -355,13 +355,13 @@ public final class Exceptional<T> {
      *
      * @return The result of applying an {@code Exceptional}-bearing mapping function to the value and
      *         throwable of this {@code Exceptional}, if a value is present, otherwise {@link
-     *         Exceptional#none()}
+     *         Exceptional#empty()}
      * @throws NullPointerException
      *         If the mapping function is null or returns a null result
      */
-    public <U> Exceptional<U> then(BiFunction<? super T, Throwable, Exceptional<U>> mapper) {
+    public <U> Exceptional<U> orElse(BiFunction<? super T, Throwable, Exceptional<U>> mapper) {
         Objects.requireNonNull(mapper);
-        if (!this.present()) return this.caught() ? of(this.throwable) : none();
+        if (!this.present()) return this.caught() ? of(this.throwable) : empty();
         else {
             return Objects.requireNonNull(mapper.apply(this.value, this.throwable));
         }
@@ -380,7 +380,7 @@ public final class Exceptional<T> {
      * @throws NullPointerException
      *         If a value is present and {@code defaultValue} is null
      */
-    public Exceptional<T> then(Supplier<T> defaultValue) {
+    public Exceptional<T> orElse(Supplier<T> defaultValue) {
         if (this.absent()) {
             if (this.caught()) {
                 return of(defaultValue.get(), this.throwable);
@@ -394,26 +394,26 @@ public final class Exceptional<T> {
 
     /**
      * If a value is present, and the value matches the given predicate, return an {@code Exceptional}
-     * describing value, otherwise return {@link Exceptional#none()}.
+     * describing value, otherwise return {@link Exceptional#empty()}.
      *
      * @param predicate
      *         A predicate to apply to the value, if present
      *
      * @return an {@code Exceptional} describing the value of this {@code Exceptional} if a value is
-     *         present and the value matches the given predicate, otherwise {@link Exceptional#none()}
+     *         present and the value matches the given predicate, otherwise {@link Exceptional#empty()}
      * @throws NullPointerException
      *         If the predicate is null
      */
     public Exceptional<T> filter(Predicate<? super T> predicate) {
         Objects.requireNonNull(predicate);
         if (!this.present()) return this;
-        else return predicate.test(this.value) ? this : none();
+        else return predicate.test(this.value) ? this : empty();
     }
 
     /**
      * If a value is present, apply the provided mapping function to it, and if the result is
      * non-null, return an {@code Exceptional} describing the result. Otherwise return {@link
-     * Exceptional#none()}.
+     * Exceptional#empty()}.
      *
      * <pre>{@code
      * Exceptional<TextChannel> textChannel = JDAUtils.getJDA()
@@ -429,13 +429,13 @@ public final class Exceptional<T> {
      *         A mapping function to apply to the value, if present
      *
      * @return an {@code Exceptional} describing the result of applying a mapping function to the
-     *         value of this {@code Exceptional}, if a value is present, otherwise {@link Exceptional#none()}
+     *         value of this {@code Exceptional}, if a value is present, otherwise {@link Exceptional#empty()}
      * @throws NullPointerException
      *         If the mapping function is null
      */
     public <U> Exceptional<U> map(Function<? super T, ? extends U> mapper) {
         Objects.requireNonNull(mapper);
-        if (!this.present()) return this.caught() ? of(this.throwable) : none();
+        if (!this.present()) return this.caught() ? of(this.throwable) : empty();
         else {
             try {
                 return of(mapper.apply(this.value), this.throwable);
@@ -500,7 +500,7 @@ public final class Exceptional<T> {
      *
      * @return {@code true} if there is no throwable present, otherwise {@code false}
      */
-    public boolean empty() {
+    public boolean isErrorAbsent() {
         return null == this.throwable;
     }
 
@@ -514,7 +514,7 @@ public final class Exceptional<T> {
      * @throws NullPointerException
      *         If {@code runnable} is null
      */
-    public Exceptional<T> empty(Runnable runnable) {
+    public Exceptional<T> ifErrorAbsent(Runnable runnable) {
         if (null == this.throwable) runnable.run();
         return this;
     }
