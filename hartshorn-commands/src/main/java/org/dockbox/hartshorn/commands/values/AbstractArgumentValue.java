@@ -26,6 +26,7 @@ import org.dockbox.hartshorn.commands.convert.ArgumentConverterRegistry;
 import lombok.Getter;
 import lombok.Setter;
 
+@Deprecated
 public abstract class AbstractArgumentValue<T> implements ArgumentValue<T> {
 
     @Getter

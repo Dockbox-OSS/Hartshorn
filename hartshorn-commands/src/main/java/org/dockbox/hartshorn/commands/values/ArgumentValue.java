@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.commands.values;
 
 import org.dockbox.hartshorn.commands.beta.api.CommandElement;
 
+@Deprecated
 public interface ArgumentValue<T> {
 
     String getPermission();

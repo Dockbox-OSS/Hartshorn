@@ -23,6 +23,7 @@ import lombok.Setter;
 
 @Getter @Setter
 @AllArgsConstructor
+@Deprecated
 public abstract class AbstractArgumentElement<T> {
 
     private T reference;
