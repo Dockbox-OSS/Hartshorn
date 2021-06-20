@@ -49,7 +49,7 @@ public class CommandFlagElement<T> implements CommandFlag, CommandElement<T> {
 
     @Override
     public int size() {
-        return 1;
+        return this.element.size();
     }
 
     @Override

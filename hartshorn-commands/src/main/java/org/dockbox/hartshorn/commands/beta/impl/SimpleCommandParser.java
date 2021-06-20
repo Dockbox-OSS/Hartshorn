@@ -86,13 +86,21 @@ public class SimpleCommandParser implements CommandParser {
             final String flag = matcher.group().substring(1); // Discard '-' prefix
             String name = flag.split(" ")[0];
             final CommandFlag commandFlag = context.flag(name);
+
             if (commandFlag.value()) {
                 if (commandFlag instanceof CommandFlagElement) {
-                    // TODO: Add support for remainingX flags
-                    final Exceptional<?> value = ((CommandFlagElement<?>) commandFlag).parse(source, flag.split(" ")[1]);
+                    final List<String> tokens = HartshornUtils.asList(command.split(" "));
+                    final int size = ((CommandFlagElement<?>) commandFlag).size();
+                    final int flagIndex = tokens.indexOf('-' + name);
+                    final int i = flagIndex + 1;
+                    final int end = size == -1 ? tokens.size() : i + size;
+
+                    String token = String.join(" ", tokens.subList(i, end)).trim();
+
+                    final Exceptional<?> value = ((CommandFlagElement<?>) commandFlag).parse(source, token);
                     flags.add(this.getParameter(value, "flag", name));
+                    command = command.replace('-' + name + ' ' + token, "");
                 }
-                command = command.replace('-' + flag, "");
             } else {
                 flags.add(new CommandParameter<>(null, name));
                 command = command.replace('-' + name, "");
