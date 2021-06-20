@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.di.context;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.util.HartshornUtils;
+import org.dockbox.hartshorn.util.Reflect;
 
 import java.util.List;
 import java.util.Set;
@@ -32,7 +33,7 @@ public abstract class DefaultContext implements Context {
     @Override
     public <C extends Context> Exceptional<C> first(Class<C> context) {
         return Exceptional.of(this.contexts.stream()
-                .filter(c -> c.getClass().equals(context))
+                .filter(c -> Reflect.assignableFrom(context, c.getClass()))
                 .findFirst())
                 .map(c -> (C) c);
     }
