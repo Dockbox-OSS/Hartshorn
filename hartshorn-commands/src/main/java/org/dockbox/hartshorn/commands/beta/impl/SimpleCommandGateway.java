@@ -17,13 +17,18 @@
 
 package org.dockbox.hartshorn.commands.beta.impl;
 
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
+
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.commands.annotations.Command;
+import org.dockbox.hartshorn.commands.beta.api.CommandContainerContext;
 import org.dockbox.hartshorn.commands.beta.api.CommandExecutor;
+import org.dockbox.hartshorn.commands.beta.api.CommandExecutorContext;
 import org.dockbox.hartshorn.commands.beta.api.CommandGateway;
 import org.dockbox.hartshorn.commands.beta.api.CommandParser;
 import org.dockbox.hartshorn.commands.beta.api.ParsedContext;
-import org.dockbox.hartshorn.commands.beta.api.CommandExecutorContext;
+import org.dockbox.hartshorn.commands.beta.exceptions.ParsingException;
 import org.dockbox.hartshorn.commands.source.CommandSource;
 import org.dockbox.hartshorn.di.annotations.Wired;
 import org.dockbox.hartshorn.util.HartshornUtils;
@@ -31,26 +36,31 @@ import org.dockbox.hartshorn.util.Reflect;
 
 import java.lang.reflect.Method;
 import java.util.Collection;
-import java.util.Set;
+import java.util.List;
+
+import javax.inject.Singleton;
 
 import lombok.AccessLevel;
 import lombok.Getter;
 
+@Singleton
 public class SimpleCommandGateway implements CommandGateway {
 
     @Wired
     private CommandParser parser;
 
     @Getter(AccessLevel.PROTECTED)
-    private final transient Set<CommandExecutorContext> contexts = HartshornUtils.emptyConcurrentSet();
+    private final transient Multimap<String, CommandExecutorContext> contexts = ArrayListMultimap.create();
 
     @Override
-    public void accept(CommandSource source, String command) {
-        for (CommandExecutorContext context : this.contexts) {
+    public void accept(CommandSource source, String command) throws ParsingException {
+        final String alias = command.split(" ")[0];
+        for (CommandExecutorContext context : this.contexts.get(alias)) {
             if (context.accepts(command)) {
                 final Exceptional<ParsedContext> commandContext = this.parser.parse(command, source, context);
                 if (commandContext.present()) {
-                    this.accept(source, commandContext.get());
+                    context.executor().execute(commandContext.get());
+                    this.accept(commandContext.get());
                     return;
                 }
             }
@@ -59,7 +69,7 @@ public class SimpleCommandGateway implements CommandGateway {
     }
 
     @Override
-    public void accept(CommandSource source, ParsedContext context) {
+    public void accept(ParsedContext context) {
         final CommandExecutor executor = this.get(context);
         if (executor != null) executor.execute(context);
         else throw new IllegalStateException("No executor registered for command '" + context.alias() + "' with " + context.arguments().size() + " arguments");
@@ -75,7 +85,21 @@ public class SimpleCommandGateway implements CommandGateway {
 
     @Override
     public void register(CommandExecutorContext context) {
-        this.contexts.add(context);
+        final Exceptional<CommandContainerContext> container = context.first(CommandContainerContext.class);
+        if (container.absent()) throw new IllegalArgumentException("Executor contexts should contain at least one container context");
+
+        List<String> aliases;
+        if (Reflect.isNotVoid(context.parent()) && context.parent().isAnnotationPresent(Command.class)) {
+            aliases = HartshornUtils.asUnmodifiableList(context.parent().getAnnotation(Command.class).value());
+        } else if (!container.get().aliases().isEmpty()){
+            aliases = container.get().aliases();
+        } else {
+            throw new IllegalArgumentException("Executor should either be declared in command type or container should provide aliases");
+        }
+
+        for (String alias : aliases) {
+            this.contexts.put(alias, context);
+        }
     }
 
     private void register(Method method, Class<?> type) {
@@ -84,7 +108,7 @@ public class SimpleCommandGateway implements CommandGateway {
 
     @Override
     public CommandExecutor get(ParsedContext context) {
-        for (CommandExecutorContext executorContext : this.getContexts()) {
+        for (CommandExecutorContext executorContext : this.getContexts().get(context.alias())) {
             if (executorContext.accepts(context.command())) return executorContext.executor();
         }
         return null;

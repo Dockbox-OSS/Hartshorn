@@ -24,4 +24,6 @@ public interface CommandExecutorContext extends Context {
     CommandExecutor executor();
     boolean accepts(String command);
 
+    Class<?> parent();
+
 }

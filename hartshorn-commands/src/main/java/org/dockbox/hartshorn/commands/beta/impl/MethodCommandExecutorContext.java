@@ -27,6 +27,7 @@ import org.dockbox.hartshorn.util.HartshornUtils;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Method;
+import java.util.List;
 
 import lombok.Getter;
 
@@ -35,6 +36,7 @@ public class MethodCommandExecutorContext extends DefaultContext implements Comm
 
     private final Method method;
     private final Class<?> type;
+    private final List<String> parentAliases;
     private final Command command;
     @Nullable
     private final Command parent;
@@ -56,6 +58,11 @@ public class MethodCommandExecutorContext extends DefaultContext implements Comm
         }
 
         this.add(new SimpleCommandContainerContext(this.command));
+
+        this.parentAliases = HartshornUtils.emptyList();
+        if (this.parent != null) {
+            this.parentAliases.addAll(HartshornUtils.asList(this.parent.value()));
+        }
     }
 
     @Override
@@ -79,5 +86,10 @@ public class MethodCommandExecutorContext extends DefaultContext implements Comm
         final CommandContainerContext containerContext = container.get();
 
         return containerContext.matches(command);
+    }
+
+    @Override
+    public Class<?> parent() {
+        return this.type;
     }
 }
