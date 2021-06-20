@@ -17,11 +17,17 @@
 
 package org.dockbox.hartshorn.commands;
 
+import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.commands.annotations.Command;
+import org.dockbox.hartshorn.commands.beta.api.CommandContainerContext;
 import org.dockbox.hartshorn.commands.beta.api.CommandElement;
 import org.dockbox.hartshorn.commands.beta.api.CommandFlag;
+import org.dockbox.hartshorn.commands.beta.api.CommandGateway;
 import org.dockbox.hartshorn.commands.beta.impl.SimpleCommandContainerContext;
+import org.dockbox.hartshorn.commands.beta.impl.SimpleCommandGateway;
+import org.dockbox.hartshorn.commands.types.CommandValueEnum;
+import org.dockbox.hartshorn.commands.types.SampleCommand;
 import org.dockbox.hartshorn.test.HartshornRunner;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -34,9 +40,16 @@ import java.time.temporal.ChronoUnit;
 public class CommandContainerContextTests {
 
     @Test
+    void testParsingCanSucceed() {
+        CommandGateway gateway = Hartshorn.context().get(SimpleCommandGateway.class);
+        gateway.register(SampleCommand.class);
+        Assertions.assertDoesNotThrow(() -> gateway.accept(null, "demo sub --flag"));
+    }
+
+    @Test
     void testContainerContext() {
-        Command command = this.createCommand("demo", "<required{String}> [optional{String}]  [enum{org.dockbox.hartshorn.commands.CommandValueEnum}] --flag --vflag String -s", "demo");
-        final SimpleCommandContainerContext context = new SimpleCommandContainerContext(command);
+        Command command = this.createCommand("demo", "<required{String}> [optional{String}]  [enum{org.dockbox.hartshorn.commands.types.CommandValueEnum}] --flag --vflag String -s", "demo");
+        final CommandContainerContext context = new SimpleCommandContainerContext(command);
 
         Assertions.assertEquals("demo", context.permission().get());
         Assertions.assertEquals(1, context.aliases().size());
