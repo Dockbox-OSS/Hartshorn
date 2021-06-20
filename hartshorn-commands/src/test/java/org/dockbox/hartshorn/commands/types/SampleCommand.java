@@ -22,7 +22,7 @@ import org.dockbox.hartshorn.commands.annotations.Command;
 @Command("demo")
 public class SampleCommand {
 
-    @Command(value = "sub", arguments = "--flag")
+    @Command(value = "sub", arguments = "<argument{Int}> --skip")
     public void sub() {
         System.out.println("Sub");
     }

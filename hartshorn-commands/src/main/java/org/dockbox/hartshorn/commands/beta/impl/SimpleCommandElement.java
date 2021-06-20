@@ -34,6 +34,7 @@ public class SimpleCommandElement<T> implements CommandElement<T> {
     private final String name;
     private final Permission permission;
     private final boolean optional;
+    private final int size;
 
     @Override
     public String name() {
@@ -53,6 +54,11 @@ public class SimpleCommandElement<T> implements CommandElement<T> {
     @Override
     public Collection<String> suggestions(CommandSource source, String argument) {
         return this.converter.suggestions(source, argument);
+    }
+
+    @Override
+    public int size() {
+        return this.size;
     }
 
     public boolean optional() {

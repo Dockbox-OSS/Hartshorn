@@ -79,6 +79,11 @@ public class CommandElements {
         public Collection<String> suggestions(CommandSource source, String argument) {
             return HartshornUtils.asUnmodifiableCollection(this.values.keySet());
         }
+
+        @Override
+        public int size() {
+            return 1;
+        }
     }
 
 }

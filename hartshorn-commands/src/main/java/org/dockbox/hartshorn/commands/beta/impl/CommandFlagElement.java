@@ -48,6 +48,11 @@ public class CommandFlagElement<T> implements CommandFlag, CommandElement<T> {
     }
 
     @Override
+    public int size() {
+        return 1;
+    }
+
+    @Override
     public String name() {
         return this.element.name();
     }

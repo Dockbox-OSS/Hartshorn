@@ -30,5 +30,6 @@ public interface CommandElement<T> {
     boolean optional();
     Exceptional<T> parse(CommandSource source, String argument);
     Collection<String> suggestions(CommandSource source, String argument);
+    int size();
 
 }

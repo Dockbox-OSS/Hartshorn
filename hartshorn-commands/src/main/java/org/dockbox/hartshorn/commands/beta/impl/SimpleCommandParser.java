@@ -54,13 +54,17 @@ public class SimpleCommandParser implements CommandParser {
         final List<CommandParameter<?>> parsedFlags = HartshornUtils.emptyList();
 
         // Ensure no aliases are left so they are not accidentally parsed
-        command = context.strip(command);
+        String stripped = context.strip(command, false);
         // Strip all flags beforehand so elements can be parsed safely without flag interference
-        command = this.stripFlags(command, parsedFlags, source, containerContext);
+        stripped = this.stripFlags(stripped, parsedFlags, source, containerContext);
 
-        for (CommandElement<?> element : elements) {
-            // TODO, actually parse elements
-            element.parse(source, "");
+        final List<String> tokens = HartshornUtils.asList(stripped.split(" "));
+        for (int i = 0; i < elements.size(); i++) {
+            CommandElement<?> element = elements.get(i);
+            // TODO: Get amount of tokens through element.size()
+            final String token = tokens.get(i);
+            final Exceptional<?> value = element.parse(source, token);
+            parsedElements.add(this.getParameter(value, "argument", element.name()));
         }
 
         return Exceptional.of(new SimpleParsedContext(command,
@@ -78,12 +82,7 @@ public class SimpleCommandParser implements CommandParser {
             if (commandFlag.value()) {
                 if (commandFlag instanceof CommandFlagElement) {
                     final Exceptional<?> value = ((CommandFlagElement<?>) commandFlag).parse(source, flag.split(" ")[1]);
-                    if (value.absent()) {
-                        ResourceEntry resource = new FakeResource("Could not parse flag '" + name + "'");
-                        throw value.caught() ? new ParsingException(resource, value.error()) : new ParsingException(resource);
-                    } else {
-                        flags.add(new CommandParameter<>(value.get(), name));
-                    }
+                    flags.add(this.getParameter(value, "flag", name));
                 }
                 command = command.replace('-' + flag, "");
             } else {
@@ -92,6 +91,15 @@ public class SimpleCommandParser implements CommandParser {
             }
         }
         return command.trim();
+    }
+
+    private CommandParameter<?> getParameter(Exceptional<?> value, String elementType, String elementName) throws ParsingException {
+        if (value.absent()) {
+            ResourceEntry resource = new FakeResource("Could not parse " + elementType + " '" + elementName + "'");
+            throw value.caught() ? new ParsingException(resource, value.error()) : new ParsingException(resource);
+        } else {
+            return new CommandParameter<>(value.get(), elementName);
+        }
     }
 
 }

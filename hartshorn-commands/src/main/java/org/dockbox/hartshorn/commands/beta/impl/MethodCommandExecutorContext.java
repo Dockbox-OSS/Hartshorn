@@ -68,31 +68,39 @@ public class MethodCommandExecutorContext extends DefaultContext implements Comm
     @Override
     public CommandExecutor executor() {
         return (ctx) -> {
+            System.out.println(ctx);
             // TODO: Method invoking
         };
     }
 
     @Override
     public boolean accepts(String command) {
-        final Exceptional<CommandContainerContext> container = this.first(CommandContainerContext.class);
-        if (container.absent()) throw new IllegalStateException("Container context was lost!");
-        final CommandContainerContext containerContext = container.get();
-
-        return containerContext.matches(this.strip(command));
+        final CommandContainerContext containerContext = this.container();
+        return containerContext.matches(this.strip(command, true));
     }
 
     @Override
-    public String strip(String command) {
+    public String strip(String command, boolean parentOnly) {
         for (String alias : this.parentAliases) {
-            // +1 to account for spaces separating the alias from the remaining command
             if (command.startsWith(alias+' ')) command = command.substring(alias.length()+1);
         }
 
+        if (!parentOnly) {
+            for (String alias : this.container().aliases()) {
+                if (command.startsWith(alias+' ')) command = command.substring(alias.length()+1);
+            }
+        }
         return command;
     }
 
     @Override
     public Class<?> parent() {
         return this.type;
+    }
+
+    private CommandContainerContext container() {
+        final Exceptional<CommandContainerContext> container = this.first(CommandContainerContext.class);
+        if (container.absent()) throw new IllegalStateException("Container context was lost!");
+        return container.get();
     }
 }

@@ -28,6 +28,7 @@ import org.dockbox.hartshorn.commands.beta.impl.SimpleCommandContainerContext;
 import org.dockbox.hartshorn.commands.beta.impl.SimpleCommandGateway;
 import org.dockbox.hartshorn.commands.types.CommandValueEnum;
 import org.dockbox.hartshorn.commands.types.SampleCommand;
+import org.dockbox.hartshorn.server.minecraft.Console;
 import org.dockbox.hartshorn.test.HartshornRunner;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -43,7 +44,7 @@ public class CommandContainerContextTests {
     void testParsingCanSucceed() {
         CommandGateway gateway = Hartshorn.context().get(SimpleCommandGateway.class);
         gateway.register(SampleCommand.class);
-        Assertions.assertDoesNotThrow(() -> gateway.accept(null, "demo sub --flag"));
+        Assertions.assertDoesNotThrow(() -> gateway.accept(Console.getInstance(), "demo sub 2 --skip"));
     }
 
     @Test
