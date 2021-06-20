@@ -17,6 +17,7 @@
 
 package org.dockbox.hartshorn.commands;
 
+import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.commands.annotations.Command;
 import org.dockbox.hartshorn.commands.beta.api.CommandElement;
 import org.dockbox.hartshorn.commands.beta.api.CommandFlag;
@@ -34,14 +35,14 @@ public class CommandContainerContextTests {
 
     @Test
     void testContainerContext() {
-        Command command = this.createCommand("demo", "<required{String}> [optional{String}] --flag --vflag String -s", "demo");
+        Command command = this.createCommand("demo", "<required{String}> [optional{String}]  [enum{org.dockbox.hartshorn.commands.CommandValueEnum}] --flag --vflag String -s", "demo");
         final SimpleCommandContainerContext context = new SimpleCommandContainerContext(command);
 
         Assertions.assertEquals("demo", context.permission().get());
         Assertions.assertEquals(1, context.aliases().size());
         Assertions.assertEquals("demo", context.aliases().get(0));
 
-        Assertions.assertEquals(2, context.elements().size());
+        Assertions.assertEquals(3, context.elements().size());
         Assertions.assertEquals(3, context.flags().size());
 
         // Below tests also cover element order.
@@ -53,6 +54,14 @@ public class CommandContainerContextTests {
         final CommandElement<?> optionalElement = context.elements().get(1);
         Assertions.assertTrue(optionalElement.optional());
         Assertions.assertEquals("optional", optionalElement.name());
+
+        final CommandElement<?> enumElement = context.elements().get(2);
+        Assertions.assertTrue(enumElement.optional());
+        Assertions.assertEquals("enum", enumElement.name());
+        final Exceptional<?> one = enumElement.parse(null, "ONE");
+        Assertions.assertTrue(one.present());
+        Assertions.assertTrue(one.get() instanceof CommandValueEnum);
+        Assertions.assertEquals(CommandValueEnum.ONE, one.get());
 
         final CommandFlag flag = context.flags().get(0);
         Assertions.assertEquals("-flag", flag.name());

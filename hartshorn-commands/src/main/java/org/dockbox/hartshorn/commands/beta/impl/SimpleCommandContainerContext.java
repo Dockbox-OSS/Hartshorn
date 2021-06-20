@@ -105,7 +105,7 @@ public class SimpleCommandContainerContext extends DefaultContext implements Com
      *   <li>Name{Type:Permission}
      * </ul>
      */
-    private static final Pattern ELEMENT_VALUE = Pattern.compile("(\\w+)(?:\\{(\\w+)(?::([\\w\\.]+))?\\})?");
+    private static final Pattern ELEMENT_VALUE = Pattern.compile("(\\w+)(?:\\{([\\w\\.]+)(?::([\\w\\.]+))?\\})?");
 
     private final Permission permission;
     private final Command command;
