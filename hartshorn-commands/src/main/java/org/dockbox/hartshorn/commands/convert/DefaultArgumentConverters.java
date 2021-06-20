@@ -140,6 +140,18 @@ public final class DefaultArgumentConverters implements InjectableType {
             .findFirst()
     ), "service");
 
+    public static final ArgumentConverter<String> REMAINING_STRING = new CommandValueConverter<>(String.class, Exceptional::of, -1, "remaining", "remainingString");
+
+    public static final ArgumentConverter<Integer[]> REMAINING_INTS = new CommandValueConverter<>(Integer[].class, in -> {
+        String[] parts = in.split(" ");
+        Integer[] integers = new Integer[parts.length];
+        for (int i = 0; i < parts.length; i++) {
+            String part = parts[i];
+            integers[i] = INTEGER.convert(null, parts[i]).get();
+        }
+        return Exceptional.of(integers);
+    }, -1, "remainingInt");
+
     @Override
     public void stateEnabling(InjectorProperty<?>... properties) {
         Hartshorn.log().info("Registered default command argument converters.");
