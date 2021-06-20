@@ -61,8 +61,8 @@ public class CommandElements {
         }
 
         @Override
-        public Permission permission() {
-            return this.permission;
+        public Exceptional<Permission> permission() {
+            return Exceptional.of(this.permission);
         }
 
         @Override

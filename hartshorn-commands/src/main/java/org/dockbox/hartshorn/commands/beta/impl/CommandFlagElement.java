@@ -15,20 +15,45 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.commands.beta.api;
+package org.dockbox.hartshorn.commands.beta.impl;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.i18n.permissions.Permission;
+import org.dockbox.hartshorn.commands.beta.api.CommandElement;
+import org.dockbox.hartshorn.commands.beta.api.CommandFlag;
 import org.dockbox.hartshorn.commands.source.CommandSource;
 
 import java.util.Collection;
 
-public interface CommandElement<T> {
+import lombok.AllArgsConstructor;
 
-    String name();
-    Exceptional<Permission> permission();
-    boolean optional();
-    Exceptional<T> parse(CommandSource source, String argument);
-    Collection<String> suggestions(CommandSource source, String argument);
+@AllArgsConstructor
+public class CommandFlagElement<T> implements CommandFlag, CommandElement<T> {
 
+    private final CommandElement<T> element;
+
+    @Override
+    public boolean optional() {
+        return true;
+    }
+
+    @Override
+    public Exceptional<T> parse(CommandSource source, String argument) {
+        return this.element.parse(source, argument);
+    }
+
+    @Override
+    public Collection<String> suggestions(CommandSource source, String argument) {
+        return this.element.suggestions(source, argument);
+    }
+
+    @Override
+    public String name() {
+        return this.element.name();
+    }
+
+    @Override
+    public Exceptional<Permission> permission() {
+        return this.element.permission();
+    }
 }

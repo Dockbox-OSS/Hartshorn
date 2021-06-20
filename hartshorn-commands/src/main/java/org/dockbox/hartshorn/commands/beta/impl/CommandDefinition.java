@@ -15,30 +15,21 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.commands.values;
+package org.dockbox.hartshorn.commands.beta.impl;
 
 import org.dockbox.hartshorn.commands.beta.api.CommandElement;
+import org.dockbox.hartshorn.commands.beta.api.CommandFlag;
 
 import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
 
-@Getter @Setter
 @AllArgsConstructor
-@Deprecated
-public abstract class AbstractFlagCollection<T> {
+@Getter
+public class CommandDefinition {
 
-    private T reference;
+    private final List<CommandElement<?>> elements;
+    private final List<CommandFlag> flags;
 
-    protected AbstractFlagCollection() {}
-
-    public abstract void addNamedFlag(String name);
-
-    public abstract void addNamedPermissionFlag(String name, String permission);
-
-    public abstract void addValueBasedFlag(String name, CommandElement<?> value);
-
-    public abstract List<AbstractArgumentElement<?>> buildAndCombines(AbstractArgumentElement<?> element);
 }

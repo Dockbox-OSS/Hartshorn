@@ -41,8 +41,8 @@ public class SimpleCommandElement<T> implements CommandElement<T> {
     }
 
     @Override
-    public Permission permission() {
-        return this.permission;
+    public Exceptional<Permission> permission() {
+        return Exceptional.of(this.permission);
     }
 
     @Override

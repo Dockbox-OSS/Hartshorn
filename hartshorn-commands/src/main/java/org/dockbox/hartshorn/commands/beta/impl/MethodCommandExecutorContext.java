@@ -55,7 +55,7 @@ public class MethodCommandExecutorContext extends DefaultContext implements Comm
             this.isChild = false;
         }
 
-        this.add(new DecoratorCommandContainerContext(this.command));
+        this.add(new SimpleCommandContainerContext(this.command));
     }
 
     @Override

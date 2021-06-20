@@ -24,9 +24,9 @@ import org.dockbox.hartshorn.api.i18n.permissions.Permission;
 import org.dockbox.hartshorn.commands.annotations.Command;
 import org.dockbox.hartshorn.commands.beta.api.CommandContainerContext;
 import org.dockbox.hartshorn.commands.beta.api.CommandElement;
+import org.dockbox.hartshorn.commands.beta.api.CommandFlag;
 import org.dockbox.hartshorn.commands.context.ArgumentConverter;
 import org.dockbox.hartshorn.commands.convert.ArgumentConverterRegistry;
-import org.dockbox.hartshorn.commands.values.AbstractFlagCollection;
 import org.dockbox.hartshorn.di.binding.Bindings;
 import org.dockbox.hartshorn.di.context.DefaultContext;
 import org.dockbox.hartshorn.util.HartshornUtils;
@@ -38,11 +38,11 @@ import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class DecoratorCommandContainerContext extends DefaultContext implements CommandContainerContext {
+public class SimpleCommandContainerContext extends DefaultContext implements CommandContainerContext {
 
     /**
-     * Represents the default type for command elements matched by {@link DecoratorCommandContainerContext#FLAG} or
-     * {@link DecoratorCommandContainerContext#ARGUMENT}. If no type is defined in those matches, this value is used.
+     * Represents the default type for command elements matched by {@link SimpleCommandContainerContext#FLAG} or
+     * {@link SimpleCommandContainerContext#ARGUMENT}. If no type is defined in those matches, this value is used.
      * 'String' is used as this is the base value provided to Hartshorn, thus requiring no further
      * converting to other data types.
      */
@@ -51,7 +51,7 @@ public class DecoratorCommandContainerContext extends DefaultContext implements 
 
     /**
      * Each matching element represents either a flag or argument, these can then be parsed using
-     * {@link DecoratorCommandContainerContext#FLAG} and {@link DecoratorCommandContainerContext#ARGUMENT}.
+     * {@link SimpleCommandContainerContext#FLAG} and {@link SimpleCommandContainerContext#ARGUMENT}.
      */
     private static final Pattern GENERIC_ARGUMENT = Pattern.compile("((?:<.+?>)|(?:\\[.+?\\])|(?:-(?:(?:-\\w+)|\\w)(?: [^ -]+)?))");
 
@@ -59,7 +59,7 @@ public class DecoratorCommandContainerContext extends DefaultContext implements 
      * Each matching element represents a flag with either one or two groups. The first group (G1) is
      * required, and indicates the name of the flag. The second group (G2) is optional, and represents
      * the value expected by the flag. G2 is a argument which can be parsed using {@link
-     * DecoratorCommandContainerContext#ARGUMENT}.
+     * SimpleCommandContainerContext#ARGUMENT}.
      *
      * <p>Syntax:
      *
@@ -74,8 +74,8 @@ public class DecoratorCommandContainerContext extends DefaultContext implements 
     /**
      * Each matching element represents a argument with two groups. The first group (G1) indicates
      * whether the argument is required or optional. The second group can either be a argument meta
-     * which can be parsed using {@link DecoratorCommandContainerContext#ELEMENT_VALUE}, or a simple value if {@link
-     * DecoratorCommandContainerContext#ELEMENT_VALUE} returns no matches. Arguments can be grouped.
+     * which can be parsed using {@link SimpleCommandContainerContext#ELEMENT_VALUE}, or a simple value if {@link
+     * SimpleCommandContainerContext#ELEMENT_VALUE} returns no matches. Arguments can be grouped.
      *
      * <p>Syntax:
      *
@@ -92,7 +92,7 @@ public class DecoratorCommandContainerContext extends DefaultContext implements 
 
     /**
      * Each matching element represents additional meta information for matching elements of {@link
-     * DecoratorCommandContainerContext#ARGUMENT}. Matches contain either one or two groups. If both groups are
+     * SimpleCommandContainerContext#ARGUMENT}. Matches contain either one or two groups. If both groups are
      * present, group 1 represents the name of the argument, and group 2 represents the value. If only
      * group 1 is present, it represents the type of the argument and the name is obtained from the
      * argument definition.
@@ -109,31 +109,34 @@ public class DecoratorCommandContainerContext extends DefaultContext implements 
 
     private final Permission permission;
     private final Command command;
-    private final List<CommandElement<?>> elements;
+    private final CommandDefinition definition;
 
-    public DecoratorCommandContainerContext(Command command) {
+    public SimpleCommandContainerContext(Command command) {
         this.command = command;
         this.permission = this.getPermissionOrDefault();
-        if (!"".equals(this.arguments()))
-            this.elements = this.parseArgumentElements(this.arguments(), this.permission);
-        else this.elements = HartshornUtils.emptyList();
+        if (!"".equals(this.arguments())) {
+            this.definition = this.parseElements(this.arguments(), this.permission);
+        }
+        else {
+            this.definition = new CommandDefinition(HartshornUtils.emptyList(), HartshornUtils.emptyList());
+        }
     }
-    
+
     protected Permission getPermissionOrDefault() {
         String raw = this.command.permission();
+
         if ("".equals(raw)) {
-            raw = Hartshorn.PROJECT_ID + '.' + Bindings.serviceId(this.parent()).replaceAll("-", ".");
-            // TODO: Extend with executor
-//            if (this instanceof MethodCommandContext) {
-//                raw += '.' + this.aliases().get(0);
-//            }
+            raw = Hartshorn.PROJECT_ID + '.'
+                    + Bindings.serviceId(this.parent()).replaceAll("-", ".") + '.'
+                    + this.aliases().get(0);
         }
+
         return Permission.of(raw);
     }
-    
-    protected List<CommandElement<?>> parseArgumentElements(CharSequence arguments, Permission permission) {
+
+    protected CommandDefinition parseElements(CharSequence arguments, Permission permission) {
         List<CommandElement<?>> elements = HartshornUtils.emptyList();
-        AbstractFlagCollection<?> flagCollection = null;
+        List<CommandFlag> flags = HartshornUtils.emptyList();
 
         Matcher genericArgumentMatcher = GENERIC_ARGUMENT.matcher(arguments);
         while (genericArgumentMatcher.find()) {
@@ -141,39 +144,37 @@ public class DecoratorCommandContainerContext extends DefaultContext implements 
             String part = genericArgumentMatcher.group();
             Matcher argumentMatcher = ARGUMENT.matcher(part);
             if (argumentMatcher.matches()) {
-                elements = this.extractArguments(elements, argumentMatcher, permission);
+                CommandDefinition definition = this.extractArguments(elements, argumentMatcher, permission);
+                // Expected to only ever be a single command element
+                elements.addAll(definition.getElements());
             }
             else {
                 Matcher flagMatcher = FLAG.matcher(part);
-//                flagCollection = this.getAbstractFlagCollection(flagCollection, flagMatcher, defaultPermission);
+                flags.addAll(this.generateFlags(flagMatcher, permission));
             }
         }
 
-        // TODO: Review need
-        if (null == flagCollection) return elements;
-        else {
-//            return flagCollection.buildAndCombines(this.wrapElements(elements));
-            return null;
-        }
+        return new CommandDefinition(elements, flags);
     }
 
-    private List<CommandElement<?>> extractArguments(Collection<CommandElement<?>> elements, MatchResult argumentMatcher, Permission permission) {
+    private CommandDefinition extractArguments(Collection<CommandElement<?>> elements, MatchResult argumentMatcher, Permission permission) {
         boolean optional = '[' == argumentMatcher.group(1).charAt(0);
         String elementValue = argumentMatcher.group(2);
 
-        List<CommandElement<?>> result = this.parseArgumentElements(elementValue, permission);
-        if (result.isEmpty()) {
-            CommandElement<?> element = this.generateCommandElement(argumentMatcher.group(2), permission, optional);
-            result = HartshornUtils.asList(element);
+        CommandDefinition definition = this.parseElements(elementValue, permission);
+
+        if (definition.getElements().isEmpty() && definition.getFlags().isEmpty()) {
+            CommandElement<?> element = this.generateElement(argumentMatcher.group(2), permission, optional);
+            definition = new CommandDefinition(HartshornUtils.asList(element), HartshornUtils.emptyList());
         }
 
-        return result;
+        return definition;
     }
 
-    protected CommandElement<?> generateCommandElement(String definition, Permission permission, boolean optional) {
-        String type = "String";
+    protected CommandElement<?> generateElement(String definition, Permission permission, boolean optional) {
+        String type = DEFAULT_TYPE;
         String name;
-        Matcher elementValue = null;
+        Matcher elementValue = ELEMENT_VALUE.matcher(definition);
         Permission elementPermission = permission;
         if (!elementValue.matches() || 0 == elementValue.groupCount())
             Except.handle("Unknown argument specification " + definition + ", use Type or Name{Type} or Name{Type:Permission}");
@@ -210,7 +211,8 @@ public class DecoratorCommandContainerContext extends DefaultContext implements 
         Exceptional<ArgumentConverter<?>> converter = ArgumentConverterRegistry.getOptionalConverter(type.toLowerCase());
         if (converter.present()) {
             return new SimpleCommandElement<>(converter.get(), name, permission, optional);
-        } else {
+        }
+        else {
             try {
                 Class<?> clazz = Class.forName(type);
                 if (clazz.isEnum()) {
@@ -227,6 +229,39 @@ public class DecoratorCommandContainerContext extends DefaultContext implements 
                 Except.handle("No argument of type `" + type + "` can be read", e);
                 return null;
             }
+        }
+    }
+
+    private List<CommandFlag> generateFlags(Matcher flagMatcher, Permission defaultPermission) {
+        List<CommandFlag> flags = HartshornUtils.emptyList();
+        if (flagMatcher.matches()) {
+            flags.add(this.parseFlag(
+                    flagMatcher.group(1),
+                    flagMatcher.group(2),
+                    defaultPermission
+            ));
+        }
+        return flags;
+    }
+
+    private CommandFlag parseFlag(String name, String type, Permission defaultPermission) {
+        if (null == type) {
+            int at;
+            /* See syntax definition of DefaultCommandBus#FLAG */
+            if (0 <= (at = name.indexOf(':'))) {
+                name = name.substring(0, at);
+                String permission = name.substring(at + 1);
+                return new SimpleCommandFlag(name, Permission.of(permission));
+            }
+            else {
+                return new SimpleCommandFlag(name);
+            }
+        }
+        else {
+            if (0 <= name.indexOf(':')) {
+                Except.handle("Flag values do not support permissions at flag `" + name + "`. Permit the value instead");
+            }
+            return new CommandFlagElement<>(this.lookupElement(type, name, defaultPermission, true));
         }
     }
 
@@ -285,6 +320,11 @@ public class DecoratorCommandContainerContext extends DefaultContext implements 
 
     @Override
     public List<CommandElement<?>> elements() {
-        return this.elements;
+        return this.definition.getElements();
+    }
+
+    @Override
+    public List<CommandFlag> flags() {
+        return this.definition.getFlags();
     }
 }

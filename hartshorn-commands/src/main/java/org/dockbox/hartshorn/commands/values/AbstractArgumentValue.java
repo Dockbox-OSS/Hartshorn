@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.commands.values;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.exceptions.Except;
+import org.dockbox.hartshorn.commands.beta.api.CommandElement;
 import org.dockbox.hartshorn.commands.context.ArgumentConverter;
 import org.dockbox.hartshorn.commands.convert.ArgumentConverterRegistry;
 
@@ -62,5 +63,5 @@ public abstract class AbstractArgumentValue<T> implements ArgumentValue<T> {
     protected abstract <E extends Enum<E>> void setEnumType(Class<E> enumType, String key);
 
     @Override
-    public abstract AbstractArgumentElement<T> getElement();
+    public abstract CommandElement<T> getElement();
 }

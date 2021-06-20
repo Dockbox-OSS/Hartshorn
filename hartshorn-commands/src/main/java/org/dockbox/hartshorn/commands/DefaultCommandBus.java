@@ -23,7 +23,6 @@ import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.domain.Identifiable;
 import org.dockbox.hartshorn.api.entity.annotations.Entity;
 import org.dockbox.hartshorn.api.events.parents.Cancellable;
-import org.dockbox.hartshorn.api.exceptions.Except;
 import org.dockbox.hartshorn.api.i18n.common.ResourceEntry;
 import org.dockbox.hartshorn.api.i18n.entry.DefaultResources;
 import org.dockbox.hartshorn.api.i18n.text.Text;
@@ -39,7 +38,6 @@ import org.dockbox.hartshorn.commands.registration.MethodCommandContext;
 import org.dockbox.hartshorn.commands.registration.ParentCommandContext;
 import org.dockbox.hartshorn.commands.source.CommandSource;
 import org.dockbox.hartshorn.commands.values.AbstractArgumentElement;
-import org.dockbox.hartshorn.commands.values.AbstractFlagCollection;
 import org.dockbox.hartshorn.commands.values.ArgumentValue;
 import org.dockbox.hartshorn.di.annotations.Wired;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
@@ -53,7 +51,6 @@ import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -353,69 +350,6 @@ public abstract class DefaultCommandBus<E> implements CommandBus {
             }
         }
         return Exceptional.empty();
-    }
-
-    protected List<AbstractArgumentElement<?>> parseArgumentElements(CharSequence argString, String defaultPermission) {
-        List<AbstractArgumentElement<?>> elements = HartshornUtils.emptyList();
-        AbstractFlagCollection<?> flagCollection = null;
-
-//        Matcher genericArgumentMatcher = GENERIC_ARGUMENT.matcher(argString);
-//        while (genericArgumentMatcher.find()) {
-//
-//            String part = genericArgumentMatcher.group();
-//            Matcher argumentMatcher = ARGUMENT.matcher(part);
-//            if (argumentMatcher.matches()) {
-//                this.extractArguments(elements, argumentMatcher, defaultPermission);
-//
-//            }
-//            else {
-//                Matcher flagMatcher = FLAG.matcher(part);
-//                flagCollection = this.getAbstractFlagCollection(flagCollection, flagMatcher, defaultPermission);
-//            }
-//        }
-
-        /*
-        Certain platforms may require the flag collection to be parsed together with the wrapped arguments. It is
-        possible that a platform implementation returns a flat list of arguments and flags here, though to avoid
-        incompatibilities the option to build and combine these is provided.
-        */
-        if (null == flagCollection) return elements;
-        else return flagCollection.buildAndCombines(this.wrapElements(elements));
-    }
-
-    private AbstractFlagCollection<?> getAbstractFlagCollection(
-            AbstractFlagCollection<?> flagCollection,
-            Matcher flagMatcher,
-            String defaultPermission
-    ) {
-        if (flagMatcher.matches()) {
-            if (null == flagCollection) flagCollection = this.context.get(AbstractFlagCollection.class);
-            this.parseFlag(flagCollection, flagMatcher.group(1), flagMatcher.group(2), defaultPermission);
-        }
-        return flagCollection;
-    }
-
-    private void parseFlag(AbstractFlagCollection<?> flags, String name, String value, String defaultPermission) {
-        if (null == value) {
-            int at;
-            /* See syntax definition of DefaultCommandBus#FLAG */
-            if (0 <= (at = name.indexOf(':'))) {
-                name = name.substring(0, at);
-                String permission = name.substring(at + 1);
-                flags.addNamedPermissionFlag(name, permission);
-            }
-            else {
-                flags.addNamedFlag(name);
-            }
-
-        }
-        else {
-            ArgumentValue<?> argumentValue = this.generateArgumentValue(value, defaultPermission);
-            if (0 <= name.indexOf(':')) {
-                Except.handle("Flag values do not support permissions at flag `" + name + "`. Permit the value instead");
-            }
-            flags.addValueBasedFlag(name, argumentValue);
-        }
     }
 
     protected SimpleCommandContext createCommandContext(String command, CommandSource sender, Map<String, Collection<Object>> args) {
