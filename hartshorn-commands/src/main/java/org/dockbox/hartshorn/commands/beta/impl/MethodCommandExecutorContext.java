@@ -74,18 +74,21 @@ public class MethodCommandExecutorContext extends DefaultContext implements Comm
 
     @Override
     public boolean accepts(String command) {
-        Command annotation = this.isChild ? this.parent : this.command;
-
-        final String alias = command.split(" ")[0];
-        if (!HartshornUtils.contains(annotation.value(), alias)) {
-            return false;
-        }
-
         final Exceptional<CommandContainerContext> container = this.first(CommandContainerContext.class);
         if (container.absent()) throw new IllegalStateException("Container context was lost!");
         final CommandContainerContext containerContext = container.get();
 
-        return containerContext.matches(command);
+        return containerContext.matches(this.strip(command));
+    }
+
+    @Override
+    public String strip(String command) {
+        for (String alias : this.parentAliases) {
+            // +1 to account for spaces separating the alias from the remaining command
+            if (command.startsWith(alias+' ')) command = command.substring(alias.length()+1);
+        }
+
+        return command;
     }
 
     @Override

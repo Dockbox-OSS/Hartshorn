@@ -43,4 +43,9 @@ public class SimpleCommandFlag implements CommandFlag {
     public Exceptional<Permission> permission() {
         return Exceptional.of(this.permission);
     }
+
+    @Override
+    public boolean value() {
+        return false;
+    }
 }

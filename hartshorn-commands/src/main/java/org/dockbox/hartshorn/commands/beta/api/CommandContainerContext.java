@@ -18,7 +18,6 @@
 package org.dockbox.hartshorn.commands.beta.api;
 
 import org.dockbox.hartshorn.api.i18n.permissions.Permission;
-import org.dockbox.hartshorn.commands.context.ArgumentConverter;
 import org.dockbox.hartshorn.di.context.Context;
 
 import java.time.temporal.ChronoUnit;
@@ -37,5 +36,6 @@ public interface CommandContainerContext extends Context {
     Class<?> parent();
     List<CommandElement<?>> elements();
     List<CommandFlag> flags();
+    CommandFlag flag(String name);
     boolean matches(String command);
 }

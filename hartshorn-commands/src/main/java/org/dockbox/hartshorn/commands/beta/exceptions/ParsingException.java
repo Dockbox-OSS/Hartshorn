@@ -15,17 +15,24 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.commands.beta.api;
+package org.dockbox.hartshorn.commands.beta.exceptions;
 
-import org.dockbox.hartshorn.di.context.Context;
+import org.dockbox.hartshorn.api.i18n.common.ResourceEntry;
 
-public interface CommandExecutorContext extends Context {
+import lombok.Getter;
 
-    CommandExecutor executor();
-    boolean accepts(String command);
+public class ParsingException extends Exception {
 
-    String strip(String command);
+    @Getter
+    private final ResourceEntry resource;
 
-    Class<?> parent();
+    public ParsingException(ResourceEntry resource) {
+        super(resource.plain());
+        this.resource = resource;
+    }
 
+    public ParsingException(ResourceEntry resource, Throwable cause) {
+        super(resource.plain(), cause);
+        this.resource = resource;
+    }
 }

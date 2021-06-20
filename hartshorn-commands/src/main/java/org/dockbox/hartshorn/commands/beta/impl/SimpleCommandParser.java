@@ -18,46 +18,80 @@
 package org.dockbox.hartshorn.commands.beta.impl;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.api.i18n.common.ResourceEntry;
+import org.dockbox.hartshorn.api.i18n.entry.FakeResource;
 import org.dockbox.hartshorn.commands.beta.api.CommandContainerContext;
 import org.dockbox.hartshorn.commands.beta.api.CommandElement;
 import org.dockbox.hartshorn.commands.beta.api.CommandExecutorContext;
+import org.dockbox.hartshorn.commands.beta.api.CommandFlag;
 import org.dockbox.hartshorn.commands.beta.api.CommandParser;
 import org.dockbox.hartshorn.commands.beta.api.ParsedContext;
+import org.dockbox.hartshorn.commands.beta.exceptions.ParsingException;
+import org.dockbox.hartshorn.commands.context.CommandParameter;
 import org.dockbox.hartshorn.commands.source.CommandSource;
 import org.dockbox.hartshorn.di.annotations.Binds;
 import org.dockbox.hartshorn.util.HartshornUtils;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Binds(CommandParser.class)
 public class SimpleCommandParser implements CommandParser {
 
+    private static final Pattern FLAG = Pattern.compile("-(-?\\w+)(?: ([^ -]+))?");
+
     @Override
-    public Exceptional<ParsedContext> parse(String command, CommandSource source, CommandExecutorContext context) {
+    public Exceptional<ParsedContext> parse(String command, CommandSource source, CommandExecutorContext context) throws ParsingException {
         final Exceptional<CommandContainerContext> container = context.first(CommandContainerContext.class);
         if (container.absent()) return Exceptional.empty();
 
         final CommandContainerContext containerContext = container.get();
-
-        // TODO: Review (keep in mind this should have already been validated in the executor, here we should only strip the aliases)
-        final String alias = command.split(" ")[0];
-        if (!containerContext.aliases().contains(alias)) return Exceptional.empty();
-
-        // TODO: Implement parsing (reuse DefaultCommandContext for this)
         List<CommandElement<?>> elements = containerContext.elements();
 
+        final List<CommandParameter<?>> parsedElements = HartshornUtils.emptyList();
+        final List<CommandParameter<?>> parsedFlags = HartshornUtils.emptyList();
+
+        // Ensure no aliases are left so they are not accidentally parsed
+        command = context.strip(command);
+        // Strip all flags beforehand so elements can be parsed safely without flag interference
+        command = this.stripFlags(command, parsedFlags, source, containerContext);
+
         for (CommandElement<?> element : elements) {
-            // TODO: Handle parts
+            // TODO, actually parse elements
             element.parse(source, "");
         }
 
-        // ... (turn values into args + flags)
-
         return Exceptional.of(new SimpleParsedContext(command,
-                HartshornUtils.emptyList(),
-                HartshornUtils.emptyList(),
+                parsedElements,
+                parsedFlags,
                 source, HartshornUtils.singletonList(containerContext.permission())));
     }
 
+    private String stripFlags(String command, Collection<CommandParameter<?>> flags, CommandSource source, CommandContainerContext context) throws ParsingException {
+        final Matcher matcher = FLAG.matcher(command);
+        while (matcher.find()) {
+            final String flag = matcher.group().substring(1); // Discard - prefix
+            String name = flag.split(" ")[0];
+            final CommandFlag commandFlag = context.flag(name);
+            if (commandFlag.value()) {
+                if (commandFlag instanceof CommandFlagElement) {
+                    final Exceptional<?> value = ((CommandFlagElement<?>) commandFlag).parse(source, flag.split(" ")[1]);
+                    if (value.absent()) {
+                        ResourceEntry resource = new FakeResource("Could not parse flag '" + name + "'");
+                        throw value.caught() ? new ParsingException(resource, value.error()) : new ParsingException(resource);
+                    } else {
+                        flags.add(new CommandParameter<>(value.get(), name));
+                    }
+                }
+                command = command.replace('-' + flag, "");
+            } else {
+                flags.add(new CommandParameter<>(null, name));
+                command = command.replace('-' + name, "");
+            }
+        }
+        return command.trim();
+    }
 
 }

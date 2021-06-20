@@ -18,10 +18,11 @@
 package org.dockbox.hartshorn.commands.beta.api;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.commands.beta.exceptions.ParsingException;
 import org.dockbox.hartshorn.commands.source.CommandSource;
 
 public interface CommandParser {
 
-    Exceptional<ParsedContext> parse(String command, CommandSource source, CommandExecutorContext context);
+    Exceptional<ParsedContext> parse(String command, CommandSource source, CommandExecutorContext context) throws ParsingException;
 
 }

@@ -56,4 +56,9 @@ public class CommandFlagElement<T> implements CommandFlag, CommandElement<T> {
     public Exceptional<Permission> permission() {
         return this.element.permission();
     }
+
+    @Override
+    public boolean value() {
+        return true;
+    }
 }

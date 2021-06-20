@@ -24,5 +24,6 @@ public interface CommandFlag {
 
     String name();
     Exceptional<Permission> permission();
+    boolean value();
 
 }

@@ -267,9 +267,12 @@ public class SimpleCommandContainerContext extends DefaultContext implements Com
 
     @Override
     public boolean matches(String command) {
-        for (String alias : this.aliases()) {
+        for (String candidate : this.aliases()) {
+            if (command.startsWith(candidate)) {
+                if (!command.contains(" ")) return this.elements().isEmpty();
+                else return true;
+            }
         }
-        // TODO: Implement
         return false;
     }
 
@@ -326,5 +329,13 @@ public class SimpleCommandContainerContext extends DefaultContext implements Com
     @Override
     public List<CommandFlag> flags() {
         return this.definition.getFlags();
+    }
+
+    @Override
+    public CommandFlag flag(String name) {
+        for (CommandFlag flag : this.flags()) {
+            if (flag.name().equals(name)) return flag;
+        }
+        return null;
     }
 }
