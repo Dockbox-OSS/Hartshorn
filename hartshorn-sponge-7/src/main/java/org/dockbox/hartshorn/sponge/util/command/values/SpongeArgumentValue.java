@@ -44,7 +44,7 @@ public class SpongeArgumentValue extends AbstractArgumentValue<CommandElement> {
     }
 
     @Override
-    public SpongeArgumentElement getElement() {
-        return new SpongeArgumentElement(super.getValue());
+    public org.dockbox.hartshorn.commands.beta.api.CommandElement<CommandElement> getElement() {
+        return null;
     }
 }

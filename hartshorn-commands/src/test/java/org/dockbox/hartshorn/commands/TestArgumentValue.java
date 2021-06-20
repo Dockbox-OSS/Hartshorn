@@ -17,8 +17,8 @@
 
 package org.dockbox.hartshorn.commands;
 
+import org.dockbox.hartshorn.commands.beta.api.CommandElement;
 import org.dockbox.hartshorn.commands.context.ArgumentConverter;
-import org.dockbox.hartshorn.commands.values.AbstractArgumentElement;
 import org.dockbox.hartshorn.commands.values.AbstractArgumentValue;
 
 public class TestArgumentValue extends AbstractArgumentValue<String> {
@@ -37,7 +37,7 @@ public class TestArgumentValue extends AbstractArgumentValue<String> {
     }
 
     @Override
-    public AbstractArgumentElement<String> getElement() {
+    public CommandElement<String> getElement() {
         return null;
     }
 }

@@ -19,7 +19,6 @@ package org.dockbox.hartshorn.sponge.util.command.values;
 
 import org.dockbox.hartshorn.commands.values.AbstractArgumentElement;
 import org.dockbox.hartshorn.commands.values.AbstractFlagCollection;
-import org.dockbox.hartshorn.commands.values.ArgumentValue;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.spongepowered.api.command.args.CommandElement;
 import org.spongepowered.api.command.args.CommandFlags;
@@ -49,9 +48,8 @@ public class SpongeFlagCollection extends AbstractFlagCollection<CommandFlags.Bu
     }
 
     @Override
-    public void addValueBasedFlag(String name, ArgumentValue<?> value) {
-        if (value instanceof SpongeArgumentValue)
-            this.getReference().valueFlag((CommandElement) value.getElement().getReference(), name);
+    public void addValueBasedFlag(String name, org.dockbox.hartshorn.commands.beta.api.CommandElement<?> value) {
+
     }
 
     @SuppressWarnings("OverlyStrongTypeCast")

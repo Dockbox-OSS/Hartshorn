@@ -152,7 +152,7 @@ public class SpongeCommandBus extends DefaultCommandBus<Builder> {
         String usage = context.getCommand().arguments();
         List<AbstractArgumentElement<?>> elements = HartshornUtils.emptyList();
         if (!"".equals(usage)) {
-//            elements = super.parseArgumentElements(context.getCommand().arguments(), permission);
+//            elements = super.parseElements(context.getCommand().arguments(), permission);
         }
         List<CommandElement> commandElements = elements.stream()
                 .filter(SpongeArgumentElement.class::isInstance)
