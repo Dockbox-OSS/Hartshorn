@@ -134,7 +134,7 @@ public final class DefaultArgumentConverters implements InjectableType {
 
     public static final ArgumentConverter<Text> TEXT = new CommandValueConverter<>(Text.class, in -> Exceptional.of(Text.of(in)), "text");
 
-    public static final ArgumentConverter<ServiceContainer> SERVICE = new CommandValueConverter<ServiceContainer>(ServiceContainer.class, in -> Exceptional.of(Hartshorn.context()
+    public static final ArgumentConverter<ServiceContainer> SERVICE = new CommandValueConverter<>(ServiceContainer.class, in -> Exceptional.of(Hartshorn.context()
             .locator().containers().stream()
             .filter(container -> container.getId().equals(in))
             .findFirst()

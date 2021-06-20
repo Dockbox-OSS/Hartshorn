@@ -68,8 +68,10 @@ public class SimpleCommandParser implements CommandParser {
             final Exceptional<?> value = element.parse(source, token);
             parsedElements.add(this.getParameter(value, "argument", element.name()));
 
-            // TODO: Throw exception if more arguments are requested after this
-            if (size == -1) break;
+            if (size == -1) {
+                if (i != elements.size() - 1) throw new ParsingException(new FakeResource("Illegal argument definition"));
+                break;
+            }
         }
 
         return Exceptional.of(new SimpleParsedContext(command,
@@ -86,6 +88,7 @@ public class SimpleCommandParser implements CommandParser {
             final CommandFlag commandFlag = context.flag(name);
             if (commandFlag.value()) {
                 if (commandFlag instanceof CommandFlagElement) {
+                    // TODO: Add support for remainingX flags
                     final Exceptional<?> value = ((CommandFlagElement<?>) commandFlag).parse(source, flag.split(" ")[1]);
                     flags.add(this.getParameter(value, "flag", name));
                 }
