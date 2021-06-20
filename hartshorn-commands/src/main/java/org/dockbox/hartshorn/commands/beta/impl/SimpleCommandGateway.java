@@ -60,7 +60,6 @@ public class SimpleCommandGateway implements CommandGateway {
                 final Exceptional<ParsedContext> commandContext = this.parser.parse(command, source, context);
                 if (commandContext.present()) {
                     context.executor().execute(commandContext.get());
-                    this.accept(commandContext.get());
                     return;
                 }
             }
