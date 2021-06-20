@@ -18,17 +18,23 @@
 package org.dockbox.hartshorn.commands.beta.impl;
 
 import org.dockbox.hartshorn.api.Hartshorn;
+import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.api.exceptions.Except;
 import org.dockbox.hartshorn.api.i18n.permissions.Permission;
 import org.dockbox.hartshorn.commands.annotations.Command;
 import org.dockbox.hartshorn.commands.beta.api.CommandContainerContext;
+import org.dockbox.hartshorn.commands.beta.api.CommandElement;
 import org.dockbox.hartshorn.commands.context.ArgumentConverter;
+import org.dockbox.hartshorn.commands.convert.ArgumentConverterRegistry;
 import org.dockbox.hartshorn.commands.values.AbstractFlagCollection;
 import org.dockbox.hartshorn.di.binding.Bindings;
 import org.dockbox.hartshorn.di.context.DefaultContext;
 import org.dockbox.hartshorn.util.HartshornUtils;
 
 import java.time.temporal.ChronoUnit;
+import java.util.Collection;
 import java.util.List;
+import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -103,13 +109,13 @@ public class DecoratorCommandContainerContext extends DefaultContext implements 
 
     private final Permission permission;
     private final Command command;
-    private final List<ArgumentConverter<?>> elements;
+    private final List<CommandElement<?>> elements;
 
     public DecoratorCommandContainerContext(Command command) {
         this.command = command;
         this.permission = this.getPermissionOrDefault();
         if (!"".equals(this.arguments()))
-            this.elements = this.parseArgumentElements(this.arguments(), permission.get());
+            this.elements = this.parseArgumentElements(this.arguments(), this.permission);
         else this.elements = HartshornUtils.emptyList();
     }
     
@@ -125,18 +131,17 @@ public class DecoratorCommandContainerContext extends DefaultContext implements 
         return Permission.of(raw);
     }
     
-    protected List<ArgumentConverter<?>> parseArgumentElements(CharSequence argString, String defaultPermission) {
-        // TODO: Ensure ordered
-        List<ArgumentConverter<?>> elements = HartshornUtils.emptyList();
+    protected List<CommandElement<?>> parseArgumentElements(CharSequence arguments, Permission permission) {
+        List<CommandElement<?>> elements = HartshornUtils.emptyList();
         AbstractFlagCollection<?> flagCollection = null;
 
-        Matcher genericArgumentMatcher = GENERIC_ARGUMENT.matcher(argString);
+        Matcher genericArgumentMatcher = GENERIC_ARGUMENT.matcher(arguments);
         while (genericArgumentMatcher.find()) {
 
             String part = genericArgumentMatcher.group();
             Matcher argumentMatcher = ARGUMENT.matcher(part);
             if (argumentMatcher.matches()) {
-//                this.extractArguments(elements, argumentMatcher, defaultPermission);
+                elements = this.extractArguments(elements, argumentMatcher, permission);
             }
             else {
                 Matcher flagMatcher = FLAG.matcher(part);
@@ -152,8 +157,83 @@ public class DecoratorCommandContainerContext extends DefaultContext implements 
         }
     }
 
+    private List<CommandElement<?>> extractArguments(Collection<CommandElement<?>> elements, MatchResult argumentMatcher, Permission permission) {
+        boolean optional = '[' == argumentMatcher.group(1).charAt(0);
+        String elementValue = argumentMatcher.group(2);
+
+        List<CommandElement<?>> result = this.parseArgumentElements(elementValue, permission);
+        if (result.isEmpty()) {
+            CommandElement<?> element = this.generateCommandElement(argumentMatcher.group(2), permission, optional);
+            result = HartshornUtils.asList(element);
+        }
+
+        return result;
+    }
+
+    protected CommandElement<?> generateCommandElement(String definition, Permission permission, boolean optional) {
+        String type = "String";
+        String name;
+        Matcher elementValue = null;
+        Permission elementPermission = permission;
+        if (!elementValue.matches() || 0 == elementValue.groupCount())
+            Except.handle("Unknown argument specification " + definition + ", use Type or Name{Type} or Name{Type:Permission}");
+
+        /*
+        Group one specifies either the name of the value (if two or more groups are matched), or the type if only one
+        group matched.
+        */
+        if (1 <= elementValue.groupCount()) {
+            String g1 = elementValue.group(1);
+            if (1 == elementValue.groupCount()) type = g1;
+            name = g1;
+        }
+        else throw new IllegalArgumentException("Missing key argument in specification '" + definition + "'");
+
+        /*
+        Group two matches the type if two or more groups are present. This overwrites the default value if applicable.
+        */
+        if (2 <= elementValue.groupCount() && null != elementValue.group(2))
+            type = elementValue.group(2);
+
+        /*
+        Group three matches the permission if three groups are present. If the third group is not present, the default
+        permission is used. Usually the default permission is provided by the original command registration (which
+        defaults to HartshornInformation#GLOBAL_OVERRIDE if none is explicitly specified).
+        */
+        if (3 <= elementValue.groupCount() && null != elementValue.group(3))
+            elementPermission = Permission.of(elementValue.group(3));
+
+        return this.lookupElement(type, name, elementPermission, optional);
+    }
+
+    private <E extends Enum<E>> CommandElement<?> lookupElement(String type, String name, Permission permission, boolean optional) {
+        Exceptional<ArgumentConverter<?>> converter = ArgumentConverterRegistry.getOptionalConverter(type.toLowerCase());
+        if (converter.present()) {
+            return new SimpleCommandElement<>(converter.get(), name, permission, optional);
+        } else {
+            try {
+                Class<?> clazz = Class.forName(type);
+                if (clazz.isEnum()) {
+                    //noinspection unchecked
+                    Class<E> enumType = (Class<E>) clazz;
+                    return CommandElements.enumElement(name, permission, enumType, optional);
+                }
+                else {
+                    Hartshorn.log().warn("Type '" + type.toLowerCase() + "' is not supported, using default value");
+                    return this.lookupElement(DEFAULT_TYPE, name, permission, optional);
+                }
+            }
+            catch (Exception e) {
+                Except.handle("No argument of type `" + type + "` can be read", e);
+                return null;
+            }
+        }
+    }
+
     @Override
     public boolean matches(String command) {
+        for (String alias : this.aliases()) {
+        }
         // TODO: Implement
         return false;
     }
@@ -204,7 +284,7 @@ public class DecoratorCommandContainerContext extends DefaultContext implements 
     }
 
     @Override
-    public List<ArgumentConverter<?>> elements() {
+    public List<CommandElement<?>> elements() {
         return this.elements;
     }
 }

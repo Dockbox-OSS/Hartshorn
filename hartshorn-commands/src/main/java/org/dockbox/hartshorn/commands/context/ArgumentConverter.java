@@ -33,5 +33,5 @@ public interface ArgumentConverter<T> {
 
     Exceptional<T> convert(CommandSource source, CommandParameter<String> value);
 
-    Collection<String> getSuggestions(CommandSource source, String argument);
+    Collection<String> suggestions(CommandSource source, String argument);
 }

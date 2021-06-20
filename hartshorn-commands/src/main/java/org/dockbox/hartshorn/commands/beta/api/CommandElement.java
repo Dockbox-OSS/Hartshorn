@@ -15,18 +15,20 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.commands.values;
+package org.dockbox.hartshorn.commands.beta.api;
 
-import org.dockbox.hartshorn.commands.beta.api.CommandElement;
+import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.api.i18n.permissions.Permission;
+import org.dockbox.hartshorn.commands.source.CommandSource;
 
-public interface ArgumentValue<T> {
+import java.util.Collection;
 
-    String getPermission();
+public interface CommandElement<T> {
 
-    CommandElement<T> getElement();
-
-    T getValue();
-
-    void setValue(T value);
+    String name();
+    Permission permission();
+    boolean optional();
+    Exceptional<T> parse(CommandSource source, String argument);
+    Collection<String> suggestions(CommandSource source, String argument);
 
 }

@@ -53,7 +53,6 @@ import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -356,47 +355,6 @@ public abstract class DefaultCommandBus<E> implements CommandBus {
         return Exceptional.empty();
     }
 
-    protected ArgumentValue<?> generateArgumentValue(String argumentDefinition, String defaultPermission) {
-        String type = "String";
-        String key;
-        String permission = defaultPermission;
-        Matcher elementValue = null;
-        if (!elementValue.matches() || 0 == elementValue.groupCount())
-            Except.handle("Unknown argument specification " + argumentDefinition + ", use Type or Name{Type} or Name{Type:Permission}");
-
-        /*
-        Group one specifies either the name of the value (if two or more groups are matched), or the type if only one
-        group matched.
-        */
-        if (1 <= elementValue.groupCount()) {
-            String g1 = elementValue.group(1);
-            if (1 == elementValue.groupCount()) type = g1;
-            key = g1;
-        }
-        else throw new IllegalArgumentException("Missing key argument in specification '" + argumentDefinition + "'");
-
-        /*
-        Group two matches the type if two or more groups are present. This overwrites the default value if applicable.
-        */
-        if (2 <= elementValue.groupCount() && null != elementValue.group(2))
-            type = elementValue.group(2);
-
-        /*
-        Group three matches the permission if three groups are present. If the third group is not present, the default
-        permission is used. Usually the default permission is provided by the original command registration (which
-        defaults to HartshornInformation#GLOBAL_OVERRIDE if none is explicitly specified).
-        */
-        if (3 <= elementValue.groupCount() && null != elementValue.group(3))
-            permission = elementValue.group(3);
-
-        try {
-            return this.getArgumentValue(type, permission, key);
-        }
-        catch (IllegalArgumentException e) {
-            return this.getArgumentValue("String", permission, key);
-        }
-    }
-
     protected List<AbstractArgumentElement<?>> parseArgumentElements(CharSequence argString, String defaultPermission) {
         List<AbstractArgumentElement<?>> elements = HartshornUtils.emptyList();
         AbstractFlagCollection<?> flagCollection = null;
@@ -435,30 +393,6 @@ public abstract class DefaultCommandBus<E> implements CommandBus {
             this.parseFlag(flagCollection, flagMatcher.group(1), flagMatcher.group(2), defaultPermission);
         }
         return flagCollection;
-    }
-
-    private void extractArguments(Collection<AbstractArgumentElement<?>> elements, MatchResult argumentMatcher, String defaultPermission) {
-        boolean optional = '[' == argumentMatcher.group(1).charAt(0);
-        String elementValue = argumentMatcher.group(2);
-
-        List<AbstractArgumentElement<?>> result = this.parseArgumentElements(elementValue, defaultPermission);
-        if (result.isEmpty()) {
-            ArgumentValue<?> argumentValue = this.generateArgumentValue(argumentMatcher.group(2), defaultPermission);
-            AbstractArgumentElement<?> argumentElement = argumentValue.getElement();
-            result = HartshornUtils.asList(argumentElement);
-        }
-
-        /*
-        If the elements are of one group they should be wrapped into a single element so it can be checked as a group.
-        If there is only one element present this may simply return a unwrapped version of the element list.
-        */
-        AbstractArgumentElement<?> argumentElement = this.wrapElements(result);
-        if (optional) {
-            elements.add(argumentElement.asOptional());
-        }
-        else {
-            elements.add(argumentElement);
-        }
     }
 
     private void parseFlag(AbstractFlagCollection<?> flags, String name, String value, String defaultPermission) {

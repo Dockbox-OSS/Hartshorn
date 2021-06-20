@@ -76,7 +76,7 @@ public class CommandValueConverter<T> extends AbstractArgumentConverter<T> {
     }
 
     @Override
-    public Collection<String> getSuggestions(CommandSource source, String argument) {
+    public Collection<String> suggestions(CommandSource source, String argument) {
         return this.suggestionProvider.apply(argument);
     }
 }

@@ -34,6 +34,7 @@ import org.spongepowered.api.text.Text;
 
 import java.util.List;
 
+@Deprecated
 final class ConverterElement extends CommandElement {
 
     private final ArgumentConverter<?> argument;
@@ -59,7 +60,7 @@ final class ConverterElement extends CommandElement {
     @Override
     public List<String> complete(@NotNull CommandSource src, CommandArgs args, @NotNull CommandContext context) {
         try {
-            return HartshornUtils.asList(this.argument.getSuggestions(SpongeConversionUtil.fromSponge(src).get(), args.next()));
+            return HartshornUtils.asList(this.argument.suggestions(SpongeConversionUtil.fromSponge(src).get(), args.next()));
         }
         catch (ArgumentParseException e) {
             return HartshornUtils.emptyList();

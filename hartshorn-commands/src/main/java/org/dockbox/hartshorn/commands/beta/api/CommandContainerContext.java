@@ -35,6 +35,6 @@ public interface CommandContainerContext extends Context {
     boolean extended();
     boolean confirmation();
     Class<?> parent();
-    List<ArgumentConverter<?>> elements();
+    List<CommandElement<?>> elements();
     boolean matches(String command);
 }
