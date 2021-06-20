@@ -34,4 +34,6 @@ public interface ArgumentConverter<T> {
     Exceptional<T> convert(CommandSource source, CommandParameter<String> value);
 
     Collection<String> suggestions(CommandSource source, String argument);
+
+    int size();
 }

@@ -210,8 +210,7 @@ public class SimpleCommandContainerContext extends DefaultContext implements Com
     private <E extends Enum<E>> CommandElement<?> lookupElement(String type, String name, Permission permission, boolean optional) {
         Exceptional<ArgumentConverter<?>> converter = ArgumentConverterRegistry.getOptionalConverter(type.toLowerCase());
         if (converter.present()) {
-            // TODO: Determine size based on converter data
-            return new SimpleCommandElement<>(converter.get(), name, permission, optional, 1);
+            return new SimpleCommandElement<>(converter.get(), name, permission, optional, converter.get().size());
         }
         else {
             try {

@@ -61,10 +61,15 @@ public class SimpleCommandParser implements CommandParser {
         final List<String> tokens = HartshornUtils.asList(stripped.split(" "));
         for (int i = 0; i < elements.size(); i++) {
             CommandElement<?> element = elements.get(i);
-            // TODO: Get amount of tokens through element.size()
-            final String token = tokens.get(i);
+            final int size = element.size();
+            final int end = size == -1 ? tokens.size() : i + size;
+
+            final String token = String.join(" ", tokens.subList(i, end)).trim();
             final Exceptional<?> value = element.parse(source, token);
             parsedElements.add(this.getParameter(value, "argument", element.name()));
+
+            // TODO: Throw exception if more arguments are requested after this
+            if (size == -1) break;
         }
 
         return Exceptional.of(new SimpleParsedContext(command,
@@ -76,7 +81,7 @@ public class SimpleCommandParser implements CommandParser {
     private String stripFlags(String command, Collection<CommandParameter<?>> flags, CommandSource source, CommandContainerContext context) throws ParsingException {
         final Matcher matcher = FLAG.matcher(command);
         while (matcher.find()) {
-            final String flag = matcher.group().substring(1); // Discard - prefix
+            final String flag = matcher.group().substring(1); // Discard '-' prefix
             String name = flag.split(" ")[0];
             final CommandFlag commandFlag = context.flag(name);
             if (commandFlag.value()) {

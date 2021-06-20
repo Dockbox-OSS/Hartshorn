@@ -29,13 +29,24 @@ public abstract class AbstractArgumentConverter<T> implements ArgumentConverter<
     private final String[] keys;
     @Getter
     private final Class<T> type;
+    private final int size;
 
-    protected AbstractArgumentConverter(Class<T> type, String... keys) {
+    protected AbstractArgumentConverter(Class<T> type, int size,String... keys) {
         if (0 == keys.length)
             throw new IllegalArgumentException("Cannot create argument converter without at least one key");
         this.keys = keys;
         this.type = type;
+        this.size = size;
         ArgumentConverterRegistry.registerConverter(this);
+    }
+
+    protected AbstractArgumentConverter(Class<T> type, String... keys) {
+        this(type, 1, keys);
+    }
+
+    @Override
+    public int size() {
+        return this.size;
     }
 
     public List<String> getKeys() {

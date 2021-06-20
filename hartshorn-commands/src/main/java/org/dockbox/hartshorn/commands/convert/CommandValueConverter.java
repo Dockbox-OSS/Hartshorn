@@ -34,6 +34,17 @@ public class CommandValueConverter<T> extends AbstractArgumentConverter<T> {
     public CommandValueConverter(
             Class<T> type,
             Function<String, Exceptional<T>> converter,
+            int size,
+            String... keys
+    ) {
+        super(type, size, keys);
+        this.converter = (cs, in) -> converter.apply(in);
+        this.suggestionProvider = in -> HartshornUtils.emptyList();
+    }
+
+    public CommandValueConverter(
+            Class<T> type,
+            Function<String, Exceptional<T>> converter,
             Function<String, Collection<String>> suggestionProvider,
             String... keys
     ) {
