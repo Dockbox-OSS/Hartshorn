@@ -31,12 +31,14 @@ import org.dockbox.hartshorn.commands.types.CommandValueEnum;
 import org.dockbox.hartshorn.commands.types.SampleCommand;
 import org.dockbox.hartshorn.server.minecraft.Console;
 import org.dockbox.hartshorn.test.HartshornRunner;
+import org.dockbox.hartshorn.util.HartshornUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.lang.annotation.Annotation;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 
 @ExtendWith(HartshornRunner.class)
 public class CommandContainerContextTests {
@@ -74,6 +76,26 @@ public class CommandContainerContextTests {
         CommandGateway gateway = Hartshorn.context().get(SimpleCommandGateway.class);
         gateway.register(SampleCommand.class);
         Assertions.assertThrows(ParsingException.class, () -> gateway.accept(Console.getInstance(), "demo complex requiredArg optionalArg ONE --unknownFlag"));
+    }
+
+    @Test
+    void testSpecificSuggestion() {
+        CommandGateway gateway = Hartshorn.context().get(SimpleCommandGateway.class);
+        gateway.register(SampleCommand.class);
+        final List<String> suggestions = gateway.suggestions(Console.getInstance(), "demo complex requiredArg optionalArg O");
+
+        Assertions.assertEquals(1, suggestions.size());
+        Assertions.assertEquals("one", suggestions.get(0));
+    }
+
+    @Test
+    void testAllSuggestions() {
+        CommandGateway gateway = Hartshorn.context().get(SimpleCommandGateway.class);
+        gateway.register(SampleCommand.class);
+        final List<String> suggestions = gateway.suggestions(Console.getInstance(), "demo complex requiredArg optionalArg ");
+
+        Assertions.assertEquals(3, suggestions.size());
+        Assertions.assertTrue(suggestions.containsAll(HartshornUtils.asList("one", "two", "three")));
     }
 
     @Test
