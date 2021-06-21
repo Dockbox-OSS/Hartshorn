@@ -160,7 +160,9 @@ public class SimpleCommandContainerContext extends DefaultContext implements Com
 
         for (int i = 0; i < elements.size(); i++) {
             CommandElement<?> element = elements.get(i);
-            if (element.size() == -1 && i != elements.size()+1) throw new IllegalStateException("Cannot request arguments after joining remaining elements");
+            if (element.size() == -1 && i != elements.size()-1) {
+                throw new IllegalStateException("Cannot request arguments after joining remaining elements");
+            }
         }
 
         return new CommandDefinition(elements, flags);
