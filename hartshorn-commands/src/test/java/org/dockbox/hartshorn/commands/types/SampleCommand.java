@@ -18,13 +18,21 @@
 package org.dockbox.hartshorn.commands.types;
 
 import org.dockbox.hartshorn.commands.annotations.Command;
+import org.dockbox.hartshorn.commands.beta.api.CommandContext;
+import org.dockbox.hartshorn.di.services.ServiceContainer;
 
 @Command("demo")
 public class SampleCommand {
 
     @Command(value = "sub", arguments = "<argument{Int}> --skip remainingInt")
-    public void sub() {
-        System.out.println("Sub");
+    public void sub(CommandContext context) {
+        System.out.println((Integer) context.get("argument"));
+    }
+
+    @Command(value = "sub sub", arguments = "<service{Service}>")
+    public void subsub(CommandContext context) {
+        final ServiceContainer service = context.get("service");
+        System.out.println(service.getName());
     }
 
 }

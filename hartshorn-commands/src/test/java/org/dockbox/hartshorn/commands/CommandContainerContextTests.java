@@ -44,7 +44,7 @@ public class CommandContainerContextTests {
     void testParsingCanSucceed() {
         CommandGateway gateway = Hartshorn.context().get(SimpleCommandGateway.class);
         gateway.register(SampleCommand.class);
-        Assertions.assertDoesNotThrow(() -> gateway.accept(Console.getInstance(), "demo sub 2 --skip 1 2 3 4"));
+        Assertions.assertDoesNotThrow(() -> gateway.accept(Console.getInstance(), "demo sub sub dave"));
     }
 
     @Test
