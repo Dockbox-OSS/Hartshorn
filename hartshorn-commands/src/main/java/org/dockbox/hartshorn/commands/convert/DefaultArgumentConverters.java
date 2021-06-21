@@ -43,72 +43,81 @@ import java.util.stream.Collectors;
 @Service
 public final class DefaultArgumentConverters implements InjectableType {
 
-    public static final ArgumentConverter<String> STRING = new CommandValueConverter<>(String.class, (Function<String, Exceptional<String>>) Exceptional::of, "string");
+    public static final ArgumentConverter<String> STRING = CommandValueConverter.builder(String.class, "string")
+            .withConverter((Function<String, Exceptional<String>>) Exceptional::of)
+            .build();
 
-    public static final ArgumentConverter<Character> CHARACTER = new CommandValueConverter<>(Character.class, in -> {
-        int length = in.length();
-        return 1 == length ? Exceptional.of(in.charAt(0)) : Exceptional.empty();
-    },
-            "char", "character"
-    );
+    public static final ArgumentConverter<Character> CHARACTER = CommandValueConverter.builder(Character.class, "char", "character")
+            .withConverter(in -> {
+                int length = in.length();
+                return 1 == length ? Exceptional.of(in.charAt(0)) : Exceptional.empty();
+            }).build();
 
-    public static final ArgumentConverter<Boolean> BOOLEAN = new CommandValueConverter<>(Boolean.class, in -> {
-        switch (in) {
-            case "yes":
-                return Exceptional.of(true);
-            case "no":
-                return Exceptional.of(false);
-            default:
-                return Exceptional.of(in).map(Boolean::parseBoolean);
-        }
-    }, in -> HartshornUtils.asList("true", "false", "yes", "no"), "bool", "boolean");
+    public static final ArgumentConverter<Boolean> BOOLEAN = CommandValueConverter.builder(Boolean.class, "bool", "boolean")
+            .withConverter(in -> {
+                switch (in) {
+                    case "yes":
+                        return Exceptional.of(true);
+                    case "no":
+                        return Exceptional.of(false);
+                    default:
+                        return Exceptional.of(in).map(Boolean::parseBoolean);
+                }
+            }).withSuggestionProvider(in -> HartshornUtils.asList("true", "false", "yes", "no"))
+            .build();
 
-    public static final ArgumentConverter<Double> DOUBLE = new CommandValueConverter<>(Double.class, in -> Exceptional.of(in)
-            .map(Double::parseDouble), "double");
+    public static final ArgumentConverter<Double> DOUBLE = CommandValueConverter.builder(Double.class, "double")
+            .withConverter(in -> Exceptional.of(in).map(Double::parseDouble))
+            .build();
 
-    public static final ArgumentConverter<Float> FLOAT = new CommandValueConverter<>(Float.class, in -> Exceptional.of(in)
-            .map(Float::parseFloat), "float");
+    public static final ArgumentConverter<Float> FLOAT = CommandValueConverter.builder(Float.class, "float")
+            .withConverter(in -> Exceptional.of(in).map(Float::parseFloat))
+            .build();
 
-    public static final ArgumentConverter<Integer> INTEGER = new CommandValueConverter<>(Integer.class, in -> Exceptional.of(in)
-            .map(Integer::parseInt), "int", "integer");
+    public static final ArgumentConverter<Integer> INTEGER = CommandValueConverter.builder(Integer.class, "int", "integer")
+            .withConverter(in -> Exceptional.of(in).map(Integer::parseInt))
+            .build();
 
-    public static final ArgumentConverter<Long> LONG = new CommandValueConverter<>(Long.class, in -> Exceptional.of(in)
-            .map(Long::parseLong), "long");
+    public static final ArgumentConverter<Long> LONG = CommandValueConverter.builder(Long.class, "long")
+            .withConverter(in -> Exceptional.of(in).map(Long::parseLong))
+            .build();
 
-    public static final ArgumentConverter<Short> SHORT = new CommandValueConverter<>(Short.class, in -> Exceptional.of(in)
-            .map(Short::parseShort), "short");
+    public static final ArgumentConverter<Short> SHORT = CommandValueConverter.builder(Short.class, "short")
+            .withConverter(in -> Exceptional.of(in).map(Short::parseShort))
+            .build();
 
-    public static final ArgumentConverter<Language> LANGUAGE = new CommandValueConverter<>(Language.class, (@NonNls String in) -> {
-        Language lang;
-        try {
-            lang = Language.valueOf(in);
-        }
-        catch (NullPointerException | IllegalArgumentException e) {
-            lang =
-                    Arrays.stream(Language.values())
-                            .filter(l -> l.getNameEnglish().equals(in) || l.getNameLocalized().equals(in))
-                            .findFirst()
-                            .orElse(Language.EN_US);
-        }
-        return Exceptional.of(lang);
-    }, in -> {
-        List<String> suggestions = HartshornUtils.emptyList();
-        for (Language lang : Language.values()) {
-            suggestions.add(lang.getCode());
-            suggestions.add(lang.getNameEnglish());
-            suggestions.add(lang.getNameLocalized());
-        }
-        return suggestions.stream()
-                .filter(lang -> lang.toLowerCase().contains(in.toLowerCase()))
-                .collect(Collectors.toList());
-    }, "lang", "language"
-    );
+    public static final ArgumentConverter<Language> LANGUAGE = CommandValueConverter.builder(Language.class, "lang", "language")
+            .withConverter((@NonNls String in) -> {
+                Language lang;
+                try {
+                    lang = Language.valueOf(in);
+                }
+                catch (NullPointerException | IllegalArgumentException e) {
+                    lang =
+                            Arrays.stream(Language.values())
+                                    .filter(l -> l.getNameEnglish().equals(in) || l.getNameLocalized().equals(in))
+                                    .findFirst()
+                                    .orElse(Language.EN_US);
+                }
+                return Exceptional.of(lang);
+            }).withSuggestionProvider(in -> {
+                List<String> suggestions = HartshornUtils.emptyList();
+                for (Language lang : Language.values()) {
+                    suggestions.add(lang.getCode());
+                    suggestions.add(lang.getNameEnglish());
+                    suggestions.add(lang.getNameLocalized());
+                }
+                return suggestions.stream()
+                        .filter(lang -> lang.toLowerCase().contains(in.toLowerCase()))
+                        .collect(Collectors.toList());
+            }).build();
 
-    public static final ArgumentConverter<UUID> UNIQUE_ID = new CommandValueConverter<>(UUID.class, in -> Exceptional
-            .of(() -> UUID.fromString(in)), "uuid", "uniqueid");
+    public static final ArgumentConverter<UUID> UNIQUE_ID = CommandValueConverter.builder(UUID.class, "uuid", "uniqueId")
+            .withConverter(in -> Exceptional.of(in).map(UUID::fromString))
+            .build();
 
-    public static final ArgumentConverter<Vector3N> VECTOR = new CommandValueConverter<>(Vector3N.class, in ->
-            Exceptional.of(
+    public static final ArgumentConverter<Vector3N> VECTOR = CommandValueConverter.builder(Vector3N.class, "vec3", "vector", "v3n")
+            .withConverter(in -> Exceptional.of(
                     () -> {
                         String[] xyz = in.split(",");
                         // IndexOutOfBounds is caught by Callable handle in Exceptional
@@ -116,41 +125,52 @@ public final class DefaultArgumentConverters implements InjectableType {
                         double y = Double.parseDouble(xyz[1]);
                         double z = Double.parseDouble(xyz[2]);
                         return Vector3N.of(x, y, z);
-                    }),
-            "vec3", "vector", "v3n"
-    );
+                    }))
+            .build();
 
-    public static final ArgumentConverter<Duration> DURATION = new CommandValueConverter<>(Duration.class, HartshornUtils::durationOf, "duration");
+    public static final ArgumentConverter<Duration> DURATION = CommandValueConverter.builder(Duration.class, "duration")
+            .withConverter(HartshornUtils::durationOf)
+            .build();
 
-    public static final ArgumentConverter<ResourceEntry> RESOURCE = new CommandValueConverter<>(ResourceEntry.class, in -> {
-        ResourceService rs = Hartshorn.context().get(ResourceService.class);
-        String validKey = rs.createValidKey(in);
+    public static final ArgumentConverter<ResourceEntry> RESOURCE = CommandValueConverter.builder(ResourceEntry.class, "resource", "i18n", "translation")
+            .withConverter(in -> {
+                ResourceService rs = Hartshorn.context().get(ResourceService.class);
+                String validKey = rs.createValidKey(in);
 
-        Exceptional<? extends ResourceEntry> or = rs.get(validKey);
-        if (or.present()) return or.map(ResourceEntry.class::cast);
+                Exceptional<? extends ResourceEntry> or = rs.get(validKey);
+                if (or.present()) return or.map(ResourceEntry.class::cast);
 
-        return Hartshorn.context().get(ResourceService.class).get(validKey);
-    }, "resource", "i18n", "translation");
+                return Hartshorn.context().get(ResourceService.class).get(validKey);
+            }).build();
 
-    public static final ArgumentConverter<Text> TEXT = new CommandValueConverter<>(Text.class, in -> Exceptional.of(Text.of(in)), "text");
+    public static final ArgumentConverter<Text> TEXT = CommandValueConverter.builder(Text.class, "text")
+            .withConverter(in -> Exceptional.of(Text.of(in)))
+            .build();
 
-    public static final ArgumentConverter<ServiceContainer> SERVICE = new CommandValueConverter<>(ServiceContainer.class, in -> Exceptional.of(Hartshorn.context()
-            .locator().containers().stream()
-            .filter(container -> container.getId().equals(in))
-            .findFirst()
-    ), "service");
+    public static final ArgumentConverter<ServiceContainer> SERVICE = CommandValueConverter.builder(ServiceContainer.class, "service")
+            .withConverter(in -> Exceptional.of(Hartshorn.context()
+                    .locator().containers().stream()
+                    .filter(container -> container.getId().equalsIgnoreCase(in))
+                    .findFirst()))
+            .build();
 
-    public static final ArgumentConverter<String> REMAINING_STRING = new CommandValueConverter<>(String.class, Exceptional::of, -1, "remaining", "remainingString");
+    public static final ArgumentConverter<String> REMAINING_STRING = CommandValueConverter.builder(String.class, "remaining", "remainingString")
+            .withConverter((Function<String, Exceptional<String>>) Exceptional::of)
+            .withSize(-1)
+            .build();
 
-    public static final ArgumentConverter<Integer[]> REMAINING_INTS = new CommandValueConverter<>(Integer[].class, in -> {
-        String[] parts = in.split(" ");
-        Integer[] integers = new Integer[parts.length];
-        for (int i = 0; i < parts.length; i++) {
-            String part = parts[i];
-            integers[i] = INTEGER.convert(null, parts[i]).get();
-        }
-        return Exceptional.of(integers);
-    }, -1, "remainingInt");
+    public static final ArgumentConverter<Integer[]> REMAINING_INTS = CommandValueConverter.builder(Integer[].class, "remainingInt")
+            .withConverter(in -> {
+                String[] parts = in.split(" ");
+                Integer[] integers = new Integer[parts.length];
+                for (int i = 0; i < parts.length; i++) {
+                    String part = parts[i];
+                    integers[i] = INTEGER.convert(null, parts[i]).get();
+                }
+                return Exceptional.of(integers);
+            })
+            .withSize(-1)
+            .build();
 
     @Override
     public void stateEnabling(InjectorProperty<?>... properties) {
