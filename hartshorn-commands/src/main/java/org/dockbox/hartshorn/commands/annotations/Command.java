@@ -21,7 +21,6 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import java.time.temporal.ChronoUnit;
 
 /**
  * The annotation used to mark a method or class as a command holder.
@@ -54,21 +53,6 @@ public @interface Command {
      * @return the permission required for the command.
      */
     String permission() default "";
-
-    /**
-     * The duration in the {@link Command#cooldownUnit() cooldown unit}. Defaults to -1 if not
-     * defined, disabling the cooldown functionality for the command.
-     *
-     * @return the duration
-     */
-    long cooldownDuration() default -1;
-
-    /**
-     * The cooldown unit. Defaults to {@link ChronoUnit#SECONDS} if not defined.
-     *
-     * @return the cooldown unit
-     */
-    ChronoUnit cooldownUnit() default ChronoUnit.SECONDS;
 
     /**
      * Marks whether or not the command is a child command. This typically only affects methods

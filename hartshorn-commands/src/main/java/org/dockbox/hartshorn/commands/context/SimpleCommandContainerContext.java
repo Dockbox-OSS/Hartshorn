@@ -22,20 +22,19 @@ import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.exceptions.Except;
 import org.dockbox.hartshorn.api.i18n.permissions.Permission;
 import org.dockbox.hartshorn.commands.annotations.Command;
+import org.dockbox.hartshorn.commands.arguments.ArgumentConverterRegistry;
+import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
 import org.dockbox.hartshorn.commands.definition.CommandDefinition;
+import org.dockbox.hartshorn.commands.definition.CommandElement;
 import org.dockbox.hartshorn.commands.definition.CommandElements;
+import org.dockbox.hartshorn.commands.definition.CommandFlag;
 import org.dockbox.hartshorn.commands.definition.CommandFlagElement;
 import org.dockbox.hartshorn.commands.definition.SimpleCommandElement;
 import org.dockbox.hartshorn.commands.definition.SimpleCommandFlag;
-import org.dockbox.hartshorn.commands.definition.CommandElement;
-import org.dockbox.hartshorn.commands.definition.CommandFlag;
-import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
-import org.dockbox.hartshorn.commands.arguments.ArgumentConverterRegistry;
 import org.dockbox.hartshorn.di.binding.Bindings;
 import org.dockbox.hartshorn.di.context.DefaultContext;
 import org.dockbox.hartshorn.util.HartshornUtils;
 
-import java.time.temporal.ChronoUnit;
 import java.util.Collection;
 import java.util.List;
 import java.util.regex.MatchResult;
@@ -300,16 +299,6 @@ public class SimpleCommandContainerContext extends DefaultContext implements Com
     @Override
     public Permission permission() {
         return this.permission;
-    }
-
-    @Override
-    public long cooldown() {
-        return this.command.cooldownDuration();
-    }
-
-    @Override
-    public ChronoUnit cooldownUnit() {
-        return this.command.cooldownUnit();
     }
 
     @Override

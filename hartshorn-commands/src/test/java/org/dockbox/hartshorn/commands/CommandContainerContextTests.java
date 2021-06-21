@@ -21,10 +21,10 @@ import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.commands.annotations.Command;
 import org.dockbox.hartshorn.commands.context.CommandContainerContext;
+import org.dockbox.hartshorn.commands.context.SimpleCommandContainerContext;
 import org.dockbox.hartshorn.commands.definition.CommandElement;
 import org.dockbox.hartshorn.commands.definition.CommandFlag;
 import org.dockbox.hartshorn.commands.exceptions.ParsingException;
-import org.dockbox.hartshorn.commands.context.SimpleCommandContainerContext;
 import org.dockbox.hartshorn.commands.types.CommandValueEnum;
 import org.dockbox.hartshorn.commands.types.SampleCommand;
 import org.dockbox.hartshorn.commands.types.SampleCommandExtension;
@@ -36,7 +36,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.lang.annotation.Annotation;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @ExtendWith(HartshornRunner.class)
@@ -168,16 +167,6 @@ public class CommandContainerContextTests {
             @Override
             public String permission() {
                 return permission;
-            }
-
-            @Override
-            public long cooldownDuration() {
-                return 0;
-            }
-
-            @Override
-            public ChronoUnit cooldownUnit() {
-                return null;
             }
 
             @Override

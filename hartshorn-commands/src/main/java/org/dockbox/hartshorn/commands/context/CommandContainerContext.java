@@ -23,7 +23,6 @@ import org.dockbox.hartshorn.commands.definition.CommandElement;
 import org.dockbox.hartshorn.commands.definition.CommandFlag;
 import org.dockbox.hartshorn.di.context.Context;
 
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 public interface CommandContainerContext extends Context {
@@ -31,8 +30,6 @@ public interface CommandContainerContext extends Context {
     List<String> aliases();
     String arguments();
     Permission permission();
-    long cooldown();
-    ChronoUnit cooldownUnit();
     boolean inherited();
     boolean extended();
     boolean confirmation();
