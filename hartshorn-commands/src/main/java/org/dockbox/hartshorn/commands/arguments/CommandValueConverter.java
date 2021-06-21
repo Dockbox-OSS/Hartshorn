@@ -20,6 +20,7 @@ package org.dockbox.hartshorn.commands.arguments;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.commands.service.CommandParameter;
 import org.dockbox.hartshorn.commands.source.CommandSource;
+import org.dockbox.hartshorn.util.HartshornUtils;
 
 import java.util.Collection;
 import java.util.function.BiFunction;
@@ -60,7 +61,7 @@ public class CommandValueConverter<T> extends AbstractArgumentConverter<T> {
         private Class<T> type;
         private int size;
         private BiFunction<CommandSource, String, Exceptional<T>> converter;
-        private Function<String, Collection<String>> suggestionProvider;
+        private Function<String, Collection<String>> suggestionProvider = in -> HartshornUtils.emptyList();
 
         private CommandValueConverterBuilder(Class<T> type, String... keys) {
             this.type = type;
