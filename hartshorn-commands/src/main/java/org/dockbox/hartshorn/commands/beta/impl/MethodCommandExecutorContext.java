@@ -22,8 +22,11 @@ import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.exceptions.Except;
 import org.dockbox.hartshorn.commands.annotations.Command;
 import org.dockbox.hartshorn.commands.beta.api.CommandContainerContext;
+import org.dockbox.hartshorn.commands.beta.api.CommandElement;
 import org.dockbox.hartshorn.commands.beta.api.CommandExecutor;
 import org.dockbox.hartshorn.commands.beta.api.CommandExecutorContext;
+import org.dockbox.hartshorn.commands.beta.api.CommandParser;
+import org.dockbox.hartshorn.commands.source.CommandSource;
 import org.dockbox.hartshorn.di.context.DefaultContext;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.jetbrains.annotations.Nullable;
@@ -116,6 +119,33 @@ public class MethodCommandExecutorContext extends DefaultContext implements Comm
     @Override
     public Class<?> parent() {
         return this.type;
+    }
+
+    @Override
+    public List<String> suggestions(CommandSource source, String command, CommandParser parser) {
+        final String stripped = this.strip(command, false);
+        final List<CommandElement<?>> elements = this.container().elements();
+        final List<String> tokens = HartshornUtils.asList(stripped.split(" "));
+        if (command.endsWith(" ")) tokens.add("");
+
+        CommandElement<?> last = null;
+        for (CommandElement<?> element : elements) {
+            int size = element.size();
+            if (size == -1) return HartshornUtils.emptyList();
+
+            if (tokens.size() <= size) {
+                last = element;
+                break;
+            }
+
+            while (size != 0) {
+                tokens.remove(0);
+                size--;
+            }
+        }
+
+        if (last == null) return HartshornUtils.emptyList();
+        return HartshornUtils.asUnmodifiableList(last.suggestions(source, String.join(" ", tokens)));
     }
 
     private CommandContainerContext container() {

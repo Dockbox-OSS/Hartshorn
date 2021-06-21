@@ -17,6 +17,7 @@
 
 package org.dockbox.hartshorn.commands.beta.api;
 
+import org.dockbox.hartshorn.commands.source.CommandSource;
 import org.dockbox.hartshorn.di.context.Context;
 
 import java.util.List;
@@ -28,5 +29,5 @@ public interface CommandExecutorContext extends Context {
     String strip(String command, boolean parentOnly);
     List<String> aliases();
     Class<?> parent();
-
+    List<String> suggestions(CommandSource source, String command, CommandParser parser);
 }

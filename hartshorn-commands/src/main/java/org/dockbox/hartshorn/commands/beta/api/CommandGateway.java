@@ -19,6 +19,9 @@ package org.dockbox.hartshorn.commands.beta.api;
 
 import org.dockbox.hartshorn.commands.beta.exceptions.ParsingException;
 import org.dockbox.hartshorn.commands.source.CommandSource;
+import org.jetbrains.annotations.UnmodifiableView;
+
+import java.util.List;
 
 public interface CommandGateway {
 
@@ -27,6 +30,9 @@ public interface CommandGateway {
 
     void register(Class<?> type);
     void register(CommandExecutorContext context);
+
+    @UnmodifiableView
+    List<String> suggestions(CommandSource source, String command);
 
     CommandExecutor get(CommandContext context);
 

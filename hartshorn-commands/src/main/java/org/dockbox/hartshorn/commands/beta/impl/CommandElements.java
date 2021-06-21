@@ -25,6 +25,7 @@ import org.dockbox.hartshorn.util.HartshornUtils;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Locale;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -77,7 +78,9 @@ public class CommandElements {
 
         @Override
         public Collection<String> suggestions(CommandSource source, String argument) {
-            return HartshornUtils.asUnmodifiableCollection(this.values.keySet());
+            return HartshornUtils.asUnmodifiableCollection(this.values.keySet()).stream()
+                    .filter(value -> value.toLowerCase(Locale.ROOT).startsWith(argument.toLowerCase(Locale.ROOT)))
+                    .collect(Collectors.toList());
         }
 
         @Override

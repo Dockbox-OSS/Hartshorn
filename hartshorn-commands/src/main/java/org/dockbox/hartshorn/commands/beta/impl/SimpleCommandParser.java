@@ -89,6 +89,7 @@ public class SimpleCommandParser implements CommandParser {
 
     private String stripFlags(String command, Collection<CommandParameter<?>> flags, CommandSource source, CommandContainerContext context) throws ParsingException {
         final Matcher matcher = FLAG.matcher(command);
+
         while (matcher.find()) {
             final String flag = matcher.group().substring(1); // Discard '-' prefix
             String name = flag.split(" ")[0];
