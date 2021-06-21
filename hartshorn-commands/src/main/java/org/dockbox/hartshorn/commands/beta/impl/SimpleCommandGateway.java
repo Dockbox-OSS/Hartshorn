@@ -27,7 +27,7 @@ import org.dockbox.hartshorn.commands.beta.api.CommandExecutor;
 import org.dockbox.hartshorn.commands.beta.api.CommandExecutorContext;
 import org.dockbox.hartshorn.commands.beta.api.CommandGateway;
 import org.dockbox.hartshorn.commands.beta.api.CommandParser;
-import org.dockbox.hartshorn.commands.beta.api.ParsedContext;
+import org.dockbox.hartshorn.commands.beta.api.CommandContext;
 import org.dockbox.hartshorn.commands.beta.exceptions.ParsingException;
 import org.dockbox.hartshorn.commands.source.CommandSource;
 import org.dockbox.hartshorn.di.annotations.Wired;
@@ -54,17 +54,34 @@ public class SimpleCommandGateway implements CommandGateway {
 
     @Override
     public void accept(CommandSource source, String command) throws ParsingException {
+        final Exceptional<CommandExecutorContext> context = this.lookupContext(command);
+        if (context.absent()) throw new IllegalArgumentException("No supported command handler found for '" + command + "'");
+        else {
+            final Exceptional<CommandContext> commandContext = this.parser.parse(command, source, context.get());
+            if (commandContext.present()) {
+                context.get().executor().execute(commandContext.get());
+            }
+        }
+    }
+
+    private Exceptional<CommandExecutorContext> lookupContext(String command) {
         final String alias = command.split(" ")[0];
+        CommandExecutorContext bestContext = null;
         for (CommandExecutorContext context : this.contexts.get(alias)) {
             if (context.accepts(command)) {
-                final Exceptional<ParsedContext> commandContext = this.parser.parse(command, source, context);
-                if (commandContext.present()) {
-                    context.executor().execute(commandContext.get());
-                    return;
+                if (bestContext == null) {
+                    bestContext = context;
+                } else {
+                    final String stripped = context.strip(command, false);
+                    // This leaves the arguments without the context's aliases. If the new value is shorter it means more aliases were
+                    // stripped, indicating it's providing a deeper level sub-command.
+                    if (stripped.length() < bestContext.strip(command, false).length()) {
+                        bestContext = context;
+                    }
                 }
             }
         }
-        throw new IllegalArgumentException("No supported command handler found for '" + command + "'");
+        return Exceptional.of(bestContext);
     }
 
     @Override

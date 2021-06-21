@@ -19,13 +19,14 @@ package org.dockbox.hartshorn.commands.beta.api;
 
 import org.dockbox.hartshorn.di.context.Context;
 
+import java.util.List;
+
 public interface CommandExecutorContext extends Context {
 
     CommandExecutor executor();
     boolean accepts(String command);
-
     String strip(String command, boolean parentOnly);
-
+    List<String> aliases();
     Class<?> parent();
 
 }

@@ -17,7 +17,9 @@
 
 package org.dockbox.hartshorn.commands.beta.impl;
 
+import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.api.exceptions.Except;
 import org.dockbox.hartshorn.commands.annotations.Command;
 import org.dockbox.hartshorn.commands.beta.api.CommandContainerContext;
 import org.dockbox.hartshorn.commands.beta.api.CommandExecutor;
@@ -26,6 +28,7 @@ import org.dockbox.hartshorn.di.context.DefaultContext;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 
@@ -67,9 +70,15 @@ public class MethodCommandExecutorContext extends DefaultContext implements Comm
 
     @Override
     public CommandExecutor executor() {
+        // TODO: Support variable parameters
         return (ctx) -> {
-            System.out.println(ctx);
-            // TODO: Method invoking
+            final Object instance = Hartshorn.context().get(this.getType());
+            try {
+                this.getMethod().invoke(instance, ctx);
+            }
+            catch (IllegalAccessException | InvocationTargetException e) {
+                Except.handle(e);
+            }
         };
     }
 
@@ -91,6 +100,17 @@ public class MethodCommandExecutorContext extends DefaultContext implements Comm
             }
         }
         return command;
+    }
+
+    @Override
+    public List<String> aliases() {
+        List<String> aliases = HartshornUtils.emptyList();
+        for (String parentAlias : this.getParentAliases()) {
+            for (String alias : this.aliases()) {
+                aliases.add(parentAlias + ' ' + alias);
+            }
+        }
+        return aliases;
     }
 
     @Override
