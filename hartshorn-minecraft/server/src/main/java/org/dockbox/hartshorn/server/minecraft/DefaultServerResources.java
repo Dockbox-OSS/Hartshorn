@@ -42,9 +42,6 @@ public interface DefaultServerResources {
     @Resource(value = "$1The language preference for $2{0} $1has been switched to: $2{1}", key = "i18n.lang.updated.other")
     ResourceEntry getOtherLanguageUpdated(String name, String languageLocalized);
 
-    @Resource(value = "$4Missing value for argument '{0}'")
-    ResourceEntry getInfoParameterMissing();
-
     @Resource(value = "$1Successfully reloaded '$2{0}$1'", key = "hartshorn.reload.single")
     ResourceEntry getReloadSuccessful(String name);
 
@@ -53,12 +50,6 @@ public interface DefaultServerResources {
 
     @Resource(value = "$1Successfully reloaded all services")
     ResourceEntry getReloadAll();
-
-    @Resource(value = "$4Could not confirm command: Invalid runner ID")
-    ResourceEntry getConfirmInvalidId();
-
-    @Resource(value = "$4Could not confirm command")
-    ResourceEntry getConfirmInvalidOther();
 
     @Resource(value = "$4This command can only be used by identifiable sources (players, console) matching the original source of the command")
     ResourceEntry getConfirmInvalidSource();

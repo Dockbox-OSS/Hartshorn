@@ -302,16 +302,6 @@ public class SimpleCommandContainerContext extends DefaultContext implements Com
     }
 
     @Override
-    public boolean inherited() {
-        return this.command.inherit();
-    }
-
-    @Override
-    public boolean extended() {
-        return this.command.extend();
-    }
-
-    @Override
     public Class<?> parent() {
         return this.command.parent();
     }

@@ -27,13 +27,12 @@ import org.dockbox.hartshorn.di.annotations.Wired;
 import org.dockbox.hartshorn.server.minecraft.players.Player;
 
 @Entity(value = "minecraft", serializable = false)
-@Command(value = Hartshorn.PROJECT_ID, permission = DefaultServer.ADMIN, extend = true)
 public class DefaultMinecraftServer {
 
     @Wired
     private DefaultServerResources resources;
 
-    @Command(value = { "lang", "language" }, arguments = "<language{Language}> [player{Player}]", inherit = false, permission = Hartshorn.GLOBAL_PERMITTED)
+    @Command(value = { "lang", "language" }, arguments = "<language{Language}> [player{Player}]", permission = Hartshorn.GLOBAL_PERMITTED)
     public void switchLang(MessageReceiver src, CommandContext ctx, Language language, Player player) {
         if (null == player) {
             if (src instanceof Player) {

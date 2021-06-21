@@ -30,8 +30,6 @@ public interface CommandContainerContext extends Context {
     List<String> aliases();
     String arguments();
     Permission permission();
-    boolean inherited();
-    boolean extended();
     Class<?> parent();
     List<CommandElement<?>> elements();
     List<CommandFlag> flags();

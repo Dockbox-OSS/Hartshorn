@@ -26,6 +26,7 @@ import org.dockbox.hartshorn.api.i18n.text.actions.HoverAction;
 import org.dockbox.hartshorn.api.i18n.text.pagination.PaginationBuilder;
 import org.dockbox.hartshorn.commands.RunCommandAction;
 import org.dockbox.hartshorn.commands.annotations.Command;
+import org.dockbox.hartshorn.commands.annotations.WithConfirmation;
 import org.dockbox.hartshorn.commands.context.CommandContext;
 import org.dockbox.hartshorn.di.annotations.Service;
 import org.dockbox.hartshorn.di.annotations.Wired;
@@ -82,7 +83,8 @@ public class DefaultServer {
         src.send(block);
     }
 
-    @Command(value = "reload", confirm = true, permission = DefaultServer.ADMIN)
+    @Command(value = "reload", permission = DefaultServer.ADMIN)
+    @WithConfirmation
     public void reload(MessageReceiver src, CommandContext ctx) {
         EventBus eb = this.context.get(EventBus.class);
         eb.post(new ServerReloadEvent());

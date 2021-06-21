@@ -54,28 +54,5 @@ public @interface Command {
      */
     String permission() default "";
 
-    /**
-     * Marks whether or not the command is a child command. This typically only affects methods
-     * annoted with this annotation which are inside a class annoted with this annotation.
-     *
-     * @return true if the command is a child command
-     */
-    boolean inherit() default true;
-
-    /**
-     * Marks whether the command is a standalone command, or adds child commands to a existing
-     * registration. This typically only affects classes annoted with this annotation.
-     *
-     * @return true if this command adds child commands to a existing registration.
-     */
-    boolean extend() default false;
-
-    /**
-     * Marks whether or not the command should require user confirmation before executing.
-     *
-     * @return true if confirmation is required.
-     */
-    boolean confirm() default false;
-
     Class<?> parent() default Void.class;
 }
