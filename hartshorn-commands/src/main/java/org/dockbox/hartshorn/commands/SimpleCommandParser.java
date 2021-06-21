@@ -41,7 +41,9 @@ import java.util.regex.Pattern;
 @Binds(CommandParser.class)
 public class SimpleCommandParser implements CommandParser {
 
-    private static final Pattern FLAG = Pattern.compile("-(-?\\w+)(?: ([^ -]+))?");
+    // Note the difference between this and SimpleCommandContainerContext.FLAG, here a space is expected before the flag
+    // to indicate it is a single element and not part of a piece of text.
+    private static final Pattern FLAG = Pattern.compile(" -(-?\\w+)(?: ([^ -]+))?");
 
     @Override
     public Exceptional<CommandContext> parse(String command, CommandSource source, CommandExecutorContext context) throws ParsingException {
