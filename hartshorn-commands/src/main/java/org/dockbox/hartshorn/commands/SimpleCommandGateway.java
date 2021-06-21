@@ -29,6 +29,7 @@ import org.dockbox.hartshorn.commands.context.CommandContext;
 import org.dockbox.hartshorn.commands.exceptions.ParsingException;
 import org.dockbox.hartshorn.commands.context.MethodCommandExecutorContext;
 import org.dockbox.hartshorn.commands.source.CommandSource;
+import org.dockbox.hartshorn.di.annotations.Binds;
 import org.dockbox.hartshorn.di.annotations.Wired;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.dockbox.hartshorn.util.Reflect;
@@ -44,6 +45,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 
 @Singleton
+@Binds(CommandGateway.class)
 public class SimpleCommandGateway implements CommandGateway {
 
     @Wired
