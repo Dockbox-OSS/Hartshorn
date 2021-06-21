@@ -20,6 +20,7 @@ package org.dockbox.hartshorn.commands.beta.impl;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 
+import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.commands.annotations.Command;
 import org.dockbox.hartshorn.commands.beta.api.CommandContainerContext;
@@ -33,6 +34,7 @@ import org.dockbox.hartshorn.commands.source.CommandSource;
 import org.dockbox.hartshorn.di.annotations.Wired;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.dockbox.hartshorn.util.Reflect;
+import org.jetbrains.annotations.UnmodifiableView;
 
 import java.lang.reflect.Method;
 import java.util.Collection;
@@ -113,9 +115,8 @@ public class SimpleCommandGateway implements CommandGateway {
             throw new IllegalArgumentException("Executor should either be declared in command type or container should provide aliases");
         }
 
-        for (String alias : aliases) {
-            this.contexts.put(alias, context);
-        }
+        for (String alias : aliases) this.contexts.put(alias, context);
+        Hartshorn.context().add(context);
     }
 
     @Override
