@@ -337,10 +337,10 @@ public class SimpleCommandContainerContext extends DefaultContext implements Com
     }
 
     @Override
-    public CommandFlag flag(String name) {
+    public Exceptional<CommandFlag> flag(String name) {
         for (CommandFlag flag : this.flags()) {
-            if (flag.name().equals(name)) return flag;
+            if (flag.name().equals(name)) return Exceptional.of(flag);
         }
-        return null;
+        return Exceptional.empty();
     }
 }

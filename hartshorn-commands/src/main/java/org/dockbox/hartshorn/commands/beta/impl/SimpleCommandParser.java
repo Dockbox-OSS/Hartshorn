@@ -62,9 +62,14 @@ public class SimpleCommandParser implements CommandParser {
         for (int i = 0; i < elements.size(); i++) {
             CommandElement<?> element = elements.get(i);
             final int size = element.size();
-            final int end = size == -1 ? tokens.size() : i + size;
+            final int end = size == -1 ? tokens.size() : size;
 
-            final String token = String.join(" ", tokens.subList(i, end)).trim();
+            if (tokens.size() < size) throw new ParsingException(new FakeResource("Not enough arguments for parameter '" + element.name() + "'"));
+
+            final List<String> elementTokens = tokens.subList(0, end);
+            final String token = String.join(" ", elementTokens).trim();
+            tokens.removeAll(elementTokens);
+
             final Exceptional<?> value = element.parse(source, token);
             parsedElements.add(this.getParameter(value, "argument", element.name()));
 
@@ -73,6 +78,8 @@ public class SimpleCommandParser implements CommandParser {
                 break;
             }
         }
+
+        if (!tokens.isEmpty()) throw new ParsingException(new FakeResource("Too many arguments"));
 
         return Exceptional.of(new SimpleCommandContext(command,
                 parsedElements,
@@ -85,19 +92,21 @@ public class SimpleCommandParser implements CommandParser {
         while (matcher.find()) {
             final String flag = matcher.group().substring(1); // Discard '-' prefix
             String name = flag.split(" ")[0];
-            final CommandFlag commandFlag = context.flag(name);
+            final Exceptional<CommandFlag> commandFlag = context.flag(name);
+            if (commandFlag.absent()) throw new ParsingException(new FakeResource("Unknown flag '-" + name + "'"));
 
-            if (commandFlag.value()) {
-                if (commandFlag instanceof CommandFlagElement) {
+            final CommandFlag contextFlag = commandFlag.get();
+            if (contextFlag.value()) {
+                if (contextFlag instanceof CommandFlagElement) {
                     final List<String> tokens = HartshornUtils.asList(command.split(" "));
-                    final int size = ((CommandFlagElement<?>) commandFlag).size();
+                    final int size = ((CommandFlagElement<?>) contextFlag).size();
                     final int flagIndex = tokens.indexOf('-' + name);
                     final int i = flagIndex + 1;
                     final int end = size == -1 ? tokens.size() : i + size;
 
                     String token = String.join(" ", tokens.subList(i, end)).trim();
 
-                    final Exceptional<?> value = ((CommandFlagElement<?>) commandFlag).parse(source, token);
+                    final Exceptional<?> value = ((CommandFlagElement<?>) contextFlag).parse(source, token);
                     flags.add(this.getParameter(value, "flag", name));
                     command = command.replace('-' + name + ' ' + token, "");
                 }

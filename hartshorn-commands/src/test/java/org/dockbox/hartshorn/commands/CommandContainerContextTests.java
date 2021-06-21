@@ -24,6 +24,7 @@ import org.dockbox.hartshorn.commands.beta.api.CommandContainerContext;
 import org.dockbox.hartshorn.commands.beta.api.CommandElement;
 import org.dockbox.hartshorn.commands.beta.api.CommandFlag;
 import org.dockbox.hartshorn.commands.beta.api.CommandGateway;
+import org.dockbox.hartshorn.commands.beta.exceptions.ParsingException;
 import org.dockbox.hartshorn.commands.beta.impl.SimpleCommandContainerContext;
 import org.dockbox.hartshorn.commands.beta.impl.SimpleCommandGateway;
 import org.dockbox.hartshorn.commands.types.CommandValueEnum;
@@ -45,6 +46,34 @@ public class CommandContainerContextTests {
         CommandGateway gateway = Hartshorn.context().get(SimpleCommandGateway.class);
         gateway.register(SampleCommand.class);
         Assertions.assertDoesNotThrow(() -> gateway.accept(Console.getInstance(), "demo sub sub dave"));
+    }
+
+    @Test
+    void testContainerExecution() {
+        CommandGateway gateway = Hartshorn.context().get(SimpleCommandGateway.class);
+        gateway.register(SampleCommand.class);
+        Assertions.assertDoesNotThrow(() -> gateway.accept(Console.getInstance(), "demo complex requiredArg optionalArg ONE --flag --vflag flagValue -s"));
+    }
+
+    @Test
+    void testTooManyArguments() {
+        CommandGateway gateway = Hartshorn.context().get(SimpleCommandGateway.class);
+        gateway.register(SampleCommand.class);
+        Assertions.assertThrows(ParsingException.class, () -> gateway.accept(Console.getInstance(), "demo complex requiredArg optionalArg ONE thisArgumentIsOneTooMany"));
+    }
+
+    @Test
+    void testNotEnoughArguments() {
+        CommandGateway gateway = Hartshorn.context().get(SimpleCommandGateway.class);
+        gateway.register(SampleCommand.class);
+        Assertions.assertThrows(ParsingException.class, () -> gateway.accept(Console.getInstance(), "demo complex requiredArg optionalArg")); // Missing enum argument
+    }
+
+    @Test
+    void testUnknownFlag() {
+        CommandGateway gateway = Hartshorn.context().get(SimpleCommandGateway.class);
+        gateway.register(SampleCommand.class);
+        Assertions.assertThrows(ParsingException.class, () -> gateway.accept(Console.getInstance(), "demo complex requiredArg optionalArg ONE --unknownFlag"));
     }
 
     @Test

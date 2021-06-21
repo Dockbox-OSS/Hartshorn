@@ -17,6 +17,7 @@
 
 package org.dockbox.hartshorn.commands.beta.api;
 
+import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.i18n.permissions.Permission;
 import org.dockbox.hartshorn.di.context.Context;
 
@@ -36,6 +37,6 @@ public interface CommandContainerContext extends Context {
     Class<?> parent();
     List<CommandElement<?>> elements();
     List<CommandFlag> flags();
-    CommandFlag flag(String name);
+    Exceptional<CommandFlag> flag(String name);
     boolean matches(String command);
 }

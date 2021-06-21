@@ -19,20 +19,20 @@ package org.dockbox.hartshorn.commands.types;
 
 import org.dockbox.hartshorn.commands.annotations.Command;
 import org.dockbox.hartshorn.commands.beta.api.CommandContext;
-import org.dockbox.hartshorn.di.services.ServiceContainer;
 
 @Command("demo")
 public class SampleCommand {
 
     @Command(value = "sub", arguments = "<argument{Int}> --skip remainingInt")
     public void sub(CommandContext context) {
-        System.out.println((Integer) context.get("argument"));
     }
 
     @Command(value = "sub sub", arguments = "<service{Service}>")
     public void subsub(CommandContext context) {
-        final ServiceContainer service = context.get("service");
-        System.out.println(service.getName());
+    }
+
+    @Command(value = "complex", arguments = "<required{String}> [optional{String}]  [enum{org.dockbox.hartshorn.commands.types.CommandValueEnum}] --flag --vflag String -s")
+    public void complex(CommandContext context) {
     }
 
 }
