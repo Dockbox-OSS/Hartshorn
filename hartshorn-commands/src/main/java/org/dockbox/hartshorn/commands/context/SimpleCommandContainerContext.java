@@ -312,11 +312,6 @@ public class SimpleCommandContainerContext extends DefaultContext implements Com
     }
 
     @Override
-    public boolean confirmation() {
-        return this.command.confirm();
-    }
-
-    @Override
     public Class<?> parent() {
         return this.command.parent();
     }

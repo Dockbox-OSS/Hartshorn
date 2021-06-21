@@ -18,14 +18,20 @@
 package org.dockbox.hartshorn.commands.extension;
 
 import org.dockbox.hartshorn.api.domain.Identifiable;
-import org.dockbox.hartshorn.api.i18n.entry.FakeResource;
-import org.dockbox.hartshorn.commands.annotations.Cooldown;
+import org.dockbox.hartshorn.api.i18n.text.Text;
+import org.dockbox.hartshorn.api.i18n.text.actions.ClickAction;
+import org.dockbox.hartshorn.api.i18n.text.actions.HoverAction;
+import org.dockbox.hartshorn.commands.CommandResources;
+import org.dockbox.hartshorn.commands.annotations.WithConfirmation;
 import org.dockbox.hartshorn.commands.context.CommandContext;
 import org.dockbox.hartshorn.commands.context.CommandExecutorContext;
 import org.dockbox.hartshorn.commands.source.CommandSource;
-import org.dockbox.hartshorn.util.HartshornUtils;
+import org.dockbox.hartshorn.di.annotations.Wired;
 
-public class CooldownExtension implements CommandExecutorExtension {
+public class ConfirmationExtension implements CommandExecutorExtension {
+
+    @Wired
+    private CommandResources resources;
 
     @Override
     public ExtensionResult execute(CommandContext context, CommandExecutorContext executorContext) {
@@ -33,16 +39,22 @@ public class CooldownExtension implements CommandExecutorExtension {
         if (!(sender instanceof Identifiable)) return ExtensionResult.accept();
 
         final String id = this.id((Identifiable) sender, context);
-        if (HartshornUtils.isInCooldown(id)) return ExtensionResult.reject(new FakeResource("You are in cooldown!"));
-        else {
-            Cooldown cooldown = executorContext.method().getAnnotation(Cooldown.class);
-            HartshornUtils.cooldown(id, cooldown.duration(), cooldown.unit());
-            return ExtensionResult.accept();
-        }
+
+        Runnable action = () -> executorContext.executor().execute(context);
+        final Text confirmationText = this.resources.getConfirmCommand().translate(sender).asText();
+        final Text confirmationHover = this.resources.getConfirmCommandHover().translate(sender).asText();
+
+        confirmationText
+                .onHover(HoverAction.showText(confirmationHover))
+                .onClick(ClickAction.executeCallback(target -> action.run()));
+
+        sender.send(confirmationText);
+
+        return ExtensionResult.reject(this.resources.getConfirmCommand());
     }
 
     @Override
     public boolean extend(CommandExecutorContext context) {
-        return context.method().isAnnotationPresent(Cooldown.class);
+        return context.method().isAnnotationPresent(WithConfirmation.class);
     }
 }

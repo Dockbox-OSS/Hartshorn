@@ -32,7 +32,6 @@ public interface CommandContainerContext extends Context {
     Permission permission();
     boolean inherited();
     boolean extended();
-    boolean confirmation();
     Class<?> parent();
     List<CommandElement<?>> elements();
     List<CommandFlag> flags();

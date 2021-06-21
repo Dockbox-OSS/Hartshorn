@@ -15,23 +15,14 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.commands.extension;
+package org.dockbox.hartshorn.commands.annotations;
 
-import org.dockbox.hartshorn.api.domain.Identifiable;
-import org.dockbox.hartshorn.commands.context.CommandContext;
-import org.dockbox.hartshorn.commands.context.CommandExecutorContext;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import java.util.UUID;
-
-public interface CommandExecutorExtension {
-
-    ExtensionResult execute(CommandContext context, CommandExecutorContext executorContext);
-    boolean extend(CommandExecutorContext context);
-
-    default String id(Identifiable sender, CommandContext context) {
-        UUID uuid = sender.getUniqueId();
-        String alias = context.alias();
-        return uuid + "$" + alias;
-    }
-
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.METHOD)
+public @interface WithConfirmation {
 }
