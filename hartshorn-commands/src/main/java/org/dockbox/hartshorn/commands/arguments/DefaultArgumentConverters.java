@@ -35,6 +35,7 @@ import org.jetbrains.annotations.NonNls;
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -152,6 +153,11 @@ public final class DefaultArgumentConverters implements InjectableType {
                     .locator().containers().stream()
                     .filter(container -> container.getId().equalsIgnoreCase(in))
                     .findFirst()))
+            .withSuggestionProvider((in) -> Hartshorn.context()
+                    .locator().containers().stream()
+                    .map(ServiceContainer::getId)
+                    .filter(id -> id.toLowerCase(Locale.ROOT).startsWith(in.toLowerCase(Locale.ROOT)))
+                    .collect(Collectors.toList()))
             .build();
 
     public static final ArgumentConverter<String> REMAINING_STRING = CommandValueConverter.builder(String.class, "remaining", "remainingString")
