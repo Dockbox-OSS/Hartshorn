@@ -15,18 +15,21 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.sponge.util.inject;
+package org.dockbox.hartshorn.commands.context;
 
-import org.dockbox.hartshorn.di.InjectConfiguration;
-import org.dockbox.hartshorn.discord.DiscordUtils;
-import org.dockbox.hartshorn.sponge.util.SpongeDiscordUtils;
+import org.dockbox.hartshorn.commands.service.CommandParameter;
+import org.dockbox.hartshorn.di.context.Context;
+import org.jetbrains.annotations.UnmodifiableView;
 
-public class SpongeLateInjector extends InjectConfiguration {
+import java.util.List;
 
-    @SuppressWarnings("OverlyCoupledMethod")
-    @Override
-    public final void collect() {
-        // Discord
-        this.bind(DiscordUtils.class, SpongeDiscordUtils.class);
-    }
+public interface ParserContext extends Context {
+
+    @UnmodifiableView
+    List<CommandParameter<?>> arguments();
+    @UnmodifiableView
+    List<CommandParameter<?>> flags();
+
+    String alias();
+
 }

@@ -15,18 +15,18 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.sponge.util.inject;
+package org.dockbox.hartshorn.commands.definition;
 
-import org.dockbox.hartshorn.di.InjectConfiguration;
-import org.dockbox.hartshorn.discord.DiscordUtils;
-import org.dockbox.hartshorn.sponge.util.SpongeDiscordUtils;
+import java.util.List;
 
-public class SpongeLateInjector extends InjectConfiguration {
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
-    @SuppressWarnings("OverlyCoupledMethod")
-    @Override
-    public final void collect() {
-        // Discord
-        this.bind(DiscordUtils.class, SpongeDiscordUtils.class);
-    }
+@AllArgsConstructor
+@Getter
+public class CommandDefinition {
+
+    private final List<CommandElement<?>> elements;
+    private final List<CommandFlag> flags;
+
 }

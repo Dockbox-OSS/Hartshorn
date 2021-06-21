@@ -21,7 +21,7 @@ import org.dockbox.hartshorn.api.i18n.annotations.Resource;
 import org.dockbox.hartshorn.api.i18n.common.ResourceEntry;
 import org.dockbox.hartshorn.di.annotations.Service;
 
-@Service(owner = DefaultCommandBus.class)
+@Service(owner = CommandGateway.class)
 public interface CommandResources {
 
     @Resource(value = "$1This command requires confirmation, click $2[here] $1to confirm", key = "confirm.message")

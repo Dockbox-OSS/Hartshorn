@@ -26,13 +26,12 @@ import org.dockbox.hartshorn.api.i18n.common.ResourceEntry;
 import org.dockbox.hartshorn.api.i18n.permissions.Permission;
 import org.dockbox.hartshorn.api.i18n.permissions.PermissionContext;
 import org.dockbox.hartshorn.api.i18n.text.Text;
-import org.dockbox.hartshorn.commands.CommandInterface;
 import org.dockbox.hartshorn.commands.source.CommandSource;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
-public abstract class Console implements CommandSource, PermissionHolder, Identifiable, CommandInterface {
+public abstract class Console implements CommandSource, PermissionHolder, Identifiable {
 
     @SuppressWarnings("ConstantDeclaredInAbstractClass")
     public static final UUID UNIQUE_ID = new UUID(0, 0);

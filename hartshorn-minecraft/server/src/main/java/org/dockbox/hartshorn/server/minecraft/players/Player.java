@@ -29,7 +29,6 @@ import org.dockbox.hartshorn.api.i18n.text.Text;
 import org.dockbox.hartshorn.api.keys.Keys;
 import org.dockbox.hartshorn.api.keys.PersistentDataHolder;
 import org.dockbox.hartshorn.api.keys.PersistentDataKey;
-import org.dockbox.hartshorn.commands.CommandUser;
 import org.dockbox.hartshorn.commands.source.CommandSource;
 import org.dockbox.hartshorn.server.minecraft.dimension.Locatable;
 import org.dockbox.hartshorn.server.minecraft.dimension.position.Location;
@@ -37,13 +36,13 @@ import org.dockbox.hartshorn.server.minecraft.dimension.world.World;
 import org.dockbox.hartshorn.server.minecraft.entities.Entity;
 import org.dockbox.hartshorn.server.minecraft.inventory.InventoryHolder;
 import org.dockbox.hartshorn.server.minecraft.item.Item;
-import org.dockbox.hartshorn.server.minecraft.players.inventory.PlayerInventory;
 import org.dockbox.hartshorn.server.minecraft.packets.PacketReceiver;
+import org.dockbox.hartshorn.server.minecraft.players.inventory.PlayerInventory;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
-public abstract class Player extends AbstractIdentifiable implements CommandSource, PermissionHolder, Locatable, InventoryHolder, PacketReceiver, PersistentDataHolder, Entity, CommandUser {
+public abstract class Player extends AbstractIdentifiable implements CommandSource, PermissionHolder, Locatable, InventoryHolder, PacketReceiver, PersistentDataHolder, Entity {
 
     // An empty context targets only global permissions
     private static final PermissionContext GLOBAL = PermissionContext.builder().build();

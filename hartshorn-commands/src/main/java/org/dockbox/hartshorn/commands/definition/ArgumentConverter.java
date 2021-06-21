@@ -15,18 +15,26 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.sponge.util.inject;
+package org.dockbox.hartshorn.commands.definition;
 
-import org.dockbox.hartshorn.di.InjectConfiguration;
-import org.dockbox.hartshorn.discord.DiscordUtils;
-import org.dockbox.hartshorn.sponge.util.SpongeDiscordUtils;
+import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.commands.service.CommandParameter;
+import org.dockbox.hartshorn.commands.source.CommandSource;
 
-public class SpongeLateInjector extends InjectConfiguration {
+import java.util.Collection;
+import java.util.List;
 
-    @SuppressWarnings("OverlyCoupledMethod")
-    @Override
-    public final void collect() {
-        // Discord
-        this.bind(DiscordUtils.class, SpongeDiscordUtils.class);
-    }
+public interface ArgumentConverter<T> {
+
+    List<String> getKeys();
+
+    Class<T> getType();
+
+    Exceptional<T> convert(CommandSource source, String argument);
+
+    Exceptional<T> convert(CommandSource source, CommandParameter<String> value);
+
+    Collection<String> suggestions(CommandSource source, String argument);
+
+    int size();
 }

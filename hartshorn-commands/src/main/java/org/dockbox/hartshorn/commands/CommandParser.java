@@ -15,33 +15,16 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.commands.events;
+package org.dockbox.hartshorn.commands;
 
-import org.dockbox.hartshorn.api.events.AbstractTargetCancellableEvent;
+import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.commands.context.CommandContext;
+import org.dockbox.hartshorn.commands.exceptions.ParsingException;
+import org.dockbox.hartshorn.commands.context.CommandExecutorContext;
 import org.dockbox.hartshorn.commands.source.CommandSource;
 
-import lombok.Getter;
+public interface CommandParser {
 
-public abstract class CommandEvent extends AbstractTargetCancellableEvent {
+    Exceptional<CommandContext> parse(String command, CommandSource source, CommandExecutorContext context) throws ParsingException;
 
-    @Getter
-    private final CommandContext context;
-
-    protected CommandEvent(CommandSource source, CommandContext context) {
-        super(source);
-        this.context = context;
-    }
-
-    public static class Before extends CommandEvent {
-        public Before(CommandSource source, CommandContext context) {
-            super(source, context);
-        }
-    }
-
-    public static class After extends CommandEvent {
-        public After(CommandSource source, CommandContext context) {
-            super(source, context);
-        }
-    }
 }

@@ -15,18 +15,36 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.sponge.util.inject;
+package org.dockbox.hartshorn.commands.definition;
 
-import org.dockbox.hartshorn.di.InjectConfiguration;
-import org.dockbox.hartshorn.discord.DiscordUtils;
-import org.dockbox.hartshorn.sponge.util.SpongeDiscordUtils;
+import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.api.i18n.permissions.Permission;
 
-public class SpongeLateInjector extends InjectConfiguration {
+import lombok.AllArgsConstructor;
 
-    @SuppressWarnings("OverlyCoupledMethod")
+@AllArgsConstructor
+public class SimpleCommandFlag implements CommandFlag {
+
+    private final String name;
+    private final Permission permission;
+
+    public SimpleCommandFlag(String name) {
+        this.name = name;
+        this.permission = null;
+    }
+
     @Override
-    public final void collect() {
-        // Discord
-        this.bind(DiscordUtils.class, SpongeDiscordUtils.class);
+    public String name() {
+        return this.name;
+    }
+
+    @Override
+    public Exceptional<Permission> permission() {
+        return Exceptional.of(this.permission);
+    }
+
+    @Override
+    public boolean value() {
+        return false;
     }
 }

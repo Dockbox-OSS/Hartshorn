@@ -20,6 +20,8 @@ package org.dockbox.hartshorn.commands;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.i18n.common.ResourceEntry;
 import org.dockbox.hartshorn.api.i18n.entry.FakeResource;
+import org.dockbox.hartshorn.commands.arguments.CustomParameterPattern;
+import org.dockbox.hartshorn.commands.arguments.HashtagParameterPattern;
 import org.dockbox.hartshorn.commands.types.CuboidArgument;
 import org.dockbox.hartshorn.test.HartshornRunner;
 import org.dockbox.hartshorn.util.HartshornUtils;

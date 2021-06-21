@@ -17,8 +17,8 @@
 
 package org.dockbox.hartshorn.commands.annotations;
 
-import org.dockbox.hartshorn.commands.CustomParameterPattern;
-import org.dockbox.hartshorn.commands.HashtagParameterPattern;
+import org.dockbox.hartshorn.commands.arguments.CustomParameterPattern;
+import org.dockbox.hartshorn.commands.arguments.HashtagParameterPattern;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

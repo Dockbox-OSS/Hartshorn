@@ -19,28 +19,26 @@ package org.dockbox.hartshorn.commands.context;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.i18n.permissions.Permission;
-import org.dockbox.hartshorn.commands.service.CommandParameter;
-import org.dockbox.hartshorn.commands.source.CommandSource;
-import org.jetbrains.annotations.UnmodifiableView;
+import org.dockbox.hartshorn.commands.definition.CommandElement;
+import org.dockbox.hartshorn.commands.definition.CommandFlag;
+import org.dockbox.hartshorn.di.context.Context;
 
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
-public interface CommandContext extends ParserContext {
+public interface CommandContainerContext extends Context {
 
-    <T> T get(String key);
-
-    boolean has(String key);
-
-    <T> Exceptional<T> first(String key);
-
-    <T> Exceptional<CommandParameter<T>> argument(String key);
-
-    <T> Exceptional<CommandParameter<T>> flag(String key);
-
-    CommandSource getSender();
-
-    @UnmodifiableView
-    List<Permission> getPermissions();
-
-    String command();
+    List<String> aliases();
+    String arguments();
+    Permission permission();
+    long cooldown();
+    ChronoUnit cooldownUnit();
+    boolean inherited();
+    boolean extended();
+    boolean confirmation();
+    Class<?> parent();
+    List<CommandElement<?>> elements();
+    List<CommandFlag> flags();
+    Exceptional<CommandFlag> flag(String name);
+    boolean matches(String command);
 }

@@ -15,18 +15,24 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.sponge.util.inject;
+package org.dockbox.hartshorn.commands.exceptions;
 
-import org.dockbox.hartshorn.di.InjectConfiguration;
-import org.dockbox.hartshorn.discord.DiscordUtils;
-import org.dockbox.hartshorn.sponge.util.SpongeDiscordUtils;
+import org.dockbox.hartshorn.api.i18n.common.ResourceEntry;
 
-public class SpongeLateInjector extends InjectConfiguration {
+import lombok.Getter;
 
-    @SuppressWarnings("OverlyCoupledMethod")
-    @Override
-    public final void collect() {
-        // Discord
-        this.bind(DiscordUtils.class, SpongeDiscordUtils.class);
+public class ParsingException extends Exception {
+
+    @Getter
+    private final ResourceEntry resource;
+
+    public ParsingException(ResourceEntry resource) {
+        super(resource.plain());
+        this.resource = resource;
+    }
+
+    public ParsingException(ResourceEntry resource, Throwable cause) {
+        super(resource.plain(), cause);
+        this.resource = resource;
     }
 }

@@ -15,33 +15,27 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.commands.events;
+package org.dockbox.hartshorn.commands;
 
-import org.dockbox.hartshorn.api.events.AbstractTargetCancellableEvent;
 import org.dockbox.hartshorn.commands.context.CommandContext;
+import org.dockbox.hartshorn.commands.exceptions.ParsingException;
+import org.dockbox.hartshorn.commands.context.CommandExecutorContext;
 import org.dockbox.hartshorn.commands.source.CommandSource;
+import org.jetbrains.annotations.UnmodifiableView;
 
-import lombok.Getter;
+import java.util.List;
 
-public abstract class CommandEvent extends AbstractTargetCancellableEvent {
+public interface CommandGateway {
 
-    @Getter
-    private final CommandContext context;
+    void accept(CommandSource source, String command) throws ParsingException;
+    void accept(CommandContext context);
 
-    protected CommandEvent(CommandSource source, CommandContext context) {
-        super(source);
-        this.context = context;
-    }
+    void register(Class<?> type);
+    void register(CommandExecutorContext context);
 
-    public static class Before extends CommandEvent {
-        public Before(CommandSource source, CommandContext context) {
-            super(source, context);
-        }
-    }
+    @UnmodifiableView
+    List<String> suggestions(CommandSource source, String command);
 
-    public static class After extends CommandEvent {
-        public After(CommandSource source, CommandContext context) {
-            super(source, context);
-        }
-    }
+    CommandExecutor get(CommandContext context);
+
 }
