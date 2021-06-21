@@ -15,30 +15,14 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.commands;
+package org.dockbox.hartshorn.commands.extension;
 
 import org.dockbox.hartshorn.commands.context.CommandContext;
-import org.dockbox.hartshorn.commands.exceptions.ParsingException;
 import org.dockbox.hartshorn.commands.context.CommandExecutorContext;
-import org.dockbox.hartshorn.commands.extension.CommandExecutorExtension;
-import org.dockbox.hartshorn.commands.source.CommandSource;
-import org.jetbrains.annotations.UnmodifiableView;
 
-import java.util.List;
+public interface CommandExecutorExtension {
 
-public interface CommandGateway {
-
-    void accept(CommandSource source, String command) throws ParsingException;
-    void accept(CommandContext context);
-
-    void register(Class<?> type);
-    void register(CommandExecutorContext context);
-
-    @UnmodifiableView
-    List<String> suggestions(CommandSource source, String command);
-
-    CommandExecutorContext get(CommandContext context);
-
-    void add(CommandExecutorExtension extension);
+    ExtensionResult execute(CommandContext context, CommandExecutorContext executorContext);
+    boolean extend(CommandExecutorContext context);
 
 }

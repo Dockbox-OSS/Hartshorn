@@ -120,6 +120,11 @@ public class MethodCommandExecutorContext extends DefaultContext implements Comm
     }
 
     @Override
+    public Method method() {
+        return this.method;
+    }
+
+    @Override
     public List<String> suggestions(CommandSource source, String command, CommandParser parser) {
         final String stripped = this.strip(command, false);
         final List<CommandElement<?>> elements = this.container().elements();

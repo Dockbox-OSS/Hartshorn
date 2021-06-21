@@ -20,6 +20,7 @@ package org.dockbox.hartshorn.commands.service;
 import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.annotations.PostBootstrap;
 import org.dockbox.hartshorn.api.annotations.UseBootstrap;
+import org.dockbox.hartshorn.commands.extension.CommandExecutorExtension;
 import org.dockbox.hartshorn.commands.CommandGateway;
 import org.dockbox.hartshorn.commands.annotations.Command;
 import org.dockbox.hartshorn.di.annotations.Service;
@@ -37,6 +38,10 @@ public class CommandServiceScanner implements Preloadable {
             if (!Reflect.annotatedMethods(container.getType(), Command.class).isEmpty()) {
                 gateway.register(container.getType());
             }
+        }
+
+        for (Class<? extends CommandExecutorExtension> extension : Reflect.subTypes(Hartshorn.PACKAGE_PREFIX, CommandExecutorExtension.class)) {
+            gateway.add(Hartshorn.context().get(extension));
         }
     }
 

@@ -28,6 +28,8 @@ import org.dockbox.hartshorn.commands.context.CommandExecutorContext;
 import org.dockbox.hartshorn.commands.context.CommandContext;
 import org.dockbox.hartshorn.commands.exceptions.ParsingException;
 import org.dockbox.hartshorn.commands.context.MethodCommandExecutorContext;
+import org.dockbox.hartshorn.commands.extension.CommandExecutorExtension;
+import org.dockbox.hartshorn.commands.extension.ExtensionResult;
 import org.dockbox.hartshorn.commands.source.CommandSource;
 import org.dockbox.hartshorn.di.annotations.Binds;
 import org.dockbox.hartshorn.di.annotations.Wired;
@@ -53,6 +55,8 @@ public class SimpleCommandGateway implements CommandGateway {
 
     @Getter(AccessLevel.PROTECTED)
     private final transient Multimap<String, CommandExecutorContext> contexts = ArrayListMultimap.create();
+    @Getter(AccessLevel.PROTECTED)
+    private final transient List<CommandExecutorExtension> extensions = HartshornUtils.emptyConcurrentList();
 
     @Override
     public void accept(CommandSource source, String command) throws ParsingException {
@@ -61,7 +65,7 @@ public class SimpleCommandGateway implements CommandGateway {
         else {
             final Exceptional<CommandContext> commandContext = this.parser.parse(command, source, context.get());
             if (commandContext.present()) {
-                context.get().executor().execute(commandContext.get());
+                this.execute(context.get(), commandContext.get());
             }
         }
     }
@@ -88,9 +92,22 @@ public class SimpleCommandGateway implements CommandGateway {
 
     @Override
     public void accept(CommandContext context) {
-        final CommandExecutor executor = this.get(context);
-        if (executor != null) executor.execute(context);
+        final CommandExecutorContext executor = this.get(context);
+        if (executor != null) this.execute(executor, context);
         else throw new IllegalStateException("No executor registered for command '" + context.alias() + "' with " + context.arguments().size() + " arguments");
+    }
+
+    protected void execute(CommandExecutorContext context, CommandContext commandContext) {
+        for (CommandExecutorExtension extension : this.getExtensions()) {
+            if (extension.extend(context)) {
+                final ExtensionResult result = extension.execute(commandContext, context);
+                if (!result.proceed()) {
+                    commandContext.getSender().send(result.reason());
+                    return;
+                }
+            }
+        }
+        context.executor().execute(commandContext);
     }
 
     @Override
@@ -132,10 +149,15 @@ public class SimpleCommandGateway implements CommandGateway {
     }
 
     @Override
-    public CommandExecutor get(CommandContext context) {
+    public CommandExecutorContext get(CommandContext context) {
         for (CommandExecutorContext executorContext : this.getContexts().get(context.alias())) {
-            if (executorContext.accepts(context.command())) return executorContext.executor();
+            if (executorContext.accepts(context.command())) return executorContext;
         }
         return null;
+    }
+
+    @Override
+    public void add(CommandExecutorExtension extension) {
+        this.extensions.add(extension);
     }
 }

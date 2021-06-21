@@ -22,6 +22,7 @@ import org.dockbox.hartshorn.commands.CommandParser;
 import org.dockbox.hartshorn.commands.source.CommandSource;
 import org.dockbox.hartshorn.di.context.Context;
 
+import java.lang.reflect.Method;
 import java.util.List;
 
 public interface CommandExecutorContext extends Context {
@@ -31,5 +32,6 @@ public interface CommandExecutorContext extends Context {
     String strip(String command, boolean parentOnly);
     List<String> aliases();
     Class<?> parent();
+    Method method();
     List<String> suggestions(CommandSource source, String command, CommandParser parser);
 }
