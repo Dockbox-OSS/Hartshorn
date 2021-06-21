@@ -19,24 +19,14 @@ package org.dockbox.hartshorn.commands.types;
 
 import org.dockbox.hartshorn.commands.annotations.Command;
 import org.dockbox.hartshorn.commands.context.CommandContext;
+import org.dockbox.hartshorn.di.annotations.Service;
 
 @Command("demo")
-public class SampleCommand {
+@Service
+public class SampleCommandExtension {
 
-    @Command(arguments = "<remaining{remainingString}>")
-    public void parent(CommandContext context) {
-    }
-
-    @Command(value = "sub", arguments = "<argument{Int}> --skip remainingInt")
-    public void sub(CommandContext context) {
-    }
-
-    @Command(value = "sub sub", arguments = "<service{Service}>")
-    public void subsub(CommandContext context) {
-    }
-
-    @Command(value = "complex", arguments = "<required{String}> [optional{String}]  [enum{org.dockbox.hartshorn.commands.types.CommandValueEnum}] --flag --vflag String -s")
-    public void complex(CommandContext context) {
+    @Command(value = "second", arguments = "<name>")
+    public void second(CommandContext context) {
     }
 
 }

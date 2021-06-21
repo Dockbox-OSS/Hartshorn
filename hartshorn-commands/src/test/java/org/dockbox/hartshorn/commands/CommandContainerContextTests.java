@@ -27,6 +27,7 @@ import org.dockbox.hartshorn.commands.exceptions.ParsingException;
 import org.dockbox.hartshorn.commands.context.SimpleCommandContainerContext;
 import org.dockbox.hartshorn.commands.types.CommandValueEnum;
 import org.dockbox.hartshorn.commands.types.SampleCommand;
+import org.dockbox.hartshorn.commands.types.SampleCommandExtension;
 import org.dockbox.hartshorn.server.minecraft.Console;
 import org.dockbox.hartshorn.test.HartshornRunner;
 import org.dockbox.hartshorn.util.HartshornUtils;
@@ -45,11 +46,19 @@ public class CommandContainerContextTests {
     void testParsingCanSucceed() {
         CommandGateway gateway = Hartshorn.context().get(SimpleCommandGateway.class);
         gateway.register(SampleCommand.class);
-        Assertions.assertDoesNotThrow(() -> gateway.accept(Console.getInstance(), "demo sub sub dave"));
+        Assertions.assertDoesNotThrow(() -> gateway.accept(Console.getInstance(), "demo sub 1 --skip 1 2 3 4"));
     }
 
     @Test
-    void testContainerExecution() {
+    void testExtensionCanSucceed() {
+        CommandGateway gateway = Hartshorn.context().get(SimpleCommandGateway.class);
+        gateway.register(SampleCommand.class);
+        gateway.register(SampleCommandExtension.class);
+        Assertions.assertDoesNotThrow(() -> gateway.accept(Console.getInstance(), "demo second ThisIsMyName"));
+    }
+
+    @Test
+    void testComplexParsingCanSucceed() {
         CommandGateway gateway = Hartshorn.context().get(SimpleCommandGateway.class);
         gateway.register(SampleCommand.class);
         Assertions.assertDoesNotThrow(() -> gateway.accept(Console.getInstance(), "demo complex requiredArg optionalArg ONE --flag --vflag flagValue -s"));
