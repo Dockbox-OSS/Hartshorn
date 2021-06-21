@@ -23,6 +23,6 @@ import org.dockbox.hartshorn.commands.source.CommandSource;
 
 public interface CommandParser {
 
-    Exceptional<ParsedContext> parse(String command, CommandSource source, CommandExecutorContext context) throws ParsingException;
+    Exceptional<CommandContext> parse(String command, CommandSource source, CommandExecutorContext context) throws ParsingException;
 
 }

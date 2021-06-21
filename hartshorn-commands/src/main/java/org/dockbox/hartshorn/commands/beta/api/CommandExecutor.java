@@ -20,6 +20,6 @@ package org.dockbox.hartshorn.commands.beta.api;
 @FunctionalInterface
 public interface CommandExecutor {
 
-    void execute(ParsedContext context);
+    void execute(CommandContext context);
 
 }

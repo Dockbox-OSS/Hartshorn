@@ -68,7 +68,7 @@ public class SimpleCommandGateway implements CommandGateway {
     }
 
     @Override
-    public void accept(ParsedContext context) {
+    public void accept(CommandContext context) {
         final CommandExecutor executor = this.get(context);
         if (executor != null) executor.execute(context);
         else throw new IllegalStateException("No executor registered for command '" + context.alias() + "' with " + context.arguments().size() + " arguments");
@@ -106,7 +106,7 @@ public class SimpleCommandGateway implements CommandGateway {
     }
 
     @Override
-    public CommandExecutor get(ParsedContext context) {
+    public CommandExecutor get(CommandContext context) {
         for (CommandExecutorContext executorContext : this.getContexts().get(context.alias())) {
             if (executorContext.accepts(context.command())) return executorContext.executor();
         }

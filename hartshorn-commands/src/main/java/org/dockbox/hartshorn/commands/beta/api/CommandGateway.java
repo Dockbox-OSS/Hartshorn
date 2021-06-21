@@ -23,11 +23,11 @@ import org.dockbox.hartshorn.commands.source.CommandSource;
 public interface CommandGateway {
 
     void accept(CommandSource source, String command) throws ParsingException;
-    void accept(ParsedContext context);
+    void accept(CommandContext context);
 
     void register(Class<?> type);
     void register(CommandExecutorContext context);
 
-    CommandExecutor get(ParsedContext context);
+    CommandExecutor get(CommandContext context);
 
 }

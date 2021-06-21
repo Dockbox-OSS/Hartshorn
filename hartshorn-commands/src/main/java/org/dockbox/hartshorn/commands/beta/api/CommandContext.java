@@ -25,7 +25,7 @@ import org.jetbrains.annotations.UnmodifiableView;
 
 import java.util.List;
 
-public interface ParsedContext extends ParserContext {
+public interface CommandContext extends ParserContext {
 
     <T> T get(String key);
 

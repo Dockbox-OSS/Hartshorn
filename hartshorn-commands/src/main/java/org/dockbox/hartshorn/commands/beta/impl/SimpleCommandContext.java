@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.commands.beta.impl;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.i18n.permissions.Permission;
-import org.dockbox.hartshorn.commands.beta.api.ParsedContext;
+import org.dockbox.hartshorn.commands.beta.api.CommandContext;
 import org.dockbox.hartshorn.commands.context.CommandParameter;
 import org.dockbox.hartshorn.commands.source.CommandSource;
 import org.dockbox.hartshorn.di.context.DefaultContext;
@@ -33,7 +33,7 @@ import lombok.Getter;
 
 @SuppressWarnings("unchecked")
 @AllArgsConstructor
-public class SimpleParsedContext extends DefaultContext implements ParsedContext {
+public class SimpleCommandContext extends DefaultContext implements CommandContext {
 
     private final String command;
     private final List<CommandParameter<?>> args;

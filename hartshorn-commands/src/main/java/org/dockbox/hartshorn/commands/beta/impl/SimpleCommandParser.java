@@ -25,7 +25,7 @@ import org.dockbox.hartshorn.commands.beta.api.CommandElement;
 import org.dockbox.hartshorn.commands.beta.api.CommandExecutorContext;
 import org.dockbox.hartshorn.commands.beta.api.CommandFlag;
 import org.dockbox.hartshorn.commands.beta.api.CommandParser;
-import org.dockbox.hartshorn.commands.beta.api.ParsedContext;
+import org.dockbox.hartshorn.commands.beta.api.CommandContext;
 import org.dockbox.hartshorn.commands.beta.exceptions.ParsingException;
 import org.dockbox.hartshorn.commands.context.CommandParameter;
 import org.dockbox.hartshorn.commands.source.CommandSource;
@@ -43,7 +43,7 @@ public class SimpleCommandParser implements CommandParser {
     private static final Pattern FLAG = Pattern.compile("-(-?\\w+)(?: ([^ -]+))?");
 
     @Override
-    public Exceptional<ParsedContext> parse(String command, CommandSource source, CommandExecutorContext context) throws ParsingException {
+    public Exceptional<CommandContext> parse(String command, CommandSource source, CommandExecutorContext context) throws ParsingException {
         final Exceptional<CommandContainerContext> container = context.first(CommandContainerContext.class);
         if (container.absent()) return Exceptional.empty();
 
@@ -74,7 +74,7 @@ public class SimpleCommandParser implements CommandParser {
             }
         }
 
-        return Exceptional.of(new SimpleParsedContext(command,
+        return Exceptional.of(new SimpleCommandContext(command,
                 parsedElements,
                 parsedFlags,
                 source, HartshornUtils.singletonList(containerContext.permission())));
