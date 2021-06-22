@@ -20,10 +20,10 @@ package org.dockbox.hartshorn.commands.context;
 import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.exceptions.Except;
-import org.dockbox.hartshorn.commands.annotations.Command;
-import org.dockbox.hartshorn.commands.definition.CommandElement;
 import org.dockbox.hartshorn.commands.CommandExecutor;
 import org.dockbox.hartshorn.commands.CommandParser;
+import org.dockbox.hartshorn.commands.annotations.Command;
+import org.dockbox.hartshorn.commands.definition.CommandElement;
 import org.dockbox.hartshorn.commands.source.CommandSource;
 import org.dockbox.hartshorn.di.context.DefaultContext;
 import org.dockbox.hartshorn.util.HartshornUtils;
@@ -91,14 +91,16 @@ public class MethodCommandExecutorContext extends DefaultContext implements Comm
 
     @Override
     public String strip(String command, boolean parentOnly) {
-        for (String alias : this.parentAliases) {
-            if (command.startsWith(alias+' ')) command = command.substring(alias.length()+1);
-        }
+        command = this.stripAny(command, this.parentAliases);
+        if (!parentOnly) command = this.stripAny(command, this.container().aliases());
+        return command;
+    }
 
-        if (!parentOnly) {
-            for (String alias : this.container().aliases()) {
-                if (command.startsWith(alias+' ')) command = command.substring(alias.length()+1);
-            }
+    private String stripAny(String command, Iterable<String> aliases) {
+        for (String alias : aliases) {
+            // Equality is expected when no required arguments are present afterwards
+            if (command.equals(alias)) command = "";
+            else if (command.startsWith(alias + ' ')) command = command.substring(alias.length()+1);
         }
         return command;
     }
