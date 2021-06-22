@@ -17,13 +17,8 @@
 
 package org.dockbox.hartshorn.commands.definition;
 
-import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.api.i18n.permissions.Permission;
+public interface CommandFlag extends CommandPartial {
 
-public interface CommandFlag {
-
-    String name();
-    Exceptional<Permission> permission();
     boolean value();
 
 }

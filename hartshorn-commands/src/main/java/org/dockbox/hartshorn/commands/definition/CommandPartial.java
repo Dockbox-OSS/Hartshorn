@@ -17,17 +17,12 @@
 
 package org.dockbox.hartshorn.commands.definition;
 
-import java.util.List;
+import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.api.i18n.permissions.Permission;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+public interface CommandPartial {
 
-@AllArgsConstructor
-@Getter
-public class CommandDefinition {
-
-    private final boolean optional;
-    private final List<CommandElement<?>> elements;
-    private final List<CommandFlag> flags;
+    String name();
+    Exceptional<Permission> permission();
 
 }

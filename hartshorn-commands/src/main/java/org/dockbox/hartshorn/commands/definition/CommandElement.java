@@ -18,15 +18,12 @@
 package org.dockbox.hartshorn.commands.definition;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.api.i18n.permissions.Permission;
 import org.dockbox.hartshorn.commands.source.CommandSource;
 
 import java.util.Collection;
 
-public interface CommandElement<T> {
+public interface CommandElement<T> extends CommandPartial {
 
-    String name();
-    Exceptional<Permission> permission();
     boolean optional();
     Exceptional<T> parse(CommandSource source, String argument);
     Collection<String> suggestions(CommandSource source, String argument);
