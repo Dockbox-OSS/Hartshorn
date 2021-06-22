@@ -26,6 +26,8 @@ import org.dockbox.hartshorn.commands.context.CommandExecutorContext;
 import org.dockbox.hartshorn.commands.definition.CommandFlag;
 import org.dockbox.hartshorn.commands.context.CommandContext;
 import org.dockbox.hartshorn.commands.definition.CommandFlagElement;
+import org.dockbox.hartshorn.commands.definition.CommandPartial;
+import org.dockbox.hartshorn.commands.definition.GroupCommandElement;
 import org.dockbox.hartshorn.commands.exceptions.ParsingException;
 import org.dockbox.hartshorn.commands.service.CommandParameter;
 import org.dockbox.hartshorn.commands.context.SimpleCommandContext;
@@ -62,32 +64,41 @@ public class SimpleCommandParser implements CommandParser {
         stripped = this.stripFlags(stripped, parsedFlags, source, containerContext);
 
         final List<String> tokens = HartshornUtils.asList(stripped.split(" "));
+        parsedElements.addAll(this.parse(elements, tokens, source));
+
+        if (!tokens.isEmpty() && !"".equals(tokens.get(0))) throw new ParsingException(new FakeResource("Too many arguments"));
+
+        return Exceptional.of(new SimpleCommandContext(command,
+                parsedElements,
+                parsedFlags,
+                source, HartshornUtils.singletonList(containerContext.permission())));
+    }
+
+    private List<CommandParameter<?>> parse(List<CommandElement<?>> elements, List<String> tokens, CommandSource source) throws ParsingException {
+        List<CommandParameter<?>> parameters = HartshornUtils.emptyList();
         for (int i = 0; i < elements.size(); i++) {
             CommandElement<?> element = elements.get(i);
             final int size = element.size();
             final int end = size == -1 ? tokens.size() : size;
 
-            if (tokens.size() < size) throw new ParsingException(new FakeResource("Not enough arguments for parameter '" + element.name() + "'"));
+            if (tokens.size() < size || end > tokens.size()) {
+                if (element.optional()) continue;
+                else throw new ParsingException(new FakeResource("Not enough arguments for parameter '" + element.name() + "'"));
+            }
 
             final List<String> elementTokens = tokens.subList(0, end);
             final String token = String.join(" ", elementTokens).trim();
             tokens.removeAll(elementTokens);
 
             final Exceptional<?> value = element.parse(source, token);
-            parsedElements.add(this.getParameter(value, "argument", element.name()));
+            parameters.addAll(this.getParameter(value, token, "argument", element.name(), element, source));
 
             if (size == -1) {
                 if (i != elements.size() - 1) throw new ParsingException(new FakeResource("Illegal argument definition"));
                 break;
             }
         }
-
-        if (!tokens.isEmpty()) throw new ParsingException(new FakeResource("Too many arguments"));
-
-        return Exceptional.of(new SimpleCommandContext(command,
-                parsedElements,
-                parsedFlags,
-                source, HartshornUtils.singletonList(containerContext.permission())));
+        return parameters;
     }
 
     private String stripFlags(String command, Collection<CommandParameter<?>> flags, CommandSource source, CommandContainerContext context) throws ParsingException {
@@ -111,7 +122,7 @@ public class SimpleCommandParser implements CommandParser {
                     String token = String.join(" ", tokens.subList(i, end)).trim();
 
                     final Exceptional<?> value = ((CommandFlagElement<?>) contextFlag).parse(source, token);
-                    flags.add(this.getParameter(value, "flag", name));
+                    flags.addAll(this.getParameter(value, token, "flag", name, contextFlag, source));
                     command = command.replace('-' + name + ' ' + token, "");
                 }
             } else {
@@ -122,12 +133,19 @@ public class SimpleCommandParser implements CommandParser {
         return command.trim();
     }
 
-    private CommandParameter<?> getParameter(Exceptional<?> value, String elementType, String elementName) throws ParsingException {
+    private Collection<CommandParameter<?>> getParameter(Exceptional<?> value, String token, String elementType, String elementName, CommandPartial partial, CommandSource source) throws ParsingException {
         if (value.absent()) {
             ResourceEntry resource = new FakeResource("Could not parse " + elementType + " '" + elementName + "'");
             throw value.caught() ? new ParsingException(resource, value.error()) : new ParsingException(resource);
         } else {
-            return new CommandParameter<>(value.get(), elementName);
+            if (partial instanceof GroupCommandElement) {
+                //noinspection unchecked
+                final List<CommandElement<?>> elements = (List<CommandElement<?>>) value.get();
+                final List<String> tokens = HartshornUtils.asList(token.split(" "));
+                return this.parse(elements, tokens, source);
+            } else {
+                return HartshornUtils.singletonList(new CommandParameter<>(value.get(), elementName));
+            }
         }
     }
 

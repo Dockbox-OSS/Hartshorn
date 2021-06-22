@@ -29,6 +29,7 @@ import org.dockbox.hartshorn.commands.definition.CommandElement;
 import org.dockbox.hartshorn.commands.definition.CommandElements;
 import org.dockbox.hartshorn.commands.definition.CommandFlag;
 import org.dockbox.hartshorn.commands.definition.CommandFlagElement;
+import org.dockbox.hartshorn.commands.definition.GroupCommandElement;
 import org.dockbox.hartshorn.commands.definition.SimpleCommandElement;
 import org.dockbox.hartshorn.commands.definition.SimpleCommandFlag;
 import org.dockbox.hartshorn.di.binding.Bindings;
@@ -40,6 +41,7 @@ import java.util.List;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class SimpleCommandContainerContext extends DefaultContext implements CommandContainerContext {
 
@@ -121,7 +123,7 @@ public class SimpleCommandContainerContext extends DefaultContext implements Com
             this.definition = this.parseElements(this.arguments(), this.permission);
         }
         else {
-            this.definition = new CommandDefinition(HartshornUtils.emptyList(), HartshornUtils.emptyList());
+            this.definition = new CommandDefinition(true, HartshornUtils.emptyList(), HartshornUtils.emptyList());
         }
     }
 
@@ -148,8 +150,10 @@ public class SimpleCommandContainerContext extends DefaultContext implements Com
             Matcher argumentMatcher = ARGUMENT.matcher(part);
             if (argumentMatcher.matches()) {
                 CommandDefinition definition = this.extractArguments(elements, argumentMatcher, permission);
-                // Expected to only ever be a single command element
-                elements.addAll(definition.getElements());
+                final List<CommandElement<?>> commandElements = definition.getElements();
+                if (commandElements.isEmpty()) continue;
+                if (commandElements.size() == 1) elements.add(commandElements.get(0));
+                else elements.add(new GroupCommandElement(commandElements, definition.isOptional()));
             }
             else {
                 Matcher flagMatcher = FLAG.matcher(part);
@@ -164,7 +168,7 @@ public class SimpleCommandContainerContext extends DefaultContext implements Com
             }
         }
 
-        return new CommandDefinition(elements, flags);
+        return new CommandDefinition(true, elements, flags);
     }
 
     private CommandDefinition extractArguments(Collection<CommandElement<?>> elements, MatchResult argumentMatcher, Permission permission) {
@@ -175,7 +179,7 @@ public class SimpleCommandContainerContext extends DefaultContext implements Com
 
         if (definition.getElements().isEmpty() && definition.getFlags().isEmpty()) {
             CommandElement<?> element = this.generateElement(argumentMatcher.group(2), permission, optional);
-            definition = new CommandDefinition(HartshornUtils.asList(element), HartshornUtils.emptyList());
+            definition = new CommandDefinition(optional, HartshornUtils.asList(element), HartshornUtils.emptyList());
         }
 
         return definition;
@@ -279,11 +283,17 @@ public class SimpleCommandContainerContext extends DefaultContext implements Com
     public boolean matches(String command) {
         for (String candidate : this.aliases()) {
             if (command.startsWith(candidate)) {
-                if (!command.contains(" ")) return this.elements().isEmpty();
+                if (!command.contains(" ")) return this.requiredElements().isEmpty();
                 else return true;
             }
         }
         return false;
+    }
+
+    private List<CommandElement<?>> requiredElements() {
+        return this.elements().stream()
+                .filter(commandElement -> !commandElement.optional())
+                .collect(Collectors.toList());
     }
 
     @Override
