@@ -95,6 +95,13 @@ public class CommandContainerContextTests {
     }
 
     @Test
+    void testGroups() throws ParsingException {
+        CommandGateway gateway = Hartshorn.context().get(SimpleCommandGateway.class);
+        gateway.register(SampleCommand.class);
+        gateway.accept(Console.getInstance(), "demo group");
+    }
+
+    @Test
     void testAllSuggestions() {
         CommandGateway gateway = Hartshorn.context().get(SimpleCommandGateway.class);
         gateway.register(SampleCommand.class);
@@ -167,21 +174,6 @@ public class CommandContainerContextTests {
             @Override
             public String permission() {
                 return permission;
-            }
-
-            @Override
-            public boolean inherit() {
-                return false;
-            }
-
-            @Override
-            public boolean extend() {
-                return false;
-            }
-
-            @Override
-            public boolean confirm() {
-                return false;
             }
 
             @Override

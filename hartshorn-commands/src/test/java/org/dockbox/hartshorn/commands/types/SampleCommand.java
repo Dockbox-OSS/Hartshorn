@@ -39,4 +39,8 @@ public class SampleCommand {
     public void complex(CommandContext context) {
     }
 
+    @Command(value = "group", arguments = "[group <requiredA> <requiredB>]")
+    public void group(CommandContext context) {
+        System.out.println(context);
+    }
 }
