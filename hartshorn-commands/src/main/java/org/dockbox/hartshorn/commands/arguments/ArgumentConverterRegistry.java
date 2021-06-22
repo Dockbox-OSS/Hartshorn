@@ -20,8 +20,8 @@ package org.dockbox.hartshorn.commands.arguments;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
 import org.dockbox.hartshorn.commands.exceptions.ConstraintException;
-import org.dockbox.hartshorn.util.Reflect;
 import org.dockbox.hartshorn.util.HartshornUtils;
+import org.dockbox.hartshorn.util.Reflect;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -39,13 +39,11 @@ public final class ArgumentConverterRegistry {
     }
 
     public static Exceptional<ArgumentConverter<?>> getOptionalConverter(String key) {
-        Optional<ArgumentConverter<?>> optional =
-                CONVERTERS.stream().filter(converter ->
-                        converter.getKeys().stream()
-                                .map(String::toLowerCase)
-                                .collect(Collectors.toList())
-                                .contains(key.toLowerCase())
-                ).findFirst();
+        Optional<ArgumentConverter<?>> optional = CONVERTERS.stream().filter(converter -> converter.getKeys().stream()
+                .map(String::toLowerCase)
+                .collect(Collectors.toList())
+                .contains(key.toLowerCase())
+        ).findFirst();
         if (optional.isPresent()) return Exceptional.of(optional);
         else return Exceptional.of(new RuntimeException("No converter present"));
     }

@@ -57,18 +57,6 @@ public class SimpleCommandGateway implements CommandGateway {
     @Getter(AccessLevel.PROTECTED)
     private final transient List<CommandExecutorExtension> extensions = HartshornUtils.emptyConcurrentList();
 
-    @Override
-    public void accept(CommandSource source, String command) throws ParsingException {
-        final Exceptional<CommandExecutorContext> context = this.lookupContext(command);
-        if (context.absent()) throw new IllegalArgumentException("No supported command handler found for '" + command + "'");
-        else {
-            final Exceptional<CommandContext> commandContext = this.parser.parse(command, source, context.get());
-            if (commandContext.present()) {
-                this.execute(context.get(), commandContext.get());
-            }
-        }
-    }
-
     private Exceptional<CommandExecutorContext> lookupContext(String command) {
         final String alias = command.split(" ")[0];
         CommandExecutorContext bestContext = null;
@@ -89,13 +77,6 @@ public class SimpleCommandGateway implements CommandGateway {
         return Exceptional.of(bestContext);
     }
 
-    @Override
-    public void accept(CommandContext context) {
-        final CommandExecutorContext executor = this.get(context);
-        if (executor != null) this.execute(executor, context);
-        else throw new IllegalStateException("No executor registered for command '" + context.alias() + "' with " + context.arguments().size() + " arguments");
-    }
-
     protected void execute(CommandExecutorContext context, CommandContext commandContext) {
         for (CommandExecutorExtension extension : this.getExtensions()) {
             if (extension.extend(context)) {
@@ -107,6 +88,25 @@ public class SimpleCommandGateway implements CommandGateway {
             }
         }
         context.executor().execute(commandContext);
+    }
+
+    @Override
+    public void accept(CommandSource source, String command) throws ParsingException {
+        final Exceptional<CommandExecutorContext> context = this.lookupContext(command);
+        if (context.absent()) throw new IllegalArgumentException("No supported command handler found for '" + command + "'");
+        else {
+            final Exceptional<CommandContext> commandContext = this.parser.parse(command, source, context.get());
+            if (commandContext.present()) {
+                this.execute(context.get(), commandContext.get());
+            }
+        }
+    }
+
+    @Override
+    public void accept(CommandContext context) {
+        final CommandExecutorContext executor = this.get(context);
+        if (executor != null) this.execute(executor, context);
+        else throw new IllegalStateException("No executor registered for command '" + context.alias() + "' with " + context.arguments().size() + " arguments");
     }
 
     @Override
