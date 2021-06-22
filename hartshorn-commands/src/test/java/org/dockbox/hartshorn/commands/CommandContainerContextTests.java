@@ -74,7 +74,7 @@ public class CommandContainerContextTests {
     void testNotEnoughArguments() {
         CommandGateway gateway = Hartshorn.context().get(SimpleCommandGateway.class);
         gateway.register(SampleCommand.class);
-        Assertions.assertThrows(ParsingException.class, () -> gateway.accept(Console.getInstance(), "demo complex requiredArg optionalArg")); // Missing enum argument
+        Assertions.assertThrows(ParsingException.class, () -> gateway.accept(Console.getInstance(), "demo complex")); // Missing required arg (and optional arguments)
     }
 
     @Test

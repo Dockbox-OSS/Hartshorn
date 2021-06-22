@@ -105,7 +105,7 @@ public class SimpleCommandParser implements CommandParser {
         final Matcher matcher = FLAG.matcher(command);
 
         while (matcher.find()) {
-            final String flag = matcher.group().substring(1); // Discard '-' prefix
+            final String flag = matcher.group().substring(2); // Discard ' -' prefix
             String name = flag.split(" ")[0];
             final Exceptional<CommandFlag> commandFlag = context.flag(name);
             if (commandFlag.absent()) throw new ParsingException(new FakeResource("Unknown flag '-" + name + "'"));

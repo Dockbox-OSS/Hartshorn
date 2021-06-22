@@ -22,6 +22,7 @@ import com.google.common.collect.Multimap;
 
 import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.api.i18n.entry.FakeResource;
 import org.dockbox.hartshorn.commands.annotations.Command;
 import org.dockbox.hartshorn.commands.context.CommandContainerContext;
 import org.dockbox.hartshorn.commands.context.CommandContext;
@@ -93,7 +94,7 @@ public class SimpleCommandGateway implements CommandGateway {
     @Override
     public void accept(CommandSource source, String command) throws ParsingException {
         final Exceptional<CommandExecutorContext> context = this.lookupContext(command);
-        if (context.absent()) throw new IllegalArgumentException("No supported command handler found for '" + command + "'");
+        if (context.absent()) throw new ParsingException(new FakeResource("No supported command handler found for '" + command + "'"));
         else {
             final Exceptional<CommandContext> commandContext = this.parser.parse(command, source, context.get());
             if (commandContext.present()) {
