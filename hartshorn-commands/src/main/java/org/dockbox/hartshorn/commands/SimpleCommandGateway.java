@@ -72,7 +72,7 @@ public class SimpleCommandGateway implements CommandGateway {
     private Exceptional<CommandExecutorContext> lookupContext(String command) {
         final String alias = command.split(" ")[0];
         CommandExecutorContext bestContext = null;
-        for (CommandExecutorContext context : this.contexts.get(alias)) {
+        for (CommandExecutorContext context : contexts.get(alias)) {
             if (context.accepts(command)) {
                 if (bestContext == null) {
                     bestContext = context;
