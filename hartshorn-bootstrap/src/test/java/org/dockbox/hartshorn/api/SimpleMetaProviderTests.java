@@ -50,9 +50,10 @@ public class SimpleMetaProviderTests {
     }
 
     @Test
-    void testUnknownIsNull() {
+    void testUnknownIsSelf() {
         final MetaProvider lookup = new SimpleMetaProvider();
         final TypedOwner owner = lookup.lookup(Void.class);
-        Assertions.assertNull(owner);
+        Assertions.assertNotNull(owner);
+        Assertions.assertEquals("void", owner.id());
     }
 }

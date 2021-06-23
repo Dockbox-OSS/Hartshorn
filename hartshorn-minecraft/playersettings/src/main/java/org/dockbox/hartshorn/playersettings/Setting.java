@@ -77,7 +77,7 @@ public class Setting<T> extends TypedPersistentDataKey<T> {
      */
     @Nullable
     public T get(PersistentDataHolder holder) {
-        return holder.get(this).then(this.defaultValue).orNull();
+        return holder.get(this).orElse(this.defaultValue).orNull();
     }
 
     public static <T> SettingBuilder<T> of(Class<T> type) {

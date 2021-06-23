@@ -45,7 +45,7 @@ public class WorldEditPasteEvent extends AbstractCancellableEvent {
 
     /**
      * Gets the clipboard of the executing {@link Player} if one is present. If no clipboard is
-     * present {@link Exceptional#none()} ()} is returned.
+     * present {@link Exceptional#empty()} ()} is returned.
      *
      * @return the clipboard
      */

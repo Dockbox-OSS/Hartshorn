@@ -44,6 +44,6 @@ public class WrappedPattern
 
     @Override
     public Exceptional<com.sk89q.worldedit.function.pattern.Pattern> constructInitialReference() {
-        return Exceptional.none();
+        return Exceptional.empty();
     }
 }

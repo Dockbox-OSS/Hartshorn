@@ -865,6 +865,12 @@ public final class HartshornUtils {
         return merged.toArray(arrayOne);
     }
 
+    public static <T> List<T> merge(Collection<T> collectionOne, Collection<T> collectionTwo) {
+        List<T> merged = HartshornUtils.asList(collectionOne);
+        merged.addAll(HartshornUtils.asList(collectionTwo));
+        return merged;
+    }
+
     /**
      * Add all t [ ].
      *
@@ -1109,7 +1115,7 @@ public final class HartshornUtils {
                 return Exceptional.of(Duration.ofSeconds(time));
             }
         }
-        return Exceptional.none();
+        return Exceptional.empty();
     }
 
     private static long durationAmount(@Nullable String g, int multipler) {
@@ -1180,6 +1186,26 @@ public final class HartshornUtils {
 
     public static String[] splitCapitals(String s) {
         return s.split("(?=\\p{Lu})");
+    }
+
+    public static String trimWith(char c, String s) {
+        int len = s.length();
+        int st = 0;
+        char[] val = s.toCharArray();
+
+        while ((st < len) && (val[st] <= c)) {
+            st++;
+        }
+        while ((st < len) && (val[len - 1] <= c)) {
+            len--;
+        }
+        return ((st > 0) || (len < s.length())) ? s.substring(st, len) : s;
+    }
+
+    public static <T> List<T> list(int size) {
+        List<T> list = new ArrayList<>();
+        for (int i = 0; i < size; i++) list.add(null);
+        return list;
     }
 
     public enum Provision {

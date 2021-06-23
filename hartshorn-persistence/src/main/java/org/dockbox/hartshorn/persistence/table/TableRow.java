@@ -65,7 +65,7 @@ public class TableRow {
     @SuppressWarnings("unchecked")
     @NotNull
     public <T> Exceptional<T> getValue(@NotNull ColumnIdentifier<T> column) {
-        if (null == this.data.get(column)) return Exceptional.none();
+        if (null == this.data.get(column)) return Exceptional.empty();
 
         return Exceptional.of((T) this.data.get(column));
     }

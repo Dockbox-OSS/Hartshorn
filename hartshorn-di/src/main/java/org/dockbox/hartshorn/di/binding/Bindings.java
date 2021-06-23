@@ -59,7 +59,7 @@ public class Bindings {
         if (null != property) {
             return Exceptional.of(property.getObject());
         }
-        return Exceptional.none();
+        return Exceptional.empty();
     }
 
     /**

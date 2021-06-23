@@ -165,7 +165,7 @@ public class ExceptionalTests {
 
     @Test
     void testNoneContainsNothing() {
-        Exceptional<String> exceptional = Exceptional.none();
+        Exceptional<String> exceptional = Exceptional.empty();
 
         Assertions.assertFalse(exceptional.present());
         Assertions.assertTrue(exceptional.absent());
@@ -174,7 +174,7 @@ public class ExceptionalTests {
 
     @Test
     void testGetThrowsExceptionIfAbsent() {
-        Assertions.assertThrows(NoSuchElementException.class, () -> Exceptional.none().get());
+        Assertions.assertThrows(NoSuchElementException.class, () -> Exceptional.empty().get());
     }
 
     @Test
@@ -189,7 +189,7 @@ public class ExceptionalTests {
 
     @Test
     void testGetWithSupplierReturnsDefaultValueIfAbsent() {
-        Exceptional<String> exceptional = Exceptional.none();
+        Exceptional<String> exceptional = Exceptional.empty();
         String value = exceptional.get(() -> "other");
 
         Assertions.assertNotNull(value);
@@ -211,7 +211,7 @@ public class ExceptionalTests {
 
     @Test
     void testPresentConsumerDoesNotActivateIfAbsent() {
-        Exceptional<String> exceptional = Exceptional.none();
+        Exceptional<String> exceptional = Exceptional.empty();
 
         final boolean[] activated = { false };
         exceptional.present(value -> activated[0] = true);
@@ -221,7 +221,7 @@ public class ExceptionalTests {
 
     @Test
     void testAbsentConsumerActivatesIfValueIsAbsent() {
-        Exceptional<String> exceptional = Exceptional.none();
+        Exceptional<String> exceptional = Exceptional.empty();
 
         final boolean[] activated = { false };
         exceptional.absent(() -> activated[0] = true);
@@ -241,7 +241,7 @@ public class ExceptionalTests {
 
     @Test
     void testOrNullReturnsNullIfAbsent() {
-        Exceptional<String> exceptional = Exceptional.none();
+        Exceptional<String> exceptional = Exceptional.empty();
         Assertions.assertNull(exceptional.orNull());
     }
 
@@ -261,7 +261,7 @@ public class ExceptionalTests {
 
     @Test
     void testOrReturnsOtherIfAbsent() {
-        Exceptional<String> exceptional = Exceptional.none();
+        Exceptional<String> exceptional = Exceptional.empty();
         Assertions.assertEquals("other", exceptional.or("other"));
     }
 
@@ -273,14 +273,14 @@ public class ExceptionalTests {
 
     @Test
     void testOrReturnsOtherIfThrowableAbsent() {
-        Exceptional<String> exceptional = Exceptional.none();
+        Exceptional<String> exceptional = Exceptional.empty();
         Assertions.assertEquals("other", exceptional.or(new Exception("other")).getMessage());
     }
 
     @Test
     void testThenDoesNotApplyIfValueAbsent() {
-        Exceptional<String> exceptional = Exceptional.none();
-        exceptional = exceptional.then(value -> Exceptional.of("other"));
+        Exceptional<String> exceptional = Exceptional.empty();
+        exceptional = exceptional.orElse(value -> Exceptional.of("other"));
 
         Assertions.assertNotNull(exceptional);
         Assertions.assertFalse(exceptional.present());
@@ -289,7 +289,7 @@ public class ExceptionalTests {
     @Test
     void testThenAppliesIfValuePresent() {
         Exceptional<String> exceptional = Exceptional.of("value");
-        exceptional = exceptional.then(value -> Exceptional.of("other"));
+        exceptional = exceptional.orElse(value -> Exceptional.of("other"));
 
         Assertions.assertNotNull(exceptional);
         Assertions.assertTrue(exceptional.present());
@@ -299,7 +299,7 @@ public class ExceptionalTests {
     @Test
     void testThenWithThrowableDoesNotApplyIfValueAbsent() {
         Exceptional<String> exceptional = Exceptional.of(new Exception());
-        exceptional = exceptional.then((value, err) -> Exceptional.of("other"));
+        exceptional = exceptional.orElse((value, err) -> Exceptional.of("other"));
 
         Assertions.assertNotNull(exceptional);
         Assertions.assertFalse(exceptional.present());
@@ -308,7 +308,7 @@ public class ExceptionalTests {
     @Test
     void testThenWithThrowableAppliesIfValuePresent() {
         Exceptional<String> exceptional = Exceptional.of("value", new Exception("error"));
-        exceptional = exceptional.then((value, err) -> {
+        exceptional = exceptional.orElse((value, err) -> {
             Assertions.assertEquals("error", err.getMessage());
             return Exceptional.of("other");
         });
@@ -321,7 +321,7 @@ public class ExceptionalTests {
     @Test
     void testThenWithSupplierReturnsValueAndExceptionIfPresent() {
         Exceptional<String> exceptional = Exceptional.of("value", new Exception());
-        exceptional = exceptional.then(() -> "other");
+        exceptional = exceptional.orElse(() -> "other");
 
         Assertions.assertNotNull(exceptional);
         Assertions.assertTrue(exceptional.present());
@@ -372,7 +372,7 @@ public class ExceptionalTests {
 
     @Test
     void testCaughtConsumerDoesNotApplyIfThrowableAbsent() {
-        Exceptional<String> exceptional = Exceptional.none();
+        Exceptional<String> exceptional = Exceptional.empty();
 
         final boolean[] activated = { false };
         exceptional.caught(err -> activated[0] = true);
@@ -391,15 +391,15 @@ public class ExceptionalTests {
 
     @Test
     void testCauseThrowsExceptionIfValueAbsent() {
-        Assertions.assertThrows(Exception.class, () -> Exceptional.none().cause(Exception::new));
+        Assertions.assertThrows(Exception.class, () -> Exceptional.empty().cause(Exception::new));
     }
 
     @Test
     void testEmptyRunnableAppliesIfThrowableAbsent() {
-        Exceptional<String> exceptional = Exceptional.none();
+        Exceptional<String> exceptional = Exceptional.empty();
 
         final boolean[] activated = { false };
-        exceptional.empty(() -> activated[0] = true);
+        exceptional.ifErrorAbsent(() -> activated[0] = true);
 
         Assertions.assertTrue(activated[0]);
     }
@@ -409,7 +409,7 @@ public class ExceptionalTests {
         Exceptional<String> exceptional = Exceptional.of(new Exception());
 
         final boolean[] activated = { false };
-        exceptional.empty(() -> activated[0] = true);
+        exceptional.ifErrorAbsent(() -> activated[0] = true);
 
         Assertions.assertFalse(activated[0]);
     }
@@ -438,7 +438,7 @@ public class ExceptionalTests {
 
     @Test
     void testTypeReturnsNullIfValueAbsent() {
-        Exceptional<String> exceptional = Exceptional.none();
+        Exceptional<String> exceptional = Exceptional.empty();
         Assertions.assertNull(exceptional.type());
     }
 
@@ -450,7 +450,7 @@ public class ExceptionalTests {
 
     @Test
     void testEqualReturnsFalseIfValueIsAbsent() {
-        Exceptional<String> exceptional = Exceptional.none();
+        Exceptional<String> exceptional = Exceptional.empty();
         Assertions.assertFalse(exceptional.equal("value"));
     }
 

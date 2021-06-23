@@ -43,6 +43,7 @@ public class ConstructorWireContext<T, I extends T> implements WireContext<T, I>
             Collection<Constructor<I>> constructors = Reflect.annotatedConstructors(this.getImplementation(), Wired.class);
             Constructor<I> ctor = null;
             for (Constructor<I> constructor : constructors) {
+                if (constructor.getParameterTypes().length != arguments.length) continue;
                 boolean valid = true;
                 for (int i = 0; i < constructor.getParameterTypes().length; i++) {
                     Class<?> parameterType = constructor.getParameterTypes()[i];

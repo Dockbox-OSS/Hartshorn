@@ -43,6 +43,6 @@ public class IpUnbannedEvent extends BanEvent<InetAddress> {
             Exceptional<String> reason,
             LocalDateTime creation
     ) {
-        super(host, source, reason, Exceptional.none(), creation);
+        super(host, source, reason, Exceptional.empty(), creation);
     }
 }

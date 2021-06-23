@@ -18,27 +18,29 @@
 package org.dockbox.hartshorn.commands.context;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.api.i18n.permissions.Permission;
+import org.dockbox.hartshorn.commands.service.CommandParameter;
 import org.dockbox.hartshorn.commands.source.CommandSource;
+import org.jetbrains.annotations.UnmodifiableView;
 
-public interface CommandContext {
+import java.util.List;
 
-    String alias();
-
-    int arguments();
-
-    int flags();
-
-    <T> Exceptional<CommandParameter<T>> argument(String key);
+public interface CommandContext extends ParserContext {
 
     <T> T get(String key);
 
-    <T> Exceptional<T> optional(String key);
+    boolean has(String key);
+
+    <T> Exceptional<T> first(String key);
+
+    <T> Exceptional<CommandParameter<T>> argument(String key);
 
     <T> Exceptional<CommandParameter<T>> flag(String key);
 
-    boolean has(String key);
-
     CommandSource getSender();
 
-    String[] getPermissions();
+    @UnmodifiableView
+    List<Permission> getPermissions();
+
+    String command();
 }

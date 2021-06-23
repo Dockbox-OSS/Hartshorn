@@ -83,7 +83,7 @@ public abstract class DefaultDiscordUtils implements DiscordUtils {
     public Exceptional<Category> getLoggingCategory() {
         if (this.getJDA().present())
             return Exceptional.of(this.getJDA().get().getCategoryById(Hartshorn.context().get(GlobalConfig.class).getDiscordLoggingCategoryId()));
-        return Exceptional.none();
+        return Exceptional.empty();
     }
 
     @NotNull

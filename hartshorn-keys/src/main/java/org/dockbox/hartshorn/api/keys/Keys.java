@@ -280,6 +280,6 @@ public final class Keys {
     }
 
     public static <K, A> Key<K, A> ofSetter(BiConsumer<K, A> setter) {
-        return of(setter, in -> Exceptional.none());
+        return of(setter, in -> Exceptional.empty());
     }
 }

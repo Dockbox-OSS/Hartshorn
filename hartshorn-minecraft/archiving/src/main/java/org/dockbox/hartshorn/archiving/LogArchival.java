@@ -148,6 +148,6 @@ public class LogArchival {
 
             return Exceptional.of(destination);
         }
-        return Exceptional.none();
+        return Exceptional.empty();
     }
 }

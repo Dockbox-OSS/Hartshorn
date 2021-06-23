@@ -23,7 +23,6 @@ import org.dockbox.hartshorn.api.i18n.text.pagination.PaginationBuilder;
 import org.dockbox.hartshorn.api.task.TaskRunner;
 import org.dockbox.hartshorn.api.task.ThreadUtils;
 import org.dockbox.hartshorn.commands.source.DiscordCommandSource;
-import org.dockbox.hartshorn.commands.values.AbstractFlagCollection;
 import org.dockbox.hartshorn.config.ConfigurationManager;
 import org.dockbox.hartshorn.config.SimpleConfigurationManager;
 import org.dockbox.hartshorn.config.TargetGlobalConfig;
@@ -69,7 +68,6 @@ import org.dockbox.hartshorn.sponge.util.SpongeTaskRunner;
 import org.dockbox.hartshorn.sponge.util.SpongeThreadUtils;
 import org.dockbox.hartshorn.sponge.util.SpongeWorldEditService;
 import org.dockbox.hartshorn.sponge.util.SpongeWorlds;
-import org.dockbox.hartshorn.sponge.util.command.values.SpongeFlagCollection;
 import org.dockbox.hartshorn.worldedit.WorldEditService;
 import org.slf4j.Logger;
 
@@ -94,9 +92,6 @@ public class SpongeEarlyInjector extends InjectConfiguration {
         this.bind(WorldEditService.class, SpongeWorldEditService.class);
         this.bind(CustomMapService.class, SpongeCustomMapService.class);
         this.bind(PlotService.class, SpongePlotSquaredService.class);
-
-        // Command services
-        this.bind(AbstractFlagCollection.class, SpongeFlagCollection.class);
 
         // Builder types
         this.bind(PaginationBuilder.class, SpongePaginationBuilder.class);

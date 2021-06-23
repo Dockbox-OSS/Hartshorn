@@ -98,7 +98,7 @@ public class MC1_12BlockRegistryParser extends BlockRegistryParser {
             Exceptional<VariantIdentifier> eVariantIdentifier = VariantIdentifier.ofName(name);
 
             if (eVariantIdentifier.present() && VariantIdentifier.FULL != eVariantIdentifier.get())
-                return Exceptional.none();
+                return Exceptional.empty();
         }
         return Exceptional.of(BlockIdentifier.formatBlockName(name));
     }

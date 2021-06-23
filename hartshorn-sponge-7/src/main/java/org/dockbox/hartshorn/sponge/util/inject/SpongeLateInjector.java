@@ -17,20 +17,15 @@
 
 package org.dockbox.hartshorn.sponge.util.inject;
 
-import org.dockbox.hartshorn.commands.CommandBus;
 import org.dockbox.hartshorn.di.InjectConfiguration;
 import org.dockbox.hartshorn.discord.DiscordUtils;
 import org.dockbox.hartshorn.sponge.util.SpongeDiscordUtils;
-import org.dockbox.hartshorn.sponge.util.command.SpongeCommandBus;
 
 public class SpongeLateInjector extends InjectConfiguration {
 
     @SuppressWarnings("OverlyCoupledMethod")
     @Override
     public final void collect() {
-        // Internal services
-        // Event- and command bus keep static references, and can thus be recreated
-        this.bind(CommandBus.class, new SpongeCommandBus());
         // Discord
         this.bind(DiscordUtils.class, SpongeDiscordUtils.class);
     }

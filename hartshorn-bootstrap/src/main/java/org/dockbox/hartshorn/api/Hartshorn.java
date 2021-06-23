@@ -92,7 +92,7 @@ public final class Hartshorn {
 
     /**
      * Attempts to look up a resource file. If the file exists it is wrapped in a {@link Exceptional}
-     * and returned. If the file does not exist or is a directory, {@link Exceptional#none()} is
+     * and returned. If the file does not exist or is a directory, {@link Exceptional#empty()} is
      * returned. If the requested file name is invalid, or {@code null}, a {@link Exceptional}
      * containing the appropriate exception is returned.
      *

@@ -55,6 +55,6 @@ public abstract class ReferencedWrapper<T> implements Wrapper<T> {
     }
 
     public Function<T, Exceptional<T>> getUpdateReferenceTask() {
-        return value -> Exceptional.of(value).then(() -> constructInitialReference().orNull());
+        return value -> Exceptional.of(value).orElse(() -> constructInitialReference().orNull());
     }
 }

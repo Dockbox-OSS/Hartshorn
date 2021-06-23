@@ -44,7 +44,7 @@ public class CachedMethodModifier extends CacheServiceModifier<Cached> {
             final Exceptional<Collection<Object>> content = cache.get();
 
             //noinspection unchecked
-            return (R) content.then(() -> {
+            return (R) content.orElse(() -> {
                 try {
                     final List<Object> out = proxyContext.invoke();
                     cache.populate(out);

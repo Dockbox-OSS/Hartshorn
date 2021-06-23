@@ -49,7 +49,7 @@ public interface Bossbar {
     /**
      * Returns a {@link Bossbar} instance based on a given {@link UUID uuid}. This identifier
      * typically matches with the one returned by {@link Bossbar#getId()}. If no instance exists,
-     * {@link Exceptional#none()} is returned.
+     * {@link Exceptional#empty()} is returned.
      *
      * @param uuid
      *         The unique identifier of the potential bossbar
@@ -63,7 +63,7 @@ public interface Bossbar {
     /**
      * Returns a {@link Bossbar} instance based on a given {@code id}. This identifier typically
      * matches with the one returned by {@link Bossbar#getId()}. If no instance exists, {@link
-     * Exceptional#none()} is returned.
+     * Exceptional#empty()} is returned.
      *
      * @param id
      *         The identifier of the potential bossbar

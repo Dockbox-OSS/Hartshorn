@@ -17,9 +17,9 @@
 
 package org.dockbox.hartshorn.commands.events;
 
+import org.dockbox.hartshorn.api.events.AbstractTargetCancellableEvent;
 import org.dockbox.hartshorn.commands.context.CommandContext;
 import org.dockbox.hartshorn.commands.source.CommandSource;
-import org.dockbox.hartshorn.api.events.AbstractTargetCancellableEvent;
 
 import lombok.Getter;
 

@@ -131,7 +131,7 @@ public class RegistryColumn<T> extends ArrayList<T> {
         for (T value : this) {
             if (predicate.test(value)) return Exceptional.of(value);
         }
-        return Exceptional.none();
+        return Exceptional.empty();
     }
 
     /**

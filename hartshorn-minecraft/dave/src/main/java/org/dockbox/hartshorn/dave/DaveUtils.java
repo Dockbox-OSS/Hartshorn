@@ -74,7 +74,7 @@ public final class DaveUtils {
                 if (containsAll) return Exceptional.of(trigger);
             }
         }
-        return Exceptional.none();
+        return Exceptional.empty();
     }
 
     public static void performTrigger(

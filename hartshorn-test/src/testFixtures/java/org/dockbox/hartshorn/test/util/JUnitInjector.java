@@ -21,12 +21,11 @@ import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.config.GlobalConfig;
 import org.dockbox.hartshorn.api.task.TaskRunner;
 import org.dockbox.hartshorn.api.task.ThreadUtils;
-import org.dockbox.hartshorn.commands.CommandBus;
 import org.dockbox.hartshorn.commands.source.DiscordCommandSource;
 import org.dockbox.hartshorn.config.ConfigurationManager;
 import org.dockbox.hartshorn.di.InjectConfiguration;
-import org.dockbox.hartshorn.di.TypeFactory;
 import org.dockbox.hartshorn.di.SimpleTypeFactory;
+import org.dockbox.hartshorn.di.TypeFactory;
 import org.dockbox.hartshorn.discord.DiscordUtils;
 import org.dockbox.hartshorn.persistence.FileManager;
 import org.dockbox.hartshorn.server.minecraft.Console;
@@ -92,7 +91,6 @@ public class JUnitInjector extends InjectConfiguration {
         this.bind(MinecraftServerType.class, MinecraftServerType.JUNIT);
         this.bind(MinecraftVersion.class, MinecraftVersion.INDEV);
 
-        this.bind(CommandBus.class, JUnitCommandBus.class);
         this.bind(DiscordUtils.class, JUnitDiscordUtils.class);
     }
 }

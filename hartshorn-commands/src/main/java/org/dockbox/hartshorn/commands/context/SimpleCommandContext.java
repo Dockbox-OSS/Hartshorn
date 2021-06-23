@@ -18,93 +18,90 @@
 package org.dockbox.hartshorn.commands.context;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.api.i18n.permissions.Permission;
+import org.dockbox.hartshorn.commands.service.CommandParameter;
 import org.dockbox.hartshorn.commands.source.CommandSource;
+import org.dockbox.hartshorn.di.context.DefaultContext;
 import org.dockbox.hartshorn.util.HartshornUtils;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.UnmodifiableView;
 
-import java.util.Arrays;
+import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @SuppressWarnings("unchecked")
 @AllArgsConstructor
-public class SimpleCommandContext implements CommandContext {
+public class SimpleCommandContext extends DefaultContext implements CommandContext {
 
-    public static final SimpleCommandContext EMPTY = new SimpleCommandContext(
-            "",
-            new CommandParameter[0],
-            new CommandParameter[0],
-            null,
-            new String[0]);
+    private final String command;
+    private final List<CommandParameter<?>> args;
+    private final List<CommandParameter<?>> flags;
 
-    private final String usage;
-    private final CommandParameter<?>[] args;
-    private final CommandParameter<?>[] flags;
-
-    // Location and world are snapshots of the location of our CommandSource at the time the command
-    // was processed.
-    // This way developers can ensure location data does not change while the command is being
-    // performed.
     @Getter
     private final CommandSource sender;
-    @Getter
-    private final String[] permissions;
-
-    @NotNull
-    @Override
-    public String alias() {
-        return this.usage.split(" ")[0];
-    }
+    @Getter(onMethod_ = @UnmodifiableView)
+    private final List<Permission> permissions;
 
     @Override
-    public int arguments() {
-        return this.args.length;
-    }
-
-    @Override
-    public int flags() {
-        return this.flags.length;
-    }
-
-    @NotNull
-    @Override
-    public <T> Exceptional<CommandParameter<T>> argument(@NonNls @NotNull String key) {
-        return Exceptional.of(Arrays.stream(this.args)
-                .filter(arg -> arg.getKey().equals(key))
-                .findFirst()
-        ).map(arg -> (CommandParameter<T>) arg);
-    }
-
-    @Override
-    public <T> T get(@NonNls String key) {
-        return Arrays.stream(HartshornUtils.merge(this.args, this.flags))
+    public <T> T get(String key) {
+        return HartshornUtils.merge(this.args, this.flags)
+                .stream()
                 .map(CommandParameter.class::cast)
-                .filter(arg -> arg.getKey().equals(key))
+                .filter(arg -> arg.trimmedKey().equals(key))
                 .findFirst()
                 .map(arg -> (T) arg.getValue())
                 .orElse(null);
     }
 
     @Override
-    public <T> Exceptional<T> optional(String key) {
+    public boolean has(String key) {
+        return HartshornUtils.merge(this.args, this.flags)
+                .stream()
+                .map(CommandParameter.class::cast)
+                .anyMatch(arg -> arg.trimmedKey().equals(key));
+    }
+
+    @Override
+    public <T> Exceptional<T> first(String key) {
         return Exceptional.of((T) this.get(key));
     }
 
-    @NotNull
     @Override
-    public <T> Exceptional<CommandParameter<T>> flag(@NonNls @NotNull String key) {
-        return Exceptional.of(Arrays.stream(this.flags)
-                .filter(flag -> flag.getKey().equals(key))
+    public <T> Exceptional<CommandParameter<T>> argument(String key) {
+        return Exceptional.of(this.args.stream()
+                .filter(arg -> arg.trimmedKey().equals(key))
+                .findFirst()
+        ).map(arg -> (CommandParameter<T>) arg);
+    }
+
+    @Override
+    public <T> Exceptional<CommandParameter<T>> flag(String key) {
+        return Exceptional.of(this.flags.stream()
+                .filter(flag -> flag.trimmedKey().equals(key))
                 .findFirst()
         ).map(flag -> (CommandParameter<T>) flag);
     }
 
     @Override
-    public boolean has(@NonNls @NotNull String key) {
-        return Arrays.stream(HartshornUtils.merge(this.args, this.flags))
-                .map(CommandParameter.class::cast)
-                .anyMatch(arg -> arg.getKey().equals(key));
+    public String command() {
+        return this.command;
+    }
+
+    @Override
+    @UnmodifiableView
+    public List<CommandParameter<?>> arguments() {
+        return HartshornUtils.asUnmodifiableList(this.args);
+    }
+
+    @Override
+    @UnmodifiableView
+    public List<CommandParameter<?>> flags() {
+        return HartshornUtils.asUnmodifiableList(this.flags);
+    }
+
+    @Override
+    public String alias() {
+        return this.command.split(" ")[0];
     }
 }

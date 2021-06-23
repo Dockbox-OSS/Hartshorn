@@ -18,7 +18,9 @@
 package org.dockbox.hartshorn.di;
 
 import org.dockbox.hartshorn.api.Hartshorn;
+import org.dockbox.hartshorn.api.SimpleMetaProvider;
 import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.api.domain.MetaProvider;
 import org.dockbox.hartshorn.di.binding.Bindings;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.di.context.HartshornApplicationContext;
@@ -207,7 +209,7 @@ public class ApplicationContextTests {
     public void testScannedMetaBindingsCanBeProvided() throws ApplicationException {
         // sub-package *.meta was added to prevent scan conflicts
         context(true).bind("org.dockbox.hartshorn.di.types.meta");
-        Assertions.assertNull(Hartshorn.context().get(SampleInterface.class));
+        Assertions.assertThrows(ProvisionFailure.class, () -> Hartshorn.context().get(SampleInterface.class));
 
         SampleInterface provided = Hartshorn.context().get(SampleInterface.class, BindingMetaProperty.of(Bindings.named("meta")));
         Assertions.assertNotNull(provided);
@@ -457,6 +459,8 @@ public class ApplicationContextTests {
                 serviceModifiers.set(context, HartshornUtils.emptyConcurrentSet());
                 serviceProcessors.set(context, HartshornUtils.emptyConcurrentSet());
                 injector.reset();
+                // Meta provision is required for wiring and vararg types, this should always be present
+                context.bind(MetaProvider.class, SimpleMetaProvider.class);
             }
         } catch (IllegalAccessException | InvocationTargetException e) {
             throw new ApplicationException(e);

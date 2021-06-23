@@ -114,7 +114,7 @@ public enum VariantIdentifier implements RegistryIdentifier {
 
         return identifierMap.containsKey(identifier)
                 ? Exceptional.of(identifierMap.get(identifier))
-                : Exceptional.none();
+                : Exceptional.empty();
     }
 
     public static Exceptional<VariantIdentifier> ofItem(Item item) {
@@ -146,7 +146,7 @@ public enum VariantIdentifier implements RegistryIdentifier {
         name = getOverriddenBlockNames().getItemRegistry().getOrDefault(name.replace(" ", "_"), name);
 
         Matcher matcher = blockNameIdentifierRegex.matcher(prepareForMatcher(name));
-        Exceptional<VariantIdentifier> variant = Exceptional.none();
+        Exceptional<VariantIdentifier> variant = Exceptional.empty();
 
         if (matcher.matches()) {
             variant = of(matcher.group(1) + matcher.group(2));
@@ -195,7 +195,7 @@ public enum VariantIdentifier implements RegistryIdentifier {
                 return of(matcher.group(1));
             }
         }
-        return Exceptional.none();
+        return Exceptional.empty();
     }
 
     public static String prepareForMatcher(String name) {

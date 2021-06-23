@@ -184,7 +184,7 @@ public class SpongePlayer extends Player implements SpongeComposite, Wrapper<org
             final Locale locale = player.getLocale();
             final Language language = Language.of(locale);
             return new SimpleGameSettings(language);
-        }).then(() -> new SimpleGameSettings(Language.EN_US)).get();
+        }).orElse(() -> new SimpleGameSettings(Language.EN_US)).get();
     }
 
     @Override
@@ -255,7 +255,7 @@ public class SpongePlayer extends Player implements SpongeComposite, Wrapper<org
         SendMessageEvent event = new SendMessageEvent(this, text);
         this.context.get(EventBus.class).post(event);
         text = event.getMessage();
-        if (event.isCancelled()) return Exceptional.none();
+        if (event.isCancelled()) return Exceptional.empty();
         else return Exceptional.of(text);
     }
 

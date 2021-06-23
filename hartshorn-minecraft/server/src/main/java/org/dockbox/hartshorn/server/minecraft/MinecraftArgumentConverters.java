@@ -20,9 +20,9 @@ package org.dockbox.hartshorn.server.minecraft;
 import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.domain.tuple.Vector3N;
-import org.dockbox.hartshorn.commands.context.ArgumentConverter;
-import org.dockbox.hartshorn.commands.convert.CommandValueConverter;
-import org.dockbox.hartshorn.commands.convert.DefaultArgumentConverters;
+import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
+import org.dockbox.hartshorn.commands.arguments.CommandValueConverter;
+import org.dockbox.hartshorn.commands.arguments.DefaultArgumentConverters;
 import org.dockbox.hartshorn.di.annotations.Service;
 import org.dockbox.hartshorn.di.properties.InjectableType;
 import org.dockbox.hartshorn.di.properties.InjectorProperty;
@@ -39,43 +39,46 @@ import java.util.stream.Collectors;
 @Service
 public final class MinecraftArgumentConverters implements InjectableType {
 
-    public static final ArgumentConverter<World> WORLD = new CommandValueConverter<>(World.class, in -> {
-        Worlds wss = Hartshorn.context().get(Worlds.class);
-        Exceptional<World> world = wss.getWorld(in);
-        return world.then(
-                () -> {
-                    UUID uuid = UUID.fromString(in);
-                    return wss.getWorld(uuid).orNull();
+    public static final ArgumentConverter<World> WORLD = CommandValueConverter.builder(World.class, "world")
+            .withConverter(in -> {
+                Worlds wss = Hartshorn.context().get(Worlds.class);
+                Exceptional<World> world = wss.getWorld(in);
+                return world.orElse(
+                        () -> {
+                            UUID uuid = UUID.fromString(in);
+                            return wss.getWorld(uuid).orNull();
+                        });
+            }).build();
+
+    public static final ArgumentConverter<Location> LOCATION = CommandValueConverter.builder(Location.class, "location", "position", "pos")
+            .withConverter((cs, in) -> {
+                String[] xyzw = in.split(",");
+                String xyz = String.join(",", xyzw[0], xyzw[1], xyzw[2]);
+                Vector3N vec = DefaultArgumentConverters.VECTOR.convert(cs, xyz).or(Vector3N.of(0, 0, 0));
+                World world = WORLD.convert(cs, xyzw[3]).or(World.empty());
+
+                return Exceptional.of(new Location(vec, world));
+            }).build();
+
+    public static final ArgumentConverter<Player> PLAYER = CommandValueConverter.builder(Player.class, "player", "user")
+            .withConverter(in -> {
+                Players pss = Hartshorn.context().get(Players.class);
+                Exceptional<Player> player = pss.getPlayer(in);
+                return player.orElse(() -> {
+                    try {
+                        UUID uuid = UUID.fromString(in);
+                        return pss.getPlayer(uuid).orNull();
+                    }
+                    catch (IllegalArgumentException e) {
+                        //noinspection ReturnOfNull
+                        return null;
+                    }
                 });
-    }, "world");
-
-    public static final ArgumentConverter<Location> LOCATION = new CommandValueConverter<>(Location.class, (cs, in) -> {
-        String[] xyzw = in.split(",");
-        String xyz = String.join(",", xyzw[0], xyzw[1], xyzw[2]);
-        Vector3N vec = DefaultArgumentConverters.VECTOR.convert(cs, xyz).or(Vector3N.of(0, 0, 0));
-        World world = WORLD.convert(cs, xyzw[3]).or(World.empty());
-
-        return Exceptional.of(new Location(vec, world));
-    }, "location", "position", "pos");
-
-    public static final ArgumentConverter<Player> PLAYER = new CommandValueConverter<>(Player.class, in -> {
-        Players pss = Hartshorn.context().get(Players.class);
-        Exceptional<Player> player = pss.getPlayer(in);
-        return player.then(() -> {
-            try {
-                UUID uuid = UUID.fromString(in);
-                return pss.getPlayer(uuid).orNull();
-            }
-            catch (IllegalArgumentException e) {
-                //noinspection ReturnOfNull
-                return null;
-            }
-        });
-    }, in -> Hartshorn.context().get(Players.class).getOnlinePlayers().stream()
-            .map(Player::getName)
-            .filter(n -> n.startsWith(in))
-            .collect(Collectors.toList()),
-            "player", "user");
+            }).withSuggestionProvider(in -> Hartshorn.context().get(Players.class).getOnlinePlayers().stream()
+                    .map(Player::getName)
+                    .filter(n -> n.startsWith(in))
+                    .collect(Collectors.toList()))
+            .build();
 
     @Override
     public void stateEnabling(InjectorProperty<?>... properties) {
