@@ -105,17 +105,18 @@ public class SimpleCommandParser implements CommandParser {
         final Matcher matcher = FLAG.matcher(command);
 
         while (matcher.find()) {
-            final String flag = matcher.group().substring(2); // Discard ' -' prefix
-            String name = flag.split(" ")[0];
+            final String flag = matcher.group().trim();
+            final String nameUntrimmed = flag.split(" ")[0];
+            final String name = HartshornUtils.trimWith('-', nameUntrimmed);
             final Exceptional<CommandFlag> commandFlag = context.flag(name);
-            if (commandFlag.absent()) throw new ParsingException(new FakeResource("Unknown flag '-" + name + "'"));
+            if (commandFlag.absent()) throw new ParsingException(new FakeResource("Unknown flag '" + name + "'"));
 
             final CommandFlag contextFlag = commandFlag.get();
             if (contextFlag.value()) {
                 if (contextFlag instanceof CommandFlagElement) {
                     final List<String> tokens = HartshornUtils.asList(command.split(" "));
                     final int size = ((CommandFlagElement<?>) contextFlag).size();
-                    final int flagIndex = tokens.indexOf('-' + name);
+                    final int flagIndex = tokens.indexOf(nameUntrimmed);
                     final int i = flagIndex + 1;
                     final int end = size == -1 ? tokens.size() : i + size;
 
@@ -123,11 +124,11 @@ public class SimpleCommandParser implements CommandParser {
 
                     final Exceptional<?> value = ((CommandFlagElement<?>) contextFlag).parse(source, token);
                     flags.addAll(this.getParameter(value, token, "flag", name, contextFlag, source));
-                    command = command.replace('-' + name + ' ' + token, "");
+                    command = command.replace(flag, "");
                 }
             } else {
                 flags.add(new CommandParameter<>(null, name));
-                command = command.replace('-' + name, "");
+                command = command.replace(flag, "");
             }
         }
         return command.trim();

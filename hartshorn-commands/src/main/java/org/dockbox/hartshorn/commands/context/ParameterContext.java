@@ -15,37 +15,24 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.commands.definition;
+package org.dockbox.hartshorn.commands.context;
 
-import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.api.i18n.permissions.Permission;
-import org.dockbox.hartshorn.util.HartshornUtils;
+import org.dockbox.hartshorn.util.Reflect;
+
+import java.lang.reflect.Parameter;
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 @AllArgsConstructor
-public class SimpleCommandFlag implements CommandFlag {
+@Getter
+public class ParameterContext {
 
-    private final String name;
-    private final Permission permission;
+    private final Parameter parameter;
+    private final int index;
 
-    public SimpleCommandFlag(String name) {
-        this.name = name;
-        this.permission = null;
+    public boolean is(Class<?> type) {
+        return Reflect.assignableFrom(this.getParameter().getType(), type);
     }
 
-    @Override
-    public String name() {
-        return HartshornUtils.trimWith('-', this.name);
-    }
-
-    @Override
-    public Exceptional<Permission> permission() {
-        return Exceptional.of(this.permission);
-    }
-
-    @Override
-    public boolean value() {
-        return false;
-    }
 }

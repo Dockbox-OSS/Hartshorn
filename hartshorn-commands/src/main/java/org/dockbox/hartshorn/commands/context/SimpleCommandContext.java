@@ -48,7 +48,7 @@ public class SimpleCommandContext extends DefaultContext implements CommandConte
         return HartshornUtils.merge(this.args, this.flags)
                 .stream()
                 .map(CommandParameter.class::cast)
-                .filter(arg -> arg.getKey().equals(key))
+                .filter(arg -> arg.trimmedKey().equals(key))
                 .findFirst()
                 .map(arg -> (T) arg.getValue())
                 .orElse(null);
@@ -59,7 +59,7 @@ public class SimpleCommandContext extends DefaultContext implements CommandConte
         return HartshornUtils.merge(this.args, this.flags)
                 .stream()
                 .map(CommandParameter.class::cast)
-                .anyMatch(arg -> arg.getKey().equals(key));
+                .anyMatch(arg -> arg.trimmedKey().equals(key));
     }
 
     @Override
@@ -70,7 +70,7 @@ public class SimpleCommandContext extends DefaultContext implements CommandConte
     @Override
     public <T> Exceptional<CommandParameter<T>> argument(String key) {
         return Exceptional.of(this.args.stream()
-                .filter(arg -> arg.getKey().equals(key))
+                .filter(arg -> arg.trimmedKey().equals(key))
                 .findFirst()
         ).map(arg -> (CommandParameter<T>) arg);
     }
@@ -78,7 +78,7 @@ public class SimpleCommandContext extends DefaultContext implements CommandConte
     @Override
     public <T> Exceptional<CommandParameter<T>> flag(String key) {
         return Exceptional.of(this.flags.stream()
-                .filter(flag -> flag.getKey().equals(key))
+                .filter(flag -> flag.trimmedKey().equals(key))
                 .findFirst()
         ).map(flag -> (CommandParameter<T>) flag);
     }

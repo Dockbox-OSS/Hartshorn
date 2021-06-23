@@ -31,11 +31,15 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 
-@Getter
+@Getter(AccessLevel.PROTECTED)
 public class MethodCommandExecutorContext extends DefaultContext implements CommandExecutorContext {
 
     private final Method method;
@@ -45,6 +49,9 @@ public class MethodCommandExecutorContext extends DefaultContext implements Comm
     @Nullable
     private final Command parent;
     private final boolean isChild;
+
+    @Getter(AccessLevel.NONE)
+    private Map<String, ParameterContext> parameters;
 
     public MethodCommandExecutorContext(Method method, Class<?> type) {
         if (!method.isAnnotationPresent(Command.class)) throw new IllegalArgumentException("Provided method is not a command handler");
@@ -67,20 +74,7 @@ public class MethodCommandExecutorContext extends DefaultContext implements Comm
         if (this.parent != null) {
             this.parentAliases.addAll(HartshornUtils.asList(this.parent.value()));
         }
-    }
-
-    @Override
-    public CommandExecutor executor() {
-        // TODO: Support variable parameters
-        return (ctx) -> {
-            final Object instance = Hartshorn.context().get(this.getType());
-            try {
-                this.getMethod().invoke(instance, ctx);
-            }
-            catch (IllegalAccessException | InvocationTargetException e) {
-                Except.handle(e);
-            }
-        };
+        this.parameters = this.parameters();
     }
 
     @Override
@@ -151,6 +145,50 @@ public class MethodCommandExecutorContext extends DefaultContext implements Comm
 
         if (last == null) return HartshornUtils.emptyList();
         return HartshornUtils.asUnmodifiableList(last.suggestions(source, String.join(" ", tokens)));
+    }
+
+    @Override
+    public CommandExecutor executor() {
+        return (ctx) -> {
+            final Object instance = Hartshorn.context().get(this.getType());
+            final List<Object> arguments = this.arguments(ctx);
+            try {
+                this.method().invoke(instance, arguments.toArray());
+            }
+            catch (IllegalAccessException | InvocationTargetException e) {
+                Except.handle(e);
+            }
+        };
+    }
+
+    private List<Object> arguments(CommandContext context) {
+        final List<Object> arguments = HartshornUtils.list(this.parameters().size());
+        final Map<String, ParameterContext> parameters = this.parameters();
+
+        for (Entry<String, ParameterContext> entry : parameters.entrySet()) {
+            final ParameterContext parameterContext = entry.getValue();
+            final int index = parameterContext.getIndex();
+            if (parameterContext.is(CommandContext.class)) arguments.set(index, context);
+            else if (parameterContext.is(CommandSource.class)) arguments.set(index, context.getSender());
+            else {
+                @Nullable final Object object = context.get(entry.getKey());
+                arguments.set(index, object);
+            }
+        }
+        return arguments;
+    }
+
+    private Map<String, ParameterContext> parameters() {
+        if (this.parameters == null) {
+            this.parameters = HartshornUtils.emptyMap();
+            Parameter[] methodParameters = this.method().getParameters();
+
+            for (int i = 0; i < methodParameters.length; i++) {
+                Parameter parameter = methodParameters[i];
+                this.parameters.put(parameter.getName(), new ParameterContext(parameter, i));
+            }
+        }
+        return this.parameters;
     }
 
     private CommandContainerContext container() {
