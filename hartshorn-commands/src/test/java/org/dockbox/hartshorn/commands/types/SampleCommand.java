@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.commands.types;
 
 import org.dockbox.hartshorn.commands.annotations.Command;
 import org.dockbox.hartshorn.commands.context.CommandContext;
+import org.dockbox.hartshorn.commands.source.CommandSource;
 
 @Command("demo")
 public class SampleCommand {
@@ -41,6 +42,9 @@ public class SampleCommand {
 
     @Command(value = "group", arguments = "[group <requiredA> <requiredB>]")
     public void group(CommandContext context) {
-        System.out.println(context);
+    }
+
+    @Command(value = "arguments", arguments = "<required{String}> [optional{String}] --flag String")
+    public void arguments(CommandSource source, CommandContext context, String required, String optional, String flag) {
     }
 }

@@ -85,6 +85,13 @@ public class CommandContainerContextTests {
     }
 
     @Test
+    void testArgumentParameters() {
+        CommandGateway gateway = Hartshorn.context().get(SimpleCommandGateway.class);
+        gateway.register(SampleCommand.class);
+        Assertions.assertDoesNotThrow(() -> gateway.accept(Console.getInstance(), "demo arguments requiredA optionalB --flag valueC"));
+    }
+
+    @Test
     void testSpecificSuggestion() {
         CommandGateway gateway = Hartshorn.context().get(SimpleCommandGateway.class);
         gateway.register(SampleCommand.class);
@@ -142,11 +149,11 @@ public class CommandContainerContextTests {
         Assertions.assertEquals(CommandValueEnum.ONE, one.get());
 
         final CommandFlag flag = context.flags().get(0);
-        Assertions.assertEquals("-flag", flag.name());
+        Assertions.assertEquals("flag", flag.name());
 
         final CommandFlag valueFlag = context.flags().get(1);
         Assertions.assertTrue(valueFlag instanceof CommandElement);
-        Assertions.assertEquals("-vflag", valueFlag.name());
+        Assertions.assertEquals("vflag", valueFlag.name());
         Assertions.assertTrue(((CommandElement<?>) valueFlag).optional());
 
         final CommandFlag shortFlag = context.flags().get(2);
