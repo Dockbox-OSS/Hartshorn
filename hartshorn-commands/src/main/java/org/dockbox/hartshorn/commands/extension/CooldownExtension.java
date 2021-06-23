@@ -18,14 +18,18 @@
 package org.dockbox.hartshorn.commands.extension;
 
 import org.dockbox.hartshorn.api.domain.Identifiable;
-import org.dockbox.hartshorn.api.i18n.entry.FakeResource;
+import org.dockbox.hartshorn.commands.CommandResources;
 import org.dockbox.hartshorn.commands.annotations.Cooldown;
 import org.dockbox.hartshorn.commands.context.CommandContext;
 import org.dockbox.hartshorn.commands.context.CommandExecutorContext;
 import org.dockbox.hartshorn.commands.source.CommandSource;
+import org.dockbox.hartshorn.di.annotations.Wired;
 import org.dockbox.hartshorn.util.HartshornUtils;
 
 public class CooldownExtension implements CommandExecutorExtension {
+
+    @Wired
+    CommandResources resources;
 
     @Override
     public ExtensionResult execute(CommandContext context, CommandExecutorContext executorContext) {
@@ -33,7 +37,7 @@ public class CooldownExtension implements CommandExecutorExtension {
         if (!(sender instanceof Identifiable)) return ExtensionResult.accept();
 
         final String id = this.id((Identifiable) sender, context);
-        if (HartshornUtils.isInCooldown(id)) return ExtensionResult.reject(new FakeResource("You are in cooldown!"));
+        if (HartshornUtils.isInCooldown(id)) return ExtensionResult.reject(this.resources.getCooldownActive());
         else {
             Cooldown cooldown = executorContext.method().getAnnotation(Cooldown.class);
             HartshornUtils.cooldown(id, cooldown.duration(), cooldown.unit());

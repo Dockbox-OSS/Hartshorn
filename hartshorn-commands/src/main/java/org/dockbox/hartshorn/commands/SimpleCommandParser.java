@@ -19,20 +19,20 @@ package org.dockbox.hartshorn.commands;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.i18n.common.ResourceEntry;
-import org.dockbox.hartshorn.api.i18n.entry.FakeResource;
 import org.dockbox.hartshorn.commands.context.CommandContainerContext;
-import org.dockbox.hartshorn.commands.definition.CommandElement;
-import org.dockbox.hartshorn.commands.context.CommandExecutorContext;
-import org.dockbox.hartshorn.commands.definition.CommandFlag;
 import org.dockbox.hartshorn.commands.context.CommandContext;
+import org.dockbox.hartshorn.commands.context.CommandExecutorContext;
+import org.dockbox.hartshorn.commands.context.SimpleCommandContext;
+import org.dockbox.hartshorn.commands.definition.CommandElement;
+import org.dockbox.hartshorn.commands.definition.CommandFlag;
 import org.dockbox.hartshorn.commands.definition.CommandFlagElement;
 import org.dockbox.hartshorn.commands.definition.CommandPartial;
 import org.dockbox.hartshorn.commands.definition.GroupCommandElement;
 import org.dockbox.hartshorn.commands.exceptions.ParsingException;
 import org.dockbox.hartshorn.commands.service.CommandParameter;
-import org.dockbox.hartshorn.commands.context.SimpleCommandContext;
 import org.dockbox.hartshorn.commands.source.CommandSource;
 import org.dockbox.hartshorn.di.annotations.Binds;
+import org.dockbox.hartshorn.di.annotations.Wired;
 import org.dockbox.hartshorn.util.HartshornUtils;
 
 import java.util.Collection;
@@ -46,6 +46,9 @@ public class SimpleCommandParser implements CommandParser {
     // Note the difference between this and SimpleCommandContainerContext.FLAG, here a space is expected before the flag
     // to indicate it is a single element and not part of a piece of text.
     private static final Pattern FLAG = Pattern.compile(" -(-?\\w+)(?: ([^ -]+))?");
+
+    @Wired
+    private CommandResources resources;
 
     @Override
     public Exceptional<CommandContext> parse(String command, CommandSource source, CommandExecutorContext context) throws ParsingException {
@@ -66,7 +69,7 @@ public class SimpleCommandParser implements CommandParser {
         final List<String> tokens = HartshornUtils.asList(stripped.split(" "));
         parsedElements.addAll(this.parse(elements, tokens, source));
 
-        if (!tokens.isEmpty() && !"".equals(tokens.get(0))) throw new ParsingException(new FakeResource("Too many arguments"));
+        if (!tokens.isEmpty() && !"".equals(tokens.get(0))) throw new ParsingException(this.resources.getTooManyArguments());
 
         return Exceptional.of(new SimpleCommandContext(command,
                 parsedElements,
@@ -83,7 +86,7 @@ public class SimpleCommandParser implements CommandParser {
 
             if (tokens.size() < size || end > tokens.size()) {
                 if (element.optional()) continue;
-                else throw new ParsingException(new FakeResource("Not enough arguments for parameter '" + element.name() + "'"));
+                else throw new ParsingException(this.resources.getNotEnoughParameterArguments(element.name()));
             }
 
             final List<String> elementTokens = tokens.subList(0, end);
@@ -94,7 +97,7 @@ public class SimpleCommandParser implements CommandParser {
             parameters.addAll(this.getParameter(value, token, "argument", element.name(), element, source));
 
             if (size == -1) {
-                if (i != elements.size() - 1) throw new ParsingException(new FakeResource("Illegal argument definition"));
+                if (i != elements.size() - 1) throw new ParsingException(this.resources.getIllegalArgumentDefinition());
                 break;
             }
         }
@@ -109,7 +112,7 @@ public class SimpleCommandParser implements CommandParser {
             final String nameUntrimmed = flag.split(" ")[0];
             final String name = HartshornUtils.trimWith('-', nameUntrimmed);
             final Exceptional<CommandFlag> commandFlag = context.flag(name);
-            if (commandFlag.absent()) throw new ParsingException(new FakeResource("Unknown flag '" + name + "'"));
+            if (commandFlag.absent()) throw new ParsingException(this.resources.getUnknownFlag(name));
 
             final CommandFlag contextFlag = commandFlag.get();
             if (contextFlag.value()) {
@@ -136,7 +139,7 @@ public class SimpleCommandParser implements CommandParser {
 
     private Collection<CommandParameter<?>> getParameter(Exceptional<?> value, String token, String elementType, String elementName, CommandPartial partial, CommandSource source) throws ParsingException {
         if (value.absent()) {
-            ResourceEntry resource = new FakeResource("Could not parse " + elementType + " '" + elementName + "'");
+            ResourceEntry resource = this.resources.getCouldNotParse(elementType, elementName);
             throw value.caught() ? new ParsingException(resource, value.error()) : new ParsingException(resource);
         } else {
             if (partial instanceof GroupCommandElement) {

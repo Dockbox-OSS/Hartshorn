@@ -22,7 +22,6 @@ import com.google.common.collect.Multimap;
 
 import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.api.i18n.entry.FakeResource;
 import org.dockbox.hartshorn.commands.annotations.Command;
 import org.dockbox.hartshorn.commands.context.CommandContainerContext;
 import org.dockbox.hartshorn.commands.context.CommandContext;
@@ -53,6 +52,9 @@ public class SimpleCommandGateway implements CommandGateway {
 
     @Wired
     private CommandParser parser;
+
+    @Wired
+    private CommandResources resources;
 
     private static final transient Multimap<String, CommandExecutorContext> contexts = ArrayListMultimap.create();
     @Getter(AccessLevel.PROTECTED)
@@ -94,7 +96,7 @@ public class SimpleCommandGateway implements CommandGateway {
     @Override
     public void accept(CommandSource source, String command) throws ParsingException {
         final Exceptional<CommandExecutorContext> context = this.lookupContext(command);
-        if (context.absent()) throw new ParsingException(new FakeResource("No supported command handler found for '" + command + "'"));
+        if (context.absent()) throw new ParsingException(this.resources.getMissingHandler(command));
         else {
             final Exceptional<CommandContext> commandContext = this.parser.parse(command, source, context.get());
             if (commandContext.present()) {
@@ -104,10 +106,10 @@ public class SimpleCommandGateway implements CommandGateway {
     }
 
     @Override
-    public void accept(CommandContext context) {
+    public void accept(CommandContext context) throws ParsingException {
         final CommandExecutorContext executor = this.get(context);
         if (executor != null) this.execute(executor, context);
-        else throw new IllegalStateException("No executor registered for command '" + context.alias() + "' with " + context.arguments().size() + " arguments");
+        else throw new ParsingException(this.resources.getMissingExecutor(context.alias(), context.arguments().size()));
     }
 
     @Override

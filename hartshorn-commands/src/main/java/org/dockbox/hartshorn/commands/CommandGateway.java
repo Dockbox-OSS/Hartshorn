@@ -29,7 +29,7 @@ import java.util.List;
 public interface CommandGateway {
 
     void accept(CommandSource source, String command) throws ParsingException;
-    void accept(CommandContext context);
+    void accept(CommandContext context) throws ParsingException;
 
     void register(Class<?> type);
     void register(CommandExecutorContext context);
