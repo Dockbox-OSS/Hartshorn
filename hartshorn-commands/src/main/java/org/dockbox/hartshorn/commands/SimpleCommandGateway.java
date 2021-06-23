@@ -138,16 +138,16 @@ public class SimpleCommandGateway implements CommandGateway {
         Hartshorn.context().add(context);
     }
 
+    private void register(Method method, Class<?> type) {
+        this.register(new MethodCommandExecutorContext(method, type));
+    }
+
     @Override
     @UnmodifiableView
     public List<String> suggestions(CommandSource source, String command) {
         final Exceptional<CommandExecutorContext> context = this.lookupContext(command);
         if (context.absent()) return HartshornUtils.emptyList();
         return HartshornUtils.asUnmodifiableList(context.get().suggestions(source, command, this.parser));
-    }
-
-    private void register(Method method, Class<?> type) {
-        this.register(new MethodCommandExecutorContext(method, type));
     }
 
     @Override

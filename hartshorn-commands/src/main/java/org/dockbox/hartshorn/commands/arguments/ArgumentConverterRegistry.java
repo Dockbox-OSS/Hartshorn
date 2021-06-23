@@ -38,6 +38,10 @@ public final class ArgumentConverterRegistry {
         return getOptionalConverter(key).present();
     }
 
+    public static boolean hasConverter(Class<?> type) {
+        return getOptionalConverter(type).present();
+    }
+    
     public static Exceptional<ArgumentConverter<?>> getOptionalConverter(String key) {
         Optional<ArgumentConverter<?>> optional = CONVERTERS.stream().filter(converter -> converter.getKeys().stream()
                 .map(String::toLowerCase)
@@ -46,10 +50,6 @@ public final class ArgumentConverterRegistry {
         ).findFirst();
         if (optional.isPresent()) return Exceptional.of(optional);
         else return Exceptional.of(new RuntimeException("No converter present"));
-    }
-
-    public static boolean hasConverter(Class<?> type) {
-        return getOptionalConverter(type).present();
     }
 
     private static <T> Exceptional<ArgumentConverter<T>> getOptionalConverter(Class<T> type) {
