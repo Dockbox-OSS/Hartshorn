@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 /**
  * Generator type which directly creates and outputs a translation batch based on
@@ -46,7 +47,7 @@ import java.util.Properties;
  */
 public class TranslationBatchGenerator {
 
-    private static List<String> blacklist = HartshornUtils.asList(
+    private static final List<String> BLACKLIST = HartshornUtils.asList(
             // Test resources
             "class-resources.abstract.entry",
             "class-resources.concrete.entry",
@@ -64,12 +65,28 @@ public class TranslationBatchGenerator {
             "oldplots.list.single",
             "prefix"
     );
-    private static SimpleDateFormat sdf = new SimpleDateFormat("ddMMyyyy");
+    private static final List<String> HEADER = HartshornUtils.asList("#",
+            "# Copyright (C) 2020 Guus Lieben",
+            "#",
+            "# This framework is free software; you can redistribute it and/or modify",
+            "# it under the terms of the GNU Lesser General Public License as",
+            "# published by the Free Software Foundation, either version 2.1 of the",
+            "# License, or (at your option) any later version.",
+            "#",
+            "# This library is distributed in the hope that it will be useful,",
+            "# but WITHOUT ANY WARRANTY; without even the implied warranty of",
+            "# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See",
+            "# the GNU Lesser General Public License for more details.",
+            "#",
+            "# You should have received a copy of the GNU Lesser General Public License",
+            "# along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.",
+            "#", "");
+    private static final SimpleDateFormat SDF = new SimpleDateFormat("ddMMyyyy");
 
     public static void main(String[] args) throws Exception {
         new HartshornRunner().beforeAll(null);
         final Map<String, String> batches = migrateBatches();
-        String date = sdf.format(new Date());
+        String date = SDF.format(new Date());
         final Path outputPath = getExistingBatch().toPath().resolve("batches/" + date);
         outputPath.toFile().mkdirs();
         outputPath.toFile().mkdir();
@@ -107,7 +124,7 @@ public class TranslationBatchGenerator {
         List<String> entries = HartshornUtils.emptyList();
         for (Entry<String, String> entry : collect.entrySet()) {
             if (entry.getValue().contains("\n")) continue;
-            if (blacklist.contains(entry.getKey())) continue;
+            if (BLACKLIST.contains(entry.getKey())) continue;
             String next = entry.getKey() + '=' + entry.getValue();
             next = next.replaceAll("\r", "");
             entries.add(next);
@@ -147,7 +164,9 @@ public class TranslationBatchGenerator {
             });
 
             Collections.sort(content);
-            String fileOut = String.join("\n", content);
+            final List<String> output = HartshornUtils.merge(HEADER, content);
+
+            String fileOut = String.join("\n", output);
             files.put(file.getName(), fileOut);
         }
         return files;
@@ -156,7 +175,9 @@ public class TranslationBatchGenerator {
     private static List<File> getExistingFiles() {
         final File batch = TranslationBatchGenerator.getExistingBatch();
         if (batch.exists() && batch.isDirectory()) {
-            return HartshornUtils.asList(batch.listFiles());
+            return HartshornUtils.asList(batch.listFiles()).stream()
+                    .filter(f -> !f.isDirectory())
+                    .collect(Collectors.toList());
         } else throw new IllegalStateException("Existing batch could not be found");
     }
 
