@@ -28,7 +28,7 @@ public interface DefaultResources {
     @Resource(value = "$3[] $1", key = "prefix")
     ResourceEntry getPrefix();
 
-    @Resource(value = "$4An caught occurred. $3{0}", key = "caught")
+    @Resource(value = "$4An unknown occurred. $3{0}", key = "caught")
     ResourceEntry getUnknownError(String message);
 
     @Resource(value = "$4Cannot apply to this type", key = "caught.failedbinding")

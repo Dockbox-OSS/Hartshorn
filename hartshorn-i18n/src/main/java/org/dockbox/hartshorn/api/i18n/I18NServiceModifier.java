@@ -18,21 +18,15 @@
 package org.dockbox.hartshorn.api.i18n;
 
 import org.dockbox.hartshorn.api.Hartshorn;
-import org.dockbox.hartshorn.api.domain.MetaProvider;
-import org.dockbox.hartshorn.api.domain.TypedOwner;
 import org.dockbox.hartshorn.api.i18n.annotations.Resource;
 import org.dockbox.hartshorn.api.i18n.annotations.UseResources;
 import org.dockbox.hartshorn.api.i18n.common.ResourceEntry;
-import org.dockbox.hartshorn.di.annotations.Service;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.proxy.exception.ProxyMethodBindingException;
 import org.dockbox.hartshorn.proxy.handle.ProxyFunction;
 import org.dockbox.hartshorn.proxy.service.MethodProxyContext;
 import org.dockbox.hartshorn.proxy.service.ServiceAnnotatedMethodModifier;
 import org.dockbox.hartshorn.util.Reflect;
-import org.dockbox.hartshorn.util.HartshornUtils;
-
-import java.lang.reflect.Method;
 
 public class I18NServiceModifier extends ServiceAnnotatedMethodModifier<Resource, UseResources> {
 
@@ -42,13 +36,7 @@ public class I18NServiceModifier extends ServiceAnnotatedMethodModifier<Resource
         if (!Reflect.assignableFrom(ResourceEntry.class, methodContext.getReturnType()))
             throw new ProxyMethodBindingException(methodContext);
 
-        String prefix = "";
-        if (methodContext.getType().isAnnotationPresent(Service.class)) {
-            TypedOwner lookup = Hartshorn.context().get(MetaProvider.class).lookup(methodContext.getType());
-            if (lookup != null) prefix = lookup.id() + '.';
-        }
-
-        String key = this.extractKey(methodContext.getMethod(), prefix);
+        String key = I18N.key(methodContext.getType(), methodContext.getMethod());
         Resource annotation = methodContext.getMethod().getAnnotation(Resource.class);
 
         return (self, args, holder) -> {
@@ -66,17 +54,6 @@ public class I18NServiceModifier extends ServiceAnnotatedMethodModifier<Resource
     @Override
     public Class<Resource> annotation() {
         return Resource.class;
-    }
-
-    private String extractKey(Method method, String prefix) {
-        if (method.isAnnotationPresent(Resource.class)) {
-            String key = method.getAnnotation(Resource.class).key();
-            if (!"".equals(key)) return key;
-        }
-        String keyJoined = method.getName();
-        if (keyJoined.startsWith("get")) keyJoined = keyJoined.substring(3);
-        String[] r = HartshornUtils.splitCapitals(keyJoined);
-        return prefix + String.join(".", r).toLowerCase();
     }
 
     @Override
