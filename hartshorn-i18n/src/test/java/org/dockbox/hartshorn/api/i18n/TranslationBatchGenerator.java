@@ -25,10 +25,12 @@ import org.dockbox.hartshorn.util.HartshornUtils;
 import org.dockbox.hartshorn.util.Reflect;
 
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.StringReader;
 import java.lang.reflect.Method;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
@@ -97,7 +99,7 @@ public class TranslationBatchGenerator {
             final Path out = outputPath.resolve(file);
             out.toFile().createNewFile();
 
-            FileWriter writer = new FileWriter(out.toFile());
+            OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(out.toFile()), StandardCharsets.UTF_8);
             writer.write(content);
             writer.close();
         }
@@ -142,7 +144,7 @@ public class TranslationBatchGenerator {
         Map<String, String> files = HartshornUtils.emptyMap();
 
         for (File file : TranslationBatchGenerator.getExistingFiles()) {
-            final List<String> strings = Files.readAllLines(file.toPath());
+            final List<String> strings = Files.readAllLines(file.toPath(), StandardCharsets.UTF_8);
             Properties cache = new Properties();
             cache.load(new StringReader(batch));
 
