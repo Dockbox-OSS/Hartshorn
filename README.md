@@ -14,20 +14,20 @@
 Hartshorn is a platform agnostic plugin/extension framework providing advanced utilities to develop against a variety of platforms.
 
 ## Usage
-_Note: To use Hartshorn, your project must be configured to use Java 8 or higher._  
+_Note: To use Hartshorn, your project must be configured to use Java 16 or higher._  
 See [About](https://github.com/GuusLieben/Hartshorn/wiki) and [Gradle](https://github.com/GuusLieben/Hartshorn/wiki/Gradle) on the wiki
 for additional information about the topics below.
 
 ## Building
-All platforms require a Java installation, with JDK 1.8 or more recent version.
+All platforms require a Java installation, with JDK 16 or more recent version.
 
 Set the JAVA\_HOME environment variable. For example:
 
 | Platform | Command |
 | :---: | --- |
-|  Unix    | ``export JAVA_HOME=/usr/java/jdk1.8.0_121``            |
-|  OSX     | ``export JAVA_HOME=`/usr/libexec/java_home -v 1.8` ``  |
-|  Windows | ``set JAVA_HOME="C:\Program Files\Java\jdk1.8.0_121"`` |
+|  Unix    | ``export JAVA_HOME=/usr/lib/jvm/openjdk-16-jdk``            |
+|  OSX     | ``export JAVA_HOME=`/usr/libexec/java_home -v 16` ``  |
+|  Windows | ``set JAVA_HOME="C:\Program Files\Java\jdk-16.0.1"`` |
 
 Hartshorn uses a custom Gradle wrapper to automate builds, performing several steps before and after a build has completed.  
 Depending on your IDE the Gradle wrapper may be automatically used. If you encounter any issues, use `./gradlew` for Unix systems or Git Bash and `gradlew.bat` for Windows systems in place of any 'gradle' command.  

@@ -5,8 +5,8 @@ dependencies {
     compileOnly project(':hartshorn-i18n')
     compileOnly project(':hartshorn-events')
 
-    compile 'com.github.ygimenez:Pagination-Utils:2.1.1'
-    compile("net.dv8tion:JDA:$jdaVersion") {
+    include 'com.github.ygimenez:Pagination-Utils:2.1.1'
+    share ("net.dv8tion:JDA:$jdaVersion") {
         exclude module: 'opus-java'
     }
 }

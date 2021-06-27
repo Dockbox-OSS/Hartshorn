@@ -52,21 +52,21 @@ repositories {
 def ignoreProjects = ['examples', 'hartshorn-parent', 'hartshorn-service-parent', 'hartshorn-sponge-7', 'hartshorn-nms-1.12']
 
 configurations {
-    includeShadow
-    include.extendsFrom(includeShadow)
-    shadow.extendsFrom(includeShadow)
+//    includeShadow
+//    include.extendsFrom(includeShadow)
+//    shadow.extendsFrom(includeShadow)
 }
 
 dependencies {
     new File(parent.rootDir, 'hartshorn-minecraft').listFiles().each {
         if (it.directory && new File(it, 'build.gradle').exists()) {
-            includeShadow project(":hartshorn-minecraft:${it.name}")
+            include project(":hartshorn-minecraft:${it.name}")
         }
     }
 
     parent.rootDir.listFiles().each {
         if ((!ignoreProjects.contains(it.name)) && it.directory && new File(it, 'build.gradle').exists()) {
-            includeShadow project(":${it.name}")
+            include project(":${it.name}")
         }
     }
 

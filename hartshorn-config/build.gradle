@@ -18,8 +18,8 @@
 apply from: "$rootDir/parent.gradle"
 
 dependencies {
-    compileOnly project(':hartshorn-bootstrap')
-    compileOnly project(':hartshorn-persistence')
+    include project(':hartshorn-bootstrap')
+    include project(':hartshorn-persistence')
 
-    compile "org.yaml:snakeyaml:${snakeYamlVersion}"
+    include "org.yaml:snakeyaml:${snakeYamlVersion}"
 }

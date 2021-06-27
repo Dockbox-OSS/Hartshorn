@@ -18,8 +18,6 @@
 dependencies {
     include project(':hartshorn-core')
     include project(':hartshorn-util')
-    include(project(':hartshorn-di')){
-        exclude module: 'guice'
-    }
+    include project(':hartshorn-di')
     include project(':hartshorn-exceptions')
 }

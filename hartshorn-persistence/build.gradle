@@ -25,18 +25,18 @@ dependencies {
     include project(':hartshorn-bootstrap')
     include project(':hartshorn-proxy')
 
-    compile 'com.fasterxml.jackson.core:jackson-core:2.12.3'
-    compile 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.12.3'
-    compile 'com.fasterxml.jackson.dataformat:jackson-dataformat-properties:2.12.3'
-    compile 'com.fasterxml.jackson.dataformat:jackson-dataformat-toml:2.12.3'
+    include 'com.fasterxml.jackson.core:jackson-core:2.12.3'
+    include 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.12.3'
+    include 'com.fasterxml.jackson.dataformat:jackson-dataformat-properties:2.12.3'
+    include 'com.fasterxml.jackson.dataformat:jackson-dataformat-toml:2.12.3'
 
-    compile 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.12.3'
-    compile 'org.codehaus.woodstox:woodstox-core-asl:4.4.1'
+    include 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.12.3'
+    include 'org.codehaus.woodstox:woodstox-core-asl:4.4.1'
 
     // SQL Extension dependencies
     include "org.jooq:jooq:$jooqVersion"
-    compile "org.jooq:jooq-meta:$jooqVersion"
-    compile "org.jooq:jooq-codegen:$jooqVersion"
+    include "org.jooq:jooq-meta:$jooqVersion"
+    include "org.jooq:jooq-codegen:$jooqVersion"
 
-    testCompile "org.xerial:sqlite-jdbc:$xerialSqliteJdbcVersion"
+    testImplementation "org.xerial:sqlite-jdbc:$xerialSqliteJdbcVersion"
 }
