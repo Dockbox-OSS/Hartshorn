@@ -28,7 +28,4 @@ public final class StaticEventListener {
     public static void on(SampleEvent event) {
         StaticEventListener.fired = true;
     }
-
-    private StaticEventListener() {
-    }
 }
