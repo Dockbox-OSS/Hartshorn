@@ -20,8 +20,10 @@ package org.dockbox.hartshorn.persistence;
 import org.dockbox.hartshorn.persistence.table.column.ColumnIdentifier;
 import org.dockbox.hartshorn.persistence.table.column.SimpleColumnIdentifier;
 
-public class SQLiteColumnIdentifiers {
+public final class SQLiteColumnIdentifiers {
 
-    public static final ColumnIdentifier<String> PLOT_WORLD =
-            new SimpleColumnIdentifier<>("world", String.class);
+    public static final ColumnIdentifier<String> PLOT_WORLD = new SimpleColumnIdentifier<>("world", String.class);
+
+    private SQLiteColumnIdentifiers() {
+    }
 }

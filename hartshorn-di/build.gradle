@@ -16,9 +16,10 @@
  */
 
 dependencies {
-    compileOnly project(':hartshorn-core')
-    compileOnly project(':hartshorn-util')
-    // Ensure both Guice and AssistedInject are on equal versions, mismatches will cause issues
-    compile "com.google.inject:guice:$guiceVersion"
-    compile 'javax.inject:javax.inject:1'
+    include project(':hartshorn-core')
+    include project(':hartshorn-util')
+    include "com.google.inject:guice:$guiceVersion"
+
+    share 'javax.inject:javax.inject:1'
+    share "org.reflections:reflections:$reflectionsVersion"
 }

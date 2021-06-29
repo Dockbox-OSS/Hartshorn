@@ -20,5 +20,5 @@ package org.dockbox.hartshorn.server.minecraft.events.server;
 /**
  * The event fired when the server is done starting or a reload is issued.
  */
-public class ServerUpdateEvent extends ServerEvent {
+public class ServerUpdateEvent implements ServerEvent {
 }

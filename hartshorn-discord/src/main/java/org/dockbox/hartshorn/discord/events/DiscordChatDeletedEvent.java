@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.discord.events;
 
-public class DiscordChatDeletedEvent extends DiscordEvent {
+public class DiscordChatDeletedEvent implements DiscordEvent {
 
     private final String messageId;
 

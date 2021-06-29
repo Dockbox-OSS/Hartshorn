@@ -29,7 +29,10 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class CommandElements {
+public final class CommandElements {
+
+    private CommandElements() {
+    }
 
     public static <E extends Enum<E>> CommandElement<E> enumElement(String name, Permission permission, Class<E> type, boolean optional) {
         return new EnumCommandElement<>(name, permission, type, optional);
@@ -42,7 +45,7 @@ public class CommandElements {
         private final Map<String, E> values;
         private final boolean optional;
 
-        public EnumCommandElement(String name, Permission permission, Class<E> type, boolean optional) {
+        private EnumCommandElement(String name, Permission permission, Class<E> type, boolean optional) {
             this.name = name;
             this.permission = permission;
             this.values = Arrays.stream(type.getEnumConstants())

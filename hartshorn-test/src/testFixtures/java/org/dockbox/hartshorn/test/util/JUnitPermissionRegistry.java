@@ -26,7 +26,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.UUID;
 
-public class JUnitPermissionRegistry {
+public final class JUnitPermissionRegistry {
 
     private static final Map<UUID, Collection<Permission>> permissions = HartshornUtils.emptyConcurrentMap();
 
@@ -80,4 +80,6 @@ public class JUnitPermissionRegistry {
             }
     }
 
+    private JUnitPermissionRegistry() {
+    }
 }

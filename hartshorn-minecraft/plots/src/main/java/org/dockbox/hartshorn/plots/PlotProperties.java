@@ -46,6 +46,6 @@ public enum PlotProperties {
     }
 
     public Key<Plot, ?> getKey() {
-        return key;
+        return this.key;
     }
 }

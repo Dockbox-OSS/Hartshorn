@@ -40,11 +40,7 @@ public class NamedImpl implements Named {
     }
 
     public boolean equals(Object o) {
-        if (!(o instanceof Named)) {
-            return false;
-        }
-
-        Named other = (Named) o;
+        if (!(o instanceof Named other)) return false;
         return this.value.equals(other.value());
     }
 

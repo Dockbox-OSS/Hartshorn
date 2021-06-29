@@ -22,9 +22,12 @@ import org.dockbox.hartshorn.persistence.table.column.SimpleColumnIdentifier;
 
 import java.util.UUID;
 
-public class TestColumnIdentifiers {
+public final class TestColumnIdentifiers {
 
     public static final ColumnIdentifier<String> NAME = new SimpleColumnIdentifier<>("name", String.class);
     public static final ColumnIdentifier<UUID> UUID = new SimpleColumnIdentifier<>("uniqueId", java.util.UUID.class);
     public static final ColumnIdentifier<Integer> NUMERAL_ID = new SimpleColumnIdentifier<>("numeralId", Integer.class);
+
+    private TestColumnIdentifiers() {
+    }
 }

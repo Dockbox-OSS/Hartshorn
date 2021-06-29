@@ -17,5 +17,5 @@
 
 dependencies {
     include project(':hartshorn-core')
-    compile "org.reflections:reflections:$reflectionsVersion"
+    include "org.reflections:reflections:$reflectionsVersion"
 }

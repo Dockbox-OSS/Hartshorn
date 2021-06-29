@@ -38,7 +38,6 @@ import org.dockbox.hartshorn.server.minecraft.events.server.ServerStoppingEvent;
 import org.dockbox.hartshorn.server.minecraft.inventory.Slot;
 import org.dockbox.hartshorn.server.minecraft.item.Item;
 import org.dockbox.hartshorn.server.minecraft.players.Player;
-import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
 import java.io.FileWriter;
@@ -71,7 +70,7 @@ public class BlockRegistryService {
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    public static @Nullable Registry<Registry<Item>> loadBlockRegistry() {
+    public static Registry<Registry<Item>> loadBlockRegistry() {
         FileManager fm = Hartshorn.context().get(FileManager.class, FileTypeProperty.of(FileType.XML));
         Path path = fm.getDataFile(BlockRegistryService.class, "blockregistry");
 

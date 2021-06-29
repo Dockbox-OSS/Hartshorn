@@ -51,10 +51,8 @@ public class Compiler {
 	 *            The source code as String.
 	 * @return The compiled results as Map that contains class name as key,
 	 *         class binary as value.
-	 * @throws IOException
-	 *             If compile error.
 	 */
-	public Map<String, byte[]> compile(String fileName, String source) throws IOException {
+	public Map<String, byte[]> compile(String fileName, String source) {
 		try (MemoryJavaFileManager manager = new MemoryJavaFileManager(this.stdManager)) {
 			JavaFileObject javaFileObject = manager.makeStringSource(fileName, source);
 			CompilationTask task = this.compiler.getTask(null, manager, null, null, null, Collections.singletonList(javaFileObject));

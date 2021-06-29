@@ -38,7 +38,7 @@ import lombok.Getter;
                 @InjectConfig(JUnitInjector.class),
                 @InjectConfig(value = LateJUnitInjector.class, phase = InjectPhase.LATE)
         })
-public class JUnit5Application {
+public final class JUnit5Application {
 
     @Getter
     private static final JUnitInformation information = new JUnitInformation();

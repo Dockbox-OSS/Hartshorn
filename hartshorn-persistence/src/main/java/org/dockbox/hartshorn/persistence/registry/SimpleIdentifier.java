@@ -28,6 +28,8 @@ public class SimpleIdentifier implements RegistryIdentifier {
 
     private final String key;
 
+    // Intended to support RegistryIdentifier implementations
+    @SuppressWarnings("EqualsWhichDoesntCheckParameterClass")
     @Override
     public boolean equals(Object o) {
         return RegistryIdentifier.super.same(o);

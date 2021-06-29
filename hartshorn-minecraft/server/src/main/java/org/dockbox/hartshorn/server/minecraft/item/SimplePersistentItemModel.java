@@ -37,7 +37,7 @@ import lombok.Getter;
 @Singleton
 @Entity(value = "item")
 @Getter
-public class SimplePersistentItemModel extends PersistentItemModel {
+public class SimplePersistentItemModel implements PersistentItemModel {
 
     private String id;
     private int meta;

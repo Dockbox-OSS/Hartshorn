@@ -24,6 +24,7 @@ import org.junit.jupiter.api.Assertions;
 
 import java.util.Locale;
 
+@SuppressWarnings("FieldMayBeFinal")
 @Demo
 @Entity(value = "test")
 public class ReflectTestType extends ParentTestType {

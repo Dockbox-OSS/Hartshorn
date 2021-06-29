@@ -26,7 +26,10 @@ import org.dockbox.hartshorn.util.HartshornUtils;
 
 import java.lang.reflect.Method;
 
-public class I18N {
+public final class I18N {
+
+    private I18N() {
+    }
 
     public static String key(Class<?> type, Method method) {
         String prefix = "";

@@ -47,7 +47,7 @@ import java.util.stream.Collectors;
  * Generator type which directly creates and outputs a translation batch based on
  * the currently registered Resource providers.
  */
-public class TranslationBatchGenerator {
+public final class TranslationBatchGenerator {
 
     private static final List<String> BLACKLIST = HartshornUtils.asList(
             // Test resources

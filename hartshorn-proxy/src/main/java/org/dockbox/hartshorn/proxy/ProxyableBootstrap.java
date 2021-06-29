@@ -45,7 +45,7 @@ public final class ProxyableBootstrap {
         Hartshorn.log().info("Scanning for proxy types in " + Hartshorn.PACKAGE_PREFIX);
         Reflect.annotatedTypes(Hartshorn.PACKAGE_PREFIX, Proxy.class).forEach(proxy -> {
             Hartshorn.log().info("Processing [" + proxy.getCanonicalName() + "]");
-            if (!Reflect.isConcrete(proxy)) {
+            if (Reflect.isAbstract(proxy)) {
                 Hartshorn.log().warn("Proxy source cannot be abstract [" + proxy.getCanonicalName() + "]");
                 return;
             }

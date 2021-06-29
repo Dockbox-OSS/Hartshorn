@@ -156,8 +156,6 @@ public final class Exceptional<T> {
      *       used to generate the instance.
      *   <li>If both the value and the throwable are null, {@link Exceptional#empty()} is used to
      *       generate the new instance.
-     *   <li>If neither the value and the throwable are null, {@link Exceptional#of(Object,
-     *       Throwable)} is used to generate the new instance.
      * </ul>
      *
      * @param <T>
@@ -579,11 +577,10 @@ public final class Exceptional<T> {
             return true;
         }
 
-        if (!(obj instanceof Exceptional)) {
+        if (!(obj instanceof Exceptional<?> other)) {
             return false;
         }
 
-        Exceptional<?> other = (Exceptional<?>) obj;
         return Objects.equals(this.value, other.value)
                 && Objects.equals(this.throwable, other.throwable);
     }

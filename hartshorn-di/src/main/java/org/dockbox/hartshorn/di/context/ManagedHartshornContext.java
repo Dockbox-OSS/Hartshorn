@@ -22,7 +22,7 @@ import org.dockbox.hartshorn.di.ProvisionFailure;
 import org.dockbox.hartshorn.di.annotations.Activator;
 import org.dockbox.hartshorn.di.annotations.ServiceActivator;
 import org.dockbox.hartshorn.di.annotations.Wired;
-import org.dockbox.hartshorn.di.exceptions.ApplicationException;
+import org.dockbox.hartshorn.api.exceptions.ApplicationException;
 import org.dockbox.hartshorn.di.inject.InjectionModifier;
 import org.dockbox.hartshorn.di.properties.InjectableType;
 import org.dockbox.hartshorn.di.properties.InjectorProperty;
@@ -106,7 +106,7 @@ public abstract class ManagedHartshornContext extends DefaultContext implements 
                     try {
                         // As we're enabling fields they may be accessed even if their
                         // modifier indicates otherwise.
-                        if (!field.isAccessible()) field.setAccessible(true);
+                        field.setAccessible(true);
                         return field.get(typeInstance);
                     }
                     catch (IllegalAccessException e) {

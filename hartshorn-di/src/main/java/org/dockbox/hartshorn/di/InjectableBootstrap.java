@@ -30,7 +30,7 @@ import java.lang.annotation.Annotation;
 import java.util.Collection;
 import java.util.List;
 
-@SuppressWarnings({ "AbstractClassWithoutAbstractMethods", "unchecked", "rawtypes" })
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public abstract class InjectableBootstrap extends ApplicationContextAware {
 
     private static InjectableBootstrap instance;
@@ -57,7 +57,7 @@ public abstract class InjectableBootstrap extends ApplicationContextAware {
     private void lookupProcessors(String prefix) {
         final Collection<Class<? extends ServiceProcessor>> processors = Reflect.subTypes(prefix, ServiceProcessor.class);
         for (Class<? extends ServiceProcessor> processor : processors) {
-            if (!Reflect.isConcrete(processor)) continue;
+            if (Reflect.isAbstract(processor)) continue;
 
             final ServiceProcessor raw = super.getContext().raw(processor, false);
             if (this.getContext().hasActivator(raw.activator()))
@@ -68,7 +68,7 @@ public abstract class InjectableBootstrap extends ApplicationContextAware {
     private void lookupModifiers(String prefix) {
         final Collection<Class<? extends InjectionModifier>> modifiers = Reflect.subTypes(prefix, InjectionModifier.class);
         for (Class<? extends InjectionModifier> modifier : modifiers) {
-            if (!Reflect.isConcrete(modifier)) continue;
+            if (Reflect.isAbstract(modifier)) continue;
 
             final InjectionModifier raw = super.getContext().raw(modifier, false);
             if (this.getContext().hasActivator(raw.activator()))

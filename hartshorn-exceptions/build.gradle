@@ -17,7 +17,7 @@
 
 dependencies {
     compileOnly project(':hartshorn-core')
-    compile(project(':hartshorn-di')){
+    implementation(project(':hartshorn-di')){
         exclude module: 'guice'
     }
 }

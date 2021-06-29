@@ -34,10 +34,10 @@ public class TeleportToPlotEvent extends CancellablePlotPlayerEvent {
     }
 
     public Location getFrom() {
-        return from;
+        return this.from;
     }
 
     public Location getTo() {
-        return to;
+        return this.to;
     }
 }

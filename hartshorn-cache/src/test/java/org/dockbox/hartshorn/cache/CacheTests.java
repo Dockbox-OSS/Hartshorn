@@ -20,14 +20,12 @@ package org.dockbox.hartshorn.cache;
 import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.test.HartshornRunner;
-import org.dockbox.hartshorn.util.HartshornUtils;
+import org.dockbox.hartshorn.test.util.JUnitCacheManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.List;
 
@@ -125,12 +123,7 @@ public class CacheTests {
     }
 
     @AfterEach
-    void reset() throws IllegalAccessException, NoSuchFieldException {
-        final Field caches = SimpleCacheManager.class.getDeclaredField("caches");
-        caches.setAccessible(true);
-        Field modifiersField = Field.class.getDeclaredField("modifiers");
-        modifiersField.setAccessible(true);
-        modifiersField.setInt(caches, caches.getModifiers() & ~Modifier.FINAL);
-        caches.set(null, HartshornUtils.emptyConcurrentMap());
+    void reset() {
+        Hartshorn.context().get(JUnitCacheManager.class).reset();
     }
 }

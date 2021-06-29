@@ -62,8 +62,7 @@ public class Vector3N extends Vector2N {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Vector3N)) return false;
-        Vector3N vector3N = (Vector3N) o;
+        if (!(o instanceof Vector3N vector3N)) return false;
         return this.getYf() == vector3N.getYf() && this.getXf() == vector3N.getXf() && this.getZf() == vector3N.getZf();
     }
 

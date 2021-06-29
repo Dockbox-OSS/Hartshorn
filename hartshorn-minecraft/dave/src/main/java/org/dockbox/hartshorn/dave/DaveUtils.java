@@ -40,6 +40,7 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Random;
 
 public final class DaveUtils {
@@ -181,11 +182,10 @@ public final class DaveUtils {
         DiscordUtils du = Hartshorn.context().get(DiscordUtils.class);
 
         if (parsedResponse.contains("<mention>")) {
-            boolean replaced = false;
             for (String partial : message.split(" "))
                 parsedResponse = parseMention(partial, parsedResponse, du);
 
-            if (!replaced) parsedResponse = parsedResponse.replaceAll("<mention>", playerName);
+            parsedResponse = parsedResponse.replaceAll("<mention>", playerName);
         }
 
         if (parsedResponse.contains("<random>"))
@@ -219,8 +219,6 @@ public final class DaveUtils {
         int index = new Random().nextInt(pss.getOnlinePlayers().size());
         String randomPlayer = pss.getOnlinePlayers().toArray(new Player[0])[index].getName();
 
-        if (null != randomPlayer) fullResponse = fullResponse.replaceAll("<random>", randomPlayer);
-        else fullResponse = fullResponse.replaceAll("<random>", playerName + "*");
-        return fullResponse;
+        return fullResponse.replaceAll("<random>", Objects.requireNonNullElseGet(randomPlayer, () -> playerName + "*"));
     }
 }

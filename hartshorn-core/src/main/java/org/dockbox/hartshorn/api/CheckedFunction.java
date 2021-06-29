@@ -17,8 +17,10 @@
 
 package org.dockbox.hartshorn.api;
 
+import org.dockbox.hartshorn.api.exceptions.ApplicationException;
+
 @FunctionalInterface
 public interface CheckedFunction<T, R> {
 
-    R apply(T t) throws Exception;
+    R apply(T t) throws ApplicationException;
 }

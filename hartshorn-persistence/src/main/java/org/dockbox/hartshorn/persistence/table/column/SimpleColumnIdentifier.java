@@ -37,8 +37,7 @@ public class SimpleColumnIdentifier<T> implements ColumnIdentifier<T> {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof SimpleColumnIdentifier)) return false;
-        SimpleColumnIdentifier<?> that = (SimpleColumnIdentifier<?>) o;
+        if (!(o instanceof SimpleColumnIdentifier<?> that)) return false;
         return Objects.equals(this.columnName, that.columnName)
                 && Objects.equals(this.getType(), that.getType());
     }

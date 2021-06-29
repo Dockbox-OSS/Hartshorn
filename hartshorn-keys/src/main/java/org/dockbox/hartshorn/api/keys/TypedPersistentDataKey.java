@@ -59,9 +59,7 @@ public class TypedPersistentDataKey<T> implements PersistentDataKey<T> {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof TypedPersistentDataKey)) return false;
-
-        TypedPersistentDataKey<?> that = (TypedPersistentDataKey<?>) o;
+        if (!(o instanceof TypedPersistentDataKey<?> that)) return false;
 
         if (!this.id.equals(that.id)) return false;
         if (!this.owner.equals(that.owner) &&

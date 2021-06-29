@@ -47,16 +47,12 @@ public abstract class AbstractPersistenceServiceModifier<M extends Annotation, C
         if (serialisationContext.absent()) throw new IllegalStateException("Expected additional context to be present");
 
         final C ctx = serialisationContext.get();
-        switch (ctx.getTarget()) {
-            case ANNOTATED_PATH:
-                return this.processAnnotatedPath(context, methodContext, ctx);
-            case PARAMETER_PATH:
-                return this.processParameterPath(context, methodContext, ctx);
-            case STRING:
-                return this.processString(context, methodContext, ctx);
-            default:
-                throw new IllegalArgumentException("Unsupported serialisation target: " + ctx.getTarget());
-        }
+        return switch (ctx.getTarget()) {
+            case ANNOTATED_PATH -> this.processAnnotatedPath(context, methodContext, ctx);
+            case PARAMETER_PATH -> this.processParameterPath(context, methodContext, ctx);
+            case STRING -> this.processString(context, methodContext, ctx);
+            default -> throw new IllegalArgumentException("Unsupported serialisation target: " + ctx.getTarget());
+        };
     }
 
     protected abstract  <T, R> ProxyFunction<T, R> processAnnotatedPath(ApplicationContext context, MethodProxyContext<T> methodContext, C serialisationContext);

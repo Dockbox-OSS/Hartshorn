@@ -20,5 +20,5 @@ package org.dockbox.hartshorn.server.minecraft.events.server;
 /**
  * The event fired when the server is done starting. Typically this is the last event to be fired.
  */
-public class ServerStartedEvent extends ServerEvent {
+public class ServerStartedEvent implements ServerEvent {
 }

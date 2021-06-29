@@ -32,11 +32,11 @@ public class PlayerPortalEvent extends PlayerTeleportEvent {
     }
 
     public boolean usesPortal() {
-        return usesPortal;
+        return this.usesPortal;
     }
 
     public PortalType getPortalType() {
-        return portalType;
+        return this.portalType;
     }
 
     public void setUsePortal(boolean usePortal) {

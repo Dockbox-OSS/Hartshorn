@@ -22,15 +22,16 @@ import org.dockbox.hartshorn.api.i18n.common.ResourceEntry;
 import org.dockbox.hartshorn.di.annotations.Service;
 import org.jetbrains.annotations.NotNull;
 
-@SuppressWarnings({ "StaticMethodOnlyUsedInOneClass", "ClassWithTooManyFields" })
 @Service(owner = DefaultServer.class)
 public interface DefaultServerResources {
 
-    @Resource(value = "&m$2====================\n" +
-            "$2Name : $1{0}\n" +
-            "$2ID : $1{1}\n" +
-            "$2Dependencies : $1{2}\n" +
-            "&m$2====================\n")
+    @Resource(value = """
+            &m$2====================
+            $2Name : $1{0}
+            $2ID : $1{1}
+            $2Dependencies : $1{2}
+            &m$2====================
+            """)
     ResourceEntry getInfoServiceBlock(String name, String id, String dependencies);
 
     @Resource(value = "$4Could not find service with ID '{0}'")
@@ -54,7 +55,12 @@ public interface DefaultServerResources {
     @Resource(value = "$4This command can only be used by identifiable sources (players, console) matching the original source of the command")
     ResourceEntry getConfirmInvalidSource();
 
-    @Resource(value = "$2Platform: $1{0} $3(version: {1})\n" + "$2Minecraft: $1{2}\n" + "$2Java: $1{3} $3(vendor: {4})\n" + "$2JVM: $1{5} $3(version: {6}, vendor: {7})\n" + "$2Runtime: $1{8} $3(class version: {9})", key = "hartshorn.info.platform")
+    @Resource(value = """
+            $2Platform: $1{0} $3(version: {1})
+            $2Minecraft: $1{2}
+            $2Java: $1{3} $3(vendor: {4})
+            $2JVM: $1{5} $3(version: {6}, vendor: {7})
+            $2Runtime: $1{8} $3(class version: {9})""", key = "hartshorn.info.platform")
     ResourceEntry getPlatformInformation(String displayName, String platformVersion, String mcVersion,
                                          Object javaVersion, Object javaVendor,
                                          Object vmVersion, Object vmName,

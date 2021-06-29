@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.test.objects;
 
 import net.dv8tion.jda.api.entities.TextChannel;
 
+import org.dockbox.hartshorn.api.exceptions.NotImplementedException;
 import org.dockbox.hartshorn.api.i18n.common.ResourceEntry;
 import org.dockbox.hartshorn.api.i18n.text.Text;
 import org.dockbox.hartshorn.api.i18n.text.pagination.Pagination;
@@ -37,30 +38,36 @@ public class JUnitDiscordCommandSource implements DiscordCommandSource {
     @Override
     public void execute(String command) {
         // TODO: Test implementation, mocking client?
+        throw new NotImplementedException();
     }
 
     @Override
     public void send(ResourceEntry text) {
         // TODO: Test implementation, mocking client?
+        throw new NotImplementedException();
     }
 
     @Override
     public void send(Text text) {
         // TODO: Test implementation, mocking client?
+        throw new NotImplementedException();
     }
 
     @Override
     public void sendWithPrefix(ResourceEntry text) {
         // TODO: Test implementation, mocking client?
+        throw new NotImplementedException();
     }
 
     @Override
     public void sendWithPrefix(Text text) {
         // TODO: Test implementation, mocking client?
+        throw new NotImplementedException();
     }
 
     @Override
     public void send(Pagination pagination) {
         // TODO: Test implementation, mocking client?
+        throw new NotImplementedException();
     }
 }

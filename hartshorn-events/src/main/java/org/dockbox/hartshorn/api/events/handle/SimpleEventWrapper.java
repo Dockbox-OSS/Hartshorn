@@ -83,9 +83,7 @@ public final class SimpleEventWrapper implements Comparable<SimpleEventWrapper>,
 
         // Listener methods may be private or protected, before invoking it we need to ensure it is
         // accessible.
-        if (!this.method.isAccessible()) {
-            this.method.setAccessible(true);
-        }
+        this.method.setAccessible(true);
 
         this.operator = this.createLambda();
     }
@@ -113,8 +111,8 @@ public final class SimpleEventWrapper implements Comparable<SimpleEventWrapper>,
      * Creates one or more {@link SimpleEventWrapper}s (depending on how many event parameters are
      * present) for a given method and instance.
      *
-     * @param instance
-     *         The instance which is used when invoking the method.
+     * @param type
+     *         The type of the instance which is used when invoking the method.
      * @param method
      *         The method to store for invocation.
      * @param priority

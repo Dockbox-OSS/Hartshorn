@@ -18,6 +18,7 @@
 package org.dockbox.hartshorn.test.objects.living;
 
 import org.dockbox.hartshorn.api.Hartshorn;
+import org.dockbox.hartshorn.api.exceptions.NotImplementedException;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.domain.tuple.Tristate;
 import org.dockbox.hartshorn.api.i18n.common.Language;
@@ -50,6 +51,7 @@ import java.util.UUID;
 import lombok.Getter;
 import lombok.Setter;
 
+// TODO: Modification events (teleport, kick, etc)
 public class JUnitPlayer extends Player implements JUnitPersistentDataHolder {
 
     @Getter
@@ -109,6 +111,7 @@ public class JUnitPlayer extends Player implements JUnitPersistentDataHolder {
     @Override
     public void execute(String command) {
         // TODO: CommandBus implementation
+        throw new NotImplementedException();
     }
 
     @Override
@@ -129,6 +132,7 @@ public class JUnitPlayer extends Player implements JUnitPersistentDataHolder {
     @Override
     public void play(Sounds sound) {
         // TODO: Test implementation, mocking client?
+        throw new NotImplementedException();
     }
 
     @Override
@@ -149,31 +153,37 @@ public class JUnitPlayer extends Player implements JUnitPersistentDataHolder {
     @Override
     public void send(ResourceEntry text) {
         // TODO: Test implementation, mocking client?
+        throw new NotImplementedException();
     }
 
     @Override
     public void send(Text text) {
         // TODO: Test implementation, mocking client?
+        throw new NotImplementedException();
     }
 
     @Override
     public void sendWithPrefix(ResourceEntry text) {
         // TODO: Test implementation, mocking client?
+        throw new NotImplementedException();
     }
 
     @Override
     public void sendWithPrefix(Text text) {
         // TODO: Test implementation, mocking client?
+        throw new NotImplementedException();
     }
 
     @Override
     public void send(Pagination pagination) {
         // TODO: Test implementation, mocking client?
+        throw new NotImplementedException();
     }
 
     @Override
     public void send(Packet packet) {
         // TODO: Test implementation, mocking client?
+        throw new NotImplementedException();
     }
 
     @Override

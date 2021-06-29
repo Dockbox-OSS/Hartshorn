@@ -24,7 +24,7 @@ import org.dockbox.hartshorn.util.HartshornUtils;
 
 import java.util.Map;
 
-public class TestKeys {
+public final class TestKeys {
 
     private static final Map<Object, String> localRegistry = HartshornUtils.emptyMap();
 
@@ -35,4 +35,7 @@ public class TestKeys {
     public static final Key<TestNonKeyHolder, String> NON_HOLDER_KEY = Keys.of(
             localRegistry::put,
             testKeyHolder -> Exceptional.of(localRegistry.getOrDefault(testKeyHolder, null)));
+
+    private TestKeys() {
+    }
 }

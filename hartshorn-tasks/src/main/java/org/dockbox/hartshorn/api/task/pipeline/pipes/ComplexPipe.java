@@ -17,6 +17,7 @@
 
 package org.dockbox.hartshorn.api.task.pipeline.pipes;
 
+import org.dockbox.hartshorn.api.exceptions.ApplicationException;
 import org.dockbox.hartshorn.api.task.pipeline.pipelines.AbstractPipeline;
 
 @FunctionalInterface
@@ -26,7 +27,7 @@ public interface ComplexPipe<I, O> extends IPipe<I, O> {
         return pipe;
     }
 
-    O apply(AbstractPipeline<?, I> pipeline, I input, Throwable throwable) throws Exception;
+    O apply(AbstractPipeline<?, I> pipeline, I input, Throwable throwable) throws ApplicationException;
 
     @SuppressWarnings("rawtypes")
     @Override

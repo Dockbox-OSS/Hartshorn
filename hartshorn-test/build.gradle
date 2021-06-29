@@ -23,38 +23,30 @@ plugins {
 group = 'org.dockbox.hartshorn.common'
 description 'Default implementations for Hartshorn'
 
-repositories {
-    maven { // Only used for Configurate, not for platform implementations
-        name 'Sponge maven repo'
-        url 'https://repo.spongepowered.org/maven'
-    }
-}
-
-def depBlacklist = ['hartshorn-sponge-7', 'hartshorn-nms-1.12', 'hartshorn-test', 'examples']
+def depBlacklist = ['hartshorn-sponge-7', 'hartshorn-sponge-8', 'hartshorn-nms-1.12', 'hartshorn-test', 'examples']
 
 dependencies {
     rootDir.listFiles().each {
         if (it.directory && it.name.startsWith('hartshorn-') && new File(it, 'build.gradle').exists()) {
             if (!depBlacklist.contains(it.name)) {
-                testFixturesCompile project(":${it.name}")
+                testFixturesApi project(":${it.name}")
             }
         }
     }
 
     new File(rootDir, 'hartshorn-minecraft').listFiles().each {
         if (it.directory && new File(it, 'build.gradle').exists()) {
-            testFixturesCompile project(":hartshorn-minecraft:${it.name}")
+            testFixturesApi project(":hartshorn-minecraft:${it.name}")
         }
     }
 
-    testFixturesCompile "org.junit.jupiter:junit-jupiter-api:$junitVersion"
-    testFixturesCompile "org.junit.jupiter:junit-jupiter-params:$junitVersion"
-    testFixturesRuntime "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
-    testFixturesCompile "org.hamcrest:java-hamcrest:$hamcrestVersion"
+    testFixturesImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"
+    testFixturesImplementation "org.junit.jupiter:junit-jupiter-params:$junitVersion"
+    testFixturesRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
+    testFixturesImplementation "org.hamcrest:java-hamcrest:$hamcrestVersion"
 
-    testFixturesCompile "org.mockito:mockito-inline:$mockitoVersion"
+    testFixturesImplementation "org.mockito:mockito-inline:$mockitoVersion"
 
-
-    testFixturesCompile 'org.projectlombok:lombok:1.18.20'
+    testFixturesImplementation 'org.projectlombok:lombok:1.18.20'
     testFixturesAnnotationProcessor 'org.projectlombok:lombok:1.18.20'
 }

@@ -21,9 +21,9 @@ import org.dockbox.hartshorn.server.minecraft.inventory.pane.Pane;
 import org.dockbox.hartshorn.di.properties.InjectableType;
 import org.dockbox.hartshorn.api.i18n.text.Text;
 
-public abstract class PaneBuilder<T extends Pane, B extends PaneBuilder<T, B>> implements InjectableType {
+public interface PaneBuilder<T extends Pane, B extends PaneBuilder<T, B>> extends InjectableType {
 
-    public abstract B title(Text text);
+    B title(Text text);
 
-    public abstract T build();
+    T build();
 }

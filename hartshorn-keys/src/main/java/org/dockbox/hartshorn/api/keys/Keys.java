@@ -35,24 +35,6 @@ public final class Keys {
     private Keys() {}
 
     /**
-     * Convert the given name to a valid ID, merging its owner ID and the name in the following format:
-     * <pre>{@code
-     * Sample Item -> $ownerId:sample_item
-     * }</pre>
-     *
-     * @param name
-     *         the name
-     * @param owner
-     *         the owner
-     *
-     * @return the string
-     */
-    public static String convertId(String name, TypedOwner owner) {
-        name = name.toLowerCase(Locale.ROOT).replaceAll("[ .]", "").replaceAll("-", "_");
-        return owner.id() + ':' + name;
-    }
-
-    /**
      * Persistent key of persistent data key.
      *
      * @param <T>
@@ -92,6 +74,24 @@ public final class Keys {
     }
 
     /**
+     * Convert the given name to a valid ID, merging its owner ID and the name in the following format:
+     * <pre>{@code
+     * Sample Item -> $ownerId:sample_item
+     * }</pre>
+     *
+     * @param name
+     *         the name
+     * @param owner
+     *         the owner
+     *
+     * @return the string
+     */
+    public static String convertId(String name, TypedOwner owner) {
+        name = name.toLowerCase(Locale.ROOT).replaceAll("[ .]", "").replaceAll("-", "_");
+        return owner.id() + ':' + name;
+    }
+
+    /**
      * Checked dynamic key of key.
      *
      * @param <K>
@@ -106,7 +106,7 @@ public final class Keys {
      * @return the key
      */
     public static <K, A> Key<K, A> removable(BiFunction<K, A, TransactionResult> setter, Function<K, Exceptional<A>> getter) {
-        return new Key<K, A>(setter, getter) {
+        return new Key<>(setter, getter) {
         };
     }
 
@@ -125,8 +125,7 @@ public final class Keys {
      * @return the key
      */
     public static <K, A> Key<K, A> wrapRemovable(BiConsumer<K, A> setter, CheckedFunction<K, A> getter) {
-        return new Key<K, A>(
-                Keys.wrapSetter(setter), k -> Exceptional.of(() -> getter.apply(k))) {
+        return new Key<>(Keys.wrapSetter(setter), k -> Exceptional.of(() -> getter.apply(k))) {
         };
     }
 
@@ -182,7 +181,7 @@ public final class Keys {
      * @return the key
      */
     public static <K, A> Key<K, A> wrapGetter(BiFunction<K, A, TransactionResult> setter, CheckedFunction<K, A> getter) {
-        return new Key<K, A>(setter, k -> Exceptional.of(() -> getter.apply(k))) {
+        return new Key<>(setter, k -> Exceptional.of(() -> getter.apply(k))) {
         };
     }
 
@@ -203,7 +202,7 @@ public final class Keys {
      * @return the removable key
      */
     public static <K, A> RemovableKey<K, A> of(BiConsumer<K, A> setter, Function<K, Exceptional<A>> getter, Consumer<K> remover) {
-        return new RemovableKey<K, A>(Keys.wrapSetter(setter), getter, remover) {
+        return new RemovableKey<>(Keys.wrapSetter(setter), getter, remover) {
         };
     }
 
@@ -228,7 +227,7 @@ public final class Keys {
             Function<K, Exceptional<A>> getter,
             Consumer<K> remover
     ) {
-        return new RemovableKey<K, A>(setter, getter, remover) {
+        return new RemovableKey<>(setter, getter, remover) {
         };
     }
 
@@ -249,7 +248,7 @@ public final class Keys {
      * @return the removable key
      */
     public static <K, A> RemovableKey<K, A> wrapRemovable(BiConsumer<K, A> setter, CheckedFunction<K, A> getter, Consumer<K> remover) {
-        return new RemovableKey<K, A>(
+        return new RemovableKey<>(
                 Keys.wrapSetter(setter), k -> Exceptional.of(() -> getter.apply(k)), remover) {
         };
     }
@@ -275,7 +274,7 @@ public final class Keys {
      * @return the key
      */
     public static <K, A> Key<K, A> of(BiConsumer<K, A> setter, Function<K, Exceptional<A>> getter) {
-        return new Key<K, A>(Keys.wrapSetter(setter), getter) {
+        return new Key<>(Keys.wrapSetter(setter), getter) {
         };
     }
 

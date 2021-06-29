@@ -68,13 +68,12 @@ public class Vector2N {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Vector2N)) return false;
-        Vector2N vector2N = (Vector2N) o;
-        return x.equals(vector2N.x) && z.equals(vector2N.z);
+        if (!(o instanceof Vector2N vector2N)) return false;
+        return this.x.equals(vector2N.x) && this.z.equals(vector2N.z);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(x, z);
+        return Objects.hash(this.x, this.z);
     }
 }

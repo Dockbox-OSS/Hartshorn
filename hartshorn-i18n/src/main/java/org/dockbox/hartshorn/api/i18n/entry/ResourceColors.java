@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.api.i18n.entry;
 
-public class ResourceColors {
+public final class ResourceColors {
 
     public static char getColorPrimary() {
         return 'b';
@@ -35,4 +35,6 @@ public class ResourceColors {
         return 'c';
     }
 
+    private ResourceColors() {
+    }
 }

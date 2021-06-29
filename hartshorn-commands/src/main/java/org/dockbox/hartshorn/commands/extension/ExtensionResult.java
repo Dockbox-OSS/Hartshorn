@@ -20,7 +20,7 @@ package org.dockbox.hartshorn.commands.extension;
 import org.dockbox.hartshorn.api.i18n.common.ResourceEntry;
 import org.dockbox.hartshorn.api.i18n.entry.FakeResource;
 
-public class ExtensionResult {
+public final class ExtensionResult {
 
     private final boolean proceed;
     private final ResourceEntry reason;

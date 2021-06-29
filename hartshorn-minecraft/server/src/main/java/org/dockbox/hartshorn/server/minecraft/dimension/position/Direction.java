@@ -21,21 +21,13 @@ public enum Direction {
     NORTH, EAST, SOUTH, WEST, OTHER;
 
     public static Direction getInstance(String direction) {
-        switch (direction.toLowerCase()) {
-            case "n":
-            case "north":
-                return NORTH;
-            case "e":
-            case "east":
-                return EAST;
-            case "s":
-            case "south":
-                return SOUTH;
-            case "w":
-            case "west":
-                return WEST;
-        }
-        return OTHER;
+        return switch (direction.toLowerCase()) {
+            case "n", "north" -> NORTH;
+            case "e", "east" -> EAST;
+            case "s", "south" -> SOUTH;
+            case "w", "west" -> WEST;
+            default -> OTHER;
+        };
     }
 
     public static Direction getInstance(int ordinal) {

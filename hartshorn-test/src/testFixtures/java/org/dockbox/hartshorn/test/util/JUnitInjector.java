@@ -21,6 +21,7 @@ import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.config.GlobalConfig;
 import org.dockbox.hartshorn.api.task.TaskRunner;
 import org.dockbox.hartshorn.api.task.ThreadUtils;
+import org.dockbox.hartshorn.cache.CacheManager;
 import org.dockbox.hartshorn.commands.source.DiscordCommandSource;
 import org.dockbox.hartshorn.config.ConfigurationManager;
 import org.dockbox.hartshorn.di.InjectConfiguration;
@@ -70,6 +71,7 @@ public class JUnitInjector extends InjectConfiguration {
         this.bind(Players.class, JUnitPlayers.class);
         this.bind(Worlds.class, JUnitWorlds.class);
         this.bind(CustomMapService.class, JUnitCustomMapService.class);
+        this.bind(CacheManager.class, JUnitCacheManager.class);
 
         // Wired types - do NOT call directly!
         this.wire(Item.class, JUnitItem.class);

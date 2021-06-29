@@ -26,7 +26,7 @@ import java.util.Collection;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-public class CommandValueConverter<T> extends AbstractArgumentConverter<T> {
+public final class CommandValueConverter<T> extends AbstractArgumentConverter<T> {
 
     private final BiFunction<CommandSource, String, Exceptional<T>> converter;
     private final Function<String, Collection<String>> suggestionProvider;

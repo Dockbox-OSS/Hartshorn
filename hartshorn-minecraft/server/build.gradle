@@ -19,6 +19,6 @@ apply from: "$rootDir/service-parent.gradle"
 
 // All dependencies are compiled so this project can be used as parent for sub projects and modules
 dependencies {
-    compile project(':hartshorn-keys')
-    compile project(':hartshorn-commands')
+    share project(':hartshorn-keys')
+    share project(':hartshorn-commands')
 }
