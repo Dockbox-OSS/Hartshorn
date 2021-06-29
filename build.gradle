@@ -19,6 +19,7 @@ import java.time.LocalDate
 buildscript {
     repositories {
         mavenCentral()
+        maven { url "https://plugins.gradle.org/m2/" }
     }
     dependencies {
         classpath 'io.franzbecker:gradle-lombok:1.6'
@@ -29,7 +30,7 @@ plugins {
     id 'java'
     id 'java-library'
     id 'org.cadixdev.licenser' version '0.5.0'
-    id 'de.lukaskoerfer.gradle.delombok' version '0.2'
+    id 'io.freefair.aggregate-javadoc' version '6.0.0-m2'
 }
 
 static def getVersionName() {
@@ -46,7 +47,6 @@ subprojects { Project subProject ->
     apply plugin: 'java-library'
     apply plugin: 'maven-publish'
     apply plugin: 'org.cadixdev.licenser'
-    apply plugin: 'de.lukaskoerfer.gradle.delombok'
 
     license {
         header = rootProject.file("HEADER.txt")
@@ -64,12 +64,6 @@ subprojects { Project subProject ->
         dependsOn tasks.updateLicenses
         finalizedBy tasks.clean
     }
-
-    javadoc {
-        dependsOn delombok
-        failOnError = false
-    }
-
 }
 
 allprojects {
@@ -106,7 +100,12 @@ allprojects {
             options.encoding = 'UTF-8'
         }
 
-        javadoc.options.encoding = 'UTF-8'
+        tasks.withType(Javadoc) {
+            failOnError false
+            options.addStringOption('Xdoclint:none', '-quiet')
+            options.addStringOption('encoding', 'UTF-8')
+            options.addStringOption('charSet', 'UTF-8')
+        }
 
         dependencies {
             include 'com.mortennobel:java-image-scaling:0.8.6'
@@ -136,30 +135,7 @@ allprojects {
             testImplementation "org.slf4j:slf4j-api:$slf4jVersion"
             testImplementation "org.slf4j:slf4j-simple:$slf4jVersion"
         }
-
-        test {
-            useJUnitPlatform()
-        }
     }
 }
 
-task aggregatedJavadocs(type: Javadoc, description: 'Generate javadocs from all submodules', group: 'Documentation') {
-    destinationDir = file "./docs"
-    title = "Hartshorn (commit #$version)"
-    options.author true
-    options.links 'http://docs.spring.io/spring/docs/4.3.x/javadoc-api/', 'http://docs.oracle.com/javase/8/docs/api/', 'http://docs.spring.io/spring-ws/docs/2.3.0.RELEASE/api/', 'http://docs.spring.io/spring-security/site/docs/4.0.4.RELEASE/apidocs/'
-    options.addStringOption 'Xdoclint:none', '-quiet'
-
-    delete "./docs"
-
-    subprojects.each { proj ->
-        proj.tasks.withType(Javadoc).each { javadocTask ->
-            source += javadocTask.source
-            classpath += javadocTask.classpath
-            excludes += javadocTask.excludes
-            includes += javadocTask.includes
-        }
-    }
-}
-
-wrapper { gradleVersion = '5.6' }
+wrapper { gradleVersion = '7.0' }

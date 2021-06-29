@@ -1,0 +1,44 @@
+# This workflow will build a Java project with Maven
+# For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-maven
+
+name: Hartshorn
+
+on: [pull_request]
+
+jobs:
+  javadoc:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK 16
+        uses: actions/setup-java@v1
+        with:
+          java-version: 16
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+      - name: Verify Javadocs
+        run: ./gradlew aggregateJavadoc
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK 16
+        uses: actions/setup-java@v1
+        with:
+          java-version: 16
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+      - name: Build all
+        run: ./gradlew build -x test
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK 16
+        uses: actions/setup-java@v1
+        with:
+          java-version: 16
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+      - name: Tests
+        run: ./gradlew test
