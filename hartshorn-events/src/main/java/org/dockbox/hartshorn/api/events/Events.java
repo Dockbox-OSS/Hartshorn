@@ -26,7 +26,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-public class Events {
+public final class Events {
+
+    private Events() {
+    }
 
     /**
      * Returns a {@link List} of non-null events based on the provided {@link Event events}. This

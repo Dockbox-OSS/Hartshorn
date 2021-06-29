@@ -30,10 +30,7 @@ public final class BlockRegistryUtil {
 
     public static Class<? extends BlockRegistryParser> getBlockRegistryParserClass() {
         //noinspection SwitchStatementWithTooFewBranches
-        switch (Hartshorn.context().get(MinecraftVersion.class)) {
-            default:
-                return MC1_12BlockRegistryParser.class;
-        }
+        return switch (Hartshorn.context().get(MinecraftVersion.class)) {default -> MC1_12BlockRegistryParser.class;};
     }
 
     public static String getUpdatedID(Item item) {

@@ -21,7 +21,10 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.Callable;
 
-public class Except {
+public final class Except {
+
+    private Except() {
+    }
 
     private static ExceptionHandle handle = ExceptionLevels.FRIENDLY;
     private static boolean stackTraces = true;

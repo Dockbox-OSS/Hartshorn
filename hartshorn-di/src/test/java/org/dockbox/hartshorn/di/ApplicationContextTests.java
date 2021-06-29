@@ -25,7 +25,7 @@ import org.dockbox.hartshorn.di.binding.Bindings;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.di.context.HartshornApplicationContext;
 import org.dockbox.hartshorn.di.context.ManagedHartshornContext;
-import org.dockbox.hartshorn.di.exceptions.ApplicationException;
+import org.dockbox.hartshorn.api.exceptions.ApplicationException;
 import org.dockbox.hartshorn.di.inject.GuiceInjector;
 import org.dockbox.hartshorn.di.inject.Injector;
 import org.dockbox.hartshorn.di.properties.BindingMetaProperty;

@@ -17,6 +17,7 @@
 
 package org.dockbox.hartshorn.test.objects;
 
+import org.dockbox.hartshorn.api.exceptions.NotImplementedException;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.i18n.text.Text;
 import org.dockbox.hartshorn.di.annotations.Wired;
@@ -38,46 +39,46 @@ public class JUnitBossbar extends DefaultTickableBossbar<Void> {
 
     @Override
     public void tick() {
-
+        throw new NotImplementedException();
     }
 
     @Override
     public Exceptional<Void> constructInitialReference() {
-        return null;
+        throw new NotImplementedException();
     }
 
     @Override
     public void showTo(Player player) {
-
+        throw new NotImplementedException();
     }
 
     @Override
     public void showTo(Player player, Duration duration) {
-
+        throw new NotImplementedException();
     }
 
     @Override
     public void hideFrom(Player player) {
-
+        throw new NotImplementedException();
     }
 
     @Override
     public Collection<Player> visibleTo() {
-        return null;
+        throw new NotImplementedException();
     }
 
     @Override
     public boolean isVisibleTo(Player player) {
-        return false;
+        throw new NotImplementedException();
     }
 
     @Override
     public boolean isVisibleTo(UUID player) {
-        return false;
+        throw new NotImplementedException();
     }
 
     @Override
     public boolean isVisibleTo(String name) {
-        return false;
+        throw new NotImplementedException();
     }
 }

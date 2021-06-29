@@ -72,7 +72,7 @@ public class DataStructuresSerializersTests {
         FileManager fm = new JUnitFileManager();
 
         fm.write(tempFile, this.buildTestRegistry());
-        Exceptional<Registry<Registry<String>>> registry = fm.read(tempFile, new GenericType<Registry<Registry<String>>>() {
+        Exceptional<Registry<Registry<String>>> registry = fm.read(tempFile, new GenericType<>() {
         });
         Assertions.assertTrue(registry.present());
 

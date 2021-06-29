@@ -120,7 +120,7 @@ public class CommandContainerContextTests {
 
     @Test
     void testContainerContext() {
-        Command command = this.createCommand("demo", "<required{String}> [optional{String}]  [enum{org.dockbox.hartshorn.commands.types.CommandValueEnum}] --flag --vflag String -s", "demo");
+        Command command = this.createCommand();
         final CommandContainerContext context = new SimpleCommandContainerContext(command);
 
         Assertions.assertEquals("demo", context.permission().get());
@@ -160,7 +160,8 @@ public class CommandContainerContextTests {
         Assertions.assertEquals("s", shortFlag.name());
     }
 
-    private Command createCommand(String alias, String definition, String permission) {
+    private Command createCommand() {
+        //noinspection OverlyComplexAnonymousInnerClass
         return new Command() {
 
             @Override
@@ -170,17 +171,17 @@ public class CommandContainerContextTests {
 
             @Override
             public String[] value() {
-                return new String[]{ alias };
+                return new String[]{ "demo" };
             }
 
             @Override
             public String arguments() {
-                return definition;
+                return "<required{String}> [optional{String}]  [enum{org.dockbox.hartshorn.commands.types.CommandValueEnum}] --flag --vflag String -s";
             }
 
             @Override
             public String permission() {
-                return permission;
+                return "demo";
             }
 
             @Override

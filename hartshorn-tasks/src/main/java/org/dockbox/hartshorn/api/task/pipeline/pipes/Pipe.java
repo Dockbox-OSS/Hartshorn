@@ -18,6 +18,7 @@
 package org.dockbox.hartshorn.api.task.pipeline.pipes;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.api.exceptions.ApplicationException;
 
 @FunctionalInterface
 public interface Pipe<I, O> extends StandardPipe<I, O> {
@@ -27,9 +28,9 @@ public interface Pipe<I, O> extends StandardPipe<I, O> {
     }
 
     @Override
-    default O apply(Exceptional<I> input) throws Exception {
+    default O apply(Exceptional<I> input) throws ApplicationException {
         return this.execute(input.orNull(), input.unsafeError());
     }
 
-    O execute(I input, Throwable throwable) throws Exception;
+    O execute(I input, Throwable throwable) throws ApplicationException;
 }

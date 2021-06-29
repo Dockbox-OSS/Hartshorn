@@ -15,19 +15,7 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.di.exceptions;
+package org.dockbox.hartshorn.api.exceptions;
 
-public class ApplicationException extends Exception {
-
-    public ApplicationException(String message) {
-        super(message);
-    }
-
-    public ApplicationException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public ApplicationException(Throwable cause) {
-        super(cause);
-    }
+public class NotImplementedException extends RuntimeException {
 }

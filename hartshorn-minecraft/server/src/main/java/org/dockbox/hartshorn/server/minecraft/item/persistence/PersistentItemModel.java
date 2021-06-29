@@ -20,5 +20,5 @@ package org.dockbox.hartshorn.server.minecraft.item.persistence;
 import org.dockbox.hartshorn.persistence.PersistentModel;
 import org.dockbox.hartshorn.server.minecraft.item.Item;
 
-public abstract class PersistentItemModel implements PersistentModel<Item> {
+public interface PersistentItemModel extends PersistentModel<Item> {
 }

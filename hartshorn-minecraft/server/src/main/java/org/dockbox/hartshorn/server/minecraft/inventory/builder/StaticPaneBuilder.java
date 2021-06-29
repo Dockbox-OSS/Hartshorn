@@ -20,5 +20,5 @@ package org.dockbox.hartshorn.server.minecraft.inventory.builder;
 import org.dockbox.hartshorn.server.minecraft.inventory.pane.StaticPane;
 
 @SuppressWarnings("EmptyClass")
-public abstract class StaticPaneBuilder extends PaneBuilder<StaticPane, StaticPaneBuilder> {
+public abstract class StaticPaneBuilder implements PaneBuilder<StaticPane, StaticPaneBuilder> {
 }

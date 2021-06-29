@@ -15,8 +15,19 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.server.minecraft.events.server;
+package org.dockbox.hartshorn.api.exceptions;
 
-/** The event fired when the server is stopping. */
-public class ServerStoppingEvent implements ServerEvent {
+public class ApplicationException extends Exception {
+
+    public ApplicationException(String message) {
+        super(message);
+    }
+
+    public ApplicationException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public ApplicationException(Throwable cause) {
+        super(cause);
+    }
 }

@@ -55,15 +55,10 @@ public final class DefaultArgumentConverters implements InjectableType {
             }).build();
 
     public static final ArgumentConverter<Boolean> BOOLEAN = CommandValueConverter.builder(Boolean.class, "bool", "boolean")
-            .withConverter(in -> {
-                switch (in) {
-                    case "yes":
-                        return Exceptional.of(true);
-                    case "no":
-                        return Exceptional.of(false);
-                    default:
-                        return Exceptional.of(in).map(Boolean::parseBoolean);
-                }
+            .withConverter(in -> switch (in) {
+                case "yes" -> Exceptional.of(true);
+                case "no" -> Exceptional.of(false);
+                default -> Exceptional.of(in).map(Boolean::parseBoolean);
             }).withSuggestionProvider(in -> HartshornUtils.asList("true", "false", "yes", "no"))
             .build();
 

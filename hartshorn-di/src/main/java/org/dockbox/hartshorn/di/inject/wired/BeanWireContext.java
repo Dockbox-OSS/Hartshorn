@@ -18,7 +18,7 @@
 package org.dockbox.hartshorn.di.inject.wired;
 
 import org.dockbox.hartshorn.di.ApplicationContextAware;
-import org.dockbox.hartshorn.di.exceptions.ApplicationException;
+import org.dockbox.hartshorn.api.exceptions.ApplicationException;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

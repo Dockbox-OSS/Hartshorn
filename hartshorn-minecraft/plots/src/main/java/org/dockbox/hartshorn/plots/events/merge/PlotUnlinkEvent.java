@@ -33,6 +33,6 @@ public class PlotUnlinkEvent extends AbstractCancellableEvent {
     }
 
     public Set<Plot> getPlots() {
-        return plots;
+        return this.plots;
     }
 }

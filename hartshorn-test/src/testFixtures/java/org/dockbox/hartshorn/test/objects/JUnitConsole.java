@@ -17,6 +17,7 @@
 
 package org.dockbox.hartshorn.test.objects;
 
+import org.dockbox.hartshorn.api.exceptions.NotImplementedException;
 import org.dockbox.hartshorn.api.i18n.text.Text;
 import org.dockbox.hartshorn.api.i18n.text.pagination.Pagination;
 import org.dockbox.hartshorn.server.minecraft.Console;
@@ -26,20 +27,24 @@ public class JUnitConsole extends Console {
     @Override
     public void execute(String command) {
         // TODO: CommandBus implementation
+        throw new NotImplementedException();
     }
 
     @Override
     public void send(Text text) {
         // TODO: Test implementation, mocking client?
+        throw new NotImplementedException();
     }
 
     @Override
     public void sendWithPrefix(Text text) {
         // TODO: Test implementation, mocking client?
+        throw new NotImplementedException();
     }
 
     @Override
     public void send(Pagination pagination) {
         // TODO: Test implementation, mocking client?
+        throw new NotImplementedException();
     }
 }

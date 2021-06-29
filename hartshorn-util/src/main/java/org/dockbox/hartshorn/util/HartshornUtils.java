@@ -24,7 +24,6 @@ import org.dockbox.hartshorn.api.domain.tuple.Triad;
 import org.dockbox.hartshorn.api.domain.tuple.Tuple;
 import org.dockbox.hartshorn.api.domain.tuple.Vector3N;
 import org.dockbox.hartshorn.util.exceptions.ImpossibleFileException;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -185,22 +184,19 @@ public final class HartshornUtils {
     }
 
     @NotNull
-    @Contract("_ -> new")
-    public static <T> Set<T> asSet(Collection<T> collection) {
+        public static <T> Set<T> asSet(Collection<T> collection) {
         return new HashSet<>(collection);
     }
 
     @UnmodifiableView
     @NotNull
-    @Contract(value = "_ -> new", pure = true)
-    @SafeVarargs
+        @SafeVarargs
     public static <T> List<T> asUnmodifiableList(T... objects) {
         return Collections.unmodifiableList(HartshornUtils.asList(objects));
     }
 
     @NotNull
-    @Contract(value = "_ -> new", pure = true)
-    @SafeVarargs
+        @SafeVarargs
     public static <T> List<T> asList(T... objects) {
         return HartshornUtils.asList(Arrays.asList(objects));
     }
@@ -232,15 +228,13 @@ public final class HartshornUtils {
 
     @UnmodifiableView
     @NotNull
-    @Contract(value = "_ -> new", pure = true)
-    @SafeVarargs
+        @SafeVarargs
     public static <T> Set<T> asUnmodifiableSet(T... objects) {
         return Collections.unmodifiableSet(HartshornUtils.asSet(objects));
     }
 
     @NotNull
-    @Contract("_ -> new")
-    @SafeVarargs
+        @SafeVarargs
     public static <T> Set<T> asSet(T... objects) {
         return new HashSet<>(HartshornUtils.asList(objects));
     }
@@ -269,15 +263,13 @@ public final class HartshornUtils {
 
     @UnmodifiableView
     @NotNull
-    @Contract(value = "_ -> new", pure = true)
-    public static <T> Set<T> asUnmodifiableSet(Collection<T> objects) {
-        return Collections.unmodifiableSet(new HashSet<>(objects));
+        public static <T> Set<T> asUnmodifiableSet(Collection<T> objects) {
+        return Set.copyOf(objects);
     }
 
     @UnmodifiableView
     @NotNull
-    @Contract(value = "_ -> new", pure = true)
-    public static <T> List<T> asUnmodifiableList(List<T> objects) {
+        public static <T> List<T> asUnmodifiableList(List<T> objects) {
         return Collections.unmodifiableList(objects);
     }
 
@@ -344,8 +336,7 @@ public final class HartshornUtils {
                 : (value.substring(0, 1).toUpperCase() + value.substring(1));
     }
 
-    @Contract(value = "null -> true", pure = true)
-    public static boolean isEmpty(String value) {
+        public static boolean isEmpty(String value) {
         return null == value || value.isEmpty();
     }
 
@@ -353,7 +344,6 @@ public final class HartshornUtils {
         return null == s ? 0 : s.length();
     }
 
-    @Contract(pure = true)
     public static int lastIndexOf(String path, char ch) {
         if (null == path) {
             return -1;
@@ -361,19 +351,16 @@ public final class HartshornUtils {
         return path.lastIndexOf(ch);
     }
 
-    @Contract(pure = true)
-    @SuppressWarnings("MagicNumber")
+        @SuppressWarnings("MagicNumber")
     public static char convertDigit(int value) {
         return _hex[value & 0x0f];
     }
 
-    @Contract(pure = true)
-    public static int[] range(int max) {
+        public static int[] range(int max) {
         return HartshornUtils.range(0, max);
     }
 
-    @Contract(pure = true)
-    public static int[] range(int min, int max) {
+        public static int[] range(int min, int max) {
         int[] range = new int[(max - min) + 1]; // +1 as both min and max are inclusive
         for (int i = min; i <= max; i++) {
             range[i - min] = i;
@@ -416,33 +403,14 @@ public final class HartshornUtils {
         for (int i = 0, is = wildcard.length(); i < is; i++) {
             char c = wildcard.charAt(i);
             switch (c) {
-                case '*':
-                    s.append(".*");
-                    break;
-
-                case '?':
-                    s.append('.');
-                    break;
-
+                case '*' -> s.append(".*");
+                case '?' -> s.append('.');
                 // escape special regexp-characters
-                case '(':
-                case ')':
-                case '[':
-                case ']':
-                case '$':
-                case '^':
-                case '.':
-                case '{':
-                case '}':
-                case '|':
-                case '\\':
+                case '(', ')', '[', ']', '$', '^', '.', '{', '}', '|', '\\' -> {
                     s.append('\\');
                     s.append(c);
-                    break;
-
-                default:
-                    s.append(c);
-                    break;
+                }
+                default -> s.append(c);
             }
         }
         s.append('$');
@@ -496,8 +464,7 @@ public final class HartshornUtils {
         return -1;
     }
 
-    @Contract(pure = true)
-    public static long minimum(long... values) {
+        public static long minimum(long... values) {
         int len = values.length;
         long current = values[0];
         for (int i = 1; i < len; i++) current = Math.min(values[i], current);
@@ -631,24 +598,21 @@ public final class HartshornUtils {
         return hash;
     }
 
-    @Contract(pure = true)
-    public static long maximum(long... values) {
+        public static long maximum(long... values) {
         int len = values.length;
         long current = values[0];
         for (int i = 1; i < len; i++) current = Math.max(values[i], current);
         return current;
     }
 
-    @Contract(pure = true)
-    public static double minimum(double... values) {
+        public static double minimum(double... values) {
         int len = values.length;
         double current = values[0];
         for (int i = 1; i < len; i++) current = Math.min(values[i], current);
         return current;
     }
 
-    @Contract(pure = true)
-    public static double maximum(double... values) {
+        public static double maximum(double... values) {
         int len = values.length;
         double current = values[0];
         for (int i = 1; i < len; i++) current = Math.max(values[i], current);
@@ -684,8 +648,7 @@ public final class HartshornUtils {
         return dest;
     }
 
-    @Contract(value = "_, _, _ -> new", pure = true)
-    // Both start and end are inclusive
+        // Both start and end are inclusive
     public static <T> T[] getArraySubset(T[] array, int start, int end) {
         return Arrays.copyOfRange(array, start, end+1);
     }
@@ -727,14 +690,12 @@ public final class HartshornUtils {
     }
 
     @NotNull
-    @Contract("_ -> param1")
-    public static Path createPathIfNotExists(@NotNull Path path) {
+        public static Path createPathIfNotExists(@NotNull Path path) {
         if (!path.toFile().exists()) path.toFile().mkdirs();
         return path;
     }
 
-    @Contract("_ -> param1")
-    public static Path createFileIfNotExists(@NotNull Path file) {
+        public static Path createFileIfNotExists(@NotNull Path file) {
         if (!Files.exists(file)) {
             try {
                 Files.createDirectories(file.getParent());
@@ -810,8 +771,7 @@ public final class HartshornUtils {
      * @return true if the defined vector is inside the 3D cuboid region
      */
     @SuppressWarnings("OverlyComplexBooleanExpression")
-    @Contract(pure = true)
-    public static boolean isInCuboidRegion(int x_min, int x_max, int y_min, int y_max, int z_min, int z_max, int x, int y, int z) {
+        public static boolean isInCuboidRegion(int x_min, int x_max, int y_min, int y_max, int z_min, int z_max, int x, int y, int z) {
         return x_min <= x && x <= x_max
                 && y_min <= y && y <= y_max
                 && z_min <= z && z <= z_max;
@@ -844,8 +804,7 @@ public final class HartshornUtils {
     }
 
     @NotNull
-    @Contract("_ -> new")
-    public static LocalDateTime toLocalDateTime(Instant dt) {
+        public static LocalDateTime toLocalDateTime(Instant dt) {
         return LocalDateTime.ofInstant(dt, ZoneId.systemDefault());
     }
 
@@ -907,16 +866,14 @@ public final class HartshornUtils {
      *
      * @return the t @ nullable [ ]
      */
-    @Contract("null -> null")
-    public static <T> T @Nullable [] shallowCopy(final T[] array) {
+        public static <T> T @Nullable [] shallowCopy(final T[] array) {
         if (null == array) {
             return null;
         }
         return array.clone();
     }
 
-    @Contract(value = "null -> false", pure = true)
-    public static boolean isNotEmpty(String value) {
+        public static boolean isNotEmpty(String value) {
         return null != value && !value.isEmpty();
     }
 
@@ -930,8 +887,7 @@ public final class HartshornUtils {
         else return false;
     }
 
-    @Contract(pure = true)
-    public static boolean equals(@NonNls final String str1, @NonNls final String str2) {
+        public static boolean equals(@NonNls final String str1, @NonNls final String str2) {
         if (null == str1 || null == str2) {
             //noinspection StringEquality
             return str1 == str2;
@@ -939,8 +895,7 @@ public final class HartshornUtils {
         return str1.equals(str2);
     }
 
-    @Contract(pure = true)
-    public static boolean equalsIgnoreCase(@NonNls final String s1, @NonNls final String s2) {
+        public static boolean equalsIgnoreCase(@NonNls final String s1, @NonNls final String s2) {
         if (null == s1 || null == s2) {
             //noinspection StringEquality
             return s1 == s2;
@@ -1021,8 +976,7 @@ public final class HartshornUtils {
         return s.replaceAll("[\n\r ]+", "").trim();
     }
 
-    @Contract("null -> true")
-    public static boolean isEmpty(final Object... array) {
+        public static boolean isEmpty(final Object... array) {
         return null == array || 0 == Array.getLength(array);
     }
 

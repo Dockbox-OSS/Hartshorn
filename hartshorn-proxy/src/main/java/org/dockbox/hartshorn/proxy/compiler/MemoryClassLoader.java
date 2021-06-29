@@ -27,7 +27,7 @@ class MemoryClassLoader extends URLClassLoader {
 	// class name to class bytes
 	Map<String, byte[]> classBytes = new HashMap<>();
 
-	public MemoryClassLoader(Map<String, byte[]> classBytes) {
+	protected MemoryClassLoader(Map<String, byte[]> classBytes) {
 		super(new URL[0], MemoryClassLoader.class.getClassLoader());
 		this.classBytes.putAll(classBytes);
 	}

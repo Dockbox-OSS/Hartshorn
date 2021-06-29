@@ -18,5 +18,5 @@
 package org.dockbox.hartshorn.server.minecraft.events.server;
 
 /** The event fired when a server-wide reload is performed. */
-public class ServerReloadEvent extends ServerEvent {
+public class ServerReloadEvent implements ServerEvent {
 }

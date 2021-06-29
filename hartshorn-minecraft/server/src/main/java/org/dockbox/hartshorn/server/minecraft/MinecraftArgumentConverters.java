@@ -35,7 +35,6 @@ import org.dockbox.hartshorn.server.minecraft.players.Players;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-@SuppressWarnings({ "unused", "ClassWithTooManyFields" })
 @Service
 public final class MinecraftArgumentConverters implements InjectableType {
 

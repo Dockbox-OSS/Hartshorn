@@ -51,7 +51,6 @@ public class SimpleCommandContainerContext extends DefaultContext implements Com
      * 'String' is used as this is the base value provided to Hartshorn, thus requiring no further
      * converting to other data types.
      */
-    @SuppressWarnings("ConstantDeclaredInAbstractClass")
     public static final String DEFAULT_TYPE = "String";
 
     /**

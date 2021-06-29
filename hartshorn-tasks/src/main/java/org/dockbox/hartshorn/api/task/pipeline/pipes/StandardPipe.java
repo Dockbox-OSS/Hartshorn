@@ -18,6 +18,7 @@
 package org.dockbox.hartshorn.api.task.pipeline.pipes;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.api.exceptions.ApplicationException;
 
 @FunctionalInterface
 public interface StandardPipe<I, O> extends IPipe<I, O> {
@@ -26,7 +27,7 @@ public interface StandardPipe<I, O> extends IPipe<I, O> {
         return pipe;
     }
 
-    O apply(Exceptional<I> input) throws Exception;
+    O apply(Exceptional<I> input) throws ApplicationException;
 
     @SuppressWarnings("rawtypes")
     @Override

@@ -28,7 +28,7 @@ import org.dockbox.hartshorn.di.annotations.Named;
 import org.dockbox.hartshorn.di.annotations.Service;
 import org.dockbox.hartshorn.di.annotations.ServiceActivator;
 import org.dockbox.hartshorn.di.binding.Bindings;
-import org.dockbox.hartshorn.di.exceptions.ApplicationException;
+import org.dockbox.hartshorn.api.exceptions.ApplicationException;
 import org.dockbox.hartshorn.di.inject.BeanContext;
 import org.dockbox.hartshorn.di.inject.Binder;
 import org.dockbox.hartshorn.di.inject.InjectionModifier;
@@ -73,7 +73,7 @@ public class HartshornApplicationContext extends ManagedHartshornContext {
         if (this.singletons.containsKey(type)) //noinspection unchecked
             return (T) this.singletons.get(type);
 
-        @Nullable Exceptional<Object[]> value = Bindings.value(UseFactory.KEY, Object[].class, additionalProperties);
+        Exceptional<Object[]> value = Bindings.value(UseFactory.KEY, Object[].class, additionalProperties);
         if (value.present()) {
             typeInstance = this.get(TypeFactory.class).with(additionalProperties).create(type, value.get());
             this.populate(typeInstance);
@@ -144,7 +144,7 @@ public class HartshornApplicationContext extends ManagedHartshornContext {
         } catch (ProvisionFailure e) {
             // Services can have no explicit implementation even if they are abstract.
             // Typically these services are expected to be populated through injection points later in time.
-            if (!Reflect.isConcrete(type) && type.isAnnotationPresent(Service.class)) return null;
+            if (Reflect.isAbstract(type) && type.isAnnotationPresent(Service.class)) return null;
             throw e;
         }
     }

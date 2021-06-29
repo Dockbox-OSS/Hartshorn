@@ -26,7 +26,7 @@ import lombok.Getter;
 @SuppressWarnings("AbstractClassWithoutAbstractMethods")
 @Getter
 @AllArgsConstructor
-public abstract class DiscordGuildUserEvent extends DiscordEvent {
+public abstract class DiscordGuildUserEvent implements DiscordEvent {
 
     private final User user;
     private final Guild guild;

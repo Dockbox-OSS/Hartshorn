@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.api.domain;
 
-public class FileTypes {
+public final class FileTypes {
 
     public static final String SQLITE = "sqlite";
 
@@ -27,4 +27,6 @@ public class FileTypes {
     public static final String TOML = "toml";
     public static final String PROPERTIES = "properties";
 
+    private FileTypes() {
+    }
 }

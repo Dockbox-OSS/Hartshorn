@@ -210,10 +210,7 @@ public final class VerbalExpression {
         Builder() {}
 
         public VerbalExpression build() {
-            Pattern pattern =
-                    Pattern.compile(
-                            new StringBuilder(this.prefixes).append(this.source).append(this.suffixes).toString(),
-                            this.modifiers);
+            Pattern pattern = Pattern.compile(String.valueOf(this.prefixes) + this.source + this.suffixes, this.modifiers);
             return new VerbalExpression(pattern);
         }
 
@@ -627,14 +624,11 @@ public final class VerbalExpression {
             if (null == count) {
                 return this.then(pValue).oneOrMore();
             }
-            switch (count.length) {
-                case 1:
-                    return this.then(pValue).count(count[0]);
-                case 2:
-                    return this.then(pValue).count(count[0], count[1]);
-                default:
-                    return this.then(pValue).oneOrMore();
-            }
+            return switch (count.length) {
+                case 1 -> this.then(pValue).count(count[0]);
+                case 2 -> this.then(pValue).count(count[0], count[1]);
+                default -> this.then(pValue).oneOrMore();
+            };
         }
 
         /**

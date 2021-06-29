@@ -30,7 +30,7 @@ class MemoryOutputJavaFileObject extends SimpleJavaFileObject {
     private final String name;
     private final MemoryJavaFileManager memoryJavaFileManager;
 
-    public MemoryOutputJavaFileObject(MemoryJavaFileManager memoryJavaFileManager, String name) {
+    protected MemoryOutputJavaFileObject(MemoryJavaFileManager memoryJavaFileManager, String name) {
         super(URI.create("string:///" + name), Kind.CLASS);
         this.memoryJavaFileManager = memoryJavaFileManager;
         this.name = name;

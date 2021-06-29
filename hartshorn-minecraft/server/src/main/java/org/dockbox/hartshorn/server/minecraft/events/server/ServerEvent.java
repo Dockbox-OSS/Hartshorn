@@ -20,6 +20,6 @@ package org.dockbox.hartshorn.server.minecraft.events.server;
 import org.dockbox.hartshorn.api.events.parents.Event;
 
 /** The abstract type which can be used to listen to all server related events. */
-public abstract class ServerEvent implements Event {
+public interface ServerEvent extends Event {
 
 }

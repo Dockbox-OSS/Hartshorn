@@ -145,7 +145,7 @@ public class Table {
         TableRow row = new TableRow();
 
         for (Field field : object.getClass().getFields()) {
-            if (!field.isAccessible()) field.setAccessible(true);
+            if (!field.canAccess(object)) field.setAccessible(true);
             if (!(field.isAnnotationPresent(Property.class) && field.getAnnotation(Property.class).ignore())) {
                 try {
                     ColumnIdentifier columnIdentifier = null;

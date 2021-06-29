@@ -47,7 +47,7 @@ public class PostBootstrapServiceProcessorTests {
     }
 
     @Test
-    void testProcessorAddsPostBootstrapActivations() throws NoSuchFieldException, IllegalAccessException {
+    void testProcessorAddsPostBootstrapActivations() {
         final HartshornBootstrap bootstrap = Mockito.mock(HartshornBootstrap.class);
         Mockito.doAnswer(invocation -> {
             final Method method = invocation.getArgument(0);

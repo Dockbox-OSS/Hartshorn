@@ -29,7 +29,7 @@ import org.dockbox.hartshorn.util.HartshornUtils;
 
 import java.util.Collection;
 
-public class PlotKeys {
+public final class PlotKeys {
 
     public static final Key<Location, Plot> PLOT = Keys.ofGetter(loc -> Hartshorn.context().get(PlotService.class).getPlotAt(loc));
     public static final Key<Player, Plot> CURRENT_PLOT = Keys.ofGetter(player -> Hartshorn.context().get(PlotService.class).getCurrentPlot(player));
@@ -64,4 +64,6 @@ public class PlotKeys {
         return HartshornUtils.asUnmodifiableList(PlotKeys.ALIAS, PlotKeys.SIZE);
     }
 
+    private PlotKeys() {
+    }
 }

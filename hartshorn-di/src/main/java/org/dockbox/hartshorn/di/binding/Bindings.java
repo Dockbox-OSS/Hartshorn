@@ -29,7 +29,10 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Locale;
 
-public class Bindings {
+public final class Bindings {
+
+    private Bindings() {
+    }
 
     public static Named named(String value) {
         return new NamedImpl(value);
@@ -52,7 +55,6 @@ public class Bindings {
      *
      * @return The nullable property value
      */
-    @Nullable
     public static <T> Exceptional<T> value(@NonNls String key, Class<T> expectedType, InjectorProperty<?>... properties) {
         InjectorProperty<T> property = Bindings.property(key, expectedType, properties);
         // As the object is provided by a supplier this cannot currently be simplified to #of

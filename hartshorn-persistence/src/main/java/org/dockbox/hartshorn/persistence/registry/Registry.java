@@ -324,7 +324,7 @@ public class Registry<V> extends HashMap<String, RegistryColumn<V>> {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        this.buildhierarchy(builder, 0);
+        this.buildHierarchy(builder, 0);
 
         return builder.toString();
     }
@@ -337,15 +337,15 @@ public class Registry<V> extends HashMap<String, RegistryColumn<V>> {
      * @param indents
      *         The depth of the registry (Caused by nested registries)
      */
-    private void buildhierarchy(StringBuilder builder, int indents) {
+    private void buildHierarchy(StringBuilder builder, int indents) {
         this.forEach((identifier, column) -> {
-            for (int i = 0; i < indents; i++) builder.append("\t");
+            builder.append("\t".repeat(Math.max(0, indents)));
             builder.append("- ").append(identifier).append("\n");
 
             column.forEach(value -> {
-                for (int i = 0; i < indents; i++) builder.append("\t");
+                builder.append("\t".repeat(Math.max(0, indents)));
                 if (value instanceof Registry)
-                    ((Registry<?>) value).buildhierarchy(builder, indents + 1);
+                    ((Registry<?>) value).buildHierarchy(builder, indents + 1);
                 else builder.append("| ").append(value).append("\n");
             });
         });

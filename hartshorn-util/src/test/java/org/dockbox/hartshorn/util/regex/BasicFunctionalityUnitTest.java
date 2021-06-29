@@ -87,7 +87,7 @@ public class BasicFunctionalityUnitTest {
     }
 
     @Test
-    public void testRangeWithMultiplyRanges() throws Exception {
+    public void testRangeWithMultiplyRanges() {
         VerbalExpression regex = VerbalExpression.regex().range("a", "z", "A", "Z").build();
 
         MatcherAssert.assertThat("Regex with multi-range differs from expected", regex.toString(), CoreMatchers.equalTo("[a-zA-Z]"));
@@ -465,7 +465,7 @@ public class BasicFunctionalityUnitTest {
     }
 
     @Test
-    public void addRegexBuilderWrapsItWithUnsavedGroup() throws Exception {
+    public void addRegexBuilderWrapsItWithUnsavedGroup() {
         VerbalExpression regex = VerbalExpression.regex()
                 .add(VerbalExpression.regex().capt().find("string").count(2).endCapt().count(1).digit())
                 .count(2)
@@ -479,7 +479,7 @@ public class BasicFunctionalityUnitTest {
     }
 
     @Test
-    public void atLeast1HaveSameEffectAsOneOrMore() throws Exception {
+    public void atLeast1HaveSameEffectAsOneOrMore() {
         VerbalExpression regex = VerbalExpression.regex().find("a").atLeast(1).build();
 
         String matched = "aaaaaa";
@@ -495,7 +495,7 @@ public class BasicFunctionalityUnitTest {
     }
 
     @Test
-    public void oneOreMoreSameAsAtLeast1() throws Exception {
+    public void oneOreMoreSameAsAtLeast1() {
         VerbalExpression regexWithOneOrMore = VerbalExpression.regex().find("a").oneOrMore().build();
 
         String matched = "aaaaaa";
@@ -511,7 +511,7 @@ public class BasicFunctionalityUnitTest {
     }
 
     @Test
-    public void atLeast0HaveSameEffectAsZeroOrMore() throws Exception {
+    public void atLeast0HaveSameEffectAsZeroOrMore() {
         VerbalExpression regex = VerbalExpression.regex().find("a").atLeast(0).build();
 
         String matched = "aaaaaa";
@@ -527,7 +527,7 @@ public class BasicFunctionalityUnitTest {
     }
 
     @Test
-    public void zeroOreMoreSameAsAtLeast0() throws Exception {
+    public void zeroOreMoreSameAsAtLeast0() {
         VerbalExpression regexWithOneOrMore = VerbalExpression.regex().find("a").zeroOrMore().build();
 
         String matched = "aaaaaa";

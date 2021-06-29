@@ -31,6 +31,6 @@ public abstract class PlotFlagEvent extends CancellablePlotEvent {
     }
 
     public PlotFlag<?> getFlag() {
-        return flag;
+        return this.flag;
     }
 }

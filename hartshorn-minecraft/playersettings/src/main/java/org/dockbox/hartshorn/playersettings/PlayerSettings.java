@@ -78,10 +78,6 @@ public class PlayerSettings {
         }
     }
 
-    private static void changeLanguage(PersistentDataHolder holder) {
-
-    }
-
     @Command("settings")
     public void getSettings(Player source) {
         PaginatedPaneBuilder builder = InventoryLayout.builder(InventoryType.DOUBLE_CHEST)

@@ -76,7 +76,7 @@ public class HartshornApplication {
         if (!activator.isAnnotationPresent(Activator.class))
             throw new IllegalArgumentException("Application type should be decorated with @Activator");
 
-        if (!Reflect.isConcrete(activator))
+        if (Reflect.isAbstract(activator))
             throw new IllegalArgumentException("Bootstrap type cannot be abstract, got " + activator.getSimpleName());
 
         return activator.getAnnotation(Activator.class);

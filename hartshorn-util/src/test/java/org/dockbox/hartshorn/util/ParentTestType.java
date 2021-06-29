@@ -21,7 +21,7 @@ import org.dockbox.hartshorn.util.annotations.Demo;
 
 public abstract class ParentTestType {
 
-    private String parentField = "parentField";
+    private final String parentField = "parentField";
 
     @Demo
     public void parentMethod() {}

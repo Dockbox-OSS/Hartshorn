@@ -79,8 +79,7 @@ public abstract class World extends WorldProperties implements BlockDimension, E
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof World)) return false;
-        World world = (World) o;
+        if (!(o instanceof World world)) return false;
         return this.getWorldUniqueId().equals(world.getWorldUniqueId()) && this.getName().equals(world.getName());
     }
 
