@@ -84,7 +84,7 @@ shadowJar {
 task copyArtifacts {
     doLast {
         def version = getVersionName()
-        def DIST_DEST_DIR = "${rootDir}/dist/${date}/${version}"
+        def DIST_DEST_DIR = "${rootDir}/hartshorn-assembly/distributions"
         def DIRT_SRC_DIR = "${buildDir}/libs"
 
         ant.mkdir(dir: DIST_DEST_DIR)
