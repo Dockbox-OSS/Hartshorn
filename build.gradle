@@ -80,6 +80,8 @@ allprojects {
                 name 'Jitpack'
                 url 'https://jitpack.io'
             }
+            // TODO: Deprecated
+            jcenter()
         }
 
         configurations {

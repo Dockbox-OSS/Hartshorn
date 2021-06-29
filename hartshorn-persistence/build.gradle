@@ -15,10 +15,6 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-repositories {
-    mavenCentral()
-}
-
 apply from: "$rootDir/parent.gradle"
 
 dependencies {
