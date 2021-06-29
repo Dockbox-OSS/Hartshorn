@@ -15,11 +15,12 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.sponge.inject;
+package org.dockbox.hartshorn.sponge.inject;
 
 import org.dockbox.hartshorn.di.InjectConfiguration;
 
 public class SpongeInjector extends InjectConfiguration {
+
     @Override
     public void collect() {
 

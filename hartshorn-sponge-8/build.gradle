@@ -1,7 +1,4 @@
-import org.spongepowered.gradle.vanilla.repository.MinecraftPlatform
-
 import java.time.LocalDate
-
 /*
  *  Copyright (C) 2020 Guus Lieben
  *
@@ -26,51 +23,58 @@ buildscript {
 }
 
 plugins {
-    id 'java'
-    id 'org.spongepowered.plugin' version '0.9.0'
-    id 'org.spongepowered.gradle.vanilla' version "0.2"
+    id 'base'
+    id 'java-library'
+    id 'org.spongepowered.gradle.plugin' version '1.1.1'
+    id 'org.spongepowered.gradle.vanilla' version '0.2'
 }
 
 apply plugin: 'com.github.johnrengelman.shadow'
 
 archivesBaseName = 'hartshorn-sponge-api8'
-group = project.pluginGroup
 description = 'Sponge API8.x implementation for Hartshorn'
-sponge.plugin.id = pluginId
 def date = LocalDate.now().toString()
-
-minecraft {
-    version("1.16.5")
-    platform(MinecraftPlatform.SERVER)
-}
 
 repositories {
     mavenCentral()
     maven { url 'https://repo.spongepowered.org/repository/maven-public/' }
+    maven { url 'https://repo-new.spongepowered.org/maven' }
 }
-
-def ignoreProjects = ['examples', 'hartshorn-parent', 'hartshorn-service-parent', 'hartshorn-sponge-7', 'hartshorn-nms-1.12']
 
 configurations {
-//    includeShadow
-//    include.extendsFrom(includeShadow)
-//    shadow.extendsFrom(includeShadow)
+    includeShadow
+    include.extendsFrom(includeShadow)
+    shadow.extendsFrom(includeShadow)
 }
+
+minecraft {
+    version("1.16.5")
+    platform(org.spongepowered.gradle.vanilla.repository.MinecraftPlatform.SERVER)
+}
+
+sponge {
+    apiVersion('8.0.0')
+    plugin('hartshorn') {
+        loader(org.spongepowered.gradle.plugin.config.PluginLoaders.JAVA_PLAIN)
+        displayName('Hartshorn')
+        mainClass('org.dockbox.hartshorn.sponge.Sponge8Application')
+    }
+}
+
+def ignoreProjects = ['examples', 'hartshorn-sponge-7', 'hartshorn-nms-1.12']
 
 dependencies {
     new File(parent.rootDir, 'hartshorn-minecraft').listFiles().each {
         if (it.directory && new File(it, 'build.gradle').exists()) {
-            include project(":hartshorn-minecraft:${it.name}")
+            includeShadow project(":hartshorn-minecraft:${it.name}")
         }
     }
 
     parent.rootDir.listFiles().each {
         if ((!ignoreProjects.contains(it.name)) && it.directory && new File(it, 'build.gradle').exists()) {
-            include project(":${it.name}")
+            includeShadow project(":${it.name}")
         }
     }
-
-    compileOnly "org.spongepowered:spongeapi:$spongeApi8Version"
 }
 
 shadowJar {
