@@ -105,7 +105,7 @@ public final class Reflect {
     }
 
     public static Exceptional<?> fieldValue(Field field, Object instance) {
-        if (!field.canAccess(instance)) field.setAccessible(true);
+        field.setAccessible(true);
         if (field.isAnnotationPresent(Property.class)) {
             Property property = field.getAnnotation(Property.class);
             if (!property.getter().equals("")) {
@@ -182,7 +182,7 @@ public final class Reflect {
     ) {
         try {
             Method m = methodHolder.getDeclaredMethod(method, argumentTypes);
-            if (!m.canAccess(instance)) m.setAccessible(true);
+            m.setAccessible(true);
             T value = (T) m.invoke(instance, args);
             return Exceptional.of(value);
         }
@@ -430,8 +430,7 @@ public final class Reflect {
         Collection<Enum<?>> constants = HartshornUtils.emptyList();
         try {
             Field f = type.getDeclaredField("$VALUES");
-            // TODO: Confirm relevance
-            // if (!f.isAccessible()) f.setAccessible(true);
+            f.setAccessible(true);
             Object o = f.get(null);
             Enum<?>[] e = (Enum<?>[]) o;
             constants.addAll(Arrays.asList(e));
@@ -703,7 +702,7 @@ public final class Reflect {
                     return;
                 }
             }
-            if (!field.canAccess(to)) field.setAccessible(true);
+            field.setAccessible(true);
             field.set(to, value);
         }
         catch (IllegalArgumentException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
@@ -752,7 +751,7 @@ public final class Reflect {
             Class<T> expectedType) {
         try {
             Method m = methodHolder.getDeclaredMethod(method);
-            if (!m.canAccess(instance)) m.setAccessible(true);
+            m.setAccessible(true);
             T value = (T) m.invoke(instance);
             return Exceptional.of(value);
         }

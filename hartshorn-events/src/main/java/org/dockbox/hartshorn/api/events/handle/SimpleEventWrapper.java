@@ -83,10 +83,7 @@ public final class SimpleEventWrapper implements Comparable<SimpleEventWrapper>,
 
         // Listener methods may be private or protected, before invoking it we need to ensure it is
         // accessible.
-        // TODO: Relocate to invoke target due to instance requirement
-        if (!this.method.isAccessible()) {
-            this.method.setAccessible(true);
-        }
+        this.method.setAccessible(true);
 
         this.operator = this.createLambda();
     }

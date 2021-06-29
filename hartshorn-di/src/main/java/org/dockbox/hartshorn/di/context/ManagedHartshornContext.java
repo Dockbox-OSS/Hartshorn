@@ -106,7 +106,7 @@ public abstract class ManagedHartshornContext extends DefaultContext implements 
                     try {
                         // As we're enabling fields they may be accessed even if their
                         // modifier indicates otherwise.
-                        if (!field.canAccess(typeInstance)) field.setAccessible(true);
+                        field.setAccessible(true);
                         return field.get(typeInstance);
                     }
                     catch (IllegalAccessException e) {
