@@ -15,11 +15,12 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.sponge.util;
+package org.dockbox.hartshorn.sponge.game;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.server.minecraft.players.Player;
 import org.dockbox.hartshorn.server.minecraft.players.Players;
+import org.dockbox.hartshorn.sponge.util.SpongeConvert;
 import org.spongepowered.api.Sponge;
 
 import java.util.List;
@@ -30,19 +31,19 @@ public class SpongePlayers implements Players {
     @Override
     public List<Player> getOnlinePlayers() {
         return Sponge.server().onlinePlayers().stream()
-                .map(SpongeConversionUtil::fromSponge)
+                .map(SpongeConvert::fromSponge)
                 .toList();
     }
 
     @Override
     public Exceptional<Player> getPlayer(String name) {
         return Exceptional.of(Sponge.server().userManager().find(name))
-                .map(SpongeConversionUtil::fromSponge);
+                .map(SpongeConvert::fromSponge);
     }
 
     @Override
     public Exceptional<Player> getPlayer(UUID uuid) {
         return Exceptional.of(Sponge.server().userManager().find(uuid))
-                .map(SpongeConversionUtil::fromSponge);
+                .map(SpongeConvert::fromSponge);
     }
 }
