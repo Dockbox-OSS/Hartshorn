@@ -33,6 +33,7 @@ public interface BlockDimension {
 
     boolean hasBlock(Vector3N position);
 
+    // TODO: Refactor when Block API (#303) is done
     Exceptional<Item> getBlock(Vector3N position);
 
     boolean setBlock(Vector3N position, Item item, BlockFace direction, Profile placer);
