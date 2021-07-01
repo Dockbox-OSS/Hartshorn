@@ -26,13 +26,13 @@ import org.dockbox.hartshorn.server.minecraft.entities.Entity;
 import org.dockbox.hartshorn.server.minecraft.item.Item;
 import org.dockbox.hartshorn.server.minecraft.item.storage.MinecraftItems;
 import org.dockbox.hartshorn.server.minecraft.players.Profile;
-import org.dockbox.hartshorn.sponge.util.SpongeConversionUtil;
+import org.dockbox.hartshorn.sponge.util.SpongeConvert;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.util.AABB;
-import org.spongepowered.api.world.World;
+import org.spongepowered.api.world.server.ServerWorld;
 import org.spongepowered.math.vector.Vector3i;
 
 import java.util.Collection;
@@ -43,42 +43,42 @@ public interface SpongeDimension extends BlockDimension, EntityHolding {
 
     @Override
     default Vector3N minimumPosition() {
-        return SpongeConversionUtil.fromSponge(this.getExtent().blockMin().toDouble());
+        return SpongeConvert.fromSponge(this.serverWorld().blockMin().toDouble());
     }
 
     @Override
     default Vector3N maximumPosition() {
-        return SpongeConversionUtil.fromSponge(this.getExtent().blockMax().toDouble());
+        return SpongeConvert.fromSponge(this.serverWorld().blockMax().toDouble());
     }
 
     @Override
     default Vector3N floor(Vector3N position) {
-        Vector3i floor = this.getExtent().highestPositionAt(SpongeConversionUtil.toSponge(position).toInt());
-        return SpongeConversionUtil.fromSponge(floor);
+        Vector3i floor = this.serverWorld().highestPositionAt(SpongeConvert.toSponge(position).toInt());
+        return SpongeConvert.fromSponge(floor);
     }
 
     @Override
     default boolean hasBlock(Vector3N position) {
-        Vector3i loc = SpongeConversionUtil.toSponge(position);
-        return this.getExtent().containsBlock(loc);
+        Vector3i loc = SpongeConvert.toSponge(position);
+        return this.serverWorld().containsBlock(loc);
     }
 
     @Override
     default Exceptional<org.dockbox.hartshorn.server.minecraft.item.Item> getBlock(Vector3N position) {
-        Vector3i loc = SpongeConversionUtil.toSponge(position);
-        BlockState blockState = this.getExtent().block(loc);
+        Vector3i loc = SpongeConvert.toSponge(position);
+        BlockState blockState = this.serverWorld().block(loc);
         if (blockState.type() == BlockTypes.AIR.get()) return Exceptional.of(MinecraftItems.getInstance().getAir());
         ItemStack stack = ItemStack.builder().fromBlockState(blockState).build();
-        return Exceptional.of(SpongeConversionUtil.fromSponge(stack));
+        return Exceptional.of(SpongeConvert.fromSponge(stack));
     }
 
     @Override
     default boolean setBlock(Vector3N position, Item item, BlockFace direction, Profile placer) {
-        Vector3i loc = SpongeConversionUtil.toSponge(position);
-        Optional<BlockType> blockType = SpongeConversionUtil.toSponge(item).type().block();
+        Vector3i loc = SpongeConvert.toSponge(position);
+        Optional<BlockType> blockType = SpongeConvert.toSponge(item).type().block();
         if (blockType.isEmpty()) return false;
         BlockState state = blockType.get().defaultState();
-        return this.getExtent().setBlock(loc, state);
+        return this.serverWorld().setBlock(loc, state);
     }
 
     @Override
@@ -88,19 +88,19 @@ public interface SpongeDimension extends BlockDimension, EntityHolding {
 
     @Override
     default Collection<Entity> getEntities(Predicate<Entity> predicate) {
-        return this.getExtent().entities(this.aabb(), entity -> {
-            Entity hartshornEntity = SpongeConversionUtil.fromSponge(entity);
+        return this.serverWorld().entities(this.aabb(), entity -> {
+            Entity hartshornEntity = SpongeConvert.fromSponge(entity);
             return predicate.test(hartshornEntity);
-        }).stream().map(SpongeConversionUtil::fromSponge).toList();
+        }).stream().map(SpongeConvert::fromSponge).toList();
     }
 
     private AABB aabb() {
         return AABB.of(
-                SpongeConversionUtil.toSponge(this.minimumPosition()),
-                SpongeConversionUtil.toSponge(this.maximumPosition())
+                SpongeConvert.toSponge(this.minimumPosition()),
+                SpongeConvert.toSponge(this.maximumPosition())
         );
     }
 
-    World<?, ?> getExtent();
+    ServerWorld serverWorld();
 
 }
