@@ -26,7 +26,6 @@ import org.spongepowered.api.profile.property.ProfileProperty;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 public class SpongeProfile implements Profile {
 
@@ -65,7 +64,7 @@ public class SpongeProfile implements Profile {
     public void setProperties(Map<String, String> properties) {
         final List<ProfileProperty> profileProperties = properties.entrySet().stream()
                 .map(property -> ProfileProperty.of(property.getKey(), property.getValue()))
-                .collect(Collectors.toList());
+                .toList();
         this.profile = this.profile.withProperties(profileProperties);
     }
 }

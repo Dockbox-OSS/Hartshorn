@@ -47,7 +47,6 @@ import org.dockbox.hartshorn.util.HartshornUtils;
 
 import java.nio.file.Path;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 @Command("dave")
 @Service
@@ -91,7 +90,7 @@ public class Dave implements InjectableType {
                         .asText()
                         .onHover(HoverAction.showText(this.resources.getTriggerSingleHover().asText()))
                         .onClick(RunCommandAction.runCommand("/dave run " + trigger.getId())))
-                        .collect(Collectors.toList()))
+                        .toList())
                 .build()
                 .send(source);
     }

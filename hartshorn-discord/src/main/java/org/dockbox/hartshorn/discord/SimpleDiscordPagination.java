@@ -33,7 +33,6 @@ import org.dockbox.hartshorn.util.HartshornUtils;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Binds(DiscordPagination.class)
 public class SimpleDiscordPagination implements DiscordPagination {
@@ -69,7 +68,7 @@ public class SimpleDiscordPagination implements DiscordPagination {
         this.pages.addAll(
                 Arrays.stream(messages)
                         .map(message -> new MessageBuilder().setContent(message).build())
-                        .collect(Collectors.toList()));
+                        .toList());
         return this;
     }
 
@@ -78,7 +77,7 @@ public class SimpleDiscordPagination implements DiscordPagination {
         this.pages.addAll(
                 Arrays.stream(messages)
                         .map(message -> new MessageBuilder().setContent(message.toStringValue()).build())
-                        .collect(Collectors.toList()));
+                        .toList());
         return this;
     }
 

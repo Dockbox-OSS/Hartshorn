@@ -35,7 +35,6 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import lombok.Getter;
 
@@ -107,7 +106,7 @@ public class JUnitWorld extends World {
 
     @Override
     public Collection<Entity> getEntities(Predicate<Entity> predicate) {
-        return this.getEntities().stream().filter(predicate).collect(Collectors.toList());
+        return this.getEntities().stream().filter(predicate).toList();
     }
 
     @Override

@@ -20,9 +20,9 @@ package org.dockbox.hartshorn.server.minecraft;
 import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.domain.tuple.Vector3N;
-import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
 import org.dockbox.hartshorn.commands.arguments.CommandValueConverter;
 import org.dockbox.hartshorn.commands.arguments.DefaultArgumentConverters;
+import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
 import org.dockbox.hartshorn.di.annotations.Service;
 import org.dockbox.hartshorn.di.properties.InjectableType;
 import org.dockbox.hartshorn.di.properties.InjectorProperty;
@@ -33,7 +33,6 @@ import org.dockbox.hartshorn.server.minecraft.players.Player;
 import org.dockbox.hartshorn.server.minecraft.players.Players;
 
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 public final class MinecraftArgumentConverters implements InjectableType {
@@ -76,7 +75,7 @@ public final class MinecraftArgumentConverters implements InjectableType {
             }).withSuggestionProvider(in -> Hartshorn.context().get(Players.class).getOnlinePlayers().stream()
                     .map(Player::getName)
                     .filter(n -> n.startsWith(in))
-                    .collect(Collectors.toList()))
+                    .toList())
             .build();
 
     @Override

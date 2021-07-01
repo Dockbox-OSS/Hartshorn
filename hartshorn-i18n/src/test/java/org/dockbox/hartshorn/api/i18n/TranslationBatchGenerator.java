@@ -41,7 +41,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
-import java.util.stream.Collectors;
 
 /**
  * Generator type which directly creates and outputs a translation batch based on
@@ -179,7 +178,7 @@ public final class TranslationBatchGenerator {
         if (batch.exists() && batch.isDirectory()) {
             return HartshornUtils.asList(batch.listFiles()).stream()
                     .filter(f -> !f.isDirectory())
-                    .collect(Collectors.toList());
+                    .toList();
         } else throw new IllegalStateException("Existing batch could not be found");
     }
 
