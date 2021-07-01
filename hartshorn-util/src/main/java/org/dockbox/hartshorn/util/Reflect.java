@@ -552,7 +552,7 @@ public final class Reflect {
             while (Object.class != (current = current.getSuperclass()) && null != current);
 
             // Guava equivalent:       Lists.transform(set, w -> w.method);
-            // Stream API equivalent:  set.stream().map(w -> w.method).collect(Collectors.toList());
+            // Stream API equivalent:  set.stream().map(w -> w.method).toList();
             List<Method> result = HartshornUtils.emptyList();
             for (InternalMethodWrapper methodWrapper : set) result.add(methodWrapper.method);
             return result;

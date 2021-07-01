@@ -40,7 +40,6 @@ import org.dockbox.hartshorn.server.minecraft.players.Player;
 import org.dockbox.hartshorn.util.HartshornUtils;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class PlayerSettings {
@@ -87,7 +86,7 @@ public class PlayerSettings {
 
         final List<Element> content = Hartshorn.context().first(SettingsContext.class).get().getSettings().stream()
                 .map(setting -> this.fromSetting(setting, source, pane))
-                .collect(Collectors.toList());
+                .toList();
         pane.elements(content);
 
         pane.open(source);

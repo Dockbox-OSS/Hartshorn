@@ -82,7 +82,7 @@ public final class CommandElements {
         public Collection<String> suggestions(CommandSource source, String argument) {
             return HartshornUtils.asUnmodifiableCollection(this.values.keySet()).stream()
                     .filter(value -> value.toLowerCase(Locale.ROOT).startsWith(argument.toLowerCase(Locale.ROOT)))
-                    .collect(Collectors.toList());
+                    .toList();
         }
 
         @Override

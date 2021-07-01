@@ -24,15 +24,14 @@ import org.dockbox.hartshorn.api.task.pipeline.pipes.CancellablePipe;
 import org.dockbox.hartshorn.api.task.pipeline.pipes.ComplexPipe;
 import org.dockbox.hartshorn.api.task.pipeline.pipes.IPipe;
 import org.dockbox.hartshorn.api.task.pipeline.pipes.StandardPipe;
-import org.dockbox.hartshorn.util.Reflect;
 import org.dockbox.hartshorn.util.HartshornUtils;
+import org.dockbox.hartshorn.util.Reflect;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public abstract class AbstractPipeline<P, I> {
 
@@ -252,7 +251,7 @@ public abstract class AbstractPipeline<P, I> {
      *         input
      */
     public List<Exceptional<I>> processAll(@NotNull Collection<P> inputs) {
-        return inputs.stream().map(this::process).collect(Collectors.toList());
+        return inputs.stream().map(this::process).toList();
     }
 
     /**
@@ -271,7 +270,7 @@ public abstract class AbstractPipeline<P, I> {
                 .map(this::process)
                 .filter(Exceptional::present)
                 .map(Exceptional::get)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**
@@ -287,7 +286,7 @@ public abstract class AbstractPipeline<P, I> {
      *         null
      */
     public List<I> processAllUnsafe(@NotNull Collection<P> inputs) {
-        return inputs.stream().map(this::process).map(Exceptional::orNull).collect(Collectors.toList());
+        return inputs.stream().map(this::process).map(Exceptional::orNull).toList();
     }
 
     /** Cancels the pipeline which prevents it from processing any further {@link IPipe}s. */

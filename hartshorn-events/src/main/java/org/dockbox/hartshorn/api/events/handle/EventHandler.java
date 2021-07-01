@@ -19,8 +19,8 @@ package org.dockbox.hartshorn.api.events.handle;
 
 import org.dockbox.hartshorn.api.events.EventWrapper;
 import org.dockbox.hartshorn.api.events.parents.Event;
-import org.dockbox.hartshorn.util.Reflect;
 import org.dockbox.hartshorn.util.HartshornUtils;
+import org.dockbox.hartshorn.util.Reflect;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Method;
@@ -30,7 +30,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import java.util.stream.Collectors;
 
 public class EventHandler {
 
@@ -47,7 +46,7 @@ public class EventHandler {
     }
 
     public List<Method> getMethods() {
-        return this.invokers.stream().map(SimpleEventWrapper::getMethod).collect(Collectors.toList());
+        return this.invokers.stream().map(SimpleEventWrapper::getMethod).toList();
     }
 
     public void subscribe(EventWrapper invoker) {

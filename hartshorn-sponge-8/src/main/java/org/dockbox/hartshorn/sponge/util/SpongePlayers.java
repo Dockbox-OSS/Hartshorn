@@ -24,15 +24,14 @@ import org.spongepowered.api.Sponge;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 public class SpongePlayers implements Players {
-    
+
     @Override
     public List<Player> getOnlinePlayers() {
         return Sponge.server().onlinePlayers().stream()
                 .map(SpongeConversionUtil::fromSponge)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override

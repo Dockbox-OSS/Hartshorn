@@ -23,7 +23,6 @@ import org.dockbox.hartshorn.commands.source.CommandSource;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class GroupCommandElement implements CommandElement<List<CommandElement<?>>> {
 
@@ -34,7 +33,7 @@ public class GroupCommandElement implements CommandElement<List<CommandElement<?
 
     public GroupCommandElement(List<CommandElement<?>> elements, boolean optional) {
         this.elements = elements;
-        final List<String> names = elements.stream().map(CommandElement::name).collect(Collectors.toList());
+        final List<String> names = elements.stream().map(CommandElement::name).toList();
         this.name = "group: " + String.join(", ", names);
         this.size = elements.stream().mapToInt(CommandElement::size).sum();
         this.optional = optional;
