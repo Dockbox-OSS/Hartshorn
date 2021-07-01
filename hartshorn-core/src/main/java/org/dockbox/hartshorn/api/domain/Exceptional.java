@@ -331,7 +331,7 @@ public final class Exceptional<T> {
      * @throws NullPointerException
      *         If the mapping function is null or returns a null result
      */
-    public <U> Exceptional<U> orElse(Function<? super T, Exceptional<U>> mapper) {
+    public <U> Exceptional<U> flatMap(Function<? super T, Exceptional<U>> mapper) {
         Objects.requireNonNull(mapper);
         if (!this.present()) return this.caught() ? of(this.throwable) : empty();
         else {
@@ -343,7 +343,7 @@ public final class Exceptional<T> {
      * If a value is present, apply the provided {@code Exceptional}-bearing mapping function to both
      * the value and throwable described by this {@code Exceptional}, return that result, otherwise
      * return {@link Exceptional#empty()}. This method is similar to {@link
-     * Exceptional#orElse(Function)}, but the provided mapper is one whose input is both a {@code
+     * Exceptional#flatMap(Function)}, but the provided mapper is one whose input is both a {@code
      * Throwable} and a value of type {@code T}.
      *
      * @param <U>
@@ -357,7 +357,7 @@ public final class Exceptional<T> {
      * @throws NullPointerException
      *         If the mapping function is null or returns a null result
      */
-    public <U> Exceptional<U> orElse(BiFunction<? super T, Throwable, Exceptional<U>> mapper) {
+    public <U> Exceptional<U> flatMap(BiFunction<? super T, Throwable, Exceptional<U>> mapper) {
         Objects.requireNonNull(mapper);
         if (!this.present()) return this.caught() ? of(this.throwable) : empty();
         else {
@@ -484,7 +484,7 @@ public final class Exceptional<T> {
      * @throws NullPointerException
      *         If no value is present and {@code exceptionSupplier} is null
      */
-    public <X extends Throwable> T cause(Supplier<? extends X> exceptionSupplier) throws X {
+    public <X extends Throwable> T orThrow(Supplier<? extends X> exceptionSupplier) throws X {
         if (null != this.value) {
             return this.value;
         }
