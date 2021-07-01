@@ -17,14 +17,17 @@
 
 package org.dockbox.hartshorn.blockregistry;
 
+import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.persistence.registry.RegistryIdentifier;
+import org.dockbox.hartshorn.util.HartshornUtils;
 
-import java.util.Locale;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 public enum VariantIdentifier implements RegistryIdentifier {
-
-    FULL,
-    BARK(FULL),
+    FULL("log"),
     SMALL_ARCH,
     SMALL_ARCH_HALF,
     TWO_METER_ARCH,
@@ -45,93 +48,54 @@ public enum VariantIdentifier implements RegistryIdentifier {
     VERTICAL_QUARTER,
     STAIRS,
     WALL,
-    PILLAR_SMALL,
     PILLAR,
-    PILLAR_LARGE,
     ROUND_ARCH,
     GOTHIC_ARCH,
     SEGMENTAL_ARCH,
 
-    LARGE_BRANCH,
-    BRANCH,
-    SMALL_BRANCH,
-    STUMP,
-
-    BEAM_HORIZONTAL,
-    BEAM_VERTICAL,
-    BEAM_POSTS,
-    BEAM_DOOR_FRAME_POSTS,
-    BEAM_LINTEL,
-    BEAM_DOOR_FRAME_LINTEL,
-    DIAGONAL_BEAM_SIDE_1,
-    DIAGONAL_BEAM_SIDE_2,
-    DIAGONAL_BEAM_SIDE_3,
-    CROSS_BEAMS,
-    CROSS_BEAMS_SIDE,
-    DIAGONAL_BEAM_1,
-    DIAGONAL_BEAM_2,
-    DIAGONAL_BEAM_3,
-
+    //TODO: Go through rest of these
     FENCE,
     FENCE_GATE,
     TRAPDOOR,
     BOARDS,
-    LAYER,
-    ROCKS,
-    RAIL,
-    DOOR,
-
-    MOUNTED_PIPE,
-    SIX_WAY_FLANGE("6_way_flange"),
-    FIVE_WAY_FLANGE("5_way_flange"),
-    FOUR_WAY_FLANGE("4_way_flange"),
-    THREE_WAY_FLANGE("3_way_flange"),
-    ELBOW_FLANGE,
-    GATE_VALVE,
-    BALL_VALVE,
-    CROSS_FLANGE,
-    T_FLANGE,
-    PIPE,
-
-    RAILING_HORIZONTAL,
-    RAILING_DIAGONAL,
-    RAILING_CORNER,
-
     CARPET,
-    LADDER,
     PANE,
-    VINE,
     IRONBAR,
-    SHUTTERS;
+    LAYER("snow"),
 
-    private final String identifier;
-    private final VariantIdentifier fallbackVariant;
+    VERTICAL_BEAM("beam"),
+    HORIZONTAL_BEAM("beamhorizontal"),
+    ROCKS;
+
+    private final Set<String> idIdentifiers;
+    private static final Map<String, VariantIdentifier> identifierMap = HartshornUtils.emptyConcurrentMap();
+
+    static {
+        for (VariantIdentifier variantIdentifier : values()) {
+            for (String identifier : variantIdentifier.idIdentifiers) {
+                identifierMap.put(identifier, variantIdentifier);
+            }
+        }
+    }
+
+    VariantIdentifier(String... idIdentifiers) {
+        this.idIdentifiers = new HashSet<>(Arrays.asList(idIdentifiers));
+        this.idIdentifiers.add(this.name().toLowerCase());
+    }
 
     VariantIdentifier() {
-        this.identifier = this.name().toLowerCase(Locale.ROOT);
-        this.fallbackVariant = this;
+        this(new String[0]);
     }
 
-    VariantIdentifier(String identifier) {
-        this.identifier = identifier;
-        this.fallbackVariant = this;
+    public static Exceptional<VariantIdentifier> of(String identifier) {
+        identifier = identifier.toLowerCase();
+
+        return identifierMap.containsKey(identifier)
+                ? Exceptional.of(identifierMap.get(identifier))
+                : Exceptional.empty();
     }
 
-    VariantIdentifier(VariantIdentifier fallbackVariant) {
-        this.identifier = this.name().toLowerCase(Locale.ROOT);
-        this.fallbackVariant = fallbackVariant;
-    }
-
-    VariantIdentifier(String identifier, VariantIdentifier fallbackVariant) {
-        this.identifier = identifier;
-        this.fallbackVariant = fallbackVariant;
-    }
-
-    public String getIdentifier() {
-        return this.identifier;
-    }
-
-    public VariantIdentifier getFallbackVariant() {
-        return this.fallbackVariant;
+    public Set<String> getIdIdentifiers() {
+        return this.idIdentifiers;
     }
 }

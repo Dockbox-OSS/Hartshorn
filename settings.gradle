@@ -28,3 +28,6 @@ def includeAll(File dir, String prefix, String... blacklist) {
         }
     }
 }
+include 'hartshorn-minecraft:blockregistry'
+findProject(':hartshorn-minecraft:blockregistry')?.name = 'blockregistry'
+
