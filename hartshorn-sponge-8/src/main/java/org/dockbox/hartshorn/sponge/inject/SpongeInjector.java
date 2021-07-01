@@ -17,12 +17,81 @@
 
 package org.dockbox.hartshorn.sponge.inject;
 
+import org.dockbox.hartshorn.api.Hartshorn;
+import org.dockbox.hartshorn.api.config.GlobalConfig;
+import org.dockbox.hartshorn.api.i18n.text.pagination.PaginationBuilder;
+import org.dockbox.hartshorn.api.i18n.text.pagination.SimplePaginationBuilder;
+import org.dockbox.hartshorn.config.ConfigurationManager;
+import org.dockbox.hartshorn.config.SimpleConfigurationManager;
+import org.dockbox.hartshorn.config.TargetGlobalConfig;
 import org.dockbox.hartshorn.di.InjectConfiguration;
+import org.dockbox.hartshorn.di.SimpleTypeFactory;
+import org.dockbox.hartshorn.di.TypeFactory;
+import org.dockbox.hartshorn.persistence.FileManager;
+import org.dockbox.hartshorn.server.minecraft.Console;
+import org.dockbox.hartshorn.server.minecraft.MinecraftServerType;
+import org.dockbox.hartshorn.server.minecraft.MinecraftVersion;
+import org.dockbox.hartshorn.server.minecraft.dimension.Worlds;
+import org.dockbox.hartshorn.server.minecraft.item.Item;
+import org.dockbox.hartshorn.server.minecraft.players.Players;
+import org.dockbox.hartshorn.server.minecraft.players.Profile;
+import org.dockbox.hartshorn.sponge.dim.SpongeWorlds;
+import org.dockbox.hartshorn.sponge.game.SpongeConsole;
+import org.dockbox.hartshorn.sponge.game.SpongePlayers;
+import org.dockbox.hartshorn.sponge.game.SpongeProfile;
+import org.dockbox.hartshorn.sponge.inventory.SpongeItem;
+import org.dockbox.hartshorn.sponge.util.SpongeFileManager;
+import org.slf4j.Logger;
 
 public class SpongeInjector extends InjectConfiguration {
 
     @Override
     public void collect() {
+        // Factory creation
+        this.bind(TypeFactory.class, SimpleTypeFactory.class);
 
+        // Tasks
+//        this.bind(TaskRunner.class, SpongeTaskRunner.class);
+//        this.bind(ThreadUtils.class, SpongeThreadUtils.class);
+
+        // Persistence
+        this.bind(FileManager.class, SpongeFileManager.class);
+
+        // Services
+        this.bind(Players.class, SpongePlayers.class);
+        this.bind(Worlds.class, SpongeWorlds.class);
+//        this.bind(WorldEditService.class, SpongeWorldEditService.class);
+//        this.bind(CustomMapService.class, SpongeCustomMapService.class);
+//        this.bind(PlotService.class, SpongePlotSquaredService.class);
+
+        // Builder types
+        this.bind(PaginationBuilder.class, SimplePaginationBuilder.class);
+//        this.bind(LayoutBuilder.class, SpongeLayoutBuilder.class);
+//        this.bind(PaginatedPaneBuilder.class, SpongePaginatedPaneBuilder.class);
+//        this.bind(StaticPaneBuilder.class, SpongeStaticPaneBuilder.class);
+
+        // Wired types - do NOT call directly!
+        this.wire(Item.class, SpongeItem.class);
+//        this.wire(Bossbar.class, SpongeBossbar.class);
+        this.wire(Profile.class, SpongeProfile.class);
+//        this.wire(ItemFrame.class, SpongeItemFrame.class);
+//        this.wire(ArmorStand.class, SpongeArmorStand.class);
+//        this.wire(DiscordCommandSource.class, MagiBridgeCommandSource.class);
+        this.wire(ConfigurationManager.class, SimpleConfigurationManager.class);
+
+        // Log is created from LoggerFactory externally
+        this.bind(Logger.class, Hartshorn.log());
+
+        // Console is a constant singleton, to avoid recreation
+        this.bind(Console.class, SpongeConsole.class);
+
+        // Packets
+//        this.bind(ChangeGameStatePacket.class, NMSChangeGameStatePacket.class);
+//        this.bind(SpawnEntityPacket.class, NMSSpawnEntityPacket.class);
+
+        this.bind(GlobalConfig.class, TargetGlobalConfig.class);
+
+        this.bind(MinecraftServerType.class, MinecraftServerType.SPONGE);
+        this.bind(MinecraftVersion.class, MinecraftVersion.MC1_16);
     }
 }
