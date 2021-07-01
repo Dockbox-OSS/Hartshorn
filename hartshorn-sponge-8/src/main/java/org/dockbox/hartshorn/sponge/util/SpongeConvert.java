@@ -56,10 +56,10 @@ import org.dockbox.hartshorn.server.minecraft.item.SimpleEnchant;
 import org.dockbox.hartshorn.server.minecraft.players.Gamemode;
 import org.dockbox.hartshorn.server.minecraft.players.Hand;
 import org.dockbox.hartshorn.server.minecraft.players.Player;
-import org.dockbox.hartshorn.sponge.objects.SpongeConsole;
-import org.dockbox.hartshorn.sponge.objects.SpongeItem;
-import org.dockbox.hartshorn.sponge.objects.SpongePlayer;
-import org.dockbox.hartshorn.sponge.objects.SpongeWorld;
+import org.dockbox.hartshorn.sponge.game.SpongeConsole;
+import org.dockbox.hartshorn.sponge.inventory.SpongeItem;
+import org.dockbox.hartshorn.sponge.game.SpongePlayer;
+import org.dockbox.hartshorn.sponge.dim.SpongeWorld;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.dockbox.hartshorn.util.exceptions.TypeConversionException;
 import org.jetbrains.annotations.NotNull;
@@ -343,7 +343,7 @@ public enum SpongeConvert {
                 .present(action -> action.present(t::onHover));
         Exceptional.of(text.insertion())
                 .present(insertion -> t.onShiftClick(ShiftClickAction.insertText(Text.of(insertion))));
-        
+
         text.children().stream().map(SpongeConvert::fromSponge).forEach(t::append);
         return t;
     }
