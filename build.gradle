@@ -100,6 +100,10 @@ allprojects {
             options.encoding = 'UTF-8'
         }
 
+        test {
+            useJUnitPlatform()
+        }
+
         tasks.withType(Javadoc) {
             failOnError false
             options.addStringOption('Xdoclint:none', '-quiet')

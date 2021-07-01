@@ -18,6 +18,7 @@
 package org.dockbox.hartshorn.api;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.api.exceptions.ApplicationException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -70,7 +71,7 @@ public class ExceptionalTests {
     @Test
     void testCanCreateFromThrowingCallable() {
         Callable<String> callable = () -> {
-            throw new Exception();
+            throw new ApplicationException("Error");
         };
         Exceptional<String> exceptional = Exceptional.of(callable);
 

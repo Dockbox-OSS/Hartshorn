@@ -220,7 +220,7 @@ public class ConvertiblePipeline<P, I> extends AbstractPipeline<P, I> {
                     result.unsafeError()
             );
         }
-        else return (Exceptional<K>) result.map(this.converter);
+        else return (Exceptional<K>) result.map(t -> this.converter.apply(t));
     }
 
     /**
