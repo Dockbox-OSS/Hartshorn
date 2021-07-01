@@ -18,6 +18,7 @@
 package org.dockbox.hartshorn.server.minecraft.dimension;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.api.domain.tuple.Vector3N;
 import org.dockbox.hartshorn.server.minecraft.dimension.position.Location;
 
 import java.util.Collection;
@@ -26,7 +27,7 @@ public interface ChunkHolder {
 
     Exceptional<Chunk> getChunk(Location location);
 
-    Exceptional<Chunk> getChunk(int x, int y);
+    Exceptional<Chunk> getChunk(Vector3N position);
 
     Collection<Chunk> getLoadedChunks();
 
