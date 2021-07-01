@@ -26,7 +26,9 @@ import org.dockbox.hartshorn.di.Modifier;
 import org.dockbox.hartshorn.di.annotations.Activator;
 import org.dockbox.hartshorn.di.annotations.InjectConfig;
 import org.dockbox.hartshorn.server.minecraft.MinecraftServerBootstrap;
+import org.dockbox.hartshorn.sponge.command.SpongeCommandRegistrar;
 import org.dockbox.hartshorn.sponge.inject.SpongeInjector;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.event.lifecycle.StartingEngineEvent;
 import org.spongepowered.plugin.PluginContainer;
 import org.spongepowered.plugin.jvm.Plugin;
@@ -57,6 +59,7 @@ public class Sponge8Application extends HartshornApplication {
     }
 
     public void on(StartingEngineEvent<?> event) {
+        Sponge.eventManager().registerListeners(this.container, new SpongeCommandRegistrar());
         this.init.run();
     }
 }
