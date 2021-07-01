@@ -57,7 +57,7 @@ public abstract class CacheServiceModifier<A extends Annotation> extends Service
             if (expiration != null)
                 cache = manager.getOrCreate(finalName, expiration);
             else {
-                cache = manager.get(finalName).cause(() -> new IllegalStateException("Requested state '" + finalName + "' has not been initialized"));
+                cache = manager.get(finalName).orThrow(() -> new IllegalStateException("Requested state '" + finalName + "' has not been initialized"));
             }
             return cache;
         };
