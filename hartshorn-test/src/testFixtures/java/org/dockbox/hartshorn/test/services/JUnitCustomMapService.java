@@ -29,7 +29,6 @@ import org.dockbox.hartshorn.util.HartshornUtils;
 import java.awt.image.BufferedImage;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class JUnitCustomMapService extends DefaultCustomMapService {
 
@@ -61,7 +60,7 @@ public class JUnitCustomMapService extends DefaultCustomMapService {
     public Collection<CustomMap> getFrom(Identifiable source) {
         return maps.stream()
                 .filter(map -> map.getOwner().equals(source))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override

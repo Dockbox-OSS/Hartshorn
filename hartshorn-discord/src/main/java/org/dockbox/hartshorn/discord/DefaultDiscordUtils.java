@@ -56,7 +56,6 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @SuppressWarnings("ResultOfMethodCallIgnored")
 public abstract class DefaultDiscordUtils implements DiscordUtils {
@@ -123,7 +122,7 @@ public abstract class DefaultDiscordUtils implements DiscordUtils {
                                 return new Page(PageType.EMBED, page);
                             }
                             else throw new IllegalArgumentException("Pages of type '" + page.getClass().getName() + "' are not supported");
-                        }).collect(Collectors.toList());
+                        }).toList();
 
                 channel.sendMessage((Message) pages.get(0).getContent()).queue(success -> Pages.paginate(success, pages));
             }

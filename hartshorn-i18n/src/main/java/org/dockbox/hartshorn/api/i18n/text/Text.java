@@ -28,7 +28,6 @@ import org.dockbox.hartshorn.util.HartshornUtils;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class Text implements PersistentCapable<PersistentTextModel> {
 
@@ -147,7 +146,7 @@ public class Text implements PersistentCapable<PersistentTextModel> {
 
     public List<Text> getExtra() {
         // To prevent stack overflows
-        return this.extra.stream().filter(e -> e != this).collect(Collectors.toList());
+        return this.extra.stream().filter(e -> e != this).toList();
     }
 
     @Override

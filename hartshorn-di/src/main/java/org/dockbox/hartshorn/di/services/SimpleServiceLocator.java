@@ -43,7 +43,8 @@ public class SimpleServiceLocator implements ServiceLocator {
 
         final List<ServiceContainer> containers = types.stream()
                 .map(SimpleServiceContainer::new)
-                .collect(Collectors.toList());
+                .map(ServiceContainer.class::cast)
+                .toList();
         SimpleServiceLocator.cache.put(prefix, containers);
 
         return HartshornUtils.asUnmodifiableCollection(types);
@@ -51,6 +52,6 @@ public class SimpleServiceLocator implements ServiceLocator {
 
     @Override
     public Collection<ServiceContainer> containers() {
-        return cache.entrySet().stream().flatMap(a -> a.getValue().stream()).collect(Collectors.toList());
+        return cache.entrySet().stream().flatMap(a -> a.getValue().stream()).toList();
     }
 }

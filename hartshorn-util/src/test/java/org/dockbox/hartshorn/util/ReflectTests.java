@@ -33,7 +33,6 @@ import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javassist.util.proxy.ProxyFactory;
@@ -150,7 +149,7 @@ public class ReflectTests {
         Collection<Method> methods = Reflect.annotatedMethods(ReflectTestType.class, Demo.class);
         Assertions.assertEquals(2, methods.size());
 
-        List<String> names = methods.stream().map(Method::getName).collect(Collectors.toList());
+        List<String> names = methods.stream().map(Method::getName).toList();
         Assertions.assertTrue(names.contains("publicAnnotatedMethod"));
         Assertions.assertTrue(names.contains("privateAnnotatedMethod"));
     }
