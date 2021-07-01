@@ -90,7 +90,7 @@ public class JUnitWorld extends World {
     }
 
     @Override
-    public Exceptional<Chunk> getChunk(int x, int y) {
+    public Exceptional<Chunk> getChunk(Vector3N position) {
         return Exceptional.empty();
     }
 
