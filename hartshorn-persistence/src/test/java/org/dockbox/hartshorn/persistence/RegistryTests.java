@@ -30,8 +30,8 @@ public class RegistryTests {
         Registry<Registry<String>> testRegistry = this.buildTestRegistry();
 
         RegistryColumn<RegistryColumn<String>> result = testRegistry
-                .matchingColumns(TestIdentifier.BRICK)
-                .mapTo(r -> r.matchingColumns(TestIdentifier.FULLBLOCK));
+                .getMatchingColumns(TestIdentifier.BRICK)
+                .map(r -> r.getMatchingColumns(TestIdentifier.FULLBLOCK));
 
         Assertions.assertTrue(result.first().get().contains("Brick Fullblock1"));
         Assertions.assertTrue(result.first().get().contains("Brick Fullblock2"));
@@ -63,16 +63,16 @@ public class RegistryTests {
                 .get(TestIdentifier.COBBLESTONE)
                 .first()
                 .present(r -> {
-                    r.add(TestIdentifier.FULLBLOCK, "Cobblestone Fullblock2");
-                    r.add(TestIdentifier.STAIR, "Cobblestone Stair1");
+                    r.addData(TestIdentifier.FULLBLOCK, "Cobblestone Fullblock2");
+                    r.addData(TestIdentifier.STAIR, "Cobblestone Stair1");
                 });
 
         Exceptional<Registry<String>> eCobblestoneRegistry =
-                testRegistry.matchingColumns(TestIdentifier.COBBLESTONE).first();
+                testRegistry.getMatchingColumns(TestIdentifier.COBBLESTONE).first();
 
         Registry<String> cobblestoneRegistry = eCobblestoneRegistry.get();
         RegistryColumn<String> fullblocks =
-                cobblestoneRegistry.matchingColumns(TestIdentifier.FULLBLOCK);
+                cobblestoneRegistry.getMatchingColumns(TestIdentifier.FULLBLOCK);
 
         Assertions.assertTrue(cobblestoneRegistry.containsColumns(TestIdentifier.STAIR));
         Assertions.assertTrue(fullblocks.contains("Cobblestone Fullblock2"));
@@ -104,7 +104,7 @@ public class RegistryTests {
         Registry<Registry<String>> testRegistry = this.buildTestRegistry();
 
         Registry<Registry<String>> result = testRegistry.removeValuesIf(r -> 2 <= r.size());
-        int brickColumnSize = result.matchingColumns(TestIdentifier.BRICK).size();
+        int brickColumnSize = result.getMatchingColumns(TestIdentifier.BRICK).size();
 
         Assertions.assertTrue(result.containsColumns(TestIdentifier.BRICK, TestIdentifier.SANDSTONE, TestIdentifier.COBBLESTONE));
         Assertions.assertEquals(0, brickColumnSize);
@@ -134,8 +134,8 @@ public class RegistryTests {
 
         testRegistry.addRegistry(secondRegistry);
         RegistryColumn<Object> result = testRegistry
-                .matchingColumns(TestIdentifier.SANDSTONE, TestIdentifier.WOOD)
-                .mapTo(r -> r.matchingColumns(TestIdentifier.STAIR).safe(0).orNull());
+                .getMatchingColumns(TestIdentifier.SANDSTONE, TestIdentifier.WOOD)
+                .map(r -> r.getMatchingColumns(TestIdentifier.STAIR).getSafely(0).orNull());
 
         Assertions.assertTrue(result.contains("Sandstone Stair1"));
         Assertions.assertTrue(result.contains("Sandstone Stair2"));
