@@ -22,7 +22,6 @@ import com.google.inject.Binding;
 import com.google.inject.Guice;
 import com.google.inject.Key;
 import com.google.inject.ProvisionException;
-import com.google.inject.internal.LinkedBindingImpl;
 import com.google.inject.spi.InstanceBinding;
 import com.google.inject.spi.LinkedKeyBinding;
 
@@ -49,8 +48,8 @@ import org.dockbox.hartshorn.di.inject.wired.WireContext;
 import org.dockbox.hartshorn.di.properties.AnnotationProperty;
 import org.dockbox.hartshorn.di.properties.BindingMetaProperty;
 import org.dockbox.hartshorn.di.properties.InjectorProperty;
-import org.dockbox.hartshorn.util.Reflect;
 import org.dockbox.hartshorn.util.HartshornUtils;
+import org.dockbox.hartshorn.util.Reflect;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.annotation.Annotation;
@@ -168,8 +167,8 @@ public class GuiceInjector implements Injector {
             Key<?> key = entry.getKey();
             Binding<?> binding = entry.getValue();
             Key<?> bindingKey = binding.getKey();
-            if (binding instanceof LinkedBindingImpl) {
-                bindingKey = ((LinkedBindingImpl<?>) binding).getLinkedKey();
+            if (binding instanceof LinkedKeyBinding) {
+                bindingKey = ((LinkedKeyBinding<?>) binding).getLinkedKey();
             }
 
             Class<?> rawKey = key.getTypeLiteral().getRawType();
