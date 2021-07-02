@@ -309,8 +309,7 @@ public final class Reflect {
     public static <A extends Annotation> Collection<Method> annotatedMethods(Class<?> clazz, Class<A> annotation, Predicate<A> rule, boolean skipParents) {
         List<Method> annotatedMethods = HartshornUtils.emptyList();
         for (Method method : HartshornUtils.asList(skipParents ? clazz.getMethods() : clazz.getDeclaredMethods())) {
-            // TODO: Confirm relevance
-            // if (!method.isAccessible()) method.setAccessible(true);
+            method.setAccessible(true);
             if (method.isAnnotationPresent(annotation) && rule.test(method.getAnnotation(annotation))) {
                 annotatedMethods.add(method);
             }

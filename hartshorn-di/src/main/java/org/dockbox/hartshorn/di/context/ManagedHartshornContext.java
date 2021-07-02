@@ -44,7 +44,7 @@ import lombok.Getter;
 
 public abstract class ManagedHartshornContext extends DefaultContext implements ApplicationContext {
 
-    protected static final Logger log = LoggerFactory.getLogger("Hartshorn Managed Context");
+    protected static final Logger log = LoggerFactory.getLogger(ManagedHartshornContext.class);
     protected final transient Set<InjectionPoint<?>> injectionPoints = HartshornUtils.emptyConcurrentSet();
 
     protected final transient Set<InjectionModifier<?>> injectionModifiers = HartshornUtils.emptyConcurrentSet();
