@@ -16,20 +16,13 @@ import java.time.LocalDate
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-buildscript {
-    dependencies {
-        classpath 'com.github.jengelman.gradle.plugins:shadow:4.0.3'
-    }
-}
-
 plugins {
     id 'base'
     id 'java-library'
     id 'org.spongepowered.gradle.plugin' version '1.1.1'
     id 'org.spongepowered.gradle.vanilla' version '0.2'
+    id 'com.github.johnrengelman.shadow' version '7.0.0'
 }
-
-apply plugin: 'com.github.johnrengelman.shadow'
 
 archivesBaseName = 'hartshorn-sponge-api8'
 description = 'Sponge API8.x implementation for Hartshorn'
@@ -77,8 +70,15 @@ dependencies {
     }
 }
 
+tasks.build {
+    dependsOn tasks.shadowJar
+}
+
 shadowJar {
     configurations = [project.configurations.shadow]
+    dependencies {
+        exclude(dependency('org.projectlombok:lombok'))
+    }
 }
 
 task copyArtifacts {
