@@ -210,7 +210,8 @@ public enum SpongeConvert {
             // Wrapping in parseColors first so internal color codes are parsed as well. Technically
             // the FormattingCode from TextSerializers won't be needed, but to ensure no trailing codes
             // are left we use it here anyway.
-            pb.append(LegacyComponentSerializer.builder().build().deserialize(Resource.parseColors(part.toLegacy())));
+            final TextComponent component = LegacyComponentSerializer.legacyAmpersand().deserialize(Resource.parseColors(part.toLegacy()));
+            pb.append(component);
 
             Exceptional<ClickEvent> clickAction = toSponge(part.getClickAction());
             clickAction.present(pb::clickEvent);
