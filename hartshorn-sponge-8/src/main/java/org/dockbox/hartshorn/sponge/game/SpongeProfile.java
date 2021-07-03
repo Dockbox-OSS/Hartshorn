@@ -67,4 +67,8 @@ public class SpongeProfile implements Profile {
                 .toList();
         this.profile = this.profile.withProperties(profileProperties);
     }
+
+    public GameProfile profile() {
+        return this.profile;
+    }
 }
