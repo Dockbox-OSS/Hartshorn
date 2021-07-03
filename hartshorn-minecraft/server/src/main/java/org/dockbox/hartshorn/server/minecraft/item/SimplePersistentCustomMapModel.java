@@ -28,8 +28,11 @@ import javax.inject.Singleton;
 @Entity(value = "map")
 public class SimplePersistentCustomMapModel extends SimplePersistentItemModel {
 
+    private final int mapId;
+
     public SimplePersistentCustomMapModel(CustomMap map) {
         super(map);
+        this.mapId = map.getMapId();
     }
 
     @Override
@@ -39,6 +42,6 @@ public class SimplePersistentCustomMapModel extends SimplePersistentItemModel {
 
     @Override
     public Item toPersistentCapable() {
-        return this.repopulate(Hartshorn.context().get(CustomMapService.class).getById(this.getMeta()));
+        return this.repopulate(Hartshorn.context().get(CustomMapService.class).getById(this.mapId));
     }
 }

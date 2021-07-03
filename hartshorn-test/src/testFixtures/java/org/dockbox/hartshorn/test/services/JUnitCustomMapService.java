@@ -65,6 +65,6 @@ public class JUnitCustomMapService extends DefaultCustomMapService {
 
     @Override
     public Exceptional<CustomMap> derive(Item item) {
-        return Exceptional.of(this.getById(item.getMeta()));
+        return Exceptional.empty();
     }
 }

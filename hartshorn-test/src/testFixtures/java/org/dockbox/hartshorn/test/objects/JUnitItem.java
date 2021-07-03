@@ -39,8 +39,6 @@ public class JUnitItem implements Item, JUnitPersistentDataHolder {
 
     @Getter
     private final String id;
-    @Getter
-    private final int meta;
     private final UUID persistentDataId = UUID.randomUUID();
     private final Set<Enchant> enchants = HartshornUtils.emptySet();
     @Getter
@@ -55,9 +53,15 @@ public class JUnitItem implements Item, JUnitPersistentDataHolder {
     private boolean treatAsBlock = false;
 
     @Wired
+    @Deprecated
     public JUnitItem(String id, int meta) {
         this.id = id;
-        this.meta = meta;
+        this.displayName = Text.of(id);
+    }
+
+    @Wired
+    public JUnitItem(String id) {
+        this.id = id;
         this.displayName = Text.of(id);
     }
 
@@ -139,16 +143,6 @@ public class JUnitItem implements Item, JUnitPersistentDataHolder {
     @Override
     public int getStackSize() {
         return 64;
-    }
-
-    @Override
-    public Item withMeta(int meta) {
-        return new JUnitItem(this.id, meta);
-    }
-
-    @Override
-    public int getIdNumeric() {
-        return -1;
     }
 
     @Override
