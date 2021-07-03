@@ -200,7 +200,7 @@ public enum SpongeConvert {
         if (0 < pagination.getLinesPerPage()) builder.linesPerPage(pagination.getLinesPerPage());
         List<Component> convertedContent = pagination.getContent().stream()
                 .map(SpongeConvert::toSponge)
-                .map(Component.class::cast)
+                .map(Component::asComponent)
                 .toList();
 
         builder.contents(convertedContent);

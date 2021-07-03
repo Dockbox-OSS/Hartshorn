@@ -17,165 +17,194 @@
 
 package org.dockbox.hartshorn.sponge.inventory;
 
+import net.kyori.adventure.text.Component;
+
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.i18n.common.Language;
 import org.dockbox.hartshorn.api.i18n.text.Text;
-import org.dockbox.hartshorn.api.keys.PersistentDataKey;
-import org.dockbox.hartshorn.api.keys.TransactionResult;
 import org.dockbox.hartshorn.di.annotations.Wired;
 import org.dockbox.hartshorn.server.minecraft.item.Enchant;
 import org.dockbox.hartshorn.server.minecraft.item.Item;
 import org.dockbox.hartshorn.server.minecraft.item.ReferencedItem;
 import org.dockbox.hartshorn.server.minecraft.item.storage.MinecraftItems;
 import org.dockbox.hartshorn.server.minecraft.players.Profile;
+import org.dockbox.hartshorn.sponge.game.SpongeComposite;
+import org.dockbox.hartshorn.sponge.game.SpongeProfile;
 import org.dockbox.hartshorn.sponge.util.SpongeConvert;
+import org.dockbox.hartshorn.sponge.util.SpongeUtil;
+import org.dockbox.hartshorn.util.HartshornUtils;
 import org.jetbrains.annotations.NotNull;
+import org.spongepowered.api.data.DataHolder.Mutable;
 import org.spongepowered.api.data.Keys;
+import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.item.ItemTypes;
+import org.spongepowered.api.item.enchantment.Enchantment;
 import org.spongepowered.api.item.inventory.ItemStack;
+import org.spongepowered.api.registry.RegistryTypes;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
-public class SpongeItem extends ReferencedItem<ItemStack> {
+public class SpongeItem extends ReferencedItem<ItemStack> implements SpongeComposite {
 
     public SpongeItem(@NotNull ItemStack reference) {
         super(reference);
     }
 
     @Wired
-    public SpongeItem(String id, int meta) {
-        super(id, meta);
-    }
-
-    @Override
-    public <T> Exceptional<T> get(PersistentDataKey<T> dataKey) {
-        return null;
-    }
-
-    @Override
-    public <T> TransactionResult set(PersistentDataKey<T> dataKey, T value) {
-        return null;
-    }
-
-    @Override
-    public <T> void remove(PersistentDataKey<T> dataKey) {
-
-    }
-
-    @Override
-    public Map<PersistentDataKey<?>, Object> getPersistentData() {
-        return null;
+    public SpongeItem(String id) {
+        super(id);
     }
 
     @Override
     public boolean isAir() {
         if (this.equals(MinecraftItems.getInstance().getAir())) return true;
         else {
-            return this.getReference()
-                    .map(itemStack -> itemStack.isEmpty() || itemStack.type() == ItemTypes.AIR.get())
+            return this.item()
+                    .map(item -> item.isEmpty() || item.type() == ItemTypes.AIR.get())
                     .or(true);
         }
     }
 
     @Override
     public void setDisplayName(Text displayName) {
-        this.getReference().present(i -> i.offer(Keys.DISPLAY_NAME, SpongeConvert.toSponge(displayName)));
+        this.item().present(item -> item.offer(Keys.CUSTOM_NAME, SpongeConvert.toSponge(displayName)));
     }
 
     @Override
     public Text getDisplayName(Language language) {
-        return null;
+        return SpongeUtil.get(this.item(), Keys.CUSTOM_NAME, SpongeConvert::fromSponge, Text::of);
     }
 
     @Override
     public List<Text> getLore() {
-        return null;
+        return this.item()
+                .map(item -> item.get(Keys.LORE)
+                        .orElseGet(HartshornUtils::emptyList)
+                        .stream()
+                        .map(SpongeConvert::fromSponge)
+                        .toList()
+                ).orElse(HartshornUtils::emptyList)
+                .get();
     }
 
     @Override
     public void setLore(List<Text> lore) {
-
+        this.item().present(item -> {
+            final List<Component> components = lore.stream()
+                    .map(SpongeConvert::toSponge)
+                    .map(Component::asComponent)
+                    .toList();
+            item.offer(Keys.LORE, components);
+        });
     }
 
     @Override
     public int getAmount() {
-        return 0;
+        return this.item().map(ItemStack::quantity).or(1);
     }
 
     @Override
     public void setAmount(int amount) {
-
+        this.item().present(item -> item.setQuantity(amount));
     }
 
     @Override
     public void removeDisplayName() {
-
+        this.item().present(item -> item.remove(Keys.CUSTOM_NAME));
     }
 
     @Override
     public void addLore(Text lore) {
-
+        this.item().present(item -> {
+            final List<Text> lines = this.getLore();
+            lines.add(lore);
+            final List<Component> components = lines.stream()
+                    .map(SpongeConvert::toSponge)
+                    .map(Component::asComponent)
+                    .toList();
+            item.offer(Keys.LORE, components);
+        });
     }
 
     @Override
     public void removeLore() {
-
+        this.item().present(item -> item.remove(Keys.LORE));
     }
 
     @Override
     public int getStackSize() {
-        return 0;
+        return this.item().map(ItemStack::maxStackQuantity).or(DEFAULT_STACK_SIZE);
     }
 
     @Override
     public Set<Enchant> getEnchantments() {
-        return null;
+        return this.item()
+                .map(item -> {
+                    final List<Enchantment> applied = item.get(Keys.APPLIED_ENCHANTMENTS).orElseGet(HartshornUtils::emptyList);
+                    final List<Enchantment> stored = item.get(Keys.STORED_ENCHANTMENTS).orElseGet(HartshornUtils::emptyList);
+                    return HartshornUtils.merge(applied, stored).stream()
+                            .map(SpongeConvert::fromSponge)
+                            .filter(Exceptional::present)
+                            .map(Exceptional::get)
+                            .collect(Collectors.toSet());
+                }).orElse(HartshornUtils::emptySet)
+                .get();
     }
 
     @Override
     public void addEnchant(Enchant enchant) {
-
+        // TODO: Review if there is a way to add a single enchantment without having to get all existing, add, and offer
     }
 
     @Override
     public void removeEnchant(Enchant enchant) {
-
+        // TODO: Review if there is a way to add a single enchantment without having to get all existing, remove, and offer
     }
 
     @Override
     public boolean isBlock() {
-        return false;
+        return this.item().map(item -> item.type().block().isPresent()).or(false);
     }
 
     @Override
     public boolean isHead() {
-        return false;
+        return this.item().map(item -> item.type() == ItemTypes.PLAYER_HEAD.get()).or(false);
     }
 
     @Override
     public Item setProfile(Profile profile) {
-        return null;
+        if (this.isHead() && profile instanceof SpongeProfile spongeProfile) {
+            this.item().present(item -> {
+
+                item.offer(Keys.GAME_PROFILE, spongeProfile.profile());
+            });
+        }
+        return this;
     }
 
     @Override
-    public Item withMeta(int meta) {
-        return null;
+    protected ItemStack getById(String id) {
+        ItemType type;
+        if (id.indexOf(':') >= 0) {
+            type = SpongeUtil.fromNamespacedRegistry(RegistryTypes.ITEM_TYPE, id).orNull();
+        } else {
+            type = SpongeUtil.fromMCRegistry(RegistryTypes.ITEM_TYPE, id).orNull();
+        }
+        if (type == null) return ItemStack.empty();
+
+        return ItemStack.builder()
+                .itemType(type)
+                .build();
     }
 
     @Override
-    public int getMeta() {
-        return 0;
+    public Exceptional<? extends Mutable> getDataHolder() {
+        return this.getReference();
     }
 
-    @Override
-    public int getIdNumeric() {
-        return 0;
-    }
-
-    @Override
-    protected ItemStack getById(String id, int meta) {
-        return null;
+    private Exceptional<ItemStack> item() {
+        return this.getReference();
     }
 }
