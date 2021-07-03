@@ -17,6 +17,9 @@
 
 package org.dockbox.hartshorn.sponge.util;
 
+import net.kyori.adventure.bossbar.BossBar;
+import net.kyori.adventure.bossbar.BossBar.Color;
+import net.kyori.adventure.bossbar.BossBar.Overlay;
 import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -45,8 +48,11 @@ import org.dockbox.hartshorn.api.i18n.text.actions.ShiftClickAction;
 import org.dockbox.hartshorn.api.i18n.text.pagination.Pagination;
 import org.dockbox.hartshorn.commands.RunCommandAction;
 import org.dockbox.hartshorn.commands.source.CommandSource;
+import org.dockbox.hartshorn.server.minecraft.bossbar.BossbarColor;
+import org.dockbox.hartshorn.server.minecraft.bossbar.BossbarStyle;
 import org.dockbox.hartshorn.server.minecraft.dimension.position.BlockFace;
 import org.dockbox.hartshorn.server.minecraft.entities.ItemFrame;
+import org.dockbox.hartshorn.server.minecraft.entities.ItemFrame.Rotation;
 import org.dockbox.hartshorn.server.minecraft.events.entity.SpawnSource;
 import org.dockbox.hartshorn.server.minecraft.events.world.WorldCreatingProperties;
 import org.dockbox.hartshorn.server.minecraft.inventory.Slot;
@@ -60,6 +66,7 @@ import org.dockbox.hartshorn.server.minecraft.players.Player;
 import org.dockbox.hartshorn.server.minecraft.players.Sounds;
 import org.dockbox.hartshorn.sponge.dim.SpongeWorld;
 import org.dockbox.hartshorn.sponge.game.SpongeConsole;
+import org.dockbox.hartshorn.sponge.game.SpongeGenericEntity;
 import org.dockbox.hartshorn.sponge.game.SpongePlayer;
 import org.dockbox.hartshorn.sponge.inventory.SpongeItem;
 import org.dockbox.hartshorn.util.HartshornUtils;
@@ -75,6 +82,7 @@ import org.spongepowered.api.data.type.HandTypes;
 import org.spongepowered.api.effect.sound.SoundType;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.EntityType;
+import org.spongepowered.api.entity.EntityTypes;
 import org.spongepowered.api.entity.Tamer;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.entity.living.player.gamemode.GameMode;
@@ -91,7 +99,8 @@ import org.spongepowered.api.service.context.Context;
 import org.spongepowered.api.service.pagination.PaginationList;
 import org.spongepowered.api.service.permission.Subject;
 import org.spongepowered.api.util.Direction;
-import org.spongepowered.api.util.rotation.Rotation;
+import org.spongepowered.api.util.orientation.Orientation;
+import org.spongepowered.api.util.orientation.Orientations;
 import org.spongepowered.api.world.server.ServerLocation;
 import org.spongepowered.api.world.server.ServerWorld;
 import org.spongepowered.math.vector.Vector3d;
@@ -171,17 +180,13 @@ public enum SpongeConvert {
         ).map(type -> Enchantment.builder().type(type).level(enchantment.getLevel()).build());
     }
 
-//    public static BossBarColor toSponge(BossbarColor bossbarColor) {
-//        return Sponge.getRegistry()
-//                .getType(BossBarColor.class, bossbarColor.name())
-//                .orElse(BossBarColors.WHITE);
-//    }
-//
-//    public static BossBarOverlay toSponge(BossbarStyle style) {
-//        return Sponge.getRegistry()
-//                .getType(BossBarOverlay.class, style.name())
-//                .orElse(BossBarOverlays.PROGRESS);
-//    }
+    public static BossBar.Color toSponge(BossbarColor bossbarColor) {
+        return Color.valueOf(bossbarColor.name());
+    }
+
+    public static BossBar.Overlay toSponge(BossbarStyle style) {
+        return Overlay.valueOf(style.name());
+    }
 
     @NotNull
     public static Exceptional<SoundType> toSponge(Sounds sound) {
@@ -627,22 +632,21 @@ public enum SpongeConvert {
         return new Vector3i(v3n.getXi(), v3n.getYi(), v3n.getZi());
     }
 
-    public static ItemFrame.Rotation fromSponge(Rotation rotation) {
-        return ItemFrame.Rotation.TOP;
-
-        // TODO: rotation now uses angles, convert these to the (nearest) equivalent rotation
-//        try {
-//            return ItemFrame.Rotation.valueOf(rotation.getName());
-//        }
-//        catch (IllegalArgumentException | NullPointerException e) {
-//            return ItemFrame.Rotation.TOP;
-//        }
+    public static ItemFrame.Rotation fromSponge(Orientation rotation) {
+        if (rotation == Orientations.BOTTOM.get()) return Rotation.BOTTOM;
+        else if (rotation == Orientations.BOTTOM_LEFT.get()) return Rotation.BOTTOM_LEFT;
+        else if (rotation == Orientations.BOTTOM_RIGHT.get()) return Rotation.BOTTOM_RIGHT;
+        else if (rotation == Orientations.LEFT.get()) return Rotation.LEFT;
+        else if (rotation == Orientations.RIGHT.get()) return Rotation.RIGHT;
+        else if (rotation == Orientations.TOP.get()) return Rotation.TOP;
+        else if (rotation == Orientations.TOP_LEFT.get()) return Rotation.TOP_LEFT;
+        else if (rotation == Orientations.TOP_RIGHT.get()) return Rotation.TOP_RIGHT;
+        else return Rotation.TOP;
     }
 
-    public static Rotation toSponge(ItemFrame.Rotation rotation) {
-        // TODO
-        return null;
-//        return Sponge.getRegistry().getType(Rotation.class, rotation.name()).orElse(Rotations.TOP);
+    public static Orientation toSponge(ItemFrame.Rotation rotation) {
+        return SpongeUtil.fromSpongeRegistry(RegistryTypes.ORIENTATION, rotation.name().toLowerCase(Locale.ROOT))
+                .or(Orientations.TOP.get());
     }
 
     public static Direction toSponge(BlockFace blockFace) {
