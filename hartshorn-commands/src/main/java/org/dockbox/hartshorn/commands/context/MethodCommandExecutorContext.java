@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.commands.context;
 
 import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.api.domain.Target;
 import org.dockbox.hartshorn.api.exceptions.Except;
 import org.dockbox.hartshorn.commands.CommandExecutor;
 import org.dockbox.hartshorn.commands.CommandParser;
@@ -169,10 +170,11 @@ public class MethodCommandExecutorContext extends DefaultContext implements Comm
             final ParameterContext parameterContext = entry.getValue();
             final int index = parameterContext.getIndex();
             if (parameterContext.is(CommandContext.class)) arguments.set(index, context);
-            else if (parameterContext.is(CommandSource.class)) arguments.set(index, context.getSender());
             else {
                 @Nullable final Object object = context.get(entry.getKey());
-                arguments.set(index, object);
+                // Target comparison is done last as this can target either the command source, or a parameter target
+                if (object == null && parameterContext.is(Target.class)) arguments.set(index, context.getSender());
+                else arguments.set(index, object);
             }
         }
         return arguments;

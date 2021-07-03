@@ -36,6 +36,8 @@ import org.spongepowered.api.command.parameter.Parameter.Value;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.lifecycle.RegisterCommandEvent;
 
+import java.util.Optional;
+
 public class SpongeCommandRegistrar {
 
     @Listener
@@ -46,16 +48,16 @@ public class SpongeCommandRegistrar {
             final Parameterized command = Command.builder()
                     .addParameter(parameter)
                     .executor(ctx -> {
-                        final String arguments = ctx.requireOne(parameter);
+                        final Optional<String> arguments = ctx.one(parameter);
                         try {
                             Hartshorn.context().get(CommandGateway.class).accept(
                                     SpongeConvert.fromSponge(ctx.cause().subject()).orNull(),
-                                    alias + ' ' + arguments
+                                    alias + arguments.map(a -> ' ' + a).orElse("")
                             );
                         }
                         catch (ParsingException e) {
                             Except.handle(e);
-                            throw new CommandException(Component.text("Could not finish command"), e);
+                            throw new CommandException(Component.text(e.getMessage()), e);
                         }
                         return CommandResult.success();
                     }).build();
@@ -64,12 +66,13 @@ public class SpongeCommandRegistrar {
     }
 
     private Value<String> parameter(String alias) {
-        return Parameter.remainingJoinedStrings().key(Hartshorn.PROJECT_ID + alias).completer((ctx, input) -> Hartshorn.context()
+        return Parameter.remainingJoinedStrings().key(Hartshorn.PROJECT_ID + alias)
+                .completer((ctx, input) -> Hartshorn.context()
                 .get(CommandGateway.class)
-                .suggestions(SpongeConvert.fromSponge(ctx.cause().subject()).orNull(), input)
+                .suggestions(SpongeConvert.fromSponge(ctx.cause().subject()).orNull(), alias + ' ' + input)
                 .stream()
                 .map(CommandCompletion::of)
                 .toList()
-        ).build();
+        ).terminal().optional().build();
     }
 }
