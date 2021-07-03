@@ -49,13 +49,13 @@ public abstract class ReferencedItem<T> extends ReferencedWrapper<T> implements 
         return this;
     }
 
-    protected ReferencedItem(String id, int meta) {
+    protected ReferencedItem(String id) {
         this.id = id;
-        T type = this.getById(id, meta);
+        T type = this.getById(id);
         super.setReference(Exceptional.of(type));
     }
 
-    protected abstract T getById(String id, int meta);
+    protected abstract T getById(String id);
 
     @Override
     public Exceptional<T> constructInitialReference() {
