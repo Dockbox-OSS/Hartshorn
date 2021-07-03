@@ -47,6 +47,8 @@ import org.dockbox.hartshorn.sponge.util.SpongeConvert;
 import org.dockbox.hartshorn.sponge.util.SpongeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
+import org.spongepowered.api.block.BlockType;
+import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.command.exception.CommandException;
 import org.spongepowered.api.data.DataHolder.Mutable;
 import org.spongepowered.api.data.Key;
@@ -57,6 +59,8 @@ import org.spongepowered.api.entity.living.player.gamemode.GameMode;
 import org.spongepowered.api.entity.living.player.server.ServerPlayer;
 import org.spongepowered.api.service.context.Context;
 import org.spongepowered.api.service.permission.SubjectData;
+import org.spongepowered.api.util.blockray.RayTrace;
+import org.spongepowered.api.util.blockray.RayTraceResult;
 import org.spongepowered.api.world.Locatable;
 
 import java.util.Locale;
@@ -64,6 +68,8 @@ import java.util.Set;
 import java.util.UUID;
 
 public class SpongePlayer extends Player implements SpongeComposite {
+
+    private static final int RAY_TRACE_LIMIT = 50;
 
     @Wired
     public SpongePlayer(@NotNull UUID uniqueId, @NotNull String name) {
@@ -286,8 +292,18 @@ public class SpongePlayer extends Player implements SpongeComposite {
 
     @Override
     public Exceptional<Location> getLookingAtBlockPos() {
-        // TODO: Implement once BlockRay is available on API8
-        return Exceptional.empty();
+        return this.player()
+                .map(player -> RayTrace.block().sourcePosition(player)
+                        .continueWhileBlock(block -> {
+                            final BlockType type = block.blockState().type();
+                            return type == BlockTypes.AIR.get() ||
+                                    type == BlockTypes.CAVE_AIR.get() ||
+                                    type == BlockTypes.VOID_AIR.get();
+                        }).limit(RAY_TRACE_LIMIT)
+                        .execute().orElse(null))
+                .map(RayTraceResult::hitPosition)
+                .map(SpongeConvert::fromSponge)
+                .map(vector -> new Location(vector, this.getWorld()));
     }
 
     @Override
