@@ -56,10 +56,11 @@ import org.dockbox.hartshorn.server.minecraft.item.SimpleEnchant;
 import org.dockbox.hartshorn.server.minecraft.players.Gamemode;
 import org.dockbox.hartshorn.server.minecraft.players.Hand;
 import org.dockbox.hartshorn.server.minecraft.players.Player;
-import org.dockbox.hartshorn.sponge.game.SpongeConsole;
-import org.dockbox.hartshorn.sponge.inventory.SpongeItem;
-import org.dockbox.hartshorn.sponge.game.SpongePlayer;
+import org.dockbox.hartshorn.server.minecraft.players.Sounds;
 import org.dockbox.hartshorn.sponge.dim.SpongeWorld;
+import org.dockbox.hartshorn.sponge.game.SpongeConsole;
+import org.dockbox.hartshorn.sponge.game.SpongePlayer;
+import org.dockbox.hartshorn.sponge.inventory.SpongeItem;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.dockbox.hartshorn.util.exceptions.TypeConversionException;
 import org.jetbrains.annotations.NotNull;
@@ -70,6 +71,7 @@ import org.spongepowered.api.adventure.SpongeComponents;
 import org.spongepowered.api.command.CommandCause;
 import org.spongepowered.api.data.type.HandType;
 import org.spongepowered.api.data.type.HandTypes;
+import org.spongepowered.api.effect.sound.SoundType;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.EntityType;
 import org.spongepowered.api.entity.Tamer;
@@ -178,10 +180,10 @@ public enum SpongeConvert {
 //                .orElse(BossBarOverlays.PROGRESS);
 //    }
 
-//    @NotNull
-//    public static Exceptional<SoundType> toSponge(Sounds sound) {
-//        return Exceptional.of(Sponge.getRegistry().getType(SoundType.class, sound.name()));
-//    }
+    @NotNull
+    public static Exceptional<SoundType> toSponge(Sounds sound) {
+        return SpongeUtil.fromMCRegistry(RegistryTypes.SOUND_TYPE, sound.name().toLowerCase(Locale.ROOT));
+    }
 
 //    @NotNull
 //    public static PaginationList toSponge(Pagination pagination) {
