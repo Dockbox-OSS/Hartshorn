@@ -184,10 +184,7 @@ public class SpongeItem extends ReferencedItem<ItemStack> implements SpongeCompo
     @Override
     public Item setProfile(Profile profile) {
         if (this.isHead() && profile instanceof SpongeProfile spongeProfile) {
-            this.item().present(item -> {
-
-                item.offer(Keys.GAME_PROFILE, spongeProfile.profile());
-            });
+            this.item().present(item -> item.offer(Keys.GAME_PROFILE, spongeProfile.profile()));
         }
         return this;
     }
