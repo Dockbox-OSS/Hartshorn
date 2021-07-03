@@ -155,12 +155,20 @@ public class SpongeItem extends ReferencedItem<ItemStack> implements SpongeCompo
 
     @Override
     public void addEnchant(Enchant enchant) {
-        // TODO: Review if there is a way to add a single enchantment without having to get all existing, add, and offer
+        this.item().present(item -> SpongeConvert.toSponge(enchant)
+                .present(enchantment -> item.transform(Keys.APPLIED_ENCHANTMENTS, list -> {
+                    list.add(enchantment);
+                    return list;
+                })));
     }
 
     @Override
     public void removeEnchant(Enchant enchant) {
-        // TODO: Review if there is a way to add a single enchantment without having to get all existing, remove, and offer
+        this.item().present(item -> SpongeConvert.toSponge(enchant)
+                .present(enchantment -> item.transform(Keys.APPLIED_ENCHANTMENTS, list -> {
+                    list.removeIf(e -> e.equals(enchantment));
+                    return list;
+                })));
     }
 
     @Override
