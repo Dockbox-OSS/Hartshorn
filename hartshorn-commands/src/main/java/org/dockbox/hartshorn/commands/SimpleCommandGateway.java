@@ -148,8 +148,23 @@ public class SimpleCommandGateway implements CommandGateway {
     @UnmodifiableView
     public List<String> suggestions(CommandSource source, String command) {
         final Exceptional<CommandExecutorContext> context = this.lookupContext(command);
-        if (context.absent()) return HartshornUtils.emptyList();
-        return HartshornUtils.asUnmodifiableList(context.get().suggestions(source, command, this.parser));
+        final List<String> suggestions = HartshornUtils.emptyList();
+
+        if (context.present())
+            suggestions.addAll(context.get().suggestions(source, command, this.parser));
+
+        final String alias = command.split(" ")[0];
+        final Collection<CommandExecutorContext> contexts = contexts().get(alias);
+        for (CommandExecutorContext executorContext : contexts) {
+            for (String contextAlias : executorContext.aliases()) {
+                if (contextAlias.startsWith(command)) {
+                    String stripped =contextAlias.replaceFirst(alias + " ", "");
+                    if (!"".equals(stripped)) suggestions.add(stripped);
+                }
+            }
+        }
+
+        return HartshornUtils.asUnmodifiableList(suggestions);
     }
 
     @Override
