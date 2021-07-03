@@ -54,13 +54,12 @@ public class BlockRegistryTestService {
         player.getInventory().give(Item.of(id));
     }
 
-    @Command(value = "blockmeta", arguments = "<id> <meta{Integer}>", permission = Hartshorn.GLOBAL_BYPASS)
+    @Command(value = "blockmeta", arguments = "<id>", permission = Hartshorn.GLOBAL_BYPASS)
     public void blockMeta(@NotNull Player player, CommandContext context) {
 
         String id = context.get("id");
-        int meta = context.get("meta");
 
-        Item item = Item.of(id, meta);
+        Item item = Item.of(id);
         this.logger.info("Is block: " + item.isBlock());
         this.logger.info(item.getDisplayName(Language.EN_US).toStringValue());
         this.logger.info(item.getId());

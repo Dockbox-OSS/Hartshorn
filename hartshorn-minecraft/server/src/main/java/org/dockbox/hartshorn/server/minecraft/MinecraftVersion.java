@@ -17,7 +17,6 @@
 
 package org.dockbox.hartshorn.server.minecraft;
 
-import org.dockbox.hartshorn.server.minecraft.item.storage.Minecraft112Items;
 import org.dockbox.hartshorn.server.minecraft.item.storage.Minecraft116Items;
 import org.dockbox.hartshorn.server.minecraft.item.storage.MinecraftItems;
 
@@ -26,9 +25,8 @@ import org.dockbox.hartshorn.server.minecraft.item.storage.MinecraftItems;
  * defining vanilla constants, indicating in which version they were made available.
  */
 public enum MinecraftVersion {
-    MC1_12("1.12", new Minecraft112Items()),
     MC1_16("1.16", new Minecraft116Items()),
-    INDEV("Indev", new Minecraft112Items());
+    INDEV("Indev", new Minecraft116Items());
 
     private final String readableVersionString;
     private final MinecraftItems minecraftItems;

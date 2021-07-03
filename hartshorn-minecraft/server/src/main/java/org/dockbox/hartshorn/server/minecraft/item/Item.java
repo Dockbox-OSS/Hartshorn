@@ -40,26 +40,11 @@ public interface Item extends KeyHolder<Item>, PersistentDataHolder, PersistentC
      * @return The item instance, or {@link MinecraftItems#getAir()}
      */
     static Item of(@NonNls String id) {
-        Item item = Item.of(id, 0);
+        Item item = Hartshorn.context().get(Item.class, id);
         if (!MinecraftItems.getInstance().getAirId().equals(id) && item.isAir()) {
             item = MinecraftItems.getInstance().getCustom(id);
         }
         return item;
-    }
-
-    /**
-     * @param id
-     *         The fully qualified identifier of a block, e.g. {@code minecraft:stone}
-     * @param meta
-     *         The unsafe damage, or meta. Constraints to range 0-15
-     *
-     * @return The item instance, or {@link MinecraftItems#getAir()}
-     * @deprecated Note that the use of unsafe damage (meta) is deprecated, and should be avoided. As
-     *         of 1.13 this will no longer be available!
-     */
-    @Deprecated
-    static Item of(String id, int meta) {
-        return Hartshorn.context().get(Item.class, id, meta);
     }
 
     boolean isAir();
@@ -101,10 +86,4 @@ public interface Item extends KeyHolder<Item>, PersistentDataHolder, PersistentC
     Item setProfile(Profile profile);
 
     Item stack();
-
-    Item withMeta(int meta);
-
-    int getMeta();
-
-    int getIdNumeric();
 }
