@@ -101,4 +101,21 @@ task copyArtifacts {
     }
 }
 
+task relocateHartshornDistribution(dependsOn: build) {
+    doLast {
+        def configDir = new File("${project.projectDir}/run/config/services/hartshorn")
+        delete fileTree(configDir).matching {
+            include 'hartshorn.yml'
+        }
+
+        copy {
+            from rootDir
+            into configDir
+            include 'hartshorn.yml'
+        }
+    }
+}
+
 build.finalizedBy copyArtifacts
+relocateHartshornDistribution.dependsOn build
+runServer.dependsOn relocateHartshornDistribution
