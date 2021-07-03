@@ -57,52 +57,52 @@ public class  ArchesInit {
                 .register(TypeList.of(Void.class));
         VanillaProps.stone()
                 .name("clay_brick_round_arch")
-                .family("clay_brick")
+                .family("clay_brick_small_arch")
                 .solid(false)
                 .register(TypeList.of(Void.class));
         VanillaProps.stone()
                 .name("clay_brick_segmental_arch")
-                .family("clay_brick")
+                .family("clay_brick_small_arch")
                 .solid(false)
                 .register(TypeList.of(Void.class));
         VanillaProps.stone()
                 .name("clay_brick_facade_round_arch")
-                .family("clay_brick")
+                .family("clay_brick_small_arch")
                 .solid(false)
                 .register(TypeList.of(Void.class));
         VanillaProps.stone()
                 .name("clay_brick_facade_segmental_arch")
-                .family("clay_brick")
+                .family("clay_brick_small_arch")
                 .solid(false)
                 .register(TypeList.of(Void.class));
         VanillaProps.stone()
                 .name("clay_brick_gothic_arch")
-                .family("clay_brick")
+                .family("clay_brick_small_arch")
                 .solid(false)
                 .register(TypeList.of(Void.class));
         VanillaProps.stone()
                 .name("lime_mortar_clay_brick_round_arch")
-                .family("lime_mortar")
+                .family("lime_mortar_clay_brick")
                 .solid(false)
                 .register(TypeList.of(Void.class));
         VanillaProps.stone()
                 .name("lime_mortar_clay_brick_segmental_arch")
-                .family("lime_mortar")
+                .family("lime_mortar_clay_brick")
                 .solid(false)
                 .register(TypeList.of(Void.class));
         VanillaProps.stone()
                 .name("lime_mortar_clay_brick_facade_round_arch")
-                .family("lime_mortar")
+                .family("lime_mortar_clay_brick")
                 .solid(false)
                 .register(TypeList.of(Void.class));
         VanillaProps.stone()
                 .name("lime_mortar_clay_brick_facade_segmental_arch")
-                .family("lime_mortar")
+                .family("lime_mortar_clay_brick")
                 .solid(false)
                 .register(TypeList.of(Void.class));
         VanillaProps.stone()
                 .name("lime_mortar_clay_brick_gothic_arch")
-                .family("lime_mortar")
+                .family("lime_mortar_clay_brick")
                 .solid(false)
                 .register(TypeList.of(Void.class));
         VanillaProps.stone()
@@ -568,17 +568,17 @@ public class  ArchesInit {
                 .register(TypeList.of(Void.class));
         VanillaProps.stone()
                 .name("limestone_cobble_round_arch")
-                .family("limestone_cobble")
+                .family("limestone_cobble_small_arch")
                 .solid(false)
                 .register(TypeList.of(Void.class));
         VanillaProps.stone()
                 .name("limestone_cobble_gothic_arch")
-                .family("limestone_cobble")
+                .family("limestone_cobble_small_arch")
                 .solid(false)
                 .register(TypeList.of(Void.class));
         VanillaProps.stone()
                 .name("limestone_cobble_segmental_arch")
-                .family("limestone_cobble")
+                .family("limestone_cobble_small_arch")
                 .solid(false)
                 .register(TypeList.of(Void.class));
     }

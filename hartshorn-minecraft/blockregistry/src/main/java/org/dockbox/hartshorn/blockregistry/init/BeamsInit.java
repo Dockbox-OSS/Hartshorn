@@ -3,12 +3,10 @@ package org.dockbox.hartshorn.blockregistry.init;
 import org.dockbox.hartshorn.blockregistry.init.VanillaProps.ModGroups;
 import org.dockbox.hartshorn.blockregistry.init.VanillaProps.TypeList;
 
-public final class BeamsInit {
+public class BeamsInit {
 
-    private BeamsInit() {}
-
-    public static void init(TypeList types, TypeList typesVanilla) {
-
+    public static void init() {
+        TypeList types = null, typesVanilla = null;
         VanillaProps.logs()
                 .group(ModGroups.PLANKS_AND_BEAMS)
                 .name("oak_wood_beam")
