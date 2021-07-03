@@ -42,6 +42,7 @@ import org.dockbox.hartshorn.server.minecraft.players.Profile;
 import org.dockbox.hartshorn.server.minecraft.players.SimpleGameSettings;
 import org.dockbox.hartshorn.server.minecraft.players.Sounds;
 import org.dockbox.hartshorn.server.minecraft.players.inventory.PlayerInventory;
+import org.dockbox.hartshorn.sponge.game.entity.SpongeEntity;
 import org.dockbox.hartshorn.sponge.inventory.SpongePlayerInventory;
 import org.dockbox.hartshorn.sponge.util.SpongeConvert;
 import org.dockbox.hartshorn.sponge.util.SpongeUtil;
@@ -51,9 +52,9 @@ import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.command.exception.CommandException;
 import org.spongepowered.api.data.DataHolder.Mutable;
-import org.spongepowered.api.data.Key;
 import org.spongepowered.api.data.Keys;
-import org.spongepowered.api.data.value.Value;
+import org.spongepowered.api.entity.EntityType;
+import org.spongepowered.api.entity.EntityTypes;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.entity.living.player.gamemode.GameMode;
 import org.spongepowered.api.entity.living.player.server.ServerPlayer;
@@ -61,13 +62,12 @@ import org.spongepowered.api.service.context.Context;
 import org.spongepowered.api.service.permission.SubjectData;
 import org.spongepowered.api.util.blockray.RayTrace;
 import org.spongepowered.api.util.blockray.RayTraceResult;
-import org.spongepowered.api.world.Locatable;
 
 import java.util.Locale;
 import java.util.Set;
 import java.util.UUID;
 
-public class SpongePlayer extends Player implements SpongeComposite {
+public class SpongePlayer extends Player implements SpongeEntity<net.minecraft.server.level.ServerPlayer, org.spongepowered.api.entity.living.player.Player>, SpongeComposite {
 
     private static final int RAY_TRACE_LIMIT = 50;
 
@@ -157,71 +157,8 @@ public class SpongePlayer extends Player implements SpongeComposite {
     }
 
     @Override
-    public Location getLocation() {
-        return this.player().map(Locatable::serverLocation).map(SpongeConvert::fromSponge).or(Location.empty());
-    }
-
-    @Override
-    public void setLocation(Location location) {
-        this.player().present(player -> SpongeConvert.toSponge(location).present(player::setLocation));
-    }
-
-    @Override
-    public Text getDisplayName() {
-        return SpongeUtil.get(this.player(), Keys.DISPLAY_NAME, SpongeConvert::fromSponge, Text::of);
-    }
-
-    @Override
-    public void setDisplayName(Text displayName) {
-        this.player().present(player -> player.offer(Keys.DISPLAY_NAME, SpongeConvert.toSponge(displayName)));
-    }
-
-    @Override
-    public double getHealth() {
-        return this.player().map(player -> player.get(Keys.HEALTH).orElse(0D)).or(0D);
-    }
-
-    @Override
-    public void setHealth(double health) {
-        this.player().present(player -> player.offer(Keys.HEALTH, health));
-    }
-
-    @Override
-    public boolean isInvisible() {
-        return this.getBoolean(Keys.IS_INVISIBLE);
-    }
-
-    @Override
-    public void setInvisible(boolean visible) {
-        this.setBoolean(Keys.IS_INVISIBLE, visible);
-    }
-
-    @Override
-    public boolean isInvulnerable() {
-        return this.getBoolean(Keys.INVULNERABLE);
-    }
-
-    @Override
-    public void setInvulnerable(boolean invulnerable) {
-        this.setBoolean(Keys.INVULNERABLE, invulnerable);
-    }
-
-    @Override
-    public boolean hasGravity() {
-        return this.getBoolean(Keys.IS_GRAVITY_AFFECTED);
-    }
-
-    @Override
-    public void setGravity(boolean gravity) {
-        this.setBoolean(Keys.IS_GRAVITY_AFFECTED, gravity);
-    }
-
-    private boolean getBoolean(Key<Value<Boolean>> key) {
-        return SpongeUtil.get(this.player(), key, t -> t, () -> false);
-    }
-
-    private void setBoolean(Key<Value<Boolean>> key, boolean value) {
-        this.player().present(player -> player.offer(key, value));
+    public EntityType<org.spongepowered.api.entity.living.player.Player> type() {
+        return EntityTypes.PLAYER.get();
     }
 
     @Override
@@ -323,5 +260,10 @@ public class SpongePlayer extends Player implements SpongeComposite {
     public Exceptional<? extends Mutable> getDataHolder() {
         // Use offline user reference to ensure we can (almost) always obtain the information
         return this.user();
+    }
+
+    @Override
+    public Exceptional<org.spongepowered.api.entity.living.player.Player> spongeEntity() {
+        return this.player().map(org.spongepowered.api.entity.living.player.Player.class::cast);
     }
 }
