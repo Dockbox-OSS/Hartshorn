@@ -95,9 +95,7 @@ public class SpongePlayer extends Player implements SpongeComposite {
 
     @Override
     public void send(Text text) {
-        this.player().present(player -> {
-            player.sendMessage(SpongeConvert.toSponge(text));
-        });
+        this.player().present(player -> player.sendMessage(SpongeConvert.toSponge(text)));
     }
 
     @Override
@@ -115,8 +113,7 @@ public class SpongePlayer extends Player implements SpongeComposite {
 
     @Override
     public void send(Pagination pagination) {
-        // TODO: Implement once Pagination API is available
-        throw new NotImplementedException();
+        this.player().present(player -> SpongeConvert.toSponge(pagination).sendTo(player));
     }
 
     @Override
@@ -156,9 +153,7 @@ public class SpongePlayer extends Player implements SpongeComposite {
 
     public void setPermission(String permission, Set<Context> context, Tristate state) {
         org.spongepowered.api.util.Tristate tristate = SpongeConvert.toSponge(state);
-        this.user().present(user -> {
-            user.subjectData().setPermission(context, permission, tristate);
-        });
+        this.user().present(user -> user.subjectData().setPermission(context, permission, tristate));
     }
 
     @Override
@@ -168,9 +163,7 @@ public class SpongePlayer extends Player implements SpongeComposite {
 
     @Override
     public void setLocation(Location location) {
-        this.player().present(player -> {
-            SpongeConvert.toSponge(location).present(player::setLocation);
-        });
+        this.player().present(player -> SpongeConvert.toSponge(location).present(player::setLocation));
     }
 
     @Override
@@ -272,12 +265,10 @@ public class SpongePlayer extends Player implements SpongeComposite {
 
     @Override
     public void play(Sounds sound) {
-        this.player().present(player -> {
-            SpongeConvert.toSponge(sound).present(soundType -> {
-                final Sound playableSound = Sound.sound(soundType, Source.MASTER, 1, 1);
-                player.playSound(playableSound);
-            });
-        });
+        this.player().present(player -> SpongeConvert.toSponge(sound).present(soundType -> {
+            final Sound playableSound = Sound.sound(soundType, Source.MASTER, 1, 1);
+            player.playSound(playableSound);
+        }));
     }
 
     @Override

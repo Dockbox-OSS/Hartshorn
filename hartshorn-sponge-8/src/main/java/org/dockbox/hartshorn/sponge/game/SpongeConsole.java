@@ -18,7 +18,6 @@
 package org.dockbox.hartshorn.sponge.game;
 
 import org.dockbox.hartshorn.api.exceptions.Except;
-import org.dockbox.hartshorn.api.exceptions.NotImplementedException;
 import org.dockbox.hartshorn.api.i18n.entry.DefaultResources;
 import org.dockbox.hartshorn.api.i18n.text.Text;
 import org.dockbox.hartshorn.api.i18n.text.pagination.Pagination;
@@ -52,7 +51,6 @@ public class SpongeConsole extends Console {
 
     @Override
     public void send(Pagination pagination) {
-        // TODO: Implement once pagination is done
-        throw new NotImplementedException();
+        SpongeConvert.toSponge(pagination).sendTo(Sponge.systemSubject());
     }
 }
