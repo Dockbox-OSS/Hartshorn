@@ -43,6 +43,7 @@ import org.dockbox.hartshorn.server.minecraft.players.Profile;
 import org.dockbox.hartshorn.server.minecraft.players.SimpleGameSettings;
 import org.dockbox.hartshorn.server.minecraft.players.Sounds;
 import org.dockbox.hartshorn.server.minecraft.players.inventory.PlayerInventory;
+import org.dockbox.hartshorn.sponge.inventory.SpongePlayerInventory;
 import org.dockbox.hartshorn.sponge.util.SpongeConvert;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
