@@ -104,7 +104,7 @@ public class MethodCommandExecutorContext extends DefaultContext implements Comm
     public List<String> aliases() {
         List<String> aliases = HartshornUtils.emptyList();
         for (String parentAlias : this.getParentAliases()) {
-            for (String alias : this.aliases()) {
+            for (String alias : this.command.value()) {
                 aliases.add(parentAlias + ' ' + alias);
             }
         }
@@ -126,7 +126,7 @@ public class MethodCommandExecutorContext extends DefaultContext implements Comm
         final String stripped = this.strip(command, false);
         final List<CommandElement<?>> elements = this.container().elements();
         final List<String> tokens = HartshornUtils.asList(stripped.split(" "));
-        if (command.endsWith(" ")) tokens.add("");
+        if (command.endsWith(" ") && !"".equals(tokens.get(tokens.size()-1))) tokens.add("");
 
         CommandElement<?> last = null;
         for (CommandElement<?> element : elements) {

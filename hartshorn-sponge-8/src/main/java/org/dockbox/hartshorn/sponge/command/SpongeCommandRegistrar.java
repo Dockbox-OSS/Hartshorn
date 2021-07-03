@@ -66,7 +66,7 @@ public class SpongeCommandRegistrar {
     }
 
     private Value<String> parameter(String alias) {
-        return Parameter.remainingJoinedStrings().key(Hartshorn.PROJECT_ID + alias)
+        return Parameter.remainingJoinedStrings().key(alias + "-arguments")
                 .completer((ctx, input) -> Hartshorn.context()
                 .get(CommandGateway.class)
                 .suggestions(SpongeConvert.fromSponge(ctx.cause().subject()).orNull(), alias + ' ' + input)
