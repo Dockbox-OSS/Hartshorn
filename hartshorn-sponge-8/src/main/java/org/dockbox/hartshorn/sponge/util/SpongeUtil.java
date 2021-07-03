@@ -65,6 +65,10 @@ public class SpongeUtil {
         return fromRegistry(value, ResourceKey.minecraft(name));
     }
 
+    public static <T> Exceptional<T> fromSpongeRegistry(RegistryType<T> value, String name) {
+        return fromRegistry(value, ResourceKey.sponge(name));
+    }
+
     public static <T> Exceptional<T> fromRegistry(RegistryType<T> value, ResourceKey key) {
         final Exceptional<Registry<T>> registry = Exceptional.of(Sponge.game().registries().findRegistry(value));
         return registry.map(r -> {

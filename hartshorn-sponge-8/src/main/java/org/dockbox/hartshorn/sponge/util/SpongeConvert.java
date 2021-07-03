@@ -701,20 +701,11 @@ public enum SpongeConvert {
 
     public static org.dockbox.hartshorn.server.minecraft.entities.Entity fromSponge(Entity entity) {
         EntityType<?> type = entity.type();
-        // TODO: Implement entities
-        return null;
-//        if (type == EntityTypes.ARMOR_STAND) {
-//            return new SpongeArmorStand((ArmorStand) entity);
-//        }
-//        else if (type == EntityTypes.ITEM_FRAME) {
-//            return new SpongeItemFrame((org.spongepowered.api.entity.hanging.ItemFrame) entity);
-//        }
-//        else if (type == EntityTypes.PLAYER) {
-//            return new SpongePlayer(entity.getUniqueId(), ((org.spongepowered.api.entity.living.player.Player) entity).getName());
-//        }
-//        else {
-//            return new SpongeGenericEntity(entity);
-//        }
+        if (type == EntityTypes.PLAYER.get()) {
+            return new SpongePlayer(entity.uniqueId(), ((ServerPlayer) entity).name());
+        } else {
+            return new SpongeGenericEntity(entity);
+        }
     }
 
     public static Set<Context> toSponge(PermissionContext context) {
