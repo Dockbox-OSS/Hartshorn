@@ -19,7 +19,6 @@ package org.dockbox.hartshorn.sponge.game;
 
 import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.sound.Sound.Source;
-import net.kyori.adventure.text.Component;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.domain.tuple.Tristate;
@@ -45,6 +44,7 @@ import org.dockbox.hartshorn.server.minecraft.players.Sounds;
 import org.dockbox.hartshorn.server.minecraft.players.inventory.PlayerInventory;
 import org.dockbox.hartshorn.sponge.inventory.SpongePlayerInventory;
 import org.dockbox.hartshorn.sponge.util.SpongeConvert;
+import org.dockbox.hartshorn.sponge.util.SpongeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.exception.CommandException;
@@ -54,7 +54,6 @@ import org.spongepowered.api.data.Keys;
 import org.spongepowered.api.data.value.Value;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.entity.living.player.gamemode.GameMode;
-import org.spongepowered.api.entity.living.player.gamemode.GameModes;
 import org.spongepowered.api.entity.living.player.server.ServerPlayer;
 import org.spongepowered.api.service.context.Context;
 import org.spongepowered.api.service.permission.SubjectData;
@@ -170,10 +169,7 @@ public class SpongePlayer extends Player implements SpongeComposite {
 
     @Override
     public Text getDisplayName() {
-        return this.player()
-                .map(player -> player.get(Keys.DISPLAY_NAME).orElse(Component.empty()))
-                .map(SpongeConvert::fromSponge)
-                .or(Text.of());
+        return SpongeUtil.get(this.player(), Keys.DISPLAY_NAME, SpongeConvert::fromSponge, Text::of);
     }
 
     @Override
@@ -222,9 +218,7 @@ public class SpongePlayer extends Player implements SpongeComposite {
     }
 
     private boolean getBoolean(Key<Value<Boolean>> key) {
-        return this.player()
-                .map(player -> player.get(key).orElse(false))
-                .or(false);
+        return SpongeUtil.get(this.player(), key, t -> t, () -> false);
     }
 
     private void setBoolean(Key<Value<Boolean>> key, boolean value) {
@@ -249,10 +243,7 @@ public class SpongePlayer extends Player implements SpongeComposite {
 
     @Override
     public Gamemode getGamemode() {
-        return this.player()
-                .map(player -> player.get(Keys.GAME_MODE).orElse(GameModes.NOT_SET.get()))
-                .map(SpongeConvert::fromSponge)
-                .or(Gamemode.OTHER);
+        return SpongeUtil.get(this.player(), Keys.GAME_MODE, SpongeConvert::fromSponge, () -> Gamemode.OTHER);
     }
 
     @Override
@@ -285,9 +276,7 @@ public class SpongePlayer extends Player implements SpongeComposite {
 
     @Override
     public boolean isSneaking() {
-        return this.player()
-                .map(player -> player.get(Keys.IS_SNEAKING).orElse(false))
-                .or(false);
+        return this.getBoolean(Keys.IS_SNEAKING);
     }
 
     @Override
