@@ -84,10 +84,8 @@ public class SimpleCommandGateway implements CommandGateway {
         for (CommandExecutorExtension extension : this.getExtensions()) {
             if (extension.extend(context)) {
                 final ExtensionResult result = extension.execute(commandContext, context);
-                if (!result.proceed()) {
-                    commandContext.getSender().send(result.reason());
-                    return;
-                }
+                if (result.send()) commandContext.getSender().send(result.reason());
+                if (!result.proceed()) return;
             }
         }
         context.executor().execute(commandContext);
