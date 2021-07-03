@@ -50,7 +50,7 @@ public class ConfirmationExtension implements CommandExecutorExtension {
 
         sender.send(confirmationText);
 
-        return ExtensionResult.reject(this.resources.getConfirmCommand());
+        return ExtensionResult.reject(this.resources.getConfirmCommand(), false);
     }
 
     @Override
