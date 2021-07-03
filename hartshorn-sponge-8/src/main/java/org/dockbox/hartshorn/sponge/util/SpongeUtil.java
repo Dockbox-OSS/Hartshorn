@@ -17,9 +17,13 @@
 
 package org.dockbox.hartshorn.sponge.util;
 
+import org.dockbox.hartshorn.api.CheckedSupplier;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.spongepowered.api.ResourceKey;
 import org.spongepowered.api.Sponge;
+import org.spongepowered.api.data.Key;
+import org.spongepowered.api.data.value.Value;
+import org.spongepowered.api.data.value.ValueContainer;
 import org.spongepowered.api.registry.Registry;
 import org.spongepowered.api.registry.RegistryEntry;
 import org.spongepowered.api.registry.RegistryKey;
@@ -28,6 +32,7 @@ import org.spongepowered.api.registry.RegistryType;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.function.Function;
 
 public class SpongeUtil {
 
@@ -50,12 +55,33 @@ public class SpongeUtil {
                 .get();
     }
 
+    public static <T> Exceptional<T> fromNamespacedRegistry(RegistryType<T> value, String name) {
+        if (name.indexOf(':') < 0) return Exceptional.empty();
+        final String[] spaced = name.split(":", 2);
+        return fromRegistry(value, ResourceKey.of(spaced[0], spaced[1]));
+    }
+
     public static <T> Exceptional<T> fromMCRegistry(RegistryType<T> value, String name) {
+        return fromRegistry(value, ResourceKey.minecraft(name));
+    }
+
+    public static <T> Exceptional<T> fromRegistry(RegistryType<T> value, ResourceKey key) {
         final Exceptional<Registry<T>> registry = Exceptional.of(Sponge.game().registries().findRegistry(value));
         return registry.map(r -> {
-            final Optional<RegistryEntry<T>> entry = r.findEntry(ResourceKey.minecraft(name));
+            final Optional<RegistryEntry<T>> entry = r.findEntry(key);
             return entry.map(RegistryEntry::value).orElse(null);
         });
+    }
+
+    public static <T, C> T get(
+            Exceptional<? extends ValueContainer> container,
+            Key<? extends Value<C>> key,
+            Function<C, T> mapper,
+            CheckedSupplier<T> defaultValue) {
+        return container
+                .map(c -> c.get(key).orElse(null))
+                .map(mapper::apply)
+                .orElse(defaultValue).get();
     }
 
 }
