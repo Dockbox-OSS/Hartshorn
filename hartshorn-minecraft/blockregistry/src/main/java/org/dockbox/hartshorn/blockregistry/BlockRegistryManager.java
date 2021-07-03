@@ -1,7 +1,6 @@
 package org.dockbox.hartshorn.blockregistry;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.di.annotations.Bean;
 import org.dockbox.hartshorn.di.annotations.Service;
 import org.dockbox.hartshorn.persistence.registry.Registry;
 import org.dockbox.hartshorn.server.minecraft.item.Item;
@@ -23,14 +22,6 @@ public class BlockRegistryManager
 
     protected BlockRegistryManager() {
         this.blockRegistry = new Registry<>();
-    }
-
-    /**
-     * @return A singleton instance of the {@link BlockRegistryManager}
-     */
-    @Bean("singleton")
-    private BlockRegistryManager getSingleton() {
-        return new BlockRegistryManager();
     }
 
     /**
