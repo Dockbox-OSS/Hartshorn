@@ -42,6 +42,7 @@ import org.dockbox.hartshorn.api.i18n.text.Text;
 import org.dockbox.hartshorn.api.i18n.text.actions.ClickAction;
 import org.dockbox.hartshorn.api.i18n.text.actions.HoverAction;
 import org.dockbox.hartshorn.api.i18n.text.actions.ShiftClickAction;
+import org.dockbox.hartshorn.api.i18n.text.pagination.Pagination;
 import org.dockbox.hartshorn.commands.RunCommandAction;
 import org.dockbox.hartshorn.commands.source.CommandSource;
 import org.dockbox.hartshorn.server.minecraft.dimension.position.BlockFace;
@@ -87,6 +88,7 @@ import org.spongepowered.api.item.inventory.equipment.EquipmentType;
 import org.spongepowered.api.item.inventory.equipment.EquipmentTypes;
 import org.spongepowered.api.registry.RegistryTypes;
 import org.spongepowered.api.service.context.Context;
+import org.spongepowered.api.service.pagination.PaginationList;
 import org.spongepowered.api.service.permission.Subject;
 import org.spongepowered.api.util.Direction;
 import org.spongepowered.api.util.rotation.Rotation;
@@ -96,6 +98,7 @@ import org.spongepowered.math.vector.Vector3d;
 import org.spongepowered.math.vector.Vector3i;
 
 import java.net.URL;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -185,22 +188,24 @@ public enum SpongeConvert {
         return SpongeUtil.fromMCRegistry(RegistryTypes.SOUND_TYPE, sound.name().toLowerCase(Locale.ROOT));
     }
 
-//    @NotNull
-//    public static PaginationList toSponge(Pagination pagination) {
-//        PaginationList.Builder builder = PaginationList.builder();
-//
-//        if (null != pagination.getTitle()) builder.title(toSponge(pagination.getTitle()));
-//        if (null != pagination.getHeader()) builder.header(toSponge(pagination.getHeader()));
-//        if (null != pagination.getFooter()) builder.footer(toSponge(pagination.getFooter()));
-//
-//        builder.padding(toSponge(pagination.getPadding()));
-//        if (0 < pagination.getLinesPerPage()) builder.linesPerPage(pagination.getLinesPerPage());
-//        List<Text> convertedContent = pagination.getContent().stream()
-//                .map(SpongeConversionUtil::toSponge)
-//                .toList();
-//        builder.contents(convertedContent);
-//        return builder.build();
-//    }
+    @NotNull
+    public static PaginationList toSponge(Pagination pagination) {
+        PaginationList.Builder builder = PaginationList.builder();
+
+        if (null != pagination.getTitle()) builder.title(toSponge(pagination.getTitle()));
+        if (null != pagination.getHeader()) builder.header(toSponge(pagination.getHeader()));
+        if (null != pagination.getFooter()) builder.footer(toSponge(pagination.getFooter()));
+
+        builder.padding(toSponge(pagination.getPadding()));
+        if (0 < pagination.getLinesPerPage()) builder.linesPerPage(pagination.getLinesPerPage());
+        List<Component> convertedContent = pagination.getContent().stream()
+                .map(SpongeConvert::toSponge)
+                .map(Component.class::cast)
+                .toList();
+
+        builder.contents(convertedContent);
+        return builder.build();
+    }
 
     @NotNull
     public static TextComponent toSponge(Text message) {
