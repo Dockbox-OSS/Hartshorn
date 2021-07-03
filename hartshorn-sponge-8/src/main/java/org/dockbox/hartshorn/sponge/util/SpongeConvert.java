@@ -482,7 +482,7 @@ public enum SpongeConvert {
 
     @NotNull
     public static Player fromSponge(ServerPlayer player) {
-        return fromSponge((User) player);
+        return fromSponge(player.user());
     }
 
     @NotNull

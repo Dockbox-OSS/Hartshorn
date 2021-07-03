@@ -28,6 +28,7 @@ import org.dockbox.hartshorn.api.keys.TransactionResult;
 import org.dockbox.hartshorn.di.annotations.Wired;
 import org.dockbox.hartshorn.server.minecraft.dimension.position.Location;
 import org.dockbox.hartshorn.server.minecraft.item.Item;
+import org.dockbox.hartshorn.server.minecraft.item.storage.MinecraftItems;
 import org.dockbox.hartshorn.server.minecraft.packets.Packet;
 import org.dockbox.hartshorn.server.minecraft.players.GameSettings;
 import org.dockbox.hartshorn.server.minecraft.players.Gamemode;
@@ -36,6 +37,7 @@ import org.dockbox.hartshorn.server.minecraft.players.Player;
 import org.dockbox.hartshorn.server.minecraft.players.Profile;
 import org.dockbox.hartshorn.server.minecraft.players.Sounds;
 import org.dockbox.hartshorn.server.minecraft.players.inventory.PlayerInventory;
+import org.dockbox.hartshorn.util.HartshornUtils;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.User;
@@ -103,12 +105,12 @@ public class SpongePlayer extends Player {
 
     @Override
     public <T> Exceptional<T> get(PersistentDataKey<T> dataKey) {
-        return null;
+        return Exceptional.empty();
     }
 
     @Override
     public <T> TransactionResult set(PersistentDataKey<T> dataKey, T value) {
-        return null;
+        return TransactionResult.success();
     }
 
     @Override
@@ -118,12 +120,12 @@ public class SpongePlayer extends Player {
 
     @Override
     public Map<PersistentDataKey<?>, Object> getPersistentData() {
-        return null;
+        return HartshornUtils.emptyMap();
     }
 
     @Override
     public Location getLocation() {
-        return null;
+        return Location.empty();
     }
 
     @Override
@@ -133,7 +135,7 @@ public class SpongePlayer extends Player {
 
     @Override
     public Text getDisplayName() {
-        return null;
+        return Text.of();
     }
 
     @Override
@@ -198,7 +200,7 @@ public class SpongePlayer extends Player {
 
     @Override
     public Gamemode getGamemode() {
-        return null;
+        return Gamemode.OTHER;
     }
 
     @Override
@@ -208,7 +210,7 @@ public class SpongePlayer extends Player {
 
     @Override
     public Item getItemInHand(Hand hand) {
-        return null;
+        return MinecraftItems.getInstance().getAir();
     }
 
     @Override
@@ -228,12 +230,12 @@ public class SpongePlayer extends Player {
 
     @Override
     public Profile getProfile() {
-        return null;
+        return new SpongeProfile(this.getUniqueId());
     }
 
     @Override
     public Exceptional<Location> getLookingAtBlockPos() {
-        return null;
+        return Exceptional.empty();
     }
 
     @Override
