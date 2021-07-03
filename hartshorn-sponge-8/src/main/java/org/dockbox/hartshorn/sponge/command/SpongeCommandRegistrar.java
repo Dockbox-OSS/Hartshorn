@@ -29,6 +29,7 @@ import org.dockbox.hartshorn.sponge.util.SpongeConvert;
 import org.spongepowered.api.command.Command;
 import org.spongepowered.api.command.Command.Parameterized;
 import org.spongepowered.api.command.CommandCompletion;
+import org.spongepowered.api.command.CommandExecutor;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.exception.CommandException;
 import org.spongepowered.api.command.parameter.Parameter;
@@ -47,22 +48,28 @@ public class SpongeCommandRegistrar {
 
             final Parameterized command = Command.builder()
                     .addParameter(parameter)
-                    .executor(ctx -> {
-                        final Optional<String> arguments = ctx.one(parameter);
-                        try {
-                            Hartshorn.context().get(CommandGateway.class).accept(
-                                    SpongeConvert.fromSponge(ctx.cause().subject()).orNull(),
-                                    alias + arguments.map(a -> ' ' + a).orElse("")
-                            );
-                        }
-                        catch (ParsingException e) {
-                            Except.handle(e);
-                            throw new CommandException(Component.text(e.getMessage()), e);
-                        }
-                        return CommandResult.success();
-                    }).build();
+                    .executor(this.executor(alias, parameter))
+                    .build();
+
             event.register(Sponge8Application.container(), command, alias);
         }
+    }
+
+    private CommandExecutor executor(String alias, Value<String> parameter) {
+        return ctx -> {
+            final Optional<String> arguments = ctx.one(parameter);
+            try {
+                Hartshorn.context().get(CommandGateway.class).accept(
+                        SpongeConvert.fromSponge(ctx.cause().subject()).orNull(),
+                        alias + arguments.map(a -> ' ' + a).orElse("")
+                );
+            }
+            catch (ParsingException e) {
+                Except.handle(e);
+                throw new CommandException(Component.text(e.getMessage()), e);
+            }
+            return CommandResult.success();
+        };
     }
 
     private Value<String> parameter(String alias) {
