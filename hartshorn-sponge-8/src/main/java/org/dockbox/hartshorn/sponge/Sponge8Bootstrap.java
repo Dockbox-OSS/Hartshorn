@@ -15,24 +15,15 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.commands.context;
+package org.dockbox.hartshorn.sponge;
 
-import org.dockbox.hartshorn.util.Reflect;
+import org.dockbox.hartshorn.api.Hartshorn;
+import org.dockbox.hartshorn.server.minecraft.MinecraftServerBootstrap;
 
-import java.lang.reflect.Parameter;
+public class Sponge8Bootstrap extends MinecraftServerBootstrap {
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
-@AllArgsConstructor
-@Getter
-public class ParameterContext {
-
-    private final Parameter parameter;
-    private final int index;
-
-    public boolean is(Class<?> type) {
-        return Reflect.assignableFrom(type, this.getParameter().getType());
+    @Override
+    protected void handleMissingBinding(Class<?> type) {
+        Hartshorn.log().warn("No implementation exists for " + type.getSimpleName() + ", this will cause functionality to misbehave or not function!");
     }
-
 }
