@@ -114,7 +114,6 @@ public final class VanillaProps {
     }
 
     public enum ModGroups {
-
         WATER_AND_AIR,
         TOOL_BLOCKS,
         ROOFING,
@@ -148,17 +147,23 @@ public final class VanillaProps {
     }
 
     public enum SoundType {
-         WOOL, BAMBOO
+         WOOL, BAMBOO, WATER
     }
 
     public enum RenderLayer {
          TRANSLUCENT, CUTOUT, CUTOUT_MIPPED;
     }
 
-    public static class TypeList {
+    public record TypeList(List<VariantIdentifier> variantIdentifiers)
+    {
+        public static TypeList of(Class<?> type)
+        {
+            return of();
+        }
 
-        public static TypeList of(Class<?> type) {
-            return new TypeList();
+        public static TypeList of(VariantIdentifier... variantIdentifiers)
+        {
+            return new TypeList(HartshornUtils.asList(variantIdentifiers));
         }
     }
 
@@ -176,12 +181,12 @@ public final class VanillaProps {
 
     public static class BlockDataBuilder
     {
-        private List<VariantIdentifier> defaultVariants;
+        private String family;
+        private List<VariantIdentifier> variants;
 
         private ModGroups group;
         private boolean isSolid;
         private boolean ignore;
-        private boolean manual = true;
 
         public BlockDataBuilder() {}
 
@@ -193,18 +198,18 @@ public final class VanillaProps {
                                 VariantIdentifier... additionalVariantIdentifiers)
         {
             //So that when the additional variant identifiers are added to it, this doesn't update the initial list too.
-            this.defaultVariants = HartshornUtils.asList(variantIdentifiers);
+            this.variants = HartshornUtils.asList(variantIdentifiers);
 
-            this.defaultVariants.addAll(HartshornUtils.asList(additionalVariantIdentifiers));
+            this.variants.addAll(HartshornUtils.asList(additionalVariantIdentifiers));
         }
 
         public BlockDataBuilder group(ModGroups group) {
             this.group = group;
-            this.manual = false;
             return this;
         }
 
         public BlockDataBuilder family(String family) {
+            this.family = family;
             return this;
         }
 
@@ -241,18 +246,21 @@ public final class VanillaProps {
         }
 
         public BlockDataBuilder manual() {
-            this.manual = true;
             return this;
         }
+
         public BlockDataBuilder waterColor() {
             return this;
         }
+
         public BlockDataBuilder variantFamily() {
             return this;
         }
+
         public BlockDataBuilder grassColor() {
             return this;
         }
+
         public BlockDataBuilder foliageColor() {
             return this;
         }
@@ -266,11 +274,12 @@ public final class VanillaProps {
         }
 
         public void register(TypeList type) {
-
+            this.variants.addAll(type.variantIdentifiers);
         }
         public BlockDataBuilder randomTick(boolean tick) {
             return this;
         }
+
         public BlockDataBuilder strength(double a, double b) {
             return this;
         }

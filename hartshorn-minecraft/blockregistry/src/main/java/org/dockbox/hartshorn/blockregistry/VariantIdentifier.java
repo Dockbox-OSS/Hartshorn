@@ -53,19 +53,38 @@ public enum VariantIdentifier implements RegistryIdentifier {
     GOTHIC_ARCH,
     SEGMENTAL_ARCH,
 
+    LARGE_BRANCH,
+    BRANCH,
+    SMALL_BRANCH,
+    STUMP,
+
+    BEAM_HORIZONTAL,
+    BEAM_VERTICAL,
+    BEAM_POSTS,
+    BEAM_DOOR_FRAME_POSTS,
+    BEAM_LINTEL,
+    BEAM_DOOR_FRAME_LINTEL,
+
     //TODO: Go through rest of these
     FENCE,
     FENCE_GATE,
     TRAPDOOR,
     BOARDS,
-    CARPET,
-    PANE,
-    IRONBAR,
     LAYER("snow"),
+    ROCKS,
+    RAIL,
 
-    VERTICAL_BEAM("beam"),
-    HORIZONTAL_BEAM("beamhorizontal"),
-    ROCKS;
+    RAILING_HORIZONTAL,
+    RAILING_DIAGONAL,
+    RAILING_CORNER,
+
+    CARPET,
+    LADDER,
+    PANE,
+    VINE,
+    IRONBAR,
+    SHUTTERS;
+
 
     private final Set<String> idIdentifiers;
     private static final Map<String, VariantIdentifier> identifierMap = HartshornUtils.emptyConcurrentMap();

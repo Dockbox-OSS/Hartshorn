@@ -3,12 +3,12 @@ package org.dockbox.hartshorn.blockregistry.init;
 import org.dockbox.hartshorn.blockregistry.init.VanillaProps.ModGroups;
 import org.dockbox.hartshorn.blockregistry.init.VanillaProps.TypeList;
 
-public class LargeStoneSlabsInit {
+public final class LargeStoneSlabsInit {
 
-    public static void init() {
-        TypeList types= null;
-        TypeList typesVanilla= null;
-        TypeList typesVanillaNoStairs= null;
+    private LargeStoneSlabsInit() {}
+
+    public static void init(TypeList types, TypeList typesVanilla, TypeList typesVanillaNoStairs) {
+
         VanillaProps.stone()
                 .group(ModGroups.COBBLE_AND_BRICK)
                 .name("large_limestone_block")

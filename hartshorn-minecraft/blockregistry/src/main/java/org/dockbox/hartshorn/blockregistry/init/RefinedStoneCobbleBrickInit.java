@@ -3,13 +3,11 @@ package org.dockbox.hartshorn.blockregistry.init;
 import org.dockbox.hartshorn.blockregistry.init.VanillaProps.ModGroups;
 import org.dockbox.hartshorn.blockregistry.init.VanillaProps.TypeList;
 
-public class RefinedStoneCobbleBrickInit {
+public final class RefinedStoneCobbleBrickInit {
 
-    public static void init() {
-        TypeList types = null;
-        TypeList typesVanilla  = null;
-        TypeList typesVanillaNoWall = null;
-        TypeList typesOverlayTop  = null;
+    private RefinedStoneCobbleBrickInit() {}
+
+    public static void init(TypeList types, TypeList typesVanilla, TypeList typesVanillaNoWall, TypeList typesOverlayTop) {
         VanillaProps.stone()
                 .group(ModGroups.COBBLE_AND_BRICK)
                 .name("lime_mortar_masonry")
@@ -27,66 +25,66 @@ public class RefinedStoneCobbleBrickInit {
                 .group(ModGroups.COBBLE_AND_BRICK)
                 .name("limestone_cobble")
                 .texture("minecraft:block/cobblestone")
-                                .register(typesVanillaNoWall);
+                .register(typesVanillaNoWall);
         VanillaProps.stone()
                 .group(ModGroups.COBBLE_AND_BRICK)
                 .name("limestone_bricks", "limestone_brick")
                 .texture("minecraft:block/stone_bricks")
-                                .register(typesVanillaNoWall);
+                .register(typesVanillaNoWall);
         VanillaProps.grassyStone()
                 .group(ModGroups.COBBLE_AND_BRICK)
                 .name("mossy_limestone_bricks", "mossy_limestone_brick")
                 .manual()
                 .grassColor()
-                                .register(TypeList.of(Void.class));
+                .register(TypeList.of(Void.class));
         VanillaProps.stone()
                 .group(ModGroups.COBBLE_AND_BRICK)
                 .name("cracked_limestone_bricks", "cracked_limestone_brick")
                 .texture("minecraft:block/cracked_stone_bricks")
-                                .register(TypeList.of(Void.class));
+                .register(TypeList.of(Void.class));
         VanillaProps.stone()
                 .group(ModGroups.COBBLE_AND_BRICK)
                 .name("clay_bricks", "clay_brick")
                 .texture("top", "minecraft:block/bricks_topbottom")
                 .texture("bottom", "minecraft:block/bricks_topbottom")
                 .texture("*", "minecraft:block/bricks")
-                                .register(typesVanillaNoWall);
+                .register(typesVanillaNoWall);
         VanillaProps.stone()
                 .group(ModGroups.COBBLE_AND_BRICK)
                 .name("red_sandstone_cobble")
                 .texture("top", "minecraft:block/red_sandstone_top")
                 .texture("bottom", "minecraft:block/red_sandstone_bottom")
                 .texture("minecraft:block/red_sandstone")
-                                .register(typesVanillaNoWall);
+                .register(typesVanillaNoWall);
         VanillaProps.stone()
                 .group(ModGroups.COBBLE_AND_BRICK)
                 .name("sandstone")
                 .texture("top", "minecraft:block/sandstone_top")
                 .texture("bottom", "minecraft:block/sandstone_bottom")
                 .texture("minecraft:block/sandstone")
-                                .register(typesVanillaNoWall);
+                .register(typesVanillaNoWall);
         VanillaProps.stone()
                 .group(ModGroups.COBBLE_AND_BRICK)
                 .name("marble_bricks", "marble_brick")
                 .texture("top", "minecraft:block/quartz_block_top")
                 .texture("bottom", "minecraft:block/quartz_block_bottom")
                 .texture("minecraft:block/quartz_block_side")
-                                .register(typesVanilla);
+                .register(typesVanilla);
         VanillaProps.stone()
                 .group(ModGroups.COBBLE_AND_BRICK)
                 .name("prismarine_bricks", "prismarine_brick")
                 .texture("minecraft:block/prismarine_bricks")
-                                .register(typesVanilla);
+                .register(typesVanilla);
         VanillaProps.stone()
                 .group(ModGroups.COBBLE_AND_BRICK)
                 .name("dark_prismarine")
                 .texture("minecraft:block/dark_prismarine")
-                                .register(typesVanilla);
+            .register(typesVanilla);
         VanillaProps.stone()
                 .group(ModGroups.ADVANCED_MASONRY_AND_CERAMICS)
                 .name("end_stone_bricks", "end_stone_brick")
                 .texture("minecraft:block/end_stone_bricks")
-                                .register(typesVanillaNoWall);
+                .register(typesVanillaNoWall);
         VanillaProps.stone()
                 .group(ModGroups.COBBLE_AND_BRICK)
                 .name("carved_limestone")
