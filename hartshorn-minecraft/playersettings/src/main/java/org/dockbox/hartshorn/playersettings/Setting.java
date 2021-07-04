@@ -165,7 +165,7 @@ public class Setting<T> extends TypedPersistentDataKey<T> {
             if (this.description == null) throw new IllegalArgumentException("Description should be specified");
             if (this.defaultValue == null) throw new IllegalArgumentException("Default value should be specified");
             if (this.id == null) {
-                this.id = Keys.convertId(this.resource.plain(), this.owner);
+                this.id = Keys.id(this.resource.plain(), this.owner);
             }
 
             return new Setting<>(
