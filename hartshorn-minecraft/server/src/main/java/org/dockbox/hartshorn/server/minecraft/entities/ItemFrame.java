@@ -18,6 +18,7 @@
 package org.dockbox.hartshorn.server.minecraft.entities;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.di.annotations.Required;
 import org.dockbox.hartshorn.server.minecraft.dimension.position.BlockFace;
 import org.dockbox.hartshorn.server.minecraft.item.Item;
 import org.dockbox.hartshorn.server.minecraft.item.storage.MinecraftItems;
@@ -26,6 +27,7 @@ import org.dockbox.hartshorn.server.minecraft.item.storage.MinecraftItems;
  * Represents an Item Frame. See <a href="https://minecraft.gamepedia.com/Item_Frame">Item Frame on
  * the Minecraft Wiki</a>.
  */
+@Required
 public interface ItemFrame extends CloneableEntity<ItemFrame> {
 
     /**

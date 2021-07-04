@@ -27,8 +27,7 @@ import org.dockbox.hartshorn.server.minecraft.dimension.position.Location;
 public final class EntityTypes {
 
     /** The Armor Stand entity type, referencing the {@link ArmorStand} entity. */
-    public static final EntityType<ArmorStand> ARMOR_STAND =
-            new EntityType<>(ArmorStand.class);
+    public static final EntityType<ArmorStand> ARMOR_STAND = new EntityType<>(ArmorStand.class);
     /** The Item Frame entity type, referencing the {@link ItemFrame} entity. */
     public static final EntityType<ItemFrame> ITEM_FRAME = new EntityType<>(ItemFrame.class);
 
