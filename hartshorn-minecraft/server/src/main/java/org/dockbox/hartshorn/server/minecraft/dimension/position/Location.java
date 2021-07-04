@@ -19,9 +19,8 @@ package org.dockbox.hartshorn.server.minecraft.dimension.position;
 
 import org.dockbox.hartshorn.api.domain.tuple.Vector3N;
 import org.dockbox.hartshorn.api.keys.KeyHolder;
+import org.dockbox.hartshorn.server.minecraft.dimension.Block;
 import org.dockbox.hartshorn.server.minecraft.dimension.world.World;
-import org.dockbox.hartshorn.server.minecraft.item.Item;
-import org.dockbox.hartshorn.server.minecraft.players.Profile;
 
 import java.util.Objects;
 
@@ -82,17 +81,8 @@ public class Location implements KeyHolder<Location> {
         return this.vectorLoc;
     }
 
-    public boolean place(Item item, Profile placer) {
-        return this.place(item, BlockFace.NONE, placer);
-    }
-
-    public boolean place(Item item, BlockFace direction) {
-        return this.place(item, direction, null);
-    }
-
-    public boolean place(Item item, BlockFace direction, Profile placer) {
-        if (!item.isBlock() && !item.isAir()) return false;
-        return this.getWorld().setBlock(this.getVectorLoc(), item, direction, placer);
+    public boolean place(Block block) {
+        return block.place(this);
     }
 
     @Override
