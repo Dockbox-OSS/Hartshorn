@@ -726,7 +726,7 @@ public final class BlocksNoVariantsInit {
 //            .name("noose")
 //            .manual()
 //            .render(RenderLayer.CUTOUT)
-//            .register(TypeList.of(VariantIdentifier.FULL));
+//            .register(TypeList.of(HorizontalDirectional.class));
 //        VanillaProps.metal()
 //            .group(ModGroups.METAL)
 //            .name("weather_vane")
@@ -821,7 +821,7 @@ public final class BlocksNoVariantsInit {
 //            .manual()
 //            .blocking(false)
 //            .render(RenderLayer.CUTOUT)
-//            .register(TypeList.of(VariantIdentifier.FULL));
+//            .register(TypeList.of(HorizontalDirectional.class));
 //        VanillaProps.cloth()
 //            .group(ModGroups.CLOTH_AND_FIBERS)
 //            .name("hanging_bear_skin")
@@ -971,7 +971,7 @@ public final class BlocksNoVariantsInit {
 //            .blocking(false)
 //            .render(RenderLayer.CUTOUT)
 //            .with("hitBox", BlockVoxelShapes.doorKnocker)
-//            .register(TypeList.of(VariantIdentifier.FULL));
+//            .register(TypeList.of(HorizontalDirectional.class));
 //        VanillaProps.metal()
 //            .group(ModGroups.METAL)
 //            .name("iron_door_knocker")
@@ -979,7 +979,7 @@ public final class BlocksNoVariantsInit {
 //            .blocking(false)
 //            .render(RenderLayer.CUTOUT)
 //            .with("hitBox", BlockVoxelShapes.doorKnocker)
-//            .register(TypeList.of(VariantIdentifier.FULL));
+//            .register(TypeList.of(HorizontalDirectional.class));
 //        VanillaProps.stone()
 //            .group(ModGroups.DECORATIONS)
 //            .name("terracotta")//fence
@@ -1034,7 +1034,7 @@ public final class BlocksNoVariantsInit {
 //            .manual()
 //            .render(RenderLayer.CUTOUT)
 //            .with("hitBox", BlockVoxelShapes.cubePartialShape)
-//            .register(TypeList.of(VariantIdentifier.FULL));
+//            .register(TypeList.of(HorizontalDirectional.class));
 //        VanillaProps.stone()
 //            .group(ModGroups.DECORATIONS)
 //            .name("commercial_amphora")
@@ -1116,20 +1116,20 @@ public final class BlocksNoVariantsInit {
 //            .manual()
 //            .render(RenderLayer.CUTOUT)
 //            .with("hitBox", BlockVoxelShapes.verticalSlabShapes)
-//            .register(TypeList.of(VariantIdentifier.FULL));
+//            .register(TypeList.of(HorizontalDirectional.class));
 //        VanillaProps.planks()
 //            .group(ModGroups.DECORATIONS)
 //            .name("clavicytherium")
 //            .manual()
 //            .render(RenderLayer.CUTOUT)
 //            .with("hitBox", BlockVoxelShapes.verticalSlabShapes)
-//            .register(TypeList.of(VariantIdentifier.FULL));
+//            .register(TypeList.of(HorizontalDirectional.class));
 //        VanillaProps.planks()
 //            .group(ModGroups.DECORATIONS)
 //            .name("sign_post")
 //            .manual()
 //            .render(RenderLayer.CUTOUT)
-//            
+//            .with("hitBox", BlockVoxelShapes.pillarShape)
 //            .register(TypeList.of(ModelBlock.class));
 //        VanillaProps.planks()
 //            .group(ModGroups.DECORATIONS)
@@ -1137,21 +1137,21 @@ public final class BlocksNoVariantsInit {
 //            .manual()
 //            .render(RenderLayer.CUTOUT)
 //            .with("hitBox", BlockVoxelShapes.mirrorShape)
-//            .register(TypeList.of(VariantIdentifier.FULL));
+//            .register(TypeList.of(HorizontalDirectional.class));
 //        VanillaProps.planks()
 //            .group(ModGroups.DECORATIONS)
 //            .name("pinata")
 //            .manual()
 //            .render(RenderLayer.CUTOUT)
 //            .with("hitBox", BlockVoxelShapes.cubePartialShape)
-//            .register(TypeList.of(VariantIdentifier.FULL));
+//            .register(TypeList.of(HorizontalDirectional.class));
 //        VanillaProps.planks()
 //            .group(ModGroups.DECORATIONS)
 //            .name("chess_board")
 //            .manual()
 //            .render(RenderLayer.CUTOUT)
 //            .with("hitBox", BlockVoxelShapes.coverShape)
-//            .register(TypeList.of(VariantIdentifier.FULL));
+//            .register(TypeList.of(HorizontalDirectional.class));
 //        VanillaProps.metal()
 //            .group(ModGroups.APPLIANCES)
 //            .name("iron_oven")
@@ -1364,7 +1364,7 @@ public final class BlocksNoVariantsInit {
 //            .render(RenderLayer.CUTOUT)
 //            .solid(false)
 //            .with("hitBox", BlockVoxelShapes.tableShapes)
-//            .register(TypeList.of(VariantIdentifier.FULL));
+//            .register(TypeList.of(HorizontalDirectional.class));
         VanillaProps.planks()
             .group(ModGroups.FURNITURE)
             .name("oak_wood_table")
@@ -1842,7 +1842,7 @@ public final class BlocksNoVariantsInit {
 //            .group(ModGroups.FOOD_BLOCKS)
 //            .name("pig_on_a_spit")
 //            .with("hitBox", BlockVoxelShapes.paneShape)
-//            .register(TypeList.of(VariantIdentifier.FULL));
+//            .register(TypeList.of(HorizontalDirectional.class));
 //        VanillaProps.planks()
 //            .group(ModGroups.FOOD_BLOCKS)
 //            .name("sausages_on_hooks")
@@ -2023,28 +2023,28 @@ public final class BlocksNoVariantsInit {
 //            .manual()
 //            .blocking(false)
 //            .variantFamily()
-//            .register(TypeList.of(DrinkingVariantIdentifier.FULL));
+//            .register(TypeList.of(DrinkingGlass.class));
 //        VanillaProps.stone()
 //            .group(ModGroups.FOOD_BLOCKS)
 //            .name("wine_goblet")
 //            .manual()
 //            .blocking(false)
 //            .variantFamily()
-//            .register(TypeList.of(DrinkingVariantIdentifier.FULL));
+//            .register(TypeList.of(DrinkingGlass.class));
 //        VanillaProps.glass()
 //            .group(ModGroups.FOOD_BLOCKS)
 //            .name("tall_crystal_wine_glass")
 //            .manual()
 //            .blocking(false)
 //            .variantFamily()
-//            .register(TypeList.of(DrinkingVariantIdentifier.FULL));
+//            .register(TypeList.of(DrinkingGlass.class));
 //        VanillaProps.glass()
 //            .group(ModGroups.FOOD_BLOCKS)
 //            .name("short_crystal_wine_glass")
 //            .manual()
 //            .blocking(false)
 //            .variantFamily()
-//            .register(TypeList.of(DrinkingVariantIdentifier.FULL));
+//            .register(TypeList.of(DrinkingGlass.class));
 //        VanillaProps.planks()
 //            .group(ModGroups.FOOD_BLOCKS)
 //            .name("wooden_tankard")
@@ -2120,7 +2120,7 @@ public final class BlocksNoVariantsInit {
 //            .name("wooden_pole")
 //            .manual()
 //            .render(RenderLayer.CUTOUT)
-//            
+//            .with("hitBox", BlockVoxelShapes.pillarShape)
 //            .register(TypeList.of(ModelBlock.class));
 //        VanillaProps.planks()
 //            .group(ModGroups.TOOL_BLOCKS)
@@ -2138,42 +2138,42 @@ public final class BlocksNoVariantsInit {
 //            .manual()
 //            .render(RenderLayer.CUTOUT)
 //            .with("hitBox", BlockVoxelShapes.verticalSlabShapes)
-//            .register(TypeList.of(VariantIdentifier.FULL));
+//            .register(TypeList.of(HorizontalDirectional.class));
 //        VanillaProps.planks()
 //            .group(ModGroups.TOOL_BLOCKS)
 //            .name("empty_small_rack")
 //            .manual()
 //            .render(RenderLayer.CUTOUT)
 //            .with("hitBox", BlockVoxelShapes.verticalSlabShapes)
-//            .register(TypeList.of(VariantIdentifier.FULL));
+//            .register(TypeList.of(HorizontalDirectional.class));
 //        VanillaProps.planks()
 //            .group(ModGroups.TOOL_BLOCKS)
 //            .name("rack_of_axes")
 //            .manual()
 //            .render(RenderLayer.CUTOUT)
 //            .with("hitBox", BlockVoxelShapes.verticalSlabShapes)
-//            .register(TypeList.of(VariantIdentifier.FULL));
+//            .register(TypeList.of(HorizontalDirectional.class));
 //        VanillaProps.planks()
 //            .group(ModGroups.TOOL_BLOCKS)
 //            .name("rack_of_brooms_pitchforks_and_shovels")
 //            .manual()
 //            .render(RenderLayer.CUTOUT)
 //            .with("hitBox", BlockVoxelShapes.verticalSlabShapes)
-//            .register(TypeList.of(VariantIdentifier.FULL));
+//            .register(TypeList.of(HorizontalDirectional.class));
 //        VanillaProps.planks()
 //            .group(ModGroups.TOOL_BLOCKS)
 //            .name("rack_of_crossbows")
 //            .manual()
 //            .render(RenderLayer.CUTOUT)
 //            .with("hitBox", BlockVoxelShapes.verticalSlabShapes)
-//            .register(TypeList.of(VariantIdentifier.FULL));
+//            .register(TypeList.of(HorizontalDirectional.class));
 //        VanillaProps.planks()
 //            .group(ModGroups.TOOL_BLOCKS)
 //            .name("rack_of_daggers")
 //            .manual()
 //            .render(RenderLayer.CUTOUT)
 //            .with("hitBox", BlockVoxelShapes.verticalSlabShapes)
-//            .register(TypeList.of(VariantIdentifier.FULL));
+//            .register(TypeList.of(HorizontalDirectional.class));
 //        VanillaProps.planks()
 //            .group(ModGroups.TOOL_BLOCKS)
 //            .name("rack_of_halberds")
@@ -2185,56 +2185,56 @@ public final class BlocksNoVariantsInit {
 //            .manual()
 //            .render(RenderLayer.CUTOUT)
 //            .with("hitBox", BlockVoxelShapes.verticalSlabShapes)
-//            .register(TypeList.of(VariantIdentifier.FULL));
+//            .register(TypeList.of(HorizontalDirectional.class));
 //        VanillaProps.planks()
 //            .group(ModGroups.TOOL_BLOCKS)
 //            .name("rack_of_military_flails")
 //            .manual()
 //            .render(RenderLayer.CUTOUT)
 //            .with("hitBox", BlockVoxelShapes.verticalSlabShapes)
-//            .register(TypeList.of(VariantIdentifier.FULL));
+//            .register(TypeList.of(HorizontalDirectional.class));
 //        VanillaProps.planks()
 //            .group(ModGroups.TOOL_BLOCKS)
 //            .name("rack_of_muskets")
 //            .manual()
 //            .render(RenderLayer.CUTOUT)
 //            .with("hitBox", BlockVoxelShapes.verticalSlabShapes)
-//            .register(TypeList.of(VariantIdentifier.FULL));
+//            .register(TypeList.of(HorizontalDirectional.class));
 //        VanillaProps.planks()
 //            .group(ModGroups.TOOL_BLOCKS)
 //            .name("rack_of_pistols")
 //            .manual()
 //            .render(RenderLayer.CUTOUT)
 //            .with("hitBox", BlockVoxelShapes.verticalSlabShapes)
-//            .register(TypeList.of(VariantIdentifier.FULL));
+//            .register(TypeList.of(HorizontalDirectional.class));
 //        VanillaProps.planks()
 //            .group(ModGroups.TOOL_BLOCKS)
 //            .name("rack_of_pitchforks_scythes_and_flails")
 //            .manual()
 //            .render(RenderLayer.CUTOUT)
 //            .with("hitBox", BlockVoxelShapes.verticalSlabShapes)
-//            .register(TypeList.of(VariantIdentifier.FULL));
+//            .register(TypeList.of(HorizontalDirectional.class));
 //        VanillaProps.planks()
 //            .group(ModGroups.TOOL_BLOCKS)
 //            .name("rack_of_sickles_and_hatchets")
 //            .manual()
 //            .render(RenderLayer.CUTOUT)
 //            .with("hitBox", BlockVoxelShapes.verticalSlabShapes)
-//            .register(TypeList.of(VariantIdentifier.FULL));
+//            .register(TypeList.of(HorizontalDirectional.class));
 //        VanillaProps.planks()
 //            .group(ModGroups.TOOL_BLOCKS)
 //            .name("rack_of_swords")
 //            .manual()
 //            .render(RenderLayer.CUTOUT)
 //            .with("hitBox", BlockVoxelShapes.verticalSlabShapes)
-//            .register(TypeList.of(VariantIdentifier.FULL));
+//            .register(TypeList.of(HorizontalDirectional.class));
 //        VanillaProps.planks()
 //            .group(ModGroups.TOOL_BLOCKS)
 //            .name("rack_of_war_hammers")
 //            .manual()
 //            .render(RenderLayer.CUTOUT)
 //            .with("hitBox", BlockVoxelShapes.verticalSlabShapes)
-//            .register(TypeList.of(VariantIdentifier.FULL));
+//            .register(TypeList.of(HorizontalDirectional.class));
 //        VanillaProps.planks()
 //            .group(ModGroups.TOOL_BLOCKS)
 //            .name("spears")
@@ -2256,7 +2256,7 @@ public final class BlocksNoVariantsInit {
 //            .blocking(false)
 //            .with("hitBox", BlockVoxelShapes.coverShape)
 //            .render(RenderLayer.CUTOUT)
-//            .register(TypeList.of(VariantIdentifier.FULL));
+//            .register(TypeList.of(HorizontalDirectional.class));
 //        VanillaProps.planks()
 //            .group(ModGroups.TOOL_BLOCKS)
 //            .name("bow_on_the_ground")
@@ -2264,7 +2264,7 @@ public final class BlocksNoVariantsInit {
 //            .blocking(false)
 //            .with("hitBox", BlockVoxelShapes.coverShape)
 //            .render(RenderLayer.CUTOUT)
-//            .register(TypeList.of(VariantIdentifier.FULL));
+//            .register(TypeList.of(HorizontalDirectional.class));
 //        VanillaProps.planks()
 //            .group(ModGroups.TOOL_BLOCKS)
 //            .name("axe_on_the_ground")
@@ -2272,14 +2272,14 @@ public final class BlocksNoVariantsInit {
 //            .blocking(false)
 //            .with("hitBox", BlockVoxelShapes.coverShape)
 //            .render(RenderLayer.CUTOUT)
-//            .register(TypeList.of(VariantIdentifier.FULL));
+//            .register(TypeList.of(HorizontalDirectional.class));
 //        VanillaProps.planks()
 //            .group(ModGroups.TOOL_BLOCKS)
 //            .name("iron_hatchet")
 //            .manual()
 //            .render(RenderLayer.CUTOUT)
 //            .with("hitBox", BlockVoxelShapes.paneShape)
-//            .register(TypeList.of(VariantIdentifier.FULL));
+//            .register(TypeList.of(HorizontalDirectional.class));
 //        VanillaProps.planks()
 //            .group(ModGroups.TOOL_BLOCKS)
 //            .name("sword_on_the_ground")
@@ -2287,7 +2287,7 @@ public final class BlocksNoVariantsInit {
 //            .blocking(false)
 //            .with("hitBox", BlockVoxelShapes.coverShape)
 //            .render(RenderLayer.CUTOUT)
-//            .register(TypeList.of(VariantIdentifier.FULL));
+//            .register(TypeList.of(HorizontalDirectional.class));
 //        VanillaProps.planks()
 //            .group(ModGroups.TOOL_BLOCKS)
 //            .name("broom")
@@ -2311,7 +2311,7 @@ public final class BlocksNoVariantsInit {
 //            .blocking(false)
 //            .render(RenderLayer.CUTOUT)
 //            .with("hitBox", BlockVoxelShapes.cubePartialShape)
-//            .register(TypeList.of(VariantIdentifier.FULL));
+//            .register(TypeList.of(HorizontalDirectional.class));
 //        VanillaProps.planks()
 //            .group(ModGroups.TOOL_BLOCKS)
 //            .name("shovel_on_the_ground")
@@ -2319,7 +2319,7 @@ public final class BlocksNoVariantsInit {
 //            .with("hitBox", BlockVoxelShapes.coverShape)
 //            .render(RenderLayer.CUTOUT)
 //            .blocking(false)
-//            .register(TypeList.of(VariantIdentifier.FULL));
+//            .register(TypeList.of(HorizontalDirectional.class));
 //        VanillaProps.planks()
 //            .group(ModGroups.TOOL_BLOCKS)
 //            .name("fishing_rod_on_the_ground")
@@ -2327,7 +2327,7 @@ public final class BlocksNoVariantsInit {
 //            .with("hitBox", BlockVoxelShapes.coverShape)
 //            .render(RenderLayer.CUTOUT)
 //            .blocking(false)
-//            .register(TypeList.of(VariantIdentifier.FULL));
+//            .register(TypeList.of(HorizontalDirectional.class));
 //        VanillaProps.planks()
 //            .group(ModGroups.TOOL_BLOCKS)
 //            .name("bow_saw_on_the_ground")
@@ -2335,7 +2335,7 @@ public final class BlocksNoVariantsInit {
 //            .with("hitBox", BlockVoxelShapes.coverShape)
 //            .render(RenderLayer.CUTOUT)
 //            .blocking(false)
-//            .register(TypeList.of(VariantIdentifier.FULL));
+//            .register(TypeList.of(HorizontalDirectional.class));
 //        VanillaProps.planks()
 //            .group(ModGroups.TOOL_BLOCKS)
 //            .name("hammer_on_the_ground")
@@ -2343,7 +2343,7 @@ public final class BlocksNoVariantsInit {
 //            .with("hitBox", BlockVoxelShapes.coverShape)
 //            .render(RenderLayer.CUTOUT)
 //            .blocking(false)
-//            .register(TypeList.of(VariantIdentifier.FULL));
+//            .register(TypeList.of(HorizontalDirectional.class));
 //        VanillaProps.planks()
 //            .group(ModGroups.TOOL_BLOCKS)
 //            .name("pickaxe_on_the_ground")
@@ -2351,7 +2351,7 @@ public final class BlocksNoVariantsInit {
 //            .with("hitBox", BlockVoxelShapes.coverShape)
 //            .render(RenderLayer.CUTOUT)
 //            .blocking(false)
-//            .register(TypeList.of(VariantIdentifier.FULL));
+//            .register(TypeList.of(HorizontalDirectional.class));
 //        VanillaProps.planks()
 //            .group(ModGroups.TOOL_BLOCKS)
 //            .name("sickle_on_the_ground")
@@ -2359,7 +2359,7 @@ public final class BlocksNoVariantsInit {
 //            .blocking(false)
 //            .with("hitBox", BlockVoxelShapes.coverShape)
 //            .render(RenderLayer.CUTOUT)
-//            .register(TypeList.of(VariantIdentifier.FULL));
+//            .register(TypeList.of(HorizontalDirectional.class));
 //        VanillaProps.planks()
 //            .group(ModGroups.TOOL_BLOCKS)
 //            .name("rack_of_tongs_and_hammers")
@@ -2367,7 +2367,7 @@ public final class BlocksNoVariantsInit {
 //            .blocking(false)
 //            .render(RenderLayer.CUTOUT)
 //            .with("hitBox", BlockVoxelShapes.cubePartialShape)
-//            .register(TypeList.of(VariantIdentifier.FULL));
+//            .register(TypeList.of(HorizontalDirectional.class));
 //        VanillaProps.planks()
 //            .group(ModGroups.TOOL_BLOCKS)
 //            .name("mounted_rack_of_tongs_and_hammers")
@@ -2375,7 +2375,7 @@ public final class BlocksNoVariantsInit {
 //            .blocking(false)
 //            .render(RenderLayer.CUTOUT)
 //            .with("hitBox", BlockVoxelShapes.verticalSlabShapes)
-//            .register(TypeList.of(VariantIdentifier.FULL));
+//            .register(TypeList.of(HorizontalDirectional.class));
 //        VanillaProps.planks()
 //            .group(ModGroups.TOOL_BLOCKS)
 //            .name("mechanical_bellows")
@@ -2434,7 +2434,7 @@ public final class BlocksNoVariantsInit {
 //            .blocking(false)
 //            .render(RenderLayer.CUTOUT)
 //            .with("hitBox", BlockVoxelShapes.cubePartialShape)
-//            .register(TypeList.of(VariantIdentifier.FULL));
+//            .register(TypeList.of(HorizontalDirectional.class));
 //        VanillaProps.planks()
 //            .group(ModGroups.TOOL_BLOCKS)
 //            .name("spoked_wooden_wheel")
@@ -2501,35 +2501,35 @@ public final class BlocksNoVariantsInit {
 //            .manual()
 //            .render(RenderLayer.CUTOUT)
 //            .with("hitBox", BlockVoxelShapes.paneShape)
-//            .register(TypeList.of(VariantIdentifier.FULL));
+//            .register(TypeList.of(HorizontalDirectional.class));
 //        VanillaProps.metal()
 //            .group(ModGroups.TOOL_BLOCKS)
 //            .name("abacus")
 //            .manual()
 //            .render(RenderLayer.CUTOUT)
 //            .with("hitBox", BlockVoxelShapes.paneShape)
-//            .register(TypeList.of(VariantIdentifier.FULL));
+//            .register(TypeList.of(HorizontalDirectional.class));
 //        VanillaProps.metal()
 //            .group(ModGroups.TOOL_BLOCKS)
 //            .name("sextant")
 //            .manual()
 //            .render(RenderLayer.CUTOUT)
 //            .with("hitBox", BlockVoxelShapes.paneShape)
-//            .register(TypeList.of(VariantIdentifier.FULL));
+//            .register(TypeList.of(HorizontalDirectional.class));
 //        VanillaProps.metal()
 //            .group(ModGroups.TOOL_BLOCKS)
 //            .name("metal_telescope")
 //            .manual()
 //            .render(RenderLayer.CUTOUT)
 //            .with("hitBox", BlockVoxelShapes.paneShape)
-//            .register(TypeList.of(VariantIdentifier.FULL));
+//            .register(TypeList.of(HorizontalDirectional.class));
 //        VanillaProps.planks()
 //            .group(ModGroups.TOOL_BLOCKS)
 //            .name("wooden_telescope")
 //            .manual()
 //            .render(RenderLayer.CUTOUT)
 //            .with("hitBox", BlockVoxelShapes.paneShape)
-//            .register(TypeList.of(VariantIdentifier.FULL));
+//            .register(TypeList.of(HorizontalDirectional.class));
 //        VanillaProps.metal()
 //            .group(ModGroups.TOOL_BLOCKS)
 //            .name("hourglass")
@@ -2550,14 +2550,14 @@ public final class BlocksNoVariantsInit {
 //            .manual()
 //            .render(RenderLayer.CUTOUT)
 //            .with("hitBox", BlockVoxelShapes.paneShape)
-//            .register(TypeList.of(VariantIdentifier.FULL));
+//            .register(TypeList.of(HorizontalDirectional.class));
 //        VanillaProps.metal()
 //            .group(ModGroups.TOOL_BLOCKS)
 //            .name("golden_astrolabe")
 //            .manual()
 //            .render(RenderLayer.CUTOUT)
 //            .with("hitBox", BlockVoxelShapes.paneShape)
-//            .register(TypeList.of(VariantIdentifier.FULL));
+//            .register(TypeList.of(HorizontalDirectional.class));
 //        VanillaProps.metal()
 //            .group(ModGroups.FOOD_BLOCKS)
 //            .name("small_hanging_cauldron")
@@ -2825,198 +2825,198 @@ public final class BlocksNoVariantsInit {
             .manual()
             .register(TypeList.of(VariantIdentifier.RAILING_CORNER));
 
-//        VanillaProps.metal()
-//            .group(ModGroups.METAL)
-//            .name("steel_beam")
-//            .manual()
-//            .solid(false)
-//            .register(TypeList.of(VariantIdentifier.BEAM_VERTICAL));
         VanillaProps.metal()
-            .name("steel_beam_vertical")
+            .group(ModGroups.METAL)
+            .name("steel_beam")
+            .manual()
+            .solid(false)
+            .register(TypeList.of(VariantIdentifier.BEAM_VERTICAL));
+        VanillaProps.metal()
+            .family("steel_beam_vertical")
+            .name("steel_beam")
             .manual()
             .solid(false)
             .register(TypeList.of(VariantIdentifier.BEAM_HORIZONTAL));
-        VanillaProps.metal()
-            .family("steel_beam_vertical")
-            .name("steel_cross_beams")
-            .manual()
-            .solid(false)
-            .register(TypeList.of(Void.class));
-        VanillaProps.metal()
-            .family("steel_beam_vertical")
-            .name("steel_diagonal_beam_1")
-            .manual()
-            .solid(false)
-            .register(TypeList.of(Void.class));
-        VanillaProps.metal()
-            .family("steel_beam_vertical")
-            .name("steel_diagonal_beam_2")
-            .manual()
-            .solid(false)
-            .register(TypeList.of(Void.class));
-        VanillaProps.metal()
-            .family("steel_beam_vertical")
-            .name("steel_diagonal_beam_3")
-            .manual()
-            .solid(false)
-            .register(TypeList.of(Void.class));
-        VanillaProps.metal()
-            .family("steel_beam_vertical")
-            .name("steel_cross_beams_side")
-            .manual()
-            .solid(false)
-            .register(TypeList.of(Void.class));
-        VanillaProps.metal()
-            .family("steel_beam_vertical")
-            .name("steel_diagonal_beam_side_1")
-            .manual()
-            .solid(false)
-            .register(TypeList.of(Void.class));
-        VanillaProps.metal()
-            .family("steel_beam_vertical")
-            .name("steel_diagonal_beam_side_2")
-            .manual()
-            .solid(false)
-            .register(TypeList.of(Void.class));
-        VanillaProps.metal()
-            .family("steel_beam_vertical")
-            .name("steel_diagonal_beam_side_3")
-            .manual()
-            .solid(false)
-            .register(TypeList.of(Void.class));
 //        VanillaProps.metal()
-//            .group(ModGroups.METAL)
-//            .name("red_painted_steel_beam")
+//            .family("steel_beam_vertical")
+//            .name("steel_cross_beams")
 //            .manual()
 //            .solid(false)
-//            .register(TypeList.of(Void.class));
+//            .register(TypeList.of(DiagonalBeamCentered.class));
+//        VanillaProps.metal()
+//            .family("steel_beam_vertical")
+//            .name("steel_diagonal_beam_1")
+//            .manual()
+//            .solid(false)
+//            .register(TypeList.of(DiagonalBeamCentered.class));
+//        VanillaProps.metal()
+//            .family("steel_beam_vertical")
+//            .name("steel_diagonal_beam_2")
+//            .manual()
+//            .solid(false)
+//            .register(TypeList.of(DiagonalBeamUpDownCentered.class));
+//        VanillaProps.metal()
+//            .family("steel_beam_vertical")
+//            .name("steel_diagonal_beam_3")
+//            .manual()
+//            .solid(false)
+//            .register(TypeList.of(DiagonalBeamUpDownCentered.class));
+//        VanillaProps.metal()
+//            .family("steel_beam_vertical")
+//            .name("steel_cross_beams_side")
+//            .manual()
+//            .solid(false)
+//            .register(TypeList.of(DiagonalBeam.class));
+//        VanillaProps.metal()
+//            .family("steel_beam_vertical")
+//            .name("steel_diagonal_beam_side_1")
+//            .manual()
+//            .solid(false)
+//            .register(TypeList.of(DiagonalBeam.class));
+//        VanillaProps.metal()
+//            .family("steel_beam_vertical")
+//            .name("steel_diagonal_beam_side_2")
+//            .manual()
+//            .solid(false)
+//            .register(TypeList.of(DiagonalBeamUpDown.class));
+//        VanillaProps.metal()
+//            .family("steel_beam_vertical")
+//            .name("steel_diagonal_beam_side_3")
+//            .manual()
+//            .solid(false)
+//            .register(TypeList.of(DiagonalBeamUpDown.class));
+        VanillaProps.metal()
+            .group(ModGroups.METAL)
+            .name("red_painted_steel_beam")
+            .manual()
+            .solid(false)
+            .register(TypeList.of(VariantIdentifier.BEAM_VERTICAL));
+        VanillaProps.metal()
+            .family("red_painted_steel_beam_vertical")
+            .name("red_painted_steel_beam")
+            .manual()
+            .solid(false)
+            .register(TypeList.of(VariantIdentifier.BEAM_HORIZONTAL));
 //        VanillaProps.metal()
 //            .family("red_painted_steel_beam_vertical")
-//            .name("red_painted_steel_beam")
+//            .name("red_painted_steel_cross_beams")
 //            .manual()
 //            .solid(false)
-//            .register(TypeList.of(Void.class));
-        VanillaProps.metal()
-            .family("red_painted_steel_beam_vertical")
-            .name("red_painted_steel_cross_beams")
-            .manual()
-            .solid(false)
-            .register(TypeList.of(Void.class));
-        VanillaProps.metal()
-            .family("red_painted_steel_beam_vertical")
-            .name("red_painted_steel_diagonal_beam_1")
-            .manual()
-            .solid(false)
-            .register(TypeList.of(Void.class));
-        VanillaProps.metal()
-            .family("red_painted_steel_beam_vertical")
-            .name("red_painted_steel_diagonal_beam_2")
-            .manual()
-            .solid(false)
-            .register(TypeList.of(Void.class));
-        VanillaProps.metal()
-            .family("red_painted_steel_beam_vertical")
-            .name("red_painted_steel_diagonal_beam_3")
-            .manual()
-            .solid(false)
-            .register(TypeList.of(Void.class));
-        VanillaProps.metal()
-            .family("red_painted_steel_beam_vertical")
-            .name("red_painted_steel_cross_beams_side")
-            .manual()
-            .solid(false)
-            .register(TypeList.of(Void.class));
-        VanillaProps.metal()
-            .family("red_painted_steel_beam_vertical")
-            .name("red_painted_steel_diagonal_beam_side_1")
-            .manual()
-            .solid(false)
-            .register(TypeList.of(Void.class));
-        VanillaProps.metal()
-            .family("red_painted_steel_beam_vertical")
-            .name("red_painted_steel_diagonal_beam_side_2")
-            .manual()
-            .solid(false)
-            .register(TypeList.of(Void.class));
-        VanillaProps.metal()
-            .family("red_painted_steel_beam_vertical")
-            .name("red_painted_steel_diagonal_beam_side_3")
-            .manual()
-            .solid(false)
-            .register(TypeList.of(Void.class));
-//        These names don't seem to match up with actual ids
+//            .register(TypeList.of(DiagonalBeamCentered.class));
 //        VanillaProps.metal()
-//            .group(ModGroups.METAL)
-//            .name("worn_red_painted_steel_beam")
+//            .family("red_painted_steel_beam_vertical")
+//            .name("red_painted_steel_diagonal_beam_1")
 //            .manual()
 //            .solid(false)
-//            .register(TypeList.of(VariantIdentifier.BEAM_VERTICAL));
+//            .register(TypeList.of(DiagonalBeamCentered.class));
+//        VanillaProps.metal()
+//            .family("red_painted_steel_beam_vertical")
+//            .name("red_painted_steel_diagonal_beam_2")
+//            .manual()
+//            .solid(false)
+//            .register(TypeList.of(DiagonalBeamUpDownCentered.class));
+//        VanillaProps.metal()
+//            .family("red_painted_steel_beam_vertical")
+//            .name("red_painted_steel_diagonal_beam_3")
+//            .manual()
+//            .solid(false)
+//            .register(TypeList.of(DiagonalBeamUpDownCentered.class));
+//        VanillaProps.metal()
+//            .family("red_painted_steel_beam_vertical")
+//            .name("red_painted_steel_cross_beams_side")
+//            .manual()
+//            .solid(false)
+//            .register(TypeList.of(DiagonalBeam.class));
+//        VanillaProps.metal()
+//            .family("red_painted_steel_beam_vertical")
+//            .name("red_painted_steel_diagonal_beam_side_1")
+//            .manual()
+//            .solid(false)
+//            .register(TypeList.of(DiagonalBeam.class));
+//        VanillaProps.metal()
+//            .family("red_painted_steel_beam_vertical")
+//            .name("red_painted_steel_diagonal_beam_side_2")
+//            .manual()
+//            .solid(false)
+//            .register(TypeList.of(DiagonalBeamUpDown.class));
+//        VanillaProps.metal()
+//            .family("red_painted_steel_beam_vertical")
+//            .name("red_painted_steel_diagonal_beam_side_3")
+//            .manual()
+//            .solid(false)
+//            .register(TypeList.of(DiagonalBeamUpDown.class));
+        VanillaProps.metal()
+            .group(ModGroups.METAL)
+            .name("worn_red_painted_steel_beam")
+            .manual()
+            .solid(false)
+            .register(TypeList.of(VariantIdentifier.BEAM_VERTICAL));
+        VanillaProps.metal()
+            .family("worn_red_painted_steel_beam_vertical")
+            .name("worn_red_painted_steel_beam")
+            .manual()
+            .solid(false)
+            .register(TypeList.of(VariantIdentifier.BEAM_HORIZONTAL));
 //        VanillaProps.metal()
 //            .family("worn_red_painted_steel_beam_vertical")
-//            .name("worn_red_painted_steel_beam")
+//            .name("worn_red_painted_steel_cross_beams")
 //            .manual()
 //            .solid(false)
-//            .register(TypeList.of(VariantIdentifier.BEAM_HORIZONTAL));
-        VanillaProps.metal()
-            .family("worn_red_painted_steel_beam_vertical")
-            .name("worn_red_painted_steel_cross_beams")
-            .manual()
-            .solid(false)
-            .register(TypeList.of(Void.class));
-        VanillaProps.metal()
-            .family("worn_red_painted_steel_beam_vertical")
-            .name("worn_red_painted_steel_diagonal_beam_1")
-            .manual()
-            .solid(false)
-            .register(TypeList.of(Void.class));
-        VanillaProps.metal()
-            .family("worn_red_painted_steel_beam_vertical")
-            .name("worn_red_painted_steel_diagonal_beam_2")
-            .manual()
-            .solid(false)
-            .register(TypeList.of(Void.class));
-        VanillaProps.metal()
-            .family("worn_red_painted_steel_beam_vertical")
-            .name("worn_red_painted_steel_diagonal_beam_3")
-            .manual()
-            .solid(false)
-            .register(TypeList.of(Void.class));
-        VanillaProps.metal()
-            .family("worn_red_painted_steel_beam_vertical")
-            .name("worn_red_painted_steel_cross_beams_side")
-            .manual()
-            .solid(false)
-            .register(TypeList.of(Void.class));
-        VanillaProps.metal()
-            .family("worn_red_painted_steel_beam_vertical")
-            .name("worn_red_painted_steel_diagonal_beam_side_1")
-            .manual()
-            .solid(false)
-            .register(TypeList.of(Void.class));
-        VanillaProps.metal()
-            .family("worn_red_painted_steel_beam_vertical")
-            .name("worn_red_painted_steel_diagonal_beam_side_2")
-            .manual()
-            .solid(false)
-            .register(TypeList.of(Void.class));
-        VanillaProps.metal()
-            .family("worn_red_painted_steel_beam_vertical")
-            .name("worn_red_painted_steel_diagonal_beam_side_3")
-            .manual()
-            .solid(false)
-            .register(TypeList.of(Void.class));
+//            .register(TypeList.of(DiagonalBeamCentered.class));
 //        VanillaProps.metal()
-//                .group(ModGroups.METAL)
-//                .name("pipe")
-//                .manual()
-//                .solid(false)
-//                .register(TypeList.of(Void.class));
+//            .family("worn_red_painted_steel_beam_vertical")
+//            .name("worn_red_painted_steel_diagonal_beam_1")
+//            .manual()
+//            .solid(false)
+//            .register(TypeList.of(DiagonalBeamCentered.class));
 //        VanillaProps.metal()
-//                .group(ModGroups.METAL)
-//                .name("wall_pipe")
-//                .manual()
-//                .solid(false)
-//                .register(TypeList.of(WallVoid.class));
+//            .family("worn_red_painted_steel_beam_vertical")
+//            .name("worn_red_painted_steel_diagonal_beam_2")
+//            .manual()
+//            .solid(false)
+//            .register(TypeList.of(DiagonalBeamUpDownCentered.class));
+//        VanillaProps.metal()
+//            .family("worn_red_painted_steel_beam_vertical")
+//            .name("worn_red_painted_steel_diagonal_beam_3")
+//            .manual()
+//            .solid(false)
+//            .register(TypeList.of(DiagonalBeamUpDownCentered.class));
+//        VanillaProps.metal()
+//            .family("worn_red_painted_steel_beam_vertical")
+//            .name("worn_red_painted_steel_cross_beams_side")
+//            .manual()
+//            .solid(false)
+//            .register(TypeList.of(DiagonalBeam.class));
+//        VanillaProps.metal()
+//            .family("worn_red_painted_steel_beam_vertical")
+//            .name("worn_red_painted_steel_diagonal_beam_side_1")
+//            .manual()
+//            .solid(false)
+//            .register(TypeList.of(DiagonalBeam.class));
+//        VanillaProps.metal()
+//            .family("worn_red_painted_steel_beam_vertical")
+//            .name("worn_red_painted_steel_diagonal_beam_side_2")
+//            .manual()
+//            .solid(false)
+//            .register(TypeList.of(DiagonalBeamUpDown.class));
+//        VanillaProps.metal()
+//            .family("worn_red_painted_steel_beam_vertical")
+//            .name("worn_red_painted_steel_diagonal_beam_side_3")
+//            .manual()
+//            .solid(false)
+//            .register(TypeList.of(DiagonalBeamUpDown.class));
+        //VanillaProps.metal()
+        //        .group(ModGroups.METAL)
+        //        .name("pipe")
+        //        .manual()
+        //        .solid(false)
+        //        .register(TypeList.of(Pipe.class));
+        //VanillaProps.metal()
+        //        .group(ModGroups.METAL)
+        //        .name("wall_pipe")
+        //        .manual()
+        //        .solid(false)
+        //        .register(TypeList.of(WallPipe.class));
         VanillaProps.planks()
             .group(ModGroups.STORAGE)
             .name("oak_plank_wooden_crate")

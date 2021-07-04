@@ -20,7 +20,6 @@ package org.dockbox.hartshorn.blockregistry.init;
 import com.google.common.reflect.ClassPath;
 import com.google.common.reflect.ClassPath.ClassInfo;
 
-import org.dockbox.hartshorn.blockregistry.BlockDataBuilder;
 import org.dockbox.hartshorn.blockregistry.VariantIdentifier;
 import org.dockbox.hartshorn.persistence.mapping.JacksonObjectMapper;
 import org.dockbox.hartshorn.util.HartshornUtils;
@@ -32,10 +31,20 @@ import java.util.List;
 
 public final class VanillaProps {
 
+    public static final List<VariantIdentifier> DEFAULT_VARIANTS =
+        HartshornUtils.asUnmodifiableList(VariantIdentifier.FULL, VariantIdentifier.ARROWSLIT, VariantIdentifier.SMALL_WINDOW,
+            VariantIdentifier.SMALL_WINDOW_HALF, VariantIdentifier.BALUSTRADE, VariantIdentifier.CAPITAL,
+            VariantIdentifier.SLAB, VariantIdentifier.QUARTER_SLAB, VariantIdentifier.CORNER_SLAB,
+            VariantIdentifier.EIGHTH_SLAB, VariantIdentifier.VERTICAL_CORNER_SLAB, VariantIdentifier.VERTICAL_SLAB,
+            VariantIdentifier.VERTICAL_CORNER, VariantIdentifier.VERTICAL_QUARTER, VariantIdentifier.STAIRS,
+            VariantIdentifier.WALL, VariantIdentifier.PILLAR);
+
     private VanillaProps() {}
 
     public static BlockDataBuilder stone() {
-        return new BlockDataBuilder();
+        return new BlockDataBuilder(
+            DEFAULT_VARIANTS, VariantIdentifier.SMALL_ARCH, VariantIdentifier.SMALL_ARCH_HALF,
+            VariantIdentifier.TWO_METER_ARCH, VariantIdentifier.TWO_METER_ARCH_HALF, VariantIdentifier.SPHERE);
     }
     public static BlockDataBuilder planks() {
         return new BlockDataBuilder();
@@ -44,7 +53,7 @@ public final class VanillaProps {
         return new BlockDataBuilder();
     }
     public static BlockDataBuilder metal() {
-        return new BlockDataBuilder();
+        return new BlockDataBuilder(DEFAULT_VARIANTS);
     }
     public static BlockDataBuilder grassyEarth() {
         return new BlockDataBuilder();
@@ -68,7 +77,7 @@ public final class VanillaProps {
         return new BlockDataBuilder();
     }
     public static BlockDataBuilder plants() {
-        return new BlockDataBuilder();
+        return new BlockDataBuilder(true);
     }
     public static BlockDataBuilder mosaic() {
         return new BlockDataBuilder();
@@ -169,4 +178,111 @@ public final class VanillaProps {
         System.out.println(names.size());
         new JacksonObjectMapper().write(names).get();
     }
+
+    public static class BlockDataBuilder
+    {
+        private String family;
+        private List<VariantIdentifier> variants;
+
+        private ModGroups group;
+        private boolean isSolid;
+        private boolean ignore;
+
+        public BlockDataBuilder() {}
+
+        public BlockDataBuilder(boolean ignore) {
+            this.ignore = ignore;
+        }
+
+        public BlockDataBuilder(List<VariantIdentifier> variantIdentifiers,
+                                VariantIdentifier... additionalVariantIdentifiers)
+        {
+            //So that when the additional variant identifiers are added to it, this doesn't update the initial list too.
+            this.variants = HartshornUtils.asList(variantIdentifiers);
+
+            this.variants.addAll(HartshornUtils.asList(additionalVariantIdentifiers));
+        }
+
+        public BlockDataBuilder group(ModGroups group) {
+            this.group = group;
+            return this;
+        }
+
+        public BlockDataBuilder family(String family) {
+            this.family = family;
+            return this;
+        }
+
+        public BlockDataBuilder name(String name) {
+            names.add(name);
+            return this;
+        }
+
+        public BlockDataBuilder name(String name, String name2) {
+            names.add(name);
+            names.add(name2);
+            return this;
+        }
+
+        public BlockDataBuilder sound(SoundType sound) {
+            return this;
+        }
+
+        public BlockDataBuilder texture(String texture) {
+            return this;
+        }
+
+        public BlockDataBuilder texture(String name, String texture) {
+            return this;
+        }
+
+        public BlockDataBuilder blocking(boolean blocking) {
+            return this;
+        }
+
+        public BlockDataBuilder solid(boolean isSolid) {
+            this.isSolid = isSolid;
+            return this;
+        }
+
+        public BlockDataBuilder manual() {
+            return this;
+        }
+
+        public BlockDataBuilder waterColor() {
+            return this;
+        }
+
+        public BlockDataBuilder variantFamily() {
+            return this;
+        }
+
+        public BlockDataBuilder grassColor() {
+            return this;
+        }
+
+        public BlockDataBuilder foliageColor() {
+            return this;
+        }
+
+        public BlockDataBuilder with(String name, String value) {
+            return this;
+        }
+
+        public BlockDataBuilder render(RenderLayer name) {
+            return this;
+        }
+
+        public void register(TypeList type) {
+            this.variants.addAll(type.variantIdentifiers);
+        }
+        public BlockDataBuilder randomTick(boolean tick) {
+            return this;
+        }
+
+        public BlockDataBuilder strength(double a, double b) {
+            return this;
+        }
+    }
+
 }
