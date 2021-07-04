@@ -34,6 +34,7 @@ import org.dockbox.hartshorn.sponge.util.SpongeConvert;
 import org.dockbox.hartshorn.sponge.util.SpongeUtil;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.jetbrains.annotations.NotNull;
+import org.spongepowered.api.ResourceKey;
 import org.spongepowered.api.data.DataHolder.Mutable;
 import org.spongepowered.api.data.Keys;
 import org.spongepowered.api.item.ItemType;
@@ -55,6 +56,13 @@ public class SpongeItem extends ReferencedItem<ItemStack> implements SpongeCompo
     @Wired
     public SpongeItem(String id) {
         super(id);
+    }
+
+    @Override
+    public String getId() {
+        return SpongeUtil.location(this.item().map(ItemStack::type), RegistryTypes.ITEM_TYPE)
+                .map(ResourceKey::asString)
+                .or("");
     }
 
     @Override
