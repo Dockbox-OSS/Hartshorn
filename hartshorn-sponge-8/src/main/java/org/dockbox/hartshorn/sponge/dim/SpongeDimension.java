@@ -19,24 +19,20 @@ package org.dockbox.hartshorn.sponge.dim;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.domain.tuple.Vector3N;
+import org.dockbox.hartshorn.server.minecraft.dimension.Block;
 import org.dockbox.hartshorn.server.minecraft.dimension.BlockDimension;
 import org.dockbox.hartshorn.server.minecraft.dimension.EntityHolding;
 import org.dockbox.hartshorn.server.minecraft.dimension.position.BlockFace;
 import org.dockbox.hartshorn.server.minecraft.entities.Entity;
-import org.dockbox.hartshorn.server.minecraft.item.Item;
-import org.dockbox.hartshorn.server.minecraft.item.storage.MinecraftItems;
 import org.dockbox.hartshorn.server.minecraft.players.Profile;
 import org.dockbox.hartshorn.sponge.util.SpongeConvert;
 import org.spongepowered.api.block.BlockState;
-import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.block.BlockTypes;
-import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.util.AABB;
 import org.spongepowered.api.world.server.ServerWorld;
 import org.spongepowered.math.vector.Vector3i;
 
 import java.util.Collection;
-import java.util.Optional;
 import java.util.function.Predicate;
 
 public interface SpongeDimension extends BlockDimension, EntityHolding {
@@ -64,21 +60,19 @@ public interface SpongeDimension extends BlockDimension, EntityHolding {
     }
 
     @Override
-    default Exceptional<org.dockbox.hartshorn.server.minecraft.item.Item> getBlock(Vector3N position) {
+    default Exceptional<Block> getBlock(Vector3N position) {
         Vector3i loc = SpongeConvert.toSponge(position);
         BlockState blockState = this.serverWorld().block(loc);
-        if (blockState.type() == BlockTypes.AIR.get()) return Exceptional.of(MinecraftItems.getInstance().getAir());
-        ItemStack stack = ItemStack.builder().fromBlockState(blockState).build();
-        return Exceptional.of(SpongeConvert.fromSponge(stack));
+        if (blockState.type() == BlockTypes.AIR.get()) return Exceptional.of(Block.empty());
+        return Exceptional.of(SpongeConvert.fromSponge(blockState));
     }
 
     @Override
-    default boolean setBlock(Vector3N position, Item item, BlockFace direction, Profile placer) {
+    default boolean setBlock(Vector3N position, Block block, BlockFace direction, Profile placer) {
         Vector3i loc = SpongeConvert.toSponge(position);
-        Optional<BlockType> blockType = SpongeConvert.toSponge(item).type().block();
-        if (blockType.isEmpty()) return false;
-        BlockState state = blockType.get().defaultState();
-        return this.serverWorld().setBlock(loc, state);
+        Exceptional<BlockState> state = SpongeConvert.toSponge(block);
+        if (state.absent()) return false;
+        return this.serverWorld().setBlock(loc, state.get());
     }
 
     @Override

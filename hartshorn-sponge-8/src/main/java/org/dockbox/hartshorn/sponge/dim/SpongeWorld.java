@@ -19,11 +19,11 @@ package org.dockbox.hartshorn.sponge.dim;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.domain.tuple.Vector3N;
+import org.dockbox.hartshorn.server.minecraft.dimension.Block;
 import org.dockbox.hartshorn.server.minecraft.dimension.Chunk;
 import org.dockbox.hartshorn.server.minecraft.dimension.position.BlockFace;
 import org.dockbox.hartshorn.server.minecraft.dimension.position.Location;
 import org.dockbox.hartshorn.server.minecraft.dimension.world.World;
-import org.dockbox.hartshorn.server.minecraft.item.Item;
 import org.dockbox.hartshorn.server.minecraft.players.Profile;
 import org.dockbox.hartshorn.sponge.util.SpongeConvert;
 import org.dockbox.hartshorn.sponge.util.SpongeUtil;
@@ -60,18 +60,13 @@ public class SpongeWorld extends World implements SpongeDimension {
     }
 
     @Override
-    public Exceptional<Item> getBlock(Vector3N position) {
-        // TODO: Implement when Block API (#303) is done
-        return Exceptional.empty();
+    public Exceptional<Block> getBlock(Vector3N position) {
+        return Exceptional.of(Block.from(new Location(position, this)));
     }
 
     @Override
-    public boolean setBlock(Vector3N position, Item item, BlockFace direction, Profile placer) {
-        return this.world().map(world -> {
-            // TODO: Implement when Block API (#303) is done
-            // world.setBlock(SpongeConversionUtil.toSponge(position), null);
-            return false;
-        }).or(false);
+    public boolean setBlock(Vector3N position, Block block, BlockFace direction, Profile placer) {
+        return block.place(new Location(position, this));
     }
 
     @Override
