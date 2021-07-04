@@ -24,9 +24,13 @@ import java.lang.ref.WeakReference;
 
 public abstract class SpongeEntityReference<E extends Entity> {
 
-    private final WeakReference<E> entity;
+    private WeakReference<E> entity;
 
     public SpongeEntityReference(E entity) {
+        this.modify(entity);
+    }
+
+    protected final void modify(E entity) {
         this.entity = new WeakReference<>(entity);
     }
 
