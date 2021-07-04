@@ -19,8 +19,6 @@ package org.dockbox.hartshorn.server.minecraft.dimension;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.domain.tuple.Vector3N;
-import org.dockbox.hartshorn.server.minecraft.dimension.position.BlockFace;
-import org.dockbox.hartshorn.server.minecraft.players.Profile;
 
 public interface BlockDimension {
 
@@ -34,6 +32,6 @@ public interface BlockDimension {
 
     Exceptional<Block> getBlock(Vector3N position);
 
-    boolean setBlock(Vector3N position, Block item, BlockFace direction, Profile placer);
+    boolean setBlock(Vector3N position, Block item);
 
 }
