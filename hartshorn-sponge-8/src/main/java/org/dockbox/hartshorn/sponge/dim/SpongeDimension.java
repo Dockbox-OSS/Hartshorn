@@ -62,7 +62,7 @@ public interface SpongeDimension extends BlockDimension, EntityHolding {
         Vector3i loc = SpongeConvert.toSponge(position);
         BlockState blockState = this.serverWorld().block(loc);
         if (blockState.type() == BlockTypes.AIR.get()) return Exceptional.of(Block.empty());
-        return Exceptional.of(SpongeConvert.fromSponge(blockState));
+        return Exceptional.of(new SpongeBlock(SpongeConvert.toSnapshot(blockState)));
     }
 
     @Override
