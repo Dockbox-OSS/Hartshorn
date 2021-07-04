@@ -26,6 +26,7 @@ import org.dockbox.hartshorn.server.minecraft.dimension.world.World;
 import org.dockbox.hartshorn.sponge.game.SpongeComposite;
 import org.dockbox.hartshorn.sponge.util.SpongeConvert;
 import org.dockbox.hartshorn.sponge.util.SpongeUtil;
+import org.dockbox.hartshorn.util.HartshornUtils;
 import org.spongepowered.api.data.DataHolder.Mutable;
 import org.spongepowered.api.data.Key;
 import org.spongepowered.api.data.Keys;
@@ -43,11 +44,13 @@ public interface SpongeEntity
     abstract EntityType<S> type();
 
     default UUID getUniqueId() {
-        return null;
+        return this.spongeEntity().map(org.spongepowered.api.entity.Entity::uniqueId)
+                .orElse(() -> HartshornUtils.EMPTY_UUID)
+                .get();
     }
 
     default String getName() {
-        return null;
+        return this.getDisplayName().toPlain();
     }
 
     default Text getDisplayName() {
