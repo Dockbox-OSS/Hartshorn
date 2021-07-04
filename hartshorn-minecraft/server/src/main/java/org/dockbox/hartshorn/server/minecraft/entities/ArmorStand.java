@@ -18,12 +18,14 @@
 package org.dockbox.hartshorn.server.minecraft.entities;
 
 import org.dockbox.hartshorn.api.domain.tuple.Vector3N;
+import org.dockbox.hartshorn.di.annotations.Required;
 import org.dockbox.hartshorn.server.minecraft.inventory.InventoryHolder;
 
 /**
  * Represents an Armor Stand. See <a href="https://minecraft.gamepedia.com/Armor_Stand">Armor Stand
  * on the Minecraft Wiki</a>.
  */
+@Required
 public interface ArmorStand extends CloneableEntity<ArmorStand>, InventoryHolder {
 
     /**
