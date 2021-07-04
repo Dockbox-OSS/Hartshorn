@@ -19,7 +19,9 @@ package org.dockbox.hartshorn.sponge.game.entity;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.di.annotations.Binds;
+import org.dockbox.hartshorn.di.annotations.Wired;
 import org.dockbox.hartshorn.server.minecraft.dimension.position.BlockFace;
+import org.dockbox.hartshorn.server.minecraft.dimension.position.Location;
 import org.dockbox.hartshorn.server.minecraft.entities.ItemFrame;
 import org.dockbox.hartshorn.server.minecraft.item.Item;
 import org.dockbox.hartshorn.sponge.util.SpongeConvert;
@@ -35,6 +37,11 @@ public class SpongeItemFrame
         extends SpongeCloneableEntityReference<ItemFrame, net.minecraft.world.entity.decoration.ItemFrame, org.spongepowered.api.entity.hanging.ItemFrame>
         implements ItemFrame
 {
+
+    @Wired
+    public SpongeItemFrame(Location location) {
+        super(location);
+    }
 
     public SpongeItemFrame(org.spongepowered.api.entity.hanging.ItemFrame frame) {
         super(frame);
