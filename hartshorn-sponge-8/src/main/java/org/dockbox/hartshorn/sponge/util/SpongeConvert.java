@@ -66,7 +66,7 @@ import org.dockbox.hartshorn.server.minecraft.players.Player;
 import org.dockbox.hartshorn.server.minecraft.players.Sounds;
 import org.dockbox.hartshorn.sponge.dim.SpongeWorld;
 import org.dockbox.hartshorn.sponge.game.SpongeConsole;
-import org.dockbox.hartshorn.sponge.game.SpongeGenericEntity;
+import org.dockbox.hartshorn.sponge.game.entity.SpongeGenericEntity;
 import org.dockbox.hartshorn.sponge.game.SpongePlayer;
 import org.dockbox.hartshorn.sponge.inventory.SpongeItem;
 import org.dockbox.hartshorn.util.HartshornUtils;
@@ -106,6 +106,7 @@ import org.spongepowered.api.world.server.ServerWorld;
 import org.spongepowered.math.vector.Vector3d;
 import org.spongepowered.math.vector.Vector3i;
 
+import java.lang.ref.WeakReference;
 import java.net.URL;
 import java.util.List;
 import java.util.Locale;
@@ -708,7 +709,7 @@ public enum SpongeConvert {
         if (type == EntityTypes.PLAYER.get()) {
             return new SpongePlayer(entity.uniqueId(), ((ServerPlayer) entity).name());
         } else {
-            return new SpongeGenericEntity(entity);
+            return new SpongeGenericEntity(new WeakReference<>(entity));
         }
     }
 

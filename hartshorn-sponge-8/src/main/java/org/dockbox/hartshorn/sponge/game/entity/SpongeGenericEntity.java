@@ -15,29 +15,32 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.sponge.game;
+package org.dockbox.hartshorn.sponge.game.entity;
 
 import net.minecraft.world.entity.Entity;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.sponge.game.entity.SpongeEntity;
 import org.spongepowered.api.entity.EntityType;
+
+import java.lang.ref.WeakReference;
 
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 public class SpongeGenericEntity implements SpongeEntity<Entity, org.spongepowered.api.entity.Entity> {
 
-    private final org.spongepowered.api.entity.Entity entity;
+    private final WeakReference<org.spongepowered.api.entity.Entity> entity;
 
     @Override
     public EntityType<org.spongepowered.api.entity.Entity> type() {
         //noinspection unchecked
-        return (EntityType<org.spongepowered.api.entity.Entity>) this.entity.type();
+        return (EntityType<org.spongepowered.api.entity.Entity>) this.spongeEntity()
+                .map(org.spongepowered.api.entity.Entity::type)
+                .orNull();
     }
 
     @Override
     public Exceptional<org.spongepowered.api.entity.Entity> spongeEntity() {
-        return Exceptional.of(this.entity);
+        return Exceptional.of(this.entity.get());
     }
 }
