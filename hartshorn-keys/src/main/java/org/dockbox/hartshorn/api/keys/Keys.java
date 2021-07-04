@@ -70,7 +70,7 @@ public final class Keys {
         if (!Reflect.isNative(type))
             throw new RuntimeException("Unsupported data type for persistent key: " + type.getCanonicalName());
 
-        return new TypedPersistentDataKey<>(name, Keys.convertId(name, owner), owner, type);
+        return new TypedPersistentDataKey<>(name, Keys.id(name, owner), owner, type);
     }
 
     /**
@@ -86,199 +86,92 @@ public final class Keys {
      *
      * @return the string
      */
-    public static String convertId(String name, TypedOwner owner) {
+    public static String id(String name, TypedOwner owner) {
         name = name.toLowerCase(Locale.ROOT).replaceAll("[ .]", "").replaceAll("-", "_");
         return owner.id() + ':' + name;
     }
 
-    /**
-     * Checked dynamic key of key.
-     *
-     * @param <K>
-     *         the type parameter
-     * @param <A>
-     *         the type parameter
-     * @param setter
-     *         the setter
-     * @param getter
-     *         the getter
-     *
-     * @return the key
-     */
-    public static <K, A> Key<K, A> removable(BiFunction<K, A, TransactionResult> setter, Function<K, Exceptional<A>> getter) {
-        return new Key<>(setter, getter) {
-        };
+    public static <K, A> KeyBuilder<K, A> builder(Class<K> target, Class<A> type) {
+        return new KeyBuilder<>();
     }
 
-    /**
-     * Unsafe dynamic key of key.
-     *
-     * @param <K>
-     *         the type parameter
-     * @param <A>
-     *         the type parameter
-     * @param setter
-     *         the setter
-     * @param getter
-     *         the getter
-     *
-     * @return the key
-     */
-    public static <K, A> Key<K, A> wrapRemovable(BiConsumer<K, A> setter, CheckedFunction<K, A> getter) {
-        return new Key<>(Keys.wrapSetter(setter), k -> Exceptional.of(() -> getter.apply(k))) {
-        };
+    @SuppressWarnings("ClassReferencesSubclass")
+    public static class KeyBuilder<K, A> {
+
+        protected BiFunction<K, A, TransactionResult> setter;
+        protected Function<K, Exceptional<A>> getter;
+
+        private KeyBuilder() {
+            this.withoutGetter();
+            this.withoutSetter();
+        }
+
+        public KeyBuilder<K, A> withoutSetter() {
+            this.setter = (k, a) -> {
+                throw new UnsupportedOperationException("cannot set the value of this key");
+            };
+            return this;
+        }
+
+        public KeyBuilder<K, A> withoutGetter() {
+            this.getter = k -> Exceptional.empty();
+            return this;
+        }
+
+        public KeyBuilder<K, A> withSetter(BiConsumer<K, A> setter) {
+            this.setter = (k, a) -> {
+                setter.accept(k, a);
+                return TransactionResult.success();
+            };
+            return this;
+        }
+
+        public KeyBuilder<K, A> withSetterResult(BiFunction<K, A, TransactionResult> setter) {
+            this.setter = setter;
+            return this;
+        }
+
+        public KeyBuilder<K, A> withGetterSafe(Function<K, Exceptional<A>> getter) {
+            this.getter = getter;
+            return this;
+        }
+
+        public KeyBuilder<K, A> withGetter(CheckedFunction<K, A> getter) {
+            this.getter = k -> Exceptional.of(() -> getter.apply(k));
+            return this;
+        }
+
+        public RemovableKeyBuilder<K, A> withRemover(Consumer<K> remover) {
+            return new RemovableKeyBuilder<K, A>()
+                    .withSetterResult(this.setter)
+                    .withGetterSafe(this.getter)
+                    .withRemover(remover);
+        }
+
+        public Key<K, A> build() {
+            return new Key<>(this.setter, this.getter) {
+            };
+        }
     }
 
-    /**
-     * Transact setter bi function.
-     *
-     * @param <K>
-     *         the type parameter
-     * @param <A>
-     *         the type parameter
-     * @param setter
-     *         the setter
-     *
-     * @return the bi function
-     */
-    public static <K, A> BiFunction<K, A, TransactionResult> wrapSetter(BiConsumer<K, A> setter) {
-        return Keys.wrapSetter(setter, TransactionResult.success());
-    }
+    public static class RemovableKeyBuilder<K, A> extends KeyBuilder<K, A> {
 
-    /**
-     * Transact setter bi function.
-     *
-     * @param <K>
-     *         the type parameter
-     * @param <A>
-     *         the type parameter
-     * @param setter
-     *         the setter
-     * @param defaultResult
-     *         the default result
-     *
-     * @return the bi function
-     */
-    public static <K, A> BiFunction<K, A, TransactionResult> wrapSetter(BiConsumer<K, A> setter, TransactionResult defaultResult) {
-        return (t, u) -> {
-            setter.accept(t, u);
-            return defaultResult;
-        };
-    }
+        private Consumer<K> remover;
 
-    /**
-     * Unsafe checked dynamic key of key.
-     *
-     * @param <K>
-     *         the type parameter
-     * @param <A>
-     *         the type parameter
-     * @param setter
-     *         the setter
-     * @param getter
-     *         the getter
-     *
-     * @return the key
-     */
-    public static <K, A> Key<K, A> wrapGetter(BiFunction<K, A, TransactionResult> setter, CheckedFunction<K, A> getter) {
-        return new Key<>(setter, k -> Exceptional.of(() -> getter.apply(k))) {
-        };
-    }
+        private RemovableKeyBuilder() {
+        }
 
-    /**
-     * Dynamic key of removable key.
-     *
-     * @param <K>
-     *         the type parameter
-     * @param <A>
-     *         the type parameter
-     * @param setter
-     *         the setter
-     * @param getter
-     *         the getter
-     * @param remover
-     *         the remover
-     *
-     * @return the removable key
-     */
-    public static <K, A> RemovableKey<K, A> of(BiConsumer<K, A> setter, Function<K, Exceptional<A>> getter, Consumer<K> remover) {
-        return new RemovableKey<>(Keys.wrapSetter(setter), getter, remover) {
-        };
-    }
+        @Override
+        public RemovableKeyBuilder<K, A> withRemover(Consumer<K> remover) {
+            this.remover = remover;
+            return this;
+        }
 
-    /**
-     * Checked dynamic key of removable key.
-     *
-     * @param <K>
-     *         the type parameter
-     * @param <A>
-     *         the type parameter
-     * @param setter
-     *         the setter
-     * @param getter
-     *         the getter
-     * @param remover
-     *         the remover
-     *
-     * @return the removable key
-     */
-    public static <K, A> RemovableKey<K, A> removable(
-            BiFunction<K, A, TransactionResult> setter,
-            Function<K, Exceptional<A>> getter,
-            Consumer<K> remover
-    ) {
-        return new RemovableKey<>(setter, getter, remover) {
-        };
-    }
-
-    /**
-     * Unsafe dynamic key of removable key.
-     *
-     * @param <K>
-     *         the type parameter
-     * @param <A>
-     *         the type parameter
-     * @param setter
-     *         the setter
-     * @param getter
-     *         the getter
-     * @param remover
-     *         the remover
-     *
-     * @return the removable key
-     */
-    public static <K, A> RemovableKey<K, A> wrapRemovable(BiConsumer<K, A> setter, CheckedFunction<K, A> getter, Consumer<K> remover) {
-        return new RemovableKey<>(
-                Keys.wrapSetter(setter), k -> Exceptional.of(() -> getter.apply(k)), remover) {
-        };
-    }
-
-    public static <K, A> Key<K, A> ofGetter(Function<K, Exceptional<A>> getter) {
-        return of((k, a) -> {
-            throw new UnsupportedOperationException("Cannot set the value of this key");
-        }, getter);
-    }
-
-    /**
-     * Dynamic key of key.
-     *
-     * @param <K>
-     *         the type parameter
-     * @param <A>
-     *         the type parameter
-     * @param setter
-     *         the setter
-     * @param getter
-     *         the getter
-     *
-     * @return the key
-     */
-    public static <K, A> Key<K, A> of(BiConsumer<K, A> setter, Function<K, Exceptional<A>> getter) {
-        return new Key<>(Keys.wrapSetter(setter), getter) {
-        };
-    }
-
-    public static <K, A> Key<K, A> ofSetter(BiConsumer<K, A> setter) {
-        return of(setter, in -> Exceptional.empty());
+        @Override
+        public RemovableKey<K, A> build() {
+            if (this.remover == null) this.remover = k -> {};
+            return new RemovableKey<>(this.setter, this.getter, this.remover) {
+            };
+        }
     }
 }

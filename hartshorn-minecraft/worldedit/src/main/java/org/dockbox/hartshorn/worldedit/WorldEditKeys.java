@@ -26,14 +26,15 @@ import org.dockbox.hartshorn.worldedit.region.Region;
 
 public final class WorldEditKeys {
 
-    public static final Key<Player, Region> SELECTION = Keys.of(
-            (player, region) -> Hartshorn.context().get(WorldEditService.class).setPlayerSelection(player, region),
-            player -> Hartshorn.context().get(WorldEditService.class).getPlayerSelection(player)
-    );
+    public static final Key<Player, Region> SELECTION = Keys.builder(Player.class, Region.class)
+            .withSetter((player, region) -> Hartshorn.context().get(WorldEditService.class).setPlayerSelection(player, region))
+            .withGetterSafe(player -> Hartshorn.context().get(WorldEditService.class).getPlayerSelection(player))
+            .build();
 
-    public static final Key<Player, Clipboard> CLIPBOARD = Keys.of(
-            (player, clipboard) -> Hartshorn.context().get(WorldEditService.class).setPlayerClipboard(player, clipboard),
-            player -> Hartshorn.context().get(WorldEditService.class).getPlayerClipboard(player));
+    public static final Key<Player, Clipboard> CLIPBOARD = Keys.builder(Player.class, Clipboard.class)
+            .withSetter((player, clipboard) -> Hartshorn.context().get(WorldEditService.class).setPlayerClipboard(player, clipboard))
+            .withGetterSafe(player -> Hartshorn.context().get(WorldEditService.class).getPlayerClipboard(player))
+            .build();
 
     private WorldEditKeys() {}
 }
