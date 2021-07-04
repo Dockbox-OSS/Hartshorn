@@ -29,7 +29,6 @@ import org.dockbox.hartshorn.sponge.util.SpongeConvert;
 import org.dockbox.hartshorn.sponge.util.SpongeUtil;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.spongepowered.api.ResourceKey;
-import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockType;
@@ -40,7 +39,6 @@ import org.spongepowered.api.state.BooleanStateProperty;
 import org.spongepowered.api.state.IntegerStateProperty;
 import org.spongepowered.api.state.StateProperty;
 import org.spongepowered.api.world.server.ServerLocation;
-import org.spongepowered.math.vector.Vector3i;
 
 import java.lang.ref.WeakReference;
 import java.util.Map;
@@ -51,6 +49,10 @@ public class SpongeBlock implements Block {
 
     private final WeakReference<BlockSnapshot> snapshot;
 
+    public SpongeBlock(BlockSnapshot snapshot) {
+        this.snapshot = new WeakReference<>(snapshot);
+    }
+
     @Wired
     public SpongeBlock(Item item) {
         final ItemStack itemStack = SpongeConvert.toSponge(item);
@@ -58,12 +60,7 @@ public class SpongeBlock implements Block {
         if (block.isEmpty()) this.snapshot = new WeakReference<>(BlockSnapshot.empty());
         else {
             final BlockType blockType = block.get();
-            final BlockSnapshot snapshot = BlockSnapshot.builder()
-                    .world(Sponge.server().worldManager().defaultWorld().properties())
-                    .position(Vector3i.ZERO)
-                    .blockState(blockType.defaultState())
-                    .build();
-            this.snapshot = new WeakReference<>(snapshot);
+            this.snapshot = new WeakReference<>(SpongeConvert.toSnapshot(blockType.defaultState()));
         }
     }
 
@@ -142,11 +139,11 @@ public class SpongeBlock implements Block {
         ).or(false);
     }
 
-    private Exceptional<BlockSnapshot> snapshot() {
+    public Exceptional<BlockSnapshot> snapshot() {
         return Exceptional.of(this.snapshot.get());
     }
 
-    private Exceptional<BlockState> state() {
+    public Exceptional<BlockState> state() {
         return this.snapshot().map(BlockSnapshot::state);
     }
 }
