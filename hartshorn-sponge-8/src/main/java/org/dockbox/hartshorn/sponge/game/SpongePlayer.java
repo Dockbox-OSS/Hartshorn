@@ -31,7 +31,9 @@ import org.dockbox.hartshorn.api.i18n.permissions.Permission;
 import org.dockbox.hartshorn.api.i18n.text.Text;
 import org.dockbox.hartshorn.api.i18n.text.pagination.Pagination;
 import org.dockbox.hartshorn.di.annotations.Wired;
+import org.dockbox.hartshorn.server.minecraft.dimension.Block;
 import org.dockbox.hartshorn.server.minecraft.dimension.position.Location;
+import org.dockbox.hartshorn.server.minecraft.entities.Entity;
 import org.dockbox.hartshorn.server.minecraft.item.Item;
 import org.dockbox.hartshorn.server.minecraft.packets.Packet;
 import org.dockbox.hartshorn.server.minecraft.players.GameSettings;
@@ -62,6 +64,7 @@ import org.spongepowered.api.service.context.Context;
 import org.spongepowered.api.service.permission.SubjectData;
 import org.spongepowered.api.util.blockray.RayTrace;
 import org.spongepowered.api.util.blockray.RayTraceResult;
+import org.spongepowered.api.world.Locatable;
 
 import java.util.Locale;
 import java.util.Set;
@@ -219,19 +222,36 @@ public class SpongePlayer extends Player implements SpongeEntity<net.minecraft.s
     }
 
     @Override
-    public Exceptional<Location> getLookingAtBlockPos() {
+    public Exceptional<Block> getLookingAtBlock() {
         return this.player()
-                .map(player -> RayTrace.block().sourcePosition(player)
-                        .continueWhileBlock(block -> {
-                            final BlockType type = block.blockState().type();
-                            return type == BlockTypes.AIR.get() ||
-                                    type == BlockTypes.CAVE_AIR.get() ||
-                                    type == BlockTypes.VOID_AIR.get();
-                        }).limit(RAY_TRACE_LIMIT)
-                        .execute().orElse(null))
+                .map(player -> this.trace(RayTrace.block(), player))
                 .map(RayTraceResult::hitPosition)
                 .map(SpongeConvert::fromSponge)
-                .map(vector -> new Location(vector, this.getWorld()));
+                .map(vector -> new Location(vector, this.getWorld()))
+                .map(Block::from);
+    }
+
+    @Override
+    public Exceptional<Entity> getLookingAtEntity() {
+        return this.player()
+                .map(player -> this.trace(RayTrace.entity(), player))
+                .map(RayTraceResult::selectedObject)
+                .map(SpongeConvert::fromSponge);
+    }
+
+    private <T extends Locatable> RayTraceResult<T> trace(RayTrace<T> trace, ServerPlayer player) {
+        return trace
+                .sourceEyePosition(player)
+                .continueWhileBlock(block -> {
+                    final BlockType type = block.blockState().type();
+                    return type == BlockTypes.AIR.get() ||
+                            type == BlockTypes.CAVE_AIR.get() ||
+                            type == BlockTypes.VOID_AIR.get();
+                })
+                .limit(RAY_TRACE_LIMIT)
+                .direction(player)
+                .world(player.world())
+                .execute().orElse(null);
     }
 
     @Override
