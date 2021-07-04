@@ -21,11 +21,9 @@ import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.domain.tuple.Vector3N;
 import org.dockbox.hartshorn.server.minecraft.dimension.Block;
 import org.dockbox.hartshorn.server.minecraft.dimension.Chunk;
-import org.dockbox.hartshorn.server.minecraft.dimension.position.BlockFace;
 import org.dockbox.hartshorn.server.minecraft.dimension.position.Location;
 import org.dockbox.hartshorn.server.minecraft.entities.Entity;
 import org.dockbox.hartshorn.server.minecraft.players.Gamemode;
-import org.dockbox.hartshorn.server.minecraft.players.Profile;
 import org.dockbox.hartshorn.util.HartshornUtils;
 
 import java.util.Collection;
@@ -83,7 +81,7 @@ final class EmptyWorld extends World {
     }
 
     @Override
-    public boolean setBlock(Vector3N position, Block block, BlockFace direction, Profile placer) {
+    public boolean setBlock(Vector3N position, Block item) {
         return false;
     }
 
