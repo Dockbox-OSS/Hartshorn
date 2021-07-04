@@ -49,8 +49,8 @@ public class JUnitItemFrame extends JUnitEntity<ItemFrame> implements ItemFrame,
     }
 
     @Override
-    public ItemFrame copy() {
-        return new JUnitItemFrame(UUID.randomUUID());
+    public Exceptional<ItemFrame> copy() {
+        return Exceptional.of(new JUnitItemFrame(UUID.randomUUID()));
     }
 
     @Override
