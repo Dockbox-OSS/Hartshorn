@@ -131,6 +131,10 @@ public final class HartshornUtils {
         }
     }
 
+    public static <K, V> MapBuilder<K, V> mapBuilder() {
+        return new MapBuilder<>();
+    }
+
     /**
      * Returns a new empty map. This should be used globally instead of instantiating maps manually.
      * The returned map is not concurrent.
