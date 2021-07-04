@@ -20,6 +20,8 @@ package org.dockbox.hartshorn.sponge.game.entity;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.domain.tuple.Vector3N;
 import org.dockbox.hartshorn.di.annotations.Binds;
+import org.dockbox.hartshorn.di.annotations.Wired;
+import org.dockbox.hartshorn.server.minecraft.dimension.position.Location;
 import org.dockbox.hartshorn.server.minecraft.entities.ArmorStand;
 import org.dockbox.hartshorn.server.minecraft.inventory.Inventory;
 import org.dockbox.hartshorn.sponge.util.SpongeConvert;
@@ -47,6 +49,11 @@ public class SpongeArmorStand
             .add(Limbs.LEFT_LEG, Keys.LEFT_LEG_ROTATION)
             .add(Limbs.RIGHT_LEG, Keys.RIGHT_LEG_ROTATION)
             .get();
+
+    @Wired
+    public SpongeArmorStand(Location location) {
+        super(location);
+    }
 
     public SpongeArmorStand(org.spongepowered.api.entity.living.ArmorStand entity) {
         super(entity);
