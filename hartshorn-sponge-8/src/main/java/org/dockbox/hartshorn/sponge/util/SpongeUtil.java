@@ -24,6 +24,9 @@ import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.Key;
 import org.spongepowered.api.data.value.Value;
 import org.spongepowered.api.data.value.ValueContainer;
+import org.spongepowered.api.registry.DefaultedRegistryReference;
+import org.spongepowered.api.registry.DefaultedRegistryType;
+import org.spongepowered.api.registry.DefaultedRegistryValue;
 import org.spongepowered.api.registry.Registry;
 import org.spongepowered.api.registry.RegistryEntry;
 import org.spongepowered.api.registry.RegistryKey;
@@ -75,6 +78,14 @@ public class SpongeUtil {
             final Optional<RegistryEntry<T>> entry = r.findEntry(key);
             return entry.map(RegistryEntry::value).orElse(null);
         });
+    }
+
+    public static <T extends DefaultedRegistryValue> Exceptional<ResourceKey> location(Exceptional<T> value, DefaultedRegistryType<T> type) {
+        return value.map(v -> v.asDefaultedReference(type).location());
+    }
+
+    public static <T extends DefaultedRegistryValue> DefaultedRegistryReference<T> key(RegistryType<T> type, String key) {
+        return RegistryKey.of(type, ResourceKey.sponge(key)).asDefaultedReference(() -> Sponge.game().registries());
     }
 
     public static <T, C> T get(

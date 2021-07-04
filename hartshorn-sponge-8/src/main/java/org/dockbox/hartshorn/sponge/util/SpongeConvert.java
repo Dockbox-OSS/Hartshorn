@@ -50,6 +50,7 @@ import org.dockbox.hartshorn.commands.RunCommandAction;
 import org.dockbox.hartshorn.commands.source.CommandSource;
 import org.dockbox.hartshorn.server.minecraft.bossbar.BossbarColor;
 import org.dockbox.hartshorn.server.minecraft.bossbar.BossbarStyle;
+import org.dockbox.hartshorn.server.minecraft.dimension.Block;
 import org.dockbox.hartshorn.server.minecraft.dimension.position.BlockFace;
 import org.dockbox.hartshorn.server.minecraft.entities.ItemFrame;
 import org.dockbox.hartshorn.server.minecraft.entities.ItemFrame.Rotation;
@@ -64,10 +65,11 @@ import org.dockbox.hartshorn.server.minecraft.players.Gamemode;
 import org.dockbox.hartshorn.server.minecraft.players.Hand;
 import org.dockbox.hartshorn.server.minecraft.players.Player;
 import org.dockbox.hartshorn.server.minecraft.players.Sounds;
+import org.dockbox.hartshorn.sponge.dim.SpongeBlock;
 import org.dockbox.hartshorn.sponge.dim.SpongeWorld;
 import org.dockbox.hartshorn.sponge.game.SpongeConsole;
-import org.dockbox.hartshorn.sponge.game.entity.SpongeGenericEntity;
 import org.dockbox.hartshorn.sponge.game.SpongePlayer;
+import org.dockbox.hartshorn.sponge.game.entity.SpongeGenericEntity;
 import org.dockbox.hartshorn.sponge.inventory.SpongeItem;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.dockbox.hartshorn.util.exceptions.TypeConversionException;
@@ -76,6 +78,8 @@ import org.spongepowered.api.ResourceKey;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.SystemSubject;
 import org.spongepowered.api.adventure.SpongeComponents;
+import org.spongepowered.api.block.BlockSnapshot;
+import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.command.CommandCause;
 import org.spongepowered.api.data.type.HandType;
 import org.spongepowered.api.data.type.HandTypes;
@@ -769,5 +773,18 @@ public enum SpongeConvert {
         else if (spawnType == SpawnTypes.WEATHER.get()) return SpawnSource.WEATHER;
         else if (spawnType == SpawnTypes.WORLD_SPAWNER.get()) return SpawnSource.WORLD;
         else return SpawnSource.PLACEMENT;
+    }
+
+    public static BlockSnapshot toSnapshot(BlockState blockState) {
+        return BlockSnapshot.builder()
+                .blockState(blockState)
+                .world(Sponge.server().worldManager().defaultWorld().properties())
+                .position(Vector3i.ZERO)
+                .build();
+    }
+
+    public static Exceptional<BlockState> toSponge(Block block) {
+        if (block instanceof SpongeBlock spongeBlock) return spongeBlock.state();
+        else return Exceptional.empty();
     }
 }
