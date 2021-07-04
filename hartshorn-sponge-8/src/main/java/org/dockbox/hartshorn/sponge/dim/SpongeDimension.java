@@ -22,9 +22,7 @@ import org.dockbox.hartshorn.api.domain.tuple.Vector3N;
 import org.dockbox.hartshorn.server.minecraft.dimension.Block;
 import org.dockbox.hartshorn.server.minecraft.dimension.BlockDimension;
 import org.dockbox.hartshorn.server.minecraft.dimension.EntityHolding;
-import org.dockbox.hartshorn.server.minecraft.dimension.position.BlockFace;
 import org.dockbox.hartshorn.server.minecraft.entities.Entity;
-import org.dockbox.hartshorn.server.minecraft.players.Profile;
 import org.dockbox.hartshorn.sponge.util.SpongeConvert;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockTypes;
@@ -68,7 +66,7 @@ public interface SpongeDimension extends BlockDimension, EntityHolding {
     }
 
     @Override
-    default boolean setBlock(Vector3N position, Block block, BlockFace direction, Profile placer) {
+    default boolean setBlock(Vector3N position, Block block) {
         Vector3i loc = SpongeConvert.toSponge(position);
         Exceptional<BlockState> state = SpongeConvert.toSponge(block);
         if (state.absent()) return false;
