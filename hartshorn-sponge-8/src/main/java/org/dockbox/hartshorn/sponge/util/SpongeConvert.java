@@ -633,6 +633,10 @@ public enum SpongeConvert {
         return new Vector3i(v3n.getXi(), v3n.getYi(), v3n.getZi());
     }
 
+    public static Vector3d toSpongeDouble(Vector3N v3n) {
+        return new Vector3d(v3n.getXd(), v3n.getYd(), v3n.getZd());
+    }
+
     public static ItemFrame.Rotation fromSponge(Orientation rotation) {
         if (rotation == Orientations.BOTTOM.get()) return Rotation.BOTTOM;
         else if (rotation == Orientations.BOTTOM_LEFT.get()) return Rotation.BOTTOM_LEFT;
