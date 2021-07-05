@@ -114,8 +114,9 @@ public interface SpongeEntity
                 final ServerLocation loc = serverLocation.get();
                 return loc.spawnEntity(entity);
             }).or(false);
+        } else {
+            return this.setLocation(location);
         }
-        return false;
     }
 
     default boolean destroy() {
@@ -131,8 +132,9 @@ public interface SpongeEntity
                 .get();
     }
 
-    default void setLocation(Location location) {
-        this.spongeEntity().present(entity -> SpongeConvert.toSponge(location).present(entity::setLocation));
+    default boolean setLocation(Location location) {
+        return this.spongeEntity().map(entity -> SpongeConvert.toSponge(location)
+                .map(entity::setLocation).or(false)).or(false);
     }
 
     default World getWorld() {
