@@ -21,6 +21,8 @@ import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.config.GlobalConfig;
 import org.dockbox.hartshorn.api.i18n.text.pagination.PaginationBuilder;
 import org.dockbox.hartshorn.api.i18n.text.pagination.SimplePaginationBuilder;
+import org.dockbox.hartshorn.api.task.TaskRunner;
+import org.dockbox.hartshorn.api.task.ThreadUtils;
 import org.dockbox.hartshorn.config.ConfigurationManager;
 import org.dockbox.hartshorn.config.SimpleConfigurationManager;
 import org.dockbox.hartshorn.config.TargetGlobalConfig;
@@ -41,6 +43,8 @@ import org.dockbox.hartshorn.sponge.game.SpongePlayers;
 import org.dockbox.hartshorn.sponge.game.SpongeProfile;
 import org.dockbox.hartshorn.sponge.inventory.SpongeItem;
 import org.dockbox.hartshorn.sponge.util.SpongeFileManager;
+import org.dockbox.hartshorn.sponge.util.SpongeTaskRunner;
+import org.dockbox.hartshorn.sponge.util.SpongeThreadUtil;
 import org.slf4j.Logger;
 
 public class SpongeInjector extends InjectConfiguration {
@@ -51,8 +55,8 @@ public class SpongeInjector extends InjectConfiguration {
         this.bind(TypeFactory.class, SimpleTypeFactory.class);
 
         // Tasks
-//        this.bind(TaskRunner.class, SpongeTaskRunner.class);
-//        this.bind(ThreadUtils.class, SpongeThreadUtils.class);
+        this.bind(TaskRunner.class, SpongeTaskRunner.class);
+        this.bind(ThreadUtils.class, SpongeThreadUtil.class);
 
         // Persistence
         this.bind(FileManager.class, SpongeFileManager.class);
@@ -74,8 +78,6 @@ public class SpongeInjector extends InjectConfiguration {
         this.wire(Item.class, SpongeItem.class);
 //        this.wire(Bossbar.class, SpongeBossbar.class);
         this.wire(Profile.class, SpongeProfile.class);
-//        this.wire(ItemFrame.class, SpongeItemFrame.class);
-//        this.wire(ArmorStand.class, SpongeArmorStand.class);
 //        this.wire(DiscordCommandSource.class, MagiBridgeCommandSource.class);
         this.wire(ConfigurationManager.class, SimpleConfigurationManager.class);
 
