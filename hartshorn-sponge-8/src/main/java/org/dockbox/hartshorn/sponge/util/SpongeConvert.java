@@ -69,7 +69,9 @@ import org.dockbox.hartshorn.sponge.dim.SpongeBlock;
 import org.dockbox.hartshorn.sponge.dim.SpongeWorld;
 import org.dockbox.hartshorn.sponge.game.SpongeConsole;
 import org.dockbox.hartshorn.sponge.game.SpongePlayer;
+import org.dockbox.hartshorn.sponge.game.entity.SpongeArmorStand;
 import org.dockbox.hartshorn.sponge.game.entity.SpongeGenericEntity;
+import org.dockbox.hartshorn.sponge.game.entity.SpongeItemFrame;
 import org.dockbox.hartshorn.sponge.inventory.SpongeItem;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.dockbox.hartshorn.util.exceptions.TypeConversionException;
@@ -88,6 +90,7 @@ import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.EntityType;
 import org.spongepowered.api.entity.EntityTypes;
 import org.spongepowered.api.entity.Tamer;
+import org.spongepowered.api.entity.living.ArmorStand;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.entity.living.player.gamemode.GameMode;
 import org.spongepowered.api.entity.living.player.gamemode.GameModes;
@@ -714,9 +717,17 @@ public enum SpongeConvert {
 
     public static org.dockbox.hartshorn.server.minecraft.entities.Entity fromSponge(Entity entity) {
         EntityType<?> type = entity.type();
+        // TODO: Better switching
         if (type == EntityTypes.PLAYER.get()) {
             return new SpongePlayer(entity.uniqueId(), ((ServerPlayer) entity).name());
-        } else {
+        }
+        else if (type == EntityTypes.ARMOR_STAND.get()) {
+            return new SpongeArmorStand((ArmorStand) entity);
+        }
+        else if (type == EntityTypes.ITEM_FRAME.get()) {
+            return new SpongeItemFrame((org.spongepowered.api.entity.hanging.ItemFrame) entity);
+        }
+        else {
             return new SpongeGenericEntity(new WeakReference<>(entity));
         }
     }
