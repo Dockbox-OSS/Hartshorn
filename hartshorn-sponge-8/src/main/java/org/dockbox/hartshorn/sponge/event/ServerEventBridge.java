@@ -84,7 +84,7 @@ public class ServerEventBridge implements EventBridge {
             final List<String> ids = registry.streamEntries().map(RegistryEntry::key).map(ResourceKey::asString).toList();
             Hartshorn.context().add(storage.apply(ids));
         } else {
-            Hartshorn.log().warn("Could not collect IDs from registry " + registryType.root().asString());
+            Hartshorn.log().warn("Could not collect IDs from registry " + registryType.location().asString());
         }
     }
 }
