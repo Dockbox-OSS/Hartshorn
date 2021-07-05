@@ -101,6 +101,9 @@ public interface ArmorStand extends CloneableEntity<ArmorStand>, InventoryHolder
      */
     void setArms(boolean arms);
 
+    @Override
+    ArmorStandInventory getInventory();
+
     enum Limbs {
         HEAD,
         BODY,

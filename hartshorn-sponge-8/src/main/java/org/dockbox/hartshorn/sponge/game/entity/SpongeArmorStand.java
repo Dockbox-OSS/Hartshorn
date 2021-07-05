@@ -23,7 +23,7 @@ import org.dockbox.hartshorn.di.annotations.Binds;
 import org.dockbox.hartshorn.di.annotations.Wired;
 import org.dockbox.hartshorn.server.minecraft.dimension.position.Location;
 import org.dockbox.hartshorn.server.minecraft.entities.ArmorStand;
-import org.dockbox.hartshorn.server.minecraft.inventory.Inventory;
+import org.dockbox.hartshorn.server.minecraft.entities.ArmorStandInventory;
 import org.dockbox.hartshorn.sponge.util.SpongeConvert;
 import org.dockbox.hartshorn.sponge.util.SpongeUtil;
 import org.dockbox.hartshorn.util.HartshornUtils;
@@ -100,7 +100,7 @@ public class SpongeArmorStand
     }
 
     @Override
-    public Inventory getInventory() {
+    public ArmorStandInventory getInventory() {
         return new SpongeArmorStandInventory(this);
     }
 
