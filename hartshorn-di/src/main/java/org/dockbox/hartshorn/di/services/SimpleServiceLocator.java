@@ -40,7 +40,7 @@ public class SimpleServiceLocator implements ServiceLocator {
                     .map(ServiceContainer::getType)
                     .collect(Collectors.toList());
         }
-        final Collection<Class<?>> types = Reflect.annotatedTypes(prefix, Service.class);
+        final Collection<Class<?>> types = Reflect.types(prefix, Service.class);
 
         final List<ServiceContainer> containers = types.stream()
                 .map(SimpleServiceContainer::new)

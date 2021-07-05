@@ -535,7 +535,7 @@ public class Table {
             throw new IllegalArgumentException(
                     "Table does not contains column named : " + column.getColumnName());
 
-        if (!Reflect.assignableFrom(Comparable.class, column.getType()))
+        if (!Reflect.assigns(Comparable.class, column.getType()))
             throw new IllegalArgumentException(
                     "Column does not contain a comparable data type : " + column.getColumnName());
 

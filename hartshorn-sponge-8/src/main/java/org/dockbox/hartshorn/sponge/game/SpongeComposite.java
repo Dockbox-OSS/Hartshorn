@@ -46,7 +46,7 @@ public interface SpongeComposite extends PersistentDataHolder {
         final Map<String, Object> data = this.raw();
 
         final Object value = data.get(dataKey.getId());
-        if (value != null && Reflect.assignableFrom(dataKey.getType(), value.getClass())) {
+        if (value != null && Reflect.assigns(dataKey.getType(), value.getClass())) {
             //noinspection unchecked
             return Exceptional.of(() -> (T) value);
         }

@@ -46,7 +46,7 @@ public final class InjectionPoint<T> {
     }
 
     public boolean accepts(Class<?> type) {
-        return Reflect.assignableFrom(this.type, type);
+        return Reflect.assigns(this.type, type);
     }
 
     public T apply(T instance, Class<T> type, InjectorProperty<?>... properties) {

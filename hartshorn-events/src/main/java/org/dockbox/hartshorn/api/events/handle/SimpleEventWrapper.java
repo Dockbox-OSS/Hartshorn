@@ -123,7 +123,7 @@ public final class SimpleEventWrapper implements Comparable<SimpleEventWrapper>,
     public static List<SimpleEventWrapper> create(Class<?> type, Method method, int priority) {
         List<SimpleEventWrapper> invokeWrappers = HartshornUtils.emptyConcurrentList();
         for (Class<?> param : method.getParameterTypes()) {
-            if (Reflect.assignableFrom(Event.class, param)) {
+            if (Reflect.assigns(Event.class, param)) {
                 @SuppressWarnings("unchecked")
                 Class<? extends Event> eventType = (Class<? extends Event>) param;
                 invokeWrappers.add(new SimpleEventWrapper(type, eventType, method, priority));

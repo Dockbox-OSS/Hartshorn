@@ -40,7 +40,7 @@ public class ConstructorWireContext<T, I extends T> implements WireContext<T, I>
     public I create(Object... arguments) {
         Class<?>[] argumentTypes = Arrays.stream(arguments).map(Object::getClass).toArray(Class<?>[]::new);
         try {
-            Collection<Constructor<I>> constructors = Reflect.annotatedConstructors(this.getImplementation(), Wired.class);
+            Collection<Constructor<I>> constructors = Reflect.constructors(this.getImplementation(), Wired.class);
             Constructor<I> ctor = null;
             for (Constructor<I> constructor : constructors) {
                 if (constructor.getParameterTypes().length != arguments.length) continue;
@@ -51,7 +51,7 @@ public class ConstructorWireContext<T, I extends T> implements WireContext<T, I>
                     if (argument == null) {
                         throw new IllegalArgumentException("Autowired parameters can not be null");
                     }
-                    if (!Reflect.assignableFrom(parameterType, argument.getClass())) {
+                    if (!Reflect.assigns(parameterType, argument.getClass())) {
                         valid = false;
                     }
                 }

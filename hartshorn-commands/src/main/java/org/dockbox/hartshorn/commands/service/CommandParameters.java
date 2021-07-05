@@ -33,7 +33,7 @@ public class CommandParameters {
 
     @PostBootstrap
     public void preload() {
-        Collection<Class<?>> customParameters = Reflect.annotatedTypes(Hartshorn.PACKAGE_PREFIX, Parameter.class);
+        Collection<Class<?>> customParameters = Reflect.types(Hartshorn.PACKAGE_PREFIX, Parameter.class);
         for (Class<?> customParameter : customParameters) {
             Parameter meta = customParameter.getAnnotation(Parameter.class);
             CustomParameterPattern pattern = Hartshorn.context().get(meta.pattern());

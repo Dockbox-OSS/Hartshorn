@@ -35,13 +35,13 @@ public class PostBootstrapServiceProcessor implements ServiceProcessor<UseBootst
                 .map(ServiceContainer::getActivator)
                 .map(UseBootstrap.class::equals)
                 .or(false);
-        boolean hasPosts = !Reflect.annotatedMethods(type, PostBootstrap.class).isEmpty();
+        boolean hasPosts = !Reflect.methods(type, PostBootstrap.class).isEmpty();
         return activated && hasPosts;
     }
 
     @Override
     public <T> void process(ApplicationContext context, Class<T> type) {
-        final Collection<Method> methods = Reflect.annotatedMethods(type, PostBootstrap.class);
+        final Collection<Method> methods = Reflect.methods(type, PostBootstrap.class);
         for (Method method : methods) {
             HartshornBootstrap.instance().addPostBootstrapActivation(method, type);
         }

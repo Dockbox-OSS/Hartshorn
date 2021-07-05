@@ -43,7 +43,7 @@ public final class ProxyableBootstrap {
 
     static void boostrapDelegates() {
         Hartshorn.log().info("Scanning for proxy types in " + Hartshorn.PACKAGE_PREFIX);
-        Reflect.annotatedTypes(Hartshorn.PACKAGE_PREFIX, Proxy.class).forEach(proxy -> {
+        Reflect.types(Hartshorn.PACKAGE_PREFIX, Proxy.class).forEach(proxy -> {
             Hartshorn.log().info("Processing [" + proxy.getCanonicalName() + "]");
             if (Reflect.isAbstract(proxy)) {
                 Hartshorn.log().warn("Proxy source cannot be abstract [" + proxy.getCanonicalName() + "]");
@@ -63,7 +63,7 @@ public final class ProxyableBootstrap {
     private static void delegateMethods(Class<?> proxyClass) {
         @NotNull
         @Unmodifiable
-        Collection<Method> targets = Reflect.annotatedMethods(proxyClass, Target.class, i -> true, false);
+        Collection<Method> targets = Reflect.methods(proxyClass, Target.class, i -> true, false);
 
         Proxy proxy = proxyClass.getAnnotation(Proxy.class);
         targets.forEach(target -> ProxyableBootstrap.delegateMethod(proxyClass, proxy.value(), target));
@@ -102,7 +102,7 @@ public final class ProxyableBootstrap {
             // type of the
             // target.
             if (!source.getReturnType().equals(Void.TYPE) && target.overwrite()) {
-                if (!Reflect.assignableFrom(source.getReturnType(), targetMethod.getReturnType())) {
+                if (!Reflect.assigns(source.getReturnType(), targetMethod.getReturnType())) {
                     Hartshorn.log().warn("Return type for '" + source.getName() + "' is not assignable from '" + targetMethod
                             .getReturnType() + "' [" + proxyClass.getCanonicalName() + "]");
                     return;
