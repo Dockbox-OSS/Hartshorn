@@ -18,23 +18,28 @@
 package org.dockbox.hartshorn.sponge.event;
 
 import org.dockbox.hartshorn.api.events.parents.Cancellable;
-import org.dockbox.hartshorn.commands.events.NativeCommandEvent;
-import org.dockbox.hartshorn.commands.source.CommandSource;
+import org.dockbox.hartshorn.api.i18n.text.Text;
+import org.dockbox.hartshorn.server.minecraft.events.chat.SendChatEvent;
+import org.dockbox.hartshorn.server.minecraft.players.Player;
 import org.dockbox.hartshorn.sponge.util.SpongeConvert;
+import org.spongepowered.api.entity.living.player.server.ServerPlayer;
 import org.spongepowered.api.event.Listener;
-import org.spongepowered.api.event.command.ExecuteCommandEvent;
+import org.spongepowered.api.event.message.PlayerChatEvent;
 
-public class CommandEventBridge implements EventBridge {
+import java.util.Optional;
+
+public class ChatEventBridge implements EventBridge {
 
     @Listener
-    public void on(ExecuteCommandEvent.Pre event) {
-        CommandSource source = SpongeConvert.fromSponge(event.commandCause().subject()).orNull();
-        final Cancellable cancellable = new NativeCommandEvent(
-                source,
-                event.originalCommand(),
-                event.originalArguments().split(" ")
-        ).post();
-        if (cancellable.isCancelled()) event.setCancelled(true);
+    public void on(PlayerChatEvent event) {
+        final Optional<ServerPlayer> source = event.cause().first(ServerPlayer.class);
+        if (source.isPresent()) {
+            final Player player = SpongeConvert.fromSponge(source.get());
+            final Text text = SpongeConvert.fromSponge(event.originalMessage());
+            final Cancellable cancellable = new SendChatEvent(player, text).post();
+
+            if (cancellable.isCancelled()) event.setCancelled(true);
+        }
     }
 
 }
