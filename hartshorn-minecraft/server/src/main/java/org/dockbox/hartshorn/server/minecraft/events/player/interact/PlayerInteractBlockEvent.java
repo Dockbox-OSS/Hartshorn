@@ -17,21 +17,23 @@
 
 package org.dockbox.hartshorn.server.minecraft.events.player.interact;
 
-import org.dockbox.hartshorn.server.minecraft.dimension.position.Location;
+import org.dockbox.hartshorn.server.minecraft.dimension.Block;
+import org.dockbox.hartshorn.server.minecraft.dimension.position.BlockFace;
 import org.dockbox.hartshorn.server.minecraft.players.ClickType;
 import org.dockbox.hartshorn.server.minecraft.players.Hand;
 import org.dockbox.hartshorn.server.minecraft.players.Player;
 
+import lombok.Getter;
+
+@Getter
 public class PlayerInteractBlockEvent extends PlayerInteractEvent {
 
-    private final Location blockLocation;
+    private final Block block;
+    private final BlockFace face;
 
-    public PlayerInteractBlockEvent(Player player, Hand hand, ClickType clickType, Location blockLocation) {
+    public PlayerInteractBlockEvent(Player player, Hand hand, ClickType clickType, Block block, BlockFace face) {
         super(player, hand, clickType);
-        this.blockLocation = blockLocation;
-    }
-
-    public Location getBlockLocation() {
-        return this.blockLocation;
+        this.block = block;
+        this.face = face;
     }
 }

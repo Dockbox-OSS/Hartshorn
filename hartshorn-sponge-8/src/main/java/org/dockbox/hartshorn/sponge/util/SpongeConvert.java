@@ -628,6 +628,10 @@ public enum SpongeConvert {
         else return Exceptional.empty();
     }
 
+    public static Block fromSponge(BlockSnapshot block) {
+        return new SpongeBlock(block);
+    }
+
 //    public static Element toSponge(org.dockbox.hartshorn.server.minecraft.inventory.Element element) {
 //        if (element instanceof SimpleElement) {
 //            return Element.of(toSponge(element.getItem()),
