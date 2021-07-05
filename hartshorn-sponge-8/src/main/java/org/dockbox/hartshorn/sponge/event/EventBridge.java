@@ -17,8 +17,14 @@
 
 package org.dockbox.hartshorn.sponge.event;
 
+import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.events.parents.Cancellable;
 import org.dockbox.hartshorn.api.events.parents.Event;
+import org.dockbox.hartshorn.server.minecraft.players.Player;
+import org.dockbox.hartshorn.sponge.util.SpongeConvert;
+import org.spongepowered.api.entity.living.player.server.ServerPlayer;
+
+import java.util.Optional;
 
 public interface EventBridge {
 
@@ -27,6 +33,14 @@ public interface EventBridge {
         if (posted instanceof Cancellable cancellable && cause instanceof org.spongepowered.api.event.Cancellable causeCancellable) {
             if (cancellable.isCancelled()) causeCancellable.setCancelled(true);
         }
+    }
+
+    default Exceptional<Player> player(org.spongepowered.api.event.Event event) {
+        final Optional<ServerPlayer> serverPlayer = event.cause().first(ServerPlayer.class);
+        if (serverPlayer.isEmpty()) return Exceptional.empty();
+
+        final Player player = SpongeConvert.fromSponge(serverPlayer.get());
+        return Exceptional.of(player);
     }
 
 }
