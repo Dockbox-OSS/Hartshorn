@@ -17,7 +17,6 @@
 
 package org.dockbox.hartshorn.sponge.event;
 
-import org.dockbox.hartshorn.api.events.parents.Cancellable;
 import org.dockbox.hartshorn.commands.events.NativeCommandEvent;
 import org.dockbox.hartshorn.commands.source.CommandSource;
 import org.dockbox.hartshorn.sponge.util.SpongeConvert;
@@ -29,12 +28,11 @@ public class CommandEventBridge implements EventBridge {
     @Listener
     public void on(ExecuteCommandEvent.Pre event) {
         CommandSource source = SpongeConvert.fromSponge(event.commandCause().subject()).orNull();
-        final Cancellable cancellable = new NativeCommandEvent(
+        this.post(new NativeCommandEvent(
                 source,
                 event.originalCommand(),
                 event.originalArguments().split(" ")
-        ).post();
-        if (cancellable.isCancelled()) event.setCancelled(true);
+        ), event);
     }
 
 }

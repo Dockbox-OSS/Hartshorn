@@ -17,7 +17,6 @@
 
 package org.dockbox.hartshorn.sponge.event;
 
-import org.dockbox.hartshorn.api.events.parents.Cancellable;
 import org.dockbox.hartshorn.api.i18n.text.Text;
 import org.dockbox.hartshorn.server.minecraft.events.chat.SendChatEvent;
 import org.dockbox.hartshorn.server.minecraft.players.Player;
@@ -36,9 +35,7 @@ public class ChatEventBridge implements EventBridge {
         if (source.isPresent()) {
             final Player player = SpongeConvert.fromSponge(source.get());
             final Text text = SpongeConvert.fromSponge(event.originalMessage());
-            final Cancellable cancellable = new SendChatEvent(player, text).post();
-
-            if (cancellable.isCancelled()) event.setCancelled(true);
+            this.post(new SendChatEvent(player, text), event);
         }
     }
 
