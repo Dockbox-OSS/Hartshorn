@@ -18,6 +18,7 @@
 package org.dockbox.hartshorn.sponge.inventory;
 
 import net.kyori.adventure.text.Component;
+import net.minecraft.world.item.CreativeModeTab;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.i18n.common.Language;
@@ -195,6 +196,14 @@ public class SpongeItem extends ReferencedItem<ItemStack> implements SpongeCompo
             this.item().present(item -> item.offer(Keys.GAME_PROFILE, spongeProfile.profile()));
         }
         return this;
+    }
+
+    @Override
+    public Exceptional<String> category() {
+        return this.item()
+                .map(net.minecraft.world.item.ItemStack.class::cast)
+                .map(stack -> stack.getItem().getItemCategory())
+                .map(CreativeModeTab::getRecipeFolderName);
     }
 
     @Override
