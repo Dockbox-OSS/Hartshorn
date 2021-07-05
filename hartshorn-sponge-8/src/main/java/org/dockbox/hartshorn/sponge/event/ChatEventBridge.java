@@ -17,26 +17,23 @@
 
 package org.dockbox.hartshorn.sponge.event;
 
+import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.i18n.text.Text;
 import org.dockbox.hartshorn.server.minecraft.events.chat.SendChatEvent;
 import org.dockbox.hartshorn.server.minecraft.players.Player;
 import org.dockbox.hartshorn.sponge.util.SpongeConvert;
-import org.spongepowered.api.entity.living.player.server.ServerPlayer;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.message.PlayerChatEvent;
-
-import java.util.Optional;
 
 public class ChatEventBridge implements EventBridge {
 
     @Listener
     public void on(PlayerChatEvent event) {
-        final Optional<ServerPlayer> source = event.cause().first(ServerPlayer.class);
-        if (source.isPresent()) {
-            final Player player = SpongeConvert.fromSponge(source.get());
-            final Text text = SpongeConvert.fromSponge(event.originalMessage());
-            this.post(new SendChatEvent(player, text), event);
-        }
+        final Exceptional<Player> player = this.player(event);
+        if (player.absent()) return;
+
+        final Text text = SpongeConvert.fromSponge(event.originalMessage());
+        this.post(new SendChatEvent(player.get(), text), event);
     }
 
 }
