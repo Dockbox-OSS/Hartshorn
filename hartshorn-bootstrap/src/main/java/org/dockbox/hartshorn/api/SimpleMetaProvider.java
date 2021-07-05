@@ -39,7 +39,7 @@ public class SimpleMetaProvider extends InjectorMetaProvider {
             final Exceptional<ServiceContainer> container = Hartshorn.context().locator().container(type);
             if (container.present()) {
                 final ServiceContainer service = container.get();
-                if (Reflect.isNotVoid(service.getOwner())) return this.lookup(service.getOwner());
+                if (Reflect.notVoid(service.getOwner())) return this.lookup(service.getOwner());
             }
         }
         return super.lookup(type);

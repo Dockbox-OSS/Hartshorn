@@ -112,7 +112,7 @@ public class SimpleCommandGateway implements CommandGateway {
 
     @Override
     public void register(Class<?> type) {
-        final Collection<Method> methods = Reflect.annotatedMethods(type, Command.class);
+        final Collection<Method> methods = Reflect.methods(type, Command.class);
         if (methods.isEmpty()) return;
 
         for (Method method : methods) this.register(method, type);
@@ -124,7 +124,7 @@ public class SimpleCommandGateway implements CommandGateway {
         if (container.absent()) throw new IllegalArgumentException("Executor contexts should contain at least one container context");
 
         List<String> aliases;
-        if (Reflect.isNotVoid(context.parent()) && context.parent().isAnnotationPresent(Command.class)) {
+        if (Reflect.notVoid(context.parent()) && context.parent().isAnnotationPresent(Command.class)) {
             aliases = HartshornUtils.asUnmodifiableList(context.parent().getAnnotation(Command.class).value());
         } else if (!container.get().aliases().isEmpty()){
             aliases = container.get().aliases();

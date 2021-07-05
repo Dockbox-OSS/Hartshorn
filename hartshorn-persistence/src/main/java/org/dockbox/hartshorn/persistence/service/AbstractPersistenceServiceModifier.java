@@ -72,7 +72,7 @@ public abstract class AbstractPersistenceServiceModifier<M extends Annotation, C
     protected Path determineAnnotationPath(ApplicationContext context, MethodProxyContext<?> methodContext, PersistenceAnnotationContext annotationContext) {
         Class<?> owner = annotationContext.getFile().owner();
 
-        if (!Reflect.isNotVoid(owner)) {
+        if (!Reflect.notVoid(owner)) {
             final Exceptional<ServiceContainer> container = context.locator().container(methodContext.getMethod().getDeclaringClass());
             if (container.present()) {
                 owner = container.get().getOwner();

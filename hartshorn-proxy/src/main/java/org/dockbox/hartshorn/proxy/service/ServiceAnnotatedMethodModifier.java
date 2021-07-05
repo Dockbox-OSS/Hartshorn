@@ -36,12 +36,12 @@ public abstract class ServiceAnnotatedMethodModifier<M extends Annotation, A ext
 
     @Override
     protected <T> boolean isModifiable(Class<T> type, @Nullable T instance, InjectorProperty<?>... properties) {
-        return !Reflect.annotatedMethods(type, this.annotation()).isEmpty();
+        return !Reflect.methods(type, this.annotation()).isEmpty();
     }
 
     @Override
     public <T> T process(ApplicationContext context, Class<T> type, @Nullable T instance, InjectorProperty<?>... properties) {
-        final Collection<Method> methods = Reflect.annotatedMethods(type, this.annotation());
+        final Collection<Method> methods = Reflect.methods(type, this.annotation());
 
         ProxyHandler<T> handler = new ProxyHandler<>(instance, type);
 

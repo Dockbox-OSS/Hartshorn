@@ -104,7 +104,7 @@ public class EventHandler {
 
     private boolean isSubtypeOf(Class<?> cls) {
         Class<? extends Event> type = this.eventType();
-        return type != cls && Reflect.assignableFrom(cls, type);
+        return type != cls && Reflect.assigns(cls, type);
     }
 
     private Class<? extends Event> eventType() {

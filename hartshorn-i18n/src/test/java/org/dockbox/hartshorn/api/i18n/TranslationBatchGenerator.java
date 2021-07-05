@@ -109,7 +109,7 @@ public final class TranslationBatchGenerator {
         int i = 0;
         for (ServiceContainer container : Hartshorn.context().locator().containers()) {
             final Class<?> type = container.getType();
-            final Collection<Method> methods = Reflect.annotatedMethods(type, Resource.class);
+            final Collection<Method> methods = Reflect.methods(type, Resource.class);
             for (Method method : methods) {
                 i++;
                 final Resource annotation = method.getAnnotation(Resource.class);

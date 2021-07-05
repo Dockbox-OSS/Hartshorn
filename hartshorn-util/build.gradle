@@ -18,4 +18,5 @@
 dependencies {
     include project(':hartshorn-core')
     include "org.reflections:reflections:$reflectionsVersion"
+    share "org.jooq:joor:0.9.14"
 }

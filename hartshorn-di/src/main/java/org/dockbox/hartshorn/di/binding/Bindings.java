@@ -92,7 +92,7 @@ public final class Bindings {
         for (InjectorProperty<?> property : properties) {
             if (property.getKey().equals(key)
                     && null != property.getObject()
-                    && Reflect.assignableFrom(expectedType, property.getObject().getClass())) {
+                    && Reflect.assigns(expectedType, property.getObject().getClass())) {
                 matchingProperties.add((InjectorProperty<T>) property);
             }
         }
@@ -126,7 +126,7 @@ public final class Bindings {
     public static <T extends InjectorProperty<?>> List<T> valuesOfType(Class<T> propertyFilter, InjectorProperty<?>... properties) {
         List<T> values = HartshornUtils.emptyList();
         for (InjectorProperty<?> property : properties) {
-            if (Reflect.assignableFrom(propertyFilter, property.getClass())) values.add((T) property);
+            if (Reflect.assigns(propertyFilter, property.getClass())) values.add((T) property);
         }
         return values;
     }

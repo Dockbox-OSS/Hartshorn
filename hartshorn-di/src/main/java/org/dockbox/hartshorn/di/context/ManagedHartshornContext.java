@@ -63,7 +63,7 @@ public abstract class ManagedHartshornContext extends DefaultContext implements 
         }
         this.activator = activationSource.getAnnotation(Activator.class);
         this.activationSource = activationSource;
-        this.activators = Reflect.annotatedAnnotations(activationSource, ServiceActivator.class);
+        this.activators = Reflect.annotations(activationSource, ServiceActivator.class);
     }
 
     /**
@@ -98,9 +98,9 @@ public abstract class ManagedHartshornContext extends DefaultContext implements 
 
     public <T> void enable(T typeInstance) {
         if (typeInstance == null) return;
-        HartshornUtils.merge(Reflect.annotatedFields(typeInstance.getClass(), Wired.class)).stream()
+        HartshornUtils.merge(Reflect.fields(typeInstance.getClass(), Wired.class)).stream()
                 .filter(field -> field.getAnnotation(Wired.class).enable())
-                .filter(field -> Reflect.assignableFrom(InjectableType.class, field.getType()))
+                .filter(field -> Reflect.assigns(InjectableType.class, field.getType()))
                 .map(field -> {
                     try {
                         // As we're enabling fields they may be accessed even if their

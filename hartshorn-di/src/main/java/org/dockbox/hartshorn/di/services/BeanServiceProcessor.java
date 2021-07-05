@@ -38,12 +38,12 @@ public final class BeanServiceProcessor implements ServiceProcessor<UseBeanProvi
 
     @Override
     public boolean preconditions(Class<?> type) {
-        return !Reflect.annotatedMethods(type, Bean.class).isEmpty();
+        return !Reflect.methods(type, Bean.class).isEmpty();
     }
 
     @Override
     public <T> void process(ApplicationContext context, Class<T> type) {
-        Collection<Method> beans = Reflect.annotatedMethods(type, Bean.class);
+        Collection<Method> beans = Reflect.methods(type, Bean.class);
         for (Method bean : beans) {
             boolean singleton = bean.isAnnotationPresent(Singleton.class);
             Bean annotation = bean.getAnnotation(Bean.class);

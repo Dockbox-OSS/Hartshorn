@@ -27,7 +27,7 @@ import org.dockbox.hartshorn.util.Reflect;
 public class DiscordServiceProcessor implements ServiceProcessor<UseDiscordCommands> {
     @Override
     public boolean preconditions(Class<?> type) {
-        return !Reflect.annotatedMethods(type, DiscordCommand.class).isEmpty();
+        return !Reflect.methods(type, DiscordCommand.class).isEmpty();
     }
 
     @Override
