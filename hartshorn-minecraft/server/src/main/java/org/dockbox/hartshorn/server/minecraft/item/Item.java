@@ -18,6 +18,7 @@
 package org.dockbox.hartshorn.server.minecraft.item;
 
 import org.dockbox.hartshorn.api.Hartshorn;
+import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.i18n.common.Language;
 import org.dockbox.hartshorn.api.i18n.text.Text;
 import org.dockbox.hartshorn.api.keys.KeyHolder;
@@ -86,4 +87,6 @@ public interface Item extends KeyHolder<Item>, PersistentDataHolder, PersistentC
     Item setProfile(Profile profile);
 
     Item stack();
+
+    Exceptional<String> category();
 }
