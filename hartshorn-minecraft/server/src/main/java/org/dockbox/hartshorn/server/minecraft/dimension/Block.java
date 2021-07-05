@@ -46,6 +46,10 @@ public interface Block {
         return Hartshorn.context().get(Block.class, item);
     }
 
+    static Block of(String id) {
+        return from(Item.of(id));
+    }
+
     static Block empty() {
         return Hartshorn.context().get(Block.class, MinecraftItems.getInstance().getAir());
     }
