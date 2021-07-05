@@ -54,11 +54,11 @@ sponge {
     }
 }
 
-def ignoreProjects = ['examples', 'hartshorn-sponge-7', 'hartshorn-sponge-8', 'hartshorn-nms-1.12']
+def ignoreProjects = ['examples', 'hartshorn-sponge-7', 'hartshorn-sponge-8', 'hartshorn-nms-1.12', 'palswap']
 
 dependencies {
     new File(parent.rootDir, 'hartshorn-minecraft').listFiles().each {
-        if (it.directory && new File(it, 'build.gradle').exists()) {
+        if ((!ignoreProjects.contains(it.name)) && it.directory && new File(it, 'build.gradle').exists()) {
             includeShadow project(":hartshorn-minecraft:${it.name}")
         }
     }
