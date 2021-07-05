@@ -20,7 +20,14 @@ package org.dockbox.hartshorn.sponge.game.entity;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.exceptions.ApplicationException;
 import org.dockbox.hartshorn.server.minecraft.entities.CloneableEntity;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.Entity;
+import org.spongepowered.api.entity.EntityArchetype;
+import org.spongepowered.api.event.EventContextKeys;
+import org.spongepowered.api.event.cause.entity.SpawnTypes;
+import org.spongepowered.math.vector.Vector3i;
+
+import java.util.Optional;
 
 public interface SpongeCloneableEntity<T extends CloneableEntity<T>, S extends Entity> extends CloneableEntity<T> {
 
@@ -28,10 +35,12 @@ public interface SpongeCloneableEntity<T extends CloneableEntity<T>, S extends E
     default Exceptional<T> copy() {
         return this.spongeEntity().map(entity -> {
             try {
-                final Entity copy = entity.copy();
-                if (copy == null) return null;
+                Sponge.server().causeStackManager().addContext(EventContextKeys.SPAWN_TYPE, SpawnTypes.PLUGIN);
+                final EntityArchetype archetype = entity.createSnapshot().createArchetype();
+                final Optional<Entity> copy = archetype.apply(Sponge.server().worldManager().defaultWorld().location(Vector3i.ZERO));
+                if (copy.isEmpty()) return null;
                 //noinspection unchecked
-                return this.from((S) copy);
+                return this.from((S) copy.get());
             } catch (ClassCastException e) {
                 throw new ApplicationException(e);
             }
