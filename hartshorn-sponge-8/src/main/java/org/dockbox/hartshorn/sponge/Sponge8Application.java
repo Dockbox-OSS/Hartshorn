@@ -25,8 +25,9 @@ import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.di.Modifier;
 import org.dockbox.hartshorn.di.annotations.Activator;
 import org.dockbox.hartshorn.di.annotations.InjectConfig;
-import org.dockbox.hartshorn.sponge.command.SpongeCommandRegistrar;
+import org.dockbox.hartshorn.sponge.event.EventBridge;
 import org.dockbox.hartshorn.sponge.inject.SpongeInjector;
+import org.dockbox.hartshorn.util.Reflect;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.lifecycle.ConstructPluginEvent;
@@ -60,7 +61,10 @@ public class Sponge8Application {
 
     @Listener
     public void on(ConstructPluginEvent event) {
-        Sponge.eventManager().registerListeners(this.container, new SpongeCommandRegistrar());
         this.init.run();
+
+        for (Class<? extends EventBridge> bridge : Reflect.subTypes(Hartshorn.PACKAGE_PREFIX, EventBridge.class)) {
+            Sponge.eventManager().registerListeners(this.container, Hartshorn.context().get(bridge));
+        }
     }
 }
