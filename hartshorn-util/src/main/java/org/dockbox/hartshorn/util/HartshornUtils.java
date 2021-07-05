@@ -886,8 +886,8 @@ public final class HartshornUtils {
         if (object instanceof String) return HartshornUtils.isEmpty((String) object);
         else if (object instanceof Collection) return ((Collection<?>) object).isEmpty();
         else if (object instanceof Map) return ((Map<?, ?>) object).isEmpty();
-        else if (Reflect.hasMethod(object, "isEmpty"))
-            return Reflect.runMethod(object, "isEmpty", Boolean.class).or(false);
+        else if (Reflect.has(object, "isEmpty"))
+            return Reflect.<Boolean>run(object, "isEmpty").or(false);
         else return false;
     }
 
@@ -1050,7 +1050,7 @@ public final class HartshornUtils {
             return false;
         }
         catch (Throwable t) {
-            return Reflect.assignableFrom(exception, t.getClass());
+            return Reflect.assigns(exception, t.getClass());
         }
     }
 

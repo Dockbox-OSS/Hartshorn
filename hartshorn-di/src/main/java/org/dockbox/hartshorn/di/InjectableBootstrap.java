@@ -55,7 +55,7 @@ public abstract class InjectableBootstrap extends ApplicationContextAware {
     }
 
     private void lookupProcessors(String prefix) {
-        final Collection<Class<? extends ServiceProcessor>> processors = Reflect.subTypes(prefix, ServiceProcessor.class);
+        final Collection<Class<? extends ServiceProcessor>> processors = Reflect.children(prefix, ServiceProcessor.class);
         for (Class<? extends ServiceProcessor> processor : processors) {
             if (Reflect.isAbstract(processor)) continue;
 
@@ -66,7 +66,7 @@ public abstract class InjectableBootstrap extends ApplicationContextAware {
     }
 
     private void lookupModifiers(String prefix) {
-        final Collection<Class<? extends InjectionModifier>> modifiers = Reflect.subTypes(prefix, InjectionModifier.class);
+        final Collection<Class<? extends InjectionModifier>> modifiers = Reflect.children(prefix, InjectionModifier.class);
         for (Class<? extends InjectionModifier> modifier : modifiers) {
             if (Reflect.isAbstract(modifier)) continue;
 

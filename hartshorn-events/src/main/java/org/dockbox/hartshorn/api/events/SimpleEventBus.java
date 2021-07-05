@@ -52,7 +52,7 @@ public class SimpleEventBus implements EventBus {
     public SimpleEventBus() {
         // Event listeners need a @Listener annotation
         this.addValidationRule(method -> {
-            if (!Reflect.hasAnnotation(method, Listener.class)) {
+            if (!Reflect.has(method, Listener.class)) {
                 return Exceptional.of(false, new IllegalArgumentException("Needs @Listener annotation: " + method.toGenericString()));
             }
             return Exceptional.of(true);
@@ -67,7 +67,7 @@ public class SimpleEventBus implements EventBus {
         });
         // Event listeners must have one and only parameter which is a subclass of Event
         this.addValidationRule(method -> {
-            if (1 != method.getParameterCount() || !Reflect.assignableFrom(Event.class, method.getParameterTypes()[0])) {
+            if (1 != method.getParameterCount() || !Reflect.assigns(Event.class, method.getParameterTypes()[0])) {
                 return Exceptional.of(false, new IllegalArgumentException("Must have one (and only one) parameter, which is a subclass of Event: " + method.toGenericString()));
             }
             return Exceptional.of(true);

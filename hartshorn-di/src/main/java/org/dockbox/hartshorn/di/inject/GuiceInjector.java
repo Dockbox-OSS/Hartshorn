@@ -219,7 +219,7 @@ public class GuiceInjector implements Injector {
     public <T> T populate(T instance) {
         if (null != instance) {
             this.rebuild().injectMembers(instance);
-            for (Field field : Reflect.annotatedFields(instance.getClass(), Wired.class)) {
+            for (Field field : Reflect.fields(instance.getClass(), Wired.class)) {
                 Object fieldInstance = ApplicationContextAware.instance().getContext().get(field.getType());
                 Reflect.set(field, instance, fieldInstance);
             }
@@ -287,13 +287,13 @@ public class GuiceInjector implements Injector {
     private Map<Key<?>, Class<?>> scan(String prefix) {
         Map<Key<?>, Class<?>> bindings = HartshornUtils.emptyMap();
 
-        Collection<Class<?>> binders = Reflect.annotatedTypes(prefix, Binds.class);
+        Collection<Class<?>> binders = Reflect.types(prefix, Binds.class);
         for (Class<?> binder : binders) {
             Binds bindAnnotation = binder.getAnnotation(Binds.class);
             this.handleBinder(bindings, binder, bindAnnotation);
         }
 
-        Collection<Class<?>> multiBinders = Reflect.annotatedTypes(prefix, Combines.class);
+        Collection<Class<?>> multiBinders = Reflect.types(prefix, Combines.class);
         for (Class<?> binder : multiBinders) {
             Combines bindAnnotation = binder.getAnnotation(Combines.class);
             for (Binds annotation : bindAnnotation.value()) {
@@ -306,7 +306,7 @@ public class GuiceInjector implements Injector {
     private void handleBinder(Map<Key<?>, Class<?>> bindings, Class<?> binder, Binds annotation) {
         Class<?> binds = annotation.value();
 
-        if (Reflect.annotatedConstructors(binder, Wired.class).isEmpty()) {
+        if (Reflect.constructors(binder, Wired.class).isEmpty()) {
             Entry<Key<?>, Class<?>> entry = this.handleScanned(binder, binds, annotation);
             bindings.put(entry.getKey(), entry.getValue());
         }
@@ -365,7 +365,7 @@ public class GuiceInjector implements Injector {
 
     @Override
     public <C, T extends C> void wire(Class<C> contract, Class<? extends T> implementation, Named meta) {
-        if (Reflect.annotatedConstructors(implementation, Wired.class).isEmpty())
+        if (Reflect.constructors(implementation, Wired.class).isEmpty())
             throw new IllegalArgumentException("Implementation should contain at least one constructor decorated with @AutoWired");
 
         this.bindings.add(new ConstructorWireContext<>(contract, implementation, meta.value()));
