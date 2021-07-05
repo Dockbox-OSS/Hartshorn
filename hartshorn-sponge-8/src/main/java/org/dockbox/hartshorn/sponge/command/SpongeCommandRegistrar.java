@@ -25,6 +25,7 @@ import org.dockbox.hartshorn.commands.CommandGateway;
 import org.dockbox.hartshorn.commands.SimpleCommandGateway;
 import org.dockbox.hartshorn.commands.exceptions.ParsingException;
 import org.dockbox.hartshorn.sponge.Sponge8Application;
+import org.dockbox.hartshorn.sponge.event.EventBridge;
 import org.dockbox.hartshorn.sponge.util.SpongeConvert;
 import org.spongepowered.api.command.Command;
 import org.spongepowered.api.command.Command.Parameterized;
@@ -39,7 +40,7 @@ import org.spongepowered.api.event.lifecycle.RegisterCommandEvent;
 
 import java.util.Optional;
 
-public class SpongeCommandRegistrar {
+public class SpongeCommandRegistrar implements EventBridge {
 
     @Listener
     public void onRegisterCommand(final RegisterCommandEvent<Parameterized> event) {
