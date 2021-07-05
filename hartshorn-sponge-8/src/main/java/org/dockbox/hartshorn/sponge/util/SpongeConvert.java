@@ -55,7 +55,6 @@ import org.dockbox.hartshorn.server.minecraft.dimension.position.BlockFace;
 import org.dockbox.hartshorn.server.minecraft.entities.ItemFrame;
 import org.dockbox.hartshorn.server.minecraft.entities.ItemFrame.Rotation;
 import org.dockbox.hartshorn.server.minecraft.events.entity.SpawnSource;
-import org.dockbox.hartshorn.server.minecraft.events.world.WorldCreatingProperties;
 import org.dockbox.hartshorn.server.minecraft.inventory.Slot;
 import org.dockbox.hartshorn.server.minecraft.item.Enchant;
 import org.dockbox.hartshorn.server.minecraft.item.Item;
@@ -425,24 +424,6 @@ public enum SpongeConvert {
     }
 
     @NotNull
-    public static WorldCreatingProperties fromSpongeCreating(org.spongepowered.api.world.storage.WorldProperties worldProperties) {
-        Vector3i vector3i = worldProperties.spawnPosition();
-        Vector3N spawnLocation = Vector3N.of(vector3i.x(), vector3i.y(), vector3i.z());
-
-        return null;
-        // TODO: Implement
-//        return new WorldCreatingProperties(
-//                worldProperties.,
-//                worldProperties.getUniqueId(),
-//                worldProperties.loadOnStartup(),
-//                spawnLocation,
-//                worldProperties.getSeed(),
-//                fromSponge(worldProperties.getGameMode()),
-//                worldProperties.gameRules()
-//        );
-    }
-
-    @NotNull
     public static Gamemode fromSponge(GameMode gamemode) {
         try {
             return Enum.valueOf(Gamemode.class, gamemode.toString());
@@ -451,19 +432,6 @@ public enum SpongeConvert {
             return Gamemode.OTHER;
         }
     }
-
-//    public static Warp fromSponge(io.github.nucleuspowered.nucleus.api.nucleusdata.Warp warp) {
-//        org.dockbox.hartshorn.server.minecraft.dimension.position.Location location = warp.getLocation()
-//                .map(SpongeConversionUtil::fromSponge)
-//                .orElse(org.dockbox.hartshorn.server.minecraft.dimension.position.Location.empty());
-//
-//        return new SimpleWarp(
-//                Exceptional.of(warp.getDescription().map(Text::toString)),
-//                Exceptional.of(warp.getCategory()),
-//                location,
-//                warp.getName()
-//        );
-//    }
 
     @NotNull
     public static org.dockbox.hartshorn.server.minecraft.dimension.position.Location fromSponge(ServerLocation location) {
@@ -483,15 +451,6 @@ public enum SpongeConvert {
         throw new RuntimeException("Invalid value in context '" + handType + "'");
     }
 
-//    public static Element toSponge(org.dockbox.hartshorn.server.minecraft.inventory.Element element) {
-//        if (element instanceof SimpleElement) {
-//            return Element.of(toSponge(element.getItem()),
-//                    a -> ((SimpleElement) element).perform(fromSponge(a.getPlayer()))
-//            );
-//        }
-//        return Element.EMPTY;
-//    }
-
     @NotNull
     public static ItemStack toSponge(Item item) {
         if (item instanceof SpongeItem)
@@ -510,59 +469,11 @@ public enum SpongeConvert {
         return new SpongePlayer(player.uniqueId(), player.name());
     }
 
-//    public static org.dockbox.hartshorn.server.minecraft.inventory.Element fromSponge(Element element) {
-//        Item item = fromSponge(element.getItem().createStack());
-//        return org.dockbox.hartshorn.server.minecraft.inventory.Element.of(item); // Action is skipped here
-//    }
-
     @NotNull
     public static ReferencedItem<ItemStack> fromSponge(ItemStack item) {
         // Create a copy of the ItemStack so Sponge doesn't modify the Item reference
         return new SpongeItem(item.copy());
     }
-
-//    public static Clipboard fromSponge(com.sk89q.worldedit.extent.clipboard.Clipboard clipboard) {
-//        Region region = fromWorldEdit(clipboard.getRegion());
-//        Vector origin = clipboard.getOrigin();
-//        return new Clipboard(region, Vector3N.of(origin.getX(), origin.getY(), origin.getZ()));
-//    }
-//
-//    public static Region fromWorldEdit(com.sk89q.worldedit.regions.Region region) {
-//        return new WrappedRegion(region);
-//    }
-//
-//    public static com.sk89q.worldedit.extent.clipboard.Clipboard toWorldEdit(Clipboard clipboard) {
-//        com.sk89q.worldedit.regions.Region region = toWorldEdit(clipboard.getRegion());
-//        Vector3N origin = clipboard.getOrigin();
-//        com.sk89q.worldedit.extent.clipboard.Clipboard worldEditClipboard = new BlockArrayClipboard(region);
-//        worldEditClipboard.setOrigin(new Vector(origin.getXd(), origin.getYd(), origin.getZd()));
-//        return worldEditClipboard;
-//    }
-//
-//    public static com.sk89q.worldedit.regions.Region toWorldEdit(Region region) {
-//        if (region instanceof WrappedRegion) {
-//            return ((WrappedRegion) region).getReference().orNull();
-//        }
-//        else {
-//            com.sk89q.worldedit.world.World world = toWorldEdit(region.getWorld());
-//            Vector3N min = region.getMinimumPoint();
-//            Vector3N max = region.getMaximumPoint();
-//
-//            return new com.sk89q.worldedit.regions.CuboidRegion(
-//                    world,
-//                    new Vector(min.getXd(), min.getYd(), min.getZd()),
-//                    new Vector(max.getXd(), max.getYd(), max.getZd())
-//            );
-//        }
-//    }
-//
-//    public static com.sk89q.worldedit.world.World toWorldEdit(org.dockbox.hartshorn.server.minecraft.dimension.world.World world) {
-//        return SpongeWorldEdit.inst().getAdapter().getWorld(toSponge(world).orNull());
-//    }
-//
-//    public static FawePlayer<?> toWorldEdit(Player player) {
-//        return FawePlayer.wrap(toSponge(player).orNull());
-//    }
 
     public static Exceptional<ServerPlayer> toSponge(Player player) {
         if (player instanceof SpongePlayer) {
@@ -570,38 +481,6 @@ public enum SpongeConvert {
         }
         return Exceptional.empty();
     }
-
-//    public static Vector3N fromWorldEdit(Vector vector) {
-//        return Vector3N.of(vector.getX(), vector.getY(), vector.getZ());
-//    }
-//
-//    public static org.dockbox.hartshorn.server.minecraft.dimension.world.World fromWorldEdit(com.sk89q.worldedit.world.World world) {
-//        return Hartshorn.context().get(Worlds.class).getWorld(world.getName()).orNull();
-//    }
-//
-//    public static Exceptional<BaseBlock> toWorldEdit(Item item, ParserContext context) {
-//        if (!item.isBlock())
-//            return Exceptional.of(new IllegalArgumentException("Cannot derive BaseBlock from non-block item"));
-//        return Exceptional.of(() -> WorldEdit.getInstance()
-//                .getBlockFactory()
-//                .parseFromInput(item.getId() + ':' + item.getMeta(), context)
-//        );
-//    }
-
-    // TODO: Find equivalent type
-//    public static InventoryArchetype toSponge(InventoryType inventoryType) {
-//        switch (inventoryType) {
-//            case DOUBLE_CHEST:
-//                return InventoryArchetypes.DOUBLE_CHEST;
-//            case HOPPER:
-//                return InventoryArchetypes.HOPPER;
-//            case DISPENSER:
-//                return InventoryArchetypes.DISPENSER;
-//            case CHEST:
-//            default:
-//                return InventoryArchetypes.CHEST;
-//        }
-//    }
 
     public static EquipmentType toSponge(Slot slot) {
         return switch (slot) {
@@ -613,20 +492,6 @@ public enum SpongeConvert {
             case OFF_HAND -> EquipmentTypes.OFF_HAND.get();
         };
     }
-
-//    public static Mask toWorldEdit(org.dockbox.hartshorn.worldedit.region.Mask mask) {
-//        if (mask instanceof WrappedMask) {
-//            return ((WrappedMask) mask).getReference().orNull();
-//        }
-//        throw new IllegalStateException("Unknown implementation for Mask: [" + mask.getClass() + "]");
-//    }
-//
-//    public static Pattern toWorldEdit(org.dockbox.hartshorn.worldedit.region.Pattern pattern) {
-//        if (pattern instanceof WrappedPattern) {
-//            return ((WrappedPattern) pattern).getReference().orNull();
-//        }
-//        throw new IllegalStateException("Unknown implementation for Pattern: [" + pattern.getClass() + "]");
-//    }
 
     public static Vector3N fromSponge(Vector3i v3d) {
         return Vector3N.of(v3d.x(), v3d.y(), v3d.z());
@@ -678,42 +543,6 @@ public enum SpongeConvert {
             return BlockFace.NONE;
         }
     }
-
-//    public static com.intellectualcrafters.plot.object.Location toPlotSquared(org.dockbox.hartshorn.server.minecraft.dimension.position.Location location) {
-//        return new com.intellectualcrafters.plot.object.Location(
-//                location.getWorld().getName(),
-//                (int) location.getX(),
-//                (int) location.getY(),
-//                (int) location.getZ(),
-//                0, 0
-//        );
-//    }
-//
-//    public static org.dockbox.hartshorn.server.minecraft.dimension.position.Location fromPlotSquared(com.intellectualcrafters.plot.object.Location location) {
-//        org.dockbox.hartshorn.server.minecraft.dimension.world.World world = Hartshorn.context().get(Worlds.class).getWorld(location.getWorld()).orNull();
-//        return new org.dockbox.hartshorn.server.minecraft.dimension.position.Location(
-//                location.getX(), location.getY(), location.getZ(), world
-//        );
-//    }
-//
-//    public static Player fromPlotSquared(PlotPlayer player) {
-//        return new SpongePlayer(player.getUUID(), player.getName());
-//    }
-//
-//    public static PlotPlayer toPlotSquared(Player player) {
-//        if (player instanceof SpongePlayer) {
-//            return PlotPlayer.wrap(((SpongePlayer) player).getSpongePlayer().orNull());
-//        }
-//        return PlotPlayer.get(player.getName());
-//    }
-//
-//    public static Exceptional<PlotBlock> toPlotSquared(Item item) {
-//        if (!item.isBlock()) return Exceptional.empty();
-//        int id = item.getIdNumeric();
-//        int meta = item.getMeta();
-//        // Casting is safe in this use-case, as this is the same approach used by PlotSquared (legacy) in PlotBlock itself
-//        return Exceptional.of(new PlotBlock((short) id, (byte) meta));
-//    }
 
     public static org.dockbox.hartshorn.server.minecraft.entities.Entity fromSponge(Entity entity) {
         EntityType<?> type = entity.type();
@@ -798,4 +627,142 @@ public enum SpongeConvert {
         if (block instanceof SpongeBlock spongeBlock) return spongeBlock.state();
         else return Exceptional.empty();
     }
+
+//    public static Element toSponge(org.dockbox.hartshorn.server.minecraft.inventory.Element element) {
+//        if (element instanceof SimpleElement) {
+//            return Element.of(toSponge(element.getItem()),
+//                    a -> ((SimpleElement) element).perform(fromSponge(a.getPlayer()))
+//            );
+//        }
+//        return Element.EMPTY;
+//    }
+
+//    public static com.intellectualcrafters.plot.object.Location toPlotSquared(org.dockbox.hartshorn.server.minecraft.dimension.position.Location location) {
+//        return new com.intellectualcrafters.plot.object.Location(
+//                location.getWorld().getName(),
+//                (int) location.getX(),
+//                (int) location.getY(),
+//                (int) location.getZ(),
+//                0, 0
+//        );
+//    }
+
+//    public static org.dockbox.hartshorn.server.minecraft.dimension.position.Location fromPlotSquared(com.intellectualcrafters.plot.object.Location location) {
+//        org.dockbox.hartshorn.server.minecraft.dimension.world.World world = Hartshorn.context().get(Worlds.class).getWorld(location.getWorld()).orNull();
+//        return new org.dockbox.hartshorn.server.minecraft.dimension.position.Location(
+//                location.getX(), location.getY(), location.getZ(), world
+//        );
+//    }
+
+//    public static Player fromPlotSquared(PlotPlayer player) {
+//        return new SpongePlayer(player.getUUID(), player.getName());
+//    }
+
+//    public static PlotPlayer toPlotSquared(Player player) {
+//        if (player instanceof SpongePlayer) {
+//            return PlotPlayer.wrap(((SpongePlayer) player).getSpongePlayer().orNull());
+//        }
+//        return PlotPlayer.get(player.getName());
+//    }
+
+//    public static Exceptional<PlotBlock> toPlotSquared(Item item) {
+//        if (!item.isBlock()) return Exceptional.empty();
+//        int id = item.getIdNumeric();
+//        int meta = item.getMeta();
+//        // Casting is safe in this use-case, as this is the same approach used by PlotSquared (legacy) in PlotBlock itself
+//        return Exceptional.of(new PlotBlock((short) id, (byte) meta));
+//    }
+
+//    public static Mask toWorldEdit(org.dockbox.hartshorn.worldedit.region.Mask mask) {
+//        if (mask instanceof WrappedMask) {
+//            return ((WrappedMask) mask).getReference().orNull();
+//        }
+//        throw new IllegalStateException("Unknown implementation for Mask: [" + mask.getClass() + "]");
+//    }
+
+//    public static Pattern toWorldEdit(org.dockbox.hartshorn.worldedit.region.Pattern pattern) {
+//        if (pattern instanceof WrappedPattern) {
+//            return ((WrappedPattern) pattern).getReference().orNull();
+//        }
+//        throw new IllegalStateException("Unknown implementation for Pattern: [" + pattern.getClass() + "]");
+//    }
+
+//    public static Vector3N fromWorldEdit(Vector vector) {
+//        return Vector3N.of(vector.getX(), vector.getY(), vector.getZ());
+//    }
+
+//    public static org.dockbox.hartshorn.server.minecraft.dimension.world.World fromWorldEdit(com.sk89q.worldedit.world.World world) {
+//        return Hartshorn.context().get(Worlds.class).getWorld(world.getName()).orNull();
+//    }
+
+//    public static Exceptional<BaseBlock> toWorldEdit(Item item, ParserContext context) {
+//        if (!item.isBlock())
+//            return Exceptional.of(new IllegalArgumentException("Cannot derive BaseBlock from non-block item"));
+//        return Exceptional.of(() -> WorldEdit.getInstance()
+//                .getBlockFactory()
+//                .parseFromInput(item.getId() + ':' + item.getMeta(), context)
+//        );
+//    }
+
+//    public static InventoryArchetype toSponge(InventoryType inventoryType) {
+//        switch (inventoryType) {
+//            case DOUBLE_CHEST:
+//                return InventoryArchetypes.DOUBLE_CHEST;
+//            case HOPPER:
+//                return InventoryArchetypes.HOPPER;
+//            case DISPENSER:
+//                return InventoryArchetypes.DISPENSER;
+//            case CHEST:
+//            default:
+//                return InventoryArchetypes.CHEST;
+//        }
+//    }
+
+//    public static Clipboard fromSponge(com.sk89q.worldedit.extent.clipboard.Clipboard clipboard) {
+//        Region region = fromWorldEdit(clipboard.getRegion());
+//        Vector origin = clipboard.getOrigin();
+//        return new Clipboard(region, Vector3N.of(origin.getX(), origin.getY(), origin.getZ()));
+//    }
+
+//    public static Region fromWorldEdit(com.sk89q.worldedit.regions.Region region) {
+//        return new WrappedRegion(region);
+//    }
+
+//    public static com.sk89q.worldedit.extent.clipboard.Clipboard toWorldEdit(Clipboard clipboard) {
+//        com.sk89q.worldedit.regions.Region region = toWorldEdit(clipboard.getRegion());
+//        Vector3N origin = clipboard.getOrigin();
+//        com.sk89q.worldedit.extent.clipboard.Clipboard worldEditClipboard = new BlockArrayClipboard(region);
+//        worldEditClipboard.setOrigin(new Vector(origin.getXd(), origin.getYd(), origin.getZd()));
+//        return worldEditClipboard;
+//    }
+
+//    public static com.sk89q.worldedit.regions.Region toWorldEdit(Region region) {
+//        if (region instanceof WrappedRegion) {
+//            return ((WrappedRegion) region).getReference().orNull();
+//        }
+//        else {
+//            com.sk89q.worldedit.world.World world = toWorldEdit(region.getWorld());
+//            Vector3N min = region.getMinimumPoint();
+//            Vector3N max = region.getMaximumPoint();
+//
+//            return new com.sk89q.worldedit.regions.CuboidRegion(
+//                    world,
+//                    new Vector(min.getXd(), min.getYd(), min.getZd()),
+//                    new Vector(max.getXd(), max.getYd(), max.getZd())
+//            );
+//        }
+//    }
+
+//    public static com.sk89q.worldedit.world.World toWorldEdit(org.dockbox.hartshorn.server.minecraft.dimension.world.World world) {
+//        return SpongeWorldEdit.inst().getAdapter().getWorld(toSponge(world).orNull());
+//    }
+
+//    public static FawePlayer<?> toWorldEdit(Player player) {
+//        return FawePlayer.wrap(toSponge(player).orNull());
+//    }
+
+//    public static org.dockbox.hartshorn.server.minecraft.inventory.Element fromSponge(Element element) {
+//        Item item = fromSponge(element.getItem().createStack());
+//        return org.dockbox.hartshorn.server.minecraft.inventory.Element.of(item); // Action is skipped here
+//    }
 }
