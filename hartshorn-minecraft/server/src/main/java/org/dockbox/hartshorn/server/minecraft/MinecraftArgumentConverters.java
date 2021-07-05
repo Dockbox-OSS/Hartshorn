@@ -26,11 +26,16 @@ import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
 import org.dockbox.hartshorn.di.annotations.Service;
 import org.dockbox.hartshorn.di.properties.InjectableType;
 import org.dockbox.hartshorn.di.properties.InjectorProperty;
+import org.dockbox.hartshorn.server.minecraft.dimension.Block;
+import org.dockbox.hartshorn.server.minecraft.dimension.BlockContext;
 import org.dockbox.hartshorn.server.minecraft.dimension.Worlds;
 import org.dockbox.hartshorn.server.minecraft.dimension.position.Location;
 import org.dockbox.hartshorn.server.minecraft.dimension.world.World;
+import org.dockbox.hartshorn.server.minecraft.item.Item;
+import org.dockbox.hartshorn.server.minecraft.item.ItemContext;
 import org.dockbox.hartshorn.server.minecraft.players.Player;
 import org.dockbox.hartshorn.server.minecraft.players.Players;
+import org.dockbox.hartshorn.util.HartshornUtils;
 
 import java.util.UUID;
 
@@ -76,6 +81,22 @@ public final class MinecraftArgumentConverters implements InjectableType {
                     .map(Player::getName)
                     .filter(n -> n.startsWith(in))
                     .toList())
+            .build();
+
+    public static final ArgumentConverter<Item> ITEM = CommandValueConverter.builder(Item.class, "item")
+            .withConverter(in -> Exceptional.of(Item.of(in)))
+            .withSuggestionProvider(in -> Hartshorn.context()
+                    .first(ItemContext.class)
+                    .map(ItemContext::getIds)
+                    .orElse(HartshornUtils::emptyList).get())
+            .build();
+
+    public static final ArgumentConverter<Block> BLOCK = CommandValueConverter.builder(Block.class, "block")
+            .withConverter(in -> Exceptional.of(Block.of(in)))
+            .withSuggestionProvider(in -> Hartshorn.context()
+                    .first(BlockContext.class)
+                    .map(BlockContext::getIds)
+                    .orElse(HartshornUtils::emptyList).get())
             .build();
 
     @Override
