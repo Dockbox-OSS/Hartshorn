@@ -21,13 +21,11 @@ import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.persistence.registry.RegistryIdentifier;
 import org.dockbox.hartshorn.util.HartshornUtils;
 
-import java.util.Arrays;
-import java.util.HashSet;
+import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 
 public enum VariantIdentifier implements RegistryIdentifier {
-    FULL("log"),
+    FULL,
     SMALL_ARCH,
     SMALL_ARCH_HALF,
     TWO_METER_ARCH,
@@ -48,7 +46,9 @@ public enum VariantIdentifier implements RegistryIdentifier {
     VERTICAL_QUARTER,
     STAIRS,
     WALL,
+    PILLAR_SMALL,
     PILLAR,
+    PILLAR_LARGE,
     ROUND_ARCH,
     GOTHIC_ARCH,
     SEGMENTAL_ARCH,
@@ -73,6 +73,19 @@ public enum VariantIdentifier implements RegistryIdentifier {
     LAYER("snow"),
     ROCKS,
     RAIL,
+    DOOR,
+
+    PIPE,
+    MOUNTED_PIPE,
+    SIX_WAY_FLANGE("6_way_flange"),
+    FIVE_WAY_FLANGE("5_way_flange"),
+    FOUR_WAY_FLANGE("4_way_flange"),
+    THREE_WAY_FLANGE("3_way_flange"),
+    ELBOW_FLANGE,
+    GATE_VALVE,
+    BALL_VALVE,
+    CROSS_FLANGE,
+    T_FLANGE,
 
     RAILING_HORIZONTAL,
     RAILING_DIAGONAL,
@@ -86,24 +99,21 @@ public enum VariantIdentifier implements RegistryIdentifier {
     SHUTTERS;
 
 
-    private final Set<String> idIdentifiers;
+    private final String identifier;
     private static final Map<String, VariantIdentifier> identifierMap = HartshornUtils.emptyConcurrentMap();
 
     static {
         for (VariantIdentifier variantIdentifier : values()) {
-            for (String identifier : variantIdentifier.idIdentifiers) {
-                identifierMap.put(identifier, variantIdentifier);
-            }
+            identifierMap.put(variantIdentifier.identifier, variantIdentifier);
         }
     }
 
-    VariantIdentifier(String... idIdentifiers) {
-        this.idIdentifiers = new HashSet<>(Arrays.asList(idIdentifiers));
-        this.idIdentifiers.add(this.name().toLowerCase());
+    VariantIdentifier(String identifier) {
+        this.identifier = identifier;
     }
 
     VariantIdentifier() {
-        this(new String[0]);
+        this.identifier = this.name().toLowerCase(Locale.ROOT);
     }
 
     public static Exceptional<VariantIdentifier> of(String identifier) {
@@ -114,7 +124,7 @@ public enum VariantIdentifier implements RegistryIdentifier {
                 : Exceptional.empty();
     }
 
-    public Set<String> getIdIdentifiers() {
-        return this.idIdentifiers;
+    public String getIdentifier() {
+        return this.identifier;
     }
 }
