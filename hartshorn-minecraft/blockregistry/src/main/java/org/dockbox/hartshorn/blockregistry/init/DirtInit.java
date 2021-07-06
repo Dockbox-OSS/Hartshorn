@@ -1,12 +1,15 @@
 package org.dockbox.hartshorn.blockregistry.init;
 
+import org.dockbox.hartshorn.blockregistry.VariantIdentifier;
 import org.dockbox.hartshorn.blockregistry.init.VanillaProps.ModGroups;
 import org.dockbox.hartshorn.blockregistry.init.VanillaProps.TypeList;
 
-public class DirtInit {
+public final class DirtInit {
 
-    public static void init() {
-        TypeList types = null, typesVanilla = null;
+    private DirtInit() {}
+
+    public static void init(TypeList types, TypeList typesVanilla) {
+
         VanillaProps.earth()
                 .group(ModGroups.GRASS_AND_DIRT)
                 .name("light_cracked_dirt")
@@ -148,6 +151,6 @@ public class DirtInit {
                 .name("grassy_dirt")
                 .texture("overlay", "block/8_topography/4_grass_leaves/grass_overlay")
                 .texture("*", "block/8_topography/5_dirt/grassy_dirt")
-                .register(TypeList.of(Void.class));
+                .register(TypeList.of(VariantIdentifier.LAYER, VariantIdentifier.STAIRS));
     }
 }

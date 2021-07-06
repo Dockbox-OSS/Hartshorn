@@ -3,10 +3,11 @@ package org.dockbox.hartshorn.blockregistry.init;
 import org.dockbox.hartshorn.blockregistry.init.VanillaProps.ModGroups;
 import org.dockbox.hartshorn.blockregistry.init.VanillaProps.TypeList;
 
-public class PlasterInit {
+public final class PlasterInit {
 
-    public static void init() {
-        TypeList types = null, typesVanilla = null;
+    private PlasterInit() {}
+
+    public static void init(TypeList types, TypeList typesVanilla) {
         VanillaProps.stone()
                 .group(ModGroups.PLASTER_STUCCO_AND_PAINT)
                 .name("rough_white_plaster")

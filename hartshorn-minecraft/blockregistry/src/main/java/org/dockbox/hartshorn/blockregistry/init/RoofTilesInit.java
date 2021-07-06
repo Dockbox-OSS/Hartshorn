@@ -3,15 +3,16 @@ package org.dockbox.hartshorn.blockregistry.init;
 import org.dockbox.hartshorn.blockregistry.init.VanillaProps.ModGroups;
 import org.dockbox.hartshorn.blockregistry.init.VanillaProps.TypeList;
 
-public class RoofTilesInit {
+public final class RoofTilesInit {
 
-    public static void init() {
-        TypeList types= null, typesVanilla = null;
+    private RoofTilesInit() {}
+
+    public static void init(TypeList types, TypeList typesVanilla) {
         VanillaProps.planks()
                 .group(ModGroups.ROOFING)
-                .name("dirty_blue_clay_beaver_tail_tiles", "dirty_blue_clay_beaver_tail_tile")
+                .name("dirty_blue_clay_beaver_tail_tile")
                 .texture("minecraft:block/light_blue_terracotta")
-                                .register(typesVanilla);
+                .register(typesVanilla);
         VanillaProps.planks()
                 .group(ModGroups.ROOFING)
                 .name("light_blue_clay_beaver_tail_tiles")
@@ -21,7 +22,7 @@ public class RoofTilesInit {
                 .group(ModGroups.ROOFING)
                 .name("blue_clay_beaver_tail_tiles", "blue_clay_beaver_tail_tile")
                 .texture("minecraft:block/blue_terracotta")
-                                .register(typesVanilla);
+                .register(typesVanilla);
         VanillaProps.planks()
                 .group(ModGroups.ROOFING)
                 .name("blue_green_diamond_clay_shingles")
@@ -31,7 +32,7 @@ public class RoofTilesInit {
                 .group(ModGroups.ROOFING)
                 .name("overgrown_green_clay_shingles", "overgrown_green_clay_shingle")
                 .texture("minecraft:block/lime_terracotta")
-                                .register(typesVanilla);
+                .register(typesVanilla);
         VanillaProps.planks()
                 .group(ModGroups.ROOFING)
                 .name("brown_gray_wood_shingles")
@@ -46,12 +47,12 @@ public class RoofTilesInit {
                 .group(ModGroups.ROOFING)
                 .name("green_clay_shingles", "green_clay_shingle")
                 .texture("minecraft:block/green_terracotta")
-                                .register(typesVanilla);
+                .register(typesVanilla);
         VanillaProps.planks()
                 .group(ModGroups.ROOFING)
                 .name("pink_clay_tiles", "pink_clay_tile")
                 .texture("minecraft:block/pink_terracotta")
-                                .register(typesVanilla);
+                .register(typesVanilla);
         VanillaProps.planks()
                 .group(ModGroups.ROOFING)
                 .name("red_clay_tiles")
@@ -106,7 +107,7 @@ public class RoofTilesInit {
                 .group(ModGroups.ROOFING)
                 .name("old_slate_roof_tiles", "old_slate_roof_tile")
                 .texture("minecraft:block/cyan_terracotta")
-                                .register(typesVanilla);
+                .register(typesVanilla);
         VanillaProps.planks()
                 .group(ModGroups.ROOFING)
                 .name("dark_slate_roof_tiles")

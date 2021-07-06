@@ -31,20 +31,10 @@ import java.util.List;
 
 public final class VanillaProps {
 
-    public static final List<VariantIdentifier> DEFAULT_VARIANTS =
-        HartshornUtils.asUnmodifiableList(VariantIdentifier.FULL, VariantIdentifier.ARROWSLIT, VariantIdentifier.SMALL_WINDOW,
-            VariantIdentifier.SMALL_WINDOW_HALF, VariantIdentifier.BALUSTRADE, VariantIdentifier.CAPITAL,
-            VariantIdentifier.SLAB, VariantIdentifier.QUARTER_SLAB, VariantIdentifier.CORNER_SLAB,
-            VariantIdentifier.EIGHTH_SLAB, VariantIdentifier.VERTICAL_CORNER_SLAB, VariantIdentifier.VERTICAL_SLAB,
-            VariantIdentifier.VERTICAL_CORNER, VariantIdentifier.VERTICAL_QUARTER, VariantIdentifier.STAIRS,
-            VariantIdentifier.WALL, VariantIdentifier.PILLAR);
-
     private VanillaProps() {}
 
     public static BlockDataBuilder stone() {
-        return new BlockDataBuilder(
-            DEFAULT_VARIANTS, VariantIdentifier.SMALL_ARCH, VariantIdentifier.SMALL_ARCH_HALF,
-            VariantIdentifier.TWO_METER_ARCH, VariantIdentifier.TWO_METER_ARCH_HALF, VariantIdentifier.SPHERE);
+        return new BlockDataBuilder();
     }
     public static BlockDataBuilder planks() {
         return new BlockDataBuilder();
@@ -53,7 +43,7 @@ public final class VanillaProps {
         return new BlockDataBuilder();
     }
     public static BlockDataBuilder metal() {
-        return new BlockDataBuilder(DEFAULT_VARIANTS);
+        return new BlockDataBuilder();
     }
     public static BlockDataBuilder grassyEarth() {
         return new BlockDataBuilder();
@@ -181,9 +171,10 @@ public final class VanillaProps {
 
     public static class BlockDataBuilder
     {
-        private String family;
         private List<VariantIdentifier> variants;
-
+        private String family;
+        private String fullName;
+        private String variantName;
         private ModGroups group;
         private boolean isSolid;
         private boolean ignore;
@@ -192,15 +183,6 @@ public final class VanillaProps {
 
         public BlockDataBuilder(boolean ignore) {
             this.ignore = ignore;
-        }
-
-        public BlockDataBuilder(List<VariantIdentifier> variantIdentifiers,
-                                VariantIdentifier... additionalVariantIdentifiers)
-        {
-            //So that when the additional variant identifiers are added to it, this doesn't update the initial list too.
-            this.variants = HartshornUtils.asList(variantIdentifiers);
-
-            this.variants.addAll(HartshornUtils.asList(additionalVariantIdentifiers));
         }
 
         public BlockDataBuilder group(ModGroups group) {
@@ -214,13 +196,14 @@ public final class VanillaProps {
         }
 
         public BlockDataBuilder name(String name) {
-            names.add(name);
+            this.fullName = name;
+            this.variantName = name;
             return this;
         }
 
         public BlockDataBuilder name(String name, String name2) {
-            names.add(name);
-            names.add(name2);
+            this.fullName = name;
+            this.variantName = name2;
             return this;
         }
 
@@ -253,10 +236,6 @@ public final class VanillaProps {
             return this;
         }
 
-        public BlockDataBuilder variantFamily() {
-            return this;
-        }
-
         public BlockDataBuilder grassColor() {
             return this;
         }
@@ -265,17 +244,27 @@ public final class VanillaProps {
             return this;
         }
 
-        public BlockDataBuilder with(String name, String value) {
-            return this;
-        }
-
         public BlockDataBuilder render(RenderLayer name) {
             return this;
         }
 
         public void register(TypeList type) {
-            this.variants.addAll(type.variantIdentifiers);
+            this.variants = type.variantIdentifiers;
+            if (this.variants.isEmpty()) {
+                
+            }
+
         }
+
+        private VariantIdentifier identifyVariant(String name) {
+            for (VariantIdentifier variantIdentifier : VariantIdentifier.values()) {
+                if (name.endsWith(variantIdentifier.getIdentifier()))
+                    return variantIdentifier;
+            }
+
+            return VariantIdentifier.FULL;
+        }
+
         public BlockDataBuilder randomTick(boolean tick) {
             return this;
         }

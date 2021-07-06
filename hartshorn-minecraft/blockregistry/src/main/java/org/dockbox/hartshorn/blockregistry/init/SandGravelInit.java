@@ -3,101 +3,103 @@ package org.dockbox.hartshorn.blockregistry.init;
 import org.dockbox.hartshorn.blockregistry.init.VanillaProps.ModGroups;
 import org.dockbox.hartshorn.blockregistry.init.VanillaProps.TypeList;
 
-public class SandGravelInit {
+public final class SandGravelInit {
 
-    public static void init() {
-        TypeList types = null, typesVanilla = null, typesOverlay = null;
+    private SandGravelInit() {}
+
+    public static void init(TypeList types, TypeList typesVanilla, TypeList typesOverlay) {
+
         VanillaProps.sand()
                 .group(ModGroups.PLASTER_STUCCO_AND_PAINT)
                 .name("white_concrete_powder")
                 .texture("minecraft:block/white_concrete_powder")
-                                .register(typesVanilla);
+                .register(typesVanilla);
         VanillaProps.sand()
                 .group(ModGroups.PLASTER_STUCCO_AND_PAINT)
                 .name("orange_concrete_powder")
                 .texture("minecraft:block/orange_concrete_powder")
-                                .register(typesVanilla);
+                .register(typesVanilla);
         VanillaProps.sand()
                 .group(ModGroups.PLASTER_STUCCO_AND_PAINT)
                 .name("magenta_concrete_powder")
                 .texture("minecraft:block/magenta_concrete_powder")
-                                .register(typesVanilla);
+                .register(typesVanilla);
         VanillaProps.sand()
                 .group(ModGroups.PLASTER_STUCCO_AND_PAINT)
                 .name("light_blue_concrete_powder")
                 .texture("minecraft:block/light_blue_concrete_powder")
-                                .register(typesVanilla);
+                .register(typesVanilla);
         VanillaProps.sand()
                 .group(ModGroups.PLASTER_STUCCO_AND_PAINT)
                 .name("yellow_concrete_powder")
                 .texture("minecraft:block/yellow_concrete_powder")
-                                .register(typesVanilla);
+                .register(typesVanilla);
         VanillaProps.sand()
                 .group(ModGroups.PLASTER_STUCCO_AND_PAINT)
                 .name("lime_concrete_powder")
                 .texture("minecraft:block/lime_concrete_powder")
-                                .register(typesVanilla);
+                .register(typesVanilla);
         VanillaProps.sand()
                 .group(ModGroups.PLASTER_STUCCO_AND_PAINT)
                 .name("pink_concrete_powder")
                 .texture("minecraft:block/pink_concrete_powder")
-                                .register(typesVanilla);
+                .register(typesVanilla);
         VanillaProps.sand()
                 .group(ModGroups.PLASTER_STUCCO_AND_PAINT)
                 .name("gray_concrete_powder")
                 .texture("minecraft:block/gray_concrete_powder")
-                                .register(typesVanilla);
+                .register(typesVanilla);
         VanillaProps.sand()
                 .group(ModGroups.PLASTER_STUCCO_AND_PAINT)
                 .name("light_gray_concrete_powder")
                 .texture("minecraft:block/light_gray_concrete_powder")
-                                .register(typesVanilla);
+                .register(typesVanilla);
         VanillaProps.sand()
                 .group(ModGroups.PLASTER_STUCCO_AND_PAINT)
                 .name("cyan_concrete_powder")
                 .texture("minecraft:block/cyan_concrete_powder")
-                                .register(typesVanilla);
+                .register(typesVanilla);
         VanillaProps.sand()
                 .group(ModGroups.PLASTER_STUCCO_AND_PAINT)
                 .name("purple_concrete_powder")
                 .texture("minecraft:block/purple_concrete_powder")
-                                .register(typesVanilla);
+                .register(typesVanilla);
         VanillaProps.sand()
                 .group(ModGroups.PLASTER_STUCCO_AND_PAINT)
                 .name("blue_concrete_powder")
                 .texture("minecraft:block/blue_concrete_powder")
-                                .register(typesVanilla);
+                .register(typesVanilla);
         VanillaProps.sand()
                 .group(ModGroups.PLASTER_STUCCO_AND_PAINT)
                 .name("brown_concrete_powder")
                 .texture("minecraft:block/brown_concrete_powder")
-                                .register(typesVanilla);
+                .register(typesVanilla);
         VanillaProps.sand()
                 .group(ModGroups.PLASTER_STUCCO_AND_PAINT)
                 .name("green_concrete_powder")
                 .texture("minecraft:block/green_concrete_powder")
-                                .register(typesVanilla);
+                .register(typesVanilla);
         VanillaProps.sand()
                 .group(ModGroups.PLASTER_STUCCO_AND_PAINT)
                 .name("red_concrete_powder")
                 .texture("minecraft:block/red_concrete_powder")
-                                .register(typesVanilla);
+                .register(typesVanilla);
         VanillaProps.sand()
                 .group(ModGroups.PLASTER_STUCCO_AND_PAINT)
                 .name("black_concrete_powder")
                 .texture("minecraft:block/black_concrete_powder")
-                                .register(typesVanilla);
+                .register(typesVanilla);
         VanillaProps.sand()
                 .group(ModGroups.SAND_AND_GRAVEL)
                 .name("sand")
                 .texture("minecraft:block/sand")
-                                .register(typesVanilla);
+                .register(typesVanilla);
         VanillaProps.grassySand()
                 .group(ModGroups.SAND_AND_GRAVEL)
                 .name("grass_and_sand")
                 .texture("overlay", "block/8_topography/4_grass_leaves/grass_overlay")
                 .texture("*", "block/8_topography/3_sand_clay/grass_and_sand")
-                                .grassColor()
+                .grassColor()
                 .register(typesOverlay);
         VanillaProps.gravel()
                 .group(ModGroups.SAND_AND_GRAVEL)
@@ -128,7 +130,7 @@ public class SandGravelInit {
                 .group(ModGroups.SAND_AND_GRAVEL)
                 .name("red_sand")
                 .texture("minecraft:block/red_sand")
-                                .register(typesVanilla);
+                .register(typesVanilla);
         VanillaProps.gravel()
                 .group(ModGroups.SAND_AND_GRAVEL)
                 .name("red_sand_and_gravel")
@@ -163,13 +165,13 @@ public class SandGravelInit {
                 .group(ModGroups.SAND_AND_GRAVEL)
                 .name("gravel")
                 .texture("minecraft:block/gravel")
-                                .register(typesVanilla);
+                .register(typesVanilla);
         VanillaProps.grassyGravel()
                 .group(ModGroups.SAND_AND_GRAVEL)
                 .name("grassy_gravel")
                 .texture("overlay", "block/8_topography/4_grass_leaves/grass_overlay")
                 .texture("*", "block/8_topography/6_debris_gravel/grassy_gravel")
-                                .grassColor()
+                .grassColor()
                 .register(typesOverlay);
         VanillaProps.gravel()
                 .group(ModGroups.SAND_AND_GRAVEL)
@@ -182,7 +184,7 @@ public class SandGravelInit {
                 .texture("overlay", "block/8_topography/4_grass_leaves/grass_overlay")
                 .texture("*", "block/8_topography/6_debris_gravel/grassy_small_stones")
                 .grassColor()
-                                .register(typesOverlay);
+                .register(typesOverlay);
         VanillaProps.gravel()
                 .group(ModGroups.SAND_AND_GRAVEL)
                 .name("brown_gravel")
@@ -202,12 +204,12 @@ public class SandGravelInit {
                 .group(ModGroups.SAND_AND_GRAVEL)
                 .name("netherrack")
                 .texture("minecraft:block/netherrack")
-                                .register(typesVanilla);
+                .register(typesVanilla);
         VanillaProps.earth()
                 .group(ModGroups.SAND_AND_GRAVEL)
                 .name("soul_sand")
                 .texture("minecraft:block/soul_sand")
-                                .register(typesVanilla);
+                .register(typesVanilla);
         VanillaProps.sand()
                 .group(ModGroups.SAND_AND_GRAVEL)
                 .name("ash")

@@ -3,10 +3,11 @@ package org.dockbox.hartshorn.blockregistry.init;
 import org.dockbox.hartshorn.blockregistry.init.VanillaProps.ModGroups;
 import org.dockbox.hartshorn.blockregistry.init.VanillaProps.TypeList;
 
-public class WallDesignsInit {
+public final class WallDesignsInit {
 
-    public static void init() {
-        TypeList types = null;
+    private WallDesignsInit() {}
+
+    public static void init(TypeList types) {
         VanillaProps.stone()
                 .group(ModGroups.ADVANCED_MASONRY_AND_CERAMICS)
                 .name("marble_embossment")

@@ -3,10 +3,11 @@ package org.dockbox.hartshorn.blockregistry.init;
 import org.dockbox.hartshorn.blockregistry.init.VanillaProps.ModGroups;
 import org.dockbox.hartshorn.blockregistry.init.VanillaProps.TypeList;
 
-public class FloorCeilingPatternInit {
+public final class FloorCeilingPatternInit {
 
-    public static void init() {
-        TypeList types = null, typesVanilla = null;
+    private FloorCeilingPatternInit() {}
+
+    public static void init(TypeList types, TypeList typesVanilla) {
         VanillaProps.stone()
                 .group(ModGroups.MOSAICS_TILES_AND_FLOORS)
                 .name("tan_clay_tiles")

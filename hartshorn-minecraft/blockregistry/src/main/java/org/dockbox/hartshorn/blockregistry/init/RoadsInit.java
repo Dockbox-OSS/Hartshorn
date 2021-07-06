@@ -3,10 +3,12 @@ package org.dockbox.hartshorn.blockregistry.init;
 import org.dockbox.hartshorn.blockregistry.init.VanillaProps.ModGroups;
 import org.dockbox.hartshorn.blockregistry.init.VanillaProps.TypeList;
 
-public class RoadsInit {
+public final class RoadsInit {
 
-    public static void init() {
-        TypeList types = null;
+    private RoadsInit() {}
+
+    public static void init(TypeList types) {
+
         VanillaProps.stone()
                 .group(ModGroups.COBBLE_AND_BRICK)
                 .name("limestone_fanpattern_setts")

@@ -3,18 +3,17 @@ package org.dockbox.hartshorn.blockregistry.init;
 import org.dockbox.hartshorn.blockregistry.init.VanillaProps.ModGroups;
 import org.dockbox.hartshorn.blockregistry.init.VanillaProps.TypeList;
 
-public class SmoothNaturalRockInit {
+public final class SmoothNaturalRockInit {
 
-    public static void init() {
-        TypeList types = null;
-        TypeList typesRocks = null;
-        TypeList typesVanillaNoWall = null;
-        TypeList typesVanilla = null;
+    private SmoothNaturalRockInit() {}
+
+    public static void init(TypeList types, TypeList typesRocks, TypeList typesVanillaNoWall, TypeList typesVanilla) {
+
         VanillaProps.stone()
                 .group(ModGroups.STONE)
                 .name("limestone")
                 .texture("minecraft:block/stone")
-                                .register(typesVanilla);
+                .register(typesVanilla);
         VanillaProps.stone()
                 .group(ModGroups.STONE)
                 .name("pink_limestone")
@@ -29,7 +28,7 @@ public class SmoothNaturalRockInit {
                 .group(ModGroups.STONE)
                 .name("light_limestone")
                 .texture("minecraft:block/diorite")
-                                .register(typesVanillaNoWall);
+                .register(typesVanillaNoWall);
         VanillaProps.stone()
                 .group(ModGroups.STONE)
                 .name("dark_limestone")
@@ -39,7 +38,7 @@ public class SmoothNaturalRockInit {
                 .group(ModGroups.STONE)
                 .name("andesite")
                 .texture("minecraft:block/andesite")
-                                .register(typesVanillaNoWall);
+                .register(typesVanillaNoWall);
         VanillaProps.stone()
                 .group(ModGroups.STONE)
                 .name("porous_andesite")
@@ -101,7 +100,7 @@ public class SmoothNaturalRockInit {
                 .group(ModGroups.STONE)
                 .name("granite")
                 .texture("minecraft:block/granite")
-                                .register(typesVanillaNoWall);
+                .register(typesVanillaNoWall);
         VanillaProps.stone()
                 .group(ModGroups.STONE)
                 .name("dripstone")

@@ -3,10 +3,12 @@ package org.dockbox.hartshorn.blockregistry.init;
 import org.dockbox.hartshorn.blockregistry.init.VanillaProps.ModGroups;
 import org.dockbox.hartshorn.blockregistry.init.VanillaProps.TypeList;
 
-public class TudorInit {
+public final class TudorInit {
 
-    public static void init() {
-        TypeList types = null, types1 = null;
+    private TudorInit() {}
+
+    public static void init(TypeList types, TypeList types1) {
+
         VanillaProps.stone()
                 .group(ModGroups.HALF_TIMBERED_WALLS)
                 .name("tudor_cross_frame")

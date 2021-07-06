@@ -7,33 +7,22 @@ import org.dockbox.hartshorn.server.minecraft.item.Item;
 import org.dockbox.hartshorn.server.minecraft.item.storage.MinecraftItems;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 public class BlockRegistryManager
 {
-    private final Map<String, String> aliasToRootMappings  = HartshornUtils.emptyMap();
+
+    private final Map<String, Set<String>> rootAliases     = HartshornUtils.emptyMap();
     private final Map<String, String> rootToFamilyMappings = HartshornUtils.emptyMap();
 
     private final Registry<Registry<String>> blockRegistry;
 
     protected BlockRegistryManager() {
         this.blockRegistry = new Registry<>();
-    }
-
-    /**
-     * Determines if the specified id is an alias.
-     *
-     * @param alias
-     *      The id to check
-     *
-     * @return If the specific is an alias
-     */
-    public boolean isAlias(String alias) {
-        return this.aliasToRootMappings.containsKey(alias);
     }
 
     /**
@@ -44,7 +33,7 @@ public class BlockRegistryManager
      *
      * @return If the specified id is a root id
      */
-    public boolean isRootId(String rootId) {
+    public boolean isRootId(@NotNull String rootId) {
         return this.rootToFamilyMappings.containsKey(rootId);
     }
 
@@ -56,76 +45,62 @@ public class BlockRegistryManager
      *
      * @return If the specified id is a family id
      */
-    public boolean isFamilyId(String familyId) {
+    public boolean isFamilyId(@NotNull String familyId) {
         return this.blockRegistry.containsKey(familyId);
     }
 
     /**
-     * Retrieves the root id of the specified id, if it exists.
+     * Retrieves the family id of the specified root id, if it exists.
      *
-     * @param id
-     *      The id to get the root id for
-     *
-     * @return An {@link Exceptional} containing the root id
-     */
-    public Exceptional<String> getRootId(String id) {
-        if (this.isRootId(id))
-            return Exceptional.of(id);
-
-        if (this.aliasToRootMappings.containsKey(id))
-            return Exceptional.of(this.aliasToRootMappings.get(id));
-
-        return Exceptional.empty();
-    }
-
-    /**
-     * Retrieves the family id of the specified id, if it exists.
-     *
-     * @param id
-     *      The id to get the family id for
+     * @param rootId
+     *      The root id to get the family id for
      *
      * @return An {@link Exceptional} containing the family id
      */
-    public Exceptional<String> getFamilyId(String id) {
-        if (this.isFamilyId(id))
-            return Exceptional.of(id);
+    public Exceptional<String> getFamilyId(@NotNull String rootId) {
+        if (this.isFamilyId(rootId))
+            return Exceptional.of(rootId);
 
-        return this.getRootId(id)
-            .map(rootID -> this.isFamilyId(rootID) ? rootID : this.rootToFamilyMappings.get(rootID));
+        return this.isRootId(rootId)
+            ? Exceptional.of(this.rootToFamilyMappings.get(rootId))
+            : Exceptional.empty();
     }
 
     /**
-     * Retrieves the registered aliases for the specified id (including the root id). If the id is an alias, then it
-     * will retrieve the root id first and then return the registered aliases for that.
+     * Retrieves the registered aliases for the specified root id (excluding the root id). If there are no aliases
+     * for that root id then an empty set will be returned.
      *
-     * @param id
-     *      The id to find the aliases for
+     * @param rootId
+     *      The root id to find the aliases for
      *
      * @return A {@link Set} containing the registered aliases
      */
-    public Set<String> getAliases(String id) {
-        return this.getRootId(id).map((@NonNls String rootId) -> {
-            Set<String> aliases = this.aliasToRootMappings.keySet()
-                .stream()
-                .filter(alias -> this.aliasToRootMappings.get(alias).equals(rootId))
-                .collect(Collectors.toSet());
-
-            aliases.add(rootId);
-            return aliases;
-        }).or(HartshornUtils.emptySet());
+    public Set<String> getAliases(@NotNull String rootId) {
+        return this.rootAliases.getOrDefault(rootId, HartshornUtils.emptySet());
     }
 
     /**
-     * Retrieves a {@link Registry} containing the root ids of the variants of the block family specified by the
-     * passed in id mapped to {@link VariantIdentifier variant identifiers}.
+     * Retrieves a {@link Registry} containing the root ids of the variants of the block family specified by the {@link Item}.
      *
-     * @param id
-     *      The id of any block in the family you want to retrieve the variants for
+     * @param item
+     *      The {@link Item} of any block in the family you want to retrieve the variants for
      *
      * @return A {@link Registry} mapping the root ids of the variants to {@link VariantIdentifier variant identifiers}
      */
-    public Registry<String> getVariants(String id) {
-        return this.getFamilyId(id)
+    public Registry<String> getVariants(@NotNull Item item) {
+        return this.getVariants(item.getId());
+    }
+
+    /**
+     * Retrieves a {@link Registry} containing the root ids of the variants of the block family specified by the id
+     *
+     * @param rootId
+     *      The root id of any block in the family you want to retrieve the variants for
+     *
+     * @return A {@link Registry} mapping the root ids of the variants to {@link VariantIdentifier variant identifiers}
+     */
+    public Registry<String> getVariants(@NotNull String rootId) {
+        return this.getFamilyId(rootId)
             .flatMap(familyId ->
                 this.blockRegistry.getOrEmpty(familyId)
                     .first())
@@ -133,20 +108,36 @@ public class BlockRegistryManager
     }
 
     /**
-     * Maps the alias to the specified root id and automatically registers it within Hartshorn. If the alias already
-     * exists and is not mapped to the specified root id then an {@link IllegalArgumentException} will be thrown.
+     * Determines if the specified alias has been registered already.
      *
      * @param alias
-     *      The alias to add
+     *      The alias to check if registered
+     *
+     * @return If the alias is already registered
+     */
+    public boolean hasAliasRegistered(@NotNull String alias) {
+        return this.rootAliases.values()
+            .stream()
+            .anyMatch(a -> a.contains(alias));
+    }
+
+    /**
+     * Maps the alias to the specified root id and automatically registers it within Hartshorn. If the alias already
+     * exists then an {@link IllegalArgumentException} will be thrown.
+     *
      * @param rootId
      *      The root id to map the alias to
+     * @param alias
+     *      The alias to add
      */
-    public void addAlias(String alias, @NonNls String rootId) {
-        String currentRoot = this.aliasToRootMappings.putIfAbsent(alias, rootId);
-
-        if (null != currentRoot && !currentRoot.equals(rootId))
+    public void addAlias(@NotNull @NonNls String rootId, @NotNull String alias) {
+        if (this.hasAliasRegistered(alias))
             throw new IllegalArgumentException(
-                String.format("The alias %s has already been used for the root %s", alias, currentRoot));
+                String.format("The alias %s has already been registered", alias));
+
+        if (this.rootAliases.containsKey(rootId))
+            this.rootAliases.get(rootId).add(alias);
+        else this.rootAliases.put(rootId, HartshornUtils.asSet(alias));
 
         MinecraftItems.getInstance().registerCustom(alias, () -> Item.of(rootId));
     }
@@ -160,7 +151,7 @@ public class BlockRegistryManager
      * @param familyId
      *      The family id to map the root id to
      */
-    public void addRoot(@NonNls String rootId, @NonNls String familyId) {
+    public void addRoot(@NotNull String rootId, @NotNull @NonNls String familyId) {
         String currentFamily = this.rootToFamilyMappings.putIfAbsent(rootId, familyId);
 
         if (null != currentFamily && !currentFamily.equals(familyId))
@@ -178,7 +169,7 @@ public class BlockRegistryManager
      * @param rootId
      *      The root id of the variant
      */
-    public void addVariant(String familyId, VariantIdentifier variant, String rootId) {
+    public void addVariant(@NotNull String familyId, @NotNull VariantIdentifier variant, @NotNull String rootId) {
         this.blockRegistry.getColumnOrCreate(familyId)
             .first()
             .present(r -> r.addData(variant, rootId));
