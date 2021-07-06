@@ -3,7 +3,7 @@ package org.dockbox.hartshorn.blockregistry.init;
 import org.dockbox.hartshorn.blockregistry.VariantIdentifier;
 import org.dockbox.hartshorn.blockregistry.init.VanillaProps.TypeList;
 
-public class BlockDataInitialisationManager
+public final class BlockDataInitialisationManager
 {
     private static final TypeList refinedStoneCobbleBrickShapesVanilla = TypeList.of(VariantIdentifier.SMALL_ARCH,
         VariantIdentifier.SMALL_ARCH_HALF, VariantIdentifier.TWO_METER_ARCH, VariantIdentifier.TWO_METER_ARCH_HALF,
@@ -257,6 +257,8 @@ public class BlockDataInitialisationManager
         VariantIdentifier.CORNER_SLAB, VariantIdentifier.EIGHTH_SLAB, VariantIdentifier.VERTICAL_CORNER_SLAB,
         VariantIdentifier.VERTICAL_SLAB, VariantIdentifier.VERTICAL_CORNER, VariantIdentifier.VERTICAL_QUARTER, VariantIdentifier.WALL,
         VariantIdentifier.PILLAR, VariantIdentifier.CAPITAL, VariantIdentifier.STAIRS);
+
+    private BlockDataInitialisationManager() {}
 
     public static void main(String[] args) {
         RefinedStoneCobbleBrickInit.init(refinedStoneCobbleBrickShapes, refinedStoneCobbleBrickShapesVanilla, refinedStoneCobbleBrickShapesVanillaNoWall, refinedStoneCobbleBrickShapesTopOverlay);

@@ -1,7 +1,10 @@
 package org.dockbox.hartshorn.blockregistry;
 
+import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.di.annotations.Service;
+import org.dockbox.hartshorn.persistence.mapping.GenericType;
+import org.dockbox.hartshorn.persistence.mapping.ObjectMapper;
 import org.dockbox.hartshorn.persistence.registry.Registry;
 import org.dockbox.hartshorn.server.minecraft.item.Item;
 import org.dockbox.hartshorn.server.minecraft.item.storage.MinecraftItems;
@@ -22,7 +25,7 @@ public class BlockRegistryManager
     private final Registry<Registry<String>> blockRegistry;
 
     protected BlockRegistryManager() {
-        this.blockRegistry = new Registry<>();
+        this.blockRegistry = this.loadBlockRegistry();
     }
 
     /**
@@ -173,5 +176,18 @@ public class BlockRegistryManager
         this.blockRegistry.getColumnOrCreate(familyId)
             .first()
             .present(r -> r.addData(variant, rootId));
+    }
+
+    /**
+     * Loads the serialised block registry from blockregistry.json. If that file doesn't exist or there was an issue
+     * loading the block registry, then an empty {@link Registry} is returned instead.
+     *
+     * @return The loaded {@link Registry block registry}
+     */
+    private Registry<Registry<String>> loadBlockRegistry() {
+        return Hartshorn.context()
+            .get(ObjectMapper.class)
+            .read("blockregistry.json", new GenericType<Registry<Registry<String>>>() {})
+            .or(new Registry<>());
     }
 }
