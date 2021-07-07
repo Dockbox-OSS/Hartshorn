@@ -44,29 +44,25 @@ public final class BlockDataInitialisationManager
 {
     public static final BlockRegistryManager BlockRegistryManager = new BlockRegistryManager();
 
-    private static final TypeList refinedStoneCobbleBrickShapesVanilla = TypeList.of(VariantIdentifier.FULL,
-        VariantIdentifier.SMALL_ARCH, VariantIdentifier.SMALL_ARCH_HALF, VariantIdentifier.TWO_METER_ARCH,
-        VariantIdentifier.TWO_METER_ARCH_HALF, VariantIdentifier.ARROWSLIT, VariantIdentifier.SMALL_WINDOW,
-        VariantIdentifier.SMALL_WINDOW_HALF, VariantIdentifier.BALUSTRADE, VariantIdentifier.CAPITAL,
-        VariantIdentifier.SPHERE, VariantIdentifier.SLAB, VariantIdentifier.QUARTER_SLAB,
-        VariantIdentifier.CORNER_SLAB, VariantIdentifier.EIGHTH_SLAB, VariantIdentifier.VERTICAL_CORNER_SLAB,
-        VariantIdentifier.VERTICAL_SLAB, VariantIdentifier.VERTICAL_CORNER, VariantIdentifier.VERTICAL_QUARTER,
-        VariantIdentifier.WALL, VariantIdentifier.PILLAR, VariantIdentifier.STAIRS);
+    private static final TypeList refinedStoneCobbleBrickShapesVanilla = TypeList.of(VariantIdentifier.SMALL_ARCH,
+        VariantIdentifier.SMALL_ARCH_HALF, VariantIdentifier.TWO_METER_ARCH, VariantIdentifier.TWO_METER_ARCH_HALF,
+        VariantIdentifier.ARROWSLIT, VariantIdentifier.SMALL_WINDOW, VariantIdentifier.SMALL_WINDOW_HALF,
+        VariantIdentifier.BALUSTRADE, VariantIdentifier.CAPITAL, VariantIdentifier.SPHERE, VariantIdentifier.SLAB,
+        VariantIdentifier.QUARTER_SLAB, VariantIdentifier.CORNER_SLAB, VariantIdentifier.EIGHTH_SLAB,
+        VariantIdentifier.VERTICAL_CORNER_SLAB, VariantIdentifier.VERTICAL_SLAB, VariantIdentifier.VERTICAL_CORNER,
+        VariantIdentifier.VERTICAL_QUARTER, VariantIdentifier.WALL, VariantIdentifier.PILLAR);
 
-    private static final TypeList refinedStoneCobbleBrickShapesVanillaNoWall = TypeList.of(VariantIdentifier.FULL,
-        VariantIdentifier.SMALL_ARCH, VariantIdentifier.SMALL_ARCH_HALF, VariantIdentifier.TWO_METER_ARCH,
-        VariantIdentifier.TWO_METER_ARCH_HALF, VariantIdentifier.ARROWSLIT, VariantIdentifier.SMALL_WINDOW,
-        VariantIdentifier.SMALL_WINDOW_HALF, VariantIdentifier.BALUSTRADE, VariantIdentifier.CAPITAL,
+    private static final TypeList refinedStoneCobbleBrickShapesVanillaNoWall = TypeList.of(VariantIdentifier.SMALL_ARCH, VariantIdentifier.SMALL_ARCH_HALF,
+        VariantIdentifier.TWO_METER_ARCH, VariantIdentifier.TWO_METER_ARCH_HALF, VariantIdentifier.ARROWSLIT,
+        VariantIdentifier.SMALL_WINDOW, VariantIdentifier.SMALL_WINDOW_HALF, VariantIdentifier.BALUSTRADE, VariantIdentifier.CAPITAL,
         VariantIdentifier.SPHERE, VariantIdentifier.SLAB,  VariantIdentifier.QUARTER_SLAB, VariantIdentifier.CORNER_SLAB,
         VariantIdentifier.EIGHTH_SLAB, VariantIdentifier.VERTICAL_CORNER_SLAB,  VariantIdentifier.VERTICAL_SLAB,
-        VariantIdentifier.VERTICAL_CORNER, VariantIdentifier.VERTICAL_QUARTER, VariantIdentifier.PILLAR,
-        VariantIdentifier.STAIRS);
+        VariantIdentifier.VERTICAL_CORNER, VariantIdentifier.VERTICAL_QUARTER, VariantIdentifier.PILLAR);
 
-    private static final TypeList refinedStoneCobbleBrickShapesTopOverlay = TypeList.of(VariantIdentifier.FULL,
-        VariantIdentifier.SMALL_ARCH, VariantIdentifier.SMALL_ARCH_HALF, VariantIdentifier.TWO_METER_ARCH,
-        VariantIdentifier.TWO_METER_ARCH_HALF, VariantIdentifier.ARROWSLIT, VariantIdentifier.SMALL_WINDOW,
-        VariantIdentifier.SMALL_WINDOW_HALF, VariantIdentifier.BALUSTRADE, VariantIdentifier.CAPITAL,
-        VariantIdentifier.SPHERE, VariantIdentifier.SLAB, VariantIdentifier.QUARTER_SLAB,
+    private static final TypeList refinedStoneCobbleBrickShapesTopOverlay = TypeList.of(VariantIdentifier.FULL, VariantIdentifier.SMALL_ARCH,
+        VariantIdentifier.SMALL_ARCH_HALF, VariantIdentifier.TWO_METER_ARCH, VariantIdentifier.TWO_METER_ARCH_HALF,
+        VariantIdentifier.ARROWSLIT, VariantIdentifier.SMALL_WINDOW, VariantIdentifier.SMALL_WINDOW_HALF, VariantIdentifier.BALUSTRADE,
+        VariantIdentifier.CAPITAL, VariantIdentifier.SPHERE, VariantIdentifier.SLAB, VariantIdentifier.QUARTER_SLAB,
         VariantIdentifier.CORNER_SLAB, VariantIdentifier.EIGHTH_SLAB, VariantIdentifier.VERTICAL_CORNER_SLAB,
         VariantIdentifier.VERTICAL_SLAB, VariantIdentifier.VERTICAL_CORNER, VariantIdentifier.VERTICAL_QUARTER,
         VariantIdentifier.STAIRS, VariantIdentifier.WALL, VariantIdentifier.PILLAR);
@@ -91,18 +87,16 @@ public final class BlockDataInitialisationManager
         VariantIdentifier.VERTICAL_CORNER, VariantIdentifier.VERTICAL_QUARTER, VariantIdentifier.STAIRS, VariantIdentifier.WALL,
         VariantIdentifier.PILLAR);
 
-    private static final TypeList largeStoneSlabShapesVanilla = TypeList.of(VariantIdentifier.FULL,
-        VariantIdentifier.SMALL_ARCH, VariantIdentifier.SMALL_ARCH_HALF, VariantIdentifier.TWO_METER_ARCH,
-        VariantIdentifier.TWO_METER_ARCH_HALF, VariantIdentifier.ARROWSLIT, VariantIdentifier.SMALL_WINDOW,
-        VariantIdentifier.SMALL_WINDOW_HALF, VariantIdentifier.BALUSTRADE, VariantIdentifier.CAPITAL,
+    private static final TypeList largeStoneSlabShapesVanilla = TypeList.of(VariantIdentifier.SMALL_ARCH, VariantIdentifier.SMALL_ARCH_HALF,
+        VariantIdentifier.TWO_METER_ARCH, VariantIdentifier.TWO_METER_ARCH_HALF, VariantIdentifier.ARROWSLIT,
+        VariantIdentifier.SMALL_WINDOW, VariantIdentifier.SMALL_WINDOW_HALF, VariantIdentifier.BALUSTRADE, VariantIdentifier.CAPITAL,
         VariantIdentifier.SLAB,  VariantIdentifier.QUARTER_SLAB, VariantIdentifier.CORNER_SLAB, VariantIdentifier.EIGHTH_SLAB,
         VariantIdentifier.VERTICAL_CORNER_SLAB,  VariantIdentifier.VERTICAL_SLAB, VariantIdentifier.VERTICAL_CORNER,
         VariantIdentifier.VERTICAL_QUARTER, VariantIdentifier.STAIRS, VariantIdentifier.WALL, VariantIdentifier.PILLAR);
 
-    private static final TypeList largeStoneSlabShapesVanillaNoStairs = TypeList.of(VariantIdentifier.FULL,
-        VariantIdentifier.SMALL_ARCH, VariantIdentifier.SMALL_ARCH_HALF, VariantIdentifier.TWO_METER_ARCH,
-        VariantIdentifier.TWO_METER_ARCH_HALF, VariantIdentifier.ARROWSLIT, VariantIdentifier.SMALL_WINDOW,
-        VariantIdentifier.SMALL_WINDOW_HALF, VariantIdentifier.BALUSTRADE, VariantIdentifier.CAPITAL,
+    private static final TypeList largeStoneSlabShapesVanillaNoStairs = TypeList.of(VariantIdentifier.SMALL_ARCH, VariantIdentifier.SMALL_ARCH_HALF,
+        VariantIdentifier.TWO_METER_ARCH, VariantIdentifier.TWO_METER_ARCH_HALF, VariantIdentifier.ARROWSLIT,
+        VariantIdentifier.SMALL_WINDOW, VariantIdentifier.SMALL_WINDOW_HALF, VariantIdentifier.BALUSTRADE, VariantIdentifier.CAPITAL,
         VariantIdentifier.SLAB,  VariantIdentifier.QUARTER_SLAB, VariantIdentifier.CORNER_SLAB, VariantIdentifier.EIGHTH_SLAB,
         VariantIdentifier.VERTICAL_CORNER_SLAB,  VariantIdentifier.VERTICAL_SLAB, VariantIdentifier.VERTICAL_CORNER,
         VariantIdentifier.VERTICAL_QUARTER, VariantIdentifier.WALL, VariantIdentifier.PILLAR);
@@ -126,7 +120,7 @@ public final class BlockDataInitialisationManager
     private static final TypeList tudorSlashShapes = TypeList.of(VariantIdentifier.FULL, VariantIdentifier.VERTICAL_SLAB,
         VariantIdentifier.VERTICAL_CORNER, VariantIdentifier.VERTICAL_QUARTER);
 
-    private static final TypeList columnShapesVanilla = TypeList.of(VariantIdentifier.VERTICAL_SLAB, VariantIdentifier.VERTICAL_CORNER,
+    private static final TypeList columnShapesVanilla = TypeList.of( VariantIdentifier.VERTICAL_SLAB, VariantIdentifier.VERTICAL_CORNER,
         VariantIdentifier.VERTICAL_QUARTER, VariantIdentifier.WALL, VariantIdentifier.PILLAR);
 
     private static final TypeList columnShapes = TypeList.of(VariantIdentifier.FULL,  VariantIdentifier.VERTICAL_SLAB,
@@ -152,23 +146,21 @@ public final class BlockDataInitialisationManager
         VariantIdentifier.VERTICAL_SLAB, VariantIdentifier.VERTICAL_CORNER, VariantIdentifier.VERTICAL_QUARTER,
         VariantIdentifier.STAIRS, VariantIdentifier.WALL, VariantIdentifier.PILLAR);
 
-    private static final TypeList plasterShapesVanilla = TypeList.of(VariantIdentifier.FULL,
-        VariantIdentifier.SMALL_ARCH, VariantIdentifier.SMALL_ARCH_HALF, VariantIdentifier.TWO_METER_ARCH,
-        VariantIdentifier.TWO_METER_ARCH_HALF, VariantIdentifier.ARROWSLIT, VariantIdentifier.SMALL_WINDOW,
-        VariantIdentifier.SMALL_WINDOW_HALF, VariantIdentifier.BALUSTRADE, VariantIdentifier.CAPITAL,
+    private static final TypeList plasterShapesVanilla = TypeList.of(VariantIdentifier.SMALL_ARCH, VariantIdentifier.SMALL_ARCH_HALF,
+        VariantIdentifier.TWO_METER_ARCH, VariantIdentifier.TWO_METER_ARCH_HALF, VariantIdentifier.ARROWSLIT,
+        VariantIdentifier.SMALL_WINDOW, VariantIdentifier.SMALL_WINDOW_HALF, VariantIdentifier.BALUSTRADE, VariantIdentifier.CAPITAL,
         VariantIdentifier.SPHERE, VariantIdentifier.SLAB,  VariantIdentifier.QUARTER_SLAB, VariantIdentifier.CORNER_SLAB,
         VariantIdentifier.EIGHTH_SLAB, VariantIdentifier.VERTICAL_CORNER_SLAB,  VariantIdentifier.VERTICAL_SLAB,
-        VariantIdentifier.VERTICAL_CORNER, VariantIdentifier.VERTICAL_QUARTER, VariantIdentifier.STAIRS,
-        VariantIdentifier.WALL, VariantIdentifier.PILLAR);
+        VariantIdentifier.VERTICAL_CORNER, VariantIdentifier.VERTICAL_QUARTER, VariantIdentifier.STAIRS, VariantIdentifier.WALL,
+        VariantIdentifier.PILLAR);
 
     private static final TypeList floorCeilingPatternShapes = TypeList.of(VariantIdentifier.FULL, VariantIdentifier.SLAB,  VariantIdentifier.QUARTER_SLAB,
         VariantIdentifier.CORNER_SLAB, VariantIdentifier.EIGHTH_SLAB, VariantIdentifier.VERTICAL_CORNER_SLAB,
         VariantIdentifier.VERTICAL_SLAB, VariantIdentifier.VERTICAL_CORNER, VariantIdentifier.VERTICAL_QUARTER, VariantIdentifier.STAIRS);
 
-    private static final TypeList floorCeilingPatternShapesVanilla = TypeList.of(VariantIdentifier.FULL,
-        VariantIdentifier.SLAB, VariantIdentifier.QUARTER_SLAB, VariantIdentifier.CORNER_SLAB,
-        VariantIdentifier.EIGHTH_SLAB, VariantIdentifier.VERTICAL_CORNER_SLAB, VariantIdentifier.VERTICAL_SLAB,
-        VariantIdentifier.VERTICAL_CORNER, VariantIdentifier.VERTICAL_QUARTER, VariantIdentifier.STAIRS);
+    private static final TypeList floorCeilingPatternShapesVanilla = TypeList.of(VariantIdentifier.SLAB,  VariantIdentifier.QUARTER_SLAB,
+        VariantIdentifier.CORNER_SLAB, VariantIdentifier.EIGHTH_SLAB, VariantIdentifier.VERTICAL_CORNER_SLAB,
+        VariantIdentifier.VERTICAL_SLAB, VariantIdentifier.VERTICAL_CORNER, VariantIdentifier.VERTICAL_QUARTER, VariantIdentifier.STAIRS);
 
     private static final TypeList strippedLogShapes = TypeList.of(VariantIdentifier.FULL, VariantIdentifier.WALL, VariantIdentifier.PILLAR,
         VariantIdentifier.SLAB,  VariantIdentifier.QUARTER_SLAB, VariantIdentifier.CORNER_SLAB,
@@ -177,26 +169,23 @@ public final class BlockDataInitialisationManager
         VariantIdentifier.BEAM_HORIZONTAL, VariantIdentifier.BEAM_VERTICAL, VariantIdentifier.BEAM_DOOR_FRAME_LINTEL,
         VariantIdentifier.BEAM_DOOR_FRAME_POSTS, VariantIdentifier.BEAM_LINTEL, VariantIdentifier.BEAM_POSTS);
 
-    private static final TypeList strippedLogVanillaShapes = TypeList.of(VariantIdentifier.FULL, VariantIdentifier.WALL,
-        VariantIdentifier.PILLAR, VariantIdentifier.SLAB, VariantIdentifier.QUARTER_SLAB,
-        VariantIdentifier.CORNER_SLAB, VariantIdentifier.EIGHTH_SLAB, VariantIdentifier.VERTICAL_CORNER_SLAB,
-        VariantIdentifier.VERTICAL_SLAB, VariantIdentifier.VERTICAL_CORNER,
+    private static final TypeList strippedLogVanillaShapes = TypeList.of(VariantIdentifier.WALL, VariantIdentifier.PILLAR, VariantIdentifier.SLAB,
+        VariantIdentifier.QUARTER_SLAB, VariantIdentifier.CORNER_SLAB, VariantIdentifier.EIGHTH_SLAB,
+        VariantIdentifier.VERTICAL_CORNER_SLAB,  VariantIdentifier.VERTICAL_SLAB, VariantIdentifier.VERTICAL_CORNER,
         VariantIdentifier.VERTICAL_QUARTER, VariantIdentifier.STAIRS, VariantIdentifier.BEAM_HORIZONTAL,
         VariantIdentifier.BEAM_VERTICAL, VariantIdentifier.BEAM_DOOR_FRAME_LINTEL, VariantIdentifier.BEAM_DOOR_FRAME_POSTS,
         VariantIdentifier.BEAM_LINTEL, VariantIdentifier.BEAM_POSTS);
 
-    private static final TypeList logShapes = TypeList.of(VariantIdentifier.FULL, VariantIdentifier.WALL,
-        VariantIdentifier.LARGE_BRANCH, VariantIdentifier.PILLAR, VariantIdentifier.BRANCH,
-        VariantIdentifier.SMALL_BRANCH, VariantIdentifier.STUMP, VariantIdentifier.SLAB,
+    private static final TypeList logShapes = TypeList.of(VariantIdentifier.WALL, VariantIdentifier.LARGE_BRANCH, VariantIdentifier.PILLAR,
+        VariantIdentifier.BRANCH, VariantIdentifier.SMALL_BRANCH, VariantIdentifier.STUMP, VariantIdentifier.SLAB,
         VariantIdentifier.QUARTER_SLAB, VariantIdentifier.CORNER_SLAB, VariantIdentifier.EIGHTH_SLAB,
         VariantIdentifier.VERTICAL_CORNER_SLAB, VariantIdentifier.VERTICAL_SLAB, VariantIdentifier.VERTICAL_CORNER,
         VariantIdentifier.VERTICAL_QUARTER, VariantIdentifier.STAIRS);
 
-    private static final TypeList logShapesVanilla = TypeList.of(VariantIdentifier.FULL, VariantIdentifier.LARGE_BRANCH,
-        VariantIdentifier.PILLAR, VariantIdentifier.BRANCH, VariantIdentifier.SMALL_BRANCH, VariantIdentifier.STUMP,
-        VariantIdentifier.SLAB, VariantIdentifier.QUARTER_SLAB, VariantIdentifier.CORNER_SLAB,
-        VariantIdentifier.EIGHTH_SLAB, VariantIdentifier.VERTICAL_CORNER_SLAB, VariantIdentifier.VERTICAL_SLAB,
-        VariantIdentifier.VERTICAL_CORNER, VariantIdentifier.VERTICAL_QUARTER, VariantIdentifier.STAIRS);
+    private static final TypeList logShapesVanilla = TypeList.of(VariantIdentifier.LARGE_BRANCH, VariantIdentifier.PILLAR, VariantIdentifier.BRANCH,
+        VariantIdentifier.SMALL_BRANCH, VariantIdentifier.STUMP, VariantIdentifier.SLAB, VariantIdentifier.QUARTER_SLAB,
+        VariantIdentifier.CORNER_SLAB, VariantIdentifier.EIGHTH_SLAB, VariantIdentifier.VERTICAL_CORNER_SLAB,
+        VariantIdentifier.VERTICAL_SLAB, VariantIdentifier.VERTICAL_CORNER, VariantIdentifier.VERTICAL_QUARTER, VariantIdentifier.STAIRS);
 
     private static final TypeList planksShapes = TypeList.of(VariantIdentifier.FULL, VariantIdentifier.SMALL_WINDOW,
         VariantIdentifier.SMALL_WINDOW_HALF, VariantIdentifier.BALUSTRADE, VariantIdentifier.CAPITAL, VariantIdentifier.SPHERE,
@@ -230,8 +219,7 @@ public final class BlockDataInitialisationManager
         VariantIdentifier.VERTICAL_SLAB, VariantIdentifier.VERTICAL_CORNER, VariantIdentifier.VERTICAL_QUARTER,
         VariantIdentifier.STAIRS);
 
-    private static final TypeList woolShapes = TypeList.of(VariantIdentifier.FULL, VariantIdentifier.SLAB,
-        VariantIdentifier.QUARTER_SLAB, VariantIdentifier.CORNER_SLAB,
+    private static final TypeList woolShapes = TypeList.of(VariantIdentifier.SLAB,  VariantIdentifier.QUARTER_SLAB, VariantIdentifier.CORNER_SLAB,
         VariantIdentifier.EIGHTH_SLAB, VariantIdentifier.VERTICAL_CORNER_SLAB,  VariantIdentifier.VERTICAL_SLAB,
         VariantIdentifier.VERTICAL_CORNER, VariantIdentifier.VERTICAL_QUARTER, VariantIdentifier.STAIRS);
 
@@ -249,16 +237,14 @@ public final class BlockDataInitialisationManager
         VariantIdentifier.VERTICAL_CORNER_SLAB, VariantIdentifier.VERTICAL_SLAB, VariantIdentifier.VERTICAL_CORNER,
         VariantIdentifier.VERTICAL_QUARTER, VariantIdentifier.STAIRS, VariantIdentifier.ROCKS);
 
-    private static final TypeList roughNaturalRockShapesVanilla = TypeList.of(VariantIdentifier.FULL,
-        VariantIdentifier.SLAB, VariantIdentifier.QUARTER_SLAB, VariantIdentifier.CORNER_SLAB,
-        VariantIdentifier.EIGHTH_SLAB, VariantIdentifier.VERTICAL_CORNER_SLAB, VariantIdentifier.VERTICAL_SLAB,
-        VariantIdentifier.VERTICAL_CORNER, VariantIdentifier.VERTICAL_QUARTER, VariantIdentifier.STAIRS);
+    private static final TypeList roughNaturalRockShapesVanilla = TypeList.of(VariantIdentifier.SLAB,  VariantIdentifier.QUARTER_SLAB,
+        VariantIdentifier.CORNER_SLAB, VariantIdentifier.EIGHTH_SLAB, VariantIdentifier.VERTICAL_CORNER_SLAB,
+        VariantIdentifier.VERTICAL_SLAB, VariantIdentifier.VERTICAL_CORNER, VariantIdentifier.VERTICAL_QUARTER, VariantIdentifier.STAIRS);
 
-    private static final TypeList roughNaturalRockShapesRocksVanilla = TypeList.of(VariantIdentifier.FULL,
-        VariantIdentifier.SLAB, VariantIdentifier.QUARTER_SLAB, VariantIdentifier.CORNER_SLAB,
-        VariantIdentifier.EIGHTH_SLAB, VariantIdentifier.VERTICAL_CORNER_SLAB, VariantIdentifier.VERTICAL_SLAB,
-        VariantIdentifier.VERTICAL_CORNER, VariantIdentifier.VERTICAL_QUARTER, VariantIdentifier.STAIRS,
-        VariantIdentifier.ROCKS);
+    private static final TypeList roughNaturalRockShapesRocksVanilla = TypeList.of(VariantIdentifier.SLAB,  VariantIdentifier.QUARTER_SLAB,
+        VariantIdentifier.CORNER_SLAB, VariantIdentifier.EIGHTH_SLAB, VariantIdentifier.VERTICAL_CORNER_SLAB,
+        VariantIdentifier.VERTICAL_SLAB, VariantIdentifier.VERTICAL_CORNER, VariantIdentifier.VERTICAL_QUARTER,
+        VariantIdentifier.STAIRS, VariantIdentifier.ROCKS);
 
     private static final TypeList smoothNaturalRockShapes = TypeList.of(VariantIdentifier.FULL, VariantIdentifier.ARROWSLIT,
         VariantIdentifier.SMALL_WINDOW, VariantIdentifier.SMALL_WINDOW_HALF, VariantIdentifier.BALUSTRADE,
@@ -274,17 +260,15 @@ public final class BlockDataInitialisationManager
         VariantIdentifier.VERTICAL_CORNER, VariantIdentifier.VERTICAL_QUARTER, VariantIdentifier.STAIRS, VariantIdentifier.WALL,
         VariantIdentifier.PILLAR, VariantIdentifier.ROCKS);
 
-    private static final TypeList smoothNaturalRockShapesVanillaNoWall = TypeList.of(VariantIdentifier.FULL,
-        VariantIdentifier.ARROWSLIT, VariantIdentifier.SMALL_WINDOW, VariantIdentifier.SMALL_WINDOW_HALF,
-        VariantIdentifier.BALUSTRADE, VariantIdentifier.CAPITAL, VariantIdentifier.SPHERE, VariantIdentifier.SLAB,
-        VariantIdentifier.QUARTER_SLAB, VariantIdentifier.CORNER_SLAB, VariantIdentifier.EIGHTH_SLAB,
+    private static final TypeList smoothNaturalRockShapesVanillaNoWall = TypeList.of(VariantIdentifier.ARROWSLIT, VariantIdentifier.SMALL_WINDOW,
+        VariantIdentifier.SMALL_WINDOW_HALF, VariantIdentifier.BALUSTRADE, VariantIdentifier.CAPITAL, VariantIdentifier.SPHERE,
+        VariantIdentifier.SLAB,  VariantIdentifier.QUARTER_SLAB, VariantIdentifier.CORNER_SLAB, VariantIdentifier.EIGHTH_SLAB,
         VariantIdentifier.VERTICAL_CORNER_SLAB,  VariantIdentifier.VERTICAL_SLAB, VariantIdentifier.VERTICAL_CORNER,
         VariantIdentifier.VERTICAL_QUARTER, VariantIdentifier.PILLAR, VariantIdentifier.ROCKS);
 
-    private static final TypeList smoothNaturalRockShapesVanilla = TypeList.of(VariantIdentifier.FULL,
-        VariantIdentifier.ARROWSLIT, VariantIdentifier.SMALL_WINDOW, VariantIdentifier.SMALL_WINDOW_HALF,
-        VariantIdentifier.BALUSTRADE, VariantIdentifier.CAPITAL, VariantIdentifier.SPHERE, VariantIdentifier.SLAB,
-        VariantIdentifier.QUARTER_SLAB, VariantIdentifier.CORNER_SLAB, VariantIdentifier.EIGHTH_SLAB,
+    private static final TypeList smoothNaturalRockShapesVanilla = TypeList.of(VariantIdentifier.ARROWSLIT, VariantIdentifier.SMALL_WINDOW,
+        VariantIdentifier.SMALL_WINDOW_HALF, VariantIdentifier.BALUSTRADE, VariantIdentifier.CAPITAL, VariantIdentifier.SPHERE,
+        VariantIdentifier.SLAB,  VariantIdentifier.QUARTER_SLAB, VariantIdentifier.CORNER_SLAB, VariantIdentifier.EIGHTH_SLAB,
         VariantIdentifier.VERTICAL_CORNER_SLAB,  VariantIdentifier.VERTICAL_SLAB, VariantIdentifier.VERTICAL_CORNER,
         VariantIdentifier.VERTICAL_QUARTER, VariantIdentifier.WALL, VariantIdentifier.PILLAR, VariantIdentifier.ROCKS);
 
@@ -299,9 +283,8 @@ public final class BlockDataInitialisationManager
         VariantIdentifier.CORNER_SLAB, VariantIdentifier.EIGHTH_SLAB,  VariantIdentifier.VERTICAL_SLAB,
         VariantIdentifier.VERTICAL_CORNER, VariantIdentifier.VERTICAL_QUARTER, VariantIdentifier.STAIRS);
 
-    private static final TypeList dirtShapesVanilla = TypeList.of(VariantIdentifier.FULL, VariantIdentifier.SLAB,
-        VariantIdentifier.QUARTER_SLAB, VariantIdentifier.CORNER_SLAB, VariantIdentifier.EIGHTH_SLAB,
-        VariantIdentifier.VERTICAL_SLAB, VariantIdentifier.VERTICAL_CORNER,
+    private static final TypeList dirtShapesVanilla = TypeList.of(VariantIdentifier.SLAB,  VariantIdentifier.QUARTER_SLAB, VariantIdentifier.CORNER_SLAB,
+        VariantIdentifier.EIGHTH_SLAB,  VariantIdentifier.VERTICAL_SLAB, VariantIdentifier.VERTICAL_CORNER,
         VariantIdentifier.VERTICAL_QUARTER, VariantIdentifier.STAIRS);
 
     private static final TypeList roofTileShapes = TypeList.of(VariantIdentifier.FULL, VariantIdentifier.SLAB,  VariantIdentifier.QUARTER_SLAB,
@@ -309,11 +292,10 @@ public final class BlockDataInitialisationManager
         VariantIdentifier.VERTICAL_SLAB, VariantIdentifier.VERTICAL_CORNER, VariantIdentifier.VERTICAL_QUARTER,
         VariantIdentifier.WALL, VariantIdentifier.PILLAR, VariantIdentifier.CAPITAL, VariantIdentifier.STAIRS);
 
-    private static final TypeList roofTileShapesVanilla = TypeList.of(VariantIdentifier.FULL, VariantIdentifier.SLAB,
-        VariantIdentifier.QUARTER_SLAB, VariantIdentifier.CORNER_SLAB, VariantIdentifier.EIGHTH_SLAB,
-        VariantIdentifier.VERTICAL_CORNER_SLAB, VariantIdentifier.VERTICAL_SLAB, VariantIdentifier.VERTICAL_CORNER,
-        VariantIdentifier.VERTICAL_QUARTER, VariantIdentifier.WALL, VariantIdentifier.PILLAR,
-        VariantIdentifier.CAPITAL, VariantIdentifier.STAIRS);
+    private static final TypeList roofTileShapesVanilla = TypeList.of(VariantIdentifier.SLAB,  VariantIdentifier.QUARTER_SLAB,
+        VariantIdentifier.CORNER_SLAB, VariantIdentifier.EIGHTH_SLAB, VariantIdentifier.VERTICAL_CORNER_SLAB,
+        VariantIdentifier.VERTICAL_SLAB, VariantIdentifier.VERTICAL_CORNER, VariantIdentifier.VERTICAL_QUARTER, VariantIdentifier.WALL,
+        VariantIdentifier.PILLAR, VariantIdentifier.CAPITAL, VariantIdentifier.STAIRS);
 
     private BlockDataInitialisationManager() {}
 

@@ -59,7 +59,6 @@ public class AirInit {
             .manual()
             .blocking(false)
             .render(RenderLayer.CUTOUT)
-            .with("hitBox", "BlockVoxelShapes.cubePartialShape")
             .register(TypeList.of(Void.class));
         VanillaProps.stone()
             .group(ModGroups.WATER_AND_AIR)
