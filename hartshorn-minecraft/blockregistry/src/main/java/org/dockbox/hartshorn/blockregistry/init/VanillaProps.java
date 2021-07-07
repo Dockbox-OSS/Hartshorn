@@ -20,6 +20,7 @@ package org.dockbox.hartshorn.blockregistry.init;
 import com.google.common.reflect.ClassPath;
 import com.google.common.reflect.ClassPath.ClassInfo;
 
+import org.dockbox.hartshorn.blockregistry.BlockDataBuilder;
 import org.dockbox.hartshorn.blockregistry.VariantIdentifier;
 import org.dockbox.hartshorn.persistence.mapping.JacksonObjectMapper;
 import org.dockbox.hartshorn.util.HartshornUtils;
@@ -67,7 +68,7 @@ public final class VanillaProps {
         return new BlockDataBuilder();
     }
     public static BlockDataBuilder plants() {
-        return new BlockDataBuilder(true);
+        return new BlockDataBuilder();
     }
     public static BlockDataBuilder mosaic() {
         return new BlockDataBuilder();
@@ -168,110 +169,4 @@ public final class VanillaProps {
         System.out.println(names.size());
         new JacksonObjectMapper().write(names).get();
     }
-
-    public static class BlockDataBuilder
-    {
-        private List<VariantIdentifier> variants;
-        private String family;
-        private String fullName;
-        private String variantName;
-        private ModGroups group;
-        private boolean isSolid;
-        private boolean ignore;
-
-        public BlockDataBuilder() {}
-
-        public BlockDataBuilder(boolean ignore) {
-            this.ignore = ignore;
-        }
-
-        public BlockDataBuilder group(ModGroups group) {
-            this.group = group;
-            return this;
-        }
-
-        public BlockDataBuilder family(String family) {
-            this.family = family;
-            return this;
-        }
-
-        public BlockDataBuilder name(String name) {
-            this.fullName = name;
-            this.variantName = name;
-            return this;
-        }
-
-        public BlockDataBuilder name(String name, String name2) {
-            this.fullName = name;
-            this.variantName = name2;
-            return this;
-        }
-
-        public BlockDataBuilder sound(SoundType sound) {
-            return this;
-        }
-
-        public BlockDataBuilder texture(String texture) {
-            return this;
-        }
-
-        public BlockDataBuilder texture(String name, String texture) {
-            return this;
-        }
-
-        public BlockDataBuilder blocking(boolean blocking) {
-            return this;
-        }
-
-        public BlockDataBuilder solid(boolean isSolid) {
-            this.isSolid = isSolid;
-            return this;
-        }
-
-        public BlockDataBuilder manual() {
-            return this;
-        }
-
-        public BlockDataBuilder waterColor() {
-            return this;
-        }
-
-        public BlockDataBuilder grassColor() {
-            return this;
-        }
-
-        public BlockDataBuilder foliageColor() {
-            return this;
-        }
-
-        public BlockDataBuilder render(RenderLayer name) {
-            return this;
-        }
-
-        public void register(TypeList type) {
-            this.variants = type.variantIdentifiers;
-            if (this.variants.isEmpty()) {
-                
-            }
-
-        }
-
-        private VariantIdentifier identifyVariant(String name) {
-            for (VariantIdentifier variantIdentifier : VariantIdentifier.values()) {
-                if (name.endsWith(variantIdentifier.getIdentifier()))
-                    return variantIdentifier;
-            }
-
-            return VariantIdentifier.FULL;
-        }
-
-        public BlockDataBuilder randomTick(boolean tick) {
-            return this;
-        }
-
-        public BlockDataBuilder strength(double a, double b) {
-            return this;
-        }
-    }
-
 }

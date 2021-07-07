@@ -393,14 +393,6 @@ public class Registry<V> extends HashMap<String, RegistryColumn<V>> {
         return super.getOrDefault(key.getKey(), defaultValue);
     }
 
-    public RegistryColumn<V> getOrEmpty(RegistryIdentifier key) {
-        return this.getOrEmpty(key.getKey());
-    }
-
-    public RegistryColumn<V> getOrEmpty(String key) {
-        return super.getOrDefault(key, new RegistryColumn<>());
-    }
-
     public RegistryColumn<V> putIfAbsent(RegistryIdentifier key, RegistryColumn<V> value) {
         return super.putIfAbsent(key.getKey(), value);
     }

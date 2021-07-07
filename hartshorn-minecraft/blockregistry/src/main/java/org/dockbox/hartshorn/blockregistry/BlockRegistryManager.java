@@ -4,6 +4,7 @@ import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.di.annotations.Service;
 import org.dockbox.hartshorn.persistence.mapping.GenericType;
+import org.dockbox.hartshorn.persistence.mapping.JacksonObjectMapper;
 import org.dockbox.hartshorn.persistence.mapping.ObjectMapper;
 import org.dockbox.hartshorn.persistence.registry.Registry;
 import org.dockbox.hartshorn.server.minecraft.item.Item;
@@ -12,6 +13,7 @@ import org.dockbox.hartshorn.util.HartshornUtils;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
+import java.nio.file.Path;
 import java.util.Map;
 import java.util.Set;
 
@@ -24,7 +26,7 @@ public class BlockRegistryManager
 
     private final Registry<Registry<String>> blockRegistry;
 
-    protected BlockRegistryManager() {
+    public BlockRegistryManager() {
         this.blockRegistry = this.loadBlockRegistry();
     }
 
@@ -105,7 +107,7 @@ public class BlockRegistryManager
     public Registry<String> getVariants(@NotNull String rootId) {
         return this.getFamilyId(rootId)
             .flatMap(familyId ->
-                this.blockRegistry.getOrEmpty(familyId)
+                this.blockRegistry.getColumnOrCreate(familyId)
                     .first())
             .or(new Registry<>());
     }
@@ -173,7 +175,7 @@ public class BlockRegistryManager
      *      The root id of the variant
      */
     public void addVariant(@NotNull String familyId, @NotNull VariantIdentifier variant, @NotNull String rootId) {
-        this.blockRegistry.getColumnOrCreate(familyId)
+        this.blockRegistry.getColumnOrCreate(familyId, new Registry<>())
             .first()
             .present(r -> r.addData(variant, rootId));
     }
@@ -185,9 +187,23 @@ public class BlockRegistryManager
      * @return The loaded {@link Registry block registry}
      */
     private Registry<Registry<String>> loadBlockRegistry() {
-        return Hartshorn.context()
-            .get(ObjectMapper.class)
+        //Hartshorn.context()
+        //            .get(ObjectMapper.class)
+
+        return new JacksonObjectMapper()
             .read("blockregistry.json", new GenericType<Registry<Registry<String>>>() {})
             .or(new Registry<>());
+    }
+
+    public void saveBlockRegistry() {
+//        Hartshorn.context()
+//            .get(ObjectMapper.class)
+        new JacksonObjectMapper()
+            .write(Path.of("blockregistry.json"), this.blockRegistry);
+    }
+
+    @Override
+    public String toString() {
+        return this.blockRegistry.toString();
     }
 }

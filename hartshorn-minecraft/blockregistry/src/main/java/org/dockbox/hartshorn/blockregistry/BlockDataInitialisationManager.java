@@ -1,10 +1,49 @@
-package org.dockbox.hartshorn.blockregistry.init;
+package org.dockbox.hartshorn.blockregistry;
 
+import org.dockbox.hartshorn.blockregistry.BlockRegistryManager;
 import org.dockbox.hartshorn.blockregistry.VariantIdentifier;
+import org.dockbox.hartshorn.blockregistry.init.AirInit;
+import org.dockbox.hartshorn.blockregistry.init.ArchesInit;
+import org.dockbox.hartshorn.blockregistry.init.BarrelsInit;
+import org.dockbox.hartshorn.blockregistry.init.BeamsInit;
+import org.dockbox.hartshorn.blockregistry.init.BlocksNoVariantsInit;
+import org.dockbox.hartshorn.blockregistry.init.BranchesInit;
+import org.dockbox.hartshorn.blockregistry.init.ClothInit;
+import org.dockbox.hartshorn.blockregistry.init.ColumnsInit;
+import org.dockbox.hartshorn.blockregistry.init.CropsInit;
+import org.dockbox.hartshorn.blockregistry.init.DirtInit;
+import org.dockbox.hartshorn.blockregistry.init.DoorsInit;
+import org.dockbox.hartshorn.blockregistry.init.FloorCeilingPatternInit;
+import org.dockbox.hartshorn.blockregistry.init.GlassInit;
+import org.dockbox.hartshorn.blockregistry.init.GrassGroundInit;
+import org.dockbox.hartshorn.blockregistry.init.IrregularBlocksInit;
+import org.dockbox.hartshorn.blockregistry.init.LargeStoneSlabsInit;
+import org.dockbox.hartshorn.blockregistry.init.LeavesInit;
+import org.dockbox.hartshorn.blockregistry.init.LightsInit;
+import org.dockbox.hartshorn.blockregistry.init.LogsInit;
+import org.dockbox.hartshorn.blockregistry.init.MetalInit;
+import org.dockbox.hartshorn.blockregistry.init.PlanksInit;
+import org.dockbox.hartshorn.blockregistry.init.PlantsInit;
+import org.dockbox.hartshorn.blockregistry.init.PlasterInit;
+import org.dockbox.hartshorn.blockregistry.init.RefinedStoneCobbleBrickInit;
+import org.dockbox.hartshorn.blockregistry.init.RoadsInit;
+import org.dockbox.hartshorn.blockregistry.init.RoofTilesInit;
+import org.dockbox.hartshorn.blockregistry.init.RoughNaturalRockInit;
+import org.dockbox.hartshorn.blockregistry.init.SandGravelInit;
+import org.dockbox.hartshorn.blockregistry.init.SaplingsInit;
+import org.dockbox.hartshorn.blockregistry.init.SmoothNaturalRockInit;
+import org.dockbox.hartshorn.blockregistry.init.ThatchInit;
+import org.dockbox.hartshorn.blockregistry.init.TudorInit;
 import org.dockbox.hartshorn.blockregistry.init.VanillaProps.TypeList;
+import org.dockbox.hartshorn.blockregistry.init.WallDesignsInit;
+import org.dockbox.hartshorn.blockregistry.init.WallDesignsNoWallInit;
+import org.dockbox.hartshorn.blockregistry.init.WasteInit;
+import org.dockbox.hartshorn.blockregistry.init.WoolInit;
 
 public final class BlockDataInitialisationManager
 {
+    public static final BlockRegistryManager BlockRegistryManager = new BlockRegistryManager();
+
     private static final TypeList refinedStoneCobbleBrickShapesVanilla = TypeList.of(VariantIdentifier.SMALL_ARCH,
         VariantIdentifier.SMALL_ARCH_HALF, VariantIdentifier.TWO_METER_ARCH, VariantIdentifier.TWO_METER_ARCH_HALF,
         VariantIdentifier.ARROWSLIT, VariantIdentifier.SMALL_WINDOW, VariantIdentifier.SMALL_WINDOW_HALF,
@@ -260,7 +299,8 @@ public final class BlockDataInitialisationManager
 
     private BlockDataInitialisationManager() {}
 
-    public static void main(String[] args) {
+    public static void main(String[] args)
+    {
         RefinedStoneCobbleBrickInit.init(refinedStoneCobbleBrickShapes, refinedStoneCobbleBrickShapesVanilla, refinedStoneCobbleBrickShapesVanillaNoWall, refinedStoneCobbleBrickShapesTopOverlay);
         LargeStoneSlabsInit.init(largeStoneSlabShapes, largeStoneSlabShapesVanilla, largeStoneSlabShapesVanillaNoStairs);
         RoadsInit.init(roadShapes);
@@ -297,5 +337,7 @@ public final class BlockDataInitialisationManager
         WasteInit.init();
         AirInit.init();
         ArchesInit.init();
+
+        BlockRegistryManager.saveBlockRegistry();
     }
 }
