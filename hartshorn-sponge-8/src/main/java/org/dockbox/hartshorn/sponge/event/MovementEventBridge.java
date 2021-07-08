@@ -18,23 +18,18 @@
 package org.dockbox.hartshorn.sponge.event;
 
 import org.dockbox.hartshorn.api.events.annotations.Posting;
-import org.dockbox.hartshorn.commands.events.NativeCommandEvent;
-import org.dockbox.hartshorn.commands.source.CommandSource;
-import org.dockbox.hartshorn.sponge.util.SpongeConvert;
-import org.spongepowered.api.event.Listener;
-import org.spongepowered.api.event.command.ExecuteCommandEvent;
+import org.dockbox.hartshorn.server.minecraft.events.player.PlayerPortalEvent;
+import org.dockbox.hartshorn.server.minecraft.events.player.PlayerSwitchWorldEvent;
+import org.dockbox.hartshorn.server.minecraft.events.player.PlayerTeleportEvent;
+import org.dockbox.hartshorn.server.minecraft.events.player.PlayerWarpEvent;
+import org.dockbox.hartshorn.server.minecraft.events.player.interact.PlayerSpawnEvent;
 
-@Posting(NativeCommandEvent.class)
-public class CommandEventBridge implements EventBridge {
-
-    @Listener
-    public void on(ExecuteCommandEvent.Pre event) {
-        CommandSource source = SpongeConvert.fromSponge(event.commandCause().subject()).orNull();
-        this.post(new NativeCommandEvent(
-                source,
-                event.originalCommand(),
-                event.originalArguments().split(" ")
-        ), event);
-    }
-
+@Posting(value = {
+        PlayerSpawnEvent.class,
+        PlayerTeleportEvent.class,
+        PlayerWarpEvent.class,
+        PlayerSwitchWorldEvent.class,
+        PlayerPortalEvent.class
+})
+public class MovementEventBridge implements EventBridge {
 }

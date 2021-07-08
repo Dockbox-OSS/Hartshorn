@@ -17,8 +17,10 @@
 
 package org.dockbox.hartshorn.sponge.event;
 
+import org.dockbox.hartshorn.api.events.annotations.Posting;
 import org.dockbox.hartshorn.api.exceptions.NotImplementedException;
 import org.dockbox.hartshorn.server.minecraft.dimension.world.World;
+import org.dockbox.hartshorn.server.minecraft.events.world.WorldCreatingEvent;
 import org.dockbox.hartshorn.server.minecraft.events.world.WorldLoadEvent;
 import org.dockbox.hartshorn.server.minecraft.events.world.WorldSaveEvent;
 import org.dockbox.hartshorn.server.minecraft.events.world.WorldUnloadEvent;
@@ -28,6 +30,7 @@ import org.spongepowered.api.event.world.LoadWorldEvent;
 import org.spongepowered.api.event.world.SaveWorldEvent;
 import org.spongepowered.api.event.world.UnloadWorldEvent;
 
+@Posting({WorldSaveEvent.class, WorldUnloadEvent.class, WorldLoadEvent.class, WorldCreatingEvent.class })
 public class WorldEventBridge implements EventBridge {
 
     @Listener

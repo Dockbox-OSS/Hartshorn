@@ -18,6 +18,7 @@
 package org.dockbox.hartshorn.sponge.event;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.api.events.annotations.Posting;
 import org.dockbox.hartshorn.api.i18n.text.Text;
 import org.dockbox.hartshorn.server.minecraft.events.chat.SendChatEvent;
 import org.dockbox.hartshorn.server.minecraft.players.Player;
@@ -25,6 +26,7 @@ import org.dockbox.hartshorn.sponge.util.SpongeConvert;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.message.PlayerChatEvent;
 
+@Posting(SendChatEvent.class)
 public class ChatEventBridge implements EventBridge {
 
     @Listener

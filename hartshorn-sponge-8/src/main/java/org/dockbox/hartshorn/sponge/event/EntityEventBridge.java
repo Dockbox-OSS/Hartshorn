@@ -17,9 +17,11 @@
 
 package org.dockbox.hartshorn.sponge.event;
 
+import org.dockbox.hartshorn.api.events.annotations.Posting;
 import org.dockbox.hartshorn.api.events.parents.Cancellable;
 import org.dockbox.hartshorn.server.minecraft.events.entity.SpawnSource;
 import org.dockbox.hartshorn.server.minecraft.events.entity.SummonEntityEvent;
+import org.dockbox.hartshorn.server.minecraft.events.player.interact.PlayerSummonEntityEvent;
 import org.dockbox.hartshorn.sponge.util.SpongeConvert;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.event.EventContextKeys;
@@ -28,6 +30,8 @@ import org.spongepowered.api.event.cause.entity.SpawnType;
 import org.spongepowered.api.event.cause.entity.SpawnTypes;
 import org.spongepowered.api.event.entity.SpawnEntityEvent;
 
+// TODO: Player summon entity event
+@Posting({SummonEntityEvent.class, PlayerSummonEntityEvent.class})
 public class EntityEventBridge implements EventBridge {
 
     @Listener

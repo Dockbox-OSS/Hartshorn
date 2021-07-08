@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.sponge.event;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.domain.tuple.Vector3N;
+import org.dockbox.hartshorn.api.events.annotations.Posting;
 import org.dockbox.hartshorn.server.minecraft.dimension.Block;
 import org.dockbox.hartshorn.server.minecraft.dimension.position.BlockFace;
 import org.dockbox.hartshorn.server.minecraft.entities.Entity;
@@ -40,6 +41,7 @@ import org.spongepowered.api.event.item.inventory.InteractItemEvent;
 
 import java.util.Optional;
 
+@Posting({PlayerInteractAirEvent.class, PlayerInteractEntityEvent.class, PlayerInteractBlockEvent.class})
 public class InteractionEventBridge implements EventBridge {
 
     @Listener
