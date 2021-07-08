@@ -190,652 +190,652 @@ public final class MetalInit {
         VanillaProps.metal()
             .group(ModGroups.METAL)
             .name("pipe")
-            .register(TypeList.of(VariantIdentifier.PIPE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("pipe")
             .name("mounted_pipe")
-            .register(TypeList.of(VariantIdentifier.MOUNTED_PIPE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("pipe")
             .name("6_way_flange")
-            .register(TypeList.of(VariantIdentifier.SIX_WAY_FLANGE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("pipe")
             .name("5_way_flange")
-            .register(TypeList.of(VariantIdentifier.FIVE_WAY_FLANGE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("pipe")
             .name("3_way_flange")
-            .register(TypeList.of(VariantIdentifier.THREE_WAY_FLANGE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("pipe")
             .name("elbow_flange")
-            .register(TypeList.of(VariantIdentifier.ELBOW_FLANGE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("pipe")
             .name("gate_valve")
             .render(RenderLayer.CUTOUT)
-            .register(TypeList.of(VariantIdentifier.MOUNTED_PIPE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("pipe")
             .name("ball_valve")
             .render(RenderLayer.CUTOUT)
-            .register(TypeList.of(VariantIdentifier.BALL_VALVE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("pipe")
             .name("4_way_flange")
-            .register(TypeList.of(VariantIdentifier.FOUR_WAY_FLANGE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("pipe")
             .name("cross_flange")
-            .register(TypeList.of(VariantIdentifier.CROSS_FLANGE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("pipe")
             .name("t_flange")
-            .register(TypeList.of(VariantIdentifier.T_FLANGE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .group(ModGroups.METAL)
             .name("old_pipe")
-            .register(TypeList.of(VariantIdentifier.PIPE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("old_pipe")
             .name("old_mounted_pipe")
-            .register(TypeList.of(VariantIdentifier.MOUNTED_PIPE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("old_pipe")
             .name("old_6_way_flange")
-            .register(TypeList.of(VariantIdentifier.SIX_WAY_FLANGE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("old_pipe")
             .name("old_5_way_flange")
-            .register(TypeList.of(VariantIdentifier.FIVE_WAY_FLANGE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("old_pipe")
             .name("old_3_way_flange")
-            .register(TypeList.of(VariantIdentifier.THREE_WAY_FLANGE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("old_pipe")
             .name("old_elbow_flange")
-            .register(TypeList.of(VariantIdentifier.ELBOW_FLANGE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("old_pipe")
             .name("old_gate_valve")
             .render(RenderLayer.CUTOUT)
-            .register(TypeList.of(VariantIdentifier.MOUNTED_PIPE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("old_pipe")
             .name("old_ball_valve")
             .render(RenderLayer.CUTOUT)
-            .register(TypeList.of(VariantIdentifier.BALL_VALVE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("old_pipe")
             .name("old_4_way_flange")
-            .register(TypeList.of(VariantIdentifier.FOUR_WAY_FLANGE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("old_pipe")
             .name("old_cross_flange")
-            .register(TypeList.of(VariantIdentifier.CROSS_FLANGE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("old_pipe")
             .name("old_t_flange")
-            .register(TypeList.of(VariantIdentifier.T_FLANGE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .group(ModGroups.METAL)
             .name("black_pipe")
-            .register(TypeList.of(VariantIdentifier.PIPE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("black_pipe")
             .name("black_mounted_pipe")
-            .register(TypeList.of(VariantIdentifier.MOUNTED_PIPE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("black_pipe")
             .name("black_6_way_flange")
-            .register(TypeList.of(VariantIdentifier.SIX_WAY_FLANGE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("black_pipe")
             .name("black_5_way_flange")
-            .register(TypeList.of(VariantIdentifier.FIVE_WAY_FLANGE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("black_pipe")
             .name("black_3_way_flange")
-            .register(TypeList.of(VariantIdentifier.THREE_WAY_FLANGE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("black_pipe")
             .name("black_elbow_flange")
-            .register(TypeList.of(VariantIdentifier.ELBOW_FLANGE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("black_pipe")
             .name("black_gate_valve")
             .render(RenderLayer.CUTOUT)
-            .register(TypeList.of(VariantIdentifier.MOUNTED_PIPE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("black_pipe")
             .name("black_ball_valve")
             .render(RenderLayer.CUTOUT)
-            .register(TypeList.of(VariantIdentifier.BALL_VALVE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("black_pipe")
             .name("black_4_way_flange")
-            .register(TypeList.of(VariantIdentifier.FOUR_WAY_FLANGE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("black_pipe")
             .name("black_cross_flange")
-            .register(TypeList.of(VariantIdentifier.CROSS_FLANGE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("black_pipe")
             .name("black_t_flange")
-            .register(TypeList.of(VariantIdentifier.T_FLANGE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .group(ModGroups.METAL)
             .name("old_black_pipe")
-            .register(TypeList.of(VariantIdentifier.PIPE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("old_black_pipe")
             .name("old_black_mounted_pipe")
-            .register(TypeList.of(VariantIdentifier.MOUNTED_PIPE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("old_black_pipe")
             .name("old_black_6_way_flange")
-            .register(TypeList.of(VariantIdentifier.SIX_WAY_FLANGE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("old_black_pipe")
             .name("old_black_5_way_flange")
-            .register(TypeList.of(VariantIdentifier.FIVE_WAY_FLANGE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("old_black_pipe")
             .name("old_black_3_way_flange")
-            .register(TypeList.of(VariantIdentifier.THREE_WAY_FLANGE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("old_black_pipe")
             .name("old_black_elbow_flange")
-            .register(TypeList.of(VariantIdentifier.ELBOW_FLANGE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("old_black_pipe")
             .name("old_black_gate_valve")
             .render(RenderLayer.CUTOUT)
-            .register(TypeList.of(VariantIdentifier.MOUNTED_PIPE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("old_black_pipe")
             .name("old_black_ball_valve")
             .render(RenderLayer.CUTOUT)
-            .register(TypeList.of(VariantIdentifier.BALL_VALVE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("old_black_pipe")
             .name("old_black_4_way_flange")
-            .register(TypeList.of(VariantIdentifier.FOUR_WAY_FLANGE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("old_black_pipe")
             .name("old_black_cross_flange")
-            .register(TypeList.of(VariantIdentifier.CROSS_FLANGE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("old_black_pipe")
             .name("old_black_t_flange")
-            .register(TypeList.of(VariantIdentifier.T_FLANGE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .group(ModGroups.METAL)
             .name("blue_pipe")
-            .register(TypeList.of(VariantIdentifier.PIPE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("blue_pipe")
             .name("blue_mounted_pipe")
-            .register(TypeList.of(VariantIdentifier.MOUNTED_PIPE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("blue_pipe")
             .name("blue_6_way_flange")
-            .register(TypeList.of(VariantIdentifier.SIX_WAY_FLANGE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("blue_pipe")
             .name("blue_5_way_flange")
-            .register(TypeList.of(VariantIdentifier.FIVE_WAY_FLANGE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("blue_pipe")
             .name("blue_3_way_flange")
-            .register(TypeList.of(VariantIdentifier.THREE_WAY_FLANGE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("blue_pipe")
             .name("blue_elbow_flange")
-            .register(TypeList.of(VariantIdentifier.ELBOW_FLANGE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("blue_pipe")
             .name("blue_gate_valve")
             .render(RenderLayer.CUTOUT)
-            .register(TypeList.of(VariantIdentifier.MOUNTED_PIPE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("blue_pipe")
             .name("blue_ball_valve")
             .render(RenderLayer.CUTOUT)
-            .register(TypeList.of(VariantIdentifier.BALL_VALVE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("blue_pipe")
             .name("blue_4_way_flange")
-            .register(TypeList.of(VariantIdentifier.FOUR_WAY_FLANGE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("blue_pipe")
             .name("blue_cross_flange")
-            .register(TypeList.of(VariantIdentifier.CROSS_FLANGE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("blue_pipe")
             .name("blue_t_flange")
-            .register(TypeList.of(VariantIdentifier.T_FLANGE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .group(ModGroups.METAL)
             .name("old_blue_pipe")
-            .register(TypeList.of(VariantIdentifier.PIPE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("old_blue_pipe")
             .name("old_blue_mounted_pipe")
-            .register(TypeList.of(VariantIdentifier.MOUNTED_PIPE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("old_blue_pipe")
             .name("old_blue_6_way_flange")
-            .register(TypeList.of(VariantIdentifier.SIX_WAY_FLANGE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("old_blue_pipe")
             .name("old_blue_5_way_flange")
-            .register(TypeList.of(VariantIdentifier.FIVE_WAY_FLANGE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("old_blue_pipe")
             .name("old_blue_3_way_flange")
-            .register(TypeList.of(VariantIdentifier.THREE_WAY_FLANGE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("old_blue_pipe")
             .name("old_blue_elbow_flange")
-            .register(TypeList.of(VariantIdentifier.ELBOW_FLANGE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("old_blue_pipe")
             .name("old_blue_gate_valve")
             .render(RenderLayer.CUTOUT)
-            .register(TypeList.of(VariantIdentifier.MOUNTED_PIPE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("old_blue_pipe")
             .name("old_blue_ball_valve")
             .render(RenderLayer.CUTOUT)
-            .register(TypeList.of(VariantIdentifier.BALL_VALVE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("old_blue_pipe")
             .name("old_blue_4_way_flange")
-            .register(TypeList.of(VariantIdentifier.FOUR_WAY_FLANGE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("old_blue_pipe")
             .name("old_blue_cross_flange")
-            .register(TypeList.of(VariantIdentifier.CROSS_FLANGE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("old_blue_pipe")
             .name("old_blue_t_flange")
-            .register(TypeList.of(VariantIdentifier.T_FLANGE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .group(ModGroups.METAL)
             .name("green_pipe")
-            .register(TypeList.of(VariantIdentifier.PIPE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("green_pipe")
             .name("green_mounted_pipe")
-            .register(TypeList.of(VariantIdentifier.MOUNTED_PIPE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("green_pipe")
             .name("green_6_way_flange")
-            .register(TypeList.of(VariantIdentifier.SIX_WAY_FLANGE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("green_pipe")
             .name("green_5_way_flange")
-            .register(TypeList.of(VariantIdentifier.FIVE_WAY_FLANGE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("green_pipe")
             .name("green_3_way_flange")
-            .register(TypeList.of(VariantIdentifier.THREE_WAY_FLANGE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("green_pipe")
             .name("green_elbow_flange")
-            .register(TypeList.of(VariantIdentifier.ELBOW_FLANGE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("green_pipe")
             .name("green_gate_valve")
             .render(RenderLayer.CUTOUT)
-            .register(TypeList.of(VariantIdentifier.MOUNTED_PIPE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("green_pipe")
             .name("green_ball_valve")
             .render(RenderLayer.CUTOUT)
-            .register(TypeList.of(VariantIdentifier.BALL_VALVE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("green_pipe")
             .name("green_4_way_flange")
-            .register(TypeList.of(VariantIdentifier.FOUR_WAY_FLANGE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("green_pipe")
             .name("green_cross_flange")
-            .register(TypeList.of(VariantIdentifier.CROSS_FLANGE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("green_pipe")
             .name("green_t_flange")
-            .register(TypeList.of(VariantIdentifier.T_FLANGE));
+            .register(TypeList.of(Void.class));
 
         VanillaProps.metal()
             .group(ModGroups.METAL)
             .name("old_green_pipe")
-            .register(TypeList.of(VariantIdentifier.PIPE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("old_green_pipe")
             .name("old_green_mounted_pipe")
-            .register(TypeList.of(VariantIdentifier.MOUNTED_PIPE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("old_green_pipe")
             .name("old_green_6_way_flange")
-            .register(TypeList.of(VariantIdentifier.SIX_WAY_FLANGE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("old_green_pipe")
             .name("old_green_5_way_flange")
-            .register(TypeList.of(VariantIdentifier.FIVE_WAY_FLANGE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("old_green_pipe")
             .name("old_green_3_way_flange")
-            .register(TypeList.of(VariantIdentifier.THREE_WAY_FLANGE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("old_green_pipe")
             .name("old_green_elbow_flange")
-            .register(TypeList.of(VariantIdentifier.ELBOW_FLANGE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("old_green_pipe")
             .name("old_green_gate_valve")
             .render(RenderLayer.CUTOUT)
-            .register(TypeList.of(VariantIdentifier.MOUNTED_PIPE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("old_green_pipe")
             .name("old_green_ball_valve")
             .render(RenderLayer.CUTOUT)
-            .register(TypeList.of(VariantIdentifier.BALL_VALVE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("old_green_pipe")
             .name("old_green_4_way_flange")
-            .register(TypeList.of(VariantIdentifier.FOUR_WAY_FLANGE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("old_green_pipe")
             .name("old_green_cross_flange")
-            .register(TypeList.of(VariantIdentifier.CROSS_FLANGE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("old_green_pipe")
             .name("old_green_t_flange")
-            .register(TypeList.of(VariantIdentifier.T_FLANGE));
+            .register(TypeList.of(Void.class));
 
         VanillaProps.metal()
             .group(ModGroups.METAL)
             .name("red_pipe")
-            .register(TypeList.of(VariantIdentifier.PIPE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("red_pipe")
             .name("red_mounted_pipe")
-            .register(TypeList.of(VariantIdentifier.MOUNTED_PIPE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("red_pipe")
             .name("red_6_way_flange")
-            .register(TypeList.of(VariantIdentifier.SIX_WAY_FLANGE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("red_pipe")
             .name("red_5_way_flange")
-            .register(TypeList.of(VariantIdentifier.FIVE_WAY_FLANGE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("red_pipe")
             .name("red_3_way_flange")
-            .register(TypeList.of(VariantIdentifier.THREE_WAY_FLANGE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("red_pipe")
             .name("red_elbow_flange")
-            .register(TypeList.of(VariantIdentifier.ELBOW_FLANGE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("red_pipe")
             .name("red_gate_valve")
             .render(RenderLayer.CUTOUT)
-            .register(TypeList.of(VariantIdentifier.MOUNTED_PIPE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("red_pipe")
             .name("red_ball_valve")
             .render(RenderLayer.CUTOUT)
-            .register(TypeList.of(VariantIdentifier.BALL_VALVE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("red_pipe")
             .name("red_4_way_flange")
-            .register(TypeList.of(VariantIdentifier.FOUR_WAY_FLANGE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("red_pipe")
             .name("red_cross_flange")
-            .register(TypeList.of(VariantIdentifier.CROSS_FLANGE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("red_pipe")
             .name("red_t_flange")
-            .register(TypeList.of(VariantIdentifier.T_FLANGE));
+            .register(TypeList.of(Void.class));
 
         VanillaProps.metal()
             .group(ModGroups.METAL)
             .name("old_red_pipe")
-            .register(TypeList.of(VariantIdentifier.PIPE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("old_red_pipe")
             .name("old_red_mounted_pipe")
-            .register(TypeList.of(VariantIdentifier.MOUNTED_PIPE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("old_red_pipe")
             .name("old_red_6_way_flange")
-            .register(TypeList.of(VariantIdentifier.SIX_WAY_FLANGE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("old_red_pipe")
             .name("old_red_5_way_flange")
-            .register(TypeList.of(VariantIdentifier.FIVE_WAY_FLANGE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("old_red_pipe")
             .name("old_red_3_way_flange")
-            .register(TypeList.of(VariantIdentifier.THREE_WAY_FLANGE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("old_red_pipe")
             .name("old_red_elbow_flange")
-            .register(TypeList.of(VariantIdentifier.ELBOW_FLANGE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("old_red_pipe")
             .name("old_red_gate_valve")
             .render(RenderLayer.CUTOUT)
-            .register(TypeList.of(VariantIdentifier.MOUNTED_PIPE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("old_red_pipe")
             .name("old_red_ball_valve")
             .render(RenderLayer.CUTOUT)
-            .register(TypeList.of(VariantIdentifier.BALL_VALVE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("old_red_pipe")
             .name("old_red_4_way_flange")
-            .register(TypeList.of(VariantIdentifier.FOUR_WAY_FLANGE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("old_red_pipe")
             .name("old_red_cross_flange")
-            .register(TypeList.of(VariantIdentifier.CROSS_FLANGE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("old_red_pipe")
             .name("old_red_t_flange")
-            .register(TypeList.of(VariantIdentifier.T_FLANGE));
+            .register(TypeList.of(Void.class));
 
         VanillaProps.metal()
             .group(ModGroups.METAL)
             .name("yellow_pipe")
-            .register(TypeList.of(VariantIdentifier.PIPE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("yellow_pipe")
             .name("yellow_mounted_pipe")
-            .register(TypeList.of(VariantIdentifier.MOUNTED_PIPE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("yellow_pipe")
             .name("yellow_6_way_flange")
-            .register(TypeList.of(VariantIdentifier.SIX_WAY_FLANGE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("yellow_pipe")
             .name("yellow_5_way_flange")
-            .register(TypeList.of(VariantIdentifier.FIVE_WAY_FLANGE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("yellow_pipe")
             .name("yellow_3_way_flange")
-            .register(TypeList.of(VariantIdentifier.THREE_WAY_FLANGE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("yellow_pipe")
             .name("yellow_elbow_flange")
-            .register(TypeList.of(VariantIdentifier.ELBOW_FLANGE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("yellow_pipe")
             .name("yellow_gate_valve")
             .render(RenderLayer.CUTOUT)
-            .register(TypeList.of(VariantIdentifier.MOUNTED_PIPE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("yellow_pipe")
             .name("yellow_ball_valve")
             .render(RenderLayer.CUTOUT)
-            .register(TypeList.of(VariantIdentifier.BALL_VALVE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("yellow_pipe")
             .name("yellow_4_way_flange")
-            .register(TypeList.of(VariantIdentifier.FOUR_WAY_FLANGE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("yellow_pipe")
             .name("yellow_cross_flange")
-            .register(TypeList.of(VariantIdentifier.CROSS_FLANGE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("yellow_pipe")
             .name("yellow_t_flange")
-            .register(TypeList.of(VariantIdentifier.T_FLANGE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .group(ModGroups.METAL)
             .name("old_yellow_pipe")
-            .register(TypeList.of(VariantIdentifier.PIPE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("old_yellow_pipe")
             .name("old_yellow_mounted_pipe")
-            .register(TypeList.of(VariantIdentifier.MOUNTED_PIPE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("old_yellow_pipe")
             .name("old_yellow_6_way_flange")
-            .register(TypeList.of(VariantIdentifier.SIX_WAY_FLANGE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("old_yellow_pipe")
             .name("old_yellow_5_way_flange")
-            .register(TypeList.of(VariantIdentifier.FIVE_WAY_FLANGE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("old_yellow_pipe")
             .name("old_yellow_3_way_flange")
-            .register(TypeList.of(VariantIdentifier.THREE_WAY_FLANGE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("old_yellow_pipe")
             .name("old_yellow_elbow_flange")
-            .register(TypeList.of(VariantIdentifier.ELBOW_FLANGE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("old_yellow_pipe")
             .name("old_yellow_gate_valve")
             .render(RenderLayer.CUTOUT)
-            .register(TypeList.of(VariantIdentifier.MOUNTED_PIPE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("old_yellow_pipe")
             .name("old_yellow_ball_valve")
             .render(RenderLayer.CUTOUT)
-            .register(TypeList.of(VariantIdentifier.BALL_VALVE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("old_yellow_pipe")
             .name("old_yellow_4_way_flange")
-            .register(TypeList.of(VariantIdentifier.FOUR_WAY_FLANGE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("old_yellow_pipe")
             .name("old_yellow_cross_flange")
-            .register(TypeList.of(VariantIdentifier.CROSS_FLANGE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("old_yellow_pipe")
             .name("old_yellow_t_flange")
-            .register(TypeList.of(VariantIdentifier.T_FLANGE));
+            .register(TypeList.of(Void.class));
 
         VanillaProps.metal()
             .group(ModGroups.METAL)
             .name("brown_pipe")
-            .register(TypeList.of(VariantIdentifier.PIPE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("brown_pipe")
             .name("brown_mounted_pipe")
-            .register(TypeList.of(VariantIdentifier.MOUNTED_PIPE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("brown_pipe")
             .name("brown_6_way_flange")
-            .register(TypeList.of(VariantIdentifier.SIX_WAY_FLANGE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("brown_pipe")
             .name("brown_5_way_flange")
-            .register(TypeList.of(VariantIdentifier.FIVE_WAY_FLANGE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("brown_pipe")
             .name("brown_3_way_flange")
-            .register(TypeList.of(VariantIdentifier.THREE_WAY_FLANGE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("brown_pipe")
             .name("brown_elbow_flange")
-            .register(TypeList.of(VariantIdentifier.ELBOW_FLANGE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("brown_pipe")
             .name("brown_gate_valve")
             .render(RenderLayer.CUTOUT)
-            .register(TypeList.of(VariantIdentifier.MOUNTED_PIPE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("brown_pipe")
             .name("brown_ball_valve")
             .render(RenderLayer.CUTOUT)
-            .register(TypeList.of(VariantIdentifier.BALL_VALVE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("brown_pipe")
             .name("brown_4_way_flange")
-            .register(TypeList.of(VariantIdentifier.FOUR_WAY_FLANGE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("brown_pipe")
             .name("brown_cross_flange")
-            .register(TypeList.of(VariantIdentifier.CROSS_FLANGE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("brown_pipe")
             .name("brown_t_flange")
-            .register(TypeList.of(VariantIdentifier.T_FLANGE));
+            .register(TypeList.of(Void.class));
 
         VanillaProps.metal()
             .group(ModGroups.METAL)
             .name("old_brown_pipe")
-            .register(TypeList.of(VariantIdentifier.PIPE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("old_brown_pipe")
             .name("old_brown_mounted_pipe")
-            .register(TypeList.of(VariantIdentifier.MOUNTED_PIPE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("old_brown_pipe")
             .name("old_brown_6_way_flange")
-            .register(TypeList.of(VariantIdentifier.SIX_WAY_FLANGE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("old_brown_pipe")
             .name("old_brown_5_way_flange")
-            .register(TypeList.of(VariantIdentifier.FIVE_WAY_FLANGE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("old_brown_pipe")
             .name("old_brown_3_way_flange")
-            .register(TypeList.of(VariantIdentifier.THREE_WAY_FLANGE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("old_brown_pipe")
             .name("old_brown_elbow_flange")
-            .register(TypeList.of(VariantIdentifier.ELBOW_FLANGE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("old_brown_pipe")
             .name("old_brown_gate_valve")
             .render(RenderLayer.CUTOUT)
-            .register(TypeList.of(VariantIdentifier.MOUNTED_PIPE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("old_brown_pipe")
             .name("old_brown_ball_valve")
             .render(RenderLayer.CUTOUT)
-            .register(TypeList.of(VariantIdentifier.BALL_VALVE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("old_brown_pipe")
             .name("old_brown_4_way_flange")
-            .register(TypeList.of(VariantIdentifier.FOUR_WAY_FLANGE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("old_brown_pipe")
             .name("old_brown_cross_flange")
-            .register(TypeList.of(VariantIdentifier.CROSS_FLANGE));
+            .register(TypeList.of(Void.class));
         VanillaProps.metal()
             .family("old_brown_pipe")
             .name("old_brown_t_flange")
-            .register(TypeList.of(VariantIdentifier.T_FLANGE));
+            .register(TypeList.of(Void.class));
     }
 }

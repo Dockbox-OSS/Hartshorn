@@ -26,6 +26,7 @@ import java.util.Map;
 
 public enum VariantIdentifier implements RegistryIdentifier {
     FULL,
+    BARK,
     SMALL_ARCH,
     SMALL_ARCH_HALF,
     TWO_METER_ARCH,
@@ -64,18 +65,24 @@ public enum VariantIdentifier implements RegistryIdentifier {
     BEAM_DOOR_FRAME_POSTS,
     BEAM_LINTEL,
     BEAM_DOOR_FRAME_LINTEL,
+    DIAGONAL_BEAM_SIDE_1,
+    DIAGONAL_BEAM_SIDE_2,
+    DIAGONAL_BEAM_SIDE_3,
+    CROSS_BEAMS,
+    CROSS_BEAMS_SIDE,
+    DIAGONAL_BEAM_1,
+    DIAGONAL_BEAM_2,
+    DIAGONAL_BEAM_3,
 
-    //TODO: Go through rest of these
     FENCE,
     FENCE_GATE,
     TRAPDOOR,
     BOARDS,
-    LAYER("snow"),
+    LAYER,
     ROCKS,
     RAIL,
     DOOR,
 
-    PIPE,
     MOUNTED_PIPE,
     SIX_WAY_FLANGE("6_way_flange"),
     FIVE_WAY_FLANGE("5_way_flange"),
@@ -86,6 +93,7 @@ public enum VariantIdentifier implements RegistryIdentifier {
     BALL_VALVE,
     CROSS_FLANGE,
     T_FLANGE,
+    PIPE,
 
     RAILING_HORIZONTAL,
     RAILING_DIAGONAL,

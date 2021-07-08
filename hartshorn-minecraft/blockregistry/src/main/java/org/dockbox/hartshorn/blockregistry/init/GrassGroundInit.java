@@ -21,13 +21,15 @@ public final class GrassGroundInit {
             .family("grass_covered_limestone")
             .manual()
             .grassColor()
-            .register(TypeList.of(VariantIdentifier.STAIRS, VariantIdentifier.VERTICAL_SLAB, VariantIdentifier.VERTICAL_CORNER, VariantIdentifier.VERTICAL_QUARTER));
+            .register(TypeList.of(VariantIdentifier.FULL, VariantIdentifier.STAIRS, VariantIdentifier.VERTICAL_SLAB,
+                VariantIdentifier.VERTICAL_CORNER, VariantIdentifier.VERTICAL_QUARTER));
         VanillaProps.grassLike()
             .group(ModGroups.GRASS_AND_DIRT)
             .name("minecraft:grass_block")
             .manual()
             .grassColor()
-            .register(TypeList.of(VariantIdentifier.LAYER, VariantIdentifier.STAIRS, VariantIdentifier.VERTICAL_SLAB, VariantIdentifier.VERTICAL_CORNER, VariantIdentifier.VERTICAL_QUARTER));
+            .register(TypeList.of(VariantIdentifier.FULL, VariantIdentifier.LAYER, VariantIdentifier.STAIRS,
+                VariantIdentifier.VERTICAL_SLAB, VariantIdentifier.VERTICAL_CORNER, VariantIdentifier.VERTICAL_QUARTER));
         VanillaProps.grass()
             .group(ModGroups.GRASS_AND_DIRT)
             .name("clover_covered_grass")
@@ -39,7 +41,8 @@ public final class GrassGroundInit {
             .name("clover_covered_grass")
             .manual()
             .grassColor()
-            .register(TypeList.of(VariantIdentifier.LAYER, VariantIdentifier.STAIRS, VariantIdentifier.VERTICAL_SLAB, VariantIdentifier.VERTICAL_CORNER, VariantIdentifier.VERTICAL_QUARTER));
+            .register(TypeList.of(VariantIdentifier.FULL, VariantIdentifier.LAYER, VariantIdentifier.STAIRS,
+                VariantIdentifier.VERTICAL_SLAB, VariantIdentifier.VERTICAL_CORNER, VariantIdentifier.VERTICAL_QUARTER));
         VanillaProps.grass()
             .group(ModGroups.GRASS_AND_DIRT)
             .name("brown_sphagnum_moss_block")
@@ -72,7 +75,9 @@ public final class GrassGroundInit {
             .texture("bottom", "minecraft:block/dirt")
             .texture("texture", "minecraft:block/mycelium_top")
             .texture("*", "minecraft:block/mycelium_side")
-            .register(TypeList.of(VariantIdentifier.LAYER, VariantIdentifier.STAIRS, VariantIdentifier.VERTICAL_SLAB, VariantIdentifier.VERTICAL_CORNER, VariantIdentifier.VERTICAL_QUARTER));
+            .register(TypeList.of(VariantIdentifier.FULL, VariantIdentifier.LAYER, VariantIdentifier.STAIRS,
+                VariantIdentifier.VERTICAL_SLAB, VariantIdentifier.VERTICAL_CORNER,
+                VariantIdentifier.VERTICAL_QUARTER));
         VanillaProps.grass()
             .group(ModGroups.GRASS_AND_DIRT)
             .name("vibrant_autumnal_forest_floor")
@@ -80,7 +85,9 @@ public final class GrassGroundInit {
             .texture("bottom", "minecraft:block/dirt")
             .texture("texture", "minecraft:block/podzol_top")
             .texture("*", "minecraft:block/podzol_side")
-            .register(TypeList.of(VariantIdentifier.LAYER, VariantIdentifier.STAIRS, VariantIdentifier.VERTICAL_SLAB, VariantIdentifier.VERTICAL_CORNER, VariantIdentifier.VERTICAL_QUARTER));
+            .register(TypeList.of(VariantIdentifier.FULL, VariantIdentifier.LAYER, VariantIdentifier.STAIRS,
+                VariantIdentifier.VERTICAL_SLAB
+                , VariantIdentifier.VERTICAL_CORNER, VariantIdentifier.VERTICAL_QUARTER));
         VanillaProps.grass()
             .group(ModGroups.GRASS_AND_DIRT)
             .name("taiga_forest_floor")
