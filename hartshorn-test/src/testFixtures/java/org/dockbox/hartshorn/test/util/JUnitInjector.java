@@ -30,7 +30,6 @@ import org.dockbox.hartshorn.di.TypeFactory;
 import org.dockbox.hartshorn.discord.DiscordUtils;
 import org.dockbox.hartshorn.persistence.FileManager;
 import org.dockbox.hartshorn.server.minecraft.Console;
-import org.dockbox.hartshorn.server.minecraft.MinecraftServerType;
 import org.dockbox.hartshorn.server.minecraft.MinecraftVersion;
 import org.dockbox.hartshorn.server.minecraft.bossbar.Bossbar;
 import org.dockbox.hartshorn.server.minecraft.dimension.Worlds;
@@ -89,8 +88,6 @@ public class JUnitInjector extends InjectConfiguration {
         this.bind(Console.class, new JUnitConsole());
 
         this.bind(GlobalConfig.class, JUnitGlobalConfig.class);
-
-        this.bind(MinecraftServerType.class, MinecraftServerType.JUNIT);
         this.bind(MinecraftVersion.class, MinecraftVersion.INDEV);
 
         this.bind(DiscordUtils.class, JUnitDiscordUtils.class);
