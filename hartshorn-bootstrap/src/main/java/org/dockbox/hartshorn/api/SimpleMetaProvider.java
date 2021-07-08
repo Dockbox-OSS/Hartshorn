@@ -17,17 +17,14 @@
 
 package org.dockbox.hartshorn.api;
 
-import org.dockbox.hartshorn.api.domain.MetaProvider;
+import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.domain.SimpleTypedOwner;
 import org.dockbox.hartshorn.api.domain.TypedOwner;
 import org.dockbox.hartshorn.api.entity.annotations.Entity;
 import org.dockbox.hartshorn.di.InjectorMetaProvider;
-import org.dockbox.hartshorn.di.annotations.Binds;
-import org.dockbox.hartshorn.di.annotations.Service;
-import org.dockbox.hartshorn.di.binding.Bindings;
+import org.dockbox.hartshorn.di.services.ServiceContainer;
 import org.dockbox.hartshorn.util.Reflect;
 
-@Binds(MetaProvider.class)
 public class SimpleMetaProvider extends InjectorMetaProvider {
 
     @Override
@@ -38,10 +35,13 @@ public class SimpleMetaProvider extends InjectorMetaProvider {
         else if (Hartshorn.class.equals(type)) {
             return SimpleTypedOwner.of(Hartshorn.PROJECT_ID);
         }
-        else if (type.isAnnotationPresent(Service.class)) {
-            final Service annotation = type.getAnnotation(Service.class);
-            if (Reflect.isNotVoid(annotation.owner())) return this.lookup(annotation.owner());
+        else {
+            final Exceptional<ServiceContainer> container = Hartshorn.context().locator().container(type);
+            if (container.present()) {
+                final ServiceContainer service = container.get();
+                if (Reflect.isNotVoid(service.getOwner())) return this.lookup(service.getOwner());
+            }
         }
-        return SimpleTypedOwner.of(Bindings.serviceId(type));
+        return super.lookup(type);
     }
 }

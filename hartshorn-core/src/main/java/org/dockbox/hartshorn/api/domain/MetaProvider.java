@@ -21,5 +21,6 @@ public interface MetaProvider {
 
     TypedOwner lookup(Class<?> type);
     boolean isSingleton(Class<?> type);
+    boolean isComponent(Class<?> type);
 
 }

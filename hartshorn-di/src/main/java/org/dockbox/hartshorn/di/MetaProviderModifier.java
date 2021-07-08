@@ -15,20 +15,21 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.di.services;
+package org.dockbox.hartshorn.di;
 
-import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Unmodifiable;
+import org.dockbox.hartshorn.api.domain.MetaProvider;
 
-import java.util.Collection;
+import java.util.function.Supplier;
 
-public interface ServiceLocator {
+public class MetaProviderModifier implements Modifier {
 
-    @NotNull
-    @Unmodifiable
-    Collection<Class<?>> locate(String prefix);
-    Collection<ServiceContainer> containers();
-    Exceptional<ServiceContainer> container(Class<?> type);
+    private final MetaProvider provider;
 
+    public MetaProviderModifier(Supplier<MetaProvider> provider) {
+        this.provider = provider.get();
+    }
+
+    public MetaProvider provider() {
+        return this.provider;
+    }
 }

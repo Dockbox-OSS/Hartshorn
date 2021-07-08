@@ -17,9 +17,10 @@
 
 package org.dockbox.hartshorn.persistence.service;
 
+import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.di.annotations.Service;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
+import org.dockbox.hartshorn.di.services.ServiceContainer;
 import org.dockbox.hartshorn.persistence.PersistenceType;
 import org.dockbox.hartshorn.persistence.annotations.Serialise;
 import org.dockbox.hartshorn.persistence.mapping.ObjectMapper;
@@ -137,7 +138,7 @@ public class SerialisationServiceModifier extends AbstractPersistenceServiceModi
 
     private Class<?> getOwner(Class<?> annotationOwner, MethodProxyContext<?> context) {
         if (Reflect.isNotVoid(annotationOwner)) return annotationOwner;
-        return context.getMethod().getDeclaringClass().getAnnotation(Service.class).owner();
+        return Hartshorn.context().locator().container(context.getMethod().getDeclaringClass()).map(ServiceContainer::getOwner).orNull();
     }
 
     private boolean argumentPathTargetPreconditions(MethodProxyContext<?> context) {

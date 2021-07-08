@@ -15,20 +15,13 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.di.services;
+package org.dockbox.hartshorn.di;
 
-import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Unmodifiable;
-
-import java.util.Collection;
-
-public interface ServiceLocator {
-
-    @NotNull
-    @Unmodifiable
-    Collection<Class<?>> locate(String prefix);
-    Collection<ServiceContainer> containers();
-    Exceptional<ServiceContainer> container(Class<?> type);
-
+public enum DefaultModifiers implements Modifier {
+    /*
+     * Makes it so application activators do not need to have service activator
+     * annotations present, and will indicate all activators are present when
+     * requested.
+     */
+    ACTIVATE_ALL
 }

@@ -18,6 +18,7 @@
 package org.dockbox.hartshorn.di.services;
 
 import org.dockbox.hartshorn.api.config.Environment;
+import org.dockbox.hartshorn.di.ApplicationContextAware;
 import org.dockbox.hartshorn.di.annotations.Service;
 import org.dockbox.hartshorn.di.binding.Bindings;
 import org.dockbox.hartshorn.util.HartshornUtils;
@@ -37,7 +38,7 @@ public class SimpleServiceContainer implements ServiceContainer {
     private final Class<?> type;
 
     public SimpleServiceContainer(Class<?> service) {
-        if (!service.isAnnotationPresent(Service.class)) throw new IllegalArgumentException("Provided type is not a service");
+        if (!ApplicationContextAware.instance().getContext().meta().isComponent(service)) throw new IllegalArgumentException("Provided type is not a component");
         this.annotation = service.getAnnotation(Service.class);
         this.id = Bindings.serviceId(service);
         this.name = Bindings.serviceName(service);
@@ -68,5 +69,10 @@ public class SimpleServiceContainer implements ServiceContainer {
     @Override
     public Environment getEnvironment() {
         return this.annotation.environment();
+    }
+
+    @Override
+    public boolean isSingleton() {
+        return this.annotation.singleton();
     }
 }
