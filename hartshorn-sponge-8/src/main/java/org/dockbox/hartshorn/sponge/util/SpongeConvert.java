@@ -52,6 +52,8 @@ import org.dockbox.hartshorn.server.minecraft.bossbar.BossbarColor;
 import org.dockbox.hartshorn.server.minecraft.bossbar.BossbarStyle;
 import org.dockbox.hartshorn.server.minecraft.dimension.Block;
 import org.dockbox.hartshorn.server.minecraft.dimension.position.BlockFace;
+import org.dockbox.hartshorn.server.minecraft.dimension.position.Location;
+import org.dockbox.hartshorn.server.minecraft.dimension.world.World;
 import org.dockbox.hartshorn.server.minecraft.entities.ItemFrame;
 import org.dockbox.hartshorn.server.minecraft.entities.ItemFrame.Rotation;
 import org.dockbox.hartshorn.server.minecraft.events.entity.SpawnSource;
@@ -65,6 +67,7 @@ import org.dockbox.hartshorn.server.minecraft.players.Hand;
 import org.dockbox.hartshorn.server.minecraft.players.Player;
 import org.dockbox.hartshorn.server.minecraft.players.Sounds;
 import org.dockbox.hartshorn.sponge.dim.SpongeBlock;
+import org.dockbox.hartshorn.sponge.dim.SpongeLocation;
 import org.dockbox.hartshorn.sponge.dim.SpongeWorld;
 import org.dockbox.hartshorn.sponge.game.SpongeConsole;
 import org.dockbox.hartshorn.sponge.game.SpongePlayer;
@@ -109,6 +112,7 @@ import org.spongepowered.api.util.orientation.Orientation;
 import org.spongepowered.api.util.orientation.Orientations;
 import org.spongepowered.api.world.server.ServerLocation;
 import org.spongepowered.api.world.server.ServerWorld;
+import org.spongepowered.api.world.server.storage.ServerWorldProperties;
 import org.spongepowered.math.vector.Vector3d;
 import org.spongepowered.math.vector.Vector3i;
 
@@ -434,14 +438,14 @@ public enum SpongeConvert {
     }
 
     @NotNull
-    public static org.dockbox.hartshorn.server.minecraft.dimension.position.Location fromSponge(ServerLocation location) {
-        org.dockbox.hartshorn.server.minecraft.dimension.world.World world = fromSponge(location.world());
+    public static Location fromSponge(ServerLocation location) {
+        SpongeWorld world = fromSponge(location.world());
         Vector3N vector3N = Vector3N.of(location.x(), location.y(), location.z());
-        return new org.dockbox.hartshorn.server.minecraft.dimension.position.Location(vector3N, world);
+        return new SpongeLocation(vector3N, world);
     }
 
     @NotNull
-    public static org.dockbox.hartshorn.server.minecraft.dimension.world.World fromSponge(ServerWorld world) {
+    public static SpongeWorld fromSponge(ServerWorld world) {
         return new SpongeWorld(world.key());
     }
 
@@ -630,6 +634,10 @@ public enum SpongeConvert {
 
     public static Block fromSponge(BlockSnapshot block) {
         return new SpongeBlock(block);
+    }
+
+    public static World fromSponge(ServerWorldProperties world) {
+        return new SpongeWorld(world.key());
     }
 
 //    public static Element toSponge(org.dockbox.hartshorn.server.minecraft.inventory.Element element) {

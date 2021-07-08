@@ -59,12 +59,12 @@ public class SpongeWorld extends World implements SpongeDimension {
 
     @Override
     public Exceptional<Block> getBlock(Vector3N position) {
-        return Exceptional.of(Block.from(new Location(position, this)));
+        return Exceptional.of(Block.from(new SpongeLocation(position, this)));
     }
 
     @Override
     public boolean setBlock(Vector3N position, Block block) {
-        return block.place(new Location(position, this));
+        return block.place(new SpongeLocation(position, this));
     }
 
     @Override

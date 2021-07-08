@@ -17,57 +17,44 @@
 
 package org.dockbox.hartshorn.server.minecraft.dimension.position;
 
+import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.tuple.Vector3N;
 import org.dockbox.hartshorn.api.keys.KeyHolder;
+import org.dockbox.hartshorn.api.keys.PersistentDataHolder;
+import org.dockbox.hartshorn.di.annotations.Required;
 import org.dockbox.hartshorn.server.minecraft.dimension.Block;
 import org.dockbox.hartshorn.server.minecraft.dimension.world.World;
 
 import java.util.Objects;
 
-import lombok.Getter;
-
-public class Location implements KeyHolder<Location> {
-
-    private final Vector3N vectorLoc;
-    @Getter
-    private final World world;
-
-    public Location(double x, double y, double z, World world) {
-        this(Vector3N.of(x, y, z), world);
-    }
-
-    public Location(Vector3N vectorLoc, World world) {
-        this.vectorLoc = vectorLoc;
-        this.world = world;
-    }
+@Required
+public abstract class Location implements KeyHolder<Location>, PersistentDataHolder {
 
     public static Location empty() {
-        return new Location(0, 0, 0, World.empty());
+        return new EmptyLocation();
     }
 
     public static Location of(World world) {
-        return new Location(world.getSpawnPosition(), world);
+        return Hartshorn.context().get(Location.class, world);
     }
 
     public double getX() {
-        return this.vectorLoc.getXd();
+        return this.getVectorLoc().getXd();
     }
 
     public double getY() {
-        return this.vectorLoc.getYd();
+        return this.getVectorLoc().getYd();
     }
 
     public double getZ() {
-        return this.vectorLoc.getZd();
+        return this.getVectorLoc().getZd();
     }
 
     public Location expandX(double x) {
         return this.expand(Vector3N.of(x, 0, 0));
     }
 
-    public Location expand(Vector3N vector) {
-        return new Location(this.vectorLoc.expand(vector), this.getWorld());
-    }
+    public abstract Location expand(Vector3N vector);
 
     public Location expandY(double y) {
         return this.expand(Vector3N.of(0, y, 0));
@@ -77,9 +64,9 @@ public class Location implements KeyHolder<Location> {
         return this.expand(Vector3N.of(0, 0, z));
     }
 
-    public Vector3N getVectorLoc() {
-        return this.vectorLoc;
-    }
+    public abstract Vector3N getVectorLoc();
+
+    public abstract World getWorld();
 
     public boolean place(Block block) {
         return block.place(this);
