@@ -44,7 +44,7 @@ public class PlotWorldModel {
     public Exceptional<Location> getLocation(int plotX, int plotZ) {
         return Hartshorn.context().get(Worlds.class)
                 .getWorld(this.getName())
-                .map(world -> new Location(this.getHomeX(plotX), this.getHeight(), this.getHomeZ(plotZ), world));
+                .map(world -> Location.of(this.getHomeX(plotX), this.getHeight(), this.getHomeZ(plotZ), world));
     }
 
     public int getHomeX(int plotX) {
