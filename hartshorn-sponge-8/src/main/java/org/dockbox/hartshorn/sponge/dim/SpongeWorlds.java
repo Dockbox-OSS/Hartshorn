@@ -25,6 +25,7 @@ import org.dockbox.hartshorn.sponge.util.SpongeUtil;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.spongepowered.api.ResourceKey;
 import org.spongepowered.api.Sponge;
+import org.spongepowered.api.util.Identifiable;
 import org.spongepowered.api.world.server.storage.ServerWorldProperties;
 
 import java.util.List;
@@ -36,45 +37,50 @@ public class SpongeWorlds implements Worlds {
     public List<World> getLoadedWorlds() {
         return Sponge.server().worldManager().worlds().stream()
                 .map(SpongeConvert::fromSponge)
+                .map(World.class::cast)
                 .toList();
     }
 
     @Override
     public List<UUID> getAllWorldUUIDs() {
-        List<UUID> uuids = HartshornUtils.emptyList();
-        for (ResourceKey worldKey : Sponge.server().worldManager().worldKeys()) {
-            final Exceptional<ServerWorldProperties> properties = SpongeUtil.awaitOption(Sponge.server().worldManager().loadProperties(worldKey));
-            properties.present(props -> uuids.add(props.uniqueId()));
-        }
-        return HartshornUtils.asUnmodifiableList(uuids);
+        return this.worlds().stream().map(Identifiable::uniqueId).toList();
     }
 
     @Override
     public Exceptional<World> getWorld(String name) {
-        for (ResourceKey worldKey : Sponge.server().worldManager().worldKeys()) {
-
-        }
-        return null;
+        return Exceptional.of(this.worlds().stream()
+                .filter(world -> world.key().value().equals(name)).findFirst())
+                .map(SpongeConvert::fromSponge);
     }
 
     @Override
     public Exceptional<World> getWorld(UUID uuid) {
-        return null;
+        return Exceptional.of(this.worlds().stream()
+                .filter(world -> world.uniqueId().equals(uuid)).findFirst())
+                .map(SpongeConvert::fromSponge);
     }
 
     @Override
     public boolean hasWorld(String name) {
-
-        return false;
+        return this.getWorld(name).present();
     }
 
     @Override
     public boolean hasWorld(UUID uuid) {
-        return false;
+        return this.getWorld(uuid).present();
     }
 
     @Override
     public UUID getRootWorldId() {
-        return null;
+        return Sponge.server().worldManager().defaultWorld().uniqueId();
+    }
+
+    private List<ServerWorldProperties> worlds() {
+        List<ServerWorldProperties> uuids = HartshornUtils.emptyList();
+        for (ResourceKey worldKey : Sponge.server().worldManager().worldKeys()) {
+            final Exceptional<ServerWorldProperties> properties = SpongeUtil.awaitOption(Sponge.server().worldManager().loadProperties(worldKey));
+            properties.present(uuids::add);
+        }
+        return HartshornUtils.asUnmodifiableList(uuids);
     }
 }
