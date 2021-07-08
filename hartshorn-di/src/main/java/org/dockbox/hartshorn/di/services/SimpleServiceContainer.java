@@ -17,7 +17,6 @@
 
 package org.dockbox.hartshorn.di.services;
 
-import org.dockbox.hartshorn.api.config.Environment;
 import org.dockbox.hartshorn.di.ApplicationContextAware;
 import org.dockbox.hartshorn.di.annotations.Service;
 import org.dockbox.hartshorn.di.binding.Bindings;
@@ -64,11 +63,6 @@ public class SimpleServiceContainer implements ServiceContainer {
     @Override
     public boolean hasActivator() {
         return !Service.class.equals(this.getActivator());
-    }
-
-    @Override
-    public Environment getEnvironment() {
-        return this.annotation.environment();
     }
 
     @Override

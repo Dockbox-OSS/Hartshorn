@@ -17,8 +17,6 @@
 
 package org.dockbox.hartshorn.di.services;
 
-import org.dockbox.hartshorn.api.config.Environment;
-
 import java.lang.annotation.Annotation;
 import java.util.List;
 
@@ -35,8 +33,6 @@ public interface ServiceContainer {
 
     Class<? extends Annotation> getActivator();
     boolean hasActivator();
-
-    Environment getEnvironment();
 
     boolean isSingleton();
 }

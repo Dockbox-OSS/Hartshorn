@@ -17,8 +17,6 @@
 
 package org.dockbox.hartshorn.di.annotations;
 
-import org.dockbox.hartshorn.api.config.Environment;
-
 import java.lang.annotation.Annotation;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -38,8 +36,6 @@ public @interface Service {
 
     Class<?> owner() default Void.class;
     Class<? extends Annotation> activator() default Service.class;
-
-    Environment environment() default Environment.PRODUCTION;
 
     boolean singleton() default true;
 }

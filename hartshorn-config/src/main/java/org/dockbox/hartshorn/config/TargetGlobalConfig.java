@@ -17,7 +17,6 @@
 
 package org.dockbox.hartshorn.config;
 
-import org.dockbox.hartshorn.api.config.Environment;
 import org.dockbox.hartshorn.api.config.GlobalConfig;
 import org.dockbox.hartshorn.api.exceptions.ExceptionLevels;
 import org.dockbox.hartshorn.config.annotations.Configuration;
@@ -34,9 +33,6 @@ public class TargetGlobalConfig implements GlobalConfig {
 
     @Value(value = "hartshorn.exceptions.level", or = "NATIVE")
     private ExceptionLevels exceptionLevel;
-
-    @Value(value = "hartshorn.environment", or = "DEVELOPMENT")
-    private Environment environment;
 
     @Value("hartshorn.discord.logging-channel")
     private String discordLoggingCategoryId;
