@@ -28,7 +28,7 @@ import org.dockbox.hartshorn.server.minecraft.events.packet.PacketEvent;
 import org.dockbox.hartshorn.server.minecraft.packets.annotations.Packet;
 import org.dockbox.hartshorn.util.Reflect;
 
-@Service(activator = UseBootstrap.class)
+@Service(activators = UseBootstrap.class)
 class PacketValidationService {
 
     @PostBootstrap

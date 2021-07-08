@@ -44,7 +44,7 @@ public class SimpleServiceLocator implements ServiceLocator {
 
         final List<ServiceContainer> containers = types.stream()
                 .map(SimpleServiceContainer::new)
-                .filter(SimpleServiceContainer::isEnabled)
+                .filter(SimpleServiceContainer::enabled)
                 .map(ServiceContainer.class::cast)
                 .toList();
         SimpleServiceLocator.cache.put(prefix, containers);

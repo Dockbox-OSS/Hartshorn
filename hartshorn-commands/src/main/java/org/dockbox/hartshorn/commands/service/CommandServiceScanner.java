@@ -30,7 +30,7 @@ import org.dockbox.hartshorn.di.preload.Preloadable;
 import org.dockbox.hartshorn.di.services.ServiceContainer;
 import org.dockbox.hartshorn.util.Reflect;
 
-@Service(activator = UseBootstrap.class)
+@Service(activators = UseBootstrap.class)
 @Posting(RegisteredCommandsEvent.class)
 public class CommandServiceScanner implements Preloadable {
 

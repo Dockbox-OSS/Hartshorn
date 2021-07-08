@@ -75,7 +75,7 @@ public abstract class AbstractPersistenceServiceModifier<M extends Annotation, C
         if (!Reflect.notVoid(owner)) {
             final Exceptional<ServiceContainer> container = context.locator().container(methodContext.getMethod().getDeclaringClass());
             if (container.present()) {
-                owner = container.get().getOwner();
+                owner = container.get().owner();
             }
         }
 
