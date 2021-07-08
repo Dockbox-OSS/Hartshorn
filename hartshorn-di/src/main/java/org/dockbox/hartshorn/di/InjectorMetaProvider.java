@@ -17,16 +17,34 @@
 
 package org.dockbox.hartshorn.di;
 
+import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.domain.MetaProvider;
 import org.dockbox.hartshorn.api.domain.SimpleTypedOwner;
 import org.dockbox.hartshorn.api.domain.TypedOwner;
+import org.dockbox.hartshorn.api.entity.annotations.Entity;
 import org.dockbox.hartshorn.di.annotations.Service;
 import org.dockbox.hartshorn.di.binding.Bindings;
 import org.dockbox.hartshorn.di.services.ServiceContainer;
+import org.dockbox.hartshorn.util.Reflect;
 
 import javax.inject.Singleton;
 
 public class InjectorMetaProvider implements MetaProvider {
+
+    @Override
+    public TypedOwner lookup(Class<?> type) {
+        if (type.isAnnotationPresent(Entity.class)) {
+            return SimpleTypedOwner.of(type.getAnnotation(Entity.class).value());
+        }
+        else {
+            final Exceptional<ServiceContainer> container = ApplicationContextAware.instance().getContext().locator().container(type);
+            if (container.present()) {
+                final ServiceContainer service = container.get();
+                if (Reflect.notVoid(service.getOwner())) return this.lookup(service.getOwner());
+            }
+        }
+        return SimpleTypedOwner.of(Bindings.serviceId(type));
+    }
 
     @Override
     public boolean isSingleton(Class<?> type) {
@@ -44,10 +62,5 @@ public class InjectorMetaProvider implements MetaProvider {
     @Override
     public boolean isComponent(Class<?> type) {
         return type.isAnnotationPresent(Service.class);
-    }
-
-    @Override
-    public TypedOwner lookup(Class<?> type) {
-        return SimpleTypedOwner.of(Bindings.serviceId(type));
     }
 }
