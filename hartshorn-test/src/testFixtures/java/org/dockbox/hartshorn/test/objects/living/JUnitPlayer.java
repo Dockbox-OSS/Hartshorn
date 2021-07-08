@@ -84,7 +84,7 @@ public class JUnitPlayer extends Player implements JUnitPersistentDataHolder {
         super(uniqueId, name);
         this.setDisplayName(Text.of(name));
         Worlds worlds = Hartshorn.context().get(Worlds.class);
-        this.setLocation(new Location(0, 0, 0, worlds.getWorld(worlds.getRootWorldId()).orNull()));
+        this.setLocation(Location.of(0, 0, 0, worlds.getWorld(worlds.getRootWorldId()).orNull()));
         ((JUnitWorld) this.getWorld()).addEntity(this);
     }
 

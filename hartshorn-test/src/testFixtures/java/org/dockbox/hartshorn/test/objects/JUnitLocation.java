@@ -15,52 +15,47 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.sponge.dim;
+package org.dockbox.hartshorn.test.objects;
 
-import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.domain.tuple.Vector3N;
 import org.dockbox.hartshorn.di.annotations.Binds;
 import org.dockbox.hartshorn.di.annotations.Wired;
 import org.dockbox.hartshorn.server.minecraft.dimension.position.Location;
 import org.dockbox.hartshorn.server.minecraft.dimension.world.World;
-import org.dockbox.hartshorn.sponge.game.SpongeComposite;
-import org.dockbox.hartshorn.sponge.util.SpongeConvert;
-import org.spongepowered.api.data.DataHolder.Mutable;
-import org.spongepowered.api.world.server.ServerLocation;
+
+import java.util.UUID;
 
 @Binds(Location.class)
-public class SpongeLocation extends Location implements SpongeComposite {
+public class JUnitLocation extends Location implements JUnitPersistentDataHolder {
 
     private final Vector3N position;
-    private final SpongeWorld world;
+    private final World world;
+    private final UUID uniqueId;
 
     @Wired
-    public SpongeLocation(World world) {
+    public JUnitLocation(World world) {
         this(world.getSpawnPosition(), world);
     }
 
     @Wired
-    public SpongeLocation(Vector3N position, World world) {
-        if (!(world instanceof SpongeWorld spongeWorld)) {
-            throw new IllegalArgumentException("Provided world cannot be used as a Sponge reference");
+    public JUnitLocation(Vector3N position, World world) {
+        if (!(world instanceof JUnitWorld spongeWorld)) {
+            throw new IllegalArgumentException("Provided world cannot be used as a JUnit reference");
         }
         this.world = spongeWorld;
         this.position = position;
+        this.uniqueId = UUID.randomUUID();
     }
 
-    public SpongeLocation(Vector3N position, SpongeWorld world) {
+    public JUnitLocation(Vector3N position, JUnitWorld world) {
         this.position = position;
         this.world = world;
-    }
-
-    @Override
-    public Exceptional<? extends Mutable> getDataHolder() {
-        return Exceptional.of(() -> ServerLocation.of(this.world.getKey(), SpongeConvert.toSpongeDouble(this.position)));
+        this.uniqueId = UUID.randomUUID();
     }
 
     @Override
     public Location expand(Vector3N vector) {
-        return new SpongeLocation(this.position.expand(vector), this.world);
+        return new JUnitLocation(this.position.expand(vector), this.world);
     }
 
     @Override
@@ -71,5 +66,15 @@ public class SpongeLocation extends Location implements SpongeComposite {
     @Override
     public World getWorld() {
         return this.world;
+    }
+
+    @Override
+    public UUID getUniqueId() {
+        return this.uniqueId;
+    }
+
+    @Override
+    public String getName() {
+        return "JUnitLocation";
     }
 }

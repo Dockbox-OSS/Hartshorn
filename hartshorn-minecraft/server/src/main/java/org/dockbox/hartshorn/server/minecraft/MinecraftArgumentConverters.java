@@ -60,7 +60,7 @@ public final class MinecraftArgumentConverters implements InjectableType {
                 Vector3N vec = DefaultArgumentConverters.VECTOR.convert(cs, xyz).or(Vector3N.of(0, 0, 0));
                 World world = WORLD.convert(cs, xyzw[3]).or(World.empty());
 
-                return Exceptional.of(new Location(vec, world));
+                return Exceptional.of(Location.of(vec, world));
             }).build();
 
     public static final ArgumentConverter<Player> PLAYER = CommandValueConverter.builder(Player.class, "player", "user")
