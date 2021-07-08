@@ -24,6 +24,7 @@ import org.dockbox.hartshorn.di.annotations.Wired;
 import org.dockbox.hartshorn.server.minecraft.dimension.Block;
 import org.dockbox.hartshorn.server.minecraft.dimension.position.Location;
 import org.dockbox.hartshorn.server.minecraft.item.Item;
+import org.dockbox.hartshorn.sponge.game.SpongeComposite;
 import org.dockbox.hartshorn.sponge.inventory.SpongeItem;
 import org.dockbox.hartshorn.sponge.util.SpongeConvert;
 import org.dockbox.hartshorn.sponge.util.SpongeUtil;
@@ -33,6 +34,7 @@ import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.block.BlockTypes;
+import org.spongepowered.api.data.DataHolder.Mutable;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.registry.RegistryTypes;
 import org.spongepowered.api.state.BooleanStateProperty;
@@ -44,13 +46,30 @@ import java.lang.ref.WeakReference;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * Represents a block in a dimensional space. Note that composite data can only
+ * be offered if a location is known for the block.
+ *
+ * <p>The position is automatically derived when creating an instance from a
+ * {@link BlockSnapshot} (if it has a location reference) or from a {@link Location}
+ * (if the location is a valid server location). When creating from a {@link Item}
+ * no position will be derived.
+ *
+ * <p>The position is updated when {@link #place(Location)} is used (assuming the
+ * given {@link Location} is a valid server location.
+ *
+ * <p><b>Warning: Custom data is currently not supported by the Sponge API. This is
+ * scheduled to be supported later on.</b>
+ */
 @Binds(Block.class)
-public class SpongeBlock implements Block {
+public class SpongeBlock implements Block, SpongeComposite {
 
     private final WeakReference<BlockSnapshot> snapshot;
+    private ServerLocation location;
 
     public SpongeBlock(BlockSnapshot snapshot) {
         this.snapshot = new WeakReference<>(snapshot);
+        this.location = snapshot.location().orElse(null);
     }
 
     @Wired
@@ -62,16 +81,21 @@ public class SpongeBlock implements Block {
             final BlockType blockType = block.get();
             this.snapshot = new WeakReference<>(SpongeConvert.toSnapshot(blockType.defaultState()));
         }
+        this.location = null;
     }
 
     @Wired
     public SpongeBlock(Location location) {
         final Exceptional<ServerLocation> exceptionalLocation = SpongeConvert.toSponge(location);
-        if (exceptionalLocation.absent()) this.snapshot = new WeakReference<>(BlockSnapshot.empty());
+        if (exceptionalLocation.absent()) {
+            this.snapshot = new WeakReference<>(BlockSnapshot.empty());
+            this.location = null;
+        }
         else {
             final ServerLocation serverLocation = exceptionalLocation.get();
             final BlockSnapshot snapshot = serverLocation.createSnapshot();
             this.snapshot = new WeakReference<>(snapshot);
+            this.location = serverLocation;
         }
     }
 
@@ -134,7 +158,10 @@ public class SpongeBlock implements Block {
     @Override
     public boolean place(Location location) {
         return this.state().map(state -> SpongeConvert.toSponge(location)
-                .map(serverLocation -> serverLocation.setBlock(state))
+                .map(serverLocation -> {
+                    SpongeBlock.this.location = serverLocation;
+                    return serverLocation.setBlock(state);
+                })
                 .or(false)
         ).or(false);
     }
@@ -145,5 +172,10 @@ public class SpongeBlock implements Block {
 
     public Exceptional<BlockState> state() {
         return this.snapshot().map(BlockSnapshot::state);
+    }
+
+    @Override
+    public Exceptional<? extends Mutable> getDataHolder() {
+        return Exceptional.of(this.location);
     }
 }
