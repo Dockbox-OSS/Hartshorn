@@ -18,6 +18,7 @@
 package org.dockbox.hartshorn.sponge.event;
 
 import org.dockbox.hartshorn.api.Hartshorn;
+import org.dockbox.hartshorn.api.events.annotations.Posting;
 import org.dockbox.hartshorn.di.context.Context;
 import org.dockbox.hartshorn.server.minecraft.dimension.BlockContext;
 import org.dockbox.hartshorn.server.minecraft.events.server.ServerInitEvent;
@@ -45,6 +46,15 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
+@Posting(value = {
+        ServerInitEvent.class,
+        ServerPostInitEvent.class,
+        ServerStartedEvent.class,
+        ServerStartingEvent.class,
+        ServerReloadEvent.class,
+        ServerUpdateEvent.class,
+        ServerStoppingEvent.class
+})
 public class ServerEventBridge implements EventBridge {
 
     @Listener

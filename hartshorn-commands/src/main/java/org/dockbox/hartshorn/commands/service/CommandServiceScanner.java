@@ -20,6 +20,7 @@ package org.dockbox.hartshorn.commands.service;
 import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.annotations.PostBootstrap;
 import org.dockbox.hartshorn.api.annotations.UseBootstrap;
+import org.dockbox.hartshorn.api.events.annotations.Posting;
 import org.dockbox.hartshorn.commands.CommandGateway;
 import org.dockbox.hartshorn.commands.annotations.Command;
 import org.dockbox.hartshorn.commands.events.RegisteredCommandsEvent;
@@ -30,6 +31,7 @@ import org.dockbox.hartshorn.di.services.ServiceContainer;
 import org.dockbox.hartshorn.util.Reflect;
 
 @Service(activator = UseBootstrap.class)
+@Posting(RegisteredCommandsEvent.class)
 public class CommandServiceScanner implements Preloadable {
 
     @PostBootstrap

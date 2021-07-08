@@ -20,11 +20,17 @@ package org.dockbox.hartshorn.commands.context;
 import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.domain.Target;
+import org.dockbox.hartshorn.api.events.annotations.Posting;
+import org.dockbox.hartshorn.api.events.parents.Cancellable;
 import org.dockbox.hartshorn.api.exceptions.Except;
+import org.dockbox.hartshorn.api.i18n.common.ResourceEntry;
 import org.dockbox.hartshorn.commands.CommandExecutor;
 import org.dockbox.hartshorn.commands.CommandParser;
+import org.dockbox.hartshorn.commands.CommandResources;
 import org.dockbox.hartshorn.commands.annotations.Command;
 import org.dockbox.hartshorn.commands.definition.CommandElement;
+import org.dockbox.hartshorn.commands.events.CommandEvent;
+import org.dockbox.hartshorn.commands.events.CommandEvent.Before;
 import org.dockbox.hartshorn.commands.source.CommandSource;
 import org.dockbox.hartshorn.di.context.DefaultContext;
 import org.dockbox.hartshorn.util.HartshornUtils;
@@ -41,6 +47,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 
 @Getter(AccessLevel.PROTECTED)
+@Posting({CommandEvent.Before.class, CommandEvent.After.class})
 public class MethodCommandExecutorContext extends DefaultContext implements CommandExecutorContext {
 
     private final Method method;
