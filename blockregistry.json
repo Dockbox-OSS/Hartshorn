@@ -21,13 +21,13 @@
   },
   "conqest:white_concrete_powder" : {
     "STAIRS" : "conqest:white_concrete_powder_stairs",
-    "LAYER" : "conqest:white_concrete_powder_snow"
+    "LAYER" : "conqest:white_concrete_powder_layer"
   },
   "conqest:aspen_leaves" : {
     "FULL" : "conqest:aspen_leaves"
   },
   "conqest:stack_of_coal" : {
-    "LAYER" : "conqest:stack_of_coal_snow"
+    "LAYER" : "conqest:stack_of_coal_layer"
   },
   "conqest:apple_log" : {
     "BRANCH" : "conqest:apple_log_branch",
@@ -36,6 +36,7 @@
     "VERTICAL_CORNER_SLAB" : "conqest:apple_log_vertical_corner_slab",
     "STAIRS" : "conqest:apple_log_stairs",
     "CORNER_SLAB" : "conqest:apple_log_corner_slab",
+    "FULL" : "conqest:apple_log",
     "STUMP" : "conqest:apple_log_stump",
     "EIGHTH_SLAB" : "conqest:apple_log_eighth_slab",
     "VERTICAL_CORNER" : "conqest:apple_log_vertical_corner",
@@ -88,16 +89,17 @@
     "FULL" : "conqest:polished_parian_marble_column_capital"
   },
   "conqest:yellow_pipe" : {
-    "ELBOW_FLANGE" : "conqest:yellow_elbow_flange_elbow_flange",
-    "BALL_VALVE" : "conqest:yellow_ball_valve_ball_valve",
-    "PIPE" : "conqest:yellow_pipe_pipe",
-    "CROSS_FLANGE" : "conqest:yellow_cross_flange_cross_flange",
-    "MOUNTED_PIPE" : [ "conqest:yellow_mounted_pipe_mounted_pipe", "conqest:yellow_gate_valve_mounted_pipe" ],
-    "SIX_WAY_FLANGE" : "conqest:yellow_6_way_flange_6_way_flange",
-    "FIVE_WAY_FLANGE" : "conqest:yellow_5_way_flange_5_way_flange",
-    "THREE_WAY_FLANGE" : "conqest:yellow_3_way_flange_3_way_flange",
-    "FOUR_WAY_FLANGE" : "conqest:yellow_4_way_flange_4_way_flange",
-    "T_FLANGE" : "conqest:yellow_t_flange_t_flange"
+    "ELBOW_FLANGE" : "conqest:yellow_elbow_flange",
+    "BALL_VALVE" : "conqest:yellow_ball_valve",
+    "GATE_VALVE" : "conqest:yellow_gate_valve",
+    "PIPE" : "conqest:yellow_pipe",
+    "CROSS_FLANGE" : "conqest:yellow_cross_flange",
+    "MOUNTED_PIPE" : "conqest:yellow_mounted_pipe",
+    "SIX_WAY_FLANGE" : "conqest:yellow_6_way_flange",
+    "FIVE_WAY_FLANGE" : "conqest:yellow_5_way_flange",
+    "THREE_WAY_FLANGE" : "conqest:yellow_3_way_flange",
+    "FOUR_WAY_FLANGE" : "conqest:yellow_4_way_flange",
+    "T_FLANGE" : "conqest:yellow_t_flange"
   },
   "conqest:blue_column_with_sandstone_base" : {
     "VERTICAL_CORNER" : "conqest:blue_column_with_sandstone_base_vertical_corner",
@@ -251,7 +253,7 @@
     "VERTICAL_QUARTER" : "conqest:fir_forest_floor_vertical_quarter",
     "STAIRS" : "conqest:fir_forest_floor_stairs",
     "VERTICAL_SLAB" : "conqest:fir_forest_floor_vertical_slab",
-    "LAYER" : "conqest:fir_forest_floor_snow",
+    "LAYER" : "conqest:fir_forest_floor_layer",
     "FULL" : "conqest:fir_forest_floor"
   },
   "conqest:pink_cherry_blossoms" : {
@@ -284,10 +286,8 @@
     "STAIRS" : "conqest:gray_clay_stairs",
     "SLAB" : "conqest:gray_clay_slab",
     "CORNER_SLAB" : "conqest:gray_clay_corner_slab",
+    "FULL" : "conqest:gray_clay",
     "EIGHTH_SLAB" : "conqest:gray_clay_eighth_slab"
-  },
-  "conqest:red_painted_steel_beam" : {
-    "BEAM_VERTICAL" : "conqest:red_painted_steel_beam_beam_vertical"
   },
   "conqest:metal_dispenser" : {
     "FULL" : "conqest:metal_dispenser"
@@ -541,6 +541,7 @@
     "VERTICAL_CORNER_SLAB" : "conqest:green_painted_wall_vertical_corner_slab",
     "STAIRS" : "conqest:green_painted_wall_stairs",
     "CORNER_SLAB" : "conqest:green_painted_wall_corner_slab",
+    "FULL" : "conqest:green_painted_wall",
     "SMALL_WINDOW_HALF" : "conqest:green_painted_wall_small_window_half",
     "EIGHTH_SLAB" : "conqest:green_painted_wall_eighth_slab",
     "ARROWSLIT" : "conqest:green_painted_wall_arrowslit",
@@ -557,7 +558,7 @@
   },
   "conqest:mossy_sandstone_debris" : {
     "STAIRS" : "conqest:mossy_sandstone_debris_stairs",
-    "LAYER" : "conqest:mossy_sandstone_debris_snow",
+    "LAYER" : "conqest:mossy_sandstone_debris_layer",
     "FULL" : "conqest:mossy_sandstone_debris"
   },
   "conqest:limestone_cornice" : {
@@ -812,7 +813,7 @@
     "FULL" : "conqest:orange_plaster_with_sandstone_base"
   },
   "conqest:stack_of_glowing_embers" : {
-    "LAYER" : "conqest:stack_of_glowing_embers_snow",
+    "LAYER" : "conqest:stack_of_glowing_embers_layer",
     "FULL" : "conqest:stack_of_glowing_embers"
   },
   "conqest:full_sack_of_potatoes" : {
@@ -852,7 +853,7 @@
     "VERTICAL_QUARTER" : "conqest:mossy_forest_floor_with_roots_vertical_quarter",
     "STAIRS" : "conqest:mossy_forest_floor_with_roots_stairs",
     "VERTICAL_SLAB" : "conqest:mossy_forest_floor_with_roots_vertical_slab",
-    "LAYER" : "conqest:mossy_forest_floor_with_roots_snow",
+    "LAYER" : "conqest:mossy_forest_floor_with_roots_layer",
     "FULL" : "conqest:mossy_forest_floor_with_roots"
   },
   "conqest:prison_door" : {
@@ -879,19 +880,21 @@
     "STAIRS" : "conqest:cyan_wool_stairs",
     "SLAB" : "conqest:cyan_wool_slab",
     "CORNER_SLAB" : "conqest:cyan_wool_corner_slab",
+    "FULL" : "conqest:cyan_wool",
     "EIGHTH_SLAB" : "conqest:cyan_wool_eighth_slab"
   },
   "conqest:blue_pipe" : {
-    "ELBOW_FLANGE" : "conqest:blue_elbow_flange_elbow_flange",
-    "BALL_VALVE" : "conqest:blue_ball_valve_ball_valve",
-    "PIPE" : "conqest:blue_pipe_pipe",
-    "CROSS_FLANGE" : "conqest:blue_cross_flange_cross_flange",
-    "MOUNTED_PIPE" : [ "conqest:blue_mounted_pipe_mounted_pipe", "conqest:blue_gate_valve_mounted_pipe" ],
-    "SIX_WAY_FLANGE" : "conqest:blue_6_way_flange_6_way_flange",
-    "FIVE_WAY_FLANGE" : "conqest:blue_5_way_flange_5_way_flange",
-    "THREE_WAY_FLANGE" : "conqest:blue_3_way_flange_3_way_flange",
-    "FOUR_WAY_FLANGE" : "conqest:blue_4_way_flange_4_way_flange",
-    "T_FLANGE" : "conqest:blue_t_flange_t_flange"
+    "ELBOW_FLANGE" : "conqest:blue_elbow_flange",
+    "BALL_VALVE" : "conqest:blue_ball_valve",
+    "GATE_VALVE" : "conqest:blue_gate_valve",
+    "PIPE" : "conqest:blue_pipe",
+    "CROSS_FLANGE" : "conqest:blue_cross_flange",
+    "MOUNTED_PIPE" : "conqest:blue_mounted_pipe",
+    "SIX_WAY_FLANGE" : "conqest:blue_6_way_flange",
+    "FIVE_WAY_FLANGE" : "conqest:blue_5_way_flange",
+    "THREE_WAY_FLANGE" : "conqest:blue_3_way_flange",
+    "FOUR_WAY_FLANGE" : "conqest:blue_4_way_flange",
+    "T_FLANGE" : "conqest:blue_t_flange"
   },
   "conqest:waiting_approval_planning_sign" : {
     "FULL" : "conqest:waiting_approval_planning_sign"
@@ -979,6 +982,7 @@
     "STAIRS" : "conqest:gray_cave_silt_stairs",
     "SLAB" : "conqest:gray_cave_silt_slab",
     "CORNER_SLAB" : "conqest:gray_cave_silt_corner_slab",
+    "FULL" : "conqest:gray_cave_silt",
     "EIGHTH_SLAB" : "conqest:gray_cave_silt_eighth_slab"
   },
   "conqest:weathered_yellow_painted_planks" : {
@@ -1117,7 +1121,7 @@
   },
   "conqest:red_sand_and_gravel" : {
     "STAIRS" : "conqest:red_sand_and_gravel_stairs",
-    "LAYER" : "conqest:red_sand_and_gravel_snow",
+    "LAYER" : "conqest:red_sand_and_gravel_layer",
     "FULL" : "conqest:red_sand_and_gravel"
   },
   "conqest:carved_limestone" : {
@@ -1208,16 +1212,17 @@
     "CAPITAL" : "conqest:rustic_spruce_wood_plank_capital"
   },
   "conqest:old_yellow_pipe" : {
-    "ELBOW_FLANGE" : "conqest:old_yellow_elbow_flange_elbow_flange",
-    "BALL_VALVE" : "conqest:old_yellow_ball_valve_ball_valve",
-    "PIPE" : "conqest:old_yellow_pipe_pipe",
-    "CROSS_FLANGE" : "conqest:old_yellow_cross_flange_cross_flange",
-    "MOUNTED_PIPE" : [ "conqest:old_yellow_mounted_pipe_mounted_pipe", "conqest:old_yellow_gate_valve_mounted_pipe" ],
-    "SIX_WAY_FLANGE" : "conqest:old_yellow_6_way_flange_6_way_flange",
-    "FIVE_WAY_FLANGE" : "conqest:old_yellow_5_way_flange_5_way_flange",
-    "THREE_WAY_FLANGE" : "conqest:old_yellow_3_way_flange_3_way_flange",
-    "FOUR_WAY_FLANGE" : "conqest:old_yellow_4_way_flange_4_way_flange",
-    "T_FLANGE" : "conqest:old_yellow_t_flange_t_flange"
+    "ELBOW_FLANGE" : "conqest:old_yellow_elbow_flange",
+    "BALL_VALVE" : "conqest:old_yellow_ball_valve",
+    "GATE_VALVE" : "conqest:old_yellow_gate_valve",
+    "PIPE" : "conqest:old_yellow_pipe",
+    "CROSS_FLANGE" : "conqest:old_yellow_cross_flange",
+    "MOUNTED_PIPE" : "conqest:old_yellow_mounted_pipe",
+    "SIX_WAY_FLANGE" : "conqest:old_yellow_6_way_flange",
+    "FIVE_WAY_FLANGE" : "conqest:old_yellow_5_way_flange",
+    "THREE_WAY_FLANGE" : "conqest:old_yellow_3_way_flange",
+    "FOUR_WAY_FLANGE" : "conqest:old_yellow_4_way_flange",
+    "T_FLANGE" : "conqest:old_yellow_t_flange"
   },
   "conqest:silty_lorien_dirt" : {
     "VERTICAL_CORNER" : "conqest:silty_lorien_dirt_vertical_corner",
@@ -1344,6 +1349,7 @@
     "VERTICAL_CORNER_SLAB" : "conqest:larch_log_vertical_corner_slab",
     "STAIRS" : "conqest:larch_log_stairs",
     "CORNER_SLAB" : "conqest:larch_log_corner_slab",
+    "FULL" : "conqest:larch_log",
     "STUMP" : "conqest:larch_log_stump",
     "EIGHTH_SLAB" : "conqest:larch_log_eighth_slab",
     "VERTICAL_CORNER" : "conqest:larch_log_vertical_corner",
@@ -1405,11 +1411,12 @@
     "STAIRS" : "conqest:lime_wool_stairs",
     "SLAB" : "conqest:lime_wool_slab",
     "CORNER_SLAB" : "conqest:lime_wool_corner_slab",
+    "FULL" : "conqest:lime_wool",
     "EIGHTH_SLAB" : "conqest:lime_wool_eighth_slab"
   },
   "conqest:red_sand_and_vegetation" : {
     "STAIRS" : "conqest:red_sand_and_vegetation_stairs",
-    "LAYER" : "conqest:red_sand_and_vegetation_snow",
+    "LAYER" : "conqest:red_sand_and_vegetation_layer",
     "FULL" : "conqest:red_sand_and_vegetation"
   },
   "conqest:round_brown_wooden_frame_window" : {
@@ -1490,6 +1497,7 @@
     "VERTICAL_CORNER_SLAB" : "minecraft:oak_log_vertical_corner_slab",
     "STAIRS" : "minecraft:oak_log_stairs",
     "CORNER_SLAB" : "minecraft:oak_log_corner_slab",
+    "FULL" : "minecraft:oak_log",
     "STUMP" : "minecraft:oak_log_stump",
     "EIGHTH_SLAB" : "minecraft:oak_log_eighth_slab",
     "VERTICAL_CORNER" : "minecraft:oak_log_vertical_corner",
@@ -1806,6 +1814,7 @@
     "VERTICAL_CORNER_SLAB" : "conqest:worn_purple_plaster_vertical_corner_slab",
     "STAIRS" : "conqest:worn_purple_plaster_stairs",
     "CORNER_SLAB" : "conqest:worn_purple_plaster_corner_slab",
+    "FULL" : "conqest:worn_purple_plaster",
     "SMALL_WINDOW_HALF" : "conqest:worn_purple_plaster_small_window_half",
     "EIGHTH_SLAB" : "conqest:worn_purple_plaster_eighth_slab",
     "ARROWSLIT" : "conqest:worn_purple_plaster_arrowslit",
@@ -1826,6 +1835,7 @@
     "VERTICAL_CORNER_SLAB" : "minecraft:acacia_log_vertical_corner_slab",
     "STAIRS" : "minecraft:acacia_log_stairs",
     "CORNER_SLAB" : "minecraft:acacia_log_corner_slab",
+    "FULL" : "minecraft:acacia_log",
     "STUMP" : "minecraft:acacia_log_stump",
     "EIGHTH_SLAB" : "minecraft:acacia_log_eighth_slab",
     "VERTICAL_CORNER" : "minecraft:acacia_log_vertical_corner",
@@ -1843,6 +1853,7 @@
     "VERTICAL_CORNER_SLAB" : "conqest:mossy_palm_log_vertical_corner_slab",
     "STAIRS" : "conqest:mossy_palm_log_stairs",
     "CORNER_SLAB" : "conqest:mossy_palm_log_corner_slab",
+    "FULL" : "conqest:mossy_palm_log",
     "STUMP" : "conqest:mossy_palm_log_stump",
     "EIGHTH_SLAB" : "conqest:mossy_palm_log_eighth_slab",
     "VERTICAL_CORNER" : "conqest:mossy_palm_log_vertical_corner",
@@ -1925,6 +1936,7 @@
     "STAIRS" : "minecraft:prismarine_stairs",
     "SLAB" : "minecraft:prismarine_slab",
     "CORNER_SLAB" : "minecraft:prismarine_corner_slab",
+    "FULL" : "minecraft:prismarine",
     "EIGHTH_SLAB" : "minecraft:prismarine_eighth_slab"
   },
   "conqest:small_diamond_pattern_glass_window" : {
@@ -2152,7 +2164,7 @@
   },
   "conqest:pink_concrete_powder" : {
     "STAIRS" : "conqest:pink_concrete_powder_stairs",
-    "LAYER" : "conqest:pink_concrete_powder_snow"
+    "LAYER" : "conqest:pink_concrete_powder_layer"
   },
   "conqest:carved_ash_wood_pillar" : {
     "VERTICAL_CORNER" : "conqest:carved_ash_wood_pillar_vertical_corner",
@@ -2164,7 +2176,7 @@
   },
   "conqest:gray_concrete_powder" : {
     "STAIRS" : "conqest:gray_concrete_powder_stairs",
-    "LAYER" : "conqest:gray_concrete_powder_snow"
+    "LAYER" : "conqest:gray_concrete_powder_layer"
   },
   "conqest:old_rusted_metal_pillar" : {
     "VERTICAL_CORNER" : "conqest:old_rusted_metal_pillar_vertical_corner",
@@ -2213,6 +2225,7 @@
     "VERTICAL_CORNER_SLAB" : "minecraft:dark_oak_log_vertical_corner_slab",
     "STAIRS" : "minecraft:dark_oak_log_stairs",
     "CORNER_SLAB" : "minecraft:dark_oak_log_corner_slab",
+    "FULL" : "minecraft:dark_oak_log",
     "STUMP" : "minecraft:dark_oak_log_stump",
     "EIGHTH_SLAB" : "minecraft:dark_oak_log_eighth_slab",
     "VERTICAL_CORNER" : "minecraft:dark_oak_log_vertical_corner",
@@ -2306,6 +2319,7 @@
     "VERTICAL_CORNER_SLAB" : "conqest:norway_spruce_log_vertical_corner_slab",
     "STAIRS" : "conqest:norway_spruce_log_stairs",
     "CORNER_SLAB" : "conqest:norway_spruce_log_corner_slab",
+    "FULL" : "conqest:norway_spruce_log",
     "STUMP" : "conqest:norway_spruce_log_stump",
     "EIGHTH_SLAB" : "conqest:norway_spruce_log_eighth_slab",
     "VERTICAL_CORNER" : "conqest:norway_spruce_log_vertical_corner",
@@ -2332,6 +2346,7 @@
     "VERTICAL_CORNER_SLAB" : "conqest:mossy_beech_log_vertical_corner_slab",
     "STAIRS" : "conqest:mossy_beech_log_stairs",
     "CORNER_SLAB" : "conqest:mossy_beech_log_corner_slab",
+    "FULL" : "conqest:mossy_beech_log",
     "STUMP" : "conqest:mossy_beech_log_stump",
     "EIGHTH_SLAB" : "conqest:mossy_beech_log_eighth_slab",
     "VERTICAL_CORNER" : "conqest:mossy_beech_log_vertical_corner",
@@ -2384,7 +2399,7 @@
   },
   "conqest:light_gray_concrete_powder" : {
     "STAIRS" : "conqest:light_gray_concrete_powder_stairs",
-    "LAYER" : "conqest:light_gray_concrete_powder_snow"
+    "LAYER" : "conqest:light_gray_concrete_powder_layer"
   },
   "conqest:large_birch_wood_shutters" : {
     "SHUTTERS" : "conqest:large_birch_wood_shutters_shutters"
@@ -2432,7 +2447,8 @@
     "VERTICAL_QUARTER" : "minecraft:grass_block_vertical_quarter",
     "STAIRS" : "minecraft:grass_block_stairs",
     "VERTICAL_SLAB" : "minecraft:grass_block_vertical_slab",
-    "LAYER" : "minecraft:grass_block_snow"
+    "LAYER" : "minecraft:grass_block_layer",
+    "FULL" : "minecraft:grass_block"
   },
   "conqest:dark_oak_wood_planks" : {
     "WALL" : "conqest:dark_oak_wood_plank_wall",
@@ -2506,6 +2522,7 @@
     "VERTICAL_CORNER_SLAB" : "conqest:mossy_rowan_log_vertical_corner_slab",
     "STAIRS" : "conqest:mossy_rowan_log_stairs",
     "CORNER_SLAB" : "conqest:mossy_rowan_log_corner_slab",
+    "FULL" : "conqest:mossy_rowan_log",
     "STUMP" : "conqest:mossy_rowan_log_stump",
     "EIGHTH_SLAB" : "conqest:mossy_rowan_log_eighth_slab",
     "VERTICAL_CORNER" : "conqest:mossy_rowan_log_vertical_corner",
@@ -2652,7 +2669,7 @@
   },
   "conqest:netherrack" : {
     "STAIRS" : "conqest:netherrack_stairs",
-    "LAYER" : "conqest:netherrack_snow"
+    "LAYER" : "conqest:netherrack_layer"
   },
   "conqest:limestone_cornice_model" : {
     "FULL" : [ "conqest:limestone_cornice_model", "conqest:limestone_cornice_model_corner", "conqest:limestone_cornice_model_quarter" ]
@@ -2725,6 +2742,7 @@
     "VERTICAL_CORNER_SLAB" : "conqest:pine_log_vertical_corner_slab",
     "STAIRS" : "conqest:pine_log_stairs",
     "CORNER_SLAB" : "conqest:pine_log_corner_slab",
+    "FULL" : "conqest:pine_log",
     "STUMP" : "conqest:pine_log_stump",
     "EIGHTH_SLAB" : "conqest:pine_log_eighth_slab",
     "VERTICAL_CORNER" : "conqest:pine_log_vertical_corner",
@@ -2767,6 +2785,7 @@
     "VERTICAL_CORNER_SLAB" : "conqest:green_concrete_vertical_corner_slab",
     "STAIRS" : "conqest:green_concrete_stairs",
     "CORNER_SLAB" : "conqest:green_concrete_corner_slab",
+    "FULL" : "conqest:green_concrete",
     "SMALL_WINDOW_HALF" : "conqest:green_concrete_small_window_half",
     "EIGHTH_SLAB" : "conqest:green_concrete_eighth_slab",
     "ARROWSLIT" : "conqest:green_concrete_arrowslit",
@@ -2783,7 +2802,7 @@
   },
   "conqest:sand_and_vegetation" : {
     "STAIRS" : "conqest:sand_and_vegetation_stairs",
-    "LAYER" : "conqest:sand_and_vegetation_snow",
+    "LAYER" : "conqest:sand_and_vegetation_layer",
     "FULL" : "conqest:sand_and_vegetation"
   },
   "conqest:shale" : {
@@ -2843,6 +2862,7 @@
     "SMALL_WINDOW" : "minecraft:sandstone_small_window",
     "VERTICAL_CORNER_SLAB" : "minecraft:sandstone_vertical_corner_slab",
     "CORNER_SLAB" : "minecraft:sandstone_corner_slab",
+    "FULL" : "minecraft:sandstone",
     "SMALL_WINDOW_HALF" : "minecraft:sandstone_small_window_half",
     "EIGHTH_SLAB" : "minecraft:sandstone_eighth_slab",
     "ARROWSLIT" : "minecraft:sandstone_arrowslit",
@@ -2877,11 +2897,12 @@
     "STAIRS" : "conqest:red_wool_stairs",
     "SLAB" : "conqest:red_wool_slab",
     "CORNER_SLAB" : "conqest:red_wool_corner_slab",
+    "FULL" : "conqest:red_wool",
     "EIGHTH_SLAB" : "conqest:red_wool_eighth_slab"
   },
   "conqest:purple_concrete_powder" : {
     "STAIRS" : "conqest:purple_concrete_powder_stairs",
-    "LAYER" : "conqest:purple_concrete_powder_snow"
+    "LAYER" : "conqest:purple_concrete_powder_layer"
   },
   "conqest:warped_blue_calcite_crystal" : {
     "FULL" : "conqest:warped_blue_calcite_crystal"
@@ -2921,6 +2942,7 @@
     "STAIRS" : "conqest:white_wool_stairs",
     "SLAB" : "conqest:white_wool_slab",
     "CORNER_SLAB" : "conqest:white_wool_corner_slab",
+    "FULL" : "conqest:white_wool",
     "EIGHTH_SLAB" : "conqest:white_wool_eighth_slab"
   },
   "conqest:diamond_frame_wine_rack" : {
@@ -2933,7 +2955,7 @@
     "SHUTTERS" : "conqest:oak_wood_shutters_shutters"
   },
   "conqest:dirt_path" : {
-    "LAYER" : "conqest:dirt_path_snow"
+    "LAYER" : "conqest:dirt_path_layer"
   },
   "conqest:aspen_wood_beam" : {
     "WALL" : "conqest:aspen_wood_beam_wall",
@@ -3016,7 +3038,7 @@
     "VERTICAL_QUARTER" : "conqest:red_sphagnum_moss_block_vertical_quarter",
     "STAIRS" : "conqest:red_sphagnum_moss_block_stairs",
     "VERTICAL_SLAB" : "conqest:red_sphagnum_moss_block_vertical_slab",
-    "LAYER" : "conqest:red_sphagnum_moss_block_snow",
+    "LAYER" : "conqest:red_sphagnum_moss_block_layer",
     "FULL" : "conqest:red_sphagnum_moss_block"
   },
   "conqest:gray_plaster_with_tudor_diagonal_downwards_frame" : {
@@ -3026,16 +3048,17 @@
     "FULL" : "conqest:gray_plaster_with_tudor_diagonal_downwards_frame"
   },
   "conqest:brown_pipe" : {
-    "ELBOW_FLANGE" : "conqest:brown_elbow_flange_elbow_flange",
-    "BALL_VALVE" : "conqest:brown_ball_valve_ball_valve",
-    "PIPE" : "conqest:brown_pipe_pipe",
-    "CROSS_FLANGE" : "conqest:brown_cross_flange_cross_flange",
-    "MOUNTED_PIPE" : [ "conqest:brown_mounted_pipe_mounted_pipe", "conqest:brown_gate_valve_mounted_pipe" ],
-    "SIX_WAY_FLANGE" : "conqest:brown_6_way_flange_6_way_flange",
-    "FIVE_WAY_FLANGE" : "conqest:brown_5_way_flange_5_way_flange",
-    "THREE_WAY_FLANGE" : "conqest:brown_3_way_flange_3_way_flange",
-    "FOUR_WAY_FLANGE" : "conqest:brown_4_way_flange_4_way_flange",
-    "T_FLANGE" : "conqest:brown_t_flange_t_flange"
+    "ELBOW_FLANGE" : "conqest:brown_elbow_flange",
+    "BALL_VALVE" : "conqest:brown_ball_valve",
+    "GATE_VALVE" : "conqest:brown_gate_valve",
+    "PIPE" : "conqest:brown_pipe",
+    "CROSS_FLANGE" : "conqest:brown_cross_flange",
+    "MOUNTED_PIPE" : "conqest:brown_mounted_pipe",
+    "SIX_WAY_FLANGE" : "conqest:brown_6_way_flange",
+    "FIVE_WAY_FLANGE" : "conqest:brown_5_way_flange",
+    "THREE_WAY_FLANGE" : "conqest:brown_3_way_flange",
+    "FOUR_WAY_FLANGE" : "conqest:brown_4_way_flange",
+    "T_FLANGE" : "conqest:brown_t_flange"
   },
   "conqest:travertine_slab" : {
     "PILLAR" : "conqest:travertine_slab_pillar",
@@ -3095,6 +3118,7 @@
     "VERTICAL_CORNER_SLAB" : "conqest:dark_oak_wood_beam_vertical_corner_slab",
     "STAIRS" : "conqest:dark_oak_wood_beam_stairs",
     "CORNER_SLAB" : "conqest:dark_oak_wood_beam_corner_slab",
+    "FULL" : "conqest:dark_oak_wood_beam",
     "EIGHTH_SLAB" : "conqest:dark_oak_wood_beam_eighth_slab",
     "VERTICAL_CORNER" : "conqest:dark_oak_wood_beam_vertical_corner",
     "BEAM_POSTS" : "conqest:dark_oak_wood_beam_beam_posts",
@@ -3135,6 +3159,7 @@
     "VERTICAL_CORNER_SLAB" : "conqest:red_painted_wall_vertical_corner_slab",
     "STAIRS" : "conqest:red_painted_wall_stairs",
     "CORNER_SLAB" : "conqest:red_painted_wall_corner_slab",
+    "FULL" : "conqest:red_painted_wall",
     "SMALL_WINDOW_HALF" : "conqest:red_painted_wall_small_window_half",
     "EIGHTH_SLAB" : "conqest:red_painted_wall_eighth_slab",
     "ARROWSLIT" : "conqest:red_painted_wall_arrowslit",
@@ -3311,6 +3336,7 @@
     "VERTICAL_CORNER_SLAB" : "conqest:mossy_larch_log_vertical_corner_slab",
     "STAIRS" : "conqest:mossy_larch_log_stairs",
     "CORNER_SLAB" : "conqest:mossy_larch_log_corner_slab",
+    "FULL" : "conqest:mossy_larch_log",
     "STUMP" : "conqest:mossy_larch_log_stump",
     "EIGHTH_SLAB" : "conqest:mossy_larch_log_eighth_slab",
     "VERTICAL_CORNER" : "conqest:mossy_larch_log_vertical_corner",
@@ -3485,6 +3511,7 @@
     "VERTICAL_CORNER_SLAB" : "conqest:burnt_log_vertical_corner_slab",
     "STAIRS" : "conqest:burnt_log_stairs",
     "CORNER_SLAB" : "conqest:burnt_log_corner_slab",
+    "FULL" : "conqest:burnt_log",
     "STUMP" : "conqest:burnt_log_stump",
     "EIGHTH_SLAB" : "conqest:burnt_log_eighth_slab",
     "VERTICAL_CORNER" : "conqest:burnt_log_vertical_corner",
@@ -3509,6 +3536,7 @@
     "VERTICAL_CORNER_SLAB" : "conqest:yellow_concrete_vertical_corner_slab",
     "STAIRS" : "conqest:yellow_concrete_stairs",
     "CORNER_SLAB" : "conqest:yellow_concrete_corner_slab",
+    "FULL" : "conqest:yellow_concrete",
     "SMALL_WINDOW_HALF" : "conqest:yellow_concrete_small_window_half",
     "EIGHTH_SLAB" : "conqest:yellow_concrete_eighth_slab",
     "ARROWSLIT" : "conqest:yellow_concrete_arrowslit",
@@ -3604,7 +3632,7 @@
     "VERTICAL_QUARTER" : "conqest:mossy_lorien_forest_floor_vertical_quarter",
     "STAIRS" : "conqest:mossy_lorien_forest_floor_stairs",
     "VERTICAL_SLAB" : "conqest:mossy_lorien_forest_floor_vertical_slab",
-    "LAYER" : "conqest:mossy_lorien_forest_floor_snow",
+    "LAYER" : "conqest:mossy_lorien_forest_floor_layer",
     "FULL" : "conqest:mossy_lorien_forest_floor"
   },
   "conqest:crate_of_lapis_lazuli" : {
@@ -3659,7 +3687,7 @@
   },
   "conqest:grassy_small_stones" : {
     "STAIRS" : "conqest:grassy_small_stones_stairs",
-    "LAYER" : "conqest:grassy_small_stones_snow"
+    "LAYER" : "conqest:grassy_small_stones_layer"
   },
   "minecraft:green_stained_glass" : {
     "VERTICAL_CORNER" : "minecraft:green_stained_glass_vertical_corner",
@@ -3742,6 +3770,7 @@
     "VERTICAL_CORNER_SLAB" : "conqest:birch_wood_beam_vertical_corner_slab",
     "STAIRS" : "conqest:birch_wood_beam_stairs",
     "CORNER_SLAB" : "conqest:birch_wood_beam_corner_slab",
+    "FULL" : "conqest:birch_wood_beam",
     "EIGHTH_SLAB" : "conqest:birch_wood_beam_eighth_slab",
     "VERTICAL_CORNER" : "conqest:birch_wood_beam_vertical_corner",
     "BEAM_POSTS" : "conqest:birch_wood_beam_beam_posts",
@@ -3783,7 +3812,7 @@
   },
   "conqest:lime_concrete_powder" : {
     "STAIRS" : "conqest:lime_concrete_powder_stairs",
-    "LAYER" : "conqest:lime_concrete_powder_snow"
+    "LAYER" : "conqest:lime_concrete_powder_layer"
   },
   "conqest:round_yellow_wooden_frame_window" : {
     "VERTICAL_CORNER" : "conqest:round_yellow_wooden_frame_window_vertical_corner",
@@ -3932,6 +3961,7 @@
     "SMALL_WINDOW" : "conqest:marble_brick_small_window",
     "VERTICAL_CORNER_SLAB" : "conqest:marble_brick_vertical_corner_slab",
     "CORNER_SLAB" : "conqest:marble_brick_corner_slab",
+    "FULL" : "conqest:marble_bricks",
     "SMALL_WINDOW_HALF" : "conqest:marble_brick_small_window_half",
     "EIGHTH_SLAB" : "conqest:marble_brick_eighth_slab",
     "ARROWSLIT" : "conqest:marble_brick_arrowslit",
@@ -4006,6 +4036,7 @@
     "VERTICAL_CORNER_SLAB" : "conqest:worn_light_gray_plaster_vertical_corner_slab",
     "STAIRS" : "conqest:worn_light_gray_plaster_stairs",
     "CORNER_SLAB" : "conqest:worn_light_gray_plaster_corner_slab",
+    "FULL" : "conqest:worn_light_gray_plaster",
     "SMALL_WINDOW_HALF" : "conqest:worn_light_gray_plaster_small_window_half",
     "EIGHTH_SLAB" : "conqest:worn_light_gray_plaster_eighth_slab",
     "ARROWSLIT" : "conqest:worn_light_gray_plaster_arrowslit",
@@ -4066,7 +4097,14 @@
     "FULL" : "conqest:third_style_red_wall_2"
   },
   "conqest:red_painted_steel_beam_vertical" : {
-    "BEAM_HORIZONTAL" : "conqest:red_painted_steel_beam_beam_horizontal"
+    "CROSS_BEAMS" : "conqest:red_painted_steel_cross_beams",
+    "DIAGONAL_BEAM_SIDE_1" : "conqest:red_painted_steel_diagonal_beam_side_1",
+    "DIAGONAL_BEAM_1" : "conqest:red_painted_steel_diagonal_beam_1",
+    "DIAGONAL_BEAM_2" : "conqest:red_painted_steel_diagonal_beam_2",
+    "DIAGONAL_BEAM_3" : "conqest:red_painted_steel_diagonal_beam_3",
+    "CROSS_BEAMS_SIDE" : "conqest:red_painted_steel_cross_beams_side",
+    "DIAGONAL_BEAM_SIDE_3" : "conqest:red_painted_steel_diagonal_beam_side_3",
+    "DIAGONAL_BEAM_SIDE_2" : "conqest:red_painted_steel_diagonal_beam_side_2"
   },
   "conqest:third_style_red_wall_3" : {
     "VERTICAL_CORNER" : "conqest:third_style_red_wall_3_vertical_corner",
@@ -4216,17 +4254,18 @@
     "FULL" : "conqest:damaged_shoji"
   },
   "conqest:blue_clay_beaver_tail_tiles" : {
-    "VERTICAL_CORNER" : "conqest:blue_clay_beaver_tail_tile_vertical_corner",
     "WALL" : "conqest:blue_clay_beaver_tail_tile_wall",
-    "VERTICAL_QUARTER" : "conqest:blue_clay_beaver_tail_tile_vertical_quarter",
     "PILLAR" : "conqest:blue_clay_beaver_tail_tile_pillar",
-    "QUARTER_SLAB" : "conqest:blue_clay_beaver_tail_tile_quarter_slab",
     "VERTICAL_CORNER_SLAB" : "conqest:blue_clay_beaver_tail_tile_vertical_corner_slab",
-    "VERTICAL_SLAB" : "conqest:blue_clay_beaver_tail_tile_vertical_slab",
     "STAIRS" : "conqest:blue_clay_beaver_tail_tile_stairs",
-    "SLAB" : "conqest:blue_clay_beaver_tail_tile_slab",
     "CORNER_SLAB" : "conqest:blue_clay_beaver_tail_tile_corner_slab",
+    "FULL" : "conqest:blue_clay_beaver_tail_tiles",
     "EIGHTH_SLAB" : "conqest:blue_clay_beaver_tail_tile_eighth_slab",
+    "VERTICAL_CORNER" : "conqest:blue_clay_beaver_tail_tile_vertical_corner",
+    "VERTICAL_QUARTER" : "conqest:blue_clay_beaver_tail_tile_vertical_quarter",
+    "QUARTER_SLAB" : "conqest:blue_clay_beaver_tail_tile_quarter_slab",
+    "VERTICAL_SLAB" : "conqest:blue_clay_beaver_tail_tile_vertical_slab",
+    "SLAB" : "conqest:blue_clay_beaver_tail_tile_slab",
     "CAPITAL" : "conqest:blue_clay_beaver_tail_tile_capital"
   },
   "minecraft:birch_log" : {
@@ -4235,6 +4274,7 @@
     "VERTICAL_CORNER_SLAB" : "minecraft:birch_log_vertical_corner_slab",
     "STAIRS" : "minecraft:birch_log_stairs",
     "CORNER_SLAB" : "minecraft:birch_log_corner_slab",
+    "FULL" : "minecraft:birch_log",
     "STUMP" : "minecraft:birch_log_stump",
     "EIGHTH_SLAB" : "minecraft:birch_log_eighth_slab",
     "VERTICAL_CORNER" : "minecraft:birch_log_vertical_corner",
@@ -4252,6 +4292,7 @@
     "VERTICAL_CORNER_SLAB" : "conqest:mossy_dark_spruce_log_vertical_corner_slab",
     "STAIRS" : "conqest:mossy_dark_spruce_log_stairs",
     "CORNER_SLAB" : "conqest:mossy_dark_spruce_log_corner_slab",
+    "FULL" : "conqest:mossy_dark_spruce_log",
     "STUMP" : "conqest:mossy_dark_spruce_log_stump",
     "EIGHTH_SLAB" : "conqest:mossy_dark_spruce_log_eighth_slab",
     "VERTICAL_CORNER" : "conqest:mossy_dark_spruce_log_vertical_corner",
@@ -4298,6 +4339,7 @@
     "STAIRS" : "conqest:yellow_mudstone_stairs",
     "SLAB" : "conqest:yellow_mudstone_slab",
     "CORNER_SLAB" : "conqest:yellow_mudstone_corner_slab",
+    "FULL" : "conqest:yellow_mudstone",
     "EIGHTH_SLAB" : "conqest:yellow_mudstone_eighth_slab"
   },
   "conqest:light_blue_clay_beaver_tail_tiles" : {
@@ -4374,7 +4416,7 @@
   },
   "conqest:sand_and_gravel" : {
     "STAIRS" : "conqest:sand_and_gravel_stairs",
-    "LAYER" : "conqest:sand_and_gravel_snow",
+    "LAYER" : "conqest:sand_and_gravel_layer",
     "FULL" : "conqest:sand_and_gravel"
   },
   "conqest:lime_mortar_clay_brick" : {
@@ -4416,6 +4458,7 @@
     "VERTICAL_CORNER_SLAB" : "conqest:willow_log_vertical_corner_slab",
     "STAIRS" : "conqest:willow_log_stairs",
     "CORNER_SLAB" : "conqest:willow_log_corner_slab",
+    "FULL" : "conqest:willow_log",
     "STUMP" : "conqest:willow_log_stump",
     "EIGHTH_SLAB" : "conqest:willow_log_eighth_slab",
     "VERTICAL_CORNER" : "conqest:willow_log_vertical_corner",
@@ -4467,17 +4510,18 @@
     "BEAM_LINTEL" : "conqest:tarred_oak_wood_beam_beam_lintel"
   },
   "conqest:green_clay_shingles" : {
-    "VERTICAL_CORNER" : "conqest:green_clay_shingle_vertical_corner",
     "WALL" : "conqest:green_clay_shingle_wall",
-    "VERTICAL_QUARTER" : "conqest:green_clay_shingle_vertical_quarter",
     "PILLAR" : "conqest:green_clay_shingle_pillar",
-    "QUARTER_SLAB" : "conqest:green_clay_shingle_quarter_slab",
     "VERTICAL_CORNER_SLAB" : "conqest:green_clay_shingle_vertical_corner_slab",
-    "VERTICAL_SLAB" : "conqest:green_clay_shingle_vertical_slab",
     "STAIRS" : "conqest:green_clay_shingle_stairs",
-    "SLAB" : "conqest:green_clay_shingle_slab",
     "CORNER_SLAB" : "conqest:green_clay_shingle_corner_slab",
+    "FULL" : "conqest:green_clay_shingles",
     "EIGHTH_SLAB" : "conqest:green_clay_shingle_eighth_slab",
+    "VERTICAL_CORNER" : "conqest:green_clay_shingle_vertical_corner",
+    "VERTICAL_QUARTER" : "conqest:green_clay_shingle_vertical_quarter",
+    "QUARTER_SLAB" : "conqest:green_clay_shingle_quarter_slab",
+    "VERTICAL_SLAB" : "conqest:green_clay_shingle_vertical_slab",
+    "SLAB" : "conqest:green_clay_shingle_slab",
     "CAPITAL" : "conqest:green_clay_shingle_capital"
   },
   "conqest:blue_column_with_sandstone_doric_capital" : {
@@ -4545,7 +4589,7 @@
   },
   "conqest:wet_sand_and_gravel" : {
     "STAIRS" : "conqest:wet_sand_and_gravel_stairs",
-    "LAYER" : "conqest:wet_sand_and_gravel_snow",
+    "LAYER" : "conqest:wet_sand_and_gravel_layer",
     "FULL" : "conqest:wet_sand_and_gravel"
   },
   "conqest:dark_wrought_iron_fence_pane" : {
@@ -4553,17 +4597,18 @@
     "VERTICAL_SLAB" : "conqest:dark_wrought_iron_fence_vertical_slab_vertical_slab"
   },
   "conqest:old_slate_roof_tiles" : {
-    "VERTICAL_CORNER" : "conqest:old_slate_roof_tile_vertical_corner",
     "WALL" : "conqest:old_slate_roof_tile_wall",
-    "VERTICAL_QUARTER" : "conqest:old_slate_roof_tile_vertical_quarter",
     "PILLAR" : "conqest:old_slate_roof_tile_pillar",
-    "QUARTER_SLAB" : "conqest:old_slate_roof_tile_quarter_slab",
     "VERTICAL_CORNER_SLAB" : "conqest:old_slate_roof_tile_vertical_corner_slab",
-    "VERTICAL_SLAB" : "conqest:old_slate_roof_tile_vertical_slab",
     "STAIRS" : "conqest:old_slate_roof_tile_stairs",
-    "SLAB" : "conqest:old_slate_roof_tile_slab",
     "CORNER_SLAB" : "conqest:old_slate_roof_tile_corner_slab",
+    "FULL" : "conqest:old_slate_roof_tiles",
     "EIGHTH_SLAB" : "conqest:old_slate_roof_tile_eighth_slab",
+    "VERTICAL_CORNER" : "conqest:old_slate_roof_tile_vertical_corner",
+    "VERTICAL_QUARTER" : "conqest:old_slate_roof_tile_vertical_quarter",
+    "QUARTER_SLAB" : "conqest:old_slate_roof_tile_quarter_slab",
+    "VERTICAL_SLAB" : "conqest:old_slate_roof_tile_vertical_slab",
+    "SLAB" : "conqest:old_slate_roof_tile_slab",
     "CAPITAL" : "conqest:old_slate_roof_tile_capital"
   },
   "conqest:red_clay_brick_with_tudor_narrow_diagonal_frames_1" : {
@@ -4579,6 +4624,7 @@
     "VERTICAL_CORNER_SLAB" : "conqest:mossy_apple_log_vertical_corner_slab",
     "STAIRS" : "conqest:mossy_apple_log_stairs",
     "CORNER_SLAB" : "conqest:mossy_apple_log_corner_slab",
+    "FULL" : "conqest:mossy_apple_log",
     "STUMP" : "conqest:mossy_apple_log_stump",
     "EIGHTH_SLAB" : "conqest:mossy_apple_log_eighth_slab",
     "VERTICAL_CORNER" : "conqest:mossy_apple_log_vertical_corner",
@@ -4707,6 +4753,7 @@
     "SMALL_WINDOW" : "conqest:light_limestone_small_window",
     "VERTICAL_CORNER_SLAB" : "conqest:light_limestone_vertical_corner_slab",
     "CORNER_SLAB" : "conqest:light_limestone_corner_slab",
+    "FULL" : "conqest:light_limestone",
     "SMALL_WINDOW_HALF" : "conqest:light_limestone_small_window_half",
     "EIGHTH_SLAB" : "conqest:light_limestone_eighth_slab",
     "ARROWSLIT" : "conqest:light_limestone_arrowslit",
@@ -4815,6 +4862,7 @@
     "VERTICAL_CORNER_SLAB" : "conqest:ivy_covered_oak_log_vertical_corner_slab",
     "STAIRS" : "conqest:ivy_covered_oak_log_stairs",
     "CORNER_SLAB" : "conqest:ivy_covered_oak_log_corner_slab",
+    "FULL" : "conqest:ivy_covered_oak_log",
     "STUMP" : "conqest:ivy_covered_oak_log_stump",
     "EIGHTH_SLAB" : "conqest:ivy_covered_oak_log_eighth_slab",
     "VERTICAL_CORNER" : "conqest:ivy_covered_oak_log_vertical_corner",
@@ -4833,6 +4881,7 @@
     "SMALL_WINDOW" : "conqest:limestone_small_window",
     "VERTICAL_CORNER_SLAB" : "conqest:limestone_vertical_corner_slab",
     "CORNER_SLAB" : "conqest:limestone_corner_slab",
+    "FULL" : "conqest:limestone",
     "SMALL_WINDOW_HALF" : "conqest:limestone_small_window_half",
     "EIGHTH_SLAB" : "conqest:limestone_eighth_slab",
     "ARROWSLIT" : "conqest:limestone_arrowslit",
@@ -4874,6 +4923,7 @@
     "VERTICAL_CORNER_SLAB" : "conqest:horse_chestnut_log_vertical_corner_slab",
     "STAIRS" : "conqest:horse_chestnut_log_stairs",
     "CORNER_SLAB" : "conqest:horse_chestnut_log_corner_slab",
+    "FULL" : "conqest:horse_chestnut_log",
     "STUMP" : "conqest:horse_chestnut_log_stump",
     "EIGHTH_SLAB" : "conqest:horse_chestnut_log_eighth_slab",
     "VERTICAL_CORNER" : "conqest:horse_chestnut_log_vertical_corner",
@@ -4936,6 +4986,7 @@
     "STAIRS" : "conqest:black_wool_stairs",
     "SLAB" : "conqest:black_wool_slab",
     "CORNER_SLAB" : "conqest:black_wool_corner_slab",
+    "FULL" : "conqest:black_wool",
     "EIGHTH_SLAB" : "conqest:black_wool_eighth_slab"
   },
   "conqest:blue_roman_mosaic" : {
@@ -4971,6 +5022,7 @@
     "STAIRS" : "conqest:yellow_wool_stairs",
     "SLAB" : "conqest:yellow_wool_slab",
     "CORNER_SLAB" : "conqest:yellow_wool_corner_slab",
+    "FULL" : "conqest:yellow_wool",
     "EIGHTH_SLAB" : "conqest:yellow_wool_eighth_slab"
   },
   "conqest:carved_dark_oak_wood" : {
@@ -5072,6 +5124,7 @@
     "VERTICAL_CORNER_SLAB" : "conqest:olive_log_vertical_corner_slab",
     "STAIRS" : "conqest:olive_log_stairs",
     "CORNER_SLAB" : "conqest:olive_log_corner_slab",
+    "FULL" : "conqest:olive_log",
     "STUMP" : "conqest:olive_log_stump",
     "EIGHTH_SLAB" : "conqest:olive_log_eighth_slab",
     "VERTICAL_CORNER" : "conqest:olive_log_vertical_corner",
@@ -5091,6 +5144,7 @@
     "STAIRS" : "conqest:light_mudstone_stairs",
     "SLAB" : "conqest:light_mudstone_slab",
     "CORNER_SLAB" : "conqest:light_mudstone_corner_slab",
+    "FULL" : "conqest:light_mudstone",
     "EIGHTH_SLAB" : "conqest:light_mudstone_eighth_slab"
   },
   "conqest:weathered_anorthosite" : {
@@ -5167,9 +5221,6 @@
     "BALUSTRADE" : "conqest:rusty_iron_block_balustrade",
     "SLAB" : "conqest:rusty_iron_block_slab",
     "CAPITAL" : "conqest:rusty_iron_block_capital"
-  },
-  "conqest:worn_red_painted_steel_beam" : {
-    "BEAM_VERTICAL" : "conqest:worn_red_painted_steel_beam_beam_vertical"
   },
   "conqest:small_brown_sandstone_brick" : {
     "TWO_METER_ARCH" : "conqest:small_brown_sandstone_brick_two_meter_arch",
@@ -5284,6 +5335,7 @@
     "STAIRS" : "minecraft:snow_stairs",
     "SLAB" : "minecraft:snow_slab",
     "CORNER_SLAB" : "minecraft:snow_corner_slab",
+    "FULL" : "minecraft:snow",
     "EIGHTH_SLAB" : "minecraft:snow_eighth_slab"
   },
   "minecraft:cyan_stained_glass" : {
@@ -5550,7 +5602,7 @@
   },
   "conqest:black_concrete_powder" : {
     "STAIRS" : "conqest:black_concrete_powder_stairs",
-    "LAYER" : "conqest:black_concrete_powder_snow"
+    "LAYER" : "conqest:black_concrete_powder_layer"
   },
   "conqest:damaged_corrugated_metal" : {
     "WALL" : "conqest:damaged_corrugated_metal_wall",
@@ -5590,7 +5642,7 @@
   },
   "conqest:grassy_gravel" : {
     "STAIRS" : "conqest:grassy_gravel_stairs",
-    "LAYER" : "conqest:grassy_gravel_snow"
+    "LAYER" : "conqest:grassy_gravel_layer"
   },
   "conqest:brown_wood_diamond_shingles" : {
     "WALL" : "conqest:brown_wood_diamond_shingles_wall",
@@ -5699,6 +5751,7 @@
     "VERTICAL_CORNER_SLAB" : "conqest:acacia_wood_beam_vertical_corner_slab",
     "STAIRS" : "conqest:acacia_wood_beam_stairs",
     "CORNER_SLAB" : "conqest:acacia_wood_beam_corner_slab",
+    "FULL" : "conqest:acacia_wood_beam",
     "EIGHTH_SLAB" : "conqest:acacia_wood_beam_eighth_slab",
     "VERTICAL_CORNER" : "conqest:acacia_wood_beam_vertical_corner",
     "BEAM_POSTS" : "conqest:acacia_wood_beam_beam_posts",
@@ -5712,7 +5765,7 @@
   },
   "conqest:blue_concrete_powder" : {
     "STAIRS" : "conqest:blue_concrete_powder_stairs",
-    "LAYER" : "conqest:blue_concrete_powder_snow"
+    "LAYER" : "conqest:blue_concrete_powder_layer"
   },
   "conqest:damaged_concrete_wall" : {
     "TWO_METER_ARCH" : "conqest:damaged_concrete_wall_two_meter_arch",
@@ -5761,6 +5814,7 @@
     "STAIRS" : "conqest:magenta_wool_stairs",
     "SLAB" : "conqest:magenta_wool_slab",
     "CORNER_SLAB" : "conqest:magenta_wool_corner_slab",
+    "FULL" : "conqest:magenta_wool",
     "EIGHTH_SLAB" : "conqest:magenta_wool_eighth_slab"
   },
   "conqest:tan_shipping_container" : {
@@ -5823,6 +5877,7 @@
     "VERTICAL_CORNER_SLAB" : "conqest:carbonite_paneling_vertical_corner_slab",
     "STAIRS" : "conqest:carbonite_paneling_stairs",
     "CORNER_SLAB" : "conqest:carbonite_paneling_corner_slab",
+    "FULL" : "conqest:carbonite_paneling",
     "SMALL_WINDOW_HALF" : "conqest:carbonite_paneling_small_window_half",
     "EIGHTH_SLAB" : "conqest:carbonite_paneling_eighth_slab",
     "ARROWSLIT" : "conqest:carbonite_paneling_arrowslit",
@@ -5949,17 +6004,18 @@
     "FULL" : "conqest:planning_sign"
   },
   "conqest:pink_clay_tiles" : {
-    "VERTICAL_CORNER" : "conqest:pink_clay_tile_vertical_corner",
     "WALL" : "conqest:pink_clay_tile_wall",
-    "VERTICAL_QUARTER" : "conqest:pink_clay_tile_vertical_quarter",
     "PILLAR" : "conqest:pink_clay_tile_pillar",
-    "QUARTER_SLAB" : "conqest:pink_clay_tile_quarter_slab",
     "VERTICAL_CORNER_SLAB" : "conqest:pink_clay_tile_vertical_corner_slab",
-    "VERTICAL_SLAB" : "conqest:pink_clay_tile_vertical_slab",
     "STAIRS" : "conqest:pink_clay_tile_stairs",
-    "SLAB" : "conqest:pink_clay_tile_slab",
     "CORNER_SLAB" : "conqest:pink_clay_tile_corner_slab",
+    "FULL" : "conqest:pink_clay_tiles",
     "EIGHTH_SLAB" : "conqest:pink_clay_tile_eighth_slab",
+    "VERTICAL_CORNER" : "conqest:pink_clay_tile_vertical_corner",
+    "VERTICAL_QUARTER" : "conqest:pink_clay_tile_vertical_quarter",
+    "QUARTER_SLAB" : "conqest:pink_clay_tile_quarter_slab",
+    "VERTICAL_SLAB" : "conqest:pink_clay_tile_vertical_slab",
+    "SLAB" : "conqest:pink_clay_tile_slab",
     "CAPITAL" : "conqest:pink_clay_tile_capital"
   },
   "conqest:red_mudstone" : {
@@ -5971,6 +6027,7 @@
     "STAIRS" : "conqest:red_mudstone_stairs",
     "SLAB" : "conqest:red_mudstone_slab",
     "CORNER_SLAB" : "conqest:red_mudstone_corner_slab",
+    "FULL" : "conqest:red_mudstone",
     "EIGHTH_SLAB" : "conqest:red_mudstone_eighth_slab"
   },
   "conqest:vertical_shoji" : {
@@ -5989,6 +6046,7 @@
     "VERTICAL_CORNER_SLAB" : "conqest:blue_painted_wall_vertical_corner_slab",
     "STAIRS" : "conqest:blue_painted_wall_stairs",
     "CORNER_SLAB" : "conqest:blue_painted_wall_corner_slab",
+    "FULL" : "conqest:blue_painted_wall",
     "SMALL_WINDOW_HALF" : "conqest:blue_painted_wall_small_window_half",
     "EIGHTH_SLAB" : "conqest:blue_painted_wall_eighth_slab",
     "ARROWSLIT" : "conqest:blue_painted_wall_arrowslit",
@@ -6045,9 +6103,6 @@
   "conqest:blue_and_green_buntings" : {
     "FENCE" : "conqest:blue_and_green_buntings_fence"
   },
-  "conqest:steel_beam" : {
-    "BEAM_VERTICAL" : "conqest:steel_beam_beam_vertical"
-  },
   "conqest:acacia_wood_plank" : {
     "WALL" : "conqest:acacia_wood_plank_wall",
     "SPHERE" : "conqest:acacia_wood_plank_sphere",
@@ -6093,6 +6148,7 @@
     "VERTICAL_CORNER_SLAB" : "conqest:mallorn_log_vertical_corner_slab",
     "STAIRS" : "conqest:mallorn_log_stairs",
     "CORNER_SLAB" : "conqest:mallorn_log_corner_slab",
+    "FULL" : "conqest:mallorn_log",
     "STUMP" : "conqest:mallorn_log_stump",
     "EIGHTH_SLAB" : "conqest:mallorn_log_eighth_slab",
     "VERTICAL_CORNER" : "conqest:mallorn_log_vertical_corner",
@@ -6104,16 +6160,17 @@
     "SMALL_BRANCH" : "conqest:mallorn_log_small_branch"
   },
   "conqest:old_blue_pipe" : {
-    "ELBOW_FLANGE" : "conqest:old_blue_elbow_flange_elbow_flange",
-    "BALL_VALVE" : "conqest:old_blue_ball_valve_ball_valve",
-    "PIPE" : "conqest:old_blue_pipe_pipe",
-    "CROSS_FLANGE" : "conqest:old_blue_cross_flange_cross_flange",
-    "MOUNTED_PIPE" : [ "conqest:old_blue_mounted_pipe_mounted_pipe", "conqest:old_blue_gate_valve_mounted_pipe" ],
-    "SIX_WAY_FLANGE" : "conqest:old_blue_6_way_flange_6_way_flange",
-    "FIVE_WAY_FLANGE" : "conqest:old_blue_5_way_flange_5_way_flange",
-    "THREE_WAY_FLANGE" : "conqest:old_blue_3_way_flange_3_way_flange",
-    "FOUR_WAY_FLANGE" : "conqest:old_blue_4_way_flange_4_way_flange",
-    "T_FLANGE" : "conqest:old_blue_t_flange_t_flange"
+    "ELBOW_FLANGE" : "conqest:old_blue_elbow_flange",
+    "BALL_VALVE" : "conqest:old_blue_ball_valve",
+    "GATE_VALVE" : "conqest:old_blue_gate_valve",
+    "PIPE" : "conqest:old_blue_pipe",
+    "CROSS_FLANGE" : "conqest:old_blue_cross_flange",
+    "MOUNTED_PIPE" : "conqest:old_blue_mounted_pipe",
+    "SIX_WAY_FLANGE" : "conqest:old_blue_6_way_flange",
+    "FIVE_WAY_FLANGE" : "conqest:old_blue_5_way_flange",
+    "THREE_WAY_FLANGE" : "conqest:old_blue_3_way_flange",
+    "FOUR_WAY_FLANGE" : "conqest:old_blue_4_way_flange",
+    "T_FLANGE" : "conqest:old_blue_t_flange"
   },
   "conqest:brown_painted_planks" : {
     "WALL" : "conqest:brown_painted_plank_wall",
@@ -6142,7 +6199,7 @@
     "VERTICAL_QUARTER" : "conqest:light_green_sphagnum_moss_block_vertical_quarter",
     "STAIRS" : "conqest:light_green_sphagnum_moss_block_stairs",
     "VERTICAL_SLAB" : "conqest:light_green_sphagnum_moss_block_vertical_slab",
-    "LAYER" : "conqest:light_green_sphagnum_moss_block_snow",
+    "LAYER" : "conqest:light_green_sphagnum_moss_block_layer",
     "FULL" : "conqest:light_green_sphagnum_moss_block"
   },
   "conqest:aspen_log" : {
@@ -6152,6 +6209,7 @@
     "VERTICAL_CORNER_SLAB" : "conqest:aspen_log_vertical_corner_slab",
     "STAIRS" : "conqest:aspen_log_stairs",
     "CORNER_SLAB" : "conqest:aspen_log_corner_slab",
+    "FULL" : "conqest:aspen_log",
     "STUMP" : "conqest:aspen_log_stump",
     "EIGHTH_SLAB" : "conqest:aspen_log_eighth_slab",
     "VERTICAL_CORNER" : "conqest:aspen_log_vertical_corner",
@@ -6232,6 +6290,7 @@
     "STAIRS" : "conqest:loamy_dirt_stairs",
     "SLAB" : "conqest:loamy_dirt_slab",
     "CORNER_SLAB" : "conqest:loamy_dirt_corner_slab",
+    "FULL" : "conqest:loamy_dirt",
     "EIGHTH_SLAB" : "conqest:loamy_dirt_eighth_slab"
   },
   "conqest:pine_wood_planks" : {
@@ -6261,6 +6320,7 @@
     "VERTICAL_CORNER_SLAB" : "conqest:mossy_olive_log_vertical_corner_slab",
     "STAIRS" : "conqest:mossy_olive_log_stairs",
     "CORNER_SLAB" : "conqest:mossy_olive_log_corner_slab",
+    "FULL" : "conqest:mossy_olive_log",
     "STUMP" : "conqest:mossy_olive_log_stump",
     "EIGHTH_SLAB" : "conqest:mossy_olive_log_eighth_slab",
     "VERTICAL_CORNER" : "conqest:mossy_olive_log_vertical_corner",
@@ -6348,6 +6408,7 @@
     "SMALL_WINDOW" : "conqest:end_stone_brick_small_window",
     "VERTICAL_CORNER_SLAB" : "conqest:end_stone_brick_vertical_corner_slab",
     "CORNER_SLAB" : "conqest:end_stone_brick_corner_slab",
+    "FULL" : "conqest:end_stone_bricks",
     "SMALL_WINDOW_HALF" : "conqest:end_stone_brick_small_window_half",
     "EIGHTH_SLAB" : "conqest:end_stone_brick_eighth_slab",
     "ARROWSLIT" : "conqest:end_stone_brick_arrowslit",
@@ -6427,6 +6488,7 @@
     "STAIRS" : "conqest:green_wool_stairs",
     "SLAB" : "conqest:green_wool_slab",
     "CORNER_SLAB" : "conqest:green_wool_corner_slab",
+    "FULL" : "conqest:green_wool",
     "EIGHTH_SLAB" : "conqest:green_wool_eighth_slab"
   },
   "conqest:gray_shipping_container" : {
@@ -6454,7 +6516,7 @@
     "VERTICAL_QUARTER" : "conqest:taiga_forest_floor_vertical_quarter",
     "STAIRS" : "conqest:taiga_forest_floor_stairs",
     "VERTICAL_SLAB" : "conqest:taiga_forest_floor_vertical_slab",
-    "LAYER" : "conqest:taiga_forest_floor_snow",
+    "LAYER" : "conqest:taiga_forest_floor_layer",
     "FULL" : "conqest:taiga_forest_floor"
   },
   "conqest:round_barrel" : {
@@ -6642,7 +6704,7 @@
   },
   "conqest:red_sand" : {
     "STAIRS" : "conqest:red_sand_stairs",
-    "LAYER" : "conqest:red_sand_snow"
+    "LAYER" : "conqest:red_sand_layer"
   },
   "conqest:purple_cherry_blossoms" : {
     "FULL" : "conqest:purple_cherry_blossoms"
@@ -6655,6 +6717,7 @@
     "VERTICAL_CORNER_SLAB" : "conqest:concrete_wall_vertical_corner_slab",
     "STAIRS" : "conqest:concrete_wall_stairs",
     "CORNER_SLAB" : "conqest:concrete_wall_corner_slab",
+    "FULL" : "conqest:concrete_wall",
     "SMALL_WINDOW_HALF" : "conqest:concrete_wall_small_window_half",
     "EIGHTH_SLAB" : "conqest:concrete_wall_eighth_slab",
     "ARROWSLIT" : "conqest:concrete_wall_arrowslit",
@@ -6822,7 +6885,7 @@
   },
   "conqest:smooth_pebbles" : {
     "STAIRS" : "conqest:smooth_pebbles_stairs",
-    "LAYER" : "conqest:smooth_pebbles_snow",
+    "LAYER" : "conqest:smooth_pebbles_layer",
     "FULL" : "conqest:smooth_pebbles"
   },
   "conqest:gothic_sandstone_floor_tiles" : {
@@ -6873,6 +6936,7 @@
     "VERTICAL_CORNER_SLAB" : "conqest:mossy_dark_oak_log_vertical_corner_slab",
     "STAIRS" : "conqest:mossy_dark_oak_log_stairs",
     "CORNER_SLAB" : "conqest:mossy_dark_oak_log_corner_slab",
+    "FULL" : "conqest:mossy_dark_oak_log",
     "STUMP" : "conqest:mossy_dark_oak_log_stump",
     "EIGHTH_SLAB" : "conqest:mossy_dark_oak_log_eighth_slab",
     "VERTICAL_CORNER" : "conqest:mossy_dark_oak_log_vertical_corner",
@@ -6900,7 +6964,7 @@
     "VERTICAL_QUARTER" : "conqest:autumnal_forest_floor_vertical_quarter",
     "STAIRS" : "conqest:autumnal_forest_floor_stairs",
     "VERTICAL_SLAB" : "conqest:autumnal_forest_floor_vertical_slab",
-    "LAYER" : "conqest:autumnal_forest_floor_snow",
+    "LAYER" : "conqest:autumnal_forest_floor_layer",
     "FULL" : "conqest:autumnal_forest_floor"
   },
   "conqest:large_red_painted_tile" : {
@@ -6961,6 +7025,7 @@
     "VERTICAL_CORNER_SLAB" : "conqest:ash_log_vertical_corner_slab",
     "STAIRS" : "conqest:ash_log_stairs",
     "CORNER_SLAB" : "conqest:ash_log_corner_slab",
+    "FULL" : "conqest:ash_log",
     "STUMP" : "conqest:ash_log_stump",
     "EIGHTH_SLAB" : "conqest:ash_log_eighth_slab",
     "VERTICAL_CORNER" : "conqest:ash_log_vertical_corner",
@@ -6991,6 +7056,7 @@
     "STAIRS" : "conqest:brown_wool_stairs",
     "SLAB" : "conqest:brown_wool_slab",
     "CORNER_SLAB" : "conqest:brown_wool_corner_slab",
+    "FULL" : "conqest:brown_wool",
     "EIGHTH_SLAB" : "conqest:brown_wool_eighth_slab"
   },
   "conqest:red_sandstone_cobble" : {
@@ -7000,6 +7066,7 @@
     "SMALL_WINDOW" : "conqest:red_sandstone_cobble_small_window",
     "VERTICAL_CORNER_SLAB" : "conqest:red_sandstone_cobble_vertical_corner_slab",
     "CORNER_SLAB" : "conqest:red_sandstone_cobble_corner_slab",
+    "FULL" : "conqest:red_sandstone_cobble",
     "SMALL_WINDOW_HALF" : "conqest:red_sandstone_cobble_small_window_half",
     "EIGHTH_SLAB" : "conqest:red_sandstone_cobble_eighth_slab",
     "ARROWSLIT" : "conqest:red_sandstone_cobble_arrowslit",
@@ -7076,6 +7143,7 @@
     "STAIRS" : "conqest:orange_mudstone_stairs",
     "SLAB" : "conqest:orange_mudstone_slab",
     "CORNER_SLAB" : "conqest:orange_mudstone_corner_slab",
+    "FULL" : "conqest:orange_mudstone",
     "EIGHTH_SLAB" : "conqest:orange_mudstone_eighth_slab"
   },
   "conqest:dirty_glacier_ice" : {
@@ -7163,6 +7231,7 @@
     "VERTICAL_CORNER_SLAB" : "conqest:mossy_norway_spruce_log_vertical_corner_slab",
     "STAIRS" : "conqest:mossy_norway_spruce_log_stairs",
     "CORNER_SLAB" : "conqest:mossy_norway_spruce_log_corner_slab",
+    "FULL" : "conqest:mossy_norway_spruce_log",
     "STUMP" : "conqest:mossy_norway_spruce_log_stump",
     "EIGHTH_SLAB" : "conqest:mossy_norway_spruce_log_eighth_slab",
     "VERTICAL_CORNER" : "conqest:mossy_norway_spruce_log_vertical_corner",
@@ -7322,6 +7391,7 @@
     "VERTICAL_CORNER_SLAB" : "conqest:orange_concrete_vertical_corner_slab",
     "STAIRS" : "conqest:orange_concrete_stairs",
     "CORNER_SLAB" : "conqest:orange_concrete_corner_slab",
+    "FULL" : "conqest:orange_concrete",
     "SMALL_WINDOW_HALF" : "conqest:orange_concrete_small_window_half",
     "EIGHTH_SLAB" : "conqest:orange_concrete_eighth_slab",
     "ARROWSLIT" : "conqest:orange_concrete_arrowslit",
@@ -7366,6 +7436,7 @@
     "SMALL_WINDOW" : "minecraft:dark_prismarine_small_window",
     "VERTICAL_CORNER_SLAB" : "minecraft:dark_prismarine_vertical_corner_slab",
     "CORNER_SLAB" : "minecraft:dark_prismarine_corner_slab",
+    "FULL" : "minecraft:dark_prismarine",
     "SMALL_WINDOW_HALF" : "minecraft:dark_prismarine_small_window_half",
     "EIGHTH_SLAB" : "minecraft:dark_prismarine_eighth_slab",
     "ARROWSLIT" : "minecraft:dark_prismarine_arrowslit",
@@ -7439,6 +7510,7 @@
     "VERTICAL_CORNER_SLAB" : "conqest:spruce_wood_beam_vertical_corner_slab",
     "STAIRS" : "conqest:spruce_wood_beam_stairs",
     "CORNER_SLAB" : "conqest:spruce_wood_beam_corner_slab",
+    "FULL" : "conqest:spruce_wood_beam",
     "EIGHTH_SLAB" : "conqest:spruce_wood_beam_eighth_slab",
     "VERTICAL_CORNER" : "conqest:spruce_wood_beam_vertical_corner",
     "BEAM_POSTS" : "conqest:spruce_wood_beam_beam_posts",
@@ -7457,6 +7529,7 @@
     "VERTICAL_CORNER_SLAB" : "conqest:mossy_pine_log_vertical_corner_slab",
     "STAIRS" : "conqest:mossy_pine_log_stairs",
     "CORNER_SLAB" : "conqest:mossy_pine_log_corner_slab",
+    "FULL" : "conqest:mossy_pine_log",
     "STUMP" : "conqest:mossy_pine_log_stump",
     "EIGHTH_SLAB" : "conqest:mossy_pine_log_eighth_slab",
     "VERTICAL_CORNER" : "conqest:mossy_pine_log_vertical_corner",
@@ -7530,16 +7603,17 @@
     "FULL" : "conqest:carved_oak_wood"
   },
   "conqest:old_red_pipe" : {
-    "ELBOW_FLANGE" : "conqest:old_red_elbow_flange_elbow_flange",
-    "BALL_VALVE" : "conqest:old_red_ball_valve_ball_valve",
-    "PIPE" : "conqest:old_red_pipe_pipe",
-    "CROSS_FLANGE" : "conqest:old_red_cross_flange_cross_flange",
-    "MOUNTED_PIPE" : [ "conqest:old_red_mounted_pipe_mounted_pipe", "conqest:old_red_gate_valve_mounted_pipe" ],
-    "SIX_WAY_FLANGE" : "conqest:old_red_6_way_flange_6_way_flange",
-    "FIVE_WAY_FLANGE" : "conqest:old_red_5_way_flange_5_way_flange",
-    "THREE_WAY_FLANGE" : "conqest:old_red_3_way_flange_3_way_flange",
-    "FOUR_WAY_FLANGE" : "conqest:old_red_4_way_flange_4_way_flange",
-    "T_FLANGE" : "conqest:old_red_t_flange_t_flange"
+    "ELBOW_FLANGE" : "conqest:old_red_elbow_flange",
+    "BALL_VALVE" : "conqest:old_red_ball_valve",
+    "GATE_VALVE" : "conqest:old_red_gate_valve",
+    "PIPE" : "conqest:old_red_pipe",
+    "CROSS_FLANGE" : "conqest:old_red_cross_flange",
+    "MOUNTED_PIPE" : "conqest:old_red_mounted_pipe",
+    "SIX_WAY_FLANGE" : "conqest:old_red_6_way_flange",
+    "FIVE_WAY_FLANGE" : "conqest:old_red_5_way_flange",
+    "THREE_WAY_FLANGE" : "conqest:old_red_3_way_flange",
+    "FOUR_WAY_FLANGE" : "conqest:old_red_4_way_flange",
+    "T_FLANGE" : "conqest:old_red_t_flange"
   },
   "conqest:sandstone_frieze" : {
     "WALL" : "conqest:sandstone_frieze_wall",
@@ -7588,16 +7662,17 @@
     "FULL" : "conqest:dark_beech_tree_leaves"
   },
   "conqest:pipe" : {
-    "ELBOW_FLANGE" : "conqest:elbow_flange_elbow_flange",
-    "BALL_VALVE" : "conqest:ball_valve_ball_valve",
-    "PIPE" : "conqest:pipe_pipe",
-    "CROSS_FLANGE" : "conqest:cross_flange_cross_flange",
-    "MOUNTED_PIPE" : [ "conqest:mounted_pipe_mounted_pipe", "conqest:gate_valve_mounted_pipe" ],
-    "SIX_WAY_FLANGE" : "conqest:6_way_flange_6_way_flange",
-    "FIVE_WAY_FLANGE" : "conqest:5_way_flange_5_way_flange",
-    "THREE_WAY_FLANGE" : "conqest:3_way_flange_3_way_flange",
-    "FOUR_WAY_FLANGE" : "conqest:4_way_flange_4_way_flange",
-    "T_FLANGE" : "conqest:t_flange_t_flange"
+    "ELBOW_FLANGE" : "conqest:elbow_flange",
+    "BALL_VALVE" : "conqest:ball_valve",
+    "GATE_VALVE" : "conqest:gate_valve",
+    "PIPE" : "conqest:pipe",
+    "CROSS_FLANGE" : "conqest:cross_flange",
+    "MOUNTED_PIPE" : "conqest:mounted_pipe",
+    "SIX_WAY_FLANGE" : "conqest:6_way_flange",
+    "FIVE_WAY_FLANGE" : "conqest:5_way_flange",
+    "THREE_WAY_FLANGE" : "conqest:3_way_flange",
+    "FOUR_WAY_FLANGE" : "conqest:4_way_flange",
+    "T_FLANGE" : "conqest:t_flange"
   },
   "conqest:glacier_ice" : {
     "VERTICAL_CORNER" : "conqest:glacier_ice_vertical_corner",
@@ -7711,6 +7786,7 @@
     "SMALL_WINDOW" : "conqest:prismarine_brick_small_window",
     "VERTICAL_CORNER_SLAB" : "conqest:prismarine_brick_vertical_corner_slab",
     "CORNER_SLAB" : "conqest:prismarine_brick_corner_slab",
+    "FULL" : "minecraft:prismarine_bricks",
     "SMALL_WINDOW_HALF" : "conqest:prismarine_brick_small_window_half",
     "EIGHTH_SLAB" : "conqest:prismarine_brick_eighth_slab",
     "ARROWSLIT" : "conqest:prismarine_brick_arrowslit",
@@ -7856,6 +7932,7 @@
     "SMALL_WINDOW" : "conqest:limestone_brick_small_window",
     "VERTICAL_CORNER_SLAB" : "conqest:limestone_brick_vertical_corner_slab",
     "CORNER_SLAB" : "conqest:limestone_brick_corner_slab",
+    "FULL" : "conqest:limestone_bricks",
     "SMALL_WINDOW_HALF" : "conqest:limestone_brick_small_window_half",
     "EIGHTH_SLAB" : "conqest:limestone_brick_eighth_slab",
     "ARROWSLIT" : "conqest:limestone_brick_arrowslit",
@@ -7901,7 +7978,15 @@
     "FULL" : "conqest:etruscan_wall_design_1"
   },
   "conqest:steel_beam_vertical" : {
-    "BEAM_HORIZONTAL" : "conqest:steel_beam_beam_horizontal"
+    "CROSS_BEAMS" : "conqest:steel_cross_beams",
+    "DIAGONAL_BEAM_SIDE_1" : "conqest:steel_diagonal_beam_side_1",
+    "DIAGONAL_BEAM_1" : "conqest:steel_diagonal_beam_1",
+    "DIAGONAL_BEAM_2" : "conqest:steel_diagonal_beam_2",
+    "DIAGONAL_BEAM_3" : "conqest:steel_diagonal_beam_3",
+    "CROSS_BEAMS_SIDE" : "conqest:steel_cross_beams_side",
+    "DIAGONAL_BEAM_SIDE_3" : "conqest:steel_diagonal_beam_side_3",
+    "BEAM_HORIZONTAL" : "conqest:steel_beam_vertical_beam_horizontal",
+    "DIAGONAL_BEAM_SIDE_2" : "conqest:steel_diagonal_beam_side_2"
   },
   "conqest:reinforced_spruce_wood_planks" : {
     "WALL" : "conqest:reinforced_spruce_wood_plank_wall",
@@ -7961,7 +8046,14 @@
     "FULL" : "conqest:pine_needles"
   },
   "conqest:worn_red_painted_steel_beam_vertical" : {
-    "BEAM_HORIZONTAL" : "conqest:worn_red_painted_steel_beam_beam_horizontal"
+    "CROSS_BEAMS" : "conqest:worn_red_painted_steel_cross_beams",
+    "DIAGONAL_BEAM_SIDE_1" : "conqest:worn_red_painted_steel_diagonal_beam_side_1",
+    "DIAGONAL_BEAM_1" : "conqest:worn_red_painted_steel_diagonal_beam_1",
+    "DIAGONAL_BEAM_2" : "conqest:worn_red_painted_steel_diagonal_beam_2",
+    "DIAGONAL_BEAM_3" : "conqest:worn_red_painted_steel_diagonal_beam_3",
+    "CROSS_BEAMS_SIDE" : "conqest:worn_red_painted_steel_cross_beams_side",
+    "DIAGONAL_BEAM_SIDE_3" : "conqest:worn_red_painted_steel_diagonal_beam_side_3",
+    "DIAGONAL_BEAM_SIDE_2" : "conqest:worn_red_painted_steel_diagonal_beam_side_2"
   },
   "conqest:dark_slate_roof_tiles" : {
     "WALL" : "conqest:dark_slate_roof_tiles_wall",
@@ -8005,6 +8097,7 @@
     "VERTICAL_CORNER_SLAB" : "conqest:mossy_oak_log_vertical_corner_slab",
     "STAIRS" : "conqest:mossy_oak_log_stairs",
     "CORNER_SLAB" : "conqest:mossy_oak_log_corner_slab",
+    "FULL" : "conqest:mossy_oak_log",
     "STUMP" : "conqest:mossy_oak_log_stump",
     "EIGHTH_SLAB" : "conqest:mossy_oak_log_eighth_slab",
     "VERTICAL_CORNER" : "conqest:mossy_oak_log_vertical_corner",
@@ -8171,6 +8264,7 @@
     "VERTICAL_CORNER_SLAB" : "conqest:mossy_horse_chestnut_log_vertical_corner_slab",
     "STAIRS" : "conqest:mossy_horse_chestnut_log_stairs",
     "CORNER_SLAB" : "conqest:mossy_horse_chestnut_log_corner_slab",
+    "FULL" : "conqest:mossy_horse_chestnut_log",
     "STUMP" : "conqest:mossy_horse_chestnut_log_stump",
     "EIGHTH_SLAB" : "conqest:mossy_horse_chestnut_log_eighth_slab",
     "VERTICAL_CORNER" : "conqest:mossy_horse_chestnut_log_vertical_corner",
@@ -8186,7 +8280,7 @@
     "VERTICAL_QUARTER" : "conqest:muddy_autumnal_forest_floor_vertical_quarter",
     "STAIRS" : "conqest:muddy_autumnal_forest_floor_stairs",
     "VERTICAL_SLAB" : "conqest:muddy_autumnal_forest_floor_vertical_slab",
-    "LAYER" : "conqest:muddy_autumnal_forest_floor_snow",
+    "LAYER" : "conqest:muddy_autumnal_forest_floor_layer",
     "FULL" : "conqest:muddy_autumnal_forest_floor"
   },
   "minecraft:blue_stained_glass" : {
@@ -8204,6 +8298,7 @@
     "SMALL_WINDOW" : "conqest:clay_brick_small_window",
     "VERTICAL_CORNER_SLAB" : "conqest:clay_brick_vertical_corner_slab",
     "CORNER_SLAB" : "conqest:clay_brick_corner_slab",
+    "FULL" : "conqest:clay_bricks",
     "SMALL_WINDOW_HALF" : "conqest:clay_brick_small_window_half",
     "EIGHTH_SLAB" : "conqest:clay_brick_eighth_slab",
     "ARROWSLIT" : "conqest:clay_brick_arrowslit",
@@ -8226,6 +8321,7 @@
     "VERTICAL_CORNER_SLAB" : "conqest:light_blue_concrete_vertical_corner_slab",
     "STAIRS" : "conqest:light_blue_concrete_stairs",
     "CORNER_SLAB" : "conqest:light_blue_concrete_corner_slab",
+    "FULL" : "conqest:light_blue_concrete",
     "SMALL_WINDOW_HALF" : "conqest:light_blue_concrete_small_window_half",
     "EIGHTH_SLAB" : "conqest:light_blue_concrete_eighth_slab",
     "ARROWSLIT" : "conqest:light_blue_concrete_arrowslit",
@@ -8281,6 +8377,7 @@
     "VERTICAL_CORNER_SLAB" : "conqest:oak_wood_beam_vertical_corner_slab",
     "STAIRS" : "conqest:oak_wood_beam_stairs",
     "CORNER_SLAB" : "conqest:oak_wood_beam_corner_slab",
+    "FULL" : "conqest:oak_wood_beam",
     "EIGHTH_SLAB" : "conqest:oak_wood_beam_eighth_slab",
     "VERTICAL_CORNER" : "conqest:oak_wood_beam_vertical_corner",
     "BEAM_POSTS" : "conqest:oak_wood_beam_beam_posts",
@@ -8408,16 +8505,17 @@
     "FULL" : "conqest:elongated_brown_wooden_frame_window"
   },
   "conqest:red_pipe" : {
-    "ELBOW_FLANGE" : "conqest:red_elbow_flange_elbow_flange",
-    "BALL_VALVE" : "conqest:red_ball_valve_ball_valve",
-    "PIPE" : "conqest:red_pipe_pipe",
-    "CROSS_FLANGE" : "conqest:red_cross_flange_cross_flange",
-    "MOUNTED_PIPE" : [ "conqest:red_mounted_pipe_mounted_pipe", "conqest:red_gate_valve_mounted_pipe" ],
-    "SIX_WAY_FLANGE" : "conqest:red_6_way_flange_6_way_flange",
-    "FIVE_WAY_FLANGE" : "conqest:red_5_way_flange_5_way_flange",
-    "THREE_WAY_FLANGE" : "conqest:red_3_way_flange_3_way_flange",
-    "FOUR_WAY_FLANGE" : "conqest:red_4_way_flange_4_way_flange",
-    "T_FLANGE" : "conqest:red_t_flange_t_flange"
+    "ELBOW_FLANGE" : "conqest:red_elbow_flange",
+    "BALL_VALVE" : "conqest:red_ball_valve",
+    "GATE_VALVE" : "conqest:red_gate_valve",
+    "PIPE" : "conqest:red_pipe",
+    "CROSS_FLANGE" : "conqest:red_cross_flange",
+    "MOUNTED_PIPE" : "conqest:red_mounted_pipe",
+    "SIX_WAY_FLANGE" : "conqest:red_6_way_flange",
+    "FIVE_WAY_FLANGE" : "conqest:red_5_way_flange",
+    "THREE_WAY_FLANGE" : "conqest:red_3_way_flange",
+    "FOUR_WAY_FLANGE" : "conqest:red_4_way_flange",
+    "T_FLANGE" : "conqest:red_t_flange"
   },
   "conqest:fancy_elven_pillar_design" : {
     "VERTICAL_CORNER" : "conqest:fancy_elven_pillar_design_vertical_corner",
@@ -8485,7 +8583,7 @@
   },
   "conqest:yellow_concrete_powder" : {
     "STAIRS" : "conqest:yellow_concrete_powder_stairs",
-    "LAYER" : "conqest:yellow_concrete_powder_snow"
+    "LAYER" : "conqest:yellow_concrete_powder_layer"
   },
   "minecraft:brown_stained_glass" : {
     "VERTICAL_CORNER" : "minecraft:brown_stained_glass_vertical_corner",
@@ -8586,6 +8684,7 @@
     "STAIRS" : "conqest:magma_stairs",
     "SLAB" : "conqest:magma_slab",
     "CORNER_SLAB" : "conqest:magma_corner_slab",
+    "FULL" : "conqest:magma",
     "EIGHTH_SLAB" : "conqest:magma_eighth_slab"
   },
   "conqest:simple_wooden_trapdoor" : {
@@ -8639,7 +8738,7 @@
     "VERTICAL_QUARTER" : "conqest:yellow_sphagnum_moss_block_vertical_quarter",
     "STAIRS" : "conqest:yellow_sphagnum_moss_block_stairs",
     "VERTICAL_SLAB" : "conqest:yellow_sphagnum_moss_block_vertical_slab",
-    "LAYER" : "conqest:yellow_sphagnum_moss_block_snow",
+    "LAYER" : "conqest:yellow_sphagnum_moss_block_layer",
     "FULL" : "conqest:yellow_sphagnum_moss_block"
   },
   "conqest:mossy_willow_log" : {
@@ -8649,6 +8748,7 @@
     "VERTICAL_CORNER_SLAB" : "conqest:mossy_willow_log_vertical_corner_slab",
     "STAIRS" : "conqest:mossy_willow_log_stairs",
     "CORNER_SLAB" : "conqest:mossy_willow_log_corner_slab",
+    "FULL" : "conqest:mossy_willow_log",
     "STUMP" : "conqest:mossy_willow_log_stump",
     "EIGHTH_SLAB" : "conqest:mossy_willow_log_eighth_slab",
     "VERTICAL_CORNER" : "conqest:mossy_willow_log_vertical_corner",
@@ -8698,7 +8798,7 @@
   },
   "conqest:grass_and_sand" : {
     "STAIRS" : "conqest:grass_and_sand_stairs",
-    "LAYER" : "conqest:grass_and_sand_snow"
+    "LAYER" : "conqest:grass_and_sand_layer"
   },
   "conqest:sandstone_ionian_capital" : {
     "VERTICAL_CORNER" : "conqest:sandstone_ionian_capital_vertical_corner",
@@ -8880,7 +8980,7 @@
   },
   "conqest:gravel" : {
     "STAIRS" : "conqest:gravel_stairs",
-    "LAYER" : "conqest:gravel_snow"
+    "LAYER" : "conqest:gravel_layer"
   },
   "conqest:light_birch_wood_planks" : {
     "WALL" : "conqest:light_birch_wood_plank_wall",
@@ -8917,7 +9017,7 @@
   },
   "conqest:sand" : {
     "STAIRS" : "conqest:sand_stairs",
-    "LAYER" : "conqest:sand_snow"
+    "LAYER" : "conqest:sand_layer"
   },
   "conqest:pink_concrete" : {
     "TWO_METER_ARCH" : "conqest:pink_concrete_two_meter_arch",
@@ -8927,6 +9027,7 @@
     "VERTICAL_CORNER_SLAB" : "conqest:pink_concrete_vertical_corner_slab",
     "STAIRS" : "conqest:pink_concrete_stairs",
     "CORNER_SLAB" : "conqest:pink_concrete_corner_slab",
+    "FULL" : "conqest:pink_concrete",
     "SMALL_WINDOW_HALF" : "conqest:pink_concrete_small_window_half",
     "EIGHTH_SLAB" : "conqest:pink_concrete_eighth_slab",
     "ARROWSLIT" : "conqest:pink_concrete_arrowslit",
@@ -8984,6 +9085,7 @@
     "VERTICAL_CORNER_SLAB" : "conqest:palm_wood_beam_vertical_corner_slab",
     "STAIRS" : "conqest:palm_wood_beam_stairs",
     "CORNER_SLAB" : "conqest:palm_wood_beam_corner_slab",
+    "FULL" : "conqest:palm_wood_beam",
     "EIGHTH_SLAB" : "conqest:palm_wood_beam_eighth_slab",
     "VERTICAL_CORNER" : "conqest:palm_wood_beam_vertical_corner",
     "BEAM_POSTS" : "conqest:palm_wood_beam_beam_posts",
@@ -9169,6 +9271,7 @@
     "VERTICAL_CORNER_SLAB" : "conqest:mossy_aspen_log_vertical_corner_slab",
     "STAIRS" : "conqest:mossy_aspen_log_stairs",
     "CORNER_SLAB" : "conqest:mossy_aspen_log_corner_slab",
+    "FULL" : "conqest:mossy_aspen_log",
     "STUMP" : "conqest:mossy_aspen_log_stump",
     "EIGHTH_SLAB" : "conqest:mossy_aspen_log_eighth_slab",
     "VERTICAL_CORNER" : "conqest:mossy_aspen_log_vertical_corner",
@@ -9275,6 +9378,7 @@
     "VERTICAL_CORNER_SLAB" : "conqest:limestone_cobble_vertical_corner_slab",
     "GOTHIC_ARCH" : "conqest:limestone_cobble_gothic_arch",
     "CORNER_SLAB" : "conqest:limestone_cobble_corner_slab",
+    "FULL" : "conqest:limestone_cobble",
     "SMALL_WINDOW_HALF" : "conqest:limestone_cobble_small_window_half",
     "EIGHTH_SLAB" : "conqest:limestone_cobble_eighth_slab",
     "ARROWSLIT" : "conqest:limestone_cobble_arrowslit",
@@ -9373,6 +9477,7 @@
     "SMALL_WINDOW" : "conqest:large_light_limestone_brick_small_window",
     "VERTICAL_CORNER_SLAB" : "conqest:large_light_limestone_brick_vertical_corner_slab",
     "CORNER_SLAB" : "conqest:large_light_limestone_brick_corner_slab",
+    "FULL" : "conqest:large_light_limestone_brick",
     "SMALL_WINDOW_HALF" : "conqest:large_light_limestone_brick_small_window_half",
     "EIGHTH_SLAB" : "conqest:large_light_limestone_brick_eighth_slab",
     "ARROWSLIT" : "conqest:large_light_limestone_brick_arrowslit",
@@ -9435,6 +9540,7 @@
     "VERTICAL_CORNER_SLAB" : "conqest:mossy_acacia_log_vertical_corner_slab",
     "STAIRS" : "conqest:mossy_acacia_log_stairs",
     "CORNER_SLAB" : "conqest:mossy_acacia_log_corner_slab",
+    "FULL" : "conqest:mossy_acacia_log",
     "STUMP" : "conqest:mossy_acacia_log_stump",
     "EIGHTH_SLAB" : "conqest:mossy_acacia_log_eighth_slab",
     "VERTICAL_CORNER" : "conqest:mossy_acacia_log_vertical_corner",
@@ -9619,6 +9725,7 @@
     "STAIRS" : "conqest:purple_wool_stairs",
     "SLAB" : "conqest:purple_wool_slab",
     "CORNER_SLAB" : "conqest:purple_wool_corner_slab",
+    "FULL" : "conqest:purple_wool",
     "EIGHTH_SLAB" : "conqest:purple_wool_eighth_slab"
   },
   "conqest:tall_old_oak_door" : {
@@ -9661,6 +9768,7 @@
     "STAIRS" : "conqest:gray_wool_stairs",
     "SLAB" : "conqest:gray_wool_slab",
     "CORNER_SLAB" : "conqest:gray_wool_corner_slab",
+    "FULL" : "conqest:gray_wool",
     "EIGHTH_SLAB" : "conqest:gray_wool_eighth_slab"
   },
   "conqest:red_white_green_gothic_frieze" : {
@@ -9753,6 +9861,7 @@
     "STAIRS" : "conqest:blue_wool_stairs",
     "SLAB" : "conqest:blue_wool_slab",
     "CORNER_SLAB" : "conqest:blue_wool_corner_slab",
+    "FULL" : "conqest:blue_wool",
     "EIGHTH_SLAB" : "conqest:blue_wool_eighth_slab"
   },
   "conqest:orange_pine_log" : {
@@ -9762,6 +9871,7 @@
     "VERTICAL_CORNER_SLAB" : "conqest:orange_pine_log_vertical_corner_slab",
     "STAIRS" : "conqest:orange_pine_log_stairs",
     "CORNER_SLAB" : "conqest:orange_pine_log_corner_slab",
+    "FULL" : "conqest:orange_pine_log",
     "STUMP" : "conqest:orange_pine_log_stump",
     "EIGHTH_SLAB" : "conqest:orange_pine_log_eighth_slab",
     "VERTICAL_CORNER" : "conqest:orange_pine_log_vertical_corner",
@@ -9843,7 +9953,7 @@
   },
   "conqest:grassy_dirt" : {
     "STAIRS" : "conqest:grassy_dirt_stairs",
-    "LAYER" : "conqest:grassy_dirt_snow"
+    "LAYER" : "conqest:grassy_dirt_layer"
   },
   "conqest:yellow_quartzite" : {
     "VERTICAL_CORNER" : "conqest:yellow_quartzite_vertical_corner",
@@ -9901,7 +10011,7 @@
   },
   "conqest:soul_sand" : {
     "STAIRS" : "conqest:soul_sand_stairs",
-    "LAYER" : "conqest:soul_sand_snow"
+    "LAYER" : "conqest:soul_sand_layer"
   },
   "minecraft:yellow_stained_glass" : {
     "VERTICAL_CORNER" : "minecraft:yellow_stained_glass_vertical_corner",
@@ -10066,7 +10176,7 @@
   },
   "conqest:ash" : {
     "STAIRS" : "conqest:ash_stairs",
-    "LAYER" : "conqest:ash_snow",
+    "LAYER" : "conqest:ash_layer",
     "FULL" : "conqest:ash"
   },
   "conqest:blue_schist_cobble" : {
@@ -10156,6 +10266,7 @@
     "VERTICAL_CORNER_SLAB" : "conqest:goat_sallow_log_vertical_corner_slab",
     "STAIRS" : "conqest:goat_sallow_log_stairs",
     "CORNER_SLAB" : "conqest:goat_sallow_log_corner_slab",
+    "FULL" : "conqest:goat_sallow_log",
     "STUMP" : "conqest:goat_sallow_log_stump",
     "EIGHTH_SLAB" : "conqest:goat_sallow_log_eighth_slab",
     "VERTICAL_CORNER" : "conqest:goat_sallow_log_vertical_corner",
@@ -10353,16 +10464,17 @@
     "EIGHTH_SLAB" : "conqest:brown_thatch_eighth_slab"
   },
   "conqest:black_pipe" : {
-    "ELBOW_FLANGE" : "conqest:black_elbow_flange_elbow_flange",
-    "BALL_VALVE" : "conqest:black_ball_valve_ball_valve",
-    "PIPE" : "conqest:black_pipe_pipe",
-    "CROSS_FLANGE" : "conqest:black_cross_flange_cross_flange",
-    "MOUNTED_PIPE" : [ "conqest:black_mounted_pipe_mounted_pipe", "conqest:black_gate_valve_mounted_pipe" ],
-    "SIX_WAY_FLANGE" : "conqest:black_6_way_flange_6_way_flange",
-    "FIVE_WAY_FLANGE" : "conqest:black_5_way_flange_5_way_flange",
-    "THREE_WAY_FLANGE" : "conqest:black_3_way_flange_3_way_flange",
-    "FOUR_WAY_FLANGE" : "conqest:black_4_way_flange_4_way_flange",
-    "T_FLANGE" : "conqest:black_t_flange_t_flange"
+    "ELBOW_FLANGE" : "conqest:black_elbow_flange",
+    "BALL_VALVE" : "conqest:black_ball_valve",
+    "GATE_VALVE" : "conqest:black_gate_valve",
+    "PIPE" : "conqest:black_pipe",
+    "CROSS_FLANGE" : "conqest:black_cross_flange",
+    "MOUNTED_PIPE" : "conqest:black_mounted_pipe",
+    "SIX_WAY_FLANGE" : "conqest:black_6_way_flange",
+    "FIVE_WAY_FLANGE" : "conqest:black_5_way_flange",
+    "THREE_WAY_FLANGE" : "conqest:black_3_way_flange",
+    "FOUR_WAY_FLANGE" : "conqest:black_4_way_flange",
+    "T_FLANGE" : "conqest:black_t_flange"
   },
   "conqest:autumnal_oak_leaves" : {
     "FULL" : "conqest:autumnal_oak_leaves"
@@ -10451,17 +10563,18 @@
     "FULL" : "conqest:marble_architrave"
   },
   "conqest:overgrown_green_clay_shingles" : {
-    "VERTICAL_CORNER" : "conqest:overgrown_green_clay_shingle_vertical_corner",
     "WALL" : "conqest:overgrown_green_clay_shingle_wall",
-    "VERTICAL_QUARTER" : "conqest:overgrown_green_clay_shingle_vertical_quarter",
     "PILLAR" : "conqest:overgrown_green_clay_shingle_pillar",
-    "QUARTER_SLAB" : "conqest:overgrown_green_clay_shingle_quarter_slab",
     "VERTICAL_CORNER_SLAB" : "conqest:overgrown_green_clay_shingle_vertical_corner_slab",
-    "VERTICAL_SLAB" : "conqest:overgrown_green_clay_shingle_vertical_slab",
     "STAIRS" : "conqest:overgrown_green_clay_shingle_stairs",
-    "SLAB" : "conqest:overgrown_green_clay_shingle_slab",
     "CORNER_SLAB" : "conqest:overgrown_green_clay_shingle_corner_slab",
+    "FULL" : "conqest:overgrown_green_clay_shingles",
     "EIGHTH_SLAB" : "conqest:overgrown_green_clay_shingle_eighth_slab",
+    "VERTICAL_CORNER" : "conqest:overgrown_green_clay_shingle_vertical_corner",
+    "VERTICAL_QUARTER" : "conqest:overgrown_green_clay_shingle_vertical_quarter",
+    "QUARTER_SLAB" : "conqest:overgrown_green_clay_shingle_quarter_slab",
+    "VERTICAL_SLAB" : "conqest:overgrown_green_clay_shingle_vertical_slab",
+    "SLAB" : "conqest:overgrown_green_clay_shingle_slab",
     "CAPITAL" : "conqest:overgrown_green_clay_shingle_capital"
   },
   "conqest:dark_sandstone_cornice_model" : {
@@ -10504,6 +10617,7 @@
     "STAIRS" : "conqest:end_stone_stairs",
     "SLAB" : "conqest:end_stone_slab",
     "CORNER_SLAB" : "conqest:end_stone_corner_slab",
+    "FULL" : "conqest:end_stone",
     "EIGHTH_SLAB" : "conqest:end_stone_eighth_slab"
   },
   "conqest:irregular_andesite_stone_wall_stone_brick_quoins" : {
@@ -10541,6 +10655,7 @@
     "SMALL_WINDOW" : "conqest:granite_small_window",
     "VERTICAL_CORNER_SLAB" : "conqest:granite_vertical_corner_slab",
     "CORNER_SLAB" : "conqest:granite_corner_slab",
+    "FULL" : "conqest:granite",
     "SMALL_WINDOW_HALF" : "conqest:granite_small_window_half",
     "EIGHTH_SLAB" : "conqest:granite_eighth_slab",
     "ARROWSLIT" : "conqest:granite_arrowslit",
@@ -10560,6 +10675,7 @@
     "VERTICAL_CORNER_SLAB" : "conqest:brown_concrete_vertical_corner_slab",
     "STAIRS" : "conqest:brown_concrete_stairs",
     "CORNER_SLAB" : "conqest:brown_concrete_corner_slab",
+    "FULL" : "conqest:brown_concrete",
     "SMALL_WINDOW_HALF" : "conqest:brown_concrete_small_window_half",
     "EIGHTH_SLAB" : "conqest:brown_concrete_eighth_slab",
     "ARROWSLIT" : "conqest:brown_concrete_arrowslit",
@@ -10769,7 +10885,7 @@
     "VERTICAL_QUARTER" : "conqest:green_sphagnum_moss_block_vertical_quarter",
     "STAIRS" : "conqest:green_sphagnum_moss_block_stairs",
     "VERTICAL_SLAB" : "conqest:green_sphagnum_moss_block_vertical_slab",
-    "LAYER" : "conqest:green_sphagnum_moss_block_snow",
+    "LAYER" : "conqest:green_sphagnum_moss_block_layer",
     "FULL" : "conqest:green_sphagnum_moss_block"
   },
   "conqest:rose_plaster" : {
@@ -10805,6 +10921,7 @@
     "VERTICAL_CORNER_SLAB" : "conqest:mossy_birch_log_vertical_corner_slab",
     "STAIRS" : "conqest:mossy_birch_log_stairs",
     "CORNER_SLAB" : "conqest:mossy_birch_log_corner_slab",
+    "FULL" : "conqest:mossy_birch_log",
     "STUMP" : "conqest:mossy_birch_log_stump",
     "EIGHTH_SLAB" : "conqest:mossy_birch_log_eighth_slab",
     "VERTICAL_CORNER" : "conqest:mossy_birch_log_vertical_corner",
@@ -10824,6 +10941,7 @@
     "STAIRS" : "conqest:pink_wool_stairs",
     "SLAB" : "conqest:pink_wool_slab",
     "CORNER_SLAB" : "conqest:pink_wool_corner_slab",
+    "FULL" : "conqest:pink_wool",
     "EIGHTH_SLAB" : "conqest:pink_wool_eighth_slab"
   },
   "conqest:columnal_basalt" : {
@@ -10888,6 +11006,7 @@
     "VERTICAL_CORNER_SLAB" : "conqest:beech_log_vertical_corner_slab",
     "STAIRS" : "conqest:beech_log_stairs",
     "CORNER_SLAB" : "conqest:beech_log_corner_slab",
+    "FULL" : "conqest:beech_log",
     "STUMP" : "conqest:beech_log_stump",
     "EIGHTH_SLAB" : "conqest:beech_log_eighth_slab",
     "VERTICAL_CORNER" : "conqest:beech_log_vertical_corner",
@@ -10908,6 +11027,7 @@
     "STAIRS" : "conqest:obsidian_stairs",
     "SLAB" : "conqest:obsidian_slab",
     "CORNER_SLAB" : "conqest:obsidian_corner_slab",
+    "FULL" : "conqest:obsidian",
     "EIGHTH_SLAB" : "conqest:obsidian_eighth_slab"
   },
   "conqest:weathered_limestone_brick" : {
@@ -10996,6 +11116,7 @@
     "VERTICAL_CORNER_SLAB" : "conqest:mossy_ash_log_vertical_corner_slab",
     "STAIRS" : "conqest:mossy_ash_log_stairs",
     "CORNER_SLAB" : "conqest:mossy_ash_log_corner_slab",
+    "FULL" : "conqest:mossy_ash_log",
     "STUMP" : "conqest:mossy_ash_log_stump",
     "EIGHTH_SLAB" : "conqest:mossy_ash_log_eighth_slab",
     "VERTICAL_CORNER" : "conqest:mossy_ash_log_vertical_corner",
@@ -11100,6 +11221,7 @@
     "SMALL_WINDOW" : "conqest:large_granite_brick_small_window",
     "VERTICAL_CORNER_SLAB" : "conqest:large_granite_brick_vertical_corner_slab",
     "CORNER_SLAB" : "conqest:large_granite_brick_corner_slab",
+    "FULL" : "conqest:large_granite_brick",
     "SMALL_WINDOW_HALF" : "conqest:large_granite_brick_small_window_half",
     "EIGHTH_SLAB" : "conqest:large_granite_brick_eighth_slab",
     "ARROWSLIT" : "conqest:large_granite_brick_arrowslit",
@@ -11122,6 +11244,7 @@
     "VERTICAL_CORNER_SLAB" : "conqest:white_concrete_vertical_corner_slab",
     "STAIRS" : "conqest:white_concrete_stairs",
     "CORNER_SLAB" : "conqest:white_concrete_corner_slab",
+    "FULL" : "conqest:white_concrete",
     "SMALL_WINDOW_HALF" : "conqest:white_concrete_small_window_half",
     "EIGHTH_SLAB" : "conqest:white_concrete_eighth_slab",
     "ARROWSLIT" : "conqest:white_concrete_arrowslit",
@@ -11243,6 +11366,7 @@
     "STAIRS" : "conqest:red_painted_angled_tile_stairs",
     "SLAB" : "conqest:red_painted_angled_tile_slab",
     "CORNER_SLAB" : "conqest:red_painted_angled_tile_corner_slab",
+    "FULL" : "conqest:red_painted_angled_tiles",
     "EIGHTH_SLAB" : "conqest:red_painted_angled_tile_eighth_slab"
   },
   "conqest:moss_covered_limestone" : {
@@ -11323,7 +11447,7 @@
   },
   "conqest:dry_river_sand" : {
     "STAIRS" : "conqest:dry_river_sand_stairs",
-    "LAYER" : "conqest:dry_river_sand_snow",
+    "LAYER" : "conqest:dry_river_sand_layer",
     "FULL" : "conqest:dry_river_sand"
   },
   "conqest:blue_painted_planks" : {
@@ -11349,16 +11473,17 @@
     "CAPITAL" : "conqest:blue_painted_plank_capital"
   },
   "conqest:old_black_pipe" : {
-    "ELBOW_FLANGE" : "conqest:old_black_elbow_flange_elbow_flange",
-    "BALL_VALVE" : "conqest:old_black_ball_valve_ball_valve",
-    "PIPE" : "conqest:old_black_pipe_pipe",
-    "CROSS_FLANGE" : "conqest:old_black_cross_flange_cross_flange",
-    "MOUNTED_PIPE" : [ "conqest:old_black_mounted_pipe_mounted_pipe", "conqest:old_black_gate_valve_mounted_pipe" ],
-    "SIX_WAY_FLANGE" : "conqest:old_black_6_way_flange_6_way_flange",
-    "FIVE_WAY_FLANGE" : "conqest:old_black_5_way_flange_5_way_flange",
-    "THREE_WAY_FLANGE" : "conqest:old_black_3_way_flange_3_way_flange",
-    "FOUR_WAY_FLANGE" : "conqest:old_black_4_way_flange_4_way_flange",
-    "T_FLANGE" : "conqest:old_black_t_flange_t_flange"
+    "ELBOW_FLANGE" : "conqest:old_black_elbow_flange",
+    "BALL_VALVE" : "conqest:old_black_ball_valve",
+    "GATE_VALVE" : "conqest:old_black_gate_valve",
+    "PIPE" : "conqest:old_black_pipe",
+    "CROSS_FLANGE" : "conqest:old_black_cross_flange",
+    "MOUNTED_PIPE" : "conqest:old_black_mounted_pipe",
+    "SIX_WAY_FLANGE" : "conqest:old_black_6_way_flange",
+    "FIVE_WAY_FLANGE" : "conqest:old_black_5_way_flange",
+    "THREE_WAY_FLANGE" : "conqest:old_black_3_way_flange",
+    "FOUR_WAY_FLANGE" : "conqest:old_black_4_way_flange",
+    "T_FLANGE" : "conqest:old_black_t_flange"
   },
   "conqest:green_wooden_door" : {
     "DOOR" : "conqest:green_wooden_door_door"
@@ -11406,6 +11531,7 @@
     "STAIRS" : "conqest:orange_wool_stairs",
     "SLAB" : "conqest:orange_wool_slab",
     "CORNER_SLAB" : "conqest:orange_wool_corner_slab",
+    "FULL" : "conqest:orange_wool",
     "EIGHTH_SLAB" : "conqest:orange_wool_eighth_slab"
   },
   "conqest:limestone_cobble_with_quoins" : {
@@ -11454,7 +11580,7 @@
   },
   "conqest:magenta_concrete_powder" : {
     "STAIRS" : "conqest:magenta_concrete_powder_stairs",
-    "LAYER" : "conqest:magenta_concrete_powder_snow"
+    "LAYER" : "conqest:magenta_concrete_powder_layer"
   },
   "conqest:yellow_autumnal_larch_needles" : {
     "FULL" : "conqest:yellow_autumnal_larch_needles"
@@ -11544,7 +11670,7 @@
   },
   "conqest:brown_gravel" : {
     "STAIRS" : "conqest:brown_gravel_stairs",
-    "LAYER" : "conqest:brown_gravel_snow",
+    "LAYER" : "conqest:brown_gravel_layer",
     "FULL" : "conqest:brown_gravel"
   },
   "conqest:tall_reinforced_oak_door" : {
@@ -11602,7 +11728,7 @@
     "VERTICAL_QUARTER" : "conqest:grass_covered_limestone_vertical_quarter",
     "STAIRS" : "conqest:grass_covered_limestone_stairs",
     "VERTICAL_SLAB" : "conqest:grass_covered_limestone_vertical_slab",
-    "FULL" : "conqest:grass_covered_limestone"
+    "FULL" : [ "conqest:grass_covered_limestone", "conqest:grass_covered_limestone" ]
   },
   "conqest:umbre_mudstone" : {
     "VERTICAL_CORNER" : "conqest:umbre_mudstone_vertical_corner",
@@ -11613,6 +11739,7 @@
     "STAIRS" : "conqest:umbre_mudstone_stairs",
     "SLAB" : "conqest:umbre_mudstone_slab",
     "CORNER_SLAB" : "conqest:umbre_mudstone_corner_slab",
+    "FULL" : "conqest:umbre_mudstone",
     "EIGHTH_SLAB" : "conqest:umbre_mudstone_eighth_slab"
   },
   "conqest:dark_rough_marble" : {
@@ -11693,7 +11820,7 @@
     "VERTICAL_QUARTER" : "conqest:brown_sphagnum_moss_block_vertical_quarter",
     "STAIRS" : "conqest:brown_sphagnum_moss_block_stairs",
     "VERTICAL_SLAB" : "conqest:brown_sphagnum_moss_block_vertical_slab",
-    "LAYER" : "conqest:brown_sphagnum_moss_block_snow",
+    "LAYER" : "conqest:brown_sphagnum_moss_block_layer",
     "FULL" : "conqest:brown_sphagnum_moss_block"
   },
   "conqest:approved_planning_sign" : {
@@ -11904,7 +12031,7 @@
   },
   "conqest:sandstone_debris" : {
     "STAIRS" : "conqest:sandstone_debris_stairs",
-    "LAYER" : "conqest:sandstone_debris_snow",
+    "LAYER" : "conqest:sandstone_debris_layer",
     "FULL" : "conqest:sandstone_debris"
   },
   "conqest:yellow_plaster_with_tudor_diagonal_frame_2" : {
@@ -11932,7 +12059,7 @@
   },
   "conqest:brown_concrete_powder" : {
     "STAIRS" : "conqest:brown_concrete_powder_stairs",
-    "LAYER" : "conqest:brown_concrete_powder_snow"
+    "LAYER" : "conqest:brown_concrete_powder_layer"
   },
   "conqest:light_small_limestone_brick" : {
     "TWO_METER_ARCH" : "conqest:light_small_limestone_brick_two_meter_arch",
@@ -12014,7 +12141,7 @@
     "VERTICAL_QUARTER" : "conqest:lorien_forest_floor_vertical_quarter",
     "STAIRS" : "conqest:lorien_forest_floor_stairs",
     "VERTICAL_SLAB" : "conqest:lorien_forest_floor_vertical_slab",
-    "LAYER" : "conqest:lorien_forest_floor_snow",
+    "LAYER" : "conqest:lorien_forest_floor_layer",
     "FULL" : "conqest:lorien_forest_floor"
   },
   "conqest:black_and_white_tesserae" : {
@@ -12031,12 +12158,12 @@
   },
   "conqest:wet_river_sand" : {
     "STAIRS" : "conqest:wet_river_sand_stairs",
-    "LAYER" : "conqest:wet_river_sand_snow",
+    "LAYER" : "conqest:wet_river_sand_layer",
     "FULL" : "conqest:wet_river_sand"
   },
   "conqest:wet_sand" : {
     "STAIRS" : "conqest:wet_sand_stairs",
-    "LAYER" : "conqest:wet_sand_snow",
+    "LAYER" : "conqest:wet_sand_layer",
     "FULL" : "conqest:wet_sand"
   },
   "conqest:rowan_wood_beam" : {
@@ -12080,7 +12207,7 @@
   },
   "conqest:green_concrete_powder" : {
     "STAIRS" : "conqest:green_concrete_powder_stairs",
-    "LAYER" : "conqest:green_concrete_powder_snow"
+    "LAYER" : "conqest:green_concrete_powder_layer"
   },
   "conqest:horizontal_palm_wood_railing" : {
     "RAILING_HORIZONTAL" : "conqest:horizontal_palm_wood_railing_railing_horizontal",
@@ -12123,6 +12250,7 @@
     "VERTICAL_CORNER_SLAB" : "conqest:mossy_mallorn_log_vertical_corner_slab",
     "STAIRS" : "conqest:mossy_mallorn_log_stairs",
     "CORNER_SLAB" : "conqest:mossy_mallorn_log_corner_slab",
+    "FULL" : "conqest:mossy_mallorn_log",
     "STUMP" : "conqest:mossy_mallorn_log_stump",
     "EIGHTH_SLAB" : "conqest:mossy_mallorn_log_eighth_slab",
     "VERTICAL_CORNER" : "conqest:mossy_mallorn_log_vertical_corner",
@@ -12134,16 +12262,17 @@
     "SMALL_BRANCH" : "conqest:mossy_mallorn_log_small_branch"
   },
   "conqest:green_pipe" : {
-    "ELBOW_FLANGE" : "conqest:green_elbow_flange_elbow_flange",
-    "BALL_VALVE" : "conqest:green_ball_valve_ball_valve",
-    "PIPE" : "conqest:green_pipe_pipe",
-    "CROSS_FLANGE" : "conqest:green_cross_flange_cross_flange",
-    "MOUNTED_PIPE" : [ "conqest:green_mounted_pipe_mounted_pipe", "conqest:green_gate_valve_mounted_pipe" ],
-    "SIX_WAY_FLANGE" : "conqest:green_6_way_flange_6_way_flange",
-    "FIVE_WAY_FLANGE" : "conqest:green_5_way_flange_5_way_flange",
-    "THREE_WAY_FLANGE" : "conqest:green_3_way_flange_3_way_flange",
-    "FOUR_WAY_FLANGE" : "conqest:green_4_way_flange_4_way_flange",
-    "T_FLANGE" : "conqest:green_t_flange_t_flange"
+    "ELBOW_FLANGE" : "conqest:green_elbow_flange",
+    "BALL_VALVE" : "conqest:green_ball_valve",
+    "GATE_VALVE" : "conqest:green_gate_valve",
+    "PIPE" : "conqest:green_pipe",
+    "CROSS_FLANGE" : "conqest:green_cross_flange",
+    "MOUNTED_PIPE" : "conqest:green_mounted_pipe",
+    "SIX_WAY_FLANGE" : "conqest:green_6_way_flange",
+    "FIVE_WAY_FLANGE" : "conqest:green_5_way_flange",
+    "THREE_WAY_FLANGE" : "conqest:green_3_way_flange",
+    "FOUR_WAY_FLANGE" : "conqest:green_4_way_flange",
+    "T_FLANGE" : "conqest:green_t_flange"
   },
   "conqest:sandstone_dispenser" : {
     "FULL" : "conqest:sandstone_dispenser"
@@ -12298,6 +12427,7 @@
     "VERTICAL_CORNER_SLAB" : "conqest:worn_magenta_plaster_vertical_corner_slab",
     "STAIRS" : "conqest:worn_magenta_plaster_stairs",
     "CORNER_SLAB" : "conqest:worn_magenta_plaster_corner_slab",
+    "FULL" : "conqest:worn_magenta_plaster",
     "SMALL_WINDOW_HALF" : "conqest:worn_magenta_plaster_small_window_half",
     "EIGHTH_SLAB" : "conqest:worn_magenta_plaster_eighth_slab",
     "ARROWSLIT" : "conqest:worn_magenta_plaster_arrowslit",
@@ -12470,7 +12600,7 @@
   },
   "conqest:small_stones" : {
     "STAIRS" : "conqest:small_stones_stairs",
-    "LAYER" : "conqest:small_stones_snow",
+    "LAYER" : "conqest:small_stones_layer",
     "FULL" : "conqest:small_stones"
   },
   "conqest:autumnal_weeping_willow_leaves" : {
@@ -12501,6 +12631,7 @@
     "VERTICAL_CORNER_SLAB" : "conqest:rowan_log_vertical_corner_slab",
     "STAIRS" : "conqest:rowan_log_stairs",
     "CORNER_SLAB" : "conqest:rowan_log_corner_slab",
+    "FULL" : "conqest:rowan_log",
     "STUMP" : "conqest:rowan_log_stump",
     "EIGHTH_SLAB" : "conqest:rowan_log_eighth_slab",
     "VERTICAL_CORNER" : "conqest:rowan_log_vertical_corner",
@@ -12553,6 +12684,7 @@
     "STAIRS" : "conqest:peridotite_stairs",
     "SLAB" : "conqest:peridotite_slab",
     "CORNER_SLAB" : "conqest:peridotite_corner_slab",
+    "FULL" : "conqest:peridotite",
     "EIGHTH_SLAB" : "conqest:peridotite_eighth_slab"
   },
   "conqest:baotuo_rug" : {
@@ -12579,7 +12711,7 @@
   },
   "conqest:red_concrete_powder" : {
     "STAIRS" : "conqest:red_concrete_powder_stairs",
-    "LAYER" : "conqest:red_concrete_powder_snow"
+    "LAYER" : "conqest:red_concrete_powder_layer"
   },
   "conqest:blue_tudor_box_frame_2" : {
     "VERTICAL_CORNER" : "conqest:blue_tudor_box_frame_2_vertical_corner",
@@ -12651,6 +12783,7 @@
     "SMALL_WINDOW" : "conqest:andesite_small_window",
     "VERTICAL_CORNER_SLAB" : "conqest:andesite_vertical_corner_slab",
     "CORNER_SLAB" : "conqest:andesite_corner_slab",
+    "FULL" : "conqest:andesite",
     "SMALL_WINDOW_HALF" : "conqest:andesite_small_window_half",
     "EIGHTH_SLAB" : "conqest:andesite_eighth_slab",
     "ARROWSLIT" : "conqest:andesite_arrowslit",
@@ -12799,6 +12932,7 @@
     "SMALL_WINDOW" : "conqest:large_andesite_masonry_small_window",
     "VERTICAL_CORNER_SLAB" : "conqest:large_andesite_masonry_vertical_corner_slab",
     "CORNER_SLAB" : "conqest:large_andesite_masonry_corner_slab",
+    "FULL" : "conqest:large_andesite_masonry",
     "SMALL_WINDOW_HALF" : "conqest:large_andesite_masonry_small_window_half",
     "EIGHTH_SLAB" : "conqest:large_andesite_masonry_eighth_slab",
     "ARROWSLIT" : "conqest:large_andesite_masonry_arrowslit",
@@ -12891,6 +13025,7 @@
     "VERTICAL_CORNER_SLAB" : "conqest:palm_log_vertical_corner_slab",
     "STAIRS" : "conqest:palm_log_stairs",
     "CORNER_SLAB" : "conqest:palm_log_corner_slab",
+    "FULL" : "conqest:palm_log",
     "STUMP" : "conqest:palm_log_stump",
     "EIGHTH_SLAB" : "conqest:palm_log_eighth_slab",
     "VERTICAL_CORNER" : "conqest:palm_log_vertical_corner",
@@ -12957,6 +13092,7 @@
     "VERTICAL_CORNER_SLAB" : "minecraft:dark_spruce_log_vertical_corner_slab",
     "STAIRS" : "minecraft:dark_spruce_log_stairs",
     "CORNER_SLAB" : "minecraft:dark_spruce_log_corner_slab",
+    "FULL" : "minecraft:dark_spruce_log",
     "STUMP" : "minecraft:dark_spruce_log_stump",
     "EIGHTH_SLAB" : "minecraft:dark_spruce_log_eighth_slab",
     "VERTICAL_CORNER" : "minecraft:dark_spruce_log_vertical_corner",
@@ -13057,6 +13193,7 @@
     "VERTICAL_CORNER_SLAB" : "conqest:purple_concrete_vertical_corner_slab",
     "STAIRS" : "conqest:purple_concrete_stairs",
     "CORNER_SLAB" : "conqest:purple_concrete_corner_slab",
+    "FULL" : "conqest:purple_concrete",
     "SMALL_WINDOW_HALF" : "conqest:purple_concrete_small_window_half",
     "EIGHTH_SLAB" : "conqest:purple_concrete_eighth_slab",
     "ARROWSLIT" : "conqest:purple_concrete_arrowslit",
@@ -13124,6 +13261,7 @@
     "STAIRS" : "conqest:black_hardened_clay_stairs",
     "SLAB" : "conqest:black_hardened_clay_slab",
     "CORNER_SLAB" : "conqest:black_hardened_clay_corner_slab",
+    "FULL" : "conqest:black_hardened_clay",
     "EIGHTH_SLAB" : "conqest:black_hardened_clay_eighth_slab"
   },
   "conqest:first_style_polychrome_isodomic_courses" : {
@@ -13222,6 +13360,7 @@
     "STAIRS" : "conqest:light_blue_wool_stairs",
     "SLAB" : "conqest:light_blue_wool_slab",
     "CORNER_SLAB" : "conqest:light_blue_wool_corner_slab",
+    "FULL" : "conqest:light_blue_wool",
     "EIGHTH_SLAB" : "conqest:light_blue_wool_eighth_slab"
   },
   "conqest:black_carpet" : {
@@ -13272,16 +13411,17 @@
     "RAILING_CORNER" : "conqest:horizontal_oak_wood_railing_corner_railing_corner"
   },
   "conqest:old_brown_pipe" : {
-    "ELBOW_FLANGE" : "conqest:old_brown_elbow_flange_elbow_flange",
-    "BALL_VALVE" : "conqest:old_brown_ball_valve_ball_valve",
-    "PIPE" : "conqest:old_brown_pipe_pipe",
-    "CROSS_FLANGE" : "conqest:old_brown_cross_flange_cross_flange",
-    "MOUNTED_PIPE" : [ "conqest:old_brown_mounted_pipe_mounted_pipe", "conqest:old_brown_gate_valve_mounted_pipe" ],
-    "SIX_WAY_FLANGE" : "conqest:old_brown_6_way_flange_6_way_flange",
-    "FIVE_WAY_FLANGE" : "conqest:old_brown_5_way_flange_5_way_flange",
-    "THREE_WAY_FLANGE" : "conqest:old_brown_3_way_flange_3_way_flange",
-    "FOUR_WAY_FLANGE" : "conqest:old_brown_4_way_flange_4_way_flange",
-    "T_FLANGE" : "conqest:old_brown_t_flange_t_flange"
+    "ELBOW_FLANGE" : "conqest:old_brown_elbow_flange",
+    "BALL_VALVE" : "conqest:old_brown_ball_valve",
+    "GATE_VALVE" : "conqest:old_brown_gate_valve",
+    "PIPE" : "conqest:old_brown_pipe",
+    "CROSS_FLANGE" : "conqest:old_brown_cross_flange",
+    "MOUNTED_PIPE" : "conqest:old_brown_mounted_pipe",
+    "SIX_WAY_FLANGE" : "conqest:old_brown_6_way_flange",
+    "FIVE_WAY_FLANGE" : "conqest:old_brown_5_way_flange",
+    "THREE_WAY_FLANGE" : "conqest:old_brown_3_way_flange",
+    "FOUR_WAY_FLANGE" : "conqest:old_brown_4_way_flange",
+    "T_FLANGE" : "conqest:old_brown_t_flange"
   },
   "conqest:tuff" : {
     "VERTICAL_CORNER" : "conqest:tuff_vertical_corner",
@@ -13297,16 +13437,17 @@
     "EIGHTH_SLAB" : "conqest:tuff_eighth_slab"
   },
   "conqest:old_green_pipe" : {
-    "ELBOW_FLANGE" : "conqest:old_green_elbow_flange_elbow_flange",
-    "BALL_VALVE" : "conqest:old_green_ball_valve_ball_valve",
-    "PIPE" : "conqest:old_green_pipe_pipe",
-    "CROSS_FLANGE" : "conqest:old_green_cross_flange_cross_flange",
-    "MOUNTED_PIPE" : [ "conqest:old_green_mounted_pipe_mounted_pipe", "conqest:old_green_gate_valve_mounted_pipe" ],
-    "SIX_WAY_FLANGE" : "conqest:old_green_6_way_flange_6_way_flange",
-    "FIVE_WAY_FLANGE" : "conqest:old_green_5_way_flange_5_way_flange",
-    "THREE_WAY_FLANGE" : "conqest:old_green_3_way_flange_3_way_flange",
-    "FOUR_WAY_FLANGE" : "conqest:old_green_4_way_flange_4_way_flange",
-    "T_FLANGE" : "conqest:old_green_t_flange_t_flange"
+    "ELBOW_FLANGE" : "conqest:old_green_elbow_flange",
+    "BALL_VALVE" : "conqest:old_green_ball_valve",
+    "GATE_VALVE" : "conqest:old_green_gate_valve",
+    "PIPE" : "conqest:old_green_pipe",
+    "CROSS_FLANGE" : "conqest:old_green_cross_flange",
+    "MOUNTED_PIPE" : "conqest:old_green_mounted_pipe",
+    "SIX_WAY_FLANGE" : "conqest:old_green_6_way_flange",
+    "FIVE_WAY_FLANGE" : "conqest:old_green_5_way_flange",
+    "THREE_WAY_FLANGE" : "conqest:old_green_3_way_flange",
+    "FOUR_WAY_FLANGE" : "conqest:old_green_4_way_flange",
+    "T_FLANGE" : "conqest:old_green_t_flange"
   },
   "conqest:white_shipping_container" : {
     "WALL" : "conqest:white_shipping_container_wall",
@@ -13373,6 +13514,7 @@
     "VERTICAL_CORNER_SLAB" : "conqest:gray_concrete_vertical_corner_slab",
     "STAIRS" : "conqest:gray_concrete_stairs",
     "CORNER_SLAB" : "conqest:gray_concrete_corner_slab",
+    "FULL" : "conqest:gray_concrete",
     "SMALL_WINDOW_HALF" : "conqest:gray_concrete_small_window_half",
     "EIGHTH_SLAB" : "conqest:gray_concrete_eighth_slab",
     "ARROWSLIT" : "conqest:gray_concrete_arrowslit",
@@ -13438,7 +13580,7 @@
   },
   "conqest:mossy_schist_debris" : {
     "STAIRS" : "conqest:mossy_schist_debris_stairs",
-    "LAYER" : "conqest:mossy_schist_debris_snow",
+    "LAYER" : "conqest:mossy_schist_debris_layer",
     "FULL" : "conqest:mossy_schist_debris"
   },
   "conqest:autumnal_forest_floor_with_roots" : {
@@ -13446,7 +13588,7 @@
     "VERTICAL_QUARTER" : "conqest:autumnal_forest_floor_with_roots_vertical_quarter",
     "STAIRS" : "conqest:autumnal_forest_floor_with_roots_stairs",
     "VERTICAL_SLAB" : "conqest:autumnal_forest_floor_with_roots_vertical_slab",
-    "LAYER" : "conqest:autumnal_forest_floor_with_roots_snow",
+    "LAYER" : "conqest:autumnal_forest_floor_with_roots_layer",
     "FULL" : "conqest:autumnal_forest_floor_with_roots"
   },
   "conqest:spice_rack" : {
@@ -13479,7 +13621,7 @@
   },
   "conqest:zen_garden_dirt" : {
     "STAIRS" : "conqest:zen_garden_dirt_stairs",
-    "LAYER" : "conqest:zen_garden_dirt_snow",
+    "LAYER" : "conqest:zen_garden_dirt_layer",
     "FULL" : "conqest:zen_garden_dirt"
   },
   "conqest:fancy_magenta_socle" : {
@@ -13523,7 +13665,7 @@
   },
   "conqest:wet_sand_and_vegetation" : {
     "STAIRS" : "conqest:wet_sand_and_vegetation_stairs",
-    "LAYER" : "conqest:wet_sand_and_vegetation_snow",
+    "LAYER" : "conqest:wet_sand_and_vegetation_layer",
     "FULL" : "conqest:wet_sand_and_vegetation"
   },
   "conqest:rusted_cross_hatched_metal_plating" : {
@@ -13559,6 +13701,7 @@
     "STAIRS" : "conqest:brown_mudstone_stairs",
     "SLAB" : "conqest:brown_mudstone_slab",
     "CORNER_SLAB" : "conqest:brown_mudstone_corner_slab",
+    "FULL" : "conqest:brown_mudstone",
     "EIGHTH_SLAB" : "conqest:brown_mudstone_eighth_slab"
   },
   "conqest:horse_chestnut_leaves" : {
@@ -13606,7 +13749,15 @@
     "FULL" : "conqest:black_baroque_wall"
   },
   "conqest:wooden_beam_vertical" : {
-    "FULL" : [ "conqest:cross_beams", "conqest:diagonal_beam_1", "conqest:diagonal_beam_2", "conqest:diagonal_beam_3", "conqest:cross_beams_side", "conqest:diagonal_beam_side_1", "conqest:diagonal_beam_side_2", "conqest:diagonal_beam_side_3", "conqest:wooden_beam_vertical_centered", "conqest:wooden_beam_horizontal_centered" ]
+    "CROSS_BEAMS" : "conqest:cross_beams",
+    "DIAGONAL_BEAM_SIDE_1" : "conqest:diagonal_beam_side_1",
+    "DIAGONAL_BEAM_1" : "conqest:diagonal_beam_1",
+    "DIAGONAL_BEAM_2" : "conqest:diagonal_beam_2",
+    "DIAGONAL_BEAM_3" : "conqest:diagonal_beam_3",
+    "CROSS_BEAMS_SIDE" : "conqest:cross_beams_side",
+    "DIAGONAL_BEAM_SIDE_3" : "conqest:diagonal_beam_side_3",
+    "DIAGONAL_BEAM_SIDE_2" : "conqest:diagonal_beam_side_2",
+    "FULL" : [ "conqest:wooden_beam_vertical_centered", "conqest:wooden_beam_horizontal_centered" ]
   },
   "conqest:gray_windowed_wooden_door" : {
     "DOOR" : "conqest:gray_windowed_wooden_door_door"
@@ -13633,6 +13784,7 @@
     "SMALL_WINDOW" : "conqest:mossy_limestone_cobble_small_window",
     "VERTICAL_CORNER_SLAB" : "conqest:mossy_limestone_cobble_vertical_corner_slab",
     "CORNER_SLAB" : "conqest:mossy_limestone_cobble_corner_slab",
+    "FULL" : "conqest:mossy_limestone_cobble",
     "SMALL_WINDOW_HALF" : "conqest:mossy_limestone_cobble_small_window_half",
     "EIGHTH_SLAB" : "conqest:mossy_limestone_cobble_eighth_slab",
     "ARROWSLIT" : "conqest:mossy_limestone_cobble_arrowslit",
@@ -13662,16 +13814,17 @@
     "FULL" : "conqest:white_red_ribbon_frieze"
   },
   "conqest:old_pipe" : {
-    "ELBOW_FLANGE" : "conqest:old_elbow_flange_elbow_flange",
-    "BALL_VALVE" : "conqest:old_ball_valve_ball_valve",
-    "PIPE" : "conqest:old_pipe_pipe",
-    "CROSS_FLANGE" : "conqest:old_cross_flange_cross_flange",
-    "MOUNTED_PIPE" : [ "conqest:old_mounted_pipe_mounted_pipe", "conqest:old_gate_valve_mounted_pipe" ],
-    "SIX_WAY_FLANGE" : "conqest:old_6_way_flange_6_way_flange",
-    "FIVE_WAY_FLANGE" : "conqest:old_5_way_flange_5_way_flange",
-    "THREE_WAY_FLANGE" : "conqest:old_3_way_flange_3_way_flange",
-    "FOUR_WAY_FLANGE" : "conqest:old_4_way_flange_4_way_flange",
-    "T_FLANGE" : "conqest:old_t_flange_t_flange"
+    "ELBOW_FLANGE" : "conqest:old_elbow_flange",
+    "BALL_VALVE" : "conqest:old_ball_valve",
+    "GATE_VALVE" : "conqest:old_gate_valve",
+    "PIPE" : "conqest:old_pipe",
+    "CROSS_FLANGE" : "conqest:old_cross_flange",
+    "MOUNTED_PIPE" : "conqest:old_mounted_pipe",
+    "SIX_WAY_FLANGE" : "conqest:old_6_way_flange",
+    "FIVE_WAY_FLANGE" : "conqest:old_5_way_flange",
+    "THREE_WAY_FLANGE" : "conqest:old_3_way_flange",
+    "FOUR_WAY_FLANGE" : "conqest:old_4_way_flange",
+    "T_FLANGE" : "conqest:old_t_flange"
   },
   "conqest:sandstone_architrave" : {
     "VERTICAL_CORNER" : "conqest:sandstone_architrave_vertical_corner",
@@ -13698,14 +13851,16 @@
     "VERTICAL_QUARTER" : "minecraft:mycelium_vertical_quarter",
     "STAIRS" : "minecraft:mycelium_stairs",
     "VERTICAL_SLAB" : "minecraft:mycelium_vertical_slab",
-    "LAYER" : "minecraft:mycelium_snow"
+    "LAYER" : "minecraft:mycelium_layer",
+    "FULL" : "minecraft:mycelium"
   },
   "conqest:vibrant_autumnal_forest_floor" : {
     "VERTICAL_CORNER" : "conqest:vibrant_autumnal_forest_floor_vertical_corner",
     "VERTICAL_QUARTER" : "conqest:vibrant_autumnal_forest_floor_vertical_quarter",
     "STAIRS" : "conqest:vibrant_autumnal_forest_floor_stairs",
     "VERTICAL_SLAB" : "conqest:vibrant_autumnal_forest_floor_vertical_slab",
-    "LAYER" : "conqest:vibrant_autumnal_forest_floor_snow"
+    "LAYER" : "conqest:vibrant_autumnal_forest_floor_layer",
+    "FULL" : "conqest:vibrant_autumnal_forest_floor"
   },
   "conqest:yellow_shipping_container" : {
     "WALL" : "conqest:yellow_shipping_container_wall",
@@ -13758,8 +13913,8 @@
     "VERTICAL_QUARTER" : "conqest:clover_covered_grass_vertical_quarter",
     "STAIRS" : "conqest:clover_covered_grass_stairs",
     "VERTICAL_SLAB" : "conqest:clover_covered_grass_vertical_slab",
-    "LAYER" : "conqest:clover_covered_grass_snow",
-    "FULL" : "conqest:clover_covered_grass"
+    "LAYER" : "conqest:clover_covered_grass_layer",
+    "FULL" : [ "conqest:clover_covered_grass", "conqest:clover_covered_grass" ]
   },
   "conqest:red_clay_brick_with_tudor_box_frame_2" : {
     "VERTICAL_CORNER" : "conqest:red_clay_brick_with_tudor_box_frame_2_vertical_corner",
@@ -13769,7 +13924,7 @@
   },
   "conqest:cyan_concrete_powder" : {
     "STAIRS" : "conqest:cyan_concrete_powder_stairs",
-    "LAYER" : "conqest:cyan_concrete_powder_snow"
+    "LAYER" : "conqest:cyan_concrete_powder_layer"
   },
   "conqest:roman_brick_with_rose_plaster" : {
     "TWO_METER_ARCH" : "conqest:roman_brick_with_rose_plaster_two_meter_arch",
@@ -13802,6 +13957,7 @@
     "VERTICAL_CORNER_SLAB" : "conqest:mossy_goat_sallow_log_vertical_corner_slab",
     "STAIRS" : "conqest:mossy_goat_sallow_log_stairs",
     "CORNER_SLAB" : "conqest:mossy_goat_sallow_log_corner_slab",
+    "FULL" : "conqest:mossy_goat_sallow_log",
     "STUMP" : "conqest:mossy_goat_sallow_log_stump",
     "EIGHTH_SLAB" : "conqest:mossy_goat_sallow_log_eighth_slab",
     "VERTICAL_CORNER" : "conqest:mossy_goat_sallow_log_vertical_corner",
@@ -13900,6 +14056,7 @@
     "VERTICAL_CORNER_SLAB" : "conqest:mossy_orange_pine_log_vertical_corner_slab",
     "STAIRS" : "conqest:mossy_orange_pine_log_stairs",
     "CORNER_SLAB" : "conqest:mossy_orange_pine_log_corner_slab",
+    "FULL" : "conqest:mossy_orange_pine_log",
     "STUMP" : "conqest:mossy_orange_pine_log_stump",
     "EIGHTH_SLAB" : "conqest:mossy_orange_pine_log_eighth_slab",
     "VERTICAL_CORNER" : "conqest:mossy_orange_pine_log_vertical_corner",
@@ -13939,17 +14096,18 @@
     "FULL" : "conqest:gilded_carved_spruce_wood"
   },
   "conqest:dirty_blue_clay_beaver_tail_tile" : {
-    "VERTICAL_CORNER" : "conqest:dirty_blue_clay_beaver_tail_tile_vertical_corner",
     "WALL" : "conqest:dirty_blue_clay_beaver_tail_tile_wall",
-    "VERTICAL_QUARTER" : "conqest:dirty_blue_clay_beaver_tail_tile_vertical_quarter",
     "PILLAR" : "conqest:dirty_blue_clay_beaver_tail_tile_pillar",
-    "QUARTER_SLAB" : "conqest:dirty_blue_clay_beaver_tail_tile_quarter_slab",
     "VERTICAL_CORNER_SLAB" : "conqest:dirty_blue_clay_beaver_tail_tile_vertical_corner_slab",
-    "VERTICAL_SLAB" : "conqest:dirty_blue_clay_beaver_tail_tile_vertical_slab",
     "STAIRS" : "conqest:dirty_blue_clay_beaver_tail_tile_stairs",
-    "SLAB" : "conqest:dirty_blue_clay_beaver_tail_tile_slab",
     "CORNER_SLAB" : "conqest:dirty_blue_clay_beaver_tail_tile_corner_slab",
+    "FULL" : "conqest:dirty_blue_clay_beaver_tail_tile",
     "EIGHTH_SLAB" : "conqest:dirty_blue_clay_beaver_tail_tile_eighth_slab",
+    "VERTICAL_CORNER" : "conqest:dirty_blue_clay_beaver_tail_tile_vertical_corner",
+    "VERTICAL_QUARTER" : "conqest:dirty_blue_clay_beaver_tail_tile_vertical_quarter",
+    "QUARTER_SLAB" : "conqest:dirty_blue_clay_beaver_tail_tile_quarter_slab",
+    "VERTICAL_SLAB" : "conqest:dirty_blue_clay_beaver_tail_tile_vertical_slab",
+    "SLAB" : "conqest:dirty_blue_clay_beaver_tail_tile_slab",
     "CAPITAL" : "conqest:dirty_blue_clay_beaver_tail_tile_capital"
   },
   "conqest:polished_parian_marble_column" : {
@@ -14027,7 +14185,7 @@
   },
   "conqest:schist_debris" : {
     "STAIRS" : "conqest:schist_debris_stairs",
-    "LAYER" : "conqest:schist_debris_snow",
+    "LAYER" : "conqest:schist_debris_layer",
     "FULL" : "conqest:schist_debris"
   },
   "conqest:magenta_stucco" : {
@@ -14088,7 +14246,7 @@
   },
   "conqest:orange_concrete_powder" : {
     "STAIRS" : "conqest:orange_concrete_powder_stairs",
-    "LAYER" : "conqest:orange_concrete_powder_snow"
+    "LAYER" : "conqest:orange_concrete_powder_layer"
   },
   "conqest:polychrome_architrave_with_soldiers" : {
     "VERTICAL_CORNER" : "conqest:polychrome_architrave_with_soldiers_vertical_corner",
@@ -14121,11 +14279,12 @@
     "STAIRS" : "conqest:light_gray_wool_stairs",
     "SLAB" : "conqest:light_gray_wool_slab",
     "CORNER_SLAB" : "conqest:light_gray_wool_corner_slab",
+    "FULL" : "conqest:light_gray_wool",
     "EIGHTH_SLAB" : "conqest:light_gray_wool_eighth_slab"
   },
   "conqest:light_blue_concrete_powder" : {
     "STAIRS" : "conqest:light_blue_concrete_powder_stairs",
-    "LAYER" : "conqest:light_blue_concrete_powder_snow"
+    "LAYER" : "conqest:light_blue_concrete_powder_layer"
   },
   "conqest:full_sack_of_hops" : {
     "FULL" : "conqest:full_sack_of_hops"

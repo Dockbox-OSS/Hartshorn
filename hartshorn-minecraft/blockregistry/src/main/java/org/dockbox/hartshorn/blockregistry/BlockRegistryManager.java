@@ -1,11 +1,10 @@
 package org.dockbox.hartshorn.blockregistry;
 
-import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.blockregistry.models.FamilyModel;
 import org.dockbox.hartshorn.di.annotations.Service;
 import org.dockbox.hartshorn.persistence.mapping.GenericType;
 import org.dockbox.hartshorn.persistence.mapping.JacksonObjectMapper;
-import org.dockbox.hartshorn.persistence.mapping.ObjectMapper;
 import org.dockbox.hartshorn.persistence.registry.Registry;
 import org.dockbox.hartshorn.server.minecraft.item.Item;
 import org.dockbox.hartshorn.server.minecraft.item.storage.MinecraftItems;
@@ -14,6 +13,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -200,6 +200,10 @@ public class BlockRegistryManager
 //            .get(ObjectMapper.class)
         new JacksonObjectMapper()
             .write(Path.of("blockregistry.json"), this.blockRegistry);
+    }
+
+    private List<FamilyModel> generatePersistentModels() {
+        return HartshornUtils.emptyList();
     }
 
     @Override
