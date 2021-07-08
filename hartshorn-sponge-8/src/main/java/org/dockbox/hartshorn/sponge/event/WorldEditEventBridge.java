@@ -15,22 +15,12 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.server.minecraft.events.player.interact;
+package org.dockbox.hartshorn.sponge.event;
 
-import org.dockbox.hartshorn.api.domain.Target;
-import org.dockbox.hartshorn.server.minecraft.dimension.position.Location;
-import org.dockbox.hartshorn.server.minecraft.events.player.PlayerMoveEvent;
+import org.dockbox.hartshorn.api.events.annotations.Posting;
+import org.dockbox.hartshorn.worldedit.events.WorldEditCopyEvent;
+import org.dockbox.hartshorn.worldedit.events.WorldEditPasteEvent;
 
-/** The event fired when a player is teleported to the spawn location. */
-public class PlayerSpawnEvent extends PlayerMoveEvent {
-    private final Location spawnLocation;
-
-    public PlayerSpawnEvent(Target target, Location spawnLocation) {
-        super(target);
-        this.spawnLocation = spawnLocation;
-    }
-
-    public Location getSpawnLocation() {
-        return this.spawnLocation;
-    }
+@Posting({ WorldEditCopyEvent.class, WorldEditPasteEvent.class })
+public class WorldEditEventBridge implements EventBridge {
 }
