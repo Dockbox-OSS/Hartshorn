@@ -17,11 +17,11 @@
 
 package org.dockbox.hartshorn.test.util;
 
-import org.dockbox.hartshorn.api.config.Environment;
 import org.dockbox.hartshorn.api.config.GlobalConfig;
 import org.dockbox.hartshorn.api.exceptions.ExceptionLevels;
 
 public class JUnitGlobalConfig implements GlobalConfig {
+
     @Override
     public boolean getStacktracesAllowed() {
         return false;
@@ -30,11 +30,6 @@ public class JUnitGlobalConfig implements GlobalConfig {
     @Override
     public ExceptionLevels getExceptionLevel() {
         return ExceptionLevels.MINIMAL;
-    }
-
-    @Override
-    public Environment getEnvironment() {
-        return Environment.JUNIT;
     }
 
     @Override

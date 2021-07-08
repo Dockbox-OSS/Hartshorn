@@ -31,7 +31,6 @@ import org.dockbox.hartshorn.di.SimpleTypeFactory;
 import org.dockbox.hartshorn.di.TypeFactory;
 import org.dockbox.hartshorn.persistence.FileManager;
 import org.dockbox.hartshorn.server.minecraft.Console;
-import org.dockbox.hartshorn.server.minecraft.MinecraftServerType;
 import org.dockbox.hartshorn.server.minecraft.MinecraftVersion;
 import org.dockbox.hartshorn.server.minecraft.dimension.Worlds;
 import org.dockbox.hartshorn.server.minecraft.item.Item;
@@ -92,8 +91,6 @@ public class SpongeInjector extends InjectConfiguration {
 //        this.bind(SpawnEntityPacket.class, NMSSpawnEntityPacket.class);
 
         this.bind(GlobalConfig.class, TargetGlobalConfig.class);
-
-        this.bind(MinecraftServerType.class, MinecraftServerType.SPONGE);
         this.bind(MinecraftVersion.class, MinecraftVersion.MC1_16);
     }
 }
