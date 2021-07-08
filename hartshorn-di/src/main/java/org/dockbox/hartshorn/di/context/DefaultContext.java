@@ -32,7 +32,7 @@ public abstract class DefaultContext implements Context {
     @Override
     public <C extends Context> Exceptional<C> first(Class<C> context) {
         return Exceptional.of(this.contexts.stream()
-                .filter(c -> Reflect.assignableFrom(context, c.getClass()))
+                .filter(c -> Reflect.assigns(context, c.getClass()))
                 .findFirst())
                 .map(c -> (C) c);
     }

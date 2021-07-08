@@ -70,7 +70,7 @@ public class DeserialisationServiceModifier extends AbstractPersistenceServiceMo
 
     @SuppressWarnings("unchecked")
     private <R> R wrapResult(Exceptional<?> result, MethodProxyContext<?> methodContext) {
-        if (Reflect.assignableFrom(Exceptional.class, methodContext.getReturnType())) return (R) result;
+        if (Reflect.assigns(Exceptional.class, methodContext.getReturnType())) return (R) result;
         else return (R) result.orNull();
     }
 
@@ -82,7 +82,7 @@ public class DeserialisationServiceModifier extends AbstractPersistenceServiceMo
     @Override
     public <T> boolean preconditions(ApplicationContext context, MethodProxyContext<T> methodContext) {
         if (methodContext.getMethod().getParameterCount() > 1) return false;
-        if (!Reflect.isNotVoid(methodContext.getReturnType())) return false;
+        if (!Reflect.notVoid(methodContext.getReturnType())) return false;
 
         final Deserialise annotation = methodContext.getAnnotation(Deserialise.class);
 
@@ -105,12 +105,12 @@ public class DeserialisationServiceModifier extends AbstractPersistenceServiceMo
         else if (methodContext.getMethod().getParameterCount() == 1) {
             final Class<?> parameterType = methodContext.getMethod().getParameterTypes()[0];
 
-            if (Reflect.assignableFrom(String.class, parameterType)) {
+            if (Reflect.assigns(String.class, parameterType)) {
                 deserialisationContext.setTarget(SerialisationTarget.STRING);
                 return true;
 
             }
-            else if (Reflect.assignableFrom(Path.class, parameterType) || Reflect.assignableFrom(File.class, parameterType)) {
+            else if (Reflect.assigns(Path.class, parameterType) || Reflect.assigns(File.class, parameterType)) {
                 deserialisationContext.setTarget(SerialisationTarget.PARAMETER_PATH);
                 return true;
             }
@@ -120,8 +120,8 @@ public class DeserialisationServiceModifier extends AbstractPersistenceServiceMo
 
     private Class<?> getOutputType(MethodProxyContext<?> context) {
         final Class<?> returnType = context.getReturnType();
-        if (Reflect.assignableFrom(Exceptional.class, returnType)) {
-            final Exceptional<Type> typeExceptional = Reflect.genericTypeParameter(returnType, 0);
+        if (Reflect.assigns(Exceptional.class, returnType)) {
+            final Exceptional<Type> typeExceptional = Reflect.typeParameter(returnType, 0);
             if (typeExceptional.absent()) return null;
             else {
                 final Type type = typeExceptional.get();

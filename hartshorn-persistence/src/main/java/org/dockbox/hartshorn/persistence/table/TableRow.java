@@ -44,7 +44,7 @@ public class TableRow {
     @NotNull
     public TableRow addValue(@NotNull ColumnIdentifier<?> column, @Nullable Object value) {
         // Make sure both the Identifier and the Value are both the same type
-        if (null == value || Reflect.assignableFrom(column.getType(), value.getClass()))
+        if (null == value || Reflect.assigns(column.getType(), value.getClass()))
             this.data.put(column, value);
         else
             throw new IllegalArgumentException(

@@ -142,7 +142,7 @@ public abstract class AbstractPipeline<P, I> {
      *         not cancellable
      */
     protected Exceptional<I> processPipe(IPipe<I, I> pipe, Exceptional<I> exceptionalInput) {
-        if (!this.isCancellable() && Reflect.assignableFrom(CancellablePipe.class, pipe.getType())) {
+        if (!this.isCancellable() && Reflect.assigns(CancellablePipe.class, pipe.getType())) {
             throw new IllegalPipeException(
                     "Attempted to add a CancellablePipe to an uncancellable pipeline.");
         }
@@ -151,12 +151,12 @@ public abstract class AbstractPipeline<P, I> {
         final Exceptional<I> finalInput = exceptionalInput;
 
         exceptionalInput = Exceptional.of(() -> {
-            if (Reflect.assignableFrom(ComplexPipe.class, pipe.getType())) {
+            if (Reflect.assigns(ComplexPipe.class, pipe.getType())) {
                 ComplexPipe<I, I> complexPipe = (ComplexPipe<I, I>) pipe;
                 return complexPipe.apply(
                         this, finalInput.orNull(), finalInput.unsafeError());
             }
-            else if (Reflect.assignableFrom(StandardPipe.class, pipe.getType())) {
+            else if (Reflect.assigns(StandardPipe.class, pipe.getType())) {
                 StandardPipe<I, I> standardPipe = (StandardPipe<I, I>) pipe;
                 return standardPipe.apply(finalInput);
             }

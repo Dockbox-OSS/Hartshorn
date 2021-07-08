@@ -54,7 +54,7 @@ public final class ArgumentConverterRegistry {
     private static <T> Exceptional<ArgumentConverter<T>> getOptionalConverter(Class<T> type) {
         //noinspection unchecked
         return Exceptional.of(CONVERTERS.stream()
-                .filter(converter -> Reflect.assignableFrom(converter.getType(), type))
+                .filter(converter -> Reflect.assigns(converter.getType(), type))
                 .map(converter -> (ArgumentConverter<T>) converter)
                 .findFirst());
     }
