@@ -57,4 +57,7 @@ public interface CommandResources {
     @Resource(value = "Could not parse {0} '{1}'", key = "command.parse.failure")
     ResourceEntry getCouldNotParse(String type, String name);
 
+    @Resource(value = "Could not execute the command as it was cancelled", key = "command.cancelled")
+    ResourceEntry getCancelled();
+
 }

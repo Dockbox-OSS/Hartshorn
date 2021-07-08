@@ -151,10 +151,17 @@ public class MethodCommandExecutorContext extends DefaultContext implements Comm
     @Override
     public CommandExecutor executor() {
         return (ctx) -> {
+            final Cancellable before = new Before(ctx.getSender(), ctx).post();
+            if (before.isCancelled()) {
+                final ResourceEntry cancelled = Hartshorn.context().get(CommandResources.class).getCancelled();
+                ctx.getSender().send(cancelled);
+            }
+
             final Object instance = Hartshorn.context().get(this.getType());
             final List<Object> arguments = this.arguments(ctx);
             try {
                 this.method().invoke(instance, arguments.toArray());
+                new CommandEvent.After(ctx.getSender(), ctx).post();
             }
             catch (IllegalAccessException | InvocationTargetException e) {
                 Except.handle(e);
