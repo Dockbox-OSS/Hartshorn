@@ -37,4 +37,6 @@ public interface ServiceContainer {
     boolean hasActivator();
 
     Environment getEnvironment();
+
+    boolean isSingleton();
 }

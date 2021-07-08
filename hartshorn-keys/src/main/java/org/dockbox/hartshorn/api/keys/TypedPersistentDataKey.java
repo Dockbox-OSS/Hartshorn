@@ -18,7 +18,6 @@
 package org.dockbox.hartshorn.api.keys;
 
 import org.dockbox.hartshorn.api.Hartshorn;
-import org.dockbox.hartshorn.api.domain.MetaProvider;
 import org.dockbox.hartshorn.api.domain.TypedOwner;
 import org.jetbrains.annotations.NonNls;
 
@@ -36,14 +35,11 @@ public class TypedPersistentDataKey<T> implements PersistentDataKey<T> {
     private final TypedOwner owner;
     private final Class<T> type;
 
-    private final MetaProvider lookup;
-
     public TypedPersistentDataKey(String name, String id, TypedOwner owner, Class<T> type) {
         this.name = name;
         this.id = id;
         this.owner = owner;
         this.type = type;
-        this.lookup = Hartshorn.context().get(MetaProvider.class);
     }
 
     @Override
@@ -63,7 +59,7 @@ public class TypedPersistentDataKey<T> implements PersistentDataKey<T> {
 
         if (!this.id.equals(that.id)) return false;
         if (!this.owner.equals(that.owner) &&
-                !this.owner.equals(this.lookup.lookup(Hartshorn.class)))
+                !this.owner.equals(Hartshorn.context().meta().lookup(Hartshorn.class)))
             return false;
         return this.type.equals(that.type);
     }

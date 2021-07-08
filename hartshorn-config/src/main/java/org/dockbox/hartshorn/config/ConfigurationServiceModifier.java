@@ -22,7 +22,6 @@ import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.config.annotations.Configuration;
 import org.dockbox.hartshorn.config.annotations.UseConfigurations;
 import org.dockbox.hartshorn.config.annotations.Value;
-import org.dockbox.hartshorn.di.annotations.Service;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.di.inject.InjectionModifier;
 import org.dockbox.hartshorn.di.properties.InjectorProperty;
@@ -49,7 +48,7 @@ public class ConfigurationServiceModifier implements InjectionModifier<UseConfig
     }
 
     private boolean isAnnotated(Class<?> type) {
-        return type.isAnnotationPresent(Service.class) || type.isAnnotationPresent(Configuration.class);
+        return Hartshorn.context().locator().container(type).present() || type.isAnnotationPresent(Configuration.class);
     }
 
     @Override

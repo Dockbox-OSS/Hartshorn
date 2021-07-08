@@ -18,7 +18,9 @@
 package org.dockbox.hartshorn.di;
 
 import org.dockbox.hartshorn.api.Hartshorn;
+import org.dockbox.hartshorn.api.domain.MetaProvider;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
+import org.dockbox.hartshorn.di.services.ServiceLocator;
 import org.dockbox.hartshorn.di.types.SampleContextAwareType;
 import org.dockbox.hartshorn.test.HartshornRunner;
 import org.junit.jupiter.api.Assertions;
@@ -38,5 +40,27 @@ public class ContextAwareTests {
         Assertions.assertNotNull(sampleContextAwareType.getContext());
 
         Assertions.assertSame(applicationContext, sampleContextAwareType.getContext());
+    }
+
+    @Test
+    void testMetaProviderIsBound() {
+        final MetaProvider metaProvider = Hartshorn.context().get(MetaProvider.class);
+        Assertions.assertNotNull(metaProvider);
+
+        final MetaProvider directMetaProvider = Hartshorn.context().meta();
+        Assertions.assertNotNull(directMetaProvider);
+
+        Assertions.assertSame(metaProvider, directMetaProvider);
+    }
+
+    @Test
+    void testServiceLocatorIsBound() {
+        final ServiceLocator serviceLocator = Hartshorn.context().get(ServiceLocator.class);
+        Assertions.assertNotNull(serviceLocator);
+
+        final ServiceLocator directServiceLocator = Hartshorn.context().locator();
+        Assertions.assertNotNull(directServiceLocator);
+
+        Assertions.assertSame(serviceLocator, directServiceLocator);
     }
 }

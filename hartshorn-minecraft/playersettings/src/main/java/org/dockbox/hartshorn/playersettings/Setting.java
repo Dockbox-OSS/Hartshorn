@@ -18,7 +18,6 @@
 package org.dockbox.hartshorn.playersettings;
 
 import org.dockbox.hartshorn.api.Hartshorn;
-import org.dockbox.hartshorn.api.domain.MetaProvider;
 import org.dockbox.hartshorn.api.domain.TypedOwner;
 import org.dockbox.hartshorn.api.i18n.common.ResourceEntry;
 import org.dockbox.hartshorn.api.i18n.entry.FakeResource;
@@ -115,7 +114,7 @@ public class Setting<T> extends TypedPersistentDataKey<T> {
         }
 
         public SettingBuilder<T> owner(Class<?> owner) {
-            this.owner = Hartshorn.context().get(MetaProvider.class).lookup(owner);
+            this.owner = Hartshorn.context().meta().lookup(owner);
             return this;
         }
 
