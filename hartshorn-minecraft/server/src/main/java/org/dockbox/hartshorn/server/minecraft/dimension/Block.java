@@ -19,13 +19,14 @@ package org.dockbox.hartshorn.server.minecraft.dimension;
 
 import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.api.keys.PersistentDataHolder;
 import org.dockbox.hartshorn.server.minecraft.dimension.position.Location;
 import org.dockbox.hartshorn.server.minecraft.item.Item;
 import org.dockbox.hartshorn.server.minecraft.item.storage.MinecraftItems;
 
 import java.util.Map;
 
-public interface Block {
+public interface Block extends PersistentDataHolder {
 
     Exceptional<Item> item();
     String id();

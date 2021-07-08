@@ -17,6 +17,7 @@
 
 package org.dockbox.hartshorn.sponge.game;
 
+import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.i18n.entry.DefaultResources;
 import org.dockbox.hartshorn.api.keys.PersistentDataHolder;
@@ -55,7 +56,7 @@ public interface SpongeComposite extends PersistentDataHolder {
 
     @Override
     default <T> TransactionResult set(PersistentDataKey<T> dataKey, T value) {
-        return this.getDataHolder().map(composite -> {
+        return this.holder().map(composite -> {
             final Map<String, Object> data = this.raw();
             data.put(dataKey.getId(), value);
 
@@ -67,7 +68,7 @@ public interface SpongeComposite extends PersistentDataHolder {
 
     @Override
     default <T> void remove(PersistentDataKey<T> dataKey) {
-        this.getDataHolder().present(composite -> {
+        this.holder().present(composite -> {
             final Map<String, Object> data = this.raw();
             data.remove(dataKey.getId());
             composite.offer(COMPOSITE, data);
@@ -76,7 +77,7 @@ public interface SpongeComposite extends PersistentDataHolder {
 
     @Override
     default Map<PersistentDataKey<?>, Object> getPersistentData() {
-        final Exceptional<? extends DataHolder> dataHolder = this.getDataHolder();
+        final Exceptional<? extends DataHolder> dataHolder = this.holder();
         if (dataHolder.absent()) return HartshornUtils.emptyMap();
 
         final Map<PersistentDataKey<?>, Object> data = HartshornUtils.emptyMap();
@@ -91,10 +92,16 @@ public interface SpongeComposite extends PersistentDataHolder {
     }
 
     private Map<String, Object> raw() {
-        return this.getDataHolder().map(composite -> composite
+        return this.holder().map(composite -> composite
                 .get(COMPOSITE)
                 .orElseGet(HartshornUtils::emptyMap)
         ).get();
+    }
+
+    private Exceptional<? extends DataHolder.Mutable> holder() {
+        return this.getDataHolder().absent(() -> {
+            Hartshorn.log().warn("Attempted to access data holder in " + this.getClass().getSimpleName() + " but none was present.");
+        });
     }
 
     Exceptional<? extends DataHolder.Mutable> getDataHolder();
