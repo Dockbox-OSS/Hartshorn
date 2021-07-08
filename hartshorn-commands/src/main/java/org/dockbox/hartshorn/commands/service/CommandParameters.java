@@ -28,7 +28,7 @@ import org.dockbox.hartshorn.util.Reflect;
 
 import java.util.Collection;
 
-@Service(activator = UseBootstrap.class)
+@Service(activators = UseBootstrap.class)
 public class CommandParameters {
 
     @PostBootstrap

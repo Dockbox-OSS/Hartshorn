@@ -21,6 +21,7 @@ import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.annotations.PostBootstrap;
 import org.dockbox.hartshorn.api.annotations.UseBootstrap;
 import org.dockbox.hartshorn.api.events.annotations.Posting;
+import org.dockbox.hartshorn.api.events.annotations.UseEvents;
 import org.dockbox.hartshorn.api.events.parents.Event;
 import org.dockbox.hartshorn.di.annotations.Service;
 import org.dockbox.hartshorn.util.HartshornUtils;
@@ -30,7 +31,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
-@Service(activator = UseBootstrap.class)
+@Service(activators = { UseBootstrap.class, UseEvents.class })
 public class EventValidator {
 
     @PostBootstrap

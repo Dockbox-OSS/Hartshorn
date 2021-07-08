@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.di.services;
 
 import org.dockbox.hartshorn.di.ApplicationContextAware;
 import org.dockbox.hartshorn.di.annotations.Service;
+import org.dockbox.hartshorn.di.annotations.ServiceActivator;
 import org.dockbox.hartshorn.di.binding.Bindings;
 import org.dockbox.hartshorn.util.HartshornUtils;
 
@@ -46,27 +47,35 @@ public class SimpleServiceContainer implements ServiceContainer {
     }
 
     @Override
-    public boolean isEnabled() {
+    public boolean enabled() {
         return !this.annotation.disabled();
     }
 
     @Override
-    public Class<?> getOwner() {
+    public Class<?> owner() {
         return this.annotation.owner();
     }
 
     @Override
-    public Class<? extends Annotation> getActivator() {
-        return this.annotation.activator();
+    public List<Class<? extends Annotation>> activators() {
+        return HartshornUtils.asUnmodifiableList(this.annotation.activators());
     }
 
     @Override
     public boolean hasActivator() {
-        return !Service.class.equals(this.getActivator());
+        return !(this.activators().size() == 1 && Service.class.equals(this.activators().get(0)));
     }
 
     @Override
-    public boolean isSingleton() {
+    public boolean hasActivator(Class<? extends Annotation> activator) {
+        if (!activator.isAnnotationPresent(ServiceActivator.class))
+            throw new IllegalArgumentException("Requested activator " + activator.getSimpleName() + " is not decorated with @ServiceActivator");
+
+        return this.activators().contains(activator);
+    }
+
+    @Override
+    public boolean singleton() {
         return this.annotation.singleton();
     }
 }

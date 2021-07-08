@@ -20,6 +20,6 @@ package org.dockbox.hartshorn.api;
 import org.dockbox.hartshorn.api.annotations.UseBootstrap;
 import org.dockbox.hartshorn.di.annotations.Service;
 
-@Service(activator = UseBootstrap.class)
+@Service(activators = UseBootstrap.class)
 public interface EmptyPostBootstrapService {
 }

@@ -35,7 +35,7 @@ public @interface Service {
     boolean disabled() default false;
 
     Class<?> owner() default Void.class;
-    Class<? extends Annotation> activator() default Service.class;
+    Class<? extends Annotation>[] activators() default Service.class;
 
     boolean singleton() default true;
 }
