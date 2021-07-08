@@ -40,7 +40,7 @@ public class InjectorMetaProvider implements MetaProvider {
             final Exceptional<ServiceContainer> container = ApplicationContextAware.instance().getContext().locator().container(type);
             if (container.present()) {
                 final ServiceContainer service = container.get();
-                if (Reflect.notVoid(service.getOwner())) return this.lookup(service.getOwner());
+                if (Reflect.notVoid(service.owner())) return this.lookup(service.owner());
             }
         }
         return SimpleTypedOwner.of(Bindings.serviceId(type));
@@ -55,7 +55,7 @@ public class InjectorMetaProvider implements MetaProvider {
                 .getContext()
                 .locator()
                 .container(type)
-                .map(ServiceContainer::isSingleton)
+                .map(ServiceContainer::singleton)
                 .or(false);
     }
 

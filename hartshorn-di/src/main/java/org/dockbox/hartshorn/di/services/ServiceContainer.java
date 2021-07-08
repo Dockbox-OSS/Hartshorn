@@ -26,13 +26,15 @@ public interface ServiceContainer {
     String getName();
     List<String> getDependencies();
 
-    boolean isEnabled();
+    boolean enabled();
 
     Class<?> getType();
-    Class<?> getOwner();
+    Class<?> owner();
 
-    Class<? extends Annotation> getActivator();
+    List<Class<? extends Annotation>> activators();
     boolean hasActivator();
 
-    boolean isSingleton();
+    boolean hasActivator(Class<? extends Annotation> activator);
+
+    boolean singleton();
 }

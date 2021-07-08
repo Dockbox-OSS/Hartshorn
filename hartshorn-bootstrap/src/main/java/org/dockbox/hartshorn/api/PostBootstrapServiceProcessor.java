@@ -20,7 +20,6 @@ package org.dockbox.hartshorn.api;
 import org.dockbox.hartshorn.api.annotations.PostBootstrap;
 import org.dockbox.hartshorn.api.annotations.UseBootstrap;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
-import org.dockbox.hartshorn.di.services.ServiceContainer;
 import org.dockbox.hartshorn.di.services.ServiceProcessor;
 import org.dockbox.hartshorn.util.Reflect;
 
@@ -32,8 +31,7 @@ public class PostBootstrapServiceProcessor implements ServiceProcessor<UseBootst
     @Override
     public boolean preconditions(Class<?> type) {
         boolean activated = Hartshorn.context().locator().container(type)
-                .map(ServiceContainer::getActivator)
-                .map(UseBootstrap.class::equals)
+                .map(serviceContainer -> serviceContainer.hasActivator(UseBootstrap.class))
                 .or(false);
         boolean hasPosts = !Reflect.methods(type, PostBootstrap.class).isEmpty();
         return activated && hasPosts;

@@ -28,10 +28,9 @@ import org.dockbox.hartshorn.di.InjectableBootstrap;
 import org.dockbox.hartshorn.di.Modifier;
 import org.dockbox.hartshorn.di.annotations.InjectPhase;
 import org.dockbox.hartshorn.di.annotations.Required;
-import org.dockbox.hartshorn.di.annotations.Service;
 import org.dockbox.hartshorn.di.services.ServiceContainer;
-import org.dockbox.hartshorn.util.Reflect;
 import org.dockbox.hartshorn.util.HartshornUtils;
+import org.dockbox.hartshorn.util.Reflect;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -102,10 +101,9 @@ public abstract class HartshornBootstrap extends InjectableBootstrap {
 
         if (container.present()) {
             final ServiceContainer serviceContainer = container.get();
-            final Class<? extends Annotation> activator = serviceContainer.getActivator();
-            if (Service.class.equals(activator)) return;
+            final List<Class<? extends Annotation>> activators = serviceContainer.activators();
 
-            if (this.getContext().hasActivator(activator))
+            if (serviceContainer.hasActivator() && activators.stream().allMatch(this.getContext()::hasActivator))
                 this.postBootstrapActivations.add(method);
         }
     }

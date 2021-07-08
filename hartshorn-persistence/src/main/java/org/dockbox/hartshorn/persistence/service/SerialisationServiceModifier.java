@@ -138,7 +138,7 @@ public class SerialisationServiceModifier extends AbstractPersistenceServiceModi
 
     private Class<?> getOwner(Class<?> annotationOwner, MethodProxyContext<?> context) {
         if (Reflect.notVoid(annotationOwner)) return annotationOwner;
-        return Hartshorn.context().locator().container(context.getMethod().getDeclaringClass()).map(ServiceContainer::getOwner).orNull();
+        return Hartshorn.context().locator().container(context.getMethod().getDeclaringClass()).map(ServiceContainer::owner).orNull();
     }
 
     private boolean argumentPathTargetPreconditions(MethodProxyContext<?> context) {
