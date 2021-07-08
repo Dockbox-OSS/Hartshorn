@@ -28,6 +28,7 @@ import org.dockbox.hartshorn.util.HartshornUtils;
 import java.util.Map;
 
 public class EmptyLocation extends Location {
+    
     @Override
     public <T> Exceptional<T> get(PersistentDataKey<T> dataKey) {
         return Exceptional.empty();

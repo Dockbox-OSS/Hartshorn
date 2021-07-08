@@ -38,6 +38,14 @@ public abstract class Location implements KeyHolder<Location>, PersistentDataHol
         return Hartshorn.context().get(Location.class, world);
     }
 
+    public static Location of(int x, int y, int z, World world) {
+        return of(Vector3N.of(x, y,z), world);
+    }
+
+    public static Location of(Vector3N position, World world) {
+        return Hartshorn.context().get(Location.class, position, world);
+    }
+
     public double getX() {
         return this.getVectorLoc().getXd();
     }

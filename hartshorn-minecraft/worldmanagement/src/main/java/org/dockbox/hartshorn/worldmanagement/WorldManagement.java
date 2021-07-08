@@ -59,7 +59,7 @@ public class WorldManagement {
     public void on(PlayerPortalEvent event) {
         if (event.usesPortal() && event.getNewLocation().getWorld().getName().equals(this.config.getPortalWorldTarget())) {
             event.setUsePortal(false);
-            event.setNewLocation(new Location(this.config.getPortalPosition(), event.getNewLocation().getWorld()));
+            event.setNewLocation(Location.of(this.config.getPortalPosition(), event.getNewLocation().getWorld()));
         }
     }
 

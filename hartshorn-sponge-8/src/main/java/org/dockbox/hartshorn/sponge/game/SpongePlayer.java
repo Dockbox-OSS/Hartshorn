@@ -227,7 +227,7 @@ public class SpongePlayer extends Player implements SpongeEntity<net.minecraft.s
                 .map(player -> this.trace(RayTrace.block(), player))
                 .map(RayTraceResult::hitPosition)
                 .map(SpongeConvert::fromSponge)
-                .map(vector -> new Location(vector, this.getWorld()))
+                .map(vector -> Location.of(vector, this.getWorld()))
                 .map(Block::from);
     }
 
