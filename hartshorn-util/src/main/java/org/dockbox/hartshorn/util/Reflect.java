@@ -634,7 +634,7 @@ public final class Reflect {
      * @return the boolean
      */
     public static boolean isNotVoid(Class<?> type) {
-        return !(type.equals(Void.class) || type == Void.TYPE);
+        return !(type == null || Void.class.equals(type) || type == Void.TYPE);
     }
 
     /**

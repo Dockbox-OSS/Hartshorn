@@ -17,6 +17,7 @@
 
 package org.dockbox.hartshorn.di.services;
 
+import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.di.annotations.Service;
 import org.dockbox.hartshorn.util.Reflect;
 import org.dockbox.hartshorn.util.HartshornUtils;
@@ -54,5 +55,14 @@ public class SimpleServiceLocator implements ServiceLocator {
     @Override
     public Collection<ServiceContainer> containers() {
         return cache.entrySet().stream().flatMap(a -> a.getValue().stream()).toList();
+    }
+
+    @Override
+    public Exceptional<ServiceContainer> container(Class<?> type) {
+        return Exceptional.of(this.containers()
+                .stream()
+                .filter(container -> container.getType().equals(type))
+                .findFirst()
+        );
     }
 }

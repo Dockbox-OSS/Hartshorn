@@ -18,10 +18,9 @@
 package org.dockbox.hartshorn.persistence.service;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.api.domain.MetaProvider;
 import org.dockbox.hartshorn.api.domain.TypedOwner;
-import org.dockbox.hartshorn.di.annotations.Service;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
+import org.dockbox.hartshorn.di.services.ServiceContainer;
 import org.dockbox.hartshorn.persistence.FileManager;
 import org.dockbox.hartshorn.persistence.FileType;
 import org.dockbox.hartshorn.persistence.annotations.UsePersistence;
@@ -74,11 +73,13 @@ public abstract class AbstractPersistenceServiceModifier<M extends Annotation, C
         Class<?> owner = annotationContext.getFile().owner();
 
         if (!Reflect.isNotVoid(owner)) {
-            final Service service = methodContext.getMethod().getDeclaringClass().getAnnotation(Service.class);
-            owner = service.owner();
+            final Exceptional<ServiceContainer> container = context.locator().container(methodContext.getMethod().getDeclaringClass());
+            if (container.present()) {
+                owner = container.get().getOwner();
+            }
         }
 
-        final TypedOwner lookup = context.get(MetaProvider.class).lookup(owner);
+        final TypedOwner lookup = context.meta().lookup(owner);
         final FileManager fileManager = context.get(FileManager.class);
 
         if ("".equals(annotationContext.getFile().value())) return fileManager.getDataFile(lookup);
