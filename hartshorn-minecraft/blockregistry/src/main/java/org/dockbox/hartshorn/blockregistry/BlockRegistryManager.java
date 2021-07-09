@@ -27,7 +27,8 @@ public class BlockRegistryManager
     private final Map<String, Registry<String>> blockRegistry;
 
     public BlockRegistryManager() {
-        this.blockRegistry = this.loadBlockRegistry();
+        //this.blockRegistry = this.loadBlockRegistry();
+        this.blockRegistry = HartshornUtils.emptyMap();
     }
 
     /**

@@ -51,7 +51,7 @@ public final class BlockDataInitialisationManager
         VariantIdentifier.SPHERE, VariantIdentifier.SLAB, VariantIdentifier.QUARTER_SLAB,
         VariantIdentifier.CORNER_SLAB, VariantIdentifier.EIGHTH_SLAB, VariantIdentifier.VERTICAL_CORNER_SLAB,
         VariantIdentifier.VERTICAL_SLAB, VariantIdentifier.VERTICAL_CORNER, VariantIdentifier.VERTICAL_QUARTER,
-        VariantIdentifier.WALL, VariantIdentifier.PILLAR);
+        VariantIdentifier.WALL, VariantIdentifier.PILLAR, VariantIdentifier.STAIRS);
 
     private static final TypeList refinedStoneCobbleBrickShapesVanillaNoWall = TypeList.of(VariantIdentifier.FULL,
         VariantIdentifier.SMALL_ARCH, VariantIdentifier.SMALL_ARCH_HALF, VariantIdentifier.TWO_METER_ARCH,
@@ -59,12 +59,14 @@ public final class BlockDataInitialisationManager
         VariantIdentifier.SMALL_WINDOW_HALF, VariantIdentifier.BALUSTRADE, VariantIdentifier.CAPITAL,
         VariantIdentifier.SPHERE, VariantIdentifier.SLAB,  VariantIdentifier.QUARTER_SLAB, VariantIdentifier.CORNER_SLAB,
         VariantIdentifier.EIGHTH_SLAB, VariantIdentifier.VERTICAL_CORNER_SLAB,  VariantIdentifier.VERTICAL_SLAB,
-        VariantIdentifier.VERTICAL_CORNER, VariantIdentifier.VERTICAL_QUARTER, VariantIdentifier.PILLAR);
+        VariantIdentifier.VERTICAL_CORNER, VariantIdentifier.VERTICAL_QUARTER, VariantIdentifier.PILLAR,
+        VariantIdentifier.STAIRS);
 
-    private static final TypeList refinedStoneCobbleBrickShapesTopOverlay = TypeList.of(VariantIdentifier.FULL, VariantIdentifier.SMALL_ARCH,
-        VariantIdentifier.SMALL_ARCH_HALF, VariantIdentifier.TWO_METER_ARCH, VariantIdentifier.TWO_METER_ARCH_HALF,
-        VariantIdentifier.ARROWSLIT, VariantIdentifier.SMALL_WINDOW, VariantIdentifier.SMALL_WINDOW_HALF, VariantIdentifier.BALUSTRADE,
-        VariantIdentifier.CAPITAL, VariantIdentifier.SPHERE, VariantIdentifier.SLAB, VariantIdentifier.QUARTER_SLAB,
+    private static final TypeList refinedStoneCobbleBrickShapesTopOverlay = TypeList.of(VariantIdentifier.FULL,
+        VariantIdentifier.SMALL_ARCH, VariantIdentifier.SMALL_ARCH_HALF, VariantIdentifier.TWO_METER_ARCH,
+        VariantIdentifier.TWO_METER_ARCH_HALF, VariantIdentifier.ARROWSLIT, VariantIdentifier.SMALL_WINDOW,
+        VariantIdentifier.SMALL_WINDOW_HALF, VariantIdentifier.BALUSTRADE, VariantIdentifier.CAPITAL,
+        VariantIdentifier.SPHERE, VariantIdentifier.SLAB, VariantIdentifier.QUARTER_SLAB,
         VariantIdentifier.CORNER_SLAB, VariantIdentifier.EIGHTH_SLAB, VariantIdentifier.VERTICAL_CORNER_SLAB,
         VariantIdentifier.VERTICAL_SLAB, VariantIdentifier.VERTICAL_CORNER, VariantIdentifier.VERTICAL_QUARTER,
         VariantIdentifier.STAIRS, VariantIdentifier.WALL, VariantIdentifier.PILLAR);

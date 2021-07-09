@@ -28,10 +28,8 @@ public class BlockDataBuilder
 
     public BlockDataBuilder name(String name)
     {
-        String id = name.startsWith("minecraft:") ? name : "conqest:" + name;
-
-        this.fullName = id;
-        this.variantName = id;
+        this.fullName = name.startsWith("minecraft:") ? name : "conqest:" + name;
+        this.variantName = name.startsWith("minecraft:") ? name.replace("minecraft:", "conquest:") : "conqest:" + name;;
         return this;
     }
 
