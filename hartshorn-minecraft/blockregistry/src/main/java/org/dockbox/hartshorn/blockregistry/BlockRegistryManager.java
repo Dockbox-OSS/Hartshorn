@@ -1,7 +1,6 @@
 package org.dockbox.hartshorn.blockregistry;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.blockregistry.models.FamilyModel;
 import org.dockbox.hartshorn.di.annotations.Service;
 import org.dockbox.hartshorn.persistence.mapping.GenericType;
 import org.dockbox.hartshorn.persistence.mapping.JacksonObjectMapper;
@@ -13,9 +12,10 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;
-import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class BlockRegistryManager
@@ -24,7 +24,7 @@ public class BlockRegistryManager
     private final Map<String, Set<String>> rootAliases     = HartshornUtils.emptyMap();
     private final Map<String, String> rootToFamilyMappings = HartshornUtils.emptyMap();
 
-    private final Registry<Registry<String>> blockRegistry;
+    private final Map<String, Registry<String>> blockRegistry;
 
     public BlockRegistryManager() {
         this.blockRegistry = this.loadBlockRegistry();
@@ -106,9 +106,7 @@ public class BlockRegistryManager
      */
     public Registry<String> getVariants(@NotNull String rootId) {
         return this.getFamilyId(rootId)
-            .flatMap(familyId ->
-                this.blockRegistry.getColumnOrCreate(familyId)
-                    .first())
+            .map(familyId -> this.blockRegistry.getOrDefault(familyId, new Registry<>()))
             .or(new Registry<>());
     }
 
@@ -175,35 +173,59 @@ public class BlockRegistryManager
      *      The root id of the variant
      */
     public void addVariant(@NotNull String familyId, @NotNull VariantIdentifier variant, @NotNull String rootId) {
-        this.blockRegistry.getColumnOrCreate(familyId, new Registry<>())
-            .first()
-            .present(r -> r.addData(variant, rootId));
+        if (!this.blockRegistry.containsKey(familyId))
+            this.blockRegistry.put(familyId, new Registry<>());
+
+        this.blockRegistry.get(familyId).addData(variant, rootId);
     }
 
     /**
      * Loads the serialised block registry from blockregistry.json. If that file doesn't exist or there was an issue
-     * loading the block registry, then an empty {@link Registry} is returned instead.
+     * loading the block registry, then an empty {@link Registry} is returned instead. All the specified aliases are
+     * then automatically registered.
      *
-     * @return The loaded {@link Registry block registry}
+     * @return The loaded block registry
      */
-    private Registry<Registry<String>> loadBlockRegistry() {
+    private Map<String, Registry<String>> loadBlockRegistry() {
+
         //Hartshorn.context()
         //            .get(ObjectMapper.class)
+        Map<String, Registry<VariantModel>> storedBlockRegistry =
+            new JacksonObjectMapper()
+                .read(Path.of("blockregistry.json"), new GenericType<Map<String, Registry<VariantModel>>>() {})
+                .or(HartshornUtils.emptyMap());
 
-        return new JacksonObjectMapper()
-            .read("blockregistry.json", new GenericType<Registry<Registry<String>>>() {})
-            .or(new Registry<>());
+        //Register aliases
+        storedBlockRegistry.forEach(
+            (familyId, variantRegistry) -> variantRegistry.forEach(
+                (variantKey, variantColumn) -> variantColumn.forEach(
+                    variantModel -> variantModel.aliases()
+                        .forEach(alias -> this.addAlias(variantModel.rootId(), alias))
+        )));
+
+        return storedBlockRegistry.entrySet()
+            .stream()
+            .collect(Collectors.toMap(Entry::getKey, e -> e.getValue()
+                .mapValues(VariantModel::rootId)
+        ));
     }
 
+    /**
+     * Saves the block registry.
+     */
     public void saveBlockRegistry() {
+        Map<String, Registry<VariantModel>> storedBlockRegistry =
+            this.blockRegistry.entrySet()
+                .stream()
+                .collect(Collectors.toMap(Entry::getKey, e -> e.getValue()
+                    .mapValues(rootId -> new VariantModel(rootId,
+                        this.rootAliases.getOrDefault(rootId,HartshornUtils.emptySet())))
+        ));
+
 //        Hartshorn.context()
 //            .get(ObjectMapper.class)
         new JacksonObjectMapper()
-            .write(Path.of("blockregistry.json"), this.blockRegistry);
-    }
-
-    private List<FamilyModel> generatePersistentModels() {
-        return HartshornUtils.emptyList();
+            .write(Path.of("blockregistry.json"), storedBlockRegistry);
     }
 
     @Override
