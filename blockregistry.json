@@ -1343,27 +1343,27 @@
   },
   "minecraft:light_blue_stained_glass" : {
     "VERTICAL_CORNER" : {
-      "rootId" : "minecraft:light_blue_stained_glass_vertical_corner",
+      "rootId" : "conquest:light_blue_stained_glass_vertical_corner",
       "aliases" : [ ]
     },
     "VERTICAL_QUARTER" : {
-      "rootId" : "minecraft:light_blue_stained_glass_vertical_quarter",
+      "rootId" : "conquest:light_blue_stained_glass_vertical_quarter",
       "aliases" : [ ]
     },
     "STAIRS" : {
-      "rootId" : "minecraft:light_blue_stained_glass_stairs",
+      "rootId" : "conquest:light_blue_stained_glass_stairs",
       "aliases" : [ ]
     },
     "VERTICAL_SLAB" : {
-      "rootId" : "minecraft:light_blue_stained_glass_vertical_slab",
+      "rootId" : "conquest:light_blue_stained_glass_vertical_slab",
       "aliases" : [ ]
     },
     "SLAB" : {
-      "rootId" : "minecraft:light_blue_stained_glass_slab",
+      "rootId" : "conquest:light_blue_stained_glass_slab",
       "aliases" : [ ]
     },
     "PANE" : {
-      "rootId" : "minecraft:light_blue_stained_glass_pane",
+      "rootId" : "conquest:light_blue_stained_glass_pane",
       "aliases" : [ ]
     }
   },
@@ -5165,23 +5165,23 @@
   },
   "minecraft:oak_log" : {
     "BRANCH" : {
-      "rootId" : "minecraft:oak_log_branch",
+      "rootId" : "conquest:oak_log_branch",
       "aliases" : [ ]
     },
     "PILLAR" : {
-      "rootId" : "minecraft:oak_log_pillar",
+      "rootId" : "conquest:oak_log_pillar",
       "aliases" : [ ]
     },
     "VERTICAL_CORNER_SLAB" : {
-      "rootId" : "minecraft:oak_log_vertical_corner_slab",
+      "rootId" : "conquest:oak_log_vertical_corner_slab",
       "aliases" : [ ]
     },
     "STAIRS" : {
-      "rootId" : "minecraft:oak_log_stairs",
+      "rootId" : "conquest:oak_log_stairs",
       "aliases" : [ ]
     },
     "CORNER_SLAB" : {
-      "rootId" : "minecraft:oak_log_corner_slab",
+      "rootId" : "conquest:oak_log_corner_slab",
       "aliases" : [ ]
     },
     "FULL" : {
@@ -5189,39 +5189,39 @@
       "aliases" : [ ]
     },
     "STUMP" : {
-      "rootId" : "minecraft:oak_log_stump",
+      "rootId" : "conquest:oak_log_stump",
       "aliases" : [ ]
     },
     "EIGHTH_SLAB" : {
-      "rootId" : "minecraft:oak_log_eighth_slab",
+      "rootId" : "conquest:oak_log_eighth_slab",
       "aliases" : [ ]
     },
     "VERTICAL_CORNER" : {
-      "rootId" : "minecraft:oak_log_vertical_corner",
+      "rootId" : "conquest:oak_log_vertical_corner",
       "aliases" : [ ]
     },
     "LARGE_BRANCH" : {
-      "rootId" : "minecraft:oak_log_large_branch",
+      "rootId" : "conquest:oak_log_large_branch",
       "aliases" : [ ]
     },
     "VERTICAL_QUARTER" : {
-      "rootId" : "minecraft:oak_log_vertical_quarter",
+      "rootId" : "conquest:oak_log_vertical_quarter",
       "aliases" : [ ]
     },
     "QUARTER_SLAB" : {
-      "rootId" : "minecraft:oak_log_quarter_slab",
+      "rootId" : "conquest:oak_log_quarter_slab",
       "aliases" : [ ]
     },
     "VERTICAL_SLAB" : {
-      "rootId" : "minecraft:oak_log_vertical_slab",
+      "rootId" : "conquest:oak_log_vertical_slab",
       "aliases" : [ ]
     },
     "SLAB" : {
-      "rootId" : "minecraft:oak_log_slab",
+      "rootId" : "conquest:oak_log_slab",
       "aliases" : [ ]
     },
     "SMALL_BRANCH" : {
-      "rootId" : "minecraft:oak_log_small_branch",
+      "rootId" : "conquest:oak_log_small_branch",
       "aliases" : [ ]
     }
   },
@@ -6343,23 +6343,23 @@
   },
   "minecraft:acacia_log" : {
     "BRANCH" : {
-      "rootId" : "minecraft:acacia_log_branch",
+      "rootId" : "conquest:acacia_log_branch",
       "aliases" : [ ]
     },
     "PILLAR" : {
-      "rootId" : "minecraft:acacia_log_pillar",
+      "rootId" : "conquest:acacia_log_pillar",
       "aliases" : [ ]
     },
     "VERTICAL_CORNER_SLAB" : {
-      "rootId" : "minecraft:acacia_log_vertical_corner_slab",
+      "rootId" : "conquest:acacia_log_vertical_corner_slab",
       "aliases" : [ ]
     },
     "STAIRS" : {
-      "rootId" : "minecraft:acacia_log_stairs",
+      "rootId" : "conquest:acacia_log_stairs",
       "aliases" : [ ]
     },
     "CORNER_SLAB" : {
-      "rootId" : "minecraft:acacia_log_corner_slab",
+      "rootId" : "conquest:acacia_log_corner_slab",
       "aliases" : [ ]
     },
     "FULL" : {
@@ -6367,39 +6367,39 @@
       "aliases" : [ ]
     },
     "STUMP" : {
-      "rootId" : "minecraft:acacia_log_stump",
+      "rootId" : "conquest:acacia_log_stump",
       "aliases" : [ ]
     },
     "EIGHTH_SLAB" : {
-      "rootId" : "minecraft:acacia_log_eighth_slab",
+      "rootId" : "conquest:acacia_log_eighth_slab",
       "aliases" : [ ]
     },
     "VERTICAL_CORNER" : {
-      "rootId" : "minecraft:acacia_log_vertical_corner",
+      "rootId" : "conquest:acacia_log_vertical_corner",
       "aliases" : [ ]
     },
     "LARGE_BRANCH" : {
-      "rootId" : "minecraft:acacia_log_large_branch",
+      "rootId" : "conquest:acacia_log_large_branch",
       "aliases" : [ ]
     },
     "VERTICAL_QUARTER" : {
-      "rootId" : "minecraft:acacia_log_vertical_quarter",
+      "rootId" : "conquest:acacia_log_vertical_quarter",
       "aliases" : [ ]
     },
     "QUARTER_SLAB" : {
-      "rootId" : "minecraft:acacia_log_quarter_slab",
+      "rootId" : "conquest:acacia_log_quarter_slab",
       "aliases" : [ ]
     },
     "VERTICAL_SLAB" : {
-      "rootId" : "minecraft:acacia_log_vertical_slab",
+      "rootId" : "conquest:acacia_log_vertical_slab",
       "aliases" : [ ]
     },
     "SLAB" : {
-      "rootId" : "minecraft:acacia_log_slab",
+      "rootId" : "conquest:acacia_log_slab",
       "aliases" : [ ]
     },
     "SMALL_BRANCH" : {
-      "rootId" : "minecraft:acacia_log_small_branch",
+      "rootId" : "conquest:acacia_log_small_branch",
       "aliases" : [ ]
     }
   },
@@ -6681,35 +6681,35 @@
   },
   "minecraft:prismarine" : {
     "VERTICAL_CORNER" : {
-      "rootId" : "minecraft:prismarine_vertical_corner",
+      "rootId" : "conquest:prismarine_vertical_corner",
       "aliases" : [ ]
     },
     "VERTICAL_QUARTER" : {
-      "rootId" : "minecraft:prismarine_vertical_quarter",
+      "rootId" : "conquest:prismarine_vertical_quarter",
       "aliases" : [ ]
     },
     "QUARTER_SLAB" : {
-      "rootId" : "minecraft:prismarine_quarter_slab",
+      "rootId" : "conquest:prismarine_quarter_slab",
       "aliases" : [ ]
     },
     "VERTICAL_CORNER_SLAB" : {
-      "rootId" : "minecraft:prismarine_vertical_corner_slab",
+      "rootId" : "conquest:prismarine_vertical_corner_slab",
       "aliases" : [ ]
     },
     "VERTICAL_SLAB" : {
-      "rootId" : "minecraft:prismarine_vertical_slab",
+      "rootId" : "conquest:prismarine_vertical_slab",
       "aliases" : [ ]
     },
     "STAIRS" : {
-      "rootId" : "minecraft:prismarine_stairs",
+      "rootId" : "conquest:prismarine_stairs",
       "aliases" : [ ]
     },
     "SLAB" : {
-      "rootId" : "minecraft:prismarine_slab",
+      "rootId" : "conquest:prismarine_slab",
       "aliases" : [ ]
     },
     "CORNER_SLAB" : {
-      "rootId" : "minecraft:prismarine_corner_slab",
+      "rootId" : "conquest:prismarine_corner_slab",
       "aliases" : [ ]
     },
     "FULL" : {
@@ -6717,7 +6717,7 @@
       "aliases" : [ ]
     },
     "EIGHTH_SLAB" : {
-      "rootId" : "minecraft:prismarine_eighth_slab",
+      "rootId" : "conquest:prismarine_eighth_slab",
       "aliases" : [ ]
     }
   },
@@ -7417,27 +7417,27 @@
   },
   "minecraft:pink_stained_glass" : {
     "VERTICAL_CORNER" : {
-      "rootId" : "minecraft:pink_stained_glass_vertical_corner",
+      "rootId" : "conquest:pink_stained_glass_vertical_corner",
       "aliases" : [ ]
     },
     "VERTICAL_QUARTER" : {
-      "rootId" : "minecraft:pink_stained_glass_vertical_quarter",
+      "rootId" : "conquest:pink_stained_glass_vertical_quarter",
       "aliases" : [ ]
     },
     "STAIRS" : {
-      "rootId" : "minecraft:pink_stained_glass_stairs",
+      "rootId" : "conquest:pink_stained_glass_stairs",
       "aliases" : [ ]
     },
     "VERTICAL_SLAB" : {
-      "rootId" : "minecraft:pink_stained_glass_vertical_slab",
+      "rootId" : "conquest:pink_stained_glass_vertical_slab",
       "aliases" : [ ]
     },
     "SLAB" : {
-      "rootId" : "minecraft:pink_stained_glass_slab",
+      "rootId" : "conquest:pink_stained_glass_slab",
       "aliases" : [ ]
     },
     "PANE" : {
-      "rootId" : "minecraft:pink_stained_glass_pane",
+      "rootId" : "conquest:pink_stained_glass_pane",
       "aliases" : [ ]
     }
   },
@@ -7657,23 +7657,23 @@
   },
   "minecraft:dark_oak_log" : {
     "BRANCH" : {
-      "rootId" : "minecraft:dark_oak_log_branch",
+      "rootId" : "conquest:dark_oak_log_branch",
       "aliases" : [ ]
     },
     "PILLAR" : {
-      "rootId" : "minecraft:dark_oak_log_pillar",
+      "rootId" : "conquest:dark_oak_log_pillar",
       "aliases" : [ ]
     },
     "VERTICAL_CORNER_SLAB" : {
-      "rootId" : "minecraft:dark_oak_log_vertical_corner_slab",
+      "rootId" : "conquest:dark_oak_log_vertical_corner_slab",
       "aliases" : [ ]
     },
     "STAIRS" : {
-      "rootId" : "minecraft:dark_oak_log_stairs",
+      "rootId" : "conquest:dark_oak_log_stairs",
       "aliases" : [ ]
     },
     "CORNER_SLAB" : {
-      "rootId" : "minecraft:dark_oak_log_corner_slab",
+      "rootId" : "conquest:dark_oak_log_corner_slab",
       "aliases" : [ ]
     },
     "FULL" : {
@@ -7681,39 +7681,39 @@
       "aliases" : [ ]
     },
     "STUMP" : {
-      "rootId" : "minecraft:dark_oak_log_stump",
+      "rootId" : "conquest:dark_oak_log_stump",
       "aliases" : [ ]
     },
     "EIGHTH_SLAB" : {
-      "rootId" : "minecraft:dark_oak_log_eighth_slab",
+      "rootId" : "conquest:dark_oak_log_eighth_slab",
       "aliases" : [ ]
     },
     "VERTICAL_CORNER" : {
-      "rootId" : "minecraft:dark_oak_log_vertical_corner",
+      "rootId" : "conquest:dark_oak_log_vertical_corner",
       "aliases" : [ ]
     },
     "LARGE_BRANCH" : {
-      "rootId" : "minecraft:dark_oak_log_large_branch",
+      "rootId" : "conquest:dark_oak_log_large_branch",
       "aliases" : [ ]
     },
     "VERTICAL_QUARTER" : {
-      "rootId" : "minecraft:dark_oak_log_vertical_quarter",
+      "rootId" : "conquest:dark_oak_log_vertical_quarter",
       "aliases" : [ ]
     },
     "QUARTER_SLAB" : {
-      "rootId" : "minecraft:dark_oak_log_quarter_slab",
+      "rootId" : "conquest:dark_oak_log_quarter_slab",
       "aliases" : [ ]
     },
     "VERTICAL_SLAB" : {
-      "rootId" : "minecraft:dark_oak_log_vertical_slab",
+      "rootId" : "conquest:dark_oak_log_vertical_slab",
       "aliases" : [ ]
     },
     "SLAB" : {
-      "rootId" : "minecraft:dark_oak_log_slab",
+      "rootId" : "conquest:dark_oak_log_slab",
       "aliases" : [ ]
     },
     "SMALL_BRANCH" : {
-      "rootId" : "minecraft:dark_oak_log_small_branch",
+      "rootId" : "conquest:dark_oak_log_small_branch",
       "aliases" : [ ]
     }
   },
@@ -8429,23 +8429,23 @@
   },
   "minecraft:grass_block" : {
     "VERTICAL_CORNER" : {
-      "rootId" : "minecraft:grass_block_vertical_corner",
+      "rootId" : "conquest:grass_block_vertical_corner",
       "aliases" : [ ]
     },
     "VERTICAL_QUARTER" : {
-      "rootId" : "minecraft:grass_block_vertical_quarter",
+      "rootId" : "conquest:grass_block_vertical_quarter",
       "aliases" : [ ]
     },
     "STAIRS" : {
-      "rootId" : "minecraft:grass_block_stairs",
+      "rootId" : "conquest:grass_block_stairs",
       "aliases" : [ ]
     },
     "VERTICAL_SLAB" : {
-      "rootId" : "minecraft:grass_block_vertical_slab",
+      "rootId" : "conquest:grass_block_vertical_slab",
       "aliases" : [ ]
     },
     "LAYER" : {
-      "rootId" : "minecraft:grass_block_layer",
+      "rootId" : "conquest:grass_block_layer",
       "aliases" : [ ]
     },
     "FULL" : {
@@ -9955,27 +9955,31 @@
   },
   "minecraft:sandstone" : {
     "TWO_METER_ARCH" : {
-      "rootId" : "minecraft:sandstone_two_meter_arch",
+      "rootId" : "conquest:sandstone_two_meter_arch",
       "aliases" : [ ]
     },
     "SPHERE" : {
-      "rootId" : "minecraft:sandstone_sphere",
+      "rootId" : "conquest:sandstone_sphere",
       "aliases" : [ ]
     },
     "PILLAR" : {
-      "rootId" : "minecraft:sandstone_pillar",
+      "rootId" : "conquest:sandstone_pillar",
       "aliases" : [ ]
     },
     "SMALL_WINDOW" : {
-      "rootId" : "minecraft:sandstone_small_window",
+      "rootId" : "conquest:sandstone_small_window",
       "aliases" : [ ]
     },
     "VERTICAL_CORNER_SLAB" : {
-      "rootId" : "minecraft:sandstone_vertical_corner_slab",
+      "rootId" : "conquest:sandstone_vertical_corner_slab",
+      "aliases" : [ ]
+    },
+    "STAIRS" : {
+      "rootId" : "conquest:sandstone_stairs",
       "aliases" : [ ]
     },
     "CORNER_SLAB" : {
-      "rootId" : "minecraft:sandstone_corner_slab",
+      "rootId" : "conquest:sandstone_corner_slab",
       "aliases" : [ ]
     },
     "FULL" : {
@@ -9983,55 +9987,55 @@
       "aliases" : [ ]
     },
     "SMALL_WINDOW_HALF" : {
-      "rootId" : "minecraft:sandstone_small_window_half",
+      "rootId" : "conquest:sandstone_small_window_half",
       "aliases" : [ ]
     },
     "EIGHTH_SLAB" : {
-      "rootId" : "minecraft:sandstone_eighth_slab",
+      "rootId" : "conquest:sandstone_eighth_slab",
       "aliases" : [ ]
     },
     "ARROWSLIT" : {
-      "rootId" : "minecraft:sandstone_arrowslit",
+      "rootId" : "conquest:sandstone_arrowslit",
       "aliases" : [ ]
     },
     "VERTICAL_CORNER" : {
-      "rootId" : "minecraft:sandstone_vertical_corner",
+      "rootId" : "conquest:sandstone_vertical_corner",
       "aliases" : [ ]
     },
     "VERTICAL_QUARTER" : {
-      "rootId" : "minecraft:sandstone_vertical_quarter",
+      "rootId" : "conquest:sandstone_vertical_quarter",
       "aliases" : [ ]
     },
     "SMALL_ARCH_HALF" : {
-      "rootId" : "minecraft:sandstone_small_arch_half",
+      "rootId" : "conquest:sandstone_small_arch_half",
       "aliases" : [ ]
     },
     "QUARTER_SLAB" : {
-      "rootId" : "minecraft:sandstone_quarter_slab",
+      "rootId" : "conquest:sandstone_quarter_slab",
       "aliases" : [ ]
     },
     "SMALL_ARCH" : {
-      "rootId" : "minecraft:sandstone_small_arch",
+      "rootId" : "conquest:sandstone_small_arch",
       "aliases" : [ ]
     },
     "VERTICAL_SLAB" : {
-      "rootId" : "minecraft:sandstone_vertical_slab",
+      "rootId" : "conquest:sandstone_vertical_slab",
       "aliases" : [ ]
     },
     "BALUSTRADE" : {
-      "rootId" : "minecraft:sandstone_balustrade",
+      "rootId" : "conquest:sandstone_balustrade",
       "aliases" : [ ]
     },
     "SLAB" : {
-      "rootId" : "minecraft:sandstone_slab",
+      "rootId" : "conquest:sandstone_slab",
       "aliases" : [ ]
     },
     "CAPITAL" : {
-      "rootId" : "minecraft:sandstone_capital",
+      "rootId" : "conquest:sandstone_capital",
       "aliases" : [ ]
     },
     "TWO_METER_ARCH_HALF" : {
-      "rootId" : "minecraft:sandstone_two_meter_arch_half",
+      "rootId" : "conquest:sandstone_two_meter_arch_half",
       "aliases" : [ ]
     }
   },
@@ -12543,27 +12547,27 @@
   },
   "minecraft:white_stained_glass" : {
     "VERTICAL_CORNER" : {
-      "rootId" : "minecraft:white_stained_glass_vertical_corner",
+      "rootId" : "conquest:white_stained_glass_vertical_corner",
       "aliases" : [ ]
     },
     "VERTICAL_QUARTER" : {
-      "rootId" : "minecraft:white_stained_glass_vertical_quarter",
+      "rootId" : "conquest:white_stained_glass_vertical_quarter",
       "aliases" : [ ]
     },
     "STAIRS" : {
-      "rootId" : "minecraft:white_stained_glass_stairs",
+      "rootId" : "conquest:white_stained_glass_stairs",
       "aliases" : [ ]
     },
     "VERTICAL_SLAB" : {
-      "rootId" : "minecraft:white_stained_glass_vertical_slab",
+      "rootId" : "conquest:white_stained_glass_vertical_slab",
       "aliases" : [ ]
     },
     "SLAB" : {
-      "rootId" : "minecraft:white_stained_glass_slab",
+      "rootId" : "conquest:white_stained_glass_slab",
       "aliases" : [ ]
     },
     "PANE" : {
-      "rootId" : "minecraft:white_stained_glass_pane",
+      "rootId" : "conquest:white_stained_glass_pane",
       "aliases" : [ ]
     }
   },
@@ -12907,27 +12911,27 @@
   },
   "minecraft:green_stained_glass" : {
     "VERTICAL_CORNER" : {
-      "rootId" : "minecraft:green_stained_glass_vertical_corner",
+      "rootId" : "conquest:green_stained_glass_vertical_corner",
       "aliases" : [ ]
     },
     "VERTICAL_QUARTER" : {
-      "rootId" : "minecraft:green_stained_glass_vertical_quarter",
+      "rootId" : "conquest:green_stained_glass_vertical_quarter",
       "aliases" : [ ]
     },
     "STAIRS" : {
-      "rootId" : "minecraft:green_stained_glass_stairs",
+      "rootId" : "conquest:green_stained_glass_stairs",
       "aliases" : [ ]
     },
     "VERTICAL_SLAB" : {
-      "rootId" : "minecraft:green_stained_glass_vertical_slab",
+      "rootId" : "conquest:green_stained_glass_vertical_slab",
       "aliases" : [ ]
     },
     "SLAB" : {
-      "rootId" : "minecraft:green_stained_glass_slab",
+      "rootId" : "conquest:green_stained_glass_slab",
       "aliases" : [ ]
     },
     "PANE" : {
-      "rootId" : "minecraft:green_stained_glass_pane",
+      "rootId" : "conquest:green_stained_glass_pane",
       "aliases" : [ ]
     }
   },
@@ -13667,27 +13671,27 @@
   },
   "minecraft:lime_stained_glass" : {
     "VERTICAL_CORNER" : {
-      "rootId" : "minecraft:lime_stained_glass_vertical_corner",
+      "rootId" : "conquest:lime_stained_glass_vertical_corner",
       "aliases" : [ ]
     },
     "VERTICAL_QUARTER" : {
-      "rootId" : "minecraft:lime_stained_glass_vertical_quarter",
+      "rootId" : "conquest:lime_stained_glass_vertical_quarter",
       "aliases" : [ ]
     },
     "STAIRS" : {
-      "rootId" : "minecraft:lime_stained_glass_stairs",
+      "rootId" : "conquest:lime_stained_glass_stairs",
       "aliases" : [ ]
     },
     "VERTICAL_SLAB" : {
-      "rootId" : "minecraft:lime_stained_glass_vertical_slab",
+      "rootId" : "conquest:lime_stained_glass_vertical_slab",
       "aliases" : [ ]
     },
     "SLAB" : {
-      "rootId" : "minecraft:lime_stained_glass_slab",
+      "rootId" : "conquest:lime_stained_glass_slab",
       "aliases" : [ ]
     },
     "PANE" : {
-      "rootId" : "minecraft:lime_stained_glass_pane",
+      "rootId" : "conquest:lime_stained_glass_pane",
       "aliases" : [ ]
     }
   },
@@ -13822,6 +13826,10 @@
     },
     "VERTICAL_CORNER_SLAB" : {
       "rootId" : "conqest:marble_brick_vertical_corner_slab",
+      "aliases" : [ ]
+    },
+    "STAIRS" : {
+      "rootId" : "conqest:marble_brick_stairs",
       "aliases" : [ ]
     },
     "CORNER_SLAB" : {
@@ -14659,27 +14667,27 @@
   },
   "minecraft:light_gray_stained_glass" : {
     "VERTICAL_CORNER" : {
-      "rootId" : "minecraft:light_gray_stained_glass_vertical_corner",
+      "rootId" : "conquest:light_gray_stained_glass_vertical_corner",
       "aliases" : [ ]
     },
     "VERTICAL_QUARTER" : {
-      "rootId" : "minecraft:light_gray_stained_glass_vertical_quarter",
+      "rootId" : "conquest:light_gray_stained_glass_vertical_quarter",
       "aliases" : [ ]
     },
     "STAIRS" : {
-      "rootId" : "minecraft:light_gray_stained_glass_stairs",
+      "rootId" : "conquest:light_gray_stained_glass_stairs",
       "aliases" : [ ]
     },
     "VERTICAL_SLAB" : {
-      "rootId" : "minecraft:light_gray_stained_glass_vertical_slab",
+      "rootId" : "conquest:light_gray_stained_glass_vertical_slab",
       "aliases" : [ ]
     },
     "SLAB" : {
-      "rootId" : "minecraft:light_gray_stained_glass_slab",
+      "rootId" : "conquest:light_gray_stained_glass_slab",
       "aliases" : [ ]
     },
     "PANE" : {
-      "rootId" : "minecraft:light_gray_stained_glass_pane",
+      "rootId" : "conquest:light_gray_stained_glass_pane",
       "aliases" : [ ]
     }
   },
@@ -14899,23 +14907,23 @@
   },
   "minecraft:birch_log" : {
     "BRANCH" : {
-      "rootId" : "minecraft:birch_log_branch",
+      "rootId" : "conquest:birch_log_branch",
       "aliases" : [ ]
     },
     "PILLAR" : {
-      "rootId" : "minecraft:birch_log_pillar",
+      "rootId" : "conquest:birch_log_pillar",
       "aliases" : [ ]
     },
     "VERTICAL_CORNER_SLAB" : {
-      "rootId" : "minecraft:birch_log_vertical_corner_slab",
+      "rootId" : "conquest:birch_log_vertical_corner_slab",
       "aliases" : [ ]
     },
     "STAIRS" : {
-      "rootId" : "minecraft:birch_log_stairs",
+      "rootId" : "conquest:birch_log_stairs",
       "aliases" : [ ]
     },
     "CORNER_SLAB" : {
-      "rootId" : "minecraft:birch_log_corner_slab",
+      "rootId" : "conquest:birch_log_corner_slab",
       "aliases" : [ ]
     },
     "FULL" : {
@@ -14923,39 +14931,39 @@
       "aliases" : [ ]
     },
     "STUMP" : {
-      "rootId" : "minecraft:birch_log_stump",
+      "rootId" : "conquest:birch_log_stump",
       "aliases" : [ ]
     },
     "EIGHTH_SLAB" : {
-      "rootId" : "minecraft:birch_log_eighth_slab",
+      "rootId" : "conquest:birch_log_eighth_slab",
       "aliases" : [ ]
     },
     "VERTICAL_CORNER" : {
-      "rootId" : "minecraft:birch_log_vertical_corner",
+      "rootId" : "conquest:birch_log_vertical_corner",
       "aliases" : [ ]
     },
     "LARGE_BRANCH" : {
-      "rootId" : "minecraft:birch_log_large_branch",
+      "rootId" : "conquest:birch_log_large_branch",
       "aliases" : [ ]
     },
     "VERTICAL_QUARTER" : {
-      "rootId" : "minecraft:birch_log_vertical_quarter",
+      "rootId" : "conquest:birch_log_vertical_quarter",
       "aliases" : [ ]
     },
     "QUARTER_SLAB" : {
-      "rootId" : "minecraft:birch_log_quarter_slab",
+      "rootId" : "conquest:birch_log_quarter_slab",
       "aliases" : [ ]
     },
     "VERTICAL_SLAB" : {
-      "rootId" : "minecraft:birch_log_vertical_slab",
+      "rootId" : "conquest:birch_log_vertical_slab",
       "aliases" : [ ]
     },
     "SLAB" : {
-      "rootId" : "minecraft:birch_log_slab",
+      "rootId" : "conquest:birch_log_slab",
       "aliases" : [ ]
     },
     "SMALL_BRANCH" : {
-      "rootId" : "minecraft:birch_log_small_branch",
+      "rootId" : "conquest:birch_log_small_branch",
       "aliases" : [ ]
     }
   },
@@ -15394,27 +15402,27 @@
   },
   "minecraft:red_stained_glass" : {
     "VERTICAL_CORNER" : {
-      "rootId" : "minecraft:red_stained_glass_vertical_corner",
+      "rootId" : "conquest:red_stained_glass_vertical_corner",
       "aliases" : [ ]
     },
     "VERTICAL_QUARTER" : {
-      "rootId" : "minecraft:red_stained_glass_vertical_quarter",
+      "rootId" : "conquest:red_stained_glass_vertical_quarter",
       "aliases" : [ ]
     },
     "STAIRS" : {
-      "rootId" : "minecraft:red_stained_glass_stairs",
+      "rootId" : "conquest:red_stained_glass_stairs",
       "aliases" : [ ]
     },
     "VERTICAL_SLAB" : {
-      "rootId" : "minecraft:red_stained_glass_vertical_slab",
+      "rootId" : "conquest:red_stained_glass_vertical_slab",
       "aliases" : [ ]
     },
     "SLAB" : {
-      "rootId" : "minecraft:red_stained_glass_slab",
+      "rootId" : "conquest:red_stained_glass_slab",
       "aliases" : [ ]
     },
     "PANE" : {
-      "rootId" : "minecraft:red_stained_glass_pane",
+      "rootId" : "conquest:red_stained_glass_pane",
       "aliases" : [ ]
     }
   },
@@ -18022,27 +18030,27 @@
   },
   "minecraft:magenta_stained_glass" : {
     "VERTICAL_CORNER" : {
-      "rootId" : "minecraft:magenta_stained_glass_vertical_corner",
+      "rootId" : "conquest:magenta_stained_glass_vertical_corner",
       "aliases" : [ ]
     },
     "VERTICAL_QUARTER" : {
-      "rootId" : "minecraft:magenta_stained_glass_vertical_quarter",
+      "rootId" : "conquest:magenta_stained_glass_vertical_quarter",
       "aliases" : [ ]
     },
     "STAIRS" : {
-      "rootId" : "minecraft:magenta_stained_glass_stairs",
+      "rootId" : "conquest:magenta_stained_glass_stairs",
       "aliases" : [ ]
     },
     "VERTICAL_SLAB" : {
-      "rootId" : "minecraft:magenta_stained_glass_vertical_slab",
+      "rootId" : "conquest:magenta_stained_glass_vertical_slab",
       "aliases" : [ ]
     },
     "SLAB" : {
-      "rootId" : "minecraft:magenta_stained_glass_slab",
+      "rootId" : "conquest:magenta_stained_glass_slab",
       "aliases" : [ ]
     },
     "PANE" : {
-      "rootId" : "minecraft:magenta_stained_glass_pane",
+      "rootId" : "conquest:magenta_stained_glass_pane",
       "aliases" : [ ]
     }
   },
@@ -18588,35 +18596,35 @@
   },
   "minecraft:snow" : {
     "VERTICAL_CORNER" : {
-      "rootId" : "minecraft:snow_vertical_corner",
+      "rootId" : "conquest:snow_vertical_corner",
       "aliases" : [ ]
     },
     "VERTICAL_QUARTER" : {
-      "rootId" : "minecraft:snow_vertical_quarter",
+      "rootId" : "conquest:snow_vertical_quarter",
       "aliases" : [ ]
     },
     "QUARTER_SLAB" : {
-      "rootId" : "minecraft:snow_quarter_slab",
+      "rootId" : "conquest:snow_quarter_slab",
       "aliases" : [ ]
     },
     "VERTICAL_CORNER_SLAB" : {
-      "rootId" : "minecraft:snow_vertical_corner_slab",
+      "rootId" : "conquest:snow_vertical_corner_slab",
       "aliases" : [ ]
     },
     "VERTICAL_SLAB" : {
-      "rootId" : "minecraft:snow_vertical_slab",
+      "rootId" : "conquest:snow_vertical_slab",
       "aliases" : [ ]
     },
     "STAIRS" : {
-      "rootId" : "minecraft:snow_stairs",
+      "rootId" : "conquest:snow_stairs",
       "aliases" : [ ]
     },
     "SLAB" : {
-      "rootId" : "minecraft:snow_slab",
+      "rootId" : "conquest:snow_slab",
       "aliases" : [ ]
     },
     "CORNER_SLAB" : {
-      "rootId" : "minecraft:snow_corner_slab",
+      "rootId" : "conquest:snow_corner_slab",
       "aliases" : [ ]
     },
     "FULL" : {
@@ -18624,33 +18632,33 @@
       "aliases" : [ ]
     },
     "EIGHTH_SLAB" : {
-      "rootId" : "minecraft:snow_eighth_slab",
+      "rootId" : "conquest:snow_eighth_slab",
       "aliases" : [ ]
     }
   },
   "minecraft:cyan_stained_glass" : {
     "VERTICAL_CORNER" : {
-      "rootId" : "minecraft:cyan_stained_glass_vertical_corner",
+      "rootId" : "conquest:cyan_stained_glass_vertical_corner",
       "aliases" : [ ]
     },
     "VERTICAL_QUARTER" : {
-      "rootId" : "minecraft:cyan_stained_glass_vertical_quarter",
+      "rootId" : "conquest:cyan_stained_glass_vertical_quarter",
       "aliases" : [ ]
     },
     "STAIRS" : {
-      "rootId" : "minecraft:cyan_stained_glass_stairs",
+      "rootId" : "conquest:cyan_stained_glass_stairs",
       "aliases" : [ ]
     },
     "VERTICAL_SLAB" : {
-      "rootId" : "minecraft:cyan_stained_glass_vertical_slab",
+      "rootId" : "conquest:cyan_stained_glass_vertical_slab",
       "aliases" : [ ]
     },
     "SLAB" : {
-      "rootId" : "minecraft:cyan_stained_glass_slab",
+      "rootId" : "conquest:cyan_stained_glass_slab",
       "aliases" : [ ]
     },
     "PANE" : {
-      "rootId" : "minecraft:cyan_stained_glass_pane",
+      "rootId" : "conquest:cyan_stained_glass_pane",
       "aliases" : [ ]
     }
   },
@@ -22325,6 +22333,10 @@
       "rootId" : "conqest:end_stone_brick_vertical_corner_slab",
       "aliases" : [ ]
     },
+    "STAIRS" : {
+      "rootId" : "conqest:end_stone_brick_stairs",
+      "aliases" : [ ]
+    },
     "CORNER_SLAB" : {
       "rootId" : "conqest:end_stone_brick_corner_slab",
       "aliases" : [ ]
@@ -24600,6 +24612,10 @@
       "rootId" : "conqest:red_sandstone_cobble_vertical_corner_slab",
       "aliases" : [ ]
     },
+    "STAIRS" : {
+      "rootId" : "conqest:red_sandstone_cobble_stairs",
+      "aliases" : [ ]
+    },
     "CORNER_SLAB" : {
       "rootId" : "conqest:red_sandstone_cobble_corner_slab",
       "aliases" : [ ]
@@ -25865,31 +25881,35 @@
   },
   "minecraft:dark_prismarine" : {
     "TWO_METER_ARCH" : {
-      "rootId" : "minecraft:dark_prismarine_two_meter_arch",
+      "rootId" : "conquest:dark_prismarine_two_meter_arch",
       "aliases" : [ ]
     },
     "WALL" : {
-      "rootId" : "minecraft:dark_prismarine_wall",
+      "rootId" : "conquest:dark_prismarine_wall",
       "aliases" : [ ]
     },
     "SPHERE" : {
-      "rootId" : "minecraft:dark_prismarine_sphere",
+      "rootId" : "conquest:dark_prismarine_sphere",
       "aliases" : [ ]
     },
     "PILLAR" : {
-      "rootId" : "minecraft:dark_prismarine_pillar",
+      "rootId" : "conquest:dark_prismarine_pillar",
       "aliases" : [ ]
     },
     "SMALL_WINDOW" : {
-      "rootId" : "minecraft:dark_prismarine_small_window",
+      "rootId" : "conquest:dark_prismarine_small_window",
       "aliases" : [ ]
     },
     "VERTICAL_CORNER_SLAB" : {
-      "rootId" : "minecraft:dark_prismarine_vertical_corner_slab",
+      "rootId" : "conquest:dark_prismarine_vertical_corner_slab",
+      "aliases" : [ ]
+    },
+    "STAIRS" : {
+      "rootId" : "conquest:dark_prismarine_stairs",
       "aliases" : [ ]
     },
     "CORNER_SLAB" : {
-      "rootId" : "minecraft:dark_prismarine_corner_slab",
+      "rootId" : "conquest:dark_prismarine_corner_slab",
       "aliases" : [ ]
     },
     "FULL" : {
@@ -25897,55 +25917,55 @@
       "aliases" : [ ]
     },
     "SMALL_WINDOW_HALF" : {
-      "rootId" : "minecraft:dark_prismarine_small_window_half",
+      "rootId" : "conquest:dark_prismarine_small_window_half",
       "aliases" : [ ]
     },
     "EIGHTH_SLAB" : {
-      "rootId" : "minecraft:dark_prismarine_eighth_slab",
+      "rootId" : "conquest:dark_prismarine_eighth_slab",
       "aliases" : [ ]
     },
     "ARROWSLIT" : {
-      "rootId" : "minecraft:dark_prismarine_arrowslit",
+      "rootId" : "conquest:dark_prismarine_arrowslit",
       "aliases" : [ ]
     },
     "VERTICAL_CORNER" : {
-      "rootId" : "minecraft:dark_prismarine_vertical_corner",
+      "rootId" : "conquest:dark_prismarine_vertical_corner",
       "aliases" : [ ]
     },
     "VERTICAL_QUARTER" : {
-      "rootId" : "minecraft:dark_prismarine_vertical_quarter",
+      "rootId" : "conquest:dark_prismarine_vertical_quarter",
       "aliases" : [ ]
     },
     "SMALL_ARCH_HALF" : {
-      "rootId" : "minecraft:dark_prismarine_small_arch_half",
+      "rootId" : "conquest:dark_prismarine_small_arch_half",
       "aliases" : [ ]
     },
     "QUARTER_SLAB" : {
-      "rootId" : "minecraft:dark_prismarine_quarter_slab",
+      "rootId" : "conquest:dark_prismarine_quarter_slab",
       "aliases" : [ ]
     },
     "SMALL_ARCH" : {
-      "rootId" : "minecraft:dark_prismarine_small_arch",
+      "rootId" : "conquest:dark_prismarine_small_arch",
       "aliases" : [ ]
     },
     "VERTICAL_SLAB" : {
-      "rootId" : "minecraft:dark_prismarine_vertical_slab",
+      "rootId" : "conquest:dark_prismarine_vertical_slab",
       "aliases" : [ ]
     },
     "BALUSTRADE" : {
-      "rootId" : "minecraft:dark_prismarine_balustrade",
+      "rootId" : "conquest:dark_prismarine_balustrade",
       "aliases" : [ ]
     },
     "SLAB" : {
-      "rootId" : "minecraft:dark_prismarine_slab",
+      "rootId" : "conquest:dark_prismarine_slab",
       "aliases" : [ ]
     },
     "CAPITAL" : {
-      "rootId" : "minecraft:dark_prismarine_capital",
+      "rootId" : "conquest:dark_prismarine_capital",
       "aliases" : [ ]
     },
     "TWO_METER_ARCH_HALF" : {
-      "rootId" : "minecraft:dark_prismarine_two_meter_arch_half",
+      "rootId" : "conquest:dark_prismarine_two_meter_arch_half",
       "aliases" : [ ]
     }
   },
@@ -26765,27 +26785,27 @@
   },
   "minecraft:purple_stained_glass" : {
     "VERTICAL_CORNER" : {
-      "rootId" : "minecraft:purple_stained_glass_vertical_corner",
+      "rootId" : "conquest:purple_stained_glass_vertical_corner",
       "aliases" : [ ]
     },
     "VERTICAL_QUARTER" : {
-      "rootId" : "minecraft:purple_stained_glass_vertical_quarter",
+      "rootId" : "conquest:purple_stained_glass_vertical_quarter",
       "aliases" : [ ]
     },
     "STAIRS" : {
-      "rootId" : "minecraft:purple_stained_glass_stairs",
+      "rootId" : "conquest:purple_stained_glass_stairs",
       "aliases" : [ ]
     },
     "VERTICAL_SLAB" : {
-      "rootId" : "minecraft:purple_stained_glass_vertical_slab",
+      "rootId" : "conquest:purple_stained_glass_vertical_slab",
       "aliases" : [ ]
     },
     "SLAB" : {
-      "rootId" : "minecraft:purple_stained_glass_slab",
+      "rootId" : "conquest:purple_stained_glass_slab",
       "aliases" : [ ]
     },
     "PANE" : {
-      "rootId" : "minecraft:purple_stained_glass_pane",
+      "rootId" : "conquest:purple_stained_glass_pane",
       "aliases" : [ ]
     }
   },
@@ -27088,6 +27108,10 @@
     },
     "VERTICAL_CORNER_SLAB" : {
       "rootId" : "conqest:prismarine_brick_vertical_corner_slab",
+      "aliases" : [ ]
+    },
+    "STAIRS" : {
+      "rootId" : "conqest:prismarine_brick_stairs",
       "aliases" : [ ]
     },
     "CORNER_SLAB" : {
@@ -27600,6 +27624,10 @@
     },
     "VERTICAL_CORNER_SLAB" : {
       "rootId" : "conqest:limestone_brick_vertical_corner_slab",
+      "aliases" : [ ]
+    },
+    "STAIRS" : {
+      "rootId" : "conqest:limestone_brick_stairs",
       "aliases" : [ ]
     },
     "CORNER_SLAB" : {
@@ -28853,27 +28881,27 @@
   },
   "minecraft:blue_stained_glass" : {
     "VERTICAL_CORNER" : {
-      "rootId" : "minecraft:blue_stained_glass_vertical_corner",
+      "rootId" : "conquest:blue_stained_glass_vertical_corner",
       "aliases" : [ ]
     },
     "VERTICAL_QUARTER" : {
-      "rootId" : "minecraft:blue_stained_glass_vertical_quarter",
+      "rootId" : "conquest:blue_stained_glass_vertical_quarter",
       "aliases" : [ ]
     },
     "STAIRS" : {
-      "rootId" : "minecraft:blue_stained_glass_stairs",
+      "rootId" : "conquest:blue_stained_glass_stairs",
       "aliases" : [ ]
     },
     "VERTICAL_SLAB" : {
-      "rootId" : "minecraft:blue_stained_glass_vertical_slab",
+      "rootId" : "conquest:blue_stained_glass_vertical_slab",
       "aliases" : [ ]
     },
     "SLAB" : {
-      "rootId" : "minecraft:blue_stained_glass_slab",
+      "rootId" : "conquest:blue_stained_glass_slab",
       "aliases" : [ ]
     },
     "PANE" : {
-      "rootId" : "minecraft:blue_stained_glass_pane",
+      "rootId" : "conquest:blue_stained_glass_pane",
       "aliases" : [ ]
     }
   },
@@ -28896,6 +28924,10 @@
     },
     "VERTICAL_CORNER_SLAB" : {
       "rootId" : "conqest:clay_brick_vertical_corner_slab",
+      "aliases" : [ ]
+    },
+    "STAIRS" : {
+      "rootId" : "conqest:clay_brick_stairs",
       "aliases" : [ ]
     },
     "CORNER_SLAB" : {
@@ -29899,27 +29931,27 @@
   },
   "minecraft:brown_stained_glass" : {
     "VERTICAL_CORNER" : {
-      "rootId" : "minecraft:brown_stained_glass_vertical_corner",
+      "rootId" : "conquest:brown_stained_glass_vertical_corner",
       "aliases" : [ ]
     },
     "VERTICAL_QUARTER" : {
-      "rootId" : "minecraft:brown_stained_glass_vertical_quarter",
+      "rootId" : "conquest:brown_stained_glass_vertical_quarter",
       "aliases" : [ ]
     },
     "STAIRS" : {
-      "rootId" : "minecraft:brown_stained_glass_stairs",
+      "rootId" : "conquest:brown_stained_glass_stairs",
       "aliases" : [ ]
     },
     "VERTICAL_SLAB" : {
-      "rootId" : "minecraft:brown_stained_glass_vertical_slab",
+      "rootId" : "conquest:brown_stained_glass_vertical_slab",
       "aliases" : [ ]
     },
     "SLAB" : {
-      "rootId" : "minecraft:brown_stained_glass_slab",
+      "rootId" : "conquest:brown_stained_glass_slab",
       "aliases" : [ ]
     },
     "PANE" : {
-      "rootId" : "minecraft:brown_stained_glass_pane",
+      "rootId" : "conquest:brown_stained_glass_pane",
       "aliases" : [ ]
     }
   },
@@ -32626,6 +32658,10 @@
       "rootId" : "conqest:limestone_cobble_vertical_corner_slab",
       "aliases" : [ ]
     },
+    "STAIRS" : {
+      "rootId" : "conqest:limestone_cobble_stairs",
+      "aliases" : [ ]
+    },
     "GOTHIC_ARCH" : {
       "rootId" : "conqest:limestone_cobble_gothic_arch",
       "aliases" : [ ]
@@ -34864,27 +34900,27 @@
   },
   "minecraft:yellow_stained_glass" : {
     "VERTICAL_CORNER" : {
-      "rootId" : "minecraft:yellow_stained_glass_vertical_corner",
+      "rootId" : "conquest:yellow_stained_glass_vertical_corner",
       "aliases" : [ ]
     },
     "VERTICAL_QUARTER" : {
-      "rootId" : "minecraft:yellow_stained_glass_vertical_quarter",
+      "rootId" : "conquest:yellow_stained_glass_vertical_quarter",
       "aliases" : [ ]
     },
     "STAIRS" : {
-      "rootId" : "minecraft:yellow_stained_glass_stairs",
+      "rootId" : "conquest:yellow_stained_glass_stairs",
       "aliases" : [ ]
     },
     "VERTICAL_SLAB" : {
-      "rootId" : "minecraft:yellow_stained_glass_vertical_slab",
+      "rootId" : "conquest:yellow_stained_glass_vertical_slab",
       "aliases" : [ ]
     },
     "SLAB" : {
-      "rootId" : "minecraft:yellow_stained_glass_slab",
+      "rootId" : "conquest:yellow_stained_glass_slab",
       "aliases" : [ ]
     },
     "PANE" : {
-      "rootId" : "minecraft:yellow_stained_glass_pane",
+      "rootId" : "conquest:yellow_stained_glass_pane",
       "aliases" : [ ]
     }
   },
@@ -35890,27 +35926,27 @@
   },
   "minecraft:gray_stained_glass" : {
     "VERTICAL_CORNER" : {
-      "rootId" : "minecraft:gray_stained_glass_vertical_corner",
+      "rootId" : "conquest:gray_stained_glass_vertical_corner",
       "aliases" : [ ]
     },
     "VERTICAL_QUARTER" : {
-      "rootId" : "minecraft:gray_stained_glass_vertical_quarter",
+      "rootId" : "conquest:gray_stained_glass_vertical_quarter",
       "aliases" : [ ]
     },
     "STAIRS" : {
-      "rootId" : "minecraft:gray_stained_glass_stairs",
+      "rootId" : "conquest:gray_stained_glass_stairs",
       "aliases" : [ ]
     },
     "VERTICAL_SLAB" : {
-      "rootId" : "minecraft:gray_stained_glass_vertical_slab",
+      "rootId" : "conquest:gray_stained_glass_vertical_slab",
       "aliases" : [ ]
     },
     "SLAB" : {
-      "rootId" : "minecraft:gray_stained_glass_slab",
+      "rootId" : "conquest:gray_stained_glass_slab",
       "aliases" : [ ]
     },
     "PANE" : {
-      "rootId" : "minecraft:gray_stained_glass_pane",
+      "rootId" : "conquest:gray_stained_glass_pane",
       "aliases" : [ ]
     }
   },
@@ -37399,27 +37435,27 @@
   },
   "minecraft:orange_stained_glass" : {
     "VERTICAL_CORNER" : {
-      "rootId" : "minecraft:orange_stained_glass_vertical_corner",
+      "rootId" : "conquest:orange_stained_glass_vertical_corner",
       "aliases" : [ ]
     },
     "VERTICAL_QUARTER" : {
-      "rootId" : "minecraft:orange_stained_glass_vertical_quarter",
+      "rootId" : "conquest:orange_stained_glass_vertical_quarter",
       "aliases" : [ ]
     },
     "STAIRS" : {
-      "rootId" : "minecraft:orange_stained_glass_stairs",
+      "rootId" : "conquest:orange_stained_glass_stairs",
       "aliases" : [ ]
     },
     "VERTICAL_SLAB" : {
-      "rootId" : "minecraft:orange_stained_glass_vertical_slab",
+      "rootId" : "conquest:orange_stained_glass_vertical_slab",
       "aliases" : [ ]
     },
     "SLAB" : {
-      "rootId" : "minecraft:orange_stained_glass_slab",
+      "rootId" : "conquest:orange_stained_glass_slab",
       "aliases" : [ ]
     },
     "PANE" : {
-      "rootId" : "minecraft:orange_stained_glass_pane",
+      "rootId" : "conquest:orange_stained_glass_pane",
       "aliases" : [ ]
     }
   },
@@ -43847,27 +43883,27 @@
   },
   "minecraft:black_stained_glass" : {
     "VERTICAL_CORNER" : {
-      "rootId" : "minecraft:black_stained_glass_vertical_corner",
+      "rootId" : "conquest:black_stained_glass_vertical_corner",
       "aliases" : [ ]
     },
     "VERTICAL_QUARTER" : {
-      "rootId" : "minecraft:black_stained_glass_vertical_quarter",
+      "rootId" : "conquest:black_stained_glass_vertical_quarter",
       "aliases" : [ ]
     },
     "STAIRS" : {
-      "rootId" : "minecraft:black_stained_glass_stairs",
+      "rootId" : "conquest:black_stained_glass_stairs",
       "aliases" : [ ]
     },
     "VERTICAL_SLAB" : {
-      "rootId" : "minecraft:black_stained_glass_vertical_slab",
+      "rootId" : "conquest:black_stained_glass_vertical_slab",
       "aliases" : [ ]
     },
     "SLAB" : {
-      "rootId" : "minecraft:black_stained_glass_slab",
+      "rootId" : "conquest:black_stained_glass_slab",
       "aliases" : [ ]
     },
     "PANE" : {
-      "rootId" : "minecraft:black_stained_glass_pane",
+      "rootId" : "conquest:black_stained_glass_pane",
       "aliases" : [ ]
     }
   },
@@ -45617,63 +45653,66 @@
   },
   "minecraft:dark_spruce_log" : {
     "BRANCH" : {
-      "rootId" : "minecraft:dark_spruce_log_branch",
+      "rootId" : "conquest:dark_spruce_log_branch",
       "aliases" : [ ]
     },
     "PILLAR" : {
-      "rootId" : "minecraft:dark_spruce_log_pillar",
+      "rootId" : "conquest:dark_spruce_log_pillar",
       "aliases" : [ ]
     },
     "VERTICAL_CORNER_SLAB" : {
-      "rootId" : "minecraft:dark_spruce_log_vertical_corner_slab",
+      "rootId" : "conquest:dark_spruce_log_vertical_corner_slab",
       "aliases" : [ ]
     },
     "STAIRS" : {
-      "rootId" : "minecraft:dark_spruce_log_stairs",
+      "rootId" : "conquest:dark_spruce_log_stairs",
       "aliases" : [ ]
     },
     "CORNER_SLAB" : {
-      "rootId" : "minecraft:dark_spruce_log_corner_slab",
+      "rootId" : "conquest:dark_spruce_log_corner_slab",
       "aliases" : [ ]
     },
-    "FULL" : {
-      "rootId" : "minecraft:dark_spruce_log",
+    "FULL" : [ {
+      "rootId" : "minecraft:spruce_log",
       "aliases" : [ ]
-    },
+    }, {
+      "rootId" : "minecraft:spruce_wood",
+      "aliases" : [ ]
+    } ],
     "STUMP" : {
-      "rootId" : "minecraft:dark_spruce_log_stump",
+      "rootId" : "conquest:dark_spruce_log_stump",
       "aliases" : [ ]
     },
     "EIGHTH_SLAB" : {
-      "rootId" : "minecraft:dark_spruce_log_eighth_slab",
+      "rootId" : "conquest:dark_spruce_log_eighth_slab",
       "aliases" : [ ]
     },
     "VERTICAL_CORNER" : {
-      "rootId" : "minecraft:dark_spruce_log_vertical_corner",
+      "rootId" : "conquest:dark_spruce_log_vertical_corner",
       "aliases" : [ ]
     },
     "LARGE_BRANCH" : {
-      "rootId" : "minecraft:dark_spruce_log_large_branch",
+      "rootId" : "conquest:dark_spruce_log_large_branch",
       "aliases" : [ ]
     },
     "VERTICAL_QUARTER" : {
-      "rootId" : "minecraft:dark_spruce_log_vertical_quarter",
+      "rootId" : "conquest:dark_spruce_log_vertical_quarter",
       "aliases" : [ ]
     },
     "QUARTER_SLAB" : {
-      "rootId" : "minecraft:dark_spruce_log_quarter_slab",
+      "rootId" : "conquest:dark_spruce_log_quarter_slab",
       "aliases" : [ ]
     },
     "VERTICAL_SLAB" : {
-      "rootId" : "minecraft:dark_spruce_log_vertical_slab",
+      "rootId" : "conquest:dark_spruce_log_vertical_slab",
       "aliases" : [ ]
     },
     "SLAB" : {
-      "rootId" : "minecraft:dark_spruce_log_slab",
+      "rootId" : "conquest:dark_spruce_log_slab",
       "aliases" : [ ]
     },
     "SMALL_BRANCH" : {
-      "rootId" : "minecraft:dark_spruce_log_small_branch",
+      "rootId" : "conquest:dark_spruce_log_small_branch",
       "aliases" : [ ]
     }
   },
@@ -47995,6 +48034,10 @@
       "rootId" : "conqest:mossy_limestone_cobble_vertical_corner_slab",
       "aliases" : [ ]
     },
+    "STAIRS" : {
+      "rootId" : "conqest:mossy_limestone_cobble_stairs",
+      "aliases" : [ ]
+    },
     "CORNER_SLAB" : {
       "rootId" : "conqest:mossy_limestone_cobble_corner_slab",
       "aliases" : [ ]
@@ -48216,23 +48259,23 @@
   },
   "minecraft:mycelium" : {
     "VERTICAL_CORNER" : {
-      "rootId" : "minecraft:mycelium_vertical_corner",
+      "rootId" : "conquest:mycelium_vertical_corner",
       "aliases" : [ ]
     },
     "VERTICAL_QUARTER" : {
-      "rootId" : "minecraft:mycelium_vertical_quarter",
+      "rootId" : "conquest:mycelium_vertical_quarter",
       "aliases" : [ ]
     },
     "STAIRS" : {
-      "rootId" : "minecraft:mycelium_stairs",
+      "rootId" : "conquest:mycelium_stairs",
       "aliases" : [ ]
     },
     "VERTICAL_SLAB" : {
-      "rootId" : "minecraft:mycelium_vertical_slab",
+      "rootId" : "conquest:mycelium_vertical_slab",
       "aliases" : [ ]
     },
     "LAYER" : {
-      "rootId" : "minecraft:mycelium_layer",
+      "rootId" : "conquest:mycelium_layer",
       "aliases" : [ ]
     },
     "FULL" : {
