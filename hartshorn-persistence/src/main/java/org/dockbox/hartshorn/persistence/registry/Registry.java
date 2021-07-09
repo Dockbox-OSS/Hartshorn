@@ -30,6 +30,7 @@ import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 @SuppressWarnings({ "UnusedReturnValue", "unused" })
 @Entity("registry")
@@ -336,6 +337,23 @@ public class Registry<V> extends HashMap<String, RegistryColumn<V>> {
                 registry.addData(identifier, v);
             }
         }));
+        return registry;
+    }
+
+    /**
+     * Maps the values of the registry with the specified {@link Function mapper}.
+     *
+     * @param mapper
+     *      The {@link Function} to map the values of the registry
+     * @param <U>
+     *      The return type of the mapper
+     *
+     * @return The mapped registry
+     */
+    public <U> Registry<U> mapValues(Function<? super V, U> mapper) {
+        Registry<U> registry = new Registry<>();
+        this.forEach((columnID, column) -> registry.put(columnID, column.map(mapper)));
+
         return registry;
     }
 

@@ -17,16 +17,14 @@
 
 package org.dockbox.hartshorn.blockregistry;
 
-import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.persistence.registry.RegistryIdentifier;
-import org.dockbox.hartshorn.util.HartshornUtils;
 
 import java.util.Locale;
-import java.util.Map;
 
 public enum VariantIdentifier implements RegistryIdentifier {
+
     FULL,
-    BARK,
+    BARK(FULL),
     SMALL_ARCH,
     SMALL_ARCH_HALF,
     TWO_METER_ARCH,
@@ -106,33 +104,34 @@ public enum VariantIdentifier implements RegistryIdentifier {
     IRONBAR,
     SHUTTERS;
 
-
     private final String identifier;
-    private static final Map<String, VariantIdentifier> identifierMap = HartshornUtils.emptyConcurrentMap();
+    private final VariantIdentifier fallbackVariant;
 
-    static {
-        for (VariantIdentifier variantIdentifier : values()) {
-            identifierMap.put(variantIdentifier.identifier, variantIdentifier);
-        }
+    VariantIdentifier() {
+        this.identifier = this.name().toLowerCase(Locale.ROOT);
+        this.fallbackVariant = this;
     }
 
     VariantIdentifier(String identifier) {
         this.identifier = identifier;
+        this.fallbackVariant = this;
     }
 
-    VariantIdentifier() {
+    VariantIdentifier(VariantIdentifier fallbackVariant) {
         this.identifier = this.name().toLowerCase(Locale.ROOT);
+        this.fallbackVariant = fallbackVariant;
     }
 
-    public static Exceptional<VariantIdentifier> of(String identifier) {
-        identifier = identifier.toLowerCase();
-
-        return identifierMap.containsKey(identifier)
-                ? Exceptional.of(identifierMap.get(identifier))
-                : Exceptional.empty();
+    VariantIdentifier(String identifier, VariantIdentifier fallbackVariant) {
+        this.identifier = identifier;
+        this.fallbackVariant = fallbackVariant;
     }
 
     public String getIdentifier() {
         return this.identifier;
+    }
+
+    public VariantIdentifier getFallbackVariant() {
+        return this.fallbackVariant;
     }
 }
