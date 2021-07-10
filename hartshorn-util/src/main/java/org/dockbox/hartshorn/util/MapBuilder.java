@@ -15,23 +15,31 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.server.minecraft.events.chat;
+package org.dockbox.hartshorn.util;
 
-import org.dockbox.hartshorn.api.events.AbstractTargetCancellableEvent;
-import org.dockbox.hartshorn.api.i18n.MessageReceiver;
-import org.dockbox.hartshorn.api.i18n.text.Text;
+import java.util.Map;
 
-import lombok.Getter;
-import lombok.Setter;
+public class MapBuilder<K, V> {
 
-/** The event fired when Hartshorn is about to send a message to any {@link MessageReceiver}. */
-public class SendMessageEvent extends AbstractTargetCancellableEvent {
+    private final Map<K, V> map = HartshornUtils.emptyMap();
 
-    @Getter @Setter
-    private Text message;
-
-    public SendMessageEvent(MessageReceiver target, Text message) {
-        super(target);
-        this.message = message;
+    public MapBuilder<K, V> add(K k, V v) {
+        this.map.put(k, v);
+        return this;
     }
+
+    public MapBuilder<K, V> add(Map<K, V> map) {
+        this.map.putAll(map);
+        return this;
+    }
+
+    public MapBuilder<K, V> reset() {
+        this.map.clear();
+        return this;
+    }
+
+    public Map<K, V> get() {
+        return this.map;
+    }
+
 }

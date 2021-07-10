@@ -17,6 +17,7 @@
 
 package org.dockbox.hartshorn.di.services;
 
+import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 
@@ -28,5 +29,6 @@ public interface ServiceLocator {
     @Unmodifiable
     Collection<Class<?>> locate(String prefix);
     Collection<ServiceContainer> containers();
+    Exceptional<ServiceContainer> container(Class<?> type);
 
 }

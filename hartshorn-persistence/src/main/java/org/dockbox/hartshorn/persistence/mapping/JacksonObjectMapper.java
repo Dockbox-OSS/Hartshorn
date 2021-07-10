@@ -216,7 +216,7 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
     }
 
     private <T, I> Exceptional<T> correctPersistentCapableInternal(Class<T> type, Function<Class<? extends PersistentModel<?>>, Exceptional<? extends PersistentModel<?>>> reader) {
-        if (Reflect.assignableFrom(PersistentCapable.class, type)) {
+        if (Reflect.assigns(PersistentCapable.class, type)) {
             // Provision basis is required here, as injected types will typically pass in a interface type. If no injection point is available a
             // regular instance is created through available constructors.
             Class<? extends PersistentModel<?>> modelType = ((PersistentCapable<?>) Hartshorn.context().get(type)).getModelClass();

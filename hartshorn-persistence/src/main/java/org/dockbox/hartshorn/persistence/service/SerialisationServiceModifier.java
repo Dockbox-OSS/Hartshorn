@@ -17,9 +17,10 @@
 
 package org.dockbox.hartshorn.persistence.service;
 
+import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.di.annotations.Service;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
+import org.dockbox.hartshorn.di.services.ServiceContainer;
 import org.dockbox.hartshorn.persistence.PersistenceType;
 import org.dockbox.hartshorn.persistence.annotations.Serialise;
 import org.dockbox.hartshorn.persistence.mapping.ObjectMapper;
@@ -71,7 +72,7 @@ public class SerialisationServiceModifier extends AbstractPersistenceServiceModi
             final ObjectMapper objectMapper = this.getObjectMapper(context, serialisationContext);
 
             final Exceptional<String> result = objectMapper.write(content);
-            if (Reflect.assignableFrom(String.class, methodContext.getReturnType())) {
+            if (Reflect.assigns(String.class, methodContext.getReturnType())) {
                 return (R) result.orNull();
             }
             else {
@@ -87,7 +88,7 @@ public class SerialisationServiceModifier extends AbstractPersistenceServiceModi
 
     @SuppressWarnings("unchecked")
     private <R> R wrapBooleanResult(Exceptional<Boolean> result, MethodProxyContext<?> methodContext) {
-        if (Reflect.assignableFrom(Boolean.class, methodContext.getReturnType())) {
+        if (Reflect.assigns(Boolean.class, methodContext.getReturnType())) {
             return (R) result.or(false);
         }
         else {
@@ -104,7 +105,7 @@ public class SerialisationServiceModifier extends AbstractPersistenceServiceModi
 
         boolean hasPath = false;
         for (Class<?> parameter : methodContext.getMethod().getParameterTypes()) {
-            if (Reflect.assignableFrom(Path.class, parameter) || Reflect.assignableFrom(File.class, parameter)) {
+            if (Reflect.assigns(Path.class, parameter) || Reflect.assigns(File.class, parameter)) {
                 hasPath = true;
                 break;
             }
@@ -119,7 +120,7 @@ public class SerialisationServiceModifier extends AbstractPersistenceServiceModi
             return methodContext.getMethod().getParameterCount() == 2;
         }
         else {
-            if (Reflect.isNotVoid(this.getOwner(annotation.value().owner(), methodContext))) {
+            if (Reflect.notVoid(this.getOwner(annotation.value().owner(), methodContext))) {
                 serialisationContext.setTarget(SerialisationTarget.ANNOTATED_PATH);
                 serialisationContext.setPredeterminedPath(this.determineAnnotationPath(
                         context,
@@ -136,8 +137,8 @@ public class SerialisationServiceModifier extends AbstractPersistenceServiceModi
     }
 
     private Class<?> getOwner(Class<?> annotationOwner, MethodProxyContext<?> context) {
-        if (Reflect.isNotVoid(annotationOwner)) return annotationOwner;
-        return context.getMethod().getDeclaringClass().getAnnotation(Service.class).owner();
+        if (Reflect.notVoid(annotationOwner)) return annotationOwner;
+        return Hartshorn.context().locator().container(context.getMethod().getDeclaringClass()).map(ServiceContainer::owner).orNull();
     }
 
     private boolean argumentPathTargetPreconditions(MethodProxyContext<?> context) {
@@ -146,16 +147,16 @@ public class SerialisationServiceModifier extends AbstractPersistenceServiceModi
         if (context.getMethod().getParameterCount() != 2) return false;
 
         final Class<?> returnType = context.getReturnType();
-        if (Reflect.assignableFrom(boolean.class, returnType)) return true;
+        if (Reflect.assigns(boolean.class, returnType)) return true;
 
-        else if (Reflect.assignableFrom(Exceptional.class, returnType)) {
-            final Exceptional<Type> type = Reflect.genericTypeParameter(returnType, 0);
+        else if (Reflect.assigns(Exceptional.class, returnType)) {
+            final Exceptional<Type> type = Reflect.typeParameter(returnType, 0);
 
             if (type.present()) {
                 final Type generic = type.get();
 
                 if (generic instanceof Class) {
-                    return Reflect.assignableFrom(Boolean.class, (Class<?>) generic);
+                    return Reflect.assigns(Boolean.class, (Class<?>) generic);
                 }
             }
         }
@@ -166,16 +167,16 @@ public class SerialisationServiceModifier extends AbstractPersistenceServiceModi
     private boolean stringTargetPreconditions(MethodProxyContext<?> context) {
         final Class<?> returnType = context.getReturnType();
 
-        if (Reflect.assignableFrom(String.class, returnType)) return true;
+        if (Reflect.assigns(String.class, returnType)) return true;
 
-        else if (Reflect.assignableFrom(Exceptional.class, returnType)) {
-            final Exceptional<Type> type = Reflect.genericTypeParameter(returnType, 0);
+        else if (Reflect.assigns(Exceptional.class, returnType)) {
+            final Exceptional<Type> type = Reflect.typeParameter(returnType, 0);
 
             if (type.present()) {
                 final Type generic = type.get();
 
                 if (generic instanceof Class) {
-                    return Reflect.assignableFrom(String.class, (Class<?>) generic);
+                    return Reflect.assigns(String.class, (Class<?>) generic);
                 }
             }
         }

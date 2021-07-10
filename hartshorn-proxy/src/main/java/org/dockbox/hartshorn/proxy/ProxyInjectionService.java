@@ -28,7 +28,7 @@ import org.dockbox.hartshorn.proxy.handle.ProxyHandler;
 
 import java.lang.reflect.InvocationTargetException;
 
-@Service(activator = UseBootstrap.class)
+@Service(activators = UseBootstrap.class)
 public class ProxyInjectionService {
 
     @PostBootstrap

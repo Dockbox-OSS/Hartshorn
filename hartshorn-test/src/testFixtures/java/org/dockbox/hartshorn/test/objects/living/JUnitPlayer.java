@@ -26,9 +26,11 @@ import org.dockbox.hartshorn.api.i18n.common.ResourceEntry;
 import org.dockbox.hartshorn.api.i18n.permissions.Permission;
 import org.dockbox.hartshorn.api.i18n.text.Text;
 import org.dockbox.hartshorn.api.i18n.text.pagination.Pagination;
+import org.dockbox.hartshorn.server.minecraft.dimension.Block;
 import org.dockbox.hartshorn.server.minecraft.dimension.Worlds;
 import org.dockbox.hartshorn.server.minecraft.dimension.position.Location;
 import org.dockbox.hartshorn.server.minecraft.dimension.world.World;
+import org.dockbox.hartshorn.server.minecraft.entities.Entity;
 import org.dockbox.hartshorn.server.minecraft.item.Item;
 import org.dockbox.hartshorn.server.minecraft.packets.Packet;
 import org.dockbox.hartshorn.server.minecraft.players.GameSettings;
@@ -64,7 +66,7 @@ public class JUnitPlayer extends Player implements JUnitPersistentDataHolder {
     @Getter @Setter
     private boolean sneaking = false;
     @Setter
-    private Location lookingAt = null;
+    private Block lookingAt = null;
     @Getter @Setter
     private Text displayName;
     @Getter @Setter
@@ -82,7 +84,7 @@ public class JUnitPlayer extends Player implements JUnitPersistentDataHolder {
         super(uniqueId, name);
         this.setDisplayName(Text.of(name));
         Worlds worlds = Hartshorn.context().get(Worlds.class);
-        this.setLocation(new Location(0, 0, 0, worlds.getWorld(worlds.getRootWorldId()).orNull()));
+        this.setLocation(Location.of(0, 0, 0, worlds.getWorld(worlds.getRootWorldId()).orNull()));
         ((JUnitWorld) this.getWorld()).addEntity(this);
     }
 
@@ -97,10 +99,11 @@ public class JUnitPlayer extends Player implements JUnitPersistentDataHolder {
     }
 
     @Override
-    public void setLocation(Location location) {
+    public boolean setLocation(Location location) {
         if (this.location != null) ((JUnitWorld) this.getWorld()).destroyEntity(this.getUniqueId());
         this.location = location;
         ((JUnitWorld) this.getWorld()).addEntity(this);
+        return true;
     }
 
     @Override
@@ -141,8 +144,13 @@ public class JUnitPlayer extends Player implements JUnitPersistentDataHolder {
     }
 
     @Override
-    public Exceptional<Location> getLookingAtBlockPos() {
+    public Exceptional<Block> getLookingAtBlock() {
         return Exceptional.of(this.lookingAt);
+    }
+
+    @Override
+    public Exceptional<Entity> getLookingAtEntity() {
+        return Exceptional.empty();
     }
 
     @Override

@@ -19,8 +19,11 @@ package org.dockbox.hartshorn.server.minecraft;
 
 import org.dockbox.hartshorn.api.HartshornBootstrap;
 import org.dockbox.hartshorn.api.events.EventBus;
+import org.dockbox.hartshorn.api.events.annotations.Posting;
 import org.dockbox.hartshorn.server.minecraft.events.server.ServerInitEvent;
+import org.dockbox.hartshorn.server.minecraft.events.server.ServerPostInitEvent;
 
+@Posting({ ServerInitEvent.class, ServerPostInitEvent.class })
 public class MinecraftServerBootstrap extends HartshornBootstrap {
 
     public static MinecraftServerBootstrap instance() {
@@ -29,8 +32,9 @@ public class MinecraftServerBootstrap extends HartshornBootstrap {
 
     @Override
     public void init() {
-        super.init();
         EventBus bus = super.getContext().get(EventBus.class);
         bus.post(new ServerInitEvent());
+        super.init();
+        bus.post(new ServerPostInitEvent());
     }
 }

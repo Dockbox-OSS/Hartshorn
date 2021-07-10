@@ -19,13 +19,16 @@ package org.dockbox.hartshorn.test;
 
 import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.HartshornApplication;
+import org.dockbox.hartshorn.api.SimpleMetaProvider;
 import org.dockbox.hartshorn.di.ApplicationContextAware;
-import org.dockbox.hartshorn.di.Modifier;
+import org.dockbox.hartshorn.di.DefaultModifiers;
+import org.dockbox.hartshorn.di.MetaProviderModifier;
 import org.dockbox.hartshorn.di.annotations.Activator;
 import org.dockbox.hartshorn.di.annotations.InjectConfig;
 import org.dockbox.hartshorn.di.annotations.InjectPhase;
 import org.dockbox.hartshorn.test.util.JUnitInjector;
 import org.dockbox.hartshorn.test.util.LateJUnitInjector;
+import org.dockbox.hartshorn.util.Reflect;
 
 import java.lang.reflect.Field;
 
@@ -48,6 +51,13 @@ public final class JUnit5Application {
         instance.setAccessible(true);
         instance.set(null, null);
 
-        HartshornApplication.create(JUnit5Application.class, Modifier.ACTIVATE_ALL).run();
+        final Field context = Reflect.class.getDeclaredField("context");
+        context.setAccessible(true);
+        context.set(null, null);
+
+        HartshornApplication.create(JUnit5Application.class,
+                DefaultModifiers.ACTIVATE_ALL,
+                new MetaProviderModifier(SimpleMetaProvider::new)
+        ).run();
     }
 }

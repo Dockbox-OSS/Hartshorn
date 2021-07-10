@@ -17,18 +17,18 @@
 
 package org.dockbox.hartshorn.di.context;
 
+import org.dockbox.hartshorn.api.exceptions.ApplicationException;
 import org.dockbox.hartshorn.di.InjectionPoint;
 import org.dockbox.hartshorn.di.ProvisionFailure;
 import org.dockbox.hartshorn.di.annotations.Activator;
 import org.dockbox.hartshorn.di.annotations.ServiceActivator;
 import org.dockbox.hartshorn.di.annotations.Wired;
-import org.dockbox.hartshorn.api.exceptions.ApplicationException;
 import org.dockbox.hartshorn.di.inject.InjectionModifier;
 import org.dockbox.hartshorn.di.properties.InjectableType;
 import org.dockbox.hartshorn.di.properties.InjectorProperty;
 import org.dockbox.hartshorn.di.services.ServiceProcessor;
-import org.dockbox.hartshorn.util.Reflect;
 import org.dockbox.hartshorn.util.HartshornUtils;
+import org.dockbox.hartshorn.util.Reflect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,14 +38,13 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import lombok.AccessLevel;
 import lombok.Getter;
 
 public abstract class ManagedHartshornContext extends DefaultContext implements ApplicationContext {
 
-    protected static final Logger log = LoggerFactory.getLogger("Hartshorn Managed Context");
+    protected static final Logger log = LoggerFactory.getLogger(ManagedHartshornContext.class);
     protected final transient Set<InjectionPoint<?>> injectionPoints = HartshornUtils.emptyConcurrentSet();
 
     protected final transient Set<InjectionModifier<?>> injectionModifiers = HartshornUtils.emptyConcurrentSet();
@@ -64,7 +63,7 @@ public abstract class ManagedHartshornContext extends DefaultContext implements 
         }
         this.activator = activationSource.getAnnotation(Activator.class);
         this.activationSource = activationSource;
-        this.activators = Reflect.annotatedAnnotations(activationSource, ServiceActivator.class);
+        this.activators = Reflect.annotations(activationSource, ServiceActivator.class);
     }
 
     /**
@@ -99,9 +98,9 @@ public abstract class ManagedHartshornContext extends DefaultContext implements 
 
     public <T> void enable(T typeInstance) {
         if (typeInstance == null) return;
-        HartshornUtils.merge(Reflect.annotatedFields(typeInstance.getClass(), Wired.class)).stream()
+        HartshornUtils.merge(Reflect.fields(typeInstance.getClass(), Wired.class)).stream()
                 .filter(field -> field.getAnnotation(Wired.class).enable())
-                .filter(field -> Reflect.assignableFrom(InjectableType.class, field.getType()))
+                .filter(field -> Reflect.assigns(InjectableType.class, field.getType()))
                 .map(field -> {
                     try {
                         // As we're enabling fields they may be accessed even if their
@@ -176,7 +175,7 @@ public abstract class ManagedHartshornContext extends DefaultContext implements 
 
         return this.activators.stream()
                 .map(Annotation::annotationType)
-                .collect(Collectors.toList())
+                .toList()
                 .contains(activator);
     }
 

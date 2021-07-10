@@ -21,15 +21,16 @@ import com.google.common.collect.Multimap;
 
 import org.dockbox.hartshorn.api.annotations.UseBootstrap;
 import org.dockbox.hartshorn.api.config.GlobalConfig;
+import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.exceptions.Except;
 import org.dockbox.hartshorn.di.InjectConfiguration;
 import org.dockbox.hartshorn.di.InjectableBootstrap;
 import org.dockbox.hartshorn.di.Modifier;
 import org.dockbox.hartshorn.di.annotations.InjectPhase;
 import org.dockbox.hartshorn.di.annotations.Required;
-import org.dockbox.hartshorn.di.annotations.Service;
-import org.dockbox.hartshorn.util.Reflect;
+import org.dockbox.hartshorn.di.services.ServiceContainer;
 import org.dockbox.hartshorn.util.HartshornUtils;
+import org.dockbox.hartshorn.util.Reflect;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -83,8 +84,8 @@ public abstract class HartshornBootstrap extends InjectableBootstrap {
             this.getContext().invoke(postBootstrapActivation);
         }
         // Ensure all services requiring a platform implementation have one present
-        Reflect.annotatedTypes(Hartshorn.PACKAGE_PREFIX, Required.class).forEach(type -> {
-            if (Reflect.subTypes(Hartshorn.PACKAGE_PREFIX, type).isEmpty()) {
+        Reflect.types(Required.class).forEach(type -> {
+            if (Reflect.children(type).isEmpty()) {
                 this.handleMissingBinding(type);
             }
         });
@@ -96,12 +97,15 @@ public abstract class HartshornBootstrap extends InjectableBootstrap {
     }
 
     void addPostBootstrapActivation(Method method, Class<?> type) {
-        final Service annotation = type.getAnnotation(Service.class);
-        final Class<? extends Annotation> activator = annotation.activator();
-        if (Service.class.equals(activator)) return;
+        final Exceptional<ServiceContainer> container = Hartshorn.context().locator().container(type);
 
-        if (this.getContext().hasActivator(activator))
-            this.postBootstrapActivations.add(method);
+        if (container.present()) {
+            final ServiceContainer serviceContainer = container.get();
+            final List<Class<? extends Annotation>> activators = serviceContainer.activators();
+
+            if (serviceContainer.hasActivator() && activators.stream().allMatch(this.getContext()::hasActivator))
+                this.postBootstrapActivations.add(method);
+        }
     }
 
 }

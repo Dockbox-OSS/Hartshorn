@@ -19,16 +19,19 @@ package org.dockbox.hartshorn.di.context;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.domain.MetaProvider;
+import org.dockbox.hartshorn.api.exceptions.ApplicationException;
+import org.dockbox.hartshorn.di.ApplicationContextAware;
+import org.dockbox.hartshorn.di.DefaultModifiers;
 import org.dockbox.hartshorn.di.InjectConfiguration;
+import org.dockbox.hartshorn.di.InjectorMetaProvider;
+import org.dockbox.hartshorn.di.MetaProviderModifier;
 import org.dockbox.hartshorn.di.Modifier;
 import org.dockbox.hartshorn.di.ProvisionFailure;
 import org.dockbox.hartshorn.di.TypeFactory;
 import org.dockbox.hartshorn.di.adapter.ContextAdapter;
 import org.dockbox.hartshorn.di.annotations.Named;
-import org.dockbox.hartshorn.di.annotations.Service;
 import org.dockbox.hartshorn.di.annotations.ServiceActivator;
 import org.dockbox.hartshorn.di.binding.Bindings;
-import org.dockbox.hartshorn.api.exceptions.ApplicationException;
 import org.dockbox.hartshorn.di.inject.BeanContext;
 import org.dockbox.hartshorn.di.inject.Binder;
 import org.dockbox.hartshorn.di.inject.InjectionModifier;
@@ -38,8 +41,8 @@ import org.dockbox.hartshorn.di.properties.InjectableType;
 import org.dockbox.hartshorn.di.properties.InjectorProperty;
 import org.dockbox.hartshorn.di.properties.UseFactory;
 import org.dockbox.hartshorn.di.services.ServiceLocator;
-import org.dockbox.hartshorn.util.Reflect;
 import org.dockbox.hartshorn.util.HartshornUtils;
+import org.dockbox.hartshorn.util.Reflect;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.annotation.Annotation;
@@ -55,15 +58,28 @@ public class HartshornApplicationContext extends ManagedHartshornContext {
     @Getter
     private final ContextAdapter adapter;
     private final List<Modifier> modifiers;
-
     private final Map<Class<?>, Object> singletons = HartshornUtils.emptyConcurrentMap();
+    private MetaProvider metaProvider;
 
 
     public HartshornApplicationContext(Class<?> activationSource, Modifier... modifiers) {
         super(activationSource);
         this.adapter = new ContextAdapter(this.getActivator().inject(), this.getActivator().services());
-        this.bind(ApplicationContext.class, this);
         this.modifiers = HartshornUtils.asUnmodifiableList(modifiers);
+        this.modify(this.modifiers);
+
+        this.bind(ApplicationContext.class, this);
+        this.bind(MetaProvider.class, this.metaProvider);
+        this.bind(ServiceLocator.class, this.locator());
+    }
+
+    protected void modify(List<Modifier> modifiers) {
+        for (Modifier modifier : modifiers) {
+            if (modifier instanceof MetaProviderModifier metaProviderModifier) {
+                this.metaProvider = metaProviderModifier.provider();
+            }
+        }
+        if (this.metaProvider == null) this.metaProvider = new InjectorMetaProvider();
     }
 
     @Override
@@ -106,9 +122,7 @@ public class HartshornApplicationContext extends ManagedHartshornContext {
             }
         }
 
-        if (!Reflect.assignableFrom(MetaProvider.class, type)) {
-            if (typeInstance != null && this.get(MetaProvider.class).isSingleton(type)) this.singletons.put(type, typeInstance);
-        }
+        if (typeInstance != null && ApplicationContextAware.instance().getContext().meta().isSingleton(type)) this.singletons.put(type, typeInstance);
 
         // May be null, but we have used all possible injectors, it's up to the developer now
         return typeInstance;
@@ -138,13 +152,15 @@ public class HartshornApplicationContext extends ManagedHartshornContext {
     public <T> T create(Class<T> type, T typeInstance, InjectorProperty<?>[] additionalProperties) {
         try {
             if (null == typeInstance) {
-                typeInstance = this.internalInjector().get(type, additionalProperties).orElse(() -> this.raw(type)).rethrow().get();
+                typeInstance = this.internalInjector()
+                        .get(type, additionalProperties)
+                        .orElse(() -> this.raw(type)).rethrow().get();
             }
             return typeInstance;
         } catch (ProvisionFailure e) {
             // Services can have no explicit implementation even if they are abstract.
             // Typically these services are expected to be populated through injection points later in time.
-            if (Reflect.isAbstract(type) && type.isAnnotationPresent(Service.class)) return null;
+            if (Reflect.isAbstract(type) && ApplicationContextAware.instance().getContext().meta().isComponent(type)) return null;
             throw e;
         }
     }
@@ -154,13 +170,18 @@ public class HartshornApplicationContext extends ManagedHartshornContext {
         if (!activator.isAnnotationPresent(ServiceActivator.class))
             throw new IllegalArgumentException("Requested activator " + activator.getSimpleName() + " is not decorated with @ServiceActivator");
 
-        if (this.modifiers.contains(Modifier.ACTIVATE_ALL)) return true;
+        if (this.modifiers.contains(DefaultModifiers.ACTIVATE_ALL)) return true;
         else return super.hasActivator(activator);
     }
 
     @Override
     public ServiceLocator locator() {
         return this.adapter.getLocator();
+    }
+
+    @Override
+    public MetaProvider meta() {
+        return this.metaProvider;
     }
 
     @Override

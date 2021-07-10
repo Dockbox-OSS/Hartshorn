@@ -38,7 +38,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @SuppressWarnings({ "unused", "ClassWithTooManyFields" })
 @Service
@@ -105,7 +104,7 @@ public final class DefaultArgumentConverters implements InjectableType {
                 }
                 return suggestions.stream()
                         .filter(lang -> lang.toLowerCase().contains(in.toLowerCase()))
-                        .collect(Collectors.toList());
+                        .toList();
             }).build();
 
     public static final ArgumentConverter<UUID> UNIQUE_ID = CommandValueConverter.builder(UUID.class, "uuid", "uniqueId")
@@ -152,7 +151,7 @@ public final class DefaultArgumentConverters implements InjectableType {
                     .locator().containers().stream()
                     .map(ServiceContainer::getId)
                     .filter(id -> id.toLowerCase(Locale.ROOT).startsWith(in.toLowerCase(Locale.ROOT)))
-                    .collect(Collectors.toList()))
+                    .toList())
             .build();
 
     public static final ArgumentConverter<String> REMAINING_STRING = CommandValueConverter.builder(String.class, "remaining", "remainingString")

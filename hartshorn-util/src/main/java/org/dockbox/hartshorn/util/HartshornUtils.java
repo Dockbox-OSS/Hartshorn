@@ -17,6 +17,9 @@
 
 package org.dockbox.hartshorn.util;
 
+import com.google.common.collect.Sets;
+import com.google.common.collect.Sets.SetView;
+
 import org.dockbox.hartshorn.api.CheckedRunnable;
 import org.dockbox.hartshorn.api.domain.AbstractIdentifiable;
 import org.dockbox.hartshorn.api.domain.Exceptional;
@@ -129,6 +132,10 @@ public final class HartshornUtils {
             }
             return map;
         }
+    }
+
+    public static <K, V> MapBuilder<K, V> mapBuilder() {
+        return new MapBuilder<>();
     }
 
     /**
@@ -882,8 +889,8 @@ public final class HartshornUtils {
         if (object instanceof String) return HartshornUtils.isEmpty((String) object);
         else if (object instanceof Collection) return ((Collection<?>) object).isEmpty();
         else if (object instanceof Map) return ((Map<?, ?>) object).isEmpty();
-        else if (Reflect.hasMethod(object, "isEmpty"))
-            return Reflect.runMethod(object, "isEmpty", Boolean.class).or(false);
+        else if (Reflect.has(object, "isEmpty"))
+            return Reflect.<Boolean>run(object, "isEmpty").or(false);
         else return false;
     }
 
@@ -1046,7 +1053,7 @@ public final class HartshornUtils {
             return false;
         }
         catch (Throwable t) {
-            return Reflect.assignableFrom(exception, t.getClass());
+            return Reflect.assigns(exception, t.getClass());
         }
     }
 
@@ -1160,6 +1167,13 @@ public final class HartshornUtils {
         List<T> list = new ArrayList<>();
         for (int i = 0; i < size; i++) list.add(null);
         return list;
+    }
+
+    public static <T> Set<T> difference(Collection<T> collectionOne, Collection<T> collectionTwo) {
+        Set<T> diff = emptySet();
+        final SetView<T> differenceInOne = Sets.difference(asSet(collectionOne), asSet(collectionTwo));
+        final SetView<T> differenceInTwo = Sets.difference(asSet(collectionTwo), asSet(collectionOne));
+        return asSet(merge(differenceInOne, differenceInTwo));
     }
 
     public enum Provision {

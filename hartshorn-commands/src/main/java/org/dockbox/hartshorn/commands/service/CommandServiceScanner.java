@@ -20,6 +20,7 @@ package org.dockbox.hartshorn.commands.service;
 import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.annotations.PostBootstrap;
 import org.dockbox.hartshorn.api.annotations.UseBootstrap;
+import org.dockbox.hartshorn.api.events.annotations.Posting;
 import org.dockbox.hartshorn.commands.CommandGateway;
 import org.dockbox.hartshorn.commands.annotations.Command;
 import org.dockbox.hartshorn.commands.events.RegisteredCommandsEvent;
@@ -29,19 +30,20 @@ import org.dockbox.hartshorn.di.preload.Preloadable;
 import org.dockbox.hartshorn.di.services.ServiceContainer;
 import org.dockbox.hartshorn.util.Reflect;
 
-@Service(activator = UseBootstrap.class)
+@Service(activators = UseBootstrap.class)
+@Posting(RegisteredCommandsEvent.class)
 public class CommandServiceScanner implements Preloadable {
 
     @PostBootstrap
     public void preload() {
         final CommandGateway gateway = Hartshorn.context().get(CommandGateway.class);
         for (ServiceContainer container : Hartshorn.context().locator().containers()) {
-            if (!Reflect.annotatedMethods(container.getType(), Command.class).isEmpty()) {
+            if (!Reflect.methods(container.getType(), Command.class).isEmpty()) {
                 gateway.register(container.getType());
             }
         }
 
-        for (Class<? extends CommandExecutorExtension> extension : Reflect.subTypes(Hartshorn.PACKAGE_PREFIX, CommandExecutorExtension.class)) {
+        for (Class<? extends CommandExecutorExtension> extension : Reflect.children(CommandExecutorExtension.class)) {
             gateway.add(Hartshorn.context().get(extension));
         }
 

@@ -36,7 +36,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public abstract class BlockRegistryParser {
 
@@ -54,7 +53,7 @@ public abstract class BlockRegistryParser {
             if (ePath.absent()) {
                 Hartshorn.log().info("Can't find " + filename);
             } else {
-                return Files.lines(ePath.get()).collect(Collectors.toList());
+                return Files.lines(ePath.get()).toList();
             }
         } catch (IOException e) {
             Except.handle(e);

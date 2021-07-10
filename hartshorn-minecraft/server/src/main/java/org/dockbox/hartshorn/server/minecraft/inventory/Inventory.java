@@ -17,12 +17,12 @@
 
 package org.dockbox.hartshorn.server.minecraft.inventory;
 
+import org.dockbox.hartshorn.server.minecraft.dimension.Block;
 import org.dockbox.hartshorn.server.minecraft.item.Item;
 import org.dockbox.hartshorn.server.minecraft.item.storage.MinecraftItems;
 
 import java.util.Collection;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 /** Represents an inventory UI */
 public interface Inventory {
@@ -74,7 +74,7 @@ public interface Inventory {
      * @return All items which match the given filter.
      */
     default Collection<Item> findMatching(Predicate<Item> filter) {
-        return this.getAllItems().stream().filter(filter).collect(Collectors.toList());
+        return this.getAllItems().stream().filter(filter).toList();
     }
 
     /**
@@ -87,6 +87,10 @@ public interface Inventory {
      * @return {@code true} if the item was added, otherwise {@code false}
      */
     boolean give(Item item);
+
+    default boolean give(Block block) {
+        return block.item().map(this::give).or(false);
+    }
 
     /**
      * Returns the total capacity of the inventory. This is equal to the maximum index, plus one (to

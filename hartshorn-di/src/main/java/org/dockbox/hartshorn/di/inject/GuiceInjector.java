@@ -22,7 +22,6 @@ import com.google.inject.Binding;
 import com.google.inject.Guice;
 import com.google.inject.Key;
 import com.google.inject.ProvisionException;
-import com.google.inject.internal.LinkedBindingImpl;
 import com.google.inject.spi.InstanceBinding;
 import com.google.inject.spi.LinkedKeyBinding;
 
@@ -49,8 +48,8 @@ import org.dockbox.hartshorn.di.inject.wired.WireContext;
 import org.dockbox.hartshorn.di.properties.AnnotationProperty;
 import org.dockbox.hartshorn.di.properties.BindingMetaProperty;
 import org.dockbox.hartshorn.di.properties.InjectorProperty;
-import org.dockbox.hartshorn.util.Reflect;
 import org.dockbox.hartshorn.util.HartshornUtils;
+import org.dockbox.hartshorn.util.Reflect;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.annotation.Annotation;
@@ -168,8 +167,8 @@ public class GuiceInjector implements Injector {
             Key<?> key = entry.getKey();
             Binding<?> binding = entry.getValue();
             Key<?> bindingKey = binding.getKey();
-            if (binding instanceof LinkedBindingImpl) {
-                bindingKey = ((LinkedBindingImpl<?>) binding).getLinkedKey();
+            if (binding instanceof LinkedKeyBinding) {
+                bindingKey = ((LinkedKeyBinding<?>) binding).getLinkedKey();
             }
 
             Class<?> rawKey = key.getTypeLiteral().getRawType();
@@ -220,7 +219,7 @@ public class GuiceInjector implements Injector {
     public <T> T populate(T instance) {
         if (null != instance) {
             this.rebuild().injectMembers(instance);
-            for (Field field : Reflect.annotatedFields(instance.getClass(), Wired.class)) {
+            for (Field field : Reflect.fields(instance.getClass(), Wired.class)) {
                 Object fieldInstance = ApplicationContextAware.instance().getContext().get(field.getType());
                 Reflect.set(field, instance, fieldInstance);
             }
@@ -286,15 +285,16 @@ public class GuiceInjector implements Injector {
     }
 
     private Map<Key<?>, Class<?>> scan(String prefix) {
+        Reflect.prefix(prefix);
         Map<Key<?>, Class<?>> bindings = HartshornUtils.emptyMap();
 
-        Collection<Class<?>> binders = Reflect.annotatedTypes(prefix, Binds.class);
+        Collection<Class<?>> binders = Reflect.types(Binds.class);
         for (Class<?> binder : binders) {
             Binds bindAnnotation = binder.getAnnotation(Binds.class);
             this.handleBinder(bindings, binder, bindAnnotation);
         }
 
-        Collection<Class<?>> multiBinders = Reflect.annotatedTypes(prefix, Combines.class);
+        Collection<Class<?>> multiBinders = Reflect.types(Combines.class);
         for (Class<?> binder : multiBinders) {
             Combines bindAnnotation = binder.getAnnotation(Combines.class);
             for (Binds annotation : bindAnnotation.value()) {
@@ -307,7 +307,7 @@ public class GuiceInjector implements Injector {
     private void handleBinder(Map<Key<?>, Class<?>> bindings, Class<?> binder, Binds annotation) {
         Class<?> binds = annotation.value();
 
-        if (Reflect.annotatedConstructors(binder, Wired.class).isEmpty()) {
+        if (Reflect.constructors(binder, Wired.class).isEmpty()) {
             Entry<Key<?>, Class<?>> entry = this.handleScanned(binder, binds, annotation);
             bindings.put(entry.getKey(), entry.getValue());
         }
@@ -366,7 +366,7 @@ public class GuiceInjector implements Injector {
 
     @Override
     public <C, T extends C> void wire(Class<C> contract, Class<? extends T> implementation, Named meta) {
-        if (Reflect.annotatedConstructors(implementation, Wired.class).isEmpty())
+        if (Reflect.constructors(implementation, Wired.class).isEmpty())
             throw new IllegalArgumentException("Implementation should contain at least one constructor decorated with @AutoWired");
 
         this.bindings.add(new ConstructorWireContext<>(contract, implementation, meta.value()));

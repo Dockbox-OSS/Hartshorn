@@ -21,23 +21,28 @@ import com.google.inject.Inject;
 
 import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.HartshornApplication;
+import org.dockbox.hartshorn.api.SimpleMetaProvider;
 import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.di.Modifier;
+import org.dockbox.hartshorn.di.DefaultModifiers;
+import org.dockbox.hartshorn.di.MetaProviderModifier;
 import org.dockbox.hartshorn.di.annotations.Activator;
 import org.dockbox.hartshorn.di.annotations.InjectConfig;
-import org.dockbox.hartshorn.server.minecraft.MinecraftServerBootstrap;
+import org.dockbox.hartshorn.sponge.event.EventBridge;
 import org.dockbox.hartshorn.sponge.inject.SpongeInjector;
-import org.spongepowered.api.event.lifecycle.StartingEngineEvent;
+import org.dockbox.hartshorn.util.Reflect;
+import org.spongepowered.api.Sponge;
+import org.spongepowered.api.event.Listener;
+import org.spongepowered.api.event.lifecycle.ConstructPluginEvent;
 import org.spongepowered.plugin.PluginContainer;
 import org.spongepowered.plugin.jvm.Plugin;
 
 @Plugin(Hartshorn.PROJECT_ID)
 @Activator(
-        value = MinecraftServerBootstrap.class,
+        value = Sponge8Bootstrap.class,
         prefix = Hartshorn.PACKAGE_PREFIX,
         configs = @InjectConfig(SpongeInjector.class)
 )
-public class Sponge8Application extends HartshornApplication {
+public class Sponge8Application {
 
     protected static Sponge8Application instance;
     protected Runnable init;
@@ -49,14 +54,22 @@ public class Sponge8Application extends HartshornApplication {
     public Sponge8Application() {
         Sponge8Application.instance = this;
         Exceptional.of("");
-        this.init = HartshornApplication.create(Sponge8Application.class, Modifier.ACTIVATE_ALL);
+        this.init = HartshornApplication.create(Sponge8Application.class,
+                DefaultModifiers.ACTIVATE_ALL,
+                new MetaProviderModifier(SimpleMetaProvider::new)
+        );
     }
 
     public static PluginContainer container() {
         return instance.container;
     }
 
-    public void on(StartingEngineEvent<?> event) {
+    @Listener
+    public void on(ConstructPluginEvent event) {
         this.init.run();
+
+        for (Class<? extends EventBridge> bridge : Reflect.children(EventBridge.class)) {
+            Sponge.eventManager().registerListeners(this.container, Hartshorn.context().get(bridge));
+        }
     }
 }

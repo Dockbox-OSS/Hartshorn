@@ -51,7 +51,7 @@ Additionally, the [wiki](https://github.com/GuusLieben/Hartshorn/wiki) contains 
 ### General
 - Tests cover relevant use-cases
 - The target coverage for all tests is 60%
-- Tests are performed using [Java](https://www.oracle.com/java/technologies/javase/javase-jdk8-downloads.html) 8
+- Tests are performed using [Java](https://www.oracle.com/java/technologies/javase-jdk16-downloads.html) 16
 
 ### Unit Testing
 - Tests are located in `src/test/java`

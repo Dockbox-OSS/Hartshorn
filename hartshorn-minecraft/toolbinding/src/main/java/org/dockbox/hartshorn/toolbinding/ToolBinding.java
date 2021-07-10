@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.toolbinding;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.events.annotations.Listener;
+import org.dockbox.hartshorn.api.events.annotations.Posting;
 import org.dockbox.hartshorn.api.keys.Keys;
 import org.dockbox.hartshorn.api.keys.PersistentDataKey;
 import org.dockbox.hartshorn.api.keys.RemovableKey;
@@ -35,6 +36,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @Service
+@Posting(ToolInteractionEvent.class)
 public class ToolBinding {
 
     @Wired
@@ -43,11 +45,12 @@ public class ToolBinding {
     static final PersistentDataKey<String> PERSISTENT_TOOL = Keys.persistent(String.class, "Tool Binding", ToolBinding.class);
     private static ToolBinding instance;
 
-    public static final RemovableKey<Item, ItemTool> TOOL = Keys.removable(
-            // Not possible to use method references here due to instance being initialized later
-            (item, tool) -> instance.setTool(item, tool),
-            item -> instance.getTool(item),
-            item -> instance.removeTool(item));
+    public static final RemovableKey<Item, ItemTool> TOOL_REMOVABLE_KEY = Keys.builder(Item.class, ItemTool.class)
+            .withSetter((item, tool) -> instance.setTool(item, tool))
+            .withGetterSafe(item -> instance.getTool(item))
+            .withRemover(item -> instance.removeTool(item))
+            .build();
+
     private final Map<String, ItemTool> registry = HartshornUtils.emptyConcurrentMap();
 
     public ToolBinding() {

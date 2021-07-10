@@ -18,9 +18,10 @@
 package org.dockbox.hartshorn.di.binding;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.di.ApplicationContextAware;
 import org.dockbox.hartshorn.di.annotations.Named;
-import org.dockbox.hartshorn.di.annotations.Service;
 import org.dockbox.hartshorn.di.properties.InjectorProperty;
+import org.dockbox.hartshorn.di.services.ServiceContainer;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.dockbox.hartshorn.util.Reflect;
 import org.jetbrains.annotations.NonNls;
@@ -91,7 +92,7 @@ public final class Bindings {
         for (InjectorProperty<?> property : properties) {
             if (property.getKey().equals(key)
                     && null != property.getObject()
-                    && Reflect.assignableFrom(expectedType, property.getObject().getClass())) {
+                    && Reflect.assigns(expectedType, property.getObject().getClass())) {
                 matchingProperties.add((InjectorProperty<T>) property);
             }
         }
@@ -125,14 +126,15 @@ public final class Bindings {
     public static <T extends InjectorProperty<?>> List<T> valuesOfType(Class<T> propertyFilter, InjectorProperty<?>... properties) {
         List<T> values = HartshornUtils.emptyList();
         for (InjectorProperty<?> property : properties) {
-            if (Reflect.assignableFrom(propertyFilter, property.getClass())) values.add((T) property);
+            if (Reflect.assigns(propertyFilter, property.getClass())) values.add((T) property);
         }
         return values;
     }
 
     public static String serviceId(Class<?> type) {
-        if (type.isAnnotationPresent(Service.class)) {
-            final String id = type.getAnnotation(Service.class).id();
+        final Exceptional<ServiceContainer> container = ApplicationContextAware.instance().getContext().locator().container(type);
+        if (container.present()) {
+            final String id = container.get().getId();
             if (!"".equals(id)) return id;
         }
 
@@ -145,8 +147,9 @@ public final class Bindings {
     }
 
     public static String serviceName(Class<?> type) {
-        if (type.isAnnotationPresent(Service.class)) {
-            final String name = type.getAnnotation(Service.class).name();
+        final Exceptional<ServiceContainer> container = ApplicationContextAware.instance().getContext().locator().container(type);
+        if (container.present()) {
+            final String name = container.get().getName();
             if (!"".equals(name)) return name;
         }
 

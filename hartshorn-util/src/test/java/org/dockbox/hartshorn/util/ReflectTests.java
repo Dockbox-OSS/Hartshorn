@@ -18,6 +18,7 @@
 package org.dockbox.hartshorn.util;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.di.context.ReflectionContext;
 import org.dockbox.hartshorn.util.annotations.Demo;
 import org.dockbox.hartshorn.util.exceptions.TypeConversionException;
 import org.junit.jupiter.api.Assertions;
@@ -30,10 +31,8 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javassist.util.proxy.ProxyFactory;
@@ -56,16 +55,7 @@ public class ReflectTests {
     @ParameterizedTest
     @MethodSource("getFieldTargets")
     void testFieldValueReturnsValue(String field) {
-        Exceptional<String> value = Reflect.fieldValue(ReflectTestType.class, new ReflectTestType(), field, String.class);
-        Assertions.assertTrue(value.present());
-        Assertions.assertEquals(field, value.get());
-    }
-
-    @ParameterizedTest
-    @MethodSource("getFieldTargets")
-    void testReflectedFieldValueReturnsValue(String field) throws NoSuchFieldException {
-        Field declaredField = ReflectTestType.class.getDeclaredField(field);
-        Exceptional<?> value = Reflect.fieldValue(declaredField, new ReflectTestType());
+        Exceptional<String> value = Reflect.field(new ReflectTestType(), field);
         Assertions.assertTrue(value.present());
         Assertions.assertEquals(field, value.get());
     }
@@ -80,21 +70,7 @@ public class ReflectTests {
     @ParameterizedTest
     @MethodSource("getMethodTargets")
     void testRunMethodReturnsValue(String method) {
-        Exceptional<String> value = Reflect.runMethod(new ReflectTestType(), method, String.class, "value");
-        Assertions.assertTrue(value.present());
-        Assertions.assertEquals("VALUE", value.get());
-    }
-
-    @ParameterizedTest
-    @MethodSource("getMethodTargets")
-    void testRunMethodWithTypesReturnsValue(String method) {
-        Exceptional<String> value = Reflect.runMethod(
-                ReflectTestType.class,
-                new ReflectTestType(),
-                method,
-                String.class,
-                new Class<?>[] { String.class },
-                "value");
+        Exceptional<String> value = Reflect.run(new ReflectTestType(), method, "value");
         Assertions.assertTrue(value.present());
         Assertions.assertEquals("VALUE", value.get());
     }
@@ -106,12 +82,6 @@ public class ReflectTests {
                 Arguments.of(null, ReflectTestType.class, false),
                 Arguments.of(new ReflectTestType(), String.class, false)
         );
-    }
-
-    @ParameterizedTest
-    @MethodSource("getGenericInstances")
-    void testGenericInstanceOf(Object instance, Class<?> type, boolean result) {
-        Assertions.assertEquals(result, Reflect.isGenericInstanceOf(instance, type));
     }
 
     private static Stream<Arguments> getAssignablePrimitives() {
@@ -130,27 +100,27 @@ public class ReflectTests {
     @ParameterizedTest
     @MethodSource("getAssignablePrimitives")
     void testAssignableFromPrimitives(Class<?> primitive, Class<?> wrapper) {
-        Assertions.assertTrue(Reflect.isPrimitiveWrapper(wrapper, primitive));
-        Assertions.assertTrue(Reflect.assignableFrom(wrapper, primitive));
-        Assertions.assertTrue(Reflect.assignableFrom(primitive, wrapper));
+        Assertions.assertTrue(Reflect.primitive(wrapper, primitive));
+        Assertions.assertTrue(Reflect.assigns(wrapper, primitive));
+        Assertions.assertTrue(Reflect.assigns(primitive, wrapper));
     }
 
     @Test
     void testAssignableFromSuper() {
-        Assertions.assertTrue(Reflect.assignableFrom(ParentTestType.class, ReflectTestType.class));
+        Assertions.assertTrue(Reflect.assigns(ParentTestType.class, ReflectTestType.class));
     }
 
     @Test
     void testAssignableFromSame() {
-        Assertions.assertTrue(Reflect.assignableFrom(ReflectTestType.class, ReflectTestType.class));
+        Assertions.assertTrue(Reflect.assigns(ReflectTestType.class, ReflectTestType.class));
     }
 
     @Test
     void testAnnotatedMethodsReturnsAllModifiers() {
-        Collection<Method> methods = Reflect.annotatedMethods(ReflectTestType.class, Demo.class);
+        Collection<Method> methods = Reflect.methods(ReflectTestType.class, Demo.class);
         Assertions.assertEquals(2, methods.size());
 
-        List<String> names = methods.stream().map(Method::getName).collect(Collectors.toList());
+        List<String> names = methods.stream().map(Method::getName).toList();
         Assertions.assertTrue(names.contains("publicAnnotatedMethod"));
         Assertions.assertTrue(names.contains("privateAnnotatedMethod"));
     }
@@ -158,27 +128,29 @@ public class ReflectTests {
     @Test
     void testAnnotatedMethodsWithRuleApplies() {
         final boolean[] activated = { false };
-        Collection<Method> methods = Reflect.annotatedMethods(ReflectTestType.class, Demo.class, type -> {
+        Collection<Method> methods = Reflect.methods(ReflectTestType.class, Demo.class, type -> {
             activated[0] = true;
             return true;
         });
         Assertions.assertEquals(2, methods.size());
         Assertions.assertTrue(activated[0]);
 
-        methods = Reflect.annotatedMethods(ReflectTestType.class, Demo.class, type -> false);
+        methods = Reflect.methods(ReflectTestType.class, Demo.class, type -> false);
         Assertions.assertEquals(0, methods.size());
     }
 
     @Test
     void testAnnotatedTypesReturnsAllInPrefix() {
-        Collection<Class<?>> types = Reflect.annotatedTypes("org.dockbox.hartshorn.util", Demo.class);
+        final PrefixContext context = new ReflectionContext("org.dockbox.hartshorn.util");
+        Collection<Class<?>> types = context.types(Demo.class);
         Assertions.assertEquals(1, types.size());
         Assertions.assertEquals(ReflectTestType.class, types.iterator().next());
     }
 
     @Test
     void testSubTypesReturnsAllSubTypes() {
-        Collection<Class<? extends ParentTestType>> types = Reflect.subTypes("org.dockbox.hartshorn.util", ParentTestType.class);
+        final PrefixContext context = new ReflectionContext("org.dockbox.hartshorn.util");
+        Collection<Class<? extends ParentTestType>> types = context.children(ParentTestType.class);
         Assertions.assertEquals(1, types.size());
         Assertions.assertEquals(ReflectTestType.class, types.iterator().next());
     }
@@ -190,22 +162,14 @@ public class ReflectTests {
     }
 
     @Test
-    void testEnumValuesReturnsAllValues() {
-        Class<?> type = TestEnumType.class;
-        Collection<? extends Enum<?>> enums = Reflect.enumValues(type);
-        Assertions.assertEquals(3, enums.size());
-        Assertions.assertTrue(enums.containsAll(Arrays.asList(TestEnumType.A, TestEnumType.B, TestEnumType.C)));
-    }
-
-    @Test
     void testHasAnnotationOnMethod() throws NoSuchMethodException {
         Method method = ReflectTestType.class.getDeclaredMethod("publicAnnotatedMethod");
-        Assertions.assertTrue(Reflect.hasAnnotation(method, Demo.class));
+        Assertions.assertTrue(Reflect.has(method, Demo.class));
     }
 
     @Test
     void testSuperTypesReturnsAllSuperTypesWithoutObject() {
-        Collection<Class<?>> types = Reflect.superTypes(ReflectTestType.class);
+        Collection<Class<?>> types = Reflect.parents(ReflectTestType.class);
         Assertions.assertEquals(1, types.size());
         Assertions.assertEquals(ParentTestType.class, types.iterator().next());
     }
@@ -234,37 +198,23 @@ public class ReflectTests {
     }
 
     @Test
-    void testPropertyFieldNameReturnsPropertyName() throws NoSuchFieldException {
-        Field field = ReflectTestType.class.getDeclaredField("publicField");
-        String name = Reflect.fieldName(field);
-        Assertions.assertEquals("propertyField", name);
-    }
-
-    @Test
-    void testRegularFieldNameReturnsFieldName() throws NoSuchFieldException {
-        Field field = ReflectTestType.class.getDeclaredField("privateField");
-        String name = Reflect.fieldName(field);
-        Assertions.assertEquals("privateField", name);
-    }
-
-    @Test
     void testHasMethodIsTrueIfMethodExists() {
-        Assertions.assertTrue(Reflect.hasMethod(ReflectTestType.class, "publicMethod"));
+        Assertions.assertTrue(Reflect.has(ReflectTestType.class, "publicMethod"));
     }
 
     @Test
     void testHasMethodIsFalseIfMethodDoesNotExist() {
-        Assertions.assertFalse(Reflect.hasMethod(ReflectTestType.class, "otherMethod"));
+        Assertions.assertFalse(Reflect.has(ReflectTestType.class, "otherMethod"));
     }
 
     @Test
     void testInstanceHasMethodIsTrueIfMethodExists() {
-        Assertions.assertTrue(Reflect.hasMethod(new ReflectTestType(), "publicMethod"));
+        Assertions.assertTrue(Reflect.has(new ReflectTestType(), "publicMethod"));
     }
 
     @Test
     void testInstanceHasMethodIsFalseIfMethodDoesNotExist() {
-        Assertions.assertFalse(Reflect.hasMethod(new ReflectTestType(), "otherMethod"));
+        Assertions.assertFalse(Reflect.has(new ReflectTestType(), "otherMethod"));
     }
 
     private static Stream<Arguments> getNonVoidTypes() {
@@ -292,17 +242,17 @@ public class ReflectTests {
     @ParameterizedTest
     @MethodSource("getNonVoidTypes")
     void testIsNotVoidIsTrueIfTypeIsNotVoid(Class<?> type) {
-        Assertions.assertTrue(Reflect.isNotVoid(type));
+        Assertions.assertTrue(Reflect.notVoid(type));
     }
 
     @Test
     void testIsNotVoidIsFalseIfTypeIsVoid() {
-        Assertions.assertFalse(Reflect.isNotVoid(Void.class));
+        Assertions.assertFalse(Reflect.notVoid(Void.class));
     }
 
     @Test
     void testIsNotVoidIsFalseIfTypeIsVoidPrimitive() {
-        Assertions.assertFalse(Reflect.isNotVoid(void.class));
+        Assertions.assertFalse(Reflect.notVoid(void.class));
     }
 
     @ParameterizedTest
@@ -343,7 +293,7 @@ public class ReflectTests {
 
     @Test
     void testAnnotatedFieldsIncludesStatic() {
-        Collection<Field> fields = Reflect.annotatedFields(ReflectTestType.class, Demo.class);
+        Collection<Field> fields = Reflect.fields(ReflectTestType.class, Demo.class);
         Assertions.assertEquals(2, fields.size());
         int statics = 0;
         for (Field field : fields) {
@@ -354,7 +304,7 @@ public class ReflectTests {
 
     @Test
     void testAnnotatedConstructors() {
-        Collection<Constructor<ReflectTestType>> constructors = Reflect.annotatedConstructors(ReflectTestType.class, Demo.class);
+        Collection<Constructor<ReflectTestType>> constructors = Reflect.constructors(ReflectTestType.class, Demo.class);
         Assertions.assertEquals(1, constructors.size());
     }
 
@@ -387,7 +337,7 @@ public class ReflectTests {
     @MethodSource("getPrimitiveValues")
     void testStringToPrimitive(Class<?> type, String value, Object expected) throws TypeConversionException {
         byte b = 0x0;
-        Object o = Reflect.primitiveFromString(type, value);
+        Object o = Reflect.toPrimitive(type, value);
         Assertions.assertNotNull(o);
         Assertions.assertEquals(expected, o);
     }

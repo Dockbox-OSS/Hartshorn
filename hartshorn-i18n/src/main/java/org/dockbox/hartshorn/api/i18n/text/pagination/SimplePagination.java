@@ -15,20 +15,30 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.api.config;
+package org.dockbox.hartshorn.api.i18n.text.pagination;
 
-public enum Environment {
-    PRODUCTION(false),
-    DEVELOPMENT(true),
-    JUNIT(true);
+import org.dockbox.hartshorn.api.i18n.MessageReceiver;
+import org.dockbox.hartshorn.api.i18n.text.Text;
+import org.jetbrains.annotations.NotNull;
 
-    private final boolean allowsDebugging;
+import java.util.List;
 
-    Environment(boolean allowsDebugging) {
-        this.allowsDebugging = allowsDebugging;
-    }
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
-    public boolean allowsDebugging() {
-        return this.allowsDebugging;
+@Data
+@AllArgsConstructor
+public class SimplePagination implements Pagination {
+
+    private Text padding;
+    private int linesPerPage;
+    private Text header;
+    private Text footer;
+    private Text title;
+    private List<Text> content;
+
+    @Override
+    public void send(@NotNull MessageReceiver receiver) {
+        receiver.send(this);
     }
 }

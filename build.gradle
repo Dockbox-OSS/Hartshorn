@@ -42,6 +42,12 @@ group project.pluginGroup
 description 'Common sources for Hartshorn services'
 def date = LocalDate.now().toString()
 
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(16)
+    }
+}
+
 subprojects { Project subProject ->
     apply plugin: 'java'
     apply plugin: 'java-library'

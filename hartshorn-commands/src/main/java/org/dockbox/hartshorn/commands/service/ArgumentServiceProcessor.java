@@ -32,7 +32,7 @@ public class ArgumentServiceProcessor implements ServiceProcessor<UseCommands> {
 
     @Override
     public boolean preconditions(Class<?> type) {
-        List<Field> fields = Reflect.fieldsWithSuper(type, ArgumentConverter.class);
+        List<Field> fields = Reflect.fieldsLike(type, ArgumentConverter.class);
         return !fields.isEmpty();
     }
 

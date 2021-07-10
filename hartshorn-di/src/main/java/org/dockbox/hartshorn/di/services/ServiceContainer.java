@@ -17,8 +17,6 @@
 
 package org.dockbox.hartshorn.di.services;
 
-import org.dockbox.hartshorn.api.config.Environment;
-
 import java.lang.annotation.Annotation;
 import java.util.List;
 
@@ -28,13 +26,15 @@ public interface ServiceContainer {
     String getName();
     List<String> getDependencies();
 
-    boolean isEnabled();
+    boolean enabled();
 
     Class<?> getType();
-    Class<?> getOwner();
+    Class<?> owner();
 
-    Class<? extends Annotation> getActivator();
+    List<Class<? extends Annotation>> activators();
     boolean hasActivator();
 
-    Environment getEnvironment();
+    boolean hasActivator(Class<? extends Annotation> activator);
+
+    boolean singleton();
 }
