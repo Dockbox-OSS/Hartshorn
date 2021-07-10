@@ -56,6 +56,8 @@ import static org.joor.Reflect.on;
 @SuppressWarnings({ "unused", "OverlyComplexClass" })
 public final class Reflect {
 
+    protected static PrefixContext context;
+
     private static final Map<String, Reflections> reflectedPrefixes = HartshornUtils.emptyConcurrentMap();
     private static final Map<Class<?>, Class<?>> primitiveWrapperMap = HartshornUtils.ofEntries(
             HartshornUtils.entry(boolean.class, Boolean.class),
@@ -84,11 +86,14 @@ public final class Reflect {
             byte[].class, int[].class, long[].class,
             String.class, List.class, Map.class);
 
-    private static final String serverClassName = "org.dockbox.hartshorn.server.Server";
-
     private static Lookup LOOKUP;
 
     private Reflect() {}
+
+    private static PrefixContext context() {
+        // Will throw a NoSuchElementException if the context has not been initialized
+        return Exceptional.of(context).get();
+    }
 
     public static <T> Exceptional<T> field(Object instance, String field) {
         if (instance == null) return Exceptional.empty();
@@ -253,15 +258,13 @@ public final class Reflect {
      *
      * @param <A>
      *         The annotation constraint
-     * @param prefix
-     *         The package prefix
      * @param annotation
      *         The annotation expected to be present on one or more types
      *
      * @return The annotated types
      */
-    public static <A extends Annotation> Collection<Class<?>> types(String prefix, Class<A> annotation) {
-        return Reflect.types(prefix, annotation, false);
+    public static <A extends Annotation> Collection<Class<?>> types(Class<A> annotation) {
+        return context.types(annotation);
     }
 
     /**
@@ -271,8 +274,6 @@ public final class Reflect {
      *
      * @param <A>
      *         The annotation constraint
-     * @param prefix
-     *         The package prefix
      * @param annotation
      *         The annotation expected to be present on one or more types
      * @param skipParents
@@ -280,25 +281,14 @@ public final class Reflect {
      *
      * @return The annotated types
      */
-    public static <A extends Annotation> Collection<Class<?>> types(String prefix, Class<A> annotation, boolean skipParents) {
-        Reflections reflections = reflections(prefix);
-        Set<Class<?>> types = reflections.getTypesAnnotatedWith(annotation, !skipParents);
-        return HartshornUtils.asList(types);
-    }
-
-    private static Reflections reflections(String prefix) {
-        if (!reflectedPrefixes.containsKey(prefix)) {
-            reflectedPrefixes.put(prefix, new Reflections(prefix));
-        }
-        return reflectedPrefixes.get(prefix);
+    public static <A extends Annotation> Collection<Class<?>> types(Class<A> annotation, boolean skipParents) {
+        return context.types(annotation, skipParents);
     }
 
     /**
      * Gets all sub-types of a given type. The prefix is typically a package. If no sub-types exist
      * for the given type, and empty list is returned.
      *
-     * @param prefix
-     *         The package prefix
      * @param parent
      *         The parent type to scan for subclasses
      * @param <T>
@@ -306,10 +296,8 @@ public final class Reflect {
      *
      * @return The list of sub-types, or a empty list
      */
-    public static <T> Collection<Class<? extends T>> children(String prefix, Class<T> parent) {
-        Reflections reflections = reflections(prefix);
-        Set<Class<? extends T>> subTypes = reflections.getSubTypesOf(parent);
-        return HartshornUtils.asList(subTypes);
+    public static <T> Collection<Class<? extends T>> children(Class<T> parent) {
+        return context.children(parent);
     }
 
     /**
@@ -654,5 +642,14 @@ public final class Reflect {
             }
             return ((ParameterizedType) superClass).getActualTypeArguments()[index];
         });
+    }
+
+    public static void prefix(String prefix) {
+        context().prefix(prefix);
+    }
+
+    public static void context(PrefixContext context) {
+        if (Reflect.context != null) throw new IllegalStateException("Cannot overwrite existing reflection context");
+        Reflect.context = context;
     }
 }
