@@ -45,6 +45,8 @@ import org.dockbox.hartshorn.di.types.scan.SampleAnnotatedImplementation;
 import org.dockbox.hartshorn.di.types.wired.SampleWiredAnnotatedImplementation;
 import org.dockbox.hartshorn.test.HartshornRunner;
 import org.dockbox.hartshorn.util.HartshornUtils;
+import org.dockbox.hartshorn.util.PrefixContext;
+import org.dockbox.hartshorn.util.Reflect;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -65,6 +67,7 @@ public class ApplicationContextTests {
     private static final Field injectionPoints;
     private static final Field serviceModifiers;
     private static final Field serviceProcessors;
+    private static final Field context;
     private static final Method internalInjector;
 
     static {
@@ -86,6 +89,9 @@ public class ApplicationContextTests {
 
             internalInjector = HartshornApplicationContext.class.getDeclaredMethod("internalInjector");
             internalInjector.setAccessible(true);
+
+            context = Reflect.class.getDeclaredField("context");
+            context.setAccessible(true);
             
         } catch (NoSuchFieldException | NoSuchMethodException e) {
             throw new RuntimeException(e);
@@ -456,6 +462,8 @@ public class ApplicationContextTests {
                 injectionPoints.set(context, HartshornUtils.emptyConcurrentSet());
                 serviceModifiers.set(context, HartshornUtils.emptyConcurrentSet());
                 serviceProcessors.set(context, HartshornUtils.emptyConcurrentSet());
+                // Non existing package to ensure no keys are cached early on
+                ApplicationContextTests.context.set(null, new PrefixContext("a.b"));
                 injector.reset();
             }
         } catch (IllegalAccessException | InvocationTargetException e) {
