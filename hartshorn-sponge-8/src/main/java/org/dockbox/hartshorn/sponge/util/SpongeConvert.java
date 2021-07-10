@@ -110,6 +110,8 @@ import org.spongepowered.api.service.permission.Subject;
 import org.spongepowered.api.util.Direction;
 import org.spongepowered.api.util.orientation.Orientation;
 import org.spongepowered.api.util.orientation.Orientations;
+import org.spongepowered.api.world.portal.PortalType;
+import org.spongepowered.api.world.portal.PortalTypes;
 import org.spongepowered.api.world.server.ServerLocation;
 import org.spongepowered.api.world.server.ServerWorld;
 import org.spongepowered.api.world.server.storage.ServerWorldProperties;
@@ -642,6 +644,14 @@ public enum SpongeConvert {
 
     public static Player toSponge(User user) {
         return new SpongePlayer(user.uniqueId(), user.name());
+    }
+
+    public static org.dockbox.hartshorn.server.minecraft.enums.PortalType fromSponge(PortalType type) {
+        if (type == PortalTypes.END.get())
+            return org.dockbox.hartshorn.server.minecraft.enums.PortalType.END;
+        else if (type == PortalTypes.NETHER.get())
+            return org.dockbox.hartshorn.server.minecraft.enums.PortalType.NETHER;
+        return org.dockbox.hartshorn.server.minecraft.enums.PortalType.UNKOWN;
     }
 
 //    public static Element toSponge(org.dockbox.hartshorn.server.minecraft.inventory.Element element) {
