@@ -17,6 +17,7 @@
 
 package org.dockbox.hartshorn.persistence.mapping;
 
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonParser.Feature;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
@@ -40,6 +41,7 @@ import org.dockbox.hartshorn.persistence.FileType;
 import org.dockbox.hartshorn.persistence.PersistentCapable;
 import org.dockbox.hartshorn.persistence.PersistentModel;
 import org.dockbox.hartshorn.persistence.jackson.PropertyAliasIntrospector;
+import org.dockbox.hartshorn.persistence.properties.PersistenceModifier;
 import org.dockbox.hartshorn.util.Reflect;
 import org.jetbrains.annotations.NotNull;
 
@@ -57,6 +59,8 @@ import lombok.AllArgsConstructor;
 @SuppressWarnings("unchecked")
 @Binds(org.dockbox.hartshorn.persistence.mapping.ObjectMapper.class)
 public class JacksonObjectMapper extends DefaultObjectMapper {
+
+    private Include include = Include.ALWAYS;
 
     @AllArgsConstructor
     private enum Mappers {
@@ -171,6 +175,14 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
         this.mapper = null;
     }
 
+    @Override
+    protected void modify(PersistenceModifier modifier) {
+        this.include = switch (modifier) {
+            case SKIP_EMPTY -> Include.NON_EMPTY;
+            case SKIP_NULL -> Include.NON_NULL;
+        };
+    }
+
     protected ObjectMapper configureMapper() {
         if (null == this.mapper) {
             this.mapper = this.getMapper(this.getFileType());
@@ -183,6 +195,7 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
             this.mapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
             this.mapper.enable(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS);
             this.mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+            this.mapper.setSerializationInclusion(this.include);
         }
         return this.mapper;
     }

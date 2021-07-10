@@ -98,6 +98,17 @@ public final class Bindings {
         return matchingProperties;
     }
 
+    @SuppressWarnings("unchecked")
+    public static <P extends InjectorProperty<?>> List<P> properties(@NonNls String key,InjectorProperty<?>... properties) {
+        List<P> matchingProperties = HartshornUtils.emptyList();
+        for (InjectorProperty<?> property : properties) {
+            if (property.getKey().equals(key) && null != property.getObject()) {
+                matchingProperties.add((P) property);
+            }
+        }
+        return matchingProperties;
+    }
+
     /**
      * Gets sub properties.
      *
