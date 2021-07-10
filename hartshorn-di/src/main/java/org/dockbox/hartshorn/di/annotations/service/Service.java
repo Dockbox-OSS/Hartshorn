@@ -49,6 +49,4 @@ public @interface Service {
     boolean singleton() default true;
 
     Class<? extends Annotation>[] activators() default Service.class;
-
-    String[] dependencies() default {};
 }

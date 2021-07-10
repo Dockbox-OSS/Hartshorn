@@ -83,7 +83,7 @@ public class SimpleComponentContainer<A extends Annotation> implements Component
 
     @Override
     public boolean hasActivator() {
-        return !(this.activators().size() == 1 && Service.class.equals(this.activators().get(0)));
+        return !(this.activators.isEmpty() || (this.activators.size() == 1 && Service.class.equals(this.activators.get(0))));
     }
 
     @Override

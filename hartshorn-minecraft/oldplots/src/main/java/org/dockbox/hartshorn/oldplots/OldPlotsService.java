@@ -46,7 +46,7 @@ import org.jetbrains.annotations.NotNull;
 import java.nio.file.Path;
 import java.util.List;
 
-@Service(dependencies = "org.dockbox.hartshorn.database")
+@Service
 public class OldPlotsService {
 
     @Wired
