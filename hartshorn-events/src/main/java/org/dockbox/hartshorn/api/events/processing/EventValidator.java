@@ -36,13 +36,13 @@ public class EventValidator {
 
     @PostBootstrap
     public void validate() {
-        final List<Class<? extends Event>> allEvents = Reflect.children(Hartshorn.PACKAGE_PREFIX, Event.class)
+        final List<Class<? extends Event>> allEvents = Reflect.children(Event.class)
                 .stream()
                 .filter(type -> !Reflect.isAbstract(type))
                 .toList();
         List<Class<? extends Event>> postedEvents = HartshornUtils.emptyList();
 
-        for (Class<?> bridge : Reflect.types(Hartshorn.PACKAGE_PREFIX, Posting.class)) {
+        for (Class<?> bridge : Reflect.types(Posting.class)) {
             final Posting posting = bridge.getAnnotation(Posting.class);
             postedEvents.addAll(Arrays.asList(posting.value()));
         }

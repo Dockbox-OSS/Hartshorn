@@ -84,8 +84,8 @@ public abstract class HartshornBootstrap extends InjectableBootstrap {
             this.getContext().invoke(postBootstrapActivation);
         }
         // Ensure all services requiring a platform implementation have one present
-        Reflect.types(Hartshorn.PACKAGE_PREFIX, Required.class).forEach(type -> {
-            if (Reflect.children(Hartshorn.PACKAGE_PREFIX, type).isEmpty()) {
+        Reflect.types(Required.class).forEach(type -> {
+            if (Reflect.children(type).isEmpty()) {
                 this.handleMissingBinding(type);
             }
         });

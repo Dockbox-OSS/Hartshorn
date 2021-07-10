@@ -21,6 +21,7 @@ import com.google.common.collect.Multimap;
 
 import org.dockbox.hartshorn.di.annotations.InjectPhase;
 import org.dockbox.hartshorn.di.context.ManagedHartshornContext;
+import org.dockbox.hartshorn.di.context.ReflectionContext;
 import org.dockbox.hartshorn.di.inject.InjectionModifier;
 import org.dockbox.hartshorn.di.services.ServiceProcessor;
 import org.dockbox.hartshorn.util.Reflect;
@@ -39,8 +40,10 @@ public abstract class InjectableBootstrap extends ApplicationContextAware {
 
     public void create(String prefix, Class<?> activationSource, List<Annotation> activators, Multimap<InjectPhase, InjectConfiguration> configs, Modifier... modifiers) {
         super.create(activationSource, modifiers);
-
         Reflections.log = null; // Don't output Reflections
+
+        final ReflectionContext context = new ReflectionContext(prefix);
+        Reflect.context(context);
 
         for (Annotation activator : activators) {
             ((ManagedHartshornContext) this.getContext()).addActivator(activator);
@@ -55,7 +58,7 @@ public abstract class InjectableBootstrap extends ApplicationContextAware {
     }
 
     private void lookupProcessors(String prefix) {
-        final Collection<Class<? extends ServiceProcessor>> processors = Reflect.children(prefix, ServiceProcessor.class);
+        final Collection<Class<? extends ServiceProcessor>> processors = Reflect.children(ServiceProcessor.class);
         for (Class<? extends ServiceProcessor> processor : processors) {
             if (Reflect.isAbstract(processor)) continue;
 
@@ -66,7 +69,7 @@ public abstract class InjectableBootstrap extends ApplicationContextAware {
     }
 
     private void lookupModifiers(String prefix) {
-        final Collection<Class<? extends InjectionModifier>> modifiers = Reflect.children(prefix, InjectionModifier.class);
+        final Collection<Class<? extends InjectionModifier>> modifiers = Reflect.children(InjectionModifier.class);
         for (Class<? extends InjectionModifier> modifier : modifiers) {
             if (Reflect.isAbstract(modifier)) continue;
 
