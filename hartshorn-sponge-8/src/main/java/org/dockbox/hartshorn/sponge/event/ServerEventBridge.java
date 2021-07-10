@@ -21,8 +21,6 @@ import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.events.annotations.Posting;
 import org.dockbox.hartshorn.di.context.Context;
 import org.dockbox.hartshorn.server.minecraft.dimension.BlockContext;
-import org.dockbox.hartshorn.server.minecraft.events.server.ServerInitEvent;
-import org.dockbox.hartshorn.server.minecraft.events.server.ServerPostInitEvent;
 import org.dockbox.hartshorn.server.minecraft.events.server.ServerReloadEvent;
 import org.dockbox.hartshorn.server.minecraft.events.server.ServerStartedEvent;
 import org.dockbox.hartshorn.server.minecraft.events.server.ServerStartingEvent;
@@ -47,8 +45,6 @@ import java.util.Optional;
 import java.util.function.Function;
 
 @Posting(value = {
-        ServerInitEvent.class,
-        ServerPostInitEvent.class,
         ServerStartedEvent.class,
         ServerStartingEvent.class,
         ServerReloadEvent.class,
@@ -59,20 +55,18 @@ public class ServerEventBridge implements EventBridge {
 
     @Listener
     public void on(StartingEngineEvent<?> event) {
-        new ServerInitEvent().post();
+        new ServerStartingEvent().post();
     }
 
     @Listener
     public void on(StartedEngineEvent<?> event) {
         this.collectIdContext(RegistryTypes.ITEM_TYPE, ItemContext::new);
         this.collectIdContext(RegistryTypes.BLOCK_TYPE, BlockContext::new);
-        new ServerPostInitEvent().post();
-        new ServerStartingEvent().post();
+        new ServerStartedEvent().post();
     }
 
     @Listener
     public void on(LoadedGameEvent event) {
-        new ServerStartedEvent().post();
         new ServerUpdateEvent().post();
     }
 
