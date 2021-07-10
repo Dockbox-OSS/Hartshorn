@@ -68,7 +68,7 @@ public class Sponge8Application {
     public void on(ConstructPluginEvent event) {
         this.init.run();
 
-        for (Class<? extends EventBridge> bridge : Reflect.children(Hartshorn.PACKAGE_PREFIX, EventBridge.class)) {
+        for (Class<? extends EventBridge> bridge : Reflect.children(EventBridge.class)) {
             Sponge.eventManager().registerListeners(this.container, Hartshorn.context().get(bridge));
         }
     }

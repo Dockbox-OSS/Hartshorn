@@ -285,15 +285,16 @@ public class GuiceInjector implements Injector {
     }
 
     private Map<Key<?>, Class<?>> scan(String prefix) {
+        Reflect.prefix(prefix);
         Map<Key<?>, Class<?>> bindings = HartshornUtils.emptyMap();
 
-        Collection<Class<?>> binders = Reflect.types(prefix, Binds.class);
+        Collection<Class<?>> binders = Reflect.types(Binds.class);
         for (Class<?> binder : binders) {
             Binds bindAnnotation = binder.getAnnotation(Binds.class);
             this.handleBinder(bindings, binder, bindAnnotation);
         }
 
-        Collection<Class<?>> multiBinders = Reflect.types(prefix, Combines.class);
+        Collection<Class<?>> multiBinders = Reflect.types(Combines.class);
         for (Class<?> binder : multiBinders) {
             Combines bindAnnotation = binder.getAnnotation(Combines.class);
             for (Binds annotation : bindAnnotation.value()) {

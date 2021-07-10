@@ -43,7 +43,7 @@ public class CommandServiceScanner implements Preloadable {
             }
         }
 
-        for (Class<? extends CommandExecutorExtension> extension : Reflect.children(Hartshorn.PACKAGE_PREFIX, CommandExecutorExtension.class)) {
+        for (Class<? extends CommandExecutorExtension> extension : Reflect.children(CommandExecutorExtension.class)) {
             gateway.add(Hartshorn.context().get(extension));
         }
 
