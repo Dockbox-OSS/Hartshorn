@@ -28,6 +28,7 @@ import org.dockbox.hartshorn.di.annotations.InjectConfig;
 import org.dockbox.hartshorn.di.annotations.InjectPhase;
 import org.dockbox.hartshorn.test.util.JUnitInjector;
 import org.dockbox.hartshorn.test.util.LateJUnitInjector;
+import org.dockbox.hartshorn.util.Reflect;
 
 import java.lang.reflect.Field;
 
@@ -49,6 +50,10 @@ public final class JUnit5Application {
         final Field instance = ApplicationContextAware.class.getDeclaredField("instance");
         instance.setAccessible(true);
         instance.set(null, null);
+
+        final Field context = Reflect.class.getDeclaredField("context");
+        context.setAccessible(true);
+        context.set(null, null);
 
         HartshornApplication.create(JUnit5Application.class,
                 DefaultModifiers.ACTIVATE_ALL,

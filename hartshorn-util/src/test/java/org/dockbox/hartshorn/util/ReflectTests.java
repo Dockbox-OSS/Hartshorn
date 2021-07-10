@@ -18,6 +18,7 @@
 package org.dockbox.hartshorn.util;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.di.context.ReflectionContext;
 import org.dockbox.hartshorn.util.annotations.Demo;
 import org.dockbox.hartshorn.util.exceptions.TypeConversionException;
 import org.junit.jupiter.api.Assertions;
@@ -140,14 +141,16 @@ public class ReflectTests {
 
     @Test
     void testAnnotatedTypesReturnsAllInPrefix() {
-        Collection<Class<?>> types = Reflect.types("org.dockbox.hartshorn.util", Demo.class);
+        final PrefixContext context = new ReflectionContext("org.dockbox.hartshorn.util");
+        Collection<Class<?>> types = context.types(Demo.class);
         Assertions.assertEquals(1, types.size());
         Assertions.assertEquals(ReflectTestType.class, types.iterator().next());
     }
 
     @Test
     void testSubTypesReturnsAllSubTypes() {
-        Collection<Class<? extends ParentTestType>> types = Reflect.children("org.dockbox.hartshorn.util", ParentTestType.class);
+        final PrefixContext context = new ReflectionContext("org.dockbox.hartshorn.util");
+        Collection<Class<? extends ParentTestType>> types = context.children(ParentTestType.class);
         Assertions.assertEquals(1, types.size());
         Assertions.assertEquals(ReflectTestType.class, types.iterator().next());
     }
