@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.di;
 
 import com.google.common.collect.Multimap;
 
-import org.dockbox.hartshorn.di.annotations.InjectPhase;
+import org.dockbox.hartshorn.di.annotations.inject.InjectPhase;
 import org.dockbox.hartshorn.di.context.ManagedHartshornContext;
 import org.dockbox.hartshorn.di.context.ReflectionContext;
 import org.dockbox.hartshorn.di.inject.InjectionModifier;

@@ -15,18 +15,17 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.di.annotations;
+package org.dockbox.hartshorn.di.annotations.component;
 
-import com.google.inject.BindingAnnotation;
+import org.dockbox.hartshorn.api.domain.tuple.Tristate;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@BindingAnnotation
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.FIELD, ElementType.PARAMETER, ElementType.METHOD })
-public @interface Named {
-    String value();
+@Target(ElementType.ANNOTATION_TYPE)
+public @interface ComponentLike {
+    Tristate singleton();
 }

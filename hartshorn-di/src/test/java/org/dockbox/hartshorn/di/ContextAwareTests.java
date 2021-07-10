@@ -20,7 +20,7 @@ package org.dockbox.hartshorn.di;
 import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.MetaProvider;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
-import org.dockbox.hartshorn.di.services.ServiceLocator;
+import org.dockbox.hartshorn.di.services.ComponentLocator;
 import org.dockbox.hartshorn.di.types.SampleContextAwareType;
 import org.dockbox.hartshorn.test.HartshornRunner;
 import org.junit.jupiter.api.Assertions;
@@ -55,12 +55,12 @@ public class ContextAwareTests {
 
     @Test
     void testServiceLocatorIsBound() {
-        final ServiceLocator serviceLocator = Hartshorn.context().get(ServiceLocator.class);
-        Assertions.assertNotNull(serviceLocator);
+        final ComponentLocator componentLocator = Hartshorn.context().get(ComponentLocator.class);
+        Assertions.assertNotNull(componentLocator);
 
-        final ServiceLocator directServiceLocator = Hartshorn.context().locator();
-        Assertions.assertNotNull(directServiceLocator);
+        final ComponentLocator directComponentLocator = Hartshorn.context().locator();
+        Assertions.assertNotNull(directComponentLocator);
 
-        Assertions.assertSame(serviceLocator, directServiceLocator);
+        Assertions.assertSame(componentLocator, directComponentLocator);
     }
 }

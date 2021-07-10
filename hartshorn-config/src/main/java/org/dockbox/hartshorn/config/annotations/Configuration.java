@@ -18,7 +18,7 @@
 package org.dockbox.hartshorn.config.annotations;
 
 import org.dockbox.hartshorn.api.Hartshorn;
-import org.dockbox.hartshorn.di.annotations.Service;
+import org.dockbox.hartshorn.di.annotations.service.Service;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

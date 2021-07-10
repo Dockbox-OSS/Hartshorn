@@ -19,10 +19,8 @@ package org.dockbox.hartshorn.commands.types;
 
 import org.dockbox.hartshorn.commands.annotations.Command;
 import org.dockbox.hartshorn.commands.context.CommandContext;
-import org.dockbox.hartshorn.di.annotations.Service;
 
 @Command("demo")
-@Service
 public class SampleCommandExtension {
 
     @Command(value = "second", arguments = "<name>")

@@ -28,16 +28,14 @@ import org.dockbox.hartshorn.commands.RunCommandAction;
 import org.dockbox.hartshorn.commands.annotations.Command;
 import org.dockbox.hartshorn.commands.annotations.WithConfirmation;
 import org.dockbox.hartshorn.commands.context.CommandContext;
-import org.dockbox.hartshorn.di.annotations.Service;
-import org.dockbox.hartshorn.di.annotations.Wired;
+import org.dockbox.hartshorn.di.annotations.inject.Wired;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
-import org.dockbox.hartshorn.di.services.ServiceContainer;
+import org.dockbox.hartshorn.di.services.ComponentContainer;
 import org.dockbox.hartshorn.server.minecraft.events.server.ServerReloadEvent;
 import org.dockbox.hartshorn.util.HartshornUtils;
 
 import java.util.List;
 
-@Service(id = Hartshorn.PROJECT_ID, name = Hartshorn.PROJECT_NAME, owner = Hartshorn.class)
 @Command(value = Hartshorn.PROJECT_ID, permission = DefaultServer.ADMIN)
 public class DefaultServer {
 
@@ -57,7 +55,7 @@ public class DefaultServer {
         content.add(this.resources.getInfoHeader(Hartshorn.server().getVersion()).translate(source).asText());
         content.add(this.resources.getServices().translate(source).asText());
 
-        for (ServiceContainer container : this.context.locator().containers()) {
+        for (ComponentContainer container : this.context.locator().containers()) {
             final Text row = this.resources.getServiceRow(container.getName(), container.getId()).translate(source).asText();
             row.onHover(HoverAction.showText(this.resources.getServiceRowHover(container.getName()).translate(source).asText()));
             row.onClick(RunCommandAction.runCommand('/' + Hartshorn.PROJECT_ID + " service " + container.getId()));
@@ -72,14 +70,8 @@ public class DefaultServer {
 
     @Command(value = "service", arguments = "<id{Service}>", permission = DefaultServer.ADMIN)
     public void serviceDetails(MessageReceiver src, CommandContext ctx) {
-        ServiceContainer container = ctx.get("id");
-
-        final ResourceEntry block = this.resources.getInfoServiceBlock(
-                container.getName(),
-                container.getId(),
-                0 == container.getDependencies().size() ? "None" : String.join("$3, $1", container.getDependencies())
-        );
-
+        ComponentContainer container = ctx.get("id");
+        final ResourceEntry block = this.resources.getInfoServiceBlock(container.getName(), container.getId());
         src.send(block);
     }
 

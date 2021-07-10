@@ -23,7 +23,7 @@ import org.dockbox.hartshorn.api.annotations.UseBootstrap;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.events.EventBus;
 import org.dockbox.hartshorn.api.events.parents.Event;
-import org.dockbox.hartshorn.di.annotations.Service;
+import org.dockbox.hartshorn.di.annotations.service.Service;
 import org.dockbox.hartshorn.server.minecraft.events.packet.PacketEvent;
 import org.dockbox.hartshorn.server.minecraft.packets.annotations.Packet;
 import org.dockbox.hartshorn.util.Reflect;

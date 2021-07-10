@@ -18,7 +18,7 @@
 package org.dockbox.hartshorn.worldedit;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.di.annotations.Required;
+import org.dockbox.hartshorn.di.annotations.inject.Required;
 import org.dockbox.hartshorn.server.minecraft.item.Item;
 import org.dockbox.hartshorn.server.minecraft.players.Player;
 import org.dockbox.hartshorn.worldedit.region.Clipboard;

@@ -17,10 +17,10 @@
 
 package org.dockbox.hartshorn.di.types.bean;
 
-import org.dockbox.hartshorn.di.annotations.Bean;
-import org.dockbox.hartshorn.di.annotations.Named;
-import org.dockbox.hartshorn.di.annotations.Service;
-import org.dockbox.hartshorn.di.annotations.Wired;
+import org.dockbox.hartshorn.di.annotations.inject.Bean;
+import org.dockbox.hartshorn.di.annotations.inject.Named;
+import org.dockbox.hartshorn.di.annotations.service.Service;
+import org.dockbox.hartshorn.di.annotations.inject.Wired;
 import org.dockbox.hartshorn.di.types.SampleField;
 
 import javax.inject.Singleton;

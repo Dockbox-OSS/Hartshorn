@@ -23,7 +23,7 @@ import org.dockbox.hartshorn.commands.annotations.Cooldown;
 import org.dockbox.hartshorn.commands.context.CommandContext;
 import org.dockbox.hartshorn.commands.context.CommandExecutorContext;
 import org.dockbox.hartshorn.commands.source.CommandSource;
-import org.dockbox.hartshorn.di.annotations.Wired;
+import org.dockbox.hartshorn.di.annotations.inject.Wired;
 import org.dockbox.hartshorn.util.HartshornUtils;
 
 public class CooldownExtension implements CommandExecutorExtension {

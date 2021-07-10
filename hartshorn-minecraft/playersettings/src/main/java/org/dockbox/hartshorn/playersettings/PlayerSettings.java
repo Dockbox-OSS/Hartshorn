@@ -26,7 +26,7 @@ import org.dockbox.hartshorn.api.i18n.entry.Resource;
 import org.dockbox.hartshorn.api.i18n.text.Text;
 import org.dockbox.hartshorn.api.keys.PersistentDataHolder;
 import org.dockbox.hartshorn.commands.annotations.Command;
-import org.dockbox.hartshorn.di.annotations.Service;
+import org.dockbox.hartshorn.di.annotations.service.Service;
 import org.dockbox.hartshorn.playersettings.service.SettingsContext;
 import org.dockbox.hartshorn.server.minecraft.inventory.Element;
 import org.dockbox.hartshorn.server.minecraft.inventory.InventoryLayout;

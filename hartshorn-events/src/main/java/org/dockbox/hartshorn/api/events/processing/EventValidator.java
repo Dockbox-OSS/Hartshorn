@@ -23,7 +23,7 @@ import org.dockbox.hartshorn.api.annotations.UseBootstrap;
 import org.dockbox.hartshorn.api.events.annotations.Posting;
 import org.dockbox.hartshorn.api.events.annotations.UseEvents;
 import org.dockbox.hartshorn.api.events.parents.Event;
-import org.dockbox.hartshorn.di.annotations.Service;
+import org.dockbox.hartshorn.di.annotations.service.Service;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.dockbox.hartshorn.util.Reflect;
 

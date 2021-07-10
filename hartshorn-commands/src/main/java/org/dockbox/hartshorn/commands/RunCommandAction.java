@@ -18,7 +18,7 @@
 package org.dockbox.hartshorn.commands;
 
 import org.dockbox.hartshorn.api.i18n.text.actions.CommandAction;
-import org.dockbox.hartshorn.di.annotations.Wired;
+import org.dockbox.hartshorn.di.annotations.inject.Wired;
 
 public final class RunCommandAction {
 

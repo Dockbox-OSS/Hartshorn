@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.sponge.util;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.i18n.text.Text;
-import org.dockbox.hartshorn.di.annotations.Binds;
+import org.dockbox.hartshorn.di.annotations.inject.Binds;
 import org.dockbox.hartshorn.plots.Plot;
 import org.dockbox.hartshorn.plots.PlotService;
 import org.dockbox.hartshorn.plots.flags.PlotFlag;

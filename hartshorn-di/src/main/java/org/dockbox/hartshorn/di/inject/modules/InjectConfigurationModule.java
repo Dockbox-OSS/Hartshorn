@@ -20,7 +20,7 @@ package org.dockbox.hartshorn.di.inject.modules;
 import com.google.inject.AbstractModule;
 
 import org.dockbox.hartshorn.di.InjectConfiguration;
-import org.dockbox.hartshorn.di.annotations.Named;
+import org.dockbox.hartshorn.di.annotations.inject.Named;
 import org.dockbox.hartshorn.di.inject.Binder;
 import org.dockbox.hartshorn.di.inject.Injector;
 

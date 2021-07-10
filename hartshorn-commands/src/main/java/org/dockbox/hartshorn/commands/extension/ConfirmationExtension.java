@@ -26,7 +26,7 @@ import org.dockbox.hartshorn.commands.annotations.WithConfirmation;
 import org.dockbox.hartshorn.commands.context.CommandContext;
 import org.dockbox.hartshorn.commands.context.CommandExecutorContext;
 import org.dockbox.hartshorn.commands.source.CommandSource;
-import org.dockbox.hartshorn.di.annotations.Wired;
+import org.dockbox.hartshorn.di.annotations.inject.Wired;
 
 public class ConfirmationExtension implements CommandExecutorExtension {
 

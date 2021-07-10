@@ -17,10 +17,13 @@
 
 package org.dockbox.hartshorn.api.domain;
 
+import java.lang.annotation.Annotation;
+
 public interface MetaProvider {
 
     TypedOwner lookup(Class<?> type);
     boolean isSingleton(Class<?> type);
     boolean isComponent(Class<?> type);
+    Exceptional<Class<? extends Annotation>> decorator(Class<?> type);
 
 }

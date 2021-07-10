@@ -15,14 +15,11 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.di.annotations;
+package org.dockbox.hartshorn.di.annotations.inject;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import org.dockbox.hartshorn.di.InjectConfiguration;
 
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.ANNOTATION_TYPE)
-public @interface ServiceActivator {
+public @interface InjectConfig {
+    Class<? extends InjectConfiguration> value();
+    InjectPhase phase() default InjectPhase.EARLY;
 }

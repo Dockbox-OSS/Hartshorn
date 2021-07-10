@@ -18,7 +18,7 @@
 package org.dockbox.hartshorn.di.adapter;
 
 import org.dockbox.hartshorn.di.inject.Injector;
-import org.dockbox.hartshorn.di.services.ServiceLocator;
+import org.dockbox.hartshorn.di.services.ComponentLocator;
 
 import lombok.Getter;
 
@@ -26,7 +26,7 @@ import lombok.Getter;
 public final class ContextAdapter {
 
     private final Injector injector;
-    private final ServiceLocator locator;
+    private final ComponentLocator locator;
 
     public ContextAdapter(InjectSource inject, ServiceSource service) {
         this.injector = inject.create();

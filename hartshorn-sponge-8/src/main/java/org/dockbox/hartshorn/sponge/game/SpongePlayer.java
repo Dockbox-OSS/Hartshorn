@@ -30,7 +30,7 @@ import org.dockbox.hartshorn.api.i18n.entry.DefaultResources;
 import org.dockbox.hartshorn.api.i18n.permissions.Permission;
 import org.dockbox.hartshorn.api.i18n.text.Text;
 import org.dockbox.hartshorn.api.i18n.text.pagination.Pagination;
-import org.dockbox.hartshorn.di.annotations.Wired;
+import org.dockbox.hartshorn.di.annotations.inject.Wired;
 import org.dockbox.hartshorn.server.minecraft.dimension.Block;
 import org.dockbox.hartshorn.server.minecraft.dimension.position.Location;
 import org.dockbox.hartshorn.server.minecraft.entities.Entity;

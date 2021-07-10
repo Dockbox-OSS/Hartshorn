@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.di.binding;
 
-import org.dockbox.hartshorn.di.annotations.Named;
+import org.dockbox.hartshorn.di.annotations.inject.Named;
 
 import java.lang.annotation.Annotation;
 

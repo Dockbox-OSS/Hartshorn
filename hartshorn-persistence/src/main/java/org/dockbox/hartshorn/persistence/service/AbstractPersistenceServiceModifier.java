@@ -20,7 +20,7 @@ package org.dockbox.hartshorn.persistence.service;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.domain.TypedOwner;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
-import org.dockbox.hartshorn.di.services.ServiceContainer;
+import org.dockbox.hartshorn.di.services.ComponentContainer;
 import org.dockbox.hartshorn.persistence.FileManager;
 import org.dockbox.hartshorn.persistence.FileType;
 import org.dockbox.hartshorn.persistence.annotations.UsePersistence;
@@ -73,7 +73,7 @@ public abstract class AbstractPersistenceServiceModifier<M extends Annotation, C
         Class<?> owner = annotationContext.getFile().owner();
 
         if (!Reflect.notVoid(owner)) {
-            final Exceptional<ServiceContainer> container = context.locator().container(methodContext.getMethod().getDeclaringClass());
+            final Exceptional<ComponentContainer> container = context.locator().container(methodContext.getMethod().getDeclaringClass());
             if (container.present()) {
                 owner = container.get().owner();
             }

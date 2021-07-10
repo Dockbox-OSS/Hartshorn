@@ -17,6 +17,11 @@
 
 package org.dockbox.hartshorn.commands.annotations;
 
+import org.dockbox.hartshorn.api.domain.tuple.Tristate;
+import org.dockbox.hartshorn.di.annotations.component.ComponentLike;
+import org.dockbox.hartshorn.di.annotations.component.ComponentLink;
+import org.dockbox.hartshorn.di.services.ComponentAspect;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -29,12 +34,14 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.TYPE, ElementType.METHOD })
+@ComponentLike(singleton = Tristate.TRUE)
 public @interface Command {
     /**
      * The aliases for the command.
      *
      * @return the aliases
      */
+    @ComponentLink(ComponentAspect.ID)
     String[] value() default "";
 
     /**
@@ -54,5 +61,6 @@ public @interface Command {
      */
     String permission() default "";
 
+    @ComponentLink(ComponentAspect.OWNER)
     Class<?> parent() default Void.class;
 }

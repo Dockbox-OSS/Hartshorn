@@ -18,7 +18,7 @@
 package org.dockbox.hartshorn.server.minecraft.entities;
 
 import org.dockbox.hartshorn.api.domain.tuple.Vector3N;
-import org.dockbox.hartshorn.di.annotations.Required;
+import org.dockbox.hartshorn.di.annotations.inject.Required;
 import org.dockbox.hartshorn.server.minecraft.inventory.InventoryHolder;
 
 /**

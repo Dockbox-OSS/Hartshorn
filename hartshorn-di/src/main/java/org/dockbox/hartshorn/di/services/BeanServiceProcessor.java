@@ -19,9 +19,9 @@ package org.dockbox.hartshorn.di.services;
 
 import com.google.inject.Key;
 
-import org.dockbox.hartshorn.di.annotations.Bean;
-import org.dockbox.hartshorn.di.annotations.UseBeanProvision;
-import org.dockbox.hartshorn.di.annotations.Wired;
+import org.dockbox.hartshorn.di.annotations.inject.Bean;
+import org.dockbox.hartshorn.di.annotations.activate.UseBeanProvision;
+import org.dockbox.hartshorn.di.annotations.inject.Wired;
 import org.dockbox.hartshorn.di.binding.Bindings;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.di.inject.BeanContext;

@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.api.i18n;
 
 import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.i18n.annotations.Resource;
-import org.dockbox.hartshorn.di.services.ServiceContainer;
+import org.dockbox.hartshorn.di.services.ComponentContainer;
 import org.dockbox.hartshorn.test.HartshornRunner;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.dockbox.hartshorn.util.Reflect;
@@ -107,7 +107,7 @@ public final class TranslationBatchGenerator {
     public static Map<String, String> collect() {
         Map<String, String> batch = HartshornUtils.emptyMap();
         int i = 0;
-        for (ServiceContainer container : Hartshorn.context().locator().containers()) {
+        for (ComponentContainer container : Hartshorn.context().locator().containers()) {
             final Class<?> type = container.getType();
             final Collection<Method> methods = Reflect.methods(type, Resource.class);
             for (Method method : methods) {

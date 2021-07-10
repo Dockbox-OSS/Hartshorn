@@ -20,7 +20,7 @@ package org.dockbox.hartshorn.test.objects;
 import org.dockbox.hartshorn.api.exceptions.NotImplementedException;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.i18n.text.Text;
-import org.dockbox.hartshorn.di.annotations.Wired;
+import org.dockbox.hartshorn.di.annotations.inject.Wired;
 import org.dockbox.hartshorn.server.minecraft.bossbar.BossbarColor;
 import org.dockbox.hartshorn.server.minecraft.bossbar.BossbarStyle;
 import org.dockbox.hartshorn.server.minecraft.bossbar.DefaultTickableBossbar;

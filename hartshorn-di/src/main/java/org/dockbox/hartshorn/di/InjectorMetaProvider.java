@@ -22,10 +22,11 @@ import org.dockbox.hartshorn.api.domain.MetaProvider;
 import org.dockbox.hartshorn.api.domain.SimpleTypedOwner;
 import org.dockbox.hartshorn.api.domain.TypedOwner;
 import org.dockbox.hartshorn.api.entity.annotations.Entity;
-import org.dockbox.hartshorn.di.annotations.Service;
 import org.dockbox.hartshorn.di.binding.Bindings;
-import org.dockbox.hartshorn.di.services.ServiceContainer;
+import org.dockbox.hartshorn.di.services.ComponentContainer;
 import org.dockbox.hartshorn.util.Reflect;
+
+import java.lang.annotation.Annotation;
 
 import javax.inject.Singleton;
 
@@ -37,9 +38,9 @@ public class InjectorMetaProvider implements MetaProvider {
             return SimpleTypedOwner.of(type.getAnnotation(Entity.class).value());
         }
         else {
-            final Exceptional<ServiceContainer> container = ApplicationContextAware.instance().getContext().locator().container(type);
+            final Exceptional<ComponentContainer> container = ApplicationContextAware.instance().getContext().locator().container(type);
             if (container.present()) {
-                final ServiceContainer service = container.get();
+                final ComponentContainer service = container.get();
                 if (Reflect.notVoid(service.owner())) return this.lookup(service.owner());
             }
         }
@@ -55,12 +56,20 @@ public class InjectorMetaProvider implements MetaProvider {
                 .getContext()
                 .locator()
                 .container(type)
-                .map(ServiceContainer::singleton)
+                .map(ComponentContainer::singleton)
                 .or(false);
     }
 
     @Override
     public boolean isComponent(Class<?> type) {
-        return type.isAnnotationPresent(Service.class);
+        return this.decorator(type).present();
+    }
+
+    @Override
+    public Exceptional<Class<? extends Annotation>> decorator(Class<?> type) {
+        for (Class<? extends Annotation> decorator : ApplicationContextAware.instance().getContext().locator().decorators()) {
+            if (type.isAnnotationPresent(decorator)) return Exceptional.of(decorator);
+        }
+        return Exceptional.empty();
     }
 }

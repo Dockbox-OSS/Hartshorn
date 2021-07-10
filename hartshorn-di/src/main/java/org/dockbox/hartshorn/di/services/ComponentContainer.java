@@ -20,11 +20,10 @@ package org.dockbox.hartshorn.di.services;
 import java.lang.annotation.Annotation;
 import java.util.List;
 
-public interface ServiceContainer {
+public interface ComponentContainer {
 
     String getId();
     String getName();
-    List<String> getDependencies();
 
     boolean enabled();
 

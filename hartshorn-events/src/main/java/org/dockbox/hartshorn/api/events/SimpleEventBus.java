@@ -22,7 +22,7 @@ import org.dockbox.hartshorn.api.events.annotations.Listener;
 import org.dockbox.hartshorn.api.events.handle.EventHandlerRegistry;
 import org.dockbox.hartshorn.api.events.handle.SimpleEventWrapper;
 import org.dockbox.hartshorn.api.events.parents.Event;
-import org.dockbox.hartshorn.di.annotations.Binds;
+import org.dockbox.hartshorn.di.annotations.inject.Binds;
 import org.dockbox.hartshorn.util.Reflect;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.jetbrains.annotations.NotNull;

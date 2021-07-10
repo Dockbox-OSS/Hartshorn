@@ -15,20 +15,14 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.di.services;
+package org.dockbox.hartshorn.di.annotations.inject;
 
-import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Unmodifiable;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import java.util.Collection;
-
-public interface ServiceLocator {
-
-    @NotNull
-    @Unmodifiable
-    Collection<Class<?>> locate(String prefix);
-    Collection<ServiceContainer> containers();
-    Exceptional<ServiceContainer> container(Class<?> type);
-
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
+public @interface Required {
 }

@@ -15,7 +15,9 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.di.annotations;
+package org.dockbox.hartshorn.di.annotations.activate;
+
+import org.dockbox.hartshorn.di.annotations.service.ServiceActivator;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -24,5 +26,6 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface Required {
+@ServiceActivator
+public @interface UseSingletonServices {
 }

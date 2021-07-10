@@ -15,7 +15,10 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.di.annotations;
+package org.dockbox.hartshorn.di.annotations.component;
+
+import org.dockbox.hartshorn.api.domain.tuple.Tristate;
+import org.dockbox.hartshorn.di.services.ComponentAspect;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -23,7 +26,14 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.CONSTRUCTOR, ElementType.FIELD, ElementType.METHOD})
-public @interface Wired {
-    boolean enable() default true;
+@Target(ElementType.TYPE)
+@ComponentLike(singleton = Tristate.FALSE)
+public @interface Component {
+
+    @ComponentLink(ComponentAspect.ID)
+    String value() default "";
+
+    @ComponentLink(ComponentAspect.OWNER)
+    Class<?> owner() default Void.class;
+
 }

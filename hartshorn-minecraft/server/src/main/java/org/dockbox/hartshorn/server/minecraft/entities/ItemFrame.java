@@ -18,7 +18,7 @@
 package org.dockbox.hartshorn.server.minecraft.entities;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.di.annotations.Required;
+import org.dockbox.hartshorn.di.annotations.inject.Required;
 import org.dockbox.hartshorn.server.minecraft.dimension.position.BlockFace;
 import org.dockbox.hartshorn.server.minecraft.item.Item;
 import org.dockbox.hartshorn.server.minecraft.item.storage.MinecraftItems;

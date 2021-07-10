@@ -18,7 +18,7 @@
 package org.dockbox.hartshorn.persistence;
 
 import org.dockbox.hartshorn.api.domain.FileTypes;
-import org.dockbox.hartshorn.di.annotations.Named;
+import org.dockbox.hartshorn.di.annotations.inject.Named;
 
 import java.lang.annotation.Annotation;
 import java.nio.file.Path;

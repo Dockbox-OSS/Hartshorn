@@ -18,7 +18,7 @@
 package org.dockbox.hartshorn.test.objects;
 
 import org.dockbox.hartshorn.api.Hartshorn;
-import org.dockbox.hartshorn.di.annotations.Wired;
+import org.dockbox.hartshorn.di.annotations.inject.Wired;
 import org.dockbox.hartshorn.server.minecraft.players.Profile;
 
 import java.util.HashMap;

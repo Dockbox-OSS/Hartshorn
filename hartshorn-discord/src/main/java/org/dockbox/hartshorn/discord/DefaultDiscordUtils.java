@@ -42,7 +42,7 @@ import org.dockbox.hartshorn.api.domain.tuple.Triad;
 import org.dockbox.hartshorn.api.exceptions.Except;
 import org.dockbox.hartshorn.api.i18n.common.ResourceEntry;
 import org.dockbox.hartshorn.api.i18n.text.Text;
-import org.dockbox.hartshorn.di.annotations.Wired;
+import org.dockbox.hartshorn.di.annotations.inject.Wired;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.discord.annotations.DiscordCommand;
 import org.dockbox.hartshorn.discord.annotations.DiscordCommand.ListeningLevel;

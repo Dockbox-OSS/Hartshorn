@@ -24,9 +24,9 @@ import org.dockbox.hartshorn.di.Modifier;
 import org.dockbox.hartshorn.api.exceptions.Except;
 import org.dockbox.hartshorn.di.InjectConfiguration;
 import org.dockbox.hartshorn.di.InjectableBootstrap;
-import org.dockbox.hartshorn.di.annotations.Activator;
-import org.dockbox.hartshorn.di.annotations.InjectConfig;
-import org.dockbox.hartshorn.di.annotations.InjectPhase;
+import org.dockbox.hartshorn.di.annotations.activate.Activator;
+import org.dockbox.hartshorn.di.annotations.inject.InjectConfig;
+import org.dockbox.hartshorn.di.annotations.inject.InjectPhase;
 import org.dockbox.hartshorn.util.Reflect;
 import org.dockbox.hartshorn.util.HartshornUtils;
 

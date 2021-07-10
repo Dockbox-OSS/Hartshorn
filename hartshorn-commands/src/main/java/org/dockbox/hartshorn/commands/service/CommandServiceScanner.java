@@ -25,9 +25,9 @@ import org.dockbox.hartshorn.commands.CommandGateway;
 import org.dockbox.hartshorn.commands.annotations.Command;
 import org.dockbox.hartshorn.commands.events.RegisteredCommandsEvent;
 import org.dockbox.hartshorn.commands.extension.CommandExecutorExtension;
-import org.dockbox.hartshorn.di.annotations.Service;
+import org.dockbox.hartshorn.di.annotations.service.Service;
 import org.dockbox.hartshorn.di.preload.Preloadable;
-import org.dockbox.hartshorn.di.services.ServiceContainer;
+import org.dockbox.hartshorn.di.services.ComponentContainer;
 import org.dockbox.hartshorn.util.Reflect;
 
 @Service(activators = UseBootstrap.class)
@@ -37,7 +37,7 @@ public class CommandServiceScanner implements Preloadable {
     @PostBootstrap
     public void preload() {
         final CommandGateway gateway = Hartshorn.context().get(CommandGateway.class);
-        for (ServiceContainer container : Hartshorn.context().locator().containers()) {
+        for (ComponentContainer container : Hartshorn.context().locator().containers()) {
             if (!Reflect.methods(container.getType(), Command.class).isEmpty()) {
                 gateway.register(container.getType());
             }

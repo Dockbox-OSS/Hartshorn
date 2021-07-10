@@ -15,7 +15,12 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.di.annotations;
+package org.dockbox.hartshorn.di.annotations.service;
+
+import org.dockbox.hartshorn.api.domain.tuple.Tristate;
+import org.dockbox.hartshorn.di.annotations.component.ComponentLike;
+import org.dockbox.hartshorn.di.annotations.component.ComponentLink;
+import org.dockbox.hartshorn.di.services.ComponentAspect;
 
 import java.lang.annotation.Annotation;
 import java.lang.annotation.ElementType;
@@ -25,17 +30,25 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
+@ComponentLike(singleton = Tristate.UNDEFINED)
 public @interface Service {
-    
+
+    @ComponentLink(ComponentAspect.ID)
     String id() default "";
+
+    @ComponentLink(ComponentAspect.NAME)
     String name() default "";
 
-    String[] dependencies() default {};
+    @ComponentLink(ComponentAspect.ENABLED)
+    boolean enabled() default true;
 
-    boolean disabled() default false;
-
+    @ComponentLink(ComponentAspect.OWNER)
     Class<?> owner() default Void.class;
+
+    @ComponentLink(ComponentAspect.SINGLETON)
+    boolean singleton() default true;
+
     Class<? extends Annotation>[] activators() default Service.class;
 
-    boolean singleton() default true;
+    String[] dependencies() default {};
 }

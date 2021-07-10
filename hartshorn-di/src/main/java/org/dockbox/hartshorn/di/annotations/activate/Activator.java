@@ -15,11 +15,12 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.di.annotations;
+package org.dockbox.hartshorn.di.annotations.activate;
 
 import org.dockbox.hartshorn.di.InjectableBootstrap;
 import org.dockbox.hartshorn.di.adapter.InjectSource;
 import org.dockbox.hartshorn.di.adapter.ServiceSource;
+import org.dockbox.hartshorn.di.annotations.inject.InjectConfig;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
