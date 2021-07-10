@@ -20,9 +20,11 @@ package org.dockbox.hartshorn.persistence;
 import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.domain.TypedOwner;
+import org.dockbox.hartshorn.api.exceptions.ApplicationException;
 import org.dockbox.hartshorn.di.properties.InjectorProperty;
 import org.dockbox.hartshorn.persistence.mapping.GenericType;
 import org.dockbox.hartshorn.persistence.mapping.ObjectMapper;
+import org.dockbox.hartshorn.persistence.properties.PersistenceProperty;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -122,18 +124,23 @@ public abstract class DefaultAbstractFileManager implements FileManager {
     }
 
     @Override
-    public void stateEnabling(InjectorProperty<?>... properties) {
-        for (InjectorProperty<?> property : properties)
+    public void stateEnabling(InjectorProperty<?>... properties) throws ApplicationException {
+        for (InjectorProperty<?> property : properties) {
             if (property instanceof FileTypeProperty) {
                 final FileType fileType = ((FileTypeProperty) property).getObject();
 
                 if (fileType.getType().equals(PersistenceType.RAW)) {
                     this.setFileType(fileType);
-                } else {
+                }
+                else {
                     throw new IllegalArgumentException("Unsupported persistence type: " + fileType.getType() + ", expected: " + PersistenceType.RAW);
                 }
                 break;
             }
+            else if (property instanceof PersistenceProperty) {
+                this.mapper.stateEnabling(property);
+            }
+        }
     }
 
     @Override
