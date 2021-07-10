@@ -30,10 +30,10 @@ import java.lang.annotation.Target;
 @ComponentLike(singleton = Tristate.FALSE)
 public @interface Component {
 
-    @ComponentLink(ComponentAspect.ID)
+    @ComponentAlias(ComponentAspect.ID)
     String value() default "";
 
-    @ComponentLink(ComponentAspect.OWNER)
+    @ComponentAlias(ComponentAspect.OWNER)
     Class<?> owner() default Void.class;
 
 }

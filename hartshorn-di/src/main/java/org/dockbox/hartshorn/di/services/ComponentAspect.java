@@ -17,6 +17,7 @@
 
 package org.dockbox.hartshorn.di.services;
 
+import org.dockbox.hartshorn.di.ComponentType;
 import org.dockbox.hartshorn.di.annotations.component.ComponentLike;
 import org.dockbox.hartshorn.di.binding.Bindings;
 
@@ -33,6 +34,10 @@ public enum ComponentAspect {
         final ComponentLike componentLike = annotation.annotationType().getAnnotation(ComponentLike.class);
         return componentLike.singleton().booleanValue();
     }),
+    TYPE(ComponentType.class, (type, annotation) -> {
+        final ComponentLike componentLike = annotation.annotationType().getAnnotation(ComponentLike.class);
+        return componentLike.type();
+    })
     ;
 
     private final Class<?> type;
@@ -43,7 +48,7 @@ public enum ComponentAspect {
         this.defaultFunction = (t, a) -> defaultFunction.apply(t);
     }
 
-    private <T> ComponentAspect(Class<T> type, BiFunction<Class<?>, Annotation, ?> defaultFunction) {
+    private <T> ComponentAspect(Class<T> type, BiFunction<Class<?>, Annotation, T> defaultFunction) {
         this.type = type;
         this.defaultFunction = defaultFunction;
     }

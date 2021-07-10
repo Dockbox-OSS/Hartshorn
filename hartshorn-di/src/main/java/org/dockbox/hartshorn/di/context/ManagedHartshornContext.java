@@ -18,9 +18,11 @@
 package org.dockbox.hartshorn.di.context;
 
 import org.dockbox.hartshorn.api.exceptions.ApplicationException;
+import org.dockbox.hartshorn.di.ComponentType;
 import org.dockbox.hartshorn.di.InjectionPoint;
 import org.dockbox.hartshorn.di.ProvisionFailure;
 import org.dockbox.hartshorn.di.annotations.activate.Activator;
+import org.dockbox.hartshorn.di.annotations.service.Service;
 import org.dockbox.hartshorn.di.annotations.service.ServiceActivator;
 import org.dockbox.hartshorn.di.annotations.inject.Wired;
 import org.dockbox.hartshorn.di.inject.InjectionModifier;
@@ -144,7 +146,7 @@ public abstract class ManagedHartshornContext extends DefaultContext implements 
     }
 
     protected void process(String prefix) {
-        final Collection<Class<?>> services = this.locator().locate(prefix);
+        final Collection<Class<?>> services = this.locator().locate(prefix, ComponentType.FUNCTIONAL);
         for (ServiceProcessor<?> serviceProcessor : this.serviceProcessors) {
             for (Class<?> service : services) {
                 if (serviceProcessor.preconditions(service)) serviceProcessor.process(this, service);

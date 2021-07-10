@@ -15,19 +15,8 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.di.annotations.component;
+package org.dockbox.hartshorn.di;
 
-import org.dockbox.hartshorn.api.domain.tuple.Tristate;
-import org.dockbox.hartshorn.di.ComponentType;
-
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.ANNOTATION_TYPE)
-public @interface ComponentLike {
-    Tristate singleton();
-    ComponentType type() default ComponentType.INJECTABLE;
+public enum ComponentType {
+    FUNCTIONAL, INJECTABLE
 }

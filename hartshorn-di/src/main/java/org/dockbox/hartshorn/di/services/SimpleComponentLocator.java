@@ -18,6 +18,7 @@
 package org.dockbox.hartshorn.di.services;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.di.ComponentType;
 import org.dockbox.hartshorn.di.annotations.component.ComponentLike;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.dockbox.hartshorn.util.Reflect;
@@ -66,6 +67,17 @@ public class SimpleComponentLocator implements ComponentLocator {
         SimpleComponentLocator.cache.put(prefix, containers);
 
         return HartshornUtils.asUnmodifiableSet(types);
+    }
+
+    @Override
+    public @NotNull @Unmodifiable Collection<Class<?>> locate(String prefix, ComponentType componentType) {
+        return HartshornUtils.asUnmodifiableSet(this.locate(prefix).stream()
+                .map(this::container)
+                .map(Exceptional::get)
+                .filter(container -> container.componentType().equals(componentType))
+                .map(ComponentContainer::getType)
+                .collect(Collectors.toSet())
+        );
     }
 
     @Override

@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.di.services;
 
 import org.dockbox.hartshorn.di.ApplicationContextAware;
 import org.dockbox.hartshorn.di.annotations.component.ComponentLike;
-import org.dockbox.hartshorn.di.annotations.component.ComponentLink;
+import org.dockbox.hartshorn.di.annotations.component.ComponentAlias;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.dockbox.hartshorn.util.Reflect;
 
@@ -39,9 +39,9 @@ final class ComponentMetaProcessor<A extends Annotation> {
             this.functions.put(aspect, function);
         }
 
-        for (Method method : Reflect.methods(annotation, ComponentLink.class)) {
-            final ComponentLink componentLink = method.getAnnotation(ComponentLink.class);
-            final ComponentAspect aspect = componentLink.value();
+        for (Method method : Reflect.methods(annotation, ComponentAlias.class)) {
+            final ComponentAlias componentAlias = method.getAnnotation(ComponentAlias.class);
+            final ComponentAspect aspect = componentAlias.value();
 
             if (Reflect.assigns(method.getReturnType(), aspect.type())) {
                 BiFunction<Class<?>, A, ?> function = (type, a) -> ApplicationContextAware.instance().getContext().invoke(method, a);

@@ -17,6 +17,8 @@
 
 package org.dockbox.hartshorn.di.services;
 
+import org.dockbox.hartshorn.di.ComponentType;
+
 import java.lang.annotation.Annotation;
 import java.util.List;
 
@@ -36,4 +38,6 @@ public interface ComponentContainer {
     boolean hasActivator(Class<? extends Annotation> activator);
 
     boolean singleton();
+
+    ComponentType componentType();
 }

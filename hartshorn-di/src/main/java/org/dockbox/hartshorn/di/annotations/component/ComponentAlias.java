@@ -26,6 +26,6 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface ComponentLink {
+public @interface ComponentAlias {
     ComponentAspect value();
 }

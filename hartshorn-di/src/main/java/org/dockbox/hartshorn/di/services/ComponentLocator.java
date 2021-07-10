@@ -18,6 +18,7 @@
 package org.dockbox.hartshorn.di.services;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.di.ComponentType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 
@@ -29,8 +30,11 @@ public interface ComponentLocator {
     @NotNull
     @Unmodifiable
     Collection<Class<?>> locate(String prefix);
+    @NotNull
+    @Unmodifiable
+    Collection<Class<?>> locate(String prefix, ComponentType type);
     Collection<ComponentContainer> containers();
     Exceptional<ComponentContainer> container(Class<?> type);
-    Collection<Class<? extends Annotation>> decorators();
 
+    Collection<Class<? extends Annotation>> decorators();
 }

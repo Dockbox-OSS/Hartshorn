@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.di.services;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.di.ApplicationContextAware;
+import org.dockbox.hartshorn.di.ComponentType;
 import org.dockbox.hartshorn.di.annotations.service.Service;
 import org.dockbox.hartshorn.di.annotations.service.ServiceActivator;
 import org.dockbox.hartshorn.util.HartshornUtils;
@@ -97,6 +98,11 @@ public class SimpleComponentContainer<A extends Annotation> implements Component
     @Override
     public boolean singleton() {
         return this.get(ComponentAspect.SINGLETON);
+    }
+
+    @Override
+    public ComponentType componentType() {
+        return this.get(ComponentAspect.TYPE);
     }
 
     private <T> T get(ComponentAspect aspect) {
