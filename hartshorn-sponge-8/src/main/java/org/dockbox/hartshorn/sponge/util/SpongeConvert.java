@@ -640,6 +640,10 @@ public enum SpongeConvert {
         return new SpongeWorld(world.key());
     }
 
+    public static Player toSponge(User user) {
+        return new SpongePlayer(user.uniqueId(), user.name());
+    }
+
 //    public static Element toSponge(org.dockbox.hartshorn.server.minecraft.inventory.Element element) {
 //        if (element instanceof SimpleElement) {
 //            return Element.of(toSponge(element.getItem()),
