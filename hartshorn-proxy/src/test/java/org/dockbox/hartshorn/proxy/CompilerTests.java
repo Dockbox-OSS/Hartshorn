@@ -19,7 +19,6 @@ package org.dockbox.hartshorn.proxy;
 
 import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.proxy.compiler.Compiler;
-import org.dockbox.hartshorn.proxy.compiler.CompilerService;
 import org.dockbox.hartshorn.test.HartshornRunner;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -41,7 +40,7 @@ public class CompilerTests {
 
     @Test
     public void surfaceTest() throws NoSuchMethodException {
-        Class<?> flying = Hartshorn.context().get(CompilerService.class).compile(SURFACE_JAVA).rethrow().get();
+        Class<?> flying = Hartshorn.context().get(Compiler.class).compile(SURFACE_JAVA).rethrow().get();
         Object flyingInstance = Hartshorn.context().get(flying);
 
         Assertions.assertEquals("FlyingClass", flying.getSimpleName());
