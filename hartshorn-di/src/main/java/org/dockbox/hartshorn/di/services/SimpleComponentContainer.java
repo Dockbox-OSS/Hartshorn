@@ -45,9 +45,9 @@ public class SimpleComponentContainer<A extends Annotation> implements Component
         this.component = component;
         this.annotation = annotated.get();
 
-        final Annotation actual = Reflect.actual(this.annotation);
-        if (actual instanceof Service service) {
-            this.activators.addAll(HartshornUtils.asList(service.activators()));
+        final Exceptional<Service> service = Reflect.annotation(component, Service.class);
+        if (service.present()) {
+            this.activators.addAll(HartshornUtils.asList(service.get().activators()));
         }
     }
 
