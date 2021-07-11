@@ -75,6 +75,7 @@ final class AnnotationHelper {
             ret = Exceptional.of(supplier::get);
             cache.put(keys, ret);
         }
+        ret.rethrow();
         return (T) ret.orNull();
     }
 
@@ -174,6 +175,11 @@ final class AnnotationHelper {
             return proxy.actual;
         }
         return annotation;
+    }
+
+    public static boolean instanceOf(Annotation annotation, Class<? extends Annotation> type) {
+        Class<? extends Annotation> annotationType = annotation.annotationType();
+        return getCached(Arrays.asList(4, annotationType), () -> getAnnotationHierarchy(annotationType)).contains(type);
     }
 
     interface AnnotationAdapter {

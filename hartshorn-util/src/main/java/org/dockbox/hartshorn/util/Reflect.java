@@ -621,6 +621,10 @@ public final class Reflect {
         return AnnotationHelper.actual(annotation);
     }
 
+    public static boolean instanceOf(Annotation annotation, Class<? extends Annotation> type) {
+        return AnnotationHelper.instanceOf(annotation, type);
+    }
+
     public static void prefix(String prefix) {
         context().prefix(prefix);
     }
