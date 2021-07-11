@@ -17,12 +17,12 @@
 
 package org.dockbox.hartshorn.di.context;
 
+import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.exceptions.ApplicationException;
 import org.dockbox.hartshorn.di.ComponentType;
 import org.dockbox.hartshorn.di.InjectionPoint;
 import org.dockbox.hartshorn.di.ProvisionFailure;
 import org.dockbox.hartshorn.di.annotations.activate.Activator;
-import org.dockbox.hartshorn.di.annotations.service.Service;
 import org.dockbox.hartshorn.di.annotations.service.ServiceActivator;
 import org.dockbox.hartshorn.di.annotations.inject.Wired;
 import org.dockbox.hartshorn.di.inject.InjectionModifier;
@@ -60,19 +60,20 @@ public abstract class ManagedHartshornContext extends DefaultContext implements 
     private final List<Annotation> activators;
 
     public ManagedHartshornContext(Class<?> activationSource) {
-        if (!activationSource.isAnnotationPresent(Activator.class)) {
+        final Exceptional<Activator> activator = Reflect.annotation(activationSource, Activator.class);
+        if (activator.absent()) {
             throw new IllegalStateException("Activation source is not marked with @Activator");
         }
-        this.activator = activationSource.getAnnotation(Activator.class);
+        this.activator = activator.get();
         this.activationSource = activationSource;
-        this.activators = Reflect.annotations(activationSource, ServiceActivator.class);
+        this.activators = Reflect.annotationsWith(activationSource, ServiceActivator.class);
     }
 
     /**
      * Non-exposed method which can be used by bootstrapping services to register default activators.
      */
     public void addActivator(Annotation annotation) {
-        if (annotation.annotationType().isAnnotationPresent(ServiceActivator.class))
+        if (Reflect.annotation(annotation.annotationType(), ServiceActivator.class).present())
             this.activators.add(annotation);
     }
 
@@ -101,7 +102,7 @@ public abstract class ManagedHartshornContext extends DefaultContext implements 
     public <T> void enable(T typeInstance) {
         if (typeInstance == null) return;
         HartshornUtils.merge(Reflect.fields(typeInstance.getClass(), Wired.class)).stream()
-                .filter(field -> field.getAnnotation(Wired.class).enable())
+                .filter(field -> Reflect.annotation(field, Wired.class).get().enable())
                 .filter(field -> Reflect.assigns(InjectableType.class, field.getType()))
                 .map(field -> {
                     try {
@@ -172,7 +173,7 @@ public abstract class ManagedHartshornContext extends DefaultContext implements 
 
     @Override
     public boolean hasActivator(Class<? extends Annotation> activator) {
-        if (!activator.isAnnotationPresent(ServiceActivator.class))
+        if (Reflect.annotation(activator, ServiceActivator.class).absent())
             throw new IllegalArgumentException("Requested activator " + activator.getSimpleName() + " is not decorated with @ServiceActivator");
 
         return this.activators.stream()

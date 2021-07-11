@@ -124,8 +124,9 @@ public class SimpleCommandGateway implements CommandGateway {
         if (container.absent()) throw new IllegalArgumentException("Executor contexts should contain at least one container context");
 
         List<String> aliases;
-        if (Reflect.notVoid(context.parent()) && context.parent().isAnnotationPresent(Command.class)) {
-            aliases = HartshornUtils.asUnmodifiableList(context.parent().getAnnotation(Command.class).value());
+        final Exceptional<Command> annotated = Reflect.annotation(context.parent(), Command.class);
+        if (Reflect.notVoid(context.parent()) && annotated.present()) {
+            aliases = HartshornUtils.asUnmodifiableList(annotated.get().value());
         } else if (!container.get().aliases().isEmpty()){
             aliases = container.get().aliases();
         } else {

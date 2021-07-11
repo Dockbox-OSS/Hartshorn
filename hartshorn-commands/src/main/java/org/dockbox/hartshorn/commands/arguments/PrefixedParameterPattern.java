@@ -17,10 +17,11 @@
 
 package org.dockbox.hartshorn.commands.arguments;
 
+import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.api.i18n.common.ResourceEntry;
 import org.dockbox.hartshorn.commands.annotations.Parameter;
 import org.dockbox.hartshorn.commands.source.CommandSource;
-import org.dockbox.hartshorn.api.i18n.common.ResourceEntry;
-import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.util.Reflect;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +33,7 @@ public abstract class PrefixedParameterPattern implements CustomParameterPattern
         return Exceptional.of(() -> {
                     String prefix = this.getPrefix() + "";
                     if (this.requiresTypeName()) {
-                        String parameterName = type.getAnnotation(Parameter.class).value();
+                        String parameterName = Reflect.annotation(type, Parameter.class).get().value();
                         prefix = this.getPrefix() + parameterName;
                     }
                     return raw.startsWith(prefix);

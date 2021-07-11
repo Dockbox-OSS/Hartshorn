@@ -43,7 +43,7 @@ public class EventValidator {
         List<Class<? extends Event>> postedEvents = HartshornUtils.emptyList();
 
         for (Class<?> bridge : Reflect.types(Posting.class)) {
-            final Posting posting = bridge.getAnnotation(Posting.class);
+            final Posting posting = Reflect.annotation(bridge, Posting.class).get();
             postedEvents.addAll(Arrays.asList(posting.value()));
         }
 

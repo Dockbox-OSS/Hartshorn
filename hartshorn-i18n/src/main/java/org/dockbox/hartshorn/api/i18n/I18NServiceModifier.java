@@ -37,7 +37,7 @@ public class I18NServiceModifier extends ServiceAnnotatedMethodModifier<Resource
             throw new ProxyMethodBindingException(methodContext);
 
         String key = I18N.key(methodContext.getType(), methodContext.getMethod());
-        Resource annotation = methodContext.getMethod().getAnnotation(Resource.class);
+        Resource annotation = Reflect.annotation(methodContext.getMethod(), Resource.class).get();
 
         return (self, args, holder) -> {
             // Prevents NPE when formatting cached resources without arguments

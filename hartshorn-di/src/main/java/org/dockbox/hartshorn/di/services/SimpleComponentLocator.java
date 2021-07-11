@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.di.services;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.di.ComponentType;
+import org.dockbox.hartshorn.di.annotations.component.Component;
 import org.dockbox.hartshorn.di.annotations.component.ComponentLike;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.dockbox.hartshorn.util.Reflect;
@@ -26,11 +27,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 
 import java.lang.annotation.Annotation;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 public class SimpleComponentLocator implements ComponentLocator {
@@ -46,18 +45,8 @@ public class SimpleComponentLocator implements ComponentLocator {
                     .collect(Collectors.toList());
         }
 
-        final Set<Class<?>> types = HartshornUtils.emptySet();
-        for (Class<? extends Annotation> decorator : this.decorators()) {
-            for (Class<?> type : Reflect.types(decorator)) {
-                if (types.contains(type)) {
-                    String decorators = Arrays.stream(type.getAnnotations())
-                            .map(annotation -> annotation.annotationType().getSimpleName())
-                            .collect(Collectors.joining());
-                    throw new IllegalStateException("Component type '" + type.getSimpleName() + "' has more than one component decorator. Found: " + decorators);
-                }
-                types.add(type);
-            }
-        }
+        Reflect.prefix(prefix);
+        final Collection<Class<?>> types = Reflect.types(Component.class);
 
         final List<ComponentContainer> containers = types.stream()
                 .map(SimpleComponentContainer::new)

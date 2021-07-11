@@ -17,6 +17,8 @@
 
 package org.dockbox.hartshorn.di;
 
+import com.google.common.collect.Multimap;
+
 import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.exceptions.ApplicationException;
@@ -54,6 +56,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -68,6 +71,7 @@ public class ApplicationContextTests {
     private static final Field serviceModifiers;
     private static final Field serviceProcessors;
     private static final Field context;
+    private static final Field annotationHierarchy;
     private static final Method internalInjector;
 
     static {
@@ -89,6 +93,9 @@ public class ApplicationContextTests {
 
             internalInjector = HartshornApplicationContext.class.getDeclaredMethod("internalInjector");
             internalInjector.setAccessible(true);
+
+            annotationHierarchy = PrefixContext.class.getDeclaredField("annotationHierarchy");
+            annotationHierarchy.setAccessible(true);
 
             context = Reflect.class.getDeclaredField("context");
             context.setAccessible(true);
@@ -452,6 +459,7 @@ public class ApplicationContextTests {
         Assertions.assertEquals("WiredBean", provided.getName());
     }
 
+    @SuppressWarnings("unchecked")
     private static ApplicationContext context(boolean reset) throws ApplicationException {
         final ApplicationContext context = Hartshorn.context();
         try {
@@ -462,8 +470,15 @@ public class ApplicationContextTests {
                 injectionPoints.set(context, HartshornUtils.emptyConcurrentSet());
                 serviceModifiers.set(context, HartshornUtils.emptyConcurrentSet());
                 serviceProcessors.set(context, HartshornUtils.emptyConcurrentSet());
+
+                final PrefixContext prefixContext = (PrefixContext) ApplicationContextTests.context.get(null);
+                final var oldHierarchy = (Multimap<Class<? extends Annotation>, Class<? extends Annotation>>) annotationHierarchy.get(prefixContext);
+
                 // Non existing package to ensure no keys are cached early on
-                ApplicationContextTests.context.set(null, new PrefixContext("a.b"));
+                final PrefixContext newContext = new PrefixContext("a.b");
+                annotationHierarchy.set(newContext, oldHierarchy);
+                ApplicationContextTests.context.set(null, newContext);
+
                 injector.reset();
             }
         } catch (IllegalAccessException | InvocationTargetException e) {

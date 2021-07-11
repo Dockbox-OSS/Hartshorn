@@ -21,6 +21,7 @@ import org.dockbox.hartshorn.api.annotations.PostBootstrap;
 import org.dockbox.hartshorn.api.annotations.UseBootstrap;
 import org.dockbox.hartshorn.di.services.ServiceProcessor;
 import org.dockbox.hartshorn.test.HartshornRunner;
+import org.dockbox.hartshorn.util.Reflect;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -54,7 +55,7 @@ public class PostBootstrapServiceProcessorTests {
         final HartshornBootstrap bootstrap = Mockito.mock(HartshornBootstrap.class);
         Mockito.doAnswer(invocation -> {
             final Method method = invocation.getArgument(0);
-            Assertions.assertTrue(method.isAnnotationPresent(PostBootstrap.class));
+            Assertions.assertTrue(Reflect.annotation(method, PostBootstrap.class).present());
             return null;
         }).when(bootstrap).addPostBootstrapActivation(Mockito.any(Method.class), Mockito.any(Class.class));
 

@@ -47,6 +47,6 @@ public class SimpleMethodProxyContext<T> extends DefaultContext implements Metho
 
     @Override
     public <A extends Annotation> A getAnnotation(Class<A> annotation) {
-        return Reflect.annotation(this.method, annotation);
+        return Reflect.annotation(this.method, annotation).orNull();
     }
 }

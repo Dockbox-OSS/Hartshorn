@@ -22,11 +22,10 @@ import org.dockbox.hartshorn.api.domain.MetaProvider;
 import org.dockbox.hartshorn.api.domain.SimpleTypedOwner;
 import org.dockbox.hartshorn.api.domain.TypedOwner;
 import org.dockbox.hartshorn.api.entity.annotations.Entity;
+import org.dockbox.hartshorn.di.annotations.component.Component;
 import org.dockbox.hartshorn.di.binding.Bindings;
 import org.dockbox.hartshorn.di.services.ComponentContainer;
 import org.dockbox.hartshorn.util.Reflect;
-
-import java.lang.annotation.Annotation;
 
 import javax.inject.Singleton;
 
@@ -34,8 +33,9 @@ public class InjectorMetaProvider implements MetaProvider {
 
     @Override
     public TypedOwner lookup(Class<?> type) {
-        if (type.isAnnotationPresent(Entity.class)) {
-            return SimpleTypedOwner.of(type.getAnnotation(Entity.class).value());
+        final Exceptional<Entity> annotated = Reflect.annotation(type, Entity.class);
+        if (annotated.present()) {
+            return SimpleTypedOwner.of(annotated.get().value());
         }
         else {
             final Exceptional<ComponentContainer> container = ApplicationContextAware.instance().getContext().locator().container(type);
@@ -49,8 +49,8 @@ public class InjectorMetaProvider implements MetaProvider {
 
     @Override
     public boolean isSingleton(Class<?> type) {
-        if (type.isAnnotationPresent(Singleton.class)) return true;
-        if (type.isAnnotationPresent(com.google.inject.Singleton.class)) return true;
+        if (Reflect.annotation(type, Singleton.class).present()) return true;
+        if (Reflect.annotation(type, com.google.inject.Singleton.class).present()) return true;
 
         return ApplicationContextAware.instance()
                 .getContext()
@@ -62,14 +62,6 @@ public class InjectorMetaProvider implements MetaProvider {
 
     @Override
     public boolean isComponent(Class<?> type) {
-        return this.decorator(type).present();
-    }
-
-    @Override
-    public Exceptional<Class<? extends Annotation>> decorator(Class<?> type) {
-        for (Class<? extends Annotation> decorator : ApplicationContextAware.instance().getContext().locator().decorators()) {
-            if (type.isAnnotationPresent(decorator)) return Exceptional.of(decorator);
-        }
-        return Exceptional.empty();
+        return Reflect.annotation(type, Component.class).present();
     }
 }

@@ -17,8 +17,7 @@
 
 package org.dockbox.hartshorn.di.annotations.component;
 
-import org.dockbox.hartshorn.api.domain.tuple.Tristate;
-import org.dockbox.hartshorn.di.services.ComponentAspect;
+import org.dockbox.hartshorn.di.ComponentType;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -27,13 +26,12 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-@ComponentLike(singleton = Tristate.FALSE)
 public @interface Component {
 
-    @ComponentAlias(ComponentAspect.ID)
     String value() default "";
-
-    @ComponentAlias(ComponentAspect.OWNER)
+    String name() default "";
     Class<?> owner() default Void.class;
-
+    boolean singleton() default false;
+    ComponentType type() default ComponentType.INJECTABLE;
+    boolean enabled() default true;
 }

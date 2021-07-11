@@ -88,7 +88,7 @@ public class GuiceInjector implements Injector {
      * Creates a custom binding for a given contract and implementation using a custom {@link
      * AbstractModule}. Requires the implementation to extend the contract type.
      *
-     * <p>The binding is created by Guice, and can be annotated using Guice supported annotations
+     * <p>The binding is created by Guice, and can be annotated using Guice supported annotationsWith
      * (e.g. {@link com.google.inject.Singleton})
      *
      * @param <T>
@@ -254,8 +254,9 @@ public class GuiceInjector implements Injector {
         Object[] invokingParameters = new Object[parameters.length];
         for (int i = 0; i < parameters.length; i++) {
             Parameter parameter = parameters[i];
-            if (parameter.isAnnotationPresent(Named.class)) {
-                invokingParameters[i] = ApplicationContextAware.instance().getContext().get(parameter.getType(), BindingMetaProperty.of(parameter.getAnnotation(Named.class)));
+            final Exceptional<Named> annotation = Reflect.annotation(parameter, Named.class);
+            if (annotation.present()) {
+                invokingParameters[i] = ApplicationContextAware.instance().getContext().get(parameter.getType(), BindingMetaProperty.of(annotation.get()));
             } else {
                 invokingParameters[i] = ApplicationContextAware.instance().getContext().get(parameter.getType());
             }
@@ -290,13 +291,13 @@ public class GuiceInjector implements Injector {
 
         Collection<Class<?>> binders = Reflect.types(Binds.class);
         for (Class<?> binder : binders) {
-            Binds bindAnnotation = binder.getAnnotation(Binds.class);
+            Binds bindAnnotation = Reflect.annotation(binder, Binds.class).get();
             this.handleBinder(bindings, binder, bindAnnotation);
         }
 
         Collection<Class<?>> multiBinders = Reflect.types(Combines.class);
         for (Class<?> binder : multiBinders) {
-            Combines bindAnnotation = binder.getAnnotation(Combines.class);
+            Combines bindAnnotation = Reflect.annotation(binder, Combines.class).get();
             for (Binds annotation : bindAnnotation.value()) {
                 this.handleBinder(bindings, binder, annotation);
             }

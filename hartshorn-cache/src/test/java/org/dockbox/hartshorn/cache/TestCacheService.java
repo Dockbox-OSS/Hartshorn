@@ -21,12 +21,10 @@ import org.dockbox.hartshorn.cache.annotations.CacheService;
 import org.dockbox.hartshorn.cache.annotations.Cached;
 import org.dockbox.hartshorn.cache.annotations.EvictCache;
 import org.dockbox.hartshorn.cache.annotations.UpdateCache;
-import org.dockbox.hartshorn.di.annotations.service.Service;
 import org.dockbox.hartshorn.util.HartshornUtils;
 
 import java.util.List;
 
-@Service
 @CacheService("sample")
 public abstract class TestCacheService {
 

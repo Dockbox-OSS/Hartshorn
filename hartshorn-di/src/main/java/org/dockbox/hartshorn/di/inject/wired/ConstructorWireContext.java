@@ -17,6 +17,7 @@
 
 package org.dockbox.hartshorn.di.inject.wired;
 
+import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.di.annotations.inject.Wired;
 import org.dockbox.hartshorn.util.Reflect;
 
@@ -65,7 +66,8 @@ public class ConstructorWireContext<T, I extends T> implements WireContext<T, I>
                 throw new NoSuchMethodException("Available constructors do not meet expected parameter types");
             }
 
-            if (ctor.isAnnotationPresent(Wired.class)) {
+            final Exceptional<Wired> annotation = Reflect.annotation(ctor, Wired.class);
+            if (annotation.present()) {
                 return ctor.newInstance(arguments);
             }
             else {

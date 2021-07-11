@@ -17,11 +17,10 @@
 
 package org.dockbox.hartshorn.di.annotations.service;
 
-import org.dockbox.hartshorn.api.domain.tuple.Tristate;
 import org.dockbox.hartshorn.di.ComponentType;
-import org.dockbox.hartshorn.di.annotations.component.ComponentLike;
-import org.dockbox.hartshorn.di.annotations.component.ComponentAlias;
-import org.dockbox.hartshorn.di.services.ComponentAspect;
+import org.dockbox.hartshorn.di.annotations.component.Component;
+import org.dockbox.hartshorn.util.annotations.AliasFor;
+import org.dockbox.hartshorn.util.annotations.Extends;
 
 import java.lang.annotation.Annotation;
 import java.lang.annotation.ElementType;
@@ -31,22 +30,19 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-@ComponentLike(singleton = Tristate.UNDEFINED, type = ComponentType.FUNCTIONAL)
+@Extends(Component.class)
+@Component(type = ComponentType.FUNCTIONAL)
 public @interface Service {
 
-    @ComponentAlias(ComponentAspect.ID)
+    @AliasFor("value")
     String id() default "";
 
-    @ComponentAlias(ComponentAspect.NAME)
     String name() default "";
 
-    @ComponentAlias(ComponentAspect.ENABLED)
     boolean enabled() default true;
 
-    @ComponentAlias(ComponentAspect.OWNER)
     Class<?> owner() default Void.class;
 
-    @ComponentAlias(ComponentAspect.SINGLETON)
     boolean singleton() default true;
 
     Class<? extends Annotation>[] activators() default Service.class;

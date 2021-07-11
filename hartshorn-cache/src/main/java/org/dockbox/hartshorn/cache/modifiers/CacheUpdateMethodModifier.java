@@ -17,8 +17,8 @@
 
 package org.dockbox.hartshorn.cache.modifiers;
 
-import org.dockbox.hartshorn.cache.context.CacheContext;
 import org.dockbox.hartshorn.cache.annotations.UpdateCache;
+import org.dockbox.hartshorn.cache.context.CacheContext;
 import org.dockbox.hartshorn.cache.context.CacheMethodContext;
 import org.dockbox.hartshorn.cache.context.SimpleCacheMethodContext;
 import org.dockbox.hartshorn.di.context.ApplicationContext;

@@ -18,11 +18,13 @@
 package org.dockbox.hartshorn.di.services;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.di.ApplicationContextAware;
 import org.dockbox.hartshorn.di.ComponentType;
+import org.dockbox.hartshorn.di.annotations.component.Component;
 import org.dockbox.hartshorn.di.annotations.service.Service;
 import org.dockbox.hartshorn.di.annotations.service.ServiceActivator;
+import org.dockbox.hartshorn.di.binding.Bindings;
 import org.dockbox.hartshorn.util.HartshornUtils;
+import org.dockbox.hartshorn.util.Reflect;
 
 import java.lang.annotation.Annotation;
 import java.util.List;
@@ -32,39 +34,40 @@ import lombok.Getter;
 @Getter
 public class SimpleComponentContainer<A extends Annotation> implements ComponentContainer {
 
-    private final ComponentMetaProcessor<A> processor;
-    private final A annotation;
+    private final Component annotation;
     private final Class<?> component;
     private final List<Class<? extends Annotation>> activators = HartshornUtils.emptyList();
 
     public SimpleComponentContainer(Class<?> component) {
-        final Exceptional<Class<? extends Annotation>> decorator = ApplicationContextAware.instance().getContext().meta().decorator(component);
-        if (decorator.absent()) throw new IllegalArgumentException("Provided component candidate has no assigned decorator");
+        final Exceptional<Component> annotated = Reflect.annotation(component, Component.class);
+        if (annotated.absent()) throw new IllegalArgumentException("Provided component candidate has no assigned decorator");
 
         this.component = component;
-        //noinspection unchecked
-        final Class<A> decoratorType = (Class<A>) decorator.get();
-        this.annotation = component.getAnnotation(decoratorType);
-        this.processor = new ComponentMetaProcessor<>(decoratorType);
+        this.annotation = annotated.get();
 
-        if (this.annotation instanceof Service service) {
+        final Annotation actual = Reflect.actual(this.annotation);
+        if (actual instanceof Service service) {
             this.activators.addAll(HartshornUtils.asList(service.activators()));
         }
     }
 
     @Override
     public String getId() {
-        return this.get(ComponentAspect.ID);
+        final String id = this.annotation.value();
+        if ("".equals(id)) return Bindings.serviceId(this.component, true);
+        return id;
     }
 
     @Override
     public String getName() {
-        return this.get(ComponentAspect.NAME);
+        final String name = this.annotation.name();
+        if ("".equals(name)) return Bindings.serviceName(this.component, true);
+        return name;
     }
 
     @Override
     public boolean enabled() {
-        return this.get(ComponentAspect.ENABLED);
+        return this.annotation.enabled();
     }
 
     @Override
@@ -74,7 +77,7 @@ public class SimpleComponentContainer<A extends Annotation> implements Component
 
     @Override
     public Class<?> owner() {
-        return this.get(ComponentAspect.OWNER);
+        return this.annotation.owner();
     }
 
     @Override
@@ -89,7 +92,7 @@ public class SimpleComponentContainer<A extends Annotation> implements Component
 
     @Override
     public boolean hasActivator(Class<? extends Annotation> activator) {
-        if (!activator.isAnnotationPresent(ServiceActivator.class))
+        if (!Reflect.annotation(activator, ServiceActivator.class).present())
             throw new IllegalArgumentException("Requested activator " + activator.getSimpleName() + " is not decorated with @ServiceActivator");
 
         return this.activators().contains(activator);
@@ -97,15 +100,11 @@ public class SimpleComponentContainer<A extends Annotation> implements Component
 
     @Override
     public boolean singleton() {
-        return this.get(ComponentAspect.SINGLETON);
+        return this.annotation.singleton();
     }
 
     @Override
     public ComponentType componentType() {
-        return this.get(ComponentAspect.TYPE);
-    }
-
-    private <T> T get(ComponentAspect aspect) {
-        return this.processor.get(aspect, this.component, this.annotation);
+        return this.annotation.type();
     }
 }

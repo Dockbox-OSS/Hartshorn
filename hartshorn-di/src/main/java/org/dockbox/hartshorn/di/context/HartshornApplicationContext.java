@@ -167,7 +167,8 @@ public class HartshornApplicationContext extends ManagedHartshornContext {
 
     @Override
     public boolean hasActivator(Class<? extends Annotation> activator) {
-        if (!activator.isAnnotationPresent(ServiceActivator.class))
+        final Exceptional<ServiceActivator> annotation = Reflect.annotation(activator, ServiceActivator.class);
+        if (annotation.absent())
             throw new IllegalArgumentException("Requested activator " + activator.getSimpleName() + " is not decorated with @ServiceActivator");
 
         if (this.modifiers.contains(DefaultModifiers.ACTIVATE_ALL)) return true;

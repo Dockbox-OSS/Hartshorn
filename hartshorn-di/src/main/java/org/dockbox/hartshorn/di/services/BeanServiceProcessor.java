@@ -45,10 +45,10 @@ public final class BeanServiceProcessor implements ServiceProcessor<UseBeanProvi
     public <T> void process(ApplicationContext context, Class<T> type) {
         Collection<Method> beans = Reflect.methods(type, Bean.class);
         for (Method bean : beans) {
-            boolean singleton = bean.isAnnotationPresent(Singleton.class);
-            Bean annotation = bean.getAnnotation(Bean.class);
+            boolean singleton = Reflect.annotation(bean, Singleton.class).present();
+            Bean annotation = Reflect.annotation(bean, Bean.class).get();
 
-            if (bean.isAnnotationPresent(Wired.class)) {
+            if (Reflect.annotation(bean, Wired.class).present()) {
                 if (singleton) throw new IllegalArgumentException("Cannot provide manually wired singleton bean " + bean.getReturnType() + " at " + bean.getName());
                 else {
                     WireContext<?, ?> wireContext = new BeanWireContext<>(bean.getReturnType(), bean, annotation.value());

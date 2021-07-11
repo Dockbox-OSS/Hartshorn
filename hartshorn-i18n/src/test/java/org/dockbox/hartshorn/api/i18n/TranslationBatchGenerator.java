@@ -112,7 +112,7 @@ public final class TranslationBatchGenerator {
             final Collection<Method> methods = Reflect.methods(type, Resource.class);
             for (Method method : methods) {
                 i++;
-                final Resource annotation = method.getAnnotation(Resource.class);
+                final Resource annotation = Reflect.annotation(method, Resource.class).get();
                 final String key = I18N.key(type, method);
                 batch.put(key, annotation.value());
             }
