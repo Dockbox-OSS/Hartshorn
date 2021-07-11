@@ -21,6 +21,9 @@ import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.di.context.ReflectionContext;
 import org.dockbox.hartshorn.util.annotations.Demo;
 import org.dockbox.hartshorn.util.exceptions.TypeConversionException;
+import org.dockbox.hartshorn.util.types.ParentTestType;
+import org.dockbox.hartshorn.util.types.ReflectTestType;
+import org.dockbox.hartshorn.util.types.TestEnumType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -141,7 +144,7 @@ public class ReflectTests {
 
     @Test
     void testAnnotatedTypesReturnsAllInPrefix() {
-        final PrefixContext context = new ReflectionContext("org.dockbox.hartshorn.util");
+        final PrefixContext context = new ReflectionContext("org.dockbox.hartshorn.util.types");
         Collection<Class<?>> types = context.types(Demo.class);
         Assertions.assertEquals(1, types.size());
         Assertions.assertEquals(ReflectTestType.class, types.iterator().next());
@@ -149,7 +152,7 @@ public class ReflectTests {
 
     @Test
     void testSubTypesReturnsAllSubTypes() {
-        final PrefixContext context = new ReflectionContext("org.dockbox.hartshorn.util");
+        final PrefixContext context = new ReflectionContext("org.dockbox.hartshorn.util.types");
         Collection<Class<? extends ParentTestType>> types = context.children(ParentTestType.class);
         Assertions.assertEquals(1, types.size());
         Assertions.assertEquals(ReflectTestType.class, types.iterator().next());
@@ -186,7 +189,7 @@ public class ReflectTests {
 
     @Test
     void testLookupReturnsClassIfPresent() {
-        Class<?> lookup = Reflect.lookup("org.dockbox.hartshorn.util.ReflectTestType");
+        Class<?> lookup = Reflect.lookup("org.dockbox.hartshorn.util.types.ReflectTestType");
         Assertions.assertNotNull(lookup);
         Assertions.assertEquals(ReflectTestType.class, lookup);
     }

@@ -15,12 +15,7 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.util;
+package org.dockbox.hartshorn.util.types;
 
-public class EmptyType {
-
-    public boolean isEmpty() {
-        return true;
-    }
-
+public class RejectingType {
 }

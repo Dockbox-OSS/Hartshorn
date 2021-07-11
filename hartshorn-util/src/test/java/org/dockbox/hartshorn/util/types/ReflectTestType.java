@@ -15,7 +15,7 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.util;
+package org.dockbox.hartshorn.util.types;
 
 import org.dockbox.hartshorn.api.entity.annotations.Entity;
 import org.dockbox.hartshorn.api.entity.annotations.Property;

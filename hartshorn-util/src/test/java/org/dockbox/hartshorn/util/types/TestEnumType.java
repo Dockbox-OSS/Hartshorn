@@ -15,15 +15,8 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.util;
+package org.dockbox.hartshorn.util.types;
 
-import org.dockbox.hartshorn.util.annotations.Demo;
-
-public abstract class ParentTestType {
-
-    private final String parentField = "parentField";
-
-    @Demo
-    public void parentMethod() {}
-
+public enum TestEnumType {
+    A, B, C
 }
