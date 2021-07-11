@@ -53,7 +53,7 @@ public class SimpleComponentContainer<A extends Annotation> implements Component
 
     @Override
     public String getId() {
-        final String id = this.annotation.value();
+        final String id = this.annotation.id();
         if ("".equals(id)) return Bindings.serviceId(this.component, true);
         return id;
     }

@@ -19,7 +19,6 @@ package org.dockbox.hartshorn.di.annotations.service;
 
 import org.dockbox.hartshorn.di.ComponentType;
 import org.dockbox.hartshorn.di.annotations.component.Component;
-import org.dockbox.hartshorn.util.annotations.AliasFor;
 import org.dockbox.hartshorn.util.annotations.Extends;
 
 import java.lang.annotation.Annotation;
@@ -34,7 +33,6 @@ import java.lang.annotation.Target;
 @Component(type = ComponentType.FUNCTIONAL)
 public @interface Service {
 
-    @AliasFor("value")
     String id() default "";
 
     String name() default "";

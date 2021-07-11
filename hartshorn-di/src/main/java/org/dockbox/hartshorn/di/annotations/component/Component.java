@@ -28,7 +28,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 public @interface Component {
 
-    String value() default "";
+    String id() default "";
     String name() default "";
     Class<?> owner() default Void.class;
     boolean singleton() default false;
