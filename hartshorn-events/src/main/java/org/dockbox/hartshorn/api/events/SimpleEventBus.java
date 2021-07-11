@@ -22,7 +22,7 @@ import org.dockbox.hartshorn.api.events.annotations.Listener;
 import org.dockbox.hartshorn.api.events.handle.EventHandlerRegistry;
 import org.dockbox.hartshorn.api.events.handle.SimpleEventWrapper;
 import org.dockbox.hartshorn.api.events.parents.Event;
-import org.dockbox.hartshorn.di.annotations.Binds;
+import org.dockbox.hartshorn.di.annotations.inject.Binds;
 import org.dockbox.hartshorn.util.Reflect;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.jetbrains.annotations.NotNull;
@@ -52,7 +52,7 @@ public class SimpleEventBus implements EventBus {
     public SimpleEventBus() {
         // Event listeners need a @Listener annotation
         this.addValidationRule(method -> {
-            if (!Reflect.hasAnnotation(method, Listener.class)) {
+            if (!Reflect.has(method, Listener.class)) {
                 return Exceptional.of(false, new IllegalArgumentException("Needs @Listener annotation: " + method.toGenericString()));
             }
             return Exceptional.of(true);
@@ -67,7 +67,7 @@ public class SimpleEventBus implements EventBus {
         });
         // Event listeners must have one and only parameter which is a subclass of Event
         this.addValidationRule(method -> {
-            if (1 != method.getParameterCount() || !Reflect.assignableFrom(Event.class, method.getParameterTypes()[0])) {
+            if (1 != method.getParameterCount() || !Reflect.assigns(Event.class, method.getParameterTypes()[0])) {
                 return Exceptional.of(false, new IllegalArgumentException("Must have one (and only one) parameter, which is a subclass of Event: " + method.toGenericString()));
             }
             return Exceptional.of(true);
@@ -149,10 +149,10 @@ public class SimpleEventBus implements EventBus {
     protected static Set<EventWrapper> getInvokers(Class<?> type) {
         Set<EventWrapper> result = HartshornUtils.emptySet();
         for (Method method : Reflect.methods(type)) {
-            Listener annotation = Reflect.annotation(method, Listener.class);
-            if (null != annotation) {
+            Exceptional<Listener> annotation = Reflect.annotation(method, Listener.class);
+            if (annotation.present()) {
                 checkListenerMethod(method);
-                result.addAll(SimpleEventWrapper.create(type, method, annotation.value().getPriority()));
+                result.addAll(SimpleEventWrapper.create(type, method, annotation.get().value().getPriority()));
             }
         }
         return result;

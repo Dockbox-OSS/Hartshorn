@@ -19,7 +19,6 @@ package org.dockbox.hartshorn.proxy;
 
 import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.proxy.compiler.Compiler;
-import org.dockbox.hartshorn.proxy.compiler.CompilerService;
 import org.dockbox.hartshorn.test.HartshornRunner;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -41,7 +40,7 @@ public class CompilerTests {
 
     @Test
     public void surfaceTest() throws NoSuchMethodException {
-        Class<?> flying = Hartshorn.context().get(CompilerService.class).compile(SURFACE_JAVA).rethrow().get();
+        Class<?> flying = Hartshorn.context().get(Compiler.class).compile(SURFACE_JAVA).rethrow().get();
         Object flyingInstance = Hartshorn.context().get(flying);
 
         Assertions.assertEquals("FlyingClass", flying.getSimpleName());
@@ -88,7 +87,7 @@ public class CompilerTests {
         Method setName = clazz.getMethod("setName", String.class);
         Method setCreated = clazz.getMethod("setCreated", long.class);
         // try instance:
-        Object obj = clazz.newInstance();
+        Object obj = clazz.getDeclaredConstructor().newInstance();
         // get as proxy:
         BeanProxy proxy = (BeanProxy) obj;
         Assertions.assertFalse(proxy.isDirty());
@@ -121,16 +120,16 @@ public class CompilerTests {
         Assertions.assertTrue(results.containsKey("org.dockbox.hartshorn.proxy.compiler.Multiple$B"));
         Assertions.assertTrue(results.containsKey("org.dockbox.hartshorn.proxy.compiler.C"));
         Class<?> clzMul = compiler.loadClass("org.dockbox.hartshorn.proxy.compiler.Multiple", results);
-        Object obj = clzMul.newInstance();
+        Object obj = clzMul.getDeclaredConstructor().newInstance();
         Assertions.assertNotNull(obj);
     }
 
-    static final String EXISTING_JAVA = "package org.dockbox.hartshorn.proxy.compiler;" +
-            "public class User {\n" +
-            "    String _extra;\n" +
-            "    public String getExtra() { return this._extra; }\n" +
-            "    public void setExtra(String extra) { this._extra = extra; }\n" +
-            "}";
+    static final String EXISTING_JAVA = """
+            package org.dockbox.hartshorn.proxy.compiler;public class User {
+                String _extra;
+                public String getExtra() { return this._extra; }
+                public void setExtra(String extra) { this._extra = extra; }
+            }""";
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
     @Test

@@ -21,8 +21,8 @@ import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.events.annotations.Listener;
 import org.dockbox.hartshorn.api.exceptions.Except;
-import org.dockbox.hartshorn.di.annotations.Service;
-import org.dockbox.hartshorn.di.annotations.Wired;
+import org.dockbox.hartshorn.di.annotations.service.Service;
+import org.dockbox.hartshorn.di.annotations.inject.Wired;
 import org.dockbox.hartshorn.persistence.FileManager;
 import org.dockbox.hartshorn.server.minecraft.events.server.ServerUpdateEvent;
 

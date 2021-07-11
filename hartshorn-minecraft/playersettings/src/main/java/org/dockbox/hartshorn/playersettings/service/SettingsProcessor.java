@@ -32,7 +32,7 @@ public class SettingsProcessor implements ServiceProcessor<UseSettings> {
 
     @Override
     public boolean preconditions(Class<?> type) {
-        return !Reflect.fieldsWithSuper(type, Setting.class).isEmpty();
+        return !Reflect.fieldsLike(type, Setting.class).isEmpty();
     }
 
     @Override
@@ -43,7 +43,7 @@ public class SettingsProcessor implements ServiceProcessor<UseSettings> {
 
         SettingsContext settingsContext = context.first(SettingsContext.class).get();
 
-        final List<Field> fields = Reflect.fieldsWithSuper(type, Setting.class);
+        final List<Field> fields = Reflect.fieldsLike(type, Setting.class);
         for (Field field : fields) {
             try {
                 final int modifiers = field.getModifiers();

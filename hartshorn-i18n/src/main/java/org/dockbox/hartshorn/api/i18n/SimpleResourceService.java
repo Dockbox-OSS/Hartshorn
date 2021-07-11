@@ -22,7 +22,7 @@ import org.dockbox.hartshorn.api.exceptions.Except;
 import org.dockbox.hartshorn.api.i18n.common.Language;
 import org.dockbox.hartshorn.api.i18n.common.ResourceEntry;
 import org.dockbox.hartshorn.api.i18n.entry.Resource;
-import org.dockbox.hartshorn.di.annotations.Binds;
+import org.dockbox.hartshorn.di.annotations.inject.Binds;
 import org.dockbox.hartshorn.di.properties.InjectableType;
 import org.dockbox.hartshorn.di.properties.InjectorProperty;
 import org.dockbox.hartshorn.util.HartshornUtils;

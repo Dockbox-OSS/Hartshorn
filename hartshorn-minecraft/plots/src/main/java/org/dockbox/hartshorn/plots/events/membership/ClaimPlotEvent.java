@@ -34,10 +34,10 @@ public class ClaimPlotEvent extends CancellablePlotEvent {
     }
 
     public Player getPlayer() {
-        return player;
+        return this.player;
     }
 
     public boolean isAuto() {
-        return auto;
+        return this.auto;
     }
 }

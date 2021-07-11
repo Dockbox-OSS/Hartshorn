@@ -24,15 +24,14 @@ import org.dockbox.hartshorn.api.task.pipeline.pipes.CancellablePipe;
 import org.dockbox.hartshorn.api.task.pipeline.pipes.ComplexPipe;
 import org.dockbox.hartshorn.api.task.pipeline.pipes.IPipe;
 import org.dockbox.hartshorn.api.task.pipeline.pipes.StandardPipe;
-import org.dockbox.hartshorn.util.Reflect;
 import org.dockbox.hartshorn.util.HartshornUtils;
+import org.dockbox.hartshorn.util.Reflect;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public abstract class AbstractPipeline<P, I> {
 
@@ -143,7 +142,7 @@ public abstract class AbstractPipeline<P, I> {
      *         not cancellable
      */
     protected Exceptional<I> processPipe(IPipe<I, I> pipe, Exceptional<I> exceptionalInput) {
-        if (!this.isCancellable() && Reflect.assignableFrom(CancellablePipe.class, pipe.getType())) {
+        if (!this.isCancellable() && Reflect.assigns(CancellablePipe.class, pipe.getType())) {
             throw new IllegalPipeException(
                     "Attempted to add a CancellablePipe to an uncancellable pipeline.");
         }
@@ -152,12 +151,12 @@ public abstract class AbstractPipeline<P, I> {
         final Exceptional<I> finalInput = exceptionalInput;
 
         exceptionalInput = Exceptional.of(() -> {
-            if (Reflect.assignableFrom(ComplexPipe.class, pipe.getType())) {
+            if (Reflect.assigns(ComplexPipe.class, pipe.getType())) {
                 ComplexPipe<I, I> complexPipe = (ComplexPipe<I, I>) pipe;
                 return complexPipe.apply(
                         this, finalInput.orNull(), finalInput.unsafeError());
             }
-            else if (Reflect.assignableFrom(StandardPipe.class, pipe.getType())) {
+            else if (Reflect.assigns(StandardPipe.class, pipe.getType())) {
                 StandardPipe<I, I> standardPipe = (StandardPipe<I, I>) pipe;
                 return standardPipe.apply(finalInput);
             }
@@ -252,7 +251,7 @@ public abstract class AbstractPipeline<P, I> {
      *         input
      */
     public List<Exceptional<I>> processAll(@NotNull Collection<P> inputs) {
-        return inputs.stream().map(this::process).collect(Collectors.toList());
+        return inputs.stream().map(this::process).toList();
     }
 
     /**
@@ -271,7 +270,7 @@ public abstract class AbstractPipeline<P, I> {
                 .map(this::process)
                 .filter(Exceptional::present)
                 .map(Exceptional::get)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**
@@ -287,7 +286,7 @@ public abstract class AbstractPipeline<P, I> {
      *         null
      */
     public List<I> processAllUnsafe(@NotNull Collection<P> inputs) {
-        return inputs.stream().map(this::process).map(Exceptional::orNull).collect(Collectors.toList());
+        return inputs.stream().map(this::process).map(Exceptional::orNull).toList();
     }
 
     /** Cancels the pipeline which prevents it from processing any further {@link IPipe}s. */

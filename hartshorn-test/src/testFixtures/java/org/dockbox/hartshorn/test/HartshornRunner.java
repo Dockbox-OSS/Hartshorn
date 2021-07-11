@@ -17,13 +17,22 @@
 
 package org.dockbox.hartshorn.test;
 
+import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
+import org.mockito.Mockito;
 
-public class HartshornRunner implements BeforeAllCallback{
+public class HartshornRunner implements BeforeAllCallback, AfterAllCallback {
 
     @Override
     public void beforeAll(ExtensionContext context) throws Exception {
         JUnit5Application.prepareBootstrap();
+    }
+
+
+    @Override
+    public void afterAll(ExtensionContext context) {
+        // To ensure static mocking does not affect other tests
+        Mockito.clearAllCaches();
     }
 }

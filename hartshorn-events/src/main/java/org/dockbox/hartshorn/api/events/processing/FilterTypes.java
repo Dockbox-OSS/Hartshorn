@@ -128,8 +128,8 @@ public enum FilterTypes implements FilterType {
         if (null == expected || null == actual || null == expectedType) {
             return false;
         }
-        return Reflect.assignableFrom(expectedType, expected.getClass())
-                && Reflect.assignableFrom(expectedType, actual.getClass());
+        return Reflect.assigns(expectedType, expected.getClass())
+                && Reflect.assigns(expectedType, actual.getClass());
     }
 
     private static boolean bothNull(Object expected, Object actual) {

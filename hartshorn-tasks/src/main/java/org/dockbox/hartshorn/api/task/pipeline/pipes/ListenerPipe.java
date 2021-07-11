@@ -18,6 +18,7 @@
 package org.dockbox.hartshorn.api.task.pipeline.pipes;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.api.exceptions.ApplicationException;
 
 @SuppressWarnings("InterfaceNeverImplemented") // API type
 @FunctionalInterface
@@ -28,10 +29,10 @@ public interface ListenerPipe<I> extends StandardPipe<I, I> {
     }
 
     @Override
-    default I apply(Exceptional<I> input) throws Exception {
+    default I apply(Exceptional<I> input) throws ApplicationException {
         this.execute(input.orNull());
         return input.orNull();
     }
 
-    void execute(I input) throws Exception;
+    void execute(I input) throws ApplicationException;
 }

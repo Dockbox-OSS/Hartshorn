@@ -23,7 +23,6 @@ import org.dockbox.hartshorn.util.Reflect;
 
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public abstract class DefaultContext implements Context {
 
@@ -33,7 +32,7 @@ public abstract class DefaultContext implements Context {
     @Override
     public <C extends Context> Exceptional<C> first(Class<C> context) {
         return Exceptional.of(this.contexts.stream()
-                .filter(c -> Reflect.assignableFrom(context, c.getClass()))
+                .filter(c -> Reflect.assigns(context, c.getClass()))
                 .findFirst())
                 .map(c -> (C) c);
     }
@@ -44,7 +43,7 @@ public abstract class DefaultContext implements Context {
         return HartshornUtils.asUnmodifiableList(this.contexts.stream()
                 .filter( c -> c.getClass().equals(context))
                 .map(c -> (C) c)
-                .collect(Collectors.toList()));
+                .toList());
     }
 
     @Override

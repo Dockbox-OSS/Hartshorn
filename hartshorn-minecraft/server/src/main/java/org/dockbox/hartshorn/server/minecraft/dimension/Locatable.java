@@ -25,7 +25,7 @@ public interface Locatable extends Target {
 
     Location getLocation();
 
-    void setLocation(Location location);
+    boolean setLocation(Location location);
 
     World getWorld();
 }

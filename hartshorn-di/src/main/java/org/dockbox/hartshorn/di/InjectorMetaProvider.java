@@ -17,22 +17,51 @@
 
 package org.dockbox.hartshorn.di;
 
+import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.domain.MetaProvider;
-import org.dockbox.hartshorn.di.annotations.Service;
+import org.dockbox.hartshorn.api.domain.SimpleTypedOwner;
+import org.dockbox.hartshorn.api.domain.TypedOwner;
+import org.dockbox.hartshorn.api.entity.annotations.Entity;
+import org.dockbox.hartshorn.di.annotations.component.Component;
+import org.dockbox.hartshorn.di.binding.Bindings;
+import org.dockbox.hartshorn.di.services.ComponentContainer;
+import org.dockbox.hartshorn.util.Reflect;
 
 import javax.inject.Singleton;
 
-public abstract class InjectorMetaProvider implements MetaProvider {
+public class InjectorMetaProvider implements MetaProvider {
+
+    @Override
+    public TypedOwner lookup(Class<?> type) {
+        final Exceptional<Entity> annotated = Reflect.annotation(type, Entity.class);
+        if (annotated.present()) {
+            return SimpleTypedOwner.of(annotated.get().value());
+        }
+        else {
+            final Exceptional<ComponentContainer> container = ApplicationContextAware.instance().getContext().locator().container(type);
+            if (container.present()) {
+                final ComponentContainer service = container.get();
+                if (Reflect.notVoid(service.owner())) return this.lookup(service.owner());
+            }
+        }
+        return SimpleTypedOwner.of(Bindings.serviceId(type));
+    }
 
     @Override
     public boolean isSingleton(Class<?> type) {
-        if (type.isAnnotationPresent(Singleton.class)) return true;
-        if (type.isAnnotationPresent(com.google.inject.Singleton.class)) return true;
+        if (Reflect.annotation(type, Singleton.class).present()) return true;
+        if (Reflect.annotation(type, com.google.inject.Singleton.class).present()) return true;
 
-        boolean serviceSingleton = false;
-        if (type.isAnnotationPresent(Service.class)) {
-            serviceSingleton = type.getAnnotation(Service.class).singleton();
-        }
-        return serviceSingleton;
+        return ApplicationContextAware.instance()
+                .getContext()
+                .locator()
+                .container(type)
+                .map(ComponentContainer::singleton)
+                .or(false);
+    }
+
+    @Override
+    public boolean isComponent(Class<?> type) {
+        return Reflect.annotation(type, Component.class).present();
     }
 }

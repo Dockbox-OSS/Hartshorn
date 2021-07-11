@@ -22,7 +22,6 @@ import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.config.annotations.Configuration;
 import org.dockbox.hartshorn.config.annotations.UseConfigurations;
 import org.dockbox.hartshorn.config.annotations.Value;
-import org.dockbox.hartshorn.di.annotations.Service;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.di.inject.InjectionModifier;
 import org.dockbox.hartshorn.di.properties.InjectorProperty;
@@ -45,11 +44,11 @@ public class ConfigurationServiceModifier implements InjectionModifier<UseConfig
         Class<?> instanceType = type;
         if (instance != null) instanceType = instance.getClass();
         boolean decorated = this.isAnnotated(instanceType);
-        return decorated && !Reflect.annotatedFields(instanceType, Value.class).isEmpty();
+        return decorated && !Reflect.fields(instanceType, Value.class).isEmpty();
     }
 
     private boolean isAnnotated(Class<?> type) {
-        return type.isAnnotationPresent(Service.class) || type.isAnnotationPresent(Configuration.class);
+        return Hartshorn.context().locator().container(type).present() || Reflect.annotation(type, Configuration.class).present();
     }
 
     @Override
@@ -59,8 +58,9 @@ public class ConfigurationServiceModifier implements InjectionModifier<UseConfig
 
         String file = Hartshorn.PROJECT_ID;
         Class<?> owner = Hartshorn.class;
-        if (instanceType.isAnnotationPresent(Configuration.class)) {
-            Configuration configuration = instanceType.getAnnotation(Configuration.class);
+        final Exceptional<Configuration> annotated = Reflect.annotation(instanceType, Configuration.class);
+        if (annotated.present()) {
+            Configuration configuration = annotated.get();
             file = configuration.value();
             owner = configuration.service().owner();
         }
@@ -70,14 +70,14 @@ public class ConfigurationServiceModifier implements InjectionModifier<UseConfig
 
         ConfigurationManager configurationManager = Hartshorn.context().get(ConfigurationManager.class, config);
 
-        for (Field field : Reflect.annotatedFields(instanceType, Value.class)) {
+        for (Field field : Reflect.fields(instanceType, Value.class)) {
             try {
                 field.setAccessible(true);
-                Value value = field.getAnnotation(Value.class);
+                Value value = Reflect.annotation(field, Value.class).get();
                 Object fieldValue = Exceptional.of(() -> configurationManager.get(value.value())).or(value.or());
 
-                if ((!Reflect.assignableFrom(String.class, field.getType())) && (fieldValue instanceof String)) {
-                    fieldValue = Reflect.primitiveFromString(field.getType(), (String) fieldValue);
+                if ((!Reflect.assigns(String.class, field.getType())) && (fieldValue instanceof String)) {
+                    fieldValue = Reflect.toPrimitive(field.getType(), (String) fieldValue);
                 }
 
                 Reflect.set(field, instance, fieldValue);

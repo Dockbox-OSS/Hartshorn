@@ -30,10 +30,12 @@ public final class PlayerInteractEntityEvent extends PlayerInteractEvent {
 
     private final Entity entity;
     private final Vector3N interactionPoint;
+    private final ClickType clickType;
 
-    public PlayerInteractEntityEvent(Player player, Entity entity, Vector3N interactionPoint) {
+    public PlayerInteractEntityEvent(Player player, Entity entity, Vector3N interactionPoint, ClickType clickType) {
         super(player, Hand.EITHER, ClickType.SECONDARY);
         this.entity = entity;
         this.interactionPoint = interactionPoint;
+        this.clickType = clickType;
     }
 }

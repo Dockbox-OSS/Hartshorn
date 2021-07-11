@@ -3,31 +3,29 @@
 	<h3 align="center">Hartshorn</h3>
 	<p align="center">Agnostic plugin/extension framework.</p>
 	<p align="center">
-		<a href="https://guuslieben.github.io/Hartshorn/"><img src="https://github.com/GuusLieben/Hartshorn/workflows/JavaDocs/badge.svg"></a>
-		<img src="https://github.com/GuusLieben/Hartshorn/workflows/Build/badge.svg">
-		<img src="https://github.com/GuusLieben/Hartshorn/workflows/Tests/badge.svg"><br>
         <a href="https://www.codefactor.io/repository/github/guuslieben/hartshorn"><img src="https://www.codefactor.io/repository/github/guuslieben/hartshorn/badge?s=5e09ccbb31604049271c18af0d20c1237d9816f2" alt="CodeFactor" /></a>
-		<a href="https://www.gnu.org/licenses/lgpl-2.1"><img src="https://img.shields.io/badge/license-LGPL%20v2.1-0CAB6B"></a>
+		<a href="https://www.gnu.org/licenses/lgpl-2.1"><img src="https://img.shields.io/badge/license-LGPL%20v2.1-0CAB6B"></a><br>
+        <img src="https://github.com/GuusLieben/Hartshorn/actions/workflows/hartshorn.yml/badge.svg">
 	</p>
 </p>
 
 Hartshorn is a platform agnostic plugin/extension framework providing advanced utilities to develop against a variety of platforms.
 
 ## Usage
-_Note: To use Hartshorn, your project must be configured to use Java 8 or higher._  
+_Note: To use Hartshorn, your project must be configured to use Java 16 or higher._  
 See [About](https://github.com/GuusLieben/Hartshorn/wiki) and [Gradle](https://github.com/GuusLieben/Hartshorn/wiki/Gradle) on the wiki
 for additional information about the topics below.
 
 ## Building
-All platforms require a Java installation, with JDK 1.8 or more recent version.
+All platforms require a Java installation, with JDK 16 or more recent version.
 
 Set the JAVA\_HOME environment variable. For example:
 
 | Platform | Command |
 | :---: | --- |
-|  Unix    | ``export JAVA_HOME=/usr/java/jdk1.8.0_121``            |
-|  OSX     | ``export JAVA_HOME=`/usr/libexec/java_home -v 1.8` ``  |
-|  Windows | ``set JAVA_HOME="C:\Program Files\Java\jdk1.8.0_121"`` |
+|  Unix    | ``export JAVA_HOME=/usr/lib/jvm/openjdk-16-jdk``            |
+|  OSX     | ``export JAVA_HOME=`/usr/libexec/java_home -v 16` ``  |
+|  Windows | ``set JAVA_HOME="C:\Program Files\Java\jdk-16.0.1"`` |
 
 Hartshorn uses a custom Gradle wrapper to automate builds, performing several steps before and after a build has completed.  
 Depending on your IDE the Gradle wrapper may be automatically used. If you encounter any issues, use `./gradlew` for Unix systems or Git Bash and `gradlew.bat` for Windows systems in place of any 'gradle' command.  
@@ -53,7 +51,7 @@ Additionally, the [wiki](https://github.com/GuusLieben/Hartshorn/wiki) contains 
 ### General
 - Tests cover relevant use-cases
 - The target coverage for all tests is 60%
-- Tests are performed using [Java](https://www.oracle.com/java/technologies/javase/javase-jdk8-downloads.html) 8
+- Tests are performed using [Java](https://www.oracle.com/java/technologies/javase-jdk16-downloads.html) 16
 
 ### Unit Testing
 - Tests are located in `src/test/java`

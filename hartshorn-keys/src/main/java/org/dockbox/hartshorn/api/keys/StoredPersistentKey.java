@@ -18,12 +18,11 @@
 package org.dockbox.hartshorn.api.keys;
 
 import org.dockbox.hartshorn.api.Hartshorn;
-import org.dockbox.hartshorn.api.domain.MetaProvider;
 
-public class StoredPersistentKey extends TypedPersistentDataKey<Object> {
+public final class StoredPersistentKey extends TypedPersistentDataKey<Object> {
 
     private StoredPersistentKey(String id) {
-        super(id, id, Hartshorn.context().get(MetaProvider.class).lookup(Hartshorn.class), Object.class);
+        super(id, id, Hartshorn.context().meta().lookup(Hartshorn.class), Object.class);
     }
 
     public static StoredPersistentKey of(String name) {

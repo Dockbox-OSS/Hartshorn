@@ -20,15 +20,14 @@ package org.dockbox.hartshorn.commands.extension;
 import org.dockbox.hartshorn.api.i18n.common.ResourceEntry;
 import org.dockbox.hartshorn.api.i18n.entry.FakeResource;
 
-public class ExtensionResult {
+import lombok.AllArgsConstructor;
+
+@AllArgsConstructor
+public final class ExtensionResult {
 
     private final boolean proceed;
     private final ResourceEntry reason;
-
-    private ExtensionResult(boolean proceed, ResourceEntry reason) {
-        this.proceed = proceed;
-        this.reason = reason;
-    }
+    private final boolean send;
 
     public boolean proceed() {
         return this.proceed;
@@ -38,11 +37,19 @@ public class ExtensionResult {
         return this.reason;
     }
 
+    public boolean send() {
+        return this.send;
+    }
+
     public static ExtensionResult accept() {
-        return new ExtensionResult(true, new FakeResource(""));
+        return new ExtensionResult(true, new FakeResource(""), false);
     }
 
     public static ExtensionResult reject(ResourceEntry reason) {
-        return new ExtensionResult(false, reason);
+        return reject(reason, true);
+    }
+
+    public static ExtensionResult reject(ResourceEntry reason, boolean send) {
+        return new ExtensionResult(false, reason, send);
     }
 }

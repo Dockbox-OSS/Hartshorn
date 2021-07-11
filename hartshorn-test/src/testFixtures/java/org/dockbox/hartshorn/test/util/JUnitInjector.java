@@ -21,6 +21,7 @@ import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.config.GlobalConfig;
 import org.dockbox.hartshorn.api.task.TaskRunner;
 import org.dockbox.hartshorn.api.task.ThreadUtils;
+import org.dockbox.hartshorn.cache.CacheManager;
 import org.dockbox.hartshorn.commands.source.DiscordCommandSource;
 import org.dockbox.hartshorn.config.ConfigurationManager;
 import org.dockbox.hartshorn.di.InjectConfiguration;
@@ -29,7 +30,6 @@ import org.dockbox.hartshorn.di.TypeFactory;
 import org.dockbox.hartshorn.discord.DiscordUtils;
 import org.dockbox.hartshorn.persistence.FileManager;
 import org.dockbox.hartshorn.server.minecraft.Console;
-import org.dockbox.hartshorn.server.minecraft.MinecraftServerType;
 import org.dockbox.hartshorn.server.minecraft.MinecraftVersion;
 import org.dockbox.hartshorn.server.minecraft.bossbar.Bossbar;
 import org.dockbox.hartshorn.server.minecraft.dimension.Worlds;
@@ -70,6 +70,7 @@ public class JUnitInjector extends InjectConfiguration {
         this.bind(Players.class, JUnitPlayers.class);
         this.bind(Worlds.class, JUnitWorlds.class);
         this.bind(CustomMapService.class, JUnitCustomMapService.class);
+        this.bind(CacheManager.class, JUnitCacheManager.class);
 
         // Wired types - do NOT call directly!
         this.wire(Item.class, JUnitItem.class);
@@ -87,8 +88,6 @@ public class JUnitInjector extends InjectConfiguration {
         this.bind(Console.class, new JUnitConsole());
 
         this.bind(GlobalConfig.class, JUnitGlobalConfig.class);
-
-        this.bind(MinecraftServerType.class, MinecraftServerType.JUNIT);
         this.bind(MinecraftVersion.class, MinecraftVersion.INDEV);
 
         this.bind(DiscordUtils.class, JUnitDiscordUtils.class);

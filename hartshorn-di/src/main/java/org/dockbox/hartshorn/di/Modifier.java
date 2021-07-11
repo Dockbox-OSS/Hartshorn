@@ -20,11 +20,5 @@ package org.dockbox.hartshorn.di;
 /**
  * Indicates a potential override of existing logic during the bootstrapping process.
  */
-public enum Modifier {
-    /*
-     * Makes it so application activators do not need to have service activator
-     * annotations present, and will indicate all activators are present when
-     * requested.
-     */
-    ACTIVATE_ALL
+public interface Modifier {
 }

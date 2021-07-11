@@ -20,7 +20,7 @@ package org.dockbox.hartshorn.api.i18n;
 import org.dockbox.hartshorn.api.entity.annotations.Entity;
 import org.dockbox.hartshorn.api.i18n.annotations.Resource;
 import org.dockbox.hartshorn.api.i18n.common.ResourceEntry;
-import org.dockbox.hartshorn.di.annotations.Service;
+import org.dockbox.hartshorn.di.annotations.service.Service;
 
 @Entity("class-resources")
 @Service

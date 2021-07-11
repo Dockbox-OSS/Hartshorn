@@ -21,8 +21,11 @@ import com.fasterxml.jackson.databind.PropertyName;
 import com.fasterxml.jackson.databind.introspect.Annotated;
 import com.fasterxml.jackson.databind.introspect.JacksonAnnotationIntrospector;
 
+import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.entity.annotations.Property;
+import org.dockbox.hartshorn.util.Reflect;
 
+import java.lang.reflect.AnnotatedElement;
 import java.util.function.Function;
 
 public class PropertyAliasIntrospector extends JacksonAnnotationIntrospector {
@@ -38,8 +41,13 @@ public class PropertyAliasIntrospector extends JacksonAnnotationIntrospector {
     }
 
     private PropertyName findName(Annotated a, Function<Annotated, PropertyName> defaultValue) {
-        if (a.hasAnnotation(Property.class)) {
-            return new PropertyName(a.getAnnotation(Property.class).value());
+        final AnnotatedElement annotated = a.getAnnotated();
+        
+        if (annotated != null) {
+            final Exceptional<Property> annotation = Reflect.annotation(annotated, Property.class);
+            if (annotation.present()) {
+                return new PropertyName(annotation.get().value());
+            }
         }
         return defaultValue.apply(a);
     }

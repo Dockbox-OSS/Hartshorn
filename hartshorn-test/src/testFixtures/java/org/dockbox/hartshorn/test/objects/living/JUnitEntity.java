@@ -79,10 +79,11 @@ public abstract class JUnitEntity<T extends Entity> implements Entity, Persisten
     }
 
     @Override
-    public void setLocation(Location location) {
+    public boolean setLocation(Location location) {
         ((JUnitWorld) this.getWorld()).destroyEntity(this.getUniqueId());
         this.location = location;
         ((JUnitWorld) this.getWorld()).addEntity(this);
+        return true;
     }
 
     @Override

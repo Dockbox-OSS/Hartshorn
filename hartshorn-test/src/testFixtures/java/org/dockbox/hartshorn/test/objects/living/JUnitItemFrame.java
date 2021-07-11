@@ -18,7 +18,7 @@
 package org.dockbox.hartshorn.test.objects.living;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.di.annotations.Wired;
+import org.dockbox.hartshorn.di.annotations.inject.Wired;
 import org.dockbox.hartshorn.server.minecraft.dimension.position.BlockFace;
 import org.dockbox.hartshorn.server.minecraft.dimension.position.Location;
 import org.dockbox.hartshorn.server.minecraft.entities.ItemFrame;
@@ -49,8 +49,8 @@ public class JUnitItemFrame extends JUnitEntity<ItemFrame> implements ItemFrame,
     }
 
     @Override
-    public ItemFrame copy() {
-        return new JUnitItemFrame(UUID.randomUUID());
+    public Exceptional<ItemFrame> copy() {
+        return Exceptional.of(new JUnitItemFrame(UUID.randomUUID()));
     }
 
     @Override

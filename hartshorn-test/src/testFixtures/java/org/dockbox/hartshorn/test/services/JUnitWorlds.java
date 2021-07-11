@@ -27,7 +27,6 @@ import org.dockbox.hartshorn.util.HartshornUtils;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 public class JUnitWorlds implements Worlds {
 
@@ -49,7 +48,7 @@ public class JUnitWorlds implements Worlds {
     public List<UUID> getAllWorldUUIDs() {
         return HartshornUtils.asList(ROOT_WORLD, SECOND_WORLD).stream()
                 .map(World::getWorldUniqueId)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override

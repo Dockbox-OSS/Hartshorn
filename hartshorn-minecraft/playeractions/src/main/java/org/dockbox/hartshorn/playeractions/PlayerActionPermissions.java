@@ -19,9 +19,11 @@ package org.dockbox.hartshorn.playeractions;
 
 import org.dockbox.hartshorn.api.i18n.permissions.Permission;
 
-public class PlayerActionPermissions {
+public final class PlayerActionPermissions {
 
     public static final Permission SPECTATOR_BYPASS = Permission.of("hartshorn.playeractions.bypass.spectator");
     public static final Permission NAVIGATE_DEFAULT_WORLD = Permission.of("hartshorn.playeractions.navigate");
 
+    private PlayerActionPermissions() {
+    }
 }

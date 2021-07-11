@@ -26,7 +26,7 @@ import org.dockbox.hartshorn.api.i18n.entry.Resource;
 import org.dockbox.hartshorn.api.i18n.text.Text;
 import org.dockbox.hartshorn.api.keys.PersistentDataHolder;
 import org.dockbox.hartshorn.commands.annotations.Command;
-import org.dockbox.hartshorn.di.annotations.Service;
+import org.dockbox.hartshorn.di.annotations.service.Service;
 import org.dockbox.hartshorn.playersettings.service.SettingsContext;
 import org.dockbox.hartshorn.server.minecraft.inventory.Element;
 import org.dockbox.hartshorn.server.minecraft.inventory.InventoryLayout;
@@ -40,7 +40,6 @@ import org.dockbox.hartshorn.server.minecraft.players.Player;
 import org.dockbox.hartshorn.util.HartshornUtils;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class PlayerSettings {
@@ -78,10 +77,6 @@ public class PlayerSettings {
         }
     }
 
-    private static void changeLanguage(PersistentDataHolder holder) {
-
-    }
-
     @Command("settings")
     public void getSettings(Player source) {
         PaginatedPaneBuilder builder = InventoryLayout.builder(InventoryType.DOUBLE_CHEST)
@@ -91,7 +86,7 @@ public class PlayerSettings {
 
         final List<Element> content = Hartshorn.context().first(SettingsContext.class).get().getSettings().stream()
                 .map(setting -> this.fromSetting(setting, source, pane))
-                .collect(Collectors.toList());
+                .toList();
         pane.elements(content);
 
         pane.open(source);

@@ -27,14 +27,16 @@ public class JUnitCustomMap extends JUnitItem implements CustomMap {
 
     @Getter
     private final Identifiable owner;
+    private final int id;
 
     public JUnitCustomMap(Identifiable owner, int id) {
-        super(MinecraftItems.getInstance().getFilledMap().getId(), id);
+        super(MinecraftItems.getInstance().getFilledMap().getId());
         this.owner = owner;
+        this.id = id;
     }
 
     @Override
     public int getMapId() {
-        return this.getMeta();
+        return this.id;
     }
 }

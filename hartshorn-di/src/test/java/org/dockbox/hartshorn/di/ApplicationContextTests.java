@@ -17,15 +17,15 @@
 
 package org.dockbox.hartshorn.di;
 
+import com.google.common.collect.Multimap;
+
 import org.dockbox.hartshorn.api.Hartshorn;
-import org.dockbox.hartshorn.api.SimpleMetaProvider;
 import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.api.domain.MetaProvider;
+import org.dockbox.hartshorn.api.exceptions.ApplicationException;
 import org.dockbox.hartshorn.di.binding.Bindings;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.di.context.HartshornApplicationContext;
 import org.dockbox.hartshorn.di.context.ManagedHartshornContext;
-import org.dockbox.hartshorn.di.exceptions.ApplicationException;
 import org.dockbox.hartshorn.di.inject.GuiceInjector;
 import org.dockbox.hartshorn.di.inject.Injector;
 import org.dockbox.hartshorn.di.properties.BindingMetaProperty;
@@ -47,6 +47,8 @@ import org.dockbox.hartshorn.di.types.scan.SampleAnnotatedImplementation;
 import org.dockbox.hartshorn.di.types.wired.SampleWiredAnnotatedImplementation;
 import org.dockbox.hartshorn.test.HartshornRunner;
 import org.dockbox.hartshorn.util.HartshornUtils;
+import org.dockbox.hartshorn.util.PrefixContext;
+import org.dockbox.hartshorn.util.Reflect;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -54,6 +56,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -67,6 +70,8 @@ public class ApplicationContextTests {
     private static final Field injectionPoints;
     private static final Field serviceModifiers;
     private static final Field serviceProcessors;
+    private static final Field context;
+    private static final Field annotationHierarchy;
     private static final Method internalInjector;
 
     static {
@@ -88,6 +93,12 @@ public class ApplicationContextTests {
 
             internalInjector = HartshornApplicationContext.class.getDeclaredMethod("internalInjector");
             internalInjector.setAccessible(true);
+
+            annotationHierarchy = PrefixContext.class.getDeclaredField("annotationHierarchy");
+            annotationHierarchy.setAccessible(true);
+
+            context = Reflect.class.getDeclaredField("context");
+            context.setAccessible(true);
             
         } catch (NoSuchFieldException | NoSuchMethodException e) {
             throw new RuntimeException(e);
@@ -448,6 +459,7 @@ public class ApplicationContextTests {
         Assertions.assertEquals("WiredBean", provided.getName());
     }
 
+    @SuppressWarnings("unchecked")
     private static ApplicationContext context(boolean reset) throws ApplicationException {
         final ApplicationContext context = Hartshorn.context();
         try {
@@ -458,9 +470,16 @@ public class ApplicationContextTests {
                 injectionPoints.set(context, HartshornUtils.emptyConcurrentSet());
                 serviceModifiers.set(context, HartshornUtils.emptyConcurrentSet());
                 serviceProcessors.set(context, HartshornUtils.emptyConcurrentSet());
+
+                final PrefixContext prefixContext = (PrefixContext) ApplicationContextTests.context.get(null);
+                final var oldHierarchy = (Multimap<Class<? extends Annotation>, Class<? extends Annotation>>) annotationHierarchy.get(prefixContext);
+
+                // Non existing package to ensure no keys are cached early on
+                final PrefixContext newContext = new PrefixContext("a.b");
+                annotationHierarchy.set(newContext, oldHierarchy);
+                ApplicationContextTests.context.set(null, newContext);
+
                 injector.reset();
-                // Meta provision is required for wiring and vararg types, this should always be present
-                context.bind(MetaProvider.class, SimpleMetaProvider.class);
             }
         } catch (IllegalAccessException | InvocationTargetException e) {
             throw new ApplicationException(e);

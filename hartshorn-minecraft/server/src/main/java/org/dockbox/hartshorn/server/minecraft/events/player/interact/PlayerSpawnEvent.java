@@ -22,7 +22,6 @@ import org.dockbox.hartshorn.server.minecraft.dimension.position.Location;
 import org.dockbox.hartshorn.server.minecraft.events.player.PlayerMoveEvent;
 
 /** The event fired when a player is teleported to the spawn location. */
-// TODO: Implementation (Sponge-1.12)
 public class PlayerSpawnEvent extends PlayerMoveEvent {
     private final Location spawnLocation;
 

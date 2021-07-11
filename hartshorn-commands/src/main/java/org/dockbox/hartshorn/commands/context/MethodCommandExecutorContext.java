@@ -19,14 +19,22 @@ package org.dockbox.hartshorn.commands.context;
 
 import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.api.domain.Target;
+import org.dockbox.hartshorn.api.events.annotations.Posting;
+import org.dockbox.hartshorn.api.events.parents.Cancellable;
 import org.dockbox.hartshorn.api.exceptions.Except;
+import org.dockbox.hartshorn.api.i18n.common.ResourceEntry;
 import org.dockbox.hartshorn.commands.CommandExecutor;
 import org.dockbox.hartshorn.commands.CommandParser;
+import org.dockbox.hartshorn.commands.CommandResources;
 import org.dockbox.hartshorn.commands.annotations.Command;
 import org.dockbox.hartshorn.commands.definition.CommandElement;
+import org.dockbox.hartshorn.commands.events.CommandEvent;
+import org.dockbox.hartshorn.commands.events.CommandEvent.Before;
 import org.dockbox.hartshorn.commands.source.CommandSource;
 import org.dockbox.hartshorn.di.context.DefaultContext;
 import org.dockbox.hartshorn.util.HartshornUtils;
+import org.dockbox.hartshorn.util.Reflect;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.InvocationTargetException;
@@ -40,6 +48,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 
 @Getter(AccessLevel.PROTECTED)
+@Posting({CommandEvent.Before.class, CommandEvent.After.class})
 public class MethodCommandExecutorContext extends DefaultContext implements CommandExecutorContext {
 
     private final Method method;
@@ -54,13 +63,15 @@ public class MethodCommandExecutorContext extends DefaultContext implements Comm
     private Map<String, ParameterContext> parameters;
 
     public MethodCommandExecutorContext(Method method, Class<?> type) {
-        if (!method.isAnnotationPresent(Command.class)) throw new IllegalArgumentException("Provided method is not a command handler");
+        final Exceptional<Command> annotated = Reflect.annotation(method, Command.class);
+        if (annotated.absent()) throw new IllegalArgumentException("Provided method is not a command handler");
         this.method = method;
         this.type = type;
-        this.command = method.getAnnotation(Command.class);
+        this.command = annotated.get();
 
-        if (type.isAnnotationPresent(Command.class)) {
-            this.parent = type.getAnnotation(Command.class);
+        final Exceptional<Command> annotation = Reflect.annotation(type, Command.class);
+        if (annotation.present()) {
+            this.parent = annotation.get();
             this.isChild = true;
         }
         else {
@@ -103,7 +114,7 @@ public class MethodCommandExecutorContext extends DefaultContext implements Comm
     public List<String> aliases() {
         List<String> aliases = HartshornUtils.emptyList();
         for (String parentAlias : this.getParentAliases()) {
-            for (String alias : this.aliases()) {
+            for (String alias : this.command.value()) {
                 aliases.add(parentAlias + ' ' + alias);
             }
         }
@@ -125,7 +136,7 @@ public class MethodCommandExecutorContext extends DefaultContext implements Comm
         final String stripped = this.strip(command, false);
         final List<CommandElement<?>> elements = this.container().elements();
         final List<String> tokens = HartshornUtils.asList(stripped.split(" "));
-        if (command.endsWith(" ")) tokens.add("");
+        if (command.endsWith(" ") && !"".equals(tokens.get(tokens.size()-1))) tokens.add("");
 
         CommandElement<?> last = null;
         for (CommandElement<?> element : elements) {
@@ -150,10 +161,17 @@ public class MethodCommandExecutorContext extends DefaultContext implements Comm
     @Override
     public CommandExecutor executor() {
         return (ctx) -> {
+            final Cancellable before = new Before(ctx.getSender(), ctx).post();
+            if (before.isCancelled()) {
+                final ResourceEntry cancelled = Hartshorn.context().get(CommandResources.class).getCancelled();
+                ctx.getSender().send(cancelled);
+            }
+
             final Object instance = Hartshorn.context().get(this.getType());
             final List<Object> arguments = this.arguments(ctx);
             try {
                 this.method().invoke(instance, arguments.toArray());
+                new CommandEvent.After(ctx.getSender(), ctx).post();
             }
             catch (IllegalAccessException | InvocationTargetException e) {
                 Except.handle(e);
@@ -169,10 +187,11 @@ public class MethodCommandExecutorContext extends DefaultContext implements Comm
             final ParameterContext parameterContext = entry.getValue();
             final int index = parameterContext.getIndex();
             if (parameterContext.is(CommandContext.class)) arguments.set(index, context);
-            else if (parameterContext.is(CommandSource.class)) arguments.set(index, context.getSender());
             else {
                 @Nullable final Object object = context.get(entry.getKey());
-                arguments.set(index, object);
+                // Target comparison is done last as this can target either the command source, or a parameter target
+                if (object == null && parameterContext.is(Target.class)) arguments.set(index, context.getSender());
+                else arguments.set(index, object);
             }
         }
         return arguments;

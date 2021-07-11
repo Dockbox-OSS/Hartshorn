@@ -18,6 +18,7 @@
 package org.dockbox.hartshorn.api;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.api.exceptions.ApplicationException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -26,6 +27,7 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.concurrent.Callable;
 
+@SuppressWarnings("ResultOfMethodCallIgnored")
 public class ExceptionalTests {
 
     @Test
@@ -69,7 +71,7 @@ public class ExceptionalTests {
     @Test
     void testCanCreateFromThrowingCallable() {
         Callable<String> callable = () -> {
-            throw new Exception();
+            throw new ApplicationException("Error");
         };
         Exceptional<String> exceptional = Exceptional.of(callable);
 
@@ -280,7 +282,7 @@ public class ExceptionalTests {
     @Test
     void testThenDoesNotApplyIfValueAbsent() {
         Exceptional<String> exceptional = Exceptional.empty();
-        exceptional = exceptional.orElse(value -> Exceptional.of("other"));
+        exceptional = exceptional.flatMap(value -> Exceptional.of("other"));
 
         Assertions.assertNotNull(exceptional);
         Assertions.assertFalse(exceptional.present());
@@ -289,7 +291,7 @@ public class ExceptionalTests {
     @Test
     void testThenAppliesIfValuePresent() {
         Exceptional<String> exceptional = Exceptional.of("value");
-        exceptional = exceptional.orElse(value -> Exceptional.of("other"));
+        exceptional = exceptional.flatMap(value -> Exceptional.of("other"));
 
         Assertions.assertNotNull(exceptional);
         Assertions.assertTrue(exceptional.present());
@@ -299,7 +301,7 @@ public class ExceptionalTests {
     @Test
     void testThenWithThrowableDoesNotApplyIfValueAbsent() {
         Exceptional<String> exceptional = Exceptional.of(new Exception());
-        exceptional = exceptional.orElse((value, err) -> Exceptional.of("other"));
+        exceptional = exceptional.flatMap((value, err) -> Exceptional.of("other"));
 
         Assertions.assertNotNull(exceptional);
         Assertions.assertFalse(exceptional.present());
@@ -308,7 +310,7 @@ public class ExceptionalTests {
     @Test
     void testThenWithThrowableAppliesIfValuePresent() {
         Exceptional<String> exceptional = Exceptional.of("value", new Exception("error"));
-        exceptional = exceptional.orElse((value, err) -> {
+        exceptional = exceptional.flatMap((value, err) -> {
             Assertions.assertEquals("error", err.getMessage());
             return Exceptional.of("other");
         });
@@ -383,7 +385,7 @@ public class ExceptionalTests {
     @Test
     void testCauseReturnsValueIfPresent() throws Exception {
         Exceptional<String> exceptional = Exceptional.of("value");
-        String value = exceptional.cause(Exception::new);
+        String value = exceptional.orThrow(Exception::new);
 
         Assertions.assertNotNull(value);
         Assertions.assertEquals("value", value);
@@ -391,7 +393,7 @@ public class ExceptionalTests {
 
     @Test
     void testCauseThrowsExceptionIfValueAbsent() {
-        Assertions.assertThrows(Exception.class, () -> Exceptional.empty().cause(Exception::new));
+        Assertions.assertThrows(Exception.class, () -> Exceptional.empty().orThrow(Exception::new));
     }
 
     @Test

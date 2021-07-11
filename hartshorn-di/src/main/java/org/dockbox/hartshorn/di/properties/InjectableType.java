@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.di.properties;
 
-import org.dockbox.hartshorn.di.exceptions.ApplicationException;
+import org.dockbox.hartshorn.api.exceptions.ApplicationException;
 
 @FunctionalInterface
 public interface InjectableType {

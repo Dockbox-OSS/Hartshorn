@@ -41,7 +41,6 @@ import java.util.List;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 public class SimpleCommandContainerContext extends DefaultContext implements CommandContainerContext {
 
@@ -51,7 +50,6 @@ public class SimpleCommandContainerContext extends DefaultContext implements Com
      * 'String' is used as this is the base value provided to Hartshorn, thus requiring no further
      * converting to other data types.
      */
-    @SuppressWarnings("ConstantDeclaredInAbstractClass")
     public static final String DEFAULT_TYPE = "String";
 
     /**
@@ -293,7 +291,7 @@ public class SimpleCommandContainerContext extends DefaultContext implements Com
     private List<CommandElement<?>> requiredElements() {
         return this.elements().stream()
                 .filter(commandElement -> !commandElement.optional())
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override

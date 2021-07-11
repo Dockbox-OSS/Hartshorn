@@ -17,13 +17,14 @@
 
 package org.dockbox.hartshorn.commands.events;
 
-import org.dockbox.hartshorn.api.events.AbstractTargetCancellableEvent;
+import org.dockbox.hartshorn.api.events.AbstractTargetEvent;
+import org.dockbox.hartshorn.api.events.parents.Cancellable;
 import org.dockbox.hartshorn.commands.context.CommandContext;
 import org.dockbox.hartshorn.commands.source.CommandSource;
 
 import lombok.Getter;
 
-public abstract class CommandEvent extends AbstractTargetCancellableEvent {
+public abstract class CommandEvent extends AbstractTargetEvent {
 
     @Getter
     private final CommandContext context;
@@ -33,7 +34,20 @@ public abstract class CommandEvent extends AbstractTargetCancellableEvent {
         this.context = context;
     }
 
-    public static class Before extends CommandEvent {
+    public static class Before extends CommandEvent implements Cancellable {
+
+        private boolean isCancelled;
+
+        @Override
+        public boolean isCancelled() {
+            return this.isCancelled;
+        }
+
+        @Override
+        public void setCancelled(boolean cancelled) {
+            this.isCancelled = cancelled;
+        }
+
         public Before(CommandSource source, CommandContext context) {
             super(source, context);
         }

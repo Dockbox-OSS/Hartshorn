@@ -17,18 +17,20 @@
 
 package org.dockbox.hartshorn.di.context;
 
+import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.api.exceptions.ApplicationException;
+import org.dockbox.hartshorn.di.ComponentType;
 import org.dockbox.hartshorn.di.InjectionPoint;
 import org.dockbox.hartshorn.di.ProvisionFailure;
-import org.dockbox.hartshorn.di.annotations.Activator;
-import org.dockbox.hartshorn.di.annotations.ServiceActivator;
-import org.dockbox.hartshorn.di.annotations.Wired;
-import org.dockbox.hartshorn.di.exceptions.ApplicationException;
+import org.dockbox.hartshorn.di.annotations.activate.Activator;
+import org.dockbox.hartshorn.di.annotations.service.ServiceActivator;
+import org.dockbox.hartshorn.di.annotations.inject.Wired;
 import org.dockbox.hartshorn.di.inject.InjectionModifier;
 import org.dockbox.hartshorn.di.properties.InjectableType;
 import org.dockbox.hartshorn.di.properties.InjectorProperty;
 import org.dockbox.hartshorn.di.services.ServiceProcessor;
-import org.dockbox.hartshorn.util.Reflect;
 import org.dockbox.hartshorn.util.HartshornUtils;
+import org.dockbox.hartshorn.util.Reflect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,14 +40,13 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import lombok.AccessLevel;
 import lombok.Getter;
 
 public abstract class ManagedHartshornContext extends DefaultContext implements ApplicationContext {
 
-    protected static final Logger log = LoggerFactory.getLogger("Hartshorn Managed Context");
+    protected static final Logger log = LoggerFactory.getLogger(ManagedHartshornContext.class);
     protected final transient Set<InjectionPoint<?>> injectionPoints = HartshornUtils.emptyConcurrentSet();
 
     protected final transient Set<InjectionModifier<?>> injectionModifiers = HartshornUtils.emptyConcurrentSet();
@@ -59,19 +60,20 @@ public abstract class ManagedHartshornContext extends DefaultContext implements 
     private final List<Annotation> activators;
 
     public ManagedHartshornContext(Class<?> activationSource) {
-        if (!activationSource.isAnnotationPresent(Activator.class)) {
+        final Exceptional<Activator> activator = Reflect.annotation(activationSource, Activator.class);
+        if (activator.absent()) {
             throw new IllegalStateException("Activation source is not marked with @Activator");
         }
-        this.activator = activationSource.getAnnotation(Activator.class);
+        this.activator = activator.get();
         this.activationSource = activationSource;
-        this.activators = Reflect.annotatedAnnotations(activationSource, ServiceActivator.class);
+        this.activators = Reflect.annotationsWith(activationSource, ServiceActivator.class);
     }
 
     /**
      * Non-exposed method which can be used by bootstrapping services to register default activators.
      */
     public void addActivator(Annotation annotation) {
-        if (annotation.annotationType().isAnnotationPresent(ServiceActivator.class))
+        if (Reflect.annotation(annotation.annotationType(), ServiceActivator.class).present())
             this.activators.add(annotation);
     }
 
@@ -99,14 +101,14 @@ public abstract class ManagedHartshornContext extends DefaultContext implements 
 
     public <T> void enable(T typeInstance) {
         if (typeInstance == null) return;
-        HartshornUtils.merge(Reflect.annotatedFields(typeInstance.getClass(), Wired.class)).stream()
-                .filter(field -> field.getAnnotation(Wired.class).enable())
-                .filter(field -> Reflect.assignableFrom(InjectableType.class, field.getType()))
+        HartshornUtils.merge(Reflect.fields(typeInstance.getClass(), Wired.class)).stream()
+                .filter(field -> Reflect.annotation(field, Wired.class).get().enable())
+                .filter(field -> Reflect.assigns(InjectableType.class, field.getType()))
                 .map(field -> {
                     try {
                         // As we're enabling fields they may be accessed even if their
                         // modifier indicates otherwise.
-                        if (!field.isAccessible()) field.setAccessible(true);
+                        field.setAccessible(true);
                         return field.get(typeInstance);
                     }
                     catch (IllegalAccessException e) {
@@ -145,7 +147,7 @@ public abstract class ManagedHartshornContext extends DefaultContext implements 
     }
 
     protected void process(String prefix) {
-        final Collection<Class<?>> services = this.locator().locate(prefix);
+        final Collection<Class<?>> services = this.locator().locate(prefix, ComponentType.FUNCTIONAL);
         for (ServiceProcessor<?> serviceProcessor : this.serviceProcessors) {
             for (Class<?> service : services) {
                 if (serviceProcessor.preconditions(service)) serviceProcessor.process(this, service);
@@ -171,12 +173,12 @@ public abstract class ManagedHartshornContext extends DefaultContext implements 
 
     @Override
     public boolean hasActivator(Class<? extends Annotation> activator) {
-        if (!activator.isAnnotationPresent(ServiceActivator.class))
+        if (Reflect.annotation(activator, ServiceActivator.class).absent())
             throw new IllegalArgumentException("Requested activator " + activator.getSimpleName() + " is not decorated with @ServiceActivator");
 
         return this.activators.stream()
                 .map(Annotation::annotationType)
-                .collect(Collectors.toList())
+                .toList()
                 .contains(activator);
     }
 

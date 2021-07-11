@@ -26,7 +26,7 @@ import org.dockbox.hartshorn.util.Reflect;
 public class EventServiceProcessor implements ServiceProcessor<UseEvents> {
     @Override
     public boolean preconditions(Class<?> type) {
-        return !Reflect.annotatedMethods(type, Listener.class).isEmpty();
+        return !Reflect.methods(type, Listener.class).isEmpty();
     }
 
     @Override

@@ -20,13 +20,14 @@ package org.dockbox.hartshorn.api;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 
+import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.di.Modifier;
 import org.dockbox.hartshorn.api.exceptions.Except;
 import org.dockbox.hartshorn.di.InjectConfiguration;
 import org.dockbox.hartshorn.di.InjectableBootstrap;
-import org.dockbox.hartshorn.di.annotations.Activator;
-import org.dockbox.hartshorn.di.annotations.InjectConfig;
-import org.dockbox.hartshorn.di.annotations.InjectPhase;
+import org.dockbox.hartshorn.di.annotations.activate.Activator;
+import org.dockbox.hartshorn.di.annotations.inject.InjectConfig;
+import org.dockbox.hartshorn.di.annotations.inject.InjectPhase;
 import org.dockbox.hartshorn.util.Reflect;
 import org.dockbox.hartshorn.util.HartshornUtils;
 
@@ -73,13 +74,14 @@ public class HartshornApplication {
     }
 
     private static Activator verifyActivator(Class<?> activator) {
-        if (!activator.isAnnotationPresent(Activator.class))
+        final Exceptional<Activator> annotation = Reflect.annotation(activator, Activator.class);
+        if (annotation.absent())
             throw new IllegalArgumentException("Application type should be decorated with @Activator");
 
-        if (!Reflect.isConcrete(activator))
+        if (Reflect.isAbstract(activator))
             throw new IllegalArgumentException("Bootstrap type cannot be abstract, got " + activator.getSimpleName());
 
-        return activator.getAnnotation(Activator.class);
+        return annotation.get();
     }
 
 }

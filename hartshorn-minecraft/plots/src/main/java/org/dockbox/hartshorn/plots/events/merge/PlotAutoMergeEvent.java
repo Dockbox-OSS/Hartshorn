@@ -34,6 +34,6 @@ public class PlotAutoMergeEvent extends CancellablePlotEvent {
     }
 
     public Set<Plot> getPlots() {
-        return plots;
+        return this.plots;
     }
 }

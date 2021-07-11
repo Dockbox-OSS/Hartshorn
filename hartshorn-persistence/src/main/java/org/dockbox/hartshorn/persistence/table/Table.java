@@ -145,15 +145,16 @@ public class Table {
         TableRow row = new TableRow();
 
         for (Field field : object.getClass().getFields()) {
-            if (!field.isAccessible()) field.setAccessible(true);
-            if (!(field.isAnnotationPresent(Property.class) && field.getAnnotation(Property.class).ignore())) {
+            field.setAccessible(true);
+            final Exceptional<Property> annotation = Reflect.annotation(field, Property.class);
+            if (!(annotation.present() && annotation.get().ignore())) {
                 try {
                     ColumnIdentifier columnIdentifier = null;
 
                     // Try to grab the column identifier from the Identifier annotation of the field (if
                     // present)
-                    Property identifier = field.getAnnotation(Property.class);
-                    if (null != identifier && !"".equals(identifier.value())) columnIdentifier = this.getIdentifier(identifier.value());
+                    Exceptional<Property> identifier = Reflect.annotation(field, Property.class);
+                    if (identifier.present() && !"".equals(identifier.get().value())) columnIdentifier = this.getIdentifier(identifier.get().value());
 
                     // If no Identifier annotation was present, try to grab it using the field name
                     if (null == columnIdentifier) columnIdentifier = this.getIdentifier(field.getName());
@@ -535,7 +536,7 @@ public class Table {
             throw new IllegalArgumentException(
                     "Table does not contains column named : " + column.getColumnName());
 
-        if (!Reflect.assignableFrom(Comparable.class, column.getType()))
+        if (!Reflect.assigns(Comparable.class, column.getType()))
             throw new IllegalArgumentException(
                     "Column does not contain a comparable data type : " + column.getColumnName());
 

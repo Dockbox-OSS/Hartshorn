@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.server.minecraft.packets.real;
 
-import org.dockbox.hartshorn.di.annotations.Required;
+import org.dockbox.hartshorn.di.annotations.inject.Required;
 import org.dockbox.hartshorn.server.minecraft.entities.Entity;
 import org.dockbox.hartshorn.server.minecraft.packets.Packet;
 

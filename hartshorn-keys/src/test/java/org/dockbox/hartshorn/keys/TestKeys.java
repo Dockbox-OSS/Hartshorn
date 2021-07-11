@@ -17,22 +17,26 @@
 
 package org.dockbox.hartshorn.keys;
 
-import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.keys.Key;
 import org.dockbox.hartshorn.api.keys.Keys;
 import org.dockbox.hartshorn.util.HartshornUtils;
 
 import java.util.Map;
 
-public class TestKeys {
+public final class TestKeys {
 
     private static final Map<Object, String> localRegistry = HartshornUtils.emptyMap();
 
-    public static final Key<TestKeyHolder, String> HOLDER_KEY = Keys.of(
-            localRegistry::put,
-            testKeyHolder -> Exceptional.of(localRegistry.getOrDefault(testKeyHolder, null)));
+    public static final Key<TestKeyHolder, String> HOLDER_KEY = Keys.builder(TestKeyHolder.class, String.class)
+            .withSetter(localRegistry::put)
+            .withGetter(testKeyHolder -> localRegistry.getOrDefault(testKeyHolder, null))
+            .build();
 
-    public static final Key<TestNonKeyHolder, String> NON_HOLDER_KEY = Keys.of(
-            localRegistry::put,
-            testKeyHolder -> Exceptional.of(localRegistry.getOrDefault(testKeyHolder, null)));
+    public static final Key<TestNonKeyHolder, String> NON_HOLDER_KEY = Keys.builder(TestNonKeyHolder.class, String.class)
+            .withSetter(localRegistry::put)
+            .withGetter(testNonKeyHolder -> localRegistry.getOrDefault(testNonKeyHolder, null))
+            .build();
+
+    private TestKeys() {
+    }
 }

@@ -17,6 +17,7 @@
 
 package org.dockbox.hartshorn.server.minecraft.entities;
 
+import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.keys.Key;
 import org.dockbox.hartshorn.api.keys.PersistentDataKey;
 
@@ -28,6 +29,6 @@ public interface CloneableEntity<T extends CloneableEntity<T>> extends Entity {
      *
      * @return The copy of the current entity.
      */
-    T copy();
+    Exceptional<T> copy();
 
 }

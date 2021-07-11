@@ -17,8 +17,8 @@
 
 package org.dockbox.hartshorn.di.types.wired;
 
-import org.dockbox.hartshorn.di.annotations.Binds;
-import org.dockbox.hartshorn.di.annotations.Wired;
+import org.dockbox.hartshorn.di.annotations.inject.Binds;
+import org.dockbox.hartshorn.di.annotations.inject.Wired;
 import org.dockbox.hartshorn.di.types.SampleInterface;
 
 import lombok.AllArgsConstructor;

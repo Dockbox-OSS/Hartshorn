@@ -18,10 +18,9 @@
 package org.dockbox.hartshorn.persistence.service;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.api.domain.MetaProvider;
 import org.dockbox.hartshorn.api.domain.TypedOwner;
-import org.dockbox.hartshorn.di.annotations.Service;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
+import org.dockbox.hartshorn.di.services.ComponentContainer;
 import org.dockbox.hartshorn.persistence.FileManager;
 import org.dockbox.hartshorn.persistence.FileType;
 import org.dockbox.hartshorn.persistence.annotations.UsePersistence;
@@ -47,16 +46,12 @@ public abstract class AbstractPersistenceServiceModifier<M extends Annotation, C
         if (serialisationContext.absent()) throw new IllegalStateException("Expected additional context to be present");
 
         final C ctx = serialisationContext.get();
-        switch (ctx.getTarget()) {
-            case ANNOTATED_PATH:
-                return this.processAnnotatedPath(context, methodContext, ctx);
-            case PARAMETER_PATH:
-                return this.processParameterPath(context, methodContext, ctx);
-            case STRING:
-                return this.processString(context, methodContext, ctx);
-            default:
-                throw new IllegalArgumentException("Unsupported serialisation target: " + ctx.getTarget());
-        }
+        return switch (ctx.getTarget()) {
+            case ANNOTATED_PATH -> this.processAnnotatedPath(context, methodContext, ctx);
+            case PARAMETER_PATH -> this.processParameterPath(context, methodContext, ctx);
+            case STRING -> this.processString(context, methodContext, ctx);
+            default -> throw new IllegalArgumentException("Unsupported serialisation target: " + ctx.getTarget());
+        };
     }
 
     protected abstract  <T, R> ProxyFunction<T, R> processAnnotatedPath(ApplicationContext context, MethodProxyContext<T> methodContext, C serialisationContext);
@@ -77,12 +72,14 @@ public abstract class AbstractPersistenceServiceModifier<M extends Annotation, C
     protected Path determineAnnotationPath(ApplicationContext context, MethodProxyContext<?> methodContext, PersistenceAnnotationContext annotationContext) {
         Class<?> owner = annotationContext.getFile().owner();
 
-        if (!Reflect.isNotVoid(owner)) {
-            final Service service = methodContext.getMethod().getDeclaringClass().getAnnotation(Service.class);
-            owner = service.owner();
+        if (!Reflect.notVoid(owner)) {
+            final Exceptional<ComponentContainer> container = context.locator().container(methodContext.getMethod().getDeclaringClass());
+            if (container.present()) {
+                owner = container.get().owner();
+            }
         }
 
-        final TypedOwner lookup = context.get(MetaProvider.class).lookup(owner);
+        final TypedOwner lookup = context.meta().lookup(owner);
         final FileManager fileManager = context.get(FileManager.class);
 
         if ("".equals(annotationContext.getFile().value())) return fileManager.getDataFile(lookup);

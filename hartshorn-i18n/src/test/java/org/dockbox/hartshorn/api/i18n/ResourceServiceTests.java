@@ -37,7 +37,7 @@ public class ResourceServiceTests {
     private final ResourceService service = new SimpleResourceService() {
         @Override
         public void stateEnabling(InjectorProperty<?>... properties) {
-            for (Language value : Language.values()) bundles.put(value, createBundle("demo", "Demo:" + value.getCode()));
+            for (Language value : Language.values()) bundles.put(value, createDemoBundle("Demo:" + value.getCode()));
         }
 
         {
@@ -45,11 +45,11 @@ public class ResourceServiceTests {
         }
     };
 
-    private static ResourceBundle createBundle(String key, String value) {
+    private static ResourceBundle createDemoBundle(String value) {
         return new ListResourceBundle() {
             @Override
             protected Object[][] getContents() {
-                return new Object[][]{ {key, value} };
+                return new Object[][]{ { "demo", value} };
             }
         };
     }
@@ -73,7 +73,7 @@ public class ResourceServiceTests {
 
     @Test
     public void testResourceReturnsCopyOnTranslate() {
-        Exceptional<ResourceEntry> demo = service.get("demo");
+        Exceptional<ResourceEntry> demo = this.service.get("demo");
         Assertions.assertTrue(demo.present());
 
         ResourceEntry entry = demo.get();
@@ -84,7 +84,7 @@ public class ResourceServiceTests {
 
     @Test
     public void testResourceReturnsCopyOnTranslateLanguage() {
-        Exceptional<ResourceEntry> demo = service.get("demo");
+        Exceptional<ResourceEntry> demo = this.service.get("demo");
         Assertions.assertTrue(demo.present());
 
         ResourceEntry entry = demo.get();
@@ -95,7 +95,7 @@ public class ResourceServiceTests {
 
     @Test
     public void testResourceReturnsCopyOnTranslateMessageReceiver() {
-        Exceptional<ResourceEntry> demo = service.get("demo");
+        Exceptional<ResourceEntry> demo = this.service.get("demo");
         Assertions.assertTrue(demo.present());
 
         MessageReceiver mock = Mockito.mock(MessageReceiver.class);

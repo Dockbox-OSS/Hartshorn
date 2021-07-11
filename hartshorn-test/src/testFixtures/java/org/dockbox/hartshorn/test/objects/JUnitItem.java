@@ -17,9 +17,10 @@
 
 package org.dockbox.hartshorn.test.objects;
 
+import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.i18n.common.Language;
 import org.dockbox.hartshorn.api.i18n.text.Text;
-import org.dockbox.hartshorn.di.annotations.Wired;
+import org.dockbox.hartshorn.di.annotations.inject.Wired;
 import org.dockbox.hartshorn.server.minecraft.item.Enchant;
 import org.dockbox.hartshorn.server.minecraft.item.Item;
 import org.dockbox.hartshorn.server.minecraft.item.SimplePersistentItemModel;
@@ -39,8 +40,6 @@ public class JUnitItem implements Item, JUnitPersistentDataHolder {
 
     @Getter
     private final String id;
-    @Getter
-    private final int meta;
     private final UUID persistentDataId = UUID.randomUUID();
     private final Set<Enchant> enchants = HartshornUtils.emptySet();
     @Getter
@@ -55,9 +54,15 @@ public class JUnitItem implements Item, JUnitPersistentDataHolder {
     private boolean treatAsBlock = false;
 
     @Wired
+    @Deprecated
     public JUnitItem(String id, int meta) {
         this.id = id;
-        this.meta = meta;
+        this.displayName = Text.of(id);
+    }
+
+    @Wired
+    public JUnitItem(String id) {
+        this.id = id;
         this.displayName = Text.of(id);
     }
 
@@ -137,18 +142,13 @@ public class JUnitItem implements Item, JUnitPersistentDataHolder {
     }
 
     @Override
+    public Exceptional<String> category() {
+        return Exceptional.empty();
+    }
+
+    @Override
     public int getStackSize() {
         return 64;
-    }
-
-    @Override
-    public Item withMeta(int meta) {
-        return new JUnitItem(this.id, meta);
-    }
-
-    @Override
-    public int getIdNumeric() {
-        return -1;
     }
 
     @Override

@@ -220,7 +220,7 @@ public class ConvertiblePipeline<P, I> extends AbstractPipeline<P, I> {
                     result.unsafeError()
             );
         }
-        else return (Exceptional<K>) result.map(this.converter);
+        else return (Exceptional<K>) result.map(t -> this.converter.apply(t));
     }
 
     /**
@@ -270,7 +270,7 @@ public class ConvertiblePipeline<P, I> extends AbstractPipeline<P, I> {
             return (ConvertiblePipeline<P, K>) this;
         }
         else {
-            if (Reflect.assignableFrom(previousClass, this.getPreviousPipeline().getInputClass())) {
+            if (Reflect.assigns(previousClass, this.getPreviousPipeline().getInputClass())) {
                 ConvertiblePipeline<P, K> previousPipeline =
                         (ConvertiblePipeline<P, K>) this.getPreviousPipeline();
                 this.clearPipelineConnections();

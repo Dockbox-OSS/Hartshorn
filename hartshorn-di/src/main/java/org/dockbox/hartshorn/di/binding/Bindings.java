@@ -18,9 +18,10 @@
 package org.dockbox.hartshorn.di.binding;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.di.annotations.Named;
-import org.dockbox.hartshorn.di.annotations.Service;
+import org.dockbox.hartshorn.di.ApplicationContextAware;
+import org.dockbox.hartshorn.di.annotations.inject.Named;
 import org.dockbox.hartshorn.di.properties.InjectorProperty;
+import org.dockbox.hartshorn.di.services.ComponentContainer;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.dockbox.hartshorn.util.Reflect;
 import org.jetbrains.annotations.NonNls;
@@ -29,7 +30,10 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Locale;
 
-public class Bindings {
+public final class Bindings {
+
+    private Bindings() {
+    }
 
     public static Named named(String value) {
         return new NamedImpl(value);
@@ -52,7 +56,6 @@ public class Bindings {
      *
      * @return The nullable property value
      */
-    @Nullable
     public static <T> Exceptional<T> value(@NonNls String key, Class<T> expectedType, InjectorProperty<?>... properties) {
         InjectorProperty<T> property = Bindings.property(key, expectedType, properties);
         // As the object is provided by a supplier this cannot currently be simplified to #of
@@ -89,8 +92,19 @@ public class Bindings {
         for (InjectorProperty<?> property : properties) {
             if (property.getKey().equals(key)
                     && null != property.getObject()
-                    && Reflect.assignableFrom(expectedType, property.getObject().getClass())) {
+                    && Reflect.assigns(expectedType, property.getObject().getClass())) {
                 matchingProperties.add((InjectorProperty<T>) property);
+            }
+        }
+        return matchingProperties;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <P extends InjectorProperty<?>> List<P> properties(@NonNls String key,InjectorProperty<?>... properties) {
+        List<P> matchingProperties = HartshornUtils.emptyList();
+        for (InjectorProperty<?> property : properties) {
+            if (property.getKey().equals(key) && null != property.getObject()) {
+                matchingProperties.add((P) property);
             }
         }
         return matchingProperties;
@@ -112,14 +126,19 @@ public class Bindings {
     public static <T extends InjectorProperty<?>> List<T> valuesOfType(Class<T> propertyFilter, InjectorProperty<?>... properties) {
         List<T> values = HartshornUtils.emptyList();
         for (InjectorProperty<?> property : properties) {
-            if (Reflect.assignableFrom(propertyFilter, property.getClass())) values.add((T) property);
+            if (Reflect.assigns(propertyFilter, property.getClass())) values.add((T) property);
         }
         return values;
     }
 
     public static String serviceId(Class<?> type) {
-        if (type.isAnnotationPresent(Service.class)) {
-            final String id = type.getAnnotation(Service.class).id();
+        return serviceId(type, false);
+    }
+
+    public static String serviceId(Class<?> type, boolean ignoreExisting) {
+        final Exceptional<ComponentContainer> container = ApplicationContextAware.instance().getContext().locator().container(type);
+        if (!ignoreExisting && container.present()) {
+            final String id = container.get().getId();
             if (!"".equals(id)) return id;
         }
 
@@ -132,8 +151,13 @@ public class Bindings {
     }
 
     public static String serviceName(Class<?> type) {
-        if (type.isAnnotationPresent(Service.class)) {
-            final String name = type.getAnnotation(Service.class).name();
+        return serviceName(type, false);
+    }
+
+    public static String serviceName(Class<?> type, boolean ignoreExisting) {
+        final Exceptional<ComponentContainer> container = ApplicationContextAware.instance().getContext().locator().container(type);
+        if (!ignoreExisting && container.present()) {
+            final String name = container.get().getName();
             if (!"".equals(name)) return name;
         }
 

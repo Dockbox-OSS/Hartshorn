@@ -18,19 +18,17 @@
 package org.dockbox.hartshorn.cache;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.di.annotations.Binds;
-import org.dockbox.hartshorn.di.annotations.Wired;
+import org.dockbox.hartshorn.di.annotations.inject.Wired;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.util.HartshornUtils;
 
 import java.util.List;
 import java.util.Map;
 
-@Binds(CacheManager.class)
 @SuppressWarnings("unchecked")
 public class SimpleCacheManager implements CacheManager {
 
-    private static final Map<String, Cache<?>> caches = HartshornUtils.emptyConcurrentMap();
+    protected static final Map<String, Cache<?>> caches = HartshornUtils.emptyConcurrentMap();
 
     @Wired
     private ApplicationContext context;

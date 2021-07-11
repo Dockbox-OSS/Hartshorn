@@ -31,8 +31,8 @@ import org.dockbox.hartshorn.commands.definition.GroupCommandElement;
 import org.dockbox.hartshorn.commands.exceptions.ParsingException;
 import org.dockbox.hartshorn.commands.service.CommandParameter;
 import org.dockbox.hartshorn.commands.source.CommandSource;
-import org.dockbox.hartshorn.di.annotations.Binds;
-import org.dockbox.hartshorn.di.annotations.Wired;
+import org.dockbox.hartshorn.di.annotations.inject.Binds;
+import org.dockbox.hartshorn.di.annotations.inject.Wired;
 import org.dockbox.hartshorn.util.HartshornUtils;
 
 import java.util.Collection;

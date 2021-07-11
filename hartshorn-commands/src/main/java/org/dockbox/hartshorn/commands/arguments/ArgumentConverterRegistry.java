@@ -25,7 +25,6 @@ import org.dockbox.hartshorn.util.Reflect;
 
 import java.util.Collection;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @SuppressWarnings("unused")
 public final class ArgumentConverterRegistry {
@@ -45,7 +44,7 @@ public final class ArgumentConverterRegistry {
     public static Exceptional<ArgumentConverter<?>> getOptionalConverter(String key) {
         Optional<ArgumentConverter<?>> optional = CONVERTERS.stream().filter(converter -> converter.getKeys().stream()
                 .map(String::toLowerCase)
-                .collect(Collectors.toList())
+                .toList()
                 .contains(key.toLowerCase())
         ).findFirst();
         if (optional.isPresent()) return Exceptional.of(optional);
@@ -55,7 +54,7 @@ public final class ArgumentConverterRegistry {
     private static <T> Exceptional<ArgumentConverter<T>> getOptionalConverter(Class<T> type) {
         //noinspection unchecked
         return Exceptional.of(CONVERTERS.stream()
-                .filter(converter -> Reflect.assignableFrom(converter.getType(), type))
+                .filter(converter -> Reflect.assigns(converter.getType(), type))
                 .map(converter -> (ArgumentConverter<T>) converter)
                 .findFirst());
     }

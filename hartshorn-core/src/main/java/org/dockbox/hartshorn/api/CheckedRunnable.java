@@ -17,9 +17,10 @@
 
 package org.dockbox.hartshorn.api;
 
-@SuppressWarnings("InterfaceNeverImplemented")
+import org.dockbox.hartshorn.api.exceptions.ApplicationException;
+
 @FunctionalInterface
 public interface CheckedRunnable {
 
-    void run() throws Exception;
+    void run() throws ApplicationException;
 }

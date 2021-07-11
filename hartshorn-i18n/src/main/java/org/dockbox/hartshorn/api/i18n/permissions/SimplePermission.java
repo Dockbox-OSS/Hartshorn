@@ -18,8 +18,8 @@
 package org.dockbox.hartshorn.api.i18n.permissions;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.di.annotations.Wired;
-import org.dockbox.hartshorn.di.annotations.Binds;
+import org.dockbox.hartshorn.di.annotations.inject.Wired;
+import org.dockbox.hartshorn.di.annotations.inject.Binds;
 
 @Binds(Permission.class)
 public class SimplePermission implements Permission {

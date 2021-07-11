@@ -24,9 +24,11 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
-public class Events {
+public final class Events {
+
+    private Events() {
+    }
 
     /**
      * Returns a {@link List} of non-null events based on the provided {@link Event events}. This
@@ -38,7 +40,7 @@ public class Events {
      * @return The fired (non-null) events
      */
     public static List<Event> getFiredEvents(Event... events) {
-        return Arrays.stream(events).filter(Objects::nonNull).collect(Collectors.toList());
+        return Arrays.stream(events).filter(Objects::nonNull).toList();
     }
 
     /**

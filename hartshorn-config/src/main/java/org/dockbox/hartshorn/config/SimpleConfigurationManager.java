@@ -17,8 +17,8 @@
 
 package org.dockbox.hartshorn.config;
 
-import org.dockbox.hartshorn.di.annotations.Wired;
-import org.dockbox.hartshorn.di.exceptions.ApplicationException;
+import org.dockbox.hartshorn.di.annotations.inject.Wired;
+import org.dockbox.hartshorn.api.exceptions.ApplicationException;
 import org.dockbox.hartshorn.di.properties.InjectableType;
 import org.dockbox.hartshorn.di.properties.InjectorProperty;
 import org.dockbox.hartshorn.util.HartshornUtils;

@@ -17,11 +17,8 @@
 
 package org.dockbox.hartshorn.palswap;
 
-import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.i18n.common.Language;
 import org.dockbox.hartshorn.palswap.fileparsers.BlockRegistryParser;
-import org.dockbox.hartshorn.palswap.fileparsers.MC1_12BlockRegistryParser;
-import org.dockbox.hartshorn.server.minecraft.MinecraftVersion;
 import org.dockbox.hartshorn.server.minecraft.item.Item;
 
 public final class BlockRegistryUtil {
@@ -29,11 +26,7 @@ public final class BlockRegistryUtil {
     private BlockRegistryUtil() {}
 
     public static Class<? extends BlockRegistryParser> getBlockRegistryParserClass() {
-        //noinspection SwitchStatementWithTooFewBranches
-        switch (Hartshorn.context().get(MinecraftVersion.class)) {
-            default:
-                return MC1_12BlockRegistryParser.class;
-        }
+        return null;
     }
 
     public static String getUpdatedID(Item item) {

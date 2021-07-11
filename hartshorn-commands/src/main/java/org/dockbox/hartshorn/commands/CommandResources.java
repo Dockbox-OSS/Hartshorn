@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.commands;
 
 import org.dockbox.hartshorn.api.i18n.annotations.Resource;
 import org.dockbox.hartshorn.api.i18n.common.ResourceEntry;
-import org.dockbox.hartshorn.di.annotations.Service;
+import org.dockbox.hartshorn.di.annotations.service.Service;
 
 @Service(owner = CommandGateway.class)
 public interface CommandResources {
@@ -56,5 +56,8 @@ public interface CommandResources {
 
     @Resource(value = "Could not parse {0} '{1}'", key = "command.parse.failure")
     ResourceEntry getCouldNotParse(String type, String name);
+
+    @Resource(value = "Could not execute the command as it was cancelled", key = "command.cancelled")
+    ResourceEntry getCancelled();
 
 }

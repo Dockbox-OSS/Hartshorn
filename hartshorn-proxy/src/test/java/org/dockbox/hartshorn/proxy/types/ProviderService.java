@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.proxy.types;
 
-import org.dockbox.hartshorn.di.annotations.Service;
+import org.dockbox.hartshorn.di.annotations.service.Service;
 import org.dockbox.hartshorn.proxy.annotations.Provided;
 
 @Service

@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.oldplots;
 
 import org.dockbox.hartshorn.api.i18n.annotations.Resource;
 import org.dockbox.hartshorn.api.i18n.common.ResourceEntry;
-import org.dockbox.hartshorn.di.annotations.Service;
+import org.dockbox.hartshorn.di.annotations.service.Service;
 import org.jetbrains.annotations.NotNull;
 
 @Service(owner = OldPlotsService.class)

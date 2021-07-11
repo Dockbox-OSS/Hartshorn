@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.di.inject.wired;
 
-import org.dockbox.hartshorn.di.exceptions.ApplicationException;
+import org.dockbox.hartshorn.api.exceptions.ApplicationException;
 
 public interface WireContext<T, I extends T> {
 

@@ -1,6 +1,8 @@
 apply from: "$rootDir/parent.gradle"
 
 dependencies {
-    compileOnly(project(':hartshorn-exceptions'))
-    compileOnly(project(':hartshorn-bootstrap'))
+    include(project(':hartshorn-exceptions'))
+    include(project(':hartshorn-bootstrap'))
+
+    include "org.reflections:reflections:$reflectionsVersion"
 }

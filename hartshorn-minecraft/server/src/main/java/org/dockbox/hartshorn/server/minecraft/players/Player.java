@@ -30,6 +30,7 @@ import org.dockbox.hartshorn.api.keys.Keys;
 import org.dockbox.hartshorn.api.keys.PersistentDataHolder;
 import org.dockbox.hartshorn.api.keys.PersistentDataKey;
 import org.dockbox.hartshorn.commands.source.CommandSource;
+import org.dockbox.hartshorn.server.minecraft.dimension.Block;
 import org.dockbox.hartshorn.server.minecraft.dimension.Locatable;
 import org.dockbox.hartshorn.server.minecraft.dimension.position.Location;
 import org.dockbox.hartshorn.server.minecraft.dimension.world.World;
@@ -173,7 +174,9 @@ public abstract class Player extends AbstractIdentifiable implements CommandSour
 
     public abstract Profile getProfile();
 
-    public abstract Exceptional<Location> getLookingAtBlockPos();
+    public abstract Exceptional<Block> getLookingAtBlock();
+
+    public abstract Exceptional<Entity> getLookingAtEntity();
 
     @Override
     public abstract PlayerInventory getInventory();

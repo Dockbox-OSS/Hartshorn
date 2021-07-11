@@ -18,6 +18,7 @@
 package org.dockbox.hartshorn.api.events.handle;
 
 import org.dockbox.hartshorn.api.Hartshorn;
+import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.events.EventWrapper;
 import org.dockbox.hartshorn.api.events.annotations.filter.Filter;
 import org.dockbox.hartshorn.api.events.annotations.filter.Filters;
@@ -83,9 +84,7 @@ public final class SimpleEventWrapper implements Comparable<SimpleEventWrapper>,
 
         // Listener methods may be private or protected, before invoking it we need to ensure it is
         // accessible.
-        if (!this.method.isAccessible()) {
-            this.method.setAccessible(true);
-        }
+        this.method.setAccessible(true);
 
         this.operator = this.createLambda();
     }
@@ -113,8 +112,8 @@ public final class SimpleEventWrapper implements Comparable<SimpleEventWrapper>,
      * Creates one or more {@link SimpleEventWrapper}s (depending on how many event parameters are
      * present) for a given method and instance.
      *
-     * @param instance
-     *         The instance which is used when invoking the method.
+     * @param type
+     *         The type of the instance which is used when invoking the method.
      * @param method
      *         The method to store for invocation.
      * @param priority
@@ -125,7 +124,7 @@ public final class SimpleEventWrapper implements Comparable<SimpleEventWrapper>,
     public static List<SimpleEventWrapper> create(Class<?> type, Method method, int priority) {
         List<SimpleEventWrapper> invokeWrappers = HartshornUtils.emptyConcurrentList();
         for (Class<?> param : method.getParameterTypes()) {
-            if (Reflect.assignableFrom(Event.class, param)) {
+            if (Reflect.assigns(Event.class, param)) {
                 @SuppressWarnings("unchecked")
                 Class<? extends Event> eventType = (Class<? extends Event>) param;
                 invokeWrappers.add(new SimpleEventWrapper(type, eventType, method, priority));
@@ -163,19 +162,19 @@ public final class SimpleEventWrapper implements Comparable<SimpleEventWrapper>,
 
     private boolean filtersMatch(Event event) {
         /*
-        If a event is Filterable and has one or more Filter annotations, we test for these filters to decide whether
+        If a event is Filterable and has one or more Filter annotationsWith, we test for these filters to decide whether
         or not we can invoke this method. These filters act on the given filter and event, and unlike paramater
         annotation processors do not have access to the InvokeWrapper, Method or listener objects.
         */
         if (event instanceof Filterable) {
-            if (this.method.isAnnotationPresent(Filter.class)) {
-                Filter filter = this.method.getAnnotation(Filter.class);
-                return SimpleEventWrapper.testFilter(filter, (Filterable) event);
+            final Exceptional<Filter> filterAnnotation = Reflect.annotation(this.method, Filter.class);
+            final Exceptional<Filters> filtersAnnotation = Reflect.annotation(this.method, Filters.class);
+            if (filterAnnotation.present()) {
+                return SimpleEventWrapper.testFilter(filterAnnotation.get(), (Filterable) event);
 
             }
-            else if (this.method.isAnnotationPresent(Filters.class)) {
-                Filters filters = this.method.getAnnotation(Filters.class);
-                for (Filter filter : filters.value()) {
+            else if (filtersAnnotation.present()) {
+                for (Filter filter : filtersAnnotation.get().value()) {
                     if (!SimpleEventWrapper.testFilter(filter, (Filterable) event)) {
                         return false;
                     }

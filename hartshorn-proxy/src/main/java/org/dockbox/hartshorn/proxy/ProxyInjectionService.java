@@ -22,13 +22,13 @@ import org.dockbox.hartshorn.api.annotations.PostBootstrap;
 import org.dockbox.hartshorn.api.annotations.UseBootstrap;
 import org.dockbox.hartshorn.api.exceptions.Except;
 import org.dockbox.hartshorn.di.InjectionPoint;
-import org.dockbox.hartshorn.di.annotations.Service;
+import org.dockbox.hartshorn.di.annotations.service.Service;
 import org.dockbox.hartshorn.di.properties.InjectorProperty;
 import org.dockbox.hartshorn.proxy.handle.ProxyHandler;
 
 import java.lang.reflect.InvocationTargetException;
 
-@Service(activator = UseBootstrap.class)
+@Service(activators = UseBootstrap.class)
 public class ProxyInjectionService {
 
     @PostBootstrap

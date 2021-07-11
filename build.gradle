@@ -18,8 +18,8 @@ import java.time.LocalDate
  */
 buildscript {
     repositories {
-        jcenter()
         mavenCentral()
+        maven { url "https://plugins.gradle.org/m2/" }
     }
     dependencies {
         classpath 'io.franzbecker:gradle-lombok:1.6'
@@ -30,7 +30,7 @@ plugins {
     id 'java'
     id 'java-library'
     id 'org.cadixdev.licenser' version '0.5.0'
-    id 'de.lukaskoerfer.gradle.delombok' version '0.2'
+    id 'io.freefair.aggregate-javadoc' version '6.0.0-m2'
 }
 
 static def getVersionName() {
@@ -42,11 +42,17 @@ group project.pluginGroup
 description 'Common sources for Hartshorn services'
 def date = LocalDate.now().toString()
 
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(16)
+    }
+}
+
 subprojects { Project subProject ->
     apply plugin: 'java'
-    apply plugin: 'maven'
+    apply plugin: 'java-library'
+    apply plugin: 'maven-publish'
     apply plugin: 'org.cadixdev.licenser'
-    apply plugin: 'de.lukaskoerfer.gradle.delombok'
 
     license {
         header = rootProject.file("HEADER.txt")
@@ -57,36 +63,35 @@ subprojects { Project subProject ->
     group project.pluginGroup
     version = "${getVersionName()}-$date"
 
-    sourceCompatibility = 1.8
-    targetCompatibility = 1.8
+    sourceCompatibility = 16
+    targetCompatibility = 16
 
     tasks.build {
         dependsOn tasks.updateLicenses
         finalizedBy tasks.clean
     }
-
-    javadoc {
-        dependsOn delombok
-        failOnError = false
-    }
-
 }
 
 allprojects {
     plugins.withType(JavaPlugin) {
         repositories {
             mavenCentral()
-            jcenter()
             maven {
                 name 'Jitpack'
                 url 'https://jitpack.io'
             }
+            // TODO: Deprecated
+            jcenter()
         }
 
         configurations {
             include
-            compileOnly.extendsFrom(include)
+            implementation.extendsFrom(include)
             testImplementation.extendsFrom(include)
+
+            share
+            api.extendsFrom(share)
+            testImplementation.extendsFrom(share)
 
             all*.exclude group: 'junit', module: 'junit'
         }
@@ -101,11 +106,20 @@ allprojects {
             options.encoding = 'UTF-8'
         }
 
-        javadoc.options.encoding = 'UTF-8'
+        test {
+            useJUnitPlatform()
+        }
+
+        tasks.withType(Javadoc) {
+            failOnError false
+            options.addStringOption('Xdoclint:none', '-quiet')
+            options.addStringOption('encoding', 'UTF-8')
+            options.addStringOption('charSet', 'UTF-8')
+        }
 
         dependencies {
-            compile group: 'com.mortennobel', name: 'java-image-scaling', version: '0.8.6'
-            compile group: 'com.jhlabs', name: 'filters', version: '2.0.235-1'
+            include 'com.mortennobel:java-image-scaling:0.8.6'
+            include 'com.jhlabs:filters:2.0.235-1'
 
             // Typically included by platforms
             include "org.slf4j:slf4j-api:$slf4jVersion"
@@ -119,42 +133,19 @@ allprojects {
             testAnnotationProcessor 'org.projectlombok:lombok:1.18.20'
 
             // Testing requirements
-            testCompile "org.junit.jupiter:junit-jupiter-api:$junitVersion"
-            testCompile "org.junit.jupiter:junit-jupiter-params:$junitVersion"
-            testRuntime "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
-            testCompile "org.hamcrest:java-hamcrest:$hamcrestVersion"
+            testImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"
+            testImplementation "org.junit.jupiter:junit-jupiter-params:$junitVersion"
+            testImplementation "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
+            testImplementation "org.hamcrest:java-hamcrest:$hamcrestVersion"
 
-            testCompile "org.mockito:mockito-inline:$mockitoVersion"
+            testImplementation "org.mockito:mockito-inline:$mockitoVersion"
 
-            testCompile testFixtures(project(":hartshorn-test"))
+            testImplementation testFixtures(project(":hartshorn-test"))
 
             testImplementation "org.slf4j:slf4j-api:$slf4jVersion"
             testImplementation "org.slf4j:slf4j-simple:$slf4jVersion"
         }
-
-        test {
-            useJUnitPlatform()
-        }
     }
 }
 
-task aggregatedJavadocs(type: Javadoc, description: 'Generate javadocs from all submodules', group: 'Documentation') {
-    destinationDir = file "./docs"
-    title = "Hartshorn (commit #$version)"
-    options.author true
-    options.links 'http://docs.spring.io/spring/docs/4.3.x/javadoc-api/', 'http://docs.oracle.com/javase/8/docs/api/', 'http://docs.spring.io/spring-ws/docs/2.3.0.RELEASE/api/', 'http://docs.spring.io/spring-security/site/docs/4.0.4.RELEASE/apidocs/'
-    options.addStringOption 'Xdoclint:none', '-quiet'
-
-    delete "./docs"
-
-    subprojects.each { proj ->
-        proj.tasks.withType(Javadoc).each { javadocTask ->
-            source += javadocTask.source
-            classpath += javadocTask.classpath
-            excludes += javadocTask.excludes
-            includes += javadocTask.includes
-        }
-    }
-}
-
-wrapper { gradleVersion = '5.6' }
+wrapper { gradleVersion = '7.0' }

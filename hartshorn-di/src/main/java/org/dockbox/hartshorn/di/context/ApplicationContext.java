@@ -17,11 +17,12 @@
 
 package org.dockbox.hartshorn.di.context;
 
+import org.dockbox.hartshorn.api.domain.MetaProvider;
 import org.dockbox.hartshorn.di.InjectionPoint;
 import org.dockbox.hartshorn.di.ProvisionFailure;
 import org.dockbox.hartshorn.di.inject.InjectionModifier;
 import org.dockbox.hartshorn.di.properties.InjectorProperty;
-import org.dockbox.hartshorn.di.services.ServiceLocator;
+import org.dockbox.hartshorn.di.services.ComponentLocator;
 import org.dockbox.hartshorn.di.services.ServiceProcessor;
 
 import java.lang.annotation.Annotation;
@@ -48,5 +49,6 @@ public interface ApplicationContext extends ApplicationBinder, HartshornContext 
     boolean hasActivator(Class<? extends Annotation> activator);
     <A> A activator(Class<A> activator);
 
-    ServiceLocator locator();
+    ComponentLocator locator();
+    MetaProvider meta();
 }

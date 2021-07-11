@@ -19,15 +19,13 @@ package org.dockbox.hartshorn.test.objects;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.domain.tuple.Vector3N;
+import org.dockbox.hartshorn.server.minecraft.dimension.Block;
 import org.dockbox.hartshorn.server.minecraft.dimension.Chunk;
-import org.dockbox.hartshorn.server.minecraft.dimension.position.BlockFace;
 import org.dockbox.hartshorn.server.minecraft.dimension.position.Location;
 import org.dockbox.hartshorn.server.minecraft.dimension.world.World;
 import org.dockbox.hartshorn.server.minecraft.entities.Entity;
-import org.dockbox.hartshorn.server.minecraft.item.Item;
 import org.dockbox.hartshorn.server.minecraft.players.Gamemode;
 import org.dockbox.hartshorn.server.minecraft.players.Player;
-import org.dockbox.hartshorn.server.minecraft.players.Profile;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -35,13 +33,12 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import lombok.Getter;
 
 public class JUnitWorld extends World {
 
-    private final Map<Vector3N, Item> blocks = HartshornUtils.emptyMap();
+    private final Map<Vector3N, Block> blocks = HartshornUtils.emptyMap();
     private final Map<UUID, Entity> entities = HartshornUtils.emptyMap();
 
     @Getter
@@ -75,13 +72,13 @@ public class JUnitWorld extends World {
     }
 
     @Override
-    public Exceptional<Item> getBlock(Vector3N position) {
+    public Exceptional<Block> getBlock(Vector3N position) {
         return Exceptional.of(this.blocks.getOrDefault(position, null));
     }
 
     @Override
-    public boolean setBlock(Vector3N position, Item item, BlockFace direction, Profile placer) {
-        this.blocks.put(position, item);
+    public boolean setBlock(Vector3N position, Block block) {
+        this.blocks.put(position, block);
         return true;
     }
 
@@ -91,7 +88,7 @@ public class JUnitWorld extends World {
     }
 
     @Override
-    public Exceptional<Chunk> getChunk(int x, int y) {
+    public Exceptional<Chunk> getChunk(Vector3N position) {
         return Exceptional.empty();
     }
 
@@ -107,7 +104,7 @@ public class JUnitWorld extends World {
 
     @Override
     public Collection<Entity> getEntities(Predicate<Entity> predicate) {
-        return this.getEntities().stream().filter(predicate).collect(Collectors.toList());
+        return this.getEntities().stream().filter(predicate).toList();
     }
 
     @Override

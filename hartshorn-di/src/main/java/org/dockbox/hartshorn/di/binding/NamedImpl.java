@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.di.binding;
 
-import org.dockbox.hartshorn.di.annotations.Named;
+import org.dockbox.hartshorn.di.annotations.inject.Named;
 
 import java.lang.annotation.Annotation;
 
@@ -40,11 +40,7 @@ public class NamedImpl implements Named {
     }
 
     public boolean equals(Object o) {
-        if (!(o instanceof Named)) {
-            return false;
-        }
-
-        Named other = (Named) o;
+        if (!(o instanceof Named other)) return false;
         return this.value.equals(other.value());
     }
 

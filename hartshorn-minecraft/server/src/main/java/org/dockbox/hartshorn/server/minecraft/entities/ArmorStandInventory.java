@@ -19,5 +19,5 @@ package org.dockbox.hartshorn.server.minecraft.entities;
 
 import org.dockbox.hartshorn.server.minecraft.inventory.SlotInventory;
 
-public abstract class ArmorStandInventory implements SlotInventory {
+public interface ArmorStandInventory extends SlotInventory {
 }

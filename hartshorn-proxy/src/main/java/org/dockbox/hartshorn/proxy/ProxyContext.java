@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.proxy;
 
-import org.dockbox.hartshorn.di.exceptions.ApplicationException;
+import org.dockbox.hartshorn.api.exceptions.ApplicationException;
 import org.dockbox.hartshorn.proxy.handle.ProxyHolder;
 
 import java.lang.reflect.Method;

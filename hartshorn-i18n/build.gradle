@@ -18,8 +18,7 @@
 apply from: "$rootDir/parent.gradle"
 
 dependencies {
-    compileOnly project(':hartshorn-bootstrap')
-    compileOnly project(':hartshorn-proxy')
-    // Compile as Text extends PersistentCapable
-    compile project(':hartshorn-persistence')
+    include project(':hartshorn-bootstrap')
+    include project(':hartshorn-proxy')
+    share project(':hartshorn-persistence')
 }

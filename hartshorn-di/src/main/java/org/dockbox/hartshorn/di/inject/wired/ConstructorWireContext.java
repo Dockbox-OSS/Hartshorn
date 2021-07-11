@@ -17,7 +17,8 @@
 
 package org.dockbox.hartshorn.di.inject.wired;
 
-import org.dockbox.hartshorn.di.annotations.Wired;
+import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.di.annotations.inject.Wired;
 import org.dockbox.hartshorn.util.Reflect;
 
 import java.lang.reflect.Constructor;
@@ -40,7 +41,7 @@ public class ConstructorWireContext<T, I extends T> implements WireContext<T, I>
     public I create(Object... arguments) {
         Class<?>[] argumentTypes = Arrays.stream(arguments).map(Object::getClass).toArray(Class<?>[]::new);
         try {
-            Collection<Constructor<I>> constructors = Reflect.annotatedConstructors(this.getImplementation(), Wired.class);
+            Collection<Constructor<I>> constructors = Reflect.constructors(this.getImplementation(), Wired.class);
             Constructor<I> ctor = null;
             for (Constructor<I> constructor : constructors) {
                 if (constructor.getParameterTypes().length != arguments.length) continue;
@@ -51,7 +52,7 @@ public class ConstructorWireContext<T, I extends T> implements WireContext<T, I>
                     if (argument == null) {
                         throw new IllegalArgumentException("Autowired parameters can not be null");
                     }
-                    if (!Reflect.assignableFrom(parameterType, argument.getClass())) {
+                    if (!Reflect.assigns(parameterType, argument.getClass())) {
                         valid = false;
                     }
                 }
@@ -65,7 +66,8 @@ public class ConstructorWireContext<T, I extends T> implements WireContext<T, I>
                 throw new NoSuchMethodException("Available constructors do not meet expected parameter types");
             }
 
-            if (ctor.isAnnotationPresent(Wired.class)) {
+            final Exceptional<Wired> annotation = Reflect.annotation(ctor, Wired.class);
+            if (annotation.present()) {
                 return ctor.newInstance(arguments);
             }
             else {

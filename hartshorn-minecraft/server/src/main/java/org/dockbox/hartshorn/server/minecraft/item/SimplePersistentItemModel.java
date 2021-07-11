@@ -37,10 +37,9 @@ import lombok.Getter;
 @Singleton
 @Entity(value = "item")
 @Getter
-public class SimplePersistentItemModel extends PersistentItemModel {
+public class SimplePersistentItemModel implements PersistentItemModel {
 
     private String id;
-    private int meta;
     private Text title;
     private List<Text> lore;
     private int amount;
@@ -49,7 +48,6 @@ public class SimplePersistentItemModel extends PersistentItemModel {
 
     public SimplePersistentItemModel(Item item) {
         this.id = item.getId();
-        this.meta = item.getMeta();
         this.title = item.getDisplayName();
         this.lore = item.getLore();
         this.amount = item.getAmount();
@@ -67,7 +65,7 @@ public class SimplePersistentItemModel extends PersistentItemModel {
 
     @Override
     public Item toPersistentCapable() {
-        return this.repopulate(Item.of(this.id, this.meta));
+        return this.repopulate(Item.of(this.id));
     }
 
     protected Item repopulate(Item item) {

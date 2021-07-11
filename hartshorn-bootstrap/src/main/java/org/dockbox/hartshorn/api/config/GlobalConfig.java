@@ -25,8 +25,6 @@ public interface GlobalConfig {
 
     ExceptionLevels getExceptionLevel();
 
-    Environment getEnvironment();
-
     String getDiscordLoggingCategoryId();
 
     String getVersion();

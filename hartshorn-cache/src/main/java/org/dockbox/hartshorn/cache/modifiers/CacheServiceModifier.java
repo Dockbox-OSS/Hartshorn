@@ -17,6 +17,7 @@
 
 package org.dockbox.hartshorn.cache.modifiers;
 
+import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.cache.Cache;
 import org.dockbox.hartshorn.cache.CacheManager;
 import org.dockbox.hartshorn.cache.Expiration;
@@ -29,6 +30,7 @@ import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.proxy.handle.ProxyFunction;
 import org.dockbox.hartshorn.proxy.service.MethodProxyContext;
 import org.dockbox.hartshorn.proxy.service.ServiceAnnotatedMethodModifier;
+import org.dockbox.hartshorn.util.Reflect;
 
 import java.lang.annotation.Annotation;
 import java.util.function.Supplier;
@@ -41,9 +43,9 @@ public abstract class CacheServiceModifier<A extends Annotation> extends Service
         final CacheManager manager = context.get(cacheMethodContext.getManager());
         String name = cacheMethodContext.getName();
         if ("".equals(name)) {
-            if (methodContext.getType().isAnnotationPresent(CacheService.class)) {
-                final CacheService annotation = methodContext.getType().getAnnotation(CacheService.class);
-                name = annotation.value();
+            final Exceptional<CacheService> annotation = Reflect.annotation(methodContext.getType(), CacheService.class);
+            if (annotation.present()) {
+                name = annotation.get().value();
             } else {
                 throw new IllegalStateException("Service " + methodContext.getType() + " contains cache targets but does not provide a valid ID");
             }
@@ -57,7 +59,7 @@ public abstract class CacheServiceModifier<A extends Annotation> extends Service
             if (expiration != null)
                 cache = manager.getOrCreate(finalName, expiration);
             else {
-                cache = manager.get(finalName).cause(() -> new IllegalStateException("Requested state '" + finalName + "' has not been initialized"));
+                cache = manager.get(finalName).orThrow(() -> new IllegalStateException("Requested state '" + finalName + "' has not been initialized"));
             }
             return cache;
         };

@@ -52,16 +52,15 @@ public class ImageConstantTests {
 
         // Test matrix type
         switch (matrixType) {
-            case "bayer":
+            case "bayer" -> {
                 Assertions.assertDoesNotThrow(mode::getBayerMatrix);
                 Assertions.assertThrows(UnsupportedOperationException.class, mode::getErrorDiffusionMatrix);
-                break;
-            case "ed":
+            }
+            case "ed" -> {
                 Assertions.assertDoesNotThrow(mode::getErrorDiffusionMatrix);
                 Assertions.assertThrows(UnsupportedOperationException.class, mode::getBayerMatrix);
-                break;
-            default:
-                Assertions.fail("Unknown matrix type: " + matrixType + " (This is a test definition failure, not a implementation failure)");
+            }
+            default -> Assertions.fail("Unknown matrix type: " + matrixType + " (This is a test definition failure, not a implementation failure)");
         }
 
         // Test matrix size

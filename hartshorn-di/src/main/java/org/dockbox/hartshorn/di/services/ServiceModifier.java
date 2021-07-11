@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.di.services;
 
-import org.dockbox.hartshorn.di.annotations.Service;
+import org.dockbox.hartshorn.di.ApplicationContextAware;
 import org.dockbox.hartshorn.di.inject.InjectionModifier;
 import org.dockbox.hartshorn.di.properties.InjectorProperty;
 import org.jetbrains.annotations.Nullable;
@@ -27,7 +27,8 @@ import java.lang.annotation.Annotation;
 public abstract class ServiceModifier<A extends Annotation> implements InjectionModifier<A> {
 
     public <T> boolean preconditions(Class<T> type, @Nullable T instance, InjectorProperty<?>... properties) {
-        return type.isAnnotationPresent(Service.class) && this.isModifiable(type, instance, properties);
+        return ApplicationContextAware.instance().getContext().locator().container(type).present()
+                && this.isModifiable(type, instance, properties);
     }
 
     protected abstract <T> boolean isModifiable(Class<T> type, @Nullable T instance, InjectorProperty<?>... properties);

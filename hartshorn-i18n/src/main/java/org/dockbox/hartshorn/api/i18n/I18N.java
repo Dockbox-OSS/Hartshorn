@@ -18,20 +18,26 @@
 package org.dockbox.hartshorn.api.i18n;
 
 import org.dockbox.hartshorn.api.Hartshorn;
+import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.domain.MetaProvider;
 import org.dockbox.hartshorn.api.domain.TypedOwner;
 import org.dockbox.hartshorn.api.i18n.annotations.Resource;
-import org.dockbox.hartshorn.di.annotations.Service;
 import org.dockbox.hartshorn.util.HartshornUtils;
+import org.dockbox.hartshorn.util.Reflect;
 
 import java.lang.reflect.Method;
 
-public class I18N {
+public final class I18N {
+
+    private I18N() {
+    }
 
     public static String key(Class<?> type, Method method) {
         String prefix = "";
-        if (type.isAnnotationPresent(Service.class)) {
-            TypedOwner lookup = Hartshorn.context().get(MetaProvider.class).lookup(type);
+
+        final MetaProvider provider = Hartshorn.context().meta();
+        if (provider.isComponent(type)) {
+            TypedOwner lookup = provider.lookup(type);
             if (lookup != null) prefix = lookup.id() + '.';
         }
 
@@ -39,8 +45,9 @@ public class I18N {
     }
 
     private static String extract(Method method, String prefix) {
-        if (method.isAnnotationPresent(Resource.class)) {
-            String key = method.getAnnotation(Resource.class).key();
+        final Exceptional<Resource> resource = Reflect.annotation(method, Resource.class);
+        if (resource.present()) {
+            String key = resource.get().key();
             if (!"".equals(key)) return key;
         }
         String keyJoined = method.getName();

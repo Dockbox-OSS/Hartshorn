@@ -22,7 +22,10 @@ import org.dockbox.hartshorn.util.HartshornUtils;
 
 import java.util.UUID;
 
-public class JUnitUtils {
+public final class JUnitUtils {
+
+    private JUnitUtils() {
+    }
 
     public static JUnitPlayer mockPlayer() {
         return new JUnitPlayer(UUID.randomUUID(), HartshornUtils.getRandomString(5, 10));

@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.api.i18n.annotations;
 
-import org.dockbox.hartshorn.di.annotations.ServiceActivator;
+import org.dockbox.hartshorn.di.annotations.service.ServiceActivator;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

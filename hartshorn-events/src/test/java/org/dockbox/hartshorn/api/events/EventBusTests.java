@@ -82,7 +82,7 @@ public class EventBusTests {
     }
 
     @Test
-    public void testIncorrectFilterDoesNoetInvokeFilteredListeners() {
+    public void testIncorrectFilterDoesNotInvokeFilteredListeners() {
         EventBus bus = this.bus();
         bus.subscribe(FilteredEventListener.class);
         SampleFilterableEvent event = new SampleFilterableEvent("NotHartshorn");

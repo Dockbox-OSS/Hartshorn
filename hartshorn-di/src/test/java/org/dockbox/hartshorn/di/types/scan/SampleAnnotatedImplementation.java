@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.di.types.scan;
 
-import org.dockbox.hartshorn.di.annotations.Binds;
+import org.dockbox.hartshorn.di.annotations.inject.Binds;
 import org.dockbox.hartshorn.di.types.SampleInterface;
 
 @Binds(SampleInterface.class)

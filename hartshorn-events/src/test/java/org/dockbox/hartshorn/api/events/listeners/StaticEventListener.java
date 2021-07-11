@@ -20,7 +20,7 @@ package org.dockbox.hartshorn.api.events.listeners;
 import org.dockbox.hartshorn.api.events.SampleEvent;
 import org.dockbox.hartshorn.api.events.annotations.Listener;
 
-public class StaticEventListener {
+public final class StaticEventListener {
 
     public static boolean fired = false;
 
@@ -28,5 +28,4 @@ public class StaticEventListener {
     public static void on(SampleEvent event) {
         StaticEventListener.fired = true;
     }
-
 }

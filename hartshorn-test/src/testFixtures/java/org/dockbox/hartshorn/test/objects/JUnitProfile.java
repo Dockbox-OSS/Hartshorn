@@ -18,12 +18,9 @@
 package org.dockbox.hartshorn.test.objects;
 
 import org.dockbox.hartshorn.api.Hartshorn;
-import org.dockbox.hartshorn.api.domain.tuple.Tuple;
-import org.dockbox.hartshorn.di.annotations.Wired;
+import org.dockbox.hartshorn.di.annotations.inject.Wired;
 import org.dockbox.hartshorn.server.minecraft.players.Profile;
-import org.dockbox.hartshorn.util.HartshornUtils;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -36,8 +33,7 @@ public class JUnitProfile implements Profile {
     @Getter
     @Setter
     private UUID uuid;
-    @Getter
-    private Map<String, Collection<Tuple<String, String>>> properties = HartshornUtils.emptyMap();
+    private Map<String, String> properties;
 
     @Wired
     public JUnitProfile(UUID uuid) {
@@ -52,12 +48,17 @@ public class JUnitProfile implements Profile {
     }
 
     @Override
-    public void setProperty(String property, String key, String value) {
-        this.properties.put(property, HartshornUtils.asList(new Tuple<>(key, value)));
+    public Map<String, String> properties() {
+        return this.properties;
     }
 
     @Override
-    public void setProperties(Map<String, Collection<Tuple<String, String>>> properties) {
-        this.properties = new HashMap<>(properties);
+    public void setProperty(String key, String value) {
+        this.properties.put(key, value);
+    }
+
+    @Override
+    public void setProperties(Map<String, String> properties) {
+        this.properties.putAll(properties);
     }
 }

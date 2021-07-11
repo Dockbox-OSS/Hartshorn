@@ -18,7 +18,7 @@
 package org.dockbox.hartshorn.api.activators;
 
 import org.dockbox.hartshorn.api.SampleBootstrap;
-import org.dockbox.hartshorn.di.annotations.Activator;
+import org.dockbox.hartshorn.di.annotations.activate.Activator;
 
 @Activator(SampleBootstrap.class)
 public class ValidActivator {

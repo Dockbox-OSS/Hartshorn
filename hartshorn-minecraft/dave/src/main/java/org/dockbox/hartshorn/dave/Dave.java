@@ -29,8 +29,7 @@ import org.dockbox.hartshorn.commands.context.CommandContext;
 import org.dockbox.hartshorn.commands.source.CommandSource;
 import org.dockbox.hartshorn.commands.source.DiscordCommandSource;
 import org.dockbox.hartshorn.dave.models.DaveTriggers;
-import org.dockbox.hartshorn.di.annotations.Service;
-import org.dockbox.hartshorn.di.annotations.Wired;
+import org.dockbox.hartshorn.di.annotations.inject.Wired;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.di.properties.InjectableType;
 import org.dockbox.hartshorn.di.properties.InjectorProperty;
@@ -47,10 +46,8 @@ import org.dockbox.hartshorn.util.HartshornUtils;
 
 import java.nio.file.Path;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 @Command("dave")
-@Service
 public class Dave implements InjectableType {
 
     public static final Setting<Boolean> MUTED_DAVE = Setting.of(Boolean.class)
@@ -91,7 +88,7 @@ public class Dave implements InjectableType {
                         .asText()
                         .onHover(HoverAction.showText(this.resources.getTriggerSingleHover().asText()))
                         .onClick(RunCommandAction.runCommand("/dave run " + trigger.getId())))
-                        .collect(Collectors.toList()))
+                        .toList())
                 .build()
                 .send(source);
     }

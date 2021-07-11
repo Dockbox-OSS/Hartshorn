@@ -18,7 +18,7 @@
 package org.dockbox.hartshorn.config;
 
 import org.dockbox.hartshorn.config.annotations.Value;
-import org.dockbox.hartshorn.di.annotations.Service;
+import org.dockbox.hartshorn.di.annotations.service.Service;
 
 import lombok.Getter;
 

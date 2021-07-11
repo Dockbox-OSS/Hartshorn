@@ -20,6 +20,9 @@ package org.dockbox.hartshorn.util;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.domain.tuple.Tuple;
 import org.dockbox.hartshorn.api.domain.tuple.Vector3N;
+import org.dockbox.hartshorn.api.exceptions.ApplicationException;
+import org.dockbox.hartshorn.util.types.EmptyType;
+import org.dockbox.hartshorn.util.types.RejectingType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -484,7 +487,7 @@ public class HartshornUtilTests {
     void testCollectionMerge() {
         Collection<Integer> col1 = Arrays.asList(1,2,3);
         Collection<Integer> col2 = Arrays.asList(4,5,6);
-        Collection<?> merged = HartshornUtils.merge(col1, col2);
+        Collection<Integer> merged = HartshornUtils.merge(col1, col2);
 
         Assertions.assertEquals(6, merged.size());
         Assertions.assertTrue(merged.containsAll(Arrays.asList(1,2,3,4,5,6)));
@@ -519,7 +522,6 @@ public class HartshornUtilTests {
     @ParameterizedTest
     @MethodSource("getEmptyValues")
     void testIsEmpty(Object obj, boolean empty) {
-        System.out.println("Got: " + obj);
         Assertions.assertEquals(empty, HartshornUtils.isEmpty(obj));
     }
 
@@ -654,7 +656,7 @@ public class HartshornUtilTests {
             int i = 1+1;
         }));
         Assertions.assertFalse(HartshornUtils.doesNotThrow(() -> {
-            throw new Exception("error");
+            throw new ApplicationException("error");
         }));
     }
 
@@ -719,8 +721,10 @@ public class HartshornUtilTests {
         String table = HartshornUtils.asTable(rows);
 
         Assertions.assertNotNull(table);
-        Assertions.assertEquals("h1  h2  h3  \n" +
-                        "v1  v2  v3  \n",
+        Assertions.assertEquals("""
+                        h1  h2  h3 \s
+                        v1  v2  v3 \s
+                        """,
                 table);
     }
 }

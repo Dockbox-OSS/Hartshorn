@@ -47,7 +47,7 @@ public class ContextMethodModifier extends ServiceAnnotatedMethodModifier<Provid
 
     @Override
     public <T> boolean preconditions(ApplicationContext context, MethodProxyContext<T> methodContext) {
-        return Reflect.isNotVoid(methodContext.getReturnType());
+        return Reflect.notVoid(methodContext.getReturnType());
     }
 
     @Override

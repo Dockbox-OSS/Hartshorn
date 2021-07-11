@@ -32,8 +32,7 @@ public interface RegistryIdentifier {
 
     default boolean same(Object o) {
         if (this == o) return true;
-        if (!(o instanceof RegistryIdentifier)) return false;
-        RegistryIdentifier that = (RegistryIdentifier) o;
+        if (!(o instanceof RegistryIdentifier that)) return false;
         return this.getKey().equals(that.getKey());
     }
 }

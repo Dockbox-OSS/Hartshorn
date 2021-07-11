@@ -17,8 +17,6 @@
 
 package org.dockbox.hartshorn.api.i18n.text;
 
-import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.api.exceptions.Except;
 import org.dockbox.hartshorn.api.i18n.MessageReceiver;
 import org.dockbox.hartshorn.api.i18n.common.ResourceEntry;
 import org.dockbox.hartshorn.api.i18n.text.actions.ClickAction;
@@ -28,13 +26,8 @@ import org.dockbox.hartshorn.api.i18n.text.persistence.PersistentTextModel;
 import org.dockbox.hartshorn.persistence.PersistentCapable;
 import org.dockbox.hartshorn.util.HartshornUtils;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
-
-import javax.xml.bind.DatatypeConverter;
 
 public class Text implements PersistentCapable<PersistentTextModel> {
 
@@ -153,19 +146,7 @@ public class Text implements PersistentCapable<PersistentTextModel> {
 
     public List<Text> getExtra() {
         // To prevent stack overflows
-        return this.extra.stream().filter(e -> e != this).collect(Collectors.toList());
-    }
-
-    public Exceptional<String> generateHash(HashMethod method) {
-        try {
-            MessageDigest md = MessageDigest.getInstance(method.toString());
-            md.update(this.toStringValue().getBytes());
-            return Exceptional.of(DatatypeConverter.printHexBinary(md.digest()).toUpperCase());
-        }
-        catch (NoSuchAlgorithmException e) {
-            Except.handle("No algorithm implementation present for " + method + ". " + "This algorithm should be implemented by every implementation of the Java platform! " + "See https://docs.oracle.com/javase/7/docs/api/java/security/MessageDigest.html", e);
-        }
-        return Exceptional.empty();
+        return this.extra.stream().filter(e -> e != this).toList();
     }
 
     @Override

@@ -17,6 +17,9 @@
 
 package org.dockbox.hartshorn.proxy.compiler;
 
+import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.di.annotations.component.Component;
+
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
@@ -32,6 +35,7 @@ import javax.tools.ToolProvider;
  * 
  * @author michael
  */
+@Component
 public class Compiler {
 
 	private final JavaCompiler compiler;
@@ -40,6 +44,31 @@ public class Compiler {
 	public Compiler() {
 		this.compiler = ToolProvider.getSystemJavaCompiler();
 		this.stdManager = this.compiler.getStandardFileManager(null, null, null);
+	}
+
+	public Exceptional<Class<?>> compile(String source) {
+		return Exceptional.of(() -> {
+			String className = this.extractClassName(source);
+			String packageName = this.extractPackage(source);
+
+			Compiler compiler = new Compiler();
+			Map<String, byte[]> result = compiler.compile(className + ".java", source);
+			return compiler.loadClass(packageName + '.' + className, result);
+		});
+	}
+
+	private String extractClassName(String source) {
+		int class_ = source.indexOf("class ");
+		if (class_ == -1) throw new IllegalArgumentException("Missing class definition");
+		String sub = source.substring(class_ + 6);
+		return sub.substring(0, sub.indexOf(' '));
+	}
+
+	private String extractPackage(String source) {
+		int package_ = source.indexOf("package ");
+		if (package_ == -1) throw new IllegalArgumentException("Missing package definition");
+		String sub = source.substring(package_ + 8);
+		return sub.substring(0, sub.indexOf(';'));
 	}
 
 	/**
@@ -51,10 +80,8 @@ public class Compiler {
 	 *            The source code as String.
 	 * @return The compiled results as Map that contains class name as key,
 	 *         class binary as value.
-	 * @throws IOException
-	 *             If compile error.
 	 */
-	public Map<String, byte[]> compile(String fileName, String source) throws IOException {
+	public Map<String, byte[]> compile(String fileName, String source) {
 		try (MemoryJavaFileManager manager = new MemoryJavaFileManager(this.stdManager)) {
 			JavaFileObject javaFileObject = manager.makeStringSource(fileName, source);
 			CompilationTask task = this.compiler.getTask(null, manager, null, null, null, Collections.singletonList(javaFileObject));

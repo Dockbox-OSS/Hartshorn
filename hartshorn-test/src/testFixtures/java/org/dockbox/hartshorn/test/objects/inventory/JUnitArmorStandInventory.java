@@ -26,7 +26,7 @@ import org.dockbox.hartshorn.util.HartshornUtils;
 import java.util.Collection;
 import java.util.Map;
 
-public class JUnitArmorStandInventory extends ArmorStandInventory {
+public class JUnitArmorStandInventory implements ArmorStandInventory {
 
     private final Map<Slot, Item> items = HartshornUtils.emptyMap();
 

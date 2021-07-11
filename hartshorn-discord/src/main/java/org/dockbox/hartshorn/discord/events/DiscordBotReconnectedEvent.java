@@ -18,5 +18,5 @@
 package org.dockbox.hartshorn.discord.events;
 
 /** The event fired when the Discord bot (re)connects to Discord. */
-public class DiscordBotReconnectedEvent extends DiscordEvent {
+public class DiscordBotReconnectedEvent implements DiscordEvent {
 }

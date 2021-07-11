@@ -18,9 +18,9 @@
 package org.dockbox.hartshorn.commands;
 
 import org.dockbox.hartshorn.api.i18n.text.actions.CommandAction;
-import org.dockbox.hartshorn.di.annotations.Wired;
+import org.dockbox.hartshorn.di.annotations.inject.Wired;
 
-public class RunCommandAction {
+public final class RunCommandAction {
 
     public static RunCommand runCommand(String command) {
         return new RunCommand(command);
@@ -34,4 +34,6 @@ public class RunCommandAction {
         }
     }
 
+    private RunCommandAction() {
+    }
 }

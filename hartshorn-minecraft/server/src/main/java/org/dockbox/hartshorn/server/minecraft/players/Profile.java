@@ -18,9 +18,7 @@
 package org.dockbox.hartshorn.server.minecraft.players;
 
 import org.dockbox.hartshorn.api.Hartshorn;
-import org.dockbox.hartshorn.api.domain.tuple.Tuple;
 
-import java.util.Collection;
 import java.util.Map;
 import java.util.UUID;
 
@@ -38,9 +36,9 @@ public interface Profile {
 
     void setUuid(UUID uuid);
 
-    Map<String, Collection<Tuple<String, String>>> getProperties();
+    Map<String, String> properties();
 
-    void setProperty(String property, String key, String value);
+    void setProperty(String key, String value);
 
-    void setProperties(Map<String, Collection<Tuple<String, String>>> properties);
+    void setProperties(Map<String, String> properties);
 }

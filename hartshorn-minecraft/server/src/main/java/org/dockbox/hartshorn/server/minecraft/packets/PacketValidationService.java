@@ -23,12 +23,12 @@ import org.dockbox.hartshorn.api.annotations.UseBootstrap;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.events.EventBus;
 import org.dockbox.hartshorn.api.events.parents.Event;
-import org.dockbox.hartshorn.di.annotations.Service;
+import org.dockbox.hartshorn.di.annotations.service.Service;
 import org.dockbox.hartshorn.server.minecraft.events.packet.PacketEvent;
 import org.dockbox.hartshorn.server.minecraft.packets.annotations.Packet;
 import org.dockbox.hartshorn.util.Reflect;
 
-@Service(activator = UseBootstrap.class)
+@Service(activators = UseBootstrap.class)
 class PacketValidationService {
 
     @PostBootstrap
@@ -36,9 +36,9 @@ class PacketValidationService {
         EventBus bus = Hartshorn.context().get(EventBus.class);
         bus.addValidationRule(method -> {
             for (Class<?> param : method.getParameterTypes()) {
-                if (Reflect.assignableFrom(Event.class, param)) {
-                    if (Reflect.assignableFrom(PacketEvent.class, param)
-                            && !method.isAnnotationPresent(Packet.class)) {
+                if (Reflect.assigns(Event.class, param)) {
+                    if (Reflect.assigns(PacketEvent.class, param)
+                            && Reflect.annotation(method, Packet.class).absent()) {
                         return Exceptional.of(false, new IllegalArgumentException("Needs @Packet annotation: " + method.toGenericString()));
                     }
                     return Exceptional.of(true);

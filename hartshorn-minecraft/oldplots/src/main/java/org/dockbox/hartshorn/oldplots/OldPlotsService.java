@@ -25,8 +25,8 @@ import org.dockbox.hartshorn.api.i18n.text.pagination.PaginationBuilder;
 import org.dockbox.hartshorn.commands.RunCommandAction;
 import org.dockbox.hartshorn.commands.annotations.Command;
 import org.dockbox.hartshorn.commands.context.CommandContext;
-import org.dockbox.hartshorn.di.annotations.Service;
-import org.dockbox.hartshorn.di.annotations.Wired;
+import org.dockbox.hartshorn.di.annotations.service.Service;
+import org.dockbox.hartshorn.di.annotations.inject.Wired;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.persistence.FileManager;
 import org.dockbox.hartshorn.persistence.FileType;
@@ -46,7 +46,7 @@ import org.jetbrains.annotations.NotNull;
 import java.nio.file.Path;
 import java.util.List;
 
-@Service(dependencies = "org.dockbox.hartshorn.database")
+@Service
 public class OldPlotsService {
 
     @Wired

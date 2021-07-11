@@ -31,8 +31,8 @@ import org.dockbox.hartshorn.commands.exceptions.ParsingException;
 import org.dockbox.hartshorn.commands.extension.CommandExecutorExtension;
 import org.dockbox.hartshorn.commands.extension.ExtensionResult;
 import org.dockbox.hartshorn.commands.source.CommandSource;
-import org.dockbox.hartshorn.di.annotations.Binds;
-import org.dockbox.hartshorn.di.annotations.Wired;
+import org.dockbox.hartshorn.di.annotations.inject.Binds;
+import org.dockbox.hartshorn.di.annotations.inject.Wired;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.dockbox.hartshorn.util.Reflect;
 import org.jetbrains.annotations.UnmodifiableView;
@@ -84,10 +84,8 @@ public class SimpleCommandGateway implements CommandGateway {
         for (CommandExecutorExtension extension : this.getExtensions()) {
             if (extension.extend(context)) {
                 final ExtensionResult result = extension.execute(commandContext, context);
-                if (!result.proceed()) {
-                    commandContext.getSender().send(result.reason());
-                    return;
-                }
+                if (result.send()) commandContext.getSender().send(result.reason());
+                if (!result.proceed()) return;
             }
         }
         context.executor().execute(commandContext);
@@ -114,7 +112,7 @@ public class SimpleCommandGateway implements CommandGateway {
 
     @Override
     public void register(Class<?> type) {
-        final Collection<Method> methods = Reflect.annotatedMethods(type, Command.class);
+        final Collection<Method> methods = Reflect.methods(type, Command.class);
         if (methods.isEmpty()) return;
 
         for (Method method : methods) this.register(method, type);
@@ -126,8 +124,9 @@ public class SimpleCommandGateway implements CommandGateway {
         if (container.absent()) throw new IllegalArgumentException("Executor contexts should contain at least one container context");
 
         List<String> aliases;
-        if (Reflect.isNotVoid(context.parent()) && context.parent().isAnnotationPresent(Command.class)) {
-            aliases = HartshornUtils.asUnmodifiableList(context.parent().getAnnotation(Command.class).value());
+        final Exceptional<Command> annotated = Reflect.annotation(context.parent(), Command.class);
+        if (Reflect.notVoid(context.parent()) && annotated.present()) {
+            aliases = HartshornUtils.asUnmodifiableList(annotated.get().value());
         } else if (!container.get().aliases().isEmpty()){
             aliases = container.get().aliases();
         } else {
@@ -148,8 +147,23 @@ public class SimpleCommandGateway implements CommandGateway {
     @UnmodifiableView
     public List<String> suggestions(CommandSource source, String command) {
         final Exceptional<CommandExecutorContext> context = this.lookupContext(command);
-        if (context.absent()) return HartshornUtils.emptyList();
-        return HartshornUtils.asUnmodifiableList(context.get().suggestions(source, command, this.parser));
+        final List<String> suggestions = HartshornUtils.emptyList();
+
+        if (context.present())
+            suggestions.addAll(context.get().suggestions(source, command, this.parser));
+
+        final String alias = command.split(" ")[0];
+        final Collection<CommandExecutorContext> contexts = contexts().get(alias);
+        for (CommandExecutorContext executorContext : contexts) {
+            for (String contextAlias : executorContext.aliases()) {
+                if (contextAlias.startsWith(command)) {
+                    String stripped =contextAlias.replaceFirst(alias + " ", "");
+                    if (!"".equals(stripped)) suggestions.add(stripped);
+                }
+            }
+        }
+
+        return HartshornUtils.asUnmodifiableList(suggestions);
     }
 
     @Override

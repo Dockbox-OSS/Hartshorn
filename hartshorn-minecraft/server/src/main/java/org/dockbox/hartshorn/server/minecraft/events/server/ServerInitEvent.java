@@ -21,5 +21,5 @@ package org.dockbox.hartshorn.server.minecraft.events.server;
  * The event fired when the server is initiating/initializing. Typically this is the first event
  * to be fired.
  */
-public class ServerInitEvent extends ServerEvent {
+public class ServerInitEvent implements ServerEvent {
 }

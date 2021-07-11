@@ -19,9 +19,12 @@ package org.dockbox.hartshorn.api;
 
 import org.dockbox.hartshorn.api.domain.MetaProvider;
 import org.dockbox.hartshorn.api.domain.TypedOwner;
+import org.dockbox.hartshorn.test.HartshornRunner;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
+@ExtendWith(HartshornRunner.class)
 public class SimpleMetaProviderTests {
 
     @Test

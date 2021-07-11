@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.playersettings.annotations;
 
-import org.dockbox.hartshorn.di.annotations.ServiceActivator;
+import org.dockbox.hartshorn.di.annotations.service.ServiceActivator;
 
 @ServiceActivator
 public @interface UseSettings {

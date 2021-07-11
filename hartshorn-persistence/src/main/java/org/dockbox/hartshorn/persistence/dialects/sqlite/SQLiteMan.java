@@ -21,8 +21,8 @@ import org.dockbox.hartshorn.api.domain.FileTypes;
 import org.dockbox.hartshorn.persistence.SQLMan;
 import org.dockbox.hartshorn.persistence.exceptions.InvalidConnectionException;
 import org.dockbox.hartshorn.di.binding.Bindings;
-import org.dockbox.hartshorn.di.annotations.Named;
-import org.dockbox.hartshorn.di.annotations.Binds;
+import org.dockbox.hartshorn.di.annotations.inject.Named;
+import org.dockbox.hartshorn.di.annotations.inject.Binds;
 import org.dockbox.hartshorn.di.properties.InjectorProperty;
 import org.jooq.SQLDialect;
 
@@ -67,7 +67,7 @@ public class SQLiteMan extends SQLMan<Path> {
     public void stateEnabling(InjectorProperty<?>... properties) {
         Bindings.value(PATH_KEY, Path.class, properties)
                 .present(path -> this.filePath = path)
-                .cause(() -> new IllegalArgumentException("Missing value for '" + PATH_KEY + "'"));
+                .orThrow(() -> new IllegalArgumentException("Missing value for '" + PATH_KEY + "'"));
 
         super.stateEnabling(properties);
     }

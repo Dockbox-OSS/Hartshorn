@@ -35,8 +35,7 @@ public abstract class AbstractPlotFlag<T> implements PlotFlag<T> {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof PlotFlag)) return false;
-        PlotFlag<?> that = (PlotFlag<?>) o;
+        if (!(o instanceof PlotFlag<?> that)) return false;
         return this.getId().equals(that.getId());
     }
 
