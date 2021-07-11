@@ -25,6 +25,7 @@ import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.entity.annotations.Property;
 import org.dockbox.hartshorn.util.Reflect;
 
+import java.lang.reflect.AnnotatedElement;
 import java.util.function.Function;
 
 public class PropertyAliasIntrospector extends JacksonAnnotationIntrospector {
@@ -40,9 +41,13 @@ public class PropertyAliasIntrospector extends JacksonAnnotationIntrospector {
     }
 
     private PropertyName findName(Annotated a, Function<Annotated, PropertyName> defaultValue) {
-        final Exceptional<Property> annotation = Reflect.annotation(a.getAnnotated(), Property.class);
-        if (annotation.present()) {
-            return new PropertyName(annotation.get().value());
+        final AnnotatedElement annotated = a.getAnnotated();
+        
+        if (annotated != null) {
+            final Exceptional<Property> annotation = Reflect.annotation(annotated, Property.class);
+            if (annotation.present()) {
+                return new PropertyName(annotation.get().value());
+            }
         }
         return defaultValue.apply(a);
     }
