@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.playeractions;
 
 import org.dockbox.hartshorn.api.i18n.annotations.Resource;
 import org.dockbox.hartshorn.api.i18n.common.ResourceEntry;
-import org.dockbox.hartshorn.di.annotations.Service;
+import org.dockbox.hartshorn.di.annotations.service.Service;
 
 @Service(owner = PlayerActions.class)
 public interface PlayerActionResources {

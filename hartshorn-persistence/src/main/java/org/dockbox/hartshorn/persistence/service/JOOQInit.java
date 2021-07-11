@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.persistence.service;
 
 import org.dockbox.hartshorn.api.annotations.PostBootstrap;
 import org.dockbox.hartshorn.api.annotations.UseBootstrap;
-import org.dockbox.hartshorn.di.annotations.Service;
+import org.dockbox.hartshorn.di.annotations.service.Service;
 import org.dockbox.hartshorn.persistence.annotations.UsePersistence;
 import org.jooq.SQLDialect;
 import org.jooq.impl.DefaultDSLContext;

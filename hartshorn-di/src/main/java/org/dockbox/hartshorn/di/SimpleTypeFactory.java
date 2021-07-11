@@ -18,7 +18,7 @@
 package org.dockbox.hartshorn.di;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.di.annotations.Named;
+import org.dockbox.hartshorn.di.annotations.inject.Named;
 import org.dockbox.hartshorn.di.binding.Bindings;
 import org.dockbox.hartshorn.di.inject.wired.WireContext;
 import org.dockbox.hartshorn.di.properties.BindingMetaProperty;

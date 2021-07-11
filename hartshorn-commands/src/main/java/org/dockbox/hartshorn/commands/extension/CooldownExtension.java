@@ -23,8 +23,9 @@ import org.dockbox.hartshorn.commands.annotations.Cooldown;
 import org.dockbox.hartshorn.commands.context.CommandContext;
 import org.dockbox.hartshorn.commands.context.CommandExecutorContext;
 import org.dockbox.hartshorn.commands.source.CommandSource;
-import org.dockbox.hartshorn.di.annotations.Wired;
+import org.dockbox.hartshorn.di.annotations.inject.Wired;
 import org.dockbox.hartshorn.util.HartshornUtils;
+import org.dockbox.hartshorn.util.Reflect;
 
 public class CooldownExtension implements CommandExecutorExtension {
 
@@ -39,7 +40,7 @@ public class CooldownExtension implements CommandExecutorExtension {
         final String id = this.id((Identifiable) sender, context);
         if (HartshornUtils.isInCooldown(id)) return ExtensionResult.reject(this.resources.getCooldownActive());
         else {
-            Cooldown cooldown = executorContext.method().getAnnotation(Cooldown.class);
+            Cooldown cooldown = Reflect.annotation(executorContext.method(), Cooldown.class).get();
             HartshornUtils.cooldown(id, cooldown.duration(), cooldown.unit());
             return ExtensionResult.accept();
         }
@@ -47,6 +48,6 @@ public class CooldownExtension implements CommandExecutorExtension {
 
     @Override
     public boolean extend(CommandExecutorContext context) {
-        return context.method().isAnnotationPresent(Cooldown.class);
+        return Reflect.annotation(context.method(), Cooldown.class).present();
     }
 }

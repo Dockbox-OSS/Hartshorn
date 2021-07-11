@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.toolbinding;
 
 import org.dockbox.hartshorn.api.i18n.annotations.Resource;
 import org.dockbox.hartshorn.api.i18n.common.ResourceEntry;
-import org.dockbox.hartshorn.di.annotations.Service;
+import org.dockbox.hartshorn.di.annotations.service.Service;
 
 @Service(owner = ToolBinding.class)
 public interface ToolBindingResources {

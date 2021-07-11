@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.commands;
 
 import org.dockbox.hartshorn.api.i18n.annotations.Resource;
 import org.dockbox.hartshorn.api.i18n.common.ResourceEntry;
-import org.dockbox.hartshorn.di.annotations.Service;
+import org.dockbox.hartshorn.di.annotations.service.Service;
 
 @Service(owner = CommandGateway.class)
 public interface CommandResources {

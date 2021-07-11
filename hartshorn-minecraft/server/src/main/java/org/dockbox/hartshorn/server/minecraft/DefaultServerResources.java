@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.server.minecraft;
 
 import org.dockbox.hartshorn.api.i18n.annotations.Resource;
 import org.dockbox.hartshorn.api.i18n.common.ResourceEntry;
-import org.dockbox.hartshorn.di.annotations.Service;
+import org.dockbox.hartshorn.di.annotations.service.Service;
 import org.jetbrains.annotations.NotNull;
 
 @Service(owner = DefaultServer.class)
@@ -29,10 +29,9 @@ public interface DefaultServerResources {
             &m$2====================
             $2Name : $1{0}
             $2ID : $1{1}
-            $2Dependencies : $1{2}
             &m$2====================
             """)
-    ResourceEntry getInfoServiceBlock(String name, String id, String dependencies);
+    ResourceEntry getInfoServiceBlock(String name, String id);
 
     @Resource(value = "$4Could not find service with ID '{0}'")
     ResourceEntry getInfoServiceUnknown();

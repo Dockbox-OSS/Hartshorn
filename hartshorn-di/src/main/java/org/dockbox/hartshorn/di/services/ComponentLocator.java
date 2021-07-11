@@ -15,15 +15,26 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.util;
+package org.dockbox.hartshorn.di.services;
 
-import org.dockbox.hartshorn.util.annotations.Demo;
+import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.di.ComponentType;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Unmodifiable;
 
-public abstract class ParentTestType {
+import java.lang.annotation.Annotation;
+import java.util.Collection;
 
-    private final String parentField = "parentField";
+public interface ComponentLocator {
 
-    @Demo
-    public void parentMethod() {}
+    @NotNull
+    @Unmodifiable
+    Collection<Class<?>> locate(String prefix);
+    @NotNull
+    @Unmodifiable
+    Collection<Class<?>> locate(String prefix, ComponentType type);
+    Collection<ComponentContainer> containers();
+    Exceptional<ComponentContainer> container(Class<?> type);
 
+    Collection<Class<? extends Annotation>> decorators();
 }

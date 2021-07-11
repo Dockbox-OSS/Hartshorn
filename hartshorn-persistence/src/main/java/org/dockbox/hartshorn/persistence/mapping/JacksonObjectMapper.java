@@ -35,7 +35,7 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLParser;
 import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.entity.annotations.Entity;
-import org.dockbox.hartshorn.di.annotations.Binds;
+import org.dockbox.hartshorn.di.annotations.inject.Binds;
 import org.dockbox.hartshorn.persistence.FileManager;
 import org.dockbox.hartshorn.persistence.FileType;
 import org.dockbox.hartshorn.persistence.PersistentCapable;
@@ -156,8 +156,10 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
 
     private ObjectWriter getWriter(Object content) {
         ObjectWriter writer = this.configureMapper().writerWithDefaultPrettyPrinter();
-        if (JacksonObjectMapper.roots.contains(this.getFileType()) && content.getClass().isAnnotationPresent(Entity.class)) {
-            final Entity annotation = content.getClass().getAnnotation(Entity.class);
+        final Exceptional<Entity> annotated = Reflect.annotation(content.getClass(), Entity.class);
+
+        if (JacksonObjectMapper.roots.contains(this.getFileType()) && annotated.present()) {
+            final Entity annotation = annotated.get();
             writer = writer.withRootName(annotation.value());
         }
         return writer;

@@ -23,7 +23,7 @@ import org.dockbox.hartshorn.api.annotations.UseBootstrap;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.events.EventBus;
 import org.dockbox.hartshorn.api.events.parents.Event;
-import org.dockbox.hartshorn.di.annotations.Service;
+import org.dockbox.hartshorn.di.annotations.service.Service;
 import org.dockbox.hartshorn.server.minecraft.events.packet.PacketEvent;
 import org.dockbox.hartshorn.server.minecraft.packets.annotations.Packet;
 import org.dockbox.hartshorn.util.Reflect;
@@ -38,7 +38,7 @@ class PacketValidationService {
             for (Class<?> param : method.getParameterTypes()) {
                 if (Reflect.assigns(Event.class, param)) {
                     if (Reflect.assigns(PacketEvent.class, param)
-                            && !method.isAnnotationPresent(Packet.class)) {
+                            && Reflect.annotation(method, Packet.class).absent()) {
                         return Exceptional.of(false, new IllegalArgumentException("Needs @Packet annotation: " + method.toGenericString()));
                     }
                     return Exceptional.of(true);

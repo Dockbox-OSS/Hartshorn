@@ -20,6 +20,9 @@ package org.dockbox.hartshorn.di.inject.modules;
 import com.google.inject.AbstractModule;
 import com.google.inject.Key;
 
+import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.util.Reflect;
+
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -37,7 +40,8 @@ public class GuicePrefixScannerModule extends AbstractModule {
     @Override
     protected void configure() {
         for (Entry<Key<?>, Class<?>> entry : this.bindings.entrySet()) {
-            if (entry.getKey().getTypeLiteral().getRawType().isAnnotationPresent(Singleton.class)) {
+            final Exceptional<Singleton> annotation = Reflect.annotation(entry.getKey().getTypeLiteral().getRawType(), Singleton.class);
+            if (annotation.present()) {
                 this.bind((Key<Object>) entry.getKey()).to(entry.getValue()).asEagerSingleton();
             } else {
                 this.bind((Key<Object>) entry.getKey()).to(entry.getValue());

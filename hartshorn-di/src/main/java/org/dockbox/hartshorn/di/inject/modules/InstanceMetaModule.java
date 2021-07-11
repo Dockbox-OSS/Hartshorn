@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.di.inject.modules;
 
 import com.google.inject.AbstractModule;
 
-import org.dockbox.hartshorn.di.annotations.Named;
+import org.dockbox.hartshorn.di.annotations.inject.Named;
 
 public class InstanceMetaModule<T> extends AbstractModule {
 

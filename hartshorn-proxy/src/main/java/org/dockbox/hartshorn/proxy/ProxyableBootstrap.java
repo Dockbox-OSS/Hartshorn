@@ -50,8 +50,8 @@ public final class ProxyableBootstrap {
                 return;
             }
 
-            Proxy delegationInfo = proxy.getAnnotation(Proxy.class);
-            if (delegationInfo.value().isAnnotationPresent(Proxy.class)) {
+            Proxy delegationInfo = Reflect.annotation(proxy, Proxy.class).get();
+            if (Reflect.annotation(delegationInfo.value(), Proxy.class).present()) {
                 Hartshorn.log().warn("Proxy target cannot be another delegate [" + proxy.getCanonicalName() + "]");
                 return;
             }
@@ -65,7 +65,7 @@ public final class ProxyableBootstrap {
         @Unmodifiable
         Collection<Method> targets = Reflect.methods(proxyClass, Target.class, i -> true, false);
 
-        Proxy proxy = proxyClass.getAnnotation(Proxy.class);
+        Proxy proxy = Reflect.annotation(proxyClass, Proxy.class).get();
         targets.forEach(target -> ProxyableBootstrap.delegateMethod(proxyClass, proxy.value(), target));
     }
 
@@ -82,7 +82,7 @@ public final class ProxyableBootstrap {
         // present on the
         // target method.
         Class<?>[] arguments = HartshornUtils.asList(source.getParameters()).stream()
-                .filter(arg -> !arg.isAnnotationPresent(Instance.class))
+                .filter(arg -> Reflect.annotation(arg, Instance.class).absent())
                 .map(Parameter::getType)
                 .toArray(Class<?>[]::new);
 
@@ -91,7 +91,7 @@ public final class ProxyableBootstrap {
         // the same method, so the method names are different. The @Target annotation allows setting the
         // method name
         // manually.
-        Target target = source.getAnnotation(Target.class);
+        Target target = Reflect.annotation(source, Target.class).get();
         if (!target.method().isEmpty()) methodName = target.method();
         try {
             Method targetMethod = proxyTargetClass.getDeclaredMethod(methodName, arguments);
@@ -147,7 +147,7 @@ public final class ProxyableBootstrap {
 
     private static Object[] prepareArguments(Method method, Object[] args, Object instance) {
         List<Object> arguments = HartshornUtils.emptyList();
-        if (method.getParameterCount() >= 1 && method.getParameters()[0].isAnnotationPresent(Instance.class)) {
+        if (method.getParameterCount() >= 1 && Reflect.annotation(method.getParameters()[0], Instance.class).present()) {
             arguments.add(instance);
         }
         arguments.addAll(Arrays.asList(args));

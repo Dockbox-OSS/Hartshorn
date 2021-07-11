@@ -34,6 +34,7 @@ import org.dockbox.hartshorn.commands.events.CommandEvent.Before;
 import org.dockbox.hartshorn.commands.source.CommandSource;
 import org.dockbox.hartshorn.di.context.DefaultContext;
 import org.dockbox.hartshorn.util.HartshornUtils;
+import org.dockbox.hartshorn.util.Reflect;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.InvocationTargetException;
@@ -62,13 +63,15 @@ public class MethodCommandExecutorContext extends DefaultContext implements Comm
     private Map<String, ParameterContext> parameters;
 
     public MethodCommandExecutorContext(Method method, Class<?> type) {
-        if (!method.isAnnotationPresent(Command.class)) throw new IllegalArgumentException("Provided method is not a command handler");
+        final Exceptional<Command> annotated = Reflect.annotation(method, Command.class);
+        if (annotated.absent()) throw new IllegalArgumentException("Provided method is not a command handler");
         this.method = method;
         this.type = type;
-        this.command = method.getAnnotation(Command.class);
+        this.command = annotated.get();
 
-        if (type.isAnnotationPresent(Command.class)) {
-            this.parent = type.getAnnotation(Command.class);
+        final Exceptional<Command> annotation = Reflect.annotation(type, Command.class);
+        if (annotation.present()) {
+            this.parent = annotation.get();
             this.isChild = true;
         }
         else {

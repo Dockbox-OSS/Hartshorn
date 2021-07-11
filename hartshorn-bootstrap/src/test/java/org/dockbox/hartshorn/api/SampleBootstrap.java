@@ -21,7 +21,7 @@ import com.google.common.collect.Multimap;
 
 import org.dockbox.hartshorn.di.InjectConfiguration;
 import org.dockbox.hartshorn.di.Modifier;
-import org.dockbox.hartshorn.di.annotations.InjectPhase;
+import org.dockbox.hartshorn.di.annotations.inject.InjectPhase;
 
 import java.lang.annotation.Annotation;
 import java.util.List;

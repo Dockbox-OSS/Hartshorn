@@ -42,13 +42,14 @@ import org.dockbox.hartshorn.api.domain.tuple.Triad;
 import org.dockbox.hartshorn.api.exceptions.Except;
 import org.dockbox.hartshorn.api.i18n.common.ResourceEntry;
 import org.dockbox.hartshorn.api.i18n.text.Text;
-import org.dockbox.hartshorn.di.annotations.Wired;
+import org.dockbox.hartshorn.di.annotations.inject.Wired;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.discord.annotations.DiscordCommand;
 import org.dockbox.hartshorn.discord.annotations.DiscordCommand.ListeningLevel;
 import org.dockbox.hartshorn.discord.templates.MessageTemplate;
 import org.dockbox.hartshorn.discord.templates.Template;
 import org.dockbox.hartshorn.util.HartshornUtils;
+import org.dockbox.hartshorn.util.Reflect;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.InvocationTargetException;
@@ -164,14 +165,14 @@ public abstract class DefaultDiscordUtils implements DiscordUtils {
     @Override
     public void registerCommandListener(@NotNull Class<?> type) {
         Arrays.stream(type.getDeclaredMethods())
-                .filter(m -> m.isAnnotationPresent(DiscordCommand.class))
+                .filter(m -> Reflect.annotation(m, DiscordCommand.class).present())
                 .filter(m -> {
                     boolean correctParameterCount = 1 == m.getParameterCount();
                     if (!correctParameterCount) return false;
                     return m.getParameters()[0].getType().equals(DiscordCommandContext.class);
                 })
                 .forEach(method -> {
-                    DiscordCommand annotation = method.getAnnotation(DiscordCommand.class);
+                    DiscordCommand annotation = Reflect.annotation(method, DiscordCommand.class).get();
                     String command = annotation.command();
                     Triad<DiscordCommand, Method, Class<?>> information = new Triad<>(annotation, method, type);
 

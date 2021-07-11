@@ -15,7 +15,9 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.di.annotations;
+package org.dockbox.hartshorn.di.annotations.activate;
+
+import org.dockbox.hartshorn.di.annotations.service.ServiceActivator;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -23,7 +25,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.CONSTRUCTOR, ElementType.FIELD, ElementType.METHOD})
-public @interface Wired {
-    boolean enable() default true;
+@Target(ElementType.TYPE)
+@ServiceActivator
+public @interface UseBeanProvision {
 }

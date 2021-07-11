@@ -17,6 +17,9 @@
 
 package org.dockbox.hartshorn.util;
 
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
+
 import org.reflections.Reflections;
 
 import java.lang.annotation.Annotation;
@@ -27,6 +30,8 @@ import java.util.Set;
 public class PrefixContext {
 
     private final Map<String, Reflections> reflectedPrefixes = HartshornUtils.emptyConcurrentMap();
+    private final Multimap<Class<? extends Annotation>, Class<? extends Annotation>> annotationHierarchy = ArrayListMultimap.create();
+    private final Map<Class<? extends Annotation>, Set<Class<? extends Annotation>>> compositeCache = HartshornUtils.emptyConcurrentMap();
 
     public PrefixContext(String initialPrefix) {
         this.prefix(initialPrefix);
@@ -49,7 +54,7 @@ public class PrefixContext {
     }
 
     /**
-     * Gets types decorated with a given annotation, both classes and annotations. The prefix is
+     * Gets types decorated with a given annotation, both classes and annotationsWith. The prefix is
      * typically a package. If the annotation is present on a parent of the type, the highest level
      * member will be included.
      *
@@ -65,7 +70,7 @@ public class PrefixContext {
     }
 
     /**
-     * Gets types decorated with a given annotation, both classes and annotations. The prefix is
+     * Gets types decorated with a given annotation, both classes and annotationsWith. The prefix is
      * typically a package. If the annotation is present on a parent of the type, it will only be
      * included if {@code skipParents} is false.
      *
@@ -80,8 +85,12 @@ public class PrefixContext {
      */
     public <A extends Annotation> Collection<Class<?>> types(Class<A> annotation, boolean skipParents) {
         Set<Class<?>> types = HartshornUtils.emptySet();
+        final Set<Class<? extends Annotation>> extensions = this.extensions(annotation);
+
         for (Reflections reflections : this.reflectedPrefixes.values()) {
-            types.addAll(reflections.getTypesAnnotatedWith(annotation, !skipParents));
+            for (Class<? extends Annotation> extension : extensions) {
+                types.addAll(reflections.getTypesAnnotatedWith(extension, !skipParents));
+            }
         }
         return HartshornUtils.asList(types);
     }
@@ -104,5 +113,22 @@ public class PrefixContext {
         }
         return HartshornUtils.asList(subTypes);
     }
+
+    private <A extends Annotation> Set<Class<? extends Annotation>> extensions(Class<A> annotation) {
+        if (this.annotationHierarchy.isEmpty()) {
+            for (Class<? extends Annotation> annotationType : this.children(Annotation.class)) {
+                for (Class<? extends Annotation> selfOrParent : AnnotationHelper.getAnnotationHierarchy(annotationType)) {
+                    this.annotationHierarchy.put(selfOrParent, annotationType);
+                }
+            }
+        }
+
+        final Collection<Class<? extends Annotation>> hierarchy = this.annotationHierarchy.get(annotation);
+
+        if (hierarchy.isEmpty()) return HartshornUtils.asUnmodifiableSet(annotation);
+        else return HartshornUtils.asUnmodifiableSet(hierarchy);
+    }
+
+
 
 }

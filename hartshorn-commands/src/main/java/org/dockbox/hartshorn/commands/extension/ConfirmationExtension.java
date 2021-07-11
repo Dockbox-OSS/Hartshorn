@@ -26,7 +26,8 @@ import org.dockbox.hartshorn.commands.annotations.WithConfirmation;
 import org.dockbox.hartshorn.commands.context.CommandContext;
 import org.dockbox.hartshorn.commands.context.CommandExecutorContext;
 import org.dockbox.hartshorn.commands.source.CommandSource;
-import org.dockbox.hartshorn.di.annotations.Wired;
+import org.dockbox.hartshorn.di.annotations.inject.Wired;
+import org.dockbox.hartshorn.util.Reflect;
 
 public class ConfirmationExtension implements CommandExecutorExtension {
 
@@ -55,6 +56,6 @@ public class ConfirmationExtension implements CommandExecutorExtension {
 
     @Override
     public boolean extend(CommandExecutorContext context) {
-        return context.method().isAnnotationPresent(WithConfirmation.class);
+        return Reflect.annotation(context.method(), WithConfirmation.class).present();
     }
 }

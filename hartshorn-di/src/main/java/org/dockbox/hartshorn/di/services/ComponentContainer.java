@@ -15,8 +15,29 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.util;
+package org.dockbox.hartshorn.di.services;
 
-public enum TestEnumType {
-    A, B, C
+import org.dockbox.hartshorn.di.ComponentType;
+
+import java.lang.annotation.Annotation;
+import java.util.List;
+
+public interface ComponentContainer {
+
+    String getId();
+    String getName();
+
+    boolean enabled();
+
+    Class<?> getType();
+    Class<?> owner();
+
+    List<Class<? extends Annotation>> activators();
+    boolean hasActivator();
+
+    boolean hasActivator(Class<? extends Annotation> activator);
+
+    boolean singleton();
+
+    ComponentType componentType();
 }

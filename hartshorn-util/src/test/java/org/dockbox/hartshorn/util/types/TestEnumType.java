@@ -15,8 +15,8 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.di.annotations;
+package org.dockbox.hartshorn.util.types;
 
-public enum InjectPhase {
-    EARLY, LATE
+public enum TestEnumType {
+    A, B, C
 }

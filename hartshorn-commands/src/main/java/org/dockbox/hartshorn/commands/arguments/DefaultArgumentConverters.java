@@ -25,10 +25,10 @@ import org.dockbox.hartshorn.api.i18n.common.Language;
 import org.dockbox.hartshorn.api.i18n.common.ResourceEntry;
 import org.dockbox.hartshorn.api.i18n.text.Text;
 import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
-import org.dockbox.hartshorn.di.annotations.Service;
+import org.dockbox.hartshorn.di.annotations.service.Service;
 import org.dockbox.hartshorn.di.properties.InjectableType;
 import org.dockbox.hartshorn.di.properties.InjectorProperty;
-import org.dockbox.hartshorn.di.services.ServiceContainer;
+import org.dockbox.hartshorn.di.services.ComponentContainer;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.jetbrains.annotations.NonNls;
 
@@ -142,14 +142,14 @@ public final class DefaultArgumentConverters implements InjectableType {
             .withConverter(in -> Exceptional.of(Text.of(in)))
             .build();
 
-    public static final ArgumentConverter<ServiceContainer> SERVICE = CommandValueConverter.builder(ServiceContainer.class, "service")
+    public static final ArgumentConverter<ComponentContainer> SERVICE = CommandValueConverter.builder(ComponentContainer.class, "service")
             .withConverter(in -> Exceptional.of(Hartshorn.context()
                     .locator().containers().stream()
                     .filter(container -> container.getId().equalsIgnoreCase(in))
                     .findFirst()))
             .withSuggestionProvider((in) -> Hartshorn.context()
                     .locator().containers().stream()
-                    .map(ServiceContainer::getId)
+                    .map(ComponentContainer::getId)
                     .filter(id -> id.toLowerCase(Locale.ROOT).startsWith(in.toLowerCase(Locale.ROOT)))
                     .toList())
             .build();

@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.di.types;
 
-import org.dockbox.hartshorn.di.annotations.Wired;
+import org.dockbox.hartshorn.di.annotations.inject.Wired;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

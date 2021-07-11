@@ -23,7 +23,7 @@ import org.dockbox.hartshorn.api.annotations.UseBootstrap;
 import org.dockbox.hartshorn.api.events.annotations.Posting;
 import org.dockbox.hartshorn.api.events.annotations.UseEvents;
 import org.dockbox.hartshorn.api.events.parents.Event;
-import org.dockbox.hartshorn.di.annotations.Service;
+import org.dockbox.hartshorn.di.annotations.service.Service;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.dockbox.hartshorn.util.Reflect;
 
@@ -43,7 +43,7 @@ public class EventValidator {
         List<Class<? extends Event>> postedEvents = HartshornUtils.emptyList();
 
         for (Class<?> bridge : Reflect.types(Posting.class)) {
-            final Posting posting = bridge.getAnnotation(Posting.class);
+            final Posting posting = Reflect.annotation(bridge, Posting.class).get();
             postedEvents.addAll(Arrays.asList(posting.value()));
         }
 

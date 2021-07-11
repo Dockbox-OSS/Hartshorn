@@ -15,18 +15,20 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.di.annotations;
-
-import com.google.inject.BindingAnnotation;
+package org.dockbox.hartshorn.util.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@BindingAnnotation
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.FIELD, ElementType.PARAMETER, ElementType.METHOD })
-public @interface Named {
+@Target(ElementType.METHOD)
+public @interface AliasFor {
     String value();
+
+    Class<?> target() default DefaultThis.class;
+
+    final class DefaultThis {
+    }
 }

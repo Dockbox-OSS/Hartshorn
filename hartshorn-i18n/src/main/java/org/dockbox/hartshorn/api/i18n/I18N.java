@@ -18,10 +18,12 @@
 package org.dockbox.hartshorn.api.i18n;
 
 import org.dockbox.hartshorn.api.Hartshorn;
+import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.domain.MetaProvider;
 import org.dockbox.hartshorn.api.domain.TypedOwner;
 import org.dockbox.hartshorn.api.i18n.annotations.Resource;
 import org.dockbox.hartshorn.util.HartshornUtils;
+import org.dockbox.hartshorn.util.Reflect;
 
 import java.lang.reflect.Method;
 
@@ -43,8 +45,9 @@ public final class I18N {
     }
 
     private static String extract(Method method, String prefix) {
-        if (method.isAnnotationPresent(Resource.class)) {
-            String key = method.getAnnotation(Resource.class).key();
+        final Exceptional<Resource> resource = Reflect.annotation(method, Resource.class);
+        if (resource.present()) {
+            String key = resource.get().key();
             if (!"".equals(key)) return key;
         }
         String keyJoined = method.getName();

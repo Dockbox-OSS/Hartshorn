@@ -17,8 +17,8 @@
 
 package org.dockbox.hartshorn.di.types.meta;
 
-import org.dockbox.hartshorn.di.annotations.Named;
-import org.dockbox.hartshorn.di.annotations.Binds;
+import org.dockbox.hartshorn.di.annotations.inject.Named;
+import org.dockbox.hartshorn.di.annotations.inject.Binds;
 import org.dockbox.hartshorn.di.types.SampleInterface;
 
 @Binds(value = SampleInterface.class, named = @Named(value = "meta"))

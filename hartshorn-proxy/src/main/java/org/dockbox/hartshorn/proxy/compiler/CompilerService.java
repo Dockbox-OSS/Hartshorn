@@ -18,7 +18,7 @@
 package org.dockbox.hartshorn.proxy.compiler;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.di.annotations.Service;
+import org.dockbox.hartshorn.di.annotations.service.Service;
 
 import java.util.Map;
 

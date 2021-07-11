@@ -29,8 +29,8 @@ import org.dockbox.hartshorn.di.Modifier;
 import org.dockbox.hartshorn.di.ProvisionFailure;
 import org.dockbox.hartshorn.di.TypeFactory;
 import org.dockbox.hartshorn.di.adapter.ContextAdapter;
-import org.dockbox.hartshorn.di.annotations.Named;
-import org.dockbox.hartshorn.di.annotations.ServiceActivator;
+import org.dockbox.hartshorn.di.annotations.inject.Named;
+import org.dockbox.hartshorn.di.annotations.service.ServiceActivator;
 import org.dockbox.hartshorn.di.binding.Bindings;
 import org.dockbox.hartshorn.di.inject.BeanContext;
 import org.dockbox.hartshorn.di.inject.Binder;
@@ -40,7 +40,7 @@ import org.dockbox.hartshorn.di.inject.wired.WireContext;
 import org.dockbox.hartshorn.di.properties.InjectableType;
 import org.dockbox.hartshorn.di.properties.InjectorProperty;
 import org.dockbox.hartshorn.di.properties.UseFactory;
-import org.dockbox.hartshorn.di.services.ServiceLocator;
+import org.dockbox.hartshorn.di.services.ComponentLocator;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.dockbox.hartshorn.util.Reflect;
 import org.jetbrains.annotations.Nullable;
@@ -70,7 +70,7 @@ public class HartshornApplicationContext extends ManagedHartshornContext {
 
         this.bind(ApplicationContext.class, this);
         this.bind(MetaProvider.class, this.metaProvider);
-        this.bind(ServiceLocator.class, this.locator());
+        this.bind(ComponentLocator.class, this.locator());
     }
 
     protected void modify(List<Modifier> modifiers) {
@@ -167,7 +167,8 @@ public class HartshornApplicationContext extends ManagedHartshornContext {
 
     @Override
     public boolean hasActivator(Class<? extends Annotation> activator) {
-        if (!activator.isAnnotationPresent(ServiceActivator.class))
+        final Exceptional<ServiceActivator> annotation = Reflect.annotation(activator, ServiceActivator.class);
+        if (annotation.absent())
             throw new IllegalArgumentException("Requested activator " + activator.getSimpleName() + " is not decorated with @ServiceActivator");
 
         if (this.modifiers.contains(DefaultModifiers.ACTIVATE_ALL)) return true;
@@ -175,7 +176,7 @@ public class HartshornApplicationContext extends ManagedHartshornContext {
     }
 
     @Override
-    public ServiceLocator locator() {
+    public ComponentLocator locator() {
         return this.adapter.getLocator();
     }
 

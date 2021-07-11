@@ -21,7 +21,7 @@ import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.tuple.Vector3N;
 import org.dockbox.hartshorn.api.keys.KeyHolder;
 import org.dockbox.hartshorn.api.keys.PersistentDataHolder;
-import org.dockbox.hartshorn.di.annotations.Required;
+import org.dockbox.hartshorn.di.annotations.inject.Required;
 import org.dockbox.hartshorn.server.minecraft.dimension.Block;
 import org.dockbox.hartshorn.server.minecraft.dimension.world.World;
 

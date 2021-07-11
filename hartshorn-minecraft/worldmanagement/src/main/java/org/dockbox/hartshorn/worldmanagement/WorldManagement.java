@@ -20,20 +20,18 @@ package org.dockbox.hartshorn.worldmanagement;
 import org.dockbox.hartshorn.api.events.annotations.Listener;
 import org.dockbox.hartshorn.api.task.TaskRunner;
 import org.dockbox.hartshorn.commands.annotations.Command;
-import org.dockbox.hartshorn.di.annotations.Service;
-import org.dockbox.hartshorn.di.annotations.Wired;
+import org.dockbox.hartshorn.di.annotations.inject.Wired;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
-import org.dockbox.hartshorn.server.minecraft.events.server.ServerReloadEvent;
-import org.dockbox.hartshorn.server.minecraft.events.server.ServerStartedEvent;
 import org.dockbox.hartshorn.server.minecraft.dimension.Worlds;
 import org.dockbox.hartshorn.server.minecraft.dimension.position.Location;
 import org.dockbox.hartshorn.server.minecraft.dimension.world.World;
 import org.dockbox.hartshorn.server.minecraft.events.player.PlayerPortalEvent;
+import org.dockbox.hartshorn.server.minecraft.events.server.ServerReloadEvent;
+import org.dockbox.hartshorn.server.minecraft.events.server.ServerStartedEvent;
 
 import java.util.concurrent.TimeUnit;
 
 @Command(value = {"unloader", "wu"}, permission = WorldManagement.WORLD_MANAGER)
-@Service
 public class WorldManagement {
 
     @Wired

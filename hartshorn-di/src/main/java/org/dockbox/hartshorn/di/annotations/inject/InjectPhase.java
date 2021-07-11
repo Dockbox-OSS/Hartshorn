@@ -15,12 +15,8 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.util;
+package org.dockbox.hartshorn.di.annotations.inject;
 
-public class EmptyType {
-
-    public boolean isEmpty() {
-        return true;
-    }
-
+public enum InjectPhase {
+    EARLY, LATE
 }

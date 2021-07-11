@@ -15,26 +15,8 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.di.services;
+package org.dockbox.hartshorn.di;
 
-import java.lang.annotation.Annotation;
-import java.util.List;
-
-public interface ServiceContainer {
-
-    String getId();
-    String getName();
-    List<String> getDependencies();
-
-    boolean enabled();
-
-    Class<?> getType();
-    Class<?> owner();
-
-    List<Class<? extends Annotation>> activators();
-    boolean hasActivator();
-
-    boolean hasActivator(Class<? extends Annotation> activator);
-
-    boolean singleton();
+public enum ComponentType {
+    FUNCTIONAL, INJECTABLE
 }

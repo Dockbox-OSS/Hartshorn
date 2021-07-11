@@ -22,7 +22,7 @@ import org.dockbox.hartshorn.api.events.annotations.Listener;
 import org.dockbox.hartshorn.api.events.handle.EventHandlerRegistry;
 import org.dockbox.hartshorn.api.events.handle.SimpleEventWrapper;
 import org.dockbox.hartshorn.api.events.parents.Event;
-import org.dockbox.hartshorn.di.annotations.Binds;
+import org.dockbox.hartshorn.di.annotations.inject.Binds;
 import org.dockbox.hartshorn.util.Reflect;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.jetbrains.annotations.NotNull;
@@ -149,10 +149,10 @@ public class SimpleEventBus implements EventBus {
     protected static Set<EventWrapper> getInvokers(Class<?> type) {
         Set<EventWrapper> result = HartshornUtils.emptySet();
         for (Method method : Reflect.methods(type)) {
-            Listener annotation = Reflect.annotation(method, Listener.class);
-            if (null != annotation) {
+            Exceptional<Listener> annotation = Reflect.annotation(method, Listener.class);
+            if (annotation.present()) {
                 checkListenerMethod(method);
-                result.addAll(SimpleEventWrapper.create(type, method, annotation.value().getPriority()));
+                result.addAll(SimpleEventWrapper.create(type, method, annotation.get().value().getPriority()));
             }
         }
         return result;

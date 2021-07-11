@@ -24,7 +24,7 @@ import org.dockbox.hartshorn.api.i18n.common.ResourceEntry;
 import org.dockbox.hartshorn.api.i18n.text.Text;
 import org.dockbox.hartshorn.api.i18n.text.pagination.Pagination;
 import org.dockbox.hartshorn.commands.source.DiscordCommandSource;
-import org.dockbox.hartshorn.di.annotations.Wired;
+import org.dockbox.hartshorn.di.annotations.inject.Wired;
 
 public class JUnitDiscordCommandSource implements DiscordCommandSource {
 

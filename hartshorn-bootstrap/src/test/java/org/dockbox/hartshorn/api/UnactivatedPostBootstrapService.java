@@ -18,7 +18,7 @@
 package org.dockbox.hartshorn.api;
 
 import org.dockbox.hartshorn.api.annotations.PostBootstrap;
-import org.dockbox.hartshorn.di.annotations.Service;
+import org.dockbox.hartshorn.di.annotations.service.Service;
 
 @Service
 public interface UnactivatedPostBootstrapService {

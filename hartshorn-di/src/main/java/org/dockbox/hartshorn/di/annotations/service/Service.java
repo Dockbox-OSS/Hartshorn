@@ -15,14 +15,33 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.di.annotations;
+package org.dockbox.hartshorn.di.annotations.service;
 
+import org.dockbox.hartshorn.di.ComponentType;
+import org.dockbox.hartshorn.di.annotations.component.Component;
+import org.dockbox.hartshorn.util.annotations.Extends;
+
+import java.lang.annotation.Annotation;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.ANNOTATION_TYPE)
-public @interface ServiceActivator {
+@Target(ElementType.TYPE)
+@Extends(Component.class)
+@Component(type = ComponentType.FUNCTIONAL)
+public @interface Service {
+
+    String id() default "";
+
+    String name() default "";
+
+    boolean enabled() default true;
+
+    Class<?> owner() default Void.class;
+
+    boolean singleton() default true;
+
+    Class<? extends Annotation>[] activators() default Service.class;
 }

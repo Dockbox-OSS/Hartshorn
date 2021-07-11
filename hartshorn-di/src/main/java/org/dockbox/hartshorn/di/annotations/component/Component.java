@@ -15,11 +15,9 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.di.annotations;
+package org.dockbox.hartshorn.di.annotations.component;
 
-import org.dockbox.hartshorn.di.InjectableBootstrap;
-import org.dockbox.hartshorn.di.adapter.InjectSource;
-import org.dockbox.hartshorn.di.adapter.ServiceSource;
+import org.dockbox.hartshorn.di.ComponentType;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -28,10 +26,12 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface Activator {
-    InjectSource inject() default InjectSource.GUICE;
-    Class<? extends InjectableBootstrap> value();
-    String prefix() default "";
-    InjectConfig[] configs() default {};
-    ServiceSource services() default ServiceSource.DEFAULT;
+public @interface Component {
+
+    String id() default "";
+    String name() default "";
+    Class<?> owner() default Void.class;
+    boolean singleton() default false;
+    ComponentType type() default ComponentType.INJECTABLE;
+    boolean enabled() default true;
 }

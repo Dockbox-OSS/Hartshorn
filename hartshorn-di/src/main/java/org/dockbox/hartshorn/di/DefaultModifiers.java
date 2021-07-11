@@ -20,7 +20,7 @@ package org.dockbox.hartshorn.di;
 public enum DefaultModifiers implements Modifier {
     /*
      * Makes it so application activators do not need to have service activator
-     * annotations present, and will indicate all activators are present when
+     * annotationsWith present, and will indicate all activators are present when
      * requested.
      */
     ACTIVATE_ALL

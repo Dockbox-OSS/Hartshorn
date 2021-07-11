@@ -26,9 +26,9 @@ import org.dockbox.hartshorn.api.exceptions.Except;
 import org.dockbox.hartshorn.di.InjectConfiguration;
 import org.dockbox.hartshorn.di.InjectableBootstrap;
 import org.dockbox.hartshorn.di.Modifier;
-import org.dockbox.hartshorn.di.annotations.InjectPhase;
-import org.dockbox.hartshorn.di.annotations.Required;
-import org.dockbox.hartshorn.di.services.ServiceContainer;
+import org.dockbox.hartshorn.di.annotations.inject.InjectPhase;
+import org.dockbox.hartshorn.di.annotations.inject.Required;
+import org.dockbox.hartshorn.di.services.ComponentContainer;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.dockbox.hartshorn.util.Reflect;
 
@@ -97,13 +97,13 @@ public abstract class HartshornBootstrap extends InjectableBootstrap {
     }
 
     void addPostBootstrapActivation(Method method, Class<?> type) {
-        final Exceptional<ServiceContainer> container = Hartshorn.context().locator().container(type);
+        final Exceptional<ComponentContainer> container = Hartshorn.context().locator().container(type);
 
         if (container.present()) {
-            final ServiceContainer serviceContainer = container.get();
-            final List<Class<? extends Annotation>> activators = serviceContainer.activators();
+            final ComponentContainer componentContainer = container.get();
+            final List<Class<? extends Annotation>> activators = componentContainer.activators();
 
-            if (serviceContainer.hasActivator() && activators.stream().allMatch(this.getContext()::hasActivator))
+            if (componentContainer.hasActivator() && activators.stream().allMatch(this.getContext()::hasActivator))
                 this.postBootstrapActivations.add(method);
         }
     }
