@@ -99,8 +99,9 @@ public final class Reflect {
         if (instance == null) return Exceptional.empty();
         try {
             Field reflectedField = instance.getClass().getDeclaredField(field);
-            if (reflectedField.isAnnotationPresent(Property.class)) {
-                Property property = reflectedField.getAnnotation(Property.class);
+            final Exceptional<Property> annotation = Reflect.annotation(reflectedField, Property.class);
+            if (annotation.present()) {
+                Property property = annotation.get();
                 if (!"".equals(property.getter())) {
                     return run(instance, property.getter());
                 }
@@ -244,7 +245,7 @@ public final class Reflect {
         List<Method> annotatedMethods = HartshornUtils.emptyList();
         for (Method method : HartshornUtils.asList(skipParents ? clazz.getMethods() : clazz.getDeclaredMethods())) {
             method.setAccessible(true);
-            if (method.isAnnotationPresent(annotation) && rule.test(method.getAnnotation(annotation))) {
+            if (has(method, annotation) && rule.test(annotation(method, annotation).get())) {
                 annotatedMethods.add(method);
             }
         }
@@ -252,7 +253,7 @@ public final class Reflect {
     }
 
     /**
-     * Gets types decorated with a given annotation, both classes and annotations. The prefix is
+     * Gets types decorated with a given annotation, both classes and annotationsWith. The prefix is
      * typically a package. If the annotation is present on a parent of the type, the highest level
      * member will be included.
      *
@@ -268,7 +269,7 @@ public final class Reflect {
     }
 
     /**
-     * Gets types decorated with a given annotation, both classes and annotations. The prefix is
+     * Gets types decorated with a given annotation, both classes and annotationsWith. The prefix is
      * typically a package. If the annotation is present on a parent of the type, it will only be
      * included if {@code skipParents} is false.
      *
@@ -333,46 +334,8 @@ public final class Reflect {
      * @throws SecurityException
      *         the security exception
      */
-    public static <T extends Annotation> boolean has(Method method, Class<T> annotationClass) throws SecurityException {
-        return null != Reflect.annotation(method, annotationClass);
-    }
-
-    /**
-     * Gets annotation recursively.
-     *
-     * @param <T>
-     *         the type parameter
-     * @param method
-     *         the method
-     * @param annotationClass
-     *         the annotation class
-     *
-     * @return the annotation recursively
-     * @throws SecurityException
-     *         the security exception
-     */
-    public static <T extends Annotation> T annotation(Method method, Class<T> annotationClass) throws SecurityException {
-        T result;
-        if (null == (result = method.getAnnotation(annotationClass))) {
-            final String name = method.getName();
-            final Class<?>[] params = method.getParameterTypes();
-
-            Class<?> declaringClass = method.getDeclaringClass();
-            for (Class<?> supertype : Reflect.parents(declaringClass)) {
-                try {
-                    Method m = supertype.getDeclaredMethod(name, params);
-
-                    // Static method doesn't override
-                    if (Modifier.isStatic(m.getModifiers())) break;
-
-                    if (null != (result = m.getAnnotation(annotationClass))) break;
-                }
-                catch (NoSuchMethodException ignored) {
-                    // Current class doesn't have Reflect method
-                }
-            }
-        }
-        return result;
+    public static <T extends Annotation> boolean has(AnnotatedElement method, Class<T> annotationClass) throws SecurityException {
+        return Reflect.annotation(method, annotationClass).present();
     }
 
     /**
@@ -510,8 +473,9 @@ public final class Reflect {
     }
 
     public static boolean serializable(AnnotatedElement holder, Class<?> potentialReject, boolean throwIfRejected) {
-        if (holder.isAnnotationPresent(Entity.class)) {
-            Entity rejects = holder.getAnnotation(Entity.class);
+        final Exceptional<Entity> entity = Reflect.annotation(holder, Entity.class);
+        if (entity.present()) {
+            Entity rejects = entity.get();
             if (!rejects.serializable()) {
                 if (throwIfRejected) {
                     String name = "Generic annotated element";
@@ -535,8 +499,9 @@ public final class Reflect {
 
     public static void set(Field field, Object to, Object value) {
         try {
-            if (field.isAnnotationPresent(Property.class)) {
-                Property property = field.getAnnotation(Property.class);
+            final Exceptional<Property> annotation = Reflect.annotation(field, Property.class);
+            if (annotation.present()) {
+                Property property = annotation.get();
                 if (!"".equals(property.setter())) {
                     Method setter = to.getClass().getDeclaredMethod(property.setter(), value.getClass());
                     setter.setAccessible(true);
@@ -555,7 +520,7 @@ public final class Reflect {
     public static Collection<Field> fields(Class<?> type, Class<? extends Annotation> annotation) {
         Collection<Field> fields = new ArrayList<>();
         for (Field declaredField : type.getDeclaredFields()) {
-            if (declaredField.isAnnotationPresent(annotation)) fields.add(declaredField);
+            if (Reflect.annotation(declaredField, annotation).present()) fields.add(declaredField);
         }
         if (type.getSuperclass() != null) fields.addAll(fields(type.getSuperclass(), annotation));
         return fields;
@@ -565,7 +530,7 @@ public final class Reflect {
         Collection<Constructor<T>> constructors = HartshornUtils.emptyList();
         //noinspection unchecked
         for (Constructor<T> constructor : (Constructor<T>[]) type.getDeclaredConstructors()) {
-            if (constructor.isAnnotationPresent(annotation)) constructors.add(constructor);
+            if (Reflect.annotation(constructor, annotation).present()) constructors.add(constructor);
         }
         return constructors;
     }
@@ -620,10 +585,10 @@ public final class Reflect {
         return HartshornUtils.asUnmodifiableList(fields);
     }
 
-    public static List<Annotation> annotations(Class<?> type, Class<? extends Annotation> annotation) {
+    public static List<Annotation> annotationsWith(Class<?> type, Class<? extends Annotation> annotation) {
         List<Annotation> annotations = HartshornUtils.emptyList();
         for (Annotation typeAnnotation : type.getAnnotations()) {
-            if (typeAnnotation.annotationType().isAnnotationPresent(annotation)) {
+            if (Reflect.annotation(typeAnnotation.annotationType(), annotation).present()) {
                 annotations.add(typeAnnotation);
             }
         }
@@ -642,6 +607,18 @@ public final class Reflect {
             }
             return ((ParameterizedType) superClass).getActualTypeArguments()[index];
         });
+    }
+
+    public static <A extends Annotation> Exceptional<A> annotation(AnnotatedElement target, Class<A> annotation) {
+        return Exceptional.of(AnnotationHelper.getOneOrNull(target, annotation));
+    }
+
+    public static <A extends Annotation> List<A> allAnnotationsLike(AnnotatedElement target, Class<A> annotation) {
+        return AnnotationHelper.getAllOrEmpty(target, annotation);
+    }
+
+    public static <A extends Annotation> Annotation actual(A annotation) {
+        return AnnotationHelper.actual(annotation);
     }
 
     public static void prefix(String prefix) {
