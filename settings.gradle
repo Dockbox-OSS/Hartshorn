@@ -18,8 +18,8 @@
 rootProject.name = 'Hartshorn'
 gradle.startParameter.continueOnFailure = true
 
-includeAll(rootDir, '', 'hartshorn-sponge-7', 'hartshorn-nms-1.12')
-includeAll(new File(rootDir, 'hartshorn-minecraft'), ':hartshorn-minecraft', 'palswap')
+includeAll(rootDir, '')
+includeAll(new File(rootDir, 'hartshorn-minecraft'), ':hartshorn-minecraft')
 
 def includeAll(File dir, String prefix, String... blacklist) {
     dir.listFiles().each {
