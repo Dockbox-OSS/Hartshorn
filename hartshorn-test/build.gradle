@@ -23,7 +23,7 @@ plugins {
 group = 'org.dockbox.hartshorn.common'
 description 'Default implementations for Hartshorn'
 
-def depBlacklist = ['hartshorn-sponge-7', 'hartshorn-sponge-8', 'hartshorn-nms-1.12', 'hartshorn-test', 'examples', 'palswap']
+def depBlacklist = ['hartshorn-sponge-8', 'hartshorn-test', 'examples']
 
 dependencies {
     rootDir.listFiles().each {
