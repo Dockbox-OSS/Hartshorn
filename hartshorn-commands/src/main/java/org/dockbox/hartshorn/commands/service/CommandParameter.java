@@ -30,7 +30,7 @@ public class CommandParameter<T> {
     private final String key;
 
     public String trimmedKey() {
-        return HartshornUtils.trimWith('-', this.getKey());
+        return HartshornUtils.trimWith('-', this.key());
     }
 
 }

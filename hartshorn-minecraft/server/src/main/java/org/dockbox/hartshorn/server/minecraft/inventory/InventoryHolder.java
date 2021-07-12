@@ -19,5 +19,5 @@ package org.dockbox.hartshorn.server.minecraft.inventory;
 
 public interface InventoryHolder {
 
-    Inventory getInventory();
+    Inventory inventory();
 }

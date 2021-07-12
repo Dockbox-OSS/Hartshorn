@@ -45,7 +45,7 @@ public class SpongeConsole extends Console {
 
     @Override
     public void sendWithPrefix(Text text) {
-        final Text message = Text.of(DefaultResources.instance().getPrefix(), text);
+        final Text message = Text.of(DefaultResources.instance().prefix(), text);
         Sponge.systemSubject().sendMessage(SpongeConvert.toSponge(message));
     }
 

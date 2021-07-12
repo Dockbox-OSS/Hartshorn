@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.server.minecraft.events.player.interact;
 
-import org.dockbox.hartshorn.api.domain.Target;
+import org.dockbox.hartshorn.api.domain.Subject;
 import org.dockbox.hartshorn.api.events.AbstractTargetCancellableEvent;
 import org.dockbox.hartshorn.server.minecraft.players.ClickType;
 import org.dockbox.hartshorn.server.minecraft.players.Hand;
@@ -35,19 +35,20 @@ public abstract class PlayerInteractEvent extends AbstractTargetCancellableEvent
 
     protected PlayerInteractEvent(Player player, Hand hand, ClickType clickType) {
         super(player);
-        this.crouching = player.isSneaking() ? Sneaking.SNEAKING : Sneaking.STANDING;
+        this.crouching = player.sneaking() ? Sneaking.SNEAKING : Sneaking.STANDING;
         this.hand = hand;
         this.clickType = clickType;
     }
 
     @Override
-    public Player getTarget() {
-        return (Player) super.getTarget();
+    public Player subject() {
+        return (Player) super.subject();
     }
 
     @Override
-    public void setTarget(Target target) {
-        if (target instanceof Player) super.setTarget(target);
+    public PlayerInteractEvent subject(Subject subject) {
+        if (subject instanceof Player) super.subject(subject);
+        return this;
     }
 
 }

@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.proxy.types;
 
 public class GlobalProxyTarget {
 
-    public String getName() {
+    public String name() {
         return "NotHartshorn";
     }
 

@@ -32,17 +32,17 @@ public class JUnitProfile implements Profile {
 
     @Getter
     @Setter
-    private UUID uuid;
+    private UUID uniqueId;
     private Map<String, String> properties;
 
     @Wired
-    public JUnitProfile(UUID uuid) {
-        this.uuid = uuid;
+    public JUnitProfile(UUID uniqueId) {
+        this.uniqueId = uniqueId;
     }
 
     @Wired
     public JUnitProfile(Profile profile) {
-        this(profile.getUuid());
+        this(profile.uniqueId());
         if (profile instanceof JUnitProfile) this.properties = new HashMap<>(((JUnitProfile) profile).properties);
         else Hartshorn.log().warn("Could not copy profile properties as the provided profile is not an instance of JUnitProfile");
     }
@@ -53,12 +53,13 @@ public class JUnitProfile implements Profile {
     }
 
     @Override
-    public void setProperty(String key, String value) {
+    public void property(String key, String value) {
         this.properties.put(key, value);
     }
 
     @Override
-    public void setProperties(Map<String, String> properties) {
+    public JUnitProfile properties(Map<String, String> properties) {
         this.properties.putAll(properties);
+        return this;
     }
 }

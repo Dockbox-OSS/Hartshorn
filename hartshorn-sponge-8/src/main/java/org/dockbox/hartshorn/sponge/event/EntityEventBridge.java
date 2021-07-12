@@ -44,7 +44,7 @@ public class EntityEventBridge implements EventBridge {
             final org.dockbox.hartshorn.server.minecraft.entities.Entity target = SpongeConvert.fromSponge(entity);
             final Cancellable cancellable = new SummonEntityEvent(target, source).post();
             
-            if (cancellable.isCancelled()) {
+            if (cancellable.cancelled()) {
                 event.setCancelled(true);
                 // Don't continue iterating if we already cancelled the source event
                 return;

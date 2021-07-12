@@ -60,7 +60,7 @@ public final class Bindings {
         InjectorProperty<T> property = Bindings.property(key, expectedType, properties);
         // As the object is provided by a supplier this cannot currently be simplified to #of
         if (null != property) {
-            return Exceptional.of(property.getObject());
+            return Exceptional.of(property.value());
         }
         return Exceptional.empty();
     }
@@ -90,9 +90,9 @@ public final class Bindings {
     public static <T> List<InjectorProperty<T>> properties(@NonNls String key, Class<T> expectedType, InjectorProperty<?>... properties) {
         List<InjectorProperty<T>> matchingProperties = HartshornUtils.emptyList();
         for (InjectorProperty<?> property : properties) {
-            if (property.getKey().equals(key)
-                    && null != property.getObject()
-                    && Reflect.assigns(expectedType, property.getObject().getClass())) {
+            if (property.key().equals(key)
+                    && null != property.value()
+                    && Reflect.assigns(expectedType, property.value().getClass())) {
                 matchingProperties.add((InjectorProperty<T>) property);
             }
         }
@@ -103,7 +103,7 @@ public final class Bindings {
     public static <P extends InjectorProperty<?>> List<P> properties(@NonNls String key,InjectorProperty<?>... properties) {
         List<P> matchingProperties = HartshornUtils.emptyList();
         for (InjectorProperty<?> property : properties) {
-            if (property.getKey().equals(key) && null != property.getObject()) {
+            if (property.key().equals(key) && null != property.value()) {
                 matchingProperties.add((P) property);
             }
         }
@@ -136,9 +136,9 @@ public final class Bindings {
     }
 
     public static String serviceId(Class<?> type, boolean ignoreExisting) {
-        final Exceptional<ComponentContainer> container = ApplicationContextAware.instance().getContext().locator().container(type);
+        final Exceptional<ComponentContainer> container = ApplicationContextAware.instance().context().locator().container(type);
         if (!ignoreExisting && container.present()) {
-            final String id = container.get().getId();
+            final String id = container.get().id();
             if (!"".equals(id)) return id;
         }
 
@@ -155,9 +155,9 @@ public final class Bindings {
     }
 
     public static String serviceName(Class<?> type, boolean ignoreExisting) {
-        final Exceptional<ComponentContainer> container = ApplicationContextAware.instance().getContext().locator().container(type);
+        final Exceptional<ComponentContainer> container = ApplicationContextAware.instance().context().locator().container(type);
         if (!ignoreExisting && container.present()) {
-            final String name = container.get().getName();
+            final String name = container.get().name();
             if (!"".equals(name)) return name;
         }
 

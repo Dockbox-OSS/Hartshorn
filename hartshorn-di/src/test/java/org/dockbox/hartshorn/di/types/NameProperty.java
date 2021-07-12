@@ -25,14 +25,14 @@ public class NameProperty implements InjectorProperty<String> {
 
     public static final String KEY = "JUnitNameProperty";
     @Getter
-    private final String object;
+    private final String value;
 
     public NameProperty(String name) {
-        this.object = name;
+        this.value = name;
     }
 
     @Override
-    public String getKey() {
+    public String key() {
         return KEY;
     }
 }

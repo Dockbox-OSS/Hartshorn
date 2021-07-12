@@ -17,11 +17,14 @@
 
 package org.dockbox.hartshorn.plots.events.membership;
 
-import org.dockbox.hartshorn.server.minecraft.players.Player;
 import org.dockbox.hartshorn.plots.Plot;
 import org.dockbox.hartshorn.plots.PlotMembership;
 import org.dockbox.hartshorn.plots.events.PlotPlayerEvent;
+import org.dockbox.hartshorn.server.minecraft.players.Player;
 
+import lombok.Getter;
+
+@Getter
 public class PlotMembershipChangedEvent extends PlotPlayerEvent {
 
     private final Player initiator;
@@ -31,13 +34,5 @@ public class PlotMembershipChangedEvent extends PlotPlayerEvent {
         super(plot, player);
         this.initiator = initiator;
         this.membership = membership;
-    }
-
-    public Player getInitiator() {
-        return this.initiator;
-    }
-
-    public PlotMembership getMembership() {
-        return this.membership;
     }
 }

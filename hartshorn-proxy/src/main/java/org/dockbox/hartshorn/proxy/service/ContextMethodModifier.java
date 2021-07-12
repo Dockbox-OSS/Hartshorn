@@ -35,19 +35,19 @@ public class ContextMethodModifier extends ServiceAnnotatedMethodModifier<Provid
     @Override
     public <T, R> ProxyFunction<T, R> process(ApplicationContext context, MethodProxyContext<T> methodContext) {
         return (instance, args, proxyContext) -> {
-            final Provided annotation = methodContext.getAnnotation(Provided.class);
+            final Provided annotation = methodContext.annotation(Provided.class);
             final String name = annotation.value();
             if ("".equals(name)) {
-                return (R) Hartshorn.context().get(methodContext.getReturnType());
+                return (R) Hartshorn.context().get(methodContext.returnType());
             } else {
-                return (R) Hartshorn.context().get(methodContext.getReturnType(), BindingMetaProperty.of(name));
+                return (R) Hartshorn.context().get(methodContext.returnType(), BindingMetaProperty.of(name));
             }
         };
     }
 
     @Override
     public <T> boolean preconditions(ApplicationContext context, MethodProxyContext<T> methodContext) {
-        return Reflect.notVoid(methodContext.getReturnType());
+        return Reflect.notVoid(methodContext.returnType());
     }
 
     @Override

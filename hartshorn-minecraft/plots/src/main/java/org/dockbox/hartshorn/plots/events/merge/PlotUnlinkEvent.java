@@ -24,15 +24,14 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import lombok.Getter;
+
 public class PlotUnlinkEvent extends AbstractCancellableEvent {
 
+    @Getter
     private final Set<Plot> plots;
 
     public PlotUnlinkEvent(Collection<Plot> plots) {
         this.plots = new HashSet<>(plots);
-    }
-
-    public Set<Plot> getPlots() {
-        return this.plots;
     }
 }

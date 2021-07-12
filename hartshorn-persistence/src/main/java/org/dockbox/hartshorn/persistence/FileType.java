@@ -76,7 +76,7 @@ public enum FileType {
         return file + '.' + this.extension;
     }
 
-    public Class<? extends Annotation> getFormat() {
+    public Class<? extends Annotation> format() {
         return Named.class;
     }
 }

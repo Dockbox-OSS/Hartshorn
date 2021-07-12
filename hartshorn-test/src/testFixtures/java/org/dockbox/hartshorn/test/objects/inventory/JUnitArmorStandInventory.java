@@ -31,7 +31,7 @@ public class JUnitArmorStandInventory implements ArmorStandInventory {
     private final Map<Slot, Item> items = HartshornUtils.emptyMap();
 
     @Override
-    public Collection<Item> getAllItems() {
+    public Collection<Item> items() {
         return HartshornUtils.asUnmodifiableList(this.items.values());
     }
 
@@ -39,7 +39,7 @@ public class JUnitArmorStandInventory implements ArmorStandInventory {
     public boolean give(Item item) {
         for (Slot slot : Slot.values()) {
             if (!this.items.containsKey(slot)) {
-                this.setSlot(item, slot);
+                this.slot(item, slot);
                 return true;
             }
         }
@@ -47,12 +47,12 @@ public class JUnitArmorStandInventory implements ArmorStandInventory {
     }
 
     @Override
-    public Item getSlot(Slot slot) {
-        return this.items.getOrDefault(slot, MinecraftItems.getInstance().getAir());
+    public Item slot(Slot slot) {
+        return this.items.getOrDefault(slot, MinecraftItems.instance().air());
     }
 
     @Override
-    public void setSlot(Item item, Slot slot) {
+    public void slot(Item item, Slot slot) {
         this.items.put(slot, item);
     }
 }

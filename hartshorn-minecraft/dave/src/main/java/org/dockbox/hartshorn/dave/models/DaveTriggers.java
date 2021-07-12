@@ -35,17 +35,17 @@ public class DaveTriggers {
 
     public DaveTriggers() {}
 
-    public Exceptional<DaveTrigger> getMatchingTrigger(String message) {
+    public Exceptional<DaveTrigger> matching(String message) {
         return DaveUtils.findMatching(this, message);
     }
 
-    public void addTrigger(DaveTrigger trigger) {
+    public void add(DaveTrigger trigger) {
         this.triggers.add(trigger);
     }
 
-    public Exceptional<DaveTrigger> findById(@NonNls String id) {
+    public Exceptional<DaveTrigger> find(@NonNls String id) {
         for (DaveTrigger trigger : this.triggers) {
-            if (trigger.getId().equals(id)) return Exceptional.of(trigger);
+            if (trigger.id().equals(id)) return Exceptional.of(trigger);
         }
         return Exceptional.empty();
     }

@@ -51,26 +51,26 @@ public class JUnitArmorStand extends JUnitEntity<ArmorStand> implements ArmorSta
     @Wired
     public JUnitArmorStand(Location location) {
         super(UUID.randomUUID());
-        this.setLocation(location);
+        this.location(location);
     }
 
     @Override
-    public Vector3N getRotation(Limbs limb) {
+    public Vector3N rotation(Limbs limb) {
         return this.limbs.getOrDefault(limb, Vector3N.empty());
     }
 
     @Override
-    public void setRotation(Limbs limb, Vector3N rotation) {
+    public void rotation(Limbs limb, Vector3N rotation) {
         this.limbs.put(limb, rotation);
     }
 
     @Override
-    public boolean hasBaseplate() {
+    public boolean baseplate() {
         return this.baseplate;
     }
 
     @Override
-    public boolean hasArms() {
+    public boolean arms() {
         return this.arms;
     }
 

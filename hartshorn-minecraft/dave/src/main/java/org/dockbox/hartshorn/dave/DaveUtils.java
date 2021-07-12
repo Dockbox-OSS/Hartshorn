@@ -54,16 +54,16 @@ public final class DaveUtils {
         final Boolean muted = Dave.MUTED_DAVE.get(player);
         if (muted) {
             player.remove(Dave.MUTED_DAVE);
-            player.sendWithPrefix(resources.getUnmute());
+            player.sendWithPrefix(resources.unmute());
         } else {
             player.set(Dave.MUTED_DAVE, true);
-            player.sendWithPrefix(resources.getMute());
+            player.sendWithPrefix(resources.mute());
         }
     }
 
     public static Exceptional<DaveTrigger> findMatching(DaveTriggers triggers, String message) {
-        for (DaveTrigger trigger : triggers.getTriggers()) {
-            for (String rawTrigger : trigger.getTriggers()) {
+        for (DaveTrigger trigger : triggers.triggers()) {
+            for (String rawTrigger : trigger.triggers()) {
                 boolean containsAll = true;
 
                 for (String keyword : rawTrigger.split(","))
@@ -101,7 +101,7 @@ public final class DaveUtils {
             String originalMessage,
             DaveConfig config
     ) {
-        String perm = trigger.getPermission();
+        String perm = trigger.permission();
 
         if (null != perm) {
             if (source instanceof PermissionHolder) {
@@ -110,19 +110,19 @@ public final class DaveUtils {
             else return;
         }
 
-        List<DaveResponse> responses = trigger.getResponses();
+        List<DaveResponse> responses = trigger.responses();
 
-        boolean important = trigger.isImportant();
+        boolean important = trigger.important();
 
         responses.forEach(response -> {
-            if (ResponseType.COMMAND == response.getType()) {
-                executeCommand(source, response.getMessage());
+            if (ResponseType.COMMAND == response.type()) {
+                executeCommand(source, response.message());
             }
-            else if (ResponseType.URL == response.getType()) {
-                printResponse(DaveUtils.parseWebsiteLink(response.getMessage()), true, important, config);
+            else if (ResponseType.URL == response.type()) {
+                printResponse(DaveUtils.parseWebsiteLink(response.message()), true, important, config);
             }
             else {
-                printResponse(DaveUtils.parsePlaceHolders(originalMessage, response.getMessage(), displayName),
+                printResponse(DaveUtils.parsePlaceHolders(originalMessage, response.message(), displayName),
                         false,
                         important,
                         config);
@@ -133,22 +133,22 @@ public final class DaveUtils {
     }
 
     private static void executeCommand(CommandSource source, String command) {
-        if (source instanceof Player && isMuted((Player) source)) return;
+        if (source instanceof Player && muted((Player) source)) return;
 
-        if (command.startsWith("*")) Console.getInstance().execute(command);
+        if (command.startsWith("*")) Console.instance().execute(command);
         else source.execute(command);
     }
 
     private static void printResponse(
             String response, boolean link, boolean important, DaveConfig config) {
         DaveResources resources = Hartshorn.context().get(DaveResources.class);
-        Text message = Text.of(config.getPrefix());
+        Text message = Text.of(config.prefix());
 
         if (link) {
-            Text linkText = Text.of(resources.getSuggestionLink(response));
+            Text linkText = Text.of(resources.suggestionLink(response));
             linkText.onClick(ClickAction.openUrl(response));
             linkText.onHover(
-                    HoverAction.showText(resources.getSuggestionLinkHover(response).asText()));
+                    HoverAction.showText(resources.suggestionLinkHover(response).asText()));
             message.append(linkText);
 
         }
@@ -156,17 +156,17 @@ public final class DaveUtils {
 
         // Regular chat response
         Players pss = Hartshorn.context().get(Players.class);
-        pss.getOnlinePlayers().stream()
-                .filter(op -> important || !isMuted(op))
+        pss.onlinePlayers().stream()
+                .filter(op -> important || !muted(op))
                 .forEach(op -> op.send(message));
 
         // Discord response
-        TextChannel discordChannel = config.getChannel();
+        TextChannel discordChannel = config.channel();
         String discordMessage = response.replaceAll("§", "&");
         for (String regex : new String[]{ "(&)([a-f])+", "(&)([0-9])+", "&l", "&n", "&o", "&k", "&m", "&r" })
             discordMessage = discordMessage.replaceAll(regex, "");
 
-        Hartshorn.context().get(DiscordUtils.class).sendToTextChannel(resources.getDiscordFormat(discordMessage), discordChannel);
+        Hartshorn.context().get(DiscordUtils.class).sendToTextChannel(resources.discordFormat(discordMessage), discordChannel);
     }
 
     public static String parseWebsiteLink(String unparsedLink) {
@@ -194,13 +194,13 @@ public final class DaveUtils {
         return parsedResponse;
     }
 
-    public static boolean isMuted(Player player) {
+    public static boolean muted(Player player) {
         return Dave.MUTED_DAVE.get(player);
     }
 
     private static String parseMention(String partial, String fullResponse, DiscordUtils du) {
         if (partial.startsWith("<@") && 2 < partial.length()) {
-            String mention = du.getJDA().map(jda ->
+            String mention = du.jda().map(jda ->
                     jda.getUserById(partial.replaceFirst("<@", "").replaceFirst(">", "")).getName()
             ).or("player");
 
@@ -216,8 +216,8 @@ public final class DaveUtils {
 
     private static String parseRandomPlayer(String fullResponse, String playerName) {
         Players pss = Hartshorn.context().get(Players.class);
-        int index = new Random().nextInt(pss.getOnlinePlayers().size());
-        String randomPlayer = pss.getOnlinePlayers().toArray(new Player[0])[index].getName();
+        int index = new Random().nextInt(pss.onlinePlayers().size());
+        String randomPlayer = pss.onlinePlayers().toArray(new Player[0])[index].name();
 
         return fullResponse.replaceAll("<random>", Objects.requireNonNullElseGet(randomPlayer, () -> playerName + "*"));
     }

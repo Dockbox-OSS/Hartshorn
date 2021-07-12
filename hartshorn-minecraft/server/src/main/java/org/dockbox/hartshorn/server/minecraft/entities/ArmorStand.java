@@ -40,7 +40,7 @@ public interface ArmorStand extends CloneableEntity<ArmorStand>, InventoryHolder
      *
      * @return The rotation of the limb, represented by a {@link Vector3N}.
      */
-    Vector3N getRotation(Limbs limb);
+    Vector3N rotation(Limbs limb);
 
     /**
      * Sets the rotation of the given {@link Limbs limb}, represented in a {@link Vector3N},
@@ -54,14 +54,14 @@ public interface ArmorStand extends CloneableEntity<ArmorStand>, InventoryHolder
      * @param rotation
      *         The rotation of the limb, represented by a {@link Vector3N}.
      */
-    void setRotation(Limbs limb, Vector3N rotation);
+    void rotation(Limbs limb, Vector3N rotation);
 
     /**
      * Indicates whether the armor stand has a baseplate present.
      *
      * @return {@code true} if the armor stand has a baseplate, else {@code false}
      */
-    boolean hasBaseplate();
+    boolean baseplate();
 
     /**
      * Sets whether the armor stand should have a baseplate.
@@ -69,14 +69,14 @@ public interface ArmorStand extends CloneableEntity<ArmorStand>, InventoryHolder
      * @param baseplate
      *         Whether a baseplate should be present.
      */
-    void setBaseplate(boolean baseplate);
+    ArmorStand baseplate(boolean baseplate);
 
     /**
      * Indicates whether the armor stand is small or full-size.
      *
      * @return {@code true} if the armor stand is small, else {@code false}.
      */
-    boolean isSmall();
+    boolean small();
 
     /**
      * Sets whether the armor stand should be small or full-size.
@@ -84,14 +84,14 @@ public interface ArmorStand extends CloneableEntity<ArmorStand>, InventoryHolder
      * @param small
      *         Whether the armor stand should be small.
      */
-    void setSmall(boolean small);
+    ArmorStand small(boolean small);
 
     /**
      * Indicates whether the armor stand has arms visible.
      *
      * @return {@code true} if arms are visible, else {@code false}.
      */
-    boolean hasArms();
+    boolean arms();
 
     /**
      * Sets whether the armor stand should have arms visible.
@@ -99,10 +99,10 @@ public interface ArmorStand extends CloneableEntity<ArmorStand>, InventoryHolder
      * @param arms
      *         Whether armors should be visible
      */
-    void setArms(boolean arms);
+    ArmorStand arms(boolean arms);
 
     @Override
-    ArmorStandInventory getInventory();
+    ArmorStandInventory inventory();
 
     enum Limbs {
         HEAD,

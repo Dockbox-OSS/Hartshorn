@@ -41,10 +41,10 @@ public interface FileManager extends InjectableType {
      *
      * @return A {@link Path} reference to a file
      */
-    Path getDataFile(TypedOwner owner);
+    Path dataFile(TypedOwner owner);
 
-    default Path getConfigFile(Class<?> owner) {
-        return this.getConfigFile(this.owner(owner));
+    default Path configFile(Class<?> owner) {
+        return this.configFile(this.owner(owner));
     }
 
     /**
@@ -56,10 +56,10 @@ public interface FileManager extends InjectableType {
      *
      * @return A {@link Path} reference to a file
      */
-    Path getConfigFile(TypedOwner owner);
+    Path configFile(TypedOwner owner);
 
-    default Path getDataFile(Class<?> owner, String file) {
-        return this.getDataFile(this.owner(owner), file);
+    default Path dataFile(Class<?> owner, String file) {
+        return this.dataFile(this.owner(owner), file);
     }
 
     /**
@@ -73,10 +73,10 @@ public interface FileManager extends InjectableType {
      *
      * @return A {@link Path} reference to a file
      */
-    Path getDataFile(TypedOwner owner, String file);
+    Path dataFile(TypedOwner owner, String file);
 
-    default Path getConfigFile(Class<?> owner, String file) {
-        return this.getConfigFile(this.owner(owner), file);
+    default Path configFile(Class<?> owner, String file) {
+        return this.configFile(this.owner(owner), file);
     }
 
     /**
@@ -90,12 +90,12 @@ public interface FileManager extends InjectableType {
      *
      * @return A {@link Path} reference to a file
      */
-    Path getConfigFile(TypedOwner owner, String file);
+    Path configFile(TypedOwner owner, String file);
 
     /**
      * Get the content of a file, and map the given values to a generic type {@code T}. The exact file
-     * is completely dynamic, though it is usually encouraged to use {@link FileManager#getDataFile}
-     * or {@link FileManager#getConfigFile} to obtain appropriate files.
+     * is completely dynamic, though it is usually encouraged to use {@link FileManager#dataFile}
+     * or {@link FileManager#configFile} to obtain appropriate files.
      *
      * @param <T>
      *         The type parameter of the type to map to
@@ -112,8 +112,8 @@ public interface FileManager extends InjectableType {
 
     /**
      * Write a generic type {@code T} to a given file. The exact file is completely dynamic, though it
-     * is usually encouraged to use {@link FileManager#getDataFile} or {@link
-     * FileManager#getConfigFile} to obtain appropriate files.
+     * is usually encouraged to use {@link FileManager#dataFile} or {@link
+     * FileManager#configFile} to obtain appropriate files.
      *
      * @param <T>
      *         The type parameter of the content
@@ -128,8 +128,8 @@ public interface FileManager extends InjectableType {
      */
     <T> Exceptional<Boolean> write(Path file, T content);
 
-    default Path getDataDir(Class<?> owner) {
-        return this.getDataDir(this.owner(owner));
+    default Path data(Class<?> owner) {
+        return this.data(this.owner(owner));
     }
 
     /**
@@ -141,8 +141,8 @@ public interface FileManager extends InjectableType {
      *
      * @return A {@link Path} reference to the data directory
      */
-    default Path getDataDir(TypedOwner owner) {
-        return this.getDataDir().resolve(owner.id());
+    default Path data(TypedOwner owner) {
+        return this.data().resolve(owner.id());
     }
 
     /**
@@ -151,7 +151,7 @@ public interface FileManager extends InjectableType {
      *
      * @return A {@link Path} reference to a directory
      */
-    Path getDataDir();
+    Path data();
 
     /**
      * Get the base log directory of a platform file system. The exact location is decided by the
@@ -159,7 +159,7 @@ public interface FileManager extends InjectableType {
      *
      * @return A {@link Path} reference to a directory
      */
-    Path getLogsDir();
+    Path logs();
 
     /**
      * Get the base directory of a platform file system. The exact location is decided by the
@@ -167,7 +167,7 @@ public interface FileManager extends InjectableType {
      *
      * @return A {@link Path} reference to a directory
      */
-    Path getServerRoot();
+    Path root();
 
     /**
      * Get the base mods directory of a platform file system. The exact location is decided by the
@@ -178,7 +178,7 @@ public interface FileManager extends InjectableType {
      * @return A {@link Exceptional} object containing either a {@link Path} reference to a directory,
      *         or nothing.
      */
-    Exceptional<Path> getModDir();
+    Exceptional<Path> mods();
 
     /**
      * Get the base plugin directory of a platform file system. The exact location is decided by the
@@ -186,10 +186,10 @@ public interface FileManager extends InjectableType {
      *
      * @return A {@link Path} reference to a directory
      */
-    Path getPluginDir();
+    Path plugins();
 
-    default Path getServiceConfigDir(Class<?> owner) {
-        return this.getServiceConfigDir(this.owner(owner));
+    default Path serviceConfig(Class<?> owner) {
+        return this.serviceConfig(this.owner(owner));
     }
 
     /**
@@ -201,8 +201,8 @@ public interface FileManager extends InjectableType {
      *
      * @return A {@link Path} reference to the configuration directory
      */
-    default Path getServiceConfigDir(TypedOwner owner) {
-        return this.getServiceConfigsDir().resolve(owner.id());
+    default Path serviceConfig(TypedOwner owner) {
+        return this.serviceConfigs().resolve(owner.id());
     }
 
     /**
@@ -211,7 +211,7 @@ public interface FileManager extends InjectableType {
      *
      * @return A {@link Path} reference to a directory
      */
-    Path getServiceConfigsDir();
+    Path serviceConfigs();
 
     /**
      * Get the configuration folder for owners directory of a platform file system. The exact
@@ -222,7 +222,7 @@ public interface FileManager extends InjectableType {
      * @return A {@link Exceptional} object containing either a {@link Path} reference to a directory,
      *         or nothing.
      */
-    Exceptional<Path> getModdedPlatformModsConfigDir();
+    Exceptional<Path> modConfigs();
 
     /**
      * Get the configuration folder for owners directory of a platform file system. The exact
@@ -230,7 +230,7 @@ public interface FileManager extends InjectableType {
      *
      * @return A {@link Path} reference to a directory
      */
-    Path getPlatformPluginsConfigDir();
+    Path pluginConfigs();
 
     /**
      * Evaluates whether or not a given {@link Path} reference directory exists. If it exists nothing

@@ -48,7 +48,7 @@ public interface Bossbar {
 
     /**
      * Returns a {@link Bossbar} instance based on a given {@link UUID uuid}. This identifier
-     * typically matches with the one returned by {@link Bossbar#getId()}. If no instance exists,
+     * typically matches with the one returned by {@link Bossbar#id()}. If no instance exists,
      * {@link Exceptional#empty()} is returned.
      *
      * @param uuid
@@ -62,7 +62,7 @@ public interface Bossbar {
 
     /**
      * Returns a {@link Bossbar} instance based on a given {@code id}. This identifier typically
-     * matches with the one returned by {@link Bossbar#getId()}. If no instance exists, {@link
+     * matches with the one returned by {@link Bossbar#id()}. If no instance exists, {@link
      * Exceptional#empty()} is returned.
      *
      * @param id
@@ -125,14 +125,14 @@ public interface Bossbar {
      *
      * @return the id
      */
-    String getId();
+    String id();
 
     /**
      * Gets the progress of the bossbar in a percentage between 0 and 100 (inclusive).
      *
      * @return The progress of the bossbar as a percentage.
      */
-    float getPercent();
+    float percent();
 
     /**
      * Sets the progress of the bossbar in a percentage between 0 and 100 (inclusive).
@@ -140,14 +140,14 @@ public interface Bossbar {
      * @param percent
      *         The progress of the bossbar as a percentage.
      */
-    void setPercent(float percent);
+    Bossbar percent(float percent);
 
     /**
      * Gets the {@link Text} displayed by the current instance.
      *
      * @return The text displayed by the bossbar.
      */
-    Text getText();
+    Text text();
 
     /**
      * Sets the {@link Text} to be displayed by the current instance.
@@ -155,14 +155,14 @@ public interface Bossbar {
      * @param text
      *         The text to be displayed.
      */
-    void setText(Text text);
+    Bossbar text(Text text);
 
     /**
      * Gets the color of the current instance.
      *
      * @return The color of the bossbar.
      */
-    BossbarColor getColor();
+    BossbarColor color();
 
     /**
      * Sets the color of the current instance.
@@ -170,14 +170,14 @@ public interface Bossbar {
      * @param color
      *         The color of the bossbar.
      */
-    void setColor(BossbarColor color);
+    Bossbar color(BossbarColor color);
 
     /**
      * Gets the style of the current instance.
      *
      * @return The style of the bossbar.
      */
-    BossbarStyle getStyle();
+    BossbarStyle style();
 
     /**
      * Sets the style of the current instance.
@@ -185,14 +185,14 @@ public interface Bossbar {
      * @param style
      *         The style of the bossbar.
      */
-    void setStyle(BossbarStyle style);
+    Bossbar style(BossbarStyle style);
 
     /**
      * Returns all {@link Player players} to which the current instance is displayed to.
      *
      * @return All players which can see the bossbar.
      */
-    Collection<Player> visibleTo();
+    Collection<Player> visible();
 
     /**
      * Returns {@code true} if the current instance is visible/shown to the given {@link Player}, else
@@ -203,7 +203,7 @@ public interface Bossbar {
      *
      * @return {@code true} of the given player can see the bossbar.
      */
-    boolean isVisibleTo(Player player);
+    boolean visible(Player player);
 
     /**
      * Returns {@code true} if the current instance is visible/shown to the {@link Player} associated
@@ -214,7 +214,7 @@ public interface Bossbar {
      *
      * @return {@code true} of the given player can see the bossbar.
      */
-    boolean isVisibleTo(UUID player);
+    boolean visible(UUID player);
 
     /**
      * Returns {@code true} if the current instance is visible/shown to the {@link Player} associated
@@ -225,5 +225,5 @@ public interface Bossbar {
      *
      * @return {@code true} of the given player can see the bossbar.
      */
-    boolean isVisibleTo(String name);
+    boolean visible(String name);
 }

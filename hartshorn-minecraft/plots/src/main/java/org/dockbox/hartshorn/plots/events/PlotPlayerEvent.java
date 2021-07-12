@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.plots.events;
 
-import org.dockbox.hartshorn.api.domain.Target;
+import org.dockbox.hartshorn.api.domain.Subject;
 import org.dockbox.hartshorn.api.events.parents.Targetable;
 import org.dockbox.hartshorn.server.minecraft.players.Player;
 import org.dockbox.hartshorn.plots.Plot;
@@ -27,15 +27,15 @@ import lombok.Getter;
 public abstract class PlotPlayerEvent extends PlotEvent implements Targetable {
 
     @Getter
-    private final Player target;
+    private final Player subject;
 
     public PlotPlayerEvent(Plot plot, Player player) {
         super(plot);
-        this.target = player;
+        this.subject = player;
     }
 
     @Override
-    public void setTarget(Target target) {
+    public PlotPlayerEvent subject(Subject subject) {
         throw new UnsupportedOperationException();
     }
 }

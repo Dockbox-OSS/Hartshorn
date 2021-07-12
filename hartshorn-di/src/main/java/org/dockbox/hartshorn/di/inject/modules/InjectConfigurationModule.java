@@ -39,7 +39,7 @@ public class InjectConfigurationModule extends AbstractModule implements Binder 
 
     @Override
     protected void configure() {
-        this.configuration.setBinder(this);
+        this.configuration.binder(this);
         this.configuration.collect();
     }
 

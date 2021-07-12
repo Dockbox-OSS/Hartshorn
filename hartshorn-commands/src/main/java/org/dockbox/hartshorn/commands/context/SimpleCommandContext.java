@@ -39,7 +39,7 @@ public class SimpleCommandContext extends DefaultContext implements CommandConte
     private final List<CommandParameter<?>> flags;
 
     @Getter
-    private final CommandSource sender;
+    private final CommandSource source;
     @Getter(onMethod_ = @UnmodifiableView)
     private final List<Permission> permissions;
 
@@ -50,7 +50,7 @@ public class SimpleCommandContext extends DefaultContext implements CommandConte
                 .map(CommandParameter.class::cast)
                 .filter(arg -> arg.trimmedKey().equals(key))
                 .findFirst()
-                .map(arg -> (T) arg.getValue())
+                .map(arg -> (T) arg.value())
                 .orElse(null);
     }
 

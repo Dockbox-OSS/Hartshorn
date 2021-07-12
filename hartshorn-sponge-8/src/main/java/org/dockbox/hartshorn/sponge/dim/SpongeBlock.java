@@ -175,7 +175,7 @@ public class SpongeBlock implements Block, SpongeComposite {
     }
 
     @Override
-    public Exceptional<? extends Mutable> getDataHolder() {
+    public Exceptional<? extends Mutable> dataHolder() {
         return Exceptional.of(this.location);
     }
 }

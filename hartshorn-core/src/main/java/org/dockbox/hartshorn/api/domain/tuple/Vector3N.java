@@ -36,26 +36,26 @@ public class Vector3N extends Vector2N {
         return Vector3N.of(0, 0, 0);
     }
 
-    public float getYf() {
+    public float yF() {
         return this.y.floatValue();
     }
 
-    public int getYi() {
+    public int yI() {
         return this.y.intValue();
     }
 
-    public long getYl() {
+    public long yL() {
         return this.y.longValue();
     }
 
     public Vector3N expand(Vector3N vector) {
         return Vector3N.of(
-                this.getXd() + vector.getXd(),
-                this.getYd() + vector.getYd(),
-                this.getZd() + vector.getZd());
+                this.xD() + vector.xD(),
+                this.yD() + vector.yD(),
+                this.zD() + vector.zD());
     }
 
-    public double getYd() {
+    public double yD() {
         return this.y.doubleValue();
     }
 
@@ -63,11 +63,11 @@ public class Vector3N extends Vector2N {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Vector3N vector3N)) return false;
-        return this.getYf() == vector3N.getYf() && this.getXf() == vector3N.getXf() && this.getZf() == vector3N.getZf();
+        return this.yF() == vector3N.yF() && this.xF() == vector3N.xF() && this.zF() == vector3N.zF();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.getXd(), this.getYd(), this.getZd());
+        return Objects.hash(this.xD(), this.yD(), this.zD());
     }
 }

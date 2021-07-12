@@ -15,17 +15,7 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.api.config;
+package org.dockbox.hartshorn.api.domain;
 
-import org.dockbox.hartshorn.api.exceptions.ExceptionLevels;
-
-public interface GlobalConfig {
-
-    boolean stacktraces();
-
-    ExceptionLevels level();
-
-    String discordCategory();
-
-    String version();
+public interface Subject {
 }

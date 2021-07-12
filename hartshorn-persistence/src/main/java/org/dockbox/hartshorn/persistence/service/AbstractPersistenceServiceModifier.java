@@ -42,15 +42,15 @@ public abstract class AbstractPersistenceServiceModifier<M extends Annotation, C
 
     @Override
     public <T, R> ProxyFunction<T, R> process(ApplicationContext context, MethodProxyContext<T> methodContext) {
-        final Exceptional<C> serialisationContext = methodContext.first(this.getContextType());
+        final Exceptional<C> serialisationContext = methodContext.first(this.contextType());
         if (serialisationContext.absent()) throw new IllegalStateException("Expected additional context to be present");
 
         final C ctx = serialisationContext.get();
-        return switch (ctx.getTarget()) {
+        return switch (ctx.target()) {
             case ANNOTATED_PATH -> this.processAnnotatedPath(context, methodContext, ctx);
             case PARAMETER_PATH -> this.processParameterPath(context, methodContext, ctx);
             case STRING -> this.processString(context, methodContext, ctx);
-            default -> throw new IllegalArgumentException("Unsupported serialisation target: " + ctx.getTarget());
+            default -> throw new IllegalArgumentException("Unsupported serialisation target: " + ctx.target());
         };
     }
 
@@ -60,20 +60,20 @@ public abstract class AbstractPersistenceServiceModifier<M extends Annotation, C
 
     protected abstract <T, R> ProxyFunction<T, R> processString(ApplicationContext context, MethodProxyContext<T> methodContext, C serialisationContext);
 
-    protected abstract Class<C> getContextType();
+    protected abstract Class<C> contextType();
 
-    protected ObjectMapper getObjectMapper(ApplicationContext context, C serialisationContext) {
+    protected ObjectMapper mapper(ApplicationContext context, C serialisationContext) {
         final ObjectMapper objectMapper = context.get(ObjectMapper.class);
-        final FileType fileType = serialisationContext.getFileType();
-        objectMapper.setFileType(fileType);
+        final FileType fileType = serialisationContext.fileType();
+        objectMapper.fileType(fileType);
         return objectMapper;
     }
 
     protected Path determineAnnotationPath(ApplicationContext context, MethodProxyContext<?> methodContext, PersistenceAnnotationContext annotationContext) {
-        Class<?> owner = annotationContext.getFile().owner();
+        Class<?> owner = annotationContext.file().owner();
 
         if (!Reflect.notVoid(owner)) {
-            final Exceptional<ComponentContainer> container = context.locator().container(methodContext.getMethod().getDeclaringClass());
+            final Exceptional<ComponentContainer> container = context.locator().container(methodContext.method().getDeclaringClass());
             if (container.present()) {
                 owner = container.get().owner();
             }
@@ -82,7 +82,7 @@ public abstract class AbstractPersistenceServiceModifier<M extends Annotation, C
         final TypedOwner lookup = context.meta().lookup(owner);
         final FileManager fileManager = context.get(FileManager.class);
 
-        if ("".equals(annotationContext.getFile().value())) return fileManager.getDataFile(lookup);
-        else return fileManager.getDataFile(lookup, annotationContext.getFile().value());
+        if ("".equals(annotationContext.file().value())) return fileManager.dataFile(lookup);
+        else return fileManager.dataFile(lookup, annotationContext.file().value());
     }
 }

@@ -39,7 +39,7 @@ public class CachedMethodModifier extends CacheServiceModifier<Cached> {
     @Override
     protected <T, R> ProxyFunction<T, R> process(ApplicationContext context, MethodProxyContext<T> methodContext, CacheContext cacheContext) {
         return (instance, args, proxyContext) -> {
-            Cache<Object> cache = cacheContext.getCache();
+            Cache<Object> cache = cacheContext.cache();
 
             final Exceptional<Collection<Object>> content = cache.get();
 
@@ -58,14 +58,14 @@ public class CachedMethodModifier extends CacheServiceModifier<Cached> {
     }
 
     @Override
-    protected CacheMethodContext getContext(MethodProxyContext<?> context) {
-        final Cached cached = context.getAnnotation(Cached.class);
+    protected CacheMethodContext context(MethodProxyContext<?> context) {
+        final Cached cached = context.annotation(Cached.class);
         return new SimpleCacheMethodContext(cached.manager(), cached.value(), Expiration.of(cached.expires()));
     }
 
     @Override
     public <T> boolean preconditions(ApplicationContext context, MethodProxyContext<T> methodContext) {
-        return Reflect.assigns(Collection.class, methodContext.getReturnType());
+        return Reflect.assigns(Collection.class, methodContext.returnType());
     }
 
     @Override

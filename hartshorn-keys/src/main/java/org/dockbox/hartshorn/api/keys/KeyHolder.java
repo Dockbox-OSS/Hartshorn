@@ -55,7 +55,7 @@ public interface KeyHolder<T extends KeyHolder> {
         }
         catch (ClassCastException e) {
             Except.handle("Attempted to apply " + key + " to non-supporting type " + this, e);
-            return TransactionResult.fail(DefaultResources.instance().getBindingFailure());
+            return TransactionResult.fail(DefaultResources.instance().bindingFailure());
         }
     }
 

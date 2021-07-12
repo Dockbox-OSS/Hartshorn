@@ -34,19 +34,19 @@ public interface DiscordPagination {
         return Hartshorn.context().get(DiscordPagination.class);
     }
 
-    void sendTo(MessageChannel channel);
+    void send(MessageChannel channel);
 
-    void sendTo(User user);
+    void send(User user);
 
-    DiscordPagination addPage(Message... message);
+    DiscordPagination add(Message... message);
 
-    DiscordPagination addPage(MessageEmbed... embed);
+    DiscordPagination add(MessageEmbed... embed);
 
-    DiscordPagination addPage(String... message);
+    DiscordPagination add(String... message);
 
-    DiscordPagination addPage(Text... message);
+    DiscordPagination add(Text... message);
 
-    DiscordPagination addPage(MessageTemplate... template);
+    DiscordPagination add(MessageTemplate... template);
 
-    Collection<Object> getPages();
+    Collection<Object> pages();
 }

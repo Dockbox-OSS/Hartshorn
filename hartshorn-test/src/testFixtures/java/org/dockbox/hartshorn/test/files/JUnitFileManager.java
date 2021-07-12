@@ -27,43 +27,43 @@ import java.nio.file.Path;
 public class JUnitFileManager extends DefaultAbstractFileManager {
 
     @NotNull
-    public Path getDataDir() {
-        return this.getServerRoot().resolve("data/");
+    public Path data() {
+        return this.root().resolve("data/");
     }
 
     @NotNull
-    public Path getServerRoot() {
-        return JUnit5Application.getInformation().getFilePath();
+    public Path root() {
+        return JUnit5Application.information().path();
     }
 
     @NotNull
-    public Path getLogsDir() {
-        return this.getServerRoot().resolve("logs/");
+    public Path logs() {
+        return this.root().resolve("logs/");
     }
 
     @NotNull
-    public Exceptional<Path> getModDir() {
-        return Exceptional.of(this.createPathIfNotExists(this.getServerRoot().resolve("mods/")));
+    public Exceptional<Path> mods() {
+        return Exceptional.of(this.createPathIfNotExists(this.root().resolve("mods/")));
     }
 
     @NotNull
-    public Path getPluginDir() {
-        return this.createPathIfNotExists(this.getServerRoot().resolve("plugins/"));
+    public Path plugins() {
+        return this.createPathIfNotExists(this.root().resolve("plugins/"));
     }
 
     @NotNull
-    public Path getServiceConfigsDir() {
-        return this.getServerRoot().resolve("config/services/");
+    public Path serviceConfigs() {
+        return this.root().resolve("config/services/");
     }
 
     @NotNull
-    public Exceptional<Path> getModdedPlatformModsConfigDir() {
-        return Exceptional.of(this.getServerRoot().resolve("config/"));
+    public Exceptional<Path> modConfigs() {
+        return Exceptional.of(this.root().resolve("config/"));
     }
 
     @NotNull
-    public Path getPlatformPluginsConfigDir() {
-        return this.getServerRoot().resolve("config/plugins/");
+    public Path pluginConfigs() {
+        return this.root().resolve("config/plugins/");
     }
 
 }

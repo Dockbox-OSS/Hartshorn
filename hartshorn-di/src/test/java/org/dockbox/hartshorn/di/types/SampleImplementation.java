@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.di.types;
 
 public class SampleImplementation implements SampleInterface {
     @Override
-    public String getName() {
+    public String name() {
         return "Hartshorn";
     }
 }

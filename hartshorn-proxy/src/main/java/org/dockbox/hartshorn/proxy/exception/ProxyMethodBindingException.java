@@ -24,7 +24,7 @@ import java.lang.reflect.Method;
 public class ProxyMethodBindingException extends RuntimeException {
 
     public ProxyMethodBindingException(MethodProxyContext<?> ctx) {
-        this(ctx.getMethod());
+        this(ctx.method());
     }
 
     public ProxyMethodBindingException(Method method) {

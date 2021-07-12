@@ -31,12 +31,12 @@ public class ExpirationProperty implements InjectorProperty<Expiration> {
     private final Expiration expire;
 
     @Override
-    public String getKey() {
+    public String key() {
         return KEY;
     }
 
     @Override
-    public Expiration getObject() {
+    public Expiration value() {
         return this.expire;
     }
 }

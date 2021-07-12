@@ -22,8 +22,8 @@ import org.dockbox.hartshorn.server.minecraft.dimension.world.World;
 
 public interface Chunk extends BlockDimension, EntityHolding {
 
-    Vector3N getPosition();
+    Vector3N position();
 
-    World getWorld();
+    World world();
 
 }

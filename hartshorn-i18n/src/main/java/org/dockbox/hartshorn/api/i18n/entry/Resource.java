@@ -58,13 +58,13 @@ public class Resource implements ResourceEntry {
     @Override
     public ResourceEntry translate(Language lang) {
         if (this.resourceMap.containsKey(lang))
-            return new Resource(this.resourceMap.get(lang), this.getKey(), lang, this.formattingArgs);
+            return new Resource(this.resourceMap.get(lang), this.key(), lang, this.formattingArgs);
         return this;
     }
 
     @Override
     public ResourceEntry translate(MessageReceiver receiver) {
-        return this.translate(receiver.getLanguage());
+        return this.translate(receiver.language());
     }
 
     @Override
@@ -113,9 +113,9 @@ public class Resource implements ResourceEntry {
         for (char c : nativeFormats)
             temp = temp.replace(String.format("&%s", c), String.format("\u00A7%s", c));
         return temp
-                .replace("$1", java.lang.String.format("\u00A7%s", ResourceColors.getColorPrimary()))
-                .replace("$2", java.lang.String.format("\u00A7%s", ResourceColors.getColorSecondary()))
-                .replace("$3", java.lang.String.format("\u00A7%s", ResourceColors.getColorMinor()))
-                .replace("$4", java.lang.String.format("\u00A7%s", ResourceColors.getColorError()));
+                .replace("$1", java.lang.String.format("\u00A7%s", ResourceColors.primary()))
+                .replace("$2", java.lang.String.format("\u00A7%s", ResourceColors.secondary()))
+                .replace("$3", java.lang.String.format("\u00A7%s", ResourceColors.minor()))
+                .replace("$4", java.lang.String.format("\u00A7%s", ResourceColors.error()));
     }
 }

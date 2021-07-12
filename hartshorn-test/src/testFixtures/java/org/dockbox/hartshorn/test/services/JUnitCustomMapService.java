@@ -49,22 +49,22 @@ public class JUnitCustomMapService extends DefaultCustomMapService {
     }
 
     @Override
-    public CustomMap getById(int id) {
+    public CustomMap from(int id) {
         if (maps.size() > id) {
             return maps.get(id);
         }
-        return new JUnitCustomMap(Console.getInstance(), id);
+        return new JUnitCustomMap(Console.instance(), id);
     }
 
     @Override
-    public Collection<CustomMap> getFrom(Identifiable source) {
+    public Collection<CustomMap> all(Identifiable source) {
         return maps.stream()
-                .filter(map -> map.getOwner().equals(source))
+                .filter(map -> map.owner().equals(source))
                 .toList();
     }
 
     @Override
-    public Exceptional<CustomMap> derive(Item item) {
+    public Exceptional<CustomMap> from(Item item) {
         return Exceptional.empty();
     }
 }

@@ -72,8 +72,8 @@ public class ItemTool {
     }
 
     public void prepare(Item item) {
-        if (null != this.name) item.setDisplayName(this.name);
-        if (null != this.lore) item.setLore(this.lore);
+        if (null != this.name) item.displayName(this.name);
+        if (null != this.lore) item.lore(this.lore);
         this.modifiers.forEach(modifiers -> modifiers.accept(item));
     }
 
@@ -98,32 +98,32 @@ public class ItemTool {
         }
 
         public ToolBuilder only(Player player) {
-            this.filters.add(e -> e.getPlayer().equals(player));
+            this.filters.add(e -> e.player().equals(player));
             return this;
         }
 
         public ToolBuilder only(UUID playerId) {
-            this.filters.add(e -> e.getPlayer().getUniqueId().equals(playerId));
+            this.filters.add(e -> e.player().uniqueId().equals(playerId));
             return this;
         }
 
         public ToolBuilder only(@NonNls String player) {
-            this.filters.add(e -> e.getPlayer().getName().equals(player));
+            this.filters.add(e -> e.player().name().equals(player));
             return this;
         }
 
         public ToolBuilder only(Sneaking sneaking) {
-            this.filters.add(e -> Sneaking.EITHER == sneaking || sneaking == e.getSneaking());
+            this.filters.add(e -> Sneaking.EITHER == sneaking || sneaking == e.sneaking());
             return this;
         }
 
         public ToolBuilder only(ClickType clickType) {
-            this.filters.add(e -> ClickType.EITHER == clickType || clickType == e.getType());
+            this.filters.add(e -> ClickType.EITHER == clickType || clickType == e.type());
             return this;
         }
 
         public ToolBuilder only(Hand hand) {
-            this.filters.add(e -> Hand.EITHER == hand || hand == e.getHand());
+            this.filters.add(e -> Hand.EITHER == hand || hand == e.hand());
             return this;
         }
 

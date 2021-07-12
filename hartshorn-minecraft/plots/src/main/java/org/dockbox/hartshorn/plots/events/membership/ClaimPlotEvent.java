@@ -21,23 +21,17 @@ import org.dockbox.hartshorn.server.minecraft.players.Player;
 import org.dockbox.hartshorn.plots.Plot;
 import org.dockbox.hartshorn.plots.events.CancellablePlotEvent;
 
+import lombok.Getter;
+
+@Getter
 public class ClaimPlotEvent extends CancellablePlotEvent {
 
     private final Player player;
-
     private final boolean auto;
 
     public ClaimPlotEvent(Plot plot, Player player, boolean auto) {
         super(plot);
         this.player = player;
         this.auto = auto;
-    }
-
-    public Player getPlayer() {
-        return this.player;
-    }
-
-    public boolean isAuto() {
-        return this.auto;
     }
 }

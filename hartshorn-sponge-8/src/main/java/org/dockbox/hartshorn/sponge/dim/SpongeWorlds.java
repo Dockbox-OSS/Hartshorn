@@ -34,7 +34,7 @@ import java.util.UUID;
 public class SpongeWorlds implements Worlds {
 
     @Override
-    public List<World> getLoadedWorlds() {
+    public List<World> loadedWorlds() {
         return Sponge.server().worldManager().worlds().stream()
                 .map(SpongeConvert::fromSponge)
                 .map(World.class::cast)
@@ -42,36 +42,36 @@ public class SpongeWorlds implements Worlds {
     }
 
     @Override
-    public List<UUID> getAllWorldUUIDs() {
+    public List<UUID> loadedUniqueIds() {
         return this.worlds().stream().map(Identifiable::uniqueId).toList();
     }
 
     @Override
-    public Exceptional<World> getWorld(String name) {
+    public Exceptional<World> world(String name) {
         return Exceptional.of(this.worlds().stream()
                 .filter(world -> world.key().value().equals(name)).findFirst())
                 .map(SpongeConvert::fromSponge);
     }
 
     @Override
-    public Exceptional<World> getWorld(UUID uuid) {
+    public Exceptional<World> world(UUID uuid) {
         return Exceptional.of(this.worlds().stream()
                 .filter(world -> world.uniqueId().equals(uuid)).findFirst())
                 .map(SpongeConvert::fromSponge);
     }
 
     @Override
-    public boolean hasWorld(String name) {
-        return this.getWorld(name).present();
+    public boolean has(String name) {
+        return this.world(name).present();
     }
 
     @Override
-    public boolean hasWorld(UUID uuid) {
-        return this.getWorld(uuid).present();
+    public boolean has(UUID uuid) {
+        return this.world(uuid).present();
     }
 
     @Override
-    public UUID getRootWorldId() {
+    public UUID rootUniqueId() {
         return Sponge.server().worldManager().defaultWorld().uniqueId();
     }
 

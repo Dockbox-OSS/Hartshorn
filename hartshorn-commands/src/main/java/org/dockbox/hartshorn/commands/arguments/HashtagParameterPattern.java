@@ -38,17 +38,17 @@ public class HashtagParameterPattern extends PrefixedParameterPattern {
     private CommandParameterResources resources;
 
     @Override
-    protected char getOpening() {
+    protected char opening() {
         return '[';
     }
 
     @Override
-    protected char getClosing() {
+    protected char closing() {
         return ']';
     }
 
     @Override
-    protected char getPrefix() {
+    protected char prefix() {
         return '#';
     }
 
@@ -58,7 +58,7 @@ public class HashtagParameterPattern extends PrefixedParameterPattern {
     }
 
     @Override
-    protected ResourceEntry getWrongFormatResource() {
-        return this.resources.getWrongHashtagPatternFormat();
+    protected ResourceEntry wrongFormat() {
+        return this.resources.wrongHashtagPatternFormat();
     }
 }

@@ -41,40 +41,40 @@ public abstract class DefaultAbstractFileManager implements FileManager {
         this.mapper = Hartshorn.context().get(ObjectMapper.class);
     }
 
-    public FileType getFileType() {
-        return this.mapper.getFileType();
+    public FileType fileType() {
+        return this.mapper.fileType();
     }
 
-    protected void setFileType(FileType fileType) {
-        this.mapper.setFileType(fileType);
+    protected void fileType(FileType fileType) {
+        this.mapper.fileType(fileType);
     }
 
-    public Path getDataFile(Class<?> owner) {
-        return this.getDataFile(this.owner(owner));
-    }
-
-    @NotNull
-    @Override
-    public Path getDataFile(@NotNull TypedOwner owner) {
-        return this.getDataFile(owner, owner.id());
+    public Path dataFile(Class<?> owner) {
+        return this.dataFile(this.owner(owner));
     }
 
     @NotNull
     @Override
-    public Path getConfigFile(@NotNull TypedOwner owner) {
-        return this.getConfigFile(owner, owner.id());
+    public Path dataFile(@NotNull TypedOwner owner) {
+        return this.dataFile(owner, owner.id());
     }
 
     @NotNull
     @Override
-    public Path getDataFile(@NotNull TypedOwner owner, @NotNull String file) {
-        return this.createFileIfNotExists(this.getFileType().asPath(this.getDataDir().resolve(owner.id()), file));
+    public Path configFile(@NotNull TypedOwner owner) {
+        return this.configFile(owner, owner.id());
     }
 
     @NotNull
     @Override
-    public Path getConfigFile(@NotNull TypedOwner owner, @NotNull String file) {
-        return this.createFileIfNotExists(this.getFileType().asPath(this.getServiceConfigsDir().resolve(owner.id()), file));
+    public Path dataFile(@NotNull TypedOwner owner, @NotNull String file) {
+        return this.createFileIfNotExists(this.fileType().asPath(this.data().resolve(owner.id()), file));
+    }
+
+    @NotNull
+    @Override
+    public Path configFile(@NotNull TypedOwner owner, @NotNull String file) {
+        return this.createFileIfNotExists(this.fileType().asPath(this.serviceConfigs().resolve(owner.id()), file));
     }
 
     @NotNull
@@ -117,28 +117,28 @@ public abstract class DefaultAbstractFileManager implements FileManager {
 
     @Override
     public boolean copyDefaultFile(String defaultFileName, Path targetFile) {
-        if (targetFile.toFile().exists() && !HartshornUtils.isFileEmpty(targetFile)) return false;
-        return Hartshorn.getResourceFile(defaultFileName)
+        if (targetFile.toFile().exists() && !HartshornUtils.empty(targetFile)) return false;
+        return Hartshorn.resource(defaultFileName)
                 .map(resource -> this.copy(resource, targetFile))
                 .or(false);
     }
 
     @Override
-    public void stateEnabling(InjectorProperty<?>... properties) throws ApplicationException {
+    public void enable(InjectorProperty<?>... properties) throws ApplicationException {
         for (InjectorProperty<?> property : properties) {
             if (property instanceof FileTypeProperty) {
-                final FileType fileType = ((FileTypeProperty) property).getObject();
+                final FileType fileType = ((FileTypeProperty) property).value();
 
-                if (fileType.getType().equals(PersistenceType.RAW)) {
-                    this.setFileType(fileType);
+                if (fileType.type().equals(PersistenceType.RAW)) {
+                    this.fileType(fileType);
                 }
                 else {
-                    throw new IllegalArgumentException("Unsupported persistence type: " + fileType.getType() + ", expected: " + PersistenceType.RAW);
+                    throw new IllegalArgumentException("Unsupported persistence type: " + fileType.type() + ", expected: " + PersistenceType.RAW);
                 }
                 break;
             }
             else if (property instanceof PersistenceProperty) {
-                this.mapper.stateEnabling(property);
+                this.mapper.enable(property);
             }
         }
     }

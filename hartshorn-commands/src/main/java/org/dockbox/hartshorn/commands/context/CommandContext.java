@@ -37,10 +37,10 @@ public interface CommandContext extends ParserContext {
 
     <T> Exceptional<CommandParameter<T>> flag(String key);
 
-    CommandSource getSender();
+    CommandSource source();
 
     @UnmodifiableView
-    List<Permission> getPermissions();
+    List<Permission> permissions();
 
     String command();
 }

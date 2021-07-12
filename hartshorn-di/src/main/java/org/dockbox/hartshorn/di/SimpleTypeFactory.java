@@ -39,12 +39,12 @@ public class SimpleTypeFactory implements TypeFactory {
     @Override
     public <T> T create(Class<T> type, Object... arguments) {
         @Nullable final InjectorProperty<Named> property = Bindings.property(BindingMetaProperty.KEY, Named.class, this.properties);
-        Exceptional<WireContext<T, T>> binding = ApplicationContextAware.instance().getContext().firstWire(type, property);
+        Exceptional<WireContext<T, T>> binding = ApplicationContextAware.instance().context().firstWire(type, property);
         if (binding.absent()) throw new IllegalStateException("Could not autowire " + type.getCanonicalName() + " as there is no active binding for it");
         return Exceptional.of(() -> {
             final T instance = binding.get().create(arguments);
             if (instance instanceof InjectableType && ((InjectableType) instance).canEnable()) {
-                ((InjectableType) instance).stateEnabling(this.properties);
+                ((InjectableType) instance).enable(this.properties);
             }
             return instance;
         }).orNull();

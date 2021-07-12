@@ -37,7 +37,7 @@ public abstract class DefaultCustomMapService implements CustomMapService {
     @Override
     public Map<Integer[], CustomMap> create(MultiSizedImage image, Identifiable source) {
         Map<Integer[], CustomMap> chunks = HartshornUtils.emptyMap();
-        image.getImageMap().forEach((index, chunk) -> chunks.put(index, this.create(chunk, source)));
+        image.imageMap().forEach((index, chunk) -> chunks.put(index, this.create(chunk, source)));
         return chunks;
     }
 }

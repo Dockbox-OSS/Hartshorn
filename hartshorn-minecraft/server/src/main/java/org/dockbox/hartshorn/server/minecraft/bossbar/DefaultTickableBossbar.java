@@ -44,25 +44,29 @@ public abstract class DefaultTickableBossbar<T> extends ReferencedWrapper<T> imp
         players.forEach(this::hideFrom);
     }
 
-    public void setPercent(float percent) {
+    public DefaultTickableBossbar<T> percent(float percent) {
         this.percent = percent;
         this.tick();
+        return this;
     }
 
     public abstract void tick();
 
-    public void setText(Text text) {
+    public DefaultTickableBossbar<T> text(Text text) {
         this.text = text;
         this.tick();
+        return this;
     }
 
-    public void setColor(BossbarColor color) {
+    public DefaultTickableBossbar<T> color(BossbarColor color) {
         this.color = color;
         this.tick();
+        return this;
     }
 
-    public void setStyle(BossbarStyle style) {
+    public DefaultTickableBossbar<T> style(BossbarStyle style) {
         this.style = style;
         this.tick();
+        return this;
     }
 }

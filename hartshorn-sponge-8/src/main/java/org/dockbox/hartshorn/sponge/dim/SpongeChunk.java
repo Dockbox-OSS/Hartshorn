@@ -35,12 +35,12 @@ public class SpongeChunk implements Chunk, SpongeDimension {
     private final Vector3i chunk;
 
     @Override
-    public Vector3N getPosition() {
+    public Vector3N position() {
         return SpongeConvert.fromSponge(this.chunk);
     }
 
     @Override
-    public World getWorld() {
+    public World world() {
         return SpongeConvert.fromSponge(this.serverWorld());
     }
 

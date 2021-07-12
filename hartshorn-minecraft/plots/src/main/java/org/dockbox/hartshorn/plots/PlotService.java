@@ -29,33 +29,33 @@ import org.dockbox.hartshorn.plots.flags.PlotFlag;
 @Required
 public interface PlotService {
 
-    Exceptional<Plot> getPlotAt(Location location);
+    Exceptional<Plot> plot(Location location);
 
-    Exceptional<Plot> getCurrentPlot(Player player);
+    Exceptional<Plot> plot(Player player);
 
-    void registerFlag(PlotFlag<?> flag);
+    Exceptional<Plot> plot(World world, int x, int y);
 
-    Exceptional<Plot> getPlot(World world, int x, int y);
+    void register(PlotFlag<?> flag);
 
-    void setFilling(Plot plot, Item item);
+    void filling(Plot plot, Item item);
 
-    void setFloor(Plot plot, Item item);
+    void floor(Plot plot, Item item);
 
-    void setAir(Plot plot, Item item);
+    void air(Plot plot, Item item);
 
-    void setAll(Plot plot, Item item);
+    void all(Plot plot, Item item);
 
-    void setWallBorder(Plot plot, Item item);
+    void wallBorder(Plot plot, Item item);
 
-    void setWallFilling(Plot plot, Item item);
+    void wallFilling(Plot plot, Item item);
 
-    void setOutline(Plot plot, Item item);
+    void outline(Plot plot, Item item);
 
-    void setMiddle(Plot plot, Item item);
+    void middle(Plot plot, Item item);
 
-    Integer getSize(Plot plot);
+    Integer size(Plot plot);
 
-    Text getAlias(Plot plot);
+    Text alias(Plot plot);
 
-    void setAlias(Plot plot, Text item);
+    void alias(Plot plot, Text item);
 }

@@ -43,12 +43,12 @@ public class SQLiteMan extends SQLMan<Path> {
     }
 
     @Override
-    protected Path getDefaultTarget() {
+    protected Path defaultTarget() {
         return this.filePath;
     }
 
     @Override
-    protected Connection getConnection(Path target) throws InvalidConnectionException {
+    protected Connection connection(Path target) throws InvalidConnectionException {
         try {
             return DriverManager.getConnection("jdbc:sqlite:" + target.toFile().getAbsolutePath());
         }
@@ -59,16 +59,16 @@ public class SQLiteMan extends SQLMan<Path> {
     }
 
     @Override
-    protected SQLDialect getDialect() {
+    protected SQLDialect dialect() {
         return SQLDialect.SQLITE;
     }
 
     @Override
-    public void stateEnabling(InjectorProperty<?>... properties) {
+    public void enable(InjectorProperty<?>... properties) {
         Bindings.value(PATH_KEY, Path.class, properties)
                 .present(path -> this.filePath = path)
                 .orThrow(() -> new IllegalArgumentException("Missing value for '" + PATH_KEY + "'"));
 
-        super.stateEnabling(properties);
+        super.enable(properties);
     }
 }

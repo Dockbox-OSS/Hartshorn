@@ -28,10 +28,10 @@ public interface BlockDimension {
 
     Vector3N floor(Vector3N position);
 
-    boolean hasBlock(Vector3N position);
+    boolean has(Vector3N position);
 
-    Exceptional<Block> getBlock(Vector3N position);
+    Exceptional<Block> block(Vector3N position);
 
-    boolean setBlock(Vector3N position, Block item);
+    boolean block(Vector3N position, Block item);
 
 }

@@ -60,7 +60,7 @@ public class ProxyHandler<T> implements MethodHandler {
     }
 
     public void delegate(ProxyProperty<T, ?> property) {
-        this.handlers.put(property.getTarget(), property);
+        this.handlers.put(property.target(), property);
     }
 
     @Override
@@ -73,7 +73,7 @@ public class ProxyHandler<T> implements MethodHandler {
             // delegated does
             // not matter here, as out-of-phase properties are not performed.
             List<ProxyProperty<T, ?>> toSort = new ArrayList<>(properties);
-            toSort.sort(Comparator.comparingInt(ProxyProperty::getPriority));
+            toSort.sort(Comparator.comparingInt(ProxyProperty::priority));
 
             // Phase is sorted in execution order (HEAD, OVERWRITE, TAIL)
             for (Phase phase : Phase.values())
@@ -105,7 +105,7 @@ public class ProxyHandler<T> implements MethodHandler {
         // Used to ensure the target is performed if there is no OVERWRITE phase hook
         boolean target = true;
         for (ProxyProperty<T, ?> property : properties) {
-            if (at == property.getPhase()) {
+            if (at == property.phase()) {
                 Object result = property.delegate(this.instance, proceed, self, args);
                 if (property.overwriteResult() && !Void.TYPE.equals(thisMethod.getReturnType())) {
                     // A proxy returning null typically indicates the use of a non-returning function, for
@@ -130,11 +130,11 @@ public class ProxyHandler<T> implements MethodHandler {
     }
 
     public T proxy() throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
-        if (this.getType().isInterface()) {
+        if (this.type().isInterface()) {
             return new ProxyInterfaceHandler<>(this).proxy();
         }
         ProxyFactory factory = new ProxyFactory();
-        factory.setSuperclass(this.getType());
+        factory.setSuperclass(this.type());
         //noinspection unchecked
 
         return (T) factory.create(new Class<?>[0], new Object[0], this);

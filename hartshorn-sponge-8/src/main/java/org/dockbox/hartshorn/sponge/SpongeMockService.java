@@ -15,7 +15,25 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.api.domain;
+package org.dockbox.hartshorn.sponge;
 
-public interface Target {
+import org.dockbox.hartshorn.commands.annotations.Command;
+import org.dockbox.hartshorn.di.annotations.service.Service;
+import org.dockbox.hartshorn.server.minecraft.dimension.Block;
+import org.dockbox.hartshorn.server.minecraft.item.Item;
+import org.dockbox.hartshorn.server.minecraft.players.Player;
+
+@Service
+@Command("mock")
+public class SpongeMockService {
+
+    @Command(value = "block",arguments = "<block{Block}>")
+    public void block(Player source, Block block) {
+        source.inventory().give(block);
+    }
+
+    @Command(value = "item",arguments = "<item{Item}>")
+    public void item(Player source, Item item) {
+        source.inventory().give(item);
+    }
 }

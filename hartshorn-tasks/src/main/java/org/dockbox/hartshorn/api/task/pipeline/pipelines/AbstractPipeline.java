@@ -33,14 +33,17 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import lombok.Getter;
+
 public abstract class AbstractPipeline<P, I> {
 
     private final List<IPipe<I, I>> pipes = HartshornUtils.emptyList();
     private boolean isCancelled;
+    @Getter
     private CancelBehaviour cancelBehaviour = CancelBehaviour.UNCANCELLABLE;
 
     /**
-     * Internally calls {@link AbstractPipeline#addPipes(IPipe[])} and returns itself.
+     * Internally calls {@link AbstractPipeline#add(IPipe[])} and returns itself.
      *
      * @param pipes
      *         The non-null varargs of {@link IPipe}s to add to the pipeline
@@ -49,34 +52,34 @@ public abstract class AbstractPipeline<P, I> {
      */
     @SafeVarargs
     public final AbstractPipeline<P, I> addVarargPipes(@NotNull IPipe<I, I>... pipes) {
-        return this.addPipes(pipes);
+        return this.add(pipes);
     }
 
     /**
      * Adds a non-null array of {@link IPipe}s to the pipeline by internally calling {@link
-     * AbstractPipeline#addPipes(Iterable)}.
+     * AbstractPipeline#add(Iterable)}.
      *
      * @param pipes
      *         The non-null array of {@link IPipe}s to add to the pipeline
      *
      * @return Itself
      */
-    public AbstractPipeline<P, I> addPipes(@NotNull IPipe<I, I>[] pipes) {
-        return this.addPipes(Arrays.asList(pipes));
+    public AbstractPipeline<P, I> add(@NotNull IPipe<I, I>[] pipes) {
+        return this.add(Arrays.asList(pipes));
     }
 
     /**
      * Adds a non-null {@link Iterable} of {@link IPipe}s to the pipeline by internally calling {@link
-     * AbstractPipeline#addPipe} on each pipe.
+     * AbstractPipeline#add} on each pipe.
      *
      * @param pipes
      *         The non-null {@link Iterable} of {@link IPipe}s to add to the pipeline
      *
      * @return Itself
      */
-    public AbstractPipeline<P, I> addPipes(@NotNull Iterable<IPipe<I, I>> pipes) {
+    public AbstractPipeline<P, I> add(@NotNull Iterable<IPipe<I, I>> pipes) {
         for (IPipe<I, I> pipe : pipes) {
-            this.addPipe(pipe);
+            this.add(pipe);
         }
         return this;
     }
@@ -89,14 +92,14 @@ public abstract class AbstractPipeline<P, I> {
      *
      * @return Itself
      */
-    public AbstractPipeline<P, I> addPipe(@NotNull IPipe<I, I> pipe) {
+    public AbstractPipeline<P, I> add(@NotNull IPipe<I, I> pipe) {
         this.pipes.add(pipe);
         return this;
     }
 
     /**
      * Adds a {@link AbstractPipeline}'s {@link IPipe}s to this current pipeline by internally calling
-     * {@link AbstractPipeline#addPipes(Iterable)}.
+     * {@link AbstractPipeline#add(Iterable)}.
      *
      * @param pipeline
      *         The non-null {@link AbstractPipeline} whos {@link IPipe}s should be added to
@@ -104,12 +107,12 @@ public abstract class AbstractPipeline<P, I> {
      *
      * @return Itself
      */
-    public AbstractPipeline<P, I> addPipeline(@NotNull AbstractPipeline<?, I> pipeline) {
-        return this.addPipes(pipeline.getPipes());
+    public AbstractPipeline<P, I> add(@NotNull AbstractPipeline<?, I> pipeline) {
+        return this.add(pipeline.pipes());
     }
 
     /** @return An unmodifiabe list of the {@link IPipe}s in the pipeline */
-    public List<IPipe<I, I>> getPipes() {
+    public List<IPipe<I, I>> pipes() {
         return HartshornUtils.asUnmodifiableList(this.pipes);
     }
 
@@ -142,7 +145,7 @@ public abstract class AbstractPipeline<P, I> {
      *         not cancellable
      */
     protected Exceptional<I> processPipe(IPipe<I, I> pipe, Exceptional<I> exceptionalInput) {
-        if (!this.isCancellable() && Reflect.assigns(CancellablePipe.class, pipe.getType())) {
+        if (!this.cancellable() && Reflect.assigns(CancellablePipe.class, pipe.type())) {
             throw new IllegalPipeException(
                     "Attempted to add a CancellablePipe to an uncancellable pipeline.");
         }
@@ -151,12 +154,12 @@ public abstract class AbstractPipeline<P, I> {
         final Exceptional<I> finalInput = exceptionalInput;
 
         exceptionalInput = Exceptional.of(() -> {
-            if (Reflect.assigns(ComplexPipe.class, pipe.getType())) {
+            if (Reflect.assigns(ComplexPipe.class, pipe.type())) {
                 ComplexPipe<I, I> complexPipe = (ComplexPipe<I, I>) pipe;
                 return complexPipe.apply(
                         this, finalInput.orNull(), finalInput.unsafeError());
             }
-            else if (Reflect.assigns(StandardPipe.class, pipe.getType())) {
+            else if (Reflect.assigns(StandardPipe.class, pipe.type())) {
                 StandardPipe<I, I> standardPipe = (StandardPipe<I, I>) pipe;
                 return standardPipe.apply(finalInput);
             }
@@ -174,13 +177,8 @@ public abstract class AbstractPipeline<P, I> {
     }
 
     /** @return A boolean describing if the pipeline is cancellable or not */
-    public boolean isCancellable() {
-        return CancelBehaviour.UNCANCELLABLE != this.getCancelBehaviour();
-    }
-
-    /** @return The {@link CancelBehaviour} of this pipeline */
-    public CancelBehaviour getCancelBehaviour() {
-        return this.cancelBehaviour;
+    public boolean cancellable() {
+        return CancelBehaviour.UNCANCELLABLE != this.cancelBehaviour();
     }
 
     /**
@@ -192,7 +190,7 @@ public abstract class AbstractPipeline<P, I> {
      *
      * @return Itself
      */
-    public AbstractPipeline<P, I> setCancelBehaviour(CancelBehaviour cancelBehaviour) {
+    public AbstractPipeline<P, I> cancelBehaviour(CancelBehaviour cancelBehaviour) {
         this.cancelBehaviour = cancelBehaviour;
         return this;
     }
@@ -290,18 +288,18 @@ public abstract class AbstractPipeline<P, I> {
     }
 
     /** Cancels the pipeline which prevents it from processing any further {@link IPipe}s. */
-    public void cancelPipeline() {
-        if (this.isCancellable()) this.isCancelled = true;
+    public void cancel() {
+        if (this.cancellable()) this.isCancelled = true;
     }
 
     /** Uncancels the pipeline. */
-    public void uncancelPipeline() {
+    public void permit() {
         this.isCancelled = false;
     }
 
     /** @return If the pipeline is cancelled */
-    protected boolean isCancelled() {
-        return this.isCancellable() && this.isCancelled;
+    protected boolean cancelled() {
+        return this.cancellable() && this.isCancelled;
     }
 
     /**

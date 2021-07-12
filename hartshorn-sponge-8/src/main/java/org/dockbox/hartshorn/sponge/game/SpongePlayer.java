@@ -109,7 +109,7 @@ public class SpongePlayer extends Player implements SpongeEntity<net.minecraft.s
     @Override
     public void sendWithPrefix(Text text) {
         this.player().present(player -> {
-            final Text message = Text.of(DefaultResources.instance().getPrefix(), text);
+            final Text message = Text.of(DefaultResources.instance().prefix(), text);
             player.sendMessage(SpongeConvert.toSponge(message));
         });
     }
@@ -126,11 +126,11 @@ public class SpongePlayer extends Player implements SpongeEntity<net.minecraft.s
 
     @Override
     public boolean hasPermission(Permission permission) {
-        if (permission.getContext().absent()) {
+        if (permission.context().absent()) {
             return this.hasPermission(permission.get());
         }
         else {
-            Set<Context> contexts = SpongeConvert.toSponge(permission.getContext().get());
+            Set<Context> contexts = SpongeConvert.toSponge(permission.context().get());
             return this.hasPermission(permission.get(), contexts);
         }
     }
@@ -140,21 +140,21 @@ public class SpongePlayer extends Player implements SpongeEntity<net.minecraft.s
     }
 
     @Override
-    public void setPermission(String permission, Tristate state) {
-        this.setPermission(permission, SubjectData.GLOBAL_CONTEXT, state);
+    public void permission(String permission, Tristate state) {
+        this.permission(permission, SubjectData.GLOBAL_CONTEXT, state);
     }
 
     @Override
-    public void setPermission(Permission permission, Tristate state) {
-        if (permission.getContext().absent()) {
-            this.setPermission(permission.get(), state);
+    public void permission(Permission permission, Tristate state) {
+        if (permission.context().absent()) {
+            this.permission(permission.get(), state);
         } else {
-            Set<Context> contexts = SpongeConvert.toSponge(permission.getContext().get());
-            this.setPermission(permission.get(), contexts, state);
+            Set<Context> contexts = SpongeConvert.toSponge(permission.context().get());
+            this.permission(permission.get(), contexts, state);
         }
     }
 
-    public void setPermission(String permission, Set<Context> context, Tristate state) {
+    public void permission(String permission, Set<Context> context, Tristate state) {
         org.spongepowered.api.util.Tristate tristate = SpongeConvert.toSponge(state);
         this.user().present(user -> user.subjectData().setPermission(context, permission, tristate));
     }
@@ -171,7 +171,7 @@ public class SpongePlayer extends Player implements SpongeEntity<net.minecraft.s
     }
 
     @Override
-    public boolean isOnline() {
+    public boolean online() {
         return this.player().map(ServerPlayer::isOnline).or(false);
     }
 
@@ -181,26 +181,27 @@ public class SpongePlayer extends Player implements SpongeEntity<net.minecraft.s
     }
 
     @Override
-    public Gamemode getGamemode() {
+    public Gamemode gamemode() {
         return SpongeUtil.get(this.player(), Keys.GAME_MODE, SpongeConvert::fromSponge, () -> Gamemode.OTHER);
     }
 
     @Override
-    public void setGamemode(Gamemode gamemode) {
+    public SpongePlayer gamemode(Gamemode gamemode) {
         this.player().present(player -> {
             final GameMode mode = SpongeConvert.toSponge(gamemode);
             player.offer(Keys.GAME_MODE, mode);
         });
+        return this;
     }
 
     @Override
-    public Item getItemInHand(Hand hand) {
-        return this.getInventory().getSlot(hand.getSlot());
+    public Item itemInHand(Hand hand) {
+        return this.inventory().slot(hand.slot());
     }
 
     @Override
-    public void setItemInHand(Hand hand, Item item) {
-        this.getInventory().setSlot(item, hand.getSlot());
+    public void itemInHand(Hand hand, Item item) {
+        this.inventory().slot(item, hand.slot());
     }
 
     @Override
@@ -212,27 +213,27 @@ public class SpongePlayer extends Player implements SpongeEntity<net.minecraft.s
     }
 
     @Override
-    public boolean isSneaking() {
-        return this.getBoolean(Keys.IS_SNEAKING);
+    public boolean sneaking() {
+        return this.bool(Keys.IS_SNEAKING);
     }
 
     @Override
-    public Profile getProfile() {
-        return new SpongeProfile(this.getUniqueId());
+    public Profile profile() {
+        return new SpongeProfile(this.uniqueId());
     }
 
     @Override
-    public Exceptional<Block> getLookingAtBlock() {
+    public Exceptional<Block> lookingAtBlock() {
         return this.player()
                 .map(player -> this.trace(RayTrace.block(), player))
                 .map(RayTraceResult::hitPosition)
                 .map(SpongeConvert::fromSponge)
-                .map(vector -> Location.of(vector, this.getWorld()))
+                .map(vector -> Location.of(vector, this.world()))
                 .map(Block::from);
     }
 
     @Override
-    public Exceptional<Entity> getLookingAtEntity() {
+    public Exceptional<Entity> lookingAtEntity() {
         return this.player()
                 .map(player -> this.trace(RayTrace.entity(), player))
                 .map(RayTraceResult::selectedObject)
@@ -255,12 +256,12 @@ public class SpongePlayer extends Player implements SpongeEntity<net.minecraft.s
     }
 
     @Override
-    public PlayerInventory getInventory() {
+    public PlayerInventory inventory() {
         return new SpongePlayerInventory(this);
     }
 
     @Override
-    public GameSettings getGameSettings() {
+    public GameSettings gameSettings() {
         return this.player().map(player -> {
             final Locale locale = player.locale();
             final Language language = Language.of(locale);
@@ -269,7 +270,7 @@ public class SpongePlayer extends Player implements SpongeEntity<net.minecraft.s
     }
 
     private Exceptional<User> user() {
-        return Exceptional.of(Sponge.server().userManager().find(this.getUniqueId()));
+        return Exceptional.of(Sponge.server().userManager().find(this.uniqueId()));
     }
 
     public Exceptional<ServerPlayer> player() {
@@ -277,7 +278,7 @@ public class SpongePlayer extends Player implements SpongeEntity<net.minecraft.s
     }
 
     @Override
-    public Exceptional<? extends Mutable> getDataHolder() {
+    public Exceptional<? extends Mutable> dataHolder() {
         // Use offline user reference to ensure we can (almost) always obtain the information
         return this.user();
     }

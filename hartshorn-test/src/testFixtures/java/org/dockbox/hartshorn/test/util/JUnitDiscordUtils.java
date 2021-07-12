@@ -26,12 +26,12 @@ import org.dockbox.hartshorn.discord.DefaultDiscordUtils;
 
 public class JUnitDiscordUtils extends DefaultDiscordUtils {
     @Override
-    public Exceptional<JDA> getJDA() {
+    public Exceptional<JDA> jda() {
         throw new NotImplementedException();
     }
 
     @Override
-    public Exceptional<TextChannel> getGlobalTextChannel() {
+    public Exceptional<TextChannel> globalChannel() {
         throw new NotImplementedException();
     }
 }

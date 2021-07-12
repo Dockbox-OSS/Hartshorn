@@ -39,7 +39,7 @@ public class EventBusTests {
     public void testTypesCanSubscribe() {
         EventBus bus = this.bus();
         bus.subscribe(BasicEventListener.class);
-        Assertions.assertTrue(bus.getListenersToInvokers().containsKey(BasicEventListener.class));
+        Assertions.assertTrue(bus.invokers().containsKey(BasicEventListener.class));
     }
 
     @Test
@@ -63,7 +63,7 @@ public class EventBusTests {
         EventBus bus = this.bus();
         bus.subscribe(PriorityEventListener.class);
         bus.post(new SampleEvent());
-        Assertions.assertEquals(Priority.LAST, PriorityEventListener.getLast());
+        Assertions.assertEquals(Priority.LAST, PriorityEventListener.last());
     }
 
     @Test
@@ -75,7 +75,7 @@ public class EventBusTests {
         Assertions.assertEquals(1, event.acceptedFilters().size());
         Assertions.assertEquals(FilterTypes.EQUALS, event.acceptedFilters().get(0));
 
-        Assertions.assertTrue(event.isApplicable(this.filter("name", "Hartshorn", FilterTypes.EQUALS)));
+        Assertions.assertTrue(event.permits(this.filter("name", "Hartshorn", FilterTypes.EQUALS)));
 
         bus.post(event);
         Assertions.assertTrue(FilteredEventListener.fired);
@@ -90,7 +90,7 @@ public class EventBusTests {
         Assertions.assertEquals(1, event.acceptedFilters().size());
         Assertions.assertEquals(FilterTypes.EQUALS, event.acceptedFilters().get(0));
 
-        Assertions.assertFalse(event.isApplicable(this.filter("name", "Hartshorn", FilterTypes.EQUALS)));
+        Assertions.assertFalse(event.permits(this.filter("name", "Hartshorn", FilterTypes.EQUALS)));
 
         bus.post(event);
         Assertions.assertFalse(FilteredEventListener.fired);

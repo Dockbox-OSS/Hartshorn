@@ -41,7 +41,7 @@ public class SimpleComponentLocator implements ComponentLocator {
     public @NotNull @Unmodifiable Collection<Class<?>> locate(String prefix) {
         if (SimpleComponentLocator.cache.containsKey(prefix)) {
             return SimpleComponentLocator.cache.get(prefix).stream()
-                    .map(ComponentContainer::getType)
+                    .map(ComponentContainer::type)
                     .collect(Collectors.toList());
         }
 
@@ -64,7 +64,7 @@ public class SimpleComponentLocator implements ComponentLocator {
                 .map(this::container)
                 .map(Exceptional::get)
                 .filter(container -> container.componentType().equals(componentType))
-                .map(ComponentContainer::getType)
+                .map(ComponentContainer::type)
                 .collect(Collectors.toSet())
         );
     }
@@ -78,7 +78,7 @@ public class SimpleComponentLocator implements ComponentLocator {
     public Exceptional<ComponentContainer> container(Class<?> type) {
         return Exceptional.of(this.containers()
                 .stream()
-                .filter(container -> container.getType().equals(type))
+                .filter(container -> container.type().equals(type))
                 .findFirst()
         );
     }

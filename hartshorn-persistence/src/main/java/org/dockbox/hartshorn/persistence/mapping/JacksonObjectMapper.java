@@ -17,7 +17,9 @@
 
 package org.dockbox.hartshorn.persistence.mapping;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.core.JsonParser.Feature;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
@@ -138,9 +140,9 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
     public <T> Exceptional<Boolean> write(Path path, T content) {
         return this.writeInternal(
                 content,
-                () -> this.write(path, ((PersistentCapable<?>) content).toPersistentModel()),
+                () -> this.write(path, ((PersistentCapable<?>) content).model()),
                 () -> {
-                    this.getWriter(content).writeValue(path.toFile(), content);
+                    this.writer(content).writeValue(path.toFile(), content);
                     return true;
                 }).orElse(() -> false);
     }
@@ -149,16 +151,16 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
     public <T> Exceptional<String> write(T content) {
         return this.writeInternal(
                 content,
-                () -> this.write(((PersistentCapable<?>) content).toPersistentModel()),
-                () -> this.getWriter(content).writeValueAsString(content))
+                () -> this.write(((PersistentCapable<?>) content).model()),
+                () -> this.writer(content).writeValueAsString(content))
                 .map(out -> out.replaceAll("\\r", ""));
     }
 
-    private ObjectWriter getWriter(Object content) {
+    private ObjectWriter writer(Object content) {
         ObjectWriter writer = this.configureMapper().writerWithDefaultPrettyPrinter();
         final Exceptional<Entity> annotated = Reflect.annotation(content.getClass(), Entity.class);
 
-        if (JacksonObjectMapper.roots.contains(this.getFileType()) && annotated.present()) {
+        if (JacksonObjectMapper.roots.contains(this.fileType()) && annotated.present()) {
             final Entity annotation = annotated.get();
             writer = writer.withRootName(annotation.value());
         }
@@ -172,8 +174,8 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
     }
 
     @Override
-    public void setFileType(FileType fileType) {
-        super.setFileType(fileType);
+    public void fileType(FileType fileType) {
+        super.fileType(fileType);
         this.mapper = null;
     }
 
@@ -187,7 +189,7 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
 
     protected ObjectMapper configureMapper() {
         if (null == this.mapper) {
-            this.mapper = this.getMapper(this.getFileType());
+            this.mapper = this.mapper(this.fileType());
             this.mapper.setAnnotationIntrospector(new PropertyAliasIntrospector());
             this.mapper.enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES);
             this.mapper.enable(Feature.ALLOW_COMMENTS);
@@ -197,12 +199,16 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
             this.mapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
             this.mapper.enable(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS);
             this.mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+            // As Lombok generates fluent style getters/setters, these are not picked up by Jackson which
+            // would otherwise cause it to fail due to it recognizing the object as an empty bean, even
+            // if it is not empty.
+            this.mapper.setVisibility(PropertyAccessor.FIELD, Visibility.ANY);
             this.mapper.setSerializationInclusion(this.include);
         }
         return this.mapper;
     }
 
-    protected ObjectMapper getMapper(FileType fileType) {
+    protected ObjectMapper mapper(FileType fileType) {
         for (JacksonObjectMapper.Mappers mapper : JacksonObjectMapper.Mappers.values()) {
             if (mapper.fileType.equals(fileType)) return (ObjectMapper) mapper.mapper.get();
         }
@@ -221,7 +227,7 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
         if (Reflect.assigns(PersistentCapable.class, type)) {
             // Provision basis is required here, as injected types will typically pass in a interface type. If no injection point is available a
             // regular instance is created through available constructors.
-            Class<? extends PersistentModel<?>> modelType = ((PersistentCapable<?>) Hartshorn.context().get(type)).getModelClass();
+            Class<? extends PersistentModel<?>> modelType = ((PersistentCapable<?>) Hartshorn.context().get(type)).modelType();
             @NotNull Exceptional<? extends PersistentModel<?>> model = reader.apply(modelType);
             return model.map(PersistentModel::toPersistentCapable).map(out -> (T) out);
         }

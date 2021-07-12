@@ -26,40 +26,40 @@ public class TriadTests {
     @Test
     public void testFirstValueIsStored() {
         Triad<?, ?, ?> triad = new Triad<>(1, "two", 3L);
-        Assertions.assertEquals(1, triad.getFirst());
-        Assertions.assertTrue(triad.getFirst() instanceof Integer);
+        Assertions.assertEquals(1, triad.first());
+        Assertions.assertTrue(triad.first() instanceof Integer);
     }
 
     @Test
     public void testSecondValueIsStored() {
         Triad<?, ?, ?> triad = new Triad<>(1, "two", 3L);
-        Assertions.assertEquals("two", triad.getSecond());
-        Assertions.assertTrue(triad.getSecond() instanceof String);
+        Assertions.assertEquals("two", triad.second());
+        Assertions.assertTrue(triad.second() instanceof String);
     }
 
     @Test
     public void testThirdValueIsStored() {
         Triad<?, ?, ?> triad = new Triad<>(1, "two", 3L);
-        Assertions.assertEquals(3L, triad.getThird());
-        Assertions.assertTrue(triad.getThird() instanceof Long);
+        Assertions.assertEquals(3L, triad.third());
+        Assertions.assertTrue(triad.third() instanceof Long);
     }
 
     @Test
     public void testFirstValueCanBeNull() {
         Triad<?, ?, ?> triad = new Triad<>(null, "two", 3L);
-        Assertions.assertNull(triad.getFirst());
+        Assertions.assertNull(triad.first());
     }
 
     @Test
     public void testSecondValueCanBeNull() {
         Triad<?, ?, ?> triad = new Triad<>(1, null, 3L);
-        Assertions.assertNull(triad.getSecond());
+        Assertions.assertNull(triad.second());
     }
 
     @Test
     public void testThirdValueCanBeNull() {
         Triad<?, ?, ?> triad = new Triad<>(1, "two", null);
-        Assertions.assertNull(triad.getThird());
+        Assertions.assertNull(triad.third());
     }
 
 }

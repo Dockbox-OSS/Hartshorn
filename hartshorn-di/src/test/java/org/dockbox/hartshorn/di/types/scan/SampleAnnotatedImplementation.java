@@ -23,7 +23,7 @@ import org.dockbox.hartshorn.di.types.SampleInterface;
 @Binds(SampleInterface.class)
 public class SampleAnnotatedImplementation implements SampleInterface {
     @Override
-    public String getName() {
+    public String name() {
         return "AnnotatedHartshorn";
     }
 }

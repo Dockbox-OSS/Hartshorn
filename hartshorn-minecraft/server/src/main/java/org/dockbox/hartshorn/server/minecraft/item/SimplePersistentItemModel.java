@@ -47,19 +47,19 @@ public class SimplePersistentItemModel implements PersistentItemModel {
     private Map<String, Object> persistentData;
 
     public SimplePersistentItemModel(Item item) {
-        this.id = item.getId();
-        this.title = item.getDisplayName();
-        this.lore = item.getLore();
-        this.amount = item.getAmount();
-        this.enchantments = new ArrayList<>(item.getEnchantments());
+        this.id = item.id();
+        this.title = item.displayName();
+        this.lore = item.lore();
+        this.amount = item.amount();
+        this.enchantments = new ArrayList<>(item.enchantments());
         this.persistentData = HartshornUtils.emptyMap();
-        for (Entry<PersistentDataKey<?>, Object> persistentEntry : item.getPersistentData().entrySet()) {
-            this.persistentData.put(persistentEntry.getKey().getId(), persistentEntry.getValue());
+        for (Entry<PersistentDataKey<?>, Object> persistentEntry : item.data().entrySet()) {
+            this.persistentData.put(persistentEntry.getKey().id(), persistentEntry.getValue());
         }
     }
 
     @Override
-    public Class<? extends Item> getCapableType() {
+    public Class<? extends Item> capableType() {
         return Item.class;
     }
 
@@ -69,10 +69,10 @@ public class SimplePersistentItemModel implements PersistentItemModel {
     }
 
     protected Item repopulate(Item item) {
-        item.setDisplayName(this.getTitle());
-        item.setLore(this.getLore());
-        item.setAmount(this.getAmount());
-        for (Enchant enchantment : this.getEnchantments())
+        item.displayName(this.title());
+        item.lore(this.lore());
+        item.amount(this.amount());
+        for (Enchant enchantment : this.enchantments())
             item.addEnchant(enchantment);
         for (Entry<String, Object> persistentEntry : this.persistentData.entrySet())
             item.set(StoredPersistentKey.of(persistentEntry.getKey()), persistentEntry.getValue());

@@ -49,7 +49,7 @@ public abstract class AbstractArgumentConverter<T> implements ArgumentConverter<
         return this.size;
     }
 
-    public List<String> getKeys() {
+    public List<String> keys() {
         return Arrays.asList(this.keys);
     }
 }

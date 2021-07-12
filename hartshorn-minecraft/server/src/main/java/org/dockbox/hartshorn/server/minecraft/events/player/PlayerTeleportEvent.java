@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.server.minecraft.events.player;
 
-import org.dockbox.hartshorn.api.domain.Target;
+import org.dockbox.hartshorn.api.domain.Subject;
 import org.dockbox.hartshorn.server.minecraft.dimension.position.Location;
 
 import lombok.Getter;
@@ -26,14 +26,14 @@ import lombok.Setter;
 /** The event fired when a player is teleported to another location */
 @Getter
 public class PlayerTeleportEvent extends PlayerMoveEvent {
-    private final Location oldLocation;
 
     @Setter
-    private Location newLocation;
+    private Location destination;
+    private final Location origin;
 
-    public PlayerTeleportEvent(Target target, Location oldLocation, Location newLocation) {
-        super(target);
-        this.oldLocation = oldLocation;
-        this.newLocation = newLocation;
+    public PlayerTeleportEvent(Subject subject, Location origin, Location destination) {
+        super(subject);
+        this.origin = origin;
+        this.destination = destination;
     }
 }

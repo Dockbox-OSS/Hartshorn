@@ -610,11 +610,11 @@ public final class Reflect {
     }
 
     public static <A extends Annotation> Exceptional<A> annotation(AnnotatedElement target, Class<A> annotation) {
-        return Exceptional.of(AnnotationHelper.getOneOrNull(target, annotation));
+        return Exceptional.of(AnnotationHelper.oneOrNull(target, annotation));
     }
 
     public static <A extends Annotation> List<A> allAnnotationsLike(AnnotatedElement target, Class<A> annotation) {
-        return AnnotationHelper.getAllOrEmpty(target, annotation);
+        return AnnotationHelper.allOrEmpty(target, annotation);
     }
 
     public static <A extends Annotation> Annotation actual(A annotation) {

@@ -25,6 +25,6 @@ import org.dockbox.hartshorn.di.annotations.service.Service;
 public class TestResources {
 
     @Resource("Hello world!")
-    public ResourceEntry getTestEntry() {return null;}
+    public ResourceEntry testEntry() {return null;}
 
 }

@@ -45,7 +45,7 @@ public class PacketEvent<T extends Packet> extends AbstractCancellableEvent {
         this.target = target;
     }
 
-    public void setPacket(T packet) {
+    public void packet(T packet) {
         this.isModified = true;
         this.packet = packet;
     }

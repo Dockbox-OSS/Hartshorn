@@ -69,7 +69,7 @@ public class SimpleCommandParser implements CommandParser {
         final List<String> tokens = HartshornUtils.asList(stripped.split(" "));
         parsedElements.addAll(this.parse(elements, tokens, source));
 
-        if (!tokens.isEmpty() && !"".equals(tokens.get(0))) throw new ParsingException(this.resources.getTooManyArguments());
+        if (!tokens.isEmpty() && !"".equals(tokens.get(0))) throw new ParsingException(this.resources.tooManyArguments());
 
         return Exceptional.of(new SimpleCommandContext(command,
                 parsedElements,
@@ -86,7 +86,7 @@ public class SimpleCommandParser implements CommandParser {
 
             if (tokens.size() < size || end > tokens.size()) {
                 if (element.optional()) continue;
-                else throw new ParsingException(this.resources.getNotEnoughParameterArguments(element.name()));
+                else throw new ParsingException(this.resources.notEnoughParameterArguments(element.name()));
             }
 
             final List<String> elementTokens = tokens.subList(0, end);
@@ -94,10 +94,10 @@ public class SimpleCommandParser implements CommandParser {
             tokens.removeAll(elementTokens);
 
             final Exceptional<?> value = element.parse(source, token);
-            parameters.addAll(this.getParameter(value, token, "argument", element.name(), element, source));
+            parameters.addAll(this.parameter(value, token, "argument", element.name(), element, source));
 
             if (size == -1) {
-                if (i != elements.size() - 1) throw new ParsingException(this.resources.getIllegalArgumentDefinition());
+                if (i != elements.size() - 1) throw new ParsingException(this.resources.illegalArgumentDefinition());
                 break;
             }
         }
@@ -112,7 +112,7 @@ public class SimpleCommandParser implements CommandParser {
             final String nameUntrimmed = flag.split(" ")[0];
             final String name = HartshornUtils.trimWith('-', nameUntrimmed);
             final Exceptional<CommandFlag> commandFlag = context.flag(name);
-            if (commandFlag.absent()) throw new ParsingException(this.resources.getUnknownFlag(name));
+            if (commandFlag.absent()) throw new ParsingException(this.resources.unknownFlag(name));
 
             final CommandFlag contextFlag = commandFlag.get();
             if (contextFlag.value()) {
@@ -126,7 +126,7 @@ public class SimpleCommandParser implements CommandParser {
                     String token = String.join(" ", tokens.subList(i, end)).trim();
 
                     final Exceptional<?> value = ((CommandFlagElement<?>) contextFlag).parse(source, token);
-                    flags.addAll(this.getParameter(value, token, "flag", name, contextFlag, source));
+                    flags.addAll(this.parameter(value, token, "flag", name, contextFlag, source));
                     command = command.replace(flag, "");
                 }
             } else {
@@ -137,9 +137,9 @@ public class SimpleCommandParser implements CommandParser {
         return command.trim();
     }
 
-    private Collection<CommandParameter<?>> getParameter(Exceptional<?> value, String token, String elementType, String elementName, CommandPartial partial, CommandSource source) throws ParsingException {
+    private Collection<CommandParameter<?>> parameter(Exceptional<?> value, String token, String elementType, String elementName, CommandPartial partial, CommandSource source) throws ParsingException {
         if (value.absent()) {
-            ResourceEntry resource = this.resources.getCouldNotParse(elementType, elementName);
+            ResourceEntry resource = this.resources.couldNotParse(elementType, elementName);
             throw value.caught() ? new ParsingException(resource, value.error()) : new ParsingException(resource);
         } else {
             if (partial instanceof GroupCommandElement) {

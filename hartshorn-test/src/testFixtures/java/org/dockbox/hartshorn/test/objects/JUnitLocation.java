@@ -34,7 +34,7 @@ public class JUnitLocation extends Location implements JUnitPersistentDataHolder
 
     @Wired
     public JUnitLocation(World world) {
-        this(world.getSpawnPosition(), world);
+        this(world.spawnPosition(), world);
     }
 
     @Wired
@@ -59,22 +59,22 @@ public class JUnitLocation extends Location implements JUnitPersistentDataHolder
     }
 
     @Override
-    public Vector3N getVectorLoc() {
+    public Vector3N vector() {
         return this.position;
     }
 
     @Override
-    public World getWorld() {
+    public World world() {
         return this.world;
     }
 
     @Override
-    public UUID getUniqueId() {
+    public UUID uniqueId() {
         return this.uniqueId;
     }
 
     @Override
-    public String getName() {
+    public String name() {
         return "JUnitLocation";
     }
 }

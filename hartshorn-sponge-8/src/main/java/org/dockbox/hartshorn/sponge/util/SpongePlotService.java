@@ -34,77 +34,77 @@ import org.dockbox.hartshorn.server.minecraft.players.Player;
 @Binds(PlotService.class)
 public class SpongePlotService implements PlotService {
     @Override
-    public Exceptional<Plot> getPlotAt(Location location) {
+    public Exceptional<Plot> plot(Location location) {
         return Exceptional.empty();
     }
 
     @Override
-    public Exceptional<Plot> getCurrentPlot(Player player) {
+    public Exceptional<Plot> plot(Player player) {
         return Exceptional.empty();
     }
 
     @Override
-    public void registerFlag(PlotFlag<?> flag) {
+    public void register(PlotFlag<?> flag) {
         // Nothing happens
     }
 
     @Override
-    public Exceptional<Plot> getPlot(World world, int x, int y) {
+    public Exceptional<Plot> plot(World world, int x, int y) {
         return Exceptional.empty();
     }
 
     @Override
-    public void setFilling(Plot plot, Item item) {
+    public void filling(Plot plot, Item item) {
         // Nothing happens
     }
 
     @Override
-    public void setFloor(Plot plot, Item item) {
+    public void floor(Plot plot, Item item) {
         // Nothing happens
     }
 
     @Override
-    public void setAir(Plot plot, Item item) {
+    public void air(Plot plot, Item item) {
         // Nothing happens
     }
 
     @Override
-    public void setAll(Plot plot, Item item) {
+    public void all(Plot plot, Item item) {
         // Nothing happens
     }
 
     @Override
-    public void setWallBorder(Plot plot, Item item) {
+    public void wallBorder(Plot plot, Item item) {
         // Nothing happens
     }
 
     @Override
-    public void setWallFilling(Plot plot, Item item) {
+    public void wallFilling(Plot plot, Item item) {
         // Nothing happens
     }
 
     @Override
-    public void setOutline(Plot plot, Item item) {
+    public void outline(Plot plot, Item item) {
         // Nothing happens
     }
 
     @Override
-    public void setMiddle(Plot plot, Item item) {
+    public void middle(Plot plot, Item item) {
         // Nothing happens
     }
 
     @Override
-    public Integer getSize(Plot plot) {
+    public Integer size(Plot plot) {
         return -1;
     }
 
     @Override
-    public Text getAlias(Plot plot) {
+    public Text alias(Plot plot) {
         return Text.of();
     }
 
     @Override
-    public void setAlias(Plot plot, Text item) {
+    public void alias(Plot plot, Text item) {
         // Nothing happens
     }
 }

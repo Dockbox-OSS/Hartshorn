@@ -36,13 +36,13 @@ public class DoubleFlag extends AbstractPlotFlag<Double> {
         try {
             return Double.parseDouble(raw);
         } catch (NumberFormatException e) {
-            Except.handle("Could not parse number flag: " + this.getId(), e);
+            Except.handle("Could not parse number flag: " + this.id(), e);
             return -1D;
         }
     }
 
     @Override
-    public Class<Double> getType() {
+    public Class<Double> type() {
         return Double.class;
     }
 }

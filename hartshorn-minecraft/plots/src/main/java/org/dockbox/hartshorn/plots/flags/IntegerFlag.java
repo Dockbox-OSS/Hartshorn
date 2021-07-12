@@ -36,13 +36,13 @@ public class IntegerFlag extends AbstractPlotFlag<Integer> {
         try {
             return Integer.parseInt(raw);
         } catch (NumberFormatException e) {
-            Except.handle("Could not parse number flag: " + this.getId(), e);
+            Except.handle("Could not parse number flag: " + this.id(), e);
             return -1;
         }
     }
 
     @Override
-    public Class<Integer> getType() {
+    public Class<Integer> type() {
         return Integer.class;
     }
 }

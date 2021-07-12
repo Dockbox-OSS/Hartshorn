@@ -39,7 +39,7 @@ public class SpongeArmorStandInventory implements SpongeInventory, ArmorStandInv
     }
 
     @Override
-    public Collection<Item> getAllItems() {
+    public Collection<Item> items() {
         List<ItemStack> items = HartshornUtils.emptyList();
         this.stand.entity().present(entity -> {
             items.add(entity.itemInHand(HandTypes.MAIN_HAND));
@@ -58,12 +58,12 @@ public class SpongeArmorStandInventory implements SpongeInventory, ArmorStandInv
 
     @Override
     public boolean give(Item item) {
-        this.setSlot(item, Slot.MAIN_HAND);
+        this.slot(item, Slot.MAIN_HAND);
         return true;
     }
 
     @Override
-    public Item getSlot(Slot slot) {
+    public Item slot(Slot slot) {
         return this.stand.entity()
                 .map(entity -> SpongeConvert.fromSponge(switch (slot) {
                     case HELMET -> entity.head();
@@ -74,12 +74,12 @@ public class SpongeArmorStandInventory implements SpongeInventory, ArmorStandInv
                     case OFF_HAND -> entity.itemInHand(HandTypes.OFF_HAND);
                 }))
                 .map(Item.class::cast)
-                .orElse(() -> MinecraftItems.getInstance().getAir())
+                .orElse(() -> MinecraftItems.instance().air())
                 .get();
     }
 
     @Override
-    public void setSlot(Item item, Slot slot) {
+    public void slot(Item item, Slot slot) {
         this.stand.entity().present(entity -> {
             final ItemStack itemStack = SpongeConvert.toSponge(item);
             switch (slot) {

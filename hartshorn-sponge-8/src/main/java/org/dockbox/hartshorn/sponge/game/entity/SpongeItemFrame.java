@@ -48,7 +48,7 @@ public class SpongeItemFrame
     }
 
     @Override
-    public Exceptional<Item> getDisplayedItem() {
+    public Exceptional<Item> displayedItem() {
         return this.entity().map(frame -> {
             final ItemStackSnapshot snapshot = frame.item().get();
             if (snapshot.isEmpty()) return null;
@@ -57,15 +57,16 @@ public class SpongeItemFrame
     }
 
     @Override
-    public void setDisplayedItem(Item stack) {
+    public SpongeItemFrame displayedItem(Item stack) {
         this.entity().present(frame -> {
             final ItemStack itemStack = SpongeConvert.toSponge(stack);
             frame.item().set(itemStack.createSnapshot());
         });
+        return this;
     }
 
     @Override
-    public Rotation getRotation() {
+    public Rotation rotation() {
         return this.entity().map(frame -> {
             final Orientation orientation = frame.itemOrientation().get();
             return SpongeConvert.fromSponge(orientation);
@@ -73,15 +74,16 @@ public class SpongeItemFrame
     }
 
     @Override
-    public void setRotation(Rotation rotation) {
+    public SpongeItemFrame rotation(Rotation rotation) {
         this.entity().present(frame -> {
             final Orientation orientation = SpongeConvert.toSponge(rotation);
             frame.itemOrientation().set(orientation);
         });
+        return this;
     }
 
     @Override
-    public BlockFace getBlockFace() {
+    public BlockFace blockFace() {
         return this.entity().map(frame -> {
             final Direction direction = frame.hangingDirection().get();
             return SpongeConvert.fromSponge(direction);
@@ -89,11 +91,12 @@ public class SpongeItemFrame
     }
 
     @Override
-    public void setBlockFace(BlockFace blockFace) {
+    public SpongeItemFrame blockFace(BlockFace blockFace) {
         this.entity().present(frame -> {
             final Direction direction = SpongeConvert.toSponge(blockFace);
             frame.hangingDirection().set(direction);
         });
+        return this;
     }
 
     @Override

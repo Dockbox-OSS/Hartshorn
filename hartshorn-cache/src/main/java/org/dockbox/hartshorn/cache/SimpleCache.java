@@ -49,8 +49,8 @@ public class SimpleCache<T> implements Cache<T>, InjectableType {
 
     private void scheduleEviction() {
         // Negative amounts are considered non-expiring
-        if (this.expiration.getAmount() > 0) {
-            TaskRunner.create().acceptDelayed(this::evict, this.expiration.getAmount(), this.expiration.getUnit());
+        if (this.expiration.amount() > 0) {
+            TaskRunner.create().acceptDelayed(this::evict, this.expiration.amount(), this.expiration.unit());
         }
     }
 
@@ -73,10 +73,10 @@ public class SimpleCache<T> implements Cache<T>, InjectableType {
     }
 
     @Override
-    public void stateEnabling(InjectorProperty<?>... properties) {
+    public void enable(InjectorProperty<?>... properties) {
         final InjectorProperty<Expiration> property = Bindings.property(ExpirationProperty.KEY, Expiration.class, properties);
         if (property != null) {
-            this.expiration = property.getObject();
+            this.expiration = property.value();
         } else {
             throw new IllegalArgumentException("Expected expiration property to be present");
         }

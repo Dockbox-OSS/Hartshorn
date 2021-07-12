@@ -88,13 +88,13 @@ public class SimpleEventBus implements EventBus {
             return; // Already registered
         }
 
-        Set<EventWrapper> invokers = getInvokers(type);
+        Set<EventWrapper> invokers = invokers(type);
         if (invokers.isEmpty()) {
             return; // Doesn't contain any listener methods
         }
         listenerToInvokers.put(type, invokers);
         for (EventWrapper invoker : invokers) {
-            handlerRegistry.getHandler(invoker.getEventType()).subscribe(invoker);
+            handlerRegistry.handler(invoker.eventType()).subscribe(invoker);
         }
     }
 
@@ -113,13 +113,13 @@ public class SimpleEventBus implements EventBus {
         }
 
         for (EventWrapper invoker : invokers) {
-            handlerRegistry.getHandler(invoker.getEventType()).unsubscribe(invoker);
+            handlerRegistry.handler(invoker.eventType()).unsubscribe(invoker);
         }
     }
 
     @Override
     public void post(Event event, Class<?> target) {
-        handlerRegistry.getHandler(event.getClass()).post(event, target);
+        handlerRegistry.handler(event.getClass()).post(event, target);
     }
 
     @Override
@@ -129,7 +129,7 @@ public class SimpleEventBus implements EventBus {
 
     @NotNull
     @Override
-    public Map<Class<?>, Set<EventWrapper>> getListenersToInvokers() {
+    public Map<Class<?>, Set<EventWrapper>> invokers() {
         return listenerToInvokers;
     }
 
@@ -141,18 +141,18 @@ public class SimpleEventBus implements EventBus {
     /**
      * Gets all {@link EventWrapper} instances for a given listener instance.
      *
-     * @param object
-     *         The listener instance
+     * @param type
+     *         The listener type
      *
      * @return The invokers
      */
-    protected static Set<EventWrapper> getInvokers(Class<?> type) {
+    protected static Set<EventWrapper> invokers(Class<?> type) {
         Set<EventWrapper> result = HartshornUtils.emptySet();
         for (Method method : Reflect.methods(type)) {
             Exceptional<Listener> annotation = Reflect.annotation(method, Listener.class);
             if (annotation.present()) {
                 checkListenerMethod(method);
-                result.addAll(SimpleEventWrapper.create(type, method, annotation.get().value().getPriority()));
+                result.addAll(SimpleEventWrapper.create(type, method, annotation.get().value().priority()));
             }
         }
         return result;

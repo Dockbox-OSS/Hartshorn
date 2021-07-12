@@ -47,9 +47,9 @@ public class JUnitConfigurationManager extends SimpleConfigurationManager {
     }
 
     @Override
-    public Map<String, Map<String, Object>> getCache() {
+    public Map<String, Map<String, Object>> cache() {
         return HartshornUtils.ofEntries(
-                HartshornUtils.entry(this.getFileKey(), cache)
+                HartshornUtils.entry(this.fileKey(), cache)
         );
     }
 
@@ -59,13 +59,13 @@ public class JUnitConfigurationManager extends SimpleConfigurationManager {
     }
 
     @Override
-    public void stateEnabling(InjectorProperty<?>... properties) throws ApplicationException {
-        super.stateEnabling(properties);
+    public void enable(InjectorProperty<?>... properties) throws ApplicationException {
+        super.enable(properties);
         enabled = true;
     }
 
     @Override
-    protected String getFileKey() {
+    protected String fileKey() {
         return "junit";
     }
 }

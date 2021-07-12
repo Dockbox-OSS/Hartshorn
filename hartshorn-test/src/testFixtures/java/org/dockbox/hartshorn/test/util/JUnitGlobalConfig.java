@@ -23,22 +23,22 @@ import org.dockbox.hartshorn.api.exceptions.ExceptionLevels;
 public class JUnitGlobalConfig implements GlobalConfig {
 
     @Override
-    public boolean getStacktracesAllowed() {
+    public boolean stacktraces() {
         return false;
     }
 
     @Override
-    public ExceptionLevels getExceptionLevel() {
+    public ExceptionLevels level() {
         return ExceptionLevels.MINIMAL;
     }
 
     @Override
-    public String getDiscordLoggingCategoryId() {
+    public String discordCategory() {
         throw new UnsupportedOperationException("This feature is not available while running tests");
     }
 
     @Override
-    public String getVersion() {
+    public String version() {
         return "dev";
     }
 }

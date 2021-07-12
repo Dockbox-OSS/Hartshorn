@@ -34,20 +34,20 @@ public class MultiSizedImage {
         this.image = image;
         this.xSize = xSize;
         this.ySize = ySize;
-        this.genSubImages();
+        this.generateImages();
     }
 
-    private void genSubImages() {
+    private void generateImages() {
         for (int i = 0; i < this.xSize; i++) {
             for (int j = 0; j < this.ySize; j++) {
-                BufferedImage sub = this.getResizedImage().getSubimage(i * 128, j * 128, 128, 128);
+                BufferedImage sub = this.resizedImage().getSubimage(i * 128, j * 128, 128, 128);
                 Integer[] pos = new Integer[]{ i, j };
                 this.imageMap.put(pos, sub);
             }
         }
     }
 
-    private BufferedImage getResizedImage() {
+    private BufferedImage resizedImage() {
         BufferedImage bufferedImage = new BufferedImage(this.xSize * 128, this.ySize * 128, BufferedImage.TRANSLUCENT);
         Graphics2D graphics2D = bufferedImage.createGraphics();
         graphics2D.drawImage(this.image, 0, 0, this.xSize * 128, this.ySize * 128, null);
@@ -55,7 +55,7 @@ public class MultiSizedImage {
         return bufferedImage;
     }
 
-    public Map<Integer[], BufferedImage> getImageMap() {
+    public Map<Integer[], BufferedImage> imageMap() {
         return this.imageMap;
     }
 }

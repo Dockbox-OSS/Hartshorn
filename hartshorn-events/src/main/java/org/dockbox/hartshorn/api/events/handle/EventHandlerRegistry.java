@@ -29,7 +29,7 @@ public final class EventHandlerRegistry {
     @Getter
     private final Map<Class<? extends Event>, EventHandler> handlers = HartshornUtils.emptyMap();
 
-    public EventHandler getHandler(Class<? extends Event> type) {
+    public EventHandler handler(Class<? extends Event> type) {
         EventHandler handler = this.handlers.get(type);
         if (null == handler) {
             this.computeHierarchy(handler = new EventHandler(type));
@@ -42,11 +42,11 @@ public final class EventHandlerRegistry {
         boolean associationFound = false;
         for (EventHandler handler : this.handlers.values()) {
             if (subject == handler) continue;
-            if (subject.isSubtypeOf(handler)) {
-                associationFound |= subject.addSupertypeHandler(handler);
+            if (subject.subtypeOf(handler)) {
+                associationFound |= subject.addSuperTypeHandler(handler);
             }
-            else if (handler.isSubtypeOf(subject)) {
-                associationFound |= handler.addSupertypeHandler(subject);
+            else if (handler.subtypeOf(subject)) {
+                associationFound |= handler.addSuperTypeHandler(subject);
             }
         }
     }

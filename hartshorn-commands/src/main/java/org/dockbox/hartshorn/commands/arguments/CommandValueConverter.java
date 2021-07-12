@@ -38,7 +38,7 @@ public final class CommandValueConverter<T> extends AbstractArgumentConverter<T>
 
     @Override
     public Exceptional<T> convert(CommandSource source, CommandParameter<String> value) {
-        return this.convert(source, value.getValue());
+        return this.convert(source, value.value());
     }
 
     @Override

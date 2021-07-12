@@ -187,7 +187,7 @@ public final class SimpleEventWrapper implements Comparable<SimpleEventWrapper>,
     private static boolean testFilter(Filter filter, Filterable event) {
         if (event.acceptedParams().contains(filter.param())
                 && event.acceptedFilters().contains(filter.type())) {
-            return event.isApplicable(filter);
+            return event.permits(filter);
         }
         return false;
     }

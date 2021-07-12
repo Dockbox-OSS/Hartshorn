@@ -24,11 +24,11 @@ import lombok.Getter;
 @AllArgsConstructor
 public class SimpleProperty<T> implements InjectorProperty<T> {
 
-    private final T object;
+    private final T value;
     private final String key;
 
     @SuppressWarnings("unchecked")
-    public Class<T> getType() {
-        return (Class<T>) this.getObject().getClass();
+    public Class<T> type() {
+        return (Class<T>) this.value().getClass();
     }
 }

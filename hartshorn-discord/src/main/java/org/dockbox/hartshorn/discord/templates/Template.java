@@ -27,5 +27,5 @@ public interface Template<T> extends Formattable {
 
     void formatPlaceholders(Map<String, String> values);
 
-    T getJDAMessage();
+    T message();
 }

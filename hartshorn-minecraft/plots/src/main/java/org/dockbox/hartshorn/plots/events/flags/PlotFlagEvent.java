@@ -21,16 +21,15 @@ import org.dockbox.hartshorn.plots.Plot;
 import org.dockbox.hartshorn.plots.events.CancellablePlotEvent;
 import org.dockbox.hartshorn.plots.flags.PlotFlag;
 
+import lombok.Getter;
+
 public abstract class PlotFlagEvent extends CancellablePlotEvent {
 
+    @Getter
     private final PlotFlag<?> flag;
 
     protected PlotFlagEvent(Plot plot, PlotFlag<?> flag) {
         super(plot);
         this.flag = flag;
-    }
-
-    public PlotFlag<?> getFlag() {
-        return this.flag;
     }
 }

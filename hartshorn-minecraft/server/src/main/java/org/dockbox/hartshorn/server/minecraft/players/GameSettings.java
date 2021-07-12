@@ -21,6 +21,6 @@ import org.dockbox.hartshorn.api.i18n.common.Language;
 
 public interface GameSettings {
 
-    Language getLanguage();
+    Language language();
 
 }

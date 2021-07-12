@@ -25,39 +25,39 @@ import org.dockbox.hartshorn.di.annotations.service.Service;
 public interface CommandResources {
 
     @Resource(value = "$1This command requires confirmation, click $2[here] $1to confirm", key = "command.confirm")
-    ResourceEntry getConfirmCommand();
+    ResourceEntry confirmCommand();
 
     @Resource(value = "$1Confirm running command", key = "command.confirm.hover")
-    ResourceEntry getConfirmCommandHover();
+    ResourceEntry confirmCommandHover();
 
     @Resource(value = "$4This command requires arguments", key = "command.missing.arguments")
-    ResourceEntry getMissingArguments();
+    ResourceEntry missingArguments();
 
     @Resource(value = "$4Too many arguments", key = "command.overflow")
-    ResourceEntry getTooManyArguments();
+    ResourceEntry tooManyArguments();
 
     @Resource(value = "$4Not enough arguments for parameter '{0}'", key = "command.parameter.missing.arguments")
-    ResourceEntry getNotEnoughParameterArguments(String parameter);
+    ResourceEntry notEnoughParameterArguments(String parameter);
 
     @Resource(value = "You are in cooldown", key = "command.cooldown")
-    ResourceEntry getCooldownActive();
+    ResourceEntry cooldownActive();
 
     @Resource(value = "No supported command handler found for '{0}'", key = "command.missing.handler")
-    ResourceEntry getMissingHandler(String command);
+    ResourceEntry missingHandler(String command);
 
     @Resource(value = "No executor registered for command '{0}' with {1} arguments", key = "command.missing.executor")
-    ResourceEntry getMissingExecutor(String alias, int size);
+    ResourceEntry missingExecutor(String alias, int size);
 
     @Resource(value = "Illegal argument definition", key = "command.illegal")
-    ResourceEntry getIllegalArgumentDefinition();
+    ResourceEntry illegalArgumentDefinition();
 
     @Resource(value = "Unknown flag '{0}'", key = "command.flag.unknown")
-    ResourceEntry getUnknownFlag(String name);
+    ResourceEntry unknownFlag(String name);
 
     @Resource(value = "Could not parse {0} '{1}'", key = "command.parse.failure")
-    ResourceEntry getCouldNotParse(String type, String name);
+    ResourceEntry couldNotParse(String type, String name);
 
     @Resource(value = "Could not execute the command as it was cancelled", key = "command.cancelled")
-    ResourceEntry getCancelled();
+    ResourceEntry cancelled();
 
 }

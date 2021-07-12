@@ -30,7 +30,7 @@ public class SampleEnablingType implements SampleInterface, InjectableType {
     private String name;
 
     @Override
-    public void stateEnabling(InjectorProperty<?>... properties) {
+    public void enable(InjectorProperty<?>... properties) {
         Exceptional<String> value = Bindings.value(NameProperty.KEY, String.class, properties);
         value.present(name -> this.name = name);
     }

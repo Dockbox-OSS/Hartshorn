@@ -27,7 +27,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Entity(value = "plot-world-model")
+@Entity(value = "plot-world-modelType")
 @AllArgsConstructor
 @NoArgsConstructor
 public class PlotWorldModel {
@@ -41,17 +41,17 @@ public class PlotWorldModel {
     private int zeroX;
     private int zeroZ;
 
-    public Exceptional<Location> getLocation(int plotX, int plotZ) {
+    public Exceptional<Location> location(int plotX, int plotZ) {
         return Hartshorn.context().get(Worlds.class)
-                .getWorld(this.getName())
-                .map(world -> Location.of(this.getHomeX(plotX), this.getHeight(), this.getHomeZ(plotZ), world));
+                .world(this.name())
+                .map(world -> Location.of(this.x(plotX), this.height(), this.z(plotZ), world));
     }
 
-    public int getHomeX(int plotX) {
+    public int x(int plotX) {
         return this.zeroX + (plotX * (this.size + this.road));
     }
 
-    public int getHomeZ(int plotZ) {
+    public int z(int plotZ) {
         return this.zeroZ + (plotZ * (this.size + this.road));
     }
 }

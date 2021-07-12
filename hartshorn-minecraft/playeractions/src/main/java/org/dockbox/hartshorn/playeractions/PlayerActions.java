@@ -64,45 +64,45 @@ public class PlayerActions {
     }
 
     private void verifySpectatorTeleportation(PlayerTeleportEvent event) {
-        if (event.getTarget().getGamemode() == Gamemode.SPECTATOR) {
-            if (event.getTarget().hasPermission(PlayerActionPermissions.SPECTATOR_BYPASS)) return;
-            if (this.whitelist.contains(event.getOldLocation().getWorld().getName())) return;
+        if (event.subject().gamemode() == Gamemode.SPECTATOR) {
+            if (event.subject().hasPermission(PlayerActionPermissions.SPECTATOR_BYPASS)) return;
+            if (this.whitelist.contains(event.origin().world().name())) return;
 
-            event.setCancelled(true);
-            event.getTarget().sendWithPrefix(this.resources.getSpectatorNotAllowed());
+            event.cancelled(true);
+            event.subject().sendWithPrefix(this.resources.spectatorNotAllowed());
         }
     }
 
     private void verifyPlotAccess(PlayerTeleportEvent event) {
-        Player player = event.getTarget();
-        Location target = event.getNewLocation();
+        Player player = event.subject();
+        Location target = event.destination();
         Exceptional<Plot> plotTarget = target.get(PlotKeys.PLOT);
 
         if (plotTarget.absent()) return;
         Plot plot = plotTarget.get();
         if (plot.hasMembership(player, PlotMembership.DENIED)) {
-            event.setCancelled(true);
-            player.sendWithPrefix(this.resources.getDeniedFromPlot());
+            event.cancelled(true);
+            player.sendWithPrefix(this.resources.deniedFromPlot());
         }
     }
 
     @Listener
     public void on(PlayerInteractEntityEvent event) {
-        if (event.getEntity() instanceof Player) return; // Allowed
-        Player player = event.getTarget();
-        event.setCancelled(this.cancelEvent(player, event.getEntity()));
+        if (event.entity() instanceof Player) return; // Allowed
+        Player player = event.subject();
+        event.cancelled(this.cancelEvent(player, event.entity()));
     }
 
     private boolean cancelEvent(Player player, Entity entity) {
-        Exceptional<Plot> targetPlot = entity.getLocation().get(PlotKeys.PLOT);
+        Exceptional<Plot> targetPlot = entity.location().get(PlotKeys.PLOT);
         if (targetPlot.absent()) {
-            player.sendWithPrefix(this.resources.getOutsidePlot());
+            player.sendWithPrefix(this.resources.outsidePlot());
             return true;
         }
         else {
             Plot plot = targetPlot.get();
             if (!plot.hasAnyMembership(player, PlotMembership.MEMBER, PlotMembership.TRUSTED, PlotMembership.OWNER)) {
-                player.sendWithPrefix(this.resources.getInteractionError());
+                player.sendWithPrefix(this.resources.interactionError());
                 return true;
             }
         }
@@ -111,48 +111,48 @@ public class PlayerActions {
 
     @Listener
     public void on(PlayerSummonEntityEvent event) {
-        Player player = event.getPlayer();
-        SpawnSource source = event.getSource();
+        Player player = event.player();
+        SpawnSource source = event.source();
         if (SpawnSource.PLACEMENT.equals(source) || SpawnSource.SPAWN_EGG.equals(source)) {
-            event.setCancelled(this.cancelEvent(player, event.getEntity()));
+            event.cancelled(this.cancelEvent(player, event.entity()));
         }
     }
 
     @Listener
     public void on(PlayerMoveEvent event) {
         if (event instanceof PlayerTeleportEvent) return; // Allow players to teleport out of the world
-        if (event.getTarget().hasPermission(PlayerActionPermissions.NAVIGATE_DEFAULT_WORLD)) return;
+        if (event.subject().hasPermission(PlayerActionPermissions.NAVIGATE_DEFAULT_WORLD)) return;
 
-        if (event.getTarget().getWorld().getWorldUniqueId().equals(this.worlds.getRootWorldId())) {
-            event.setCancelled(true);
-            event.getTarget().send(this.resources.getMoveError());
+        if (event.subject().world().worldUniqueId().equals(this.worlds.rootUniqueId())) {
+            event.cancelled(true);
+            event.subject().send(this.resources.moveError());
         }
     }
 
     @Listener
     public void on(PlayerSettingsChangedEvent event) {
-        final Player target = event.getTarget();
+        final Player target = event.subject();
 
         final Boolean receiving = PlayerSettings.RECEIVING_NOTIFICATIONS.get(target);
 
         if (receiving) {
-            final Language settingsLanguage = event.getSettings().getLanguage();
-            final Language preferenceLanguage = target.getLanguage();
+            final Language settingsLanguage = event.settings().language();
+            final Language preferenceLanguage = target.language();
 
             if (!settingsLanguage.equals(preferenceLanguage)) {
-                Text notification = this.resources.getLanguageNotification(settingsLanguage.getNameLocalized())
+                Text notification = this.resources.languageNotification(settingsLanguage.nameLocalized())
                         .translate(target)
                         .asText();
 
                 notification.onClick(ClickAction.executeCallback(t -> {
-                    target.setLanguage(settingsLanguage);
+                    target.language(settingsLanguage);
                     target.send(this.serverResources
-                            .getLanguageUpdated(settingsLanguage.getNameLocalized())
+                            .languageUpdated(settingsLanguage.nameLocalized())
                     );
                 }));
 
                 notification.onHover(HoverAction.showText(this.resources
-                        .getLanguageNotificationHover(settingsLanguage.getNameLocalized())
+                        .languageNotificationHover(settingsLanguage.nameLocalized())
                         .translate(target)
                         .asText())
                 );

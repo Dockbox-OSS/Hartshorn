@@ -23,18 +23,18 @@ import org.dockbox.hartshorn.plots.PlotService;
 
 public interface PlotFlag<T> {
 
-    String getId();
+    String id();
 
-    ResourceEntry getDescription();
+    ResourceEntry description();
 
     String serialize(T object);
 
     T parse(String raw);
 
-    Class<T> getType();
+    Class<T> type();
 
     default void register() {
-        Hartshorn.context().get(PlotService.class).registerFlag(this);
+        Hartshorn.context().get(PlotService.class).register(this);
     }
 
 }

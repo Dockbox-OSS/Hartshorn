@@ -31,7 +31,7 @@ public interface EventBridge {
     default void post(Event event, org.spongepowered.api.event.Event cause) {
         final Event posted = event.post();
         if (posted instanceof Cancellable cancellable && cause instanceof org.spongepowered.api.event.Cancellable causeCancellable) {
-            if (cancellable.isCancelled()) causeCancellable.setCancelled(true);
+            if (cancellable.cancelled()) causeCancellable.setCancelled(true);
         }
     }
 

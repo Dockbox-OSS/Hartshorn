@@ -25,12 +25,12 @@ import org.dockbox.hartshorn.di.annotations.service.Service;
 public interface DiscordResources {
 
     @Resource("Sorry, I don't know what to do with that command!")
-    ResourceEntry getCommandUnknown();
+    ResourceEntry commandUnknown();
 
     @Resource("You are not permitted to use that command!")
-    ResourceEntry getCommandNotPermitted();
+    ResourceEntry commandNotPermitted();
 
     @Resource("Sorry, I could not start that command. Please report this in our support channel.")
-    ResourceEntry getCommandCaught();
+    ResourceEntry commandCaught();
 
 }

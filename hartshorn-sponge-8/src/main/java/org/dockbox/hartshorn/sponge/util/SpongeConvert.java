@@ -35,7 +35,7 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.domain.Identifiable;
-import org.dockbox.hartshorn.api.domain.Target;
+import org.dockbox.hartshorn.api.domain.Subject;
 import org.dockbox.hartshorn.api.domain.tuple.Tristate;
 import org.dockbox.hartshorn.api.domain.tuple.Vector3N;
 import org.dockbox.hartshorn.api.i18n.entry.DefaultResources;
@@ -106,7 +106,6 @@ import org.spongepowered.api.item.inventory.equipment.EquipmentTypes;
 import org.spongepowered.api.registry.RegistryTypes;
 import org.spongepowered.api.service.context.Context;
 import org.spongepowered.api.service.pagination.PaginationList;
-import org.spongepowered.api.service.permission.Subject;
 import org.spongepowered.api.util.Direction;
 import org.spongepowered.api.util.orientation.Orientation;
 import org.spongepowered.api.util.orientation.Orientations;
@@ -174,7 +173,7 @@ public enum SpongeConvert {
         }
         else if (object instanceof User) {
             return Exceptional.of(
-                    new SpongePlayer(((Identifiable) object).getUniqueId(), ((Tamer) object).name()));
+                    new SpongePlayer(((Identifiable) object).uniqueId(), ((Tamer) object).name()));
         }
         else if (object instanceof ItemStack) {
             return Exceptional.of(fromSponge((ItemStack) object));
@@ -189,8 +188,8 @@ public enum SpongeConvert {
     public static Exceptional<Enchantment> toSponge(Enchant enchantment) {
         return SpongeUtil.fromMCRegistry(
                 RegistryTypes.ENCHANTMENT_TYPE,
-                enchantment.getEnchantment().name().toLowerCase(Locale.ROOT)
-        ).map(type -> Enchantment.builder().type(type).level(enchantment.getLevel()).build());
+                enchantment.enchantment().name().toLowerCase(Locale.ROOT)
+        ).map(type -> Enchantment.builder().type(type).level(enchantment.level()).build());
     }
 
     public static BossBar.Color toSponge(BossbarColor bossbarColor) {
@@ -210,13 +209,13 @@ public enum SpongeConvert {
     public static PaginationList toSponge(Pagination pagination) {
         PaginationList.Builder builder = PaginationList.builder();
 
-        if (null != pagination.getTitle()) builder.title(toSponge(pagination.getTitle()));
-        if (null != pagination.getHeader()) builder.header(toSponge(pagination.getHeader()));
-        if (null != pagination.getFooter()) builder.footer(toSponge(pagination.getFooter()));
+        if (null != pagination.title()) builder.title(toSponge(pagination.title()));
+        if (null != pagination.header()) builder.header(toSponge(pagination.header()));
+        if (null != pagination.footer()) builder.footer(toSponge(pagination.footer()));
 
-        builder.padding(toSponge(pagination.getPadding()));
-        if (0 < pagination.getLinesPerPage()) builder.linesPerPage(pagination.getLinesPerPage());
-        List<Component> convertedContent = pagination.getContent().stream()
+        builder.padding(toSponge(pagination.padding()));
+        if (0 < pagination.linesPerPage()) builder.linesPerPage(pagination.linesPerPage());
+        List<Component> convertedContent = pagination.content().stream()
                 .map(SpongeConvert::toSponge)
                 .map(Component::asComponent)
                 .toList();
@@ -227,7 +226,7 @@ public enum SpongeConvert {
 
     @NotNull
     public static TextComponent toSponge(Text message) {
-        Iterable<Text> parts = message.getParts();
+        Iterable<Text> parts = message.parts();
         TextComponent.Builder b = TextComponent.ofChildren().toBuilder();
         parts.forEach(part -> {
             TextComponent.Builder pb = TextComponent.ofChildren().toBuilder();
@@ -238,14 +237,14 @@ public enum SpongeConvert {
             final TextComponent component = LegacyComponentSerializer.legacyAmpersand().deserialize(Resource.parseColors(part.toLegacy()));
             pb.append(component);
 
-            Exceptional<ClickEvent> clickAction = toSponge(part.getClickAction());
+            Exceptional<ClickEvent> clickAction = toSponge(part.onClick());
             clickAction.present(pb::clickEvent);
 
-            Exceptional<HoverEvent<?>> hoverAction = toSponge(part.getHoverAction());
+            Exceptional<HoverEvent<?>> hoverAction = toSponge(part.onHover());
             hoverAction.present(pb::hoverEvent);
 
-            if (message.getShiftClickAction() instanceof ShiftClickAction.InsertText insertText) {
-                pb.insertion(insertText.getResult().toLegacy());
+            if (message.onShiftClick() instanceof ShiftClickAction.InsertText insertText) {
+                pb.insertion(insertText.result().toLegacy());
             }
 
             b.append(pb.build());
@@ -257,7 +256,7 @@ public enum SpongeConvert {
     @NotNull
     private static Exceptional<HoverEvent<?>> toSponge(HoverAction<?> action) {
         if (null == action) return Exceptional.empty();
-        Object result = action.getResult();
+        Object result = action.result();
         if (action instanceof HoverAction.ShowText) {
             return Exceptional.of(HoverEvent.showText(toSponge(((Text) result))));
         }
@@ -267,7 +266,7 @@ public enum SpongeConvert {
     @NotNull
     private static Exceptional<ClickEvent> toSponge(ClickAction<?> action) {
         if (null == action) return Exceptional.empty();
-        Object result = action.getResult();
+        Object result = action.result();
         if (action instanceof ClickAction.OpenUrl) {
             return Exceptional.of(ClickEvent.openUrl((URL) result));
         }
@@ -282,12 +281,12 @@ public enum SpongeConvert {
         }
         else if (action instanceof ClickAction.ExecuteCallback) {
             SpongeComponents.executeCallback(source -> {
-                Consumer<Target> consumer = ((ClickAction.ExecuteCallback) action).getResult();
+                Consumer<Subject> consumer = ((ClickAction.ExecuteCallback) action).result();
                 try {
                     SpongeConvert.fromSponge(source).present(consumer).rethrow();
                 }
                 catch (Throwable throwable) {
-                    source.sendMessage(Identity.nil(), toSponge(DefaultResources.instance().getUnknownError(throwable.getMessage()).asText()));
+                    source.sendMessage(Identity.nil(), toSponge(DefaultResources.instance().unknownError(throwable.getMessage()).asText()));
                 }
             });
             return Exceptional.empty();
@@ -297,13 +296,13 @@ public enum SpongeConvert {
 
     @NotNull
     public static Exceptional<ServerLocation> toSponge(org.dockbox.hartshorn.server.minecraft.dimension.position.Location location) {
-        Exceptional<ServerWorld> world = toSponge(location.getWorld());
+        Exceptional<ServerWorld> world = toSponge(location.world());
         if (world.caught()) return Exceptional.of(world.error());
         if (!world.present()) return Exceptional.empty();
         Vector3d vector3d = new Vector3d(
-                location.getVectorLoc().getXd(),
-                location.getVectorLoc().getYd(),
-                location.getVectorLoc().getZd()
+                location.vector().xD(),
+                location.vector().yD(),
+                location.vector().zD()
         );
         return Exceptional.of(ServerLocation.of(world.get(), vector3d));
     }
@@ -311,7 +310,7 @@ public enum SpongeConvert {
     @NotNull
     public static Exceptional<ServerWorld> toSponge(org.dockbox.hartshorn.server.minecraft.dimension.world.World world) {
         if (world instanceof SpongeWorld) {
-            ResourceKey key = ((SpongeWorld) world).getKey();
+            ResourceKey key = ((SpongeWorld) world).key();
             return Exceptional.of(Sponge.server().worldManager().world(key));
         }
         return Exceptional.of(new IllegalArgumentException("Cannot convert non-Sponge world to Sponge reference"));
@@ -415,9 +414,9 @@ public enum SpongeConvert {
     }
 
     @NotNull
-    public static Exceptional<CommandSource> fromSponge(Subject subject) {
+    public static Exceptional<CommandSource> fromSponge(org.spongepowered.api.service.permission.Subject subject) {
         if (subject instanceof SystemSubject) {
-            return Exceptional.of(SpongeConsole.getInstance());
+            return Exceptional.of(SpongeConsole.instance());
         }
         else if (subject instanceof ServerPlayer) {
             return Exceptional.of(fromSponge((ServerPlayer) subject));
@@ -461,7 +460,7 @@ public enum SpongeConvert {
     public static ItemStack toSponge(Item item) {
         if (item instanceof SpongeItem)
             // Create a copy of the ItemStack so Sponge doesn't modify the Item reference
-            return ((SpongeItem) item).getReference().or(ItemStack.empty()).copy();
+            return ((SpongeItem) item).reference().or(ItemStack.empty()).copy();
         return ItemStack.empty();
     }
 
@@ -508,11 +507,11 @@ public enum SpongeConvert {
     }
 
     public static Vector3i toSponge(Vector3N v3n) {
-        return new Vector3i(v3n.getXi(), v3n.getYi(), v3n.getZi());
+        return new Vector3i(v3n.xI(), v3n.yI(), v3n.zI());
     }
 
     public static Vector3d toSpongeDouble(Vector3N v3n) {
-        return new Vector3d(v3n.getXd(), v3n.getYd(), v3n.getZd());
+        return new Vector3d(v3n.xD(), v3n.yD(), v3n.zD());
     }
 
     public static ItemFrame.Rotation fromSponge(Orientation rotation) {
@@ -570,23 +569,23 @@ public enum SpongeConvert {
     public static Set<Context> toSponge(PermissionContext context) {
         Set<Context> contexts = HartshornUtils.emptySet();
 
-        if (!HartshornUtils.isEmpty(context.getDimension()))
-            contexts.add(new Context(Context.DIMENSION_KEY, context.getDimension()));
+        if (!HartshornUtils.empty(context.dimension()))
+            contexts.add(new Context(Context.DIMENSION_KEY, context.dimension()));
 
-        if (!HartshornUtils.isEmpty(context.getLocalHost()))
-            contexts.add(new Context(Context.LOCAL_HOST_KEY, context.getLocalHost()));
+        if (!HartshornUtils.empty(context.localHost()))
+            contexts.add(new Context(Context.LOCAL_HOST_KEY, context.localHost()));
 
-        if (!HartshornUtils.isEmpty(context.getLocalIp()))
-            contexts.add(new Context(Context.LOCAL_IP_KEY, context.getLocalIp()));
+        if (!HartshornUtils.empty(context.localIp()))
+            contexts.add(new Context(Context.LOCAL_IP_KEY, context.localIp()));
 
-        if (!HartshornUtils.isEmpty(context.getRemoteIp()))
-            contexts.add(new Context(Context.REMOTE_IP_KEY, context.getRemoteIp()));
+        if (!HartshornUtils.empty(context.remoteIp()))
+            contexts.add(new Context(Context.REMOTE_IP_KEY, context.remoteIp()));
 
-        if (!HartshornUtils.isEmpty(context.getUser()))
-            contexts.add(new Context(Context.USER_KEY, context.getUser()));
+        if (!HartshornUtils.empty(context.user()))
+            contexts.add(new Context(Context.USER_KEY, context.user()));
 
-        if (!HartshornUtils.isEmpty(context.getWorld()))
-            contexts.add(new Context(Context.WORLD_KEY, context.getWorld()));
+        if (!HartshornUtils.empty(context.world()))
+            contexts.add(new Context(Context.WORLD_KEY, context.world()));
 
         return contexts;
     }
@@ -656,8 +655,8 @@ public enum SpongeConvert {
 
 //    public static Element toSponge(org.dockbox.hartshorn.server.minecraft.inventory.Element element) {
 //        if (element instanceof SimpleElement) {
-//            return Element.of(toSponge(element.getItem()),
-//                    a -> ((SimpleElement) element).perform(fromSponge(a.getPlayer()))
+//            return Element.of(toSponge(element.item()),
+//                    a -> ((SimpleElement) element).perform(fromSponge(a.player()))
 //            );
 //        }
 //        return Element.EMPTY;
@@ -665,7 +664,7 @@ public enum SpongeConvert {
 
 //    public static com.intellectualcrafters.plot.object.Location toPlotSquared(org.dockbox.hartshorn.server.minecraft.dimension.position.Location location) {
 //        return new com.intellectualcrafters.plot.object.Location(
-//                location.getWorld().getName(),
+//                location.world().name(),
 //                (int) location.getX(),
 //                (int) location.getY(),
 //                (int) location.getZ(),
@@ -674,21 +673,21 @@ public enum SpongeConvert {
 //    }
 
 //    public static org.dockbox.hartshorn.server.minecraft.dimension.position.Location fromPlotSquared(com.intellectualcrafters.plot.object.Location location) {
-//        org.dockbox.hartshorn.server.minecraft.dimension.world.World world = Hartshorn.context().get(Worlds.class).getWorld(location.getWorld()).orNull();
+//        org.dockbox.hartshorn.server.minecraft.dimension.world.World world = Hartshorn.context().get(Worlds.class).world(location.world()).orNull();
 //        return new org.dockbox.hartshorn.server.minecraft.dimension.position.Location(
 //                location.getX(), location.getY(), location.getZ(), world
 //        );
 //    }
 
 //    public static Player fromPlotSquared(PlotPlayer player) {
-//        return new SpongePlayer(player.getUUID(), player.getName());
+//        return new SpongePlayer(player.getUUID(), player.name());
 //    }
 
 //    public static PlotPlayer toPlotSquared(Player player) {
 //        if (player instanceof SpongePlayer) {
 //            return PlotPlayer.wrap(((SpongePlayer) player).getSpongePlayer().orNull());
 //        }
-//        return PlotPlayer.get(player.getName());
+//        return PlotPlayer.get(player.name());
 //    }
 
 //    public static Exceptional<PlotBlock> toPlotSquared(Item item) {
@@ -701,14 +700,14 @@ public enum SpongeConvert {
 
 //    public static Mask toWorldEdit(org.dockbox.hartshorn.worldedit.region.Mask mask) {
 //        if (mask instanceof WrappedMask) {
-//            return ((WrappedMask) mask).getReference().orNull();
+//            return ((WrappedMask) mask).reference().orNull();
 //        }
 //        throw new IllegalStateException("Unknown implementation for Mask: [" + mask.getClass() + "]");
 //    }
 
 //    public static Pattern toWorldEdit(org.dockbox.hartshorn.worldedit.region.Pattern pattern) {
 //        if (pattern instanceof WrappedPattern) {
-//            return ((WrappedPattern) pattern).getReference().orNull();
+//            return ((WrappedPattern) pattern).reference().orNull();
 //        }
 //        throw new IllegalStateException("Unknown implementation for Pattern: [" + pattern.getClass() + "]");
 //    }
@@ -718,15 +717,15 @@ public enum SpongeConvert {
 //    }
 
 //    public static org.dockbox.hartshorn.server.minecraft.dimension.world.World fromWorldEdit(com.sk89q.worldedit.world.World world) {
-//        return Hartshorn.context().get(Worlds.class).getWorld(world.getName()).orNull();
+//        return Hartshorn.context().get(Worlds.class).world(world.name()).orNull();
 //    }
 
 //    public static Exceptional<BaseBlock> toWorldEdit(Item item, ParserContext context) {
 //        if (!item.isBlock())
-//            return Exceptional.of(new IllegalArgumentException("Cannot derive BaseBlock from non-block item"));
-//        return Exceptional.of(() -> WorldEdit.getInstance()
+//            return Exceptional.of(new IllegalArgumentException("Cannot from BaseBlock from non-block item"));
+//        return Exceptional.of(() -> WorldEdit.instance()
 //                .getBlockFactory()
-//                .parseFromInput(item.getId() + ':' + item.getMeta(), context)
+//                .parseFromInput(item.id() + ':' + item.getMeta(), context)
 //        );
 //    }
 
@@ -758,29 +757,29 @@ public enum SpongeConvert {
 //        com.sk89q.worldedit.regions.Region region = toWorldEdit(clipboard.getRegion());
 //        Vector3N origin = clipboard.getOrigin();
 //        com.sk89q.worldedit.extent.clipboard.Clipboard worldEditClipboard = new BlockArrayClipboard(region);
-//        worldEditClipboard.setOrigin(new Vector(origin.getXd(), origin.getYd(), origin.getZd()));
+//        worldEditClipboard.setOrigin(new Vector(origin.xD(), origin.yD(), origin.zD()));
 //        return worldEditClipboard;
 //    }
 
 //    public static com.sk89q.worldedit.regions.Region toWorldEdit(Region region) {
 //        if (region instanceof WrappedRegion) {
-//            return ((WrappedRegion) region).getReference().orNull();
+//            return ((WrappedRegion) region).reference().orNull();
 //        }
 //        else {
-//            com.sk89q.worldedit.world.World world = toWorldEdit(region.getWorld());
-//            Vector3N min = region.getMinimumPoint();
-//            Vector3N max = region.getMaximumPoint();
+//            com.sk89q.worldedit.world.World world = toWorldEdit(region.world());
+//            Vector3N min = region.minimum();
+//            Vector3N max = region.maximum();
 //
 //            return new com.sk89q.worldedit.regions.CuboidRegion(
 //                    world,
-//                    new Vector(min.getXd(), min.getYd(), min.getZd()),
-//                    new Vector(max.getXd(), max.getYd(), max.getZd())
+//                    new Vector(min.xD(), min.yD(), min.zD()),
+//                    new Vector(max.xD(), max.yD(), max.zD())
 //            );
 //        }
 //    }
 
 //    public static com.sk89q.worldedit.world.World toWorldEdit(org.dockbox.hartshorn.server.minecraft.dimension.world.World world) {
-//        return SpongeWorldEdit.inst().getAdapter().getWorld(toSponge(world).orNull());
+//        return SpongeWorldEdit.inst().getAdapter().world(toSponge(world).orNull());
 //    }
 
 //    public static FawePlayer<?> toWorldEdit(Player player) {
@@ -788,7 +787,7 @@ public enum SpongeConvert {
 //    }
 
 //    public static org.dockbox.hartshorn.server.minecraft.inventory.Element fromSponge(Element element) {
-//        Item item = fromSponge(element.getItem().createStack());
+//        Item item = fromSponge(element.item().createStack());
 //        return org.dockbox.hartshorn.server.minecraft.inventory.Element.of(item); // Action is skipped here
 //    }
 }

@@ -52,7 +52,7 @@ public interface Entity extends Identifiable, Locatable, PersistentDataHolder, K
      *
      * @return The display name of the entity, or an empty {@link Text} instance.
      */
-    Text getDisplayName();
+    Text displayName();
 
     /**
      * Sets the display name of the entity.
@@ -60,14 +60,14 @@ public interface Entity extends Identifiable, Locatable, PersistentDataHolder, K
      * @param displayName
      *         The display name of the entity.
      */
-    void setDisplayName(Text displayName);
+    Entity displayName(Text displayName);
 
     /**
      * Gets the current health of the entity in the form of the total HP.
      *
      * @return The current health of the entity.
      */
-    double getHealth();
+    double health();
 
     /**
      * Sets the health of the entity in the form of the total HP. If the given value is higher than
@@ -76,7 +76,7 @@ public interface Entity extends Identifiable, Locatable, PersistentDataHolder, K
      * @param health
      *         The new health of the entity.
      */
-    void setHealth(double health);
+    Entity health(double health);
 
     /**
      * Indicates whether the entity is alive inside a {@link
@@ -84,14 +84,14 @@ public interface Entity extends Identifiable, Locatable, PersistentDataHolder, K
      *
      * @return {@code true} if the entity is alive and loaded in a world, else {@code false}.
      */
-    boolean isAlive();
+    boolean alive();
 
     /**
      * Indicates whether the entity is invisible.
      *
      * @return {@code true} if the entity is invisible, else {@code false}
      */
-    boolean isInvisible();
+    boolean invisible();
 
     /**
      * Sets whether the entity should be invisible. Depending on the type of entity, inventory items
@@ -100,16 +100,16 @@ public interface Entity extends Identifiable, Locatable, PersistentDataHolder, K
      * @param visible
      *         Whether the entity should be visible.
      */
-    void setInvisible(boolean visible);
+    Entity invisible(boolean visible);
 
     /**
      * Indicates whether the entity is invulnerable. This protects the entity from being damaged by
      * other entities, explosions, etc. However it does not protect it from being affected by {@link
-     * #setHealth(double)} and {@link #destroy()}.
+     * #health(double)} and {@link #destroy()}.
      *
      * @return Whether the entity is invulnerable.
      */
-    boolean isInvulnerable();
+    boolean invulnerable();
 
     /**
      * Sets whether the entity should be invulnerable.
@@ -117,14 +117,14 @@ public interface Entity extends Identifiable, Locatable, PersistentDataHolder, K
      * @param invulnerable
      *         Whether the entity should be invulnerable.
      */
-    void setInvulnerable(boolean invulnerable);
+    Entity invulnerable(boolean invulnerable);
 
     /**
      * Indicates whether the entity is affected by gravity.
      *
      * @return {@code true} if the entity is affected by gravity, or {@code false}.
      */
-    boolean hasGravity();
+    boolean gravity();
 
     /**
      * Sets whether the entity should be affected by gravity. If the entity does not support gravity
@@ -133,7 +133,7 @@ public interface Entity extends Identifiable, Locatable, PersistentDataHolder, K
      * @param gravity
      *         Whether the entity should be affected by gravity.
      */
-    void setGravity(boolean gravity);
+    Entity gravity(boolean gravity);
 
     /**
      * Summons the entity into a world. The location at which the entity is summoned is provided by
@@ -142,7 +142,7 @@ public interface Entity extends Identifiable, Locatable, PersistentDataHolder, K
      * @return {@code true} if the entity was summoned successfully, else {@code false}.
      */
     default boolean summon() {
-        return this.summon(this.getLocation());
+        return this.summon(this.location());
     }
 
     /**

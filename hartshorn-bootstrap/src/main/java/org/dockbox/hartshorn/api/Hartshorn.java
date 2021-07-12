@@ -61,7 +61,7 @@ public final class Hartshorn {
     }
 
     public static ApplicationContext context() {
-        return server().getContext();
+        return server().context();
     }
 
     /**
@@ -102,7 +102,7 @@ public final class Hartshorn {
      * @return The resource file wrapped in a {@link Exceptional}, or a appropriate {@link
      *         Exceptional} (either none or providing the appropriate exception).
      */
-    public static Exceptional<Path> getResourceFile(String name) {
+    public static Exceptional<Path> resource(String name) {
         try {
             InputStream in = Hartshorn.class.getClassLoader().getResourceAsStream(name);
             byte[] buffer = new byte[in.available()];

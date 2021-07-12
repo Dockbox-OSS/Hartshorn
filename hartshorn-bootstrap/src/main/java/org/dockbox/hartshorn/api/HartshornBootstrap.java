@@ -59,13 +59,13 @@ public abstract class HartshornBootstrap extends InjectableBootstrap {
         });
         super.create(prefix, activationSource, activators, configs, modifiers);
 
-        final GlobalConfig globalConfig = this.getContext().get(GlobalConfig.class);
-        Except.useStackTraces(globalConfig.getStacktracesAllowed());
-        Except.with(globalConfig.getExceptionLevel());
-        this.version = globalConfig.getVersion();
+        final GlobalConfig globalConfig = this.context().get(GlobalConfig.class);
+        Except.useStackTraces(globalConfig.stacktraces());
+        Except.with(globalConfig.level());
+        this.version = globalConfig.version();
     }
 
-    public static boolean isConstructed() {
+    public static boolean constructed() {
         return instance() != null;
     }
 
@@ -79,9 +79,9 @@ public abstract class HartshornBootstrap extends InjectableBootstrap {
      */
     @Override
     public void init() {
-        Hartshorn.log().info("Initialising Hartshorn " + this.getVersion());
+        Hartshorn.log().info("Initialising Hartshorn " + this.context());
         for (Method postBootstrapActivation : this.postBootstrapActivations) {
-            this.getContext().invoke(postBootstrapActivation);
+            this.context().invoke(postBootstrapActivation);
         }
         // Ensure all services requiring a platform implementation have one present
         Reflect.types(Required.class).forEach(type -> {
@@ -103,7 +103,7 @@ public abstract class HartshornBootstrap extends InjectableBootstrap {
             final ComponentContainer componentContainer = container.get();
             final List<Class<? extends Annotation>> activators = componentContainer.activators();
 
-            if (componentContainer.hasActivator() && activators.stream().allMatch(this.getContext()::hasActivator))
+            if (componentContainer.hasActivator() && activators.stream().allMatch(this.context()::hasActivator))
                 this.postBootstrapActivations.add(method);
         }
     }

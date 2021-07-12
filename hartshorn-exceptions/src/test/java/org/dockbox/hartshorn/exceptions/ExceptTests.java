@@ -34,9 +34,9 @@ public class ExceptTests {
         Throwable throwable = new Exception("Test");
         Except.handle("Test", throwable);
 
-        Assertions.assertTrue(handle.isStacktrace());
-        Assertions.assertEquals("Test", handle.getMessage());
-        Assertions.assertSame(throwable, handle.getException());
+        Assertions.assertTrue(handle.stacktrace());
+        Assertions.assertEquals("Test", handle.message());
+        Assertions.assertSame(throwable, handle.exception());
     }
 
     @Test
@@ -49,7 +49,7 @@ public class ExceptTests {
             throw throwable;
         });
 
-        Assertions.assertSame(throwable, handle.getException());
+        Assertions.assertSame(throwable, handle.exception());
     }
 
     @Test
@@ -62,7 +62,7 @@ public class ExceptTests {
             throw throwable;
         });
 
-        Assertions.assertSame(throwable, handle.getException());
+        Assertions.assertSame(throwable, handle.exception());
     }
 
     @Test
@@ -73,8 +73,8 @@ public class ExceptTests {
         Exception throwable = new Exception("Something broke!");
         Except.handle(throwable);
 
-        Assertions.assertSame(throwable, handle.getException());
-        Assertions.assertEquals("Something broke!", handle.getMessage());
+        Assertions.assertSame(throwable, handle.exception());
+        Assertions.assertEquals("Something broke!", handle.message());
     }
 
     @Test
@@ -86,8 +86,8 @@ public class ExceptTests {
         Exception throwable = new Exception("Something broke!", cause);
         Except.handle(throwable);
 
-        Assertions.assertSame(throwable, handle.getException());
-        Assertions.assertEquals("Something broke!", handle.getMessage());
+        Assertions.assertSame(throwable, handle.exception());
+        Assertions.assertEquals("Something broke!", handle.message());
     }
 
     @Test

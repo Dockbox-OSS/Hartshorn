@@ -32,29 +32,29 @@ public abstract class ReferencedWrapper<T> implements Wrapper<T> {
     private transient WeakReference<T> internalReference;
 
     protected ReferencedWrapper() {
-        this.setReference(this.constructInitialReference());
+        this.reference(this.constructInitialReference());
     }
 
     protected ReferencedWrapper(T reference) {
-        this.setReference(Exceptional.of(reference));
+        this.reference(Exceptional.of(reference));
     }
 
     @Override
-    public Exceptional<T> getReference() {
-        this.updateReference().present(t -> this.setInternalReference(new WeakReference<>(t)));
-        return Exceptional.of(this.getInternalReference().get());
+    public Exceptional<T> reference() {
+        this.updateReference().present(t -> this.internalReference(new WeakReference<>(t)));
+        return Exceptional.of(this.internalReference().get());
     }
 
     @Override
-    public void setReference(@NotNull Exceptional<T> reference) {
-        this.setInternalReference(reference.map(WeakReference::new).get(() -> new WeakReference<>(null)));
+    public void reference(@NotNull Exceptional<T> reference) {
+        this.internalReference(reference.map(WeakReference::new).get(() -> new WeakReference<>(null)));
     }
 
     public Exceptional<T> updateReference() {
-        return this.getUpdateReferenceTask().apply(this.getInternalReference().get());
+        return this.updateTask().apply(this.internalReference().get());
     }
 
-    public Function<T, Exceptional<T>> getUpdateReferenceTask() {
-        return value -> Exceptional.of(value).orElse(() -> constructInitialReference().orNull());
+    public Function<T, Exceptional<T>> updateTask() {
+        return value -> Exceptional.of(value).orElse(() -> this.constructInitialReference().orNull());
     }
 }

@@ -32,7 +32,7 @@ public class MinecraftServerBootstrap extends HartshornBootstrap {
 
     @Override
     public void init() {
-        EventBus bus = super.getContext().get(EventBus.class);
+        EventBus bus = super.context().get(EventBus.class);
         bus.post(new ServerInitEvent());
         super.init();
         bus.post(new ServerPostInitEvent());

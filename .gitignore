@@ -1,6 +1,6 @@
 # Generic build outputs
 build
-target
+subject
 # Project specifics
 .gradle/
 .idea/

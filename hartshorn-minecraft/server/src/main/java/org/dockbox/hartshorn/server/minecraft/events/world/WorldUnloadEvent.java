@@ -19,15 +19,13 @@ package org.dockbox.hartshorn.server.minecraft.events.world;
 
 import java.util.UUID;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
 /** The event fired when a world is unloaded. */
+@Getter
+@AllArgsConstructor
 public class WorldUnloadEvent extends WorldEvent {
+
     private final UUID uniqueId;
-
-    public WorldUnloadEvent(UUID uniqueId) {
-        this.uniqueId = uniqueId;
-    }
-
-    public UUID getUniqueId() {
-        return this.uniqueId;
-    }
 }

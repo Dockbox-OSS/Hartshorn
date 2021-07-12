@@ -28,10 +28,10 @@ public class InventoryTypeProperty implements InjectorProperty<InventoryType> {
 
     public static final String KEY = "HartshornInternalInventoryTypeKey";
     @Getter
-    private final InventoryType object;
+    private final InventoryType value;
 
     @Override
-    public String getKey() {
+    public String key() {
         return InventoryTypeProperty.KEY;
     }
 }

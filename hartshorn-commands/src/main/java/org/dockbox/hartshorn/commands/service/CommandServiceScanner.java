@@ -38,8 +38,8 @@ public class CommandServiceScanner implements Preloadable {
     public void preload() {
         final CommandGateway gateway = Hartshorn.context().get(CommandGateway.class);
         for (ComponentContainer container : Hartshorn.context().locator().containers()) {
-            if (!Reflect.methods(container.getType(), Command.class).isEmpty()) {
-                gateway.register(container.getType());
+            if (!Reflect.methods(container.type(), Command.class).isEmpty()) {
+                gateway.register(container.type());
             }
         }
 

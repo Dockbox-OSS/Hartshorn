@@ -24,1222 +24,1222 @@ import org.dockbox.hartshorn.server.minecraft.MinecraftVersion;
 public class Minecraft116Items extends MinecraftItems {
 
     @Override
-    public MinecraftVersion getMinecraftVersion() {
+    public MinecraftVersion minecraftVersion() {
         return MinecraftVersion.MC1_16;
     }
 
     @Override
-    public Item getAcaciaLeaves() {
+    public Item acaciaLeaves() {
         return Item.of("minecraft:acacia_leaves");
     }
 
     @Override
-    public Item getAcaciaLog() {
+    public Item acaciaLog() {
         return Item.of("minecraft:acacia_log");
     }
 
     @Override
-    public Item getAcaciaPlanks() {
+    public Item acaciaPlanks() {
         return Item.of("minecraft:acacia_planks");
     }
 
     @Override
-    public Item getAcaciaSapling() {
+    public Item acaciaSapling() {
         return Item.of("minecraft:acacia_sapling");
     }
 
     @Override
-    public Item getAcaciaWoodSlab() {
+    public Item acaciaWoodSlab() {
         return Item.of("minecraft:acacia_slab");
     }
 
     @Override
-    public Item getAllium() {
+    public Item allium() {
         return Item.of("minecraft:allium");
     }
 
     @Override
-    public Item getAndesite() {
+    public Item andesite() {
         return Item.of("minecraft:andesite");
     }
 
     @Override
-    public Item getAzureBluet() {
+    public Item azureBluet() {
         return Item.of("minecraft:azure_bluet");
     }
 
     @Override
-    public Item getBirchLeaves() {
+    public Item birchLeaves() {
         return Item.of("minecraft:birch_leaves");
     }
 
     @Override
-    public Item getBirchLog() {
+    public Item birchLog() {
         return Item.of("minecraft:birch_log");
     }
 
     @Override
-    public Item getBirchPlanks() {
+    public Item birchPlanks() {
         return Item.of("minecraft:birch_planks");
     }
 
     @Override
-    public Item getBirchSapling() {
+    public Item birchSapling() {
         return Item.of("minecraft:birch_sapling");
     }
 
     @Override
-    public Item getBirchWoodSlab() {
+    public Item birchWoodSlab() {
         return Item.of("minecraft:birch_slab");
     }
 
     @Override
-    public Item getBlackBanner() {
+    public Item blackBanner() {
         return Item.of("minecraft:black_banner");
     }
 
     @Override
-    public Item getBlackBed() {
+    public Item blackBed() {
         return Item.of("minecraft:black_bed");
     }
 
     @Override
-    public Item getBlackCarpet() {
+    public Item blackCarpet() {
         return Item.of("minecraft:black_carpet");
     }
 
     @Override
-    public Item getBlackConcrete() {
+    public Item blackConcrete() {
         return Item.of("minecraft:black_concrete");
     }
 
     @Override
-    public Item getBlackConcretePowder() {
+    public Item blackConcretePowder() {
         return Item.of("minecraft:black_concrete_powder");
     }
 
     @Override
-    public Item getBlackDye() {
+    public Item blackDye() {
         return Item.of("minecraft:black_dye");
     }
 
     @Override
-    public Item getBlackStainedGlass() {
+    public Item blackStainedGlass() {
         return Item.of("minecraft:black_stained_glass");
     }
 
     @Override
-    public Item getBlackStainedGlassPane() {
+    public Item blackStainedGlassPane() {
         return Item.of("minecraft:black_stained_glass_pane");
     }
 
     @Override
-    public Item getBlackTerracotta() {
+    public Item blackTerracotta() {
         return Item.of("minecraft:black_terracotta");
     }
 
     @Override
-    public Item getBlackWool() {
+    public Item blackWool() {
         return Item.of("minecraft:black_wool");
     }
 
     @Override
-    public Item getBlueBanner() {
+    public Item blueBanner() {
         return Item.of("minecraft:blue_banner");
     }
 
     @Override
-    public Item getBlueBed() {
+    public Item blueBed() {
         return Item.of("minecraft:blue_bed");
     }
 
     @Override
-    public Item getBlueCarpet() {
+    public Item blueCarpet() {
         return Item.of("minecraft:blue_carpet");
     }
 
     @Override
-    public Item getBlueOrchid() {
+    public Item blueOrchid() {
         return Item.of("minecraft:blue_orchid");
     }
 
     @Override
-    public Item getBlueStainedGlass() {
+    public Item blueStainedGlass() {
         return Item.of("minecraft:blue_stained_glass");
     }
 
     @Override
-    public Item getBlueStainedGlassPane() {
+    public Item blueStainedGlassPane() {
         return Item.of("minecraft:blue_stained_glass_pane");
     }
 
     @Override
-    public Item getBlueTerracotta() {
+    public Item blueTerracotta() {
         return Item.of("minecraft:blue_terracotta");
     }
 
     @Override
-    public Item getBlueWool() {
+    public Item blueWool() {
         return Item.of("minecraft:blue_wool");
     }
 
     @Override
-    public Item getBrickSlab() {
+    public Item brickSlab() {
         return Item.of("minecraft:brick_slab");
     }
 
     @Override
-    public Item getBrownBanner() {
+    public Item brownBanner() {
         return Item.of("minecraft:brown_banner");
     }
 
     @Override
-    public Item getBrownBed() {
+    public Item brownBed() {
         return Item.of("minecraft:brown_bed");
     }
 
     @Override
-    public Item getBrownCarpet() {
+    public Item brownCarpet() {
         return Item.of("minecraft:brown_carpet");
     }
 
     @Override
-    public Item getBrownConcrete() {
+    public Item brownConcrete() {
         return Item.of("minecraft:brown_concrete");
     }
 
     @Override
-    public Item getBrownConcretePowder() {
+    public Item brownConcretePowder() {
         return Item.of("minecraft:brown_concrete_powder");
     }
 
     @Override
-    public Item getBrownDye() {
+    public Item brownDye() {
         return Item.of("minecraft:brown_dye");
     }
 
     @Override
-    public Item getBrownStainedGlass() {
+    public Item brownStainedGlass() {
         return Item.of("minecraft:brown_stained_glass");
     }
 
     @Override
-    public Item getBrownStainedGlassPane() {
+    public Item brownStainedGlassPane() {
         return Item.of("minecraft:brown_stained_glass_pane");
     }
 
     @Override
-    public Item getBrownTerracotta() {
+    public Item brownTerracotta() {
         return Item.of("minecraft:brown_terracotta");
     }
 
     @Override
-    public Item getBrownWool() {
+    public Item brownWool() {
         return Item.of("minecraft:brown_wool");
     }
 
     @Override
-    public Item getCharcoal() {
+    public Item charcoal() {
         return Item.of("minecraft:charcoal");
     }
 
     @Override
-    public Item getSlightlyDamagedAnvil() {
+    public Item slightlyDamagedAnvil() {
         return Item.of("minecraft:chipped_anvil");
     }
 
     @Override
-    public Item getChiseledRedSandstone() {
+    public Item chiseledRedSandstone() {
         return Item.of("minecraft:chiseled_red_sandstone");
     }
 
     @Override
-    public Item getChiseledSandstone() {
+    public Item chiseledSandstone() {
         return Item.of("minecraft:chiseled_sandstone");
     }
 
     @Override
-    public Item getChiseledStoneBricks() {
+    public Item chiseledStoneBricks() {
         return Item.of("minecraft:chiseled_stone_bricks");
     }
 
     @Override
-    public Item getCoarseDirt() {
+    public Item coarseDirt() {
         return Item.of("minecraft:coarse_dirt");
     }
 
     @Override
-    public Item getCobblestoneSlab() {
+    public Item cobblestoneSlab() {
         return Item.of("minecraft:cobblestone_slab");
     }
 
     @Override
-    public Item getCookedSalmon() {
+    public Item cookedSalmon() {
         return Item.of("minecraft:cooked_salmon");
     }
 
     @Override
-    public Item getCrackedStoneBricks() {
+    public Item crackedStoneBricks() {
         return Item.of("minecraft:cracked_stone_bricks");
     }
 
     @Override
-    public Item getCreeperHead() {
+    public Item creeperHead() {
         return Item.of("minecraft:creeper_head");
     }
 
     @Override
-    public Item getCyanBanner() {
+    public Item cyanBanner() {
         return Item.of("minecraft:cyan_banner");
     }
 
     @Override
-    public Item getCyanBed() {
+    public Item cyanBed() {
         return Item.of("minecraft:cyan_bed");
     }
 
     @Override
-    public Item getCyanCarpet() {
+    public Item cyanCarpet() {
         return Item.of("minecraft:cyan_carpet");
     }
 
     @Override
-    public Item getCyanConcrete() {
+    public Item cyanConcrete() {
         return Item.of("minecraft:cyan_concrete");
     }
 
     @Override
-    public Item getCyanConcretePowder() {
+    public Item cyanConcretePowder() {
         return Item.of("minecraft:cyan_concrete_powder");
     }
 
     @Override
-    public Item getCyanDye() {
+    public Item cyanDye() {
         return Item.of("minecraft:cyan_dye");
     }
 
     @Override
-    public Item getCyanStainedGlass() {
+    public Item cyanStainedGlass() {
         return Item.of("minecraft:cyan_stained_glass");
     }
 
     @Override
-    public Item getCyanStainedGlassPane() {
+    public Item cyanStainedGlassPane() {
         return Item.of("minecraft:cyan_stained_glass_pane");
     }
 
     @Override
-    public Item getCyanTerracotta() {
+    public Item cyanTerracotta() {
         return Item.of("minecraft:cyan_terracotta");
     }
 
     @Override
-    public Item getCyanWool() {
+    public Item cyanWool() {
         return Item.of("minecraft:cyan_wool");
     }
 
     @Override
-    public Item getVeryDamagedAnvil() {
+    public Item veryDamagedAnvil() {
         return Item.of("minecraft:damaged_anvil");
     }
 
     @Override
-    public Item getDarkOakLeaves() {
+    public Item darkOakLeaves() {
         return Item.of("minecraft:dark_oak_leaves");
     }
 
     @Override
-    public Item getDarkOakLog() {
+    public Item darkOakLog() {
         return Item.of("minecraft:dark_oak_log");
     }
 
     @Override
-    public Item getDarkOakPlanks() {
+    public Item darkOakPlanks() {
         return Item.of("minecraft:dark_oak_planks");
     }
 
     @Override
-    public Item getDarkOakSapling() {
+    public Item darkOakSapling() {
         return Item.of("minecraft:dark_oak_sapling");
     }
 
     @Override
-    public Item getDarkOakWoodSlab() {
+    public Item darkOakWoodSlab() {
         return Item.of("minecraft:dark_oak_slab");
     }
 
     @Override
-    public Item getDarkPrismarine() {
+    public Item darkPrismarine() {
         return Item.of("minecraft:dark_prismarine");
     }
 
     @Override
-    public Item getDiorite() {
+    public Item diorite() {
         return Item.of("minecraft:diorite");
     }
 
     @Override
-    public Item getDragonHead() {
+    public Item dragonHead() {
         return Item.of("minecraft:dragon_head");
     }
 
     @Override
-    public Item getEnchantedGoldenApple() {
+    public Item enchantedGoldenApple() {
         return Item.of("minecraft:enchanted_golden_apple");
     }
 
     @Override
-    public Item getFern() {
+    public Item fern() {
         return Item.of("minecraft:fern");
     }
 
     @Override
-    public Item getGranite() {
+    public Item granite() {
         return Item.of("minecraft:granite");
     }
 
     @Override
-    public Item getGrass() {
+    public Item grass() {
         return Item.of("minecraft:grass");
     }
 
     @Override
-    public Item getGrayBanner() {
+    public Item grayBanner() {
         return Item.of("minecraft:gray_banner");
     }
 
     @Override
-    public Item getGrayBed() {
+    public Item grayBed() {
         return Item.of("minecraft:gray_bed");
     }
 
     @Override
-    public Item getGrayCarpet() {
+    public Item grayCarpet() {
         return Item.of("minecraft:gray_carpet");
     }
 
     @Override
-    public Item getGrayConcrete() {
+    public Item grayConcrete() {
         return Item.of("minecraft:gray_concrete");
     }
 
     @Override
-    public Item getGrayConcretePowder() {
+    public Item grayConcretePowder() {
         return Item.of("minecraft:gray_concrete_powder");
     }
 
     @Override
-    public Item getGrayDye() {
+    public Item grayDye() {
         return Item.of("minecraft:gray_dye");
     }
 
     @Override
-    public Item getGrayStainedGlass() {
+    public Item grayStainedGlass() {
         return Item.of("minecraft:gray_stained_glass");
     }
 
     @Override
-    public Item getGrayStainedGlassPane() {
+    public Item grayStainedGlassPane() {
         return Item.of("minecraft:gray_stained_glass_pane");
     }
 
     @Override
-    public Item getGrayTerracotta() {
+    public Item grayTerracotta() {
         return Item.of("minecraft:gray_terracotta");
     }
 
     @Override
-    public Item getGrayWool() {
+    public Item grayWool() {
         return Item.of("minecraft:gray_wool");
     }
 
     @Override
-    public Item getGreenBanner() {
+    public Item greenBanner() {
         return Item.of("minecraft:green_banner");
     }
 
     @Override
-    public Item getGreenBed() {
+    public Item greenBed() {
         return Item.of("minecraft:green_bed");
     }
 
     @Override
-    public Item getGreenCarpet() {
+    public Item greenCarpet() {
         return Item.of("minecraft:green_carpet");
     }
 
     @Override
-    public Item getGreenConcrete() {
+    public Item greenConcrete() {
         return Item.of("minecraft:green_concrete");
     }
 
     @Override
-    public Item getGreenConcretePowder() {
+    public Item greenConcretePowder() {
         return Item.of("minecraft:green_concrete_powder");
     }
 
     @Override
-    public Item getGreenDye() {
+    public Item greenDye() {
         return Item.of("minecraft:green_dye");
     }
 
     @Override
-    public Item getGreenStainedGlass() {
+    public Item greenStainedGlass() {
         return Item.of("minecraft:green_stained_glass");
     }
 
     @Override
-    public Item getGreenStainedGlassPane() {
+    public Item greenStainedGlassPane() {
         return Item.of("minecraft:green_stained_glass_pane");
     }
 
     @Override
-    public Item getGreenTerracotta() {
+    public Item greenTerracotta() {
         return Item.of("minecraft:green_terracotta");
     }
 
     @Override
-    public Item getGreenWool() {
+    public Item greenWool() {
         return Item.of("minecraft:green_wool");
     }
 
     @Override
-    public Item getChiseledStoneBrickMonsterEgg() {
+    public Item chiseledStoneBrickMonsterEgg() {
         return Item.of("minecraft:infested_chiseled_stone_bricks");
     }
 
     @Override
-    public Item getCobblestoneMonsterEgg() {
+    public Item cobblestoneMonsterEgg() {
         return Item.of("minecraft:infested_cobblestone");
     }
 
     @Override
-    public Item getCrackedStoneBrickMonsterEgg() {
+    public Item crackedStoneBrickMonsterEgg() {
         return Item.of("minecraft:infested_cracked_stone_bricks");
     }
 
     @Override
-    public Item getMossyStoneBrickMonsterEgg() {
+    public Item mossyStoneBrickMonsterEgg() {
         return Item.of("minecraft:infested_mossy_stone_bricks");
     }
 
     @Override
-    public Item getStoneBrickMonsterEgg() {
+    public Item stoneBrickMonsterEgg() {
         return Item.of("minecraft:infested_stone_bricks");
     }
 
     @Override
-    public Item getJungleLeaves() {
+    public Item jungleLeaves() {
         return Item.of("minecraft:jungle_leaves");
     }
 
     @Override
-    public Item getJungleLog() {
+    public Item jungleLog() {
         return Item.of("minecraft:jungle_log");
     }
 
     @Override
-    public Item getJunglePlanks() {
+    public Item junglePlanks() {
         return Item.of("minecraft:jungle_planks");
     }
 
     @Override
-    public Item getJungleSapling() {
+    public Item jungleSapling() {
         return Item.of("minecraft:jungle_sapling");
     }
 
     @Override
-    public Item getJungleWoodSlab() {
+    public Item jungleWoodSlab() {
         return Item.of("minecraft:jungle_slab");
     }
 
     @Override
-    public Item getLargeFern() {
+    public Item largeFern() {
         return Item.of("minecraft:large_fern");
     }
 
     @Override
-    public Item getLightBlueBanner() {
+    public Item lightBlueBanner() {
         return Item.of("minecraft:light_blue_banner");
     }
 
     @Override
-    public Item getLightBlueBed() {
+    public Item lightBlueBed() {
         return Item.of("minecraft:light_blue_bed");
     }
 
     @Override
-    public Item getLightBlueCarpet() {
+    public Item lightBlueCarpet() {
         return Item.of("minecraft:light_blue_carpet");
     }
 
     @Override
-    public Item getLightBlueConcrete() {
+    public Item lightBlueConcrete() {
         return Item.of("minecraft:light_blue_concrete");
     }
 
     @Override
-    public Item getLightBlueConcretePowder() {
+    public Item lightBlueConcretePowder() {
         return Item.of("minecraft:light_blue_concrete_powder");
     }
 
     @Override
-    public Item getLightBlueDye() {
+    public Item lightBlueDye() {
         return Item.of("minecraft:light_blue_dye");
     }
 
     @Override
-    public Item getLightBlueStainedGlass() {
+    public Item lightBlueStainedGlass() {
         return Item.of("minecraft:light_blue_stained_glass");
     }
 
     @Override
-    public Item getLightBlueStainedGlassPane() {
+    public Item lightBlueStainedGlassPane() {
         return Item.of("minecraft:light_blue_stained_glass_pane");
     }
 
     @Override
-    public Item getLightBlueTerracotta() {
+    public Item lightBlueTerracotta() {
         return Item.of("minecraft:light_blue_terracotta");
     }
 
     @Override
-    public Item getLightBlueWool() {
+    public Item lightBlueWool() {
         return Item.of("minecraft:light_blue_wool");
     }
 
     @Override
-    public Item getLightGrayBanner() {
+    public Item lightGrayBanner() {
         return Item.of("minecraft:light_gray_banner");
     }
 
     @Override
-    public Item getLightGrayBed() {
+    public Item lightGrayBed() {
         return Item.of("minecraft:light_gray_bed");
     }
 
     @Override
-    public Item getLightGrayCarpet() {
+    public Item lightGrayCarpet() {
         return Item.of("minecraft:light_gray_carpet");
     }
 
     @Override
-    public Item getLightGrayConcrete() {
+    public Item lightGrayConcrete() {
         return Item.of("minecraft:light_gray_concrete");
     }
 
     @Override
-    public Item getLightGrayConcretePowder() {
+    public Item lightGrayConcretePowder() {
         return Item.of("minecraft:light_gray_concrete_powder");
     }
 
     @Override
-    public Item getLightGrayDye() {
+    public Item lightGrayDye() {
         return Item.of("minecraft:light_gray_dye");
     }
 
     @Override
-    public Item getLightGrayStainedGlass() {
+    public Item lightGrayStainedGlass() {
         return Item.of("minecraft:light_gray_stained_glass");
     }
 
     @Override
-    public Item getLightGrayStainedGlassPane() {
+    public Item lightGrayStainedGlassPane() {
         return Item.of("minecraft:light_gray_stained_glass_pane");
     }
 
     @Override
-    public Item getLightGrayTerracotta() {
+    public Item lightGrayTerracotta() {
         return Item.of("minecraft:light_gray_terracotta");
     }
 
     @Override
-    public Item getLightGrayWool() {
+    public Item lightGrayWool() {
         return Item.of("minecraft:light_gray_wool");
     }
 
     @Override
-    public Item getLilac() {
+    public Item lilac() {
         return Item.of("minecraft:lilac");
     }
 
     @Override
-    public Item getLimeBanner() {
+    public Item limeBanner() {
         return Item.of("minecraft:lime_banner");
     }
 
     @Override
-    public Item getLimeBed() {
+    public Item limeBed() {
         return Item.of("minecraft:lime_bed");
     }
 
     @Override
-    public Item getLimeCarpet() {
+    public Item limeCarpet() {
         return Item.of("minecraft:lime_carpet");
     }
 
     @Override
-    public Item getLimeConcrete() {
+    public Item limeConcrete() {
         return Item.of("minecraft:lime_concrete");
     }
 
     @Override
-    public Item getLimeConcretePowder() {
+    public Item limeConcretePowder() {
         return Item.of("minecraft:lime_concrete_powder");
     }
 
     @Override
-    public Item getLimeDye() {
+    public Item limeDye() {
         return Item.of("minecraft:lime_dye");
     }
 
     @Override
-    public Item getLimeStainedGlass() {
+    public Item limeStainedGlass() {
         return Item.of("minecraft:lime_stained_glass");
     }
 
     @Override
-    public Item getLimeStainedGlassPane() {
+    public Item limeStainedGlassPane() {
         return Item.of("minecraft:lime_stained_glass_pane");
     }
 
     @Override
-    public Item getLimeTerracotta() {
+    public Item limeTerracotta() {
         return Item.of("minecraft:lime_terracotta");
     }
 
     @Override
-    public Item getLimeWool() {
+    public Item limeWool() {
         return Item.of("minecraft:lime_wool");
     }
 
     @Override
-    public Item getMagentaBanner() {
+    public Item magentaBanner() {
         return Item.of("minecraft:magenta_banner");
     }
 
     @Override
-    public Item getMagentaBed() {
+    public Item magentaBed() {
         return Item.of("minecraft:magenta_bed");
     }
 
     @Override
-    public Item getMagentaCarpet() {
+    public Item magentaCarpet() {
         return Item.of("minecraft:magenta_carpet");
     }
 
     @Override
-    public Item getMagentaConcrete() {
+    public Item magentaConcrete() {
         return Item.of("minecraft:magenta_concrete");
     }
 
     @Override
-    public Item getMagentaConcretePowder() {
+    public Item magentaConcretePowder() {
         return Item.of("minecraft:magenta_concrete_powder");
     }
 
     @Override
-    public Item getMagentaDye() {
+    public Item magentaDye() {
         return Item.of("minecraft:magenta_dye");
     }
 
     @Override
-    public Item getMagentaStainedGlass() {
+    public Item magentaStainedGlass() {
         return Item.of("minecraft:magenta_stained_glass");
     }
 
     @Override
-    public Item getMagentaStainedGlassPane() {
+    public Item magentaStainedGlassPane() {
         return Item.of("minecraft:magenta_stained_glass_pane");
     }
 
     @Override
-    public Item getMagentaTerracotta() {
+    public Item magentaTerracotta() {
         return Item.of("minecraft:magenta_terracotta");
     }
 
     @Override
-    public Item getMagentaWool() {
+    public Item magentaWool() {
         return Item.of("minecraft:magenta_wool");
     }
 
     @Override
-    public Item getMossyCobblestoneWall() {
+    public Item mossyCobblestoneWall() {
         return Item.of("minecraft:mossy_cobblestone_wall");
     }
 
     @Override
-    public Item getMossyStoneBricks() {
+    public Item mossyStoneBricks() {
         return Item.of("minecraft:mossy_stone_bricks");
     }
 
     @Override
-    public Item getNetherBrickSlab() {
+    public Item netherBrickSlab() {
         return Item.of("minecraft:nether_brick_slab");
     }
 
     @Override
-    public Item getOakWoodSlab() {
+    public Item oakWoodSlab() {
         return Item.of("minecraft:oak_slab");
     }
 
     @Override
-    public Item getOrangeBanner() {
+    public Item orangeBanner() {
         return Item.of("minecraft:orange_banner");
     }
 
     @Override
-    public Item getOrangeBed() {
+    public Item orangeBed() {
         return Item.of("minecraft:orange_bed");
     }
 
     @Override
-    public Item getOrangeCarpet() {
+    public Item orangeCarpet() {
         return Item.of("minecraft:orange_carpet");
     }
 
     @Override
-    public Item getOrangeConcrete() {
+    public Item orangeConcrete() {
         return Item.of("minecraft:orange_concrete");
     }
 
     @Override
-    public Item getOrangeConcretePowder() {
+    public Item orangeConcretePowder() {
         return Item.of("minecraft:orange_concrete_powder");
     }
 
     @Override
-    public Item getOrangeDye() {
+    public Item orangeDye() {
         return Item.of("minecraft:orange_dye");
     }
 
     @Override
-    public Item getOrangeStainedGlass() {
+    public Item orangeStainedGlass() {
         return Item.of("minecraft:orange_stained_glass");
     }
 
     @Override
-    public Item getOrangeStainedGlassPane() {
+    public Item orangeStainedGlassPane() {
         return Item.of("minecraft:orange_stained_glass_pane");
     }
 
     @Override
-    public Item getOrangeTerracotta() {
+    public Item orangeTerracotta() {
         return Item.of("minecraft:orange_terracotta");
     }
 
     @Override
-    public Item getOrangeTulip() {
+    public Item orangeTulip() {
         return Item.of("minecraft:orange_tulip");
     }
 
     @Override
-    public Item getOrangeWool() {
+    public Item orangeWool() {
         return Item.of("minecraft:orange_wool");
     }
 
     @Override
-    public Item getOxeyeDaisy() {
+    public Item oxeyeDaisy() {
         return Item.of("minecraft:oxeye_daisy");
     }
 
     @Override
-    public Item getPeony() {
+    public Item peony() {
         return Item.of("minecraft:peony");
     }
 
     @Override
-    public Item getPinkBanner() {
+    public Item pinkBanner() {
         return Item.of("minecraft:pink_banner");
     }
 
     @Override
-    public Item getPinkBed() {
+    public Item pinkBed() {
         return Item.of("minecraft:pink_bed");
     }
 
     @Override
-    public Item getPinkCarpet() {
+    public Item pinkCarpet() {
         return Item.of("minecraft:pink_carpet");
     }
 
     @Override
-    public Item getPinkConcrete() {
+    public Item pinkConcrete() {
         return Item.of("minecraft:pink_concrete");
     }
 
     @Override
-    public Item getPinkConcretePowder() {
+    public Item pinkConcretePowder() {
         return Item.of("minecraft:pink_concrete_powder");
     }
 
     @Override
-    public Item getPinkDye() {
+    public Item pinkDye() {
         return Item.of("minecraft:pink_dye");
     }
 
     @Override
-    public Item getPinkStainedGlass() {
+    public Item pinkStainedGlass() {
         return Item.of("minecraft:pink_stained_glass");
     }
 
     @Override
-    public Item getPinkStainedGlassPane() {
+    public Item pinkStainedGlassPane() {
         return Item.of("minecraft:pink_stained_glass_pane");
     }
 
     @Override
-    public Item getPinkTerracotta() {
+    public Item pinkTerracotta() {
         return Item.of("minecraft:pink_terracotta");
     }
 
     @Override
-    public Item getPinkTulip() {
+    public Item pinkTulip() {
         return Item.of("minecraft:pink_tulip");
     }
 
     @Override
-    public Item getPinkWool() {
+    public Item pinkWool() {
         return Item.of("minecraft:pink_wool");
     }
 
     @Override
-    public Item getSteveHead() {
+    public Item steveHead() {
         return Item.of("minecraft:player_head");
     }
 
     @Override
-    public Item getPodzol() {
+    public Item podzol() {
         return Item.of("minecraft:podzol");
     }
 
     @Override
-    public Item getPolishedAndesite() {
+    public Item polishedAndesite() {
         return Item.of("minecraft:polished_andesite");
     }
 
     @Override
-    public Item getPolishedDiorite() {
+    public Item polishedDiorite() {
         return Item.of("minecraft:polished_diorite");
     }
 
     @Override
-    public Item getPolishedGranite() {
+    public Item polishedGranite() {
         return Item.of("minecraft:polished_granite");
     }
 
     @Override
-    public Item getPrismarineBricks() {
+    public Item prismarineBricks() {
         return Item.of("minecraft:prismarine_bricks");
     }
 
     @Override
-    public Item getPufferfish() {
+    public Item pufferfish() {
         return Item.of("minecraft:pufferfish");
     }
 
     @Override
-    public Item getPurpleBanner() {
+    public Item purpleBanner() {
         return Item.of("minecraft:purple_banner");
     }
 
     @Override
-    public Item getPurpleBed() {
+    public Item purpleBed() {
         return Item.of("minecraft:purple_bed");
     }
 
     @Override
-    public Item getPurpleCarpet() {
+    public Item purpleCarpet() {
         return Item.of("minecraft:purple_carpet");
     }
 
     @Override
-    public Item getPurpleConcrete() {
+    public Item purpleConcrete() {
         return Item.of("minecraft:purple_concrete");
     }
 
     @Override
-    public Item getPurpleConcretePowder() {
+    public Item purpleConcretePowder() {
         return Item.of("minecraft:purple_concrete_powder");
     }
 
     @Override
-    public Item getPurpleDye() {
+    public Item purpleDye() {
         return Item.of("minecraft:purple_dye");
     }
 
     @Override
-    public Item getPurpleStainedGlass() {
+    public Item purpleStainedGlass() {
         return Item.of("minecraft:purple_stained_glass");
     }
 
     @Override
-    public Item getPurpleStainedGlassPane() {
+    public Item purpleStainedGlassPane() {
         return Item.of("minecraft:purple_stained_glass_pane");
     }
 
     @Override
-    public Item getPurpleTerracotta() {
+    public Item purpleTerracotta() {
         return Item.of("minecraft:purple_terracotta");
     }
 
     @Override
-    public Item getPurpleWool() {
+    public Item purpleWool() {
         return Item.of("minecraft:purple_wool");
     }
 
     @Override
-    public Item getPillarQuartzBlock() {
+    public Item pillarQuartzBlock() {
         return Item.of("minecraft:quartz_pillar");
     }
 
     @Override
-    public Item getQuartzSlab() {
+    public Item quartzSlab() {
         return Item.of("minecraft:quartz_slab");
     }
 
     @Override
-    public Item getRedBanner() {
+    public Item redBanner() {
         return Item.of("minecraft:red_banner");
     }
 
     @Override
-    public Item getRedBed() {
+    public Item redBed() {
         return Item.of("minecraft:red_bed");
     }
 
     @Override
-    public Item getRedCarpet() {
+    public Item redCarpet() {
         return Item.of("minecraft:red_carpet");
     }
 
     @Override
-    public Item getRedConcrete() {
+    public Item redConcrete() {
         return Item.of("minecraft:red_concrete");
     }
 
     @Override
-    public Item getRedConcretePowder() {
+    public Item redConcretePowder() {
         return Item.of("minecraft:red_concrete_powder");
     }
 
     @Override
-    public Item getRedDye() {
+    public Item redDye() {
         return Item.of("minecraft:red_dye");
     }
 
     @Override
-    public Item getRedSand() {
+    public Item redSand() {
         return Item.of("minecraft:red_sand");
     }
 
     @Override
-    public Item getRedSandstoneSlab() {
+    public Item redSandstoneSlab() {
         return Item.of("minecraft:red_sandstone_slab");
     }
 
     @Override
-    public Item getRedStainedGlass() {
+    public Item redStainedGlass() {
         return Item.of("minecraft:red_stained_glass");
     }
 
     @Override
-    public Item getRedStainedGlassPane() {
+    public Item redStainedGlassPane() {
         return Item.of("minecraft:red_stained_glass_pane");
     }
 
     @Override
-    public Item getRedTerracotta() {
+    public Item redTerracotta() {
         return Item.of("minecraft:red_terracotta");
     }
 
     @Override
-    public Item getRedTulip() {
+    public Item redTulip() {
         return Item.of("minecraft:red_tulip");
     }
 
     @Override
-    public Item getRedWool() {
+    public Item redWool() {
         return Item.of("minecraft:red_wool");
     }
 
     @Override
-    public Item getRoseBush() {
+    public Item roseBush() {
         return Item.of("minecraft:rose_bush");
     }
 
     @Override
-    public Item getRawSalmon() {
+    public Item rawSalmon() {
         return Item.of("minecraft:salmon");
     }
 
     @Override
-    public Item getSandstoneSlab() {
+    public Item sandstoneSlab() {
         return Item.of("minecraft:sandstone_slab");
     }
 
     @Override
-    public Item getSkeletonSkull() {
+    public Item skeletonSkull() {
         return Item.of("minecraft:skeleton_skull");
     }
 
     @Override
-    public Item getSmoothRedSandstone() {
+    public Item smoothRedSandstone() {
         return Item.of("minecraft:smooth_red_sandstone");
     }
 
     @Override
-    public Item getSmoothSandstone() {
+    public Item smoothSandstone() {
         return Item.of("minecraft:smooth_sandstone");
     }
 
     @Override
-    public Item getSpruceLeaves() {
+    public Item spruceLeaves() {
         return Item.of("minecraft:spruce_leaves");
     }
 
     @Override
-    public Item getSpruceLog() {
+    public Item spruceLog() {
         return Item.of("minecraft:spruce_log");
     }
 
     @Override
-    public Item getSprucePlanks() {
+    public Item sprucePlanks() {
         return Item.of("minecraft:spruce_planks");
     }
 
     @Override
-    public Item getSpruceSapling() {
+    public Item spruceSapling() {
         return Item.of("minecraft:spruce_sapling");
     }
 
     @Override
-    public Item getSpruceWoodSlab() {
+    public Item spruceWoodSlab() {
         return Item.of("minecraft:spruce_slab");
     }
 
     @Override
-    public Item getStoneBrickSlab() {
+    public Item stoneBrickSlab() {
         return Item.of("minecraft:stone_brick_slab");
     }
 
     @Override
-    public Item getDoubleTallgrass() {
+    public Item doubleTallgrass() {
         return Item.of("minecraft:tall_grass");
     }
 
     @Override
-    public Item getTropicalFish() {
+    public Item tropicalFish() {
         return Item.of("minecraft:tropical_fish");
     }
 
     @Override
-    public Item getWetSponge() {
+    public Item wetSponge() {
         return Item.of("minecraft:wet_sponge");
     }
 
     @Override
-    public Item getWhiteBanner() {
+    public Item whiteBanner() {
         return Item.of("minecraft:white_banner");
     }
 
     @Override
-    public Item getWhiteBed() {
+    public Item whiteBed() {
         return Item.of("minecraft:white_bed");
     }
 
     @Override
-    public Item getWhiteCarpet() {
+    public Item whiteCarpet() {
         return Item.of("minecraft:white_carpet");
     }
 
     @Override
-    public Item getWhiteConcrete() {
+    public Item whiteConcrete() {
         return Item.of("minecraft:white_concrete");
     }
 
     @Override
-    public Item getWhiteConcretePowder() {
+    public Item whiteConcretePowder() {
         return Item.of("minecraft:white_concrete_powder");
     }
 
     @Override
-    public Item getWhiteDye() {
+    public Item whiteDye() {
         return Item.of("minecraft:white_dye");
     }
 
     @Override
-    public Item getWhiteStainedGlass() {
+    public Item whiteStainedGlass() {
         return Item.of("minecraft:white_stained_glass");
     }
 
     @Override
-    public Item getWhiteStainedGlassPane() {
+    public Item whiteStainedGlassPane() {
         return Item.of("minecraft:white_stained_glass_pane");
     }
 
     @Override
-    public Item getWhiteTulip() {
+    public Item whiteTulip() {
         return Item.of("minecraft:white_tulip");
     }
 
     @Override
-    public Item getWitherSkeletonSkull() {
+    public Item witherSkeletonSkull() {
         return Item.of("minecraft:wither_skeleton_skull");
     }
 
     @Override
-    public Item getYellowBanner() {
+    public Item yellowBanner() {
         return Item.of("minecraft:yellow_banner");
     }
 
     @Override
-    public Item getYellowBed() {
+    public Item yellowBed() {
         return Item.of("minecraft:yellow_bed");
     }
 
     @Override
-    public Item getYellowCarpet() {
+    public Item yellowCarpet() {
         return Item.of("minecraft:yellow_carpet");
     }
 
     @Override
-    public Item getYellowConcrete() {
+    public Item yellowConcrete() {
         return Item.of("minecraft:yellow_concrete");
     }
 
     @Override
-    public Item getYellowConcretePowder() {
+    public Item yellowConcretePowder() {
         return Item.of("minecraft:yellow_concrete_powder");
     }
 
     @Override
-    public Item getYellowDye() {
+    public Item yellowDye() {
         return Item.of("minecraft:yellow_dye");
     }
 
     @Override
-    public Item getYellowStainedGlass() {
+    public Item yellowStainedGlass() {
         return Item.of("minecraft:yellow_stained_glass");
     }
 
     @Override
-    public Item getYellowStainedGlassPane() {
+    public Item yellowStainedGlassPane() {
         return Item.of("minecraft:yellow_stained_glass_pane");
     }
 
     @Override
-    public Item getYellowTerracotta() {
+    public Item yellowTerracotta() {
         return Item.of("minecraft:yellow_terracotta");
     }
 
     @Override
-    public Item getYellowWool() {
+    public Item yellowWool() {
         return Item.of("minecraft:yellow_wool");
     }
 
     @Override
-    public Item getZombieHead() {
+    public Item zombieHead() {
         return Item.of("minecraft:zombie_head");
     }
 }

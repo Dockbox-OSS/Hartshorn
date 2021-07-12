@@ -24,7 +24,7 @@ import org.dockbox.hartshorn.di.types.SampleInterface;
 @Binds(value = SampleInterface.class, named = @Named(value = "meta"))
 public class SampleMetaAnnotatedImplementation implements SampleInterface {
     @Override
-    public String getName() {
+    public String name() {
         return "MetaAnnotatedHartshorn";
     }
 }

@@ -24,16 +24,15 @@ import org.dockbox.hartshorn.util.HartshornUtils;
 import java.util.Collection;
 import java.util.Set;
 
+import lombok.Getter;
+
 public class PlotAutoMergeEvent extends CancellablePlotEvent {
 
+    @Getter
     private final Set<Plot> plots;
 
     public PlotAutoMergeEvent(Plot plot, Collection<Plot> plots) {
         super(plot);
         this.plots = HartshornUtils.asSet(plots);
-    }
-
-    public Set<Plot> getPlots() {
-        return this.plots;
     }
 }

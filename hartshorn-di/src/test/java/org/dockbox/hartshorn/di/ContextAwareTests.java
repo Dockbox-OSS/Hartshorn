@@ -37,9 +37,9 @@ public class ContextAwareTests {
 
         final SampleContextAwareType sampleContextAwareType = Hartshorn.context().get(SampleContextAwareType.class);
         Assertions.assertNotNull(sampleContextAwareType);
-        Assertions.assertNotNull(sampleContextAwareType.getContext());
+        Assertions.assertNotNull(sampleContextAwareType.context());
 
-        Assertions.assertSame(applicationContext, sampleContextAwareType.getContext());
+        Assertions.assertSame(applicationContext, sampleContextAwareType.context());
     }
 
     @Test

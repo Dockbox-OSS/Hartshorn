@@ -28,10 +28,10 @@ public class LayoutProperty implements InjectorProperty<InventoryLayout> {
 
     public static final String KEY = "HartshornInternalInventoryTypeKey";
     @Getter
-    private final InventoryLayout object;
+    private final InventoryLayout value;
 
     @Override
-    public String getKey() {
+    public String key() {
         return LayoutProperty.KEY;
     }
 }

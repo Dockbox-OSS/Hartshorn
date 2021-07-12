@@ -37,14 +37,15 @@ public class SpongeProfile implements Profile {
     }
 
     @Override
-    public UUID getUuid() {
+    public UUID uniqueId() {
         return this.profile.uuid();
     }
 
     @Override
-    public void setUuid(UUID uuid) {
+    public SpongeProfile uniqueId(UUID uuid) {
         final List<ProfileProperty> properties = this.profile.properties();
         this.profile = GameProfile.of(uuid).withProperties(properties);
+        return this;
     }
 
     @Override
@@ -56,16 +57,17 @@ public class SpongeProfile implements Profile {
     }
 
     @Override
-    public void setProperty(String key, String value) {
+    public void property(String key, String value) {
         this.profile = this.profile.withProperty(ProfileProperty.of(key, value));
     }
 
     @Override
-    public void setProperties(Map<String, String> properties) {
+    public SpongeProfile properties(Map<String, String> properties) {
         final List<ProfileProperty> profileProperties = properties.entrySet().stream()
                 .map(property -> ProfileProperty.of(property.getKey(), property.getValue()))
                 .toList();
         this.profile = this.profile.withProperties(profileProperties);
+        return this;
     }
 
     public GameProfile profile() {

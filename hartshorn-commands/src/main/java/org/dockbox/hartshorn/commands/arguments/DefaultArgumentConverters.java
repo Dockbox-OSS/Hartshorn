@@ -90,7 +90,7 @@ public final class DefaultArgumentConverters implements InjectableType {
                 catch (NullPointerException | IllegalArgumentException e) {
                     lang =
                             Arrays.stream(Language.values())
-                                    .filter(l -> l.getNameEnglish().equals(in) || l.getNameLocalized().equals(in))
+                                    .filter(l -> l.nameEnglish().equals(in) || l.nameLocalized().equals(in))
                                     .findFirst()
                                     .orElse(Language.EN_US);
                 }
@@ -98,9 +98,9 @@ public final class DefaultArgumentConverters implements InjectableType {
             }).withSuggestionProvider(in -> {
                 List<String> suggestions = HartshornUtils.emptyList();
                 for (Language lang : Language.values()) {
-                    suggestions.add(lang.getCode());
-                    suggestions.add(lang.getNameEnglish());
-                    suggestions.add(lang.getNameLocalized());
+                    suggestions.add(lang.code());
+                    suggestions.add(lang.nameEnglish());
+                    suggestions.add(lang.nameLocalized());
                 }
                 return suggestions.stream()
                         .filter(lang -> lang.toLowerCase().contains(in.toLowerCase()))
@@ -145,11 +145,11 @@ public final class DefaultArgumentConverters implements InjectableType {
     public static final ArgumentConverter<ComponentContainer> SERVICE = CommandValueConverter.builder(ComponentContainer.class, "service")
             .withConverter(in -> Exceptional.of(Hartshorn.context()
                     .locator().containers().stream()
-                    .filter(container -> container.getId().equalsIgnoreCase(in))
+                    .filter(container -> container.id().equalsIgnoreCase(in))
                     .findFirst()))
             .withSuggestionProvider((in) -> Hartshorn.context()
                     .locator().containers().stream()
-                    .map(ComponentContainer::getId)
+                    .map(ComponentContainer::id)
                     .filter(id -> id.toLowerCase(Locale.ROOT).startsWith(in.toLowerCase(Locale.ROOT)))
                     .toList())
             .build();
@@ -173,7 +173,7 @@ public final class DefaultArgumentConverters implements InjectableType {
             .build();
 
     @Override
-    public void stateEnabling(InjectorProperty<?>... properties) {
+    public void enable(InjectorProperty<?>... properties) {
         Hartshorn.log().info("Registered default command argument converters.");
     }
 }

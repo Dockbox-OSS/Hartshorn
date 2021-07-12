@@ -60,18 +60,18 @@ public enum Language implements PersistentCapable<PersistentLanguageModel> {
     public static Language of(Locale locale) {
         for (Language value : Language.values()) {
             // Compare based on language, as e.g. NL_NL will not match with Locale(nl, NL)
-            if (value.getLocale().getLanguage().equalsIgnoreCase(locale.getLanguage())) return value;
+            if (value.locale().getLanguage().equalsIgnoreCase(locale.getLanguage())) return value;
         }
         return Language.EN_US;
     }
 
     @Override
-    public Class<PersistentLanguageModel> getModelClass() {
+    public Class<PersistentLanguageModel> modelType() {
         return PersistentLanguageModel.class;
     }
 
     @Override
-    public PersistentLanguageModel toPersistentModel() {
+    public PersistentLanguageModel model() {
         return new PersistentLanguageModel(this.code);
     }
 }

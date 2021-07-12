@@ -25,11 +25,11 @@ public interface EventWrapper {
 
     void invoke(Event event) throws RuntimeException;
 
-    Object getListener();
+    Object listener();
 
-    Class<? extends Event> getEventType();
+    Class<? extends Event> eventType();
 
-    Method getMethod();
+    Method method();
 
-    int getPriority();
+    int priority();
 }

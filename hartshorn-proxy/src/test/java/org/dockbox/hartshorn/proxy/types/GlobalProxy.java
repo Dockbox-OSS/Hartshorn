@@ -23,7 +23,7 @@ import org.dockbox.hartshorn.proxy.annotations.Proxy;
 public class GlobalProxy {
 
     @Proxy.Target
-    public String getName() {
+    public String name() {
         return "GlobalHartshorn";
     }
 

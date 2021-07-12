@@ -28,7 +28,7 @@ public final class JUnitUtils {
     }
 
     public static JUnitPlayer mockPlayer() {
-        return new JUnitPlayer(UUID.randomUUID(), HartshornUtils.getRandomString(5, 10));
+        return new JUnitPlayer(UUID.randomUUID(), HartshornUtils.randomString(5, 10));
     }
 
 }

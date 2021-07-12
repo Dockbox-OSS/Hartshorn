@@ -22,12 +22,12 @@ import org.dockbox.hartshorn.api.i18n.common.Language;
 public interface DiscordCommandSource extends CommandSource {
 
     @Override
-    default Language getLanguage() {
+    default Language language() {
         return Language.EN_US;
     }
 
     @Override
-    default void setLanguage(Language language) {
+    default void language(Language language) {
         // Nothing happens
     }
 

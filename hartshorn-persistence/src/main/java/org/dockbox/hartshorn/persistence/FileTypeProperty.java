@@ -33,12 +33,12 @@ public final class FileTypeProperty implements InjectorProperty<FileType> {
     }
 
     @Override
-    public String getKey() {
+    public String key() {
         return FileTypeProperty.KEY;
     }
 
     @Override
-    public FileType getObject() {
+    public FileType value() {
         return this.fileType;
     }
 }

@@ -32,12 +32,12 @@ public class SQLColumnProperty implements InjectorProperty<Tuple<String, ColumnI
     }
 
     @Override
-    public String getKey() {
+    public String key() {
         return this.originColumnName;
     }
 
     @Override
-    public Tuple<String, ColumnIdentifier<?>> getObject() {
+    public Tuple<String, ColumnIdentifier<?>> value() {
         return new Tuple<>(this.originColumnName, this.toColumn);
     }
 }

@@ -24,6 +24,8 @@ import org.junit.jupiter.api.Assertions;
 
 import java.util.Locale;
 
+import lombok.Getter;
+
 @SuppressWarnings("FieldMayBeFinal")
 @Demo
 @Entity(value = "test")
@@ -42,14 +44,14 @@ public class ReflectTestType extends ParentTestType {
     public static String publicStaticField = "publicStaticField";
     private static String privateStaticField = "privateStaticField";
 
-    @Property(getter = "getField", setter = "setField")
+    @Property(getter = "field", setter = "field")
     private String accessorField;
 
-    public String getField() {
+    public String field() {
         return "accessorField";
     }
 
-    public void setField(String value) {
+    public void field(String value) {
         this.activatedSetter = true;
     }
 
@@ -75,19 +77,10 @@ public class ReflectTestType extends ParentTestType {
     }
 
     /* TEST UTILITIES, DO NOT TEST AGAINST */
+    @Getter
     private boolean activatedSetter = false;
+    @Getter
     private boolean activatedMethod = false;
+    @Getter
     private boolean activatedConstructor = false;
-
-    public boolean isActivatedSetter() {
-        return this.activatedSetter;
-    }
-
-    public boolean isActivatedMethod() {
-        return this.activatedMethod;
-    }
-
-    public boolean isActivatedConstructor() {
-        return this.activatedConstructor;
-    }
 }

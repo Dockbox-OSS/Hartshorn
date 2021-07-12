@@ -19,11 +19,11 @@ package org.dockbox.hartshorn.api.keys;
 
 public interface PersistentDataKey<T> {
 
-    Class<T> getType();
+    Class<T> type();
 
-    String getOwnerId();
+    String ownerId();
 
-    String getId();
+    String id();
 
-    String getName();
+    String name();
 }

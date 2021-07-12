@@ -34,27 +34,27 @@ public interface JUnitPersistentDataHolder extends PersistentDataHolder, Identif
 
     @Override
     default <T> Exceptional<T> get(PersistentDataKey<T> dataKey) {
-        return Exceptional.of((T) this.getPersistentData().getOrDefault(dataKey, null));
+        return Exceptional.of((T) this.data().getOrDefault(dataKey, null));
     }
 
     @Override
     default <T> TransactionResult set(PersistentDataKey<T> dataKey, T value) {
-        Map<PersistentDataKey<?>, Object> persistentData = this.getPersistentData();
+        Map<PersistentDataKey<?>, Object> persistentData = this.data();
         persistentData.put(dataKey, value);
-        DATA.put(this.getUniqueId(), persistentData);
+        DATA.put(this.uniqueId(), persistentData);
         return TransactionResult.success();
     }
 
     @Override
     default <T> void remove(PersistentDataKey<T> dataKey) {
-        Map<PersistentDataKey<?>, Object> persistentData = this.getPersistentData();
+        Map<PersistentDataKey<?>, Object> persistentData = this.data();
         persistentData.remove(dataKey);
-        DATA.put(this.getUniqueId(), persistentData);
+        DATA.put(this.uniqueId(), persistentData);
     }
 
     @Override
-    default Map<PersistentDataKey<?>, Object> getPersistentData() {
-        DATA.putIfAbsent(this.getUniqueId(), HartshornUtils.emptyMap());
-        return DATA.get(this.getUniqueId());
+    default Map<PersistentDataKey<?>, Object> data() {
+        DATA.putIfAbsent(this.uniqueId(), HartshornUtils.emptyMap());
+        return DATA.get(this.uniqueId());
     }
 }

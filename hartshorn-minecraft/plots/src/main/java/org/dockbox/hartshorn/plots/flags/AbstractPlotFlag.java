@@ -36,11 +36,11 @@ public abstract class AbstractPlotFlag<T> implements PlotFlag<T> {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof PlotFlag<?> that)) return false;
-        return this.getId().equals(that.getId());
+        return this.id().equals(that.id());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.getId());
+        return Objects.hash(this.id());
     }
 }

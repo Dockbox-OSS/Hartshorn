@@ -29,14 +29,14 @@ public interface CancellablePipe<I, O> extends ComplexPipe<I, O> {
 
     @Override
     default O apply(AbstractPipeline<?, I> pipeline, I input, Throwable throwable) throws ApplicationException {
-        return this.execute(pipeline::cancelPipeline, input, throwable);
+        return this.execute(pipeline::cancel, input, throwable);
     }
 
     O execute(Runnable cancelPipeline, I input, Throwable throwable) throws ApplicationException;
 
     @SuppressWarnings("rawtypes")
     @Override
-    default Class<CancellablePipe> getType() {
+    default Class<CancellablePipe> type() {
         return CancellablePipe.class;
     }
 }

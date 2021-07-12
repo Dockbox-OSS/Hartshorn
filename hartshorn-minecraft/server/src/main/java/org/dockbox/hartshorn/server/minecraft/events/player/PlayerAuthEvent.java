@@ -36,7 +36,7 @@ public class PlayerAuthEvent extends PlayerConnectionEvent {
     }
 
     @Override
-    public Player getTarget() throws UnsupportedOperationException {
+    public Player subject() throws UnsupportedOperationException {
         throw new UnsupportedOperationException("Cannot get target while authenticating");
     }
 }

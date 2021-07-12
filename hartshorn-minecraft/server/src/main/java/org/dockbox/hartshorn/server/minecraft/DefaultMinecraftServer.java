@@ -39,16 +39,16 @@ public class DefaultMinecraftServer {
                 player = (Player) src;
             }
             else {
-                src.send(this.resources.getWrongSource());
+                src.send(this.resources.wrongSource());
                 return;
             }
         }
 
-        player.setLanguage(language);
+        player.language(language);
 
-        String languageLocalized = language.getNameLocalized() + " (" + language.getNameEnglish() + ")";
+        String languageLocalized = language.nameLocalized() + " (" + language.nameEnglish() + ")";
         if (player != src)
-            src.sendWithPrefix(this.resources.getOtherLanguageUpdated(player.getName(), languageLocalized));
-        player.sendWithPrefix(this.resources.getLanguageUpdated(languageLocalized));
+            src.sendWithPrefix(this.resources.otherLanguageUpdated(player.name(), languageLocalized));
+        player.sendWithPrefix(this.resources.languageUpdated(languageLocalized));
     }
 }

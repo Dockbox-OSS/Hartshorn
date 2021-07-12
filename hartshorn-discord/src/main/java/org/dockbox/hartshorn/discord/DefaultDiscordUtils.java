@@ -70,7 +70,7 @@ public abstract class DefaultDiscordUtils implements DiscordUtils {
 
     @Override
     public boolean checkMessageExists(String messageId, String channelId) {
-        return this.getJDA().map(jda -> {
+        return this.jda().map(jda -> {
             TextChannel channel = jda.getTextChannelById(channelId);
             if (null == channel) return false;
             Message message = channel.retrieveMessageById(messageId).complete();
@@ -80,16 +80,16 @@ public abstract class DefaultDiscordUtils implements DiscordUtils {
 
     @NotNull
     @Override
-    public Exceptional<Category> getLoggingCategory() {
-        if (this.getJDA().present())
-            return Exceptional.of(this.getJDA().get().getCategoryById(Hartshorn.context().get(GlobalConfig.class).getDiscordLoggingCategoryId()));
+    public Exceptional<Category> loggingCategory() {
+        if (this.jda().present())
+            return Exceptional.of(this.jda().get().getCategoryById(Hartshorn.context().get(GlobalConfig.class).discordCategory()));
         return Exceptional.empty();
     }
 
     @NotNull
     @Override
-    public Exceptional<Guild> getGuild() {
-        return this.getGlobalTextChannel().map(GuildChannel::getGuild);
+    public Exceptional<Guild> guild() {
+        return this.globalChannel().map(GuildChannel::getGuild);
     }
 
     @Override
@@ -104,9 +104,9 @@ public abstract class DefaultDiscordUtils implements DiscordUtils {
 
     @Override
     public void sendToTextChannel(DiscordPagination pagination, MessageChannel channel) {
-        this.getJDA().present(jda -> {
+        this.jda().present(jda -> {
             try {
-                if (pagination.getPages().isEmpty()) return;
+                if (pagination.pages().isEmpty()) return;
 
                 Paginator paginator = PaginatorBuilder.createPaginator()
                         .setHandler(jda)
@@ -114,7 +114,7 @@ public abstract class DefaultDiscordUtils implements DiscordUtils {
                         .build();
                 Pages.activate(paginator);
 
-                List<Page> pages = pagination.getPages().stream()
+                List<Page> pages = pagination.pages().stream()
                         .map(page -> {
                             if (page instanceof Message) {
                                 return new Page(PageType.TEXT, page);
@@ -136,7 +136,7 @@ public abstract class DefaultDiscordUtils implements DiscordUtils {
     @Override
     public void sendToTextChannel(Template<?> template, MessageChannel channel) {
         if (template instanceof MessageTemplate)
-            channel.sendMessage(((MessageTemplate) template).getJDAMessage()).queue();
+            channel.sendMessage(((MessageTemplate) template).message()).queue();
     }
 
     @Override
@@ -158,7 +158,7 @@ public abstract class DefaultDiscordUtils implements DiscordUtils {
     public void sendToUser(Template<?> template, User user) {
         user.openPrivateChannel().queue(channel -> {
             if (template instanceof MessageTemplate)
-                channel.sendMessage(((MessageTemplate) template).getJDAMessage());
+                channel.sendMessage(((MessageTemplate) template).message());
         });
     }
 
@@ -188,14 +188,14 @@ public abstract class DefaultDiscordUtils implements DiscordUtils {
         DiscordResources resources = this.context.get(DiscordResources.class);
         if (commandMethods.containsKey(command)) {
             Triad<DiscordCommand, Method, Class<?>> information = commandMethods.get(command);
-            DiscordCommand annotation = information.getFirst();
+            DiscordCommand annotation = information.first();
 
             ListeningLevel level = annotation.listeningLevel();
 
-            if (!isValidChannel(context, level)) return;
+            if (!validChannel(context, level)) return;
 
             // Ensure the command is either globally available, or it was sent in the correct channel
-            boolean correctChannel = WILDCARD.equals(annotation.channelId()) || context.getChannel().getId().equals(annotation.channelId());
+            boolean correctChannel = WILDCARD.equals(annotation.channelId()) || context.channel().getId().equals(annotation.channelId());
             if (!correctChannel) return;
 
             // If all roles are allowed, we move on directly, otherwise we compare the ranks of the author
@@ -204,44 +204,44 @@ public abstract class DefaultDiscordUtils implements DiscordUtils {
             if (!userPermitted) {
 
                 // Ensure the role exists at all
-                Exceptional<Role> or = this.getGuild().map(guild -> guild.getRoleById(annotation.minimumRankId()));
+                Exceptional<Role> or = this.guild().map(guild -> guild.getRoleById(annotation.minimumRankId()));
                 if (!or.present()) return;
 
                 // Ensure the player has the required role
-                userPermitted = this.getGuild()
-                        .map(guild -> guild.getMember(context.getAuthor()))
+                userPermitted = this.guild()
+                        .map(guild -> guild.getMember(context.author()))
                         .map(member -> member.getRoles().contains(or.get()))
                         .or(false);
             }
 
             if (!userPermitted) {
-                context.sendToChannel(resources.getCommandNotPermitted());
+                context.sendToChannel(resources.commandNotPermitted());
                 return;
             }
 
-            Method method = information.getSecond();
-            Class<?> type = information.getThird();
+            Method method = information.second();
+            Class<?> type = information.third();
 
             try {
                 final Object o = this.context.get(type);
                 method.invoke(o, context);
             }
             catch (IllegalAccessException | InvocationTargetException e) {
-                context.sendToChannel(resources.getCommandCaught());
+                context.sendToChannel(resources.commandCaught());
                 Except.handle("Failed to invoke previously checked method [" + method.getName() + "] in [" + type.getCanonicalName() + "]");
             }
         }
-        else context.sendToChannel(resources.getCommandUnknown());
+        else context.sendToChannel(resources.commandUnknown());
     }
 
-    private static boolean isValidChannel(@NotNull DiscordCommandContext context, ListeningLevel level) {
+    private static boolean validChannel(@NotNull DiscordCommandContext context, ListeningLevel level) {
         boolean listensForBoth = ListeningLevel.BOTH == level;
         if (listensForBoth) return true;
 
-        boolean isPrivateAndValid = ListeningLevel.PRIVATE_ONLY == level && ChannelType.PRIVATE == context.getChannel().getType();
-        boolean isTextAndValid = ListeningLevel.CHANNEL_ONLY == level && ChannelType.TEXT == context.getChannel().getType();
+        boolean privateAndValid = ListeningLevel.PRIVATE_ONLY == level && ChannelType.PRIVATE == context.channel().getType();
+        boolean textAndValid = ListeningLevel.CHANNEL_ONLY == level && ChannelType.TEXT == context.channel().getType();
 
-        return isPrivateAndValid || isTextAndValid;
+        return privateAndValid || textAndValid;
     }
 
     public static void sendToUser(@NotNull CharSequence text, @NotNull User user) {

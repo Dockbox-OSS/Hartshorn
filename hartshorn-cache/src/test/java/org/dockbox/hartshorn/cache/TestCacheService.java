@@ -29,7 +29,7 @@ import java.util.List;
 public abstract class TestCacheService {
 
     @Cached
-    public List<String> getCachedThings() {
+    public List<String> cachedObjects() {
         return HartshornUtils.asList(System.nanoTime() + "");
     }
 

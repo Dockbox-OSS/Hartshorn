@@ -144,18 +144,18 @@ public enum DitherMode {
         this.matrix = matrix;
     }
 
-    boolean isEnabled() {
+    boolean enabled() {
         return NoDither != this;
     }
 
-    boolean isOrdered() {
+    boolean ordered() {
         if (Tristate.UNDEFINED == this.ordered) {
             throw new UnsupportedOperationException("Unknown/corrupted dither mode!");
         }
         return this.ordered.booleanValue();
     }
 
-    double[][] getErrorDiffusionMatrix() {
+    double[][] errorDiffusionMatrix() {
         if (MatrixType.ERROR_DIFFUSION != this.matrixType) {
             throw new UnsupportedOperationException("Only caught diffusion matrices supported, invalid dither mode");
         }
@@ -169,7 +169,7 @@ public enum DitherMode {
         return result;
     }
 
-    double[][] getBayerMatrix() {
+    double[][] bayerMatrix() {
         if (MatrixType.BAYER != this.matrixType) {
             throw new UnsupportedOperationException("Only ordered dither matrices supported, invalid dither mode");
         }

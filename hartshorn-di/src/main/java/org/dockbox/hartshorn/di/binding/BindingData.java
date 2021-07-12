@@ -42,7 +42,7 @@ public class BindingData {
         this.named = null;
     }
 
-    public Exceptional<Named> getName() {
+    public Exceptional<Named> named() {
         return Exceptional.of(this.named);
     }
 }

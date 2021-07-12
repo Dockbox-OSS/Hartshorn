@@ -17,15 +17,15 @@
 
 package org.dockbox.hartshorn.server.minecraft.dimension;
 
-import org.dockbox.hartshorn.api.domain.Target;
+import org.dockbox.hartshorn.api.domain.Subject;
 import org.dockbox.hartshorn.server.minecraft.dimension.position.Location;
 import org.dockbox.hartshorn.server.minecraft.dimension.world.World;
 
-public interface Locatable extends Target {
+public interface Locatable extends Subject {
 
-    Location getLocation();
+    Location location();
 
-    boolean setLocation(Location location);
+    boolean location(Location location);
 
-    World getWorld();
+    World world();
 }

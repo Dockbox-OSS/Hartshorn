@@ -41,11 +41,11 @@ public final class TransactionResult {
     }
 
     public static TransactionResult fail(Throwable cause) {
-        return new TransactionResult(Status.FAILURE, DefaultResources.instance().getException(cause.getMessage()));
+        return new TransactionResult(Status.FAILURE, DefaultResources.instance().exception(cause.getMessage()));
     }
 
-    public boolean isSuccessful() {
-        return Status.SUCCESS == this.getStatus();
+    public boolean successful() {
+        return Status.SUCCESS == this.status();
     }
 
     public enum Status {

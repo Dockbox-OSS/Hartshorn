@@ -115,7 +115,7 @@ public final class ProxyableBootstrap {
                     return source.invoke(Hartshorn.context().get(proxyClass), invokingArgs);
                 }
                 catch (CancelProxyException e) {
-                    proxyContext.getHolder().setCancelled(true);
+                    proxyContext.holder().cancelled(true);
                 }
                 catch (Throwable e) {
                     Except.handle(e);
@@ -123,9 +123,9 @@ public final class ProxyableBootstrap {
                 //noinspection ReturnOfNull
                 return null;
             });
-            property.setPhase(target.at());
-            property.setPriority(target.priority());
-            property.setOverwriteResult(target.overwrite());
+            property.phase(target.at());
+            property.priority(target.priority());
+            property.overwriteResult(target.overwrite());
             InjectionPoint<C> point = InjectionPoint.of(proxyTargetClass, instance -> {
                 try {
                     ProxyHandler<C> handler = new ProxyHandler<>(instance);

@@ -33,11 +33,11 @@ public class I18NServiceModifier extends ServiceAnnotatedMethodModifier<Resource
     @SuppressWarnings("unchecked")
     @Override
     public <T, R> ProxyFunction<T, R> process(ApplicationContext context, MethodProxyContext<T> methodContext) {
-        if (!Reflect.assigns(ResourceEntry.class, methodContext.getReturnType()))
+        if (!Reflect.assigns(ResourceEntry.class, methodContext.returnType()))
             throw new ProxyMethodBindingException(methodContext);
 
-        String key = I18N.key(methodContext.getType(), methodContext.getMethod());
-        Resource annotation = Reflect.annotation(methodContext.getMethod(), Resource.class).get();
+        String key = I18N.key(methodContext.type(), methodContext.method());
+        Resource annotation = Reflect.annotation(methodContext.method(), Resource.class).get();
 
         return (self, args, holder) -> {
             // Prevents NPE when formatting cached resources without arguments
@@ -48,7 +48,7 @@ public class I18NServiceModifier extends ServiceAnnotatedMethodModifier<Resource
 
     @Override
     public <T> boolean preconditions(ApplicationContext context, MethodProxyContext<T> methodContext) {
-        return Reflect.assigns(ResourceEntry.class, methodContext.getReturnType());
+        return Reflect.assigns(ResourceEntry.class, methodContext.returnType());
     }
 
     @Override

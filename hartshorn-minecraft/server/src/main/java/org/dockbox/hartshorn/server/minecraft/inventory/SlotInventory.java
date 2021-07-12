@@ -24,15 +24,15 @@ public interface SlotInventory extends Inventory {
 
     /**
      * Gets the {@link Item} in the requested slot type within the inventory. If the slot type is not
-     * supported by the inventory, or if there is no item present, {@link MinecraftItems#getAir()} is
+     * supported by the inventory, or if there is no item present, {@link MinecraftItems#air()} is
      * returned instead.
      *
      * @param slot
      *         The slot type
      *
-     * @return The {@link Item}, or {@link MinecraftItems#getAir() air}.
+     * @return The {@link Item}, or {@link MinecraftItems#air() air}.
      */
-    Item getSlot(Slot slot);
+    Item slot(Slot slot);
 
     /**
      * Sets the item at the given slot type to the given {@link Item}. If the slot type is not
@@ -43,7 +43,7 @@ public interface SlotInventory extends Inventory {
      * @param slot
      *         The slot type
      */
-    void setSlot(Item item, Slot slot);
+    void slot(Item item, Slot slot);
 
     @Override
     default int capacity() {

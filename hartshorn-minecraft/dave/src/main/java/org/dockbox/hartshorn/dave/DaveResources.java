@@ -25,32 +25,32 @@ import org.dockbox.hartshorn.di.annotations.service.Service;
 public interface DaveResources {
 
     @Resource("Here's a useful link, $1{0}")
-    ResourceEntry getSuggestionLink(String link);
+    ResourceEntry suggestionLink(String link);
 
     @Resource("$2Click to open $1{0}")
-    ResourceEntry getSuggestionLinkHover(String link);
+    ResourceEntry suggestionLinkHover(String link);
 
     @Resource("**Dave** ≫ {0}")
-    ResourceEntry getDiscordFormat(String message);
+    ResourceEntry discordFormat(String message);
 
     @Resource("$4Muted Dave, note that important triggers will always show")
-    ResourceEntry getMute();
+    ResourceEntry mute();
 
     @Resource("$1Unmuted Dave")
-    ResourceEntry getUnmute();
+    ResourceEntry unmute();
 
     @Resource("$1Reloaded Dave without breaking stuff, whoo!")
-    ResourceEntry getReload();
+    ResourceEntry reload();
 
     @Resource("$3 - $1{0}")
-    ResourceEntry getTriggerSingle(String item);
+    ResourceEntry triggerSingle(String item);
 
     @Resource("$1Click to perform trigger")
-    ResourceEntry getTriggerSingleHover();
+    ResourceEntry triggerSingleHover();
 
     @Resource("$1Triggers")
-    ResourceEntry getTriggerHeader();
+    ResourceEntry triggerHeader();
 
     @Resource("$4No trigger with id '{0}' exists.")
-    ResourceEntry getTriggerNotfound(String trigger);
+    ResourceEntry triggerNotfound(String trigger);
 }

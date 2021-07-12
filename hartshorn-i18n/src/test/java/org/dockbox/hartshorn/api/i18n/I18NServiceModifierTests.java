@@ -37,16 +37,16 @@ public class I18NServiceModifierTests {
     @Test
     public void testResourceServiceReturnsValidResourceKey() {
         ITestResources resources = Hartshorn.context().get(ITestResources.class);
-        ResourceEntry testEntry = resources.getTestEntry();
+        ResourceEntry testEntry = resources.testEntry();
 
         Assertions.assertNotNull(testEntry);
-        Assertions.assertEquals("resource.test.entry", testEntry.getKey());
+        Assertions.assertEquals("resource.test.entry", testEntry.key());
     }
 
     @Test
     public void testResourceServiceReturnsValidResourceValue() {
         ITestResources resources = Hartshorn.context().get(ITestResources.class);
-        ResourceEntry testEntry = resources.getTestEntry();
+        ResourceEntry testEntry = resources.testEntry();
 
         Assertions.assertNotNull(testEntry);
         Assertions.assertEquals("Hello world!", testEntry.plain());
@@ -55,7 +55,7 @@ public class I18NServiceModifierTests {
     @Test
     public void testResourceServiceFormatsParamResource() {
         ITestResources resources = Hartshorn.context().get(ITestResources.class);
-        ResourceEntry testEntry = resources.getParameterTestEntry("world");
+        ResourceEntry testEntry = resources.parameterTestEntry("world");
 
         Assertions.assertNotNull(testEntry);
         Assertions.assertEquals("Hello world!", testEntry.plain());
@@ -64,7 +64,7 @@ public class I18NServiceModifierTests {
     @Test
     void testAbstractServiceAbstractMethodIsProxied() {
         AbstractTestResources resources = Hartshorn.context().get(AbstractTestResources.class);
-        final ResourceEntry testEntry = resources.getAbstractEntry();
+        final ResourceEntry testEntry = resources.abstractEntry();
 
         Assertions.assertNotNull(testEntry);
         Assertions.assertEquals("Hello abstract world!", testEntry.plain());
@@ -73,7 +73,7 @@ public class I18NServiceModifierTests {
     @Test
     void testAbstractServiceConcreteMethodIsProxied() {
         AbstractTestResources resources = Hartshorn.context().get(AbstractTestResources.class);
-        final ResourceEntry testEntry = resources.getConcreteEntry();
+        final ResourceEntry testEntry = resources.concreteEntry();
 
         Assertions.assertNotNull(testEntry);
         Assertions.assertEquals("Hello concrete world!", testEntry.plain());
@@ -82,7 +82,7 @@ public class I18NServiceModifierTests {
     @Test
     void testConcreteServiceMethodIsProxied() {
         TestResources resources = Hartshorn.context().get(TestResources.class);
-        final ResourceEntry testEntry = resources.getTestEntry();
+        final ResourceEntry testEntry = resources.testEntry();
 
         Assertions.assertNotNull(testEntry);
         Assertions.assertEquals("Hello world!", testEntry.plain());

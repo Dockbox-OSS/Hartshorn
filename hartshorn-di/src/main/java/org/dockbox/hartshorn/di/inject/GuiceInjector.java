@@ -149,9 +149,9 @@ public class GuiceInjector implements Injector {
     @Override
     public <T, I extends T> Exceptional<WireContext<T, I>> firstWire(Class<T> contract, InjectorProperty<Named> property) {
         for (WireContext<?, ?> binding : this.bindings) {
-            if (binding.getContract().equals(contract)) {
-                if (!"".equals(binding.getName())) {
-                    if (property == null || !binding.getName().equals(property.getObject().value())) continue;
+            if (binding.contract().equals(contract)) {
+                if (!"".equals(binding.name())) {
+                    if (property == null || !binding.name().equals(property.value().value())) continue;
                 }
                 //noinspection unchecked
                 return Exceptional.of((WireContext<T, I>) binding);
@@ -161,9 +161,9 @@ public class GuiceInjector implements Injector {
     }
 
     @Override
-    public List<BindingData> getBindingData() {
+    public List<BindingData> bindingData() {
         List<BindingData> data = HartshornUtils.emptyList();
-        for (Entry<Key<?>, Binding<?>> entry : this.getAllBindings().entrySet()) {
+        for (Entry<Key<?>, Binding<?>> entry : this.bindings().entrySet()) {
             Key<?> key = entry.getKey();
             Binding<?> binding = entry.getValue();
             Key<?> bindingKey = binding.getKey();
@@ -188,11 +188,11 @@ public class GuiceInjector implements Injector {
                 data.add(new BindingData(rawKey, rawBinding));
             }
         }
-        data.sort(Comparator.comparing(d -> d.getSource().getSimpleName()));
+        data.sort(Comparator.comparing(d -> d.source().getSimpleName()));
         return data;
     }
 
-    private Map<Key<?>, Binding<?>> getAllBindings() {
+    private Map<Key<?>, Binding<?>> bindings() {
         Map<Key<?>, Binding<?>> bindings = HartshornUtils.emptyConcurrentMap();
         for (Entry<Key<?>, Binding<?>> entry : this.rebuild().getAllBindings().entrySet()) {
             Key<?> key = entry.getKey();
@@ -220,7 +220,7 @@ public class GuiceInjector implements Injector {
         if (null != instance) {
             this.rebuild().injectMembers(instance);
             for (Field field : Reflect.fields(instance.getClass(), Wired.class)) {
-                Object fieldInstance = ApplicationContextAware.instance().getContext().get(field.getType());
+                Object fieldInstance = ApplicationContextAware.instance().context().get(field.getType());
                 Reflect.set(field, instance, fieldInstance);
             }
         }
@@ -234,17 +234,17 @@ public class GuiceInjector implements Injector {
 
     @Override
     public void add(BeanContext<?, ?> context) {
-        if (context.isSingleton()) {
-            this.modules.add(new InstanceModule<>(context.getKey(), context.getProvider().get()));
+        if (context.singleton()) {
+            this.modules.add(new InstanceModule<>(context.key(), context.provider().get()));
         } else {
-            this.modules.add(new ProvisionModule<>(context.getKey(), () -> context.getProvider().get()));
+            this.modules.add(new ProvisionModule<>(context.key(), () -> context.provider().get()));
         }
         this.reset();
     }
 
     @Override
     public <T> T invoke(Method method) {
-        return this.invoke(method, ApplicationContextAware.instance().getContext().get(method.getDeclaringClass()));
+        return this.invoke(method, ApplicationContextAware.instance().context().get(method.getDeclaringClass()));
     }
 
     @SuppressWarnings("unchecked")
@@ -256,9 +256,9 @@ public class GuiceInjector implements Injector {
             Parameter parameter = parameters[i];
             final Exceptional<Named> annotation = Reflect.annotation(parameter, Named.class);
             if (annotation.present()) {
-                invokingParameters[i] = ApplicationContextAware.instance().getContext().get(parameter.getType(), BindingMetaProperty.of(annotation.get()));
+                invokingParameters[i] = ApplicationContextAware.instance().context().get(parameter.getType(), BindingMetaProperty.of(annotation.get()));
             } else {
-                invokingParameters[i] = ApplicationContextAware.instance().getContext().get(parameter.getType());
+                invokingParameters[i] = ApplicationContextAware.instance().context().get(parameter.getType());
             }
         }
         try {
@@ -272,7 +272,7 @@ public class GuiceInjector implements Injector {
     @SuppressWarnings("unchecked")
     @Override
     public <T, I extends T> Exceptional<Class<I>> type(Class<T> type) {
-        for (Entry<Key<?>, Binding<?>> binding : this.getAllBindings().entrySet()) {
+        for (Entry<Key<?>, Binding<?>> binding : this.bindings().entrySet()) {
             if (binding.getKey().getTypeLiteral().getRawType().equals(type)) {
                 if (binding.getValue() instanceof LinkedKeyBinding) {
                     return Exceptional.of(() -> (Class<I>) ((LinkedKeyBinding<?>) binding.getValue()).getLinkedKey().getTypeLiteral().getRawType());

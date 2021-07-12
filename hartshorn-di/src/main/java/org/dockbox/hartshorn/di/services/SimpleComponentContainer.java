@@ -52,14 +52,14 @@ public class SimpleComponentContainer<A extends Annotation> implements Component
     }
 
     @Override
-    public String getId() {
+    public String id() {
         final String id = this.annotation.id();
         if ("".equals(id)) return Bindings.serviceId(this.component, true);
         return id;
     }
 
     @Override
-    public String getName() {
+    public String name() {
         final String name = this.annotation.name();
         if ("".equals(name)) return Bindings.serviceName(this.component, true);
         return name;
@@ -71,7 +71,7 @@ public class SimpleComponentContainer<A extends Annotation> implements Component
     }
 
     @Override
-    public Class<?> getType() {
+    public Class<?> type() {
         return this.component;
     }
 

@@ -36,7 +36,7 @@ public class BooleanFlag extends AbstractPlotFlag<Boolean> {
     }
 
     @Override
-    public Class<Boolean> getType() {
+    public Class<Boolean> type() {
         return Boolean.class;
     }
 }

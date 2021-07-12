@@ -43,7 +43,7 @@ public class TypedPersistentDataKey<T> implements PersistentDataKey<T> {
     }
 
     @Override
-    public String getOwnerId() {
+    public String ownerId() {
         return this.owner.id();
     }
 
