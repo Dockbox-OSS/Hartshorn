@@ -35,14 +35,14 @@ public class CacheTests {
     @Test
     void testCacheIsReused() {
         TestCacheService service = Hartshorn.context().get(TestCacheService.class);
-        List<String> cached = service.getCachedThings();
+        List<String> cached = service.cachedObjects();
         Assertions.assertNotNull(cached);
         Assertions.assertFalse(cached.isEmpty());
 
         final String first = cached.get(0);
         Assertions.assertNotNull(first);
 
-        cached = service.getCachedThings();
+        cached = service.cachedObjects();
         Assertions.assertNotNull(cached);
         Assertions.assertFalse(cached.isEmpty());
 
@@ -55,12 +55,12 @@ public class CacheTests {
     @Test
     void testCacheCanBeUpdated() {
         TestCacheService service = Hartshorn.context().get(TestCacheService.class);
-        List<String> cached = service.getCachedThings();
+        List<String> cached = service.cachedObjects();
         Assertions.assertEquals(1, cached.size());
         String first = cached.get(0);
 
         service.updateCache("second value");
-        cached = service.getCachedThings();
+        cached = service.cachedObjects();
         Assertions.assertEquals(2, cached.size());
 
         String newFirst = cached.get(0);
@@ -73,11 +73,11 @@ public class CacheTests {
     @Test
     void testCacheCanBeEvicted() {
         TestCacheService service = Hartshorn.context().get(TestCacheService.class);
-        List<String> cached = service.getCachedThings();
+        List<String> cached = service.cachedObjects();
         String first = cached.get(0);
 
         service.evict();
-        cached = service.getCachedThings();
+        cached = service.cachedObjects();
         String second = cached.get(0);
         Assertions.assertNotEquals(first, second);
     }
@@ -85,7 +85,7 @@ public class CacheTests {
     @Test
     void testCacheCanBeUpdatedThroughManager() {
         TestCacheService service = Hartshorn.context().get(TestCacheService.class);
-        List<String> cached = service.getCachedThings();
+        List<String> cached = service.cachedObjects();
         Assertions.assertEquals(1, cached.size());
         String first = cached.get(0);
 
@@ -110,7 +110,7 @@ public class CacheTests {
     void testCacheCanBeEvictedThroughManager() {
         // Initial population through source service
         TestCacheService service = Hartshorn.context().get(TestCacheService.class);
-        List<String> cached = service.getCachedThings();
+        List<String> cached = service.cachedObjects();
         Assertions.assertNotNull(cached);
         Assertions.assertFalse(cached.isEmpty());
 

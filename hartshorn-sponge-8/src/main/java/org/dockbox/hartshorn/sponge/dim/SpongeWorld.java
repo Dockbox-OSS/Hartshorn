@@ -51,29 +51,29 @@ public class SpongeWorld extends World implements SpongeDimension {
     }
 
     @Override
-    public boolean hasBlock(Vector3N position) {
+    public boolean has(Vector3N position) {
         return this.world()
                 .map(world -> world.containsBlock(SpongeConvert.toSponge(position)))
                 .or(false);
     }
 
     @Override
-    public Exceptional<Block> getBlock(Vector3N position) {
+    public Exceptional<Block> block(Vector3N position) {
         return Exceptional.of(Block.from(new SpongeLocation(position, this)));
     }
 
     @Override
-    public boolean setBlock(Vector3N position, Block block) {
+    public boolean block(Vector3N position, Block block) {
         return block.place(new SpongeLocation(position, this));
     }
 
     @Override
-    public Exceptional<Chunk> getChunk(Location location) {
-        return this.getChunk(location.getVectorLoc());
+    public Exceptional<Chunk> chunk(Location location) {
+        return this.chunk(location.vector());
     }
 
     @Override
-    public Exceptional<Chunk> getChunk(Vector3N position) {
+    public Exceptional<Chunk> chunk(Vector3N position) {
         final Vector3i vector3i = SpongeConvert.toSponge(position);
         final boolean hasChunk = this.world().map(world -> world.hasChunk(vector3i)).or(false);
         if (hasChunk) Exceptional.of(new SpongeChunk(this.key, vector3i));
@@ -81,7 +81,7 @@ public class SpongeWorld extends World implements SpongeDimension {
     }
 
     @Override
-    public Collection<Chunk> getLoadedChunks() {
+    public Collection<Chunk> loadedChunks() {
         Collection<Chunk> chunks = HartshornUtils.emptyList();
         this.world().present(world -> {
             for (org.spongepowered.api.world.chunk.Chunk chunk : world.loadedChunks()) {
@@ -97,7 +97,7 @@ public class SpongeWorld extends World implements SpongeDimension {
     }
 
     @Override
-    public int getPlayerCount() {
+    public int playerCount() {
         return this.world().map(ServerWorld::players).map(Collection::size).or(0);
     }
 
@@ -114,14 +114,14 @@ public class SpongeWorld extends World implements SpongeDimension {
     }
 
     @Override
-    public boolean isLoaded() {
+    public boolean loaded() {
         return this.world()
                 .map(org.spongepowered.api.world.World::isLoaded)
                 .or(false);
     }
 
     @Override
-    public void setGamerule(String key, String value) {
+    public void gamerule(String key, String value) {
         this.world().present(world -> {
             //noinspection unchecked
             final GameRule<String> rule = (GameRule<String>) SpongeUtil.spReference(RegistryTypes.GAME_RULE, value);
@@ -130,7 +130,7 @@ public class SpongeWorld extends World implements SpongeDimension {
     }
 
     @Override
-    public Map<String, String> getGamerules() {
+    public Map<String, String> gamerules() {
         Map<String, String> rules = HartshornUtils.emptyMap();
         this.world().present(world -> world.properties().gameRules().forEach((rule, value) -> rules.put(rule.name(), String.valueOf(value))));
         return null;

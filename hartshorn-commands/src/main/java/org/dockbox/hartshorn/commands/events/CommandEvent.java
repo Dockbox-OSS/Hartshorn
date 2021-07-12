@@ -23,6 +23,7 @@ import org.dockbox.hartshorn.commands.context.CommandContext;
 import org.dockbox.hartshorn.commands.source.CommandSource;
 
 import lombok.Getter;
+import lombok.Setter;
 
 public abstract class CommandEvent extends AbstractTargetEvent {
 
@@ -34,19 +35,11 @@ public abstract class CommandEvent extends AbstractTargetEvent {
         this.context = context;
     }
 
+    @Getter
+    @Setter
     public static class Before extends CommandEvent implements Cancellable {
 
-        private boolean isCancelled;
-
-        @Override
-        public boolean isCancelled() {
-            return this.isCancelled;
-        }
-
-        @Override
-        public void setCancelled(boolean cancelled) {
-            this.isCancelled = cancelled;
-        }
+        private boolean cancelled;
 
         public Before(CommandSource source, CommandContext context) {
             super(source, context);

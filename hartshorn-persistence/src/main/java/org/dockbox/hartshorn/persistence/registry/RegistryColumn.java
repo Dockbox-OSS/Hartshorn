@@ -141,7 +141,7 @@ public class RegistryColumn<T> extends ArrayList<T> {
      *         found.
      */
     public Exceptional<T> first() {
-        return this.getSafely(0);
+        return this.safe(0);
     }
 
     /**
@@ -153,7 +153,7 @@ public class RegistryColumn<T> extends ArrayList<T> {
      * @return An {@link Exceptional} containing the element at the provided index in the
      *         RegistryColumn, if one is found.
      */
-    public Exceptional<T> getSafely(int index) {
+    public Exceptional<T> safe(int index) {
         return Exceptional.of(() -> this.get(index));
     }
 }

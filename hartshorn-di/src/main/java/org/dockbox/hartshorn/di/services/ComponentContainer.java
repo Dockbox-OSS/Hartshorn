@@ -24,12 +24,12 @@ import java.util.List;
 
 public interface ComponentContainer {
 
-    String getId();
-    String getName();
+    String id();
+    String name();
 
     boolean enabled();
 
-    Class<?> getType();
+    Class<?> type();
     Class<?> owner();
 
     List<Class<? extends Annotation>> activators();

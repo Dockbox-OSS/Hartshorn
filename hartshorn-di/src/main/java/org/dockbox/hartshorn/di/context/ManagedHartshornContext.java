@@ -121,7 +121,7 @@ public abstract class ManagedHartshornContext extends DefaultContext implements 
                 .filter(InjectableType::canEnable)
                 .forEach(injectableType -> {
                     try {
-                        injectableType.stateEnabling();
+                        injectableType.enable();
                     } catch (ApplicationException e) {
                         throw new RuntimeException(e);
                     }

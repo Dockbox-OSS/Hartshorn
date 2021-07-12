@@ -36,9 +36,9 @@ public final class SampleService {
         Hartshorn.log()
                 .info(
                         "Sending a packet event to "
-                                + packetEvent.getTarget().getName()
+                                + packetEvent.target().name()
                                 + " (GameStateChange: "
-                                + packetEvent.getPacket().getWeather()
+                                + packetEvent.packet().weather()
                                 + ')');
     }
 

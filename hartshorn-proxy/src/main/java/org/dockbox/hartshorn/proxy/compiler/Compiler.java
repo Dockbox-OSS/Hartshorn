@@ -89,7 +89,7 @@ public class Compiler {
 			if (result == null || !result) {
 				throw new RuntimeException("Compilation failed.");
 			}
-			return manager.getClassBytes();
+			return manager.classBytes();
 		}
 	}
 

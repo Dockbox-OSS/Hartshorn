@@ -21,8 +21,8 @@ import org.dockbox.hartshorn.api.exceptions.ApplicationException;
 
 public interface WireContext<T, I extends T> {
 
-    String getName();
-    Class<T> getContract();
+    String name();
+    Class<T> contract();
     T create(Object... arguments) throws ApplicationException;
 
 }

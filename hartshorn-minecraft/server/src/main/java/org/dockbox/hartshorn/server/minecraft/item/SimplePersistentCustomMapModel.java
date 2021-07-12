@@ -32,16 +32,16 @@ public class SimplePersistentCustomMapModel extends SimplePersistentItemModel {
 
     public SimplePersistentCustomMapModel(CustomMap map) {
         super(map);
-        this.mapId = map.getMapId();
+        this.mapId = map.mapId();
     }
 
     @Override
-    public Class<? extends Item> getCapableType() {
+    public Class<? extends Item> capableType() {
         return CustomMap.class;
     }
 
     @Override
     public Item toPersistentCapable() {
-        return this.repopulate(Hartshorn.context().get(CustomMapService.class).getById(this.mapId));
+        return this.repopulate(Hartshorn.context().get(CustomMapService.class).from(this.mapId));
     }
 }

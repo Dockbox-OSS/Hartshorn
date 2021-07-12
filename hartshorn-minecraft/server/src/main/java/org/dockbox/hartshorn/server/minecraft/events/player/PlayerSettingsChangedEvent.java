@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.server.minecraft.events.player;
 
-import org.dockbox.hartshorn.api.domain.Target;
+import org.dockbox.hartshorn.api.domain.Subject;
 import org.dockbox.hartshorn.api.events.AbstractTargetEvent;
 import org.dockbox.hartshorn.server.minecraft.players.GameSettings;
 import org.dockbox.hartshorn.server.minecraft.players.Player;
@@ -35,12 +35,12 @@ public class PlayerSettingsChangedEvent extends AbstractTargetEvent {
     }
 
     @Override
-    public Player getTarget() {
-        return (Player) super.getTarget();
+    public Player subject() {
+        return (Player) super.subject();
     }
 
     @Override
-    public void setTarget(Target target) {
+    public PlayerSettingsChangedEvent subject(Subject subject) {
         throw new UnsupportedOperationException("Cannot change target of player settings event");
     }
 }

@@ -49,9 +49,9 @@ public class TableTests {
         Table selectedTable = table.select(TestColumnIdentifiers.NAME);
 
         // Check if table's identifiers have been removed properly
-        Assertions.assertArrayEquals(expectedColumns, selectedTable.getIdentifiers());
+        Assertions.assertArrayEquals(expectedColumns, selectedTable.identifiers());
         // Check if table rows' columns have been removed properly
-        Assertions.assertEquals(1, selectedTable.getRows().get(0).getColumns().size());
+        Assertions.assertEquals(1, selectedTable.rows().get(0).columns().size());
     }
 
     private Table createTestTable() {
@@ -63,9 +63,9 @@ public class TableTests {
         Table table = this.createTestTable();
         table.addRow(new IdentifiedUser(1, "coulis"));
 
-        Assertions.assertEquals(1, table.getRows().size());
-        TableRow row = table.getRows().get(0);
-        Assertions.assertEquals("coulis", row.getValue(TestColumnIdentifiers.NAME).get());
+        Assertions.assertEquals(1, table.rows().size());
+        TableRow row = table.rows().get(0);
+        Assertions.assertEquals("coulis", row.value(TestColumnIdentifiers.NAME).get());
     }
 
     @Test
@@ -89,9 +89,9 @@ public class TableTests {
         Table table = this.createTestTable();
         table.addRow(new User(1, "pumbas600"));
 
-        Assertions.assertEquals(1, table.getRows().size());
-        TableRow row = table.getRows().get(0);
-        Assertions.assertEquals("pumbas600", row.getValue(TestColumnIdentifiers.NAME).get());
+        Assertions.assertEquals(1, table.rows().size());
+        TableRow row = table.rows().get(0);
+        Assertions.assertEquals("pumbas600", row.value(TestColumnIdentifiers.NAME).get());
     }
 
     @Test
@@ -103,9 +103,9 @@ public class TableTests {
                     TestColumnIdentifiers.UUID);
             table.addRow(new User(1, "pumbas600"));
 
-            Assertions.assertEquals(1, table.getRows().size());
-            TableRow row = table.getRows().get(0);
-            Assertions.assertEquals("pumbas600", row.getValue(TestColumnIdentifiers.NAME).get());
+            Assertions.assertEquals(1, table.rows().size());
+            TableRow row = table.rows().get(0);
+            Assertions.assertEquals("pumbas600", row.value(TestColumnIdentifiers.NAME).get());
         });
     }
 
@@ -114,9 +114,9 @@ public class TableTests {
         Table table = this.createTestTable();
         table.addRow(2, "Diggy");
 
-        Assertions.assertEquals(1, table.getRows().size());
-        TableRow row = table.getRows().get(0);
-        Assertions.assertEquals("Diggy", row.getValue(TestColumnIdentifiers.NAME).get());
+        Assertions.assertEquals(1, table.rows().size());
+        TableRow row = table.rows().get(0);
+        Assertions.assertEquals("Diggy", row.value(TestColumnIdentifiers.NAME).get());
     }
 
     @Test
@@ -127,8 +127,8 @@ public class TableTests {
         table.addRow(1, "coulis");
 
         table.orderBy(TestColumnIdentifiers.NUMERAL_ID, Order.DESC); // Expected: 3, 2, 1
-        Assertions.assertSame(3, table.first().get().getValue(TestColumnIdentifiers.NUMERAL_ID).get());
-        Assertions.assertSame(1, table.last().get().getValue(TestColumnIdentifiers.NUMERAL_ID).get());
+        Assertions.assertSame(3, table.first().get().value(TestColumnIdentifiers.NUMERAL_ID).get());
+        Assertions.assertSame(1, table.last().get().value(TestColumnIdentifiers.NUMERAL_ID).get());
     }
 
     @Test
@@ -139,8 +139,8 @@ public class TableTests {
         table.addRow(1, "coulis");
 
         table.orderBy(TestColumnIdentifiers.NUMERAL_ID, Order.ASC); // Expected: 1, 2, 3
-        Assertions.assertSame(1, table.first().get().getValue(TestColumnIdentifiers.NUMERAL_ID).get());
-        Assertions.assertSame(3, table.last().get().getValue(TestColumnIdentifiers.NUMERAL_ID).get());
+        Assertions.assertSame(1, table.first().get().value(TestColumnIdentifiers.NUMERAL_ID).get());
+        Assertions.assertSame(3, table.last().get().value(TestColumnIdentifiers.NUMERAL_ID).get());
     }
 
     @Test
@@ -160,7 +160,7 @@ public class TableTests {
         table.addRow(1, "coulis");
 
         Table where = table.where(TestColumnIdentifiers.NUMERAL_ID, 1);
-        Assertions.assertEquals(1, where.getRows().size());
+        Assertions.assertEquals(1, where.rows().size());
     }
 
     @Test
@@ -175,8 +175,8 @@ public class TableTests {
 
         Table joined = original.join(other, TestColumnIdentifiers.NUMERAL_ID, Merge.PREFER_ORIGINAL);
         Table whereLookup = joined.where(TestColumnIdentifiers.NUMERAL_ID, 2);
-        Assertions.assertEquals(3, joined.getRows().size());
-        Assertions.assertEquals("NotDiggy", whereLookup.first().get().getValue(TestColumnIdentifiers.NAME).get());
+        Assertions.assertEquals(3, joined.rows().size());
+        Assertions.assertEquals("NotDiggy", whereLookup.first().get().value(TestColumnIdentifiers.NAME).get());
     }
 
     @Test
@@ -191,8 +191,8 @@ public class TableTests {
 
         Table joined = original.join(other, TestColumnIdentifiers.NUMERAL_ID, Merge.PREFER_FOREIGN);
         Table whereLookup = joined.where(TestColumnIdentifiers.NUMERAL_ID, 2);
-        Assertions.assertEquals(3, joined.getRows().size());
-        Assertions.assertEquals("Diggy", whereLookup.first().get().getValue(TestColumnIdentifiers.NAME).get());
+        Assertions.assertEquals(3, joined.rows().size());
+        Assertions.assertEquals("Diggy", whereLookup.first().get().value(TestColumnIdentifiers.NAME).get());
     }
 
     @Test
@@ -229,6 +229,6 @@ public class TableTests {
         Table joined = original.join(other, TestColumnIdentifiers.NUMERAL_ID, Merge.PREFER_FOREIGN, true);
         Table whereLookup = joined.where(TestColumnIdentifiers.NUMERAL_ID, 1);
         Assertions.assertFalse(
-                whereLookup.first().get().getValue(TestColumnIdentifiers.UUID).present());
+                whereLookup.first().get().value(TestColumnIdentifiers.UUID).present());
     }
 }

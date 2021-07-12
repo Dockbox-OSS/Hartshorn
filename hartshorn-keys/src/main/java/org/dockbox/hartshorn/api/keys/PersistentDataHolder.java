@@ -29,6 +29,6 @@ public interface PersistentDataHolder {
 
     <T> void remove(PersistentDataKey<T> dataKey);
 
-    Map<PersistentDataKey<?>, Object> getPersistentData();
+    Map<PersistentDataKey<?>, Object> data();
 
 }

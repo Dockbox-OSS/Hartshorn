@@ -42,7 +42,7 @@ public class ArgumentServiceProcessor implements ServiceProcessor<UseCommands> {
         if (raw instanceof InjectableType) {
             Exceptional.of(() -> {
                 // If a ApplicationException is thrown this fails silently
-                ((InjectableType) raw).stateEnabling();
+                ((InjectableType) raw).enable();
                 return null; // Captured in Exceptional
             });
         }

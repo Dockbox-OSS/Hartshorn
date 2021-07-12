@@ -31,7 +31,7 @@ public abstract class Packet {
      *
      * @return The {@link Class}, or {@code null}.
      */
-    public @Nullable Class<?> getNativePacketType() {
+    public @Nullable Class<?> nativeType() {
         try {
             return this.internalGetPacketType();
         }

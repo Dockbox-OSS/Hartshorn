@@ -24,9 +24,9 @@ import java.util.UUID;
 
 public interface Players {
 
-    List<Player> getOnlinePlayers();
+    List<Player> onlinePlayers();
 
-    Exceptional<Player> getPlayer(String name);
+    Exceptional<Player> player(String name);
 
-    Exceptional<Player> getPlayer(UUID uuid);
+    Exceptional<Player> player(UUID uuid);
 }

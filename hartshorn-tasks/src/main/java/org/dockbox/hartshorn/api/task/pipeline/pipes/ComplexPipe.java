@@ -31,7 +31,7 @@ public interface ComplexPipe<I, O> extends IPipe<I, O> {
 
     @SuppressWarnings("rawtypes")
     @Override
-    default Class<? extends IPipe> getType() {
+    default Class<? extends IPipe> type() {
         return ComplexPipe.class;
     }
 }

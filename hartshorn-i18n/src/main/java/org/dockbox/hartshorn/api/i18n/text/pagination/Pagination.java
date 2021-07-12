@@ -26,27 +26,27 @@ public interface Pagination {
 
     void send(MessageReceiver receiver);
 
-    Text getPadding();
+    Text padding();
 
-    void setPadding(Text padding);
+    Pagination padding(Text padding);
 
-    int getLinesPerPage();
+    int linesPerPage();
 
-    void setLinesPerPage(int linesPerPage);
+    Pagination linesPerPage(int linesPerPage);
 
-    Text getHeader();
+    Text header();
 
-    void setHeader(Text header);
+    Pagination header(Text header);
 
-    Text getFooter();
+    Text footer();
 
-    void setFooter(Text footer);
+    Pagination footer(Text footer);
 
-    Text getTitle();
+    Text title();
 
-    void setTitle(Text title);
+    Pagination title(Text title);
 
-    List<Text> getContent();
+    List<Text> content();
 
-    void setContent(List<Text> content);
+    Pagination content(List<Text> content);
 }

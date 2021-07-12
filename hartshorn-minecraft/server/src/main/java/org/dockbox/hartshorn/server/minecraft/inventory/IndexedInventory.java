@@ -31,19 +31,19 @@ public interface IndexedInventory extends Inventory {
      * @param index
      *         The inventory index
      */
-    void setSlot(Item item, int index);
+    void slot(Item item, int index);
 
     /**
      * Gets the {@link Item} in the requested position within the inventory. If the position is out of
-     * bounds, or if there is no item present, {@link MinecraftItems#getAir()} is returned instead.
+     * bounds, or if there is no item present, {@link MinecraftItems#air()} is returned instead.
      * Indices start at zero.
      *
      * @param index
      *         The inventory index
      *
-     * @return The {@link Item}, or {@link MinecraftItems#getAir() air}.
+     * @return The {@link Item}, or {@link MinecraftItems#air() air}.
      */
-    Item getSlot(int index);
+    Item slot(int index);
 
     /**
      * Returns the first occurring index of the given {@link Item}. If the item is not present, -1 is
@@ -57,7 +57,7 @@ public interface IndexedInventory extends Inventory {
     default int indexOf(Item item) {
         int capacity = this.capacity() - 1; // -1 to correct for index offset
         while (0 <= capacity) {
-            Item slot = this.getSlot(capacity);
+            Item slot = this.slot(capacity);
             if (slot.equals(item)) return capacity;
             capacity--;
         }

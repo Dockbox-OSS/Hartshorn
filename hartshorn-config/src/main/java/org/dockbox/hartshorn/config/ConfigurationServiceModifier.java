@@ -66,7 +66,7 @@ public class ConfigurationServiceModifier implements InjectionModifier<UseConfig
         }
 
         FileManager fileManager = Hartshorn.context().get(FileManager.class, FileTypeProperty.of(FileType.YAML));
-        Path config = fileManager.getConfigFile(owner, file);
+        Path config = fileManager.configFile(owner, file);
 
         ConfigurationManager configurationManager = Hartshorn.context().get(ConfigurationManager.class, config);
 

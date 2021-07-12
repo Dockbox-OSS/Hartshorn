@@ -37,11 +37,11 @@ public class PipelineTests {
     @Test
     public void genericPipelineTest() {
         int result = new Pipeline<Integer>()
-                .addPipe(Pipe.of((input, throwable) -> input + 1))
+                .add(Pipe.of((input, throwable) -> input + 1))
                 .addVarargPipes(
                         Pipe.of((input, throwable) -> input * 2),
                         Pipe.of(((input, throwable) -> input - 3)))
-                .addPipe(StandardPipe.of(input -> input.or(-1)))
+                .add(StandardPipe.of(input -> input.or(-1)))
                 .processUnsafe(5);
 
         Assertions.assertEquals(9, result);
@@ -49,11 +49,11 @@ public class PipelineTests {
 
     @Test
     public void addingPipelinesTest() {
-        AbstractPipeline<String, String> pipeline = new Pipeline<String>().addPipe(Pipe.of((input, throwable) -> "- " + input + " -"));
+        AbstractPipeline<String, String> pipeline = new Pipeline<String>().add(Pipe.of((input, throwable) -> "- " + input + " -"));
 
         String result = new Pipeline<String>()
-                .addPipe(Pipe.of((input, throwable) -> input.substring(0, 1).toUpperCase() + input.substring(1)))
-                .addPipeline(pipeline)
+                .add(Pipe.of((input, throwable) -> input.substring(0, 1).toUpperCase() + input.substring(1)))
+                .add(pipeline)
                 .processUnsafe("hi world");
 
         Assertions.assertEquals("- Hi world -", result);
@@ -62,8 +62,8 @@ public class PipelineTests {
     @Test
     public void passingInputForwardOnErrorTest() {
         int output = new Pipeline<Integer>()
-                .addPipe(InputPipe.of(input -> 1 / input))
-                .addPipe(StandardPipe.of(input -> input.or(1)))
+                .add(InputPipe.of(input -> 1 / input))
+                .add(StandardPipe.of(input -> input.or(1)))
                 .processUnsafe(0);
 
         Assertions.assertEquals(0, output);
@@ -72,8 +72,8 @@ public class PipelineTests {
     @Test
     public void errorCatchingTest() {
         int output = new Pipeline<Integer>()
-                .addPipe(InputPipe.of(input -> 1 / input))
-                .addPipe(StandardPipe.of(
+                .add(InputPipe.of(input -> 1 / input))
+                .add(StandardPipe.of(
                         input -> {
                             if (input.caught()) return -1;
                             else return input.or(1);
@@ -87,27 +87,27 @@ public class PipelineTests {
     public void uncancellablePipelineTest() {
         Assertions.assertThrows(IllegalPipeException.class, () ->
                 new Pipeline<Float>()
-                        .addPipe(InputPipe.of(input -> input + 1F))
-                        .addPipe(CancellablePipe.of(
+                        .add(InputPipe.of(input -> input + 1F))
+                        .add(CancellablePipe.of(
                                 (cancelPipeline, input, throwable) -> {
                                     if (2 < input) cancelPipeline.run();
                                     return input;
                                 }))
-                        .addPipe(InputPipe.of(input -> input / 2F))
+                        .add(InputPipe.of(input -> input / 2F))
                         .processUnsafe(4F));
     }
 
     @Test
     public void returnCancelBehaviourTest() {
         float output = new Pipeline<Float>()
-                .setCancelBehaviour(CancelBehaviour.RETURN)
-                .addPipe(InputPipe.of(input -> input + 1F))
-                .addPipe(CancellablePipe.of(
+                .cancelBehaviour(CancelBehaviour.RETURN)
+                .add(InputPipe.of(input -> input + 1F))
+                .add(CancellablePipe.of(
                         (cancelPipeline, input, throwable) -> {
                             if (2 < input) cancelPipeline.run();
                             return input;
                         }))
-                .addPipe(InputPipe.of(input -> input / 2F))
+                .add(InputPipe.of(input -> input / 2F))
                 .processUnsafe(4F);
 
         Assertions.assertEquals(5, output);
@@ -116,14 +116,14 @@ public class PipelineTests {
     @Test
     public void discardCancelBehaviourTest() {
         Exceptional<Float> output = new Pipeline<Float>()
-                .setCancelBehaviour(CancelBehaviour.DISCARD)
-                .addPipe(InputPipe.of(input -> input + 1F))
-                .addPipe(CancellablePipe.of(
+                .cancelBehaviour(CancelBehaviour.DISCARD)
+                .add(InputPipe.of(input -> input + 1F))
+                .add(CancellablePipe.of(
                         (cancelPipeline, input, throwable) -> {
                             if (2 < input) cancelPipeline.run();
                             return input;
                         }))
-                .addPipe(InputPipe.of(input -> input / 2F))
+                .add(InputPipe.of(input -> input / 2F))
                 .process(4F);
 
         Assertions.assertFalse(output.present());
@@ -133,23 +133,23 @@ public class PipelineTests {
     public void convertCancelBehaviourTest() {
         Assertions.assertThrows(UnsupportedOperationException.class, () ->
                 new Pipeline<Float>()
-                        .setCancelBehaviour(CancelBehaviour.CONVERT)
-                        .addPipe(InputPipe.of(input -> input + 1F))
-                        .addPipe(CancellablePipe.of(
+                        .cancelBehaviour(CancelBehaviour.CONVERT)
+                        .add(InputPipe.of(input -> input + 1F))
+                        .add(CancellablePipe.of(
                                 (cancelPipeline, input, throwable) -> {
                                     if (2 < input) cancelPipeline.run();
                                     return input;
                                 }))
-                        .addPipe(InputPipe.of(input -> input / 2F))
+                        .add(InputPipe.of(input -> input / 2F))
                         .processUnsafe(4F));
     }
 
     @Test
     public void removingPipesTest() {
         AbstractPipeline<Integer, Integer> pipeline = new Pipeline<Integer>()
-                .addPipe(InputPipe.of(input -> input * 2))
-                .addPipe(InputPipe.of(input -> input + 3))
-                .addPipe(InputPipe.of(input -> input - 1));
+                .add(InputPipe.of(input -> input * 2))
+                .add(InputPipe.of(input -> input + 3))
+                .add(InputPipe.of(input -> input - 1));
 
         int output = pipeline.processUnsafe(8);
         Assertions.assertEquals(18, output);
@@ -165,8 +165,8 @@ public class PipelineTests {
     @Test
     public void processingCollectionInputsTest() {
         List<Integer> output = new Pipeline<Integer>()
-                .addPipe(InputPipe.of(input -> 0 == input % 2 ? input : null))
-                .addPipe(InputPipe.of(input -> input * 2))
+                .add(InputPipe.of(input -> 0 == input % 2 ? input : null))
+                .add(InputPipe.of(input -> input * 2))
                 .processAllSafe(Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10));
         Assertions.assertEquals(Arrays.asList(4, 8, 12, 16, 20), output);
     }

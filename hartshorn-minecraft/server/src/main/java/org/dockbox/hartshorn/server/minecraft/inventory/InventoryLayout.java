@@ -46,12 +46,12 @@ public interface InventoryLayout {
      *
      * @return The elements in the inventory.
      */
-    Map<Integer, Element> getElements();
+    Map<Integer, Element> elements();
 
     /**
      * Get the {@link InventoryType inventory type} used by the layout.
      *
      * @return The iventory type.
      */
-    InventoryType getInventoryType();
+    InventoryType inventoryType();
 }

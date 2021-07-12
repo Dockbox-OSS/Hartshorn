@@ -48,14 +48,14 @@ public class SerialisationTests {
         final PersistentElement element = service.readFromString(json);
 
         Assertions.assertNotNull(element);
-        Assertions.assertEquals("sample", element.getName());
+        Assertions.assertEquals("sample", element.name());
     }
 
     @Test
     void testToPathSerialisation() {
         final PathPersistenceService service = Hartshorn.context().get(PathPersistenceService.class);
         final PersistentElement element = new PersistentElement("sample");
-        final boolean result = service.writeToPath(element, this.getPath());
+        final boolean result = service.writeToPath(element, this.path());
 
         Assertions.assertTrue(result);
     }
@@ -64,14 +64,14 @@ public class SerialisationTests {
     void testFromPathDeserialisation() {
         final PathPersistenceService service = Hartshorn.context().get(PathPersistenceService.class);
         final PersistentElement element = new PersistentElement("sample");
-        final Path path = this.getPath();
+        final Path path = this.path();
 
         final boolean result = service.writeToPath(element, path);
         Assertions.assertTrue(result);
 
         final PersistentElement out = service.readFromPath(path);
         Assertions.assertNotNull(out);
-        Assertions.assertEquals("sample", out.getName());
+        Assertions.assertEquals("sample", out.name());
     }
 
     @Test
@@ -93,10 +93,10 @@ public class SerialisationTests {
 
         final PersistentElement out = service.readFromPath();
         Assertions.assertNotNull(out);
-        Assertions.assertEquals("sample", out.getName());
+        Assertions.assertEquals("sample", out.name());
     }
 
-    private Path getPath() {
-        return Hartshorn.context().get(FileManager.class).getDataFile(Hartshorn.class, System.nanoTime() + "-persistence.tmp");
+    private Path path() {
+        return Hartshorn.context().get(FileManager.class).dataFile(Hartshorn.class, System.nanoTime() + "-persistence.tmp");
     }
 }

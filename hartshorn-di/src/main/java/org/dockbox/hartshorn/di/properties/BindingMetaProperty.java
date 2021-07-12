@@ -29,10 +29,10 @@ public class BindingMetaProperty implements InjectorProperty<Named> {
 
     public static final String KEY = "HartshornInternalBindingMetaProperty";
     @Getter
-    private final Named object;
+    private final Named value;
 
     private BindingMetaProperty(String value) {
-        this.object = Bindings.named(value);
+        this.value = Bindings.named(value);
     }
 
     public static BindingMetaProperty of(String value) {
@@ -44,7 +44,7 @@ public class BindingMetaProperty implements InjectorProperty<Named> {
     }
 
     @Override
-    public String getKey() {
+    public String key() {
         return KEY;
     }
 }

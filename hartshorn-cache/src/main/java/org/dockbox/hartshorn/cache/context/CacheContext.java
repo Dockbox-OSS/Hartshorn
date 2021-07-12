@@ -22,8 +22,8 @@ import org.dockbox.hartshorn.cache.CacheManager;
 
 public interface CacheContext {
 
-    CacheManager getManager();
-    <T> Cache<T> getCache();
-    String getName();
+    CacheManager manager();
+    <T> Cache<T> cache();
+    String name();
 
 }

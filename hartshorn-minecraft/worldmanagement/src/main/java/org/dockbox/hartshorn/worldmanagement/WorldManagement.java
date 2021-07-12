@@ -55,19 +55,19 @@ public class WorldManagement {
 
     @Listener
     public void on(PlayerPortalEvent event) {
-        if (event.usesPortal() && event.getNewLocation().getWorld().getName().equals(this.config.getPortalWorldTarget())) {
-            event.setUsePortal(false);
-            event.setNewLocation(Location.of(this.config.getPortalPosition(), event.getNewLocation().getWorld()));
+        if (event.usesPortal() && event.destination().world().name().equals(this.config.worldTarget())) {
+            event.usesPortal(false);
+            event.destination(Location.of(this.config.portalPosition(), event.destination().world()));
         }
     }
 
     private void unloadEmptyWorlds() {
-        this.context.get(Worlds.class).getLoadedWorlds()
+        this.context.get(Worlds.class).loadedWorlds()
                 .stream()
-                .filter(world -> world.getPlayerCount() == 0)
-                .filter(world -> this.config.getUnloadBlacklist().contains(world.getName()))
-                .limit(this.config.getMaximumWorldsToUnload())
+                .filter(world -> world.playerCount() == 0)
+                .filter(world -> this.config.unloadBlacklist().contains(world.name()))
+                .limit(this.config.unloadLimit())
                 .forEach(World::unload);
-        this.context.get(TaskRunner.class).acceptDelayed(this::unloadEmptyWorlds, this.config.getUnloadDelay(), TimeUnit.MINUTES);
+        this.context.get(TaskRunner.class).acceptDelayed(this::unloadEmptyWorlds, this.config.unloadDelay(), TimeUnit.MINUTES);
     }
 }

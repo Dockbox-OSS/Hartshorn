@@ -63,22 +63,22 @@ public class JUnitBossbar extends DefaultTickableBossbar<Void> {
     }
 
     @Override
-    public Collection<Player> visibleTo() {
+    public Collection<Player> visible() {
         throw new NotImplementedException();
     }
 
     @Override
-    public boolean isVisibleTo(Player player) {
+    public boolean visible(Player player) {
         throw new NotImplementedException();
     }
 
     @Override
-    public boolean isVisibleTo(UUID player) {
+    public boolean visible(UUID player) {
         throw new NotImplementedException();
     }
 
     @Override
-    public boolean isVisibleTo(String name) {
+    public boolean visible(String name) {
         throw new NotImplementedException();
     }
 }

@@ -33,20 +33,20 @@ public class CacheUpdateMethodModifier extends CacheServiceModifier<UpdateCache>
     protected <T, R> ProxyFunction<T, R> process(ApplicationContext context, MethodProxyContext<T> methodContext, CacheContext cacheContext) {
         return (instance, args, proxyContext) -> {
             final Object o = args[0];
-            cacheContext.getManager().update(cacheContext.getName(), o);
+            cacheContext.manager().update(cacheContext.name(), o);
             return null; // Should be void anyway
         };
     }
 
     @Override
-    protected CacheMethodContext getContext(MethodProxyContext<?> context) {
-        final UpdateCache update = context.getAnnotation(UpdateCache.class);
+    protected CacheMethodContext context(MethodProxyContext<?> context) {
+        final UpdateCache update = context.annotation(UpdateCache.class);
         return new SimpleCacheMethodContext(update.manager(), update.value(), null);
     }
 
     @Override
     public <T> boolean preconditions(ApplicationContext context, MethodProxyContext<T> methodContext) {
-        final Parameter[] parameters = methodContext.getMethod().getParameters();
+        final Parameter[] parameters = methodContext.method().getParameters();
         return parameters.length == 1;
     }
 

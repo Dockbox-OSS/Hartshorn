@@ -35,7 +35,7 @@ public class EventHandler {
 
     private final Class<? extends Event> eventType;
 
-    private final Set<EventHandler> supertypeHandlers = HartshornUtils.emptySet();
+    private final Set<EventHandler> superTypeHandlers = HartshornUtils.emptySet();
 
     private final SortedSet<SimpleEventWrapper> invokers = new TreeSet<>(SimpleEventWrapper.COMPARATOR);
 
@@ -45,8 +45,8 @@ public class EventHandler {
         this.eventType = eventType;
     }
 
-    public List<Method> getMethods() {
-        return this.invokers.stream().map(SimpleEventWrapper::getMethod).toList();
+    public List<Method> methods() {
+        return this.invokers.stream().map(SimpleEventWrapper::method).toList();
     }
 
     public void subscribe(EventWrapper invoker) {
@@ -76,7 +76,7 @@ public class EventHandler {
         for (SimpleEventWrapper invoker : cache) {
             // Target is null if no specific target should be checked
             // If the target is present we only want to invoke when the listener matches our target
-            if (null == target || invoker.getListenerType().equals(target)) invoker.invoke(event);
+            if (null == target || invoker.listenerType().equals(target)) invoker.invoke(event);
         }
     }
 
@@ -84,7 +84,7 @@ public class EventHandler {
         SortedSet<SimpleEventWrapper> set;
         if (this.hasSupertypeHandler()) {
             set = new TreeSet<>(this.invokers);
-            for (EventHandler supertypeHandler : this.supertypeHandlers)
+            for (EventHandler supertypeHandler : this.superTypeHandlers)
                 set.addAll(supertypeHandler.invokers);
         }
         else {
@@ -94,15 +94,15 @@ public class EventHandler {
     }
 
     private boolean hasSupertypeHandler() {
-        return !this.supertypeHandlers.isEmpty();
+        return !this.superTypeHandlers.isEmpty();
     }
 
-    public boolean isSubtypeOf(EventHandler handler) {
-        if (handler != null) return this.isSubtypeOf(handler.eventType());
+    public boolean subtypeOf(EventHandler handler) {
+        if (handler != null) return this.subtypeOf(handler.eventType());
         return false;
     }
 
-    private boolean isSubtypeOf(Class<?> cls) {
+    private boolean subtypeOf(Class<?> cls) {
         Class<? extends Event> type = this.eventType();
         return type != cls && Reflect.assigns(cls, type);
     }
@@ -111,14 +111,14 @@ public class EventHandler {
         return this.eventType;
     }
 
-    public Set<EventHandler> getSupertypeHandlers() {
-        return Collections.unmodifiableSet(this.supertypeHandlers);
+    public Set<EventHandler> superTypeHandlers() {
+        return Collections.unmodifiableSet(this.superTypeHandlers);
     }
 
-    public boolean addSupertypeHandler(EventHandler handler) {
+    public boolean addSuperTypeHandler(EventHandler handler) {
         if (handler == null) return false;
         if (handler == this) return false;
-        return this.invalidateCache(this.supertypeHandlers.add(handler));
+        return this.invalidateCache(this.superTypeHandlers.add(handler));
     }
 
     @Override

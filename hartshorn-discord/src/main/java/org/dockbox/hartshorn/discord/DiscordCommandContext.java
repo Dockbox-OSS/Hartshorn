@@ -40,18 +40,18 @@ public class DiscordCommandContext {
     private final String[] arguments;
 
     public void sendToChannel(Text text) {
-        Hartshorn.context().get(DiscordUtils.class).sendToTextChannel(text, this.getChannel());
+        Hartshorn.context().get(DiscordUtils.class).sendToTextChannel(text, this.channel());
     }
 
     public void sendToChannel(ResourceEntry text) {
-        Hartshorn.context().get(DiscordUtils.class).sendToTextChannel(text, this.getChannel());
+        Hartshorn.context().get(DiscordUtils.class).sendToTextChannel(text, this.channel());
     }
 
     public void sendToAuthor(Text text) {
-        Hartshorn.context().get(DiscordUtils.class).sendToUser(text, this.getAuthor());
+        Hartshorn.context().get(DiscordUtils.class).sendToUser(text, this.author());
     }
 
     public void sendToAuthor(ResourceEntry text) {
-        Hartshorn.context().get(DiscordUtils.class).sendToUser(text, this.getAuthor());
+        Hartshorn.context().get(DiscordUtils.class).sendToUser(text, this.author());
     }
 }

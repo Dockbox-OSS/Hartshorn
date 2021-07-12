@@ -54,24 +54,24 @@ public abstract class World extends WorldProperties implements BlockDimension, E
         return new EmptyWorld();
     }
 
-    public abstract int getPlayerCount();
+    public abstract int playerCount();
 
     public abstract boolean unload();
 
     public abstract boolean load();
 
-    public abstract boolean isLoaded();
+    public abstract boolean loaded();
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.getWorldUniqueId(), this.getName());
+        return Objects.hash(this.worldUniqueId(), this.name());
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof World world)) return false;
-        return this.getWorldUniqueId().equals(world.getWorldUniqueId()) && this.getName().equals(world.getName());
+        return this.worldUniqueId().equals(world.worldUniqueId()) && this.name().equals(world.name());
     }
 
 }

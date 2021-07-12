@@ -17,17 +17,17 @@
 
 package org.dockbox.hartshorn.api.i18n;
 
-import org.dockbox.hartshorn.api.domain.Target;
+import org.dockbox.hartshorn.api.domain.Subject;
 import org.dockbox.hartshorn.api.i18n.common.Language;
 import org.dockbox.hartshorn.api.i18n.common.ResourceEntry;
 import org.dockbox.hartshorn.api.i18n.text.Text;
 import org.dockbox.hartshorn.api.i18n.text.pagination.Pagination;
 
-public interface MessageReceiver extends Target {
+public interface MessageReceiver extends Subject {
 
-    Language getLanguage();
+    Language language();
 
-    void setLanguage(Language language);
+    void language(Language language);
 
     void send(ResourceEntry text);
 

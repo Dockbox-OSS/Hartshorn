@@ -29,7 +29,7 @@ public interface CommandExecutorExtension {
     boolean extend(CommandExecutorContext context);
 
     default String id(Identifiable sender, CommandContext context) {
-        UUID uuid = sender.getUniqueId();
+        UUID uuid = sender.uniqueId();
         String alias = context.alias();
         return uuid + "$" + alias;
     }

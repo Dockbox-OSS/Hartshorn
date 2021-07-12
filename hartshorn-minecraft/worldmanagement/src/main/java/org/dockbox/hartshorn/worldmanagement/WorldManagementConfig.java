@@ -25,6 +25,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import lombok.Getter;
+
 public class WorldManagementConfig {
 
     @Inject
@@ -43,29 +45,23 @@ public class WorldManagementConfig {
     @Value(value = "services.world-management.unload.max", or = "10")
     private int maximumWorldsToUnload;
 
+    @Getter
     @Value("services.world-management.unload.blacklist")
     private List<String> unloadBlacklist;
 
+    @Getter
     @Value(value = "services.world-management.unload.delay", or = "2")
     private int unloadDelay;
 
-    public Vector3N getPortalPosition() {
+    public Vector3N portalPosition() {
         return Vector3N.of(this.x, this.y, this.z);
     }
 
-    public String getPortalWorldTarget() {
+    public String worldTarget() {
         return this.portalWorldTarget;
     }
 
-    public int getMaximumWorldsToUnload() {
+    public int unloadLimit() {
         return this.maximumWorldsToUnload;
-    }
-
-    public List<String> getUnloadBlacklist() {
-        return this.unloadBlacklist;
-    }
-
-    public int getUnloadDelay() {
-        return this.unloadDelay;
     }
 }

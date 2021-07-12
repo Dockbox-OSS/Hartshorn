@@ -25,23 +25,23 @@ import org.dockbox.hartshorn.di.annotations.service.Service;
 public interface PlayerActionResources {
     
     @Resource(value = "$4You are not allowed to teleport while in spectator mode", key = "playeractions.spectator.notallowed")
-    ResourceEntry getSpectatorNotAllowed();
+    ResourceEntry spectatorNotAllowed();
 
     @Resource(value = "$4You are denied from the plot you are teleporting to", key = "playeractions.plot.denied")
-    ResourceEntry getDeniedFromPlot();
+    ResourceEntry deniedFromPlot();
 
     @Resource(value = "$4You are outside a plot", key = "playeractions.plot.outside")
-    ResourceEntry getOutsidePlot();
+    ResourceEntry outsidePlot();
 
     @Resource(value = "$4You do not have permission to interact with entities here", key = "playeractions.plot.interact")
-    ResourceEntry getInteractionError();
+    ResourceEntry interactionError();
 
     @Resource(value = "$4You are not permitted to move in this world", key = "playeractions.rootworld")
-    ResourceEntry getMoveError();
+    ResourceEntry moveError();
 
     @Resource(value = "$1Hi there! We detected you prefer to see messages in {0}, if you would like our commands to send you messages in {0} click on this message to change your language preference.", key = "playeractions.lang.notify")
-    ResourceEntry getLanguageNotification(String languageEnglish);
+    ResourceEntry languageNotification(String languageEnglish);
 
     @Resource(value = "$1Click here to change your language preference to $2{0}", key = "playeractions.lang.notify.hover")
-    ResourceEntry getLanguageNotificationHover(String languageEnglish);
+    ResourceEntry languageNotificationHover(String languageEnglish);
 }

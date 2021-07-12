@@ -42,15 +42,15 @@ public class TableRow {
      * @return The instance of this TableRow
      */
     @NotNull
-    public TableRow addValue(@NotNull ColumnIdentifier<?> column, @Nullable Object value) {
+    public TableRow add(@NotNull ColumnIdentifier<?> column, @Nullable Object value) {
         // Make sure both the Identifier and the Value are both the same type
-        if (null == value || Reflect.assigns(column.getType(), value.getClass()))
+        if (null == value || Reflect.assigns(column.type(), value.getClass()))
             this.data.put(column, value);
         else
             throw new IllegalArgumentException(
                     String.format(
                             "The value: %s, is not of the correct type. (Expected: %s, but got %s)",
-                            value, column.getType().getSimpleName(), value.getClass().getSimpleName()));
+                            value, column.type().getSimpleName(), value.getClass().getSimpleName()));
         return this;
     }
 
@@ -64,7 +64,7 @@ public class TableRow {
      */
     @SuppressWarnings("unchecked")
     @NotNull
-    public <T> Exceptional<T> getValue(@NotNull ColumnIdentifier<T> column) {
+    public <T> Exceptional<T> value(@NotNull ColumnIdentifier<T> column) {
         if (null == this.data.get(column)) return Exceptional.empty();
 
         return Exceptional.of((T) this.data.get(column));
@@ -72,13 +72,13 @@ public class TableRow {
 
     /** @return Return a set of the values of the columns of the row */
     @NotNull
-    public Set<Object> getValues() {
+    public Set<Object> values() {
         return HartshornUtils.asUnmodifiableSet(this.data.values());
     }
 
     /** @return Return a set of keys of the row */
     @NotNull
-    public Set<ColumnIdentifier<?>> getColumns() {
+    public Set<ColumnIdentifier<?>> columns() {
         return HartshornUtils.asUnmodifiableSet(this.data.keySet());
     }
 

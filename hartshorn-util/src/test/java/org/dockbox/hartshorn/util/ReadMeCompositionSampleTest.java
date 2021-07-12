@@ -76,12 +76,12 @@ class MyResource {
 public class ReadMeCompositionSampleTest {
     @Test
     public void test() throws NoSuchMethodException {
-        Assertions.assertTrue(AnnotationHelper.isAnnotationPresent(MyResource.class.getMethod("bar"), GET.class));
+        Assertions.assertTrue(AnnotationHelper.annotationPresent(MyResource.class.getMethod("bar"), GET.class));
 
-        Path pathAnnotation = AnnotationHelper.getOneOrNull(MyResource.class.getMethod("bar"), Path.class);
+        Path pathAnnotation = AnnotationHelper.oneOrNull(MyResource.class.getMethod("bar"), Path.class);
         assertEquals("/{id}", pathAnnotation.value());
 
-        Produces producesAnnotation = AnnotationHelper.getOneOrNull(MyResource.class.getMethod("bar"), Produces.class);
+        Produces producesAnnotation = AnnotationHelper.oneOrNull(MyResource.class.getMethod("bar"), Produces.class);
         assertEquals("application/json", producesAnnotation.value());
     }
 }

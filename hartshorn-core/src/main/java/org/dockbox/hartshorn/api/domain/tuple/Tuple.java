@@ -37,6 +37,16 @@ public class Tuple<K, V> implements Entry<K, V> {
     }
 
     @Override
+    public K getKey() {
+        return this.key();
+    }
+
+    @Override
+    public V getValue() {
+        return this.value();
+    }
+
+    @Override
     public V setValue(V value) {
         throw new UnsupportedOperationException("Cannot modify final Tuple value");
     }

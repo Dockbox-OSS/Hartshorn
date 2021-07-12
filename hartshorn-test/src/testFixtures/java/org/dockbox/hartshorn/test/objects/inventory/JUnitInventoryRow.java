@@ -35,20 +35,20 @@ public class JUnitInventoryRow extends AbstractInventoryRow {
     }
 
     @Override
-    public void setSlot(Item item, int index) {
+    public void slot(Item item, int index) {
         if (index < this.capacity()) this.slots.put(index, item);
     }
 
     @Override
-    public Collection<Item> getAllItems() {
+    public Collection<Item> items() {
         return HartshornUtils.asUnmodifiableList(this.slots.values());
     }
 
     @Override
     public boolean give(Item item) {
         for (int i = 0; i < this.capacity(); i++) {
-            if (this.getSlot(i).isAir()) {
-                this.setSlot(item, i);
+            if (this.slot(i).isAir()) {
+                this.slot(item, i);
                 return true;
             }
         }
@@ -56,7 +56,7 @@ public class JUnitInventoryRow extends AbstractInventoryRow {
     }
 
     @Override
-    public Item getSlot(int index) {
-        return this.slots.getOrDefault(index, MinecraftItems.getInstance().getAir());
+    public Item slot(int index) {
+        return this.slots.getOrDefault(index, MinecraftItems.instance().air());
     }
 }

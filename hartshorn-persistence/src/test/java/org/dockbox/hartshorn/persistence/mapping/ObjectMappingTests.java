@@ -67,9 +67,9 @@ public class ObjectMappingTests {
     @MethodSource("serialisationElements")
     void testObjectSerialisation(FileType fileType, Element content, String expected) {
         final ObjectMapper mapper = new JacksonObjectMapper();
-        mapper.setFileType(fileType);
+        mapper.fileType(fileType);
 
-        content.setName("sample");
+        content.name("sample");
         final Exceptional<String> result = mapper.write(content);
 
         Assertions.assertTrue(result.present());
@@ -80,8 +80,8 @@ public class ObjectMappingTests {
     @MethodSource("serialisationElements")
     void testObjectDeserialisation(FileType fileType, Element expected, String content) {
         final ObjectMapper mapper = new JacksonObjectMapper();
-        mapper.setFileType(fileType);
-        expected.setName("sample");
+        mapper.fileType(fileType);
+        expected.name("sample");
 
         final Exceptional<? extends Element> result = mapper.read(content, expected.getClass());
 

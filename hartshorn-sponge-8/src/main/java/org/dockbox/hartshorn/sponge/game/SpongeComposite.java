@@ -46,8 +46,8 @@ public interface SpongeComposite extends PersistentDataHolder {
     default <T> Exceptional<T> get(PersistentDataKey<T> dataKey) {
         final Map<String, Object> data = this.raw();
 
-        final Object value = data.get(dataKey.getId());
-        if (value != null && Reflect.assigns(dataKey.getType(), value.getClass())) {
+        final Object value = data.get(dataKey.id());
+        if (value != null && Reflect.assigns(dataKey.type(), value.getClass())) {
             //noinspection unchecked
             return Exceptional.of(() -> (T) value);
         }
@@ -58,25 +58,25 @@ public interface SpongeComposite extends PersistentDataHolder {
     default <T> TransactionResult set(PersistentDataKey<T> dataKey, T value) {
         return this.holder().map(composite -> {
             final Map<String, Object> data = this.raw();
-            data.put(dataKey.getId(), value);
+            data.put(dataKey.id(), value);
 
             final DataTransactionResult result = composite.offer(COMPOSITE, data);
             if (result.isSuccessful()) return TransactionResult.success();
-            else return TransactionResult.fail(DefaultResources.instance().getBindingFailure());
-        }).get(() -> TransactionResult.fail(DefaultResources.instance().getReferenceLost()));
+            else return TransactionResult.fail(DefaultResources.instance().bindingFailure());
+        }).get(() -> TransactionResult.fail(DefaultResources.instance().referenceLost()));
     }
 
     @Override
     default <T> void remove(PersistentDataKey<T> dataKey) {
         this.holder().present(composite -> {
             final Map<String, Object> data = this.raw();
-            data.remove(dataKey.getId());
+            data.remove(dataKey.id());
             composite.offer(COMPOSITE, data);
         });
     }
 
     @Override
-    default Map<PersistentDataKey<?>, Object> getPersistentData() {
+    default Map<PersistentDataKey<?>, Object> data() {
         final Exceptional<? extends DataHolder> dataHolder = this.holder();
         if (dataHolder.absent()) return HartshornUtils.emptyMap();
 
@@ -99,10 +99,10 @@ public interface SpongeComposite extends PersistentDataHolder {
     }
 
     private Exceptional<? extends DataHolder.Mutable> holder() {
-        return this.getDataHolder().absent(() -> {
+        return this.dataHolder().absent(() -> {
             Hartshorn.log().warn("Attempted to access data holder in " + this.getClass().getSimpleName() + " but none was present.");
         });
     }
 
-    Exceptional<? extends DataHolder.Mutable> getDataHolder();
+    Exceptional<? extends DataHolder.Mutable> dataHolder();
 }

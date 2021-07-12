@@ -27,10 +27,10 @@ import java.lang.annotation.Annotation;
 public abstract class ServiceModifier<A extends Annotation> implements InjectionModifier<A> {
 
     public <T> boolean preconditions(Class<T> type, @Nullable T instance, InjectorProperty<?>... properties) {
-        return ApplicationContextAware.instance().getContext().locator().container(type).present()
-                && this.isModifiable(type, instance, properties);
+        return ApplicationContextAware.instance().context().locator().container(type).present()
+                && this.modifies(type, instance, properties);
     }
 
-    protected abstract <T> boolean isModifiable(Class<T> type, @Nullable T instance, InjectorProperty<?>... properties);
+    protected abstract <T> boolean modifies(Class<T> type, @Nullable T instance, InjectorProperty<?>... properties);
 
 }

@@ -21,7 +21,7 @@ import java.util.UUID;
 
 public interface Identifiable {
 
-    UUID getUniqueId();
+    UUID uniqueId();
 
-    String getName();
+    String name();
 }

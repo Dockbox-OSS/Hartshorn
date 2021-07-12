@@ -45,11 +45,11 @@ public final class MinecraftArgumentConverters implements InjectableType {
     public static final ArgumentConverter<World> WORLD = CommandValueConverter.builder(World.class, "world")
             .withConverter(in -> {
                 Worlds wss = Hartshorn.context().get(Worlds.class);
-                Exceptional<World> world = wss.getWorld(in);
+                Exceptional<World> world = wss.world(in);
                 return world.orElse(
                         () -> {
                             UUID uuid = UUID.fromString(in);
-                            return wss.getWorld(uuid).orNull();
+                            return wss.world(uuid).orNull();
                         });
             }).build();
 
@@ -66,19 +66,19 @@ public final class MinecraftArgumentConverters implements InjectableType {
     public static final ArgumentConverter<Player> PLAYER = CommandValueConverter.builder(Player.class, "player", "user")
             .withConverter(in -> {
                 Players pss = Hartshorn.context().get(Players.class);
-                Exceptional<Player> player = pss.getPlayer(in);
+                Exceptional<Player> player = pss.player(in);
                 return player.orElse(() -> {
                     try {
                         UUID uuid = UUID.fromString(in);
-                        return pss.getPlayer(uuid).orNull();
+                        return pss.player(uuid).orNull();
                     }
                     catch (IllegalArgumentException e) {
                         //noinspection ReturnOfNull
                         return null;
                     }
                 });
-            }).withSuggestionProvider(in -> Hartshorn.context().get(Players.class).getOnlinePlayers().stream()
-                    .map(Player::getName)
+            }).withSuggestionProvider(in -> Hartshorn.context().get(Players.class).onlinePlayers().stream()
+                    .map(Player::name)
                     .filter(n -> n.startsWith(in))
                     .toList())
             .build();
@@ -87,7 +87,7 @@ public final class MinecraftArgumentConverters implements InjectableType {
             .withConverter(in -> Exceptional.of(Item.of(in)))
             .withSuggestionProvider(in -> Hartshorn.context()
                     .first(ItemContext.class)
-                    .map(ItemContext::getIds)
+                    .map(ItemContext::ids)
                     .orElse(HartshornUtils::emptyList).get())
             .build();
 
@@ -95,12 +95,12 @@ public final class MinecraftArgumentConverters implements InjectableType {
             .withConverter(in -> Exceptional.of(Block.of(in)))
             .withSuggestionProvider(in -> Hartshorn.context()
                     .first(BlockContext.class)
-                    .map(BlockContext::getIds)
+                    .map(BlockContext::ids)
                     .orElse(HartshornUtils::emptyList).get())
             .build();
 
     @Override
-    public void stateEnabling(InjectorProperty<?>... properties) {
+    public void enable(InjectorProperty<?>... properties) {
         Hartshorn.log().info("Registered Minecraft specific command argument converters.");
     }
 }

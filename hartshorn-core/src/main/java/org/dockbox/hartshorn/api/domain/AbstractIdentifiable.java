@@ -25,7 +25,7 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 @SuppressWarnings("AbstractClassWithoutAbstractMethods") // Type is used to extract side-effects of identifiable types
-public abstract class AbstractIdentifiable implements Identifiable, Target {
+public abstract class AbstractIdentifiable implements Identifiable, Subject {
 
     protected UUID uniqueId;
     protected String name;

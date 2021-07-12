@@ -48,10 +48,10 @@ public @interface Property {
      * field. Note that type differences are only accepted when defined with {@link Property#accepts()}.
      *
      * <pre>{@code
-     * \@Property(setter = "setValueString")
+     * \@Property(setter = "valueString")
      * private Integer id;
      *
-     * public void setValueString(String value) {
+     * public void valueString(String value) {
      * this.id = Integer.parseInt(value);
      * }
      * }</pre>

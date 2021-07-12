@@ -36,7 +36,7 @@ public class StringFlag extends AbstractPlotFlag<String> {
     }
 
     @Override
-    public Class<String> getType() {
+    public Class<String> type() {
         return String.class;
     }
 }

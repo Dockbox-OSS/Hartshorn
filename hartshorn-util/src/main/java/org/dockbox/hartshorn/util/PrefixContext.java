@@ -117,7 +117,7 @@ public class PrefixContext {
     private <A extends Annotation> Set<Class<? extends Annotation>> extensions(Class<A> annotation) {
         if (this.annotationHierarchy.isEmpty()) {
             for (Class<? extends Annotation> annotationType : this.children(Annotation.class)) {
-                for (Class<? extends Annotation> selfOrParent : AnnotationHelper.getAnnotationHierarchy(annotationType)) {
+                for (Class<? extends Annotation> selfOrParent : AnnotationHelper.annotationHierarchy(annotationType)) {
                     this.annotationHierarchy.put(selfOrParent, annotationType);
                 }
             }

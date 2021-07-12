@@ -28,10 +28,10 @@ import lombok.Getter;
 public class SQLitePathProperty implements InjectorProperty<Path> {
 
     @Getter
-    private final Path object;
+    private final Path value;
 
     @Override
-    public String getKey() {
+    public String key() {
         return SQLiteMan.PATH_KEY;
     }
 

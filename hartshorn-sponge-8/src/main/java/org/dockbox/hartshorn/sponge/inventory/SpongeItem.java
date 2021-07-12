@@ -60,7 +60,7 @@ public class SpongeItem extends ReferencedItem<ItemStack> implements SpongeCompo
     }
 
     @Override
-    public String getId() {
+    public String id() {
         return SpongeUtil.location(this.item().map(ItemStack::type), RegistryTypes.ITEM_TYPE)
                 .map(ResourceKey::asString)
                 .or("");
@@ -68,7 +68,7 @@ public class SpongeItem extends ReferencedItem<ItemStack> implements SpongeCompo
 
     @Override
     public boolean isAir() {
-        if (this.equals(MinecraftItems.getInstance().getAir())) return true;
+        if (this.equals(MinecraftItems.instance().air())) return true;
         else {
             return this.item()
                     .map(item -> item.isEmpty() || item.type() == ItemTypes.AIR.get())
@@ -77,17 +77,18 @@ public class SpongeItem extends ReferencedItem<ItemStack> implements SpongeCompo
     }
 
     @Override
-    public void setDisplayName(Text displayName) {
+    public SpongeItem displayName(Text displayName) {
         this.item().present(item -> item.offer(Keys.CUSTOM_NAME, SpongeConvert.toSponge(displayName)));
+        return this;
     }
 
     @Override
-    public Text getDisplayName(Language language) {
+    public Text displayName(Language language) {
         return SpongeUtil.get(this.item(), Keys.CUSTOM_NAME, SpongeConvert::fromSponge, Text::of);
     }
 
     @Override
-    public List<Text> getLore() {
+    public List<Text> lore() {
         return this.item()
                 .map(item -> item.get(Keys.LORE)
                         .orElseGet(HartshornUtils::emptyList)
@@ -99,7 +100,7 @@ public class SpongeItem extends ReferencedItem<ItemStack> implements SpongeCompo
     }
 
     @Override
-    public void setLore(List<Text> lore) {
+    public SpongeItem lore(List<Text> lore) {
         this.item().present(item -> {
             final List<Component> components = lore.stream()
                     .map(SpongeConvert::toSponge)
@@ -107,16 +108,18 @@ public class SpongeItem extends ReferencedItem<ItemStack> implements SpongeCompo
                     .toList();
             item.offer(Keys.LORE, components);
         });
+        return this;
     }
 
     @Override
-    public int getAmount() {
+    public int amount() {
         return this.item().map(ItemStack::quantity).or(1);
     }
 
     @Override
-    public void setAmount(int amount) {
+    public SpongeItem amount(int amount) {
         this.item().present(item -> item.setQuantity(amount));
+        return this;
     }
 
     @Override
@@ -127,7 +130,7 @@ public class SpongeItem extends ReferencedItem<ItemStack> implements SpongeCompo
     @Override
     public void addLore(Text lore) {
         this.item().present(item -> {
-            final List<Text> lines = this.getLore();
+            final List<Text> lines = this.lore();
             lines.add(lore);
             final List<Component> components = lines.stream()
                     .map(SpongeConvert::toSponge)
@@ -143,12 +146,12 @@ public class SpongeItem extends ReferencedItem<ItemStack> implements SpongeCompo
     }
 
     @Override
-    public int getStackSize() {
+    public int stackSize() {
         return this.item().map(ItemStack::maxStackQuantity).or(DEFAULT_STACK_SIZE);
     }
 
     @Override
-    public Set<Enchant> getEnchantments() {
+    public Set<Enchant> enchantments() {
         return this.item()
                 .map(item -> {
                     final List<Enchantment> applied = item.get(Keys.APPLIED_ENCHANTMENTS).orElseGet(HartshornUtils::emptyList);
@@ -191,7 +194,7 @@ public class SpongeItem extends ReferencedItem<ItemStack> implements SpongeCompo
     }
 
     @Override
-    public Item setProfile(Profile profile) {
+    public Item profile(Profile profile) {
         if (this.isHead() && profile instanceof SpongeProfile spongeProfile) {
             this.item().present(item -> item.offer(Keys.GAME_PROFILE, spongeProfile.profile()));
         }
@@ -207,7 +210,7 @@ public class SpongeItem extends ReferencedItem<ItemStack> implements SpongeCompo
     }
 
     @Override
-    protected ItemStack getById(String id) {
+    protected ItemStack from(String id) {
         ItemType type;
         if (id.indexOf(':') >= 0) {
             type = SpongeUtil.fromNamespacedRegistry(RegistryTypes.ITEM_TYPE, id).orNull();
@@ -222,11 +225,11 @@ public class SpongeItem extends ReferencedItem<ItemStack> implements SpongeCompo
     }
 
     @Override
-    public Exceptional<? extends Mutable> getDataHolder() {
-        return this.getReference();
+    public Exceptional<? extends Mutable> dataHolder() {
+        return this.reference();
     }
 
     private Exceptional<ItemStack> item() {
-        return this.getReference();
+        return this.reference();
     }
 }

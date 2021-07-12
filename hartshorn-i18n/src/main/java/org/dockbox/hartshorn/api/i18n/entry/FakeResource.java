@@ -31,7 +31,7 @@ public class FakeResource implements ResourceEntry {
     }
 
     @Override
-    public String getKey() {
+    public String key() {
         return "hartshorn.fake";
     }
 
@@ -71,7 +71,7 @@ public class FakeResource implements ResourceEntry {
     }
 
     @Override
-    public Language getLanguage() {
+    public Language language() {
         return Language.EN_US;
     }
 }

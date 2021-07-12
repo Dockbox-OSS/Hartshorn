@@ -33,35 +33,35 @@ public class Vector2N {
         this.z = z;
     }
 
-    public double getXd() {
+    public double xD() {
         return this.x.doubleValue();
     }
 
-    public float getXf() {
+    public float xF() {
         return this.x.floatValue();
     }
 
-    public int getXi() {
+    public int xI() {
         return this.x.intValue();
     }
 
-    public long getXl() {
+    public long xL() {
         return this.x.longValue();
     }
 
-    public double getZd() {
+    public double zD() {
         return this.z.doubleValue();
     }
 
-    public float getZf() {
+    public float zF() {
         return this.z.floatValue();
     }
 
-    public int getZi() {
+    public int zI() {
         return this.z.intValue();
     }
 
-    public long getZl() {
+    public long zL() {
         return this.z.longValue();
     }
 

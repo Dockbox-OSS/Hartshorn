@@ -19,18 +19,14 @@ package org.dockbox.hartshorn.api.events;
 
 import org.dockbox.hartshorn.api.events.parents.Cancellable;
 
+import lombok.Getter;
+import lombok.Setter;
+
 @SuppressWarnings("AbstractClassWithoutAbstractMethods")
+@Getter
+@Setter
 public abstract class AbstractCancellableEvent implements Cancellable {
 
-    private boolean isCancelled;
+    private boolean cancelled;
 
-    @Override
-    public boolean isCancelled() {
-        return this.isCancelled;
-    }
-
-    @Override
-    public void setCancelled(boolean cancelled) {
-        this.isCancelled = cancelled;
-    }
 }

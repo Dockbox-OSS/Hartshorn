@@ -29,21 +29,21 @@ import java.util.Collection;
 
 public interface Region {
 
-    Vector3N getMinimumPoint();
+    Vector3N minimum();
 
-    Vector3N getMaximumPoint();
+    Vector3N maximum();
 
-    Vector3N getCenter();
+    Vector3N center();
 
-    int getArea();
+    int area();
 
-    int getWidth();
+    int width();
 
-    int getHeight();
+    int height();
 
-    int getLength();
+    int length();
 
-    World getWorld();
+    World world();
 
     default void replace(Mask mask, Pattern pattern, Player cause) {
         Hartshorn.context().get(WorldEditService.class).replace(this, mask, pattern, cause);

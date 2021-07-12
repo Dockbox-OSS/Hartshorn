@@ -19,6 +19,11 @@ package org.dockbox.hartshorn.plots;
 
 import org.dockbox.hartshorn.api.keys.Key;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@AllArgsConstructor
+@Getter
 public enum PlotProperties {
     // The filling of the plot between bedrock (if present) and the plot floor
     FILLING(PlotKeys.FILLING),
@@ -40,12 +45,4 @@ public enum PlotProperties {
     ALIAS(PlotKeys.ALIAS);
 
     private final Key<Plot, ?> key;
-
-    PlotProperties(Key<Plot, ?> key) {
-        this.key = key;
-    }
-
-    public Key<Plot, ?> getKey() {
-        return this.key;
-    }
 }

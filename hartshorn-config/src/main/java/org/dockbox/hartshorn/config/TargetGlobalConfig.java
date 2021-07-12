@@ -29,19 +29,15 @@ import lombok.Getter;
 public class TargetGlobalConfig implements GlobalConfig {
 
     @Value(value = "hartshorn.exceptions.stacktraces", or = "false")
-    private boolean stacktracesAllowed;
+    private boolean stacktraces;
 
     @Value(value = "hartshorn.exceptions.level", or = "NATIVE")
-    private ExceptionLevels exceptionLevel;
+    private ExceptionLevels level;
 
     @Value("hartshorn.discord.logging-channel")
-    private String discordLoggingCategoryId;
+    private String discordCategory;
 
     @Value("hartshorn.version")
     private String version;
 
-    @Override
-    public boolean getStacktracesAllowed() {
-        return this.stacktracesAllowed;
-    }
 }

@@ -36,7 +36,7 @@ public class SpongeLocation extends Location implements SpongeComposite {
 
     @Wired
     public SpongeLocation(World world) {
-        this(world.getSpawnPosition(), world);
+        this(world.spawnPosition(), world);
     }
 
     @Wired
@@ -54,8 +54,8 @@ public class SpongeLocation extends Location implements SpongeComposite {
     }
 
     @Override
-    public Exceptional<? extends Mutable> getDataHolder() {
-        return Exceptional.of(() -> ServerLocation.of(this.world.getKey(), SpongeConvert.toSpongeDouble(this.position)));
+    public Exceptional<? extends Mutable> dataHolder() {
+        return Exceptional.of(() -> ServerLocation.of(this.world.key(), SpongeConvert.toSpongeDouble(this.position)));
     }
 
     @Override
@@ -64,12 +64,12 @@ public class SpongeLocation extends Location implements SpongeComposite {
     }
 
     @Override
-    public Vector3N getVectorLoc() {
+    public Vector3N vector() {
         return this.position;
     }
 
     @Override
-    public World getWorld() {
+    public World world() {
         return this.world;
     }
 }

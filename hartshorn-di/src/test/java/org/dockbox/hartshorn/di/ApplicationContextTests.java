@@ -123,7 +123,7 @@ public class ApplicationContextTests {
         Class<? extends SampleInterface> providedClass = provided.getClass();
         Assertions.assertEquals(SampleImplementation.class, providedClass);
 
-        Assertions.assertEquals("Hartshorn", provided.getName());
+        Assertions.assertEquals("Hartshorn", provided.name());
     }
 
     @Test
@@ -135,7 +135,7 @@ public class ApplicationContextTests {
         Class<? extends SampleInterface> providedClass = provided.getClass();
         Assertions.assertEquals(SampleImplementation.class, providedClass);
 
-        Assertions.assertEquals("Hartshorn", provided.getName());
+        Assertions.assertEquals("Hartshorn", provided.name());
     }
 
     @Test
@@ -156,7 +156,7 @@ public class ApplicationContextTests {
         Class<? extends SampleInterface> providedClass = provided.getClass();
         Assertions.assertEquals(SampleImplementation.class, providedClass);
 
-        Assertions.assertEquals("Hartshorn", provided.getName());
+        Assertions.assertEquals("Hartshorn", provided.name());
     }
 
     @Test
@@ -168,7 +168,7 @@ public class ApplicationContextTests {
         Class<? extends SampleInterface> providedClass = provided.getClass();
         Assertions.assertEquals(SampleImplementation.class, providedClass);
 
-        Assertions.assertEquals("Hartshorn", provided.getName());
+        Assertions.assertEquals("Hartshorn", provided.name());
     }
 
     @Test
@@ -188,7 +188,7 @@ public class ApplicationContextTests {
         Class<? extends SampleInterface> providedClass = provided.getClass();
         Assertions.assertEquals(SampleImplementation.class, providedClass);
 
-        Assertions.assertEquals("Hartshorn", provided.getName());
+        Assertions.assertEquals("Hartshorn", provided.name());
     }
 
     @Test
@@ -200,7 +200,7 @@ public class ApplicationContextTests {
         Class<? extends SampleInterface> providedClass = provided.getClass();
         Assertions.assertEquals(SampleImplementation.class, providedClass);
 
-        Assertions.assertEquals("Hartshorn", provided.getName());
+        Assertions.assertEquals("Hartshorn", provided.name());
     }
 
     @Test
@@ -213,7 +213,7 @@ public class ApplicationContextTests {
         Class<? extends SampleInterface> providedClass = provided.getClass();
         Assertions.assertEquals(SampleAnnotatedImplementation.class, providedClass);
 
-        Assertions.assertEquals("AnnotatedHartshorn", provided.getName());
+        Assertions.assertEquals("AnnotatedHartshorn", provided.name());
     }
 
     @Test
@@ -228,7 +228,7 @@ public class ApplicationContextTests {
         Class<? extends SampleInterface> providedClass = provided.getClass();
         Assertions.assertEquals(SampleMetaAnnotatedImplementation.class, providedClass);
 
-        Assertions.assertEquals("MetaAnnotatedHartshorn", provided.getName());
+        Assertions.assertEquals("MetaAnnotatedHartshorn", provided.name());
     }
 
     @Test
@@ -242,7 +242,7 @@ public class ApplicationContextTests {
         Class<? extends SampleInterface> providedClass = provided.getClass();
         Assertions.assertEquals(SampleMultiAnnotatedImplementation.class, providedClass);
 
-        Assertions.assertEquals("MultiAnnotatedHartshorn", provided.getName());
+        Assertions.assertEquals("MultiAnnotatedHartshorn", provided.name());
     }
 
     @Test
@@ -256,7 +256,7 @@ public class ApplicationContextTests {
         Class<? extends SampleInterface> providedClass = provided.getClass();
         Assertions.assertEquals(SampleMultiAnnotatedImplementation.class, providedClass);
 
-        Assertions.assertEquals("MultiAnnotatedHartshorn", provided.getName());
+        Assertions.assertEquals("MultiAnnotatedHartshorn", provided.name());
     }
 
     @Test
@@ -268,18 +268,18 @@ public class ApplicationContextTests {
         Class<? extends SampleInterface> providedClass = provided.getClass();
         Assertions.assertEquals(SampleImplementation.class, providedClass);
 
-        Assertions.assertEquals("Hartshorn", provided.getName());
+        Assertions.assertEquals("Hartshorn", provided.name());
     }
 
     @Test
     public void testTypesCanBePopulated() throws ApplicationException {
         context(true).bind(SampleInterface.class, SampleImplementation.class);
         PopulatedType populatedType = new PopulatedType();
-        Assertions.assertNull(populatedType.getSampleInterface());
+        Assertions.assertNull(populatedType.sampleInterface());
 
         context(false).populate(populatedType);
-        Assertions.assertNotNull(populatedType.getSampleInterface());
-        Assertions.assertEquals("Hartshorn", populatedType.getSampleInterface().getName());
+        Assertions.assertNotNull(populatedType.sampleInterface());
+        Assertions.assertEquals("Hartshorn", populatedType.sampleInterface().name());
     }
 
     @Test
@@ -287,7 +287,7 @@ public class ApplicationContextTests {
         context(true).bind(SampleInterface.class, SampleImplementation.class);
         PopulatedType provided = Hartshorn.context().get(PopulatedType.class);
         Assertions.assertNotNull(provided);
-        Assertions.assertNotNull(provided.getSampleInterface());
+        Assertions.assertNotNull(provided.sampleInterface());
     }
 
     @Test
@@ -315,7 +315,7 @@ public class ApplicationContextTests {
 
         SampleInterface wired = Hartshorn.context().get(TypeFactory.class).create(SampleInterface.class, "WiredHartshorn");
         Assertions.assertNotNull(wired);
-        Assertions.assertEquals("WiredHartshorn", wired.getName());
+        Assertions.assertEquals("WiredHartshorn", wired.name());
     }
 
     @Test
@@ -324,8 +324,8 @@ public class ApplicationContextTests {
 
         SampleInterface provided = Hartshorn.context().get(SampleInterface.class, new NameProperty("Enabled"));
         Assertions.assertNotNull(provided);
-        Assertions.assertNotNull(provided.getName());
-        Assertions.assertEquals("Enabled", provided.getName());
+        Assertions.assertNotNull(provided.name());
+        Assertions.assertEquals("Enabled", provided.name());
     }
 
     @Test
@@ -340,7 +340,7 @@ public class ApplicationContextTests {
         Class<? extends SampleInterface> providedClass = provided.getClass();
         Assertions.assertEquals(SampleWiredAnnotatedImplementation.class, providedClass);
 
-        Assertions.assertEquals("WiredAnnotated", provided.getName());
+        Assertions.assertEquals("WiredAnnotated", provided.name());
     }
 
     @Test
@@ -355,7 +355,7 @@ public class ApplicationContextTests {
         Class<? extends SampleInterface> providedClass = provided.getClass();
         Assertions.assertEquals(SampleWiredType.class, providedClass);
 
-        Assertions.assertEquals("FactoryTyped", provided.getName());
+        Assertions.assertEquals("FactoryTyped", provided.name());
     }
 
     @Test
@@ -369,7 +369,7 @@ public class ApplicationContextTests {
         Class<? extends SampleInterface> providedClass = provided.getClass();
         Assertions.assertEquals(SampleWiredType.class, providedClass);
 
-        Assertions.assertEquals("FactoryTyped", provided.getName());
+        Assertions.assertEquals("FactoryTyped", provided.name());
     }
 
     @Test
@@ -381,7 +381,7 @@ public class ApplicationContextTests {
         SampleInterface provided = Hartshorn.context().get(SampleInterface.class, "FactoryTyped");
         Assertions.assertNotNull(provided);
         Assertions.assertTrue(provided instanceof SampleWiredPopulatedType);
-        Assertions.assertTrue(((SampleWiredPopulatedType) provided).isEnabled());
+        Assertions.assertTrue(((SampleWiredPopulatedType) provided).enabled());
     }
 
     @Test
@@ -393,8 +393,8 @@ public class ApplicationContextTests {
         SampleInterface provided = Hartshorn.context().get(SampleInterface.class, "FactoryTyped");
         Assertions.assertNotNull(provided);
         Assertions.assertTrue(provided instanceof SampleWiredPopulatedType);
-        Assertions.assertNotNull(((SampleWiredPopulatedType) provided).getField());
-        Assertions.assertTrue(((SampleWiredPopulatedType) provided).getField() instanceof SampleFieldImplementation);
+        Assertions.assertNotNull(((SampleWiredPopulatedType) provided).field());
+        Assertions.assertTrue(((SampleWiredPopulatedType) provided).field() instanceof SampleFieldImplementation);
     }
 
     @Test
@@ -411,7 +411,7 @@ public class ApplicationContextTests {
         Assertions.assertTrue(provided instanceof SampleImplementation);
     }
 
-    private static Stream<Arguments> getBeans() {
+    private static Stream<Arguments> beans() {
         return Stream.of(
                 Arguments.of(null, "Bean", false, null, false),
                 Arguments.of("named", "NamedBean", false, null, false),
@@ -422,7 +422,7 @@ public class ApplicationContextTests {
     }
 
     @ParameterizedTest
-    @MethodSource("getBeans")
+    @MethodSource("beans")
     void testBeansCanSupply(String meta, String name, boolean field, String fieldMeta, boolean singleton) throws ApplicationException {
         context(true).bind("org.dockbox.hartshorn.di.types.bean");
 
@@ -436,7 +436,7 @@ public class ApplicationContextTests {
         else provided = Hartshorn.context().get(BeanInterface.class, BindingMetaProperty.of(meta));
         Assertions.assertNotNull(provided);
 
-        String actual = provided.getName();
+        String actual = provided.name();
         Assertions.assertNotNull(name);
         Assertions.assertEquals(name, actual);
 
@@ -456,7 +456,7 @@ public class ApplicationContextTests {
 
         BeanInterface provided = Hartshorn.context().get(BeanInterface.class, BindingMetaProperty.of("wired"), TypeFactory.use("WiredBean"));
         Assertions.assertNotNull(provided);
-        Assertions.assertEquals("WiredBean", provided.getName());
+        Assertions.assertEquals("WiredBean", provided.name());
     }
 
     @SuppressWarnings("unchecked")

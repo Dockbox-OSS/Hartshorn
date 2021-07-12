@@ -153,7 +153,7 @@ public class RealWorldUnitTest {
         final String text = " text";
         final VerbalExpression expression = VerbalExpression.regex().lineBreak().capture().find(some).endCapture().then(text).build();
 
-        MatcherAssert.assertThat(some, CoreMatchers.equalTo(expression.getText(lineBreak + some + text, 1)));
+        MatcherAssert.assertThat(some, CoreMatchers.equalTo(expression.text(lineBreak + some + text, 1)));
     }
 
     @Test
@@ -164,6 +164,6 @@ public class RealWorldUnitTest {
         final String captureName = "name";
         final VerbalExpression expression = VerbalExpression.regex().lineBreak().capture(captureName).find(some).endCapture().then(text).build();
 
-        MatcherAssert.assertThat(some, CoreMatchers.equalTo(expression.getText(lineBreak + some + text, captureName)));
+        MatcherAssert.assertThat(some, CoreMatchers.equalTo(expression.text(lineBreak + some + text, captureName)));
     }
 }

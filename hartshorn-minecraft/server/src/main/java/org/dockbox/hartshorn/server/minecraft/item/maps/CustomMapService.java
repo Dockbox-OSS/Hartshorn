@@ -31,13 +31,13 @@ public interface CustomMapService {
 
     CustomMap create(byte[] image, Identifiable source);
 
-    CustomMap getById(int id);
+    CustomMap from(int id);
 
     Map<Integer[], CustomMap> create(BufferedImage image, int width, int height, Identifiable source);
 
     Map<Integer[], CustomMap> create(MultiSizedImage image, Identifiable source);
 
-    Collection<CustomMap> getFrom(Identifiable source);
+    Collection<CustomMap> all(Identifiable source);
 
-    Exceptional<CustomMap> derive(Item item);
+    Exceptional<CustomMap> from(Item item);
 }

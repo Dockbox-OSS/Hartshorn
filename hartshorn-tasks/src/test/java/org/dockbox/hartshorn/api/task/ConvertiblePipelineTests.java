@@ -36,10 +36,10 @@ public class ConvertiblePipelineTests {
     @Test
     public void simpleConvertablePipelineTest() {
         float output = new ConvertiblePipelineSource<>(Integer.class)
-                .addPipe(InputPipe.of(input -> input * 2))
+                .add(InputPipe.of(input -> input * 2))
                 .convertPipeline(integer -> (float) integer, Float.class)
-                .addPipe(InputPipe.of(input -> input / 5F))
-                .addPipe(InputPipe.of(input -> input * 2))
+                .add(InputPipe.of(input -> input / 5F))
+                .add(InputPipe.of(input -> input * 2))
                 .processUnsafe(18);
 
         Assertions.assertEquals(14.4F, output);
@@ -49,12 +49,12 @@ public class ConvertiblePipelineTests {
     public void addingPipesToUncancellablePipelineTest() {
         Assertions.assertThrows(IllegalPipeException.class, () ->
                 new ConvertiblePipelineSource<>(Integer.class)
-                        .addPipe(CancellablePipe.of(
+                        .add(CancellablePipe.of(
                                 (cancelPipeline, input, throwable) -> {
                                     if (2 < input) cancelPipeline.run();
                                     return input;
                                 }))
-                        .addPipe(Pipe.of((input, throwable) -> input - 3))
+                        .add(Pipe.of((input, throwable) -> input - 3))
                         .process(4));
     }
 
@@ -62,16 +62,16 @@ public class ConvertiblePipelineTests {
     public void convertCancelBehaviourTest() {
         ConvertiblePipeline<Integer, String> pipeline =
                 new ConvertiblePipelineSource<>(Integer.class)
-                        .setCancelBehaviour(CancelBehaviour.CONVERT)
-                        .addPipe(InputPipe.of(input -> input + 1))
-                        .addPipe(CancellablePipe.of(
+                        .cancelBehaviour(CancelBehaviour.CONVERT)
+                        .add(InputPipe.of(input -> input + 1))
+                        .add(CancellablePipe.of(
                                 (cancelPipeline, input, throwable) -> {
                                     if (2 > input) cancelPipeline.run();
                                     return input;
                                 }))
-                        .addPipe(InputPipe.of(input -> input + 1))
+                        .add(InputPipe.of(input -> input + 1))
                         .convertPipeline(String::valueOf, String.class)
-                        .addPipe(InputPipe.of(input -> input + "1"));
+                        .add(InputPipe.of(input -> input + "1"));
 
         // Doesn't cancel.
         String output = pipeline.processUnsafe(2);
@@ -86,16 +86,16 @@ public class ConvertiblePipelineTests {
     public void returnCancelBehaviourTest() {
         ConvertiblePipeline<Float, Integer> pipeline =
                 new ConvertiblePipelineSource<>(Float.class)
-                        .setCancelBehaviour(CancelBehaviour.RETURN)
-                        .addPipe(InputPipe.of(input -> input + 1))
-                        .addPipe(CancellablePipe.of(
+                        .cancelBehaviour(CancelBehaviour.RETURN)
+                        .add(InputPipe.of(input -> input + 1))
+                        .add(CancellablePipe.of(
                                 (cancelPipeline, input, throwable) -> {
                                     if (2 > input) cancelPipeline.run();
                                     return input;
                                 }))
-                        .addPipe(InputPipe.of(input -> input + 1))
+                        .add(InputPipe.of(input -> input + 1))
                         .convertPipeline(Float::intValue, Integer.class)
-                        .addPipe(InputPipe.of(input -> input + 1));
+                        .add(InputPipe.of(input -> input + 1));
 
         // Doesn't cancel
         int output = pipeline.processUnsafe(2F);
@@ -111,16 +111,16 @@ public class ConvertiblePipelineTests {
     public void discardCancelBehaviourTest() {
         ConvertiblePipeline<Float, Integer> pipeline =
                 new ConvertiblePipelineSource<>(Float.class)
-                        .setCancelBehaviour(CancelBehaviour.DISCARD)
-                        .addPipe(InputPipe.of(input -> input + 1))
-                        .addPipe(CancellablePipe.of(
+                        .cancelBehaviour(CancelBehaviour.DISCARD)
+                        .add(InputPipe.of(input -> input + 1))
+                        .add(CancellablePipe.of(
                                 (cancelPipeline, input, throwable) -> {
                                     if (2 > input) cancelPipeline.run();
                                     return input;
                                 }))
-                        .addPipe(InputPipe.of(input -> input + 1))
+                        .add(InputPipe.of(input -> input + 1))
                         .convertPipeline(Float::intValue, Integer.class)
-                        .addPipe(InputPipe.of(input -> input + 1));
+                        .add(InputPipe.of(input -> input + 1));
 
         // Doesn't cancel
         int output = pipeline.processUnsafe(2F);
@@ -135,17 +135,17 @@ public class ConvertiblePipelineTests {
     public void multipleCancelBehavioursTest() {
         ConvertiblePipeline<Float, Integer> pipeline =
                 new ConvertiblePipelineSource<>(Float.class)
-                        .setCancelBehaviour(CancelBehaviour.DISCARD)
-                        .addPipe(InputPipe.of(input -> input + 1))
-                        .addPipe(CancellablePipe.of(
+                        .cancelBehaviour(CancelBehaviour.DISCARD)
+                        .add(InputPipe.of(input -> input + 1))
+                        .add(CancellablePipe.of(
                                 (cancelPipeline, input, throwable) -> {
                                     if (2 > input) cancelPipeline.run();
                                     return input;
                                 }))
-                        .addPipe(InputPipe.of(input -> input + 1))
+                        .add(InputPipe.of(input -> input + 1))
                         .convertPipeline(Float::intValue, Integer.class)
-                        .setCancelBehaviour(CancelBehaviour.CONVERT)
-                        .addPipe(InputPipe.of(input -> input + 1));
+                        .cancelBehaviour(CancelBehaviour.CONVERT)
+                        .add(InputPipe.of(input -> input + 1));
 
         // Doesn't cancel
         int output = pipeline.processUnsafe(2F);
@@ -160,15 +160,15 @@ public class ConvertiblePipelineTests {
     public void convertiblePipelineCancellableAfterConversionTest() {
         int output =
                 new ConvertiblePipelineSource<>(Float.class)
-                        .setCancelBehaviour(CancelBehaviour.CONVERT)
-                        .addPipe(Pipe.of((input, throwable) -> input + 1F))
+                        .cancelBehaviour(CancelBehaviour.CONVERT)
+                        .add(Pipe.of((input, throwable) -> input + 1F))
                         .convertPipeline(Float::intValue, Integer.class)
-                        .addPipe(CancellablePipe.of(
+                        .add(CancellablePipe.of(
                                 (cancelPipeline, input, throwable) -> {
                                     cancelPipeline.run();
                                     return input;
                                 }))
-                        .addPipe(Pipe.of((input, throwable) -> input + 3))
+                        .add(Pipe.of((input, throwable) -> input + 3))
                         .processUnsafe(3F);
 
         Assertions.assertEquals(4, output);
@@ -177,11 +177,11 @@ public class ConvertiblePipelineTests {
     @Test
     public void removePipelineTest() {
         int output = new ConvertiblePipelineSource<>(Integer.class)
-                .addPipe(Pipe.of((input, throwable) -> input + 3))
+                .add(Pipe.of((input, throwable) -> input + 3))
                 .convertPipeline(integer -> (float) integer, Float.class)
-                .addPipe(Pipe.of(((input, throwable) -> input / 2)))
-                .removePipeline(Integer.class)
-                .addPipe(Pipe.of((input, throwable) -> input - 3))
+                .add(Pipe.of(((input, throwable) -> input / 2)))
+                .remove(Integer.class)
+                .add(Pipe.of((input, throwable) -> input - 3))
                 .processUnsafe(4);
 
         Assertions.assertEquals(4, output);
@@ -190,10 +190,10 @@ public class ConvertiblePipelineTests {
     @Test
     public void convertiblePipelineSizeTest() {
         int size = new ConvertiblePipelineSource<>(Integer.class)
-                .addPipe(Pipe.of((input, throwable) -> input + 3))
-                .addPipe(Pipe.of((input, throwable) -> input * 2))
+                .add(Pipe.of((input, throwable) -> input + 3))
+                .add(Pipe.of((input, throwable) -> input * 2))
                 .convertPipeline(integer -> (float) integer, Float.class)
-                .addPipe(Pipe.of((input, throwable) -> input + 1F))
+                .add(Pipe.of((input, throwable) -> input + 1F))
                 .size();
 
         Assertions.assertEquals(4, size);
@@ -203,7 +203,7 @@ public class ConvertiblePipelineTests {
     public void processingCollectionInputsTest() {
         List<Integer> output = new ConvertiblePipelineSource<>(String.class)
                 .convertPipeline(Integer::valueOf, Integer.class)
-                .addPipe(InputPipe.of(input -> input * input))
+                .add(InputPipe.of(input -> input * input))
                 .processAllSafe(Arrays.asList("1", "2", "3", "4", "5"));
 
         Assertions.assertEquals(Arrays.asList(1, 4, 9, 16, 25), output);

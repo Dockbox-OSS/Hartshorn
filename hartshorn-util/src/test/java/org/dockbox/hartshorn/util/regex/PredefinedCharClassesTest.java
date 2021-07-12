@@ -37,7 +37,7 @@ public class PredefinedCharClassesTest {
 
         MatcherAssert.assertThat("Not matches on letters", regex, TestMatchMatcher.matchesTo(LETTERS_NO_DIGITS + DIGITS));
         MatcherAssert.assertThat("matches on non letters", regex, CoreMatchers.not(TestMatchMatcher.matchesTo((NON_LETTERS + SPACE))));
-        MatcherAssert.assertThat("Extracts wrong word chars", regex.getText(LETTERS_NO_DIGITS + DIGITS + NON_LETTERS + SPACE), CoreMatchers.equalTo(LETTERS_NO_DIGITS + DIGITS));
+        MatcherAssert.assertThat("Extracts wrong word chars", regex.text(LETTERS_NO_DIGITS + DIGITS + NON_LETTERS + SPACE), CoreMatchers.equalTo(LETTERS_NO_DIGITS + DIGITS));
     }
 
     @Test
@@ -46,7 +46,7 @@ public class PredefinedCharClassesTest {
 
         MatcherAssert.assertThat("matches on letters", regex, CoreMatchers.not(TestMatchMatcher.matchesTo((LETTERS_NO_DIGITS + DIGITS))));
         MatcherAssert.assertThat("Not matches on non letters", regex, TestMatchMatcher.matchesTo(NON_LETTERS + SPACE));
-        MatcherAssert.assertThat("Extracts wrong chars", regex.getText(LETTERS_NO_DIGITS + DIGITS + NON_LETTERS + SPACE), CoreMatchers.equalTo(NON_LETTERS + SPACE));
+        MatcherAssert.assertThat("Extracts wrong chars", regex.text(LETTERS_NO_DIGITS + DIGITS + NON_LETTERS + SPACE), CoreMatchers.equalTo(NON_LETTERS + SPACE));
     }
 
     @Test
@@ -55,7 +55,7 @@ public class PredefinedCharClassesTest {
 
         MatcherAssert.assertThat("matches on letters", regex, CoreMatchers.not(TestMatchMatcher.matchesTo((LETTERS_NO_DIGITS + DIGITS + NON_LETTERS))));
         MatcherAssert.assertThat("Not matches on space", regex, TestMatchMatcher.matchesTo(SPACE));
-        MatcherAssert.assertThat("Extracts wrong chars", regex.getText(LETTERS_NO_DIGITS + DIGITS + NON_LETTERS + SPACE), CoreMatchers.equalTo(SPACE));
+        MatcherAssert.assertThat("Extracts wrong chars", regex.text(LETTERS_NO_DIGITS + DIGITS + NON_LETTERS + SPACE), CoreMatchers.equalTo(SPACE));
     }
 
     @Test
@@ -64,7 +64,7 @@ public class PredefinedCharClassesTest {
 
         MatcherAssert.assertThat("Not matches on non space", regex, TestMatchMatcher.matchesTo(LETTERS_NO_DIGITS + DIGITS + NON_LETTERS));
         MatcherAssert.assertThat("matches on space", regex, CoreMatchers.not(TestMatchMatcher.matchesTo((SPACE))));
-        MatcherAssert.assertThat("Extracts wrong chars", regex.getText(LETTERS_NO_DIGITS + DIGITS + NON_LETTERS + SPACE), CoreMatchers.not(SPACE));
+        MatcherAssert.assertThat("Extracts wrong chars", regex.text(LETTERS_NO_DIGITS + DIGITS + NON_LETTERS + SPACE), CoreMatchers.not(SPACE));
     }
 
     @Test
@@ -73,7 +73,7 @@ public class PredefinedCharClassesTest {
 
         MatcherAssert.assertThat("matches on letters", regex, CoreMatchers.not(TestMatchMatcher.matchesTo((LETTERS_NO_DIGITS + SPACE + NON_LETTERS))));
         MatcherAssert.assertThat("Not matches on digits", regex, TestMatchMatcher.matchesTo(DIGITS));
-        MatcherAssert.assertThat("Extracts wrong chars", regex.getText(LETTERS_NO_DIGITS + DIGITS + NON_LETTERS + SPACE), CoreMatchers.is(DIGITS));
+        MatcherAssert.assertThat("Extracts wrong chars", regex.text(LETTERS_NO_DIGITS + DIGITS + NON_LETTERS + SPACE), CoreMatchers.is(DIGITS));
     }
 
     @Test
@@ -82,7 +82,7 @@ public class PredefinedCharClassesTest {
 
         MatcherAssert.assertThat("Not matches on letters", regex, TestMatchMatcher.matchesTo(LETTERS_NO_DIGITS + SPACE + NON_LETTERS));
         MatcherAssert.assertThat("matches on digits", regex, CoreMatchers.not(TestMatchMatcher.matchesTo((DIGITS))));
-        MatcherAssert.assertThat("Extracts wrong chars", regex.getText(LETTERS_NO_DIGITS + DIGITS + NON_LETTERS + SPACE), CoreMatchers.not(DIGITS));
+        MatcherAssert.assertThat("Extracts wrong chars", regex.text(LETTERS_NO_DIGITS + DIGITS + NON_LETTERS + SPACE), CoreMatchers.not(DIGITS));
     }
 
     @Test
@@ -91,6 +91,6 @@ public class PredefinedCharClassesTest {
 
         MatcherAssert.assertThat("not matches on word", regex, TestMatchMatcher.matchesTo(LETTERS_NO_DIGITS + DIGITS));
         MatcherAssert.assertThat("matches on space and non letters", regex, CoreMatchers.not(TestMatchMatcher.matchesTo(SPACE + NON_LETTERS)));
-        MatcherAssert.assertThat("extracts wrong chars", regex.getText(LETTERS_NO_DIGITS + DIGITS + NON_LETTERS + SPACE), CoreMatchers.is(LETTERS_NO_DIGITS + DIGITS));
+        MatcherAssert.assertThat("extracts wrong chars", regex.text(LETTERS_NO_DIGITS + DIGITS + NON_LETTERS + SPACE), CoreMatchers.is(LETTERS_NO_DIGITS + DIGITS));
     }
 }

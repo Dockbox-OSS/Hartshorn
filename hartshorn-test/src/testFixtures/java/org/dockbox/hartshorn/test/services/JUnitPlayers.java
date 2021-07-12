@@ -37,12 +37,12 @@ public class JUnitPlayers implements Players {
     public static final Player PLAYER_THREE = new JUnitPlayer(UUID.randomUUID(), PLAYER_THREE_NAME);
 
     @Override
-    public List<Player> getOnlinePlayers() {
-        return HartshornUtils.asList(Player::isOnline, PLAYER_ONE, PLAYER_TWO, PLAYER_THREE);
+    public List<Player> onlinePlayers() {
+        return HartshornUtils.asList(Player::online, PLAYER_ONE, PLAYER_TWO, PLAYER_THREE);
     }
 
     @Override
-    public Exceptional<Player> getPlayer(String name) {
+    public Exceptional<Player> player(String name) {
         if (PLAYER_ONE_NAME.equals(name)) return Exceptional.of(PLAYER_ONE);
         else if (PLAYER_TWO_NAME.equals(name)) return Exceptional.of(PLAYER_TWO);
         else if (PLAYER_THREE_NAME.equals(name)) return Exceptional.of(PLAYER_THREE);
@@ -50,10 +50,10 @@ public class JUnitPlayers implements Players {
     }
 
     @Override
-    public Exceptional<Player> getPlayer(UUID uuid) {
-        if (PLAYER_ONE.getUniqueId().equals(uuid)) return Exceptional.of(PLAYER_ONE);
-        else if (PLAYER_TWO.getUniqueId().equals(uuid)) return Exceptional.of(PLAYER_TWO);
-        else if (PLAYER_THREE.getUniqueId().equals(uuid)) return Exceptional.of(PLAYER_THREE);
+    public Exceptional<Player> player(UUID uuid) {
+        if (PLAYER_ONE.uniqueId().equals(uuid)) return Exceptional.of(PLAYER_ONE);
+        else if (PLAYER_TWO.uniqueId().equals(uuid)) return Exceptional.of(PLAYER_TWO);
+        else if (PLAYER_THREE.uniqueId().equals(uuid)) return Exceptional.of(PLAYER_THREE);
         return Exceptional.empty();
     }
 }

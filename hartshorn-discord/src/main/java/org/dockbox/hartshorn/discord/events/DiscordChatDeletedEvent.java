@@ -31,7 +31,7 @@ public class DiscordChatDeletedEvent implements DiscordEvent {
         this.messageId = messageId;
     }
 
-    public String getMessageId() {
+    public String id() {
         return this.messageId;
     }
 }

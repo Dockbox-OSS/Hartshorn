@@ -42,6 +42,7 @@ import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@SuppressWarnings("RegExpUnnecessaryNonCapturingGroup")
 public class SimpleCommandContainerContext extends DefaultContext implements CommandContainerContext {
 
     /**
@@ -116,7 +117,7 @@ public class SimpleCommandContainerContext extends DefaultContext implements Com
 
     public SimpleCommandContainerContext(Command command) {
         this.command = command;
-        this.permission = this.getPermissionOrDefault();
+        this.permission = this.getOrDefault();
         if (!"".equals(this.arguments())) {
             this.definition = this.parseElements(this.arguments(), this.permission);
         }
@@ -125,7 +126,7 @@ public class SimpleCommandContainerContext extends DefaultContext implements Com
         }
     }
 
-    protected Permission getPermissionOrDefault() {
+    protected Permission getOrDefault() {
         String raw = this.command.permission();
 
         if ("".equals(raw)) {
@@ -148,10 +149,10 @@ public class SimpleCommandContainerContext extends DefaultContext implements Com
             Matcher argumentMatcher = ARGUMENT.matcher(part);
             if (argumentMatcher.matches()) {
                 CommandDefinition definition = this.extractArguments(elements, argumentMatcher, permission);
-                final List<CommandElement<?>> commandElements = definition.getElements();
+                final List<CommandElement<?>> commandElements = definition.elements();
                 if (commandElements.isEmpty()) continue;
                 if (commandElements.size() == 1) elements.add(commandElements.get(0));
-                else elements.add(new GroupCommandElement(commandElements, definition.isOptional()));
+                else elements.add(new GroupCommandElement(commandElements, definition.optional()));
             }
             else {
                 Matcher flagMatcher = FLAG.matcher(part);
@@ -175,7 +176,7 @@ public class SimpleCommandContainerContext extends DefaultContext implements Com
 
         CommandDefinition definition = this.parseElements(elementValue, permission);
 
-        if (definition.getElements().isEmpty() && definition.getFlags().isEmpty()) {
+        if (definition.elements().isEmpty() && definition.flags().isEmpty()) {
             CommandElement<?> element = this.generateElement(argumentMatcher.group(2), permission, optional);
             definition = new CommandDefinition(optional, HartshornUtils.asList(element), HartshornUtils.emptyList());
         }
@@ -220,7 +221,7 @@ public class SimpleCommandContainerContext extends DefaultContext implements Com
     }
 
     private <E extends Enum<E>> CommandElement<?> lookupElement(String type, String name, Permission permission, boolean optional) {
-        Exceptional<ArgumentConverter<?>> converter = ArgumentConverterRegistry.getOptionalConverter(type.toLowerCase());
+        Exceptional<ArgumentConverter<?>> converter = ArgumentConverterRegistry.optionalConverter(type.toLowerCase());
         if (converter.present()) {
             return new SimpleCommandElement<>(converter.get(), name, permission, optional, converter.get().size());
         }
@@ -316,12 +317,12 @@ public class SimpleCommandContainerContext extends DefaultContext implements Com
 
     @Override
     public List<CommandElement<?>> elements() {
-        return this.definition.getElements();
+        return this.definition.elements();
     }
 
     @Override
     public List<CommandFlag> flags() {
-        return this.definition.getFlags();
+        return this.definition.flags();
     }
 
     @Override

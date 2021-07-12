@@ -19,6 +19,6 @@ package org.dockbox.hartshorn.di.types;
 
 public interface SampleInterface {
 
-    String getName();
+    String name();
 
 }

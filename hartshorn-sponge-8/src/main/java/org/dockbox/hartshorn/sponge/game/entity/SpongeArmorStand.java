@@ -60,47 +60,50 @@ public class SpongeArmorStand
     }
 
     @Override
-    public Vector3N getRotation(Limbs limb) {
+    public Vector3N rotation(Limbs limb) {
         return SpongeUtil.get(this.entity(), limbs.get(limb), SpongeConvert::fromSponge, Vector3N::empty);
     }
 
     @Override
-    public void setRotation(Limbs limb, Vector3N rotation) {
+    public void rotation(Limbs limb, Vector3N rotation) {
         this.entity().present(entity -> entity.offer(limbs.get(limb), SpongeConvert.toSpongeDouble(rotation)));
     }
 
     @Override
-    public boolean hasBaseplate() {
+    public boolean baseplate() {
         return SpongeUtil.get(this.entity(), Keys.HAS_BASE_PLATE, b -> b, () -> false);
     }
 
     @Override
-    public void setBaseplate(boolean baseplate) {
+    public SpongeArmorStand baseplate(boolean baseplate) {
         this.entity().present(entity -> entity.offer(Keys.HAS_BASE_PLATE, baseplate));
+        return this;
     }
 
     @Override
-    public boolean isSmall() {
+    public boolean small() {
         return SpongeUtil.get(this.entity(), Keys.IS_SMALL, b -> b, () -> false);
     }
 
     @Override
-    public void setSmall(boolean small) {
+    public SpongeArmorStand small(boolean small) {
         this.entity().present(entity -> entity.offer(Keys.IS_SMALL, small));
+        return this;
     }
 
     @Override
-    public boolean hasArms() {
+    public boolean arms() {
         return SpongeUtil.get(this.entity(), Keys.HAS_ARMS, b -> b, () -> false);
     }
 
     @Override
-    public void setArms(boolean arms) {
+    public SpongeArmorStand arms(boolean arms) {
         this.entity().present(entity -> entity.offer(Keys.HAS_ARMS, arms));
+        return this;
     }
 
     @Override
-    public ArmorStandInventory getInventory() {
+    public ArmorStandInventory inventory() {
         return new SpongeArmorStandInventory(this);
     }
 

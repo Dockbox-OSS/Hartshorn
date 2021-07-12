@@ -31,3448 +31,3448 @@ public abstract class MinecraftItems {
     // Static as it is possible multiple instances of this type are created
     private static final Map<MinecraftVersion, Map<String, Supplier<Item>>> customItems = HartshornUtils.emptyConcurrentMap();
 
-    public static MinecraftItems getInstance() {
-        return Hartshorn.context().get(MinecraftVersion.class).getItems();
+    public static MinecraftItems instance() {
+        return Hartshorn.context().get(MinecraftVersion.class).items();
     }
 
-    public Item getCustom(String identifier) {
-        Map<String, Supplier<Item>> customItemsForVersion = customItems.getOrDefault(this.getMinecraftVersion(), HartshornUtils.emptyMap());
-        return customItemsForVersion.getOrDefault(identifier, () -> getInstance().getAir()).get();
+    public Item custom(String identifier) {
+        Map<String, Supplier<Item>> customItemsForVersion = customItems.getOrDefault(this.minecraftVersion(), HartshornUtils.emptyMap());
+        return customItemsForVersion.getOrDefault(identifier, () -> instance().air()).get();
     }
 
-    public abstract MinecraftVersion getMinecraftVersion();
+    public abstract MinecraftVersion minecraftVersion();
 
-    public Item getAir() {
-        return Item.of(this.getAirId());
+    public Item air() {
+        return Item.of(this.airId());
     }
 
-    public String getAirId() {
+    public String airId() {
         return "minecraft:air";
     }
 
-    public MinecraftItems registerCustom(String identifier, Item item) {
-        return this.registerCustom(identifier, () -> item);
+    public MinecraftItems register(String identifier, Item item) {
+        return this.register(identifier, () -> item);
     }
 
-    public MinecraftItems registerCustom(String identifier, Supplier<Item> item) {
-        customItems.putIfAbsent(this.getMinecraftVersion(), HartshornUtils.emptyConcurrentMap());
-        if (customItems.get(this.getMinecraftVersion()).containsKey(identifier))
+    public MinecraftItems register(String identifier, Supplier<Item> item) {
+        customItems.putIfAbsent(this.minecraftVersion(), HartshornUtils.emptyConcurrentMap());
+        if (customItems.get(this.minecraftVersion()).containsKey(identifier))
             Hartshorn.log().warn("Overwriting custom item identifier '" + identifier + "'");
-        customItems.get(this.getMinecraftVersion()).put(identifier, item);
+        customItems.get(this.minecraftVersion()).put(identifier, item);
         return this;
     }
 
-    public abstract Item getAcaciaLeaves();
+    public abstract Item acaciaLeaves();
 
-    public abstract Item getAcaciaLog();
+    public abstract Item acaciaLog();
 
-    public abstract Item getAcaciaPlanks();
+    public abstract Item acaciaPlanks();
 
-    public abstract Item getAcaciaSapling();
+    public abstract Item acaciaSapling();
 
-    public abstract Item getAcaciaWoodSlab();
+    public abstract Item acaciaWoodSlab();
 
-    public abstract Item getAllium();
+    public abstract Item allium();
 
-    public abstract Item getAndesite();
+    public abstract Item andesite();
 
-    public abstract Item getAzureBluet();
+    public abstract Item azureBluet();
 
-    public abstract Item getBirchLeaves();
+    public abstract Item birchLeaves();
 
-    public abstract Item getBirchLog();
+    public abstract Item birchLog();
 
-    public abstract Item getBirchPlanks();
+    public abstract Item birchPlanks();
 
-    public abstract Item getBirchSapling();
+    public abstract Item birchSapling();
 
-    public abstract Item getBirchWoodSlab();
+    public abstract Item birchWoodSlab();
 
-    public abstract Item getBlackBanner();
+    public abstract Item blackBanner();
 
-    public abstract Item getBlackBed();
+    public abstract Item blackBed();
 
-    public abstract Item getBlackCarpet();
+    public abstract Item blackCarpet();
 
-    public abstract Item getBlackConcrete();
+    public abstract Item blackConcrete();
 
-    public abstract Item getBlackConcretePowder();
+    public abstract Item blackConcretePowder();
 
-    public abstract Item getBlackDye();
+    public abstract Item blackDye();
 
-    public abstract Item getBlackStainedGlass();
+    public abstract Item blackStainedGlass();
 
-    public abstract Item getBlackStainedGlassPane();
+    public abstract Item blackStainedGlassPane();
 
-    public abstract Item getBlackTerracotta();
+    public abstract Item blackTerracotta();
 
-    public abstract Item getBlackWool();
+    public abstract Item blackWool();
 
-    public abstract Item getBlueBanner();
+    public abstract Item blueBanner();
 
-    public abstract Item getBlueBed();
+    public abstract Item blueBed();
 
-    public abstract Item getBlueCarpet();
+    public abstract Item blueCarpet();
 
-    public abstract Item getBlueOrchid();
+    public abstract Item blueOrchid();
 
-    public abstract Item getBlueStainedGlass();
+    public abstract Item blueStainedGlass();
 
-    public abstract Item getBlueStainedGlassPane();
+    public abstract Item blueStainedGlassPane();
 
-    public abstract Item getBlueTerracotta();
+    public abstract Item blueTerracotta();
 
-    public abstract Item getBlueWool();
+    public abstract Item blueWool();
 
-    public abstract Item getBrickSlab();
+    public abstract Item brickSlab();
 
-    public abstract Item getBrownBanner();
+    public abstract Item brownBanner();
 
-    public abstract Item getBrownBed();
+    public abstract Item brownBed();
 
-    public abstract Item getBrownCarpet();
+    public abstract Item brownCarpet();
 
-    public abstract Item getBrownConcrete();
+    public abstract Item brownConcrete();
 
-    public abstract Item getBrownConcretePowder();
+    public abstract Item brownConcretePowder();
 
-    public abstract Item getBrownDye();
+    public abstract Item brownDye();
 
-    public abstract Item getBrownStainedGlass();
+    public abstract Item brownStainedGlass();
 
-    public abstract Item getBrownStainedGlassPane();
+    public abstract Item brownStainedGlassPane();
 
-    public abstract Item getBrownTerracotta();
+    public abstract Item brownTerracotta();
 
-    public abstract Item getBrownWool();
+    public abstract Item brownWool();
 
-    public abstract Item getCharcoal();
+    public abstract Item charcoal();
 
-    public abstract Item getSlightlyDamagedAnvil();
+    public abstract Item slightlyDamagedAnvil();
 
-    public abstract Item getChiseledRedSandstone();
+    public abstract Item chiseledRedSandstone();
 
-    public abstract Item getChiseledSandstone();
+    public abstract Item chiseledSandstone();
 
-    public abstract Item getChiseledStoneBricks();
+    public abstract Item chiseledStoneBricks();
 
-    public abstract Item getCoarseDirt();
+    public abstract Item coarseDirt();
 
-    public abstract Item getCobblestoneSlab();
+    public abstract Item cobblestoneSlab();
 
-    public abstract Item getCookedSalmon();
+    public abstract Item cookedSalmon();
 
-    public abstract Item getCrackedStoneBricks();
+    public abstract Item crackedStoneBricks();
 
-    public abstract Item getCreeperHead();
+    public abstract Item creeperHead();
 
-    public abstract Item getCyanBanner();
+    public abstract Item cyanBanner();
 
-    public abstract Item getCyanBed();
+    public abstract Item cyanBed();
 
-    public abstract Item getCyanCarpet();
+    public abstract Item cyanCarpet();
 
-    public abstract Item getCyanConcrete();
+    public abstract Item cyanConcrete();
 
-    public abstract Item getCyanConcretePowder();
+    public abstract Item cyanConcretePowder();
 
-    public abstract Item getCyanDye();
+    public abstract Item cyanDye();
 
-    public abstract Item getCyanStainedGlass();
+    public abstract Item cyanStainedGlass();
 
-    public abstract Item getCyanStainedGlassPane();
+    public abstract Item cyanStainedGlassPane();
 
-    public abstract Item getCyanTerracotta();
+    public abstract Item cyanTerracotta();
 
-    public abstract Item getCyanWool();
+    public abstract Item cyanWool();
 
-    public abstract Item getVeryDamagedAnvil();
+    public abstract Item veryDamagedAnvil();
 
-    public abstract Item getDarkOakLeaves();
+    public abstract Item darkOakLeaves();
 
-    public abstract Item getDarkOakLog();
+    public abstract Item darkOakLog();
 
-    public abstract Item getDarkOakPlanks();
+    public abstract Item darkOakPlanks();
 
-    public abstract Item getDarkOakSapling();
+    public abstract Item darkOakSapling();
 
-    public abstract Item getDarkOakWoodSlab();
+    public abstract Item darkOakWoodSlab();
 
-    public abstract Item getDarkPrismarine();
+    public abstract Item darkPrismarine();
 
-    public abstract Item getDiorite();
+    public abstract Item diorite();
 
-    public abstract Item getDragonHead();
+    public abstract Item dragonHead();
 
-    public abstract Item getEnchantedGoldenApple();
+    public abstract Item enchantedGoldenApple();
 
-    public abstract Item getFern();
+    public abstract Item fern();
 
-    public abstract Item getGranite();
+    public abstract Item granite();
 
-    public abstract Item getGrass();
+    public abstract Item grass();
 
-    public abstract Item getGrayBanner();
+    public abstract Item grayBanner();
 
-    public abstract Item getGrayBed();
+    public abstract Item grayBed();
 
-    public abstract Item getGrayCarpet();
+    public abstract Item grayCarpet();
 
-    public abstract Item getGrayConcrete();
+    public abstract Item grayConcrete();
 
-    public abstract Item getGrayConcretePowder();
+    public abstract Item grayConcretePowder();
 
-    public abstract Item getGrayDye();
+    public abstract Item grayDye();
 
-    public abstract Item getGrayStainedGlass();
+    public abstract Item grayStainedGlass();
 
-    public abstract Item getGrayStainedGlassPane();
+    public abstract Item grayStainedGlassPane();
 
-    public abstract Item getGrayTerracotta();
+    public abstract Item grayTerracotta();
 
-    public abstract Item getGrayWool();
+    public abstract Item grayWool();
 
-    public abstract Item getGreenBanner();
+    public abstract Item greenBanner();
 
-    public abstract Item getGreenBed();
+    public abstract Item greenBed();
 
-    public abstract Item getGreenCarpet();
+    public abstract Item greenCarpet();
 
-    public abstract Item getGreenConcrete();
+    public abstract Item greenConcrete();
 
-    public abstract Item getGreenConcretePowder();
+    public abstract Item greenConcretePowder();
 
-    public abstract Item getGreenDye();
+    public abstract Item greenDye();
 
-    public abstract Item getGreenStainedGlass();
+    public abstract Item greenStainedGlass();
 
-    public abstract Item getGreenStainedGlassPane();
+    public abstract Item greenStainedGlassPane();
 
-    public abstract Item getGreenTerracotta();
+    public abstract Item greenTerracotta();
 
-    public abstract Item getGreenWool();
+    public abstract Item greenWool();
 
-    public abstract Item getChiseledStoneBrickMonsterEgg();
+    public abstract Item chiseledStoneBrickMonsterEgg();
 
-    public abstract Item getCobblestoneMonsterEgg();
+    public abstract Item cobblestoneMonsterEgg();
 
-    public abstract Item getCrackedStoneBrickMonsterEgg();
+    public abstract Item crackedStoneBrickMonsterEgg();
 
-    public abstract Item getMossyStoneBrickMonsterEgg();
+    public abstract Item mossyStoneBrickMonsterEgg();
 
-    public abstract Item getStoneBrickMonsterEgg();
+    public abstract Item stoneBrickMonsterEgg();
 
-    public abstract Item getJungleLeaves();
+    public abstract Item jungleLeaves();
 
-    public abstract Item getJungleLog();
+    public abstract Item jungleLog();
 
-    public abstract Item getJunglePlanks();
+    public abstract Item junglePlanks();
 
-    public abstract Item getJungleSapling();
+    public abstract Item jungleSapling();
 
-    public abstract Item getJungleWoodSlab();
+    public abstract Item jungleWoodSlab();
 
-    public abstract Item getLargeFern();
+    public abstract Item largeFern();
 
-    public abstract Item getLightBlueBanner();
+    public abstract Item lightBlueBanner();
 
-    public abstract Item getLightBlueBed();
+    public abstract Item lightBlueBed();
 
-    public abstract Item getLightBlueCarpet();
+    public abstract Item lightBlueCarpet();
 
-    public abstract Item getLightBlueConcrete();
+    public abstract Item lightBlueConcrete();
 
-    public abstract Item getLightBlueConcretePowder();
+    public abstract Item lightBlueConcretePowder();
 
-    public abstract Item getLightBlueDye();
+    public abstract Item lightBlueDye();
 
-    public abstract Item getLightBlueStainedGlass();
+    public abstract Item lightBlueStainedGlass();
 
-    public abstract Item getLightBlueStainedGlassPane();
+    public abstract Item lightBlueStainedGlassPane();
 
-    public abstract Item getLightBlueTerracotta();
+    public abstract Item lightBlueTerracotta();
 
-    public abstract Item getLightBlueWool();
+    public abstract Item lightBlueWool();
 
-    public abstract Item getLightGrayBanner();
+    public abstract Item lightGrayBanner();
 
-    public abstract Item getLightGrayBed();
+    public abstract Item lightGrayBed();
 
-    public abstract Item getLightGrayCarpet();
+    public abstract Item lightGrayCarpet();
 
-    public abstract Item getLightGrayConcrete();
+    public abstract Item lightGrayConcrete();
 
-    public abstract Item getLightGrayConcretePowder();
+    public abstract Item lightGrayConcretePowder();
 
-    public abstract Item getLightGrayDye();
+    public abstract Item lightGrayDye();
 
-    public abstract Item getLightGrayStainedGlass();
+    public abstract Item lightGrayStainedGlass();
 
-    public abstract Item getLightGrayStainedGlassPane();
+    public abstract Item lightGrayStainedGlassPane();
 
-    public abstract Item getLightGrayTerracotta();
+    public abstract Item lightGrayTerracotta();
 
-    public abstract Item getLightGrayWool();
+    public abstract Item lightGrayWool();
 
-    public abstract Item getLilac();
+    public abstract Item lilac();
 
-    public abstract Item getLimeBanner();
+    public abstract Item limeBanner();
 
-    public abstract Item getLimeBed();
+    public abstract Item limeBed();
 
-    public abstract Item getLimeCarpet();
+    public abstract Item limeCarpet();
 
-    public abstract Item getLimeConcrete();
+    public abstract Item limeConcrete();
 
-    public abstract Item getLimeConcretePowder();
+    public abstract Item limeConcretePowder();
 
-    public abstract Item getLimeDye();
+    public abstract Item limeDye();
 
-    public abstract Item getLimeStainedGlass();
+    public abstract Item limeStainedGlass();
 
-    public abstract Item getLimeStainedGlassPane();
+    public abstract Item limeStainedGlassPane();
 
-    public abstract Item getLimeTerracotta();
+    public abstract Item limeTerracotta();
 
-    public abstract Item getLimeWool();
+    public abstract Item limeWool();
 
-    public abstract Item getMagentaBanner();
+    public abstract Item magentaBanner();
 
-    public abstract Item getMagentaBed();
+    public abstract Item magentaBed();
 
-    public abstract Item getMagentaCarpet();
+    public abstract Item magentaCarpet();
 
-    public abstract Item getMagentaConcrete();
+    public abstract Item magentaConcrete();
 
-    public abstract Item getMagentaConcretePowder();
+    public abstract Item magentaConcretePowder();
 
-    public abstract Item getMagentaDye();
+    public abstract Item magentaDye();
 
-    public abstract Item getMagentaStainedGlass();
+    public abstract Item magentaStainedGlass();
 
-    public abstract Item getMagentaStainedGlassPane();
+    public abstract Item magentaStainedGlassPane();
 
-    public abstract Item getMagentaTerracotta();
+    public abstract Item magentaTerracotta();
 
-    public abstract Item getMagentaWool();
+    public abstract Item magentaWool();
 
-    public abstract Item getMossyCobblestoneWall();
+    public abstract Item mossyCobblestoneWall();
 
-    public abstract Item getMossyStoneBricks();
+    public abstract Item mossyStoneBricks();
 
-    public abstract Item getNetherBrickSlab();
+    public abstract Item netherBrickSlab();
 
-    public abstract Item getOakWoodSlab();
+    public abstract Item oakWoodSlab();
 
-    public abstract Item getOrangeBanner();
+    public abstract Item orangeBanner();
 
-    public abstract Item getOrangeBed();
+    public abstract Item orangeBed();
 
-    public abstract Item getOrangeCarpet();
+    public abstract Item orangeCarpet();
 
-    public abstract Item getOrangeConcrete();
+    public abstract Item orangeConcrete();
 
-    public abstract Item getOrangeConcretePowder();
+    public abstract Item orangeConcretePowder();
 
-    public abstract Item getOrangeDye();
+    public abstract Item orangeDye();
 
-    public abstract Item getOrangeStainedGlass();
+    public abstract Item orangeStainedGlass();
 
-    public abstract Item getOrangeStainedGlassPane();
+    public abstract Item orangeStainedGlassPane();
 
-    public abstract Item getOrangeTerracotta();
+    public abstract Item orangeTerracotta();
 
-    public abstract Item getOrangeTulip();
+    public abstract Item orangeTulip();
 
-    public abstract Item getOrangeWool();
+    public abstract Item orangeWool();
 
-    public abstract Item getOxeyeDaisy();
+    public abstract Item oxeyeDaisy();
 
-    public abstract Item getPeony();
+    public abstract Item peony();
 
-    public abstract Item getPinkBanner();
+    public abstract Item pinkBanner();
 
-    public abstract Item getPinkBed();
+    public abstract Item pinkBed();
 
-    public abstract Item getPinkCarpet();
+    public abstract Item pinkCarpet();
 
-    public abstract Item getPinkConcrete();
+    public abstract Item pinkConcrete();
 
-    public abstract Item getPinkConcretePowder();
+    public abstract Item pinkConcretePowder();
 
-    public abstract Item getPinkDye();
+    public abstract Item pinkDye();
 
-    public abstract Item getPinkStainedGlass();
+    public abstract Item pinkStainedGlass();
 
-    public abstract Item getPinkStainedGlassPane();
+    public abstract Item pinkStainedGlassPane();
 
-    public abstract Item getPinkTerracotta();
+    public abstract Item pinkTerracotta();
 
-    public abstract Item getPinkTulip();
+    public abstract Item pinkTulip();
 
-    public abstract Item getPinkWool();
+    public abstract Item pinkWool();
 
-    public abstract Item getSteveHead();
+    public abstract Item steveHead();
 
-    public abstract Item getPodzol();
+    public abstract Item podzol();
 
-    public abstract Item getPolishedAndesite();
+    public abstract Item polishedAndesite();
 
-    public abstract Item getPolishedDiorite();
+    public abstract Item polishedDiorite();
 
-    public abstract Item getPolishedGranite();
+    public abstract Item polishedGranite();
 
-    public abstract Item getPrismarineBricks();
+    public abstract Item prismarineBricks();
 
-    public abstract Item getPufferfish();
+    public abstract Item pufferfish();
 
-    public abstract Item getPurpleBanner();
+    public abstract Item purpleBanner();
 
-    public abstract Item getPurpleBed();
+    public abstract Item purpleBed();
 
-    public abstract Item getPurpleCarpet();
+    public abstract Item purpleCarpet();
 
-    public abstract Item getPurpleConcrete();
+    public abstract Item purpleConcrete();
 
-    public abstract Item getPurpleConcretePowder();
+    public abstract Item purpleConcretePowder();
 
-    public abstract Item getPurpleDye();
+    public abstract Item purpleDye();
 
-    public abstract Item getPurpleStainedGlass();
+    public abstract Item purpleStainedGlass();
 
-    public abstract Item getPurpleStainedGlassPane();
+    public abstract Item purpleStainedGlassPane();
 
-    public abstract Item getPurpleTerracotta();
+    public abstract Item purpleTerracotta();
 
-    public abstract Item getPurpleWool();
+    public abstract Item purpleWool();
 
-    public abstract Item getPillarQuartzBlock();
+    public abstract Item pillarQuartzBlock();
 
-    public abstract Item getQuartzSlab();
+    public abstract Item quartzSlab();
 
-    public abstract Item getRedBanner();
+    public abstract Item redBanner();
 
-    public abstract Item getRedBed();
+    public abstract Item redBed();
 
-    public abstract Item getRedCarpet();
+    public abstract Item redCarpet();
 
-    public abstract Item getRedConcrete();
+    public abstract Item redConcrete();
 
-    public abstract Item getRedConcretePowder();
+    public abstract Item redConcretePowder();
 
-    public abstract Item getRedDye();
+    public abstract Item redDye();
 
-    public abstract Item getRedSand();
+    public abstract Item redSand();
 
-    public abstract Item getRedSandstoneSlab();
+    public abstract Item redSandstoneSlab();
 
-    public abstract Item getRedStainedGlass();
+    public abstract Item redStainedGlass();
 
-    public abstract Item getRedStainedGlassPane();
+    public abstract Item redStainedGlassPane();
 
-    public abstract Item getRedTerracotta();
+    public abstract Item redTerracotta();
 
-    public abstract Item getRedTulip();
+    public abstract Item redTulip();
 
-    public abstract Item getRedWool();
+    public abstract Item redWool();
 
-    public abstract Item getRoseBush();
+    public abstract Item roseBush();
 
-    public abstract Item getRawSalmon();
+    public abstract Item rawSalmon();
 
-    public abstract Item getSandstoneSlab();
+    public abstract Item sandstoneSlab();
 
-    public abstract Item getSkeletonSkull();
+    public abstract Item skeletonSkull();
 
-    public abstract Item getSmoothRedSandstone();
+    public abstract Item smoothRedSandstone();
 
-    public abstract Item getSmoothSandstone();
+    public abstract Item smoothSandstone();
 
-    public abstract Item getSpruceLeaves();
+    public abstract Item spruceLeaves();
 
-    public abstract Item getSpruceLog();
+    public abstract Item spruceLog();
 
-    public abstract Item getSprucePlanks();
+    public abstract Item sprucePlanks();
 
-    public abstract Item getSpruceSapling();
+    public abstract Item spruceSapling();
 
-    public abstract Item getSpruceWoodSlab();
+    public abstract Item spruceWoodSlab();
 
-    public abstract Item getStoneBrickSlab();
+    public abstract Item stoneBrickSlab();
 
-    public abstract Item getDoubleTallgrass();
+    public abstract Item doubleTallgrass();
 
-    public abstract Item getTropicalFish();
+    public abstract Item tropicalFish();
 
-    public abstract Item getWetSponge();
+    public abstract Item wetSponge();
 
-    public abstract Item getWhiteBanner();
+    public abstract Item whiteBanner();
 
-    public abstract Item getWhiteBed();
+    public abstract Item whiteBed();
 
-    public abstract Item getWhiteCarpet();
+    public abstract Item whiteCarpet();
 
-    public abstract Item getWhiteConcrete();
+    public abstract Item whiteConcrete();
 
-    public abstract Item getWhiteConcretePowder();
+    public abstract Item whiteConcretePowder();
 
-    public abstract Item getWhiteDye();
+    public abstract Item whiteDye();
 
-    public abstract Item getWhiteStainedGlass();
+    public abstract Item whiteStainedGlass();
 
-    public abstract Item getWhiteStainedGlassPane();
+    public abstract Item whiteStainedGlassPane();
 
-    public abstract Item getWhiteTulip();
+    public abstract Item whiteTulip();
 
-    public abstract Item getWitherSkeletonSkull();
+    public abstract Item witherSkeletonSkull();
 
-    public abstract Item getYellowBanner();
+    public abstract Item yellowBanner();
 
-    public Item getAcaciaBoat() {
+    public Item acaciaBoat() {
         return Item.of("minecraft:acacia_boat");
     }
 
-    public Item getAcaciaButton() {
+    public Item acaciaButton() {
         return Item.of("minecraft:acacia_button");
     }
 
-    public Item getAcaciaDoor() {
+    public Item acaciaDoor() {
         return Item.of("minecraft:acacia_door");
     }
 
-    public Item getAcaciaFence() {
+    public Item acaciaFence() {
         return Item.of("minecraft:acacia_fence");
     }
 
-    public Item getAcaciaFenceGate() {
+    public Item acaciaFenceGate() {
         return Item.of("minecraft:acacia_fence_gate");
     }
 
-    public Item getAcaciaPressurePlate() {
+    public Item acaciaPressurePlate() {
         return Item.of("minecraft:acacia_pressure_plate");
     }
 
-    public Item getAcaciaSign() {
+    public Item acaciaSign() {
         return Item.of("minecraft:acacia_sign");
     }
 
-    public Item getAcaciaWoodStairs() {
+    public Item acaciaWoodStairs() {
         return Item.of("minecraft:acacia_stairs");
     }
 
-    public Item getAcaciaTrapdoor() {
+    public Item acaciaTrapdoor() {
         return Item.of("minecraft:acacia_trapdoor");
     }
 
-    public Item getAcaciaWoodWithBark() {
+    public Item acaciaWoodWithBark() {
         return Item.of("minecraft:acacia_wood");
     }
 
-    public Item getActivatorRails() {
+    public Item activatorRails() {
         return Item.of("minecraft:activator_rail");
     }
 
-    public Item getAncientDebris() {
+    public Item ancientDebris() {
         return Item.of("minecraft:ancient_debris");
     }
 
-    public Item getAndesiteSlab() {
+    public Item andesiteSlab() {
         return Item.of("minecraft:andesite_slab");
     }
 
-    public Item getAndesiteStairs() {
+    public Item andesiteStairs() {
         return Item.of("minecraft:andesite_stairs");
     }
 
-    public Item getAndesiteWall() {
+    public Item andesiteWall() {
         return Item.of("minecraft:andesite_wall");
     }
 
-    public Item getAnvil() {
+    public Item anvil() {
         return Item.of("minecraft:anvil");
     }
 
-    public Item getApple() {
+    public Item apple() {
         return Item.of("minecraft:apple");
     }
 
-    public Item getArmorStand() {
+    public Item armorStand() {
         return Item.of("minecraft:armor_stand");
     }
 
-    public Item getArrow() {
+    public Item arrow() {
         return Item.of("minecraft:arrow");
     }
 
-    public Item getBakedPotato() {
+    public Item bakedPotato() {
         return Item.of("minecraft:baked_potato");
     }
 
-    public Item getBamboo() {
+    public Item bamboo() {
         return Item.of("minecraft:bamboo");
     }
 
-    public Item getBarrel() {
+    public Item barrel() {
         return Item.of("minecraft:barrel");
     }
 
-    public Item getBarrier() {
+    public Item barrier() {
         return Item.of("minecraft:barrier");
     }
 
-    public Item getBasalt() {
+    public Item basalt() {
         return Item.of("minecraft:basalt");
     }
 
-    public Item getBatSpawnEgg() {
+    public Item batSpawnEgg() {
         return Item.of("minecraft:bat_spawn_egg");
     }
 
-    public Item getBeacon() {
+    public Item beacon() {
         return Item.of("minecraft:beacon");
     }
 
-    public Item getBedrock() {
+    public Item bedrock() {
         return Item.of("minecraft:bedrock");
     }
 
-    public Item getBeeNest() {
+    public Item beeNest() {
         return Item.of("minecraft:bee_nest");
     }
 
-    public Item getBeeSpawnEgg() {
+    public Item beeSpawnEgg() {
         return Item.of("minecraft:bee_spawn_egg");
     }
 
-    public Item getRawBeef() {
+    public Item rawBeef() {
         return Item.of("minecraft:beef");
     }
 
-    public Item getBeehive() {
+    public Item beehive() {
         return Item.of("minecraft:beehive");
     }
 
-    public Item getBeetroot() {
+    public Item beetroot() {
         return Item.of("minecraft:beetroot");
     }
 
-    public Item getBeetrootSeeds() {
+    public Item beetrootSeeds() {
         return Item.of("minecraft:beetroot_seeds");
     }
 
-    public Item getBeetrootSoup() {
+    public Item beetrootSoup() {
         return Item.of("minecraft:beetroot_soup");
     }
 
-    public Item getBell() {
+    public Item bell() {
         return Item.of("minecraft:bell");
     }
 
-    public Item getBirchBoat() {
+    public Item birchBoat() {
         return Item.of("minecraft:birch_boat");
     }
 
-    public Item getBirchButton() {
+    public Item birchButton() {
         return Item.of("minecraft:birch_button");
     }
 
-    public Item getBirchDoor() {
+    public Item birchDoor() {
         return Item.of("minecraft:birch_door");
     }
 
-    public Item getBirchFence() {
+    public Item birchFence() {
         return Item.of("minecraft:birch_fence");
     }
 
-    public Item getBirchFenceGate() {
+    public Item birchFenceGate() {
         return Item.of("minecraft:birch_fence_gate");
     }
 
-    public Item getBirchPressurePlate() {
+    public Item birchPressurePlate() {
         return Item.of("minecraft:birch_pressure_plate");
     }
 
-    public Item getBirchSign() {
+    public Item birchSign() {
         return Item.of("minecraft:birch_sign");
     }
 
-    public Item getBirchWoodStairs() {
+    public Item birchWoodStairs() {
         return Item.of("minecraft:birch_stairs");
     }
 
-    public Item getBirchTrapdoor() {
+    public Item birchTrapdoor() {
         return Item.of("minecraft:birch_trapdoor");
     }
 
-    public Item getBirchWoodWithBark() {
+    public Item birchWoodWithBark() {
         return Item.of("minecraft:birch_wood");
     }
 
-    public Item getBlackGlazedTerracotta() {
+    public Item blackGlazedTerracotta() {
         return Item.of("minecraft:black_glazed_terracotta");
     }
 
-    public Item getBlackShulkerBox() {
+    public Item blackShulkerBox() {
         return Item.of("minecraft:black_shulker_box");
     }
 
-    public Item getBlackstone() {
+    public Item blackstone() {
         return Item.of("minecraft:blackstone");
     }
 
-    public Item getBlackstoneSlab() {
+    public Item blackstoneSlab() {
         return Item.of("minecraft:blackstone_slab");
     }
 
-    public Item getBlackstoneStairs() {
+    public Item blackstoneStairs() {
         return Item.of("minecraft:blackstone_stairs");
     }
 
-    public Item getBlackstoneWall() {
+    public Item blackstoneWall() {
         return Item.of("minecraft:blackstone_wall");
     }
 
-    public Item getBlastFurnace() {
+    public Item blastFurnace() {
         return Item.of("minecraft:blast_furnace");
     }
 
-    public Item getBlazePowder() {
+    public Item blazePowder() {
         return Item.of("minecraft:blaze_powder");
     }
 
-    public Item getBlazeRod() {
+    public Item blazeRod() {
         return Item.of("minecraft:blaze_rod");
     }
 
-    public Item getBlazeSpawnEgg() {
+    public Item blazeSpawnEgg() {
         return Item.of("minecraft:blaze_spawn_egg");
     }
 
-    public Item getBlueConcrete() {
+    public Item blueConcrete() {
         return Item.of("minecraft:blue_concrete");
     }
 
-    public Item getBlueConcretePowder() {
+    public Item blueConcretePowder() {
         return Item.of("minecraft:blue_concrete_powder");
     }
 
-    public Item getBlueDye() {
+    public Item blueDye() {
         return Item.of("minecraft:blue_dye");
     }
 
-    public Item getBlueGlazedTerracotta() {
+    public Item blueGlazedTerracotta() {
         return Item.of("minecraft:blue_glazed_terracotta");
     }
 
-    public Item getBlueIce() {
+    public Item blueIce() {
         return Item.of("minecraft:blue_ice");
     }
 
-    public Item getBlueShulkerBox() {
+    public Item blueShulkerBox() {
         return Item.of("minecraft:blue_shulker_box");
     }
 
-    public Item getBone() {
+    public Item bone() {
         return Item.of("minecraft:bone");
     }
 
-    public Item getBoneBlock() {
+    public Item boneBlock() {
         return Item.of("minecraft:bone_block");
     }
 
-    public Item getBoneMeal() {
+    public Item boneMeal() {
         return Item.of("minecraft:bone_meal");
     }
 
-    public Item getBook() {
+    public Item book() {
         return Item.of("minecraft:book");
     }
 
-    public Item getBookshelf() {
+    public Item bookshelf() {
         return Item.of("minecraft:bookshelf");
     }
 
-    public Item getBow() {
+    public Item bow() {
         return Item.of("minecraft:bow");
     }
 
-    public Item getBowl() {
+    public Item bowl() {
         return Item.of("minecraft:bowl");
     }
 
-    public Item getBrainCoral() {
+    public Item brainCoral() {
         return Item.of("minecraft:brain_coral");
     }
 
-    public Item getBrainCoralBlock() {
+    public Item brainCoralBlock() {
         return Item.of("minecraft:brain_coral_block");
     }
 
-    public Item getBrainCoralFan() {
+    public Item brainCoralFan() {
         return Item.of("minecraft:brain_coral_fan");
     }
 
-    public Item getBread() {
+    public Item bread() {
         return Item.of("minecraft:bread");
     }
 
-    public Item getBrewingStand() {
+    public Item brewingStand() {
         return Item.of("minecraft:brewing_stand");
     }
 
-    public Item getBrick() {
+    public Item brick() {
         return Item.of("minecraft:brick");
     }
 
-    public Item getBrickStairs() {
+    public Item brickStairs() {
         return Item.of("minecraft:brick_stairs");
     }
 
-    public Item getBrickWall() {
+    public Item brickWall() {
         return Item.of("minecraft:brick_wall");
     }
 
-    public Item getBricks() {
+    public Item bricks() {
         return Item.of("minecraft:bricks");
     }
 
-    public Item getBrownGlazedTerracotta() {
+    public Item brownGlazedTerracotta() {
         return Item.of("minecraft:brown_glazed_terracotta");
     }
 
-    public Item getBrownMushroom() {
+    public Item brownMushroom() {
         return Item.of("minecraft:brown_mushroom");
     }
 
-    public Item getBrownMushroomBlock() {
+    public Item brownMushroomBlock() {
         return Item.of("minecraft:brown_mushroom_block");
     }
 
-    public Item getBrownShulkerBox() {
+    public Item brownShulkerBox() {
         return Item.of("minecraft:brown_shulker_box");
     }
 
-    public Item getBubbleCoral() {
+    public Item bubbleCoral() {
         return Item.of("minecraft:bubble_coral");
     }
 
-    public Item getBubbleCoralBlock() {
+    public Item bubbleCoralBlock() {
         return Item.of("minecraft:bubble_coral_block");
     }
 
-    public Item getBubbleCoralFan() {
+    public Item bubbleCoralFan() {
         return Item.of("minecraft:bubble_coral_fan");
     }
 
-    public Item getBucket() {
+    public Item bucket() {
         return Item.of("minecraft:bucket");
     }
 
-    public Item getCactus() {
+    public Item cactus() {
         return Item.of("minecraft:cactus");
     }
 
-    public Item getCake() {
+    public Item cake() {
         return Item.of("minecraft:cake");
     }
 
-    public Item getCampfire() {
+    public Item campfire() {
         return Item.of("minecraft:campfire");
     }
 
-    public Item getCarrot() {
+    public Item carrot() {
         return Item.of("minecraft:carrot");
     }
 
-    public Item getCarrotOnAStick() {
+    public Item carrotOnAStick() {
         return Item.of("minecraft:carrot_on_a_stick");
     }
 
-    public Item getCartographyTable() {
+    public Item cartographyTable() {
         return Item.of("minecraft:cartography_table");
     }
 
-    public Item getCarvedPumpkin() {
+    public Item carvedPumpkin() {
         return Item.of("minecraft:carved_pumpkin");
     }
 
-    public Item getCatSpawnEgg() {
+    public Item catSpawnEgg() {
         return Item.of("minecraft:cat_spawn_egg");
     }
 
-    public Item getCauldron() {
+    public Item cauldron() {
         return Item.of("minecraft:cauldron");
     }
 
-    public Item getCaveSpiderSpawnEgg() {
+    public Item caveSpiderSpawnEgg() {
         return Item.of("minecraft:cave_spider_spawn_egg");
     }
 
-    public Item getChain() {
+    public Item chain() {
         return Item.of("minecraft:chain");
     }
 
-    public Item getChainCommandBlock() {
+    public Item chainCommandBlock() {
         return Item.of("minecraft:chain_command_block");
     }
 
-    public Item getChainBoots() {
+    public Item chainBoots() {
         return Item.of("minecraft:chainmail_boots");
     }
 
-    public Item getChainChestplate() {
+    public Item chainChestplate() {
         return Item.of("minecraft:chainmail_chestplate");
     }
 
-    public Item getChainHelmet() {
+    public Item chainHelmet() {
         return Item.of("minecraft:chainmail_helmet");
     }
 
-    public Item getChainLeggings() {
+    public Item chainLeggings() {
         return Item.of("minecraft:chainmail_leggings");
     }
 
-    public Item getChest() {
+    public Item chest() {
         return Item.of("minecraft:chest");
     }
 
-    public Item getMinecartWithChest() {
+    public Item minecartWithChest() {
         return Item.of("minecraft:chest_minecart");
     }
 
-    public Item getRawChicken() {
+    public Item rawChicken() {
         return Item.of("minecraft:chicken");
     }
 
-    public Item getChickenSpawnEgg() {
+    public Item chickenSpawnEgg() {
         return Item.of("minecraft:chicken_spawn_egg");
     }
 
-    public Item getChiseledNetherBricks() {
+    public Item chiseledNetherBricks() {
         return Item.of("minecraft:chiseled_nether_bricks");
     }
 
-    public Item getChiseledPolishedBlackstone() {
+    public Item chiseledPolishedBlackstone() {
         return Item.of("minecraft:chiseled_polished_blackstone");
     }
 
-    public Item getChiseledQuartzBlock() {
+    public Item chiseledQuartzBlock() {
         return Item.of("minecraft:chiseled_quartz_block");
     }
 
-    public Item getChorusFlower() {
+    public Item chorusFlower() {
         return Item.of("minecraft:chorus_flower");
     }
 
-    public Item getChorusFruit() {
+    public Item chorusFruit() {
         return Item.of("minecraft:chorus_fruit");
     }
 
-    public Item getChorusPlant() {
+    public Item chorusPlant() {
         return Item.of("minecraft:chorus_plant");
     }
 
-    public Item getClayBlock() {
+    public Item clayBlock() {
         return Item.of("minecraft:clay");
     }
 
-    public Item getClay() {
+    public Item clay() {
         return Item.of("minecraft:clay_ball");
     }
 
-    public Item getClock() {
+    public Item clock() {
         return Item.of("minecraft:clock");
     }
 
-    public Item getCoal() {
+    public Item coal() {
         return Item.of("minecraft:coal");
     }
 
-    public Item getCoalBlock() {
+    public Item coalBlock() {
         return Item.of("minecraft:coal_block");
     }
 
-    public Item getCoalOre() {
+    public Item coalOre() {
         return Item.of("minecraft:coal_ore");
     }
 
-    public Item getCobblestone() {
+    public Item cobblestone() {
         return Item.of("minecraft:cobblestone");
     }
 
-    public Item getCobblestoneStairs() {
+    public Item cobblestoneStairs() {
         return Item.of("minecraft:cobblestone_stairs");
     }
 
-    public Item getCobblestoneWall() {
+    public Item cobblestoneWall() {
         return Item.of("minecraft:cobblestone_wall");
     }
 
-    public Item getCobweb() {
+    public Item cobweb() {
         return Item.of("minecraft:cobweb");
     }
 
-    public Item getCocoaBeans() {
+    public Item cocoaBeans() {
         return Item.of("minecraft:cocoa_beans");
     }
 
-    public Item getRawCod() {
+    public Item rawCod() {
         return Item.of("minecraft:cod");
     }
 
-    public Item getBucketOfCod() {
+    public Item bucketOfCod() {
         return Item.of("minecraft:cod_bucket");
     }
 
-    public Item getCodSpawnEgg() {
+    public Item codSpawnEgg() {
         return Item.of("minecraft:cod_spawn_egg");
     }
 
-    public Item getCommandBlock() {
+    public Item commandBlock() {
         return Item.of("minecraft:command_block");
     }
 
-    public Item getMinecartWithCommandBlock() {
+    public Item minecartWithCommandBlock() {
         return Item.of("minecraft:command_block_minecart");
     }
 
-    public Item getRedstoneComparator() {
+    public Item redstoneComparator() {
         return Item.of("minecraft:comparator");
     }
 
-    public Item getCompass() {
+    public Item compass() {
         return Item.of("minecraft:compass");
     }
 
-    public Item getComposter() {
+    public Item composter() {
         return Item.of("minecraft:composter");
     }
 
-    public Item getConduit() {
+    public Item conduit() {
         return Item.of("minecraft:conduit");
     }
 
-    public Item getSteak() {
+    public Item steak() {
         return Item.of("minecraft:cooked_beef");
     }
 
-    public Item getCookedChicken() {
+    public Item cookedChicken() {
         return Item.of("minecraft:cooked_chicken");
     }
 
-    public Item getCookedCod() {
+    public Item cookedCod() {
         return Item.of("minecraft:cooked_cod");
     }
 
-    public Item getCookedMutton() {
+    public Item cookedMutton() {
         return Item.of("minecraft:cooked_mutton");
     }
 
-    public Item getCookedPorkchop() {
+    public Item cookedPorkchop() {
         return Item.of("minecraft:cooked_porkchop");
     }
 
-    public Item getCookedRabbit() {
+    public Item cookedRabbit() {
         return Item.of("minecraft:cooked_rabbit");
     }
 
-    public Item getCookie() {
+    public Item cookie() {
         return Item.of("minecraft:cookie");
     }
 
-    public Item getCornflower() {
+    public Item cornflower() {
         return Item.of("minecraft:cornflower");
     }
 
-    public Item getCowSpawnEgg() {
+    public Item cowSpawnEgg() {
         return Item.of("minecraft:cow_spawn_egg");
     }
 
-    public Item getCrackedNetherBricks() {
+    public Item crackedNetherBricks() {
         return Item.of("minecraft:cracked_nether_bricks");
     }
 
-    public Item getCrackedPolishedBlackstoneBricks() {
+    public Item crackedPolishedBlackstoneBricks() {
         return Item.of("minecraft:cracked_polished_blackstone_bricks");
     }
 
-    public Item getCraftingTable() {
+    public Item craftingTable() {
         return Item.of("minecraft:crafting_table");
     }
 
-    public Item getCreeperChargeBannerPattern() {
+    public Item creeperChargeBannerPattern() {
         return Item.of("minecraft:creeper_banner_pattern");
     }
 
-    public Item getCreeperSpawnEgg() {
+    public Item creeperSpawnEgg() {
         return Item.of("minecraft:creeper_spawn_egg");
     }
 
-    public Item getCrimsonButton() {
+    public Item crimsonButton() {
         return Item.of("minecraft:crimson_button");
     }
 
-    public Item getCrimsonDoor() {
+    public Item crimsonDoor() {
         return Item.of("minecraft:crimson_door");
     }
 
-    public Item getCrimsonFence() {
+    public Item crimsonFence() {
         return Item.of("minecraft:crimson_fence");
     }
 
-    public Item getCrimsonFenceGate() {
+    public Item crimsonFenceGate() {
         return Item.of("minecraft:crimson_fence_gate");
     }
 
-    public Item getCrimsonFungus() {
+    public Item crimsonFungus() {
         return Item.of("minecraft:crimson_fungus");
     }
 
-    public Item getCrimsonHyphae() {
+    public Item crimsonHyphae() {
         return Item.of("minecraft:crimson_hyphae");
     }
 
-    public Item getCrimsonNylium() {
+    public Item crimsonNylium() {
         return Item.of("minecraft:crimson_nylium");
     }
 
-    public Item getCrimsonPlanks() {
+    public Item crimsonPlanks() {
         return Item.of("minecraft:crimson_planks");
     }
 
-    public Item getCrimsonPressurePlate() {
+    public Item crimsonPressurePlate() {
         return Item.of("minecraft:crimson_pressure_plate");
     }
 
-    public Item getCrimsonRoots() {
+    public Item crimsonRoots() {
         return Item.of("minecraft:crimson_roots");
     }
 
-    public Item getCrimsonSign() {
+    public Item crimsonSign() {
         return Item.of("minecraft:crimson_sign");
     }
 
-    public Item getCrimsonSlab() {
+    public Item crimsonSlab() {
         return Item.of("minecraft:crimson_slab");
     }
 
-    public Item getCrimsonStairs() {
+    public Item crimsonStairs() {
         return Item.of("minecraft:crimson_stairs");
     }
 
-    public Item getCrimsonStem() {
+    public Item crimsonStem() {
         return Item.of("minecraft:crimson_stem");
     }
 
-    public Item getCrimsonTrapdoor() {
+    public Item crimsonTrapdoor() {
         return Item.of("minecraft:crimson_trapdoor");
     }
 
-    public Item getCrossbow() {
+    public Item crossbow() {
         return Item.of("minecraft:crossbow");
     }
 
-    public Item getCryingObsidian() {
+    public Item cryingObsidian() {
         return Item.of("minecraft:crying_obsidian");
     }
 
-    public Item getCutRedSandstone() {
+    public Item cutRedSandstone() {
         return Item.of("minecraft:cut_red_sandstone");
     }
 
-    public Item getCutRedSandstoneSlab() {
+    public Item cutRedSandstoneSlab() {
         return Item.of("minecraft:cut_red_sandstone_slab");
     }
 
-    public Item getCutSandstone() {
+    public Item cutSandstone() {
         return Item.of("minecraft:cut_sandstone");
     }
 
-    public Item getCutSandstoneSlab() {
+    public Item cutSandstoneSlab() {
         return Item.of("minecraft:cut_sandstone_slab");
     }
 
-    public Item getCyanGlazedTerracotta() {
+    public Item cyanGlazedTerracotta() {
         return Item.of("minecraft:cyan_glazed_terracotta");
     }
 
-    public Item getCyanShulkerBox() {
+    public Item cyanShulkerBox() {
         return Item.of("minecraft:cyan_shulker_box");
     }
 
-    public Item getDandelion() {
+    public Item dandelion() {
         return Item.of("minecraft:dandelion");
     }
 
-    public Item getDarkOakBoat() {
+    public Item darkOakBoat() {
         return Item.of("minecraft:dark_oak_boat");
     }
 
-    public Item getDarkOakButton() {
+    public Item darkOakButton() {
         return Item.of("minecraft:dark_oak_button");
     }
 
-    public Item getDarkOakDoor() {
+    public Item darkOakDoor() {
         return Item.of("minecraft:dark_oak_door");
     }
 
-    public Item getDarkOakFence() {
+    public Item darkOakFence() {
         return Item.of("minecraft:dark_oak_fence");
     }
 
-    public Item getDarkOakFenceGate() {
+    public Item darkOakFenceGate() {
         return Item.of("minecraft:dark_oak_fence_gate");
     }
 
-    public Item getDarkOakPressurePlate() {
+    public Item darkOakPressurePlate() {
         return Item.of("minecraft:dark_oak_pressure_plate");
     }
 
-    public Item getDarkOakSign() {
+    public Item darkOakSign() {
         return Item.of("minecraft:dark_oak_sign");
     }
 
-    public Item getDarkOakWoodStairs() {
+    public Item darkOakWoodStairs() {
         return Item.of("minecraft:dark_oak_stairs");
     }
 
-    public Item getDarkOakTrapdoor() {
+    public Item darkOakTrapdoor() {
         return Item.of("minecraft:dark_oak_trapdoor");
     }
 
-    public Item getDarkOakWoodWithBark() {
+    public Item darkOakWoodWithBark() {
         return Item.of("minecraft:dark_oak_wood");
     }
 
-    public Item getDarkPrismarineSlab() {
+    public Item darkPrismarineSlab() {
         return Item.of("minecraft:dark_prismarine_slab");
     }
 
-    public Item getDarkPrismarineStairs() {
+    public Item darkPrismarineStairs() {
         return Item.of("minecraft:dark_prismarine_stairs");
     }
 
-    public Item getDaylightSensor() {
+    public Item daylightSensor() {
         return Item.of("minecraft:daylight_detector");
     }
 
-    public Item getDeadBrainCoral() {
+    public Item deadBrainCoral() {
         return Item.of("minecraft:dead_brain_coral");
     }
 
-    public Item getDeadBrainCoralBlock() {
+    public Item deadBrainCoralBlock() {
         return Item.of("minecraft:dead_brain_coral_block");
     }
 
-    public Item getDeadBrainCoralFan() {
+    public Item deadBrainCoralFan() {
         return Item.of("minecraft:dead_brain_coral_fan");
     }
 
-    public Item getDeadBubbleCoral() {
+    public Item deadBubbleCoral() {
         return Item.of("minecraft:dead_bubble_coral");
     }
 
-    public Item getDeadBubbleCoralBlock() {
+    public Item deadBubbleCoralBlock() {
         return Item.of("minecraft:dead_bubble_coral_block");
     }
 
-    public Item getDeadBubbleCoralFan() {
+    public Item deadBubbleCoralFan() {
         return Item.of("minecraft:dead_bubble_coral_fan");
     }
 
-    public Item getDeadBush() {
+    public Item deadBush() {
         return Item.of("minecraft:dead_bush");
     }
 
-    public Item getDeadFireCoral() {
+    public Item deadFireCoral() {
         return Item.of("minecraft:dead_fire_coral");
     }
 
-    public Item getDeadFireCoralBlock() {
+    public Item deadFireCoralBlock() {
         return Item.of("minecraft:dead_fire_coral_block");
     }
 
-    public Item getDeadFireCoralFan() {
+    public Item deadFireCoralFan() {
         return Item.of("minecraft:dead_fire_coral_fan");
     }
 
-    public Item getDeadHornCoral() {
+    public Item deadHornCoral() {
         return Item.of("minecraft:dead_horn_coral");
     }
 
-    public Item getDeadHornCoralBlock() {
+    public Item deadHornCoralBlock() {
         return Item.of("minecraft:dead_horn_coral_block");
     }
 
-    public Item getDeadHornCoralFan() {
+    public Item deadHornCoralFan() {
         return Item.of("minecraft:dead_horn_coral_fan");
     }
 
-    public Item getDeadTubeCoral() {
+    public Item deadTubeCoral() {
         return Item.of("minecraft:dead_tube_coral");
     }
 
-    public Item getDeadTubeCoralBlock() {
+    public Item deadTubeCoralBlock() {
         return Item.of("minecraft:dead_tube_coral_block");
     }
 
-    public Item getDeadTubeCoralFan() {
+    public Item deadTubeCoralFan() {
         return Item.of("minecraft:dead_tube_coral_fan");
     }
 
-    public Item getDetectorRails() {
+    public Item detectorRails() {
         return Item.of("minecraft:detector_rail");
     }
 
-    public Item getDiamond() {
+    public Item diamond() {
         return Item.of("minecraft:diamond");
     }
 
-    public Item getDiamondAxe() {
+    public Item diamondAxe() {
         return Item.of("minecraft:diamond_axe");
     }
 
-    public Item getBlockOfDiamond() {
+    public Item blockOfDiamond() {
         return Item.of("minecraft:diamond_block");
     }
 
-    public Item getDiamondBoots() {
+    public Item diamondBoots() {
         return Item.of("minecraft:diamond_boots");
     }
 
-    public Item getDiamondChestplate() {
+    public Item diamondChestplate() {
         return Item.of("minecraft:diamond_chestplate");
     }
 
-    public Item getDiamondHelmet() {
+    public Item diamondHelmet() {
         return Item.of("minecraft:diamond_helmet");
     }
 
-    public Item getDiamondHoe() {
+    public Item diamondHoe() {
         return Item.of("minecraft:diamond_hoe");
     }
 
-    public Item getDiamondHorseArmor() {
+    public Item diamondHorseArmor() {
         return Item.of("minecraft:diamond_horse_armor");
     }
 
-    public Item getDiamondLeggings() {
+    public Item diamondLeggings() {
         return Item.of("minecraft:diamond_leggings");
     }
 
-    public Item getDiamondOre() {
+    public Item diamondOre() {
         return Item.of("minecraft:diamond_ore");
     }
 
-    public Item getDiamondPickaxe() {
+    public Item diamondPickaxe() {
         return Item.of("minecraft:diamond_pickaxe");
     }
 
-    public Item getDiamondShovel() {
+    public Item diamondShovel() {
         return Item.of("minecraft:diamond_shovel");
     }
 
-    public Item getDiamondSword() {
+    public Item diamondSword() {
         return Item.of("minecraft:diamond_sword");
     }
 
-    public Item getDioriteSlab() {
+    public Item dioriteSlab() {
         return Item.of("minecraft:diorite_slab");
     }
 
-    public Item getDioriteStairs() {
+    public Item dioriteStairs() {
         return Item.of("minecraft:diorite_stairs");
     }
 
-    public Item getDioriteWall() {
+    public Item dioriteWall() {
         return Item.of("minecraft:diorite_wall");
     }
 
-    public Item getDirt() {
+    public Item dirt() {
         return Item.of("minecraft:dirt");
     }
 
-    public Item getDispenser() {
+    public Item dispenser() {
         return Item.of("minecraft:dispenser");
     }
 
-    public Item getDolphinSpawnEgg() {
+    public Item dolphinSpawnEgg() {
         return Item.of("minecraft:dolphin_spawn_egg");
     }
 
-    public Item getDonkeySpawnEgg() {
+    public Item donkeySpawnEgg() {
         return Item.of("minecraft:donkey_spawn_egg");
     }
 
-    public Item getDragonsBreath() {
+    public Item dragonsBreath() {
         return Item.of("minecraft:dragon_breath");
     }
 
-    public Item getDragonEgg() {
+    public Item dragonEgg() {
         return Item.of("minecraft:dragon_egg");
     }
 
-    public Item getDriedKelp() {
+    public Item driedKelp() {
         return Item.of("minecraft:dried_kelp");
     }
 
-    public Item getDriedKelpBlock() {
+    public Item driedKelpBlock() {
         return Item.of("minecraft:dried_kelp_block");
     }
 
-    public Item getDropper() {
+    public Item dropper() {
         return Item.of("minecraft:dropper");
     }
 
-    public Item getDrownedSpawnEgg() {
+    public Item drownedSpawnEgg() {
         return Item.of("minecraft:drowned_spawn_egg");
     }
 
-    public Item getEgg() {
+    public Item egg() {
         return Item.of("minecraft:egg");
     }
 
-    public Item getElderGuardianSpawnEgg() {
+    public Item elderGuardianSpawnEgg() {
         return Item.of("minecraft:elder_guardian_spawn_egg");
     }
 
-    public Item getElytra() {
+    public Item elytra() {
         return Item.of("minecraft:elytra");
     }
 
-    public Item getEmerald() {
+    public Item emerald() {
         return Item.of("minecraft:emerald");
     }
 
-    public Item getBlockOfEmerald() {
+    public Item blockOfEmerald() {
         return Item.of("minecraft:emerald_block");
     }
 
-    public Item getEmeraldOre() {
+    public Item emeraldOre() {
         return Item.of("minecraft:emerald_ore");
     }
 
-    public Item getEnchantedBook() {
+    public Item enchantedBook() {
         return Item.of("minecraft:enchanted_book");
     }
 
-    public Item getEnchantingTable() {
+    public Item enchantingTable() {
         return Item.of("minecraft:enchanting_table");
     }
 
-    public Item getEndCrystal() {
+    public Item endCrystal() {
         return Item.of("minecraft:end_crystal");
     }
 
-    public Item getEndPortalFrame() {
+    public Item endPortalFrame() {
         return Item.of("minecraft:end_portal_frame");
     }
 
-    public Item getEndRod() {
+    public Item endRod() {
         return Item.of("minecraft:end_rod");
     }
 
-    public Item getEndStone() {
+    public Item endStone() {
         return Item.of("minecraft:end_stone");
     }
 
-    public Item getEndStoneBrickSlab() {
+    public Item endStoneBrickSlab() {
         return Item.of("minecraft:end_stone_brick_slab");
     }
 
-    public Item getEndStoneBrickStairs() {
+    public Item endStoneBrickStairs() {
         return Item.of("minecraft:end_stone_brick_stairs");
     }
 
-    public Item getEndStoneBrickWall() {
+    public Item endStoneBrickWall() {
         return Item.of("minecraft:end_stone_brick_wall");
     }
 
-    public Item getEndStoneBricks() {
+    public Item endStoneBricks() {
         return Item.of("minecraft:end_stone_bricks");
     }
 
-    public Item getEnderChest() {
+    public Item enderChest() {
         return Item.of("minecraft:ender_chest");
     }
 
-    public Item getEyeOfEnder() {
+    public Item eyeOfEnder() {
         return Item.of("minecraft:ender_eye");
     }
 
-    public Item getEnderPearl() {
+    public Item enderPearl() {
         return Item.of("minecraft:ender_pearl");
     }
 
-    public Item getEndermanSpawnEgg() {
+    public Item endermanSpawnEgg() {
         return Item.of("minecraft:enderman_spawn_egg");
     }
 
-    public Item getEndermiteSpawnEgg() {
+    public Item endermiteSpawnEgg() {
         return Item.of("minecraft:endermite_spawn_egg");
     }
 
-    public Item getEvokerSpawnEgg() {
+    public Item evokerSpawnEgg() {
         return Item.of("minecraft:evoker_spawn_egg");
     }
 
-    public Item getBottleOEnchanting() {
+    public Item bottleOEnchanting() {
         return Item.of("minecraft:experience_bottle");
     }
 
-    public Item getFarmland() {
+    public Item farmland() {
         return Item.of("minecraft:farmland");
     }
 
-    public Item getFeather() {
+    public Item feather() {
         return Item.of("minecraft:feather");
     }
 
-    public Item getFermentedSpiderEye() {
+    public Item fermentedSpiderEye() {
         return Item.of("minecraft:fermented_spider_eye");
     }
 
-    public Item getFilledMap() {
+    public Item filledMap() {
         return Item.of("minecraft:filled_map");
     }
 
-    public Item getFireCharge() {
+    public Item fireCharge() {
         return Item.of("minecraft:fire_charge");
     }
 
-    public Item getFireCoral() {
+    public Item fireCoral() {
         return Item.of("minecraft:fire_coral");
     }
 
-    public Item getFireCoralBlock() {
+    public Item fireCoralBlock() {
         return Item.of("minecraft:fire_coral_block");
     }
 
-    public Item getFireCoralFan() {
+    public Item fireCoralFan() {
         return Item.of("minecraft:fire_coral_fan");
     }
 
-    public Item getFireworkRocket() {
+    public Item fireworkRocket() {
         return Item.of("minecraft:firework_rocket");
     }
 
-    public Item getFireworkStar() {
+    public Item fireworkStar() {
         return Item.of("minecraft:firework_star");
     }
 
-    public Item getFishingRod() {
+    public Item fishingRod() {
         return Item.of("minecraft:fishing_rod");
     }
 
-    public Item getFletchingTable() {
+    public Item fletchingTable() {
         return Item.of("minecraft:fletching_table");
     }
 
-    public Item getFlint() {
+    public Item flint() {
         return Item.of("minecraft:flint");
     }
 
-    public Item getFlintAndSteel() {
+    public Item flintAndSteel() {
         return Item.of("minecraft:flint_and_steel");
     }
 
-    public Item getFlowerChargeBannerPattern() {
+    public Item flowerChargeBannerPattern() {
         return Item.of("minecraft:flower_banner_pattern");
     }
 
-    public Item getFlowerPot() {
+    public Item flowerPot() {
         return Item.of("minecraft:flower_pot");
     }
 
-    public Item getFoxSpawnEgg() {
+    public Item foxSpawnEgg() {
         return Item.of("minecraft:fox_spawn_egg");
     }
 
-    public Item getFurnace() {
+    public Item furnace() {
         return Item.of("minecraft:furnace");
     }
 
-    public Item getMinecartWithFurnace() {
+    public Item minecartWithFurnace() {
         return Item.of("minecraft:furnace_minecart");
     }
 
-    public Item getGhastSpawnEgg() {
+    public Item ghastSpawnEgg() {
         return Item.of("minecraft:ghast_spawn_egg");
     }
 
-    public Item getGhastTear() {
+    public Item ghastTear() {
         return Item.of("minecraft:ghast_tear");
     }
 
-    public Item getGildedBlackstone() {
+    public Item gildedBlackstone() {
         return Item.of("minecraft:gilded_blackstone");
     }
 
-    public Item getGlass() {
+    public Item glass() {
         return Item.of("minecraft:glass");
     }
 
-    public Item getGlassBottle() {
+    public Item glassBottle() {
         return Item.of("minecraft:glass_bottle");
     }
 
-    public Item getGlassPane() {
+    public Item glassPane() {
         return Item.of("minecraft:glass_pane");
     }
 
-    public Item getGlisteringMelon() {
+    public Item glisteringMelon() {
         return Item.of("minecraft:glistering_melon_slice");
     }
 
-    public Item getGlobeBannerPattern() {
+    public Item globeBannerPattern() {
         return Item.of("minecraft:globe_banner_pattern");
     }
 
-    public Item getGlowstone() {
+    public Item glowstone() {
         return Item.of("minecraft:glowstone");
     }
 
-    public Item getGlowstoneDust() {
+    public Item glowstoneDust() {
         return Item.of("minecraft:glowstone_dust");
     }
 
-    public Item getBlockOfGold() {
+    public Item blockOfGold() {
         return Item.of("minecraft:gold_block");
     }
 
-    public Item getGoldIngot() {
+    public Item goldIngot() {
         return Item.of("minecraft:gold_ingot");
     }
 
-    public Item getGoldNugget() {
+    public Item goldNugget() {
         return Item.of("minecraft:gold_nugget");
     }
 
-    public Item getGoldOre() {
+    public Item goldOre() {
         return Item.of("minecraft:gold_ore");
     }
 
-    public Item getGoldenApple() {
+    public Item goldenApple() {
         return Item.of("minecraft:golden_apple");
     }
 
-    public Item getGoldenAxe() {
+    public Item goldenAxe() {
         return Item.of("minecraft:golden_axe");
     }
 
-    public Item getGoldenBoots() {
+    public Item goldenBoots() {
         return Item.of("minecraft:golden_boots");
     }
 
-    public Item getGoldenCarrot() {
+    public Item goldenCarrot() {
         return Item.of("minecraft:golden_carrot");
     }
 
-    public Item getGoldenChestplate() {
+    public Item goldenChestplate() {
         return Item.of("minecraft:golden_chestplate");
     }
 
-    public Item getGoldenHelmet() {
+    public Item goldenHelmet() {
         return Item.of("minecraft:golden_helmet");
     }
 
-    public Item getGoldenHoe() {
+    public Item goldenHoe() {
         return Item.of("minecraft:golden_hoe");
     }
 
-    public Item getGoldHorseArmor() {
+    public Item goldHorseArmor() {
         return Item.of("minecraft:golden_horse_armor");
     }
 
-    public Item getGoldenLeggings() {
+    public Item goldenLeggings() {
         return Item.of("minecraft:golden_leggings");
     }
 
-    public Item getGoldenPickaxe() {
+    public Item goldenPickaxe() {
         return Item.of("minecraft:golden_pickaxe");
     }
 
-    public Item getGoldenShovel() {
+    public Item goldenShovel() {
         return Item.of("minecraft:golden_shovel");
     }
 
-    public Item getGoldenSword() {
+    public Item goldenSword() {
         return Item.of("minecraft:golden_sword");
     }
 
-    public Item getGraniteSlab() {
+    public Item graniteSlab() {
         return Item.of("minecraft:granite_slab");
     }
 
-    public Item getGraniteStairs() {
+    public Item graniteStairs() {
         return Item.of("minecraft:granite_stairs");
     }
 
-    public Item getGraniteWall() {
+    public Item graniteWall() {
         return Item.of("minecraft:granite_wall");
     }
 
-    public Item getGrassBlock() {
+    public Item grassBlock() {
         return Item.of("minecraft:grass_block");
     }
 
-    public Item getGrassPath() {
+    public Item grassPath() {
         return Item.of("minecraft:grass_path");
     }
 
-    public Item getGravel() {
+    public Item gravel() {
         return Item.of("minecraft:gravel");
     }
 
-    public Item getGrayGlazedTerracotta() {
+    public Item grayGlazedTerracotta() {
         return Item.of("minecraft:gray_glazed_terracotta");
     }
 
-    public Item getGrayShulkerBox() {
+    public Item grayShulkerBox() {
         return Item.of("minecraft:gray_shulker_box");
     }
 
-    public Item getGreenGlazedTerracotta() {
+    public Item greenGlazedTerracotta() {
         return Item.of("minecraft:green_glazed_terracotta");
     }
 
-    public Item getGreenShulkerBox() {
+    public Item greenShulkerBox() {
         return Item.of("minecraft:green_shulker_box");
     }
 
-    public Item getGrindstone() {
+    public Item grindstone() {
         return Item.of("minecraft:grindstone");
     }
 
-    public Item getGuardianSpawnEgg() {
+    public Item guardianSpawnEgg() {
         return Item.of("minecraft:guardian_spawn_egg");
     }
 
-    public Item getGunpowder() {
+    public Item gunpowder() {
         return Item.of("minecraft:gunpowder");
     }
 
-    public Item getHayBale() {
+    public Item hayBale() {
         return Item.of("minecraft:hay_block");
     }
 
-    public Item getHeartOfTheSea() {
+    public Item heartOfTheSea() {
         return Item.of("minecraft:heart_of_the_sea");
     }
 
-    public Item getHeavyWeightedPressurePlate() {
+    public Item heavyWeightedPressurePlate() {
         return Item.of("minecraft:heavy_weighted_pressure_plate");
     }
 
-    public Item getHoglinSpawnEgg() {
+    public Item hoglinSpawnEgg() {
         return Item.of("minecraft:hoglin_spawn_egg");
     }
 
-    public Item getHoneyBlock() {
+    public Item honeyBlock() {
         return Item.of("minecraft:honey_block");
     }
 
-    public Item getHoneyBottle() {
+    public Item honeyBottle() {
         return Item.of("minecraft:honey_bottle");
     }
 
-    public Item getHoneycomb() {
+    public Item honeycomb() {
         return Item.of("minecraft:honeycomb");
     }
 
-    public Item getHoneycombBlock() {
+    public Item honeycombBlock() {
         return Item.of("minecraft:honeycomb_block");
     }
 
-    public Item getHopper() {
+    public Item hopper() {
         return Item.of("minecraft:hopper");
     }
 
-    public Item getMinecartWithHopper() {
+    public Item minecartWithHopper() {
         return Item.of("minecraft:hopper_minecart");
     }
 
-    public Item getHornCoral() {
+    public Item hornCoral() {
         return Item.of("minecraft:horn_coral");
     }
 
-    public Item getHornCoralBlock() {
+    public Item hornCoralBlock() {
         return Item.of("minecraft:horn_coral_block");
     }
 
-    public Item getHornCoralFan() {
+    public Item hornCoralFan() {
         return Item.of("minecraft:horn_coral_fan");
     }
 
-    public Item getHorseSpawnEgg() {
+    public Item horseSpawnEgg() {
         return Item.of("minecraft:horse_spawn_egg");
     }
 
-    public Item getHuskSpawnEgg() {
+    public Item huskSpawnEgg() {
         return Item.of("minecraft:husk_spawn_egg");
     }
 
-    public Item getIce() {
+    public Item ice() {
         return Item.of("minecraft:ice");
     }
 
-    public Item getStoneMonsterEgg() {
+    public Item stoneMonsterEgg() {
         return Item.of("minecraft:infested_stone");
     }
 
-    public Item getInkSac() {
+    public Item inkSac() {
         return Item.of("minecraft:ink_sac");
     }
 
-    public Item getIronAxe() {
+    public Item ironAxe() {
         return Item.of("minecraft:iron_axe");
     }
 
-    public Item getIronBars() {
+    public Item ironBars() {
         return Item.of("minecraft:iron_bars");
     }
 
-    public Item getBlockOfIron() {
+    public Item blockOfIron() {
         return Item.of("minecraft:iron_block");
     }
 
-    public Item getIronBoots() {
+    public Item ironBoots() {
         return Item.of("minecraft:iron_boots");
     }
 
-    public Item getIronChestplate() {
+    public Item ironChestplate() {
         return Item.of("minecraft:iron_chestplate");
     }
 
-    public Item getIronDoor() {
+    public Item ironDoor() {
         return Item.of("minecraft:iron_door");
     }
 
-    public Item getIronHelmet() {
+    public Item ironHelmet() {
         return Item.of("minecraft:iron_helmet");
     }
 
-    public Item getIronHoe() {
+    public Item ironHoe() {
         return Item.of("minecraft:iron_hoe");
     }
 
-    public Item getIronHorseArmor() {
+    public Item ironHorseArmor() {
         return Item.of("minecraft:iron_horse_armor");
     }
 
-    public Item getIronIngot() {
+    public Item ironIngot() {
         return Item.of("minecraft:iron_ingot");
     }
 
-    public Item getIronLeggings() {
+    public Item ironLeggings() {
         return Item.of("minecraft:iron_leggings");
     }
 
-    public Item getIronNugget() {
+    public Item ironNugget() {
         return Item.of("minecraft:iron_nugget");
     }
 
-    public Item getIronOre() {
+    public Item ironOre() {
         return Item.of("minecraft:iron_ore");
     }
 
-    public Item getIronPickaxe() {
+    public Item ironPickaxe() {
         return Item.of("minecraft:iron_pickaxe");
     }
 
-    public Item getIronShovel() {
+    public Item ironShovel() {
         return Item.of("minecraft:iron_shovel");
     }
 
-    public Item getIronSword() {
+    public Item ironSword() {
         return Item.of("minecraft:iron_sword");
     }
 
-    public Item getIronTrapdoor() {
+    public Item ironTrapdoor() {
         return Item.of("minecraft:iron_trapdoor");
     }
 
-    public Item getItemFrame() {
+    public Item itemFrame() {
         return Item.of("minecraft:item_frame");
     }
 
-    public Item getJackOLantern() {
+    public Item jackOLantern() {
         return Item.of("minecraft:jack_o_lantern");
     }
 
-    public Item getJukebox() {
+    public Item jukebox() {
         return Item.of("minecraft:jukebox");
     }
 
-    public Item getJungleBoat() {
+    public Item jungleBoat() {
         return Item.of("minecraft:jungle_boat");
     }
 
-    public Item getJungleButton() {
+    public Item jungleButton() {
         return Item.of("minecraft:jungle_button");
     }
 
-    public Item getJungleDoor() {
+    public Item jungleDoor() {
         return Item.of("minecraft:jungle_door");
     }
 
-    public Item getJungleFence() {
+    public Item jungleFence() {
         return Item.of("minecraft:jungle_fence");
     }
 
-    public Item getJungleFenceGate() {
+    public Item jungleFenceGate() {
         return Item.of("minecraft:jungle_fence_gate");
     }
 
-    public Item getJunglePressurePlate() {
+    public Item junglePressurePlate() {
         return Item.of("minecraft:jungle_pressure_plate");
     }
 
-    public Item getJungleSign() {
+    public Item jungleSign() {
         return Item.of("minecraft:jungle_sign");
     }
 
-    public Item getJungleWoodStairs() {
+    public Item jungleWoodStairs() {
         return Item.of("minecraft:jungle_stairs");
     }
 
-    public Item getJungleTrapdoor() {
+    public Item jungleTrapdoor() {
         return Item.of("minecraft:jungle_trapdoor");
     }
 
-    public Item getJungleWoodWithBark() {
+    public Item jungleWoodWithBark() {
         return Item.of("minecraft:jungle_wood");
     }
 
-    public Item getKelp() {
+    public Item kelp() {
         return Item.of("minecraft:kelp");
     }
 
-    public Item getLadder() {
+    public Item ladder() {
         return Item.of("minecraft:ladder");
     }
 
-    public Item getLantern() {
+    public Item lantern() {
         return Item.of("minecraft:lantern");
     }
 
-    public Item getLapisLazuliBlock() {
+    public Item lapisLazuliBlock() {
         return Item.of("minecraft:lapis_block");
     }
 
-    public Item getLapisLazuli() {
+    public Item lapisLazuli() {
         return Item.of("minecraft:lapis_lazuli");
     }
 
-    public Item getLapisLazuliOre() {
+    public Item lapisLazuliOre() {
         return Item.of("minecraft:lapis_ore");
     }
 
-    public Item getLava() {
+    public Item lava() {
         return Item.of("minecraft:lava");
     }
 
-    public Item getLavaBucket() {
+    public Item lavaBucket() {
         return Item.of("minecraft:lava_bucket");
     }
 
-    public Item getLead() {
+    public Item lead() {
         return Item.of("minecraft:lead");
     }
 
-    public Item getLeather() {
+    public Item leather() {
         return Item.of("minecraft:leather");
     }
 
-    public Item getLeatherBoots() {
+    public Item leatherBoots() {
         return Item.of("minecraft:leather_boots");
     }
 
-    public Item getLeatherTunic() {
+    public Item leatherTunic() {
         return Item.of("minecraft:leather_chestplate");
     }
 
-    public Item getLeatherCap() {
+    public Item leatherCap() {
         return Item.of("minecraft:leather_helmet");
     }
 
-    public Item getLeatherHorseArmor() {
+    public Item leatherHorseArmor() {
         return Item.of("minecraft:leather_horse_armor");
     }
 
-    public Item getLeatherPants() {
+    public Item leatherPants() {
         return Item.of("minecraft:leather_leggings");
     }
 
-    public Item getLecturn() {
+    public Item lecturn() {
         return Item.of("minecraft:lectern");
     }
 
-    public Item getLever() {
+    public Item lever() {
         return Item.of("minecraft:lever");
     }
 
-    public Item getLightBlueGlazedTerracotta() {
+    public Item lightBlueGlazedTerracotta() {
         return Item.of("minecraft:light_blue_glazed_terracotta");
     }
 
-    public Item getLightBlueShulkerBox() {
+    public Item lightBlueShulkerBox() {
         return Item.of("minecraft:light_blue_shulker_box");
     }
 
-    public Item getLightGrayGlazedTerracotta() {
+    public Item lightGrayGlazedTerracotta() {
         return Item.of("minecraft:light_gray_glazed_terracotta");
     }
 
-    public Item getLightGrayShulkerBox() {
+    public Item lightGrayShulkerBox() {
         return Item.of("minecraft:light_gray_shulker_box");
     }
 
-    public Item getLightWeightedPressurePlate() {
+    public Item lightWeightedPressurePlate() {
         return Item.of("minecraft:light_weighted_pressure_plate");
     }
 
-    public Item getLilyOfTheValley() {
+    public Item lilyOfTheValley() {
         return Item.of("minecraft:lily_of_the_valley");
     }
 
-    public Item getLilyPad() {
+    public Item lilyPad() {
         return Item.of("minecraft:lily_pad");
     }
 
-    public Item getLimeGlazedTerracotta() {
+    public Item limeGlazedTerracotta() {
         return Item.of("minecraft:lime_glazed_terracotta");
     }
 
-    public Item getLimeShulkerBox() {
+    public Item limeShulkerBox() {
         return Item.of("minecraft:lime_shulker_box");
     }
 
-    public Item getLingeringPotion() {
+    public Item lingeringPotion() {
         return Item.of("minecraft:lingering_potion");
     }
 
-    public Item getLlamaSpawnEgg() {
+    public Item llamaSpawnEgg() {
         return Item.of("minecraft:llama_spawn_egg");
     }
 
-    public Item getLodestone() {
+    public Item lodestone() {
         return Item.of("minecraft:lodestone");
     }
 
-    public Item getLoom() {
+    public Item loom() {
         return Item.of("minecraft:loom");
     }
 
-    public Item getMagentaGlazedTerracotta() {
+    public Item magentaGlazedTerracotta() {
         return Item.of("minecraft:magenta_glazed_terracotta");
     }
 
-    public Item getMagentaShulkerBox() {
+    public Item magentaShulkerBox() {
         return Item.of("minecraft:magenta_shulker_box");
     }
 
-    public Item getMagmaBlock() {
+    public Item magmaBlock() {
         return Item.of("minecraft:magma_block");
     }
 
-    public Item getMagmaCream() {
+    public Item magmaCream() {
         return Item.of("minecraft:magma_cream");
     }
 
-    public Item getMagmaCubeSpawnEgg() {
+    public Item magmaCubeSpawnEgg() {
         return Item.of("minecraft:magma_cube_spawn_egg");
     }
 
-    public Item getMap() {
+    public Item map() {
         return Item.of("minecraft:map");
     }
 
-    public Item getBlockOfMelon() {
+    public Item blockOfMelon() {
         return Item.of("minecraft:melon");
     }
 
-    public Item getMelonSeeds() {
+    public Item melonSeeds() {
         return Item.of("minecraft:melon_seeds");
     }
 
-    public Item getMelonSlice() {
+    public Item melonSlice() {
         return Item.of("minecraft:melon_slice");
     }
 
-    public Item getMilk() {
+    public Item milk() {
         return Item.of("minecraft:milk_bucket");
     }
 
-    public Item getMinecart() {
+    public Item minecart() {
         return Item.of("minecraft:minecart");
     }
 
-    public Item getThingBannerPattern() {
+    public Item thingBannerPattern() {
         return Item.of("minecraft:mojang_banner_pattern");
     }
 
-    public Item getMooshroomSpawnEgg() {
+    public Item mooshroomSpawnEgg() {
         return Item.of("minecraft:mooshroom_spawn_egg");
     }
 
-    public Item getMossyCobblestone() {
+    public Item mossyCobblestone() {
         return Item.of("minecraft:mossy_cobblestone");
     }
 
-    public Item getMossyCobblestoneSlab() {
+    public Item mossyCobblestoneSlab() {
         return Item.of("minecraft:mossy_cobblestone_slab");
     }
 
-    public Item getMossyCobblestoneStairs() {
+    public Item mossyCobblestoneStairs() {
         return Item.of("minecraft:mossy_cobblestone_stairs");
     }
 
-    public Item getMossyStoneBrickSlab() {
+    public Item mossyStoneBrickSlab() {
         return Item.of("minecraft:mossy_stone_brick_slab");
     }
 
-    public Item getMossyStoneBrickStairs() {
+    public Item mossyStoneBrickStairs() {
         return Item.of("minecraft:mossy_stone_brick_stairs");
     }
 
-    public Item getMossyStoneBrickWall() {
+    public Item mossyStoneBrickWall() {
         return Item.of("minecraft:mossy_stone_brick_wall");
     }
 
-    public Item getMuleSpawnEgg() {
+    public Item muleSpawnEgg() {
         return Item.of("minecraft:mule_spawn_egg");
     }
 
-    public Item getMushroomStem() {
+    public Item mushroomStem() {
         return Item.of("minecraft:mushroom_stem");
     }
 
-    public Item getMushroomStew() {
+    public Item mushroomStew() {
         return Item.of("minecraft:mushroom_stew");
     }
 
-    public Item getMusicDiscC418_11() {
+    public Item musicDiscC418_11() {
         return Item.of("minecraft:music_disc_11");
     }
 
-    public Item getMusicDiscC418_13() {
+    public Item musicDiscC418_13() {
         return Item.of("minecraft:music_disc_13");
     }
 
-    public Item getMusicDiscC418Blocks() {
+    public Item musicDiscC418Blocks() {
         return Item.of("minecraft:music_disc_blocks");
     }
 
-    public Item getMusicDiscC418Cat() {
+    public Item musicDiscC418Cat() {
         return Item.of("minecraft:music_disc_cat");
     }
 
-    public Item getMusicDiscC418Chirp() {
+    public Item musicDiscC418Chirp() {
         return Item.of("minecraft:music_disc_chirp");
     }
 
-    public Item getMusicDiscC418Far() {
+    public Item musicDiscC418Far() {
         return Item.of("minecraft:music_disc_far");
     }
 
-    public Item getMusicDiscC418Mall() {
+    public Item musicDiscC418Mall() {
         return Item.of("minecraft:music_disc_mall");
     }
 
-    public Item getMusicDiscC418Mellohi() {
+    public Item musicDiscC418Mellohi() {
         return Item.of("minecraft:music_disc_mellohi");
     }
 
-    public Item getMusicDiscPigstep() {
+    public Item musicDiscPigstep() {
         return Item.of("minecraft:music_disc_pigstep");
     }
 
-    public Item getMusicDiscC418Stal() {
+    public Item musicDiscC418Stal() {
         return Item.of("minecraft:music_disc_stal");
     }
 
-    public Item getMusicDiscC418Strad() {
+    public Item musicDiscC418Strad() {
         return Item.of("minecraft:music_disc_strad");
     }
 
-    public Item getMusicDiscC418Wait() {
+    public Item musicDiscC418Wait() {
         return Item.of("minecraft:music_disc_wait");
     }
 
-    public Item getMusicDiscC418Ward() {
+    public Item musicDiscC418Ward() {
         return Item.of("minecraft:music_disc_ward");
     }
 
-    public Item getRawMutton() {
+    public Item rawMutton() {
         return Item.of("minecraft:mutton");
     }
 
-    public Item getMycelium() {
+    public Item mycelium() {
         return Item.of("minecraft:mycelium");
     }
 
-    public Item getNameTag() {
+    public Item nameTag() {
         return Item.of("minecraft:name_tag");
     }
 
-    public Item getNautilusShell() {
+    public Item nautilusShell() {
         return Item.of("minecraft:nautilus_shell");
     }
 
-    public Item getNetherBrick() {
+    public Item netherBrick() {
         return Item.of("minecraft:nether_brick");
     }
 
-    public Item getNetherBrickFence() {
+    public Item netherBrickFence() {
         return Item.of("minecraft:nether_brick_fence");
     }
 
-    public Item getNetherBrickStairs() {
+    public Item netherBrickStairs() {
         return Item.of("minecraft:nether_brick_stairs");
     }
 
-    public Item getNetherBrickWall() {
+    public Item netherBrickWall() {
         return Item.of("minecraft:nether_brick_wall");
     }
 
-    public Item getBlockOfNetherBricks() {
+    public Item blockOfNetherBricks() {
         return Item.of("minecraft:nether_bricks");
     }
 
-    public Item getNetherGoldOre() {
+    public Item netherGoldOre() {
         return Item.of("minecraft:nether_gold_ore");
     }
 
-    public Item getNetherQuartzOre() {
+    public Item netherQuartzOre() {
         return Item.of("minecraft:nether_quartz_ore");
     }
 
-    public Item getNetherSprouts() {
+    public Item netherSprouts() {
         return Item.of("minecraft:nether_sprouts");
     }
 
-    public Item getNetherStar() {
+    public Item netherStar() {
         return Item.of("minecraft:nether_star");
     }
 
-    public Item getNetherWart() {
+    public Item netherWart() {
         return Item.of("minecraft:nether_wart");
     }
 
-    public Item getNetherWartBlock() {
+    public Item netherWartBlock() {
         return Item.of("minecraft:nether_wart_block");
     }
 
-    public Item getNetheriteAxe() {
+    public Item netheriteAxe() {
         return Item.of("minecraft:netherite_axe");
     }
 
-    public Item getBlockOfNetherite() {
+    public Item blockOfNetherite() {
         return Item.of("minecraft:netherite_block");
     }
 
-    public Item getNetheriteBoots() {
+    public Item netheriteBoots() {
         return Item.of("minecraft:netherite_boots");
     }
 
-    public Item getNetheriteChestplate() {
+    public Item netheriteChestplate() {
         return Item.of("minecraft:netherite_chestplate");
     }
 
-    public Item getNetheriteHelmet() {
+    public Item netheriteHelmet() {
         return Item.of("minecraft:netherite_helmet");
     }
 
-    public Item getNetheriteHoe() {
+    public Item netheriteHoe() {
         return Item.of("minecraft:netherite_hoe");
     }
 
-    public Item getNetheriteIngot() {
+    public Item netheriteIngot() {
         return Item.of("minecraft:netherite_ingot");
     }
 
-    public Item getNetheriteLeggings() {
+    public Item netheriteLeggings() {
         return Item.of("minecraft:netherite_leggings");
     }
 
-    public Item getNetheritePickaxe() {
+    public Item netheritePickaxe() {
         return Item.of("minecraft:netherite_pickaxe");
     }
 
-    public Item getNetheriteScrap() {
+    public Item netheriteScrap() {
         return Item.of("minecraft:netherite_scrap");
     }
 
-    public Item getNetheriteShovel() {
+    public Item netheriteShovel() {
         return Item.of("minecraft:netherite_shovel");
     }
 
-    public Item getNetheriteSword() {
+    public Item netheriteSword() {
         return Item.of("minecraft:netherite_sword");
     }
 
-    public Item getNetherrack() {
+    public Item netherrack() {
         return Item.of("minecraft:netherrack");
     }
 
-    public Item getQuartzBricks() {
+    public Item quartzBricks() {
         return Item.of("minecraft:quartz_bricks");
     }
 
-    public Item getNoteBlock() {
+    public Item noteBlock() {
         return Item.of("minecraft:note_block");
     }
 
-    public Item getOakBoat() {
+    public Item oakBoat() {
         return Item.of("minecraft:oak_boat");
     }
 
-    public Item getOakButton() {
+    public Item oakButton() {
         return Item.of("minecraft:oak_button");
     }
 
-    public Item getOakDoor() {
+    public Item oakDoor() {
         return Item.of("minecraft:oak_door");
     }
 
-    public Item getOakFence() {
+    public Item oakFence() {
         return Item.of("minecraft:oak_fence");
     }
 
-    public Item getOakFenceGate() {
+    public Item oakFenceGate() {
         return Item.of("minecraft:oak_fence_gate");
     }
 
-    public Item getOakLeaves() {
+    public Item oakLeaves() {
         return Item.of("minecraft:oak_leaves");
     }
 
-    public Item getOakLog() {
+    public Item oakLog() {
         return Item.of("minecraft:oak_log");
     }
 
-    public Item getOakPlanks() {
+    public Item oakPlanks() {
         return Item.of("minecraft:oak_planks");
     }
 
-    public Item getOakPressurePlate() {
+    public Item oakPressurePlate() {
         return Item.of("minecraft:oak_pressure_plate");
     }
 
-    public Item getOakSapling() {
+    public Item oakSapling() {
         return Item.of("minecraft:oak_sapling");
     }
 
-    public Item getOakSign() {
+    public Item oakSign() {
         return Item.of("minecraft:oak_sign");
     }
 
-    public Item getOakWoodStairs() {
+    public Item oakWoodStairs() {
         return Item.of("minecraft:oak_stairs");
     }
 
-    public Item getOakTrapdoor() {
+    public Item oakTrapdoor() {
         return Item.of("minecraft:oak_trapdoor");
     }
 
-    public Item getOakWoodWithBark() {
+    public Item oakWoodWithBark() {
         return Item.of("minecraft:oak_wood");
     }
 
-    public Item getObserver() {
+    public Item observer() {
         return Item.of("minecraft:observer");
     }
 
-    public Item getObsidian() {
+    public Item obsidian() {
         return Item.of("minecraft:obsidian");
     }
 
-    public Item getOcelotSpawnEgg() {
+    public Item ocelotSpawnEgg() {
         return Item.of("minecraft:ocelot_spawn_egg");
     }
 
-    public Item getOrangeGlazedTerracotta() {
+    public Item orangeGlazedTerracotta() {
         return Item.of("minecraft:orange_glazed_terracotta");
     }
 
-    public Item getOrangeShulkerBox() {
+    public Item orangeShulkerBox() {
         return Item.of("minecraft:orange_shulker_box");
     }
 
-    public Item getPackedIce() {
+    public Item packedIce() {
         return Item.of("minecraft:packed_ice");
     }
 
-    public Item getPainting() {
+    public Item painting() {
         return Item.of("minecraft:painting");
     }
 
-    public Item getPandaSpawnEgg() {
+    public Item pandaSpawnEgg() {
         return Item.of("minecraft:panda_spawn_egg");
     }
 
-    public Item getPaper() {
+    public Item paper() {
         return Item.of("minecraft:paper");
     }
 
-    public Item getParrotSpawnEgg() {
+    public Item parrotSpawnEgg() {
         return Item.of("minecraft:parrot_spawn_egg");
     }
 
-    public Item getPetrifiedOakSlab() {
+    public Item petrifiedOakSlab() {
         return Item.of("minecraft:petrified_oak_slab");
     }
 
-    public Item getPhantomMembrane() {
+    public Item phantomMembrane() {
         return Item.of("minecraft:phantom_membrane");
     }
 
-    public Item getPhantomSpawnEgg() {
+    public Item phantomSpawnEgg() {
         return Item.of("minecraft:phantom_spawn_egg");
     }
 
-    public Item getPigSpawnEgg() {
+    public Item pigSpawnEgg() {
         return Item.of("minecraft:pig_spawn_egg");
     }
 
-    public Item getSnoutBannerPattern() {
+    public Item snoutBannerPattern() {
         return Item.of("minecraft:piglin_banner_pattern");
     }
 
-    public Item getSpawnPiglinBrute() {
+    public Item spawnPiglinBrute() {
         return Item.of("minecraft:piglin_brute_spawn_egg");
     }
 
-    public Item getPiglinSpawnEgg() {
+    public Item piglinSpawnEgg() {
         return Item.of("minecraft:piglin_spawn_egg");
     }
 
-    public Item getPillagerSpawnEgg() {
+    public Item pillagerSpawnEgg() {
         return Item.of("minecraft:pillager_spawn_egg");
     }
 
-    public Item getPinkGlazedTerracotta() {
+    public Item pinkGlazedTerracotta() {
         return Item.of("minecraft:pink_glazed_terracotta");
     }
 
-    public Item getPinkShulkerBox() {
+    public Item pinkShulkerBox() {
         return Item.of("minecraft:pink_shulker_box");
     }
 
-    public Item getPiston() {
+    public Item piston() {
         return Item.of("minecraft:piston");
     }
 
-    public Item getPoisonousPotato() {
+    public Item poisonousPotato() {
         return Item.of("minecraft:poisonous_potato");
     }
 
-    public Item getPolarBearSpawnEgg() {
+    public Item polarBearSpawnEgg() {
         return Item.of("minecraft:polar_bear_spawn_egg");
     }
 
-    public Item getPolishedAndesiteSlab() {
+    public Item polishedAndesiteSlab() {
         return Item.of("minecraft:polished_andesite_slab");
     }
 
-    public Item getPolishedAndesiteStairs() {
+    public Item polishedAndesiteStairs() {
         return Item.of("minecraft:polished_andesite_stairs");
     }
 
-    public Item getPolishedBasalt() {
+    public Item polishedBasalt() {
         return Item.of("minecraft:polished_basalt");
     }
 
-    public Item getPolishedBlackstone() {
+    public Item polishedBlackstone() {
         return Item.of("minecraft:polished_blackstone");
     }
 
-    public Item getPolishedBlackstoneBrickSlab() {
+    public Item polishedBlackstoneBrickSlab() {
         return Item.of("minecraft:polished_blackstone_brick_slab");
     }
 
-    public Item getPolishedBlackstoneBrickStairs() {
+    public Item polishedBlackstoneBrickStairs() {
         return Item.of("minecraft:polished_blackstone_brick_stairs");
     }
 
-    public Item getPolishedBlackstoneBrickWall() {
+    public Item polishedBlackstoneBrickWall() {
         return Item.of("minecraft:polished_blackstone_brick_wall");
     }
 
-    public Item getPolishedBlackstoneBricks() {
+    public Item polishedBlackstoneBricks() {
         return Item.of("minecraft:polished_blackstone_bricks");
     }
 
-    public Item getPolishedBlackstoneButton() {
+    public Item polishedBlackstoneButton() {
         return Item.of("minecraft:polished_blackstone_button");
     }
 
-    public Item getPolishedBlackstonePressurePlate() {
+    public Item polishedBlackstonePressurePlate() {
         return Item.of("minecraft:polished_blackstone_pressure_plate");
     }
 
-    public Item getPolishedBlackstoneSlab() {
+    public Item polishedBlackstoneSlab() {
         return Item.of("minecraft:polished_blackstone_slab");
     }
 
-    public Item getPolishedBlackstoneStairs() {
+    public Item polishedBlackstoneStairs() {
         return Item.of("minecraft:polished_blackstone_stairs");
     }
 
-    public Item getPolishedBlackstoneWall() {
+    public Item polishedBlackstoneWall() {
         return Item.of("minecraft:polished_blackstone_wall");
     }
 
-    public Item getPolishedDioriteSlab() {
+    public Item polishedDioriteSlab() {
         return Item.of("minecraft:polished_diorite_slab");
     }
 
-    public Item getPolishedDioriteStairs() {
+    public Item polishedDioriteStairs() {
         return Item.of("minecraft:polished_diorite_stairs");
     }
 
-    public Item getPolishedGraniteSlab() {
+    public Item polishedGraniteSlab() {
         return Item.of("minecraft:polished_granite_slab");
     }
 
-    public Item getPolishedGraniteStairs() {
+    public Item polishedGraniteStairs() {
         return Item.of("minecraft:polished_granite_stairs");
     }
 
-    public Item getPoppedChorusFruit() {
+    public Item poppedChorusFruit() {
         return Item.of("minecraft:popped_chorus_fruit");
     }
 
-    public Item getPoppy() {
+    public Item poppy() {
         return Item.of("minecraft:poppy");
     }
 
-    public Item getRawPorkchop() {
+    public Item rawPorkchop() {
         return Item.of("minecraft:porkchop");
     }
 
-    public Item getPotato() {
+    public Item potato() {
         return Item.of("minecraft:potato");
     }
 
-    public Item getPotion() {
+    public Item potion() {
         return Item.of("minecraft:potion");
     }
 
-    public Item getWaterBottle() {
+    public Item waterBottle() {
         return Item.of("minecraft:potion");
     }
 
-    public Item getPoweredRails() {
+    public Item poweredRails() {
         return Item.of("minecraft:powered_rail");
     }
 
-    public Item getPrismarine() {
+    public Item prismarine() {
         return Item.of("minecraft:prismarine");
     }
 
-    public Item getPrismarineBrickSlab() {
+    public Item prismarineBrickSlab() {
         return Item.of("minecraft:prismarine_brick_slab");
     }
 
-    public Item getPrismarineBricksStairs() {
+    public Item prismarineBricksStairs() {
         return Item.of("minecraft:prismarine_brick_stairs");
     }
 
-    public Item getPrismarineCrystals() {
+    public Item prismarineCrystals() {
         return Item.of("minecraft:prismarine_crystals");
     }
 
-    public Item getPrismarineShard() {
+    public Item prismarineShard() {
         return Item.of("minecraft:prismarine_shard");
     }
 
-    public Item getPrismarineSlab() {
+    public Item prismarineSlab() {
         return Item.of("minecraft:prismarine_slab");
     }
 
-    public Item getPrismarineStairs() {
+    public Item prismarineStairs() {
         return Item.of("minecraft:prismarine_stairs");
     }
 
-    public Item getPrismarineWall() {
+    public Item prismarineWall() {
         return Item.of("minecraft:prismarine_wall");
     }
 
-    public Item getBucketOfPufferfish() {
+    public Item bucketOfPufferfish() {
         return Item.of("minecraft:pufferfish_bucket");
     }
 
-    public Item getPufferfishSpawnEgg() {
+    public Item pufferfishSpawnEgg() {
         return Item.of("minecraft:pufferfish_spawn_egg");
     }
 
-    public Item getPumpkin() {
+    public Item pumpkin() {
         return Item.of("minecraft:pumpkin");
     }
 
-    public Item getPumpkinPie() {
+    public Item pumpkinPie() {
         return Item.of("minecraft:pumpkin_pie");
     }
 
-    public Item getPumpkinSeeds() {
+    public Item pumpkinSeeds() {
         return Item.of("minecraft:pumpkin_seeds");
     }
 
-    public Item getPurpleGlazedTerracotta() {
+    public Item purpleGlazedTerracotta() {
         return Item.of("minecraft:purple_glazed_terracotta");
     }
 
-    public Item getPurpleShulkerBox() {
+    public Item purpleShulkerBox() {
         return Item.of("minecraft:purple_shulker_box");
     }
 
-    public Item getPurpurBlock() {
+    public Item purpurBlock() {
         return Item.of("minecraft:purpur_block");
     }
 
-    public Item getPurpurPillar() {
+    public Item purpurPillar() {
         return Item.of("minecraft:purpur_pillar");
     }
 
-    public Item getPurpurSlab() {
+    public Item purpurSlab() {
         return Item.of("minecraft:purpur_slab");
     }
 
-    public Item getPurpurStairs() {
+    public Item purpurStairs() {
         return Item.of("minecraft:purpur_stairs");
     }
 
-    public Item getNetherQuartz() {
+    public Item netherQuartz() {
         return Item.of("minecraft:quartz");
     }
 
-    public Item getBlockOfQuartz() {
+    public Item blockOfQuartz() {
         return Item.of("minecraft:quartz_block");
     }
 
-    public Item getQuartzStairs() {
+    public Item quartzStairs() {
         return Item.of("minecraft:quartz_stairs");
     }
 
-    public Item getRawRabbit() {
+    public Item rawRabbit() {
         return Item.of("minecraft:rabbit");
     }
 
-    public Item getRabbitsFoot() {
+    public Item rabbitsFoot() {
         return Item.of("minecraft:rabbit_foot");
     }
 
-    public Item getRabbitHide() {
+    public Item rabbitHide() {
         return Item.of("minecraft:rabbit_hide");
     }
 
-    public Item getRabbitSpawnEgg() {
+    public Item rabbitSpawnEgg() {
         return Item.of("minecraft:rabbit_spawn_egg");
     }
 
-    public Item getRabbitStew() {
+    public Item rabbitStew() {
         return Item.of("minecraft:rabbit_stew");
     }
 
-    public Item getRails() {
+    public Item rails() {
         return Item.of("minecraft:rail");
     }
 
-    public Item getRavagerSpawnEgg() {
+    public Item ravagerSpawnEgg() {
         return Item.of("minecraft:ravager_spawn_egg");
     }
 
-    public Item getRedGlazedTerracotta() {
+    public Item redGlazedTerracotta() {
         return Item.of("minecraft:red_glazed_terracotta");
     }
 
-    public Item getRedMushroom() {
+    public Item redMushroom() {
         return Item.of("minecraft:red_mushroom");
     }
 
-    public Item getRedMushroomBlock() {
+    public Item redMushroomBlock() {
         return Item.of("minecraft:red_mushroom_block");
     }
 
-    public Item getRedNetherBrickSlab() {
+    public Item redNetherBrickSlab() {
         return Item.of("minecraft:red_nether_brick_slab");
     }
 
-    public Item getRedNetherBrickStairs() {
+    public Item redNetherBrickStairs() {
         return Item.of("minecraft:red_nether_brick_stairs");
     }
 
-    public Item getRedNetherBrickWall() {
+    public Item redNetherBrickWall() {
         return Item.of("minecraft:red_nether_brick_wall");
     }
 
-    public Item getRedNetherBrick() {
+    public Item redNetherBrick() {
         return Item.of("minecraft:red_nether_bricks");
     }
 
-    public Item getRedSandstone() {
+    public Item redSandstone() {
         return Item.of("minecraft:red_sandstone");
     }
 
-    public Item getRedSandstoneStairs() {
+    public Item redSandstoneStairs() {
         return Item.of("minecraft:red_sandstone_stairs");
     }
 
-    public Item getRedSandstoneWall() {
+    public Item redSandstoneWall() {
         return Item.of("minecraft:red_sandstone_wall");
     }
 
-    public Item getRedShulkerBox() {
+    public Item redShulkerBox() {
         return Item.of("minecraft:red_shulker_box");
     }
 
-    public Item getRedstoneDust() {
+    public Item redstoneDust() {
         return Item.of("minecraft:redstone");
     }
 
-    public Item getBlockOfRedstone() {
+    public Item blockOfRedstone() {
         return Item.of("minecraft:redstone_block");
     }
 
-    public Item getRedstoneLamp() {
+    public Item redstoneLamp() {
         return Item.of("minecraft:redstone_lamp");
     }
 
-    public Item getRedstoneOre() {
+    public Item redstoneOre() {
         return Item.of("minecraft:redstone_ore");
     }
 
-    public Item getRedstoneTorch() {
+    public Item redstoneTorch() {
         return Item.of("minecraft:redstone_torch");
     }
 
-    public Item getRedstoneRepeater() {
+    public Item redstoneRepeater() {
         return Item.of("minecraft:repeater");
     }
 
-    public Item getRepeatingCommandBlock() {
+    public Item repeatingCommandBlock() {
         return Item.of("minecraft:repeating_command_block");
     }
 
-    public Item getRespawnAnchor() {
+    public Item respawnAnchor() {
         return Item.of("minecraft:respawn_anchor");
     }
 
-    public Item getRottenFlesh() {
+    public Item rottenFlesh() {
         return Item.of("minecraft:rotten_flesh");
     }
 
-    public Item getSaddle() {
+    public Item saddle() {
         return Item.of("minecraft:saddle");
     }
 
-    public Item getBucketOfSalmon() {
+    public Item bucketOfSalmon() {
         return Item.of("minecraft:salmon_bucket");
     }
 
-    public Item getSalmonSpawnEgg() {
+    public Item salmonSpawnEgg() {
         return Item.of("minecraft:salmon_spawn_egg");
     }
 
-    public Item getSand() {
+    public Item sand() {
         return Item.of("minecraft:sand");
     }
 
-    public Item getSandstone() {
+    public Item sandstone() {
         return Item.of("minecraft:sandstone");
     }
 
-    public Item getSandstoneStairs() {
+    public Item sandstoneStairs() {
         return Item.of("minecraft:sandstone_stairs");
     }
 
-    public Item getSandstoneWall() {
+    public Item sandstoneWall() {
         return Item.of("minecraft:sandstone_wall");
     }
 
-    public Item getScaffolding() {
+    public Item scaffolding() {
         return Item.of("minecraft:scaffolding");
     }
 
-    public Item getScute() {
+    public Item scute() {
         return Item.of("minecraft:scute");
     }
 
-    public Item getSeaLantern() {
+    public Item seaLantern() {
         return Item.of("minecraft:sea_lantern");
     }
 
-    public Item getSeaPickle() {
+    public Item seaPickle() {
         return Item.of("minecraft:sea_pickle");
     }
 
-    public Item getSeagrass() {
+    public Item seagrass() {
         return Item.of("minecraft:seagrass");
     }
 
-    public Item getShears() {
+    public Item shears() {
         return Item.of("minecraft:shears");
     }
 
-    public Item getSheepSpawnEgg() {
+    public Item sheepSpawnEgg() {
         return Item.of("minecraft:sheep_spawn_egg");
     }
 
-    public Item getShield() {
+    public Item shield() {
         return Item.of("minecraft:shield");
     }
 
-    public Item getShroomlight() {
+    public Item shroomlight() {
         return Item.of("minecraft:shroomlight");
     }
 
-    public Item getShulkerBox() {
+    public Item shulkerBox() {
         return Item.of("minecraft:shulker_box");
     }
 
-    public Item getShulkerShell() {
+    public Item shulkerShell() {
         return Item.of("minecraft:shulker_shell");
     }
 
-    public Item getShulkerSpawnEgg() {
+    public Item shulkerSpawnEgg() {
         return Item.of("minecraft:shulker_spawn_egg");
     }
 
-    public Item getSilverfishSpawnEgg() {
+    public Item silverfishSpawnEgg() {
         return Item.of("minecraft:silverfish_spawn_egg");
     }
 
-    public Item getSkeletonHorseSpawnEgg() {
+    public Item skeletonHorseSpawnEgg() {
         return Item.of("minecraft:skeleton_horse_spawn_egg");
     }
 
-    public Item getSkeletonSpawnEgg() {
+    public Item skeletonSpawnEgg() {
         return Item.of("minecraft:skeleton_spawn_egg");
     }
 
-    public Item getSkullChargeBannerPattern() {
+    public Item skullChargeBannerPattern() {
         return Item.of("minecraft:skull_banner_pattern");
     }
 
-    public Item getSlimeball() {
+    public Item slimeball() {
         return Item.of("minecraft:slime_ball");
     }
 
-    public Item getSlimeBlock() {
+    public Item slimeBlock() {
         return Item.of("minecraft:slime_block");
     }
 
-    public Item getSlimeSpawnEgg() {
+    public Item slimeSpawnEgg() {
         return Item.of("minecraft:slime_spawn_egg");
     }
 
-    public Item getSmithingTable() {
+    public Item smithingTable() {
         return Item.of("minecraft:smithing_table");
     }
 
-    public Item getSmoker() {
+    public Item smoker() {
         return Item.of("minecraft:smoker");
     }
 
-    public Item getSmoothQuartz() {
+    public Item smoothQuartz() {
         return Item.of("minecraft:smooth_quartz");
     }
 
-    public Item getSmoothQuartzSlab() {
+    public Item smoothQuartzSlab() {
         return Item.of("minecraft:smooth_quartz_slab");
     }
 
-    public Item getSmoothQuartzStairs() {
+    public Item smoothQuartzStairs() {
         return Item.of("minecraft:smooth_quartz_stairs");
     }
 
-    public Item getSmoothRedSandstoneSlab() {
+    public Item smoothRedSandstoneSlab() {
         return Item.of("minecraft:smooth_red_sandstone_slab");
     }
 
-    public Item getSmoothRedSandstoneStairs() {
+    public Item smoothRedSandstoneStairs() {
         return Item.of("minecraft:smooth_red_sandstone_stairs");
     }
 
-    public Item getSmoothSandstoneSlab() {
+    public Item smoothSandstoneSlab() {
         return Item.of("minecraft:smooth_sandstone_slab");
     }
 
-    public Item getSmoothSandstoneStairs() {
+    public Item smoothSandstoneStairs() {
         return Item.of("minecraft:smooth_sandstone_stairs");
     }
 
-    public Item getSmoothStone() {
+    public Item smoothStone() {
         return Item.of("minecraft:smooth_stone");
     }
 
-    public Item getSmoothStoneSlab() {
+    public Item smoothStoneSlab() {
         return Item.of("minecraft:smooth_stone_slab");
     }
 
-    public Item getSnow() {
+    public Item snow() {
         return Item.of("minecraft:snow");
     }
 
-    public Item getSnowBlock() {
+    public Item snowBlock() {
         return Item.of("minecraft:snow_block");
     }
 
-    public Item getSnowball() {
+    public Item snowball() {
         return Item.of("minecraft:snowball");
     }
 
-    public Item getSoulCampfire() {
+    public Item soulCampfire() {
         return Item.of("minecraft:soul_campfire");
     }
 
-    public Item getSoulLantern() {
+    public Item soulLantern() {
         return Item.of("minecraft:soul_lantern");
     }
 
-    public Item getSoulSand() {
+    public Item soulSand() {
         return Item.of("minecraft:soul_sand");
     }
 
-    public Item getSoulSoil() {
+    public Item soulSoil() {
         return Item.of("minecraft:soul_soil");
     }
 
-    public Item getSoulTorch() {
+    public Item soulTorch() {
         return Item.of("minecraft:soul_torch");
     }
 
-    public Item getMonsterSpawner() {
+    public Item monsterSpawner() {
         return Item.of("minecraft:spawner");
     }
 
-    public Item getSpectralArrow() {
+    public Item spectralArrow() {
         return Item.of("minecraft:spectral_arrow");
     }
 
-    public Item getSpiderEye() {
+    public Item spiderEye() {
         return Item.of("minecraft:spider_eye");
     }
 
-    public Item getSpiderSpawnEgg() {
+    public Item spiderSpawnEgg() {
         return Item.of("minecraft:spider_spawn_egg");
     }
 
-    public Item getSplashPotion() {
+    public Item splashPotion() {
         return Item.of("minecraft:splash_potion");
     }
 
-    public Item getSponge() {
+    public Item sponge() {
         return Item.of("minecraft:sponge");
     }
 
-    public Item getSpruceBoat() {
+    public Item spruceBoat() {
         return Item.of("minecraft:spruce_boat");
     }
 
-    public Item getSpruceButton() {
+    public Item spruceButton() {
         return Item.of("minecraft:spruce_button");
     }
 
-    public Item getSpruceDoor() {
+    public Item spruceDoor() {
         return Item.of("minecraft:spruce_door");
     }
 
-    public Item getSpruceFence() {
+    public Item spruceFence() {
         return Item.of("minecraft:spruce_fence");
     }
 
-    public Item getSpruceFenceGate() {
+    public Item spruceFenceGate() {
         return Item.of("minecraft:spruce_fence_gate");
     }
 
-    public Item getSprucePressurePlate() {
+    public Item sprucePressurePlate() {
         return Item.of("minecraft:spruce_pressure_plate");
     }
 
-    public Item getSpruceSign() {
+    public Item spruceSign() {
         return Item.of("minecraft:spruce_sign");
     }
 
-    public Item getSpruceWoodStairs() {
+    public Item spruceWoodStairs() {
         return Item.of("minecraft:spruce_stairs");
     }
 
-    public Item getSpruceTrapdoor() {
+    public Item spruceTrapdoor() {
         return Item.of("minecraft:spruce_trapdoor");
     }
 
-    public Item getSpruceWoodWithBark() {
+    public Item spruceWoodWithBark() {
         return Item.of("minecraft:spruce_wood");
     }
 
-    public Item getSquidSpawnEgg() {
+    public Item squidSpawnEgg() {
         return Item.of("minecraft:squid_spawn_egg");
     }
 
-    public Item getStick() {
+    public Item stick() {
         return Item.of("minecraft:stick");
     }
 
-    public Item getStickyPiston() {
+    public Item stickyPiston() {
         return Item.of("minecraft:sticky_piston");
     }
 
-    public Item getStone() {
+    public Item stone() {
         return Item.of("minecraft:stone");
     }
 
-    public Item getStoneAxe() {
+    public Item stoneAxe() {
         return Item.of("minecraft:stone_axe");
     }
 
-    public Item getStoneBrickStairs() {
+    public Item stoneBrickStairs() {
         return Item.of("minecraft:stone_brick_stairs");
     }
 
-    public Item getStoneBrickWall() {
+    public Item stoneBrickWall() {
         return Item.of("minecraft:stone_brick_wall");
     }
 
-    public Item getStoneBricks() {
+    public Item stoneBricks() {
         return Item.of("minecraft:stone_bricks");
     }
 
-    public Item getStoneButton() {
+    public Item stoneButton() {
         return Item.of("minecraft:stone_button");
     }
 
-    public Item getStoneHoe() {
+    public Item stoneHoe() {
         return Item.of("minecraft:stone_hoe");
     }
 
-    public Item getStonePickaxe() {
+    public Item stonePickaxe() {
         return Item.of("minecraft:stone_pickaxe");
     }
 
-    public Item getStonePressurePlate() {
+    public Item stonePressurePlate() {
         return Item.of("minecraft:stone_pressure_plate");
     }
 
-    public Item getStoneShovel() {
+    public Item stoneShovel() {
         return Item.of("minecraft:stone_shovel");
     }
 
-    public Item getStoneSlab() {
+    public Item stoneSlab() {
         return Item.of("minecraft:stone_slab");
     }
 
-    public Item getStoneStairs() {
+    public Item stoneStairs() {
         return Item.of("minecraft:stone_stairs");
     }
 
-    public Item getStoneSword() {
+    public Item stoneSword() {
         return Item.of("minecraft:stone_sword");
     }
 
-    public Item getStonecutter() {
+    public Item stonecutter() {
         return Item.of("minecraft:stonecutter");
     }
 
-    public Item getStraySpawnEgg() {
+    public Item straySpawnEgg() {
         return Item.of("minecraft:stray_spawn_egg");
     }
 
-    public Item getStriderSpawnEgg() {
+    public Item striderSpawnEgg() {
         return Item.of("minecraft:strider_spawn_egg");
     }
 
-    public Item getString() {
+    public Item string() {
         return Item.of("minecraft:string");
     }
 
-    public Item getStrippedAcaciaLog() {
+    public Item strippedAcaciaLog() {
         return Item.of("minecraft:stripped_acacia_log");
     }
 
-    public Item getStrippedAcaciaWood() {
+    public Item strippedAcaciaWood() {
         return Item.of("minecraft:stripped_acacia_wood");
     }
 
-    public Item getStrippedBirchWood() {
+    public Item strippedBirchWood() {
         return Item.of("minecraft:stripped_birch_wood");
     }
 
-    public Item getStrippedCrimsonHyphae() {
+    public Item strippedCrimsonHyphae() {
         return Item.of("minecraft:stripped_crimson_hyphae");
     }
 
-    public Item getStrippedCrimsonStem() {
+    public Item strippedCrimsonStem() {
         return Item.of("minecraft:stripped_crimson_stem");
     }
 
-    public Item getStrippedDarkOakLog() {
+    public Item strippedDarkOakLog() {
         return Item.of("minecraft:stripped_dark_oak_log");
     }
 
-    public Item getStrippedDarkOakWood() {
+    public Item strippedDarkOakWood() {
         return Item.of("minecraft:stripped_dark_oak_wood");
     }
 
-    public Item getStrippedJungleWood() {
+    public Item strippedJungleWood() {
         return Item.of("minecraft:stripped_jungle_wood");
     }
 
-    public Item getStrippedOakLog() {
+    public Item strippedOakLog() {
         return Item.of("minecraft:stripped_oak_log");
     }
 
-    public Item getStrippedOakWood() {
+    public Item strippedOakWood() {
         return Item.of("minecraft:stripped_oak_wood");
     }
 
-    public Item getStrippedSpruceLog() {
+    public Item strippedSpruceLog() {
         return Item.of("minecraft:stripped_spruce_log");
     }
 
-    public Item getStrippedSpruceWood() {
+    public Item strippedSpruceWood() {
         return Item.of("minecraft:stripped_spruce_wood");
     }
 
-    public Item getStrippedWarpedHyphae() {
+    public Item strippedWarpedHyphae() {
         return Item.of("minecraft:stripped_warped_hyphae");
     }
 
-    public Item getStrippedWarpedStem() {
+    public Item strippedWarpedStem() {
         return Item.of("minecraft:stripped_warped_stem");
     }
 
-    public Item getStrippedBirchLog() {
+    public Item strippedBirchLog() {
         return Item.of("minecraft:stripped_birch_log");
     }
 
-    public Item getStrippedJungleLog() {
+    public Item strippedJungleLog() {
         return Item.of("minecraft:stripped_jungle_log");
     }
 
-    public Item getStructureBlock() {
+    public Item structureBlock() {
         return Item.of("minecraft:structure_block");
     }
 
-    public Item getStructureVoid() {
+    public Item structureVoid() {
         return Item.of("minecraft:structure_void");
     }
 
-    public Item getSugar() {
+    public Item sugar() {
         return Item.of("minecraft:sugar");
     }
 
-    public Item getSugarCanes() {
+    public Item sugarCanes() {
         return Item.of("minecraft:sugar_cane");
     }
 
-    public Item getSunflower() {
+    public Item sunflower() {
         return Item.of("minecraft:sunflower");
     }
 
-    public Item getSuspiciousStew() {
+    public Item suspiciousStew() {
         return Item.of("minecraft:suspicious_stew");
     }
 
-    public Item getSweetBerries() {
+    public Item sweetBerries() {
         return Item.of("minecraft:sweet_berries");
     }
 
-    public Item getTarget() {
+    public Item target() {
         return Item.of("minecraft:target");
     }
 
-    public Item getTerracotta() {
+    public Item terracotta() {
         return Item.of("minecraft:terracotta");
     }
 
-    public Item getTippedArrow() {
+    public Item tippedArrow() {
         return Item.of("minecraft:tipped_arrow");
     }
 
-    public Item getTnt() {
+    public Item tnt() {
         return Item.of("minecraft:tnt");
     }
 
-    public Item getMinecartWithTnt() {
+    public Item minecartWithTnt() {
         return Item.of("minecraft:tnt_minecart");
     }
 
-    public Item getTorch() {
+    public Item torch() {
         return Item.of("minecraft:torch");
     }
 
-    public Item getTotemOfUndying() {
+    public Item totemOfUndying() {
         return Item.of("minecraft:totem_of_undying");
     }
 
-    public Item getTraderLlamaSpawnEgg() {
+    public Item traderLlamaSpawnEgg() {
         return Item.of("minecraft:trader_llama_spawn_egg");
     }
 
-    public Item getTrappedChest() {
+    public Item trappedChest() {
         return Item.of("minecraft:trapped_chest");
     }
 
-    public Item getTrident() {
+    public Item trident() {
         return Item.of("minecraft:trident");
     }
 
-    public Item getTripwireHook() {
+    public Item tripwireHook() {
         return Item.of("minecraft:tripwire_hook");
     }
 
-    public Item getBucketOfTropicalFish() {
+    public Item bucketOfTropicalFish() {
         return Item.of("minecraft:tropical_fish_bucket");
     }
 
-    public Item getTropicalFishSpawnEgg() {
+    public Item tropicalFishSpawnEgg() {
         return Item.of("minecraft:tropical_fish_spawn_egg");
     }
 
-    public Item getTubeCoral() {
+    public Item tubeCoral() {
         return Item.of("minecraft:tube_coral");
     }
 
-    public Item getTubeCoralBlock() {
+    public Item tubeCoralBlock() {
         return Item.of("minecraft:tube_coral_block");
     }
 
-    public Item getTubeCoralFan() {
+    public Item tubeCoralFan() {
         return Item.of("minecraft:tube_coral_fan");
     }
 
-    public Item getTurtleEgg() {
+    public Item turtleEgg() {
         return Item.of("minecraft:turtle_egg");
     }
 
-    public Item getTurtleShell() {
+    public Item turtleShell() {
         return Item.of("minecraft:turtle_helmet");
     }
 
-    public Item getTurtleSpawnEgg() {
+    public Item turtleSpawnEgg() {
         return Item.of("minecraft:turtle_spawn_egg");
     }
 
-    public Item getTwistingVines() {
+    public Item twistingVines() {
         return Item.of("minecraft:twisting_vines");
     }
 
-    public Item getVexSpawnEgg() {
+    public Item vexSpawnEgg() {
         return Item.of("minecraft:vex_spawn_egg");
     }
 
-    public Item getVillagerSpawnEgg() {
+    public Item villagerSpawnEgg() {
         return Item.of("minecraft:villager_spawn_egg");
     }
 
-    public Item getVindicatorSpawnEgg() {
+    public Item vindicatorSpawnEgg() {
         return Item.of("minecraft:vindicator_spawn_egg");
     }
 
-    public Item getVines() {
+    public Item vines() {
         return Item.of("minecraft:vine");
     }
 
-    public Item getWanderingTraderSpawnEgg() {
+    public Item wanderingTraderSpawnEgg() {
         return Item.of("minecraft:wandering_trader_spawn_egg");
     }
 
-    public Item getWarpedButton() {
+    public Item warpedButton() {
         return Item.of("minecraft:warped_button");
     }
 
-    public Item getWarpedDoor() {
+    public Item warpedDoor() {
         return Item.of("minecraft:warped_door");
     }
 
-    public Item getWarpedFence() {
+    public Item warpedFence() {
         return Item.of("minecraft:warped_fence");
     }
 
-    public Item getWarpedFenceGate() {
+    public Item warpedFenceGate() {
         return Item.of("minecraft:warped_fence_gate");
     }
 
-    public Item getWarpedFungus() {
+    public Item warpedFungus() {
         return Item.of("minecraft:warped_fungus");
     }
 
-    public Item getWarpedFungusOnAStick() {
+    public Item warpedFungusOnAStick() {
         return Item.of("minecraft:warped_fungus_on_a_stick");
     }
 
-    public Item getWarpedHyphae() {
+    public Item warpedHyphae() {
         return Item.of("minecraft:warped_hyphae");
     }
 
-    public Item getWarpedNylium() {
+    public Item warpedNylium() {
         return Item.of("minecraft:warped_nylium");
     }
 
-    public Item getWarpedPlanks() {
+    public Item warpedPlanks() {
         return Item.of("minecraft:warped_planks");
     }
 
-    public Item getWarpedPressurePlate() {
+    public Item warpedPressurePlate() {
         return Item.of("minecraft:warped_pressure_plate");
     }
 
-    public Item getWarpedRoots() {
+    public Item warpedRoots() {
         return Item.of("minecraft:warped_roots");
     }
 
-    public Item getWarpedSign() {
+    public Item warpedSign() {
         return Item.of("minecraft:warped_sign");
     }
 
-    public Item getWarpedSlab() {
+    public Item warpedSlab() {
         return Item.of("minecraft:warped_slab");
     }
 
-    public Item getWarpedStairs() {
+    public Item warpedStairs() {
         return Item.of("minecraft:warped_stairs");
     }
 
-    public Item getWarpedStem() {
+    public Item warpedStem() {
         return Item.of("minecraft:warped_stem");
     }
 
-    public Item getWarpedTrapdoor() {
+    public Item warpedTrapdoor() {
         return Item.of("minecraft:warped_trapdoor");
     }
 
-    public Item getWarpedWartBlock() {
+    public Item warpedWartBlock() {
         return Item.of("minecraft:warped_wart_block");
     }
 
-    public Item getWater() {
+    public Item water() {
         return Item.of("minecraft:water");
     }
 
-    public Item getWaterBucket() {
+    public Item waterBucket() {
         return Item.of("minecraft:water_bucket");
     }
 
-    public Item getWeepingVines() {
+    public Item weepingVines() {
         return Item.of("minecraft:weeping_vines");
     }
 
-    public Item getWheat() {
+    public Item wheat() {
         return Item.of("minecraft:wheat");
     }
 
-    public Item getSeeds() {
+    public Item seeds() {
         return Item.of("minecraft:wheat_seeds");
     }
 
-    public Item getWhiteGlazedTerracotta() {
+    public Item whiteGlazedTerracotta() {
         return Item.of("minecraft:white_glazed_terracotta");
     }
 
-    public Item getWhiteShulkerBox() {
+    public Item whiteShulkerBox() {
         return Item.of("minecraft:white_shulker_box");
     }
 
-    public Item getWhiteTerracotta() {
+    public Item whiteTerracotta() {
         return Item.of("minecraft:white_terracotta");
     }
 
-    public Item getWhiteWool() {
+    public Item whiteWool() {
         return Item.of("minecraft:white_wool");
     }
 
-    public Item getWitchSpawnEgg() {
+    public Item witchSpawnEgg() {
         return Item.of("minecraft:witch_spawn_egg");
     }
 
-    public Item getWitherRose() {
+    public Item witherRose() {
         return Item.of("minecraft:wither_rose");
     }
 
-    public Item getWitherSkeletonSpawnEgg() {
+    public Item witherSkeletonSpawnEgg() {
         return Item.of("minecraft:wither_skeleton_spawn_egg");
     }
 
-    public Item getWolfSpawnEgg() {
+    public Item wolfSpawnEgg() {
         return Item.of("minecraft:wolf_spawn_egg");
     }
 
-    public Item getWoodenAxe() {
+    public Item woodenAxe() {
         return Item.of("minecraft:wooden_axe");
     }
 
-    public Item getWoodenHoe() {
+    public Item woodenHoe() {
         return Item.of("minecraft:wooden_hoe");
     }
 
-    public Item getWoodenPickaxe() {
+    public Item woodenPickaxe() {
         return Item.of("minecraft:wooden_pickaxe");
     }
 
-    public Item getWoodenShovel() {
+    public Item woodenShovel() {
         return Item.of("minecraft:wooden_shovel");
     }
 
-    public Item getWoodenSword() {
+    public Item woodenSword() {
         return Item.of("minecraft:wooden_sword");
     }
 
-    public Item getBookAndQuill() {
+    public Item bookAndQuill() {
         return Item.of("minecraft:writable_book");
     }
 
-    public Item getWrittenBook() {
+    public Item writtenBook() {
         return Item.of("minecraft:written_book");
     }
 
-    public Item getYellowGlazedTerracotta() {
+    public Item yellowGlazedTerracotta() {
         return Item.of("minecraft:yellow_glazed_terracotta");
     }
 
-    public Item getYellowShulkerBox() {
+    public Item yellowShulkerBox() {
         return Item.of("minecraft:yellow_shulker_box");
     }
 
-    public Item getZoglinSpawnEgg() {
+    public Item zoglinSpawnEgg() {
         return Item.of("minecraft:zoglin_spawn_egg");
     }
 
-    public Item getZombieHorseSpawnEgg() {
+    public Item zombieHorseSpawnEgg() {
         return Item.of("minecraft:zombie_horse_spawn_egg");
     }
 
-    public Item getZombieSpawnEgg() {
+    public Item zombieSpawnEgg() {
         return Item.of("minecraft:zombie_spawn_egg");
     }
 
-    public Item getZombieVillagerSpawnEgg() {
+    public Item zombieVillagerSpawnEgg() {
         return Item.of("minecraft:zombie_villager_spawn_egg");
     }
 
-    public Item getZombifiedPiglinSpawnEgg() {
+    public Item zombifiedPiglinSpawnEgg() {
         return Item.of("minecraft:zombified_piglin_spawn_egg");
     }
 
-    public abstract Item getYellowBed();
+    public abstract Item yellowBed();
 
-    public abstract Item getYellowCarpet();
+    public abstract Item yellowCarpet();
 
-    public abstract Item getYellowConcrete();
+    public abstract Item yellowConcrete();
 
-    public abstract Item getYellowConcretePowder();
+    public abstract Item yellowConcretePowder();
 
-    public abstract Item getYellowDye();
+    public abstract Item yellowDye();
 
-    public abstract Item getYellowStainedGlass();
+    public abstract Item yellowStainedGlass();
 
-    public abstract Item getYellowStainedGlassPane();
+    public abstract Item yellowStainedGlassPane();
 
-    public abstract Item getYellowTerracotta();
+    public abstract Item yellowTerracotta();
 
-    public abstract Item getYellowWool();
+    public abstract Item yellowWool();
 
-    public abstract Item getZombieHead();
+    public abstract Item zombieHead();
 }

@@ -30,14 +30,14 @@ public class CacheEvictionMethodModifier extends CacheServiceModifier<EvictCache
     @Override
     protected <T, R> ProxyFunction<T, R> process(ApplicationContext context, MethodProxyContext<T> methodContext, CacheContext cacheContext) {
         return (instance, args, proxyContext) -> {
-            cacheContext.getManager().evict(cacheContext.getName());
+            cacheContext.manager().evict(cacheContext.name());
             return null; // Should be void anyway
         };
     }
 
     @Override
-    protected CacheMethodContext getContext(MethodProxyContext<?> context) {
-        final EvictCache evict = context.getAnnotation(EvictCache.class);
+    protected CacheMethodContext context(MethodProxyContext<?> context) {
+        final EvictCache evict = context.annotation(EvictCache.class);
         return new SimpleCacheMethodContext(evict.manager(), evict.value(), null);
     }
 

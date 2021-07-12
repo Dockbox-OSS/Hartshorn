@@ -105,15 +105,15 @@ public final class VerbalExpression {
     }
 
     /**
-     * Extract full string that matches regex Same as {@link #getText(String, int)} for 0 group
+     * Extract full string that matches regex Same as {@link #text(String, int)} for 0 group
      *
      * @param toTest
      *         - string to extract from
      *
      * @return group 0, extracted from text
      */
-    public String getText(final String toTest) {
-        return this.getText(toTest, 0);
+    public String text(final String toTest) {
+        return this.text(toTest, 0);
     }
 
     /**
@@ -127,7 +127,7 @@ public final class VerbalExpression {
      * @return extracted group
      * @since 1.1
      */
-    public String getText(final String toTest, final int group) {
+    public String text(final String toTest, final int group) {
         Matcher m = this.pattern.matcher(toTest);
         StringBuilder result = new StringBuilder();
         while (m.find()) {
@@ -149,7 +149,7 @@ public final class VerbalExpression {
      * @return extracted group
      * @since 1.6
      */
-    public String getText(final String toTest, final String group) {
+    public String text(final String toTest, final String group) {
         Matcher m = this.pattern.matcher(toTest);
         StringBuilder result = new StringBuilder();
         while (m.find()) {
@@ -163,7 +163,7 @@ public final class VerbalExpression {
      *
      * <p>Example: String text = "SampleHelloWorldString"; VerbalExpression regex =
      * regex().capt().oneOf("Hello", "World").endCapt().maybe("String").build(); list =
-     * regex.getTextGroups(text, 0) //result: "Hello", "WorldString" list = regex.getTextGroups(text,
+     * regex.textGroups(text, 0) //result: "Hello", "WorldString" list = regex.textGroups(text,
      * 1) //result: "Hello", "World"
      *
      * @param toTest
@@ -173,7 +173,7 @@ public final class VerbalExpression {
      *
      * @return list of extracted groups
      */
-    public List<String> getTextGroups(final String toTest, final int group) {
+    public List<String> textGroups(final String toTest, final int group) {
         List<String> groups = HartshornUtils.emptyList();
         Matcher m = this.pattern.matcher(toTest);
         while (m.find()) {
@@ -795,7 +795,7 @@ public final class VerbalExpression {
          * VerbalExpression regex = regex()
          * .find("@")
          * .capture("domain").anything().build();
-         * regex.getText(text, "domain"); // => "example.com"
+         * regex.text(text, "domain"); // => "example.com"
          * }</pre>
          *
          * @param name

@@ -18,7 +18,7 @@
 package org.dockbox.hartshorn.server.minecraft.events.moderation;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.api.domain.Target;
+import org.dockbox.hartshorn.api.domain.Subject;
 import org.dockbox.hartshorn.commands.source.CommandSource;
 import org.dockbox.hartshorn.server.minecraft.players.Player;
 
@@ -27,7 +27,7 @@ import java.time.LocalDateTime;
 public class PlayerBannedEvent extends BanEvent<Player> {
 
     /**
-     * The event fired when a {@link Target} is banned, typically this is a {@link Player}.
+     * The event fired when a {@link Subject} is banned, typically this is a {@link Player}.
      *
      * @param target
      *         The player being banned

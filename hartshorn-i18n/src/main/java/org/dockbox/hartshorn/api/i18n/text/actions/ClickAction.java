@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.api.i18n.text.actions;
 
-import org.dockbox.hartshorn.api.domain.Target;
+import org.dockbox.hartshorn.api.domain.Subject;
 import org.dockbox.hartshorn.api.exceptions.Except;
 
 import java.net.MalformedURLException;
@@ -54,7 +54,7 @@ public class ClickAction<R> extends TextAction<R> {
         return new SuggestCommand(command);
     }
 
-    public static ExecuteCallback executeCallback(Consumer<Target> consumer) {
+    public static ExecuteCallback executeCallback(Consumer<Subject> consumer) {
         return new ExecuteCallback(consumer);
     }
 
@@ -76,8 +76,8 @@ public class ClickAction<R> extends TextAction<R> {
         }
     }
 
-    public static final class ExecuteCallback extends ClickAction<Consumer<Target>> {
-        private ExecuteCallback(Consumer<Target> result) {
+    public static final class ExecuteCallback extends ClickAction<Consumer<Subject>> {
+        private ExecuteCallback(Consumer<Subject> result) {
             super(result);
         }
     }

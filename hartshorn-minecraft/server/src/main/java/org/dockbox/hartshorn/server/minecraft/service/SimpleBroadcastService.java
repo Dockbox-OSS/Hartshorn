@@ -31,7 +31,7 @@ import java.util.function.Predicate;
 public class SimpleBroadcastService implements BroadcastService {
     @Override
     public void broadcastPublic(@NotNull Text message) {
-        Hartshorn.context().get(Players.class).getOnlinePlayers().forEach(message::send);
+        Hartshorn.context().get(Players.class).onlinePlayers().forEach(message::send);
     }
 
     @Override
@@ -60,7 +60,7 @@ public class SimpleBroadcastService implements BroadcastService {
     }
 
     private static void sendWithPredicate(Text message, Predicate<Player> filter) {
-        Hartshorn.context().get(Players.class).getOnlinePlayers().stream()
+        Hartshorn.context().get(Players.class).onlinePlayers().stream()
                 .filter(filter)
                 .forEach(message::send);
     }

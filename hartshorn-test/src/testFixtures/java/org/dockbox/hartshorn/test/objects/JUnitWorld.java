@@ -44,11 +44,11 @@ public class JUnitWorld extends World {
     @Getter
     private final Map<String, String> gamerules = HartshornUtils.emptyMap();
     @Getter
-    private boolean isLoaded;
+    private boolean loaded;
 
     public JUnitWorld(UUID worldUniqueId, String name, boolean loadOnStartup, @NotNull Vector3N spawnPosition, long seed, Gamemode defaultGamemode) {
         super(worldUniqueId, name, loadOnStartup, spawnPosition, seed, defaultGamemode);
-        this.isLoaded = loadOnStartup;
+        this.loaded = loadOnStartup;
     }
 
     @Override
@@ -63,74 +63,74 @@ public class JUnitWorld extends World {
 
     @Override
     public Vector3N floor(Vector3N position) {
-        return Vector3N.of(position.getXd(), 64, position.getZd());
+        return Vector3N.of(position.xD(), 64, position.zD());
     }
 
     @Override
-    public boolean hasBlock(Vector3N position) {
+    public boolean has(Vector3N position) {
         return this.blocks.containsKey(position);
     }
 
     @Override
-    public Exceptional<Block> getBlock(Vector3N position) {
+    public Exceptional<Block> block(Vector3N position) {
         return Exceptional.of(this.blocks.getOrDefault(position, null));
     }
 
     @Override
-    public boolean setBlock(Vector3N position, Block block) {
+    public boolean block(Vector3N position, Block block) {
         this.blocks.put(position, block);
         return true;
     }
 
     @Override
-    public Exceptional<Chunk> getChunk(Location location) {
+    public Exceptional<Chunk> chunk(Location location) {
         return Exceptional.empty();
     }
 
     @Override
-    public Exceptional<Chunk> getChunk(Vector3N position) {
+    public Exceptional<Chunk> chunk(Vector3N position) {
         return Exceptional.empty();
     }
 
     @Override
-    public Collection<Chunk> getLoadedChunks() {
+    public Collection<Chunk> loadedChunks() {
         return HartshornUtils.emptyList();
     }
 
     @Override
-    public Collection<Entity> getEntities() {
+    public Collection<Entity> entities() {
         return this.entities.values();
     }
 
     @Override
-    public Collection<Entity> getEntities(Predicate<Entity> predicate) {
-        return this.getEntities().stream().filter(predicate).toList();
+    public Collection<Entity> entities(Predicate<Entity> predicate) {
+        return this.entities().stream().filter(predicate).toList();
     }
 
     @Override
-    public int getPlayerCount() {
-        return this.getEntities(entity -> entity instanceof Player).size();
+    public int playerCount() {
+        return this.entities(entity -> entity instanceof Player).size();
     }
 
     @Override
     public boolean unload() {
-        this.isLoaded = false;
+        this.loaded = false;
         return true;
     }
 
     @Override
     public boolean load() {
-        this.isLoaded = true;
+        this.loaded = true;
         return true;
     }
 
     @Override
-    public void setGamerule(String key, String value) {
+    public void gamerule(String key, String value) {
         this.gamerules.put(key, value);
     }
 
     public void addEntity(Entity entity) {
-        this.entities.put(entity.getUniqueId(), entity);
+        this.entities.put(entity.uniqueId(), entity);
     }
 
     public void destroyEntity(UUID uuid) {

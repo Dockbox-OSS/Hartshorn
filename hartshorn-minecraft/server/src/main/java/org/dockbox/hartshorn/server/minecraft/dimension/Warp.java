@@ -23,11 +23,11 @@ import org.dockbox.hartshorn.server.minecraft.dimension.position.Location;
 /** Represents a warp, a virtual location inside a world, with descriptive properties. */
 public interface Warp {
 
-    Exceptional<String> getDescription();
+    Exceptional<String> description();
 
-    Exceptional<String> getCategory();
+    Exceptional<String> category();
 
-    Location getLocation();
+    Location location();
 
-    String getName();
+    String name();
 }

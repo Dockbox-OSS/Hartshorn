@@ -53,13 +53,13 @@ public abstract class Player extends AbstractIdentifiable implements CommandSour
         super(uniqueId, name);
     }
 
-    public abstract boolean isOnline();
+    public abstract boolean online();
 
     public abstract void kick(Text reason);
 
-    public abstract Gamemode getGamemode();
+    public abstract Gamemode gamemode();
 
-    public abstract void setGamemode(Gamemode gamemode);
+    public abstract Player gamemode(Gamemode gamemode);
 
     @Override
     public boolean hasAnyPermission(@NotNull String @NotNull ... permissions) {
@@ -94,22 +94,22 @@ public abstract class Player extends AbstractIdentifiable implements CommandSour
     }
 
     @Override
-    public void setPermissions(Tristate state, @NotNull String @NotNull ... permissions) {
+    public void permissions(Tristate state, @NotNull String @NotNull ... permissions) {
         for (String permission : permissions) {
-            this.setPermission(permission, state);
+            this.permission(permission, state);
         }
     }
 
     @Override
-    public void setPermissions(Tristate state, @NotNull Permission @NotNull ... permissions) {
+    public void permissions(Tristate state, @NotNull Permission @NotNull ... permissions) {
         for (Permission permission : permissions) {
-            this.setPermission(permission, state);
+            this.permission(permission, state);
         }
     }
 
     @Override
-    public boolean isAlive() {
-        return this.getHealth() > 0;
+    public boolean alive() {
+        return this.health() > 0;
     }
 
     @Override
@@ -123,63 +123,63 @@ public abstract class Player extends AbstractIdentifiable implements CommandSour
     }
 
     @Override
-    public World getWorld() {
-        // No reference refresh required as this is done by getLocation. Should never throw NPE as
+    public World world() {
+        // No reference refresh required as this is done by location. Should never throw NPE as
         // Location is either
         // valid or EMPTY (World instance follows this same guideline).
-        return this.getLocation().getWorld();
+        return this.location().world();
     }
 
     @Override
     public PermissionContext activeContext() {
-        if (!this.isOnline()) {
+        if (!this.online()) {
             return GLOBAL;
         } else {
             return PermissionContext.builder()
-                    .world(this.getWorld().getName())
+                    .world(this.world().name())
                     .build();
         }
     }
 
     @Override
-    public Language getLanguage() {
+    public Language language() {
         return this.get(LANGUAGE).map(ordinal -> Language.values()[ordinal]).or(Language.EN_US);
     }
 
     @Override
-    public void setLanguage(Language language) {
+    public void language(Language language) {
         this.set(LANGUAGE, language.ordinal());
     }
 
-    public abstract Item getItemInHand(Hand hand);
+    public abstract Item itemInHand(Hand hand);
 
-    public abstract void setItemInHand(Hand hand, Item item);
+    public abstract void itemInHand(Hand hand, Item item);
 
     public abstract void play(Sounds sound);
 
     @Override
     public int hashCode() {
-        return this.getUniqueId().hashCode();
+        return this.uniqueId().hashCode();
     }
 
     @SuppressWarnings("OverlyStrongTypeCast")
     @Override
     public boolean equals(Object obj) {
         if (null == obj) return false;
-        if (obj instanceof Player) return this.getUniqueId().equals(((Player) obj).getUniqueId());
+        if (obj instanceof Player) return this.uniqueId().equals(((Player) obj).uniqueId());
         return false;
     }
 
-    public abstract boolean isSneaking();
+    public abstract boolean sneaking();
 
-    public abstract Profile getProfile();
+    public abstract Profile profile();
 
-    public abstract Exceptional<Block> getLookingAtBlock();
+    public abstract Exceptional<Block> lookingAtBlock();
 
-    public abstract Exceptional<Entity> getLookingAtEntity();
+    public abstract Exceptional<Entity> lookingAtEntity();
 
     @Override
-    public abstract PlayerInventory getInventory();
+    public abstract PlayerInventory inventory();
 
-    public abstract GameSettings getGameSettings();
+    public abstract GameSettings gameSettings();
 }

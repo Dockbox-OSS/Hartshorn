@@ -42,18 +42,18 @@ public abstract class Console implements CommandSource, PermissionHolder, Identi
         instance = this;
     }
 
-    public static Console getInstance() {
+    public static Console instance() {
         if (null == instance) return Hartshorn.context().get(Console.class);
         return instance;
     }
 
     @Override
-    public Language getLanguage() {
+    public Language language() {
         return Language.EN_US;
     }
 
     @Override
-    public void setLanguage(Language language) {
+    public void language(Language language) {
         // Nothing happens
     }
 
@@ -88,16 +88,16 @@ public abstract class Console implements CommandSource, PermissionHolder, Identi
     }
 
     @Override
-    public void setPermission(@NotNull String permission, Tristate state) {}
+    public void permission(@NotNull String permission, Tristate state) {}
 
     @Override
-    public void setPermissions(Tristate state, @NotNull String @NotNull ... permissions) {}
+    public void permissions(Tristate state, @NotNull String @NotNull ... permissions) {}
 
     @Override
-    public void setPermission(@NotNull Permission permission, Tristate state) {}
+    public void permission(@NotNull Permission permission, Tristate state) {}
 
     @Override
-    public void setPermissions(Tristate state, @NotNull Permission @NotNull ... permissions) {}
+    public void permissions(Tristate state, @NotNull Permission @NotNull ... permissions) {}
 
     @Override
     public void send(@NotNull ResourceEntry text) {
@@ -112,12 +112,12 @@ public abstract class Console implements CommandSource, PermissionHolder, Identi
     }
 
     @Override
-    public UUID getUniqueId() {
+    public UUID uniqueId() {
         return UNIQUE_ID;
     }
 
     @Override
-    public String getName() {
+    public String name() {
         return "Console";
     }
 

@@ -41,7 +41,7 @@ public class ConstructorWireContext<T, I extends T> implements WireContext<T, I>
     public I create(Object... arguments) {
         Class<?>[] argumentTypes = Arrays.stream(arguments).map(Object::getClass).toArray(Class<?>[]::new);
         try {
-            Collection<Constructor<I>> constructors = Reflect.constructors(this.getImplementation(), Wired.class);
+            Collection<Constructor<I>> constructors = Reflect.constructors(this.implementation(), Wired.class);
             Constructor<I> ctor = null;
             for (Constructor<I> constructor : constructors) {
                 if (constructor.getParameterTypes().length != arguments.length) continue;
@@ -71,11 +71,11 @@ public class ConstructorWireContext<T, I extends T> implements WireContext<T, I>
                 return ctor.newInstance(arguments);
             }
             else {
-                throw new IllegalArgumentException("Could not autowire " + this.getImplementation().getCanonicalName() + " as the applicable constructor is not marked with @AutoWired");
+                throw new IllegalArgumentException("Could not autowire " + this.implementation().getCanonicalName() + " as the applicable constructor is not marked with @AutoWired");
             }
         }
         catch (InvocationTargetException | NoSuchMethodException | InstantiationException | IllegalAccessException e) {
-            throw new IllegalArgumentException("Could not autowire " + this.getImplementation().getCanonicalName() + ", no constructor could be accessed", e);
+            throw new IllegalArgumentException("Could not autowire " + this.implementation().getCanonicalName() + ", no constructor could be accessed", e);
         }
     }
 }

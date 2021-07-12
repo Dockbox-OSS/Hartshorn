@@ -37,9 +37,9 @@ public class SerialisationServiceModifier extends AbstractPersistenceServiceModi
     @Override
     protected <T, R> ProxyFunction<T, R> processAnnotatedPath(ApplicationContext context, MethodProxyContext<T> methodContext, SerialisationContext serialisationContext) {
         return (instance, args, proxyContext) -> {
-            final Path target = serialisationContext.getPredeterminedPath();
+            final Path target = serialisationContext.predeterminedPath();
             final Object content = args[0];
-            final ObjectMapper objectMapper = this.getObjectMapper(context, serialisationContext);
+            final ObjectMapper objectMapper = this.mapper(context, serialisationContext);
             final Exceptional<Boolean> result = objectMapper.write(target, content);
             return this.wrapBooleanResult(result, methodContext);
         };
@@ -58,7 +58,7 @@ public class SerialisationServiceModifier extends AbstractPersistenceServiceModi
 
             if (target == null || content == null) throw new IllegalArgumentException("Expected one argument to be a subtype of File or Path, expected one argument to be a content type");
 
-            final ObjectMapper objectMapper = this.getObjectMapper(context, serialisationContext);
+            final ObjectMapper objectMapper = this.mapper(context, serialisationContext);
             final Exceptional<Boolean> result = objectMapper.write(target, content);
             return this.wrapBooleanResult(result, methodContext);
         };
@@ -69,10 +69,10 @@ public class SerialisationServiceModifier extends AbstractPersistenceServiceModi
     protected <T, R> ProxyFunction<T, R> processString(ApplicationContext context, MethodProxyContext<T> methodContext, SerialisationContext serialisationContext) {
         return (instance, args, proxyContext) -> {
             final Object content = args[0];
-            final ObjectMapper objectMapper = this.getObjectMapper(context, serialisationContext);
+            final ObjectMapper objectMapper = this.mapper(context, serialisationContext);
 
             final Exceptional<String> result = objectMapper.write(content);
-            if (Reflect.assigns(String.class, methodContext.getReturnType())) {
+            if (Reflect.assigns(String.class, methodContext.returnType())) {
                 return (R) result.orNull();
             }
             else {
@@ -82,13 +82,13 @@ public class SerialisationServiceModifier extends AbstractPersistenceServiceModi
     }
 
     @Override
-    protected Class<SerialisationContext> getContextType() {
+    protected Class<SerialisationContext> contextType() {
         return SerialisationContext.class;
     }
 
     @SuppressWarnings("unchecked")
     private <R> R wrapBooleanResult(Exceptional<Boolean> result, MethodProxyContext<?> methodContext) {
-        if (Reflect.assigns(Boolean.class, methodContext.getReturnType())) {
+        if (Reflect.assigns(Boolean.class, methodContext.returnType())) {
             return (R) result.or(false);
         }
         else {
@@ -98,13 +98,13 @@ public class SerialisationServiceModifier extends AbstractPersistenceServiceModi
 
     @Override
     public <T> boolean preconditions(ApplicationContext context, MethodProxyContext<T> methodContext) {
-        if (methodContext.getMethod().getParameterCount() < 1) return false;
+        if (methodContext.method().getParameterCount() < 1) return false;
 
-        final Serialise annotation = methodContext.getAnnotation(Serialise.class);
-        if (!annotation.filetype().getType().equals(PersistenceType.RAW)) return false;
+        final Serialise annotation = methodContext.annotation(Serialise.class);
+        if (!annotation.filetype().type().equals(PersistenceType.RAW)) return false;
 
         boolean hasPath = false;
-        for (Class<?> parameter : methodContext.getMethod().getParameterTypes()) {
+        for (Class<?> parameter : methodContext.method().getParameterTypes()) {
             if (Reflect.assigns(Path.class, parameter) || Reflect.assigns(File.class, parameter)) {
                 hasPath = true;
                 break;
@@ -112,41 +112,41 @@ public class SerialisationServiceModifier extends AbstractPersistenceServiceModi
         }
 
         SerialisationContext serialisationContext = new SerialisationContext();
-        serialisationContext.setFileType(annotation.filetype());
+        serialisationContext.fileType(annotation.filetype());
         methodContext.add(serialisationContext);
 
         if (hasPath) {
-            serialisationContext.setTarget(SerialisationTarget.PARAMETER_PATH);
-            return methodContext.getMethod().getParameterCount() == 2;
+            serialisationContext.target(SerialisationTarget.PARAMETER_PATH);
+            return methodContext.method().getParameterCount() == 2;
         }
         else {
-            if (Reflect.notVoid(this.getOwner(annotation.value().owner(), methodContext))) {
-                serialisationContext.setTarget(SerialisationTarget.ANNOTATED_PATH);
-                serialisationContext.setPredeterminedPath(this.determineAnnotationPath(
+            if (Reflect.notVoid(this.owner(annotation.value().owner(), methodContext))) {
+                serialisationContext.target(SerialisationTarget.ANNOTATED_PATH);
+                serialisationContext.predeterminedPath(this.determineAnnotationPath(
                         context,
                         methodContext,
                         new PersistenceAnnotationContext(annotation))
                 );
-                return methodContext.getMethod().getParameterCount() == 1;
+                return methodContext.method().getParameterCount() == 1;
             }
             else {
-                serialisationContext.setTarget(SerialisationTarget.STRING);
+                serialisationContext.target(SerialisationTarget.STRING);
                 return this.stringTargetPreconditions(methodContext);
             }
         }
     }
 
-    private Class<?> getOwner(Class<?> annotationOwner, MethodProxyContext<?> context) {
+    private Class<?> owner(Class<?> annotationOwner, MethodProxyContext<?> context) {
         if (Reflect.notVoid(annotationOwner)) return annotationOwner;
-        return Hartshorn.context().locator().container(context.getMethod().getDeclaringClass()).map(ComponentContainer::owner).orNull();
+        return Hartshorn.context().locator().container(context.method().getDeclaringClass()).map(ComponentContainer::owner).orNull();
     }
 
     private boolean argumentPathTargetPreconditions(MethodProxyContext<?> context) {
         // One argument should be the content, one should be a Path/File subtype. The presence of the latter
         // has already been verified before.
-        if (context.getMethod().getParameterCount() != 2) return false;
+        if (context.method().getParameterCount() != 2) return false;
 
-        final Class<?> returnType = context.getReturnType();
+        final Class<?> returnType = context.returnType();
         if (Reflect.assigns(boolean.class, returnType)) return true;
 
         else if (Reflect.assigns(Exceptional.class, returnType)) {
@@ -165,7 +165,7 @@ public class SerialisationServiceModifier extends AbstractPersistenceServiceModi
     }
 
     private boolean stringTargetPreconditions(MethodProxyContext<?> context) {
-        final Class<?> returnType = context.getReturnType();
+        final Class<?> returnType = context.returnType();
 
         if (Reflect.assigns(String.class, returnType)) return true;
 

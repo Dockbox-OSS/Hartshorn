@@ -43,7 +43,7 @@ public abstract class JUnitEntity<T extends Entity> implements Entity, Persisten
     private boolean invulnerable = false;
     @Setter
     private boolean gravity = true;
-    @Getter
+
     private final UUID uniqueId;
 
     public JUnitEntity(UUID uniqueId) {
@@ -51,43 +51,48 @@ public abstract class JUnitEntity<T extends Entity> implements Entity, Persisten
     }
 
     @Override
+    public UUID uniqueId() {
+        return this.uniqueId;
+    }
+
+    @Override
     public boolean summon(Location location) {
-        ((JUnitWorld) location.getWorld()).addEntity(this);
-        this.setLocation(location);
+        ((JUnitWorld) location.world()).addEntity(this);
+        this.location(location);
         return true;
     }
 
     @Override
     public boolean destroy() {
-        ((JUnitWorld) this.getLocation().getWorld()).destroyEntity(this.getUniqueId());
+        ((JUnitWorld) this.location().world()).destroyEntity(this.uniqueId());
         return true;
     }
 
     @Override
-    public String getName() {
-        return this.getDisplayName().toPlain();
+    public String name() {
+        return this.displayName().toPlain();
     }
 
     @Override
-    public boolean isAlive() {
-        return this.getHealth() > 0;
+    public boolean alive() {
+        return this.health() > 0;
     }
 
     @Override
-    public boolean hasGravity() {
+    public boolean gravity() {
         return this.gravity;
     }
 
     @Override
-    public boolean setLocation(Location location) {
-        ((JUnitWorld) this.getWorld()).destroyEntity(this.getUniqueId());
+    public boolean location(Location location) {
+        ((JUnitWorld) this.world()).destroyEntity(this.uniqueId());
         this.location = location;
-        ((JUnitWorld) this.getWorld()).addEntity(this);
+        ((JUnitWorld) this.world()).addEntity(this);
         return true;
     }
 
     @Override
-    public World getWorld() {
-        return this.getLocation().getWorld();
+    public World world() {
+        return this.location().world();
     }
 }

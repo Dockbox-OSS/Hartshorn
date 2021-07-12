@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.util.types;
 
 public class EmptyType {
 
-    public boolean isEmpty() {
+    public boolean empty() {
         return true;
     }
 

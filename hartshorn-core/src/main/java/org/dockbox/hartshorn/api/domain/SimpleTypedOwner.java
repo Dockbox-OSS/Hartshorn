@@ -28,11 +28,6 @@ public final class SimpleTypedOwner implements TypedOwner {
 
     private final String id;
 
-    @Override
-    public String id() {
-        return this.getId();
-    }
-
     public static TypedOwner of(String id) {
         return new SimpleTypedOwner(id);
     }

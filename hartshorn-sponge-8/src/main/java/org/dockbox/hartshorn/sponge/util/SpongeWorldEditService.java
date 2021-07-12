@@ -36,22 +36,22 @@ import java.util.Collection;
 public class SpongeWorldEditService implements WorldEditService {
     
     @Override
-    public Exceptional<Region> getPlayerSelection(Player player) {
+    public Exceptional<Region> selection(Player player) {
         return Exceptional.empty();
     }
 
     @Override
-    public void setPlayerSelection(Player player, Region region) {
+    public void selection(Player player, Region region) {
         // Nothing happens
     }
 
     @Override
-    public Exceptional<Clipboard> getPlayerClipboard(Player player) {
+    public Exceptional<Clipboard> clipboard(Player player) {
         return Exceptional.empty();
     }
 
     @Override
-    public void setPlayerClipboard(Player player, Clipboard clipboard) {
+    public void clipboard(Player player, Clipboard clipboard) {
         // Nothing happens
     }
 
@@ -86,17 +86,17 @@ public class SpongeWorldEditService implements WorldEditService {
     }
 
     @Override
-    public boolean hasActiveGmask(Player player) {
+    public boolean hasGlobalMask(Player player) {
         return false;
     }
 
     @Override
-    public Exceptional<Mask> getGmask(Player player) {
+    public Exceptional<Mask> globalMask(Player player) {
         return Exceptional.empty();
     }
 
     @Override
-    public void setGmask(Player player, Mask mask) {
+    public void globalMask(Player player, Mask mask) {
         // Nothing happens
     }
 }

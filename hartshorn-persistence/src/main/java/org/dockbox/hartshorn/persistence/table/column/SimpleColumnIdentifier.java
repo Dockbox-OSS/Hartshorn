@@ -26,24 +26,24 @@ import lombok.Getter;
 @AllArgsConstructor
 public class SimpleColumnIdentifier<T> implements ColumnIdentifier<T> {
 
-    private final String columnName;
+    private final String name;
     private final Class<T> type;
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.columnName, this.getType());
+        return Objects.hash(this.name, this.type());
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof SimpleColumnIdentifier<?> that)) return false;
-        return Objects.equals(this.columnName, that.columnName)
-                && Objects.equals(this.getType(), that.getType());
+        return Objects.equals(this.name, that.name)
+                && Objects.equals(this.type(), that.type());
     }
 
     @Override
     public String toString() {
-        return "SimpleColumnIdentifier{" + "fieldName='" + this.columnName + '\'' + ", type=" + this.type + '}';
+        return "SimpleColumnIdentifier{" + "fieldName='" + this.name + '\'' + ", type=" + this.type + '}';
     }
 }

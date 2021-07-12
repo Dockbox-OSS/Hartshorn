@@ -34,8 +34,8 @@ public class CompilerTests {
     static final String SURFACE_JAVA = "package org.dockbox.hartshorn.proxy.compiler;"
             + "public class FlyingClass {"
             + "    boolean _dirty = false;"
-            + "    public void setDirty(boolean dirty) { this._dirty = dirty; }"
-            + "    public boolean isDirty() { return this._dirty; }"
+            + "    public void dirty(boolean dirty) { this._dirty = dirty; }"
+            + "    public boolean dirty() { return this._dirty; }"
             + "}";
 
     @Test
@@ -44,7 +44,7 @@ public class CompilerTests {
         Object flyingInstance = Hartshorn.context().get(flying);
 
         Assertions.assertEquals("FlyingClass", flying.getSimpleName());
-        Assertions.assertNotNull(flying.getMethod("isDirty"));
+        Assertions.assertNotNull(flying.getMethod("dirty"));
         Assertions.assertNotNull(flyingInstance);
         Assertions.assertTrue(flying.isInstance(flyingInstance));
     }
@@ -52,7 +52,7 @@ public class CompilerTests {
     static Compiler compiler;
 
     @BeforeAll
-    static void setUp() {
+    static void setup() {
         compiler = new Compiler();
     }
 
@@ -60,20 +60,23 @@ public class CompilerTests {
             + "import org.dockbox.hartshorn.proxy.*;"
             + "public class UserProxy extends User implements BeanProxy {"
             + "    boolean _dirty = false;"
-            + "    public void setId(String id) {"
-            + "        super.setId(id);"
-            + "        setDirty(true);"
+            + "    public UserProxy id(String id) {"
+            + "        super.id(id);"
+            + "        dirty(true);"
+            + "        return this;"
             + "    }"
-            + "    public void setName(String name) {"
-            + "        super.setName(name);"
-            + "        setDirty(true);"
+            + "    public UserProxy name(String name) {"
+            + "        super.name(name);"
+            + "        dirty(true);"
+            + "        return this;"
             + "    }"
-            + "    public void setCreated(long created) {"
-            + "        super.setCreated(created);"
-            + "        setDirty(true);"
+            + "    public UserProxy created(long created) {"
+            + "        super.created(created);"
+            + "        dirty(true);"
+            + "        return this;"
             + "    }"
-            + "    public void setDirty(boolean dirty) { this._dirty = dirty; }"
-            + "    public boolean isDirty() { return this._dirty; }"
+            + "    public void dirty(boolean dirty) { this._dirty = dirty; }"
+            + "    public boolean dirty() { return this._dirty; }"
             + "}";
 
     @Test
@@ -83,24 +86,24 @@ public class CompilerTests {
         Assertions.assertTrue(results.containsKey("org.dockbox.hartshorn.proxy.compiler.UserProxy"));
         Class<?> clazz = compiler.loadClass("org.dockbox.hartshorn.proxy.compiler.UserProxy", results);
         // get method:
-        Method setId = clazz.getMethod("setId", String.class);
-        Method setName = clazz.getMethod("setName", String.class);
-        Method setCreated = clazz.getMethod("setCreated", long.class);
+        Method setId = clazz.getMethod("id", String.class);
+        Method setName = clazz.getMethod("name", String.class);
+        Method setCreated = clazz.getMethod("created", long.class);
         // try instance:
         Object obj = clazz.getDeclaredConstructor().newInstance();
         // get as proxy:
         BeanProxy proxy = (BeanProxy) obj;
-        Assertions.assertFalse(proxy.isDirty());
+        Assertions.assertFalse(proxy.dirty());
         // set:
         setId.invoke(obj, "A-123");
         setName.invoke(obj, "Fly");
         setCreated.invoke(obj, 123000999);
         // get as user:
         User user = (User) obj;
-        Assertions.assertEquals("A-123", user.getId());
-        Assertions.assertEquals("Fly", user.getName());
-        Assertions.assertEquals(123000999, user.getCreated());
-        Assertions.assertTrue(proxy.isDirty());
+        Assertions.assertEquals("A-123", user.id());
+        Assertions.assertEquals("Fly", user.name());
+        Assertions.assertEquals(123000999, user.created());
+        Assertions.assertTrue(proxy.dirty());
     }
 
     static final String MULTIPLE_JAVA = "package org.dockbox.hartshorn.proxy.compiler;"
@@ -127,8 +130,8 @@ public class CompilerTests {
     static final String EXISTING_JAVA = """
             package org.dockbox.hartshorn.proxy.compiler;public class User {
                 String _extra;
-                public String getExtra() { return this._extra; }
-                public void setExtra(String extra) { this._extra = extra; }
+                public String extra() { return this._extra; }
+                public void extra(String extra) { this._extra = extra; }
             }""";
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
@@ -136,7 +139,7 @@ public class CompilerTests {
     public void existingClassIsNotChanged() throws Exception {
         Map<String, byte[]> results = compiler.compile("User.java", EXISTING_JAVA);
         Class<?> clzExisting = compiler.loadClass("org.dockbox.hartshorn.proxy.User", results);
-        Assertions.assertThrows(NoSuchMethodException.class, () -> clzExisting.getMethod("getExtra"));
-        Assertions.assertNotNull(clzExisting.getMethod("getName"));
+        Assertions.assertThrows(NoSuchMethodException.class, () -> clzExisting.getMethod("extra"));
+        Assertions.assertNotNull(clzExisting.getMethod("name"));
     }
 }

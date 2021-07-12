@@ -36,11 +36,11 @@ public enum MinecraftVersion {
         this.minecraftItems = minecraftItems;
     }
 
-    public String getReadableVersionString() {
+    public String asString() {
         return this.readableVersionString;
     }
 
-    public MinecraftItems getItems() {
+    public MinecraftItems items() {
         return this.minecraftItems;
     }
 }

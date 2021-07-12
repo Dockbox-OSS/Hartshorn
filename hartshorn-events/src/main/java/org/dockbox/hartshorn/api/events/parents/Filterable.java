@@ -33,7 +33,7 @@ public interface Filterable {
      *
      * @return Whether or not the filter applies
      */
-    boolean isApplicable(Filter filter);
+    boolean permits(Filter filter);
 
     /**
      * Gets the list of accepted {@link FilterType} for the implementation

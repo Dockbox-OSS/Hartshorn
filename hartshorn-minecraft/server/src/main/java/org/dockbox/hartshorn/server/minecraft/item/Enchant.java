@@ -19,9 +19,9 @@ package org.dockbox.hartshorn.server.minecraft.item;
 
 public interface Enchant {
 
-    Enchantment getEnchantment();
+    Enchantment enchantment();
 
-    int getLevel();
+    int level();
 
-    void setLevel(int level);
+    Enchant level(int level);
 }

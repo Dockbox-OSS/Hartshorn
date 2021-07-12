@@ -36,14 +36,14 @@ public class ConfirmationExtension implements CommandExecutorExtension {
 
     @Override
     public ExtensionResult execute(CommandContext context, CommandExecutorContext executorContext) {
-        final CommandSource sender = context.getSender();
+        final CommandSource sender = context.source();
         if (!(sender instanceof Identifiable)) return ExtensionResult.accept();
 
         final String id = this.id((Identifiable) sender, context);
 
         Runnable action = () -> executorContext.executor().execute(context);
-        final Text confirmationText = this.resources.getConfirmCommand().translate(sender).asText();
-        final Text confirmationHover = this.resources.getConfirmCommandHover().translate(sender).asText();
+        final Text confirmationText = this.resources.confirmCommand().translate(sender).asText();
+        final Text confirmationHover = this.resources.confirmCommandHover().translate(sender).asText();
 
         confirmationText
                 .onHover(HoverAction.showText(confirmationHover))
@@ -51,7 +51,7 @@ public class ConfirmationExtension implements CommandExecutorExtension {
 
         sender.send(confirmationText);
 
-        return ExtensionResult.reject(this.resources.getConfirmCommand(), false);
+        return ExtensionResult.reject(this.resources.confirmCommand(), false);
     }
 
     @Override

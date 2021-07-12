@@ -46,12 +46,12 @@ public class SpongePlayerInventory extends PlayerInventory implements SpongeInve
     }
 
     @Override
-    public Item getSlot(int row, int column) {
+    public Item slot(int row, int column) {
         return this.internalGetSlot(row, column).map(SLOT_LOOKUP).get(AbstractInventoryRow.AIR);
     }
 
     @Override
-    public void setSlot(Item item, int row, int column) {
+    public void slot(Item item, int row, int column) {
         this.internalGetSlot(row, column).present(slot -> slot.set(SpongeConvert.toSponge(item)));
     }
 
@@ -70,12 +70,12 @@ public class SpongePlayerInventory extends PlayerInventory implements SpongeInve
     }
 
     @Override
-    public Item getSlot(Slot slot) {
+    public Item slot(Slot slot) {
         return this.internalGetSlot(slot).map(SLOT_LOOKUP).get(AbstractInventoryRow.AIR);
     }
 
     @Override
-    public void setSlot(Item item, Slot slotType) {
+    public void slot(Item item, Slot slotType) {
         this.internalGetSlot(slotType).present(slot -> slot.set(SpongeConvert.toSponge(item)));
     }
 
@@ -93,12 +93,12 @@ public class SpongePlayerInventory extends PlayerInventory implements SpongeInve
     }
 
     @Override
-    public void setSlot(Item item, int index) {
+    public void slot(Item item, int index) {
         this.internalGetSlot(index).present(slot -> slot.set(SpongeConvert.toSponge(item)));
     }
 
     @Override
-    public Item getSlot(int index) {
+    public Item slot(int index) {
         return this.internalGetSlot(index).map(SLOT_LOOKUP).get(AbstractInventoryRow.AIR);
     }
 
@@ -122,7 +122,7 @@ public class SpongePlayerInventory extends PlayerInventory implements SpongeInve
     }
 
     @Override
-    public Collection<Item> getAllItems() {
+    public Collection<Item> items() {
         return this.inventory()
                 .map(inventory -> inventory.slots()
                         .stream()
@@ -149,7 +149,7 @@ public class SpongePlayerInventory extends PlayerInventory implements SpongeInve
     }
 
     @Override
-    public Exceptional<InventoryRow> getRow(int index) {
+    public Exceptional<InventoryRow> row(int index) {
         if (4 >= index) {
             return Exceptional.of(new SpongeInventoryRow(this, index, this.player));
         }

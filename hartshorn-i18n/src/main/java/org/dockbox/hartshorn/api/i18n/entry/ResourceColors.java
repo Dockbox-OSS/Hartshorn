@@ -19,19 +19,19 @@ package org.dockbox.hartshorn.api.i18n.entry;
 
 public final class ResourceColors {
 
-    public static char getColorPrimary() {
+    public static char primary() {
         return 'b';
     }
 
-    public static char getColorSecondary() {
+    public static char secondary() {
         return '3';
     }
 
-    public static char getColorMinor() {
+    public static char minor() {
         return '7';
     }
 
-    public static char getColorError() {
+    public static char error() {
         return 'c';
     }
 

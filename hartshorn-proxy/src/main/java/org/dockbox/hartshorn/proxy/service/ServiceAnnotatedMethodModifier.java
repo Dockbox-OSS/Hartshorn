@@ -35,7 +35,7 @@ import java.util.Collection;
 public abstract class ServiceAnnotatedMethodModifier<M extends Annotation, A extends Annotation> extends ServiceModifier<A> {
 
     @Override
-    protected <T> boolean isModifiable(Class<T> type, @Nullable T instance, InjectorProperty<?>... properties) {
+    protected <T> boolean modifies(Class<T> type, @Nullable T instance, InjectorProperty<?>... properties) {
         return !Reflect.methods(type, this.annotation()).isEmpty();
     }
 

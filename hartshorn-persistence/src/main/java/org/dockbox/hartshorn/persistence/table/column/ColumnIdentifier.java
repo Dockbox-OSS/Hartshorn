@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.persistence.table.column;
 
 public interface ColumnIdentifier<T> {
 
-    String getColumnName();
+    String name();
 
-    Class<T> getType();
+    Class<T> type();
 }

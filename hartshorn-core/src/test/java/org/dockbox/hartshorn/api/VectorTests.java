@@ -26,28 +26,28 @@ public class VectorTests {
     @Test
     void testXCanConvertType() {
         Vector3N vec = Vector3N.of(1, 2, 3);
-        Assertions.assertEquals(1, vec.getXi());
-        Assertions.assertEquals(1D, vec.getXd());
-        Assertions.assertEquals(1F, vec.getXf());
-        Assertions.assertEquals(1L, vec.getXl());
+        Assertions.assertEquals(1, vec.xI());
+        Assertions.assertEquals(1D, vec.xD());
+        Assertions.assertEquals(1F, vec.xF());
+        Assertions.assertEquals(1L, vec.xL());
     }
 
     @Test
     void testYCanConvertType() {
         Vector3N vec = Vector3N.of(1, 2, 3);
-        Assertions.assertEquals(2, vec.getYi());
-        Assertions.assertEquals(2D, vec.getYd());
-        Assertions.assertEquals(2F, vec.getYf());
-        Assertions.assertEquals(2L, vec.getYl());
+        Assertions.assertEquals(2, vec.yI());
+        Assertions.assertEquals(2D, vec.yD());
+        Assertions.assertEquals(2F, vec.yF());
+        Assertions.assertEquals(2L, vec.yL());
     }
 
     @Test
     void testZCanConvertType() {
         Vector3N vec = Vector3N.of(1, 2, 3);
-        Assertions.assertEquals(3, vec.getZi());
-        Assertions.assertEquals(3D, vec.getZd());
-        Assertions.assertEquals(3F, vec.getZf());
-        Assertions.assertEquals(3L, vec.getZl());
+        Assertions.assertEquals(3, vec.zI());
+        Assertions.assertEquals(3D, vec.zD());
+        Assertions.assertEquals(3F, vec.zF());
+        Assertions.assertEquals(3L, vec.zL());
     }
 
     @Test

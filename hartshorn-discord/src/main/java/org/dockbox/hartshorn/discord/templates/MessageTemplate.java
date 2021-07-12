@@ -26,7 +26,7 @@ public interface MessageTemplate extends Template<Message> {
 
     static MessageTemplate create(Text content) {
         MessageTemplate template = create();
-        template.setContent(content);
+        template.content(content);
         return template;
     }
 
@@ -34,9 +34,9 @@ public interface MessageTemplate extends Template<Message> {
         return Hartshorn.context().get(MessageTemplate.class);
     }
 
-    Text getContent();
+    Text content();
 
-    void setContent(Text content);
+    MessageTemplate content(Text content);
 
     MessageTemplate copy();
 

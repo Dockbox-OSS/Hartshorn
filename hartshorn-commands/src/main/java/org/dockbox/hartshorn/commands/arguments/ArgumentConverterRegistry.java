@@ -34,15 +34,15 @@ public final class ArgumentConverterRegistry {
     private ArgumentConverterRegistry() {}
 
     public static boolean hasConverter(String key) {
-        return getOptionalConverter(key).present();
+        return optionalConverter(key).present();
     }
 
     public static boolean hasConverter(Class<?> type) {
-        return getOptionalConverter(type).present();
+        return optionalConverter(type).present();
     }
     
-    public static Exceptional<ArgumentConverter<?>> getOptionalConverter(String key) {
-        Optional<ArgumentConverter<?>> optional = CONVERTERS.stream().filter(converter -> converter.getKeys().stream()
+    public static Exceptional<ArgumentConverter<?>> optionalConverter(String key) {
+        Optional<ArgumentConverter<?>> optional = CONVERTERS.stream().filter(converter -> converter.keys().stream()
                 .map(String::toLowerCase)
                 .toList()
                 .contains(key.toLowerCase())
@@ -51,26 +51,26 @@ public final class ArgumentConverterRegistry {
         else return Exceptional.of(new RuntimeException("No converter present"));
     }
 
-    private static <T> Exceptional<ArgumentConverter<T>> getOptionalConverter(Class<T> type) {
+    private static <T> Exceptional<ArgumentConverter<T>> optionalConverter(Class<T> type) {
         //noinspection unchecked
         return Exceptional.of(CONVERTERS.stream()
-                .filter(converter -> Reflect.assigns(converter.getType(), type))
+                .filter(converter -> Reflect.assigns(converter.type(), type))
                 .map(converter -> (ArgumentConverter<T>) converter)
                 .findFirst());
     }
 
-    public static ArgumentConverter<?> getConverter(String key) {
-        return getOptionalConverter(key).rethrow().orNull();
+    public static ArgumentConverter<?> converter(String key) {
+        return optionalConverter(key).rethrow().orNull();
     }
 
-    public static <T> ArgumentConverter<T> getConverter(Class<T> type) {
-        return getOptionalConverter(type).orNull();
+    public static <T> ArgumentConverter<T> converter(Class<T> type) {
+        return optionalConverter(type).orNull();
     }
 
     public static void registerConverter(ArgumentConverter<?> converter) {
-        for (String key : converter.getKeys()) {
+        for (String key : converter.keys()) {
             for (ArgumentConverter<?> existingConverter : CONVERTERS) {
-                if (existingConverter.getKeys().contains(key)) {
+                if (existingConverter.keys().contains(key)) {
                     throw new ConstraintException("Duplicate argument key '" + key + "' found while registering converter");
                 }
             }

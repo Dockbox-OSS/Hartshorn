@@ -106,26 +106,26 @@ public class Text implements PersistentCapable<PersistentTextModel> {
         for (MessageReceiver receiver : receivers) receiver.sendWithPrefix(this);
     }
 
-    public ClickAction<?> getClickAction() {
+    public ClickAction<?> onClick() {
         return this.clickAction;
     }
 
-    public HoverAction<?> getHoverAction() {
+    public HoverAction<?> onHover() {
         return this.hoverAction;
     }
 
-    public ShiftClickAction<?> getShiftClickAction() {
+    public ShiftClickAction<?> onShiftClick() {
         return this.shiftClickAction;
     }
 
-    public List<Text> getParts() {
+    public List<Text> parts() {
         List<Text> parts = HartshornUtils.emptyList();
         // Do not add 'this' directly, as it'd wrap the extra parts as well and cause duplicates
         parts.add(Text.of(this.text)
                 .onClick(this.clickAction)
                 .onHover(this.hoverAction)
                 .onShiftClick(this.shiftClickAction));
-        parts.addAll(this.getExtra());
+        parts.addAll(this.extra());
         return parts;
     }
 
@@ -144,7 +144,7 @@ public class Text implements PersistentCapable<PersistentTextModel> {
         return this;
     }
 
-    public List<Text> getExtra() {
+    public List<Text> extra() {
         // To prevent stack overflows
         return this.extra.stream().filter(e -> e != this).toList();
     }
@@ -155,12 +155,12 @@ public class Text implements PersistentCapable<PersistentTextModel> {
     }
 
     @Override
-    public Class<? extends PersistentTextModel> getModelClass() {
+    public Class<? extends PersistentTextModel> modelType() {
         return PersistentTextModel.class;
     }
 
     @Override
-    public PersistentTextModel toPersistentModel() {
+    public PersistentTextModel model() {
         return new PersistentTextModel(this);
     }
 

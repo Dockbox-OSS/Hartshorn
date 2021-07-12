@@ -36,7 +36,7 @@ public final class I18N {
         String prefix = "";
 
         final MetaProvider provider = Hartshorn.context().meta();
-        if (provider.isComponent(type)) {
+        if (provider.component(type)) {
             TypedOwner lookup = provider.lookup(type);
             if (lookup != null) prefix = lookup.id() + '.';
         }

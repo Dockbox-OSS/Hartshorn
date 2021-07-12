@@ -34,10 +34,10 @@ public class DeserialisationServiceModifier extends AbstractPersistenceServiceMo
     @Override
     protected <T, R> ProxyFunction<T, R> processAnnotatedPath(ApplicationContext context, MethodProxyContext<T> methodContext, DeserialisationContext serialisationContext) {
         return (instance, args, proxyContext) -> {
-            final Path path = serialisationContext.getPredeterminedPath();
-            final ObjectMapper objectMapper = this.getObjectMapper(context, serialisationContext);
+            final Path path = serialisationContext.predeterminedPath();
+            final ObjectMapper objectMapper = this.mapper(context, serialisationContext);
 
-            final Exceptional<?> result = objectMapper.read(path, serialisationContext.getType());
+            final Exceptional<?> result = objectMapper.read(path, serialisationContext.type());
             return this.wrapResult(result, methodContext);
         };
     }
@@ -50,9 +50,9 @@ public class DeserialisationServiceModifier extends AbstractPersistenceServiceMo
             else if (args[0] instanceof File) path = ((File) args[0]).toPath();
             else throw new IllegalArgumentException("Expected one argument to be a subtype of File or Path");
 
-            final ObjectMapper objectMapper = this.getObjectMapper(context, serialisationContext);
+            final ObjectMapper objectMapper = this.mapper(context, serialisationContext);
 
-            final Exceptional<?> result = objectMapper.read(path, serialisationContext.getType());
+            final Exceptional<?> result = objectMapper.read(path, serialisationContext.type());
             return this.wrapResult(result, methodContext);
         };
     }
@@ -61,65 +61,65 @@ public class DeserialisationServiceModifier extends AbstractPersistenceServiceMo
     protected <T, R> ProxyFunction<T, R> processString(ApplicationContext context, MethodProxyContext<T> methodContext, DeserialisationContext serialisationContext) {
         return (instance, args, proxyContext) -> {
             final String raw = (String) args[0];
-            final ObjectMapper objectMapper = this.getObjectMapper(context, serialisationContext);
+            final ObjectMapper objectMapper = this.mapper(context, serialisationContext);
 
-            final Exceptional<?> result = objectMapper.read(raw, serialisationContext.getType());
+            final Exceptional<?> result = objectMapper.read(raw, serialisationContext.type());
             return this.wrapResult(result, methodContext);
         };
     }
 
     @SuppressWarnings("unchecked")
     private <R> R wrapResult(Exceptional<?> result, MethodProxyContext<?> methodContext) {
-        if (Reflect.assigns(Exceptional.class, methodContext.getReturnType())) return (R) result;
+        if (Reflect.assigns(Exceptional.class, methodContext.returnType())) return (R) result;
         else return (R) result.orNull();
     }
 
     @Override
-    protected Class<DeserialisationContext> getContextType() {
+    protected Class<DeserialisationContext> contextType() {
         return DeserialisationContext.class;
     }
 
     @Override
     public <T> boolean preconditions(ApplicationContext context, MethodProxyContext<T> methodContext) {
-        if (methodContext.getMethod().getParameterCount() > 1) return false;
-        if (!Reflect.notVoid(methodContext.getReturnType())) return false;
+        if (methodContext.method().getParameterCount() > 1) return false;
+        if (!Reflect.notVoid(methodContext.returnType())) return false;
 
-        final Deserialise annotation = methodContext.getAnnotation(Deserialise.class);
+        final Deserialise annotation = methodContext.annotation(Deserialise.class);
 
-        final Class<?> outputType = this.getOutputType(methodContext);
+        final Class<?> outputType = this.outputType(methodContext);
         if (outputType == null) return false;
 
         DeserialisationContext deserialisationContext = new DeserialisationContext(outputType);
-        deserialisationContext.setFileType(annotation.filetype());
+        deserialisationContext.fileType(annotation.filetype());
         methodContext.add(deserialisationContext);
 
-        if (methodContext.getMethod().getParameterCount() == 0) {
-            deserialisationContext.setTarget(SerialisationTarget.ANNOTATED_PATH);
-            deserialisationContext.setPredeterminedPath(this.determineAnnotationPath(
+        if (methodContext.method().getParameterCount() == 0) {
+            deserialisationContext.target(SerialisationTarget.ANNOTATED_PATH);
+            deserialisationContext.predeterminedPath(this.determineAnnotationPath(
                     context,
                     methodContext,
                     new PersistenceAnnotationContext(annotation))
             );
             return true;
         }
-        else if (methodContext.getMethod().getParameterCount() == 1) {
-            final Class<?> parameterType = methodContext.getMethod().getParameterTypes()[0];
+        else if (methodContext.method().getParameterCount() == 1) {
+            final Class<?> parameterType = methodContext.method().getParameterTypes()[0];
 
             if (Reflect.assigns(String.class, parameterType)) {
-                deserialisationContext.setTarget(SerialisationTarget.STRING);
+                deserialisationContext.target(SerialisationTarget.STRING);
                 return true;
 
             }
             else if (Reflect.assigns(Path.class, parameterType) || Reflect.assigns(File.class, parameterType)) {
-                deserialisationContext.setTarget(SerialisationTarget.PARAMETER_PATH);
+                deserialisationContext.target(SerialisationTarget.PARAMETER_PATH);
                 return true;
             }
         }
         return false;
     }
 
-    private Class<?> getOutputType(MethodProxyContext<?> context) {
-        final Class<?> returnType = context.getReturnType();
+    private Class<?> outputType(MethodProxyContext<?> context) {
+        final Class<?> returnType = context.returnType();
         if (Reflect.assigns(Exceptional.class, returnType)) {
             final Exceptional<Type> typeExceptional = Reflect.typeParameter(returnType, 0);
             if (typeExceptional.absent()) return null;

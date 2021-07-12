@@ -32,6 +32,6 @@ public class PlotMergeEvent extends CancellablePlotEvent {
     public PlotMergeEvent(Plot plot, Direction direction) {
         super(plot);
         this.direction = direction;
-        this.otherPlot = plot.getRelative(direction).orNull();
+        this.otherPlot = plot.relative(direction).orNull();
     }
 }

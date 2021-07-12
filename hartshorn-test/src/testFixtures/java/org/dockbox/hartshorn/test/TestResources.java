@@ -25,9 +25,9 @@ import org.dockbox.hartshorn.di.annotations.service.Service;
 public interface TestResources {
 
     @Resource(value = "integrated-confirm-true", key = "server.confirm.true")
-    ResourceEntry getCommandConfirmed();
+    ResourceEntry commandConfirmed();
 
     @Resource(value = "integrated-confirm-false", key = "server.confirm.false")
-    ResourceEntry getCommandNotConfirmed();
+    ResourceEntry commandNotConfirmed();
     
 }

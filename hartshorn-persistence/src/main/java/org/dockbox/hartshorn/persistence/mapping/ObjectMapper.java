@@ -34,7 +34,7 @@ public interface ObjectMapper extends InjectableType {
     <T> Exceptional<Boolean> write(Path path, T content);
     <T> Exceptional<String> write(T content);
 
-    void setFileType(FileType fileType);
-    FileType getFileType();
+    void fileType(FileType fileType);
+    FileType fileType();
 
 }

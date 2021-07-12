@@ -27,7 +27,7 @@ import java.util.stream.Stream;
 
 public class ImageConstantTests {
 
-    private static Stream<Arguments> getDitherModes() {
+    private static Stream<Arguments> ditherModes() {
         return Stream.of(
                 Arguments.of(DitherMode.FloydSteinberg, false, "ed", 3, 2),
                 Arguments.of(DitherMode.JarvisJudiceNinke, false, "ed", 5, 3),
@@ -45,26 +45,26 @@ public class ImageConstantTests {
     }
 
     @ParameterizedTest
-    @MethodSource("getDitherModes")
+    @MethodSource("ditherModes")
     public void testDitherMode(DitherMode mode, boolean isOrdered, String matrixType, int matrixWidth, int matrixHeight) {
         // Test ordered
-        Assertions.assertEquals(isOrdered, mode.isOrdered());
+        Assertions.assertEquals(isOrdered, mode.ordered());
 
         // Test matrix type
         switch (matrixType) {
             case "bayer" -> {
-                Assertions.assertDoesNotThrow(mode::getBayerMatrix);
-                Assertions.assertThrows(UnsupportedOperationException.class, mode::getErrorDiffusionMatrix);
+                Assertions.assertDoesNotThrow(mode::bayerMatrix);
+                Assertions.assertThrows(UnsupportedOperationException.class, mode::errorDiffusionMatrix);
             }
             case "ed" -> {
-                Assertions.assertDoesNotThrow(mode::getErrorDiffusionMatrix);
-                Assertions.assertThrows(UnsupportedOperationException.class, mode::getBayerMatrix);
+                Assertions.assertDoesNotThrow(mode::errorDiffusionMatrix);
+                Assertions.assertThrows(UnsupportedOperationException.class, mode::bayerMatrix);
             }
             default -> Assertions.fail("Unknown matrix type: " + matrixType + " (This is a test definition failure, not a implementation failure)");
         }
 
         // Test matrix size
-        double[][] matrix = matrixType.equals("bayer") ? mode.getBayerMatrix() : mode.getErrorDiffusionMatrix();
+        double[][] matrix = matrixType.equals("bayer") ? mode.bayerMatrix() : mode.errorDiffusionMatrix();
         Assertions.assertEquals(matrixHeight, matrix.length);
         for (double[] doubles : matrix) {
             Assertions.assertEquals(matrixWidth, doubles.length);
@@ -75,11 +75,11 @@ public class ImageConstantTests {
     void testScaleModesHaveResampleFilters() {
         for (ScaleMode scaleMode : ScaleMode.values()) {
             if (scaleMode == ScaleMode.NoScale) {
-                Assertions.assertThrows(UnsupportedOperationException.class, () -> scaleMode.getResampleFilter().apply(0));
+                Assertions.assertThrows(UnsupportedOperationException.class, () -> scaleMode.resampleFilter().apply(0));
             }
             else {
-                Assertions.assertNotNull(scaleMode.getResampleFilter());
-                Assertions.assertDoesNotThrow(() -> scaleMode.getResampleFilter().apply(-1));
+                Assertions.assertNotNull(scaleMode.resampleFilter());
+                Assertions.assertDoesNotThrow(() -> scaleMode.resampleFilter().apply(-1));
             }
         }
     }

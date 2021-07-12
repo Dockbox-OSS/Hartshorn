@@ -25,9 +25,9 @@ import org.dockbox.hartshorn.di.annotations.service.Service;
 public interface WorldManagementResources {
 
     @Resource(value = "$2{0} $1was added to the blacklist and will not be unloaded", key = "worldmanagement.unloader.blacklist.added")
-    ResourceEntry getBlacklistAdded(String world);
+    ResourceEntry blacklistAdded(String world);
 
     @Resource(value = "$2{0} $1could not be blacklisted, are you sure it exists?", key = "worldmanagement.unloader.blacklist.failed")
-    ResourceEntry getBlacklistFailure(String world);
+    ResourceEntry blacklistFailure(String world);
 
 }

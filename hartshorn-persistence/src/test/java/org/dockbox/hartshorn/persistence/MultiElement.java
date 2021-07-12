@@ -29,9 +29,10 @@ public class MultiElement implements Element {
     private String name;
     private String other;
 
-    public void setName(String name) {
+    public MultiElement name(String name) {
         this.name = name;
         this.other = name;
+        return this;
     }
 
 }

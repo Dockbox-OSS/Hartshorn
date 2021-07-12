@@ -25,17 +25,17 @@ import java.util.UUID;
 
 public interface Worlds {
 
-    List<World> getLoadedWorlds();
+    List<World> loadedWorlds();
 
-    List<UUID> getAllWorldUUIDs();
+    List<UUID> loadedUniqueIds();
 
-    Exceptional<World> getWorld(String name);
+    Exceptional<World> world(String name);
 
-    Exceptional<World> getWorld(UUID uuid);
+    Exceptional<World> world(UUID uuid);
 
-    boolean hasWorld(String name);
+    boolean has(String name);
 
-    boolean hasWorld(UUID uuid);
+    boolean has(UUID uuid);
 
-    UUID getRootWorldId();
+    UUID rootUniqueId();
 }

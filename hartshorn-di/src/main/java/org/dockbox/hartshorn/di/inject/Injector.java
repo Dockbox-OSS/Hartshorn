@@ -30,5 +30,5 @@ public interface Injector extends ApplicationBinder {
 
     <T> Exceptional<T> get(Class<T> type, InjectorProperty<?>... additionalProperties);
 
-    List<BindingData> getBindingData();
+    List<BindingData> bindingData();
 }

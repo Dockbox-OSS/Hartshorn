@@ -22,6 +22,9 @@ import com.mortennobel.imagescaling.ResampleFilters;
 
 import java.util.function.Supplier;
 
+import lombok.AllArgsConstructor;
+
+@AllArgsConstructor
 public enum ScaleMode {
     NoScale(() -> { throw new UnsupportedOperationException("Unsupported resample filter!"); }),
     BSpline(ResampleFilters::getBSplineFilter),
@@ -36,11 +39,7 @@ public enum ScaleMode {
 
     private final Supplier<ResampleFilter> resampleFilter;
 
-    ScaleMode(Supplier<ResampleFilter> resampleFilter) {
-        this.resampleFilter = resampleFilter;
-    }
-
-    ResampleFilter getResampleFilter() {
+    public ResampleFilter resampleFilter() {
         return this.resampleFilter.get();
     }
 }

@@ -20,7 +20,7 @@ package org.dockbox.hartshorn.server.minecraft.dimension.position;
 public enum Direction {
     NORTH, EAST, SOUTH, WEST, OTHER;
 
-    public static Direction getInstance(String direction) {
+    public static Direction instance(String direction) {
         return switch (direction.toLowerCase()) {
             case "n", "north" -> NORTH;
             case "e", "east" -> EAST;
@@ -30,7 +30,7 @@ public enum Direction {
         };
     }
 
-    public static Direction getInstance(int ordinal) {
+    public static Direction instance(int ordinal) {
         for (Direction direction : Direction.values()) {
             if (direction.ordinal() == ordinal) return direction;
         }

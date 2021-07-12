@@ -58,15 +58,15 @@ public class Pipeline<I> extends AbstractPipeline<I, I> {
     @SuppressWarnings("unchecked")
     @Override
     protected Exceptional<I> process(@NotNull Exceptional<I> exceptionalInput) {
-        for (IPipe<I, I> pipe : this.getPipes()) {
+        for (IPipe<I, I> pipe : this.pipes()) {
             exceptionalInput = super.processPipe(pipe, exceptionalInput);
 
             // If the pipelines been cancelled, stop processing any further pipes.
-            if (this.isCancelled()) {
+            if (this.cancelled()) {
                 // Reset it straight after its been detected for next time the pipeline's used.
-                this.uncancelPipeline();
+                this.permit();
                 return Exceptional.of(
-                        (I) super.getCancelBehaviour().act(exceptionalInput.orNull()),
+                        (I) super.cancelBehaviour().act(exceptionalInput.orNull()),
                         exceptionalInput.unsafeError()
                 );
             }

@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.commands.context;
 
 import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.api.domain.Target;
+import org.dockbox.hartshorn.api.domain.Subject;
 import org.dockbox.hartshorn.api.events.annotations.Posting;
 import org.dockbox.hartshorn.api.events.parents.Cancellable;
 import org.dockbox.hartshorn.api.exceptions.Except;
@@ -113,7 +113,7 @@ public class MethodCommandExecutorContext extends DefaultContext implements Comm
     @Override
     public List<String> aliases() {
         List<String> aliases = HartshornUtils.emptyList();
-        for (String parentAlias : this.getParentAliases()) {
+        for (String parentAlias : this.parentAliases()) {
             for (String alias : this.command.value()) {
                 aliases.add(parentAlias + ' ' + alias);
             }
@@ -161,17 +161,17 @@ public class MethodCommandExecutorContext extends DefaultContext implements Comm
     @Override
     public CommandExecutor executor() {
         return (ctx) -> {
-            final Cancellable before = new Before(ctx.getSender(), ctx).post();
-            if (before.isCancelled()) {
-                final ResourceEntry cancelled = Hartshorn.context().get(CommandResources.class).getCancelled();
-                ctx.getSender().send(cancelled);
+            final Cancellable before = new Before(ctx.source(), ctx).post();
+            if (before.cancelled()) {
+                final ResourceEntry cancelled = Hartshorn.context().get(CommandResources.class).cancelled();
+                ctx.source().send(cancelled);
             }
 
-            final Object instance = Hartshorn.context().get(this.getType());
+            final Object instance = Hartshorn.context().get(this.type());
             final List<Object> arguments = this.arguments(ctx);
             try {
                 this.method().invoke(instance, arguments.toArray());
-                new CommandEvent.After(ctx.getSender(), ctx).post();
+                new CommandEvent.After(ctx.source(), ctx).post();
             }
             catch (IllegalAccessException | InvocationTargetException e) {
                 Except.handle(e);
@@ -185,12 +185,12 @@ public class MethodCommandExecutorContext extends DefaultContext implements Comm
 
         for (Entry<String, ParameterContext> entry : parameters.entrySet()) {
             final ParameterContext parameterContext = entry.getValue();
-            final int index = parameterContext.getIndex();
+            final int index = parameterContext.index();
             if (parameterContext.is(CommandContext.class)) arguments.set(index, context);
             else {
                 @Nullable final Object object = context.get(entry.getKey());
                 // Target comparison is done last as this can target either the command source, or a parameter target
-                if (object == null && parameterContext.is(Target.class)) arguments.set(index, context.getSender());
+                if (object == null && parameterContext.is(Subject.class)) arguments.set(index, context.source());
                 else arguments.set(index, object);
             }
         }

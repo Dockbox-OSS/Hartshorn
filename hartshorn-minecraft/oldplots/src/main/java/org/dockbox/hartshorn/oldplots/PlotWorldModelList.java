@@ -32,14 +32,14 @@ class PlotWorldModelList {
     @Getter
     private final List<PlotWorldModel> worlds = HartshornUtils.emptyList();
 
-    public void addWorld(PlotWorldModel model) {
+    public void add(PlotWorldModel model) {
         this.worlds.add(model);
     }
 
-    public Exceptional<PlotWorldModel> getWorld(@NonNls String worldName) {
+    public Exceptional<PlotWorldModel> get(@NonNls String worldName) {
         return Exceptional.of(() -> {
             for (PlotWorldModel world : this.worlds) {
-                if (world.getName().equalsIgnoreCase(worldName)) {
+                if (world.name().equalsIgnoreCase(worldName)) {
                     return world;
                 }
             }

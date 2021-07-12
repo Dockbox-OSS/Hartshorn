@@ -504,7 +504,7 @@ public final class Exceptional<T> {
      *
      * @return {@code true} if there is no throwable present, otherwise {@code false}
      */
-    public boolean isErrorAbsent() {
+    public boolean errorAbsent() {
         return null == this.throwable;
     }
 

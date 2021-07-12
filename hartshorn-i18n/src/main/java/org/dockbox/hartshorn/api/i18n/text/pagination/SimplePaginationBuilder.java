@@ -25,11 +25,11 @@ public class SimplePaginationBuilder extends PaginationBuilder {
     @Override
     public Pagination build() {
         return new SimplePagination(
-                super.getPadding(),
-                super.getLinesPerPage(),
-                super.getHeader(),
-                super.getFooter(),
-                super.getTitle(),
-                super.getContent());
+                super.padding(),
+                super.linesPerPage(),
+                super.header(),
+                super.footer(),
+                super.title(),
+                super.content());
     }
 }

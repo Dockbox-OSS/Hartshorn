@@ -43,12 +43,12 @@ public class DynamicPatternConverter<T> extends AbstractArgumentConverter<T> {
 
     @Override
     public Exceptional<T> convert(CommandSource source, String argument) {
-        return this.pattern.request(this.getType(), source, argument);
+        return this.pattern.request(this.type(), source, argument);
     }
 
     @Override
     public Exceptional<T> convert(CommandSource source, CommandParameter<String> value) {
-        return this.pattern.request(this.getType(), source, value.getValue());
+        return this.pattern.request(this.type(), source, value.value());
     }
 
     @Override

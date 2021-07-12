@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.server.minecraft.events.player;
 
-import org.dockbox.hartshorn.api.domain.Target;
+import org.dockbox.hartshorn.api.domain.Subject;
 import org.dockbox.hartshorn.server.minecraft.dimension.position.Location;
 import org.dockbox.hartshorn.server.minecraft.dimension.world.World;
 
@@ -25,27 +25,27 @@ import org.dockbox.hartshorn.server.minecraft.dimension.world.World;
  * The event fired when a player switches to another world. Typically this is fired after {@link
  * PlayerTeleportEvent}.
  */
-public class PlayerSwitchWorldEvent extends PlayerTeleportEvent {
-    private final World oldWorld;
-    private final World newWorld;
+public class PlayerSwitchWorldEvent extends PlayerMoveEvent {
+    private final World origin;
+    private final World destination;
 
-    public PlayerSwitchWorldEvent(Target target, Location oldLocation, Location newLocation) {
-        super(target, oldLocation, newLocation);
-        this.oldWorld = oldLocation.getWorld();
-        this.newWorld = newLocation.getWorld();
+    public PlayerSwitchWorldEvent(Subject subject, Location origin, Location destination) {
+        super(subject);
+        this.origin = origin.world();
+        this.destination = destination.world();
     }
 
-    public PlayerSwitchWorldEvent(Target target, World oldWorld, World newWorld) {
-        super(target, Location.of(oldWorld), Location.of(newWorld));
-        this.oldWorld = oldWorld;
-        this.newWorld = newWorld;
+    public PlayerSwitchWorldEvent(Subject subject, World origin, World destination) {
+        super(subject);
+        this.origin = origin;
+        this.destination = destination;
     }
 
-    public World getOldWorld() {
-        return this.oldWorld;
+    public World origin() {
+        return this.origin;
     }
 
-    public World getNewWorld() {
-        return this.newWorld;
+    public World destination() {
+        return this.destination;
     }
 }
