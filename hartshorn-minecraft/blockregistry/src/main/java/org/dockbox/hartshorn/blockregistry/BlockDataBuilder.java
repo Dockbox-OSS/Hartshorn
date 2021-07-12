@@ -22,21 +22,21 @@ public class BlockDataBuilder
 
     public BlockDataBuilder family(String family)
     {
-        this.family = family.startsWith("minecraft:") ? family : "conqest:" + family;
+        this.family = family.startsWith("minecraft:") ? family : "conquest:" + family;
         return this;
     }
 
     public BlockDataBuilder name(String name)
     {
-        this.fullName = name.startsWith("minecraft:") ? name : "conqest:" + name;
-        this.variantName = name.startsWith("minecraft:") ? name.replace("minecraft:", "conquest:") : "conqest:" + name;;
+        this.fullName = name.startsWith("minecraft:") ? name : "conquest:" + name;
+        this.variantName = name.startsWith("minecraft:") ? name.replace("minecraft:", "conquest:") : "conquest:" + name;;
         return this;
     }
 
     public BlockDataBuilder name(String name, String name2)
     {
-        this.fullName = name.startsWith("minecraft:") ? name : "conqest:" + name;
-        this.variantName = name2.startsWith("minecraft:") ? name2 : "conqest:" + name2;
+        this.fullName = name.startsWith("minecraft:") ? name : "conquest:" + name;
+        this.variantName = name2.startsWith("minecraft:") ? name2 : "conquest:" + name2;
         return this;
     }
 

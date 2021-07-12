@@ -358,6 +358,23 @@ public class Registry<V> extends HashMap<String, RegistryColumn<V>> {
     }
 
     /**
+     * Maps the values of the registry with the specified {@link Function mapper}.
+     *
+     * @param mapper
+     *      The {@link Function} to map the values of the registry
+     * @param <U>
+     *      The return type of the mapper
+     *
+     * @return The mapped registry
+     */
+    public <U> Registry<U> mapValues(Function<? super V, U> mapper) {
+        Registry<U> registry = new Registry<>();
+        this.forEach((columnID, column) -> registry.put(columnID, column.map(mapper)));
+
+        return registry;
+    }
+
+    /**
      * @return The registry in an easy to view manner, which displays the relationship between {@link
      *         RegistryIdentifier}s and the values in the columns.
      */

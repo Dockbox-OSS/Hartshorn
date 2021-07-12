@@ -1,7 +1,7 @@
 package org.dockbox.hartshorn.blockregistry;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.di.annotations.Service;
+import org.dockbox.hartshorn.di.annotations.service.Service;
 import org.dockbox.hartshorn.persistence.mapping.GenericType;
 import org.dockbox.hartshorn.persistence.mapping.JacksonObjectMapper;
 import org.dockbox.hartshorn.persistence.registry.Registry;
@@ -94,7 +94,7 @@ public class BlockRegistryManager
      * @return A {@link Registry} mapping the root ids of the variants to {@link VariantIdentifier variant identifiers}
      */
     public Registry<String> getVariants(@NotNull Item item) {
-        return this.getVariants(item.getId());
+        return this.getVariants(item.id());
     }
 
     /**
@@ -143,7 +143,7 @@ public class BlockRegistryManager
             this.rootAliases.get(rootId).add(alias);
         else this.rootAliases.put(rootId, HartshornUtils.asSet(alias));
 
-        MinecraftItems.getInstance().registerCustom(alias, () -> Item.of(rootId));
+        MinecraftItems.instance().register(alias, () -> Item.of(rootId));
     }
 
     /**
@@ -177,7 +177,7 @@ public class BlockRegistryManager
         if (!this.blockRegistry.containsKey(familyId))
             this.blockRegistry.put(familyId, new Registry<>());
 
-        this.blockRegistry.get(familyId).addData(variant, rootId);
+        this.blockRegistry.get(familyId).add(variant, rootId);
     }
 
     /**
