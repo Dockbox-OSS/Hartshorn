@@ -59,38 +59,18 @@ Additionally, the [wiki](https://github.com/GuusLieben/Hartshorn/wiki) contains 
 - Test classes follow the naming convention `${TestedClass}Tests`
 - Tests follow the [AAA pattern](https://medium.com/@pjbgf/title-testing-code-ocd-and-the-aaa-pattern-df453975ab80)
 - Tests use JUnit 5 (`org.junit.jupiter.api`)
+- Tests are performed against the latest (supported) version of relevant platforms
 
 For example, `org.dockbox.hartshorn.common.ClassX` is tested in `org.dockbox.hartshorn.common.ClassXTests`
-
-### Run Testing
-- Tests are performed using the [predefined Hartshorn Servers](https://github.com/GuusLieben/Hartshorn-Servers)
-- Tests are performed against the latest (supported) version of relevant platforms
-- Servers are activated using the [Hartshorn development server configurations](https://github.com/GuusLieben/Hartshorn/wiki/Gradle#development-server)
 
 ### Embedded server
 Hartshorn offers a embedded server which can be used when testing higher level components. To apply the embedded server to your tests, annotate your class as follows:
 ```java
-@ExtendWith(HartshornJUnit5Runner.class)
+@ExtendWith(HartshornRunner.class)
 public class ComponentTests {
     @Test
     public void testHighLevelComponent() {...}
 }
-```
-
-## Development Server
-Hartshorn contains pre-made servers for its supported platforms, with automatic build distributions towards those platforms. 
-These servers can be generated using the appropriate download task for each relevant platform module.
-```bash
-./gradlew downloadDevServer
-```
-This automatically downloads the appropriate server files from their respective authors/approved CDNs, see [this PR](https://github.com/GuusLieben/Hartshorn/pull/214) for more details.
-
-To run the server, we recommend using [IntelliJ IDEA](https://www.jetbrains.com/idea/). 
-Each relevant platform module will have a server run task which prepares and executes the development server for that platform.
-The server run task exposes a debugging socket on port 5005. Using IntelliJ IDEA you can manually attach your debugger once the task starts
-(the IDE will notify you of this). To attach automatically, we recommend the use of [AttachMe](https://plugins.jetbrains.com/plugin/13263-attachme).
-```bash
-./gradlew runDevServer
 ```
 
 ## Contributors
