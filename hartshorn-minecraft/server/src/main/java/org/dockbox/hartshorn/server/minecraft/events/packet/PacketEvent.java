@@ -31,7 +31,7 @@ import lombok.Getter;
  *
  * @param <T>
  */
-public class PacketEvent<T extends Packet> extends AbstractCancellableEvent {
+public abstract class PacketEvent<T extends Packet> extends AbstractCancellableEvent {
 
     @Getter
     private final Player target;
