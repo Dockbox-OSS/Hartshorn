@@ -125,7 +125,7 @@ public class GuiceInjector implements Injector {
     @Override
     public void bind(InjectConfiguration configuration) {
         if (configuration != null) {
-            this.module.add(new InjectConfigurationModule(configuration, this));
+            this.module.add(new GuiceConfigurationBridge(configuration, this));
             this.reset();
         }
     }
