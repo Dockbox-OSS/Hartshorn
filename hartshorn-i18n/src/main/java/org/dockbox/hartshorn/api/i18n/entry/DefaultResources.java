@@ -26,22 +26,22 @@ import org.dockbox.hartshorn.di.annotations.service.Service;
 public interface DefaultResources {
 
     @Resource(value = "$3[] $1", key = "prefix")
-    ResourceEntry getPrefix();
+    ResourceEntry prefix();
 
     @Resource(value = "$4An unknown occurred. $3{0}", key = "caught")
-    ResourceEntry getUnknownError(String message);
+    ResourceEntry unknownError(String message);
 
     @Resource(value = "$4Cannot apply to this type", key = "caught.failedbinding")
-    ResourceEntry getBindingFailure();
+    ResourceEntry bindingFailure();
 
     @Resource(value = "$4Reference to object lost", key = "caught.reference.lost")
-    ResourceEntry getReferenceLost();
+    ResourceEntry referenceLost();
 
     @Resource(value = "Unknown", key = "source.unknown")
-    ResourceEntry getUnknown();
+    ResourceEntry unknown();
 
     @Resource(value = "$4{0}", key = "hartshorn.exception")
-    ResourceEntry getException(String message);
+    ResourceEntry exception(String message);
 
     static DefaultResources instance() {
         return Hartshorn.context().get(DefaultResources.class);

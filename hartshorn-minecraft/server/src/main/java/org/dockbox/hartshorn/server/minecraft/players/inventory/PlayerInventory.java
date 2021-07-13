@@ -39,7 +39,7 @@ import org.dockbox.hartshorn.server.minecraft.players.Player;
  *
  * <p><i>Hotbar:</i> {@code 27 - - - - - - 35}
  *
- * <p>Equipment lookups should be performed using {@link #getSlot(Slot)}.
+ * <p>Equipment lookups should be performed using {@link #slot(Slot)}.
  */
 public abstract class PlayerInventory implements IndexedInventory, PositionInventory, SlotInventory {
 
@@ -48,8 +48,8 @@ public abstract class PlayerInventory implements IndexedInventory, PositionInven
      *
      * @return The hotbar.
      */
-    public InventoryRow getHotbar() {
-        return this.getRow(3).get();
+    public InventoryRow hotbar() {
+        return this.row(3).get();
     }
 
     /**
@@ -61,5 +61,5 @@ public abstract class PlayerInventory implements IndexedInventory, PositionInven
      *
      * @return The row, or none.
      */
-    public abstract Exceptional<InventoryRow> getRow(int index);
+    public abstract Exceptional<InventoryRow> row(int index);
 }

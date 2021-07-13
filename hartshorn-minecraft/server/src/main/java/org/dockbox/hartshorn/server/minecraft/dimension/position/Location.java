@@ -47,15 +47,15 @@ public abstract class Location implements KeyHolder<Location>, PersistentDataHol
     }
 
     public double getX() {
-        return this.getVectorLoc().getXd();
+        return this.vector().xD();
     }
 
     public double getY() {
-        return this.getVectorLoc().getYd();
+        return this.vector().yD();
     }
 
     public double getZ() {
-        return this.getVectorLoc().getZd();
+        return this.vector().zD();
     }
 
     public Location expandX(double x) {
@@ -72,9 +72,9 @@ public abstract class Location implements KeyHolder<Location>, PersistentDataHol
         return this.expand(Vector3N.of(0, 0, z));
     }
 
-    public abstract Vector3N getVectorLoc();
+    public abstract Vector3N vector();
 
-    public abstract World getWorld();
+    public abstract World world();
 
     public boolean place(Block block) {
         return block.place(this);
@@ -84,12 +84,12 @@ public abstract class Location implements KeyHolder<Location>, PersistentDataHol
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Location location)) return false;
-        return this.getVectorLoc().equals(location.getVectorLoc()) && Objects.equals(this.getWorld(), location.getWorld());
+        return this.vector().equals(location.vector()) && Objects.equals(this.world(), location.world());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.getVectorLoc(), this.getWorld());
+        return Objects.hash(this.vector(), this.world());
     }
 
 }

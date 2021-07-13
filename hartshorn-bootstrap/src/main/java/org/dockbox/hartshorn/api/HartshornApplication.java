@@ -21,15 +21,15 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.di.Modifier;
 import org.dockbox.hartshorn.api.exceptions.Except;
 import org.dockbox.hartshorn.di.InjectConfiguration;
 import org.dockbox.hartshorn.di.InjectableBootstrap;
+import org.dockbox.hartshorn.di.Modifier;
 import org.dockbox.hartshorn.di.annotations.activate.Activator;
 import org.dockbox.hartshorn.di.annotations.inject.InjectConfig;
 import org.dockbox.hartshorn.di.annotations.inject.InjectPhase;
-import org.dockbox.hartshorn.util.Reflect;
 import org.dockbox.hartshorn.util.HartshornUtils;
+import org.dockbox.hartshorn.util.Reflect;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -50,7 +50,12 @@ public class HartshornApplication {
                 configurations.put(config.phase(), instance(config.value()));
             }
 
-            injectableBootstrap.create(prefix, activator, HartshornUtils.emptyList(), configurations, modifiers);
+            injectableBootstrap.create(
+                    HartshornUtils.asList(Hartshorn.PACKAGE_PREFIX, prefix),
+                    activator,
+                    HartshornUtils.emptyList(),
+                    configurations,
+                    modifiers);
             final long creationTime = System.currentTimeMillis() - start;
 
             return () -> {

@@ -42,10 +42,10 @@ public class SimpleConfigurationManager implements ConfigurationManager, Injecta
     @Wired
     public SimpleConfigurationManager(Path path) {
         this.path = path;
-        this.fileKey = this.getFileKey();
+        this.fileKey = this.fileKey();
     }
 
-    protected String getFileKey() {
+    protected String fileKey() {
         String fileName = this.path.getFileName().toString();
         String root = this.path.getParent().getFileName().toString();
         return root + ':' + fileName + '/';
@@ -54,7 +54,7 @@ public class SimpleConfigurationManager implements ConfigurationManager, Injecta
     @Override
     public <T> T get(String key) {
         String[] keys = key.split("\\.");
-        Map<String, Object> next = new HashMap<>(this.getCache().get(this.fileKey));
+        Map<String, Object> next = new HashMap<>(this.cache().get(this.fileKey));
         for (int i = 0; i < keys.length; i++) {
             String s = keys[i];
             Object value = next.getOrDefault(s, null);
@@ -81,7 +81,7 @@ public class SimpleConfigurationManager implements ConfigurationManager, Injecta
     }
 
     @Override
-    public void stateEnabling(InjectorProperty<?>... properties) throws ApplicationException {
+    public void enable(InjectorProperty<?>... properties) throws ApplicationException {
         try {
             if (!this.cache.containsKey(this.fileKey)) {
                 FileInputStream fileInputStream = new FileInputStream(this.path.toFile());

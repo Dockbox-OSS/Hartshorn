@@ -28,5 +28,5 @@ public interface InventoryRow extends IndexedInventory, PositionInventory {
      *
      * @return The inventory
      */
-    PlayerInventory getInventory();
+    PlayerInventory inventory();
 }

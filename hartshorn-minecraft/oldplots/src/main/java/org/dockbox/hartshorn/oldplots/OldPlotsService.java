@@ -25,8 +25,8 @@ import org.dockbox.hartshorn.api.i18n.text.pagination.PaginationBuilder;
 import org.dockbox.hartshorn.commands.RunCommandAction;
 import org.dockbox.hartshorn.commands.annotations.Command;
 import org.dockbox.hartshorn.commands.context.CommandContext;
-import org.dockbox.hartshorn.di.annotations.service.Service;
 import org.dockbox.hartshorn.di.annotations.inject.Wired;
+import org.dockbox.hartshorn.di.annotations.service.Service;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.persistence.FileManager;
 import org.dockbox.hartshorn.persistence.FileType;
@@ -37,7 +37,8 @@ import org.dockbox.hartshorn.persistence.exceptions.InvalidConnectionException;
 import org.dockbox.hartshorn.persistence.properties.SQLColumnProperty;
 import org.dockbox.hartshorn.persistence.table.Table;
 import org.dockbox.hartshorn.server.minecraft.dimension.position.Location;
-import org.dockbox.hartshorn.server.minecraft.events.server.ServerUpdateEvent;
+import org.dockbox.hartshorn.server.minecraft.events.server.EngineChangedState;
+import org.dockbox.hartshorn.server.minecraft.events.server.ServerState.Update;
 import org.dockbox.hartshorn.server.minecraft.players.Player;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.jetbrains.annotations.NonNls;
@@ -60,8 +61,8 @@ public class OldPlotsService {
     private PlotWorldModelList modelList = new PlotWorldModelList();
 
     @Listener
-    public void on(ServerUpdateEvent event) {
-        Path worldConfig = this.fileManager.getConfigFile(OldPlotsService.class, "worlds");
+    public void on(EngineChangedState<Update> event) {
+        Path worldConfig = this.fileManager.configFile(OldPlotsService.class, "worlds");
         this.fileManager.copyDefaultFile("oldplots_worlds.yml", worldConfig);
         Exceptional<PlotWorldModelList> exceptionalList = this.fileManager.read(worldConfig, PlotWorldModelList.class);
         exceptionalList.present(modelList -> this.modelList = modelList);
@@ -70,45 +71,45 @@ public class OldPlotsService {
     @Command(value = "oldplots", arguments = "<player{Player}>", permission = "hartshorn.oldplots.list")
     public void oldPlotsCommand(Player source, CommandContext ctx) throws InvalidConnectionException {
         if (!ctx.has("player")) {
-            source.sendWithPrefix(this.resources.getPlayerError());
+            source.sendWithPrefix(this.resources.playerError());
         }
         Player player = ctx.get("player");
 
-        SQLMan<?> man = this.getSQLMan();
-        Table plots = man.getTable("plot");
-        plots = plots.where(OldPlotsIdentifiers.UUID, player.getUniqueId().toString());
+        SQLMan<?> man = this.sql();
+        Table plots = man.table("plot");
+        plots = plots.where(OldPlotsIdentifiers.UUID, player.uniqueId().toString());
 
         List<Text> plotContent = HartshornUtils.emptyList();
         plots.forEach(row -> {
-            @NotNull Integer id = row.getValue(OldPlotsIdentifiers.PLOT_ID).get();
-            @NotNull Integer idX = row.getValue(OldPlotsIdentifiers.PLOT_X).get();
-            @NotNull Integer idZ = row.getValue(OldPlotsIdentifiers.PLOT_Z).get();
+            @NotNull Integer id = row.value(OldPlotsIdentifiers.PLOT_ID).get();
+            @NotNull Integer idX = row.value(OldPlotsIdentifiers.PLOT_X).get();
+            @NotNull Integer idZ = row.value(OldPlotsIdentifiers.PLOT_Z).get();
             @NonNls
             @NotNull
-            String world = row.getValue(OldPlotsIdentifiers.WORLD).get();
+            String world = row.value(OldPlotsIdentifiers.WORLD).get();
 
             // Only show worlds we can access
-            if (this.modelList.getWorld(world).present()) {
+            if (this.modelList.get(world).present()) {
                 Text plotLine =
-                        Text.of(this.resources.getSinglePlotListItem(world, idX, idZ).translate(player));
+                        Text.of(this.resources.singlePlotListItem(world, idX, idZ).translate(player));
                 plotLine.onClick(RunCommandAction.runCommand("/optp " + id));
                 plotLine.onHover(
                         HoverAction.showText(
                                 Text.of(
-                                        this.resources.getSinglePlotListItemHover(world, idX, idZ).translate(player))));
+                                        this.resources.singlePlotListItemHover(world, idX, idZ).translate(player))));
                 plotContent.add(plotLine);
             }
         });
 
         this.context.get(PaginationBuilder.class)
                 .content(plotContent)
-                .title(Text.of(this.resources.getListTitle(player.getName()).translate(player)))
+                .title(Text.of(this.resources.listTitle(player.name()).translate(player)))
                 .build()
                 .send(source);
     }
 
-    private SQLMan<?> getSQLMan() {
-        Path dataDirectory = this.context.get(FileManager.class).getDataDir(OldPlotsService.class);
+    private SQLMan<?> sql() {
+        Path dataDirectory = this.context.get(FileManager.class).data(OldPlotsService.class);
         Path path = dataDirectory.resolve("oldplots.db");
 
         return this.context.get(SQLMan.class,
@@ -125,25 +126,25 @@ public class OldPlotsService {
     public void teleportCommand(Player source, CommandContext context)
             throws InvalidConnectionException {
         Integer id = context.get("id");
-        SQLMan<?> man = this.getSQLMan();
-        Table plots = man.getTable("plot");
+        SQLMan<?> man = this.sql();
+        Table plots = man.table("plot");
         plots = plots.where(OldPlotsIdentifiers.PLOT_ID, id);
         plots.first().present(plot -> {
-            @NotNull Integer idX = plot.getValue(OldPlotsIdentifiers.PLOT_X).get();
-            @NotNull Integer idZ = plot.getValue(OldPlotsIdentifiers.PLOT_Z).get();
+            @NotNull Integer idX = plot.value(OldPlotsIdentifiers.PLOT_X).get();
+            @NotNull Integer idZ = plot.value(OldPlotsIdentifiers.PLOT_Z).get();
             @NonNls
             @NotNull
-            String world = plot.getValue(OldPlotsIdentifiers.WORLD).get();
+            String world = plot.value(OldPlotsIdentifiers.WORLD).get();
 
-            if ("*".equals(world)) source.send(this.resources.getCaughtError());
+            if ("*".equals(world)) source.send(this.resources.caughtError());
             else {
-                Exceptional<PlotWorldModel> model = this.modelList.getWorld(world);
+                Exceptional<PlotWorldModel> model = this.modelList.get(world);
                 model.present(worldModel -> {
-                    Exceptional<Location> location = worldModel.getLocation(idX, idZ);
-                    location.present(source::setLocation)
-                            .absent(() -> source.send(this.resources.getCalculationError()));
-                }).absent(() -> source.send(this.resources.getLocationError(world)));
+                    Exceptional<Location> location = worldModel.location(idX, idZ);
+                    location.present(source::location)
+                            .absent(() -> source.send(this.resources.calculationError()));
+                }).absent(() -> source.send(this.resources.locationError(world)));
             }
-        }).absent(() -> source.send(this.resources.getPlotError()));
+        }).absent(() -> source.send(this.resources.plotError()));
     }
 }

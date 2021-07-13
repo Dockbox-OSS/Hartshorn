@@ -30,17 +30,17 @@ public final class JUnitPermissionRegistry {
 
     private static final Map<UUID, Collection<Permission>> permissions = HartshornUtils.emptyConcurrentMap();
 
-    public static void setPermission(PermissionHolder holder, Permission permission) {
-        permissions.putIfAbsent(holder.getUniqueId(), HartshornUtils.emptyList());
-        permissions.get(holder.getUniqueId()).add(permission);
+    public static void permission(PermissionHolder holder, Permission permission) {
+        permissions.putIfAbsent(holder.uniqueId(), HartshornUtils.emptyList());
+        permissions.get(holder.uniqueId()).add(permission);
     }
 
     // Specific context
     public static boolean hasPermission(PermissionHolder holder, Permission permission) {
-        if (permission.getContext().absent()) return hasPermission(holder, permission.get());
-        for (Permission abstractPermission : permissions.getOrDefault(holder.getUniqueId(), HartshornUtils.emptyList())) {
-            if (abstractPermission.getContext().present() && abstractPermission.get().equals(permission.get())) {
-                if (abstractPermission.getContext().get().equals(permission.getContext().get())) return true;
+        if (permission.context().absent()) return hasPermission(holder, permission.get());
+        for (Permission abstractPermission : permissions.getOrDefault(holder.uniqueId(), HartshornUtils.emptyList())) {
+            if (abstractPermission.context().present() && abstractPermission.get().equals(permission.get())) {
+                if (abstractPermission.context().get().equals(permission.context().get())) return true;
             }
         }
         return false;
@@ -48,34 +48,34 @@ public final class JUnitPermissionRegistry {
 
     // Global context
     public static boolean hasPermission(PermissionHolder holder, String permission) {
-        for (Permission abstractPermission : permissions.getOrDefault(holder.getUniqueId(), HartshornUtils.emptyList())) {
-            if (abstractPermission.getContext().absent() && abstractPermission.get().equals(permission)) {
+        for (Permission abstractPermission : permissions.getOrDefault(holder.uniqueId(), HartshornUtils.emptyList())) {
+            if (abstractPermission.context().absent() && abstractPermission.get().equals(permission)) {
                 return true;
             }
         }
         return false;
     }
 
-    public static void setPermission(PermissionHolder holder, String permission, Tristate tristate) {
+    public static void permission(PermissionHolder holder, String permission, Tristate tristate) {
         if (tristate.booleanValue()) {
-            permissions.get(holder.getUniqueId()).add(Permission.of(permission));
+            permissions.get(holder.uniqueId()).add(Permission.of(permission));
         }
         else
-            for (Permission abstractPermission : permissions.getOrDefault(holder.getUniqueId(), HartshornUtils.emptyList())) {
-                if (abstractPermission.get().equals(permission) && abstractPermission.getContext().absent()) {
-                    permissions.get(holder.getUniqueId()).remove(abstractPermission);
+            for (Permission abstractPermission : permissions.getOrDefault(holder.uniqueId(), HartshornUtils.emptyList())) {
+                if (abstractPermission.get().equals(permission) && abstractPermission.context().absent()) {
+                    permissions.get(holder.uniqueId()).remove(abstractPermission);
                 }
             }
     }
 
-    public static void setPermission(PermissionHolder holder, Permission permission, Tristate tristate) {
+    public static void permission(PermissionHolder holder, Permission permission, Tristate tristate) {
         if (tristate.booleanValue()) {
-            permissions.get(holder.getUniqueId()).add(permission);
+            permissions.get(holder.uniqueId()).add(permission);
         }
         else
-            for (Permission abstractPermission : permissions.getOrDefault(holder.getUniqueId(), HartshornUtils.emptyList())) {
+            for (Permission abstractPermission : permissions.getOrDefault(holder.uniqueId(), HartshornUtils.emptyList())) {
                 if (abstractPermission.equals(permission)) {
-                    permissions.get(holder.getUniqueId()).remove(abstractPermission);
+                    permissions.get(holder.uniqueId()).remove(abstractPermission);
                 }
             }
     }

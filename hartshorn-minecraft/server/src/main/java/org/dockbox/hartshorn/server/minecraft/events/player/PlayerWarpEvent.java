@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.server.minecraft.events.player;
 
-import org.dockbox.hartshorn.api.domain.Target;
+import org.dockbox.hartshorn.api.domain.Subject;
 import org.dockbox.hartshorn.server.minecraft.dimension.Warp;
 
 import lombok.Getter;
@@ -27,8 +27,8 @@ import lombok.Getter;
 public class PlayerWarpEvent extends PlayerMoveEvent {
     private final Warp warp;
 
-    public PlayerWarpEvent(Target target, Warp warp) {
-        super(target);
+    public PlayerWarpEvent(Subject subject, Warp warp) {
+        super(subject);
         this.warp = warp;
     }
 }

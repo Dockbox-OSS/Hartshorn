@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.persistence;
 
 public interface PersistentCapable<T extends PersistentModel<? extends PersistentCapable<T>>> {
 
-    Class<? extends T> getModelClass();
-    T toPersistentModel();
+    Class<? extends T> modelType();
+    T model();
 
 }

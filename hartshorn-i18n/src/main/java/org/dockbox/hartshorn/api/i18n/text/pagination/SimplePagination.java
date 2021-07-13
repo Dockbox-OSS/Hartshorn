@@ -41,4 +41,6 @@ public class SimplePagination implements Pagination {
     public void send(@NotNull MessageReceiver receiver) {
         receiver.send(this);
     }
+
+
 }

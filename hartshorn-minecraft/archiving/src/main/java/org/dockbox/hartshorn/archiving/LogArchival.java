@@ -21,10 +21,11 @@ import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.events.annotations.Listener;
 import org.dockbox.hartshorn.api.exceptions.Except;
-import org.dockbox.hartshorn.di.annotations.service.Service;
 import org.dockbox.hartshorn.di.annotations.inject.Wired;
+import org.dockbox.hartshorn.di.annotations.service.Service;
 import org.dockbox.hartshorn.persistence.FileManager;
-import org.dockbox.hartshorn.server.minecraft.events.server.ServerUpdateEvent;
+import org.dockbox.hartshorn.server.minecraft.events.server.EngineChangedState;
+import org.dockbox.hartshorn.server.minecraft.events.server.ServerState.Update;
 
 import java.io.IOException;
 import java.nio.file.FileSystems;
@@ -51,8 +52,8 @@ public class LogArchival {
     private FileManager fileManager;
 
     @Listener
-    public void on(ServerUpdateEvent event) {
-        this.logPath = this.fileManager.getLogsDir();
+    public void on(EngineChangedState<Update> event) {
+        this.logPath = this.fileManager.logs();
         try {
             Hartshorn.log().info("Checking for logs to archive in {}", this.logPath);
             Files.list(this.logPath)
@@ -65,13 +66,13 @@ public class LogArchival {
     }
 
     private void archive(Path source) {
-        Exceptional<Path> directory = this.getArchiveDirectory(source);
+        Exceptional<Path> directory = this.archiveDirectory(source);
         if (directory.absent()) {
             Hartshorn.log().warn("Unable to determine date of file {}", source);
             return;
         }
 
-        Exceptional<Path> destination = this.getArchiveName(directory.get(), source);
+        Exceptional<Path> destination = this.archiveName(directory.get(), source);
         if (destination.absent()) {
             Hartshorn.log().warn("Unable to resolve archive name for file {}", source);
             return;
@@ -95,7 +96,7 @@ public class LogArchival {
      *
      * @return The target archive directory
      */
-    private Exceptional<Path> getArchiveDirectory(Path file) {
+    private Exceptional<Path> archiveDirectory(Path file) {
         Matcher dateMatcher = this.datePattern.matcher(file.getFileName().toString());
 
         String year;
@@ -133,7 +134,7 @@ public class LogArchival {
      *
      * @return The target archive file
      */
-    private Exceptional<Path> getArchiveName(Path dir, Path file) {
+    private Exceptional<Path> archiveName(Path dir, Path file) {
         Matcher nameMatcher = this.namePattern.matcher(file.getFileName().toString());
         if (nameMatcher.find()) {
             String name = nameMatcher.group(1);

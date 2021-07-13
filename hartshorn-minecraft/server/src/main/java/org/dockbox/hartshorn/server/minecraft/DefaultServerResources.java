@@ -31,28 +31,28 @@ public interface DefaultServerResources {
             $2ID : $1{1}
             &m$2====================
             """)
-    ResourceEntry getInfoServiceBlock(String name, String id);
+    ResourceEntry infoServiceBlock(String name, String id);
 
     @Resource(value = "$4Could not find service with ID '{0}'")
-    ResourceEntry getInfoServiceUnknown();
+    ResourceEntry infoServiceUnknown();
 
     @Resource(value = "$1Your preferred language has been switched to: $2{0}", key = "i18n.lang.updated")
-    ResourceEntry getLanguageUpdated(String languageLocalized);
+    ResourceEntry languageUpdated(String languageLocalized);
 
     @Resource(value = "$1The language preference for $2{0} $1has been switched to: $2{1}", key = "i18n.lang.updated.other")
-    ResourceEntry getOtherLanguageUpdated(String name, String languageLocalized);
+    ResourceEntry otherLanguageUpdated(String name, String languageLocalized);
 
     @Resource(value = "$1Successfully reloaded '$2{0}$1'", key = "hartshorn.reload.single")
-    ResourceEntry getReloadSuccessful(String name);
+    ResourceEntry reloadSuccessful(String name);
 
     @Resource(value = "$4Failed to reload '{0}'", key = "hartshorn.reload.single.fail")
-    ResourceEntry getReloadFailed(String name);
+    ResourceEntry reloadFailed(String name);
 
     @Resource(value = "$1Successfully reloaded all services")
-    ResourceEntry getReloadAll();
+    ResourceEntry reloadAll();
 
     @Resource(value = "$4This command can only be used by identifiable sources (players, console) matching the original source of the command")
-    ResourceEntry getConfirmInvalidSource();
+    ResourceEntry confirmInvalidSource();
 
     @Resource(value = """
             $2Platform: $1{0} $3(version: {1})
@@ -60,26 +60,26 @@ public interface DefaultServerResources {
             $2Java: $1{3} $3(vendor: {4})
             $2JVM: $1{5} $3(version: {6}, vendor: {7})
             $2Runtime: $1{8} $3(class version: {9})""", key = "hartshorn.info.platform")
-    ResourceEntry getPlatformInformation(String displayName, String platformVersion, String mcVersion,
-                                         Object javaVersion, Object javaVendor,
-                                         Object vmVersion, Object vmName,
-                                         Object vmVendor, Object runtimeVersion, Object classVersion);
+    ResourceEntry platformInformation(String displayName, String platformVersion, String mcVersion,
+                                      Object javaVersion, Object javaVendor,
+                                      Object vmVersion, Object vmName,
+                                      Object vmVendor, Object runtimeVersion, Object classVersion);
 
     @Resource(value = "$1Hartshorn Server Info")
-    ResourceEntry getPaginationTitle();
+    ResourceEntry paginationTitle();
 
     @Resource(value = "$2Hartshorn $3($1Version$3: $1{0}$3)")
-    ResourceEntry getInfoHeader(@NotNull String version);
+    ResourceEntry infoHeader(@NotNull String version);
 
     @Resource(value = "$2Services$3:", key = "hartshorn.info.services")
-    ResourceEntry getServices();
+    ResourceEntry services();
 
     @Resource(value = "$3 - $1{0} $3- $2{1}", key = "hartshorn.info.service.row")
-    ResourceEntry getServiceRow(String name, String id);
+    ResourceEntry serviceRow(String name, String id);
 
     @Resource(value = "$2Details for '$1{0}$2'", key = "hartshorn.info.service.hover")
-    ResourceEntry getServiceRowHover(String name);
+    ResourceEntry serviceRowHover(String name);
 
     @Resource(value = "$4This command can only be used by players", key = "hartshorn.invalid.source")
-    ResourceEntry getWrongSource();
+    ResourceEntry wrongSource();
 }

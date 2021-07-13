@@ -32,7 +32,7 @@ public interface Cancellable extends Event {
      *
      * @return The cancelled state
      */
-    boolean isCancelled();
+    boolean cancelled();
 
     /**
      * Sets the cancelled state of the event
@@ -40,7 +40,7 @@ public interface Cancellable extends Event {
      * @param cancelled
      *         Whether or not the event should be cancelled
      */
-    void setCancelled(boolean cancelled);
+    Cancellable cancelled(boolean cancelled);
 
     @Override
     @NotNull

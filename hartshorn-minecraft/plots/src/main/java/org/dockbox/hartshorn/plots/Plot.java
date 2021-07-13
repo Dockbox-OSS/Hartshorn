@@ -31,34 +31,34 @@ import java.util.Map;
 
 public interface Plot extends KeyHolder<Plot> {
 
-    Exceptional<Player> getOwner();
+    Exceptional<Player> owner();
 
-    Collection<Player> getPlayers(PlotMembership membership);
+    Collection<Player> players(PlotMembership membership);
 
     boolean hasMembership(Player player, PlotMembership membership);
 
     boolean hasAnyMembership(Player player, PlotMembership... membership);
 
-    Map<PlotFlag<?>, ?> getFlags();
+    Map<PlotFlag<?>, ?> flags();
 
-    <T> void addFlag(PlotFlag<T> flag, T value);
+    <T> void add(PlotFlag<T> flag, T value);
 
-    void removeFlag(PlotFlag<?> flag);
+    void remove(PlotFlag<?> flag);
 
-    <T> Exceptional<T> getFlag(PlotFlag<T> flag);
+    <T> Exceptional<T> get(PlotFlag<T> flag);
 
-    int getPlotX();
+    int x();
 
-    int getPlotY();
+    int y();
 
-    Location getHome();
+    Location home();
 
-    Location getCenter();
+    Location center();
 
-    Exceptional<Plot> getRelative(Direction direction);
+    Exceptional<Plot> relative(Direction direction);
 
-    static Exceptional<Plot> getById(World world, int x, int y) {
-        return Hartshorn.context().get(PlotService.class).getPlot(world, x, y);
+    static Exceptional<Plot> from(World world, int x, int y) {
+        return Hartshorn.context().get(PlotService.class).plot(world, x, y);
     }
 
     boolean isWorld();

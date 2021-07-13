@@ -22,22 +22,17 @@ import org.dockbox.hartshorn.server.minecraft.players.Player;
 import org.dockbox.hartshorn.plots.Plot;
 import org.dockbox.hartshorn.plots.events.CancellablePlotPlayerEvent;
 
+import lombok.Getter;
+
+@Getter
 public class TeleportToPlotEvent extends CancellablePlotPlayerEvent {
 
-    private final Location from;
-    private final Location to;
+    private final Location origin;
+    private final Location destination;
 
-    public TeleportToPlotEvent(Plot plot, Player player, Location from, Location to) {
+    public TeleportToPlotEvent(Plot plot, Player player, Location origin, Location destination) {
         super(plot, player);
-        this.from = from;
-        this.to = to;
-    }
-
-    public Location getFrom() {
-        return this.from;
-    }
-
-    public Location getTo() {
-        return this.to;
+        this.origin = origin;
+        this.destination = destination;
     }
 }

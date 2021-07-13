@@ -26,8 +26,9 @@ import org.dockbox.hartshorn.server.minecraft.dimension.Worlds;
 import org.dockbox.hartshorn.server.minecraft.dimension.position.Location;
 import org.dockbox.hartshorn.server.minecraft.dimension.world.World;
 import org.dockbox.hartshorn.server.minecraft.events.player.PlayerPortalEvent;
-import org.dockbox.hartshorn.server.minecraft.events.server.ServerReloadEvent;
-import org.dockbox.hartshorn.server.minecraft.events.server.ServerStartedEvent;
+import org.dockbox.hartshorn.server.minecraft.events.server.EngineChangedState;
+import org.dockbox.hartshorn.server.minecraft.events.server.ServerState.Reload;
+import org.dockbox.hartshorn.server.minecraft.events.server.ServerState.Started;
 
 import java.util.concurrent.TimeUnit;
 
@@ -44,30 +45,30 @@ public class WorldManagement {
     protected static final String WORLD_MANAGER = "hartshorn.worlds";
 
     @Listener
-    public void on(ServerReloadEvent event) {
+    public void reload(EngineChangedState<Reload> event) {
         this.config = this.context.get(WorldManagementConfig.class); // Reload from file, clean instance
     }
 
     @Listener
-    public void on(ServerStartedEvent event) {
+    public void started(EngineChangedState<Started> event) {
         this.context.get(TaskRunner.class).acceptDelayed(this::unloadEmptyWorlds, 5, TimeUnit.MINUTES);
     }
 
     @Listener
     public void on(PlayerPortalEvent event) {
-        if (event.usesPortal() && event.getNewLocation().getWorld().getName().equals(this.config.getPortalWorldTarget())) {
-            event.setUsePortal(false);
-            event.setNewLocation(Location.of(this.config.getPortalPosition(), event.getNewLocation().getWorld()));
+        if (event.usesPortal() && event.destination().world().name().equals(this.config.worldTarget())) {
+            event.usesPortal(false);
+            event.destination(Location.of(this.config.portalPosition(), event.destination().world()));
         }
     }
 
     private void unloadEmptyWorlds() {
-        this.context.get(Worlds.class).getLoadedWorlds()
+        this.context.get(Worlds.class).loadedWorlds()
                 .stream()
-                .filter(world -> world.getPlayerCount() == 0)
-                .filter(world -> this.config.getUnloadBlacklist().contains(world.getName()))
-                .limit(this.config.getMaximumWorldsToUnload())
+                .filter(world -> world.playerCount() == 0)
+                .filter(world -> this.config.unloadBlacklist().contains(world.name()))
+                .limit(this.config.unloadLimit())
                 .forEach(World::unload);
-        this.context.get(TaskRunner.class).acceptDelayed(this::unloadEmptyWorlds, this.config.getUnloadDelay(), TimeUnit.MINUTES);
+        this.context.get(TaskRunner.class).acceptDelayed(this::unloadEmptyWorlds, this.config.unloadDelay(), TimeUnit.MINUTES);
     }
 }

@@ -35,7 +35,7 @@ public interface EventBus {
 
     void post(Event event);
 
-    Map<Class<?>, Set<EventWrapper>> getListenersToInvokers();
+    Map<Class<?>, Set<EventWrapper>> invokers();
 
     void addValidationRule(Function<Method, Exceptional<Boolean>> validator);
 }

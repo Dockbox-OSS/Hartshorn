@@ -51,18 +51,18 @@ public interface Inventory {
      * @return The total quantity of the item
      */
     default int count(Item item) {
-        return this.getAllItems().stream()
+        return this.items().stream()
                 .filter(inventoryItem -> inventoryItem.equals(item))
-                .mapToInt(Item::getAmount)
+                .mapToInt(Item::amount)
                 .sum();
     }
 
     /**
-     * Returns all {@link Item items}, including {@link MinecraftItems#getAir()}.
+     * Returns all {@link Item items}, including {@link MinecraftItems#air()}.
      *
      * @return All items inside the inventory.
      */
-    Collection<Item> getAllItems();
+    Collection<Item> items();
 
     /**
      * Returns all {@link Item items} which match a given filter. If no items are present, or none
@@ -74,7 +74,7 @@ public interface Inventory {
      * @return All items which match the given filter.
      */
     default Collection<Item> findMatching(Predicate<Item> filter) {
-        return this.getAllItems().stream().filter(filter).toList();
+        return this.items().stream().filter(filter).toList();
     }
 
     /**

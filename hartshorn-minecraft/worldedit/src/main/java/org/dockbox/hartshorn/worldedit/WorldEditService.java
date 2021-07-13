@@ -31,13 +31,13 @@ import java.util.Collection;
 @Required
 public interface WorldEditService {
 
-    Exceptional<Region> getPlayerSelection(Player player);
+    Exceptional<Region> selection(Player player);
 
-    void setPlayerSelection(Player player, Region region);
+    void selection(Player player, Region region);
 
-    Exceptional<Clipboard> getPlayerClipboard(Player player);
+    Exceptional<Clipboard> clipboard(Player player);
 
-    void setPlayerClipboard(Player player, Clipboard clipboard);
+    void clipboard(Player player, Clipboard clipboard);
 
     void replace(Region region, Mask mask, Pattern pattern, Player cause);
 
@@ -51,9 +51,9 @@ public interface WorldEditService {
 
     void set(Region region, Collection<Item> pattern, Player cause);
 
-    boolean hasActiveGmask(Player player);
+    boolean hasGlobalMask(Player player);
 
-    Exceptional<Mask> getGmask(Player player);
+    Exceptional<Mask> globalMask(Player player);
 
-    void setGmask(Player player, Mask mask);
+    void globalMask(Player player, Mask mask);
 }

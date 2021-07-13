@@ -48,8 +48,8 @@ public class DiscordReactionAddedEvent extends DiscordMessageAuthorEvent {
      *
      * @return The ID of the emote (can usually be parsed to a {@link Long}
      */
-    public String getEmoteId() {
-        return this.getReaction().getReactionEmote().getId();
+    public String emoteId() {
+        return this.reaction().getReactionEmote().getId();
     }
 
     /**
@@ -57,7 +57,7 @@ public class DiscordReactionAddedEvent extends DiscordMessageAuthorEvent {
      *
      * @return The name of the emote
      */
-    public String getEmoteName() {
-        return this.getReaction().getReactionEmote().getName();
+    public String emoteName() {
+        return this.reaction().getReactionEmote().getName();
     }
 }

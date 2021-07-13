@@ -41,7 +41,7 @@ public class SimpleMessageTemplate implements MessageTemplate {
     public MessageTemplate copy() {
         MessageTemplate template = new SimpleMessageTemplate();
         template.formatPlaceholders(this.filledPlaceholders);
-        template.setContent(this.content);
+        template.content(this.content);
         return template;
     }
 
@@ -62,7 +62,7 @@ public class SimpleMessageTemplate implements MessageTemplate {
     }
 
     @Override
-    public Message getJDAMessage() {
+    public Message message() {
         MessageBuilder builder = new MessageBuilder();
         String message = this.replaceFromMap(this.content.toStringValue(), this.filledPlaceholders);
         builder.setContent(message);

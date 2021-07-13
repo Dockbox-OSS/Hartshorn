@@ -24,8 +24,8 @@ package org.dockbox.hartshorn.proxy;
  */
 public interface BeanProxy {
 
-	void setDirty(boolean dirty);
+	void dirty(boolean dirty);
 
-	boolean isDirty();
+	boolean dirty();
 
 }

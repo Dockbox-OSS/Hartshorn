@@ -25,11 +25,11 @@ import java.lang.reflect.Method;
 
 public interface MethodProxyContext<T> extends Context {
 
-    T getInstance();
-    Class<T> getType();
-    Method getMethod();
-    InjectorProperty<?>[] getProperties();
-    Annotation[] getAnnotations();
-    <A extends Annotation> A getAnnotation(Class<A> annotation);
-    Class<?> getReturnType();
+    T instance();
+    Class<T> type();
+    Method method();
+    InjectorProperty<?>[] properties();
+    Annotation[] annotations();
+    <A extends Annotation> A annotation(Class<A> annotation);
+    Class<?> returnType();
 }

@@ -19,12 +19,12 @@ package org.dockbox.hartshorn.di.types;
 
 import org.dockbox.hartshorn.di.annotations.inject.Wired;
 
+import lombok.Getter;
+
+@Getter
 public class PopulatedType {
 
     @Wired
     SampleInterface sampleInterface;
 
-    public SampleInterface getSampleInterface() {
-        return this.sampleInterface;
-    }
 }

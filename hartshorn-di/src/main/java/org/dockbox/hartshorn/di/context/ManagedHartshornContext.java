@@ -23,11 +23,12 @@ import org.dockbox.hartshorn.di.ComponentType;
 import org.dockbox.hartshorn.di.InjectionPoint;
 import org.dockbox.hartshorn.di.ProvisionFailure;
 import org.dockbox.hartshorn.di.annotations.activate.Activator;
-import org.dockbox.hartshorn.di.annotations.service.ServiceActivator;
 import org.dockbox.hartshorn.di.annotations.inject.Wired;
+import org.dockbox.hartshorn.di.annotations.service.ServiceActivator;
 import org.dockbox.hartshorn.di.inject.InjectionModifier;
 import org.dockbox.hartshorn.di.properties.InjectableType;
 import org.dockbox.hartshorn.di.properties.InjectorProperty;
+import org.dockbox.hartshorn.di.services.ComponentContainer;
 import org.dockbox.hartshorn.di.services.ServiceProcessor;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.dockbox.hartshorn.util.Reflect;
@@ -121,7 +122,7 @@ public abstract class ManagedHartshornContext extends DefaultContext implements 
                 .filter(InjectableType::canEnable)
                 .forEach(injectableType -> {
                     try {
-                        injectableType.stateEnabling();
+                        injectableType.enable();
                     } catch (ApplicationException e) {
                         throw new RuntimeException(e);
                     }
@@ -147,13 +148,17 @@ public abstract class ManagedHartshornContext extends DefaultContext implements 
     }
 
     protected void process(String prefix) {
-        final Collection<Class<?>> services = this.locator().locate(prefix, ComponentType.FUNCTIONAL);
+        this.locator().register(prefix);
+        final Collection<ComponentContainer> containers = this.locator().containers(ComponentType.FUNCTIONAL);
         for (ServiceProcessor<?> serviceProcessor : this.serviceProcessors) {
-            for (Class<?> service : services) {
-                if (serviceProcessor.preconditions(service)) serviceProcessor.process(this, service);
+            for (ComponentContainer container : containers) {
+                if (container.activators().stream().allMatch(this::hasActivator)) {
+                    final Class<?> service = container.type();
+                    if (serviceProcessor.preconditions(service)) serviceProcessor.process(this, service);
+                    this.services.add(service);
+                }
             }
         }
-        this.services.addAll(services);
     }
 
     @Override

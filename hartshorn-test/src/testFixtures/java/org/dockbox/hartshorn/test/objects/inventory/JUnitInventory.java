@@ -38,34 +38,34 @@ public class JUnitInventory extends PlayerInventory {
     private final int columnCount = 9;
 
     @Override
-    public Item getSlot(int row, int column) {
-        return this.rows.get(row).getSlot(column);
+    public Item slot(int row, int column) {
+        return this.rows.get(row).slot(column);
     }
 
     @Override
-    public Item getSlot(Slot slot) {
-        return this.specialSlots.getOrDefault(slot, MinecraftItems.getInstance().getAir());
+    public Item slot(Slot slot) {
+        return this.specialSlots.getOrDefault(slot, MinecraftItems.instance().air());
     }
 
     @Override
-    public void setSlot(Item item, int row, int column) {
-        this.rows.get(row).setSlot(item, column);
+    public void slot(Item item, int row, int column) {
+        this.rows.get(row).slot(item, column);
     }
 
     @Override
-    public void setSlot(Item item, int index) {
-        this.setSlot(item, this.row(index), this.column(index));
+    public void slot(Item item, int index) {
+        this.slot(item, this.rowIndex(index), this.columnIndex(index));
     }
 
     @Override
-    public void setSlot(Item item, Slot slot) {
+    public void slot(Item item, Slot slot) {
         this.specialSlots.put(slot, item);
     }
 
     @Override
-    public Collection<Item> getAllItems() {
+    public Collection<Item> items() {
         List<Item> items = HartshornUtils.emptyList();
-        for (InventoryRow row : this.rows.values()) items.addAll(row.getAllItems());
+        for (InventoryRow row : this.rows.values()) items.addAll(row.items());
         items.addAll(this.specialSlots.values());
         return HartshornUtils.asUnmodifiableList(items);
     }
@@ -74,8 +74,8 @@ public class JUnitInventory extends PlayerInventory {
     public boolean give(Item item) {
         for (int row = 0; row < this.rowCount; row++) {
             for (int column = 0; column < this.columnCount; column++) {
-                if (this.getSlot(row, column).isAir()) {
-                    this.setSlot(item, row, column);
+                if (this.slot(row, column).isAir()) {
+                    this.slot(item, row, column);
                     return true;
                 }
             }
@@ -89,23 +89,23 @@ public class JUnitInventory extends PlayerInventory {
     }
 
     @Override
-    public Item getSlot(int index) {
-        return this.getSlot(this.row(index), this.column(index));
+    public Item slot(int index) {
+        return this.slot(this.rowIndex(index), this.columnIndex(index));
     }
 
     @Override
-    public Exceptional<InventoryRow> getRow(int index) {
+    public Exceptional<InventoryRow> row(int index) {
         if (index < this.rowCount) {
             return Exceptional.of(new JUnitInventoryRow(index, this));
         }
         return Exceptional.empty();
     }
 
-    private int row(int index) {
+    private int rowIndex(int index) {
         return (index - (index % 3)) / 9;
     }
 
-    private int column(int index) {
+    private int columnIndex(int index) {
         return index % 9;
     }
 }

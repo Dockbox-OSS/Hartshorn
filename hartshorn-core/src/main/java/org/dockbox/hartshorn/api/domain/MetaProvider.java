@@ -20,7 +20,7 @@ package org.dockbox.hartshorn.api.domain;
 public interface MetaProvider {
 
     TypedOwner lookup(Class<?> type);
-    boolean isSingleton(Class<?> type);
-    boolean isComponent(Class<?> type);
+    boolean singleton(Class<?> type);
+    boolean component(Class<?> type);
 
 }

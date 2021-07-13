@@ -36,13 +36,13 @@ public class ShortFlag extends AbstractPlotFlag<Short> {
         try {
             return Short.parseShort(raw);
         } catch (NumberFormatException e) {
-            Except.handle("Could not parse number flag: " + this.getId(), e);
+            Except.handle("Could not parse number flag: " + this.id(), e);
             return -1;
         }
     }
 
     @Override
-    public Class<Short> getType() {
+    public Class<Short> type() {
         return Short.class;
     }
 }

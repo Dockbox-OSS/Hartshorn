@@ -37,37 +37,37 @@ public class CuboidRegion implements Region {
     }
 
     @Override
-    public Vector3N getMinimumPoint() {
-        return HartshornUtils.getMinimumPoint(this.from, this.to);
+    public Vector3N minimum() {
+        return HartshornUtils.minimumPoint(this.from, this.to);
     }
 
     @Override
-    public Vector3N getMaximumPoint() {
-        return HartshornUtils.getMaximumPoint(this.from, this.to);
+    public Vector3N maximum() {
+        return HartshornUtils.maximumPoint(this.from, this.to);
     }
 
     @Override
-    public Vector3N getCenter() {
-        return HartshornUtils.getCenterPoint(this.from, this.to);
+    public Vector3N center() {
+        return HartshornUtils.centerPoint(this.from, this.to);
     }
 
     @Override
-    public int getArea() {
-        return this.getWidth() * this.getWidth() * this.getLength();
+    public int area() {
+        return this.width() * this.width() * this.length();
     }
 
     @Override
-    public int getWidth() {
-        return this.getMaximumPoint().getXi() - this.getMinimumPoint().getXi();
+    public int width() {
+        return this.maximum().xI() - this.minimum().xI();
     }
 
     @Override
-    public int getHeight() {
-        return this.getMaximumPoint().getYi() - this.getMinimumPoint().getYi();
+    public int height() {
+        return this.maximum().yI() - this.minimum().yI();
     }
 
     @Override
-    public int getLength() {
-        return this.getMaximumPoint().getZi() - this.getMinimumPoint().getZi();
+    public int length() {
+        return this.maximum().zI() - this.minimum().zI();
     }
 }

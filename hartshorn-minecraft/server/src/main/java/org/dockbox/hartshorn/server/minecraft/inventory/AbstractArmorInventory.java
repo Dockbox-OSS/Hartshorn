@@ -24,7 +24,7 @@ import java.util.Collection;
 public class AbstractArmorInventory implements SlotInventory {
 
     @Override
-    public Collection<Item> getAllItems() {
+    public Collection<Item> items() {
         return null;
     }
 
@@ -39,12 +39,12 @@ public class AbstractArmorInventory implements SlotInventory {
     }
 
     @Override
-    public Item getSlot(Slot slot) {
+    public Item slot(Slot slot) {
         return null;
     }
 
     @Override
-    public void setSlot(Item item, Slot slot) {
+    public void slot(Item item, Slot slot) {
 
     }
 }

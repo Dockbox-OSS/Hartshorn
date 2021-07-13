@@ -67,16 +67,16 @@ public interface CustomParameterPattern {
             }
             String typeIdentifier = argumentIdentifier.get();
 
-            ArgumentConverter<?> converter = ArgumentConverterRegistry.getConverter(typeIdentifier);
+            ArgumentConverter<?> converter = ArgumentConverterRegistry.converter(typeIdentifier);
             if (converter == null) return Exceptional
-                    .of(new IllegalArgumentException(Hartshorn.context().get(CommandParameterResources.class).getMissingConverter(type.getCanonicalName()).asString()));
+                    .of(new IllegalArgumentException(Hartshorn.context().get(CommandParameterResources.class).missingConverter(type.getCanonicalName()).asString()));
 
-            argumentTypes.add(converter.getType());
+            argumentTypes.add(converter.type());
             arguments.add(converter.convert(source, rawArgument).orNull());
         }
 
 
-        return this.getConstructor(argumentTypes, arguments, type, source).map(constructor -> {
+        return this.constructor(argumentTypes, arguments, type, source).map(constructor -> {
             try {
                 return constructor.newInstance(arguments.toArray(new Object[0]));
             }
@@ -92,7 +92,7 @@ public interface CustomParameterPattern {
 
     Exceptional<String> parseIdentifier(String argument);
 
-    default <T> Exceptional<Constructor<T>> getConstructor(List<Class<?>> argumentTypes, List<Object> arguments, Class<T> type, CommandSource source) {
+    default <T> Exceptional<Constructor<T>> constructor(List<Class<?>> argumentTypes, List<Object> arguments, Class<T> type, CommandSource source) {
         //noinspection unchecked
         for (Constructor<T> declaredConstructor : (Constructor<T>[]) type.getDeclaredConstructors()) {
             Class<?>[] parameterTypes = declaredConstructor.getParameterTypes();
@@ -103,7 +103,7 @@ public interface CustomParameterPattern {
                 Class<?> parameterType = parameterTypes[i];
                 Class<?> requiredType = argumentTypes.get(i);
                 if (requiredType == null) {
-                    final ArgumentConverter<?> converter = ArgumentConverterRegistry.getConverter(parameterType);
+                    final ArgumentConverter<?> converter = ArgumentConverterRegistry.converter(parameterType);
                     Exceptional<?> result = converter.convert(source, (String) arguments.get(i));
                     if (result.present()) {
                         arguments.set(i, result.get());
@@ -117,6 +117,6 @@ public interface CustomParameterPattern {
             }
             if (passed) return Exceptional.of(declaredConstructor);
         }
-        return Exceptional.of(new IllegalArgumentException(Hartshorn.context().get(CommandParameterResources.class).getNotEnoughArgs().asString()));
+        return Exceptional.of(new IllegalArgumentException(Hartshorn.context().get(CommandParameterResources.class).notEnoughArgs().asString()));
     }
 }

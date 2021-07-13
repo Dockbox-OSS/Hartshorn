@@ -32,10 +32,10 @@ public class PersistenceProperty implements InjectorProperty<Set<PersistenceModi
     public static String KEY = "HartshornPersistenceProperty";
 
     @Getter
-    private final Set<PersistenceModifier> object;
+    private final Set<PersistenceModifier> value;
 
     @Override
-    public String getKey() {
+    public String key() {
         return KEY;
     }
 

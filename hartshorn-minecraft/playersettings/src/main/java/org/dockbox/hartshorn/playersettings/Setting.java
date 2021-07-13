@@ -62,7 +62,7 @@ public class Setting<T> extends TypedPersistentDataKey<T> {
         return this.converter.apply(value);
     }
 
-    public Item getDisplay() {
+    public Item item() {
         return this.display.get();
     }
 
@@ -83,7 +83,7 @@ public class Setting<T> extends TypedPersistentDataKey<T> {
         return new SettingBuilder<>(type);
     }
 
-    public Consumer<PersistentDataHolder> getAction() {
+    public Consumer<PersistentDataHolder> action() {
         return this.action;
     }
 
@@ -96,7 +96,7 @@ public class Setting<T> extends TypedPersistentDataKey<T> {
         private ResourceEntry description;
         private Function<T, ResourceEntry> converter = o -> new FakeResource(String.valueOf(o));
         private Supplier<T> defaultValue;
-        private Supplier<Item> display = () -> MinecraftItems.getInstance().getBarrier();
+        private Supplier<Item> display = () -> MinecraftItems.instance().barrier();
         private Consumer<PersistentDataHolder> action = holder -> {};
 
         private SettingBuilder(Class<T> type) {
@@ -149,7 +149,7 @@ public class Setting<T> extends TypedPersistentDataKey<T> {
         }
 
         public SettingBuilder<T> from(PersistentDataKey<T> key) {
-            return this.id(key.getId()).type(key.getType());
+            return this.id(key.id()).type(key.type());
         }
 
         public SettingBuilder<T> action(Consumer<PersistentDataHolder> action) {

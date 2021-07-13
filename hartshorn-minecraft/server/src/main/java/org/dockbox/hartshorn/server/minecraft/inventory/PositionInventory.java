@@ -24,7 +24,7 @@ public interface PositionInventory extends Inventory {
 
     /**
      * Gets the {@link Item} in the requested position within the inventory. If the position is out of
-     * bounds, or if there is no item present, {@link MinecraftItems#getAir()} is returned instead.
+     * bounds, or if there is no item present, {@link MinecraftItems#air()} is returned instead.
      * Indices start at zero.
      *
      * @param row
@@ -32,9 +32,9 @@ public interface PositionInventory extends Inventory {
      * @param column
      *         The column index
      *
-     * @return The {@link Item}, or {@link MinecraftItems#getAir() air}.
+     * @return The {@link Item}, or {@link MinecraftItems#air() air}.
      */
-    Item getSlot(int row, int column);
+    Item slot(int row, int column);
 
     /**
      * Sets the item at the given position within the inventory to the given {@link Item}. If the
@@ -47,6 +47,6 @@ public interface PositionInventory extends Inventory {
      * @param column
      *         The column index
      */
-    void setSlot(Item item, int row, int column);
+    void slot(Item item, int row, int column);
 
 }

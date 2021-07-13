@@ -40,7 +40,7 @@ public class WorldEditCopyEvent extends AbstractCancellableEvent {
      *
      * @return The selection
      */
-    public Exceptional<Region> getSelection() {
+    public Exceptional<Region> selection() {
         return this.player.get(WorldEditKeys.SELECTION);
     }
 }

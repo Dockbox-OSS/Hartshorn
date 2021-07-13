@@ -43,71 +43,76 @@ public interface SpongeEntity
 
     abstract EntityType<S> type();
 
-    default UUID getUniqueId() {
+    default UUID uniqueId() {
         return this.spongeEntity().map(org.spongepowered.api.entity.Entity::uniqueId)
                 .orElse(() -> HartshornUtils.EMPTY_UUID)
                 .get();
     }
 
-    default String getName() {
-        return this.getDisplayName().toPlain();
+    default String name() {
+        return this.displayName().toPlain();
     }
 
-    default Text getDisplayName() {
+    default Text displayName() {
         return SpongeUtil.get(this.spongeEntity(), Keys.DISPLAY_NAME, SpongeConvert::fromSponge, Text::of);
     }
 
-    default void setDisplayName(Text displayName) {
+    default SpongeEntity<T, S> displayName(Text displayName) {
         this.spongeEntity().present(entity -> entity.offer(Keys.DISPLAY_NAME, SpongeConvert.toSponge(displayName)));
+        return this;
     }
 
-    default double getHealth() {
+    default double health() {
         return this.spongeEntity().map(entity -> entity.get(Keys.HEALTH).orElse(0D)).or(0D);
     }
 
-    default void setHealth(double health) {
+    default SpongeEntity<T, S> health(double health) {
         this.spongeEntity().present(entity -> entity.offer(Keys.HEALTH, health));
+        return this;
     }
 
-    default boolean isAlive() {
+    default boolean alive() {
         final boolean alive = this.spongeEntity().map(entity -> entity.isLoaded() && !entity.isRemoved()).or(false);
-        return alive && this.getHealth() > 0;
+        return alive && this.health() > 0;
     }
 
-    default boolean isInvisible() {
-        return this.getBoolean(Keys.IS_INVISIBLE);
+    default boolean invisible() {
+        return this.bool(Keys.IS_INVISIBLE);
     }
 
-    default void setInvisible(boolean visible) {
-        this.setBoolean(Keys.IS_INVISIBLE, visible);
+    default SpongeEntity<T, S> invisible(boolean visible) {
+        this.bool(Keys.IS_INVISIBLE, visible);
+        return this;
     }
 
-    default boolean isInvulnerable() {
-        return this.getBoolean(Keys.INVULNERABLE);
+    default boolean invulnerable() {
+        return this.bool(Keys.INVULNERABLE);
     }
 
-    default void setInvulnerable(boolean invulnerable) {
-        this.setBoolean(Keys.INVULNERABLE, invulnerable);
+    default SpongeEntity<T, S> invulnerable(boolean invulnerable) {
+        this.bool(Keys.INVULNERABLE, invulnerable);
+        return this;
     }
 
-    default boolean hasGravity() {
-        return this.getBoolean(Keys.IS_GRAVITY_AFFECTED);
+    default boolean gravity() {
+        return this.bool(Keys.IS_GRAVITY_AFFECTED);
     }
 
-    default void setGravity(boolean gravity) {
-        this.setBoolean(Keys.IS_GRAVITY_AFFECTED, gravity);
+    default SpongeEntity<T, S> gravity(boolean gravity) {
+        this.bool(Keys.IS_GRAVITY_AFFECTED, gravity);
+        return this;
     }
 
-    default boolean getBoolean(Key<Value<Boolean>> key) {
+    default boolean bool(Key<Value<Boolean>> key) {
         return SpongeUtil.get(this.spongeEntity(), key, t -> t, () -> false);
     }
 
-    default void setBoolean(Key<Value<Boolean>> key, boolean value) {
+    default void bool(Key<Value<Boolean>> key, boolean value) {
         this.spongeEntity().present(entity -> entity.offer(key, value));
     }
 
     default boolean summon(Location location) {
-        if (!this.isAlive()) {
+        if (!this.alive()) {
             return this.spongeEntity().map(entity -> {
                 final Exceptional<ServerLocation> serverLocation = SpongeConvert.toSponge(location);
                 if (serverLocation.absent()) return false;
@@ -115,7 +120,7 @@ public interface SpongeEntity
                 return loc.spawnEntity(entity);
             }).or(false);
         } else {
-            return this.setLocation(location);
+            return this.location(location);
         }
     }
 
@@ -124,7 +129,7 @@ public interface SpongeEntity
         return true;
     }
 
-    default Location getLocation() {
+    default Location location() {
         return this.spongeEntity()
                 .map(S::serverLocation)
                 .map(SpongeConvert::fromSponge)
@@ -132,16 +137,16 @@ public interface SpongeEntity
                 .get();
     }
 
-    default boolean setLocation(Location location) {
+    default boolean location(Location location) {
         return this.spongeEntity().map(entity -> SpongeConvert.toSponge(location)
                 .map(entity::setLocation).or(false)).or(false);
     }
 
-    default World getWorld() {
-        return this.getLocation().getWorld();
+    default World world() {
+        return this.location().world();
     }
 
-    default Exceptional<? extends Mutable> getDataHolder() {
+    default Exceptional<? extends Mutable> dataHolder() {
         return this.spongeEntity();
     }
 

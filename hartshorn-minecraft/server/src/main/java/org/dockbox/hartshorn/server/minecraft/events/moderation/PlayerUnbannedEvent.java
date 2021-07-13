@@ -18,18 +18,18 @@
 package org.dockbox.hartshorn.server.minecraft.events.moderation;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.api.domain.Target;
+import org.dockbox.hartshorn.api.domain.Subject;
 import org.dockbox.hartshorn.commands.source.CommandSource;
 
 import java.time.LocalDateTime;
 
-public class PlayerUnbannedEvent extends BanEvent<Target> {
+public class PlayerUnbannedEvent extends BanEvent<Subject> {
 
     /**
-     * The event fired when a {@link Target} is unbanned. This can be either through a manual unban,
+     * The event fired when a {@link Subject} is unbanned. This can be either through a manual unban,
      * or by the expiration of a ban.
      *
-     * @param target
+     * @param subject
      *         The player being unbanned
      * @param reason
      *         The reason of the original ban
@@ -38,7 +38,7 @@ public class PlayerUnbannedEvent extends BanEvent<Target> {
      * @param creation
      *         The {@link LocalDateTime} of when the pardon was issued.
      */
-    public PlayerUnbannedEvent(Target target, CommandSource source, Exceptional<String> reason, LocalDateTime creation) {
-        super(target, source, reason, Exceptional.empty(), creation);
+    public PlayerUnbannedEvent(Subject subject, CommandSource source, Exceptional<String> reason, LocalDateTime creation) {
+        super(subject, source, reason, Exceptional.empty(), creation);
     }
 }

@@ -39,7 +39,8 @@ import org.dockbox.hartshorn.persistence.FileType;
 import org.dockbox.hartshorn.persistence.FileTypeProperty;
 import org.dockbox.hartshorn.playersettings.Setting;
 import org.dockbox.hartshorn.server.minecraft.events.chat.SendChatEvent;
-import org.dockbox.hartshorn.server.minecraft.events.server.ServerReloadEvent;
+import org.dockbox.hartshorn.server.minecraft.events.server.EngineChangedState;
+import org.dockbox.hartshorn.server.minecraft.events.server.ServerState.Reload;
 import org.dockbox.hartshorn.server.minecraft.item.storage.MinecraftItems;
 import org.dockbox.hartshorn.server.minecraft.players.Player;
 import org.dockbox.hartshorn.util.HartshornUtils;
@@ -56,7 +57,7 @@ public class Dave implements InjectableType {
             .owner(Dave.class)
             .converter(value -> value ? new Resource("Yes", "yes") : new Resource("No", "no"))
             .defaultValue(() -> false)
-            .display(() -> MinecraftItems.getInstance().getBottleOEnchanting())
+            .display(() -> MinecraftItems.instance().bottleOEnchanting())
             .ok();
 
     private static final int msTick = 20;
@@ -82,12 +83,12 @@ public class Dave implements InjectableType {
     @Command(value = "triggers", permission = Dave.DAVE_TRIGGERS)
     public void triggers(CommandSource source) {
         this.context.get(PaginationBuilder.class)
-                .title(this.resources.getTriggerHeader().asText())
-                .content(this.triggers.getTriggers().stream()
-                        .map(trigger -> this.resources.getTriggerSingle(HartshornUtils.shorten(trigger.getResponses().get(0).getMessage(), 75) + " ...")
+                .title(this.resources.triggerHeader().asText())
+                .content(this.triggers.triggers().stream()
+                        .map(trigger -> this.resources.triggerSingle(HartshornUtils.shorten(trigger.responses().get(0).message(), 75) + " ...")
                         .asText()
-                        .onHover(HoverAction.showText(this.resources.getTriggerSingleHover().asText()))
-                        .onClick(RunCommandAction.runCommand("/dave run " + trigger.getId())))
+                        .onHover(HoverAction.showText(this.resources.triggerSingleHover().asText()))
+                        .onClick(RunCommandAction.runCommand("/dave run " + trigger.id())))
                         .toList())
                 .build()
                 .send(source);
@@ -96,29 +97,29 @@ public class Dave implements InjectableType {
     @Command(value = "run", arguments = "<trigger{String}>", permission = Dave.DAVE_TRIGGER_RUN)
     public void run(Player source, CommandContext context) {
         String triggerId = context.get("trigger");
-        this.triggers.findById(triggerId)
-                .present(trigger -> DaveUtils.performTrigger(source, source.getName(), trigger, "", this.config))
-                .absent(() -> source.send(this.resources.getTriggerNotfound(triggerId)));
+        this.triggers.find(triggerId)
+                .present(trigger -> DaveUtils.performTrigger(source, source.name(), trigger, "", this.config))
+                .absent(() -> source.send(this.resources.triggerNotfound(triggerId)));
     }
 
     @Command(value = "refresh", permission = Dave.DAVE_REFRESH)
     public void refresh(CommandSource source) {
-        this.stateEnabling();
-        source.sendWithPrefix(this.resources.getReload());
+        this.enable();
+        source.sendWithPrefix(this.resources.reload());
     }
 
     @Override
-    public void stateEnabling(InjectorProperty<?>... properties) {
+    public void enable(InjectorProperty<?>... properties) {
         FileManager fm = this.context.get(FileManager.class, FileTypeProperty.of(FileType.YAML));
-        Path triggerFile = fm.getDataFile(Dave.class, "triggers");
-        if (HartshornUtils.isFileEmpty(triggerFile)) this.restoreTriggerFile(fm, triggerFile);
+        Path triggerFile = fm.dataFile(Dave.class, "triggers");
+        if (HartshornUtils.empty(triggerFile)) this.restoreTriggerFile(fm, triggerFile);
 
         fm.read(triggerFile, DaveTriggers.class).present(triggers -> {
-            Hartshorn.log().info("Found " + triggers.getTriggers().size() + " triggers");
+            Hartshorn.log().info("Found " + triggers.triggers().size() + " triggers");
             this.triggers = triggers;
         }).caught(e -> Hartshorn.log().warn("Could not load triggers for Dave"));
 
-        Path configFile = fm.getConfigFile(Dave.class);
+        Path configFile = fm.configFile(Dave.class);
         fm.read(configFile, DaveConfig.class)
                 .present(config -> this.config = config)
                 .caught(e -> Hartshorn.log().warn("Could not load config for Dave"));
@@ -129,18 +130,18 @@ public class Dave implements InjectableType {
     }
 
     @Listener
-    public void on(ServerReloadEvent event) {
-        this.stateEnabling();
+    public void on(EngineChangedState<Reload> event) {
+        this.enable();
     }
 
     @Listener
     public void on(SendChatEvent sendChatEvent) {
-        Player player = (Player) sendChatEvent.getTarget();
-        DaveUtils.findMatching(this.triggers, sendChatEvent.getMessage().toPlain()).present(trigger -> this.context.get(TaskRunner.class).acceptDelayed(() -> DaveUtils.performTrigger(
+        Player player = (Player) sendChatEvent.subject();
+        DaveUtils.findMatching(this.triggers, sendChatEvent.message().toPlain()).present(trigger -> this.context.get(TaskRunner.class).acceptDelayed(() -> DaveUtils.performTrigger(
                 player,
-                player.getName(),
+                player.name(),
                 trigger,
-                sendChatEvent.getMessage().toPlain(),
+                sendChatEvent.message().toPlain(),
                 this.config),
                 5 * msTick, TimeUnit.MILLISECONDS)
         );
@@ -148,12 +149,12 @@ public class Dave implements InjectableType {
 
     @Listener
     public void on(DiscordChatReceivedEvent chatEvent) {
-        if (chatEvent.getChannel().getId().equals(this.config.getChannel().getId())) {
-            DaveUtils.findMatching(this.triggers, chatEvent.getMessage().getContentRaw()).present(trigger -> this.context.get(TaskRunner.class).acceptDelayed(() -> DaveUtils.performTrigger(
-                    this.context.get(DiscordCommandSource.class, chatEvent.getChannel()),
-                    chatEvent.getAuthor().getName(),
+        if (chatEvent.channel().getId().equals(this.config.channel().getId())) {
+            DaveUtils.findMatching(this.triggers, chatEvent.message().getContentRaw()).present(trigger -> this.context.get(TaskRunner.class).acceptDelayed(() -> DaveUtils.performTrigger(
+                    this.context.get(DiscordCommandSource.class, chatEvent.channel()),
+                    chatEvent.author().getName(),
                     trigger,
-                    chatEvent.getMessage().getContentRaw(),
+                    chatEvent.message().getContentRaw(),
                     this.config),
                     5 * msTick, TimeUnit.MILLISECONDS)
             );

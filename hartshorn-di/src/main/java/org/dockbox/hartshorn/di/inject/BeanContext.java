@@ -17,8 +17,7 @@
 
 package org.dockbox.hartshorn.di.inject;
 
-import com.google.inject.Key;
-import com.google.inject.Provider;
+import java.util.function.Supplier;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -27,8 +26,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class BeanContext<T, C extends T> {
 
-    private final Key<T> key;
+    private final KeyBinding<T> key;
     private final boolean singleton;
-    private final Provider<C> provider;
+    private final Supplier<C> provider;
 
 }

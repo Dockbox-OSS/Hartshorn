@@ -17,29 +17,22 @@
 
 package org.dockbox.hartshorn.server.minecraft.events.player;
 
-import org.dockbox.hartshorn.api.domain.Target;
+import org.dockbox.hartshorn.api.domain.Subject;
 import org.dockbox.hartshorn.server.minecraft.dimension.position.Location;
 import org.dockbox.hartshorn.server.minecraft.enums.PortalType;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
 public class PlayerPortalEvent extends PlayerTeleportEvent {
     private final PortalType portalType;
+    @Setter
     private boolean usesPortal;
 
-    public PlayerPortalEvent(Target target, Location oldLocation, Location newLocation, boolean usesPortal, PortalType portalType) {
-        super(target, oldLocation, newLocation);
+    public PlayerPortalEvent(Subject subject, Location oldLocation, Location newLocation, boolean usesPortal, PortalType portalType) {
+        super(subject, oldLocation, newLocation);
         this.usesPortal = usesPortal;
         this.portalType = portalType;
-    }
-
-    public boolean usesPortal() {
-        return this.usesPortal;
-    }
-
-    public PortalType getPortalType() {
-        return this.portalType;
-    }
-
-    public void setUsePortal(boolean usePortal) {
-        this.usesPortal = usePortal;
     }
 }

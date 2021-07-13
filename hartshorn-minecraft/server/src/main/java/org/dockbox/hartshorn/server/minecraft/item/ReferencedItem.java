@@ -34,28 +34,28 @@ public abstract class ReferencedItem<T> extends ReferencedWrapper<T> implements 
     private String id;
 
     protected ReferencedItem(@NotNull T reference) {
-        this.id = this.getId();
-        this.setReference(Exceptional.of(reference));
+        this.id = this.id();
+        this.reference(Exceptional.of(reference));
     }
 
     @Override
-    public Text getDisplayName() {
-        return this.getDisplayName(Language.EN_US);
+    public Text displayName() {
+        return this.displayName(Language.EN_US);
     }
 
     @Override
     public Item stack() {
-        this.setAmount(this.getStackSize());
+        this.amount(this.stackSize());
         return this;
     }
 
     protected ReferencedItem(String id) {
         this.id = id;
-        T type = this.getById(id);
-        super.setReference(Exceptional.of(type));
+        T type = this.from(id);
+        super.reference(Exceptional.of(type));
     }
 
-    protected abstract T getById(String id);
+    protected abstract T from(String id);
 
     @Override
     public Exceptional<T> constructInitialReference() {
@@ -63,12 +63,12 @@ public abstract class ReferencedItem<T> extends ReferencedWrapper<T> implements 
     }
 
     @Override
-    public Class<? extends PersistentItemModel> getModelClass() {
+    public Class<? extends PersistentItemModel> modelType() {
         return SimplePersistentItemModel.class;
     }
 
     @Override
-    public PersistentItemModel toPersistentModel() {
+    public PersistentItemModel model() {
         return new SimplePersistentItemModel(this);
     }
 }

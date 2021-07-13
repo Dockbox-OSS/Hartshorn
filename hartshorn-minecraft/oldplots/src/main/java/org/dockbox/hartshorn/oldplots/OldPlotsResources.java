@@ -26,26 +26,26 @@ import org.jetbrains.annotations.NotNull;
 public interface OldPlotsResources {
 
     @Resource(value = "$3 - $1{0}$2, $1{1}, {2}", key = "oldplots.list.single")
-    ResourceEntry getSinglePlotListItem(@NotNull String world, @NotNull Integer idX, @NotNull Integer idZ);
+    ResourceEntry singlePlotListItem(@NotNull String world, @NotNull Integer idX, @NotNull Integer idZ);
 
     @Resource(value = "$2Teleport to $1{0}$2, $1{1}, {2}", key = "oldplots.list.hover")
-    ResourceEntry getSinglePlotListItemHover(@NotNull String world, @NotNull Integer idX, @NotNull Integer idZ);
+    ResourceEntry singlePlotListItemHover(@NotNull String world, @NotNull Integer idX, @NotNull Integer idZ);
 
     @Resource(value = "$1OldPlots for $2{0}", key = "oldplots.list.title")
-    ResourceEntry getListTitle(String name);
+    ResourceEntry listTitle(String name);
 
     @Resource(value = "$4Worlds are not stored as OldPlots", key = "oldplots.caught.worlds")
-    ResourceEntry getCaughtError();
+    ResourceEntry caughtError();
 
     @Resource(value = "$4Could not calculate plot location", key = "oldplots.caught.calculation")
-    ResourceEntry getCalculationError();
+    ResourceEntry calculationError();
 
     @Resource(value = "$4No world location configured for '{0}'", key = "oldplots.caught.location")
-    ResourceEntry getLocationError(@NotNull String world);
+    ResourceEntry locationError(@NotNull String world);
 
     @Resource(value = "$4No plot with that ID found", key = "oldplots.caught.plot")
-    ResourceEntry getPlotError();
+    ResourceEntry plotError();
 
     @Resource(value = "$4No valid player provided", key = "oldplots.caught.player")
-    ResourceEntry getPlayerError();
+    ResourceEntry playerError();
 }

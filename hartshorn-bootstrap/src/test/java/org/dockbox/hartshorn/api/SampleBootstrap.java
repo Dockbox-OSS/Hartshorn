@@ -24,12 +24,13 @@ import org.dockbox.hartshorn.di.Modifier;
 import org.dockbox.hartshorn.di.annotations.inject.InjectPhase;
 
 import java.lang.annotation.Annotation;
+import java.util.Collection;
 import java.util.List;
 
 public class SampleBootstrap extends HartshornBootstrap {
 
     @Override
-    public void create(String prefix, Class<?> activationSource, List<Annotation> activators, Multimap<InjectPhase, InjectConfiguration> configs, Modifier... modifiers) {
+    public void create(Collection<String> prefixes, Class<?> activationSource, List<Annotation> activators, Multimap<InjectPhase, InjectConfiguration> configs, Modifier... modifiers) {
         // This is only used for Application testing, do not actually create bootstrap instance
     }
 }

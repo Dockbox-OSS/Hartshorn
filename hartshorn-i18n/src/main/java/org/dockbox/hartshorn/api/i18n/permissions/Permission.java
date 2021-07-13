@@ -32,6 +32,6 @@ public interface Permission extends Formattable {
     }
 
     String get();
-    Exceptional<PermissionContext> getContext();
+    Exceptional<PermissionContext> context();
     Permission withContext(PermissionContext context);
 }

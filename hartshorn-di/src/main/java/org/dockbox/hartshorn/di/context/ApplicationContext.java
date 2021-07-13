@@ -44,7 +44,7 @@ public interface ApplicationContext extends ApplicationBinder, HartshornContext 
     void add(ServiceProcessor<?> processor);
     void add(InjectionModifier<?> modifier);
 
-    Class<?> getActivationSource();
+    Class<?> activationSource();
     List<Annotation> activators();
     boolean hasActivator(Class<? extends Annotation> activator);
     <A> A activator(Class<A> activator);

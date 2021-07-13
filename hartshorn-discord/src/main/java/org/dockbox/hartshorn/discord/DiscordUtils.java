@@ -33,15 +33,15 @@ import org.dockbox.hartshorn.discord.templates.Template;
 @Entity(value = "discord", serializable = false)
 public interface DiscordUtils {
 
-    Exceptional<JDA> getJDA();
+    Exceptional<JDA> jda();
 
-    Exceptional<TextChannel> getGlobalTextChannel();
+    Exceptional<TextChannel> globalChannel();
 
     boolean checkMessageExists(String messageId, String channelId);
 
-    Exceptional<Category> getLoggingCategory();
+    Exceptional<Category> loggingCategory();
 
-    Exceptional<Guild> getGuild();
+    Exceptional<Guild> guild();
 
     void sendToTextChannel(Text text, MessageChannel channel);
 

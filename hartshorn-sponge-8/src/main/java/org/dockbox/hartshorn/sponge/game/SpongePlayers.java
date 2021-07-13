@@ -29,20 +29,20 @@ import java.util.UUID;
 public class SpongePlayers implements Players {
 
     @Override
-    public List<Player> getOnlinePlayers() {
+    public List<Player> onlinePlayers() {
         return Sponge.server().onlinePlayers().stream()
                 .map(SpongeConvert::fromSponge)
                 .toList();
     }
 
     @Override
-    public Exceptional<Player> getPlayer(String name) {
+    public Exceptional<Player> player(String name) {
         return Exceptional.of(Sponge.server().userManager().find(name))
                 .map(SpongeConvert::fromSponge);
     }
 
     @Override
-    public Exceptional<Player> getPlayer(UUID uuid) {
+    public Exceptional<Player> player(UUID uuid) {
         return Exceptional.of(Sponge.server().userManager().find(uuid))
                 .map(SpongeConvert::fromSponge);
     }

@@ -29,17 +29,17 @@ public class WeatherFlag extends AbstractPlotFlag<Weather> {
 
     @Override
     public String serialize(Weather object) {
-        return String.valueOf(object.getGameStateId());
+        return String.valueOf(object.gameStateId());
     }
 
     @Override
     public Weather parse(String raw) {
         int gameState = Integer.parseInt(raw);
-        return Weather.getByGameStateId(gameState);
+        return Weather.fromGameState(gameState);
     }
 
     @Override
-    public Class<Weather> getType() {
+    public Class<Weather> type() {
         return Weather.class;
     }
 }

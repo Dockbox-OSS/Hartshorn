@@ -34,29 +34,29 @@ public class SampleBeanService {
     }
 
     @Bean("named")
-    public BeanInterface getNamed() {
+    public BeanInterface named() {
         return () -> "NamedBean";
     }
 
     @Bean("field")
-    public BeanInterface getWithField(SampleField field) {
+    public BeanInterface withField(SampleField field) {
         return () -> "FieldBean";
     }
 
     @Bean("namedField")
-    public BeanInterface getWithNamedField(@Named("named") SampleField field) {
+    public BeanInterface withNamedField(@Named("named") SampleField field) {
         return () -> "NamedFieldBean";
     }
 
     @Singleton
     @Bean("singleton")
-    public BeanInterface getSingleton() {
+    public BeanInterface singleton() {
         return () -> "SingletonBean";
     }
 
     @Bean("wired")
     @Wired
-    public BeanInterface getManualWired(String name) {
+    public BeanInterface manualWired(String name) {
         return () -> name;
     }
 

@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.persistence;
 
 public interface Element {
 
-    void setName(String name);
-    String getName();
+    Element name(String name);
+    String name();
 
 }

@@ -46,8 +46,8 @@ public class ToolBinding {
     private static ToolBinding instance;
 
     public static final RemovableKey<Item, ItemTool> TOOL_REMOVABLE_KEY = Keys.builder(Item.class, ItemTool.class)
-            .withSetter((item, tool) -> instance.setTool(item, tool))
-            .withGetterSafe(item -> instance.getTool(item))
+            .withSetter((item, tool) -> instance.tool(item, tool))
+            .withGetterSafe(item -> instance.get(item))
             .withRemover(item -> instance.removeTool(item))
             .build();
 
@@ -57,15 +57,15 @@ public class ToolBinding {
         instance = this;
     }
 
-    private TransactionResult setTool(Item item, ItemTool tool) {
-        if (item.isBlock()) return TransactionResult.fail(this.resources.getBlockError());
-        if (item == MinecraftItems.getInstance().getAir()) return TransactionResult.fail(this.resources.getHandError());
-        if (item.get(PERSISTENT_TOOL).present()) return TransactionResult.fail(this.resources.getDuplicateError());
+    private TransactionResult tool(Item item, ItemTool tool) {
+        if (item.isBlock()) return TransactionResult.fail(this.resources.blockError());
+        if (item == MinecraftItems.instance().air()) return TransactionResult.fail(this.resources.handError());
+        if (item.get(PERSISTENT_TOOL).present()) return TransactionResult.fail(this.resources.duplicateError());
 
         String bindingId = UUID.randomUUID().toString();
 
         TransactionResult result = item.set(PERSISTENT_TOOL, bindingId);
-        if (result.isSuccessful()) {
+        if (result.successful()) {
             this.registry.put(bindingId, tool);
             tool.prepare(item);
         }
@@ -77,7 +77,7 @@ public class ToolBinding {
         Exceptional<String> identifier = item.get(PERSISTENT_TOOL);
         if (identifier.absent()) return;
 
-        Exceptional<ItemTool> tool = this.getTool(item);
+        Exceptional<ItemTool> tool = this.get(item);
         if (tool.absent()) return;
 
         item.remove(PERSISTENT_TOOL);
@@ -85,7 +85,7 @@ public class ToolBinding {
         ItemTool.reset(item);
     }
 
-    private Exceptional<ItemTool> getTool(Item item) {
+    private Exceptional<ItemTool> get(Item item) {
         Exceptional<String> identifier = item.get(PERSISTENT_TOOL);
         if (identifier.absent()) return Exceptional.empty();
 
@@ -98,8 +98,8 @@ public class ToolBinding {
 
     @Listener
     public void on(PlayerInteractEvent event) {
-        Item itemInHand = event.getTarget().getItemInHand(event.getHand());
-        if (itemInHand.equals(MinecraftItems.getInstance().getAir()) || itemInHand.isBlock()) return;
+        Item itemInHand = event.subject().itemInHand(event.hand());
+        if (itemInHand.equals(MinecraftItems.instance().air()) || itemInHand.isBlock()) return;
 
         Exceptional<String> identifier = itemInHand.get(PERSISTENT_TOOL);
         if (identifier.absent()) return;
@@ -107,18 +107,18 @@ public class ToolBinding {
         ItemTool tool = this.registry.get(identifier.get());
 
         ToolInteractionEvent toolInteractionEvent = new ToolInteractionEvent(
-                event.getTarget(),
+                event.subject(),
                 itemInHand,
                 tool,
-                event.getHand(),
-                event.getClickType(),
-                event.getTarget().isSneaking() ? Sneaking.SNEAKING : Sneaking.STANDING);
+                event.hand(),
+                event.clickType(),
+                event.subject().sneaking() ? Sneaking.SNEAKING : Sneaking.STANDING);
 
         if (tool.accepts(toolInteractionEvent)) {
             toolInteractionEvent.post();
-            if (toolInteractionEvent.isCancelled()) return;
-            tool.perform(event.getTarget(), itemInHand);
-            event.setCancelled(true); // To prevent block/entity damage
+            if (toolInteractionEvent.cancelled()) return;
+            tool.perform(event.subject(), itemInHand);
+            event.cancelled(true); // To prevent block/entity damage
         }
     }
 }

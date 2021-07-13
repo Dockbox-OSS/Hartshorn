@@ -27,9 +27,9 @@ public abstract class PipelineTask extends AbstractTask {
 
     protected PipelineTask() {
         this.pipeline = new Pipeline<>();
-        this.pipeline.addPipe((EqualPipe<Void>) this::init);
-        this.pipeline.addPipe((EqualPipe<Void>) PipelineTask.this::perform);
-        this.pipeline.addPipe((EqualPipe<Void>) this::complete);
+        this.pipeline.add((EqualPipe<Void>) this::init);
+        this.pipeline.add((EqualPipe<Void>) PipelineTask.this::perform);
+        this.pipeline.add((EqualPipe<Void>) this::complete);
     }
 
     @Override
@@ -39,6 +39,6 @@ public abstract class PipelineTask extends AbstractTask {
 
     @Override
     public void cancel() {
-        this.pipeline.cancelPipeline();
+        this.pipeline.cancel();
     }
 }

@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.server.minecraft;
 
 import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.events.EventBus;
+import org.dockbox.hartshorn.api.events.annotations.Posting;
 import org.dockbox.hartshorn.api.i18n.MessageReceiver;
 import org.dockbox.hartshorn.api.i18n.common.ResourceEntry;
 import org.dockbox.hartshorn.api.i18n.text.Text;
@@ -31,11 +32,13 @@ import org.dockbox.hartshorn.commands.context.CommandContext;
 import org.dockbox.hartshorn.di.annotations.inject.Wired;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.di.services.ComponentContainer;
-import org.dockbox.hartshorn.server.minecraft.events.server.ServerReloadEvent;
+import org.dockbox.hartshorn.server.minecraft.events.server.EngineChangedState;
+import org.dockbox.hartshorn.server.minecraft.events.server.ServerState.Reload;
 import org.dockbox.hartshorn.util.HartshornUtils;
 
 import java.util.List;
 
+@Posting(EngineChangedState.class)
 @Command(value = Hartshorn.PROJECT_ID, permission = DefaultServer.ADMIN)
 public class DefaultServer {
 
@@ -52,17 +55,17 @@ public class DefaultServer {
         PaginationBuilder paginationBuilder = this.context.get(PaginationBuilder.class);
 
         List<Text> content = HartshornUtils.emptyList();
-        content.add(this.resources.getInfoHeader(Hartshorn.server().getVersion()).translate(source).asText());
-        content.add(this.resources.getServices().translate(source).asText());
+        content.add(this.resources.infoHeader(Hartshorn.server().version()).translate(source).asText());
+        content.add(this.resources.services().translate(source).asText());
 
         for (ComponentContainer container : this.context.locator().containers()) {
-            final Text row = this.resources.getServiceRow(container.getName(), container.getId()).translate(source).asText();
-            row.onHover(HoverAction.showText(this.resources.getServiceRowHover(container.getName()).translate(source).asText()));
-            row.onClick(RunCommandAction.runCommand('/' + Hartshorn.PROJECT_ID + " service " + container.getId()));
+            final Text row = this.resources.serviceRow(container.name(), container.id()).translate(source).asText();
+            row.onHover(HoverAction.showText(this.resources.serviceRowHover(container.name()).translate(source).asText()));
+            row.onClick(RunCommandAction.runCommand('/' + Hartshorn.PROJECT_ID + " service " + container.id()));
             content.add(row);
         }
 
-        paginationBuilder.title(this.resources.getPaginationTitle().translate(source).asText());
+        paginationBuilder.title(this.resources.paginationTitle().translate(source).asText());
         paginationBuilder.content(content);
 
         source.send(paginationBuilder.build());
@@ -71,7 +74,7 @@ public class DefaultServer {
     @Command(value = "service", arguments = "<id{Service}>", permission = DefaultServer.ADMIN)
     public void serviceDetails(MessageReceiver src, CommandContext ctx) {
         ComponentContainer container = ctx.get("id");
-        final ResourceEntry block = this.resources.getInfoServiceBlock(container.getName(), container.getId());
+        final ResourceEntry block = this.resources.infoServiceBlock(container.name(), container.id());
         src.send(block);
     }
 
@@ -79,7 +82,8 @@ public class DefaultServer {
     @WithConfirmation
     public void reload(MessageReceiver src, CommandContext ctx) {
         EventBus eb = this.context.get(EventBus.class);
-        eb.post(new ServerReloadEvent());
-        src.send(this.resources.getReloadAll());
+        eb.post(new EngineChangedState<Reload>() {
+        });
+        src.send(this.resources.reloadAll());
     }
 }

@@ -36,16 +36,16 @@ public interface ItemFrame extends CloneableEntity<ItemFrame> {
      *
      * @return The {@link Item} displayed in the item frame, or {@link Exceptional#empty()}.
      */
-    Exceptional<Item> getDisplayedItem();
+    Exceptional<Item> displayedItem();
 
     /**
      * Sets the {@link Item} to be displayed in the item frame. If the item is equal to {@link
-     * MinecraftItems#getAir()} the displayed item is reset to display none.
+     * MinecraftItems#air()} the displayed item is reset to display none.
      *
      * @param stack
      *         The {@link Item} to display.
      */
-    void setDisplayedItem(Item stack);
+    ItemFrame displayedItem(Item stack);
 
     /**
      * Gets the {@link Rotation} of the currently displayed {@link Item}. If no item is displayed,
@@ -53,7 +53,7 @@ public interface ItemFrame extends CloneableEntity<ItemFrame> {
      *
      * @return The {@link Rotation} of the displayed {@link Item}, or {@link Rotation#TOP}.
      */
-    Rotation getRotation();
+    Rotation rotation();
 
     /**
      * Sets the {@link Rotation} of the currently displayed {@link Item}. If no item is displayed, the
@@ -62,7 +62,7 @@ public interface ItemFrame extends CloneableEntity<ItemFrame> {
      * @param rotation
      *         The {@link Rotation} of the displayed {@link Item}.
      */
-    void setRotation(Rotation rotation);
+    ItemFrame rotation(Rotation rotation);
 
     /**
      * Gets the {@link BlockFace} the item frame is placed against. If no blockface is configured,
@@ -70,7 +70,7 @@ public interface ItemFrame extends CloneableEntity<ItemFrame> {
      *
      * @return The {@link BlockFace} the item frame is placed against, or {@link BlockFace#NONE}.
      */
-    BlockFace getBlockFace();
+    BlockFace blockFace();
 
     /**
      * Sets the {@link BlockFace} the item frame should be placed against.
@@ -78,7 +78,7 @@ public interface ItemFrame extends CloneableEntity<ItemFrame> {
      * @param blockFace
      *         The {@link BlockFace} the item frame should be placed against.
      */
-    void setBlockFace(BlockFace blockFace);
+    ItemFrame blockFace(BlockFace blockFace);
 
     enum Rotation {
         BOTTOM,

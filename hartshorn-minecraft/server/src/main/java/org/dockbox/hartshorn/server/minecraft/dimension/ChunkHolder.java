@@ -25,10 +25,10 @@ import java.util.Collection;
 
 public interface ChunkHolder {
 
-    Exceptional<Chunk> getChunk(Location location);
+    Exceptional<Chunk> chunk(Location location);
 
-    Exceptional<Chunk> getChunk(Vector3N position);
+    Exceptional<Chunk> chunk(Vector3N position);
 
-    Collection<Chunk> getLoadedChunks();
+    Collection<Chunk> loadedChunks();
 
 }

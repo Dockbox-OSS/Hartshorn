@@ -33,12 +33,12 @@ public class DaveConfig {
 
     public DaveConfig() {}
 
-    public TextChannel getChannel() {
+    public TextChannel channel() {
         DiscordUtils du = Hartshorn.context().get(DiscordUtils.class);
-        return du.getJDA().get().getTextChannelById(this.channelId);
+        return du.jda().get().getTextChannelById(this.channelId);
     }
 
-    public Text getPrefix() {
+    public Text prefix() {
         return Text.of(this.prefix);
     }
 }

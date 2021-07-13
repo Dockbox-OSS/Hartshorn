@@ -24,46 +24,46 @@ import java.util.function.Supplier;
 
 public interface DelegatedBinder extends Binder {
 
-    Binder getBinder();
+    Binder binder();
     
     @Override
     default <C, T extends C, A extends Annotation> void provide(Class<C> contract, Supplier<? extends T> supplier) {
-        this.getBinder().provide(contract, supplier);
+        this.binder().provide(contract, supplier);
     }
 
     @Override
     default <C, T extends C, A extends Annotation> void provide(Class<C> contract, Supplier<? extends T> supplier, Named meta) {
-        this.getBinder().provide(contract, supplier, meta);
+        this.binder().provide(contract, supplier, meta);
     }
 
     @Override
     default <C, T extends C> void bind(Class<C> contract, Class<? extends T> implementation) {
-        this.getBinder().bind(contract, implementation);
+        this.binder().bind(contract, implementation);
     }
 
     @Override
     default <C, T extends C> void bind(Class<C> contract, Class<? extends T> implementation, Named meta) {
-        this.getBinder().bind(contract, implementation, meta);
+        this.binder().bind(contract, implementation, meta);
     }
 
     @Override
     default <C, T extends C> void bind(Class<C> contract, T instance) {
-        this.getBinder().bind(contract, instance);
+        this.binder().bind(contract, instance);
     }
 
     @Override
     default <C, T extends C> void bind(Class<C> contract, T instance, Named meta) {
-        this.getBinder().bind(contract, instance, meta);
+        this.binder().bind(contract, instance, meta);
     }
 
     @Override
     default  <C, T extends C> void wire(Class<C> contract, Class<? extends T> implementation) {
-        this.getBinder().wire(contract, implementation);
+        this.binder().wire(contract, implementation);
     }
 
     @Override
     default  <C, T extends C> void wire(Class<C> contract, Class<? extends T> implementation, Named meta) {
-        this.getBinder().wire(contract, implementation, meta);
+        this.binder().wire(contract, implementation, meta);
     }
     
 }

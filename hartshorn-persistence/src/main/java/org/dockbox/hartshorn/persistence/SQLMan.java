@@ -52,7 +52,7 @@ import java.util.Map;
  *
  * @param <T>
  *         The type of the target source of a implementation. This is typically passed into
- *         {@link #getConnection(Object)} and {@link #getContext(Object)} dynamically, so
+ *         {@link #connection(Object)} and {@link #context(Object)} dynamically, so
  *         implementations can act on the given source. If a source should be constant, the
  *         implementation should make this type {@link Void}.
  */
@@ -62,27 +62,27 @@ public abstract class SQLMan<T> implements ISQLMan<T> {
     private Boolean resetOnStore;
 
     private static Field<?>[] convertIdentifiersToFields(Table table) {
-        Field<?>[] fields = new Field[table.getIdentifiers().length];
-        ColumnIdentifier<?>[] tableIdentifiers = table.getIdentifiers();
+        Field<?>[] fields = new Field[table.identifiers().length];
+        ColumnIdentifier<?>[] tableIdentifiers = table.identifiers();
         for (int i = 0; i < tableIdentifiers.length; i++) {
             ColumnIdentifier<?> identifier = tableIdentifiers[i];
-            fields[i] = DSL.field(identifier.getColumnName(), identifier.getType());
+            fields[i] = DSL.field(identifier.name(), identifier.type());
         }
         return fields;
     }
 
     private static void populateRemoteTable(InsertValuesStepN<?> insertStep, Table table, Field<?>[] fields) {
-        table.getRows().forEach(row -> {
+        table.rows().forEach(row -> {
             Object[] values = new Object[fields.length];
             // Indexed over iterative to ensure the horizontal location of our value is equal to
             // the location of our field (read; column).
             for (int i = 0; i < fields.length; i++) {
                 Field<?> field = fields[i];
-                ColumnIdentifier<?> identifier = table.getIdentifier(field.getName());
+                ColumnIdentifier<?> identifier = table.identifier(field.getName());
                 // If the identifier in our table is null, it is possible we are working with a
                 // filtered row. In this case we accept null into the remote table.
                 if (null != identifier) {
-                    values[i] = row.getValue(identifier).orNull();
+                    values[i] = row.value(identifier).orNull();
                 }
                 else values[i] = null;
             }
@@ -96,29 +96,29 @@ public abstract class SQLMan<T> implements ISQLMan<T> {
     }
 
     @Override
-    public Table getOrCreateTable(String name, Table empty) throws InvalidConnectionException {
-        return this.getOrCreateTable(name, this.getDefaultTarget(), empty);
+    public Table lookup(String name, Table empty) throws InvalidConnectionException {
+        return this.lookup(name, this.defaultTarget(), empty);
     }
 
     @Override
-    public Table getOrCreateTable(String name, T target, Table empty)
+    public Table lookup(String name, T target, Table empty)
             throws InvalidConnectionException {
         try {
-            return this.getTable(name, target);
+            return this.table(name, target);
         }
         catch (NoSuchTableException e) {
             this.store(name, empty);
-            return this.getTableSafe(name, target).or(empty);
+            return this.tableSafe(name, target).or(empty);
         }
     }
 
     @Override
-    public Table getTable(String name) throws InvalidConnectionException {
-        return this.getTable(name, this.getDefaultTarget());
+    public Table table(String name) throws InvalidConnectionException {
+        return this.table(name, this.defaultTarget());
     }
 
     @Override
-    public Table getTable(String name, T target) throws InvalidConnectionException {
+    public Table table(String name, T target) throws InvalidConnectionException {
         try {
             return this.withContext(target, ctx -> {
                 // .fetch() automatically closes the native ResultSet and leaves us with the Result.
@@ -126,7 +126,7 @@ public abstract class SQLMan<T> implements ISQLMan<T> {
                 Result<Record> results = ctx.select().from(name).fetch();
                 if (results.isEmpty()) {
                     // If the table is empty we still want a accurate representation of its schema
-                    return new Table(this.getIdentifiers(results.fields()));
+                    return new Table(this.identifiers(results.fields()));
                 }
                 else {
                     return this.convertToTable(results);
@@ -139,31 +139,31 @@ public abstract class SQLMan<T> implements ISQLMan<T> {
     }
 
     @Override
-    public Exceptional<Table> getTableSafe(String name) {
-        return Exceptional.of(() -> this.getTable(name));
+    public Exceptional<Table> tableSafe(String name) {
+        return Exceptional.of(() -> this.table(name));
     }
 
     /**
      * Get the default target if none is provided, this can be injected in {@link
-     * #stateEnabling(InjectorProperty[])}.
+     * #enable(InjectorProperty[])}.
      *
      * @return The default target
      */
-    protected abstract T getDefaultTarget();
+    protected abstract T defaultTarget();
 
     private <R> R withContext(T target, DSLFunction<R> function) throws InvalidConnectionException {
-        DSLContext ctx = this.getContext(target);
+        DSLContext ctx = this.context(target);
         R r = function.accept(ctx);
         SQLMan.closeConnection(ctx);
         return r;
     }
 
-    private List<ColumnIdentifier<?>> getIdentifiers(Field<?>[] fields) {
+    private List<ColumnIdentifier<?>> identifiers(Field<?>[] fields) {
         List<ColumnIdentifier<?>> identifiers = HartshornUtils.emptyList();
         for (Field<?> field : fields) {
             String name = field.getName();
 
-            // Developers can define custom column bindings in stateEnabling, here we look those up before
+            // Developers can define custom column bindings in enable, here we look those up before
             // constructing a custom column identifier.
             ColumnIdentifier<?> identifier = this.tryGetColumn(name).get(() -> {
                 Class<?> type = field.getDataType().getType();
@@ -175,7 +175,7 @@ public abstract class SQLMan<T> implements ISQLMan<T> {
     }
 
     private Table convertToTable(Result<Record> results) {
-        Table table = new Table(this.getIdentifiers(results.fields()));
+        Table table = new Table(this.identifiers(results.fields()));
 
         // We cannot populate the table if no results exist, in which case we return a empty table.
         if (results.isEmpty()) return table;
@@ -209,8 +209,8 @@ public abstract class SQLMan<T> implements ISQLMan<T> {
      *         When the connection could not be prepared, either because of
      *         it being unavailable or because of invalid configurations.
      */
-    protected DSLContext getContext(T target) throws InvalidConnectionException {
-        return DSL.using(this.getConnection(target), this.getDialect());
+    protected DSLContext context(T target) throws InvalidConnectionException {
+        return DSL.using(this.connection(target), this.dialect());
     }
 
     private static void closeConnection(DSLContext ctx) {
@@ -233,16 +233,16 @@ public abstract class SQLMan<T> implements ISQLMan<T> {
         for (Field<?> field : record.fields()) {
             Object attr = record.getValue(field);
             ColumnIdentifier<?> identifier =
-                    this.identifiers.getOrDefault(field.getName(), table.getIdentifier(field.getName()));
+                    this.identifiers.getOrDefault(field.getName(), table.identifier(field.getName()));
             // May cause the row to be rejected by the target Table, though typically the identifier is
             // never null unless the result was modified after fetching.
-            if (null != identifier) row.addValue(identifier, attr);
+            if (null != identifier) row.add(identifier, attr);
         }
         return row;
     }
 
     /**
-     * Get the connection which can be used by {@link #getContext(Object)} to prepare the internal
+     * Get the connection which can be used by {@link #context(Object)} to prepare the internal
      * {@link DSLContext}.
      *
      * @param target
@@ -253,23 +253,23 @@ public abstract class SQLMan<T> implements ISQLMan<T> {
      *         When the connection could not be prepared, either because of
      *         it being unavailable or because of invalid configurations.
      */
-    protected abstract Connection getConnection(T target) throws InvalidConnectionException;
+    protected abstract Connection connection(T target) throws InvalidConnectionException;
 
     /**
      * Get the dialect which will be used for a given implementation.
      *
      * @return The SQL dialect
      */
-    protected abstract SQLDialect getDialect();
+    protected abstract SQLDialect dialect();
 
     @Override
-    public Exceptional<Table> getTableSafe(String name, T target) {
-        return Exceptional.of(() -> this.getTable(name, target));
+    public Exceptional<Table> tableSafe(String name, T target) {
+        return Exceptional.of(() -> this.table(name, target));
     }
 
     @Override
     public void store(String name, Table table) throws InvalidConnectionException {
-        this.store(this.getDefaultTarget(), name, table, this.resetOnStore);
+        this.store(this.defaultTarget(), name, table, this.resetOnStore);
     }
 
     @Override
@@ -278,7 +278,7 @@ public abstract class SQLMan<T> implements ISQLMan<T> {
     }
 
     public void store(String name, Table table, boolean reset) throws InvalidConnectionException {
-        this.store(this.getDefaultTarget(), name, table, reset);
+        this.store(this.defaultTarget(), name, table, reset);
     }
 
     public void store(T target, String name, Table table, boolean reset)
@@ -296,7 +296,7 @@ public abstract class SQLMan<T> implements ISQLMan<T> {
 
     @Override
     public void drop(String name) throws InvalidConnectionException {
-        this.drop(this.getDefaultTarget(), name);
+        this.drop(this.defaultTarget(), name);
     }
 
     @Override
@@ -309,31 +309,31 @@ public abstract class SQLMan<T> implements ISQLMan<T> {
     @Override
     public <C> void deleteIf(String name, ColumnIdentifier<C> identifier, C value)
             throws InvalidConnectionException {
-        this.deleteIf(this.getDefaultTarget(), name, identifier, value);
+        this.deleteIf(this.defaultTarget(), name, identifier, value);
     }
 
     @Override
     public <C> void deleteIf(T target, String name, ColumnIdentifier<C> identifier, C value)
             throws InvalidConnectionException {
         this.withContext(target, ctx -> {
-            ctx.delete(DSL.table(name)).where(SQLMan.getNamedField(identifier).eq(value)).execute();
+            ctx.delete(DSL.table(name)).where(SQLMan.namedField(identifier).eq(value)).execute();
         });
     }
 
-    private static <C> Field<C> getNamedField(ColumnIdentifier<C> identifier) {
-        return DSL.field(identifier.getColumnName(), identifier.getType());
+    private static <C> Field<C> namedField(ColumnIdentifier<C> identifier) {
+        return DSL.field(identifier.name(), identifier.type());
     }
 
     private void withContext(T target, DSLConsumer consumer) throws InvalidConnectionException {
-        DSLContext ctx = this.getContext(target);
+        DSLContext ctx = this.context(target);
         consumer.accept(ctx);
         SQLMan.closeConnection(ctx);
     }
 
     @Override
-    public void stateEnabling(InjectorProperty<?>... properties) {
+    public void enable(InjectorProperty<?>... properties) {
         Bindings.valuesOfType(SQLColumnProperty.class, properties).forEach(property -> {
-            Tuple<String, ColumnIdentifier<?>> identifier = property.getObject();
+            Tuple<String, ColumnIdentifier<?>> identifier = property.value();
             this.identifiers.put(identifier.getKey(), identifier.getValue());
         });
 

@@ -26,10 +26,10 @@ import java.util.Arrays;
 
 public enum ExceptionLevels implements ExceptionHandle {
     FRIENDLY((message, exception, stacktrace) -> {
-        ApplicationContextAware.instance().getContext().get(ExceptionHelper.class).printFriendly(message, exception, stacktrace);
+        ApplicationContextAware.instance().context().get(ExceptionHelper.class).printFriendly(message, exception, stacktrace);
     }),
     MINIMAL((message, exception, stacktrace) -> {
-        ApplicationContextAware.instance().getContext().get(ExceptionHelper.class).printMinimal(message, exception, stacktrace);
+        ApplicationContextAware.instance().context().get(ExceptionHelper.class).printMinimal(message, exception, stacktrace);
     }),
     NATIVE((message, exception, stacktrace) -> {
         final Logger log = LoggerFactory.getLogger("Hartshorn::native");

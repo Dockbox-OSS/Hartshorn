@@ -45,7 +45,7 @@ public class EmptyLocation extends Location {
     }
 
     @Override
-    public Map<PersistentDataKey<?>, Object> getPersistentData() {
+    public Map<PersistentDataKey<?>, Object> data() {
         return HartshornUtils.emptyMap();
     }
 
@@ -55,12 +55,12 @@ public class EmptyLocation extends Location {
     }
 
     @Override
-    public Vector3N getVectorLoc() {
+    public Vector3N vector() {
         return Vector3N.empty();
     }
 
     @Override
-    public World getWorld() {
+    public World world() {
         return World.empty();
     }
 }

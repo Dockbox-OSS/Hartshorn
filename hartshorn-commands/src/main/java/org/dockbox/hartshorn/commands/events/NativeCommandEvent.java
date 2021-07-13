@@ -49,21 +49,21 @@ public class NativeCommandEvent extends AbstractTargetCancellableEvent implement
     }
 
     @Override
-    public boolean isApplicable(Filter filter) {
+    public boolean permits(Filter filter) {
         if (Arrays.asList("alias", "command").contains(filter.param())) {
-            return filter.type().test(filter.value(), this.getAlias());
+            return filter.type().test(filter.value(), this.alias());
         }
         else if (Arrays.asList("args", "arguments").contains(filter.param())) {
             String[] expectedARguments = filter.value().split(" ");
             if (FilterTypes.EQUALS == filter.type()) {
                 for (String expectedArg : expectedARguments) {
-                    if (!Arrays.asList(this.getArguments()).contains(expectedArg)) return false;
+                    if (!Arrays.asList(this.arguments()).contains(expectedArg)) return false;
                 }
                 return true;
             }
             else if (FilterTypes.CONTAINS == filter.type()) {
                 for (String expectedArg : expectedARguments) {
-                    if (Arrays.asList(this.getArguments()).contains(expectedArg)) return true;
+                    if (Arrays.asList(this.arguments()).contains(expectedArg)) return true;
                 }
                 return false;
             }

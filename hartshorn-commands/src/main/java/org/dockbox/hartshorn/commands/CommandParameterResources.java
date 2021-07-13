@@ -26,12 +26,12 @@ import org.dockbox.hartshorn.di.annotations.service.Service;
 public interface CommandParameterResources {
 
     @Resource(value = "Not enough arguments.", key = "missing_args")
-    ResourceEntry getNotEnoughArgs();
+    ResourceEntry notEnoughArgs();
 
     @Resource(value = "Pattern has to be formatted as #type[arg1][arg2][etc.]", key = "hashtag.wrong_format")
-    ResourceEntry getWrongHashtagPatternFormat();
+    ResourceEntry wrongHashtagPatternFormat();
 
     @Resource(value = "Parameter of type {0} has no register converter", key = "missing_converter")
-    ResourceEntry getMissingConverter(String type);
+    ResourceEntry missingConverter(String type);
 
 }

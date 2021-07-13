@@ -52,7 +52,7 @@ public interface Block extends PersistentDataHolder {
     }
 
     static Block empty() {
-        return Hartshorn.context().get(Block.class, MinecraftItems.getInstance().getAir());
+        return Hartshorn.context().get(Block.class, MinecraftItems.instance().air());
     }
 
 }

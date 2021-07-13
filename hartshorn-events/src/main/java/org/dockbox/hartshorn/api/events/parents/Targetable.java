@@ -17,11 +17,11 @@
 
 package org.dockbox.hartshorn.api.events.parents;
 
-import org.dockbox.hartshorn.api.domain.Target;
+import org.dockbox.hartshorn.api.domain.Subject;
 
 public interface Targetable {
 
-    Target getTarget();
+    Subject subject();
 
-    void setTarget(Target target);
+    Targetable subject(Subject subject);
 }

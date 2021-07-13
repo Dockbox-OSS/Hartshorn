@@ -50,7 +50,7 @@ public class PlayerSettings {
             .owner(PlayerSettings.class)
             .converter(value -> value ? new Resource("Yes", "yes") : new Resource("No", "no"))
             .defaultValue(() -> true)
-            .display(() -> MinecraftItems.getInstance().getInkSac())
+            .display(() -> MinecraftItems.instance().inkSac())
             .action(PlayerSettings::toggleNotifications)
             .ok();
 
@@ -61,10 +61,10 @@ public class PlayerSettings {
             .owner(PlayerSettings.class)
             .converter(ordinal -> {
                 Language language = Language.values()[ordinal];
-                return new FakeResource(language.getNameLocalized());
+                return new FakeResource(language.nameLocalized());
             })
             .defaultValue(Language.EN_US::ordinal)
-            .display(() -> MinecraftItems.getInstance().getBookAndQuill())
+            .display(() -> MinecraftItems.instance().bookAndQuill())
             .ok();
 
     private final List<Setting<?>> settings = HartshornUtils.emptyConcurrentList();
@@ -78,13 +78,13 @@ public class PlayerSettings {
     }
 
     @Command("settings")
-    public void getSettings(Player source) {
+    public void settings(Player source) {
         PaginatedPaneBuilder builder = InventoryLayout.builder(InventoryType.DOUBLE_CHEST)
                 .toPaginatedPaneBuilder();
         builder.title(new Resource("$1Settings", "settings").translate(source).asText());
         final PaginatedPane pane = builder.build();
 
-        final List<Element> content = Hartshorn.context().first(SettingsContext.class).get().getSettings().stream()
+        final List<Element> content = Hartshorn.context().first(SettingsContext.class).get().settings().stream()
                 .map(setting -> this.fromSetting(setting, source, pane))
                 .toList();
         pane.elements(content);
@@ -93,20 +93,20 @@ public class PlayerSettings {
     }
 
     private Element fromSetting(Setting<?> setting, Player source, Pane build) {
-        Item item = setting.getDisplay();
+        Item item = setting.item();
         this.modify(item, setting, source);
         return Element.of(item, player -> {
-            setting.getAction().accept(player);
-            this.getSettings(player);
+            setting.action().accept(player);
+            this.settings(player);
         });
     }
 
     private void modify(Item item, Setting<?> setting, Player source) {
-        item.setDisplayName(Text.of("$1", setting.getResource().translate(source), " $3(", this.getValue(setting, source), "$3)"));
-        item.setLore(HartshornUtils.singletonList(Text.of("$2", setting.getDescription().translate(source))));
+        item.displayName(Text.of("$1", setting.resource().translate(source), " $3(", this.value(setting, source), "$3)"));
+        item.lore(HartshornUtils.singletonList(Text.of("$2", setting.description().translate(source))));
     }
 
-    private <T> ResourceEntry getValue(Setting<T> setting, Player source) {
+    private <T> ResourceEntry value(Setting<T> setting, Player source) {
         final T o = setting.get(source);
         return setting.convert(o).translate(source);
     }

@@ -38,7 +38,7 @@ public class InjectorMetaProvider implements MetaProvider {
             return SimpleTypedOwner.of(annotated.get().value());
         }
         else {
-            final Exceptional<ComponentContainer> container = ApplicationContextAware.instance().getContext().locator().container(type);
+            final Exceptional<ComponentContainer> container = ApplicationContextAware.instance().context().locator().container(type);
             if (container.present()) {
                 final ComponentContainer service = container.get();
                 if (Reflect.notVoid(service.owner())) return this.lookup(service.owner());
@@ -48,12 +48,12 @@ public class InjectorMetaProvider implements MetaProvider {
     }
 
     @Override
-    public boolean isSingleton(Class<?> type) {
+    public boolean singleton(Class<?> type) {
         if (Reflect.annotation(type, Singleton.class).present()) return true;
         if (Reflect.annotation(type, com.google.inject.Singleton.class).present()) return true;
 
         return ApplicationContextAware.instance()
-                .getContext()
+                .context()
                 .locator()
                 .container(type)
                 .map(ComponentContainer::singleton)
@@ -61,7 +61,7 @@ public class InjectorMetaProvider implements MetaProvider {
     }
 
     @Override
-    public boolean isComponent(Class<?> type) {
+    public boolean component(Class<?> type) {
         return Reflect.annotation(type, Component.class).present();
     }
 }

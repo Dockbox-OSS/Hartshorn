@@ -36,13 +36,13 @@ public class FloatFlag extends AbstractPlotFlag<Float> {
         try {
             return Float.parseFloat(raw);
         } catch (NumberFormatException e) {
-            Except.handle("Could not parse number flag: " + this.getId(), e);
+            Except.handle("Could not parse number flag: " + this.id(), e);
             return -1F;
         }
     }
 
     @Override
-    public Class<Float> getType() {
+    public Class<Float> type() {
         return Float.class;
     }
 }

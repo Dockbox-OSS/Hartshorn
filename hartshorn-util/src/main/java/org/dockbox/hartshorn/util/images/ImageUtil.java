@@ -122,7 +122,7 @@ public final class ImageUtil {
 
         ResampleOp resampleOp = new ResampleOp(background.getWidth(), background.getHeight());
         resampleOp.setUnsharpenMask(AdvancedResizeOp.UnsharpenMask.None);
-        ResampleFilter filter = scaleMode.getResampleFilter();
+        ResampleFilter filter = scaleMode.resampleFilter();
         resampleOp.setFilter(filter);
         resampleOp.filter(image, background);
         placeCentered(scaledImg, background);
@@ -150,7 +150,7 @@ public final class ImageUtil {
         byte[][] nontiledMapData = new byte[image.getWidth()][image.getHeight()];
         byte[] nontiledMapPixels = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
 
-        if (!mode.isEnabled()) {
+        if (!mode.enabled()) {
             for (int i = 0; i < image.getHeight(); i++) {
                 for (int j = 0; j < image.getWidth(); j++) {
                     int w = image.getWidth();
@@ -164,13 +164,13 @@ public final class ImageUtil {
             }
         }
         else {
-            if (mode.isOrdered()) applyBayer(image, mode, nontiledMapData, nontiledMapPixels);
+            if (mode.ordered()) applyBayer(image, mode, nontiledMapData, nontiledMapPixels);
             else applyErrorDiffusion(image, mode, colorBleedReduction, nontiledMapData, nontiledMapPixels);
         }
     }
 
     private static void applyBayer(RenderedImage image, DitherMode mode, byte[][] nontiledMapData, byte[] nontiledMapPixels) {
-        double[][] bayerMatrix = mode.getBayerMatrix();
+        double[][] bayerMatrix = mode.bayerMatrix();
 
         for (int i = 0; i < image.getHeight(); i++) {
             for (int j = 0; j < image.getWidth(); j++) {
@@ -200,7 +200,7 @@ public final class ImageUtil {
             byte[][] nontiledMapData,
             byte[] nontiledMapPixels
     ) {
-        double[][] errorDiffusionMatrix = mode.getErrorDiffusionMatrix();
+        double[][] errorDiffusionMatrix = mode.errorDiffusionMatrix();
         double[][] errorsR = new double[image.getHeight()][image.getWidth()];
         double[][] errorsG = new double[image.getHeight()][image.getWidth()];
         double[][] errorsB = new double[image.getHeight()][image.getWidth()];

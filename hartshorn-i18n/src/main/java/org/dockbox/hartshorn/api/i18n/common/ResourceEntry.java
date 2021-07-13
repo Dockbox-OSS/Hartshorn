@@ -22,7 +22,7 @@ import org.dockbox.hartshorn.api.i18n.text.Text;
 
 public interface ResourceEntry extends Formattable {
 
-    String getKey();
+    String key();
 
     Text asText();
 
@@ -38,5 +38,5 @@ public interface ResourceEntry extends Formattable {
 
     ResourceEntry format(Object... args);
 
-    Language getLanguage();
+    Language language();
 }

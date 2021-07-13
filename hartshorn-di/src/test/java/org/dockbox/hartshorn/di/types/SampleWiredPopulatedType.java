@@ -38,7 +38,7 @@ public class SampleWiredPopulatedType implements SampleInterface, InjectableType
     }
 
     @Override
-    public void stateEnabling(InjectorProperty<?>... properties) {
+    public void enable(InjectorProperty<?>... properties) {
         this.enabled = true;
     }
 

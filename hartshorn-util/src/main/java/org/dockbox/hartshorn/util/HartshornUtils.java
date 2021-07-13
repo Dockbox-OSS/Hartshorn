@@ -309,7 +309,7 @@ public final class HartshornUtils {
      *         Whether or not to overwrite existing cooldowns
      */
     public static void cooldown(Object o, Long duration, TemporalUnit timeUnit, boolean overwriteExisting) {
-        if (HartshornUtils.isInCooldown(o) && !overwriteExisting) return;
+        if (HartshornUtils.inCooldown(o) && !overwriteExisting) return;
         activeCooldowns.put(o, new Triad<>(LocalDateTime.now(), duration, timeUnit));
     }
 
@@ -321,13 +321,13 @@ public final class HartshornUtils {
      *
      * @return true if a object is in a active cooldown queue. Otherwise false
      */
-    public static boolean isInCooldown(Object o) {
+    public static boolean inCooldown(Object o) {
         if (activeCooldowns.containsKey(o)) {
             LocalDateTime now = LocalDateTime.now();
             Triad<LocalDateTime, Long, TemporalUnit> cooldown = activeCooldowns.get(o);
-            LocalDateTime timeCooledDown = cooldown.getFirst();
-            Long duration = cooldown.getSecond();
-            TemporalUnit timeUnit = cooldown.getThird();
+            LocalDateTime timeCooledDown = cooldown.first();
+            Long duration = cooldown.second();
+            TemporalUnit timeUnit = cooldown.third();
 
             LocalDateTime endTime = timeCooledDown.plus(duration, timeUnit);
 
@@ -338,12 +338,12 @@ public final class HartshornUtils {
     }
 
     public static String capitalize(String value) {
-        return HartshornUtils.isEmpty(value)
+        return HartshornUtils.empty(value)
                 ? value
                 : (value.substring(0, 1).toUpperCase() + value.substring(1));
     }
 
-        public static boolean isEmpty(String value) {
+        public static boolean empty(String value) {
         return null == value || value.isEmpty();
     }
 
@@ -358,16 +358,16 @@ public final class HartshornUtils {
         return path.lastIndexOf(ch);
     }
 
-        @SuppressWarnings("MagicNumber")
+    @SuppressWarnings("MagicNumber")
     public static char convertDigit(int value) {
         return _hex[value & 0x0f];
     }
 
-        public static int[] range(int max) {
+    public static int[] range(int max) {
         return HartshornUtils.range(0, max);
     }
 
-        public static int[] range(int min, int max) {
+    public static int[] range(int min, int max) {
         int[] range = new int[(max - min) + 1]; // +1 as both min and max are inclusive
         for (int i = min; i <= max; i++) {
             range[i - min] = i;
@@ -388,7 +388,7 @@ public final class HartshornUtils {
     }
 
     public static int count(String s, char c) {
-        if (HartshornUtils.isEmpty(s)) {
+        if (HartshornUtils.empty(s)) {
             return 0;
         }
 
@@ -544,18 +544,18 @@ public final class HartshornUtils {
     }
 
     @NotNull
-    public static String getRandomString(int minLen, int maxLen) {
+    public static String randomString(int minLen, int maxLen) {
         StringBuilder s = new StringBuilder();
         int length = minLen + random.nextInt(maxLen - minLen + 1);
         for (int i = 0; i < length; i++) {
-            s.append(HartshornUtils.getRandomChar(0 == i));
+            s.append(HartshornUtils.randomChar(0 == i));
         }
         return s.toString();
     }
 
     @NotNull
     @SuppressWarnings({ "BooleanParameter", "MagicNumber" })
-    public static String getRandomChar(boolean upper) {
+    public static String randomChar(boolean upper) {
         int r = random.nextInt(26);
         return upper ? "" + (char) ((int) 'A' + r) : "" + (char) ((int) 'a' + r);
     }
@@ -575,11 +575,11 @@ public final class HartshornUtils {
         }
     }
 
-    public static byte[] getUTF8Bytes(String s) {
-        return HartshornUtils.getBytes(s, "UTF-8");
+    public static byte[] bytesUTF8(String s) {
+        return HartshornUtils.bytes(s, "UTF-8");
     }
 
-    public static byte[] getBytes(String s, String encoding) {
+    public static byte[] bytes(String s, String encoding) {
         try {
             return null == s ? new byte[0] : s.getBytes(encoding);
         }
@@ -636,7 +636,7 @@ public final class HartshornUtils {
         }
     }
 
-    public static Throwable getDeepestException(Throwable e) {
+    public static Throwable deepestException(Throwable e) {
         while (null != e.getCause()) e = e.getCause();
         return e;
     }
@@ -656,7 +656,7 @@ public final class HartshornUtils {
     }
 
         // Both start and end are inclusive
-    public static <T> T[] getArraySubset(T[] array, int start, int end) {
+    public static <T> T[] arraySubset(T[] array, int start, int end) {
         return Arrays.copyOfRange(array, start, end+1);
     }
 
@@ -671,7 +671,7 @@ public final class HartshornUtils {
         return array;
     }
 
-    public static boolean isFileEmpty(@NotNull Path file) {
+    public static boolean empty(@NotNull Path file) {
         return !Files.exists(file) || 0 >= file.toFile().length();
     }
 
@@ -738,14 +738,14 @@ public final class HartshornUtils {
      *         The vector position in 3D space
      *
      * @return true if {@code vec} is inside the 3D cuboid region
-     * @see HartshornUtils#isInCuboidRegion(int, int, int, int, int, int, int, int, int)
+     * @see HartshornUtils#inCuboidRegion(int, int, int, int, int, int, int, int, int)
      */
-    public static boolean isInCuboidRegion(Vector3N min, Vector3N max, Vector3N vec) {
-        return HartshornUtils.isInCuboidRegion(
-                min.getXi(), max.getXi(),
-                min.getYi(), max.getYi(),
-                min.getZi(), max.getZi(),
-                vec.getXi(), vec.getYi(), vec.getZi()
+    public static boolean inCuboidRegion(Vector3N min, Vector3N max, Vector3N vec) {
+        return HartshornUtils.inCuboidRegion(
+                min.xI(), max.xI(),
+                min.yI(), max.yI(),
+                min.zI(), max.zI(),
+                vec.xI(), vec.yI(), vec.zI()
         );
     }
 
@@ -778,30 +778,30 @@ public final class HartshornUtils {
      * @return true if the defined vector is inside the 3D cuboid region
      */
     @SuppressWarnings("OverlyComplexBooleanExpression")
-        public static boolean isInCuboidRegion(int x_min, int x_max, int y_min, int y_max, int z_min, int z_max, int x, int y, int z) {
+        public static boolean inCuboidRegion(int x_min, int x_max, int y_min, int y_max, int z_min, int z_max, int x, int y, int z) {
         return x_min <= x && x <= x_max
                 && y_min <= y && y <= y_max
                 && z_min <= z && z <= z_max;
     }
 
-    public static Vector3N getMinimumPoint(Vector3N pos1, Vector3N pos2) {
-        float minX = Math.min(pos1.getXf(), pos2.getXf());
-        float minY = Math.min(pos1.getYf(), pos2.getYf());
-        float minZ = Math.min(pos1.getZf(), pos2.getZf());
+    public static Vector3N minimumPoint(Vector3N pos1, Vector3N pos2) {
+        float minX = Math.min(pos1.xF(), pos2.xF());
+        float minY = Math.min(pos1.yF(), pos2.yF());
+        float minZ = Math.min(pos1.zF(), pos2.zF());
         return Vector3N.of(minX, minY, minZ);
     }
 
-    public static Vector3N getMaximumPoint(Vector3N pos1, Vector3N pos2) {
-        float maxX = Math.max(pos1.getXf(), pos2.getXf());
-        float maxY = Math.max(pos1.getYf(), pos2.getYf());
-        float maxZ = Math.max(pos1.getZf(), pos2.getZf());
+    public static Vector3N maximumPoint(Vector3N pos1, Vector3N pos2) {
+        float maxX = Math.max(pos1.xF(), pos2.xF());
+        float maxY = Math.max(pos1.yF(), pos2.yF());
+        float maxZ = Math.max(pos1.zF(), pos2.zF());
         return Vector3N.of(maxX, maxY, maxZ);
     }
 
-    public static Vector3N getCenterPoint(Vector3N pos1, Vector3N pos2) {
-        float centerX = (pos1.getXf() + pos2.getXf()) / 2;
-        float centerY = (pos1.getYf() + pos2.getYf()) / 2;
-        float centerZ = (pos1.getZf() + pos2.getZf()) / 2;
+    public static Vector3N centerPoint(Vector3N pos1, Vector3N pos2) {
+        float centerX = (pos1.xF() + pos2.xF()) / 2;
+        float centerY = (pos1.yF() + pos2.yF()) / 2;
+        float centerZ = (pos1.zF() + pos2.zF()) / 2;
         return Vector3N.of(centerX, centerY, centerZ);
     }
 
@@ -873,28 +873,28 @@ public final class HartshornUtils {
      *
      * @return the t @ nullable [ ]
      */
-        public static <T> T @Nullable [] shallowCopy(final T[] array) {
+    public static <T> T @Nullable [] shallowCopy(final T[] array) {
         if (null == array) {
             return null;
         }
         return array.clone();
     }
 
-        public static boolean isNotEmpty(String value) {
+    public static boolean notEmpty(String value) {
         return null != value && !value.isEmpty();
     }
 
-    public static boolean isEmpty(Object object) {
+    public static boolean empty(Object object) {
         if (null == object) return true;
-        if (object instanceof String) return HartshornUtils.isEmpty((String) object);
+        if (object instanceof String) return HartshornUtils.empty((String) object);
         else if (object instanceof Collection) return ((Collection<?>) object).isEmpty();
         else if (object instanceof Map) return ((Map<?, ?>) object).isEmpty();
-        else if (Reflect.has(object, "isEmpty"))
-            return Reflect.<Boolean>run(object, "isEmpty").or(false);
+        else if (Reflect.has(object, "empty"))
+            return Reflect.<Boolean>run(object, "empty").or(false);
         else return false;
     }
 
-        public static boolean equals(@NonNls final String str1, @NonNls final String str2) {
+    public static boolean equals(@NonNls final String str1, @NonNls final String str2) {
         if (null == str1 || null == str2) {
             //noinspection StringEquality
             return str1 == str2;
@@ -902,7 +902,7 @@ public final class HartshornUtils {
         return str1.equals(str2);
     }
 
-        public static boolean equalsIgnoreCase(@NonNls final String s1, @NonNls final String s2) {
+    public static boolean equalsIgnoreCase(@NonNls final String s1, @NonNls final String s2) {
         if (null == s1 || null == s2) {
             //noinspection StringEquality
             return s1 == s2;
@@ -946,7 +946,7 @@ public final class HartshornUtils {
     }
 
     public static boolean hasContent(final String s) {
-        return !(0 == HartshornUtils.trimLength(s)); // faster than returning !isEmpty()
+        return !(0 == HartshornUtils.trimLength(s)); // faster than returning !empty()
     }
 
     public static int trimLength(final String s) {
@@ -983,7 +983,7 @@ public final class HartshornUtils {
         return s.replaceAll("[\n\r ]+", "").trim();
     }
 
-        public static boolean isEmpty(final Object... array) {
+    public static boolean empty(final Object... array) {
         return null == array || 0 == Array.getLength(array);
     }
 
@@ -1097,7 +1097,7 @@ public final class HartshornUtils {
     }
 
     @SafeVarargs
-    public static <T, R> Object[] getAll(Function<T, R> function, T... input) {
+    public static <T, R> Object[] all(Function<T, R> function, T... input) {
         List<R> out = HartshornUtils.emptyList();
         for (T t : input) {
             out.add(function.apply(t));

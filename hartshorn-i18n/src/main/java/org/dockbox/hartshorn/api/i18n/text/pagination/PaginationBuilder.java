@@ -64,27 +64,27 @@ public abstract class PaginationBuilder {
 
     public abstract Pagination build();
 
-    protected Text getPadding() {
+    protected Text padding() {
         return this.padding;
     }
 
-    protected Text getHeader() {
+    protected Text header() {
         return this.header;
     }
 
-    protected Text getFooter() {
+    protected Text footer() {
         return this.footer;
     }
 
-    protected Text getTitle() {
+    protected Text title() {
         return this.title;
     }
 
-    protected int getLinesPerPage() {
+    protected int linesPerPage() {
         return this.linesPerPage;
     }
 
-    protected List<Text> getContent() {
+    protected List<Text> content() {
         return this.content;
     }
 }

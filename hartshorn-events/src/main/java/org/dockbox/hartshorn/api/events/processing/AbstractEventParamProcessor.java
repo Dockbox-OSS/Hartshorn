@@ -43,7 +43,7 @@ public abstract class AbstractEventParamProcessor<A extends Annotation> {
      * @return the annotation class
      */
     @NotNull
-    public abstract Class<A> getAnnotationClass();
+    public abstract Class<A> annotation();
 
     /**
      * Gets the target {@link EventStage} in which this processor should be applied. Defaults to

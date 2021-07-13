@@ -34,6 +34,7 @@ import org.dockbox.hartshorn.util.Reflect;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -50,22 +51,22 @@ public abstract class HartshornBootstrap extends InjectableBootstrap {
     private final Set<Method> postBootstrapActivations = HartshornUtils.emptyConcurrentSet();
 
     @Override
-    public void create(String prefix, Class<?> activationSource, List<Annotation> activators, Multimap<InjectPhase, InjectConfiguration> configs, Modifier... modifiers) {
+    public void create(Collection<String> prefixes, Class<?> activationSource, List<Annotation> activators, Multimap<InjectPhase, InjectConfiguration> configs, Modifier... modifiers) {
         activators.add(new UseBootstrap() {
             @Override
             public Class<? extends Annotation> annotationType() {
                 return UseBootstrap.class;
             }
         });
-        super.create(prefix, activationSource, activators, configs, modifiers);
+        super.create(prefixes, activationSource, activators, configs, modifiers);
 
-        final GlobalConfig globalConfig = this.getContext().get(GlobalConfig.class);
-        Except.useStackTraces(globalConfig.getStacktracesAllowed());
-        Except.with(globalConfig.getExceptionLevel());
-        this.version = globalConfig.getVersion();
+        final GlobalConfig globalConfig = this.context().get(GlobalConfig.class);
+        Except.useStackTraces(globalConfig.stacktraces());
+        Except.with(globalConfig.level());
+        this.version = globalConfig.version();
     }
 
-    public static boolean isConstructed() {
+    public static boolean constructed() {
         return instance() != null;
     }
 
@@ -79,9 +80,9 @@ public abstract class HartshornBootstrap extends InjectableBootstrap {
      */
     @Override
     public void init() {
-        Hartshorn.log().info("Initialising Hartshorn " + this.getVersion());
+        Hartshorn.log().info("Initialising Hartshorn " + this.context());
         for (Method postBootstrapActivation : this.postBootstrapActivations) {
-            this.getContext().invoke(postBootstrapActivation);
+            this.context().invoke(postBootstrapActivation);
         }
         // Ensure all services requiring a platform implementation have one present
         Reflect.types(Required.class).forEach(type -> {
@@ -103,7 +104,7 @@ public abstract class HartshornBootstrap extends InjectableBootstrap {
             final ComponentContainer componentContainer = container.get();
             final List<Class<? extends Annotation>> activators = componentContainer.activators();
 
-            if (componentContainer.hasActivator() && activators.stream().allMatch(this.getContext()::hasActivator))
+            if (componentContainer.hasActivator() && activators.stream().allMatch(this.context()::hasActivator))
                 this.postBootstrapActivations.add(method);
         }
     }

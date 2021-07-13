@@ -39,7 +39,7 @@ public class WorldEditPasteEvent extends AbstractCancellableEvent {
      *
      * @return The selection
      */
-    public Exceptional<Region> getSelection() {
+    public Exceptional<Region> selection() {
         return this.player.get(WorldEditKeys.SELECTION);
     }
 
@@ -49,7 +49,7 @@ public class WorldEditPasteEvent extends AbstractCancellableEvent {
      *
      * @return the clipboard
      */
-    public Exceptional<Clipboard> getClipboard() {
+    public Exceptional<Clipboard> clipboard() {
         return this.player.get(WorldEditKeys.CLIPBOARD);
     }
 }

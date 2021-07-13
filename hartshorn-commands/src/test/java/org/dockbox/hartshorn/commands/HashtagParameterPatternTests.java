@@ -37,7 +37,7 @@ public class HashtagParameterPatternTests {
     @Test
     void testPreconditionsAcceptValidPattern() {
         final String pattern = "#cuboid[1]";
-        final CustomParameterPattern parameterPattern = this.getParameterPattern();
+        final CustomParameterPattern parameterPattern = this.pattern();
 
         final Exceptional<Boolean> result = parameterPattern.preconditionsMatch(CuboidArgument.class, null, pattern);
 
@@ -48,7 +48,7 @@ public class HashtagParameterPatternTests {
     @Test
     void testPreconditionsRejectInvalidPrefix() {
         final String pattern = "@cuboid[1]";
-        final CustomParameterPattern parameterPattern = this.getParameterPattern();
+        final CustomParameterPattern parameterPattern = this.pattern();
 
         final Exceptional<Boolean> result = parameterPattern.preconditionsMatch(CuboidArgument.class, null, pattern);
 
@@ -59,7 +59,7 @@ public class HashtagParameterPatternTests {
     @Test
     void testPreconditionsRejectInvalidName() {
         final String pattern = "#sphere[1]";
-        final CustomParameterPattern parameterPattern = this.getParameterPattern();
+        final CustomParameterPattern parameterPattern = this.pattern();
 
         final Exceptional<Boolean> result = parameterPattern.preconditionsMatch(CuboidArgument.class, null, pattern);
 
@@ -70,7 +70,7 @@ public class HashtagParameterPatternTests {
     @Test
     void testSplitArgumentsCreatesCorrectArguments() {
         final String pattern = "#cuboid[1]";
-        final CustomParameterPattern parameterPattern = this.getParameterPattern();
+        final CustomParameterPattern parameterPattern = this.pattern();
 
         final List<String> arguments = parameterPattern.splitArguments(pattern);
 
@@ -81,7 +81,7 @@ public class HashtagParameterPatternTests {
     @Test
     void testIdentifierParser() {
         final String pattern = "#cuboid[1]";
-        final CustomParameterPattern parameterPattern = this.getParameterPattern();
+        final CustomParameterPattern parameterPattern = this.pattern();
 
         final Exceptional<String> identifier = parameterPattern.parseIdentifier(pattern);
 
@@ -92,20 +92,20 @@ public class HashtagParameterPatternTests {
     @Test
     void testValidArgumentCanBeRequested() {
         final String pattern = "#cuboid[1]";
-        final CustomParameterPattern parameterPattern = this.getParameterPattern();
+        final CustomParameterPattern parameterPattern = this.pattern();
 
         final Exceptional<CuboidArgument> result = parameterPattern.request(CuboidArgument.class, null, pattern);
 
         Assertions.assertTrue(result.present());
 
         final CuboidArgument cuboid = result.get();
-        Assertions.assertEquals(1, cuboid.getSize());
+        Assertions.assertEquals(1, cuboid.size());
     }
 
-    private HashtagParameterPattern getParameterPattern() {
+    private HashtagParameterPattern pattern() {
         return new HashtagParameterPattern() {
             @Override
-            protected ResourceEntry getWrongFormatResource() {
+            protected ResourceEntry wrongFormat() {
                 // Override resources as these are otherwise requested through wired resource references
                 return new FakeResource("failed");
             }

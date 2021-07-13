@@ -48,11 +48,11 @@ public class WorldCreatingProperties extends WorldProperties {
         super(loadOnStartup, spawnPosition, seed, defaultGamemode);
         this.name = name;
         this.uniqueId = uniqueId;
-        gamerules.forEach(this::setGamerule);
+        gamerules.forEach(this::gamerule);
     }
 
     @Override
-    public void setGamerule(String key, String value) {
+    public void gamerule(String key, String value) {
         this.gamerules.put(key, value);
     }
 }

@@ -42,29 +42,29 @@ public class SimpleDiscordPagination implements DiscordPagination {
     private ApplicationContext context;
 
     @Override
-    public void sendTo(MessageChannel channel) {
+    public void send(MessageChannel channel) {
         this.context.get(DiscordUtils.class).sendToTextChannel(this, channel);
     }
 
     @Override
-    public void sendTo(User user) {
+    public void send(User user) {
         this.context.get(DiscordUtils.class).sendToUser(this, user);
     }
 
     @Override
-    public DiscordPagination addPage(Message... messages) {
+    public DiscordPagination add(Message... messages) {
         this.pages.addAll(Arrays.asList(messages));
         return this;
     }
 
     @Override
-    public DiscordPagination addPage(MessageEmbed... embed) {
+    public DiscordPagination add(MessageEmbed... embed) {
         this.pages.addAll(Arrays.asList(embed));
         return this;
     }
 
     @Override
-    public DiscordPagination addPage(String... messages) {
+    public DiscordPagination add(String... messages) {
         this.pages.addAll(
                 Arrays.stream(messages)
                         .map(message -> new MessageBuilder().setContent(message).build())
@@ -73,7 +73,7 @@ public class SimpleDiscordPagination implements DiscordPagination {
     }
 
     @Override
-    public DiscordPagination addPage(Text... messages) {
+    public DiscordPagination add(Text... messages) {
         this.pages.addAll(
                 Arrays.stream(messages)
                         .map(message -> new MessageBuilder().setContent(message.toStringValue()).build())
@@ -82,15 +82,15 @@ public class SimpleDiscordPagination implements DiscordPagination {
     }
 
     @Override
-    public DiscordPagination addPage(MessageTemplate... templates) {
+    public DiscordPagination add(MessageTemplate... templates) {
         for (MessageTemplate template : templates) {
-            this.addPage(template.getJDAMessage());
+            this.add(template.message());
         }
         return this;
     }
 
     @Override
-    public Collection<Object> getPages() {
+    public Collection<Object> pages() {
         return HartshornUtils.asUnmodifiableCollection(this.pages);
     }
 }

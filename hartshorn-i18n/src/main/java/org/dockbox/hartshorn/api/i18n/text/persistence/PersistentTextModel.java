@@ -54,8 +54,8 @@ public class PersistentTextModel implements PersistentModel<Text> {
     }
 
     protected void extractClickAction(Text text) {
-        ClickAction<?> clickAction = text.getClickAction();
-        this.clickActionResult = String.valueOf(clickAction.getResult());
+        ClickAction<?> clickAction = text.onClick();
+        this.clickActionResult = String.valueOf(clickAction.result());
         if (clickAction instanceof ClickAction.ChangePage) this.clickAction = ActionTypes.CHANGE_PAGE;
         else if (Reflect.lookup("org.dockbox.hartshorn.commands.CommandAction").isInstance(clickAction)) this.clickAction = ActionTypes.RUN_COMMAND;
         else if (clickAction instanceof ClickAction.OpenUrl) this.clickAction = ActionTypes.OPEN_URL;
@@ -67,21 +67,21 @@ public class PersistentTextModel implements PersistentModel<Text> {
     }
 
     protected void extractShiftClickAction(Text text) {
-        ShiftClickAction<?> shiftClickAction = text.getShiftClickAction();
-        this.shiftClickActionResult = String.valueOf(shiftClickAction.getResult());
+        ShiftClickAction<?> shiftClickAction = text.onShiftClick();
+        this.shiftClickActionResult = String.valueOf(shiftClickAction.result());
         if (shiftClickAction instanceof ShiftClickAction.InsertText) this.shiftClickAction = ActionTypes.INSERT_TEXT;
         else this.shiftClickAction = ActionTypes.NONE;
     }
 
     protected void extractHoverAction(Text text) {
-        HoverAction<?> hoverAction = text.getHoverAction();
-        this.hoverActionResult = String.valueOf(hoverAction.getResult());
+        HoverAction<?> hoverAction = text.onHover();
+        this.hoverActionResult = String.valueOf(hoverAction.result());
         if (hoverAction instanceof HoverAction.ShowText) this.hoverAction = ActionTypes.SHOW_TEXT;
         else this.hoverAction = ActionTypes.NONE;
     }
 
     @Override
-    public Class<? extends Text> getCapableType() {
+    public Class<? extends Text> capableType() {
         return Text.class;
     }
 

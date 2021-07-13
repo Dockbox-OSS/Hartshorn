@@ -31,31 +31,31 @@ public abstract class PrefixedParameterPattern implements CustomParameterPattern
     @Override
     public <T> Exceptional<Boolean> preconditionsMatch(Class<T> type, CommandSource source, String raw) {
         return Exceptional.of(() -> {
-                    String prefix = this.getPrefix() + "";
+                    String prefix = this.prefix() + "";
                     if (this.requiresTypeName()) {
                         String parameterName = Reflect.annotation(type, Parameter.class).get().value();
-                        prefix = this.getPrefix() + parameterName;
+                        prefix = this.prefix() + parameterName;
                     }
                     return raw.startsWith(prefix);
                 },
                 () -> true,
                 () -> false,
-                () -> new IllegalArgumentException(this.getWrongFormatResource().asString())
+                () -> new IllegalArgumentException(this.wrongFormat().asString())
         );
     }
 
     @Override
     public List<String> splitArguments(String raw) {
-        String group = raw.substring(raw.indexOf(this.getOpening()));
+        String group = raw.substring(raw.indexOf(this.opening()));
         List<String> arguments = new ArrayList<>();
         StringBuilder current = new StringBuilder();
         int openCount = 0;
         for (char c : group.toCharArray()) {
             current.append(c);
-            if (this.getOpening() == c) {
+            if (this.opening() == c) {
                 openCount++;
             }
-            else if (this.getClosing() == c) {
+            else if (this.closing() == c) {
                 openCount--;
                 if (0 == openCount) {
                     String out = current.toString();
@@ -69,19 +69,19 @@ public abstract class PrefixedParameterPattern implements CustomParameterPattern
 
     @Override
     public Exceptional<String> parseIdentifier(String argument) {
-        return Exceptional.of(() -> argument.startsWith(this.getPrefix() + ""),
-                () -> argument.substring(1, argument.indexOf(this.getOpening())),
-                () -> new IllegalArgumentException(this.getWrongFormatResource().asString())
+        return Exceptional.of(() -> argument.startsWith(this.prefix() + ""),
+                () -> argument.substring(1, argument.indexOf(this.opening())),
+                () -> new IllegalArgumentException(this.wrongFormat().asString())
         );
     }
 
-    protected abstract char getOpening();
+    protected abstract char opening();
 
-    protected abstract char getClosing();
+    protected abstract char closing();
 
-    protected abstract char getPrefix();
+    protected abstract char prefix();
 
     protected abstract boolean requiresTypeName();
 
-    protected abstract ResourceEntry getWrongFormatResource();
+    protected abstract ResourceEntry wrongFormat();
 }

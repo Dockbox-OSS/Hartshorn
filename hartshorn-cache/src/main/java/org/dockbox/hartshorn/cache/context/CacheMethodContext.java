@@ -22,8 +22,8 @@ import org.dockbox.hartshorn.cache.Expiration;
 
 public interface CacheMethodContext {
 
-    Class<? extends CacheManager> getManager();
-    String getName();
-    Expiration getExpiration();
+    Class<? extends CacheManager> manager();
+    String name();
+    Expiration expiration();
 
 }

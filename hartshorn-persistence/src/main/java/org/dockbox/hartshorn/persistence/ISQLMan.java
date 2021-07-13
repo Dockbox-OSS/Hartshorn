@@ -31,9 +31,9 @@ import org.dockbox.hartshorn.persistence.table.column.ColumnIdentifier;
  */
 public interface ISQLMan<T> extends InjectableType {
 
-    Table getOrCreateTable(String name, Table empty) throws InvalidConnectionException;
+    Table lookup(String name, Table empty) throws InvalidConnectionException;
 
-    Table getOrCreateTable(String name, T target, Table empty) throws InvalidConnectionException;
+    Table lookup(String name, T target, Table empty) throws InvalidConnectionException;
 
     /**
      * Gets a table from the database and converts it to the internal {@link Table} type. Uses the
@@ -46,7 +46,7 @@ public interface ISQLMan<T> extends InjectableType {
      * @throws InvalidConnectionException
      *         If no connection could be prepared to the database
      */
-    Table getTable(String name) throws InvalidConnectionException;
+    Table table(String name) throws InvalidConnectionException;
 
     /**
      * Gets a table from the database and converts it to the internal {@link Table} type.
@@ -60,7 +60,7 @@ public interface ISQLMan<T> extends InjectableType {
      * @throws InvalidConnectionException
      *         If no connection could be prepared to the database
      */
-    Table getTable(String name, T target) throws InvalidConnectionException;
+    Table table(String name, T target) throws InvalidConnectionException;
 
     /**
      * Attempts to get a table from the database and converts it to the internal {@link Table} type
@@ -72,7 +72,7 @@ public interface ISQLMan<T> extends InjectableType {
      *
      * @return The table wrapped in a {@link Exceptional}, or {@link Exceptional#empty()}
      */
-    Exceptional<Table> getTableSafe(String name);
+    Exceptional<Table> tableSafe(String name);
 
     /**
      * Attempts to get a table from the database and converts it to the internal {@link Table} type
@@ -86,7 +86,7 @@ public interface ISQLMan<T> extends InjectableType {
      *
      * @return The table wrapped in a {@link Exceptional}, or {@link Exceptional#empty()}
      */
-    Exceptional<Table> getTableSafe(String name, T target);
+    Exceptional<Table> tableSafe(String name, T target);
 
     /**
      * Stores a table to the database under a given name. Depending on the implementation this may

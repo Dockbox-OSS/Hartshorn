@@ -23,14 +23,11 @@ import org.dockbox.hartshorn.di.annotations.component.Component;
 import org.dockbox.hartshorn.di.annotations.component.ComponentLike;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.dockbox.hartshorn.util.Reflect;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Unmodifiable;
 
 import java.lang.annotation.Annotation;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public class SimpleComponentLocator implements ComponentLocator {
 
@@ -38,12 +35,8 @@ public class SimpleComponentLocator implements ComponentLocator {
     private static final List<Class<? extends Annotation>> decorators = HartshornUtils.emptyList();
 
     @Override
-    public @NotNull @Unmodifiable Collection<Class<?>> locate(String prefix) {
-        if (SimpleComponentLocator.cache.containsKey(prefix)) {
-            return SimpleComponentLocator.cache.get(prefix).stream()
-                    .map(ComponentContainer::getType)
-                    .collect(Collectors.toList());
-        }
+    public void register(String prefix) {
+        if (SimpleComponentLocator.cache.containsKey(prefix)) return;
 
         Reflect.prefix(prefix);
         final Collection<Class<?>> types = Reflect.types(Component.class);
@@ -54,19 +47,6 @@ public class SimpleComponentLocator implements ComponentLocator {
                 .map(ComponentContainer.class::cast)
                 .toList();
         SimpleComponentLocator.cache.put(prefix, containers);
-
-        return HartshornUtils.asUnmodifiableSet(types);
-    }
-
-    @Override
-    public @NotNull @Unmodifiable Collection<Class<?>> locate(String prefix, ComponentType componentType) {
-        return HartshornUtils.asUnmodifiableSet(this.locate(prefix).stream()
-                .map(this::container)
-                .map(Exceptional::get)
-                .filter(container -> container.componentType().equals(componentType))
-                .map(ComponentContainer::getType)
-                .collect(Collectors.toSet())
-        );
     }
 
     @Override
@@ -75,10 +55,17 @@ public class SimpleComponentLocator implements ComponentLocator {
     }
 
     @Override
+    public Collection<ComponentContainer> containers(ComponentType componentType) {
+        return this.containers().stream()
+                .filter(container -> container.componentType() == componentType)
+                .toList();
+    }
+
+    @Override
     public Exceptional<ComponentContainer> container(Class<?> type) {
         return Exceptional.of(this.containers()
                 .stream()
-                .filter(container -> container.getType().equals(type))
+                .filter(container -> container.type().equals(type))
                 .findFirst()
         );
     }

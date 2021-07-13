@@ -26,9 +26,9 @@ import java.util.List;
 
 public interface ArgumentConverter<T> {
 
-    List<String> getKeys();
+    List<String> keys();
 
-    Class<T> getType();
+    Class<T> type();
 
     Exceptional<T> convert(CommandSource source, String argument);
 

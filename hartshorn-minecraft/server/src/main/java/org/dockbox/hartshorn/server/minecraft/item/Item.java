@@ -38,33 +38,33 @@ public interface Item extends KeyHolder<Item>, PersistentDataHolder, PersistentC
      * @param id
      *         The fully qualified identifier of a block, e.g. {@code minecraft:stone}
      *
-     * @return The item instance, or {@link MinecraftItems#getAir()}
+     * @return The item instance, or {@link MinecraftItems#air()}
      */
     static Item of(@NonNls String id) {
         Item item = Hartshorn.context().get(Item.class, id);
-        if (!MinecraftItems.getInstance().getAirId().equals(id) && item.isAir()) {
-            item = MinecraftItems.getInstance().getCustom(id);
+        if (!MinecraftItems.instance().airId().equals(id) && item.isAir()) {
+            item = MinecraftItems.instance().custom(id);
         }
         return item;
     }
 
     boolean isAir();
 
-    String getId();
+    String id();
 
-    Text getDisplayName();
+    Text displayName();
 
-    void setDisplayName(Text displayName);
+    Item displayName(Text displayName);
 
-    Text getDisplayName(Language language);
+    Text displayName(Language language);
 
-    List<Text> getLore();
+    List<Text> lore();
 
-    void setLore(List<Text> lore);
+    Item lore(List<Text> lore);
 
-    int getAmount();
+    int amount();
 
-    void setAmount(int amount);
+    Item amount(int amount);
 
     void removeDisplayName();
 
@@ -72,9 +72,9 @@ public interface Item extends KeyHolder<Item>, PersistentDataHolder, PersistentC
 
     void removeLore();
 
-    int getStackSize();
+    int stackSize();
 
-    Set<Enchant> getEnchantments();
+    Set<Enchant> enchantments();
 
     void addEnchant(Enchant enchant);
 
@@ -84,7 +84,7 @@ public interface Item extends KeyHolder<Item>, PersistentDataHolder, PersistentC
 
     boolean isHead();
 
-    Item setProfile(Profile profile);
+    Item profile(Profile profile);
 
     Item stack();
 

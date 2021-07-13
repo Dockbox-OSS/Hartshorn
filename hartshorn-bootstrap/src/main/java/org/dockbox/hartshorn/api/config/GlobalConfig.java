@@ -21,11 +21,11 @@ import org.dockbox.hartshorn.api.exceptions.ExceptionLevels;
 
 public interface GlobalConfig {
 
-    boolean getStacktracesAllowed();
+    boolean stacktraces();
 
-    ExceptionLevels getExceptionLevel();
+    ExceptionLevels level();
 
-    String getDiscordLoggingCategoryId();
+    String discordCategory();
 
-    String getVersion();
+    String version();
 }

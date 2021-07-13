@@ -84,15 +84,15 @@ class MyClass {
 public class ReadMeInheritanceSampleTest {
     @Test
     public void test() throws NoSuchMethodException {
-        Pet petAnnotation = AnnotationHelper.getOneOrNull(MyClass.class, Pet.class);
+        Pet petAnnotation = AnnotationHelper.oneOrNull(MyClass.class, Pet.class);
         assertEquals("Tom", petAnnotation.name());
         assertTrue(AnnotationHelper.instanceOf(petAnnotation, Animal.class));
 
-        Animal animalAnnotation = AnnotationHelper.getOneOrNull(MyClass.class, Animal.class);
+        Animal animalAnnotation = AnnotationHelper.oneOrNull(MyClass.class, Animal.class);
         assertTrue(animalAnnotation.fluffy());
 
         Method fooMethod = MyClass.class.getMethod("foo");
-        List<Animal> animalAnnotations = AnnotationHelper.getAllOrEmpty(fooMethod, Animal.class);
+        List<Animal> animalAnnotations = AnnotationHelper.allOrEmpty(fooMethod, Animal.class);
         assertEquals(Arrays.asList("Spike", "Jerry"), animalAnnotations.stream().map(Animal::name).collect(toList()));
     }
 }

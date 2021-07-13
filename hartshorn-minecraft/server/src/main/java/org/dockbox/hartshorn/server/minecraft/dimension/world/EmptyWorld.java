@@ -36,7 +36,7 @@ final class EmptyWorld extends World {
     }
 
     @Override
-    public int getPlayerCount() {
+    public int playerCount() {
         return 0;
     }
 
@@ -51,7 +51,7 @@ final class EmptyWorld extends World {
     }
 
     @Override
-    public boolean isLoaded() {
+    public boolean loaded() {
         return false;
     }
 
@@ -71,50 +71,50 @@ final class EmptyWorld extends World {
     }
 
     @Override
-    public boolean hasBlock(Vector3N position) {
+    public boolean has(Vector3N position) {
         return false;
     }
 
     @Override
-    public Exceptional<Block> getBlock(Vector3N position) {
+    public Exceptional<Block> block(Vector3N position) {
         return Exceptional.empty();
     }
 
     @Override
-    public boolean setBlock(Vector3N position, Block item) {
+    public boolean block(Vector3N position, Block item) {
         return false;
     }
 
     @Override
-    public void setGamerule(String key, String value) {}
+    public void gamerule(String key, String value) {}
 
     @Override
-    public Map<String, String> getGamerules() {
+    public Map<String, String> gamerules() {
         return HartshornUtils.emptyMap();
     }
 
     @Override
-    public Collection<Entity> getEntities() {
+    public Collection<Entity> entities() {
         return HartshornUtils.emptyList();
     }
 
     @Override
-    public Collection<Entity> getEntities(Predicate<Entity> predicate) {
+    public Collection<Entity> entities(Predicate<Entity> predicate) {
         return HartshornUtils.emptyList();
     }
 
     @Override
-    public Exceptional<Chunk> getChunk(Location location) {
+    public Exceptional<Chunk> chunk(Location location) {
         return Exceptional.empty();
     }
 
     @Override
-    public Exceptional<Chunk> getChunk(Vector3N position) {
+    public Exceptional<Chunk> chunk(Vector3N position) {
         return Exceptional.empty();
     }
 
     @Override
-    public Collection<Chunk> getLoadedChunks() {
+    public Collection<Chunk> loadedChunks() {
         return HartshornUtils.emptyList();
     }
 }

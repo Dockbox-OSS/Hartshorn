@@ -29,12 +29,12 @@ public class SQLResetBehaviorProperty implements InjectorProperty<Boolean> {
     private final boolean reset;
 
     @Override
-    public String getKey() {
+    public String key() {
         return SQLResetBehaviorProperty.KEY;
     }
 
     @Override
-    public Boolean getObject() {
+    public Boolean value() {
         return this.reset;
     }
 }

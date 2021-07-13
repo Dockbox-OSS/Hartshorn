@@ -41,8 +41,8 @@ public class ConfigurationManagerTests {
         JUnitConfigurationManager.add("demo", "Hartshorn");
         ValueTyped typed = Hartshorn.context().get(ValueTyped.class);
 
-        Assertions.assertNotNull(typed.getString());
-        Assertions.assertEquals("Hartshorn", typed.getString());
+        Assertions.assertNotNull(typed.string());
+        Assertions.assertEquals("Hartshorn", typed.string());
     }
 
     @Test
@@ -53,7 +53,7 @@ public class ConfigurationManagerTests {
         ValueTyped typed = Hartshorn.context().get(ValueTyped.class);
 
         Assertions.assertNotNull(typed);
-        Assertions.assertNotNull(typed.getNestedString());
-        Assertions.assertEquals("Hartshorn", typed.getNestedString());
+        Assertions.assertNotNull(typed.nestedString());
+        Assertions.assertEquals("Hartshorn", typed.nestedString());
     }
 }

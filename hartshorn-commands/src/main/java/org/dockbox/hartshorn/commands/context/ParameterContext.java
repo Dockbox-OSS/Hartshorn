@@ -32,7 +32,7 @@ public class ParameterContext {
     private final int index;
 
     public boolean is(Class<?> type) {
-        return Reflect.assigns(type, this.getParameter().getType());
+        return Reflect.assigns(type, this.parameter().getType());
     }
 
 }

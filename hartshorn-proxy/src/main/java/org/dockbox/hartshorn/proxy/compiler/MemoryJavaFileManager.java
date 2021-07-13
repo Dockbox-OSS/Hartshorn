@@ -35,7 +35,7 @@ class MemoryJavaFileManager extends ForwardingJavaFileManager<JavaFileManager> {
         super(fileManager);
     }
 
-    public Map<String, byte[]> getClassBytes() {
+    public Map<String, byte[]> classBytes() {
         return new HashMap<>(this.classBytes);
     }
 

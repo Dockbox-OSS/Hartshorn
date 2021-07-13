@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.api.events;
 
-import org.dockbox.hartshorn.api.domain.Target;
+import org.dockbox.hartshorn.api.domain.Subject;
 import org.dockbox.hartshorn.api.events.parents.Cancellable;
 import org.dockbox.hartshorn.api.events.parents.Targetable;
 
@@ -28,11 +28,11 @@ import lombok.Setter;
 @Getter @Setter
 public abstract class AbstractTargetCancellableEvent implements Cancellable, Targetable {
 
-    private boolean isCancelled;
-    private Target target;
+    private boolean cancelled;
+    private Subject subject;
 
-    protected AbstractTargetCancellableEvent(Target target) {
-        this.target = target;
+    protected AbstractTargetCancellableEvent(Subject subject) {
+        this.subject = subject;
     }
 
 }

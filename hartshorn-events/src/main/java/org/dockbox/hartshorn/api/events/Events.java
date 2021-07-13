@@ -39,7 +39,7 @@ public final class Events {
      *
      * @return The fired (non-null) events
      */
-    public static List<Event> getFiredEvents(Event... events) {
+    public static List<Event> fired(Event... events) {
         return Arrays.stream(events).filter(Objects::nonNull).toList();
     }
 
@@ -53,7 +53,7 @@ public final class Events {
      */
     @Contract(pure = true)
     @Nullable
-    public static Event getFirstFiredEvent(Event... events) {
+    public static Event firstFired(Event... events) {
         for (Event event : events) {
             if (null != event) {
                 return event;

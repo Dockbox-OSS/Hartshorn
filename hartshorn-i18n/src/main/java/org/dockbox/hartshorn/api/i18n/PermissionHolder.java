@@ -40,11 +40,11 @@ public interface PermissionHolder extends Identifiable {
 
     boolean hasAllPermissions(Permission... permissions);
 
-    void setPermission(String permission, org.dockbox.hartshorn.api.domain.tuple.Tristate state);
+    void permission(String permission, org.dockbox.hartshorn.api.domain.tuple.Tristate state);
 
-    void setPermissions(org.dockbox.hartshorn.api.domain.tuple.Tristate state, String... permissions);
+    void permissions(org.dockbox.hartshorn.api.domain.tuple.Tristate state, String... permissions);
 
-    void setPermission(Permission permission, org.dockbox.hartshorn.api.domain.tuple.Tristate state);
+    void permission(Permission permission, org.dockbox.hartshorn.api.domain.tuple.Tristate state);
 
-    void setPermissions(org.dockbox.hartshorn.api.domain.tuple.Tristate state, Permission... permissions);
+    void permissions(org.dockbox.hartshorn.api.domain.tuple.Tristate state, Permission... permissions);
 }

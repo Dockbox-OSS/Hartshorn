@@ -39,19 +39,19 @@ public abstract class CacheServiceModifier<A extends Annotation> extends Service
 
     @Override
     public <T, R> ProxyFunction<T, R> process(ApplicationContext context, MethodProxyContext<T> methodContext) {
-        CacheMethodContext cacheMethodContext = this.getContext(methodContext);
-        final CacheManager manager = context.get(cacheMethodContext.getManager());
-        String name = cacheMethodContext.getName();
+        CacheMethodContext cacheMethodContext = this.context(methodContext);
+        final CacheManager manager = context.get(cacheMethodContext.manager());
+        String name = cacheMethodContext.name();
         if ("".equals(name)) {
-            final Exceptional<CacheService> annotation = Reflect.annotation(methodContext.getType(), CacheService.class);
+            final Exceptional<CacheService> annotation = Reflect.annotation(methodContext.type(), CacheService.class);
             if (annotation.present()) {
                 name = annotation.get().value();
             } else {
-                throw new IllegalStateException("Service " + methodContext.getType() + " contains cache targets but does not provide a valid ID");
+                throw new IllegalStateException("Service " + methodContext.type() + " contains cache targets but does not provide a valid ID");
             }
         }
 
-        final Expiration expiration = cacheMethodContext.getExpiration();
+        final Expiration expiration = cacheMethodContext.expiration();
         String finalName = name;
 
         Supplier<Cache<?>> cacheSupplier = () -> {
@@ -71,7 +71,7 @@ public abstract class CacheServiceModifier<A extends Annotation> extends Service
 
     protected abstract <T, R> ProxyFunction<T, R> process(ApplicationContext context, MethodProxyContext<T> methodContext, CacheContext cacheContext);
 
-    protected abstract CacheMethodContext getContext(MethodProxyContext<?> context);
+    protected abstract CacheMethodContext context(MethodProxyContext<?> context);
 
     @Override
     public <T> boolean preconditions(ApplicationContext context, MethodProxyContext<T> methodContext) {

@@ -283,7 +283,7 @@ public class BasicFunctionalityUnitTest {
                 .anythingBut(" ")
                 .add("com")
                 .build();
-        Assertions.assertEquals(testRegex.getText(testString), "https://www.google.com");
+        Assertions.assertEquals(testRegex.text(testString), "https://www.google.com");
     }
 
     @Test
@@ -292,8 +292,8 @@ public class BasicFunctionalityUnitTest {
         VerbalExpression regex =
                 VerbalExpression.regex().find("a").count(3).capture().find("b").anything().build();
 
-        MatcherAssert.assertThat("regex don't match string", regex.getText(text), CoreMatchers.equalTo(text));
-        MatcherAssert.assertThat("can't get first captured group", regex.getText(text, 1), CoreMatchers.equalTo("bcd"));
+        MatcherAssert.assertThat("regex don't match string", regex.text(text), CoreMatchers.equalTo(text));
+        MatcherAssert.assertThat("can't get first captured group", regex.text(text, 1), CoreMatchers.equalTo("bcd"));
     }
 
     @Test
@@ -302,7 +302,7 @@ public class BasicFunctionalityUnitTest {
         String captureName = "domain";
         VerbalExpression regex = VerbalExpression.regex().find("@").capture(captureName).anything().build();
 
-        MatcherAssert.assertThat("can't get captured group named " + captureName, regex.getText(text, captureName), CoreMatchers.equalTo("example.com"));
+        MatcherAssert.assertThat("can't get captured group named " + captureName, regex.text(text, captureName), CoreMatchers.equalTo("example.com"));
     }
 
     @Test
@@ -325,9 +325,9 @@ public class BasicFunctionalityUnitTest {
         String text = "abc";
         VerbalExpression regex = VerbalExpression.regex().find("d").capture().find("e").build();
 
-        MatcherAssert.assertThat("regex don't match string", regex.getText(text), CoreMatchers.equalTo(""));
-        MatcherAssert.assertThat("first captured group not empty string", regex.getText(text, 1), CoreMatchers.equalTo(""));
-        MatcherAssert.assertThat("second captured group not empty string", regex.getText(text, 2), CoreMatchers.equalTo(""));
+        MatcherAssert.assertThat("regex don't match string", regex.text(text), CoreMatchers.equalTo(""));
+        MatcherAssert.assertThat("first captured group not empty string", regex.text(text, 1), CoreMatchers.equalTo(""));
+        MatcherAssert.assertThat("second captured group not empty string", regex.text(text, 2), CoreMatchers.equalTo(""));
     }
 
     @Test
@@ -338,8 +338,8 @@ public class BasicFunctionalityUnitTest {
 
         VerbalExpression regex = VerbalExpression.regex().find("c").count(2, 3).build();
 
-        MatcherAssert.assertThat("regex don't match string", regex.getText(text4c), CoreMatchers.equalTo("ccc"));
-        MatcherAssert.assertThat("regex don't match string", regex.getText(text2c), CoreMatchers.equalTo("cc"));
+        MatcherAssert.assertThat("regex don't match string", regex.text(text4c), CoreMatchers.equalTo("ccc"));
+        MatcherAssert.assertThat("regex don't match string", regex.text(text2c), CoreMatchers.equalTo("cc"));
         MatcherAssert.assertThat("regex don't match string", regex, CoreMatchers.not(TestMatchMatcher.matchesTo(text1c)));
     }
 
@@ -355,8 +355,8 @@ public class BasicFunctionalityUnitTest {
                 .then("cd")
                 .build();
 
-        MatcherAssert.assertThat(regex.getText(text), CoreMatchers.equalTo("abcd"));
-        MatcherAssert.assertThat("can't get first captured group", regex.getText(text, 1), CoreMatchers.equalTo("b"));
+        MatcherAssert.assertThat(regex.text(text), CoreMatchers.equalTo("abcd"));
+        MatcherAssert.assertThat("can't get first captured group", regex.text(text, 1), CoreMatchers.equalTo("b"));
     }
 
     @Test
@@ -372,8 +372,8 @@ public class BasicFunctionalityUnitTest {
                 .then("cd")
                 .build();
 
-        MatcherAssert.assertThat(regex.getText(text), CoreMatchers.equalTo("abcd"));
-        MatcherAssert.assertThat("can't get captured group named " + captureName, regex.getText(text, captureName), CoreMatchers.equalTo("b"));
+        MatcherAssert.assertThat(regex.text(text), CoreMatchers.equalTo("abcd"));
+        MatcherAssert.assertThat("can't get captured group named " + captureName, regex.text(text, captureName), CoreMatchers.equalTo("b"));
     }
 
     @Test
@@ -390,8 +390,8 @@ public class BasicFunctionalityUnitTest {
                 .find("d")
                 .build();
 
-        MatcherAssert.assertThat("can't get first captured group", regex.getText(text, 1), CoreMatchers.equalTo("b"));
-        MatcherAssert.assertThat("can't get second captured group", regex.getText(text, 2), CoreMatchers.equalTo("d"));
+        MatcherAssert.assertThat("can't get first captured group", regex.text(text, 1), CoreMatchers.equalTo("b"));
+        MatcherAssert.assertThat("can't get second captured group", regex.text(text, 2), CoreMatchers.equalTo("d"));
     }
 
     @Test
@@ -410,8 +410,8 @@ public class BasicFunctionalityUnitTest {
                 .find("d")
                 .build();
 
-        MatcherAssert.assertThat("can't get captured group named " + captureName1, regex.getText(text, captureName1), CoreMatchers.equalTo("b"));
-        MatcherAssert.assertThat("can't get captured group named " + captureName2, regex.getText(text, captureName2), CoreMatchers.equalTo("d"));
+        MatcherAssert.assertThat("can't get captured group named " + captureName1, regex.text(text, captureName1), CoreMatchers.equalTo("b"));
+        MatcherAssert.assertThat("can't get captured group named " + captureName2, regex.text(text, captureName2), CoreMatchers.equalTo("d"));
     }
 
     @Test
@@ -421,9 +421,9 @@ public class BasicFunctionalityUnitTest {
         MatcherAssert.assertThat("Starts with abc or def", testRegex, TestMatchMatcher.matchesTo("abczzz"));
         MatcherAssert.assertThat("Doesn't start with abc or def", testRegex, IsNot.not(TestsExactMatcher.matchesExactly("xyzabcefg")));
 
-        MatcherAssert.assertThat(testRegex.getText("xxxabcdefzzz", 1), CoreMatchers.equalTo("abcnull"));
-        MatcherAssert.assertThat(testRegex.getText("xxxdefzzz", 1), CoreMatchers.equalTo("null"));
-        MatcherAssert.assertThat(testRegex.getText("xxxabcdefzzz", 1), CoreMatchers.equalTo("abcnull"));
+        MatcherAssert.assertThat(testRegex.text("xxxabcdefzzz", 1), CoreMatchers.equalTo("abcnull"));
+        MatcherAssert.assertThat(testRegex.text("xxxdefzzz", 1), CoreMatchers.equalTo("null"));
+        MatcherAssert.assertThat(testRegex.text("xxxabcdefzzz", 1), CoreMatchers.equalTo("abcnull"));
     }
 
     @Test
@@ -434,9 +434,9 @@ public class BasicFunctionalityUnitTest {
         MatcherAssert.assertThat("Starts with abc or def", testRegex, TestMatchMatcher.matchesTo("abczzz"));
         MatcherAssert.assertThat("Doesn't start with abc or def", testRegex, IsNot.not(TestsExactMatcher.matchesExactly("xyzabcefg")));
 
-        MatcherAssert.assertThat(testRegex.getText("xxxabcdefzzz", captureName), CoreMatchers.equalTo("abcnull"));
-        MatcherAssert.assertThat(testRegex.getText("xxxdefzzz", captureName), CoreMatchers.equalTo("null"));
-        MatcherAssert.assertThat(testRegex.getText("xxxabcdefzzz", captureName), CoreMatchers.equalTo("abcnull"));
+        MatcherAssert.assertThat(testRegex.text("xxxabcdefzzz", captureName), CoreMatchers.equalTo("abcnull"));
+        MatcherAssert.assertThat(testRegex.text("xxxdefzzz", captureName), CoreMatchers.equalTo("null"));
+        MatcherAssert.assertThat(testRegex.text("xxxabcdefzzz", captureName), CoreMatchers.equalTo("abcnull"));
     }
 
     @Test
@@ -446,9 +446,9 @@ public class BasicFunctionalityUnitTest {
         MatcherAssert.assertThat("Starts with abc or def", testRegex, TestMatchMatcher.matchesTo("abczzz"));
         MatcherAssert.assertThat("Doesn't start with abc or def", testRegex, IsNot.not(TestsExactMatcher.matchesExactly("xyzabcefg")));
 
-        MatcherAssert.assertThat(testRegex.getText("xxxabcdefzzz", 1), CoreMatchers.equalTo("abcnull"));
-        MatcherAssert.assertThat(testRegex.getText("xxxdefzzz", 1), CoreMatchers.equalTo("null"));
-        MatcherAssert.assertThat(testRegex.getText("xxxabcdefzzz", 1), CoreMatchers.equalTo("abcnull"));
+        MatcherAssert.assertThat(testRegex.text("xxxabcdefzzz", 1), CoreMatchers.equalTo("abcnull"));
+        MatcherAssert.assertThat(testRegex.text("xxxdefzzz", 1), CoreMatchers.equalTo("null"));
+        MatcherAssert.assertThat(testRegex.text("xxxabcdefzzz", 1), CoreMatchers.equalTo("abcnull"));
     }
 
     @Test
@@ -459,9 +459,9 @@ public class BasicFunctionalityUnitTest {
         MatcherAssert.assertThat("Starts with abc or def", testRegex, TestMatchMatcher.matchesTo("abczzz"));
         MatcherAssert.assertThat("Doesn't start with abc or def", testRegex, IsNot.not(TestsExactMatcher.matchesExactly("xyzabcefg")));
 
-        MatcherAssert.assertThat(testRegex.getText("xxxabcdefzzz", captureName), CoreMatchers.equalTo("abcnull"));
-        MatcherAssert.assertThat(testRegex.getText("xxxdefzzz", captureName), CoreMatchers.equalTo("null"));
-        MatcherAssert.assertThat(testRegex.getText("xxxabcdefzzz", captureName), CoreMatchers.equalTo("abcnull"));
+        MatcherAssert.assertThat(testRegex.text("xxxabcdefzzz", captureName), CoreMatchers.equalTo("abcnull"));
+        MatcherAssert.assertThat(testRegex.text("xxxdefzzz", captureName), CoreMatchers.equalTo("null"));
+        MatcherAssert.assertThat(testRegex.text("xxxabcdefzzz", captureName), CoreMatchers.equalTo("abcnull"));
     }
 
     @Test
@@ -560,8 +560,8 @@ public class BasicFunctionalityUnitTest {
         MatcherAssert.assertThat("Starts with abc or def", testRegex, TestMatchMatcher.matchesTo("abczzz"));
         MatcherAssert.assertThat("Doesn't start with abc or def", testRegex, IsNot.not(TestsExactMatcher.matchesExactly("xyzabcefg")));
 
-        MatcherAssert.assertThat(testRegex.getText("xxxabcdefzzz", 1), CoreMatchers.equalTo("abcdef"));
-        MatcherAssert.assertThat(testRegex.getText("xxxdefzzz", 1), CoreMatchers.equalTo("def"));
+        MatcherAssert.assertThat(testRegex.text("xxxabcdefzzz", 1), CoreMatchers.equalTo("abcdef"));
+        MatcherAssert.assertThat(testRegex.text("xxxdefzzz", 1), CoreMatchers.equalTo("def"));
     }
 
     @Test
@@ -572,8 +572,8 @@ public class BasicFunctionalityUnitTest {
         MatcherAssert.assertThat("Starts with abc or def", testRegex, TestMatchMatcher.matchesTo("abczzz"));
         MatcherAssert.assertThat("Doesn't start with abc or def", testRegex, IsNot.not(TestsExactMatcher.matchesExactly("xyzabcefg")));
 
-        MatcherAssert.assertThat(testRegex.getText("xxxabcdefzzz", captureName), CoreMatchers.equalTo("abcdef"));
-        MatcherAssert.assertThat(testRegex.getText("xxxdefzzz", captureName), CoreMatchers.equalTo("def"));
+        MatcherAssert.assertThat(testRegex.text("xxxabcdefzzz", captureName), CoreMatchers.equalTo("abcdef"));
+        MatcherAssert.assertThat(testRegex.text("xxxdefzzz", captureName), CoreMatchers.equalTo("def"));
     }
 
     @Test
@@ -583,8 +583,8 @@ public class BasicFunctionalityUnitTest {
         MatcherAssert.assertThat("Starts with abc or def", testRegex, TestMatchMatcher.matchesTo("abczzz"));
         MatcherAssert.assertThat("Doesn't start with abc or def", testRegex, IsNot.not(TestsExactMatcher.matchesExactly("xyzabcefg")));
 
-        MatcherAssert.assertThat(testRegex.getText("xxxabcdefzzz", 1), CoreMatchers.equalTo("abcdef"));
-        MatcherAssert.assertThat(testRegex.getText("xxxdefzzz", 1), CoreMatchers.equalTo("def"));
+        MatcherAssert.assertThat(testRegex.text("xxxabcdefzzz", 1), CoreMatchers.equalTo("abcdef"));
+        MatcherAssert.assertThat(testRegex.text("xxxdefzzz", 1), CoreMatchers.equalTo("def"));
     }
 
     @Test
@@ -595,8 +595,8 @@ public class BasicFunctionalityUnitTest {
         MatcherAssert.assertThat("Starts with abc or def", testRegex, TestMatchMatcher.matchesTo("abczzz"));
         MatcherAssert.assertThat("Doesn't start with abc or def", testRegex, IsNot.not(TestsExactMatcher.matchesExactly("xyzabcefg")));
 
-        MatcherAssert.assertThat(testRegex.getText("xxxabcdefzzz", captureName), CoreMatchers.equalTo("abcdef"));
-        MatcherAssert.assertThat(testRegex.getText("xxxdefzzz", captureName), CoreMatchers.equalTo("def"));
+        MatcherAssert.assertThat(testRegex.text("xxxabcdefzzz", captureName), CoreMatchers.equalTo("abcdef"));
+        MatcherAssert.assertThat(testRegex.text("xxxdefzzz", captureName), CoreMatchers.equalTo("def"));
     }
 
     @Test
@@ -613,12 +613,12 @@ public class BasicFunctionalityUnitTest {
         String text = "SampleHelloWorldString";
         VerbalExpression regex = VerbalExpression.regex().capt().oneOf("Hello", "World").endCapt().maybe("String").build();
 
-        List<String> groups0 = regex.getTextGroups(text, 0);
+        List<String> groups0 = regex.textGroups(text, 0);
 
         MatcherAssert.assertThat(groups0.get(0), CoreMatchers.equalTo("Hello"));
         MatcherAssert.assertThat(groups0.get(1), CoreMatchers.equalTo("WorldString"));
 
-        List<String> groups1 = regex.getTextGroups(text, 1);
+        List<String> groups1 = regex.textGroups(text, 1);
 
         MatcherAssert.assertThat(groups1.get(0), CoreMatchers.equalTo("Hello"));
         MatcherAssert.assertThat(groups1.get(1), CoreMatchers.equalTo("World"));
@@ -636,7 +636,7 @@ public class BasicFunctionalityUnitTest {
                 .endCapture()
                 .build();
 
-        MatcherAssert.assertThat(regex.getText("apple orange grape", 1), CoreMatchers.is("orange"));
+        MatcherAssert.assertThat(regex.text("apple orange grape", 1), CoreMatchers.is("orange"));
         MatcherAssert.assertThat(regex.test("appleorange grape"), CoreMatchers.is(false));
         MatcherAssert.assertThat(regex.test("apple3orange grape"), CoreMatchers.is(false));
     }

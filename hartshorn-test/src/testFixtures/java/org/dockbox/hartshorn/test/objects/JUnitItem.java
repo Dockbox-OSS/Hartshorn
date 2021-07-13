@@ -49,7 +49,7 @@ public class JUnitItem implements Item, JUnitPersistentDataHolder {
     private Profile profile;
     @Getter @Setter
     private int amount = 1;
-    @Getter @Setter
+    @Getter
     private Text displayName;
     private boolean treatAsBlock = false;
 
@@ -68,23 +68,30 @@ public class JUnitItem implements Item, JUnitPersistentDataHolder {
 
     @Override
     public boolean isAir() {
-        return this.equals(MinecraftItems.getInstance().getAir());
+        return this.equals(MinecraftItems.instance().air());
     }
 
     @Override
-    public Text getDisplayName(Language language) {
+    public Item displayName(Text displayName) {
+        this.displayName = displayName;
+        return this;
+    }
+
+    @Override
+    public Text displayName(Language language) {
         return this.displayName;
     }
 
     @Override
-    public void setLore(List<Text> lore) {
+    public JUnitItem lore(List<Text> lore) {
         this.lore.clear();
         this.lore.addAll(lore);
+        return this;
     }
 
     @Override
     public void removeDisplayName() {
-        this.displayName = Text.of(this.getId());
+        this.displayName = Text.of(this.id());
     }
 
     @Override
@@ -98,7 +105,7 @@ public class JUnitItem implements Item, JUnitPersistentDataHolder {
     }
 
     @Override
-    public Set<Enchant> getEnchantments() {
+    public Set<Enchant> enchantments() {
         return HartshornUtils.asUnmodifiableSet(this.enchants);
     }
 
@@ -123,7 +130,7 @@ public class JUnitItem implements Item, JUnitPersistentDataHolder {
     }
 
     @Override
-    public Item setProfile(Profile profile) {
+    public Item profile(Profile profile) {
         if (this.isHead()) {
             this.profile = profile;
         }
@@ -132,12 +139,12 @@ public class JUnitItem implements Item, JUnitPersistentDataHolder {
 
     @Override
     public boolean isHead() {
-        return MinecraftItems.getInstance().getSkeletonSkull().getId().equals(this.getId());
+        return MinecraftItems.instance().skeletonSkull().id().equals(this.id());
     }
 
     @Override
     public Item stack() {
-        this.setAmount(this.getStackSize());
+        this.amount(this.stackSize());
         return this;
     }
 
@@ -147,27 +154,27 @@ public class JUnitItem implements Item, JUnitPersistentDataHolder {
     }
 
     @Override
-    public int getStackSize() {
+    public int stackSize() {
         return 64;
     }
 
     @Override
-    public UUID getUniqueId() {
+    public UUID uniqueId() {
         return this.persistentDataId;
     }
 
     @Override
-    public String getName() {
-        return this.getDisplayName().toString();
+    public String name() {
+        return this.displayName().toString();
     }
 
     @Override
-    public Class<? extends PersistentItemModel> getModelClass() {
+    public Class<? extends PersistentItemModel> modelType() {
         return SimplePersistentItemModel.class;
     }
 
     @Override
-    public PersistentItemModel toPersistentModel() {
+    public PersistentItemModel model() {
         return new SimplePersistentItemModel(this);
     }
 }

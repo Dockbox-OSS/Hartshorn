@@ -24,7 +24,7 @@ import java.util.concurrent.TimeUnit;
 public abstract class TaskRunner {
 
     public static TaskRunner create() {
-        return ApplicationContextAware.instance().getContext().get(TaskRunner.class);
+        return ApplicationContextAware.instance().context().get(TaskRunner.class);
     }
 
     public abstract void accept(Task task);

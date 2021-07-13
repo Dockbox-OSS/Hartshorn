@@ -33,12 +33,12 @@ public class AnnotationProperty<T extends Annotation> implements InjectorPropert
     }
 
     @Override
-    public String getKey() {
+    public String key() {
         return KEY;
     }
 
     @Override
-    public Class<T> getObject() {
+    public Class<T> value() {
         return this.annotationType;
     }
 }

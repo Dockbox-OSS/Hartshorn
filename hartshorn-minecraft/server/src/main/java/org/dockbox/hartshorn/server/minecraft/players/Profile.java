@@ -32,13 +32,13 @@ public interface Profile {
         return Hartshorn.context().get(Profile.class, profile);
     }
 
-    UUID getUuid();
+    UUID uniqueId();
 
-    void setUuid(UUID uuid);
+    Profile uniqueId(UUID uuid);
 
     Map<String, String> properties();
 
-    void setProperty(String key, String value);
+    void property(String key, String value);
 
-    void setProperties(Map<String, String> properties);
+    Profile properties(Map<String, String> properties);
 }

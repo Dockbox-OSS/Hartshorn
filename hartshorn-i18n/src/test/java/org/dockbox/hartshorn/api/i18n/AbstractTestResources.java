@@ -27,9 +27,9 @@ import org.dockbox.hartshorn.di.annotations.service.Service;
 public abstract class AbstractTestResources {
 
     @Resource("Hello concrete world!")
-    public ResourceEntry getConcreteEntry() {return null;}
+    public ResourceEntry concreteEntry() {return null;}
 
     @Resource("Hello abstract world!")
-    abstract ResourceEntry getAbstractEntry();
+    abstract ResourceEntry abstractEntry();
 
 }

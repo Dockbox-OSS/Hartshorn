@@ -45,7 +45,7 @@ public class SimplePermission implements Permission {
     }
 
     @Override
-    public Exceptional<PermissionContext> getContext() {
+    public Exceptional<PermissionContext> context() {
         return Exceptional.of(this.context);
     }
 

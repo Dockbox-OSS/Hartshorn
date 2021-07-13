@@ -27,9 +27,9 @@ import org.dockbox.hartshorn.di.annotations.service.Service;
 public interface ITestResources {
 
     @Resource("Hello world!")
-    ResourceEntry getTestEntry();
+    ResourceEntry testEntry();
 
     @Resource("Hello {0}!")
-    ResourceEntry getParameterTestEntry(String name);
+    ResourceEntry parameterTestEntry(String name);
 
 }

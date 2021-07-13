@@ -35,7 +35,7 @@ public class SampleFilterableEvent implements Event, Filterable {
     }
 
     @Override
-    public boolean isApplicable(Filter filter) {
+    public boolean permits(Filter filter) {
         return FilterTypes.EQUALS.test(filter.value(), this.name);
     }
 

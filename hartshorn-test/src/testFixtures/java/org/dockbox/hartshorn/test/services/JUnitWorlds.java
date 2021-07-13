@@ -40,43 +40,43 @@ public class JUnitWorlds implements Worlds {
             false,Vector3N.empty(), 101487854L, Gamemode.CREATIVE);
 
     @Override
-    public List<World> getLoadedWorlds() {
-        return HartshornUtils.asList(World::isLoaded, ROOT_WORLD, SECOND_WORLD);
+    public List<World> loadedWorlds() {
+        return HartshornUtils.asList(World::loaded, ROOT_WORLD, SECOND_WORLD);
     }
 
     @Override
-    public List<UUID> getAllWorldUUIDs() {
+    public List<UUID> loadedUniqueIds() {
         return HartshornUtils.asList(ROOT_WORLD, SECOND_WORLD).stream()
-                .map(World::getWorldUniqueId)
+                .map(World::worldUniqueId)
                 .toList();
     }
 
     @Override
-    public Exceptional<World> getWorld(String name) {
-        if (ROOT_WORLD.getName().equals(name)) return Exceptional.of(ROOT_WORLD);
-        else if (SECOND_WORLD.getName().equals(name)) return Exceptional.of(SECOND_WORLD);
+    public Exceptional<World> world(String name) {
+        if (ROOT_WORLD.name().equals(name)) return Exceptional.of(ROOT_WORLD);
+        else if (SECOND_WORLD.name().equals(name)) return Exceptional.of(SECOND_WORLD);
         else return Exceptional.empty();
     }
 
     @Override
-    public Exceptional<World> getWorld(UUID uuid) {
-        if (ROOT_WORLD.getWorldUniqueId().equals(uuid)) return Exceptional.of(ROOT_WORLD);
-        else if (SECOND_WORLD.getWorldUniqueId().equals(uuid)) return Exceptional.of(SECOND_WORLD);
+    public Exceptional<World> world(UUID uuid) {
+        if (ROOT_WORLD.worldUniqueId().equals(uuid)) return Exceptional.of(ROOT_WORLD);
+        else if (SECOND_WORLD.worldUniqueId().equals(uuid)) return Exceptional.of(SECOND_WORLD);
         else return Exceptional.empty();
     }
 
     @Override
-    public boolean hasWorld(String name) {
-        return this.getWorld(name).present();
+    public boolean has(String name) {
+        return this.world(name).present();
     }
 
     @Override
-    public boolean hasWorld(UUID uuid) {
-        return this.getWorld(uuid).present();
+    public boolean has(UUID uuid) {
+        return this.world(uuid).present();
     }
 
     @Override
-    public UUID getRootWorldId() {
-        return ROOT_WORLD.getWorldUniqueId();
+    public UUID rootUniqueId() {
+        return ROOT_WORLD.worldUniqueId();
     }
 }

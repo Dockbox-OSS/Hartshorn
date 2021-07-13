@@ -34,15 +34,15 @@ public class JUnitInformation {
         }
     }
 
-    public Path getFilePath() {
+    public Path path() {
         return this.filePath;
     }
 
-    public int getOnlinePlayerCount() {
+    public int playerCount() {
         return this.onlinePlayerCount;
     }
 
-    public void setOnlinePlayerCount(int onlinePlayerCount) {
+    public void playerCount(int onlinePlayerCount) {
         this.onlinePlayerCount = onlinePlayerCount;
     }
 }

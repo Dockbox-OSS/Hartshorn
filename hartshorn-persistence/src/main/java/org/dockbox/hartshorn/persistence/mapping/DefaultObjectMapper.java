@@ -35,20 +35,20 @@ public abstract class DefaultObjectMapper implements ObjectMapper {
     }
 
     @Override
-    public void setFileType(FileType fileType) {
+    public void fileType(FileType fileType) {
         this.fileType = fileType;
     }
 
     @Override
-    public FileType getFileType() {
+    public FileType fileType() {
         return this.fileType;
     }
 
     @Override
-    public void stateEnabling(InjectorProperty<?>... properties) throws ApplicationException {
+    public void enable(InjectorProperty<?>... properties) throws ApplicationException {
         final List<PersistenceProperty> persistenceProperties = Bindings.properties(PersistenceProperty.KEY, properties);
         for (PersistenceProperty persistenceProperty : persistenceProperties) {
-            for (PersistenceModifier modifier : persistenceProperty.getObject()) this.modify(modifier);
+            for (PersistenceModifier modifier : persistenceProperty.value()) this.modify(modifier);
         }
     }
 

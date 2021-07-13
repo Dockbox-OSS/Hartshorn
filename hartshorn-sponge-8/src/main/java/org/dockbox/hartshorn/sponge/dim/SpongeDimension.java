@@ -52,13 +52,13 @@ public interface SpongeDimension extends BlockDimension, EntityHolding {
     }
 
     @Override
-    default boolean hasBlock(Vector3N position) {
+    default boolean has(Vector3N position) {
         Vector3i loc = SpongeConvert.toSponge(position);
         return this.serverWorld().containsBlock(loc);
     }
 
     @Override
-    default Exceptional<Block> getBlock(Vector3N position) {
+    default Exceptional<Block> block(Vector3N position) {
         Vector3i loc = SpongeConvert.toSponge(position);
         BlockState blockState = this.serverWorld().block(loc);
         if (blockState.type() == BlockTypes.AIR.get()) return Exceptional.of(Block.empty());
@@ -66,7 +66,7 @@ public interface SpongeDimension extends BlockDimension, EntityHolding {
     }
 
     @Override
-    default boolean setBlock(Vector3N position, Block block) {
+    default boolean block(Vector3N position, Block block) {
         Vector3i loc = SpongeConvert.toSponge(position);
         Exceptional<BlockState> state = SpongeConvert.toSponge(block);
         if (state.absent()) return false;
@@ -74,12 +74,12 @@ public interface SpongeDimension extends BlockDimension, EntityHolding {
     }
 
     @Override
-    default Collection<Entity> getEntities() {
-        return this.getEntities(e -> true);
+    default Collection<Entity> entities() {
+        return this.entities(e -> true);
     }
 
     @Override
-    default Collection<Entity> getEntities(Predicate<Entity> predicate) {
+    default Collection<Entity> entities(Predicate<Entity> predicate) {
         return this.serverWorld().entities(this.aabb(), entity -> {
             Entity hartshornEntity = SpongeConvert.fromSponge(entity);
             return predicate.test(hartshornEntity);

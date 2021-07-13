@@ -36,12 +36,12 @@ public class ResourceServiceTests {
 
     private final ResourceService service = new SimpleResourceService() {
         @Override
-        public void stateEnabling(InjectorProperty<?>... properties) {
-            for (Language value : Language.values()) bundles.put(value, createDemoBundle("Demo:" + value.getCode()));
+        public void enable(InjectorProperty<?>... properties) {
+            for (Language value : Language.values()) bundles.put(value, createDemoBundle("Demo:" + value.code()));
         }
 
         {
-            this.stateEnabling();
+            this.enable();
         }
     };
 
@@ -99,7 +99,7 @@ public class ResourceServiceTests {
         Assertions.assertTrue(demo.present());
 
         MessageReceiver mock = Mockito.mock(MessageReceiver.class);
-        Mockito.when(mock.getLanguage()).thenReturn(Language.NL_NL);
+        Mockito.when(mock.language()).thenReturn(Language.NL_NL);
 
         ResourceEntry entry = demo.get();
         ResourceEntry formatted = entry.translate(mock);
@@ -111,7 +111,7 @@ public class ResourceServiceTests {
     public void testResourceBundleUsesBundle() {
         Exceptional<ResourceEntry> demo = this.service.get("demo");
         Assertions.assertTrue(demo.present());
-        Assertions.assertEquals("demo", demo.get().getKey());
+        Assertions.assertEquals("demo", demo.get().key());
     }
 
     @Test
@@ -120,7 +120,7 @@ public class ResourceServiceTests {
         Assertions.assertTrue(demo.present());
         ResourceEntry entry = demo.get();
         for (Language value : Language.values()) {
-            Assertions.assertEquals("Demo:"+ value.getCode(), entry.translate(value).plain());
+            Assertions.assertEquals("Demo:"+ value.code(), entry.translate(value).plain());
         }
     }
 

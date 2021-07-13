@@ -38,7 +38,7 @@ public class SimpleProxyContext implements ProxyContext {
     public <T> T invoke(Object... args) throws ApplicationException {
         try {
             //noinspection unchecked
-            return (T) this.getProceed().invoke(this.getSelf(), args);
+            return (T) this.proceed().invoke(this.self(), args);
         }
         catch (InvocationTargetException | IllegalAccessException | ClassCastException e) {
             throw new ApplicationException(e);

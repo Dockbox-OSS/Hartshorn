@@ -49,10 +49,10 @@ public class SimpleResourceService implements ResourceService, InjectableType {
     }
 
     @Override
-    public void stateEnabling(InjectorProperty<?>... properties) {
+    public void enable(InjectorProperty<?>... properties) {
         for (Language language : Language.values()) {
             try {
-                ResourceBundle bundle = ResourceBundle.getBundle("hartshorn.translations", language.getLocale());
+                ResourceBundle bundle = ResourceBundle.getBundle("hartshorn.translations", language.locale());
                 SimpleResourceService.bundles.put(language, bundle);
             } catch (Throwable e) {
                 Except.handle(e);
@@ -85,7 +85,7 @@ public class SimpleResourceService implements ResourceService, InjectableType {
         Map<Language, String> translations = HartshornUtils.emptyMap();
         for (Entry<Language, ResourceBundle> bundle : SimpleResourceService.bundles.entrySet()) {
             try {
-                String string = bundle.getValue().getString(entry.getKey());
+                String string = bundle.getValue().getString(entry.key());
                 translations.put(bundle.getKey(), string);
             } catch (MissingResourceException ignored) {
             }

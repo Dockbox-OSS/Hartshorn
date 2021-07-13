@@ -250,15 +250,15 @@ public enum Enchantment {
         this.minimumMinecraftVersion = minimumMinecraftVersion;
     }
 
-    public int getMaximumLevel() {
+    public int maximumLevel() {
         return this.maximumLevel;
     }
 
-    public ResourceEntry getNameResource() {
+    public ResourceEntry resource() {
         return this.nameResource;
     }
 
-    public MinecraftVersion getMinimumMinecraftVersion() {
+    public MinecraftVersion minimumVersion() {
         return this.minimumMinecraftVersion;
     }
 }

@@ -26,5 +26,5 @@ public interface InjectableType {
         return true;
     }
 
-    void stateEnabling(InjectorProperty<?>... properties) throws ApplicationException;
+    void enable(InjectorProperty<?>... properties) throws ApplicationException;
 }

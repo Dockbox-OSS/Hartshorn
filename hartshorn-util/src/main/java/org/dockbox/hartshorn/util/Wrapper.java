@@ -23,12 +23,12 @@ import org.jetbrains.annotations.NotNull;
 public interface Wrapper<T> {
 
     default boolean referenceExists() {
-        return this.getReference().present();
+        return this.reference().present();
     }
 
-    Exceptional<T> getReference();
+    Exceptional<T> reference();
 
-    void setReference(@NotNull Exceptional<T> reference);
+    void reference(@NotNull Exceptional<T> reference);
 
     Exceptional<T> constructInitialReference();
 }

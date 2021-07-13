@@ -64,7 +64,7 @@ public class HartshornApplicationContext extends ManagedHartshornContext {
 
     public HartshornApplicationContext(Class<?> activationSource, Modifier... modifiers) {
         super(activationSource);
-        this.adapter = new ContextAdapter(this.getActivator().inject(), this.getActivator().services());
+        this.adapter = new ContextAdapter(this.activator().inject(), this.activator().services());
         this.modifiers = HartshornUtils.asUnmodifiableList(modifiers);
         this.modify(this.modifiers);
 
@@ -116,13 +116,13 @@ public class HartshornApplicationContext extends ManagedHartshornContext {
         // Inject properties if applicable
         if (typeInstance instanceof InjectableType && ((InjectableType) typeInstance).canEnable()) {
             try {
-                ((InjectableType) typeInstance).stateEnabling(additionalProperties);
+                ((InjectableType) typeInstance).enable(additionalProperties);
             } catch (ApplicationException e) {
                 throw new RuntimeException(e);
             }
         }
 
-        if (typeInstance != null && ApplicationContextAware.instance().getContext().meta().isSingleton(type)) this.singletons.put(type, typeInstance);
+        if (typeInstance != null && ApplicationContextAware.instance().context().meta().singleton(type)) this.singletons.put(type, typeInstance);
 
         // May be null, but we have used all possible injectors, it's up to the developer now
         return typeInstance;
@@ -140,12 +140,12 @@ public class HartshornApplicationContext extends ManagedHartshornContext {
     }
 
     @Override
-    public Binder getBinder() {
+    public Binder binder() {
         return this.internalInjector();
     }
     
     protected Injector internalInjector() {
-        return this.adapter.getInjector();
+        return this.adapter.injector();
     }
 
     @Nullable
@@ -160,7 +160,7 @@ public class HartshornApplicationContext extends ManagedHartshornContext {
         } catch (ProvisionFailure e) {
             // Services can have no explicit implementation even if they are abstract.
             // Typically these services are expected to be populated through injection points later in time.
-            if (Reflect.isAbstract(type) && ApplicationContextAware.instance().getContext().meta().isComponent(type)) return null;
+            if (Reflect.isAbstract(type) && ApplicationContextAware.instance().context().meta().component(type)) return null;
             throw e;
         }
     }
@@ -177,7 +177,7 @@ public class HartshornApplicationContext extends ManagedHartshornContext {
 
     @Override
     public ComponentLocator locator() {
-        return this.adapter.getLocator();
+        return this.adapter.locator();
     }
 
     @Override
@@ -214,11 +214,6 @@ public class HartshornApplicationContext extends ManagedHartshornContext {
     @Override
     public <T, I extends T> Exceptional<WireContext<T, I>> firstWire(Class<T> contract, InjectorProperty<Named> property) {
         return this.internalInjector().firstWire(contract, property);
-    }
-
-    @Override
-    public <T, I extends T> Exceptional<Class<I>> type(Class<T> type) {
-        return this.internalInjector().type(type);
     }
 
     @Override

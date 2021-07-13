@@ -45,7 +45,7 @@ public class JUnitItemFrame extends JUnitEntity<ItemFrame> implements ItemFrame,
     @Wired
     public JUnitItemFrame(Location location) {
         super(UUID.randomUUID());
-        this.setLocation(location);
+        this.location(location);
     }
 
     @Override
@@ -54,7 +54,7 @@ public class JUnitItemFrame extends JUnitEntity<ItemFrame> implements ItemFrame,
     }
 
     @Override
-    public Exceptional<Item> getDisplayedItem() {
+    public Exceptional<Item> displayedItem() {
         return Exceptional.of(this.displayedItem);
     }
 }

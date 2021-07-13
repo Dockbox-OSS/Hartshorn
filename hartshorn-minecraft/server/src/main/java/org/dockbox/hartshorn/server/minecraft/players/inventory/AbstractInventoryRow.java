@@ -29,21 +29,21 @@ import lombok.Getter;
 @AllArgsConstructor
 public abstract class AbstractInventoryRow implements InventoryRow {
 
-    public static final Supplier<Item> AIR = () -> MinecraftItems.getInstance().getAir();
+    public static final Supplier<Item> AIR = () -> MinecraftItems.instance().air();
 
     private final int rowIndex;
     private final PlayerInventory inventory;
 
     @Override
-    public Item getSlot(int row, int column) {
-        if (row != this.rowIndex) return MinecraftItems.getInstance().getAir();
-        return this.getSlot(column);
+    public Item slot(int row, int column) {
+        if (row != this.rowIndex) return MinecraftItems.instance().air();
+        return this.slot(column);
     }
 
     @Override
-    public void setSlot(Item item, int row, int column) {
+    public void slot(Item item, int row, int column) {
         if (row != this.rowIndex) return;
-        this.setSlot(item, column);
+        this.slot(item, column);
     }
 
     @Override

@@ -54,7 +54,7 @@ sponge {
     }
 }
 
-def ignoreProjects = ['examples', 'hartshorn-sponge-7', 'hartshorn-sponge-8', 'hartshorn-nms-1.12', 'palswap']
+def ignoreProjects = ['examples', 'hartshorn-sponge-8']
 
 dependencies {
     new File(parent.rootDir, 'hartshorn-minecraft').listFiles().each {

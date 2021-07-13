@@ -82,33 +82,32 @@ public class JUnitPlayer extends Player implements JUnitPersistentDataHolder {
 
     public JUnitPlayer(@NotNull UUID uniqueId, @NotNull String name) {
         super(uniqueId, name);
-        this.setDisplayName(Text.of(name));
         Worlds worlds = Hartshorn.context().get(Worlds.class);
-        this.setLocation(Location.of(0, 0, 0, worlds.getWorld(worlds.getRootWorldId()).orNull()));
-        ((JUnitWorld) this.getWorld()).addEntity(this);
+        this.location(Location.of(0, 0, 0, worlds.world(worlds.rootUniqueId()).orNull()));
+        ((JUnitWorld) this.world()).addEntity(this);
     }
 
     @Override
-    public boolean isAlive() {
-        return this.getHealth() > 0;
+    public boolean alive() {
+        return this.health() > 0;
     }
 
     @Override
-    public boolean hasGravity() {
+    public boolean gravity() {
         return this.gravity;
     }
 
     @Override
-    public boolean setLocation(Location location) {
-        if (this.location != null) ((JUnitWorld) this.getWorld()).destroyEntity(this.getUniqueId());
+    public boolean location(Location location) {
+        if (this.location != null) ((JUnitWorld) this.world()).destroyEntity(this.uniqueId());
         this.location = location;
-        ((JUnitWorld) this.getWorld()).addEntity(this);
+        ((JUnitWorld) this.world()).addEntity(this);
         return true;
     }
 
     @Override
-    public World getWorld() {
-        return this.getLocation().getWorld();
+    public World world() {
+        return this.location().world();
     }
 
     @Override
@@ -123,13 +122,13 @@ public class JUnitPlayer extends Player implements JUnitPersistentDataHolder {
     }
 
     @Override
-    public Item getItemInHand(Hand hand) {
-        return this.getInventory().getSlot(hand.getSlot());
+    public Item itemInHand(Hand hand) {
+        return this.inventory().slot(hand.slot());
     }
 
     @Override
-    public void setItemInHand(Hand hand, Item item) {
-        this.getInventory().setSlot(item, hand.getSlot());
+    public void itemInHand(Hand hand, Item item) {
+        this.inventory().slot(item, hand.slot());
     }
 
     @Override
@@ -139,22 +138,22 @@ public class JUnitPlayer extends Player implements JUnitPersistentDataHolder {
     }
 
     @Override
-    public Profile getProfile() {
-        return new JUnitProfile(this.getUniqueId());
+    public Profile profile() {
+        return new JUnitProfile(this.uniqueId());
     }
 
     @Override
-    public Exceptional<Block> getLookingAtBlock() {
+    public Exceptional<Block> lookingAtBlock() {
         return Exceptional.of(this.lookingAt);
     }
 
     @Override
-    public Exceptional<Entity> getLookingAtEntity() {
+    public Exceptional<Entity> lookingAtEntity() {
         return Exceptional.empty();
     }
 
     @Override
-    public GameSettings getGameSettings() {
+    public GameSettings gameSettings() {
         return new SimpleGameSettings(Language.EN_US);
     }
 
@@ -205,12 +204,12 @@ public class JUnitPlayer extends Player implements JUnitPersistentDataHolder {
     }
 
     @Override
-    public void setPermission(String permission, Tristate state) {
-        JUnitPermissionRegistry.setPermission(this, permission, state);
+    public void permission(String permission, Tristate state) {
+        JUnitPermissionRegistry.permission(this, permission, state);
     }
 
     @Override
-    public void setPermission(Permission permission, Tristate state) {
-        JUnitPermissionRegistry.setPermission(this, permission, state);
+    public void permission(Permission permission, Tristate state) {
+        JUnitPermissionRegistry.permission(this, permission, state);
     }
 }

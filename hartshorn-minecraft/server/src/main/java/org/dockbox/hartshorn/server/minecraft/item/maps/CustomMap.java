@@ -39,7 +39,7 @@ public interface CustomMap extends Item {
         return Hartshorn.context().get(CustomMapService.class).create(image, source);
     }
 
-    Identifiable getOwner();
+    Identifiable owner();
 
-    int getMapId();
+    int mapId();
 }

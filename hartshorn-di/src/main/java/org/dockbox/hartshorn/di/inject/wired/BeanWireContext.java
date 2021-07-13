@@ -36,7 +36,7 @@ public class BeanWireContext<T, I extends T> implements WireContext<T, I> {
 
     @Override
     public T create(Object... arguments) throws ApplicationException {
-        final Object service = ApplicationContextAware.instance().getContext().get(this.bean.getDeclaringClass());
+        final Object service = ApplicationContextAware.instance().context().get(this.bean.getDeclaringClass());
         try {
             //noinspection unchecked
             return (T) this.bean.invoke(service, arguments);

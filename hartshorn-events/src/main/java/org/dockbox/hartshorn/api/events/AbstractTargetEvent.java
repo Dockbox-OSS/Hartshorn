@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.api.events;
 
-import org.dockbox.hartshorn.api.domain.Target;
+import org.dockbox.hartshorn.api.domain.Subject;
 import org.dockbox.hartshorn.api.events.parents.Event;
 import org.dockbox.hartshorn.api.events.parents.Targetable;
 
@@ -30,6 +30,6 @@ import lombok.Setter;
 @Getter @Setter
 public abstract class AbstractTargetEvent implements Event, Targetable {
 
-    private Target target;
+    private Subject subject;
 
 }

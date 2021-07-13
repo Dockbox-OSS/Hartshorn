@@ -17,20 +17,20 @@
 
 package org.dockbox.hartshorn.server.minecraft.events.player;
 
-import org.dockbox.hartshorn.api.domain.Target;
+import org.dockbox.hartshorn.api.domain.Subject;
 import org.dockbox.hartshorn.api.events.AbstractTargetCancellableEvent;
 import org.dockbox.hartshorn.server.minecraft.players.Player;
 
 /** The abstract type which can be used to listen to all player movement related events. */
 public abstract class PlayerMoveEvent extends AbstractTargetCancellableEvent {
 
-    protected PlayerMoveEvent(Target target) {
-        super(target);
+    protected PlayerMoveEvent(Subject subject) {
+        super(subject);
     }
 
     @Override
-    public Player getTarget() {
-        return (Player) super.getTarget();
+    public Player subject() {
+        return (Player) super.subject();
     }
 
 }

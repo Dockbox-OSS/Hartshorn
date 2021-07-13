@@ -39,14 +39,14 @@ public class NegativeCasesTest {
         String text = "abc";
         VerbalExpression regex = VerbalExpression.regex().find("b").capture().find("c").build();
 
-        Assertions.assertThrows(IndexOutOfBoundsException.class, () -> regex.getText(text, 2));
+        Assertions.assertThrows(IndexOutOfBoundsException.class, () -> regex.text(text, 2));
     }
 
     @Test
     public void shouldExceptionWhenTryGetByNonExistentCaptureName() {
         String text = "abc";
         VerbalExpression regex = VerbalExpression.regex().find("b").capture("test1").find("c").build();
-        Assertions.assertThrows(IllegalArgumentException.class, () -> regex.getText(text, "test2"));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> regex.text(text, "test2"));
     }
 
     @Test
@@ -72,15 +72,15 @@ public class NegativeCasesTest {
 
         MatcherAssert.assertThat("regex don't matches writed letter", regex, TestMatchMatcher.matchesTo("a"));
         MatcherAssert.assertThat("or(null) should match any", regex, TestMatchMatcher.matchesTo("bcd"));
-        MatcherAssert.assertThat("or(null) extract only first", regex.getText("abcd"), CoreMatchers.equalTo("a"));
+        MatcherAssert.assertThat("or(null) extract only first", regex.text("abcd"), CoreMatchers.equalTo("a"));
     }
 
     @Test
     public void orAfterCaptureProduceEmptyGroup() {
         VerbalExpression regex = VerbalExpression.regex().startOfLine().then("a").capture().or("b").build();
 
-        MatcherAssert.assertThat("regex dont matches string abcd", regex.getText("abcd", 0), CoreMatchers.equalTo("a"));
-        MatcherAssert.assertThat("regex dont extract a by first group", regex.getText("abcd", 1), CoreMatchers.equalTo(""));
+        MatcherAssert.assertThat("regex dont matches string abcd", regex.text("abcd", 0), CoreMatchers.equalTo("a"));
+        MatcherAssert.assertThat("regex dont extract a by first group", regex.text("abcd", 1), CoreMatchers.equalTo(""));
     }
 
     @Test
@@ -88,8 +88,8 @@ public class NegativeCasesTest {
         String captureName = "test";
         VerbalExpression regex = VerbalExpression.regex().startOfLine().then("a").capture(captureName).or("b").build();
 
-        MatcherAssert.assertThat("regex don't matches string abcd", regex.getText("abcd", 0), CoreMatchers.equalTo("a"));
-        MatcherAssert.assertThat("regex don't extract a by group named " + captureName, regex.getText("abcd", captureName), CoreMatchers.equalTo(""));
+        MatcherAssert.assertThat("regex don't matches string abcd", regex.text("abcd", 0), CoreMatchers.equalTo("a"));
+        MatcherAssert.assertThat("regex don't extract a by group named " + captureName, regex.text("abcd", captureName), CoreMatchers.equalTo(""));
     }
 
     @Test

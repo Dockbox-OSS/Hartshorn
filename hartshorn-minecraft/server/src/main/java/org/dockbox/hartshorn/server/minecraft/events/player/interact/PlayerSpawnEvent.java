@@ -17,20 +17,19 @@
 
 package org.dockbox.hartshorn.server.minecraft.events.player.interact;
 
-import org.dockbox.hartshorn.api.domain.Target;
+import org.dockbox.hartshorn.api.domain.Subject;
 import org.dockbox.hartshorn.server.minecraft.dimension.position.Location;
 import org.dockbox.hartshorn.server.minecraft.events.player.PlayerMoveEvent;
 
+import lombok.Getter;
+
 /** The event fired when a player is teleported to the spawn location. */
 public class PlayerSpawnEvent extends PlayerMoveEvent {
-    private final Location spawnLocation;
+    @Getter
+    private final Location spawn;
 
-    public PlayerSpawnEvent(Target target, Location spawnLocation) {
-        super(target);
-        this.spawnLocation = spawnLocation;
-    }
-
-    public Location getSpawnLocation() {
-        return this.spawnLocation;
+    public PlayerSpawnEvent(Subject subject, Location spawn) {
+        super(subject);
+        this.spawn = spawn;
     }
 }

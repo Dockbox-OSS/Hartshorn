@@ -22,7 +22,6 @@ import org.dockbox.hartshorn.api.events.annotations.Listener;
 import org.dockbox.hartshorn.commands.annotations.Command;
 import org.dockbox.hartshorn.di.annotations.service.Service;
 import org.dockbox.hartshorn.server.minecraft.events.packet.PacketEvent;
-import org.dockbox.hartshorn.server.minecraft.packets.annotations.Packet;
 import org.dockbox.hartshorn.server.minecraft.packets.real.ChangeGameStatePacket;
 
 @Service
@@ -31,14 +30,13 @@ public final class SampleService {
     private SampleService() {}
 
     @Listener
-    @Packet(ChangeGameStatePacket.class)
     public static void onGameStatePacket(PacketEvent<ChangeGameStatePacket> packetEvent) {
         Hartshorn.log()
                 .info(
                         "Sending a packet event to "
-                                + packetEvent.getTarget().getName()
+                                + packetEvent.target().name()
                                 + " (GameStateChange: "
-                                + packetEvent.getPacket().getWeather()
+                                + packetEvent.packet().weather()
                                 + ')');
     }
 

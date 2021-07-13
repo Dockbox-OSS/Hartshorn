@@ -43,7 +43,7 @@ import javassist.util.proxy.ProxyFactory;
 @SuppressWarnings("ALL")
 public class ReflectTests {
 
-    private static Stream<Arguments> getFieldTargets() {
+    private static Stream<Arguments> fields() {
         return Stream.of(
                 Arguments.of("privateField"),
                 Arguments.of("publicField"),
@@ -56,14 +56,14 @@ public class ReflectTests {
     }
 
     @ParameterizedTest
-    @MethodSource("getFieldTargets")
+    @MethodSource("fields")
     void testFieldValueReturnsValue(String field) {
         Exceptional<String> value = Reflect.field(new ReflectTestType(), field);
         Assertions.assertTrue(value.present());
         Assertions.assertEquals(field, value.get());
     }
 
-    private static Stream<Arguments> getMethodTargets() {
+    private static Stream<Arguments> methods() {
         return Stream.of(
                 Arguments.of("publicMethod"),
                 Arguments.of("privateMethod")
@@ -71,14 +71,14 @@ public class ReflectTests {
     }
 
     @ParameterizedTest
-    @MethodSource("getMethodTargets")
+    @MethodSource("methods")
     void testRunMethodReturnsValue(String method) {
         Exceptional<String> value = Reflect.run(new ReflectTestType(), method, "value");
         Assertions.assertTrue(value.present());
         Assertions.assertEquals("VALUE", value.get());
     }
 
-    private static Stream<Arguments> getGenericInstances() {
+    private static Stream<Arguments> genericInstances() {
         return Stream.of(
                 Arguments.of(new ReflectTestType(), ReflectTestType.class, true),
                 Arguments.of(new ReflectTestType(), ParentTestType.class, true),
@@ -87,7 +87,7 @@ public class ReflectTests {
         );
     }
 
-    private static Stream<Arguments> getAssignablePrimitives() {
+    private static Stream<Arguments> assignablePrimitives() {
         return Stream.of(
                 Arguments.of(boolean.class, Boolean.class),
                 Arguments.of(byte.class, Byte.class),
@@ -101,7 +101,7 @@ public class ReflectTests {
     }
 
     @ParameterizedTest
-    @MethodSource("getAssignablePrimitives")
+    @MethodSource("assignablePrimitives")
     void testAssignableFromPrimitives(Class<?> primitive, Class<?> wrapper) {
         Assertions.assertTrue(Reflect.primitive(wrapper, primitive));
         Assertions.assertTrue(Reflect.assigns(wrapper, primitive));
@@ -144,7 +144,7 @@ public class ReflectTests {
 
     @Test
     void testAnnotatedTypesReturnsAllInPrefix() {
-        final PrefixContext context = new ReflectionContext("org.dockbox.hartshorn.util.types");
+        final PrefixContext context = new ReflectionContext(HartshornUtils.asList("org.dockbox.hartshorn.util.types"));
         Collection<Class<?>> types = context.types(Demo.class);
         Assertions.assertEquals(1, types.size());
         Assertions.assertEquals(ReflectTestType.class, types.iterator().next());
@@ -152,7 +152,7 @@ public class ReflectTests {
 
     @Test
     void testSubTypesReturnsAllSubTypes() {
-        final PrefixContext context = new ReflectionContext("org.dockbox.hartshorn.util.types");
+        final PrefixContext context = new ReflectionContext(HartshornUtils.asList("org.dockbox.hartshorn.util.types"));
         Collection<Class<? extends ParentTestType>> types = context.children(ParentTestType.class);
         Assertions.assertEquals(1, types.size());
         Assertions.assertEquals(ReflectTestType.class, types.iterator().next());
@@ -220,7 +220,7 @@ public class ReflectTests {
         Assertions.assertFalse(Reflect.has(new ReflectTestType(), "otherMethod"));
     }
 
-    private static Stream<Arguments> getNonVoidTypes() {
+    private static Stream<Arguments> nonVoidTypes() {
         return Stream.of(
                 Arguments.of(boolean.class),
                 Arguments.of(Boolean.class),
@@ -243,7 +243,7 @@ public class ReflectTests {
     }
 
     @ParameterizedTest
-    @MethodSource("getNonVoidTypes")
+    @MethodSource("nonVoidTypes")
     void testIsNotVoidIsTrueIfTypeIsNotVoid(Class<?> type) {
         Assertions.assertTrue(Reflect.notVoid(type));
     }
@@ -259,13 +259,13 @@ public class ReflectTests {
     }
 
     @ParameterizedTest
-    @MethodSource("getFieldTargets")
+    @MethodSource("fields")
     void testHasFieldReturnsTrue(String field) {
         Assertions.assertTrue(Reflect.hasField(ReflectTestType.class, field));
     }
 
     @ParameterizedTest
-    @MethodSource("getFieldTargets")
+    @MethodSource("fields")
     void testFieldsConsumesAllFields(String field) {
         final boolean[] activated = { false };
         Reflect.fields(ReflectTestType.class, (t, f) -> {
@@ -282,7 +282,7 @@ public class ReflectTests {
         ReflectTestType instance = new ReflectTestType();
         Reflect.set(fieldRef, instance, "newValue");
 
-        Assertions.assertTrue(instance.isActivatedSetter());
+        Assertions.assertTrue(instance.activatedSetter());
     }
 
     @Test
@@ -322,7 +322,7 @@ public class ReflectTests {
         Assertions.assertFalse(Reflect.isProxy(new ReflectTestType()));
     }
 
-    private static Stream<Arguments> getPrimitiveValues() {
+    private static Stream<Arguments> primitiveValues() {
         return Stream.of(
                 Arguments.of(boolean.class, "true", true),
                 Arguments.of(byte.class, "0", (byte) 0),
@@ -337,7 +337,7 @@ public class ReflectTests {
     }
 
     @ParameterizedTest
-    @MethodSource("getPrimitiveValues")
+    @MethodSource("primitiveValues")
     void testStringToPrimitive(Class<?> type, String value, Object expected) throws TypeConversionException {
         byte b = 0x0;
         Object o = Reflect.toPrimitive(type, value);

@@ -81,10 +81,10 @@ public class SimpleCommandGateway implements CommandGateway {
     }
 
     protected void execute(CommandExecutorContext context, CommandContext commandContext) {
-        for (CommandExecutorExtension extension : this.getExtensions()) {
+        for (CommandExecutorExtension extension : this.extensions()) {
             if (extension.extend(context)) {
                 final ExtensionResult result = extension.execute(commandContext, context);
-                if (result.send()) commandContext.getSender().send(result.reason());
+                if (result.send()) commandContext.source().send(result.reason());
                 if (!result.proceed()) return;
             }
         }
@@ -94,7 +94,7 @@ public class SimpleCommandGateway implements CommandGateway {
     @Override
     public void accept(CommandSource source, String command) throws ParsingException {
         final Exceptional<CommandExecutorContext> context = this.lookupContext(command);
-        if (context.absent()) throw new ParsingException(this.resources.getMissingHandler(command));
+        if (context.absent()) throw new ParsingException(this.resources.missingHandler(command));
         else {
             final Exceptional<CommandContext> commandContext = this.parser.parse(command, source, context.get());
             if (commandContext.present()) {
@@ -107,7 +107,7 @@ public class SimpleCommandGateway implements CommandGateway {
     public void accept(CommandContext context) throws ParsingException {
         final CommandExecutorContext executor = this.get(context);
         if (executor != null) this.execute(executor, context);
-        else throw new ParsingException(this.resources.getMissingExecutor(context.alias(), context.arguments().size()));
+        else throw new ParsingException(this.resources.missingExecutor(context.alias(), context.arguments().size()));
     }
 
     @Override

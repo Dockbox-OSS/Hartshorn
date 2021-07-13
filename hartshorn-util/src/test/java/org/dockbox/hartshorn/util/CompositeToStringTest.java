@@ -33,13 +33,13 @@ import static org.hamcrest.core.StringContains.containsString;
 public class CompositeToStringTest {
     @Test
     public void throwExceptionsWhenTwoAnnotationsAreFound() {
-        Exception e = Assertions.assertThrows(Exception.class, () -> AnnotationHelper.getOneOrNull(CompositeToStringTest.class, Router.class));
+        Exception e = Assertions.assertThrows(Exception.class, () -> AnnotationHelper.oneOrNull(CompositeToStringTest.class, Router.class));
         MatcherAssert.assertThat(ExceptionUtils.readStackTrace(e), containsString("Found more than one annotation on class org.dockbox.hartshorn.util.CompositeToStringTest"));
     }
 
     @Test
     public void canGetTwoRouters() {
-        Assertions.assertEquals(2, AnnotationHelper.getAllOrEmpty(CompositeToStringTest.class, Router.class).size());
+        Assertions.assertEquals(2, AnnotationHelper.allOrEmpty(CompositeToStringTest.class, Router.class).size());
     }
 }
 

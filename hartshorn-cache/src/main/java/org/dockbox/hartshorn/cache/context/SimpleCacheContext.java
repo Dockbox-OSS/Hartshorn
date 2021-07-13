@@ -40,7 +40,7 @@ public class SimpleCacheContext implements CacheContext {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T> Cache<T> getCache() {
+    public <T> Cache<T> cache() {
         return (Cache<T>) this.supplier.get();
     }
 }

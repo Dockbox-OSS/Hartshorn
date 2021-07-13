@@ -25,12 +25,12 @@ import org.dockbox.hartshorn.di.annotations.service.Service;
 public interface ToolBindingResources {
 
     @Resource(value = "Tool cannot be bound to blocks", key = "toolbinding.caught.block")
-    ResourceEntry getBlockError();
+    ResourceEntry blockError();
 
     @Resource(value = "Tool cannot be bound to hand", key = "toolbinding.caught.hand")
-    ResourceEntry getHandError();
+    ResourceEntry handError();
 
     @Resource(value = "There is already a tool bound to this item", key = "toolbinding.caught.duplicate")
-    ResourceEntry getDuplicateError();
+    ResourceEntry duplicateError();
 
 }

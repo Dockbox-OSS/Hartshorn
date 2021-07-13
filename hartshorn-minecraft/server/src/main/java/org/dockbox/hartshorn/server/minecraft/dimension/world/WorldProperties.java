@@ -40,7 +40,7 @@ public abstract class WorldProperties {
     private long seed;
     private Gamemode defaultGamemode;
 
-    public abstract void setGamerule(String key, String value);
+    public abstract void gamerule(String key, String value);
 
-    public abstract Map<String, String> getGamerules();
+    public abstract Map<String, String> gamerules();
 }

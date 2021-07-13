@@ -33,7 +33,7 @@ public final class ProxyProperty<T, R> implements InjectorProperty<Class<T>> {
 
     public static final String KEY = "HartshornInternalProxyKey";
     @Getter
-    private final Class<T> object;
+    private final Class<T> value;
     @Getter
     private final Method target;
     private final ProxyFunction<T, R> delegate;
@@ -47,7 +47,7 @@ public final class ProxyProperty<T, R> implements InjectorProperty<Class<T>> {
     private int priority = 10;
 
     private ProxyProperty(Class<T> type, Method target, ProxyFunction<T, R> delegate) {
-        this.object = type;
+        this.value = type;
         this.target = target;
         this.delegate = delegate;
     }
@@ -69,21 +69,21 @@ public final class ProxyProperty<T, R> implements InjectorProperty<Class<T>> {
     }
 
     @Override
-    public String getKey() {
+    public String key() {
         return KEY;
     }
 
-    public Class<?> getTargetClass() {
-        return this.getTarget().getDeclaringClass();
+    public Class<?> targetClass() {
+        return this.target().getDeclaringClass();
     }
 
     public R delegate(T instance, Method proceed, Object self, Object... args) {
-        this.holder.setCancelled(false);
+        this.holder.cancelled(false);
         return this.delegate.delegate(instance, args, new SimpleProxyContext(proceed, this.holder, self));
     }
 
-    public boolean isCancelled() {
-        return this.holder.isCancelled();
+    public boolean cancelled() {
+        return this.holder.cancelled();
     }
 
     public boolean overwriteResult() {
@@ -91,6 +91,6 @@ public final class ProxyProperty<T, R> implements InjectorProperty<Class<T>> {
     }
 
     public boolean isVoid() {
-        return Void.TYPE.equals(this.getTarget().getReturnType());
+        return Void.TYPE.equals(this.target().getReturnType());
     }
 }

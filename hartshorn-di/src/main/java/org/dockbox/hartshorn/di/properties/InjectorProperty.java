@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.di.properties;
 
 public interface InjectorProperty<T> {
 
-    String getKey();
+    String key();
 
-    T getObject();
+    T value();
 }

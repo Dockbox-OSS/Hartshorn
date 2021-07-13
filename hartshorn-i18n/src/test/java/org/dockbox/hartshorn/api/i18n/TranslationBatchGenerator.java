@@ -88,7 +88,7 @@ public final class TranslationBatchGenerator {
         new HartshornRunner().beforeAll(null);
         final Map<String, String> batches = migrateBatches();
         String date = SDF.format(new Date());
-        final Path outputPath = getExistingBatch().toPath().resolve("batches/" + date);
+        final Path outputPath = existingBatch().toPath().resolve("batches/" + date);
         outputPath.toFile().mkdirs();
         outputPath.toFile().mkdir();
 
@@ -108,7 +108,7 @@ public final class TranslationBatchGenerator {
         Map<String, String> batch = HartshornUtils.emptyMap();
         int i = 0;
         for (ComponentContainer container : Hartshorn.context().locator().containers()) {
-            final Class<?> type = container.getType();
+            final Class<?> type = container.type();
             final Collection<Method> methods = Reflect.methods(type, Resource.class);
             for (Method method : methods) {
                 i++;
@@ -142,7 +142,7 @@ public final class TranslationBatchGenerator {
 
         Map<String, String> files = HartshornUtils.emptyMap();
 
-        for (File file : TranslationBatchGenerator.getExistingFiles()) {
+        for (File file : TranslationBatchGenerator.existingFiles()) {
             final List<String> strings = Files.readAllLines(file.toPath(), StandardCharsets.UTF_8);
             Properties cache = new Properties();
             cache.load(new StringReader(batch));
@@ -151,7 +151,7 @@ public final class TranslationBatchGenerator {
                 final String[] property = string.split("=");
                 String key = property[0];
                 if (key.startsWith("$")) continue;
-                String value = String.join("=", HartshornUtils.getArraySubset(property, 1, property.length-1));
+                String value = String.join("=", HartshornUtils.arraySubset(property, 1, property.length-1));
                 if (properties.containsKey(key)) {
                     // Override any existing, drop retired translations
                     cache.setProperty(key, value);
@@ -173,8 +173,8 @@ public final class TranslationBatchGenerator {
         return files;
     }
 
-    private static List<File> getExistingFiles() {
-        final File batch = TranslationBatchGenerator.getExistingBatch();
+    private static List<File> existingFiles() {
+        final File batch = TranslationBatchGenerator.existingBatch();
         if (batch.exists() && batch.isDirectory()) {
             return HartshornUtils.asList(batch.listFiles()).stream()
                     .filter(f -> !f.isDirectory())
@@ -182,7 +182,7 @@ public final class TranslationBatchGenerator {
         } else throw new IllegalStateException("Existing batch could not be found");
     }
 
-    private static File getExistingBatch() {
+    private static File existingBatch() {
         // About as hacky as it gets. Please PR a better version
         return new File(TranslationBatchGenerator.class
                 .getClassLoader().getResource("")

@@ -18,7 +18,7 @@
 package org.dockbox.hartshorn.api.domain.tuple;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 
 /**
  * Represents a triad of values
@@ -33,7 +33,7 @@ import lombok.Getter;
  * @param <C>
  *         type of the third value.
  */
-@Getter
+@Data
 @AllArgsConstructor
 public class Triad<A, B, C> {
 

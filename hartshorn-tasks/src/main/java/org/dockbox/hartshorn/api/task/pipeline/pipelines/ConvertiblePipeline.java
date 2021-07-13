@@ -54,7 +54,7 @@ public class ConvertiblePipeline<P, I> extends AbstractPipeline<P, I> {
     }
 
     /**
-     * Internally calls {@link AbstractPipeline#addPipes(IPipe[])} and returns itself.
+     * Internally calls {@link AbstractPipeline#add(IPipe[])} and returns itself.
      *
      * @param pipes
      *         The non-null varargs of {@link IPipe}s to add to the pipeline
@@ -63,12 +63,12 @@ public class ConvertiblePipeline<P, I> extends AbstractPipeline<P, I> {
      */
     @SafeVarargs
     @Override
-    public final ConvertiblePipeline<P, I> addPipes(@NotNull IPipe<I, I>... pipes) {
-        return (ConvertiblePipeline<P, I>) super.addPipes(pipes);
+    public final ConvertiblePipeline<P, I> add(@NotNull IPipe<I, I>... pipes) {
+        return (ConvertiblePipeline<P, I>) super.add(pipes);
     }
 
     /**
-     * Internally calls {@link AbstractPipeline#addPipe(IPipe)} and returns itself.
+     * Internally calls {@link AbstractPipeline#add(IPipe)} and returns itself.
      *
      * @param pipe
      *         The non-null {@link IPipe} to add to the pipeline
@@ -76,12 +76,12 @@ public class ConvertiblePipeline<P, I> extends AbstractPipeline<P, I> {
      * @return Itself
      */
     @Override
-    public ConvertiblePipeline<P, I> addPipe(@NotNull IPipe<I, I> pipe) {
-        return (ConvertiblePipeline<P, I>) super.addPipe(pipe);
+    public ConvertiblePipeline<P, I> add(@NotNull IPipe<I, I> pipe) {
+        return (ConvertiblePipeline<P, I>) super.add(pipe);
     }
 
     /**
-     * Internally calls {@link AbstractPipeline#addPipeline(AbstractPipeline)} and returns itself.
+     * Internally calls {@link AbstractPipeline#add(AbstractPipeline)} and returns itself.
      *
      * @param pipeline
      *         The non-null {@link AbstractPipeline} whos {@link IPipe}s should be added to
@@ -90,8 +90,8 @@ public class ConvertiblePipeline<P, I> extends AbstractPipeline<P, I> {
      * @return Itself
      */
     @Override
-    public ConvertiblePipeline<P, I> addPipeline(@NotNull AbstractPipeline<?, I> pipeline) {
-        return (ConvertiblePipeline<P, I>) super.addPipeline(pipeline);
+    public ConvertiblePipeline<P, I> add(@NotNull AbstractPipeline<?, I> pipeline) {
+        return (ConvertiblePipeline<P, I>) super.add(pipeline);
     }
 
     /**
@@ -107,12 +107,12 @@ public class ConvertiblePipeline<P, I> extends AbstractPipeline<P, I> {
      */
     @Override
     protected Exceptional<I> process(@NotNull Exceptional<I> exceptionalInput) {
-        for (IPipe<I, I> pipe : this.getPipes()) {
+        for (IPipe<I, I> pipe : this.pipes()) {
             // If the pipelines been cancelled, stop processing any further pipes.
-            if (super.isCancelled()) {
+            if (super.cancelled()) {
                 // Only uncancel the pipeline straight away if there's no pipeline after this one
                 // as it will be checked again in the processConverted method.
-                if (null == this.getNextPipeline()) super.uncancelPipeline();
+                if (null == this.next()) super.permit();
                 return exceptionalInput;
             }
 
@@ -123,7 +123,7 @@ public class ConvertiblePipeline<P, I> extends AbstractPipeline<P, I> {
 
     /**
      * Sets the cancel behaviour to be used by the entire pipeline by internally calling {@link
-     * ConvertiblePipeline#setCancelBehaviour(CancelBehaviour, PipelineDirection)}.
+     * ConvertiblePipeline#cancelBehaviour(CancelBehaviour, PipelineDirection)}.
      *
      * @param cancelBehaviour
      *         A {@link CancelBehaviour} describing the cancellability of the pipeline
@@ -131,8 +131,8 @@ public class ConvertiblePipeline<P, I> extends AbstractPipeline<P, I> {
      * @return Itself
      */
     @Override
-    public ConvertiblePipeline<P, I> setCancelBehaviour(CancelBehaviour cancelBehaviour) {
-        this.setCancelBehaviour(cancelBehaviour, PipelineDirection.BOTH);
+    public ConvertiblePipeline<P, I> cancelBehaviour(CancelBehaviour cancelBehaviour) {
+        this.cancelBehaviour(cancelBehaviour, PipelineDirection.BOTH);
         return this;
     }
 
@@ -158,11 +158,11 @@ public class ConvertiblePipeline<P, I> extends AbstractPipeline<P, I> {
         // This should never be called, unless this class was used initially instead of
         // ConvertiblePipelineSource.
         // (Which shouldn't be possible due to the protected constructor).
-        if (null == this.getPreviousPipeline()) {
+        if (null == this.previous()) {
             throw new IllegalPipelineException("Pipeline wasn't constructed using ConvertiblePipelineSource.");
         }
         else {
-            exceptionalInput = this.getPreviousPipeline().processConverted(input, throwable);
+            exceptionalInput = this.previous().processConverted(input, throwable);
         }
 
         return this.process(exceptionalInput);
@@ -170,11 +170,11 @@ public class ConvertiblePipeline<P, I> extends AbstractPipeline<P, I> {
 
     /** Cancels the pipeline and all the following pipelines. */
     @Override
-    public void cancelPipeline() {
-        super.cancelPipeline();
+    public void cancel() {
+        super.cancel();
 
-        if (null != this.getNextPipeline()) {
-            this.getNextPipeline().cancelPipeline();
+        if (null != this.next()) {
+            this.next().cancel();
         }
     }
 
@@ -187,7 +187,7 @@ public class ConvertiblePipeline<P, I> extends AbstractPipeline<P, I> {
     @Override
     public int size() {
         int size = super.size();
-        if (null != this.getPreviousPipeline()) size += this.getPreviousPipeline().size();
+        if (null != this.previous()) size += this.previous().size();
         if (null != this.converter) size++;
 
         return size;
@@ -212,11 +212,11 @@ public class ConvertiblePipeline<P, I> extends AbstractPipeline<P, I> {
     protected <K> Exceptional<K> processConverted(@NotNull P input, @Nullable Throwable throwable) {
         Exceptional<I> result = this.process(input, throwable);
 
-        if (super.isCancelled()) {
-            super.uncancelPipeline();
+        if (super.cancelled()) {
+            super.permit();
 
             return Exceptional.of(
-                    (K) super.getCancelBehaviour().act(result.orNull(), (Function<Object, Object>) this.converter),
+                    (K) super.cancelBehaviour().act(result.orNull(), (Function<Object, Object>) this.converter),
                     result.unsafeError()
             );
         }
@@ -242,11 +242,11 @@ public class ConvertiblePipeline<P, I> extends AbstractPipeline<P, I> {
         this.converter = converter;
 
         ConvertiblePipeline<P, K> nextPipeline = new ConvertiblePipeline<>(outputClass);
-        nextPipeline.setPreviousPipeline(this);
-        this.setNextPipeline(nextPipeline);
+        nextPipeline.previous(this);
+        this.next(nextPipeline);
 
         // Set the cancel behaviour of the new pipeline to the current one.
-        nextPipeline.setCancelBehaviour(this.getCancelBehaviour(), PipelineDirection.NEITHER);
+        nextPipeline.cancelBehaviour(this.cancelBehaviour(), PipelineDirection.NEITHER);
         return nextPipeline;
     }
 
@@ -262,17 +262,17 @@ public class ConvertiblePipeline<P, I> extends AbstractPipeline<P, I> {
      * @return The previous pipeline. If there are no previous pipelines, then it returns itself
      */
     @SuppressWarnings("unchecked")
-    public <K> ConvertiblePipeline<P, K> removePipeline(Class<K> previousClass) {
+    public <K> ConvertiblePipeline<P, K> remove(Class<K> previousClass) {
         super.clearPipes();
 
-        if (null == this.getPreviousPipeline()) {
+        if (null == this.previous()) {
             this.clearPipelineConnections();
             return (ConvertiblePipeline<P, K>) this;
         }
         else {
-            if (Reflect.assigns(previousClass, this.getPreviousPipeline().getInputClass())) {
+            if (Reflect.assigns(previousClass, this.previous().input())) {
                 ConvertiblePipeline<P, K> previousPipeline =
-                        (ConvertiblePipeline<P, K>) this.getPreviousPipeline();
+                        (ConvertiblePipeline<P, K>) this.previous();
                 this.clearPipelineConnections();
 
                 return previousPipeline;
@@ -280,7 +280,7 @@ public class ConvertiblePipeline<P, I> extends AbstractPipeline<P, I> {
             else {
                 throw new IllegalArgumentException(String.format(
                         "Input class was not correct. [Expected: %s, Actual: %s]",
-                        this.getPreviousPipeline().getInputClass().getCanonicalName(),
+                        this.previous().input().getCanonicalName(),
                         previousClass.getCanonicalName())
                 );
             }
@@ -289,7 +289,7 @@ public class ConvertiblePipeline<P, I> extends AbstractPipeline<P, I> {
 
     /** @return The previous pipeline or null if there isn't one */
     @Nullable
-    protected ConvertiblePipeline<P, ?> getPreviousPipeline() {
+    protected ConvertiblePipeline<P, ?> previous() {
         return this.previousPipeline;
     }
 
@@ -298,27 +298,27 @@ public class ConvertiblePipeline<P, I> extends AbstractPipeline<P, I> {
      * pipelines.
      */
     protected void clearPipelineConnections() {
-        if (null != this.getPreviousPipeline()) {
-            this.getPreviousPipeline().setNextPipeline(null);
-            this.getPreviousPipeline().converter = null;
-            this.setPreviousPipeline(null);
+        if (null != this.previous()) {
+            this.previous().next(null);
+            this.previous().converter = null;
+            this.previous(null);
         }
 
-        if (null != this.getNextPipeline()) {
-            this.getNextPipeline().setPreviousPipeline(null);
-            this.setNextPipeline(null);
+        if (null != this.next()) {
+            this.next().previous(null);
+            this.next(null);
             this.converter = null;
         }
     }
 
     /** @return A {@link Class} of the {@code I} input type for this pipeline */
-    public Class<I> getInputClass() {
+    public Class<I> input() {
         return this.inputClass;
     }
 
     /** @return The next pipeline or null if there isn't one */
     @Nullable
-    protected ConvertiblePipeline<P, ?> getNextPipeline() {
+    protected ConvertiblePipeline<P, ?> next() {
         return this.nextPipeline;
     }
 
@@ -328,7 +328,7 @@ public class ConvertiblePipeline<P, I> extends AbstractPipeline<P, I> {
      * @param nextPipeline
      *         The next pipeline
      */
-    protected void setNextPipeline(@Nullable ConvertiblePipeline<P, ?> nextPipeline) {
+    protected void next(@Nullable ConvertiblePipeline<P, ?> nextPipeline) {
         this.nextPipeline = nextPipeline;
     }
 
@@ -338,7 +338,7 @@ public class ConvertiblePipeline<P, I> extends AbstractPipeline<P, I> {
      * @param previousPipeline
      *         The previous pipeline
      */
-    protected void setPreviousPipeline(@Nullable ConvertiblePipeline<P, ?> previousPipeline) {
+    protected void previous(@Nullable ConvertiblePipeline<P, ?> previousPipeline) {
         this.previousPipeline = previousPipeline;
     }
 
@@ -352,17 +352,17 @@ public class ConvertiblePipeline<P, I> extends AbstractPipeline<P, I> {
      *         The {@link PipelineDirection} that the cancel behaviour needs to be passed
      *         along
      */
-    protected void setCancelBehaviour(CancelBehaviour cancelBehaviour, PipelineDirection direction) {
-        super.setCancelBehaviour(cancelBehaviour);
+    protected void cancelBehaviour(CancelBehaviour cancelBehaviour, PipelineDirection direction) {
+        super.cancelBehaviour(cancelBehaviour);
 
         if ((PipelineDirection.FORWARD == direction || PipelineDirection.BOTH == direction)
-                && null != this.getNextPipeline()) {
-            this.getNextPipeline().setCancelBehaviour(cancelBehaviour, PipelineDirection.FORWARD);
+                && null != this.next()) {
+            this.next().cancelBehaviour(cancelBehaviour, PipelineDirection.FORWARD);
         }
 
         if ((PipelineDirection.BACKWARD == direction || PipelineDirection.BOTH == direction)
-                && null != this.getPreviousPipeline()) {
-            this.getPreviousPipeline().setCancelBehaviour(cancelBehaviour, PipelineDirection.BACKWARD);
+                && null != this.previous()) {
+            this.previous().cancelBehaviour(cancelBehaviour, PipelineDirection.BACKWARD);
         }
     }
 }
