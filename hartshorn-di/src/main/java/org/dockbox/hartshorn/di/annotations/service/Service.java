@@ -31,6 +31,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 @Extends(Component.class)
 @Component(type = ComponentType.FUNCTIONAL)
+@ServiceActivator
 public @interface Service {
 
     String id() default "";
