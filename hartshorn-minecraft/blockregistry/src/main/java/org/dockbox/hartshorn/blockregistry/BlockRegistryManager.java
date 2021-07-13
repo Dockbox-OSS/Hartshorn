@@ -4,6 +4,7 @@ import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.i18n.text.Text;
 import org.dockbox.hartshorn.commands.annotations.Command;
+import org.dockbox.hartshorn.di.annotations.service.Service;
 import org.dockbox.hartshorn.persistence.mapping.GenericType;
 import org.dockbox.hartshorn.persistence.mapping.ObjectMapper;
 import org.dockbox.hartshorn.persistence.properties.PersistenceModifier;
@@ -11,8 +12,6 @@ import org.dockbox.hartshorn.persistence.properties.PersistenceProperty;
 import org.dockbox.hartshorn.persistence.registry.Registry;
 import org.dockbox.hartshorn.server.minecraft.item.Item;
 import org.dockbox.hartshorn.server.minecraft.item.storage.MinecraftItems;
-import org.dockbox.hartshorn.server.minecraft.players.Hand;
-import org.dockbox.hartshorn.server.minecraft.players.Player;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -23,7 +22,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Command({"blockregistry", "registry"})
+@Service
 public class BlockRegistryManager
 {
 
@@ -35,20 +34,6 @@ public class BlockRegistryManager
     public BlockRegistryManager() {
         //this.blockRegistry = this.loadBlockRegistry();
         this.blockRegistry = HartshornUtils.emptyMap();
-    }
-
-    @Command(value = "variant", arguments = "[item{Item}]", permission = Hartshorn.GLOBAL_PERMITTED)
-    public void determineVariant(Player player, Item item) {
-        if (null == item)
-            item = player.itemInHand(Hand.MAIN_HAND);
-        if (null == item) {
-            player.send(Text.of("You need to have an item in your main hand or specify an id"));
-            return;
-        }
-        final String id = item.id();
-        this.variant(id)
-            .present(v -> player.send(Text.of("The variant of ", id, " is ", v)))
-            .absent(() -> player.send(Text.of("There doesn't appear to be a registered variant for ", id)));
     }
 
     /**
