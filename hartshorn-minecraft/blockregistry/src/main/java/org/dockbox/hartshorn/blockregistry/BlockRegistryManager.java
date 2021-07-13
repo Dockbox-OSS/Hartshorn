@@ -42,7 +42,7 @@ public class BlockRegistryManager
         if (null == item)
             item = player.itemInHand(Hand.MAIN_HAND);
         if (null == item) {
-            player.send(Text.of("You need to have an item in your hand or specify an id"));
+            player.send(Text.of("You need to have an item in your main hand or specify an id"));
             return;
         }
         final String id = item.id();
@@ -112,7 +112,7 @@ public class BlockRegistryManager
      *
      * @return An {@link Exceptional} containing the family id
      */
-    public Exceptional<String> getFamilyId(@NotNull String rootId) {
+    public Exceptional<String> familyId(@NotNull String rootId) {
         if (this.isFamilyId(rootId))
             return Exceptional.of(rootId);
 
@@ -130,7 +130,7 @@ public class BlockRegistryManager
      *
      * @return A {@link Set} containing the registered aliases
      */
-    public Set<String> getAliases(@NotNull String rootId) {
+    public Set<String> aliases(@NotNull String rootId) {
         return this.rootAliases.getOrDefault(rootId, HartshornUtils.emptySet());
     }
 
@@ -155,7 +155,7 @@ public class BlockRegistryManager
      * @return A {@link Registry} mapping the root ids of the variants to {@link VariantIdentifier variant identifiers}
      */
     public Registry<String> variants(@NotNull String rootId) {
-        return this.getFamilyId(rootId)
+        return this.familyId(rootId)
             .map(familyId -> this.blockRegistry.getOrDefault(familyId, new Registry<>()))
             .or(new Registry<>());
     }

@@ -1,8 +1,6 @@
 package org.dockbox.hartshorn.blockregistry;
 
 import org.dockbox.hartshorn.api.Hartshorn;
-import org.dockbox.hartshorn.blockregistry.BlockRegistryManager;
-import org.dockbox.hartshorn.blockregistry.VariantIdentifier;
 import org.dockbox.hartshorn.blockregistry.init.AirInit;
 import org.dockbox.hartshorn.blockregistry.init.ArchesInit;
 import org.dockbox.hartshorn.blockregistry.init.BarrelsInit;
