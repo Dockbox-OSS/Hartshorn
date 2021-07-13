@@ -37,11 +37,7 @@ import org.spongepowered.plugin.PluginContainer;
 import org.spongepowered.plugin.jvm.Plugin;
 
 @Plugin(Hartshorn.PROJECT_ID)
-@Activator(
-        value = Sponge8Bootstrap.class,
-        prefix = Hartshorn.PACKAGE_PREFIX,
-        configs = @InjectConfig(SpongeInjector.class)
-)
+@Activator(value = Sponge8Bootstrap.class, configs = @InjectConfig(SpongeInjector.class))
 public class Sponge8Application {
 
     protected static Sponge8Application instance;

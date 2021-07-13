@@ -17,7 +17,6 @@
 
 package org.dockbox.hartshorn.test;
 
-import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.HartshornApplication;
 import org.dockbox.hartshorn.api.SimpleMetaProvider;
 import org.dockbox.hartshorn.di.ApplicationContextAware;
@@ -25,22 +24,14 @@ import org.dockbox.hartshorn.di.DefaultModifiers;
 import org.dockbox.hartshorn.di.MetaProviderModifier;
 import org.dockbox.hartshorn.di.annotations.activate.Activator;
 import org.dockbox.hartshorn.di.annotations.inject.InjectConfig;
-import org.dockbox.hartshorn.di.annotations.inject.InjectPhase;
 import org.dockbox.hartshorn.test.util.JUnitInjector;
-import org.dockbox.hartshorn.test.util.LateJUnitInjector;
 import org.dockbox.hartshorn.util.Reflect;
 
 import java.lang.reflect.Field;
 
 import lombok.Getter;
 
-@Activator(
-        value = JUnit5Bootstrap.class,
-        prefix = Hartshorn.PACKAGE_PREFIX,
-        configs = {
-                @InjectConfig(JUnitInjector.class),
-                @InjectConfig(value = LateJUnitInjector.class, phase = InjectPhase.LATE)
-        })
+@Activator(value = JUnit5Bootstrap.class, configs = @InjectConfig(JUnitInjector.class))
 public final class JUnit5Application {
 
     @Getter
