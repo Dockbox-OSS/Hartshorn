@@ -26,8 +26,9 @@ import org.dockbox.hartshorn.server.minecraft.dimension.Worlds;
 import org.dockbox.hartshorn.server.minecraft.dimension.position.Location;
 import org.dockbox.hartshorn.server.minecraft.dimension.world.World;
 import org.dockbox.hartshorn.server.minecraft.events.player.PlayerPortalEvent;
-import org.dockbox.hartshorn.server.minecraft.events.server.ServerReloadEvent;
-import org.dockbox.hartshorn.server.minecraft.events.server.ServerStartedEvent;
+import org.dockbox.hartshorn.server.minecraft.events.server.EngineChangedState;
+import org.dockbox.hartshorn.server.minecraft.events.server.ServerState.Reload;
+import org.dockbox.hartshorn.server.minecraft.events.server.ServerState.Started;
 
 import java.util.concurrent.TimeUnit;
 
@@ -44,12 +45,12 @@ public class WorldManagement {
     protected static final String WORLD_MANAGER = "hartshorn.worlds";
 
     @Listener
-    public void on(ServerReloadEvent event) {
+    public void reload(EngineChangedState<Reload> event) {
         this.config = this.context.get(WorldManagementConfig.class); // Reload from file, clean instance
     }
 
     @Listener
-    public void on(ServerStartedEvent event) {
+    public void started(EngineChangedState<Started> event) {
         this.context.get(TaskRunner.class).acceptDelayed(this::unloadEmptyWorlds, 5, TimeUnit.MINUTES);
     }
 

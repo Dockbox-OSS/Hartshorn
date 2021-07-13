@@ -39,7 +39,8 @@ import org.dockbox.hartshorn.persistence.FileType;
 import org.dockbox.hartshorn.persistence.FileTypeProperty;
 import org.dockbox.hartshorn.playersettings.Setting;
 import org.dockbox.hartshorn.server.minecraft.events.chat.SendChatEvent;
-import org.dockbox.hartshorn.server.minecraft.events.server.ServerReloadEvent;
+import org.dockbox.hartshorn.server.minecraft.events.server.EngineChangedState;
+import org.dockbox.hartshorn.server.minecraft.events.server.ServerState.Reload;
 import org.dockbox.hartshorn.server.minecraft.item.storage.MinecraftItems;
 import org.dockbox.hartshorn.server.minecraft.players.Player;
 import org.dockbox.hartshorn.util.HartshornUtils;
@@ -129,7 +130,7 @@ public class Dave implements InjectableType {
     }
 
     @Listener
-    public void on(ServerReloadEvent event) {
+    public void on(EngineChangedState<Reload> event) {
         this.enable();
     }
 
