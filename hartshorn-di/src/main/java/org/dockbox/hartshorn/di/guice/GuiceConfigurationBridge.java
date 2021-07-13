@@ -15,7 +15,7 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.di.inject.modules;
+package org.dockbox.hartshorn.di.guice;
 
 import com.google.inject.AbstractModule;
 
@@ -27,12 +27,12 @@ import org.dockbox.hartshorn.di.inject.Injector;
 import java.lang.annotation.Annotation;
 import java.util.function.Supplier;
 
-public class InjectConfigurationModule extends AbstractModule implements Binder {
+public class GuiceConfigurationBridge extends AbstractModule implements Binder {
 
     private final InjectConfiguration configuration;
     private final Injector injector;
 
-    public InjectConfigurationModule(InjectConfiguration configuration, Injector injector) {
+    public GuiceConfigurationBridge(InjectConfiguration configuration, Injector injector) {
         this.configuration = configuration;
         this.injector = injector;
     }

@@ -37,8 +37,6 @@ public interface ApplicationBinder extends Binder {
     void add(WireContext<?, ?> context);
     void add(BeanContext<?, ?> context);
 
-    <T, I extends T> Exceptional<Class<I>> type(Class<T> type);
-
     <T> T invoke(Method method);
     <T> T invoke(Method method, Object instance);
 }

@@ -15,27 +15,26 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.di.inject.modules;
-
-import com.google.inject.AbstractModule;
+package org.dockbox.hartshorn.di.inject;
 
 import org.dockbox.hartshorn.di.annotations.inject.Named;
 
-public class InstanceMetaModule<T> extends AbstractModule {
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
-    private final Class<T> target;
-    private final T instance;
-    private final Named meta;
+@Getter
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+public class KeyBinding<T> {
 
-    public InstanceMetaModule(Class<T> target, T instance,  Named meta) {
-        this.target = target;
-        this.instance = instance;
-        this.meta = meta;
+    private final Class<T> type;
+    private final Named annotation;
+
+    public static <T> KeyBinding<T> of(Class<T> type, Named annotation) {
+        return new KeyBinding<>(type, annotation);
     }
 
-    @Override
-    protected void configure() {
-        super.configure();
-        this.bind(this.target).annotatedWith(this.meta).toInstance(this.instance);
+    public static <T> KeyBinding<T> of(Class<T> type) {
+        return new KeyBinding<>(type, null);
     }
 }

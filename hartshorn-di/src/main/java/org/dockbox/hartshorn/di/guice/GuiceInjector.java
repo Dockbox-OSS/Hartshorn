@@ -15,14 +15,13 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.di.inject;
+package org.dockbox.hartshorn.di.guice;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Binding;
 import com.google.inject.Guice;
 import com.google.inject.Key;
 import com.google.inject.ProvisionException;
-import com.google.inject.spi.InstanceBinding;
 import com.google.inject.spi.LinkedKeyBinding;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
@@ -35,14 +34,9 @@ import org.dockbox.hartshorn.di.annotations.inject.Named;
 import org.dockbox.hartshorn.di.annotations.inject.Wired;
 import org.dockbox.hartshorn.di.binding.BindingData;
 import org.dockbox.hartshorn.di.binding.Bindings;
-import org.dockbox.hartshorn.di.inject.modules.GuicePrefixScannerModule;
-import org.dockbox.hartshorn.di.inject.modules.InjectConfigurationModule;
-import org.dockbox.hartshorn.di.inject.modules.InstanceMetaModule;
-import org.dockbox.hartshorn.di.inject.modules.InstanceModule;
-import org.dockbox.hartshorn.di.inject.modules.ProvisionMetaModule;
-import org.dockbox.hartshorn.di.inject.modules.ProvisionModule;
-import org.dockbox.hartshorn.di.inject.modules.StaticMetaModule;
-import org.dockbox.hartshorn.di.inject.modules.StaticModule;
+import org.dockbox.hartshorn.di.inject.BeanContext;
+import org.dockbox.hartshorn.di.inject.Injector;
+import org.dockbox.hartshorn.di.inject.KeyBinding;
 import org.dockbox.hartshorn.di.inject.wired.ConstructorWireContext;
 import org.dockbox.hartshorn.di.inject.wired.WireContext;
 import org.dockbox.hartshorn.di.properties.AnnotationProperty;
@@ -56,7 +50,6 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
@@ -68,19 +61,18 @@ import java.util.function.Supplier;
 public class GuiceInjector implements Injector {
 
     private final transient Set<WireContext<?, ?>> bindings = HartshornUtils.emptyConcurrentSet();
-    private final transient Set<AbstractModule> modules = HartshornUtils.emptyConcurrentSet();
-
+    private final transient HartshornModule module = new HartshornModule();
     private com.google.inject.Injector internalInjector;
 
     @Override
     public <C, T extends C, A extends Annotation> void provide(Class<C> contract, Supplier<? extends T> supplier) {
-        this.modules.add(new ProvisionModule<>(contract, supplier));
+        this.module.add(contract, supplier);
         this.reset();
     }
 
     @Override
     public <C, T extends C, A extends Annotation> void provide(Class<C> contract, Supplier<? extends T> supplier, Named meta) {
-        this.modules.add(new ProvisionMetaModule<>(contract, supplier, meta));
+        this.module.add(contract, meta, supplier);
         this.reset();
     }
 
@@ -100,8 +92,7 @@ public class GuiceInjector implements Injector {
      */
     @Override
     public <C, T extends C> void bind(Class<C> contract, Class<? extends T> implementation) {
-        AbstractModule localModule = new StaticModule<>(contract, implementation);
-        this.modules.add(localModule);
+        this.module.add(contract, implementation);
         this.reset();
     }
 
@@ -134,7 +125,7 @@ public class GuiceInjector implements Injector {
     @Override
     public void bind(InjectConfiguration configuration) {
         if (configuration != null) {
-            this.modules.add(new InjectConfigurationModule(configuration, this));
+            this.module.add(new GuiceConfigurationBridge(configuration, this));
             this.reset();
         }
     }
@@ -142,7 +133,7 @@ public class GuiceInjector implements Injector {
     @Override
     public void bind(String prefix) {
         Map<Key<?>, Class<?>> scannedBinders = this.scan(prefix);
-        this.modules.add(new GuicePrefixScannerModule(scannedBinders));
+        this.module.add(scannedBinders);
         this.reset();
     }
 
@@ -194,15 +185,11 @@ public class GuiceInjector implements Injector {
 
     private Map<Key<?>, Binding<?>> bindings() {
         Map<Key<?>, Binding<?>> bindings = HartshornUtils.emptyConcurrentMap();
+
         for (Entry<Key<?>, Binding<?>> entry : this.rebuild().getAllBindings().entrySet()) {
             Key<?> key = entry.getKey();
             Binding<?> binding = entry.getValue();
             try {
-                if (binding.getProvider() instanceof ProvisionModule
-                        || binding.getProvider() instanceof ProvisionMetaModule
-                        || null == binding.getProvider().get()
-                ) continue;
-
                 Class<?> keyType = binding.getKey().getTypeLiteral().getRawType();
                 Class<?> providerType = binding.getProvider().get().getClass();
 
@@ -232,12 +219,19 @@ public class GuiceInjector implements Injector {
         this.bindings.add(context);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void add(BeanContext<?, ?> context) {
+        final KeyBinding<?> binding = context.key();
+        Key<?> key = Key.get(binding.type());
+        if (binding.annotation() != null) {
+            key = key.withAnnotation(binding.annotation());
+        }
         if (context.singleton()) {
-            this.modules.add(new InstanceModule<>(context.key(), context.provider().get()));
+            final Object instance = context.provider().get();
+            this.module.add((KeyBinding<Object>) binding, () ->instance);
         } else {
-            this.modules.add(new ProvisionModule<>(context.key(), () -> context.provider().get()));
+            this.module.add((KeyBinding<Object>) binding, () -> context.provider().get());
         }
         this.reset();
     }
@@ -267,22 +261,6 @@ public class GuiceInjector implements Injector {
         catch (Throwable e) {
             return null;
         }
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public <T, I extends T> Exceptional<Class<I>> type(Class<T> type) {
-        for (Entry<Key<?>, Binding<?>> binding : this.bindings().entrySet()) {
-            if (binding.getKey().getTypeLiteral().getRawType().equals(type)) {
-                if (binding.getValue() instanceof LinkedKeyBinding) {
-                    return Exceptional.of(() -> (Class<I>) ((LinkedKeyBinding<?>) binding.getValue()).getLinkedKey().getTypeLiteral().getRawType());
-                }
-                else if (binding.getValue() instanceof InstanceBinding) {
-                    return Exceptional.of(() -> (Class<I>) ((InstanceBinding<?>) binding.getValue()).getInstance().getClass());
-                }
-            }
-        }
-        return Exceptional.empty();
     }
 
     private Map<Key<?>, Class<?>> scan(String prefix) {
@@ -332,31 +310,26 @@ public class GuiceInjector implements Injector {
 
     private com.google.inject.Injector rebuild() {
         if (null == this.internalInjector) {
-            Collection<AbstractModule> modules = new ArrayList<>(this.modules);
-            modules.addAll(this.modules);
-            this.internalInjector = Guice.createInjector(modules);
+            this.internalInjector = Guice.createInjector(this.module);
         }
         return this.internalInjector;
     }
 
     @Override
     public <C, T extends C> void bind(Class<C> contract, Class<? extends T> implementation, Named meta) {
-        AbstractModule localModule = new StaticMetaModule<>(contract, implementation, meta);
-        this.modules.add(localModule);
+        this.module.add(contract, meta, implementation);
         this.reset();
     }
 
     @Override
     public <C, T extends C> void bind(Class<C> contract, T instance) {
-        AbstractModule localModule = new InstanceModule<>(contract, instance);
-        this.modules.add(localModule);
+        this.module.add(contract, () -> instance);
         this.reset();
     }
 
     @Override
     public <C, T extends C> void bind(Class<C> contract, T instance, Named meta) {
-        AbstractModule localModule = new InstanceMetaModule<>(contract, instance, meta);
-        this.modules.add(localModule);
+        this.module.add(contract, meta, () -> instance);
         this.reset();
     }
 
