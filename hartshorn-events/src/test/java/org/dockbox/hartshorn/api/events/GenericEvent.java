@@ -15,15 +15,15 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.server.minecraft.packets.annotations;
+package org.dockbox.hartshorn.api.events;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import org.dockbox.hartshorn.api.events.parents.Event;
 
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
-public @interface Packet {
-    Class<? extends org.dockbox.hartshorn.server.minecraft.packets.Packet> value();
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@AllArgsConstructor
+@Getter
+public abstract class GenericEvent<T> implements Event {
+    private final T value;
 }

@@ -35,6 +35,8 @@ import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
@@ -70,6 +72,8 @@ public final class SimpleEventWrapper implements Comparable<SimpleEventWrapper>,
     @Getter
     private final Class<? extends Event> eventType;
     @Getter
+    private final Type[] eventParameters;
+    @Getter
     private final Method method;
     @Getter
     private final int priority;
@@ -81,6 +85,13 @@ public final class SimpleEventWrapper implements Comparable<SimpleEventWrapper>,
         this.eventType = eventType;
         this.method = method;
         this.priority = priority;
+
+        final Type genericType = method.getGenericParameterTypes()[0];
+        if (genericType instanceof ParameterizedType parameterizedType) {
+            this.eventParameters = parameterizedType.getActualTypeArguments();
+        } else {
+            this.eventParameters = new Type[0];
+        }
 
         // Listener methods may be private or protected, before invoking it we need to ensure it is
         // accessible.
@@ -181,6 +192,23 @@ public final class SimpleEventWrapper implements Comparable<SimpleEventWrapper>,
                 }
             }
         }
+
+        if (this.eventParameters.length > 0) {
+            final Type[] actualTypeArguments = (((ParameterizedType) event.getClass().getGenericSuperclass()).getActualTypeArguments());
+            if (this.eventParameters.length != actualTypeArguments.length) return false;
+
+            for (int i = 0; i < this.eventParameters.length; i++) {
+                final Type eventParameter = this.eventParameters[i];
+                final Type actualTypeArgument = actualTypeArguments[i];
+
+                if (eventParameter instanceof Class && actualTypeArgument instanceof Class) {
+                    if (!Reflect.assigns((Class<?>) eventParameter, (Class<?>) actualTypeArgument)) {
+                        return false;
+                    }
+                }
+            }
+        }
+
         return true;
     }
 

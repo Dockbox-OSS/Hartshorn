@@ -20,13 +20,16 @@ package org.dockbox.hartshorn.server.minecraft.packets;
 import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.annotations.PostBootstrap;
 import org.dockbox.hartshorn.api.annotations.UseBootstrap;
-import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.events.EventBus;
-import org.dockbox.hartshorn.api.events.parents.Event;
+import org.dockbox.hartshorn.api.events.EventWrapper;
 import org.dockbox.hartshorn.di.annotations.service.Service;
 import org.dockbox.hartshorn.server.minecraft.events.packet.PacketEvent;
-import org.dockbox.hartshorn.server.minecraft.packets.annotations.Packet;
 import org.dockbox.hartshorn.util.Reflect;
+
+import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.Collection;
 
 @Service(activators = UseBootstrap.class)
 class PacketValidationService {
@@ -34,18 +37,25 @@ class PacketValidationService {
     @PostBootstrap
     public void addEventValidation() {
         EventBus bus = Hartshorn.context().get(EventBus.class);
-        bus.addValidationRule(method -> {
-            for (Class<?> param : method.getParameterTypes()) {
-                if (Reflect.assigns(Event.class, param)) {
-                    if (Reflect.assigns(PacketEvent.class, param)
-                            && Reflect.annotation(method, Packet.class).absent()) {
-                        return Exceptional.of(false, new IllegalArgumentException("Needs @Packet annotation: " + method.toGenericString()));
+        final PacketContext context = new PacketContext();
+
+        for (EventWrapper wrapper : bus.invokers().values().stream().flatMap(Collection::stream).toList()) {
+
+            final Method method = wrapper.method();
+            final Class<?> parameterType = method.getParameterTypes()[0];
+            if (Reflect.assigns(PacketEvent.class, parameterType)) {
+                Type genericParameterType = method.getGenericParameterTypes()[0];
+                if (genericParameterType instanceof ParameterizedType parameterizedType) {
+                    final Type actualType = parameterizedType.getActualTypeArguments()[0];
+                    if (actualType instanceof Class && Reflect.assigns(Packet.class, (Class<?>) actualType)) {
+                        //noinspection unchecked
+                        context.add((Class<? extends Packet>) actualType);
                     }
-                    return Exceptional.of(true);
                 }
             }
-            // Typically already caught by the event bus itself, this is just so we return a validated message
-            return Exceptional.of(false, new IllegalArgumentException("At least one parameter should be a subclass of Event: " + method.toGenericString()));
-        });
+
+        }
+        Hartshorn.context().add(context);
     }
+
 }
