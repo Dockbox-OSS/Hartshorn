@@ -21,6 +21,7 @@ import org.dockbox.hartshorn.api.events.annotations.Listener.Priority;
 import org.dockbox.hartshorn.api.events.annotations.filter.Filter;
 import org.dockbox.hartshorn.api.events.listeners.BasicEventListener;
 import org.dockbox.hartshorn.api.events.listeners.FilteredEventListener;
+import org.dockbox.hartshorn.api.events.listeners.GenericEventListener;
 import org.dockbox.hartshorn.api.events.listeners.PriorityEventListener;
 import org.dockbox.hartshorn.api.events.listeners.StaticEventListener;
 import org.dockbox.hartshorn.api.events.processing.FilterTypes;
@@ -31,6 +32,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.lang.annotation.Annotation;
+import java.util.List;
 
 @ExtendWith(HartshornRunner.class)
 public class EventBusTests {
@@ -94,6 +96,30 @@ public class EventBusTests {
 
         bus.post(event);
         Assertions.assertFalse(FilteredEventListener.fired);
+    }
+
+    @Test
+    void testGenericEventsAreFiltered() {
+        EventBus bus = this.bus();
+        bus.subscribe(GenericEventListener.class);
+        final GenericEvent<String> event = new GenericEvent<>("String") {};
+        Assertions.assertDoesNotThrow(() -> bus.post(event));
+    }
+
+    @Test
+    void testGenericWildcardsArePosted() {
+        EventBus bus = this.bus();
+        // Ensure the values have not been affected by previous tests
+        GenericEventListener.objects().clear();
+        bus.subscribe(GenericEventListener.class);
+        final GenericEvent<String> stringEvent = new GenericEvent<>("String") {};
+        final GenericEvent<Integer> integerEvent = new GenericEvent<>(1) {};
+        bus.post(stringEvent);
+        bus.post(integerEvent);
+        final List<Object> objects = GenericEventListener.objects();
+        Assertions.assertEquals(2, objects.size());
+        Assertions.assertEquals("String", objects.get(0));
+        Assertions.assertEquals(1, objects.get(1));
     }
 
     @SuppressWarnings("SameParameterValue")
