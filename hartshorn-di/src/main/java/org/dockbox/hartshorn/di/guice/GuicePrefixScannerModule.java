@@ -15,7 +15,7 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.di.inject.modules;
+package org.dockbox.hartshorn.di.guice;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Key;

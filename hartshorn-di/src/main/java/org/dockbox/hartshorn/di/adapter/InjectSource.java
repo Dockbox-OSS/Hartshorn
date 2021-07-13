@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.di.adapter;
 
-import org.dockbox.hartshorn.di.inject.GuiceInjector;
+import org.dockbox.hartshorn.di.guice.GuiceInjector;
 import org.dockbox.hartshorn.di.inject.Injector;
 
 import java.util.function.Supplier;
