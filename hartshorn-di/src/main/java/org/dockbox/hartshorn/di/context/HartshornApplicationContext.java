@@ -217,11 +217,6 @@ public class HartshornApplicationContext extends ManagedHartshornContext {
     }
 
     @Override
-    public <T, I extends T> Exceptional<Class<I>> type(Class<T> type) {
-        return this.internalInjector().type(type);
-    }
-
-    @Override
     public <T> T invoke(Method method) {
         return this.internalInjector().invoke(method);
     }

@@ -20,13 +20,13 @@ package org.dockbox.hartshorn.di;
 import com.google.common.collect.Multimap;
 
 import org.dockbox.hartshorn.api.Hartshorn;
-import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.exceptions.ApplicationException;
 import org.dockbox.hartshorn.di.binding.Bindings;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.di.context.HartshornApplicationContext;
 import org.dockbox.hartshorn.di.context.ManagedHartshornContext;
-import org.dockbox.hartshorn.di.inject.GuiceInjector;
+import org.dockbox.hartshorn.di.guice.GuiceInjector;
+import org.dockbox.hartshorn.di.guice.HartshornModule;
 import org.dockbox.hartshorn.di.inject.Injector;
 import org.dockbox.hartshorn.di.properties.BindingMetaProperty;
 import org.dockbox.hartshorn.di.services.BeanServiceProcessor;
@@ -65,7 +65,7 @@ import java.util.stream.Stream;
 @ExtendWith(HartshornRunner.class)
 public class ApplicationContextTests {
 
-    private static final Field modules;
+    private static final Field module;
     private static final Field bindings;
     private static final Field injectionPoints;
     private static final Field serviceModifiers;
@@ -76,8 +76,8 @@ public class ApplicationContextTests {
 
     static {
         try {
-            modules = GuiceInjector.class.getDeclaredField("modules");
-            modules.setAccessible(true);
+            module = GuiceInjector.class.getDeclaredField("module");
+            module.setAccessible(true);
 
             bindings = GuiceInjector.class.getDeclaredField("bindings");
             bindings.setAccessible(true);
@@ -106,15 +106,6 @@ public class ApplicationContextTests {
     }
 
     @Test
-    public void testStaticBindingStoresBinding() throws ApplicationException {
-        context(true).bind(SampleInterface.class, SampleImplementation.class);
-        Exceptional<Class<SampleInterface>> binding = context(false).type(SampleInterface.class);
-        Assertions.assertTrue(binding.present());
-        Class<SampleInterface> bindingClass = binding.get();
-        Assertions.assertEquals(SampleImplementation.class, bindingClass);
-    }
-
-    @Test
     public void testStaticBindingCanBeProvided() throws ApplicationException {
         context(true).bind(SampleInterface.class, SampleImplementation.class);
         SampleInterface provided = Hartshorn.context().get(SampleInterface.class);
@@ -139,15 +130,6 @@ public class ApplicationContextTests {
     }
 
     @Test
-    public void testInstanceBindingStoresBinding() throws ApplicationException {
-        context(true).bind(SampleInterface.class, new SampleImplementation());
-        Exceptional<Class<SampleInterface>> binding = context(false).type(SampleInterface.class);
-        Assertions.assertTrue(binding.present());
-        Class<SampleInterface> bindingClass = binding.get();
-        Assertions.assertEquals(SampleImplementation.class, bindingClass);
-    }
-
-    @Test
     public void testInstanceBindingCanBeProvided() throws ApplicationException {
         context(true).bind(SampleInterface.class, new SampleImplementation());
         SampleInterface provided = Hartshorn.context().get(SampleInterface.class);
@@ -169,14 +151,6 @@ public class ApplicationContextTests {
         Assertions.assertEquals(SampleImplementation.class, providedClass);
 
         Assertions.assertEquals("Hartshorn", provided.name());
-    }
-
-    @Test
-    public void testProviderBindingStoresBinding() throws ApplicationException {
-        context(true).provide(SampleInterface.class, SampleImplementation::new);
-        Exceptional<Class<SampleInterface>> binding = context(false).type(SampleInterface.class);
-        // Unlike instance and static bindings, providers cannot be evaluated this early
-        Assertions.assertTrue(binding.absent());
     }
 
     @Test
@@ -465,7 +439,7 @@ public class ApplicationContextTests {
         try {
             Injector injector = (Injector) internalInjector.invoke(context);
             if (reset) {
-                modules.set(injector, HartshornUtils.emptyConcurrentSet());
+                module.set(injector, new HartshornModule());
                 bindings.set(injector, HartshornUtils.emptyConcurrentSet());
                 injectionPoints.set(context, HartshornUtils.emptyConcurrentSet());
                 serviceModifiers.set(context, HartshornUtils.emptyConcurrentSet());
