@@ -40,7 +40,7 @@ public class Registry<V> extends HashMap<String, RegistryColumn<V>> {
 
     public Registry(Map<RegistryIdentifier, RegistryColumn<V>> data) {
         for (Entry<RegistryIdentifier, RegistryColumn<V>> entry : data.entrySet()) {
-            this.put(entry.getKey().getKey(), entry.getValue());
+            this.put(entry.getKey().key(), entry.getValue());
         }
     }
 
@@ -54,7 +54,7 @@ public class Registry<V> extends HashMap<String, RegistryColumn<V>> {
      * @return Itself.
      */
     public Registry<V> addRegistry(@NotNull Map<RegistryIdentifier, RegistryColumn<V>> other) {
-        other.forEach(this::addData);
+        other.forEach(this::add);
         return this;
     }
 
@@ -62,7 +62,7 @@ public class Registry<V> extends HashMap<String, RegistryColumn<V>> {
         // Iterate over entries instead of using putAll to avoid overwriting existing
         // column values.
         for (Entry<String, RegistryColumn<V>> column : other.entrySet()) {
-            this.addData(column.getKey(), column.getValue());
+            this.add(new SimpleIdentifier(column.getKey()), column.getValue());
         }
         return this;
     }
@@ -71,28 +71,7 @@ public class Registry<V> extends HashMap<String, RegistryColumn<V>> {
      * Adds data to the Registry. If the columnID does not exist, it creates a new column, otherwise
      * it adds the data to the existing column.
      *
-     * @param key
-     *         The {@link String key} for which this data will be added to.
-     * @param values
-     *         A collection of type {@code V} or its children to be added.
-     *
-     * @return Itself.
-     */
-    public Registry<V> addData(String key, Collection<V> values) {
-        if (super.containsKey(key)) {
-            super.get(key).addAll(values);
-        }
-        else {
-            super.put(key, new RegistryColumn<>(values));
-        }
-        return this;
-    }
-
-    /**
-     * Adds data to the Registry. If the columnID does not exist, it creates a new column, otherwise
-     * it adds the data to the existing column.
-     *
-     * @param columnID
+     * @param identifier
      *         The {@link RegistryIdentifier} for which this data will be added to.
      * @param values
      *         A safe varargs of type {@code V} to be added.
@@ -100,19 +79,36 @@ public class Registry<V> extends HashMap<String, RegistryColumn<V>> {
      * @return Itself.
      */
     @SafeVarargs
-    public final Registry<V> addData(RegistryIdentifier columnID, V... values) {
-        return this.addData(columnID, Arrays.asList(values));
+    public final Registry<V> add(RegistryIdentifier identifier, V... values) {
+        return this.add(identifier, new RegistryColumn<>(Arrays.asList(values)));
     }
 
-    public Registry<V> addData(RegistryIdentifier columnID, Collection<V> values) {
-        return this.addData(columnID.getKey(), values);
+    /**
+     * Adds data to the Registry. If the columnID does not exist, it creates a new column, otherwise
+     * it adds the data to the existing column.
+     *
+     * @param identifier
+     *         The {@link RegistryIdentifier} for which this data will be added to.
+     * @param column
+     *         A {@link RegistryColumn} of type {@code V} to be added.
+     *
+     * @return Itself.
+     */
+    public Registry<V> add(RegistryIdentifier identifier, RegistryColumn<V> column) {
+        if (this.containsKey(identifier.key())) {
+            this.get(identifier.key()).addAll(column);
+        }
+        else {
+            super.put(identifier.key(), column);
+        }
+        return this;
     }
 
     /**
      * Adds a column of data to the Registry. <B>Note</B> this will override an existing column if
      * they share the same {@link RegistryIdentifier}
      *
-     * @param columnID
+     * @param identifier
      *         The {@link RegistryIdentifier} for which to add this data added under.
      * @param values
      *         A safe varargs of type {@code V} to be added.
@@ -120,8 +116,8 @@ public class Registry<V> extends HashMap<String, RegistryColumn<V>> {
      * @return Itself.
      */
     @SafeVarargs
-    public final Registry<V> addColumn(RegistryIdentifier columnID, V... values) {
-        return this.addColumn(columnID.getKey(), values);
+    public final Registry<V> addColumn(RegistryIdentifier identifier, V... values) {
+        return this.addColumn(identifier.key(), values);
     }
 
     @SafeVarargs
@@ -134,33 +130,33 @@ public class Registry<V> extends HashMap<String, RegistryColumn<V>> {
      * Adds a column of data to the Registry. <B>Note</B> this will override an existing column if
      * they share the same {@link RegistryIdentifier}
      *
-     * @param columnID
+     * @param identifier
      *         The {@link RegistryIdentifier} for which to add this data added under.
      * @param values
      *         A collection of type {@code V} or its children to be added.
      *
      * @return Itself.
      */
-    public Registry<V> addColumn(RegistryIdentifier columnID, Collection<V> values) {
-        super.put(columnID.getKey(), new RegistryColumn<>(values));
+    public Registry<V> addColumn(RegistryIdentifier identifier, Collection<V> values) {
+        super.put(identifier.key(), new RegistryColumn<>(values));
         return this;
     }
 
     public Registry<V> addColumn(RegistryIdentifier columnID, RegistryColumn<V> column) {
-        super.put(columnID.getKey(), column);
+        this.put(columnID.key(), column);
         return this;
     }
 
     /**
-     * @param columnIDs
+     * @param identifiers
      *         A varargs of {@link RegistryIdentifier}s to remove from the Registry if
      *         contained.
      *
      * @return Itself.
      */
-    public Registry<V> removeColumns(@NotNull RegistryIdentifier... columnIDs) {
-        for (RegistryIdentifier columnID : columnIDs) {
-            this.remove(columnID);
+    public Registry<V> removeColumns(@NotNull RegistryIdentifier... identifiers) {
+        for (RegistryIdentifier identifier : identifiers) {
+            this.remove(identifier);
         }
         return this;
     }
@@ -178,15 +174,15 @@ public class Registry<V> extends HashMap<String, RegistryColumn<V>> {
      */
     @SafeVarargs
     public final RegistryColumn<V> getColumnOrCreate(RegistryIdentifier identifier, V... defaultValues) {
-        return this.getColumnOrCreate(identifier.getKey(), defaultValues);
+        return this.getColumnOrCreate(identifier.key(), defaultValues);
     }
 
     @SafeVarargs
-    public final RegistryColumn<V> getColumnOrCreate(String key, V... defaultValues) {
-        if (!super.containsKey(key)) {
-            this.addColumn(key, defaultValues);
+    public final RegistryColumn<V> getColumnOrCreate(String identifier, V... defaultValues) {
+        if (!super.containsKey(identifier)) {
+            this.addColumn(identifier, defaultValues);
         }
-        return this.getMatchingColumns(key);
+        return this.matchingColumns(identifier);
     }
 
     /**
@@ -198,7 +194,7 @@ public class Registry<V> extends HashMap<String, RegistryColumn<V>> {
      */
     public boolean containsColumns(RegistryIdentifier... columnIDs) {
         for (RegistryIdentifier columnID : columnIDs) {
-            if (!this.containsKey(columnID.getKey())) return false;
+            if (!this.containsKey(columnID.key())) return false;
         }
         return true;
     }
@@ -213,24 +209,24 @@ public class Registry<V> extends HashMap<String, RegistryColumn<V>> {
     /**
      * Gets all the matching columns in the Registry if contained.
      *
-     * @param columnIDs
+     * @param identifiers
      *         A varargs of {@link RegistryIdentifier}s to return from the Registry if
      *         contained.
      *
      * @return All the matching columns data combined into a single {@link RegistryColumn}. If no
      *         matches are found, an empty {@link RegistryColumn} will be returned.
      */
-    public RegistryColumn<V> getMatchingColumns(RegistryIdentifier... columnIDs) {
+    public RegistryColumn<V> matchingColumns(RegistryIdentifier... identifiers) {
         RegistryColumn<V> result = new RegistryColumn<>();
-        for (RegistryIdentifier columnID : columnIDs) {
-            if (super.containsKey(columnID.getKey())) {
-                result.addAll(this.get(columnID.getKey()));
+        for (RegistryIdentifier identifier : identifiers) {
+            if (this.containsKey(identifier.key())) {
+                result.addAll(this.get(identifier.key()));
             }
         }
         return result;
     }
 
-    public RegistryColumn<V> getMatchingColumns(String... keys) {
+    public RegistryColumn<V> matchingColumns(String... keys) {
         RegistryColumn<V> result = new RegistryColumn<>();
         for (String key : keys) {
             if (super.containsKey(key)) {
@@ -264,7 +260,7 @@ public class Registry<V> extends HashMap<String, RegistryColumn<V>> {
 
     /** @return All the data in the Registry combined into a single {@link RegistryColumn} */
     @JsonIgnore
-    public RegistryColumn<V> getAllData() {
+    public RegistryColumn<V> data() {
         RegistryColumn<V> result = new RegistryColumn<>();
         for (RegistryColumn<V> columnData : this.values()) {
             result.addAll(columnData);
@@ -334,26 +330,9 @@ public class Registry<V> extends HashMap<String, RegistryColumn<V>> {
         this.forEach((columnID, column) -> column.forEach(v -> {
             final RegistryIdentifier identifier = new SimpleIdentifier(columnID);
             if (!biFilter.test(identifier, v)) {
-                registry.addData(identifier, v);
+                registry.add(identifier, v);
             }
         }));
-        return registry;
-    }
-
-    /**
-     * Maps the values of the registry with the specified {@link Function mapper}.
-     *
-     * @param mapper
-     *      The {@link Function} to map the values of the registry
-     * @param <U>
-     *      The return type of the mapper
-     *
-     * @return The mapped registry
-     */
-    public <U> Registry<U> mapValues(Function<? super V, U> mapper) {
-        Registry<U> registry = new Registry<>();
-        this.forEach((columnID, column) -> registry.put(columnID, column.map(mapper)));
-
         return registry;
     }
 
@@ -409,54 +388,54 @@ public class Registry<V> extends HashMap<String, RegistryColumn<V>> {
     }
 
     public RegistryColumn<V> get(RegistryIdentifier identifier) {
-        return super.get(identifier.getKey());
+        return super.get(identifier.key());
     }
 
     public boolean containsKey(RegistryIdentifier key) {
-        return super.containsKey(key.getKey());
+        return super.containsKey(key.key());
     }
 
     public RegistryColumn<V> put(RegistryIdentifier key, RegistryColumn<V> value) {
-        return super.put(key.getKey(), value);
+        return super.put(key.key(), value);
     }
 
     public RegistryColumn<V> remove(RegistryIdentifier key) {
-        return super.remove(key.getKey());
+        return super.remove(key.key());
     }
 
     public RegistryColumn<V> getOrDefault(RegistryIdentifier key, RegistryColumn<V> defaultValue) {
-        return super.getOrDefault(key.getKey(), defaultValue);
+        return super.getOrDefault(key.key(), defaultValue);
     }
 
     public RegistryColumn<V> putIfAbsent(RegistryIdentifier key, RegistryColumn<V> value) {
-        return super.putIfAbsent(key.getKey(), value);
+        return super.putIfAbsent(key.key(), value);
     }
 
     public boolean remove(RegistryIdentifier key, Object value) {
-        return super.remove(key.getKey(), value);
+        return super.remove(key.key(), value);
     }
 
     public boolean replace(RegistryIdentifier key, RegistryColumn<V> oldValue, RegistryColumn<V> newValue) {
-        return super.replace(key.getKey(), oldValue, newValue);
+        return super.replace(key.key(), oldValue, newValue);
     }
 
     public RegistryColumn<V> replace(RegistryIdentifier key, RegistryColumn<V> value) {
-        return super.replace(key.getKey(), value);
+        return super.replace(key.key(), value);
     }
 
     public RegistryColumn<V> computeIfAbsent(RegistryIdentifier key, Function<? super String, ? extends RegistryColumn<V>> mappingFunction) {
-        return super.computeIfAbsent(key.getKey(), mappingFunction);
+        return super.computeIfAbsent(key.key(), mappingFunction);
     }
 
     public RegistryColumn<V> computeIfPresent(RegistryIdentifier key, BiFunction<? super String, ? super RegistryColumn<V>, ? extends RegistryColumn<V>> remappingFunction) {
-        return super.computeIfPresent(key.getKey(), remappingFunction);
+        return super.computeIfPresent(key.key(), remappingFunction);
     }
 
     public RegistryColumn<V> compute(RegistryIdentifier key, BiFunction<? super String, ? super RegistryColumn<V>, ? extends RegistryColumn<V>> remappingFunction) {
-        return super.compute(key.getKey(), remappingFunction);
+        return super.compute(key.key(), remappingFunction);
     }
 
     public RegistryColumn<V> merge(RegistryIdentifier key, RegistryColumn<V> value, BiFunction<? super RegistryColumn<V>, ? super RegistryColumn<V>, ? extends RegistryColumn<V>> remappingFunction) {
-        return super.merge(key.getKey(), value, remappingFunction);
+        return super.merge(key.key(), value, remappingFunction);
     }
 }

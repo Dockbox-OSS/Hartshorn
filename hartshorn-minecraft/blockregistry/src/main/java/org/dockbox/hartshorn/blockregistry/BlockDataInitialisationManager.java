@@ -1,5 +1,6 @@
 package org.dockbox.hartshorn.blockregistry;
 
+import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.blockregistry.BlockRegistryManager;
 import org.dockbox.hartshorn.blockregistry.VariantIdentifier;
 import org.dockbox.hartshorn.blockregistry.init.AirInit;
@@ -42,7 +43,7 @@ import org.dockbox.hartshorn.blockregistry.init.WoolInit;
 
 public final class BlockDataInitialisationManager
 {
-    public static final BlockRegistryManager BlockRegistryManager = new BlockRegistryManager();
+    public static final BlockRegistryManager BlockRegistryManager = Hartshorn.context().get(BlockRegistryManager.class);
 
     private static final TypeList refinedStoneCobbleBrickShapesVanilla = TypeList.of(VariantIdentifier.FULL,
         VariantIdentifier.SMALL_ARCH, VariantIdentifier.SMALL_ARCH_HALF, VariantIdentifier.TWO_METER_ARCH,
@@ -317,7 +318,7 @@ public final class BlockDataInitialisationManager
 
     private BlockDataInitialisationManager() {}
 
-    public static void main(String[] args)
+    public static void constructBlockRegistry()
     {
         RefinedStoneCobbleBrickInit.init(refinedStoneCobbleBrickShapes, refinedStoneCobbleBrickShapesVanilla, refinedStoneCobbleBrickShapesVanillaNoWall, refinedStoneCobbleBrickShapesTopOverlay);
         LargeStoneSlabsInit.init(largeStoneSlabShapes, largeStoneSlabShapesVanilla, largeStoneSlabShapesVanillaNoStairs);

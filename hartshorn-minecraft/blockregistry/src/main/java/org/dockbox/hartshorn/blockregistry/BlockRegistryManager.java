@@ -1,12 +1,18 @@
 package org.dockbox.hartshorn.blockregistry;
 
+import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.di.annotations.service.Service;
+import org.dockbox.hartshorn.api.i18n.text.Text;
+import org.dockbox.hartshorn.commands.annotations.Command;
 import org.dockbox.hartshorn.persistence.mapping.GenericType;
-import org.dockbox.hartshorn.persistence.mapping.JacksonObjectMapper;
+import org.dockbox.hartshorn.persistence.mapping.ObjectMapper;
+import org.dockbox.hartshorn.persistence.properties.PersistenceModifier;
+import org.dockbox.hartshorn.persistence.properties.PersistenceProperty;
 import org.dockbox.hartshorn.persistence.registry.Registry;
 import org.dockbox.hartshorn.server.minecraft.item.Item;
 import org.dockbox.hartshorn.server.minecraft.item.storage.MinecraftItems;
+import org.dockbox.hartshorn.server.minecraft.players.Hand;
+import org.dockbox.hartshorn.server.minecraft.players.Player;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -17,7 +23,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Service
+@Command({"blockregistry", "registry"})
 public class BlockRegistryManager
 {
 
@@ -31,8 +37,51 @@ public class BlockRegistryManager
         this.blockRegistry = HartshornUtils.emptyMap();
     }
 
+    @Command(value = "variant", arguments = "[item{Item}]", permission = Hartshorn.GLOBAL_PERMITTED)
+    public void determineVariant(Player player, Item item) {
+        if (null == item)
+            item = player.itemInHand(Hand.MAIN_HAND);
+        if (null == item) {
+            player.send(Text.of("You need to have an item in your hand or specify an id"));
+            return;
+        }
+        final String id = item.id();
+        this.variant(id)
+            .present(v -> player.send(Text.of("The variant of ", id, " is ", v)))
+            .absent(() -> player.send(Text.of("There doesn't appear to be a registered variant for ", id)));
+    }
+
     /**
-     * Determines if the specified id is a root id (The id that is assigned by CR, rather than an alias)
+     * Determines the {@link VariantIdentifier} of the specified {@link Item}.
+     *
+     * @param item
+     *      The {@link Item} to find the variant of
+     *
+     * @return An {@link Exceptional} containing the {@link VariantIdentifier}
+     */
+    public Exceptional<VariantIdentifier> variant(Item item) {
+        return this.variant(item.id());
+    }
+
+    /**
+     * Determines the {@link VariantIdentifier} of the specified {@link Item}.
+     *
+     * @param id
+     *      The id of the {@link Item} to find the variant of
+     *
+     * @return An {@link Exceptional} containing the {@link VariantIdentifier}
+     */
+    public Exceptional<VariantIdentifier> variant(final String id) {
+        return Exceptional.of(this.variants(id)
+            .entrySet()
+            .stream()
+            .filter(e -> e.getValue().contains(id))
+            .findFirst()
+            .map(e -> VariantIdentifier.valueOf(e.getKey())));
+    }
+
+    /**
+     * Determines if the specified id is a root id (The id that is assigned by CR, rather than an alias).
      *
      * @param rootId
      *      The id to check
@@ -93,8 +142,8 @@ public class BlockRegistryManager
      *
      * @return A {@link Registry} mapping the root ids of the variants to {@link VariantIdentifier variant identifiers}
      */
-    public Registry<String> getVariants(@NotNull Item item) {
-        return this.getVariants(item.id());
+    public Registry<String> variants(@NotNull Item item) {
+        return this.variants(item.id());
     }
 
     /**
@@ -105,7 +154,7 @@ public class BlockRegistryManager
      *
      * @return A {@link Registry} mapping the root ids of the variants to {@link VariantIdentifier variant identifiers}
      */
-    public Registry<String> getVariants(@NotNull String rootId) {
+    public Registry<String> variants(@NotNull String rootId) {
         return this.getFamilyId(rootId)
             .map(familyId -> this.blockRegistry.getOrDefault(familyId, new Registry<>()))
             .or(new Registry<>());
@@ -188,11 +237,9 @@ public class BlockRegistryManager
      * @return The loaded block registry
      */
     private Map<String, Registry<String>> loadBlockRegistry() {
-
-        //Hartshorn.context()
-        //            .get(ObjectMapper.class)
         Map<String, Registry<VariantModel>> storedBlockRegistry =
-            new JacksonObjectMapper()
+            Hartshorn.context()
+                .get(ObjectMapper.class, PersistenceProperty.of(PersistenceModifier.SKIP_EMPTY))
                 .read(Path.of("blockregistry.json"), new GenericType<Map<String, Registry<VariantModel>>>() {})
                 .or(HartshornUtils.emptyMap());
 
@@ -212,7 +259,7 @@ public class BlockRegistryManager
     }
 
     /**
-     * Saves the block registry.
+     * Saves the block registry to blockregistry.json.
      */
     public void saveBlockRegistry() {
         Map<String, Registry<VariantModel>> storedBlockRegistry =
@@ -223,9 +270,8 @@ public class BlockRegistryManager
                         this.rootAliases.getOrDefault(rootId,HartshornUtils.emptySet())))
         ));
 
-//        Hartshorn.context()
-//            .get(ObjectMapper.class)
-        new JacksonObjectMapper()
+        Hartshorn.context()
+            .get(ObjectMapper.class, PersistenceProperty.of(PersistenceModifier.SKIP_EMPTY))
             .write(Path.of("blockregistry.json"), storedBlockRegistry);
     }
 
