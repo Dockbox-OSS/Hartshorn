@@ -17,6 +17,14 @@
 
 package org.dockbox.hartshorn.server.minecraft.events.server;
 
-/** The event fired when the server is stopping. */
-public class ServerStoppingEvent implements ServerEvent {
+public interface ServerState {
+
+    public class Init implements ServerState {}
+    public class PostInit implements ServerState {}
+    public class Starting implements ServerState {}
+    public class Started implements ServerState {}
+    public class Update implements ServerState {}
+    public class Reload implements ServerState {}
+    public class Stopping implements ServerState {}
+
 }

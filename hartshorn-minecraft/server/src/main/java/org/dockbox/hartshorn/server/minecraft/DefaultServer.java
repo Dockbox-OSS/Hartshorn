@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.server.minecraft;
 
 import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.events.EventBus;
+import org.dockbox.hartshorn.api.events.annotations.Posting;
 import org.dockbox.hartshorn.api.i18n.MessageReceiver;
 import org.dockbox.hartshorn.api.i18n.common.ResourceEntry;
 import org.dockbox.hartshorn.api.i18n.text.Text;
@@ -31,11 +32,13 @@ import org.dockbox.hartshorn.commands.context.CommandContext;
 import org.dockbox.hartshorn.di.annotations.inject.Wired;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.di.services.ComponentContainer;
-import org.dockbox.hartshorn.server.minecraft.events.server.ServerReloadEvent;
+import org.dockbox.hartshorn.server.minecraft.events.server.EngineChangedState;
+import org.dockbox.hartshorn.server.minecraft.events.server.ServerState.Reload;
 import org.dockbox.hartshorn.util.HartshornUtils;
 
 import java.util.List;
 
+@Posting(EngineChangedState.class)
 @Command(value = Hartshorn.PROJECT_ID, permission = DefaultServer.ADMIN)
 public class DefaultServer {
 
@@ -79,7 +82,8 @@ public class DefaultServer {
     @WithConfirmation
     public void reload(MessageReceiver src, CommandContext ctx) {
         EventBus eb = this.context.get(EventBus.class);
-        eb.post(new ServerReloadEvent());
+        eb.post(new EngineChangedState<Reload>() {
+        });
         src.send(this.resources.reloadAll());
     }
 }

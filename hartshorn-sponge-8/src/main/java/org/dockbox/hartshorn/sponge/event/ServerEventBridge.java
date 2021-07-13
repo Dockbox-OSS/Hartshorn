@@ -21,11 +21,12 @@ import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.events.annotations.Posting;
 import org.dockbox.hartshorn.di.context.Context;
 import org.dockbox.hartshorn.server.minecraft.dimension.BlockContext;
-import org.dockbox.hartshorn.server.minecraft.events.server.ServerReloadEvent;
-import org.dockbox.hartshorn.server.minecraft.events.server.ServerStartedEvent;
-import org.dockbox.hartshorn.server.minecraft.events.server.ServerStartingEvent;
-import org.dockbox.hartshorn.server.minecraft.events.server.ServerStoppingEvent;
-import org.dockbox.hartshorn.server.minecraft.events.server.ServerUpdateEvent;
+import org.dockbox.hartshorn.server.minecraft.events.server.EngineChangedState;
+import org.dockbox.hartshorn.server.minecraft.events.server.ServerState.Reload;
+import org.dockbox.hartshorn.server.minecraft.events.server.ServerState.Started;
+import org.dockbox.hartshorn.server.minecraft.events.server.ServerState.Starting;
+import org.dockbox.hartshorn.server.minecraft.events.server.ServerState.Stopping;
+import org.dockbox.hartshorn.server.minecraft.events.server.ServerState.Update;
 import org.dockbox.hartshorn.server.minecraft.item.ItemContext;
 import org.spongepowered.api.ResourceKey;
 import org.spongepowered.api.Sponge;
@@ -44,41 +45,35 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
-@Posting(value = {
-        ServerStartedEvent.class,
-        ServerStartingEvent.class,
-        ServerReloadEvent.class,
-        ServerUpdateEvent.class,
-        ServerStoppingEvent.class
-})
+@Posting(EngineChangedState.class)
 public class ServerEventBridge implements EventBridge {
 
     @Listener
     public void on(StartingEngineEvent<?> event) {
-        new ServerStartingEvent().post();
+        new EngineChangedState<Starting>() {}.post();
     }
 
     @Listener
     public void on(StartedEngineEvent<?> event) {
         this.collectIdContext(RegistryTypes.ITEM_TYPE, ItemContext::new);
         this.collectIdContext(RegistryTypes.BLOCK_TYPE, BlockContext::new);
-        new ServerStartedEvent().post();
+        new EngineChangedState<Started>() {}.post();
     }
 
     @Listener
     public void on(LoadedGameEvent event) {
-        new ServerUpdateEvent().post();
+        new EngineChangedState<Update>() {}.post();
     }
 
     @Listener
     public void on(StoppingEngineEvent<?> event) {
-        new ServerStoppingEvent().post();
+        new EngineChangedState<Stopping>() {}.post();
     }
 
     @Listener
     public void on(RefreshGameEvent event) {
-        new ServerReloadEvent().post();
-        new ServerUpdateEvent().post();
+        new EngineChangedState<Reload>() {}.post();
+        new EngineChangedState<Update>() {}.post();
     }
 
     private void collectIdContext(RegistryType<?> registryType, Function<List<String>, Context> storage) {

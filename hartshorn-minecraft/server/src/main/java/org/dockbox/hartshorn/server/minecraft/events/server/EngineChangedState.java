@@ -17,9 +17,7 @@
 
 package org.dockbox.hartshorn.server.minecraft.events.server;
 
-/**
- * The event fired when the server is starting. Typically this is fired after {@link
- * ServerPostInitEvent} and before {@link ServerStartedEvent}.
- */
-public class ServerStartingEvent implements ServerEvent {
+import org.dockbox.hartshorn.api.events.parents.Event;
+
+public abstract class EngineChangedState<T extends ServerState> implements Event {
 }
