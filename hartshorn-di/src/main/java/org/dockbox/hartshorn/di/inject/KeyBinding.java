@@ -17,17 +17,24 @@
 
 package org.dockbox.hartshorn.di.inject;
 
-import java.util.function.Supplier;
+import org.dockbox.hartshorn.di.annotations.inject.Named;
 
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
 @Getter
-@RequiredArgsConstructor
-public class BeanContext<T, C extends T> {
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+public class KeyBinding<T> {
 
-    private final KeyBinding<T> key;
-    private final boolean singleton;
-    private final Supplier<C> provider;
+    private final Class<T> type;
+    private final Named annotation;
 
+    public static <T> KeyBinding<T> of(Class<T> type, Named annotation) {
+        return new KeyBinding<>(type, annotation);
+    }
+
+    public static <T> KeyBinding<T> of(Class<T> type) {
+        return new KeyBinding<>(type, null);
+    }
 }

@@ -17,14 +17,13 @@
 
 package org.dockbox.hartshorn.di.services;
 
-import com.google.inject.Key;
-
-import org.dockbox.hartshorn.di.annotations.inject.Bean;
 import org.dockbox.hartshorn.di.annotations.activate.UseBeanProvision;
+import org.dockbox.hartshorn.di.annotations.inject.Bean;
 import org.dockbox.hartshorn.di.annotations.inject.Wired;
 import org.dockbox.hartshorn.di.binding.Bindings;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.di.inject.BeanContext;
+import org.dockbox.hartshorn.di.inject.KeyBinding;
 import org.dockbox.hartshorn.di.inject.wired.BeanWireContext;
 import org.dockbox.hartshorn.di.inject.wired.WireContext;
 import org.dockbox.hartshorn.util.Reflect;
@@ -56,9 +55,9 @@ public final class BeanServiceProcessor implements ServiceProcessor<UseBeanProvi
                 }
             }
             else {
-                Key<?> key = "".equals(annotation.value())
-                        ? Key.get(bean.getReturnType())
-                        : Key.get(bean.getReturnType(), Bindings.named(annotation.value()));
+                KeyBinding<?> key = "".equals(annotation.value())
+                        ? KeyBinding.of(bean.getReturnType())
+                        : KeyBinding.of(bean.getReturnType(), Bindings.named(annotation.value()));
 
                 BeanContext<?, ?> beanContext = new BeanContext<>(key, singleton, () -> context.invoke(bean));
                 context.add(beanContext);
