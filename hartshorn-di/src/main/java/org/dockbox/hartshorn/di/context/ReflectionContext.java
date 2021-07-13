@@ -26,8 +26,8 @@ public class ReflectionContext extends PrefixContext implements Context {
 
     private final DefaultContext context;
 
-    public ReflectionContext(String initialPrefix) {
-        super(initialPrefix);
+    public ReflectionContext(Iterable<String> initialPrefixes) {
+        super(initialPrefixes);
         this.context = new DefaultContext() {
         };
     }

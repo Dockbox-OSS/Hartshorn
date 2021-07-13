@@ -38,22 +38,24 @@ public abstract class InjectableBootstrap extends ApplicationContextAware {
 
     public abstract void init();
 
-    public void create(String prefix, Class<?> activationSource, List<Annotation> activators, Multimap<InjectPhase, InjectConfiguration> configs, Modifier... modifiers) {
+    public void create(Collection<String> prefixes, Class<?> activationSource, List<Annotation> activators, Multimap<InjectPhase, InjectConfiguration> configs, Modifier... modifiers) {
         super.create(activationSource, modifiers);
         Reflections.log = null; // Don't output Reflections
 
-        final ReflectionContext context = new ReflectionContext(prefix);
+        final ReflectionContext context = new ReflectionContext(prefixes);
         Reflect.context(context);
 
         for (Annotation activator : activators) {
             ((ManagedHartshornContext) this.context()).addActivator(activator);
         }
         instance(this);
-        this.lookupProcessors(prefix);
-        this.lookupModifiers(prefix);
+        for (String prefix : prefixes) {
+            this.lookupProcessors(prefix);
+            this.lookupModifiers(prefix);
+        }
 
         for (InjectConfiguration config : configs.get(InjectPhase.EARLY)) super.context().bind(config);
-        super.context().bind(prefix);
+        for (String prefix : prefixes) super.context().bind(prefix);
         for (InjectConfiguration config : configs.get(InjectPhase.LATE)) super.context().bind(config);
     }
 

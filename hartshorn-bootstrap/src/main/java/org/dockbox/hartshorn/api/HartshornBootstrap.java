@@ -34,6 +34,7 @@ import org.dockbox.hartshorn.util.Reflect;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -50,14 +51,14 @@ public abstract class HartshornBootstrap extends InjectableBootstrap {
     private final Set<Method> postBootstrapActivations = HartshornUtils.emptyConcurrentSet();
 
     @Override
-    public void create(String prefix, Class<?> activationSource, List<Annotation> activators, Multimap<InjectPhase, InjectConfiguration> configs, Modifier... modifiers) {
+    public void create(Collection<String> prefixes, Class<?> activationSource, List<Annotation> activators, Multimap<InjectPhase, InjectConfiguration> configs, Modifier... modifiers) {
         activators.add(new UseBootstrap() {
             @Override
             public Class<? extends Annotation> annotationType() {
                 return UseBootstrap.class;
             }
         });
-        super.create(prefix, activationSource, activators, configs, modifiers);
+        super.create(prefixes, activationSource, activators, configs, modifiers);
 
         final GlobalConfig globalConfig = this.context().get(GlobalConfig.class);
         Except.useStackTraces(globalConfig.stacktraces());

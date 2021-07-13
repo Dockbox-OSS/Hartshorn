@@ -449,7 +449,7 @@ public class ApplicationContextTests {
                 final var oldHierarchy = (Multimap<Class<? extends Annotation>, Class<? extends Annotation>>) annotationHierarchy.get(prefixContext);
 
                 // Non existing package to ensure no keys are cached early on
-                final PrefixContext newContext = new PrefixContext("a.b");
+                final PrefixContext newContext = new PrefixContext(HartshornUtils.asList("a.b"));
                 annotationHierarchy.set(newContext, oldHierarchy);
                 ApplicationContextTests.context.set(null, newContext);
 

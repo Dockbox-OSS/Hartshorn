@@ -144,7 +144,7 @@ public class ReflectTests {
 
     @Test
     void testAnnotatedTypesReturnsAllInPrefix() {
-        final PrefixContext context = new ReflectionContext("org.dockbox.hartshorn.util.types");
+        final PrefixContext context = new ReflectionContext(HartshornUtils.asList("org.dockbox.hartshorn.util.types"));
         Collection<Class<?>> types = context.types(Demo.class);
         Assertions.assertEquals(1, types.size());
         Assertions.assertEquals(ReflectTestType.class, types.iterator().next());
@@ -152,7 +152,7 @@ public class ReflectTests {
 
     @Test
     void testSubTypesReturnsAllSubTypes() {
-        final PrefixContext context = new ReflectionContext("org.dockbox.hartshorn.util.types");
+        final PrefixContext context = new ReflectionContext(HartshornUtils.asList("org.dockbox.hartshorn.util.types"));
         Collection<Class<? extends ParentTestType>> types = context.children(ParentTestType.class);
         Assertions.assertEquals(1, types.size());
         Assertions.assertEquals(ReflectTestType.class, types.iterator().next());

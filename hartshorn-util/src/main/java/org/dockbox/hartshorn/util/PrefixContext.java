@@ -33,8 +33,10 @@ public class PrefixContext {
     private final Multimap<Class<? extends Annotation>, Class<? extends Annotation>> annotationHierarchy = ArrayListMultimap.create();
     private final Map<Class<? extends Annotation>, Set<Class<? extends Annotation>>> compositeCache = HartshornUtils.emptyConcurrentMap();
 
-    public PrefixContext(String initialPrefix) {
-        this.prefix(initialPrefix);
+    public PrefixContext(Iterable<String> initialPrefixes) {
+        for (String initialPrefix : initialPrefixes) {
+            this.prefix(initialPrefix);
+        }
     }
 
     public void prefix(String prefix) {
