@@ -2,8 +2,6 @@ package org.dockbox.hartshorn.blockregistry;
 
 import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.api.i18n.text.Text;
-import org.dockbox.hartshorn.commands.annotations.Command;
 import org.dockbox.hartshorn.di.annotations.service.Service;
 import org.dockbox.hartshorn.persistence.mapping.GenericType;
 import org.dockbox.hartshorn.persistence.mapping.ObjectMapper;
@@ -11,7 +9,7 @@ import org.dockbox.hartshorn.persistence.properties.PersistenceModifier;
 import org.dockbox.hartshorn.persistence.properties.PersistenceProperty;
 import org.dockbox.hartshorn.persistence.registry.Registry;
 import org.dockbox.hartshorn.server.minecraft.item.Item;
-import org.dockbox.hartshorn.server.minecraft.item.storage.MinecraftItems;
+import org.dockbox.hartshorn.server.minecraft.item.ItemContext;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -176,7 +174,8 @@ public class BlockRegistryManager
             this.rootAliases.get(rootId).add(alias);
         else this.rootAliases.put(rootId, HartshornUtils.asSet(alias));
 
-        MinecraftItems.instance().register(alias, () -> Item.of(rootId));
+        Hartshorn.context().first(ItemContext.class)
+                .present(context -> context.register(alias, () -> Item.of(rootId)));
     }
 
     /**
