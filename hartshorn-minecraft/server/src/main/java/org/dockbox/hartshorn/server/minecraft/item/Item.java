@@ -38,7 +38,7 @@ public interface Item extends KeyHolder<Item>, PersistentDataHolder, PersistentC
      * @param id
      *         The fully qualified identifier of a block, e.g. {@code minecraft:stone}
      *
-     * @return The item instance, or {@link MinecraftItems#air()}
+     * @return The item instance, or {@link ItemTypes#AIR}
      */
     static Item of(@NonNls String id) {
         Item item = Hartshorn.context().get(Item.class, id);
