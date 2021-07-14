@@ -32,8 +32,7 @@ public class BlockRegistryManager
     private final Map<String, Registry<String>> blockRegistry;
 
     public BlockRegistryManager() {
-        //this.blockRegistry = this.loadBlockRegistry();
-        this.blockRegistry = HartshornUtils.emptyMap();
+        this.blockRegistry = this.loadBlockRegistry();
     }
 
     /**
@@ -210,6 +209,8 @@ public class BlockRegistryManager
     public void addVariant(@NotNull String familyId, @NotNull VariantIdentifier variant, @NotNull String rootId) {
         if (!this.blockRegistry.containsKey(familyId))
             this.blockRegistry.put(familyId, new Registry<>());
+        if (!this.rootToFamilyMappings.containsKey(rootId))
+            this.rootToFamilyMappings.put(rootId, familyId);
 
         this.blockRegistry.get(familyId).add(variant, rootId);
     }
@@ -228,12 +229,18 @@ public class BlockRegistryManager
                 .read(Path.of("blockregistry.json"), new GenericType<Map<String, Registry<VariantModel>>>() {})
                 .or(HartshornUtils.emptyMap());
 
-        //Register aliases
+        //Register aliases and roots
         storedBlockRegistry.forEach(
             (familyId, variantRegistry) -> variantRegistry.forEach(
-                (variantKey, variantColumn) -> variantColumn.forEach(
-                    variantModel -> variantModel.aliases()
-                        .forEach(alias -> this.addAlias(variantModel.rootId(), alias))
+                (@NonNls var variantKey, var variantColumn) -> variantColumn.forEach(
+                    variantModel -> {
+                        if (!variantKey.equals(VariantIdentifier.FULL.name())) {
+                            this.rootToFamilyMappings.put(variantModel.rootId(), familyId);
+                        }
+                        if (null != variantModel.aliases())
+                            variantModel.aliases()
+                                .forEach(alias -> this.addAlias(variantModel.rootId(), alias));
+                    }
         )));
 
         return storedBlockRegistry.entrySet()
