@@ -36,6 +36,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import lombok.Getter;
@@ -66,10 +67,10 @@ public abstract class HartshornBootstrap extends InjectableBootstrap {
         this.version = globalConfig.version();
     }
 
-    public static boolean constructed() {
-        return instance() != null;
-    }
-
+    /**
+     * Returns the active instance of {@link HartshornBootstrap}, if any.
+     * @return The active instance or <code>null</code>
+     */
     public static HartshornBootstrap instance() {
         return (HartshornBootstrap) InjectableBootstrap.instance();
     }
@@ -93,11 +94,22 @@ public abstract class HartshornBootstrap extends InjectableBootstrap {
 
     }
 
+    /**
+     * Indicates the behavior to use when a {@link Required} type has no active binding.
+     * @param type The required type
+     */
     protected void handleMissingBinding(Class<?> type) {
         throw new IllegalStateException("No implementation exists for [" + type.getCanonicalName() + "], this will cause functionality to misbehave or not function!");
     }
 
-    void addPostBootstrapActivation(Method method, Class<?> type) {
+    /**
+     * Registers the given method as a activation action which should run when bootstrapping
+     * completes. This requires all activators for the declaring class to be present.
+     * @param method The method to activate
+     */
+    void addPostBootstrapActivation(Method method) {
+        Objects.requireNonNull(method);
+        final Class<?> type = method.getDeclaringClass();
         final Exceptional<ComponentContainer> container = Hartshorn.context().locator().container(type);
 
         if (container.present()) {

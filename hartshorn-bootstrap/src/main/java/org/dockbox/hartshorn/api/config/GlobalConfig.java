@@ -19,13 +19,27 @@ package org.dockbox.hartshorn.api.config;
 
 import org.dockbox.hartshorn.api.exceptions.ExceptionLevels;
 
+/**
+ * Contains the default configuration for bootstrap-related values.
+ */
 public interface GlobalConfig {
 
+    /**
+     * Indicates whether to print stacktraces when exceptions occur.
+     * @return Whether to print stacktraces
+     */
     boolean stacktraces();
 
+    /**
+     * Indicates the {@link ExceptionLevels level at which exceptions
+     * are logged}.
+     * @return The exception level
+     */
     ExceptionLevels level();
 
-    String discordCategory();
-
+    /**
+     * Indicates the current version of Hartshorn.
+     * @return The current version.
+     */
     String version();
 }

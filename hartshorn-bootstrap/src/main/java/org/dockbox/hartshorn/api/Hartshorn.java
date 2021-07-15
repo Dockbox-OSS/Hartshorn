@@ -29,22 +29,27 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 /** The global {@link Hartshorn} instance used to grant access to various components. */
 public final class Hartshorn {
 
-    public static final String GLOBAL_BYPASS = "hartshorn.admin.bypass-all";
+    /**
+     * The global permission node for any {@link org.dockbox.hartshorn.api.domain.Subject}
+     * to bypass application permissions.
+     */
     public static final String GLOBAL_PERMITTED = "hartshorn.global.permitted";
+    /**
+     * The default package prefix to use when scanning Hartshorn internals.
+     */
     public static final String PACKAGE_PREFIX = "org.dockbox.hartshorn";
-    public static final List<UUID> GLOBALLY_PERMITTED = HartshornUtils.asList(
-            UUID.fromString("6047d264-7769-4e50-a11e-c8b83f65ccc4"),
-            UUID.fromString("cb6411bb-31c9-4d69-8000-b98842ce0a0a"),
-            UUID.fromString("b7fb5e32-73ee-4f25-b256-a763c8739192")
-    );
+    /**
+     * The (human readable) display name of Hartshorn.
+     */
     public static final String PROJECT_NAME = "Hartshorn";
+    /**
+     * The simplified identifier for Hartshorn-default identifiers.
+     */
     public static final String PROJECT_ID = "hartshorn";
 
     private static final Map<String, Logger> LOGGERS = HartshornUtils.emptyConcurrentMap();
@@ -60,6 +65,10 @@ public final class Hartshorn {
         return HartshornBootstrap.instance();
     }
 
+    /**
+     * Gets the current {@link ApplicationContext} associated with the active {@link #server()}.
+     * @return The active context
+     */
     public static ApplicationContext context() {
         return server().context();
     }

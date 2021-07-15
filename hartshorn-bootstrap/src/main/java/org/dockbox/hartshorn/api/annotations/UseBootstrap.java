@@ -24,7 +24,11 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-// Provided by default when using bootstrapping
+/**
+ * Service activator for bootstrap-dependent services. This activator is automatically injected
+ * when the application is created through {@link org.dockbox.hartshorn.api.HartshornBootstrap}.
+ * @see PostBootstrap
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @ServiceActivator
