@@ -23,6 +23,10 @@ import org.dockbox.hartshorn.cache.Expiration;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+/**
+ * Default implementation of {@link CacheMethodContext}.
+ * @see CacheMethodContext
+ */
 @Getter
 @AllArgsConstructor
 public class SimpleCacheMethodContext implements CacheMethodContext {

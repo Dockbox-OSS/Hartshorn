@@ -24,6 +24,10 @@ import java.util.function.Supplier;
 
 import lombok.Getter;
 
+/**
+ * Default implementation of {@link CacheContext}.
+ * @see CacheContext
+ */
 public class SimpleCacheContext implements CacheContext {
 
     @Getter

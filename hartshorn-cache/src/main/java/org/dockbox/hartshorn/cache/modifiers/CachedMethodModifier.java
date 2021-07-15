@@ -34,6 +34,11 @@ import org.dockbox.hartshorn.util.Reflect;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * The {@link org.dockbox.hartshorn.proxy.service.ServiceAnnotatedMethodModifier} responsible for {@link Cached}
+ * decorated methods. This delegates functionality to the underlying {@link org.dockbox.hartshorn.cache.CacheManager}
+ * to store or obtain {@link Cache} entries.
+ */
 public class CachedMethodModifier extends CacheServiceModifier<Cached> {
 
     @Override

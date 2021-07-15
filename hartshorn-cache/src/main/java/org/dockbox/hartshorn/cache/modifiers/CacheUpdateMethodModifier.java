@@ -27,6 +27,11 @@ import org.dockbox.hartshorn.proxy.service.MethodProxyContext;
 
 import java.lang.reflect.Parameter;
 
+/**
+ * The {@link org.dockbox.hartshorn.proxy.service.ServiceAnnotatedMethodModifier} responsible for {@link UpdateCache}
+ * decorated methods. This delegates functionality to the underlying {@link org.dockbox.hartshorn.cache.CacheManager}
+ * to update specific {@link org.dockbox.hartshorn.cache.Cache caches}.
+ */
 public class CacheUpdateMethodModifier extends CacheServiceModifier<UpdateCache> {
 
     @Override

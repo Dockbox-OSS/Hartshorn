@@ -25,9 +25,25 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * Method decorator to indicate it can be used to update a cache. This
+ * requires the method parameter to be assignable to the type stored in
+ * the cache.
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface UpdateCache {
+    /**
+     * The ID of the target cache. If this is left empty a name will be
+     * generated based on the owning service.
+     * @return the cache ID
+     */
     String value() default "";
+
+    /**
+     * Indicates the cache manager to use. This type can be provided through
+     * the active {@link org.dockbox.hartshorn.di.context.ApplicationContext}.
+     * @return the type of the cache manager to use
+     */
     Class<? extends CacheManager> manager() default SimpleCacheManager.class;
 }

@@ -25,6 +25,10 @@ import org.dockbox.hartshorn.util.HartshornUtils;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Default implementation of {@link CacheManager}.
+ * @see CacheManager
+ */
 @SuppressWarnings("unchecked")
 public class SimpleCacheManager implements CacheManager {
 

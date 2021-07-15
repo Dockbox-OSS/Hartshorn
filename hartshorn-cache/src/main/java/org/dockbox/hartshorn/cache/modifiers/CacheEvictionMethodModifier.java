@@ -17,14 +17,19 @@
 
 package org.dockbox.hartshorn.cache.modifiers;
 
-import org.dockbox.hartshorn.cache.context.CacheContext;
 import org.dockbox.hartshorn.cache.annotations.EvictCache;
+import org.dockbox.hartshorn.cache.context.CacheContext;
 import org.dockbox.hartshorn.cache.context.CacheMethodContext;
 import org.dockbox.hartshorn.cache.context.SimpleCacheMethodContext;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.proxy.handle.ProxyFunction;
 import org.dockbox.hartshorn.proxy.service.MethodProxyContext;
 
+/**
+ * The {@link org.dockbox.hartshorn.proxy.service.ServiceAnnotatedMethodModifier} responsible for {@link EvictCache}
+ * decorated methods. This delegates functionality to the underlying {@link org.dockbox.hartshorn.cache.CacheManager}
+ * to evict specific {@link org.dockbox.hartshorn.cache.Cache caches}.
+ */
 public class CacheEvictionMethodModifier extends CacheServiceModifier<EvictCache> {
 
     @Override
