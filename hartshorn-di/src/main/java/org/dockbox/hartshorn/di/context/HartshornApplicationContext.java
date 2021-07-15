@@ -92,7 +92,6 @@ public class HartshornApplicationContext extends ManagedHartshornContext {
         Exceptional<Object[]> value = Bindings.value(UseFactory.KEY, Object[].class, additionalProperties);
         if (value.present()) {
             typeInstance = this.get(TypeFactory.class).with(additionalProperties).create(type, value.get());
-            this.populate(typeInstance);
         } else {
             // Type instance can be present if it is a service. These instances are also created using Guice
             // injectors and therefore do not need late member injection here.
@@ -122,7 +121,11 @@ public class HartshornApplicationContext extends ManagedHartshornContext {
             }
         }
 
-        if (typeInstance != null && ApplicationContextAware.instance().context().meta().singleton(type)) this.singletons.put(type, typeInstance);
+        final MetaProvider meta = ApplicationContextAware.instance().context().meta();
+        // Ensure the order of resolution is to first resolve the instance singleton state, and only after check the type state.
+        // Typically the implementation decided whether it should be a singleton, so this cuts time complexity in half.
+        if (typeInstance != null && (meta.singleton(typeInstance.getClass()) || meta.singleton(type)))
+            this.singletons.put(type, typeInstance);
 
         // May be null, but we have used all possible injectors, it's up to the developer now
         return typeInstance;

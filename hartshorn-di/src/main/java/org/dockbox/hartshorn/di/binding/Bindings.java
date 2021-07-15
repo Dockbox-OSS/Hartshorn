@@ -57,6 +57,8 @@ public final class Bindings {
      * @return The nullable property value
      */
     public static <T> Exceptional<T> value(@NonNls String key, Class<T> expectedType, InjectorProperty<?>... properties) {
+        if (properties.length == 0) return Exceptional.empty();
+
         InjectorProperty<T> property = Bindings.property(key, expectedType, properties);
         // As the object is provided by a supplier this cannot currently be simplified to #of
         if (null != property) {
