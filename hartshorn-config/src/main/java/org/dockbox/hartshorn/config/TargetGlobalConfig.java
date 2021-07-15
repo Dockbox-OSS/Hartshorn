@@ -34,9 +34,6 @@ public class TargetGlobalConfig implements GlobalConfig {
     @Value(value = "hartshorn.exceptions.level", or = "NATIVE")
     private ExceptionLevels level;
 
-    @Value("hartshorn.discord.logging-channel")
-    private String discordCategory;
-
     @Value("hartshorn.version")
     private String version;
 
