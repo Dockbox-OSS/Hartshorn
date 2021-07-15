@@ -15,17 +15,14 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.di.types;
+package org.dockbox.hartshorn.di.inject.wired;
 
-import org.dockbox.hartshorn.di.annotations.inject.Wired;
+import org.dockbox.hartshorn.api.exceptions.ApplicationException;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+public interface BoundContext<T, I extends T> {
 
-@Getter
-@AllArgsConstructor(onConstructor_ = @Wired)
-public class SampleWiredType implements SampleInterface {
-
-    private final String name;
+    String name();
+    Class<T> contract();
+    T create(Object... arguments) throws ApplicationException;
 
 }

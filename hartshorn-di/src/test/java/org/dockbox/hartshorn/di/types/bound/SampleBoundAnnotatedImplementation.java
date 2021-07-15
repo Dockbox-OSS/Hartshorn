@@ -15,17 +15,20 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.di.annotations.activate;
+package org.dockbox.hartshorn.di.types.bound;
 
-import org.dockbox.hartshorn.di.annotations.service.ServiceActivator;
+import org.dockbox.hartshorn.di.annotations.inject.Binds;
+import org.dockbox.hartshorn.di.annotations.inject.Bound;
+import org.dockbox.hartshorn.di.types.SampleInterface;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-@ServiceActivator
-public @interface UseBeanProvision {
+@Binds(SampleInterface.class)
+@Getter
+@AllArgsConstructor(onConstructor_ = @Bound)
+public class SampleBoundAnnotatedImplementation implements SampleInterface {
+
+    private final String name;
+
 }

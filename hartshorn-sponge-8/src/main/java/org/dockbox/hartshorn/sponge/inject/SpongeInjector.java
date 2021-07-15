@@ -74,11 +74,11 @@ public class SpongeInjector extends InjectConfiguration {
 //        this.bind(StaticPaneBuilder.class, SpongeStaticPaneBuilder.class);
 
         // Wired types - do NOT call directly!
-        this.wire(Item.class, SpongeItem.class);
-//        this.wire(Bossbar.class, SpongeBossbar.class);
-        this.wire(Profile.class, SpongeProfile.class);
-//        this.wire(DiscordCommandSource.class, MagiBridgeCommandSource.class);
-        this.wire(ConfigurationManager.class, SimpleConfigurationManager.class);
+        this.manual(Item.class, SpongeItem.class);
+//        this.manual(Bossbar.class, SpongeBossbar.class);
+        this.manual(Profile.class, SpongeProfile.class);
+//        this.manual(DiscordCommandSource.class, MagiBridgeCommandSource.class);
+        this.manual(ConfigurationManager.class, SimpleConfigurationManager.class);
 
         // Log is created from LoggerFactory externally
         this.bind(Logger.class, Hartshorn.log());

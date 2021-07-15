@@ -32,11 +32,11 @@ import org.dockbox.hartshorn.di.adapter.ContextAdapter;
 import org.dockbox.hartshorn.di.annotations.inject.Named;
 import org.dockbox.hartshorn.di.annotations.service.ServiceActivator;
 import org.dockbox.hartshorn.di.binding.Bindings;
-import org.dockbox.hartshorn.di.inject.BeanContext;
+import org.dockbox.hartshorn.di.inject.ProviderContext;
 import org.dockbox.hartshorn.di.inject.Binder;
 import org.dockbox.hartshorn.di.inject.InjectionModifier;
 import org.dockbox.hartshorn.di.inject.Injector;
-import org.dockbox.hartshorn.di.inject.wired.WireContext;
+import org.dockbox.hartshorn.di.inject.wired.BoundContext;
 import org.dockbox.hartshorn.di.properties.InjectableType;
 import org.dockbox.hartshorn.di.properties.InjectorProperty;
 import org.dockbox.hartshorn.di.properties.UseFactory;
@@ -194,12 +194,12 @@ public class HartshornApplicationContext extends ManagedHartshornContext {
     }
 
     @Override
-    public void add(WireContext<?, ?> context) {
+    public void add(BoundContext<?, ?> context) {
         this.internalInjector().add(context);
     }
 
     @Override
-    public void add(BeanContext<?, ?> context) {
+    public void add(ProviderContext<?, ?> context) {
         this.internalInjector().add(context);
     }
 
@@ -215,7 +215,7 @@ public class HartshornApplicationContext extends ManagedHartshornContext {
     }
 
     @Override
-    public <T, I extends T> Exceptional<WireContext<T, I>> firstWire(Class<T> contract, InjectorProperty<Named> property) {
+    public <T, I extends T> Exceptional<BoundContext<T, I>> firstWire(Class<T> contract, InjectorProperty<Named> property) {
         return this.internalInjector().firstWire(contract, property);
     }
 

@@ -15,48 +15,48 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.di.types.bean;
+package org.dockbox.hartshorn.di.types.provision;
 
-import org.dockbox.hartshorn.di.annotations.inject.Bean;
+import org.dockbox.hartshorn.di.annotations.inject.Bound;
 import org.dockbox.hartshorn.di.annotations.inject.Named;
+import org.dockbox.hartshorn.di.annotations.inject.Provider;
 import org.dockbox.hartshorn.di.annotations.service.Service;
-import org.dockbox.hartshorn.di.annotations.inject.Wired;
 import org.dockbox.hartshorn.di.types.SampleField;
 
 import javax.inject.Singleton;
 
 @Service
-public class SampleBeanService {
+public class SampleProviderService {
 
-    @Bean
-    public BeanInterface get() {
-        return () -> "Bean";
+    @Provider
+    public ProvidedInterface get() {
+        return () -> "Provision";
     }
 
-    @Bean("named")
-    public BeanInterface named() {
-        return () -> "NamedBean";
+    @Provider("named")
+    public ProvidedInterface named() {
+        return () -> "NamedProvision";
     }
 
-    @Bean("field")
-    public BeanInterface withField(SampleField field) {
-        return () -> "FieldBean";
+    @Provider("field")
+    public ProvidedInterface withField(SampleField field) {
+        return () -> "FieldProvision";
     }
 
-    @Bean("namedField")
-    public BeanInterface withNamedField(@Named("named") SampleField field) {
-        return () -> "NamedFieldBean";
+    @Provider("namedField")
+    public ProvidedInterface withNamedField(@Named("named") SampleField field) {
+        return () -> "NamedFieldProvision";
     }
 
     @Singleton
-    @Bean("singleton")
-    public BeanInterface singleton() {
-        return () -> "SingletonBean";
+    @Provider("singleton")
+    public ProvidedInterface singleton() {
+        return () -> "SingletonProvision";
     }
 
-    @Bean("wired")
-    @Wired
-    public BeanInterface manualWired(String name) {
+    @Provider("bound")
+    @Bound
+    public ProvidedInterface manual(String name) {
         return () -> name;
     }
 

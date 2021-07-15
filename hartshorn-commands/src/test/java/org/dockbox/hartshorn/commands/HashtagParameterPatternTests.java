@@ -106,7 +106,7 @@ public class HashtagParameterPatternTests {
         return new HashtagParameterPattern() {
             @Override
             protected ResourceEntry wrongFormat() {
-                // Override resources as these are otherwise requested through wired resource references
+                // Override resources as these are otherwise requested through bound resource references
                 return new FakeResource("failed");
             }
         };

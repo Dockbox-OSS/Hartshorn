@@ -17,8 +17,8 @@
 
 package org.dockbox.hartshorn.config;
 
-import org.dockbox.hartshorn.di.annotations.inject.Wired;
 import org.dockbox.hartshorn.api.exceptions.ApplicationException;
+import org.dockbox.hartshorn.di.annotations.inject.Bound;
 import org.dockbox.hartshorn.di.properties.InjectableType;
 import org.dockbox.hartshorn.di.properties.InjectorProperty;
 import org.dockbox.hartshorn.util.HartshornUtils;
@@ -39,7 +39,7 @@ public class SimpleConfigurationManager implements ConfigurationManager, Injecta
     @Getter
     private final Map<String, Map<String, Object>> cache = HartshornUtils.emptyConcurrentMap();
 
-    @Wired
+    @Bound
     public SimpleConfigurationManager(Path path) {
         this.path = path;
         this.fileKey = this.fileKey();

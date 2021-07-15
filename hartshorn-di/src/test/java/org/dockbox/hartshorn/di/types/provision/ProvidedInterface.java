@@ -15,11 +15,11 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.di.types.bean;
+package org.dockbox.hartshorn.di.types.provision;
 
 import org.dockbox.hartshorn.di.types.SampleInterface;
 
 // Middle interface to avoid JUnit runner conflicts
-public interface BeanInterface extends SampleInterface {
+public interface ProvidedInterface extends SampleInterface {
 
 }

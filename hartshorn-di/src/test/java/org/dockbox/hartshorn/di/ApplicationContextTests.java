@@ -17,38 +17,25 @@
 
 package org.dockbox.hartshorn.di;
 
-import com.google.common.collect.Multimap;
-
 import org.dockbox.hartshorn.api.Hartshorn;
-import org.dockbox.hartshorn.api.exceptions.ApplicationException;
 import org.dockbox.hartshorn.di.binding.Bindings;
-import org.dockbox.hartshorn.di.context.ApplicationContext;
-import org.dockbox.hartshorn.di.context.HartshornApplicationContext;
-import org.dockbox.hartshorn.di.context.ManagedHartshornContext;
-import org.dockbox.hartshorn.di.guice.GuiceInjector;
-import org.dockbox.hartshorn.di.guice.HartshornModule;
-import org.dockbox.hartshorn.di.inject.Injector;
 import org.dockbox.hartshorn.di.properties.BindingMetaProperty;
-import org.dockbox.hartshorn.di.services.BeanServiceProcessor;
-import org.dockbox.hartshorn.di.types.InvalidSampleWiredType;
+import org.dockbox.hartshorn.di.types.InvalidSampleBoundType;
 import org.dockbox.hartshorn.di.types.NameProperty;
 import org.dockbox.hartshorn.di.types.PopulatedType;
+import org.dockbox.hartshorn.di.types.SampleBoundPopulatedType;
+import org.dockbox.hartshorn.di.types.SampleBoundType;
 import org.dockbox.hartshorn.di.types.SampleEnablingType;
 import org.dockbox.hartshorn.di.types.SampleField;
 import org.dockbox.hartshorn.di.types.SampleFieldImplementation;
 import org.dockbox.hartshorn.di.types.SampleImplementation;
 import org.dockbox.hartshorn.di.types.SampleInterface;
-import org.dockbox.hartshorn.di.types.SampleWiredPopulatedType;
-import org.dockbox.hartshorn.di.types.SampleWiredType;
-import org.dockbox.hartshorn.di.types.bean.BeanInterface;
+import org.dockbox.hartshorn.di.types.bound.SampleBoundAnnotatedImplementation;
 import org.dockbox.hartshorn.di.types.meta.SampleMetaAnnotatedImplementation;
 import org.dockbox.hartshorn.di.types.multi.SampleMultiAnnotatedImplementation;
+import org.dockbox.hartshorn.di.types.provision.ProvidedInterface;
 import org.dockbox.hartshorn.di.types.scan.SampleAnnotatedImplementation;
-import org.dockbox.hartshorn.di.types.wired.SampleWiredAnnotatedImplementation;
 import org.dockbox.hartshorn.test.HartshornRunner;
-import org.dockbox.hartshorn.util.HartshornUtils;
-import org.dockbox.hartshorn.util.PrefixContext;
-import org.dockbox.hartshorn.util.Reflect;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -56,10 +43,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.stream.Stream;
 
 @ExtendWith(HartshornRunner.class)
@@ -287,9 +270,9 @@ public class ApplicationContextTests {
         context(true).wire(SampleInterface.class, SampleWiredType.class);
         context(false).bind(TypeFactory.class, SimpleTypeFactory.class);
 
-        SampleInterface wired = Hartshorn.context().get(TypeFactory.class).create(SampleInterface.class, "WiredHartshorn");
+        SampleInterface wired = Hartshorn.context().get(TypeFactory.class).create(SampleInterface.class, "BoundHartshorn");
         Assertions.assertNotNull(wired);
-        Assertions.assertEquals("WiredHartshorn", wired.name());
+        Assertions.assertEquals("BoundHartshorn", wired.name());
     }
 
     @Test
@@ -308,13 +291,13 @@ public class ApplicationContextTests {
         context(true).bind("org.dockbox.hartshorn.di.types.wired");
         context(false).bind(TypeFactory.class, SimpleTypeFactory.class);
 
-        SampleInterface provided = Hartshorn.context().get(TypeFactory.class).create(SampleInterface.class, "WiredAnnotated");
+        SampleInterface provided = Hartshorn.context().get(TypeFactory.class).create(SampleInterface.class, "BoundAnnotated");
         Assertions.assertNotNull(provided);
 
         Class<? extends SampleInterface> providedClass = provided.getClass();
-        Assertions.assertEquals(SampleWiredAnnotatedImplementation.class, providedClass);
+        Assertions.assertEquals(SampleBoundAnnotatedImplementation.class, providedClass);
 
-        Assertions.assertEquals("WiredAnnotated", provided.name());
+        Assertions.assertEquals("BoundAnnotated", provided.name());
     }
 
     @Test
@@ -327,7 +310,7 @@ public class ApplicationContextTests {
         Assertions.assertNotNull(provided);
 
         Class<? extends SampleInterface> providedClass = provided.getClass();
-        Assertions.assertEquals(SampleWiredType.class, providedClass);
+        Assertions.assertEquals(SampleBoundType.class, providedClass);
 
         Assertions.assertEquals("FactoryTyped", provided.name());
     }
@@ -341,7 +324,7 @@ public class ApplicationContextTests {
         Assertions.assertNotNull(provided);
 
         Class<? extends SampleInterface> providedClass = provided.getClass();
-        Assertions.assertEquals(SampleWiredType.class, providedClass);
+        Assertions.assertEquals(SampleBoundType.class, providedClass);
 
         Assertions.assertEquals("FactoryTyped", provided.name());
     }
@@ -354,8 +337,8 @@ public class ApplicationContextTests {
 
         SampleInterface provided = Hartshorn.context().get(SampleInterface.class, "FactoryTyped");
         Assertions.assertNotNull(provided);
-        Assertions.assertTrue(provided instanceof SampleWiredPopulatedType);
-        Assertions.assertTrue(((SampleWiredPopulatedType) provided).enabled());
+        Assertions.assertTrue(provided instanceof SampleBoundPopulatedType);
+        Assertions.assertTrue(((SampleBoundPopulatedType) provided).enabled());
     }
 
     @Test
@@ -385,20 +368,20 @@ public class ApplicationContextTests {
         Assertions.assertTrue(provided instanceof SampleImplementation);
     }
 
-    private static Stream<Arguments> beans() {
+    private static Stream<Arguments> providers() {
         return Stream.of(
-                Arguments.of(null, "Bean", false, null, false),
-                Arguments.of("named", "NamedBean", false, null, false),
-                Arguments.of("field", "FieldBean", true, null, false),
-                Arguments.of("namedField", "NamedFieldBean", true, "named", false),
-                Arguments.of("singleton", "SingletonBean", false, null, true)
+                Arguments.of(null, "Provision", false, null, false),
+                Arguments.of("named", "NamedProvision", false, null, false),
+                Arguments.of("field", "FieldProvision", true, null, false),
+                Arguments.of("namedField", "NamedFieldProvision", true, "named", false),
+                Arguments.of("singleton", "SingletonProvision", false, null, true)
         );
     }
 
     @ParameterizedTest
-    @MethodSource("beans")
     void testBeansCanSupply(String meta, String name, boolean field, String fieldMeta, boolean singleton) throws ApplicationException {
         context(true).bind("org.dockbox.hartshorn.di.types.bean");
+    @MethodSource("providers")
 
         if (field) {
             if (fieldMeta == null) {context(false).bind(SampleField.class, SampleFieldImplementation.class);}

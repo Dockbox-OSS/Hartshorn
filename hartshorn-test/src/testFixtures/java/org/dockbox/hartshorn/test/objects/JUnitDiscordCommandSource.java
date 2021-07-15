@@ -24,13 +24,13 @@ import org.dockbox.hartshorn.api.i18n.common.ResourceEntry;
 import org.dockbox.hartshorn.api.i18n.text.Text;
 import org.dockbox.hartshorn.api.i18n.text.pagination.Pagination;
 import org.dockbox.hartshorn.commands.source.DiscordCommandSource;
-import org.dockbox.hartshorn.di.annotations.inject.Wired;
+import org.dockbox.hartshorn.di.annotations.inject.Bound;
 
 public class JUnitDiscordCommandSource implements DiscordCommandSource {
 
     private final TextChannel textChannel;
 
-    @Wired
+    @Bound
     public JUnitDiscordCommandSource(TextChannel textChannel) {
         this.textChannel = textChannel;
     }

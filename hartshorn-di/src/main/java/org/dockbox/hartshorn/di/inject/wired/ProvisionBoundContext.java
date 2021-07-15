@@ -28,18 +28,18 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class BeanWireContext<T, I extends T> implements WireContext<T, I> {
+public class ProvisionBoundContext<T, I extends T> implements BoundContext<T, I> {
 
     private final Class<T> contract;
-    private final Method bean;
+    private final Method provider;
     private final String name;
 
     @Override
     public T create(Object... arguments) throws ApplicationException {
-        final Object service = ApplicationContextAware.instance().context().get(this.bean.getDeclaringClass());
+        final Object service = ApplicationContextAware.instance().context().get(this.provider.getDeclaringClass());
         try {
             //noinspection unchecked
-            return (T) this.bean.invoke(service, arguments);
+            return (T) this.provider.invoke(service, arguments);
         }
         catch (InvocationTargetException | IllegalAccessException | ClassCastException e) {
             throw new ApplicationException(e);

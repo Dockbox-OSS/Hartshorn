@@ -20,7 +20,7 @@ package org.dockbox.hartshorn.sponge.dim;
 import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.di.annotations.inject.Binds;
-import org.dockbox.hartshorn.di.annotations.inject.Wired;
+import org.dockbox.hartshorn.di.annotations.inject.Bound;
 import org.dockbox.hartshorn.server.minecraft.dimension.Block;
 import org.dockbox.hartshorn.server.minecraft.dimension.position.Location;
 import org.dockbox.hartshorn.server.minecraft.item.Item;
@@ -72,7 +72,7 @@ public class SpongeBlock implements Block, SpongeComposite {
         this.location = snapshot.location().orElse(null);
     }
 
-    @Wired
+    @Bound
     public SpongeBlock(Item item) {
         final ItemStack itemStack = SpongeConvert.toSponge(item);
         final Optional<BlockType> block = itemStack.type().block();
@@ -84,7 +84,7 @@ public class SpongeBlock implements Block, SpongeComposite {
         this.location = null;
     }
 
-    @Wired
+    @Bound
     public SpongeBlock(Location location) {
         final Exceptional<ServerLocation> exceptionalLocation = SpongeConvert.toSponge(location);
         if (exceptionalLocation.absent()) {

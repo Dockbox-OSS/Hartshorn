@@ -24,7 +24,7 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public class BeanContext<T, C extends T> {
+public class ProviderContext<T, C extends T> {
 
     private final KeyBinding<T> key;
     private final boolean singleton;

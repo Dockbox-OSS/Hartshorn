@@ -20,7 +20,7 @@ package org.dockbox.hartshorn.test.objects;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.i18n.common.Language;
 import org.dockbox.hartshorn.api.i18n.text.Text;
-import org.dockbox.hartshorn.di.annotations.inject.Wired;
+import org.dockbox.hartshorn.di.annotations.inject.Bound;
 import org.dockbox.hartshorn.server.minecraft.item.Enchant;
 import org.dockbox.hartshorn.server.minecraft.item.Item;
 import org.dockbox.hartshorn.server.minecraft.item.ItemTypes;
@@ -53,14 +53,14 @@ public class JUnitItem implements Item, JUnitPersistentDataHolder {
     private Text displayName;
     private boolean treatAsBlock = false;
 
-    @Wired
+    @Bound
     @Deprecated
     public JUnitItem(String id, int meta) {
         this.id = id;
         this.displayName = Text.of(id);
     }
 
-    @Wired
+    @Bound
     public JUnitItem(String id) {
         this.id = id;
         this.displayName = Text.of(id);

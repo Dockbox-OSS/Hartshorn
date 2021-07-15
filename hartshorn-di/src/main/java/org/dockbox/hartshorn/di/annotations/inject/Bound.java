@@ -15,31 +15,14 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.di.types;
+package org.dockbox.hartshorn.di.annotations.inject;
 
-import org.dockbox.hartshorn.di.annotations.inject.Wired;
-import org.dockbox.hartshorn.di.properties.InjectableType;
-import org.dockbox.hartshorn.di.properties.InjectorProperty;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import lombok.Getter;
-
-@Getter
-public class SampleWiredPopulatedType implements SampleInterface, InjectableType {
-
-    private final String name;
-
-    @Wired
-    private SampleField field;
-    private boolean enabled = false;
-
-    @Wired
-    public SampleWiredPopulatedType(String name) {
-        this.name = name;
-    }
-
-    @Override
-    public void enable(InjectorProperty<?>... properties) {
-        this.enabled = true;
-    }
-
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.CONSTRUCTOR, ElementType.METHOD})
+public @interface Bound {
 }

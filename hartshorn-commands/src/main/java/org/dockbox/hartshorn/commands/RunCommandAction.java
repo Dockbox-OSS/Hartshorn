@@ -18,7 +18,7 @@
 package org.dockbox.hartshorn.commands;
 
 import org.dockbox.hartshorn.api.i18n.text.actions.CommandAction;
-import org.dockbox.hartshorn.di.annotations.inject.Wired;
+import org.dockbox.hartshorn.di.annotations.inject.Bound;
 
 public final class RunCommandAction {
 
@@ -28,7 +28,7 @@ public final class RunCommandAction {
 
     public static final class RunCommand extends CommandAction<String> {
 
-        @Wired
+        @Bound
         private RunCommand(String result) {
             super(result);
         }

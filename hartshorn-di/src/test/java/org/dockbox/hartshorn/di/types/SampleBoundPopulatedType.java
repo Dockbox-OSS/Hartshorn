@@ -15,20 +15,32 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.di.types.wired;
+package org.dockbox.hartshorn.di.types;
 
-import org.dockbox.hartshorn.di.annotations.inject.Binds;
+import org.dockbox.hartshorn.di.annotations.inject.Bound;
 import org.dockbox.hartshorn.di.annotations.inject.Wired;
-import org.dockbox.hartshorn.di.types.SampleInterface;
+import org.dockbox.hartshorn.di.properties.InjectableType;
+import org.dockbox.hartshorn.di.properties.InjectorProperty;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-@Binds(SampleInterface.class)
 @Getter
-@AllArgsConstructor(onConstructor_ = @Wired)
-public class SampleWiredAnnotatedImplementation implements SampleInterface {
+public class SampleBoundPopulatedType implements SampleInterface, InjectableType {
 
     private final String name;
+
+    @Wired
+    private SampleField field;
+    private boolean enabled = false;
+
+    @Bound
+    public SampleBoundPopulatedType(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public void enable(InjectorProperty<?>... properties) {
+        this.enabled = true;
+    }
 
 }

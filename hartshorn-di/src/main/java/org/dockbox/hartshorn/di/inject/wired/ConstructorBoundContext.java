@@ -18,7 +18,7 @@
 package org.dockbox.hartshorn.di.inject.wired;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.di.annotations.inject.Wired;
+import org.dockbox.hartshorn.di.annotations.inject.Bound;
 import org.dockbox.hartshorn.util.Reflect;
 
 import java.lang.reflect.Constructor;
@@ -31,7 +31,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class ConstructorWireContext<T, I extends T> implements WireContext<T, I> {
+public class ConstructorBoundContext<T, I extends T> implements BoundContext<T, I> {
 
     private final Class<T> contract;
     private final Class<I> implementation;
@@ -41,7 +41,7 @@ public class ConstructorWireContext<T, I extends T> implements WireContext<T, I>
     public I create(Object... arguments) {
         Class<?>[] argumentTypes = Arrays.stream(arguments).map(Object::getClass).toArray(Class<?>[]::new);
         try {
-            Collection<Constructor<I>> constructors = Reflect.constructors(this.implementation(), Wired.class);
+            Collection<Constructor<I>> constructors = Reflect.constructors(this.implementation(), Bound.class);
             Constructor<I> ctor = null;
             for (Constructor<I> constructor : constructors) {
                 if (constructor.getParameterTypes().length != arguments.length) continue;
@@ -66,7 +66,7 @@ public class ConstructorWireContext<T, I extends T> implements WireContext<T, I>
                 throw new NoSuchMethodException("Available constructors do not meet expected parameter types");
             }
 
-            final Exceptional<Wired> annotation = Reflect.annotation(ctor, Wired.class);
+            final Exceptional<Bound> annotation = Reflect.annotation(ctor, Bound.class);
             if (annotation.present()) {
                 return ctor.newInstance(arguments);
             }

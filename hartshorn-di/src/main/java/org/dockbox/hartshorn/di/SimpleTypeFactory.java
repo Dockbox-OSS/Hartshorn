@@ -20,7 +20,7 @@ package org.dockbox.hartshorn.di;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.di.annotations.inject.Named;
 import org.dockbox.hartshorn.di.binding.Bindings;
-import org.dockbox.hartshorn.di.inject.wired.WireContext;
+import org.dockbox.hartshorn.di.inject.wired.BoundContext;
 import org.dockbox.hartshorn.di.properties.BindingMetaProperty;
 import org.dockbox.hartshorn.di.properties.InjectableType;
 import org.dockbox.hartshorn.di.properties.InjectorProperty;
@@ -39,7 +39,7 @@ public class SimpleTypeFactory implements TypeFactory {
     @Override
     public <T> T create(Class<T> type, Object... arguments) {
         @Nullable final InjectorProperty<Named> property = Bindings.property(BindingMetaProperty.KEY, Named.class, this.properties);
-        Exceptional<WireContext<T, T>> binding = ApplicationContextAware.instance().context().firstWire(type, property);
+        Exceptional<BoundContext<T, T>> binding = ApplicationContextAware.instance().context().firstWire(type, property);
         if (binding.absent()) throw new IllegalStateException("Could not autowire " + type.getCanonicalName() + " as there is no active binding for it");
         return Exceptional.of(() -> {
             final T instance = binding.get().create(arguments);
