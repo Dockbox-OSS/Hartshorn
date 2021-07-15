@@ -205,7 +205,6 @@ public class GuiceInjector implements Injector {
     @Override
     public <T> T populate(T instance) {
         if (null != instance) {
-            this.rebuild().injectMembers(instance);
             for (Field field : Reflect.fields(instance.getClass(), Wired.class)) {
                 Object fieldInstance = ApplicationContextAware.instance().context().get(field.getType());
                 Reflect.set(field, instance, fieldInstance);
