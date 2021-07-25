@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.commands;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.i18n.common.ResourceEntry;
-import org.dockbox.hartshorn.commands.context.CommandContainerContext;
+import org.dockbox.hartshorn.commands.context.CommandDefinitionContext;
 import org.dockbox.hartshorn.commands.context.CommandContext;
 import org.dockbox.hartshorn.commands.context.CommandExecutorContext;
 import org.dockbox.hartshorn.commands.context.SimpleCommandContext;
@@ -52,10 +52,10 @@ public class SimpleCommandParser implements CommandParser {
 
     @Override
     public Exceptional<CommandContext> parse(String command, CommandSource source, CommandExecutorContext context) throws ParsingException {
-        final Exceptional<CommandContainerContext> container = context.first(CommandContainerContext.class);
+        final Exceptional<CommandDefinitionContext> container = context.first(CommandDefinitionContext.class);
         if (container.absent()) return Exceptional.empty();
 
-        final CommandContainerContext containerContext = container.get();
+        final CommandDefinitionContext containerContext = container.get();
         List<CommandElement<?>> elements = containerContext.elements();
 
         final List<CommandParameter<?>> parsedElements = HartshornUtils.emptyList();
@@ -104,7 +104,7 @@ public class SimpleCommandParser implements CommandParser {
         return parameters;
     }
 
-    private String stripFlags(String command, Collection<CommandParameter<?>> flags, CommandSource source, CommandContainerContext context) throws ParsingException {
+    private String stripFlags(String command, Collection<CommandParameter<?>> flags, CommandSource source, CommandDefinitionContext context) throws ParsingException {
         final Matcher matcher = FLAG.matcher(command);
 
         while (matcher.find()) {

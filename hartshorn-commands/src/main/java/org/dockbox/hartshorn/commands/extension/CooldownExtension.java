@@ -40,7 +40,7 @@ public class CooldownExtension implements CommandExecutorExtension {
         final String id = this.id((Identifiable) sender, context);
         if (HartshornUtils.inCooldown(id)) return ExtensionResult.reject(this.resources.cooldownActive());
         else {
-            Cooldown cooldown = Reflect.annotation(executorContext.method(), Cooldown.class).get();
+            Cooldown cooldown = Reflect.annotation(executorContext.element(), Cooldown.class).get();
             HartshornUtils.cooldown(id, cooldown.duration(), cooldown.unit());
             return ExtensionResult.accept();
         }
@@ -48,6 +48,6 @@ public class CooldownExtension implements CommandExecutorExtension {
 
     @Override
     public boolean extend(CommandExecutorContext context) {
-        return Reflect.annotation(context.method(), Cooldown.class).present();
+        return Reflect.annotation(context.element(), Cooldown.class).present();
     }
 }

@@ -17,30 +17,31 @@
 
 package org.dockbox.hartshorn.commands.arguments;
 
+import org.dockbox.hartshorn.api.Hartshorn;
+import org.dockbox.hartshorn.commands.context.ArgumentConverterContext;
 import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
 
 import java.util.Arrays;
 import java.util.List;
 
 import lombok.Getter;
-
-public abstract class AbstractArgumentConverter<T> implements ArgumentConverter<T> {
+public abstract class DefaultArgumentConverter<T> implements ArgumentConverter<T> {
 
     private final String[] keys;
     @Getter
     private final Class<T> type;
     private final int size;
 
-    protected AbstractArgumentConverter(Class<T> type, int size,String... keys) {
+    protected DefaultArgumentConverter(Class<T> type, int size, String... keys) {
         if (0 == keys.length)
             throw new IllegalArgumentException("Cannot create argument converter without at least one key");
         this.keys = keys;
         this.type = type;
         this.size = size;
-        ArgumentConverterRegistry.registerConverter(this);
+        Hartshorn.context().first(ArgumentConverterContext.class).present(context -> context.register(this));
     }
 
-    protected AbstractArgumentConverter(Class<T> type, String... keys) {
+    protected DefaultArgumentConverter(Class<T> type, String... keys) {
         this(type, 1, keys);
     }
 

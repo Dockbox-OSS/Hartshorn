@@ -20,8 +20,8 @@ package org.dockbox.hartshorn.commands;
 import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.commands.annotations.Command;
-import org.dockbox.hartshorn.commands.context.CommandContainerContext;
-import org.dockbox.hartshorn.commands.context.SimpleCommandContainerContext;
+import org.dockbox.hartshorn.commands.context.CommandDefinitionContext;
+import org.dockbox.hartshorn.commands.context.SimpleCommandDefinitionContext;
 import org.dockbox.hartshorn.commands.definition.CommandElement;
 import org.dockbox.hartshorn.commands.definition.CommandFlag;
 import org.dockbox.hartshorn.commands.exceptions.ParsingException;
@@ -39,7 +39,7 @@ import java.lang.annotation.Annotation;
 import java.util.List;
 
 @ExtendWith(HartshornRunner.class)
-public class CommandContainerContextTests {
+public class CommandDefinitionContextTests {
 
     @Test
     void testParsingCanSucceed() {
@@ -121,7 +121,7 @@ public class CommandContainerContextTests {
     @Test
     void testContainerContext() {
         Command command = this.createCommand();
-        final CommandContainerContext context = new SimpleCommandContainerContext(command);
+        final CommandDefinitionContext context = new SimpleCommandDefinitionContext(command);
 
         Assertions.assertEquals("demo", context.permission().get());
         Assertions.assertEquals(1, context.aliases().size());

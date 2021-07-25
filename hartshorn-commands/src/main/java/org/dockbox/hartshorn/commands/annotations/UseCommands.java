@@ -17,6 +17,8 @@
 
 package org.dockbox.hartshorn.commands.annotations;
 
+import org.dockbox.hartshorn.commands.service.ArgumentServiceProcessor;
+import org.dockbox.hartshorn.commands.service.CommandServiceScanner;
 import org.dockbox.hartshorn.di.annotations.service.ServiceActivator;
 
 import java.lang.annotation.ElementType;

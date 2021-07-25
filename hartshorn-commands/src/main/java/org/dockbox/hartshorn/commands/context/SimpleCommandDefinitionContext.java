@@ -22,7 +22,6 @@ import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.exceptions.Except;
 import org.dockbox.hartshorn.api.i18n.permissions.Permission;
 import org.dockbox.hartshorn.commands.annotations.Command;
-import org.dockbox.hartshorn.commands.arguments.ArgumentConverterRegistry;
 import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
 import org.dockbox.hartshorn.commands.definition.CommandDefinition;
 import org.dockbox.hartshorn.commands.definition.CommandElement;
@@ -35,6 +34,7 @@ import org.dockbox.hartshorn.commands.definition.SimpleCommandFlag;
 import org.dockbox.hartshorn.di.binding.Bindings;
 import org.dockbox.hartshorn.di.context.DefaultContext;
 import org.dockbox.hartshorn.util.HartshornUtils;
+import org.dockbox.hartshorn.util.Reflect;
 
 import java.util.Collection;
 import java.util.List;
@@ -42,12 +42,16 @@ import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Simple implementation of {@link CommandDefinitionContext}.
+ * TODO GLieben: Document element patterns and expected definition format.
+ */
 @SuppressWarnings("RegExpUnnecessaryNonCapturingGroup")
-public class SimpleCommandContainerContext extends DefaultContext implements CommandContainerContext {
+public class SimpleCommandDefinitionContext extends DefaultContext implements CommandDefinitionContext {
 
     /**
-     * Represents the default type for command elements matched by {@link SimpleCommandContainerContext#FLAG} or
-     * {@link SimpleCommandContainerContext#ARGUMENT}. If no type is defined in those matches, this value is used.
+     * Represents the default type for command elements matched by {@link SimpleCommandDefinitionContext#FLAG} or
+     * {@link SimpleCommandDefinitionContext#ARGUMENT}. If no type is defined in those matches, this value is used.
      * 'String' is used as this is the base value provided to Hartshorn, thus requiring no further
      * converting to other data types.
      */
@@ -55,7 +59,7 @@ public class SimpleCommandContainerContext extends DefaultContext implements Com
 
     /**
      * Each matching element represents either a flag or argument, these can then be parsed using
-     * {@link SimpleCommandContainerContext#FLAG} and {@link SimpleCommandContainerContext#ARGUMENT}.
+     * {@link SimpleCommandDefinitionContext#FLAG} and {@link SimpleCommandDefinitionContext#ARGUMENT}.
      */
     private static final Pattern GENERIC_ARGUMENT = Pattern.compile("((?:<.+?>)|(?:\\[.+?\\])|(?:-(?:(?:-\\w+)|\\w)(?: [^ -]+)?))");
 
@@ -63,7 +67,7 @@ public class SimpleCommandContainerContext extends DefaultContext implements Com
      * Each matching element represents a flag with either one or two groups. The first group (G1) is
      * required, and indicates the name of the flag. The second group (G2) is optional, and represents
      * the value expected by the flag. G2 is a argument which can be parsed using {@link
-     * SimpleCommandContainerContext#ARGUMENT}.
+     * SimpleCommandDefinitionContext#ARGUMENT}.
      *
      * <p>Syntax:
      *
@@ -78,8 +82,8 @@ public class SimpleCommandContainerContext extends DefaultContext implements Com
     /**
      * Each matching element represents a argument with two groups. The first group (G1) indicates
      * whether the argument is required or optional. The second group can either be a argument meta
-     * which can be parsed using {@link SimpleCommandContainerContext#ELEMENT_VALUE}, or a simple value if {@link
-     * SimpleCommandContainerContext#ELEMENT_VALUE} returns no matches. Arguments can be grouped.
+     * which can be parsed using {@link SimpleCommandDefinitionContext#ELEMENT_VALUE}, or a simple value if {@link
+     * SimpleCommandDefinitionContext#ELEMENT_VALUE} returns no matches. Arguments can be grouped.
      *
      * <p>Syntax:
      *
@@ -96,7 +100,7 @@ public class SimpleCommandContainerContext extends DefaultContext implements Com
 
     /**
      * Each matching element represents additional meta information for matching elements of {@link
-     * SimpleCommandContainerContext#ARGUMENT}. Matches contain either one or two groups. If both groups are
+     * SimpleCommandDefinitionContext#ARGUMENT}. Matches contain either one or two groups. If both groups are
      * present, group 1 represents the name of the argument, and group 2 represents the value. If only
      * group 1 is present, it represents the type of the argument and the name is obtained from the
      * argument definition.
@@ -115,7 +119,7 @@ public class SimpleCommandContainerContext extends DefaultContext implements Com
     private final Command command;
     private final CommandDefinition definition;
 
-    public SimpleCommandContainerContext(Command command) {
+    public SimpleCommandDefinitionContext(Command command) {
         this.command = command;
         this.permission = this.getOrDefault();
         if (!"".equals(this.arguments())) {
@@ -221,26 +225,27 @@ public class SimpleCommandContainerContext extends DefaultContext implements Com
     }
 
     private <E extends Enum<E>> CommandElement<?> lookupElement(String type, String name, Permission permission, boolean optional) {
-        Exceptional<ArgumentConverter<?>> converter = ArgumentConverterRegistry.optionalConverter(type.toLowerCase());
+        Exceptional<ArgumentConverter<?>> converter = Hartshorn.context()
+                .first(ArgumentConverterContext.class)
+                .flatMap(context -> context.converter(type.toLowerCase()));
         if (converter.present()) {
             return new SimpleCommandElement<>(converter.get(), name, permission, optional, converter.get().size());
         }
         else {
-            try {
-                Class<?> clazz = Class.forName(type);
-                if (clazz.isEnum()) {
-                    //noinspection unchecked
-                    Class<E> enumType = (Class<E>) clazz;
-                    return CommandElements.enumElement(name, permission, enumType, optional);
-                }
-                else {
-                    Hartshorn.log().warn("Type '" + type.toLowerCase() + "' is not supported, using default value");
-                    return this.lookupElement(DEFAULT_TYPE, name, permission, optional);
-                }
-            }
-            catch (Exception e) {
-                Except.handle("No argument of type `" + type + "` can be read", e);
+            Class<?> clazz = Reflect.lookup(type);
+            if (clazz == null) {
+                Except.handle("No argument of type `" + type + "` can be read");
                 return null;
+            }
+
+            if (clazz.isEnum()) {
+                //noinspection unchecked
+                Class<E> enumType = (Class<E>) clazz;
+                return CommandElements.enumElement(name, permission, enumType, optional);
+            }
+            else {
+                Hartshorn.log().warn("Type '" + type.toLowerCase() + "' is not supported, using default value");
+                return this.lookupElement(DEFAULT_TYPE, name, permission, optional);
             }
         }
     }

@@ -24,6 +24,10 @@ import java.lang.reflect.Parameter;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+/**
+ * Type used to store a {@link java.lang.reflect.Method}'s parameter and the index of said
+ * parameter.
+ */
 @AllArgsConstructor
 @Getter
 public class ParameterContext {
@@ -31,6 +35,11 @@ public class ParameterContext {
     private final Parameter parameter;
     private final int index;
 
+    /**
+     * Checks if the provided type is equal to, or a supertype of, the stored parameter's type.
+     * @param type The type to compare against
+     * @return <code>true</code> if the provided type is equal or a supertype, else <code>false</code>
+     */
     public boolean is(Class<?> type) {
         return Reflect.assigns(type, this.parameter().getType());
     }

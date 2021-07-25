@@ -56,6 +56,6 @@ public class ConfirmationExtension implements CommandExecutorExtension {
 
     @Override
     public boolean extend(CommandExecutorContext context) {
-        return Reflect.annotation(context.method(), WithConfirmation.class).present();
+        return Reflect.annotation(context.element(), WithConfirmation.class).present();
     }
 }

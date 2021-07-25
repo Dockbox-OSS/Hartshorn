@@ -32,7 +32,7 @@ import java.util.Collection;
  *
  * @param <T> The generic type
  */
-public class DynamicPatternConverter<T> extends AbstractArgumentConverter<T> {
+public class DynamicPatternConverter<T> extends DefaultArgumentConverter<T> {
 
     private final CustomParameterPattern pattern;
 

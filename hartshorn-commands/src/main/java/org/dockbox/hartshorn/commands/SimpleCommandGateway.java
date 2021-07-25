@@ -23,7 +23,7 @@ import com.google.common.collect.Multimap;
 import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.commands.annotations.Command;
-import org.dockbox.hartshorn.commands.context.CommandContainerContext;
+import org.dockbox.hartshorn.commands.context.CommandDefinitionContext;
 import org.dockbox.hartshorn.commands.context.CommandContext;
 import org.dockbox.hartshorn.commands.context.CommandExecutorContext;
 import org.dockbox.hartshorn.commands.context.MethodCommandExecutorContext;
@@ -120,7 +120,7 @@ public class SimpleCommandGateway implements CommandGateway {
 
     @Override
     public void register(CommandExecutorContext context) {
-        final Exceptional<CommandContainerContext> container = context.first(CommandContainerContext.class);
+        final Exceptional<CommandDefinitionContext> container = context.first(CommandDefinitionContext.class);
         if (container.absent()) throw new IllegalArgumentException("Executor contexts should contain at least one container context");
 
         List<String> aliases;
