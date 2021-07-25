@@ -17,22 +17,6 @@
 
 package org.dockbox.hartshorn.di.context;
 
-import org.dockbox.hartshorn.api.domain.Exceptional;
-
-import java.util.List;
-
-public interface Context {
-
-    <C extends Context> void add(C context);
-    <N extends NamedContext> void add(N context);
-    <C extends Context> void add(String name, C context);
-
-    <C extends Context> Exceptional<C> first(Class<C> context);
-    Exceptional<Context> first(String name);
-    <N extends Context> Exceptional<N> first(String name, Class<N> context);
-
-    <C extends Context> List<C> all(Class<C> context);
-    List<Context> all(String name);
-    <N extends Context> List<N> all(String name, Class<N> context);
-
+public interface NamedContext extends Context {
+    String name();
 }

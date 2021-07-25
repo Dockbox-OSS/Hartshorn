@@ -17,12 +17,9 @@
 
 package org.dockbox.hartshorn.di.context;
 
-import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.util.PrefixContext;
 
-import java.util.List;
-
-public class ReflectionContext extends PrefixContext implements Context {
+public class ReflectionContext extends PrefixContext implements DelegatingContext<DefaultContext> {
 
     private final DefaultContext context;
 
@@ -33,17 +30,7 @@ public class ReflectionContext extends PrefixContext implements Context {
     }
 
     @Override
-    public <C extends Context> Exceptional<C> first(Class<C> context) {
-        return this.context.first(context);
-    }
-
-    @Override
-    public <C extends Context> List<C> all(Class<C> context) {
-        return this.context.all(context);
-    }
-
-    @Override
-    public <C extends Context> void add(C context) {
-        this.context.add(context);
+    public DefaultContext get() {
+        return this.context;
     }
 }

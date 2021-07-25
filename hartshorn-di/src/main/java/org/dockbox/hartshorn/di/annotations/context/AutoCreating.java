@@ -15,24 +15,19 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.di.context;
+package org.dockbox.hartshorn.di.annotations.context;
 
-import org.dockbox.hartshorn.api.domain.Exceptional;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import java.util.List;
-
-public interface Context {
-
-    <C extends Context> void add(C context);
-    <N extends NamedContext> void add(N context);
-    <C extends Context> void add(String name, C context);
-
-    <C extends Context> Exceptional<C> first(Class<C> context);
-    Exceptional<Context> first(String name);
-    <N extends Context> Exceptional<N> first(String name, Class<N> context);
-
-    <C extends Context> List<C> all(Class<C> context);
-    List<Context> all(String name);
-    <N extends Context> List<N> all(String name, Class<N> context);
-
+/**
+ * Indicates a {@link org.dockbox.hartshorn.di.context.Context} type should be
+ * automatically created when it is looked up. Subtypes of {@link org.dockbox.hartshorn.di.context.DefaultContext}
+ * honor this behavior by default, other implementations may differ.
+ */
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
+public @interface AutoCreating {
 }
