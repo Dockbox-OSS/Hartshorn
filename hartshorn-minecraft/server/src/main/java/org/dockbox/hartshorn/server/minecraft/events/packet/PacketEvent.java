@@ -29,7 +29,7 @@ import lombok.Getter;
 /**
  * The event fired when the server <b>sends</b> a packet to a player.
  *
- * @param <T>
+ * @param <T> The type of packet being sent/received
  */
 public abstract class PacketEvent<T extends Packet> extends AbstractCancellableEvent {
 
