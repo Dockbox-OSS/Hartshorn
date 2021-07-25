@@ -25,6 +25,7 @@ import org.dockbox.hartshorn.util.exceptions.NotPrimitiveException;
 import org.dockbox.hartshorn.util.exceptions.TypeConversionException;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 import org.reflections.Reflections;
 
@@ -403,6 +404,7 @@ public final class Reflect {
         }
     }
 
+    @Nullable
     public static Class<?> lookup(String className) {
         try {
             return Class.forName(className);
