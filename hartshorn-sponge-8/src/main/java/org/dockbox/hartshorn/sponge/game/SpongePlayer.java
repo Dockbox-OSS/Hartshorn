@@ -277,7 +277,7 @@ public class SpongePlayer extends Player implements SpongeEntity<net.minecraft.s
     }
 
     private Exceptional<User> user() {
-        return Exceptional.of(Sponge.server().userManager().find(this.uniqueId()));
+        return SpongeUtil.await(Sponge.server().userManager().loadOrCreate(this.uniqueId()));
     }
 
     public Exceptional<ServerPlayer> player() {
