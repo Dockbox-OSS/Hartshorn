@@ -50,7 +50,15 @@ public interface CommandContext extends ParserContext {
      */
     boolean has(String key);
 
-    <T> Exceptional<T> first(String key);
+    /**
+     * Gets the argument or flag associated with the given <code>key</code>, if it exists. The
+     * value of the argument is cast to type <code>T</code>. If the argument or flag is not of type
+     * <code>T</code>, or does not exist, {@link Exceptional#empty()} is returned instead.
+     * @param key The key of the argument or flag
+     * @param <T> The expected type of the argument or flag
+     * @return The argument or flag wrapped in a {@link Exceptional}, or {@link Exceptional#empty()}
+     */
+    <T> Exceptional<T> find(String key);
 
     /**
      * Gets the first {@link CommandParameter} in the form of a argument associated with the given

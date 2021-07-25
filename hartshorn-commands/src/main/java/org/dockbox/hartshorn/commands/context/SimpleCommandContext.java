@@ -30,6 +30,9 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+/**
+ * Simple implementation of {@link CommandContext}.
+ */
 @SuppressWarnings("unchecked")
 @AllArgsConstructor
 public class SimpleCommandContext extends DefaultContext implements CommandContext {
@@ -63,8 +66,8 @@ public class SimpleCommandContext extends DefaultContext implements CommandConte
     }
 
     @Override
-    public <T> Exceptional<T> first(String key) {
-        return Exceptional.of((T) this.get(key));
+    public <T> Exceptional<T> find(String key) {
+        return Exceptional.of(() -> this.get(key));
     }
 
     @Override
