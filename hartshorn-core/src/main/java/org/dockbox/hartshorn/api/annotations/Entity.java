@@ -15,17 +15,28 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.api.entity.annotations;
+package org.dockbox.hartshorn.api.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * Represents a (non)serializable entity.
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface Entity {
+    /**
+     * Gets the name or alias of the entity. This can typically be used during (de)serialization.
+     * @return The name or alias
+     */
     String value();
+
+    /**
+     * Gets whether the entity should be serialized.
+     * @return <code>true</code> if the entity should be serialized, or <code>false</code>
+     */
     boolean serializable() default true;
-    Class<?>[] rejects() default {};
 }

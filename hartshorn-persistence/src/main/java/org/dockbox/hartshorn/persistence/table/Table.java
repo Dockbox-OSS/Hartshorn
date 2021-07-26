@@ -18,8 +18,8 @@
 package org.dockbox.hartshorn.persistence.table;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.api.entity.annotations.Entity;
-import org.dockbox.hartshorn.api.entity.annotations.Property;
+import org.dockbox.hartshorn.api.annotations.Entity;
+import org.dockbox.hartshorn.api.annotations.Property;
 import org.dockbox.hartshorn.persistence.table.behavior.Merge;
 import org.dockbox.hartshorn.persistence.table.behavior.Order;
 import org.dockbox.hartshorn.persistence.table.column.ColumnIdentifier;

@@ -18,7 +18,7 @@
 package org.dockbox.hartshorn.dave.models;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.api.entity.annotations.Entity;
+import org.dockbox.hartshorn.api.annotations.Entity;
 import org.dockbox.hartshorn.dave.DaveUtils;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.jetbrains.annotations.NonNls;

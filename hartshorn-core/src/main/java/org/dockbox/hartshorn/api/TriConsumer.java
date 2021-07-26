@@ -17,6 +17,14 @@
 
 package org.dockbox.hartshorn.api;
 
+/**
+ * Extension of {@link java.util.function.Consumer} and {@link java.util.function.BiConsumer} with
+ * the addition of a third parameter of type <code>O</code>
+ *
+ * @param <T> the type of the first argument to the operation
+ * @param <U> the type of the second argument to the operation
+ * @param <O> the type of the third argument to the operation
+ */
 @FunctionalInterface
 public interface TriConsumer<T, U, O> {
     void accept(T t, U u, O o);

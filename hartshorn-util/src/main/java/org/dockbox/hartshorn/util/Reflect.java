@@ -18,8 +18,8 @@
 package org.dockbox.hartshorn.util;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.api.entity.annotations.Entity;
-import org.dockbox.hartshorn.api.entity.annotations.Property;
+import org.dockbox.hartshorn.api.annotations.Entity;
+import org.dockbox.hartshorn.api.annotations.Property;
 import org.dockbox.hartshorn.util.exceptions.FieldAccessException;
 import org.dockbox.hartshorn.util.exceptions.NotPrimitiveException;
 import org.dockbox.hartshorn.util.exceptions.TypeConversionException;

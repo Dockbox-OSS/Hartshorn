@@ -17,6 +17,10 @@
 
 package org.dockbox.hartshorn.api.domain;
 
+/**
+ * Utility type containing filetype constants indicating the file extension
+ * of each file type.
+ */
 public final class FileTypes {
 
     public static final String SQLITE = "sqlite";

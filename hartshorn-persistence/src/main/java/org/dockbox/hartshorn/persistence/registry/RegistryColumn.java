@@ -18,7 +18,7 @@
 package org.dockbox.hartshorn.persistence.registry;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.api.entity.annotations.Entity;
+import org.dockbox.hartshorn.api.annotations.Entity;
 import org.dockbox.hartshorn.util.HartshornUtils;
 
 import java.util.ArrayList;

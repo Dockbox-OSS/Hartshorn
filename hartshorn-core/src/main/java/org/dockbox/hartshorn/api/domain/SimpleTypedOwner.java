@@ -19,15 +19,21 @@ package org.dockbox.hartshorn.api.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
 
+/**
+ * Simple implementation of {@link TypedOwner}
+ */
 @Getter
-@Setter
 @AllArgsConstructor
 public final class SimpleTypedOwner implements TypedOwner {
 
     private final String id;
 
+    /**
+     * Creates a new {@link SimpleTypedOwner} from the given ID.
+     * @param id The ID of the owner
+     * @return The new {@link TypedOwner}
+     */
     public static TypedOwner of(String id) {
         return new SimpleTypedOwner(id);
     }

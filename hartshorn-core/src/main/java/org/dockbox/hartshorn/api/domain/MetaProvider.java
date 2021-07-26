@@ -17,10 +17,33 @@
 
 package org.dockbox.hartshorn.api.domain;
 
+/**
+ * The type responsible for providing metadata on given types.
+ */
 public interface MetaProvider {
 
+    /**
+     * Looks up the owner of the given type. If no explicit owner exists, the
+     * type itself is used as owner.
+     * @param type The type to look up
+     * @return The owner of the type
+     */
     TypedOwner lookup(Class<?> type);
+
+    /**
+     * Looks up whether the given type is a singleton.
+     * @param type The type to look up
+     * @return <code>true</code> if the type is a singleton, or <code>false</code>
+     */
     boolean singleton(Class<?> type);
+
+    /**
+     * Looks up whether the given type is a component-like type. This only applies if
+     * the dependency injection module is present, if it is not this should always
+     * return <code>false</code>.
+     * @param type The type to look up
+     * @return <code>true</code> if the type is a component-like type, or <code>false</code>
+     */
     boolean component(Class<?> type);
 
 }

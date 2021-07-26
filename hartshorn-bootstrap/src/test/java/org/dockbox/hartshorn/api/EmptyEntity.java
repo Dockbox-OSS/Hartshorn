@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.api;
 
-import org.dockbox.hartshorn.api.entity.annotations.Entity;
+import org.dockbox.hartshorn.api.annotations.Entity;
 
 @Entity("entity")
 public class EmptyEntity {

@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.persistence.table.objects;
 
-import org.dockbox.hartshorn.api.entity.annotations.Property;
+import org.dockbox.hartshorn.api.annotations.Property;
 
 public class WronglyIdentifiedUser {
 

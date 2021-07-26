@@ -24,6 +24,12 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * Represents a simple tuple holding a single key of type <code>K</code> and value
+ * of type <code>V</code>. This can be used to populate {@link java.util.Map maps}.
+ * @param <K> The type of the key represented by this tuple
+ * @param <V> The type of the value represented by this tuple
+ */
 @Getter @Setter
 @AllArgsConstructor
 @EqualsAndHashCode

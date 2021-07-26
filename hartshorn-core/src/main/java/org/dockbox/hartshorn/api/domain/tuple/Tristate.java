@@ -17,6 +17,10 @@
 
 package org.dockbox.hartshorn.api.domain.tuple;
 
+/**
+ * Represents a simple tristate, which is either <code>true</code>, <code>false</code>, or <code>undefined</code>
+ * (indicating the value isn't present, either as a boolean or at all)
+ */
 public enum Tristate {
     TRUE(true),
     FALSE(false),

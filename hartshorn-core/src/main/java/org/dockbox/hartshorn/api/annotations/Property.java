@@ -15,7 +15,7 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.api.entity.annotations;
+package org.dockbox.hartshorn.api.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
