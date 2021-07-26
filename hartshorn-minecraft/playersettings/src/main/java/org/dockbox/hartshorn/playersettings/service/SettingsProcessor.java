@@ -37,10 +37,6 @@ public class SettingsProcessor implements ServiceProcessor<UseSettings> {
 
     @Override
     public <T> void process(ApplicationContext context, Class<T> type) {
-        if (context.first(SettingsContext.class).absent()) {
-            context.add(new SettingsContext());
-        }
-
         SettingsContext settingsContext = context.first(SettingsContext.class).get();
 
         final List<Field> fields = Reflect.fieldsLike(type, Setting.class);

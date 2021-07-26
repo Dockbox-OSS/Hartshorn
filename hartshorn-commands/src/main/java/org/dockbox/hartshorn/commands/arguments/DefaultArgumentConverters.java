@@ -26,8 +26,6 @@ import org.dockbox.hartshorn.api.i18n.common.ResourceEntry;
 import org.dockbox.hartshorn.api.i18n.text.Text;
 import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
 import org.dockbox.hartshorn.di.annotations.service.Service;
-import org.dockbox.hartshorn.di.properties.InjectableType;
-import org.dockbox.hartshorn.di.properties.InjectorProperty;
 import org.dockbox.hartshorn.di.services.ComponentContainer;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.jetbrains.annotations.NonNls;
@@ -41,7 +39,7 @@ import java.util.function.Function;
 
 @SuppressWarnings({ "unused", "ClassWithTooManyFields" })
 @Service
-public final class DefaultArgumentConverters implements InjectableType {
+public final class DefaultArgumentConverters {
 
     public static final ArgumentConverter<String> STRING = SimpleArgumentConverter.builder(String.class, "string")
             .withConverter((Function<String, Exceptional<String>>) Exceptional::of)
@@ -171,9 +169,4 @@ public final class DefaultArgumentConverters implements InjectableType {
             })
             .withSize(-1)
             .build();
-
-    @Override
-    public void enable(InjectorProperty<?>... properties) {
-        Hartshorn.log().info("Registered default command argument converters.");
-    }
 }

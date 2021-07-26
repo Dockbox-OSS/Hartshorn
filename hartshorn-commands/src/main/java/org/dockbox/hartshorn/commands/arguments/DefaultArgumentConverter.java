@@ -17,8 +17,6 @@
 
 package org.dockbox.hartshorn.commands.arguments;
 
-import org.dockbox.hartshorn.api.Hartshorn;
-import org.dockbox.hartshorn.commands.context.ArgumentConverterContext;
 import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
 
 import java.util.Arrays;
@@ -43,7 +41,6 @@ public abstract class DefaultArgumentConverter<T> implements ArgumentConverter<T
         this.keys = keys;
         this.type = type;
         this.size = size;
-        Hartshorn.context().first(ArgumentConverterContext.class).present(context -> context.register(this));
     }
 
     protected DefaultArgumentConverter(Class<T> type, String... keys) {
