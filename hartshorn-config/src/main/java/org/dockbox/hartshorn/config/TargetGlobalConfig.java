@@ -24,6 +24,10 @@ import org.dockbox.hartshorn.config.annotations.Value;
 
 import lombok.Getter;
 
+/**
+ * Simple implementation of {@link GlobalConfig} using {@link Value} based
+ * field population.
+ */
 @Getter
 @Configuration
 public class TargetGlobalConfig implements GlobalConfig {

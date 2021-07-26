@@ -17,6 +17,17 @@
 
 package org.dockbox.hartshorn.config;
 
+/**
+ * Thrown when a provided key cannot be found because it's too deeply nested. For example
+ * when the key <code>a.b.c</code> is requested on the following (JSON) configuration:
+ * <pre><code>
+ *     {
+ *         "a": {
+ *             "b": "value"
+ *         }
+ *     }
+ * </code></pre>
+ */
 public class EndOfPropertyException extends RuntimeException {
 
     public EndOfPropertyException(String property, String end) {

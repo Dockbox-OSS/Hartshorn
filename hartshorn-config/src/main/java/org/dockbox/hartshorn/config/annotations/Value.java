@@ -22,9 +22,36 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * Annotation used to indicate a field should be populated with the value obtained
+ * from {@link org.dockbox.hartshorn.config.ConfigurationManager#get(String)} or the
+ * {@link #or() default value}.
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 public @interface Value {
+
+    /**
+     * The key of the configuration value. Nested values are separated by a single
+     * period symbol. For example, in the configuration (JSON) below the deepest
+     * value is accessed with <code>config.nested.value</code>, returning the value 'A'
+     * <pre><code>
+     *     {
+     *         "config": {
+     *             "nested": {
+     *                 "value": "A"
+     *             }
+     *         }
+     *     }
+     * </code></pre>
+     * @return The configuration key.
+     */
     String value();
+
+    /**
+     * The default value for the field, used when the result of {@link org.dockbox.hartshorn.config.ConfigurationManager#get(String)}
+     * returned <code>null</code>. Supports native types through {@link org.dockbox.hartshorn.util.Reflect#toPrimitive(Class, String)}.
+     * @return The string-based default value.
+     */
     String or() default  "";
 }

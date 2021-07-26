@@ -37,6 +37,12 @@ import org.jetbrains.annotations.Nullable;
 import java.lang.reflect.Field;
 import java.nio.file.Path;
 
+/**
+ * Looks up and populates fields annotated with {@link Value}. If the type is annotated with
+ * {@link Configuration} in which a {@link Configuration#source() source} is configured, the
+ * provided source is used. If the source is not explicitly configured, the default configuration
+ * file is used.
+ */
 public class ConfigurationServiceModifier implements InjectionModifier<UseConfigurations> {
 
     @Override
@@ -74,7 +80,7 @@ public class ConfigurationServiceModifier implements InjectionModifier<UseConfig
             try {
                 field.setAccessible(true);
                 Value value = Reflect.annotation(field, Value.class).get();
-                Object fieldValue = Exceptional.of(() -> configurationManager.get(value.value())).or(value.or());
+                Object fieldValue = configurationManager.get(value.value()).or(value.or());
 
                 if ((!Reflect.assigns(String.class, field.getType())) && (fieldValue instanceof String)) {
                     fieldValue = Reflect.toPrimitive(field.getType(), (String) fieldValue);
