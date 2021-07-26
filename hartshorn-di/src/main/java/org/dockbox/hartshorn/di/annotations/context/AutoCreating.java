@@ -15,25 +15,19 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.playersettings.service;
+package org.dockbox.hartshorn.di.annotations.context;
 
-import org.dockbox.hartshorn.di.annotations.context.AutoCreating;
-import org.dockbox.hartshorn.di.context.DefaultContext;
-import org.dockbox.hartshorn.playersettings.Setting;
-import org.dockbox.hartshorn.util.HartshornUtils;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import java.util.List;
-
-import lombok.Getter;
-
-@Getter
-@AutoCreating
-public class SettingsContext extends DefaultContext {
-
-    private final List<Setting<?>> settings = HartshornUtils.emptyList();
-
-    public void add(Setting<?> setting) {
-        this.settings.add(setting);
-    }
-
+/**
+ * Indicates a {@link org.dockbox.hartshorn.di.context.Context} type should be
+ * automatically created when it is looked up. Subtypes of {@link org.dockbox.hartshorn.di.context.DefaultContext}
+ * honor this behavior by default, other implementations may differ.
+ */
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
+public @interface AutoCreating {
 }

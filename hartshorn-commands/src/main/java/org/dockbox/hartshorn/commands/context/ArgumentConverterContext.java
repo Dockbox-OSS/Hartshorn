@@ -17,6 +17,7 @@
 
 package org.dockbox.hartshorn.commands.context;
 
+import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
 import org.dockbox.hartshorn.commands.exceptions.ConstraintException;
@@ -27,12 +28,15 @@ import org.dockbox.hartshorn.util.Reflect;
 
 import java.util.Map;
 
+import lombok.Getter;
+
 /**
  * The utility class which keeps track of all registered {@link ArgumentConverter argument converters}.
  */
 @AutoCreating
 public final class ArgumentConverterContext extends DefaultContext {
 
+    @Getter
     private final transient Map<String, ArgumentConverter<?>> converterMap = HartshornUtils.emptyConcurrentMap();
 
     /**
@@ -86,7 +90,7 @@ public final class ArgumentConverterContext extends DefaultContext {
         for (String key : converter.keys()) {
             key = key.toLowerCase();
             if (this.converterMap.containsKey(key))
-                throw new ConstraintException("Duplicate argument key '" + key + "' found while registering converter");
+                Hartshorn.log().warn("Duplicate argument key '" + key + "' found while registering converter, overwriting existing converter");
             this.converterMap.put(key, converter);
         }
     }

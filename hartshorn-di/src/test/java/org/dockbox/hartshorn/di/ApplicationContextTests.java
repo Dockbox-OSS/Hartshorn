@@ -49,7 +49,7 @@ public class ApplicationContextTests {
 
     @RegisterExtension
     static HartshornRunner hartshorn = HartshornRunner.builder()
-            .reset(true)
+            .resetEach(true)
             .build();
 
     @Test

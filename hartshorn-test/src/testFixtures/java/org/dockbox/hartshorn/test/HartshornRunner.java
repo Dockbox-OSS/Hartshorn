@@ -51,7 +51,12 @@ public class HartshornRunner implements BeforeAllCallback, AfterAllCallback, Aft
 
         private HartshornRunnerBuilder() {}
 
-        public HartshornRunnerBuilder reset(boolean reset) {
+        /**
+         * Whether the build should reset after each test.
+         * @param reset <code>true</code> to reset after each test, or <code>false</code>
+         * @return The current builder
+         */
+        public HartshornRunnerBuilder resetEach(boolean reset) {
             this.reset = reset;
             return this;
         }

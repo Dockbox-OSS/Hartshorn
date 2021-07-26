@@ -326,8 +326,8 @@ public final class Reflect {
      *
      * @param <T>
      *         the type parameter
-     * @param method
-     *         the method
+     * @param element
+     *         the element
      * @param annotationClass
      *         the annotation class
      *
@@ -335,8 +335,8 @@ public final class Reflect {
      * @throws SecurityException
      *         the security exception
      */
-    public static <T extends Annotation> boolean has(AnnotatedElement method, Class<T> annotationClass) throws SecurityException {
-        return Reflect.annotation(method, annotationClass).present();
+    public static <T extends Annotation> boolean has(AnnotatedElement element, Class<T> annotationClass) throws SecurityException {
+        return Reflect.annotation(element, annotationClass).present();
     }
 
     /**

@@ -36,7 +36,6 @@ import org.dockbox.hartshorn.di.context.DefaultContext;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.dockbox.hartshorn.util.Reflect;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
@@ -152,7 +151,7 @@ public class SimpleCommandDefinitionContext extends DefaultContext implements Co
             String part = genericArgumentMatcher.group();
             Matcher argumentMatcher = ARGUMENT.matcher(part);
             if (argumentMatcher.matches()) {
-                CommandDefinition definition = this.extractArguments(elements, argumentMatcher, permission);
+                CommandDefinition definition = this.extractArguments(argumentMatcher, permission);
                 final List<CommandElement<?>> commandElements = definition.elements();
                 if (commandElements.isEmpty()) continue;
                 if (commandElements.size() == 1) elements.add(commandElements.get(0));
@@ -174,7 +173,7 @@ public class SimpleCommandDefinitionContext extends DefaultContext implements Co
         return new CommandDefinition(true, elements, flags);
     }
 
-    private CommandDefinition extractArguments(Collection<CommandElement<?>> elements, MatchResult argumentMatcher, Permission permission) {
+    private CommandDefinition extractArguments(MatchResult argumentMatcher, Permission permission) {
         boolean optional = '[' == argumentMatcher.group(1).charAt(0);
         String elementValue = argumentMatcher.group(2);
 

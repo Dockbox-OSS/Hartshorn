@@ -20,12 +20,10 @@ package org.dockbox.hartshorn.server.minecraft;
 import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.domain.tuple.Vector3N;
-import org.dockbox.hartshorn.commands.arguments.SimpleArgumentConverter;
 import org.dockbox.hartshorn.commands.arguments.DefaultArgumentConverters;
+import org.dockbox.hartshorn.commands.arguments.SimpleArgumentConverter;
 import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
 import org.dockbox.hartshorn.di.annotations.service.Service;
-import org.dockbox.hartshorn.di.properties.InjectableType;
-import org.dockbox.hartshorn.di.properties.InjectorProperty;
 import org.dockbox.hartshorn.server.minecraft.dimension.Block;
 import org.dockbox.hartshorn.server.minecraft.dimension.Worlds;
 import org.dockbox.hartshorn.server.minecraft.dimension.position.Location;
@@ -39,7 +37,7 @@ import org.dockbox.hartshorn.util.HartshornUtils;
 import java.util.UUID;
 
 @Service
-public final class MinecraftArgumentConverters implements InjectableType {
+public final class MinecraftArgumentConverters {
 
     public static final ArgumentConverter<World> WORLD = SimpleArgumentConverter.builder(World.class, "world")
             .withConverter(in -> {
@@ -97,9 +95,4 @@ public final class MinecraftArgumentConverters implements InjectableType {
                     .map(ItemContext::blocks)
                     .orElse(HartshornUtils::emptyList).get())
             .build();
-
-    @Override
-    public void enable(InjectorProperty<?>... properties) {
-        Hartshorn.log().info("Registered Minecraft specific command argument converters.");
-    }
 }

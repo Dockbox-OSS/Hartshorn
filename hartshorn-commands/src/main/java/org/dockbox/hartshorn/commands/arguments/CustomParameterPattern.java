@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.commands.arguments;
 
 import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.api.exceptions.Except;
 import org.dockbox.hartshorn.commands.CommandParameterResources;
 import org.dockbox.hartshorn.commands.annotations.Parameter;
 import org.dockbox.hartshorn.commands.context.ArgumentConverterContext;
@@ -84,6 +85,7 @@ public interface CustomParameterPattern {
                 return constructor.newInstance(arguments.toArray(new Object[0]));
             }
             catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
+                Except.handle(e);
                 return null;
             }
         });

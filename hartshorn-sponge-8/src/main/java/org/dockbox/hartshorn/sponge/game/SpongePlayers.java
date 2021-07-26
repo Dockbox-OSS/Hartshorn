@@ -21,6 +21,7 @@ import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.server.minecraft.players.Player;
 import org.dockbox.hartshorn.server.minecraft.players.Players;
 import org.dockbox.hartshorn.sponge.util.SpongeConvert;
+import org.dockbox.hartshorn.sponge.util.SpongeUtil;
 import org.spongepowered.api.Sponge;
 
 import java.util.List;
@@ -37,13 +38,13 @@ public class SpongePlayers implements Players {
 
     @Override
     public Exceptional<Player> player(String name) {
-        return Exceptional.of(Sponge.server().userManager().find(name))
+        return SpongeUtil.awaitOption(Sponge.server().userManager().load(name))
                 .map(SpongeConvert::fromSponge);
     }
 
     @Override
     public Exceptional<Player> player(UUID uuid) {
-        return Exceptional.of(Sponge.server().userManager().find(uuid))
+        return SpongeUtil.await(Sponge.server().userManager().loadOrCreate(uuid))
                 .map(SpongeConvert::fromSponge);
     }
 }

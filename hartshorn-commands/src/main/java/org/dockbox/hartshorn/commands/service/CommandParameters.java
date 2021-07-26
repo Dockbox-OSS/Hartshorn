@@ -23,6 +23,8 @@ import org.dockbox.hartshorn.api.annotations.UseBootstrap;
 import org.dockbox.hartshorn.commands.arguments.CustomParameterPattern;
 import org.dockbox.hartshorn.commands.annotations.Parameter;
 import org.dockbox.hartshorn.commands.arguments.DynamicPatternConverter;
+import org.dockbox.hartshorn.commands.context.ArgumentConverterContext;
+import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
 import org.dockbox.hartshorn.di.annotations.service.Service;
 import org.dockbox.hartshorn.util.Reflect;
 
@@ -38,8 +40,8 @@ public class CommandParameters {
             Parameter meta = Reflect.annotation(customParameter, Parameter.class).get();
             CustomParameterPattern pattern = Hartshorn.context().get(meta.pattern());
             String key = meta.value();
-            // Automatically registers to the ArgumentConverterRegistry
-            new DynamicPatternConverter<>(customParameter, pattern, key);
+            final ArgumentConverter<?> converter = new DynamicPatternConverter<>(customParameter, pattern, key);
+            Hartshorn.context().first(ArgumentConverterContext.class).present(context -> context.register(converter));
         }
     }
 

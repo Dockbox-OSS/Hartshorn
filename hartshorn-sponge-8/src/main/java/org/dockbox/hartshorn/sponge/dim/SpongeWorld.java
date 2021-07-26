@@ -53,7 +53,7 @@ public class SpongeWorld extends World implements SpongeDimension {
     @Override
     public boolean has(Vector3N position) {
         return this.world()
-                .map(world -> world.containsBlock(SpongeConvert.toSponge(position)))
+                .map(world -> world.contains(SpongeConvert.toSponge(position)))
                 .or(false);
     }
 
@@ -84,7 +84,7 @@ public class SpongeWorld extends World implements SpongeDimension {
     public Collection<Chunk> loadedChunks() {
         Collection<Chunk> chunks = HartshornUtils.emptyList();
         this.world().present(world -> {
-            for (org.spongepowered.api.world.chunk.Chunk chunk : world.loadedChunks()) {
+            for (org.spongepowered.api.world.chunk.Chunk<?> chunk : world.loadedChunks()) {
                 chunks.add(new SpongeChunk(this.key, chunk.chunkPosition()));
             }
         });
