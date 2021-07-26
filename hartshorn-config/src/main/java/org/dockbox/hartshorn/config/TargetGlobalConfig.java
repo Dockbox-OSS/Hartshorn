@@ -25,7 +25,7 @@ import org.dockbox.hartshorn.config.annotations.Value;
 import lombok.Getter;
 
 @Getter
-@Configuration("hartshorn")
+@Configuration
 public class TargetGlobalConfig implements GlobalConfig {
 
     @Value(value = "hartshorn.exceptions.stacktraces", or = "false")

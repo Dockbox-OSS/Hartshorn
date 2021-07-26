@@ -43,6 +43,7 @@ import org.dockbox.hartshorn.api.i18n.common.ResourceEntry;
 import org.dockbox.hartshorn.api.i18n.text.Text;
 import org.dockbox.hartshorn.config.annotations.Value;
 import org.dockbox.hartshorn.di.annotations.inject.Wired;
+import org.dockbox.hartshorn.di.annotations.service.Service;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.discord.annotations.DiscordCommand;
 import org.dockbox.hartshorn.discord.annotations.DiscordCommand.ListeningLevel;
@@ -58,6 +59,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+@Service
 @SuppressWarnings("ResultOfMethodCallIgnored")
 public abstract class DefaultDiscordUtils implements DiscordUtils {
 

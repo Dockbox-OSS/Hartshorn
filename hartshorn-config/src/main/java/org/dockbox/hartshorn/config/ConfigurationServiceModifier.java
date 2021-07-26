@@ -48,7 +48,7 @@ public class ConfigurationServiceModifier implements InjectionModifier<UseConfig
     }
 
     private boolean isAnnotated(Class<?> type) {
-        return Hartshorn.context().locator().container(type).present() || Reflect.annotation(type, Configuration.class).present();
+        return Hartshorn.context().locator().container(type).present();
     }
 
     @Override
@@ -61,8 +61,8 @@ public class ConfigurationServiceModifier implements InjectionModifier<UseConfig
         final Exceptional<Configuration> annotated = Reflect.annotation(instanceType, Configuration.class);
         if (annotated.present()) {
             Configuration configuration = annotated.get();
-            file = configuration.value();
-            owner = configuration.service().owner();
+            file = configuration.source();
+            owner = configuration.owner();
         }
 
         FileManager fileManager = Hartshorn.context().get(FileManager.class, FileTypeProperty.of(FileType.YAML));
