@@ -22,11 +22,17 @@ import org.dockbox.hartshorn.commands.CommandResources;
 import org.dockbox.hartshorn.commands.annotations.Cooldown;
 import org.dockbox.hartshorn.commands.context.CommandContext;
 import org.dockbox.hartshorn.commands.context.CommandExecutorContext;
-import org.dockbox.hartshorn.commands.source.CommandSource;
+import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.di.annotations.inject.Wired;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.dockbox.hartshorn.util.Reflect;
 
+/**
+ * Extends a command by providing a cooldown on its execution. If a command is
+ * performed multiple times its execution is cancelled if it is repeated too
+ * quickly. The delay between commands is defined by a {@link Cooldown}
+ * decorator on the command.
+ */
 public class CooldownExtension implements CommandExecutorExtension {
 
     @Wired

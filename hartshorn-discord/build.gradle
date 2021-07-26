@@ -5,6 +5,7 @@ dependencies {
     compileOnly project(':hartshorn-i18n')
     compileOnly project(':hartshorn-events')
     compileOnly project(':hartshorn-config')
+    compileOnly project(':hartshorn-commands')
 
     include 'com.github.ygimenez:Pagination-Utils:2.1.1'
     share ("net.dv8tion:JDA:$jdaVersion") {

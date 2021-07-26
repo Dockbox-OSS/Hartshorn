@@ -19,9 +19,13 @@ package org.dockbox.hartshorn.commands.extension;
 
 import org.dockbox.hartshorn.api.i18n.common.ResourceEntry;
 import org.dockbox.hartshorn.api.i18n.entry.FakeResource;
+import org.dockbox.hartshorn.commands.CommandSource;
 
 import lombok.AllArgsConstructor;
 
+/**
+ * Indicates the result of a {@link CommandExecutorExtension}.
+ */
 @AllArgsConstructor
 public final class ExtensionResult {
 
@@ -29,26 +33,61 @@ public final class ExtensionResult {
     private final ResourceEntry reason;
     private final boolean send;
 
+    /**
+     * Gets whether the {@link org.dockbox.hartshorn.commands.CommandExecutor} requesting
+     * the extension should proceed to perform the command directly.
+     * @return <code>true</code> if the executor should proceed, or <code>false</code>
+     */
     public boolean proceed() {
         return this.proceed;
     }
 
+    /**
+     * Gets the reason a extension has been performed. This will only be sent to the
+     * {@link CommandSource} if {@link #send()} is
+     * <code>true</code>.
+     * @return The reason
+     */
     public ResourceEntry reason() {
         return this.reason;
     }
 
+    /**
+     * Gets whether the {@link #reason()} should be sent to the {@link CommandSource}
+     * of the executor.
+     * @return <code>true</code> if the {@link #reason()} should be sent, or <code>false</code>
+     */
     public boolean send() {
         return this.send;
     }
 
+    /**
+     * Gets a new {@link ExtensionResult} which allows the {@link org.dockbox.hartshorn.commands.CommandExecutor} to
+     * proceed without any notifications to the user.
+     * @return The {@link ExtensionResult}
+     */
     public static ExtensionResult accept() {
         return new ExtensionResult(true, new FakeResource(""), false);
     }
 
+    /**
+     * Gets a new {@link ExtensionResult} which rejects the {@link org.dockbox.hartshorn.commands.CommandExecutor} to
+     * proceed. This result will send the provided {@link ResourceEntry} to the {@link CommandSource}.
+     * @param reason The reason
+     * @return The {@link ExtensionResult}
+     */
     public static ExtensionResult reject(ResourceEntry reason) {
         return reject(reason, true);
     }
 
+    /**
+     * Gets a new {@link ExtensionResult} which rejects the {@link org.dockbox.hartshorn.commands.CommandExecutor} to
+     * proceed. This result will send the provided {@link ResourceEntry} to the {@link CommandSource}
+     * if <code>send</code> is <code>true</code>.
+     * @param reason The reason
+     * @param send Whether to send the reason to the {@link CommandSource}
+     * @return The {@link ExtensionResult}
+     */
     public static ExtensionResult reject(ResourceEntry reason, boolean send) {
         return new ExtensionResult(false, reason, send);
     }

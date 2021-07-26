@@ -25,10 +25,15 @@ import org.dockbox.hartshorn.commands.CommandResources;
 import org.dockbox.hartshorn.commands.annotations.WithConfirmation;
 import org.dockbox.hartshorn.commands.context.CommandContext;
 import org.dockbox.hartshorn.commands.context.CommandExecutorContext;
-import org.dockbox.hartshorn.commands.source.CommandSource;
+import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.di.annotations.inject.Wired;
 import org.dockbox.hartshorn.util.Reflect;
 
+/**
+ * Extends a command by requiring a confirmation action to be performed. This
+ * prevents the executor from directly executing the command until the action is
+ * performed. Requires the presence of {@link WithConfirmation} on the command.
+ */
 public class ConfirmationExtension implements CommandExecutorExtension {
 
     @Wired

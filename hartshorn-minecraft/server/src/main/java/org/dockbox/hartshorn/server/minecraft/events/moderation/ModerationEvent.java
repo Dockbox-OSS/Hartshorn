@@ -18,7 +18,7 @@
 package org.dockbox.hartshorn.server.minecraft.events.moderation;
 
 import org.dockbox.hartshorn.api.events.AbstractTargetEvent;
-import org.dockbox.hartshorn.commands.source.CommandSource;
+import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.server.minecraft.players.Player;
 
 import lombok.Getter;

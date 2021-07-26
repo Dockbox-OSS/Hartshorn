@@ -26,7 +26,7 @@ import org.dockbox.hartshorn.api.i18n.common.ResourceEntry;
 import org.dockbox.hartshorn.api.i18n.permissions.Permission;
 import org.dockbox.hartshorn.api.i18n.permissions.PermissionContext;
 import org.dockbox.hartshorn.api.i18n.text.Text;
-import org.dockbox.hartshorn.commands.source.CommandSource;
+import org.dockbox.hartshorn.commands.CommandSource;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;

@@ -22,7 +22,7 @@ import org.dockbox.hartshorn.api.events.annotations.filter.Filter;
 import org.dockbox.hartshorn.api.events.parents.Filterable;
 import org.dockbox.hartshorn.api.events.processing.FilterType;
 import org.dockbox.hartshorn.api.events.processing.FilterTypes;
-import org.dockbox.hartshorn.commands.source.CommandSource;
+import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.util.HartshornUtils;
 
 import java.util.Arrays;

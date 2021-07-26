@@ -30,6 +30,11 @@ import org.dockbox.hartshorn.util.Reflect;
 
 import java.util.Collection;
 
+/**
+ * Scans for any type annotated with {@link Parameter} and registers a {@link DynamicPatternConverter}
+ * for each type found. Requires the use of a {@link org.dockbox.hartshorn.di.InjectableBootstrap} and
+ * presence of {@link UseBootstrap}.
+ */
 @Service(activators = UseBootstrap.class)
 public class CommandParameters {
 

@@ -29,6 +29,11 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.List;
 
+/**
+ * Processes any service with static {@link ArgumentConverter} fields, and registers them to
+ * the {@link ArgumentConverterContext} contained in the {@link ApplicationContext}. Requires
+ * the presence of {@link UseCommands}.
+ */
 public class ArgumentServiceProcessor implements ServiceProcessor<UseCommands> {
 
     @Override

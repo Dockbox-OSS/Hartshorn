@@ -23,6 +23,9 @@ import org.dockbox.hartshorn.util.HartshornUtils;
 
 import lombok.AllArgsConstructor;
 
+/**
+ * Simple implementation of {@link CommandFlag}.
+ */
 @AllArgsConstructor
 public class SimpleCommandFlag implements CommandFlag {
 

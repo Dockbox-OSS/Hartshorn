@@ -23,7 +23,7 @@ import org.dockbox.hartshorn.api.exceptions.NotImplementedException;
 import org.dockbox.hartshorn.api.i18n.common.ResourceEntry;
 import org.dockbox.hartshorn.api.i18n.text.Text;
 import org.dockbox.hartshorn.api.i18n.text.pagination.Pagination;
-import org.dockbox.hartshorn.commands.source.DiscordCommandSource;
+import org.dockbox.hartshorn.discord.DiscordCommandSource;
 import org.dockbox.hartshorn.di.annotations.inject.Bound;
 
 public class JUnitDiscordCommandSource implements DiscordCommandSource {

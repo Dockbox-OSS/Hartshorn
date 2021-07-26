@@ -30,7 +30,6 @@ import org.dockbox.hartshorn.commands.context.MethodCommandExecutorContext;
 import org.dockbox.hartshorn.commands.exceptions.ParsingException;
 import org.dockbox.hartshorn.commands.extension.CommandExecutorExtension;
 import org.dockbox.hartshorn.commands.extension.ExtensionResult;
-import org.dockbox.hartshorn.commands.source.CommandSource;
 import org.dockbox.hartshorn.di.annotations.inject.Binds;
 import org.dockbox.hartshorn.di.annotations.inject.Wired;
 import org.dockbox.hartshorn.util.HartshornUtils;
@@ -46,6 +45,9 @@ import javax.inject.Singleton;
 import lombok.AccessLevel;
 import lombok.Getter;
 
+/**
+ * Simple implementation of {@link CommandGateway}.
+ */
 @Singleton
 @Binds(CommandGateway.class)
 public class SimpleCommandGateway implements CommandGateway {
@@ -105,9 +107,9 @@ public class SimpleCommandGateway implements CommandGateway {
 
     @Override
     public void accept(CommandContext context) throws ParsingException {
-        final CommandExecutorContext executor = this.get(context);
-        if (executor != null) this.execute(executor, context);
-        else throw new ParsingException(this.resources.missingExecutor(context.alias(), context.arguments().size()));
+        final Exceptional<CommandExecutorContext> executor = this.get(context);
+        executor.present(e -> this.execute(e, context))
+                .orThrow(() -> new ParsingException(this.resources.missingExecutor(context.alias(), context.arguments().size())));
     }
 
     @Override
@@ -167,11 +169,11 @@ public class SimpleCommandGateway implements CommandGateway {
     }
 
     @Override
-    public CommandExecutorContext get(CommandContext context) {
+    public Exceptional<CommandExecutorContext> get(CommandContext context) {
         for (CommandExecutorContext executorContext : contexts().get(context.alias())) {
-            if (executorContext.accepts(context.command())) return executorContext;
+            if (executorContext.accepts(context.command())) return Exceptional.of(executorContext);
         }
-        return null;
+        return Exceptional.empty();
     }
 
     @Override
@@ -179,6 +181,10 @@ public class SimpleCommandGateway implements CommandGateway {
         this.extensions.add(extension);
     }
 
+    /**
+     * Gets all contexts stored by the gateway.
+     * @return
+     */
     public static Multimap<String, CommandExecutorContext> contexts() {
         return SimpleCommandGateway.contexts;
     }

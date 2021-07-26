@@ -20,7 +20,6 @@ package org.dockbox.hartshorn.commands.context;
 import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
-import org.dockbox.hartshorn.commands.exceptions.ConstraintException;
 import org.dockbox.hartshorn.di.annotations.context.AutoCreating;
 import org.dockbox.hartshorn.di.context.DefaultContext;
 import org.dockbox.hartshorn.util.HartshornUtils;
@@ -84,7 +83,6 @@ public final class ArgumentConverterContext extends DefaultContext {
     /**
      * Registers the given {@link ArgumentConverter} to the current context.
      * @param converter The converter to register
-     * @throws ConstraintException If another context is already registered with the same key(s).
      */
     public void register(ArgumentConverter<?> converter) {
         for (String key : converter.keys()) {

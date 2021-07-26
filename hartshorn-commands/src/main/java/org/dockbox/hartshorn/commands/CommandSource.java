@@ -15,20 +15,20 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.commands.source;
+package org.dockbox.hartshorn.commands;
 
-import org.dockbox.hartshorn.api.i18n.common.Language;
+import org.dockbox.hartshorn.api.i18n.MessageReceiver;
 
-public interface DiscordCommandSource extends CommandSource {
+/**
+ * Represents a single {@link org.dockbox.hartshorn.api.domain.Subject} capable
+ * of executing commands.
+ */
+public interface CommandSource extends MessageReceiver {
 
-    @Override
-    default Language language() {
-        return Language.EN_US;
-    }
-
-    @Override
-    default void language(Language language) {
-        // Nothing happens
-    }
-
+    /**
+     * Executes the given raw command as the {@link org.dockbox.hartshorn.api.domain.Subject}
+     * represented by this source.
+     * @param command The raw command
+     */
+    void execute(String command);
 }

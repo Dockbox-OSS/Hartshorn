@@ -15,14 +15,21 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.commands.events;
+package org.dockbox.hartshorn.discord;
 
-import org.dockbox.hartshorn.api.events.parents.Event;
+import org.dockbox.hartshorn.api.i18n.common.Language;
+import org.dockbox.hartshorn.commands.CommandSource;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+public interface DiscordCommandSource extends CommandSource {
 
-@AllArgsConstructor
-@Getter
-public class RegisteredCommandsEvent implements Event {
+    @Override
+    default Language language() {
+        return Language.EN_US;
+    }
+
+    @Override
+    default void language(Language language) {
+        // Nothing happens
+    }
+
 }

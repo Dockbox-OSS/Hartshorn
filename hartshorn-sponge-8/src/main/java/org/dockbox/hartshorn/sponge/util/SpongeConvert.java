@@ -47,7 +47,7 @@ import org.dockbox.hartshorn.api.i18n.text.actions.HoverAction;
 import org.dockbox.hartshorn.api.i18n.text.actions.ShiftClickAction;
 import org.dockbox.hartshorn.api.i18n.text.pagination.Pagination;
 import org.dockbox.hartshorn.commands.RunCommandAction;
-import org.dockbox.hartshorn.commands.source.CommandSource;
+import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.server.minecraft.bossbar.BossbarColor;
 import org.dockbox.hartshorn.server.minecraft.bossbar.BossbarStyle;
 import org.dockbox.hartshorn.server.minecraft.dimension.Block;

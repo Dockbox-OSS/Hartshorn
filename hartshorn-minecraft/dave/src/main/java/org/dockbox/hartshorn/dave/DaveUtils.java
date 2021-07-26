@@ -25,7 +25,7 @@ import org.dockbox.hartshorn.api.i18n.PermissionHolder;
 import org.dockbox.hartshorn.api.i18n.text.Text;
 import org.dockbox.hartshorn.api.i18n.text.actions.ClickAction;
 import org.dockbox.hartshorn.api.i18n.text.actions.HoverAction;
-import org.dockbox.hartshorn.commands.source.CommandSource;
+import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.dave.models.DaveResponse;
 import org.dockbox.hartshorn.dave.models.DaveTrigger;
 import org.dockbox.hartshorn.dave.models.DaveTriggers;

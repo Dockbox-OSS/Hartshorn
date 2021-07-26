@@ -22,12 +22,27 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+/**
+ * Represents the definition of a single command or collection of {@link CommandElement elements}.
+ */
 @AllArgsConstructor
 @Getter
 public class CommandDefinition {
 
+    /**
+     * Indicates whether the definition is optional. Only applies when the
+     * definition represents a collection of elements.
+     */
     private final boolean optional;
+
+    /**
+     * Gets all elements contained in this definition.
+     */
     private final List<CommandElement<?>> elements;
+
+    /**
+     * Gets all flags contained in this definition.
+     */
     private final List<CommandFlag> flags;
 
 }

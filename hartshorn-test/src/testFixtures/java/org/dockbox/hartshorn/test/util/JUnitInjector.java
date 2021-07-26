@@ -22,7 +22,7 @@ import org.dockbox.hartshorn.api.config.GlobalConfig;
 import org.dockbox.hartshorn.api.task.TaskRunner;
 import org.dockbox.hartshorn.api.task.ThreadUtils;
 import org.dockbox.hartshorn.cache.CacheManager;
-import org.dockbox.hartshorn.commands.source.DiscordCommandSource;
+import org.dockbox.hartshorn.discord.DiscordCommandSource;
 import org.dockbox.hartshorn.config.ConfigurationManager;
 import org.dockbox.hartshorn.di.InjectConfiguration;
 import org.dockbox.hartshorn.di.SimpleTypeFactory;

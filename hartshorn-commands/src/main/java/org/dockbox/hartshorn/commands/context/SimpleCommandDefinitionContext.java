@@ -42,8 +42,16 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Simple implementation of {@link CommandDefinitionContext}.
- * TODO GLieben: Document element patterns and expected definition format.
+ * Simple implementation of {@link CommandDefinitionContext}. Creates a definition based on the
+ * <a href="https://minecraft.fandom.com/wiki/Module:Command/Syntax">Minecraft Command Syntax</a>.
+ * <p>Required arguments are formatted as <code>&lt;name&gt;</code>, optional arguments are formatted
+ * as <code>[name]</code>, and flags are formatted as <code>-f</code> (short) or <code>--flag</code>
+ * (long).
+ * <p>See {@link SimpleCommandDefinitionContext#FLAG} for details on the flag pattern, and {@link SimpleCommandDefinitionContext#ARGUMENT}
+ * for details on the argument pattern. Both flags and arguments can be defined with custom types, which
+ * can later be associated with specific {@link ArgumentConverter converters}. Details about the format
+ * for this definition are explained at {@link SimpleCommandDefinitionContext#ELEMENT_VALUE}. If no
+ * explicit type is defined, {@link SimpleCommandDefinitionContext#DEFAULT_TYPE} is used.
  */
 @SuppressWarnings("RegExpUnnecessaryNonCapturingGroup")
 public class SimpleCommandDefinitionContext extends DefaultContext implements CommandDefinitionContext {

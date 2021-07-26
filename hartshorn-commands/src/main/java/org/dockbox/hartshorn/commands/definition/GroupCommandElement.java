@@ -19,11 +19,15 @@ package org.dockbox.hartshorn.commands.definition;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.i18n.permissions.Permission;
-import org.dockbox.hartshorn.commands.source.CommandSource;
+import org.dockbox.hartshorn.commands.CommandSource;
 
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * Represents a group of {@link CommandElement command elements}. This is typically used when
+ * a single argument is only valid in combination with another argument.
+ */
 public class GroupCommandElement implements CommandElement<List<CommandElement<?>>> {
 
     private final List<CommandElement<?>> elements;
