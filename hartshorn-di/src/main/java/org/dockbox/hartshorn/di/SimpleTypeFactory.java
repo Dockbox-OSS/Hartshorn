@@ -21,10 +21,12 @@ import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.di.annotations.inject.Named;
 import org.dockbox.hartshorn.di.binding.Bindings;
 import org.dockbox.hartshorn.di.inject.wired.BoundContext;
+import org.dockbox.hartshorn.di.inject.wired.ConstructorBoundContext;
 import org.dockbox.hartshorn.di.properties.BindingMetaProperty;
 import org.dockbox.hartshorn.di.properties.InjectableType;
 import org.dockbox.hartshorn.di.properties.InjectorProperty;
 import org.dockbox.hartshorn.util.HartshornUtils;
+import org.dockbox.hartshorn.util.Reflect;
 
 import javax.annotation.Nullable;
 
@@ -40,9 +42,18 @@ public class SimpleTypeFactory implements TypeFactory {
     public <T> T create(Class<T> type, Object... arguments) {
         @Nullable final InjectorProperty<Named> property = Bindings.property(BindingMetaProperty.KEY, Named.class, this.properties);
         Exceptional<BoundContext<T, T>> binding = ApplicationContextAware.instance().context().firstWire(type, property);
-        if (binding.absent()) throw new IllegalStateException("Could not autowire " + type.getCanonicalName() + " as there is no active binding for it");
+        if (binding.absent()) {
+            if (Reflect.isAbstract(type)) throw new IllegalStateException("Could not autowire " + type.getCanonicalName() + " as there is no active binding for it");
+            else {
+                final BoundContext<T,T> context = new ConstructorBoundContext<>(type, type, "");
+                ApplicationContextAware.instance().context().add(context);
+                binding = Exceptional.of(context);
+            }
+        }
+        Exceptional<BoundContext<T, T>> finalBinding = binding;
+
         return Exceptional.of(() -> {
-            final T instance = binding.get().create(arguments);
+            final T instance = finalBinding.get().create(arguments);
             if (instance instanceof InjectableType && ((InjectableType) instance).canEnable()) {
                 ((InjectableType) instance).enable(this.properties);
             }
