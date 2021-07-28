@@ -189,7 +189,7 @@ public class SpongePlayer extends Player implements SpongeEntity<net.minecraft.s
     @Override
     public SpongePlayer gamemode(Gamemode gamemode) {
         this.player().present(player -> {
-            final GameMode mode = SpongeConvert.toSponge(gamemode);
+            final GameMode mode = SpongeConvert.toSponge(gamemode).get();
             player.offer(Keys.GAME_MODE, mode);
         });
         return this;

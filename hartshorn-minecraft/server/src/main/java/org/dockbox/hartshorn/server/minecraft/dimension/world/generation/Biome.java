@@ -15,21 +15,8 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.server.minecraft.dimension;
+package org.dockbox.hartshorn.server.minecraft.dimension.world.generation;
 
-import org.dockbox.hartshorn.api.domain.Subject;
-import org.dockbox.hartshorn.server.minecraft.dimension.position.Location;
-import org.dockbox.hartshorn.server.minecraft.dimension.world.World;
-
-public interface Locatable extends Subject {
-
-    Location location();
-
-    boolean location(Location location);
-
-    World world();
-
-    default boolean location(World world) {
-        return this.location(Location.of(world));
-    }
+public interface Biome {
+    String id();
 }

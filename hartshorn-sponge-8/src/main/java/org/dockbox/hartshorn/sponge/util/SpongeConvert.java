@@ -46,14 +46,15 @@ import org.dockbox.hartshorn.api.i18n.text.actions.ClickAction;
 import org.dockbox.hartshorn.api.i18n.text.actions.HoverAction;
 import org.dockbox.hartshorn.api.i18n.text.actions.ShiftClickAction;
 import org.dockbox.hartshorn.api.i18n.text.pagination.Pagination;
-import org.dockbox.hartshorn.commands.RunCommandAction;
 import org.dockbox.hartshorn.commands.CommandSource;
+import org.dockbox.hartshorn.commands.RunCommandAction;
 import org.dockbox.hartshorn.server.minecraft.bossbar.BossbarColor;
 import org.dockbox.hartshorn.server.minecraft.bossbar.BossbarStyle;
 import org.dockbox.hartshorn.server.minecraft.dimension.Block;
 import org.dockbox.hartshorn.server.minecraft.dimension.position.BlockFace;
 import org.dockbox.hartshorn.server.minecraft.dimension.position.Location;
 import org.dockbox.hartshorn.server.minecraft.dimension.world.World;
+import org.dockbox.hartshorn.server.minecraft.dimension.world.generation.GeneratorType;
 import org.dockbox.hartshorn.server.minecraft.entities.ItemFrame;
 import org.dockbox.hartshorn.server.minecraft.entities.ItemFrame.Rotation;
 import org.dockbox.hartshorn.server.minecraft.events.entity.SpawnSource;
@@ -103,12 +104,19 @@ import org.spongepowered.api.item.enchantment.Enchantment;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.item.inventory.equipment.EquipmentType;
 import org.spongepowered.api.item.inventory.equipment.EquipmentTypes;
+import org.spongepowered.api.registry.DefaultedRegistryReference;
+import org.spongepowered.api.registry.RegistryReference;
 import org.spongepowered.api.registry.RegistryTypes;
 import org.spongepowered.api.service.context.Context;
 import org.spongepowered.api.service.pagination.PaginationList;
 import org.spongepowered.api.util.Direction;
 import org.spongepowered.api.util.orientation.Orientation;
 import org.spongepowered.api.util.orientation.Orientations;
+import org.spongepowered.api.world.WorldType;
+import org.spongepowered.api.world.WorldTypes;
+import org.spongepowered.api.world.biome.Biome;
+import org.spongepowered.api.world.difficulty.Difficulties;
+import org.spongepowered.api.world.difficulty.Difficulty;
 import org.spongepowered.api.world.portal.PortalType;
 import org.spongepowered.api.world.portal.PortalTypes;
 import org.spongepowered.api.world.server.ServerLocation;
@@ -330,13 +338,13 @@ public enum SpongeConvert {
     }
 
     @NotNull
-    public static GameMode toSponge(Gamemode gamemode) {
+    public static DefaultedRegistryReference<GameMode> toSponge(Gamemode gamemode) {
         return switch (gamemode) {
-            case SURVIVAL -> GameModes.SURVIVAL.get();
-            case CREATIVE -> GameModes.CREATIVE.get();
-            case ADVENTURE -> GameModes.ADVENTURE.get();
-            case SPECTATOR -> GameModes.SPECTATOR.get();
-            default -> GameModes.NOT_SET.get();
+            case SURVIVAL -> GameModes.SURVIVAL;
+            case CREATIVE -> GameModes.CREATIVE;
+            case ADVENTURE -> GameModes.ADVENTURE;
+            case SPECTATOR -> GameModes.SPECTATOR;
+            default -> GameModes.NOT_SET;
         };
     }
 
@@ -651,6 +659,27 @@ public enum SpongeConvert {
         else if (type == PortalTypes.NETHER.get())
             return org.dockbox.hartshorn.server.minecraft.enums.PortalType.NETHER;
         return org.dockbox.hartshorn.server.minecraft.enums.PortalType.UNKOWN;
+    }
+
+    public static RegistryReference<Biome> toSponge(org.dockbox.hartshorn.server.minecraft.dimension.world.generation.Biome biome) {
+        return RegistryTypes.BIOME.referenced(ResourceKey.minecraft(biome.id().toLowerCase(Locale.ROOT)));
+    }
+
+    public static RegistryReference<WorldType> toSponge(GeneratorType type) {
+        return switch (type) {
+            case OVERWORLD, FLAT -> WorldTypes.OVERWORLD;
+            case END -> WorldTypes.THE_END;
+            case NETHER -> WorldTypes.THE_NETHER;
+        };
+    }
+
+    public static RegistryReference<Difficulty> toSponge(org.dockbox.hartshorn.server.minecraft.dimension.world.generation.Difficulty difficulty) {
+        return switch (difficulty) {
+            case PEACEFUL -> Difficulties.PEACEFUL;
+            case EASY -> Difficulties.EASY;
+            case NORMAL -> Difficulties.NORMAL;
+            case HARD -> Difficulties.HARD;
+        };
     }
 
 //    public static Element toSponge(org.dockbox.hartshorn.server.minecraft.inventory.Element element) {
