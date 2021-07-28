@@ -15,31 +15,28 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.sample;
+package org.dockbox.hartshorn.regions.events;
 
-import org.dockbox.hartshorn.api.i18n.common.ResourceEntry;
-import org.dockbox.hartshorn.regions.flags.AbstractRegionFlag;
-import org.dockbox.hartshorn.server.minecraft.packets.data.Weather;
+import org.dockbox.hartshorn.api.events.parents.Cancellable;
+import org.dockbox.hartshorn.regions.Region;
+import org.jetbrains.annotations.NotNull;
 
-public class WeatherFlag extends AbstractRegionFlag<Weather> {
+import lombok.Getter;
+import lombok.Setter;
 
-    public WeatherFlag(String id, ResourceEntry description) {
-        super(id, description);
+public abstract class CancellableRegionEvent extends RegionEvent implements Cancellable {
+
+    @Getter
+    @Setter
+    private boolean cancelled = false;
+
+    protected CancellableRegionEvent(Region region) {
+        super(region);
     }
 
     @Override
-    public String serialize(Weather object) {
-        return String.valueOf(object.gameStateId());
-    }
-
-    @Override
-    public Weather parse(String raw) {
-        int gameState = Integer.parseInt(raw);
-        return Weather.fromGameState(gameState);
-    }
-
-    @Override
-    public Class<Weather> type() {
-        return Weather.class;
+    public @NotNull CancellableRegionEvent post() {
+        super.post();
+        return this;
     }
 }

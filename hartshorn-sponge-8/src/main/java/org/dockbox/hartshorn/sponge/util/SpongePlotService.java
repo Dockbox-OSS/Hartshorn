@@ -17,40 +17,24 @@
 
 package org.dockbox.hartshorn.sponge.util;
 
-import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.api.i18n.text.Text;
 import org.dockbox.hartshorn.di.annotations.inject.Binds;
-import org.dockbox.hartshorn.plots.Plot;
-import org.dockbox.hartshorn.plots.PlotService;
-import org.dockbox.hartshorn.plots.flags.PlotFlag;
-import org.dockbox.hartshorn.server.minecraft.dimension.position.Location;
-import org.dockbox.hartshorn.server.minecraft.dimension.world.World;
+import org.dockbox.hartshorn.regions.DefaultRegionService;
+import org.dockbox.hartshorn.regions.RegionService;
+import org.dockbox.hartshorn.regions.flags.RegionFlag;
+import org.dockbox.hartshorn.regions.plots.Plot;
+import org.dockbox.hartshorn.regions.plots.PlotService;
 import org.dockbox.hartshorn.server.minecraft.item.Item;
-import org.dockbox.hartshorn.server.minecraft.players.Player;
 
 /**
  * Placeholder implementation of PlotService
  */
+@Binds(RegionService.class)
 @Binds(PlotService.class)
-public class SpongePlotService implements PlotService {
-    @Override
-    public Exceptional<Plot> plot(Location location) {
-        return Exceptional.empty();
-    }
+public class SpongePlotService extends DefaultRegionService implements PlotService {
 
     @Override
-    public Exceptional<Plot> plot(Player player) {
-        return Exceptional.empty();
-    }
-
-    @Override
-    public void register(PlotFlag<?> flag) {
+    public void register(RegionFlag<?> flag) {
         // Nothing happens
-    }
-
-    @Override
-    public Exceptional<Plot> plot(World world, int x, int y) {
-        return Exceptional.empty();
     }
 
     @Override
@@ -90,21 +74,6 @@ public class SpongePlotService implements PlotService {
 
     @Override
     public void middle(Plot plot, Item item) {
-        // Nothing happens
-    }
-
-    @Override
-    public Integer size(Plot plot) {
-        return -1;
-    }
-
-    @Override
-    public Text alias(Plot plot) {
-        return Text.of();
-    }
-
-    @Override
-    public void alias(Plot plot, Text item) {
         // Nothing happens
     }
 }

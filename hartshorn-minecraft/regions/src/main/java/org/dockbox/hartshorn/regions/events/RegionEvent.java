@@ -15,31 +15,25 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.sample;
+package org.dockbox.hartshorn.regions.events;
 
-import org.dockbox.hartshorn.api.i18n.common.ResourceEntry;
-import org.dockbox.hartshorn.regions.flags.AbstractRegionFlag;
-import org.dockbox.hartshorn.server.minecraft.packets.data.Weather;
+import org.dockbox.hartshorn.api.Hartshorn;
+import org.dockbox.hartshorn.api.events.EventBus;
+import org.dockbox.hartshorn.api.events.parents.Event;
+import org.dockbox.hartshorn.regions.Region;
 
-public class WeatherFlag extends AbstractRegionFlag<Weather> {
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
-    public WeatherFlag(String id, ResourceEntry description) {
-        super(id, description);
-    }
+@Getter
+@AllArgsConstructor
+public abstract class RegionEvent implements Event {
 
-    @Override
-    public String serialize(Weather object) {
-        return String.valueOf(object.gameStateId());
-    }
-
-    @Override
-    public Weather parse(String raw) {
-        int gameState = Integer.parseInt(raw);
-        return Weather.fromGameState(gameState);
-    }
+    private final Region region;
 
     @Override
-    public Class<Weather> type() {
-        return Weather.class;
+    public RegionEvent post() {
+        Hartshorn.context().get(EventBus.class).post(this);
+        return this;
     }
 }

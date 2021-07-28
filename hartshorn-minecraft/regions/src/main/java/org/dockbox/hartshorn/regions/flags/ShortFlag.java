@@ -15,31 +15,36 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.sample;
+package org.dockbox.hartshorn.regions.flags;
 
+import org.dockbox.hartshorn.api.exceptions.Except;
 import org.dockbox.hartshorn.api.i18n.common.ResourceEntry;
-import org.dockbox.hartshorn.regions.flags.AbstractRegionFlag;
-import org.dockbox.hartshorn.server.minecraft.packets.data.Weather;
+import org.dockbox.hartshorn.di.annotations.inject.Bound;
 
-public class WeatherFlag extends AbstractRegionFlag<Weather> {
+public class ShortFlag extends AbstractRegionFlag<Short> {
 
-    public WeatherFlag(String id, ResourceEntry description) {
+    @Bound
+    public ShortFlag(String id, ResourceEntry description) {
         super(id, description);
     }
 
     @Override
-    public String serialize(Weather object) {
-        return String.valueOf(object.gameStateId());
+    public String serialize(Short object) {
+        return String.valueOf(object);
     }
 
     @Override
-    public Weather parse(String raw) {
-        int gameState = Integer.parseInt(raw);
-        return Weather.fromGameState(gameState);
+    public Short parse(String raw) {
+        try {
+            return Short.parseShort(raw);
+        } catch (NumberFormatException e) {
+            Except.handle("Could not parse number flag: " + this.id(), e);
+            return -1;
+        }
     }
 
     @Override
-    public Class<Weather> type() {
-        return Weather.class;
+    public Class<Short> type() {
+        return Short.class;
     }
 }

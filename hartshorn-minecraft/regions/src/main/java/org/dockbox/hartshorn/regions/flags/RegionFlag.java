@@ -15,31 +15,29 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.sample;
+package org.dockbox.hartshorn.regions.flags;
 
+import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.i18n.common.ResourceEntry;
-import org.dockbox.hartshorn.regions.flags.AbstractRegionFlag;
-import org.dockbox.hartshorn.server.minecraft.packets.data.Weather;
+import org.dockbox.hartshorn.regions.RegionService;
 
-public class WeatherFlag extends AbstractRegionFlag<Weather> {
+public interface RegionFlag<T> {
 
-    public WeatherFlag(String id, ResourceEntry description) {
-        super(id, description);
+    String id();
+
+    ResourceEntry description();
+
+    String serialize(T object);
+
+    T parse(String raw);
+
+    Class<T> type();
+
+    default void register() {
+        Hartshorn.context().get(RegionService.class).register(this);
     }
 
-    @Override
-    public String serialize(Weather object) {
-        return String.valueOf(object.gameStateId());
-    }
-
-    @Override
-    public Weather parse(String raw) {
-        int gameState = Integer.parseInt(raw);
-        return Weather.fromGameState(gameState);
-    }
-
-    @Override
-    public Class<Weather> type() {
-        return Weather.class;
+    default PersistentFlagModel model() {
+        return new PersistentFlagModel(this.id(), this.description().model(), this.getClass().getCanonicalName());
     }
 }

@@ -18,32 +18,32 @@
 package org.dockbox.hartshorn.sponge.event;
 
 import org.dockbox.hartshorn.api.events.annotations.Posting;
-import org.dockbox.hartshorn.plots.events.ClearPlotEvent;
-import org.dockbox.hartshorn.plots.events.DeletePlotEvent;
-import org.dockbox.hartshorn.plots.events.PlotChangePropertyEvent;
-import org.dockbox.hartshorn.plots.events.flags.PlotFlagAddedEvent;
-import org.dockbox.hartshorn.plots.events.flags.PlotFlagRemovedEvent;
-import org.dockbox.hartshorn.plots.events.membership.ClaimPlotEvent;
-import org.dockbox.hartshorn.plots.events.membership.PlotMembershipChangedEvent;
-import org.dockbox.hartshorn.plots.events.merge.PlotAutoMergeEvent;
-import org.dockbox.hartshorn.plots.events.merge.PlotMergeEvent;
-import org.dockbox.hartshorn.plots.events.merge.PlotUnlinkEvent;
-import org.dockbox.hartshorn.plots.events.movement.EnterPlotEvent;
-import org.dockbox.hartshorn.plots.events.movement.LeavePlotEvent;
-import org.dockbox.hartshorn.plots.events.movement.TeleportToPlotEvent;
+import org.dockbox.hartshorn.regions.plots.events.ClearPlotEvent;
+import org.dockbox.hartshorn.regions.plots.events.DeletePlotEvent;
+import org.dockbox.hartshorn.regions.plots.events.PlotChangePropertyEvent;
+import org.dockbox.hartshorn.regions.events.flags.RegionFlagAddedEvent;
+import org.dockbox.hartshorn.regions.events.flags.RegionFlagRemovedEvent;
+import org.dockbox.hartshorn.regions.events.membership.ClaimRegionEvent;
+import org.dockbox.hartshorn.regions.events.membership.MembershipChangedEvent;
+import org.dockbox.hartshorn.regions.plots.events.merge.RegionAutoMergeEvent;
+import org.dockbox.hartshorn.regions.plots.events.merge.PlotMergeEvent;
+import org.dockbox.hartshorn.regions.plots.events.merge.PlotUnlinkEvent;
+import org.dockbox.hartshorn.regions.events.movement.EnterRegionEvent;
+import org.dockbox.hartshorn.regions.events.movement.LeaveRegionEvent;
+import org.dockbox.hartshorn.regions.events.movement.TeleportToRegionEvent;
 
 @Posting(value = {
-        LeavePlotEvent.class,
-        PlotFlagRemovedEvent.class,
-        PlotAutoMergeEvent.class,
+        LeaveRegionEvent.class,
+        RegionFlagRemovedEvent.class,
+        RegionAutoMergeEvent.class,
         PlotUnlinkEvent.class,
-        TeleportToPlotEvent.class,
-        ClaimPlotEvent.class,
+        TeleportToRegionEvent.class,
+        ClaimRegionEvent.class,
         PlotMergeEvent.class,
-        PlotMembershipChangedEvent.class,
+        MembershipChangedEvent.class,
         PlotChangePropertyEvent.class,
-        PlotFlagAddedEvent.class,
-        EnterPlotEvent.class,
+        RegionFlagAddedEvent.class,
+        EnterRegionEvent.class,
         ClearPlotEvent.class,
         DeletePlotEvent.class
 })
