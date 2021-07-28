@@ -15,31 +15,32 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.sample;
+package org.dockbox.hartshorn.regions;
 
-import org.dockbox.hartshorn.api.i18n.common.ResourceEntry;
-import org.dockbox.hartshorn.regions.flags.AbstractRegionFlag;
-import org.dockbox.hartshorn.server.minecraft.packets.data.Weather;
+import org.dockbox.hartshorn.regions.flags.PersistentFlagModel;
+import org.dockbox.hartshorn.regions.flags.RegionFlag;
+import org.dockbox.hartshorn.util.HartshornUtils;
 
-public class WeatherFlag extends AbstractRegionFlag<Weather> {
+import java.util.List;
+import java.util.Set;
 
-    public WeatherFlag(String id, ResourceEntry description) {
-        super(id, description);
+import lombok.Getter;
+
+public class RegionsList {
+
+    private List<CustomRegion> regions = HartshornUtils.emptyList();
+
+    @Getter
+    private Set<PersistentFlagModel> flags = HartshornUtils.emptySet();
+
+    public void add(RegionFlag<?> flag) {
+        this.flags.add(flag.model());
     }
 
-    @Override
-    public String serialize(Weather object) {
-        return String.valueOf(object.gameStateId());
-    }
-
-    @Override
-    public Weather parse(String raw) {
-        int gameState = Integer.parseInt(raw);
-        return Weather.fromGameState(gameState);
-    }
-
-    @Override
-    public Class<Weather> type() {
-        return Weather.class;
+    public void add(CustomRegion element) {
+        this.regions.add(element);
+        for (RegionFlag<?> flag : element.flags().keySet()) {
+            this.add(flag);
+        }
     }
 }

@@ -15,31 +15,30 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.sample;
+package org.dockbox.hartshorn.regions.flags;
 
 import org.dockbox.hartshorn.api.i18n.common.ResourceEntry;
-import org.dockbox.hartshorn.regions.flags.AbstractRegionFlag;
-import org.dockbox.hartshorn.server.minecraft.packets.data.Weather;
+import org.dockbox.hartshorn.di.annotations.inject.Bound;
 
-public class WeatherFlag extends AbstractRegionFlag<Weather> {
+public class BooleanFlag extends AbstractRegionFlag<Boolean> {
 
-    public WeatherFlag(String id, ResourceEntry description) {
+    @Bound
+    public BooleanFlag(String id, ResourceEntry description) {
         super(id, description);
     }
 
     @Override
-    public String serialize(Weather object) {
-        return String.valueOf(object.gameStateId());
+    public String serialize(Boolean object) {
+        return String.valueOf(object);
     }
 
     @Override
-    public Weather parse(String raw) {
-        int gameState = Integer.parseInt(raw);
-        return Weather.fromGameState(gameState);
+    public Boolean parse(String raw) {
+        return Boolean.parseBoolean(raw);
     }
 
     @Override
-    public Class<Weather> type() {
-        return Weather.class;
+    public Class<Boolean> type() {
+        return Boolean.class;
     }
 }
