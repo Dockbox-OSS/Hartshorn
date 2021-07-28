@@ -17,13 +17,27 @@
 
 package org.dockbox.hartshorn.di.adapter;
 
-import org.dockbox.hartshorn.di.context.HartshornApplicationContext;
-import org.dockbox.hartshorn.di.inject.Injector;
+import org.dockbox.hartshorn.di.services.ComponentLocator;
+import org.dockbox.hartshorn.di.services.SimpleComponentLocator;
+
+import java.util.function.Supplier;
 
 /**
- * Provider type to create the {@link Injector} used by the {@link HartshornApplicationContext}.
+ * Default implementation(s) for {@link ServiceSource}.
  */
-@FunctionalInterface
-public interface InjectSource {
-    Injector create();
+public enum ServiceSources implements ServiceSource {
+    /**
+     * The default implementation of {@link ComponentLocator}.
+     */
+    DEFAULT(SimpleComponentLocator::new);
+
+    private final Supplier<ComponentLocator> supplier;
+
+    ServiceSources(Supplier<ComponentLocator> supplier) {
+        this.supplier = supplier;
+    }
+
+    public ComponentLocator create() {
+        return this.supplier.get();
+    }
 }

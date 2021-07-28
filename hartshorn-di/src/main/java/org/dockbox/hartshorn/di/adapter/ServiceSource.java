@@ -17,21 +17,13 @@
 
 package org.dockbox.hartshorn.di.adapter;
 
+import org.dockbox.hartshorn.di.context.HartshornApplicationContext;
 import org.dockbox.hartshorn.di.services.ComponentLocator;
-import org.dockbox.hartshorn.di.services.SimpleComponentLocator;
 
-import java.util.function.Supplier;
-
-public enum ServiceSource {
-    DEFAULT(SimpleComponentLocator::new);
-
-    private final Supplier<ComponentLocator> supplier;
-
-    ServiceSource(Supplier<ComponentLocator> supplier) {
-        this.supplier = supplier;
-    }
-
-    public ComponentLocator create() {
-        return this.supplier.get();
-    }
+/**
+ * Provider type to create the {@link ServiceSource} used by the {@link HartshornApplicationContext}.
+ */
+@FunctionalInterface
+public interface ServiceSource {
+    ComponentLocator create();
 }

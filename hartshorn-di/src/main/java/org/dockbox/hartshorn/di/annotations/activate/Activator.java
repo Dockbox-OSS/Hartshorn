@@ -30,9 +30,9 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface Activator {
-    InjectSource inject() default InjectSource.GUICE;
+    InjectSources inject() default InjectSources.GUICE;
     Class<? extends InjectableBootstrap> value();
     String prefix() default "";
     InjectConfig[] configs() default {};
-    ServiceSource services() default ServiceSource.DEFAULT;
+    ServiceSources services() default ServiceSources.DEFAULT;
 }

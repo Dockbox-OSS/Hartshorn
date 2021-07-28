@@ -17,20 +17,29 @@
 
 package org.dockbox.hartshorn.di.adapter;
 
+import org.dockbox.hartshorn.di.guice.GuiceInjector;
 import org.dockbox.hartshorn.di.inject.Injector;
-import org.dockbox.hartshorn.di.services.ComponentLocator;
 
-import lombok.Getter;
+import java.util.function.Supplier;
 
-@Getter
-public final class ContextAdapter {
+/**
+ * Default implementation(s) for {@link InjectSource}.
+ */
+public enum InjectSources implements InjectSource {
+    /**
+     * Guice based implementation of {@link InjectSource}. Using custom modules found
+     * in {@link org.dockbox.hartshorn.di.guice}.
+     */
+    GUICE(GuiceInjector::new);
 
-    private final Injector injector;
-    private final ComponentLocator locator;
+    private final Supplier<Injector> supplier;
 
-    public ContextAdapter(InjectSource inject, ServiceSource service) {
-        this.injector = inject.create();
-        this.locator = service.create();
+    InjectSources(Supplier<Injector> supplier) {
+        this.supplier = supplier;
     }
 
+    @Override
+    public Injector create() {
+        return this.supplier.get();
+    }
 }
