@@ -25,7 +25,11 @@ import java.util.Objects;
  */
 public class Vector3N extends Vector2N {
 
-    private final Number y;
+    private Number y;
+
+    protected Vector3N() {
+        super();
+    }
 
     private Vector3N(Number x, Number y, Number z) {
         super(x, z);
