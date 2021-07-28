@@ -1176,6 +1176,13 @@ public final class HartshornUtils {
         return asSet(merge(differenceInOne, differenceInTwo));
     }
 
+    public static Vector3N cuboidSize(Vector3N min, Vector3N max) {
+        final double x = max.xD() - min.xD();
+        final double y = max.yD() - min.yD();
+        final double z = max.zD() - min.zD();
+        return Vector3N.of(x, y, z);
+    }
+
     public enum Provision {
         /** Uses the field name to process field information. */
         FIELD,
