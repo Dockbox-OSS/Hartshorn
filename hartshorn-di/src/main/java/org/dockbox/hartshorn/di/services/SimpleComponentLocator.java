@@ -20,7 +20,6 @@ package org.dockbox.hartshorn.di.services;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.di.ComponentType;
 import org.dockbox.hartshorn.di.annotations.component.Component;
-import org.dockbox.hartshorn.di.annotations.component.ComponentLike;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.dockbox.hartshorn.util.Reflect;
 
@@ -73,7 +72,7 @@ public class SimpleComponentLocator implements ComponentLocator {
     @Override
     public Collection<Class<? extends Annotation>> decorators() {
         if (decorators.isEmpty()) {
-            final Collection<Class<?>> annotations = Reflect.types(ComponentLike.class);
+            final Collection<Class<?>> annotations = Reflect.types(Component.class);
             for (Class<?> annotation : annotations) {
                 if (annotation.isAnnotation()) //noinspection unchecked
                     decorators.add((Class<? extends Annotation>) annotation);
