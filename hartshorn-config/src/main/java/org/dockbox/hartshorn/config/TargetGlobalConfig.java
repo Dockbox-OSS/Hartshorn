@@ -35,7 +35,7 @@ public class TargetGlobalConfig implements GlobalConfig {
     @Value(value = "hartshorn.exceptions.stacktraces", or = "false")
     private boolean stacktraces;
 
-    @Value(value = "hartshorn.exceptions.level", or = "NATIVE")
+    @Value(value = "hartshorn.exceptions.level", or = "FRIENDLY")
     private ExceptionLevels level;
 
     @Value("hartshorn.version")
