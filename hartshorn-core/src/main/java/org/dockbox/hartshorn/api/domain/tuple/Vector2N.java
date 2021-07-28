@@ -25,12 +25,34 @@ import java.util.Objects;
  */
 public class Vector2N {
 
-    private final Number x;
-    private final Number z;
+    private Number x;
+    private Number z;
 
-    public Vector2N(Number x, Number z) {
+    protected Vector2N() {
+    }
+
+    protected Vector2N(Number x, Number z) {
         this.x = x;
         this.z = z;
+    }
+
+    /**
+     * Creates a new {@link Vector2N} from the given values.
+     * @param x The x position of the {@link Vector2N}
+     * @param z The z position of the {@link Vector2N}
+     * @return The new {@link Vector3N}
+     */
+    public static Vector2N of(Number x, Number z) {
+        return new Vector2N(x, z);
+    }
+
+    /**
+     * Creates a new empty {@link Vector2N}. An empty {@link Vector2N} contains only
+     * zeroes.
+     * @return A new empty {@link Vector2N}
+     */
+    public static Vector2N empty() {
+        return Vector2N.of(0, 0);
     }
 
     /**
