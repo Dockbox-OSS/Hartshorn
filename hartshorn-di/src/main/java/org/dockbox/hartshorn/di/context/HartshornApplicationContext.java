@@ -28,15 +28,14 @@ import org.dockbox.hartshorn.di.MetaProviderModifier;
 import org.dockbox.hartshorn.di.Modifier;
 import org.dockbox.hartshorn.di.ProvisionFailure;
 import org.dockbox.hartshorn.di.TypeFactory;
-import org.dockbox.hartshorn.di.adapter.ContextAdapter;
 import org.dockbox.hartshorn.di.annotations.inject.Named;
 import org.dockbox.hartshorn.di.annotations.service.ServiceActivator;
 import org.dockbox.hartshorn.di.binding.Bindings;
-import org.dockbox.hartshorn.di.inject.BeanContext;
 import org.dockbox.hartshorn.di.inject.Binder;
 import org.dockbox.hartshorn.di.inject.InjectionModifier;
 import org.dockbox.hartshorn.di.inject.Injector;
-import org.dockbox.hartshorn.di.inject.wired.WireContext;
+import org.dockbox.hartshorn.di.inject.ProviderContext;
+import org.dockbox.hartshorn.di.inject.wired.BoundContext;
 import org.dockbox.hartshorn.di.properties.InjectableType;
 import org.dockbox.hartshorn.di.properties.InjectorProperty;
 import org.dockbox.hartshorn.di.properties.UseFactory;
@@ -51,12 +50,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-import lombok.Getter;
-
 public class HartshornApplicationContext extends ManagedHartshornContext {
 
-    @Getter
-    private final ContextAdapter adapter;
+    private final Injector injector;
+    private final ComponentLocator locator;
     private final List<Modifier> modifiers;
     private final Map<Class<?>, Object> singletons = HartshornUtils.emptyConcurrentMap();
     private MetaProvider metaProvider;
@@ -64,7 +61,8 @@ public class HartshornApplicationContext extends ManagedHartshornContext {
 
     public HartshornApplicationContext(Class<?> activationSource, Modifier... modifiers) {
         super(activationSource);
-        this.adapter = new ContextAdapter(this.activator().inject(), this.activator().services());
+        this.injector = this.activator().inject().create();
+        this.locator = this.activator().services().create();
         this.modifiers = HartshornUtils.asUnmodifiableList(modifiers);
         this.modify(this.modifiers);
 
@@ -148,7 +146,7 @@ public class HartshornApplicationContext extends ManagedHartshornContext {
     }
     
     protected Injector internalInjector() {
-        return this.adapter.injector();
+        return this.injector;
     }
 
     @Nullable
@@ -180,7 +178,7 @@ public class HartshornApplicationContext extends ManagedHartshornContext {
 
     @Override
     public ComponentLocator locator() {
-        return this.adapter.locator();
+        return this.locator;
     }
 
     @Override
@@ -194,12 +192,12 @@ public class HartshornApplicationContext extends ManagedHartshornContext {
     }
 
     @Override
-    public void add(WireContext<?, ?> context) {
+    public void add(BoundContext<?, ?> context) {
         this.internalInjector().add(context);
     }
 
     @Override
-    public void add(BeanContext<?, ?> context) {
+    public void add(ProviderContext<?, ?> context) {
         this.internalInjector().add(context);
     }
 
@@ -215,7 +213,7 @@ public class HartshornApplicationContext extends ManagedHartshornContext {
     }
 
     @Override
-    public <T, I extends T> Exceptional<WireContext<T, I>> firstWire(Class<T> contract, InjectorProperty<Named> property) {
+    public <T, I extends T> Exceptional<BoundContext<T, I>> firstWire(Class<T> contract, InjectorProperty<Named> property) {
         return this.internalInjector().firstWire(contract, property);
     }
 

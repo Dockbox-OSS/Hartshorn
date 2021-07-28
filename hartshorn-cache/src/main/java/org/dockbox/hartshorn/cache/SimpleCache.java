@@ -27,6 +27,10 @@ import org.dockbox.hartshorn.util.HartshornUtils;
 
 import java.util.Collection;
 
+/**
+ * Default implementation of {@link Cache}.
+ * @see Cache
+ */
 @Binds(Cache.class)
 public class SimpleCache<T> implements Cache<T>, InjectableType {
 

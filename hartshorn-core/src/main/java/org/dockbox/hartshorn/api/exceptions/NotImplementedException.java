@@ -17,5 +17,8 @@
 
 package org.dockbox.hartshorn.api.exceptions;
 
+/**
+ * Thrown when a method is not (yet) implemented.
+ */
 public class NotImplementedException extends RuntimeException {
 }

@@ -20,12 +20,10 @@ package org.dockbox.hartshorn.server.minecraft;
 import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.domain.tuple.Vector3N;
-import org.dockbox.hartshorn.commands.arguments.CommandValueConverter;
 import org.dockbox.hartshorn.commands.arguments.DefaultArgumentConverters;
+import org.dockbox.hartshorn.commands.arguments.SimpleArgumentConverter;
 import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
 import org.dockbox.hartshorn.di.annotations.service.Service;
-import org.dockbox.hartshorn.di.properties.InjectableType;
-import org.dockbox.hartshorn.di.properties.InjectorProperty;
 import org.dockbox.hartshorn.server.minecraft.dimension.Block;
 import org.dockbox.hartshorn.server.minecraft.dimension.Worlds;
 import org.dockbox.hartshorn.server.minecraft.dimension.position.Location;
@@ -39,9 +37,9 @@ import org.dockbox.hartshorn.util.HartshornUtils;
 import java.util.UUID;
 
 @Service
-public final class MinecraftArgumentConverters implements InjectableType {
+public final class MinecraftArgumentConverters {
 
-    public static final ArgumentConverter<World> WORLD = CommandValueConverter.builder(World.class, "world")
+    public static final ArgumentConverter<World> WORLD = SimpleArgumentConverter.builder(World.class, "world")
             .withConverter(in -> {
                 Worlds wss = Hartshorn.context().get(Worlds.class);
                 Exceptional<World> world = wss.world(in);
@@ -52,7 +50,7 @@ public final class MinecraftArgumentConverters implements InjectableType {
                         });
             }).build();
 
-    public static final ArgumentConverter<Location> LOCATION = CommandValueConverter.builder(Location.class, "location", "position", "pos")
+    public static final ArgumentConverter<Location> LOCATION = SimpleArgumentConverter.builder(Location.class, "location", "position", "pos")
             .withConverter((cs, in) -> {
                 String[] xyzw = in.split(",");
                 String xyz = String.join(",", xyzw[0], xyzw[1], xyzw[2]);
@@ -62,7 +60,7 @@ public final class MinecraftArgumentConverters implements InjectableType {
                 return Exceptional.of(Location.of(vec, world));
             }).build();
 
-    public static final ArgumentConverter<Player> PLAYER = CommandValueConverter.builder(Player.class, "player", "user")
+    public static final ArgumentConverter<Player> PLAYER = SimpleArgumentConverter.builder(Player.class, "player", "user")
             .withConverter(in -> {
                 Players pss = Hartshorn.context().get(Players.class);
                 Exceptional<Player> player = pss.player(in);
@@ -82,7 +80,7 @@ public final class MinecraftArgumentConverters implements InjectableType {
                     .toList())
             .build();
 
-    public static final ArgumentConverter<Item> ITEM = CommandValueConverter.builder(Item.class, "item")
+    public static final ArgumentConverter<Item> ITEM = SimpleArgumentConverter.builder(Item.class, "item")
             .withConverter(in -> Exceptional.of(Item.of(in)))
             .withSuggestionProvider(in -> Hartshorn.context()
                     .first(ItemContext.class)
@@ -90,16 +88,11 @@ public final class MinecraftArgumentConverters implements InjectableType {
                     .orElse(HartshornUtils::emptyList).get())
             .build();
 
-    public static final ArgumentConverter<Block> BLOCK = CommandValueConverter.builder(Block.class, "block")
+    public static final ArgumentConverter<Block> BLOCK = SimpleArgumentConverter.builder(Block.class, "block")
             .withConverter(in -> Exceptional.of(Block.of(in)))
             .withSuggestionProvider(in -> Hartshorn.context()
                     .first(ItemContext.class)
                     .map(ItemContext::blocks)
                     .orElse(HartshornUtils::emptyList).get())
             .build();
-
-    @Override
-    public void enable(InjectorProperty<?>... properties) {
-        Hartshorn.log().info("Registered Minecraft specific command argument converters.");
-    }
 }

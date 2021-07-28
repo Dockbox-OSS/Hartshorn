@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.commands.definition;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.i18n.permissions.Permission;
-import org.dockbox.hartshorn.commands.source.CommandSource;
+import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.util.HartshornUtils;
 
 import java.util.Arrays;
@@ -29,11 +29,24 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+/**
+ * Utility class containing common definitions for {@link CommandElement command elements}.
+ */
 public final class CommandElements {
 
     private CommandElements() {
     }
 
+    /**
+     * Creates a new {@link CommandElement} for the given enum <code>type</code>. The element's suggestions will
+     * use the possible enum values.
+     * @param name The name of the element
+     * @param permission The permission required for the element
+     * @param type The (enum) type of the element
+     * @param optional Whether the element is optional
+     * @param <E> The type parameter for the enum type
+     * @return The enum command element
+     */
     public static <E extends Enum<E>> CommandElement<E> enumElement(String name, Permission permission, Class<E> type, boolean optional) {
         return new EnumCommandElement<>(name, permission, type, optional);
     }

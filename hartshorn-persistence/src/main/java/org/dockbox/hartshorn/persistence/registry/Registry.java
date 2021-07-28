@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.persistence.registry;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import org.dockbox.hartshorn.api.entity.annotations.Entity;
+import org.dockbox.hartshorn.api.annotations.Entity;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;

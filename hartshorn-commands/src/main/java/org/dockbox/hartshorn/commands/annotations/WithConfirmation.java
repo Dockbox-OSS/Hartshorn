@@ -22,6 +22,10 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * The annotation used to indicate a {@link Command} executor should be modified
+ * with a confirmation requirement.
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface WithConfirmation {

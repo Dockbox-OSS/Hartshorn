@@ -22,7 +22,7 @@ import org.dockbox.hartshorn.api.config.GlobalConfig;
 import org.dockbox.hartshorn.api.task.TaskRunner;
 import org.dockbox.hartshorn.api.task.ThreadUtils;
 import org.dockbox.hartshorn.cache.CacheManager;
-import org.dockbox.hartshorn.commands.source.DiscordCommandSource;
+import org.dockbox.hartshorn.discord.DiscordCommandSource;
 import org.dockbox.hartshorn.config.ConfigurationManager;
 import org.dockbox.hartshorn.di.InjectConfiguration;
 import org.dockbox.hartshorn.di.SimpleTypeFactory;
@@ -73,13 +73,13 @@ public class JUnitInjector extends InjectConfiguration {
         this.bind(CacheManager.class, JUnitCacheManager.class);
 
         // Wired types - do NOT call directly!
-        this.wire(Item.class, JUnitItem.class);
-        this.wire(Bossbar.class, JUnitBossbar.class);
-        this.wire(Profile.class, JUnitProfile.class);
-        this.wire(ItemFrame.class, JUnitItemFrame.class);
-        this.wire(ArmorStand.class, JUnitArmorStand.class);
-        this.wire(DiscordCommandSource.class, JUnitDiscordCommandSource.class);
-        this.wire(ConfigurationManager.class, JUnitConfigurationManager.class);
+        this.manual(Item.class, JUnitItem.class);
+        this.manual(Bossbar.class, JUnitBossbar.class);
+        this.manual(Profile.class, JUnitProfile.class);
+        this.manual(ItemFrame.class, JUnitItemFrame.class);
+        this.manual(ArmorStand.class, JUnitArmorStand.class);
+        this.manual(DiscordCommandSource.class, JUnitDiscordCommandSource.class);
+        this.manual(ConfigurationManager.class, JUnitConfigurationManager.class);
 
         // Log is created from LoggerFactory externally
         this.bind(Logger.class, Hartshorn.log());

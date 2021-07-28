@@ -20,7 +20,7 @@ package org.dockbox.hartshorn.commands.context;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.i18n.permissions.Permission;
 import org.dockbox.hartshorn.commands.service.CommandParameter;
-import org.dockbox.hartshorn.commands.source.CommandSource;
+import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.di.context.DefaultContext;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.jetbrains.annotations.UnmodifiableView;
@@ -30,6 +30,9 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+/**
+ * Simple implementation of {@link CommandContext}.
+ */
 @SuppressWarnings("unchecked")
 @AllArgsConstructor
 public class SimpleCommandContext extends DefaultContext implements CommandContext {
@@ -63,8 +66,8 @@ public class SimpleCommandContext extends DefaultContext implements CommandConte
     }
 
     @Override
-    public <T> Exceptional<T> first(String key) {
-        return Exceptional.of((T) this.get(key));
+    public <T> Exceptional<T> find(String key) {
+        return Exceptional.of(() -> this.get(key));
     }
 
     @Override

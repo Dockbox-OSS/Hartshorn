@@ -18,13 +18,14 @@
 package org.dockbox.hartshorn.util;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.api.entity.annotations.Entity;
-import org.dockbox.hartshorn.api.entity.annotations.Property;
+import org.dockbox.hartshorn.api.annotations.Entity;
+import org.dockbox.hartshorn.api.annotations.Property;
 import org.dockbox.hartshorn.util.exceptions.FieldAccessException;
 import org.dockbox.hartshorn.util.exceptions.NotPrimitiveException;
 import org.dockbox.hartshorn.util.exceptions.TypeConversionException;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 import org.reflections.Reflections;
 
@@ -325,8 +326,8 @@ public final class Reflect {
      *
      * @param <T>
      *         the type parameter
-     * @param method
-     *         the method
+     * @param element
+     *         the element
      * @param annotationClass
      *         the annotation class
      *
@@ -334,8 +335,8 @@ public final class Reflect {
      * @throws SecurityException
      *         the security exception
      */
-    public static <T extends Annotation> boolean has(AnnotatedElement method, Class<T> annotationClass) throws SecurityException {
-        return Reflect.annotation(method, annotationClass).present();
+    public static <T extends Annotation> boolean has(AnnotatedElement element, Class<T> annotationClass) throws SecurityException {
+        return Reflect.annotation(element, annotationClass).present();
     }
 
     /**
@@ -403,6 +404,7 @@ public final class Reflect {
         }
     }
 
+    @Nullable
     public static Class<?> lookup(String className) {
         try {
             return Class.forName(className);

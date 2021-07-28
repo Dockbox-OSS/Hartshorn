@@ -22,7 +22,7 @@ import com.fasterxml.jackson.databind.introspect.Annotated;
 import com.fasterxml.jackson.databind.introspect.JacksonAnnotationIntrospector;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.api.entity.annotations.Property;
+import org.dockbox.hartshorn.api.annotations.Property;
 import org.dockbox.hartshorn.util.Reflect;
 
 import java.lang.reflect.AnnotatedElement;

@@ -157,7 +157,7 @@ final class AnnotationHelper {
             return null;
         }
 
-        return (A) Proxy.newProxyInstance(targetAnnotationClass.getClassLoader(), new Class[]{targetAnnotationClass, AnnotationAdapter.class},
+        return (A) Proxy.newProxyInstance(AnnotationHelper.class.getClassLoader(), new Class[]{targetAnnotationClass, AnnotationAdapter.class},
                 new AnnotationAdapterProxy<>(actual, targetAnnotationClass, hierarchy));
     }
 

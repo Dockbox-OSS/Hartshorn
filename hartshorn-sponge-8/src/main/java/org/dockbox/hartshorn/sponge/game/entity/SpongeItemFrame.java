@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.sponge.game.entity;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.di.annotations.inject.Binds;
-import org.dockbox.hartshorn.di.annotations.inject.Wired;
+import org.dockbox.hartshorn.di.annotations.inject.Bound;
 import org.dockbox.hartshorn.server.minecraft.dimension.position.BlockFace;
 import org.dockbox.hartshorn.server.minecraft.dimension.position.Location;
 import org.dockbox.hartshorn.server.minecraft.entities.ItemFrame;
@@ -38,7 +38,7 @@ public class SpongeItemFrame
         implements ItemFrame
 {
 
-    @Wired
+    @Bound
     public SpongeItemFrame(Location location) {
         super(location);
     }

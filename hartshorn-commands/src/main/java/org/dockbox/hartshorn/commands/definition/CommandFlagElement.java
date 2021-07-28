@@ -19,13 +19,18 @@ package org.dockbox.hartshorn.commands.definition;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.i18n.permissions.Permission;
-import org.dockbox.hartshorn.commands.source.CommandSource;
+import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.util.HartshornUtils;
 
 import java.util.Collection;
 
 import lombok.AllArgsConstructor;
 
+/**
+ * Simple implementation of a value-based {@link CommandFlag}. Using a underlying
+ * {@link CommandElement} to delegate value parsing.
+ * @param <T> The type of the expected value
+ */
 @AllArgsConstructor
 public class CommandFlagElement<T> implements CommandFlag, CommandElement<T> {
 

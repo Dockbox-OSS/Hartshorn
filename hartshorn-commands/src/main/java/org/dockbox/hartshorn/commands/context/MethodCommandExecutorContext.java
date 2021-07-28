@@ -31,12 +31,13 @@ import org.dockbox.hartshorn.commands.annotations.Command;
 import org.dockbox.hartshorn.commands.definition.CommandElement;
 import org.dockbox.hartshorn.commands.events.CommandEvent;
 import org.dockbox.hartshorn.commands.events.CommandEvent.Before;
-import org.dockbox.hartshorn.commands.source.CommandSource;
+import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.di.context.DefaultContext;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.dockbox.hartshorn.util.Reflect;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -47,6 +48,9 @@ import java.util.Map.Entry;
 import lombok.AccessLevel;
 import lombok.Getter;
 
+/**
+ * Simple implementation of {@link CommandExecutorContext} targeting {@link Method} based executors.
+ */
 @Getter(AccessLevel.PROTECTED)
 @Posting({CommandEvent.Before.class, CommandEvent.After.class})
 public class MethodCommandExecutorContext extends DefaultContext implements CommandExecutorContext {
@@ -79,7 +83,7 @@ public class MethodCommandExecutorContext extends DefaultContext implements Comm
             this.isChild = false;
         }
 
-        this.add(new SimpleCommandContainerContext(this.command));
+        this.add(new SimpleCommandDefinitionContext(this.command));
 
         this.parentAliases = HartshornUtils.emptyList();
         if (this.parent != null) {
@@ -90,14 +94,14 @@ public class MethodCommandExecutorContext extends DefaultContext implements Comm
 
     @Override
     public boolean accepts(String command) {
-        final CommandContainerContext containerContext = this.container();
-        return containerContext.matches(this.strip(command, true));
+        final CommandDefinitionContext context = this.definition();
+        return context.matches(this.strip(command, true));
     }
 
     @Override
     public String strip(String command, boolean parentOnly) {
         command = this.stripAny(command, this.parentAliases);
-        if (!parentOnly) command = this.stripAny(command, this.container().aliases());
+        if (!parentOnly) command = this.stripAny(command, this.definition().aliases());
         return command;
     }
 
@@ -127,14 +131,14 @@ public class MethodCommandExecutorContext extends DefaultContext implements Comm
     }
 
     @Override
-    public Method method() {
+    public AnnotatedElement element() {
         return this.method;
     }
 
     @Override
     public List<String> suggestions(CommandSource source, String command, CommandParser parser) {
         final String stripped = this.strip(command, false);
-        final List<CommandElement<?>> elements = this.container().elements();
+        final List<CommandElement<?>> elements = this.definition().elements();
         final List<String> tokens = HartshornUtils.asList(stripped.split(" "));
         if (command.endsWith(" ") && !"".equals(tokens.get(tokens.size()-1))) tokens.add("");
 
@@ -170,7 +174,7 @@ public class MethodCommandExecutorContext extends DefaultContext implements Comm
             final Object instance = Hartshorn.context().get(this.type());
             final List<Object> arguments = this.arguments(ctx);
             try {
-                this.method().invoke(instance, arguments.toArray());
+                this.method.invoke(instance, arguments.toArray());
                 new CommandEvent.After(ctx.source(), ctx).post();
             }
             catch (IllegalAccessException | InvocationTargetException e) {
@@ -200,7 +204,7 @@ public class MethodCommandExecutorContext extends DefaultContext implements Comm
     private Map<String, ParameterContext> parameters() {
         if (this.parameters == null) {
             this.parameters = HartshornUtils.emptyMap();
-            Parameter[] methodParameters = this.method().getParameters();
+            Parameter[] methodParameters = this.method.getParameters();
 
             for (int i = 0; i < methodParameters.length; i++) {
                 Parameter parameter = methodParameters[i];
@@ -210,9 +214,9 @@ public class MethodCommandExecutorContext extends DefaultContext implements Comm
         return this.parameters;
     }
 
-    private CommandContainerContext container() {
-        final Exceptional<CommandContainerContext> container = this.first(CommandContainerContext.class);
-        if (container.absent()) throw new IllegalStateException("Container context was lost!");
-        return container.get();
+    private CommandDefinitionContext definition() {
+        final Exceptional<CommandDefinitionContext> definition = this.first(CommandDefinitionContext.class);
+        if (definition.absent()) throw new IllegalStateException("Definition context was lost!");
+        return definition.get();
     }
 }

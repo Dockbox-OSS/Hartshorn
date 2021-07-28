@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.server.minecraft.events.moderation;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.domain.Subject;
-import org.dockbox.hartshorn.commands.source.CommandSource;
+import org.dockbox.hartshorn.commands.CommandSource;
 
 import java.time.LocalDateTime;
 

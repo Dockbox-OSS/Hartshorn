@@ -23,6 +23,7 @@ import net.minecraft.world.item.CreativeModeTab;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.i18n.common.Language;
 import org.dockbox.hartshorn.api.i18n.text.Text;
+import org.dockbox.hartshorn.di.annotations.inject.Bound;
 import org.dockbox.hartshorn.di.annotations.inject.Wired;
 import org.dockbox.hartshorn.server.minecraft.item.Enchant;
 import org.dockbox.hartshorn.server.minecraft.item.Item;
@@ -53,7 +54,7 @@ public class SpongeItem extends ReferencedItem<ItemStack> implements SpongeCompo
         super(reference);
     }
 
-    @Wired
+    @Bound
     public SpongeItem(String id) {
         super(id);
     }

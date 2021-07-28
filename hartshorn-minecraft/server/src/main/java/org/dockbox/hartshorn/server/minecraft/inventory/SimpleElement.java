@@ -17,8 +17,8 @@
 
 package org.dockbox.hartshorn.server.minecraft.inventory;
 
-import org.dockbox.hartshorn.di.annotations.inject.Wired;
 import org.dockbox.hartshorn.di.annotations.inject.Binds;
+import org.dockbox.hartshorn.di.annotations.inject.Bound;
 import org.dockbox.hartshorn.server.minecraft.item.Item;
 import org.dockbox.hartshorn.server.minecraft.players.Player;
 
@@ -28,7 +28,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Binds(Element.class)
-@AllArgsConstructor(onConstructor_ = @Wired)
+@AllArgsConstructor(onConstructor_ = @Bound)
 public class SimpleElement implements Element {
 
     @Getter

@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.oldplots;
 
 import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.api.entity.annotations.Entity;
+import org.dockbox.hartshorn.api.annotations.Entity;
 import org.dockbox.hartshorn.server.minecraft.dimension.Worlds;
 import org.dockbox.hartshorn.server.minecraft.dimension.position.Location;
 

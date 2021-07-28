@@ -22,11 +22,17 @@ import org.dockbox.hartshorn.commands.CommandResources;
 import org.dockbox.hartshorn.commands.annotations.Cooldown;
 import org.dockbox.hartshorn.commands.context.CommandContext;
 import org.dockbox.hartshorn.commands.context.CommandExecutorContext;
-import org.dockbox.hartshorn.commands.source.CommandSource;
+import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.di.annotations.inject.Wired;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.dockbox.hartshorn.util.Reflect;
 
+/**
+ * Extends a command by providing a cooldown on its execution. If a command is
+ * performed multiple times its execution is cancelled if it is repeated too
+ * quickly. The delay between commands is defined by a {@link Cooldown}
+ * decorator on the command.
+ */
 public class CooldownExtension implements CommandExecutorExtension {
 
     @Wired
@@ -40,7 +46,7 @@ public class CooldownExtension implements CommandExecutorExtension {
         final String id = this.id((Identifiable) sender, context);
         if (HartshornUtils.inCooldown(id)) return ExtensionResult.reject(this.resources.cooldownActive());
         else {
-            Cooldown cooldown = Reflect.annotation(executorContext.method(), Cooldown.class).get();
+            Cooldown cooldown = Reflect.annotation(executorContext.element(), Cooldown.class).get();
             HartshornUtils.cooldown(id, cooldown.duration(), cooldown.unit());
             return ExtensionResult.accept();
         }
@@ -48,6 +54,6 @@ public class CooldownExtension implements CommandExecutorExtension {
 
     @Override
     public boolean extend(CommandExecutorContext context) {
-        return Reflect.annotation(context.method(), Cooldown.class).present();
+        return Reflect.annotation(context.element(), Cooldown.class).present();
     }
 }

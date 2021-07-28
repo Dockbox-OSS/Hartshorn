@@ -24,18 +24,19 @@ import org.dockbox.hartshorn.config.annotations.Value;
 
 import lombok.Getter;
 
+/**
+ * Simple implementation of {@link GlobalConfig} using {@link Value} based
+ * field population.
+ */
 @Getter
-@Configuration("hartshorn")
+@Configuration
 public class TargetGlobalConfig implements GlobalConfig {
 
     @Value(value = "hartshorn.exceptions.stacktraces", or = "false")
     private boolean stacktraces;
 
-    @Value(value = "hartshorn.exceptions.level", or = "NATIVE")
+    @Value(value = "hartshorn.exceptions.level", or = "FRIENDLY")
     private ExceptionLevels level;
-
-    @Value("hartshorn.discord.logging-channel")
-    private String discordCategory;
 
     @Value("hartshorn.version")
     private String version;

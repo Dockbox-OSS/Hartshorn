@@ -33,11 +33,6 @@ public class JUnitGlobalConfig implements GlobalConfig {
     }
 
     @Override
-    public String discordCategory() {
-        throw new UnsupportedOperationException("This feature is not available while running tests");
-    }
-
-    @Override
     public String version() {
         return "dev";
     }

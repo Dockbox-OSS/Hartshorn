@@ -35,8 +35,24 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
+/**
+ * Application starter for Hartshorn applications. This takes a single type annotated with {@link Activator}
+ * which provides application metadata, and a set of {@link Modifier modifiers}.
+ * <p>The starter uses the provided {@link InjectableBootstrap} reference to use for bootstrapping the
+ * application.
+ */
 public class HartshornApplication {
 
+    /**
+     * Creates the bootstrapped server instance using the provided {@link Activator} metadata. If no valid
+     * {@link InjectableBootstrap} is provided the application will not be started. This does not initialize
+     * the application. The returned {@link Runnable} can be used to initialize the server at the desired
+     * time.
+     *
+     * @param activator The activator type, providing application metadata
+     * @param modifiers The modifiers to use when bootstrapping
+     * @return A {@link Runnable} to initialize the application
+     */
     public static Runnable create(Class<?> activator, Modifier... modifiers) {
         try {
             final long start = System.currentTimeMillis();

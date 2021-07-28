@@ -41,7 +41,7 @@ public class PostBootstrapServiceProcessor implements ServiceProcessor<UseBootst
     public <T> void process(ApplicationContext context, Class<T> type) {
         final Collection<Method> methods = Reflect.methods(type, PostBootstrap.class);
         for (Method method : methods) {
-            HartshornBootstrap.instance().addPostBootstrapActivation(method, type);
+            HartshornBootstrap.instance().addPostBootstrapActivation(method);
         }
     }
 

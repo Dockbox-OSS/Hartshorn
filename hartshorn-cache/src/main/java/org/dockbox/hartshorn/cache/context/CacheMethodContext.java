@@ -19,7 +19,15 @@ package org.dockbox.hartshorn.cache.context;
 
 import org.dockbox.hartshorn.cache.CacheManager;
 import org.dockbox.hartshorn.cache.Expiration;
+import org.dockbox.hartshorn.cache.annotations.Cached;
+import org.dockbox.hartshorn.cache.annotations.EvictCache;
+import org.dockbox.hartshorn.cache.annotations.UpdateCache;
 
+/**
+ * The method-specific cache context containing all required information to
+ * manipulate cache methods. Values are typically derived from {@link Cached},
+ * {@link EvictCache}, or {@link UpdateCache}.
+ */
 public interface CacheMethodContext {
 
     Class<? extends CacheManager> manager();

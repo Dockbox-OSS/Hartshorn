@@ -17,6 +17,7 @@
 
 package org.dockbox.hartshorn.playersettings.service;
 
+import org.dockbox.hartshorn.di.annotations.context.AutoCreating;
 import org.dockbox.hartshorn.di.context.DefaultContext;
 import org.dockbox.hartshorn.playersettings.Setting;
 import org.dockbox.hartshorn.util.HartshornUtils;
@@ -26,6 +27,7 @@ import java.util.List;
 import lombok.Getter;
 
 @Getter
+@AutoCreating
 public class SettingsContext extends DefaultContext {
 
     private final List<Setting<?>> settings = HartshornUtils.emptyList();

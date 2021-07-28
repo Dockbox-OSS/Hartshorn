@@ -17,17 +17,23 @@
 
 package org.dockbox.hartshorn.commands.service;
 
-import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.api.exceptions.ApplicationException;
 import org.dockbox.hartshorn.commands.annotations.UseCommands;
+import org.dockbox.hartshorn.commands.context.ArgumentConverterContext;
 import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
-import org.dockbox.hartshorn.di.properties.InjectableType;
 import org.dockbox.hartshorn.di.services.ServiceProcessor;
 import org.dockbox.hartshorn.util.Reflect;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.List;
 
+/**
+ * Processes any service with static {@link ArgumentConverter} fields, and registers them to
+ * the {@link ArgumentConverterContext} contained in the {@link ApplicationContext}. Requires
+ * the presence of {@link UseCommands}.
+ */
 public class ArgumentServiceProcessor implements ServiceProcessor<UseCommands> {
 
     @Override
@@ -38,14 +44,24 @@ public class ArgumentServiceProcessor implements ServiceProcessor<UseCommands> {
 
     @Override
     public <T> void process(ApplicationContext context, Class<T> type) {
-        final T raw = context.raw(type);
-        if (raw instanceof InjectableType) {
-            Exceptional.of(() -> {
-                // If a ApplicationException is thrown this fails silently
-                ((InjectableType) raw).enable();
-                return null; // Captured in Exceptional
-            });
-        }
+        final List<Field> fields = Reflect.fieldsLike(type, ArgumentConverter.class);
+        context.first(ArgumentConverterContext.class).map(converterContext -> {
+            for (Field field : fields) {
+                field.setAccessible(true);
+                if (Modifier.isStatic(field.getModifiers())) {
+                    try {
+                        final ArgumentConverter<?> converter = (ArgumentConverter<?>) field.get(null);
+                        converterContext.register(converter);
+                    }
+                    catch (IllegalAccessException e) {
+                        throw new ApplicationException(e);
+                    }
+                } else {
+                    throw new ApplicationException(field.getName() + " should be static");
+                }
+            }
+            return null;
+        }).rethrow();
     }
 
     @Override

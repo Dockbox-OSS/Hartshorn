@@ -17,8 +17,9 @@
 
 package org.dockbox.hartshorn.config;
 
-import org.dockbox.hartshorn.di.annotations.inject.Wired;
+import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.exceptions.ApplicationException;
+import org.dockbox.hartshorn.di.annotations.inject.Bound;
 import org.dockbox.hartshorn.di.properties.InjectableType;
 import org.dockbox.hartshorn.di.properties.InjectorProperty;
 import org.dockbox.hartshorn.util.HartshornUtils;
@@ -39,7 +40,7 @@ public class SimpleConfigurationManager implements ConfigurationManager, Injecta
     @Getter
     private final Map<String, Map<String, Object>> cache = HartshornUtils.emptyConcurrentMap();
 
-    @Wired
+    @Bound
     public SimpleConfigurationManager(Path path) {
         this.path = path;
         this.fileKey = this.fileKey();
@@ -52,13 +53,13 @@ public class SimpleConfigurationManager implements ConfigurationManager, Injecta
     }
 
     @Override
-    public <T> T get(String key) {
+    public <T> Exceptional<T> get(String key) {
         String[] keys = key.split("\\.");
         Map<String, Object> next = new HashMap<>(this.cache().get(this.fileKey));
         for (int i = 0; i < keys.length; i++) {
             String s = keys[i];
             Object value = next.getOrDefault(s, null);
-            if (value == null) return null;
+            if (value == null) return Exceptional.empty();
             else if (value instanceof Map) {
                 //noinspection unchecked
                 next = (Map<String, Object>) value;
@@ -66,13 +67,13 @@ public class SimpleConfigurationManager implements ConfigurationManager, Injecta
             }
             else if (i == keys.length - 1) {
                 //noinspection unchecked
-                return (T) value;
+                return Exceptional.of((T) value);
             }
             else {
-                throw new EndOfPropertyException(key, s);
+                return Exceptional.of(new EndOfPropertyException(key, s));
             }
         }
-        return null;
+        return Exceptional.empty();
     }
 
     @Override

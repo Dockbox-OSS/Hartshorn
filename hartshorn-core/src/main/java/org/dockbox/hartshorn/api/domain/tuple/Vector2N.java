@@ -33,34 +33,66 @@ public class Vector2N {
         this.z = z;
     }
 
+    /**
+     * Gets the position on the x-axis as a double.
+     * @return The x-position as double
+     */
     public double xD() {
         return this.x.doubleValue();
     }
 
+    /**
+     * Gets the position on the x-axis as a float.
+     * @return The x-position as float
+     */
     public float xF() {
         return this.x.floatValue();
     }
 
+    /**
+     * Gets the position on the x-axis as a integer.
+     * @return The x-position as integer
+     */
     public int xI() {
         return this.x.intValue();
     }
 
+    /**
+     * Gets the position on the x-axis as a long.
+     * @return The x-position as long
+     */
     public long xL() {
         return this.x.longValue();
     }
 
+    /**
+     * Gets the position on the z-axis as a double.
+     * @return The z-position as double
+     */
     public double zD() {
         return this.z.doubleValue();
     }
 
+    /**
+     * Gets the position on the z-axis as a float.
+     * @return The z-position as float
+     */
     public float zF() {
         return this.z.floatValue();
     }
 
+    /**
+     * Gets the position on the z-axis as a integer.
+     * @return The z-position as integer
+     */
     public int zI() {
         return this.z.intValue();
     }
 
+    /**
+     * Gets the position on the z-axis as a long.
+     * @return The z-position as long
+     */
     public long zL() {
         return this.z.longValue();
     }

@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.persistence.registry;
 
-import org.dockbox.hartshorn.api.entity.annotations.Entity;
+import org.dockbox.hartshorn.api.annotations.Entity;
 import org.jetbrains.annotations.NonNls;
 
 @Entity(value = "identifier")

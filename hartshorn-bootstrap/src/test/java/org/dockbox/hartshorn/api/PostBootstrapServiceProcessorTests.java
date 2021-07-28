@@ -57,7 +57,7 @@ public class PostBootstrapServiceProcessorTests {
             final Method method = invocation.getArgument(0);
             Assertions.assertTrue(Reflect.annotation(method, PostBootstrap.class).present());
             return null;
-        }).when(bootstrap).addPostBootstrapActivation(Mockito.any(Method.class), Mockito.any(Class.class));
+        }).when(bootstrap).addPostBootstrapActivation(Mockito.any(Method.class));
 
         Mockito.mockStatic(HartshornBootstrap.class).when(HartshornBootstrap::instance).thenReturn(bootstrap);
 

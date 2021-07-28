@@ -47,6 +47,10 @@ public interface Block extends PersistentDataHolder {
         return Hartshorn.context().get(Block.class, item);
     }
 
+    static Block from(ItemTypes type) {
+        return from(Item.of(type));
+    }
+
     static Block of(String id) {
         return from(Item.of(id));
     }

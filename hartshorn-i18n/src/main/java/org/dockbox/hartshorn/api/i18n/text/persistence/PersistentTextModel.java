@@ -18,7 +18,7 @@
 package org.dockbox.hartshorn.api.i18n.text.persistence;
 
 import org.dockbox.hartshorn.api.Hartshorn;
-import org.dockbox.hartshorn.api.entity.annotations.Entity;
+import org.dockbox.hartshorn.api.annotations.Entity;
 import org.dockbox.hartshorn.api.i18n.text.Text;
 import org.dockbox.hartshorn.api.i18n.text.actions.ClickAction;
 import org.dockbox.hartshorn.api.i18n.text.actions.CommandAction;

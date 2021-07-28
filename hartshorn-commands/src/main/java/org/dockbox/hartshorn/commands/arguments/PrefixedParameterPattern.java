@@ -20,12 +20,16 @@ package org.dockbox.hartshorn.commands.arguments;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.i18n.common.ResourceEntry;
 import org.dockbox.hartshorn.commands.annotations.Parameter;
-import org.dockbox.hartshorn.commands.source.CommandSource;
+import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.util.Reflect;
 
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Converts prefixed patterns into type instances used by command executors. The
+ * pattern is decided on by any implementation of this type.
+ */
 public abstract class PrefixedParameterPattern implements CustomParameterPattern {
 
     @Override
@@ -75,13 +79,33 @@ public abstract class PrefixedParameterPattern implements CustomParameterPattern
         );
     }
 
+    /**
+     * The opening character of a new argument.
+     * @return The character
+     */
     protected abstract char opening();
 
+    /**
+     * The closing character of a argument.
+     * @return The character
+     */
     protected abstract char closing();
 
+    /**
+     * The prefix indicating a new type argument.
+     * @return The character
+     */
     protected abstract char prefix();
 
+    /**
+     * Whether the pattern requires the name of the type to be present.
+     * @return <code>true</code> if the name is required, else <code>false</code>
+     */
     protected abstract boolean requiresTypeName();
 
+    /**
+     * The resource to send to the {@link CommandSource} when a argument is not formatted correctly.
+     * @return The resource
+     */
     protected abstract ResourceEntry wrongFormat();
 }

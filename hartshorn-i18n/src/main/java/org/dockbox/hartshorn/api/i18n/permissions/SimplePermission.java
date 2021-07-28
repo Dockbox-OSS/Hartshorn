@@ -18,8 +18,8 @@
 package org.dockbox.hartshorn.api.i18n.permissions;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.di.annotations.inject.Wired;
 import org.dockbox.hartshorn.di.annotations.inject.Binds;
+import org.dockbox.hartshorn.di.annotations.inject.Bound;
 
 @Binds(Permission.class)
 public class SimplePermission implements Permission {
@@ -27,13 +27,13 @@ public class SimplePermission implements Permission {
     private final String key;
     private final PermissionContext context;
 
-    @Wired
+    @Bound
     public SimplePermission(String key, PermissionContext context) {
         this.key = key;
         this.context = context;
     }
 
-    @Wired
+    @Bound
     public SimplePermission(String key) {
         this.key = key;
         this.context = null;

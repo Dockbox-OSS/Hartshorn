@@ -19,14 +19,16 @@ package org.dockbox.hartshorn.commands.definition;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.i18n.permissions.Permission;
-import org.dockbox.hartshorn.commands.definition.CommandElement;
-import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
-import org.dockbox.hartshorn.commands.source.CommandSource;
+import org.dockbox.hartshorn.commands.CommandSource;
 
 import java.util.Collection;
 
 import lombok.AllArgsConstructor;
 
+/**
+ * Simple implementation of {@link CommandElement}.
+ * @param <T>
+ */
 @AllArgsConstructor
 public class SimpleCommandElement<T> implements CommandElement<T> {
 
@@ -61,6 +63,7 @@ public class SimpleCommandElement<T> implements CommandElement<T> {
         return this.size;
     }
 
+    @Override
     public boolean optional() {
         return this.optional;
     }

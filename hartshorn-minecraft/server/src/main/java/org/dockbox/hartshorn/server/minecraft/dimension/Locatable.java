@@ -28,4 +28,8 @@ public interface Locatable extends Subject {
     boolean location(Location location);
 
     World world();
+
+    default boolean location(World world) {
+        return this.location(Location.of(world));
+    }
 }

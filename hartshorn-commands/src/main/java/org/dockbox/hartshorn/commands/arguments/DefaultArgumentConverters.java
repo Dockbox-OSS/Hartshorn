@@ -26,8 +26,6 @@ import org.dockbox.hartshorn.api.i18n.common.ResourceEntry;
 import org.dockbox.hartshorn.api.i18n.text.Text;
 import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
 import org.dockbox.hartshorn.di.annotations.service.Service;
-import org.dockbox.hartshorn.di.properties.InjectableType;
-import org.dockbox.hartshorn.di.properties.InjectorProperty;
 import org.dockbox.hartshorn.di.services.ComponentContainer;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.jetbrains.annotations.NonNls;
@@ -41,19 +39,19 @@ import java.util.function.Function;
 
 @SuppressWarnings({ "unused", "ClassWithTooManyFields" })
 @Service
-public final class DefaultArgumentConverters implements InjectableType {
+public final class DefaultArgumentConverters {
 
-    public static final ArgumentConverter<String> STRING = CommandValueConverter.builder(String.class, "string")
+    public static final ArgumentConverter<String> STRING = SimpleArgumentConverter.builder(String.class, "string")
             .withConverter((Function<String, Exceptional<String>>) Exceptional::of)
             .build();
 
-    public static final ArgumentConverter<Character> CHARACTER = CommandValueConverter.builder(Character.class, "char", "character")
+    public static final ArgumentConverter<Character> CHARACTER = SimpleArgumentConverter.builder(Character.class, "char", "character")
             .withConverter(in -> {
                 int length = in.length();
                 return 1 == length ? Exceptional.of(in.charAt(0)) : Exceptional.empty();
             }).build();
 
-    public static final ArgumentConverter<Boolean> BOOLEAN = CommandValueConverter.builder(Boolean.class, "bool", "boolean")
+    public static final ArgumentConverter<Boolean> BOOLEAN = SimpleArgumentConverter.builder(Boolean.class, "bool", "boolean")
             .withConverter(in -> switch (in) {
                 case "yes" -> Exceptional.of(true);
                 case "no" -> Exceptional.of(false);
@@ -61,27 +59,27 @@ public final class DefaultArgumentConverters implements InjectableType {
             }).withSuggestionProvider(in -> HartshornUtils.asList("true", "false", "yes", "no"))
             .build();
 
-    public static final ArgumentConverter<Double> DOUBLE = CommandValueConverter.builder(Double.class, "double")
+    public static final ArgumentConverter<Double> DOUBLE = SimpleArgumentConverter.builder(Double.class, "double")
             .withConverter(in -> Exceptional.of(in).map(Double::parseDouble))
             .build();
 
-    public static final ArgumentConverter<Float> FLOAT = CommandValueConverter.builder(Float.class, "float")
+    public static final ArgumentConverter<Float> FLOAT = SimpleArgumentConverter.builder(Float.class, "float")
             .withConverter(in -> Exceptional.of(in).map(Float::parseFloat))
             .build();
 
-    public static final ArgumentConverter<Integer> INTEGER = CommandValueConverter.builder(Integer.class, "int", "integer")
+    public static final ArgumentConverter<Integer> INTEGER = SimpleArgumentConverter.builder(Integer.class, "int", "integer")
             .withConverter(in -> Exceptional.of(in).map(Integer::parseInt))
             .build();
 
-    public static final ArgumentConverter<Long> LONG = CommandValueConverter.builder(Long.class, "long")
+    public static final ArgumentConverter<Long> LONG = SimpleArgumentConverter.builder(Long.class, "long")
             .withConverter(in -> Exceptional.of(in).map(Long::parseLong))
             .build();
 
-    public static final ArgumentConverter<Short> SHORT = CommandValueConverter.builder(Short.class, "short")
+    public static final ArgumentConverter<Short> SHORT = SimpleArgumentConverter.builder(Short.class, "short")
             .withConverter(in -> Exceptional.of(in).map(Short::parseShort))
             .build();
 
-    public static final ArgumentConverter<Language> LANGUAGE = CommandValueConverter.builder(Language.class, "lang", "language")
+    public static final ArgumentConverter<Language> LANGUAGE = SimpleArgumentConverter.builder(Language.class, "lang", "language")
             .withConverter((@NonNls String in) -> {
                 Language lang;
                 try {
@@ -107,11 +105,11 @@ public final class DefaultArgumentConverters implements InjectableType {
                         .toList();
             }).build();
 
-    public static final ArgumentConverter<UUID> UNIQUE_ID = CommandValueConverter.builder(UUID.class, "uuid", "uniqueId")
+    public static final ArgumentConverter<UUID> UNIQUE_ID = SimpleArgumentConverter.builder(UUID.class, "uuid", "uniqueId")
             .withConverter(in -> Exceptional.of(in).map(UUID::fromString))
             .build();
 
-    public static final ArgumentConverter<Vector3N> VECTOR = CommandValueConverter.builder(Vector3N.class, "vec3", "vector", "v3n")
+    public static final ArgumentConverter<Vector3N> VECTOR = SimpleArgumentConverter.builder(Vector3N.class, "vec3", "vector", "v3n")
             .withConverter(in -> Exceptional.of(
                     () -> {
                         String[] xyz = in.split(",");
@@ -123,11 +121,11 @@ public final class DefaultArgumentConverters implements InjectableType {
                     }))
             .build();
 
-    public static final ArgumentConverter<Duration> DURATION = CommandValueConverter.builder(Duration.class, "duration")
+    public static final ArgumentConverter<Duration> DURATION = SimpleArgumentConverter.builder(Duration.class, "duration")
             .withConverter(HartshornUtils::durationOf)
             .build();
 
-    public static final ArgumentConverter<ResourceEntry> RESOURCE = CommandValueConverter.builder(ResourceEntry.class, "resource", "i18n", "translation")
+    public static final ArgumentConverter<ResourceEntry> RESOURCE = SimpleArgumentConverter.builder(ResourceEntry.class, "resource", "i18n", "translation")
             .withConverter(in -> {
                 ResourceService rs = Hartshorn.context().get(ResourceService.class);
                 String validKey = rs.createValidKey(in);
@@ -138,11 +136,11 @@ public final class DefaultArgumentConverters implements InjectableType {
                 return Hartshorn.context().get(ResourceService.class).get(validKey);
             }).build();
 
-    public static final ArgumentConverter<Text> TEXT = CommandValueConverter.builder(Text.class, "text")
+    public static final ArgumentConverter<Text> TEXT = SimpleArgumentConverter.builder(Text.class, "text")
             .withConverter(in -> Exceptional.of(Text.of(in)))
             .build();
 
-    public static final ArgumentConverter<ComponentContainer> SERVICE = CommandValueConverter.builder(ComponentContainer.class, "service")
+    public static final ArgumentConverter<ComponentContainer> SERVICE = SimpleArgumentConverter.builder(ComponentContainer.class, "service")
             .withConverter(in -> Exceptional.of(Hartshorn.context()
                     .locator().containers().stream()
                     .filter(container -> container.id().equalsIgnoreCase(in))
@@ -154,12 +152,12 @@ public final class DefaultArgumentConverters implements InjectableType {
                     .toList())
             .build();
 
-    public static final ArgumentConverter<String> REMAINING_STRING = CommandValueConverter.builder(String.class, "remaining", "remainingString")
+    public static final ArgumentConverter<String> REMAINING_STRING = SimpleArgumentConverter.builder(String.class, "remaining", "remainingString")
             .withConverter((Function<String, Exceptional<String>>) Exceptional::of)
             .withSize(-1)
             .build();
 
-    public static final ArgumentConverter<Integer[]> REMAINING_INTS = CommandValueConverter.builder(Integer[].class, "remainingInt")
+    public static final ArgumentConverter<Integer[]> REMAINING_INTS = SimpleArgumentConverter.builder(Integer[].class, "remainingInt")
             .withConverter(in -> {
                 String[] parts = in.split(" ");
                 Integer[] integers = new Integer[parts.length];
@@ -171,9 +169,4 @@ public final class DefaultArgumentConverters implements InjectableType {
             })
             .withSize(-1)
             .build();
-
-    @Override
-    public void enable(InjectorProperty<?>... properties) {
-        Hartshorn.log().info("Registered default command argument converters.");
-    }
 }

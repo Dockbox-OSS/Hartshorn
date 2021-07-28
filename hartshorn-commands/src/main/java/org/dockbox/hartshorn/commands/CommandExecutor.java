@@ -19,6 +19,9 @@ package org.dockbox.hartshorn.commands;
 
 import org.dockbox.hartshorn.commands.context.CommandContext;
 
+/**
+ * A type capable of handling a single {@link CommandContext}.
+ */
 @FunctionalInterface
 public interface CommandExecutor {
 

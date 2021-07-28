@@ -74,12 +74,12 @@ public class GuiceConfigurationBridge extends AbstractModule implements Binder {
     }
 
     @Override
-    public <C, T extends C> void wire(Class<C> contract, Class<? extends T> implementation) {
-        this.injector.wire(contract, implementation);
+    public <C, T extends C> void manual(Class<C> contract, Class<? extends T> implementation) {
+        this.injector.manual(contract, implementation);
     }
 
     @Override
-    public <C, T extends C> void wire(Class<C> contract, Class<? extends T> implementation, Named meta) {
-        this.injector.wire(contract, implementation, meta);
+    public <C, T extends C> void manual(Class<C> contract, Class<? extends T> implementation, Named meta) {
+        this.injector.manual(contract, implementation, meta);
     }
 }

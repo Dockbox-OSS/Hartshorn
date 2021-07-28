@@ -19,10 +19,12 @@ package org.dockbox.hartshorn.commands.arguments;
 
 import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.api.exceptions.Except;
 import org.dockbox.hartshorn.commands.CommandParameterResources;
 import org.dockbox.hartshorn.commands.annotations.Parameter;
+import org.dockbox.hartshorn.commands.context.ArgumentConverterContext;
 import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
-import org.dockbox.hartshorn.commands.source.CommandSource;
+import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.util.HartshornUtils;
 
 import java.lang.reflect.Constructor;
@@ -67,12 +69,14 @@ public interface CustomParameterPattern {
             }
             String typeIdentifier = argumentIdentifier.get();
 
-            ArgumentConverter<?> converter = ArgumentConverterRegistry.converter(typeIdentifier);
-            if (converter == null) return Exceptional
+            Exceptional<ArgumentConverter<?>> converter = Hartshorn.context()
+                    .first(ArgumentConverterContext.class)
+                    .flatMap(context -> context.converter(typeIdentifier));
+            if (converter.absent()) return Exceptional
                     .of(new IllegalArgumentException(Hartshorn.context().get(CommandParameterResources.class).missingConverter(type.getCanonicalName()).asString()));
 
-            argumentTypes.add(converter.type());
-            arguments.add(converter.convert(source, rawArgument).orNull());
+            argumentTypes.add(converter.get().type());
+            arguments.add(converter.get().convert(source, rawArgument).orNull());
         }
 
 
@@ -81,6 +85,7 @@ public interface CustomParameterPattern {
                 return constructor.newInstance(arguments.toArray(new Object[0]));
             }
             catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
+                Except.handle(e);
                 return null;
             }
         });
@@ -103,11 +108,15 @@ public interface CustomParameterPattern {
                 Class<?> parameterType = parameterTypes[i];
                 Class<?> requiredType = argumentTypes.get(i);
                 if (requiredType == null) {
-                    final ArgumentConverter<?> converter = ArgumentConverterRegistry.converter(parameterType);
-                    Exceptional<?> result = converter.convert(source, (String) arguments.get(i));
-                    if (result.present()) {
-                        arguments.set(i, result.get());
-                        continue; // Generic type, will be parsed later
+                    final Exceptional<? extends ArgumentConverter<?>> converter = Hartshorn.context()
+                            .first(ArgumentConverterContext.class)
+                            .flatMap(context -> context.converter(parameterType));
+                    if (converter.present()) {
+                        Exceptional<?> result = converter.get().convert(source, (String) arguments.get(i));
+                        if (result.present()) {
+                            arguments.set(i, result.get());
+                            continue; // Generic type, will be parsed later
+                        }
                     }
                 }
                 else if (parameterType.equals(requiredType)) continue;

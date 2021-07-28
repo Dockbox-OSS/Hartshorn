@@ -17,6 +17,9 @@
 
 package org.dockbox.hartshorn.api.domain;
 
+/**
+ * Represents a owner of a type or component, represented by its ID.
+ */
 public interface TypedOwner {
 
     String id();

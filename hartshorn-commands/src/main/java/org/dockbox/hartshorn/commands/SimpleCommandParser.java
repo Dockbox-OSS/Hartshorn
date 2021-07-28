@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.commands;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.i18n.common.ResourceEntry;
-import org.dockbox.hartshorn.commands.context.CommandContainerContext;
+import org.dockbox.hartshorn.commands.context.CommandDefinitionContext;
 import org.dockbox.hartshorn.commands.context.CommandContext;
 import org.dockbox.hartshorn.commands.context.CommandExecutorContext;
 import org.dockbox.hartshorn.commands.context.SimpleCommandContext;
@@ -30,7 +30,6 @@ import org.dockbox.hartshorn.commands.definition.CommandPartial;
 import org.dockbox.hartshorn.commands.definition.GroupCommandElement;
 import org.dockbox.hartshorn.commands.exceptions.ParsingException;
 import org.dockbox.hartshorn.commands.service.CommandParameter;
-import org.dockbox.hartshorn.commands.source.CommandSource;
 import org.dockbox.hartshorn.di.annotations.inject.Binds;
 import org.dockbox.hartshorn.di.annotations.inject.Wired;
 import org.dockbox.hartshorn.util.HartshornUtils;
@@ -40,6 +39,9 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Simple implementation of {@link CommandParser}.
+ */
 @Binds(CommandParser.class)
 public class SimpleCommandParser implements CommandParser {
 
@@ -52,10 +54,10 @@ public class SimpleCommandParser implements CommandParser {
 
     @Override
     public Exceptional<CommandContext> parse(String command, CommandSource source, CommandExecutorContext context) throws ParsingException {
-        final Exceptional<CommandContainerContext> container = context.first(CommandContainerContext.class);
+        final Exceptional<CommandDefinitionContext> container = context.first(CommandDefinitionContext.class);
         if (container.absent()) return Exceptional.empty();
 
-        final CommandContainerContext containerContext = container.get();
+        final CommandDefinitionContext containerContext = container.get();
         List<CommandElement<?>> elements = containerContext.elements();
 
         final List<CommandParameter<?>> parsedElements = HartshornUtils.emptyList();
@@ -104,7 +106,7 @@ public class SimpleCommandParser implements CommandParser {
         return parameters;
     }
 
-    private String stripFlags(String command, Collection<CommandParameter<?>> flags, CommandSource source, CommandContainerContext context) throws ParsingException {
+    private String stripFlags(String command, Collection<CommandParameter<?>> flags, CommandSource source, CommandDefinitionContext context) throws ParsingException {
         final Matcher matcher = FLAG.matcher(command);
 
         while (matcher.find()) {

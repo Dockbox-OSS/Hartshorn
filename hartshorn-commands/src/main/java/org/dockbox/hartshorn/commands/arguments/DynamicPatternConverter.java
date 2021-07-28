@@ -20,7 +20,7 @@ package org.dockbox.hartshorn.commands.arguments;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.commands.annotations.Parameter;
 import org.dockbox.hartshorn.commands.service.CommandParameter;
-import org.dockbox.hartshorn.commands.source.CommandSource;
+import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.util.HartshornUtils;
 
 import java.util.Collection;
@@ -32,7 +32,7 @@ import java.util.Collection;
  *
  * @param <T> The generic type
  */
-public class DynamicPatternConverter<T> extends AbstractArgumentConverter<T> {
+public class DynamicPatternConverter<T> extends DefaultArgumentConverter<T> {
 
     private final CustomParameterPattern pattern;
 

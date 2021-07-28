@@ -22,10 +22,12 @@ import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+/**
+ * Default implementation of {@link Identifiable}.
+ */
 @AllArgsConstructor
 @Getter
-@SuppressWarnings("AbstractClassWithoutAbstractMethods") // Type is used to extract side-effects of identifiable types
-public abstract class AbstractIdentifiable implements Identifiable, Subject {
+public abstract class AbstractIdentifiable implements Identifiable {
 
     protected UUID uniqueId;
     protected String name;

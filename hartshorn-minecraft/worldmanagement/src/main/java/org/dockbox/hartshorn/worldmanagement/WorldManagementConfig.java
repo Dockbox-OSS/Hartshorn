@@ -18,6 +18,7 @@
 package org.dockbox.hartshorn.worldmanagement;
 
 import org.dockbox.hartshorn.api.domain.tuple.Vector3N;
+import org.dockbox.hartshorn.config.annotations.Configuration;
 import org.dockbox.hartshorn.config.annotations.Value;
 import org.dockbox.hartshorn.persistence.FileManager;
 
@@ -27,6 +28,7 @@ import javax.inject.Inject;
 
 import lombok.Getter;
 
+@Configuration
 public class WorldManagementConfig {
 
     @Inject

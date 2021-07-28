@@ -17,21 +17,13 @@
 
 package org.dockbox.hartshorn.di.adapter;
 
-import org.dockbox.hartshorn.di.guice.GuiceInjector;
+import org.dockbox.hartshorn.di.context.HartshornApplicationContext;
 import org.dockbox.hartshorn.di.inject.Injector;
 
-import java.util.function.Supplier;
-
-public enum InjectSource {
-    GUICE(GuiceInjector::new);
-
-    private final Supplier<Injector> supplier;
-
-    InjectSource(Supplier<Injector> supplier) {
-        this.supplier = supplier;
-    }
-
-    public Injector create() {
-        return this.supplier.get();
-    }
+/**
+ * Provider type to create the {@link Injector} used by the {@link HartshornApplicationContext}.
+ */
+@FunctionalInterface
+public interface InjectSource {
+    Injector create();
 }

@@ -17,9 +17,9 @@
 
 package org.dockbox.hartshorn.test.util;
 
-import org.dockbox.hartshorn.config.SimpleConfigurationManager;
-import org.dockbox.hartshorn.di.annotations.inject.Wired;
 import org.dockbox.hartshorn.api.exceptions.ApplicationException;
+import org.dockbox.hartshorn.config.SimpleConfigurationManager;
+import org.dockbox.hartshorn.di.annotations.inject.Bound;
 import org.dockbox.hartshorn.di.properties.InjectorProperty;
 import org.dockbox.hartshorn.util.HartshornUtils;
 
@@ -31,7 +31,7 @@ public class JUnitConfigurationManager extends SimpleConfigurationManager {
     public static Map<String, Object> cache = HartshornUtils.emptyConcurrentMap();
     private static boolean enabled = false;
 
-    @Wired
+    @Bound
     public JUnitConfigurationManager(Path path) {
         super(path);
         // Path is typically stored to obtain values from, during testing this is not required.

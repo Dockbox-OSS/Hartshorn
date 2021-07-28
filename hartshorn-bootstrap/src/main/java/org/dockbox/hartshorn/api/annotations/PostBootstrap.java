@@ -17,11 +17,17 @@
 
 package org.dockbox.hartshorn.api.annotations;
 
+import org.dockbox.hartshorn.di.annotations.service.Service;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * Indicates a method should be activated after {@link org.dockbox.hartshorn.api.HartshornBootstrap} is done bootstrapping
+ * the current instance. This requires the enclosing service to have its {@link Service#activators()} set to include {@link UseBootstrap}.
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface PostBootstrap {

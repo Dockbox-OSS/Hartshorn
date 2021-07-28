@@ -29,16 +29,17 @@ import org.dockbox.hartshorn.api.domain.tuple.Tuple;
 import org.dockbox.hartshorn.di.ApplicationContextAware;
 import org.dockbox.hartshorn.di.InjectConfiguration;
 import org.dockbox.hartshorn.di.annotations.inject.Binds;
+import org.dockbox.hartshorn.di.annotations.inject.Bound;
 import org.dockbox.hartshorn.di.annotations.inject.Combines;
 import org.dockbox.hartshorn.di.annotations.inject.Named;
 import org.dockbox.hartshorn.di.annotations.inject.Wired;
 import org.dockbox.hartshorn.di.binding.BindingData;
 import org.dockbox.hartshorn.di.binding.Bindings;
-import org.dockbox.hartshorn.di.inject.BeanContext;
+import org.dockbox.hartshorn.di.inject.ProviderContext;
 import org.dockbox.hartshorn.di.inject.Injector;
 import org.dockbox.hartshorn.di.inject.KeyBinding;
-import org.dockbox.hartshorn.di.inject.wired.ConstructorWireContext;
-import org.dockbox.hartshorn.di.inject.wired.WireContext;
+import org.dockbox.hartshorn.di.inject.wired.ConstructorBoundContext;
+import org.dockbox.hartshorn.di.inject.wired.BoundContext;
 import org.dockbox.hartshorn.di.properties.AnnotationProperty;
 import org.dockbox.hartshorn.di.properties.BindingMetaProperty;
 import org.dockbox.hartshorn.di.properties.InjectorProperty;
@@ -60,7 +61,7 @@ import java.util.function.Supplier;
 
 public class GuiceInjector implements Injector {
 
-    private final transient Set<WireContext<?, ?>> bindings = HartshornUtils.emptyConcurrentSet();
+    private final transient Set<BoundContext<?, ?>> bindings = HartshornUtils.emptyConcurrentSet();
     private final transient HartshornModule module = new HartshornModule();
     private com.google.inject.Injector internalInjector;
 
@@ -138,14 +139,14 @@ public class GuiceInjector implements Injector {
     }
 
     @Override
-    public <T, I extends T> Exceptional<WireContext<T, I>> firstWire(Class<T> contract, InjectorProperty<Named> property) {
-        for (WireContext<?, ?> binding : this.bindings) {
+    public <T, I extends T> Exceptional<BoundContext<T, I>> firstWire(Class<T> contract, InjectorProperty<Named> property) {
+        for (BoundContext<?, ?> binding : this.bindings) {
             if (binding.contract().equals(contract)) {
                 if (!"".equals(binding.name())) {
                     if (property == null || !binding.name().equals(property.value().value())) continue;
                 }
                 //noinspection unchecked
-                return Exceptional.of((WireContext<T, I>) binding);
+                return Exceptional.of((BoundContext<T, I>) binding);
             }
         }
         return Exceptional.empty();
@@ -214,13 +215,13 @@ public class GuiceInjector implements Injector {
     }
 
     @Override
-    public void add(WireContext<?, ?> context) {
+    public void add(BoundContext<?, ?> context) {
         this.bindings.add(context);
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public void add(BeanContext<?, ?> context) {
+    public void add(ProviderContext<?, ?> context) {
         final KeyBinding<?> binding = context.key();
         Key<?> key = Key.get(binding.type());
         if (binding.annotation() != null) {
@@ -285,13 +286,13 @@ public class GuiceInjector implements Injector {
     private void handleBinder(Map<Key<?>, Class<?>> bindings, Class<?> binder, Binds annotation) {
         Class<?> binds = annotation.value();
 
-        if (Reflect.constructors(binder, Wired.class).isEmpty()) {
+        if (Reflect.constructors(binder, Bound.class).isEmpty()) {
             Entry<Key<?>, Class<?>> entry = this.handleScanned(binder, binds, annotation);
             bindings.put(entry.getKey(), entry.getValue());
         }
         else {
             //noinspection unchecked
-            this.wire((Class<Object>) binds, binder);
+            this.manual((Class<Object>) binds, binder);
         }
     }
 
@@ -333,15 +334,15 @@ public class GuiceInjector implements Injector {
     }
 
     @Override
-    public <T, I extends T> void wire(Class<T> contract, Class<? extends I> implementation) {
-        this.wire(contract, implementation, Bindings.named(""));
+    public <T, I extends T> void manual(Class<T> contract, Class<? extends I> implementation) {
+        this.manual(contract, implementation, Bindings.named(""));
     }
 
     @Override
-    public <C, T extends C> void wire(Class<C> contract, Class<? extends T> implementation, Named meta) {
-        if (Reflect.constructors(implementation, Wired.class).isEmpty())
-            throw new IllegalArgumentException("Implementation should contain at least one constructor decorated with @AutoWired");
+    public <C, T extends C> void manual(Class<C> contract, Class<? extends T> implementation, Named meta) {
+        if (Reflect.constructors(implementation, Bound.class).isEmpty())
+            throw new IllegalArgumentException("Implementation should contain at least one constructor decorated with @Bound");
 
-        this.bindings.add(new ConstructorWireContext<>(contract, implementation, meta.value()));
+        this.bindings.add(new ConstructorBoundContext<>(contract, implementation, meta.value()));
     }
 }

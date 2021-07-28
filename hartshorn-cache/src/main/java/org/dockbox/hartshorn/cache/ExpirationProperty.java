@@ -22,6 +22,10 @@ import org.dockbox.hartshorn.di.properties.InjectorProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+/**
+ * Injector property which can be provided to {@link Cache} entries to set
+ * the cache expiration when the cache instance is enabled.
+ */
 @Getter
 @AllArgsConstructor
 public class ExpirationProperty implements InjectorProperty<Expiration> {

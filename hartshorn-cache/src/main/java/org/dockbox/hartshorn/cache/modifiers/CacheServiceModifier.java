@@ -35,6 +35,10 @@ import org.dockbox.hartshorn.util.Reflect;
 import java.lang.annotation.Annotation;
 import java.util.function.Supplier;
 
+/**
+ * Common functionality for cache related {@link ServiceAnnotatedMethodModifier modifiers}.
+ * @param <A> The cache-related annotation
+ */
 public abstract class CacheServiceModifier<A extends Annotation> extends ServiceAnnotatedMethodModifier<A, UseCaching> {
 
     @Override

@@ -17,6 +17,8 @@
 
 package org.dockbox.hartshorn.commands.annotations;
 
+import org.dockbox.hartshorn.commands.service.ArgumentServiceProcessor;
+import org.dockbox.hartshorn.commands.service.CommandServiceScanner;
 import org.dockbox.hartshorn.di.annotations.service.ServiceActivator;
 
 import java.lang.annotation.ElementType;
@@ -24,6 +26,10 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * Service activator for the command module, activated through {@link CommandServiceScanner}
+ * and {@link ArgumentServiceProcessor}.
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @ServiceActivator

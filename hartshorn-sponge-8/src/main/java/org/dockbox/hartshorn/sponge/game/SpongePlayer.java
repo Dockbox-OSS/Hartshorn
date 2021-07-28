@@ -31,7 +31,7 @@ import org.dockbox.hartshorn.api.i18n.entry.DefaultResources;
 import org.dockbox.hartshorn.api.i18n.permissions.Permission;
 import org.dockbox.hartshorn.api.i18n.text.Text;
 import org.dockbox.hartshorn.api.i18n.text.pagination.Pagination;
-import org.dockbox.hartshorn.di.annotations.inject.Wired;
+import org.dockbox.hartshorn.di.annotations.inject.Bound;
 import org.dockbox.hartshorn.server.minecraft.dimension.Block;
 import org.dockbox.hartshorn.server.minecraft.dimension.position.Location;
 import org.dockbox.hartshorn.server.minecraft.entities.Entity;
@@ -75,7 +75,7 @@ public class SpongePlayer extends Player implements SpongeEntity<net.minecraft.s
 
     private static final int RAY_TRACE_LIMIT = 50;
 
-    @Wired
+    @Bound
     public SpongePlayer(@NotNull UUID uniqueId, @NotNull String name) {
         super(uniqueId, name);
     }
@@ -189,7 +189,7 @@ public class SpongePlayer extends Player implements SpongeEntity<net.minecraft.s
     @Override
     public SpongePlayer gamemode(Gamemode gamemode) {
         this.player().present(player -> {
-            final GameMode mode = SpongeConvert.toSponge(gamemode);
+            final GameMode mode = SpongeConvert.toSponge(gamemode).get();
             player.offer(Keys.GAME_MODE, mode);
         });
         return this;
@@ -277,7 +277,7 @@ public class SpongePlayer extends Player implements SpongeEntity<net.minecraft.s
     }
 
     private Exceptional<User> user() {
-        return Exceptional.of(Sponge.server().userManager().find(this.uniqueId()));
+        return SpongeUtil.await(Sponge.server().userManager().loadOrCreate(this.uniqueId()));
     }
 
     public Exceptional<ServerPlayer> player() {

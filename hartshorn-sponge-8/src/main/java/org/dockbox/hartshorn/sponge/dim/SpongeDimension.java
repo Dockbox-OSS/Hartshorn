@@ -37,12 +37,12 @@ public interface SpongeDimension extends BlockDimension, EntityHolding {
 
     @Override
     default Vector3N minimumPosition() {
-        return SpongeConvert.fromSponge(this.serverWorld().blockMin().toDouble());
+        return SpongeConvert.fromSponge(this.serverWorld().min().toDouble());
     }
 
     @Override
     default Vector3N maximumPosition() {
-        return SpongeConvert.fromSponge(this.serverWorld().blockMax().toDouble());
+        return SpongeConvert.fromSponge(this.serverWorld().max().toDouble());
     }
 
     @Override
@@ -54,7 +54,7 @@ public interface SpongeDimension extends BlockDimension, EntityHolding {
     @Override
     default boolean has(Vector3N position) {
         Vector3i loc = SpongeConvert.toSponge(position);
-        return this.serverWorld().containsBlock(loc);
+        return this.serverWorld().contains(loc);
     }
 
     @Override

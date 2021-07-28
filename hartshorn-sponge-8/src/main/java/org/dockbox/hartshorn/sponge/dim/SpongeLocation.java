@@ -20,7 +20,7 @@ package org.dockbox.hartshorn.sponge.dim;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.domain.tuple.Vector3N;
 import org.dockbox.hartshorn.di.annotations.inject.Binds;
-import org.dockbox.hartshorn.di.annotations.inject.Wired;
+import org.dockbox.hartshorn.di.annotations.inject.Bound;
 import org.dockbox.hartshorn.server.minecraft.dimension.position.Location;
 import org.dockbox.hartshorn.server.minecraft.dimension.world.World;
 import org.dockbox.hartshorn.sponge.game.SpongeComposite;
@@ -34,12 +34,12 @@ public class SpongeLocation extends Location implements SpongeComposite {
     private final Vector3N position;
     private final SpongeWorld world;
 
-    @Wired
+    @Bound
     public SpongeLocation(World world) {
         this(world.spawnPosition(), world);
     }
 
-    @Wired
+    @Bound
     public SpongeLocation(Vector3N position, World world) {
         if (!(world instanceof SpongeWorld spongeWorld)) {
             throw new IllegalArgumentException("Provided world cannot be used as a Sponge reference");

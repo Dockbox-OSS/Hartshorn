@@ -57,13 +57,13 @@ public interface DelegatedBinder extends Binder {
     }
 
     @Override
-    default  <C, T extends C> void wire(Class<C> contract, Class<? extends T> implementation) {
-        this.binder().wire(contract, implementation);
+    default  <C, T extends C> void manual(Class<C> contract, Class<? extends T> implementation) {
+        this.binder().manual(contract, implementation);
     }
 
     @Override
-    default  <C, T extends C> void wire(Class<C> contract, Class<? extends T> implementation, Named meta) {
-        this.binder().wire(contract, implementation, meta);
+    default  <C, T extends C> void manual(Class<C> contract, Class<? extends T> implementation, Named meta) {
+        this.binder().manual(contract, implementation, meta);
     }
     
 }

@@ -21,6 +21,11 @@ import org.dockbox.hartshorn.api.domain.SimpleTypedOwner;
 import org.dockbox.hartshorn.api.domain.TypedOwner;
 import org.dockbox.hartshorn.di.InjectorMetaProvider;
 
+/**
+ * An extension of {@link InjectorMetaProvider} which adds {@link Hartshorn}
+ * as a valid {@link TypedOwner}. It is up to the final implementation to
+ * decide whether this should be used.
+ */
 public class SimpleMetaProvider extends InjectorMetaProvider {
 
     @Override

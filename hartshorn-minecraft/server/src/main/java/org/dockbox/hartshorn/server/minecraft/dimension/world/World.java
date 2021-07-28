@@ -17,6 +17,7 @@
 
 package org.dockbox.hartshorn.server.minecraft.dimension.world;
 
+import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.tuple.Vector3N;
 import org.dockbox.hartshorn.server.minecraft.dimension.BlockDimension;
 import org.dockbox.hartshorn.server.minecraft.dimension.ChunkHolder;
@@ -52,6 +53,10 @@ public abstract class World extends WorldProperties implements BlockDimension, E
 
     public static World empty() {
         return new EmptyWorld();
+    }
+
+    public static WorldBuilder builder() {
+        return Hartshorn.context().get(WorldBuilder.class);
     }
 
     public abstract int playerCount();

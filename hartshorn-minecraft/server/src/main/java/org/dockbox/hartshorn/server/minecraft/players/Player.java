@@ -30,7 +30,7 @@ import org.dockbox.hartshorn.api.i18n.text.Text;
 import org.dockbox.hartshorn.api.keys.Keys;
 import org.dockbox.hartshorn.api.keys.PersistentDataHolder;
 import org.dockbox.hartshorn.api.keys.PersistentDataKey;
-import org.dockbox.hartshorn.commands.source.CommandSource;
+import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.server.minecraft.dimension.Block;
 import org.dockbox.hartshorn.server.minecraft.dimension.Locatable;
 import org.dockbox.hartshorn.server.minecraft.dimension.position.Location;
