@@ -55,6 +55,8 @@ public class PersistentTextModel implements PersistentModel<Text> {
 
     protected void extractClickAction(Text text) {
         ClickAction<?> clickAction = text.onClick();
+        if (clickAction == null) return;
+
         this.clickActionResult = String.valueOf(clickAction.result());
         if (clickAction instanceof ClickAction.ChangePage) this.clickAction = ActionTypes.CHANGE_PAGE;
         else if (Reflect.lookup("org.dockbox.hartshorn.commands.CommandAction").isInstance(clickAction)) this.clickAction = ActionTypes.RUN_COMMAND;
@@ -68,6 +70,8 @@ public class PersistentTextModel implements PersistentModel<Text> {
 
     protected void extractShiftClickAction(Text text) {
         ShiftClickAction<?> shiftClickAction = text.onShiftClick();
+        if (shiftClickAction == null) return;
+
         this.shiftClickActionResult = String.valueOf(shiftClickAction.result());
         if (shiftClickAction instanceof ShiftClickAction.InsertText) this.shiftClickAction = ActionTypes.INSERT_TEXT;
         else this.shiftClickAction = ActionTypes.NONE;
@@ -75,6 +79,8 @@ public class PersistentTextModel implements PersistentModel<Text> {
 
     protected void extractHoverAction(Text text) {
         HoverAction<?> hoverAction = text.onHover();
+        if (hoverAction == null) return;
+
         this.hoverActionResult = String.valueOf(hoverAction.result());
         if (hoverAction instanceof HoverAction.ShowText) this.hoverAction = ActionTypes.SHOW_TEXT;
         else this.hoverAction = ActionTypes.NONE;
