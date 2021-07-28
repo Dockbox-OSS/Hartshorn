@@ -17,37 +17,27 @@
 
 package org.dockbox.hartshorn.api.i18n.common;
 
-import org.dockbox.hartshorn.api.i18n.MessageReceiver;
-import org.dockbox.hartshorn.api.i18n.text.Text;
-import org.dockbox.hartshorn.persistence.PersistentCapable;
+import org.dockbox.hartshorn.api.i18n.entry.Resource;
+import org.dockbox.hartshorn.persistence.PersistentModel;
 
-public interface ResourceEntry extends Formattable, PersistentCapable<ResourceEntryModel> {
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
-    String key();
+@AllArgsConstructor
+@NoArgsConstructor
+public class ResourceEntryModel implements PersistentModel<ResourceEntry> {
 
-    Text asText();
-
-    String asString();
-
-    String plain();
-
-    ResourceEntry translate(MessageReceiver receiver);
-
-    ResourceEntry translate(Language lang);
-
-    ResourceEntry translate();
-
-    ResourceEntry format(Object... args);
-
-    Language language();
+    private String key;
+    private String fallback;
+    private Language language;
 
     @Override
-    default Class<? extends ResourceEntryModel> modelType() {
-        return ResourceEntryModel.class;
+    public Class<? extends ResourceEntry> capableType() {
+        return ResourceEntry.class;
     }
 
     @Override
-    default ResourceEntryModel model() {
-        return new ResourceEntryModel(this.key(), this.asString(), this.language());
+    public ResourceEntry toPersistentCapable() {
+        return new Resource(this.fallback, this.key, this.language);
     }
 }
