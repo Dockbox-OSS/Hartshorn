@@ -113,12 +113,23 @@ public abstract class SQLMan<T> implements ISQLMan<T> {
     }
 
     @Override
-    public Table table(String name) throws InvalidConnectionException {
+    public Table table(String name) throws InvalidConnectionException, NoSuchTableException {
         return this.table(name, this.defaultTarget());
     }
 
     @Override
-    public Table table(String name, T target) throws InvalidConnectionException {
+    public Table table(String name, Table definition) throws InvalidConnectionException {
+        try {
+            return this.table(name);
+        }
+        catch (NoSuchTableException e) {
+            this.store(name, definition);
+            return this.tableSafe(name).or(definition);
+        }
+    }
+
+    @Override
+    public Table table(String name, T target) throws InvalidConnectionException, NoSuchTableException {
         try {
             return this.withContext(target, ctx -> {
                 // .fetch() automatically closes the native ResultSet and leaves us with the Result.
