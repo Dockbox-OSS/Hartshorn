@@ -34,6 +34,7 @@ import org.dockbox.hartshorn.persistence.FileTypeProperty;
 import org.dockbox.hartshorn.persistence.SQLMan;
 import org.dockbox.hartshorn.persistence.dialects.sqlite.SQLitePathProperty;
 import org.dockbox.hartshorn.persistence.exceptions.InvalidConnectionException;
+import org.dockbox.hartshorn.persistence.exceptions.NoSuchTableException;
 import org.dockbox.hartshorn.persistence.properties.SQLColumnProperty;
 import org.dockbox.hartshorn.persistence.table.Table;
 import org.dockbox.hartshorn.server.minecraft.dimension.position.Location;
@@ -69,7 +70,7 @@ public class OldPlotsService {
     }
 
     @Command(value = "oldplots", arguments = "<player{Player}>", permission = "hartshorn.oldplots.list")
-    public void oldPlotsCommand(Player source, CommandContext ctx) throws InvalidConnectionException {
+    public void oldPlotsCommand(Player source, CommandContext ctx) throws InvalidConnectionException, NoSuchTableException {
         if (!ctx.has("player")) {
             source.sendWithPrefix(this.resources.playerError());
         }
@@ -123,8 +124,7 @@ public class OldPlotsService {
     }
 
     @Command(value = "optp", arguments = "<id{Int}>", permission = "hartshorn.oldplots.teleport")
-    public void teleportCommand(Player source, CommandContext context)
-            throws InvalidConnectionException {
+    public void teleportCommand(Player source, CommandContext context) throws InvalidConnectionException, NoSuchTableException {
         Integer id = context.get("id");
         SQLMan<?> man = this.sql();
         Table plots = man.table("plot");
