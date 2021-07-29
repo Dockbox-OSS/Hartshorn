@@ -38,6 +38,7 @@ import java.util.Set;
 public class DefaultRegionService implements RegionService, InjectableType {
 
     private RegionsList regions;
+    private Path regionsData;
 
     @Override
     public <R extends Region> Exceptional<R> first(Location location, Class<R> type) {
@@ -99,8 +100,9 @@ public class DefaultRegionService implements RegionService, InjectableType {
     @Override
     public void enable(InjectorProperty<?>... properties) {
         final FileManager fileManager = Hartshorn.context().get(FileManager.class);
-        final Path regionsData = fileManager.dataFile(DefaultRegionService.class, "regions");
-        this.regions = fileManager.read(regionsData, RegionsList.class).orElse(RegionsList::new).get();
+        this.regionsData = fileManager.data(DefaultRegionService.class).resolve("regions.sqlite");
+        fileManager.createFileIfNotExists(this.regionsData);
+        this.regions = RegionsList.restore(this.regionsData);
     }
 
     public Set<PersistentFlagModel> flags() {
@@ -109,17 +111,11 @@ public class DefaultRegionService implements RegionService, InjectableType {
 
     public void add(RegionFlag<?> flag) {
         this.regions.add(flag);
-        this.saveState();
+        this.regions.save(this.regionsData);
     }
 
     public void add(CustomRegion element) {
         this.regions.add(element);
-        this.saveState();
-    }
-
-    private void saveState() {
-        final FileManager fileManager = Hartshorn.context().get(FileManager.class);
-        final Path regionsData = fileManager.dataFile(DefaultRegionService.class, "regions");
-        fileManager.write(regionsData, this.regions);
+        this.regions.save(this.regionsData);
     }
 }

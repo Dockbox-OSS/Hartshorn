@@ -22,6 +22,7 @@ import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.domain.tuple.Vector3N;
 import org.dockbox.hartshorn.api.events.annotations.Posting;
 import org.dockbox.hartshorn.api.i18n.text.Text;
+import org.dockbox.hartshorn.persistence.PersistentCapable;
 import org.dockbox.hartshorn.regions.events.CancellableRegionEvent;
 import org.dockbox.hartshorn.regions.events.flags.RegionFlagAddedEvent;
 import org.dockbox.hartshorn.regions.events.flags.RegionFlagRemovedEvent;
@@ -39,7 +40,7 @@ import java.util.UUID;
 import lombok.Getter;
 
 @Posting({ RegionFlagAddedEvent.class, RegionFlagRemovedEvent.class })
-public class CustomRegion implements Region {
+public class CustomRegion implements Region, PersistentCapable<PersistentRegion> {
 
     @Getter private Vector3N cornerA;
     @Getter private Vector3N cornerB;
@@ -135,5 +136,17 @@ public class CustomRegion implements Region {
     @Override
     public World world() {
         return Hartshorn.context().get(Worlds.class).world(this.world).or(World.empty());
+    }
+
+    @Override
+    public Class<? extends PersistentRegion> modelType() {
+        return PersistentRegion.class;
+    }
+
+    @Override
+    public PersistentRegion model() {
+        return new PersistentRegion(this.name().toLegacy(), this.owner.toString(), this.world.toString(),
+                this.cornerA().xI(), this.cornerA().yI(), this.cornerA().zI(),
+                this.cornerB().xI(), this.cornerB().yI(), this.cornerB().zI());
     }
 }
