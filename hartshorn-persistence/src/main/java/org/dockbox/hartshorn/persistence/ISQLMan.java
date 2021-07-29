@@ -20,6 +20,7 @@ package org.dockbox.hartshorn.persistence;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.di.properties.InjectableType;
 import org.dockbox.hartshorn.persistence.exceptions.InvalidConnectionException;
+import org.dockbox.hartshorn.persistence.exceptions.NoSuchTableException;
 import org.dockbox.hartshorn.persistence.table.Table;
 import org.dockbox.hartshorn.persistence.table.column.ColumnIdentifier;
 
@@ -46,7 +47,9 @@ public interface ISQLMan<T> extends InjectableType {
      * @throws InvalidConnectionException
      *         If no connection could be prepared to the database
      */
-    Table table(String name) throws InvalidConnectionException;
+    Table table(String name) throws InvalidConnectionException, NoSuchTableException;
+
+    Table table(String name, Table definition) throws InvalidConnectionException;
 
     /**
      * Gets a table from the database and converts it to the internal {@link Table} type.
@@ -60,7 +63,7 @@ public interface ISQLMan<T> extends InjectableType {
      * @throws InvalidConnectionException
      *         If no connection could be prepared to the database
      */
-    Table table(String name, T target) throws InvalidConnectionException;
+    Table table(String name, T target) throws InvalidConnectionException, NoSuchTableException;
 
     /**
      * Attempts to get a table from the database and converts it to the internal {@link Table} type
