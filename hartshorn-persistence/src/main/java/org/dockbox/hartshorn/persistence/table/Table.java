@@ -17,12 +17,19 @@
 
 package org.dockbox.hartshorn.persistence.table;
 
+import com.fasterxml.jackson.databind.util.BeanUtil;
+
+import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.annotations.Entity;
 import org.dockbox.hartshorn.api.annotations.Property;
+import org.dockbox.hartshorn.api.exceptions.ApplicationException;
+import org.dockbox.hartshorn.persistence.PersistentCapable;
+import org.dockbox.hartshorn.persistence.PersistentModel;
 import org.dockbox.hartshorn.persistence.table.behavior.Merge;
 import org.dockbox.hartshorn.persistence.table.behavior.Order;
 import org.dockbox.hartshorn.persistence.table.column.ColumnIdentifier;
+import org.dockbox.hartshorn.persistence.table.column.SimpleColumnIdentifier;
 import org.dockbox.hartshorn.persistence.table.exceptions.EmptyEntryException;
 import org.dockbox.hartshorn.persistence.table.exceptions.IdentifierMismatchException;
 import org.dockbox.hartshorn.persistence.table.exceptions.UnknownIdentifierException;
@@ -32,11 +39,17 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.beans.Beans;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import lombok.Getter;
 
@@ -142,9 +155,14 @@ public class Table {
      *         table.
      */
     public void addRow(Object object) {
+        if (object instanceof PersistentCapable persistentCapable) {
+            this.addRow(persistentCapable.model());
+            return;
+        }
+
         TableRow row = new TableRow();
 
-        for (Field field : object.getClass().getFields()) {
+        for (Field field : object.getClass().getDeclaredFields()) {
             field.setAccessible(true);
             final Exceptional<Property> annotation = Reflect.annotation(field, Property.class);
             if (!(annotation.present() && annotation.get().ignore())) {
@@ -173,7 +191,7 @@ public class Table {
         }
 
         if (row.columns().size() != this.identifiers.length) {
-            throw new UnknownIdentifierException("Missing Columns!");
+            throw new UnknownIdentifierException("Expected " + Arrays.toString(this.identifiers) + " (" + this.identifiers.length + ") but got " + row.columns() + " (" + row.columns().size() + ")");
         }
         this.rows.add(row);
     }
