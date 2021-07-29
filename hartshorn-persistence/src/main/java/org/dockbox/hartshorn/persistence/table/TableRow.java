@@ -27,8 +27,11 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Map;
 import java.util.Set;
 
+import lombok.Getter;
+
 public class TableRow {
 
+    @Getter
     private final Map<ColumnIdentifier<?>, Object> data = HartshornUtils.emptyMap();
 
     public TableRow() {}
