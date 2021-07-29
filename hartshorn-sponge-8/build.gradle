@@ -68,6 +68,8 @@ dependencies {
             includeShadow project(":${it.name}")
         }
     }
+
+    includeShadow "org.xerial:sqlite-jdbc:$xerialSqliteJdbcVersion"
 }
 
 tasks.build {
