@@ -18,12 +18,13 @@
 package org.dockbox.hartshorn.persistence.dialects.sqlite;
 
 import org.dockbox.hartshorn.api.domain.FileTypes;
+import org.dockbox.hartshorn.di.annotations.inject.Binds;
+import org.dockbox.hartshorn.di.annotations.inject.Named;
+import org.dockbox.hartshorn.di.binding.Bindings;
+import org.dockbox.hartshorn.di.properties.InjectorProperty;
+import org.dockbox.hartshorn.persistence.ISQLMan;
 import org.dockbox.hartshorn.persistence.SQLMan;
 import org.dockbox.hartshorn.persistence.exceptions.InvalidConnectionException;
-import org.dockbox.hartshorn.di.binding.Bindings;
-import org.dockbox.hartshorn.di.annotations.inject.Named;
-import org.dockbox.hartshorn.di.annotations.inject.Binds;
-import org.dockbox.hartshorn.di.properties.InjectorProperty;
 import org.jooq.SQLDialect;
 
 import java.nio.file.Path;
@@ -32,6 +33,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 @Binds(value = SQLMan.class, named = @Named(value = FileTypes.SQLITE))
+@Binds(value = ISQLMan.class, named = @Named(value = FileTypes.SQLITE))
 public class SQLiteMan extends SQLMan<Path> {
 
     public static final String PATH_KEY = "sqliteFilePath";
