@@ -29,6 +29,7 @@ public class JOOQInit {
 
     @PostBootstrap
     public void init() {
+        System.getProperties().setProperty("org.jooq.no-logo", "true");
         new DefaultDSLContext(SQLDialect.SQLITE).selectZero();
     }
 }
