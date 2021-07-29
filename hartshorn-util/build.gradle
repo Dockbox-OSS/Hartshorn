@@ -18,5 +18,6 @@
 dependencies {
     include project(':hartshorn-core')
     include "org.reflections:reflections:$reflectionsVersion"
+    include 'commons-beanutils:commons-beanutils:1.9.4'
     share "org.jooq:joor:0.9.14"
 }

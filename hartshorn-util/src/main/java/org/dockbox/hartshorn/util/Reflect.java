@@ -17,9 +17,11 @@
 
 package org.dockbox.hartshorn.util;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.annotations.Entity;
 import org.dockbox.hartshorn.api.annotations.Property;
+import org.dockbox.hartshorn.api.exceptions.ApplicationException;
 import org.dockbox.hartshorn.util.exceptions.FieldAccessException;
 import org.dockbox.hartshorn.util.exceptions.NotPrimitiveException;
 import org.dockbox.hartshorn.util.exceptions.TypeConversionException;
@@ -528,6 +530,14 @@ public final class Reflect {
         return fields;
     }
 
+    public static String fieldName(Field field) {
+        final Exceptional<Property> annotation = Reflect.annotation(field, Property.class);
+        if (annotation.present()) {
+            if (HartshornUtils.notEmpty(annotation.get().value())) return annotation.get().value();
+        }
+        return field.getName();
+    }
+
     public static <T> Collection<Constructor<T>> constructors(Class<T> type, Class<? extends Annotation> annotation) {
         Collection<Constructor<T>> constructors = HartshornUtils.emptyList();
         //noinspection unchecked
@@ -535,6 +545,27 @@ public final class Reflect {
             if (Reflect.annotation(constructor, annotation).present()) constructors.add(constructor);
         }
         return constructors;
+    }
+
+    public static <T> T populate(T instance, Map<String, Object> data) throws ApplicationException {
+        if (instance == null) return null;
+        try {
+            BeanUtils.populate(instance, data);
+            final Class<?> type = instance.getClass();
+            for (Entry<String, Object> field : data.entrySet()) {
+                try {
+                    final Field declaredField = type.getDeclaredField(field.getKey());
+                    set(declaredField, instance, field.getValue());
+                } catch (NoSuchFieldException e) {
+                    // ignored
+                    continue;
+                }
+            }
+            return instance;
+        }
+        catch (IllegalAccessException | InvocationTargetException e) {
+            throw new ApplicationException(e);
+        }
     }
 
     public static boolean isNative(Class<?> type) {
