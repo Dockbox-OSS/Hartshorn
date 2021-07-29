@@ -573,8 +573,49 @@ public class Table {
         return HartshornUtils.asUnmodifiableList(this.rows);
     }
 
+    public <T> List<T> rows(Class<T> type) {
+        List<T> items = HartshornUtils.emptyList();
+
+        try {
+            final Constructor<T> constructor = type.getConstructor();
+            constructor.setAccessible(true);
+            for (TableRow row : this.rows) {
+                try {
+                    final T instance = constructor.newInstance();
+                    final Map<String, Object> data = row.data().entrySet().stream().collect(Collectors.toMap(e -> e.getKey().name(), Entry::getValue));
+                    items.add(Reflect.populate(instance, data));
+                } catch (ApplicationException e) {
+                    Hartshorn.log().warn("Skipping row " + row + ": " + e.getMessage());
+                }
+            }
+        }
+        catch (InvocationTargetException | NoSuchMethodException | InstantiationException | IllegalAccessException e) {
+            Hartshorn.log().warn("Could not convert rows to type " + type.getSimpleName() + " as no base constructor exists");
+        }
+        return items;
+    }
+
+    public <T extends PersistentCapable<M>, M extends PersistentModel<T>> List<T> restore(Class<M> type) {
+        final List<M> rows = this.rows(type);
+        return rows.stream().map(PersistentModel::toPersistentCapable).toList();
+    }
+
     public void forEach(Consumer<TableRow> consumer) {
         this.rows().forEach(consumer);
+    }
+
+    private static final Map<Class<?>, List<ColumnIdentifier<?>>> DEFINITIONS = HartshornUtils.emptyMap();
+
+    public static Table of(Class<?> type) {
+        if (!DEFINITIONS.containsKey(type)) {
+            final List<ColumnIdentifier<?>> identifiers = HartshornUtils.emptyList();
+            for (Field field : type.getDeclaredFields()) {
+                final String name = Reflect.fieldName(field);
+                identifiers.add(new SimpleColumnIdentifier<>(name, field.getType()));
+            }
+            DEFINITIONS.put(type, identifiers);
+        }
+        return new Table(DEFINITIONS.getOrDefault(type, HartshornUtils.emptyList()));
     }
 
     @Override
