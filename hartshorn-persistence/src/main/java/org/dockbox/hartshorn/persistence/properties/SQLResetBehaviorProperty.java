@@ -20,21 +20,10 @@ package org.dockbox.hartshorn.persistence.properties;
 import org.dockbox.hartshorn.di.properties.InjectorProperty;
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 @AllArgsConstructor
 public class SQLResetBehaviorProperty implements InjectorProperty<Boolean> {
-
-    public static String KEY = "resetBeforeStore";
-
-    private final boolean reset;
-
-    @Override
-    public String key() {
-        return SQLResetBehaviorProperty.KEY;
-    }
-
-    @Override
-    public Boolean value() {
-        return this.reset;
-    }
+    @Getter
+    private final Boolean value;
 }

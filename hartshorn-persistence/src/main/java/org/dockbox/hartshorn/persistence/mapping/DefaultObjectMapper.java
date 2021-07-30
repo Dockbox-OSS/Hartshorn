@@ -45,9 +45,8 @@ public abstract class DefaultObjectMapper implements ObjectMapper {
     }
 
     @Override
-    public void enable(InjectorProperty<?>... properties) throws ApplicationException {
-        final List<PersistenceProperty> persistenceProperties = Bindings.properties(PersistenceProperty.KEY, properties);
-        for (PersistenceProperty persistenceProperty : persistenceProperties) {
+    public void apply(InjectorProperty<?> property) throws ApplicationException {
+        if (property instanceof PersistenceProperty persistenceProperty) {
             for (PersistenceModifier modifier : persistenceProperty.value()) this.modify(modifier);
         }
     }

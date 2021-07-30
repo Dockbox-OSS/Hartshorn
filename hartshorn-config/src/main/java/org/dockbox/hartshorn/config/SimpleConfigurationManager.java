@@ -33,7 +33,7 @@ import java.util.Map;
 
 import lombok.Getter;
 
-public class SimpleConfigurationManager implements ConfigurationManager, InjectableType {
+public class SimpleConfigurationManager implements ConfigurationManager {
 
     private final Path path;
     private final String fileKey;
@@ -44,6 +44,21 @@ public class SimpleConfigurationManager implements ConfigurationManager, Injecta
     public SimpleConfigurationManager(Path path) {
         this.path = path;
         this.fileKey = this.fileKey();
+
+        try {
+            if (!this.cache.containsKey(this.fileKey)) {
+                FileInputStream fileInputStream = new FileInputStream(this.path.toFile());
+                Yaml yaml = new Yaml();
+                Map<String, Object> localCache = yaml.load(fileInputStream);
+                if (localCache == null) {
+                    localCache = HartshornUtils.emptyMap();
+                }
+                this.cache.put(this.fileKey, localCache);
+            }
+        }
+        catch (FileNotFoundException e) {
+            throw new ApplicationException(e).runtime();
+        }
     }
 
     protected String fileKey() {
@@ -74,28 +89,5 @@ public class SimpleConfigurationManager implements ConfigurationManager, Injecta
             }
         }
         return Exceptional.empty();
-    }
-
-    @Override
-    public boolean canEnable() {
-        return !this.cache.containsKey(this.fileKey);
-    }
-
-    @Override
-    public void enable(InjectorProperty<?>... properties) throws ApplicationException {
-        try {
-            if (!this.cache.containsKey(this.fileKey)) {
-                FileInputStream fileInputStream = new FileInputStream(this.path.toFile());
-                Yaml yaml = new Yaml();
-                Map<String, Object> localCache = yaml.load(fileInputStream);
-                if (localCache == null) {
-                    localCache = HartshornUtils.emptyMap();
-                }
-                this.cache.put(this.fileKey, localCache);
-            }
-        }
-        catch (FileNotFoundException e) {
-            throw new ApplicationException(e);
-        }
     }
 }

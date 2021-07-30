@@ -25,13 +25,6 @@ import lombok.Getter;
 
 @AllArgsConstructor
 public class LayoutProperty implements InjectorProperty<InventoryLayout> {
-
-    public static final String KEY = "HartshornInternalInventoryTypeKey";
     @Getter
     private final InventoryLayout value;
-
-    @Override
-    public String key() {
-        return LayoutProperty.KEY;
-    }
 }

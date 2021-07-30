@@ -20,7 +20,6 @@ package org.dockbox.hartshorn.cache;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.task.TaskRunner;
 import org.dockbox.hartshorn.di.annotations.inject.Binds;
-import org.dockbox.hartshorn.di.binding.Bindings;
 import org.dockbox.hartshorn.di.properties.InjectableType;
 import org.dockbox.hartshorn.di.properties.InjectorProperty;
 import org.dockbox.hartshorn.util.HartshornUtils;
@@ -77,12 +76,14 @@ public class SimpleCache<T> implements Cache<T>, InjectableType {
     }
 
     @Override
-    public void enable(InjectorProperty<?>... properties) {
-        final InjectorProperty<Expiration> property = Bindings.property(ExpirationProperty.KEY, Expiration.class, properties);
-        if (property != null) {
-            this.expiration = property.value();
-        } else {
-            throw new IllegalArgumentException("Expected expiration property to be present");
+    public void apply(InjectorProperty<?> property) {
+        if (property instanceof ExpirationProperty expirationProperty) {
+            this.expiration = expirationProperty.value();
         }
+    }
+
+    @Override
+    public void enable() {
+        if (this.expiration == null) throw new IllegalArgumentException("Expected expiration property to be present");
     }
 }

@@ -15,24 +15,17 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.di.types;
+package org.dockbox.hartshorn.persistence.dialects.sqlite;
 
 import org.dockbox.hartshorn.di.properties.InjectorProperty;
 
+import java.nio.file.Path;
+
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-public class NameProperty implements InjectorProperty<String> {
-
-    public static final String KEY = "JUnitNameProperty";
+@AllArgsConstructor
+public class PathProperty implements InjectorProperty<Path> {
     @Getter
-    private final String value;
-
-    public NameProperty(String name) {
-        this.value = name;
-    }
-
-    @Override
-    public String key() {
-        return KEY;
-    }
+    private final Path value;
 }

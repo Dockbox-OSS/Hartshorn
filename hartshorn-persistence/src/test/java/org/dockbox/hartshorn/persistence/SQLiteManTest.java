@@ -17,10 +17,10 @@
 
 package org.dockbox.hartshorn.persistence;
 
+import org.dockbox.hartshorn.api.exceptions.ApplicationException;
+import org.dockbox.hartshorn.persistence.dialects.sqlite.PathProperty;
 import org.dockbox.hartshorn.persistence.dialects.sqlite.SQLiteMan;
-import org.dockbox.hartshorn.persistence.dialects.sqlite.SQLitePathProperty;
 import org.dockbox.hartshorn.persistence.exceptions.InvalidConnectionException;
-import org.dockbox.hartshorn.persistence.exceptions.NoSuchTableException;
 import org.dockbox.hartshorn.persistence.table.Table;
 import org.dockbox.hartshorn.test.HartshornRunner;
 import org.jooq.SQLDialect;
@@ -49,14 +49,14 @@ class SQLiteManTest {
                 (ThrowingSupplier<? extends ISQLMan<?>>) SQLiteManTest::writeToFile);
     }
 
-    private static ISQLMan<?> writeToFile() throws InvalidConnectionException {
+    private static ISQLMan<?> writeToFile() throws ApplicationException {
         ISQLMan<?> man = SQLiteManTest.sql();
         return writeToFile(man);
     }
 
-    private static SQLiteMan sql() {
+    private static SQLiteMan sql() throws ApplicationException {
         SQLiteMan man = new SQLiteMan();
-        man.enable(new SQLitePathProperty(SQLiteManTest.testFile()));
+        man.apply(new PathProperty(SQLiteManTest.testFile()));
         return man;
     }
 
@@ -98,14 +98,14 @@ class SQLiteManTest {
     }
 
     @Test
-    public void testGetTable() throws InvalidConnectionException, NoSuchTableException {
+    public void testGetTable() throws ApplicationException {
         ISQLMan<?> man = SQLiteManTest.writeToFile();
         Table table = man.table(MAIN_TABLE);
         Assertions.assertEquals(SQLiteManTest.populatedMainTable().count(), table.count());
     }
 
     @Test
-    public void testIdentifierProperties() throws InvalidConnectionException, NoSuchTableException {
+    public void testIdentifierProperties() throws ApplicationException {
         ISQLMan<?> man = SQLiteManTest.writeToFile();
         Table table = man.table(MAIN_TABLE);
         Table developers = table.where(TestColumnIdentifiers.NUMERAL_ID, 1);
@@ -113,20 +113,20 @@ class SQLiteManTest {
     }
 
     @Test
-    void dialectReturnsSQLite() {
+    void dialectReturnsSQLite() throws ApplicationException {
         SQLMan<?> man = SQLiteManTest.sql();
         Assertions.assertEquals(SQLDialect.SQLITE, man.dialect());
     }
 
     @Test
-    void tablesCanBeDropped() throws InvalidConnectionException {
+    void tablesCanBeDropped() throws ApplicationException {
         ISQLMan<?> man = SQLiteManTest.writeToFile();
         man.drop(ID_TABLE);
         Assertions.assertTrue(man.tableSafe(ID_TABLE).absent());
     }
 
     @Test
-    void rowsCanBeRemovedByFilter() throws InvalidConnectionException, NoSuchTableException {
+    void rowsCanBeRemovedByFilter() throws ApplicationException {
         ISQLMan<?> man = SQLiteManTest.writeToFile();
         man.deleteIf(ID_TABLE, TestColumnIdentifiers.NUMERAL_ID, 1);
         Table filteredTable = man.table(ID_TABLE).where(TestColumnIdentifiers.NUMERAL_ID, 1);

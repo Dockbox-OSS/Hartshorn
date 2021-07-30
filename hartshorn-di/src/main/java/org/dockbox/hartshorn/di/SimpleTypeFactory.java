@@ -23,7 +23,6 @@ import org.dockbox.hartshorn.di.binding.Bindings;
 import org.dockbox.hartshorn.di.inject.wired.BoundContext;
 import org.dockbox.hartshorn.di.inject.wired.ConstructorBoundContext;
 import org.dockbox.hartshorn.di.properties.BindingMetaProperty;
-import org.dockbox.hartshorn.di.properties.InjectableType;
 import org.dockbox.hartshorn.di.properties.InjectorProperty;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.dockbox.hartshorn.util.Reflect;
@@ -40,8 +39,12 @@ public class SimpleTypeFactory implements TypeFactory {
 
     @Override
     public <T> T create(Class<T> type, Object... arguments) {
-        @Nullable final InjectorProperty<Named> property = Bindings.property(BindingMetaProperty.KEY, Named.class, this.properties);
-        Exceptional<BoundContext<T, T>> binding = ApplicationContextAware.instance().context().firstWire(type, property);
+        @Nullable Named named = null;
+        for (InjectorProperty<?> property : this.properties) {
+            if (property instanceof BindingMetaProperty bindingMeta) named = bindingMeta.value();
+        }
+
+        Exceptional<BoundContext<T, T>> binding = ApplicationContextAware.instance().context().firstWire(type, named);
         if (binding.absent()) {
             if (Reflect.isAbstract(type)) throw new IllegalStateException("Could not autowire " + type.getCanonicalName() + " as there is no active binding for it");
             else {
@@ -54,9 +57,7 @@ public class SimpleTypeFactory implements TypeFactory {
 
         return Exceptional.of(() -> {
             final T instance = finalBinding.get().create(arguments);
-            if (instance instanceof InjectableType && ((InjectableType) instance).canEnable()) {
-                ((InjectableType) instance).enable(this.properties);
-            }
+            Bindings.enable(instance, this.properties);
             return instance;
         }).orNull();
     }

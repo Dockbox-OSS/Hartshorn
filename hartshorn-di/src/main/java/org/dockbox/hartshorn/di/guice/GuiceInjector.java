@@ -35,12 +35,11 @@ import org.dockbox.hartshorn.di.annotations.inject.Named;
 import org.dockbox.hartshorn.di.annotations.inject.Wired;
 import org.dockbox.hartshorn.di.binding.BindingData;
 import org.dockbox.hartshorn.di.binding.Bindings;
-import org.dockbox.hartshorn.di.inject.ProviderContext;
 import org.dockbox.hartshorn.di.inject.Injector;
 import org.dockbox.hartshorn.di.inject.KeyBinding;
-import org.dockbox.hartshorn.di.inject.wired.ConstructorBoundContext;
+import org.dockbox.hartshorn.di.inject.ProviderContext;
 import org.dockbox.hartshorn.di.inject.wired.BoundContext;
-import org.dockbox.hartshorn.di.properties.AnnotationProperty;
+import org.dockbox.hartshorn.di.inject.wired.ConstructorBoundContext;
 import org.dockbox.hartshorn.di.properties.BindingMetaProperty;
 import org.dockbox.hartshorn.di.properties.InjectorProperty;
 import org.dockbox.hartshorn.util.HartshornUtils;
@@ -105,20 +104,12 @@ public class GuiceInjector implements Injector {
     @Override
     public <T> Exceptional<T> get(Class<T> type, InjectorProperty<?>... additionalProperties) {
         return Exceptional.of(() -> {
-            @SuppressWarnings("rawtypes") @Nullable
-            Exceptional<Class> annotation = Bindings.value(AnnotationProperty.KEY, Class.class, additionalProperties);
-            if (annotation.present() && annotation.get().isAnnotation()) {
-                //noinspection unchecked
-                return (T) this.rebuild().getInstance(Key.get(type, annotation.get()));
+            @Nullable Exceptional<Named> meta = Bindings.lookup(BindingMetaProperty.class, additionalProperties);
+            if (meta.present()) {
+                return this.rebuild().getInstance(Key.get(type, meta.get()));
             }
             else {
-                @Nullable Exceptional<Named> meta = Bindings.value(BindingMetaProperty.KEY, Named.class, additionalProperties);
-                if (meta.present()) {
-                    return this.rebuild().getInstance(Key.get(type, meta.get()));
-                }
-                else {
-                    return this.rebuild().getInstance(type);
-                }
+                return this.rebuild().getInstance(type);
             }
         });
     }
@@ -139,11 +130,11 @@ public class GuiceInjector implements Injector {
     }
 
     @Override
-    public <T, I extends T> Exceptional<BoundContext<T, I>> firstWire(Class<T> contract, InjectorProperty<Named> property) {
+    public <T, I extends T> Exceptional<BoundContext<T, I>> firstWire(Class<T> contract, Named named) {
         for (BoundContext<?, ?> binding : this.bindings) {
             if (binding.contract().equals(contract)) {
                 if (!"".equals(binding.name())) {
-                    if (property == null || !binding.name().equals(property.value().value())) continue;
+                    if (named == null || !binding.name().equals(named.value())) continue;
                 }
                 //noinspection unchecked
                 return Exceptional.of((BoundContext<T, I>) binding);
@@ -250,7 +241,7 @@ public class GuiceInjector implements Injector {
             Parameter parameter = parameters[i];
             final Exceptional<Named> annotation = Reflect.annotation(parameter, Named.class);
             if (annotation.present()) {
-                invokingParameters[i] = ApplicationContextAware.instance().context().get(parameter.getType(), BindingMetaProperty.of(annotation.get()));
+                invokingParameters[i] = ApplicationContextAware.instance().context().get(parameter.getType(), annotation.get());
             } else {
                 invokingParameters[i] = ApplicationContextAware.instance().context().get(parameter.getType());
             }

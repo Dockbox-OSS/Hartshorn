@@ -26,21 +26,8 @@ import lombok.Getter;
  * Injector property which can be provided to {@link Cache} entries to set
  * the cache expiration when the cache instance is enabled.
  */
-@Getter
 @AllArgsConstructor
 public class ExpirationProperty implements InjectorProperty<Expiration> {
-
-    public static final String KEY = "HartshornInternalCacheExpirationKey";
-
-    private final Expiration expire;
-
-    @Override
-    public String key() {
-        return KEY;
-    }
-
-    @Override
-    public Expiration value() {
-        return this.expire;
-    }
+    @Getter
+    private final Expiration value;
 }

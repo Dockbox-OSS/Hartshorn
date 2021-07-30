@@ -21,11 +21,9 @@ import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.di.binding.Bindings;
 import org.dockbox.hartshorn.di.properties.BindingMetaProperty;
 import org.dockbox.hartshorn.di.types.InvalidSampleBoundType;
-import org.dockbox.hartshorn.di.types.NameProperty;
 import org.dockbox.hartshorn.di.types.PopulatedType;
 import org.dockbox.hartshorn.di.types.SampleBoundPopulatedType;
 import org.dockbox.hartshorn.di.types.SampleBoundType;
-import org.dockbox.hartshorn.di.types.SampleEnablingType;
 import org.dockbox.hartshorn.di.types.SampleField;
 import org.dockbox.hartshorn.di.types.SampleFieldImplementation;
 import org.dockbox.hartshorn.di.types.SampleImplementation;
@@ -67,7 +65,7 @@ public class ApplicationContextTests {
     @Test
     public void testStaticBindingWithMetaCanBeProvided() {
         Hartshorn.context().bind(SampleInterface.class, SampleImplementation.class, Bindings.named("demo"));
-        SampleInterface provided = Hartshorn.context().get(SampleInterface.class, BindingMetaProperty.of(Bindings.named("demo")));
+        SampleInterface provided = Hartshorn.context().get(SampleInterface.class, Bindings.named("demo"));
         Assertions.assertNotNull(provided);
 
         Class<? extends SampleInterface> providedClass = provided.getClass();
@@ -91,7 +89,7 @@ public class ApplicationContextTests {
     @Test
     public void testInstanceBindingWithMetaCanBeProvided() {
         Hartshorn.context().bind(SampleInterface.class, new SampleImplementation(), Bindings.named("demo"));
-        SampleInterface provided = Hartshorn.context().get(SampleInterface.class, BindingMetaProperty.of(Bindings.named("demo")));
+        SampleInterface provided = Hartshorn.context().get(SampleInterface.class, Bindings.named("demo"));
         Assertions.assertNotNull(provided);
 
         Class<? extends SampleInterface> providedClass = provided.getClass();
@@ -115,7 +113,7 @@ public class ApplicationContextTests {
     @Test
     public void testProviderBindingWithMetaCanBeProvided() {
         Hartshorn.context().provide(SampleInterface.class, SampleImplementation::new, Bindings.named("demo"));
-        SampleInterface provided = Hartshorn.context().get(SampleInterface.class, BindingMetaProperty.of(Bindings.named("demo")));
+        SampleInterface provided = Hartshorn.context().get(SampleInterface.class, Bindings.named("demo"));
         Assertions.assertNotNull(provided);
 
         Class<? extends SampleInterface> providedClass = provided.getClass();
@@ -143,7 +141,7 @@ public class ApplicationContextTests {
         Hartshorn.context().bind("org.dockbox.hartshorn.di.types.meta");
         Assertions.assertThrows(ProvisionFailure.class, () -> Hartshorn.context().get(SampleInterface.class));
 
-        SampleInterface provided = Hartshorn.context().get(SampleInterface.class, BindingMetaProperty.of(Bindings.named("meta")));
+        SampleInterface provided = Hartshorn.context().get(SampleInterface.class, Bindings.named("meta"));
         Assertions.assertNotNull(provided);
 
         Class<? extends SampleInterface> providedClass = provided.getClass();
@@ -171,7 +169,7 @@ public class ApplicationContextTests {
         // sub-package *.multi was added to prevent scan conflicts
         Hartshorn.context().bind("org.dockbox.hartshorn.di.types.multi");
 
-        SampleInterface provided = Hartshorn.context().get(SampleInterface.class, BindingMetaProperty.of(Bindings.named("meta")));
+        SampleInterface provided = Hartshorn.context().get(SampleInterface.class, Bindings.named("meta"));
         Assertions.assertNotNull(provided);
 
         Class<? extends SampleInterface> providedClass = provided.getClass();
@@ -240,16 +238,6 @@ public class ApplicationContextTests {
     }
 
     @Test
-    public void injectableTypesAreEnabled() {
-        Hartshorn.context().bind(SampleInterface.class, SampleEnablingType.class);
-
-        SampleInterface provided = Hartshorn.context().get(SampleInterface.class, new NameProperty("Enabled"));
-        Assertions.assertNotNull(provided);
-        Assertions.assertNotNull(provided.name());
-        Assertions.assertEquals("Enabled", provided.name());
-    }
-
-    @Test
     public void testScannedBoundBindingsCanBeProvided() {
         // sub-package *.bound was added to prevent scan conflicts
         Hartshorn.context().bind("org.dockbox.hartshorn.di.types.bound");
@@ -291,18 +279,6 @@ public class ApplicationContextTests {
         Assertions.assertEquals(SampleBoundType.class, providedClass);
 
         Assertions.assertEquals("FactoryTyped", provided.name());
-    }
-
-    @Test
-    public void varargProvidedTypesAreEnabled() {
-        Hartshorn.context().manual(SampleInterface.class, SampleBoundPopulatedType.class);
-        Hartshorn.context().bind(TypeFactory.class, SimpleTypeFactory.class);
-        Hartshorn.context().bind(SampleField.class, SampleFieldImplementation.class);
-
-        SampleInterface provided = Hartshorn.context().get(SampleInterface.class, "FactoryTyped");
-        Assertions.assertNotNull(provided);
-        Assertions.assertTrue(provided instanceof SampleBoundPopulatedType);
-        Assertions.assertTrue(((SampleBoundPopulatedType) provided).enabled());
     }
 
     @Test
@@ -354,7 +330,7 @@ public class ApplicationContextTests {
 
         ProvidedInterface provided;
         if (meta == null) provided = Hartshorn.context().get(ProvidedInterface.class);
-        else provided = Hartshorn.context().get(ProvidedInterface.class, BindingMetaProperty.of(meta));
+        else provided = Hartshorn.context().get(ProvidedInterface.class, Bindings.named(meta));
         Assertions.assertNotNull(provided);
 
         String actual = provided.name();
@@ -364,7 +340,7 @@ public class ApplicationContextTests {
         if (singleton) {
             ProvidedInterface second;
             if (meta == null) second = Hartshorn.context().get(ProvidedInterface.class);
-            else second = Hartshorn.context().get(ProvidedInterface.class, BindingMetaProperty.of(meta));
+            else second = Hartshorn.context().get(ProvidedInterface.class, Bindings.named(meta));
             Assertions.assertNotNull(second);
             Assertions.assertSame(provided, second);
         }

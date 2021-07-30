@@ -18,10 +18,7 @@
 package org.dockbox.hartshorn.di.properties;
 
 public class UseFactory extends SimpleProperty<Object[]> {
-
-    public static final String KEY = "InternalFactoryBindingKey";
-
     public UseFactory(Object... use) {
-        super(use, KEY);
+        super(use);
     }
 }

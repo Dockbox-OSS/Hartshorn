@@ -19,12 +19,13 @@ package org.dockbox.hartshorn.di.properties;
 
 import org.dockbox.hartshorn.api.exceptions.ApplicationException;
 
-@FunctionalInterface
 public interface InjectableType {
 
     default boolean canEnable() {
         return true;
     }
 
-    void enable(InjectorProperty<?>... properties) throws ApplicationException;
+    default void apply(InjectorProperty<?> property) throws ApplicationException {}
+
+    default void enable() throws ApplicationException {}
 }

@@ -25,13 +25,6 @@ import lombok.Getter;
 
 @AllArgsConstructor
 public class InventoryTypeProperty implements InjectorProperty<InventoryType> {
-
-    public static final String KEY = "HartshornInternalInventoryTypeKey";
     @Getter
     private final InventoryType value;
-
-    @Override
-    public String key() {
-        return InventoryTypeProperty.KEY;
-    }
 }

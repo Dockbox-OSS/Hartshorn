@@ -19,12 +19,12 @@ package org.dockbox.hartshorn.persistence;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.domain.tuple.Tuple;
+import org.dockbox.hartshorn.api.exceptions.ApplicationException;
+import org.dockbox.hartshorn.di.properties.InjectorProperty;
 import org.dockbox.hartshorn.persistence.exceptions.InvalidConnectionException;
 import org.dockbox.hartshorn.persistence.exceptions.NoSuchTableException;
 import org.dockbox.hartshorn.persistence.properties.SQLColumnProperty;
 import org.dockbox.hartshorn.persistence.properties.SQLResetBehaviorProperty;
-import org.dockbox.hartshorn.di.binding.Bindings;
-import org.dockbox.hartshorn.di.properties.InjectorProperty;
 import org.dockbox.hartshorn.persistence.table.Table;
 import org.dockbox.hartshorn.persistence.table.TableRow;
 import org.dockbox.hartshorn.persistence.table.column.ColumnIdentifier;
@@ -59,7 +59,7 @@ import java.util.Map;
 public abstract class SQLMan<T> implements ISQLMan<T> {
 
     private final Map<String, ColumnIdentifier<?>> identifiers = HartshornUtils.emptyMap();
-    private Boolean resetOnStore;
+    private Boolean resetOnStore = true;
 
     private static Field<?>[] convertIdentifiersToFields(Table table) {
         Field<?>[] fields = new Field[table.identifiers().length];
@@ -156,7 +156,7 @@ public abstract class SQLMan<T> implements ISQLMan<T> {
 
     /**
      * Get the default target if none is provided, this can be injected in {@link
-     * #enable(InjectorProperty[])}.
+     * #apply(InjectorProperty)}.
      *
      * @return The default target
      */
@@ -342,12 +342,13 @@ public abstract class SQLMan<T> implements ISQLMan<T> {
     }
 
     @Override
-    public void enable(InjectorProperty<?>... properties) {
-        Bindings.valuesOfType(SQLColumnProperty.class, properties).forEach(property -> {
-            Tuple<String, ColumnIdentifier<?>> identifier = property.value();
+    public void apply(InjectorProperty<?> property) throws ApplicationException {
+        if (property instanceof SQLColumnProperty columnProperty) {
+            Tuple<String, ColumnIdentifier<?>> identifier = columnProperty.value();
             this.identifiers.put(identifier.getKey(), identifier.getValue());
-        });
-
-        this.resetOnStore = Bindings.value(SQLResetBehaviorProperty.KEY, Boolean.class, properties).or(true);
+        }
+        else if (property instanceof SQLResetBehaviorProperty resetBehaviorProperty) {
+            this.resetOnStore = resetBehaviorProperty.value();
+        }
     }
 }

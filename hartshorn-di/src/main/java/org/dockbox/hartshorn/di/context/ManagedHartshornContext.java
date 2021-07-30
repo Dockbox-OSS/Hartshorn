@@ -25,6 +25,7 @@ import org.dockbox.hartshorn.di.ProvisionFailure;
 import org.dockbox.hartshorn.di.annotations.activate.Activator;
 import org.dockbox.hartshorn.di.annotations.inject.Wired;
 import org.dockbox.hartshorn.di.annotations.service.ServiceActivator;
+import org.dockbox.hartshorn.di.binding.Bindings;
 import org.dockbox.hartshorn.di.inject.InjectionModifier;
 import org.dockbox.hartshorn.di.properties.InjectableType;
 import org.dockbox.hartshorn.di.properties.InjectorProperty;
@@ -118,13 +119,11 @@ public abstract class ManagedHartshornContext extends DefaultContext implements 
                     }
                 })
                 .filter(Objects::nonNull)
-                .map(fieldInstance -> (InjectableType) fieldInstance)
-                .filter(InjectableType::canEnable)
                 .forEach(injectableType -> {
                     try {
-                        injectableType.enable();
+                        Bindings.enable(injectableType);
                     } catch (ApplicationException e) {
-                        throw new RuntimeException(e);
+                        throw e.runtime();
                     }
                 });
     }

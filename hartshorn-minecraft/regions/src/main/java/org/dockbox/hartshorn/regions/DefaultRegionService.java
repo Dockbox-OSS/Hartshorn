@@ -35,10 +35,17 @@ import java.nio.file.Path;
 import java.util.Set;
 
 @Service(id = "regions")
-public class DefaultRegionService implements RegionService, InjectableType {
+public class DefaultRegionService implements RegionService {
 
-    private RegionsList regions;
-    private Path regionsData;
+    private final RegionsList regions;
+    private final Path regionsData;
+
+    public DefaultRegionService() {
+        final FileManager fileManager = Hartshorn.context().get(FileManager.class);
+        this.regionsData = fileManager.data(DefaultRegionService.class).resolve("regions.sqlite");
+        fileManager.createFileIfNotExists(this.regionsData);
+        this.regions = RegionsList.restore(this.regionsData);
+    }
 
     @Override
     public <R extends Region> Exceptional<R> first(Location location, Class<R> type) {
@@ -95,14 +102,6 @@ public class DefaultRegionService implements RegionService, InjectableType {
             if (id.equals(flag.id())) return Exceptional.of(flag.restore());
         }
         return Exceptional.empty();
-    }
-
-    @Override
-    public void enable(InjectorProperty<?>... properties) {
-        final FileManager fileManager = Hartshorn.context().get(FileManager.class);
-        this.regionsData = fileManager.data(DefaultRegionService.class).resolve("regions.sqlite");
-        fileManager.createFileIfNotExists(this.regionsData);
-        this.regions = RegionsList.restore(this.regionsData);
     }
 
     public Set<PersistentFlagModel> flags() {

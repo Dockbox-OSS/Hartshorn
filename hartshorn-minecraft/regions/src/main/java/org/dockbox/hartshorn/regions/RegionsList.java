@@ -22,7 +22,7 @@ import org.dockbox.hartshorn.api.domain.FileTypes;
 import org.dockbox.hartshorn.api.exceptions.Except;
 import org.dockbox.hartshorn.di.properties.BindingMetaProperty;
 import org.dockbox.hartshorn.persistence.SQLMan;
-import org.dockbox.hartshorn.persistence.dialects.sqlite.SQLitePathProperty;
+import org.dockbox.hartshorn.persistence.dialects.sqlite.PathProperty;
 import org.dockbox.hartshorn.persistence.exceptions.InvalidConnectionException;
 import org.dockbox.hartshorn.persistence.table.Table;
 import org.dockbox.hartshorn.persistence.table.exceptions.IdentifierMismatchException;
@@ -63,7 +63,7 @@ public class RegionsList {
     }
 
     public void save(Path file) {
-        final SQLMan<?> sql = Hartshorn.context().get(SQLMan.class, BindingMetaProperty.of(FileTypes.SQLITE), new SQLitePathProperty(file));
+        final SQLMan<?> sql = Hartshorn.context().get(SQLMan.class, BindingMetaProperty.of(FileTypes.SQLITE), new PathProperty(file));
         try {
             sql.store("regions", this.regionTable());
         }
@@ -74,12 +74,13 @@ public class RegionsList {
 
     public static RegionsList restore(Path file) {
         final RegionsList regionsList = new RegionsList();
-        final SQLMan<?> sql = Hartshorn.context().get(SQLMan.class, BindingMetaProperty.of(FileTypes.SQLITE), new SQLitePathProperty(file));
+        final SQLMan<?> sql = Hartshorn.context().get(SQLMan.class, BindingMetaProperty.of(FileTypes.SQLITE), new PathProperty(file));
 
         try {
-            final Table regions = sql.table("regions", Table.of(PersistentRegion.class));
-            final List<CustomRegion> rows = regions.restore(PersistentRegion.class);
-            regionsList.regions.addAll(rows);
+            regionsList.regions.addAll(sql
+                    .table("regions", Table.of(PersistentRegion.class))
+                    .restore(PersistentRegion.class)
+            );
         }
         catch (InvalidConnectionException e) {
             Except.handle(e);

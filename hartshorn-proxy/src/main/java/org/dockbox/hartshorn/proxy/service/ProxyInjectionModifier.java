@@ -32,7 +32,9 @@ public class ProxyInjectionModifier implements InjectionModifier<UseProxying> {
 
     @Override
     public <T> boolean preconditions(Class<T> type, @Nullable T instance, InjectorProperty<?>... properties) {
-        return !Bindings.properties(ProxyProperty.KEY, Class.class, properties).isEmpty();
+        // Unchecked as ProxyProperty has generic type parameters
+        //noinspection unchecked
+        return Bindings.has(ProxyProperty.class, properties);
     }
 
     @Override

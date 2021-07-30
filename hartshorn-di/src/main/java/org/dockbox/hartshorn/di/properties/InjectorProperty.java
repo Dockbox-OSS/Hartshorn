@@ -17,9 +17,7 @@
 
 package org.dockbox.hartshorn.di.properties;
 
+@FunctionalInterface
 public interface InjectorProperty<T> {
-
-    String key();
-
     T value();
 }

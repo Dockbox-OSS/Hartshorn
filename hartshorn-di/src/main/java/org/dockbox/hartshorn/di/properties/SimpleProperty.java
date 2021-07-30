@@ -25,7 +25,6 @@ import lombok.Getter;
 public class SimpleProperty<T> implements InjectorProperty<T> {
 
     private final T value;
-    private final String key;
 
     @SuppressWarnings("unchecked")
     public Class<T> type() {

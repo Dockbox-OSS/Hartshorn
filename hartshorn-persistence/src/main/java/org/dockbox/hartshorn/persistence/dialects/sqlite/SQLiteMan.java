@@ -18,9 +18,9 @@
 package org.dockbox.hartshorn.persistence.dialects.sqlite;
 
 import org.dockbox.hartshorn.api.domain.FileTypes;
+import org.dockbox.hartshorn.api.exceptions.ApplicationException;
 import org.dockbox.hartshorn.di.annotations.inject.Binds;
 import org.dockbox.hartshorn.di.annotations.inject.Named;
-import org.dockbox.hartshorn.di.binding.Bindings;
 import org.dockbox.hartshorn.di.properties.InjectorProperty;
 import org.dockbox.hartshorn.persistence.ISQLMan;
 import org.dockbox.hartshorn.persistence.SQLMan;
@@ -36,7 +36,6 @@ import java.sql.SQLException;
 @Binds(value = ISQLMan.class, named = @Named(value = FileTypes.SQLITE))
 public class SQLiteMan extends SQLMan<Path> {
 
-    public static final String PATH_KEY = "sqliteFilePath";
     private Path filePath;
 
     @Override
@@ -61,16 +60,20 @@ public class SQLiteMan extends SQLMan<Path> {
     }
 
     @Override
+    public void enable() {
+        if (this.filePath == null) throw new IllegalArgumentException("Missing target file path");
+    }
+
+    @Override
     protected SQLDialect dialect() {
         return SQLDialect.SQLITE;
     }
 
     @Override
-    public void enable(InjectorProperty<?>... properties) {
-        Bindings.value(PATH_KEY, Path.class, properties)
-                .present(path -> this.filePath = path)
-                .orThrow(() -> new IllegalArgumentException("Missing value for '" + PATH_KEY + "'"));
-
-        super.enable(properties);
+    public void apply(InjectorProperty<?> property) throws ApplicationException {
+        super.apply(property);
+        if (property instanceof PathProperty pathProperty) {
+            this.filePath = pathProperty.value();
+        }
     }
 }

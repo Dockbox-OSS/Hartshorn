@@ -35,13 +35,8 @@ import java.util.ResourceBundle;
 public class ResourceServiceTests {
 
     private final ResourceService service = new SimpleResourceService() {
-        @Override
-        public void enable(InjectorProperty<?>... properties) {
+        static {
             for (Language value : Language.values()) bundles.put(value, createDemoBundle("Demo:" + value.code()));
-        }
-
-        {
-            this.enable();
         }
     };
 

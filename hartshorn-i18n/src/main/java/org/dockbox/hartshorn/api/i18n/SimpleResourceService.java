@@ -23,8 +23,6 @@ import org.dockbox.hartshorn.api.i18n.common.Language;
 import org.dockbox.hartshorn.api.i18n.common.ResourceEntry;
 import org.dockbox.hartshorn.api.i18n.entry.Resource;
 import org.dockbox.hartshorn.di.annotations.inject.Binds;
-import org.dockbox.hartshorn.di.properties.InjectableType;
-import org.dockbox.hartshorn.di.properties.InjectorProperty;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -39,23 +37,20 @@ import javax.inject.Singleton;
 
 @Singleton
 @Binds(ResourceService.class)
-public class SimpleResourceService implements ResourceService, InjectableType {
+public class SimpleResourceService implements ResourceService {
 
     protected static final Map<Language, ResourceBundle> bundles = HartshornUtils.emptyConcurrentMap();
 
-    @Override
-    public boolean canEnable() {
-        return bundles.isEmpty();
-    }
-
-    @Override
-    public void enable(InjectorProperty<?>... properties) {
-        for (Language language : Language.values()) {
-            try {
-                ResourceBundle bundle = ResourceBundle.getBundle("hartshorn.translations", language.locale());
-                SimpleResourceService.bundles.put(language, bundle);
-            } catch (Throwable e) {
-                Except.handle(e);
+    public SimpleResourceService() {
+        if (bundles.isEmpty()) {
+            for (Language language : Language.values()) {
+                try {
+                    ResourceBundle bundle = ResourceBundle.getBundle("hartshorn.translations", language.locale());
+                    SimpleResourceService.bundles.put(language, bundle);
+                }
+                catch (Throwable e) {
+                    Except.handle(e);
+                }
             }
         }
     }
