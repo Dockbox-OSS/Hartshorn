@@ -26,6 +26,7 @@ import org.dockbox.hartshorn.sponge.util.SpongeConvert;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.spongepowered.api.data.type.HandTypes;
 import org.spongepowered.api.item.inventory.ItemStack;
+import org.spongepowered.api.item.inventory.equipment.EquipmentType;
 
 import java.util.Collection;
 import java.util.List;
@@ -82,14 +83,8 @@ public class SpongeArmorStandInventory implements SpongeInventory, ArmorStandInv
     public void slot(Item item, Slot slot) {
         this.stand.entity().present(entity -> {
             final ItemStack itemStack = SpongeConvert.toSponge(item);
-            switch (slot) {
-                case HELMET -> entity.setHead(itemStack);
-                case CHESTPLATE -> entity.setChest(itemStack);
-                case LEGGINGS -> entity.setLegs(itemStack);
-                case BOOTS -> entity.setFeet(itemStack);
-                case MAIN_HAND -> entity.setItemInHand(HandTypes.MAIN_HAND, itemStack);
-                case OFF_HAND -> entity.setItemInHand(HandTypes.OFF_HAND, itemStack);
-            }
+            final EquipmentType type = SpongeConvert.toSponge(slot);
+            entity.equipment().slot(type).ifPresent(equipmentSlot -> equipmentSlot.set(itemStack));
         });
     }
 }
