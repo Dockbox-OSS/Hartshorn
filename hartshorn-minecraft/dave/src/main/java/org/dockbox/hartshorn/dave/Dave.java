@@ -19,20 +19,21 @@ package org.dockbox.hartshorn.dave;
 
 import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.events.annotations.Listener;
+import org.dockbox.hartshorn.api.exceptions.ApplicationException;
 import org.dockbox.hartshorn.api.i18n.entry.Resource;
 import org.dockbox.hartshorn.api.i18n.text.actions.HoverAction;
 import org.dockbox.hartshorn.api.i18n.text.pagination.PaginationBuilder;
 import org.dockbox.hartshorn.api.task.TaskRunner;
+import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.commands.RunCommandAction;
 import org.dockbox.hartshorn.commands.annotations.Command;
 import org.dockbox.hartshorn.commands.context.CommandContext;
-import org.dockbox.hartshorn.commands.CommandSource;
-import org.dockbox.hartshorn.discord.DiscordCommandSource;
 import org.dockbox.hartshorn.dave.models.DaveTriggers;
 import org.dockbox.hartshorn.di.annotations.inject.Wired;
+import org.dockbox.hartshorn.di.binding.Bindings;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.di.properties.InjectableType;
-import org.dockbox.hartshorn.di.properties.InjectorProperty;
+import org.dockbox.hartshorn.discord.DiscordCommandSource;
 import org.dockbox.hartshorn.discord.events.DiscordChatReceivedEvent;
 import org.dockbox.hartshorn.persistence.FileManager;
 import org.dockbox.hartshorn.persistence.FileType;
@@ -104,13 +105,13 @@ public class Dave implements InjectableType {
     }
 
     @Command(value = "refresh", permission = Dave.DAVE_REFRESH)
-    public void refresh(CommandSource source) {
-        this.enable();
+    public void refresh(CommandSource source) throws ApplicationException {
+        Bindings.enable(this);
         source.sendWithPrefix(this.resources.reload());
     }
 
     @Override
-    public void enable(InjectorProperty<?>... properties) {
+    public void enable() {
         FileManager fm = this.context.get(FileManager.class, FileTypeProperty.of(FileType.YAML));
         Path triggerFile = fm.dataFile(Dave.class, "triggers");
         if (HartshornUtils.empty(triggerFile)) this.restoreTriggerFile(fm, triggerFile);
@@ -131,8 +132,8 @@ public class Dave implements InjectableType {
     }
 
     @Listener
-    public void on(EngineChangedState<Reload> event) {
-        this.enable();
+    public void on(EngineChangedState<Reload> event) throws ApplicationException {
+        Bindings.enable(this);
     }
 
     @Listener

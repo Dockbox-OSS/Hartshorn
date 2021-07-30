@@ -32,7 +32,7 @@ import org.dockbox.hartshorn.persistence.FileManager;
 import org.dockbox.hartshorn.persistence.FileType;
 import org.dockbox.hartshorn.persistence.FileTypeProperty;
 import org.dockbox.hartshorn.persistence.SQLMan;
-import org.dockbox.hartshorn.persistence.dialects.sqlite.SQLitePathProperty;
+import org.dockbox.hartshorn.persistence.dialects.sqlite.PathProperty;
 import org.dockbox.hartshorn.persistence.exceptions.InvalidConnectionException;
 import org.dockbox.hartshorn.persistence.exceptions.NoSuchTableException;
 import org.dockbox.hartshorn.persistence.properties.SQLColumnProperty;
@@ -115,7 +115,7 @@ public class OldPlotsService {
 
         return this.context.get(SQLMan.class,
                 FileTypeProperty.of(FileType.SQLITE),
-                new SQLitePathProperty(path),
+                new PathProperty(path),
                 new SQLColumnProperty("id", OldPlotsIdentifiers.PLOT_ID),
                 new SQLColumnProperty("plot_id_x", OldPlotsIdentifiers.PLOT_X),
                 new SQLColumnProperty("plot_id_z", OldPlotsIdentifiers.PLOT_Z),

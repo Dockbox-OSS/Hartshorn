@@ -27,7 +27,6 @@ import lombok.Getter;
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 public class BindingMetaProperty implements InjectorProperty<Named> {
 
-    public static final String KEY = "HartshornInternalBindingMetaProperty";
     @Getter
     private final Named value;
 
@@ -41,10 +40,5 @@ public class BindingMetaProperty implements InjectorProperty<Named> {
 
     public static BindingMetaProperty of(Named meta) {
         return new BindingMetaProperty(meta);
-    }
-
-    @Override
-    public String key() {
-        return KEY;
     }
 }

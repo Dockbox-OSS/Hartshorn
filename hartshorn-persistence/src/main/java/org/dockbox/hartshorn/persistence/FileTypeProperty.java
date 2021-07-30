@@ -19,26 +19,17 @@ package org.dockbox.hartshorn.persistence;
 
 import org.dockbox.hartshorn.di.properties.InjectorProperty;
 
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public final class FileTypeProperty implements InjectorProperty<FileType> {
 
-    public static final String KEY = "HartshornInternalFileTypeProperty";
-    private final FileType fileType;
-
-    private FileTypeProperty(FileType fileType) {
-        this.fileType = fileType;
-    }
+    @Getter
+    private final FileType value;
 
     public static FileTypeProperty of(FileType fileType) {
         return new FileTypeProperty(fileType);
-    }
-
-    @Override
-    public String key() {
-        return FileTypeProperty.KEY;
-    }
-
-    @Override
-    public FileType value() {
-        return this.fileType;
     }
 }

@@ -29,15 +29,8 @@ import lombok.Getter;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class PersistenceProperty implements InjectorProperty<Set<PersistenceModifier>> {
 
-    public static String KEY = "HartshornPersistenceProperty";
-
     @Getter
     private final Set<PersistenceModifier> value;
-
-    @Override
-    public String key() {
-        return KEY;
-    }
 
     public static PersistenceProperty of(PersistenceModifier... modifiers) {
         return new PersistenceProperty(HartshornUtils.asSet(modifiers));

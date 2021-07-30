@@ -1002,4 +1002,8 @@ public enum ItemTypes {
 
     @Getter
     private final String id;
+
+    public Item item() {
+        return Item.of(this);
+    }
 }

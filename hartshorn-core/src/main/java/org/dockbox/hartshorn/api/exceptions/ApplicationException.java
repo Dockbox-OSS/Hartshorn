@@ -35,4 +35,8 @@ public class ApplicationException extends Exception {
     public ApplicationException(Throwable cause) {
         super(cause);
     }
+
+    public RuntimeException runtime() {
+        return new RuntimeException(this);
+    }
 }

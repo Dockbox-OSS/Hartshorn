@@ -29,7 +29,6 @@ import java.util.Map;
 public class JUnitConfigurationManager extends SimpleConfigurationManager {
 
     public static Map<String, Object> cache = HartshornUtils.emptyConcurrentMap();
-    private static boolean enabled = false;
 
     @Bound
     public JUnitConfigurationManager(Path path) {
@@ -43,7 +42,6 @@ public class JUnitConfigurationManager extends SimpleConfigurationManager {
 
     public static void reset() {
         cache.clear();
-        enabled = false;
     }
 
     @Override
@@ -51,17 +49,6 @@ public class JUnitConfigurationManager extends SimpleConfigurationManager {
         return HartshornUtils.ofEntries(
                 HartshornUtils.entry(this.fileKey(), cache)
         );
-    }
-
-    @Override
-    public boolean canEnable() {
-        return !enabled && super.canEnable();
-    }
-
-    @Override
-    public void enable(InjectorProperty<?>... properties) throws ApplicationException {
-        super.enable(properties);
-        enabled = true;
     }
 
     @Override

@@ -36,7 +36,7 @@ import org.dockbox.hartshorn.di.inject.InjectionModifier;
 import org.dockbox.hartshorn.di.inject.Injector;
 import org.dockbox.hartshorn.di.inject.ProviderContext;
 import org.dockbox.hartshorn.di.inject.wired.BoundContext;
-import org.dockbox.hartshorn.di.properties.InjectableType;
+import org.dockbox.hartshorn.di.properties.BindingMetaProperty;
 import org.dockbox.hartshorn.di.properties.InjectorProperty;
 import org.dockbox.hartshorn.di.properties.UseFactory;
 import org.dockbox.hartshorn.di.services.ComponentLocator;
@@ -81,52 +81,56 @@ public class HartshornApplicationContext extends ManagedHartshornContext {
     }
 
     @Override
-    public <T> T get(Class<T> type, InjectorProperty<?>... additionalProperties) {
-        T typeInstance = null;
+    public <T> T get(Class<T> type, Named named) {
+        return this.get(type, BindingMetaProperty.of(named));
+    }
+
+    @Override
+    public <T> T get(Class<T> type, InjectorProperty<?>... properties) {
+        T instance = null;
 
         if (this.singletons.containsKey(type)) //noinspection unchecked
             return (T) this.singletons.get(type);
 
-        Exceptional<Object[]> value = Bindings.value(UseFactory.KEY, Object[].class, additionalProperties);
+        Exceptional<Object[]> value = Bindings.lookup(UseFactory.class, properties);
         if (value.present()) {
-            typeInstance = this.get(TypeFactory.class).with(additionalProperties).create(type, value.get());
+            instance = this.get(TypeFactory.class).with(properties).create(type, value.get());
         } else {
             // Type instance can be present if it is a service. These instances are also created using Guice
             // injectors and therefore do not need late member injection here.
-            typeInstance = this.create(type, typeInstance, additionalProperties);
+            instance = this.create(type, instance, properties);
         }
 
         // Recreating field instances ensures all fields are created through bootstrapping, allowing injection
         // points to apply correctly
-        this.populate(typeInstance);
+        this.populate(instance);
 
-        typeInstance = this.inject(type, typeInstance, additionalProperties);
+        instance = this.inject(type, instance, properties);
 
         for (InjectionModifier<?> serviceModifier : this.injectionModifiers) {
-            if (serviceModifier.preconditions(type, typeInstance, additionalProperties))
-                typeInstance = serviceModifier.process(this, type, typeInstance, additionalProperties);
+            if (serviceModifier.preconditions(type, instance, properties))
+                instance = serviceModifier.process(this, type, instance, properties);
         }
 
         // Enables all fields which are decorated with @Wired(enable=true)
-        this.enable(typeInstance);
+        this.enable(instance);
 
         // Inject properties if applicable
-        if (typeInstance instanceof InjectableType && ((InjectableType) typeInstance).canEnable()) {
-            try {
-                ((InjectableType) typeInstance).enable(additionalProperties);
-            } catch (ApplicationException e) {
-                throw new RuntimeException(e);
-            }
+        try {
+            Bindings.enable(instance, properties);
+        }
+        catch (ApplicationException e) {
+            throw e.runtime();
         }
 
         final MetaProvider meta = ApplicationContextAware.instance().context().meta();
         // Ensure the order of resolution is to first resolve the instance singleton state, and only after check the type state.
         // Typically the implementation decided whether it should be a singleton, so this cuts time complexity in half.
-        if (typeInstance != null && (meta.singleton(typeInstance.getClass()) || meta.singleton(type)))
-            this.singletons.put(type, typeInstance);
+        if (instance != null && (meta.singleton(instance.getClass()) || meta.singleton(type)))
+            this.singletons.put(type, instance);
 
         // May be null, but we have used all possible injectors, it's up to the developer now
-        return typeInstance;
+        return instance;
     }
 
     @Override
@@ -213,8 +217,8 @@ public class HartshornApplicationContext extends ManagedHartshornContext {
     }
 
     @Override
-    public <T, I extends T> Exceptional<BoundContext<T, I>> firstWire(Class<T> contract, InjectorProperty<Named> property) {
-        return this.internalInjector().firstWire(contract, property);
+    public <T, I extends T> Exceptional<BoundContext<T, I>> firstWire(Class<T> contract, Named named) {
+        return this.internalInjector().firstWire(contract, named);
     }
 
     @Override

@@ -124,22 +124,19 @@ public abstract class DefaultAbstractFileManager implements FileManager {
     }
 
     @Override
-    public void enable(InjectorProperty<?>... properties) throws ApplicationException {
-        for (InjectorProperty<?> property : properties) {
-            if (property instanceof FileTypeProperty) {
-                final FileType fileType = ((FileTypeProperty) property).value();
+    public void apply(InjectorProperty<?> property) throws ApplicationException {
+        if (property instanceof FileTypeProperty) {
+            final FileType fileType = ((FileTypeProperty) property).value();
 
-                if (fileType.type().equals(PersistenceType.RAW)) {
-                    this.fileType(fileType);
-                }
-                else {
-                    throw new IllegalArgumentException("Unsupported persistence type: " + fileType.type() + ", expected: " + PersistenceType.RAW);
-                }
-                break;
+            if (fileType.type().equals(PersistenceType.RAW)) {
+                this.fileType(fileType);
             }
-            else if (property instanceof PersistenceProperty) {
-                this.mapper.enable(property);
+            else {
+                throw new IllegalArgumentException("Unsupported persistence type: " + fileType.type() + ", expected: " + PersistenceType.RAW);
             }
+        }
+        else if (property instanceof PersistenceProperty) {
+            this.mapper.apply(property);
         }
     }
 

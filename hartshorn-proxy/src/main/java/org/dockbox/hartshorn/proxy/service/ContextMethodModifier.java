@@ -18,6 +18,7 @@
 package org.dockbox.hartshorn.proxy.service;
 
 import org.dockbox.hartshorn.api.Hartshorn;
+import org.dockbox.hartshorn.di.binding.Bindings;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.di.properties.BindingMetaProperty;
 import org.dockbox.hartshorn.proxy.annotations.Provided;
@@ -40,7 +41,7 @@ public class ContextMethodModifier extends ServiceAnnotatedMethodModifier<Provid
             if ("".equals(name)) {
                 return (R) Hartshorn.context().get(methodContext.returnType());
             } else {
-                return (R) Hartshorn.context().get(methodContext.returnType(), BindingMetaProperty.of(name));
+                return (R) Hartshorn.context().get(methodContext.returnType(), Bindings.named(name));
             }
         };
     }

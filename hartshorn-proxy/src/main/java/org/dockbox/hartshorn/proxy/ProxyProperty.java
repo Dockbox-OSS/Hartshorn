@@ -31,7 +31,6 @@ import lombok.Setter;
 
 public final class ProxyProperty<T, R> implements InjectorProperty<Class<T>> {
 
-    public static final String KEY = "HartshornInternalProxyKey";
     @Getter
     private final Class<T> value;
     @Getter
@@ -66,11 +65,6 @@ public final class ProxyProperty<T, R> implements InjectorProperty<Class<T>> {
 
     public static <T, R> ProxyProperty<T, R> of(Class<T> type, Method target, ProxyFunction<T, R> proxyFunction) {
         return new ProxyProperty<>(type, target, proxyFunction);
-    }
-
-    @Override
-    public String key() {
-        return KEY;
     }
 
     public Class<?> targetClass() {
