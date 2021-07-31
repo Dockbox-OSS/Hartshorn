@@ -30,6 +30,8 @@ import java.util.Map;
 
 public interface Region extends KeyHolder<Region> {
 
+    long id();
+
     Text name();
 
     Exceptional<Player> owner();

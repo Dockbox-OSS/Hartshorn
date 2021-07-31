@@ -15,11 +15,12 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.regions;
+package org.dockbox.hartshorn.regions.persistence;
 
 import org.dockbox.hartshorn.api.domain.tuple.Vector3N;
 import org.dockbox.hartshorn.api.i18n.text.Text;
 import org.dockbox.hartshorn.persistence.PersistentModel;
+import org.dockbox.hartshorn.regions.CustomRegion;
 
 import java.util.UUID;
 
@@ -29,6 +30,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PersistentRegion implements PersistentModel<CustomRegion> {
+
+    private long id;
 
     private String name;
     private String owner;

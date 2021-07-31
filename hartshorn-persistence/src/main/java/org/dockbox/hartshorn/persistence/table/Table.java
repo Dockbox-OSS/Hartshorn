@@ -17,12 +17,10 @@
 
 package org.dockbox.hartshorn.persistence.table;
 
-import com.fasterxml.jackson.databind.util.BeanUtil;
-
 import org.dockbox.hartshorn.api.Hartshorn;
-import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.annotations.Entity;
 import org.dockbox.hartshorn.api.annotations.Property;
+import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.exceptions.ApplicationException;
 import org.dockbox.hartshorn.persistence.PersistentCapable;
 import org.dockbox.hartshorn.persistence.PersistentModel;
@@ -33,16 +31,16 @@ import org.dockbox.hartshorn.persistence.table.column.SimpleColumnIdentifier;
 import org.dockbox.hartshorn.persistence.table.exceptions.EmptyEntryException;
 import org.dockbox.hartshorn.persistence.table.exceptions.IdentifierMismatchException;
 import org.dockbox.hartshorn.persistence.table.exceptions.UnknownIdentifierException;
-import org.dockbox.hartshorn.util.Reflect;
 import org.dockbox.hartshorn.util.HartshornUtils;
+import org.dockbox.hartshorn.util.Reflect;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.beans.Beans;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -628,6 +626,8 @@ public class Table {
         if (!DEFINITIONS.containsKey(type)) {
             final List<ColumnIdentifier<?>> identifiers = HartshornUtils.emptyList();
             for (Field field : type.getDeclaredFields()) {
+                if (Modifier.isTransient(field.getModifiers())) continue;
+
                 final String name = Reflect.fieldName(field);
                 identifiers.add(new SimpleColumnIdentifier<>(name, field.getType()));
             }

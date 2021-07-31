@@ -38,6 +38,6 @@ public interface RegionFlag<T> {
     }
 
     default PersistentFlagModel model() {
-        return new PersistentFlagModel(this.id(), this.description().model(), this.getClass().getCanonicalName());
+        return new PersistentFlagModel(this.id(), this.description(), this.getClass().getCanonicalName());
     }
 }

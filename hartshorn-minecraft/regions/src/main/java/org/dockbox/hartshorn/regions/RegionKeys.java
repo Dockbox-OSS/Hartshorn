@@ -23,7 +23,6 @@ import org.dockbox.hartshorn.api.keys.Keys;
 import org.dockbox.hartshorn.server.minecraft.dimension.position.Location;
 import org.dockbox.hartshorn.server.minecraft.players.Player;
 
-@SuppressWarnings("unchecked")
 public final class RegionKeys {
 
     public static final Key<Location, Region> REGION = Keys.builder(Location.class, Region.class)

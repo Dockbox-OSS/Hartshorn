@@ -18,7 +18,10 @@
 package org.dockbox.hartshorn.regions.flags;
 
 import org.dockbox.hartshorn.api.Hartshorn;
+import org.dockbox.hartshorn.api.i18n.common.Language;
+import org.dockbox.hartshorn.api.i18n.common.ResourceEntry;
 import org.dockbox.hartshorn.api.i18n.common.ResourceEntryModel;
+import org.dockbox.hartshorn.persistence.PersistentModel;
 import org.dockbox.hartshorn.util.Reflect;
 
 import lombok.AllArgsConstructor;
@@ -31,13 +34,25 @@ public class PersistentFlagModel {
 
     @Getter
     private String id;
-    private ResourceEntryModel description;
+    private String descriptionKey;
+    private String descriptionFallback;
+    private String descriptionLanguage;
     private String type;
+
+    public PersistentFlagModel(String id, ResourceEntry description, String type) {
+        this.id = id;
+        this.descriptionKey = description.key();
+        this.descriptionFallback = description.asString();
+        this.descriptionLanguage = description.language().name();
+        this.type = type;
+    }
 
     public RegionFlag<?> restore() {
         final Class<?> flagType = Reflect.lookup(this.type);
+
         if (Reflect.assigns(RegionFlag.class, flagType)) {
-            return (RegionFlag<?>) Hartshorn.context().get(flagType, this.id, this.description.toPersistentCapable());
+            final PersistentModel<ResourceEntry> description = new ResourceEntryModel(this.descriptionKey, this.descriptionFallback, Language.valueOf(this.descriptionLanguage));
+            return (RegionFlag<?>) Hartshorn.context().get(flagType, this.id, description.toPersistentCapable());
         }
         return null;
     }

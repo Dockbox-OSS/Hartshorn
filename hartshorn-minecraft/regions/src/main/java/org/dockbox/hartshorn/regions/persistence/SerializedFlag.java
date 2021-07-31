@@ -15,10 +15,11 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.regions;
+package org.dockbox.hartshorn.regions.persistence;
 
 import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.regions.RegionService;
 import org.dockbox.hartshorn.regions.flags.RegionFlag;
 
 import lombok.AllArgsConstructor;

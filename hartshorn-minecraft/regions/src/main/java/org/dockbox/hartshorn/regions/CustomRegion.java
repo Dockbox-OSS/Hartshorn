@@ -27,6 +27,8 @@ import org.dockbox.hartshorn.regions.events.CancellableRegionEvent;
 import org.dockbox.hartshorn.regions.events.flags.RegionFlagAddedEvent;
 import org.dockbox.hartshorn.regions.events.flags.RegionFlagRemovedEvent;
 import org.dockbox.hartshorn.regions.flags.RegionFlag;
+import org.dockbox.hartshorn.regions.persistence.PersistentRegion;
+import org.dockbox.hartshorn.regions.persistence.SerializedFlag;
 import org.dockbox.hartshorn.server.minecraft.dimension.Worlds;
 import org.dockbox.hartshorn.server.minecraft.dimension.position.Location;
 import org.dockbox.hartshorn.server.minecraft.dimension.world.World;
@@ -41,6 +43,8 @@ import lombok.Getter;
 
 @Posting({ RegionFlagAddedEvent.class, RegionFlagRemovedEvent.class })
 public class CustomRegion implements Region, PersistentCapable<PersistentRegion> {
+
+    @Getter private long id;
 
     @Getter private Vector3N cornerA;
     @Getter private Vector3N cornerB;
@@ -145,7 +149,7 @@ public class CustomRegion implements Region, PersistentCapable<PersistentRegion>
 
     @Override
     public PersistentRegion model() {
-        return new PersistentRegion(this.name().toLegacy(), this.owner.toString(), this.world.toString(),
+        return new PersistentRegion(this.id(), this.name().toLegacy(), this.owner.toString(), this.world.toString(),
                 this.cornerA().xI(), this.cornerA().yI(), this.cornerA().zI(),
                 this.cornerB().xI(), this.cornerB().yI(), this.cornerB().zI());
     }

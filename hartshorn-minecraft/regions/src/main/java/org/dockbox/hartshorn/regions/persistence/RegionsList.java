@@ -15,7 +15,7 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.regions;
+package org.dockbox.hartshorn.regions.persistence;
 
 import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.FileTypes;
@@ -26,12 +26,14 @@ import org.dockbox.hartshorn.persistence.dialects.sqlite.PathProperty;
 import org.dockbox.hartshorn.persistence.exceptions.InvalidConnectionException;
 import org.dockbox.hartshorn.persistence.table.Table;
 import org.dockbox.hartshorn.persistence.table.exceptions.IdentifierMismatchException;
+import org.dockbox.hartshorn.regions.CustomRegion;
 import org.dockbox.hartshorn.regions.flags.PersistentFlagModel;
 import org.dockbox.hartshorn.regions.flags.RegionFlag;
 import org.dockbox.hartshorn.util.HartshornUtils;
 
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import lombok.Getter;
@@ -62,10 +64,34 @@ public class RegionsList {
         return table;
     }
 
+    private Table flagsTable() throws IdentifierMismatchException {
+        final Table table = Table.of(PersistentFlagModel.class);
+        for (PersistentFlagModel flag : this.flags()) {
+            table.addRow(flag);
+        }
+        return table;
+    }
+
+    private Table regionFlagsTable() throws IdentifierMismatchException {
+        final Table table = Table.of(PersistentRegionFlag.class);
+        for (CustomRegion region : this.regions) {
+            for (Entry<RegionFlag<?>, ?> entry : region.flags().entrySet()) {
+                // TODO GLieben: Addition to SQLMan, #insert, #delete, etc quick actions/queries
+                //noinspection unchecked
+                final RegionFlag<Object> key = (RegionFlag<Object>) entry.getKey();
+                final String value = key.serialize(entry.getValue());
+                table.addRow(new PersistentRegionFlag(region.id(), key.id(), value));
+            }
+        }
+        return table;
+    }
+
     public void save(Path file) {
         final SQLMan<?> sql = Hartshorn.context().get(SQLMan.class, BindingMetaProperty.of(FileTypes.SQLITE), new PathProperty(file));
         try {
             sql.store("regions", this.regionTable());
+            sql.store("flags", this.flagsTable());
+            sql.store("regionflags", this.regionFlagsTable());
         }
         catch (InvalidConnectionException | IdentifierMismatchException e) {
             Except.handle(e);
