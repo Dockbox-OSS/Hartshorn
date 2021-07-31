@@ -32,7 +32,7 @@ import lombok.Getter;
 @Configuration
 public class TargetGlobalConfig implements GlobalConfig {
 
-    @Value(value = "hartshorn.exceptions.stacktraces", or = "false")
+    @Value(value = "hartshorn.exceptions.stacktraces", or = "true")
     private boolean stacktraces;
 
     @Value(value = "hartshorn.exceptions.level", or = "FRIENDLY")
