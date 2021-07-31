@@ -21,7 +21,7 @@ import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.FileTypes;
 import org.dockbox.hartshorn.api.exceptions.Except;
 import org.dockbox.hartshorn.di.properties.BindingMetaProperty;
-import org.dockbox.hartshorn.persistence.SQLMan;
+import org.dockbox.hartshorn.persistence.SqlService;
 import org.dockbox.hartshorn.persistence.dialects.sqlite.PathProperty;
 import org.dockbox.hartshorn.persistence.exceptions.InvalidConnectionException;
 import org.dockbox.hartshorn.persistence.table.Table;
@@ -87,7 +87,7 @@ public class RegionsList {
     }
 
     public void save(Path file) {
-        final SQLMan<?> sql = Hartshorn.context().get(SQLMan.class, BindingMetaProperty.of(FileTypes.SQLITE), new PathProperty(file));
+        final SqlService<?> sql = Hartshorn.context().get(SqlService.class, BindingMetaProperty.of(FileTypes.SQLITE), new PathProperty(file));
         try {
             sql.store("regions", this.regionTable());
             sql.store("flags", this.flagsTable());
@@ -100,7 +100,7 @@ public class RegionsList {
 
     public static RegionsList restore(Path file) {
         final RegionsList regionsList = new RegionsList();
-        final SQLMan<?> sql = Hartshorn.context().get(SQLMan.class, BindingMetaProperty.of(FileTypes.SQLITE), new PathProperty(file));
+        final SqlService<?> sql = Hartshorn.context().get(SqlService.class, BindingMetaProperty.of(FileTypes.SQLITE), new PathProperty(file));
 
         try {
             regionsList.regions.addAll(sql

@@ -30,7 +30,7 @@ import org.dockbox.hartshorn.persistence.table.column.ColumnIdentifier;
  * @param <T>
  *         The type of the target database source
  */
-public interface ISQLMan<T> extends InjectableType {
+public interface SqlService<T> extends InjectableType {
 
     Table lookup(String name, Table empty) throws InvalidConnectionException;
 

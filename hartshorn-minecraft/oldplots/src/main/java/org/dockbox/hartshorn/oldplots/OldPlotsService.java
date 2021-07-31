@@ -31,7 +31,7 @@ import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.persistence.FileManager;
 import org.dockbox.hartshorn.persistence.FileType;
 import org.dockbox.hartshorn.persistence.FileTypeProperty;
-import org.dockbox.hartshorn.persistence.SQLMan;
+import org.dockbox.hartshorn.persistence.SqlService;
 import org.dockbox.hartshorn.persistence.dialects.sqlite.PathProperty;
 import org.dockbox.hartshorn.persistence.exceptions.InvalidConnectionException;
 import org.dockbox.hartshorn.persistence.exceptions.NoSuchTableException;
@@ -76,7 +76,7 @@ public class OldPlotsService {
         }
         Player player = ctx.get("player");
 
-        SQLMan<?> man = this.sql();
+        SqlService<?> man = this.sql();
         Table plots = man.table("plot");
         plots = plots.where(OldPlotsIdentifiers.UUID, player.uniqueId().toString());
 
@@ -109,11 +109,11 @@ public class OldPlotsService {
                 .send(source);
     }
 
-    private SQLMan<?> sql() {
+    private SqlService<?> sql() {
         Path dataDirectory = this.context.get(FileManager.class).data(OldPlotsService.class);
         Path path = dataDirectory.resolve("oldplots.db");
 
-        return this.context.get(SQLMan.class,
+        return this.context.get(SqlService.class,
                 FileTypeProperty.of(FileType.SQLITE),
                 new PathProperty(path),
                 new SQLColumnProperty("id", OldPlotsIdentifiers.PLOT_ID),
@@ -126,7 +126,7 @@ public class OldPlotsService {
     @Command(value = "optp", arguments = "<id{Int}>", permission = "hartshorn.oldplots.teleport")
     public void teleportCommand(Player source, CommandContext context) throws InvalidConnectionException, NoSuchTableException {
         Integer id = context.get("id");
-        SQLMan<?> man = this.sql();
+        SqlService<?> man = this.sql();
         Table plots = man.table("plot");
         plots = plots.where(OldPlotsIdentifiers.PLOT_ID, id);
         plots.first().present(plot -> {

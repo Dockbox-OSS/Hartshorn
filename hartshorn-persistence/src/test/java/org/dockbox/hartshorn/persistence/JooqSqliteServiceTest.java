@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.persistence;
 
 import org.dockbox.hartshorn.api.exceptions.ApplicationException;
 import org.dockbox.hartshorn.persistence.dialects.sqlite.PathProperty;
-import org.dockbox.hartshorn.persistence.dialects.sqlite.SQLiteMan;
+import org.dockbox.hartshorn.persistence.dialects.sqlite.JooqSqliteService;
 import org.dockbox.hartshorn.persistence.exceptions.InvalidConnectionException;
 import org.dockbox.hartshorn.persistence.table.Table;
 import org.dockbox.hartshorn.test.HartshornRunner;
@@ -35,7 +35,7 @@ import java.nio.file.Path;
 import java.util.UUID;
 
 @ExtendWith(HartshornRunner.class)
-class SQLiteManTest {
+class JooqSqliteServiceTest {
 
     private static final String MAIN_TABLE = "developers";
     private static final String ID_TABLE = "identifiers";
@@ -46,24 +46,24 @@ class SQLiteManTest {
     @Test
     void testCanWriteToFile() {
         Assertions.assertDoesNotThrow(
-                (ThrowingSupplier<? extends ISQLMan<?>>) SQLiteManTest::writeToFile);
+                (ThrowingSupplier<? extends SqlService<?>>) JooqSqliteServiceTest::writeToFile);
     }
 
-    private static ISQLMan<?> writeToFile() throws ApplicationException {
-        ISQLMan<?> man = SQLiteManTest.sql();
+    private static SqlService<?> writeToFile() throws ApplicationException {
+        SqlService<?> man = JooqSqliteServiceTest.sql();
         return writeToFile(man);
     }
 
-    private static SQLiteMan sql() throws ApplicationException {
-        SQLiteMan man = new SQLiteMan();
-        man.apply(new PathProperty(SQLiteManTest.testFile()));
+    private static JooqSqliteService sql() throws ApplicationException {
+        JooqSqliteService man = new JooqSqliteService();
+        man.apply(new PathProperty(JooqSqliteServiceTest.testFile()));
         return man;
     }
 
-    private static ISQLMan<?> writeToFile(ISQLMan<?> man) throws InvalidConnectionException {
-        Table main = SQLiteManTest.populatedMainTable();
+    private static SqlService<?> writeToFile(SqlService<?> man) throws InvalidConnectionException {
+        Table main = JooqSqliteServiceTest.populatedMainTable();
         man.store(MAIN_TABLE, main);
-        Table ids = SQLiteManTest.populatedIdTable();
+        Table ids = JooqSqliteServiceTest.populatedIdTable();
         man.store(ID_TABLE, ids);
         return man;
     }
@@ -99,14 +99,14 @@ class SQLiteManTest {
 
     @Test
     public void testGetTable() throws ApplicationException {
-        ISQLMan<?> man = SQLiteManTest.writeToFile();
+        SqlService<?> man = JooqSqliteServiceTest.writeToFile();
         Table table = man.table(MAIN_TABLE);
-        Assertions.assertEquals(SQLiteManTest.populatedMainTable().count(), table.count());
+        Assertions.assertEquals(JooqSqliteServiceTest.populatedMainTable().count(), table.count());
     }
 
     @Test
     public void testIdentifierProperties() throws ApplicationException {
-        ISQLMan<?> man = SQLiteManTest.writeToFile();
+        SqlService<?> man = JooqSqliteServiceTest.writeToFile();
         Table table = man.table(MAIN_TABLE);
         Table developers = table.where(TestColumnIdentifiers.NUMERAL_ID, 1);
         Assertions.assertEquals(1, developers.count());
@@ -114,20 +114,20 @@ class SQLiteManTest {
 
     @Test
     void dialectReturnsSQLite() throws ApplicationException {
-        SQLMan<?> man = SQLiteManTest.sql();
+        JooqSqlService<?> man = JooqSqliteServiceTest.sql();
         Assertions.assertEquals(SQLDialect.SQLITE, man.dialect());
     }
 
     @Test
     void tablesCanBeDropped() throws ApplicationException {
-        ISQLMan<?> man = SQLiteManTest.writeToFile();
+        SqlService<?> man = JooqSqliteServiceTest.writeToFile();
         man.drop(ID_TABLE);
         Assertions.assertTrue(man.tableSafe(ID_TABLE).absent());
     }
 
     @Test
     void rowsCanBeRemovedByFilter() throws ApplicationException {
-        ISQLMan<?> man = SQLiteManTest.writeToFile();
+        SqlService<?> man = JooqSqliteServiceTest.writeToFile();
         man.deleteIf(ID_TABLE, TestColumnIdentifiers.NUMERAL_ID, 1);
         Table filteredTable = man.table(ID_TABLE).where(TestColumnIdentifiers.NUMERAL_ID, 1);
         Assertions.assertEquals(0, filteredTable.count());

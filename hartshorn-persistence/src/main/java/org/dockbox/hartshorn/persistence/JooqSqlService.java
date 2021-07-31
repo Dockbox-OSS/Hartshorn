@@ -48,7 +48,7 @@ import java.util.Map;
 /**
  * Mid-level manager for communicating with SQL instances. Acts as middlewhere between {@link DSL}
  * and {@link Table}. All functionality inside this manager is designed to expose only the methods
- * as defined in {@link ISQLMan}.
+ * as defined in {@link SqlService}.
  *
  * @param <T>
  *         The type of the target source of a implementation. This is typically passed into
@@ -56,10 +56,10 @@ import java.util.Map;
  *         implementations can act on the given source. If a source should be constant, the
  *         implementation should make this type {@link Void}.
  */
-public abstract class SQLMan<T> implements ISQLMan<T> {
+public abstract class JooqSqlService<T> implements SqlService<T> {
 
     private final Map<String, ColumnIdentifier<?>> identifiers = HartshornUtils.emptyMap();
-    private Boolean resetOnStore = true;
+    private Boolean resetOnStore = false;
 
     private static Field<?>[] convertIdentifiersToFields(Table table) {
         Field<?>[] fields = new Field[table.identifiers().length];
@@ -165,7 +165,7 @@ public abstract class SQLMan<T> implements ISQLMan<T> {
     private <R> R withContext(T target, DSLFunction<R> function) throws InvalidConnectionException {
         DSLContext ctx = this.context(target);
         R r = function.accept(ctx);
-        SQLMan.closeConnection(ctx);
+        JooqSqlService.closeConnection(ctx);
         return r;
     }
 
@@ -298,10 +298,10 @@ public abstract class SQLMan<T> implements ISQLMan<T> {
             // Use .drop() over .deleteIf() here, as the table definition may have changed
             if (reset) this.drop(target, name);
 
-            Field<?>[] fields = SQLMan.convertIdentifiersToFields(table);
-            SQLMan.createTableIfNotExists(name, ctx, fields);
+            Field<?>[] fields = JooqSqlService.convertIdentifiersToFields(table);
+            JooqSqlService.createTableIfNotExists(name, ctx, fields);
             InsertValuesStepN<?> insertStep = ctx.insertInto(DSL.table(name)).columns();
-            SQLMan.populateRemoteTable(insertStep, table, fields);
+            JooqSqlService.populateRemoteTable(insertStep, table, fields);
         });
     }
 
@@ -327,7 +327,7 @@ public abstract class SQLMan<T> implements ISQLMan<T> {
     public <C> void deleteIf(T target, String name, ColumnIdentifier<C> identifier, C value)
             throws InvalidConnectionException {
         this.withContext(target, ctx -> {
-            ctx.delete(DSL.table(name)).where(SQLMan.namedField(identifier).eq(value)).execute();
+            ctx.delete(DSL.table(name)).where(JooqSqlService.namedField(identifier).eq(value)).execute();
         });
     }
 
@@ -338,7 +338,7 @@ public abstract class SQLMan<T> implements ISQLMan<T> {
     private void withContext(T target, DSLConsumer consumer) throws InvalidConnectionException {
         DSLContext ctx = this.context(target);
         consumer.accept(ctx);
-        SQLMan.closeConnection(ctx);
+        JooqSqlService.closeConnection(ctx);
     }
 
     @Override

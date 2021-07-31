@@ -22,8 +22,8 @@ import org.dockbox.hartshorn.api.exceptions.ApplicationException;
 import org.dockbox.hartshorn.di.annotations.inject.Binds;
 import org.dockbox.hartshorn.di.annotations.inject.Named;
 import org.dockbox.hartshorn.di.properties.InjectorProperty;
-import org.dockbox.hartshorn.persistence.ISQLMan;
-import org.dockbox.hartshorn.persistence.SQLMan;
+import org.dockbox.hartshorn.persistence.JooqSqlService;
+import org.dockbox.hartshorn.persistence.SqlService;
 import org.dockbox.hartshorn.persistence.exceptions.InvalidConnectionException;
 import org.jooq.SQLDialect;
 
@@ -32,9 +32,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-@Binds(value = SQLMan.class, named = @Named(value = FileTypes.SQLITE))
-@Binds(value = ISQLMan.class, named = @Named(value = FileTypes.SQLITE))
-public class SQLiteMan extends SQLMan<Path> {
+@Binds(value = SqlService.class, named = @Named(value = FileTypes.SQLITE))
+public class JooqSqliteService extends JooqSqlService<Path> {
 
     private Path filePath;
 
