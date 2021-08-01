@@ -21,8 +21,11 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
+import lombok.Getter;
+
 public class ProxyInterfaceHandler<T> implements InvocationHandler {
 
+    @Getter
     private final ProxyHandler<T> handler;
 
     public ProxyInterfaceHandler(ProxyHandler<T> handler) {
