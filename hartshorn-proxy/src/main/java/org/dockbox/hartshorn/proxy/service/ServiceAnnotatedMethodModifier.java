@@ -25,11 +25,14 @@ import org.dockbox.hartshorn.proxy.ProxyProperty;
 import org.dockbox.hartshorn.proxy.exception.ProxyMethodBindingException;
 import org.dockbox.hartshorn.proxy.handle.ProxyFunction;
 import org.dockbox.hartshorn.proxy.handle.ProxyHandler;
+import org.dockbox.hartshorn.proxy.handle.ProxyInterfaceHandler;
 import org.dockbox.hartshorn.util.Reflect;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.util.Collection;
 
 import javassist.util.proxy.MethodHandler;
@@ -47,11 +50,20 @@ public abstract class ServiceAnnotatedMethodModifier<M extends Annotation, A ext
         final Collection<Method> methods = Reflect.methods(type, this.annotation());
 
         ProxyHandler<T> handler = null;
-        if (instance != null && ProxyFactory.isProxyClass(instance.getClass())) {
-            final MethodHandler methodHandler = ProxyFactory.getHandler((javassist.util.proxy.Proxy) instance);
-            if (methodHandler instanceof ProxyHandler proxyHandler) {
-                //noinspection unchecked
-                handler = (ProxyHandler<T>) proxyHandler;
+        if (instance != null) {
+            if (ProxyFactory.isProxyClass(instance.getClass())) {
+                final MethodHandler methodHandler = ProxyFactory.getHandler((javassist.util.proxy.Proxy) instance);
+                if (methodHandler instanceof ProxyHandler proxyHandler) {
+                    //noinspection unchecked
+                    handler = (ProxyHandler<T>) proxyHandler;
+                }
+            }
+            else if (Proxy.isProxyClass(instance.getClass())) {
+                final InvocationHandler invocationHandler = Proxy.getInvocationHandler(instance);
+                if (invocationHandler instanceof ProxyInterfaceHandler proxyInterfaceHandler) {
+                    //noinspection unchecked
+                    handler = proxyInterfaceHandler.handler();
+                }
             }
         }
 
@@ -66,7 +78,8 @@ public abstract class ServiceAnnotatedMethodModifier<M extends Annotation, A ext
                     ProxyProperty<T, ?> property = ProxyProperty.of(type, method, function);
                     handler.delegate(property);
                 }
-            } else {
+            }
+            else {
                 if (this.failOnPrecondition()) {
                     throw new ProxyMethodBindingException(method);
                 }
