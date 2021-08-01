@@ -15,19 +15,21 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.persistence.table.objects;
+package org.dockbox.hartshorn.persistence.objects;
 
 import org.dockbox.hartshorn.api.annotations.Property;
 
-public class WronglyIdentifiedUser {
+public class IdentifiedUser {
 
-    public int Id;
+    public int numeralId;
 
     @Property("name")
     public String displayedName;
 
-    public WronglyIdentifiedUser(int id, String name) {
-        this.Id = id;
+    public IdentifiedUser(int id, String name) {
+        this.numeralId = id;
         this.displayedName = name;
     }
+
+    public IdentifiedUser() {}
 }

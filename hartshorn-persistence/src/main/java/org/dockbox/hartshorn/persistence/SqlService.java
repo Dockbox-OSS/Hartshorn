@@ -22,7 +22,7 @@ import org.dockbox.hartshorn.di.properties.InjectableType;
 import org.dockbox.hartshorn.persistence.exceptions.InvalidConnectionException;
 import org.dockbox.hartshorn.persistence.exceptions.NoSuchTableException;
 import org.dockbox.hartshorn.persistence.table.Table;
-import org.dockbox.hartshorn.persistence.table.column.ColumnIdentifier;
+import org.dockbox.hartshorn.persistence.table.ColumnIdentifier;
 
 /**
  * Low-level interface for communicating with SQL databases.

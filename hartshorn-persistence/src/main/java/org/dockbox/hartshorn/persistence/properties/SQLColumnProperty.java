@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.persistence.properties;
 
 import org.dockbox.hartshorn.api.domain.tuple.Tuple;
 import org.dockbox.hartshorn.di.properties.InjectorProperty;
-import org.dockbox.hartshorn.persistence.table.column.ColumnIdentifier;
+import org.dockbox.hartshorn.persistence.table.ColumnIdentifier;
 
 public class SQLColumnProperty implements InjectorProperty<Tuple<String, ColumnIdentifier<?>>> {
 

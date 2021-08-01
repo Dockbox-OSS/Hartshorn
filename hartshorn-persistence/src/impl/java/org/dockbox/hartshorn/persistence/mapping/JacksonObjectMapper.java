@@ -23,7 +23,6 @@ import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.core.JsonParser.Feature;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.javaprop.JavaPropsMapper;
@@ -33,6 +32,7 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLParser;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Exceptional;
@@ -42,6 +42,7 @@ import org.dockbox.hartshorn.persistence.FileManager;
 import org.dockbox.hartshorn.persistence.FileType;
 import org.dockbox.hartshorn.persistence.PersistentCapable;
 import org.dockbox.hartshorn.persistence.PersistentModel;
+import org.dockbox.hartshorn.persistence.jackson.GenericTypeReference;
 import org.dockbox.hartshorn.persistence.jackson.PropertyAliasIntrospector;
 import org.dockbox.hartshorn.persistence.properties.PersistenceModifier;
 import org.dockbox.hartshorn.util.Reflect;
@@ -112,7 +113,7 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
         return this.readInternal(
                 type.getType(),
                 () -> this.correctPersistentCapable(content, (Class<T>) type.getType()),
-                () -> this.configureMapper().readValue(content, type)
+                () -> this.configureMapper().readValue(content, new GenericTypeReference<>(type))
         );
     }
 
@@ -121,7 +122,7 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
         return this.readInternal(
                 type.getType(),
                 () -> this.correctPersistentCapable(path, (Class<T>) type.getType()),
-                () -> this.configureMapper().readValue(path.toFile(), type)
+                () -> this.configureMapper().readValue(path.toFile(), new GenericTypeReference<>(type))
                 );
     }
 

@@ -15,21 +15,10 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.persistence.table.objects;
+package org.dockbox.hartshorn.persistence.exceptions;
 
-import org.dockbox.hartshorn.api.annotations.Property;
-
-public class IdentifiedUser {
-
-    public int numeralId;
-
-    @Property("name")
-    public String displayedName;
-
-    public IdentifiedUser(int id, String name) {
-        this.numeralId = id;
-        this.displayedName = name;
+public class IdentifierMismatchException extends Exception {
+    public IdentifierMismatchException(String message) {
+        super(message);
     }
-
-    public IdentifiedUser() {}
 }

@@ -26,14 +26,13 @@ import org.dockbox.hartshorn.persistence.exceptions.NoSuchTableException;
 import org.dockbox.hartshorn.persistence.properties.SQLColumnProperty;
 import org.dockbox.hartshorn.persistence.table.Table;
 import org.dockbox.hartshorn.persistence.table.TableRow;
-import org.dockbox.hartshorn.persistence.table.column.ColumnIdentifier;
-import org.dockbox.hartshorn.persistence.table.column.SimpleColumnIdentifier;
-import org.dockbox.hartshorn.persistence.table.exceptions.IdentifierMismatchException;
+import org.dockbox.hartshorn.persistence.table.ColumnIdentifier;
+import org.dockbox.hartshorn.persistence.table.SimpleColumnIdentifier;
+import org.dockbox.hartshorn.persistence.exceptions.IdentifierMismatchException;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.jooq.InsertValuesStepN;
-import org.jooq.Record;
 import org.jooq.Result;
 import org.jooq.SQLDialect;
 import org.jooq.exception.DataAccessException;
@@ -116,7 +115,7 @@ public abstract class JooqSqlService<T> implements SqlService {
             return this.withContext(target, ctx -> {
                 // .fetch() automatically closes the native ResultSet and leaves us with the Result.
                 // This can be used safely.
-                Result<Record> results = ctx.select().from(name).fetch();
+                Result<org.jooq.Record> results = ctx.select().from(name).fetch();
                 if (results.isEmpty()) {
                     // If the table is empty we still want a accurate representation of its schema
                     return new Table(this.identifiers(results.fields()));
@@ -167,14 +166,14 @@ public abstract class JooqSqlService<T> implements SqlService {
         return identifiers;
     }
 
-    private Table convertToTable(Result<Record> results) {
+    private Table convertToTable(Result<org.jooq.Record> results) {
         Table table = new Table(this.identifiers(results.fields()));
 
         // We cannot populate the table if no results exist, in which case we return a empty table.
         if (results.isEmpty()) return table;
 
         results
-                .map((Record record) -> this.convertToTableRow(record, table))
+                .map((org.jooq.Record record) -> this.convertToTableRow(record, table))
                 .forEach(row -> {
                     try {
                         table.addRow(row);
@@ -221,7 +220,7 @@ public abstract class JooqSqlService<T> implements SqlService {
         return Exceptional.of(this.identifiers.get(key));
     }
 
-    private TableRow convertToTableRow(Record record, Table table) {
+    private TableRow convertToTableRow(org.jooq.Record record, Table table) {
         TableRow row = new TableRow();
         for (Field<?> field : record.fields()) {
             Object attr = record.getValue(field);
@@ -272,7 +271,7 @@ public abstract class JooqSqlService<T> implements SqlService {
 
     private <F> void handleUniqueInsert(String name, Table table, ColumnIdentifier<F> identifier) throws InvalidConnectionException {
         this.withContext(this.defaultTarget(), ctx -> {
-            org.jooq.Table<Record> remote = DSL.table(name);
+            org.jooq.Table<org.jooq.Record> remote = DSL.table(name);
             final Field<?>[] fields = JooqSqlService.convertIdentifiersToFields(table);
             //noinspection unchecked
             final Field<F> field = (Field<F>) remote.field(identifier.name());

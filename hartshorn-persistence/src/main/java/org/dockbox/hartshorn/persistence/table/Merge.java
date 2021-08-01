@@ -15,10 +15,9 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.persistence.table.exceptions;
+package org.dockbox.hartshorn.persistence.table;
 
-public class IdentifierMismatchException extends Exception {
-    public IdentifierMismatchException(String message) {
-        super(message);
-    }
+public enum Merge {
+    PREFER_ORIGINAL,
+    PREFER_FOREIGN
 }

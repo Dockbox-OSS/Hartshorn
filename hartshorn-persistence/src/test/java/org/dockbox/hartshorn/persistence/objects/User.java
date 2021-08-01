@@ -15,7 +15,7 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.persistence.table.objects;
+package org.dockbox.hartshorn.persistence.objects;
 
 public class User {
 

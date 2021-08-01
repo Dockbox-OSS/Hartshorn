@@ -17,11 +17,32 @@
 
 package org.dockbox.hartshorn.persistence.mapping;
 
-import com.fasterxml.jackson.core.type.TypeReference;
+import org.jetbrains.annotations.NotNull;
+
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 
 /**
- * Generic type reference, exposing a self-declared type for API usage while maintaining easy
- * conversion to Jackson dependencies.
+ * Generic type reference, allowing for generic type reading. This is derived
+ * from Jackson's TypeReference.
  * @param <T> The generic type
  */
-public abstract class GenericType<T> extends TypeReference<T> { }
+public abstract class GenericType<T> implements Comparable<GenericType<T>> {
+
+    protected final Type _type;
+
+    protected GenericType()
+    {
+        Type superClass = this.getClass().getGenericSuperclass();
+        if (superClass instanceof Class<?>) {
+            throw new IllegalArgumentException("Internal error: GenericType constructed without actual type information");
+        }
+        this._type = ((ParameterizedType) superClass).getActualTypeArguments()[0];
+    }
+
+    public Type getType() { return this._type; }
+
+    @Override
+    public int compareTo(@NotNull GenericType<T> o) { return 0; }
+
+}

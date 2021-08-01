@@ -15,11 +15,10 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.persistence.table.column;
+package org.dockbox.hartshorn.persistence.exceptions;
 
-public interface ColumnIdentifier<T> {
-
-    String name();
-
-    Class<T> type();
+public class UnknownIdentifierException extends RuntimeException {
+    public UnknownIdentifierException(String message) {
+        super(message);
+    }
 }

@@ -15,10 +15,24 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.persistence.table.exceptions;
+package org.dockbox.hartshorn.persistence.exceptions;
 
-public class UnknownIdentifierException extends RuntimeException {
-    public UnknownIdentifierException(String message) {
-        super(message);
+import org.dockbox.hartshorn.persistence.FileType;
+
+/**
+ * A checked {@link Exception}, thrown if a file or {@link FileType} is
+ * not supported by an implementation.
+ */
+public class UnsupportedFileException extends Exception {
+
+    /**
+     * Creates a new instance, providing a given filetype to the super type {@link Exception} as the
+     * caught message.
+     *
+     * @param fileType
+     *         The filetype providing information about the unsupport file or {@link FileType}
+     */
+    public UnsupportedFileException(String fileType) {
+        super(fileType);
     }
 }

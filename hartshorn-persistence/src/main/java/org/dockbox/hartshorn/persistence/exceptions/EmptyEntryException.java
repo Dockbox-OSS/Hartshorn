@@ -15,16 +15,10 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.persistence.table.behavior;
+package org.dockbox.hartshorn.persistence.exceptions;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
-@Getter
-@AllArgsConstructor
-public enum Order {
-    ASC(1),
-    DESC(-1);
-
-    private final int order;
+public class EmptyEntryException extends Exception {
+    public EmptyEntryException(String message) {
+        super(message);
+    }
 }

@@ -18,13 +18,10 @@
 package org.dockbox.hartshorn.persistence.mapping;
 
 import org.dockbox.hartshorn.api.exceptions.ApplicationException;
-import org.dockbox.hartshorn.di.binding.Bindings;
 import org.dockbox.hartshorn.di.properties.InjectorProperty;
 import org.dockbox.hartshorn.persistence.FileType;
 import org.dockbox.hartshorn.persistence.properties.PersistenceModifier;
 import org.dockbox.hartshorn.persistence.properties.PersistenceProperty;
-
-import java.util.List;
 
 public abstract class DefaultObjectMapper implements ObjectMapper {
 

@@ -15,9 +15,19 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.persistence.table.behavior;
+package org.dockbox.hartshorn.persistence.objects;
 
-public enum Merge {
-    PREFER_ORIGINAL,
-    PREFER_FOREIGN
+import org.dockbox.hartshorn.api.annotations.Property;
+
+public class WronglyIdentifiedUser {
+
+    public int Id;
+
+    @Property("name")
+    public String displayedName;
+
+    public WronglyIdentifiedUser(int id, String name) {
+        this.Id = id;
+        this.displayedName = name;
+    }
 }

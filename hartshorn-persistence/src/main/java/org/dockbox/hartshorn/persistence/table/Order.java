@@ -15,19 +15,16 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.persistence.table.identifiers;
+package org.dockbox.hartshorn.persistence.table;
 
-import org.dockbox.hartshorn.persistence.table.column.ColumnIdentifier;
-import org.dockbox.hartshorn.persistence.table.column.SimpleColumnIdentifier;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
-import java.util.UUID;
+@Getter
+@AllArgsConstructor
+public enum Order {
+    ASC(1),
+    DESC(-1);
 
-public final class TestColumnIdentifiers {
-
-    public static final ColumnIdentifier<String> NAME = new SimpleColumnIdentifier<>("name", String.class);
-    public static final ColumnIdentifier<UUID> UUID = new SimpleColumnIdentifier<>("uniqueId", java.util.UUID.class);
-    public static final ColumnIdentifier<Integer> NUMERAL_ID = new SimpleColumnIdentifier<>("numeralId", Integer.class);
-
-    private TestColumnIdentifiers() {
-    }
+    private final int order;
 }

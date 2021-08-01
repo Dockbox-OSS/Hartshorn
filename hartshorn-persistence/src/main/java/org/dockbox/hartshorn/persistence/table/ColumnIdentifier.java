@@ -15,10 +15,11 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.persistence.table.exceptions;
+package org.dockbox.hartshorn.persistence.table;
 
-public class EmptyEntryException extends Exception {
-    public EmptyEntryException(String message) {
-        super(message);
-    }
+public interface ColumnIdentifier<T> {
+
+    String name();
+
+    Class<T> type();
 }
