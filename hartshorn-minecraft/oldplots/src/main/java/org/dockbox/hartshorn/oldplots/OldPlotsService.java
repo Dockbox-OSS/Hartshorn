@@ -39,7 +39,7 @@ import org.dockbox.hartshorn.persistence.properties.SQLColumnProperty;
 import org.dockbox.hartshorn.persistence.table.Table;
 import org.dockbox.hartshorn.server.minecraft.dimension.position.Location;
 import org.dockbox.hartshorn.server.minecraft.events.server.EngineChangedState;
-import org.dockbox.hartshorn.server.minecraft.events.server.ServerState.Update;
+import org.dockbox.hartshorn.server.minecraft.events.server.ServerState.Loading;
 import org.dockbox.hartshorn.server.minecraft.players.Player;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.jetbrains.annotations.NonNls;
@@ -62,7 +62,7 @@ public class OldPlotsService {
     private PlotWorldModelList modelList = new PlotWorldModelList();
 
     @Listener
-    public void on(EngineChangedState<Update> event) {
+    public void on(EngineChangedState<Loading> event) {
         Path worldConfig = this.fileManager.configFile(OldPlotsService.class, "worlds");
         this.fileManager.copyDefaultFile("oldplots_worlds.yml", worldConfig);
         Exceptional<PlotWorldModelList> exceptionalList = this.fileManager.read(worldConfig, PlotWorldModelList.class);

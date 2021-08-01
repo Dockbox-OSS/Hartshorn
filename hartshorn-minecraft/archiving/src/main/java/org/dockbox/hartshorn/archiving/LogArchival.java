@@ -25,7 +25,7 @@ import org.dockbox.hartshorn.di.annotations.inject.Wired;
 import org.dockbox.hartshorn.di.annotations.service.Service;
 import org.dockbox.hartshorn.persistence.FileManager;
 import org.dockbox.hartshorn.server.minecraft.events.server.EngineChangedState;
-import org.dockbox.hartshorn.server.minecraft.events.server.ServerState.Update;
+import org.dockbox.hartshorn.server.minecraft.events.server.ServerState.Loading;
 
 import java.io.IOException;
 import java.nio.file.FileSystems;
@@ -52,7 +52,7 @@ public class LogArchival {
     private FileManager fileManager;
 
     @Listener
-    public void on(EngineChangedState<Update> event) {
+    public void on(EngineChangedState<Loading> event) {
         this.logPath = this.fileManager.logs();
         try {
             Hartshorn.log().info("Checking for logs to archive in {}", this.logPath);

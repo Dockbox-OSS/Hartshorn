@@ -24,7 +24,7 @@ import org.dockbox.hartshorn.server.minecraft.events.server.ServerState.Reload;
 import org.dockbox.hartshorn.server.minecraft.events.server.ServerState.Started;
 import org.dockbox.hartshorn.server.minecraft.events.server.ServerState.Starting;
 import org.dockbox.hartshorn.server.minecraft.events.server.ServerState.Stopping;
-import org.dockbox.hartshorn.server.minecraft.events.server.ServerState.Update;
+import org.dockbox.hartshorn.server.minecraft.events.server.ServerState.Loading;
 import org.dockbox.hartshorn.server.minecraft.item.ItemContext;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.spongepowered.api.ResourceKey;
@@ -62,7 +62,7 @@ public class ServerEventBridge implements EventBridge {
 
     @Listener
     public void on(LoadedGameEvent event) {
-        new EngineChangedState<Update>() {}.post();
+        new EngineChangedState<Loading>() {}.post();
     }
 
     @Listener
@@ -73,7 +73,7 @@ public class ServerEventBridge implements EventBridge {
     @Listener
     public void on(RefreshGameEvent event) {
         new EngineChangedState<Reload>() {}.post();
-        new EngineChangedState<Update>() {}.post();
+        new EngineChangedState<Loading>() {}.post();
     }
 
     private List<String> collectIdContext(RegistryType<?> registryType) {
