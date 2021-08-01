@@ -16,8 +16,8 @@
  */
 
 dependencies {
-    include project(':hartshorn-core')
-    include project(':hartshorn-util')
-    include project(':hartshorn-di')
-    include project(':hartshorn-exceptions')
+    apiInclude project(':hartshorn-core')
+    apiInclude project(':hartshorn-util')
+    apiInclude project(':hartshorn-di')
+    apiInclude project(':hartshorn-exceptions')
 }

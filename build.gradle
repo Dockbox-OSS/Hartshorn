@@ -84,14 +84,25 @@ allprojects {
             jcenter()
         }
 
+        sourceSets {
+            impl {
+                compileClasspath += main.output
+                runtimeClasspath += main.output
+            }
+            test {
+                compileClasspath += impl.output
+                runtimeClasspath += impl.output
+            }
+        }
+
         configurations {
             include
-            implementation.extendsFrom(include)
+            implImplementation.extendsFrom(include)
             testImplementation.extendsFrom(include)
 
-            share
-            api.extendsFrom(share)
-            testImplementation.extendsFrom(share)
+            apiInclude
+            include.extendsFrom(apiInclude)
+            implementation.extendsFrom(apiInclude)
 
             all*.exclude group: 'junit', module: 'junit'
         }
@@ -122,13 +133,13 @@ allprojects {
             include 'com.jhlabs:filters:2.0.235-1'
 
             // Typically included by platforms
-            include "org.slf4j:slf4j-api:$slf4jVersion"
+            apiInclude "org.slf4j:slf4j-api:$slf4jVersion"
 
             // Compile/source dependencies
-            include("org.jetbrains:annotations:$jetbrainsAnnotationsVersion")
+            apiInclude("org.jetbrains:annotations:$jetbrainsAnnotationsVersion")
 
             // Lombok
-            include 'org.projectlombok:lombok:1.18.20'
+            apiInclude 'org.projectlombok:lombok:1.18.20'
             annotationProcessor 'org.projectlombok:lombok:1.18.20'
             testAnnotationProcessor 'org.projectlombok:lombok:1.18.20'
 

@@ -60,12 +60,14 @@ dependencies {
     new File(parent.rootDir, 'hartshorn-minecraft').listFiles().each {
         if ((!ignoreProjects.contains(it.name)) && it.directory && new File(it, 'build.gradle').exists()) {
             includeShadow project(":hartshorn-minecraft:${it.name}")
+            includeShadow project(":hartshorn-minecraft:${it.name}").sourceSets.impl.output
         }
     }
 
     parent.rootDir.listFiles().each {
         if ((!ignoreProjects.contains(it.name)) && it.directory && new File(it, 'build.gradle').exists()) {
             includeShadow project(":${it.name}")
+            includeShadow project(":${it.name}").sourceSets.impl.output
         }
     }
 

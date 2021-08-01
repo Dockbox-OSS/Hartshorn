@@ -28,7 +28,7 @@ import org.dockbox.hartshorn.persistence.SqlService;
 import org.dockbox.hartshorn.persistence.dialects.sqlite.PathProperty;
 import org.dockbox.hartshorn.persistence.exceptions.InvalidConnectionException;
 import org.dockbox.hartshorn.persistence.table.Table;
-import org.dockbox.hartshorn.persistence.table.column.SimpleColumnIdentifier;
+import org.dockbox.hartshorn.persistence.table.SimpleColumnIdentifier;
 import org.dockbox.hartshorn.regions.CustomRegion;
 import org.dockbox.hartshorn.regions.flags.PersistentFlagModel;
 import org.dockbox.hartshorn.regions.flags.RegionFlag;
