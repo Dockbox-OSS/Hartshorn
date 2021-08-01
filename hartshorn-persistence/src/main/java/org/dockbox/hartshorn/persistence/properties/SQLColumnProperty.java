@@ -31,6 +31,11 @@ public class SQLColumnProperty implements InjectorProperty<Tuple<String, ColumnI
         this.toColumn = toColumn;
     }
 
+    public SQLColumnProperty(ColumnIdentifier<?> column) {
+        this.originColumnName = column.name();
+        this.toColumn = column;
+    }
+
     @Override
     public Tuple<String, ColumnIdentifier<?>> value() {
         return new Tuple<>(this.originColumnName, this.toColumn);

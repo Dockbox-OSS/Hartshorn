@@ -24,9 +24,9 @@ public final class OldPlotsIdentifiers {
 
     public static final ColumnIdentifier<String> UUID = new SimpleColumnIdentifier<>("owner", String.class);
     public static final ColumnIdentifier<String> WORLD = new SimpleColumnIdentifier<>("world", String.class);
-    public static final ColumnIdentifier<Integer> PLOT_X = new SimpleColumnIdentifier<>("plotIdX", Integer.class);
-    public static final ColumnIdentifier<Integer> PLOT_Z = new SimpleColumnIdentifier<>("plotIdZ", Integer.class);
-    public static final ColumnIdentifier<Integer> PLOT_ID = new SimpleColumnIdentifier<>("plotIdInternal", Integer.class);
+    public static final ColumnIdentifier<Integer> PLOT_X = new SimpleColumnIdentifier<>("plot_id_x", Integer.class);
+    public static final ColumnIdentifier<Integer> PLOT_Z = new SimpleColumnIdentifier<>("plot_id_z", Integer.class);
+    public static final ColumnIdentifier<Integer> PLOT_ID = new SimpleColumnIdentifier<>("id", Integer.class);
 
     private OldPlotsIdentifiers() {}
 }

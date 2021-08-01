@@ -116,11 +116,11 @@ public class OldPlotsService {
         return this.context.get(SqlService.class,
                 FileTypeProperty.of(FileType.SQLITE),
                 new PathProperty(path),
-                new SQLColumnProperty("id", OldPlotsIdentifiers.PLOT_ID),
-                new SQLColumnProperty("plot_id_x", OldPlotsIdentifiers.PLOT_X),
-                new SQLColumnProperty("plot_id_z", OldPlotsIdentifiers.PLOT_Z),
-                new SQLColumnProperty("owner", OldPlotsIdentifiers.UUID),
-                new SQLColumnProperty("world", OldPlotsIdentifiers.WORLD));
+                new SQLColumnProperty(OldPlotsIdentifiers.PLOT_ID),
+                new SQLColumnProperty(OldPlotsIdentifiers.PLOT_X),
+                new SQLColumnProperty(OldPlotsIdentifiers.PLOT_Z),
+                new SQLColumnProperty(OldPlotsIdentifiers.UUID),
+                new SQLColumnProperty(OldPlotsIdentifiers.WORLD));
     }
 
     @Command(value = "optp", arguments = "<id{Int}>", permission = "hartshorn.oldplots.teleport")
