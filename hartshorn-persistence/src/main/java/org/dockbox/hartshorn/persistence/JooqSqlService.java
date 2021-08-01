@@ -266,8 +266,25 @@ public abstract class JooqSqlService<T> implements SqlService {
     }
 
     @Override
+    public void insertUnique(String name, Table table, ColumnIdentifier<?> identifier) throws InvalidConnectionException {
+        this.handleUniqueInsert(name, table, identifier);
     }
 
+    private <F> void handleUniqueInsert(String name, Table table, ColumnIdentifier<F> identifier) throws InvalidConnectionException {
+        this.withContext(this.defaultTarget(), ctx -> {
+            org.jooq.Table<Record> remote = DSL.table(name);
+            final Field<?>[] fields = JooqSqlService.convertIdentifiersToFields(table);
+            //noinspection unchecked
+            final Field<F> field = (Field<F>) remote.field(identifier.name());
+            for (TableRow row : table.rows()) {
+                ctx.insertInto(remote, fields)
+                        .values(JooqSqlService.values(fields, row, table))
+                        .select(DSL.select(DSL.asterisk()).whereNotExists(DSL.selectOne()
+                                .from(remote)
+                                .where(field.eq(DSL.field(identifier.name(), identifier.type())))
+                        ))
+                        .executeAsync();
+            }
         });
     }
 

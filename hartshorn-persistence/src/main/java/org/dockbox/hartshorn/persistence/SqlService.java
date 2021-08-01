@@ -74,6 +74,7 @@ public interface SqlService extends InjectableType {
      */
     void insert(String name, Table table) throws InvalidConnectionException;
 
+    void insertUnique(String name, Table table, ColumnIdentifier<?> identifier) throws InvalidConnectionException;
 
     /**
      * Stores a table to the database under a given name. If a table already exists it will be dropped
