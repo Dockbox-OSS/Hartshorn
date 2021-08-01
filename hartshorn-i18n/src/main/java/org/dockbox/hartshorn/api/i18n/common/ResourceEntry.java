@@ -42,7 +42,7 @@ public interface ResourceEntry extends Formattable, PersistentCapable<ResourceEn
     Language language();
 
     @Override
-    default Class<? extends ResourceEntryModel> modelType() {
+    default Class<? extends ResourceEntryModel> type() {
         return ResourceEntryModel.class;
     }
 

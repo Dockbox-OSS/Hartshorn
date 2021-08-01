@@ -59,12 +59,12 @@ public class SimplePersistentItemModel implements PersistentItemModel {
     }
 
     @Override
-    public Class<? extends Item> capableType() {
+    public Class<? extends Item> type() {
         return Item.class;
     }
 
     @Override
-    public Item toPersistentCapable() {
+    public Item restore() {
         return this.repopulate(Item.of(this.id));
     }
 

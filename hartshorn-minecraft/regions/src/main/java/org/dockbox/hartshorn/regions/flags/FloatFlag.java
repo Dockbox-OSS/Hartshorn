@@ -34,11 +34,11 @@ public class FloatFlag extends AbstractRegionFlag<Float> {
     }
 
     @Override
-    public Float parse(String raw) {
+    public Float restore(String raw) {
         try {
             return Float.parseFloat(raw);
         } catch (NumberFormatException e) {
-            Except.handle("Could not parse number flag: " + this.id(), e);
+            Except.handle("Could not restore number flag: " + this.id(), e);
             return -1F;
         }
     }

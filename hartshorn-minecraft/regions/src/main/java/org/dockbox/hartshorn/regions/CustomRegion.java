@@ -143,7 +143,7 @@ public class CustomRegion implements Region, PersistentCapable<PersistentRegion>
     }
 
     @Override
-    public Class<? extends PersistentRegion> modelType() {
+    public Class<? extends PersistentRegion> type() {
         return PersistentRegion.class;
     }
 

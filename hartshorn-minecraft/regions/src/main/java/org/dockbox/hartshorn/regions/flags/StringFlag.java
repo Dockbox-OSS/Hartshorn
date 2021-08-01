@@ -33,7 +33,7 @@ public class StringFlag extends AbstractRegionFlag<String> {
     }
 
     @Override
-    public String parse(String raw) {
+    public String restore(String raw) {
         return raw;
     }
 

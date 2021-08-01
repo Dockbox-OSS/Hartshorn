@@ -33,7 +33,7 @@ public class BooleanFlag extends AbstractRegionFlag<Boolean> {
     }
 
     @Override
-    public Boolean parse(String raw) {
+    public Boolean restore(String raw) {
         return Boolean.parseBoolean(raw);
     }
 

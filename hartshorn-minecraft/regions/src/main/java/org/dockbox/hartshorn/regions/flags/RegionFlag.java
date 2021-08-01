@@ -29,7 +29,7 @@ public interface RegionFlag<T> {
 
     String serialize(T object);
 
-    T parse(String raw);
+    T restore(String raw);
 
     Class<T> type();
 

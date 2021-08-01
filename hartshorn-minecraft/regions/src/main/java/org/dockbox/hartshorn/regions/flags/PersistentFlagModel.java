@@ -52,7 +52,7 @@ public class PersistentFlagModel {
 
         if (Reflect.assigns(RegionFlag.class, flagType)) {
             final PersistentModel<ResourceEntry> description = new ResourceEntryModel(this.descriptionKey, this.descriptionFallback, Language.valueOf(this.descriptionLanguage));
-            return (RegionFlag<?>) Hartshorn.context().get(flagType, this.id, description.toPersistentCapable());
+            return (RegionFlag<?>) Hartshorn.context().get(flagType, this.id, description.restore());
         }
         return null;
     }

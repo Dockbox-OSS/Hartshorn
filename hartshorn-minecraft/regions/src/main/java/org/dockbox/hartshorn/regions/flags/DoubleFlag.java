@@ -34,11 +34,11 @@ public class DoubleFlag extends AbstractRegionFlag<Double> {
     }
 
     @Override
-    public Double parse(String raw) {
+    public Double restore(String raw) {
         try {
             return Double.parseDouble(raw);
         } catch (NumberFormatException e) {
-            Except.handle("Could not parse number flag: " + this.id(), e);
+            Except.handle("Could not restore number flag: " + this.id(), e);
             return -1D;
         }
     }

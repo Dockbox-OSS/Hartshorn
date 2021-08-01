@@ -227,9 +227,9 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
         if (Reflect.assigns(PersistentCapable.class, type)) {
             // Provision basis is required here, as injected types will typically pass in a interface type. If no injection point is available a
             // regular instance is created through available constructors.
-            Class<? extends PersistentModel<?>> modelType = ((PersistentCapable<?>) Hartshorn.context().get(type)).modelType();
+            Class<? extends PersistentModel<?>> modelType = ((PersistentCapable<?>) Hartshorn.context().get(type)).type();
             @NotNull Exceptional<? extends PersistentModel<?>> model = reader.apply(modelType);
-            return model.map(PersistentModel::toPersistentCapable).map(out -> (T) out);
+            return model.map(PersistentModel::restore).map(out -> (T) out);
         }
         return Exceptional.empty();
     }

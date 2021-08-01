@@ -34,11 +34,11 @@ public class IntegerFlag extends AbstractRegionFlag<Integer> {
     }
 
     @Override
-    public Integer parse(String raw) {
+    public Integer restore(String raw) {
         try {
             return Integer.parseInt(raw);
         } catch (NumberFormatException e) {
-            Except.handle("Could not parse number flag: " + this.id(), e);
+            Except.handle("Could not restore number flag: " + this.id(), e);
             return -1;
         }
     }

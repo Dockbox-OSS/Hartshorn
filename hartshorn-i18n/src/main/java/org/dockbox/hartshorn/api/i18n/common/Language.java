@@ -66,7 +66,7 @@ public enum Language implements PersistentCapable<PersistentLanguageModel> {
     }
 
     @Override
-    public Class<PersistentLanguageModel> modelType() {
+    public Class<PersistentLanguageModel> type() {
         return PersistentLanguageModel.class;
     }
 

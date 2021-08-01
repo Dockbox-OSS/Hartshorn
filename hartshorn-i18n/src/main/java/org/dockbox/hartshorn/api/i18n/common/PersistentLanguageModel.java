@@ -36,12 +36,12 @@ public class PersistentLanguageModel implements PersistentModel<Language> {
     }
 
     @Override
-    public Class<Language> capableType() {
+    public Class<Language> type() {
         return Language.class;
     }
 
     @Override
-    public Language toPersistentCapable() {
+    public Language restore() {
         return Language.of(this.code());
     }
 }

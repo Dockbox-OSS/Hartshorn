@@ -155,7 +155,7 @@ public class Text implements PersistentCapable<PersistentTextModel> {
     }
 
     @Override
-    public Class<? extends PersistentTextModel> modelType() {
+    public Class<? extends PersistentTextModel> type() {
         return PersistentTextModel.class;
     }
 

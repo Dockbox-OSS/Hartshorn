@@ -33,7 +33,7 @@ public class WeatherFlag extends AbstractRegionFlag<Weather> {
     }
 
     @Override
-    public Weather parse(String raw) {
+    public Weather restore(String raw) {
         int gameState = Integer.parseInt(raw);
         return Weather.fromGameState(gameState);
     }

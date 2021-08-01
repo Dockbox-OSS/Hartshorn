@@ -87,12 +87,12 @@ public class PersistentTextModel implements PersistentModel<Text> {
     }
 
     @Override
-    public Class<? extends Text> capableType() {
+    public Class<? extends Text> type() {
         return Text.class;
     }
 
     @Override
-    public Text toPersistentCapable() {
+    public Text restore() {
         Text text = Text.of(this.content);
         switch (this.clickAction) {
             case CHANGE_PAGE:

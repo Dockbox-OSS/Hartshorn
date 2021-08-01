@@ -169,7 +169,7 @@ public class JUnitItem implements Item, JUnitPersistentDataHolder {
     }
 
     @Override
-    public Class<? extends PersistentItemModel> modelType() {
+    public Class<? extends PersistentItemModel> type() {
         return SimplePersistentItemModel.class;
     }
 

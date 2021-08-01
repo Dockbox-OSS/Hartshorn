@@ -34,11 +34,11 @@ public class ShortFlag extends AbstractRegionFlag<Short> {
     }
 
     @Override
-    public Short parse(String raw) {
+    public Short restore(String raw) {
         try {
             return Short.parseShort(raw);
         } catch (NumberFormatException e) {
-            Except.handle("Could not parse number flag: " + this.id(), e);
+            Except.handle("Could not restore number flag: " + this.id(), e);
             return -1;
         }
     }

@@ -54,6 +54,6 @@ public class SerializedFlag {
 
     public <T> Exceptional<T> restoreValue() {
         //noinspection unchecked
-        return this.restoreFlag().map(flag -> (T) flag.parse(this.value));
+        return this.restoreFlag().map(flag -> (T) flag.restore(this.value));
     }
 }

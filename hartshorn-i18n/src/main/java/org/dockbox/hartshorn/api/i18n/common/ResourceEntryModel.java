@@ -32,12 +32,12 @@ public class ResourceEntryModel implements PersistentModel<ResourceEntry> {
     private Language language;
 
     @Override
-    public Class<? extends ResourceEntry> capableType() {
+    public Class<? extends ResourceEntry> type() {
         return ResourceEntry.class;
     }
 
     @Override
-    public ResourceEntry toPersistentCapable() {
+    public ResourceEntry restore() {
         return new Resource(this.fallback, this.key, this.language);
     }
 }

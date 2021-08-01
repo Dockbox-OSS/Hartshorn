@@ -613,7 +613,7 @@ public class Table {
 
     public <T extends PersistentCapable<M>, M extends PersistentModel<T>> List<T> restore(Class<M> type) {
         final List<M> rows = this.rows(type);
-        return rows.stream().map(PersistentModel::toPersistentCapable).toList();
+        return rows.stream().map(PersistentModel::restore).toList();
     }
 
     public void forEach(Consumer<TableRow> consumer) {

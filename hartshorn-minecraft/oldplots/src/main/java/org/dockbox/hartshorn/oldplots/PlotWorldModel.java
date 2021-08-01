@@ -27,7 +27,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Entity(value = "plot-world-modelType")
+@Entity(value = "plot-world")
 @AllArgsConstructor
 @NoArgsConstructor
 public class PlotWorldModel {

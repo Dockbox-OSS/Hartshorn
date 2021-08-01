@@ -46,12 +46,12 @@ public class PersistentRegion implements PersistentModel<CustomRegion> {
     private int corner_b_z;
 
     @Override
-    public Class<? extends CustomRegion> capableType() {
+    public Class<? extends CustomRegion> type() {
         return CustomRegion.class;
     }
 
     @Override
-    public CustomRegion toPersistentCapable() {
+    public CustomRegion restore() {
         return new CustomRegion(Text.of(this.name),
                 Vector3N.of(this.corner_a_x, this.corner_a_y, this.corner_a_z),
                 Vector3N.of(this.corner_b_x, this.corner_b_y, this.corner_b_z),
