@@ -32,6 +32,9 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.Collection;
 
+import javassist.util.proxy.MethodHandler;
+import javassist.util.proxy.ProxyFactory;
+
 public abstract class ServiceAnnotatedMethodModifier<M extends Annotation, A extends Annotation> extends ServiceModifier<A> {
 
     @Override
@@ -43,7 +46,16 @@ public abstract class ServiceAnnotatedMethodModifier<M extends Annotation, A ext
     public <T> T process(ApplicationContext context, Class<T> type, @Nullable T instance, InjectorProperty<?>... properties) {
         final Collection<Method> methods = Reflect.methods(type, this.annotation());
 
-        ProxyHandler<T> handler = new ProxyHandler<>(instance, type);
+        ProxyHandler<T> handler = null;
+        if (instance != null && ProxyFactory.isProxyClass(instance.getClass())) {
+            final MethodHandler methodHandler = ProxyFactory.getHandler((javassist.util.proxy.Proxy) instance);
+            if (methodHandler instanceof ProxyHandler proxyHandler) {
+                //noinspection unchecked
+                handler = (ProxyHandler<T>) proxyHandler;
+            }
+        }
+
+        if (handler == null) handler = new ProxyHandler<>(instance, type);
 
         for (Method method : methods) {
             MethodProxyContext<T> ctx = new SimpleMethodProxyContext<>(instance, type, method, properties);
