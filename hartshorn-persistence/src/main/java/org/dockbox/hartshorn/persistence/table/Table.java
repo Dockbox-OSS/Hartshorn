@@ -636,6 +636,14 @@ public class Table {
         return new Table(DEFINITIONS.getOrDefault(type, HartshornUtils.emptyList()));
     }
 
+    public static <T> Table of(Class<T> type, T... defaultEntries) {
+        final Table table = Table.of(type);
+        for (T entry : defaultEntries) {
+            table.addRow(entry);
+        }
+        return table;
+    }
+
     @Override
     public String toString() {
         List<List<String>> rows = HartshornUtils.emptyList();
