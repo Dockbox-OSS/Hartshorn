@@ -46,11 +46,11 @@ class JooqSqliteServiceTest {
     @Test
     void testCanWriteToFile() {
         Assertions.assertDoesNotThrow(
-                (ThrowingSupplier<? extends SqlService<?>>) JooqSqliteServiceTest::writeToFile);
+                (ThrowingSupplier<? extends SqlService>) JooqSqliteServiceTest::writeToFile);
     }
 
-    private static SqlService<?> writeToFile() throws ApplicationException {
-        SqlService<?> man = JooqSqliteServiceTest.sql();
+    private static SqlService writeToFile() throws ApplicationException {
+        SqlService man = JooqSqliteServiceTest.sql();
         return writeToFile(man);
     }
 
@@ -60,11 +60,11 @@ class JooqSqliteServiceTest {
         return man;
     }
 
-    private static SqlService<?> writeToFile(SqlService<?> man) throws InvalidConnectionException {
+    private static SqlService writeToFile(SqlService man) throws InvalidConnectionException {
         Table main = JooqSqliteServiceTest.populatedMainTable();
-        man.store(MAIN_TABLE, main);
+        man.insert(MAIN_TABLE, main);
         Table ids = JooqSqliteServiceTest.populatedIdTable();
-        man.store(ID_TABLE, ids);
+        man.insert(ID_TABLE, ids);
         return man;
     }
 
@@ -99,14 +99,14 @@ class JooqSqliteServiceTest {
 
     @Test
     public void testGetTable() throws ApplicationException {
-        SqlService<?> man = JooqSqliteServiceTest.writeToFile();
+        SqlService man = JooqSqliteServiceTest.writeToFile();
         Table table = man.table(MAIN_TABLE);
         Assertions.assertEquals(JooqSqliteServiceTest.populatedMainTable().count(), table.count());
     }
 
     @Test
     public void testIdentifierProperties() throws ApplicationException {
-        SqlService<?> man = JooqSqliteServiceTest.writeToFile();
+        SqlService man = JooqSqliteServiceTest.writeToFile();
         Table table = man.table(MAIN_TABLE);
         Table developers = table.where(TestColumnIdentifiers.NUMERAL_ID, 1);
         Assertions.assertEquals(1, developers.count());
@@ -120,14 +120,14 @@ class JooqSqliteServiceTest {
 
     @Test
     void tablesCanBeDropped() throws ApplicationException {
-        SqlService<?> man = JooqSqliteServiceTest.writeToFile();
+        SqlService man = JooqSqliteServiceTest.writeToFile();
         man.drop(ID_TABLE);
         Assertions.assertTrue(man.tableSafe(ID_TABLE).absent());
     }
 
     @Test
     void rowsCanBeRemovedByFilter() throws ApplicationException {
-        SqlService<?> man = JooqSqliteServiceTest.writeToFile();
+        SqlService man = JooqSqliteServiceTest.writeToFile();
         man.deleteIf(ID_TABLE, TestColumnIdentifiers.NUMERAL_ID, 1);
         Table filteredTable = man.table(ID_TABLE).where(TestColumnIdentifiers.NUMERAL_ID, 1);
         Assertions.assertEquals(0, filteredTable.count());

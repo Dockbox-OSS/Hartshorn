@@ -76,7 +76,7 @@ public class OldPlotsService {
         }
         Player player = ctx.get("player");
 
-        SqlService<?> man = this.sql();
+        SqlService man = this.sql();
         Table plots = man.table("plot");
         plots = plots.where(OldPlotsIdentifiers.UUID, player.uniqueId().toString());
 
@@ -109,7 +109,7 @@ public class OldPlotsService {
                 .send(source);
     }
 
-    private SqlService<?> sql() {
+    private SqlService sql() {
         Path dataDirectory = this.context.get(FileManager.class).data(OldPlotsService.class);
         Path path = dataDirectory.resolve("oldplots.db");
 
@@ -126,7 +126,7 @@ public class OldPlotsService {
     @Command(value = "optp", arguments = "<id{Int}>", permission = "hartshorn.oldplots.teleport")
     public void teleportCommand(Player source, CommandContext context) throws InvalidConnectionException, NoSuchTableException {
         Integer id = context.get("id");
-        SqlService<?> man = this.sql();
+        SqlService man = this.sql();
         Table plots = man.table("plot");
         plots = plots.where(OldPlotsIdentifiers.PLOT_ID, id);
         plots.first().present(plot -> {

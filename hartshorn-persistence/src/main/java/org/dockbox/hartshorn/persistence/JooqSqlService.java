@@ -24,7 +24,6 @@ import org.dockbox.hartshorn.di.properties.InjectorProperty;
 import org.dockbox.hartshorn.persistence.exceptions.InvalidConnectionException;
 import org.dockbox.hartshorn.persistence.exceptions.NoSuchTableException;
 import org.dockbox.hartshorn.persistence.properties.SQLColumnProperty;
-import org.dockbox.hartshorn.persistence.properties.SQLResetBehaviorProperty;
 import org.dockbox.hartshorn.persistence.table.Table;
 import org.dockbox.hartshorn.persistence.table.TableRow;
 import org.dockbox.hartshorn.persistence.table.column.ColumnIdentifier;
@@ -56,10 +55,9 @@ import java.util.Map;
  *         implementations can act on the given source. If a source should be constant, the
  *         implementation should make this type {@link Void}.
  */
-public abstract class JooqSqlService<T> implements SqlService<T> {
+public abstract class JooqSqlService<T> implements SqlService {
 
     private final Map<String, ColumnIdentifier<?>> identifiers = HartshornUtils.emptyMap();
-    private Boolean resetOnStore = false;
 
     private static Field<?>[] convertIdentifiersToFields(Table table) {
         Field<?>[] fields = new Field[table.identifiers().length];
@@ -72,44 +70,29 @@ public abstract class JooqSqlService<T> implements SqlService<T> {
     }
 
     private static void populateRemoteTable(InsertValuesStepN<?> insertStep, Table table, Field<?>[] fields) {
-        table.rows().forEach(row -> {
-            Object[] values = new Object[fields.length];
-            // Indexed over iterative to ensure the horizontal location of our value is equal to
-            // the location of our field (read; column).
-            for (int i = 0; i < fields.length; i++) {
-                Field<?> field = fields[i];
-                ColumnIdentifier<?> identifier = table.identifier(field.getName());
-                // If the identifier in our table is null, it is possible we are working with a
-                // filtered row. In this case we accept null into the remote table.
-                if (null != identifier) {
-                    values[i] = row.value(identifier).orNull();
-                }
-                else values[i] = null;
+        table.rows().forEach(row -> insertStep.values(JooqSqlService.values(fields, row, table)));
+        insertStep.executeAsync();
+    }
+
+    private static Object[] values(Field<?>[] fields, TableRow row, Table table) {
+        Object[] values = new Object[fields.length];
+        // Indexed over iterative to ensure the horizontal location of our value is equal to
+        // the location of our field (read; column).
+        for (int i = 0; i < fields.length; i++) {
+            Field<?> field = fields[i];
+            ColumnIdentifier<?> identifier = table.identifier(field.getName());
+            // If the identifier in our table is null, it is possible we are working with a
+            // filtered row. In this case we accept null into the remote table.
+            if (null != identifier) {
+                values[i] = row.value(identifier).orNull();
             }
-            insertStep.values(values);
-        });
-        insertStep.execute();
+            else values[i] = null;
+        }
+        return values;
     }
 
     private static void createTableIfNotExists(String name, DSLContext ctx, Field<?>[] fields) {
         ctx.createTableIfNotExists(name).columns(fields).execute();
-    }
-
-    @Override
-    public Table lookup(String name, Table empty) throws InvalidConnectionException {
-        return this.lookup(name, this.defaultTarget(), empty);
-    }
-
-    @Override
-    public Table lookup(String name, T target, Table empty)
-            throws InvalidConnectionException {
-        try {
-            return this.table(name, target);
-        }
-        catch (NoSuchTableException e) {
-            this.store(name, empty);
-            return this.tableSafe(name, target).or(empty);
-        }
     }
 
     @Override
@@ -123,12 +106,11 @@ public abstract class JooqSqlService<T> implements SqlService<T> {
             return this.table(name);
         }
         catch (NoSuchTableException e) {
-            this.store(name, definition);
+            this.insert(name, definition);
             return this.tableSafe(name).or(definition);
         }
     }
 
-    @Override
     public Table table(String name, T target) throws InvalidConnectionException, NoSuchTableException {
         try {
             return this.withContext(target, ctx -> {
@@ -274,30 +256,8 @@ public abstract class JooqSqlService<T> implements SqlService<T> {
     protected abstract SQLDialect dialect();
 
     @Override
-    public Exceptional<Table> tableSafe(String name, T target) {
-        return Exceptional.of(() -> this.table(name, target));
-    }
-
-    @Override
-    public void store(String name, Table table) throws InvalidConnectionException {
-        this.store(this.defaultTarget(), name, table, this.resetOnStore);
-    }
-
-    @Override
-    public void store(T target, String name, Table table) throws InvalidConnectionException {
-        this.store(target, name, table, this.resetOnStore);
-    }
-
-    public void store(String name, Table table, boolean reset) throws InvalidConnectionException {
-        this.store(this.defaultTarget(), name, table, reset);
-    }
-
-    public void store(T target, String name, Table table, boolean reset)
-            throws InvalidConnectionException {
-        this.withContext(target, ctx -> {
-            // Use .drop() over .deleteIf() here, as the table definition may have changed
-            if (reset) this.drop(target, name);
-
+    public void insert(String name, Table table) throws InvalidConnectionException {
+        this.withContext(this.defaultTarget(), ctx -> {
             Field<?>[] fields = JooqSqlService.convertIdentifiersToFields(table);
             JooqSqlService.createTableIfNotExists(name, ctx, fields);
             InsertValuesStepN<?> insertStep = ctx.insertInto(DSL.table(name)).columns();
@@ -306,13 +266,20 @@ public abstract class JooqSqlService<T> implements SqlService<T> {
     }
 
     @Override
-    public void drop(String name) throws InvalidConnectionException {
-        this.drop(this.defaultTarget(), name);
+    }
+
+        });
     }
 
     @Override
-    public void drop(T target, String name) throws InvalidConnectionException {
-        this.withContext(target, ctx -> {
+    public void insert(String name, Table table, boolean reset) throws InvalidConnectionException {
+        if (reset) this.drop(name);
+        this.insert(name, table);
+    }
+
+    @Override
+    public void drop(String name) throws InvalidConnectionException {
+        this.withContext(this.defaultTarget(), ctx -> {
             ctx.dropTableIfExists(DSL.table(name)).execute();
         });
     }
@@ -320,13 +287,7 @@ public abstract class JooqSqlService<T> implements SqlService<T> {
     @Override
     public <C> void deleteIf(String name, ColumnIdentifier<C> identifier, C value)
             throws InvalidConnectionException {
-        this.deleteIf(this.defaultTarget(), name, identifier, value);
-    }
-
-    @Override
-    public <C> void deleteIf(T target, String name, ColumnIdentifier<C> identifier, C value)
-            throws InvalidConnectionException {
-        this.withContext(target, ctx -> {
+        this.withContext(this.defaultTarget(), ctx -> {
             ctx.delete(DSL.table(name)).where(JooqSqlService.namedField(identifier).eq(value)).execute();
         });
     }
@@ -346,9 +307,6 @@ public abstract class JooqSqlService<T> implements SqlService<T> {
         if (property instanceof SQLColumnProperty columnProperty) {
             Tuple<String, ColumnIdentifier<?>> identifier = columnProperty.value();
             this.identifiers.put(identifier.getKey(), identifier.getValue());
-        }
-        else if (property instanceof SQLResetBehaviorProperty resetBehaviorProperty) {
-            this.resetOnStore = resetBehaviorProperty.value();
         }
     }
 }
