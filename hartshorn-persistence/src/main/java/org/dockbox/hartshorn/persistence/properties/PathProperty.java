@@ -15,7 +15,7 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.persistence.dialects.sqlite;
+package org.dockbox.hartshorn.persistence.properties;
 
 import org.dockbox.hartshorn.di.properties.InjectorProperty;
 

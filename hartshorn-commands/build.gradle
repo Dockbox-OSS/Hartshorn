@@ -22,4 +22,6 @@ dependencies {
     apiInclude project(':hartshorn-i18n')
     apiInclude project(':hartshorn-events')
     apiInclude project(':hartshorn-proxy')
+
+    testImplementation project(':hartshorn-i18n').sourceSets.impl.output
 }

@@ -24,6 +24,7 @@ import org.dockbox.hartshorn.di.annotations.service.Service;
 import org.dockbox.hartshorn.i18n.MessageReceiver;
 import org.dockbox.hartshorn.i18n.common.Language;
 import org.dockbox.hartshorn.i18n.common.ResourceEntry;
+import org.dockbox.hartshorn.i18n.entry.FakeResource;
 import org.dockbox.hartshorn.i18n.entry.Resource;
 import org.dockbox.hartshorn.i18n.text.Text;
 import org.dockbox.hartshorn.playersettings.service.SettingsContext;
@@ -60,7 +61,7 @@ public class PlayerSettings {
             .owner(PlayerSettings.class)
             .converter(ordinal -> {
                 Language language = Language.values()[ordinal];
-                return new Resource(language.nameLocalized(), "", language);
+                return new FakeResource(language.nameLocalized());
             })
             .defaultValue(Language.EN_US::ordinal)
             .display(() -> Item.of(ItemTypes.BOOK_AND_QUILL))

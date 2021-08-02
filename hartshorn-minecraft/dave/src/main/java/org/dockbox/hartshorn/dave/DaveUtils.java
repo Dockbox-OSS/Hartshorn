@@ -21,17 +21,17 @@ import net.dv8tion.jda.api.entities.TextChannel;
 
 import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.i18n.PermissionHolder;
-import org.dockbox.hartshorn.i18n.text.Text;
-import org.dockbox.hartshorn.i18n.text.actions.ClickAction;
-import org.dockbox.hartshorn.i18n.text.actions.HoverAction;
 import org.dockbox.hartshorn.commands.CommandSource;
+import org.dockbox.hartshorn.commands.SystemSubject;
 import org.dockbox.hartshorn.dave.models.DaveResponse;
 import org.dockbox.hartshorn.dave.models.DaveTrigger;
 import org.dockbox.hartshorn.dave.models.DaveTriggers;
 import org.dockbox.hartshorn.dave.models.ResponseType;
 import org.dockbox.hartshorn.discord.DiscordUtils;
-import org.dockbox.hartshorn.server.minecraft.Console;
+import org.dockbox.hartshorn.i18n.PermissionHolder;
+import org.dockbox.hartshorn.i18n.text.Text;
+import org.dockbox.hartshorn.i18n.text.actions.ClickAction;
+import org.dockbox.hartshorn.i18n.text.actions.HoverAction;
 import org.dockbox.hartshorn.server.minecraft.players.Player;
 import org.dockbox.hartshorn.server.minecraft.players.Players;
 import org.dockbox.hartshorn.util.HartshornUtils;
@@ -135,7 +135,7 @@ public final class DaveUtils {
     private static void executeCommand(CommandSource source, String command) {
         if (source instanceof Player && muted((Player) source)) return;
 
-        if (command.startsWith("*")) Console.instance().execute(command);
+        if (command.startsWith("*")) SystemSubject.instance().execute(command);
         else source.execute(command);
     }
 

@@ -18,7 +18,7 @@
 package org.dockbox.hartshorn.persistence;
 
 import org.dockbox.hartshorn.api.exceptions.ApplicationException;
-import org.dockbox.hartshorn.persistence.dialects.sqlite.PathProperty;
+import org.dockbox.hartshorn.persistence.properties.PathProperty;
 import org.dockbox.hartshorn.persistence.dialects.sqlite.JooqSqliteService;
 import org.dockbox.hartshorn.persistence.exceptions.InvalidConnectionException;
 import org.dockbox.hartshorn.persistence.table.Table;

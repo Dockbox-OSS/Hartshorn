@@ -22,6 +22,7 @@ import org.dockbox.hartshorn.api.config.GlobalConfig;
 import org.dockbox.hartshorn.api.task.TaskRunner;
 import org.dockbox.hartshorn.api.task.ThreadUtils;
 import org.dockbox.hartshorn.cache.CacheManager;
+import org.dockbox.hartshorn.commands.SystemSubject;
 import org.dockbox.hartshorn.discord.DiscordCommandSource;
 import org.dockbox.hartshorn.config.ConfigurationManager;
 import org.dockbox.hartshorn.di.InjectConfiguration;
@@ -29,7 +30,6 @@ import org.dockbox.hartshorn.di.SimpleTypeFactory;
 import org.dockbox.hartshorn.di.TypeFactory;
 import org.dockbox.hartshorn.discord.DiscordUtils;
 import org.dockbox.hartshorn.persistence.FileManager;
-import org.dockbox.hartshorn.server.minecraft.Console;
 import org.dockbox.hartshorn.server.minecraft.MinecraftVersion;
 import org.dockbox.hartshorn.server.minecraft.bossbar.Bossbar;
 import org.dockbox.hartshorn.server.minecraft.dimension.Worlds;
@@ -41,7 +41,7 @@ import org.dockbox.hartshorn.server.minecraft.players.Players;
 import org.dockbox.hartshorn.server.minecraft.players.Profile;
 import org.dockbox.hartshorn.test.files.JUnitFileManager;
 import org.dockbox.hartshorn.test.objects.JUnitBossbar;
-import org.dockbox.hartshorn.test.objects.JUnitConsole;
+import org.dockbox.hartshorn.test.objects.JUnitSystemSubject;
 import org.dockbox.hartshorn.test.objects.JUnitDiscordCommandSource;
 import org.dockbox.hartshorn.test.objects.JUnitItem;
 import org.dockbox.hartshorn.test.objects.JUnitProfile;
@@ -85,7 +85,7 @@ public class JUnitInjector extends InjectConfiguration {
         this.bind(Logger.class, Hartshorn.log());
 
         // Console is a constant singleton, to avoid recreation
-        this.bind(Console.class, new JUnitConsole());
+        this.bind(SystemSubject.class, new JUnitSystemSubject());
 
         this.bind(GlobalConfig.class, JUnitGlobalConfig.class);
         this.bind(MinecraftVersion.class, MinecraftVersion.INDEV);

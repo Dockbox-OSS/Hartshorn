@@ -20,4 +20,5 @@ dependencies {
     apiInclude project(':hartshorn-util')
     apiInclude project(':hartshorn-di')
     apiInclude project(':hartshorn-exceptions')
+    apiInclude project(':hartshorn-bootstrap')
 }

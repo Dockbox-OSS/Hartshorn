@@ -20,9 +20,9 @@ package org.dockbox.hartshorn.test.objects;
 import org.dockbox.hartshorn.api.exceptions.NotImplementedException;
 import org.dockbox.hartshorn.i18n.text.Text;
 import org.dockbox.hartshorn.i18n.text.pagination.Pagination;
-import org.dockbox.hartshorn.server.minecraft.Console;
+import org.dockbox.hartshorn.commands.SystemSubject;
 
-public class JUnitConsole extends Console {
+public class JUnitSystemSubject extends SystemSubject {
 
     @Override
     public void execute(String command) {

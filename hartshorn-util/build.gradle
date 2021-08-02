@@ -16,7 +16,10 @@
  */
 
 dependencies {
-    apiInclude project(':hartshorn-core')
+    apiShare project(':hartshorn-core')
+
+    testImplementation project(':hartshorn-di').sourceSets.impl.output
+
     apiInclude "org.reflections:reflections:$reflectionsVersion"
     apiInclude 'commons-beanutils:commons-beanutils:1.9.4'
     apiInclude "org.jooq:joor:0.9.14"

@@ -70,7 +70,7 @@ import org.dockbox.hartshorn.server.minecraft.players.Sounds;
 import org.dockbox.hartshorn.sponge.dim.SpongeBlock;
 import org.dockbox.hartshorn.sponge.dim.SpongeLocation;
 import org.dockbox.hartshorn.sponge.dim.SpongeWorld;
-import org.dockbox.hartshorn.sponge.game.SpongeConsole;
+import org.dockbox.hartshorn.sponge.game.SpongeSystemSubject;
 import org.dockbox.hartshorn.sponge.game.SpongePlayer;
 import org.dockbox.hartshorn.sponge.game.entity.SpongeArmorStand;
 import org.dockbox.hartshorn.sponge.game.entity.SpongeGenericEntity;
@@ -424,7 +424,7 @@ public enum SpongeConvert {
     @NotNull
     public static Exceptional<CommandSource> fromSponge(org.spongepowered.api.service.permission.Subject subject) {
         if (subject instanceof SystemSubject) {
-            return Exceptional.of(SpongeConsole.instance());
+            return Exceptional.of(SpongeSystemSubject.instance());
         }
         else if (subject instanceof ServerPlayer) {
             return Exceptional.of(fromSponge((ServerPlayer) subject));

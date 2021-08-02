@@ -15,7 +15,7 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.server.minecraft;
+package org.dockbox.hartshorn.commands;
 
 import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Identifiable;
@@ -26,24 +26,23 @@ import org.dockbox.hartshorn.i18n.common.ResourceEntry;
 import org.dockbox.hartshorn.i18n.permissions.Permission;
 import org.dockbox.hartshorn.i18n.permissions.PermissionContext;
 import org.dockbox.hartshorn.i18n.text.Text;
-import org.dockbox.hartshorn.commands.CommandSource;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
-public abstract class Console implements CommandSource, PermissionHolder, Identifiable {
+public abstract class SystemSubject implements CommandSource, PermissionHolder, Identifiable {
 
     @SuppressWarnings("ConstantDeclaredInAbstractClass")
     public static final UUID UNIQUE_ID = new UUID(0, 0);
-    protected static Console instance;
+    protected static SystemSubject instance;
 
-    protected Console() {
+    protected SystemSubject() {
         if (null != instance) return;
         instance = this;
     }
 
-    public static Console instance() {
-        if (null == instance) return Hartshorn.context().get(Console.class);
+    public static SystemSubject instance() {
+        if (null == instance) return Hartshorn.context().get(SystemSubject.class);
         return instance;
     }
 
@@ -118,12 +117,12 @@ public abstract class Console implements CommandSource, PermissionHolder, Identi
 
     @Override
     public String name() {
-        return "Console";
+        return "System";
     }
 
     @Override
     public PermissionContext activeContext() {
-        // Console will always have all permissions, context is therefore global by default
+        // System will always have all permissions, context is therefore global by default
         return PermissionContext.builder().build();
     }
 }

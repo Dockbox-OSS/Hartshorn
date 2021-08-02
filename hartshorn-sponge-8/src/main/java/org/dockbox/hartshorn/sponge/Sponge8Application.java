@@ -25,6 +25,8 @@ import org.dockbox.hartshorn.api.SimpleMetaProvider;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.di.DefaultModifiers;
 import org.dockbox.hartshorn.di.MetaProviderModifier;
+import org.dockbox.hartshorn.di.adapter.InjectSources;
+import org.dockbox.hartshorn.di.adapter.ServiceSources;
 import org.dockbox.hartshorn.di.annotations.activate.Activator;
 import org.dockbox.hartshorn.di.annotations.inject.InjectConfig;
 import org.dockbox.hartshorn.sponge.event.EventBridge;
@@ -37,7 +39,11 @@ import org.spongepowered.plugin.PluginContainer;
 import org.spongepowered.plugin.jvm.Plugin;
 
 @Plugin(Hartshorn.PROJECT_ID)
-@Activator(value = Sponge8Bootstrap.class, configs = @InjectConfig(SpongeInjector.class))
+@Activator(
+        injectSource = InjectSources.class, inject = "GUICE",
+        serviceSource = ServiceSources.class, service = "default",
+        value = Sponge8Bootstrap.class, configs = @InjectConfig(SpongeInjector.class)
+)
 public class Sponge8Application {
 
     protected static Sponge8Application instance;

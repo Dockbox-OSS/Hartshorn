@@ -21,12 +21,12 @@ import org.dockbox.hartshorn.api.exceptions.Except;
 import org.dockbox.hartshorn.i18n.entry.DefaultResources;
 import org.dockbox.hartshorn.i18n.text.Text;
 import org.dockbox.hartshorn.i18n.text.pagination.Pagination;
-import org.dockbox.hartshorn.server.minecraft.Console;
+import org.dockbox.hartshorn.commands.SystemSubject;
 import org.dockbox.hartshorn.sponge.util.SpongeConvert;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.exception.CommandException;
 
-public class SpongeConsole extends Console {
+public class SpongeSystemSubject extends SystemSubject {
 
     @Override
     public void execute(String command) {

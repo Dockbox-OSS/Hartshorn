@@ -16,8 +16,11 @@
  */
 
 dependencies {
-    apiInclude project(':hartshorn-core')
-    apiInclude project(':hartshorn-util')
+    apiShare project(':hartshorn-core')
+    apiShare project(':hartshorn-util')
+
+    testImplementation project(':hartshorn-bootstrap')
+
     // TODO: Move to implementation
     apiInclude "com.google.inject:guice:$guiceVersion"
 

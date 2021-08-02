@@ -19,6 +19,10 @@ apply from: "$rootDir/service-parent.gradle"
 
 // All dependencies are compiled so this project can be used as parent for sub projects and modules
 dependencies {
-    apiInclude project(':hartshorn-keys')
+    apiShare project(':hartshorn-keys')
     apiInclude project(':hartshorn-commands')
+
+    apiInclude project(':hartshorn-commands').sourceSets.impl.output
+    apiInclude project(':hartshorn-i18n').sourceSets.impl.output
+    apiInclude project(':hartshorn-di').sourceSets.impl.output
 }

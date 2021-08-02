@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.api.keys;
 
 import org.dockbox.hartshorn.i18n.common.ResourceEntry;
 import org.dockbox.hartshorn.i18n.entry.DefaultResources;
-import org.dockbox.hartshorn.i18n.entry.Resource;
+import org.dockbox.hartshorn.i18n.entry.FakeResource;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -28,7 +28,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public final class TransactionResult {
 
-    private static final TransactionResult SUCCESS = new TransactionResult(Status.SUCCESS, new Resource("", ""));
+    private static final TransactionResult SUCCESS = new TransactionResult(Status.SUCCESS, new FakeResource(""));
     private final Status status;
     private final ResourceEntry message;
 

@@ -16,8 +16,6 @@
  */
 
 dependencies {
-    compileOnly project(':hartshorn-core')
-    implementation(project(':hartshorn-di')){
-        exclude module: 'guice'
-    }
+    apiShare project(':hartshorn-core')
+    apiShare project(':hartshorn-di')
 }

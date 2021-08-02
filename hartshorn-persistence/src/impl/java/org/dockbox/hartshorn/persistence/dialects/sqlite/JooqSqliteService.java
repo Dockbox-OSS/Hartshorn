@@ -25,6 +25,7 @@ import org.dockbox.hartshorn.di.properties.InjectorProperty;
 import org.dockbox.hartshorn.persistence.JooqSqlService;
 import org.dockbox.hartshorn.persistence.SqlService;
 import org.dockbox.hartshorn.persistence.exceptions.InvalidConnectionException;
+import org.dockbox.hartshorn.persistence.properties.PathProperty;
 import org.jooq.SQLDialect;
 
 import java.nio.file.Path;

@@ -71,7 +71,11 @@ dependencies {
         }
     }
 
+    // Additional shaded dependencies, these are not available on the platform by default
     includeShadow "org.xerial:sqlite-jdbc:$xerialSqliteJdbcVersion"
+    includeShadow "org.jooq:jooq:$jooqVersion"
+    includeShadow "org.jooq:jooq-meta:$jooqVersion"
+    includeShadow "org.jooq:jooq-codegen:$jooqVersion"
 }
 
 tasks.build {
@@ -109,13 +113,13 @@ task relocateHartshornDistribution(dependsOn: build) {
     doLast {
         def configDir = new File("${project.projectDir}/run/config/services/hartshorn")
         delete fileTree(configDir).matching {
-            apiInclude 'hartshorn.yml'
+            include 'hartshorn.yml'
         }
 
         copy {
             from rootDir
             into configDir
-            apiInclude 'hartshorn.yml'
+            include 'hartshorn.yml'
         }
     }
 }

@@ -17,8 +17,6 @@
 
 package org.dockbox.hartshorn.persistence.registry;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import org.dockbox.hartshorn.api.annotations.Entity;
 import org.jetbrains.annotations.NotNull;
 
@@ -203,7 +201,6 @@ public class Registry<V> extends HashMap<String, RegistryColumn<V>> {
     }
 
     /** @return All the data in the Registry combined into a single {@link RegistryColumn} */
-    @JsonIgnore
     public RegistryColumn<V> data() {
         RegistryColumn<V> result = new RegistryColumn<>();
         for (RegistryColumn<V> columnData : this.values()) {

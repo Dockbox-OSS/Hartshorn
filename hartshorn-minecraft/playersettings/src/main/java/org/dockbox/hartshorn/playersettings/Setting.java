@@ -19,12 +19,12 @@ package org.dockbox.hartshorn.playersettings;
 
 import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.TypedOwner;
-import org.dockbox.hartshorn.i18n.common.ResourceEntry;
 import org.dockbox.hartshorn.api.keys.Keys;
 import org.dockbox.hartshorn.api.keys.PersistentDataHolder;
 import org.dockbox.hartshorn.api.keys.PersistentDataKey;
 import org.dockbox.hartshorn.api.keys.TypedPersistentDataKey;
-import org.dockbox.hartshorn.i18n.entry.Resource;
+import org.dockbox.hartshorn.i18n.common.ResourceEntry;
+import org.dockbox.hartshorn.i18n.entry.FakeResource;
 import org.dockbox.hartshorn.server.minecraft.item.Item;
 import org.dockbox.hartshorn.server.minecraft.item.ItemTypes;
 import org.jetbrains.annotations.Nullable;
@@ -94,7 +94,7 @@ public class Setting<T> extends TypedPersistentDataKey<T> {
         private Class<T> type;
         private ResourceEntry resource;
         private ResourceEntry description;
-        private Function<T, ResourceEntry> converter = o -> new Resource(String.valueOf(o), "");
+        private Function<T, ResourceEntry> converter = o -> new FakeResource(String.valueOf(o));
         private Supplier<T> defaultValue;
         private Supplier<Item> display = () -> Item.of(ItemTypes.BARRIER);
         private Consumer<PersistentDataHolder> action = holder -> {};
