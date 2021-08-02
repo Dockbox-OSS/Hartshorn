@@ -18,13 +18,13 @@
 package org.dockbox.hartshorn.server.minecraft;
 
 import org.dockbox.hartshorn.api.Hartshorn;
-import org.dockbox.hartshorn.api.events.EventBus;
-import org.dockbox.hartshorn.api.events.annotations.Posting;
-import org.dockbox.hartshorn.api.i18n.MessageReceiver;
-import org.dockbox.hartshorn.api.i18n.common.ResourceEntry;
-import org.dockbox.hartshorn.api.i18n.text.Text;
-import org.dockbox.hartshorn.api.i18n.text.actions.HoverAction;
-import org.dockbox.hartshorn.api.i18n.text.pagination.PaginationBuilder;
+import org.dockbox.hartshorn.events.EventBus;
+import org.dockbox.hartshorn.events.annotations.Posting;
+import org.dockbox.hartshorn.i18n.MessageReceiver;
+import org.dockbox.hartshorn.i18n.common.ResourceEntry;
+import org.dockbox.hartshorn.i18n.text.Text;
+import org.dockbox.hartshorn.i18n.text.actions.HoverAction;
+import org.dockbox.hartshorn.i18n.text.pagination.PaginationBuilder;
 import org.dockbox.hartshorn.commands.RunCommandAction;
 import org.dockbox.hartshorn.commands.annotations.Command;
 import org.dockbox.hartshorn.commands.annotations.WithConfirmation;

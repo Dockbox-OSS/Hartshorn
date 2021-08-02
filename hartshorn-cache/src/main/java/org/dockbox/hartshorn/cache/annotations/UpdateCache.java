@@ -18,7 +18,6 @@
 package org.dockbox.hartshorn.cache.annotations;
 
 import org.dockbox.hartshorn.cache.CacheManager;
-import org.dockbox.hartshorn.cache.SimpleCacheManager;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -45,5 +44,5 @@ public @interface UpdateCache {
      * the active {@link org.dockbox.hartshorn.di.context.ApplicationContext}.
      * @return the type of the cache manager to use
      */
-    Class<? extends CacheManager> manager() default SimpleCacheManager.class;
+    Class<? extends CacheManager> manager() default CacheManager.class;
 }

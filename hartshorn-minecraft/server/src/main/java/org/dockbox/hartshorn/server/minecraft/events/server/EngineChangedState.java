@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.server.minecraft.events.server;
 
-import org.dockbox.hartshorn.api.events.parents.Event;
+import org.dockbox.hartshorn.events.parents.Event;
 
 public abstract class EngineChangedState<T extends ServerState> implements Event {
 }

@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.sponge.event;
 
-import org.dockbox.hartshorn.api.events.annotations.Posting;
+import org.dockbox.hartshorn.events.annotations.Posting;
 import org.dockbox.hartshorn.commands.events.NativeCommandEvent;
 import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.sponge.util.SpongeConvert;

@@ -104,6 +104,10 @@ allprojects {
             include.extendsFrom(apiInclude)
             implementation.extendsFrom(apiInclude)
 
+            apiShare
+            apiInclude.extendsFrom(apiShare)
+            api.extendsFrom(apiShare)
+
             all*.exclude group: 'junit', module: 'junit'
         }
 
@@ -129,18 +133,18 @@ allprojects {
         }
 
         dependencies {
-            include 'com.mortennobel:java-image-scaling:0.8.6'
-            include 'com.jhlabs:filters:2.0.235-1'
-
             // Typically included by platforms
             apiInclude "org.slf4j:slf4j-api:$slf4jVersion"
+            apiInclude "com.google.guava:guava:${guavaVersion}"
 
             // Compile/source dependencies
             apiInclude("org.jetbrains:annotations:$jetbrainsAnnotationsVersion")
 
             // Lombok
             apiInclude 'org.projectlombok:lombok:1.18.20'
+
             annotationProcessor 'org.projectlombok:lombok:1.18.20'
+            implAnnotationProcessor 'org.projectlombok:lombok:1.18.20'
             testAnnotationProcessor 'org.projectlombok:lombok:1.18.20'
 
             // Testing requirements

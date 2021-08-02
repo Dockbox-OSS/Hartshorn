@@ -109,13 +109,13 @@ task relocateHartshornDistribution(dependsOn: build) {
     doLast {
         def configDir = new File("${project.projectDir}/run/config/services/hartshorn")
         delete fileTree(configDir).matching {
-            include 'hartshorn.yml'
+            apiInclude 'hartshorn.yml'
         }
 
         copy {
             from rootDir
             into configDir
-            include 'hartshorn.yml'
+            apiInclude 'hartshorn.yml'
         }
     }
 }

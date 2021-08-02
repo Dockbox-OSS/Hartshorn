@@ -44,6 +44,8 @@ dependencies {
         }
     }
 
+    testFixturesImplementation "com.google.guava:guava:${guavaVersion}"
+
     testFixturesImplementation "org.jetbrains:annotations:$jetbrainsAnnotationsVersion"
 
     testFixturesImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"
@@ -55,4 +57,7 @@ dependencies {
 
     testFixturesImplementation 'org.projectlombok:lombok:1.18.20'
     testFixturesAnnotationProcessor 'org.projectlombok:lombok:1.18.20'
+
+    testFixturesImplementation "org.slf4j:slf4j-api:$slf4jVersion"
+    testFixturesImplementation "org.slf4j:slf4j-simple:$slf4jVersion"
 }

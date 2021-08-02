@@ -18,7 +18,7 @@
 package org.dockbox.hartshorn.server.minecraft;
 
 import org.dockbox.hartshorn.api.HartshornBootstrap;
-import org.dockbox.hartshorn.api.events.EventBus;
+import org.dockbox.hartshorn.events.EventBus;
 
 public class MinecraftServerBootstrap extends HartshornBootstrap {
 

@@ -20,4 +20,7 @@ dependencies {
     apiInclude "org.reflections:reflections:$reflectionsVersion"
     apiInclude 'commons-beanutils:commons-beanutils:1.9.4'
     apiInclude "org.jooq:joor:0.9.14"
+
+    apiInclude 'com.mortennobel:java-image-scaling:0.8.6'
+    apiInclude 'com.jhlabs:filters:2.0.235-1'
 }

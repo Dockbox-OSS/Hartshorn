@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.archiving;
 
 import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.api.events.annotations.Listener;
+import org.dockbox.hartshorn.events.annotations.Listener;
 import org.dockbox.hartshorn.api.exceptions.Except;
 import org.dockbox.hartshorn.di.annotations.inject.Wired;
 import org.dockbox.hartshorn.di.annotations.service.Service;

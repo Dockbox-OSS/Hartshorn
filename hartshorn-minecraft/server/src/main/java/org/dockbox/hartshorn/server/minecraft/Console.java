@@ -20,12 +20,12 @@ package org.dockbox.hartshorn.server.minecraft;
 import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Identifiable;
 import org.dockbox.hartshorn.api.domain.tuple.Tristate;
-import org.dockbox.hartshorn.api.i18n.PermissionHolder;
-import org.dockbox.hartshorn.api.i18n.common.Language;
-import org.dockbox.hartshorn.api.i18n.common.ResourceEntry;
-import org.dockbox.hartshorn.api.i18n.permissions.Permission;
-import org.dockbox.hartshorn.api.i18n.permissions.PermissionContext;
-import org.dockbox.hartshorn.api.i18n.text.Text;
+import org.dockbox.hartshorn.i18n.PermissionHolder;
+import org.dockbox.hartshorn.i18n.common.Language;
+import org.dockbox.hartshorn.i18n.common.ResourceEntry;
+import org.dockbox.hartshorn.i18n.permissions.Permission;
+import org.dockbox.hartshorn.i18n.permissions.PermissionContext;
+import org.dockbox.hartshorn.i18n.text.Text;
 import org.dockbox.hartshorn.commands.CommandSource;
 import org.jetbrains.annotations.NotNull;
 

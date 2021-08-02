@@ -18,7 +18,7 @@
 package org.dockbox.hartshorn.server.minecraft.item;
 
 import org.dockbox.hartshorn.api.annotations.Entity;
-import org.dockbox.hartshorn.api.i18n.text.Text;
+import org.dockbox.hartshorn.i18n.text.Text;
 import org.dockbox.hartshorn.api.keys.PersistentDataKey;
 import org.dockbox.hartshorn.api.keys.StoredPersistentKey;
 import org.dockbox.hartshorn.server.minecraft.item.persistence.PersistentItemModel;

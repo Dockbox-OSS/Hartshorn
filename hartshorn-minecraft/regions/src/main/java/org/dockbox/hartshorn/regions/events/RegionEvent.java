@@ -18,8 +18,8 @@
 package org.dockbox.hartshorn.regions.events;
 
 import org.dockbox.hartshorn.api.Hartshorn;
-import org.dockbox.hartshorn.api.events.EventBus;
-import org.dockbox.hartshorn.api.events.parents.Event;
+import org.dockbox.hartshorn.events.EventBus;
+import org.dockbox.hartshorn.events.parents.Event;
 import org.dockbox.hartshorn.regions.Region;
 
 import lombok.AllArgsConstructor;

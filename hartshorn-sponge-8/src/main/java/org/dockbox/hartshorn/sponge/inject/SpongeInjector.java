@@ -19,10 +19,12 @@ package org.dockbox.hartshorn.sponge.inject;
 
 import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.config.GlobalConfig;
-import org.dockbox.hartshorn.api.i18n.text.pagination.PaginationBuilder;
-import org.dockbox.hartshorn.api.i18n.text.pagination.SimplePaginationBuilder;
+import org.dockbox.hartshorn.i18n.text.pagination.PaginationBuilder;
+import org.dockbox.hartshorn.i18n.text.pagination.SimplePaginationBuilder;
 import org.dockbox.hartshorn.api.task.TaskRunner;
 import org.dockbox.hartshorn.api.task.ThreadUtils;
+import org.dockbox.hartshorn.cache.CacheManager;
+import org.dockbox.hartshorn.cache.SimpleCacheManager;
 import org.dockbox.hartshorn.config.ConfigurationManager;
 import org.dockbox.hartshorn.config.SimpleConfigurationManager;
 import org.dockbox.hartshorn.config.TargetGlobalConfig;
@@ -66,6 +68,7 @@ public class SpongeInjector extends InjectConfiguration {
 //        this.bind(WorldEditService.class, SpongeWorldEditService.class);
 //        this.bind(CustomMapService.class, SpongeCustomMapService.class);
 //        this.bind(PlotService.class, SpongePlotSquaredService.class);
+        this.bind(CacheManager.class, SimpleCacheManager.class);
 
         // Builder types
         this.bind(PaginationBuilder.class, SimplePaginationBuilder.class);

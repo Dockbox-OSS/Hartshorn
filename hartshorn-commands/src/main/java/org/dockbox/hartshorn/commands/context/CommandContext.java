@@ -18,7 +18,7 @@
 package org.dockbox.hartshorn.commands.context;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.api.i18n.permissions.Permission;
+import org.dockbox.hartshorn.i18n.permissions.Permission;
 import org.dockbox.hartshorn.commands.service.CommandParameter;
 import org.dockbox.hartshorn.commands.CommandSource;
 import org.jetbrains.annotations.UnmodifiableView;

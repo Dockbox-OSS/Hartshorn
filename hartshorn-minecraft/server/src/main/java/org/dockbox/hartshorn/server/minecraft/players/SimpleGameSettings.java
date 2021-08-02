@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.server.minecraft.players;
 
-import org.dockbox.hartshorn.api.i18n.common.Language;
+import org.dockbox.hartshorn.i18n.common.Language;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

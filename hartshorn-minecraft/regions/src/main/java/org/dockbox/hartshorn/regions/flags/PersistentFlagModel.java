@@ -18,9 +18,9 @@
 package org.dockbox.hartshorn.regions.flags;
 
 import org.dockbox.hartshorn.api.Hartshorn;
-import org.dockbox.hartshorn.api.i18n.common.Language;
-import org.dockbox.hartshorn.api.i18n.common.ResourceEntry;
-import org.dockbox.hartshorn.api.i18n.common.ResourceEntryModel;
+import org.dockbox.hartshorn.i18n.common.Language;
+import org.dockbox.hartshorn.i18n.common.ResourceEntry;
+import org.dockbox.hartshorn.i18n.common.ResourceEntryModel;
 import org.dockbox.hartshorn.persistence.PersistentModel;
 import org.dockbox.hartshorn.util.Reflect;
 

@@ -18,8 +18,8 @@
 package org.dockbox.hartshorn.server.minecraft.item;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.api.i18n.common.Language;
-import org.dockbox.hartshorn.api.i18n.text.Text;
+import org.dockbox.hartshorn.i18n.common.Language;
+import org.dockbox.hartshorn.i18n.text.Text;
 import org.dockbox.hartshorn.server.minecraft.item.persistence.PersistentItemModel;
 import org.dockbox.hartshorn.util.ReferencedWrapper;
 import org.jetbrains.annotations.NotNull;

@@ -20,7 +20,7 @@ package org.dockbox.hartshorn.sponge.game.entity;
 import net.minecraft.world.entity.Entity;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.api.i18n.text.Text;
+import org.dockbox.hartshorn.i18n.text.Text;
 import org.dockbox.hartshorn.server.minecraft.dimension.position.Location;
 import org.dockbox.hartshorn.server.minecraft.dimension.world.World;
 import org.dockbox.hartshorn.sponge.game.SpongeComposite;

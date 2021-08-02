@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.regions.events;
 
-import org.dockbox.hartshorn.api.events.parents.Cancellable;
+import org.dockbox.hartshorn.events.parents.Cancellable;
 import org.dockbox.hartshorn.regions.Region;
 import org.jetbrains.annotations.NotNull;
 

@@ -19,8 +19,8 @@ package org.dockbox.hartshorn.server.minecraft.item;
 
 import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.api.i18n.common.Language;
-import org.dockbox.hartshorn.api.i18n.text.Text;
+import org.dockbox.hartshorn.i18n.common.Language;
+import org.dockbox.hartshorn.i18n.text.Text;
 import org.dockbox.hartshorn.api.keys.KeyHolder;
 import org.dockbox.hartshorn.api.keys.PersistentDataHolder;
 import org.dockbox.hartshorn.persistence.PersistentCapable;

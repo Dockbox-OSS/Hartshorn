@@ -18,7 +18,7 @@
 package org.dockbox.hartshorn.regions.persistence;
 
 import org.dockbox.hartshorn.api.domain.tuple.Vector3N;
-import org.dockbox.hartshorn.api.i18n.text.Text;
+import org.dockbox.hartshorn.i18n.text.Text;
 import org.dockbox.hartshorn.persistence.PersistentModel;
 import org.dockbox.hartshorn.regions.CustomRegion;
 

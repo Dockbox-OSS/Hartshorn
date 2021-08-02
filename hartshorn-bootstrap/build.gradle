@@ -16,3 +16,7 @@
  */
 
 apply from: "$rootDir/parent.gradle"
+
+dependencies {
+    apiInclude project(':hartshorn-di').sourceSets.impl.output
+}

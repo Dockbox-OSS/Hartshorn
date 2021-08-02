@@ -70,8 +70,7 @@ public class ProxyHandler<T> implements MethodHandler {
             Collection<ProxyProperty<T, ?>> properties = this.handlers.get(thisMethod);
             Object returnValue = null;
             // Sort the list so all properties are prioritised. The phase at which the property will be
-            // delegated does
-            // not matter here, as out-of-phase properties are not performed.
+            // delegated does not matter here, as out-of-phase properties are not performed.
             List<ProxyProperty<T, ?>> toSort = new ArrayList<>(properties);
             toSort.sort(Comparator.comparingInt(ProxyProperty::priority));
 
@@ -83,8 +82,7 @@ public class ProxyHandler<T> implements MethodHandler {
         }
         else {
             // If no handler is known, default to the original method. This is delegated to the instance
-            // created, as it
-            // is typically created through Hartshorn's injectors and therefore DI dependent.
+            // created, as it is typically created through Hartshorn's injectors and therefore DI dependent.
             Method target = thisMethod;
             if (this.instance == null)
                 target = proceed;
@@ -109,12 +107,10 @@ public class ProxyHandler<T> implements MethodHandler {
                 Object result = property.delegate(this.instance, proceed, self, args);
                 if (property.overwriteResult() && !Void.TYPE.equals(thisMethod.getReturnType())) {
                     // A proxy returning null typically indicates the use of a non-returning function, for
-                    // annotation
-                    // properties this is handled internally, however proxy types should carry the annotation
-                    // value to
-                    // ensure no results will be overwritten. Null values may cause the initial target return
-                    // value to
-                    // be used instead if no other phase hook changes the final return value.
+                    // annotation  properties this is handled internally, however proxy types should carry
+                    // the annotation value to ensure no results will be overwritten. Null values may cause
+                    // the initial target return value to be used instead if no other phase hook changes the
+                    // final return value.
                     if (null == result) Hartshorn.log().warn("Proxy method for '" + thisMethod.getName() + "' returned null while overwriting results!");
                     returnValue = result;
                 }
@@ -135,8 +131,8 @@ public class ProxyHandler<T> implements MethodHandler {
         }
         ProxyFactory factory = new ProxyFactory();
         factory.setSuperclass(this.type());
-        //noinspection unchecked
 
+        //noinspection unchecked
         return (T) factory.create(new Class<?>[0], new Object[0], this);
     }
 }

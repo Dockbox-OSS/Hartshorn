@@ -18,8 +18,8 @@
 package org.dockbox.hartshorn.test.objects;
 
 import org.dockbox.hartshorn.api.exceptions.NotImplementedException;
-import org.dockbox.hartshorn.api.i18n.text.Text;
-import org.dockbox.hartshorn.api.i18n.text.pagination.Pagination;
+import org.dockbox.hartshorn.i18n.text.Text;
+import org.dockbox.hartshorn.i18n.text.pagination.Pagination;
 import org.dockbox.hartshorn.server.minecraft.Console;
 
 public class JUnitConsole extends Console {

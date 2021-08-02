@@ -18,9 +18,9 @@
 package org.dockbox.hartshorn.sponge.game;
 
 import org.dockbox.hartshorn.api.exceptions.Except;
-import org.dockbox.hartshorn.api.i18n.entry.DefaultResources;
-import org.dockbox.hartshorn.api.i18n.text.Text;
-import org.dockbox.hartshorn.api.i18n.text.pagination.Pagination;
+import org.dockbox.hartshorn.i18n.entry.DefaultResources;
+import org.dockbox.hartshorn.i18n.text.Text;
+import org.dockbox.hartshorn.i18n.text.pagination.Pagination;
 import org.dockbox.hartshorn.server.minecraft.Console;
 import org.dockbox.hartshorn.sponge.util.SpongeConvert;
 import org.spongepowered.api.Sponge;

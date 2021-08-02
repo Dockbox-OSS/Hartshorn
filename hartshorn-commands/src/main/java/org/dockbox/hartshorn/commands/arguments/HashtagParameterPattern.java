@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.commands.arguments;
 
-import org.dockbox.hartshorn.api.i18n.common.ResourceEntry;
+import org.dockbox.hartshorn.i18n.common.ResourceEntry;
 import org.dockbox.hartshorn.commands.CommandParameterResources;
 import org.dockbox.hartshorn.di.annotations.inject.Wired;
 

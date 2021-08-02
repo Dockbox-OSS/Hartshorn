@@ -21,7 +21,7 @@ import net.dv8tion.jda.api.entities.TextChannel;
 
 import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.annotations.Entity;
-import org.dockbox.hartshorn.api.i18n.text.Text;
+import org.dockbox.hartshorn.i18n.text.Text;
 import org.dockbox.hartshorn.discord.DiscordUtils;
 
 @SuppressWarnings({ "FieldCanBeLocal", "FieldMayBeFinal" })

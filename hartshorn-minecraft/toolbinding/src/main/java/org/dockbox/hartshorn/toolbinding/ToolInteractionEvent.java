@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.toolbinding;
 
-import org.dockbox.hartshorn.api.events.AbstractCancellableEvent;
+import org.dockbox.hartshorn.events.AbstractCancellableEvent;
 import org.dockbox.hartshorn.server.minecraft.item.Item;
 import org.dockbox.hartshorn.server.minecraft.players.ClickType;
 import org.dockbox.hartshorn.server.minecraft.players.Hand;

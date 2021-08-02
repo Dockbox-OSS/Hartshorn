@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.regions.plots.events;
 
-import org.dockbox.hartshorn.api.events.AbstractCancellableEvent;
+import org.dockbox.hartshorn.events.AbstractCancellableEvent;
 import org.dockbox.hartshorn.server.minecraft.dimension.world.World;
 
 import lombok.AllArgsConstructor;

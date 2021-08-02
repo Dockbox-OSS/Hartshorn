@@ -20,7 +20,7 @@ package org.dockbox.hartshorn.discord.templates;
 import net.dv8tion.jda.api.entities.Message;
 
 import org.dockbox.hartshorn.api.Hartshorn;
-import org.dockbox.hartshorn.api.i18n.text.Text;
+import org.dockbox.hartshorn.i18n.text.Text;
 
 public interface MessageTemplate extends Template<Message> {
 

@@ -18,7 +18,7 @@
 package org.dockbox.hartshorn.regions.flags;
 
 import org.dockbox.hartshorn.api.exceptions.Except;
-import org.dockbox.hartshorn.api.i18n.common.ResourceEntry;
+import org.dockbox.hartshorn.i18n.common.ResourceEntry;
 import org.dockbox.hartshorn.di.annotations.inject.Bound;
 
 public class IntegerFlag extends AbstractRegionFlag<Integer> {

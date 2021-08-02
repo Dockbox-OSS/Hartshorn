@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.playeractions;
 
-import org.dockbox.hartshorn.api.i18n.permissions.Permission;
+import org.dockbox.hartshorn.i18n.permissions.Permission;
 
 public final class PlayerActionPermissions {
 

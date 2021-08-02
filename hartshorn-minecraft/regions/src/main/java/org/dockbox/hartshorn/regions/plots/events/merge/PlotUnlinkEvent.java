@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.regions.plots.events.merge;
 
-import org.dockbox.hartshorn.api.events.AbstractCancellableEvent;
+import org.dockbox.hartshorn.events.AbstractCancellableEvent;
 import org.dockbox.hartshorn.regions.Region;
 
 import java.util.Collection;

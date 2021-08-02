@@ -20,7 +20,7 @@ package org.dockbox.hartshorn.discord;
 import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.Message;
 
-import org.dockbox.hartshorn.api.i18n.text.Text;
+import org.dockbox.hartshorn.i18n.text.Text;
 import org.dockbox.hartshorn.di.annotations.inject.Binds;
 import org.dockbox.hartshorn.discord.templates.MessageTemplate;
 import org.dockbox.hartshorn.util.HartshornUtils;

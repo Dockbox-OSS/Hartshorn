@@ -17,9 +17,9 @@
 
 package org.dockbox.hartshorn.server.minecraft.events.chat;
 
-import org.dockbox.hartshorn.api.events.AbstractTargetCancellableEvent;
-import org.dockbox.hartshorn.api.i18n.MessageReceiver;
-import org.dockbox.hartshorn.api.i18n.text.Text;
+import org.dockbox.hartshorn.events.AbstractTargetCancellableEvent;
+import org.dockbox.hartshorn.i18n.MessageReceiver;
+import org.dockbox.hartshorn.i18n.text.Text;
 
 import lombok.Getter;
 import lombok.Setter;

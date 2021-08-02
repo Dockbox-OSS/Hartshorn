@@ -17,9 +17,9 @@
 
 package org.dockbox.hartshorn.commands.extension;
 
-import org.dockbox.hartshorn.api.i18n.common.ResourceEntry;
-import org.dockbox.hartshorn.api.i18n.entry.FakeResource;
 import org.dockbox.hartshorn.commands.CommandSource;
+import org.dockbox.hartshorn.i18n.common.ResourceEntry;
+import org.dockbox.hartshorn.i18n.entry.Resource;
 
 import lombok.AllArgsConstructor;
 
@@ -67,7 +67,7 @@ public final class ExtensionResult {
      * @return The {@link ExtensionResult}
      */
     public static ExtensionResult accept() {
-        return new ExtensionResult(true, new FakeResource(""), false);
+        return new ExtensionResult(true, new Resource("", ""), false);
     }
 
     /**
