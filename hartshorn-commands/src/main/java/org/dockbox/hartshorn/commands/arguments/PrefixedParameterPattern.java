@@ -18,7 +18,7 @@
 package org.dockbox.hartshorn.commands.arguments;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.api.i18n.common.ResourceEntry;
+import org.dockbox.hartshorn.i18n.common.ResourceEntry;
 import org.dockbox.hartshorn.commands.annotations.Parameter;
 import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.util.Reflect;

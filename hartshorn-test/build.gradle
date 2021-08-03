@@ -29,7 +29,8 @@ dependencies {
     rootDir.listFiles().each {
         if (it.directory && it.name.startsWith('hartshorn-') && new File(it, 'build.gradle').exists()) {
             if (!depBlacklist.contains(it.name)) {
-                testFixturesApi project(":${it.name}")
+                testFixturesImplementation project(":${it.name}")
+                testFixturesImplementation project(":${it.name}").sourceSets.impl.output
             }
         }
     }
@@ -37,10 +38,15 @@ dependencies {
     new File(rootDir, 'hartshorn-minecraft').listFiles().each {
         if (it.directory && new File(it, 'build.gradle').exists()) {
             if (!depBlacklist.contains(it.name)) {
-                testFixturesApi project(":hartshorn-minecraft:${it.name}")
+                testFixturesImplementation project(":hartshorn-minecraft:${it.name}")
+                testFixturesImplementation project(":hartshorn-minecraft:${it.name}").sourceSets.impl.output
             }
         }
     }
+
+    testFixturesImplementation "com.google.guava:guava:${guavaVersion}"
+
+    testFixturesImplementation "org.jetbrains:annotations:$jetbrainsAnnotationsVersion"
 
     testFixturesImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"
     testFixturesImplementation "org.junit.jupiter:junit-jupiter-params:$junitVersion"
@@ -51,4 +57,11 @@ dependencies {
 
     testFixturesImplementation 'org.projectlombok:lombok:1.18.20'
     testFixturesAnnotationProcessor 'org.projectlombok:lombok:1.18.20'
+
+    testFixturesImplementation "org.slf4j:slf4j-api:$slf4jVersion"
+    testFixturesImplementation "org.slf4j:slf4j-simple:$slf4jVersion"
+
+    testFixturesImplementation "org.jooq:jooq:$jooqVersion"
+    testFixturesImplementation "org.jooq:jooq-meta:$jooqVersion"
+    testFixturesImplementation "org.jooq:jooq-codegen:$jooqVersion"
 }

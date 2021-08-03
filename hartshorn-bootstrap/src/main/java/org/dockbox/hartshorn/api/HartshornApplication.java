@@ -22,8 +22,8 @@ import com.google.common.collect.Multimap;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.exceptions.Except;
+import org.dockbox.hartshorn.di.ApplicationBootstrap;
 import org.dockbox.hartshorn.di.InjectConfiguration;
-import org.dockbox.hartshorn.di.InjectableBootstrap;
 import org.dockbox.hartshorn.di.Modifier;
 import org.dockbox.hartshorn.di.annotations.activate.Activator;
 import org.dockbox.hartshorn.di.annotations.inject.InjectConfig;
@@ -38,14 +38,14 @@ import java.util.List;
 /**
  * Application starter for Hartshorn applications. This takes a single type annotated with {@link Activator}
  * which provides application metadata, and a set of {@link Modifier modifiers}.
- * <p>The starter uses the provided {@link InjectableBootstrap} reference to use for bootstrapping the
+ * <p>The starter uses the provided {@link ApplicationBootstrap} reference to use for bootstrapping the
  * application.
  */
 public class HartshornApplication {
 
     /**
      * Creates the bootstrapped server instance using the provided {@link Activator} metadata. If no valid
-     * {@link InjectableBootstrap} is provided the application will not be started. This does not initialize
+     * {@link ApplicationBootstrap} is provided the application will not be started. This does not initialize
      * the application. The returned {@link Runnable} can be used to initialize the server at the desired
      * time.
      *
@@ -57,8 +57,8 @@ public class HartshornApplication {
         try {
             final long start = System.currentTimeMillis();
             final Activator annotation = verifyActivator(activator);
-            final Class<? extends InjectableBootstrap> bootstrap = annotation.value();
-            final InjectableBootstrap injectableBootstrap = instance(bootstrap);
+            final Class<? extends ApplicationBootstrap> bootstrap = annotation.value();
+            final ApplicationBootstrap injectableBootstrap = instance(bootstrap);
 
             String prefix = "".equals(annotation.prefix()) ? activator.getPackage().getName() : annotation.prefix();
 

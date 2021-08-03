@@ -17,8 +17,8 @@
 
 package org.dockbox.hartshorn.server.minecraft.service;
 
-import org.dockbox.hartshorn.api.i18n.permissions.Permission;
-import org.dockbox.hartshorn.api.i18n.text.Text;
+import org.dockbox.hartshorn.i18n.permissions.Permission;
+import org.dockbox.hartshorn.i18n.text.Text;
 import org.dockbox.hartshorn.server.minecraft.players.Player;
 
 import java.util.function.Predicate;

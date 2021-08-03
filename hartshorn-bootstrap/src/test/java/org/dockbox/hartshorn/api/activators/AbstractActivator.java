@@ -18,8 +18,10 @@
 package org.dockbox.hartshorn.api.activators;
 
 import org.dockbox.hartshorn.api.SampleBootstrap;
+import org.dockbox.hartshorn.di.adapter.InjectSources;
+import org.dockbox.hartshorn.di.adapter.ServiceSources;
 import org.dockbox.hartshorn.di.annotations.activate.Activator;
 
-@Activator(SampleBootstrap.class)
+@Activator(injectSource = InjectSources.class, inject = "GUICE", value = SampleBootstrap.class, serviceSource = ServiceSources.class, service = "default")
 public abstract class AbstractActivator {
 }

@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.discord.events;
 
-import org.dockbox.hartshorn.api.events.parents.Event;
+import org.dockbox.hartshorn.events.parents.Event;
 
 /** The abstract type which can be used to listen to all Discord related events. */
 public interface DiscordEvent extends Event {

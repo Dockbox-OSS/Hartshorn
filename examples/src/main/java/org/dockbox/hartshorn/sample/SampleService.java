@@ -18,7 +18,7 @@
 package org.dockbox.hartshorn.sample;
 
 import org.dockbox.hartshorn.api.Hartshorn;
-import org.dockbox.hartshorn.api.events.annotations.Listener;
+import org.dockbox.hartshorn.events.annotations.Listener;
 import org.dockbox.hartshorn.commands.annotations.Command;
 import org.dockbox.hartshorn.di.annotations.service.Service;
 import org.dockbox.hartshorn.server.minecraft.events.packet.PacketEvent;

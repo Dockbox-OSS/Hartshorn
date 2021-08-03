@@ -28,7 +28,6 @@ import org.dockbox.hartshorn.commands.exceptions.ParsingException;
 import org.dockbox.hartshorn.commands.types.CommandValueEnum;
 import org.dockbox.hartshorn.commands.types.SampleCommand;
 import org.dockbox.hartshorn.commands.types.SampleCommandExtension;
-import org.dockbox.hartshorn.server.minecraft.Console;
 import org.dockbox.hartshorn.test.HartshornRunner;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.junit.jupiter.api.Assertions;
@@ -45,7 +44,7 @@ public class CommandDefinitionContextTests {
     void testParsingCanSucceed() {
         CommandGateway gateway = Hartshorn.context().get(SimpleCommandGateway.class);
         gateway.register(SampleCommand.class);
-        Assertions.assertDoesNotThrow(() -> gateway.accept(Console.instance(), "demo sub 1 --skip 1 2 3 4"));
+        Assertions.assertDoesNotThrow(() -> gateway.accept(SystemSubject.instance(), "demo sub 1 --skip 1 2 3 4"));
     }
 
     @Test
@@ -53,49 +52,49 @@ public class CommandDefinitionContextTests {
         CommandGateway gateway = Hartshorn.context().get(SimpleCommandGateway.class);
         gateway.register(SampleCommand.class);
         gateway.register(SampleCommandExtension.class);
-        Assertions.assertDoesNotThrow(() -> gateway.accept(Console.instance(), "demo second ThisIsMyName"));
+        Assertions.assertDoesNotThrow(() -> gateway.accept(SystemSubject.instance(), "demo second ThisIsMyName"));
     }
 
     @Test
     void testComplexParsingCanSucceed() {
         CommandGateway gateway = Hartshorn.context().get(SimpleCommandGateway.class);
         gateway.register(SampleCommand.class);
-        Assertions.assertDoesNotThrow(() -> gateway.accept(Console.instance(), "demo complex requiredArg optionalArg ONE --flag --vflag flagValue -s"));
+        Assertions.assertDoesNotThrow(() -> gateway.accept(SystemSubject.instance(), "demo complex requiredArg optionalArg ONE --flag --vflag flagValue -s"));
     }
 
     @Test
     void testTooManyArguments() {
         CommandGateway gateway = Hartshorn.context().get(SimpleCommandGateway.class);
         gateway.register(SampleCommand.class);
-        Assertions.assertThrows(ParsingException.class, () -> gateway.accept(Console.instance(), "demo complex requiredArg optionalArg ONE thisArgumentIsOneTooMany"));
+        Assertions.assertThrows(ParsingException.class, () -> gateway.accept(SystemSubject.instance(), "demo complex requiredArg optionalArg ONE thisArgumentIsOneTooMany"));
     }
 
     @Test
     void testNotEnoughArguments() {
         CommandGateway gateway = Hartshorn.context().get(SimpleCommandGateway.class);
         gateway.register(SampleCommand.class);
-        Assertions.assertThrows(ParsingException.class, () -> gateway.accept(Console.instance(), "demo complex")); // Missing required arg (and optional arguments)
+        Assertions.assertThrows(ParsingException.class, () -> gateway.accept(SystemSubject.instance(), "demo complex")); // Missing required arg (and optional arguments)
     }
 
     @Test
     void testUnknownFlag() {
         CommandGateway gateway = Hartshorn.context().get(SimpleCommandGateway.class);
         gateway.register(SampleCommand.class);
-        Assertions.assertThrows(ParsingException.class, () -> gateway.accept(Console.instance(), "demo complex requiredArg optionalArg ONE --unknownFlag"));
+        Assertions.assertThrows(ParsingException.class, () -> gateway.accept(SystemSubject.instance(), "demo complex requiredArg optionalArg ONE --unknownFlag"));
     }
 
     @Test
     void testArgumentParameters() {
         CommandGateway gateway = Hartshorn.context().get(SimpleCommandGateway.class);
         gateway.register(SampleCommand.class);
-        Assertions.assertDoesNotThrow(() -> gateway.accept(Console.instance(), "demo arguments requiredA optionalB --flag valueC"));
+        Assertions.assertDoesNotThrow(() -> gateway.accept(SystemSubject.instance(), "demo arguments requiredA optionalB --flag valueC"));
     }
 
     @Test
     void testSpecificSuggestion() {
         CommandGateway gateway = Hartshorn.context().get(SimpleCommandGateway.class);
         gateway.register(SampleCommand.class);
-        final List<String> suggestions = gateway.suggestions(Console.instance(), "demo complex requiredArg optionalArg O");
+        final List<String> suggestions = gateway.suggestions(SystemSubject.instance(), "demo complex requiredArg optionalArg O");
 
         Assertions.assertEquals(1, suggestions.size());
         Assertions.assertEquals("one", suggestions.get(0));
@@ -105,14 +104,14 @@ public class CommandDefinitionContextTests {
     void testGroups() throws ParsingException {
         CommandGateway gateway = Hartshorn.context().get(SimpleCommandGateway.class);
         gateway.register(SampleCommand.class);
-        gateway.accept(Console.instance(), "demo group");
+        gateway.accept(SystemSubject.instance(), "demo group");
     }
 
     @Test
     void testAllSuggestions() {
         CommandGateway gateway = Hartshorn.context().get(SimpleCommandGateway.class);
         gateway.register(SampleCommand.class);
-        final List<String> suggestions = gateway.suggestions(Console.instance(), "demo complex requiredArg optionalArg ");
+        final List<String> suggestions = gateway.suggestions(SystemSubject.instance(), "demo complex requiredArg optionalArg ");
 
         Assertions.assertEquals(3, suggestions.size());
         Assertions.assertTrue(suggestions.containsAll(HartshornUtils.asList("one", "two", "three")));

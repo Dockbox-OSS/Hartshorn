@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.discord.templates;
 
-import org.dockbox.hartshorn.api.i18n.common.Formattable;
+import org.dockbox.hartshorn.i18n.common.Formattable;
 
 import java.util.Map;
 

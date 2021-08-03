@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.sponge.event;
 
-import org.dockbox.hartshorn.api.events.annotations.Posting;
+import org.dockbox.hartshorn.events.annotations.Posting;
 import org.dockbox.hartshorn.regions.plots.events.ClearPlotEvent;
 import org.dockbox.hartshorn.regions.plots.events.DeletePlotEvent;
 import org.dockbox.hartshorn.regions.plots.events.PlotChangePropertyEvent;

@@ -84,14 +84,29 @@ allprojects {
             jcenter()
         }
 
+        sourceSets {
+            impl {
+                compileClasspath += main.output
+                runtimeClasspath += main.output
+            }
+            test {
+                compileClasspath += impl.output
+                runtimeClasspath += impl.output
+            }
+        }
+
         configurations {
             include
-            implementation.extendsFrom(include)
+            implImplementation.extendsFrom(include)
             testImplementation.extendsFrom(include)
 
-            share
-            api.extendsFrom(share)
-            testImplementation.extendsFrom(share)
+            apiInclude
+            include.extendsFrom(apiInclude)
+            implementation.extendsFrom(apiInclude)
+
+            apiShare
+            apiInclude.extendsFrom(apiShare)
+            api.extendsFrom(apiShare)
 
             all*.exclude group: 'junit', module: 'junit'
         }
@@ -118,18 +133,18 @@ allprojects {
         }
 
         dependencies {
-            include 'com.mortennobel:java-image-scaling:0.8.6'
-            include 'com.jhlabs:filters:2.0.235-1'
-
             // Typically included by platforms
-            include "org.slf4j:slf4j-api:$slf4jVersion"
+            apiInclude "org.slf4j:slf4j-api:$slf4jVersion"
+            apiInclude "com.google.guava:guava:${guavaVersion}"
 
             // Compile/source dependencies
-            include("org.jetbrains:annotations:$jetbrainsAnnotationsVersion")
+            apiInclude("org.jetbrains:annotations:$jetbrainsAnnotationsVersion")
 
             // Lombok
-            include 'org.projectlombok:lombok:1.18.20'
+            apiInclude 'org.projectlombok:lombok:1.18.20'
+
             annotationProcessor 'org.projectlombok:lombok:1.18.20'
+            implAnnotationProcessor 'org.projectlombok:lombok:1.18.20'
             testAnnotationProcessor 'org.projectlombok:lombok:1.18.20'
 
             // Testing requirements

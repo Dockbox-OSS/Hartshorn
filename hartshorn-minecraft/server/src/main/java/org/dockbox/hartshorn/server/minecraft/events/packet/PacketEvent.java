@@ -18,8 +18,8 @@
 package org.dockbox.hartshorn.server.minecraft.events.packet;
 
 import org.dockbox.hartshorn.api.Hartshorn;
-import org.dockbox.hartshorn.api.events.AbstractCancellableEvent;
-import org.dockbox.hartshorn.api.events.EventBus;
+import org.dockbox.hartshorn.events.AbstractCancellableEvent;
+import org.dockbox.hartshorn.events.EventBus;
 import org.dockbox.hartshorn.server.minecraft.packets.Packet;
 import org.dockbox.hartshorn.server.minecraft.players.Player;
 import org.jetbrains.annotations.NotNull;

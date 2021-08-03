@@ -18,7 +18,7 @@
 package org.dockbox.hartshorn.commands.definition;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.api.i18n.permissions.Permission;
+import org.dockbox.hartshorn.i18n.permissions.Permission;
 
 /**
  * Represents a part of a command, which is typically either a argument or flag.

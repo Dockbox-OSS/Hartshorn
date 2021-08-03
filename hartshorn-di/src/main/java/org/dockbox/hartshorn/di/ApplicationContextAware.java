@@ -18,7 +18,6 @@
 package org.dockbox.hartshorn.di;
 
 import org.dockbox.hartshorn.di.context.ApplicationContext;
-import org.dockbox.hartshorn.di.context.HartshornApplicationContext;
 
 import lombok.Getter;
 
@@ -29,8 +28,8 @@ public class ApplicationContextAware {
 
     private static ApplicationContextAware instance;
 
-    public void create(Class<?> activationSource, Modifier... modifiers) {
-        this.context = new HartshornApplicationContext(activationSource, modifiers);
+    public void create(ApplicationContext context) {
+        this.context = context;
     }
 
     public static ApplicationContextAware instance() {

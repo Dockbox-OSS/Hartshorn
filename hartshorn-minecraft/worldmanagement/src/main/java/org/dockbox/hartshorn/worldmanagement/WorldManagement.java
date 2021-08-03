@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.worldmanagement;
 
-import org.dockbox.hartshorn.api.events.annotations.Listener;
+import org.dockbox.hartshorn.events.annotations.Listener;
 import org.dockbox.hartshorn.api.task.TaskRunner;
 import org.dockbox.hartshorn.commands.annotations.Command;
 import org.dockbox.hartshorn.di.annotations.inject.Wired;

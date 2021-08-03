@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.sample;
 
-import org.dockbox.hartshorn.api.i18n.common.ResourceEntry;
+import org.dockbox.hartshorn.i18n.common.ResourceEntry;
 import org.dockbox.hartshorn.regions.flags.AbstractRegionFlag;
 import org.dockbox.hartshorn.server.minecraft.packets.data.Weather;
 

@@ -17,8 +17,8 @@
 
 package org.dockbox.hartshorn.sponge.event;
 
-import org.dockbox.hartshorn.api.events.annotations.Posting;
-import org.dockbox.hartshorn.api.events.parents.Cancellable;
+import org.dockbox.hartshorn.events.annotations.Posting;
+import org.dockbox.hartshorn.events.parents.Cancellable;
 import org.dockbox.hartshorn.server.minecraft.events.entity.SpawnSource;
 import org.dockbox.hartshorn.server.minecraft.events.entity.SummonEntityEvent;
 import org.dockbox.hartshorn.server.minecraft.events.player.interact.PlayerSummonEntityEvent;

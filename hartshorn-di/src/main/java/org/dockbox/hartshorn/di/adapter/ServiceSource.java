@@ -17,11 +17,11 @@
 
 package org.dockbox.hartshorn.di.adapter;
 
-import org.dockbox.hartshorn.di.context.HartshornApplicationContext;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.di.services.ComponentLocator;
 
 /**
- * Provider type to create the {@link ServiceSource} used by the {@link HartshornApplicationContext}.
+ * Provider type to create the {@link ServiceSource} used by the {@link ApplicationContext}.
  */
 @FunctionalInterface
 public interface ServiceSource {

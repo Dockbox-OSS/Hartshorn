@@ -17,9 +17,9 @@
 
 package org.dockbox.hartshorn.sponge.event;
 
-import org.dockbox.hartshorn.api.events.annotations.Posting;
+import org.dockbox.hartshorn.events.annotations.Posting;
 import org.dockbox.hartshorn.api.exceptions.NotImplementedException;
-import org.dockbox.hartshorn.api.i18n.common.Language;
+import org.dockbox.hartshorn.i18n.common.Language;
 import org.dockbox.hartshorn.server.minecraft.events.packet.PacketEvent;
 import org.dockbox.hartshorn.server.minecraft.events.player.PlayerAuthEvent;
 import org.dockbox.hartshorn.server.minecraft.events.player.PlayerJoinEvent;

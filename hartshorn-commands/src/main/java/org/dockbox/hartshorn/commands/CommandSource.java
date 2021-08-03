@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.commands;
 
-import org.dockbox.hartshorn.api.i18n.MessageReceiver;
+import org.dockbox.hartshorn.i18n.MessageReceiver;
 
 /**
  * Represents a single {@link org.dockbox.hartshorn.api.domain.Subject} capable

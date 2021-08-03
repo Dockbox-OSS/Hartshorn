@@ -109,11 +109,9 @@ public class DefaultRegionService implements RegionService {
 
     public void add(RegionFlag<?> flag) {
         this.regions.add(flag);
-        this.regions.save(this.regionsData);
     }
 
     public void add(CustomRegion element) {
         this.regions.add(element);
-        this.regions.save(this.regionsData);
     }
 }

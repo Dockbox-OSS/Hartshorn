@@ -18,7 +18,7 @@
 apply from: "$rootDir/parent.gradle"
 
 dependencies {
-    include project(':hartshorn-bootstrap')
-    include project(':hartshorn-proxy')
-    share project(':hartshorn-persistence')
+    apiInclude project(':hartshorn-bootstrap')
+    apiInclude project(':hartshorn-proxy')
+    apiShare project(':hartshorn-persistence')
 }

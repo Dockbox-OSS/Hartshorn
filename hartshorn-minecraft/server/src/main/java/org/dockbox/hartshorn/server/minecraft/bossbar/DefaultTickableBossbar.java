@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.server.minecraft.bossbar;
 
-import org.dockbox.hartshorn.api.i18n.text.Text;
+import org.dockbox.hartshorn.i18n.text.Text;
 import org.dockbox.hartshorn.server.minecraft.players.Player;
 import org.dockbox.hartshorn.util.ReferencedWrapper;
 

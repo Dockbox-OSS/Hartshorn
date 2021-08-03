@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.api.keys;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.exceptions.Except;
-import org.dockbox.hartshorn.api.i18n.entry.DefaultResources;
+import org.dockbox.hartshorn.i18n.entry.DefaultResources;
 
 /**
  * Low-level interface which can be used to access and retrieve values from a implementation of this
@@ -47,7 +47,7 @@ public interface KeyHolder<T extends KeyHolder> {
      *         The applied value.
      *
      * @return The transaction result. If the transaction failed the {@link TransactionResult} will
-     *         provide a {@link TransactionResult#getMessage() message}.
+     *         provide a {@link TransactionResult#message() message}.
      */
     default <A> TransactionResult set(Key<T, A> key, A appliedValue) {
         try {

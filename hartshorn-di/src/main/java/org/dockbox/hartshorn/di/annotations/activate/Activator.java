@@ -17,9 +17,9 @@
 
 package org.dockbox.hartshorn.di.annotations.activate;
 
-import org.dockbox.hartshorn.di.InjectableBootstrap;
-import org.dockbox.hartshorn.di.adapter.InjectSources;
-import org.dockbox.hartshorn.di.adapter.ServiceSources;
+import org.dockbox.hartshorn.di.ApplicationBootstrap;
+import org.dockbox.hartshorn.di.adapter.InjectSource;
+import org.dockbox.hartshorn.di.adapter.ServiceSource;
 import org.dockbox.hartshorn.di.annotations.inject.InjectConfig;
 
 import java.lang.annotation.ElementType;
@@ -34,17 +34,24 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface Activator {
+
     /**
-     * TODO: GLieben, refactor this to allow for a custom InjectSource
-     * @return The {@link org.dockbox.hartshorn.di.adapter.InjectSource} for the current
-     * activator.
+     * @return The target enum constant of the {@link InjectSource} provided at
+     * {@link #injectSource()}. If {@link #injectSource()} is not an enum type
+     * this can be left empty.
      */
-    InjectSources inject() default InjectSources.GUICE;
+    String inject() default "";
+
+    /**
+     * @return The {@link InjectSource} type for the current activator. If this
+     * targets an enum value, {@link #inject()} should indicate the target constant.
+     */
+    Class<? extends InjectSource> injectSource();
 
     /**
      * @return The bootstrap type which should be used for the current activator.
      */
-    Class<? extends InjectableBootstrap> value();
+    Class<? extends ApplicationBootstrap> value();
 
     /**
      * @return The default prefix for the activator. If this is left empty the package of
@@ -59,9 +66,15 @@ public @interface Activator {
     InjectConfig[] configs() default {};
 
     /**
-     * TODO: GLieben, refactor this to allow for a custom ServiceSource
-     * @return The {@link org.dockbox.hartshorn.di.adapter.ServiceSource} for the current
-     * activator.
+     * @return The target enum constant of the {@link ServiceSource} provided at
+     * {@link #serviceSource()}. If {@link #serviceSource()} is not an enum type
+     * this can be left empty.
      */
-    ServiceSources services() default ServiceSources.DEFAULT;
+    String service() default "";
+
+    /**
+     * @return The {@link ServiceSource} type for the current activator. If this
+     * targets an enum value, {@link #service()} should indicate the target constant.
+     */
+    Class<? extends ServiceSource> serviceSource();
 }

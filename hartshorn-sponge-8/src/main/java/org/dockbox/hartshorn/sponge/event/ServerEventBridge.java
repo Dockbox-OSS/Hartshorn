@@ -18,7 +18,7 @@
 package org.dockbox.hartshorn.sponge.event;
 
 import org.dockbox.hartshorn.api.Hartshorn;
-import org.dockbox.hartshorn.api.events.annotations.Posting;
+import org.dockbox.hartshorn.events.annotations.Posting;
 import org.dockbox.hartshorn.server.minecraft.events.server.EngineChangedState;
 import org.dockbox.hartshorn.server.minecraft.events.server.ServerState.Reload;
 import org.dockbox.hartshorn.server.minecraft.events.server.ServerState.Started;

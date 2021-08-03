@@ -19,9 +19,9 @@ package org.dockbox.hartshorn.server.minecraft.dimension.position;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.domain.tuple.Vector3N;
-import org.dockbox.hartshorn.api.i18n.entry.FakeResource;
 import org.dockbox.hartshorn.api.keys.PersistentDataKey;
 import org.dockbox.hartshorn.api.keys.TransactionResult;
+import org.dockbox.hartshorn.i18n.entry.FakeResource;
 import org.dockbox.hartshorn.server.minecraft.dimension.world.World;
 import org.dockbox.hartshorn.util.HartshornUtils;
 

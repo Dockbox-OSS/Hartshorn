@@ -17,9 +17,9 @@
 
 package org.dockbox.hartshorn.commands.extension;
 
-import org.dockbox.hartshorn.api.i18n.common.ResourceEntry;
-import org.dockbox.hartshorn.api.i18n.entry.FakeResource;
 import org.dockbox.hartshorn.commands.CommandSource;
+import org.dockbox.hartshorn.i18n.common.ResourceEntry;
+import org.dockbox.hartshorn.i18n.entry.FakeResource;
 
 import lombok.AllArgsConstructor;
 

@@ -17,16 +17,8 @@
 
 package org.dockbox.hartshorn.commands.events;
 
-import org.dockbox.hartshorn.api.events.AbstractTargetCancellableEvent;
-import org.dockbox.hartshorn.api.events.annotations.filter.Filter;
-import org.dockbox.hartshorn.api.events.parents.Filterable;
-import org.dockbox.hartshorn.api.events.processing.FilterType;
-import org.dockbox.hartshorn.api.events.processing.FilterTypes;
 import org.dockbox.hartshorn.commands.CommandSource;
-import org.dockbox.hartshorn.util.HartshornUtils;
-
-import java.util.Arrays;
-import java.util.List;
+import org.dockbox.hartshorn.events.AbstractTargetCancellableEvent;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -37,7 +29,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class NativeCommandEvent extends AbstractTargetCancellableEvent implements Filterable {
+public class NativeCommandEvent extends AbstractTargetCancellableEvent {
 
     private String alias;
     private String[] arguments;
@@ -46,38 +38,5 @@ public class NativeCommandEvent extends AbstractTargetCancellableEvent implement
         super(source);
         this.alias = alias;
         this.arguments = arguments;
-    }
-
-    @Override
-    public boolean permits(Filter filter) {
-        if (Arrays.asList("alias", "command").contains(filter.param())) {
-            return filter.type().test(filter.value(), this.alias());
-        }
-        else if (Arrays.asList("args", "arguments").contains(filter.param())) {
-            String[] expectedARguments = filter.value().split(" ");
-            if (FilterTypes.EQUALS == filter.type()) {
-                for (String expectedArg : expectedARguments) {
-                    if (!Arrays.asList(this.arguments()).contains(expectedArg)) return false;
-                }
-                return true;
-            }
-            else if (FilterTypes.CONTAINS == filter.type()) {
-                for (String expectedArg : expectedARguments) {
-                    if (Arrays.asList(this.arguments()).contains(expectedArg)) return true;
-                }
-                return false;
-            }
-        }
-        return false;
-    }
-
-    @Override
-    public List<FilterType> acceptedFilters() {
-        return FilterTypes.commonStringTypes();
-    }
-
-    @Override
-    public List<String> acceptedParams() {
-        return HartshornUtils.asUnmodifiableList("alias", "args", "arguments", "command");
     }
 }

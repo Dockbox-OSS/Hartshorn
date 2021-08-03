@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.sponge.event;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.domain.tuple.Vector3N;
-import org.dockbox.hartshorn.api.events.annotations.Posting;
+import org.dockbox.hartshorn.events.annotations.Posting;
 import org.dockbox.hartshorn.server.minecraft.dimension.position.Location;
 import org.dockbox.hartshorn.server.minecraft.enums.PortalType;
 import org.dockbox.hartshorn.server.minecraft.events.player.PlayerPortalEvent;

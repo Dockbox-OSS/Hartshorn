@@ -17,11 +17,11 @@
 
 package org.dockbox.hartshorn.di.adapter;
 
-import org.dockbox.hartshorn.di.context.HartshornApplicationContext;
+import org.dockbox.hartshorn.di.context.HartshornContext;
 import org.dockbox.hartshorn.di.inject.Injector;
 
 /**
- * Provider type to create the {@link Injector} used by the {@link HartshornApplicationContext}.
+ * Provider type to create the {@link Injector} used by the {@link HartshornContext}.
  */
 @FunctionalInterface
 public interface InjectSource {

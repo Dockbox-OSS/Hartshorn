@@ -17,8 +17,8 @@
 
 package org.dockbox.hartshorn.oldplots;
 
-import org.dockbox.hartshorn.persistence.table.column.ColumnIdentifier;
-import org.dockbox.hartshorn.persistence.table.column.SimpleColumnIdentifier;
+import org.dockbox.hartshorn.persistence.table.ColumnIdentifier;
+import org.dockbox.hartshorn.persistence.table.SimpleColumnIdentifier;
 
 public final class OldPlotsIdentifiers {
 

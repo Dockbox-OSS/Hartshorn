@@ -18,7 +18,7 @@
 package org.dockbox.hartshorn.server.minecraft.events.player.interact;
 
 import org.dockbox.hartshorn.api.domain.Subject;
-import org.dockbox.hartshorn.api.events.AbstractTargetCancellableEvent;
+import org.dockbox.hartshorn.events.AbstractTargetCancellableEvent;
 import org.dockbox.hartshorn.server.minecraft.players.ClickType;
 import org.dockbox.hartshorn.server.minecraft.players.Hand;
 import org.dockbox.hartshorn.server.minecraft.players.Player;

@@ -18,17 +18,18 @@
 package org.dockbox.hartshorn.commands.context;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.api.i18n.permissions.Permission;
+import org.dockbox.hartshorn.i18n.permissions.Permission;
 import org.dockbox.hartshorn.commands.annotations.Command;
 import org.dockbox.hartshorn.commands.definition.CommandElement;
 import org.dockbox.hartshorn.commands.definition.CommandFlag;
 import org.dockbox.hartshorn.di.context.Context;
+import org.dockbox.hartshorn.i18n.permissions.PermissionContext;
 
 import java.util.List;
 
 /**
- * Context related to a {@link org.dockbox.hartshorn.commands.definition.CommandDefinition}, this
- * is typically contained in a {@link CommandExecutorContext}.
+ * Context related to a command definition, this is typically contained in
+ * a {@link CommandExecutorContext}.
  */
 public interface CommandDefinitionContext extends Context {
 
@@ -47,7 +48,7 @@ public interface CommandDefinitionContext extends Context {
 
     /**
      * Gets the permission required for a command. This typically only carries a raw permission node
-     * without addition {@link org.dockbox.hartshorn.api.i18n.permissions.PermissionContext}. This
+     * without addition {@link PermissionContext}. This
      * is typically either a direct representation of {@link Command#permission()} or a generated
      * permission (created by the implementation of this context).
      * @return The required permission.

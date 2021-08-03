@@ -18,7 +18,7 @@
 package org.dockbox.hartshorn.regions.flags;
 
 import org.dockbox.hartshorn.api.Hartshorn;
-import org.dockbox.hartshorn.api.i18n.common.ResourceEntry;
+import org.dockbox.hartshorn.i18n.common.ResourceEntry;
 import org.dockbox.hartshorn.regions.RegionService;
 
 public interface RegionFlag<T> {

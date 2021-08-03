@@ -18,8 +18,8 @@
 package org.dockbox.hartshorn.test.util;
 
 import org.dockbox.hartshorn.api.domain.tuple.Tristate;
-import org.dockbox.hartshorn.api.i18n.PermissionHolder;
-import org.dockbox.hartshorn.api.i18n.permissions.Permission;
+import org.dockbox.hartshorn.i18n.PermissionHolder;
+import org.dockbox.hartshorn.i18n.permissions.Permission;
 import org.dockbox.hartshorn.util.HartshornUtils;
 
 import java.util.Collection;

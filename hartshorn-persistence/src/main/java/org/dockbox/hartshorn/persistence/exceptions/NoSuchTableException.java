@@ -18,10 +18,9 @@
 package org.dockbox.hartshorn.persistence.exceptions;
 
 import org.dockbox.hartshorn.api.exceptions.ApplicationException;
-import org.jooq.exception.DataAccessException;
 
 public class NoSuchTableException extends ApplicationException {
-    public NoSuchTableException(String tableName, DataAccessException e) {
+    public NoSuchTableException(String tableName, Throwable e) {
         super("Table '" + tableName + "' does not exist", e);
     }
 }

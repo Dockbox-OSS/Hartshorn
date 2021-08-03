@@ -19,10 +19,13 @@ package org.dockbox.hartshorn.sponge.inject;
 
 import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.config.GlobalConfig;
-import org.dockbox.hartshorn.api.i18n.text.pagination.PaginationBuilder;
-import org.dockbox.hartshorn.api.i18n.text.pagination.SimplePaginationBuilder;
+import org.dockbox.hartshorn.commands.SystemSubject;
+import org.dockbox.hartshorn.i18n.text.pagination.PaginationBuilder;
+import org.dockbox.hartshorn.i18n.text.pagination.SimplePaginationBuilder;
 import org.dockbox.hartshorn.api.task.TaskRunner;
 import org.dockbox.hartshorn.api.task.ThreadUtils;
+import org.dockbox.hartshorn.cache.CacheManager;
+import org.dockbox.hartshorn.cache.SimpleCacheManager;
 import org.dockbox.hartshorn.config.ConfigurationManager;
 import org.dockbox.hartshorn.config.SimpleConfigurationManager;
 import org.dockbox.hartshorn.config.TargetGlobalConfig;
@@ -30,14 +33,13 @@ import org.dockbox.hartshorn.di.InjectConfiguration;
 import org.dockbox.hartshorn.di.SimpleTypeFactory;
 import org.dockbox.hartshorn.di.TypeFactory;
 import org.dockbox.hartshorn.persistence.FileManager;
-import org.dockbox.hartshorn.server.minecraft.Console;
 import org.dockbox.hartshorn.server.minecraft.MinecraftVersion;
 import org.dockbox.hartshorn.server.minecraft.dimension.Worlds;
 import org.dockbox.hartshorn.server.minecraft.item.Item;
 import org.dockbox.hartshorn.server.minecraft.players.Players;
 import org.dockbox.hartshorn.server.minecraft.players.Profile;
 import org.dockbox.hartshorn.sponge.dim.SpongeWorlds;
-import org.dockbox.hartshorn.sponge.game.SpongeConsole;
+import org.dockbox.hartshorn.sponge.game.SpongeSystemSubject;
 import org.dockbox.hartshorn.sponge.game.SpongePlayers;
 import org.dockbox.hartshorn.sponge.game.SpongeProfile;
 import org.dockbox.hartshorn.sponge.inventory.SpongeItem;
@@ -66,6 +68,7 @@ public class SpongeInjector extends InjectConfiguration {
 //        this.bind(WorldEditService.class, SpongeWorldEditService.class);
 //        this.bind(CustomMapService.class, SpongeCustomMapService.class);
 //        this.bind(PlotService.class, SpongePlotSquaredService.class);
+        this.bind(CacheManager.class, SimpleCacheManager.class);
 
         // Builder types
         this.bind(PaginationBuilder.class, SimplePaginationBuilder.class);
@@ -84,7 +87,7 @@ public class SpongeInjector extends InjectConfiguration {
         this.bind(Logger.class, Hartshorn.log());
 
         // Console is a constant singleton, to avoid recreation
-        this.bind(Console.class, SpongeConsole.class);
+        this.bind(SystemSubject.class, SpongeSystemSubject.class);
 
         // Packets
 //        this.bind(ChangeGameStatePacket.class, NMSChangeGameStatePacket.class);

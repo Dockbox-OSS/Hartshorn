@@ -18,11 +18,11 @@
 package org.dockbox.hartshorn.dave;
 
 import org.dockbox.hartshorn.api.Hartshorn;
-import org.dockbox.hartshorn.api.events.annotations.Listener;
+import org.dockbox.hartshorn.events.annotations.Listener;
 import org.dockbox.hartshorn.api.exceptions.ApplicationException;
-import org.dockbox.hartshorn.api.i18n.entry.Resource;
-import org.dockbox.hartshorn.api.i18n.text.actions.HoverAction;
-import org.dockbox.hartshorn.api.i18n.text.pagination.PaginationBuilder;
+import org.dockbox.hartshorn.i18n.entry.Resource;
+import org.dockbox.hartshorn.i18n.text.actions.HoverAction;
+import org.dockbox.hartshorn.i18n.text.pagination.PaginationBuilder;
 import org.dockbox.hartshorn.api.task.TaskRunner;
 import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.commands.RunCommandAction;
