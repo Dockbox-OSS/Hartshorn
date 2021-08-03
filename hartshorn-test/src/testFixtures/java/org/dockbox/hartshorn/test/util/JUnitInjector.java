@@ -20,14 +20,13 @@ package org.dockbox.hartshorn.test.util;
 import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.config.GlobalConfig;
 import org.dockbox.hartshorn.api.task.TaskRunner;
-import org.dockbox.hartshorn.api.task.ThreadUtils;
 import org.dockbox.hartshorn.cache.CacheManager;
 import org.dockbox.hartshorn.commands.SystemSubject;
-import org.dockbox.hartshorn.discord.DiscordCommandSource;
 import org.dockbox.hartshorn.config.ConfigurationManager;
 import org.dockbox.hartshorn.di.InjectConfiguration;
 import org.dockbox.hartshorn.di.SimpleTypeFactory;
 import org.dockbox.hartshorn.di.TypeFactory;
+import org.dockbox.hartshorn.discord.DiscordCommandSource;
 import org.dockbox.hartshorn.discord.DiscordUtils;
 import org.dockbox.hartshorn.persistence.FileManager;
 import org.dockbox.hartshorn.server.minecraft.MinecraftVersion;
@@ -41,10 +40,10 @@ import org.dockbox.hartshorn.server.minecraft.players.Players;
 import org.dockbox.hartshorn.server.minecraft.players.Profile;
 import org.dockbox.hartshorn.test.files.JUnitFileManager;
 import org.dockbox.hartshorn.test.objects.JUnitBossbar;
-import org.dockbox.hartshorn.test.objects.JUnitSystemSubject;
 import org.dockbox.hartshorn.test.objects.JUnitDiscordCommandSource;
 import org.dockbox.hartshorn.test.objects.JUnitItem;
 import org.dockbox.hartshorn.test.objects.JUnitProfile;
+import org.dockbox.hartshorn.test.objects.JUnitSystemSubject;
 import org.dockbox.hartshorn.test.objects.living.JUnitArmorStand;
 import org.dockbox.hartshorn.test.objects.living.JUnitItemFrame;
 import org.dockbox.hartshorn.test.services.JUnitCustomMapService;
@@ -61,7 +60,6 @@ public class JUnitInjector extends InjectConfiguration {
 
         // Tasks
         this.bind(TaskRunner.class, JUnitTaskRunner.class);
-        this.bind(ThreadUtils.class, JUnitThreadUtils.class);
 
         // Persistence
         this.bind(FileManager.class, JUnitFileManager.class);

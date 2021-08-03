@@ -19,19 +19,18 @@ package org.dockbox.hartshorn.sponge.inject;
 
 import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.config.GlobalConfig;
-import org.dockbox.hartshorn.commands.SystemSubject;
-import org.dockbox.hartshorn.i18n.text.pagination.PaginationBuilder;
-import org.dockbox.hartshorn.i18n.text.pagination.SimplePaginationBuilder;
 import org.dockbox.hartshorn.api.task.TaskRunner;
-import org.dockbox.hartshorn.api.task.ThreadUtils;
 import org.dockbox.hartshorn.cache.CacheManager;
 import org.dockbox.hartshorn.cache.SimpleCacheManager;
+import org.dockbox.hartshorn.commands.SystemSubject;
 import org.dockbox.hartshorn.config.ConfigurationManager;
 import org.dockbox.hartshorn.config.SimpleConfigurationManager;
 import org.dockbox.hartshorn.config.TargetGlobalConfig;
 import org.dockbox.hartshorn.di.InjectConfiguration;
 import org.dockbox.hartshorn.di.SimpleTypeFactory;
 import org.dockbox.hartshorn.di.TypeFactory;
+import org.dockbox.hartshorn.i18n.text.pagination.PaginationBuilder;
+import org.dockbox.hartshorn.i18n.text.pagination.SimplePaginationBuilder;
 import org.dockbox.hartshorn.persistence.FileManager;
 import org.dockbox.hartshorn.server.minecraft.MinecraftVersion;
 import org.dockbox.hartshorn.server.minecraft.dimension.Worlds;
@@ -39,13 +38,12 @@ import org.dockbox.hartshorn.server.minecraft.item.Item;
 import org.dockbox.hartshorn.server.minecraft.players.Players;
 import org.dockbox.hartshorn.server.minecraft.players.Profile;
 import org.dockbox.hartshorn.sponge.dim.SpongeWorlds;
-import org.dockbox.hartshorn.sponge.game.SpongeSystemSubject;
 import org.dockbox.hartshorn.sponge.game.SpongePlayers;
 import org.dockbox.hartshorn.sponge.game.SpongeProfile;
+import org.dockbox.hartshorn.sponge.game.SpongeSystemSubject;
 import org.dockbox.hartshorn.sponge.inventory.SpongeItem;
 import org.dockbox.hartshorn.sponge.util.SpongeFileManager;
 import org.dockbox.hartshorn.sponge.util.SpongeTaskRunner;
-import org.dockbox.hartshorn.sponge.util.SpongeThreadUtil;
 import org.slf4j.Logger;
 
 public class SpongeInjector extends InjectConfiguration {
@@ -57,7 +55,6 @@ public class SpongeInjector extends InjectConfiguration {
 
         // Tasks
         this.bind(TaskRunner.class, SpongeTaskRunner.class);
-        this.bind(ThreadUtils.class, SpongeThreadUtil.class);
 
         // Persistence
         this.bind(FileManager.class, SpongeFileManager.class);

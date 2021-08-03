@@ -20,7 +20,8 @@ package org.dockbox.hartshorn.api.task;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 
 import java.util.concurrent.Callable;
-import java.util.concurrent.Future;
+import java.util.concurrent.CompletableFuture;
+import java.util.function.Consumer;
 
 /**
  * A low-level interface for easy thread-based actions.
@@ -36,18 +37,7 @@ public interface ThreadUtils {
      *
      * @return The Future object for completion checks
      */
-    Future<?> performAsync(Runnable runnable);
-
-    /**
-     * Performs a given Runnable on a sync thread, returning a Future object to be used for completion
-     * checks. The threads are usually provided by the underlying platform.
-     *
-     * @param runnable
-     *         The Runnable to run
-     *
-     * @return The Future object for completion checks
-     */
-    Future<?> performSync(Runnable runnable);
+    CompletableFuture<?> performAsync(Runnable runnable);
 
     /**
      * Performs a given Runnable on a async thread, and blocks the current thread until it completes.
@@ -60,7 +50,7 @@ public interface ThreadUtils {
      *
      * @return The Exceptional holding either the return value or a Exception
      */
-    <T> Exceptional<T> awaitAsync(Callable<T> callable);
+    <T> void performAsync(Callable<T> callable, Consumer<Exceptional<T>> consumer);
 
     /**
      * Performs a given Runnable on a sync thread, and blocks the current thread until it completes.
@@ -73,5 +63,5 @@ public interface ThreadUtils {
      *
      * @return The Exceptional holding either the return value or a Exception
      */
-    <T> Exceptional<T> awaitSync(Callable<T> callable);
+    <T> Exceptional<T> performSync(Callable<T> callable);
 }
