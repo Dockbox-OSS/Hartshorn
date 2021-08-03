@@ -29,6 +29,7 @@ import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.ThrowingSupplier;
+import org.yaml.snakeyaml.events.Event.ID;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -61,6 +62,8 @@ class JooqSqliteServiceTest {
     }
 
     private static SqlService writeToFile(SqlService man) throws InvalidConnectionException {
+        man.drop(MAIN_TABLE);
+        man.drop(ID_TABLE);
         Table main = JooqSqliteServiceTest.populatedMainTable();
         man.insert(MAIN_TABLE, main);
         Table ids = JooqSqliteServiceTest.populatedIdTable();
