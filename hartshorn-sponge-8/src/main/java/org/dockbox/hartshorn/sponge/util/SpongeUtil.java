@@ -33,14 +33,15 @@ import org.spongepowered.api.registry.RegistryKey;
 import org.spongepowered.api.registry.RegistryType;
 
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.function.Function;
 
 public class SpongeUtil {
 
-    public static <T> Exceptional<T> await(Future<T> future) {
-        return Exceptional.of(future::get);
+    public static <T> Exceptional<T> await(CompletableFuture<T> future) {
+        return Exceptional.of(future::join);
     }
 
     public static <T> Exceptional<T> awaitOption(Future<Optional<T>> future) {
