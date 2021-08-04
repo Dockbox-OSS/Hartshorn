@@ -22,21 +22,16 @@ import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.di.properties.InjectorProperty;
 import org.dockbox.hartshorn.di.services.ServiceModifier;
 import org.dockbox.hartshorn.proxy.ProxyProperty;
+import org.dockbox.hartshorn.proxy.ProxyUtil;
 import org.dockbox.hartshorn.proxy.exception.ProxyMethodBindingException;
 import org.dockbox.hartshorn.proxy.handle.ProxyFunction;
 import org.dockbox.hartshorn.proxy.handle.ProxyHandler;
-import org.dockbox.hartshorn.proxy.handle.ProxyInterfaceHandler;
 import org.dockbox.hartshorn.util.Reflect;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 import java.util.Collection;
-
-import javassist.util.proxy.MethodHandler;
-import javassist.util.proxy.ProxyFactory;
 
 public abstract class ServiceAnnotatedMethodModifier<M extends Annotation, A extends Annotation> extends ServiceModifier<A> {
 
@@ -49,25 +44,7 @@ public abstract class ServiceAnnotatedMethodModifier<M extends Annotation, A ext
     public <T> T process(ApplicationContext context, Class<T> type, @Nullable T instance, InjectorProperty<?>... properties) {
         final Collection<Method> methods = Reflect.methods(type, this.annotation());
 
-        ProxyHandler<T> handler = null;
-        if (instance != null) {
-            if (ProxyFactory.isProxyClass(instance.getClass())) {
-                final MethodHandler methodHandler = ProxyFactory.getHandler((javassist.util.proxy.Proxy) instance);
-                if (methodHandler instanceof ProxyHandler proxyHandler) {
-                    //noinspection unchecked
-                    handler = (ProxyHandler<T>) proxyHandler;
-                }
-            }
-            else if (Proxy.isProxyClass(instance.getClass())) {
-                final InvocationHandler invocationHandler = Proxy.getInvocationHandler(instance);
-                if (invocationHandler instanceof ProxyInterfaceHandler proxyInterfaceHandler) {
-                    //noinspection unchecked
-                    handler = proxyInterfaceHandler.handler();
-                }
-            }
-        }
-
-        if (handler == null) handler = new ProxyHandler<>(instance, type);
+        ProxyHandler<T> handler = ProxyUtil.handler(type, instance);
 
         for (Method method : methods) {
             MethodProxyContext<T> ctx = new SimpleMethodProxyContext<>(instance, type, method, properties);
