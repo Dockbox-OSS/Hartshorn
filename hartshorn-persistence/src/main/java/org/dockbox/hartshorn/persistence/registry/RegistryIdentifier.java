@@ -17,10 +17,8 @@
 
 package org.dockbox.hartshorn.persistence.registry;
 
-import org.dockbox.hartshorn.api.annotations.Entity;
 import org.jetbrains.annotations.NonNls;
 
-@Entity(value = "identifier")
 public interface RegistryIdentifier {
     @NonNls
     default String key() {

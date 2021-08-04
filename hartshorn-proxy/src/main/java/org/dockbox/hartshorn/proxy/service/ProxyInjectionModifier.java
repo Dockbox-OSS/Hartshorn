@@ -22,6 +22,7 @@ import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.di.inject.InjectionModifier;
 import org.dockbox.hartshorn.di.properties.InjectorProperty;
 import org.dockbox.hartshorn.proxy.ProxyProperty;
+import org.dockbox.hartshorn.proxy.ProxyUtil;
 import org.dockbox.hartshorn.proxy.annotations.UseProxying;
 import org.dockbox.hartshorn.proxy.handle.ProxyHandler;
 import org.jetbrains.annotations.Nullable;
@@ -40,7 +41,8 @@ public class ProxyInjectionModifier implements InjectionModifier<UseProxying> {
     @Override
     public <T> T process(ApplicationContext context, Class<T> type, @Nullable T instance, InjectorProperty<?>... properties) {
         try {
-            ProxyHandler<T> handler = new ProxyHandler<>(instance, type);
+            ProxyHandler<T> handler = ProxyUtil.handler(type, instance);
+
             for (InjectorProperty<?> property : properties) {
                 if (property instanceof ProxyProperty) {
                     //noinspection unchecked

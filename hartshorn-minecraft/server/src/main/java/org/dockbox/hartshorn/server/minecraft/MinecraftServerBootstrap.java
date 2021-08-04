@@ -19,8 +19,9 @@ package org.dockbox.hartshorn.server.minecraft;
 
 import org.dockbox.hartshorn.api.HartshornBootstrap;
 import org.dockbox.hartshorn.events.EventBus;
+import org.dockbox.hartshorn.proxy.ProxyApplicationBootstrap;
 
-public class MinecraftServerBootstrap extends HartshornBootstrap {
+public class MinecraftServerBootstrap extends ProxyApplicationBootstrap {
 
     public static MinecraftServerBootstrap instance() {
         return (MinecraftServerBootstrap) HartshornBootstrap.instance();

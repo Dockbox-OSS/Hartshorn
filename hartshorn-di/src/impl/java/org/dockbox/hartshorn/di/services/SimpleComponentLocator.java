@@ -43,6 +43,7 @@ public class SimpleComponentLocator implements ComponentLocator {
         final List<ComponentContainer> containers = types.stream()
                 .map(SimpleComponentContainer::new)
                 .filter(SimpleComponentContainer::enabled)
+                .filter(container -> !container.type().isAnnotation()) // Exclude extended annotations
                 .map(ComponentContainer.class::cast)
                 .toList();
         SimpleComponentLocator.cache.put(prefix, containers);

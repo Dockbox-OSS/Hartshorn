@@ -17,15 +17,32 @@
 
 package org.dockbox.hartshorn.regions.persistence;
 
-import lombok.AllArgsConstructor;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@AllArgsConstructor
 @NoArgsConstructor
 @Getter
+@Entity
 public class PersistentRegionFlag {
-    long regionId;
+
+    @Id
+    @GeneratedValue
+    long id;
+
+    @ManyToOne
+    PersistentRegion region;
+
     String flagId;
     String value;
+
+    public PersistentRegionFlag(PersistentRegion region, String flagId, String value) {
+        this.region = region;
+        this.flagId = flagId;
+        this.value = value;
+    }
 }

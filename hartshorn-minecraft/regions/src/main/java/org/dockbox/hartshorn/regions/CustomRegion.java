@@ -28,6 +28,7 @@ import org.dockbox.hartshorn.regions.events.flags.RegionFlagAddedEvent;
 import org.dockbox.hartshorn.regions.events.flags.RegionFlagRemovedEvent;
 import org.dockbox.hartshorn.regions.flags.RegionFlag;
 import org.dockbox.hartshorn.regions.persistence.PersistentRegion;
+import org.dockbox.hartshorn.regions.persistence.PersistentRegionFlag;
 import org.dockbox.hartshorn.regions.persistence.SerializedFlag;
 import org.dockbox.hartshorn.server.minecraft.dimension.Worlds;
 import org.dockbox.hartshorn.server.minecraft.dimension.position.Location;
@@ -149,8 +150,14 @@ public class CustomRegion implements Region, PersistentCapable<PersistentRegion>
 
     @Override
     public PersistentRegion model() {
-        return new PersistentRegion(this.id(), this.name().toLegacy(), this.owner.toString(), this.world.toString(),
+        final PersistentRegion persistentRegion = new PersistentRegion(this.id(), this.name().toLegacy(), this.owner.toString(), this.world.toString(),
                 this.cornerA().xI(), this.cornerA().yI(), this.cornerA().zI(),
                 this.cornerB().xI(), this.cornerB().yI(), this.cornerB().zI());
+
+        this.flags.values().stream()
+                .map(flag -> new PersistentRegionFlag(persistentRegion, flag.id(), flag.value()))
+                .forEach(persistentRegion::add);
+
+        return persistentRegion;
     }
 }

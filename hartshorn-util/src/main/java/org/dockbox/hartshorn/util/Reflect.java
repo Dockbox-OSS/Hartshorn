@@ -18,9 +18,8 @@
 package org.dockbox.hartshorn.util;
 
 import org.apache.commons.beanutils.BeanUtils;
-import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.api.annotations.Entity;
 import org.dockbox.hartshorn.api.annotations.Property;
+import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.exceptions.ApplicationException;
 import org.dockbox.hartshorn.util.exceptions.FieldAccessException;
 import org.dockbox.hartshorn.util.exceptions.NotPrimitiveException;
@@ -476,24 +475,6 @@ public final class Reflect {
         return false;
     }
 
-    public static boolean serializable(AnnotatedElement holder, Class<?> potentialReject, boolean throwIfRejected) {
-        final Exceptional<Entity> entity = Reflect.annotation(holder, Entity.class);
-        if (entity.present()) {
-            Entity rejects = entity.get();
-            if (!rejects.serializable()) {
-                if (throwIfRejected) {
-                    String name = "Generic annotated element";
-                    if (holder instanceof Class) {
-                        name = ((Class<?>) holder).getSimpleName();
-                    }
-                    throw new RuntimeException(name + " cannot be serialized");
-                }
-                else return false;
-            }
-        }
-        return true;
-    }
-
     public static void fields(Class<?> type, BiConsumer<Class<?>, Field> consumer) {
         for (Field declaredField : type.getDeclaredFields()) {
             consumer.accept(type, declaredField);
@@ -502,6 +483,7 @@ public final class Reflect {
     }
 
     public static void set(Field field, Object to, Object value) {
+        if (to == null) throw new IllegalArgumentException("Cannot access field " + field.getName() + " because object 'to' is null");
         try {
             final Exceptional<Property> annotation = Reflect.annotation(field, Property.class);
             if (annotation.present()) {

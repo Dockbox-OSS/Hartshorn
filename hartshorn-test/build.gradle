@@ -61,7 +61,6 @@ dependencies {
     testFixturesImplementation "org.slf4j:slf4j-api:$slf4jVersion"
     testFixturesImplementation "org.slf4j:slf4j-simple:$slf4jVersion"
 
-    testFixturesImplementation "org.jooq:jooq:$jooqVersion"
-    testFixturesImplementation "org.jooq:jooq-meta:$jooqVersion"
-    testFixturesImplementation "org.jooq:jooq-codegen:$jooqVersion"
+    testFixturesImplementation "org.hibernate:hibernate-core:5.5.5.Final"
+    testFixturesImplementation 'org.apache.derby:derby:10.8.2.2'
 }

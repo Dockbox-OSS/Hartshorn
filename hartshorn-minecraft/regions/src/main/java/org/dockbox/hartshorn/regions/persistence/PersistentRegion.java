@@ -21,16 +21,24 @@ import org.dockbox.hartshorn.api.domain.tuple.Vector3N;
 import org.dockbox.hartshorn.i18n.text.Text;
 import org.dockbox.hartshorn.persistence.PersistentModel;
 import org.dockbox.hartshorn.regions.CustomRegion;
+import org.dockbox.hartshorn.util.HartshornUtils;
 
+import java.util.List;
 import java.util.UUID;
 
-import lombok.AllArgsConstructor;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@AllArgsConstructor
 @NoArgsConstructor
+@Entity
 public class PersistentRegion implements PersistentModel<CustomRegion> {
 
+    @Id
     private long id;
 
     private String name;
@@ -45,6 +53,27 @@ public class PersistentRegion implements PersistentModel<CustomRegion> {
     private int corner_b_y;
     private int corner_b_z;
 
+    @OneToMany(cascade = CascadeType.ALL)
+    @Getter
+    private List<PersistentRegionFlag> flags = HartshornUtils.emptyList();
+
+    public PersistentRegion(long id, String name, String owner, String world, int corner_a_x, int corner_a_y, int corner_a_z, int corner_b_x, int corner_b_y, int corner_b_z) {
+        this.id = id;
+        this.name = name;
+        this.owner = owner;
+        this.world = world;
+        this.corner_a_x = corner_a_x;
+        this.corner_a_y = corner_a_y;
+        this.corner_a_z = corner_a_z;
+        this.corner_b_x = corner_b_x;
+        this.corner_b_y = corner_b_y;
+        this.corner_b_z = corner_b_z;
+    }
+
+    public void add(PersistentRegionFlag flag) {
+        this.flags.add(flag);
+    }
+
     @Override
     public Class<? extends CustomRegion> type() {
         return CustomRegion.class;
@@ -52,9 +81,11 @@ public class PersistentRegion implements PersistentModel<CustomRegion> {
 
     @Override
     public CustomRegion restore() {
-        return new CustomRegion(Text.of(this.name),
+        final CustomRegion region = new CustomRegion(Text.of(this.name),
                 Vector3N.of(this.corner_a_x, this.corner_a_y, this.corner_a_z),
                 Vector3N.of(this.corner_b_x, this.corner_b_y, this.corner_b_z),
                 UUID.fromString(this.owner), UUID.fromString(this.world));
+        // TODO: Restore flags!
+        return region;
     }
 }

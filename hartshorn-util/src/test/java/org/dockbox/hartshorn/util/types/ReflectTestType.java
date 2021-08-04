@@ -17,7 +17,6 @@
 
 package org.dockbox.hartshorn.util.types;
 
-import org.dockbox.hartshorn.api.annotations.Entity;
 import org.dockbox.hartshorn.api.annotations.Property;
 import org.dockbox.hartshorn.util.annotations.Demo;
 import org.junit.jupiter.api.Assertions;
@@ -28,7 +27,6 @@ import lombok.Getter;
 
 @SuppressWarnings("FieldMayBeFinal")
 @Demo
-@Entity(value = "test")
 public class ReflectTestType extends ParentTestType {
 
     @Demo

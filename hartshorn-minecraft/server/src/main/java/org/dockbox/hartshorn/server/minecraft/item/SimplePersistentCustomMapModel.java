@@ -18,14 +18,12 @@
 package org.dockbox.hartshorn.server.minecraft.item;
 
 import org.dockbox.hartshorn.api.Hartshorn;
-import org.dockbox.hartshorn.api.annotations.Entity;
 import org.dockbox.hartshorn.server.minecraft.item.maps.CustomMap;
 import org.dockbox.hartshorn.server.minecraft.item.maps.CustomMapService;
 
 import javax.inject.Singleton;
 
 @Singleton
-@Entity(value = "map")
 public class SimplePersistentCustomMapModel extends SimplePersistentItemModel {
 
     private final int mapId;

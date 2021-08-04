@@ -19,16 +19,14 @@ package org.dockbox.hartshorn.regions.persistence;
 
 import org.dockbox.hartshorn.api.CheckedConsumer;
 import org.dockbox.hartshorn.api.Hartshorn;
-import org.dockbox.hartshorn.api.domain.FileTypes;
 import org.dockbox.hartshorn.api.exceptions.ApplicationException;
 import org.dockbox.hartshorn.api.exceptions.Except;
-import org.dockbox.hartshorn.di.annotations.inject.Wired;
-import org.dockbox.hartshorn.di.properties.BindingMetaProperty;
+import org.dockbox.hartshorn.di.annotations.component.Component;
+import org.dockbox.hartshorn.di.properties.InjectableType;
+import org.dockbox.hartshorn.di.properties.InjectorProperty;
 import org.dockbox.hartshorn.persistence.SqlService;
-import org.dockbox.hartshorn.persistence.exceptions.InvalidConnectionException;
+import org.dockbox.hartshorn.persistence.properties.ConnectionProperty;
 import org.dockbox.hartshorn.persistence.properties.PathProperty;
-import org.dockbox.hartshorn.persistence.table.SimpleColumnIdentifier;
-import org.dockbox.hartshorn.persistence.table.Table;
 import org.dockbox.hartshorn.regions.CustomRegion;
 import org.dockbox.hartshorn.regions.flags.PersistentFlagModel;
 import org.dockbox.hartshorn.regions.flags.RegionFlag;
@@ -40,18 +38,16 @@ import java.util.Set;
 
 import lombok.Getter;
 
-public class RegionsList {
+@Component
+public class RegionsList implements InjectableType {
 
-    @Wired SqlService sqlService;
-
+    private SqlService sqlService;
     @Getter private final Set<PersistentFlagModel> flags = HartshornUtils.emptySet();
     private final List<CustomRegion> regions = HartshornUtils.emptyList();
 
     public void add(RegionFlag<?> flag) {
         this.flags.add(flag.model());
-        this.withSql(sql -> {
-            sql.insert("flags", Table.of(PersistentFlagModel.class, flag.model()));
-        });
+        this.withSql(sql -> sql.save(flag.model()));
     }
 
     public void add(CustomRegion element) {
@@ -60,8 +56,8 @@ public class RegionsList {
             this.add(flag);
         }
         this.withSql(sql -> {
-            sql.insert("regions", Table.of(PersistentRegion.class, element.model()));
-            sql.insertUnique("regionflags", Table.of(PersistentRegionFlag.class), new SimpleColumnIdentifier<>("region_id", String.class));
+            final PersistentRegion model = element.model();
+            sql.save(model);
         });
     }
 
@@ -74,19 +70,14 @@ public class RegionsList {
     }
 
     public static RegionsList restore(Path file) {
-        final RegionsList regionsList = Hartshorn.context().get(RegionsList.class);
-        final SqlService sql = Hartshorn.context().get(SqlService.class, BindingMetaProperty.of(FileTypes.SQLITE), new PathProperty(file));
+        return Hartshorn.context().get(RegionsList.class, new PathProperty(file));
+    }
 
-        try {
-            regionsList.regions.addAll(sql
-                    .table("regions", Table.of(PersistentRegion.class))
-                    .restore(PersistentRegion.class)
-            );
+    @Override
+    public void apply(InjectorProperty<?> property) {
+        if (property instanceof PathProperty pathProperty) {
+            final Path path = pathProperty.value();
+            this.sqlService = Hartshorn.context().get(SqlService.class, ConnectionProperty.of(path));
         }
-        catch (InvalidConnectionException e) {
-            Except.handle(e);
-        }
-
-        return regionsList;
     }
 }

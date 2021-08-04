@@ -15,7 +15,7 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.persistence.mapping;
+package org.dockbox.hartshorn.persistence.jackson;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -23,6 +23,7 @@ import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.core.JsonParser.Feature;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.javaprop.JavaPropsMapper;
@@ -32,23 +33,20 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLParser;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.api.annotations.Entity;
+import org.dockbox.hartshorn.di.annotations.component.Component;
 import org.dockbox.hartshorn.di.annotations.inject.Binds;
-import org.dockbox.hartshorn.persistence.FileManager;
+import org.dockbox.hartshorn.persistence.DefaultObjectMapper;
 import org.dockbox.hartshorn.persistence.FileType;
 import org.dockbox.hartshorn.persistence.PersistentCapable;
 import org.dockbox.hartshorn.persistence.PersistentModel;
-import org.dockbox.hartshorn.persistence.jackson.GenericTypeReference;
-import org.dockbox.hartshorn.persistence.jackson.PropertyAliasIntrospector;
+import org.dockbox.hartshorn.persistence.mapping.GenericType;
 import org.dockbox.hartshorn.persistence.properties.PersistenceModifier;
 import org.dockbox.hartshorn.util.Reflect;
 import org.jetbrains.annotations.NotNull;
 
-import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Type;
 import java.nio.file.Path;
 import java.util.Collections;
@@ -132,8 +130,6 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
             if (persistentCapable.present()) return persistentCapable;
         }
 
-        if (type instanceof AnnotatedElement) Reflect.serializable((AnnotatedElement) type, FileManager.class, true);
-
         return Exceptional.of(reader);
     }
 
@@ -159,18 +155,17 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
 
     private ObjectWriter writer(Object content) {
         ObjectWriter writer = this.configureMapper().writerWithDefaultPrettyPrinter();
-        final Exceptional<Entity> annotated = Reflect.annotation(content.getClass(), Entity.class);
+        final Exceptional<Component> annotated = Reflect.annotation(content.getClass(), Component.class);
 
         if (JacksonObjectMapper.roots.contains(this.fileType()) && annotated.present()) {
-            final Entity annotation = annotated.get();
-            writer = writer.withRootName(annotation.value());
+            final Component annotation = annotated.get();
+            writer = writer.withRootName(annotation.id());
         }
         return writer;
     }
 
     private <T, R> Exceptional<R> writeInternal(T content, Supplier<Exceptional<R>> capable, Callable<R> writer) {
         if (content instanceof PersistentCapable) return capable.get();
-        Reflect.serializable(content.getClass(), FileManager.class, true);
         return Exceptional.of(writer);
     }
 

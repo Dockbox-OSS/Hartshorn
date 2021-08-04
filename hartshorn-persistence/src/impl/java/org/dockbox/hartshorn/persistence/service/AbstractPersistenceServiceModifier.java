@@ -24,6 +24,8 @@ import org.dockbox.hartshorn.di.services.ComponentContainer;
 import org.dockbox.hartshorn.persistence.FileManager;
 import org.dockbox.hartshorn.persistence.FileType;
 import org.dockbox.hartshorn.persistence.annotations.UsePersistence;
+import org.dockbox.hartshorn.persistence.context.PersistenceAnnotationContext;
+import org.dockbox.hartshorn.persistence.context.SerialisationContext;
 import org.dockbox.hartshorn.persistence.mapping.ObjectMapper;
 import org.dockbox.hartshorn.proxy.handle.ProxyFunction;
 import org.dockbox.hartshorn.proxy.service.MethodProxyContext;

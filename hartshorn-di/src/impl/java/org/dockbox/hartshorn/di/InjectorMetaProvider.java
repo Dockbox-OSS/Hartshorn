@@ -21,13 +21,13 @@ import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.domain.MetaProvider;
 import org.dockbox.hartshorn.api.domain.SimpleTypedOwner;
 import org.dockbox.hartshorn.api.domain.TypedOwner;
-import org.dockbox.hartshorn.api.annotations.Entity;
 import org.dockbox.hartshorn.di.annotations.component.Component;
 import org.dockbox.hartshorn.di.binding.Bindings;
 import org.dockbox.hartshorn.di.services.ComponentContainer;
 import org.dockbox.hartshorn.util.Reflect;
 
 import javax.inject.Singleton;
+import javax.persistence.Entity;
 
 public class InjectorMetaProvider implements MetaProvider {
 
@@ -35,13 +35,16 @@ public class InjectorMetaProvider implements MetaProvider {
     public TypedOwner lookup(Class<?> type) {
         final Exceptional<Entity> annotated = Reflect.annotation(type, Entity.class);
         if (annotated.present()) {
-            return SimpleTypedOwner.of(annotated.get().value());
+            return SimpleTypedOwner.of(annotated.get().name());
         }
         else {
             final Exceptional<ComponentContainer> container = ApplicationContextAware.instance().context().locator().container(type);
             if (container.present()) {
                 final ComponentContainer service = container.get();
                 if (Reflect.notVoid(service.owner())) return this.lookup(service.owner());
+                else {
+                    if (!"".equals(service.id())) return SimpleTypedOwner.of(service.id());
+                }
             }
         }
         return SimpleTypedOwner.of(Bindings.serviceId(type));

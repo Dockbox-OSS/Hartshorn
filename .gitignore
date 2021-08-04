@@ -16,3 +16,4 @@ module/src/test/resources/storage.db-journal
 */testRuns
 */logs
 hartshorn-sponge-8/run
+*.log

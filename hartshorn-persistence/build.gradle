@@ -30,9 +30,6 @@ dependencies {
     include 'org.codehaus.woodstox:woodstox-core-asl:4.4.1'
 
     // SQL Extension dependencies
-    include "org.jooq:jooq:$jooqVersion"
-    include "org.jooq:jooq-meta:$jooqVersion"
-    include "org.jooq:jooq-codegen:$jooqVersion"
-
-    testImplementation "org.xerial:sqlite-jdbc:$xerialSqliteJdbcVersion"
+    include "org.hibernate:hibernate-core:5.5.5.Final"
+    include 'org.apache.derby:derby:10.8.2.2'
 }

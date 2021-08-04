@@ -15,11 +15,11 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.persistence.mapping;
+package org.dockbox.hartshorn.persistence;
 
 import org.dockbox.hartshorn.api.exceptions.ApplicationException;
 import org.dockbox.hartshorn.di.properties.InjectorProperty;
-import org.dockbox.hartshorn.persistence.FileType;
+import org.dockbox.hartshorn.persistence.mapping.ObjectMapper;
 import org.dockbox.hartshorn.persistence.properties.PersistenceModifier;
 import org.dockbox.hartshorn.persistence.properties.PersistenceProperty;
 

@@ -15,10 +15,8 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.api;
+package org.dockbox.hartshorn.persistence.context;
 
-import org.dockbox.hartshorn.api.annotations.Entity;
-
-@Entity("entity")
-public class EmptyEntity {
+public enum SerialisationTarget {
+    ANNOTATED_PATH, PARAMETER_PATH, STRING
 }

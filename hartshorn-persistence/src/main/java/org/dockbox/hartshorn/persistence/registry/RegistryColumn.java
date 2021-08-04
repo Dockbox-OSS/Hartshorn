@@ -18,7 +18,6 @@
 package org.dockbox.hartshorn.persistence.registry;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.api.annotations.Entity;
 import org.dockbox.hartshorn.util.HartshornUtils;
 
 import java.util.ArrayList;
@@ -27,7 +26,6 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 @SuppressWarnings({ "UnusedReturnValue", "unused" })
-@Entity(value = "column")
 public class RegistryColumn<T> extends ArrayList<T> {
 
     public RegistryColumn() {

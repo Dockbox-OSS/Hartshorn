@@ -24,14 +24,19 @@ import org.dockbox.hartshorn.i18n.common.ResourceEntryModel;
 import org.dockbox.hartshorn.persistence.PersistentModel;
 import org.dockbox.hartshorn.util.Reflect;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @AllArgsConstructor
 @NoArgsConstructor
+@Entity
 public class PersistentFlagModel {
 
+    @Id
     @Getter
     private String id;
     private String descriptionKey;
