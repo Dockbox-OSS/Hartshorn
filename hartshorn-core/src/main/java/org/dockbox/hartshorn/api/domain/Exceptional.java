@@ -364,7 +364,7 @@ public final class Exceptional<T> {
                     return of(defaultValue.get());
                 }
             }
-            catch (ApplicationException e) {
+            catch (Throwable e) {
                 return of(e);
             }
         }
