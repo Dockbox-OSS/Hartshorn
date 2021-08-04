@@ -25,12 +25,12 @@ import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.api.annotations.Entity;
+import org.dockbox.hartshorn.di.annotations.service.Service;
+import org.dockbox.hartshorn.discord.templates.Template;
 import org.dockbox.hartshorn.i18n.common.ResourceEntry;
 import org.dockbox.hartshorn.i18n.text.Text;
-import org.dockbox.hartshorn.discord.templates.Template;
 
-@Entity(value = "discord", serializable = false)
+@Service
 public interface DiscordUtils {
 
     Exceptional<JDA> jda();

@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.api;
 
 import com.google.common.collect.Multimap;
 
+import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.di.InjectConfiguration;
 import org.dockbox.hartshorn.di.Modifier;
 import org.dockbox.hartshorn.di.annotations.inject.InjectPhase;
@@ -32,5 +33,10 @@ public class SampleBootstrap extends HartshornBootstrap {
     @Override
     public void create(Collection<String> prefixes, Class<?> activationSource, List<Annotation> activators, Multimap<InjectPhase, InjectConfiguration> configs, Modifier... modifiers) {
         // This is only used for Application testing, do not actually create bootstrap instance
+    }
+
+    @Override
+    public <T> Exceptional<T> proxy(Class<T> type, T instance) {
+        return Exceptional.empty();
     }
 }

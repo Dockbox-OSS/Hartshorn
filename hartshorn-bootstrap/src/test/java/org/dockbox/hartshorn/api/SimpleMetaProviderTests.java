@@ -28,11 +28,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 public class SimpleMetaProviderTests {
 
     @Test
-    void testEntityTypeUsesEntityAlias() {
+    void testComponentTypeUsesComponentAlias() {
         final MetaProvider lookup = new SimpleMetaProvider();
-        final TypedOwner owner = lookup.lookup(EmptyEntity.class);
+        final TypedOwner owner = lookup.lookup(EmptyComponent.class);
         Assertions.assertNotNull(owner);
-        Assertions.assertEquals("entity", owner.id());
+        Assertions.assertEquals("component", owner.id());
     }
 
     @Test

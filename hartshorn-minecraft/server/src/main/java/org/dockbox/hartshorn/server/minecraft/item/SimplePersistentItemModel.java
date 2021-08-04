@@ -17,10 +17,9 @@
 
 package org.dockbox.hartshorn.server.minecraft.item;
 
-import org.dockbox.hartshorn.api.annotations.Entity;
-import org.dockbox.hartshorn.i18n.text.Text;
 import org.dockbox.hartshorn.api.keys.PersistentDataKey;
 import org.dockbox.hartshorn.api.keys.StoredPersistentKey;
+import org.dockbox.hartshorn.i18n.text.Text;
 import org.dockbox.hartshorn.server.minecraft.item.persistence.PersistentItemModel;
 import org.dockbox.hartshorn.util.HartshornUtils;
 
@@ -35,7 +34,6 @@ import lombok.Getter;
 
 @SuppressWarnings("FieldMayBeFinal")
 @Singleton
-@Entity(value = "item")
 @Getter
 public class SimplePersistentItemModel implements PersistentItemModel {
 

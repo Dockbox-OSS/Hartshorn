@@ -17,14 +17,13 @@
 
 package org.dockbox.hartshorn.i18n.common;
 
-import org.dockbox.hartshorn.api.annotations.Entity;
 import org.dockbox.hartshorn.api.annotations.Property;
+import org.dockbox.hartshorn.di.annotations.component.Component;
 import org.dockbox.hartshorn.persistence.PersistentModel;
 
 import lombok.Getter;
 import lombok.Setter;
 
-@Entity(value = "language")
 public class PersistentLanguageModel implements PersistentModel<Language> {
 
     @Property(getter = "getCode", setter = "getCode")

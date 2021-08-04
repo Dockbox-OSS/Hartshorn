@@ -18,7 +18,6 @@
 package org.dockbox.hartshorn.oldplots;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.api.annotations.Entity;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.jetbrains.annotations.NonNls;
 
@@ -26,7 +25,6 @@ import java.util.List;
 
 import lombok.Getter;
 
-@Entity(value = "plot-world-models")
 class PlotWorldModelList {
 
     @Getter

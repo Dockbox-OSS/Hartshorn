@@ -18,7 +18,6 @@
 package org.dockbox.hartshorn.i18n.text.persistence;
 
 import org.dockbox.hartshorn.api.Hartshorn;
-import org.dockbox.hartshorn.api.annotations.Entity;
 import org.dockbox.hartshorn.i18n.text.Text;
 import org.dockbox.hartshorn.i18n.text.actions.ClickAction;
 import org.dockbox.hartshorn.i18n.text.actions.CommandAction;
@@ -30,7 +29,6 @@ import org.dockbox.hartshorn.util.Reflect;
 import lombok.Getter;
 
 @SuppressWarnings("FieldMayBeFinal")
-@Entity(value = "text")
 @Getter
 public class PersistentTextModel implements PersistentModel<Text> {
 

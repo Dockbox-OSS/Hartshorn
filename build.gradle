@@ -136,6 +136,7 @@ allprojects {
             // Typically included by platforms
             apiInclude "org.slf4j:slf4j-api:$slf4jVersion"
             apiInclude "com.google.guava:guava:${guavaVersion}"
+            apiInclude group: 'javax.persistence', name: 'javax.persistence-api', version: '2.2'
 
             // Compile/source dependencies
             apiInclude("org.jetbrains:annotations:$jetbrainsAnnotationsVersion")

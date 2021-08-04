@@ -18,15 +18,13 @@
 package org.dockbox.hartshorn.server.minecraft;
 
 import org.dockbox.hartshorn.api.Hartshorn;
-import org.dockbox.hartshorn.api.annotations.Entity;
-import org.dockbox.hartshorn.i18n.MessageReceiver;
-import org.dockbox.hartshorn.i18n.common.Language;
 import org.dockbox.hartshorn.commands.annotations.Command;
 import org.dockbox.hartshorn.commands.context.CommandContext;
 import org.dockbox.hartshorn.di.annotations.inject.Wired;
+import org.dockbox.hartshorn.i18n.MessageReceiver;
+import org.dockbox.hartshorn.i18n.common.Language;
 import org.dockbox.hartshorn.server.minecraft.players.Player;
 
-@Entity(value = "minecraft", serializable = false)
 public class DefaultMinecraftServer {
 
     @Wired
