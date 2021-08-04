@@ -17,10 +17,11 @@
 
 package org.dockbox.hartshorn.regions;
 
-import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.domain.tuple.Vector3N;
+import org.dockbox.hartshorn.di.annotations.inject.Wired;
 import org.dockbox.hartshorn.di.annotations.service.Service;
+import org.dockbox.hartshorn.di.properties.InjectableType;
 import org.dockbox.hartshorn.persistence.FileManager;
 import org.dockbox.hartshorn.regions.flags.PersistentFlagModel;
 import org.dockbox.hartshorn.regions.flags.RegionFlag;
@@ -34,17 +35,12 @@ import java.nio.file.Path;
 import java.util.Set;
 
 @Service(id = "regions")
-public class DefaultRegionService implements RegionService {
+public class DefaultRegionService implements RegionService, InjectableType {
 
-    private final RegionsList regions;
-    private final Path regionsData;
-
-    public DefaultRegionService() {
-        final FileManager fileManager = Hartshorn.context().get(FileManager.class);
-        this.regionsData = fileManager.data(DefaultRegionService.class).resolve("regions.sqlite");
-        fileManager.createFileIfNotExists(this.regionsData);
-        this.regions = RegionsList.restore(this.regionsData);
-    }
+    @Wired
+    private FileManager fileManager;
+    private RegionsList regions;
+    private Path regionStorageDir;
 
     @Override
     public <R extends Region> Exceptional<R> first(Location location, Class<R> type) {
@@ -113,5 +109,12 @@ public class DefaultRegionService implements RegionService {
 
     public void add(CustomRegion element) {
         this.regions.add(element);
+    }
+
+    @Override
+    public void enable() {
+        this.regionStorageDir = this.fileManager.data(DefaultRegionService.class);
+        this.fileManager.createPathIfNotExists(this.regionStorageDir);
+        this.regions = RegionsList.restore(this.regionStorageDir);
     }
 }
