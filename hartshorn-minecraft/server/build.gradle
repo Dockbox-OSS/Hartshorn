@@ -25,4 +25,5 @@ dependencies {
     apiInclude project(':hartshorn-commands').sourceSets.impl.output
     apiInclude project(':hartshorn-i18n').sourceSets.impl.output
     apiInclude project(':hartshorn-di').sourceSets.impl.output
+    apiInclude project(':hartshorn-proxy')
 }
