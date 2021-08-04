@@ -25,19 +25,29 @@ import org.dockbox.hartshorn.persistence.properties.Remote;
 import org.dockbox.hartshorn.test.HartshornRunner;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Assumptions;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Set;
+import java.util.stream.Stream;
 
 @ExtendWith(HartshornRunner.class)
-abstract class SqlServiceTest {
+class SqlServiceTest {
 
-    @Test
-    public void testJpaSave() throws ApplicationException {
-        final SqlService sql = this.sql();
+    public static Stream<Arguments> dialects() {
+        return Stream.of(
+                Arguments.of(Remote.DERBY, directory("derby"))
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("dialects")
+    public void testJpaSave(Remote remote, Object target) throws ApplicationException {
+        final SqlService sql = this.sql(remote, target);
         sql.save(new User("Guus"));
         sql.save(new User("Simon"));
         sql.save(new User("Josh"));
@@ -50,9 +60,10 @@ abstract class SqlServiceTest {
         }
     }
 
-    @Test
-    void testJpaDelete() throws ApplicationException {
-        final SqlService sql = this.sql();
+    @ParameterizedTest
+    @MethodSource("dialects")
+    void testJpaDelete(Remote remote, Object target) throws ApplicationException {
+        final SqlService sql = this.sql(remote, target);
         final User guus = new User("Guus");
         sql.save(guus);
         sql.save(new User("Simon"));
@@ -67,9 +78,10 @@ abstract class SqlServiceTest {
         }
     }
 
-    @Test
-    void testJpaPersists() throws ApplicationException {
-        final SqlService sql = this.sql();
+    @ParameterizedTest
+    @MethodSource("dialects")
+    void testJpaPersists(Remote remote, Object target) throws ApplicationException {
+        final SqlService sql = this.sql(remote, target);
         final User user = new User("Guus");
         Assertions.assertEquals(0, user.id());
 
@@ -77,9 +89,10 @@ abstract class SqlServiceTest {
         Assertions.assertNotEquals(0, user.id());
     }
 
-    @Test
-    void testJpaUpdate() throws ApplicationException {
-        final SqlService sql = this.sql();
+    @ParameterizedTest
+    @MethodSource("dialects")
+    void testJpaUpdate(Remote remote, Object target) throws ApplicationException {
+        final SqlService sql = this.sql(remote, target);
         final User guus = new User("Guus");
 
         sql.save(guus);
@@ -102,16 +115,11 @@ abstract class SqlServiceTest {
         }
     }
 
-    protected SqlService sql() throws ApplicationException {
+    protected SqlService sql(Remote remote, Object target) throws ApplicationException {
         SqlService man = new HibernateSqlService();
-        String connection = this.remote().url(this.target());
-        final ConnectionProperty property = ConnectionProperty.of(this.remote(), connection, "", "");
+        final ConnectionProperty property = ConnectionProperty.of(remote, target, "", "");
         man.apply(property);
         man.enable();
         return man;
     }
-
-    protected abstract Remote remote();
-
-    protected abstract Object target();
 }

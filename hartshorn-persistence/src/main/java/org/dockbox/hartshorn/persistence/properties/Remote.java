@@ -3,16 +3,23 @@ package org.dockbox.hartshorn.persistence.properties;
 import java.nio.file.Path;
 import java.util.function.Function;
 
+import lombok.Getter;
+
+@Getter
 public enum Remote {
-    DERBY(Path.class, path -> "jdbc:derby:directory:" + path.toFile().getAbsolutePath() + "/db" + ";create=true"),
+    DERBY(Path.class,
+            path -> "jdbc:derby:directory:" + path.toFile().getAbsolutePath() + "/db" + ";create=true",
+            "org.apache.derby.jdbc.EmbeddedDriver"),
     ;
 
     private final Class<?> target;
     private final Function<?, String> urlGen;
+    private final String driver;
 
-    <T> Remote(Class<T> target, Function<T, String> urlGen) {
+    <T> Remote(Class<T> target, Function<T, String> urlGen, String driver) {
         this.target = target;
         this.urlGen = urlGen;
+        this.driver = driver;
     }
 
     public String url(Object target) {

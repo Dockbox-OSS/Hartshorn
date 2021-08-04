@@ -1,6 +1,5 @@
 package org.dockbox.hartshorn.persistence.hibernate;
 
-import org.apache.derby.jdbc.EmbeddedDriver;
 import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.exceptions.ApplicationException;
@@ -14,7 +13,6 @@ import org.dockbox.hartshorn.util.HartshornUtils;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
-import org.hibernate.dialect.DerbyTenSevenDialect;
 
 import java.util.Collection;
 import java.util.List;
@@ -47,21 +45,21 @@ public class HibernateSqlService implements SqlService {
             }
             this.configuration.setProperty("hibernate.connection.url", connection.url());
 
-            String dialect;
-            String driver;
-
-            switch (connection.remote()) {
-                case DERBY -> {
-                    dialect = DerbyTenSevenDialect.class.getCanonicalName();
-                    driver = EmbeddedDriver.class.getCanonicalName();
-                }
-                default -> throw new ApplicationException("Unexpected value: " + connection.remote());
-            }
+            final String driver = connection.remote().driver();
+            final String dialect = this.dialect(connection);
 
             this.configuration.setProperty("hibernate.hbm2ddl.auto", "update");
             this.configuration.setProperty("hibernate.connection.driver_class", driver);
             this.configuration.setProperty("hibernate.dialect", dialect);
         }
+    }
+
+    protected String dialect(PersistenceConnection connection) throws ApplicationException {
+        //noinspection SwitchStatementWithTooFewBranches
+        return switch (connection.remote()) {
+            case DERBY -> "org.hibernate.dialect.DerbyTenSevenDialect";
+            default -> throw new ApplicationException("Unexpected value: " + connection.remote());
+        };
     }
 
     @Override

@@ -13,15 +13,15 @@ public class ConnectionProperty implements InjectorProperty<PersistenceConnectio
         return new ConnectionProperty(connection);
     }
 
-    public static ConnectionProperty of(Remote remote, String url, String user, String password) {
-        return of(remote.connection(url, user, password));
+    public static ConnectionProperty of(Remote remote, Object target, String user, String password) {
+        return of(remote.connection(target, user, password));
     }
 
-    public static ConnectionProperty of(String url, String user, String password) {
-        return of(Remote.DERBY, url, user, password);
+    public static ConnectionProperty of(Object target, String user, String password) {
+        return of(Remote.DERBY, target, user, password);
     }
 
-    public static ConnectionProperty of(String url) {
-        return of(url, "", "");
+    public static ConnectionProperty of(Object target) {
+        return of(target, "", "");
     }
 }
