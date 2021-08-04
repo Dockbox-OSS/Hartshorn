@@ -15,21 +15,15 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.persistence.service;
+package org.dockbox.hartshorn.persistence.context;
 
-import org.dockbox.hartshorn.api.annotations.PostBootstrap;
-import org.dockbox.hartshorn.api.annotations.UseBootstrap;
-import org.dockbox.hartshorn.di.annotations.service.Service;
-import org.dockbox.hartshorn.persistence.annotations.UsePersistence;
-import org.jooq.SQLDialect;
-import org.jooq.impl.DefaultDSLContext;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
-@Service(activators = { UseBootstrap.class, UsePersistence.class })
-public class JOOQInit {
+@Getter
+@AllArgsConstructor
+public class DeserialisationContext extends SerialisationContext {
 
-    @PostBootstrap
-    public void init() {
-        System.getProperties().setProperty("org.jooq.no-logo", "true");
-        new DefaultDSLContext(SQLDialect.SQLITE).selectZero();
-    }
+    private final Class<?> type;
+
 }

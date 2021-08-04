@@ -15,7 +15,7 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.persistence.service;
+package org.dockbox.hartshorn.persistence.context;
 
 import org.dockbox.hartshorn.persistence.FileType;
 import org.dockbox.hartshorn.persistence.annotations.Deserialise;

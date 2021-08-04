@@ -15,13 +15,27 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.persistence;
+package org.dockbox.hartshorn.persistence.context;
 
-import org.dockbox.hartshorn.persistence.exceptions.InvalidConnectionException;
-import org.jooq.DSLContext;
+import org.dockbox.hartshorn.di.context.DefaultContext;
+import org.dockbox.hartshorn.persistence.FileType;
+import org.jetbrains.annotations.Nullable;
 
-@FunctionalInterface
-public interface DSLConsumer {
+import java.nio.file.Path;
 
-    void accept(DSLContext ctx) throws InvalidConnectionException;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
+@NoArgsConstructor
+public class SerialisationContext extends DefaultContext {
+
+    private SerialisationTarget target;
+    private FileType fileType;
+
+    @Nullable
+    private Path predeterminedPath;
+
 }

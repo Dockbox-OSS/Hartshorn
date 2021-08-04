@@ -17,7 +17,6 @@
 
 package org.dockbox.hartshorn.persistence.registry;
 
-import org.dockbox.hartshorn.api.annotations.Entity;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -30,7 +29,6 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 @SuppressWarnings({ "UnusedReturnValue", "unused" })
-@Entity("registry")
 public class Registry<V> extends HashMap<String, RegistryColumn<V>> {
 
     public Registry() {}

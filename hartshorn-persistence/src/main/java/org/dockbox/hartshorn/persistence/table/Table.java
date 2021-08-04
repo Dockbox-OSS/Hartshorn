@@ -18,7 +18,6 @@
 package org.dockbox.hartshorn.persistence.table;
 
 import org.dockbox.hartshorn.api.Hartshorn;
-import org.dockbox.hartshorn.api.annotations.Entity;
 import org.dockbox.hartshorn.api.annotations.Property;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.exceptions.ApplicationException;
@@ -62,7 +61,6 @@ import lombok.Getter;
  * @since feature/S124
  */
 @SuppressWarnings({ "unchecked", "rawtypes" })
-@Entity(value = "table")
 public class Table {
 
     private final List<TableRow> rows;

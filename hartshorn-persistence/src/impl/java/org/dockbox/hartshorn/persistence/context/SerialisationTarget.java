@@ -15,7 +15,7 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.persistence.service;
+package org.dockbox.hartshorn.persistence.context;
 
 public enum SerialisationTarget {
     ANNOTATED_PATH, PARAMETER_PATH, STRING

@@ -24,6 +24,7 @@ import org.dockbox.hartshorn.persistence.NestedElement;
 import org.dockbox.hartshorn.persistence.PersistentElement;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.persistence.FileType;
+import org.dockbox.hartshorn.persistence.jackson.JacksonObjectMapper;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
