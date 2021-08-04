@@ -185,9 +185,26 @@ public class HartshornApplicationContext extends ManagedHartshornContext {
     public <T> T create(Class<T> type, T typeInstance, InjectorProperty<?>[] additionalProperties) {
         try {
             if (null == typeInstance) {
-                typeInstance = this.internalInjector()
-                        .get(type, additionalProperties)
-                        .orElse(() -> this.raw(type)).rethrow().get();
+                Exceptional<T> instanceCandidate = this.internalInjector().get(type, additionalProperties);
+                Throwable cause = null;
+                if (instanceCandidate.caught()) {
+                    cause = instanceCandidate.error();
+                }
+
+                if (instanceCandidate.absent()) {
+                    final Exceptional<T> rawCandidate = instanceCandidate.orElse(() -> this.raw(type));
+                    if (rawCandidate.absent() && rawCandidate.caught()) {
+                        if (cause == null) rawCandidate.rethrow();
+                        else {
+                            return ApplicationContextAware.instance().proxy(type, typeInstance).orNull();
+                        }
+                    }
+                    else {
+                        return rawCandidate.get();
+                    }
+                }
+
+                return instanceCandidate.get();
             }
             return typeInstance;
         } catch (ProvisionFailure e) {

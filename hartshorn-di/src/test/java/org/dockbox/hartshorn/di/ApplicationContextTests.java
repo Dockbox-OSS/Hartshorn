@@ -34,6 +34,7 @@ import org.dockbox.hartshorn.di.types.multi.SampleMultiAnnotatedImplementation;
 import org.dockbox.hartshorn.di.types.provision.ProvidedInterface;
 import org.dockbox.hartshorn.di.types.scan.SampleAnnotatedImplementation;
 import org.dockbox.hartshorn.test.HartshornRunner;
+import org.dockbox.hartshorn.util.Reflect;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -139,7 +140,9 @@ public class ApplicationContextTests {
     public void testScannedMetaBindingsCanBeProvided() {
         // sub-package *.meta was added to prevent scan conflicts
         Hartshorn.context().bind("org.dockbox.hartshorn.di.types.meta");
-        Assertions.assertThrows(ProvisionFailure.class, () -> Hartshorn.context().get(SampleInterface.class));
+        final SampleInterface sample = Hartshorn.context().get(SampleInterface.class);
+        Assertions.assertTrue(Reflect.isProxy(sample));
+        Assertions.assertThrows(AbstractMethodError.class, sample::name);
 
         SampleInterface provided = Hartshorn.context().get(SampleInterface.class, Bindings.named("meta"));
         Assertions.assertNotNull(provided);
