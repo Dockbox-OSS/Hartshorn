@@ -26,8 +26,7 @@ import lombok.Getter;
 
 public final class EventHandlerRegistry {
 
-    @Getter
-    private final Map<Class<? extends Event>, EventHandler> handlers = HartshornUtils.emptyMap();
+    @Getter private final Map<Class<? extends Event>, EventHandler> handlers = HartshornUtils.emptyMap();
 
     public EventHandler handler(Class<? extends Event> type) {
         EventHandler handler = this.handlers.get(type);

@@ -26,8 +26,7 @@ import lombok.Getter;
 
 public class PriorityEventListener {
 
-    @Getter
-    private static Priority last = null;
+    @Getter private static Priority last = null;
 
     @Listener(Priority.FIRST)
     public void onFirst(SampleEvent event) {

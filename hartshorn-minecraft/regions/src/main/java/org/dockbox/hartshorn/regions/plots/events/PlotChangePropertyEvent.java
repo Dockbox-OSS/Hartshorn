@@ -25,8 +25,7 @@ import lombok.Getter;
 
 public class PlotChangePropertyEvent extends RegionEvent {
 
-    @Getter
-    private final PlotProperties property;
+    @Getter private final PlotProperties property;
 
     public PlotChangePropertyEvent(Region region, PlotProperties property) {
         super(region);

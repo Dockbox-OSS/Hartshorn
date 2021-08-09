@@ -61,18 +61,12 @@ public final class SimpleEventWrapper implements Comparable<SimpleEventWrapper>,
         // aren't equal
     };
 
-    @Getter
-    private Object listener;
-    @Getter
-    private final Class<?> listenerType;
-    @Getter
-    private final Class<? extends Event> eventType;
-    @Getter
-    private final Type[] eventParameters;
-    @Getter
-    private final Method method;
-    @Getter
-    private final int priority;
+    @Getter private Object listener;
+    @Getter private final Class<?> listenerType;
+    @Getter private final Class<? extends Event> eventType;
+    @Getter private final Type[] eventParameters;
+    @Getter private final Method method;
+    @Getter private final int priority;
     private final BiConsumer<Object, ? super Event> operator;
 
     private SimpleEventWrapper(Class<?> type, Class<? extends Event> eventType, Method method, int priority) {

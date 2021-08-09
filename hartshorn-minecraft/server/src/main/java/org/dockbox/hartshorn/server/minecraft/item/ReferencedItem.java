@@ -30,8 +30,7 @@ import lombok.Setter;
 public abstract class ReferencedItem<T> extends ReferencedWrapper<T> implements Item {
 
     public static final int DEFAULT_STACK_SIZE = 64;
-    @Getter @Setter
-    private String id;
+    @Getter @Setter private String id;
 
     protected ReferencedItem(@NotNull T reference) {
         this.id = this.id();

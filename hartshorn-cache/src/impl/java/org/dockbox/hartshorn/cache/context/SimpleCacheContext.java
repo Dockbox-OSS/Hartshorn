@@ -30,10 +30,8 @@ import lombok.Getter;
  */
 public class SimpleCacheContext implements CacheContext {
 
-    @Getter
-    private final CacheManager manager;
-    @Getter
-    private final String name;
+    @Getter private final CacheManager manager;
+    @Getter private final String name;
     private final Supplier<Cache<?>> supplier;
 
     public SimpleCacheContext(CacheManager manager, Supplier<Cache<?>> supplier, String name) {

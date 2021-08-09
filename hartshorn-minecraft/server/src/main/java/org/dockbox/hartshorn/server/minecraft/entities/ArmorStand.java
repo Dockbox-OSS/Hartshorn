@@ -17,6 +17,7 @@
 
 package org.dockbox.hartshorn.server.minecraft.entities;
 
+import org.dockbox.hartshorn.api.annotations.PartialApi;
 import org.dockbox.hartshorn.api.domain.tuple.Vector3N;
 import org.dockbox.hartshorn.di.annotations.inject.Required;
 import org.dockbox.hartshorn.server.minecraft.inventory.InventoryHolder;
@@ -40,6 +41,7 @@ public interface ArmorStand extends CloneableEntity<ArmorStand>, InventoryHolder
      *
      * @return The rotation of the limb, represented by a {@link Vector3N}.
      */
+    @PartialApi
     Vector3N rotation(Limbs limb);
 
     /**
@@ -54,6 +56,7 @@ public interface ArmorStand extends CloneableEntity<ArmorStand>, InventoryHolder
      * @param rotation
      *         The rotation of the limb, represented by a {@link Vector3N}.
      */
+    @PartialApi
     void rotation(Limbs limb, Vector3N rotation);
 
     /**
@@ -61,6 +64,7 @@ public interface ArmorStand extends CloneableEntity<ArmorStand>, InventoryHolder
      *
      * @return {@code true} if the armor stand has a baseplate, else {@code false}
      */
+    @PartialApi
     boolean baseplate();
 
     /**
@@ -69,6 +73,7 @@ public interface ArmorStand extends CloneableEntity<ArmorStand>, InventoryHolder
      * @param baseplate
      *         Whether a baseplate should be present.
      */
+    @PartialApi
     ArmorStand baseplate(boolean baseplate);
 
     /**
@@ -76,6 +81,7 @@ public interface ArmorStand extends CloneableEntity<ArmorStand>, InventoryHolder
      *
      * @return {@code true} if the armor stand is small, else {@code false}.
      */
+    @PartialApi
     boolean small();
 
     /**
@@ -84,6 +90,7 @@ public interface ArmorStand extends CloneableEntity<ArmorStand>, InventoryHolder
      * @param small
      *         Whether the armor stand should be small.
      */
+    @PartialApi
     ArmorStand small(boolean small);
 
     /**
@@ -91,6 +98,7 @@ public interface ArmorStand extends CloneableEntity<ArmorStand>, InventoryHolder
      *
      * @return {@code true} if arms are visible, else {@code false}.
      */
+    @PartialApi
     boolean arms();
 
     /**
@@ -99,6 +107,7 @@ public interface ArmorStand extends CloneableEntity<ArmorStand>, InventoryHolder
      * @param arms
      *         Whether armors should be visible
      */
+    @PartialApi
     ArmorStand arms(boolean arms);
 
     @Override

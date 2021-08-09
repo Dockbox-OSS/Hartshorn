@@ -40,10 +40,8 @@ public enum FileType {
     PROPERTIES(FileTypes.PROPERTIES, PersistenceType.RAW)
     ;
 
-    @Getter
-    private final String extension;
-    @Getter
-    private final PersistenceType type;
+    @Getter private final String extension;
+    @Getter private final PersistenceType type;
 
     /**
      * Converts a given filename (without the file extension present), combined with a {@link Path}

@@ -22,6 +22,5 @@ import lombok.Getter;
 
 @AllArgsConstructor
 public abstract class DefaultNamedContext extends DefaultContext implements NamedContext {
-    @Getter
-    private final String name;
+    @Getter private final String name;
 }

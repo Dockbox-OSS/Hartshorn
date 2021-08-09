@@ -57,35 +57,24 @@ import lombok.Setter;
 // TODO: Modification events (teleport, kick, etc)
 public class JUnitPlayer extends Player implements JUnitPersistentDataHolder {
 
-    @Getter
-    private final PlayerInventory inventory = new JUnitInventory();
-    @Getter @Setter
-    private boolean online = true;
+    @Getter private Location location;
+    @Getter private final PlayerInventory inventory = new JUnitInventory();
 
-    @Getter @Setter
-    private Gamemode gamemode = Gamemode.CREATIVE;
-    @Getter @Setter
-    private boolean sneaking = false;
-    @Setter
-    private Block lookingAt = null;
-    @Getter @Setter
-    private Text displayName;
-    @Getter @Setter
-    private double health = 20;
-    @Getter
-    private Location location;
-    @Getter @Setter
-    private boolean invisible = false;
-    @Getter @Setter
-    private boolean invulnerable = false;
-    @Setter
-    private boolean gravity = true;
-    @Getter @Setter
-    private Vector3N rotation;
+    @Setter private boolean gravity = true;
+    @Setter private Block lookingAt = null;
 
-    public JUnitPlayer(@NotNull UUID uniqueId, @NotNull String name) {
+    @Getter @Setter private double health = 20;
+    @Getter @Setter private boolean online = true;
+    @Getter @Setter private boolean sneaking = false;
+    @Getter @Setter private boolean invisible = false;
+    @Getter @Setter private boolean invulnerable = false;
+    @Getter @Setter private Text displayName;
+    @Getter @Setter private Vector3N rotation;
+    @Getter @Setter private Gamemode gamemode = Gamemode.CREATIVE;
+
+    public JUnitPlayer(@NotNull final UUID uniqueId, @NotNull final String name) {
         super(uniqueId, name);
-        Worlds worlds = Hartshorn.context().get(Worlds.class);
+        final Worlds worlds = Hartshorn.context().get(Worlds.class);
         this.location(Location.of(0, 0, 0, worlds.world(worlds.rootUniqueId()).orNull()));
         ((JUnitWorld) this.world()).addEntity(this);
     }
@@ -101,7 +90,7 @@ public class JUnitPlayer extends Player implements JUnitPersistentDataHolder {
     }
 
     @Override
-    public boolean location(Location location) {
+    public boolean location(final Location location) {
         if (this.location != null) ((JUnitWorld) this.world()).destroyEntity(this.uniqueId());
         this.location = location;
         ((JUnitWorld) this.world()).addEntity(this);
@@ -114,28 +103,28 @@ public class JUnitPlayer extends Player implements JUnitPersistentDataHolder {
     }
 
     @Override
-    public void execute(String command) {
+    public void execute(final String command) {
         // TODO: CommandBus implementation
         throw new NotImplementedException();
     }
 
     @Override
-    public void kick(Text reason) {
+    public void kick(final Text reason) {
         this.online = false;
     }
 
     @Override
-    public Item itemInHand(Hand hand) {
+    public Item itemInHand(final Hand hand) {
         return this.inventory().slot(hand.slot());
     }
 
     @Override
-    public void itemInHand(Hand hand, Item item) {
+    public void itemInHand(final Hand hand, final Item item) {
         this.inventory().slot(item, hand.slot());
     }
 
     @Override
-    public void play(Sounds sound) {
+    public void play(final Sounds sound) {
         // TODO: Test implementation, mocking client?
         throw new NotImplementedException();
     }
@@ -161,58 +150,58 @@ public class JUnitPlayer extends Player implements JUnitPersistentDataHolder {
     }
 
     @Override
-    public void send(ResourceEntry text) {
+    public void send(final ResourceEntry text) {
         // TODO: Test implementation, mocking client?
         throw new NotImplementedException();
     }
 
     @Override
-    public void send(Text text) {
+    public void send(final Text text) {
         // TODO: Test implementation, mocking client?
         throw new NotImplementedException();
     }
 
     @Override
-    public void sendWithPrefix(ResourceEntry text) {
+    public void sendWithPrefix(final ResourceEntry text) {
         // TODO: Test implementation, mocking client?
         throw new NotImplementedException();
     }
 
     @Override
-    public void sendWithPrefix(Text text) {
+    public void sendWithPrefix(final Text text) {
         // TODO: Test implementation, mocking client?
         throw new NotImplementedException();
     }
 
     @Override
-    public void send(Pagination pagination) {
+    public void send(final Pagination pagination) {
         // TODO: Test implementation, mocking client?
         throw new NotImplementedException();
     }
 
     @Override
-    public void send(Packet packet) {
+    public void send(final Packet packet) {
         // TODO: Test implementation, mocking client?
         throw new NotImplementedException();
     }
 
     @Override
-    public boolean hasPermission(String permission) {
+    public boolean hasPermission(final String permission) {
         return JUnitPermissionRegistry.hasPermission(this, permission);
     }
 
     @Override
-    public boolean hasPermission(Permission permission) {
+    public boolean hasPermission(final Permission permission) {
         return JUnitPermissionRegistry.hasPermission(this, permission);
     }
 
     @Override
-    public void permission(String permission, Tristate state) {
+    public void permission(final String permission, final Tristate state) {
         JUnitPermissionRegistry.permission(this, permission, state);
     }
 
     @Override
-    public void permission(Permission permission, Tristate state) {
+    public void permission(final Permission permission, final Tristate state) {
         JUnitPermissionRegistry.permission(this, permission, state);
     }
 }

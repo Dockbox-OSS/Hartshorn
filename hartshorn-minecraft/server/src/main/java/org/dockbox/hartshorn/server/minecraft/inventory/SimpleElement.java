@@ -31,8 +31,7 @@ import lombok.Getter;
 @AllArgsConstructor(onConstructor_ = @Bound)
 public class SimpleElement implements Element {
 
-    @Getter
-    private final Item item;
+    @Getter private final Item item;
     private Consumer<Player> onClick;
 
     @Override

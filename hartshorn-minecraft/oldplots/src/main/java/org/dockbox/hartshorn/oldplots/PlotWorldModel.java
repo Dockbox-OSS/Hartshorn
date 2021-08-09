@@ -30,10 +30,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class PlotWorldModel {
 
-    @Getter
-    private String name;
-    @Getter
-    private int height;
+    @Getter private String name;
+    @Getter private int height;
     private int size;
     private int road;
     private int zeroX;

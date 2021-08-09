@@ -31,11 +31,9 @@ import lombok.Getter;
 @AllArgsConstructor
 public class ItemContext extends DefaultContext {
 
-    @Getter
-    private final List<String> items;
+    @Getter private final List<String> items;
 
-    @Getter
-    private final List<String> blocks;
+    @Getter private final List<String> blocks;
 
     private final Map<String, Supplier<Item>> custom = HartshornUtils.emptyConcurrentMap();
 

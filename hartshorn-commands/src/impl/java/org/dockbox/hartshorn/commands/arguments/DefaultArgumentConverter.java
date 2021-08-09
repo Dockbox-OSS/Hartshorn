@@ -31,8 +31,7 @@ import lombok.Getter;
 public abstract class DefaultArgumentConverter<T> implements ArgumentConverter<T> {
 
     private final String[] keys;
-    @Getter
-    private final Class<T> type;
+    @Getter private final Class<T> type;
     private final int size;
 
     protected DefaultArgumentConverter(Class<T> type, int size, String... keys) {

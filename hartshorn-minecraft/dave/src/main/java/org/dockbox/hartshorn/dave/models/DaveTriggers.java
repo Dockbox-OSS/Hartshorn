@@ -28,8 +28,7 @@ import lombok.Getter;
 
 public class DaveTriggers {
 
-    @Getter
-    private final List<DaveTrigger> triggers = HartshornUtils.emptyList();
+    @Getter private final List<DaveTrigger> triggers = HartshornUtils.emptyList();
 
     public Exceptional<DaveTrigger> matching(String message) {
         return DaveUtils.findMatching(this, message);

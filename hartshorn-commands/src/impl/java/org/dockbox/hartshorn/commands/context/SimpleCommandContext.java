@@ -41,8 +41,7 @@ public class SimpleCommandContext extends DefaultContext implements CommandConte
     private final List<CommandParameter<?>> args;
     private final List<CommandParameter<?>> flags;
 
-    @Getter
-    private final CommandSource source;
+    @Getter private final CommandSource source;
     @Getter(onMethod_ = @UnmodifiableView)
     private final List<Permission> permissions;
 

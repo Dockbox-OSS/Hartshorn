@@ -34,14 +34,10 @@ import lombok.Setter;
 
 public class JUnitArmorStand extends JUnitEntity<ArmorStand> implements ArmorStand, org.dockbox.hartshorn.test.objects.JUnitPersistentDataHolder {
 
-    @Setter
-    private boolean baseplate = true;
-    @Setter
-    private boolean arms = false;
-    @Getter @Setter
-    private boolean small = false;
-    @Getter
-    private final ArmorStandInventory inventory = new JUnitArmorStandInventory();
+    @Setter private boolean baseplate = true;
+    @Setter private boolean arms = false;
+    @Getter @Setter private boolean small = false;
+    @Getter private final ArmorStandInventory inventory = new JUnitArmorStandInventory();
     private final Map<Limbs, Vector3N> limbs = HartshornUtils.emptyMap();
 
     public JUnitArmorStand(UUID uuid) {

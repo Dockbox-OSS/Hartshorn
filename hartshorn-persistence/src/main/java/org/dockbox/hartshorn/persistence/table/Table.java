@@ -64,8 +64,7 @@ import lombok.Getter;
 public class Table {
 
     private final List<TableRow> rows;
-    @Getter
-    private final ColumnIdentifier<?>[] identifiers;
+    @Getter private final ColumnIdentifier<?>[] identifiers;
 
     /**
      * Instantiates a new Table with a given set of column identifiers. These identifiers cannot be

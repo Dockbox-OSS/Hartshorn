@@ -25,8 +25,7 @@ import lombok.Getter;
 
 public abstract class RegionFlagEvent extends CancellableRegionEvent {
 
-    @Getter
-    private final RegionFlag<?> flag;
+    @Getter private final RegionFlag<?> flag;
 
     protected RegionFlagEvent(Region region, RegionFlag<?> flag) {
         super(region);

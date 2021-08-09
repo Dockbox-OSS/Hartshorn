@@ -41,10 +41,8 @@ public class JUnitWorld extends World {
     private final Map<Vector3N, Block> blocks = HartshornUtils.emptyMap();
     private final Map<UUID, Entity> entities = HartshornUtils.emptyMap();
 
-    @Getter
-    private final Map<String, String> gamerules = HartshornUtils.emptyMap();
-    @Getter
-    private boolean loaded;
+    @Getter private final Map<String, String> gamerules = HartshornUtils.emptyMap();
+    @Getter private boolean loaded;
 
     public JUnitWorld(UUID worldUniqueId, String name, boolean loadOnStartup, @NotNull Vector3N spawnPosition, long seed, Gamemode defaultGamemode) {
         super(worldUniqueId, name, loadOnStartup, spawnPosition, seed, defaultGamemode);

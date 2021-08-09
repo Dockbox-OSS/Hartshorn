@@ -37,10 +37,8 @@ import lombok.Getter;
 
 public class Setting<T> extends TypedPersistentDataKey<T> {
 
-    @Getter
-    private final ResourceEntry resource;
-    @Getter
-    private final ResourceEntry description;
+    @Getter private final ResourceEntry resource;
+    @Getter private final ResourceEntry description;
 
     private final Function<T, ResourceEntry> converter;
     private final Supplier<T> defaultValue;

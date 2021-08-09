@@ -263,7 +263,7 @@ public class ConvertiblePipeline<P, I> extends AbstractPipeline<P, I> {
      */
     @SuppressWarnings("unchecked")
     public <K> ConvertiblePipeline<P, K> remove(Class<K> previousClass) {
-        super.clearPipes();
+        super.clear();
 
         if (null == this.previous()) {
             this.clearPipelineConnections();

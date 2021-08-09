@@ -26,8 +26,7 @@ import lombok.Getter;
 
 public abstract class RegionPlayerEvent extends RegionEvent implements Targetable {
 
-    @Getter
-    private final Player subject;
+    @Getter private final Player subject;
 
     public RegionPlayerEvent(Region region, Player player) {
         super(region);

@@ -30,8 +30,7 @@ import lombok.Getter;
 
 public class TableRow {
 
-    @Getter
-    private final Map<ColumnIdentifier<?>, Object> data = HartshornUtils.emptyMap();
+    @Getter private final Map<ColumnIdentifier<?>, Object> data = HartshornUtils.emptyMap();
 
     public TableRow() {}
 

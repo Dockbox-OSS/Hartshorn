@@ -30,8 +30,7 @@ import lombok.Setter;
  */
 public abstract class CommandEvent extends AbstractTargetEvent {
 
-    @Getter
-    private final CommandContext context;
+    @Getter private final CommandContext context;
 
     protected CommandEvent(CommandSource source, CommandContext context) {
         super(source);
@@ -41,9 +40,7 @@ public abstract class CommandEvent extends AbstractTargetEvent {
     /**
      * The event fired before a command is executed.
      */
-    @Getter
-    @Setter
-    public static class Before extends CommandEvent implements Cancellable {
+    @Getter @Setter public static class Before extends CommandEvent implements Cancellable {
 
         private boolean cancelled;
 

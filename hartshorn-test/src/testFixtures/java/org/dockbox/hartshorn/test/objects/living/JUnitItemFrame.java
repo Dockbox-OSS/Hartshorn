@@ -31,12 +31,9 @@ import lombok.Setter;
 
 public class JUnitItemFrame extends JUnitEntity<ItemFrame> implements ItemFrame, org.dockbox.hartshorn.test.objects.JUnitPersistentDataHolder {
 
-    @Setter
-    private Item displayedItem;
-    @Getter @Setter
-    private Rotation rotation = Rotation.TOP;
-    @Getter @Setter
-    private BlockFace blockFace = BlockFace.NORTH;
+    @Setter private Item displayedItem;
+    @Getter @Setter private Rotation rotation = Rotation.TOP;
+    @Getter @Setter private BlockFace blockFace = BlockFace.NORTH;
 
     public JUnitItemFrame(UUID uuid) {
         super(uuid);

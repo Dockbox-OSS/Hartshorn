@@ -31,11 +31,9 @@ import lombok.Getter;
 
 public class Resource implements ResourceEntry {
 
-    @Getter
-    private final Language language;
+    @Getter private final Language language;
     private final Object[] formattingArgs;
-    @Getter
-    private final String key;
+    @Getter private final String key;
     private final Map<Language, String> resourceMap;
     private final String value;
 

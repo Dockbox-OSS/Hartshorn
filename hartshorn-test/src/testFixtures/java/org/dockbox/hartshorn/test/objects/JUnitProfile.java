@@ -31,9 +31,7 @@ import lombok.Setter;
 
 public class JUnitProfile implements Profile {
 
-    @Getter
-    @Setter
-    private UUID uniqueId;
+    @Getter @Setter private UUID uniqueId;
     private Map<String, String> properties;
 
     @Bound

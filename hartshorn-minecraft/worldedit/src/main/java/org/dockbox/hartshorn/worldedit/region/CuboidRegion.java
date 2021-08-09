@@ -25,8 +25,7 @@ import lombok.Getter;
 
 public class CuboidRegion implements Region {
 
-    @Getter
-    private final World world;
+    @Getter private final World world;
     private final Vector3N from;
     private final Vector3N to;
 

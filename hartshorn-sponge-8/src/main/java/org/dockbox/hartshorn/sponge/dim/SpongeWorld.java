@@ -43,8 +43,7 @@ import lombok.Getter;
 
 public class SpongeWorld extends World implements SpongeDimension {
 
-    @Getter
-    private final ResourceKey key;
+    @Getter private final ResourceKey key;
 
     public SpongeWorld(ResourceKey key) {
         this.key = key;

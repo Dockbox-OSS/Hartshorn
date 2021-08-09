@@ -54,8 +54,7 @@ public class PersistentRegion implements PersistentModel<CustomRegion> {
     private int corner_b_z;
 
     @OneToMany(cascade = CascadeType.ALL)
-    @Getter
-    private List<PersistentRegionFlag> flags = HartshornUtils.emptyList();
+    @Getter private List<PersistentRegionFlag> flags = HartshornUtils.emptyList();
 
     public PersistentRegion(long id, String name, String owner, String world, int corner_a_x, int corner_a_y, int corner_a_z, int corner_b_x, int corner_b_y, int corner_b_z) {
         this.id = id;
