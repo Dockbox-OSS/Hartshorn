@@ -20,7 +20,7 @@ package org.dockbox.hartshorn.persistence;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.exceptions.ApplicationException;
 import org.dockbox.hartshorn.persistence.hibernate.HibernateSqlService;
-import org.dockbox.hartshorn.persistence.properties.ConnectionProperty;
+import org.dockbox.hartshorn.persistence.properties.ConnectionAttribute;
 import org.dockbox.hartshorn.persistence.properties.Remote;
 import org.dockbox.hartshorn.test.HartshornRunner;
 import org.junit.jupiter.api.Assertions;
@@ -117,7 +117,7 @@ class SqlServiceTest {
 
     protected SqlService sql(Remote remote, Object target) throws ApplicationException {
         SqlService man = new HibernateSqlService();
-        final ConnectionProperty property = ConnectionProperty.of(remote, target, "", "");
+        final ConnectionAttribute property = ConnectionAttribute.of(remote, target, "", "");
         man.apply(property);
         man.enable();
         return man;

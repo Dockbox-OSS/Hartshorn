@@ -19,9 +19,9 @@ package org.dockbox.hartshorn.proxy.service;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
-import org.dockbox.hartshorn.di.properties.InjectorProperty;
+import org.dockbox.hartshorn.di.properties.Attribute;
 import org.dockbox.hartshorn.di.services.ServiceModifier;
-import org.dockbox.hartshorn.proxy.ProxyProperty;
+import org.dockbox.hartshorn.proxy.ProxyAttribute;
 import org.dockbox.hartshorn.proxy.ProxyUtil;
 import org.dockbox.hartshorn.proxy.exception.ProxyMethodBindingException;
 import org.dockbox.hartshorn.proxy.handle.ProxyFunction;
@@ -36,12 +36,12 @@ import java.util.Collection;
 public abstract class ServiceAnnotatedMethodModifier<M extends Annotation, A extends Annotation> extends ServiceModifier<A> {
 
     @Override
-    protected <T> boolean modifies(Class<T> type, @Nullable T instance, InjectorProperty<?>... properties) {
+    protected <T> boolean modifies(Class<T> type, @Nullable T instance, Attribute<?>... properties) {
         return !Reflect.methods(type, this.annotation()).isEmpty();
     }
 
     @Override
-    public <T> T process(ApplicationContext context, Class<T> type, @Nullable T instance, InjectorProperty<?>... properties) {
+    public <T> T process(ApplicationContext context, Class<T> type, @Nullable T instance, Attribute<?>... properties) {
         final Collection<Method> methods = Reflect.methods(type, this.annotation());
 
         ProxyHandler<T> handler = ProxyUtil.handler(type, instance);
@@ -52,7 +52,7 @@ public abstract class ServiceAnnotatedMethodModifier<M extends Annotation, A ext
             if (this.preconditions(context, ctx)) {
                 final ProxyFunction<T, Object> function = this.process(context, ctx);
                 if (function != null) {
-                    ProxyProperty<T, ?> property = ProxyProperty.of(type, method, function);
+                    ProxyAttribute<T, ?> property = ProxyAttribute.of(type, method, function);
                     handler.delegate(property);
                 }
             }

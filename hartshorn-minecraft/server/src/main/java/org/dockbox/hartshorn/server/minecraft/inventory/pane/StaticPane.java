@@ -21,7 +21,7 @@ import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.server.minecraft.inventory.Element;
 import org.dockbox.hartshorn.server.minecraft.inventory.InventoryLayout;
 import org.dockbox.hartshorn.server.minecraft.inventory.builder.StaticPaneBuilder;
-import org.dockbox.hartshorn.server.minecraft.inventory.properties.LayoutProperty;
+import org.dockbox.hartshorn.server.minecraft.inventory.properties.LayoutAttribute;
 import org.dockbox.hartshorn.server.minecraft.item.Item;
 
 /** Represents a static (non-changing) pane, which can be updated without closing the pane. */
@@ -36,7 +36,7 @@ public interface StaticPane extends Pane {
      * @return The builder
      */
     static StaticPaneBuilder builder(InventoryLayout layout) {
-        return Hartshorn.context().get(StaticPaneBuilder.class, new LayoutProperty(layout));
+        return Hartshorn.context().get(StaticPaneBuilder.class, new LayoutAttribute(layout));
     }
 
     /**

@@ -18,7 +18,7 @@
 package org.dockbox.hartshorn.persistence;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.di.properties.InjectableType;
+import org.dockbox.hartshorn.di.properties.AttributeHolder;
 
 import java.util.Set;
 
@@ -28,7 +28,7 @@ import java.util.Set;
  * @param <T>
  *         The type of the target database source
  */
-public interface SqlService extends InjectableType {
+public interface SqlService extends AttributeHolder {
 
     void save(Object object);
     void update(Object object);

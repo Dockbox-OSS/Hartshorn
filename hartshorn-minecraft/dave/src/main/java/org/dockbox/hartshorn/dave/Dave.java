@@ -18,6 +18,7 @@
 package org.dockbox.hartshorn.dave;
 
 import org.dockbox.hartshorn.api.Hartshorn;
+import org.dockbox.hartshorn.di.properties.AttributeHolder;
 import org.dockbox.hartshorn.events.annotations.Listener;
 import org.dockbox.hartshorn.api.exceptions.ApplicationException;
 import org.dockbox.hartshorn.i18n.entry.Resource;
@@ -32,12 +33,11 @@ import org.dockbox.hartshorn.dave.models.DaveTriggers;
 import org.dockbox.hartshorn.di.annotations.inject.Wired;
 import org.dockbox.hartshorn.di.binding.Bindings;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
-import org.dockbox.hartshorn.di.properties.InjectableType;
 import org.dockbox.hartshorn.discord.DiscordCommandSource;
 import org.dockbox.hartshorn.discord.events.DiscordChatReceivedEvent;
 import org.dockbox.hartshorn.persistence.FileManager;
 import org.dockbox.hartshorn.persistence.FileType;
-import org.dockbox.hartshorn.persistence.FileTypeProperty;
+import org.dockbox.hartshorn.persistence.FileTypeAttribute;
 import org.dockbox.hartshorn.playersettings.Setting;
 import org.dockbox.hartshorn.server.minecraft.events.chat.SendChatEvent;
 import org.dockbox.hartshorn.server.minecraft.events.server.EngineChangedState;
@@ -51,7 +51,7 @@ import java.nio.file.Path;
 import java.util.concurrent.TimeUnit;
 
 @Command("dave")
-public class Dave implements InjectableType {
+public class Dave implements AttributeHolder {
 
     public static final Setting<Boolean> MUTED_DAVE = Setting.of(Boolean.class)
             .resource(new Resource("Muted Dave", "settings.dave.muted"))
@@ -112,7 +112,7 @@ public class Dave implements InjectableType {
 
     @Override
     public void enable() {
-        FileManager fm = this.context.get(FileManager.class, FileTypeProperty.of(FileType.YAML));
+        FileManager fm = this.context.get(FileManager.class, FileTypeAttribute.of(FileType.YAML));
         Path triggerFile = fm.dataFile(Dave.class, "triggers");
         if (HartshornUtils.empty(triggerFile)) this.restoreTriggerFile(fm, triggerFile);
 

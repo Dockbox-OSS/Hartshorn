@@ -20,7 +20,7 @@ package org.dockbox.hartshorn.di.inject;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.di.binding.BindingData;
 import org.dockbox.hartshorn.di.context.ApplicationBinder;
-import org.dockbox.hartshorn.di.properties.InjectorProperty;
+import org.dockbox.hartshorn.di.properties.Attribute;
 
 import java.util.List;
 
@@ -28,7 +28,7 @@ public interface Injector extends ApplicationBinder {
 
     void reset();
 
-    <T> Exceptional<T> get(Class<T> type, InjectorProperty<?>... additionalProperties);
+    <T> Exceptional<T> get(Class<T> type, Attribute<?>... additionalProperties);
 
     List<BindingData> bindingData();
 }

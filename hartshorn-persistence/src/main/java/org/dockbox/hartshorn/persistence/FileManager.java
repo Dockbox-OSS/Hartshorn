@@ -20,7 +20,7 @@ package org.dockbox.hartshorn.persistence;
 import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.domain.TypedOwner;
-import org.dockbox.hartshorn.di.properties.InjectableType;
+import org.dockbox.hartshorn.di.properties.AttributeHolder;
 import org.dockbox.hartshorn.persistence.mapping.GenericType;
 
 import java.nio.file.Path;
@@ -30,7 +30,7 @@ import java.nio.file.Path;
  * this type encourages the usage of Configurate based instances, it is possible to create
  * implementations for alternative configuration libraries and/or frameworks.
  */
-public interface FileManager extends InjectableType {
+public interface FileManager extends AttributeHolder {
 
     /**
      * Gets the default data file for a given {@link TypedOwner}. The exact location is decided by the

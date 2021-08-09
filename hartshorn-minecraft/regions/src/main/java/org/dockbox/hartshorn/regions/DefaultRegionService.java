@@ -21,7 +21,7 @@ import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.domain.tuple.Vector3N;
 import org.dockbox.hartshorn.di.annotations.inject.Wired;
 import org.dockbox.hartshorn.di.annotations.service.Service;
-import org.dockbox.hartshorn.di.properties.InjectableType;
+import org.dockbox.hartshorn.di.properties.AttributeHolder;
 import org.dockbox.hartshorn.persistence.FileManager;
 import org.dockbox.hartshorn.regions.flags.PersistentFlagModel;
 import org.dockbox.hartshorn.regions.flags.RegionFlag;
@@ -35,7 +35,7 @@ import java.nio.file.Path;
 import java.util.Set;
 
 @Service(id = "regions")
-public class DefaultRegionService implements RegionService, InjectableType {
+public class DefaultRegionService implements RegionService, AttributeHolder {
 
     @Wired
     private FileManager fileManager;

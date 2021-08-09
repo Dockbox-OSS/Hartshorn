@@ -15,17 +15,17 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.persistence.properties;
+package org.dockbox.hartshorn.di.properties;
 
-import org.dockbox.hartshorn.di.properties.InjectorProperty;
+import org.dockbox.hartshorn.api.exceptions.ApplicationException;
 
-import java.nio.file.Path;
+public interface AttributeHolder {
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+    default boolean canEnable() {
+        return true;
+    }
 
-@AllArgsConstructor
-public class PathProperty implements InjectorProperty<Path> {
-    @Getter
-    private final Path value;
+    default void apply(Attribute<?> property) throws ApplicationException {}
+
+    default void enable() throws ApplicationException {}
 }

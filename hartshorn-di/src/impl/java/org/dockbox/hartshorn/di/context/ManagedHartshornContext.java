@@ -84,10 +84,10 @@ public abstract class ManagedHartshornContext extends DefaultContext implements 
         if (null != property) this.injectionPoints.add(property);
     }
 
-    public abstract <T> T create(Class<T> type, T typeInstance, InjectorProperty<?>... properties);
+    public abstract <T> T create(Class<T> type, T typeInstance, Attribute<?>... properties);
 
-    public <T> T inject(Class<T> type, T typeInstance, InjectorProperty<?>... properties) {
-        for (InjectionPoint<?> injectionPoint : this.injectionPoints) {
+    public <T> T inject(final Class<T> type, T typeInstance, final Attribute<?>... properties) {
+        for (final InjectionPoint<?> injectionPoint : this.injectionPoints) {
             if (injectionPoint.accepts(type)) {
                 try {
                     //noinspection unchecked
@@ -105,7 +105,7 @@ public abstract class ManagedHartshornContext extends DefaultContext implements 
         if (typeInstance == null) return;
         HartshornUtils.merge(Reflect.fields(typeInstance.getClass(), Wired.class)).stream()
                 .filter(field -> Reflect.annotation(field, Wired.class).get().enable())
-                .filter(field -> Reflect.assigns(InjectableType.class, field.getType()))
+                .filter(field -> Reflect.assigns(AttributeHolder.class, field.getType()))
                 .map(field -> {
                     try {
                         // As we're enabling fields they may be accessed even if their

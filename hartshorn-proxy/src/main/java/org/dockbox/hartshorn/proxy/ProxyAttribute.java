@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.proxy;
 
-import org.dockbox.hartshorn.di.properties.InjectorProperty;
+import org.dockbox.hartshorn.di.properties.Attribute;
 import org.dockbox.hartshorn.proxy.handle.Phase;
 import org.dockbox.hartshorn.proxy.handle.ProxyFunction;
 import org.dockbox.hartshorn.proxy.handle.ProxyHolder;
@@ -29,42 +29,37 @@ import java.util.function.BiFunction;
 import lombok.Getter;
 import lombok.Setter;
 
-public final class ProxyProperty<T, R> implements InjectorProperty<Class<T>> {
+public final class ProxyAttribute<T, R> implements Attribute<Class<T>> {
 
-    @Getter
-    private final Class<T> value;
-    @Getter
-    private final Method target;
+    @Getter private final Class<T> value;
+    @Getter private final Method target;
     private final ProxyFunction<T, R> delegate;
     private final ProxyHolder holder = new ProxyHolder();
 
-    @Getter @Setter
-    private Phase phase = Phase.OVERWRITE;
-    @Setter
-    private boolean overwriteResult = true;
-    @Getter @Setter
-    private int priority = 10;
+    @Getter @Setter private Phase phase = Phase.OVERWRITE;
+    @Setter private boolean overwriteResult = true;
+    @Getter @Setter private int priority = 10;
 
-    private ProxyProperty(Class<T> type, Method target, ProxyFunction<T, R> delegate) {
+    private ProxyAttribute(Class<T> type, Method target, ProxyFunction<T, R> delegate) {
         this.value = type;
         this.target = target;
         this.delegate = delegate;
     }
 
-    public static <T, R> ProxyProperty<T, R> of(Class<T> type, Method target, BiFunction<T, Object[], R> proxyFunction) {
-        return new ProxyProperty<>(type, target, (instance, args, proxyContext) -> proxyFunction.apply(instance, args));
+    public static <T, R> ProxyAttribute<T, R> of(Class<T> type, Method target, BiFunction<T, Object[], R> proxyFunction) {
+        return new ProxyAttribute<>(type, target, (instance, args, proxyContext) -> proxyFunction.apply(instance, args));
     }
 
-    public static <T, R> ProxyProperty<T, R> of(Class<T> type, Method target, BiConsumer<T, Object[]> proxyFunction) {
-        return new ProxyProperty<>(type, target, (instance, args, proxyContext) -> {
+    public static <T, R> ProxyAttribute<T, R> of(Class<T> type, Method target, BiConsumer<T, Object[]> proxyFunction) {
+        return new ProxyAttribute<>(type, target, (instance, args, proxyContext) -> {
             proxyFunction.accept(instance, args);
             //noinspection ReturnOfNull
             return null;
         });
     }
 
-    public static <T, R> ProxyProperty<T, R> of(Class<T> type, Method target, ProxyFunction<T, R> proxyFunction) {
-        return new ProxyProperty<>(type, target, proxyFunction);
+    public static <T, R> ProxyAttribute<T, R> of(Class<T> type, Method target, ProxyFunction<T, R> proxyFunction) {
+        return new ProxyAttribute<>(type, target, proxyFunction);
     }
 
     public Class<?> targetClass() {

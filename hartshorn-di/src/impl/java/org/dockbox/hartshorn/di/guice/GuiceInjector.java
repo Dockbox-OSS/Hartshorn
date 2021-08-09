@@ -40,8 +40,8 @@ import org.dockbox.hartshorn.di.inject.KeyBinding;
 import org.dockbox.hartshorn.di.inject.ProviderContext;
 import org.dockbox.hartshorn.di.inject.wired.BoundContext;
 import org.dockbox.hartshorn.di.inject.wired.ConstructorBoundContext;
-import org.dockbox.hartshorn.di.properties.BindingMetaProperty;
-import org.dockbox.hartshorn.di.properties.InjectorProperty;
+import org.dockbox.hartshorn.di.properties.BindingMetaAttribute;
+import org.dockbox.hartshorn.di.properties.Attribute;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.dockbox.hartshorn.util.Reflect;
 import org.jetbrains.annotations.Nullable;
@@ -102,9 +102,9 @@ public class GuiceInjector implements Injector {
     }
 
     @Override
-    public <T> Exceptional<T> get(Class<T> type, InjectorProperty<?>... additionalProperties) {
+    public <T> Exceptional<T> get(Class<T> type, Attribute<?>... additionalProperties) {
         return Exceptional.of(() -> {
-            @Nullable Exceptional<Named> meta = Bindings.lookup(BindingMetaProperty.class, additionalProperties);
+            @Nullable Exceptional<Named> meta = Bindings.lookup(BindingMetaAttribute.class, additionalProperties);
             if (meta.present()) {
                 return this.rebuild().getInstance(Key.get(type, meta.get()));
             }

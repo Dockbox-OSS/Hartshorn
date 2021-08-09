@@ -38,8 +38,8 @@ import org.dockbox.hartshorn.di.inject.InjectionModifier;
 import org.dockbox.hartshorn.di.inject.Injector;
 import org.dockbox.hartshorn.di.inject.ProviderContext;
 import org.dockbox.hartshorn.di.inject.wired.BoundContext;
-import org.dockbox.hartshorn.di.properties.BindingMetaProperty;
-import org.dockbox.hartshorn.di.properties.InjectorProperty;
+import org.dockbox.hartshorn.di.properties.Attribute;
+import org.dockbox.hartshorn.di.properties.BindingMetaAttribute;
 import org.dockbox.hartshorn.di.properties.UseFactory;
 import org.dockbox.hartshorn.di.services.ComponentLocator;
 import org.dockbox.hartshorn.util.HartshornUtils;
@@ -110,11 +110,11 @@ public class HartshornApplicationContext extends ManagedHartshornContext {
 
     @Override
     public <T> T get(Class<T> type, Named named) {
-        return this.get(type, BindingMetaProperty.of(named));
+        return this.get(type, BindingMetaAttribute.of(named));
     }
 
     @Override
-    public <T> T get(Class<T> type, InjectorProperty<?>... properties) {
+    public <T> T get(Class<T> type, Attribute<?>... properties) {
         T instance = null;
 
         if (this.singletons.containsKey(type)) //noinspection unchecked
@@ -182,7 +182,7 @@ public class HartshornApplicationContext extends ManagedHartshornContext {
     }
 
     @Nullable
-    public <T> T create(Class<T> type, T typeInstance, InjectorProperty<?>[] additionalProperties) {
+    public <T> T create(Class<T> type, T typeInstance, Attribute<?>[] additionalProperties) {
         try {
             if (null == typeInstance) {
                 Exceptional<T> instanceCandidate = this.internalInjector().get(type, additionalProperties);

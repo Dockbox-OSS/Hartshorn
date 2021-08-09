@@ -22,11 +22,11 @@ import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.exceptions.ApplicationException;
 import org.dockbox.hartshorn.api.exceptions.Except;
 import org.dockbox.hartshorn.di.annotations.component.Component;
-import org.dockbox.hartshorn.di.properties.InjectableType;
-import org.dockbox.hartshorn.di.properties.InjectorProperty;
+import org.dockbox.hartshorn.di.properties.Attribute;
+import org.dockbox.hartshorn.di.properties.AttributeHolder;
 import org.dockbox.hartshorn.persistence.SqlService;
-import org.dockbox.hartshorn.persistence.properties.ConnectionProperty;
-import org.dockbox.hartshorn.persistence.properties.PathProperty;
+import org.dockbox.hartshorn.persistence.properties.ConnectionAttribute;
+import org.dockbox.hartshorn.persistence.properties.PathAttribute;
 import org.dockbox.hartshorn.regions.CustomRegion;
 import org.dockbox.hartshorn.regions.flags.PersistentFlagModel;
 import org.dockbox.hartshorn.regions.flags.RegionFlag;
@@ -39,7 +39,7 @@ import java.util.Set;
 import lombok.Getter;
 
 @Component
-public class RegionsList implements InjectableType {
+public class RegionsList implements AttributeHolder {
 
     private SqlService sqlService;
     @Getter private final Set<PersistentFlagModel> flags = HartshornUtils.emptySet();
@@ -70,14 +70,14 @@ public class RegionsList implements InjectableType {
     }
 
     public static RegionsList restore(Path file) {
-        return Hartshorn.context().get(RegionsList.class, new PathProperty(file));
+        return Hartshorn.context().get(RegionsList.class, new PathAttribute(file));
     }
 
     @Override
-    public void apply(InjectorProperty<?> property) {
-        if (property instanceof PathProperty pathProperty) {
-            final Path path = pathProperty.value();
-            this.sqlService = Hartshorn.context().get(SqlService.class, ConnectionProperty.of(path));
+    public void apply(Attribute<?> property) {
+        if (property instanceof PathAttribute pathAttribute) {
+            final Path path = pathAttribute.value();
+            this.sqlService = Hartshorn.context().get(SqlService.class, ConnectionAttribute.of(path));
         }
     }
 }

@@ -4,10 +4,10 @@ import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.exceptions.ApplicationException;
 import org.dockbox.hartshorn.di.annotations.inject.Binds;
-import org.dockbox.hartshorn.di.properties.InjectorProperty;
+import org.dockbox.hartshorn.di.properties.Attribute;
 import org.dockbox.hartshorn.persistence.SqlService;
 import org.dockbox.hartshorn.persistence.context.EntityContext;
-import org.dockbox.hartshorn.persistence.properties.ConnectionProperty;
+import org.dockbox.hartshorn.persistence.properties.ConnectionAttribute;
 import org.dockbox.hartshorn.persistence.properties.PersistenceConnection;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.hibernate.Session;
@@ -36,9 +36,9 @@ public class HibernateSqlService implements SqlService {
     }
 
     @Override
-    public void apply(InjectorProperty<?> property) throws ApplicationException {
-        if (property instanceof ConnectionProperty connectionProperty) {
-            final PersistenceConnection connection = connectionProperty.value();
+    public void apply(Attribute<?> property) throws ApplicationException {
+        if (property instanceof ConnectionAttribute connectionAttribute) {
+            final PersistenceConnection connection = connectionAttribute.value();
             if (HartshornUtils.notEmpty(connection.username()) || HartshornUtils.notEmpty(connection.password())) {
                 this.configuration.setProperty("hibernate.connection.username", connection.username());
                 this.configuration.setProperty("hibernate.connection.password", connection.password());

@@ -109,7 +109,7 @@ public final class ProxyableBootstrap {
                 }
             }
 
-            ProxyProperty<C, ?> property = ProxyProperty.of(proxyTargetClass, targetMethod, (instance, args, proxyContext) -> {
+            ProxyAttribute<C, ?> property = ProxyAttribute.of(proxyTargetClass, targetMethod, (instance, args, proxyContext) -> {
                 Object[] invokingArgs = ProxyableBootstrap.prepareArguments(source, args, instance);
                 try {
                     return source.invoke(Hartshorn.context().get(proxyClass), invokingArgs);

@@ -18,10 +18,10 @@
 package org.dockbox.hartshorn.persistence;
 
 import org.dockbox.hartshorn.api.exceptions.ApplicationException;
-import org.dockbox.hartshorn.di.properties.InjectorProperty;
+import org.dockbox.hartshorn.di.properties.Attribute;
 import org.dockbox.hartshorn.persistence.mapping.ObjectMapper;
 import org.dockbox.hartshorn.persistence.properties.PersistenceModifier;
-import org.dockbox.hartshorn.persistence.properties.PersistenceProperty;
+import org.dockbox.hartshorn.persistence.properties.ModifiersAttribute;
 
 public abstract class DefaultObjectMapper implements ObjectMapper {
 
@@ -42,9 +42,9 @@ public abstract class DefaultObjectMapper implements ObjectMapper {
     }
 
     @Override
-    public void apply(InjectorProperty<?> property) throws ApplicationException {
-        if (property instanceof PersistenceProperty persistenceProperty) {
-            for (PersistenceModifier modifier : persistenceProperty.value()) this.modify(modifier);
+    public void apply(Attribute<?> property) throws ApplicationException {
+        if (property instanceof ModifiersAttribute modifiersAttribute) {
+            for (PersistenceModifier modifier : modifiersAttribute.value()) this.modify(modifier);
         }
     }
 

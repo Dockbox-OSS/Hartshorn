@@ -18,7 +18,7 @@
 package org.dockbox.hartshorn.proxy.service;
 
 import org.dockbox.hartshorn.di.context.DefaultContext;
-import org.dockbox.hartshorn.di.properties.InjectorProperty;
+import org.dockbox.hartshorn.di.properties.Attribute;
 import org.dockbox.hartshorn.util.Reflect;
 
 import java.lang.annotation.Annotation;
@@ -32,11 +32,11 @@ public class SimpleMethodProxyContext<T> extends DefaultContext implements Metho
     private final T instance;
     private final Class<T> type;
     private final Method method;
-    private final InjectorProperty<?>[] properties;
+    private final Attribute<?>[] properties;
     private final Annotation[] annotations;
     private final Class<?> returnType;
 
-    public SimpleMethodProxyContext(T instance, Class<T> type, Method method, InjectorProperty<?>[] properties) {
+    public SimpleMethodProxyContext(T instance, Class<T> type, Method method, Attribute<?>[] properties) {
         this.instance = instance;
         this.type = type;
         this.method = method;

@@ -23,7 +23,7 @@ import org.dockbox.hartshorn.api.annotations.UseBootstrap;
 import org.dockbox.hartshorn.api.exceptions.Except;
 import org.dockbox.hartshorn.di.InjectionPoint;
 import org.dockbox.hartshorn.di.annotations.service.Service;
-import org.dockbox.hartshorn.di.properties.InjectorProperty;
+import org.dockbox.hartshorn.di.properties.Attribute;
 import org.dockbox.hartshorn.proxy.handle.ProxyHandler;
 
 import java.lang.reflect.InvocationTargetException;
@@ -37,10 +37,10 @@ public class ProxyInjectionService {
         Hartshorn.context().add(InjectionPoint.of(Object.class, (instance, type, properties) -> {
             ProxyHandler<Object> handler = new ProxyHandler<>(instance, type);
             boolean proxy = false;
-            for (InjectorProperty<?> property : properties) {
-                if (property instanceof ProxyProperty) {
+            for (Attribute<?> property : properties) {
+                if (property instanceof ProxyAttribute) {
                     //noinspection unchecked
-                    handler.delegate((ProxyProperty<Object, ?>) property);
+                    handler.delegate((ProxyAttribute<Object, ?>) property);
                     proxy = true;
                 }
             }

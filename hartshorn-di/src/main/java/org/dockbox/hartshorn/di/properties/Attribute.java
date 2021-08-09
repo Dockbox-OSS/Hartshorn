@@ -15,16 +15,9 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.server.minecraft.inventory.properties;
+package org.dockbox.hartshorn.di.properties;
 
-import org.dockbox.hartshorn.server.minecraft.inventory.InventoryType;
-import org.dockbox.hartshorn.di.properties.InjectorProperty;
-
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
-@AllArgsConstructor
-public class InventoryTypeProperty implements InjectorProperty<InventoryType> {
-    @Getter
-    private final InventoryType value;
+@FunctionalInterface
+public interface Attribute<T> {
+    T value();
 }

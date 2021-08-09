@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.di;
 
 import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.di.binding.Bindings;
-import org.dockbox.hartshorn.di.properties.BindingMetaProperty;
+import org.dockbox.hartshorn.di.properties.BindingMetaAttribute;
 import org.dockbox.hartshorn.di.types.InvalidSampleBoundType;
 import org.dockbox.hartshorn.di.types.PopulatedType;
 import org.dockbox.hartshorn.di.types.SampleBoundPopulatedType;
@@ -354,7 +354,7 @@ public class ApplicationContextTests {
         Hartshorn.context().bind("org.dockbox.hartshorn.di.types.provision");
         Hartshorn.context().bind(TypeFactory.class, SimpleTypeFactory.class);
 
-        ProvidedInterface provided = Hartshorn.context().get(ProvidedInterface.class, BindingMetaProperty.of("bound"), TypeFactory.use("BoundProvision"));
+        ProvidedInterface provided = Hartshorn.context().get(ProvidedInterface.class, BindingMetaAttribute.of("bound"), TypeFactory.use("BoundProvision"));
         Assertions.assertNotNull(provided);
         Assertions.assertEquals("BoundProvision", provided.name());
     }

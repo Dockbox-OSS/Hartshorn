@@ -15,24 +15,20 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.persistence.properties;
+package org.dockbox.hartshorn.persistence;
 
-import org.dockbox.hartshorn.di.properties.InjectorProperty;
-import org.dockbox.hartshorn.util.HartshornUtils;
-
-import java.util.Set;
+import org.dockbox.hartshorn.di.properties.Attribute;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class PersistenceProperty implements InjectorProperty<Set<PersistenceModifier>> {
+public final class FileTypeAttribute implements Attribute<FileType> {
 
-    @Getter
-    private final Set<PersistenceModifier> value;
+    @Getter private final FileType value;
 
-    public static PersistenceProperty of(PersistenceModifier... modifiers) {
-        return new PersistenceProperty(HartshornUtils.asSet(modifiers));
+    public static FileTypeAttribute of(FileType fileType) {
+        return new FileTypeAttribute(fileType);
     }
 }

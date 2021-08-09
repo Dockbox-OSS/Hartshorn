@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.server.minecraft.inventory;
 
 import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.server.minecraft.inventory.builder.LayoutBuilder;
-import org.dockbox.hartshorn.server.minecraft.inventory.properties.InventoryTypeProperty;
+import org.dockbox.hartshorn.server.minecraft.inventory.properties.InventoryTypeAttribute;
 
 import java.util.Map;
 
@@ -38,7 +38,7 @@ public interface InventoryLayout {
      * @return The builder
      */
     static LayoutBuilder builder(InventoryType inventoryType) {
-        return Hartshorn.context().get(LayoutBuilder.class, new InventoryTypeProperty(inventoryType));
+        return Hartshorn.context().get(LayoutBuilder.class, new InventoryTypeAttribute(inventoryType));
     }
 
     /**
