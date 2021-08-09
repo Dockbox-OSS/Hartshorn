@@ -17,20 +17,15 @@
 
 package org.dockbox.hartshorn.di.inject;
 
-import org.dockbox.hartshorn.di.annotations.inject.Named;
+import org.dockbox.hartshorn.di.Key;
 
-import java.lang.annotation.Annotation;
 import java.util.function.Supplier;
 
 public interface Binder {
 
-    <C, T extends C, A extends Annotation> void provide(Class<C> contract, Supplier<? extends T> supplier);
-    <C, T extends C, A extends Annotation> void provide(Class<C> contract, Supplier<? extends T> supplier, Named meta);
-    <C, T extends C> void bind(Class<C> contract, Class<? extends T> implementation);
-    <C, T extends C> void bind(Class<C> contract, Class<? extends T> implementation, Named meta);
-    <C, T extends C> void bind(Class<C> contract, T instance);
-    <C, T extends C> void bind(Class<C> contract, T instance, Named meta);
-    <C, T extends C> void manual(Class<C> contract, Class<? extends T> implementation);
-    <C, T extends C> void manual(Class<C> contract, Class<? extends T> implementation, Named meta);
+    <C> void provide(Key<C> contract, Supplier<C> supplier);
+    <C, T extends C> void bind(Key<C> key, Class<? extends T> implementation);
+    <C, T extends C> void bind(Key<C> key, T instance);
+    <C, T extends C> void manual(Key<C> key, Class<? extends T> implementation);
 
 }

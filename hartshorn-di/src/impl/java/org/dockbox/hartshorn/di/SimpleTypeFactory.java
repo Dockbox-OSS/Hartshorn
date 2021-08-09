@@ -26,8 +26,7 @@ import org.dockbox.hartshorn.di.properties.Attribute;
 import org.dockbox.hartshorn.di.properties.BindingMetaAttribute;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.dockbox.hartshorn.util.Reflect;
-
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 public class SimpleTypeFactory implements TypeFactory {
 
@@ -38,9 +37,9 @@ public class SimpleTypeFactory implements TypeFactory {
     }
 
     @Override
-    public <T> T create(Class<T> type, Object... arguments) {
+    public <T> T create(final Class<T> type, final Object... arguments) {
         @Nullable Named named = null;
-        for (Attribute<?> property : this.properties) {
+        for (final Attribute<?> property : this.properties) {
             if (property instanceof BindingMetaAttribute bindingMeta) named = bindingMeta.value();
         }
 
@@ -48,12 +47,12 @@ public class SimpleTypeFactory implements TypeFactory {
         if (binding.absent()) {
             if (Reflect.isAbstract(type)) throw new IllegalStateException("Could not autowire " + type.getCanonicalName() + " as there is no active binding for it");
             else {
-                final BoundContext<T,T> context = new ConstructorBoundContext<>(type, type, "");
+                final BoundContext<T,T> context = new ConstructorBoundContext<>(Key.of(type, Bindings.named("")), type);
                 ApplicationContextAware.instance().context().add(context);
                 binding = Exceptional.of(context);
             }
         }
-        Exceptional<BoundContext<T, T>> finalBinding = binding;
+        final Exceptional<BoundContext<T, T>> finalBinding = binding;
 
         return Exceptional.of(() -> {
             final T instance = finalBinding.get().create(arguments);
@@ -63,8 +62,8 @@ public class SimpleTypeFactory implements TypeFactory {
     }
 
     @Override
-    public TypeFactory with(Attribute<?>... properties) {
-        SimpleTypeFactory clone = new SimpleTypeFactory();
+    public TypeFactory with(final Attribute<?>... properties) {
+        final SimpleTypeFactory clone = new SimpleTypeFactory();
         clone.properties = HartshornUtils.merge(this.properties, properties);
         return clone;
     }

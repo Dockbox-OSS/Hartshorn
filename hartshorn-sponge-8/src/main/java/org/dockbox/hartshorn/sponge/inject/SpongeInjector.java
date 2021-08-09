@@ -27,6 +27,7 @@ import org.dockbox.hartshorn.config.ConfigurationManager;
 import org.dockbox.hartshorn.config.SimpleConfigurationManager;
 import org.dockbox.hartshorn.config.TargetGlobalConfig;
 import org.dockbox.hartshorn.di.InjectConfiguration;
+import org.dockbox.hartshorn.di.Key;
 import org.dockbox.hartshorn.di.SimpleTypeFactory;
 import org.dockbox.hartshorn.di.TypeFactory;
 import org.dockbox.hartshorn.i18n.text.pagination.PaginationBuilder;
@@ -51,46 +52,46 @@ public class SpongeInjector extends InjectConfiguration {
     @Override
     public void collect() {
         // Factory creation
-        this.bind(TypeFactory.class, SimpleTypeFactory.class);
+        this.bind(Key.of(TypeFactory.class), SimpleTypeFactory.class);
 
         // Tasks
-        this.bind(TaskRunner.class, SpongeTaskRunner.class);
+        this.bind(Key.of(TaskRunner.class), SpongeTaskRunner.class);
 
         // Persistence
-        this.bind(FileManager.class, SpongeFileManager.class);
+        this.bind(Key.of(FileManager.class), SpongeFileManager.class);
 
         // Services
-        this.bind(Players.class, SpongePlayers.class);
-        this.bind(Worlds.class, SpongeWorlds.class);
-//        this.bind(WorldEditService.class, SpongeWorldEditService.class);
-//        this.bind(CustomMapService.class, SpongeCustomMapService.class);
-//        this.bind(PlotService.class, SpongePlotSquaredService.class);
-        this.bind(CacheManager.class, SimpleCacheManager.class);
+        this.bind(Key.of(Players.class), SpongePlayers.class);
+        this.bind(Key.of(Worlds.class), SpongeWorlds.class);
+//        this.bind(Key.of(WorldEditService.class), SpongeWorldEditService.class);
+//        this.bind(Key.of(CustomMapService.class), SpongeCustomMapService.class);
+//        this.bind(Key.of(PlotService.class), SpongePlotSquaredService.class);
+        this.bind(Key.of(CacheManager.class), SimpleCacheManager.class);
 
         // Builder types
-        this.bind(PaginationBuilder.class, SimplePaginationBuilder.class);
-//        this.bind(LayoutBuilder.class, SpongeLayoutBuilder.class);
-//        this.bind(PaginatedPaneBuilder.class, SpongePaginatedPaneBuilder.class);
-//        this.bind(StaticPaneBuilder.class, SpongeStaticPaneBuilder.class);
+        this.bind(Key.of(PaginationBuilder.class), SimplePaginationBuilder.class);
+//        this.bind(Key.of(LayoutBuilder.class), SpongeLayoutBuilder.class);
+//        this.bind(Key.of(PaginatedPaneBuilder.class), SpongePaginatedPaneBuilder.class);
+//        this.bind(Key.of(StaticPaneBuilder.class), SpongeStaticPaneBuilder.class);
 
         // Wired types - do NOT call directly!
-        this.manual(Item.class, SpongeItem.class);
-//        this.manual(Bossbar.class, SpongeBossbar.class);
-        this.manual(Profile.class, SpongeProfile.class);
-//        this.manual(DiscordCommandSource.class, MagiBridgeCommandSource.class);
-        this.manual(ConfigurationManager.class, SimpleConfigurationManager.class);
+        this.manual(Key.of(Item.class), SpongeItem.class);
+//        this.manual(Key.of(Bossbar.class), SpongeBossbar.class);
+        this.manual(Key.of(Profile.class), SpongeProfile.class);
+//        this.manual(Key.of(DiscordCommandSource.class), MagiBridgeCommandSource.class);
+        this.manual(Key.of(ConfigurationManager.class), SimpleConfigurationManager.class);
 
         // Log is created from LoggerFactory externally
-        this.bind(Logger.class, Hartshorn.log());
+        this.bind(Key.of(Logger.class), Hartshorn.log());
 
         // Console is a constant singleton, to avoid recreation
-        this.bind(SystemSubject.class, SpongeSystemSubject.class);
+        this.bind(Key.of(SystemSubject.class), SpongeSystemSubject.class);
 
         // Packets
-//        this.bind(ChangeGameStatePacket.class, NMSChangeGameStatePacket.class);
-//        this.bind(SpawnEntityPacket.class, NMSSpawnEntityPacket.class);
+//        this.bind(Key.of(ChangeGameStatePacket.class), NMSChangeGameStatePacket.class);
+//        this.bind(Key.of(SpawnEntityPacket.class), NMSSpawnEntityPacket.class);
 
-        this.bind(GlobalConfig.class, TargetGlobalConfig.class);
-        this.bind(MinecraftVersion.class, MinecraftVersion.MC1_16);
+        this.bind(Key.of(GlobalConfig.class), TargetGlobalConfig.class);
+        this.bind(Key.of(MinecraftVersion.class), MinecraftVersion.MC1_16);
     }
 }

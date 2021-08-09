@@ -24,6 +24,7 @@ import org.dockbox.hartshorn.cache.CacheManager;
 import org.dockbox.hartshorn.commands.SystemSubject;
 import org.dockbox.hartshorn.config.ConfigurationManager;
 import org.dockbox.hartshorn.di.InjectConfiguration;
+import org.dockbox.hartshorn.di.Key;
 import org.dockbox.hartshorn.di.SimpleTypeFactory;
 import org.dockbox.hartshorn.di.TypeFactory;
 import org.dockbox.hartshorn.discord.DiscordCommandSource;
@@ -56,38 +57,38 @@ public class JUnitInjector extends InjectConfiguration {
     @Override
     public void collect() {
         // Factory creation
-        this.bind(TypeFactory.class, SimpleTypeFactory.class);
+        this.bind(Key.of(TypeFactory.class), SimpleTypeFactory.class);
 
         // Tasks
-        this.bind(TaskRunner.class, JUnitTaskRunner.class);
+        this.bind(Key.of(TaskRunner.class), JUnitTaskRunner.class);
 
         // Persistence
-        this.bind(FileManager.class, JUnitFileManager.class);
+        this.bind(Key.of(FileManager.class), JUnitFileManager.class);
 
         // Services
-        this.bind(Players.class, JUnitPlayers.class);
-        this.bind(Worlds.class, JUnitWorlds.class);
-        this.bind(CustomMapService.class, JUnitCustomMapService.class);
-        this.bind(CacheManager.class, JUnitCacheManager.class);
+        this.bind(Key.of(Players.class), JUnitPlayers.class);
+        this.bind(Key.of(Worlds.class), JUnitWorlds.class);
+        this.bind(Key.of(CustomMapService.class), JUnitCustomMapService.class);
+        this.bind(Key.of(CacheManager.class), JUnitCacheManager.class);
 
         // Wired types - do NOT call directly!
-        this.manual(Item.class, JUnitItem.class);
-        this.manual(Bossbar.class, JUnitBossbar.class);
-        this.manual(Profile.class, JUnitProfile.class);
-        this.manual(ItemFrame.class, JUnitItemFrame.class);
-        this.manual(ArmorStand.class, JUnitArmorStand.class);
-        this.manual(DiscordCommandSource.class, JUnitDiscordCommandSource.class);
-        this.manual(ConfigurationManager.class, JUnitConfigurationManager.class);
+        this.manual(Key.of(Item.class), JUnitItem.class);
+        this.manual(Key.of(Bossbar.class), JUnitBossbar.class);
+        this.manual(Key.of(Profile.class), JUnitProfile.class);
+        this.manual(Key.of(ItemFrame.class), JUnitItemFrame.class);
+        this.manual(Key.of(ArmorStand.class), JUnitArmorStand.class);
+        this.manual(Key.of(DiscordCommandSource.class), JUnitDiscordCommandSource.class);
+        this.manual(Key.of(ConfigurationManager.class), JUnitConfigurationManager.class);
 
         // Log is created from LoggerFactory externally
-        this.bind(Logger.class, Hartshorn.log());
+        this.bind(Key.of(Logger.class), Hartshorn.log());
 
         // Console is a constant singleton, to avoid recreation
-        this.bind(SystemSubject.class, new JUnitSystemSubject());
+        this.bind(Key.of(SystemSubject.class), new JUnitSystemSubject());
 
-        this.bind(GlobalConfig.class, JUnitGlobalConfig.class);
-        this.bind(MinecraftVersion.class, MinecraftVersion.INDEV);
+        this.bind(Key.of(GlobalConfig.class), JUnitGlobalConfig.class);
+        this.bind(Key.of(MinecraftVersion.class), MinecraftVersion.INDEV);
 
-        this.bind(DiscordUtils.class, JUnitDiscordUtils.class);
+        this.bind(Key.of(DiscordUtils.class), JUnitDiscordUtils.class);
     }
 }

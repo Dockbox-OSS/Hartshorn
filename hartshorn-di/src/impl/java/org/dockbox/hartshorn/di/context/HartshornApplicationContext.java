@@ -24,83 +24,72 @@ import org.dockbox.hartshorn.di.ApplicationContextAware;
 import org.dockbox.hartshorn.di.DefaultModifiers;
 import org.dockbox.hartshorn.di.InjectConfiguration;
 import org.dockbox.hartshorn.di.InjectorMetaProvider;
+import org.dockbox.hartshorn.di.Key;
 import org.dockbox.hartshorn.di.MetaProviderModifier;
 import org.dockbox.hartshorn.di.Modifier;
-import org.dockbox.hartshorn.di.ProvisionFailure;
+import org.dockbox.hartshorn.di.NativeBindingHierarchy;
 import org.dockbox.hartshorn.di.TypeFactory;
-import org.dockbox.hartshorn.di.adapter.InjectSource;
-import org.dockbox.hartshorn.di.adapter.ServiceSource;
+import org.dockbox.hartshorn.di.annotations.inject.Binds;
+import org.dockbox.hartshorn.di.annotations.inject.Bound;
+import org.dockbox.hartshorn.di.annotations.inject.Combines;
 import org.dockbox.hartshorn.di.annotations.inject.Named;
+import org.dockbox.hartshorn.di.annotations.inject.Wired;
 import org.dockbox.hartshorn.di.annotations.service.ServiceActivator;
+import org.dockbox.hartshorn.di.binding.BindingHierarchy;
 import org.dockbox.hartshorn.di.binding.Bindings;
-import org.dockbox.hartshorn.di.inject.Binder;
+import org.dockbox.hartshorn.di.binding.InstanceProvider;
+import org.dockbox.hartshorn.di.binding.Provider;
+import org.dockbox.hartshorn.di.binding.StaticProvider;
+import org.dockbox.hartshorn.di.binding.SupplierProvider;
 import org.dockbox.hartshorn.di.inject.InjectionModifier;
-import org.dockbox.hartshorn.di.inject.Injector;
 import org.dockbox.hartshorn.di.inject.ProviderContext;
 import org.dockbox.hartshorn.di.inject.wired.BoundContext;
+import org.dockbox.hartshorn.di.inject.wired.ConstructorBoundContext;
 import org.dockbox.hartshorn.di.properties.Attribute;
 import org.dockbox.hartshorn.di.properties.BindingMetaAttribute;
 import org.dockbox.hartshorn.di.properties.UseFactory;
 import org.dockbox.hartshorn.di.services.ComponentLocator;
+import org.dockbox.hartshorn.di.services.SimpleComponentLocator;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.dockbox.hartshorn.util.Reflect;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public class HartshornApplicationContext extends ManagedHartshornContext {
 
-    private final Injector injector;
     private final ComponentLocator locator;
     private final List<Modifier> modifiers;
     private final Map<Class<?>, Object> singletons = HartshornUtils.emptyConcurrentMap();
     private MetaProvider metaProvider;
 
+    private final transient Set<BoundContext<?, ?>> bindings = HartshornUtils.emptyConcurrentSet();
+    private final Map<Key<?>, BindingHierarchy<?>> hierarchies = HartshornUtils.emptyConcurrentMap();
 
-    public HartshornApplicationContext(Class<?> activationSource, Modifier... modifiers) {
+
+    public HartshornApplicationContext(final Class<?> activationSource, final Modifier... modifiers) {
         super(activationSource);
-        InjectSource injectSource = this.getSource(this.activator().injectSource(), this.activator().inject());
-        ServiceSource serviceSource = this.getSource(this.activator().serviceSource(), this.activator().service());
 
-        this.injector = injectSource.create();
-        this.locator = serviceSource.create();
+        this.locator = new SimpleComponentLocator();
         this.modifiers = HartshornUtils.asUnmodifiableList(modifiers);
         this.modify(this.modifiers);
 
-        this.bind(ApplicationContext.class, this);
-        this.bind(MetaProvider.class, this.metaProvider);
-        this.bind(ComponentLocator.class, this.locator());
+        this.bind(Key.of(ApplicationContext.class), this);
+        this.bind(Key.of(MetaProvider.class), this.metaProvider);
+        this.bind(Key.of(ComponentLocator.class), this.locator());
     }
 
-    private <T, E extends T> T getSource(Class<T> type, String target) {
-        try {
-            if (type.isEnum()) {
-                for (Enum<?> enumConstant : (Enum<?>[]) type.getEnumConstants()) {
-                    if (enumConstant.name().equalsIgnoreCase(target)) {
-                        //noinspection unchecked
-                        return (T) enumConstant;
-                    }
-                }
-            }
-            else {
-                final Constructor<T> constructor = type.getConstructor();
-                return constructor.newInstance();
-            }
-        }
-        catch (InvocationTargetException | NoSuchMethodException | InstantiationException | IllegalAccessException | ClassCastException e) {
-            return null;
-        }
-        return null;
-    }
-
-    protected void modify(List<Modifier> modifiers) {
-        for (Modifier modifier : modifiers) {
+    protected void modify(final List<Modifier> modifiers) {
+        for (final Modifier modifier : modifiers) {
             if (modifier instanceof MetaProviderModifier metaProviderModifier) {
                 this.metaProvider = metaProviderModifier.provider();
             }
@@ -109,23 +98,21 @@ public class HartshornApplicationContext extends ManagedHartshornContext {
     }
 
     @Override
-    public <T> T get(Class<T> type, Named named) {
+    public <T> T get(final Class<T> type, final Named named) {
         return this.get(type, BindingMetaAttribute.of(named));
     }
 
     @Override
-    public <T> T get(Class<T> type, Attribute<?>... properties) {
+    public <T> T get(final Class<T> type, final Attribute<?>... properties) {
         T instance = null;
 
         if (this.singletons.containsKey(type)) //noinspection unchecked
             return (T) this.singletons.get(type);
 
-        Exceptional<Object[]> value = Bindings.lookup(UseFactory.class, properties);
+        final Exceptional<Object[]> value = Bindings.lookup(UseFactory.class, properties);
         if (value.present()) {
             instance = this.get(TypeFactory.class).with(properties).create(type, value.get());
         } else {
-            // Type instance can be present if it is a service. These instances are also created using Guice
-            // injectors and therefore do not need late member injection here.
             instance = this.create(type, instance, properties);
         }
 
@@ -135,7 +122,7 @@ public class HartshornApplicationContext extends ManagedHartshornContext {
 
         instance = this.inject(type, instance, properties);
 
-        for (InjectionModifier<?> serviceModifier : this.injectionModifiers) {
+        for (final InjectionModifier<?> serviceModifier : this.injectionModifiers) {
             if (serviceModifier.preconditions(type, instance, properties))
                 instance = serviceModifier.process(this, type, instance, properties);
         }
@@ -147,7 +134,7 @@ public class HartshornApplicationContext extends ManagedHartshornContext {
         try {
             Bindings.enable(instance, properties);
         }
-        catch (ApplicationException e) {
+        catch (final ApplicationException e) {
             throw e.runtime();
         }
 
@@ -162,30 +149,21 @@ public class HartshornApplicationContext extends ManagedHartshornContext {
     }
 
     @Override
-    public <T> T get(Class<T> type, Object... varargs) {
+    public <T> T get(final Class<T> type, final Object... varargs) {
         return this.get(type, TypeFactory.use(varargs));
     }
 
     @Override
-    public <T> void with(Class<T> type, Consumer<T> consumer) {
+    public <T> void with(final Class<T> type, final Consumer<T> consumer) {
         final T instance = this.get(type);
         if (null != instance) consumer.accept(instance);
     }
 
-    @Override
-    public Binder binder() {
-        return this.internalInjector();
-    }
-    
-    protected Injector internalInjector() {
-        return this.injector;
-    }
-
     @Nullable
-    public <T> T create(Class<T> type, T typeInstance, Attribute<?>[] additionalProperties) {
+    public <T> T create(final Class<T> type, final T typeInstance, final Attribute<?>[] additionalProperties) {
         try {
             if (null == typeInstance) {
-                Exceptional<T> instanceCandidate = this.internalInjector().get(type, additionalProperties);
+                final Exceptional<T> instanceCandidate = this.provide(type, additionalProperties);
                 Throwable cause = null;
                 if (instanceCandidate.caught()) {
                     cause = instanceCandidate.error();
@@ -194,10 +172,8 @@ public class HartshornApplicationContext extends ManagedHartshornContext {
                 if (instanceCandidate.absent()) {
                     final Exceptional<T> rawCandidate = instanceCandidate.orElse(() -> this.raw(type));
                     if (rawCandidate.absent() && rawCandidate.caught()) {
-                        if (cause == null) rawCandidate.rethrow();
-                        else {
-                            return ApplicationContextAware.instance().proxy(type, typeInstance).orNull();
-                        }
+                        final Throwable finalCause = cause;
+                        return ApplicationContextAware.instance().proxy(type, typeInstance).orThrow(() -> finalCause);
                     }
                     else {
                         return rawCandidate.get();
@@ -207,16 +183,16 @@ public class HartshornApplicationContext extends ManagedHartshornContext {
                 return instanceCandidate.get();
             }
             return typeInstance;
-        } catch (ProvisionFailure e) {
+        } catch (final Throwable e) {
             // Services can have no explicit implementation even if they are abstract.
             // Typically these services are expected to be populated through injection points later in time.
             if (Reflect.isAbstract(type) && ApplicationContextAware.instance().context().meta().component(type)) return null;
-            throw e;
+            throw new ApplicationException(e).runtime();
         }
     }
 
     @Override
-    public boolean hasActivator(Class<? extends Annotation> activator) {
+    public boolean hasActivator(final Class<? extends Annotation> activator) {
         final Exceptional<ServiceActivator> annotation = Reflect.annotation(activator, ServiceActivator.class);
         if (annotation.absent())
             throw new IllegalArgumentException("Requested activator " + activator.getSimpleName() + " is not decorated with @ServiceActivator");
@@ -236,43 +212,200 @@ public class HartshornApplicationContext extends ManagedHartshornContext {
     }
 
     @Override
-    public <T> T populate(T o) {
-        return this.internalInjector().populate(o);
+    public void reset() {
+        this.hierarchies.clear();
+        this.bindings.clear();
     }
 
     @Override
-    public void add(BoundContext<?, ?> context) {
-        this.internalInjector().add(context);
+    public <T> T populate(final T instance) {
+        if (null != instance) {
+            for (final Field field : Reflect.fields(instance.getClass(), Wired.class)) {
+                final Object fieldInstance = ApplicationContextAware.instance().context().get(field.getType());
+                Reflect.set(field, instance, fieldInstance);
+            }
+        }
+        return instance;
     }
 
     @Override
-    public void add(ProviderContext<?, ?> context) {
-        this.internalInjector().add(context);
+    public void add(final BoundContext<?, ?> context) {
+        this.bindings.add(context);
     }
 
     @Override
-    public void bind(InjectConfiguration configuration) {
-        this.internalInjector().bind(configuration);
+    public void add(final ProviderContext<?, ?> context) {
+        //noinspection unchecked
+        final Key<Object> key = (Key<Object>) context.key();
+        this.inHierarchy(key, hierarchy -> {
+            if (context.singleton()) {
+                hierarchy.add(new InstanceProvider<>(context.provider().get()));
+            }
+            else {
+                //noinspection unchecked
+                hierarchy.add(new SupplierProvider<>((Supplier<Object>) context.provider()));
+            }
+        });
     }
 
     @Override
-    public void bind(String prefix) {
-        this.internalInjector().bind(prefix);
+    public void bind(final InjectConfiguration configuration) {
+        configuration.binder(this).collect();
+    }
+
+    @Override
+    public void bind(final String prefix) {
+        Reflect.prefix(prefix);
+
+        final Collection<Class<?>> binders = Reflect.types(Binds.class);
+        for (final Class<?> binder : binders) {
+            final Binds bindAnnotation = Reflect.annotation(binder, Binds.class).get();
+            this.handleBinder(binder, bindAnnotation);
+        }
+
+        final Collection<Class<?>> multiBinders = Reflect.types(Combines.class);
+        for (final Class<?> binder : multiBinders) {
+            final Combines bindAnnotation = Reflect.annotation(binder, Combines.class).get();
+            for (final Binds annotation : bindAnnotation.value()) {
+                this.handleBinder(binder, annotation);
+            }
+        }
         super.process(prefix);
     }
 
     @Override
-    public <T, I extends T> Exceptional<BoundContext<T, I>> firstWire(Class<T> contract, Named named) {
-        return this.internalInjector().firstWire(contract, named);
+    public <T, I extends T> Exceptional<BoundContext<T, I>> firstWire(final Class<T> contract, final Named property) {
+        for (final BoundContext<?, ?> binding : this.bindings) {
+            if (binding.contract().equals(contract)) {
+                if (!"".equals(binding.name())) {
+                    if (property == null || !binding.name().equals(property.value())) continue;
+                }
+                //noinspection unchecked
+                return Exceptional.of((BoundContext<T, I>) binding);
+            }
+        }
+        return Exceptional.empty();
     }
 
     @Override
-    public <T> T invoke(Method method) {
-        return this.internalInjector().invoke(method);
+    public <T> T invoke(final Method method) {
+        return this.invoke(method, ApplicationContextAware.instance().context().get(method.getDeclaringClass()));
     }
 
     @Override
-    public <T> T invoke(Method method, Object instance) {
-        return this.internalInjector().invoke(method, instance);
+    public <T> T invoke(final Method method, final Object instance) {
+        final Parameter[] parameters = method.getParameters();
+        final Object[] invokingParameters = new Object[parameters.length];
+        for (int i = 0; i < parameters.length; i++) {
+            final Parameter parameter = parameters[i];
+            final Exceptional<Named> annotation = Reflect.annotation(parameter, Named.class);
+            if (annotation.present()) {
+                invokingParameters[i] = ApplicationContextAware.instance().context().get(parameter.getType(), annotation.get());
+            } else {
+                invokingParameters[i] = ApplicationContextAware.instance().context().get(parameter.getType());
+            }
+        }
+        try {
+            //noinspection unchecked
+            return (T) method.invoke(instance, invokingParameters);
+        }
+        catch (final Throwable e) {
+            return null;
+        }
+    }
+
+    @Override
+    public <T> void add(final BindingHierarchy<T> hierarchy) {
+        this.hierarchies.put(hierarchy.key(), hierarchy);
+    }
+
+    @Override
+    public <T> void merge(final BindingHierarchy<T> hierarchy) {
+        //noinspection unchecked
+        final BindingHierarchy<T> existing = (BindingHierarchy<T>) this.hierarchies.get(hierarchy.key());
+        if (existing != null) {
+            this.hierarchies.put(hierarchy.key(), hierarchy.merge(existing));
+        } else {
+            this.add(hierarchy);
+        }
+    }
+
+    @Override
+    public <T> Exceptional<BindingHierarchy<T>> hierarchy(final Key<T> key) {
+        //noinspection unchecked
+        return Exceptional.of(this.hierarchies.getOrDefault(key, null)).map(hierarchy -> (BindingHierarchy<T>) hierarchy);
+    }
+
+    public <T> Exceptional<T> provide(final Class<T> type, final Attribute<?>... additionalProperties) {
+        //noinspection unchecked
+        return Exceptional.of(() -> {
+                    @Nullable final Exceptional<Named> meta = Bindings.lookup(BindingMetaAttribute.class, additionalProperties);
+                    if (meta.present()) return Key.of(type, meta.get());
+                    else return Key.of(type);
+                })
+                .map(key -> this.hierarchies.getOrDefault(key, null))
+                .map(hierarchy -> (BindingHierarchy<T>) hierarchy)
+                .flatMap(hierarchy -> {
+                    // Will continue going through each provider until a provider was successful or no other providers remain
+                    for (final Provider<T> provider : hierarchy.providers()) {
+                        final Exceptional<T> provided = provider.provide();
+                        if (provided.present()) return provided;
+                    }
+                    return Exceptional.empty();
+                });
+    }
+
+    @Override
+    public <C> void provide(final Key<C> contract, final Supplier<C> supplier) {
+        this.inHierarchy(contract, hierarchy -> hierarchy.add(new SupplierProvider<>(supplier)));
+    }
+
+    @Override
+    public <C, T extends C> void bind(final Key<C> contract, final Class<? extends T> implementation) {
+        this.inHierarchy(contract, hierarchy -> hierarchy.add(new StaticProvider<>(implementation)));
+    }
+
+    @Override
+    public <C, T extends C> void bind(final Key<C> contract, final T instance) {
+        this.inHierarchy(contract, hierarchy -> hierarchy.add(new InstanceProvider<>(instance)));
+    }
+
+    @Override
+    public <C, T extends C> void manual(final Key<C> contract, final Class<? extends T> implementation) {
+        if (Reflect.constructors(implementation, Bound.class).isEmpty())
+            throw new IllegalArgumentException("Implementation should contain at least one constructor decorated with @Bound");
+        this.bindings.add(new ConstructorBoundContext<>(contract, implementation));
+    }
+
+    private <C, T extends C> void handleBinder(final Class<T> binder, final Binds annotation) {
+        //noinspection unchecked
+        final Class<C> binds = (Class<C>) annotation.value();
+
+        if (Reflect.constructors(binder, Bound.class).isEmpty()) {
+            this.handleScanned(binder, binds, annotation);
+        }
+        else {
+            //noinspection unchecked
+            this.manual(Key.of((Class<Object>) binds), binder);
+        }
+    }
+
+    private <C> void handleScanned(final Class<? extends C> binder, final Class<C> binds, final Binds bindAnnotation) {
+        final Named meta = bindAnnotation.named();
+        final Key<C> key;
+        if (!"".equals(meta.value())) {
+            key = Key.of(binds, meta);
+        }
+        else {
+            key = Key.of(binds);
+        }
+        this.inHierarchy(key, hierarchy -> hierarchy.add(new StaticProvider<>(binder)));
+    }
+
+    private <C> void inHierarchy(final Key<C> key, final Consumer<BindingHierarchy<C>> consumer) {
+        //noinspection unchecked
+        final BindingHierarchy<C> hierarchy = (BindingHierarchy<C>) this.hierarchies.getOrDefault(key, new NativeBindingHierarchy<>(key));
+        consumer.accept(hierarchy);
+        this.hierarchies.put(key, hierarchy);
     }
 }

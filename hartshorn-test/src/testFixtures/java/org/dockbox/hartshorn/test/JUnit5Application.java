@@ -22,8 +22,6 @@ import org.dockbox.hartshorn.api.SimpleMetaProvider;
 import org.dockbox.hartshorn.di.ApplicationContextAware;
 import org.dockbox.hartshorn.di.DefaultModifiers;
 import org.dockbox.hartshorn.di.MetaProviderModifier;
-import org.dockbox.hartshorn.di.adapter.InjectSources;
-import org.dockbox.hartshorn.di.adapter.ServiceSources;
 import org.dockbox.hartshorn.di.annotations.activate.Activator;
 import org.dockbox.hartshorn.di.annotations.inject.InjectConfig;
 import org.dockbox.hartshorn.test.util.JUnitInjector;
@@ -33,7 +31,7 @@ import java.lang.reflect.Field;
 
 import lombok.Getter;
 
-@Activator(injectSource = InjectSources.class, inject = "GUICE", value = JUnit5Bootstrap.class, configs = @InjectConfig(JUnitInjector.class), serviceSource = ServiceSources.class, service = "default")
+@Activator(value = JUnit5Bootstrap.class, configs = @InjectConfig(JUnitInjector.class))
 public final class JUnit5Application {
 
     @Getter private static final JUnitInformation information = new JUnitInformation();

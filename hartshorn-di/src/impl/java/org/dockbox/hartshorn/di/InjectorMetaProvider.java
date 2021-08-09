@@ -32,7 +32,7 @@ import javax.persistence.Entity;
 public class InjectorMetaProvider implements MetaProvider {
 
     @Override
-    public TypedOwner lookup(Class<?> type) {
+    public TypedOwner lookup(final Class<?> type) {
         final Exceptional<Entity> annotated = Reflect.annotation(type, Entity.class);
         if (annotated.present()) {
             return SimpleTypedOwner.of(annotated.get().name());
@@ -51,9 +51,8 @@ public class InjectorMetaProvider implements MetaProvider {
     }
 
     @Override
-    public boolean singleton(Class<?> type) {
+    public boolean singleton(final Class<?> type) {
         if (Reflect.annotation(type, Singleton.class).present()) return true;
-        if (Reflect.annotation(type, com.google.inject.Singleton.class).present()) return true;
 
         return ApplicationContextAware.instance()
                 .context()
@@ -64,7 +63,7 @@ public class InjectorMetaProvider implements MetaProvider {
     }
 
     @Override
-    public boolean component(Class<?> type) {
+    public boolean component(final Class<?> type) {
         return Reflect.annotation(type, Component.class).present();
     }
 }
