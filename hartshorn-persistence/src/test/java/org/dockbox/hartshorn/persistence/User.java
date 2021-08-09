@@ -16,8 +16,7 @@ public class User {
     @Id
     @GeneratedValue
     private long id;
-    @Setter
-    private String name;
+    @Setter private String name;
 
     public User(String name) {
         this.name = name;

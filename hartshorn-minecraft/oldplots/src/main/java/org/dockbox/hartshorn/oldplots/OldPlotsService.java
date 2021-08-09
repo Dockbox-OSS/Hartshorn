@@ -25,13 +25,11 @@ import org.dockbox.hartshorn.di.annotations.service.Service;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.events.annotations.Listener;
 import org.dockbox.hartshorn.persistence.FileManager;
-import org.dockbox.hartshorn.persistence.FileType;
-import org.dockbox.hartshorn.persistence.FileTypeProperty;
 import org.dockbox.hartshorn.persistence.SqlService;
 import org.dockbox.hartshorn.persistence.exceptions.InvalidConnectionException;
 import org.dockbox.hartshorn.persistence.exceptions.NoSuchTableException;
-import org.dockbox.hartshorn.persistence.properties.PathProperty;
-import org.dockbox.hartshorn.persistence.properties.SQLColumnProperty;
+import org.dockbox.hartshorn.persistence.properties.ConnectionAttribute;
+import org.dockbox.hartshorn.persistence.properties.Remote;
 import org.dockbox.hartshorn.server.minecraft.events.server.EngineChangedState;
 import org.dockbox.hartshorn.server.minecraft.events.server.ServerState.Loading;
 import org.dockbox.hartshorn.server.minecraft.players.Player;
@@ -103,14 +101,7 @@ public class OldPlotsService {
         Path dataDirectory = this.context.get(FileManager.class).data(OldPlotsService.class);
         Path path = dataDirectory.resolve("oldplots.db");
 
-        return this.context.get(SqlService.class,
-                FileTypeProperty.of(FileType.SQLITE),
-                new PathProperty(path),
-                new SQLColumnProperty(OldPlotsIdentifiers.PLOT_ID),
-                new SQLColumnProperty(OldPlotsIdentifiers.PLOT_X),
-                new SQLColumnProperty(OldPlotsIdentifiers.PLOT_Z),
-                new SQLColumnProperty(OldPlotsIdentifiers.UUID),
-                new SQLColumnProperty(OldPlotsIdentifiers.WORLD));
+        return this.context.get(SqlService.class, ConnectionAttribute.of(Remote.DERBY.connection(path, "", "")));
     }
 
     @Command(value = "optp", arguments = "<id{Int}>", permission = "hartshorn.oldplots.teleport")

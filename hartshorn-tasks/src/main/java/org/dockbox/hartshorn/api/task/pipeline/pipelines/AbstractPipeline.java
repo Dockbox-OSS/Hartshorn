@@ -17,6 +17,7 @@
 
 package org.dockbox.hartshorn.api.task.pipeline.pipelines;
 
+import org.dockbox.hartshorn.api.annotations.PartialApi;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.task.pipeline.CancelBehaviour;
 import org.dockbox.hartshorn.api.task.pipeline.exceptions.IllegalPipeException;
@@ -39,8 +40,7 @@ public abstract class AbstractPipeline<P, I> {
 
     private final List<IPipe<I, I>> pipes = HartshornUtils.emptyList();
     private boolean isCancelled;
-    @Getter
-    private CancelBehaviour cancelBehaviour = CancelBehaviour.UNCANCELLABLE;
+    @Getter private CancelBehaviour cancelBehaviour = CancelBehaviour.UNCANCELLABLE;
 
     /**
      * Internally calls {@link AbstractPipeline#add(IPipe[])} and returns itself.
@@ -50,8 +50,8 @@ public abstract class AbstractPipeline<P, I> {
      *
      * @return Itself
      */
-    @SafeVarargs
-    public final AbstractPipeline<P, I> addVarargPipes(@NotNull IPipe<I, I>... pipes) {
+    @SafeVarargs @PartialApi
+    public final AbstractPipeline<P, I> addVarargPipes(@NotNull final IPipe<I, I>... pipes) {
         return this.add(pipes);
     }
 
@@ -64,7 +64,8 @@ public abstract class AbstractPipeline<P, I> {
      *
      * @return Itself
      */
-    public AbstractPipeline<P, I> add(@NotNull IPipe<I, I>[] pipes) {
+    @PartialApi
+    public AbstractPipeline<P, I> add(@NotNull final IPipe<I, I>[] pipes) {
         return this.add(Arrays.asList(pipes));
     }
 
@@ -77,8 +78,9 @@ public abstract class AbstractPipeline<P, I> {
      *
      * @return Itself
      */
-    public AbstractPipeline<P, I> add(@NotNull Iterable<IPipe<I, I>> pipes) {
-        for (IPipe<I, I> pipe : pipes) {
+    @PartialApi
+    public AbstractPipeline<P, I> add(@NotNull final Iterable<IPipe<I, I>> pipes) {
+        for (final IPipe<I, I> pipe : pipes) {
             this.add(pipe);
         }
         return this;
@@ -92,7 +94,8 @@ public abstract class AbstractPipeline<P, I> {
      *
      * @return Itself
      */
-    public AbstractPipeline<P, I> add(@NotNull IPipe<I, I> pipe) {
+    @PartialApi
+    public AbstractPipeline<P, I> add(@NotNull final IPipe<I, I> pipe) {
         this.pipes.add(pipe);
         return this;
     }
@@ -107,11 +110,13 @@ public abstract class AbstractPipeline<P, I> {
      *
      * @return Itself
      */
-    public AbstractPipeline<P, I> add(@NotNull AbstractPipeline<?, I> pipeline) {
+    @PartialApi
+    public AbstractPipeline<P, I> add(@NotNull final AbstractPipeline<?, I> pipeline) {
         return this.add(pipeline.pipes());
     }
 
     /** @return An unmodifiabe list of the {@link IPipe}s in the pipeline */
+    @PartialApi
     public List<IPipe<I, I>> pipes() {
         return HartshornUtils.asUnmodifiableList(this.pipes);
     }
@@ -126,6 +131,7 @@ public abstract class AbstractPipeline<P, I> {
      * @return An {@link Exceptional} containing the output value after it has been processed by the
      *         pipeline
      */
+    @PartialApi
     protected abstract Exceptional<I> process(@NotNull Exceptional<I> exceptionalInput);
 
     /**
@@ -144,7 +150,8 @@ public abstract class AbstractPipeline<P, I> {
      *         If you try and add a {@link CancellablePipe} and the pipeline is
      *         not cancellable
      */
-    protected Exceptional<I> processPipe(IPipe<I, I> pipe, Exceptional<I> exceptionalInput) {
+    @PartialApi
+    protected Exceptional<I> processPipe(final IPipe<I, I> pipe, Exceptional<I> exceptionalInput) {
         if (!this.cancellable() && Reflect.assigns(CancellablePipe.class, pipe.type())) {
             throw new IllegalPipeException(
                     "Attempted to add a CancellablePipe to an uncancellable pipeline.");
@@ -155,12 +162,12 @@ public abstract class AbstractPipeline<P, I> {
 
         exceptionalInput = Exceptional.of(() -> {
             if (Reflect.assigns(ComplexPipe.class, pipe.type())) {
-                ComplexPipe<I, I> complexPipe = (ComplexPipe<I, I>) pipe;
+                final ComplexPipe<I, I> complexPipe = (ComplexPipe<I, I>) pipe;
                 return complexPipe.apply(
                         this, finalInput.orNull(), finalInput.unsafeError());
             }
             else if (Reflect.assigns(StandardPipe.class, pipe.type())) {
-                StandardPipe<I, I> standardPipe = (StandardPipe<I, I>) pipe;
+                final StandardPipe<I, I> standardPipe = (StandardPipe<I, I>) pipe;
                 return standardPipe.apply(finalInput);
             }
             else {
@@ -177,6 +184,7 @@ public abstract class AbstractPipeline<P, I> {
     }
 
     /** @return A boolean describing if the pipeline is cancellable or not */
+    @PartialApi
     public boolean cancellable() {
         return CancelBehaviour.UNCANCELLABLE != this.cancelBehaviour();
     }
@@ -190,7 +198,8 @@ public abstract class AbstractPipeline<P, I> {
      *
      * @return Itself
      */
-    public AbstractPipeline<P, I> cancelBehaviour(CancelBehaviour cancelBehaviour) {
+    @PartialApi
+    public AbstractPipeline<P, I> cancelBehaviour(final CancelBehaviour cancelBehaviour) {
         this.cancelBehaviour = cancelBehaviour;
         return this;
     }
@@ -205,7 +214,8 @@ public abstract class AbstractPipeline<P, I> {
      * @return The {@code I} output of processing the input, unwrapped from the {@link Exceptional}
      *         without checking if its present
      */
-    public I processUnsafe(@NotNull P input) {
+    @PartialApi
+    public I processUnsafe(@NotNull final P input) {
         return this.process(input).orNull();
     }
 
@@ -219,7 +229,8 @@ public abstract class AbstractPipeline<P, I> {
      * @return An {@link Exceptional} containing the {@code I} output. If the output is not present it
      *         will contain a throwable describing why
      */
-    public Exceptional<I> process(P input) {
+    @PartialApi
+    public Exceptional<I> process(final P input) {
         return this.process(input, null);
     }
 
@@ -234,6 +245,7 @@ public abstract class AbstractPipeline<P, I> {
      *
      * @return An {@link Exceptional} of the output
      */
+    @PartialApi
     public abstract Exceptional<I> process(@NotNull P input, @Nullable Throwable throwable);
 
     /**
@@ -248,7 +260,8 @@ public abstract class AbstractPipeline<P, I> {
      * @return A {@link List} of {@link Exceptional} containing the processed {@code I} output of each
      *         input
      */
-    public List<Exceptional<I>> processAll(@NotNull Collection<P> inputs) {
+    @PartialApi
+    public List<Exceptional<I>> processAll(@NotNull final Collection<P> inputs) {
         return inputs.stream().map(this::process).toList();
     }
 
@@ -263,7 +276,8 @@ public abstract class AbstractPipeline<P, I> {
      *
      * @return A {@link List} containing the processed {@code I} output of each input, if not null
      */
-    public List<I> processAllSafe(@NotNull Collection<P> inputs) {
+    @PartialApi
+    public List<I> processAllSafe(@NotNull final Collection<P> inputs) {
         return inputs.stream()
                 .map(this::process)
                 .filter(Exceptional::present)
@@ -283,21 +297,25 @@ public abstract class AbstractPipeline<P, I> {
      * @return A {@link List} containing the processed {@code I} output of each input, even if its
      *         null
      */
-    public List<I> processAllUnsafe(@NotNull Collection<P> inputs) {
+    @PartialApi
+    public List<I> processAllUnsafe(@NotNull final Collection<P> inputs) {
         return inputs.stream().map(this::process).map(Exceptional::orNull).toList();
     }
 
     /** Cancels the pipeline which prevents it from processing any further {@link IPipe}s. */
+    @PartialApi
     public void cancel() {
         if (this.cancellable()) this.isCancelled = true;
     }
 
     /** Uncancels the pipeline. */
+    @PartialApi
     public void permit() {
         this.isCancelled = false;
     }
 
     /** @return If the pipeline is cancelled */
+    @PartialApi
     protected boolean cancelled() {
         return this.cancellable() && this.isCancelled;
     }
@@ -306,6 +324,7 @@ public abstract class AbstractPipeline<P, I> {
      * Removes the last {@link IPipe} from the pipeline. If there are no {@link IPipe}s in the
      * pipeline, this does nothing.
      */
+    @PartialApi
     public void removeLastPipe() {
         this.removePipeAt(this.size() - 1);
     }
@@ -317,19 +336,22 @@ public abstract class AbstractPipeline<P, I> {
      * @param index
      *         The index of the {@link IPipe} to remove
      */
-    public void removePipeAt(int index) {
+    @PartialApi
+    public void removePipeAt(final int index) {
         if (this.pipes.size() > index) {
             this.pipes.remove(index);
         }
     }
 
     /** @return The number of {@link IPipe}s in the pipeline */
+    @PartialApi
     public int size() {
         return this.pipes.size();
     }
 
     /** Removes all the {@link IPipe}s in the pipeline. */
-    public void clearPipes() {
+    @PartialApi
+    public void clear() {
         this.pipes.clear();
     }
 }

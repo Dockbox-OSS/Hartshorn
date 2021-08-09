@@ -35,15 +35,14 @@ import lombok.Getter;
 @AutoCreating
 public final class ArgumentConverterContext extends DefaultContext {
 
-    @Getter
-    private final transient Map<String, ArgumentConverter<?>> converterMap = HartshornUtils.emptyConcurrentMap();
+    @Getter private final transient Map<String, ArgumentConverter<?>> converterMap = HartshornUtils.emptyConcurrentMap();
 
     /**
      * Indicates if any converter with the given <code>key</code> is registered.
      * @param key The key to use during lookup
      * @return <code>true</code> if a converter exists, or else <code>false</code>
      */
-    public boolean hasConverter(String key) {
+    public boolean hasConverter(final String key) {
         return this.converter(key).present();
     }
 
@@ -52,7 +51,7 @@ public final class ArgumentConverterContext extends DefaultContext {
      * @param type The type the converter should convert into.
      * @return <code>true</code> if a converter exists, or else <code>false</code>
      */
-    public boolean hasConverter(Class<?> type) {
+    public boolean hasConverter(final Class<?> type) {
         return this.converter(type).present();
     }
 
@@ -61,7 +60,7 @@ public final class ArgumentConverterContext extends DefaultContext {
      * @param key The key to use during lookup
      * @return The converter if it exists, or {@link Exceptional#empty()}
      */
-    public Exceptional<ArgumentConverter<?>> converter(String key) {
+    public Exceptional<ArgumentConverter<?>> converter(final String key) {
         return Exceptional.of(this.converterMap.get(key.toLowerCase()));
     }
 
@@ -72,7 +71,7 @@ public final class ArgumentConverterContext extends DefaultContext {
      * @param <T> The type parameter of the type
      * @return The converter if it exists, or {@link Exceptional#empty()}
      */
-    public <T> Exceptional<ArgumentConverter<T>> converter(Class<T> type) {
+    public <T> Exceptional<ArgumentConverter<T>> converter(final Class<T> type) {
         //noinspection unchecked
         return Exceptional.of(this.converterMap.values().stream()
                 .filter(converter -> Reflect.assigns(converter.type(), type))
@@ -84,7 +83,7 @@ public final class ArgumentConverterContext extends DefaultContext {
      * Registers the given {@link ArgumentConverter} to the current context.
      * @param converter The converter to register
      */
-    public void register(ArgumentConverter<?> converter) {
+    public void register(final ArgumentConverter<?> converter) {
         for (String key : converter.keys()) {
             key = key.toLowerCase();
             if (this.converterMap.containsKey(key))

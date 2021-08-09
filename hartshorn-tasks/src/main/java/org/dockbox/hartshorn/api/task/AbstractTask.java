@@ -17,17 +17,22 @@
 
 package org.dockbox.hartshorn.api.task;
 
-@SuppressWarnings("AbstractClassNeverImplemented") // API type
+import org.dockbox.hartshorn.api.annotations.PartialApi;
+
 public abstract class AbstractTask implements Task {
 
+    @PartialApi
     protected abstract void perform();
 
+    @PartialApi
     public abstract void cancel();
 
+    @PartialApi
     public void init() {
         // Reserved for implementation
     }
 
+    @PartialApi
     public void complete() {
         // Reserved for implementation
     }

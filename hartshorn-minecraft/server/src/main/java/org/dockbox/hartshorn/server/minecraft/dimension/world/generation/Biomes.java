@@ -103,6 +103,5 @@ public enum Biomes implements Biome {
     WOODED_MOUNTAINS("wooded_mountains"),
     ;
 
-    @Getter
-    private final String id;
+    @Getter private final String id;
 }

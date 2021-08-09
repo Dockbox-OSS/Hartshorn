@@ -18,7 +18,7 @@
 package org.dockbox.hartshorn.proxy.service;
 
 import org.dockbox.hartshorn.di.context.Context;
-import org.dockbox.hartshorn.di.properties.InjectorProperty;
+import org.dockbox.hartshorn.di.properties.Attribute;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -28,7 +28,7 @@ public interface MethodProxyContext<T> extends Context {
     T instance();
     Class<T> type();
     Method method();
-    InjectorProperty<?>[] properties();
+    Attribute<?>[] properties();
     Annotation[] annotations();
     <A extends Annotation> A annotation(Class<A> annotation);
     Class<?> returnType();

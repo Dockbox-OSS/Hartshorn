@@ -27,8 +27,7 @@ import lombok.Getter;
 
 class PlotWorldModelList {
 
-    @Getter
-    private final List<PlotWorldModel> worlds = HartshornUtils.emptyList();
+    @Getter private final List<PlotWorldModel> worlds = HartshornUtils.emptyList();
 
     public void add(PlotWorldModel model) {
         this.worlds.add(model);

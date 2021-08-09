@@ -42,8 +42,7 @@ public @interface Listener {
     Priority value() default Priority.NORMAL;
 
     @AllArgsConstructor
-    @Getter
-    enum Priority {
+    @Getter enum Priority {
         /** Execute the listener after all other listeners are done. */
         LAST(0x14),
         /** Execute the listener after all normal listeners are done. */

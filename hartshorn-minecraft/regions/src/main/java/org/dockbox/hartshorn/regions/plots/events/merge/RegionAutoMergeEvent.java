@@ -28,8 +28,7 @@ import lombok.Getter;
 
 public class RegionAutoMergeEvent extends CancellableRegionEvent {
 
-    @Getter
-    private final Set<Region> regions;
+    @Getter private final Set<Region> regions;
 
     public RegionAutoMergeEvent(Region region, Collection<Region> regions) {
         super(region);

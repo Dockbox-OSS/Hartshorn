@@ -28,8 +28,7 @@ import lombok.Getter;
 
 public class PlotUnlinkEvent extends AbstractCancellableEvent {
 
-    @Getter
-    private final Set<Region> regions;
+    @Getter private final Set<Region> regions;
 
     public PlotUnlinkEvent(Collection<Region> regions) {
         this.regions = new HashSet<>(regions);

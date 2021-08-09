@@ -25,7 +25,6 @@ import lombok.Getter;
 public class SampleContextAwareType {
 
     @Wired
-    @Getter
-    private ApplicationContext context;
+    @Getter private ApplicationContext context;
 
 }

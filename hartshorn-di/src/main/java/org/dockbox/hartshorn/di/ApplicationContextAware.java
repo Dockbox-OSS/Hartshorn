@@ -24,8 +24,7 @@ import lombok.Getter;
 
 public abstract class ApplicationContextAware {
 
-    @Getter
-    private ApplicationContext context;
+    @Getter private ApplicationContext context;
 
     private static ApplicationContextAware instance;
 

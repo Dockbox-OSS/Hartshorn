@@ -22,8 +22,8 @@ import org.dockbox.hartshorn.di.annotations.inject.Named;
 import org.dockbox.hartshorn.di.binding.Bindings;
 import org.dockbox.hartshorn.di.inject.wired.BoundContext;
 import org.dockbox.hartshorn.di.inject.wired.ConstructorBoundContext;
-import org.dockbox.hartshorn.di.properties.BindingMetaProperty;
-import org.dockbox.hartshorn.di.properties.InjectorProperty;
+import org.dockbox.hartshorn.di.properties.Attribute;
+import org.dockbox.hartshorn.di.properties.BindingMetaAttribute;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.dockbox.hartshorn.util.Reflect;
 
@@ -31,17 +31,17 @@ import javax.annotation.Nullable;
 
 public class SimpleTypeFactory implements TypeFactory {
 
-    private InjectorProperty<?>[] properties;
+    private Attribute<?>[] properties;
 
     public SimpleTypeFactory() {
-        this.properties = new InjectorProperty[0];
+        this.properties = new Attribute[0];
     }
 
     @Override
     public <T> T create(Class<T> type, Object... arguments) {
         @Nullable Named named = null;
-        for (InjectorProperty<?> property : this.properties) {
-            if (property instanceof BindingMetaProperty bindingMeta) named = bindingMeta.value();
+        for (Attribute<?> property : this.properties) {
+            if (property instanceof BindingMetaAttribute bindingMeta) named = bindingMeta.value();
         }
 
         Exceptional<BoundContext<T, T>> binding = ApplicationContextAware.instance().context().firstWire(type, named);
@@ -63,7 +63,7 @@ public class SimpleTypeFactory implements TypeFactory {
     }
 
     @Override
-    public TypeFactory with(InjectorProperty<?>... properties) {
+    public TypeFactory with(Attribute<?>... properties) {
         SimpleTypeFactory clone = new SimpleTypeFactory();
         clone.properties = HartshornUtils.merge(this.properties, properties);
         return clone;

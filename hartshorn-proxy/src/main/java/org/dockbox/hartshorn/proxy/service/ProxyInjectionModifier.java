@@ -20,8 +20,8 @@ package org.dockbox.hartshorn.proxy.service;
 import org.dockbox.hartshorn.di.binding.Bindings;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.di.inject.InjectionModifier;
-import org.dockbox.hartshorn.di.properties.InjectorProperty;
-import org.dockbox.hartshorn.proxy.ProxyProperty;
+import org.dockbox.hartshorn.di.properties.Attribute;
+import org.dockbox.hartshorn.proxy.ProxyAttribute;
 import org.dockbox.hartshorn.proxy.ProxyUtil;
 import org.dockbox.hartshorn.proxy.annotations.UseProxying;
 import org.dockbox.hartshorn.proxy.handle.ProxyHandler;
@@ -32,22 +32,22 @@ import java.lang.reflect.InvocationTargetException;
 public class ProxyInjectionModifier implements InjectionModifier<UseProxying> {
 
     @Override
-    public <T> boolean preconditions(Class<T> type, @Nullable T instance, InjectorProperty<?>... properties) {
+    public <T> boolean preconditions(Class<T> type, @Nullable T instance, Attribute<?>... properties) {
         // Unchecked as ProxyProperty has generic type parameters
         //noinspection unchecked
-        return Bindings.has(ProxyProperty.class, properties);
+        return Bindings.has(ProxyAttribute.class, properties);
     }
 
     @Override
-    public <T> T process(ApplicationContext context, Class<T> type, @Nullable T instance, InjectorProperty<?>... properties) {
+    public <T> T process(ApplicationContext context, Class<T> type, @Nullable T instance, Attribute<?>... properties) {
         try {
             ProxyHandler<T> handler = ProxyUtil.handler(type, instance);
 
-            for (InjectorProperty<?> property : properties) {
-                if (property instanceof ProxyProperty) {
+            for (Attribute<?> property : properties) {
+                if (property instanceof ProxyAttribute) {
                     //noinspection unchecked
-                    ProxyProperty<T, ?> proxyProperty = (ProxyProperty<T, ?>) property;
-                    handler.delegate(proxyProperty);
+                    ProxyAttribute<T, ?> proxyAttribute = (ProxyAttribute<T, ?>) property;
+                    handler.delegate(proxyAttribute);
                 }
             }
             return handler.proxy();

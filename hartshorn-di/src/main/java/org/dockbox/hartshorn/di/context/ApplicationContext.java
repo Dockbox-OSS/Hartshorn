@@ -21,7 +21,7 @@ import org.dockbox.hartshorn.api.domain.MetaProvider;
 import org.dockbox.hartshorn.di.InjectionPoint;
 import org.dockbox.hartshorn.di.ProvisionFailure;
 import org.dockbox.hartshorn.di.inject.InjectionModifier;
-import org.dockbox.hartshorn.di.properties.InjectorProperty;
+import org.dockbox.hartshorn.di.properties.Attribute;
 import org.dockbox.hartshorn.di.services.ComponentLocator;
 import org.dockbox.hartshorn.di.services.ServiceProcessor;
 
@@ -32,9 +32,9 @@ public interface ApplicationContext extends ApplicationBinder, HartshornContext 
 
     void add(InjectionPoint<?> property);
 
-    <T> T create(Class<T> type, T typeInstance, InjectorProperty<?>... properties);
+    <T> T create(Class<T> type, T typeInstance, Attribute<?>... properties);
 
-    <T> T inject(Class<T> type, T typeInstance, InjectorProperty<?>... properties);
+    <T> T inject(Class<T> type, T typeInstance, Attribute<?>... properties);
 
     <T> void enable(T typeInstance);
 
@@ -44,7 +44,6 @@ public interface ApplicationContext extends ApplicationBinder, HartshornContext 
     void add(ServiceProcessor<?> processor);
     void add(InjectionModifier<?> modifier);
 
-    Class<?> activationSource();
     List<Annotation> activators();
     boolean hasActivator(Class<? extends Annotation> activator);
     <A> A activator(Class<A> activator);

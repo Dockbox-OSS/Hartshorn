@@ -20,7 +20,6 @@ package org.dockbox.hartshorn.proxy.service;
 import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.di.binding.Bindings;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
-import org.dockbox.hartshorn.di.properties.BindingMetaProperty;
 import org.dockbox.hartshorn.proxy.annotations.Provided;
 import org.dockbox.hartshorn.proxy.annotations.UseProxying;
 import org.dockbox.hartshorn.proxy.handle.ProxyFunction;

@@ -15,16 +15,29 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.server.minecraft.inventory.properties;
+package org.dockbox.hartshorn.di.properties;
 
-import org.dockbox.hartshorn.server.minecraft.inventory.InventoryLayout;
-import org.dockbox.hartshorn.di.properties.InjectorProperty;
+import org.dockbox.hartshorn.di.binding.Bindings;
+import org.dockbox.hartshorn.di.annotations.inject.Named;
 
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-@AllArgsConstructor
-public class LayoutProperty implements InjectorProperty<InventoryLayout> {
-    @Getter
-    private final InventoryLayout value;
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
+public class BindingMetaAttribute implements Attribute<Named> {
+
+    @Getter private final Named value;
+
+    private BindingMetaAttribute(String value) {
+        this.value = Bindings.named(value);
+    }
+
+    public static BindingMetaAttribute of(String value) {
+        return new BindingMetaAttribute(value);
+    }
+
+    public static BindingMetaAttribute of(Named meta) {
+        return new BindingMetaAttribute(meta);
+    }
 }

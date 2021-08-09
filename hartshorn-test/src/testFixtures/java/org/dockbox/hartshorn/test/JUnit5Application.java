@@ -36,8 +36,7 @@ import lombok.Getter;
 @Activator(injectSource = InjectSources.class, inject = "GUICE", value = JUnit5Bootstrap.class, configs = @InjectConfig(JUnitInjector.class), serviceSource = ServiceSources.class, service = "default")
 public final class JUnit5Application {
 
-    @Getter
-    private static final JUnitInformation information = new JUnitInformation();
+    @Getter private static final JUnitInformation information = new JUnitInformation();
 
     public static void prepareBootstrap() throws NoSuchFieldException, IllegalAccessException {
         final Field instance = ApplicationContextAware.class.getDeclaredField("instance");

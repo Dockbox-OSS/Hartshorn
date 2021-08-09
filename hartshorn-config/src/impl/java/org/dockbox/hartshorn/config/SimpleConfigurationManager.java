@@ -35,8 +35,7 @@ public class SimpleConfigurationManager implements ConfigurationManager {
 
     private final Path path;
     private final String fileKey;
-    @Getter
-    private final Map<String, Map<String, Object>> cache = HartshornUtils.emptyConcurrentMap();
+    @Getter private final Map<String, Map<String, Object>> cache = HartshornUtils.emptyConcurrentMap();
 
     @Bound
     public SimpleConfigurationManager(Path path) {

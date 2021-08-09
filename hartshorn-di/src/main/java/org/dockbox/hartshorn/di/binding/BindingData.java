@@ -24,19 +24,17 @@ import lombok.Getter;
 
 public class BindingData {
 
-    @Getter
-    private final Class<?> source;
-    @Getter
-    private final Class<?> target;
+    @Getter private final Class<?> source;
+    @Getter private final Class<?> target;
     private final Named named;
 
-    public BindingData(Class<?> source, Class<?> target, Named named) {
+    public BindingData(final Class<?> source, final Class<?> target, final Named named) {
         this.source = source;
         this.target = target;
         this.named = named;
     }
 
-    public BindingData(Class<?> source, Class<?> target) {
+    public BindingData(final Class<?> source, final Class<?> target) {
         this.source = source;
         this.target = target;
         this.named = null;

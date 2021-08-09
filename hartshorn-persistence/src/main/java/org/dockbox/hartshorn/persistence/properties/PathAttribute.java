@@ -15,30 +15,16 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.di.properties;
+package org.dockbox.hartshorn.persistence.properties;
 
-import org.dockbox.hartshorn.di.binding.Bindings;
-import org.dockbox.hartshorn.di.annotations.inject.Named;
+import org.dockbox.hartshorn.di.properties.Attribute;
 
-import lombok.AccessLevel;
+import java.nio.file.Path;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-@AllArgsConstructor(access = AccessLevel.PROTECTED)
-public class BindingMetaProperty implements InjectorProperty<Named> {
-
-    @Getter
-    private final Named value;
-
-    private BindingMetaProperty(String value) {
-        this.value = Bindings.named(value);
-    }
-
-    public static BindingMetaProperty of(String value) {
-        return new BindingMetaProperty(value);
-    }
-
-    public static BindingMetaProperty of(Named meta) {
-        return new BindingMetaProperty(meta);
-    }
+@AllArgsConstructor
+public class PathAttribute implements Attribute<Path> {
+    @Getter private final Path value;
 }

@@ -47,8 +47,7 @@ import lombok.Getter;
  */
 public abstract class HartshornBootstrap extends InjectableBootstrap {
 
-    @Getter
-    private String version;
+    @Getter private String version;
     private final Set<Method> postBootstrapActivations = HartshornUtils.emptyConcurrentSet();
 
     @Override

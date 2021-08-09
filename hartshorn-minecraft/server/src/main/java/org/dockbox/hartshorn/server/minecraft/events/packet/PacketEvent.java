@@ -33,12 +33,9 @@ import lombok.Getter;
  */
 public abstract class PacketEvent<T extends Packet> extends AbstractCancellableEvent {
 
-    @Getter
-    private final Player target;
-    @Getter
-    private T packet;
-    @Getter
-    private boolean isModified;
+    @Getter private final Player target;
+    @Getter private T packet;
+    @Getter private boolean isModified;
 
     public PacketEvent(T packet, Player target) {
         this.packet = packet;

@@ -24,10 +24,10 @@ import org.dockbox.hartshorn.config.annotations.UseConfigurations;
 import org.dockbox.hartshorn.config.annotations.Value;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.di.inject.InjectionModifier;
-import org.dockbox.hartshorn.di.properties.InjectorProperty;
+import org.dockbox.hartshorn.di.properties.Attribute;
 import org.dockbox.hartshorn.persistence.FileManager;
 import org.dockbox.hartshorn.persistence.FileType;
-import org.dockbox.hartshorn.persistence.FileTypeProperty;
+import org.dockbox.hartshorn.persistence.FileTypeAttribute;
 import org.dockbox.hartshorn.util.Reflect;
 import org.dockbox.hartshorn.util.exceptions.FieldAccessException;
 import org.dockbox.hartshorn.util.exceptions.NotPrimitiveException;
@@ -46,7 +46,7 @@ import java.nio.file.Path;
 public class ConfigurationServiceModifier implements InjectionModifier<UseConfigurations> {
 
     @Override
-    public <T> boolean preconditions(Class<T> type, @Nullable T instance, InjectorProperty<?>... properties) {
+    public <T> boolean preconditions(Class<T> type, @Nullable T instance, Attribute<?>... properties) {
         Class<?> instanceType = type;
         if (instance != null) instanceType = instance.getClass();
         boolean decorated = this.isAnnotated(instanceType);
@@ -58,7 +58,7 @@ public class ConfigurationServiceModifier implements InjectionModifier<UseConfig
     }
 
     @Override
-    public <T> T process(ApplicationContext context, Class<T> type, @Nullable T instance, InjectorProperty<?>... properties) {
+    public <T> T process(ApplicationContext context, Class<T> type, @Nullable T instance, Attribute<?>... properties) {
         Class<?> instanceType = type;
         if (instance != null) instanceType = instance.getClass();
 
@@ -71,7 +71,7 @@ public class ConfigurationServiceModifier implements InjectionModifier<UseConfig
             owner = configuration.owner();
         }
 
-        FileManager fileManager = Hartshorn.context().get(FileManager.class, FileTypeProperty.of(FileType.YAML));
+        FileManager fileManager = Hartshorn.context().get(FileManager.class, FileTypeAttribute.of(FileType.YAML));
         Path config = fileManager.configFile(owner, file);
 
         ConfigurationManager configurationManager = Hartshorn.context().get(ConfigurationManager.class, config);

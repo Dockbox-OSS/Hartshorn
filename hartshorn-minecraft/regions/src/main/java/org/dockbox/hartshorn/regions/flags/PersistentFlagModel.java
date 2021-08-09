@@ -37,8 +37,7 @@ import lombok.NoArgsConstructor;
 public class PersistentFlagModel {
 
     @Id
-    @Getter
-    private String id;
+    @Getter private String id;
     private String descriptionKey;
     private String descriptionFallback;
     private String descriptionLanguage;

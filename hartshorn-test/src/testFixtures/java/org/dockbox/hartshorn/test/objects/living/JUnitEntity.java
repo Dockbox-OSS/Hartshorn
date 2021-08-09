@@ -31,18 +31,12 @@ import lombok.Setter;
 
 public abstract class JUnitEntity<T extends Entity> implements Entity, PersistentDataHolder {
 
-    @Getter @Setter
-    private Text displayName;
-    @Getter @Setter
-    private double health = 20;
-    @Getter
-    private Location location;
-    @Getter @Setter
-    private boolean invisible = false;
-    @Getter @Setter
-    private boolean invulnerable = false;
-    @Setter
-    private boolean gravity = true;
+    @Getter @Setter private Text displayName;
+    @Getter @Setter private double health = 20;
+    @Getter private Location location;
+    @Getter @Setter private boolean invisible = false;
+    @Getter @Setter private boolean invulnerable = false;
+    @Setter private boolean gravity = true;
 
     private final UUID uniqueId;
 

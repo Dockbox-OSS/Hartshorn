@@ -20,8 +20,8 @@ package org.dockbox.hartshorn.cache;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.task.TaskRunner;
 import org.dockbox.hartshorn.di.annotations.inject.Binds;
-import org.dockbox.hartshorn.di.properties.InjectableType;
-import org.dockbox.hartshorn.di.properties.InjectorProperty;
+import org.dockbox.hartshorn.di.properties.AttributeHolder;
+import org.dockbox.hartshorn.di.properties.Attribute;
 import org.dockbox.hartshorn.util.HartshornUtils;
 
 import java.util.Collection;
@@ -31,7 +31,7 @@ import java.util.Collection;
  * @see Cache
  */
 @Binds(Cache.class)
-public class SimpleCache<T> implements Cache<T>, InjectableType {
+public class SimpleCache<T> implements Cache<T>, AttributeHolder {
 
     private Expiration expiration;
     private Collection<T> content;
@@ -76,9 +76,9 @@ public class SimpleCache<T> implements Cache<T>, InjectableType {
     }
 
     @Override
-    public void apply(InjectorProperty<?> property) {
-        if (property instanceof ExpirationProperty expirationProperty) {
-            this.expiration = expirationProperty.value();
+    public void apply(Attribute<?> property) {
+        if (property instanceof ExpirationAttribute expirationAttribute) {
+            this.expiration = expirationAttribute.value();
         }
     }
 

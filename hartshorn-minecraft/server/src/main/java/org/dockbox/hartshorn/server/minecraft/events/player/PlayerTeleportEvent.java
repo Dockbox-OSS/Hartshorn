@@ -27,8 +27,7 @@ import lombok.Setter;
 @Getter
 public class PlayerTeleportEvent extends PlayerMoveEvent {
 
-    @Setter
-    private Location destination;
+    @Setter private Location destination;
     private final Location origin;
 
     public PlayerTeleportEvent(Subject subject, Location origin, Location destination) {

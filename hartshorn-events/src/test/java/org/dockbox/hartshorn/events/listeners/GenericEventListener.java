@@ -27,8 +27,7 @@ import lombok.Getter;
 
 public class GenericEventListener {
 
-    @Getter
-    private static final List<Object> objects = HartshornUtils.emptyList();
+    @Getter private static final List<Object> objects = HartshornUtils.emptyList();
 
     @Listener
     public void onString(GenericEvent<String> event) {

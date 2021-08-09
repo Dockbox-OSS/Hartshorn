@@ -15,19 +15,15 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.cache;
+package org.dockbox.hartshorn.server.minecraft.inventory.properties;
 
-import org.dockbox.hartshorn.di.properties.InjectorProperty;
+import org.dockbox.hartshorn.server.minecraft.inventory.InventoryLayout;
+import org.dockbox.hartshorn.di.properties.Attribute;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-/**
- * Injector property which can be provided to {@link Cache} entries to set
- * the cache expiration when the cache instance is enabled.
- */
 @AllArgsConstructor
-public class ExpirationProperty implements InjectorProperty<Expiration> {
-    @Getter
-    private final Expiration value;
+public class LayoutAttribute implements Attribute<InventoryLayout> {
+    @Getter private final InventoryLayout value;
 }

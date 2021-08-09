@@ -21,8 +21,8 @@ import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.exceptions.ApplicationException;
 import org.dockbox.hartshorn.di.ApplicationContextAware;
 import org.dockbox.hartshorn.di.annotations.inject.Named;
-import org.dockbox.hartshorn.di.properties.InjectableType;
-import org.dockbox.hartshorn.di.properties.InjectorProperty;
+import org.dockbox.hartshorn.di.properties.Attribute;
+import org.dockbox.hartshorn.di.properties.AttributeHolder;
 import org.dockbox.hartshorn.di.services.ComponentContainer;
 import org.dockbox.hartshorn.util.HartshornUtils;
 
@@ -37,23 +37,23 @@ public final class Bindings {
         return new NamedImpl(value);
     }
 
-    public static void enable(Object instance, InjectorProperty<?>... properties) throws ApplicationException {
-        if (instance instanceof InjectableType injectable && injectable.canEnable()) {
-            for (InjectorProperty<?> property : properties) injectable.apply(property);
+    public static void enable(Object instance, Attribute<?>... properties) throws ApplicationException {
+        if (instance instanceof AttributeHolder injectable && injectable.canEnable()) {
+            for (Attribute<?> property : properties) injectable.apply(property);
             injectable.enable();
         }
     }
 
-    public static <A, T extends InjectorProperty<A>> boolean has(Class<T> type, InjectorProperty<?>... properties) {
-        for (InjectorProperty<?> property : properties) {
+    public static <A, T extends Attribute<A>> boolean has(Class<T> type, Attribute<?>... properties) {
+        for (Attribute<?> property : properties) {
             if (type.isInstance(property)) return true;
         }
         return false;
     }
 
     @SuppressWarnings("unchecked")
-    public static <A, T extends InjectorProperty<A>> Exceptional<A> lookup(Class<T> type, InjectorProperty<?>... properties) {
-        for (InjectorProperty<?> property : properties) {
+    public static <A, T extends Attribute<A>> Exceptional<A> lookup(Class<T> type, Attribute<?>... properties) {
+        for (Attribute<?> property : properties) {
             if (type.isInstance(property)) return Exceptional.of(() -> (A) property.value());
         }
         return Exceptional.empty();

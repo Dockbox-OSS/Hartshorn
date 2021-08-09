@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.di;
 
-import org.dockbox.hartshorn.di.properties.InjectorProperty;
+import org.dockbox.hartshorn.di.properties.Attribute;
 import org.dockbox.hartshorn.util.Reflect;
 
 import java.util.function.BiFunction;
@@ -37,7 +37,7 @@ public final class InjectionPoint<T> {
         return new InjectionPoint<>(type, (instance, it, properties) -> point.apply(instance));
     }
 
-    public static <T> InjectionPoint<T> of(Class<T> type, BiFunction<T, InjectorProperty<?>[], T> point) {
+    public static <T> InjectionPoint<T> of(Class<T> type, BiFunction<T, Attribute<?>[], T> point) {
         return new InjectionPoint<>(type, (instance, it, properties) -> point.apply(instance, properties));
     }
 
@@ -49,7 +49,7 @@ public final class InjectionPoint<T> {
         return Reflect.assigns(this.type, type);
     }
 
-    public T apply(T instance, Class<T> type, InjectorProperty<?>... properties) {
+    public T apply(T instance, Class<T> type, Attribute<?>... properties) {
         return this.point.apply(instance, type, properties);
     }
 
@@ -58,7 +58,7 @@ public final class InjectionPoint<T> {
         return this.apply(instance, (Class<T>) instance.getClass());
     }
 
-    public T apply(T instance, InjectorProperty<?>... properties) {
+    public T apply(T instance, Attribute<?>... properties) {
         //noinspection unchecked
         return this.apply(instance, (Class<T>) instance.getClass(), properties);
     }

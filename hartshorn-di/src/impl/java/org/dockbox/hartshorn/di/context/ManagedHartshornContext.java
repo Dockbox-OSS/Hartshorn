@@ -27,8 +27,8 @@ import org.dockbox.hartshorn.di.annotations.inject.Wired;
 import org.dockbox.hartshorn.di.annotations.service.ServiceActivator;
 import org.dockbox.hartshorn.di.binding.Bindings;
 import org.dockbox.hartshorn.di.inject.InjectionModifier;
-import org.dockbox.hartshorn.di.properties.InjectableType;
-import org.dockbox.hartshorn.di.properties.InjectorProperty;
+import org.dockbox.hartshorn.di.properties.AttributeHolder;
+import org.dockbox.hartshorn.di.properties.Attribute;
 import org.dockbox.hartshorn.di.services.ComponentContainer;
 import org.dockbox.hartshorn.di.services.ServiceProcessor;
 import org.dockbox.hartshorn.util.HartshornUtils;
@@ -55,45 +55,41 @@ public abstract class ManagedHartshornContext extends DefaultContext implements 
     protected final transient Set<ServiceProcessor<?>> serviceProcessors = HartshornUtils.emptyConcurrentSet();
     private final Set<Class<?>> services = HartshornUtils.emptyConcurrentSet();
 
-    @Getter(AccessLevel.PROTECTED)
-    private final Activator activator;
-    @Getter
-    private final Class<?> activationSource;
+    @Getter(AccessLevel.PROTECTED) private final Activator activator;
     private final List<Annotation> activators;
 
-    public ManagedHartshornContext(Class<?> activationSource) {
+    public ManagedHartshornContext(final Class<?> activationSource) {
         final Exceptional<Activator> activator = Reflect.annotation(activationSource, Activator.class);
         if (activator.absent()) {
             throw new IllegalStateException("Activation source is not marked with @Activator");
         }
         this.activator = activator.get();
-        this.activationSource = activationSource;
         this.activators = Reflect.annotationsWith(activationSource, ServiceActivator.class);
     }
 
     /**
      * Non-exposed method which can be used by bootstrapping services to register default activators.
      */
-    public void addActivator(Annotation annotation) {
+    public void addActivator(final Annotation annotation) {
         if (Reflect.annotation(annotation.annotationType(), ServiceActivator.class).present())
             this.activators.add(annotation);
     }
 
     @Override
-    public void add(InjectionPoint<?> property) {
+    public void add(final InjectionPoint<?> property) {
         if (null != property) this.injectionPoints.add(property);
     }
 
-    public abstract <T> T create(Class<T> type, T typeInstance, InjectorProperty<?>... properties);
+    public abstract <T> T create(Class<T> type, T typeInstance, Attribute<?>... properties);
 
-    public <T> T inject(Class<T> type, T typeInstance, InjectorProperty<?>... properties) {
-        for (InjectionPoint<?> injectionPoint : this.injectionPoints) {
+    public <T> T inject(final Class<T> type, T typeInstance, final Attribute<?>... properties) {
+        for (final InjectionPoint<?> injectionPoint : this.injectionPoints) {
             if (injectionPoint.accepts(type)) {
                 try {
                     //noinspection unchecked
                     typeInstance = ((InjectionPoint<T>) injectionPoint).apply(typeInstance, type, properties);
                 }
-                catch (ClassCastException e) {
+                catch (final ClassCastException e) {
                     log.warn("Attempted to apply injection point to incompatible type [" + type.getCanonicalName() + "]");
                 }
             }
@@ -101,11 +97,11 @@ public abstract class ManagedHartshornContext extends DefaultContext implements 
         return typeInstance;
     }
 
-    public <T> void enable(T typeInstance) {
+    public <T> void enable(final T typeInstance) {
         if (typeInstance == null) return;
         HartshornUtils.merge(Reflect.fields(typeInstance.getClass(), Wired.class)).stream()
                 .filter(field -> Reflect.annotation(field, Wired.class).get().enable())
-                .filter(field -> Reflect.assigns(InjectableType.class, field.getType()))
+                .filter(field -> Reflect.assigns(AttributeHolder.class, field.getType()))
                 .map(field -> {
                     try {
                         // As we're enabling fields they may be accessed even if their
@@ -113,7 +109,7 @@ public abstract class ManagedHartshornContext extends DefaultContext implements 
                         field.setAccessible(true);
                         return field.get(typeInstance);
                     }
-                    catch (IllegalAccessException e) {
+                    catch (final IllegalAccessException e) {
                         log.warn("Could not access field " + field.getName() + " in " + field.getDeclaringClass().getSimpleName());
                         return null;
                     }
@@ -122,35 +118,35 @@ public abstract class ManagedHartshornContext extends DefaultContext implements 
                 .forEach(injectableType -> {
                     try {
                         Bindings.enable(injectableType);
-                    } catch (ApplicationException e) {
+                    } catch (final ApplicationException e) {
                         throw e.runtime();
                     }
                 });
     }
 
-    public <T> T raw(Class<T> type) throws ProvisionFailure {
+    public <T> T raw(final Class<T> type) throws ProvisionFailure {
         return this.raw(type, true);
     }
 
     @Override
-    public <T> T raw(Class<T> type, boolean populate) throws ProvisionFailure {
+    public <T> T raw(final Class<T> type, final boolean populate) throws ProvisionFailure {
         try {
-            Constructor<T> ctor = type.getDeclaredConstructor();
+            final Constructor<T> ctor = type.getDeclaredConstructor();
             ctor.setAccessible(true);
-            T t = ctor.newInstance();
+            final T t = ctor.newInstance();
             if (populate) this.populate(t);
             return t;
         }
-        catch (Exception e) {
+        catch (final Exception e) {
             throw new ProvisionFailure("Could not provide raw instance of " + type.getSimpleName(), e);
         }
     }
 
-    protected void process(String prefix) {
+    protected void process(final String prefix) {
         this.locator().register(prefix);
         final Collection<ComponentContainer> containers = this.locator().containers(ComponentType.FUNCTIONAL);
-        for (ServiceProcessor<?> serviceProcessor : this.serviceProcessors) {
-            for (ComponentContainer container : containers) {
+        for (final ServiceProcessor<?> serviceProcessor : this.serviceProcessors) {
+            for (final ComponentContainer container : containers) {
                 if (container.activators().stream().allMatch(this::hasActivator)) {
                     final Class<?> service = container.type();
                     if (serviceProcessor.preconditions(service)) serviceProcessor.process(this, service);
@@ -161,12 +157,12 @@ public abstract class ManagedHartshornContext extends DefaultContext implements 
     }
 
     @Override
-    public void add(ServiceProcessor<?> processor) {
+    public void add(final ServiceProcessor<?> processor) {
         this.serviceProcessors.add(processor);
     }
 
     @Override
-    public void add(InjectionModifier<?> modifier) {
+    public void add(final InjectionModifier<?> modifier) {
         this.injectionModifiers.add(modifier);
     }
 
@@ -176,7 +172,7 @@ public abstract class ManagedHartshornContext extends DefaultContext implements 
     }
 
     @Override
-    public boolean hasActivator(Class<? extends Annotation> activator) {
+    public boolean hasActivator(final Class<? extends Annotation> activator) {
         if (Reflect.annotation(activator, ServiceActivator.class).absent())
             throw new IllegalArgumentException("Requested activator " + activator.getSimpleName() + " is not decorated with @ServiceActivator");
 
@@ -187,7 +183,7 @@ public abstract class ManagedHartshornContext extends DefaultContext implements 
     }
 
     @Override
-    public <A> A activator(Class<A> activator) {
+    public <A> A activator(final Class<A> activator) {
         //noinspection unchecked
         return (A) this.activators.stream().filter(a -> a.annotationType().equals(activator)).findFirst().orElse(null);
     }

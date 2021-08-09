@@ -27,8 +27,7 @@ import lombok.Setter;
 
 public abstract class CancellableRegionPlayerEvent extends RegionPlayerEvent implements Cancellable {
 
-    @Getter @Setter
-    private boolean cancelled = false;
+    @Getter @Setter private boolean cancelled = false;
 
     protected CancellableRegionPlayerEvent(Region region, Player player) {
         super(region, player);

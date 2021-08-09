@@ -28,8 +28,7 @@ import lombok.Setter;
 
 public abstract class ReferencedWrapper<T> implements Wrapper<T> {
 
-    @Getter @Setter
-    private transient WeakReference<T> internalReference;
+    @Getter @Setter private transient WeakReference<T> internalReference;
 
     protected ReferencedWrapper() {
         this.reference(this.constructInitialReference());

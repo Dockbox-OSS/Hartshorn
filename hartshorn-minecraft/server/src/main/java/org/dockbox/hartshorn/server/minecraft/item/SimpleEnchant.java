@@ -24,9 +24,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class SimpleEnchant implements Enchant {
 
-    @Getter
-    private final Enchantment enchantment;
-    @Getter @Setter
-    private int level;
+    @Getter private final Enchantment enchantment;
+    @Getter @Setter private int level;
 
 }

@@ -25,8 +25,7 @@ import lombok.Getter;
 
 public class ProxyInterfaceHandler<T> implements InvocationHandler {
 
-    @Getter
-    private final ProxyHandler<T> handler;
+    @Getter private final ProxyHandler<T> handler;
 
     public ProxyInterfaceHandler(ProxyHandler<T> handler) {
         this.handler = handler;

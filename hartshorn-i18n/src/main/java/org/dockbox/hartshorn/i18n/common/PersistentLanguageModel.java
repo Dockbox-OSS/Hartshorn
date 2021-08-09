@@ -27,8 +27,7 @@ import lombok.Setter;
 public class PersistentLanguageModel implements PersistentModel<Language> {
 
     @Property(getter = "getCode", setter = "getCode")
-    @Getter @Setter
-    private String code;
+    @Getter @Setter private String code;
 
     public PersistentLanguageModel(String code) {
         this.code = code;

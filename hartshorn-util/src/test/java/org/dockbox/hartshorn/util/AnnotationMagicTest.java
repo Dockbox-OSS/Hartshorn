@@ -152,7 +152,6 @@ enum InterceptType {
 @Intercept(type = InterceptType.AFTER_SUCCESS)
 @interface AfterSuccess {
     String path() default "";
-
     HttpMethod method() default HttpMethod.GET;
 }
 

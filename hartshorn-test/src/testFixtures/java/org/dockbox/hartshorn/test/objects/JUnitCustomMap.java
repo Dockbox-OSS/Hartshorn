@@ -26,8 +26,7 @@ import lombok.Getter;
 
 public class JUnitCustomMap extends JUnitItem implements CustomMap {
 
-    @Getter
-    private final Identifiable owner;
+    @Getter private final Identifiable owner;
     private final int id;
 
     public JUnitCustomMap(Identifiable owner, int id) {

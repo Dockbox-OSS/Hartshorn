@@ -15,17 +15,18 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.di.properties;
+package org.dockbox.hartshorn.cache;
 
-import org.dockbox.hartshorn.api.exceptions.ApplicationException;
+import org.dockbox.hartshorn.di.properties.Attribute;
 
-public interface InjectableType {
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
-    default boolean canEnable() {
-        return true;
-    }
-
-    default void apply(InjectorProperty<?> property) throws ApplicationException {}
-
-    default void enable() throws ApplicationException {}
+/**
+ * Injector property which can be provided to {@link Cache} entries to set
+ * the cache expiration when the cache instance is enabled.
+ */
+@AllArgsConstructor
+public class ExpirationAttribute implements Attribute<Expiration> {
+    @Getter private final Expiration value;
 }

@@ -38,19 +38,14 @@ import lombok.Setter;
 
 public class JUnitItem implements Item, JUnitPersistentDataHolder {
 
-    @Getter
-    private final String id;
+    @Getter private final String id;
     private final UUID persistentDataId = UUID.randomUUID();
     private final Set<Enchant> enchants = HartshornUtils.emptySet();
-    @Getter
-    private final List<Text> lore = HartshornUtils.emptyList();
+    @Getter private final List<Text> lore = HartshornUtils.emptyList();
 
-    @Getter
-    private Profile profile;
-    @Getter @Setter
-    private int amount = 1;
-    @Getter
-    private Text displayName;
+    @Getter private Profile profile;
+    @Getter @Setter private int amount = 1;
+    @Getter private Text displayName;
     private boolean treatAsBlock = false;
 
     @Bound

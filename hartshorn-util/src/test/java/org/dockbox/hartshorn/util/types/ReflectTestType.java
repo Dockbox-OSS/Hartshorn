@@ -75,10 +75,7 @@ public class ReflectTestType extends ParentTestType {
     }
 
     /* TEST UTILITIES, DO NOT TEST AGAINST */
-    @Getter
-    private boolean activatedSetter = false;
-    @Getter
-    private boolean activatedMethod = false;
-    @Getter
-    private boolean activatedConstructor = false;
+    @Getter private boolean activatedSetter = false;
+    @Getter private boolean activatedMethod = false;
+    @Getter private boolean activatedConstructor = false;
 }

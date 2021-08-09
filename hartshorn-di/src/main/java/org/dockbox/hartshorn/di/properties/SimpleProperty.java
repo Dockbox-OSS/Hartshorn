@@ -22,7 +22,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class SimpleProperty<T> implements InjectorProperty<T> {
+public class SimpleProperty<T> implements Attribute<T> {
 
     private final T value;
 

@@ -34,8 +34,7 @@ import lombok.Setter;
 public class SimpleMessageTemplate implements MessageTemplate {
 
     private final Map<String, String> filledPlaceholders = HartshornUtils.emptyMap();
-    @Getter @Setter
-    private Text content = Text.of();
+    @Getter @Setter private Text content = Text.of();
 
     @Override
     public MessageTemplate copy() {
