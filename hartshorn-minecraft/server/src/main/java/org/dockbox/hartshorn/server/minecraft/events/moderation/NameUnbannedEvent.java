@@ -36,7 +36,7 @@ public class NameUnbannedEvent extends BanEvent<String> {
      * @param creation
      *         The {@link LocalDateTime} of when the pardon was issued.
      */
-    public NameUnbannedEvent(String name, CommandSource source, Exceptional<String> reason, LocalDateTime creation) {
-        super(name, source, reason, Exceptional.empty(), creation);
+    public NameUnbannedEvent(final String name, final CommandSource source, final Exceptional<String> reason, final LocalDateTime creation) {
+        super(name, source, creation, reason, Exceptional.empty());
     }
 }

@@ -36,15 +36,15 @@ class PacketValidationService {
 
     @PostBootstrap
     public void addEventValidation() {
-        EventBus bus = Hartshorn.context().get(EventBus.class);
+        final EventBus bus = Hartshorn.context().get(EventBus.class);
         final PacketContext context = new PacketContext();
 
-        for (EventWrapper wrapper : bus.invokers().values().stream().flatMap(Collection::stream).toList()) {
+        for (final EventWrapper wrapper : bus.invokers().values().stream().flatMap(Collection::stream).toList()) {
 
             final Method method = wrapper.method();
             final Class<?> parameterType = method.getParameterTypes()[0];
             if (Reflect.assigns(PacketEvent.class, parameterType)) {
-                Type genericParameterType = method.getGenericParameterTypes()[0];
+                final Type genericParameterType = method.getGenericParameterTypes()[0];
                 if (genericParameterType instanceof ParameterizedType parameterizedType) {
                     final Type actualType = parameterizedType.getActualTypeArguments()[0];
                     if (actualType instanceof Class && Reflect.assigns(Packet.class, (Class<?>) actualType)) {
