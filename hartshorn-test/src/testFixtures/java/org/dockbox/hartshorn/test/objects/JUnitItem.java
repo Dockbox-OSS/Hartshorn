@@ -24,7 +24,7 @@ import org.dockbox.hartshorn.i18n.text.Text;
 import org.dockbox.hartshorn.server.minecraft.item.Enchant;
 import org.dockbox.hartshorn.server.minecraft.item.Item;
 import org.dockbox.hartshorn.server.minecraft.item.ItemTypes;
-import org.dockbox.hartshorn.server.minecraft.item.SimplePersistentItemModel;
+import org.dockbox.hartshorn.server.minecraft.item.PersistentItemModelImpl;
 import org.dockbox.hartshorn.server.minecraft.item.persistence.PersistentItemModel;
 import org.dockbox.hartshorn.server.minecraft.players.Profile;
 import org.dockbox.hartshorn.util.HartshornUtils;
@@ -165,11 +165,11 @@ public class JUnitItem implements Item, JUnitPersistentDataHolder {
 
     @Override
     public Class<? extends PersistentItemModel> type() {
-        return SimplePersistentItemModel.class;
+        return PersistentItemModelImpl.class;
     }
 
     @Override
     public PersistentItemModel model() {
-        return new SimplePersistentItemModel(this);
+        return new PersistentItemModelImpl(this);
     }
 }

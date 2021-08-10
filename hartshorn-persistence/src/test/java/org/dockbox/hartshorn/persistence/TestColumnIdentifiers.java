@@ -18,15 +18,15 @@
 package org.dockbox.hartshorn.persistence;
 
 import org.dockbox.hartshorn.persistence.table.ColumnIdentifier;
-import org.dockbox.hartshorn.persistence.table.SimpleColumnIdentifier;
+import org.dockbox.hartshorn.persistence.table.ColumnIdentifierImpl;
 
 import java.util.UUID;
 
 public final class TestColumnIdentifiers {
 
-    public static final ColumnIdentifier<String> NAME = new SimpleColumnIdentifier<>("name", String.class);
-    public static final ColumnIdentifier<UUID> UUID = new SimpleColumnIdentifier<>("uniqueId", java.util.UUID.class);
-    public static final ColumnIdentifier<Integer> NUMERAL_ID = new SimpleColumnIdentifier<>("numeralId", Integer.class);
+    public static final ColumnIdentifier<String> NAME = new ColumnIdentifierImpl<>("name", String.class);
+    public static final ColumnIdentifier<UUID> UUID = new ColumnIdentifierImpl<>("uniqueId", java.util.UUID.class);
+    public static final ColumnIdentifier<Integer> NUMERAL_ID = new ColumnIdentifierImpl<>("numeralId", Integer.class);
 
     private TestColumnIdentifiers() {
     }

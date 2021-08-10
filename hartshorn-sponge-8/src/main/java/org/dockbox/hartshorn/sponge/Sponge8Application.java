@@ -21,7 +21,7 @@ import com.google.inject.Inject;
 
 import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.HartshornApplication;
-import org.dockbox.hartshorn.api.SimpleMetaProvider;
+import org.dockbox.hartshorn.api.MetaProviderImpl;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.di.DefaultModifiers;
 import org.dockbox.hartshorn.di.MetaProviderModifier;
@@ -52,7 +52,7 @@ public class Sponge8Application {
         Exceptional.of("");
         this.init = HartshornApplication.create(Sponge8Application.class,
                 DefaultModifiers.ACTIVATE_ALL,
-                new MetaProviderModifier(SimpleMetaProvider::new)
+                new MetaProviderModifier(MetaProviderImpl::new)
         );
     }
 

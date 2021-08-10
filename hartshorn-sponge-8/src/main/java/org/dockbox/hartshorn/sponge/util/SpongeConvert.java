@@ -60,9 +60,9 @@ import org.dockbox.hartshorn.server.minecraft.entities.ItemFrame.Rotation;
 import org.dockbox.hartshorn.server.minecraft.events.entity.SpawnSource;
 import org.dockbox.hartshorn.server.minecraft.inventory.Slot;
 import org.dockbox.hartshorn.server.minecraft.item.Enchant;
+import org.dockbox.hartshorn.server.minecraft.item.EnchantImpl;
 import org.dockbox.hartshorn.server.minecraft.item.Item;
 import org.dockbox.hartshorn.server.minecraft.item.ReferencedItem;
-import org.dockbox.hartshorn.server.minecraft.item.SimpleEnchant;
 import org.dockbox.hartshorn.server.minecraft.players.Gamemode;
 import org.dockbox.hartshorn.server.minecraft.players.Hand;
 import org.dockbox.hartshorn.server.minecraft.players.Player;
@@ -257,7 +257,7 @@ public enum SpongeConvert {
         try {
             String id = enchantment.type().key(RegistryTypes.ENCHANTMENT_TYPE).value();
             int level = enchantment.level();
-            Enchant enchant = new SimpleEnchant(org.dockbox.hartshorn.server.minecraft.item.Enchantment.valueOf(id.toUpperCase()), level);
+            Enchant enchant = new EnchantImpl(org.dockbox.hartshorn.server.minecraft.item.Enchantment.valueOf(id.toUpperCase()), level);
             return Exceptional.of(enchant);
         }
         catch (IllegalArgumentException | NullPointerException e) {

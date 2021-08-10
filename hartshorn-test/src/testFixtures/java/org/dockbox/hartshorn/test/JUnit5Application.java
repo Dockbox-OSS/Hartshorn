@@ -18,7 +18,7 @@
 package org.dockbox.hartshorn.test;
 
 import org.dockbox.hartshorn.api.HartshornApplication;
-import org.dockbox.hartshorn.api.SimpleMetaProvider;
+import org.dockbox.hartshorn.api.MetaProviderImpl;
 import org.dockbox.hartshorn.di.ApplicationContextAware;
 import org.dockbox.hartshorn.di.DefaultModifiers;
 import org.dockbox.hartshorn.di.MetaProviderModifier;
@@ -47,7 +47,7 @@ public final class JUnit5Application {
 
         HartshornApplication.create(JUnit5Application.class,
                 DefaultModifiers.ACTIVATE_ALL,
-                new MetaProviderModifier(SimpleMetaProvider::new)
+                new MetaProviderModifier(MetaProviderImpl::new)
         ).run();
     }
 }

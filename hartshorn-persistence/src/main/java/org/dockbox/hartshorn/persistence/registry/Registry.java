@@ -72,7 +72,7 @@ public class Registry<V> extends HashMap<String, RegistryColumn<V>> {
         // Iterate over entries instead of using putAll to avoid overwriting existing
         // column values.
         for (Entry<String, RegistryColumn<V>> column : other.entrySet()) {
-            this.add(new SimpleIdentifier(column.getKey()), column.getValue());
+            this.add(new RegistryIdentifierImpl(column.getKey()), column.getValue());
         }
         return this;
     }
@@ -194,7 +194,7 @@ public class Registry<V> extends HashMap<String, RegistryColumn<V>> {
         Registry<V> registry = new Registry<>();
 
         for (String columnID : this.keySet()) {
-            final RegistryIdentifier identifier = new SimpleIdentifier(columnID);
+            final RegistryIdentifier identifier = new RegistryIdentifierImpl(columnID);
             if (!filter.test(identifier)) {
                 registry.addColumn(identifier, this.get(columnID));
             }
@@ -225,7 +225,7 @@ public class Registry<V> extends HashMap<String, RegistryColumn<V>> {
         Registry<V> registry = new Registry<>();
 
         this.forEach((columnID, column) -> {
-            final RegistryIdentifier identifier = new SimpleIdentifier(columnID);
+            final RegistryIdentifier identifier = new RegistryIdentifierImpl(columnID);
             if (!biFilter.test(identifier, column)) {
                 registry.addColumn(identifier, column);
             }
@@ -250,7 +250,7 @@ public class Registry<V> extends HashMap<String, RegistryColumn<V>> {
         for (String columnID : this.keySet()) {
             RegistryColumn<V> column = new RegistryColumn<>(this.get(columnID));
             column.removeValueIf(filter);
-            registry.addColumn(new SimpleIdentifier(columnID), column);
+            registry.addColumn(new RegistryIdentifierImpl(columnID), column);
         }
         return registry;
     }
@@ -271,7 +271,7 @@ public class Registry<V> extends HashMap<String, RegistryColumn<V>> {
         Registry<V> registry = new Registry<>();
 
         this.forEach((columnID, column) -> column.forEach(v -> {
-            final RegistryIdentifier identifier = new SimpleIdentifier(columnID);
+            final RegistryIdentifier identifier = new RegistryIdentifierImpl(columnID);
             if (!biFilter.test(identifier, v)) {
                 registry.add(identifier, v);
             }

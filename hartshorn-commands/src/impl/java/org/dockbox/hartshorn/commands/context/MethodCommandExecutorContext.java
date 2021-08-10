@@ -83,7 +83,7 @@ public class MethodCommandExecutorContext extends DefaultContext implements Comm
             this.isChild = false;
         }
 
-        this.add(new SimpleCommandDefinitionContext(this.command));
+        this.add(new CommandDefinitionContextImpl(this.command));
 
         this.parentAliases = HartshornUtils.emptyList();
         if (this.parent != null) {

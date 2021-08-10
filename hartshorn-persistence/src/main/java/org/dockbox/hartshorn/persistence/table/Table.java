@@ -132,7 +132,7 @@ public class Table {
                 if (Modifier.isTransient(field.getModifiers())) continue;
 
                 final String name = Reflect.fieldName(field);
-                identifiers.add(new SimpleColumnIdentifier<>(name, field.getType()));
+                identifiers.add(new ColumnIdentifierImpl<>(name, field.getType()));
             }
             DEFINITIONS.put(type, identifiers);
         }

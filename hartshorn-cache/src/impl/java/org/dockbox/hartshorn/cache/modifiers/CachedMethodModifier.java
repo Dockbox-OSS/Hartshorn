@@ -25,7 +25,7 @@ import org.dockbox.hartshorn.cache.Expiration;
 import org.dockbox.hartshorn.cache.annotations.Cached;
 import org.dockbox.hartshorn.cache.context.CacheContext;
 import org.dockbox.hartshorn.cache.context.CacheMethodContext;
-import org.dockbox.hartshorn.cache.context.SimpleCacheMethodContext;
+import org.dockbox.hartshorn.cache.context.CacheMethodContextImpl;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.proxy.handle.ProxyFunction;
 import org.dockbox.hartshorn.proxy.service.MethodProxyContext;
@@ -66,7 +66,7 @@ public class CachedMethodModifier extends CacheServiceModifier<Cached> {
     @Override
     protected CacheMethodContext context(MethodProxyContext<?> context) {
         final Cached cached = context.annotation(Cached.class);
-        return new SimpleCacheMethodContext(cached.manager(), cached.value(), Expiration.of(cached.expires()));
+        return new CacheMethodContextImpl(cached.manager(), cached.value(), Expiration.of(cached.expires()));
     }
 
     @Override

@@ -20,7 +20,7 @@ package org.dockbox.hartshorn.cache.modifiers;
 import org.dockbox.hartshorn.cache.annotations.UpdateCache;
 import org.dockbox.hartshorn.cache.context.CacheContext;
 import org.dockbox.hartshorn.cache.context.CacheMethodContext;
-import org.dockbox.hartshorn.cache.context.SimpleCacheMethodContext;
+import org.dockbox.hartshorn.cache.context.CacheMethodContextImpl;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.proxy.handle.ProxyFunction;
 import org.dockbox.hartshorn.proxy.service.MethodProxyContext;
@@ -37,7 +37,7 @@ public class CacheUpdateMethodModifier extends CacheServiceModifier<UpdateCache>
     @Override
     protected CacheMethodContext context(MethodProxyContext<?> context) {
         final UpdateCache update = context.annotation(UpdateCache.class);
-        return new SimpleCacheMethodContext(update.manager(), update.value(), null);
+        return new CacheMethodContextImpl(update.manager(), update.value(), null);
     }
 
     @Override

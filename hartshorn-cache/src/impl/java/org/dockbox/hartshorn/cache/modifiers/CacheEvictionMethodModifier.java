@@ -20,7 +20,7 @@ package org.dockbox.hartshorn.cache.modifiers;
 import org.dockbox.hartshorn.cache.annotations.EvictCache;
 import org.dockbox.hartshorn.cache.context.CacheContext;
 import org.dockbox.hartshorn.cache.context.CacheMethodContext;
-import org.dockbox.hartshorn.cache.context.SimpleCacheMethodContext;
+import org.dockbox.hartshorn.cache.context.CacheMethodContextImpl;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.proxy.handle.ProxyFunction;
 import org.dockbox.hartshorn.proxy.service.MethodProxyContext;
@@ -35,7 +35,7 @@ public class CacheEvictionMethodModifier extends CacheServiceModifier<EvictCache
     @Override
     protected CacheMethodContext context(MethodProxyContext<?> context) {
         final EvictCache evict = context.annotation(EvictCache.class);
-        return new SimpleCacheMethodContext(evict.manager(), evict.value(), null);
+        return new CacheMethodContextImpl(evict.manager(), evict.value(), null);
     }
 
     @Override

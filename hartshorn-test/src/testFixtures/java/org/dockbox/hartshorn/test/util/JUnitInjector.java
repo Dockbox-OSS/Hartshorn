@@ -25,7 +25,7 @@ import org.dockbox.hartshorn.commands.SystemSubject;
 import org.dockbox.hartshorn.config.ConfigurationManager;
 import org.dockbox.hartshorn.di.InjectConfiguration;
 import org.dockbox.hartshorn.di.Key;
-import org.dockbox.hartshorn.di.SimpleTypeFactory;
+import org.dockbox.hartshorn.di.TypeFactoryImpl;
 import org.dockbox.hartshorn.di.TypeFactory;
 import org.dockbox.hartshorn.discord.DiscordCommandSource;
 import org.dockbox.hartshorn.discord.DiscordUtils;
@@ -57,7 +57,7 @@ public class JUnitInjector extends InjectConfiguration {
     @Override
     public void collect() {
         // Factory creation
-        this.bind(Key.of(TypeFactory.class), SimpleTypeFactory.class);
+        this.bind(Key.of(TypeFactory.class), TypeFactoryImpl.class);
 
         // Tasks
         this.bind(Key.of(TaskRunner.class), JUnitTaskRunner.class);

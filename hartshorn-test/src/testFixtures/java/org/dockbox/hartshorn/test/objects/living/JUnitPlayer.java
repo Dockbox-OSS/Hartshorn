@@ -35,11 +35,11 @@ import org.dockbox.hartshorn.server.minecraft.entities.Entity;
 import org.dockbox.hartshorn.server.minecraft.item.Item;
 import org.dockbox.hartshorn.server.minecraft.packets.Packet;
 import org.dockbox.hartshorn.server.minecraft.players.GameSettings;
+import org.dockbox.hartshorn.server.minecraft.players.GameSettingsImpl;
 import org.dockbox.hartshorn.server.minecraft.players.Gamemode;
 import org.dockbox.hartshorn.server.minecraft.players.Hand;
 import org.dockbox.hartshorn.server.minecraft.players.Player;
 import org.dockbox.hartshorn.server.minecraft.players.Profile;
-import org.dockbox.hartshorn.server.minecraft.players.SimpleGameSettings;
 import org.dockbox.hartshorn.server.minecraft.players.Sounds;
 import org.dockbox.hartshorn.server.minecraft.players.inventory.PlayerInventory;
 import org.dockbox.hartshorn.test.objects.JUnitPersistentDataHolder;
@@ -145,7 +145,7 @@ public class JUnitPlayer extends Player implements JUnitPersistentDataHolder {
 
     @Override
     public GameSettings gameSettings() {
-        return new SimpleGameSettings(Language.EN_US);
+        return new GameSettingsImpl(Language.EN_US);
     }
 
     @Override

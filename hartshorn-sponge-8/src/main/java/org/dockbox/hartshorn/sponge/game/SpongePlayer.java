@@ -42,7 +42,7 @@ import org.dockbox.hartshorn.server.minecraft.players.Gamemode;
 import org.dockbox.hartshorn.server.minecraft.players.Hand;
 import org.dockbox.hartshorn.server.minecraft.players.Player;
 import org.dockbox.hartshorn.server.minecraft.players.Profile;
-import org.dockbox.hartshorn.server.minecraft.players.SimpleGameSettings;
+import org.dockbox.hartshorn.server.minecraft.players.GameSettingsImpl;
 import org.dockbox.hartshorn.server.minecraft.players.Sounds;
 import org.dockbox.hartshorn.server.minecraft.players.inventory.PlayerInventory;
 import org.dockbox.hartshorn.sponge.game.entity.SpongeEntity;
@@ -271,8 +271,8 @@ public class SpongePlayer extends Player implements SpongeEntity<net.minecraft.s
         return this.player().map(player -> {
             final Locale locale = player.locale();
             final Language language = Language.of(locale);
-            return new SimpleGameSettings(language);
-        }).orElse(() -> new SimpleGameSettings(Language.EN_US)).get();
+            return new GameSettingsImpl(language);
+        }).orElse(() -> new GameSettingsImpl(Language.EN_US)).get();
     }
 
     @Override

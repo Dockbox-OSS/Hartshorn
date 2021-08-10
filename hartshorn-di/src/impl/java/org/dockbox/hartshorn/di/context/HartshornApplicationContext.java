@@ -48,7 +48,7 @@ import org.dockbox.hartshorn.di.properties.Attribute;
 import org.dockbox.hartshorn.di.properties.BindingMetaAttribute;
 import org.dockbox.hartshorn.di.properties.UseFactory;
 import org.dockbox.hartshorn.di.services.ComponentLocator;
-import org.dockbox.hartshorn.di.services.SimpleComponentLocator;
+import org.dockbox.hartshorn.di.services.ComponentLocatorImpl;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.dockbox.hartshorn.util.Reflect;
 import org.jetbrains.annotations.Nullable;
@@ -77,7 +77,7 @@ public class HartshornApplicationContext extends ManagedHartshornContext {
     public HartshornApplicationContext(final Class<?> activationSource, final Modifier... modifiers) {
         super(activationSource);
 
-        this.locator = new SimpleComponentLocator();
+        this.locator = new ComponentLocatorImpl();
         this.modifiers = HartshornUtils.asUnmodifiableList(modifiers);
         this.modify(this.modifiers);
 

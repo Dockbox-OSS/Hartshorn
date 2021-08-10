@@ -25,8 +25,8 @@ import org.dockbox.hartshorn.server.minecraft.events.player.PlayerAuthEvent;
 import org.dockbox.hartshorn.server.minecraft.events.player.PlayerJoinEvent;
 import org.dockbox.hartshorn.server.minecraft.events.player.PlayerLeaveEvent;
 import org.dockbox.hartshorn.server.minecraft.events.player.PlayerSettingsChangedEvent;
+import org.dockbox.hartshorn.server.minecraft.players.GameSettingsImpl;
 import org.dockbox.hartshorn.server.minecraft.players.Player;
-import org.dockbox.hartshorn.server.minecraft.players.SimpleGameSettings;
 import org.dockbox.hartshorn.sponge.util.SpongeConvert;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.entity.living.player.PlayerChangeClientSettingsEvent;
@@ -67,7 +67,7 @@ public class ConnectionEventBridge implements EventBridge {
     @Listener
     public void on(PlayerChangeClientSettingsEvent event) {
         final Player player = SpongeConvert.fromSponge(event.player());
-        this.post(new PlayerSettingsChangedEvent(player, new SimpleGameSettings(Language.of(event.locale()))), event);
+        this.post(new PlayerSettingsChangedEvent(player, new GameSettingsImpl(Language.of(event.locale()))), event);
     }
 
     /**

@@ -17,9 +17,9 @@
 
 package org.dockbox.hartshorn.test.util;
 
-import org.dockbox.hartshorn.cache.SimpleCacheManager;
+import org.dockbox.hartshorn.cache.CacheManagerImpl;
 
-public class JUnitCacheManager extends SimpleCacheManager {
+public class JUnitCacheManager extends CacheManagerImpl {
 
     public void reset() {
         caches.clear();

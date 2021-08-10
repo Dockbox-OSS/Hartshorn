@@ -33,7 +33,7 @@ import java.util.ResourceBundle;
 @ExtendWith(HartshornRunner.class)
 public class ResourceServiceTests {
 
-    private final ResourceService service = new SimpleResourceService() {
+    private final ResourceService service = new ResourceServiceImpl() {
         static {
             for (Language value : Language.values()) bundles.put(value, createDemoBundle("Demo:" + value.code()));
         }

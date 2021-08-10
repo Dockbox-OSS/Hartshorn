@@ -63,11 +63,11 @@ public abstract class ReferencedItem<T> extends ReferencedWrapper<T> implements 
 
     @Override
     public Class<? extends PersistentItemModel> type() {
-        return SimplePersistentItemModel.class;
+        return PersistentItemModelImpl.class;
     }
 
     @Override
     public PersistentItemModel model() {
-        return new SimplePersistentItemModel(this);
+        return new PersistentItemModelImpl(this);
     }
 }

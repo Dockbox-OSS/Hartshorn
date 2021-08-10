@@ -25,7 +25,7 @@ import org.dockbox.hartshorn.cache.annotations.CacheService;
 import org.dockbox.hartshorn.cache.annotations.UseCaching;
 import org.dockbox.hartshorn.cache.context.CacheContext;
 import org.dockbox.hartshorn.cache.context.CacheMethodContext;
-import org.dockbox.hartshorn.cache.context.SimpleCacheContext;
+import org.dockbox.hartshorn.cache.context.CacheContextImpl;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.proxy.handle.ProxyFunction;
 import org.dockbox.hartshorn.proxy.service.MethodProxyContext;
@@ -71,7 +71,7 @@ public abstract class CacheServiceModifier<A extends Annotation> extends Service
             return cache;
         };
 
-        CacheContext cacheContext = new SimpleCacheContext(manager, cacheSupplier, name);
+        CacheContext cacheContext = new CacheContextImpl(manager, cacheSupplier, name);
 
         return this.process(context, methodContext, cacheContext);
     }

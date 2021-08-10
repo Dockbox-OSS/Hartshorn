@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.di.properties;
 
-public class UseFactory extends SimpleProperty<Object[]> {
+public class UseFactory extends AttributeImpl<Object[]> {
     public UseFactory(final Object... use) {
         super(use);
     }

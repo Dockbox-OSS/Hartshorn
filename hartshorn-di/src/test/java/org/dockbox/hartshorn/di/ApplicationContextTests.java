@@ -243,7 +243,7 @@ public class ApplicationContextTests {
     @Test
     public void boundTypesCanBeProvided() {
         Hartshorn.context().manual(Key.of(SampleInterface.class), SampleBoundType.class);
-        Hartshorn.context().bind(Key.of(TypeFactory.class), SimpleTypeFactory.class);
+        Hartshorn.context().bind(Key.of(TypeFactory.class), TypeFactoryImpl.class);
 
         final SampleInterface wired = Hartshorn.context().get(TypeFactory.class).create(SampleInterface.class, "BoundHartshorn");
         Assertions.assertNotNull(wired);
@@ -254,7 +254,7 @@ public class ApplicationContextTests {
     public void testScannedBoundBindingsCanBeProvided() {
         // sub-package *.bound was added to prevent scan conflicts
         Hartshorn.context().bind("org.dockbox.hartshorn.di.types.bound");
-        Hartshorn.context().bind(Key.of(TypeFactory.class), SimpleTypeFactory.class);
+        Hartshorn.context().bind(Key.of(TypeFactory.class), TypeFactoryImpl.class);
 
         final SampleInterface provided = Hartshorn.context().get(TypeFactory.class).create(SampleInterface.class, "BoundAnnotated");
         Assertions.assertNotNull(provided);
@@ -269,7 +269,7 @@ public class ApplicationContextTests {
     public void boundTypesCanBeProvidedThroughFactoryProperty() {
         Hartshorn.context().manual(Key.of(SampleInterface.class), SampleBoundType.class);
         Hartshorn.context().manual(Key.of(SampleInterface.class), SampleBoundType.class);
-        Hartshorn.context().bind(Key.of(TypeFactory.class), SimpleTypeFactory.class);
+        Hartshorn.context().bind(Key.of(TypeFactory.class), TypeFactoryImpl.class);
 
         final SampleInterface provided = Hartshorn.context().get(SampleInterface.class, TypeFactory.use("FactoryTyped"));
         Assertions.assertNotNull(provided);
@@ -283,7 +283,7 @@ public class ApplicationContextTests {
     @Test
     public void providerRedirectsVarargs() {
         Hartshorn.context().manual(Key.of(SampleInterface.class), SampleBoundType.class);
-        Hartshorn.context().bind(Key.of(TypeFactory.class), SimpleTypeFactory.class);
+        Hartshorn.context().bind(Key.of(TypeFactory.class), TypeFactoryImpl.class);
 
         final SampleInterface provided = Hartshorn.context().get(SampleInterface.class, "FactoryTyped");
         Assertions.assertNotNull(provided);
@@ -297,7 +297,7 @@ public class ApplicationContextTests {
     @Test
     public void varargProvidedTypesArePopulated() {
         Hartshorn.context().manual(Key.of(SampleInterface.class), SampleBoundPopulatedType.class);
-        Hartshorn.context().bind(Key.of(TypeFactory.class), SimpleTypeFactory.class);
+        Hartshorn.context().bind(Key.of(TypeFactory.class), TypeFactoryImpl.class);
         Hartshorn.context().bind(Key.of(SampleField.class), SampleFieldImplementation.class);
 
         final SampleInterface provided = Hartshorn.context().get(SampleInterface.class, "FactoryTyped");
@@ -310,7 +310,7 @@ public class ApplicationContextTests {
     @Test
     public void injectionPointsAreAppliedToVarargProviders() {
         Hartshorn.context().manual(Key.of(SampleInterface.class), SampleBoundType.class);
-        Hartshorn.context().bind(Key.of(TypeFactory.class), SimpleTypeFactory.class);
+        Hartshorn.context().bind(Key.of(TypeFactory.class), TypeFactoryImpl.class);
         Hartshorn.context().bind(Key.of(SampleField.class), SampleFieldImplementation.class);
 
         final InjectionPoint<SampleInterface> point = InjectionPoint.of(SampleInterface.class, $ -> new SampleImplementation());
@@ -352,7 +352,7 @@ public class ApplicationContextTests {
     @Test
     void testBoundProviderCanSupply() {
         Hartshorn.context().bind("org.dockbox.hartshorn.di.types.provision");
-        Hartshorn.context().bind(Key.of(TypeFactory.class), SimpleTypeFactory.class);
+        Hartshorn.context().bind(Key.of(TypeFactory.class), TypeFactoryImpl.class);
 
         final ProvidedInterface provided = Hartshorn.context().get(ProvidedInterface.class, BindingMetaAttribute.of("bound"), TypeFactory.use("BoundProvision"));
         Assertions.assertNotNull(provided);

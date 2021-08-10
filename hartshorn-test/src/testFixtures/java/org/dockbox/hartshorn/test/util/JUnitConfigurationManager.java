@@ -17,14 +17,14 @@
 
 package org.dockbox.hartshorn.test.util;
 
-import org.dockbox.hartshorn.config.SimpleConfigurationManager;
+import org.dockbox.hartshorn.config.ConfigurationManagerImpl;
 import org.dockbox.hartshorn.di.annotations.inject.Bound;
 import org.dockbox.hartshorn.util.HartshornUtils;
 
 import java.nio.file.Path;
 import java.util.Map;
 
-public class JUnitConfigurationManager extends SimpleConfigurationManager {
+public class JUnitConfigurationManager extends ConfigurationManagerImpl {
 
     public static Map<String, Object> cache = HartshornUtils.emptyConcurrentMap();
 

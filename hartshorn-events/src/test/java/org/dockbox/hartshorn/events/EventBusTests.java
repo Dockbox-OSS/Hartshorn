@@ -41,7 +41,7 @@ public class EventBusTests {
     }
 
     private EventBus bus() {
-        return new SimpleEventBus();
+        return new EventBusImpl();
     }
 
     @Test

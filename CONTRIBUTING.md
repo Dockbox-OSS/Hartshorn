@@ -116,7 +116,7 @@ Additionally you should use [`Hartshorn Code Inspections.xml`](https://github.co
 Naming conventions follow [Oracle's Code Conventions for Java](https://www.oracle.com/java/technologies/javase/codeconventions-namingconventions.html#:~:text=Class%20names%20should%20be%20nouns,such%20as%20URL%20or%20HTML).
 Two additional rules to these conventions are present for types which are registered to Hartshorn's internal injector:
 - Partial (abstract) implementations of interfaces are prefixed with `Default` (e.g. `DefaultCommandBus`)
-- Complete (standalone) implementations of interfaces are prefixes with `Simple` (e.g. `SimpleEventBus`)
+- Complete (standalone) implementations of interfaces are suffixed with `Impl` (e.g. `EventBusImpl`)
 
 #### Modifiers
 - Classes should always be `public`

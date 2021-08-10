@@ -49,7 +49,7 @@ public abstract class ServiceAnnotatedMethodModifier<M extends Annotation, A ext
         ProxyHandler<T> handler = ProxyUtil.handler(type, instance);
 
         for (Method method : methods) {
-            MethodProxyContext<T> ctx = new SimpleMethodProxyContext<>(instance, type, method, properties);
+            MethodProxyContext<T> ctx = new MethodProxyContextImpl<>(instance, type, method, properties);
 
             if (this.preconditions(context, ctx)) {
                 final ProxyFunction<T, Object> function = this.process(context, ctx);

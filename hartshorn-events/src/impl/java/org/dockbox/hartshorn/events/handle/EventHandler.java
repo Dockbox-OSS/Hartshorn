@@ -37,21 +37,21 @@ public class EventHandler {
 
     private final Set<EventHandler> superTypeHandlers = HartshornUtils.emptySet();
 
-    private final SortedSet<SimpleEventWrapper> invokers = new TreeSet<>(SimpleEventWrapper.COMPARATOR);
+    private final SortedSet<EventWrapperImpl> invokers = new TreeSet<>(EventWrapperImpl.COMPARATOR);
 
-    private transient volatile SimpleEventWrapper @Nullable [] computedInvokerCache;
+    private transient volatile EventWrapperImpl @Nullable [] computedInvokerCache;
 
     EventHandler(Class<? extends Event> eventType) {
         this.eventType = eventType;
     }
 
     public List<Method> methods() {
-        return this.invokers.stream().map(SimpleEventWrapper::method).toList();
+        return this.invokers.stream().map(EventWrapperImpl::method).toList();
     }
 
     public void subscribe(EventWrapper invoker) {
-        if (invoker instanceof SimpleEventWrapper)
-            this.invalidateCache(this.invokers.add((SimpleEventWrapper) invoker));
+        if (invoker instanceof EventWrapperImpl)
+            this.invalidateCache(this.invokers.add((EventWrapperImpl) invoker));
     }
 
     private boolean invalidateCache(boolean modified) {
@@ -60,11 +60,11 @@ public class EventHandler {
     }
 
     public void unsubscribe(EventWrapper invoker) {
-        if (invoker instanceof SimpleEventWrapper) this.invalidateCache(this.invokers.remove(invoker));
+        if (invoker instanceof EventWrapperImpl) this.invalidateCache(this.invokers.remove(invoker));
     }
 
     public void post(Event event, Class<?> target) {
-        SimpleEventWrapper[] cache = this.computedInvokerCache;
+        EventWrapperImpl[] cache = this.computedInvokerCache;
         if (null == cache) {
             synchronized (this) {
                 if (null == (cache = this.computedInvokerCache)) {
@@ -73,15 +73,15 @@ public class EventHandler {
             }
         }
 
-        for (SimpleEventWrapper invoker : cache) {
+        for (EventWrapperImpl invoker : cache) {
             // Target is null if no specific target should be checked
             // If the target is present we only want to invoke when the listener matches our target
             if (null == target || invoker.listenerType().equals(target)) invoker.invoke(event);
         }
     }
 
-    private synchronized SimpleEventWrapper[] computeInvokerCache() {
-        SortedSet<SimpleEventWrapper> set;
+    private synchronized EventWrapperImpl[] computeInvokerCache() {
+        SortedSet<EventWrapperImpl> set;
         if (this.hasSupertypeHandler()) {
             set = new TreeSet<>(this.invokers);
             for (EventHandler supertypeHandler : this.superTypeHandlers)
@@ -90,7 +90,7 @@ public class EventHandler {
         else {
             set = this.invokers;
         }
-        return set.toArray(new SimpleEventWrapper[0]);
+        return set.toArray(new EventWrapperImpl[0]);
     }
 
     private boolean hasSupertypeHandler() {

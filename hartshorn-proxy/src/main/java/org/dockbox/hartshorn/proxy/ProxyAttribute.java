@@ -68,7 +68,7 @@ public final class ProxyAttribute<T, R> implements Attribute<Class<T>> {
 
     public R delegate(T instance, Method proceed, Object self, Object... args) {
         this.holder.cancelled(false);
-        return this.delegate.delegate(instance, args, new SimpleProxyContext(proceed, this.holder, self));
+        return this.delegate.delegate(instance, args, new ProxyContextImpl(proceed, this.holder, self));
     }
 
     public boolean cancelled() {
