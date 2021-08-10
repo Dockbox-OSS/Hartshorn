@@ -54,30 +54,8 @@ public class Resource implements ResourceEntry {
     }
 
     @Override
-    public ResourceEntry translate(Language lang) {
-        if (this.resourceMap.containsKey(lang))
-            return new Resource(this.resourceMap.get(lang), this.key(), lang, this.formattingArgs);
-        return this;
-    }
-
-    @Override
-    public ResourceEntry translate(MessageReceiver receiver) {
-        return this.translate(receiver.language());
-    }
-
-    @Override
-    public ResourceEntry translate() {
-        return this.translate(Language.EN_US);
-    }
-
-    @Override
     public Text asText() {
         return Text.of(this.asString());
-    }
-
-    @Override
-    public ResourceEntry format(Object... args) {
-        return new Resource(this.value, this.key, this.language, args);
     }
 
     @Override
@@ -88,6 +66,28 @@ public class Resource implements ResourceEntry {
     @Override
     public String plain() {
         return this.formatCustom().replaceAll("[$|&][0-9a-fklmnor]", "");
+    }
+
+    @Override
+    public ResourceEntry translate(MessageReceiver receiver) {
+        return this.translate(receiver.language());
+    }
+
+    @Override
+    public ResourceEntry translate(Language lang) {
+        if (this.resourceMap.containsKey(lang))
+            return new Resource(this.resourceMap.get(lang), this.key(), lang, this.formattingArgs);
+        return this;
+    }
+
+    @Override
+    public ResourceEntry translate() {
+        return this.translate(Language.EN_US);
+    }
+
+    @Override
+    public ResourceEntry format(Object... args) {
+        return new Resource(this.value, this.key, this.language, args);
     }
 
     private String formatCustom() {

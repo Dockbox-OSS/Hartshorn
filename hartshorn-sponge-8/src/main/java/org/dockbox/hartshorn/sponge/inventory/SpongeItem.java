@@ -21,9 +21,9 @@ import net.kyori.adventure.text.Component;
 import net.minecraft.world.item.CreativeModeTab;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.di.annotations.inject.Bound;
 import org.dockbox.hartshorn.i18n.common.Language;
 import org.dockbox.hartshorn.i18n.text.Text;
-import org.dockbox.hartshorn.di.annotations.inject.Bound;
 import org.dockbox.hartshorn.server.minecraft.item.Enchant;
 import org.dockbox.hartshorn.server.minecraft.item.Item;
 import org.dockbox.hartshorn.server.minecraft.item.ReferencedItem;
@@ -59,13 +59,6 @@ public class SpongeItem extends ReferencedItem<ItemStack> implements SpongeCompo
     }
 
     @Override
-    public String id() {
-        return SpongeUtil.location(this.item().map(ItemStack::type), RegistryTypes.ITEM_TYPE)
-                .map(ResourceKey::asString)
-                .or("");
-    }
-
-    @Override
     public boolean isAir() {
         if (this.id().equals(org.dockbox.hartshorn.server.minecraft.item.ItemTypes.AIR.id())) return true;
         else {
@@ -73,6 +66,33 @@ public class SpongeItem extends ReferencedItem<ItemStack> implements SpongeCompo
                     .map(item -> item.isEmpty() || item.type() == ItemTypes.AIR.get())
                     .or(true);
         }
+    }
+
+    @Override
+    public String id() {
+        return SpongeUtil.location(this.item().map(ItemStack::type), RegistryTypes.ITEM_TYPE)
+                .map(ResourceKey::asString)
+                .or("");
+    }
+
+    @Override
+    protected ItemStack from(String id) {
+        ItemType type;
+        if (id.indexOf(':') >= 0) {
+            type = SpongeUtil.fromNamespacedRegistry(RegistryTypes.ITEM_TYPE, id).orNull();
+        }
+        else {
+            type = SpongeUtil.fromMCRegistry(RegistryTypes.ITEM_TYPE, id).orNull();
+        }
+        if (type == null) return ItemStack.empty();
+
+        return ItemStack.builder()
+                .itemType(type)
+                .build();
+    }
+
+    private Exceptional<ItemStack> item() {
+        return this.reference();
     }
 
     @Override
@@ -209,26 +229,7 @@ public class SpongeItem extends ReferencedItem<ItemStack> implements SpongeCompo
     }
 
     @Override
-    protected ItemStack from(String id) {
-        ItemType type;
-        if (id.indexOf(':') >= 0) {
-            type = SpongeUtil.fromNamespacedRegistry(RegistryTypes.ITEM_TYPE, id).orNull();
-        } else {
-            type = SpongeUtil.fromMCRegistry(RegistryTypes.ITEM_TYPE, id).orNull();
-        }
-        if (type == null) return ItemStack.empty();
-
-        return ItemStack.builder()
-                .itemType(type)
-                .build();
-    }
-
-    @Override
     public Exceptional<? extends Mutable> dataHolder() {
-        return this.reference();
-    }
-
-    private Exceptional<ItemStack> item() {
         return this.reference();
     }
 }

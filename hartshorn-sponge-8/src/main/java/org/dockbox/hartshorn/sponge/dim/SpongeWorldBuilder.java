@@ -140,7 +140,8 @@ public class SpongeWorldBuilder implements WorldBuilder {
         if (saveResult) {
             final Exceptional<ServerWorld> world = SpongeUtil.await(Sponge.server().worldManager().loadWorld(template));
             return world.map(serverWorld -> new SpongeWorld(serverWorld.key()));
-        } else {
+        }
+        else {
             return Exceptional.of(new IllegalStateException("Could not save world template"));
         }
     }

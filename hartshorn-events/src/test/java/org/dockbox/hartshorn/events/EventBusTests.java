@@ -40,6 +40,10 @@ public class EventBusTests {
         Assertions.assertTrue(bus.invokers().containsKey(BasicEventListener.class));
     }
 
+    private EventBus bus() {
+        return new SimpleEventBus();
+    }
+
     @Test
     public void testNonStaticMethodsCanListen() {
         EventBus bus = this.bus();
@@ -68,7 +72,8 @@ public class EventBusTests {
     void testGenericEventsAreFiltered() {
         EventBus bus = this.bus();
         bus.subscribe(GenericEventListener.class);
-        final GenericEvent<String> event = new GenericEvent<>("String") {};
+        final GenericEvent<String> event = new GenericEvent<>("String") {
+        };
         Assertions.assertDoesNotThrow(() -> bus.post(event));
     }
 
@@ -78,8 +83,10 @@ public class EventBusTests {
         // Ensure the values have not been affected by previous tests
         GenericEventListener.objects().clear();
         bus.subscribe(GenericEventListener.class);
-        final GenericEvent<String> stringEvent = new GenericEvent<>("String") {};
-        final GenericEvent<Integer> integerEvent = new GenericEvent<>(1) {};
+        final GenericEvent<String> stringEvent = new GenericEvent<>("String") {
+        };
+        final GenericEvent<Integer> integerEvent = new GenericEvent<>(1) {
+        };
         bus.post(stringEvent);
         bus.post(integerEvent);
         final List<Object> objects = GenericEventListener.objects();
@@ -92,10 +99,6 @@ public class EventBusTests {
     public void reset() {
         BasicEventListener.fired = false;
         StaticEventListener.fired = false;
-    }
-
-    private EventBus bus() {
-        return new SimpleEventBus();
     }
 
 }

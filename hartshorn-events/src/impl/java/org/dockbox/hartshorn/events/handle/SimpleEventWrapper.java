@@ -60,14 +60,13 @@ public final class SimpleEventWrapper implements Comparable<SimpleEventWrapper>,
         throw new AssertionError(); // ensures the comparator will never return 0 if the two wrapper
         // aren't equal
     };
-
-    @Getter private Object listener;
     @Getter private final Class<?> listenerType;
     @Getter private final Class<? extends Event> eventType;
     @Getter private final Type[] eventParameters;
     @Getter private final Method method;
     @Getter private final int priority;
     private final BiConsumer<Object, ? super Event> operator;
+    @Getter private Object listener;
 
     private SimpleEventWrapper(Class<?> type, Class<? extends Event> eventType, Method method, int priority) {
         this.listener = null;
@@ -79,7 +78,8 @@ public final class SimpleEventWrapper implements Comparable<SimpleEventWrapper>,
         final Type genericType = method.getGenericParameterTypes()[0];
         if (genericType instanceof ParameterizedType parameterizedType) {
             this.eventParameters = parameterizedType.getActualTypeArguments();
-        } else {
+        }
+        else {
             this.eventParameters = new Type[0];
         }
 
@@ -103,7 +103,8 @@ public final class SimpleEventWrapper implements Comparable<SimpleEventWrapper>,
                     MethodType.methodType(void.class, this.listenerType, this.method.getParameterTypes()[0]));
             MethodHandle factory = site.getTarget();
             return (BiConsumer<T, ? super Event>) factory.invoke();
-        } catch (Throwable e) {
+        }
+        catch (Throwable e) {
             Hartshorn.log().warn("Could not prepare meta factory for method '" + this.method.getName() + "' in " + this.listenerType.getSimpleName() + ", behavior will default to unoptimized reflective operations.");
             return null;
         }

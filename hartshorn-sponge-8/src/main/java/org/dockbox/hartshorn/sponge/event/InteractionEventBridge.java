@@ -41,7 +41,7 @@ import org.spongepowered.api.event.item.inventory.InteractItemEvent;
 
 import java.util.Optional;
 
-@Posting({PlayerInteractAirEvent.class, PlayerInteractEntityEvent.class, PlayerInteractBlockEvent.class})
+@Posting({ PlayerInteractAirEvent.class, PlayerInteractEntityEvent.class, PlayerInteractBlockEvent.class })
 public class InteractionEventBridge implements EventBridge {
 
     @Listener
@@ -60,6 +60,14 @@ public class InteractionEventBridge implements EventBridge {
         if (player.absent()) return;
 
         this.post(new PlayerInteractAirEvent(player.get(), hand.get(), type), event);
+    }
+
+    private Exceptional<Hand> hand(Event event) {
+        final Optional<HandType> handType = event.context().get(EventContextKeys.USED_HAND);
+        if (handType.isEmpty()) return Exceptional.empty();
+
+        final Hand hand = SpongeConvert.fromSponge(handType.get());
+        return Exceptional.of(hand);
     }
 
     @Listener
@@ -99,14 +107,6 @@ public class InteractionEventBridge implements EventBridge {
         if (player.absent()) return;
 
         this.post(new PlayerInteractBlockEvent(player.get(), hand.get(), type, block, face), event);
-    }
-
-    private Exceptional<Hand> hand(Event event) {
-        final Optional<HandType> handType = event.context().get(EventContextKeys.USED_HAND);
-        if (handType.isEmpty()) return Exceptional.empty();
-
-        final Hand hand = SpongeConvert.fromSponge(handType.get());
-        return Exceptional.of(hand);
     }
 
 }

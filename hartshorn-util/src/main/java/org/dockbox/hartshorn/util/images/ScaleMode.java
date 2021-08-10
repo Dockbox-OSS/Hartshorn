@@ -26,7 +26,7 @@ import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 public enum ScaleMode {
-    NoScale(() -> { throw new UnsupportedOperationException("Unsupported resample filter!"); }),
+    NoScale(() -> {throw new UnsupportedOperationException("Unsupported resample filter!");}),
     BSpline(ResampleFilters::getBSplineFilter),
     Bell(ResampleFilters::getBellFilter),
     BiCubic(ResampleFilters::getBiCubicFilter),

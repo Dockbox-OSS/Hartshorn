@@ -45,19 +45,14 @@ import lombok.Getter;
 @Posting({ RegionFlagAddedEvent.class, RegionFlagRemovedEvent.class })
 public class CustomRegion implements Region, PersistentCapable<PersistentRegion> {
 
+    private final Map<String, SerializedFlag> flags = HartshornUtils.emptyMap();
     @Getter private long id;
-
     @Getter private Vector3N cornerA;
     @Getter private Vector3N cornerB;
-
     private transient Vector3N size;
-
     private String name;
-
     private UUID owner;
     private UUID world;
-
-    private final Map<String, SerializedFlag> flags = HartshornUtils.emptyMap();
 
     protected CustomRegion() {
     }
@@ -72,6 +67,24 @@ public class CustomRegion implements Region, PersistentCapable<PersistentRegion>
 
         this.owner = owner;
         this.world = world;
+    }
+
+    @Override
+    public Class<? extends PersistentRegion> type() {
+        return PersistentRegion.class;
+    }
+
+    @Override
+    public PersistentRegion model() {
+        final PersistentRegion persistentRegion = new PersistentRegion(this.id(), this.name().toLegacy(), this.owner.toString(), this.world.toString(),
+                this.cornerA().xI(), this.cornerA().yI(), this.cornerA().zI(),
+                this.cornerB().xI(), this.cornerB().yI(), this.cornerB().zI());
+
+        this.flags.values().stream()
+                .map(flag -> new PersistentRegionFlag(persistentRegion, flag.id(), flag.value()))
+                .forEach(persistentRegion::add);
+
+        return persistentRegion;
     }
 
     @Override
@@ -141,23 +154,5 @@ public class CustomRegion implements Region, PersistentCapable<PersistentRegion>
     @Override
     public World world() {
         return Hartshorn.context().get(Worlds.class).world(this.world).or(World.empty());
-    }
-
-    @Override
-    public Class<? extends PersistentRegion> type() {
-        return PersistentRegion.class;
-    }
-
-    @Override
-    public PersistentRegion model() {
-        final PersistentRegion persistentRegion = new PersistentRegion(this.id(), this.name().toLegacy(), this.owner.toString(), this.world.toString(),
-                this.cornerA().xI(), this.cornerA().yI(), this.cornerA().zI(),
-                this.cornerB().xI(), this.cornerB().yI(), this.cornerB().zI());
-
-        this.flags.values().stream()
-                .map(flag -> new PersistentRegionFlag(persistentRegion, flag.id(), flag.value()))
-                .forEach(persistentRegion::add);
-
-        return persistentRegion;
     }
 }

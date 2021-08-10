@@ -17,9 +17,9 @@
 
 package org.dockbox.hartshorn.regions.events.membership;
 
-import org.dockbox.hartshorn.server.minecraft.players.Player;
 import org.dockbox.hartshorn.regions.Region;
 import org.dockbox.hartshorn.regions.events.CancellableRegionEvent;
+import org.dockbox.hartshorn.server.minecraft.players.Player;
 
 import lombok.Getter;
 

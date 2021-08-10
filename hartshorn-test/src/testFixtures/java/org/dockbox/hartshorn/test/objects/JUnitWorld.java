@@ -96,6 +96,11 @@ public class JUnitWorld extends World {
     }
 
     @Override
+    public int playerCount() {
+        return this.entities(entity -> entity instanceof Player).size();
+    }
+
+    @Override
     public Collection<Entity> entities() {
         return this.entities.values();
     }
@@ -103,11 +108,6 @@ public class JUnitWorld extends World {
     @Override
     public Collection<Entity> entities(Predicate<Entity> predicate) {
         return this.entities().stream().filter(predicate).toList();
-    }
-
-    @Override
-    public int playerCount() {
-        return this.entities(entity -> entity instanceof Player).size();
     }
 
     @Override

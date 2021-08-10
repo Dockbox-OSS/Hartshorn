@@ -37,7 +37,9 @@ import java.util.function.Supplier;
 
 /**
  * Common functionality for cache related {@link ServiceAnnotatedMethodModifier modifiers}.
- * @param <A> The cache-related annotation
+ *
+ * @param <A>
+ *         The cache-related annotation
  */
 public abstract class CacheServiceModifier<A extends Annotation> extends ServiceAnnotatedMethodModifier<A, UseCaching> {
 
@@ -50,7 +52,8 @@ public abstract class CacheServiceModifier<A extends Annotation> extends Service
             final Exceptional<CacheService> annotation = Reflect.annotation(methodContext.type(), CacheService.class);
             if (annotation.present()) {
                 name = annotation.get().value();
-            } else {
+            }
+            else {
                 throw new IllegalStateException("Service " + methodContext.type() + " contains cache targets but does not provide a valid ID");
             }
         }
@@ -73,9 +76,9 @@ public abstract class CacheServiceModifier<A extends Annotation> extends Service
         return this.process(context, methodContext, cacheContext);
     }
 
-    protected abstract <T, R> ProxyFunction<T, R> process(ApplicationContext context, MethodProxyContext<T> methodContext, CacheContext cacheContext);
-
     protected abstract CacheMethodContext context(MethodProxyContext<?> context);
+
+    protected abstract <T, R> ProxyFunction<T, R> process(ApplicationContext context, MethodProxyContext<T> methodContext, CacheContext cacheContext);
 
     @Override
     public <T> boolean preconditions(ApplicationContext context, MethodProxyContext<T> methodContext) {

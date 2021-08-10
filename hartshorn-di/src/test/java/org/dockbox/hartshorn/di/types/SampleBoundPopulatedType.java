@@ -31,7 +31,7 @@ public class SampleBoundPopulatedType implements SampleInterface {
     private SampleField field;
 
     @Bound
-    public SampleBoundPopulatedType(String name) {
+    public SampleBoundPopulatedType(final String name) {
         this.name = name;
     }
 

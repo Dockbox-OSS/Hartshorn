@@ -40,13 +40,13 @@ public @interface Activator {
 
     /**
      * @return The default prefix for the activator. If this is left empty the package of
-     * the activation source is used
+     *         the activation source is used
      */
     String prefix() default "";
 
     /**
      * @return The applicable {@link InjectConfig configurations} which should be used for
-     * this activator
+     *         this activator
      */
     InjectConfig[] configs() default {};
 }

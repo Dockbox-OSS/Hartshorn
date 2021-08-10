@@ -17,18 +17,24 @@
 
 package org.dockbox.hartshorn.commands;
 
-import org.dockbox.hartshorn.i18n.text.actions.CommandAction;
 import org.dockbox.hartshorn.di.annotations.inject.Bound;
 import org.dockbox.hartshorn.i18n.text.actions.ClickAction;
+import org.dockbox.hartshorn.i18n.text.actions.CommandAction;
 
 /**
  * Utility class to create a {@link RunCommand} action.
  */
 public final class RunCommandAction {
 
+    private RunCommandAction() {
+    }
+
     /**
      * Creates a new {@link RunCommand} action for the given <code>command</code>
-     * @param command The command to perform when the action is run
+     *
+     * @param command
+     *         The command to perform when the action is run
+     *
      * @return The new action
      */
     public static RunCommand runCommand(String command) {
@@ -46,8 +52,5 @@ public final class RunCommandAction {
         private RunCommand(String result) {
             super(result);
         }
-    }
-
-    private RunCommandAction() {
     }
 }

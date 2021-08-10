@@ -39,7 +39,8 @@ public class ContextMethodModifier extends ServiceAnnotatedMethodModifier<Provid
             final String name = annotation.value();
             if ("".equals(name)) {
                 return (R) Hartshorn.context().get(methodContext.returnType());
-            } else {
+            }
+            else {
                 return (R) Hartshorn.context().get(methodContext.returnType(), Bindings.named(name));
             }
         };

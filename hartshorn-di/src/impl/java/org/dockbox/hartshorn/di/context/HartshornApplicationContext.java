@@ -69,10 +69,9 @@ public class HartshornApplicationContext extends ManagedHartshornContext {
     private final ComponentLocator locator;
     private final List<Modifier> modifiers;
     private final Map<Class<?>, Object> singletons = HartshornUtils.emptyConcurrentMap();
-    private MetaProvider metaProvider;
-
     private final transient Set<BoundContext<?, ?>> bindings = HartshornUtils.emptyConcurrentSet();
     private final Map<Key<?>, BindingHierarchy<?>> hierarchies = HartshornUtils.emptyConcurrentMap();
+    private MetaProvider metaProvider;
 
 
     public HartshornApplicationContext(final Class<?> activationSource, final Modifier... modifiers) {
@@ -97,6 +96,29 @@ public class HartshornApplicationContext extends ManagedHartshornContext {
     }
 
     @Override
+    public ComponentLocator locator() {
+        return this.locator;
+    }
+
+    @Override
+    public MetaProvider meta() {
+        return this.metaProvider;
+    }
+
+    @Override
+    public void reset() {
+        this.hierarchies.clear();
+        this.bindings.clear();
+    }
+
+    private <C> void inHierarchy(final Key<C> key, final Consumer<BindingHierarchy<C>> consumer) {
+        //noinspection unchecked
+        final BindingHierarchy<C> hierarchy = (BindingHierarchy<C>) this.hierarchies.getOrDefault(key, new NativeBindingHierarchy<>(key));
+        consumer.accept(hierarchy);
+        this.hierarchies.put(key, hierarchy);
+    }
+
+    @Override
     public <T> T get(final Class<T> type, final Named named) {
         return this.get(type, BindingMetaAttribute.of(named));
     }
@@ -111,7 +133,8 @@ public class HartshornApplicationContext extends ManagedHartshornContext {
         final Exceptional<Object[]> value = Bindings.lookup(UseFactory.class, properties);
         if (value.present()) {
             instance = this.get(TypeFactory.class).with(properties).create(type, value.get());
-        } else {
+        }
+        else {
             instance = this.create(type, instance, properties);
         }
 
@@ -182,7 +205,8 @@ public class HartshornApplicationContext extends ManagedHartshornContext {
                 return instanceCandidate.get();
             }
             return typeInstance;
-        } catch (final Throwable e) {
+        }
+        catch (final Throwable e) {
             // Services can have no explicit implementation even if they are abstract.
             // Typically these services are expected to be populated through injection points later in time.
             if (Reflect.isAbstract(type) && ApplicationContextAware.instance().context().meta().component(type)) return null;
@@ -198,53 +222,6 @@ public class HartshornApplicationContext extends ManagedHartshornContext {
 
         if (this.modifiers.contains(DefaultModifiers.ACTIVATE_ALL)) return true;
         else return super.hasActivator(activator);
-    }
-
-    @Override
-    public ComponentLocator locator() {
-        return this.locator;
-    }
-
-    @Override
-    public MetaProvider meta() {
-        return this.metaProvider;
-    }
-
-    @Override
-    public void reset() {
-        this.hierarchies.clear();
-        this.bindings.clear();
-    }
-
-    @Override
-    public <T> T populate(final T instance) {
-        if (null != instance) {
-            for (final Field field : Reflect.fields(instance.getClass(), Wired.class)) {
-                final Object fieldInstance = ApplicationContextAware.instance().context().get(field.getType());
-                Reflect.set(field, instance, fieldInstance);
-            }
-        }
-        return instance;
-    }
-
-    @Override
-    public void add(final BoundContext<?, ?> context) {
-        this.bindings.add(context);
-    }
-
-    @Override
-    public void add(final ProviderContext<?, ?> context) {
-        //noinspection unchecked
-        final Key<Object> key = (Key<Object>) context.key();
-        this.inHierarchy(key, hierarchy -> {
-            if (context.singleton()) {
-                hierarchy.add(Providers.of(context.provider().get()));
-            }
-            else {
-                //noinspection unchecked
-                hierarchy.add(Providers.of((Supplier<Object>) context.provider()));
-            }
-        });
     }
 
     @Override
@@ -287,6 +264,37 @@ public class HartshornApplicationContext extends ManagedHartshornContext {
     }
 
     @Override
+    public <T> T populate(final T instance) {
+        if (null != instance) {
+            for (final Field field : Reflect.fields(instance.getClass(), Wired.class)) {
+                final Object fieldInstance = ApplicationContextAware.instance().context().get(field.getType());
+                Reflect.set(field, instance, fieldInstance);
+            }
+        }
+        return instance;
+    }
+
+    @Override
+    public void add(final BoundContext<?, ?> context) {
+        this.bindings.add(context);
+    }
+
+    @Override
+    public void add(final ProviderContext<?, ?> context) {
+        //noinspection unchecked
+        final Key<Object> key = (Key<Object>) context.key();
+        this.inHierarchy(key, hierarchy -> {
+            if (context.singleton()) {
+                hierarchy.add(Providers.of(context.provider().get()));
+            }
+            else {
+                //noinspection unchecked
+                hierarchy.add(Providers.of((Supplier<Object>) context.provider()));
+            }
+        });
+    }
+
+    @Override
     public <T> T invoke(final Method method) {
         return this.invoke(method, ApplicationContextAware.instance().context().get(method.getDeclaringClass()));
     }
@@ -300,7 +308,8 @@ public class HartshornApplicationContext extends ManagedHartshornContext {
             final Exceptional<Named> annotation = Reflect.annotation(parameter, Named.class);
             if (annotation.present()) {
                 invokingParameters[i] = ApplicationContextAware.instance().context().get(parameter.getType(), annotation.get());
-            } else {
+            }
+            else {
                 invokingParameters[i] = ApplicationContextAware.instance().context().get(parameter.getType());
             }
         }
@@ -320,6 +329,31 @@ public class HartshornApplicationContext extends ManagedHartshornContext {
         // onUpdate callback is purely so updates will still be saved even if the reference is lost
         if (hierarchy instanceof ContextWrappedHierarchy) return hierarchy;
         else return new ContextWrappedHierarchy<>(hierarchy, updated -> this.hierarchies.put(key, updated));
+    }
+
+    private <C, T extends C> void handleBinder(final Class<T> binder, final Binds annotation) {
+        //noinspection unchecked
+        final Class<C> binds = (Class<C>) annotation.value();
+
+        if (Reflect.constructors(binder, Bound.class).isEmpty()) {
+            this.handleScanned(binder, binds, annotation);
+        }
+        else {
+            //noinspection unchecked
+            this.manual(Key.of((Class<Object>) binds), binder);
+        }
+    }
+
+    private <C> void handleScanned(final Class<? extends C> binder, final Class<C> binds, final Binds bindAnnotation) {
+        final Named meta = bindAnnotation.named();
+        final Key<C> key;
+        if (!"".equals(meta.value())) {
+            key = Key.of(binds, meta);
+        }
+        else {
+            key = Key.of(binds);
+        }
+        this.inHierarchy(key, hierarchy -> hierarchy.add(Providers.of(binder)));
     }
 
     public <T> Exceptional<T> provide(final Class<T> type, final Attribute<?>... additionalProperties) {
@@ -361,37 +395,5 @@ public class HartshornApplicationContext extends ManagedHartshornContext {
         if (Reflect.constructors(implementation, Bound.class).isEmpty())
             throw new IllegalArgumentException("Implementation should contain at least one constructor decorated with @Bound");
         this.bindings.add(new ConstructorBoundContext<>(contract, implementation));
-    }
-
-    private <C, T extends C> void handleBinder(final Class<T> binder, final Binds annotation) {
-        //noinspection unchecked
-        final Class<C> binds = (Class<C>) annotation.value();
-
-        if (Reflect.constructors(binder, Bound.class).isEmpty()) {
-            this.handleScanned(binder, binds, annotation);
-        }
-        else {
-            //noinspection unchecked
-            this.manual(Key.of((Class<Object>) binds), binder);
-        }
-    }
-
-    private <C> void handleScanned(final Class<? extends C> binder, final Class<C> binds, final Binds bindAnnotation) {
-        final Named meta = bindAnnotation.named();
-        final Key<C> key;
-        if (!"".equals(meta.value())) {
-            key = Key.of(binds, meta);
-        }
-        else {
-            key = Key.of(binds);
-        }
-        this.inHierarchy(key, hierarchy -> hierarchy.add(Providers.of(binder)));
-    }
-
-    private <C> void inHierarchy(final Key<C> key, final Consumer<BindingHierarchy<C>> consumer) {
-        //noinspection unchecked
-        final BindingHierarchy<C> hierarchy = (BindingHierarchy<C>) this.hierarchies.getOrDefault(key, new NativeBindingHierarchy<>(key));
-        consumer.accept(hierarchy);
-        this.hierarchies.put(key, hierarchy);
     }
 }

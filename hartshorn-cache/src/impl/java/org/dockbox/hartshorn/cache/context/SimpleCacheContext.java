@@ -26,6 +26,7 @@ import lombok.Getter;
 
 /**
  * Default implementation of {@link CacheContext}.
+ *
  * @see CacheContext
  */
 public class SimpleCacheContext implements CacheContext {

@@ -34,7 +34,7 @@ import java.util.Collection;
  */
 @Binds(WorldEditService.class)
 public class SpongeWorldEditService implements WorldEditService {
-    
+
     @Override
     public Exceptional<Region> selection(Player player) {
         return Exceptional.empty();

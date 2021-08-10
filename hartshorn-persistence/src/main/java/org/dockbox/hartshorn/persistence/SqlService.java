@@ -31,10 +31,15 @@ import java.util.Set;
 public interface SqlService extends AttributeHolder {
 
     void save(Object object);
+
     void update(Object object);
+
     void updateOrSave(Object object);
+
     void delete(Object object);
+
     <T> Set<T> findAll(Class<T> type);
-    <T>Exceptional<T> findById(Class<T> type, Object id);
+
+    <T> Exceptional<T> findById(Class<T> type, Object id);
 
 }

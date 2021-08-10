@@ -58,6 +58,10 @@ public interface FileManager extends AttributeHolder {
      */
     Path configFile(TypedOwner owner);
 
+    default TypedOwner owner(Class<?> type) {
+        return Hartshorn.context().meta().lookup(type);
+    }
+
     default Path dataFile(Class<?> owner, String file) {
         return this.dataFile(this.owner(owner), file);
     }
@@ -108,6 +112,7 @@ public interface FileManager extends AttributeHolder {
      *         {@link Throwable}
      */
     <T> Exceptional<T> read(Path file, Class<T> type);
+
     <T> Exceptional<T> read(Path file, GenericType<T> type);
 
     /**
@@ -290,8 +295,4 @@ public interface FileManager extends AttributeHolder {
      * @return true if the file was copied, otherwise false
      */
     boolean copyDefaultFile(String defaultFileName, Path targetFile);
-
-    default TypedOwner owner(Class<?> type) {
-        return Hartshorn.context().meta().lookup(type);
-    }
 }

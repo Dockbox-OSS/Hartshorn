@@ -31,7 +31,10 @@ public final class SimpleTypedOwner implements TypedOwner {
 
     /**
      * Creates a new {@link SimpleTypedOwner} from the given ID.
-     * @param id The ID of the owner
+     *
+     * @param id
+     *         The ID of the owner
+     *
      * @return The new {@link TypedOwner}
      */
     public static TypedOwner of(String id) {

@@ -40,6 +40,8 @@ public abstract class ServiceAnnotatedMethodModifier<M extends Annotation, A ext
         return !Reflect.methods(type, this.annotation()).isEmpty();
     }
 
+    public abstract Class<M> annotation();
+
     @Override
     public <T> T process(ApplicationContext context, Class<T> type, @Nullable T instance, Attribute<?>... properties) {
         final Collection<Method> methods = Reflect.methods(type, this.annotation());
@@ -65,13 +67,11 @@ public abstract class ServiceAnnotatedMethodModifier<M extends Annotation, A ext
         return Exceptional.of(handler::proxy).or(instance);
     }
 
-    public abstract <T, R> ProxyFunction<T, R> process(ApplicationContext context, MethodProxyContext<T> methodContext);
-
     public abstract <T> boolean preconditions(ApplicationContext context, MethodProxyContext<T> methodContext);
+
+    public abstract <T, R> ProxyFunction<T, R> process(ApplicationContext context, MethodProxyContext<T> methodContext);
 
     public boolean failOnPrecondition() {
         return true;
     }
-
-    public abstract Class<M> annotation();
 }

@@ -27,8 +27,8 @@ import org.dockbox.hartshorn.di.annotations.inject.Wired;
 import org.dockbox.hartshorn.di.annotations.service.ServiceActivator;
 import org.dockbox.hartshorn.di.binding.Bindings;
 import org.dockbox.hartshorn.di.inject.InjectionModifier;
-import org.dockbox.hartshorn.di.properties.AttributeHolder;
 import org.dockbox.hartshorn.di.properties.Attribute;
+import org.dockbox.hartshorn.di.properties.AttributeHolder;
 import org.dockbox.hartshorn.di.services.ComponentContainer;
 import org.dockbox.hartshorn.di.services.ServiceProcessor;
 import org.dockbox.hartshorn.util.HartshornUtils;
@@ -118,7 +118,8 @@ public abstract class ManagedHartshornContext extends DefaultContext implements 
                 .forEach(injectableType -> {
                     try {
                         Bindings.enable(injectableType);
-                    } catch (final ApplicationException e) {
+                    }
+                    catch (final ApplicationException e) {
                         throw e.runtime();
                     }
                 });
@@ -139,20 +140,6 @@ public abstract class ManagedHartshornContext extends DefaultContext implements 
         }
         catch (final Exception e) {
             throw new ProvisionFailure("Could not provide raw instance of " + type.getSimpleName(), e);
-        }
-    }
-
-    protected void process(final String prefix) {
-        this.locator().register(prefix);
-        final Collection<ComponentContainer> containers = this.locator().containers(ComponentType.FUNCTIONAL);
-        for (final ServiceProcessor<?> serviceProcessor : this.serviceProcessors) {
-            for (final ComponentContainer container : containers) {
-                if (container.activators().stream().allMatch(this::hasActivator)) {
-                    final Class<?> service = container.type();
-                    if (serviceProcessor.preconditions(service)) serviceProcessor.process(this, service);
-                    this.services.add(service);
-                }
-            }
         }
     }
 
@@ -186,6 +173,20 @@ public abstract class ManagedHartshornContext extends DefaultContext implements 
     public <A> A activator(final Class<A> activator) {
         //noinspection unchecked
         return (A) this.activators.stream().filter(a -> a.annotationType().equals(activator)).findFirst().orElse(null);
+    }
+
+    protected void process(final String prefix) {
+        this.locator().register(prefix);
+        final Collection<ComponentContainer> containers = this.locator().containers(ComponentType.FUNCTIONAL);
+        for (final ServiceProcessor<?> serviceProcessor : this.serviceProcessors) {
+            for (final ComponentContainer container : containers) {
+                if (container.activators().stream().allMatch(this::hasActivator)) {
+                    final Class<?> service = container.type();
+                    if (serviceProcessor.preconditions(service)) serviceProcessor.process(this, service);
+                    this.services.add(service);
+                }
+            }
+        }
     }
 
 }

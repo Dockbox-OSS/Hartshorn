@@ -20,14 +20,15 @@ package org.dockbox.hartshorn.cache;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.task.TaskRunner;
 import org.dockbox.hartshorn.di.annotations.inject.Binds;
-import org.dockbox.hartshorn.di.properties.AttributeHolder;
 import org.dockbox.hartshorn.di.properties.Attribute;
+import org.dockbox.hartshorn.di.properties.AttributeHolder;
 import org.dockbox.hartshorn.util.HartshornUtils;
 
 import java.util.Collection;
 
 /**
  * Default implementation of {@link Cache}.
+ *
  * @see Cache
  */
 @Binds(Cache.class)
@@ -50,19 +51,19 @@ public class SimpleCache<T> implements Cache<T>, AttributeHolder {
         }
     }
 
-    private void scheduleEviction() {
-        // Negative amounts are considered non-expiring
-        if (this.expiration.amount() > 0) {
-            TaskRunner.create().acceptDelayed(this::evict, this.expiration.amount(), this.expiration.unit());
-        }
-    }
-
     @Override
     public void update(T object) {
         if (this.content == null) {
             this.populate(HartshornUtils.emptyList());
         }
         this.content.add(object);
+    }
+
+    private void scheduleEviction() {
+        // Negative amounts are considered non-expiring
+        if (this.expiration.amount() > 0) {
+            TaskRunner.create().acceptDelayed(this::evict, this.expiration.amount(), this.expiration.unit());
+        }
     }
 
     @Override

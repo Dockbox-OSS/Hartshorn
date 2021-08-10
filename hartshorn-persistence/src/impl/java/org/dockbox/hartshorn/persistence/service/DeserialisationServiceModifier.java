@@ -71,15 +71,15 @@ public class DeserialisationServiceModifier extends AbstractPersistenceServiceMo
         };
     }
 
+    @Override
+    protected Class<DeserialisationContext> contextType() {
+        return DeserialisationContext.class;
+    }
+
     @SuppressWarnings("unchecked")
     private <R> R wrapResult(Exceptional<?> result, MethodProxyContext<?> methodContext) {
         if (Reflect.assigns(Exceptional.class, methodContext.returnType())) return (R) result;
         else return (R) result.orNull();
-    }
-
-    @Override
-    protected Class<DeserialisationContext> contextType() {
-        return DeserialisationContext.class;
     }
 
     @Override
@@ -131,7 +131,8 @@ public class DeserialisationServiceModifier extends AbstractPersistenceServiceMo
                 if (type instanceof Class) return (Class<?>) type;
                 else return null;
             }
-        } else {
+        }
+        else {
             return returnType;
         }
     }

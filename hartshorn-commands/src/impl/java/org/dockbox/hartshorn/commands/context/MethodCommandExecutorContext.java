@@ -20,19 +20,19 @@ package org.dockbox.hartshorn.commands.context;
 import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.domain.Subject;
-import org.dockbox.hartshorn.events.annotations.Posting;
-import org.dockbox.hartshorn.events.parents.Cancellable;
 import org.dockbox.hartshorn.api.exceptions.Except;
-import org.dockbox.hartshorn.i18n.common.ResourceEntry;
 import org.dockbox.hartshorn.commands.CommandExecutor;
 import org.dockbox.hartshorn.commands.CommandParser;
 import org.dockbox.hartshorn.commands.CommandResources;
+import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.commands.annotations.Command;
 import org.dockbox.hartshorn.commands.definition.CommandElement;
 import org.dockbox.hartshorn.commands.events.CommandEvent;
 import org.dockbox.hartshorn.commands.events.CommandEvent.Before;
-import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.di.context.DefaultContext;
+import org.dockbox.hartshorn.events.annotations.Posting;
+import org.dockbox.hartshorn.events.parents.Cancellable;
+import org.dockbox.hartshorn.i18n.common.ResourceEntry;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.dockbox.hartshorn.util.Reflect;
 import org.jetbrains.annotations.Nullable;
@@ -52,7 +52,7 @@ import lombok.Getter;
  * Simple implementation of {@link CommandExecutorContext} targeting {@link Method} based executors.
  */
 @Getter(AccessLevel.PROTECTED)
-@Posting({CommandEvent.Before.class, CommandEvent.After.class})
+@Posting({ CommandEvent.Before.class, CommandEvent.After.class })
 public class MethodCommandExecutorContext extends DefaultContext implements CommandExecutorContext {
 
     private final Method method;
@@ -92,6 +92,40 @@ public class MethodCommandExecutorContext extends DefaultContext implements Comm
         this.parameters = this.parameters();
     }
 
+    private Map<String, ParameterContext> parameters() {
+        if (this.parameters == null) {
+            this.parameters = HartshornUtils.emptyMap();
+            Parameter[] methodParameters = this.method.getParameters();
+
+            for (int i = 0; i < methodParameters.length; i++) {
+                Parameter parameter = methodParameters[i];
+                this.parameters.put(parameter.getName(), new ParameterContext(parameter, i));
+            }
+        }
+        return this.parameters;
+    }
+
+    @Override
+    public CommandExecutor executor() {
+        return (ctx) -> {
+            final Cancellable before = new Before(ctx.source(), ctx).post();
+            if (before.cancelled()) {
+                final ResourceEntry cancelled = Hartshorn.context().get(CommandResources.class).cancelled();
+                ctx.source().send(cancelled);
+            }
+
+            final Object instance = Hartshorn.context().get(this.type());
+            final List<Object> arguments = this.arguments(ctx);
+            try {
+                this.method.invoke(instance, arguments.toArray());
+                new CommandEvent.After(ctx.source(), ctx).post();
+            }
+            catch (IllegalAccessException | InvocationTargetException e) {
+                Except.handle(e);
+            }
+        };
+    }
+
     @Override
     public boolean accepts(String command) {
         final CommandDefinitionContext context = this.definition();
@@ -102,15 +136,6 @@ public class MethodCommandExecutorContext extends DefaultContext implements Comm
     public String strip(String command, boolean parentOnly) {
         command = this.stripAny(command, this.parentAliases);
         if (!parentOnly) command = this.stripAny(command, this.definition().aliases());
-        return command;
-    }
-
-    private String stripAny(String command, Iterable<String> aliases) {
-        for (String alias : aliases) {
-            // Equality is expected when no required arguments are present afterwards
-            if (command.equals(alias)) command = "";
-            else if (command.startsWith(alias + ' ')) command = command.substring(alias.length()+1);
-        }
         return command;
     }
 
@@ -140,7 +165,7 @@ public class MethodCommandExecutorContext extends DefaultContext implements Comm
         final String stripped = this.strip(command, false);
         final List<CommandElement<?>> elements = this.definition().elements();
         final List<String> tokens = HartshornUtils.asList(stripped.split(" "));
-        if (command.endsWith(" ") && !"".equals(tokens.get(tokens.size()-1))) tokens.add("");
+        if (command.endsWith(" ") && !"".equals(tokens.get(tokens.size() - 1))) tokens.add("");
 
         CommandElement<?> last = null;
         for (CommandElement<?> element : elements) {
@@ -162,25 +187,19 @@ public class MethodCommandExecutorContext extends DefaultContext implements Comm
         return HartshornUtils.asUnmodifiableList(last.suggestions(source, String.join(" ", tokens)));
     }
 
-    @Override
-    public CommandExecutor executor() {
-        return (ctx) -> {
-            final Cancellable before = new Before(ctx.source(), ctx).post();
-            if (before.cancelled()) {
-                final ResourceEntry cancelled = Hartshorn.context().get(CommandResources.class).cancelled();
-                ctx.source().send(cancelled);
-            }
+    private CommandDefinitionContext definition() {
+        final Exceptional<CommandDefinitionContext> definition = this.first(CommandDefinitionContext.class);
+        if (definition.absent()) throw new IllegalStateException("Definition context was lost!");
+        return definition.get();
+    }
 
-            final Object instance = Hartshorn.context().get(this.type());
-            final List<Object> arguments = this.arguments(ctx);
-            try {
-                this.method.invoke(instance, arguments.toArray());
-                new CommandEvent.After(ctx.source(), ctx).post();
-            }
-            catch (IllegalAccessException | InvocationTargetException e) {
-                Except.handle(e);
-            }
-        };
+    private String stripAny(String command, Iterable<String> aliases) {
+        for (String alias : aliases) {
+            // Equality is expected when no required arguments are present afterwards
+            if (command.equals(alias)) command = "";
+            else if (command.startsWith(alias + ' ')) command = command.substring(alias.length() + 1);
+        }
+        return command;
     }
 
     private List<Object> arguments(CommandContext context) {
@@ -199,24 +218,5 @@ public class MethodCommandExecutorContext extends DefaultContext implements Comm
             }
         }
         return arguments;
-    }
-
-    private Map<String, ParameterContext> parameters() {
-        if (this.parameters == null) {
-            this.parameters = HartshornUtils.emptyMap();
-            Parameter[] methodParameters = this.method.getParameters();
-
-            for (int i = 0; i < methodParameters.length; i++) {
-                Parameter parameter = methodParameters[i];
-                this.parameters.put(parameter.getName(), new ParameterContext(parameter, i));
-            }
-        }
-        return this.parameters;
-    }
-
-    private CommandDefinitionContext definition() {
-        final Exceptional<CommandDefinitionContext> definition = this.first(CommandDefinitionContext.class);
-        if (definition.absent()) throw new IllegalStateException("Definition context was lost!");
-        return definition.get();
     }
 }

@@ -37,7 +37,10 @@ public class ParameterContext {
 
     /**
      * Checks if the provided type is equal to, or a supertype of, the stored parameter's type.
-     * @param type The type to compare against
+     *
+     * @param type
+     *         The type to compare against
+     *
      * @return <code>true</code> if the provided type is equal or a supertype, else <code>false</code>
      */
     public boolean is(Class<?> type) {

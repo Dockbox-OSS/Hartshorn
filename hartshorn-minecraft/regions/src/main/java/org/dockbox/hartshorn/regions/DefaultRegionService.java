@@ -42,22 +42,33 @@ public class DefaultRegionService implements RegionService, AttributeHolder {
     private RegionsList regions;
     private Path regionStorageDir;
 
-    @Override
+    public Set<PersistentFlagModel> flags() {
+        return this.regions.flags();
+    }    @Override
     public <R extends Region> Exceptional<R> first(Location location, Class<R> type) {
         return this.first(location.world(), location.vector(), type);
     }
 
-    @Override
+    public void add(RegionFlag<?> flag) {
+        this.regions.add(flag);
+    }    @Override
     public <R extends Region> Exceptional<R> first(Player player, Class<R> type) {
         return this.first(player.location(), type);
     }
 
-    @Override
+    public void add(CustomRegion element) {
+        this.regions.add(element);
+    }    @Override
     public <R extends Region> Exceptional<R> first(World world, int x, int y, Class<R> type) {
         return this.first(world, Vector3N.of(x, -1, y), type);
     }
 
-    private <R extends Region> Exceptional<R> first(World world, Vector3N position, Class<R> type) {
+    @Override
+    public void enable() {
+        this.regionStorageDir = this.fileManager.data(DefaultRegionService.class);
+        this.fileManager.createPathIfNotExists(this.regionStorageDir);
+        this.regions = RegionsList.restore(this.regionStorageDir);
+    }    private <R extends Region> Exceptional<R> first(World world, Vector3N position, Class<R> type) {
         if (CustomRegion.class.equals(type) || Region.class.equals(type)) {
             // TODO
         }
@@ -99,22 +110,11 @@ public class DefaultRegionService implements RegionService, AttributeHolder {
         return Exceptional.empty();
     }
 
-    public Set<PersistentFlagModel> flags() {
-        return this.regions.flags();
-    }
 
-    public void add(RegionFlag<?> flag) {
-        this.regions.add(flag);
-    }
 
-    public void add(CustomRegion element) {
-        this.regions.add(element);
-    }
 
-    @Override
-    public void enable() {
-        this.regionStorageDir = this.fileManager.data(DefaultRegionService.class);
-        this.fileManager.createPathIfNotExists(this.regionStorageDir);
-        this.regions = RegionsList.restore(this.regionStorageDir);
-    }
+
+
+
+
 }

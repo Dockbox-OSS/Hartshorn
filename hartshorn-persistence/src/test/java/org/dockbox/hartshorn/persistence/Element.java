@@ -20,6 +20,7 @@ package org.dockbox.hartshorn.persistence;
 public interface Element {
 
     Element name(String name);
+
     String name();
 
 }

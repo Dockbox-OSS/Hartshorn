@@ -59,13 +59,13 @@ public class SpongeLocation extends Location implements SpongeComposite {
     }
 
     @Override
-    public Location expand(Vector3N vector) {
-        return new SpongeLocation(this.position.expand(vector), this.world);
+    public Vector3N vector() {
+        return this.position;
     }
 
     @Override
-    public Vector3N vector() {
-        return this.position;
+    public Location expand(Vector3N vector) {
+        return new SpongeLocation(this.position.expand(vector), this.world);
     }
 
     @Override

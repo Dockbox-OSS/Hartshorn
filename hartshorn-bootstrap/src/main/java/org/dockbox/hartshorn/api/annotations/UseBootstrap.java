@@ -27,6 +27,7 @@ import java.lang.annotation.Target;
 /**
  * Service activator for bootstrap-dependent services. This activator is automatically injected
  * when the application is created through {@link org.dockbox.hartshorn.api.HartshornBootstrap}.
+ *
  * @see PostBootstrap
  */
 @Retention(RetentionPolicy.RUNTIME)

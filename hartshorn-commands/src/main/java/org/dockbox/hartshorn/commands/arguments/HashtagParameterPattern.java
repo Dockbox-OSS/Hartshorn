@@ -17,9 +17,9 @@
 
 package org.dockbox.hartshorn.commands.arguments;
 
-import org.dockbox.hartshorn.i18n.common.ResourceEntry;
 import org.dockbox.hartshorn.commands.CommandParameterResources;
 import org.dockbox.hartshorn.di.annotations.inject.Wired;
+import org.dockbox.hartshorn.i18n.common.ResourceEntry;
 
 /**
  * Converts Hashtag-patterns into type instances used by command executors. The pattern follows the HashtagPatternParser from WorldEdit.

@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE, ElementType.METHOD, ElementType.ANNOTATION_TYPE})
+@Target({ ElementType.TYPE, ElementType.METHOD, ElementType.ANNOTATION_TYPE })
 @interface Animal {
     boolean fluffy() default false;
 
@@ -42,7 +42,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 }
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE, ElementType.METHOD, ElementType.ANNOTATION_TYPE})
+@Target({ ElementType.TYPE, ElementType.METHOD, ElementType.ANNOTATION_TYPE })
 @Extends(Animal.class)
 @Animal(fluffy = true)
 @interface Pet {
@@ -50,7 +50,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 }
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE, ElementType.METHOD, ElementType.ANNOTATION_TYPE})
+@Target({ ElementType.TYPE, ElementType.METHOD, ElementType.ANNOTATION_TYPE })
 @Extends(Pet.class)
 @interface Cat {
     @AliasFor("name")
@@ -58,14 +58,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 }
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE, ElementType.METHOD, ElementType.ANNOTATION_TYPE})
+@Target({ ElementType.TYPE, ElementType.METHOD, ElementType.ANNOTATION_TYPE })
 @Extends(Pet.class)
 @interface Dog {
     String name();
 }
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE, ElementType.METHOD, ElementType.ANNOTATION_TYPE})
+@Target({ ElementType.TYPE, ElementType.METHOD, ElementType.ANNOTATION_TYPE })
 @Extends(Animal.class)
 @interface Rat {
     @AliasFor(target = Animal.class, value = "name")

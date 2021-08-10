@@ -43,7 +43,7 @@ public class ResourceServiceTests {
         return new ListResourceBundle() {
             @Override
             protected Object[][] getContents() {
-                return new Object[][]{ { "demo", value} };
+                return new Object[][]{ { "demo", value } };
             }
         };
     }
@@ -114,7 +114,7 @@ public class ResourceServiceTests {
         Assertions.assertTrue(demo.present());
         ResourceEntry entry = demo.get();
         for (Language value : Language.values()) {
-            Assertions.assertEquals("Demo:"+ value.code(), entry.translate(value).plain());
+            Assertions.assertEquals("Demo:" + value.code(), entry.translate(value).plain());
         }
     }
 

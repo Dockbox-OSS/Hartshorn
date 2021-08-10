@@ -20,9 +20,9 @@ package org.dockbox.hartshorn.server.minecraft.packets;
 import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.annotations.PostBootstrap;
 import org.dockbox.hartshorn.api.annotations.UseBootstrap;
+import org.dockbox.hartshorn.di.annotations.service.Service;
 import org.dockbox.hartshorn.events.EventBus;
 import org.dockbox.hartshorn.events.EventWrapper;
-import org.dockbox.hartshorn.di.annotations.service.Service;
 import org.dockbox.hartshorn.server.minecraft.events.packet.PacketEvent;
 import org.dockbox.hartshorn.util.Reflect;
 

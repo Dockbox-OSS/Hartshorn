@@ -20,7 +20,8 @@ package org.dockbox.hartshorn.server.minecraft.dimension.world.generation;
 import lombok.Getter;
 import lombok.Setter;
 
-@Getter @Setter
+@Getter
+@Setter
 public abstract class AbstractWorldGenerator implements WorldGenerator {
 
     private Biome biome = Biomes.FOREST;

@@ -29,6 +29,18 @@ import java.nio.file.Path;
 public interface ConfigurationManager {
 
     /**
+     * Creates a new {@link ConfigurationManager} for the given {@link Path}.
+     *
+     * @param path
+     *         The path referencing the configuration file.
+     *
+     * @return The new {@link ConfigurationManager}
+     */
+    static ConfigurationManager of(Path path) {
+        return Hartshorn.context().get(ConfigurationManager.class, path);
+    }
+
+    /**
      * Attempts to obtain a single configuration value from the given key. Nested
      * values are separated by a single period symbol. For example, in the configuration
      * (JSON) below the deepest value is accessed with <code>config.nested.value</code>,
@@ -42,19 +54,14 @@ public interface ConfigurationManager {
      *         }
      *     }
      * </code></pre>
-     * @param key The key used to look up the value
-     * @param <T> The expected type of the value
+     *
+     * @param key
+     *         The key used to look up the value
+     * @param <T>
+     *         The expected type of the value
+     *
      * @return The value if it exists, or {@link Exceptional#empty()}
      */
     <T> Exceptional<T> get(String key);
-
-    /**
-     * Creates a new {@link ConfigurationManager} for the given {@link Path}.
-     * @param path The path referencing the configuration file.
-     * @return The new {@link ConfigurationManager}
-     */
-    static ConfigurationManager of(Path path) {
-        return Hartshorn.context().get(ConfigurationManager.class, path);
-    }
 
 }

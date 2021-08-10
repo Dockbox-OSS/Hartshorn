@@ -26,13 +26,19 @@ import lombok.Getter;
 
 /**
  * The default (abstract) implementation for {@link ArgumentConverter argument converters}.
- * @param <T> The type the argument is converted into
+ *
+ * @param <T>
+ *         The type the argument is converted into
  */
 public abstract class DefaultArgumentConverter<T> implements ArgumentConverter<T> {
 
     private final String[] keys;
     @Getter private final Class<T> type;
     private final int size;
+
+    protected DefaultArgumentConverter(Class<T> type, String... keys) {
+        this(type, 1, keys);
+    }
 
     protected DefaultArgumentConverter(Class<T> type, int size, String... keys) {
         if (0 == keys.length)
@@ -42,16 +48,12 @@ public abstract class DefaultArgumentConverter<T> implements ArgumentConverter<T
         this.size = size;
     }
 
-    protected DefaultArgumentConverter(Class<T> type, String... keys) {
-        this(type, 1, keys);
+    public List<String> keys() {
+        return Arrays.asList(this.keys);
     }
 
     @Override
     public int size() {
         return this.size;
-    }
-
-    public List<String> keys() {
-        return Arrays.asList(this.keys);
     }
 }

@@ -25,14 +25,15 @@ import java.lang.reflect.Type;
 /**
  * Generic type reference, allowing for generic type reading. This is derived
  * from Jackson's TypeReference.
- * @param <T> The generic type
+ *
+ * @param <T>
+ *         The generic type
  */
 public abstract class GenericType<T> implements Comparable<GenericType<T>> {
 
     protected final Type _type;
 
-    protected GenericType()
-    {
+    protected GenericType() {
         Type superClass = this.getClass().getGenericSuperclass();
         if (superClass instanceof Class<?>) {
             throw new IllegalArgumentException("Internal error: GenericType constructed without actual type information");
@@ -40,9 +41,9 @@ public abstract class GenericType<T> implements Comparable<GenericType<T>> {
         this._type = ((ParameterizedType) superClass).getActualTypeArguments()[0];
     }
 
-    public Type getType() { return this._type; }
+    public Type getType() {return this._type;}
 
     @Override
-    public int compareTo(@NotNull GenericType<T> o) { return 0; }
+    public int compareTo(@NotNull GenericType<T> o) {return 0;}
 
 }

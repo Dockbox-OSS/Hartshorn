@@ -19,8 +19,8 @@ package org.dockbox.hartshorn.regions;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.domain.tuple.Vector3N;
-import org.dockbox.hartshorn.i18n.text.Text;
 import org.dockbox.hartshorn.api.keys.KeyHolder;
+import org.dockbox.hartshorn.i18n.text.Text;
 import org.dockbox.hartshorn.regions.flags.RegionFlag;
 import org.dockbox.hartshorn.server.minecraft.dimension.position.Location;
 import org.dockbox.hartshorn.server.minecraft.dimension.world.World;
@@ -49,6 +49,7 @@ public interface Region extends KeyHolder<Region> {
     Vector3N size();
 
     Vector3N cornerA();
+
     Vector3N cornerB();
 
     World world();

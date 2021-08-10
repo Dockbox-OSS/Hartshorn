@@ -22,7 +22,9 @@ import org.dockbox.hartshorn.api.exceptions.ApplicationException;
 public interface BoundContext<T, I extends T> {
 
     String name();
+
     Class<T> contract();
+
     T create(Object... arguments) throws ApplicationException;
 
 }

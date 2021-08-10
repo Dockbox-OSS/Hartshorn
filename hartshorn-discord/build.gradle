@@ -8,7 +8,7 @@ dependencies {
     compileOnly project(':hartshorn-commands')
 
     apiInclude 'com.github.ygimenez:Pagination-Utils:2.1.1'
-    apiShare ("net.dv8tion:JDA:$jdaVersion") {
+    apiShare("net.dv8tion:JDA:$jdaVersion") {
         exclude module: 'opus-java'
     }
 }

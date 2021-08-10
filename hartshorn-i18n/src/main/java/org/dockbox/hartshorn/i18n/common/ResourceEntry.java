@@ -23,11 +23,7 @@ import org.dockbox.hartshorn.persistence.PersistentCapable;
 
 public interface ResourceEntry extends Formattable, PersistentCapable<ResourceEntryModel> {
 
-    String key();
-
     Text asText();
-
-    String asString();
 
     String plain();
 
@@ -39,8 +35,6 @@ public interface ResourceEntry extends Formattable, PersistentCapable<ResourceEn
 
     ResourceEntry format(Object... args);
 
-    Language language();
-
     @Override
     default Class<? extends ResourceEntryModel> type() {
         return ResourceEntryModel.class;
@@ -50,4 +44,10 @@ public interface ResourceEntry extends Formattable, PersistentCapable<ResourceEn
     default ResourceEntryModel model() {
         return new ResourceEntryModel(this.key(), this.asString(), this.language());
     }
+
+    String key();
+
+    String asString();
+
+    Language language();
 }

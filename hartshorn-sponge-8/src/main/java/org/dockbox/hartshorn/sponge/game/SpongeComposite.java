@@ -19,11 +19,11 @@ package org.dockbox.hartshorn.sponge.game;
 
 import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.i18n.entry.DefaultResources;
 import org.dockbox.hartshorn.api.keys.PersistentDataHolder;
 import org.dockbox.hartshorn.api.keys.PersistentDataKey;
 import org.dockbox.hartshorn.api.keys.StoredPersistentKey;
 import org.dockbox.hartshorn.api.keys.TransactionResult;
+import org.dockbox.hartshorn.i18n.entry.DefaultResources;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.dockbox.hartshorn.util.Reflect;
 import org.spongepowered.api.ResourceKey;

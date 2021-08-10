@@ -33,14 +33,14 @@ public abstract class AbstractRegionFlag<T> implements RegionFlag<T> {
     private final ResourceEntry description;
 
     @Override
+    public int hashCode() {
+        return Objects.hash(this.id());
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof RegionFlag<?> that)) return false;
         return this.id().equals(that.id());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(this.id());
     }
 }

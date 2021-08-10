@@ -17,11 +17,11 @@
 
 package org.dockbox.hartshorn.worldmanagement;
 
-import org.dockbox.hartshorn.events.annotations.Listener;
 import org.dockbox.hartshorn.api.task.TaskRunner;
 import org.dockbox.hartshorn.commands.annotations.Command;
 import org.dockbox.hartshorn.di.annotations.inject.Wired;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
+import org.dockbox.hartshorn.events.annotations.Listener;
 import org.dockbox.hartshorn.server.minecraft.dimension.Worlds;
 import org.dockbox.hartshorn.server.minecraft.dimension.position.Location;
 import org.dockbox.hartshorn.server.minecraft.dimension.world.World;
@@ -32,17 +32,16 @@ import org.dockbox.hartshorn.server.minecraft.events.server.ServerState.Started;
 
 import java.util.concurrent.TimeUnit;
 
-@Command(value = {"unloader", "wu"}, permission = WorldManagement.WORLD_MANAGER)
+@Command(value = { "unloader", "wu" }, permission = WorldManagement.WORLD_MANAGER)
 public class WorldManagement {
 
+    protected static final String WORLD_MANAGER = "hartshorn.worlds";
     @Wired
     private WorldManagementConfig config;
     @Wired
     private WorldManagementResources resources;
     @Wired
     private ApplicationContext context;
-
-    protected static final String WORLD_MANAGER = "hartshorn.worlds";
 
     @Listener
     public void reload(EngineChangedState<Reload> event) {

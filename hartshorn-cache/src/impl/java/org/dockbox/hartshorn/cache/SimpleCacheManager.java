@@ -27,6 +27,7 @@ import java.util.Map;
 
 /**
  * Default implementation of {@link CacheManager}.
+ *
  * @see CacheManager
  */
 @SuppressWarnings("unchecked")

@@ -38,34 +38,6 @@ import java.lang.reflect.Field;
 
 public class HartshornRunner implements BeforeAllCallback, AfterAllCallback, AfterEachCallback {
 
-    private boolean reset = false;
-
-    public static final class HartshornRunnerBuilder {
-        private boolean reset = false;
-
-        private HartshornRunnerBuilder() {}
-
-        /**
-         * Whether the build should reset after each test.
-         * @param reset <code>true</code> to reset after each test, or <code>false</code>
-         * @return The current builder
-         */
-        public HartshornRunnerBuilder resetEach(final boolean reset) {
-            this.reset = reset;
-            return this;
-        }
-
-        public HartshornRunner build() {
-            final HartshornRunner hartshornRunner = new HartshornRunner();
-            hartshornRunner.reset = this.reset;
-            return hartshornRunner;
-        }
-    }
-
-    public static HartshornRunnerBuilder builder() {
-        return new HartshornRunnerBuilder();
-    }
-
     private static final Field injectionPoints;
     private static final Field serviceModifiers;
     private static final Field serviceProcessors;
@@ -89,16 +61,22 @@ public class HartshornRunner implements BeforeAllCallback, AfterAllCallback, Aft
             context = Reflect.class.getDeclaredField("context");
             context.setAccessible(true);
 
-        } catch (final NoSuchFieldException e) {
+        }
+        catch (final NoSuchFieldException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private boolean reset = false;
+
+    public static HartshornRunnerBuilder builder() {
+        return new HartshornRunnerBuilder();
     }
 
     @Override
     public void beforeAll(final ExtensionContext context) throws Exception {
         JUnit5Application.prepareBootstrap();
     }
-
 
     @Override
     public void afterAll(final ExtensionContext context) {
@@ -132,6 +110,31 @@ public class HartshornRunner implements BeforeAllCallback, AfterAllCallback, Aft
             catch (final IllegalAccessException e) {
                 throw new ApplicationException(e);
             }
+        }
+    }
+
+    public static final class HartshornRunnerBuilder {
+        private boolean reset = false;
+
+        private HartshornRunnerBuilder() {}
+
+        /**
+         * Whether the build should reset after each test.
+         *
+         * @param reset
+         *         <code>true</code> to reset after each test, or <code>false</code>
+         *
+         * @return The current builder
+         */
+        public HartshornRunnerBuilder resetEach(final boolean reset) {
+            this.reset = reset;
+            return this;
+        }
+
+        public HartshornRunner build() {
+            final HartshornRunner hartshornRunner = new HartshornRunner();
+            hartshornRunner.reset = this.reset;
+            return hartshornRunner;
         }
     }
 }

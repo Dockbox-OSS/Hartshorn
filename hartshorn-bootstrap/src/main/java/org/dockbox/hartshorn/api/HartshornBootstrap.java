@@ -48,8 +48,17 @@ import lombok.Getter;
  */
 public abstract class HartshornBootstrap extends InjectableBootstrap {
 
-    @Getter private String version;
     private final Set<Method> postBootstrapActivations = HartshornUtils.emptyConcurrentSet();
+    @Getter private String version;
+
+    /**
+     * Returns the active instance of {@link HartshornBootstrap}, if any.
+     *
+     * @return The active instance or <code>null</code>
+     */
+    public static HartshornBootstrap instance() {
+        return (HartshornBootstrap) InjectableBootstrap.instance();
+    }
 
     @Override
     public void create(final Collection<String> prefixes, final Class<?> activationSource, final List<Annotation> activators, final Multimap<InjectPhase, InjectConfiguration> configs, final Modifier... modifiers) {
@@ -65,14 +74,6 @@ public abstract class HartshornBootstrap extends InjectableBootstrap {
         Except.useStackTraces(globalConfig.stacktraces());
         Except.with(globalConfig.level());
         this.version = globalConfig.version();
-    }
-
-    /**
-     * Returns the active instance of {@link HartshornBootstrap}, if any.
-     * @return The active instance or <code>null</code>
-     */
-    public static HartshornBootstrap instance() {
-        return (HartshornBootstrap) InjectableBootstrap.instance();
     }
 
     /**
@@ -93,23 +94,27 @@ public abstract class HartshornBootstrap extends InjectableBootstrap {
         });
     }
 
+    /**
+     * Indicates the behavior to use when a {@link Required} type has no active binding.
+     *
+     * @param type
+     *         The required type
+     */
+    protected void handleMissingBinding(final Class<?> type) {
+        throw new IllegalStateException("No implementation exists for [" + type.getCanonicalName() + "], this will cause functionality to misbehave or not function!");
+    }
+
     @Override
     public Logger log() {
         return Hartshorn.log();
     }
 
     /**
-     * Indicates the behavior to use when a {@link Required} type has no active binding.
-     * @param type The required type
-     */
-    protected void handleMissingBinding(final Class<?> type) {
-        throw new IllegalStateException("No implementation exists for [" + type.getCanonicalName() + "], this will cause functionality to misbehave or not function!");
-    }
-
-    /**
      * Registers the given method as a activation action which should run when bootstrapping
      * completes. This requires all activators for the declaring class to be present.
-     * @param method The method to activate
+     *
+     * @param method
+     *         The method to activate
      */
     void addPostBootstrapActivation(final Method method) {
         Objects.requireNonNull(method);

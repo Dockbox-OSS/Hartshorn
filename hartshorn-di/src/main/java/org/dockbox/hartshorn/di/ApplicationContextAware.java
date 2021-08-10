@@ -25,17 +25,8 @@ import lombok.Getter;
 
 public abstract class ApplicationContextAware {
 
-    @Getter private ApplicationContext context;
-
     private static ApplicationContextAware instance;
-
-    public void create(final ApplicationContext context) {
-        this.context = context;
-    }
-
-    public abstract <T> Exceptional<T> proxy(Class<T> type, T instance);
-
-    public abstract Logger log();
+    @Getter private ApplicationContext context;
 
     public static ApplicationContextAware instance() {
         return instance;
@@ -44,5 +35,13 @@ public abstract class ApplicationContextAware {
     protected static void instance(final ApplicationContextAware bootstrap) {
         ApplicationContextAware.instance = bootstrap;
     }
+
+    public void create(final ApplicationContext context) {
+        this.context = context;
+    }
+
+    public abstract <T> Exceptional<T> proxy(Class<T> type, T instance);
+
+    public abstract Logger log();
 
 }

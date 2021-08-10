@@ -32,83 +32,85 @@ import javax.tools.ToolProvider;
 
 /**
  * In-memory compile Java source code as String.
- * 
+ *
  * @author michael
  */
 @Component
 public class Compiler {
 
-	private final JavaCompiler compiler;
-	private final StandardJavaFileManager stdManager;
+    private final JavaCompiler compiler;
+    private final StandardJavaFileManager stdManager;
 
-	public Compiler() {
-		this.compiler = ToolProvider.getSystemJavaCompiler();
-		this.stdManager = this.compiler.getStandardFileManager(null, null, null);
-	}
+    public Compiler() {
+        this.compiler = ToolProvider.getSystemJavaCompiler();
+        this.stdManager = this.compiler.getStandardFileManager(null, null, null);
+    }
 
-	public Exceptional<Class<?>> compile(String source) {
-		return Exceptional.of(() -> {
-			String className = this.extractClassName(source);
-			String packageName = this.extractPackage(source);
+    public Exceptional<Class<?>> compile(String source) {
+        return Exceptional.of(() -> {
+            String className = this.extractClassName(source);
+            String packageName = this.extractPackage(source);
 
-			Compiler compiler = new Compiler();
-			Map<String, byte[]> result = compiler.compile(className + ".java", source);
-			return compiler.loadClass(packageName + '.' + className, result);
-		});
-	}
+            Compiler compiler = new Compiler();
+            Map<String, byte[]> result = compiler.compile(className + ".java", source);
+            return compiler.loadClass(packageName + '.' + className, result);
+        });
+    }
 
-	private String extractClassName(String source) {
-		int class_ = source.indexOf("class ");
-		if (class_ == -1) throw new IllegalArgumentException("Missing class definition");
-		String sub = source.substring(class_ + 6);
-		return sub.substring(0, sub.indexOf(' '));
-	}
+    private String extractClassName(String source) {
+        int class_ = source.indexOf("class ");
+        if (class_ == -1) throw new IllegalArgumentException("Missing class definition");
+        String sub = source.substring(class_ + 6);
+        return sub.substring(0, sub.indexOf(' '));
+    }
 
-	private String extractPackage(String source) {
-		int package_ = source.indexOf("package ");
-		if (package_ == -1) throw new IllegalArgumentException("Missing package definition");
-		String sub = source.substring(package_ + 8);
-		return sub.substring(0, sub.indexOf(';'));
-	}
+    private String extractPackage(String source) {
+        int package_ = source.indexOf("package ");
+        if (package_ == -1) throw new IllegalArgumentException("Missing package definition");
+        String sub = source.substring(package_ + 8);
+        return sub.substring(0, sub.indexOf(';'));
+    }
 
-	/**
-	 * Compile a Java source file in memory.
-	 * 
-	 * @param fileName
-	 *            Java file name, e.g. "Test.java"
-	 * @param source
-	 *            The source code as String.
-	 * @return The compiled results as Map that contains class name as key,
-	 *         class binary as value.
-	 */
-	public Map<String, byte[]> compile(String fileName, String source) {
-		try (MemoryJavaFileManager manager = new MemoryJavaFileManager(this.stdManager)) {
-			JavaFileObject javaFileObject = manager.makeStringSource(fileName, source);
-			CompilationTask task = this.compiler.getTask(null, manager, null, null, null, Collections.singletonList(javaFileObject));
-			Boolean result = task.call();
-			if (result == null || !result) {
-				throw new RuntimeException("Compilation failed.");
-			}
-			return manager.classBytes();
-		}
-	}
+    /**
+     * Compile a Java source file in memory.
+     *
+     * @param fileName
+     *         Java file name, e.g. "Test.java"
+     * @param source
+     *         The source code as String.
+     *
+     * @return The compiled results as Map that contains class name as key,
+     *         class binary as value.
+     */
+    public Map<String, byte[]> compile(String fileName, String source) {
+        try (MemoryJavaFileManager manager = new MemoryJavaFileManager(this.stdManager)) {
+            JavaFileObject javaFileObject = manager.makeStringSource(fileName, source);
+            CompilationTask task = this.compiler.getTask(null, manager, null, null, null, Collections.singletonList(javaFileObject));
+            Boolean result = task.call();
+            if (result == null || !result) {
+                throw new RuntimeException("Compilation failed.");
+            }
+            return manager.classBytes();
+        }
+    }
 
-	/**
-	 * Load class from compiled classes.
-	 * 
-	 * @param name
-	 *            Full class name.
-	 * @param classBytes
-	 *            Compiled results as a Map.
-	 * @return The Class instance.
-	 * @throws ClassNotFoundException
-	 *             If class not found.
-	 * @throws IOException
-	 *             If load error.
-	 */
-	public Class<?> loadClass(String name, Map<String, byte[]> classBytes) throws ClassNotFoundException, IOException {
-		try (MemoryClassLoader classLoader = new MemoryClassLoader(classBytes)) {
-			return classLoader.loadClass(name);
-		}
-	}
+    /**
+     * Load class from compiled classes.
+     *
+     * @param name
+     *         Full class name.
+     * @param classBytes
+     *         Compiled results as a Map.
+     *
+     * @return The Class instance.
+     * @throws ClassNotFoundException
+     *         If class not found.
+     * @throws IOException
+     *         If load error.
+     */
+    public Class<?> loadClass(String name, Map<String, byte[]> classBytes) throws ClassNotFoundException, IOException {
+        try (MemoryClassLoader classLoader = new MemoryClassLoader(classBytes)) {
+            return classLoader.loadClass(name);
+        }
+    }
 }

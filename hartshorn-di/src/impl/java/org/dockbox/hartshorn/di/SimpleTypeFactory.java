@@ -47,7 +47,7 @@ public class SimpleTypeFactory implements TypeFactory {
         if (binding.absent()) {
             if (Reflect.isAbstract(type)) throw new IllegalStateException("Could not autowire " + type.getCanonicalName() + " as there is no active binding for it");
             else {
-                final BoundContext<T,T> context = new ConstructorBoundContext<>(Key.of(type, Bindings.named("")), type);
+                final BoundContext<T, T> context = new ConstructorBoundContext<>(Key.of(type, Bindings.named("")), type);
                 ApplicationContextAware.instance().context().add(context);
                 binding = Exceptional.of(context);
             }

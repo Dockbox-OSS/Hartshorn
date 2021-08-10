@@ -21,5 +21,6 @@ import org.dockbox.hartshorn.di.InjectConfiguration;
 
 public @interface InjectConfig {
     Class<? extends InjectConfiguration> value();
+
     InjectPhase phase() default InjectPhase.EARLY;
 }

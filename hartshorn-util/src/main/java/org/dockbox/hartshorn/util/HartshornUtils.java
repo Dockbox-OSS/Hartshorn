@@ -134,10 +134,6 @@ public final class HartshornUtils {
         }
     }
 
-    public static <K, V> MapBuilder<K, V> mapBuilder() {
-        return new MapBuilder<>();
-    }
-
     /**
      * Returns a new empty map. This should be used globally instead of instantiating maps manually.
      * The returned map is not concurrent.
@@ -152,6 +148,10 @@ public final class HartshornUtils {
      */
     public static <K, V> Map<K, V> emptyMap() {
         return new HashMap<>();
+    }
+
+    public static <K, V> MapBuilder<K, V> mapBuilder() {
+        return new MapBuilder<>();
     }
 
     /**
@@ -190,20 +190,15 @@ public final class HartshornUtils {
         return new ConcurrentHashMap<>();
     }
 
-    @NotNull
-        public static <T> Set<T> asSet(Collection<T> collection) {
-        return new HashSet<>(collection);
-    }
-
     @UnmodifiableView
     @NotNull
-        @SafeVarargs
+    @SafeVarargs
     public static <T> List<T> asUnmodifiableList(T... objects) {
         return Collections.unmodifiableList(HartshornUtils.asList(objects));
     }
 
     @NotNull
-        @SafeVarargs
+    @SafeVarargs
     public static <T> List<T> asList(T... objects) {
         return HartshornUtils.asList(Arrays.asList(objects));
     }
@@ -221,27 +216,23 @@ public final class HartshornUtils {
         return list;
     }
 
-    public static <T> List<T> asUnmodifiableList(Collection<T> collection) {
-        return Collections.unmodifiableList(HartshornUtils.asList(collection));
-    }
-
     public static <T> List<T> emptyList() {
         return new ArrayList<>();
     }
 
-    public static <T> Set<T> emptySet() {
-        return new HashSet<>();
+    public static <T> List<T> asUnmodifiableList(Collection<T> collection) {
+        return Collections.unmodifiableList(HartshornUtils.asList(collection));
     }
 
     @UnmodifiableView
     @NotNull
-        @SafeVarargs
+    @SafeVarargs
     public static <T> Set<T> asUnmodifiableSet(T... objects) {
         return Collections.unmodifiableSet(HartshornUtils.asSet(objects));
     }
 
     @NotNull
-        @SafeVarargs
+    @SafeVarargs
     public static <T> Set<T> asSet(T... objects) {
         return new HashSet<>(HartshornUtils.asList(objects));
     }
@@ -253,6 +244,10 @@ public final class HartshornUtils {
             if (predicate.test(object)) list.add(object);
         }
         return list;
+    }
+
+    public static <T> Set<T> emptySet() {
+        return new HashSet<>();
     }
 
     @SafeVarargs
@@ -270,13 +265,13 @@ public final class HartshornUtils {
 
     @UnmodifiableView
     @NotNull
-        public static <T> Set<T> asUnmodifiableSet(Collection<T> objects) {
+    public static <T> Set<T> asUnmodifiableSet(Collection<T> objects) {
         return Set.copyOf(objects);
     }
 
     @UnmodifiableView
     @NotNull
-        public static <T> List<T> asUnmodifiableList(List<T> objects) {
+    public static <T> List<T> asUnmodifiableList(List<T> objects) {
         return Collections.unmodifiableList(objects);
     }
 
@@ -343,7 +338,7 @@ public final class HartshornUtils {
                 : (value.substring(0, 1).toUpperCase() + value.substring(1));
     }
 
-        public static boolean empty(String value) {
+    public static boolean empty(String value) {
         return null == value || value.isEmpty();
     }
 
@@ -378,13 +373,6 @@ public final class HartshornUtils {
     public static String shorten(String string, int maxLength) {
         if (string.length() < maxLength) return string;
         return string.substring(0, maxLength);
-    }
-
-    @NotNull
-    public static String repeat(String string, int amount) {
-        StringBuilder sb = new StringBuilder();
-        for (int ignored : HartshornUtils.range(1, amount)) sb.append(string);
-        return sb.toString();
     }
 
     public static int count(String s, char c) {
@@ -471,7 +459,7 @@ public final class HartshornUtils {
         return -1;
     }
 
-        public static long minimum(long... values) {
+    public static long minimum(long... values) {
         int len = values.length;
         long current = values[0];
         for (int i = 1; i < len; i++) current = Math.min(values[i], current);
@@ -605,21 +593,21 @@ public final class HartshornUtils {
         return hash;
     }
 
-        public static long maximum(long... values) {
+    public static long maximum(long... values) {
         int len = values.length;
         long current = values[0];
         for (int i = 1; i < len; i++) current = Math.max(values[i], current);
         return current;
     }
 
-        public static double minimum(double... values) {
+    public static double minimum(double... values) {
         int len = values.length;
         double current = values[0];
         for (int i = 1; i < len; i++) current = Math.min(values[i], current);
         return current;
     }
 
-        public static double maximum(double... values) {
+    public static double maximum(double... values) {
         int len = values.length;
         double current = values[0];
         for (int i = 1; i < len; i++) current = Math.max(values[i], current);
@@ -655,9 +643,9 @@ public final class HartshornUtils {
         return dest;
     }
 
-        // Both start and end are inclusive
+    // Both start and end are inclusive
     public static <T> T[] arraySubset(T[] array, int start, int end) {
-        return Arrays.copyOfRange(array, start, end+1);
+        return Arrays.copyOfRange(array, start, end + 1);
     }
 
     @SuppressWarnings({ "unchecked", "SuspiciousToArrayCall" })
@@ -697,12 +685,12 @@ public final class HartshornUtils {
     }
 
     @NotNull
-        public static Path createPathIfNotExists(@NotNull Path path) {
+    public static Path createPathIfNotExists(@NotNull Path path) {
         if (!path.toFile().exists()) path.toFile().mkdirs();
         return path;
     }
 
-        public static Path createFileIfNotExists(@NotNull Path file) {
+    public static Path createFileIfNotExists(@NotNull Path file) {
         if (!Files.exists(file)) {
             try {
                 Files.createDirectories(file.getParent());
@@ -778,7 +766,7 @@ public final class HartshornUtils {
      * @return true if the defined vector is inside the 3D cuboid region
      */
     @SuppressWarnings("OverlyComplexBooleanExpression")
-        public static boolean inCuboidRegion(int x_min, int x_max, int y_min, int y_max, int z_min, int z_max, int x, int y, int z) {
+    public static boolean inCuboidRegion(int x_min, int x_max, int y_min, int y_max, int z_min, int z_max, int x, int y, int z) {
         return x_min <= x && x <= x_max
                 && y_min <= y && y <= y_max
                 && z_min <= z && z <= z_max;
@@ -811,7 +799,7 @@ public final class HartshornUtils {
     }
 
     @NotNull
-        public static LocalDateTime toLocalDateTime(Instant dt) {
+    public static LocalDateTime toLocalDateTime(Instant dt) {
         return LocalDateTime.ofInstant(dt, ZoneId.systemDefault());
     }
 
@@ -829,12 +817,6 @@ public final class HartshornUtils {
         List<T> merged = HartshornUtils.asList(arrayOne);
         merged.addAll(HartshornUtils.asList(arrayTwo));
         return merged.toArray(arrayOne);
-    }
-
-    public static <T> List<T> merge(Collection<T> collectionOne, Collection<T> collectionTwo) {
-        List<T> merged = HartshornUtils.asList(collectionOne);
-        merged.addAll(HartshornUtils.asList(collectionTwo));
-        return merged;
     }
 
     /**
@@ -1113,27 +1095,22 @@ public final class HartshornUtils {
         return StreamSupport.stream(Spliterators.spliteratorUnknownSize(tIterator, Spliterator.ORDERED), false);
     }
 
-    public static String asTable(List<List<String>> rows)
-    {
+    public static String asTable(List<List<String>> rows) {
         int[] maxLengths = new int[rows.get(0).size()];
-        for (List<String> row : rows)
-        {
-            for (int i = 0; i < row.size(); i++)
-            {
+        for (List<String> row : rows) {
+            for (int i = 0; i < row.size(); i++) {
                 maxLengths[i] = Math.max(maxLengths[i], row.get(i).length());
             }
         }
 
         StringBuilder formatBuilder = new StringBuilder();
-        for (int maxLength : maxLengths)
-        {
+        for (int maxLength : maxLengths) {
             formatBuilder.append("%-").append(maxLength + 2).append("s");
         }
         String format = formatBuilder.toString();
 
         StringBuilder result = new StringBuilder();
-        for (List<String> row : rows)
-        {
+        for (List<String> row : rows) {
             result.append(String.format(format, row.toArray(new Object[0]))).append("\n");
         }
         return result.toString();
@@ -1143,6 +1120,13 @@ public final class HartshornUtils {
         int start = fullName.length() - max;
         if (start < 0) return fullName + repeat(" ", -start);
         else return fullName.substring(start);
+    }
+
+    @NotNull
+    public static String repeat(String string, int amount) {
+        StringBuilder sb = new StringBuilder();
+        for (int ignored : HartshornUtils.range(1, amount)) sb.append(string);
+        return sb.toString();
     }
 
     public static String[] splitCapitals(String s) {
@@ -1174,6 +1158,17 @@ public final class HartshornUtils {
         final SetView<T> differenceInOne = Sets.difference(asSet(collectionOne), asSet(collectionTwo));
         final SetView<T> differenceInTwo = Sets.difference(asSet(collectionTwo), asSet(collectionOne));
         return asSet(merge(differenceInOne, differenceInTwo));
+    }
+
+    @NotNull
+    public static <T> Set<T> asSet(Collection<T> collection) {
+        return new HashSet<>(collection);
+    }
+
+    public static <T> List<T> merge(Collection<T> collectionOne, Collection<T> collectionTwo) {
+        List<T> merged = HartshornUtils.asList(collectionOne);
+        merged.addAll(HartshornUtils.asList(collectionTwo));
+        return merged;
     }
 
     public static Vector3N cuboidSize(Vector3N min, Vector3N max) {

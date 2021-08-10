@@ -24,7 +24,9 @@ import java.lang.annotation.Annotation;
 public interface ServiceProcessor<A extends Annotation> {
 
     boolean preconditions(Class<?> type);
+
     <T> void process(ApplicationContext context, Class<T> type);
+
     Class<A> activator();
 
 }

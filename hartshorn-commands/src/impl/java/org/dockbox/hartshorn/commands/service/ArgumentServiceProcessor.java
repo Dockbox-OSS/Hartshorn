@@ -56,7 +56,8 @@ public class ArgumentServiceProcessor implements ServiceProcessor<UseCommands> {
                     catch (IllegalAccessException e) {
                         throw new ApplicationException(e);
                     }
-                } else {
+                }
+                else {
                     throw new ApplicationException(field.getName() + " should be static");
                 }
             }

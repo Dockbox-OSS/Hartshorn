@@ -34,9 +34,9 @@ public interface MessageTemplate extends Template<Message> {
         return Hartshorn.context().get(MessageTemplate.class);
     }
 
-    Text content();
-
     MessageTemplate content(Text content);
+
+    Text content();
 
     MessageTemplate copy();
 

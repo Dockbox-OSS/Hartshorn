@@ -18,8 +18,8 @@
 package org.dockbox.hartshorn.server.minecraft.inventory.builder;
 
 import org.dockbox.hartshorn.di.properties.AttributeHolder;
-import org.dockbox.hartshorn.server.minecraft.inventory.pane.Pane;
 import org.dockbox.hartshorn.i18n.text.Text;
+import org.dockbox.hartshorn.server.minecraft.inventory.pane.Pane;
 
 public interface PaneBuilder<T extends Pane, B extends PaneBuilder<T, B>> extends AttributeHolder {
 

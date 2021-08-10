@@ -18,12 +18,7 @@
 package org.dockbox.hartshorn.dave;
 
 import org.dockbox.hartshorn.api.Hartshorn;
-import org.dockbox.hartshorn.di.properties.AttributeHolder;
-import org.dockbox.hartshorn.events.annotations.Listener;
 import org.dockbox.hartshorn.api.exceptions.ApplicationException;
-import org.dockbox.hartshorn.i18n.entry.Resource;
-import org.dockbox.hartshorn.i18n.text.actions.HoverAction;
-import org.dockbox.hartshorn.i18n.text.pagination.PaginationBuilder;
 import org.dockbox.hartshorn.api.task.TaskRunner;
 import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.commands.RunCommandAction;
@@ -33,8 +28,13 @@ import org.dockbox.hartshorn.dave.models.DaveTriggers;
 import org.dockbox.hartshorn.di.annotations.inject.Wired;
 import org.dockbox.hartshorn.di.binding.Bindings;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
+import org.dockbox.hartshorn.di.properties.AttributeHolder;
 import org.dockbox.hartshorn.discord.DiscordCommandSource;
 import org.dockbox.hartshorn.discord.events.DiscordChatReceivedEvent;
+import org.dockbox.hartshorn.events.annotations.Listener;
+import org.dockbox.hartshorn.i18n.entry.Resource;
+import org.dockbox.hartshorn.i18n.text.actions.HoverAction;
+import org.dockbox.hartshorn.i18n.text.pagination.PaginationBuilder;
 import org.dockbox.hartshorn.persistence.FileManager;
 import org.dockbox.hartshorn.persistence.FileType;
 import org.dockbox.hartshorn.persistence.FileTypeAttribute;
@@ -61,16 +61,13 @@ public class Dave implements AttributeHolder {
             .defaultValue(() -> false)
             .display(() -> Item.of(ItemTypes.BOTTLE_O_ENCHANTING))
             .ok();
-
-    private static final int msTick = 20;
-    private DaveTriggers triggers = new DaveTriggers();
-    private DaveConfig config = new DaveConfig();
-
     public static final String DAVE_MUTE = "dave.mute";
     public static final String DAVE_REFRESH = "dave.refresh";
     public static final String DAVE_TRIGGERS = "dave.triggers.list";
     public static final String DAVE_TRIGGER_RUN = "dave.triggers.run";
-
+    private static final int msTick = 20;
+    private DaveTriggers triggers = new DaveTriggers();
+    private DaveConfig config = new DaveConfig();
     @Wired
     private DaveResources resources;
 
@@ -88,9 +85,9 @@ public class Dave implements AttributeHolder {
                 .title(this.resources.triggerHeader().asText())
                 .content(this.triggers.triggers().stream()
                         .map(trigger -> this.resources.triggerSingle(HartshornUtils.shorten(trigger.responses().get(0).message(), 75) + " ...")
-                        .asText()
-                        .onHover(HoverAction.showText(this.resources.triggerSingleHover().asText()))
-                        .onClick(RunCommandAction.runCommand("/dave run " + trigger.id())))
+                                .asText()
+                                .onHover(HoverAction.showText(this.resources.triggerSingleHover().asText()))
+                                .onClick(RunCommandAction.runCommand("/dave run " + trigger.id())))
                         .toList())
                 .build()
                 .send(source);
@@ -140,11 +137,11 @@ public class Dave implements AttributeHolder {
     public void on(SendChatEvent sendChatEvent) {
         Player player = (Player) sendChatEvent.subject();
         DaveUtils.findMatching(this.triggers, sendChatEvent.message().toPlain()).present(trigger -> this.context.get(TaskRunner.class).acceptDelayed(() -> DaveUtils.performTrigger(
-                player,
-                player.name(),
-                trigger,
-                sendChatEvent.message().toPlain(),
-                this.config),
+                        player,
+                        player.name(),
+                        trigger,
+                        sendChatEvent.message().toPlain(),
+                        this.config),
                 5 * msTick, TimeUnit.MILLISECONDS)
         );
     }
@@ -153,11 +150,11 @@ public class Dave implements AttributeHolder {
     public void on(DiscordChatReceivedEvent chatEvent) {
         if (chatEvent.channel().getId().equals(this.config.channel().getId())) {
             DaveUtils.findMatching(this.triggers, chatEvent.message().getContentRaw()).present(trigger -> this.context.get(TaskRunner.class).acceptDelayed(() -> DaveUtils.performTrigger(
-                    this.context.get(DiscordCommandSource.class, chatEvent.channel()),
-                    chatEvent.author().getName(),
-                    trigger,
-                    chatEvent.message().getContentRaw(),
-                    this.config),
+                            this.context.get(DiscordCommandSource.class, chatEvent.channel()),
+                            chatEvent.author().getName(),
+                            trigger,
+                            chatEvent.message().getContentRaw(),
+                            this.config),
                     5 * msTick, TimeUnit.MILLISECONDS)
             );
         }

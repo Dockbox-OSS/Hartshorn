@@ -27,7 +27,8 @@ import lombok.Setter;
 
 @SuppressWarnings("AbstractClassWithoutAbstractMethods")
 @AllArgsConstructor
-@Getter @Setter
+@Getter
+@Setter
 public abstract class AbstractTargetEvent implements Event, Targetable {
 
     private Subject subject;

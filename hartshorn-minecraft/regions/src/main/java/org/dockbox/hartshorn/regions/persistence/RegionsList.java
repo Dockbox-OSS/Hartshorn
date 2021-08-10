@@ -41,13 +41,12 @@ import lombok.Getter;
 @Component
 public class RegionsList implements AttributeHolder {
 
-    private SqlService sqlService;
     @Getter private final Set<PersistentFlagModel> flags = HartshornUtils.emptySet();
     private final List<CustomRegion> regions = HartshornUtils.emptyList();
+    private SqlService sqlService;
 
-    public void add(RegionFlag<?> flag) {
-        this.flags.add(flag.model());
-        this.withSql(sql -> sql.save(flag.model()));
+    public static RegionsList restore(Path file) {
+        return Hartshorn.context().get(RegionsList.class, new PathAttribute(file));
     }
 
     public void add(CustomRegion element) {
@@ -61,16 +60,18 @@ public class RegionsList implements AttributeHolder {
         });
     }
 
+    public void add(RegionFlag<?> flag) {
+        this.flags.add(flag.model());
+        this.withSql(sql -> sql.save(flag.model()));
+    }
+
     private void withSql(CheckedConsumer<SqlService> consumer) {
         try {
             consumer.accept(this.sqlService);
-        } catch (ApplicationException e) {
+        }
+        catch (ApplicationException e) {
             Except.handle(e);
         }
-    }
-
-    public static RegionsList restore(Path file) {
-        return Hartshorn.context().get(RegionsList.class, new PathAttribute(file));
     }
 
     @Override

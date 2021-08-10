@@ -20,8 +20,8 @@ package org.dockbox.hartshorn.test.util;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.TextChannel;
 
-import org.dockbox.hartshorn.api.exceptions.NotImplementedException;
 import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.api.exceptions.NotImplementedException;
 import org.dockbox.hartshorn.discord.DefaultDiscordUtils;
 
 public class JUnitDiscordUtils extends DefaultDiscordUtils {

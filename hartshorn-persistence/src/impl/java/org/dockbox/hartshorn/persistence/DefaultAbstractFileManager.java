@@ -41,14 +41,6 @@ public abstract class DefaultAbstractFileManager implements FileManager {
         this.mapper = Hartshorn.context().get(ObjectMapper.class);
     }
 
-    public FileType fileType() {
-        return this.mapper.fileType();
-    }
-
-    protected void fileType(FileType fileType) {
-        this.mapper.fileType(fileType);
-    }
-
     public Path dataFile(Class<?> owner) {
         return this.dataFile(this.owner(owner));
     }
@@ -57,6 +49,10 @@ public abstract class DefaultAbstractFileManager implements FileManager {
     @Override
     public Path dataFile(@NotNull TypedOwner owner) {
         return this.dataFile(owner, owner.id());
+    }
+
+    public FileType fileType() {
+        return this.mapper.fileType();
     }
 
     @NotNull
@@ -75,6 +71,21 @@ public abstract class DefaultAbstractFileManager implements FileManager {
     @Override
     public Path configFile(@NotNull TypedOwner owner, @NotNull String file) {
         return this.createFileIfNotExists(this.fileType().asPath(this.serviceConfigs().resolve(owner.id()), file));
+    }
+
+    @Override
+    public <T> Exceptional<T> read(Path file, Class<T> type) {
+        return this.mapper.read(file, type);
+    }
+
+    @Override
+    public <T> Exceptional<T> read(Path file, GenericType<T> type) {
+        return this.mapper.read(file, type);
+    }
+
+    @Override
+    public <T> Exceptional<Boolean> write(Path file, T content) {
+        return this.mapper.write(file, content);
     }
 
     @NotNull
@@ -140,18 +151,7 @@ public abstract class DefaultAbstractFileManager implements FileManager {
         }
     }
 
-    @Override
-    public <T> Exceptional<T> read(Path file, Class<T> type) {
-        return this.mapper.read(file, type);
-    }
-
-    @Override
-    public <T> Exceptional<T> read(Path file, GenericType<T> type) {
-        return this.mapper.read(file, type);
-    }
-
-    @Override
-    public <T> Exceptional<Boolean> write(Path file, T content) {
-        return this.mapper.write(file, content);
+    protected void fileType(FileType fileType) {
+        this.mapper.fileType(fileType);
     }
 }

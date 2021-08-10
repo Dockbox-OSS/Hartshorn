@@ -18,11 +18,11 @@
 package org.dockbox.hartshorn.commands;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.i18n.common.ResourceEntry;
-import org.dockbox.hartshorn.i18n.entry.FakeResource;
 import org.dockbox.hartshorn.commands.arguments.CustomParameterPattern;
 import org.dockbox.hartshorn.commands.arguments.HashtagParameterPattern;
 import org.dockbox.hartshorn.commands.types.CuboidArgument;
+import org.dockbox.hartshorn.i18n.common.ResourceEntry;
+import org.dockbox.hartshorn.i18n.entry.FakeResource;
 import org.dockbox.hartshorn.test.HartshornRunner;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.junit.jupiter.api.Assertions;
@@ -43,6 +43,16 @@ public class HashtagParameterPatternTests {
 
         Assertions.assertTrue(result.present());
         Assertions.assertTrue(HartshornUtils.unwrap(result));
+    }
+
+    private HashtagParameterPattern pattern() {
+        return new HashtagParameterPattern() {
+            @Override
+            protected ResourceEntry wrongFormat() {
+                // Override resources as these are otherwise requested through bound resource references
+                return new FakeResource("failed");
+            }
+        };
     }
 
     @Test
@@ -100,15 +110,5 @@ public class HashtagParameterPatternTests {
 
         final CuboidArgument cuboid = result.get();
         Assertions.assertEquals(1, cuboid.size());
-    }
-
-    private HashtagParameterPattern pattern() {
-        return new HashtagParameterPattern() {
-            @Override
-            protected ResourceEntry wrongFormat() {
-                // Override resources as these are otherwise requested through bound resource references
-                return new FakeResource("failed");
-            }
-        };
     }
 }

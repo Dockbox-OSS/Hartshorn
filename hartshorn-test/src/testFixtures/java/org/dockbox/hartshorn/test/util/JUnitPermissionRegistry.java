@@ -30,6 +30,9 @@ public final class JUnitPermissionRegistry {
 
     private static final Map<UUID, Collection<Permission>> permissions = HartshornUtils.emptyConcurrentMap();
 
+    private JUnitPermissionRegistry() {
+    }
+
     public static void permission(PermissionHolder holder, Permission permission) {
         permissions.putIfAbsent(holder.uniqueId(), HartshornUtils.emptyList());
         permissions.get(holder.uniqueId()).add(permission);
@@ -78,8 +81,5 @@ public final class JUnitPermissionRegistry {
                     permissions.get(holder.uniqueId()).remove(abstractPermission);
                 }
             }
-    }
-
-    private JUnitPermissionRegistry() {
     }
 }

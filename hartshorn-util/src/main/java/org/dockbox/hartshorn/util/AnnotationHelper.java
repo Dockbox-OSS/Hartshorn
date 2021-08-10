@@ -59,13 +59,20 @@ final class AnnotationHelper {
         return assertZeroOrOne(allOrEmpty(element, targetAnnotationClass), element);
     }
 
+    private static <A extends Annotation> A assertZeroOrOne(List<A> annotations, Object target) {
+        if (annotations == null) return null;
+
+        if (annotations.size() > 1) {
+            throw new IllegalArgumentException("Found more than one annotation on " + target + ":\n"
+                    + annotations.stream().map(Annotation::toString).collect(Collectors.joining("\n")));
+        }
+
+        return annotations.isEmpty() ? null : annotations.get(0);
+    }
+
     public static <A extends Annotation> List<A> allOrEmpty(AnnotatedElement element, Class<A> targetAnnotationClass) {
         return cached(Arrays.asList(1, element, targetAnnotationClass),
                 () -> annotations(element.getAnnotations(), targetAnnotationClass));
-    }
-
-    public static boolean annotationPresent(AnnotatedElement element, Class<? extends Annotation> annotationClass) {
-        return !allOrEmpty(element, annotationClass).isEmpty();
     }
 
     @SuppressWarnings("unchecked")
@@ -87,15 +94,6 @@ final class AnnotationHelper {
                 .collect(toList());
     }
 
-    private static int indexOf(Annotation[] annotations, Class<? extends Annotation> targetAnnotation) {
-        for (int i = 0; i < annotations.length; ++i) {
-            if (annotations[i].annotationType() == targetAnnotation) {
-                return i;
-            }
-        }
-        return -1;
-    }
-
     private static Stream<Annotation> expandAnnotation(Annotation annotation) {
         Annotation[] annotationsOnTargetAnnotationType = annotation.annotationType().getAnnotations();
 
@@ -107,15 +105,50 @@ final class AnnotationHelper {
         }
 
         LinkedList<Annotation> result = Stream.of(((CompositeOf) annotationsOnTargetAnnotationType[compositeOfIndex]).value())
-                .map(klass -> (Annotation) Proxy.newProxyInstance(klass.getClassLoader(), new Class[]{klass}, new AnnotationInvocationHandler(klass, annotation))).collect(Collectors.toCollection(LinkedList::new));
+                .map(klass -> (Annotation) Proxy.newProxyInstance(klass.getClassLoader(), new Class[]{ klass }, new AnnotationInvocationHandler(klass, annotation))).collect(Collectors.toCollection(LinkedList::new));
         if (extendsIndex != -1) {
             if (extendsIndex < compositeOfIndex) {
                 result.addFirst(annotation);
-            } else {
+            }
+            else {
                 result.add(annotation);
             }
         }
         return result.stream();
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <A extends Annotation> A examineAnnotation(Annotation actual, Class<A> targetAnnotationClass) {
+        actual = actualAnnotationBehindProxy(actual);
+        // Two passes:
+        // 1. scan all annotation hierarchy classes
+        // 2. construct a proxy with all information (probably overridden by sub annotationsWith)
+        LinkedHashSet<Class<? extends Annotation>> hierarchy = annotationHierarchy(actual.annotationType());
+
+        if (!hierarchy.contains(targetAnnotationClass)) {
+            return null;
+        }
+
+        return (A) Proxy.newProxyInstance(AnnotationHelper.class.getClassLoader(), new Class[]{ targetAnnotationClass, AnnotationAdapter.class },
+                new AnnotationAdapterProxy<>(actual, targetAnnotationClass, hierarchy));
+    }
+
+    private static int indexOf(Annotation[] annotations, Class<? extends Annotation> targetAnnotation) {
+        for (int i = 0; i < annotations.length; ++i) {
+            if (annotations[i].annotationType() == targetAnnotation) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    private static Annotation actualAnnotationBehindProxy(Annotation annotation) {
+        if (annotation instanceof AnnotationAdapter) {
+            return ((AnnotationAdapter) annotation).actualAnnotation();
+        }
+        else {
+            return annotation;
+        }
     }
 
     /*
@@ -134,39 +167,13 @@ final class AnnotationHelper {
         return hierarchy;
     }
 
-    private static <A extends Annotation> A assertZeroOrOne(List<A> annotations, Object target) {
-        if (annotations == null) return null;
-
-        if (annotations.size() > 1) {
-            throw new IllegalArgumentException("Found more than one annotation on " + target + ":\n"
-                    + annotations.stream().map(Annotation::toString).collect(Collectors.joining("\n")));
-        }
-
-        return annotations.isEmpty() ? null : annotations.get(0);
+    private static Class<? extends Annotation> superAnnotationOrNull(Class<? extends Annotation> currentClass) {
+        Extends extendsAnnotation = currentClass.getAnnotation(Extends.class);
+        return extendsAnnotation == null ? null : extendsAnnotation.value();
     }
 
-    @SuppressWarnings("unchecked")
-    private static <A extends Annotation> A examineAnnotation(Annotation actual, Class<A> targetAnnotationClass) {
-        actual = actualAnnotationBehindProxy(actual);
-        // Two passes:
-        // 1. scan all annotation hierarchy classes
-        // 2. construct a proxy with all information (probably overridden by sub annotationsWith)
-        LinkedHashSet<Class<? extends Annotation>> hierarchy = annotationHierarchy(actual.annotationType());
-
-        if (!hierarchy.contains(targetAnnotationClass)) {
-            return null;
-        }
-
-        return (A) Proxy.newProxyInstance(AnnotationHelper.class.getClassLoader(), new Class[]{targetAnnotationClass, AnnotationAdapter.class},
-                new AnnotationAdapterProxy<>(actual, targetAnnotationClass, hierarchy));
-    }
-
-    private static Annotation actualAnnotationBehindProxy(Annotation annotation) {
-        if (annotation instanceof AnnotationAdapter) {
-            return ((AnnotationAdapter) annotation).actualAnnotation();
-        } else {
-            return annotation;
-        }
+    public static boolean annotationPresent(AnnotatedElement element, Class<? extends Annotation> annotationClass) {
+        return !allOrEmpty(element, annotationClass).isEmpty();
     }
 
     public static <A extends Annotation> Annotation actual(A annotation) {
@@ -180,6 +187,55 @@ final class AnnotationHelper {
     public static boolean instanceOf(Annotation annotation, Class<? extends Annotation> type) {
         Class<? extends Annotation> annotationType = annotation.annotationType();
         return cached(Arrays.asList(4, annotationType), () -> annotationHierarchy(annotationType)).contains(type);
+    }
+
+    private static Exceptional<Object> searchInHierarchy(Annotation actual, Class<? extends Annotation> targetAnnotationClass, Collection<Class<? extends Annotation>> hierarchy, String name) {
+        try {
+            Method method = actual.annotationType().getMethod(name);
+            return Exceptional.of(safeInvokeAnnotationMethod(method, actual));
+        }
+        catch (NoSuchMethodException e) {
+            // search for AliasFor in same annotation type
+            for (Method method : actual.annotationType().getMethods()) {
+                AliasFor aliasFor = method.getAnnotation(AliasFor.class);
+                if (aliasFor != null && (aliasFor.target() == AliasFor.DefaultThis.class || aliasFor.target() == targetAnnotationClass) && name.equals(aliasFor.value())) {
+                    // Bingo! We found it!
+                    return Exceptional.of(safeInvokeAnnotationMethod(method, actual));
+                }
+            }
+
+            // search in super annotation type
+            for (Class<? extends Annotation> klass : hierarchy) {
+                Annotation[] annotationsOnCurrentAnnotationClass = klass.getAnnotations();
+                for (Annotation annotationOnCurrentAnnotationClass : annotationsOnCurrentAnnotationClass) {
+                    if (hierarchy.contains(annotationOnCurrentAnnotationClass.annotationType())) {
+                        try {
+                            Method method = annotationOnCurrentAnnotationClass.annotationType().getMethod(name);
+                            return Exceptional.of(safeInvokeAnnotationMethod(method, annotationOnCurrentAnnotationClass));
+                        }
+                        catch (NoSuchMethodException ignored) {
+                            break;
+                        }
+                    }
+                }
+            }
+            try {
+                Method method = targetAnnotationClass.getMethod(name);
+                return Exceptional.of(method.getDefaultValue());
+            }
+            catch (NoSuchMethodException noSuchMethodException) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    private static Object safeInvokeAnnotationMethod(Method method, Annotation annotation) {
+        try {
+            return method.invoke(annotation);
+        }
+        catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     interface AnnotationAdapter {
@@ -211,7 +267,8 @@ final class AnnotationHelper {
             if ("equals".equals(method.getName()) && method.getParameters().length == 1) {
                 if (args[0] instanceof Annotation) {
                     return this.actual.equals(actualAnnotationBehindProxy((Annotation) args[0]));
-                } else {
+                }
+                else {
                     return this.actual.equals(args[0]);
                 }
             }
@@ -223,56 +280,6 @@ final class AnnotationHelper {
             }
             return cachedField.orNull();
         }
-    }
-
-    private static Exceptional<Object> searchInHierarchy(Annotation actual, Class<? extends Annotation> targetAnnotationClass, Collection<Class<? extends Annotation>> hierarchy, String name) {
-        try {
-            Method method = actual.annotationType().getMethod(name);
-            return Exceptional.of(safeInvokeAnnotationMethod(method, actual));
-        } catch (NoSuchMethodException e) {
-            // search for AliasFor in same annotation type
-            for (Method method : actual.annotationType().getMethods()) {
-                AliasFor aliasFor = method.getAnnotation(AliasFor.class);
-                if (aliasFor != null && (aliasFor.target() == AliasFor.DefaultThis.class || aliasFor.target() == targetAnnotationClass) && name.equals(aliasFor.value())) {
-                    // Bingo! We found it!
-                    return Exceptional.of(safeInvokeAnnotationMethod(method, actual));
-                }
-            }
-
-            // search in super annotation type
-            for (Class<? extends Annotation> klass : hierarchy) {
-                Annotation[] annotationsOnCurrentAnnotationClass = klass.getAnnotations();
-                for (Annotation annotationOnCurrentAnnotationClass : annotationsOnCurrentAnnotationClass) {
-                    if (hierarchy.contains(annotationOnCurrentAnnotationClass.annotationType())) {
-                        try {
-                            Method method = annotationOnCurrentAnnotationClass.annotationType().getMethod(name);
-                            return Exceptional.of(safeInvokeAnnotationMethod(method, annotationOnCurrentAnnotationClass));
-                        } catch (NoSuchMethodException ignored) {
-                            break;
-                        }
-                    }
-                }
-            }
-            try {
-                Method method = targetAnnotationClass.getMethod(name);
-                return Exceptional.of(method.getDefaultValue());
-            } catch (NoSuchMethodException noSuchMethodException) {
-                throw new RuntimeException(e);
-            }
-        }
-    }
-
-    private static Object safeInvokeAnnotationMethod(Method method, Annotation annotation) {
-        try {
-            return method.invoke(annotation);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private static Class<? extends Annotation> superAnnotationOrNull(Class<? extends Annotation> currentClass) {
-        Extends extendsAnnotation = currentClass.getAnnotation(Extends.class);
-        return extendsAnnotation == null ? null : extendsAnnotation.value();
     }
 
     private static class AnnotationInvocationHandler implements InvocationHandler {
@@ -314,9 +321,14 @@ final class AnnotationHelper {
                     throw new IllegalStateException("Can't invoke " + this.klass.getName() + "." + method.getName() + "() on composite annotation " + this.annotation);
                 }
                 return ret;
-            } catch (NoSuchMethodError e) {
+            }
+            catch (NoSuchMethodError e) {
                 throw new IllegalStateException("Can't invoke " + this.klass.getName() + "." + method.getName() + "() on composite annotation " + this.annotation, e);
             }
+        }
+
+        private boolean directAlias(AliasFor aliasFor, Method methodBeingInvoked) {
+            return aliasFor.target() == this.klass && aliasFor.value().equals(methodBeingInvoked.getName());
         }
 
         private boolean indirectAlias(AliasFor aliasFor, Method methodBeingInvoked) {
@@ -325,10 +337,6 @@ final class AnnotationHelper {
             }
             AliasFor redirect = methodBeingInvoked.getAnnotation(AliasFor.class);
             return redirect != null && redirect.target() == AliasFor.DefaultThis.class && redirect.value().equals(aliasFor.value());
-        }
-
-        private boolean directAlias(AliasFor aliasFor, Method methodBeingInvoked) {
-            return aliasFor.target() == this.klass && aliasFor.value().equals(methodBeingInvoked.getName());
         }
     }
 }

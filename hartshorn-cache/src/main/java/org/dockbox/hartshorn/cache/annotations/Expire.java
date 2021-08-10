@@ -29,12 +29,14 @@ public @interface Expire {
     /**
      * The amount of the given {@link TimeUnit} that should pass
      * before the duration ends.
+     *
      * @return the amount
      */
     int amount();
 
     /**
      * The unit in which time passes.
+     *
      * @return the unit
      */
     TimeUnit unit();

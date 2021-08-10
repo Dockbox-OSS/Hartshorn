@@ -35,69 +35,70 @@ public abstract class DefaultContext implements Context {
     protected final transient Multimap<String, Context> namedContexts = HashMultimap.create();
 
     @Override
-    public <C extends Context> void add(C context) {
+    public <C extends Context> void add(final C context) {
         if (context != null) this.contexts.add(context);
     }
 
     @Override
-    public <N extends NamedContext> void add(N context) {
+    public <N extends NamedContext> void add(final N context) {
         if (context != null && HartshornUtils.notEmpty(context.name()))
             this.namedContexts.put(context.name(), context);
     }
 
     @Override
-    public <C extends Context> void add(String name, C context) {
+    public <C extends Context> void add(final String name, final C context) {
         if (context != null && HartshornUtils.notEmpty(name))
             this.namedContexts.put(name, context);
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public <C extends Context> Exceptional<C> first(Class<C> context) {
+    public <C extends Context> Exceptional<C> first(final Class<C> context) {
         return Exceptional.of(this.contexts.stream()
-                .filter(c -> Reflect.assigns(context, c.getClass()))
-                .findFirst())
+                        .filter(c -> Reflect.assigns(context, c.getClass()))
+                        .findFirst())
                 .orElse(() -> {
                     if (Reflect.has(context, AutoCreating.class)) {
                         final C created = ApplicationContextAware.instance().context().get(context);
                         this.add(created);
                         return created;
-                    } else return null;
+                    }
+                    else return null;
                 })
                 .map(c -> (C) c);
     }
 
     @Override
-    public Exceptional<Context> first(String name) {
+    public Exceptional<Context> first(final String name) {
         return Exceptional.of(this.namedContexts.get(name).stream().findFirst());
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public <N extends Context> Exceptional<N> first(String name, Class<N> context) {
+    public <N extends Context> Exceptional<N> first(final String name, final Class<N> context) {
         return Exceptional.of(this.namedContexts.get(name).stream()
-                .filter(c -> Reflect.assigns(context, c.getClass()))
-                .findFirst())
+                        .filter(c -> Reflect.assigns(context, c.getClass()))
+                        .findFirst())
                 .map(c -> (N) c);
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public <C extends Context> List<C> all(Class<C> context) {
+    public <C extends Context> List<C> all(final Class<C> context) {
         return HartshornUtils.asUnmodifiableList(this.contexts.stream()
-                .filter( c -> c.getClass().equals(context))
+                .filter(c -> c.getClass().equals(context))
                 .map(c -> (C) c)
                 .toList());
     }
 
     @Override
-    public List<Context> all(String name) {
+    public List<Context> all(final String name) {
         return HartshornUtils.asList(this.namedContexts.get(name));
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public <N extends Context> List<N> all(String name, Class<N> context) {
+    public <N extends Context> List<N> all(final String name, final Class<N> context) {
         return this.namedContexts.get(name).stream()
                 .filter(c -> Reflect.assigns(context, c.getClass()))
                 .map(c -> (N) c)

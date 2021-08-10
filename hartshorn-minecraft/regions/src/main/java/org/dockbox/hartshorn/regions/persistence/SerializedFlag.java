@@ -27,7 +27,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Getter @Setter
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class SerializedFlag {
@@ -42,6 +43,11 @@ public class SerializedFlag {
         this.value = flag.serialize(value);
     }
 
+    public <T> Exceptional<T> restoreValue() {
+        //noinspection unchecked
+        return this.restoreFlag().map(flag -> (T) flag.restore(this.value));
+    }
+
     public Exceptional<RegionFlag<?>> restoreFlag() {
         Exceptional<RegionFlag<?>> flag = Hartshorn.context().get(RegionService.class).flag(this.id());
         if (flag.absent()) {
@@ -50,10 +56,5 @@ public class SerializedFlag {
         }
         //noinspection unchecked
         return Exceptional.of(Hartshorn.context().get(flag.get().getClass(), this.id, flag.get().description()));
-    }
-
-    public <T> Exceptional<T> restoreValue() {
-        //noinspection unchecked
-        return this.restoreFlag().map(flag -> (T) flag.restore(this.value));
     }
 }

@@ -18,8 +18,8 @@
 package org.dockbox.hartshorn.regions.flags;
 
 import org.dockbox.hartshorn.api.exceptions.Except;
-import org.dockbox.hartshorn.i18n.common.ResourceEntry;
 import org.dockbox.hartshorn.di.annotations.inject.Bound;
+import org.dockbox.hartshorn.i18n.common.ResourceEntry;
 
 public class DoubleFlag extends AbstractRegionFlag<Double> {
 
@@ -37,7 +37,8 @@ public class DoubleFlag extends AbstractRegionFlag<Double> {
     public Double restore(String raw) {
         try {
             return Double.parseDouble(raw);
-        } catch (NumberFormatException e) {
+        }
+        catch (NumberFormatException e) {
             Except.handle("Could not restore number flag: " + this.id(), e);
             return -1D;
         }

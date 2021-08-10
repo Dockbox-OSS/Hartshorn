@@ -144,29 +144,6 @@ public class SerialisationServiceModifier extends AbstractPersistenceServiceModi
         return Hartshorn.context().locator().container(context.method().getDeclaringClass()).map(ComponentContainer::owner).orNull();
     }
 
-    private boolean argumentPathTargetPreconditions(MethodProxyContext<?> context) {
-        // One argument should be the content, one should be a Path/File subtype. The presence of the latter
-        // has already been verified before.
-        if (context.method().getParameterCount() != 2) return false;
-
-        final Class<?> returnType = context.returnType();
-        if (Reflect.assigns(boolean.class, returnType)) return true;
-
-        else if (Reflect.assigns(Exceptional.class, returnType)) {
-            final Exceptional<Type> type = Reflect.typeParameter(returnType, 0);
-
-            if (type.present()) {
-                final Type generic = type.get();
-
-                if (generic instanceof Class) {
-                    return Reflect.assigns(Boolean.class, (Class<?>) generic);
-                }
-            }
-        }
-
-        return false;
-    }
-
     private boolean stringTargetPreconditions(MethodProxyContext<?> context) {
         final Class<?> returnType = context.returnType();
 
@@ -190,5 +167,28 @@ public class SerialisationServiceModifier extends AbstractPersistenceServiceModi
     @Override
     public Class<Serialise> annotation() {
         return Serialise.class;
+    }
+
+    private boolean argumentPathTargetPreconditions(MethodProxyContext<?> context) {
+        // One argument should be the content, one should be a Path/File subtype. The presence of the latter
+        // has already been verified before.
+        if (context.method().getParameterCount() != 2) return false;
+
+        final Class<?> returnType = context.returnType();
+        if (Reflect.assigns(boolean.class, returnType)) return true;
+
+        else if (Reflect.assigns(Exceptional.class, returnType)) {
+            final Exceptional<Type> type = Reflect.typeParameter(returnType, 0);
+
+            if (type.present()) {
+                final Type generic = type.get();
+
+                if (generic instanceof Class) {
+                    return Reflect.assigns(Boolean.class, (Class<?>) generic);
+                }
+            }
+        }
+
+        return false;
     }
 }

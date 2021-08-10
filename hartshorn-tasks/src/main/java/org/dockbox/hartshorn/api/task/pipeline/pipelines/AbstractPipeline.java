@@ -50,7 +50,8 @@ public abstract class AbstractPipeline<P, I> {
      *
      * @return Itself
      */
-    @SafeVarargs @PartialApi
+    @SafeVarargs
+    @PartialApi
     public final AbstractPipeline<P, I> addVarargPipes(@NotNull final IPipe<I, I>... pipes) {
         return this.add(pipes);
     }

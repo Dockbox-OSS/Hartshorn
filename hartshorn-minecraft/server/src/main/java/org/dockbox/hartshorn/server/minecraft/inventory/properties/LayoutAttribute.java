@@ -17,8 +17,8 @@
 
 package org.dockbox.hartshorn.server.minecraft.inventory.properties;
 
-import org.dockbox.hartshorn.server.minecraft.inventory.InventoryLayout;
 import org.dockbox.hartshorn.di.properties.Attribute;
+import org.dockbox.hartshorn.server.minecraft.inventory.InventoryLayout;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

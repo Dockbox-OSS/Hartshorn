@@ -87,8 +87,10 @@ public class BindingHierarchyTests {
 
     @Test
     void testContextCreatesHierarchy() {
-        interface LocalContract {}
-        class LocalImpl implements LocalContract {}
+        interface LocalContract {
+        }
+        class LocalImpl implements LocalContract {
+        }
 
         Hartshorn.context().bind(Key.of(LocalContract.class), LocalImpl.class);
 
@@ -102,8 +104,15 @@ public class BindingHierarchyTests {
         Assertions.assertEquals(((StaticProvider<LocalContract>) provider.get()).target(), LocalImpl.class);
     }
 
-    private interface Contract {}
-    private static class ImplementationA implements Contract {}
-    private static class ImplementationB implements Contract {}
-    private static class ImplementationC implements Contract {}
+    private interface Contract {
+    }
+
+    private static class ImplementationA implements Contract {
+    }
+
+    private static class ImplementationB implements Contract {
+    }
+
+    private static class ImplementationC implements Contract {
+    }
 }

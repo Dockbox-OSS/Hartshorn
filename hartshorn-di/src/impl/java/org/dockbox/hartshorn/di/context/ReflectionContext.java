@@ -23,7 +23,7 @@ public class ReflectionContext extends PrefixContext implements DelegatingContex
 
     private final DefaultContext context;
 
-    public ReflectionContext(Iterable<String> initialPrefixes) {
+    public ReflectionContext(final Iterable<String> initialPrefixes) {
         super(initialPrefixes);
         this.context = new DefaultContext() {
         };

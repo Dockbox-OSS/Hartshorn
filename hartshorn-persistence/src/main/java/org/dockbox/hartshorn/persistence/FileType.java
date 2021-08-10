@@ -37,8 +37,7 @@ public enum FileType {
     JSON(FileTypes.JSON, PersistenceType.RAW),
     XML(FileTypes.XML, PersistenceType.RAW),
     TOML(FileTypes.TOML, PersistenceType.RAW),
-    PROPERTIES(FileTypes.PROPERTIES, PersistenceType.RAW)
-    ;
+    PROPERTIES(FileTypes.PROPERTIES, PersistenceType.RAW);
 
     @Getter private final String extension;
     @Getter private final PersistenceType type;

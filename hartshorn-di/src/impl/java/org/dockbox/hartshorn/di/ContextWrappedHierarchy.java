@@ -16,9 +16,9 @@ import lombok.Getter;
 @AllArgsConstructor
 public class ContextWrappedHierarchy<C> implements BindingHierarchy<C> {
 
+    private final Consumer<BindingHierarchy<C>> onUpdate;
     @Getter
     private BindingHierarchy<C> real;
-    private final Consumer<BindingHierarchy<C>> onUpdate;
 
     @Override
     public Set<Provider<C>> providers() {
@@ -58,14 +58,14 @@ public class ContextWrappedHierarchy<C> implements BindingHierarchy<C> {
         return this.real().key();
     }
 
+    private BindingHierarchy<C> update() {
+        this.onUpdate.accept(this.real());
+        return this;
+    }
+
     @NotNull
     @Override
     public Iterator<Entry<Integer, Provider<C>>> iterator() {
         return this.real().iterator();
-    }
-
-    private BindingHierarchy<C> update() {
-        this.onUpdate.accept(this.real());
-        return this;
     }
 }

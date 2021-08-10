@@ -18,9 +18,8 @@
 package org.dockbox.hartshorn.commands;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.i18n.common.ResourceEntry;
-import org.dockbox.hartshorn.commands.context.CommandDefinitionContext;
 import org.dockbox.hartshorn.commands.context.CommandContext;
+import org.dockbox.hartshorn.commands.context.CommandDefinitionContext;
 import org.dockbox.hartshorn.commands.context.CommandExecutorContext;
 import org.dockbox.hartshorn.commands.context.SimpleCommandContext;
 import org.dockbox.hartshorn.commands.definition.CommandElement;
@@ -32,6 +31,7 @@ import org.dockbox.hartshorn.commands.exceptions.ParsingException;
 import org.dockbox.hartshorn.commands.service.CommandParameter;
 import org.dockbox.hartshorn.di.annotations.inject.Binds;
 import org.dockbox.hartshorn.di.annotations.inject.Wired;
+import org.dockbox.hartshorn.i18n.common.ResourceEntry;
 import org.dockbox.hartshorn.util.HartshornUtils;
 
 import java.util.Collection;
@@ -131,7 +131,8 @@ public class SimpleCommandParser implements CommandParser {
                     flags.addAll(this.parameter(value, token, "flag", name, contextFlag, source));
                     command = command.replace(flag, "");
                 }
-            } else {
+            }
+            else {
                 flags.add(new CommandParameter<>(null, name));
                 command = command.replace(flag, "");
             }
@@ -143,13 +144,15 @@ public class SimpleCommandParser implements CommandParser {
         if (value.absent()) {
             ResourceEntry resource = this.resources.couldNotParse(elementType, elementName);
             throw value.caught() ? new ParsingException(resource, value.error()) : new ParsingException(resource);
-        } else {
+        }
+        else {
             if (partial instanceof GroupCommandElement) {
                 //noinspection unchecked
                 final List<CommandElement<?>> elements = (List<CommandElement<?>>) value.get();
                 final List<String> tokens = HartshornUtils.asList(token.split(" "));
                 return this.parse(elements, tokens, source);
-            } else {
+            }
+            else {
                 return HartshornUtils.singletonList(new CommandParameter<>(value.get(), elementName));
             }
         }

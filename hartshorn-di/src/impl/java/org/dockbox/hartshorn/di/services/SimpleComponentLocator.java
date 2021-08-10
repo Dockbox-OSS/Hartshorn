@@ -34,7 +34,7 @@ public class SimpleComponentLocator implements ComponentLocator {
     private static final List<Class<? extends Annotation>> decorators = HartshornUtils.emptyList();
 
     @Override
-    public void register(String prefix) {
+    public void register(final String prefix) {
         if (SimpleComponentLocator.cache.containsKey(prefix)) return;
 
         Reflect.prefix(prefix);
@@ -55,14 +55,14 @@ public class SimpleComponentLocator implements ComponentLocator {
     }
 
     @Override
-    public Collection<ComponentContainer> containers(ComponentType componentType) {
+    public Collection<ComponentContainer> containers(final ComponentType componentType) {
         return this.containers().stream()
                 .filter(container -> container.componentType() == componentType)
                 .toList();
     }
 
     @Override
-    public Exceptional<ComponentContainer> container(Class<?> type) {
+    public Exceptional<ComponentContainer> container(final Class<?> type) {
         return Exceptional.of(this.containers()
                 .stream()
                 .filter(container -> container.type().equals(type))
@@ -74,7 +74,7 @@ public class SimpleComponentLocator implements ComponentLocator {
     public Collection<Class<? extends Annotation>> decorators() {
         if (decorators.isEmpty()) {
             final Collection<Class<?>> annotations = Reflect.types(Component.class);
-            for (Class<?> annotation : annotations) {
+            for (final Class<?> annotation : annotations) {
                 if (annotation.isAnnotation()) //noinspection unchecked
                     decorators.add((Class<? extends Annotation>) annotation);
             }

@@ -71,6 +71,14 @@ public class MovementEventBridge implements EventBridge {
         }
     }
 
+    private void portal(ChangeEntityWorldEvent event, Player player, Portal portal) {
+        final Location origin = SpongeConvert.fromSponge(portal.origin());
+        final Location destination = Exceptional.of(portal.destination()).map(SpongeConvert::fromSponge).or(Location.empty());
+        final PortalType portalType = SpongeConvert.fromSponge(portal.type());
+
+        this.post(new PlayerPortalEvent(player, origin, destination, true, portalType), event);
+    }
+
     @Listener
     public void on(Reposition event) {
         final Entity entity = event.entity();
@@ -89,17 +97,11 @@ public class MovementEventBridge implements EventBridge {
         }
     }
 
-    private void portal(ChangeEntityWorldEvent event, Player player, Portal portal) {
-        final Location origin = SpongeConvert.fromSponge(portal.origin());
-        final Location destination = Exceptional.of(portal.destination()).map(SpongeConvert::fromSponge).or(Location.empty());
-        final PortalType portalType = SpongeConvert.fromSponge(portal.type());
-
-        this.post(new PlayerPortalEvent(player, origin, destination, true, portalType), event);
-    }
-
     /**
      * Placeholder for PlayerWarpEvent
-     * @param event The event
+     *
+     * @param event
+     *         The event
      */
     public void on(Void event) {
 

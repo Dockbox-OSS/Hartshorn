@@ -28,15 +28,15 @@ public class SimpleIdentifier implements RegistryIdentifier {
 
     private final String key;
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.key());
+    }
+
     // Intended to support RegistryIdentifier implementations
     @SuppressWarnings("EqualsWhichDoesntCheckParameterClass")
     @Override
     public boolean equals(Object o) {
         return RegistryIdentifier.super.same(o);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(this.key());
     }
 }

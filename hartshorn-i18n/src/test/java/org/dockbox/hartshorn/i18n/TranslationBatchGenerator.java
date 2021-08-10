@@ -18,8 +18,8 @@
 package org.dockbox.hartshorn.i18n;
 
 import org.dockbox.hartshorn.api.Hartshorn;
-import org.dockbox.hartshorn.i18n.annotations.Resource;
 import org.dockbox.hartshorn.di.services.ComponentContainer;
+import org.dockbox.hartshorn.i18n.annotations.Resource;
 import org.dockbox.hartshorn.test.HartshornRunner;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.dockbox.hartshorn.util.Reflect;
@@ -104,36 +104,6 @@ public final class TranslationBatchGenerator {
         }
     }
 
-    public static Map<String, String> collect() {
-        Map<String, String> batch = HartshornUtils.emptyMap();
-        int i = 0;
-        for (ComponentContainer container : Hartshorn.context().locator().containers()) {
-            final Class<?> type = container.type();
-            final Collection<Method> methods = Reflect.methods(type, Resource.class);
-            for (Method method : methods) {
-                i++;
-                final Resource annotation = Reflect.annotation(method, Resource.class).get();
-                final String key = I18N.key(type, method);
-                batch.put(key, annotation.value());
-            }
-        }
-        return batch;
-    }
-
-    private static String createBatch() {
-        final Map<String, String> collect = collect();
-        List<String> entries = HartshornUtils.emptyList();
-        for (Entry<String, String> entry : collect.entrySet()) {
-            if (entry.getValue().contains("\n")) continue;
-            if (BLACKLIST.contains(entry.getKey())) continue;
-            String next = entry.getKey() + '=' + entry.getValue();
-            next = next.replaceAll("\r", "");
-            entries.add(next);
-        }
-        Collections.sort(entries);
-        return String.join("\n", entries);
-    }
-
     // File content identified by file name
     private static Map<String, String> migrateBatches() throws IOException {
         final String batch = TranslationBatchGenerator.createBatch();
@@ -151,7 +121,7 @@ public final class TranslationBatchGenerator {
                 final String[] property = string.split("=");
                 String key = property[0];
                 if (key.startsWith("$")) continue;
-                String value = String.join("=", HartshornUtils.arraySubset(property, 1, property.length-1));
+                String value = String.join("=", HartshornUtils.arraySubset(property, 1, property.length - 1));
                 if (properties.containsKey(key)) {
                     // Override any existing, drop retired translations
                     cache.setProperty(key, value);
@@ -173,15 +143,6 @@ public final class TranslationBatchGenerator {
         return files;
     }
 
-    private static List<File> existingFiles() {
-        final File batch = TranslationBatchGenerator.existingBatch();
-        if (batch.exists() && batch.isDirectory()) {
-            return HartshornUtils.asList(batch.listFiles()).stream()
-                    .filter(f -> !f.isDirectory())
-                    .toList();
-        } else throw new IllegalStateException("Existing batch could not be found");
-    }
-
     private static File existingBatch() {
         // About as hacky as it gets. Please PR a better version
         return new File(TranslationBatchGenerator.class
@@ -190,6 +151,46 @@ public final class TranslationBatchGenerator {
                 .toPath()
                 .resolve("../../../../src/main/resources/hartshorn")
                 .toFile();
+    }
+
+    private static String createBatch() {
+        final Map<String, String> collect = collect();
+        List<String> entries = HartshornUtils.emptyList();
+        for (Entry<String, String> entry : collect.entrySet()) {
+            if (entry.getValue().contains("\n")) continue;
+            if (BLACKLIST.contains(entry.getKey())) continue;
+            String next = entry.getKey() + '=' + entry.getValue();
+            next = next.replaceAll("\r", "");
+            entries.add(next);
+        }
+        Collections.sort(entries);
+        return String.join("\n", entries);
+    }
+
+    private static List<File> existingFiles() {
+        final File batch = TranslationBatchGenerator.existingBatch();
+        if (batch.exists() && batch.isDirectory()) {
+            return HartshornUtils.asList(batch.listFiles()).stream()
+                    .filter(f -> !f.isDirectory())
+                    .toList();
+        }
+        else throw new IllegalStateException("Existing batch could not be found");
+    }
+
+    public static Map<String, String> collect() {
+        Map<String, String> batch = HartshornUtils.emptyMap();
+        int i = 0;
+        for (ComponentContainer container : Hartshorn.context().locator().containers()) {
+            final Class<?> type = container.type();
+            final Collection<Method> methods = Reflect.methods(type, Resource.class);
+            for (Method method : methods) {
+                i++;
+                final Resource annotation = Reflect.annotation(method, Resource.class).get();
+                final String key = I18N.key(type, method);
+                batch.put(key, annotation.value());
+            }
+        }
+        return batch;
     }
 
 }

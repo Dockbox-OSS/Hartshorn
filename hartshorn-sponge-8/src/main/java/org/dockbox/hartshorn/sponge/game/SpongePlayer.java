@@ -25,13 +25,13 @@ import org.dockbox.hartshorn.api.domain.tuple.Tristate;
 import org.dockbox.hartshorn.api.domain.tuple.Vector3N;
 import org.dockbox.hartshorn.api.exceptions.Except;
 import org.dockbox.hartshorn.api.exceptions.NotImplementedException;
+import org.dockbox.hartshorn.di.annotations.inject.Bound;
 import org.dockbox.hartshorn.i18n.common.Language;
 import org.dockbox.hartshorn.i18n.common.ResourceEntry;
 import org.dockbox.hartshorn.i18n.entry.DefaultResources;
 import org.dockbox.hartshorn.i18n.permissions.Permission;
 import org.dockbox.hartshorn.i18n.text.Text;
 import org.dockbox.hartshorn.i18n.text.pagination.Pagination;
-import org.dockbox.hartshorn.di.annotations.inject.Bound;
 import org.dockbox.hartshorn.server.minecraft.dimension.Block;
 import org.dockbox.hartshorn.server.minecraft.dimension.position.Location;
 import org.dockbox.hartshorn.server.minecraft.entities.Entity;
@@ -92,6 +92,14 @@ public class SpongePlayer extends Player implements SpongeEntity<net.minecraft.s
         });
     }
 
+    public Exceptional<ServerPlayer> player() {
+        return this.user().map(user -> user.player().orElse(null));
+    }
+
+    private Exceptional<User> user() {
+        return SpongeUtil.await(Sponge.server().userManager().loadOrCreate(this.uniqueId()));
+    }
+
     @Override
     public void send(ResourceEntry text) {
         this.send(text.translate(this).asText());
@@ -136,10 +144,6 @@ public class SpongePlayer extends Player implements SpongeEntity<net.minecraft.s
         }
     }
 
-    private boolean hasPermission(String permission, Set<Context> contexts) {
-        return this.user().map(user -> user.hasPermission(permission, contexts)).or(false);
-    }
-
     @Override
     public void permission(String permission, Tristate state) {
         this.permission(permission, SubjectData.GLOBAL_CONTEXT, state);
@@ -149,10 +153,15 @@ public class SpongePlayer extends Player implements SpongeEntity<net.minecraft.s
     public void permission(Permission permission, Tristate state) {
         if (permission.context().absent()) {
             this.permission(permission.get(), state);
-        } else {
+        }
+        else {
             Set<Context> contexts = SpongeConvert.toSponge(permission.context().get());
             this.permission(permission.get(), contexts, state);
         }
+    }
+
+    private boolean hasPermission(String permission, Set<Context> contexts) {
+        return this.user().map(user -> user.hasPermission(permission, contexts)).or(false);
     }
 
     public void permission(String permission, Set<Context> context, Tristate state) {
@@ -166,14 +175,20 @@ public class SpongePlayer extends Player implements SpongeEntity<net.minecraft.s
     }
 
     @Override
-    public void send(Packet packet) {
-        // TODO: Implement once packet API is done
-        throw new NotImplementedException();
+    public Exceptional<org.spongepowered.api.entity.living.player.Player> spongeEntity() {
+        return this.player().map(org.spongepowered.api.entity.living.player.Player.class::cast);
     }
 
     @Override
-    public boolean online() {
-        return this.player().map(ServerPlayer::isOnline).or(false);
+    public Exceptional<? extends Mutable> dataHolder() {
+        // Use offline user reference to ensure we can (almost) always obtain the information
+        return this.user();
+    }
+
+    @Override
+    public void send(Packet packet) {
+        // TODO: Implement once packet API is done
+        throw new NotImplementedException();
     }
 
     @Override
@@ -193,6 +208,11 @@ public class SpongePlayer extends Player implements SpongeEntity<net.minecraft.s
             player.offer(Keys.GAME_MODE, mode);
         });
         return this;
+    }
+
+    @Override
+    public boolean online() {
+        return this.player().map(ServerPlayer::isOnline).or(false);
     }
 
     @Override
@@ -241,21 +261,6 @@ public class SpongePlayer extends Player implements SpongeEntity<net.minecraft.s
                 .map(SpongeConvert::fromSponge);
     }
 
-    private <T extends Locatable> RayTraceResult<T> trace(RayTrace<T> trace, ServerPlayer player) {
-        return trace
-                .sourceEyePosition(player)
-                .continueWhileBlock(block -> {
-                    final BlockType type = block.blockState().type();
-                    return type == BlockTypes.AIR.get() ||
-                            type == BlockTypes.CAVE_AIR.get() ||
-                            type == BlockTypes.VOID_AIR.get();
-                })
-                .limit(RAY_TRACE_LIMIT)
-                .direction(player)
-                .world(player.world())
-                .execute().orElse(null);
-    }
-
     @Override
     public PlayerInventory inventory() {
         return new SpongePlayerInventory(this);
@@ -276,22 +281,18 @@ public class SpongePlayer extends Player implements SpongeEntity<net.minecraft.s
                 .or(Vector3N.empty());
     }
 
-    private Exceptional<User> user() {
-        return SpongeUtil.await(Sponge.server().userManager().loadOrCreate(this.uniqueId()));
-    }
-
-    public Exceptional<ServerPlayer> player() {
-        return this.user().map(user -> user.player().orElse(null));
-    }
-
-    @Override
-    public Exceptional<? extends Mutable> dataHolder() {
-        // Use offline user reference to ensure we can (almost) always obtain the information
-        return this.user();
-    }
-
-    @Override
-    public Exceptional<org.spongepowered.api.entity.living.player.Player> spongeEntity() {
-        return this.player().map(org.spongepowered.api.entity.living.player.Player.class::cast);
+    private <T extends Locatable> RayTraceResult<T> trace(RayTrace<T> trace, ServerPlayer player) {
+        return trace
+                .sourceEyePosition(player)
+                .continueWhileBlock(block -> {
+                    final BlockType type = block.blockState().type();
+                    return type == BlockTypes.AIR.get() ||
+                            type == BlockTypes.CAVE_AIR.get() ||
+                            type == BlockTypes.VOID_AIR.get();
+                })
+                .limit(RAY_TRACE_LIMIT)
+                .direction(player)
+                .world(player.world())
+                .execute().orElse(null);
     }
 }

@@ -18,9 +18,9 @@
 package org.dockbox.hartshorn.persistence;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.persistence.mapping.GenericType;
 import org.dockbox.hartshorn.persistence.registry.Registry;
 import org.dockbox.hartshorn.persistence.registry.RegistryColumn;
-import org.dockbox.hartshorn.persistence.mapping.GenericType;
 import org.dockbox.hartshorn.test.HartshornRunner;
 import org.dockbox.hartshorn.test.files.JUnitFileManager;
 import org.junit.jupiter.api.Assertions;

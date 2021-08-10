@@ -25,7 +25,7 @@ public interface AttributeHolder {
         return true;
     }
 
-    default void apply(Attribute<?> property) throws ApplicationException {}
+    default void apply(final Attribute<?> property) throws ApplicationException {}
 
     default void enable() throws ApplicationException {}
 }

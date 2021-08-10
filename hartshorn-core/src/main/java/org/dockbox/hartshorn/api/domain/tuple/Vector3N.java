@@ -37,19 +37,9 @@ public class Vector3N extends Vector2N {
     }
 
     /**
-     * Creates a new {@link Vector3N} from the given values.
-     * @param x The x position of the {@link Vector3N}
-     * @param y The y position of the {@link Vector3N}
-     * @param z The z position of the {@link Vector3N}
-     * @return The new {@link Vector3N}
-     */
-    public static Vector3N of(Number x, Number y, Number z) {
-        return new Vector3N(x, y, z);
-    }
-
-    /**
      * Creates a new empty {@link Vector3N}. An empty {@link Vector3N} contains only
      * zeroes.
+     *
      * @return A new empty {@link Vector3N}
      */
     public static Vector3N empty() {
@@ -57,23 +47,24 @@ public class Vector3N extends Vector2N {
     }
 
     /**
-     * Gets the position on the y-axis as a double.
-     * @return The y-position as double
+     * Creates a new {@link Vector3N} from the given values.
+     *
+     * @param x
+     *         The x position of the {@link Vector3N}
+     * @param y
+     *         The y position of the {@link Vector3N}
+     * @param z
+     *         The z position of the {@link Vector3N}
+     *
+     * @return The new {@link Vector3N}
      */
-    public double yD() {
-        return this.y.doubleValue();
-    }
-
-    /**
-     * Gets the position on the y-axis as a float.
-     * @return The y-position as float
-     */
-    public float yF() {
-        return this.y.floatValue();
+    public static Vector3N of(Number x, Number y, Number z) {
+        return new Vector3N(x, y, z);
     }
 
     /**
      * Gets the position on the y-axis as a integer.
+     *
      * @return The y-position as integer
      */
     public int yI() {
@@ -82,6 +73,7 @@ public class Vector3N extends Vector2N {
 
     /**
      * Gets the position on the y-axis as a long.
+     *
      * @return The y-position as long
      */
     public long yL() {
@@ -93,7 +85,10 @@ public class Vector3N extends Vector2N {
      * current {@link Vector3N} is equal to [11,12,13] and the given {@link Vector3N} is equal
      * to [1,2,3] the output {@link Vector3N} is [12,14,16]. Both {@link Vector3N vectors} can
      * contain negative values.
-     * @param vector The {@link Vector3N} containing the expansion values
+     *
+     * @param vector
+     *         The {@link Vector3N} containing the expansion values
+     *
      * @return The expanded {@link Vector3N}
      */
     public Vector3N expand(Vector3N vector) {
@@ -103,6 +98,20 @@ public class Vector3N extends Vector2N {
                 this.zD() + vector.zD());
     }
 
+    /**
+     * Gets the position on the y-axis as a double.
+     *
+     * @return The y-position as double
+     */
+    public double yD() {
+        return this.y.doubleValue();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.xD(), this.yD(), this.zD());
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -110,8 +119,12 @@ public class Vector3N extends Vector2N {
         return this.yF() == vector3N.yF() && this.xF() == vector3N.xF() && this.zF() == vector3N.zF();
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(this.xD(), this.yD(), this.zD());
+    /**
+     * Gets the position on the y-axis as a float.
+     *
+     * @return The y-position as float
+     */
+    public float yF() {
+        return this.y.floatValue();
     }
 }

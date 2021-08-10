@@ -33,17 +33,17 @@ import org.dockbox.hartshorn.proxy.service.MethodProxyContext;
 public class CacheEvictionMethodModifier extends CacheServiceModifier<EvictCache> {
 
     @Override
+    protected CacheMethodContext context(MethodProxyContext<?> context) {
+        final EvictCache evict = context.annotation(EvictCache.class);
+        return new SimpleCacheMethodContext(evict.manager(), evict.value(), null);
+    }
+
+    @Override
     protected <T, R> ProxyFunction<T, R> process(ApplicationContext context, MethodProxyContext<T> methodContext, CacheContext cacheContext) {
         return (instance, args, proxyContext) -> {
             cacheContext.manager().evict(cacheContext.name());
             return null; // Should be void anyway
         };
-    }
-
-    @Override
-    protected CacheMethodContext context(MethodProxyContext<?> context) {
-        final EvictCache evict = context.annotation(EvictCache.class);
-        return new SimpleCacheMethodContext(evict.manager(), evict.value(), null);
     }
 
     @Override

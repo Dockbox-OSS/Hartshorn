@@ -18,10 +18,10 @@
 package org.dockbox.hartshorn.commands.context;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.i18n.permissions.Permission;
-import org.dockbox.hartshorn.commands.service.CommandParameter;
 import org.dockbox.hartshorn.commands.CommandSource;
+import org.dockbox.hartshorn.commands.service.CommandParameter;
 import org.dockbox.hartshorn.di.context.DefaultContext;
+import org.dockbox.hartshorn.i18n.permissions.Permission;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.jetbrains.annotations.UnmodifiableView;
 
@@ -46,6 +46,10 @@ public class SimpleCommandContext extends DefaultContext implements CommandConte
     private final List<Permission> permissions;
 
     @Override
+    @UnmodifiableView
+    public List<CommandParameter<?>> arguments() {
+        return HartshornUtils.asUnmodifiableList(this.args);
+    }    @Override
     public <T> T get(String key) {
         return HartshornUtils.merge(this.args, this.flags)
                 .stream()
@@ -57,6 +61,10 @@ public class SimpleCommandContext extends DefaultContext implements CommandConte
     }
 
     @Override
+    @UnmodifiableView
+    public List<CommandParameter<?>> flags() {
+        return HartshornUtils.asUnmodifiableList(this.flags);
+    }    @Override
     public boolean has(String key) {
         return HartshornUtils.merge(this.args, this.flags)
                 .stream()
@@ -65,6 +73,9 @@ public class SimpleCommandContext extends DefaultContext implements CommandConte
     }
 
     @Override
+    public String alias() {
+        return this.command.split(" ")[0];
+    }    @Override
     public <T> Exceptional<T> find(String key) {
         return Exceptional.of(() -> this.get(key));
     }
@@ -90,20 +101,9 @@ public class SimpleCommandContext extends DefaultContext implements CommandConte
         return this.command;
     }
 
-    @Override
-    @UnmodifiableView
-    public List<CommandParameter<?>> arguments() {
-        return HartshornUtils.asUnmodifiableList(this.args);
-    }
 
-    @Override
-    @UnmodifiableView
-    public List<CommandParameter<?>> flags() {
-        return HartshornUtils.asUnmodifiableList(this.flags);
-    }
 
-    @Override
-    public String alias() {
-        return this.command.split(" ")[0];
-    }
+
+
+
 }

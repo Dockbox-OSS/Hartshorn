@@ -57,20 +57,21 @@ public final class Hartshorn {
     private Hartshorn() {}
 
     /**
+     * Gets the current {@link ApplicationContext} associated with the active {@link #server()}.
+     *
+     * @return The active context
+     */
+    public static ApplicationContext context() {
+        return server().context();
+    }
+
+    /**
      * Gets the instance of {@link Hartshorn}.
      *
      * @return The {@link Hartshorn} instance
      */
     public static HartshornBootstrap server() {
         return HartshornBootstrap.instance();
-    }
-
-    /**
-     * Gets the current {@link ApplicationContext} associated with the active {@link #server()}.
-     * @return The active context
-     */
-    public static ApplicationContext context() {
-        return server().context();
     }
 
     /**
@@ -89,7 +90,7 @@ public final class Hartshorn {
         for (int i = 0; i < qualifiedClassName.length; i++) {
             final String part = qualifiedClassName[i];
             if (i > 0) fullName.append('.');
-            if (i == qualifiedClassName.length-1) fullName.append(part);
+            if (i == qualifiedClassName.length - 1) fullName.append(part);
             else fullName.append(part.charAt(0));
         }
 

@@ -17,11 +17,6 @@
 
 package org.dockbox.hartshorn.persistence;
 
-import org.dockbox.hartshorn.persistence.table.Table;
-import org.dockbox.hartshorn.persistence.table.TableRow;
-import org.dockbox.hartshorn.persistence.table.Merge;
-import org.dockbox.hartshorn.persistence.table.Order;
-import org.dockbox.hartshorn.persistence.table.ColumnIdentifier;
 import org.dockbox.hartshorn.persistence.exceptions.EmptyEntryException;
 import org.dockbox.hartshorn.persistence.exceptions.IdentifierMismatchException;
 import org.dockbox.hartshorn.persistence.exceptions.UnknownIdentifierException;
@@ -29,6 +24,11 @@ import org.dockbox.hartshorn.persistence.identifiers.TestColumnIdentifiers;
 import org.dockbox.hartshorn.persistence.objects.IdentifiedUser;
 import org.dockbox.hartshorn.persistence.objects.User;
 import org.dockbox.hartshorn.persistence.objects.WronglyIdentifiedUser;
+import org.dockbox.hartshorn.persistence.table.ColumnIdentifier;
+import org.dockbox.hartshorn.persistence.table.Merge;
+import org.dockbox.hartshorn.persistence.table.Order;
+import org.dockbox.hartshorn.persistence.table.Table;
+import org.dockbox.hartshorn.persistence.table.TableRow;
 import org.dockbox.hartshorn.test.HartshornRunner;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

@@ -30,6 +30,7 @@ public interface CacheManager {
     /**
      * Gets a list of all currently known {@link Cache caches} managed
      * by this manager.
+     *
      * @return all caches, or an empty list.
      */
     List<Cache<?>> caches();
@@ -38,8 +39,11 @@ public interface CacheManager {
      * Gets the {@link Cache} associated with the given <code>cache</code>
      * ID, if it exists.
      *
-     * @param cache The cache ID
-     * @param <T> The type of objects stored by the cache
+     * @param cache
+     *         The cache ID
+     * @param <T>
+     *         The type of objects stored by the cache
+     *
      * @return The cache, or {@link Exceptional#empty()}
      */
     <T> Exceptional<Cache<T>> get(String cache);
@@ -48,9 +52,12 @@ public interface CacheManager {
      * Updates the {@link Cache} associated with the given <code>cache</code>
      * ID, if it exists.
      *
-     * @param cache The cache ID
-     * @param object The object to update the cache with
-     * @param <T> The type of the object
+     * @param cache
+     *         The cache ID
+     * @param object
+     *         The object to update the cache with
+     * @param <T>
+     *         The type of the object
      */
     <T> void update(String cache, T object);
 
@@ -58,7 +65,8 @@ public interface CacheManager {
      * Evicts the {@link Cache} associated with the given <code>cache</code>
      * ID, if it exists.
      *
-     * @param cache The cache ID
+     * @param cache
+     *         The cache ID
      */
     void evict(String cache);
 
@@ -68,9 +76,13 @@ public interface CacheManager {
      * with the given {@link Expiration}. If the cache previously existed,
      * the expiration is not modified.
      *
-     * @param name The cache ID
-     * @param expiration The expiration of the cache
-     * @param <T> The type of object stored in the cache
+     * @param name
+     *         The cache ID
+     * @param expiration
+     *         The expiration of the cache
+     * @param <T>
+     *         The type of object stored in the cache
+     *
      * @return The existing or created {@link Cache}
      */
     <T> Cache<T> getOrCreate(String name, Expiration expiration);

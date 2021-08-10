@@ -35,18 +35,18 @@ import java.lang.reflect.Parameter;
 public class CacheUpdateMethodModifier extends CacheServiceModifier<UpdateCache> {
 
     @Override
+    protected CacheMethodContext context(MethodProxyContext<?> context) {
+        final UpdateCache update = context.annotation(UpdateCache.class);
+        return new SimpleCacheMethodContext(update.manager(), update.value(), null);
+    }
+
+    @Override
     protected <T, R> ProxyFunction<T, R> process(ApplicationContext context, MethodProxyContext<T> methodContext, CacheContext cacheContext) {
         return (instance, args, proxyContext) -> {
             final Object o = args[0];
             cacheContext.manager().update(cacheContext.name(), o);
             return null; // Should be void anyway
         };
-    }
-
-    @Override
-    protected CacheMethodContext context(MethodProxyContext<?> context) {
-        final UpdateCache update = context.annotation(UpdateCache.class);
-        return new SimpleCacheMethodContext(update.manager(), update.value(), null);
     }
 
     @Override

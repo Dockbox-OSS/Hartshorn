@@ -17,8 +17,8 @@
 
 package org.dockbox.hartshorn.di.properties;
 
-import org.dockbox.hartshorn.di.binding.Bindings;
 import org.dockbox.hartshorn.di.annotations.inject.Named;
+import org.dockbox.hartshorn.di.binding.Bindings;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -29,15 +29,15 @@ public class BindingMetaAttribute implements Attribute<Named> {
 
     @Getter private final Named value;
 
-    private BindingMetaAttribute(String value) {
+    private BindingMetaAttribute(final String value) {
         this.value = Bindings.named(value);
     }
 
-    public static BindingMetaAttribute of(String value) {
+    public static BindingMetaAttribute of(final String value) {
         return new BindingMetaAttribute(value);
     }
 
-    public static BindingMetaAttribute of(Named meta) {
+    public static BindingMetaAttribute of(final Named meta) {
         return new BindingMetaAttribute(meta);
     }
 }

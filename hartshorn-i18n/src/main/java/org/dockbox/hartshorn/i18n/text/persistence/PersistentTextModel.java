@@ -63,7 +63,8 @@ public class PersistentTextModel implements PersistentModel<Text> {
         else if (clickAction instanceof ClickAction.ExecuteCallback) {
             this.clickAction = ActionTypes.EXECUTE_CALLBACK;
             this.clickActionResult = "[cannot serialize consumers (yet)]";
-        } else this.clickAction = ActionTypes.NONE;
+        }
+        else this.clickAction = ActionTypes.NONE;
     }
 
     protected void extractShiftClickAction(Text text) {
