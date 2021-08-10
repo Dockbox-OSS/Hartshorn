@@ -41,7 +41,5 @@ public interface ApplicationBinder extends Binder {
     <T> T invoke(Method method);
     <T> T invoke(Method method, Object instance);
 
-    <T> void add(BindingHierarchy<T> hierarchy);
-    <T> void merge(BindingHierarchy<T> hierarchy);
-    <T> Exceptional<BindingHierarchy<T>> hierarchy(Key<T> key);
+    <T> BindingHierarchy<T> hierarchy(Key<T> key);
 }

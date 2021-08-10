@@ -5,6 +5,7 @@ import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.di.binding.BindingHierarchy;
 import org.dockbox.hartshorn.di.binding.Bindings;
 import org.dockbox.hartshorn.di.binding.Provider;
+import org.dockbox.hartshorn.di.binding.Providers;
 import org.dockbox.hartshorn.di.binding.StaticProvider;
 import org.dockbox.hartshorn.test.HartshornRunner;
 import org.junit.jupiter.api.Assertions;
@@ -53,33 +54,32 @@ public class BindingHierarchyTests {
 
     @Test
     void testApplicationContextHierarchyControl() {
-        final BindingHierarchy<Contract> hierarchy = new NativeBindingHierarchy<>(Key.of(Contract.class));
-        hierarchy.add(0, new StaticProvider<>(ImplementationA.class));
-        hierarchy.add(1, new StaticProvider<>(ImplementationB.class));
+        final Key<Contract> key = Key.of(Contract.class);
 
-        final BindingHierarchy<Contract> secondHierarchy = new NativeBindingHierarchy<>(Key.of(Contract.class));
+        final BindingHierarchy<Contract> secondHierarchy = new NativeBindingHierarchy<>(key);
         secondHierarchy.add(2, Providers.of(ImplementationC.class));
 
-        Hartshorn.context().add(hierarchy);
-        Hartshorn.context().merge(secondHierarchy);
+        Hartshorn.context().hierarchy(key)
+                .add(0, Providers.of(ImplementationA.class))
+                .add(1, Providers.of(ImplementationB.class))
+                .merge(secondHierarchy);
 
-        final Exceptional<BindingHierarchy<Contract>> stored = Hartshorn.context().hierarchy(Key.of(Contract.class));
-        Assertions.assertTrue(stored.present());
+        final BindingHierarchy<Contract> hierarchy = Hartshorn.context().hierarchy(key);
+        Assertions.assertNotNull(hierarchy);
 
-        final BindingHierarchy<Contract> storedHierarchy = stored.get();
-        Assertions.assertEquals(3, storedHierarchy.size());
+        Assertions.assertEquals(3, hierarchy.size());
 
-        final Exceptional<Provider<Contract>> priorityZero = storedHierarchy.get(0);
+        final Exceptional<Provider<Contract>> priorityZero = hierarchy.get(0);
         Assertions.assertTrue(priorityZero.present());
         Assertions.assertTrue(priorityZero.get() instanceof StaticProvider);
         Assertions.assertEquals(((StaticProvider<Contract>) priorityZero.get()).target(), ImplementationA.class);
 
-        final Exceptional<Provider<Contract>> priorityOne = storedHierarchy.get(1);
+        final Exceptional<Provider<Contract>> priorityOne = hierarchy.get(1);
         Assertions.assertTrue(priorityOne.present());
         Assertions.assertTrue(priorityOne.get() instanceof StaticProvider);
         Assertions.assertEquals(((StaticProvider<Contract>) priorityOne.get()).target(), ImplementationB.class);
 
-        final Exceptional<Provider<Contract>> priorityTwo = storedHierarchy.get(2);
+        final Exceptional<Provider<Contract>> priorityTwo = hierarchy.get(2);
         Assertions.assertTrue(priorityTwo.present());
         Assertions.assertTrue(priorityTwo.get() instanceof StaticProvider);
         Assertions.assertEquals(((StaticProvider<Contract>) priorityTwo.get()).target(), ImplementationC.class);
@@ -92,12 +92,11 @@ public class BindingHierarchyTests {
 
         Hartshorn.context().bind(Key.of(LocalContract.class), LocalImpl.class);
 
-        final Exceptional<BindingHierarchy<LocalContract>> hierarchy = Hartshorn.context().hierarchy(Key.of(LocalContract.class));
-        Assertions.assertTrue(hierarchy.present());
-        final BindingHierarchy<LocalContract> storedHierarchy = hierarchy.get();
-        Assertions.assertEquals(1, storedHierarchy.size());
+        final BindingHierarchy<LocalContract> hierarchy = Hartshorn.context().hierarchy(Key.of(LocalContract.class));
+        Assertions.assertNotNull(hierarchy);
+        Assertions.assertEquals(1, hierarchy.size());
 
-        final Exceptional<Provider<LocalContract>> provider = storedHierarchy.get(-1);
+        final Exceptional<Provider<LocalContract>> provider = hierarchy.get(-1);
         Assertions.assertTrue(provider.present());
         Assertions.assertTrue(provider.get() instanceof StaticProvider);
         Assertions.assertEquals(((StaticProvider<LocalContract>) provider.get()).target(), LocalImpl.class);

@@ -21,6 +21,7 @@ import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.domain.MetaProvider;
 import org.dockbox.hartshorn.api.exceptions.ApplicationException;
 import org.dockbox.hartshorn.di.ApplicationContextAware;
+import org.dockbox.hartshorn.di.ContextWrappedHierarchy;
 import org.dockbox.hartshorn.di.DefaultModifiers;
 import org.dockbox.hartshorn.di.InjectConfiguration;
 import org.dockbox.hartshorn.di.InjectorMetaProvider;
@@ -313,25 +314,12 @@ public class HartshornApplicationContext extends ManagedHartshornContext {
     }
 
     @Override
-    public <T> void add(final BindingHierarchy<T> hierarchy) {
-        this.hierarchies.put(hierarchy.key(), hierarchy);
-    }
-
-    @Override
-    public <T> void merge(final BindingHierarchy<T> hierarchy) {
+    public <T> BindingHierarchy<T> hierarchy(final Key<T> key) {
         //noinspection unchecked
-        final BindingHierarchy<T> existing = (BindingHierarchy<T>) this.hierarchies.get(hierarchy.key());
-        if (existing != null) {
-            this.hierarchies.put(hierarchy.key(), hierarchy.merge(existing));
-        } else {
-            this.add(hierarchy);
-        }
-    }
-
-    @Override
-    public <T> Exceptional<BindingHierarchy<T>> hierarchy(final Key<T> key) {
-        //noinspection unchecked
-        return Exceptional.of(this.hierarchies.getOrDefault(key, null)).map(hierarchy -> (BindingHierarchy<T>) hierarchy);
+        final BindingHierarchy<T> hierarchy = (BindingHierarchy<T>) this.hierarchies.getOrDefault(key, new NativeBindingHierarchy<>(key));
+        // onUpdate callback is purely so updates will still be saved even if the reference is lost
+        if (hierarchy instanceof ContextWrappedHierarchy) return hierarchy;
+        else return new ContextWrappedHierarchy<>(hierarchy, updated -> this.hierarchies.put(key, updated));
     }
 
     public <T> Exceptional<T> provide(final Class<T> type, final Attribute<?>... additionalProperties) {
