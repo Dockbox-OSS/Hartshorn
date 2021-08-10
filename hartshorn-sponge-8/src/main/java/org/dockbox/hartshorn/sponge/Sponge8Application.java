@@ -50,7 +50,7 @@ public class Sponge8Application {
     public Sponge8Application() {
         Sponge8Application.instance = this;
         Exceptional.of("");
-        this.init = HartshornApplication.create(Sponge8Application.class,
+        this.init = HartshornApplication.lazy(Sponge8Application.class,
                 DefaultModifiers.ACTIVATE_ALL,
                 new MetaProviderModifier(MetaProviderImpl::new)
         );
@@ -61,10 +61,10 @@ public class Sponge8Application {
     }
 
     @Listener
-    public void on(ConstructPluginEvent event) {
+    public void on(final ConstructPluginEvent event) {
         this.init.run();
 
-        for (Class<? extends EventBridge> bridge : Reflect.children(EventBridge.class)) {
+        for (final Class<? extends EventBridge> bridge : Reflect.children(EventBridge.class)) {
             Sponge.eventManager().registerListeners(this.container, Hartshorn.context().get(bridge));
         }
     }
