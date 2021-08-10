@@ -51,6 +51,10 @@ public final class Hartshorn {
      * The simplified identifier for Hartshorn-default identifiers.
      */
     public static final String PROJECT_ID = "hartshorn";
+    /**
+     * The semantic version of the current/latest release of Hartshorn
+     */
+    public static final String VERSION = "4.1.1";
 
     private static final Map<String, Logger> LOGGERS = HartshornUtils.emptyConcurrentMap();
 
@@ -80,7 +84,11 @@ public final class Hartshorn {
      * @return The {@link Logger}
      */
     public static Logger log() {
-        final StackTraceElement element = Thread.currentThread().getStackTrace()[2];
+        return internalLog();
+    }
+
+    static Logger internalLog() {
+        final StackTraceElement element = Thread.currentThread().getStackTrace()[3];
         final String className = element.getClassName();
         if (LOGGERS.containsKey(className)) return LOGGERS.get(className);
 

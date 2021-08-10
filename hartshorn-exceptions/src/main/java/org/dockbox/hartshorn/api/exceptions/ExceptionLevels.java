@@ -39,12 +39,12 @@ public enum ExceptionLevels implements ExceptionHandle {
 
     private final TriConsumer<String, Throwable, Boolean> consumer;
 
-    ExceptionLevels(TriConsumer<String, Throwable, Boolean> consumer) {
+    ExceptionLevels(final TriConsumer<String, Throwable, Boolean> consumer) {
         this.consumer = consumer;
     }
 
     @Override
-    public void handle(String message, Throwable exception, boolean stacktrace) {
+    public void handle(final String message, final Throwable exception, final boolean stacktrace) {
         this.consumer.accept(message, exception, stacktrace);
     }
 }

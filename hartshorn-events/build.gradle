@@ -19,5 +19,6 @@ apply from: "$rootDir/parent.gradle"
 
 dependencies {
     apiInclude project(':hartshorn-bootstrap')
+
     include project(':hartshorn-tasks')
 }

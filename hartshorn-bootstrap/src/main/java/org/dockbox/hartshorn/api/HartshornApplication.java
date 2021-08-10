@@ -43,6 +43,15 @@ import java.util.List;
  */
 public class HartshornApplication {
 
+    private static final String BANNER = """
+                 _   _            _       _                     \s
+                | | | | __ _ _ __| |_ ___| |__   ___  _ __ _ __ \s
+                | |_| |/ _` | '__| __/ __| '_ \\ / _ \\| '__| '_ \\\s
+                |  _  | (_| | |  | |_\\__ \\ | | | (_) | |  | | | |
+            ====|_| |_|\\__,_|_|===\\__|___/_|=|_|\\___/|_|==|_|=|_|====
+                                             -- Hartshorn v%s --
+            """.formatted(Hartshorn.VERSION);
+
     /**
      * Creates the bootstrapped server instance using the provided {@link Activator} metadata. If no valid
      * {@link ApplicationBootstrap} is provided the application will not be started. This does not initialize
@@ -58,10 +67,20 @@ public class HartshornApplication {
      */
     public static Runnable create(final Class<?> activator, final Modifier... modifiers) {
         try {
+            Hartshorn.log().info("Starting " + Hartshorn.PROJECT_NAME + " with activator " + activator.getSimpleName());
             final long start = System.currentTimeMillis();
             final Activator annotation = verifyActivator(activator);
             final Class<? extends ApplicationBootstrap> bootstrap = annotation.value();
+
+            Hartshorn.log().info("Requested bootstrap is " + bootstrap.getSimpleName());
             final ApplicationBootstrap injectableBootstrap = instance(bootstrap);
+
+            if (!injectableBootstrap.isCI()) {
+                for (final String line : BANNER.split("\n")) {
+                    Hartshorn.log().info(line);
+                }
+                Hartshorn.log().info("");
+            }
 
             final String prefix = "".equals(annotation.prefix()) ? activator.getPackage().getName() : annotation.prefix();
 
@@ -72,6 +91,8 @@ public class HartshornApplication {
 
             final List<String> prefixes = HartshornUtils.asList(Hartshorn.PACKAGE_PREFIX);
             if (!prefix.startsWith(Hartshorn.PACKAGE_PREFIX)) prefixes.add(prefix);
+
+            Hartshorn.log().info("Default context prefix set to: " + prefix);
 
             injectableBootstrap.create(
                     prefixes,
@@ -85,7 +106,7 @@ public class HartshornApplication {
                 final long initStart = System.currentTimeMillis();
                 injectableBootstrap.init();
                 final long initTime = System.currentTimeMillis() - initStart;
-                Hartshorn.log().info("Started " + Hartshorn.PROJECT_NAME + " in " + (creationTime + initTime) + "ms");
+                Hartshorn.log().info("Started " + Hartshorn.PROJECT_NAME + " in " + (creationTime + initTime) + "ms (" + creationTime + "ms creation, " + initTime + "ms init)");
             };
         }
         catch (final InvocationTargetException | NoSuchMethodException | InstantiationException | IllegalAccessException e) {

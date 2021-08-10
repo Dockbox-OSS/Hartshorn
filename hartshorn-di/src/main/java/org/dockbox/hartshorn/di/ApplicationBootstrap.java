@@ -29,6 +29,8 @@ public interface ApplicationBootstrap {
 
     void init();
 
+    boolean isCI();
+
     void create(Collection<String> prefixes, Class<?> activationSource, List<Annotation> activators, Multimap<InjectPhase, InjectConfiguration> configs, Modifier... modifiers);
 
 }
