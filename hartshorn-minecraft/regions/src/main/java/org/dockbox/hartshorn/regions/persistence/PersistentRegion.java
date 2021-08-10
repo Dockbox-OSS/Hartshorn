@@ -54,9 +54,13 @@ public class PersistentRegion implements PersistentModel<CustomRegion> {
     private int corner_b_z;
 
     @OneToMany(cascade = CascadeType.ALL)
-    @Getter private List<PersistentRegionFlag> flags = HartshornUtils.emptyList();
+    @Getter private final List<PersistentRegionFlag> flags = HartshornUtils.emptyList();
 
-    public PersistentRegion(long id, String name, String owner, String world, int corner_a_x, int corner_a_y, int corner_a_z, int corner_b_x, int corner_b_y, int corner_b_z) {
+    public PersistentRegion(
+            final long id, final String name, final String owner, final String world,
+            final int corner_a_x, final int corner_a_y, final int corner_a_z,
+            final int corner_b_x, final int corner_b_y, final int corner_b_z
+    ) {
         this.id = id;
         this.name = name;
         this.owner = owner;
@@ -69,7 +73,7 @@ public class PersistentRegion implements PersistentModel<CustomRegion> {
         this.corner_b_z = corner_b_z;
     }
 
-    public void add(PersistentRegionFlag flag) {
+    public void add(final PersistentRegionFlag flag) {
         this.flags.add(flag);
     }
 
@@ -80,11 +84,11 @@ public class PersistentRegion implements PersistentModel<CustomRegion> {
 
     @Override
     public CustomRegion restore() {
-        final CustomRegion region = new CustomRegion(Text.of(this.name),
+
+        // TODO: Restore flags!
+        return new CustomRegion(this.id, Text.of(this.name),
                 Vector3N.of(this.corner_a_x, this.corner_a_y, this.corner_a_z),
                 Vector3N.of(this.corner_b_x, this.corner_b_y, this.corner_b_z),
                 UUID.fromString(this.owner), UUID.fromString(this.world));
-        // TODO: Restore flags!
-        return region;
     }
 }

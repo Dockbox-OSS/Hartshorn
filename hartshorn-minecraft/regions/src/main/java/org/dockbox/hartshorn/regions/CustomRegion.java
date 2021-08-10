@@ -47,17 +47,14 @@ public class CustomRegion implements Region, PersistentCapable<PersistentRegion>
 
     private final Map<String, SerializedFlag> flags = HartshornUtils.emptyMap();
     @Getter private long id;
-    @Getter private Vector3N cornerA;
-    @Getter private Vector3N cornerB;
+    @Getter private final Vector3N cornerA;
+    @Getter private final Vector3N cornerB;
     private transient Vector3N size;
     private String name;
-    private UUID owner;
-    private UUID world;
+    private final UUID owner;
+    private final UUID world;
 
-    protected CustomRegion() {
-    }
-
-    public CustomRegion(Text name, Vector3N cornerA, Vector3N cornerB, UUID owner, UUID world) {
+    public CustomRegion(final Text name, final Vector3N cornerA, final Vector3N cornerB, final UUID owner, final UUID world) {
         this.name = name.toLegacy();
 
         this.cornerA = HartshornUtils.minimumPoint(cornerA, cornerB);
@@ -67,6 +64,11 @@ public class CustomRegion implements Region, PersistentCapable<PersistentRegion>
 
         this.owner = owner;
         this.world = world;
+    }
+
+    public CustomRegion(final long id, final Text name, final Vector3N cornerA, final Vector3N cornerB, final UUID owner, final UUID world) {
+        this(name, cornerA, cornerB, owner, world);
+        this.id = id;
     }
 
     @Override
@@ -102,9 +104,9 @@ public class CustomRegion implements Region, PersistentCapable<PersistentRegion>
 
     @Override
     public Map<RegionFlag<?>, ?> flags() {
-        Map<RegionFlag<?>, Object> flags = HartshornUtils.emptyMap();
+        final Map<RegionFlag<?>, Object> flags = HartshornUtils.emptyMap();
 
-        for (SerializedFlag serializedFlag : this.flags.values()) {
+        for (final SerializedFlag serializedFlag : this.flags.values()) {
             final Exceptional<RegionFlag<?>> flag = serializedFlag.restoreFlag().rethrow();
             if (flag.absent()) {
                 Hartshorn.log().warn("Could not restore flag with ID '" + serializedFlag.id() + "'");
@@ -118,21 +120,21 @@ public class CustomRegion implements Region, PersistentCapable<PersistentRegion>
     }
 
     @Override
-    public <T> void add(RegionFlag<T> flag, T value) {
+    public <T> void add(final RegionFlag<T> flag, final T value) {
         final CancellableRegionEvent event = new RegionFlagAddedEvent(this, flag).post();
         if (!event.cancelled())
             this.flags.put(flag.id(), new SerializedFlag(flag, value));
     }
 
     @Override
-    public void remove(RegionFlag<?> flag) {
+    public void remove(final RegionFlag<?> flag) {
         final CancellableRegionEvent event = new RegionFlagRemovedEvent(this, flag).post();
         if (!event.cancelled())
             this.flags.remove(flag.id());
     }
 
     @Override
-    public <T> Exceptional<T> get(RegionFlag<T> flag) {
+    public <T> Exceptional<T> get(final RegionFlag<T> flag) {
         return Exceptional.of(() -> this.flags.getOrDefault(flag.id(), null))
                 .flatMap(SerializedFlag::restoreValue);
     }
