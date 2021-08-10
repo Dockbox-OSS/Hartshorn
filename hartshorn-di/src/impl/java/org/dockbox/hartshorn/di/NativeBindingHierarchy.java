@@ -31,13 +31,18 @@ public class NativeBindingHierarchy<C> implements BindingHierarchy<C> {
     }
 
     @Override
-    public void add(final Provider<C> provider) {
-        this.add(-1, provider);
+    public BindingHierarchy<C> add(final Provider<C> provider) {
+        return this.add(-1, provider);
     }
 
     @Override
-    public void add(final int priority, final Provider<C> provider) {
+    public BindingHierarchy<C> add(final int priority, final Provider<C> provider) {
+        if (this.bindings.containsKey(priority)) {
+            ApplicationContextAware.instance().log().warn("There is already a provider for " + this.key().contract().getSimpleName() + " with priority " + priority + ". It will be overwritten! " +
+                    "To avoid unexpected behavior, ensure the priority is not already present. Current hierarchy: " + this);
+        }
         this.bindings.put(priority, provider);
+        return this;
     }
 
     @Override

@@ -10,8 +10,8 @@ public interface BindingHierarchy<C> extends Iterable<Entry<Integer, Provider<C>
 
     Set<Provider<C>> providers();
 
-    void add(Provider<C> provider);
-    void add(int priority, Provider<C> provider);
+    BindingHierarchy<C> add(Provider<C> provider);
+    BindingHierarchy<C> add(int priority, Provider<C> provider);
 
     BindingHierarchy<C> merge(BindingHierarchy<C> hierarchy);
 

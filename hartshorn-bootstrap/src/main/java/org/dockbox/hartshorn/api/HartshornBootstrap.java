@@ -31,6 +31,7 @@ import org.dockbox.hartshorn.di.annotations.inject.Required;
 import org.dockbox.hartshorn.di.services.ComponentContainer;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.dockbox.hartshorn.util.Reflect;
+import org.slf4j.Logger;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -51,7 +52,7 @@ public abstract class HartshornBootstrap extends InjectableBootstrap {
     private final Set<Method> postBootstrapActivations = HartshornUtils.emptyConcurrentSet();
 
     @Override
-    public void create(Collection<String> prefixes, Class<?> activationSource, List<Annotation> activators, Multimap<InjectPhase, InjectConfiguration> configs, Modifier... modifiers) {
+    public void create(final Collection<String> prefixes, final Class<?> activationSource, final List<Annotation> activators, final Multimap<InjectPhase, InjectConfiguration> configs, final Modifier... modifiers) {
         activators.add(new UseBootstrap() {
             @Override
             public Class<? extends Annotation> annotationType() {
@@ -81,7 +82,7 @@ public abstract class HartshornBootstrap extends InjectableBootstrap {
     @Override
     public void init() {
         Hartshorn.log().info("Initialising Hartshorn " + this.context());
-        for (Method postBootstrapActivation : this.postBootstrapActivations) {
+        for (final Method postBootstrapActivation : this.postBootstrapActivations) {
             this.context().invoke(postBootstrapActivation);
         }
         // Ensure all services requiring a platform implementation have one present
@@ -90,14 +91,18 @@ public abstract class HartshornBootstrap extends InjectableBootstrap {
                 this.handleMissingBinding(type);
             }
         });
+    }
 
+    @Override
+    public Logger log() {
+        return Hartshorn.log();
     }
 
     /**
      * Indicates the behavior to use when a {@link Required} type has no active binding.
      * @param type The required type
      */
-    protected void handleMissingBinding(Class<?> type) {
+    protected void handleMissingBinding(final Class<?> type) {
         throw new IllegalStateException("No implementation exists for [" + type.getCanonicalName() + "], this will cause functionality to misbehave or not function!");
     }
 
@@ -106,7 +111,7 @@ public abstract class HartshornBootstrap extends InjectableBootstrap {
      * completes. This requires all activators for the declaring class to be present.
      * @param method The method to activate
      */
-    void addPostBootstrapActivation(Method method) {
+    void addPostBootstrapActivation(final Method method) {
         Objects.requireNonNull(method);
         final Class<?> type = method.getDeclaringClass();
         final Exceptional<ComponentContainer> container = Hartshorn.context().locator().container(type);
