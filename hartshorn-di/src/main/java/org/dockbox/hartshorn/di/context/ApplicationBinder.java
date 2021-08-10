@@ -19,7 +19,9 @@ package org.dockbox.hartshorn.di.context;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.di.InjectConfiguration;
+import org.dockbox.hartshorn.di.Key;
 import org.dockbox.hartshorn.di.annotations.inject.Named;
+import org.dockbox.hartshorn.di.binding.BindingHierarchy;
 import org.dockbox.hartshorn.di.inject.Binder;
 import org.dockbox.hartshorn.di.inject.ProviderContext;
 import org.dockbox.hartshorn.di.inject.wired.BoundContext;
@@ -38,4 +40,6 @@ public interface ApplicationBinder extends Binder {
 
     <T> T invoke(Method method);
     <T> T invoke(Method method, Object instance);
+
+    <T> BindingHierarchy<T> hierarchy(Key<T> key);
 }

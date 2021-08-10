@@ -17,9 +17,8 @@
 
 package org.dockbox.hartshorn.di.inject;
 
-import org.dockbox.hartshorn.di.annotations.inject.Named;
+import org.dockbox.hartshorn.di.Key;
 
-import java.lang.annotation.Annotation;
 import java.util.function.Supplier;
 
 public interface DelegatedBinder extends Binder {
@@ -27,43 +26,23 @@ public interface DelegatedBinder extends Binder {
     Binder binder();
     
     @Override
-    default <C, T extends C, A extends Annotation> void provide(Class<C> contract, Supplier<? extends T> supplier) {
+    default <C> void provide(final Key<C> contract, final Supplier<C> supplier) {
         this.binder().provide(contract, supplier);
     }
 
     @Override
-    default <C, T extends C, A extends Annotation> void provide(Class<C> contract, Supplier<? extends T> supplier, Named meta) {
-        this.binder().provide(contract, supplier, meta);
-    }
-
-    @Override
-    default <C, T extends C> void bind(Class<C> contract, Class<? extends T> implementation) {
+    default <C, T extends C> void bind(final Key<C> contract, final Class<? extends T> implementation) {
         this.binder().bind(contract, implementation);
     }
 
     @Override
-    default <C, T extends C> void bind(Class<C> contract, Class<? extends T> implementation, Named meta) {
-        this.binder().bind(contract, implementation, meta);
-    }
-
-    @Override
-    default <C, T extends C> void bind(Class<C> contract, T instance) {
+    default <C, T extends C> void bind(final Key<C> contract, final T instance) {
         this.binder().bind(contract, instance);
     }
 
     @Override
-    default <C, T extends C> void bind(Class<C> contract, T instance, Named meta) {
-        this.binder().bind(contract, instance, meta);
-    }
-
-    @Override
-    default  <C, T extends C> void manual(Class<C> contract, Class<? extends T> implementation) {
+    default  <C, T extends C> void manual(final Key<C> contract, final Class<? extends T> implementation) {
         this.binder().manual(contract, implementation);
     }
 
-    @Override
-    default  <C, T extends C> void manual(Class<C> contract, Class<? extends T> implementation, Named meta) {
-        this.binder().manual(contract, implementation, meta);
-    }
-    
 }

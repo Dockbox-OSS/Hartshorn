@@ -18,12 +18,11 @@
 package org.dockbox.hartshorn.di.context;
 
 import org.dockbox.hartshorn.di.annotations.inject.Named;
-import org.dockbox.hartshorn.di.inject.DelegatedBinder;
 import org.dockbox.hartshorn.di.properties.Attribute;
 
 import java.util.function.Consumer;
 
-public interface HartshornContext extends DelegatedBinder, Context {
+public interface HartshornContext extends Context {
 
     <T> T get(Class<T> type, Named named);
 

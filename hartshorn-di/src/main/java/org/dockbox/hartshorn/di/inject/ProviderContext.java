@@ -17,6 +17,8 @@
 
 package org.dockbox.hartshorn.di.inject;
 
+import org.dockbox.hartshorn.di.Key;
+
 import java.util.function.Supplier;
 
 import lombok.Getter;
@@ -26,7 +28,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ProviderContext<T, C extends T> {
 
-    private final KeyBinding<T> key;
+    private final Key<T> key;
     private final boolean singleton;
     private final Supplier<C> provider;
 

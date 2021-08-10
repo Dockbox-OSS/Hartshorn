@@ -18,8 +18,6 @@
 package org.dockbox.hartshorn.di.annotations.activate;
 
 import org.dockbox.hartshorn.di.ApplicationBootstrap;
-import org.dockbox.hartshorn.di.adapter.InjectSource;
-import org.dockbox.hartshorn.di.adapter.ServiceSource;
 import org.dockbox.hartshorn.di.annotations.inject.InjectConfig;
 
 import java.lang.annotation.ElementType;
@@ -34,19 +32,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface Activator {
-
-    /**
-     * @return The target enum constant of the {@link InjectSource} provided at
-     * {@link #injectSource()}. If {@link #injectSource()} is not an enum type
-     * this can be left empty.
-     */
-    String inject() default "";
-
-    /**
-     * @return The {@link InjectSource} type for the current activator. If this
-     * targets an enum value, {@link #inject()} should indicate the target constant.
-     */
-    Class<? extends InjectSource> injectSource();
 
     /**
      * @return The bootstrap type which should be used for the current activator.
@@ -64,17 +49,4 @@ public @interface Activator {
      * this activator
      */
     InjectConfig[] configs() default {};
-
-    /**
-     * @return The target enum constant of the {@link ServiceSource} provided at
-     * {@link #serviceSource()}. If {@link #serviceSource()} is not an enum type
-     * this can be left empty.
-     */
-    String service() default "";
-
-    /**
-     * @return The {@link ServiceSource} type for the current activator. If this
-     * targets an enum value, {@link #service()} should indicate the target constant.
-     */
-    Class<? extends ServiceSource> serviceSource();
 }

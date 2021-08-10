@@ -20,6 +20,7 @@ package org.dockbox.hartshorn.di.context;
 import org.dockbox.hartshorn.api.domain.MetaProvider;
 import org.dockbox.hartshorn.di.InjectionPoint;
 import org.dockbox.hartshorn.di.ProvisionFailure;
+import org.dockbox.hartshorn.di.binding.BindingData;
 import org.dockbox.hartshorn.di.inject.InjectionModifier;
 import org.dockbox.hartshorn.di.properties.Attribute;
 import org.dockbox.hartshorn.di.services.ComponentLocator;
@@ -50,4 +51,6 @@ public interface ApplicationContext extends ApplicationBinder, HartshornContext 
 
     ComponentLocator locator();
     MetaProvider meta();
+
+    void reset();
 }

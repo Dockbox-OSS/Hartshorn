@@ -21,8 +21,6 @@ dependencies {
 
     testImplementation project(':hartshorn-bootstrap')
 
-    apiInclude "com.google.inject:guice:$guiceVersion"
-
     apiShare 'javax.inject:javax.inject:1'
     apiInclude "org.reflections:reflections:$reflectionsVersion"
 }
