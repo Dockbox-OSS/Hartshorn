@@ -39,20 +39,27 @@ public class EventValidator {
         final List<Class<? extends Event>> allEvents = Reflect.children(Event.class)
                 .stream()
                 .filter(type -> !Reflect.isAbstract(type))
+                // Anonymous classes indicate the event carries type parameters when posted (e.g. EngineChangedState<State>)
+                // These are only created when the event is posted, so they can be ignored here, as they are not explicit
+                // definitions.
+                .filter(type -> !type.isAnonymousClass())
                 .toList();
-        List<Class<? extends Event>> postedEvents = HartshornUtils.emptyList();
+        final List<Class<? extends Event>> postedEvents = HartshornUtils.emptyList();
 
-        for (Class<?> bridge : Reflect.types(Posting.class)) {
+        for (final Class<?> bridge : Reflect.types(Posting.class)) {
             final Posting posting = Reflect.annotation(bridge, Posting.class).get();
             postedEvents.addAll(Arrays.asList(posting.value()));
         }
 
-        Set<Class<? extends Event>> difference = HartshornUtils.difference(allEvents, postedEvents);
+        final Set<Class<? extends Event>> difference = HartshornUtils.difference(allEvents, postedEvents);
 
         if (!difference.isEmpty()) {
-            StringBuilder message = new StringBuilder(difference.size() + " events are not handled by any event bridge!");
-            for (Class<? extends Event> event : difference) {
-                message.append("\n\t- ").append(event.getSimpleName());
+            final StringBuilder message = new StringBuilder(difference.size() + " events are not handled by any event bridge!");
+
+            if (!Hartshorn.server().isCI()) {
+                for (final Class<? extends Event> event : difference) {
+                    message.append("\n\t- ").append(event.getSimpleName());
+                }
             }
             Hartshorn.log().warn(message.toString());
         }

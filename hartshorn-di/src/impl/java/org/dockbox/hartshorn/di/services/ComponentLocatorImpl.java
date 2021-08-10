@@ -18,6 +18,7 @@
 package org.dockbox.hartshorn.di.services;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.di.ApplicationContextAware;
 import org.dockbox.hartshorn.di.ComponentType;
 import org.dockbox.hartshorn.di.annotations.component.Component;
 import org.dockbox.hartshorn.util.HartshornUtils;
@@ -37,6 +38,7 @@ public class ComponentLocatorImpl implements ComponentLocator {
     public void register(final String prefix) {
         if (ComponentLocatorImpl.cache.containsKey(prefix)) return;
 
+        final long start = System.currentTimeMillis();
         Reflect.prefix(prefix);
         final Collection<Class<?>> types = Reflect.types(Component.class);
 
@@ -46,6 +48,10 @@ public class ComponentLocatorImpl implements ComponentLocator {
                 .filter(container -> !container.type().isAnnotation()) // Exclude extended annotations
                 .map(ComponentContainer.class::cast)
                 .toList();
+
+        final long duration = System.currentTimeMillis() - start;
+        ApplicationContextAware.instance().log().info("Collected %d types and %d components in %dms".formatted(types.size(), containers.size(), duration));
+
         ComponentLocatorImpl.cache.put(prefix, containers);
     }
 

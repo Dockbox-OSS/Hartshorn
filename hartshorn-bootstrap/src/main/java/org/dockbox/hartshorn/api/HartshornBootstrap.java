@@ -82,7 +82,7 @@ public abstract class HartshornBootstrap extends InjectableBootstrap {
      */
     @Override
     public void init() {
-        Hartshorn.log().info("Initialising Hartshorn " + this.context());
+        Hartshorn.log().info("Initialising Hartshorn v" + Hartshorn.VERSION);
         for (final Method postBootstrapActivation : this.postBootstrapActivations) {
             this.context().invoke(postBootstrapActivation);
         }
@@ -106,7 +106,7 @@ public abstract class HartshornBootstrap extends InjectableBootstrap {
 
     @Override
     public Logger log() {
-        return Hartshorn.log();
+        return Hartshorn.internalLog();
     }
 
     /**
