@@ -37,10 +37,8 @@ import org.dockbox.hartshorn.di.annotations.inject.Wired;
 import org.dockbox.hartshorn.di.annotations.service.ServiceActivator;
 import org.dockbox.hartshorn.di.binding.BindingHierarchy;
 import org.dockbox.hartshorn.di.binding.Bindings;
-import org.dockbox.hartshorn.di.binding.InstanceProvider;
 import org.dockbox.hartshorn.di.binding.Provider;
-import org.dockbox.hartshorn.di.binding.StaticProvider;
-import org.dockbox.hartshorn.di.binding.SupplierProvider;
+import org.dockbox.hartshorn.di.binding.Providers;
 import org.dockbox.hartshorn.di.inject.InjectionModifier;
 import org.dockbox.hartshorn.di.inject.ProviderContext;
 import org.dockbox.hartshorn.di.inject.wired.BoundContext;
@@ -239,11 +237,11 @@ public class HartshornApplicationContext extends ManagedHartshornContext {
         final Key<Object> key = (Key<Object>) context.key();
         this.inHierarchy(key, hierarchy -> {
             if (context.singleton()) {
-                hierarchy.add(new InstanceProvider<>(context.provider().get()));
+                hierarchy.add(Providers.of(context.provider().get()));
             }
             else {
                 //noinspection unchecked
-                hierarchy.add(new SupplierProvider<>((Supplier<Object>) context.provider()));
+                hierarchy.add(Providers.of((Supplier<Object>) context.provider()));
             }
         });
     }
@@ -357,17 +355,17 @@ public class HartshornApplicationContext extends ManagedHartshornContext {
 
     @Override
     public <C> void provide(final Key<C> contract, final Supplier<C> supplier) {
-        this.inHierarchy(contract, hierarchy -> hierarchy.add(new SupplierProvider<>(supplier)));
+        this.inHierarchy(contract, hierarchy -> hierarchy.add(Providers.of(supplier)));
     }
 
     @Override
     public <C, T extends C> void bind(final Key<C> contract, final Class<? extends T> implementation) {
-        this.inHierarchy(contract, hierarchy -> hierarchy.add(new StaticProvider<>(implementation)));
+        this.inHierarchy(contract, hierarchy -> hierarchy.add(Providers.of(implementation)));
     }
 
     @Override
     public <C, T extends C> void bind(final Key<C> contract, final T instance) {
-        this.inHierarchy(contract, hierarchy -> hierarchy.add(new InstanceProvider<>(instance)));
+        this.inHierarchy(contract, hierarchy -> hierarchy.add(Providers.of(instance)));
     }
 
     @Override
@@ -399,7 +397,7 @@ public class HartshornApplicationContext extends ManagedHartshornContext {
         else {
             key = Key.of(binds);
         }
-        this.inHierarchy(key, hierarchy -> hierarchy.add(new StaticProvider<>(binder)));
+        this.inHierarchy(key, hierarchy -> hierarchy.add(Providers.of(binder)));
     }
 
     private <C> void inHierarchy(final Key<C> key, final Consumer<BindingHierarchy<C>> consumer) {

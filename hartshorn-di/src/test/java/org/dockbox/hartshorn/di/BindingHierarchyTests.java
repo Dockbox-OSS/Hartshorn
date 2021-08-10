@@ -19,9 +19,9 @@ public class BindingHierarchyTests {
     @Test
     void testToString() {
         final BindingHierarchy<Contract> hierarchy = new NativeBindingHierarchy<>(Key.of(Contract.class));
-        hierarchy.add(0, new StaticProvider<>(ImplementationA.class));
-        hierarchy.add(1, new StaticProvider<>(ImplementationB.class));
-        hierarchy.add(2, new StaticProvider<>(ImplementationC.class));
+        hierarchy.add(0, Providers.of(ImplementationA.class));
+        hierarchy.add(1, Providers.of(ImplementationB.class));
+        hierarchy.add(2, Providers.of(ImplementationC.class));
 
         Assertions.assertEquals("Hierarchy[Contract]: 0: ImplementationA -> 1: ImplementationB -> 2: ImplementationC", hierarchy.toString());
     }
@@ -29,9 +29,9 @@ public class BindingHierarchyTests {
     @Test
     void testToStringNamed() {
         final BindingHierarchy<Contract> hierarchy = new NativeBindingHierarchy<>(Key.of(Contract.class, Bindings.named("sample")));
-        hierarchy.add(0, new StaticProvider<>(ImplementationA.class));
-        hierarchy.add(1, new StaticProvider<>(ImplementationB.class));
-        hierarchy.add(2, new StaticProvider<>(ImplementationC.class));
+        hierarchy.add(0, Providers.of(ImplementationA.class));
+        hierarchy.add(1, Providers.of(ImplementationB.class));
+        hierarchy.add(2, Providers.of(ImplementationC.class));
 
         Assertions.assertEquals("Hierarchy[Contract::sample]: 0: ImplementationA -> 1: ImplementationB -> 2: ImplementationC", hierarchy.toString());
     }
@@ -39,9 +39,9 @@ public class BindingHierarchyTests {
     @Test
     void testIteratorIsSorted() {
         final BindingHierarchy<Contract> hierarchy = new NativeBindingHierarchy<>(Key.of(Contract.class));
-        hierarchy.add(0, new StaticProvider<>(ImplementationA.class));
-        hierarchy.add(1, new StaticProvider<>(ImplementationB.class));
-        hierarchy.add(2, new StaticProvider<>(ImplementationC.class));
+        hierarchy.add(0, Providers.of(ImplementationA.class));
+        hierarchy.add(1, Providers.of(ImplementationB.class));
+        hierarchy.add(2, Providers.of(ImplementationC.class));
 
         int next = 0;
         for (final Entry<Integer, Provider<Contract>> entry : hierarchy) {
@@ -58,7 +58,7 @@ public class BindingHierarchyTests {
         hierarchy.add(1, new StaticProvider<>(ImplementationB.class));
 
         final BindingHierarchy<Contract> secondHierarchy = new NativeBindingHierarchy<>(Key.of(Contract.class));
-        secondHierarchy.add(2, new StaticProvider<>(ImplementationC.class));
+        secondHierarchy.add(2, Providers.of(ImplementationC.class));
 
         Hartshorn.context().add(hierarchy);
         Hartshorn.context().merge(secondHierarchy);

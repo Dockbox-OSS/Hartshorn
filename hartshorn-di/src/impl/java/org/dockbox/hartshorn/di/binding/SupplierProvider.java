@@ -4,10 +4,11 @@ import org.dockbox.hartshorn.api.domain.Exceptional;
 
 import java.util.function.Supplier;
 
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-@AllArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PACKAGE)
 @Getter
 public class SupplierProvider<C> implements Provider<C> {
 
