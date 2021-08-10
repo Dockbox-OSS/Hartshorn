@@ -43,6 +43,15 @@ import java.util.List;
  */
 public class HartshornApplication {
 
+    private static final String BANNER = """
+                 _   _            _       _                     \s
+                | | | | __ _ _ __| |_ ___| |__   ___  _ __ _ __ \s
+                | |_| |/ _` | '__| __/ __| '_ \\ / _ \\| '__| '_ \\\s
+                |  _  | (_| | |  | |_\\__ \\ | | | (_) | |  | | | |
+            ====|_| |_|\\__,_|_|===\\__|___/_|=|_|\\___/|_|==|_|=|_|====
+                                             -- Hartshorn v%s --
+            """.formatted(Hartshorn.VERSION);
+
     /**
      * Creates the bootstrapped server instance using the provided {@link Activator} metadata. If no valid
      * {@link ApplicationBootstrap} is provided the application will not be started. This does not initialize
@@ -65,6 +74,13 @@ public class HartshornApplication {
 
             Hartshorn.log().info("Requested bootstrap is " + bootstrap.getSimpleName());
             final ApplicationBootstrap injectableBootstrap = instance(bootstrap);
+
+            if (!injectableBootstrap.isCI()) {
+                for (final String line : BANNER.split("\n")) {
+                    Hartshorn.log().info(line);
+                }
+                Hartshorn.log().info("");
+            }
 
             final String prefix = "".equals(annotation.prefix()) ? activator.getPackage().getName() : annotation.prefix();
 
