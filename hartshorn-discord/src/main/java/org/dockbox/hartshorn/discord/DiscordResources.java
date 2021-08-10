@@ -17,9 +17,9 @@
 
 package org.dockbox.hartshorn.discord;
 
+import org.dockbox.hartshorn.di.annotations.service.Service;
 import org.dockbox.hartshorn.i18n.annotations.Resource;
 import org.dockbox.hartshorn.i18n.common.ResourceEntry;
-import org.dockbox.hartshorn.di.annotations.service.Service;
 
 @Service(owner = DiscordUtils.class)
 public interface DiscordResources {

@@ -27,6 +27,10 @@ import org.dockbox.hartshorn.server.minecraft.dimension.world.World;
 
 public interface Plot extends MembershipRegion {
 
+    static Exceptional<Plot> from(World world, int x, int y) {
+        return Hartshorn.context().get(RegionService.class).first(world, x, y, Plot.class);
+    }
+
     int x();
 
     int y();
@@ -34,9 +38,5 @@ public interface Plot extends MembershipRegion {
     Location home();
 
     Exceptional<Plot> relative(Direction direction);
-
-    static Exceptional<Plot> from(World world, int x, int y) {
-        return Hartshorn.context().get(RegionService.class).first(world, x, y, Plot.class);
-    }
 
 }

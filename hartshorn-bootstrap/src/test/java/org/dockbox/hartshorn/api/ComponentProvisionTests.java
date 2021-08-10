@@ -35,7 +35,7 @@ public class ComponentProvisionTests {
 
     @ParameterizedTest
     @MethodSource("components")
-    public void testComponentProvision(Class<?> component) {
+    public void testComponentProvision(final Class<?> component) {
         Assertions.assertDoesNotThrow(() -> {
             final Object instance = Hartshorn.context().get(component);
             Assertions.assertNotNull(instance);

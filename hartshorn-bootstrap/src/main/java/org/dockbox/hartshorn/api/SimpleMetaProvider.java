@@ -29,7 +29,7 @@ import org.dockbox.hartshorn.di.InjectorMetaProvider;
 public class SimpleMetaProvider extends InjectorMetaProvider {
 
     @Override
-    public TypedOwner lookup(Class<?> type) {
+    public TypedOwner lookup(final Class<?> type) {
         if (Hartshorn.class.equals(type)) {
             return SimpleTypedOwner.of(Hartshorn.PROJECT_ID);
         }

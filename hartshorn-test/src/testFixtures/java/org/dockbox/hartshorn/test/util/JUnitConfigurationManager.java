@@ -35,7 +35,7 @@ public class JUnitConfigurationManager extends SimpleConfigurationManager {
     }
 
     public static void add(String key, Object value) {
-        cache.put(key ,value);
+        cache.put(key, value);
     }
 
     public static void reset() {

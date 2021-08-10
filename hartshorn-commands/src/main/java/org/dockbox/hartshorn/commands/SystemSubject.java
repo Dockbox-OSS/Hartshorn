@@ -57,6 +57,34 @@ public abstract class SystemSubject implements CommandSource, PermissionHolder, 
     }
 
     @Override
+    public void send(@NotNull ResourceEntry text) {
+        Text formattedValue = text.translate().asText();
+        this.send(formattedValue);
+    }
+
+    @Override
+    public void sendWithPrefix(@NotNull ResourceEntry text) {
+        Text formattedValue = text.translate().asText();
+        this.sendWithPrefix(formattedValue);
+    }
+
+    @Override
+    public UUID uniqueId() {
+        return UNIQUE_ID;
+    }
+
+    @Override
+    public String name() {
+        return "System";
+    }
+
+    @Override
+    public PermissionContext activeContext() {
+        // System will always have all permissions, context is therefore global by default
+        return PermissionContext.builder().build();
+    }
+
+    @Override
     public boolean hasPermission(@NotNull String permission) {
         return true;
     }
@@ -97,32 +125,4 @@ public abstract class SystemSubject implements CommandSource, PermissionHolder, 
 
     @Override
     public void permissions(Tristate state, @NotNull Permission @NotNull ... permissions) {}
-
-    @Override
-    public void send(@NotNull ResourceEntry text) {
-        Text formattedValue = text.translate().asText();
-        this.send(formattedValue);
-    }
-
-    @Override
-    public void sendWithPrefix(@NotNull ResourceEntry text) {
-        Text formattedValue = text.translate().asText();
-        this.sendWithPrefix(formattedValue);
-    }
-
-    @Override
-    public UUID uniqueId() {
-        return UNIQUE_ID;
-    }
-
-    @Override
-    public String name() {
-        return "System";
-    }
-
-    @Override
-    public PermissionContext activeContext() {
-        // System will always have all permissions, context is therefore global by default
-        return PermissionContext.builder().build();
-    }
 }

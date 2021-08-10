@@ -28,5 +28,6 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 public @interface Deserialise {
     FileType filetype() default FileType.JSON;
+
     File value() default @File;
 }

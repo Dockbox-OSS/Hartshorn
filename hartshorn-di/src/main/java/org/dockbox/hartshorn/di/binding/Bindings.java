@@ -33,37 +33,37 @@ public final class Bindings {
     private Bindings() {
     }
 
-    public static Named named(String value) {
+    public static Named named(final String value) {
         return new NamedImpl(value);
     }
 
-    public static void enable(Object instance, Attribute<?>... properties) throws ApplicationException {
+    public static void enable(final Object instance, final Attribute<?>... properties) throws ApplicationException {
         if (instance instanceof AttributeHolder injectable && injectable.canEnable()) {
-            for (Attribute<?> property : properties) injectable.apply(property);
+            for (final Attribute<?> property : properties) injectable.apply(property);
             injectable.enable();
         }
     }
 
-    public static <A, T extends Attribute<A>> boolean has(Class<T> type, Attribute<?>... properties) {
-        for (Attribute<?> property : properties) {
+    public static <A, T extends Attribute<A>> boolean has(final Class<T> type, final Attribute<?>... properties) {
+        for (final Attribute<?> property : properties) {
             if (type.isInstance(property)) return true;
         }
         return false;
     }
 
     @SuppressWarnings("unchecked")
-    public static <A, T extends Attribute<A>> Exceptional<A> lookup(Class<T> type, Attribute<?>... properties) {
-        for (Attribute<?> property : properties) {
+    public static <A, T extends Attribute<A>> Exceptional<A> lookup(final Class<T> type, final Attribute<?>... properties) {
+        for (final Attribute<?> property : properties) {
             if (type.isInstance(property)) return Exceptional.of(() -> (A) property.value());
         }
         return Exceptional.empty();
     }
 
-    public static String serviceId(Class<?> type) {
+    public static String serviceId(final Class<?> type) {
         return serviceId(type, false);
     }
 
-    public static String serviceId(Class<?> type, boolean ignoreExisting) {
+    public static String serviceId(final Class<?> type, final boolean ignoreExisting) {
         final Exceptional<ComponentContainer> container = ApplicationContextAware.instance().context().locator().container(type);
         if (!ignoreExisting && container.present()) {
             final String id = container.get().id();
@@ -78,11 +78,11 @@ public final class Bindings {
         return String.join("-", parts).toLowerCase(Locale.ROOT);
     }
 
-    public static String serviceName(Class<?> type) {
+    public static String serviceName(final Class<?> type) {
         return serviceName(type, false);
     }
 
-    public static String serviceName(Class<?> type, boolean ignoreExisting) {
+    public static String serviceName(final Class<?> type, final boolean ignoreExisting) {
         final Exceptional<ComponentContainer> container = ApplicationContextAware.instance().context().locator().container(type);
         if (!ignoreExisting && container.present()) {
             final String name = container.get().name();

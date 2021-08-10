@@ -53,15 +53,6 @@ public class Registry<V> extends HashMap<String, RegistryColumn<V>> {
         return this;
     }
 
-    public Registry<V> addRegistry(@NotNull Registry<V> other) {
-        // Iterate over entries instead of using putAll to avoid overwriting existing
-        // column values.
-        for (Entry<String, RegistryColumn<V>> column : other.entrySet()) {
-            this.add(new SimpleIdentifier(column.getKey()), column.getValue());
-        }
-        return this;
-    }
-
     public Registry<V> add(RegistryIdentifier columnID, RegistryColumn<V> column) {
         if (this.containsKey(columnID.key())) {
             this.get(columnID.key()).addAll(column);
@@ -77,6 +68,15 @@ public class Registry<V> extends HashMap<String, RegistryColumn<V>> {
         return this;
     }
 
+    public Registry<V> addRegistry(@NotNull Registry<V> other) {
+        // Iterate over entries instead of using putAll to avoid overwriting existing
+        // column values.
+        for (Entry<String, RegistryColumn<V>> column : other.entrySet()) {
+            this.add(new SimpleIdentifier(column.getKey()), column.getValue());
+        }
+        return this;
+    }
+
     /**
      * @param columnIDs
      *         A varargs of {@link RegistryIdentifier}s to remove from the Registry if
@@ -89,6 +89,10 @@ public class Registry<V> extends HashMap<String, RegistryColumn<V>> {
             this.remove(columnID);
         }
         return this;
+    }
+
+    public RegistryColumn<V> remove(RegistryIdentifier key) {
+        return super.remove(key.key());
     }
 
     /**
@@ -356,10 +360,6 @@ public class Registry<V> extends HashMap<String, RegistryColumn<V>> {
 
     public RegistryColumn<V> put(RegistryIdentifier key, RegistryColumn<V> value) {
         return super.put(key.key(), value);
-    }
-
-    public RegistryColumn<V> remove(RegistryIdentifier key) {
-        return super.remove(key.key());
     }
 
     public RegistryColumn<V> getOrDefault(RegistryIdentifier key, RegistryColumn<V> defaultValue) {

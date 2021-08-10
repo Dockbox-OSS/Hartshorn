@@ -38,7 +38,7 @@ public class SimpleComponentContainer<A extends Annotation> implements Component
     private final Class<?> component;
     private final List<Class<? extends Annotation>> activators = HartshornUtils.emptyList();
 
-    public SimpleComponentContainer(Class<?> component) {
+    public SimpleComponentContainer(final Class<?> component) {
         final Exceptional<Component> annotated = Reflect.annotation(component, Component.class);
         if (annotated.absent()) throw new IllegalArgumentException("Provided component candidate has no assigned decorator");
 
@@ -91,7 +91,7 @@ public class SimpleComponentContainer<A extends Annotation> implements Component
     }
 
     @Override
-    public boolean hasActivator(Class<? extends Annotation> activator) {
+    public boolean hasActivator(final Class<? extends Annotation> activator) {
         if (!Reflect.annotation(activator, ServiceActivator.class).present())
             throw new IllegalArgumentException("Requested activator " + activator.getSimpleName() + " is not decorated with @ServiceActivator");
 

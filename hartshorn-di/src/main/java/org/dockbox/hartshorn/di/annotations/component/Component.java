@@ -32,9 +32,14 @@ import java.lang.annotation.Target;
 public @interface Component {
 
     String id() default "";
+
     String name() default "";
+
     Class<?> owner() default Void.class;
+
     boolean singleton() default false;
+
     ComponentType type() default ComponentType.INJECTABLE;
+
     boolean enabled() default true;
 }

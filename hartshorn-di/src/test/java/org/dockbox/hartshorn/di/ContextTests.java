@@ -34,8 +34,8 @@ public class ContextTests {
 
     @Test
     void testUnnamedContextFirst() {
-        Context context = new TestContext();
-        Context child = new TestContext();
+        final Context context = new TestContext();
+        final Context child = new TestContext();
 
         context.add(child);
 
@@ -46,8 +46,8 @@ public class ContextTests {
 
     @Test
     void testUnnamedContextAll() {
-        Context context = new TestContext();
-        Context child = new TestContext();
+        final Context context = new TestContext();
+        final Context child = new TestContext();
 
         context.add(child);
 
@@ -58,7 +58,7 @@ public class ContextTests {
 
     @Test
     void testNamedContextFirstByName() {
-        Context context = new TestContext();
+        final Context context = new TestContext();
         final NamedTestContext named = new NamedTestContext();
 
         context.add(named);
@@ -70,7 +70,7 @@ public class ContextTests {
 
     @Test
     void testNamedContextFirstByNameAndType() {
-        Context context = new TestContext();
+        final Context context = new TestContext();
         final NamedTestContext named = new NamedTestContext();
 
         context.add(named);
@@ -82,8 +82,8 @@ public class ContextTests {
 
     @Test
     void testManuallyNamedContextFirstByName() {
-        Context context = new TestContext();
-        Context child = new TestContext();
+        final Context context = new TestContext();
+        final Context child = new TestContext();
 
         context.add(NamedTestContext.NAME, child);
 
@@ -94,7 +94,7 @@ public class ContextTests {
 
     @Test
     void testNamedContextAllByName() {
-        Context context = new TestContext();
+        final Context context = new TestContext();
         final NamedTestContext named = new NamedTestContext();
 
         context.add(named);
@@ -106,7 +106,7 @@ public class ContextTests {
 
     @Test
     void testNamedContextAllByNameAndType() {
-        Context context = new TestContext();
+        final Context context = new TestContext();
         final NamedTestContext named = new NamedTestContext();
 
         context.add(named);
@@ -118,8 +118,8 @@ public class ContextTests {
 
     @Test
     void testManuallyNamedContextAllByName() {
-        Context context = new TestContext();
-        Context child = new TestContext();
+        final Context context = new TestContext();
+        final Context child = new TestContext();
 
         context.add(NamedTestContext.NAME, child);
 
@@ -130,7 +130,7 @@ public class ContextTests {
 
     @Test
     void testAutoCreatingContext() {
-        Context context = new TestContext();
+        final Context context = new TestContext();
         final Exceptional<AutoCreatingContext> first = context.first(AutoCreatingContext.class);
         Assertions.assertTrue(first.present());
     }

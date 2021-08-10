@@ -18,13 +18,6 @@
 package org.dockbox.hartshorn.server.minecraft;
 
 import org.dockbox.hartshorn.api.Hartshorn;
-import org.dockbox.hartshorn.events.EventBus;
-import org.dockbox.hartshorn.events.annotations.Posting;
-import org.dockbox.hartshorn.i18n.MessageReceiver;
-import org.dockbox.hartshorn.i18n.common.ResourceEntry;
-import org.dockbox.hartshorn.i18n.text.Text;
-import org.dockbox.hartshorn.i18n.text.actions.HoverAction;
-import org.dockbox.hartshorn.i18n.text.pagination.PaginationBuilder;
 import org.dockbox.hartshorn.commands.RunCommandAction;
 import org.dockbox.hartshorn.commands.annotations.Command;
 import org.dockbox.hartshorn.commands.annotations.WithConfirmation;
@@ -32,6 +25,13 @@ import org.dockbox.hartshorn.commands.context.CommandContext;
 import org.dockbox.hartshorn.di.annotations.inject.Wired;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.di.services.ComponentContainer;
+import org.dockbox.hartshorn.events.EventBus;
+import org.dockbox.hartshorn.events.annotations.Posting;
+import org.dockbox.hartshorn.i18n.MessageReceiver;
+import org.dockbox.hartshorn.i18n.common.ResourceEntry;
+import org.dockbox.hartshorn.i18n.text.Text;
+import org.dockbox.hartshorn.i18n.text.actions.HoverAction;
+import org.dockbox.hartshorn.i18n.text.pagination.PaginationBuilder;
 import org.dockbox.hartshorn.server.minecraft.events.server.EngineChangedState;
 import org.dockbox.hartshorn.server.minecraft.events.server.ServerState.Reload;
 import org.dockbox.hartshorn.util.HartshornUtils;

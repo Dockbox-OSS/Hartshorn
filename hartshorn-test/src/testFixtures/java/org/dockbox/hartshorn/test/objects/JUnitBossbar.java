@@ -19,8 +19,8 @@ package org.dockbox.hartshorn.test.objects;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.exceptions.NotImplementedException;
-import org.dockbox.hartshorn.i18n.text.Text;
 import org.dockbox.hartshorn.di.annotations.inject.Bound;
+import org.dockbox.hartshorn.i18n.text.Text;
 import org.dockbox.hartshorn.server.minecraft.bossbar.BossbarColor;
 import org.dockbox.hartshorn.server.minecraft.bossbar.BossbarStyle;
 import org.dockbox.hartshorn.server.minecraft.bossbar.DefaultTickableBossbar;

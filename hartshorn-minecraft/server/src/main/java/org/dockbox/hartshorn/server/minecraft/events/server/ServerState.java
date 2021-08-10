@@ -19,10 +19,19 @@ package org.dockbox.hartshorn.server.minecraft.events.server;
 
 public interface ServerState {
 
-    public class Starting implements ServerState {}
-    public class Started implements ServerState {}
-    public class Loading implements ServerState {}
-    public class Reload implements ServerState {}
-    public class Stopping implements ServerState {}
+    public class Starting implements ServerState {
+    }
+
+    public class Started implements ServerState {
+    }
+
+    public class Loading implements ServerState {
+    }
+
+    public class Reload implements ServerState {
+    }
+
+    public class Stopping implements ServerState {
+    }
 
 }

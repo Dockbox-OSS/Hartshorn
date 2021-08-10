@@ -28,27 +28,16 @@ import java.util.Map;
 
 public interface Block extends PersistentDataHolder {
 
-    Exceptional<Item> item();
-    String id();
-
-    Map<String, Object> states();
-    <T> Exceptional<T> state(String state);
-    void state(String state, Object value);
-
-    boolean isEmpty();
-
-    boolean place(Location location);
-
     static Block from(Location location) {
         return Hartshorn.context().get(Block.class, location);
     }
 
-    static Block from(Item item) {
-        return Hartshorn.context().get(Block.class, item);
-    }
-
     static Block from(ItemTypes type) {
         return from(Item.of(type));
+    }
+
+    static Block from(Item item) {
+        return Hartshorn.context().get(Block.class, item);
     }
 
     static Block of(String id) {
@@ -58,5 +47,19 @@ public interface Block extends PersistentDataHolder {
     static Block empty() {
         return Hartshorn.context().get(Block.class, Item.of(ItemTypes.AIR));
     }
+
+    Exceptional<Item> item();
+
+    String id();
+
+    Map<String, Object> states();
+
+    <T> Exceptional<T> state(String state);
+
+    void state(String state, Object value);
+
+    boolean isEmpty();
+
+    boolean place(Location location);
 
 }

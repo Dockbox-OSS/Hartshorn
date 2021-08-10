@@ -21,10 +21,10 @@ import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.exceptions.Except;
 import org.dockbox.hartshorn.commands.CommandParameterResources;
+import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.commands.annotations.Parameter;
 import org.dockbox.hartshorn.commands.context.ArgumentConverterContext;
 import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
-import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.util.HartshornUtils;
 
 import java.lang.reflect.Constructor;

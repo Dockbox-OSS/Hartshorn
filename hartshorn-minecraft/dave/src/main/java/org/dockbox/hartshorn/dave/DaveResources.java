@@ -17,9 +17,9 @@
 
 package org.dockbox.hartshorn.dave;
 
+import org.dockbox.hartshorn.di.annotations.service.Service;
 import org.dockbox.hartshorn.i18n.annotations.Resource;
 import org.dockbox.hartshorn.i18n.common.ResourceEntry;
-import org.dockbox.hartshorn.di.annotations.service.Service;
 
 @Service(owner = Dave.class)
 public interface DaveResources {

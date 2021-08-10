@@ -22,19 +22,19 @@ public enum Remote {
         this.driver = driver;
     }
 
-    public String url(Object target) {
-        if (this.target.isInstance(target)) {
-            //noinspection unchecked
-            return ((Function<Object, String>) this.urlGen).apply(target);
-        }
-        throw new IllegalArgumentException("Provided target was expected to be of type " + this.target.getSimpleName() + " but was: " + target);
+    public PersistenceConnection connection(Object target, String user, String password) {
+        return this.connection(this.url(target), user, password);
     }
 
     public PersistenceConnection connection(String url, String user, String password) {
         return new PersistenceConnection(url, user, password, this);
     }
 
-    public PersistenceConnection connection(Object target, String user, String password) {
-        return this.connection(this.url(target), user, password);
+    public String url(Object target) {
+        if (this.target.isInstance(target)) {
+            //noinspection unchecked
+            return ((Function<Object, String>) this.urlGen).apply(target);
+        }
+        throw new IllegalArgumentException("Provided target was expected to be of type " + this.target.getSimpleName() + " but was: " + target);
     }
 }

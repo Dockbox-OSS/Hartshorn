@@ -17,8 +17,8 @@
 
 package org.dockbox.hartshorn.regions.flags;
 
-import org.dockbox.hartshorn.i18n.common.ResourceEntry;
 import org.dockbox.hartshorn.di.annotations.inject.Bound;
+import org.dockbox.hartshorn.i18n.common.ResourceEntry;
 
 public class BooleanFlag extends AbstractRegionFlag<Boolean> {
 

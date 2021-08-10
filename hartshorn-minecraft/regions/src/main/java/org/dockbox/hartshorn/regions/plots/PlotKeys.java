@@ -36,7 +36,7 @@ public final class PlotKeys {
             .build();
 
     // The filling of the plot between bedrock (if present) and the plot floor
-    public static final Key<Plot, Item> FILLING = Keys.builder(Plot.class, Item .class)
+    public static final Key<Plot, Item> FILLING = Keys.builder(Plot.class, Item.class)
             .withSetter((plot, item) -> Hartshorn.context().get(PlotService.class).filling(plot, item))
             .build();
 

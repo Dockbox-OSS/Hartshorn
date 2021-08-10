@@ -32,13 +32,13 @@ public class JUnitFileManager extends DefaultAbstractFileManager {
     }
 
     @NotNull
-    public Path root() {
-        return JUnit5Application.information().path();
+    public Path logs() {
+        return this.root().resolve("logs/");
     }
 
     @NotNull
-    public Path logs() {
-        return this.root().resolve("logs/");
+    public Path root() {
+        return JUnit5Application.information().path();
     }
 
     @NotNull

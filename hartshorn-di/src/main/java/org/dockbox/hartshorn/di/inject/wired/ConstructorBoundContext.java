@@ -69,7 +69,7 @@ public class ConstructorBoundContext<T, I extends T> implements BoundContext<T, 
                         valid = false;
                     }
                 }
-                if (valid){
+                if (valid) {
                     ctor = constructor;
                     break;
                 }

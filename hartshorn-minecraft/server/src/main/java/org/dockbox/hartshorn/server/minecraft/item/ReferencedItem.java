@@ -37,6 +37,14 @@ public abstract class ReferencedItem<T> extends ReferencedWrapper<T> implements 
         this.reference(Exceptional.of(reference));
     }
 
+    protected ReferencedItem(String id) {
+        this.id = id;
+        T type = this.from(id);
+        super.reference(Exceptional.of(type));
+    }
+
+    protected abstract T from(String id);
+
     @Override
     public Text displayName() {
         return this.displayName(Language.EN_US);
@@ -47,14 +55,6 @@ public abstract class ReferencedItem<T> extends ReferencedWrapper<T> implements 
         this.amount(this.stackSize());
         return this;
     }
-
-    protected ReferencedItem(String id) {
-        this.id = id;
-        T type = this.from(id);
-        super.reference(Exceptional.of(type));
-    }
-
-    protected abstract T from(String id);
 
     @Override
     public Exceptional<T> constructInitialReference() {

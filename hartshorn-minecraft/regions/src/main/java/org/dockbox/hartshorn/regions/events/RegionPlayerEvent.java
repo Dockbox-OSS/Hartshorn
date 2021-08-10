@@ -19,8 +19,8 @@ package org.dockbox.hartshorn.regions.events;
 
 import org.dockbox.hartshorn.api.domain.Subject;
 import org.dockbox.hartshorn.events.parents.Targetable;
-import org.dockbox.hartshorn.server.minecraft.players.Player;
 import org.dockbox.hartshorn.regions.Region;
+import org.dockbox.hartshorn.server.minecraft.players.Player;
 
 import lombok.Getter;
 

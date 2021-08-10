@@ -17,10 +17,10 @@
 
 package org.dockbox.hartshorn.events;
 
-import org.dockbox.hartshorn.events.annotations.Listener;
-import org.dockbox.hartshorn.events.annotations.UseEvents;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.di.services.ServiceProcessor;
+import org.dockbox.hartshorn.events.annotations.Listener;
+import org.dockbox.hartshorn.events.annotations.UseEvents;
 import org.dockbox.hartshorn.util.Reflect;
 
 public class EventServiceProcessor implements ServiceProcessor<UseEvents> {

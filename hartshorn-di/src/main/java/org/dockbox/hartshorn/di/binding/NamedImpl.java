@@ -39,7 +39,7 @@ public class NamedImpl implements Named {
         return (127 * "value".hashCode()) ^ this.value.hashCode();
     }
 
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (!(o instanceof Named other)) return false;
         return this.value.equals(other.value());
     }

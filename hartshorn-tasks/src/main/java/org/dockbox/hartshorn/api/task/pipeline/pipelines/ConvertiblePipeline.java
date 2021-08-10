@@ -316,12 +316,6 @@ public class ConvertiblePipeline<P, I> extends AbstractPipeline<P, I> {
         return this.inputClass;
     }
 
-    /** @return The next pipeline or null if there isn't one */
-    @Nullable
-    protected ConvertiblePipeline<P, ?> next() {
-        return this.nextPipeline;
-    }
-
     /**
      * Setter function to set the next pipeline.
      *
@@ -340,6 +334,12 @@ public class ConvertiblePipeline<P, I> extends AbstractPipeline<P, I> {
      */
     protected void previous(@Nullable ConvertiblePipeline<P, ?> previousPipeline) {
         this.previousPipeline = previousPipeline;
+    }
+
+    /** @return The next pipeline or null if there isn't one */
+    @Nullable
+    protected ConvertiblePipeline<P, ?> next() {
+        return this.nextPipeline;
     }
 
     /**

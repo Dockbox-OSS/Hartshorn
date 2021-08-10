@@ -17,8 +17,8 @@
 
 package org.dockbox.hartshorn.test.objects.living;
 
-import org.dockbox.hartshorn.i18n.text.Text;
 import org.dockbox.hartshorn.api.keys.PersistentDataHolder;
+import org.dockbox.hartshorn.i18n.text.Text;
 import org.dockbox.hartshorn.server.minecraft.dimension.position.Location;
 import org.dockbox.hartshorn.server.minecraft.dimension.world.World;
 import org.dockbox.hartshorn.server.minecraft.entities.Entity;
@@ -31,6 +31,7 @@ import lombok.Setter;
 
 public abstract class JUnitEntity<T extends Entity> implements Entity, PersistentDataHolder {
 
+    private final UUID uniqueId;
     @Getter @Setter private Text displayName;
     @Getter @Setter private double health = 20;
     @Getter private Location location;
@@ -38,15 +39,18 @@ public abstract class JUnitEntity<T extends Entity> implements Entity, Persisten
     @Getter @Setter private boolean invulnerable = false;
     @Setter private boolean gravity = true;
 
-    private final UUID uniqueId;
-
     public JUnitEntity(UUID uniqueId) {
         this.uniqueId = uniqueId;
     }
 
     @Override
-    public UUID uniqueId() {
-        return this.uniqueId;
+    public boolean alive() {
+        return this.health() > 0;
+    }
+
+    @Override
+    public boolean gravity() {
+        return this.gravity;
     }
 
     @Override
@@ -63,18 +67,18 @@ public abstract class JUnitEntity<T extends Entity> implements Entity, Persisten
     }
 
     @Override
+    public World world() {
+        return this.location().world();
+    }
+
+    @Override
+    public UUID uniqueId() {
+        return this.uniqueId;
+    }
+
+    @Override
     public String name() {
         return this.displayName().toPlain();
-    }
-
-    @Override
-    public boolean alive() {
-        return this.health() > 0;
-    }
-
-    @Override
-    public boolean gravity() {
-        return this.gravity;
     }
 
     @Override
@@ -83,10 +87,5 @@ public abstract class JUnitEntity<T extends Entity> implements Entity, Persisten
         this.location = location;
         ((JUnitWorld) this.world()).addEntity(this);
         return true;
-    }
-
-    @Override
-    public World world() {
-        return this.location().world();
     }
 }

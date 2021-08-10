@@ -17,8 +17,8 @@
 
 package org.dockbox.hartshorn.persistence.service;
 
-import org.dockbox.hartshorn.persistence.PersistentElement;
 import org.dockbox.hartshorn.di.annotations.service.Service;
+import org.dockbox.hartshorn.persistence.PersistentElement;
 import org.dockbox.hartshorn.persistence.annotations.Deserialise;
 import org.dockbox.hartshorn.persistence.annotations.Serialise;
 

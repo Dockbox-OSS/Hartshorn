@@ -17,8 +17,8 @@
 
 package org.dockbox.hartshorn.di.types.multi;
 
-import org.dockbox.hartshorn.di.annotations.inject.Named;
 import org.dockbox.hartshorn.di.annotations.inject.Binds;
+import org.dockbox.hartshorn.di.annotations.inject.Named;
 import org.dockbox.hartshorn.di.types.SampleInterface;
 
 @Binds(SampleInterface.class)

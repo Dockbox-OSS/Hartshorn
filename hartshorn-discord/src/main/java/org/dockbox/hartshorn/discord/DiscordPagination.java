@@ -23,8 +23,8 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
 
 import org.dockbox.hartshorn.api.Hartshorn;
-import org.dockbox.hartshorn.i18n.text.Text;
 import org.dockbox.hartshorn.discord.templates.MessageTemplate;
+import org.dockbox.hartshorn.i18n.text.Text;
 
 import java.util.Collection;
 

@@ -18,10 +18,10 @@
 package org.dockbox.hartshorn.test.objects.living;
 
 import org.dockbox.hartshorn.api.Hartshorn;
-import org.dockbox.hartshorn.api.domain.tuple.Vector3N;
-import org.dockbox.hartshorn.api.exceptions.NotImplementedException;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.domain.tuple.Tristate;
+import org.dockbox.hartshorn.api.domain.tuple.Vector3N;
+import org.dockbox.hartshorn.api.exceptions.NotImplementedException;
 import org.dockbox.hartshorn.i18n.common.Language;
 import org.dockbox.hartshorn.i18n.common.ResourceEntry;
 import org.dockbox.hartshorn.i18n.permissions.Permission;
@@ -57,9 +57,8 @@ import lombok.Setter;
 // TODO: Modification events (teleport, kick, etc)
 public class JUnitPlayer extends Player implements JUnitPersistentDataHolder {
 
-    @Getter private Location location;
     @Getter private final PlayerInventory inventory = new JUnitInventory();
-
+    @Getter private Location location;
     @Setter private boolean gravity = true;
     @Setter private Block lookingAt = null;
 
@@ -80,11 +79,6 @@ public class JUnitPlayer extends Player implements JUnitPersistentDataHolder {
     }
 
     @Override
-    public boolean alive() {
-        return this.health() > 0;
-    }
-
-    @Override
     public boolean gravity() {
         return this.gravity;
     }
@@ -98,11 +92,6 @@ public class JUnitPlayer extends Player implements JUnitPersistentDataHolder {
     }
 
     @Override
-    public World world() {
-        return this.location().world();
-    }
-
-    @Override
     public void execute(final String command) {
         // TODO: CommandBus implementation
         throw new NotImplementedException();
@@ -111,6 +100,16 @@ public class JUnitPlayer extends Player implements JUnitPersistentDataHolder {
     @Override
     public void kick(final Text reason) {
         this.online = false;
+    }
+
+    @Override
+    public boolean alive() {
+        return this.health() > 0;
+    }
+
+    @Override
+    public World world() {
+        return this.location().world();
     }
 
     @Override

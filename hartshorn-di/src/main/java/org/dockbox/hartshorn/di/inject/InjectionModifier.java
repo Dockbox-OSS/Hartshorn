@@ -26,7 +26,9 @@ import java.lang.annotation.Annotation;
 public interface InjectionModifier<A extends Annotation> {
 
     <T> boolean preconditions(Class<T> type, @Nullable T instance, Attribute<?>... properties);
+
     <T> T process(ApplicationContext context, Class<T> type, @Nullable T instance, Attribute<?>... properties);
+
     Class<A> activator();
 
 }

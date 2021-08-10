@@ -97,6 +97,21 @@ public class PrefixContext {
         return HartshornUtils.asList(types);
     }
 
+    private <A extends Annotation> Set<Class<? extends Annotation>> extensions(Class<A> annotation) {
+        if (this.annotationHierarchy.isEmpty()) {
+            for (Class<? extends Annotation> annotationType : this.children(Annotation.class)) {
+                for (Class<? extends Annotation> selfOrParent : AnnotationHelper.annotationHierarchy(annotationType)) {
+                    this.annotationHierarchy.put(selfOrParent, annotationType);
+                }
+            }
+        }
+
+        final Collection<Class<? extends Annotation>> hierarchy = this.annotationHierarchy.get(annotation);
+
+        if (hierarchy.isEmpty()) return HartshornUtils.asUnmodifiableSet(annotation);
+        else return HartshornUtils.asUnmodifiableSet(hierarchy);
+    }
+
     /**
      * Gets all sub-types of a given type. The prefix is typically a package. If no sub-types exist
      * for the given type, and empty list is returned.
@@ -115,22 +130,6 @@ public class PrefixContext {
         }
         return HartshornUtils.asList(subTypes);
     }
-
-    private <A extends Annotation> Set<Class<? extends Annotation>> extensions(Class<A> annotation) {
-        if (this.annotationHierarchy.isEmpty()) {
-            for (Class<? extends Annotation> annotationType : this.children(Annotation.class)) {
-                for (Class<? extends Annotation> selfOrParent : AnnotationHelper.annotationHierarchy(annotationType)) {
-                    this.annotationHierarchy.put(selfOrParent, annotationType);
-                }
-            }
-        }
-
-        final Collection<Class<? extends Annotation>> hierarchy = this.annotationHierarchy.get(annotation);
-
-        if (hierarchy.isEmpty()) return HartshornUtils.asUnmodifiableSet(annotation);
-        else return HartshornUtils.asUnmodifiableSet(hierarchy);
-    }
-
 
 
 }

@@ -58,8 +58,6 @@ import static org.joor.Reflect.on;
 @SuppressWarnings({ "unused", "OverlyComplexClass" })
 public final class Reflect {
 
-    protected static PrefixContext context;
-
     private static final Map<String, Reflections> reflectedPrefixes = HartshornUtils.emptyConcurrentMap();
     private static final Map<Class<?>, Class<?>> primitiveWrapperMap = HartshornUtils.ofEntries(
             HartshornUtils.entry(boolean.class, Boolean.class),
@@ -70,7 +68,6 @@ public final class Reflect {
             HartshornUtils.entry(int.class, Integer.class),
             HartshornUtils.entry(long.class, Long.class),
             HartshornUtils.entry(short.class, Short.class));
-
     private static final Map<?, Function<String, ?>> nativeFromStringSuppliers = HartshornUtils.ofEntries(
             HartshornUtils.entry(boolean.class, Boolean::valueOf),
             HartshornUtils.entry(byte.class, Byte::valueOf),
@@ -81,21 +78,15 @@ public final class Reflect {
             HartshornUtils.entry(long.class, Long::valueOf),
             HartshornUtils.entry(short.class, Short::valueOf)
     );
-
     private static final List<Class<?>> nativeSupportedTypes = HartshornUtils.asList(
             boolean.class, byte.class, short.class,
             int.class, long.class, float.class, double.class,
             byte[].class, int[].class, long[].class,
             String.class, List.class, Map.class);
-
+    protected static PrefixContext context;
     private static Lookup LOOKUP;
 
     private Reflect() {}
-
-    private static PrefixContext context() {
-        // Will throw a NoSuchElementException if the context has not been initialized
-        return Exceptional.of(context).get();
-    }
 
     public static <T> Exceptional<T> field(Object instance, String field) {
         if (instance == null) return Exceptional.empty();
@@ -113,6 +104,10 @@ public final class Reflect {
             return Exceptional.of(e);
         }
         return Exceptional.of(() -> on(instance).field(field).get());
+    }
+
+    public static <A extends Annotation> Exceptional<A> annotation(AnnotatedElement target, Class<A> annotation) {
+        return Exceptional.of(AnnotationHelper.oneOrNull(target, annotation));
     }
 
     /**
@@ -134,64 +129,6 @@ public final class Reflect {
      */
     public static <T> Exceptional<T> run(Object instance, String method, Object... args) {
         return Exceptional.of(() -> on(instance).call(method, args).get());
-    }
-
-    /**
-     * Returns true if {@code to} is equal to-, a super type of, or a primitive wrapper of {@code
-     * from}.
-     *
-     * <p>Primitive wrappers include all JDK wrappers for native types (int, char, double, etc). E.g.
-     * all of the following assignabilities return true:
-     *
-     * <pre>{@code
-     * HartshornUtils.assigns(int.class, Integer.class);
-     * HartshornUtils.assigns(Integer.class, int.class);
-     * HartshornUtils.assigns(int.class, int.class);
-     * HartshornUtils.assigns(Number.class, Integer.class);
-     *
-     * }</pre>
-     *
-     * @param to
-     *         The possible (super) type or primite wrapper of {@code from}
-     * @param from
-     *         The type to compare assignability against
-     *
-     * @return true if {@code to} is equal to-, a super type of, or a primitive wrapper of {@code
-     *         from}
-     * @see Reflect#primitive(Class, Class)
-     */
-    public static boolean assigns(Class<?> to, Class<?> from) {
-        if (null == to || null == from) return false;
-        //noinspection ConstantConditions
-        if (to == from || to.equals(from)) return true;
-
-        if (to.isAssignableFrom(from)) {
-            return true;
-        }
-        if (from.isPrimitive()) {
-            return Reflect.primitive(to, from);
-        }
-        if (to.isPrimitive()) {
-            return Reflect.primitive(from, to);
-        }
-        return false;
-    }
-
-    /**
-     * Returns true if {@code targetClass} is a primitive wrapper of {@code primitive}.
-     *
-     * @param targetClass
-     *         The primitive wrapper (e.g. Integer)
-     * @param primitive
-     *         The primitive type (e.g. int)
-     *
-     * @return true if {@code targetClass} is a primitive wrapper of {@code primitive}.
-     */
-    public static boolean primitive(Class<?> targetClass, Class<?> primitive) {
-        if (!primitive.isPrimitive()) {
-            throw new IllegalArgumentException("First argument has to be primitive type");
-        }
-        return primitiveWrapperMap.get(primitive) == targetClass;
     }
 
     @NotNull
@@ -252,6 +189,24 @@ public final class Reflect {
             }
         }
         return HartshornUtils.asUnmodifiableList(annotatedMethods);
+    }
+
+    /**
+     * Is annotation present recursively boolean.
+     *
+     * @param <T>
+     *         the type parameter
+     * @param element
+     *         the element
+     * @param annotationClass
+     *         the annotation class
+     *
+     * @return the boolean
+     * @throws SecurityException
+     *         the security exception
+     */
+    public static <T extends Annotation> boolean has(AnnotatedElement element, Class<T> annotationClass) throws SecurityException {
+        return Reflect.annotation(element, annotationClass).present();
     }
 
     /**
@@ -320,24 +275,6 @@ public final class Reflect {
             }
         }
         return staticFields;
-    }
-
-    /**
-     * Is annotation present recursively boolean.
-     *
-     * @param <T>
-     *         the type parameter
-     * @param element
-     *         the element
-     * @param annotationClass
-     *         the annotation class
-     *
-     * @return the boolean
-     * @throws SecurityException
-     *         the security exception
-     */
-    public static <T extends Annotation> boolean has(AnnotatedElement element, Class<T> annotationClass) throws SecurityException {
-        return Reflect.annotation(element, annotationClass).present();
     }
 
     /**
@@ -415,25 +352,6 @@ public final class Reflect {
         }
     }
 
-
-    /**
-     * Returns true if a type has a declared method of which the name equals the value of {@code
-     * method} and has no parameters.
-     *
-     * @param type
-     *         The type
-     * @param method
-     *         The name of the method to check for
-     *
-     * @return true if the type has a declared method which matches {@code method}
-     */
-    public static boolean has(Class<?> type, @NonNls String method) {
-        for (Method m : type.getDeclaredMethods()) {
-            if (m.getName().equals(method)) return true;
-        }
-        return false;
-    }
-
     /**
      * Is not void boolean.
      *
@@ -461,6 +379,24 @@ public final class Reflect {
         return Reflect.has(instance.getClass(), method);
     }
 
+    /**
+     * Returns true if a type has a declared method of which the name equals the value of {@code
+     * method} and has no parameters.
+     *
+     * @param type
+     *         The type
+     * @param method
+     *         The name of the method to check for
+     *
+     * @return true if the type has a declared method which matches {@code method}
+     */
+    public static boolean has(Class<?> type, @NonNls String method) {
+        for (Method m : type.getDeclaredMethods()) {
+            if (m.getName().equals(method)) return true;
+        }
+        return false;
+    }
+
     public static boolean hasField(Class<?> type, String field) {
         Class<?> original = type;
         while (null != type) {
@@ -480,27 +416,6 @@ public final class Reflect {
             consumer.accept(type, declaredField);
         }
         if (null != type.getSuperclass()) Reflect.fields(type.getSuperclass(), consumer);
-    }
-
-    public static void set(Field field, Object to, Object value) {
-        if (to == null) throw new IllegalArgumentException("Cannot access field " + field.getName() + " because object 'to' is null");
-        try {
-            final Exceptional<Property> annotation = Reflect.annotation(field, Property.class);
-            if (annotation.present()) {
-                Property property = annotation.get();
-                if (!"".equals(property.setter())) {
-                    Method setter = to.getClass().getDeclaredMethod(property.setter(), value.getClass());
-                    setter.setAccessible(true);
-                    setter.invoke(to, value);
-                    return;
-                }
-            }
-            field.setAccessible(true);
-            field.set(to, value);
-        }
-        catch (IllegalArgumentException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-            throw new FieldAccessException("Cannot access field " + field.getName(), e);
-        }
     }
 
     public static Collection<Field> fields(Class<?> type, Class<? extends Annotation> annotation) {
@@ -538,7 +453,8 @@ public final class Reflect {
                 try {
                     final Field declaredField = type.getDeclaredField(field.getKey());
                     set(declaredField, instance, field.getValue());
-                } catch (NoSuchFieldException e) {
+                }
+                catch (NoSuchFieldException e) {
                     // ignored
                     continue;
                 }
@@ -547,6 +463,27 @@ public final class Reflect {
         }
         catch (IllegalAccessException | InvocationTargetException e) {
             throw new ApplicationException(e);
+        }
+    }
+
+    public static void set(Field field, Object to, Object value) {
+        if (to == null) throw new IllegalArgumentException("Cannot access field " + field.getName() + " because object 'to' is null");
+        try {
+            final Exceptional<Property> annotation = Reflect.annotation(field, Property.class);
+            if (annotation.present()) {
+                Property property = annotation.get();
+                if (!"".equals(property.setter())) {
+                    Method setter = to.getClass().getDeclaredMethod(property.setter(), value.getClass());
+                    setter.setAccessible(true);
+                    setter.invoke(to, value);
+                    return;
+                }
+            }
+            field.setAccessible(true);
+            field.set(to, value);
+        }
+        catch (IllegalArgumentException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+            throw new FieldAccessException("Cannot access field " + field.getName(), e);
         }
     }
 
@@ -559,6 +496,64 @@ public final class Reflect {
             }
         }
         return supportedType;
+    }
+
+    /**
+     * Returns true if {@code to} is equal to-, a super type of, or a primitive wrapper of {@code
+     * from}.
+     *
+     * <p>Primitive wrappers include all JDK wrappers for native types (int, char, double, etc). E.g.
+     * all of the following assignabilities return true:
+     *
+     * <pre>{@code
+     * HartshornUtils.assigns(int.class, Integer.class);
+     * HartshornUtils.assigns(Integer.class, int.class);
+     * HartshornUtils.assigns(int.class, int.class);
+     * HartshornUtils.assigns(Number.class, Integer.class);
+     *
+     * }</pre>
+     *
+     * @param to
+     *         The possible (super) type or primite wrapper of {@code from}
+     * @param from
+     *         The type to compare assignability against
+     *
+     * @return true if {@code to} is equal to-, a super type of, or a primitive wrapper of {@code
+     *         from}
+     * @see Reflect#primitive(Class, Class)
+     */
+    public static boolean assigns(Class<?> to, Class<?> from) {
+        if (null == to || null == from) return false;
+        //noinspection ConstantConditions
+        if (to == from || to.equals(from)) return true;
+
+        if (to.isAssignableFrom(from)) {
+            return true;
+        }
+        if (from.isPrimitive()) {
+            return Reflect.primitive(to, from);
+        }
+        if (to.isPrimitive()) {
+            return Reflect.primitive(from, to);
+        }
+        return false;
+    }
+
+    /**
+     * Returns true if {@code targetClass} is a primitive wrapper of {@code primitive}.
+     *
+     * @param targetClass
+     *         The primitive wrapper (e.g. Integer)
+     * @param primitive
+     *         The primitive type (e.g. int)
+     *
+     * @return true if {@code targetClass} is a primitive wrapper of {@code primitive}.
+     */
+    public static boolean primitive(Class<?> targetClass, Class<?> primitive) {
+        if (!primitive.isPrimitive()) {
+            throw new IllegalArgumentException("First argument has to be primitive type");
+        }
+        return primitiveWrapperMap.get(primitive) == targetClass;
     }
 
     public static boolean isProxy(Object o) {
@@ -624,10 +619,6 @@ public final class Reflect {
         });
     }
 
-    public static <A extends Annotation> Exceptional<A> annotation(AnnotatedElement target, Class<A> annotation) {
-        return Exceptional.of(AnnotationHelper.oneOrNull(target, annotation));
-    }
-
     public static <A extends Annotation> List<A> allAnnotationsLike(AnnotatedElement target, Class<A> annotation) {
         return AnnotationHelper.allOrEmpty(target, annotation);
     }
@@ -642,6 +633,11 @@ public final class Reflect {
 
     public static void prefix(String prefix) {
         context().prefix(prefix);
+    }
+
+    private static PrefixContext context() {
+        // Will throw a NoSuchElementException if the context has not been initialized
+        return Exceptional.of(context).get();
     }
 
     public static void context(PrefixContext context) {

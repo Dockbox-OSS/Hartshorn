@@ -37,31 +37,35 @@ public abstract class InjectableBootstrap extends ApplicationContextAware implem
 
     private static InjectableBootstrap instance;
 
+    public static InjectableBootstrap instance() {
+        return (InjectableBootstrap) ApplicationContextAware.instance();
+    }
+
     @Override
-    public void create(Collection<String> prefixes, Class<?> activationSource, List<Annotation> activators, Multimap<InjectPhase, InjectConfiguration> configs, Modifier... modifiers) {
+    public void create(final Collection<String> prefixes, final Class<?> activationSource, final List<Annotation> activators, final Multimap<InjectPhase, InjectConfiguration> configs, final Modifier... modifiers) {
         super.create(new HartshornApplicationContext(activationSource, modifiers));
         Reflections.log = null; // Don't output Reflections
 
         final ReflectionContext context = new ReflectionContext(prefixes);
         Reflect.context(context);
 
-        for (Annotation activator : activators) {
+        for (final Annotation activator : activators) {
             ((ManagedHartshornContext) this.context()).addActivator(activator);
         }
         instance(this);
-        for (String prefix : prefixes) {
+        for (final String prefix : prefixes) {
             this.lookupProcessors(prefix);
             this.lookupModifiers(prefix);
         }
 
-        for (InjectConfiguration config : configs.get(InjectPhase.EARLY)) super.context().bind(config);
-        for (String prefix : prefixes) super.context().bind(prefix);
-        for (InjectConfiguration config : configs.get(InjectPhase.LATE)) super.context().bind(config);
+        for (final InjectConfiguration config : configs.get(InjectPhase.EARLY)) super.context().bind(config);
+        for (final String prefix : prefixes) super.context().bind(prefix);
+        for (final InjectConfiguration config : configs.get(InjectPhase.LATE)) super.context().bind(config);
     }
 
-    private void lookupProcessors(String prefix) {
+    private void lookupProcessors(final String prefix) {
         final Collection<Class<? extends ServiceProcessor>> processors = Reflect.children(ServiceProcessor.class);
-        for (Class<? extends ServiceProcessor> processor : processors) {
+        for (final Class<? extends ServiceProcessor> processor : processors) {
             if (Reflect.isAbstract(processor)) continue;
 
             final ServiceProcessor raw = super.context().raw(processor, false);
@@ -70,18 +74,14 @@ public abstract class InjectableBootstrap extends ApplicationContextAware implem
         }
     }
 
-    private void lookupModifiers(String prefix) {
+    private void lookupModifiers(final String prefix) {
         final Collection<Class<? extends InjectionModifier>> modifiers = Reflect.children(InjectionModifier.class);
-        for (Class<? extends InjectionModifier> modifier : modifiers) {
+        for (final Class<? extends InjectionModifier> modifier : modifiers) {
             if (Reflect.isAbstract(modifier)) continue;
 
             final InjectionModifier raw = super.context().raw(modifier, false);
             if (this.context().hasActivator(raw.activator()))
                 super.context().add(raw);
         }
-    }
-
-    public static InjectableBootstrap instance() {
-        return (InjectableBootstrap) ApplicationContextAware.instance();
     }
 }

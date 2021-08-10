@@ -55,27 +55,11 @@ public class ReflectTests {
         );
     }
 
-    @ParameterizedTest
-    @MethodSource("fields")
-    void testFieldValueReturnsValue(String field) {
-        Exceptional<String> value = Reflect.field(new ReflectTestType(), field);
-        Assertions.assertTrue(value.present());
-        Assertions.assertEquals(field, value.get());
-    }
-
     private static Stream<Arguments> methods() {
         return Stream.of(
                 Arguments.of("publicMethod"),
                 Arguments.of("privateMethod")
         );
-    }
-
-    @ParameterizedTest
-    @MethodSource("methods")
-    void testRunMethodReturnsValue(String method) {
-        Exceptional<String> value = Reflect.run(new ReflectTestType(), method, "value");
-        Assertions.assertTrue(value.present());
-        Assertions.assertEquals("VALUE", value.get());
     }
 
     private static Stream<Arguments> genericInstances() {
@@ -98,6 +82,58 @@ public class ReflectTests {
                 Arguments.of(long.class, Long.class),
                 Arguments.of(short.class, Short.class)
         );
+    }
+
+    private static Stream<Arguments> nonVoidTypes() {
+        return Stream.of(
+                Arguments.of(boolean.class),
+                Arguments.of(Boolean.class),
+                Arguments.of(byte.class),
+                Arguments.of(Byte.class),
+                Arguments.of(char.class),
+                Arguments.of(Character.class),
+                Arguments.of(double.class),
+                Arguments.of(Double.class),
+                Arguments.of(float.class),
+                Arguments.of(Float.class),
+                Arguments.of(int.class),
+                Arguments.of(Integer.class),
+                Arguments.of(long.class),
+                Arguments.of(Long.class),
+                Arguments.of(short.class),
+                Arguments.of(Short.class),
+                Arguments.of(String.class)
+        );
+    }
+
+    private static Stream<Arguments> primitiveValues() {
+        return Stream.of(
+                Arguments.of(boolean.class, "true", true),
+                Arguments.of(byte.class, "0", (byte) 0),
+                Arguments.of(char.class, "a", 'a'),
+                Arguments.of(double.class, "10.5", 10.5D),
+                Arguments.of(float.class, "10.5", 10.5F),
+                Arguments.of(int.class, "10", 10),
+                Arguments.of(long.class, "10", 10L),
+                Arguments.of(short.class, "10", (short) 10),
+                Arguments.of(TestEnumType.class, "A", TestEnumType.A)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("fields")
+    void testFieldValueReturnsValue(String field) {
+        Exceptional<String> value = Reflect.field(new ReflectTestType(), field);
+        Assertions.assertTrue(value.present());
+        Assertions.assertEquals(field, value.get());
+    }
+
+    @ParameterizedTest
+    @MethodSource("methods")
+    void testRunMethodReturnsValue(String method) {
+        Exceptional<String> value = Reflect.run(new ReflectTestType(), method, "value");
+        Assertions.assertTrue(value.present());
+        Assertions.assertEquals("VALUE", value.get());
     }
 
     @ParameterizedTest
@@ -220,28 +256,6 @@ public class ReflectTests {
         Assertions.assertFalse(Reflect.has(new ReflectTestType(), "otherMethod"));
     }
 
-    private static Stream<Arguments> nonVoidTypes() {
-        return Stream.of(
-                Arguments.of(boolean.class),
-                Arguments.of(Boolean.class),
-                Arguments.of(byte.class),
-                Arguments.of(Byte.class),
-                Arguments.of(char.class),
-                Arguments.of(Character.class),
-                Arguments.of(double.class),
-                Arguments.of(Double.class),
-                Arguments.of(float.class),
-                Arguments.of(Float.class),
-                Arguments.of(int.class),
-                Arguments.of(Integer.class),
-                Arguments.of(long.class),
-                Arguments.of(Long.class),
-                Arguments.of(short.class),
-                Arguments.of(Short.class),
-                Arguments.of(String.class)
-        );
-    }
-
     @ParameterizedTest
     @MethodSource("nonVoidTypes")
     void testIsNotVoidIsTrueIfTypeIsNotVoid(Class<?> type) {
@@ -320,20 +334,6 @@ public class ReflectTests {
     @Test
     void testIsProxyIsFalseIfTypeIsNormal() {
         Assertions.assertFalse(Reflect.isProxy(new ReflectTestType()));
-    }
-
-    private static Stream<Arguments> primitiveValues() {
-        return Stream.of(
-                Arguments.of(boolean.class, "true", true),
-                Arguments.of(byte.class, "0", (byte) 0),
-                Arguments.of(char.class, "a", 'a'),
-                Arguments.of(double.class, "10.5", 10.5D),
-                Arguments.of(float.class, "10.5", 10.5F),
-                Arguments.of(int.class, "10", 10),
-                Arguments.of(long.class, "10", 10L),
-                Arguments.of(short.class, "10", (short) 10),
-                Arguments.of(TestEnumType.class, "A", TestEnumType.A)
-        );
     }
 
     @ParameterizedTest

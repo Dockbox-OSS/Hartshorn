@@ -19,10 +19,10 @@ package org.dockbox.hartshorn.i18n;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.exceptions.Except;
+import org.dockbox.hartshorn.di.annotations.inject.Binds;
 import org.dockbox.hartshorn.i18n.common.Language;
 import org.dockbox.hartshorn.i18n.common.ResourceEntry;
 import org.dockbox.hartshorn.i18n.entry.Resource;
-import org.dockbox.hartshorn.di.annotations.inject.Binds;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -67,7 +67,8 @@ public class SimpleResourceService implements ResourceService {
                 try {
                     String string = bundle.getString(key);
                     translations.put(key, string);
-                } catch (MissingResourceException ignored) {
+                }
+                catch (MissingResourceException ignored) {
                 }
             }
         }
@@ -82,7 +83,8 @@ public class SimpleResourceService implements ResourceService {
             try {
                 String string = bundle.getValue().getString(entry.key());
                 translations.put(bundle.getKey(), string);
-            } catch (MissingResourceException ignored) {
+            }
+            catch (MissingResourceException ignored) {
             }
         }
         return translations;
@@ -115,10 +117,12 @@ public class SimpleResourceService implements ResourceService {
             if (translations.containsKey(finalKey)) {
                 String knownValue = translations.get(finalKey);
                 return new Resource(knownValue, finalKey);
-            } else {
+            }
+            else {
                 if (createIfAbsent && null != value) {
                     return new Resource(value, key);
-                } else {
+                }
+                else {
                     throw new IllegalStateException("Missing translation for " + finalKey);
                 }
             }

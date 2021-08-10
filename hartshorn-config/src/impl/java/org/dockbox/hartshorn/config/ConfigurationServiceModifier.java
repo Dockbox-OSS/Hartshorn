@@ -87,7 +87,8 @@ public class ConfigurationServiceModifier implements InjectionModifier<UseConfig
                 }
 
                 Reflect.set(field, instance, fieldValue);
-            } catch (FieldAccessException | TypeConversionException | NotPrimitiveException e) {
+            }
+            catch (FieldAccessException | TypeConversionException | NotPrimitiveException e) {
                 Hartshorn.log().warn("Could not prepare value field " + field.getName() + " in " + instanceType.getSimpleName());
             }
         }

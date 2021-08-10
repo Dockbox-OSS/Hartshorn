@@ -17,9 +17,9 @@
 
 package org.dockbox.hartshorn.regions.events.movement;
 
-import org.dockbox.hartshorn.server.minecraft.players.Player;
 import org.dockbox.hartshorn.regions.Region;
 import org.dockbox.hartshorn.regions.events.RegionPlayerEvent;
+import org.dockbox.hartshorn.server.minecraft.players.Player;
 
 public class EnterRegionEvent extends RegionPlayerEvent {
 

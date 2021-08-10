@@ -19,8 +19,8 @@ package org.dockbox.hartshorn.persistence.mapping;
 
 import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.persistence.properties.PersistenceModifier;
 import org.dockbox.hartshorn.persistence.properties.ModifiersAttribute;
+import org.dockbox.hartshorn.persistence.properties.PersistenceModifier;
 import org.dockbox.hartshorn.test.HartshornRunner;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.junit.jupiter.api.Assertions;

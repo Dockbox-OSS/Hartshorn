@@ -22,12 +22,12 @@ import org.dockbox.hartshorn.di.properties.UseFactory;
 
 public interface TypeFactory {
 
+    static UseFactory use(final Object... varargs) {
+        return new UseFactory(varargs);
+    }
+
     <T> T create(Class<T> type, Object... arguments);
 
     TypeFactory with(Attribute<?>... properties);
-
-    static UseFactory use(Object... varargs) {
-        return new UseFactory(varargs);
-    }
 
 }

@@ -56,13 +56,13 @@ public abstract class AbstractPersistenceServiceModifier<M extends Annotation, C
         };
     }
 
-    protected abstract  <T, R> ProxyFunction<T, R> processAnnotatedPath(ApplicationContext context, MethodProxyContext<T> methodContext, C serialisationContext);
+    protected abstract Class<C> contextType();
+
+    protected abstract <T, R> ProxyFunction<T, R> processAnnotatedPath(ApplicationContext context, MethodProxyContext<T> methodContext, C serialisationContext);
 
     protected abstract <T, R> ProxyFunction<T, R> processParameterPath(ApplicationContext context, MethodProxyContext<T> methodContext, C serialisationContext);
 
     protected abstract <T, R> ProxyFunction<T, R> processString(ApplicationContext context, MethodProxyContext<T> methodContext, C serialisationContext);
-
-    protected abstract Class<C> contextType();
 
     protected ObjectMapper mapper(ApplicationContext context, C serialisationContext) {
         final ObjectMapper objectMapper = context.get(ObjectMapper.class);

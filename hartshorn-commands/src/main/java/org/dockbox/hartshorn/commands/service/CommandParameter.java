@@ -26,7 +26,9 @@ import lombok.Getter;
 /**
  * Represents a single parameter which can be provided to command executors
  * through {@link CommandContext#flags()} and {@link CommandContext#arguments()}.
- * @param <T> The type of the parameter value.
+ *
+ * @param <T>
+ *         The type of the parameter value.
  */
 @AllArgsConstructor
 @Getter

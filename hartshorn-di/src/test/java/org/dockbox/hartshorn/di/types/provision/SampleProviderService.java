@@ -39,12 +39,12 @@ public class SampleProviderService {
     }
 
     @Provider("field")
-    public ProvidedInterface withField(SampleField field) {
+    public ProvidedInterface withField(final SampleField field) {
         return () -> "FieldProvision";
     }
 
     @Provider("namedField")
-    public ProvidedInterface withNamedField(@Named("named") SampleField field) {
+    public ProvidedInterface withNamedField(@Named("named") final SampleField field) {
         return () -> "NamedFieldProvision";
     }
 
@@ -56,7 +56,7 @@ public class SampleProviderService {
 
     @Provider("bound")
     @Bound
-    public ProvidedInterface manual(String name) {
+    public ProvidedInterface manual(final String name) {
         return () -> name;
     }
 

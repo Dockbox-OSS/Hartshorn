@@ -18,12 +18,16 @@
 package org.dockbox.hartshorn.i18n.entry;
 
 import org.dockbox.hartshorn.api.Hartshorn;
+import org.dockbox.hartshorn.di.annotations.service.Service;
 import org.dockbox.hartshorn.i18n.annotations.Resource;
 import org.dockbox.hartshorn.i18n.common.ResourceEntry;
-import org.dockbox.hartshorn.di.annotations.service.Service;
 
 @Service(owner = Hartshorn.class)
 public interface DefaultResources {
+
+    static DefaultResources instance() {
+        return Hartshorn.context().get(DefaultResources.class);
+    }
 
     @org.dockbox.hartshorn.i18n.annotations.Resource(value = "$3[] $1", key = "prefix")
     ResourceEntry prefix();
@@ -42,9 +46,5 @@ public interface DefaultResources {
 
     @Resource(value = "$4{0}", key = "hartshorn.exception")
     ResourceEntry exception(String message);
-
-    static DefaultResources instance() {
-        return Hartshorn.context().get(DefaultResources.class);
-    }
 
 }

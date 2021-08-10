@@ -42,6 +42,16 @@ public class PropertyAliasIntrospectorTests {
         Assertions.assertEquals("firstName", simpleName);
     }
 
+    private Annotated annotated(String name) throws NoSuchFieldException {
+        final Field field = SampleElement.class.getDeclaredField(name);
+        TypeResolutionContext context = new Empty(TypeFactory.defaultInstance());
+        AnnotationMap map = new AnnotationMap();
+        for (Annotation annotation : field.getAnnotations()) {
+            map.add(annotation);
+        }
+        return new AnnotatedField(context, field, map);
+    }
+
     @Test
     void testDefaultNameForSerialization() throws NoSuchFieldException {
         final Annotated annotated = this.annotated("other");
@@ -67,15 +77,5 @@ public class PropertyAliasIntrospectorTests {
         final PropertyName name = introspector.findNameForDeserialization(annotated);
         // No explicit property name defined
         Assertions.assertNull(name);
-    }
-
-    private Annotated annotated(String name) throws NoSuchFieldException {
-        final Field field = SampleElement.class.getDeclaredField(name);
-        TypeResolutionContext context = new Empty(TypeFactory.defaultInstance());
-        AnnotationMap map = new AnnotationMap();
-        for (Annotation annotation : field.getAnnotations()) {
-            map.add(annotation);
-        }
-        return new AnnotatedField(context, field, map);
     }
 }

@@ -17,13 +17,13 @@
 
 package org.dockbox.hartshorn.playeractions;
 
+import org.dockbox.hartshorn.di.annotations.service.Service;
 import org.dockbox.hartshorn.i18n.annotations.Resource;
 import org.dockbox.hartshorn.i18n.common.ResourceEntry;
-import org.dockbox.hartshorn.di.annotations.service.Service;
 
 @Service(owner = PlayerActions.class)
 public interface PlayerActionResources {
-    
+
     @Resource(value = "$4You are not allowed to teleport while in spectator mode", key = "playeractions.spectator.notallowed")
     ResourceEntry spectatorNotAllowed();
 

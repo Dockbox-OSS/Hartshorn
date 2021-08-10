@@ -39,8 +39,7 @@ import java.util.Map;
 @Binds(ArmorStand.class)
 public class SpongeArmorStand
         extends SpongeCloneableEntityReference<ArmorStand, net.minecraft.world.entity.decoration.ArmorStand, org.spongepowered.api.entity.living.ArmorStand>
-        implements ArmorStand
-{
+        implements ArmorStand {
 
     private static final Map<Limbs, Key<Value<Vector3d>>> limbs = HartshornUtils.<Limbs, Key<Value<Vector3d>>>mapBuilder()
             .add(Limbs.HEAD, Keys.HEAD_ROTATION)

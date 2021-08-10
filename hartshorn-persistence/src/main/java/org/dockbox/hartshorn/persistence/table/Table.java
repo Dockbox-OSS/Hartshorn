@@ -63,6 +63,7 @@ import lombok.Getter;
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class Table {
 
+    private static final Map<Class<?>, List<ColumnIdentifier<?>>> DEFINITIONS = HartshornUtils.emptyMap();
     private final List<TableRow> rows;
     @Getter private final ColumnIdentifier<?>[] identifiers;
 
@@ -122,6 +123,28 @@ public class Table {
                 throw new EmptyEntryException(
                         "Could not populate empty entry for column " + identifier.name());
         }
+    }
+
+    public static Table of(Class<?> type) {
+        if (!DEFINITIONS.containsKey(type)) {
+            final List<ColumnIdentifier<?>> identifiers = HartshornUtils.emptyList();
+            for (Field field : type.getDeclaredFields()) {
+                if (Modifier.isTransient(field.getModifiers())) continue;
+
+                final String name = Reflect.fieldName(field);
+                identifiers.add(new SimpleColumnIdentifier<>(name, field.getType()));
+            }
+            DEFINITIONS.put(type, identifiers);
+        }
+        return new Table(DEFINITIONS.getOrDefault(type, HartshornUtils.emptyList()));
+    }
+
+    public static <T> Table of(Class<T> type, T... defaultEntries) {
+        final Table table = Table.of(type);
+        for (T entry : defaultEntries) {
+            table.addRow(entry);
+        }
+        return table;
     }
 
     /**
@@ -582,6 +605,11 @@ public class Table {
         return HartshornUtils.asUnmodifiableList(this.rows);
     }
 
+    public <T extends PersistentCapable<M>, M extends PersistentModel<T>> List<T> restore(Class<M> type) {
+        final List<M> rows = this.rows(type);
+        return rows.stream().map(PersistentModel::restore).toList();
+    }
+
     public <T> List<T> rows(Class<T> type) {
         List<T> items = HartshornUtils.emptyList();
 
@@ -593,7 +621,8 @@ public class Table {
                     final T instance = constructor.newInstance();
                     final Map<String, Object> data = row.data().entrySet().stream().collect(Collectors.toMap(e -> e.getKey().name(), Entry::getValue));
                     items.add(Reflect.populate(instance, data));
-                } catch (ApplicationException e) {
+                }
+                catch (ApplicationException e) {
                     Hartshorn.log().warn("Skipping row " + row + ": " + e.getMessage());
                 }
             }
@@ -604,37 +633,8 @@ public class Table {
         return items;
     }
 
-    public <T extends PersistentCapable<M>, M extends PersistentModel<T>> List<T> restore(Class<M> type) {
-        final List<M> rows = this.rows(type);
-        return rows.stream().map(PersistentModel::restore).toList();
-    }
-
     public void forEach(Consumer<TableRow> consumer) {
         this.rows().forEach(consumer);
-    }
-
-    private static final Map<Class<?>, List<ColumnIdentifier<?>>> DEFINITIONS = HartshornUtils.emptyMap();
-
-    public static Table of(Class<?> type) {
-        if (!DEFINITIONS.containsKey(type)) {
-            final List<ColumnIdentifier<?>> identifiers = HartshornUtils.emptyList();
-            for (Field field : type.getDeclaredFields()) {
-                if (Modifier.isTransient(field.getModifiers())) continue;
-
-                final String name = Reflect.fieldName(field);
-                identifiers.add(new SimpleColumnIdentifier<>(name, field.getType()));
-            }
-            DEFINITIONS.put(type, identifiers);
-        }
-        return new Table(DEFINITIONS.getOrDefault(type, HartshornUtils.emptyList()));
-    }
-
-    public static <T> Table of(Class<T> type, T... defaultEntries) {
-        final Table table = Table.of(type);
-        for (T entry : defaultEntries) {
-            table.addRow(entry);
-        }
-        return table;
     }
 
     @Override

@@ -18,8 +18,8 @@
 package org.dockbox.hartshorn.commands.definition;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.i18n.permissions.Permission;
 import org.dockbox.hartshorn.commands.CommandSource;
+import org.dockbox.hartshorn.i18n.permissions.Permission;
 
 import java.util.Collection;
 
@@ -27,6 +27,7 @@ import lombok.AllArgsConstructor;
 
 /**
  * Simple implementation of {@link CommandElement}.
+ *
  * @param <T>
  */
 @AllArgsConstructor
@@ -49,6 +50,11 @@ public class SimpleCommandElement<T> implements CommandElement<T> {
     }
 
     @Override
+    public boolean optional() {
+        return this.optional;
+    }
+
+    @Override
     public Exceptional<T> parse(CommandSource source, String argument) {
         return this.converter.convert(source, argument);
     }
@@ -61,11 +67,6 @@ public class SimpleCommandElement<T> implements CommandElement<T> {
     @Override
     public int size() {
         return this.size;
-    }
-
-    @Override
-    public boolean optional() {
-        return this.optional;
     }
 
 }

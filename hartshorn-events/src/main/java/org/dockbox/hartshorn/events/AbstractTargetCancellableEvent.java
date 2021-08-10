@@ -25,7 +25,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 @SuppressWarnings("AbstractClassWithoutAbstractMethods")
-@Getter @Setter
+@Getter
+@Setter
 public abstract class AbstractTargetCancellableEvent implements Cancellable, Targetable {
 
     private boolean cancelled;

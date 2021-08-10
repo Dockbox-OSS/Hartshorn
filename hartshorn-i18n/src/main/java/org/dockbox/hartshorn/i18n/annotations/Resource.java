@@ -26,5 +26,6 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 public @interface Resource {
     String value();
+
     String key() default "";
 }

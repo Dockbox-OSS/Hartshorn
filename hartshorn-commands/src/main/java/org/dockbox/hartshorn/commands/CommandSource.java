@@ -28,7 +28,9 @@ public interface CommandSource extends MessageReceiver {
     /**
      * Executes the given raw command as the {@link org.dockbox.hartshorn.api.domain.Subject}
      * represented by this source.
-     * @param command The raw command
+     *
+     * @param command
+     *         The raw command
      */
     void execute(String command);
 }

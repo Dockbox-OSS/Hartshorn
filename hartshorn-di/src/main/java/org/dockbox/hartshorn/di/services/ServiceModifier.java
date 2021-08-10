@@ -26,7 +26,7 @@ import java.lang.annotation.Annotation;
 
 public abstract class ServiceModifier<A extends Annotation> implements InjectionModifier<A> {
 
-    public <T> boolean preconditions(Class<T> type, @Nullable T instance, Attribute<?>... properties) {
+    public <T> boolean preconditions(final Class<T> type, @Nullable final T instance, final Attribute<?>... properties) {
         return ApplicationContextAware.instance().context().locator().container(type).present()
                 && this.modifies(type, instance, properties);
     }

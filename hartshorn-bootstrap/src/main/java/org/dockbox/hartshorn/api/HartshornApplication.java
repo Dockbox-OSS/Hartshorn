@@ -49,21 +49,24 @@ public class HartshornApplication {
      * the application. The returned {@link Runnable} can be used to initialize the server at the desired
      * time.
      *
-     * @param activator The activator type, providing application metadata
-     * @param modifiers The modifiers to use when bootstrapping
+     * @param activator
+     *         The activator type, providing application metadata
+     * @param modifiers
+     *         The modifiers to use when bootstrapping
+     *
      * @return A {@link Runnable} to initialize the application
      */
-    public static Runnable create(Class<?> activator, Modifier... modifiers) {
+    public static Runnable create(final Class<?> activator, final Modifier... modifiers) {
         try {
             final long start = System.currentTimeMillis();
             final Activator annotation = verifyActivator(activator);
             final Class<? extends ApplicationBootstrap> bootstrap = annotation.value();
             final ApplicationBootstrap injectableBootstrap = instance(bootstrap);
 
-            String prefix = "".equals(annotation.prefix()) ? activator.getPackage().getName() : annotation.prefix();
+            final String prefix = "".equals(annotation.prefix()) ? activator.getPackage().getName() : annotation.prefix();
 
-            Multimap<InjectPhase, InjectConfiguration> configurations = ArrayListMultimap.create();
-            for (InjectConfig config : annotation.configs()) {
+            final Multimap<InjectPhase, InjectConfiguration> configurations = ArrayListMultimap.create();
+            for (final InjectConfig config : annotation.configs()) {
                 configurations.put(config.phase(), instance(config.value()));
             }
 
@@ -85,7 +88,7 @@ public class HartshornApplication {
                 Hartshorn.log().info("Started " + Hartshorn.PROJECT_NAME + " in " + (creationTime + initTime) + "ms");
             };
         }
-        catch (InvocationTargetException | NoSuchMethodException | InstantiationException | IllegalAccessException e) {
+        catch (final InvocationTargetException | NoSuchMethodException | InstantiationException | IllegalAccessException e) {
             Except.handle("Could not bootstrap application " + activator.getSimpleName(), e);
             return () -> {
                 throw new RuntimeException("Hartshorn could not be bootstrapped, see cause for details", e);
@@ -93,12 +96,7 @@ public class HartshornApplication {
         }
     }
 
-    private static <T> T instance(Class<T> type) throws InvocationTargetException, InstantiationException, IllegalAccessException, NoSuchMethodException {
-        final Constructor<T> constructor = type.getConstructor();
-        return constructor.newInstance();
-    }
-
-    private static Activator verifyActivator(Class<?> activator) {
+    private static Activator verifyActivator(final Class<?> activator) {
         final Exceptional<Activator> annotation = Reflect.annotation(activator, Activator.class);
         if (annotation.absent())
             throw new IllegalArgumentException("Application type should be decorated with @Activator");
@@ -107,6 +105,11 @@ public class HartshornApplication {
             throw new IllegalArgumentException("Bootstrap type cannot be abstract, got " + activator.getSimpleName());
 
         return annotation.get();
+    }
+
+    private static <T> T instance(final Class<T> type) throws InvocationTargetException, InstantiationException, IllegalAccessException, NoSuchMethodException {
+        final Constructor<T> constructor = type.getConstructor();
+        return constructor.newInstance();
     }
 
 }

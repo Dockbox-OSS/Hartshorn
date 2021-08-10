@@ -39,7 +39,10 @@ public final class ArgumentConverterContext extends DefaultContext {
 
     /**
      * Indicates if any converter with the given <code>key</code> is registered.
-     * @param key The key to use during lookup
+     *
+     * @param key
+     *         The key to use during lookup
+     *
      * @return <code>true</code> if a converter exists, or else <code>false</code>
      */
     public boolean hasConverter(final String key) {
@@ -47,17 +50,11 @@ public final class ArgumentConverterContext extends DefaultContext {
     }
 
     /**
-     * Indicates if any registered converter is able to convert into the given <code>type</code>.
-     * @param type The type the converter should convert into.
-     * @return <code>true</code> if a converter exists, or else <code>false</code>
-     */
-    public boolean hasConverter(final Class<?> type) {
-        return this.converter(type).present();
-    }
-
-    /**
      * Gets the converter associated with the registered <code>key</code>, if it exists.
-     * @param key The key to use during lookup
+     *
+     * @param key
+     *         The key to use during lookup
+     *
      * @return The converter if it exists, or {@link Exceptional#empty()}
      */
     public Exceptional<ArgumentConverter<?>> converter(final String key) {
@@ -65,10 +62,26 @@ public final class ArgumentConverterContext extends DefaultContext {
     }
 
     /**
+     * Indicates if any registered converter is able to convert into the given <code>type</code>.
+     *
+     * @param type
+     *         The type the converter should convert into.
+     *
+     * @return <code>true</code> if a converter exists, or else <code>false</code>
+     */
+    public boolean hasConverter(final Class<?> type) {
+        return this.converter(type).present();
+    }
+
+    /**
      * Gets the (first) converter which is able to convert into the given <code>type</code>, if it
      * exists.
-     * @param type The type the converter should convert into.
-     * @param <T> The type parameter of the type
+     *
+     * @param type
+     *         The type the converter should convert into.
+     * @param <T>
+     *         The type parameter of the type
+     *
      * @return The converter if it exists, or {@link Exceptional#empty()}
      */
     public <T> Exceptional<ArgumentConverter<T>> converter(final Class<T> type) {
@@ -81,7 +94,9 @@ public final class ArgumentConverterContext extends DefaultContext {
 
     /**
      * Registers the given {@link ArgumentConverter} to the current context.
-     * @param converter The converter to register
+     *
+     * @param converter
+     *         The converter to register
      */
     public void register(final ArgumentConverter<?> converter) {
         for (String key : converter.keys()) {

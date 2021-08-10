@@ -58,14 +58,14 @@ public class ContextWrappedHierarchy<C> implements BindingHierarchy<C> {
         return this.real().key();
     }
 
+    private BindingHierarchy<C> update() {
+        this.onUpdate.accept(this.real());
+        return this;
+    }
+
     @NotNull
     @Override
     public Iterator<Entry<Integer, Provider<C>>> iterator() {
         return this.real().iterator();
-    }
-
-    private BindingHierarchy<C> update() {
-        this.onUpdate.accept(this.real());
-        return this;
     }
 }

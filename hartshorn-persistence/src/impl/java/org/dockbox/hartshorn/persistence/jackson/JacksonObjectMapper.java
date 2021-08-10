@@ -61,30 +61,9 @@ import lombok.AllArgsConstructor;
 @Binds(org.dockbox.hartshorn.persistence.mapping.ObjectMapper.class)
 public class JacksonObjectMapper extends DefaultObjectMapper {
 
-    private Include include = Include.ALWAYS;
-
-    @AllArgsConstructor
-    private enum Mappers {
-        JSON(FileType.JSON, ObjectMapper::new),
-        YAML(FileType.YAML, () -> {
-            final YAMLFactory yamlFactory = new YAMLFactory();
-            yamlFactory.enable(YAMLGenerator.Feature.MINIMIZE_QUOTES);
-            yamlFactory.disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER);
-            yamlFactory.disable(YAMLParser.Feature.EMPTY_STRING_AS_NULL);
-            return new YAMLMapper(yamlFactory);
-        }),
-        PROPERTIES(FileType.PROPERTIES, JavaPropsMapper::new),
-        TOML(FileType.TOML, TomlMapper::new),
-        XML(FileType.XML, XmlMapper::new),
-        ;
-
-        private final FileType fileType;
-        private final Supplier<? super ObjectMapper> mapper;
-    }
-
     private static final List<FileType> roots = Collections.singletonList(FileType.XML);
-
     protected ObjectMapper mapper;
+    private Include include = Include.ALWAYS;
 
     public JacksonObjectMapper() {
         super(FileType.JSON);
@@ -121,16 +100,7 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
                 type.getType(),
                 () -> this.correctPersistentCapable(path, (Class<T>) type.getType()),
                 () -> this.configureMapper().readValue(path.toFile(), new GenericTypeReference<>(type))
-                );
-    }
-
-    private <T> Exceptional<T> readInternal(Type type, Supplier<Exceptional<T>> capable, Callable<T> reader) {
-        if (type instanceof Class) {
-            Exceptional<T> persistentCapable = capable.get();
-            if (persistentCapable.present()) return persistentCapable;
-        }
-
-        return Exceptional.of(reader);
+        );
     }
 
     @Override
@@ -147,10 +117,19 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
     @Override
     public <T> Exceptional<String> write(T content) {
         return this.writeInternal(
-                content,
-                () -> this.write(((PersistentCapable<?>) content).model()),
-                () -> this.writer(content).writeValueAsString(content))
+                        content,
+                        () -> this.write(((PersistentCapable<?>) content).model()),
+                        () -> this.writer(content).writeValueAsString(content))
                 .map(out -> out.replaceAll("\\r", ""));
+    }
+
+    private <T> Exceptional<T> readInternal(Type type, Supplier<Exceptional<T>> capable, Callable<T> reader) {
+        if (type instanceof Class) {
+            Exceptional<T> persistentCapable = capable.get();
+            if (persistentCapable.present()) return persistentCapable;
+        }
+
+        return Exceptional.of(reader);
     }
 
     private ObjectWriter writer(Object content) {
@@ -228,5 +207,24 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
             return model.map(PersistentModel::restore).map(out -> (T) out);
         }
         return Exceptional.empty();
+    }
+
+    @AllArgsConstructor
+    private enum Mappers {
+        JSON(FileType.JSON, ObjectMapper::new),
+        YAML(FileType.YAML, () -> {
+            final YAMLFactory yamlFactory = new YAMLFactory();
+            yamlFactory.enable(YAMLGenerator.Feature.MINIMIZE_QUOTES);
+            yamlFactory.disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER);
+            yamlFactory.disable(YAMLParser.Feature.EMPTY_STRING_AS_NULL);
+            return new YAMLMapper(yamlFactory);
+        }),
+        PROPERTIES(FileType.PROPERTIES, JavaPropsMapper::new),
+        TOML(FileType.TOML, TomlMapper::new),
+        XML(FileType.XML, XmlMapper::new),
+        ;
+
+        private final FileType fileType;
+        private final Supplier<? super ObjectMapper> mapper;
     }
 }

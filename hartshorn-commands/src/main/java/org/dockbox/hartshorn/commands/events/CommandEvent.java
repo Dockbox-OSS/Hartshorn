@@ -17,10 +17,10 @@
 
 package org.dockbox.hartshorn.commands.events;
 
+import org.dockbox.hartshorn.commands.CommandSource;
+import org.dockbox.hartshorn.commands.context.CommandContext;
 import org.dockbox.hartshorn.events.AbstractTargetEvent;
 import org.dockbox.hartshorn.events.parents.Cancellable;
-import org.dockbox.hartshorn.commands.context.CommandContext;
-import org.dockbox.hartshorn.commands.CommandSource;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -40,7 +40,9 @@ public abstract class CommandEvent extends AbstractTargetEvent {
     /**
      * The event fired before a command is executed.
      */
-    @Getter @Setter public static class Before extends CommandEvent implements Cancellable {
+    @Getter
+    @Setter
+    public static class Before extends CommandEvent implements Cancellable {
 
         private boolean cancelled;
 

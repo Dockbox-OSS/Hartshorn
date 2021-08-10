@@ -20,10 +20,10 @@ package org.dockbox.hartshorn.events;
 import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.annotations.PostBootstrap;
 import org.dockbox.hartshorn.api.annotations.UseBootstrap;
+import org.dockbox.hartshorn.di.annotations.service.Service;
 import org.dockbox.hartshorn.events.annotations.Posting;
 import org.dockbox.hartshorn.events.annotations.UseEvents;
 import org.dockbox.hartshorn.events.parents.Event;
-import org.dockbox.hartshorn.di.annotations.service.Service;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.dockbox.hartshorn.util.Reflect;
 

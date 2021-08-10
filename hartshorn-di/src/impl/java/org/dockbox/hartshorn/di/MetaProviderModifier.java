@@ -25,7 +25,7 @@ public class MetaProviderModifier implements Modifier {
 
     private final MetaProvider provider;
 
-    public MetaProviderModifier(Supplier<MetaProvider> provider) {
+    public MetaProviderModifier(final Supplier<MetaProvider> provider) {
         this.provider = provider.get();
     }
 

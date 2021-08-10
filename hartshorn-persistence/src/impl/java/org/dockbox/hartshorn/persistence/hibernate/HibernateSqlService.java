@@ -87,28 +87,19 @@ public class HibernateSqlService implements SqlService {
         }
     }
 
+    @Override
+    public void save(Object object) {
+        this.session(session -> {
+            session.save(object);
+        });
+    }
+
     private void session(Consumer<Session> consumer) {
         final Session session = this.factory.openSession();
         session.beginTransaction();
         consumer.accept(session);
         session.getTransaction().commit();
         session.close();
-    }
-
-    private <T> T session(Function<Session, T> function) {
-        final Session session = this.factory.openSession();
-        session.beginTransaction();
-        final T result = function.apply(session);
-        session.getTransaction().commit();
-        session.close();
-        return result;
-    }
-
-    @Override
-    public void save(Object object) {
-        this.session(session -> {
-            session.save(object);
-        });
     }
 
     @Override
@@ -141,6 +132,15 @@ public class HibernateSqlService implements SqlService {
             final List<T> data = session.createQuery(criteria).getResultList();
             return HartshornUtils.asUnmodifiableSet(data);
         });
+    }
+
+    private <T> T session(Function<Session, T> function) {
+        final Session session = this.factory.openSession();
+        session.beginTransaction();
+        final T result = function.apply(session);
+        session.getTransaction().commit();
+        session.close();
+        return result;
     }
 
     @Override

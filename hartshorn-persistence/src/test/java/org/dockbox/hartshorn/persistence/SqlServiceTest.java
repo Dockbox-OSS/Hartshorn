@@ -44,6 +44,17 @@ class SqlServiceTest {
         );
     }
 
+    protected static Path directory(String prefix) {
+        try {
+            return Files.createTempDirectory(prefix);
+        }
+        catch (Exception e) {
+            Assumptions.assumeTrue(false);
+            //noinspection ReturnOfNull
+            return null;
+        }
+    }
+
     @ParameterizedTest
     @MethodSource("dialects")
     public void testJpaSave(Remote remote, Object target) throws ApplicationException {
@@ -58,6 +69,14 @@ class SqlServiceTest {
         for (User user : users) {
             Assertions.assertNotEquals(0, user.id());
         }
+    }
+
+    protected SqlService sql(Remote remote, Object target) throws ApplicationException {
+        SqlService man = new HibernateSqlService();
+        final ConnectionAttribute property = ConnectionAttribute.of(remote, target, "", "");
+        man.apply(property);
+        man.enable();
+        return man;
     }
 
     @ParameterizedTest
@@ -102,24 +121,5 @@ class SqlServiceTest {
         final Exceptional<User> persisted = sql.findById(User.class, guus.id());
         Assertions.assertTrue(persisted.present());
         Assertions.assertEquals(persisted.get().name(), "NotGuus");
-    }
-
-    protected static Path directory(String prefix) {
-        try {
-            return Files.createTempDirectory(prefix);
-        }
-        catch (Exception e) {
-            Assumptions.assumeTrue(false);
-            //noinspection ReturnOfNull
-            return null;
-        }
-    }
-
-    protected SqlService sql(Remote remote, Object target) throws ApplicationException {
-        SqlService man = new HibernateSqlService();
-        final ConnectionAttribute property = ConnectionAttribute.of(remote, target, "", "");
-        man.apply(property);
-        man.enable();
-        return man;
     }
 }

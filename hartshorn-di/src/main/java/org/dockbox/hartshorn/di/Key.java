@@ -22,14 +22,14 @@ public class Key<C> {
     }
 
     @Override
+    public int hashCode() {
+        return Objects.hash(this.contract, this.named);
+    }
+
+    @Override
     public boolean equals(final Object o) {
         if (this == o) return true;
         if (!(o instanceof final Key<?> key)) return false;
         return this.contract.equals(key.contract) && Objects.equals(this.named, key.named);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(this.contract, this.named);
     }
 }

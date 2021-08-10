@@ -18,9 +18,9 @@
 package org.dockbox.hartshorn.test.objects;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.di.annotations.inject.Bound;
 import org.dockbox.hartshorn.i18n.common.Language;
 import org.dockbox.hartshorn.i18n.text.Text;
-import org.dockbox.hartshorn.di.annotations.inject.Bound;
 import org.dockbox.hartshorn.server.minecraft.item.Enchant;
 import org.dockbox.hartshorn.server.minecraft.item.Item;
 import org.dockbox.hartshorn.server.minecraft.item.ItemTypes;
@@ -100,6 +100,11 @@ public class JUnitItem implements Item, JUnitPersistentDataHolder {
     }
 
     @Override
+    public int stackSize() {
+        return 64;
+    }
+
+    @Override
     public Set<Enchant> enchantments() {
         return HartshornUtils.asUnmodifiableSet(this.enchants);
     }
@@ -119,9 +124,9 @@ public class JUnitItem implements Item, JUnitPersistentDataHolder {
         return this.treatAsBlock;
     }
 
-    public Item treatAsBlock() {
-        this.treatAsBlock = true;
-        return this;
+    @Override
+    public boolean isHead() {
+        return Item.of(ItemTypes.SKELETON_SKULL).id().equals(this.id());
     }
 
     @Override
@@ -130,11 +135,6 @@ public class JUnitItem implements Item, JUnitPersistentDataHolder {
             this.profile = profile;
         }
         return this;
-    }
-
-    @Override
-    public boolean isHead() {
-        return Item.of(ItemTypes.SKELETON_SKULL).id().equals(this.id());
     }
 
     @Override
@@ -148,9 +148,9 @@ public class JUnitItem implements Item, JUnitPersistentDataHolder {
         return Exceptional.empty();
     }
 
-    @Override
-    public int stackSize() {
-        return 64;
+    public Item treatAsBlock() {
+        this.treatAsBlock = true;
+        return this;
     }
 
     @Override

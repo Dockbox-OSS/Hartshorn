@@ -18,9 +18,9 @@
 package org.dockbox.hartshorn.server.minecraft.service;
 
 import org.dockbox.hartshorn.api.Hartshorn;
+import org.dockbox.hartshorn.di.annotations.inject.Binds;
 import org.dockbox.hartshorn.i18n.permissions.Permission;
 import org.dockbox.hartshorn.i18n.text.Text;
-import org.dockbox.hartshorn.di.annotations.inject.Binds;
 import org.dockbox.hartshorn.server.minecraft.players.Player;
 import org.dockbox.hartshorn.server.minecraft.players.Players;
 import org.jetbrains.annotations.NotNull;

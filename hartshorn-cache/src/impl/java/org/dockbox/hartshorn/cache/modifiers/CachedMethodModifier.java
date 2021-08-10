@@ -18,6 +18,7 @@
 package org.dockbox.hartshorn.cache.modifiers;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.api.exceptions.ApplicationException;
 import org.dockbox.hartshorn.api.exceptions.Except;
 import org.dockbox.hartshorn.cache.Cache;
 import org.dockbox.hartshorn.cache.Expiration;
@@ -26,7 +27,6 @@ import org.dockbox.hartshorn.cache.context.CacheContext;
 import org.dockbox.hartshorn.cache.context.CacheMethodContext;
 import org.dockbox.hartshorn.cache.context.SimpleCacheMethodContext;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
-import org.dockbox.hartshorn.api.exceptions.ApplicationException;
 import org.dockbox.hartshorn.proxy.handle.ProxyFunction;
 import org.dockbox.hartshorn.proxy.service.MethodProxyContext;
 import org.dockbox.hartshorn.util.Reflect;
@@ -54,7 +54,8 @@ public class CachedMethodModifier extends CacheServiceModifier<Cached> {
                     final List<Object> out = proxyContext.invoke();
                     cache.populate(out);
                     return out;
-                } catch (ApplicationException e) {
+                }
+                catch (ApplicationException e) {
                     Except.handle(e);
                     return null;
                 }

@@ -56,6 +56,10 @@ public class Setting<T> extends TypedPersistentDataKey<T> {
         this.action = action;
     }
 
+    public static <T> SettingBuilder<T> of(Class<T> type) {
+        return new SettingBuilder<>(type);
+    }
+
     protected ResourceEntry convert(T value) {
         return this.converter.apply(value);
     }
@@ -69,16 +73,14 @@ public class Setting<T> extends TypedPersistentDataKey<T> {
      * holder, the default value is used. If the setting isn't set and the default value is absent,
      * {@code null} is returned.
      *
-     * @param holder The data holder to test the setting on
+     * @param holder
+     *         The data holder to test the setting on
+     *
      * @return The set value, default value, or null
      */
     @Nullable
     public T get(PersistentDataHolder holder) {
         return holder.get(this).orElse(this.defaultValue::get).orNull();
-    }
-
-    public static <T> SettingBuilder<T> of(Class<T> type) {
-        return new SettingBuilder<>(type);
     }
 
     public Consumer<PersistentDataHolder> action() {
@@ -101,11 +103,6 @@ public class Setting<T> extends TypedPersistentDataKey<T> {
             this.type = type;
         }
 
-        public SettingBuilder<T> id(String id) {
-            this.id = id;
-            return this;
-        }
-
         public SettingBuilder<T> owner(TypedOwner owner) {
             this.owner = owner;
             return this;
@@ -113,11 +110,6 @@ public class Setting<T> extends TypedPersistentDataKey<T> {
 
         public SettingBuilder<T> owner(Class<?> owner) {
             this.owner = Hartshorn.context().meta().lookup(owner);
-            return this;
-        }
-
-        public SettingBuilder<T> type(Class<T> type) {
-            this.type = type;
             return this;
         }
 
@@ -148,6 +140,16 @@ public class Setting<T> extends TypedPersistentDataKey<T> {
 
         public SettingBuilder<T> from(PersistentDataKey<T> key) {
             return this.id(key.id()).type(key.type());
+        }
+
+        public SettingBuilder<T> type(Class<T> type) {
+            this.type = type;
+            return this;
+        }
+
+        public SettingBuilder<T> id(String id) {
+            this.id = id;
+            return this;
         }
 
         public SettingBuilder<T> action(Consumer<PersistentDataHolder> action) {

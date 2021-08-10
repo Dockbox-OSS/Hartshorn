@@ -20,7 +20,6 @@ package org.dockbox.hartshorn.commands.context;
 import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.exceptions.Except;
-import org.dockbox.hartshorn.i18n.permissions.Permission;
 import org.dockbox.hartshorn.commands.annotations.Command;
 import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
 import org.dockbox.hartshorn.commands.definition.CommandDefinition;
@@ -33,6 +32,7 @@ import org.dockbox.hartshorn.commands.definition.SimpleCommandElement;
 import org.dockbox.hartshorn.commands.definition.SimpleCommandFlag;
 import org.dockbox.hartshorn.di.binding.Bindings;
 import org.dockbox.hartshorn.di.context.DefaultContext;
+import org.dockbox.hartshorn.i18n.permissions.Permission;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.dockbox.hartshorn.util.Reflect;
 
@@ -173,7 +173,7 @@ public class SimpleCommandDefinitionContext extends DefaultContext implements Co
 
         for (int i = 0; i < elements.size(); i++) {
             CommandElement<?> element = elements.get(i);
-            if (element.size() == -1 && i != elements.size()-1) {
+            if (element.size() == -1 && i != elements.size() - 1) {
                 throw new IllegalStateException("Cannot request arguments after joining remaining elements");
             }
         }

@@ -21,5 +21,6 @@ public interface WorldGenerator {
     GeneratorType type();
 
     Biome biome();
+
     WorldGenerator biome(Biome biome);
 }

@@ -28,6 +28,7 @@ import java.lang.annotation.Target;
 
 /**
  * Component type to specify a source for field values annotated with {@link Value}.
+ *
  * @see Value
  */
 @Retention(RetentionPolicy.RUNTIME)
@@ -36,5 +37,6 @@ import java.lang.annotation.Target;
 @Component(singleton = true)
 public @interface Configuration {
     String source() default "";
+
     Class<?> owner() default Hartshorn.class;
 }

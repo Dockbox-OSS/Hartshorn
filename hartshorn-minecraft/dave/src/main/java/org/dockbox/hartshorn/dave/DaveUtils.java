@@ -55,7 +55,8 @@ public final class DaveUtils {
         if (muted) {
             player.remove(Dave.MUTED_DAVE);
             player.sendWithPrefix(resources.unmute());
-        } else {
+        }
+        else {
             player.set(Dave.MUTED_DAVE, true);
             player.sendWithPrefix(resources.mute());
         }

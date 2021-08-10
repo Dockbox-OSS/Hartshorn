@@ -18,14 +18,14 @@
 package org.dockbox.hartshorn.toolbinding;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.events.annotations.Listener;
-import org.dockbox.hartshorn.events.annotations.Posting;
 import org.dockbox.hartshorn.api.keys.Keys;
 import org.dockbox.hartshorn.api.keys.PersistentDataKey;
 import org.dockbox.hartshorn.api.keys.RemovableKey;
 import org.dockbox.hartshorn.api.keys.TransactionResult;
 import org.dockbox.hartshorn.di.annotations.inject.Wired;
 import org.dockbox.hartshorn.di.annotations.service.Service;
+import org.dockbox.hartshorn.events.annotations.Listener;
+import org.dockbox.hartshorn.events.annotations.Posting;
 import org.dockbox.hartshorn.server.minecraft.events.player.interact.PlayerInteractEvent;
 import org.dockbox.hartshorn.server.minecraft.item.Item;
 import org.dockbox.hartshorn.server.minecraft.players.Sneaking;
@@ -38,19 +38,16 @@ import java.util.UUID;
 @Posting(ToolInteractionEvent.class)
 public class ToolBinding {
 
-    @Wired
-    private ToolBindingResources resources;
-
     static final PersistentDataKey<String> PERSISTENT_TOOL = Keys.persistent(String.class, "Tool Binding", ToolBinding.class);
     private static ToolBinding instance;
-
     public static final RemovableKey<Item, ItemTool> TOOL_REMOVABLE_KEY = Keys.builder(Item.class, ItemTool.class)
             .withSetter((item, tool) -> instance.tool(item, tool))
             .withGetterSafe(item -> instance.get(item))
             .withRemover(item -> instance.removeTool(item))
             .build();
-
     private final Map<String, ItemTool> registry = HartshornUtils.emptyConcurrentMap();
+    @Wired
+    private ToolBindingResources resources;
 
     public ToolBinding() {
         instance = this;

@@ -23,11 +23,10 @@ import java.util.concurrent.Callable;
 
 public final class Except {
 
-    private Except() {
-    }
-
     private static ExceptionHandle handle = ExceptionLevels.FRIENDLY;
     private static boolean stackTraces = true;
+    private Except() {
+    }
 
     public static void useStackTraces(boolean stackTraces) {
         Except.stackTraces = stackTraces;

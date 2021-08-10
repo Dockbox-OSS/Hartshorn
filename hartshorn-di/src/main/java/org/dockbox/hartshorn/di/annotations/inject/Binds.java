@@ -28,5 +28,6 @@ import java.lang.annotation.Target;
 @Repeatable(Combines.class)
 public @interface Binds {
     Class<?> value();
-    Named named() default @Named(value = "");
+
+    Named named() default @Named("");
 }

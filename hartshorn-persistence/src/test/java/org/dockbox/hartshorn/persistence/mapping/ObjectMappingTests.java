@@ -17,13 +17,13 @@
 
 package org.dockbox.hartshorn.persistence.mapping;
 
+import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.persistence.Element;
 import org.dockbox.hartshorn.persistence.EntityElement;
+import org.dockbox.hartshorn.persistence.FileType;
 import org.dockbox.hartshorn.persistence.MultiElement;
 import org.dockbox.hartshorn.persistence.NestedElement;
 import org.dockbox.hartshorn.persistence.PersistentElement;
-import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.persistence.FileType;
 import org.dockbox.hartshorn.persistence.jackson.JacksonObjectMapper;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.junit.jupiter.api.Assertions;

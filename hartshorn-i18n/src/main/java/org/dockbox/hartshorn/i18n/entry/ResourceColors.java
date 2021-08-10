@@ -19,6 +19,9 @@ package org.dockbox.hartshorn.i18n.entry;
 
 public final class ResourceColors {
 
+    private ResourceColors() {
+    }
+
     public static char primary() {
         return 'b';
     }
@@ -33,8 +36,5 @@ public final class ResourceColors {
 
     public static char error() {
         return 'c';
-    }
-
-    private ResourceColors() {
     }
 }

@@ -66,6 +66,10 @@ public class SpongeWorld extends World implements SpongeDimension {
         return block.place(new SpongeLocation(position, this));
     }
 
+    private Exceptional<ServerWorld> world() {
+        return Exceptional.of(Sponge.server().worldManager().world(this.key));
+    }
+
     @Override
     public Exceptional<Chunk> chunk(Location location) {
         return this.chunk(location.vector());
@@ -119,6 +123,11 @@ public class SpongeWorld extends World implements SpongeDimension {
                 .or(false);
     }
 
+    private <T> Exceptional<T> run(BiFunction<WorldManager, ResourceKey, CompletableFuture<T>> function) {
+        final CompletableFuture<T> future = function.apply(Sponge.server().worldManager(), this.key);
+        return SpongeUtil.await(future);
+    }
+
     @Override
     public void gamerule(String key, String value) {
         this.world().present(world -> {
@@ -133,14 +142,5 @@ public class SpongeWorld extends World implements SpongeDimension {
         Map<String, String> rules = HartshornUtils.emptyMap();
         this.world().present(world -> world.properties().gameRules().forEach((rule, value) -> rules.put(rule.name(), String.valueOf(value))));
         return null;
-    }
-
-    private <T> Exceptional<T> run(BiFunction<WorldManager, ResourceKey, CompletableFuture<T>> function) {
-        final CompletableFuture<T> future = function.apply(Sponge.server().worldManager(), this.key);
-        return SpongeUtil.await(future);
-    }
-
-    private Exceptional<ServerWorld> world() {
-        return Exceptional.of(Sponge.server().worldManager().world(this.key));
     }
 }

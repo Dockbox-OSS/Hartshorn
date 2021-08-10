@@ -18,19 +18,19 @@
 package org.dockbox.hartshorn.sponge.event;
 
 import org.dockbox.hartshorn.events.annotations.Posting;
-import org.dockbox.hartshorn.regions.plots.events.ClearPlotEvent;
-import org.dockbox.hartshorn.regions.plots.events.DeletePlotEvent;
-import org.dockbox.hartshorn.regions.plots.events.PlotChangePropertyEvent;
 import org.dockbox.hartshorn.regions.events.flags.RegionFlagAddedEvent;
 import org.dockbox.hartshorn.regions.events.flags.RegionFlagRemovedEvent;
 import org.dockbox.hartshorn.regions.events.membership.ClaimRegionEvent;
 import org.dockbox.hartshorn.regions.events.membership.MembershipChangedEvent;
-import org.dockbox.hartshorn.regions.plots.events.merge.RegionAutoMergeEvent;
-import org.dockbox.hartshorn.regions.plots.events.merge.PlotMergeEvent;
-import org.dockbox.hartshorn.regions.plots.events.merge.PlotUnlinkEvent;
 import org.dockbox.hartshorn.regions.events.movement.EnterRegionEvent;
 import org.dockbox.hartshorn.regions.events.movement.LeaveRegionEvent;
 import org.dockbox.hartshorn.regions.events.movement.TeleportToRegionEvent;
+import org.dockbox.hartshorn.regions.plots.events.ClearPlotEvent;
+import org.dockbox.hartshorn.regions.plots.events.DeletePlotEvent;
+import org.dockbox.hartshorn.regions.plots.events.PlotChangePropertyEvent;
+import org.dockbox.hartshorn.regions.plots.events.merge.PlotMergeEvent;
+import org.dockbox.hartshorn.regions.plots.events.merge.PlotUnlinkEvent;
+import org.dockbox.hartshorn.regions.plots.events.merge.RegionAutoMergeEvent;
 
 @Posting(value = {
         LeaveRegionEvent.class,

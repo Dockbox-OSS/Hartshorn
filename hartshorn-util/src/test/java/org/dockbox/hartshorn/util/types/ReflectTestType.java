@@ -30,20 +30,25 @@ import lombok.Getter;
 public class ReflectTestType extends ParentTestType {
 
     @Demo
-    private String privateField = "privateField";
-
-    @Property("propertyField")
-    public String publicField = "publicField";
-
-    private final String finalPrivateField = "finalPrivateField";
-    public final String finalPublicField = "finalPublicField";
-
-    @Demo
     public static String publicStaticField = "publicStaticField";
     private static String privateStaticField = "privateStaticField";
-
+    public final String finalPublicField = "finalPublicField";
+    private final String finalPrivateField = "finalPrivateField";
+    @Property("propertyField")
+    public String publicField = "publicField";
+    @Demo
+    private String privateField = "privateField";
     @Property(getter = "field", setter = "field")
     private String accessorField;
+    /* TEST UTILITIES, DO NOT TEST AGAINST */
+    @Getter private boolean activatedSetter = false;
+    @Getter private boolean activatedMethod = false;
+    @Getter private boolean activatedConstructor = false;
+
+    @Demo
+    public ReflectTestType() {
+        this.activatedConstructor = true;
+    }
 
     public String field() {
         return "accessorField";
@@ -68,14 +73,4 @@ public class ReflectTestType extends ParentTestType {
 
     @Demo
     private void privateAnnotatedMethod() {}
-
-    @Demo
-    public ReflectTestType() {
-        this.activatedConstructor = true;
-    }
-
-    /* TEST UTILITIES, DO NOT TEST AGAINST */
-    @Getter private boolean activatedSetter = false;
-    @Getter private boolean activatedMethod = false;
-    @Getter private boolean activatedConstructor = false;
 }

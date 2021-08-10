@@ -28,6 +28,7 @@ public interface ComponentLocator {
     void register(String prefix);
 
     Collection<ComponentContainer> containers();
+
     Collection<ComponentContainer> containers(ComponentType functional);
 
     Exceptional<ComponentContainer> container(Class<?> type);

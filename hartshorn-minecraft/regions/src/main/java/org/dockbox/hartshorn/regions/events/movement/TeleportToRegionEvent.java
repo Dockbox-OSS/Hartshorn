@@ -17,10 +17,10 @@
 
 package org.dockbox.hartshorn.regions.events.movement;
 
-import org.dockbox.hartshorn.server.minecraft.dimension.position.Location;
-import org.dockbox.hartshorn.server.minecraft.players.Player;
 import org.dockbox.hartshorn.regions.Region;
 import org.dockbox.hartshorn.regions.events.CancellableRegionPlayerEvent;
+import org.dockbox.hartshorn.server.minecraft.dimension.position.Location;
+import org.dockbox.hartshorn.server.minecraft.players.Player;
 
 import lombok.Getter;
 

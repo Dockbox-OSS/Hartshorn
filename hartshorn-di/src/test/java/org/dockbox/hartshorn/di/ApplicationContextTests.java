@@ -51,6 +51,16 @@ public class ApplicationContextTests {
             .resetEach(true)
             .build();
 
+    private static Stream<Arguments> providers() {
+        return Stream.of(
+                Arguments.of(null, "Provision", false, null, false),
+                Arguments.of("named", "NamedProvision", false, null, false),
+                Arguments.of("field", "FieldProvision", true, null, false),
+                Arguments.of("namedField", "NamedFieldProvision", true, "named", false),
+                Arguments.of("singleton", "SingletonProvision", false, null, true)
+        );
+    }
+
     @Test
     public void testStaticBindingCanBeProvided() {
         Hartshorn.context().bind(Key.of(SampleInterface.class), SampleImplementation.class);
@@ -309,16 +319,6 @@ public class ApplicationContextTests {
         final SampleInterface provided = Hartshorn.context().get(SampleInterface.class, "FactoryTyped");
         Assertions.assertFalse(provided instanceof SampleBoundType);
         Assertions.assertTrue(provided instanceof SampleImplementation);
-    }
-
-    private static Stream<Arguments> providers() {
-        return Stream.of(
-                Arguments.of(null, "Provision", false, null, false),
-                Arguments.of("named", "NamedProvision", false, null, false),
-                Arguments.of("field", "FieldProvision", true, null, false),
-                Arguments.of("namedField", "NamedFieldProvision", true, "named", false),
-                Arguments.of("singleton", "SingletonProvision", false, null, true)
-        );
     }
 
     @ParameterizedTest

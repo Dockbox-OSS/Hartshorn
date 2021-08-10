@@ -23,10 +23,6 @@ import org.dockbox.hartshorn.regions.RegionService;
 
 public interface RegionFlag<T> {
 
-    String id();
-
-    ResourceEntry description();
-
     String serialize(T object);
 
     T restore(String raw);
@@ -40,4 +36,8 @@ public interface RegionFlag<T> {
     default PersistentFlagModel model() {
         return new PersistentFlagModel(this.id(), this.description(), this.getClass().getCanonicalName());
     }
+
+    String id();
+
+    ResourceEntry description();
 }

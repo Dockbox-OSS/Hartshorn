@@ -44,6 +44,7 @@ public @interface Value {
      *         }
      *     }
      * </code></pre>
+     *
      * @return The configuration key.
      */
     String value();
@@ -51,7 +52,8 @@ public @interface Value {
     /**
      * The default value for the field, used when the result of {@link org.dockbox.hartshorn.config.ConfigurationManager#get(String)}
      * returned <code>null</code>. Supports native types through {@link org.dockbox.hartshorn.util.Reflect#toPrimitive(Class, String)}.
+     *
      * @return The string-based default value.
      */
-    String or() default  "";
+    String or() default "";
 }

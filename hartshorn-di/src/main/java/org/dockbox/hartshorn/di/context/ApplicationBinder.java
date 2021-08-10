@@ -31,14 +31,19 @@ import java.lang.reflect.Method;
 public interface ApplicationBinder extends Binder {
 
     void bind(InjectConfiguration configuration);
+
     void bind(String prefix);
+
     <T, I extends T> Exceptional<BoundContext<T, I>> firstWire(Class<T> contract, Named property);
+
     <T> T populate(T type);
 
     void add(BoundContext<?, ?> context);
+
     void add(ProviderContext<?, ?> context);
 
     <T> T invoke(Method method);
+
     <T> T invoke(Method method, Object instance);
 
     <T> BindingHierarchy<T> hierarchy(Key<T> key);

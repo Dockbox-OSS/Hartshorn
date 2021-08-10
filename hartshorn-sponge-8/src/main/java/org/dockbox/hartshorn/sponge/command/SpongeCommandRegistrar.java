@@ -56,6 +56,17 @@ public class SpongeCommandRegistrar implements EventBridge {
         }
     }
 
+    private Value<String> parameter(String alias) {
+        return Parameter.remainingJoinedStrings().key(alias + "-arguments")
+                .completer((ctx, input) -> Hartshorn.context()
+                        .get(CommandGateway.class)
+                        .suggestions(SpongeConvert.fromSponge(ctx.cause().subject()).orNull(), alias + ' ' + input)
+                        .stream()
+                        .map(CommandCompletion::of)
+                        .toList()
+                ).terminal().optional().build();
+    }
+
     private CommandExecutor executor(String alias, Value<String> parameter) {
         return ctx -> {
             final Optional<String> arguments = ctx.one(parameter);
@@ -71,16 +82,5 @@ public class SpongeCommandRegistrar implements EventBridge {
             }
             return CommandResult.success();
         };
-    }
-
-    private Value<String> parameter(String alias) {
-        return Parameter.remainingJoinedStrings().key(alias + "-arguments")
-                .completer((ctx, input) -> Hartshorn.context()
-                .get(CommandGateway.class)
-                .suggestions(SpongeConvert.fromSponge(ctx.cause().subject()).orNull(), alias + ' ' + input)
-                .stream()
-                .map(CommandCompletion::of)
-                .toList()
-        ).terminal().optional().build();
     }
 }

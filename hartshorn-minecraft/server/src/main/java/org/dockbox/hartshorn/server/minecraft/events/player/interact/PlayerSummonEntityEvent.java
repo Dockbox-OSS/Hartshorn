@@ -18,9 +18,9 @@
 package org.dockbox.hartshorn.server.minecraft.events.player.interact;
 
 import org.dockbox.hartshorn.server.minecraft.entities.Entity;
-import org.dockbox.hartshorn.server.minecraft.players.Player;
 import org.dockbox.hartshorn.server.minecraft.events.entity.SpawnSource;
 import org.dockbox.hartshorn.server.minecraft.events.entity.SummonEntityEvent;
+import org.dockbox.hartshorn.server.minecraft.players.Player;
 
 import lombok.Getter;
 

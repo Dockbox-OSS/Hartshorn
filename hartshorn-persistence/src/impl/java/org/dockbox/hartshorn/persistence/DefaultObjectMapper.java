@@ -20,8 +20,8 @@ package org.dockbox.hartshorn.persistence;
 import org.dockbox.hartshorn.api.exceptions.ApplicationException;
 import org.dockbox.hartshorn.di.properties.Attribute;
 import org.dockbox.hartshorn.persistence.mapping.ObjectMapper;
-import org.dockbox.hartshorn.persistence.properties.PersistenceModifier;
 import org.dockbox.hartshorn.persistence.properties.ModifiersAttribute;
+import org.dockbox.hartshorn.persistence.properties.PersistenceModifier;
 
 public abstract class DefaultObjectMapper implements ObjectMapper {
 
