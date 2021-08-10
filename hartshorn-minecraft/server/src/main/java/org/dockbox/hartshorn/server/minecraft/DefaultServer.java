@@ -51,14 +51,14 @@ public class DefaultServer {
 
     // Parent command
     @Command(permission = DefaultServer.ADMIN)
-    public void allServices(MessageReceiver source) {
-        PaginationBuilder paginationBuilder = this.context.get(PaginationBuilder.class);
+    public void allServices(final MessageReceiver source) {
+        final PaginationBuilder paginationBuilder = this.context.get(PaginationBuilder.class);
 
-        List<Text> content = HartshornUtils.emptyList();
+        final List<Text> content = HartshornUtils.emptyList();
         content.add(this.resources.infoHeader(Hartshorn.server().version()).translate(source).asText());
         content.add(this.resources.services().translate(source).asText());
 
-        for (ComponentContainer container : this.context.locator().containers()) {
+        for (final ComponentContainer container : this.context.locator().containers()) {
             final Text row = this.resources.serviceRow(container.name(), container.id()).translate(source).asText();
             row.onHover(HoverAction.showText(this.resources.serviceRowHover(container.name()).translate(source).asText()));
             row.onClick(RunCommandAction.runCommand('/' + Hartshorn.PROJECT_ID + " service " + container.id()));
@@ -72,16 +72,16 @@ public class DefaultServer {
     }
 
     @Command(value = "service", arguments = "<id{Service}>", permission = DefaultServer.ADMIN)
-    public void serviceDetails(MessageReceiver src, CommandContext ctx) {
-        ComponentContainer container = ctx.get("id");
+    public void serviceDetails(final MessageReceiver src, final CommandContext ctx) {
+        final ComponentContainer container = ctx.get("id");
         final ResourceEntry block = this.resources.infoServiceBlock(container.name(), container.id());
         src.send(block);
     }
 
     @Command(value = "reload", permission = DefaultServer.ADMIN)
     @WithConfirmation
-    public void reload(MessageReceiver src, CommandContext ctx) {
-        EventBus eb = this.context.get(EventBus.class);
+    public void reload(final MessageReceiver src, final CommandContext ctx) {
+        final EventBus eb = this.context.get(EventBus.class);
         eb.post(new EngineChangedState<Reload>() {
         });
         src.send(this.resources.reloadAll());
