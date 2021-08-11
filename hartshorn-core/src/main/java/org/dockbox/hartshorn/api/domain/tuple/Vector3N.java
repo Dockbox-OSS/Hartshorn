@@ -31,7 +31,7 @@ public class Vector3N extends Vector2N {
         super();
     }
 
-    private Vector3N(Number x, Number y, Number z) {
+    private Vector3N(final Number x, final Number y, final Number z) {
         super(x, z);
         this.y = y;
     }
@@ -58,7 +58,7 @@ public class Vector3N extends Vector2N {
      *
      * @return The new {@link Vector3N}
      */
-    public static Vector3N of(Number x, Number y, Number z) {
+    public static Vector3N of(final Number x, final Number y, final Number z) {
         return new Vector3N(x, y, z);
     }
 
@@ -91,7 +91,7 @@ public class Vector3N extends Vector2N {
      *
      * @return The expanded {@link Vector3N}
      */
-    public Vector3N expand(Vector3N vector) {
+    public Vector3N expand(final Vector3N vector) {
         return Vector3N.of(
                 this.xD() + vector.xD(),
                 this.yD() + vector.yD(),
@@ -113,7 +113,7 @@ public class Vector3N extends Vector2N {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) return true;
         if (!(o instanceof Vector3N vector3N)) return false;
         return this.yF() == vector3N.yF() && this.xF() == vector3N.xF() && this.zF() == vector3N.zF();
@@ -126,5 +126,10 @@ public class Vector3N extends Vector2N {
      */
     public float yF() {
         return this.y.floatValue();
+    }
+
+    @Override
+    public String toString() {
+        return "[x:%s,y:%s,z:%s]".formatted(this.xD(), this.yD(), this.zD());
     }
 }

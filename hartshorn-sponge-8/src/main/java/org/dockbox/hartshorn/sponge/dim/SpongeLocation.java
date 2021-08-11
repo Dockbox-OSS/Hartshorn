@@ -35,12 +35,12 @@ public class SpongeLocation extends Location implements SpongeComposite {
     private final SpongeWorld world;
 
     @Bound
-    public SpongeLocation(World world) {
+    public SpongeLocation(final World world) {
         this(world.spawnPosition(), world);
     }
 
     @Bound
-    public SpongeLocation(Vector3N position, World world) {
+    public SpongeLocation(final Vector3N position, final World world) {
         if (!(world instanceof SpongeWorld spongeWorld)) {
             throw new IllegalArgumentException("Provided world cannot be used as a Sponge reference");
         }
@@ -48,7 +48,7 @@ public class SpongeLocation extends Location implements SpongeComposite {
         this.position = position;
     }
 
-    public SpongeLocation(Vector3N position, SpongeWorld world) {
+    public SpongeLocation(final Vector3N position, final SpongeWorld world) {
         this.position = position;
         this.world = world;
     }
@@ -64,12 +64,20 @@ public class SpongeLocation extends Location implements SpongeComposite {
     }
 
     @Override
-    public Location expand(Vector3N vector) {
+    public Location expand(final Vector3N vector) {
         return new SpongeLocation(this.position.expand(vector), this.world);
     }
 
     @Override
     public World world() {
         return this.world;
+    }
+
+    @Override
+    public String toString() {
+        return "SpongeLocation{" +
+                "position=" + this.position +
+                ", world=" + this.world.key().asString() +
+                '}';
     }
 }
