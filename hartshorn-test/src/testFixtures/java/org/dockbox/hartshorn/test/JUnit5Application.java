@@ -48,6 +48,6 @@ public final class JUnit5Application {
         HartshornApplication.create(JUnit5Application.class,
                 DefaultModifiers.ACTIVATE_ALL,
                 new MetaProviderModifier(MetaProviderImpl::new)
-        ).run();
+        );
     }
 }

@@ -54,6 +54,20 @@ public class HartshornApplication {
 
     /**
      * Creates the bootstrapped server instance using the provided {@link Activator} metadata. If no valid
+     * {@link ApplicationBootstrap} is provided the application will not be started. This directly initializes
+     * the application.
+     *
+     * @param activator
+     *         The activator type, providing application metadata
+     * @param modifiers
+     *         The modifiers to use when bootstrapping
+     */
+    public static void create(final Class<?> activator, final Modifier... modifiers) {
+        lazy(activator, modifiers).run();
+    }
+
+    /**
+     * Creates the bootstrapped server instance using the provided {@link Activator} metadata. If no valid
      * {@link ApplicationBootstrap} is provided the application will not be started. This does not initialize
      * the application. The returned {@link Runnable} can be used to initialize the server at the desired
      * time.
@@ -65,7 +79,7 @@ public class HartshornApplication {
      *
      * @return A {@link Runnable} to initialize the application
      */
-    public static Runnable create(final Class<?> activator, final Modifier... modifiers) {
+    public static Runnable lazy(final Class<?> activator, final Modifier... modifiers) {
         try {
             Hartshorn.log().info("Starting " + Hartshorn.PROJECT_NAME + " with activator " + activator.getSimpleName());
             final long start = System.currentTimeMillis();
