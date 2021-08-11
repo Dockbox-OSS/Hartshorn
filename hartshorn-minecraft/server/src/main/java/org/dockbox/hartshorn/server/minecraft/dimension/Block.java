@@ -20,27 +20,28 @@ package org.dockbox.hartshorn.server.minecraft.dimension;
 import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.keys.PersistentDataHolder;
+import org.dockbox.hartshorn.server.minecraft.Interactable;
 import org.dockbox.hartshorn.server.minecraft.dimension.position.Location;
 import org.dockbox.hartshorn.server.minecraft.item.Item;
 import org.dockbox.hartshorn.server.minecraft.item.ItemTypes;
 
 import java.util.Map;
 
-public interface Block extends PersistentDataHolder {
+public interface Block extends PersistentDataHolder, Interactable {
 
-    static Block from(Location location) {
+    static Block from(final Location location) {
         return Hartshorn.context().get(Block.class, location);
     }
 
-    static Block from(ItemTypes type) {
+    static Block from(final ItemTypes type) {
         return from(Item.of(type));
     }
 
-    static Block from(Item item) {
+    static Block from(final Item item) {
         return Hartshorn.context().get(Block.class, item);
     }
 
-    static Block of(String id) {
+    static Block of(final String id) {
         return from(Item.of(id));
     }
 

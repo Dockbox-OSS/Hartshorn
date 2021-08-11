@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.server.minecraft.events.player.interact;
 
 import org.dockbox.hartshorn.api.domain.Subject;
 import org.dockbox.hartshorn.events.AbstractTargetCancellableEvent;
+import org.dockbox.hartshorn.server.minecraft.Interactable;
 import org.dockbox.hartshorn.server.minecraft.players.ClickType;
 import org.dockbox.hartshorn.server.minecraft.players.Hand;
 import org.dockbox.hartshorn.server.minecraft.players.Player;
@@ -27,17 +28,19 @@ import org.dockbox.hartshorn.server.minecraft.players.Sneaking;
 import lombok.Getter;
 
 @Getter
-public abstract class PlayerInteractEvent extends AbstractTargetCancellableEvent {
+public abstract class PlayerInteractEvent<T extends Interactable> extends AbstractTargetCancellableEvent {
 
     private final Sneaking crouching;
     private final Hand hand;
     private final ClickType clickType;
+    private final T target;
 
-    protected PlayerInteractEvent(Player player, Hand hand, ClickType clickType) {
+    protected PlayerInteractEvent(final Player player, final Hand hand, final ClickType clickType, final T target) {
         super(player);
         this.crouching = player.sneaking() ? Sneaking.SNEAKING : Sneaking.STANDING;
         this.hand = hand;
         this.clickType = clickType;
+        this.target = target;
     }
 
     @Override
@@ -46,7 +49,7 @@ public abstract class PlayerInteractEvent extends AbstractTargetCancellableEvent
     }
 
     @Override
-    public PlayerInteractEvent subject(Subject subject) {
+    public PlayerInteractEvent subject(final Subject subject) {
         if (subject instanceof Player) super.subject(subject);
         return this;
     }

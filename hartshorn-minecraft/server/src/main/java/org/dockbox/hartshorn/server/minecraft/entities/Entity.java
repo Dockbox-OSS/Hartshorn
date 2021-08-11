@@ -21,6 +21,7 @@ import org.dockbox.hartshorn.api.domain.Identifiable;
 import org.dockbox.hartshorn.api.keys.KeyHolder;
 import org.dockbox.hartshorn.api.keys.PersistentDataHolder;
 import org.dockbox.hartshorn.i18n.text.Text;
+import org.dockbox.hartshorn.server.minecraft.Interactable;
 import org.dockbox.hartshorn.server.minecraft.dimension.Locatable;
 import org.dockbox.hartshorn.server.minecraft.dimension.position.Location;
 import org.dockbox.hartshorn.server.minecraft.dimension.world.World;
@@ -41,7 +42,7 @@ import org.dockbox.hartshorn.server.minecraft.dimension.world.World;
  *
  * <p>Blocks and items (when they are in inventories) are not entities.
  */
-public interface Entity extends Identifiable, Locatable, PersistentDataHolder, KeyHolder<Entity> {
+public interface Entity extends Identifiable, Locatable, PersistentDataHolder, KeyHolder<Entity>, Interactable {
 
     @SuppressWarnings("ConstantDeclaredInInterface")
     double DEFAULT_MAX_HEALTH = 20D;

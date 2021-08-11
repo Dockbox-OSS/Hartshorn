@@ -18,6 +18,7 @@
 package org.dockbox.hartshorn.toolbinding;
 
 import org.dockbox.hartshorn.events.AbstractCancellableEvent;
+import org.dockbox.hartshorn.server.minecraft.Interactable;
 import org.dockbox.hartshorn.server.minecraft.item.Item;
 import org.dockbox.hartshorn.server.minecraft.players.ClickType;
 import org.dockbox.hartshorn.server.minecraft.players.Hand;
@@ -38,5 +39,7 @@ public class ToolInteractionEvent extends AbstractCancellableEvent {
     private final Hand hand;
     private final ClickType type;
     private final Sneaking sneaking;
+
+    private final Interactable target;
 
 }
