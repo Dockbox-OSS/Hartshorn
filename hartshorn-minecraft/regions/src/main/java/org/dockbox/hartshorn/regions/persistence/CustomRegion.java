@@ -15,7 +15,7 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.regions;
+package org.dockbox.hartshorn.regions.persistence;
 
 import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Exceptional;
@@ -23,13 +23,11 @@ import org.dockbox.hartshorn.api.domain.tuple.Vector3N;
 import org.dockbox.hartshorn.events.annotations.Posting;
 import org.dockbox.hartshorn.i18n.text.Text;
 import org.dockbox.hartshorn.persistence.PersistentCapable;
+import org.dockbox.hartshorn.regions.Region;
 import org.dockbox.hartshorn.regions.events.CancellableRegionEvent;
 import org.dockbox.hartshorn.regions.events.flags.RegionFlagAddedEvent;
 import org.dockbox.hartshorn.regions.events.flags.RegionFlagRemovedEvent;
 import org.dockbox.hartshorn.regions.flags.RegionFlag;
-import org.dockbox.hartshorn.regions.persistence.PersistentRegion;
-import org.dockbox.hartshorn.regions.persistence.PersistentRegionFlag;
-import org.dockbox.hartshorn.regions.persistence.SerializedFlag;
 import org.dockbox.hartshorn.server.minecraft.dimension.Worlds;
 import org.dockbox.hartshorn.server.minecraft.dimension.position.Location;
 import org.dockbox.hartshorn.server.minecraft.dimension.world.World;
@@ -40,13 +38,16 @@ import org.dockbox.hartshorn.util.HartshornUtils;
 import java.util.Map;
 import java.util.UUID;
 
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.Setter;
 
 @Posting({ RegionFlagAddedEvent.class, RegionFlagRemovedEvent.class })
 public class CustomRegion implements Region, PersistentCapable<PersistentRegion> {
 
     private final Map<String, SerializedFlag> flags = HartshornUtils.emptyMap();
-    @Getter private long id;
+    @Getter @Setter(AccessLevel.PACKAGE)
+    private long id;
     @Getter private final Vector3N cornerA;
     @Getter private final Vector3N cornerB;
     private transient Vector3N size;

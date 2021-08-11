@@ -23,6 +23,7 @@ import org.dockbox.hartshorn.regions.flags.RegionFlag;
 import org.dockbox.hartshorn.server.minecraft.dimension.position.Location;
 import org.dockbox.hartshorn.server.minecraft.dimension.world.World;
 import org.dockbox.hartshorn.server.minecraft.players.Player;
+import org.dockbox.hartshorn.toolbinding.ItemTool;
 
 import java.util.Set;
 
@@ -44,5 +45,7 @@ public interface RegionService {
     void register(RegionFlag<?> flag);
 
     Exceptional<RegionFlag<?>> flag(String id);
+
+    ItemTool tool();
 
 }

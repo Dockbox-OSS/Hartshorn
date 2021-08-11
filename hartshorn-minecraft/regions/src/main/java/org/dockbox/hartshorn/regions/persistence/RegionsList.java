@@ -27,7 +27,6 @@ import org.dockbox.hartshorn.di.properties.AttributeHolder;
 import org.dockbox.hartshorn.persistence.SqlService;
 import org.dockbox.hartshorn.persistence.properties.ConnectionAttribute;
 import org.dockbox.hartshorn.persistence.properties.PathAttribute;
-import org.dockbox.hartshorn.regions.CustomRegion;
 import org.dockbox.hartshorn.regions.flags.PersistentFlagModel;
 import org.dockbox.hartshorn.regions.flags.RegionFlag;
 import org.dockbox.hartshorn.util.HartshornUtils;
@@ -45,37 +44,38 @@ public class RegionsList implements AttributeHolder {
     private final List<CustomRegion> regions = HartshornUtils.emptyList();
     private SqlService sqlService;
 
-    public static RegionsList restore(Path file) {
+    public static RegionsList restore(final Path file) {
         return Hartshorn.context().get(RegionsList.class, new PathAttribute(file));
     }
 
-    public void add(CustomRegion element) {
+    public void save(final CustomRegion element) {
         this.regions.add(element);
-        for (RegionFlag<?> flag : element.flags().keySet()) {
-            this.add(flag);
+        for (final RegionFlag<?> flag : element.flags().keySet()) {
+            this.save(flag);
         }
         this.withSql(sql -> {
             final PersistentRegion model = element.model();
             sql.save(model);
+            element.id(model.id());
         });
     }
 
-    public void add(RegionFlag<?> flag) {
+    public void save(final RegionFlag<?> flag) {
         this.flags.add(flag.model());
         this.withSql(sql -> sql.save(flag.model()));
     }
 
-    private void withSql(CheckedConsumer<SqlService> consumer) {
+    private void withSql(final CheckedConsumer<SqlService> consumer) {
         try {
             consumer.accept(this.sqlService);
         }
-        catch (ApplicationException e) {
+        catch (final ApplicationException e) {
             Except.handle(e);
         }
     }
 
     @Override
-    public void apply(Attribute<?> property) {
+    public void apply(final Attribute<?> property) {
         if (property instanceof PathAttribute pathAttribute) {
             final Path path = pathAttribute.value();
             this.sqlService = Hartshorn.context().get(SqlService.class, ConnectionAttribute.of(path));
