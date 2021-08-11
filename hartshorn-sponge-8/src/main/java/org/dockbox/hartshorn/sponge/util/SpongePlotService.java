@@ -33,47 +33,47 @@ import org.dockbox.hartshorn.server.minecraft.item.Item;
 public class SpongePlotService extends DefaultRegionService implements PlotService {
 
     @Override
-    public void register(RegionFlag<?> flag) {
+    public void register(final RegionFlag<?> flag) {
         // Nothing happens
     }
 
     @Override
-    public void filling(Plot plot, Item item) {
+    public void filling(final Plot plot, final Item item) {
         // Nothing happens
     }
 
     @Override
-    public void floor(Plot plot, Item item) {
+    public void floor(final Plot plot, final Item item) {
         // Nothing happens
     }
 
     @Override
-    public void air(Plot plot, Item item) {
+    public void air(final Plot plot, final Item item) {
         // Nothing happens
     }
 
     @Override
-    public void all(Plot plot, Item item) {
+    public void all(final Plot plot, final Item item) {
         // Nothing happens
     }
 
     @Override
-    public void wallBorder(Plot plot, Item item) {
+    public void wallBorder(final Plot plot, final Item item) {
         // Nothing happens
     }
 
     @Override
-    public void wallFilling(Plot plot, Item item) {
+    public void wallFilling(final Plot plot, final Item item) {
         // Nothing happens
     }
 
     @Override
-    public void outline(Plot plot, Item item) {
+    public void outline(final Plot plot, final Item item) {
         // Nothing happens
     }
 
     @Override
-    public void middle(Plot plot, Item item) {
+    public void middle(final Plot plot, final Item item) {
         // Nothing happens
     }
 }

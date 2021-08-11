@@ -76,17 +76,17 @@ public class SpongePlayer extends Player implements SpongeEntity<net.minecraft.s
     private static final int RAY_TRACE_LIMIT = 50;
 
     @Bound
-    public SpongePlayer(@NotNull UUID uniqueId, @NotNull String name) {
+    public SpongePlayer(@NotNull final UUID uniqueId, @NotNull final String name) {
         super(uniqueId, name);
     }
 
     @Override
-    public void execute(String command) {
+    public void execute(final String command) {
         this.player().present(player -> {
             try {
                 Sponge.server().commandManager().process(player, command);
             }
-            catch (CommandException e) {
+            catch (final CommandException e) {
                 Except.handle(e);
             }
         });
@@ -101,22 +101,22 @@ public class SpongePlayer extends Player implements SpongeEntity<net.minecraft.s
     }
 
     @Override
-    public void send(ResourceEntry text) {
+    public void send(final ResourceEntry text) {
         this.send(text.translate(this).asText());
     }
 
     @Override
-    public void send(Text text) {
+    public void send(final Text text) {
         this.player().present(player -> player.sendMessage(SpongeConvert.toSponge(text)));
     }
 
     @Override
-    public void sendWithPrefix(ResourceEntry text) {
+    public void sendWithPrefix(final ResourceEntry text) {
         this.sendWithPrefix(text.translate(this).asText());
     }
 
     @Override
-    public void sendWithPrefix(Text text) {
+    public void sendWithPrefix(final Text text) {
         this.player().present(player -> {
             final Text message = Text.of(DefaultResources.instance().prefix(), text);
             player.sendMessage(SpongeConvert.toSponge(message));
@@ -124,48 +124,48 @@ public class SpongePlayer extends Player implements SpongeEntity<net.minecraft.s
     }
 
     @Override
-    public void send(Pagination pagination) {
+    public void send(final Pagination pagination) {
         this.player().present(player -> SpongeConvert.toSponge(pagination).sendTo(player));
     }
 
     @Override
-    public boolean hasPermission(String permission) {
+    public boolean hasPermission(final String permission) {
         return this.hasPermission(permission, SubjectData.GLOBAL_CONTEXT);
     }
 
     @Override
-    public boolean hasPermission(Permission permission) {
+    public boolean hasPermission(final Permission permission) {
         if (permission.context().absent()) {
             return this.hasPermission(permission.get());
         }
         else {
-            Set<Context> contexts = SpongeConvert.toSponge(permission.context().get());
+            final Set<Context> contexts = SpongeConvert.toSponge(permission.context().get());
             return this.hasPermission(permission.get(), contexts);
         }
     }
 
     @Override
-    public void permission(String permission, Tristate state) {
+    public void permission(final String permission, final Tristate state) {
         this.permission(permission, SubjectData.GLOBAL_CONTEXT, state);
     }
 
     @Override
-    public void permission(Permission permission, Tristate state) {
+    public void permission(final Permission permission, final Tristate state) {
         if (permission.context().absent()) {
             this.permission(permission.get(), state);
         }
         else {
-            Set<Context> contexts = SpongeConvert.toSponge(permission.context().get());
+            final Set<Context> contexts = SpongeConvert.toSponge(permission.context().get());
             this.permission(permission.get(), contexts, state);
         }
     }
 
-    private boolean hasPermission(String permission, Set<Context> contexts) {
+    private boolean hasPermission(final String permission, final Set<Context> contexts) {
         return this.user().map(user -> user.hasPermission(permission, contexts)).or(false);
     }
 
-    public void permission(String permission, Set<Context> context, Tristate state) {
-        org.spongepowered.api.util.Tristate tristate = SpongeConvert.toSponge(state);
+    public void permission(final String permission, final Set<Context> context, final Tristate state) {
+        final org.spongepowered.api.util.Tristate tristate = SpongeConvert.toSponge(state);
         this.user().present(user -> user.subjectData().setPermission(context, permission, tristate));
     }
 
@@ -186,13 +186,13 @@ public class SpongePlayer extends Player implements SpongeEntity<net.minecraft.s
     }
 
     @Override
-    public void send(Packet packet) {
+    public void send(final Packet packet) {
         // TODO: Implement once packet API is done
         throw new NotImplementedException();
     }
 
     @Override
-    public void kick(Text reason) {
+    public void kick(final Text reason) {
         this.player().present(player -> player.kick(SpongeConvert.toSponge(reason)));
     }
 
@@ -202,7 +202,7 @@ public class SpongePlayer extends Player implements SpongeEntity<net.minecraft.s
     }
 
     @Override
-    public SpongePlayer gamemode(Gamemode gamemode) {
+    public SpongePlayer gamemode(final Gamemode gamemode) {
         this.player().present(player -> {
             final GameMode mode = SpongeConvert.toSponge(gamemode).get();
             player.offer(Keys.GAME_MODE, mode);
@@ -216,17 +216,17 @@ public class SpongePlayer extends Player implements SpongeEntity<net.minecraft.s
     }
 
     @Override
-    public Item itemInHand(Hand hand) {
+    public Item itemInHand(final Hand hand) {
         return this.inventory().slot(hand.slot());
     }
 
     @Override
-    public void itemInHand(Hand hand, Item item) {
+    public void itemInHand(final Hand hand, final Item item) {
         this.inventory().slot(item, hand.slot());
     }
 
     @Override
-    public void play(Sounds sound) {
+    public void play(final Sounds sound) {
         this.player().present(player -> SpongeConvert.toSponge(sound).present(soundType -> {
             final Sound playableSound = Sound.sound(soundType, Source.MASTER, 1, 1);
             player.playSound(playableSound);
@@ -281,7 +281,7 @@ public class SpongePlayer extends Player implements SpongeEntity<net.minecraft.s
                 .or(Vector3N.empty());
     }
 
-    private <T extends Locatable> RayTraceResult<T> trace(RayTrace<T> trace, ServerPlayer player) {
+    private <T extends Locatable> RayTraceResult<T> trace(final RayTrace<T> trace, final ServerPlayer player) {
         return trace
                 .sourceEyePosition(player)
                 .continueWhileBlock(block -> {
