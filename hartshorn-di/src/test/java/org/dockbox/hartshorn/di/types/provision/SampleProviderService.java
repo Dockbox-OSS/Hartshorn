@@ -18,11 +18,11 @@
 package org.dockbox.hartshorn.di.types.provision;
 
 import org.dockbox.hartshorn.di.annotations.inject.Bound;
-import org.dockbox.hartshorn.di.annotations.inject.Named;
 import org.dockbox.hartshorn.di.annotations.inject.Provider;
 import org.dockbox.hartshorn.di.annotations.service.Service;
 import org.dockbox.hartshorn.di.types.SampleField;
 
+import javax.inject.Named;
 import javax.inject.Singleton;
 
 @Service
@@ -39,12 +39,12 @@ public class SampleProviderService {
     }
 
     @Provider("field")
-    public ProvidedInterface withField(SampleField field) {
+    public ProvidedInterface withField(final SampleField field) {
         return () -> "FieldProvision";
     }
 
     @Provider("namedField")
-    public ProvidedInterface withNamedField(@Named("named") SampleField field) {
+    public ProvidedInterface withNamedField(@Named("named") final SampleField field) {
         return () -> "NamedFieldProvision";
     }
 
@@ -56,7 +56,7 @@ public class SampleProviderService {
 
     @Provider("bound")
     @Bound
-    public ProvidedInterface manual(String name) {
+    public ProvidedInterface manual(final String name) {
         return () -> name;
     }
 

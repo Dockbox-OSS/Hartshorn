@@ -19,13 +19,13 @@ package org.dockbox.hartshorn.proxy;
 
 /**
  * Sample interface.
- * 
+ *
  * @author michael
  */
 public interface BeanProxy {
 
-	void dirty(boolean dirty);
+    void dirty(boolean dirty);
 
-	boolean dirty();
+    boolean dirty();
 
 }

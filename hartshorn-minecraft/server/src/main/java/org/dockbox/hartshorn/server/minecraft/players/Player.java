@@ -22,15 +22,15 @@ import org.dockbox.hartshorn.api.domain.AbstractIdentifiable;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.domain.tuple.Tristate;
 import org.dockbox.hartshorn.api.domain.tuple.Vector3N;
-import org.dockbox.hartshorn.api.i18n.PermissionHolder;
-import org.dockbox.hartshorn.api.i18n.common.Language;
-import org.dockbox.hartshorn.api.i18n.permissions.Permission;
-import org.dockbox.hartshorn.api.i18n.permissions.PermissionContext;
-import org.dockbox.hartshorn.api.i18n.text.Text;
 import org.dockbox.hartshorn.api.keys.Keys;
 import org.dockbox.hartshorn.api.keys.PersistentDataHolder;
 import org.dockbox.hartshorn.api.keys.PersistentDataKey;
 import org.dockbox.hartshorn.commands.CommandSource;
+import org.dockbox.hartshorn.i18n.PermissionHolder;
+import org.dockbox.hartshorn.i18n.common.Language;
+import org.dockbox.hartshorn.i18n.permissions.Permission;
+import org.dockbox.hartshorn.i18n.permissions.PermissionContext;
+import org.dockbox.hartshorn.i18n.text.Text;
 import org.dockbox.hartshorn.server.minecraft.dimension.Block;
 import org.dockbox.hartshorn.server.minecraft.dimension.Locatable;
 import org.dockbox.hartshorn.server.minecraft.dimension.position.Location;
@@ -46,21 +46,56 @@ import java.util.UUID;
 
 public abstract class Player extends AbstractIdentifiable implements CommandSource, PermissionHolder, Locatable, InventoryHolder, PacketReceiver, PersistentDataHolder, Entity {
 
+    public static final PersistentDataKey<Integer> LANGUAGE = Keys.persistent(Integer.class, "HartshornPlayerLanguage", Hartshorn.class);
     // An empty context targets only global permissions
     private static final PermissionContext GLOBAL = PermissionContext.builder().build();
-    public static final PersistentDataKey<Integer> LANGUAGE = Keys.persistent(Integer.class, "HartshornPlayerLanguage", Hartshorn.class);
 
     protected Player(@NotNull UUID uniqueId, @NotNull String name) {
         super(uniqueId, name);
     }
-
-    public abstract boolean online();
 
     public abstract void kick(Text reason);
 
     public abstract Gamemode gamemode();
 
     public abstract Player gamemode(Gamemode gamemode);
+
+    @Override
+    public boolean alive() {
+        return this.health() > 0;
+    }
+
+    @Override
+    public boolean summon(Location location) {
+        throw new UnsupportedOperationException("Cannot re-summon players");
+    }
+
+    @Override
+    public boolean destroy() {
+        throw new UnsupportedOperationException("Cannot destroy players");
+    }
+
+    @Override
+    public PermissionContext activeContext() {
+        if (!this.online()) {
+            return GLOBAL;
+        }
+        else {
+            return PermissionContext.builder()
+                    .world(this.world().name())
+                    .build();
+        }
+    }
+
+    public abstract boolean online();
+
+    @Override
+    public World world() {
+        // No reference refresh required as this is done by location. Should never throw NPE as
+        // Location is either
+        // valid or EMPTY (World instance follows this same guideline).
+        return this.location().world();
+    }
 
     @Override
     public boolean hasAnyPermission(@NotNull String @NotNull ... permissions) {
@@ -105,40 +140,6 @@ public abstract class Player extends AbstractIdentifiable implements CommandSour
     public void permissions(Tristate state, @NotNull Permission @NotNull ... permissions) {
         for (Permission permission : permissions) {
             this.permission(permission, state);
-        }
-    }
-
-    @Override
-    public boolean alive() {
-        return this.health() > 0;
-    }
-
-    @Override
-    public boolean summon(Location location) {
-        throw new UnsupportedOperationException("Cannot re-summon players");
-    }
-
-    @Override
-    public boolean destroy() {
-        throw new UnsupportedOperationException("Cannot destroy players");
-    }
-
-    @Override
-    public World world() {
-        // No reference refresh required as this is done by location. Should never throw NPE as
-        // Location is either
-        // valid or EMPTY (World instance follows this same guideline).
-        return this.location().world();
-    }
-
-    @Override
-    public PermissionContext activeContext() {
-        if (!this.online()) {
-            return GLOBAL;
-        } else {
-            return PermissionContext.builder()
-                    .world(this.world().name())
-                    .build();
         }
     }
 

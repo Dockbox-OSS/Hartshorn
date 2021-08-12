@@ -17,22 +17,20 @@
 
 package org.dockbox.hartshorn.persistence.registry;
 
-import org.dockbox.hartshorn.api.annotations.Entity;
 import org.jetbrains.annotations.NonNls;
 
-@Entity(value = "identifier")
 public interface RegistryIdentifier {
+    default boolean same(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof RegistryIdentifier that)) return false;
+        return this.key().equals(that.key());
+    }
+
     @NonNls
     default String key() {
         if (this.getClass().isEnum()) {
             return ((Enum<?>) this).name();
         }
         throw new UnsupportedOperationException("Non-enum type " + this.getClass().getSimpleName() + " does not override key()");
-    }
-
-    default boolean same(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof RegistryIdentifier that)) return false;
-        return this.key().equals(that.key());
     }
 }

@@ -36,6 +36,26 @@ import java.util.function.Predicate;
 public interface SpongeDimension extends BlockDimension, EntityHolding {
 
     @Override
+    default Collection<Entity> entities() {
+        return this.entities(e -> true);
+    }
+
+    @Override
+    default Collection<Entity> entities(Predicate<Entity> predicate) {
+        return this.serverWorld().entities(this.aabb(), entity -> {
+            Entity hartshornEntity = SpongeConvert.fromSponge(entity);
+            return predicate.test(hartshornEntity);
+        }).stream().map(SpongeConvert::fromSponge).toList();
+    }
+
+    private AABB aabb() {
+        return AABB.of(
+                SpongeConvert.toSponge(this.minimumPosition()),
+                SpongeConvert.toSponge(this.maximumPosition())
+        );
+    }
+
+    @Override
     default Vector3N minimumPosition() {
         return SpongeConvert.fromSponge(this.serverWorld().min().toDouble());
     }
@@ -71,26 +91,6 @@ public interface SpongeDimension extends BlockDimension, EntityHolding {
         Exceptional<BlockState> state = SpongeConvert.toSponge(block);
         if (state.absent()) return false;
         return this.serverWorld().setBlock(loc, state.get());
-    }
-
-    @Override
-    default Collection<Entity> entities() {
-        return this.entities(e -> true);
-    }
-
-    @Override
-    default Collection<Entity> entities(Predicate<Entity> predicate) {
-        return this.serverWorld().entities(this.aabb(), entity -> {
-            Entity hartshornEntity = SpongeConvert.fromSponge(entity);
-            return predicate.test(hartshornEntity);
-        }).stream().map(SpongeConvert::fromSponge).toList();
-    }
-
-    private AABB aabb() {
-        return AABB.of(
-                SpongeConvert.toSponge(this.minimumPosition()),
-                SpongeConvert.toSponge(this.maximumPosition())
-        );
     }
 
     ServerWorld serverWorld();

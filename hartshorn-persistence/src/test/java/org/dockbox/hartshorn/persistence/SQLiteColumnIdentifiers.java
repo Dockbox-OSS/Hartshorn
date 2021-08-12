@@ -17,12 +17,12 @@
 
 package org.dockbox.hartshorn.persistence;
 
-import org.dockbox.hartshorn.persistence.table.column.ColumnIdentifier;
-import org.dockbox.hartshorn.persistence.table.column.SimpleColumnIdentifier;
+import org.dockbox.hartshorn.persistence.table.ColumnIdentifier;
+import org.dockbox.hartshorn.persistence.table.ColumnIdentifierImpl;
 
 public final class SQLiteColumnIdentifiers {
 
-    public static final ColumnIdentifier<String> PLOT_WORLD = new SimpleColumnIdentifier<>("world", String.class);
+    public static final ColumnIdentifier<String> PLOT_WORLD = new ColumnIdentifierImpl<>("world", String.class);
 
     private SQLiteColumnIdentifiers() {
     }

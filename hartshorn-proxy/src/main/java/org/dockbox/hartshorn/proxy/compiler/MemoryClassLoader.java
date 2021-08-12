@@ -24,22 +24,22 @@ import java.util.Map;
 
 class MemoryClassLoader extends URLClassLoader {
 
-	// class name to class bytes
-	Map<String, byte[]> classBytes = new HashMap<>();
+    // class name to class bytes
+    Map<String, byte[]> classBytes = new HashMap<>();
 
-	protected MemoryClassLoader(Map<String, byte[]> classBytes) {
-		super(new URL[0], MemoryClassLoader.class.getClassLoader());
-		this.classBytes.putAll(classBytes);
-	}
+    protected MemoryClassLoader(Map<String, byte[]> classBytes) {
+        super(new URL[0], MemoryClassLoader.class.getClassLoader());
+        this.classBytes.putAll(classBytes);
+    }
 
-	@Override
-	protected Class<?> findClass(String name) throws ClassNotFoundException {
-		byte[] buf = this.classBytes.get(name);
-		if (buf == null) {
-			return super.findClass(name);
-		}
-		this.classBytes.remove(name);
-		return this.defineClass(name, buf, 0, buf.length);
-	}
+    @Override
+    protected Class<?> findClass(String name) throws ClassNotFoundException {
+        byte[] buf = this.classBytes.get(name);
+        if (buf == null) {
+            return super.findClass(name);
+        }
+        this.classBytes.remove(name);
+        return this.defineClass(name, buf, 0, buf.length);
+    }
 
 }

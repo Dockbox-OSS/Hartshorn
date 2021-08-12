@@ -17,8 +17,8 @@
 
 package org.dockbox.hartshorn.server.minecraft.events.moderation;
 
-import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.commands.CommandSource;
 
 import java.time.LocalDateTime;
 
@@ -40,12 +40,12 @@ public class NameBannedEvent extends BanEvent<String> {
      *         The {@link LocalDateTime} of when the ban was issued.
      */
     public NameBannedEvent(
-            String name,
-            CommandSource source,
-            Exceptional<String> reason,
-            Exceptional<LocalDateTime> expiration,
-            LocalDateTime creation
+            final String name,
+            final CommandSource source,
+            final Exceptional<String> reason,
+            final Exceptional<LocalDateTime> expiration,
+            final LocalDateTime creation
     ) {
-        super(name, source, reason, expiration, creation);
+        super(name, source, creation, reason, expiration);
     }
 }

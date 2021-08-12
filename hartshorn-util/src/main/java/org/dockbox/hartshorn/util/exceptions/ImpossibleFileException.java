@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.util.exceptions;
 
 import java.nio.file.Path;
 
-public class ImpossibleFileException extends RuntimeException{
+public class ImpossibleFileException extends RuntimeException {
     public ImpossibleFileException(Path file, Throwable cause) {
         super("Could not create file '" + file.getFileName() + "'", cause);
     }

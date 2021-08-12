@@ -17,9 +17,9 @@
 
 package org.dockbox.hartshorn.persistence.service;
 
-import org.dockbox.hartshorn.persistence.PersistentElement;
 import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.persistence.FileManager;
+import org.dockbox.hartshorn.persistence.PersistentElement;
 import org.dockbox.hartshorn.test.HartshornRunner;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.junit.jupiter.api.Assertions;
@@ -60,6 +60,10 @@ public class SerialisationTests {
         Assertions.assertTrue(result);
     }
 
+    private Path path() {
+        return Hartshorn.context().get(FileManager.class).dataFile(Hartshorn.class, System.nanoTime() + "-persistence.tmp");
+    }
+
     @Test
     void testFromPathDeserialisation() {
         final PathPersistenceService service = Hartshorn.context().get(PathPersistenceService.class);
@@ -94,9 +98,5 @@ public class SerialisationTests {
         final PersistentElement out = service.readFromPath();
         Assertions.assertNotNull(out);
         Assertions.assertEquals("sample", out.name());
-    }
-
-    private Path path() {
-        return Hartshorn.context().get(FileManager.class).dataFile(Hartshorn.class, System.nanoTime() + "-persistence.tmp");
     }
 }

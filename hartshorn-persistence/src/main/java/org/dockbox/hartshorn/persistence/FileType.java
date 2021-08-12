@@ -18,10 +18,11 @@
 package org.dockbox.hartshorn.persistence;
 
 import org.dockbox.hartshorn.api.domain.FileTypes;
-import org.dockbox.hartshorn.di.annotations.inject.Named;
 
 import java.lang.annotation.Annotation;
 import java.nio.file.Path;
+
+import javax.inject.Named;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -37,13 +38,10 @@ public enum FileType {
     JSON(FileTypes.JSON, PersistenceType.RAW),
     XML(FileTypes.XML, PersistenceType.RAW),
     TOML(FileTypes.TOML, PersistenceType.RAW),
-    PROPERTIES(FileTypes.PROPERTIES, PersistenceType.RAW)
-    ;
+    PROPERTIES(FileTypes.PROPERTIES, PersistenceType.RAW);
 
-    @Getter
-    private final String extension;
-    @Getter
-    private final PersistenceType type;
+    @Getter private final String extension;
+    @Getter private final PersistenceType type;
 
     /**
      * Converts a given filename (without the file extension present), combined with a {@link Path}

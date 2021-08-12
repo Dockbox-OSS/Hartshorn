@@ -23,7 +23,12 @@ import org.dockbox.hartshorn.server.minecraft.MinecraftServerBootstrap;
 public class Sponge8Bootstrap extends MinecraftServerBootstrap {
 
     @Override
-    protected void handleMissingBinding(Class<?> type) {
+    public boolean isCI() {
+        return false;
+    }
+
+    @Override
+    protected void handleMissingBinding(final Class<?> type) {
         Hartshorn.log().warn("No implementation exists for " + type.getSimpleName() + ", this will cause functionality to misbehave or not function!");
     }
 }

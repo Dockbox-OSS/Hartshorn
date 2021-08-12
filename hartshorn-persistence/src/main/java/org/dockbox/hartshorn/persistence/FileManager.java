@@ -20,7 +20,7 @@ package org.dockbox.hartshorn.persistence;
 import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.domain.TypedOwner;
-import org.dockbox.hartshorn.di.properties.InjectableType;
+import org.dockbox.hartshorn.di.properties.AttributeHolder;
 import org.dockbox.hartshorn.persistence.mapping.GenericType;
 
 import java.nio.file.Path;
@@ -30,7 +30,7 @@ import java.nio.file.Path;
  * this type encourages the usage of Configurate based instances, it is possible to create
  * implementations for alternative configuration libraries and/or frameworks.
  */
-public interface FileManager extends InjectableType {
+public interface FileManager extends AttributeHolder {
 
     /**
      * Gets the default data file for a given {@link TypedOwner}. The exact location is decided by the
@@ -57,6 +57,10 @@ public interface FileManager extends InjectableType {
      * @return A {@link Path} reference to a file
      */
     Path configFile(TypedOwner owner);
+
+    default TypedOwner owner(Class<?> type) {
+        return Hartshorn.context().meta().lookup(type);
+    }
 
     default Path dataFile(Class<?> owner, String file) {
         return this.dataFile(this.owner(owner), file);
@@ -108,6 +112,7 @@ public interface FileManager extends InjectableType {
      *         {@link Throwable}
      */
     <T> Exceptional<T> read(Path file, Class<T> type);
+
     <T> Exceptional<T> read(Path file, GenericType<T> type);
 
     /**
@@ -290,8 +295,4 @@ public interface FileManager extends InjectableType {
      * @return true if the file was copied, otherwise false
      */
     boolean copyDefaultFile(String defaultFileName, Path targetFile);
-
-    default TypedOwner owner(Class<?> type) {
-        return Hartshorn.context().meta().lookup(type);
-    }
 }

@@ -47,12 +47,10 @@ public class WorldManagementConfig {
     @Value(value = "services.world-management.unload.max", or = "10")
     private int maximumWorldsToUnload;
 
-    @Getter
-    @Value("services.world-management.unload.blacklist")
+    @Getter @Value("services.world-management.unload.blacklist")
     private List<String> unloadBlacklist;
 
-    @Getter
-    @Value(value = "services.world-management.unload.delay", or = "2")
+    @Getter @Value(value = "services.world-management.unload.delay", or = "2")
     private int unloadDelay;
 
     public Vector3N portalPosition() {

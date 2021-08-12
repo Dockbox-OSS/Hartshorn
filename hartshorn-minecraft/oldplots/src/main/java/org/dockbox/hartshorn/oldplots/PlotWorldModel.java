@@ -19,7 +19,6 @@ package org.dockbox.hartshorn.oldplots;
 
 import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.api.annotations.Entity;
 import org.dockbox.hartshorn.server.minecraft.dimension.Worlds;
 import org.dockbox.hartshorn.server.minecraft.dimension.position.Location;
 
@@ -27,15 +26,12 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Entity(value = "plot-world-modelType")
 @AllArgsConstructor
 @NoArgsConstructor
 public class PlotWorldModel {
 
-    @Getter
-    private String name;
-    @Getter
-    private int height;
+    @Getter private String name;
+    @Getter private int height;
     private int size;
     private int road;
     private int zeroX;

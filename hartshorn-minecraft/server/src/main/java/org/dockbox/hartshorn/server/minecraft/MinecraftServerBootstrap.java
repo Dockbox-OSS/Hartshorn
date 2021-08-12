@@ -18,14 +18,10 @@
 package org.dockbox.hartshorn.server.minecraft;
 
 import org.dockbox.hartshorn.api.HartshornBootstrap;
-import org.dockbox.hartshorn.api.events.EventBus;
-import org.dockbox.hartshorn.api.events.annotations.Posting;
-import org.dockbox.hartshorn.server.minecraft.events.server.EngineChangedState;
-import org.dockbox.hartshorn.server.minecraft.events.server.ServerState.Init;
-import org.dockbox.hartshorn.server.minecraft.events.server.ServerState.PostInit;
+import org.dockbox.hartshorn.events.EventBus;
+import org.dockbox.hartshorn.proxy.ProxyApplicationBootstrap;
 
-@Posting({ EngineChangedState.class })
-public class MinecraftServerBootstrap extends HartshornBootstrap {
+public abstract class MinecraftServerBootstrap extends ProxyApplicationBootstrap {
 
     public static MinecraftServerBootstrap instance() {
         return (MinecraftServerBootstrap) HartshornBootstrap.instance();
@@ -34,10 +30,6 @@ public class MinecraftServerBootstrap extends HartshornBootstrap {
     @Override
     public void init() {
         EventBus bus = super.context().get(EventBus.class);
-        bus.post(new EngineChangedState<Init>() {
-        });
         super.init();
-        bus.post(new EngineChangedState<PostInit>() {
-        });
     }
 }

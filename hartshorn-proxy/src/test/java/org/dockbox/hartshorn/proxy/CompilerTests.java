@@ -37,25 +37,6 @@ public class CompilerTests {
             + "    public void dirty(boolean dirty) { this._dirty = dirty; }"
             + "    public boolean dirty() { return this._dirty; }"
             + "}";
-
-    @Test
-    public void surfaceTest() throws NoSuchMethodException {
-        Class<?> flying = Hartshorn.context().get(Compiler.class).compile(SURFACE_JAVA).rethrow().get();
-        Object flyingInstance = Hartshorn.context().get(flying);
-
-        Assertions.assertEquals("FlyingClass", flying.getSimpleName());
-        Assertions.assertNotNull(flying.getMethod("dirty"));
-        Assertions.assertNotNull(flyingInstance);
-        Assertions.assertTrue(flying.isInstance(flyingInstance));
-    }
-
-    static Compiler compiler;
-
-    @BeforeAll
-    static void setup() {
-        compiler = new Compiler();
-    }
-
     static final String SINGLE_JAVA = "package org.dockbox.hartshorn.proxy.compiler;"
             + "import org.dockbox.hartshorn.proxy.*;"
             + "public class UserProxy extends User implements BeanProxy {"
@@ -78,6 +59,36 @@ public class CompilerTests {
             + "    public void dirty(boolean dirty) { this._dirty = dirty; }"
             + "    public boolean dirty() { return this._dirty; }"
             + "}";
+    static final String MULTIPLE_JAVA = "package org.dockbox.hartshorn.proxy.compiler;"
+            + "public class Multiple {"
+            + "    public static class A { }"
+            + "    class B { }"
+            + "}"
+            + ""
+            + "class C { }";
+    static final String EXISTING_JAVA = """
+            package org.dockbox.hartshorn.proxy.compiler;public class User {
+                String _extra;
+                public String extra() { return this._extra; }
+                public void extra(String extra) { this._extra = extra; }
+            }""";
+    static Compiler compiler;
+
+    @BeforeAll
+    static void setup() {
+        compiler = new Compiler();
+    }
+
+    @Test
+    public void surfaceTest() throws NoSuchMethodException {
+        Class<?> flying = Hartshorn.context().get(Compiler.class).compile(SURFACE_JAVA).rethrow().get();
+        Object flyingInstance = Hartshorn.context().get(flying);
+
+        Assertions.assertEquals("FlyingClass", flying.getSimpleName());
+        Assertions.assertNotNull(flying.getMethod("dirty"));
+        Assertions.assertNotNull(flyingInstance);
+        Assertions.assertTrue(flying.isInstance(flyingInstance));
+    }
 
     @Test
     public void testCompileSingleClass() throws Exception {
@@ -106,14 +117,6 @@ public class CompilerTests {
         Assertions.assertTrue(proxy.dirty());
     }
 
-    static final String MULTIPLE_JAVA = "package org.dockbox.hartshorn.proxy.compiler;"
-            + "public class Multiple {"
-            + "    public static class A { }"
-            + "    class B { }"
-            + "}"
-            + ""
-            + "class C { }";
-
     @Test
     public void testCompileMultipleClasses() throws Exception {
         Map<String, byte[]> results = compiler.compile("Multiple.java", MULTIPLE_JAVA);
@@ -126,13 +129,6 @@ public class CompilerTests {
         Object obj = clzMul.getDeclaredConstructor().newInstance();
         Assertions.assertNotNull(obj);
     }
-
-    static final String EXISTING_JAVA = """
-            package org.dockbox.hartshorn.proxy.compiler;public class User {
-                String _extra;
-                public String extra() { return this._extra; }
-                public void extra(String extra) { this._extra = extra; }
-            }""";
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
     @Test

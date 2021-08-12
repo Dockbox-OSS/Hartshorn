@@ -26,7 +26,6 @@ import lombok.Setter;
  */
 public class ProxyHolder {
 
-    @Getter @Setter
-    private boolean cancelled;
+    @Getter @Setter private boolean cancelled;
 
 }

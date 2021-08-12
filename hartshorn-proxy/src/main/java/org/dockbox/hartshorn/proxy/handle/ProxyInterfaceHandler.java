@@ -25,8 +25,7 @@ import lombok.Getter;
 
 public class ProxyInterfaceHandler<T> implements InvocationHandler {
 
-    @Getter
-    private final ProxyHandler<T> handler;
+    @Getter private final ProxyHandler<T> handler;
 
     public ProxyInterfaceHandler(ProxyHandler<T> handler) {
         this.handler = handler;
@@ -39,6 +38,6 @@ public class ProxyInterfaceHandler<T> implements InvocationHandler {
 
     public T proxy() {
         //noinspection unchecked
-        return (T) Proxy.newProxyInstance(this.getClass().getClassLoader(), new Class[] { this.handler.type() }, this);
+        return (T) Proxy.newProxyInstance(this.getClass().getClassLoader(), new Class[]{ this.handler.type() }, this);
     }
 }

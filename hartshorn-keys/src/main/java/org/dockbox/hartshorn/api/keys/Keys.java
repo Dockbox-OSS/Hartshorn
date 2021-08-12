@@ -105,15 +105,15 @@ public final class Keys {
             this.withoutSetter();
         }
 
+        public KeyBuilder<K, A> withoutGetter() {
+            this.getter = k -> Exceptional.empty();
+            return this;
+        }
+
         public KeyBuilder<K, A> withoutSetter() {
             this.setter = (k, a) -> {
                 throw new UnsupportedOperationException("cannot set the value of this key");
             };
-            return this;
-        }
-
-        public KeyBuilder<K, A> withoutGetter() {
-            this.getter = k -> Exceptional.empty();
             return this;
         }
 

@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.toolbinding;
 
-import org.dockbox.hartshorn.api.i18n.text.Text;
+import org.dockbox.hartshorn.i18n.text.Text;
 import org.dockbox.hartshorn.server.minecraft.item.Item;
 import org.dockbox.hartshorn.server.minecraft.players.ClickType;
 import org.dockbox.hartshorn.server.minecraft.players.Hand;
@@ -28,7 +28,6 @@ import org.jetbrains.annotations.NonNls;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -36,16 +35,16 @@ public class ItemTool {
 
     private final Text name;
     private final List<Text> lore;
-    private final BiConsumer<Player, Item> consumer;
-    private final List<Predicate<ToolInteractionEvent>> filters;
+    private final Consumer<ToolInteractionContext> consumer;
+    private final List<Predicate<ToolInteractionContext>> filters;
     private final List<Consumer<Item>> modifiers;
 
     public ItemTool(
-            Text name,
-            List<Text> lore,
-            BiConsumer<Player, Item> consumer,
-            List<Predicate<ToolInteractionEvent>> filters,
-            List<Consumer<Item>> modifiers
+            final Text name,
+            final List<Text> lore,
+            final Consumer<ToolInteractionContext> consumer,
+            final List<Predicate<ToolInteractionContext>> filters,
+            final List<Consumer<Item>> modifiers
     ) {
         this.name = name;
         this.lore = lore;
@@ -54,7 +53,7 @@ public class ItemTool {
         this.modifiers = modifiers;
     }
 
-    public static void reset(Item item) {
+    public static void reset(final Item item) {
         item.removeDisplayName();
         item.removeLore();
     }
@@ -63,15 +62,15 @@ public class ItemTool {
         return new ToolBuilder();
     }
 
-    public boolean accepts(ToolInteractionEvent event) {
-        return this.filters.stream().allMatch(predicate -> predicate.test(event));
+    public boolean accepts(final ToolInteractionContext context) {
+        return this.filters.stream().allMatch(predicate -> predicate.test(context));
     }
 
-    public void perform(Player player, Item item) {
-        this.consumer.accept(player, item);
+    public void perform(final ToolInteractionContext context) {
+        this.consumer.accept(context);
     }
 
-    public void prepare(Item item) {
+    protected void prepare(final Item item) {
         if (null != this.name) item.displayName(this.name);
         if (null != this.lore) item.lore(this.lore);
         this.modifiers.forEach(modifiers -> modifiers.accept(item));
@@ -79,15 +78,15 @@ public class ItemTool {
 
     @SuppressWarnings("unused")
     public static final class ToolBuilder {
-        private final List<Predicate<ToolInteractionEvent>> filters = HartshornUtils.emptyConcurrentList();
+        private final List<Predicate<ToolInteractionContext>> filters = HartshornUtils.emptyConcurrentList();
         private final List<Consumer<Item>> modifiers = HartshornUtils.emptyConcurrentList();
-        private BiConsumer<Player, Item> consumer;
+        private Consumer<ToolInteractionContext> consumer;
         private Text name;
         private List<Text> lore;
 
         private ToolBuilder() {}
 
-        public ToolBuilder perform(BiConsumer<Player, Item> consumer) {
+        public ToolBuilder perform(final Consumer<ToolInteractionContext> consumer) {
             this.consumer = consumer;
             return this;
         }
@@ -97,52 +96,52 @@ public class ItemTool {
             return this;
         }
 
-        public ToolBuilder only(Player player) {
+        public ToolBuilder only(final Player player) {
             this.filters.add(e -> e.player().equals(player));
             return this;
         }
 
-        public ToolBuilder only(UUID playerId) {
+        public ToolBuilder only(final UUID playerId) {
             this.filters.add(e -> e.player().uniqueId().equals(playerId));
             return this;
         }
 
-        public ToolBuilder only(@NonNls String player) {
+        public ToolBuilder only(@NonNls final String player) {
             this.filters.add(e -> e.player().name().equals(player));
             return this;
         }
 
-        public ToolBuilder only(Sneaking sneaking) {
+        public ToolBuilder only(final Sneaking sneaking) {
             this.filters.add(e -> Sneaking.EITHER == sneaking || sneaking == e.sneaking());
             return this;
         }
 
-        public ToolBuilder only(ClickType clickType) {
+        public ToolBuilder only(final ClickType clickType) {
             this.filters.add(e -> ClickType.EITHER == clickType || clickType == e.type());
             return this;
         }
 
-        public ToolBuilder only(Hand hand) {
+        public ToolBuilder only(final Hand hand) {
             this.filters.add(e -> Hand.EITHER == hand || hand == e.hand());
             return this;
         }
 
-        public ToolBuilder only(Predicate<ToolInteractionEvent> predicate) {
+        public ToolBuilder only(final Predicate<ToolInteractionContext> predicate) {
             this.filters.add(predicate);
             return this;
         }
 
-        public ToolBuilder name(Text name) {
+        public ToolBuilder name(final Text name) {
             this.name = name;
             return this;
         }
 
-        public ToolBuilder lore(List<Text> lore) {
+        public ToolBuilder lore(final List<Text> lore) {
             this.lore = lore;
             return this;
         }
 
-        public ToolBuilder modify(Consumer<Item> modifier) {
+        public ToolBuilder modify(final Consumer<Item> modifier) {
             this.modifiers.add(modifier);
             return this;
         }

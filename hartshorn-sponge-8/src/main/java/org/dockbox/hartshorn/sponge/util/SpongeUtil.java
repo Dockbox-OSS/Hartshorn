@@ -33,14 +33,15 @@ import org.spongepowered.api.registry.RegistryKey;
 import org.spongepowered.api.registry.RegistryType;
 
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.function.Function;
 
 public class SpongeUtil {
 
-    public static <T> Exceptional<T> await(Future<T> future) {
-        return Exceptional.of(future::get);
+    public static <T> Exceptional<T> await(CompletableFuture<T> future) {
+        return Exceptional.of(future::join);
     }
 
     public static <T> Exceptional<T> awaitOption(Future<Optional<T>> future) {
@@ -64,20 +65,20 @@ public class SpongeUtil {
         return fromRegistry(value, ResourceKey.of(spaced[0], spaced[1]));
     }
 
-    public static <T> Exceptional<T> fromMCRegistry(RegistryType<T> value, String name) {
-        return fromRegistry(value, ResourceKey.minecraft(name));
-    }
-
-    public static <T> Exceptional<T> fromSpongeRegistry(RegistryType<T> value, String name) {
-        return fromRegistry(value, ResourceKey.sponge(name));
-    }
-
     public static <T> Exceptional<T> fromRegistry(RegistryType<T> value, ResourceKey key) {
         final Exceptional<Registry<T>> registry = Exceptional.of(Sponge.game().registries().findRegistry(value));
         return registry.map(r -> {
             final Optional<RegistryEntry<T>> entry = r.findEntry(key);
             return entry.map(RegistryEntry::value).orElse(null);
         });
+    }
+
+    public static <T> Exceptional<T> fromMCRegistry(RegistryType<T> value, String name) {
+        return fromRegistry(value, ResourceKey.minecraft(name));
+    }
+
+    public static <T> Exceptional<T> fromSpongeRegistry(RegistryType<T> value, String name) {
+        return fromRegistry(value, ResourceKey.sponge(name));
     }
 
     public static <T extends DefaultedRegistryValue> Exceptional<ResourceKey> location(Exceptional<T> value, DefaultedRegistryType<T> type) {

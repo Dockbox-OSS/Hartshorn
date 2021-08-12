@@ -79,8 +79,10 @@ public final class Exceptional<T> {
      * optional contains a value, it is unwrapped and rewrapped in {@link Exceptional#of(Object)}. If
      * the optional doesn't contain a value, {@link Exceptional#empty()} is returned.
      *
-     * @param <T> The type parameter of the potential value
-     * @param optional The {@link Optional} instance to rewrap
+     * @param <T>
+     *         The type parameter of the potential value
+     * @param optional
+     *         The {@link Optional} instance to rewrap
      *
      * @return The {@link Exceptional}
      */
@@ -93,8 +95,10 @@ public final class Exceptional<T> {
      * Provides a {@link Exceptional} instance which can contain a value in {@link Exceptional#value}.
      * The value can be null. If the value is null, {@link Exceptional#empty()} is returned.
      *
-     * @param <T> The type parameter of the potential value
-     * @param value The potential value to wrap
+     * @param <T>
+     *         The type parameter of the potential value
+     * @param value
+     *         The potential value to wrap
      *
      * @return The {@link Exceptional}
      */
@@ -107,7 +111,8 @@ public final class Exceptional<T> {
      * no {@link Exceptional#throwable throwable}. The returned instance is a cast copy of {@link
      * Exceptional#EMPTY}
      *
-     * @param <T> The type parameter of the value which the instance is cast to
+     * @param <T>
+     *         The type parameter of the value which the instance is cast to
      *
      * @return The none {@link Exceptional}
      */
@@ -124,8 +129,10 @@ public final class Exceptional<T> {
      * Exceptional#of(Object)} is returned. This also means suppliers can return nullable
      * values.
      *
-     * @param <T> The type parameter of the potential value
-     * @param supplier The {@link CheckedSupplier} instance, supplying the value
+     * @param <T>
+     *         The type parameter of the potential value
+     * @param supplier
+     *         The {@link CheckedSupplier} instance, supplying the value
      *
      * @return The {@link Exceptional}
      */
@@ -143,10 +150,14 @@ public final class Exceptional<T> {
      * is met, the value of <code>ifTrue</code> is used. If the condition is not met the {@link Throwable}
      * provided by <code>ifFalseException</code> is used.
      *
-     * @param condition The condition
-     * @param ifTrue The value if the condition is met
-     * @param ifFalseException The throwable if the condition is not met
-     * @param <T> The type of the value
+     * @param condition
+     *         The condition
+     * @param ifTrue
+     *         The value if the condition is met
+     * @param ifFalseException
+     *         The throwable if the condition is not met
+     * @param <T>
+     *         The type of the value
      *
      * @return The {@link Exceptional}
      */
@@ -159,11 +170,16 @@ public final class Exceptional<T> {
      * is met, the value of <code>ifTrue</code> is used. If the condition is not met the {@link Throwable}
      * provided by <code>ifFalseException</code> is used together with the value of <code>ifFalse</code>.
      *
-     * @param condition The condition
-     * @param ifTrue The value if the condition is met
-     * @param ifFalse The value if the condition is not met
-     * @param ifFalseException The throwable if the condition is not met
-     * @param <T> The type of the value
+     * @param condition
+     *         The condition
+     * @param ifTrue
+     *         The value if the condition is met
+     * @param ifFalse
+     *         The value if the condition is not met
+     * @param ifFalseException
+     *         The throwable if the condition is not met
+     * @param <T>
+     *         The type of the value
      *
      * @return The {@link Exceptional}
      */
@@ -181,10 +197,12 @@ public final class Exceptional<T> {
      * Return the value if present, otherwise invoke {@code other} and return the result of that
      * invocation.
      *
-     * @param other A {@code Supplier} whose result is returned if no value is present
+     * @param other
+     *         A {@code Supplier} whose result is returned if no value is present
      *
      * @return The value if present otherwise the result of {@code other.get()}
-     * @throws NullPointerException if value is not present and {@code other} is null
+     * @throws NullPointerException
+     *         if value is not present and {@code other} is null
      */
     public T get(Supplier<? extends T> other) {
         return null != this.value ? this.value : other.get();
@@ -193,10 +211,12 @@ public final class Exceptional<T> {
     /**
      * If a value is present, invoke the specified consumer with the value, otherwise do nothing.
      *
-     * @param consumer Block to be executed if a value is present
+     * @param consumer
+     *         Block to be executed if a value is present
      *
      * @return The {@link Exceptional}, for chaining
-     * @throws NullPointerException If value is present and {@code consumer} is null
+     * @throws NullPointerException
+     *         If value is present and {@code consumer} is null
      */
     public Exceptional<T> present(Consumer<? super T> consumer) {
         if (null != this.value) consumer.accept(this.value);
@@ -216,10 +236,12 @@ public final class Exceptional<T> {
     /**
      * If a value is empty, invoke the specified runnable, otherwise do nothing.
      *
-     * @param runnable Block to be executed if a value is empty
+     * @param runnable
+     *         Block to be executed if a value is empty
      *
      * @return The {@link Exceptional}, for chaining
-     * @throws NullPointerException If {@code runnable} is null
+     * @throws NullPointerException
+     *         If {@code runnable} is null
      */
     public Exceptional<T> absent(Runnable runnable) {
         if (null == this.value) runnable.run();
@@ -238,7 +260,8 @@ public final class Exceptional<T> {
     /**
      * Return the value if present, otherwise return {@code other}.
      *
-     * @param other The value to be returned if there is no value present, may be null
+     * @param other
+     *         The value to be returned if there is no value present, may be null
      *
      * @return The value, if present, otherwise {@code other}
      * @see Exceptional#orNull()
@@ -250,7 +273,8 @@ public final class Exceptional<T> {
     /**
      * Return the throwable if present, otherwise return {@code other}.
      *
-     * @param other The value to be returned if there is no throwable present, may be null
+     * @param other
+     *         The value to be returned if there is no throwable present, may be null
      *
      * @return The throwable, if present, otherwise {@code other}
      */
@@ -265,11 +289,14 @@ public final class Exceptional<T> {
      * {@link Exceptional}, and if invoked, {@code then} does not wrap it with an additional {@code
      * Exceptional}.
      *
-     * @param <U> The type parameter to the {@link Exceptional} returned
-     * @param mapper A mapping function to apply to the value, if present
+     * @param <U>
+     *         The type parameter to the {@link Exceptional} returned
+     * @param mapper
+     *         A mapping function to apply to the value, if present
      *
      * @return The result of applying an {@link Exceptional}-bearing mapping function to the value of this {@link Exceptional}, if a value is present, otherwise {@link Exceptional#empty()}
-     * @throws NullPointerException If the mapping function is null or returns a null result
+     * @throws NullPointerException
+     *         If the mapping function is null or returns a null result
      */
     public <U> Exceptional<U> flatMap(CheckedFunction<? super T, Exceptional<U>> mapper) {
         Objects.requireNonNull(mapper);
@@ -307,11 +334,14 @@ public final class Exceptional<T> {
      * throwable as {@link Exceptional#throwable}. This requires the provided throwable to be
      * non-null. If the throwable is null, a {@link NullPointerException} is thrown.
      *
-     * @param <T> The type parameter of the empty value
-     * @param throwable The throwable to wrap
+     * @param <T>
+     *         The type parameter of the empty value
+     * @param throwable
+     *         The throwable to wrap
      *
      * @return The {@link Exceptional}
-     * @throws NullPointerException When the provided value is null
+     * @throws NullPointerException
+     *         When the provided value is null
      */
     public static <T> Exceptional<T> of(Throwable throwable) {
         return new Exceptional<>(throwable);
@@ -324,11 +354,14 @@ public final class Exceptional<T> {
      * Exceptional#flatMap(CheckedFunction)}, but the provided mapper is one whose input is both a {@code
      * Throwable} and a value of type {@code T}.
      *
-     * @param <U> The type parameter to the {@link Exceptional} returned
-     * @param mapper A mapping function to apply to the value and throwable, if present
+     * @param <U>
+     *         The type parameter to the {@link Exceptional} returned
+     * @param mapper
+     *         A mapping function to apply to the value and throwable, if present
      *
      * @return The result of applying an {@link Exceptional}-bearing mapping function to the value and throwable of this {@link Exceptional}, if a value is present, otherwise {@link Exceptional#empty()}
-     * @throws NullPointerException If the mapping function is null or returns a null result
+     * @throws NullPointerException
+     *         If the mapping function is null or returns a null result
      */
     public <U> Exceptional<U> flatMap(CheckedBiFunction<? super T, Throwable, Exceptional<U>> mapper) {
         Objects.requireNonNull(mapper);
@@ -349,10 +382,12 @@ public final class Exceptional<T> {
      * throwable is present. This method is similar to {@link Exceptional#get(Supplier)}, but
      * instead of returning the value, the result is wrapped in a {@link Exceptional}.
      *
-     * @param defaultValue A {@code Supplier} whose result is wrapped if no value is present
+     * @param defaultValue
+     *         A {@code Supplier} whose result is wrapped if no value is present
      *
      * @return The {@link Exceptional}, for chaining
-     * @throws NullPointerException If a value is present and {@code defaultValue} is null
+     * @throws NullPointerException
+     *         If a value is present and {@code defaultValue} is null
      */
     public Exceptional<T> orElse(CheckedSupplier<T> defaultValue) {
         if (this.absent()) {
@@ -364,7 +399,7 @@ public final class Exceptional<T> {
                     return of(defaultValue.get());
                 }
             }
-            catch (ApplicationException e) {
+            catch (Throwable e) {
                 return of(e);
             }
         }
@@ -375,10 +410,12 @@ public final class Exceptional<T> {
      * If a value is present, and the value matches the given predicate, return an {@link Exceptional}
      * describing value, otherwise return {@link Exceptional#empty()}.
      *
-     * @param predicate A predicate to apply to the value, if present
+     * @param predicate
+     *         A predicate to apply to the value, if present
      *
      * @return an {@link Exceptional} describing the value of this {@link Exceptional} if a value is present and the value matches the given predicate, otherwise {@link Exceptional#empty()}
-     * @throws NullPointerException If the predicate is null
+     * @throws NullPointerException
+     *         If the predicate is null
      */
     public Exceptional<T> filter(Predicate<? super T> predicate) {
         Objects.requireNonNull(predicate);
@@ -399,11 +436,14 @@ public final class Exceptional<T> {
      * <p>Here, {@code getJDA} returns an {@code Exceptional<JDA>}, and then {@code map} returns an
      * {@code Exceptional<TextChannel>} for the desired channel if one exists.
      *
-     * @param <U> The type of the result of the mapping function
-     * @param mapper A mapping function to apply to the value, if present
+     * @param <U>
+     *         The type of the result of the mapping function
+     * @param mapper
+     *         A mapping function to apply to the value, if present
      *
      * @return an {@link Exceptional} describing the result of applying a mapping function to the value of this {@link Exceptional}, if a value is present, otherwise {@link Exceptional#empty()}
-     * @throws NullPointerException If the mapping function is null
+     * @throws NullPointerException
+     *         If the mapping function is null
      */
     public <U> Exceptional<U> map(CheckedFunction<? super T, ? extends U> mapper) {
         Objects.requireNonNull(mapper);
@@ -432,9 +472,12 @@ public final class Exceptional<T> {
      *       generate the new instance.
      * </ul>
      *
-     * @param <T> The type parameter of the potential value
-     * @param value The potential value to wrap
-     * @param throwable The potential throwable to wrap
+     * @param <T>
+     *         The type parameter of the potential value
+     * @param value
+     *         The potential value to wrap
+     * @param throwable
+     *         The potential throwable to wrap
      *
      * @return The {@link Exceptional}
      */
@@ -449,10 +492,12 @@ public final class Exceptional<T> {
      * If a throwable is present, invoke the specified {@code consumer} with the throwable, otherwise
      * do nothing.
      *
-     * @param consumer The block to be executed if a throwable is present
+     * @param consumer
+     *         The block to be executed if a throwable is present
      *
      * @return The {@link Exceptional}, for chaining
-     * @throws NullPointerException If throwable is present and {@code consumer} is null
+     * @throws NullPointerException
+     *         If throwable is present and {@code consumer} is null
      */
     public Exceptional<T> caught(Consumer<? super Throwable> consumer) {
         if (null != this.throwable) consumer.accept(this.throwable);
@@ -463,12 +508,16 @@ public final class Exceptional<T> {
      * Return the contained value, if present, otherwise throw an exception to be created by the
      * provided supplier.
      *
-     * @param <X> Type of the exception to be thrown
-     * @param exceptionSupplier The supplier which will return the exception to be thrown
+     * @param <X>
+     *         Type of the exception to be thrown
+     * @param exceptionSupplier
+     *         The supplier which will return the exception to be thrown
      *
      * @return The present value
-     * @throws X If there is no value present
-     * @throws NullPointerException If no value is present and {@code exceptionSupplier} is null
+     * @throws X
+     *         If there is no value present
+     * @throws NullPointerException
+     *         If no value is present and {@code exceptionSupplier} is null
      */
     public <X extends Throwable> T orThrow(Supplier<? extends X> exceptionSupplier) throws X {
         if (null != this.value) {
@@ -491,10 +540,12 @@ public final class Exceptional<T> {
     /**
      * If a throwable is none, invoke the specified runnable, otherwise do nothing.
      *
-     * @param runnable Block to be executed if no throwable is present
+     * @param runnable
+     *         Block to be executed if no throwable is present
      *
      * @return The {@link Exceptional}, for chaining
-     * @throws NullPointerException If {@code runnable} is null
+     * @throws NullPointerException
+     *         If {@code runnable} is null
      */
     public Exceptional<T> ifErrorAbsent(Runnable runnable) {
         if (null == this.throwable) runnable.run();
@@ -506,7 +557,8 @@ public final class Exceptional<T> {
      * wrapped exception, otherwise do nothing.
      *
      * @return The {@link Exceptional}, for chaining
-     * @throws RuntimeException If {@code throwable} is not null and is rethrown
+     * @throws RuntimeException
+     *         If {@code throwable} is not null and is rethrown
      */
     public Exceptional<T> rethrow() {
         if (null != this.throwable) {
@@ -521,7 +573,8 @@ public final class Exceptional<T> {
      * {@code NoSuchElementException}.
      *
      * @return The non-null throwable held by this {@link Exceptional}
-     * @throws NoSuchElementException If there is no throwable present
+     * @throws NoSuchElementException
+     *         If there is no throwable present
      * @see Exceptional#caught()
      */
     public Throwable error() {
@@ -553,7 +606,8 @@ public final class Exceptional<T> {
      * NoSuchElementException}.
      *
      * @return the non-null value held by this {@code Optional}
-     * @throws NoSuchElementException If there is no value present
+     * @throws NoSuchElementException
+     *         If there is no value present
      * @see Exceptional#present()
      */
     public T get() {

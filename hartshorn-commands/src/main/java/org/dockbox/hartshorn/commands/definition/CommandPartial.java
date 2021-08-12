@@ -18,7 +18,7 @@
 package org.dockbox.hartshorn.commands.definition;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.api.i18n.permissions.Permission;
+import org.dockbox.hartshorn.i18n.permissions.Permission;
 
 /**
  * Represents a part of a command, which is typically either a argument or flag.
@@ -28,12 +28,14 @@ public interface CommandPartial {
     /**
      * Gets the name of the part. This is typically used to obtain the part from
      * a {@link org.dockbox.hartshorn.commands.context.CommandContext} instance.
+     *
      * @return The name of the part.
      */
     String name();
 
     /**
      * Gets the permission required to use the part, if any is required.
+     *
      * @return The required permission, or {@link Exceptional#empty()}
      */
     Exceptional<Permission> permission();

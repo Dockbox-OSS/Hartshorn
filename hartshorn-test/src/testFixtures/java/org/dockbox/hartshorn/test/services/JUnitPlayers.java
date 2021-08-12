@@ -29,11 +29,10 @@ import java.util.UUID;
 public class JUnitPlayers implements Players {
 
     private static final String PLAYER_ONE_NAME = "PlayerOne";
-    private static final String PLAYER_TWO_NAME = "PlayerTwo";
-    private static final String PLAYER_THREE_NAME = "PlayerThree";
-
     public static final Player PLAYER_ONE = new JUnitPlayer(UUID.randomUUID(), PLAYER_ONE_NAME);
+    private static final String PLAYER_TWO_NAME = "PlayerTwo";
     public static final Player PLAYER_TWO = new JUnitPlayer(UUID.randomUUID(), PLAYER_TWO_NAME);
+    private static final String PLAYER_THREE_NAME = "PlayerThree";
     public static final Player PLAYER_THREE = new JUnitPlayer(UUID.randomUUID(), PLAYER_THREE_NAME);
 
     @Override

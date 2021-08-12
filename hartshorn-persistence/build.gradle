@@ -18,10 +18,10 @@
 apply from: "$rootDir/parent.gradle"
 
 dependencies {
-    include project(':hartshorn-bootstrap')
-    include project(':hartshorn-proxy')
+    apiInclude project(':hartshorn-bootstrap')
+    apiInclude project(':hartshorn-proxy')
 
-    include 'com.fasterxml.jackson.core:jackson-core:2.12.3'
+    apiInclude 'com.fasterxml.jackson.core:jackson-core:2.12.3'
     include 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.12.3'
     include 'com.fasterxml.jackson.dataformat:jackson-dataformat-properties:2.12.3'
     include 'com.fasterxml.jackson.dataformat:jackson-dataformat-toml:2.12.3'
@@ -30,9 +30,6 @@ dependencies {
     include 'org.codehaus.woodstox:woodstox-core-asl:4.4.1'
 
     // SQL Extension dependencies
-    include "org.jooq:jooq:$jooqVersion"
-    include "org.jooq:jooq-meta:$jooqVersion"
-    include "org.jooq:jooq-codegen:$jooqVersion"
-
-    testImplementation "org.xerial:sqlite-jdbc:$xerialSqliteJdbcVersion"
+    include "org.hibernate:hibernate-core:5.5.5.Final"
+    include 'org.apache.derby:derby:10.8.2.2'
 }

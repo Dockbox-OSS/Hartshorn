@@ -18,8 +18,8 @@
 package org.dockbox.hartshorn.server.minecraft.events.packet;
 
 import org.dockbox.hartshorn.api.Hartshorn;
-import org.dockbox.hartshorn.api.events.AbstractCancellableEvent;
-import org.dockbox.hartshorn.api.events.EventBus;
+import org.dockbox.hartshorn.events.AbstractCancellableEvent;
+import org.dockbox.hartshorn.events.EventBus;
 import org.dockbox.hartshorn.server.minecraft.packets.Packet;
 import org.dockbox.hartshorn.server.minecraft.players.Player;
 import org.jetbrains.annotations.NotNull;
@@ -29,16 +29,14 @@ import lombok.Getter;
 /**
  * The event fired when the server <b>sends</b> a packet to a player.
  *
- * @param <T> The type of packet being sent/received
+ * @param <T>
+ *         The type of packet being sent/received
  */
 public abstract class PacketEvent<T extends Packet> extends AbstractCancellableEvent {
 
-    @Getter
-    private final Player target;
-    @Getter
-    private T packet;
-    @Getter
-    private boolean isModified;
+    @Getter private final Player target;
+    @Getter private T packet;
+    @Getter private boolean isModified;
 
     public PacketEvent(T packet, Player target) {
         this.packet = packet;

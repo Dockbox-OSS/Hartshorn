@@ -31,7 +31,9 @@ import org.dockbox.hartshorn.cache.annotations.UpdateCache;
 public interface CacheMethodContext {
 
     Class<? extends CacheManager> manager();
+
     String name();
+
     Expiration expiration();
 
 }

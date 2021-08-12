@@ -18,29 +18,22 @@
 package org.dockbox.hartshorn.di.types;
 
 import org.dockbox.hartshorn.di.annotations.inject.Bound;
-import org.dockbox.hartshorn.di.annotations.inject.Wired;
-import org.dockbox.hartshorn.di.properties.InjectableType;
-import org.dockbox.hartshorn.di.properties.InjectorProperty;
+
+import javax.inject.Inject;
 
 import lombok.Getter;
 
 @Getter
-public class SampleBoundPopulatedType implements SampleInterface, InjectableType {
+public class SampleBoundPopulatedType implements SampleInterface {
 
     private final String name;
 
-    @Wired
+    @Inject
     private SampleField field;
-    private boolean enabled = false;
 
     @Bound
-    public SampleBoundPopulatedType(String name) {
+    public SampleBoundPopulatedType(final String name) {
         this.name = name;
-    }
-
-    @Override
-    public void enable(InjectorProperty<?>... properties) {
-        this.enabled = true;
     }
 
 }

@@ -51,10 +51,23 @@ public final class Hartshorn {
      * The simplified identifier for Hartshorn-default identifiers.
      */
     public static final String PROJECT_ID = "hartshorn";
+    /**
+     * The semantic version of the current/latest release of Hartshorn
+     */
+    public static final String VERSION = "4.1.1";
 
     private static final Map<String, Logger> LOGGERS = HartshornUtils.emptyConcurrentMap();
 
     private Hartshorn() {}
+
+    /**
+     * Gets the current {@link ApplicationContext} associated with the active {@link #server()}.
+     *
+     * @return The active context
+     */
+    public static ApplicationContext context() {
+        return server().context();
+    }
 
     /**
      * Gets the instance of {@link Hartshorn}.
@@ -66,35 +79,31 @@ public final class Hartshorn {
     }
 
     /**
-     * Gets the current {@link ApplicationContext} associated with the active {@link #server()}.
-     * @return The active context
-     */
-    public static ApplicationContext context() {
-        return server().context();
-    }
-
-    /**
      * Gets a log instance representing the calling type.
      *
      * @return The {@link Logger}
      */
     public static Logger log() {
-        StackTraceElement element = Thread.currentThread().getStackTrace()[2];
-        String className = element.getClassName();
+        return internalLog();
+    }
+
+    static Logger internalLog() {
+        final StackTraceElement element = Thread.currentThread().getStackTrace()[3];
+        final String className = element.getClassName();
         if (LOGGERS.containsKey(className)) return LOGGERS.get(className);
 
-        String[] qualifiedClassName = className.split("\\.");
-        StringBuilder fullName = new StringBuilder();
+        final String[] qualifiedClassName = className.split("\\.");
+        final StringBuilder fullName = new StringBuilder();
 
         for (int i = 0; i < qualifiedClassName.length; i++) {
-            String part = qualifiedClassName[i];
+            final String part = qualifiedClassName[i];
             if (i > 0) fullName.append('.');
-            if (i == qualifiedClassName.length-1) fullName.append(part);
+            if (i == qualifiedClassName.length - 1) fullName.append(part);
             else fullName.append(part.charAt(0));
         }
 
-        String name = HartshornUtils.wrap(fullName.toString(), 35);
-        Logger logger = LoggerFactory.getLogger(name);
+        final String name = HartshornUtils.wrap(fullName.toString(), 35);
+        final Logger logger = LoggerFactory.getLogger(name);
         LOGGERS.put(className, logger);
         return logger;
     }
@@ -111,19 +120,19 @@ public final class Hartshorn {
      * @return The resource file wrapped in a {@link Exceptional}, or a appropriate {@link
      *         Exceptional} (either none or providing the appropriate exception).
      */
-    public static Exceptional<Path> resource(String name) {
+    public static Exceptional<Path> resource(final String name) {
         try {
-            InputStream in = Hartshorn.class.getClassLoader().getResourceAsStream(name);
-            byte[] buffer = new byte[in.available()];
+            final InputStream in = Hartshorn.class.getClassLoader().getResourceAsStream(name);
+            final byte[] buffer = new byte[in.available()];
             in.read(buffer);
 
-            Path tempFile = Files.createTempFile(name, ".tmp");
-            OutputStream outStream = new FileOutputStream(tempFile.toFile());
+            final Path tempFile = Files.createTempFile(name, ".tmp");
+            final OutputStream outStream = new FileOutputStream(tempFile.toFile());
             outStream.write(buffer);
 
             return Exceptional.of(tempFile);
         }
-        catch (NullPointerException | IOException e) {
+        catch (final NullPointerException | IOException e) {
             return Exceptional.of(e);
         }
     }

@@ -29,18 +29,18 @@ import java.util.Collection;
 public class PostBootstrapServiceProcessor implements ServiceProcessor<UseBootstrap> {
 
     @Override
-    public boolean preconditions(Class<?> type) {
-        boolean activated = Hartshorn.context().locator().container(type)
+    public boolean preconditions(final Class<?> type) {
+        final boolean activated = Hartshorn.context().locator().container(type)
                 .map(serviceContainer -> serviceContainer.hasActivator(UseBootstrap.class))
                 .or(false);
-        boolean hasPosts = !Reflect.methods(type, PostBootstrap.class).isEmpty();
+        final boolean hasPosts = !Reflect.methods(type, PostBootstrap.class).isEmpty();
         return activated && hasPosts;
     }
 
     @Override
-    public <T> void process(ApplicationContext context, Class<T> type) {
+    public <T> void process(final ApplicationContext context, final Class<T> type) {
         final Collection<Method> methods = Reflect.methods(type, PostBootstrap.class);
-        for (Method method : methods) {
+        for (final Method method : methods) {
             HartshornBootstrap.instance().addPostBootstrapActivation(method);
         }
     }

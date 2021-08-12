@@ -39,7 +39,7 @@ public abstract class Location implements KeyHolder<Location>, PersistentDataHol
     }
 
     public static Location of(int x, int y, int z, World world) {
-        return of(Vector3N.of(x, y,z), world);
+        return of(Vector3N.of(x, y, z), world);
     }
 
     public static Location of(Vector3N position, World world) {
@@ -49,6 +49,8 @@ public abstract class Location implements KeyHolder<Location>, PersistentDataHol
     public double getX() {
         return this.vector().xD();
     }
+
+    public abstract Vector3N vector();
 
     public double getY() {
         return this.vector().yD();
@@ -72,12 +74,13 @@ public abstract class Location implements KeyHolder<Location>, PersistentDataHol
         return this.expand(Vector3N.of(0, 0, z));
     }
 
-    public abstract Vector3N vector();
-
-    public abstract World world();
-
     public boolean place(Block block) {
         return block.place(this);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.vector(), this.world());
     }
 
     @Override
@@ -87,9 +90,6 @@ public abstract class Location implements KeyHolder<Location>, PersistentDataHol
         return this.vector().equals(location.vector()) && Objects.equals(this.world(), location.world());
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(this.vector(), this.world());
-    }
+    public abstract World world();
 
 }

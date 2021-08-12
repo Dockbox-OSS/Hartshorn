@@ -17,8 +17,8 @@
 
 package org.dockbox.hartshorn.di.inject.wired;
 
-import org.dockbox.hartshorn.di.ApplicationContextAware;
 import org.dockbox.hartshorn.api.exceptions.ApplicationException;
+import org.dockbox.hartshorn.di.ApplicationContextAware;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -35,13 +35,13 @@ public class ProvisionBoundContext<T, I extends T> implements BoundContext<T, I>
     private final String name;
 
     @Override
-    public T create(Object... arguments) throws ApplicationException {
+    public T create(final Object... arguments) throws ApplicationException {
         final Object service = ApplicationContextAware.instance().context().get(this.provider.getDeclaringClass());
         try {
             //noinspection unchecked
             return (T) this.provider.invoke(service, arguments);
         }
-        catch (InvocationTargetException | IllegalAccessException | ClassCastException e) {
+        catch (final InvocationTargetException | IllegalAccessException | ClassCastException e) {
             throw new ApplicationException(e);
         }
     }

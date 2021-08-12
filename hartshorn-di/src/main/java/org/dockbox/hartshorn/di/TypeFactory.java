@@ -17,17 +17,17 @@
 
 package org.dockbox.hartshorn.di;
 
-import org.dockbox.hartshorn.di.properties.InjectorProperty;
+import org.dockbox.hartshorn.di.properties.Attribute;
 import org.dockbox.hartshorn.di.properties.UseFactory;
 
 public interface TypeFactory {
 
-    <T> T create(Class<T> type, Object... arguments);
-
-    TypeFactory with(InjectorProperty<?>... properties);
-
-    static UseFactory use(Object... varargs) {
+    static UseFactory use(final Object... varargs) {
         return new UseFactory(varargs);
     }
+
+    <T> T create(Class<T> type, Object... arguments);
+
+    TypeFactory with(Attribute<?>... properties);
 
 }

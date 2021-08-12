@@ -23,50 +23,50 @@ import java.util.List;
 
 public interface DelegatingContext<D extends Context> extends Context {
 
+    @Override
+    default <C extends Context> void add(final C context) {
+        this.get().add(context);
+    }
+
     D get();
 
     @Override
-    default <C extends Context> void add(C context) {
+    default <N extends NamedContext> void add(final N context) {
         this.get().add(context);
     }
 
     @Override
-    default <N extends NamedContext> void add(N context) {
-        this.get().add(context);
-    }
-
-    @Override
-    default <C extends Context> void add(String name, C context) {
+    default <C extends Context> void add(final String name, final C context) {
         this.get().add(name, context);
     }
 
     @Override
-    default <C extends Context> Exceptional<C> first(Class<C> context) {
+    default <C extends Context> Exceptional<C> first(final Class<C> context) {
         return this.get().first(context);
     }
 
     @Override
-    default Exceptional<Context> first(String name) {
+    default Exceptional<Context> first(final String name) {
         return this.get().first(name);
     }
 
     @Override
-    default <N extends Context> Exceptional<N> first(String name, Class<N> context) {
+    default <N extends Context> Exceptional<N> first(final String name, final Class<N> context) {
         return this.get().first(name, context);
     }
 
     @Override
-    default <C extends Context> List<C> all(Class<C> context) {
+    default <C extends Context> List<C> all(final Class<C> context) {
         return this.get().all(context);
     }
 
     @Override
-    default List<Context> all(String name) {
+    default List<Context> all(final String name) {
         return this.get().all(name);
     }
 
     @Override
-    default <N extends Context> List<N> all(String name, Class<N> context) {
+    default <N extends Context> List<N> all(final String name, final Class<N> context) {
         return this.get().all(name, context);
     }
 }

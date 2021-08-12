@@ -1,4 +1,4 @@
 dependencies {
-    compileOnly project(':hartshorn-minecraft:plots')
+    compileOnly project(':hartshorn-minecraft:regions')
     compileOnly project(':hartshorn-minecraft:playersettings')
 }

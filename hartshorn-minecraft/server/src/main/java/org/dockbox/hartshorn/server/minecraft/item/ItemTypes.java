@@ -1000,6 +1000,9 @@ public enum ItemTypes {
     ZOMBIFIED_PIGLIN_SPAWN_EGG("minecraft:zombified_piglin_spawn_egg"),
     ;
 
-    @Getter
-    private final String id;
+    @Getter private final String id;
+
+    public Item item() {
+        return Item.of(this);
+    }
 }

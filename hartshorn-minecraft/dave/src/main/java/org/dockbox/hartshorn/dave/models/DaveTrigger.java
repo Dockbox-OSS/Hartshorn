@@ -17,15 +17,12 @@
 
 package org.dockbox.hartshorn.dave.models;
 
-import org.dockbox.hartshorn.api.annotations.Entity;
-
 import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Entity(value = "trigger")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter

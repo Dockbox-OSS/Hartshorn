@@ -17,10 +17,10 @@
 
 package org.dockbox.hartshorn.commands.events;
 
-import org.dockbox.hartshorn.api.events.AbstractTargetEvent;
-import org.dockbox.hartshorn.api.events.parents.Cancellable;
-import org.dockbox.hartshorn.commands.context.CommandContext;
 import org.dockbox.hartshorn.commands.CommandSource;
+import org.dockbox.hartshorn.commands.context.CommandContext;
+import org.dockbox.hartshorn.events.AbstractTargetEvent;
+import org.dockbox.hartshorn.events.parents.Cancellable;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -30,8 +30,7 @@ import lombok.Setter;
  */
 public abstract class CommandEvent extends AbstractTargetEvent {
 
-    @Getter
-    private final CommandContext context;
+    @Getter private final CommandContext context;
 
     protected CommandEvent(CommandSource source, CommandContext context) {
         super(source);

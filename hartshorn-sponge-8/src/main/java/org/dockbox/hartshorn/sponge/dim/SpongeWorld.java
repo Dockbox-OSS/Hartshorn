@@ -43,37 +43,45 @@ import lombok.Getter;
 
 public class SpongeWorld extends World implements SpongeDimension {
 
-    @Getter
-    private final ResourceKey key;
+    @Getter private final ResourceKey key;
 
-    public SpongeWorld(ResourceKey key) {
+    public SpongeWorld(final ResourceKey key) {
         this.key = key;
+        final ServerWorld serverWorld = this.serverWorld();
+        super.worldUniqueId = serverWorld.uniqueId();
+        super.name = serverWorld.key().value();
     }
 
+    // TODO: Override WorldProperties so they are synced
+
     @Override
-    public boolean has(Vector3N position) {
+    public boolean has(final Vector3N position) {
         return this.world()
                 .map(world -> world.contains(SpongeConvert.toSponge(position)))
                 .or(false);
     }
 
     @Override
-    public Exceptional<Block> block(Vector3N position) {
+    public Exceptional<Block> block(final Vector3N position) {
         return Exceptional.of(Block.from(new SpongeLocation(position, this)));
     }
 
     @Override
-    public boolean block(Vector3N position, Block block) {
+    public boolean block(final Vector3N position, final Block block) {
         return block.place(new SpongeLocation(position, this));
     }
 
+    private Exceptional<ServerWorld> world() {
+        return Exceptional.of(Sponge.server().worldManager().world(this.key));
+    }
+
     @Override
-    public Exceptional<Chunk> chunk(Location location) {
+    public Exceptional<Chunk> chunk(final Location location) {
         return this.chunk(location.vector());
     }
 
     @Override
-    public Exceptional<Chunk> chunk(Vector3N position) {
+    public Exceptional<Chunk> chunk(final Vector3N position) {
         final Vector3i vector3i = SpongeConvert.toSponge(position);
         final boolean hasChunk = this.world().map(world -> world.hasChunk(vector3i)).or(false);
         if (hasChunk) Exceptional.of(new SpongeChunk(this.key, vector3i));
@@ -82,9 +90,9 @@ public class SpongeWorld extends World implements SpongeDimension {
 
     @Override
     public Collection<Chunk> loadedChunks() {
-        Collection<Chunk> chunks = HartshornUtils.emptyList();
+        final Collection<Chunk> chunks = HartshornUtils.emptyList();
         this.world().present(world -> {
-            for (org.spongepowered.api.world.chunk.Chunk<?> chunk : world.loadedChunks()) {
+            for (final org.spongepowered.api.world.chunk.Chunk<?> chunk : world.loadedChunks()) {
                 chunks.add(new SpongeChunk(this.key, chunk.chunkPosition()));
             }
         });
@@ -120,8 +128,13 @@ public class SpongeWorld extends World implements SpongeDimension {
                 .or(false);
     }
 
+    private <T> Exceptional<T> run(final BiFunction<WorldManager, ResourceKey, CompletableFuture<T>> function) {
+        final CompletableFuture<T> future = function.apply(Sponge.server().worldManager(), this.key);
+        return SpongeUtil.await(future);
+    }
+
     @Override
-    public void gamerule(String key, String value) {
+    public void gamerule(final String key, final String value) {
         this.world().present(world -> {
             //noinspection unchecked
             final GameRule<String> rule = (GameRule<String>) SpongeUtil.spReference(RegistryTypes.GAME_RULE, value);
@@ -131,17 +144,8 @@ public class SpongeWorld extends World implements SpongeDimension {
 
     @Override
     public Map<String, String> gamerules() {
-        Map<String, String> rules = HartshornUtils.emptyMap();
+        final Map<String, String> rules = HartshornUtils.emptyMap();
         this.world().present(world -> world.properties().gameRules().forEach((rule, value) -> rules.put(rule.name(), String.valueOf(value))));
         return null;
-    }
-
-    private <T> Exceptional<T> run(BiFunction<WorldManager, ResourceKey, CompletableFuture<T>> function) {
-        final CompletableFuture<T> future = function.apply(Sponge.server().worldManager(), this.key);
-        return SpongeUtil.await(future);
-    }
-
-    private Exceptional<ServerWorld> world() {
-        return Exceptional.of(Sponge.server().worldManager().world(this.key));
     }
 }

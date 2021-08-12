@@ -41,28 +41,28 @@ public class SpongePlayerInventory extends PlayerInventory implements SpongeInve
     private static final int inventorySize = 36;
     private final SpongePlayer player;
 
-    public SpongePlayerInventory(SpongePlayer player) {
+    public SpongePlayerInventory(final SpongePlayer player) {
         this.player = player;
     }
 
     @Override
-    public Item slot(int row, int column) {
+    public Item slot(final int row, final int column) {
         return this.internalGetSlot(row, column).map(SLOT_LOOKUP).get(AbstractInventoryRow.AIR);
     }
 
     @Override
-    public void slot(Item item, int row, int column) {
+    public void slot(final Item item, final int row, final int column) {
         this.internalGetSlot(row, column).present(slot -> slot.set(SpongeConvert.toSponge(item)));
     }
 
     private Exceptional<org.spongepowered.api.item.inventory.Slot> internalGetSlot(
-            int row, int column) {
+            final int row, final int column) {
         return this.player.player().map(player -> {
             if (3 > row) { // Main inventory
                 return player.inventory().storage().slot(column, row).orElse(null);
             }
             else if (3 == row) { // Hotbar
-                Hotbar hotbar = player.inventory().hotbar();
+                final Hotbar hotbar = player.inventory().hotbar();
                 return hotbar.slot(column).orElse(null);
             }
             else throw new IllegalArgumentException("Slot index [row=" + row + ", col=" + column + "] is out of bounds (row: 0-3, col: 0-8)");
@@ -70,12 +70,12 @@ public class SpongePlayerInventory extends PlayerInventory implements SpongeInve
     }
 
     @Override
-    public Item slot(Slot slot) {
+    public Item slot(final Slot slot) {
         return this.internalGetSlot(slot).map(SLOT_LOOKUP).get(AbstractInventoryRow.AIR);
     }
 
     @Override
-    public void slot(Item item, Slot slotType) {
+    public void slot(final Item item, final Slot slotType) {
         this.internalGetSlot(slotType).present(slot -> slot.set(SpongeConvert.toSponge(item)));
     }
 
@@ -84,25 +84,25 @@ public class SpongePlayerInventory extends PlayerInventory implements SpongeInve
         return inventorySize;
     }
 
-    private Exceptional<org.spongepowered.api.item.inventory.Slot> internalGetSlot(Slot slot) {
+    private Exceptional<org.spongepowered.api.item.inventory.Slot> internalGetSlot(final Slot slot) {
         return this.player.player().map(player -> {
-            EquipmentInventory equipment = player.inventory().equipment();
-            EquipmentType equipmentType = SpongeConvert.toSponge(slot);
+            final EquipmentInventory equipment = player.inventory().equipment();
+            final EquipmentType equipmentType = SpongeConvert.toSponge(slot);
             return equipment.slot(equipmentType).orElse(null);
         });
     }
 
     @Override
-    public void slot(Item item, int index) {
+    public void slot(final Item item, final int index) {
         this.internalGetSlot(index).present(slot -> slot.set(SpongeConvert.toSponge(item)));
     }
 
     @Override
-    public Item slot(int index) {
+    public Item slot(final int index) {
         return this.internalGetSlot(index).map(SLOT_LOOKUP).get(AbstractInventoryRow.AIR);
     }
 
-    private Exceptional<org.spongepowered.api.item.inventory.Slot> internalGetSlot(int index) {
+    private Exceptional<org.spongepowered.api.item.inventory.Slot> internalGetSlot(final int index) {
         final int gridSize = 27;
         return this.player.player().map(player -> {
             if (gridSize > index) { // Main inventory
@@ -110,7 +110,7 @@ public class SpongePlayerInventory extends PlayerInventory implements SpongeInve
 
             }
             else if (inventorySize > index) { // Hotbar
-                Hotbar hotbar = player.inventory().hotbar();
+                final Hotbar hotbar = player.inventory().hotbar();
 
                 // -27 to correct for the grid gap (main grid is excluded once we get the Hotbar
                 // inventory, and is 3x9 slots)
@@ -134,11 +134,11 @@ public class SpongePlayerInventory extends PlayerInventory implements SpongeInve
     }
 
     @Override
-    public boolean give(Item item) {
+    public boolean give(final Item item) {
         return this.player.player().map(player -> {
             final org.spongepowered.api.item.inventory.entity.PlayerInventory inventory = player.inventory();
-            ItemStack stack = SpongeConvert.toSponge(item);
-            InventoryTransactionResult result = inventory.hotbar().offer(stack);
+            final ItemStack stack = SpongeConvert.toSponge(item);
+            final InventoryTransactionResult result = inventory.hotbar().offer(stack);
             if (Type.SUCCESS == result.type()) return true;
             else return Type.SUCCESS == inventory.offer(stack).type();
         }).or(false);
@@ -149,7 +149,7 @@ public class SpongePlayerInventory extends PlayerInventory implements SpongeInve
     }
 
     @Override
-    public Exceptional<InventoryRow> row(int index) {
+    public Exceptional<InventoryRow> row(final int index) {
         if (4 >= index) {
             return Exceptional.of(new SpongeInventoryRow(this, index, this.player));
         }

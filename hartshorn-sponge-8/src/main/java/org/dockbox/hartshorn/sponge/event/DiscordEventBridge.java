@@ -17,7 +17,6 @@
 
 package org.dockbox.hartshorn.sponge.event;
 
-import org.dockbox.hartshorn.api.events.annotations.Posting;
 import org.dockbox.hartshorn.discord.events.DiscordBotDisconnectedEvent;
 import org.dockbox.hartshorn.discord.events.DiscordBotReconnectedEvent;
 import org.dockbox.hartshorn.discord.events.DiscordChatDeletedEvent;
@@ -32,6 +31,7 @@ import org.dockbox.hartshorn.discord.events.DiscordUserJoinedEvent;
 import org.dockbox.hartshorn.discord.events.DiscordUserLeftEvent;
 import org.dockbox.hartshorn.discord.events.DiscordUserNicknameChangedEvent;
 import org.dockbox.hartshorn.discord.events.DiscordUserUnbannedEvent;
+import org.dockbox.hartshorn.events.annotations.Posting;
 
 @Posting(value = {
         DiscordChatReceivedEvent.class,

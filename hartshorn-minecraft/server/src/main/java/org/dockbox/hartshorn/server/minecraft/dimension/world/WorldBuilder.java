@@ -29,13 +29,21 @@ import org.dockbox.hartshorn.server.minecraft.players.Gamemode;
 public interface WorldBuilder {
 
     WorldBuilder name(String name);
+
     WorldBuilder generator(WorldGenerator generator);
+
     WorldBuilder type(GeneratorType type);
+
     WorldBuilder gamemode(Gamemode mode);
+
     WorldBuilder difficulty(Difficulty difficulty);
+
     WorldBuilder loadOnStartup(boolean load);
+
     WorldBuilder pvp(boolean pvp);
+
     WorldBuilder spawnPosition(Vector3N position);
+
     Exceptional<World> build();
 
 }

@@ -42,15 +42,15 @@ public final class ProxyableBootstrap {
     private ProxyableBootstrap() {}
 
     static void boostrapDelegates() {
-        Hartshorn.log().info("Scanning for proxy types in " + Hartshorn.PACKAGE_PREFIX);
+        Hartshorn.log().info("Scanning for proxy types in all context prefixes");
         Reflect.types(Proxy.class).forEach(proxy -> {
-            Hartshorn.log().info("Processing [" + proxy.getCanonicalName() + "]");
+            Hartshorn.log().info("Processing global proxy " + proxy.getCanonicalName());
             if (Reflect.isAbstract(proxy)) {
                 Hartshorn.log().warn("Proxy source cannot be abstract [" + proxy.getCanonicalName() + "]");
                 return;
             }
 
-            Proxy delegationInfo = Reflect.annotation(proxy, Proxy.class).get();
+            final Proxy delegationInfo = Reflect.annotation(proxy, Proxy.class).get();
             if (Reflect.annotation(delegationInfo.value(), Proxy.class).present()) {
                 Hartshorn.log().warn("Proxy target cannot be another delegate [" + proxy.getCanonicalName() + "]");
                 return;
@@ -60,16 +60,15 @@ public final class ProxyableBootstrap {
         });
     }
 
-    private static void delegateMethods(Class<?> proxyClass) {
+    private static void delegateMethods(final Class<?> proxyClass) {
         @NotNull
-        @Unmodifiable
-        Collection<Method> targets = Reflect.methods(proxyClass, Target.class, i -> true, false);
+        @Unmodifiable final Collection<Method> targets = Reflect.methods(proxyClass, Target.class, i -> true, false);
 
-        Proxy proxy = Reflect.annotation(proxyClass, Proxy.class).get();
+        final Proxy proxy = Reflect.annotation(proxyClass, Proxy.class).get();
         targets.forEach(target -> ProxyableBootstrap.delegateMethod(proxyClass, proxy.value(), target));
     }
 
-    private static <T, C> void delegateMethod(Class<T> proxyClass, Class<C> proxyTargetClass, Method source) {
+    private static <T, C> void delegateMethod(final Class<T> proxyClass, final Class<C> proxyTargetClass, final Method source) {
         Hartshorn.log().info("Processing " + proxyClass.getSimpleName() + "." + source.getName());
         if (Modifier.isAbstract(source.getModifiers())) {
             Hartshorn.log().warn("Proxy method cannot be abstract [" + source.getName() + "]");
@@ -81,7 +80,7 @@ public final class ProxyableBootstrap {
         // Used only for method lookup, parameters decorated with @Instance are injected and thus not
         // present on the
         // target method.
-        Class<?>[] arguments = HartshornUtils.asList(source.getParameters()).stream()
+        final Class<?>[] arguments = HartshornUtils.asList(source.getParameters()).stream()
                 .filter(arg -> Reflect.annotation(arg, Instance.class).absent())
                 .map(Parameter::getType)
                 .toArray(Class<?>[]::new);
@@ -91,10 +90,10 @@ public final class ProxyableBootstrap {
         // the same method, so the method names are different. The @Target annotation allows setting the
         // method name
         // manually.
-        Target target = Reflect.annotation(source, Target.class).get();
+        final Target target = Reflect.annotation(source, Target.class).get();
         if (!target.method().isEmpty()) methodName = target.method();
         try {
-            Method targetMethod = proxyTargetClass.getDeclaredMethod(methodName, arguments);
+            final Method targetMethod = proxyTargetClass.getDeclaredMethod(methodName, arguments);
 
             // If the target method has a return type other than `void`, and the proxy wants to overwrite
             // the return
@@ -109,15 +108,15 @@ public final class ProxyableBootstrap {
                 }
             }
 
-            ProxyProperty<C, ?> property = ProxyProperty.of(proxyTargetClass, targetMethod, (instance, args, proxyContext) -> {
-                Object[] invokingArgs = ProxyableBootstrap.prepareArguments(source, args, instance);
+            final ProxyAttribute<C, ?> property = ProxyAttribute.of(proxyTargetClass, targetMethod, (instance, args, proxyContext) -> {
+                final Object[] invokingArgs = ProxyableBootstrap.prepareArguments(source, args, instance);
                 try {
                     return source.invoke(Hartshorn.context().get(proxyClass), invokingArgs);
                 }
-                catch (CancelProxyException e) {
+                catch (final CancelProxyException e) {
                     proxyContext.holder().cancelled(true);
                 }
-                catch (Throwable e) {
+                catch (final Throwable e) {
                     Except.handle(e);
                 }
                 //noinspection ReturnOfNull
@@ -126,27 +125,27 @@ public final class ProxyableBootstrap {
             property.phase(target.at());
             property.priority(target.priority());
             property.overwriteResult(target.overwrite());
-            InjectionPoint<C> point = InjectionPoint.of(proxyTargetClass, instance -> {
+            final InjectionPoint<C> point = InjectionPoint.of(proxyTargetClass, instance -> {
                 try {
-                    ProxyHandler<C> handler = new ProxyHandler<>(instance);
+                    final ProxyHandler<C> handler = new ProxyHandler<>(instance);
                     handler.delegate(property);
                     return handler.proxy();
                 }
-                catch (Throwable t) {
+                catch (final Throwable t) {
                     Except.handle(t);
                 }
                 return instance;
             });
             Hartshorn.context().add(point);
         }
-        catch (NoSuchMethodException e) {
+        catch (final NoSuchMethodException e) {
             Hartshorn.log().warn("Proxy target does not have declared method '" + methodName + "(" + Arrays.toString(arguments) + ") [" + proxyClass
                     .getCanonicalName() + "]");
         }
     }
 
-    private static Object[] prepareArguments(Method method, Object[] args, Object instance) {
-        List<Object> arguments = HartshornUtils.emptyList();
+    private static Object[] prepareArguments(final Method method, final Object[] args, final Object instance) {
+        final List<Object> arguments = HartshornUtils.emptyList();
         if (method.getParameterCount() >= 1 && Reflect.annotation(method.getParameters()[0], Instance.class).present()) {
             arguments.add(instance);
         }

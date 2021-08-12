@@ -21,7 +21,7 @@ import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.server.minecraft.inventory.Element;
 import org.dockbox.hartshorn.server.minecraft.inventory.InventoryLayout;
 import org.dockbox.hartshorn.server.minecraft.inventory.builder.PaginatedPaneBuilder;
-import org.dockbox.hartshorn.server.minecraft.inventory.properties.LayoutProperty;
+import org.dockbox.hartshorn.server.minecraft.inventory.properties.LayoutAttribute;
 import org.dockbox.hartshorn.server.minecraft.players.Player;
 
 import java.util.Collection;
@@ -41,7 +41,7 @@ public interface PaginatedPane extends Pane {
      * @return The builder
      */
     static PaginatedPaneBuilder builder(InventoryLayout layout) {
-        return Hartshorn.context().get(PaginatedPaneBuilder.class, new LayoutProperty(layout));
+        return Hartshorn.context().get(PaginatedPaneBuilder.class, new LayoutAttribute(layout));
     }
 
     /**

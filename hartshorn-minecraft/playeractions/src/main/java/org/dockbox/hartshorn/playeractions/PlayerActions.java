@@ -18,18 +18,17 @@
 package org.dockbox.hartshorn.playeractions;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.api.events.annotations.Listener;
-import org.dockbox.hartshorn.api.i18n.common.Language;
-import org.dockbox.hartshorn.api.i18n.text.Text;
-import org.dockbox.hartshorn.api.i18n.text.actions.ClickAction;
-import org.dockbox.hartshorn.api.i18n.text.actions.HoverAction;
 import org.dockbox.hartshorn.config.annotations.Value;
 import org.dockbox.hartshorn.di.annotations.service.Service;
-import org.dockbox.hartshorn.di.annotations.inject.Wired;
+import org.dockbox.hartshorn.events.annotations.Listener;
+import org.dockbox.hartshorn.i18n.common.Language;
+import org.dockbox.hartshorn.i18n.text.Text;
+import org.dockbox.hartshorn.i18n.text.actions.ClickAction;
+import org.dockbox.hartshorn.i18n.text.actions.HoverAction;
 import org.dockbox.hartshorn.playersettings.PlayerSettings;
-import org.dockbox.hartshorn.plots.Plot;
-import org.dockbox.hartshorn.plots.PlotKeys;
-import org.dockbox.hartshorn.plots.PlotMembership;
+import org.dockbox.hartshorn.regions.RegionMembership;
+import org.dockbox.hartshorn.regions.plots.Plot;
+import org.dockbox.hartshorn.regions.plots.PlotKeys;
 import org.dockbox.hartshorn.server.minecraft.DefaultServerResources;
 import org.dockbox.hartshorn.server.minecraft.dimension.Worlds;
 import org.dockbox.hartshorn.server.minecraft.dimension.position.Location;
@@ -45,14 +44,16 @@ import org.dockbox.hartshorn.server.minecraft.players.Player;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 @Service
 public class PlayerActions {
 
-    @Wired
+    @Inject
     private Worlds worlds;
-    @Wired
+    @Inject
     private PlayerActionResources resources;
-    @Wired
+    @Inject
     private DefaultServerResources serverResources;
     @Value("services.player-actions.whitelist")
     private List<String> whitelist;
@@ -80,7 +81,7 @@ public class PlayerActions {
 
         if (plotTarget.absent()) return;
         Plot plot = plotTarget.get();
-        if (plot.hasMembership(player, PlotMembership.DENIED)) {
+        if (plot.hasMembership(player, RegionMembership.DENIED)) {
             event.cancelled(true);
             player.sendWithPrefix(this.resources.deniedFromPlot());
         }
@@ -101,7 +102,7 @@ public class PlayerActions {
         }
         else {
             Plot plot = targetPlot.get();
-            if (!plot.hasAnyMembership(player, PlotMembership.MEMBER, PlotMembership.TRUSTED, PlotMembership.OWNER)) {
+            if (!plot.hasAnyMembership(player, RegionMembership.MEMBER, RegionMembership.TRUSTED, RegionMembership.OWNER)) {
                 player.sendWithPrefix(this.resources.interactionError());
                 return true;
             }

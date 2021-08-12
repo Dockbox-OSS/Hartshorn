@@ -17,9 +17,6 @@
 
 package org.dockbox.hartshorn.persistence.registry;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
-import org.dockbox.hartshorn.api.annotations.Entity;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -32,7 +29,6 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 @SuppressWarnings({ "UnusedReturnValue", "unused" })
-@Entity("registry")
 public class Registry<V> extends HashMap<String, RegistryColumn<V>> {
 
     public Registry() {}
@@ -57,15 +53,6 @@ public class Registry<V> extends HashMap<String, RegistryColumn<V>> {
         return this;
     }
 
-    public Registry<V> addRegistry(@NotNull Registry<V> other) {
-        // Iterate over entries instead of using putAll to avoid overwriting existing
-        // column values.
-        for (Entry<String, RegistryColumn<V>> column : other.entrySet()) {
-            this.add(new SimpleIdentifier(column.getKey()), column.getValue());
-        }
-        return this;
-    }
-
     public Registry<V> add(RegistryIdentifier columnID, RegistryColumn<V> column) {
         if (this.containsKey(columnID.key())) {
             this.get(columnID.key()).addAll(column);
@@ -81,6 +68,15 @@ public class Registry<V> extends HashMap<String, RegistryColumn<V>> {
         return this;
     }
 
+    public Registry<V> addRegistry(@NotNull Registry<V> other) {
+        // Iterate over entries instead of using putAll to avoid overwriting existing
+        // column values.
+        for (Entry<String, RegistryColumn<V>> column : other.entrySet()) {
+            this.add(new RegistryIdentifierImpl(column.getKey()), column.getValue());
+        }
+        return this;
+    }
+
     /**
      * @param columnIDs
      *         A varargs of {@link RegistryIdentifier}s to remove from the Registry if
@@ -93,6 +89,10 @@ public class Registry<V> extends HashMap<String, RegistryColumn<V>> {
             this.remove(columnID);
         }
         return this;
+    }
+
+    public RegistryColumn<V> remove(RegistryIdentifier key) {
+        return super.remove(key.key());
     }
 
     /**
@@ -194,7 +194,7 @@ public class Registry<V> extends HashMap<String, RegistryColumn<V>> {
         Registry<V> registry = new Registry<>();
 
         for (String columnID : this.keySet()) {
-            final RegistryIdentifier identifier = new SimpleIdentifier(columnID);
+            final RegistryIdentifier identifier = new RegistryIdentifierImpl(columnID);
             if (!filter.test(identifier)) {
                 registry.addColumn(identifier, this.get(columnID));
             }
@@ -203,7 +203,6 @@ public class Registry<V> extends HashMap<String, RegistryColumn<V>> {
     }
 
     /** @return All the data in the Registry combined into a single {@link RegistryColumn} */
-    @JsonIgnore
     public RegistryColumn<V> data() {
         RegistryColumn<V> result = new RegistryColumn<>();
         for (RegistryColumn<V> columnData : this.values()) {
@@ -226,7 +225,7 @@ public class Registry<V> extends HashMap<String, RegistryColumn<V>> {
         Registry<V> registry = new Registry<>();
 
         this.forEach((columnID, column) -> {
-            final RegistryIdentifier identifier = new SimpleIdentifier(columnID);
+            final RegistryIdentifier identifier = new RegistryIdentifierImpl(columnID);
             if (!biFilter.test(identifier, column)) {
                 registry.addColumn(identifier, column);
             }
@@ -251,7 +250,7 @@ public class Registry<V> extends HashMap<String, RegistryColumn<V>> {
         for (String columnID : this.keySet()) {
             RegistryColumn<V> column = new RegistryColumn<>(this.get(columnID));
             column.removeValueIf(filter);
-            registry.addColumn(new SimpleIdentifier(columnID), column);
+            registry.addColumn(new RegistryIdentifierImpl(columnID), column);
         }
         return registry;
     }
@@ -272,7 +271,7 @@ public class Registry<V> extends HashMap<String, RegistryColumn<V>> {
         Registry<V> registry = new Registry<>();
 
         this.forEach((columnID, column) -> column.forEach(v -> {
-            final RegistryIdentifier identifier = new SimpleIdentifier(columnID);
+            final RegistryIdentifier identifier = new RegistryIdentifierImpl(columnID);
             if (!biFilter.test(identifier, v)) {
                 registry.add(identifier, v);
             }
@@ -361,10 +360,6 @@ public class Registry<V> extends HashMap<String, RegistryColumn<V>> {
 
     public RegistryColumn<V> put(RegistryIdentifier key, RegistryColumn<V> value) {
         return super.put(key.key(), value);
-    }
-
-    public RegistryColumn<V> remove(RegistryIdentifier key) {
-        return super.remove(key.key());
     }
 
     public RegistryColumn<V> getOrDefault(RegistryIdentifier key, RegistryColumn<V> defaultValue) {

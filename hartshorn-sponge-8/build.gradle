@@ -1,4 +1,5 @@
 import java.time.LocalDate
+
 /*
  *  Copyright (C) 2020 Guus Lieben
  *
@@ -60,14 +61,22 @@ dependencies {
     new File(parent.rootDir, 'hartshorn-minecraft').listFiles().each {
         if ((!ignoreProjects.contains(it.name)) && it.directory && new File(it, 'build.gradle').exists()) {
             includeShadow project(":hartshorn-minecraft:${it.name}")
+            includeShadow project(":hartshorn-minecraft:${it.name}").sourceSets.impl.output
         }
     }
 
     parent.rootDir.listFiles().each {
         if ((!ignoreProjects.contains(it.name)) && it.directory && new File(it, 'build.gradle').exists()) {
             includeShadow project(":${it.name}")
+            includeShadow project(":${it.name}").sourceSets.impl.output
         }
     }
+
+    // Additional shaded dependencies, these are not available on the platform by default
+    includeShadow "org.hibernate:hibernate-core:5.5.5.Final"
+    includeShadow 'org.apache.derby:derby:10.8.2.2'
+    includeShadow 'javax.xml.bind:jaxb-api:2.2.4'
+
 }
 
 tasks.build {

@@ -23,6 +23,11 @@ import org.dockbox.hartshorn.server.minecraft.MinecraftServerBootstrap;
 public class JUnit5Bootstrap extends MinecraftServerBootstrap {
 
     @Override
+    public boolean isCI() {
+        return true;
+    }
+
+    @Override
     protected void handleMissingBinding(Class<?> type) {
         Hartshorn.log().warn("Ignoring missing binding for " + type.getSimpleName());
     }

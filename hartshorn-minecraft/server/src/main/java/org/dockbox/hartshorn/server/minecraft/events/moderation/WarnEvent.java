@@ -25,9 +25,7 @@ import lombok.Setter;
 
 public abstract class WarnEvent extends ModerationEvent {
 
-    @Getter
-    @Setter
-    private String reason;
+    @Getter @Setter private String reason;
 
     protected WarnEvent(Player player, CommandSource source, String reason) {
         super(player, source);

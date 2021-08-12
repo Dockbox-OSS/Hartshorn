@@ -54,13 +54,13 @@ public class JUnitLocation extends Location implements JUnitPersistentDataHolder
     }
 
     @Override
-    public Location expand(Vector3N vector) {
-        return new JUnitLocation(this.position.expand(vector), this.world);
+    public Vector3N vector() {
+        return this.position;
     }
 
     @Override
-    public Vector3N vector() {
-        return this.position;
+    public Location expand(Vector3N vector) {
+        return new JUnitLocation(this.position.expand(vector), this.world);
     }
 
     @Override

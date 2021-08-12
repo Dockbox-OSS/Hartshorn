@@ -31,6 +31,7 @@ import org.dockbox.hartshorn.di.annotations.inject.Required;
 import org.dockbox.hartshorn.di.services.ComponentContainer;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.dockbox.hartshorn.util.Reflect;
+import org.slf4j.Logger;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -47,12 +48,20 @@ import lombok.Getter;
  */
 public abstract class HartshornBootstrap extends InjectableBootstrap {
 
-    @Getter
-    private String version;
     private final Set<Method> postBootstrapActivations = HartshornUtils.emptyConcurrentSet();
+    @Getter private String version;
+
+    /**
+     * Returns the active instance of {@link HartshornBootstrap}, if any.
+     *
+     * @return The active instance or <code>null</code>
+     */
+    public static HartshornBootstrap instance() {
+        return (HartshornBootstrap) InjectableBootstrap.instance();
+    }
 
     @Override
-    public void create(Collection<String> prefixes, Class<?> activationSource, List<Annotation> activators, Multimap<InjectPhase, InjectConfiguration> configs, Modifier... modifiers) {
+    public void create(final Collection<String> prefixes, final Class<?> activationSource, final List<Annotation> activators, final Multimap<InjectPhase, InjectConfiguration> configs, final Modifier... modifiers) {
         activators.add(new UseBootstrap() {
             @Override
             public Class<? extends Annotation> annotationType() {
@@ -68,21 +77,13 @@ public abstract class HartshornBootstrap extends InjectableBootstrap {
     }
 
     /**
-     * Returns the active instance of {@link HartshornBootstrap}, if any.
-     * @return The active instance or <code>null</code>
-     */
-    public static HartshornBootstrap instance() {
-        return (HartshornBootstrap) InjectableBootstrap.instance();
-    }
-
-    /**
      * Initiates a {@link Hartshorn} instance. Collecting integrated services and registering them to the
      * appropriate instances where required.
      */
     @Override
     public void init() {
-        Hartshorn.log().info("Initialising Hartshorn " + this.context());
-        for (Method postBootstrapActivation : this.postBootstrapActivations) {
+        Hartshorn.log().info("Initialising Hartshorn v" + Hartshorn.VERSION);
+        for (final Method postBootstrapActivation : this.postBootstrapActivations) {
             this.context().invoke(postBootstrapActivation);
         }
         // Ensure all services requiring a platform implementation have one present
@@ -91,23 +92,31 @@ public abstract class HartshornBootstrap extends InjectableBootstrap {
                 this.handleMissingBinding(type);
             }
         });
-
     }
 
     /**
      * Indicates the behavior to use when a {@link Required} type has no active binding.
-     * @param type The required type
+     *
+     * @param type
+     *         The required type
      */
-    protected void handleMissingBinding(Class<?> type) {
+    protected void handleMissingBinding(final Class<?> type) {
         throw new IllegalStateException("No implementation exists for [" + type.getCanonicalName() + "], this will cause functionality to misbehave or not function!");
+    }
+
+    @Override
+    public Logger log() {
+        return Hartshorn.internalLog();
     }
 
     /**
      * Registers the given method as a activation action which should run when bootstrapping
      * completes. This requires all activators for the declaring class to be present.
-     * @param method The method to activate
+     *
+     * @param method
+     *         The method to activate
      */
-    void addPostBootstrapActivation(Method method) {
+    void addPostBootstrapActivation(final Method method) {
         Objects.requireNonNull(method);
         final Class<?> type = method.getDeclaringClass();
         final Exceptional<ComponentContainer> container = Hartshorn.context().locator().container(type);

@@ -18,15 +18,15 @@
 package org.dockbox.hartshorn.test.objects.living;
 
 import org.dockbox.hartshorn.api.Hartshorn;
-import org.dockbox.hartshorn.api.domain.tuple.Vector3N;
-import org.dockbox.hartshorn.api.exceptions.NotImplementedException;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.domain.tuple.Tristate;
-import org.dockbox.hartshorn.api.i18n.common.Language;
-import org.dockbox.hartshorn.api.i18n.common.ResourceEntry;
-import org.dockbox.hartshorn.api.i18n.permissions.Permission;
-import org.dockbox.hartshorn.api.i18n.text.Text;
-import org.dockbox.hartshorn.api.i18n.text.pagination.Pagination;
+import org.dockbox.hartshorn.api.domain.tuple.Vector3N;
+import org.dockbox.hartshorn.api.exceptions.NotImplementedException;
+import org.dockbox.hartshorn.i18n.common.Language;
+import org.dockbox.hartshorn.i18n.common.ResourceEntry;
+import org.dockbox.hartshorn.i18n.permissions.Permission;
+import org.dockbox.hartshorn.i18n.text.Text;
+import org.dockbox.hartshorn.i18n.text.pagination.Pagination;
 import org.dockbox.hartshorn.server.minecraft.dimension.Block;
 import org.dockbox.hartshorn.server.minecraft.dimension.Worlds;
 import org.dockbox.hartshorn.server.minecraft.dimension.position.Location;
@@ -35,11 +35,11 @@ import org.dockbox.hartshorn.server.minecraft.entities.Entity;
 import org.dockbox.hartshorn.server.minecraft.item.Item;
 import org.dockbox.hartshorn.server.minecraft.packets.Packet;
 import org.dockbox.hartshorn.server.minecraft.players.GameSettings;
+import org.dockbox.hartshorn.server.minecraft.players.GameSettingsImpl;
 import org.dockbox.hartshorn.server.minecraft.players.Gamemode;
 import org.dockbox.hartshorn.server.minecraft.players.Hand;
 import org.dockbox.hartshorn.server.minecraft.players.Player;
 import org.dockbox.hartshorn.server.minecraft.players.Profile;
-import org.dockbox.hartshorn.server.minecraft.players.SimpleGameSettings;
 import org.dockbox.hartshorn.server.minecraft.players.Sounds;
 import org.dockbox.hartshorn.server.minecraft.players.inventory.PlayerInventory;
 import org.dockbox.hartshorn.test.objects.JUnitPersistentDataHolder;
@@ -57,42 +57,25 @@ import lombok.Setter;
 // TODO: Modification events (teleport, kick, etc)
 public class JUnitPlayer extends Player implements JUnitPersistentDataHolder {
 
-    @Getter
-    private final PlayerInventory inventory = new JUnitInventory();
-    @Getter @Setter
-    private boolean online = true;
+    @Getter private final PlayerInventory inventory = new JUnitInventory();
+    @Getter private Location location;
+    @Setter private boolean gravity = true;
+    @Setter private Block lookingAt = null;
 
-    @Getter @Setter
-    private Gamemode gamemode = Gamemode.CREATIVE;
-    @Getter @Setter
-    private boolean sneaking = false;
-    @Setter
-    private Block lookingAt = null;
-    @Getter @Setter
-    private Text displayName;
-    @Getter @Setter
-    private double health = 20;
-    @Getter
-    private Location location;
-    @Getter @Setter
-    private boolean invisible = false;
-    @Getter @Setter
-    private boolean invulnerable = false;
-    @Setter
-    private boolean gravity = true;
-    @Getter @Setter
-    private Vector3N rotation;
+    @Getter @Setter private double health = 20;
+    @Getter @Setter private boolean online = true;
+    @Getter @Setter private boolean sneaking = false;
+    @Getter @Setter private boolean invisible = false;
+    @Getter @Setter private boolean invulnerable = false;
+    @Getter @Setter private Text displayName;
+    @Getter @Setter private Vector3N rotation;
+    @Getter @Setter private Gamemode gamemode = Gamemode.CREATIVE;
 
-    public JUnitPlayer(@NotNull UUID uniqueId, @NotNull String name) {
+    public JUnitPlayer(@NotNull final UUID uniqueId, @NotNull final String name) {
         super(uniqueId, name);
-        Worlds worlds = Hartshorn.context().get(Worlds.class);
+        final Worlds worlds = Hartshorn.context().get(Worlds.class);
         this.location(Location.of(0, 0, 0, worlds.world(worlds.rootUniqueId()).orNull()));
         ((JUnitWorld) this.world()).addEntity(this);
-    }
-
-    @Override
-    public boolean alive() {
-        return this.health() > 0;
     }
 
     @Override
@@ -101,11 +84,27 @@ public class JUnitPlayer extends Player implements JUnitPersistentDataHolder {
     }
 
     @Override
-    public boolean location(Location location) {
+    public boolean location(final Location location) {
         if (this.location != null) ((JUnitWorld) this.world()).destroyEntity(this.uniqueId());
         this.location = location;
         ((JUnitWorld) this.world()).addEntity(this);
         return true;
+    }
+
+    @Override
+    public void execute(final String command) {
+        // TODO: CommandBus implementation
+        throw new NotImplementedException();
+    }
+
+    @Override
+    public void kick(final Text reason) {
+        this.online = false;
+    }
+
+    @Override
+    public boolean alive() {
+        return this.health() > 0;
     }
 
     @Override
@@ -114,28 +113,17 @@ public class JUnitPlayer extends Player implements JUnitPersistentDataHolder {
     }
 
     @Override
-    public void execute(String command) {
-        // TODO: CommandBus implementation
-        throw new NotImplementedException();
-    }
-
-    @Override
-    public void kick(Text reason) {
-        this.online = false;
-    }
-
-    @Override
-    public Item itemInHand(Hand hand) {
+    public Item itemInHand(final Hand hand) {
         return this.inventory().slot(hand.slot());
     }
 
     @Override
-    public void itemInHand(Hand hand, Item item) {
+    public void itemInHand(final Hand hand, final Item item) {
         this.inventory().slot(item, hand.slot());
     }
 
     @Override
-    public void play(Sounds sound) {
+    public void play(final Sounds sound) {
         // TODO: Test implementation, mocking client?
         throw new NotImplementedException();
     }
@@ -157,62 +145,62 @@ public class JUnitPlayer extends Player implements JUnitPersistentDataHolder {
 
     @Override
     public GameSettings gameSettings() {
-        return new SimpleGameSettings(Language.EN_US);
+        return new GameSettingsImpl(Language.EN_US);
     }
 
     @Override
-    public void send(ResourceEntry text) {
+    public void send(final ResourceEntry text) {
         // TODO: Test implementation, mocking client?
         throw new NotImplementedException();
     }
 
     @Override
-    public void send(Text text) {
+    public void send(final Text text) {
         // TODO: Test implementation, mocking client?
         throw new NotImplementedException();
     }
 
     @Override
-    public void sendWithPrefix(ResourceEntry text) {
+    public void sendWithPrefix(final ResourceEntry text) {
         // TODO: Test implementation, mocking client?
         throw new NotImplementedException();
     }
 
     @Override
-    public void sendWithPrefix(Text text) {
+    public void sendWithPrefix(final Text text) {
         // TODO: Test implementation, mocking client?
         throw new NotImplementedException();
     }
 
     @Override
-    public void send(Pagination pagination) {
+    public void send(final Pagination pagination) {
         // TODO: Test implementation, mocking client?
         throw new NotImplementedException();
     }
 
     @Override
-    public void send(Packet packet) {
+    public void send(final Packet packet) {
         // TODO: Test implementation, mocking client?
         throw new NotImplementedException();
     }
 
     @Override
-    public boolean hasPermission(String permission) {
+    public boolean hasPermission(final String permission) {
         return JUnitPermissionRegistry.hasPermission(this, permission);
     }
 
     @Override
-    public boolean hasPermission(Permission permission) {
+    public boolean hasPermission(final Permission permission) {
         return JUnitPermissionRegistry.hasPermission(this, permission);
     }
 
     @Override
-    public void permission(String permission, Tristate state) {
+    public void permission(final String permission, final Tristate state) {
         JUnitPermissionRegistry.permission(this, permission, state);
     }
 
     @Override
-    public void permission(Permission permission, Tristate state) {
+    public void permission(final Permission permission, final Tristate state) {
         JUnitPermissionRegistry.permission(this, permission, state);
     }
 }

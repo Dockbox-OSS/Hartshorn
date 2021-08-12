@@ -33,6 +33,7 @@ public interface ParserContext extends Context {
     /**
      * Gets all registered arguments in the form of {@link CommandParameter}. If no arguments are
      * registered, an empty list is returned instead.
+     *
      * @return All registered arguments.
      */
     @UnmodifiableView
@@ -41,6 +42,7 @@ public interface ParserContext extends Context {
     /**
      * Gets all registered flags in the form of {@link CommandParameter}. If no flags are registered,
      * an empty list is returned instead.
+     *
      * @return All registered flags.
      */
     @UnmodifiableView
@@ -56,6 +58,7 @@ public interface ParserContext extends Context {
      * <pre><code>
      *     "command"
      * </code></pre>
+     *
      * @return The command alias.
      */
     String alias();

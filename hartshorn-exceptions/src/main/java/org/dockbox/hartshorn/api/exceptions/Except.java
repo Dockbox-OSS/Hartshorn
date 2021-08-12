@@ -23,31 +23,30 @@ import java.util.concurrent.Callable;
 
 public final class Except {
 
+    private static ExceptionHandle handle = ExceptionLevels.FRIENDLY;
+    private static boolean stackTraces = true;
     private Except() {
     }
 
-    private static ExceptionHandle handle = ExceptionLevels.FRIENDLY;
-    private static boolean stackTraces = true;
-
-    public static void useStackTraces(boolean stackTraces) {
+    public static void useStackTraces(final boolean stackTraces) {
         Except.stackTraces = stackTraces;
     }
 
-    public static void with(ExceptionHandle handle) {
+    public static void with(final ExceptionHandle handle) {
         Except.handle = handle;
     }
 
-    public static <T> T handle(Callable<T> callable) {
+    public static <T> T handle(final Callable<T> callable) {
         try {
             return callable.call();
         }
-        catch (Exception e) {
+        catch (final Exception e) {
             Except.handle(e);
             return null;
         }
     }
 
-    public static void handle(Throwable e) {
+    public static void handle(final Throwable e) {
         handle(firstMessage(e), e);
     }
 
@@ -59,19 +58,21 @@ public final class Except {
      * @param e
      *         Zero or more exceptions (varargs)
      */
-    public static void handle(@Nullable String msg, @Nullable Throwable... e) {
-        for (Throwable throwable : e) handle.handle(msg, throwable, stackTraces);
+    public static void handle(@Nullable final String msg, @Nullable final Throwable... e) {
+        for (final Throwable throwable : e) handle.handle(msg, throwable, stackTraces);
     }
 
-    public static String firstMessage(Throwable throwable) {
-        final String noCause = "No message provided";
-        if (null == throwable) return noCause;
-        while (true) {
-            if (null != throwable.getMessage()) break;
-            else if (null != throwable.getCause()) throwable = throwable.getCause();
-            else break;
+    public static String firstMessage(final Throwable throwable) {
+        Throwable next = throwable;
+        while (next != null) {
+            if (null != next.getMessage()) return next.getMessage();
+            else {
+                // Avoid infinitely looping if the throwable has itself as cause
+                if (!next.equals(throwable.getCause())) next = next.getCause();
+                else break;
+            }
         }
-        return null == throwable.getMessage() ? noCause : throwable.getMessage();
+        return "No message provided";
     }
 
 }

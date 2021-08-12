@@ -35,8 +35,12 @@ public interface CommandExecutorExtension {
      * {@link ExtensionResult} indicates whether the executor should send a message to the
      * player, the message to be sent, and whether the executor should directly continue
      * activating the command.
-     * @param context The command context containing the parsed command
-     * @param executorContext The executor context
+     *
+     * @param context
+     *         The command context containing the parsed command
+     * @param executorContext
+     *         The executor context
+     *
      * @return The result of the extension
      * @see CommandExecutorContext
      */
@@ -44,15 +48,22 @@ public interface CommandExecutorExtension {
 
     /**
      * Gets whether the given executor should be modified.
-     * @param context The executor context
+     *
+     * @param context
+     *         The executor context
+     *
      * @return <code>true</code> if the executor should be modified, or <code>false</code>
      */
     boolean extend(CommandExecutorContext context);
 
     /**
      * Gets the unique ID for the given sender and command context.
-     * @param sender The identifiable sender, typically a {@link CommandSource}.
-     * @param context The command context containing the parsed command
+     *
+     * @param sender
+     *         The identifiable sender, typically a {@link CommandSource}.
+     * @param context
+     *         The command context containing the parsed command
+     *
      * @return The unique ID
      */
     default String id(Identifiable sender, CommandContext context) {

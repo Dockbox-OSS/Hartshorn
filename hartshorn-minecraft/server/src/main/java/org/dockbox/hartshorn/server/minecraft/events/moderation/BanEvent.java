@@ -18,8 +18,8 @@
 package org.dockbox.hartshorn.server.minecraft.events.moderation;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.api.events.AbstractCancellableEvent;
 import org.dockbox.hartshorn.commands.CommandSource;
+import org.dockbox.hartshorn.events.AbstractCancellableEvent;
 
 import java.time.LocalDateTime;
 
@@ -34,10 +34,8 @@ public abstract class BanEvent<T> extends AbstractCancellableEvent {
 
     private final T target;
     private final CommandSource source;
-    @Setter
-    private Exceptional<String> reason;
-    @Setter
-    private Exceptional<LocalDateTime> expiration;
     private final LocalDateTime creation;
+    @Setter private Exceptional<String> reason;
+    @Setter private Exceptional<LocalDateTime> expiration;
 
 }

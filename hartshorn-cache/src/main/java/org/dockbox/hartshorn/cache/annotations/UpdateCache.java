@@ -18,7 +18,6 @@
 package org.dockbox.hartshorn.cache.annotations;
 
 import org.dockbox.hartshorn.cache.CacheManager;
-import org.dockbox.hartshorn.cache.SimpleCacheManager;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -36,6 +35,7 @@ public @interface UpdateCache {
     /**
      * The ID of the target cache. If this is left empty a name will be
      * generated based on the owning service.
+     *
      * @return the cache ID
      */
     String value() default "";
@@ -43,7 +43,8 @@ public @interface UpdateCache {
     /**
      * Indicates the cache manager to use. This type can be provided through
      * the active {@link org.dockbox.hartshorn.di.context.ApplicationContext}.
+     *
      * @return the type of the cache manager to use
      */
-    Class<? extends CacheManager> manager() default SimpleCacheManager.class;
+    Class<? extends CacheManager> manager() default CacheManager.class;
 }

@@ -17,8 +17,8 @@
 
 package org.dockbox.hartshorn.discord;
 
-import org.dockbox.hartshorn.api.i18n.common.Language;
 import org.dockbox.hartshorn.commands.CommandSource;
+import org.dockbox.hartshorn.i18n.common.Language;
 
 public interface DiscordCommandSource extends CommandSource {
 

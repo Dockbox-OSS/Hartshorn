@@ -29,7 +29,8 @@ public class JUnitInformation {
     public JUnitInformation() {
         try {
             this.filePath = Files.createTempDirectory("hartshorn-");
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             throw new RuntimeException(e);
         }
     }

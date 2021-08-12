@@ -18,6 +18,7 @@
 package org.dockbox.hartshorn.di.inject.wired;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.di.Key;
 import org.dockbox.hartshorn.di.annotations.inject.Bound;
 import org.dockbox.hartshorn.util.Reflect;
 
@@ -26,6 +27,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.Collection;
 
+import javax.inject.Named;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -33,22 +36,33 @@ import lombok.Getter;
 @AllArgsConstructor
 public class ConstructorBoundContext<T, I extends T> implements BoundContext<T, I> {
 
-    private final Class<T> contract;
+    private final Key<T> key;
     private final Class<I> implementation;
-    private final String name;
 
     @Override
-    public I create(Object... arguments) {
-        Class<?>[] argumentTypes = Arrays.stream(arguments).map(Object::getClass).toArray(Class<?>[]::new);
+    public String name() {
+        final Named named = this.key.named();
+        if (named != null) return named.value();
+        return "";
+    }
+
+    @Override
+    public Class<T> contract() {
+        return this.key.contract();
+    }
+
+    @Override
+    public I create(final Object... arguments) {
+        final Class<?>[] argumentTypes = Arrays.stream(arguments).map(Object::getClass).toArray(Class<?>[]::new);
         try {
-            Collection<Constructor<I>> constructors = Reflect.constructors(this.implementation(), Bound.class);
+            final Collection<Constructor<I>> constructors = Reflect.constructors(this.implementation(), Bound.class);
             Constructor<I> ctor = null;
-            for (Constructor<I> constructor : constructors) {
+            for (final Constructor<I> constructor : constructors) {
                 if (constructor.getParameterTypes().length != arguments.length) continue;
                 boolean valid = true;
                 for (int i = 0; i < constructor.getParameterTypes().length; i++) {
-                    Class<?> parameterType = constructor.getParameterTypes()[i];
-                    Object argument = arguments[i];
+                    final Class<?> parameterType = constructor.getParameterTypes()[i];
+                    final Object argument = arguments[i];
                     if (argument == null) {
                         throw new IllegalArgumentException("Autowired parameters can not be null");
                     }
@@ -56,7 +70,7 @@ public class ConstructorBoundContext<T, I extends T> implements BoundContext<T, 
                         valid = false;
                     }
                 }
-                if (valid){
+                if (valid) {
                     ctor = constructor;
                     break;
                 }
@@ -74,7 +88,7 @@ public class ConstructorBoundContext<T, I extends T> implements BoundContext<T, 
                 throw new IllegalArgumentException("Could not autowire " + this.implementation().getCanonicalName() + " as the applicable constructor is not marked with @AutoWired");
             }
         }
-        catch (InvocationTargetException | NoSuchMethodException | InstantiationException | IllegalAccessException e) {
+        catch (final InvocationTargetException | NoSuchMethodException | InstantiationException | IllegalAccessException e) {
             throw new IllegalArgumentException("Could not autowire " + this.implementation().getCanonicalName() + ", no constructor could be accessed", e);
         }
     }

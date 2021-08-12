@@ -166,12 +166,12 @@ public class SpongeBlock implements Block, SpongeComposite {
         ).or(false);
     }
 
-    public Exceptional<BlockSnapshot> snapshot() {
-        return Exceptional.of(this.snapshot.get());
-    }
-
     public Exceptional<BlockState> state() {
         return this.snapshot().map(BlockSnapshot::state);
+    }
+
+    public Exceptional<BlockSnapshot> snapshot() {
+        return Exceptional.of(this.snapshot.get());
     }
 
     @Override

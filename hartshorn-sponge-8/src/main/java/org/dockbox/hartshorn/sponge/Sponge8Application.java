@@ -21,18 +21,22 @@ import com.google.inject.Inject;
 
 import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.HartshornApplication;
-import org.dockbox.hartshorn.api.SimpleMetaProvider;
+import org.dockbox.hartshorn.api.MetaProviderImpl;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.di.DefaultModifiers;
 import org.dockbox.hartshorn.di.MetaProviderModifier;
 import org.dockbox.hartshorn.di.annotations.activate.Activator;
 import org.dockbox.hartshorn.di.annotations.inject.InjectConfig;
 import org.dockbox.hartshorn.sponge.event.EventBridge;
+import org.dockbox.hartshorn.sponge.game.SpongeComposite;
 import org.dockbox.hartshorn.sponge.inject.SpongeInjector;
 import org.dockbox.hartshorn.util.Reflect;
 import org.spongepowered.api.Sponge;
+import org.spongepowered.api.data.DataHolder;
+import org.spongepowered.api.data.DataRegistration;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.lifecycle.ConstructPluginEvent;
+import org.spongepowered.api.event.lifecycle.RegisterDataEvent;
 import org.spongepowered.plugin.PluginContainer;
 import org.spongepowered.plugin.jvm.Plugin;
 
@@ -50,9 +54,9 @@ public class Sponge8Application {
     public Sponge8Application() {
         Sponge8Application.instance = this;
         Exceptional.of("");
-        this.init = HartshornApplication.create(Sponge8Application.class,
+        this.init = HartshornApplication.lazy(Sponge8Application.class,
                 DefaultModifiers.ACTIVATE_ALL,
-                new MetaProviderModifier(SimpleMetaProvider::new)
+                new MetaProviderModifier(MetaProviderImpl::new)
         );
     }
 
@@ -61,11 +65,17 @@ public class Sponge8Application {
     }
 
     @Listener
-    public void on(ConstructPluginEvent event) {
+    public void on(final ConstructPluginEvent event) {
         this.init.run();
 
-        for (Class<? extends EventBridge> bridge : Reflect.children(EventBridge.class)) {
+        for (final Class<? extends EventBridge> bridge : Reflect.children(EventBridge.class)) {
             Sponge.eventManager().registerListeners(this.container, Hartshorn.context().get(bridge));
         }
+    }
+
+    @Listener
+    public void on(final RegisterDataEvent event) {
+        final DataRegistration registration = DataRegistration.of(SpongeComposite.COMPOSITE, DataHolder.Mutable.class);
+        event.register(registration);
     }
 }

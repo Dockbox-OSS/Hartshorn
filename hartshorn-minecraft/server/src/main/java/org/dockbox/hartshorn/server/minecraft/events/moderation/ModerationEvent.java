@@ -17,16 +17,15 @@
 
 package org.dockbox.hartshorn.server.minecraft.events.moderation;
 
-import org.dockbox.hartshorn.api.events.AbstractTargetEvent;
 import org.dockbox.hartshorn.commands.CommandSource;
+import org.dockbox.hartshorn.events.AbstractTargetEvent;
 import org.dockbox.hartshorn.server.minecraft.players.Player;
 
 import lombok.Getter;
 
 public abstract class ModerationEvent extends AbstractTargetEvent {
 
-    @Getter
-    private final CommandSource source;
+    @Getter private final CommandSource source;
 
     protected ModerationEvent(Player player, CommandSource source) {
         super(player);

@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.server.minecraft.events.entity;
 
-import org.dockbox.hartshorn.api.events.AbstractCancellableEvent;
+import org.dockbox.hartshorn.events.AbstractCancellableEvent;
 import org.dockbox.hartshorn.server.minecraft.entities.Entity;
 
 import lombok.AllArgsConstructor;

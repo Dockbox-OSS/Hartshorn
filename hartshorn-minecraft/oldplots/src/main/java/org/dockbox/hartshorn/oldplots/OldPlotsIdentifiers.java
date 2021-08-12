@@ -17,16 +17,16 @@
 
 package org.dockbox.hartshorn.oldplots;
 
-import org.dockbox.hartshorn.persistence.table.column.ColumnIdentifier;
-import org.dockbox.hartshorn.persistence.table.column.SimpleColumnIdentifier;
+import org.dockbox.hartshorn.persistence.table.ColumnIdentifier;
+import org.dockbox.hartshorn.persistence.table.ColumnIdentifierImpl;
 
 public final class OldPlotsIdentifiers {
 
-    public static final ColumnIdentifier<String> UUID = new SimpleColumnIdentifier<>("owner", String.class);
-    public static final ColumnIdentifier<String> WORLD = new SimpleColumnIdentifier<>("world", String.class);
-    public static final ColumnIdentifier<Integer> PLOT_X = new SimpleColumnIdentifier<>("plotIdX", Integer.class);
-    public static final ColumnIdentifier<Integer> PLOT_Z = new SimpleColumnIdentifier<>("plotIdZ", Integer.class);
-    public static final ColumnIdentifier<Integer> PLOT_ID = new SimpleColumnIdentifier<>("plotIdInternal", Integer.class);
+    public static final ColumnIdentifier<String> UUID = new ColumnIdentifierImpl<>("owner", String.class);
+    public static final ColumnIdentifier<String> WORLD = new ColumnIdentifierImpl<>("world", String.class);
+    public static final ColumnIdentifier<Integer> PLOT_X = new ColumnIdentifierImpl<>("plot_id_x", Integer.class);
+    public static final ColumnIdentifier<Integer> PLOT_Z = new ColumnIdentifierImpl<>("plot_id_z", Integer.class);
+    public static final ColumnIdentifier<Integer> PLOT_ID = new ColumnIdentifierImpl<>("id", Integer.class);
 
     private OldPlotsIdentifiers() {}
 }

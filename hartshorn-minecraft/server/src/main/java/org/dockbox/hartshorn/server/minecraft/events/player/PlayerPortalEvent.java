@@ -27,8 +27,7 @@ import lombok.Setter;
 @Getter
 public class PlayerPortalEvent extends PlayerTeleportEvent {
     private final PortalType portalType;
-    @Setter
-    private boolean usesPortal;
+    @Setter private boolean usesPortal;
 
     public PlayerPortalEvent(Subject subject, Location oldLocation, Location newLocation, boolean usesPortal, PortalType portalType) {
         super(subject, oldLocation, newLocation);

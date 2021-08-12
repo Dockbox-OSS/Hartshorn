@@ -35,11 +35,6 @@ public class JUnitInventoryRow extends AbstractInventoryRow {
     }
 
     @Override
-    public void slot(Item item, int index) {
-        if (index < this.capacity()) this.slots.put(index, item);
-    }
-
-    @Override
     public Collection<Item> items() {
         return HartshornUtils.asUnmodifiableList(this.slots.values());
     }
@@ -53,6 +48,11 @@ public class JUnitInventoryRow extends AbstractInventoryRow {
             }
         }
         return false;
+    }
+
+    @Override
+    public void slot(Item item, int index) {
+        if (index < this.capacity()) this.slots.put(index, item);
     }
 
     @Override

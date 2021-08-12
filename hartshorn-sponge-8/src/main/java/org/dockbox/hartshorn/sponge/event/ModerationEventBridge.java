@@ -18,9 +18,9 @@
 package org.dockbox.hartshorn.sponge.event;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.api.events.annotations.Posting;
 import org.dockbox.hartshorn.api.exceptions.NotImplementedException;
-import org.dockbox.hartshorn.api.i18n.text.Text;
+import org.dockbox.hartshorn.events.annotations.Posting;
+import org.dockbox.hartshorn.i18n.text.Text;
 import org.dockbox.hartshorn.server.minecraft.events.moderation.IpBannedEvent;
 import org.dockbox.hartshorn.server.minecraft.events.moderation.IpUnbannedEvent;
 import org.dockbox.hartshorn.server.minecraft.events.moderation.KickEvent;
@@ -112,7 +112,9 @@ public class ModerationEventBridge implements EventBridge {
 
     /**
      * Placeholder for NameBannedEvent NameUnbannedEvent, PlayerWarnedEvent, PlayerWarningExpired, and PlayerNotedEvent
-     * @param event The event
+     *
+     * @param event
+     *         The event
      */
     public void on(Void event) {
         throw new NotImplementedException();

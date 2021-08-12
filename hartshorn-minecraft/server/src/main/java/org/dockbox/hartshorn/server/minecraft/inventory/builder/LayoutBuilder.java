@@ -17,14 +17,14 @@
 
 package org.dockbox.hartshorn.server.minecraft.inventory.builder;
 
+import org.dockbox.hartshorn.di.properties.AttributeHolder;
 import org.dockbox.hartshorn.server.minecraft.inventory.Element;
 import org.dockbox.hartshorn.server.minecraft.inventory.InventoryLayout;
 import org.dockbox.hartshorn.server.minecraft.inventory.pane.PaginatedPane;
 import org.dockbox.hartshorn.server.minecraft.inventory.pane.StaticPane;
 import org.dockbox.hartshorn.server.minecraft.item.Item;
-import org.dockbox.hartshorn.di.properties.InjectableType;
 
-public abstract class LayoutBuilder implements InjectableType {
+public abstract class LayoutBuilder implements AttributeHolder {
 
     public LayoutBuilder set(Item item, int index) {
         return this.set(Element.of(item), index);

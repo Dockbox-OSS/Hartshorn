@@ -26,8 +26,7 @@ import lombok.Getter;
 
 public class PlayerWarnedEvent extends WarnEvent {
 
-    @Getter
-    private final LocalDateTime created;
+    @Getter private final LocalDateTime created;
 
     /**
      * The event fired when a player is warned

@@ -26,16 +26,14 @@ import org.dockbox.hartshorn.server.minecraft.players.Player;
 import lombok.Getter;
 
 @Getter
-public final class PlayerInteractEntityEvent extends PlayerInteractEvent {
+public final class PlayerInteractEntityEvent extends PlayerInteractEvent<Entity> {
 
     private final Entity entity;
     private final Vector3N interactionPoint;
-    private final ClickType clickType;
 
-    public PlayerInteractEntityEvent(Player player, Entity entity, Vector3N interactionPoint, ClickType clickType) {
-        super(player, Hand.EITHER, ClickType.SECONDARY);
+    public PlayerInteractEntityEvent(final Player player, final Hand hand, final Entity entity, final Vector3N interactionPoint, final ClickType clickType) {
+        super(player, hand, clickType, entity);
         this.entity = entity;
         this.interactionPoint = interactionPoint;
-        this.clickType = clickType;
     }
 }

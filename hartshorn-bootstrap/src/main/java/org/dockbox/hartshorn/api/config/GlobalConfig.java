@@ -26,6 +26,7 @@ public interface GlobalConfig {
 
     /**
      * Indicates whether to print stacktraces when exceptions occur.
+     *
      * @return Whether to print stacktraces
      */
     boolean stacktraces();
@@ -33,12 +34,14 @@ public interface GlobalConfig {
     /**
      * Indicates the {@link ExceptionLevels level at which exceptions
      * are logged}.
+     *
      * @return The exception level
      */
     ExceptionLevels level();
 
     /**
      * Indicates the current version of Hartshorn.
+     *
      * @return The current version.
      */
     String version();

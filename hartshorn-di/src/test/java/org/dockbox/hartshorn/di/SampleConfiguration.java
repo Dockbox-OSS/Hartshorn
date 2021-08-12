@@ -23,6 +23,6 @@ import org.dockbox.hartshorn.di.types.SampleInterface;
 public class SampleConfiguration extends InjectConfiguration {
     @Override
     public void collect() {
-        this.bind(SampleInterface.class, SampleImplementation.class);
+        this.bind(Key.of(SampleInterface.class), SampleImplementation.class);
     }
 }

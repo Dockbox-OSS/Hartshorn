@@ -29,8 +29,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public class FlatWorldGenerator extends AbstractWorldGenerator {
 
-    @Getter
-    private final List<Block> layers = HartshornUtils.emptyList();
+    @Getter private final List<Block> layers = HartshornUtils.emptyList();
 
     public FlatWorldGenerator layer(Block block) {
         this.layers.add(block);

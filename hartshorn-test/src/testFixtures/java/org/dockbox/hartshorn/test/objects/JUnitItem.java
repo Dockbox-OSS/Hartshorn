@@ -18,13 +18,13 @@
 package org.dockbox.hartshorn.test.objects;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.api.i18n.common.Language;
-import org.dockbox.hartshorn.api.i18n.text.Text;
 import org.dockbox.hartshorn.di.annotations.inject.Bound;
+import org.dockbox.hartshorn.i18n.common.Language;
+import org.dockbox.hartshorn.i18n.text.Text;
 import org.dockbox.hartshorn.server.minecraft.item.Enchant;
 import org.dockbox.hartshorn.server.minecraft.item.Item;
 import org.dockbox.hartshorn.server.minecraft.item.ItemTypes;
-import org.dockbox.hartshorn.server.minecraft.item.SimplePersistentItemModel;
+import org.dockbox.hartshorn.server.minecraft.item.PersistentItemModelImpl;
 import org.dockbox.hartshorn.server.minecraft.item.persistence.PersistentItemModel;
 import org.dockbox.hartshorn.server.minecraft.players.Profile;
 import org.dockbox.hartshorn.util.HartshornUtils;
@@ -38,19 +38,14 @@ import lombok.Setter;
 
 public class JUnitItem implements Item, JUnitPersistentDataHolder {
 
-    @Getter
-    private final String id;
+    @Getter private final String id;
     private final UUID persistentDataId = UUID.randomUUID();
     private final Set<Enchant> enchants = HartshornUtils.emptySet();
-    @Getter
-    private final List<Text> lore = HartshornUtils.emptyList();
+    @Getter private final List<Text> lore = HartshornUtils.emptyList();
 
-    @Getter
-    private Profile profile;
-    @Getter @Setter
-    private int amount = 1;
-    @Getter
-    private Text displayName;
+    @Getter private Profile profile;
+    @Getter @Setter private int amount = 1;
+    @Getter private Text displayName;
     private boolean treatAsBlock = false;
 
     @Bound
@@ -105,6 +100,11 @@ public class JUnitItem implements Item, JUnitPersistentDataHolder {
     }
 
     @Override
+    public int stackSize() {
+        return 64;
+    }
+
+    @Override
     public Set<Enchant> enchantments() {
         return HartshornUtils.asUnmodifiableSet(this.enchants);
     }
@@ -124,9 +124,9 @@ public class JUnitItem implements Item, JUnitPersistentDataHolder {
         return this.treatAsBlock;
     }
 
-    public Item treatAsBlock() {
-        this.treatAsBlock = true;
-        return this;
+    @Override
+    public boolean isHead() {
+        return Item.of(ItemTypes.SKELETON_SKULL).id().equals(this.id());
     }
 
     @Override
@@ -135,11 +135,6 @@ public class JUnitItem implements Item, JUnitPersistentDataHolder {
             this.profile = profile;
         }
         return this;
-    }
-
-    @Override
-    public boolean isHead() {
-        return Item.of(ItemTypes.SKELETON_SKULL).id().equals(this.id());
     }
 
     @Override
@@ -153,9 +148,9 @@ public class JUnitItem implements Item, JUnitPersistentDataHolder {
         return Exceptional.empty();
     }
 
-    @Override
-    public int stackSize() {
-        return 64;
+    public Item treatAsBlock() {
+        this.treatAsBlock = true;
+        return this;
     }
 
     @Override
@@ -169,12 +164,12 @@ public class JUnitItem implements Item, JUnitPersistentDataHolder {
     }
 
     @Override
-    public Class<? extends PersistentItemModel> modelType() {
-        return SimplePersistentItemModel.class;
+    public Class<? extends PersistentItemModel> type() {
+        return PersistentItemModelImpl.class;
     }
 
     @Override
     public PersistentItemModel model() {
-        return new SimplePersistentItemModel(this);
+        return new PersistentItemModelImpl(this);
     }
 }

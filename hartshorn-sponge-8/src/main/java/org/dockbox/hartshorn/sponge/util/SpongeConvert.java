@@ -38,16 +38,16 @@ import org.dockbox.hartshorn.api.domain.Identifiable;
 import org.dockbox.hartshorn.api.domain.Subject;
 import org.dockbox.hartshorn.api.domain.tuple.Tristate;
 import org.dockbox.hartshorn.api.domain.tuple.Vector3N;
-import org.dockbox.hartshorn.api.i18n.entry.DefaultResources;
-import org.dockbox.hartshorn.api.i18n.entry.Resource;
-import org.dockbox.hartshorn.api.i18n.permissions.PermissionContext;
-import org.dockbox.hartshorn.api.i18n.text.Text;
-import org.dockbox.hartshorn.api.i18n.text.actions.ClickAction;
-import org.dockbox.hartshorn.api.i18n.text.actions.HoverAction;
-import org.dockbox.hartshorn.api.i18n.text.actions.ShiftClickAction;
-import org.dockbox.hartshorn.api.i18n.text.pagination.Pagination;
 import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.commands.RunCommandAction;
+import org.dockbox.hartshorn.i18n.entry.DefaultResources;
+import org.dockbox.hartshorn.i18n.entry.Resource;
+import org.dockbox.hartshorn.i18n.permissions.PermissionContext;
+import org.dockbox.hartshorn.i18n.text.Text;
+import org.dockbox.hartshorn.i18n.text.actions.ClickAction;
+import org.dockbox.hartshorn.i18n.text.actions.HoverAction;
+import org.dockbox.hartshorn.i18n.text.actions.ShiftClickAction;
+import org.dockbox.hartshorn.i18n.text.pagination.Pagination;
 import org.dockbox.hartshorn.server.minecraft.bossbar.BossbarColor;
 import org.dockbox.hartshorn.server.minecraft.bossbar.BossbarStyle;
 import org.dockbox.hartshorn.server.minecraft.dimension.Block;
@@ -60,9 +60,9 @@ import org.dockbox.hartshorn.server.minecraft.entities.ItemFrame.Rotation;
 import org.dockbox.hartshorn.server.minecraft.events.entity.SpawnSource;
 import org.dockbox.hartshorn.server.minecraft.inventory.Slot;
 import org.dockbox.hartshorn.server.minecraft.item.Enchant;
+import org.dockbox.hartshorn.server.minecraft.item.EnchantImpl;
 import org.dockbox.hartshorn.server.minecraft.item.Item;
 import org.dockbox.hartshorn.server.minecraft.item.ReferencedItem;
-import org.dockbox.hartshorn.server.minecraft.item.SimpleEnchant;
 import org.dockbox.hartshorn.server.minecraft.players.Gamemode;
 import org.dockbox.hartshorn.server.minecraft.players.Hand;
 import org.dockbox.hartshorn.server.minecraft.players.Player;
@@ -70,8 +70,8 @@ import org.dockbox.hartshorn.server.minecraft.players.Sounds;
 import org.dockbox.hartshorn.sponge.dim.SpongeBlock;
 import org.dockbox.hartshorn.sponge.dim.SpongeLocation;
 import org.dockbox.hartshorn.sponge.dim.SpongeWorld;
-import org.dockbox.hartshorn.sponge.game.SpongeConsole;
 import org.dockbox.hartshorn.sponge.game.SpongePlayer;
+import org.dockbox.hartshorn.sponge.game.SpongeSystemSubject;
 import org.dockbox.hartshorn.sponge.game.entity.SpongeArmorStand;
 import org.dockbox.hartshorn.sponge.game.entity.SpongeGenericEntity;
 import org.dockbox.hartshorn.sponge.game.entity.SpongeItemFrame;
@@ -135,11 +135,11 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 @SuppressWarnings({
-                          "ClassWithTooManyMethods",
-                          "OverlyComplexClass",
-                          "unchecked",
-                          "OverlyStrongTypeCast"
-                  })
+        "ClassWithTooManyMethods",
+        "OverlyComplexClass",
+        "unchecked",
+        "OverlyStrongTypeCast"
+})
 public enum SpongeConvert {
     ;
 
@@ -190,6 +190,89 @@ public enum SpongeConvert {
             return fromSponge((Enchantment) object);
         }
         return Exceptional.empty();
+    }
+
+    public static org.dockbox.hartshorn.server.minecraft.entities.Entity fromSponge(Entity entity) {
+        EntityType<?> type = entity.type();
+        // TODO: Better switching
+        if (type == EntityTypes.PLAYER.get()) {
+            return new SpongePlayer(entity.uniqueId(), ((ServerPlayer) entity).name());
+        }
+        else if (type == EntityTypes.ARMOR_STAND.get()) {
+            return new SpongeArmorStand((ArmorStand) entity);
+        }
+        else if (type == EntityTypes.ITEM_FRAME.get()) {
+            return new SpongeItemFrame((org.spongepowered.api.entity.hanging.ItemFrame) entity);
+        }
+        else {
+            return new SpongeGenericEntity(new WeakReference<>(entity));
+        }
+    }
+
+    @NotNull
+    public static Exceptional<CommandSource> fromSponge(org.spongepowered.api.service.permission.Subject subject) {
+        if (subject instanceof SystemSubject) {
+            return Exceptional.of(SpongeSystemSubject.instance());
+        }
+        else if (subject instanceof ServerPlayer) {
+            return Exceptional.of(fromSponge((ServerPlayer) subject));
+        }
+        // TODO: Reimplement once Discord bridge is added
+//        else if (subject instanceof BridgeCommandSource) {
+//            return Exceptional.of(new MagiBridgeCommandSource((BridgeCommandSource) subject));
+//        }
+        return Exceptional.of(new TypeConversionException(CommandSource.class, subject.getClass().getSimpleName()));
+    }
+
+    @NotNull
+    public static Location fromSponge(ServerLocation location) {
+        SpongeWorld world = fromSponge(location.world());
+        Vector3N vector3N = Vector3N.of(location.x(), location.y(), location.z());
+        return new SpongeLocation(vector3N, world);
+    }
+
+    @NotNull
+    public static SpongeWorld fromSponge(ServerWorld world) {
+        return new SpongeWorld(world.key());
+    }
+
+    @NotNull
+    public static Gamemode fromSponge(GameMode gamemode) {
+        try {
+            return Enum.valueOf(Gamemode.class, gamemode.toString());
+        }
+        catch (IllegalArgumentException | NullPointerException e) {
+            return Gamemode.OTHER;
+        }
+    }
+
+    @NotNull
+    public static ReferencedItem<ItemStack> fromSponge(ItemStack item) {
+        // Create a copy of the ItemStack so Sponge doesn't modify the Item reference
+        return new SpongeItem(item.copy());
+    }
+
+    @NotNull
+    public static Exceptional<Enchant> fromSponge(Enchantment enchantment) {
+        try {
+            String id = enchantment.type().key(RegistryTypes.ENCHANTMENT_TYPE).value();
+            int level = enchantment.level();
+            Enchant enchant = new EnchantImpl(org.dockbox.hartshorn.server.minecraft.item.Enchantment.valueOf(id.toUpperCase()), level);
+            return Exceptional.of(enchant);
+        }
+        catch (IllegalArgumentException | NullPointerException e) {
+            return Exceptional.of(e);
+        }
+    }
+
+    @NotNull
+    public static Player fromSponge(ServerPlayer player) {
+        return fromSponge(player.user());
+    }
+
+    @NotNull
+    public static Player fromSponge(org.spongepowered.api.entity.living.player.User player) {
+        return new SpongePlayer(player.uniqueId(), player.name());
     }
 
     @NotNull
@@ -325,19 +408,6 @@ public enum SpongeConvert {
     }
 
     @NotNull
-    public static Exceptional<Enchant> fromSponge(Enchantment enchantment) {
-        try {
-            String id = enchantment.type().key(RegistryTypes.ENCHANTMENT_TYPE).value();
-            int level = enchantment.level();
-            Enchant enchant = new SimpleEnchant(org.dockbox.hartshorn.server.minecraft.item.Enchantment.valueOf(id.toUpperCase()), level);
-            return Exceptional.of(enchant);
-        }
-        catch (IllegalArgumentException | NullPointerException e) {
-            return Exceptional.of(e);
-        }
-    }
-
-    @NotNull
     public static DefaultedRegistryReference<GameMode> toSponge(Gamemode gamemode) {
         return switch (gamemode) {
             case SURVIVAL -> GameModes.SURVIVAL;
@@ -357,7 +427,8 @@ public enum SpongeConvert {
     public static Text fromSponge(Component component) {
         if (component instanceof TextComponent textComponent) {
             return fromSponge(textComponent);
-        } else return Text.of();
+        }
+        else return Text.of();
     }
 
     @NotNull
@@ -421,43 +492,6 @@ public enum SpongeConvert {
         return styleString.toString();
     }
 
-    @NotNull
-    public static Exceptional<CommandSource> fromSponge(org.spongepowered.api.service.permission.Subject subject) {
-        if (subject instanceof SystemSubject) {
-            return Exceptional.of(SpongeConsole.instance());
-        }
-        else if (subject instanceof ServerPlayer) {
-            return Exceptional.of(fromSponge((ServerPlayer) subject));
-        }
-        // TODO: Reimplement once Discord bridge is added
-//        else if (subject instanceof BridgeCommandSource) {
-//            return Exceptional.of(new MagiBridgeCommandSource((BridgeCommandSource) subject));
-//        }
-        return Exceptional.of(new TypeConversionException(CommandSource.class, subject.getClass().getSimpleName()));
-    }
-
-    @NotNull
-    public static Gamemode fromSponge(GameMode gamemode) {
-        try {
-            return Enum.valueOf(Gamemode.class, gamemode.toString());
-        }
-        catch (IllegalArgumentException | NullPointerException e) {
-            return Gamemode.OTHER;
-        }
-    }
-
-    @NotNull
-    public static Location fromSponge(ServerLocation location) {
-        SpongeWorld world = fromSponge(location.world());
-        Vector3N vector3N = Vector3N.of(location.x(), location.y(), location.z());
-        return new SpongeLocation(vector3N, world);
-    }
-
-    @NotNull
-    public static SpongeWorld fromSponge(ServerWorld world) {
-        return new SpongeWorld(world.key());
-    }
-
     public static Hand fromSponge(HandType handType) {
         if (handType == HandTypes.MAIN_HAND.get()) return Hand.MAIN_HAND;
         else if (handType == HandTypes.OFF_HAND.get()) return Hand.OFF_HAND;
@@ -470,22 +504,6 @@ public enum SpongeConvert {
             // Create a copy of the ItemStack so Sponge doesn't modify the Item reference
             return ((SpongeItem) item).reference().or(ItemStack.empty()).copy();
         return ItemStack.empty();
-    }
-
-    @NotNull
-    public static Player fromSponge(ServerPlayer player) {
-        return fromSponge(player.user());
-    }
-
-    @NotNull
-    public static Player fromSponge(org.spongepowered.api.entity.living.player.User player) {
-        return new SpongePlayer(player.uniqueId(), player.name());
-    }
-
-    @NotNull
-    public static ReferencedItem<ItemStack> fromSponge(ItemStack item) {
-        // Create a copy of the ItemStack so Sponge doesn't modify the Item reference
-        return new SpongeItem(item.copy());
     }
 
     public static Exceptional<ServerPlayer> toSponge(Player player) {
@@ -554,23 +572,6 @@ public enum SpongeConvert {
         }
         catch (IllegalArgumentException | NullPointerException e) {
             return BlockFace.NONE;
-        }
-    }
-
-    public static org.dockbox.hartshorn.server.minecraft.entities.Entity fromSponge(Entity entity) {
-        EntityType<?> type = entity.type();
-        // TODO: Better switching
-        if (type == EntityTypes.PLAYER.get()) {
-            return new SpongePlayer(entity.uniqueId(), ((ServerPlayer) entity).name());
-        }
-        else if (type == EntityTypes.ARMOR_STAND.get()) {
-            return new SpongeArmorStand((ArmorStand) entity);
-        }
-        else if (type == EntityTypes.ITEM_FRAME.get()) {
-            return new SpongeItemFrame((org.spongepowered.api.entity.hanging.ItemFrame) entity);
-        }
-        else {
-            return new SpongeGenericEntity(new WeakReference<>(entity));
         }
     }
 

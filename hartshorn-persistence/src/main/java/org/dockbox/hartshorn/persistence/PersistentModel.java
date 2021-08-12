@@ -19,8 +19,8 @@ package org.dockbox.hartshorn.persistence;
 
 public interface PersistentModel<T extends PersistentCapable<? extends PersistentModel<T>>> {
 
-    Class<? extends T> capableType();
+    Class<? extends T> type();
 
-    T toPersistentCapable();
+    T restore();
 
 }
