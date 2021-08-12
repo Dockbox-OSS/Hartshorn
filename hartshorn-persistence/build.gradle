@@ -21,15 +21,15 @@ dependencies {
     apiInclude project(':hartshorn-bootstrap')
     apiInclude project(':hartshorn-proxy')
 
-    apiInclude 'com.fasterxml.jackson.core:jackson-core:2.12.3'
-    include 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.12.3'
-    include 'com.fasterxml.jackson.dataformat:jackson-dataformat-properties:2.12.3'
-    include 'com.fasterxml.jackson.dataformat:jackson-dataformat-toml:2.12.3'
+    apiInclude "com.fasterxml.jackson.core:jackson-core:$jacksonVersion"
+    include "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:$jacksonVersion"
+    include "com.fasterxml.jackson.dataformat:jackson-dataformat-properties:$jacksonVersion"
+    include "com.fasterxml.jackson.dataformat:jackson-dataformat-toml:$jacksonVersion"
+    include "com.fasterxml.jackson.dataformat:jackson-dataformat-xml:$jacksonVersion"
 
-    include 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.12.3'
-    include 'org.codehaus.woodstox:woodstox-core-asl:4.4.1'
+    include "org.codehaus.woodstox:woodstox-core-asl:$woodstoxVersion"
 
     // SQL Extension dependencies
-    include "org.hibernate:hibernate-core:5.5.5.Final"
-    include 'org.apache.derby:derby:10.8.2.2'
+    include "org.hibernate:hibernate-core:$hibernateVersion"
+    include "org.apache.derby:derby:$derbyVersion"
 }

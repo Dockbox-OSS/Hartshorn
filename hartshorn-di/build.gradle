@@ -21,6 +21,6 @@ dependencies {
 
     testImplementation project(':hartshorn-bootstrap')
 
-    apiShare 'javax.inject:javax.inject:1'
+    apiShare "javax.inject:javax.inject:$javaxInjectVersion"
     apiInclude "org.reflections:reflections:$reflectionsVersion"
 }

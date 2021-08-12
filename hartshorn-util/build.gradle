@@ -21,9 +21,9 @@ dependencies {
     testImplementation project(':hartshorn-di').sourceSets.impl.output
 
     apiInclude "org.reflections:reflections:$reflectionsVersion"
-    apiInclude 'commons-beanutils:commons-beanutils:1.9.4'
-    apiInclude "org.jooq:joor:0.9.14"
+    apiInclude "commons-beanutils:commons-beanutils:$beanUtilsVersion"
+    apiInclude "org.jooq:joor:$joorVersion"
 
-    apiInclude 'com.mortennobel:java-image-scaling:0.8.6'
-    apiInclude 'com.jhlabs:filters:2.0.235-1'
+    apiInclude "com.mortennobel:java-image-scaling:$imageScalingVersion"
+    apiInclude "com.jhlabs:filters:$jhlabsFiltersVersion"
 }

@@ -42,15 +42,15 @@ configurations {
 }
 
 minecraft {
-    version("1.16.5")
+    version("$minecraftVersion")
     platform(org.spongepowered.gradle.vanilla.repository.MinecraftPlatform.SERVER)
 }
 
 sponge {
-    apiVersion('8.0.0')
-    plugin('hartshorn') {
+    apiVersion("$spongeApiVersion")
+    plugin("$pluginId") {
         loader(org.spongepowered.gradle.plugin.config.PluginLoaders.JAVA_PLAIN)
-        displayName('Hartshorn')
+        displayName("$pluginName")
         mainClass('org.dockbox.hartshorn.sponge.Sponge8Application')
     }
 }
@@ -73,9 +73,9 @@ dependencies {
     }
 
     // Additional shaded dependencies, these are not available on the platform by default
-    includeShadow "org.hibernate:hibernate-core:5.5.5.Final"
-    includeShadow 'org.apache.derby:derby:10.8.2.2'
-    includeShadow 'javax.xml.bind:jaxb-api:2.2.4'
+    includeShadow "org.hibernate:hibernate-core:$hibernateVersion"
+    includeShadow "org.apache.derby:derby:$derbyVersion"
+    includeShadow "javax.xml.bind:jaxb-api:$javaxJaxbVersion"
 
 }
 
@@ -97,14 +97,14 @@ shadowJar {
 task copyArtifacts {
     doLast {
         def version = getVersionName()
-        def DIST_DEST_DIR = "${rootDir}/hartshorn-assembly/distributions"
-        def DIRT_SRC_DIR = "${buildDir}/libs"
+        def DIST_DEST_DIR = "$rootDir/hartshorn-assembly/distributions"
+        def DIRT_SRC_DIR = "$buildDir/libs"
 
         ant.mkdir(dir: DIST_DEST_DIR)
         println("Copying all built files to $DIST_DEST_DIR")
         ant.copy(todir: DIST_DEST_DIR) {
             fileset dir: DIRT_SRC_DIR,
-                    includes: "*${version}-${date}*.jar"
+                    includes: "*$version-$date*.jar"
         }
 
     }

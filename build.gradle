@@ -22,15 +22,15 @@ buildscript {
         maven { url "https://plugins.gradle.org/m2/" }
     }
     dependencies {
-        classpath 'io.franzbecker:gradle-lombok:1.6'
+        classpath "io.franzbecker:gradle-lombok:$gradleLombokVersion"
     }
 }
 
 plugins {
     id 'java'
     id 'java-library'
-    id 'org.cadixdev.licenser' version '0.5.0'
-    id 'io.freefair.aggregate-javadoc' version '6.0.0-m2'
+    id 'org.cadixdev.licenser' version "$licenserVersion"
+    id 'io.freefair.aggregate-javadoc' version "$aggregateJavadocVersion"
 }
 
 static def getVersionName() {
@@ -135,18 +135,18 @@ allprojects {
         dependencies {
             // Typically included by platforms
             apiInclude "org.slf4j:slf4j-api:$slf4jVersion"
-            apiInclude "com.google.guava:guava:${guavaVersion}"
-            apiInclude group: 'javax.persistence', name: 'javax.persistence-api', version: '2.2'
+            apiInclude "com.google.guava:guava:$guavaVersion"
+            apiInclude "javax.persistence:javax.persistence-api:$javaxPersistenceVersion"
 
             // Compile/source dependencies
             apiInclude("org.jetbrains:annotations:$jetbrainsAnnotationsVersion")
 
             // Lombok
-            apiInclude 'org.projectlombok:lombok:1.18.20'
+            apiInclude "org.projectlombok:lombok:$lombokVersion"
 
-            annotationProcessor 'org.projectlombok:lombok:1.18.20'
-            implAnnotationProcessor 'org.projectlombok:lombok:1.18.20'
-            testAnnotationProcessor 'org.projectlombok:lombok:1.18.20'
+            annotationProcessor "org.projectlombok:lombok:$lombokVersion"
+            implAnnotationProcessor "org.projectlombok:lombok:$lombokVersion"
+            testAnnotationProcessor "org.projectlombok:lombok:$lombokVersion"
 
             // Testing requirements
             testImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"
