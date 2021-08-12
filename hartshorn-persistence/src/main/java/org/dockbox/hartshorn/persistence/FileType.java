@@ -18,10 +18,11 @@
 package org.dockbox.hartshorn.persistence;
 
 import org.dockbox.hartshorn.api.domain.FileTypes;
-import org.dockbox.hartshorn.di.annotations.inject.Named;
 
 import java.lang.annotation.Annotation;
 import java.nio.file.Path;
+
+import javax.inject.Named;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

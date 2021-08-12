@@ -17,10 +17,11 @@
 
 package org.dockbox.hartshorn.di.context;
 
-import org.dockbox.hartshorn.di.annotations.inject.Named;
 import org.dockbox.hartshorn.di.properties.Attribute;
 
 import java.util.function.Consumer;
+
+import javax.inject.Named;
 
 public interface HartshornContext extends Context {
 

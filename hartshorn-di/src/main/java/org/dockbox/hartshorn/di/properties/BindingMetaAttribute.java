@@ -17,8 +17,9 @@
 
 package org.dockbox.hartshorn.di.properties;
 
-import org.dockbox.hartshorn.di.annotations.inject.Named;
 import org.dockbox.hartshorn.di.binding.Bindings;
+
+import javax.inject.Named;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

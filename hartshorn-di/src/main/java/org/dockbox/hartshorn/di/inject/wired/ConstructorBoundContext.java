@@ -20,13 +20,14 @@ package org.dockbox.hartshorn.di.inject.wired;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.di.Key;
 import org.dockbox.hartshorn.di.annotations.inject.Bound;
-import org.dockbox.hartshorn.di.annotations.inject.Named;
 import org.dockbox.hartshorn.util.Reflect;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.Collection;
+
+import javax.inject.Named;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
