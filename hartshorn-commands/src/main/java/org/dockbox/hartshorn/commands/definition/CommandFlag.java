@@ -17,8 +17,18 @@
 
 package org.dockbox.hartshorn.commands.definition;
 
+/**
+ * Represents a single flag. Flags typically represent a option which is not
+ * expected to be present by default, but allows commands to define custom
+ * behavior.
+ */
 public interface CommandFlag extends CommandPartial {
 
+    /**
+     * Gets whether the flag expects a value to be present.
+     *
+     * @return <code>true</code> if the flag expects a value, or <code>false</code>.
+     */
     boolean value();
 
 }

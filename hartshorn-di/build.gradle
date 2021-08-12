@@ -16,10 +16,11 @@
  */
 
 dependencies {
-    include project(':hartshorn-core')
-    include project(':hartshorn-util')
-    include "com.google.inject:guice:$guiceVersion"
+    apiShare project(':hartshorn-core')
+    apiShare project(':hartshorn-util')
 
-    share 'javax.inject:javax.inject:1'
-    share "org.reflections:reflections:$reflectionsVersion"
+    testImplementation project(':hartshorn-bootstrap')
+
+    apiShare "javax.inject:javax.inject:$javaxInjectVersion"
+    apiInclude "org.reflections:reflections:$reflectionsVersion"
 }

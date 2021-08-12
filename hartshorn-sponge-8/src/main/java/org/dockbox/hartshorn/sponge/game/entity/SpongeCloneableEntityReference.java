@@ -25,11 +25,10 @@ import org.spongepowered.api.world.server.ServerLocation;
 
 public abstract class SpongeCloneableEntityReference
         <E extends CloneableEntity<E>,
-        M extends net.minecraft.world.entity.Entity,
-        S extends org.spongepowered.api.entity.Entity>
-    extends SpongeEntityReference<S>
-    implements SpongeEntity<M, S>, SpongeCloneableEntity<E, S>
-{
+                M extends net.minecraft.world.entity.Entity,
+                S extends org.spongepowered.api.entity.Entity>
+        extends SpongeEntityReference<S>
+        implements SpongeEntity<M, S>, SpongeCloneableEntity<E, S> {
     public SpongeCloneableEntityReference(S entity) {
         super(entity);
     }

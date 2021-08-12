@@ -20,7 +20,7 @@ package org.dockbox.hartshorn.sponge.dim;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.domain.tuple.Vector3N;
 import org.dockbox.hartshorn.di.annotations.inject.Binds;
-import org.dockbox.hartshorn.di.annotations.inject.Wired;
+import org.dockbox.hartshorn.di.annotations.inject.Bound;
 import org.dockbox.hartshorn.server.minecraft.dimension.position.Location;
 import org.dockbox.hartshorn.server.minecraft.dimension.world.World;
 import org.dockbox.hartshorn.sponge.game.SpongeComposite;
@@ -34,13 +34,13 @@ public class SpongeLocation extends Location implements SpongeComposite {
     private final Vector3N position;
     private final SpongeWorld world;
 
-    @Wired
-    public SpongeLocation(World world) {
+    @Bound
+    public SpongeLocation(final World world) {
         this(world.spawnPosition(), world);
     }
 
-    @Wired
-    public SpongeLocation(Vector3N position, World world) {
+    @Bound
+    public SpongeLocation(final Vector3N position, final World world) {
         if (!(world instanceof SpongeWorld spongeWorld)) {
             throw new IllegalArgumentException("Provided world cannot be used as a Sponge reference");
         }
@@ -48,7 +48,7 @@ public class SpongeLocation extends Location implements SpongeComposite {
         this.position = position;
     }
 
-    public SpongeLocation(Vector3N position, SpongeWorld world) {
+    public SpongeLocation(final Vector3N position, final SpongeWorld world) {
         this.position = position;
         this.world = world;
     }
@@ -59,17 +59,25 @@ public class SpongeLocation extends Location implements SpongeComposite {
     }
 
     @Override
-    public Location expand(Vector3N vector) {
-        return new SpongeLocation(this.position.expand(vector), this.world);
-    }
-
-    @Override
     public Vector3N vector() {
         return this.position;
     }
 
     @Override
+    public Location expand(final Vector3N vector) {
+        return new SpongeLocation(this.position.expand(vector), this.world);
+    }
+
+    @Override
     public World world() {
         return this.world;
+    }
+
+    @Override
+    public String toString() {
+        return "SpongeLocation{" +
+                "position=" + this.position +
+                ", world=" + this.world.key().asString() +
+                '}';
     }
 }

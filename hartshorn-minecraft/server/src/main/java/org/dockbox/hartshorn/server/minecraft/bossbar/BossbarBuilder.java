@@ -18,7 +18,7 @@
 package org.dockbox.hartshorn.server.minecraft.bossbar;
 
 import org.dockbox.hartshorn.api.Hartshorn;
-import org.dockbox.hartshorn.api.i18n.text.Text;
+import org.dockbox.hartshorn.i18n.text.Text;
 
 import java.util.UUID;
 

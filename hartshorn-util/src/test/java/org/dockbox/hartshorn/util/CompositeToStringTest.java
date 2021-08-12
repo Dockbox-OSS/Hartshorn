@@ -28,6 +28,20 @@ import java.lang.annotation.RetentionPolicy;
 
 import static org.hamcrest.core.StringContains.containsString;
 
+@Retention(RetentionPolicy.RUNTIME)
+@interface Component {
+}
+
+@Retention(RetentionPolicy.RUNTIME)
+@interface Router {
+    String value() default "";
+}
+
+@Retention(RetentionPolicy.RUNTIME)
+@CompositeOf({ Component.class, Router.class })
+@interface Application {
+}
+
 @Router("/test")
 @Application
 public class CompositeToStringTest {
@@ -41,18 +55,4 @@ public class CompositeToStringTest {
     public void canGetTwoRouters() {
         Assertions.assertEquals(2, AnnotationHelper.allOrEmpty(CompositeToStringTest.class, Router.class).size());
     }
-}
-
-@Retention(RetentionPolicy.RUNTIME)
-@interface Component {
-}
-
-@Retention(RetentionPolicy.RUNTIME)
-@interface Router {
-    String value() default "";
-}
-
-@Retention(RetentionPolicy.RUNTIME)
-@CompositeOf({Component.class, Router.class})
-@interface Application {
 }

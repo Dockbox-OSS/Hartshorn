@@ -18,7 +18,7 @@
 package org.dockbox.hartshorn.server.minecraft.inventory;
 
 import org.dockbox.hartshorn.server.minecraft.item.Item;
-import org.dockbox.hartshorn.server.minecraft.item.storage.MinecraftItems;
+import org.dockbox.hartshorn.server.minecraft.item.ItemTypes;
 
 public interface IndexedInventory extends Inventory {
 
@@ -32,18 +32,6 @@ public interface IndexedInventory extends Inventory {
      *         The inventory index
      */
     void slot(Item item, int index);
-
-    /**
-     * Gets the {@link Item} in the requested position within the inventory. If the position is out of
-     * bounds, or if there is no item present, {@link MinecraftItems#air()} is returned instead.
-     * Indices start at zero.
-     *
-     * @param index
-     *         The inventory index
-     *
-     * @return The {@link Item}, or {@link MinecraftItems#air() air}.
-     */
-    Item slot(int index);
 
     /**
      * Returns the first occurring index of the given {@link Item}. If the item is not present, -1 is
@@ -63,5 +51,17 @@ public interface IndexedInventory extends Inventory {
         }
         return -1; // No matches
     }
+
+    /**
+     * Gets the {@link Item} in the requested position within the inventory. If the position is out of
+     * bounds, or if there is no item present, {@link ItemTypes#AIR} is returned instead.
+     * Indices start at zero.
+     *
+     * @param index
+     *         The inventory index
+     *
+     * @return The {@link Item}, or {@link ItemTypes#AIR air}.
+     */
+    Item slot(int index);
 
 }

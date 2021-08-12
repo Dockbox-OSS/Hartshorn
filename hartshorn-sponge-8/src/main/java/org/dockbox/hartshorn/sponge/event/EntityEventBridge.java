@@ -17,8 +17,8 @@
 
 package org.dockbox.hartshorn.sponge.event;
 
-import org.dockbox.hartshorn.api.events.annotations.Posting;
-import org.dockbox.hartshorn.api.events.parents.Cancellable;
+import org.dockbox.hartshorn.events.annotations.Posting;
+import org.dockbox.hartshorn.events.parents.Cancellable;
 import org.dockbox.hartshorn.server.minecraft.events.entity.SpawnSource;
 import org.dockbox.hartshorn.server.minecraft.events.entity.SummonEntityEvent;
 import org.dockbox.hartshorn.server.minecraft.events.player.interact.PlayerSummonEntityEvent;
@@ -31,7 +31,7 @@ import org.spongepowered.api.event.cause.entity.SpawnTypes;
 import org.spongepowered.api.event.entity.SpawnEntityEvent;
 
 // TODO: Player summon entity event
-@Posting({SummonEntityEvent.class, PlayerSummonEntityEvent.class})
+@Posting({ SummonEntityEvent.class, PlayerSummonEntityEvent.class })
 public class EntityEventBridge implements EventBridge {
 
     @Listener
@@ -43,7 +43,7 @@ public class EntityEventBridge implements EventBridge {
         for (Entity entity : event.entities()) {
             final org.dockbox.hartshorn.server.minecraft.entities.Entity target = SpongeConvert.fromSponge(entity);
             final Cancellable cancellable = new SummonEntityEvent(target, source).post();
-            
+
             if (cancellable.cancelled()) {
                 event.setCancelled(true);
                 // Don't continue iterating if we already cancelled the source event

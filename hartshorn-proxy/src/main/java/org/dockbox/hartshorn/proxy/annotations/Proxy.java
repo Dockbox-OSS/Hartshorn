@@ -17,7 +17,10 @@
 
 package org.dockbox.hartshorn.proxy.annotations;
 
+import org.dockbox.hartshorn.di.annotations.component.Component;
+import org.dockbox.hartshorn.proxy.ProxyInjectionService;
 import org.dockbox.hartshorn.proxy.handle.Phase;
+import org.dockbox.hartshorn.util.annotations.Extends;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -30,6 +33,8 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
+@Extends(Component.class)
+@Component(owner = ProxyInjectionService.class)
 public @interface Proxy {
     /**
      * The target class for the proxy. Can be a interface, abstract, or concrete class.

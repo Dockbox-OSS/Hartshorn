@@ -36,7 +36,9 @@ import java.lang.annotation.Target;
 public @interface Parameter {
 
     Class<? extends CustomParameterPattern> pattern() default HashtagParameterPattern.class;
+
     String value();
+
     String usage() default "";
 
 }

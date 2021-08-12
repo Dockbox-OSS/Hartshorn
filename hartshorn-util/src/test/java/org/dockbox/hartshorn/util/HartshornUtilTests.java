@@ -44,6 +44,254 @@ import java.util.stream.Stream;
 
 public class HartshornUtilTests {
 
+    private static final int minute = 60;
+    private static final int hour = 60 * minute;
+    private static final int day = 24 * hour;
+    private static final int week = 7 * day;
+
+    private static Stream<Arguments> modifiableCollections() {
+        return Stream.of(
+                Arguments.of(HartshornUtils.emptyList()),
+                Arguments.of(HartshornUtils.emptyConcurrentList()),
+                Arguments.of(HartshornUtils.asList("value", "other")),
+                Arguments.of(HartshornUtils.asList(Arrays.asList("value", "other"))),
+                Arguments.of(HartshornUtils.asList(Arrays.asList("value", "other"))),
+                Arguments.of(HartshornUtils.emptySet()),
+                Arguments.of(HartshornUtils.emptyConcurrentSet()),
+                Arguments.of(HartshornUtils.asSet("value", "other")),
+                Arguments.of(HartshornUtils.asSet(Arrays.asList("value", "other")))
+
+        );
+    }
+
+    private static Stream<Arguments> unmodifiableCollections() {
+        return Stream.of(
+                Arguments.of(HartshornUtils.asUnmodifiableList("value", "other")),
+                Arguments.of(HartshornUtils.asUnmodifiableList(Arrays.asList("value", "other"))),
+                Arguments.of(HartshornUtils.asUnmodifiableList((Collection<String>) Arrays.asList("value", "other"))),
+                Arguments.of(HartshornUtils.asUnmodifiableSet("value", "other")),
+                Arguments.of(HartshornUtils.asUnmodifiableSet(Arrays.asList("value", "other"))),
+                Arguments.of(HartshornUtils.asUnmodifiableCollection("value", "other")),
+                Arguments.of(HartshornUtils.asUnmodifiableCollection(Arrays.asList("value", "other")))
+
+        );
+    }
+
+    private static Stream<Arguments> capitalizeValues() {
+        return Stream.of(
+                Arguments.of("value", "Value"),
+                Arguments.of("Value", "Value"),
+                Arguments.of("VALUE", "VALUE"),
+                Arguments.of(" value", " value")
+        );
+    }
+
+    private static Stream<Arguments> hexDigits() {
+        return Stream.of(
+                Arguments.of(0, '0'),
+                Arguments.of(1, '1'),
+                Arguments.of(2, '2'),
+                Arguments.of(3, '3'),
+                Arguments.of(4, '4'),
+                Arguments.of(5, '5'),
+                Arguments.of(6, '6'),
+                Arguments.of(7, '7'),
+                Arguments.of(8, '8'),
+                Arguments.of(9, '9'),
+                Arguments.of(0xA, 'A'),
+                Arguments.of(0xB, 'B'),
+                Arguments.of(0xC, 'C'),
+                Arguments.of(0xD, 'D'),
+                Arguments.of(0xE, 'E'),
+                Arguments.of(0xF, 'F')
+        );
+    }
+
+    private static Stream<Arguments> wildcardInputs() {
+        return Stream.of(
+                Arguments.of("*", "^.*$"),
+                Arguments.of("?", "^.$"),
+                Arguments.of("(", "^\\($"),
+                Arguments.of(")", "^\\)$"),
+                Arguments.of("[", "^\\[$"),
+                Arguments.of("]", "^\\]$"),
+                Arguments.of("$", "^\\$$"),
+                Arguments.of("^", "^\\^$"),
+                Arguments.of(".", "^\\.$"),
+                Arguments.of("{", "^\\{$"),
+                Arguments.of("}", "^\\}$"),
+                Arguments.of("|", "^\\|$"),
+                Arguments.of("\\", "^\\\\$"),
+                Arguments.of("[a-z]", "^\\[a-z\\]$"),
+                Arguments.of("[A-Z]", "^\\[A-Z\\]$"),
+                Arguments.of("[0-9]", "^\\[0-9\\]$"),
+                Arguments.of("[a-zA-Z0-9]", "^\\[a-zA-Z0-9\\]$"),
+                Arguments.of("[!a-z]", "^\\[!a-z\\]$"),
+                Arguments.of("#", "^#$"),
+                Arguments.of("*value*", "^.*value.*$")
+        );
+    }
+
+    private static Stream<Arguments> levenshteinDistances() {
+        return Stream.of(
+                Arguments.of("kitten", "kitten", 0),
+                Arguments.of("kitten", "smitten", 2),
+                Arguments.of("kitten", "mitten", 1),
+                Arguments.of("kitten", "kitty", 2),
+                Arguments.of("kitten", "fitting", 3),
+                Arguments.of("kitten", "written", 2)
+        );
+    }
+
+    private static Stream<Arguments> roundingValues() {
+        return Stream.of(
+                Arguments.of(20.123456, 20, 0),
+                Arguments.of(20.123456, 20.1, 1),
+                Arguments.of(20.123456, 20.12, 2),
+                Arguments.of(20.123456, 20.123, 3),
+                Arguments.of(20.123456, 20.1235, 4), // Rounds up to ..5
+                Arguments.of(20.123456, 20.12346, 5), // Rounds up to ..6
+                Arguments.of(20.123456, 20.123456, 6),
+                Arguments.of(20.123456, 20.1234560, 7)
+        );
+    }
+
+    private static Stream<Arguments> regionValues() {
+        return Stream.of(
+                Arguments.of(Vector3N.of(0, 0, 0), Vector3N.of(2, 2, 2), Vector3N.of(1, 1, 1), true),
+                Arguments.of(Vector3N.of(0, 0, 0), Vector3N.of(1, 1, 1), Vector3N.of(2, 2, 2), false),
+                Arguments.of(Vector3N.of(0, 0, 0), Vector3N.of(2, 2, 2), Vector3N.of(1, 1, 3), false),
+                Arguments.of(Vector3N.of(0, 0, 0), Vector3N.of(2, 2, 2), Vector3N.of(1, 3, 1), false),
+                Arguments.of(Vector3N.of(0, 0, 0), Vector3N.of(2, 2, 2), Vector3N.of(3, 1, 1), false),
+                Arguments.of(Vector3N.of(0, 0, 0), Vector3N.of(2, 2, 2), Vector3N.of(3, 3, 3), false)
+        );
+    }
+
+    private static Stream<Arguments> minimumValues() {
+        return Stream.of(
+                Arguments.of(Vector3N.of(0, 0, 0), Vector3N.of(10, 10, 10), Vector3N.of(0, 0, 0)),
+                Arguments.of(Vector3N.of(0, 10, 10), Vector3N.of(10, 0, 0), Vector3N.of(0, 0, 0)),
+                Arguments.of(Vector3N.of(10, 10, 10), Vector3N.of(10, 10, 10), Vector3N.of(10, 10, 10))
+        );
+    }
+
+    private static Stream<Arguments> maximumValues() {
+        return Stream.of(
+                Arguments.of(Vector3N.of(0, 0, 0), Vector3N.of(10, 10, 10), Vector3N.of(10, 10, 10)),
+                Arguments.of(Vector3N.of(0, 10, 10), Vector3N.of(10, 0, 0), Vector3N.of(10, 10, 10)),
+                Arguments.of(Vector3N.of(10, 10, 10), Vector3N.of(10, 10, 10), Vector3N.of(10, 10, 10))
+        );
+    }
+
+    private static Stream<Arguments> emptyValues() {
+        return Stream.of(
+                Arguments.of(null, true),
+                Arguments.of("", true),
+                Arguments.of("value", false),
+                Arguments.of(HartshornUtils.emptyList(), true),
+                Arguments.of(HartshornUtils.emptySet(), true),
+                Arguments.of(HartshornUtils.emptyConcurrentList(), true),
+                Arguments.of(HartshornUtils.emptyConcurrentSet(), true),
+                Arguments.of(HartshornUtils.asList("value"), false),
+                Arguments.of(HartshornUtils.emptyMap(), true),
+                Arguments.of(HartshornUtils.emptyConcurrentMap(), true),
+                Arguments.of(HartshornUtils.ofEntries(Tuple.of(1, "two")), false),
+                Arguments.of(new EmptyType(), true),
+                Arguments.of(new RejectingType(), false)
+        );
+    }
+
+    private static Stream<Arguments> stringEqualityValues() {
+        return Stream.of(
+                Arguments.of("value", "value", true),
+                Arguments.of("value", "VALUE", false)
+        );
+    }
+
+    private static Stream<Arguments> stringEqualityIgnoreCaseValues() {
+        return Stream.of(
+                Arguments.of("value", "value", true),
+                Arguments.of("value", "VALUE", true),
+                Arguments.of("value", "other", false)
+        );
+    }
+
+    private static Stream<Arguments> stringEqualityTrimValues() {
+        return Stream.of(
+                Arguments.of("value", "value", true),
+                Arguments.of("value", " value ", true),
+                Arguments.of("value", " value", true),
+                Arguments.of("value", "value ", true),
+                Arguments.of("value", "other", false)
+        );
+    }
+
+    private static Stream<Arguments> stringEqualityTrimIgnoreCaseValues() {
+        return Stream.of(
+                Arguments.of("value", "value", true),
+                Arguments.of("value", " value ", true),
+                Arguments.of("value", " value", true),
+                Arguments.of("value", "value ", true),
+                Arguments.of("value", "VALUE ", true),
+                Arguments.of("value", " VALUE", true),
+                Arguments.of("value", " VALUE ", true),
+                Arguments.of("value", "other", false)
+        );
+    }
+
+    private static Stream<Arguments> nonEqualValues() {
+        return Stream.of(
+                Arguments.of("value", "value", false),
+                Arguments.of("value", "VALUE", true),
+                Arguments.of("value", 1, true),
+                Arguments.of(1.2D, 1, true)
+        );
+    }
+
+    private static Stream<Arguments> equalValues() {
+        return Stream.of(
+                Arguments.of("value", "value", true),
+                Arguments.of(null, null, false),
+                Arguments.of(null, "value", false),
+                Arguments.of("value", "VALUE", false),
+                Arguments.of("value", 1, false),
+                Arguments.of(1.2D, 1, false)
+        );
+    }
+
+    private static Stream<Arguments> sameValues() {
+        return Stream.of(
+                Arguments.of("value"),
+                Arguments.of(new ArrayList<>()),
+                Arguments.of(-1),
+                Arguments.of((Object) null)
+        );
+    }
+
+    private static Stream<Arguments> contentValues() {
+        return Stream.of(
+                Arguments.of("value", true),
+                Arguments.of("value ", true),
+                Arguments.of("", false),
+                Arguments.of("  ", false),
+                Arguments.of(null, false)
+        );
+    }
+
+    private static Stream<Arguments> durations() {
+        return Stream.of(
+                Arguments.of("1s", 1),
+                Arguments.of("1m", minute),
+                Arguments.of("1h", hour),
+                Arguments.of("1d", day),
+                Arguments.of("1w", week),
+                Arguments.of("1w1d1h1m1s", week + day + hour + minute + 1),
+                Arguments.of("2w3d", (2 * week) + (3 * day)),
+                Arguments.of("2w3d5h", (2 * week) + (3 * day) + (5 * hour)),
+                Arguments.of("17h21m13s", (17 * hour) + (21 * minute) + 13)
+        );
+    }
+
     @Test
     void testOfEntriesAddsAllEntries() {
         Map<Integer, String> map = HartshornUtils.ofEntries(
@@ -77,21 +325,6 @@ public class HartshornUtilTests {
         Assertions.assertEquals("two", entry.getValue());
     }
 
-    private static Stream<Arguments> modifiableCollections() {
-        return Stream.of(
-                Arguments.of(HartshornUtils.emptyList()),
-                Arguments.of(HartshornUtils.emptyConcurrentList()),
-                Arguments.of(HartshornUtils.asList("value", "other")),
-                Arguments.of(HartshornUtils.asList(Arrays.asList("value", "other"))),
-                Arguments.of(HartshornUtils.asList(Arrays.asList("value", "other"))),
-                Arguments.of(HartshornUtils.emptySet()),
-                Arguments.of(HartshornUtils.emptyConcurrentSet()),
-                Arguments.of(HartshornUtils.asSet("value", "other")),
-                Arguments.of(HartshornUtils.asSet(Arrays.asList("value", "other")))
-
-        );
-    }
-
     @ParameterizedTest
     @MethodSource("modifiableCollections")
     void testCollectionCanBeModified(Collection<String> collection) {
@@ -99,33 +332,11 @@ public class HartshornUtilTests {
         Assertions.assertDoesNotThrow(() -> collection.add("another"));
     }
 
-    private static Stream<Arguments> unmodifiableCollections() {
-        return Stream.of(
-                Arguments.of(HartshornUtils.asUnmodifiableList("value", "other")),
-                Arguments.of(HartshornUtils.asUnmodifiableList(Arrays.asList("value", "other"))),
-                Arguments.of(HartshornUtils.asUnmodifiableList((Collection<String>) Arrays.asList("value", "other"))),
-                Arguments.of(HartshornUtils.asUnmodifiableSet("value", "other")),
-                Arguments.of(HartshornUtils.asUnmodifiableSet(Arrays.asList("value", "other"))),
-                Arguments.of(HartshornUtils.asUnmodifiableCollection("value", "other")),
-                Arguments.of(HartshornUtils.asUnmodifiableCollection(Arrays.asList("value", "other")))
-
-        );
-    }
-
     @ParameterizedTest
     @MethodSource("unmodifiableCollections")
     void testImmutableCollectionCannotBeModified(Collection<String> collection) {
         Assertions.assertNotNull(collection);
         Assertions.assertThrows(UnsupportedOperationException.class, () -> collection.add("another"));
-    }
-
-    private static Stream<Arguments> capitalizeValues() {
-        return Stream.of(
-                Arguments.of("value", "Value"),
-                Arguments.of("Value", "Value"),
-                Arguments.of("VALUE", "VALUE"),
-                Arguments.of(" value", " value")
-        );
     }
 
     @ParameterizedTest
@@ -181,27 +392,6 @@ public class HartshornUtilTests {
         Assertions.assertEquals(1, HartshornUtils.lastIndexOf("value", 'a'));
     }
 
-    private static Stream<Arguments> hexDigits() {
-        return Stream.of(
-                Arguments.of(0, '0'),
-                Arguments.of(1, '1'),
-                Arguments.of(2, '2'),
-                Arguments.of(3, '3'),
-                Arguments.of(4, '4'),
-                Arguments.of(5, '5'),
-                Arguments.of(6, '6'),
-                Arguments.of(7, '7'),
-                Arguments.of(8, '8'),
-                Arguments.of(9, '9'),
-                Arguments.of(0xA, 'A'),
-                Arguments.of(0xB, 'B'),
-                Arguments.of(0xC, 'C'),
-                Arguments.of(0xD, 'D'),
-                Arguments.of(0xE, 'E'),
-                Arguments.of(0xF, 'F')
-        );
-    }
-
     @ParameterizedTest
     @MethodSource("hexDigits")
     void convertHexDigitsReturnsCorrectChar(int value, char expected) {
@@ -252,48 +442,12 @@ public class HartshornUtilTests {
         Assertions.assertEquals(3, count);
     }
 
-    private static Stream<Arguments> wildcardInputs() {
-        return Stream.of(
-                Arguments.of("*", "^.*$"),
-                Arguments.of("?", "^.$"),
-                Arguments.of("(", "^\\($"),
-                Arguments.of(")", "^\\)$"),
-                Arguments.of("[", "^\\[$"),
-                Arguments.of("]", "^\\]$"),
-                Arguments.of("$", "^\\$$"),
-                Arguments.of("^", "^\\^$"),
-                Arguments.of(".", "^\\.$"),
-                Arguments.of("{", "^\\{$"),
-                Arguments.of("}", "^\\}$"),
-                Arguments.of("|", "^\\|$"),
-                Arguments.of("\\", "^\\\\$"),
-                Arguments.of("[a-z]", "^\\[a-z\\]$"),
-                Arguments.of("[A-Z]", "^\\[A-Z\\]$"),
-                Arguments.of("[0-9]", "^\\[0-9\\]$"),
-                Arguments.of("[a-zA-Z0-9]", "^\\[a-zA-Z0-9\\]$"),
-                Arguments.of("[!a-z]", "^\\[!a-z\\]$"),
-                Arguments.of("#", "^#$"),
-                Arguments.of("*value*", "^.*value.*$")
-        );
-    }
-
     @ParameterizedTest
     @MethodSource("wildcardInputs")
     void testWildcardToRegexOutput(String wildcard, String regex) {
         String outputRegex = HartshornUtils.wildcardToRegexString(wildcard);
         Assertions.assertNotNull(outputRegex);
         Assertions.assertEquals(regex, outputRegex);
-    }
-
-    private static Stream<Arguments> levenshteinDistances() {
-        return Stream.of(
-                Arguments.of("kitten", "kitten", 0),
-                Arguments.of("kitten", "smitten", 2),
-                Arguments.of("kitten", "mitten", 1),
-                Arguments.of("kitten", "kitty", 2),
-                Arguments.of("kitten", "fitting", 3),
-                Arguments.of("kitten", "written", 2)
-        );
     }
 
     @ParameterizedTest
@@ -372,19 +526,6 @@ public class HartshornUtilTests {
         Assertions.assertNotEquals(5, array[2]);
     }
 
-    private static Stream<Arguments> roundingValues() {
-        return Stream.of(
-                Arguments.of(20.123456, 20, 0),
-                Arguments.of(20.123456, 20.1, 1),
-                Arguments.of(20.123456, 20.12, 2),
-                Arguments.of(20.123456, 20.123, 3),
-                Arguments.of(20.123456, 20.1235, 4), // Rounds up to ..5
-                Arguments.of(20.123456, 20.12346, 5), // Rounds up to ..6
-                Arguments.of(20.123456, 20.123456, 6),
-                Arguments.of(20.123456, 20.1234560, 7)
-        );
-    }
-
     @ParameterizedTest
     @MethodSource("roundingValues")
     void testRoundIsCorrect(double original, double expected, int decimals) {
@@ -407,17 +548,6 @@ public class HartshornUtilTests {
         Assertions.assertTrue(HartshornUtils.unwrap(Optional.of(true)));
     }
 
-    private static Stream<Arguments> regionValues() {
-        return Stream.of(
-                Arguments.of(Vector3N.of(0,0,0), Vector3N.of(2,2,2), Vector3N.of(1,1,1), true),
-                Arguments.of(Vector3N.of(0,0,0), Vector3N.of(1,1,1), Vector3N.of(2,2,2), false),
-                Arguments.of(Vector3N.of(0,0,0), Vector3N.of(2,2,2), Vector3N.of(1,1,3), false),
-                Arguments.of(Vector3N.of(0,0,0), Vector3N.of(2,2,2), Vector3N.of(1,3,1), false),
-                Arguments.of(Vector3N.of(0,0,0), Vector3N.of(2,2,2), Vector3N.of(3,1,1), false),
-                Arguments.of(Vector3N.of(0,0,0), Vector3N.of(2,2,2), Vector3N.of(3,3,3), false)
-        );
-    }
-
     @ParameterizedTest
     @MethodSource("regionValues")
     void testIsInCuboidRegionVector(Vector3N min, Vector3N max, Vector3N vec, boolean inside) {
@@ -434,27 +564,11 @@ public class HartshornUtilTests {
                 vec.xI(), vec.yI(), vec.zI()));
     }
 
-    private static Stream<Arguments> minimumValues() {
-        return Stream.of(
-                Arguments.of(Vector3N.of(0,0,0), Vector3N.of(10,10,10), Vector3N.of(0,0,0)),
-                Arguments.of(Vector3N.of(0,10,10), Vector3N.of(10,0,0), Vector3N.of(0,0,0)),
-                Arguments.of(Vector3N.of(10,10,10), Vector3N.of(10,10,10), Vector3N.of(10,10,10))
-        );
-    }
-
     @ParameterizedTest
     @MethodSource("minimumValues")
     void testMinimumPoint(Vector3N pos1, Vector3N pos2, Vector3N min) {
         Vector3N minimumPoint = HartshornUtils.minimumPoint(pos1, pos2);
         Assertions.assertEquals(min, minimumPoint);
-    }
-
-    private static Stream<Arguments> maximumValues() {
-        return Stream.of(
-                Arguments.of(Vector3N.of(0,0,0), Vector3N.of(10,10,10), Vector3N.of(10,10,10)),
-                Arguments.of(Vector3N.of(0,10,10), Vector3N.of(10,0,0), Vector3N.of(10,10,10)),
-                Arguments.of(Vector3N.of(10,10,10), Vector3N.of(10,10,10), Vector3N.of(10,10,10))
-        );
     }
 
     @ParameterizedTest
@@ -475,48 +589,30 @@ public class HartshornUtilTests {
 
     @Test
     void testArrayMerge() {
-        Object[] arr1 = {1,2,3};
-        Object[] arr2 = {4,5,6};
+        Object[] arr1 = { 1, 2, 3 };
+        Object[] arr2 = { 4, 5, 6 };
         Object[] merged = HartshornUtils.merge(arr1, arr2);
         for (int i = 0; i < 6; i++) {
-            Assertions.assertEquals(i+1, (int) merged[i]);
+            Assertions.assertEquals(i + 1, (int) merged[i]);
         }
     }
 
     @Test
     void testCollectionMerge() {
-        Collection<Integer> col1 = Arrays.asList(1,2,3);
-        Collection<Integer> col2 = Arrays.asList(4,5,6);
+        Collection<Integer> col1 = Arrays.asList(1, 2, 3);
+        Collection<Integer> col2 = Arrays.asList(4, 5, 6);
         Collection<Integer> merged = HartshornUtils.merge(col1, col2);
 
         Assertions.assertEquals(6, merged.size());
-        Assertions.assertTrue(merged.containsAll(Arrays.asList(1,2,3,4,5,6)));
+        Assertions.assertTrue(merged.containsAll(Arrays.asList(1, 2, 3, 4, 5, 6)));
     }
 
     @Test
     void testArrayShallowCopy() {
-        Object[] arr1 = {1,2,3};
+        Object[] arr1 = { 1, 2, 3 };
         Object[] arr2 = HartshornUtils.shallowCopy(arr1);
         Assertions.assertNotSame(arr1, arr2);
         Assertions.assertArrayEquals(arr1, arr2);
-    }
-
-    private static Stream<Arguments> emptyValues() {
-        return Stream.of(
-                Arguments.of(null, true),
-                Arguments.of("", true),
-                Arguments.of("value", false),
-                Arguments.of(HartshornUtils.emptyList(), true),
-                Arguments.of(HartshornUtils.emptySet(), true),
-                Arguments.of(HartshornUtils.emptyConcurrentList(), true),
-                Arguments.of(HartshornUtils.emptyConcurrentSet(), true),
-                Arguments.of(HartshornUtils.asList("value"), false),
-                Arguments.of(HartshornUtils.emptyMap(), true),
-                Arguments.of(HartshornUtils.emptyConcurrentMap(), true),
-                Arguments.of(HartshornUtils.ofEntries(Tuple.of(1, "two")), false),
-                Arguments.of(new EmptyType(), true),
-                Arguments.of(new RejectingType(), false)
-        );
     }
 
     @ParameterizedTest
@@ -525,25 +621,10 @@ public class HartshornUtilTests {
         Assertions.assertEquals(empty, HartshornUtils.empty(obj));
     }
 
-    private static Stream<Arguments> stringEqualityValues() {
-        return Stream.of(
-                Arguments.of("value", "value", true),
-                Arguments.of("value", "VALUE", false)
-        );
-    }
-
     @ParameterizedTest
     @MethodSource("stringEqualityValues")
     void testEqualsStrings(String s1, String s2, boolean equal) {
         Assertions.assertEquals(equal, HartshornUtils.equals(s1, s2));
-    }
-
-    private static Stream<Arguments> stringEqualityIgnoreCaseValues() {
-        return Stream.of(
-                Arguments.of("value", "value", true),
-                Arguments.of("value", "VALUE", true),
-                Arguments.of("value", "other", false)
-        );
     }
 
     @ParameterizedTest
@@ -552,33 +633,10 @@ public class HartshornUtilTests {
         Assertions.assertEquals(equal, HartshornUtils.equalsIgnoreCase(s1, s2));
     }
 
-    private static Stream<Arguments> stringEqualityTrimValues() {
-        return Stream.of(
-                Arguments.of("value", "value", true),
-                Arguments.of("value", " value ", true),
-                Arguments.of("value", " value", true),
-                Arguments.of("value", "value ", true),
-                Arguments.of("value", "other", false)
-        );
-    }
-
     @ParameterizedTest
     @MethodSource("stringEqualityTrimValues")
     void testEqualsTrimStrings(String s1, String s2, boolean equal) {
         Assertions.assertEquals(equal, HartshornUtils.equalsWithTrim(s1, s2));
-    }
-
-    private static Stream<Arguments> stringEqualityTrimIgnoreCaseValues() {
-        return Stream.of(
-                Arguments.of("value", "value", true),
-                Arguments.of("value", " value ", true),
-                Arguments.of("value", " value", true),
-                Arguments.of("value", "value ", true),
-                Arguments.of("value", "VALUE ", true),
-                Arguments.of("value", " VALUE", true),
-                Arguments.of("value", " VALUE ", true),
-                Arguments.of("value", "other", false)
-        );
     }
 
     @ParameterizedTest
@@ -587,30 +645,10 @@ public class HartshornUtilTests {
         Assertions.assertEquals(equal, HartshornUtils.equalsIgnoreCaseWithTrim(s1, s2));
     }
 
-    private static Stream<Arguments> nonEqualValues() {
-        return Stream.of(
-                Arguments.of("value", "value", false),
-                Arguments.of("value", "VALUE", true),
-                Arguments.of("value", 1, true),
-                Arguments.of(1.2D, 1, true)
-        );
-    }
-
     @ParameterizedTest
     @MethodSource("nonEqualValues")
     void testNotEqual(Object o1, Object o2, boolean expected) {
         Assertions.assertEquals(expected, HartshornUtils.notEqual(o1, o2));
-    }
-
-    private static Stream<Arguments> equalValues() {
-        return Stream.of(
-                Arguments.of("value", "value", true),
-                Arguments.of(null, null, false),
-                Arguments.of(null, "value", false),
-                Arguments.of("value", "VALUE", false),
-                Arguments.of("value", 1, false),
-                Arguments.of(1.2D, 1, false)
-        );
     }
 
     @ParameterizedTest
@@ -619,29 +657,10 @@ public class HartshornUtilTests {
         Assertions.assertEquals(expected, HartshornUtils.equal(o1, o2));
     }
 
-    private static Stream<Arguments> sameValues() {
-        return Stream.of(
-                Arguments.of("value"),
-                Arguments.of(new ArrayList<>()),
-                Arguments.of(-1),
-                Arguments.of((Object) null)
-        );
-    }
-
     @ParameterizedTest
     @MethodSource("sameValues")
     void testSame(Object obj) {
         Assertions.assertTrue(HartshornUtils.same(obj, obj));
-    }
-
-    private static Stream<Arguments> contentValues() {
-        return Stream.of(
-                Arguments.of("value", true),
-                Arguments.of("value ", true),
-                Arguments.of("", false),
-                Arguments.of("  ", false),
-                Arguments.of(null, false)
-        );
     }
 
     @ParameterizedTest
@@ -653,7 +672,7 @@ public class HartshornUtilTests {
     @Test
     void testDoesNotThrow() {
         Assertions.assertTrue(HartshornUtils.doesNotThrow(() -> {
-            int i = 1+1;
+            int i = 1 + 1;
         }));
         Assertions.assertFalse(HartshornUtils.doesNotThrow(() -> {
             throw new ApplicationException("error");
@@ -663,7 +682,7 @@ public class HartshornUtilTests {
     @Test
     void testDoesNotThrowSpecific() {
         Assertions.assertTrue(HartshornUtils.doesNotThrow(() -> {
-            int i = 1+1;
+            int i = 1 + 1;
         }, Exception.class));
         Assertions.assertFalse(HartshornUtils.doesNotThrow(() -> {
             throw new UnsupportedOperationException("error");
@@ -676,7 +695,7 @@ public class HartshornUtilTests {
     @Test
     void testThrowsSpecific() {
         Assertions.assertFalse(HartshornUtils.throwsException(() -> {
-            int i = 1+1;
+            int i = 1 + 1;
         }, Exception.class));
         Assertions.assertTrue(HartshornUtils.throwsException(() -> {
             throw new UnsupportedOperationException("error");
@@ -684,25 +703,6 @@ public class HartshornUtilTests {
         Assertions.assertFalse(HartshornUtils.throwsException(() -> {
             throw new IllegalArgumentException("error");
         }, UnsupportedOperationException.class));
-    }
-
-    private static final int minute = 60;
-    private static final int hour = 60*minute;
-    private static final int day = 24*hour;
-    private static final int week = 7*day;
-
-    private static Stream<Arguments> durations() {
-        return Stream.of(
-                Arguments.of("1s", 1),
-                Arguments.of("1m", minute),
-                Arguments.of("1h", hour),
-                Arguments.of("1d", day),
-                Arguments.of("1w", week),
-                Arguments.of("1w1d1h1m1s", week + day + hour + minute + 1),
-                Arguments.of("2w3d", (2*week) + (3*day)),
-                Arguments.of("2w3d5h", (2*week) + (3*day) + (5*hour)),
-                Arguments.of("17h21m13s", (17*hour) + (21*minute) + 13)
-        );
     }
 
     @ParameterizedTest

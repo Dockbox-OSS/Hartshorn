@@ -18,8 +18,8 @@
 package org.dockbox.hartshorn.server.minecraft.item;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.api.i18n.common.Language;
-import org.dockbox.hartshorn.api.i18n.text.Text;
+import org.dockbox.hartshorn.i18n.common.Language;
+import org.dockbox.hartshorn.i18n.text.Text;
 import org.dockbox.hartshorn.server.minecraft.item.persistence.PersistentItemModel;
 import org.dockbox.hartshorn.util.ReferencedWrapper;
 import org.jetbrains.annotations.NotNull;
@@ -30,13 +30,20 @@ import lombok.Setter;
 public abstract class ReferencedItem<T> extends ReferencedWrapper<T> implements Item {
 
     public static final int DEFAULT_STACK_SIZE = 64;
-    @Getter @Setter
-    private String id;
+    @Getter @Setter private String id;
 
     protected ReferencedItem(@NotNull T reference) {
         this.id = this.id();
         this.reference(Exceptional.of(reference));
     }
+
+    protected ReferencedItem(String id) {
+        this.id = id;
+        T type = this.from(id);
+        super.reference(Exceptional.of(type));
+    }
+
+    protected abstract T from(String id);
 
     @Override
     public Text displayName() {
@@ -49,26 +56,18 @@ public abstract class ReferencedItem<T> extends ReferencedWrapper<T> implements 
         return this;
     }
 
-    protected ReferencedItem(String id) {
-        this.id = id;
-        T type = this.from(id);
-        super.reference(Exceptional.of(type));
-    }
-
-    protected abstract T from(String id);
-
     @Override
     public Exceptional<T> constructInitialReference() {
         return Exceptional.empty(); // Handled by constructors
     }
 
     @Override
-    public Class<? extends PersistentItemModel> modelType() {
-        return SimplePersistentItemModel.class;
+    public Class<? extends PersistentItemModel> type() {
+        return PersistentItemModelImpl.class;
     }
 
     @Override
     public PersistentItemModel model() {
-        return new SimplePersistentItemModel(this);
+        return new PersistentItemModelImpl(this);
     }
 }

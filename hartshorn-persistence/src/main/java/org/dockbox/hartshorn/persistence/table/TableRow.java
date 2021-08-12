@@ -18,18 +18,19 @@
 package org.dockbox.hartshorn.persistence.table;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.persistence.table.column.ColumnIdentifier;
-import org.dockbox.hartshorn.util.Reflect;
 import org.dockbox.hartshorn.util.HartshornUtils;
+import org.dockbox.hartshorn.util.Reflect;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 import java.util.Set;
 
+import lombok.Getter;
+
 public class TableRow {
 
-    private final Map<ColumnIdentifier<?>, Object> data = HartshornUtils.emptyMap();
+    @Getter private final Map<ColumnIdentifier<?>, Object> data = HartshornUtils.emptyMap();
 
     public TableRow() {}
 

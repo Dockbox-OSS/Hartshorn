@@ -23,10 +23,13 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import javax.inject.Named;
+
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @Repeatable(Combines.class)
 public @interface Binds {
     Class<?> value();
-    Named named() default @Named(value = "");
+
+    Named named() default @Named;
 }

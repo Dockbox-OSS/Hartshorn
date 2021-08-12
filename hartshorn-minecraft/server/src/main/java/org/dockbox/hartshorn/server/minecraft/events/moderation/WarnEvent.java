@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.server.minecraft.events.moderation;
 
-import org.dockbox.hartshorn.commands.source.CommandSource;
+import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.server.minecraft.players.Player;
 
 import lombok.Getter;
@@ -25,9 +25,7 @@ import lombok.Setter;
 
 public abstract class WarnEvent extends ModerationEvent {
 
-    @Getter
-    @Setter
-    private String reason;
+    @Getter @Setter private String reason;
 
     protected WarnEvent(Player player, CommandSource source, String reason) {
         super(player, source);

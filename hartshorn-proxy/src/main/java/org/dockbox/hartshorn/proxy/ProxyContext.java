@@ -25,7 +25,9 @@ import java.lang.reflect.Method;
 public interface ProxyContext {
 
     Method proceed();
+
     ProxyHolder holder();
+
     <T> T invoke(Object... args) throws ApplicationException;
 
 }

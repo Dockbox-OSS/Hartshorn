@@ -17,9 +17,9 @@
 
 package org.dockbox.hartshorn.commands.types;
 
+import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.commands.annotations.Command;
 import org.dockbox.hartshorn.commands.context.CommandContext;
-import org.dockbox.hartshorn.commands.source.CommandSource;
 
 @Command("demo")
 public class SampleCommand {

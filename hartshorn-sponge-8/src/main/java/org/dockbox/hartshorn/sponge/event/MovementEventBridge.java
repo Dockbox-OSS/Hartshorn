@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.sponge.event;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.domain.tuple.Vector3N;
-import org.dockbox.hartshorn.api.events.annotations.Posting;
+import org.dockbox.hartshorn.events.annotations.Posting;
 import org.dockbox.hartshorn.server.minecraft.dimension.position.Location;
 import org.dockbox.hartshorn.server.minecraft.enums.PortalType;
 import org.dockbox.hartshorn.server.minecraft.events.player.PlayerPortalEvent;
@@ -71,6 +71,14 @@ public class MovementEventBridge implements EventBridge {
         }
     }
 
+    private void portal(ChangeEntityWorldEvent event, Player player, Portal portal) {
+        final Location origin = SpongeConvert.fromSponge(portal.origin());
+        final Location destination = Exceptional.of(portal.destination()).map(SpongeConvert::fromSponge).or(Location.empty());
+        final PortalType portalType = SpongeConvert.fromSponge(portal.type());
+
+        this.post(new PlayerPortalEvent(player, origin, destination, true, portalType), event);
+    }
+
     @Listener
     public void on(Reposition event) {
         final Entity entity = event.entity();
@@ -89,17 +97,11 @@ public class MovementEventBridge implements EventBridge {
         }
     }
 
-    private void portal(ChangeEntityWorldEvent event, Player player, Portal portal) {
-        final Location origin = SpongeConvert.fromSponge(portal.origin());
-        final Location destination = Exceptional.of(portal.destination()).map(SpongeConvert::fromSponge).or(Location.empty());
-        final PortalType portalType = SpongeConvert.fromSponge(portal.type());
-
-        this.post(new PlayerPortalEvent(player, origin, destination, true, portalType), event);
-    }
-
     /**
      * Placeholder for PlayerWarpEvent
-     * @param event The event
+     *
+     * @param event
+     *         The event
      */
     public void on(Void event) {
 

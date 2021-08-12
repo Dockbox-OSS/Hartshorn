@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.server.minecraft.events.moderation;
 
-import org.dockbox.hartshorn.commands.source.CommandSource;
+import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.server.minecraft.players.Player;
 
 import java.time.LocalDateTime;
@@ -26,8 +26,7 @@ import lombok.Getter;
 
 public class PlayerWarnedEvent extends WarnEvent {
 
-    @Getter
-    private final LocalDateTime created;
+    @Getter private final LocalDateTime created;
 
     /**
      * The event fired when a player is warned

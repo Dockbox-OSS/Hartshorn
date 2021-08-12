@@ -25,8 +25,7 @@ import lombok.Getter;
 
 public class DiscordReactionAddedEvent extends DiscordMessageAuthorEvent {
 
-    @Getter
-    private final MessageReaction reaction;
+    @Getter private final MessageReaction reaction;
 
     /**
      * The event fired when a reaction is added to a message.

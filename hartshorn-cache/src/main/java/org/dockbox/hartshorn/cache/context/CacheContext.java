@@ -20,10 +20,17 @@ package org.dockbox.hartshorn.cache.context;
 import org.dockbox.hartshorn.cache.Cache;
 import org.dockbox.hartshorn.cache.CacheManager;
 
+/**
+ * Context carrier for cache service modifiers, indicating the {@link CacheManager},
+ * {@link Cache}, and cache ID to use. These are typically derived from
+ * {@link CacheMethodContext} during processing.
+ */
 public interface CacheContext {
 
     CacheManager manager();
+
     <T> Cache<T> cache();
+
     String name();
 
 }

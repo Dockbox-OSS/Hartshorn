@@ -25,6 +25,13 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * An extension of {@link Service} which registers the service as
+ * a cache owner. The {@link #value()} is used as the ID of the cache
+ * kept in the service.
+ *
+ * @see UseCaching
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @Extends(Service.class)

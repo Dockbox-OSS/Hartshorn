@@ -18,7 +18,7 @@
 package org.dockbox.hartshorn.test.objects;
 
 import org.dockbox.hartshorn.api.Hartshorn;
-import org.dockbox.hartshorn.di.annotations.inject.Wired;
+import org.dockbox.hartshorn.di.annotations.inject.Bound;
 import org.dockbox.hartshorn.server.minecraft.players.Profile;
 
 import java.util.HashMap;
@@ -30,21 +30,19 @@ import lombok.Setter;
 
 public class JUnitProfile implements Profile {
 
-    @Getter
-    @Setter
-    private UUID uniqueId;
+    @Getter @Setter private UUID uniqueId;
     private Map<String, String> properties;
 
-    @Wired
-    public JUnitProfile(UUID uniqueId) {
-        this.uniqueId = uniqueId;
-    }
-
-    @Wired
+    @Bound
     public JUnitProfile(Profile profile) {
         this(profile.uniqueId());
         if (profile instanceof JUnitProfile) this.properties = new HashMap<>(((JUnitProfile) profile).properties);
         else Hartshorn.log().warn("Could not copy profile properties as the provided profile is not an instance of JUnitProfile");
+    }
+
+    @Bound
+    public JUnitProfile(UUID uniqueId) {
+        this.uniqueId = uniqueId;
     }
 
     @Override

@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.sponge.game.entity;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.di.annotations.inject.Binds;
-import org.dockbox.hartshorn.di.annotations.inject.Wired;
+import org.dockbox.hartshorn.di.annotations.inject.Bound;
 import org.dockbox.hartshorn.server.minecraft.dimension.position.BlockFace;
 import org.dockbox.hartshorn.server.minecraft.dimension.position.Location;
 import org.dockbox.hartshorn.server.minecraft.entities.ItemFrame;
@@ -35,10 +35,9 @@ import org.spongepowered.api.util.orientation.Orientation;
 @Binds(ItemFrame.class)
 public class SpongeItemFrame
         extends SpongeCloneableEntityReference<ItemFrame, net.minecraft.world.entity.decoration.ItemFrame, org.spongepowered.api.entity.hanging.ItemFrame>
-        implements ItemFrame
-{
+        implements ItemFrame {
 
-    @Wired
+    @Bound
     public SpongeItemFrame(Location location) {
         super(location);
     }
@@ -105,12 +104,12 @@ public class SpongeItemFrame
     }
 
     @Override
-    public ItemFrame from(org.spongepowered.api.entity.hanging.ItemFrame entity) {
-        return new SpongeItemFrame(entity);
+    public Exceptional<org.spongepowered.api.entity.hanging.ItemFrame> spongeEntity() {
+        return this.entity();
     }
 
     @Override
-    public Exceptional<org.spongepowered.api.entity.hanging.ItemFrame> spongeEntity() {
-        return this.entity();
+    public ItemFrame from(org.spongepowered.api.entity.hanging.ItemFrame entity) {
+        return new SpongeItemFrame(entity);
     }
 }

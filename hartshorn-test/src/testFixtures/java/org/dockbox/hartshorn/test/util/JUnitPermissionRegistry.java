@@ -18,8 +18,8 @@
 package org.dockbox.hartshorn.test.util;
 
 import org.dockbox.hartshorn.api.domain.tuple.Tristate;
-import org.dockbox.hartshorn.api.i18n.PermissionHolder;
-import org.dockbox.hartshorn.api.i18n.permissions.Permission;
+import org.dockbox.hartshorn.i18n.PermissionHolder;
+import org.dockbox.hartshorn.i18n.permissions.Permission;
 import org.dockbox.hartshorn.util.HartshornUtils;
 
 import java.util.Collection;
@@ -29,6 +29,9 @@ import java.util.UUID;
 public final class JUnitPermissionRegistry {
 
     private static final Map<UUID, Collection<Permission>> permissions = HartshornUtils.emptyConcurrentMap();
+
+    private JUnitPermissionRegistry() {
+    }
 
     public static void permission(PermissionHolder holder, Permission permission) {
         permissions.putIfAbsent(holder.uniqueId(), HartshornUtils.emptyList());
@@ -78,8 +81,5 @@ public final class JUnitPermissionRegistry {
                     permissions.get(holder.uniqueId()).remove(abstractPermission);
                 }
             }
-    }
-
-    private JUnitPermissionRegistry() {
     }
 }

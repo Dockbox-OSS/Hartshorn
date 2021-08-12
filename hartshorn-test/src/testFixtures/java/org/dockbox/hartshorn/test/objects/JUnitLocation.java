@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.test.objects;
 
 import org.dockbox.hartshorn.api.domain.tuple.Vector3N;
 import org.dockbox.hartshorn.di.annotations.inject.Binds;
-import org.dockbox.hartshorn.di.annotations.inject.Wired;
+import org.dockbox.hartshorn.di.annotations.inject.Bound;
 import org.dockbox.hartshorn.server.minecraft.dimension.position.Location;
 import org.dockbox.hartshorn.server.minecraft.dimension.world.World;
 
@@ -32,12 +32,12 @@ public class JUnitLocation extends Location implements JUnitPersistentDataHolder
     private final World world;
     private final UUID uniqueId;
 
-    @Wired
+    @Bound
     public JUnitLocation(World world) {
         this(world.spawnPosition(), world);
     }
 
-    @Wired
+    @Bound
     public JUnitLocation(Vector3N position, World world) {
         if (!(world instanceof JUnitWorld spongeWorld)) {
             throw new IllegalArgumentException("Provided world cannot be used as a JUnit reference");
@@ -54,13 +54,13 @@ public class JUnitLocation extends Location implements JUnitPersistentDataHolder
     }
 
     @Override
-    public Location expand(Vector3N vector) {
-        return new JUnitLocation(this.position.expand(vector), this.world);
+    public Vector3N vector() {
+        return this.position;
     }
 
     @Override
-    public Vector3N vector() {
-        return this.position;
+    public Location expand(Vector3N vector) {
+        return new JUnitLocation(this.position.expand(vector), this.world);
     }
 
     @Override

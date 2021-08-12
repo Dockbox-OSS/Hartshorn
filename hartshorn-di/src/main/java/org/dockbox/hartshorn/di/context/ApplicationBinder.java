@@ -19,24 +19,33 @@ package org.dockbox.hartshorn.di.context;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.di.InjectConfiguration;
-import org.dockbox.hartshorn.di.annotations.inject.Named;
-import org.dockbox.hartshorn.di.inject.BeanContext;
+import org.dockbox.hartshorn.di.Key;
+import org.dockbox.hartshorn.di.binding.BindingHierarchy;
 import org.dockbox.hartshorn.di.inject.Binder;
-import org.dockbox.hartshorn.di.inject.wired.WireContext;
-import org.dockbox.hartshorn.di.properties.InjectorProperty;
+import org.dockbox.hartshorn.di.inject.ProviderContext;
+import org.dockbox.hartshorn.di.inject.wired.BoundContext;
 
 import java.lang.reflect.Method;
+
+import javax.inject.Named;
 
 public interface ApplicationBinder extends Binder {
 
     void bind(InjectConfiguration configuration);
+
     void bind(String prefix);
-    <T, I extends T> Exceptional<WireContext<T, I>> firstWire(Class<T> contract, InjectorProperty<Named> property);
+
+    <T, I extends T> Exceptional<BoundContext<T, I>> firstWire(Class<T> contract, Named property);
+
     <T> T populate(T type);
 
-    void add(WireContext<?, ?> context);
-    void add(BeanContext<?, ?> context);
+    void add(BoundContext<?, ?> context);
+
+    void add(ProviderContext<?, ?> context);
 
     <T> T invoke(Method method);
+
     <T> T invoke(Method method, Object instance);
+
+    <T> BindingHierarchy<T> hierarchy(Key<T> key);
 }

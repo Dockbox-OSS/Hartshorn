@@ -19,6 +19,19 @@ package org.dockbox.hartshorn.api;
 
 import org.dockbox.hartshorn.api.exceptions.ApplicationException;
 
+/**
+ * Extension of {@link java.util.function.BiFunction} with the addition of a
+ * <code>throws ApplicationException</code> clause.
+ *
+ * @param <T>
+ *         the type of the first argument to the function
+ * @param <U>
+ *         the type of the second argument to the function
+ * @param <R>
+ *         the type of the result of the function
+ *
+ * @see java.util.function.BiFunction
+ */
 @FunctionalInterface
 public interface CheckedBiFunction<T, U, R> {
 

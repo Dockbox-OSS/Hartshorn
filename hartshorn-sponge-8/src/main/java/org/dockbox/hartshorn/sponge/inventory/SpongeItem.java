@@ -21,13 +21,12 @@ import net.kyori.adventure.text.Component;
 import net.minecraft.world.item.CreativeModeTab;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.api.i18n.common.Language;
-import org.dockbox.hartshorn.api.i18n.text.Text;
-import org.dockbox.hartshorn.di.annotations.inject.Wired;
+import org.dockbox.hartshorn.di.annotations.inject.Bound;
+import org.dockbox.hartshorn.i18n.common.Language;
+import org.dockbox.hartshorn.i18n.text.Text;
 import org.dockbox.hartshorn.server.minecraft.item.Enchant;
 import org.dockbox.hartshorn.server.minecraft.item.Item;
 import org.dockbox.hartshorn.server.minecraft.item.ReferencedItem;
-import org.dockbox.hartshorn.server.minecraft.item.storage.MinecraftItems;
 import org.dockbox.hartshorn.server.minecraft.players.Profile;
 import org.dockbox.hartshorn.sponge.game.SpongeComposite;
 import org.dockbox.hartshorn.sponge.game.SpongeProfile;
@@ -54,9 +53,19 @@ public class SpongeItem extends ReferencedItem<ItemStack> implements SpongeCompo
         super(reference);
     }
 
-    @Wired
+    @Bound
     public SpongeItem(String id) {
         super(id);
+    }
+
+    @Override
+    public boolean isAir() {
+        if (this.id().equals(org.dockbox.hartshorn.server.minecraft.item.ItemTypes.AIR.id())) return true;
+        else {
+            return this.item()
+                    .map(item -> item.isEmpty() || item.type() == ItemTypes.AIR.get())
+                    .or(true);
+        }
     }
 
     @Override
@@ -67,13 +76,23 @@ public class SpongeItem extends ReferencedItem<ItemStack> implements SpongeCompo
     }
 
     @Override
-    public boolean isAir() {
-        if (this.equals(MinecraftItems.instance().air())) return true;
-        else {
-            return this.item()
-                    .map(item -> item.isEmpty() || item.type() == ItemTypes.AIR.get())
-                    .or(true);
+    protected ItemStack from(String id) {
+        ItemType type;
+        if (id.indexOf(':') >= 0) {
+            type = SpongeUtil.fromNamespacedRegistry(RegistryTypes.ITEM_TYPE, id).orNull();
         }
+        else {
+            type = SpongeUtil.fromMCRegistry(RegistryTypes.ITEM_TYPE, id).orNull();
+        }
+        if (type == null) return ItemStack.empty();
+
+        return ItemStack.builder()
+                .itemType(type)
+                .build();
+    }
+
+    private Exceptional<ItemStack> item() {
+        return this.reference();
     }
 
     @Override
@@ -210,26 +229,7 @@ public class SpongeItem extends ReferencedItem<ItemStack> implements SpongeCompo
     }
 
     @Override
-    protected ItemStack from(String id) {
-        ItemType type;
-        if (id.indexOf(':') >= 0) {
-            type = SpongeUtil.fromNamespacedRegistry(RegistryTypes.ITEM_TYPE, id).orNull();
-        } else {
-            type = SpongeUtil.fromMCRegistry(RegistryTypes.ITEM_TYPE, id).orNull();
-        }
-        if (type == null) return ItemStack.empty();
-
-        return ItemStack.builder()
-                .itemType(type)
-                .build();
-    }
-
-    @Override
     public Exceptional<? extends Mutable> dataHolder() {
-        return this.reference();
-    }
-
-    private Exceptional<ItemStack> item() {
         return this.reference();
     }
 }

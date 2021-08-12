@@ -49,14 +49,14 @@ public class SpongeWorlds implements Worlds {
     @Override
     public Exceptional<World> world(String name) {
         return Exceptional.of(this.worlds().stream()
-                .filter(world -> world.key().value().equals(name)).findFirst())
+                        .filter(world -> world.key().value().equals(name)).findFirst())
                 .map(SpongeConvert::fromSponge);
     }
 
     @Override
     public Exceptional<World> world(UUID uuid) {
         return Exceptional.of(this.worlds().stream()
-                .filter(world -> world.uniqueId().equals(uuid)).findFirst())
+                        .filter(world -> world.uniqueId().equals(uuid)).findFirst())
                 .map(SpongeConvert::fromSponge);
     }
 

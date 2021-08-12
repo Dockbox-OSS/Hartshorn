@@ -19,14 +19,14 @@ package org.dockbox.hartshorn.playersettings;
 
 import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.TypedOwner;
-import org.dockbox.hartshorn.api.i18n.common.ResourceEntry;
-import org.dockbox.hartshorn.api.i18n.entry.FakeResource;
 import org.dockbox.hartshorn.api.keys.Keys;
 import org.dockbox.hartshorn.api.keys.PersistentDataHolder;
 import org.dockbox.hartshorn.api.keys.PersistentDataKey;
 import org.dockbox.hartshorn.api.keys.TypedPersistentDataKey;
+import org.dockbox.hartshorn.i18n.common.ResourceEntry;
+import org.dockbox.hartshorn.i18n.entry.FakeResource;
 import org.dockbox.hartshorn.server.minecraft.item.Item;
-import org.dockbox.hartshorn.server.minecraft.item.storage.MinecraftItems;
+import org.dockbox.hartshorn.server.minecraft.item.ItemTypes;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
@@ -37,10 +37,8 @@ import lombok.Getter;
 
 public class Setting<T> extends TypedPersistentDataKey<T> {
 
-    @Getter
-    private final ResourceEntry resource;
-    @Getter
-    private final ResourceEntry description;
+    @Getter private final ResourceEntry resource;
+    @Getter private final ResourceEntry description;
 
     private final Function<T, ResourceEntry> converter;
     private final Supplier<T> defaultValue;
@@ -58,6 +56,10 @@ public class Setting<T> extends TypedPersistentDataKey<T> {
         this.action = action;
     }
 
+    public static <T> SettingBuilder<T> of(Class<T> type) {
+        return new SettingBuilder<>(type);
+    }
+
     protected ResourceEntry convert(T value) {
         return this.converter.apply(value);
     }
@@ -71,16 +73,14 @@ public class Setting<T> extends TypedPersistentDataKey<T> {
      * holder, the default value is used. If the setting isn't set and the default value is absent,
      * {@code null} is returned.
      *
-     * @param holder The data holder to test the setting on
+     * @param holder
+     *         The data holder to test the setting on
+     *
      * @return The set value, default value, or null
      */
     @Nullable
     public T get(PersistentDataHolder holder) {
         return holder.get(this).orElse(this.defaultValue::get).orNull();
-    }
-
-    public static <T> SettingBuilder<T> of(Class<T> type) {
-        return new SettingBuilder<>(type);
     }
 
     public Consumer<PersistentDataHolder> action() {
@@ -96,16 +96,11 @@ public class Setting<T> extends TypedPersistentDataKey<T> {
         private ResourceEntry description;
         private Function<T, ResourceEntry> converter = o -> new FakeResource(String.valueOf(o));
         private Supplier<T> defaultValue;
-        private Supplier<Item> display = () -> MinecraftItems.instance().barrier();
+        private Supplier<Item> display = () -> Item.of(ItemTypes.BARRIER);
         private Consumer<PersistentDataHolder> action = holder -> {};
 
         private SettingBuilder(Class<T> type) {
             this.type = type;
-        }
-
-        public SettingBuilder<T> id(String id) {
-            this.id = id;
-            return this;
         }
 
         public SettingBuilder<T> owner(TypedOwner owner) {
@@ -115,11 +110,6 @@ public class Setting<T> extends TypedPersistentDataKey<T> {
 
         public SettingBuilder<T> owner(Class<?> owner) {
             this.owner = Hartshorn.context().meta().lookup(owner);
-            return this;
-        }
-
-        public SettingBuilder<T> type(Class<T> type) {
-            this.type = type;
             return this;
         }
 
@@ -150,6 +140,16 @@ public class Setting<T> extends TypedPersistentDataKey<T> {
 
         public SettingBuilder<T> from(PersistentDataKey<T> key) {
             return this.id(key.id()).type(key.type());
+        }
+
+        public SettingBuilder<T> type(Class<T> type) {
+            this.type = type;
+            return this;
+        }
+
+        public SettingBuilder<T> id(String id) {
+            this.id = id;
+            return this;
         }
 
         public SettingBuilder<T> action(Consumer<PersistentDataHolder> action) {

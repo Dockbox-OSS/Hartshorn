@@ -17,54 +17,48 @@
 
 package org.dockbox.hartshorn.toolbinding;
 
+import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.api.events.annotations.Listener;
-import org.dockbox.hartshorn.api.events.annotations.Posting;
 import org.dockbox.hartshorn.api.keys.Keys;
 import org.dockbox.hartshorn.api.keys.PersistentDataKey;
 import org.dockbox.hartshorn.api.keys.RemovableKey;
 import org.dockbox.hartshorn.api.keys.TransactionResult;
 import org.dockbox.hartshorn.di.annotations.service.Service;
-import org.dockbox.hartshorn.di.annotations.inject.Wired;
+import org.dockbox.hartshorn.events.annotations.Listener;
+import org.dockbox.hartshorn.events.annotations.Posting;
 import org.dockbox.hartshorn.server.minecraft.events.player.interact.PlayerInteractEvent;
 import org.dockbox.hartshorn.server.minecraft.item.Item;
-import org.dockbox.hartshorn.server.minecraft.item.storage.MinecraftItems;
 import org.dockbox.hartshorn.server.minecraft.players.Sneaking;
 import org.dockbox.hartshorn.util.HartshornUtils;
 
 import java.util.Map;
 import java.util.UUID;
 
+import javax.inject.Inject;
+
 @Service
 @Posting(ToolInteractionEvent.class)
 public class ToolBinding {
 
-    @Wired
-    private ToolBindingResources resources;
-
     static final PersistentDataKey<String> PERSISTENT_TOOL = Keys.persistent(String.class, "Tool Binding", ToolBinding.class);
-    private static ToolBinding instance;
-
-    public static final RemovableKey<Item, ItemTool> TOOL_REMOVABLE_KEY = Keys.builder(Item.class, ItemTool.class)
-            .withSetter((item, tool) -> instance.tool(item, tool))
-            .withGetterSafe(item -> instance.get(item))
-            .withRemover(item -> instance.removeTool(item))
+    public static final RemovableKey<Item, ItemTool> TOOL = Keys.builder(Item.class, ItemTool.class)
+            .withSetter((item, tool) -> Hartshorn.context().get(ToolBinding.class).tool(item, tool))
+            .withGetterSafe(item -> Hartshorn.context().get(ToolBinding.class).get(item))
+            .withRemover(item -> Hartshorn.context().get(ToolBinding.class).removeTool(item))
             .build();
-
     private final Map<String, ItemTool> registry = HartshornUtils.emptyConcurrentMap();
 
-    public ToolBinding() {
-        instance = this;
-    }
+    @Inject
+    private ToolBindingResources resources;
 
-    private TransactionResult tool(Item item, ItemTool tool) {
+    private TransactionResult tool(final Item item, final ItemTool tool) {
         if (item.isBlock()) return TransactionResult.fail(this.resources.blockError());
-        if (item == MinecraftItems.instance().air()) return TransactionResult.fail(this.resources.handError());
+        if (item.isAir()) return TransactionResult.fail(this.resources.handError());
         if (item.get(PERSISTENT_TOOL).present()) return TransactionResult.fail(this.resources.duplicateError());
 
-        String bindingId = UUID.randomUUID().toString();
+        final String bindingId = UUID.randomUUID().toString();
 
-        TransactionResult result = item.set(PERSISTENT_TOOL, bindingId);
+        final TransactionResult result = item.set(PERSISTENT_TOOL, bindingId);
         if (result.successful()) {
             this.registry.put(bindingId, tool);
             tool.prepare(item);
@@ -73,11 +67,11 @@ public class ToolBinding {
         return result;
     }
 
-    private void removeTool(Item item) {
-        Exceptional<String> identifier = item.get(PERSISTENT_TOOL);
+    private void removeTool(final Item item) {
+        final Exceptional<String> identifier = item.get(PERSISTENT_TOOL);
         if (identifier.absent()) return;
 
-        Exceptional<ItemTool> tool = this.get(item);
+        final Exceptional<ItemTool> tool = this.get(item);
         if (tool.absent()) return;
 
         item.remove(PERSISTENT_TOOL);
@@ -85,39 +79,42 @@ public class ToolBinding {
         ItemTool.reset(item);
     }
 
-    private Exceptional<ItemTool> get(Item item) {
-        Exceptional<String> identifier = item.get(PERSISTENT_TOOL);
+    private Exceptional<ItemTool> get(final Item item) {
+        final Exceptional<String> identifier = item.get(PERSISTENT_TOOL);
         if (identifier.absent()) return Exceptional.empty();
 
-        String registryIdentifier = identifier.get();
+        final String registryIdentifier = identifier.get();
         if (!this.registry.containsKey(registryIdentifier)) return Exceptional.empty();
-        ItemTool itemTool = this.registry.get(registryIdentifier);
+        final ItemTool itemTool = this.registry.get(registryIdentifier);
 
         return Exceptional.of(itemTool);
     }
 
     @Listener
-    public void on(PlayerInteractEvent event) {
-        Item itemInHand = event.subject().itemInHand(event.hand());
-        if (itemInHand.equals(MinecraftItems.instance().air()) || itemInHand.isBlock()) return;
+    public void on(final PlayerInteractEvent<?> event) {
+        final Item itemInHand = event.subject().itemInHand(event.hand());
+        if (itemInHand.isAir() || itemInHand.isBlock()) return;
 
-        Exceptional<String> identifier = itemInHand.get(PERSISTENT_TOOL);
+        final Exceptional<String> identifier = itemInHand.get(PERSISTENT_TOOL);
         if (identifier.absent()) return;
         if (!this.registry.containsKey(identifier.get())) return;
-        ItemTool tool = this.registry.get(identifier.get());
+        final ItemTool tool = this.registry.get(identifier.get());
 
-        ToolInteractionEvent toolInteractionEvent = new ToolInteractionEvent(
+        final ToolInteractionEvent toolInteractionEvent = new ToolInteractionEvent(
                 event.subject(),
                 itemInHand,
                 tool,
                 event.hand(),
                 event.clickType(),
-                event.subject().sneaking() ? Sneaking.SNEAKING : Sneaking.STANDING);
+                event.subject().sneaking() ? Sneaking.SNEAKING : Sneaking.STANDING,
+                event.target());
 
-        if (tool.accepts(toolInteractionEvent)) {
+        final ToolInteractionContext context = new ToolInteractionContext(toolInteractionEvent);
+
+        if (tool.accepts(context)) {
             toolInteractionEvent.post();
             if (toolInteractionEvent.cancelled()) return;
-            tool.perform(event.subject(), itemInHand);
+            tool.perform(context);
             event.cancelled(true); // To prevent block/entity damage
         }
     }

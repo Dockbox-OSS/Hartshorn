@@ -17,26 +17,32 @@
 
 package org.dockbox.hartshorn.persistence.table;
 
+import org.dockbox.hartshorn.api.Hartshorn;
+import org.dockbox.hartshorn.api.annotations.Property;
 import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.api.entity.annotations.Entity;
-import org.dockbox.hartshorn.api.entity.annotations.Property;
-import org.dockbox.hartshorn.persistence.table.behavior.Merge;
-import org.dockbox.hartshorn.persistence.table.behavior.Order;
-import org.dockbox.hartshorn.persistence.table.column.ColumnIdentifier;
-import org.dockbox.hartshorn.persistence.table.exceptions.EmptyEntryException;
-import org.dockbox.hartshorn.persistence.table.exceptions.IdentifierMismatchException;
-import org.dockbox.hartshorn.persistence.table.exceptions.UnknownIdentifierException;
-import org.dockbox.hartshorn.util.Reflect;
+import org.dockbox.hartshorn.api.exceptions.ApplicationException;
+import org.dockbox.hartshorn.persistence.PersistentCapable;
+import org.dockbox.hartshorn.persistence.PersistentModel;
+import org.dockbox.hartshorn.persistence.exceptions.EmptyEntryException;
+import org.dockbox.hartshorn.persistence.exceptions.IdentifierMismatchException;
+import org.dockbox.hartshorn.persistence.exceptions.UnknownIdentifierException;
 import org.dockbox.hartshorn.util.HartshornUtils;
+import org.dockbox.hartshorn.util.Reflect;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import lombok.Getter;
 
@@ -55,12 +61,11 @@ import lombok.Getter;
  * @since feature/S124
  */
 @SuppressWarnings({ "unchecked", "rawtypes" })
-@Entity(value = "table")
 public class Table {
 
+    private static final Map<Class<?>, List<ColumnIdentifier<?>>> DEFINITIONS = HartshornUtils.emptyMap();
     private final List<TableRow> rows;
-    @Getter
-    private final ColumnIdentifier<?>[] identifiers;
+    @Getter private final ColumnIdentifier<?>[] identifiers;
 
     /**
      * Instantiates a new Table with a given set of column identifiers. These identifiers cannot be
@@ -120,6 +125,28 @@ public class Table {
         }
     }
 
+    public static Table of(Class<?> type) {
+        if (!DEFINITIONS.containsKey(type)) {
+            final List<ColumnIdentifier<?>> identifiers = HartshornUtils.emptyList();
+            for (Field field : type.getDeclaredFields()) {
+                if (Modifier.isTransient(field.getModifiers())) continue;
+
+                final String name = Reflect.fieldName(field);
+                identifiers.add(new ColumnIdentifierImpl<>(name, field.getType()));
+            }
+            DEFINITIONS.put(type, identifiers);
+        }
+        return new Table(DEFINITIONS.getOrDefault(type, HartshornUtils.emptyList()));
+    }
+
+    public static <T> Table of(Class<T> type, T... defaultEntries) {
+        final Table table = Table.of(type);
+        for (T entry : defaultEntries) {
+            table.addRow(entry);
+        }
+        return table;
+    }
+
     /**
      * Generates a {@link TableRow} from a given object based on the objects {@link Field}s. By
      * default the field name is used to look up a matching column identifier which is present inside
@@ -142,9 +169,14 @@ public class Table {
      *         table.
      */
     public void addRow(Object object) {
+        if (object instanceof PersistentCapable persistentCapable) {
+            this.addRow(persistentCapable.model());
+            return;
+        }
+
         TableRow row = new TableRow();
 
-        for (Field field : object.getClass().getFields()) {
+        for (Field field : object.getClass().getDeclaredFields()) {
             field.setAccessible(true);
             final Exceptional<Property> annotation = Reflect.annotation(field, Property.class);
             if (!(annotation.present() && annotation.get().ignore())) {
@@ -173,7 +205,7 @@ public class Table {
         }
 
         if (row.columns().size() != this.identifiers.length) {
-            throw new UnknownIdentifierException("Missing Columns!");
+            throw new UnknownIdentifierException("Expected " + Arrays.toString(this.identifiers) + " (" + this.identifiers.length + ") but got " + row.columns() + " (" + row.columns().size() + ")");
         }
         this.rows.add(row);
     }
@@ -571,6 +603,34 @@ public class Table {
      */
     public List<TableRow> rows() {
         return HartshornUtils.asUnmodifiableList(this.rows);
+    }
+
+    public <T extends PersistentCapable<M>, M extends PersistentModel<T>> List<T> restore(Class<M> type) {
+        final List<M> rows = this.rows(type);
+        return rows.stream().map(PersistentModel::restore).toList();
+    }
+
+    public <T> List<T> rows(Class<T> type) {
+        List<T> items = HartshornUtils.emptyList();
+
+        try {
+            final Constructor<T> constructor = type.getConstructor();
+            constructor.setAccessible(true);
+            for (TableRow row : this.rows) {
+                try {
+                    final T instance = constructor.newInstance();
+                    final Map<String, Object> data = row.data().entrySet().stream().collect(Collectors.toMap(e -> e.getKey().name(), Entry::getValue));
+                    items.add(Reflect.populate(instance, data));
+                }
+                catch (ApplicationException e) {
+                    Hartshorn.log().warn("Skipping row " + row + ": " + e.getMessage());
+                }
+            }
+        }
+        catch (InvocationTargetException | NoSuchMethodException | InstantiationException | IllegalAccessException e) {
+            Hartshorn.log().warn("Could not convert rows to type " + type.getSimpleName() + " as no base constructor exists");
+        }
+        return items;
     }
 
     public void forEach(Consumer<TableRow> consumer) {

@@ -17,33 +17,29 @@
 
 package org.dockbox.hartshorn.test.util;
 
-import org.dockbox.hartshorn.config.SimpleConfigurationManager;
-import org.dockbox.hartshorn.di.annotations.inject.Wired;
-import org.dockbox.hartshorn.api.exceptions.ApplicationException;
-import org.dockbox.hartshorn.di.properties.InjectorProperty;
+import org.dockbox.hartshorn.config.ConfigurationManagerImpl;
+import org.dockbox.hartshorn.di.annotations.inject.Bound;
 import org.dockbox.hartshorn.util.HartshornUtils;
 
 import java.nio.file.Path;
 import java.util.Map;
 
-public class JUnitConfigurationManager extends SimpleConfigurationManager {
+public class JUnitConfigurationManager extends ConfigurationManagerImpl {
 
     public static Map<String, Object> cache = HartshornUtils.emptyConcurrentMap();
-    private static boolean enabled = false;
 
-    @Wired
+    @Bound
     public JUnitConfigurationManager(Path path) {
         super(path);
         // Path is typically stored to obtain values from, during testing this is not required.
     }
 
     public static void add(String key, Object value) {
-        cache.put(key ,value);
+        cache.put(key, value);
     }
 
     public static void reset() {
         cache.clear();
-        enabled = false;
     }
 
     @Override
@@ -51,17 +47,6 @@ public class JUnitConfigurationManager extends SimpleConfigurationManager {
         return HartshornUtils.ofEntries(
                 HartshornUtils.entry(this.fileKey(), cache)
         );
-    }
-
-    @Override
-    public boolean canEnable() {
-        return !enabled && super.canEnable();
-    }
-
-    @Override
-    public void enable(InjectorProperty<?>... properties) throws ApplicationException {
-        super.enable(properties);
-        enabled = true;
     }
 
     @Override

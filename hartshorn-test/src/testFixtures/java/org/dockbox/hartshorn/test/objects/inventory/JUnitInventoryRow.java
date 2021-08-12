@@ -18,7 +18,7 @@
 package org.dockbox.hartshorn.test.objects.inventory;
 
 import org.dockbox.hartshorn.server.minecraft.item.Item;
-import org.dockbox.hartshorn.server.minecraft.item.storage.MinecraftItems;
+import org.dockbox.hartshorn.server.minecraft.item.ItemTypes;
 import org.dockbox.hartshorn.server.minecraft.players.inventory.AbstractInventoryRow;
 import org.dockbox.hartshorn.server.minecraft.players.inventory.PlayerInventory;
 import org.dockbox.hartshorn.util.HartshornUtils;
@@ -32,11 +32,6 @@ public class JUnitInventoryRow extends AbstractInventoryRow {
 
     public JUnitInventoryRow(int rowIndex, PlayerInventory inventory) {
         super(rowIndex, inventory);
-    }
-
-    @Override
-    public void slot(Item item, int index) {
-        if (index < this.capacity()) this.slots.put(index, item);
     }
 
     @Override
@@ -56,7 +51,12 @@ public class JUnitInventoryRow extends AbstractInventoryRow {
     }
 
     @Override
+    public void slot(Item item, int index) {
+        if (index < this.capacity()) this.slots.put(index, item);
+    }
+
+    @Override
     public Item slot(int index) {
-        return this.slots.getOrDefault(index, MinecraftItems.instance().air());
+        return this.slots.getOrDefault(index, Item.of(ItemTypes.AIR));
     }
 }

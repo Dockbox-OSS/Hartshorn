@@ -36,44 +36,6 @@ import java.util.function.Predicate;
 public interface SpongeDimension extends BlockDimension, EntityHolding {
 
     @Override
-    default Vector3N minimumPosition() {
-        return SpongeConvert.fromSponge(this.serverWorld().blockMin().toDouble());
-    }
-
-    @Override
-    default Vector3N maximumPosition() {
-        return SpongeConvert.fromSponge(this.serverWorld().blockMax().toDouble());
-    }
-
-    @Override
-    default Vector3N floor(Vector3N position) {
-        Vector3i floor = this.serverWorld().highestPositionAt(SpongeConvert.toSponge(position).toInt());
-        return SpongeConvert.fromSponge(floor);
-    }
-
-    @Override
-    default boolean has(Vector3N position) {
-        Vector3i loc = SpongeConvert.toSponge(position);
-        return this.serverWorld().containsBlock(loc);
-    }
-
-    @Override
-    default Exceptional<Block> block(Vector3N position) {
-        Vector3i loc = SpongeConvert.toSponge(position);
-        BlockState blockState = this.serverWorld().block(loc);
-        if (blockState.type() == BlockTypes.AIR.get()) return Exceptional.of(Block.empty());
-        return Exceptional.of(new SpongeBlock(SpongeConvert.toSnapshot(blockState)));
-    }
-
-    @Override
-    default boolean block(Vector3N position, Block block) {
-        Vector3i loc = SpongeConvert.toSponge(position);
-        Exceptional<BlockState> state = SpongeConvert.toSponge(block);
-        if (state.absent()) return false;
-        return this.serverWorld().setBlock(loc, state.get());
-    }
-
-    @Override
     default Collection<Entity> entities() {
         return this.entities(e -> true);
     }
@@ -91,6 +53,44 @@ public interface SpongeDimension extends BlockDimension, EntityHolding {
                 SpongeConvert.toSponge(this.minimumPosition()),
                 SpongeConvert.toSponge(this.maximumPosition())
         );
+    }
+
+    @Override
+    default Vector3N minimumPosition() {
+        return SpongeConvert.fromSponge(this.serverWorld().min().toDouble());
+    }
+
+    @Override
+    default Vector3N maximumPosition() {
+        return SpongeConvert.fromSponge(this.serverWorld().max().toDouble());
+    }
+
+    @Override
+    default Vector3N floor(Vector3N position) {
+        Vector3i floor = this.serverWorld().highestPositionAt(SpongeConvert.toSponge(position).toInt());
+        return SpongeConvert.fromSponge(floor);
+    }
+
+    @Override
+    default boolean has(Vector3N position) {
+        Vector3i loc = SpongeConvert.toSponge(position);
+        return this.serverWorld().contains(loc);
+    }
+
+    @Override
+    default Exceptional<Block> block(Vector3N position) {
+        Vector3i loc = SpongeConvert.toSponge(position);
+        BlockState blockState = this.serverWorld().block(loc);
+        if (blockState.type() == BlockTypes.AIR.get()) return Exceptional.of(Block.empty());
+        return Exceptional.of(new SpongeBlock(SpongeConvert.toSnapshot(blockState)));
+    }
+
+    @Override
+    default boolean block(Vector3N position, Block block) {
+        Vector3i loc = SpongeConvert.toSponge(position);
+        Exceptional<BlockState> state = SpongeConvert.toSponge(block);
+        if (state.absent()) return false;
+        return this.serverWorld().setBlock(loc, state.get());
     }
 
     ServerWorld serverWorld();

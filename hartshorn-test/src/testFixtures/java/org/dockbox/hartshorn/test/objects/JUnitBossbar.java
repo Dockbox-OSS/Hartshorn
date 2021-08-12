@@ -17,10 +17,10 @@
 
 package org.dockbox.hartshorn.test.objects;
 
-import org.dockbox.hartshorn.api.exceptions.NotImplementedException;
 import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.api.i18n.text.Text;
-import org.dockbox.hartshorn.di.annotations.inject.Wired;
+import org.dockbox.hartshorn.api.exceptions.NotImplementedException;
+import org.dockbox.hartshorn.di.annotations.inject.Bound;
+import org.dockbox.hartshorn.i18n.text.Text;
 import org.dockbox.hartshorn.server.minecraft.bossbar.BossbarColor;
 import org.dockbox.hartshorn.server.minecraft.bossbar.BossbarStyle;
 import org.dockbox.hartshorn.server.minecraft.bossbar.DefaultTickableBossbar;
@@ -32,7 +32,7 @@ import java.util.UUID;
 
 public class JUnitBossbar extends DefaultTickableBossbar<Void> {
 
-    @Wired
+    @Bound
     public JUnitBossbar(String id, float percent, Text text, BossbarColor color, BossbarStyle style) {
         super(id, percent, text, color, style);
     }

@@ -18,7 +18,7 @@
 package org.dockbox.hartshorn.test.objects.living;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.di.annotations.inject.Wired;
+import org.dockbox.hartshorn.di.annotations.inject.Bound;
 import org.dockbox.hartshorn.server.minecraft.dimension.position.BlockFace;
 import org.dockbox.hartshorn.server.minecraft.dimension.position.Location;
 import org.dockbox.hartshorn.server.minecraft.entities.ItemFrame;
@@ -31,18 +31,15 @@ import lombok.Setter;
 
 public class JUnitItemFrame extends JUnitEntity<ItemFrame> implements ItemFrame, org.dockbox.hartshorn.test.objects.JUnitPersistentDataHolder {
 
-    @Setter
-    private Item displayedItem;
-    @Getter @Setter
-    private Rotation rotation = Rotation.TOP;
-    @Getter @Setter
-    private BlockFace blockFace = BlockFace.NORTH;
+    @Setter private Item displayedItem;
+    @Getter @Setter private Rotation rotation = Rotation.TOP;
+    @Getter @Setter private BlockFace blockFace = BlockFace.NORTH;
 
     public JUnitItemFrame(UUID uuid) {
         super(uuid);
     }
 
-    @Wired
+    @Bound
     public JUnitItemFrame(Location location) {
         super(UUID.randomUUID());
         this.location(location);

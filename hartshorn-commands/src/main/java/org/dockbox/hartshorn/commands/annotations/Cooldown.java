@@ -23,6 +23,10 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.time.temporal.ChronoUnit;
 
+/**
+ * The annotation to indicate a {@link Command} executor should be modified
+ * with a configured cooldown duration.
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface Cooldown {

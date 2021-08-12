@@ -21,8 +21,23 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Indicates the expiration of a {@link Cached} decorator.
+ */
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Expire {
+    /**
+     * The amount of the given {@link TimeUnit} that should pass
+     * before the duration ends.
+     *
+     * @return the amount
+     */
     int amount();
+
+    /**
+     * The unit in which time passes.
+     *
+     * @return the unit
+     */
     TimeUnit unit();
 }

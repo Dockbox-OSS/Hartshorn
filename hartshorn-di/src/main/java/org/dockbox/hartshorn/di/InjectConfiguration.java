@@ -24,8 +24,7 @@ import lombok.Setter;
 
 public abstract class InjectConfiguration implements DelegatedBinder {
 
-    @Setter
-    private Binder binder;
+    @Setter private Binder binder;
 
     public abstract void collect();
 

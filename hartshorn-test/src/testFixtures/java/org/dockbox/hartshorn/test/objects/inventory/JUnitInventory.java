@@ -20,7 +20,7 @@ package org.dockbox.hartshorn.test.objects.inventory;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.server.minecraft.inventory.Slot;
 import org.dockbox.hartshorn.server.minecraft.item.Item;
-import org.dockbox.hartshorn.server.minecraft.item.storage.MinecraftItems;
+import org.dockbox.hartshorn.server.minecraft.item.ItemTypes;
 import org.dockbox.hartshorn.server.minecraft.players.inventory.InventoryRow;
 import org.dockbox.hartshorn.server.minecraft.players.inventory.PlayerInventory;
 import org.dockbox.hartshorn.util.HartshornUtils;
@@ -38,18 +38,18 @@ public class JUnitInventory extends PlayerInventory {
     private final int columnCount = 9;
 
     @Override
-    public Item slot(int row, int column) {
-        return this.rows.get(row).slot(column);
-    }
-
-    @Override
     public Item slot(Slot slot) {
-        return this.specialSlots.getOrDefault(slot, MinecraftItems.instance().air());
+        return this.specialSlots.getOrDefault(slot, Item.of(ItemTypes.AIR));
     }
 
     @Override
-    public void slot(Item item, int row, int column) {
-        this.rows.get(row).slot(item, column);
+    public void slot(Item item, Slot slot) {
+        this.specialSlots.put(slot, item);
+    }
+
+    @Override
+    public int capacity() {
+        return this.rowCount * this.columnCount;
     }
 
     @Override
@@ -58,8 +58,16 @@ public class JUnitInventory extends PlayerInventory {
     }
 
     @Override
-    public void slot(Item item, Slot slot) {
-        this.specialSlots.put(slot, item);
+    public Item slot(int index) {
+        return this.slot(this.rowIndex(index), this.columnIndex(index));
+    }
+
+    private int rowIndex(int index) {
+        return (index - (index % 3)) / 9;
+    }
+
+    private int columnIndex(int index) {
+        return index % 9;
     }
 
     @Override
@@ -84,13 +92,13 @@ public class JUnitInventory extends PlayerInventory {
     }
 
     @Override
-    public int capacity() {
-        return this.rowCount * this.columnCount;
+    public Item slot(int row, int column) {
+        return this.rows.get(row).slot(column);
     }
 
     @Override
-    public Item slot(int index) {
-        return this.slot(this.rowIndex(index), this.columnIndex(index));
+    public void slot(Item item, int row, int column) {
+        this.rows.get(row).slot(item, column);
     }
 
     @Override
@@ -99,13 +107,5 @@ public class JUnitInventory extends PlayerInventory {
             return Exceptional.of(new JUnitInventoryRow(index, this));
         }
         return Exceptional.empty();
-    }
-
-    private int rowIndex(int index) {
-        return (index - (index % 3)) / 9;
-    }
-
-    private int columnIndex(int index) {
-        return index % 9;
     }
 }

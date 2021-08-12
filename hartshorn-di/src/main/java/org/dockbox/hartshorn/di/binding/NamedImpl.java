@@ -17,9 +17,9 @@
 
 package org.dockbox.hartshorn.di.binding;
 
-import org.dockbox.hartshorn.di.annotations.inject.Named;
-
 import java.lang.annotation.Annotation;
+
+import javax.inject.Named;
 
 import lombok.AllArgsConstructor;
 
@@ -39,7 +39,7 @@ public class NamedImpl implements Named {
         return (127 * "value".hashCode()) ^ this.value.hashCode();
     }
 
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (!(o instanceof Named other)) return false;
         return this.value.equals(other.value());
     }

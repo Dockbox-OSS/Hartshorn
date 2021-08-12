@@ -18,6 +18,7 @@
 package org.dockbox.hartshorn.api.keys;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.i18n.common.ResourceEntry;
 
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -64,7 +65,7 @@ public abstract class Key<K, A> {
      *         The value to apply, constrained by type parameter {@code A}.
      *
      * @return The transaction result containing a {@link
-     *         org.dockbox.hartshorn.api.i18n.common.ResourceEntry} if a failure occurred.
+     *         ResourceEntry} if a failure occurred.
      */
     public TransactionResult set(K keyType, A appliedValue) {
         return this.setter.apply(keyType, appliedValue);

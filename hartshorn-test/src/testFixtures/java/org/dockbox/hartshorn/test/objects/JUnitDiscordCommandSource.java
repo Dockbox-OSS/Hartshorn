@@ -20,17 +20,17 @@ package org.dockbox.hartshorn.test.objects;
 import net.dv8tion.jda.api.entities.TextChannel;
 
 import org.dockbox.hartshorn.api.exceptions.NotImplementedException;
-import org.dockbox.hartshorn.api.i18n.common.ResourceEntry;
-import org.dockbox.hartshorn.api.i18n.text.Text;
-import org.dockbox.hartshorn.api.i18n.text.pagination.Pagination;
-import org.dockbox.hartshorn.commands.source.DiscordCommandSource;
-import org.dockbox.hartshorn.di.annotations.inject.Wired;
+import org.dockbox.hartshorn.di.annotations.inject.Bound;
+import org.dockbox.hartshorn.discord.DiscordCommandSource;
+import org.dockbox.hartshorn.i18n.common.ResourceEntry;
+import org.dockbox.hartshorn.i18n.text.Text;
+import org.dockbox.hartshorn.i18n.text.pagination.Pagination;
 
 public class JUnitDiscordCommandSource implements DiscordCommandSource {
 
     private final TextChannel textChannel;
 
-    @Wired
+    @Bound
     public JUnitDiscordCommandSource(TextChannel textChannel) {
         this.textChannel = textChannel;
     }

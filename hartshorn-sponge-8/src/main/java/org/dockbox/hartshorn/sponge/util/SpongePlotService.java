@@ -18,93 +18,110 @@
 package org.dockbox.hartshorn.sponge.util;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.api.i18n.text.Text;
 import org.dockbox.hartshorn.di.annotations.inject.Binds;
-import org.dockbox.hartshorn.plots.Plot;
-import org.dockbox.hartshorn.plots.PlotService;
-import org.dockbox.hartshorn.plots.flags.PlotFlag;
+import org.dockbox.hartshorn.regions.Region;
+import org.dockbox.hartshorn.regions.RegionService;
+import org.dockbox.hartshorn.regions.flags.RegionFlag;
+import org.dockbox.hartshorn.regions.plots.Plot;
+import org.dockbox.hartshorn.regions.plots.PlotService;
 import org.dockbox.hartshorn.server.minecraft.dimension.position.Location;
 import org.dockbox.hartshorn.server.minecraft.dimension.world.World;
 import org.dockbox.hartshorn.server.minecraft.item.Item;
 import org.dockbox.hartshorn.server.minecraft.players.Player;
+import org.dockbox.hartshorn.toolbinding.ItemTool;
+import org.dockbox.hartshorn.util.HartshornUtils;
+
+import java.util.Set;
 
 /**
  * Placeholder implementation of PlotService
  */
+@Binds(RegionService.class)
 @Binds(PlotService.class)
-public class SpongePlotService implements PlotService {
+public class SpongePlotService implements PlotService, RegionService {
+
     @Override
-    public Exceptional<Plot> plot(Location location) {
+    public <R extends Region> Exceptional<R> first(final Location location, final Class<R> type) {
         return Exceptional.empty();
     }
 
     @Override
-    public Exceptional<Plot> plot(Player player) {
+    public <R extends Region> Exceptional<R> first(final Player player, final Class<R> type) {
         return Exceptional.empty();
     }
 
     @Override
-    public void register(PlotFlag<?> flag) {
-        // Nothing happens
-    }
-
-    @Override
-    public Exceptional<Plot> plot(World world, int x, int y) {
+    public <R extends Region> Exceptional<R> first(final World world, final int x, final int y, final Class<R> type) {
         return Exceptional.empty();
     }
 
     @Override
-    public void filling(Plot plot, Item item) {
+    public <R extends Region> Set<R> all(final Location location, final Class<R> type) {
+        return HartshornUtils.emptySet();
+    }
+
+    @Override
+    public <R extends Region> Set<R> all(final Player player, final Class<R> type) {
+        return HartshornUtils.emptySet();
+    }
+
+    @Override
+    public <R extends Region> Set<R> all(final World world, final int x, final int y, final Class<R> type) {
+        return HartshornUtils.emptySet();
+    }
+
+    @Override
+    public void register(final RegionFlag<?> flag) {
         // Nothing happens
     }
 
     @Override
-    public void floor(Plot plot, Item item) {
+    public Exceptional<RegionFlag<?>> flag(final String id) {
+        return Exceptional.empty();
+    }
+
+    @Override
+    public ItemTool tool() {
+        return ItemTool.builder().build();
+    }
+
+    @Override
+    public void filling(final Plot plot, final Item item) {
         // Nothing happens
     }
 
     @Override
-    public void air(Plot plot, Item item) {
+    public void floor(final Plot plot, final Item item) {
         // Nothing happens
     }
 
     @Override
-    public void all(Plot plot, Item item) {
+    public void air(final Plot plot, final Item item) {
         // Nothing happens
     }
 
     @Override
-    public void wallBorder(Plot plot, Item item) {
+    public void all(final Plot plot, final Item item) {
         // Nothing happens
     }
 
     @Override
-    public void wallFilling(Plot plot, Item item) {
+    public void wallBorder(final Plot plot, final Item item) {
         // Nothing happens
     }
 
     @Override
-    public void outline(Plot plot, Item item) {
+    public void wallFilling(final Plot plot, final Item item) {
         // Nothing happens
     }
 
     @Override
-    public void middle(Plot plot, Item item) {
+    public void outline(final Plot plot, final Item item) {
         // Nothing happens
     }
 
     @Override
-    public Integer size(Plot plot) {
-        return -1;
-    }
-
-    @Override
-    public Text alias(Plot plot) {
-        return Text.of();
-    }
-
-    @Override
-    public void alias(Plot plot, Text item) {
+    public void middle(final Plot plot, final Item item) {
         // Nothing happens
     }
 }

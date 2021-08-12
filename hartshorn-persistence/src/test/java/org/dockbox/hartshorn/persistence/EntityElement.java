@@ -17,16 +17,16 @@
 
 package org.dockbox.hartshorn.persistence;
 
-import org.dockbox.hartshorn.api.entity.annotations.Entity;
+import org.dockbox.hartshorn.di.annotations.component.Component;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Entity("entity")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Component(id = "entity")
 public class EntityElement implements Element {
 
     private String name;

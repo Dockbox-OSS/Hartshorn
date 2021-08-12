@@ -41,13 +41,15 @@ public interface SpongeCloneableEntity<T extends CloneableEntity<T>, S extends E
                 if (copy.isEmpty()) return null;
                 //noinspection unchecked
                 return this.from((S) copy.get());
-            } catch (ClassCastException e) {
+            }
+            catch (ClassCastException e) {
                 throw new ApplicationException(e);
             }
         });
     }
 
-    T from(S entity);
     Exceptional<S> spongeEntity();
+
+    T from(S entity);
 
 }

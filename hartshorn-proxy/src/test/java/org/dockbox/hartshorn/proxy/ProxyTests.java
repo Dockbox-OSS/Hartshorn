@@ -37,7 +37,7 @@ public class ProxyTests {
 
     @Test
     void testConcreteMethodsCanBeProxied() throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
-        ProxyProperty<ConcreteProxyTarget, String> property = ProxyProperty.of(
+        ProxyAttribute<ConcreteProxyTarget, String> property = ProxyAttribute.of(
                 ConcreteProxyTarget.class,
                 ConcreteProxyTarget.class.getMethod("name"),
                 (instance, args, proxyContext) -> "Hartshorn");
@@ -52,7 +52,7 @@ public class ProxyTests {
 
     @Test
     void testFinalMethodsCanNotBeProxied() throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
-        ProxyProperty<FinalProxyTarget, String> property = ProxyProperty.of(
+        ProxyAttribute<FinalProxyTarget, String> property = ProxyAttribute.of(
                 FinalProxyTarget.class,
                 FinalProxyTarget.class.getMethod("name"),
                 (instance, args, proxyContext) -> "Hartshorn");
@@ -68,7 +68,7 @@ public class ProxyTests {
 
     @Test
     void testProviderPropertiesAreApplied() throws NoSuchMethodException {
-        ProxyProperty<ConcreteProxyTarget, String> property = ProxyProperty.of(
+        ProxyAttribute<ConcreteProxyTarget, String> property = ProxyAttribute.of(
                 ConcreteProxyTarget.class,
                 ConcreteProxyTarget.class.getMethod("name"),
                 (instance, args, proxyContext) -> "Hartshorn");

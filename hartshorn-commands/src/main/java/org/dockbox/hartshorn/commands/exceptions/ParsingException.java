@@ -17,13 +17,14 @@
 
 package org.dockbox.hartshorn.commands.exceptions;
 
-import org.dockbox.hartshorn.api.i18n.common.ResourceEntry;
+import org.dockbox.hartshorn.i18n.common.ResourceEntry;
 
-import lombok.Getter;
-
+/**
+ * The exception thrown when a command could not be parsed. This can occur either during
+ * the creation of a command definition or {@link org.dockbox.hartshorn.commands.context.CommandContext}.
+ */
 public class ParsingException extends Exception {
 
-    @Getter
     private final ResourceEntry resource;
 
     public ParsingException(ResourceEntry resource) {

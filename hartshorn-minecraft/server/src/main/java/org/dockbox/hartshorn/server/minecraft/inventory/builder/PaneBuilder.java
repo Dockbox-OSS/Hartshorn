@@ -17,11 +17,11 @@
 
 package org.dockbox.hartshorn.server.minecraft.inventory.builder;
 
+import org.dockbox.hartshorn.di.properties.AttributeHolder;
+import org.dockbox.hartshorn.i18n.text.Text;
 import org.dockbox.hartshorn.server.minecraft.inventory.pane.Pane;
-import org.dockbox.hartshorn.di.properties.InjectableType;
-import org.dockbox.hartshorn.api.i18n.text.Text;
 
-public interface PaneBuilder<T extends Pane, B extends PaneBuilder<T, B>> extends InjectableType {
+public interface PaneBuilder<T extends Pane, B extends PaneBuilder<T, B>> extends AttributeHolder {
 
     B title(Text text);
 

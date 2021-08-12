@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.server.minecraft.events.moderation;
 
-import org.dockbox.hartshorn.commands.source.CommandSource;
+import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.server.minecraft.players.Player;
 
 public class PlayerWarningExpired extends WarnEvent {

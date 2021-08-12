@@ -34,11 +34,6 @@ public class AbstractArmorInventory implements SlotInventory {
     }
 
     @Override
-    public int capacity() {
-        return 0;
-    }
-
-    @Override
     public Item slot(Slot slot) {
         return null;
     }
@@ -46,5 +41,10 @@ public class AbstractArmorInventory implements SlotInventory {
     @Override
     public void slot(Item item, Slot slot) {
 
+    }
+
+    @Override
+    public int capacity() {
+        return 0;
     }
 }

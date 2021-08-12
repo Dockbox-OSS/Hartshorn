@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.server.minecraft.inventory;
 
 import org.dockbox.hartshorn.server.minecraft.dimension.Block;
 import org.dockbox.hartshorn.server.minecraft.item.Item;
-import org.dockbox.hartshorn.server.minecraft.item.storage.MinecraftItems;
+import org.dockbox.hartshorn.server.minecraft.item.ItemTypes;
 
 import java.util.Collection;
 import java.util.function.Predicate;
@@ -58,7 +58,7 @@ public interface Inventory {
     }
 
     /**
-     * Returns all {@link Item items}, including {@link MinecraftItems#air()}.
+     * Returns all {@link Item items}, including {@link ItemTypes#AIR}.
      *
      * @return All items inside the inventory.
      */
@@ -77,6 +77,10 @@ public interface Inventory {
         return this.items().stream().filter(filter).toList();
     }
 
+    default boolean give(Block block) {
+        return block.item().map(this::give).or(false);
+    }
+
     /**
      * Attempts to give the {@link Item} to the inventory. If the item cannot be added, false is
      * returned.
@@ -87,10 +91,6 @@ public interface Inventory {
      * @return {@code true} if the item was added, otherwise {@code false}
      */
     boolean give(Item item);
-
-    default boolean give(Block block) {
-        return block.item().map(this::give).or(false);
-    }
 
     /**
      * Returns the total capacity of the inventory. This is equal to the maximum index, plus one (to

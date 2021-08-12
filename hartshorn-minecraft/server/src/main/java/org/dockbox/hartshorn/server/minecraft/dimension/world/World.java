@@ -17,6 +17,7 @@
 
 package org.dockbox.hartshorn.server.minecraft.dimension.world;
 
+import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.tuple.Vector3N;
 import org.dockbox.hartshorn.server.minecraft.dimension.BlockDimension;
 import org.dockbox.hartshorn.server.minecraft.dimension.ChunkHolder;
@@ -38,12 +39,12 @@ public abstract class World extends WorldProperties implements BlockDimension, E
     protected String name;
 
     public World(
-            UUID worldUniqueId,
-            String name,
-            boolean loadOnStartup,
-            @NotNull Vector3N spawnPosition,
-            long seed,
-            Gamemode defaultGamemode
+            final UUID worldUniqueId,
+            final String name,
+            final boolean loadOnStartup,
+            @NotNull final Vector3N spawnPosition,
+            final long seed,
+            final Gamemode defaultGamemode
     ) {
         super(loadOnStartup, spawnPosition, seed, defaultGamemode);
         this.worldUniqueId = worldUniqueId;
@@ -52,6 +53,10 @@ public abstract class World extends WorldProperties implements BlockDimension, E
 
     public static World empty() {
         return new EmptyWorld();
+    }
+
+    public static WorldBuilder builder() {
+        return Hartshorn.context().get(WorldBuilder.class);
     }
 
     public abstract int playerCount();
@@ -68,7 +73,7 @@ public abstract class World extends WorldProperties implements BlockDimension, E
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) return true;
         if (!(o instanceof World world)) return false;
         return this.worldUniqueId().equals(world.worldUniqueId()) && this.name().equals(world.name());

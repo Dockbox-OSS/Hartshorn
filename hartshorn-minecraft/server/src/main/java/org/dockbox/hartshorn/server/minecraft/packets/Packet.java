@@ -41,5 +41,5 @@ public abstract class Packet {
         }
     }
 
-    protected abstract Class<?> internalGetPacketType() throws ClassNotFoundException;
+    protected abstract Class<?> internalGetPacketType();
 }

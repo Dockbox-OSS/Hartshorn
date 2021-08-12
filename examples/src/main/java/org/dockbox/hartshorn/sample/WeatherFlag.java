@@ -17,11 +17,11 @@
 
 package org.dockbox.hartshorn.sample;
 
-import org.dockbox.hartshorn.api.i18n.common.ResourceEntry;
-import org.dockbox.hartshorn.plots.flags.AbstractPlotFlag;
+import org.dockbox.hartshorn.i18n.common.ResourceEntry;
+import org.dockbox.hartshorn.regions.flags.AbstractRegionFlag;
 import org.dockbox.hartshorn.server.minecraft.packets.data.Weather;
 
-public class WeatherFlag extends AbstractPlotFlag<Weather> {
+public class WeatherFlag extends AbstractRegionFlag<Weather> {
 
     public WeatherFlag(String id, ResourceEntry description) {
         super(id, description);
@@ -33,7 +33,7 @@ public class WeatherFlag extends AbstractPlotFlag<Weather> {
     }
 
     @Override
-    public Weather parse(String raw) {
+    public Weather restore(String raw) {
         int gameState = Integer.parseInt(raw);
         return Weather.fromGameState(gameState);
     }

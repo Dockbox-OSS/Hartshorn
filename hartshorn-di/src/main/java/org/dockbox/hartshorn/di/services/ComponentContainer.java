@@ -25,14 +25,17 @@ import java.util.List;
 public interface ComponentContainer {
 
     String id();
+
     String name();
 
     boolean enabled();
 
     Class<?> type();
+
     Class<?> owner();
 
     List<Class<? extends Annotation>> activators();
+
     boolean hasActivator();
 
     boolean hasActivator(Class<? extends Annotation> activator);

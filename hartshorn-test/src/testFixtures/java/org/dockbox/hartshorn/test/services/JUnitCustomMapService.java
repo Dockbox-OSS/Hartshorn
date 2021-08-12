@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.test.services;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.domain.Identifiable;
-import org.dockbox.hartshorn.server.minecraft.Console;
+import org.dockbox.hartshorn.commands.SystemSubject;
 import org.dockbox.hartshorn.server.minecraft.item.DefaultCustomMapService;
 import org.dockbox.hartshorn.server.minecraft.item.Item;
 import org.dockbox.hartshorn.server.minecraft.item.maps.CustomMap;
@@ -53,7 +53,7 @@ public class JUnitCustomMapService extends DefaultCustomMapService {
         if (maps.size() > id) {
             return maps.get(id);
         }
-        return new JUnitCustomMap(Console.instance(), id);
+        return new JUnitCustomMap(SystemSubject.instance(), id);
     }
 
     @Override

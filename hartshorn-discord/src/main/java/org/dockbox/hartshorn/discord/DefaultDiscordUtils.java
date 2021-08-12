@@ -36,18 +36,18 @@ import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 
 import org.dockbox.hartshorn.api.Hartshorn;
-import org.dockbox.hartshorn.api.config.GlobalConfig;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.domain.tuple.Triad;
 import org.dockbox.hartshorn.api.exceptions.Except;
-import org.dockbox.hartshorn.api.i18n.common.ResourceEntry;
-import org.dockbox.hartshorn.api.i18n.text.Text;
-import org.dockbox.hartshorn.di.annotations.inject.Wired;
+import org.dockbox.hartshorn.config.annotations.Value;
+import org.dockbox.hartshorn.di.annotations.service.Service;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.discord.annotations.DiscordCommand;
 import org.dockbox.hartshorn.discord.annotations.DiscordCommand.ListeningLevel;
 import org.dockbox.hartshorn.discord.templates.MessageTemplate;
 import org.dockbox.hartshorn.discord.templates.Template;
+import org.dockbox.hartshorn.i18n.common.ResourceEntry;
+import org.dockbox.hartshorn.i18n.text.Text;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.dockbox.hartshorn.util.Reflect;
 import org.jetbrains.annotations.NotNull;
@@ -58,15 +58,19 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
+@Service
 @SuppressWarnings("ResultOfMethodCallIgnored")
 public abstract class DefaultDiscordUtils implements DiscordUtils {
 
-    @Wired
-    private ApplicationContext context;
-    
     @SuppressWarnings("ConstantDeclaredInAbstractClass")
     public static final String WILDCARD = "*";
     private static final Map<String, Triad<DiscordCommand, Method, Class<?>>> commandMethods = HartshornUtils.emptyConcurrentMap();
+    @Inject
+    private ApplicationContext context;
+    @Value("hartshorn.discord.logging-channel")
+    private String loggingCategoryId;
 
     @Override
     public boolean checkMessageExists(String messageId, String channelId) {
@@ -82,7 +86,7 @@ public abstract class DefaultDiscordUtils implements DiscordUtils {
     @Override
     public Exceptional<Category> loggingCategory() {
         if (this.jda().present())
-            return Exceptional.of(this.jda().get().getCategoryById(Hartshorn.context().get(GlobalConfig.class).discordCategory()));
+            return Exceptional.of(this.jda().get().getCategoryById(this.loggingCategoryId));
         return Exceptional.empty();
     }
 

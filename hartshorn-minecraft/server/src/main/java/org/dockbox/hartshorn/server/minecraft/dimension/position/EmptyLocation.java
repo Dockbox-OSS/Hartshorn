@@ -19,16 +19,16 @@ package org.dockbox.hartshorn.server.minecraft.dimension.position;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.domain.tuple.Vector3N;
-import org.dockbox.hartshorn.api.i18n.entry.FakeResource;
 import org.dockbox.hartshorn.api.keys.PersistentDataKey;
 import org.dockbox.hartshorn.api.keys.TransactionResult;
+import org.dockbox.hartshorn.i18n.entry.FakeResource;
 import org.dockbox.hartshorn.server.minecraft.dimension.world.World;
 import org.dockbox.hartshorn.util.HartshornUtils;
 
 import java.util.Map;
 
 public class EmptyLocation extends Location {
-    
+
     @Override
     public <T> Exceptional<T> get(PersistentDataKey<T> dataKey) {
         return Exceptional.empty();
@@ -50,13 +50,13 @@ public class EmptyLocation extends Location {
     }
 
     @Override
-    public Location expand(Vector3N vector) {
-        return this;
+    public Vector3N vector() {
+        return Vector3N.empty();
     }
 
     @Override
-    public Vector3N vector() {
-        return Vector3N.empty();
+    public Location expand(Vector3N vector) {
+        return this;
     }
 
     @Override

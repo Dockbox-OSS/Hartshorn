@@ -20,7 +20,7 @@ package org.dockbox.hartshorn.sponge.game.entity;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.domain.tuple.Vector3N;
 import org.dockbox.hartshorn.di.annotations.inject.Binds;
-import org.dockbox.hartshorn.di.annotations.inject.Wired;
+import org.dockbox.hartshorn.di.annotations.inject.Bound;
 import org.dockbox.hartshorn.server.minecraft.dimension.position.Location;
 import org.dockbox.hartshorn.server.minecraft.entities.ArmorStand;
 import org.dockbox.hartshorn.server.minecraft.entities.ArmorStandInventory;
@@ -39,8 +39,7 @@ import java.util.Map;
 @Binds(ArmorStand.class)
 public class SpongeArmorStand
         extends SpongeCloneableEntityReference<ArmorStand, net.minecraft.world.entity.decoration.ArmorStand, org.spongepowered.api.entity.living.ArmorStand>
-        implements ArmorStand
-{
+        implements ArmorStand {
 
     private static final Map<Limbs, Key<Value<Vector3d>>> limbs = HartshornUtils.<Limbs, Key<Value<Vector3d>>>mapBuilder()
             .add(Limbs.HEAD, Keys.HEAD_ROTATION)
@@ -50,7 +49,7 @@ public class SpongeArmorStand
             .add(Limbs.RIGHT_LEG, Keys.RIGHT_LEG_ROTATION)
             .get();
 
-    @Wired
+    @Bound
     public SpongeArmorStand(Location location) {
         super(location);
     }

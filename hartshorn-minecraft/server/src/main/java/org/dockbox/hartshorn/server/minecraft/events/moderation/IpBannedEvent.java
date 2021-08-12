@@ -18,7 +18,7 @@
 package org.dockbox.hartshorn.server.minecraft.events.moderation;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.commands.source.CommandSource;
+import org.dockbox.hartshorn.commands.CommandSource;
 
 import java.net.InetAddress;
 import java.time.LocalDateTime;
@@ -42,12 +42,12 @@ public class IpBannedEvent extends BanEvent<InetAddress> {
      *         The {@link LocalDateTime} of when the ban was issued.
      */
     public IpBannedEvent(
-            InetAddress host,
-            CommandSource source,
-            Exceptional<String> reason,
-            Exceptional<LocalDateTime> expiration,
-            LocalDateTime creation
+            final InetAddress host,
+            final CommandSource source,
+            final Exceptional<String> reason,
+            final Exceptional<LocalDateTime> expiration,
+            final LocalDateTime creation
     ) {
-        super(host, source, reason, expiration, creation);
+        super(host, source, creation, reason, expiration);
     }
 }

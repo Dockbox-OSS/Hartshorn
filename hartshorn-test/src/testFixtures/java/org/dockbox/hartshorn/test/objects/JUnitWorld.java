@@ -41,10 +41,8 @@ public class JUnitWorld extends World {
     private final Map<Vector3N, Block> blocks = HartshornUtils.emptyMap();
     private final Map<UUID, Entity> entities = HartshornUtils.emptyMap();
 
-    @Getter
-    private final Map<String, String> gamerules = HartshornUtils.emptyMap();
-    @Getter
-    private boolean loaded;
+    @Getter private final Map<String, String> gamerules = HartshornUtils.emptyMap();
+    @Getter private boolean loaded;
 
     public JUnitWorld(UUID worldUniqueId, String name, boolean loadOnStartup, @NotNull Vector3N spawnPosition, long seed, Gamemode defaultGamemode) {
         super(worldUniqueId, name, loadOnStartup, spawnPosition, seed, defaultGamemode);
@@ -98,6 +96,11 @@ public class JUnitWorld extends World {
     }
 
     @Override
+    public int playerCount() {
+        return this.entities(entity -> entity instanceof Player).size();
+    }
+
+    @Override
     public Collection<Entity> entities() {
         return this.entities.values();
     }
@@ -105,11 +108,6 @@ public class JUnitWorld extends World {
     @Override
     public Collection<Entity> entities(Predicate<Entity> predicate) {
         return this.entities().stream().filter(predicate).toList();
-    }
-
-    @Override
-    public int playerCount() {
-        return this.entities(entity -> entity instanceof Player).size();
     }
 
     @Override

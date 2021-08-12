@@ -22,15 +22,15 @@ buildscript {
         maven { url "https://plugins.gradle.org/m2/" }
     }
     dependencies {
-        classpath 'io.franzbecker:gradle-lombok:1.6'
+        classpath "io.franzbecker:gradle-lombok:$gradleLombokVersion"
     }
 }
 
 plugins {
     id 'java'
     id 'java-library'
-    id 'org.cadixdev.licenser' version '0.5.0'
-    id 'io.freefair.aggregate-javadoc' version '6.0.0-m2'
+    id 'org.cadixdev.licenser' version "$licenserVersion"
+    id 'io.freefair.aggregate-javadoc' version "$aggregateJavadocVersion"
 }
 
 static def getVersionName() {
@@ -84,14 +84,29 @@ allprojects {
             jcenter()
         }
 
+        sourceSets {
+            impl {
+                compileClasspath += main.output
+                runtimeClasspath += main.output
+            }
+            test {
+                compileClasspath += impl.output
+                runtimeClasspath += impl.output
+            }
+        }
+
         configurations {
             include
-            implementation.extendsFrom(include)
+            implImplementation.extendsFrom(include)
             testImplementation.extendsFrom(include)
 
-            share
-            api.extendsFrom(share)
-            testImplementation.extendsFrom(share)
+            apiInclude
+            include.extendsFrom(apiInclude)
+            implementation.extendsFrom(apiInclude)
+
+            apiShare
+            apiInclude.extendsFrom(apiShare)
+            api.extendsFrom(apiShare)
 
             all*.exclude group: 'junit', module: 'junit'
         }
@@ -118,19 +133,20 @@ allprojects {
         }
 
         dependencies {
-            include 'com.mortennobel:java-image-scaling:0.8.6'
-            include 'com.jhlabs:filters:2.0.235-1'
-
             // Typically included by platforms
-            include "org.slf4j:slf4j-api:$slf4jVersion"
+            apiInclude "org.slf4j:slf4j-api:$slf4jVersion"
+            apiInclude "com.google.guava:guava:$guavaVersion"
+            apiInclude "javax.persistence:javax.persistence-api:$javaxPersistenceVersion"
 
             // Compile/source dependencies
-            include("org.jetbrains:annotations:$jetbrainsAnnotationsVersion")
+            apiInclude("org.jetbrains:annotations:$jetbrainsAnnotationsVersion")
 
             // Lombok
-            include 'org.projectlombok:lombok:1.18.20'
-            annotationProcessor 'org.projectlombok:lombok:1.18.20'
-            testAnnotationProcessor 'org.projectlombok:lombok:1.18.20'
+            apiInclude "org.projectlombok:lombok:$lombokVersion"
+
+            annotationProcessor "org.projectlombok:lombok:$lombokVersion"
+            implAnnotationProcessor "org.projectlombok:lombok:$lombokVersion"
+            testAnnotationProcessor "org.projectlombok:lombok:$lombokVersion"
 
             // Testing requirements
             testImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"

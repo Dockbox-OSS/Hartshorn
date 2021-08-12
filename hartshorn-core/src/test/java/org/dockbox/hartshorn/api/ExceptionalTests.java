@@ -423,7 +423,8 @@ public class ExceptionalTests {
         try {
             exceptional.rethrow();
             Assertions.fail();
-        } catch (Throwable t) {
+        }
+        catch (Throwable t) {
             Assertions.assertTrue(t instanceof RuntimeException);
             Assertions.assertNotNull(t.getCause());
             Assertions.assertEquals("error", t.getCause().getMessage());

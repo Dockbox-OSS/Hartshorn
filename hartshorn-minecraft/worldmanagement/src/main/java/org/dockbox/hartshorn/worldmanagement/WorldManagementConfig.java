@@ -18,6 +18,7 @@
 package org.dockbox.hartshorn.worldmanagement;
 
 import org.dockbox.hartshorn.api.domain.tuple.Vector3N;
+import org.dockbox.hartshorn.config.annotations.Configuration;
 import org.dockbox.hartshorn.config.annotations.Value;
 import org.dockbox.hartshorn.persistence.FileManager;
 
@@ -27,6 +28,7 @@ import javax.inject.Inject;
 
 import lombok.Getter;
 
+@Configuration
 public class WorldManagementConfig {
 
     @Inject
@@ -45,12 +47,10 @@ public class WorldManagementConfig {
     @Value(value = "services.world-management.unload.max", or = "10")
     private int maximumWorldsToUnload;
 
-    @Getter
-    @Value("services.world-management.unload.blacklist")
+    @Getter @Value("services.world-management.unload.blacklist")
     private List<String> unloadBlacklist;
 
-    @Getter
-    @Value(value = "services.world-management.unload.delay", or = "2")
+    @Getter @Value(value = "services.world-management.unload.delay", or = "2")
     private int unloadDelay;
 
     public Vector3N portalPosition() {

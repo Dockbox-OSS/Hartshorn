@@ -20,12 +20,10 @@ package org.dockbox.hartshorn.dave;
 import net.dv8tion.jda.api.entities.TextChannel;
 
 import org.dockbox.hartshorn.api.Hartshorn;
-import org.dockbox.hartshorn.api.entity.annotations.Entity;
-import org.dockbox.hartshorn.api.i18n.text.Text;
 import org.dockbox.hartshorn.discord.DiscordUtils;
+import org.dockbox.hartshorn.i18n.text.Text;
 
 @SuppressWarnings({ "FieldCanBeLocal", "FieldMayBeFinal" })
-@Entity(value = "dave-config")
 public class DaveConfig {
 
     private String channelId = "424884086230876161";

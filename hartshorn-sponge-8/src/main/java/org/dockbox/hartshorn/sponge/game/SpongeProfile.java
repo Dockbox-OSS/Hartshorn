@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.sponge.game;
 
-import org.dockbox.hartshorn.di.annotations.inject.Wired;
+import org.dockbox.hartshorn.di.annotations.inject.Bound;
 import org.dockbox.hartshorn.server.minecraft.players.Profile;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.spongepowered.api.profile.GameProfile;
@@ -31,7 +31,7 @@ public class SpongeProfile implements Profile {
 
     private GameProfile profile;
 
-    @Wired
+    @Bound
     public SpongeProfile(UUID uuid) {
         this.profile = GameProfile.of(uuid);
     }

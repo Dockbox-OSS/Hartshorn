@@ -29,27 +29,45 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 /** The global {@link Hartshorn} instance used to grant access to various components. */
 public final class Hartshorn {
 
-    public static final String GLOBAL_BYPASS = "hartshorn.admin.bypass-all";
+    /**
+     * The global permission node for any {@link org.dockbox.hartshorn.api.domain.Subject}
+     * to bypass application permissions.
+     */
     public static final String GLOBAL_PERMITTED = "hartshorn.global.permitted";
+    /**
+     * The default package prefix to use when scanning Hartshorn internals.
+     */
     public static final String PACKAGE_PREFIX = "org.dockbox.hartshorn";
-    public static final List<UUID> GLOBALLY_PERMITTED = HartshornUtils.asList(
-            UUID.fromString("6047d264-7769-4e50-a11e-c8b83f65ccc4"),
-            UUID.fromString("cb6411bb-31c9-4d69-8000-b98842ce0a0a"),
-            UUID.fromString("b7fb5e32-73ee-4f25-b256-a763c8739192")
-    );
+    /**
+     * The (human readable) display name of Hartshorn.
+     */
     public static final String PROJECT_NAME = "Hartshorn";
+    /**
+     * The simplified identifier for Hartshorn-default identifiers.
+     */
     public static final String PROJECT_ID = "hartshorn";
+    /**
+     * The semantic version of the current/latest release of Hartshorn
+     */
+    public static final String VERSION = "4.1.1";
 
     private static final Map<String, Logger> LOGGERS = HartshornUtils.emptyConcurrentMap();
 
     private Hartshorn() {}
+
+    /**
+     * Gets the current {@link ApplicationContext} associated with the active {@link #server()}.
+     *
+     * @return The active context
+     */
+    public static ApplicationContext context() {
+        return server().context();
+    }
 
     /**
      * Gets the instance of {@link Hartshorn}.
@@ -60,32 +78,32 @@ public final class Hartshorn {
         return HartshornBootstrap.instance();
     }
 
-    public static ApplicationContext context() {
-        return server().context();
-    }
-
     /**
      * Gets a log instance representing the calling type.
      *
      * @return The {@link Logger}
      */
     public static Logger log() {
-        StackTraceElement element = Thread.currentThread().getStackTrace()[2];
-        String className = element.getClassName();
+        return internalLog();
+    }
+
+    static Logger internalLog() {
+        final StackTraceElement element = Thread.currentThread().getStackTrace()[3];
+        final String className = element.getClassName();
         if (LOGGERS.containsKey(className)) return LOGGERS.get(className);
 
-        String[] qualifiedClassName = className.split("\\.");
-        StringBuilder fullName = new StringBuilder();
+        final String[] qualifiedClassName = className.split("\\.");
+        final StringBuilder fullName = new StringBuilder();
 
         for (int i = 0; i < qualifiedClassName.length; i++) {
-            String part = qualifiedClassName[i];
+            final String part = qualifiedClassName[i];
             if (i > 0) fullName.append('.');
-            if (i == qualifiedClassName.length-1) fullName.append(part);
+            if (i == qualifiedClassName.length - 1) fullName.append(part);
             else fullName.append(part.charAt(0));
         }
 
-        String name = HartshornUtils.wrap(fullName.toString(), 35);
-        Logger logger = LoggerFactory.getLogger(name);
+        final String name = HartshornUtils.wrap(fullName.toString(), 35);
+        final Logger logger = LoggerFactory.getLogger(name);
         LOGGERS.put(className, logger);
         return logger;
     }
@@ -102,19 +120,19 @@ public final class Hartshorn {
      * @return The resource file wrapped in a {@link Exceptional}, or a appropriate {@link
      *         Exceptional} (either none or providing the appropriate exception).
      */
-    public static Exceptional<Path> resource(String name) {
+    public static Exceptional<Path> resource(final String name) {
         try {
-            InputStream in = Hartshorn.class.getClassLoader().getResourceAsStream(name);
-            byte[] buffer = new byte[in.available()];
+            final InputStream in = Hartshorn.class.getClassLoader().getResourceAsStream(name);
+            final byte[] buffer = new byte[in.available()];
             in.read(buffer);
 
-            Path tempFile = Files.createTempFile(name, ".tmp");
-            OutputStream outStream = new FileOutputStream(tempFile.toFile());
+            final Path tempFile = Files.createTempFile(name, ".tmp");
+            final OutputStream outStream = new FileOutputStream(tempFile.toFile());
             outStream.write(buffer);
 
             return Exceptional.of(tempFile);
         }
-        catch (NullPointerException | IOException e) {
+        catch (final NullPointerException | IOException e) {
             return Exceptional.of(e);
         }
     }

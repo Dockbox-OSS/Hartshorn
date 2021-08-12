@@ -18,7 +18,9 @@
 package org.dockbox.hartshorn.server.minecraft.events.player.interact;
 
 import org.dockbox.hartshorn.server.minecraft.dimension.Block;
+import org.dockbox.hartshorn.server.minecraft.dimension.BlockSnapshot;
 import org.dockbox.hartshorn.server.minecraft.dimension.position.BlockFace;
+import org.dockbox.hartshorn.server.minecraft.dimension.position.Location;
 import org.dockbox.hartshorn.server.minecraft.players.ClickType;
 import org.dockbox.hartshorn.server.minecraft.players.Hand;
 import org.dockbox.hartshorn.server.minecraft.players.Player;
@@ -26,14 +28,16 @@ import org.dockbox.hartshorn.server.minecraft.players.Player;
 import lombok.Getter;
 
 @Getter
-public class PlayerInteractBlockEvent extends PlayerInteractEvent {
+public class PlayerInteractBlockEvent extends PlayerInteractEvent<BlockSnapshot> {
 
     private final Block block;
     private final BlockFace face;
+    private final Location location;
 
-    public PlayerInteractBlockEvent(Player player, Hand hand, ClickType clickType, Block block, BlockFace face) {
-        super(player, hand, clickType);
+    public PlayerInteractBlockEvent(final Player player, final Hand hand, final ClickType clickType, final Block block, final BlockFace face, final Location location) {
+        super(player, hand, clickType, new BlockSnapshot(block ,location));
         this.block = block;
         this.face = face;
+        this.location = location;
     }
 }

@@ -17,24 +17,29 @@
 
 package org.dockbox.hartshorn.commands.events;
 
-import org.dockbox.hartshorn.api.events.AbstractTargetEvent;
-import org.dockbox.hartshorn.api.events.parents.Cancellable;
+import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.commands.context.CommandContext;
-import org.dockbox.hartshorn.commands.source.CommandSource;
+import org.dockbox.hartshorn.events.AbstractTargetEvent;
+import org.dockbox.hartshorn.events.parents.Cancellable;
 
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * The common parent for command-related events.
+ */
 public abstract class CommandEvent extends AbstractTargetEvent {
 
-    @Getter
-    private final CommandContext context;
+    @Getter private final CommandContext context;
 
     protected CommandEvent(CommandSource source, CommandContext context) {
         super(source);
         this.context = context;
     }
 
+    /**
+     * The event fired before a command is executed.
+     */
     @Getter
     @Setter
     public static class Before extends CommandEvent implements Cancellable {
@@ -46,6 +51,9 @@ public abstract class CommandEvent extends AbstractTargetEvent {
         }
     }
 
+    /**
+     * The event fired after a command is executed.
+     */
     public static class After extends CommandEvent {
         public After(CommandSource source, CommandContext context) {
             super(source, context);

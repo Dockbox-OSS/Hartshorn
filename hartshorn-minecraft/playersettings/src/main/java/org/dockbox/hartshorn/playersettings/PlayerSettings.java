@@ -18,15 +18,15 @@
 package org.dockbox.hartshorn.playersettings;
 
 import org.dockbox.hartshorn.api.Hartshorn;
-import org.dockbox.hartshorn.api.i18n.MessageReceiver;
-import org.dockbox.hartshorn.api.i18n.common.Language;
-import org.dockbox.hartshorn.api.i18n.common.ResourceEntry;
-import org.dockbox.hartshorn.api.i18n.entry.FakeResource;
-import org.dockbox.hartshorn.api.i18n.entry.Resource;
-import org.dockbox.hartshorn.api.i18n.text.Text;
 import org.dockbox.hartshorn.api.keys.PersistentDataHolder;
 import org.dockbox.hartshorn.commands.annotations.Command;
 import org.dockbox.hartshorn.di.annotations.service.Service;
+import org.dockbox.hartshorn.i18n.MessageReceiver;
+import org.dockbox.hartshorn.i18n.common.Language;
+import org.dockbox.hartshorn.i18n.common.ResourceEntry;
+import org.dockbox.hartshorn.i18n.entry.FakeResource;
+import org.dockbox.hartshorn.i18n.entry.Resource;
+import org.dockbox.hartshorn.i18n.text.Text;
 import org.dockbox.hartshorn.playersettings.service.SettingsContext;
 import org.dockbox.hartshorn.server.minecraft.inventory.Element;
 import org.dockbox.hartshorn.server.minecraft.inventory.InventoryLayout;
@@ -35,7 +35,7 @@ import org.dockbox.hartshorn.server.minecraft.inventory.builder.PaginatedPaneBui
 import org.dockbox.hartshorn.server.minecraft.inventory.pane.PaginatedPane;
 import org.dockbox.hartshorn.server.minecraft.inventory.pane.Pane;
 import org.dockbox.hartshorn.server.minecraft.item.Item;
-import org.dockbox.hartshorn.server.minecraft.item.storage.MinecraftItems;
+import org.dockbox.hartshorn.server.minecraft.item.ItemTypes;
 import org.dockbox.hartshorn.server.minecraft.players.Player;
 import org.dockbox.hartshorn.util.HartshornUtils;
 
@@ -43,16 +43,6 @@ import java.util.List;
 
 @Service
 public class PlayerSettings {
-
-    public static final Setting<Boolean> RECEIVING_NOTIFICATIONS = Setting.of(Boolean.class)
-            .resource(new Resource("Receive notifications", "settings.notifications"))
-            .description(new Resource("Whether to receive server notifications, for example when you change your client-side language preferences.", "settings.notifications.description"))
-            .owner(PlayerSettings.class)
-            .converter(value -> value ? new Resource("Yes", "yes") : new Resource("No", "no"))
-            .defaultValue(() -> true)
-            .display(() -> MinecraftItems.instance().inkSac())
-            .action(PlayerSettings::toggleNotifications)
-            .ok();
 
     public static final Setting<Integer> LANGUAGE = Setting.of(Integer.class)
             .from(Player.LANGUAGE)
@@ -64,9 +54,16 @@ public class PlayerSettings {
                 return new FakeResource(language.nameLocalized());
             })
             .defaultValue(Language.EN_US::ordinal)
-            .display(() -> MinecraftItems.instance().bookAndQuill())
+            .display(() -> Item.of(ItemTypes.BOOK_AND_QUILL))
+            .ok();    public static final Setting<Boolean> RECEIVING_NOTIFICATIONS = Setting.of(Boolean.class)
+            .resource(new Resource("Receive notifications", "settings.notifications"))
+            .description(new Resource("Whether to receive server notifications, for example when you change your client-side language preferences.", "settings.notifications.description"))
+            .owner(PlayerSettings.class)
+            .converter(value -> value ? new Resource("Yes", "yes") : new Resource("No", "no"))
+            .defaultValue(() -> true)
+            .display(() -> Item.of(ItemTypes.INK_SAC))
+            .action(PlayerSettings::toggleNotifications)
             .ok();
-
     private final List<Setting<?>> settings = HartshornUtils.emptyConcurrentList();
 
     private static void toggleNotifications(PersistentDataHolder holder) {
@@ -110,4 +107,6 @@ public class PlayerSettings {
         final T o = setting.get(source);
         return setting.convert(o).translate(source);
     }
+
+
 }

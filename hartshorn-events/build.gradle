@@ -18,6 +18,7 @@
 apply from: "$rootDir/parent.gradle"
 
 dependencies {
-    compileOnly project(':hartshorn-bootstrap')
-    compileOnly project(':hartshorn-tasks')
+    apiInclude project(':hartshorn-bootstrap')
+
+    include project(':hartshorn-tasks')
 }

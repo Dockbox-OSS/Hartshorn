@@ -26,5 +26,5 @@ apply from: "$rootDir/service-parent.gradle"
 
 dependencies {
     compileOnly project(':hartshorn-minecraft:server')
-    compileOnly project(':hartshorn-minecraft:plots')
+    compileOnly project(':hartshorn-minecraft:regions')
 }

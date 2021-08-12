@@ -18,7 +18,6 @@
 package org.dockbox.hartshorn.dave.models;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.api.entity.annotations.Entity;
 import org.dockbox.hartshorn.dave.DaveUtils;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.jetbrains.annotations.NonNls;
@@ -27,13 +26,9 @@ import java.util.List;
 
 import lombok.Getter;
 
-@Entity(value = "triggers")
 public class DaveTriggers {
 
-    @Getter
-    private final List<DaveTrigger> triggers = HartshornUtils.emptyList();
-
-    public DaveTriggers() {}
+    @Getter private final List<DaveTrigger> triggers = HartshornUtils.emptyList();
 
     public Exceptional<DaveTrigger> matching(String message) {
         return DaveUtils.findMatching(this, message);

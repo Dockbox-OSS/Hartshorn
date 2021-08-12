@@ -15,4 +15,10 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-apply from: "$rootDir/parent.gradle"
+dependencies {
+    apiInclude project(':hartshorn-core')
+    apiInclude project(':hartshorn-util')
+    apiInclude project(':hartshorn-di')
+    apiInclude project(':hartshorn-exceptions')
+    apiShare project(':hartshorn-di').sourceSets.impl.output
+}

@@ -19,11 +19,11 @@ package org.dockbox.hartshorn.sponge.game;
 
 import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.api.i18n.entry.DefaultResources;
 import org.dockbox.hartshorn.api.keys.PersistentDataHolder;
 import org.dockbox.hartshorn.api.keys.PersistentDataKey;
 import org.dockbox.hartshorn.api.keys.StoredPersistentKey;
 import org.dockbox.hartshorn.api.keys.TransactionResult;
+import org.dockbox.hartshorn.i18n.entry.DefaultResources;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.dockbox.hartshorn.util.Reflect;
 import org.spongepowered.api.ResourceKey;
@@ -37,13 +37,13 @@ import java.util.Map;
 
 public interface SpongeComposite extends PersistentDataHolder {
 
-    public static final Key<MapValue<String, Object>> COMPOSITE = Key.builder()
-            .key(ResourceKey.of("hartshorn", "body_rotations"))
-            .mapElementType(String.class, Object.class)
-            .build();
+    Key<MapValue<String, Object>> COMPOSITE = Key.fromMap(
+            ResourceKey.of(Hartshorn.PROJECT_ID, "composite"),
+            String.class, Object.class
+    );
 
     @Override
-    default <T> Exceptional<T> get(PersistentDataKey<T> dataKey) {
+    default <T> Exceptional<T> get(final PersistentDataKey<T> dataKey) {
         final Map<String, Object> data = this.raw();
 
         final Object value = data.get(dataKey.id());
@@ -55,7 +55,7 @@ public interface SpongeComposite extends PersistentDataHolder {
     }
 
     @Override
-    default <T> TransactionResult set(PersistentDataKey<T> dataKey, T value) {
+    default <T> TransactionResult set(final PersistentDataKey<T> dataKey, final T value) {
         return this.holder().map(composite -> {
             final Map<String, Object> data = this.raw();
             data.put(dataKey.id(), value);
@@ -67,7 +67,7 @@ public interface SpongeComposite extends PersistentDataHolder {
     }
 
     @Override
-    default <T> void remove(PersistentDataKey<T> dataKey) {
+    default <T> void remove(final PersistentDataKey<T> dataKey) {
         this.holder().present(composite -> {
             final Map<String, Object> data = this.raw();
             data.remove(dataKey.id());
@@ -83,7 +83,7 @@ public interface SpongeComposite extends PersistentDataHolder {
         final Map<PersistentDataKey<?>, Object> data = HartshornUtils.emptyMap();
         final DataHolder holder = dataHolder.get();
 
-        for (Immutable<?> value : holder.getValues()) {
+        for (final Immutable<?> value : holder.getValues()) {
             final StoredPersistentKey key = StoredPersistentKey.of(value.key().key().asString());
             final Object dataValue = value.get();
             data.put(key, dataValue);

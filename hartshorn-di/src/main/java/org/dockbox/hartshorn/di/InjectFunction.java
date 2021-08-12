@@ -17,11 +17,11 @@
 
 package org.dockbox.hartshorn.di;
 
-import org.dockbox.hartshorn.di.properties.InjectorProperty;
+import org.dockbox.hartshorn.di.properties.Attribute;
 
 @FunctionalInterface
 public interface InjectFunction<T> {
 
-    T apply(T instance, Class<T> type, InjectorProperty<?>... properties);
+    T apply(T instance, Class<T> type, Attribute<?>... properties);
 
 }

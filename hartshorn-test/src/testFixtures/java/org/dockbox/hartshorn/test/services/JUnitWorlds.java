@@ -37,7 +37,7 @@ public class JUnitWorlds implements Worlds {
 
     // Seed is equal to 'junit' represented by a long
     public static World SECOND_WORLD = new JUnitWorld(UUID.randomUUID(), "second",
-            false,Vector3N.empty(), 101487854L, Gamemode.CREATIVE);
+            false, Vector3N.empty(), 101487854L, Gamemode.CREATIVE);
 
     @Override
     public List<World> loadedWorlds() {

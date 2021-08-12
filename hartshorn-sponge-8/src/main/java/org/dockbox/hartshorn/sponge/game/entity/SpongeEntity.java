@@ -20,7 +20,7 @@ package org.dockbox.hartshorn.sponge.game.entity;
 import net.minecraft.world.entity.Entity;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.api.i18n.text.Text;
+import org.dockbox.hartshorn.i18n.text.Text;
 import org.dockbox.hartshorn.server.minecraft.dimension.position.Location;
 import org.dockbox.hartshorn.server.minecraft.dimension.world.World;
 import org.dockbox.hartshorn.sponge.game.SpongeComposite;
@@ -38,8 +38,7 @@ import java.util.UUID;
 
 public interface SpongeEntity
         <T extends Entity, S extends org.spongepowered.api.entity.Entity>
-        extends org.dockbox.hartshorn.server.minecraft.entities.Entity, SpongeComposite
-{
+        extends org.dockbox.hartshorn.server.minecraft.entities.Entity, SpongeComposite {
 
     abstract EntityType<S> type();
 
@@ -103,14 +102,6 @@ public interface SpongeEntity
         return this;
     }
 
-    default boolean bool(Key<Value<Boolean>> key) {
-        return SpongeUtil.get(this.spongeEntity(), key, t -> t, () -> false);
-    }
-
-    default void bool(Key<Value<Boolean>> key, boolean value) {
-        this.spongeEntity().present(entity -> entity.offer(key, value));
-    }
-
     default boolean summon(Location location) {
         if (!this.alive()) {
             return this.spongeEntity().map(entity -> {
@@ -119,7 +110,8 @@ public interface SpongeEntity
                 final ServerLocation loc = serverLocation.get();
                 return loc.spawnEntity(entity);
             }).or(false);
-        } else {
+        }
+        else {
             return this.location(location);
         }
     }
@@ -129,7 +121,15 @@ public interface SpongeEntity
         return true;
     }
 
-    default Location location() {
+    default void bool(Key<Value<Boolean>> key, boolean value) {
+        this.spongeEntity().present(entity -> entity.offer(key, value));
+    }
+
+    default boolean bool(Key<Value<Boolean>> key) {
+        return SpongeUtil.get(this.spongeEntity(), key, t -> t, () -> false);
+    }
+
+    public abstract Exceptional<S> spongeEntity();    default Location location() {
         return this.spongeEntity()
                 .map(S::serverLocation)
                 .map(SpongeConvert::fromSponge)
@@ -137,17 +137,11 @@ public interface SpongeEntity
                 .get();
     }
 
-    default boolean location(Location location) {
-        return this.spongeEntity().map(entity -> SpongeConvert.toSponge(location)
-                .map(entity::setLocation).or(false)).or(false);
-    }
-
-    default World world() {
-        return this.location().world();
-    }
-
     default Exceptional<? extends Mutable> dataHolder() {
         return this.spongeEntity();
+    }    default boolean location(Location location) {
+        return this.spongeEntity().map(entity -> SpongeConvert.toSponge(location)
+                .map(entity::setLocation).or(false)).or(false);
     }
 
     /**
@@ -158,7 +152,13 @@ public interface SpongeEntity
     default Exceptional<T> minecraftEntity() {
         //noinspection unchecked
         return this.spongeEntity().map(e -> (T) e);
+    }    default World world() {
+        return this.location().world();
     }
 
-    public abstract Exceptional<S> spongeEntity();
+
+
+
+
+
 }

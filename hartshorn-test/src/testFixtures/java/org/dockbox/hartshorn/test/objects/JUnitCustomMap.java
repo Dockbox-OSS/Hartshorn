@@ -18,19 +18,19 @@
 package org.dockbox.hartshorn.test.objects;
 
 import org.dockbox.hartshorn.api.domain.Identifiable;
+import org.dockbox.hartshorn.server.minecraft.item.Item;
+import org.dockbox.hartshorn.server.minecraft.item.ItemTypes;
 import org.dockbox.hartshorn.server.minecraft.item.maps.CustomMap;
-import org.dockbox.hartshorn.server.minecraft.item.storage.MinecraftItems;
 
 import lombok.Getter;
 
 public class JUnitCustomMap extends JUnitItem implements CustomMap {
 
-    @Getter
-    private final Identifiable owner;
+    @Getter private final Identifiable owner;
     private final int id;
 
     public JUnitCustomMap(Identifiable owner, int id) {
-        super(MinecraftItems.instance().filledMap().id());
+        super(Item.of(ItemTypes.FILLED_MAP).id());
         this.owner = owner;
         this.id = id;
     }

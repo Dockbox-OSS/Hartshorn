@@ -31,7 +31,7 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
       - name: Build all
-        run: ./gradlew build -x test
+        run: ./gradlew build -x test -x :hartshorn-sponge-8:build
   test:
     name: Tests
     runs-on: ubuntu-latest
@@ -45,3 +45,16 @@ jobs:
         run: chmod +x gradlew
       - name: Tests
         run: ./gradlew test
+  sponge-integration:
+    name: Sponge integration build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK 16
+        uses: actions/setup-java@v1
+        with:
+          java-version: 16
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+      - name: Sponge integration build
+        run: ./gradlew build -x test

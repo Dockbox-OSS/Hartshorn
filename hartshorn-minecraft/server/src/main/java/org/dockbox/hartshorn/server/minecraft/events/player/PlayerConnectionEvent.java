@@ -18,7 +18,7 @@
 package org.dockbox.hartshorn.server.minecraft.events.player;
 
 import org.dockbox.hartshorn.api.domain.Subject;
-import org.dockbox.hartshorn.api.events.AbstractTargetEvent;
+import org.dockbox.hartshorn.events.AbstractTargetEvent;
 import org.dockbox.hartshorn.server.minecraft.players.Player;
 
 /** The abstract type which can be used to listen to all player movement related events. */

@@ -17,12 +17,11 @@
 
 package org.dockbox.hartshorn.commands;
 
-import org.dockbox.hartshorn.api.i18n.annotations.Resource;
-import org.dockbox.hartshorn.api.i18n.common.ResourceEntry;
-import org.dockbox.hartshorn.commands.service.CommandParameters;
 import org.dockbox.hartshorn.di.annotations.service.Service;
+import org.dockbox.hartshorn.i18n.annotations.Resource;
+import org.dockbox.hartshorn.i18n.common.ResourceEntry;
 
-@Service(owner = CommandParameters.class)
+@Service(owner = CommandGateway.class)
 public interface CommandParameterResources {
 
     @Resource(value = "Not enough arguments.", key = "missing_args")

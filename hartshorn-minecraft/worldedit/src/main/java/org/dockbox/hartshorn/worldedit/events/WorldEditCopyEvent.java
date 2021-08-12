@@ -17,8 +17,8 @@
 
 package org.dockbox.hartshorn.worldedit.events;
 
-import org.dockbox.hartshorn.api.events.AbstractCancellableEvent;
 import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.events.AbstractCancellableEvent;
 import org.dockbox.hartshorn.server.minecraft.players.Player;
 import org.dockbox.hartshorn.worldedit.WorldEditKeys;
 import org.dockbox.hartshorn.worldedit.region.Region;
@@ -35,6 +35,7 @@ import lombok.Getter;
 public class WorldEditCopyEvent extends AbstractCancellableEvent {
 
     private final Player player;
+
     /**
      * Gets the selection of the executing {@link Player}
      *

@@ -22,7 +22,7 @@ import net.kyori.adventure.text.Component;
 import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.exceptions.Except;
 import org.dockbox.hartshorn.commands.CommandGateway;
-import org.dockbox.hartshorn.commands.SimpleCommandGateway;
+import org.dockbox.hartshorn.commands.CommandGatewayImpl;
 import org.dockbox.hartshorn.commands.exceptions.ParsingException;
 import org.dockbox.hartshorn.sponge.Sponge8Application;
 import org.dockbox.hartshorn.sponge.event.EventBridge;
@@ -44,7 +44,7 @@ public class SpongeCommandRegistrar implements EventBridge {
 
     @Listener
     public void onRegisterCommand(final RegisterCommandEvent<Parameterized> event) {
-        for (final String alias : SimpleCommandGateway.contexts().keySet()) {
+        for (final String alias : CommandGatewayImpl.contexts().keySet()) {
             final Value<String> parameter = this.parameter(alias);
 
             final Parameterized command = Command.builder()
@@ -54,6 +54,17 @@ public class SpongeCommandRegistrar implements EventBridge {
 
             event.register(Sponge8Application.container(), command, alias);
         }
+    }
+
+    private Value<String> parameter(String alias) {
+        return Parameter.remainingJoinedStrings().key(alias + "-arguments")
+                .completer((ctx, input) -> Hartshorn.context()
+                        .get(CommandGateway.class)
+                        .suggestions(SpongeConvert.fromSponge(ctx.cause().subject()).orNull(), alias + ' ' + input)
+                        .stream()
+                        .map(CommandCompletion::of)
+                        .toList()
+                ).terminal().optional().build();
     }
 
     private CommandExecutor executor(String alias, Value<String> parameter) {
@@ -71,16 +82,5 @@ public class SpongeCommandRegistrar implements EventBridge {
             }
             return CommandResult.success();
         };
-    }
-
-    private Value<String> parameter(String alias) {
-        return Parameter.remainingJoinedStrings().key(alias + "-arguments")
-                .completer((ctx, input) -> Hartshorn.context()
-                .get(CommandGateway.class)
-                .suggestions(SpongeConvert.fromSponge(ctx.cause().subject()).orNull(), alias + ' ' + input)
-                .stream()
-                .map(CommandCompletion::of)
-                .toList()
-        ).terminal().optional().build();
     }
 }

@@ -17,13 +17,10 @@
 
 package org.dockbox.hartshorn.dave.models;
 
-import org.dockbox.hartshorn.api.entity.annotations.Entity;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Entity(value = "dave-response")
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor

@@ -19,9 +19,10 @@ package org.dockbox.hartshorn.proxy.service;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
-import org.dockbox.hartshorn.di.properties.InjectorProperty;
+import org.dockbox.hartshorn.di.properties.Attribute;
 import org.dockbox.hartshorn.di.services.ServiceModifier;
-import org.dockbox.hartshorn.proxy.ProxyProperty;
+import org.dockbox.hartshorn.proxy.ProxyAttribute;
+import org.dockbox.hartshorn.proxy.ProxyUtil;
 import org.dockbox.hartshorn.proxy.exception.ProxyMethodBindingException;
 import org.dockbox.hartshorn.proxy.handle.ProxyFunction;
 import org.dockbox.hartshorn.proxy.handle.ProxyHandler;
@@ -35,26 +36,29 @@ import java.util.Collection;
 public abstract class ServiceAnnotatedMethodModifier<M extends Annotation, A extends Annotation> extends ServiceModifier<A> {
 
     @Override
-    protected <T> boolean modifies(Class<T> type, @Nullable T instance, InjectorProperty<?>... properties) {
+    protected <T> boolean modifies(Class<T> type, @Nullable T instance, Attribute<?>... properties) {
         return !Reflect.methods(type, this.annotation()).isEmpty();
     }
 
+    public abstract Class<M> annotation();
+
     @Override
-    public <T> T process(ApplicationContext context, Class<T> type, @Nullable T instance, InjectorProperty<?>... properties) {
+    public <T> T process(ApplicationContext context, Class<T> type, @Nullable T instance, Attribute<?>... properties) {
         final Collection<Method> methods = Reflect.methods(type, this.annotation());
 
-        ProxyHandler<T> handler = new ProxyHandler<>(instance, type);
+        ProxyHandler<T> handler = ProxyUtil.handler(type, instance);
 
         for (Method method : methods) {
-            MethodProxyContext<T> ctx = new SimpleMethodProxyContext<>(instance, type, method, properties);
+            MethodProxyContext<T> ctx = new MethodProxyContextImpl<>(instance, type, method, properties);
 
             if (this.preconditions(context, ctx)) {
                 final ProxyFunction<T, Object> function = this.process(context, ctx);
                 if (function != null) {
-                    ProxyProperty<T, ?> property = ProxyProperty.of(type, method, function);
+                    ProxyAttribute<T, ?> property = ProxyAttribute.of(type, method, function);
                     handler.delegate(property);
                 }
-            } else {
+            }
+            else {
                 if (this.failOnPrecondition()) {
                     throw new ProxyMethodBindingException(method);
                 }
@@ -63,13 +67,11 @@ public abstract class ServiceAnnotatedMethodModifier<M extends Annotation, A ext
         return Exceptional.of(handler::proxy).or(instance);
     }
 
-    public abstract <T, R> ProxyFunction<T, R> process(ApplicationContext context, MethodProxyContext<T> methodContext);
-
     public abstract <T> boolean preconditions(ApplicationContext context, MethodProxyContext<T> methodContext);
+
+    public abstract <T, R> ProxyFunction<T, R> process(ApplicationContext context, MethodProxyContext<T> methodContext);
 
     public boolean failOnPrecondition() {
         return true;
     }
-
-    public abstract Class<M> annotation();
 }

@@ -19,9 +19,22 @@ package org.dockbox.hartshorn.api.domain;
 
 import java.util.UUID;
 
-public interface Identifiable {
+/**
+ * A single {@link Subject} which can be identified by its name and unique ID.
+ */
+public interface Identifiable extends Subject {
 
+    /**
+     * Gets the unique ID of the subject
+     *
+     * @return The unique ID
+     */
     UUID uniqueId();
 
+    /**
+     * Gets the name of the subject
+     *
+     * @return The name
+     */
     String name();
 }

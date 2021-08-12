@@ -25,8 +25,7 @@ import lombok.Getter;
 
 /** The event fired when a player is teleported to the spawn location. */
 public class PlayerSpawnEvent extends PlayerMoveEvent {
-    @Getter
-    private final Location spawn;
+    @Getter private final Location spawn;
 
     public PlayerSpawnEvent(Subject subject, Location spawn) {
         super(subject);
