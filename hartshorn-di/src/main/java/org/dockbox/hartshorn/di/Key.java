@@ -1,8 +1,8 @@
 package org.dockbox.hartshorn.di;
 
-import org.dockbox.hartshorn.di.annotations.inject.Named;
-
 import java.util.Objects;
+
+import javax.inject.Named;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -19,7 +19,6 @@ package org.dockbox.hartshorn.regions;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.domain.tuple.Vector3N;
-import org.dockbox.hartshorn.di.annotations.inject.Wired;
 import org.dockbox.hartshorn.di.annotations.service.Service;
 import org.dockbox.hartshorn.di.properties.AttributeHolder;
 import org.dockbox.hartshorn.i18n.text.Text;
@@ -42,10 +41,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import javax.inject.Inject;
+
 @Service(id = "regions")
 public class DefaultRegionService implements RegionService, AttributeHolder {
 
-    @Wired
+    @Inject
     private FileManager fileManager;
     private RegionsList regions;
     private Path regionStorageDir;

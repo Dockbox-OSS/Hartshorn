@@ -17,14 +17,15 @@
 
 package org.dockbox.hartshorn.di.types;
 
-import org.dockbox.hartshorn.di.annotations.inject.Wired;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
+
+import javax.inject.Inject;
 
 import lombok.Getter;
 
 public class SampleContextAwareType {
 
-    @Wired
+    @Inject
     @Getter private ApplicationContext context;
 
 }

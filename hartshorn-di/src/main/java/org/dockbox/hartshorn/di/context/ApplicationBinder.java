@@ -20,13 +20,14 @@ package org.dockbox.hartshorn.di.context;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.di.InjectConfiguration;
 import org.dockbox.hartshorn.di.Key;
-import org.dockbox.hartshorn.di.annotations.inject.Named;
 import org.dockbox.hartshorn.di.binding.BindingHierarchy;
 import org.dockbox.hartshorn.di.inject.Binder;
 import org.dockbox.hartshorn.di.inject.ProviderContext;
 import org.dockbox.hartshorn.di.inject.wired.BoundContext;
 
 import java.lang.reflect.Method;
+
+import javax.inject.Named;
 
 public interface ApplicationBinder extends Binder {
 

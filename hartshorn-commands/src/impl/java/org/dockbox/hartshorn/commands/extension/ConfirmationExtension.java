@@ -23,11 +23,12 @@ import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.commands.annotations.WithConfirmation;
 import org.dockbox.hartshorn.commands.context.CommandContext;
 import org.dockbox.hartshorn.commands.context.CommandExecutorContext;
-import org.dockbox.hartshorn.di.annotations.inject.Wired;
 import org.dockbox.hartshorn.i18n.text.Text;
 import org.dockbox.hartshorn.i18n.text.actions.ClickAction;
 import org.dockbox.hartshorn.i18n.text.actions.HoverAction;
 import org.dockbox.hartshorn.util.Reflect;
+
+import javax.inject.Inject;
 
 /**
  * Extends a command by requiring a confirmation action to be performed. This
@@ -36,7 +37,7 @@ import org.dockbox.hartshorn.util.Reflect;
  */
 public class ConfirmationExtension implements CommandExecutorExtension {
 
-    @Wired
+    @Inject
     private CommandResources resources;
 
     @Override

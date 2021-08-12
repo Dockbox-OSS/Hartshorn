@@ -23,7 +23,7 @@ import org.dockbox.hartshorn.di.ComponentType;
 import org.dockbox.hartshorn.di.InjectionPoint;
 import org.dockbox.hartshorn.di.ProvisionFailure;
 import org.dockbox.hartshorn.di.annotations.activate.Activator;
-import org.dockbox.hartshorn.di.annotations.inject.Wired;
+import org.dockbox.hartshorn.di.annotations.inject.Enable;
 import org.dockbox.hartshorn.di.annotations.service.ServiceActivator;
 import org.dockbox.hartshorn.di.binding.Bindings;
 import org.dockbox.hartshorn.di.inject.InjectionModifier;
@@ -42,6 +42,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+
+import javax.inject.Inject;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -99,9 +101,12 @@ public abstract class ManagedHartshornContext extends DefaultContext implements 
 
     public <T> void enable(final T typeInstance) {
         if (typeInstance == null) return;
-        HartshornUtils.merge(Reflect.fields(typeInstance.getClass(), Wired.class)).stream()
-                .filter(field -> Reflect.annotation(field, Wired.class).get().enable())
+        Reflect.fields(typeInstance.getClass(), Inject.class).stream()
                 .filter(field -> Reflect.assigns(AttributeHolder.class, field.getType()))
+                .filter(field -> {
+                    final Exceptional<Enable> enable = Reflect.annotation(field, Enable.class);
+                    return (enable.absent() || enable.get().value());
+                })
                 .map(field -> {
                     try {
                         // As we're enabling fields they may be accessed even if their

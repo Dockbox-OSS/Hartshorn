@@ -19,7 +19,6 @@ package org.dockbox.hartshorn.worldmanagement;
 
 import org.dockbox.hartshorn.api.task.TaskRunner;
 import org.dockbox.hartshorn.commands.annotations.Command;
-import org.dockbox.hartshorn.di.annotations.inject.Wired;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.events.annotations.Listener;
 import org.dockbox.hartshorn.server.minecraft.dimension.Worlds;
@@ -32,15 +31,18 @@ import org.dockbox.hartshorn.server.minecraft.events.server.ServerState.Started;
 
 import java.util.concurrent.TimeUnit;
 
+import javax.inject.Inject;
+
 @Command(value = { "unloader", "wu" }, permission = WorldManagement.WORLD_MANAGER)
 public class WorldManagement {
 
     protected static final String WORLD_MANAGER = "hartshorn.worlds";
-    @Wired
+    
+    @Inject
     private WorldManagementConfig config;
-    @Wired
+    @Inject
     private WorldManagementResources resources;
-    @Wired
+    @Inject
     private ApplicationContext context;
 
     @Listener

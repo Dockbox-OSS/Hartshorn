@@ -40,7 +40,6 @@ import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.domain.tuple.Triad;
 import org.dockbox.hartshorn.api.exceptions.Except;
 import org.dockbox.hartshorn.config.annotations.Value;
-import org.dockbox.hartshorn.di.annotations.inject.Wired;
 import org.dockbox.hartshorn.di.annotations.service.Service;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.discord.annotations.DiscordCommand;
@@ -59,6 +58,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 @Service
 @SuppressWarnings("ResultOfMethodCallIgnored")
 public abstract class DefaultDiscordUtils implements DiscordUtils {
@@ -66,7 +67,7 @@ public abstract class DefaultDiscordUtils implements DiscordUtils {
     @SuppressWarnings("ConstantDeclaredInAbstractClass")
     public static final String WILDCARD = "*";
     private static final Map<String, Triad<DiscordCommand, Method, Class<?>>> commandMethods = HartshornUtils.emptyConcurrentMap();
-    @Wired
+    @Inject
     private ApplicationContext context;
     @Value("hartshorn.discord.logging-channel")
     private String loggingCategoryId;

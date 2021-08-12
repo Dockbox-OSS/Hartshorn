@@ -25,7 +25,6 @@ import org.dockbox.hartshorn.commands.RunCommandAction;
 import org.dockbox.hartshorn.commands.annotations.Command;
 import org.dockbox.hartshorn.commands.context.CommandContext;
 import org.dockbox.hartshorn.dave.models.DaveTriggers;
-import org.dockbox.hartshorn.di.annotations.inject.Wired;
 import org.dockbox.hartshorn.di.binding.Bindings;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.di.properties.AttributeHolder;
@@ -50,6 +49,8 @@ import org.dockbox.hartshorn.util.HartshornUtils;
 import java.nio.file.Path;
 import java.util.concurrent.TimeUnit;
 
+import javax.inject.Inject;
+
 @Command("dave")
 public class Dave implements AttributeHolder {
 
@@ -68,10 +69,11 @@ public class Dave implements AttributeHolder {
     private static final int msTick = 20;
     private DaveTriggers triggers = new DaveTriggers();
     private DaveConfig config = new DaveConfig();
-    @Wired
+
+    @Inject
     private DaveResources resources;
 
-    @Wired
+    @Inject
     private ApplicationContext context;
 
     @Command(value = "mute", permission = Dave.DAVE_MUTE)

@@ -1,7 +1,6 @@
 package org.dockbox.hartshorn.di;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.di.annotations.inject.Named;
 import org.dockbox.hartshorn.di.binding.BindingHierarchy;
 import org.dockbox.hartshorn.di.binding.Provider;
 import org.dockbox.hartshorn.di.binding.StaticProvider;
@@ -14,6 +13,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
+
+import javax.inject.Named;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

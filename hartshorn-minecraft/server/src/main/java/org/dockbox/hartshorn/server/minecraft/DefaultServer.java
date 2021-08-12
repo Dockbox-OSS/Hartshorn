@@ -22,7 +22,6 @@ import org.dockbox.hartshorn.commands.RunCommandAction;
 import org.dockbox.hartshorn.commands.annotations.Command;
 import org.dockbox.hartshorn.commands.annotations.WithConfirmation;
 import org.dockbox.hartshorn.commands.context.CommandContext;
-import org.dockbox.hartshorn.di.annotations.inject.Wired;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.di.services.ComponentContainer;
 import org.dockbox.hartshorn.events.EventBus;
@@ -38,15 +37,17 @@ import org.dockbox.hartshorn.util.HartshornUtils;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 @Posting(EngineChangedState.class)
 @Command(value = Hartshorn.PROJECT_ID, permission = DefaultServer.ADMIN)
 public class DefaultServer {
 
     public static final String ADMIN = Hartshorn.PROJECT_ID + ".admin";
 
-    @Wired
+    @Inject
     private DefaultServerResources resources;
-    @Wired
+    @Inject
     private ApplicationContext context;
 
     // Parent command

@@ -18,8 +18,9 @@
 package org.dockbox.hartshorn.di.types.multi;
 
 import org.dockbox.hartshorn.di.annotations.inject.Binds;
-import org.dockbox.hartshorn.di.annotations.inject.Named;
 import org.dockbox.hartshorn.di.types.SampleInterface;
+
+import javax.inject.Named;
 
 @Binds(SampleInterface.class)
 @Binds(value = SampleInterface.class, named = @Named("meta"))

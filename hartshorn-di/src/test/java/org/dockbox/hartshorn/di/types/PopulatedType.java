@@ -17,14 +17,14 @@
 
 package org.dockbox.hartshorn.di.types;
 
-import org.dockbox.hartshorn.di.annotations.inject.Wired;
+import javax.inject.Inject;
 
 import lombok.Getter;
 
 @Getter
 public class PopulatedType {
 
-    @Wired
+    @Inject
     SampleInterface sampleInterface;
 
 }

@@ -31,7 +31,6 @@ import org.dockbox.hartshorn.commands.exceptions.ParsingException;
 import org.dockbox.hartshorn.commands.extension.CommandExecutorExtension;
 import org.dockbox.hartshorn.commands.extension.ExtensionResult;
 import org.dockbox.hartshorn.di.annotations.inject.Binds;
-import org.dockbox.hartshorn.di.annotations.inject.Wired;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.dockbox.hartshorn.util.Reflect;
 import org.jetbrains.annotations.UnmodifiableView;
@@ -40,6 +39,7 @@ import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import lombok.AccessLevel;
@@ -55,9 +55,9 @@ public class CommandGatewayImpl implements CommandGateway {
     private static final transient Multimap<String, CommandExecutorContext> contexts = ArrayListMultimap.create();
     @Getter(AccessLevel.PROTECTED)
     private final transient List<CommandExecutorExtension> extensions = HartshornUtils.emptyConcurrentList();
-    @Wired
+    @Inject
     private CommandParser parser;
-    @Wired
+    @Inject
     private CommandResources resources;
 
     @Override
