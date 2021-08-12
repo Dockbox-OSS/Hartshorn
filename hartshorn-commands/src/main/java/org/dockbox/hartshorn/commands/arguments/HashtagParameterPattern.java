@@ -18,8 +18,9 @@
 package org.dockbox.hartshorn.commands.arguments;
 
 import org.dockbox.hartshorn.commands.CommandParameterResources;
-import org.dockbox.hartshorn.di.annotations.inject.Wired;
 import org.dockbox.hartshorn.i18n.common.ResourceEntry;
+
+import javax.inject.Inject;
 
 /**
  * Converts Hashtag-patterns into type instances used by command executors. The pattern follows the HashtagPatternParser from WorldEdit.
@@ -34,7 +35,7 @@ import org.dockbox.hartshorn.i18n.common.ResourceEntry;
  */
 public class HashtagParameterPattern extends PrefixedParameterPattern {
 
-    @Wired
+    @Inject
     private CommandParameterResources resources;
 
     @Override

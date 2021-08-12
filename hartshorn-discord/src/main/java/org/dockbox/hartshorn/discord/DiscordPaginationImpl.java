@@ -24,7 +24,6 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
 
 import org.dockbox.hartshorn.di.annotations.inject.Binds;
-import org.dockbox.hartshorn.di.annotations.inject.Wired;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.discord.templates.MessageTemplate;
 import org.dockbox.hartshorn.i18n.text.Text;
@@ -34,11 +33,13 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import javax.inject.Inject;
+
 @Binds(DiscordPagination.class)
 public class DiscordPaginationImpl implements DiscordPagination {
 
     private final List<Object> pages = HartshornUtils.emptyList();
-    @Wired
+    @Inject
     private ApplicationContext context;
 
     @Override

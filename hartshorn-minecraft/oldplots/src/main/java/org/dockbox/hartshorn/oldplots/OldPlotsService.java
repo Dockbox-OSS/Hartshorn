@@ -20,7 +20,6 @@ package org.dockbox.hartshorn.oldplots;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.commands.annotations.Command;
 import org.dockbox.hartshorn.commands.context.CommandContext;
-import org.dockbox.hartshorn.di.annotations.inject.Wired;
 import org.dockbox.hartshorn.di.annotations.service.Service;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.events.annotations.Listener;
@@ -36,14 +35,16 @@ import org.dockbox.hartshorn.server.minecraft.players.Player;
 
 import java.nio.file.Path;
 
+import javax.inject.Inject;
+
 @Service
 public class OldPlotsService {
 
-    @Wired
+    @Inject
     private FileManager fileManager;
-    @Wired
+    @Inject
     private OldPlotsResources resources;
-    @Wired
+    @Inject
     private ApplicationContext context;
 
     // Avoid null

@@ -30,7 +30,6 @@ import org.dockbox.hartshorn.commands.definition.GroupCommandElement;
 import org.dockbox.hartshorn.commands.exceptions.ParsingException;
 import org.dockbox.hartshorn.commands.service.CommandParameter;
 import org.dockbox.hartshorn.di.annotations.inject.Binds;
-import org.dockbox.hartshorn.di.annotations.inject.Wired;
 import org.dockbox.hartshorn.i18n.common.ResourceEntry;
 import org.dockbox.hartshorn.util.HartshornUtils;
 
@@ -38,6 +37,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.inject.Inject;
 
 /**
  * Simple implementation of {@link CommandParser}.
@@ -49,7 +50,7 @@ public class CommandParserImpl implements CommandParser {
     // to indicate it is a single element and not part of a piece of text.
     private static final Pattern FLAG = Pattern.compile(" -(-?\\w+)(?: ([^ -]+))?");
 
-    @Wired
+    @Inject
     private CommandResources resources;
 
     @Override

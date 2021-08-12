@@ -18,7 +18,8 @@
 package org.dockbox.hartshorn.di.types;
 
 import org.dockbox.hartshorn.di.annotations.inject.Bound;
-import org.dockbox.hartshorn.di.annotations.inject.Wired;
+
+import javax.inject.Inject;
 
 import lombok.Getter;
 
@@ -27,7 +28,7 @@ public class SampleBoundPopulatedType implements SampleInterface {
 
     private final String name;
 
-    @Wired
+    @Inject
     private SampleField field;
 
     @Bound

@@ -20,14 +20,15 @@ package org.dockbox.hartshorn.server.minecraft;
 import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.commands.annotations.Command;
 import org.dockbox.hartshorn.commands.context.CommandContext;
-import org.dockbox.hartshorn.di.annotations.inject.Wired;
 import org.dockbox.hartshorn.i18n.MessageReceiver;
 import org.dockbox.hartshorn.i18n.common.Language;
 import org.dockbox.hartshorn.server.minecraft.players.Player;
 
+import javax.inject.Inject;
+
 public class DefaultMinecraftServer {
 
-    @Wired
+    @Inject
     private DefaultServerResources resources;
 
     @Command(value = { "lang", "language" }, arguments = "<language{Language}> [player{Player}]", permission = Hartshorn.GLOBAL_PERMITTED)

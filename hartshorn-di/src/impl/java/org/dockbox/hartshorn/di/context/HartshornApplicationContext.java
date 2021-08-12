@@ -33,8 +33,6 @@ import org.dockbox.hartshorn.di.TypeFactory;
 import org.dockbox.hartshorn.di.annotations.inject.Binds;
 import org.dockbox.hartshorn.di.annotations.inject.Bound;
 import org.dockbox.hartshorn.di.annotations.inject.Combines;
-import org.dockbox.hartshorn.di.annotations.inject.Named;
-import org.dockbox.hartshorn.di.annotations.inject.Wired;
 import org.dockbox.hartshorn.di.annotations.service.ServiceActivator;
 import org.dockbox.hartshorn.di.binding.BindingHierarchy;
 import org.dockbox.hartshorn.di.binding.Bindings;
@@ -63,6 +61,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+
+import javax.inject.Inject;
+import javax.inject.Named;
 
 public class HartshornApplicationContext extends ManagedHartshornContext {
 
@@ -266,7 +267,7 @@ public class HartshornApplicationContext extends ManagedHartshornContext {
     @Override
     public <T> T populate(final T instance) {
         if (null != instance) {
-            for (final Field field : Reflect.fields(instance.getClass(), Wired.class)) {
+            for (final Field field : Reflect.fields(instance.getClass(), Inject.class)) {
                 final Object fieldInstance = ApplicationContextAware.instance().context().get(field.getType());
                 Reflect.set(field, instance, fieldInstance);
             }

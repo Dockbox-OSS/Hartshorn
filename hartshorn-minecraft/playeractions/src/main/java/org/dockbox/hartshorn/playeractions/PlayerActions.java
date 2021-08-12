@@ -19,7 +19,6 @@ package org.dockbox.hartshorn.playeractions;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.config.annotations.Value;
-import org.dockbox.hartshorn.di.annotations.inject.Wired;
 import org.dockbox.hartshorn.di.annotations.service.Service;
 import org.dockbox.hartshorn.events.annotations.Listener;
 import org.dockbox.hartshorn.i18n.common.Language;
@@ -45,14 +44,16 @@ import org.dockbox.hartshorn.server.minecraft.players.Player;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 @Service
 public class PlayerActions {
 
-    @Wired
+    @Inject
     private Worlds worlds;
-    @Wired
+    @Inject
     private PlayerActionResources resources;
-    @Wired
+    @Inject
     private DefaultServerResources serverResources;
     @Value("services.player-actions.whitelist")
     private List<String> whitelist;

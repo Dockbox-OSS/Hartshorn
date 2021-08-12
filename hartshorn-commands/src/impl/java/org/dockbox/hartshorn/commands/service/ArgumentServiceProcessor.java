@@ -37,23 +37,23 @@ import java.util.List;
 public class ArgumentServiceProcessor implements ServiceProcessor<UseCommands> {
 
     @Override
-    public boolean preconditions(Class<?> type) {
-        List<Field> fields = Reflect.fieldsLike(type, ArgumentConverter.class);
+    public boolean preconditions(final Class<?> type) {
+        final List<Field> fields = Reflect.fieldsLike(type, ArgumentConverter.class);
         return !fields.isEmpty();
     }
 
     @Override
-    public <T> void process(ApplicationContext context, Class<T> type) {
+    public <T> void process(final ApplicationContext context, final Class<T> type) {
         final List<Field> fields = Reflect.fieldsLike(type, ArgumentConverter.class);
         context.first(ArgumentConverterContext.class).map(converterContext -> {
-            for (Field field : fields) {
+            for (final Field field : fields) {
                 field.setAccessible(true);
                 if (Modifier.isStatic(field.getModifiers())) {
                     try {
                         final ArgumentConverter<?> converter = (ArgumentConverter<?>) field.get(null);
                         converterContext.register(converter);
                     }
-                    catch (IllegalAccessException e) {
+                    catch (final IllegalAccessException e) {
                         throw new ApplicationException(e);
                     }
                 }

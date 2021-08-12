@@ -23,7 +23,6 @@ import org.dockbox.hartshorn.api.keys.Keys;
 import org.dockbox.hartshorn.api.keys.PersistentDataKey;
 import org.dockbox.hartshorn.api.keys.RemovableKey;
 import org.dockbox.hartshorn.api.keys.TransactionResult;
-import org.dockbox.hartshorn.di.annotations.inject.Wired;
 import org.dockbox.hartshorn.di.annotations.service.Service;
 import org.dockbox.hartshorn.events.annotations.Listener;
 import org.dockbox.hartshorn.events.annotations.Posting;
@@ -34,6 +33,8 @@ import org.dockbox.hartshorn.util.HartshornUtils;
 
 import java.util.Map;
 import java.util.UUID;
+
+import javax.inject.Inject;
 
 @Service
 @Posting(ToolInteractionEvent.class)
@@ -46,7 +47,8 @@ public class ToolBinding {
             .withRemover(item -> Hartshorn.context().get(ToolBinding.class).removeTool(item))
             .build();
     private final Map<String, ItemTool> registry = HartshornUtils.emptyConcurrentMap();
-    @Wired
+
+    @Inject
     private ToolBindingResources resources;
 
     private TransactionResult tool(final Item item, final ItemTool tool) {

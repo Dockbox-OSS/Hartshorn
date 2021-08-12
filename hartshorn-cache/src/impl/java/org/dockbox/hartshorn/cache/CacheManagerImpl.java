@@ -18,12 +18,13 @@
 package org.dockbox.hartshorn.cache;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.di.annotations.inject.Wired;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.util.HartshornUtils;
 
 import java.util.List;
 import java.util.Map;
+
+import javax.inject.Inject;
 
 /**
  * Default implementation of {@link CacheManager}.
@@ -35,7 +36,7 @@ public class CacheManagerImpl implements CacheManager {
 
     protected static final Map<String, Cache<?>> caches = HartshornUtils.emptyConcurrentMap();
 
-    @Wired
+    @Inject
     private ApplicationContext context;
 
     @Override
