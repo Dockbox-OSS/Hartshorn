@@ -691,8 +691,23 @@ public enum SpongeConvert {
             case CHEST -> ContainerTypes.GENERIC_9X3;
             case DOUBLE_CHEST -> ContainerTypes.GENERIC_9X6;
             case HOPPER -> ContainerTypes.HOPPER;
+            case SHULKER_BOX -> ContainerTypes.SHULKER_BOX;
             case DISPENSER -> ContainerTypes.GENERIC_3X3;
+            case SMOKER -> ContainerTypes.SMOKER;
             case DROPPER -> ContainerTypes.GENERIC_9X1;
+            case LECTERN -> ContainerTypes.LECTERN;
+            case CRAFTING_BENCH -> ContainerTypes.CRAFTING;
+            case BREWING_STAND -> ContainerTypes.BREWING_STAND;
+            case BLAST_FURNACE -> ContainerTypes.BLAST_FURNACE;
+            case FURNACE -> ContainerTypes.FURNACE;
+            case ANVIL -> ContainerTypes.ANVIL;
+            case ENCHANTMENT_TABLE -> ContainerTypes.ENCHANTMENT;
+            case STONE_CUTTER -> ContainerTypes.STONECUTTER;
+            case GRINDSTONE -> ContainerTypes.GRINDSTONE;
+            case MERCHANT -> ContainerTypes.MERCHANT;
+            case LOOM -> ContainerTypes.LOOM;
+            case CARTOGRAPHY_TABLE -> ContainerTypes.CARTOGRAPHY_TABLE;
+            case BEACON -> ContainerTypes.BEACON;
         }).get();
     }
 
