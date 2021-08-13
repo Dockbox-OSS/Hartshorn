@@ -35,7 +35,7 @@ public interface StaticPane extends Pane {
      *
      * @return The builder
      */
-    static StaticPaneBuilder builder(InventoryLayout layout) {
+    static StaticPaneBuilder builder(final InventoryLayout layout) {
         return Hartshorn.context().get(StaticPaneBuilder.class, new LayoutAttribute(layout));
     }
 

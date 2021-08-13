@@ -32,7 +32,7 @@ public interface SpongeInventory {
     CheckedFunction<Slot, Item> SLOT_LOOKUP = slot -> SpongeConvert.fromSponge(slot.peek());
     Function<Slot, Item> SLOT_LOOKUP_FN = slot -> SpongeConvert.fromSponge(slot.peek());
 
-    default Collection<Item> items(Inventory inventory) {
+    default Collection<Item> items(final Inventory inventory) {
         return inventory.slots().stream()
                 .map(SLOT_LOOKUP_FN)
                 .collect(Collectors.toList());

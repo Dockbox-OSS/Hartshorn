@@ -18,6 +18,7 @@
 package org.dockbox.hartshorn.server.minecraft.inventory;
 
 import org.dockbox.hartshorn.api.Hartshorn;
+import org.dockbox.hartshorn.api.annotations.PartialApi;
 import org.dockbox.hartshorn.server.minecraft.item.Item;
 import org.dockbox.hartshorn.server.minecraft.players.Player;
 
@@ -39,7 +40,7 @@ public interface Element {
      *
      * @return The element.
      */
-    static Element of(Item item) {
+    static Element of(final Item item) {
         return of(item, p -> {});
     }
 
@@ -54,7 +55,7 @@ public interface Element {
      *
      * @return The element.
      */
-    static Element of(Item item, Consumer<Player> onClick) {
+    static Element of(final Item item, final Consumer<Player> onClick) {
         return Hartshorn.context().get(Element.class, item, onClick);
     }
 
@@ -72,4 +73,14 @@ public interface Element {
      *         The action to perform.
      */
     void onClick(Consumer<Player> onClick);
+
+    /**
+     * Executes the consumer of the element with the given player.
+     * @param player The player that caused the click action.
+     */
+    @PartialApi
+    void perform(final Player player);
+
+    @PartialApi
+    boolean listening();
 }

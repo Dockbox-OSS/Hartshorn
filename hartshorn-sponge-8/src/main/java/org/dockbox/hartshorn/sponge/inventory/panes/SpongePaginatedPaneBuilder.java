@@ -15,31 +15,29 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.server.minecraft.inventory;
+package org.dockbox.hartshorn.sponge.inventory.panes;
 
-import lombok.Getter;
+import org.dockbox.hartshorn.i18n.text.Text;
+import org.dockbox.hartshorn.server.minecraft.inventory.Element;
+import org.dockbox.hartshorn.server.minecraft.inventory.builder.PaginatedPaneBuilder;
+import org.dockbox.hartshorn.server.minecraft.inventory.pane.PaginatedPane;
 
-@Getter
-public enum InventoryType {
-    CHEST(3, 9),
-    DOUBLE_CHEST(6, 9),
-    HOPPER(1, 5),
-    DISPENSER(3, 3),
-    DROPPER(1, 9);
+import java.util.Collection;
 
-    private final int rows;
-    private final int columns;
-    private final int size;
-
-    InventoryType(final int rows, final int columns) {
-        this.rows = rows;
-        this.columns = columns;
-        this.size = rows * columns;
+// TODO: #369 Implement this
+public class SpongePaginatedPaneBuilder extends PaginatedPaneBuilder {
+    @Override
+    public PaginatedPaneBuilder elements(Collection<Element> elements) {
+        return null;
     }
 
-    InventoryType(final int size) {
-        this.rows = -1;
-        this.columns = -1;
-        this.size = size;
+    @Override
+    public PaginatedPaneBuilder title(Text text) {
+        return null;
+    }
+
+    @Override
+    public PaginatedPane build() {
+        return null;
     }
 }
