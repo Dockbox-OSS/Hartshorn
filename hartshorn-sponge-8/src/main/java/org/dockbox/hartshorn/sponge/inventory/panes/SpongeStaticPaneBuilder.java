@@ -38,7 +38,8 @@ public class SpongeStaticPaneBuilder extends StaticPaneBuilder {
                 .type(SpongeConvert.toSponge(this.layout().inventoryType()))
                 .completeStructure()
                 .build().asMenu();
-        menu.setTitle(SpongeConvert.toSponge(this.title));
+
+        if (this.title != null) menu.setTitle(SpongeConvert.toSponge(this.title));
 
         final StaticPane pane = new SpongeStaticPane(menu);
         pane.update(this.layout());

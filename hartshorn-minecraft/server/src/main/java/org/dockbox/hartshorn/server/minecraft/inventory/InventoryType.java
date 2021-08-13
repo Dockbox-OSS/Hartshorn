@@ -21,11 +21,35 @@ import lombok.Getter;
 
 @Getter
 public enum InventoryType {
-    CHEST(3, 9),
+    // Grid inventories, sorted by row count first, then column count
     DOUBLE_CHEST(6, 9),
-    HOPPER(1, 5),
+    SHULKER_BOX(3, 9),
     DISPENSER(3, 3),
-    DROPPER(1, 9);
+    CHEST(3, 9),
+    SMOKER(3, 9),
+    DROPPER(1, 9),
+    LECTERN(1, 5),
+    HOPPER(1, 5),
+
+    // Generic inventories, sorted by row count
+    GENERIC_5_ROWS(5, 9),
+    GENERIC_4_ROWS(4, 9),
+    GENERIC_2_ROWS(2, 9),
+
+    // Special non-grid inventories, sorted by size
+    CRAFTING_BENCH(10),
+    BREWING_STAND(5),
+    BLAST_FURNACE(3),
+    FURNACE(3),
+    ANVIL(3),
+    ENCHANTMENT_TABLE(2),
+    STONE_CUTTER(2),
+    GRINDSTONE(2),
+    MERCHANT(2),
+    LOOM(2),
+    CARTOGRAPHY_TABLE(1),
+    BEACON(1),
+    ;
 
     private final int rows;
     private final int columns;
