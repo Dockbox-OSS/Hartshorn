@@ -43,39 +43,39 @@ public class Text implements PersistentCapable<PersistentTextModel> {
 
     public Text(Object... objects) {
         if (0 < objects.length) {
-            Object prim = objects[0];
+            final Object prim = objects[0];
 
             if (prim instanceof Text) this.text = ((Text) prim).toStringValue();
             else if (prim instanceof ResourceEntry) this.text = ((ResourceEntry) prim).asString();
             else this.text = prim.toString();
 
-            for (char styleChar : styleChars.toCharArray()) {
+            for (final char styleChar : styleChars.toCharArray()) {
                 this.text = this.text.replaceAll(legacySectionSymbol + "" + styleChar, sectionSymbol + "" + styleChar);
             }
             objects = Arrays.copyOfRange(objects, 1, objects.length);
 
-            for (Object obj : objects) {
+            for (final Object obj : objects) {
                 if (obj instanceof Text) this.extra.add((Text) obj);
-                if (obj instanceof ResourceEntry) this.extra.add(of(((ResourceEntry) obj).asString()));
+                else if (obj instanceof ResourceEntry) this.extra.add(of(((ResourceEntry) obj).asString()));
                 else this.extra.add(of(obj));
             }
         }
     }
 
     public String toStringValue() {
-        StringBuilder stringValue = new StringBuilder(this.text);
-        for (Text extraText : this.extra) stringValue.append(' ').append(extraText.text);
+        final StringBuilder stringValue = new StringBuilder(this.text);
+        for (final Text extraText : this.extra) stringValue.append(' ').append(extraText.text);
         return stringValue.toString();
     }
 
-    public static Text of(Object... objects) {
+    public static Text of(final Object... objects) {
         if (0 == objects.length) return new Text("");
         return new Text(objects);
     }
 
     public String toLegacy() {
-        StringBuilder legacyText = new StringBuilder(this.text.replaceAll(sectionSymbol + "", legacySectionSymbol + ""));
-        for (Text extraText : this.extra) legacyText.append(' ').append(extraText.toLegacy());
+        final StringBuilder legacyText = new StringBuilder(this.text.replaceAll(sectionSymbol + "", legacySectionSymbol + ""));
+        for (final Text extraText : this.extra) legacyText.append(' ').append(extraText.toLegacy());
         return legacyText.toString();
     }
 
@@ -83,27 +83,27 @@ public class Text implements PersistentCapable<PersistentTextModel> {
         return this.toLegacy().replaceAll(legacyRegexFormat, "");
     }
 
-    public Text append(Text text) {
+    public Text append(final Text text) {
         this.extra.add(text);
         return this;
     }
 
-    public Text append(CharSequence text) {
+    public Text append(final CharSequence text) {
         this.extra.add(of(text));
         return this;
     }
 
-    public Text append(char text) {
+    public Text append(final char text) {
         this.extra.add(of(text));
         return this;
     }
 
-    public void send(MessageReceiver... receivers) {
-        for (MessageReceiver receiver : receivers) receiver.send(this);
+    public void send(final MessageReceiver... receivers) {
+        for (final MessageReceiver receiver : receivers) receiver.send(this);
     }
 
-    public void sendWithPrefix(MessageReceiver... receivers) {
-        for (MessageReceiver receiver : receivers) receiver.sendWithPrefix(this);
+    public void sendWithPrefix(final MessageReceiver... receivers) {
+        for (final MessageReceiver receiver : receivers) receiver.sendWithPrefix(this);
     }
 
     public ClickAction<?> onClick() {
@@ -119,7 +119,7 @@ public class Text implements PersistentCapable<PersistentTextModel> {
     }
 
     public List<Text> parts() {
-        List<Text> parts = HartshornUtils.emptyList();
+        final List<Text> parts = HartshornUtils.emptyList();
         // Do not add 'this' directly, as it'd wrap the extra parts as well and cause duplicates
         parts.add(Text.of(this.text)
                 .onClick(this.clickAction)
@@ -129,17 +129,17 @@ public class Text implements PersistentCapable<PersistentTextModel> {
         return parts;
     }
 
-    public Text onShiftClick(ShiftClickAction<?> action) {
+    public Text onShiftClick(final ShiftClickAction<?> action) {
         this.shiftClickAction = action;
         return this;
     }
 
-    public Text onHover(HoverAction<?> action) {
+    public Text onHover(final HoverAction<?> action) {
         this.hoverAction = action;
         return this;
     }
 
-    public Text onClick(ClickAction<?> action) {
+    public Text onClick(final ClickAction<?> action) {
         this.clickAction = action;
         return this;
     }
@@ -171,7 +171,7 @@ public class Text implements PersistentCapable<PersistentTextModel> {
 
         private final String alg;
 
-        HashMethod(String alg) {
+        HashMethod(final String alg) {
             this.alg = alg;
         }
 
