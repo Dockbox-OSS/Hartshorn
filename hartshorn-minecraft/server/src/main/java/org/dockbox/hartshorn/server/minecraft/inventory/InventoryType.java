@@ -31,6 +31,11 @@ public enum InventoryType {
     LECTERN(1, 5),
     HOPPER(1, 5),
 
+    // Generic inventories, sorted by row count
+    GENERIC_5_ROWS(5, 9),
+    GENERIC_4_ROWS(4, 9),
+    GENERIC_2_ROWS(2, 9),
+
     // Special non-grid inventories, sorted by size
     CRAFTING_BENCH(10),
     BREWING_STAND(5),
