@@ -80,4 +80,7 @@ public interface Element {
      */
     @PartialApi
     void perform(final Player player);
+
+    @PartialApi
+    boolean listening();
 }

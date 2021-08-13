@@ -37,7 +37,7 @@ public interface InventoryLayout {
      *
      * @return The builder
      */
-    static LayoutBuilder builder(InventoryType inventoryType) {
+    static LayoutBuilder builder(final InventoryType inventoryType) {
         return Hartshorn.context().get(LayoutBuilder.class, new InventoryTypeAttribute(inventoryType));
     }
 
