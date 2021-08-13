@@ -130,7 +130,7 @@ public class LayoutBuilder implements AttributeHolder {
 
     @PartialApi
     public LayoutBuilder fill(final Element element) {
-        for (int i = 0; i < this.type.size()-1; i++) {
+        for (int i = 0; i < this.type.size(); i++) {
             this.set(element, i);
         }
         return this;
