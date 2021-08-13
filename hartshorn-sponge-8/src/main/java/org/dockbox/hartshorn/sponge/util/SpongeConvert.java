@@ -687,12 +687,13 @@ public enum SpongeConvert {
     }
 
     public static ContainerType toSponge(final InventoryType inventoryType) {
-        return switch (inventoryType) {
-            case CHEST -> ContainerTypes.GENERIC_9X3.get();
-            case DOUBLE_CHEST -> ContainerTypes.GENERIC_9X6.get();
-            case HOPPER -> ContainerTypes.HOPPER.get();
-            case DISPENSER -> ContainerTypes.GENERIC_3X3.get();
-        };
+        return (switch (inventoryType) {
+            case CHEST -> ContainerTypes.GENERIC_9X3;
+            case DOUBLE_CHEST -> ContainerTypes.GENERIC_9X6;
+            case HOPPER -> ContainerTypes.HOPPER;
+            case DISPENSER -> ContainerTypes.GENERIC_3X3;
+            case DROPPER -> ContainerTypes.GENERIC_9X1;
+        }).get();
     }
 
 //    public static Element toSponge(org.dockbox.hartshorn.server.minecraft.inventory.Element element) {
