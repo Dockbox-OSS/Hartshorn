@@ -58,6 +58,7 @@ import org.dockbox.hartshorn.server.minecraft.dimension.world.generation.Generat
 import org.dockbox.hartshorn.server.minecraft.entities.ItemFrame;
 import org.dockbox.hartshorn.server.minecraft.entities.ItemFrame.Rotation;
 import org.dockbox.hartshorn.server.minecraft.events.entity.SpawnSource;
+import org.dockbox.hartshorn.server.minecraft.inventory.InventoryType;
 import org.dockbox.hartshorn.server.minecraft.inventory.Slot;
 import org.dockbox.hartshorn.server.minecraft.item.Enchant;
 import org.dockbox.hartshorn.server.minecraft.item.EnchantImpl;
@@ -101,6 +102,8 @@ import org.spongepowered.api.entity.living.player.server.ServerPlayer;
 import org.spongepowered.api.event.cause.entity.SpawnType;
 import org.spongepowered.api.event.cause.entity.SpawnTypes;
 import org.spongepowered.api.item.enchantment.Enchantment;
+import org.spongepowered.api.item.inventory.ContainerType;
+import org.spongepowered.api.item.inventory.ContainerTypes;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.item.inventory.equipment.EquipmentType;
 import org.spongepowered.api.item.inventory.equipment.EquipmentTypes;
@@ -680,6 +683,15 @@ public enum SpongeConvert {
             case EASY -> Difficulties.EASY;
             case NORMAL -> Difficulties.NORMAL;
             case HARD -> Difficulties.HARD;
+        };
+    }
+
+    public static ContainerType toSponge(final InventoryType inventoryType) {
+        return switch (inventoryType) {
+            case CHEST -> ContainerTypes.GENERIC_9X3.get();
+            case DOUBLE_CHEST -> ContainerTypes.GENERIC_9X6.get();
+            case HOPPER -> ContainerTypes.HOPPER.get();
+            case DISPENSER -> ContainerTypes.GENERIC_3X3.get();
         };
     }
 
