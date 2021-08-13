@@ -41,7 +41,9 @@ public class ElementImpl implements Element {
     }
 
     @PartialApi
+    @Override
     public void perform(final Player player) {
-        this.onClick.accept(player);
+        if (this.onClick != null && player != null)
+            this.onClick.accept(player);
     }
 }

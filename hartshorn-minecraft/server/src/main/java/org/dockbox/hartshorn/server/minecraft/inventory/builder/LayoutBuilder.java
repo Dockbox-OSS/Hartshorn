@@ -26,42 +26,42 @@ import org.dockbox.hartshorn.server.minecraft.item.Item;
 
 public abstract class LayoutBuilder implements AttributeHolder {
 
-    public LayoutBuilder set(Item item, int index) {
+    public LayoutBuilder set(final Item item, final int index) {
         return this.set(Element.of(item), index);
     }
 
     public abstract LayoutBuilder set(Element element, int index);
 
-    public LayoutBuilder set(Item item, int... indices) {
+    public LayoutBuilder set(final Item item, final int... indices) {
         return this.set(Element.of(item), indices);
     }
 
-    public LayoutBuilder set(Element element, int... indices) {
-        for (int index : indices) {
+    public LayoutBuilder set(final Element element, final int... indices) {
+        for (final int index : indices) {
             this.set(element, index);
         }
         return this;
     }
 
-    public LayoutBuilder row(Item item, int index) {
+    public LayoutBuilder row(final Item item, final int index) {
         return this.row(Element.of(item), index);
     }
 
     public abstract LayoutBuilder row(Element element, int index);
 
-    public LayoutBuilder column(Item item, int index) {
+    public LayoutBuilder column(final Item item, final int index) {
         return this.column(Element.of(item), index);
     }
 
     public abstract LayoutBuilder column(Element element, int index);
 
-    public LayoutBuilder border(Item item) {
+    public LayoutBuilder border(final Item item) {
         return this.border(Element.of(item));
     }
 
     public abstract LayoutBuilder border(Element element);
 
-    public LayoutBuilder fill(Item item) {
+    public LayoutBuilder fill(final Item item) {
         return this.fill(Element.of(item));
     }
 
