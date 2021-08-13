@@ -35,13 +35,13 @@ import java.lang.reflect.Parameter;
 public class CacheUpdateMethodModifier extends CacheServiceModifier<UpdateCache> {
 
     @Override
-    protected CacheMethodContext context(MethodProxyContext<?> context) {
+    protected CacheMethodContext context(final MethodProxyContext<?> context) {
         final UpdateCache update = context.annotation(UpdateCache.class);
         return new CacheMethodContextImpl(update.manager(), update.value(), null);
     }
 
     @Override
-    protected <T, R> ProxyFunction<T, R> process(ApplicationContext context, MethodProxyContext<T> methodContext, CacheContext cacheContext) {
+    protected <T, R> ProxyFunction<T, R> process(final ApplicationContext context, final MethodProxyContext<T> methodContext, final CacheContext cacheContext) {
         return (instance, args, proxyContext) -> {
             final Object o = args[0];
             cacheContext.manager().update(cacheContext.name(), o);
@@ -50,7 +50,7 @@ public class CacheUpdateMethodModifier extends CacheServiceModifier<UpdateCache>
     }
 
     @Override
-    public <T> boolean preconditions(ApplicationContext context, MethodProxyContext<T> methodContext) {
+    public <T> boolean preconditions(final ApplicationContext context, final MethodProxyContext<T> methodContext) {
         final Parameter[] parameters = methodContext.method().getParameters();
         return parameters.length == 1;
     }
