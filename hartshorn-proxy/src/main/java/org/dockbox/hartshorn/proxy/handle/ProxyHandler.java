@@ -62,6 +62,9 @@ public class ProxyHandler<T> implements MethodHandler {
     }
 
     public void delegate(final ProxyAttribute<T, ?> property) {
+        if (Modifier.isFinal(property.target().getModifiers()))
+            throw new ApplicationException("Cannot proxy final method " + property.target().getName()).runtime();
+        
         this.handlers.put(property.target(), property);
     }
 
