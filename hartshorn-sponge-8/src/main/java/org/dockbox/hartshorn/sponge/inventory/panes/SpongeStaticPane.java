@@ -32,6 +32,7 @@ import org.dockbox.hartshorn.server.minecraft.players.Player;
 import org.dockbox.hartshorn.sponge.util.SpongeConvert;
 import org.spongepowered.api.entity.living.player.server.ServerPlayer;
 import org.spongepowered.api.item.inventory.menu.InventoryMenu;
+import org.spongepowered.api.item.inventory.type.ViewableInventory;
 
 import java.util.Optional;
 import java.util.function.BiConsumer;
@@ -39,7 +40,7 @@ import java.util.function.Function;
 
 public class SpongeStaticPane implements StaticPane {
 
-    private final InventoryMenu menu;
+    protected final InventoryMenu menu;
     private final InventoryType type;
     private final Multimap<Integer, Function<ClickContext, Boolean>> listeners = ArrayListMultimap.create();
 
@@ -100,12 +101,12 @@ public class SpongeStaticPane implements StaticPane {
 
     @Override
     public void set(final Item item, final int index) {
-        this.menu.inventory().set(index, SpongeConvert.toSponge(item));
+        this.inventory().set(index, SpongeConvert.toSponge(item));
     }
 
     @Override
     public Exceptional<Item> get(final int index) {
-        return Exceptional.of(this.menu.inventory().peekAt(index))
+        return Exceptional.of(this.inventory().peekAt(index))
                 .map(SpongeConvert::fromSponge);
     }
 
@@ -123,5 +124,9 @@ public class SpongeStaticPane implements StaticPane {
     @Override
     public void update(final InventoryLayout layout) {
         layout.elements().forEach((index, element) -> this.set(element, index));
+    }
+
+    protected ViewableInventory inventory() {
+        return this.menu.inventory();
     }
 }

@@ -41,7 +41,12 @@ public class SpongeStaticPaneBuilder extends StaticPaneBuilder {
 
         if (this.title != null) menu.setTitle(SpongeConvert.toSponge(this.title));
 
-        final StaticPane pane = new SpongeStaticPane(menu, this.layout().inventoryType(), this.onClose());
+        // Containers which exist solely to function while open cannot be rendered early, so we need to use a delayed populating panel.
+        final StaticPane pane = switch (this.layout().inventoryType()) {
+            case CRAFTING_BENCH, BREWING_STAND, ANVIL, ENCHANTMENT_TABLE, STONE_CUTTER, GRINDSTONE, MERCHANT, LOOM, CARTOGRAPHY_TABLE ->
+                    new SpongeContainerStaticPane(menu, this.layout().inventoryType(), this.onClose());
+            default -> new SpongeStaticPane(menu, this.layout().inventoryType(), this.onClose());
+        };
 
         if (this.lock()) {
             for (int i = 0; i < this.layout().inventoryType().size(); i++) {
