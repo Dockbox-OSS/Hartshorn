@@ -17,13 +17,15 @@
 
 package org.dockbox.hartshorn.server.minecraft.inventory.pane;
 
+import org.dockbox.hartshorn.server.minecraft.inventory.ClickContext;
 import org.dockbox.hartshorn.server.minecraft.players.Player;
+
+import java.util.function.Function;
 
 /**
  * Represents a inventory pane. Depending on the implementation this may display any type of
  * inventory UI.
  */
-@FunctionalInterface
 public interface Pane {
     /**
      * Open the pane for a given player.
@@ -32,4 +34,8 @@ public interface Pane {
      *         The player to show the pane to.
      */
     void open(Player player);
+
+    void onClick(int index, Function<ClickContext, Boolean> onClick);
+
+    void close(Player player);
 }

@@ -17,11 +17,13 @@
 
 package org.dockbox.hartshorn.sponge.inventory.panes;
 
+import org.dockbox.hartshorn.server.minecraft.inventory.ClickContext;
 import org.dockbox.hartshorn.server.minecraft.inventory.Element;
 import org.dockbox.hartshorn.server.minecraft.inventory.pane.PaginatedPane;
 import org.dockbox.hartshorn.server.minecraft.players.Player;
 
 import java.util.Collection;
+import java.util.function.Function;
 
 // TODO: #369 Implement this
 public class SpongePaginatedPane implements PaginatedPane {
@@ -38,6 +40,16 @@ public class SpongePaginatedPane implements PaginatedPane {
 
     @Override
     public void open(final Player player) {
+
+    }
+
+    @Override
+    public void onClick(final int index, final Function<ClickContext, Boolean> onClick) {
+
+    }
+
+    @Override
+    public void close(final Player player) {
 
     }
 }

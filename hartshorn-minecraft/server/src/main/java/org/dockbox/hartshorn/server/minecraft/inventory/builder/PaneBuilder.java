@@ -19,11 +19,22 @@ package org.dockbox.hartshorn.server.minecraft.inventory.builder;
 
 import org.dockbox.hartshorn.di.properties.AttributeHolder;
 import org.dockbox.hartshorn.i18n.text.Text;
+import org.dockbox.hartshorn.server.minecraft.inventory.ClickContext;
 import org.dockbox.hartshorn.server.minecraft.inventory.pane.Pane;
+import org.dockbox.hartshorn.server.minecraft.players.Player;
+
+import java.util.function.BiConsumer;
+import java.util.function.Function;
 
 public interface PaneBuilder<T extends Pane, B extends PaneBuilder<T, B>> extends AttributeHolder {
 
     B title(Text text);
+
+    B onClose(BiConsumer<Player, T> onClose);
+    B onClick(int index, Function<ClickContext, Boolean> onClick);
+    B onClickOutput(Function<ClickContext, Boolean> onClick);
+
+    B lock(boolean lock);
 
     T build();
 }

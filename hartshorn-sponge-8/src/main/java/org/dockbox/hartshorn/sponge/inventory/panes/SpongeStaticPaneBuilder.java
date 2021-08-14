@@ -41,8 +41,18 @@ public class SpongeStaticPaneBuilder extends StaticPaneBuilder {
 
         if (this.title != null) menu.setTitle(SpongeConvert.toSponge(this.title));
 
-        final StaticPane pane = new SpongeStaticPane(menu);
+        final StaticPane pane = new SpongeStaticPane(menu, this.layout().inventoryType(), this.onClose());
+
+        if (this.lock()) {
+            for (int i = 0; i < this.layout().inventoryType().size(); i++) {
+                pane.onClick(i, (p, e, r) -> false);
+            }
+        }
+
+        this.listeners().forEach(pane::onClick);
+
         pane.update(this.layout());
+
         return pane;
     }
 }
