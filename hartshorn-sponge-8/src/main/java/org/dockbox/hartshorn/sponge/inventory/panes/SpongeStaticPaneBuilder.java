@@ -45,7 +45,7 @@ public class SpongeStaticPaneBuilder extends StaticPaneBuilder {
 
         if (this.lock()) {
             for (int i = 0; i < this.layout().inventoryType().size(); i++) {
-                pane.onClick(i, (p, e, r) -> false);
+                pane.onClick(i, context -> false);
             }
         }
 
