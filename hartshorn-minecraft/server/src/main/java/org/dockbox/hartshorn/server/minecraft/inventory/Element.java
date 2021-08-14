@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.server.minecraft.inventory;
 
 import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.annotations.PartialApi;
+import org.dockbox.hartshorn.server.minecraft.inventory.context.ClickContext;
 import org.dockbox.hartshorn.server.minecraft.item.Item;
 
 import java.util.function.Consumer;

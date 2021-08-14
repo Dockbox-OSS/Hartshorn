@@ -21,7 +21,7 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.server.minecraft.inventory.ClickContext;
+import org.dockbox.hartshorn.server.minecraft.inventory.context.ClickContext;
 import org.dockbox.hartshorn.server.minecraft.inventory.Element;
 import org.dockbox.hartshorn.server.minecraft.inventory.InventoryLayout;
 import org.dockbox.hartshorn.server.minecraft.inventory.InventoryType;

@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.server.minecraft.inventory.builder;
 
 import org.dockbox.hartshorn.api.exceptions.ApplicationException;
 import org.dockbox.hartshorn.di.properties.Attribute;
-import org.dockbox.hartshorn.server.minecraft.inventory.ClickContext;
+import org.dockbox.hartshorn.server.minecraft.inventory.context.ClickContext;
 import org.dockbox.hartshorn.server.minecraft.inventory.InventoryLayout;
 import org.dockbox.hartshorn.server.minecraft.inventory.pane.StaticPane;
 import org.dockbox.hartshorn.server.minecraft.inventory.properties.LayoutAttribute;

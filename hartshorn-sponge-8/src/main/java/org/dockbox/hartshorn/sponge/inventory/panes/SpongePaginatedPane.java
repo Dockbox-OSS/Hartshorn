@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.sponge.inventory.panes;
 
-import org.dockbox.hartshorn.server.minecraft.inventory.ClickContext;
+import org.dockbox.hartshorn.server.minecraft.inventory.context.ClickContext;
 import org.dockbox.hartshorn.server.minecraft.inventory.Element;
 import org.dockbox.hartshorn.server.minecraft.inventory.pane.PaginatedPane;
 import org.dockbox.hartshorn.server.minecraft.players.Player;

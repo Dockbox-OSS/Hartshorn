@@ -3,7 +3,7 @@ package org.dockbox.hartshorn.server.minecraft.inventory.builder;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 
-import org.dockbox.hartshorn.server.minecraft.inventory.ClickContext;
+import org.dockbox.hartshorn.server.minecraft.inventory.context.ClickContext;
 import org.dockbox.hartshorn.server.minecraft.inventory.pane.Pane;
 import org.dockbox.hartshorn.server.minecraft.players.Player;
 

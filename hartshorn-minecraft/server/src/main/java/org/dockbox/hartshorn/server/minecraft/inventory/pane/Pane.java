@@ -17,9 +17,16 @@
 
 package org.dockbox.hartshorn.server.minecraft.inventory.pane;
 
-import org.dockbox.hartshorn.server.minecraft.inventory.ClickContext;
+import org.dockbox.hartshorn.i18n.text.Text;
+import org.dockbox.hartshorn.server.minecraft.inventory.context.ClickContext;
+import org.dockbox.hartshorn.server.minecraft.inventory.InventoryLayout;
+import org.dockbox.hartshorn.server.minecraft.inventory.InventoryType;
+import org.dockbox.hartshorn.server.minecraft.inventory.context.RenameContext;
+import org.dockbox.hartshorn.server.minecraft.item.Item;
+import org.dockbox.hartshorn.server.minecraft.item.ItemTypes;
 import org.dockbox.hartshorn.server.minecraft.players.Player;
 
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
@@ -38,4 +45,24 @@ public interface Pane {
     void onClick(int index, Function<ClickContext, Boolean> onClick);
 
     void close(Player player);
+
+    static Pane rename(final Consumer<RenameContext> callback) {
+        final Item paper = ItemTypes.PAPER.item().displayName(Text.of("Enter name..."));
+        return rename(paper, Text.of("&4Rename"), callback);
+    }
+
+    static Pane rename(final Item item, final Text title, final Consumer<RenameContext> callback) {
+        return InventoryLayout.builder(InventoryType.ANVIL)
+                .set(item, 0)
+                .toStaticPaneBuilder()
+                .lock(true)
+                .title(title)
+                .onClickOutput(context -> {
+                    final Item out = context.item();
+                    final RenameContext renameContext = new RenameContext(context, out.displayName());
+                    callback.accept(renameContext);
+                    context.close();
+                    return false;
+                }).build();
+    }
 }
