@@ -24,7 +24,6 @@ public abstract class HotbarService implements AttributeHolder {
 
     @Override
     public void enable() {
-        // TODO GLieben, auto init cache if method is abstract (empty list)
         // Initialize cache
         this.cache();
     }
@@ -58,12 +57,9 @@ public abstract class HotbarService implements AttributeHolder {
             if (entry.key() == id) {
                 InventoryLayout.builder(InventoryType.DROPPER)
                         .addElements(entry.value().items()
-                                .stream().map(item -> {
-                                    final Element element = Element.of(item);
-                                    element.onClick(p -> source.inventory().give(item));
-                                    return element;
-                                }).toList())
-                        .toStaticPaneBuilder()
+                                .stream().map(item -> Element.of(item, ctx -> ctx.player().inventory().give(item)))
+                                .toList()
+                        ).toStaticPaneBuilder()
                         .title(Text.of("$1" + source.name() + "$2's hotbar"))
                         .build()
                         .open(source);
