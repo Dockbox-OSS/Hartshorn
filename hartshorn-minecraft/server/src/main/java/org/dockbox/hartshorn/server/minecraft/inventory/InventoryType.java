@@ -37,33 +37,36 @@ public enum InventoryType {
     GENERIC_2_ROWS(2, 9),
 
     // Special non-grid inventories, sorted by size
-    CRAFTING_BENCH(10),
-    BREWING_STAND(5),
-    BLAST_FURNACE(3),
-    FURNACE(3),
-    ANVIL(3),
-    ENCHANTMENT_TABLE(2),
-    STONE_CUTTER(2),
-    GRINDSTONE(2),
-    MERCHANT(2),
-    LOOM(2),
-    CARTOGRAPHY_TABLE(1),
-    BEACON(1),
+    CRAFTING_BENCH(10, true),
+    BREWING_STAND(5, false), // Technically true, but hasOutput assumes a single output, not three
+    BLAST_FURNACE(3, true),
+    FURNACE(3, true),
+    ANVIL(3, true),
+    ENCHANTMENT_TABLE(2, true),
+    STONE_CUTTER(2, true),
+    GRINDSTONE(3, true),
+    MERCHANT(3, true),
+    LOOM(4, true),
+    CARTOGRAPHY_TABLE(3, true),
+    BEACON(1, false),
     ;
 
     private final int rows;
     private final int columns;
     private final int size;
+    private final boolean hasOutput;
 
     InventoryType(final int rows, final int columns) {
         this.rows = rows;
         this.columns = columns;
         this.size = rows * columns;
+        this.hasOutput = false;
     }
 
-    InventoryType(final int size) {
+    InventoryType(final int size, final boolean hasOutput) {
         this.rows = -1;
         this.columns = -1;
         this.size = size;
+        this.hasOutput = hasOutput;
     }
 }

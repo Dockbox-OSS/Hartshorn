@@ -66,7 +66,7 @@ public class PlayerSettings {
             .ok();
     private final List<Setting<?>> settings = HartshornUtils.emptyConcurrentList();
 
-    private static void toggleNotifications(PersistentDataHolder holder) {
+    private static void toggleNotifications(final PersistentDataHolder holder) {
         final Boolean receiving = RECEIVING_NOTIFICATIONS.get(holder);
         holder.set(RECEIVING_NOTIFICATIONS, !receiving);
         if (holder instanceof MessageReceiver) {
@@ -75,8 +75,8 @@ public class PlayerSettings {
     }
 
     @Command("settings")
-    public void settings(Player source) {
-        PaginatedPaneBuilder builder = InventoryLayout.builder(InventoryType.DOUBLE_CHEST)
+    public void settings(final Player source) {
+        final PaginatedPaneBuilder builder = InventoryLayout.builder(InventoryType.DOUBLE_CHEST)
                 .toPaginatedPaneBuilder();
         builder.title(new Resource("$1Settings", "settings").translate(source).asText());
         final PaginatedPane pane = builder.build();
@@ -89,21 +89,23 @@ public class PlayerSettings {
         pane.open(source);
     }
 
-    private Element fromSetting(Setting<?> setting, Player source, Pane build) {
-        Item item = setting.item();
+    private Element fromSetting(final Setting<?> setting, final Player source, final Pane build) {
+        final Item item = setting.item();
         this.modify(item, setting, source);
-        return Element.of(item, player -> {
+        return Element.of(item, context -> {
+            final Player player = context.player();
             setting.action().accept(player);
             this.settings(player);
+            return false;
         });
     }
 
-    private void modify(Item item, Setting<?> setting, Player source) {
+    private void modify(final Item item, final Setting<?> setting, final Player source) {
         item.displayName(Text.of("$1", setting.resource().translate(source), " $3(", this.value(setting, source), "$3)"));
         item.lore(HartshornUtils.singletonList(Text.of("$2", setting.description().translate(source))));
     }
 
-    private <T> ResourceEntry value(Setting<T> setting, Player source) {
+    private <T> ResourceEntry value(final Setting<T> setting, final Player source) {
         final T o = setting.get(source);
         return setting.convert(o).translate(source);
     }

@@ -17,12 +17,26 @@
 
 package org.dockbox.hartshorn.server.minecraft.inventory.builder;
 
+import org.dockbox.hartshorn.server.minecraft.inventory.context.ClickContext;
 import org.dockbox.hartshorn.server.minecraft.inventory.Element;
 import org.dockbox.hartshorn.server.minecraft.inventory.pane.PaginatedPane;
 
 import java.util.Collection;
+import java.util.function.Function;
 
-public abstract class PaginatedPaneBuilder implements PaneBuilder<PaginatedPane, PaginatedPaneBuilder> {
+public abstract class PaginatedPaneBuilder extends DefaultPaneBuilder<PaginatedPane, PaginatedPaneBuilder> {
 
     public abstract PaginatedPaneBuilder elements(Collection<Element> elements);
+
+
+    @Override
+    public PaginatedPaneBuilder onClickOutput(final Function<ClickContext, Boolean> onClick) {
+        // Pagination has no output types
+        return this;
+    }
+
+    @Override
+    protected PaginatedPaneBuilder self() {
+        return this;
+    }
 }

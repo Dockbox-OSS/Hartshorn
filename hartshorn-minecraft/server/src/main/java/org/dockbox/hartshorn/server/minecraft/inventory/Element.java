@@ -19,10 +19,11 @@ package org.dockbox.hartshorn.server.minecraft.inventory;
 
 import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.annotations.PartialApi;
+import org.dockbox.hartshorn.server.minecraft.inventory.context.ClickContext;
 import org.dockbox.hartshorn.server.minecraft.item.Item;
-import org.dockbox.hartshorn.server.minecraft.players.Player;
 
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * Represents a inventory element which can be displayed by a {@link
@@ -41,7 +42,11 @@ public interface Element {
      * @return The element.
      */
     static Element of(final Item item) {
-        return of(item, p -> {});
+        return of(item, true);
+    }
+
+    static Element of(final Item item, final boolean modifiable) {
+        return of(item, p -> modifiable);
     }
 
     /**
@@ -55,7 +60,7 @@ public interface Element {
      *
      * @return The element.
      */
-    static Element of(final Item item, final Consumer<Player> onClick) {
+    static Element of(final Item item, final Function<ClickContext, Boolean> onClick) {
         return Hartshorn.context().get(Element.class, item, onClick);
     }
 
@@ -72,14 +77,15 @@ public interface Element {
      * @param onClick
      *         The action to perform.
      */
-    void onClick(Consumer<Player> onClick);
+    void onClick(Function<ClickContext, Boolean> onClick);
 
     /**
      * Executes the consumer of the element with the given player.
      * @param player The player that caused the click action.
+     * @return Whether the slot can be modified
      */
     @PartialApi
-    void perform(final Player player);
+    boolean perform(final ClickContext player);
 
     @PartialApi
     boolean listening();
