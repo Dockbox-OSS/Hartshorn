@@ -40,7 +40,7 @@ public interface PaginatedPane extends Pane {
      *
      * @return The builder
      */
-    static PaginatedPaneBuilder builder(InventoryLayout layout) {
+    static PaginatedPaneBuilder builder(final InventoryLayout layout) {
         return Hartshorn.context().get(PaginatedPaneBuilder.class, new LayoutAttribute(layout));
     }
 
@@ -61,4 +61,7 @@ public interface PaginatedPane extends Pane {
      *         The elements
      */
     void elements(Collection<Element> elements);
+
+    int page();
+    int pages();
 }
