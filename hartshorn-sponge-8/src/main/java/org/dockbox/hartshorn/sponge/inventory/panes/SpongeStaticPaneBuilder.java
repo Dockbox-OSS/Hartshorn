@@ -18,19 +18,14 @@
 package org.dockbox.hartshorn.sponge.inventory.panes;
 
 import org.dockbox.hartshorn.di.annotations.inject.Binds;
-import org.dockbox.hartshorn.i18n.text.Text;
 import org.dockbox.hartshorn.server.minecraft.inventory.builder.StaticPaneBuilder;
 import org.dockbox.hartshorn.server.minecraft.inventory.pane.StaticPane;
 import org.dockbox.hartshorn.sponge.util.SpongeConvert;
 import org.spongepowered.api.item.inventory.menu.InventoryMenu;
 import org.spongepowered.api.item.inventory.type.ViewableInventory;
 
-import lombok.Setter;
-
 @Binds(StaticPaneBuilder.class)
 public class SpongeStaticPaneBuilder extends StaticPaneBuilder {
-
-    @Setter private Text title;
 
     @Override
     public StaticPane build() {
@@ -39,7 +34,7 @@ public class SpongeStaticPaneBuilder extends StaticPaneBuilder {
                 .completeStructure()
                 .build().asMenu();
 
-        if (this.title != null) menu.setTitle(SpongeConvert.toSponge(this.title));
+        if (this.title() != null) menu.setTitle(SpongeConvert.toSponge(this.title()));
 
         // Containers which exist solely to function while open cannot be rendered early, so we need to use a delayed populating panel.
         final StaticPane pane = switch (this.layout().inventoryType()) {

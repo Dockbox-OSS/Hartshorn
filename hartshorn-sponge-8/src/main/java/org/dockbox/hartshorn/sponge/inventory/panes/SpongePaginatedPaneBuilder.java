@@ -17,27 +17,37 @@
 
 package org.dockbox.hartshorn.sponge.inventory.panes;
 
-import org.dockbox.hartshorn.i18n.text.Text;
-import org.dockbox.hartshorn.server.minecraft.inventory.Element;
+import org.dockbox.hartshorn.di.annotations.inject.Binds;
 import org.dockbox.hartshorn.server.minecraft.inventory.builder.PaginatedPaneBuilder;
 import org.dockbox.hartshorn.server.minecraft.inventory.pane.PaginatedPane;
+import org.dockbox.hartshorn.sponge.util.SpongeConvert;
+import org.spongepowered.api.item.inventory.menu.InventoryMenu;
+import org.spongepowered.api.item.inventory.type.ViewableInventory;
 
-import java.util.Collection;
-
-// TODO: #369 Implement this
+@Binds(PaginatedPaneBuilder.class)
 public class SpongePaginatedPaneBuilder extends PaginatedPaneBuilder {
-    @Override
-    public PaginatedPaneBuilder elements(Collection<Element> elements) {
-        return null;
-    }
-
-    @Override
-    public PaginatedPaneBuilder title(Text text) {
-        return null;
-    }
 
     @Override
     public PaginatedPane build() {
-        return null;
+        final InventoryMenu menu = ViewableInventory.builder()
+                .type(SpongeConvert.toSponge(this.layout().inventoryType()))
+                .completeStructure()
+                .build().asMenu();
+
+        if (this.title() != null) menu.setTitle(SpongeConvert.toSponge(this.title()));
+
+        final PaginatedPane pane = new SpongePaginatedPane(menu, this.layout().inventoryType(), this.onClose(), this.actions());
+
+        if (this.lock()) {
+            for (int i = 0; i < this.layout().inventoryType().size(); i++) {
+                pane.onClick(i, context -> false);
+            }
+        }
+
+        this.listeners().forEach(pane::onClick);
+
+        pane.elements(this.elements());
+
+        return pane;
     }
 }
