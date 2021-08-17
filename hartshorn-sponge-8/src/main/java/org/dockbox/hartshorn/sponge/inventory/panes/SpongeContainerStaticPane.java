@@ -23,7 +23,7 @@ import org.dockbox.hartshorn.server.minecraft.inventory.InventoryType;
 import org.dockbox.hartshorn.server.minecraft.inventory.pane.StaticPane;
 import org.dockbox.hartshorn.server.minecraft.item.Item;
 import org.dockbox.hartshorn.server.minecraft.players.Player;
-import org.dockbox.hartshorn.sponge.util.SpongeConvert;
+import org.dockbox.hartshorn.sponge.util.SpongeAdapter;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.spongepowered.api.entity.living.player.server.ServerPlayer;
 import org.spongepowered.api.item.inventory.Container;
@@ -46,7 +46,7 @@ public class SpongeContainerStaticPane extends SpongeStaticPane {
 
     @Override
     public void open(final Player player) {
-        final Exceptional<ServerPlayer> serverPlayer = SpongeConvert.toSponge(player);
+        final Exceptional<ServerPlayer> serverPlayer = SpongeAdapter.toSponge(player);
         // Only open if the player is still online, it's possible the user logged off
         final Exceptional<Container> container = serverPlayer.map(this.menu::open)
                 .map(o -> o.orElse(null));
@@ -58,7 +58,7 @@ public class SpongeContainerStaticPane extends SpongeStaticPane {
 
     @Override
     public void set(final Item item, final int index) {
-        this.delayed.put(index, SpongeConvert.toSponge(item));
+        this.delayed.put(index, SpongeAdapter.toSponge(item));
     }
 
     @Override

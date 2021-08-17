@@ -29,7 +29,7 @@ import org.dockbox.hartshorn.server.minecraft.inventory.pane.StaticPane;
 import org.dockbox.hartshorn.server.minecraft.item.Item;
 import org.dockbox.hartshorn.server.minecraft.item.ItemTypes;
 import org.dockbox.hartshorn.server.minecraft.players.Player;
-import org.dockbox.hartshorn.sponge.util.SpongeConvert;
+import org.dockbox.hartshorn.sponge.util.SpongeAdapter;
 import org.spongepowered.api.entity.living.player.server.ServerPlayer;
 import org.spongepowered.api.item.inventory.menu.InventoryMenu;
 import org.spongepowered.api.item.inventory.type.ViewableInventory;
@@ -52,9 +52,9 @@ public class SpongeStaticPane implements StaticPane {
                 final Optional<ServerPlayer> player = cause.first(ServerPlayer.class);
                 if (player.isEmpty()) return false;
 
-                final Player origin = SpongeConvert.fromSponge(player.get());
+                final Player origin = SpongeAdapter.fromSponge(player.get());
                 final Item item = Exceptional.of(slot.peekAt(0))
-                        .map(SpongeConvert::fromSponge)
+                        .map(SpongeAdapter::fromSponge)
                         .map(Item.class::cast)
                         .orElse(ItemTypes.AIR::item)
                         .get();
@@ -71,14 +71,14 @@ public class SpongeStaticPane implements StaticPane {
         this.menu.registerClose((cause, container) -> {
             final Optional<ServerPlayer> player = cause.first(ServerPlayer.class);
             if (player.isEmpty()) return;
-            final Player origin = SpongeConvert.fromSponge(player.get());
+            final Player origin = SpongeAdapter.fromSponge(player.get());
             onClose.accept(origin, this);
         });
     }
 
     @Override
     public void open(final Player player) {
-        final Exceptional<ServerPlayer> serverPlayer = SpongeConvert.toSponge(player);
+        final Exceptional<ServerPlayer> serverPlayer = SpongeAdapter.toSponge(player);
         // Only open if the player is still online, it's possible the user logged off
         serverPlayer.present(this.menu::open);
     }
@@ -90,7 +90,7 @@ public class SpongeStaticPane implements StaticPane {
 
     @Override
     public void close(final Player player) {
-        SpongeConvert.toSponge(player).present(ServerPlayer::closeInventory);
+        SpongeAdapter.toSponge(player).present(ServerPlayer::closeInventory);
     }
 
     @Override
@@ -101,13 +101,13 @@ public class SpongeStaticPane implements StaticPane {
 
     @Override
     public void set(final Item item, final int index) {
-        this.inventory().set(index, SpongeConvert.toSponge(item));
+        this.inventory().set(index, SpongeAdapter.toSponge(item));
     }
 
     @Override
     public Exceptional<Item> get(final int index) {
         return Exceptional.of(this.inventory().peekAt(index))
-                .map(SpongeConvert::fromSponge);
+                .map(SpongeAdapter::fromSponge);
     }
 
     @Override

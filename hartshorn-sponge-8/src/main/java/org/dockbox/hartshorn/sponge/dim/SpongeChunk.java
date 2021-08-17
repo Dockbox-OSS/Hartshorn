@@ -20,7 +20,7 @@ package org.dockbox.hartshorn.sponge.dim;
 import org.dockbox.hartshorn.api.domain.tuple.Vector3N;
 import org.dockbox.hartshorn.server.minecraft.dimension.Chunk;
 import org.dockbox.hartshorn.server.minecraft.dimension.world.World;
-import org.dockbox.hartshorn.sponge.util.SpongeConvert;
+import org.dockbox.hartshorn.sponge.util.SpongeAdapter;
 import org.spongepowered.api.ResourceKey;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.world.server.ServerWorld;
@@ -36,12 +36,12 @@ public class SpongeChunk implements Chunk, SpongeDimension {
 
     @Override
     public Vector3N position() {
-        return SpongeConvert.fromSponge(this.chunk);
+        return SpongeAdapter.fromSponge(this.chunk);
     }
 
     @Override
     public World world() {
-        return SpongeConvert.fromSponge(this.serverWorld());
+        return SpongeAdapter.fromSponge(this.serverWorld());
     }
 
     @Override

@@ -24,7 +24,7 @@ import org.dockbox.hartshorn.di.annotations.inject.Bound;
 import org.dockbox.hartshorn.server.minecraft.dimension.position.Location;
 import org.dockbox.hartshorn.server.minecraft.entities.ArmorStand;
 import org.dockbox.hartshorn.server.minecraft.entities.ArmorStandInventory;
-import org.dockbox.hartshorn.sponge.util.SpongeConvert;
+import org.dockbox.hartshorn.sponge.util.SpongeAdapter;
 import org.dockbox.hartshorn.sponge.util.SpongeUtil;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.spongepowered.api.data.Key;
@@ -60,12 +60,12 @@ public class SpongeArmorStand
 
     @Override
     public Vector3N rotation(Limbs limb) {
-        return SpongeUtil.get(this.entity(), limbs.get(limb), SpongeConvert::fromSponge, Vector3N::empty);
+        return SpongeUtil.get(this.entity(), limbs.get(limb), SpongeAdapter::fromSponge, Vector3N::empty);
     }
 
     @Override
     public void rotation(Limbs limb, Vector3N rotation) {
-        this.entity().present(entity -> entity.offer(limbs.get(limb), SpongeConvert.toSpongeDouble(rotation)));
+        this.entity().present(entity -> entity.offer(limbs.get(limb), SpongeAdapter.toSpongeDouble(rotation)));
     }
 
     @Override

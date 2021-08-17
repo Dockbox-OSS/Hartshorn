@@ -29,7 +29,7 @@ import org.dockbox.hartshorn.server.minecraft.events.player.PlayerWarpEvent;
 import org.dockbox.hartshorn.server.minecraft.events.player.interact.PlayerSpawnEvent;
 import org.dockbox.hartshorn.server.minecraft.players.Player;
 import org.dockbox.hartshorn.sponge.dim.SpongeWorld;
-import org.dockbox.hartshorn.sponge.util.SpongeConvert;
+import org.dockbox.hartshorn.sponge.util.SpongeAdapter;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.living.player.server.ServerPlayer;
 import org.spongepowered.api.event.EventContextKeys;
@@ -50,8 +50,8 @@ public class MovementEventBridge implements EventBridge {
 
     @Listener
     public void on(RespawnPlayerEvent event) {
-        final Player player = SpongeConvert.fromSponge(event.entity());
-        final SpongeWorld world = SpongeConvert.fromSponge(event.destinationWorld());
+        final Player player = SpongeAdapter.fromSponge(event.entity());
+        final SpongeWorld world = SpongeAdapter.fromSponge(event.destinationWorld());
         this.post(new PlayerSpawnEvent(player, Location.of(world)), event);
     }
 
@@ -59,22 +59,22 @@ public class MovementEventBridge implements EventBridge {
     public void on(ChangeEntityWorldEvent event) {
         final Entity entity = event.entity();
         if (entity instanceof ServerPlayer serverPlayer) {
-            final Player player = SpongeConvert.fromSponge(serverPlayer);
+            final Player player = SpongeAdapter.fromSponge(serverPlayer);
 
             final Exceptional<Portal> portal = Exceptional.of(event.context().get(EventContextKeys.PORTAL));
             portal.present(p -> this.portal(event, player, p));
 
-            final SpongeWorld origin = SpongeConvert.fromSponge(event.originalWorld());
-            final SpongeWorld destination = SpongeConvert.fromSponge(event.destinationWorld());
+            final SpongeWorld origin = SpongeAdapter.fromSponge(event.originalWorld());
+            final SpongeWorld destination = SpongeAdapter.fromSponge(event.destinationWorld());
 
             this.post(new PlayerSwitchWorldEvent(player, origin, destination), event);
         }
     }
 
     private void portal(ChangeEntityWorldEvent event, Player player, Portal portal) {
-        final Location origin = SpongeConvert.fromSponge(portal.origin());
-        final Location destination = Exceptional.of(portal.destination()).map(SpongeConvert::fromSponge).or(Location.empty());
-        final PortalType portalType = SpongeConvert.fromSponge(portal.type());
+        final Location origin = SpongeAdapter.fromSponge(portal.origin());
+        final Location destination = Exceptional.of(portal.destination()).map(SpongeAdapter::fromSponge).or(Location.empty());
+        final PortalType portalType = SpongeAdapter.fromSponge(portal.type());
 
         this.post(new PlayerPortalEvent(player, origin, destination, true, portalType), event);
     }
@@ -83,12 +83,12 @@ public class MovementEventBridge implements EventBridge {
     public void on(Reposition event) {
         final Entity entity = event.entity();
         if (entity instanceof ServerPlayer serverPlayer) {
-            final Player player = SpongeConvert.fromSponge(serverPlayer);
+            final Player player = SpongeAdapter.fromSponge(serverPlayer);
 
-            final SpongeWorld originWorld = SpongeConvert.fromSponge(event.originalWorld());
-            final Vector3N originPosition = SpongeConvert.fromSponge(event.originalPosition());
-            final SpongeWorld destinationWorld = SpongeConvert.fromSponge(event.destinationWorld());
-            final Vector3N destinationPosition = SpongeConvert.fromSponge(event.destinationPosition());
+            final SpongeWorld originWorld = SpongeAdapter.fromSponge(event.originalWorld());
+            final Vector3N originPosition = SpongeAdapter.fromSponge(event.originalPosition());
+            final SpongeWorld destinationWorld = SpongeAdapter.fromSponge(event.destinationWorld());
+            final Vector3N destinationPosition = SpongeAdapter.fromSponge(event.destinationPosition());
 
             this.post(new PlayerTeleportEvent(player,
                     Location.of(originPosition, originWorld),

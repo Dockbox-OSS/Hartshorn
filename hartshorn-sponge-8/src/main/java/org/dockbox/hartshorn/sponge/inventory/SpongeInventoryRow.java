@@ -21,7 +21,7 @@ import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.server.minecraft.item.Item;
 import org.dockbox.hartshorn.server.minecraft.players.inventory.AbstractInventoryRow;
 import org.dockbox.hartshorn.sponge.game.SpongePlayer;
-import org.dockbox.hartshorn.sponge.util.SpongeConvert;
+import org.dockbox.hartshorn.sponge.util.SpongeAdapter;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.item.inventory.transaction.InventoryTransactionResult.Type;
@@ -39,7 +39,7 @@ public class SpongeInventoryRow extends AbstractInventoryRow implements SpongeIn
 
     @Override
     public void slot(final Item item, final int index) {
-        this.internalGetSlot(index).present(slot -> slot.set(SpongeConvert.toSponge(item)));
+        this.internalGetSlot(index).present(slot -> slot.set(SpongeAdapter.toSponge(item)));
     }
 
     @Override
@@ -66,7 +66,7 @@ public class SpongeInventoryRow extends AbstractInventoryRow implements SpongeIn
     @Override
     public boolean give(final Item item) {
         return this.internalGetRow().map(row -> {
-            final ItemStack stack = SpongeConvert.toSponge(item);
+            final ItemStack stack = SpongeAdapter.toSponge(item);
             return Type.SUCCESS == row.offer(stack).type();
         }).or(false);
     }

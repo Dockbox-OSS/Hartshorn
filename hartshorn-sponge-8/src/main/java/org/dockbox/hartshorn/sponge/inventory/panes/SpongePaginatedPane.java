@@ -29,7 +29,7 @@ import org.dockbox.hartshorn.server.minecraft.inventory.pane.PaginatedPane;
 import org.dockbox.hartshorn.server.minecraft.item.Item;
 import org.dockbox.hartshorn.server.minecraft.item.ItemTypes;
 import org.dockbox.hartshorn.server.minecraft.players.Player;
-import org.dockbox.hartshorn.sponge.util.SpongeConvert;
+import org.dockbox.hartshorn.sponge.util.SpongeAdapter;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.spongepowered.api.entity.living.player.server.ServerPlayer;
 import org.spongepowered.api.item.inventory.Container;
@@ -62,9 +62,9 @@ public class SpongePaginatedPane implements PaginatedPane {
                 final Optional<ServerPlayer> player = cause.first(ServerPlayer.class);
                 if (player.isEmpty()) return false;
 
-                final Player origin = SpongeConvert.fromSponge(player.get());
+                final Player origin = SpongeAdapter.fromSponge(player.get());
                 final Item item = Exceptional.of(slot.peekAt(0))
-                        .map(SpongeConvert::fromSponge)
+                        .map(SpongeAdapter::fromSponge)
                         .map(Item.class::cast)
                         .orElse(ItemTypes.AIR::item)
                         .get();
@@ -83,7 +83,7 @@ public class SpongePaginatedPane implements PaginatedPane {
         this.menu.registerClose((cause, container) -> {
             final Optional<ServerPlayer> player = cause.first(ServerPlayer.class);
             if (player.isEmpty()) return;
-            final Player origin = SpongeConvert.fromSponge(player.get());
+            final Player origin = SpongeAdapter.fromSponge(player.get());
             onClose.accept(origin, this);
         });
     }
@@ -103,14 +103,14 @@ public class SpongePaginatedPane implements PaginatedPane {
             // 18 19 20 21 22 23 24 25 26
             final int offset = this.type.size() - this.type.columns();
 
-            this.menu.inventory().set(offset + index, SpongeConvert.toSponge(element.item()));
+            this.menu.inventory().set(offset + index, SpongeAdapter.toSponge(element.item()));
             this.onClick(offset + index, element::perform);
         }
     }
 
     @Override
     public void open(final Player player, final int page) {
-        final Exceptional<ServerPlayer> serverPlayer = SpongeConvert.toSponge(player);
+        final Exceptional<ServerPlayer> serverPlayer = SpongeAdapter.toSponge(player);
         if (serverPlayer.present() && this.pages.containsKey(page)) {
             this.listeners.clear();
             this.page = page;
@@ -121,7 +121,7 @@ public class SpongePaginatedPane implements PaginatedPane {
                 final Element element = elements.get(i);
                 final Item item = element.item();
 
-                this.menu.inventory().set(i, SpongeConvert.toSponge(item));
+                this.menu.inventory().set(i, SpongeAdapter.toSponge(item));
                 if (element.listening()) this.onClick(i, element::perform);
             }
 
@@ -166,6 +166,6 @@ public class SpongePaginatedPane implements PaginatedPane {
 
     @Override
     public void close(final Player player) {
-        SpongeConvert.toSponge(player).present(ServerPlayer::closeInventory);
+        SpongeAdapter.toSponge(player).present(ServerPlayer::closeInventory);
     }
 }

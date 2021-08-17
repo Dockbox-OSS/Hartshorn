@@ -22,7 +22,7 @@ import org.dockbox.hartshorn.server.minecraft.inventory.Slot;
 import org.dockbox.hartshorn.server.minecraft.item.Item;
 import org.dockbox.hartshorn.server.minecraft.item.ItemTypes;
 import org.dockbox.hartshorn.sponge.inventory.SpongeInventory;
-import org.dockbox.hartshorn.sponge.util.SpongeConvert;
+import org.dockbox.hartshorn.sponge.util.SpongeAdapter;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.spongepowered.api.data.type.HandTypes;
 import org.spongepowered.api.item.inventory.ItemStack;
@@ -52,7 +52,7 @@ public class SpongeArmorStandInventory implements SpongeInventory, ArmorStandInv
         });
 
         return items.stream()
-                .map(SpongeConvert::fromSponge)
+                .map(SpongeAdapter::fromSponge)
                 .map(Item.class::cast)
                 .toList();
     }
@@ -66,7 +66,7 @@ public class SpongeArmorStandInventory implements SpongeInventory, ArmorStandInv
     @Override
     public Item slot(Slot slot) {
         return this.stand.entity()
-                .map(entity -> SpongeConvert.fromSponge(switch (slot) {
+                .map(entity -> SpongeAdapter.fromSponge(switch (slot) {
                     case HELMET -> entity.head();
                     case CHESTPLATE -> entity.chest();
                     case LEGGINGS -> entity.legs();
@@ -82,8 +82,8 @@ public class SpongeArmorStandInventory implements SpongeInventory, ArmorStandInv
     @Override
     public void slot(Item item, Slot slot) {
         this.stand.entity().present(entity -> {
-            final ItemStack itemStack = SpongeConvert.toSponge(item);
-            final EquipmentType type = SpongeConvert.toSponge(slot);
+            final ItemStack itemStack = SpongeAdapter.toSponge(item);
+            final EquipmentType type = SpongeAdapter.toSponge(slot);
             entity.equipment().slot(type).ifPresent(equipmentSlot -> equipmentSlot.set(itemStack));
         });
     }

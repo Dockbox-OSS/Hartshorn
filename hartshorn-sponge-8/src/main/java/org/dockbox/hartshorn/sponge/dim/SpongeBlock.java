@@ -26,7 +26,7 @@ import org.dockbox.hartshorn.server.minecraft.dimension.position.Location;
 import org.dockbox.hartshorn.server.minecraft.item.Item;
 import org.dockbox.hartshorn.sponge.game.SpongeComposite;
 import org.dockbox.hartshorn.sponge.inventory.SpongeItem;
-import org.dockbox.hartshorn.sponge.util.SpongeConvert;
+import org.dockbox.hartshorn.sponge.util.SpongeAdapter;
 import org.dockbox.hartshorn.sponge.util.SpongeUtil;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.spongepowered.api.ResourceKey;
@@ -74,19 +74,19 @@ public class SpongeBlock implements Block, SpongeComposite {
 
     @Bound
     public SpongeBlock(Item item) {
-        final ItemStack itemStack = SpongeConvert.toSponge(item);
+        final ItemStack itemStack = SpongeAdapter.toSponge(item);
         final Optional<BlockType> block = itemStack.type().block();
         if (block.isEmpty()) this.snapshot = new WeakReference<>(BlockSnapshot.empty());
         else {
             final BlockType blockType = block.get();
-            this.snapshot = new WeakReference<>(SpongeConvert.toSnapshot(blockType.defaultState()));
+            this.snapshot = new WeakReference<>(SpongeAdapter.toSnapshot(blockType.defaultState()));
         }
         this.location = null;
     }
 
     @Bound
     public SpongeBlock(Location location) {
-        final Exceptional<ServerLocation> exceptionalLocation = SpongeConvert.toSponge(location);
+        final Exceptional<ServerLocation> exceptionalLocation = SpongeAdapter.toSponge(location);
         if (exceptionalLocation.absent()) {
             this.snapshot = new WeakReference<>(BlockSnapshot.empty());
             this.location = null;
@@ -157,7 +157,7 @@ public class SpongeBlock implements Block, SpongeComposite {
 
     @Override
     public boolean place(Location location) {
-        return this.state().map(state -> SpongeConvert.toSponge(location)
+        return this.state().map(state -> SpongeAdapter.toSponge(location)
                 .map(serverLocation -> {
                     SpongeBlock.this.location = serverLocation;
                     return serverLocation.setBlock(state);
