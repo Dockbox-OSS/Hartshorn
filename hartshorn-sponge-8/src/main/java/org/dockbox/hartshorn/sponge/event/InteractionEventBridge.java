@@ -30,7 +30,7 @@ import org.dockbox.hartshorn.server.minecraft.events.player.interact.PlayerInter
 import org.dockbox.hartshorn.server.minecraft.players.ClickType;
 import org.dockbox.hartshorn.server.minecraft.players.Hand;
 import org.dockbox.hartshorn.server.minecraft.players.Player;
-import org.dockbox.hartshorn.sponge.util.SpongeConvert;
+import org.dockbox.hartshorn.sponge.util.SpongeAdapter;
 import org.spongepowered.api.data.type.HandType;
 import org.spongepowered.api.event.Event;
 import org.spongepowered.api.event.EventContextKeys;
@@ -67,7 +67,7 @@ public class InteractionEventBridge implements EventBridge {
         final Optional<HandType> handType = event.context().get(EventContextKeys.USED_HAND);
         if (handType.isEmpty()) return Exceptional.empty();
 
-        final Hand hand = SpongeConvert.fromSponge(handType.get());
+        final Hand hand = SpongeAdapter.fromSponge(handType.get());
         return Exceptional.of(hand);
     }
 
@@ -80,10 +80,10 @@ public class InteractionEventBridge implements EventBridge {
 
         Vector3N point = Vector3N.empty();
         if (event instanceof InteractEntityEvent.Secondary.At at) {
-            point = SpongeConvert.fromSponge(at.interactionPoint());
+            point = SpongeAdapter.fromSponge(at.interactionPoint());
         }
 
-        final Entity entity = SpongeConvert.fromSponge(event.entity());
+        final Entity entity = SpongeAdapter.fromSponge(event.entity());
 
         final Exceptional<Hand> hand = this.hand(event);
         if (hand.absent()) return;
@@ -101,10 +101,10 @@ public class InteractionEventBridge implements EventBridge {
         else if (event instanceof InteractBlockEvent.Secondary) type = ClickType.SECONDARY;
         else return;
 
-        final BlockFace face = SpongeConvert.fromSponge(event.targetSide());
-        final Block block = SpongeConvert.fromSponge(event.block());
+        final BlockFace face = SpongeAdapter.fromSponge(event.targetSide());
+        final Block block = SpongeAdapter.fromSponge(event.block());
 
-        final Location location = event.block().location().map(SpongeConvert::fromSponge).orElseGet(Location::empty);
+        final Location location = event.block().location().map(SpongeAdapter::fromSponge).orElseGet(Location::empty);
 
         final Exceptional<Hand> hand = this.hand(event);
         if (hand.absent()) return;

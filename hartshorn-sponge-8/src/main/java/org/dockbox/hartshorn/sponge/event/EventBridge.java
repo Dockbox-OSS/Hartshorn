@@ -21,7 +21,7 @@ import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.events.parents.Cancellable;
 import org.dockbox.hartshorn.events.parents.Event;
 import org.dockbox.hartshorn.server.minecraft.players.Player;
-import org.dockbox.hartshorn.sponge.util.SpongeConvert;
+import org.dockbox.hartshorn.sponge.util.SpongeAdapter;
 import org.spongepowered.api.entity.living.player.server.ServerPlayer;
 
 import java.util.Optional;
@@ -39,7 +39,7 @@ public interface EventBridge {
         final Optional<ServerPlayer> serverPlayer = event.cause().first(ServerPlayer.class);
         if (serverPlayer.isEmpty()) return Exceptional.empty();
 
-        final Player player = SpongeConvert.fromSponge(serverPlayer.get());
+        final Player player = SpongeAdapter.fromSponge(serverPlayer.get());
         return Exceptional.of(player);
     }
 

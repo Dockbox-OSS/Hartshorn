@@ -22,7 +22,7 @@ import org.dockbox.hartshorn.commands.SystemSubject;
 import org.dockbox.hartshorn.i18n.entry.DefaultResources;
 import org.dockbox.hartshorn.i18n.text.Text;
 import org.dockbox.hartshorn.i18n.text.pagination.Pagination;
-import org.dockbox.hartshorn.sponge.util.SpongeConvert;
+import org.dockbox.hartshorn.sponge.util.SpongeAdapter;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.exception.CommandException;
 
@@ -40,17 +40,17 @@ public class SpongeSystemSubject extends SystemSubject {
 
     @Override
     public void send(Text text) {
-        Sponge.systemSubject().sendMessage(SpongeConvert.toSponge(text));
+        Sponge.systemSubject().sendMessage(SpongeAdapter.toSponge(text));
     }
 
     @Override
     public void sendWithPrefix(Text text) {
         final Text message = Text.of(DefaultResources.instance().prefix(), text);
-        Sponge.systemSubject().sendMessage(SpongeConvert.toSponge(message));
+        Sponge.systemSubject().sendMessage(SpongeAdapter.toSponge(message));
     }
 
     @Override
     public void send(Pagination pagination) {
-        SpongeConvert.toSponge(pagination).sendTo(Sponge.systemSubject());
+        SpongeAdapter.toSponge(pagination).sendTo(Sponge.systemSubject());
     }
 }

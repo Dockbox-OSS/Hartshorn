@@ -24,7 +24,7 @@ import org.dockbox.hartshorn.i18n.text.Text;
 import org.dockbox.hartshorn.server.minecraft.dimension.position.Location;
 import org.dockbox.hartshorn.server.minecraft.dimension.world.World;
 import org.dockbox.hartshorn.sponge.game.SpongeComposite;
-import org.dockbox.hartshorn.sponge.util.SpongeConvert;
+import org.dockbox.hartshorn.sponge.util.SpongeAdapter;
 import org.dockbox.hartshorn.sponge.util.SpongeUtil;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.spongepowered.api.data.DataHolder.Mutable;
@@ -53,11 +53,11 @@ public interface SpongeEntity
     }
 
     default Text displayName() {
-        return SpongeUtil.get(this.spongeEntity(), Keys.DISPLAY_NAME, SpongeConvert::fromSponge, Text::of);
+        return SpongeUtil.get(this.spongeEntity(), Keys.DISPLAY_NAME, SpongeAdapter::fromSponge, Text::of);
     }
 
     default SpongeEntity<T, S> displayName(Text displayName) {
-        this.spongeEntity().present(entity -> entity.offer(Keys.DISPLAY_NAME, SpongeConvert.toSponge(displayName)));
+        this.spongeEntity().present(entity -> entity.offer(Keys.DISPLAY_NAME, SpongeAdapter.toSponge(displayName)));
         return this;
     }
 
@@ -105,7 +105,7 @@ public interface SpongeEntity
     default boolean summon(Location location) {
         if (!this.alive()) {
             return this.spongeEntity().map(entity -> {
-                final Exceptional<ServerLocation> serverLocation = SpongeConvert.toSponge(location);
+                final Exceptional<ServerLocation> serverLocation = SpongeAdapter.toSponge(location);
                 if (serverLocation.absent()) return false;
                 final ServerLocation loc = serverLocation.get();
                 return loc.spawnEntity(entity);
@@ -132,7 +132,7 @@ public interface SpongeEntity
     public abstract Exceptional<S> spongeEntity();    default Location location() {
         return this.spongeEntity()
                 .map(S::serverLocation)
-                .map(SpongeConvert::fromSponge)
+                .map(SpongeAdapter::fromSponge)
                 .orElse(Location::empty)
                 .get();
     }
@@ -140,7 +140,7 @@ public interface SpongeEntity
     default Exceptional<? extends Mutable> dataHolder() {
         return this.spongeEntity();
     }    default boolean location(Location location) {
-        return this.spongeEntity().map(entity -> SpongeConvert.toSponge(location)
+        return this.spongeEntity().map(entity -> SpongeAdapter.toSponge(location)
                 .map(entity::setLocation).or(false)).or(false);
     }
 

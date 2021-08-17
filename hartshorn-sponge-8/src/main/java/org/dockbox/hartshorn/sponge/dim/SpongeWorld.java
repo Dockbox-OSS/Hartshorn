@@ -23,7 +23,7 @@ import org.dockbox.hartshorn.server.minecraft.dimension.Block;
 import org.dockbox.hartshorn.server.minecraft.dimension.Chunk;
 import org.dockbox.hartshorn.server.minecraft.dimension.position.Location;
 import org.dockbox.hartshorn.server.minecraft.dimension.world.World;
-import org.dockbox.hartshorn.sponge.util.SpongeConvert;
+import org.dockbox.hartshorn.sponge.util.SpongeAdapter;
 import org.dockbox.hartshorn.sponge.util.SpongeUtil;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.spongepowered.api.ResourceKey;
@@ -57,7 +57,7 @@ public class SpongeWorld extends World implements SpongeDimension {
     @Override
     public boolean has(final Vector3N position) {
         return this.world()
-                .map(world -> world.contains(SpongeConvert.toSponge(position)))
+                .map(world -> world.contains(SpongeAdapter.toSponge(position)))
                 .or(false);
     }
 
@@ -82,7 +82,7 @@ public class SpongeWorld extends World implements SpongeDimension {
 
     @Override
     public Exceptional<Chunk> chunk(final Vector3N position) {
-        final Vector3i vector3i = SpongeConvert.toSponge(position);
+        final Vector3i vector3i = SpongeAdapter.toSponge(position);
         final boolean hasChunk = this.world().map(world -> world.hasChunk(vector3i)).or(false);
         if (hasChunk) Exceptional.of(new SpongeChunk(this.key, vector3i));
         return Exceptional.empty();
@@ -137,7 +137,7 @@ public class SpongeWorld extends World implements SpongeDimension {
     public void gamerule(final String key, final String value) {
         this.world().present(world -> {
             //noinspection unchecked
-            final GameRule<String> rule = (GameRule<String>) SpongeUtil.spReference(RegistryTypes.GAME_RULE, value);
+            final GameRule<String> rule = (GameRule<String>) SpongeUtil.spongeReference(RegistryTypes.GAME_RULE, value);
             world.properties().setGameRule(rule, value);
         });
     }

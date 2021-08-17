@@ -24,7 +24,7 @@ import org.dockbox.hartshorn.server.minecraft.dimension.position.BlockFace;
 import org.dockbox.hartshorn.server.minecraft.dimension.position.Location;
 import org.dockbox.hartshorn.server.minecraft.entities.ItemFrame;
 import org.dockbox.hartshorn.server.minecraft.item.Item;
-import org.dockbox.hartshorn.sponge.util.SpongeConvert;
+import org.dockbox.hartshorn.sponge.util.SpongeAdapter;
 import org.spongepowered.api.entity.EntityType;
 import org.spongepowered.api.entity.EntityTypes;
 import org.spongepowered.api.item.inventory.ItemStack;
@@ -51,14 +51,14 @@ public class SpongeItemFrame
         return this.entity().map(frame -> {
             final ItemStackSnapshot snapshot = frame.item().get();
             if (snapshot.isEmpty()) return null;
-            return SpongeConvert.fromSponge(snapshot.createStack());
+            return SpongeAdapter.fromSponge(snapshot.createStack());
         });
     }
 
     @Override
     public SpongeItemFrame displayedItem(Item stack) {
         this.entity().present(frame -> {
-            final ItemStack itemStack = SpongeConvert.toSponge(stack);
+            final ItemStack itemStack = SpongeAdapter.toSponge(stack);
             frame.item().set(itemStack.createSnapshot());
         });
         return this;
@@ -68,14 +68,14 @@ public class SpongeItemFrame
     public Rotation rotation() {
         return this.entity().map(frame -> {
             final Orientation orientation = frame.itemOrientation().get();
-            return SpongeConvert.fromSponge(orientation);
+            return SpongeAdapter.fromSponge(orientation);
         }).orElse(() -> Rotation.TOP).get();
     }
 
     @Override
     public SpongeItemFrame rotation(Rotation rotation) {
         this.entity().present(frame -> {
-            final Orientation orientation = SpongeConvert.toSponge(rotation);
+            final Orientation orientation = SpongeAdapter.toSponge(rotation);
             frame.itemOrientation().set(orientation);
         });
         return this;
@@ -85,14 +85,14 @@ public class SpongeItemFrame
     public BlockFace blockFace() {
         return this.entity().map(frame -> {
             final Direction direction = frame.hangingDirection().get();
-            return SpongeConvert.fromSponge(direction);
+            return SpongeAdapter.fromSponge(direction);
         }).orElse(() -> BlockFace.NONE).get();
     }
 
     @Override
     public SpongeItemFrame blockFace(BlockFace blockFace) {
         this.entity().present(frame -> {
-            final Direction direction = SpongeConvert.toSponge(blockFace);
+            final Direction direction = SpongeAdapter.toSponge(blockFace);
             frame.hangingDirection().set(direction);
         });
         return this;

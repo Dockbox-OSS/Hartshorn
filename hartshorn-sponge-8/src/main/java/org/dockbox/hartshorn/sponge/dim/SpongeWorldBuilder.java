@@ -31,7 +31,7 @@ import org.dockbox.hartshorn.server.minecraft.dimension.world.generation.Generat
 import org.dockbox.hartshorn.server.minecraft.dimension.world.generation.WorldGenerator;
 import org.dockbox.hartshorn.server.minecraft.players.Gamemode;
 import org.dockbox.hartshorn.sponge.Sponge8Application;
-import org.dockbox.hartshorn.sponge.util.SpongeConvert;
+import org.dockbox.hartshorn.sponge.util.SpongeAdapter;
 import org.dockbox.hartshorn.sponge.util.SpongeUtil;
 import org.spongepowered.api.ResourceKey;
 import org.spongepowered.api.Sponge;
@@ -70,14 +70,14 @@ public class SpongeWorldBuilder implements WorldBuilder {
 
         if (generator instanceof FlatWorldGenerator flatGenerator) {
             final List<LayerConfig> layers = flatGenerator.layers().stream()
-                    .map(SpongeConvert::toSponge)
+                    .map(SpongeAdapter::toSponge)
                     .filter(Exceptional::present)
                     .map(Exceptional::get)
                     .map(block -> LayerConfig.of(1, block))
                     .toList();
 
             final FlatGeneratorConfig config = FlatGeneratorConfig.builder()
-                    .biome(SpongeConvert.toSponge(biome))
+                    .biome(SpongeAdapter.toSponge(biome))
                     .addLayers(layers)
                     .performDecoration(false)
                     .populateLakes(false)
@@ -99,19 +99,19 @@ public class SpongeWorldBuilder implements WorldBuilder {
 
     @Override
     public WorldBuilder type(GeneratorType type) {
-        this.template.worldType(SpongeConvert.toSponge(type));
+        this.template.worldType(SpongeAdapter.toSponge(type));
         return this;
     }
 
     @Override
     public WorldBuilder gamemode(Gamemode mode) {
-        this.template.gameMode(SpongeConvert.toSponge(mode));
+        this.template.gameMode(SpongeAdapter.toSponge(mode));
         return this;
     }
 
     @Override
     public WorldBuilder difficulty(Difficulty difficulty) {
-        this.template.difficulty(SpongeConvert.toSponge(difficulty));
+        this.template.difficulty(SpongeAdapter.toSponge(difficulty));
         return this;
     }
 
@@ -129,7 +129,7 @@ public class SpongeWorldBuilder implements WorldBuilder {
 
     @Override
     public WorldBuilder spawnPosition(Vector3N position) {
-        this.template.spawnPosition(SpongeConvert.toSpongeDouble(position).toInt());
+        this.template.spawnPosition(SpongeAdapter.toSpongeDouble(position).toInt());
         return this;
     }
 

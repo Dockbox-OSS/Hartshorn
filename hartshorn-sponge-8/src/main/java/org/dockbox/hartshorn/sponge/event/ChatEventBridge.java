@@ -22,7 +22,7 @@ import org.dockbox.hartshorn.events.annotations.Posting;
 import org.dockbox.hartshorn.i18n.text.Text;
 import org.dockbox.hartshorn.server.minecraft.events.chat.SendChatEvent;
 import org.dockbox.hartshorn.server.minecraft.players.Player;
-import org.dockbox.hartshorn.sponge.util.SpongeConvert;
+import org.dockbox.hartshorn.sponge.util.SpongeAdapter;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.message.PlayerChatEvent;
 
@@ -34,7 +34,7 @@ public class ChatEventBridge implements EventBridge {
         final Exceptional<Player> player = this.player(event);
         if (player.absent()) return;
 
-        final Text text = SpongeConvert.fromSponge(event.originalMessage());
+        final Text text = SpongeAdapter.fromSponge(event.originalMessage());
         this.post(new SendChatEvent(player.get(), text), event);
     }
 

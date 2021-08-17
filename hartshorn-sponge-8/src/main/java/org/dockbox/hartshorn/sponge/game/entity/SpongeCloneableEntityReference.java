@@ -20,7 +20,7 @@ package org.dockbox.hartshorn.sponge.game.entity;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.server.minecraft.dimension.position.Location;
 import org.dockbox.hartshorn.server.minecraft.entities.CloneableEntity;
-import org.dockbox.hartshorn.sponge.util.SpongeConvert;
+import org.dockbox.hartshorn.sponge.util.SpongeAdapter;
 import org.spongepowered.api.world.server.ServerLocation;
 
 public abstract class SpongeCloneableEntityReference
@@ -35,7 +35,7 @@ public abstract class SpongeCloneableEntityReference
 
     public SpongeCloneableEntityReference(Location location) {
         super(null);
-        final Exceptional<ServerLocation> exceptionalLocation = SpongeConvert.toSponge(location);
+        final Exceptional<ServerLocation> exceptionalLocation = SpongeAdapter.toSponge(location);
         if (exceptionalLocation.absent()) throw new IllegalArgumentException("Location cannot be converted to server location");
 
         final ServerLocation serverLocation = exceptionalLocation.get();

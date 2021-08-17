@@ -24,7 +24,7 @@ import org.dockbox.hartshorn.server.minecraft.events.world.WorldCreatingEvent;
 import org.dockbox.hartshorn.server.minecraft.events.world.WorldLoadEvent;
 import org.dockbox.hartshorn.server.minecraft.events.world.WorldSaveEvent;
 import org.dockbox.hartshorn.server.minecraft.events.world.WorldUnloadEvent;
-import org.dockbox.hartshorn.sponge.util.SpongeConvert;
+import org.dockbox.hartshorn.sponge.util.SpongeAdapter;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.world.LoadWorldEvent;
 import org.spongepowered.api.event.world.SaveWorldEvent;
@@ -35,7 +35,7 @@ public class WorldEventBridge implements EventBridge {
 
     @Listener
     public void on(SaveWorldEvent.Pre event) {
-        final World world = SpongeConvert.fromSponge(event.world());
+        final World world = SpongeAdapter.fromSponge(event.world());
         this.post(new WorldSaveEvent(world), event);
     }
 
@@ -46,7 +46,7 @@ public class WorldEventBridge implements EventBridge {
 
     @Listener
     public void on(LoadWorldEvent event) {
-        final World world = SpongeConvert.fromSponge(event.world());
+        final World world = SpongeAdapter.fromSponge(event.world());
         this.post(new WorldLoadEvent(world), event);
     }
 

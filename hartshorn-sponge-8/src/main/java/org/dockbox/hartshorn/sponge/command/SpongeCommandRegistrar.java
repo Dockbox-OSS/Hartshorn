@@ -26,7 +26,7 @@ import org.dockbox.hartshorn.commands.CommandGatewayImpl;
 import org.dockbox.hartshorn.commands.exceptions.ParsingException;
 import org.dockbox.hartshorn.sponge.Sponge8Application;
 import org.dockbox.hartshorn.sponge.event.EventBridge;
-import org.dockbox.hartshorn.sponge.util.SpongeConvert;
+import org.dockbox.hartshorn.sponge.util.SpongeAdapter;
 import org.spongepowered.api.command.Command;
 import org.spongepowered.api.command.Command.Parameterized;
 import org.spongepowered.api.command.CommandCompletion;
@@ -60,7 +60,7 @@ public class SpongeCommandRegistrar implements EventBridge {
         return Parameter.remainingJoinedStrings().key(alias + "-arguments")
                 .completer((ctx, input) -> Hartshorn.context()
                         .get(CommandGateway.class)
-                        .suggestions(SpongeConvert.fromSponge(ctx.cause().subject()).orNull(), alias + ' ' + input)
+                        .suggestions(SpongeAdapter.fromSponge(ctx.cause().subject()).orNull(), alias + ' ' + input)
                         .stream()
                         .map(CommandCompletion::of)
                         .toList()
@@ -72,7 +72,7 @@ public class SpongeCommandRegistrar implements EventBridge {
             final Optional<String> arguments = ctx.one(parameter);
             try {
                 Hartshorn.context().get(CommandGateway.class).accept(
-                        SpongeConvert.fromSponge(ctx.cause().subject()).orNull(),
+                        SpongeAdapter.fromSponge(ctx.cause().subject()).orNull(),
                         alias + arguments.map(a -> ' ' + a).orElse("")
                 );
             }

@@ -20,7 +20,7 @@ package org.dockbox.hartshorn.sponge.event;
 import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.commands.events.NativeCommandEvent;
 import org.dockbox.hartshorn.events.annotations.Posting;
-import org.dockbox.hartshorn.sponge.util.SpongeConvert;
+import org.dockbox.hartshorn.sponge.util.SpongeAdapter;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.command.ExecuteCommandEvent;
 
@@ -29,7 +29,7 @@ public class CommandEventBridge implements EventBridge {
 
     @Listener
     public void on(ExecuteCommandEvent.Pre event) {
-        CommandSource source = SpongeConvert.fromSponge(event.commandCause().subject()).orNull();
+        CommandSource source = SpongeAdapter.fromSponge(event.commandCause().subject()).orNull();
         this.post(new NativeCommandEvent(
                 source,
                 event.originalCommand(),
