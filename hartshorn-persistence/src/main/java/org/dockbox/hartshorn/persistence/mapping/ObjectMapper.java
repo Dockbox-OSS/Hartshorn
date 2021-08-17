@@ -21,6 +21,7 @@ import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.di.properties.AttributeHolder;
 import org.dockbox.hartshorn.persistence.FileType;
 
+import java.net.URL;
 import java.nio.file.Path;
 
 public interface ObjectMapper extends AttributeHolder {
@@ -29,15 +30,19 @@ public interface ObjectMapper extends AttributeHolder {
 
     <T> Exceptional<T> read(Path path, Class<T> type);
 
+    <T> Exceptional<T> read(URL url, Class<T> type);
+
     <T> Exceptional<T> read(String content, GenericType<T> type);
 
     <T> Exceptional<T> read(Path path, GenericType<T> type);
+
+    <T> Exceptional<T> read(URL url, GenericType<T> type);
 
     <T> Exceptional<Boolean> write(Path path, T content);
 
     <T> Exceptional<String> write(T content);
 
-    void fileType(FileType fileType);
+    ObjectMapper fileType(FileType fileType);
 
     FileType fileType();
 

@@ -32,8 +32,9 @@ public abstract class DefaultObjectMapper implements ObjectMapper {
     }
 
     @Override
-    public void fileType(FileType fileType) {
+    public ObjectMapper fileType(FileType fileType) {
         this.fileType = fileType;
+        return this;
     }
 
     @Override
