@@ -27,10 +27,10 @@ import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.message.PlayerChatEvent;
 
 @Posting(SendChatEvent.class)
-public class ChatEventBridge implements EventBridge {
+public class ChatEventBridge extends EventBridge {
 
     @Listener
-    public void on(PlayerChatEvent event) {
+    public void on(final PlayerChatEvent event) {
         final Exceptional<Player> player = this.player(event);
         if (player.absent()) return;
 

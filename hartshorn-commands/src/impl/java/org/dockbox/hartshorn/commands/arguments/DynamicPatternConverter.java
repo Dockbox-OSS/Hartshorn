@@ -21,6 +21,7 @@ import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.commands.annotations.Parameter;
 import org.dockbox.hartshorn.commands.service.CommandParameter;
+import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.util.HartshornUtils;
 
 import java.util.Collection;
@@ -37,23 +38,23 @@ public class DynamicPatternConverter<T> extends DefaultArgumentConverter<T> {
 
     private final CustomParameterPattern pattern;
 
-    public DynamicPatternConverter(Class<T> type, CustomParameterPattern pattern, String... keys) {
+    public DynamicPatternConverter(final TypeContext<T> type, final CustomParameterPattern pattern, final String... keys) {
         super(type, keys);
         this.pattern = pattern;
     }
 
     @Override
-    public Exceptional<T> convert(CommandSource source, String argument) {
+    public Exceptional<T> convert(final CommandSource source, final String argument) {
         return this.pattern.request(this.type(), source, argument);
     }
 
     @Override
-    public Exceptional<T> convert(CommandSource source, CommandParameter<String> value) {
+    public Exceptional<T> convert(final CommandSource source, final CommandParameter<String> value) {
         return this.pattern.request(this.type(), source, value.value());
     }
 
     @Override
-    public Collection<String> suggestions(CommandSource source, String argument) {
+    public Collection<String> suggestions(final CommandSource source, final String argument) {
         return HartshornUtils.emptyList();
     }
 }

@@ -22,8 +22,8 @@ import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
 import org.dockbox.hartshorn.di.annotations.context.AutoCreating;
 import org.dockbox.hartshorn.di.context.DefaultContext;
+import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.util.HartshornUtils;
-import org.dockbox.hartshorn.util.Reflect;
 
 import java.util.Map;
 
@@ -69,7 +69,7 @@ public final class ArgumentConverterContext extends DefaultContext {
      *
      * @return <code>true</code> if a converter exists, or else <code>false</code>
      */
-    public boolean hasConverter(final Class<?> type) {
+    public boolean hasConverter(final TypeContext<?> type) {
         return this.converter(type).present();
     }
 
@@ -84,10 +84,10 @@ public final class ArgumentConverterContext extends DefaultContext {
      *
      * @return The converter if it exists, or {@link Exceptional#empty()}
      */
-    public <T> Exceptional<ArgumentConverter<T>> converter(final Class<T> type) {
+    public <T> Exceptional<ArgumentConverter<T>> converter(final TypeContext<T> type) {
         //noinspection unchecked
         return Exceptional.of(this.converterMap.values().stream()
-                .filter(converter -> Reflect.assigns(converter.type(), type))
+                .filter(converter -> type.childOf(converter.type()))
                 .map(converter -> (ArgumentConverter<T>) converter)
                 .findFirst());
     }

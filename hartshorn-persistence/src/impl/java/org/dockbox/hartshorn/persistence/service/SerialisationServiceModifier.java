@@ -17,9 +17,9 @@
 
 package org.dockbox.hartshorn.persistence.service;
 
-import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
+import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.di.services.ComponentContainer;
 import org.dockbox.hartshorn.persistence.PersistenceType;
 import org.dockbox.hartshorn.persistence.annotations.Serialise;
@@ -29,16 +29,14 @@ import org.dockbox.hartshorn.persistence.context.SerialisationTarget;
 import org.dockbox.hartshorn.persistence.mapping.ObjectMapper;
 import org.dockbox.hartshorn.proxy.handle.ProxyFunction;
 import org.dockbox.hartshorn.proxy.service.MethodProxyContext;
-import org.dockbox.hartshorn.util.Reflect;
 
 import java.io.File;
-import java.lang.reflect.Type;
 import java.nio.file.Path;
 
 public class SerialisationServiceModifier extends AbstractPersistenceServiceModifier<Serialise, SerialisationContext> {
 
     @Override
-    protected <T, R> ProxyFunction<T, R> processAnnotatedPath(ApplicationContext context, MethodProxyContext<T> methodContext, SerialisationContext serialisationContext) {
+    protected <T, R> ProxyFunction<T, R> processAnnotatedPath(final ApplicationContext context, final MethodProxyContext<T> methodContext, final SerialisationContext serialisationContext) {
         return (instance, args, proxyContext) -> {
             final Path target = serialisationContext.predeterminedPath();
             final Object content = args[0];
@@ -49,11 +47,11 @@ public class SerialisationServiceModifier extends AbstractPersistenceServiceModi
     }
 
     @Override
-    protected <T, R> ProxyFunction<T, R> processParameterPath(ApplicationContext context, MethodProxyContext<T> methodContext, SerialisationContext serialisationContext) {
+    protected <T, R> ProxyFunction<T, R> processParameterPath(final ApplicationContext context, final MethodProxyContext<T> methodContext, final SerialisationContext serialisationContext) {
         return (instance, args, proxyContext) -> {
             Path target = null;
             Object content = null;
-            for (Object arg : args) {
+            for (final Object arg : args) {
                 if (arg instanceof Path) target = (Path) arg;
                 else if (arg instanceof File) target = ((File) arg).toPath();
                 else content = arg;
@@ -69,13 +67,13 @@ public class SerialisationServiceModifier extends AbstractPersistenceServiceModi
 
     @Override
     @SuppressWarnings("unchecked")
-    protected <T, R> ProxyFunction<T, R> processString(ApplicationContext context, MethodProxyContext<T> methodContext, SerialisationContext serialisationContext) {
+    protected <T, R> ProxyFunction<T, R> processString(final ApplicationContext context, final MethodProxyContext<T> methodContext, final SerialisationContext serialisationContext) {
         return (instance, args, proxyContext) -> {
             final Object content = args[0];
             final ObjectMapper objectMapper = this.mapper(context, serialisationContext);
 
             final Exceptional<String> result = objectMapper.write(content);
-            if (Reflect.assigns(String.class, methodContext.returnType())) {
+            if (methodContext.method().returnType().childOf(String.class)) {
                 return (R) result.orNull();
             }
             else {
@@ -90,47 +88,45 @@ public class SerialisationServiceModifier extends AbstractPersistenceServiceModi
     }
 
     @SuppressWarnings("unchecked")
-    private <R> R wrapBooleanResult(Exceptional<Boolean> result, MethodProxyContext<?> methodContext) {
-        if (Reflect.assigns(Boolean.class, methodContext.returnType())) {
+    private <R> R wrapBooleanResult(final Exceptional<Boolean> result, final MethodProxyContext<?> methodContext) {
+        if (methodContext.method().returnType().childOf(Boolean.class))
             return (R) result.or(false);
-        }
-        else {
-            return (R) result;
-        }
+        else return (R) result;
     }
 
     @Override
-    public <T> boolean preconditions(ApplicationContext context, MethodProxyContext<T> methodContext) {
-        if (methodContext.method().getParameterCount() < 1) return false;
+    public <T> boolean preconditions(final ApplicationContext context, final MethodProxyContext<T> methodContext) {
+        if (methodContext.method().parameterCount() < 1) return false;
 
         final Serialise annotation = methodContext.annotation(Serialise.class);
         if (!annotation.filetype().type().equals(PersistenceType.RAW)) return false;
 
         boolean hasPath = false;
-        for (Class<?> parameter : methodContext.method().getParameterTypes()) {
-            if (Reflect.assigns(Path.class, parameter) || Reflect.assigns(File.class, parameter)) {
+        for (final TypeContext<?> parameter : methodContext.method().parameterTypes()) {
+            if (parameter.childOf(Path.class) || parameter.childOf(File.class)) {
                 hasPath = true;
                 break;
             }
         }
 
-        SerialisationContext serialisationContext = new SerialisationContext();
+        final SerialisationContext serialisationContext = new SerialisationContext();
         serialisationContext.fileType(annotation.filetype());
         methodContext.add(serialisationContext);
 
         if (hasPath) {
             serialisationContext.target(SerialisationTarget.PARAMETER_PATH);
-            return methodContext.method().getParameterCount() == 2;
+            return methodContext.method().parameterCount() == 2;
         }
         else {
-            if (Reflect.notVoid(this.owner(annotation.value().owner(), methodContext))) {
+            final TypeContext<?> owner = this.owner(context, TypeContext.of(annotation.value().owner()), methodContext);
+            if (!owner.isVoid()) {
                 serialisationContext.target(SerialisationTarget.ANNOTATED_PATH);
                 serialisationContext.predeterminedPath(this.determineAnnotationPath(
                         context,
                         methodContext,
                         new PersistenceAnnotationContext(annotation))
                 );
-                return methodContext.method().getParameterCount() == 1;
+                return methodContext.method().parameterCount() == 1;
             }
             else {
                 serialisationContext.target(SerialisationTarget.STRING);
@@ -139,25 +135,21 @@ public class SerialisationServiceModifier extends AbstractPersistenceServiceModi
         }
     }
 
-    private Class<?> owner(Class<?> annotationOwner, MethodProxyContext<?> context) {
-        if (Reflect.notVoid(annotationOwner)) return annotationOwner;
-        return Hartshorn.context().locator().container(context.method().getDeclaringClass()).map(ComponentContainer::owner).orNull();
+    private TypeContext<?> owner(final ApplicationContext context, final TypeContext<?> annotationOwner, final MethodProxyContext<?> methodContext) {
+        if (!annotationOwner.isVoid()) return annotationOwner;
+        return context.locator().container(methodContext.method().parent()).map(ComponentContainer::owner).orNull();
     }
 
-    private boolean stringTargetPreconditions(MethodProxyContext<?> context) {
-        final Class<?> returnType = context.returnType();
+    private boolean stringTargetPreconditions(final MethodProxyContext<?> context) {
+        final TypeContext<?> returnType = context.method().returnType();
 
-        if (Reflect.assigns(String.class, returnType)) return true;
+        if (returnType.childOf(String.class)) return true;
 
-        else if (Reflect.assigns(Exceptional.class, returnType)) {
-            final Exceptional<Type> type = Reflect.typeParameter(returnType, 0);
+        else if (returnType.childOf(Exceptional.class)) {
+            final TypeContext<?> type = returnType.typeParameters().get(0);
 
-            if (type.present()) {
-                final Type generic = type.get();
-
-                if (generic instanceof Class) {
-                    return Reflect.assigns(String.class, (Class<?>) generic);
-                }
+            if (!type.isVoid()) {
+                return type.childOf(String.class);
             }
         }
 
@@ -167,28 +159,5 @@ public class SerialisationServiceModifier extends AbstractPersistenceServiceModi
     @Override
     public Class<Serialise> annotation() {
         return Serialise.class;
-    }
-
-    private boolean argumentPathTargetPreconditions(MethodProxyContext<?> context) {
-        // One argument should be the content, one should be a Path/File subtype. The presence of the latter
-        // has already been verified before.
-        if (context.method().getParameterCount() != 2) return false;
-
-        final Class<?> returnType = context.returnType();
-        if (Reflect.assigns(boolean.class, returnType)) return true;
-
-        else if (Reflect.assigns(Exceptional.class, returnType)) {
-            final Exceptional<Type> type = Reflect.typeParameter(returnType, 0);
-
-            if (type.present()) {
-                final Type generic = type.get();
-
-                if (generic instanceof Class) {
-                    return Reflect.assigns(Boolean.class, (Class<?>) generic);
-                }
-            }
-        }
-
-        return false;
     }
 }

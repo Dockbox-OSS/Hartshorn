@@ -24,6 +24,7 @@ import org.dockbox.hartshorn.server.minecraft.dimension.position.BlockFace;
 import org.dockbox.hartshorn.server.minecraft.dimension.position.Location;
 import org.dockbox.hartshorn.server.minecraft.entities.ItemFrame;
 import org.dockbox.hartshorn.server.minecraft.item.Item;
+import org.dockbox.hartshorn.sponge.SpongeContextCarrier;
 import org.dockbox.hartshorn.sponge.util.SpongeAdapter;
 import org.spongepowered.api.entity.EntityType;
 import org.spongepowered.api.entity.EntityTypes;
@@ -35,7 +36,7 @@ import org.spongepowered.api.util.orientation.Orientation;
 @Binds(ItemFrame.class)
 public class SpongeItemFrame
         extends SpongeCloneableEntityReference<ItemFrame, net.minecraft.world.entity.decoration.ItemFrame, org.spongepowered.api.entity.hanging.ItemFrame>
-        implements ItemFrame {
+        implements ItemFrame, SpongeContextCarrier {
 
     @Bound
     public SpongeItemFrame(Location location) {

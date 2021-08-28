@@ -38,13 +38,14 @@ import org.dockbox.hartshorn.server.minecraft.entities.Entity;
 import org.dockbox.hartshorn.server.minecraft.item.Item;
 import org.dockbox.hartshorn.server.minecraft.packets.Packet;
 import org.dockbox.hartshorn.server.minecraft.players.GameSettings;
+import org.dockbox.hartshorn.server.minecraft.players.GameSettingsImpl;
 import org.dockbox.hartshorn.server.minecraft.players.Gamemode;
 import org.dockbox.hartshorn.server.minecraft.players.Hand;
 import org.dockbox.hartshorn.server.minecraft.players.Player;
 import org.dockbox.hartshorn.server.minecraft.players.Profile;
-import org.dockbox.hartshorn.server.minecraft.players.GameSettingsImpl;
 import org.dockbox.hartshorn.server.minecraft.players.Sounds;
 import org.dockbox.hartshorn.server.minecraft.players.inventory.PlayerInventory;
+import org.dockbox.hartshorn.sponge.SpongeContextCarrier;
 import org.dockbox.hartshorn.sponge.game.entity.SpongeEntity;
 import org.dockbox.hartshorn.sponge.inventory.SpongePlayerInventory;
 import org.dockbox.hartshorn.sponge.util.SpongeAdapter;
@@ -71,7 +72,7 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.UUID;
 
-public class SpongePlayer extends Player implements SpongeEntity<net.minecraft.server.level.ServerPlayer, org.spongepowered.api.entity.living.player.Player>, SpongeComposite {
+public class SpongePlayer extends Player implements SpongeEntity<net.minecraft.server.level.ServerPlayer, org.spongepowered.api.entity.living.player.Player>, SpongeComposite, SpongeContextCarrier {
 
     private static final int RAY_TRACE_LIMIT = 50;
 
@@ -118,7 +119,7 @@ public class SpongePlayer extends Player implements SpongeEntity<net.minecraft.s
     @Override
     public void sendWithPrefix(final Text text) {
         this.player().present(player -> {
-            final Text message = Text.of(DefaultResources.instance().prefix(), text);
+            final Text message = Text.of(DefaultResources.instance(this.applicationContext()).prefix(), text);
             player.sendMessage(SpongeAdapter.toSponge(message));
         });
     }
@@ -249,7 +250,7 @@ public class SpongePlayer extends Player implements SpongeEntity<net.minecraft.s
                 .map(player -> this.trace(RayTrace.block(), player))
                 .map(RayTraceResult::hitPosition)
                 .map(SpongeAdapter::fromSponge)
-                .map(vector -> Location.of(vector, this.world()))
+                .map(vector -> Location.of(this.applicationContext(), vector, this.world()))
                 .map(Block::from);
     }
 

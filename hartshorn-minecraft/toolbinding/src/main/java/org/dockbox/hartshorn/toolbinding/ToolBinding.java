@@ -17,13 +17,14 @@
 
 package org.dockbox.hartshorn.toolbinding;
 
-import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.keys.Keys;
 import org.dockbox.hartshorn.api.keys.PersistentDataKey;
 import org.dockbox.hartshorn.api.keys.RemovableKey;
 import org.dockbox.hartshorn.api.keys.TransactionResult;
 import org.dockbox.hartshorn.di.annotations.service.Service;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
+import org.dockbox.hartshorn.di.properties.AttributeHolder;
 import org.dockbox.hartshorn.events.annotations.Listener;
 import org.dockbox.hartshorn.events.annotations.Posting;
 import org.dockbox.hartshorn.server.minecraft.events.player.interact.PlayerInteractEvent;
@@ -36,20 +37,28 @@ import java.util.UUID;
 
 import javax.inject.Inject;
 
+import lombok.Getter;
+
 @Service
 @Posting(ToolInteractionEvent.class)
-public class ToolBinding {
+public class ToolBinding implements AttributeHolder {
 
     static final PersistentDataKey<String> PERSISTENT_TOOL = Keys.persistent(String.class, "Tool Binding", ToolBinding.class);
-    public static final RemovableKey<Item, ItemTool> TOOL = Keys.builder(Item.class, ItemTool.class)
-            .withSetter((item, tool) -> Hartshorn.context().get(ToolBinding.class).tool(item, tool))
-            .withGetterSafe(item -> Hartshorn.context().get(ToolBinding.class).get(item))
-            .withRemover(item -> Hartshorn.context().get(ToolBinding.class).removeTool(item))
-            .build();
     private final Map<String, ItemTool> registry = HartshornUtils.emptyConcurrentMap();
 
-    @Inject
-    private ToolBindingResources resources;
+    @Inject private ToolBindingResources resources;
+    @Inject private ApplicationContext context;
+
+    @Getter RemovableKey<Item, ItemTool> key;
+
+    @Override
+    public void enable() {
+        this.key = Keys.builder(Item.class, ItemTool.class)
+                .withSetter((item, tool) -> this.context.get(ToolBinding.class).tool(item, tool))
+                .withGetterSafe(item -> this.context.get(ToolBinding.class).get(item))
+                .withRemover(item -> this.context.get(ToolBinding.class).removeTool(item))
+                .build();
+    }
 
     private TransactionResult tool(final Item item, final ItemTool tool) {
         if (item.isBlock()) return TransactionResult.fail(this.resources.blockError());

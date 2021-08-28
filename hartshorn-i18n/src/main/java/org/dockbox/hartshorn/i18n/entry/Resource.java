@@ -17,7 +17,8 @@
 
 package org.dockbox.hartshorn.i18n.entry;
 
-import org.dockbox.hartshorn.api.Hartshorn;
+import org.dockbox.hartshorn.di.ContextCarrier;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.i18n.MessageReceiver;
 import org.dockbox.hartshorn.i18n.ResourceService;
 import org.dockbox.hartshorn.i18n.common.Language;
@@ -29,25 +30,27 @@ import java.util.Map;
 
 import lombok.Getter;
 
-public class Resource implements ResourceEntry {
+public class Resource implements ResourceEntry, ContextCarrier {
 
     @Getter private final Language language;
     private final Object[] formattingArgs;
     @Getter private final String key;
     private final Map<Language, String> resourceMap;
     private final String value;
+    @Getter private final ApplicationContext applicationContext;
 
-    public Resource(String value, String key) {
-        this(value, key, Language.EN_US);
+    public Resource(final ApplicationContext context, final String value, final String key) {
+        this(context, value, key, Language.EN_US);
     }
 
-    public Resource(String value, String key, Language language) {
-        this(value, key, language, new Object[0]);
+    public Resource(final ApplicationContext context, final String value, final String key, final Language language) {
+        this(context, value, key, language, new Object[0]);
     }
 
-    public Resource(String value, String key, Language language, Object... args) {
+    public Resource(final ApplicationContext context, final String value, final String key, final Language language, final Object... args) {
         this.key = key;
-        this.resourceMap = Hartshorn.context().get(ResourceService.class).translations(this);
+        this.applicationContext = context;
+        this.resourceMap = context.get(ResourceService.class).translations(this);
         this.value = this.resourceMap.getOrDefault(language, value);
         this.language = language;
         this.formattingArgs = args;
@@ -69,14 +72,14 @@ public class Resource implements ResourceEntry {
     }
 
     @Override
-    public ResourceEntry translate(MessageReceiver receiver) {
+    public ResourceEntry translate(final MessageReceiver receiver) {
         return this.translate(receiver.language());
     }
 
     @Override
-    public ResourceEntry translate(Language lang) {
+    public ResourceEntry translate(final Language lang) {
         if (this.resourceMap.containsKey(lang))
-            return new Resource(this.resourceMap.get(lang), this.key(), lang, this.formattingArgs);
+            return new Resource(this.applicationContext, this.resourceMap.get(lang), this.key(), lang, this.formattingArgs);
         return this;
     }
 
@@ -86,17 +89,17 @@ public class Resource implements ResourceEntry {
     }
 
     @Override
-    public ResourceEntry format(Object... args) {
-        return new Resource(this.value, this.key, this.language, args);
+    public ResourceEntry format(final Object... args) {
+        return new Resource(this.applicationContext, this.value, this.key, this.language, args);
     }
 
     private String formatCustom() {
         String temp = this.value;
         if (0 == this.formattingArgs.length) return temp;
-        Map<String, String> map = HartshornUtils.emptyMap();
+        final Map<String, String> map = HartshornUtils.emptyMap();
 
         for (int i = 0; i < this.formattingArgs.length; i++) {
-            String arg = "" + this.formattingArgs[i];
+            final String arg = "" + this.formattingArgs[i];
             if (arg.isEmpty()) map.put(String.format("{%d}", i), "");
             else map.put(String.format("{%d}", i), arg);
             if (0 == i) map.put("%s", arg);
@@ -105,10 +108,10 @@ public class Resource implements ResourceEntry {
         return Resource.parseColors(temp);
     }
 
-    public static String parseColors(String m) {
+    public static String parseColors(final String m) {
         String temp = m;
-        char[] nativeFormats = "abcdef1234567890klmnor".toCharArray();
-        for (char c : nativeFormats)
+        final char[] nativeFormats = "abcdef1234567890klmnor".toCharArray();
+        for (final char c : nativeFormats)
             temp = temp.replace(String.format("&%s", c), String.format("\u00A7%s", c));
         return temp
                 .replace("$1", java.lang.String.format("\u00A7%s", ResourceColors.primary()))

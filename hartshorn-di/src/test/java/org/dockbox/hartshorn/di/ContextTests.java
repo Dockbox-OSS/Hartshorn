@@ -22,15 +22,13 @@ import org.dockbox.hartshorn.di.annotations.context.AutoCreating;
 import org.dockbox.hartshorn.di.context.Context;
 import org.dockbox.hartshorn.di.context.DefaultContext;
 import org.dockbox.hartshorn.di.context.DefaultNamedContext;
-import org.dockbox.hartshorn.test.HartshornRunner;
+import org.dockbox.hartshorn.test.ApplicationAwareTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.List;
 
-@ExtendWith(HartshornRunner.class)
-public class ContextTests {
+public class ContextTests extends ApplicationAwareTest {
 
     @Test
     void testUnnamedContextFirst() {
@@ -39,7 +37,7 @@ public class ContextTests {
 
         context.add(child);
 
-        final Exceptional<TestContext> first = context.first(TestContext.class);
+        final Exceptional<TestContext> first = context.first(this.context(), TestContext.class);
         Assertions.assertTrue(first.present());
         Assertions.assertSame(child, first.get());
     }
@@ -131,7 +129,7 @@ public class ContextTests {
     @Test
     void testAutoCreatingContext() {
         final Context context = new TestContext();
-        final Exceptional<AutoCreatingContext> first = context.first(AutoCreatingContext.class);
+        final Exceptional<AutoCreatingContext> first = context.first(this.context(), AutoCreatingContext.class);
         Assertions.assertTrue(first.present());
     }
 

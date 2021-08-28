@@ -18,19 +18,19 @@
 package org.dockbox.hartshorn.events;
 
 import org.dockbox.hartshorn.di.context.ApplicationContext;
+import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.di.services.ServiceProcessor;
 import org.dockbox.hartshorn.events.annotations.Listener;
 import org.dockbox.hartshorn.events.annotations.UseEvents;
-import org.dockbox.hartshorn.util.Reflect;
 
 public class EventServiceProcessor implements ServiceProcessor<UseEvents> {
     @Override
-    public boolean preconditions(Class<?> type) {
-        return !Reflect.methods(type, Listener.class).isEmpty();
+    public boolean preconditions(final ApplicationContext context, final TypeContext<?> type) {
+        return !type.flatMethods(Listener.class).isEmpty();
     }
 
     @Override
-    public <T> void process(ApplicationContext context, Class<T> type) {
+    public <T> void process(final ApplicationContext context, final TypeContext<T> type) {
         context.get(EventBus.class).subscribe(type);
     }
 

@@ -31,21 +31,21 @@ import org.spongepowered.api.event.world.SaveWorldEvent;
 import org.spongepowered.api.event.world.UnloadWorldEvent;
 
 @Posting({ WorldSaveEvent.class, WorldUnloadEvent.class, WorldLoadEvent.class, WorldCreatingEvent.class })
-public class WorldEventBridge implements EventBridge {
+public class WorldEventBridge extends EventBridge {
 
     @Listener
-    public void on(SaveWorldEvent.Pre event) {
+    public void on(final SaveWorldEvent.Pre event) {
         final World world = SpongeAdapter.fromSponge(event.world());
         this.post(new WorldSaveEvent(world), event);
     }
 
     @Listener
-    public void on(UnloadWorldEvent event) {
+    public void on(final UnloadWorldEvent event) {
         this.post(new WorldUnloadEvent(event.world().uniqueId()), event);
     }
 
     @Listener
-    public void on(LoadWorldEvent event) {
+    public void on(final LoadWorldEvent event) {
         final World world = SpongeAdapter.fromSponge(event.world());
         this.post(new WorldLoadEvent(world), event);
     }
@@ -59,7 +59,7 @@ public class WorldEventBridge implements EventBridge {
      * @param event
      *         The event placeholder
      */
-    public void on(Void event) {
+    public void on(final Void event) {
         throw new NotImplementedException();
     }
 

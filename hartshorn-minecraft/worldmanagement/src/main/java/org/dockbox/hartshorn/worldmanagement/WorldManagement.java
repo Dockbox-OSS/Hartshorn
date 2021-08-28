@@ -40,36 +40,32 @@ public class WorldManagement {
     
     @Inject
     private WorldManagementConfig config;
-    @Inject
-    private WorldManagementResources resources;
-    @Inject
-    private ApplicationContext context;
 
     @Listener
-    public void reload(EngineChangedState<Reload> event) {
-        this.config = this.context.get(WorldManagementConfig.class); // Reload from file, clean instance
+    public void reload(final EngineChangedState<Reload> event) {
+        this.config = event.applicationContext().get(WorldManagementConfig.class); // Reload from file, clean instance
     }
 
     @Listener
-    public void started(EngineChangedState<Started> event) {
-        this.context.get(TaskRunner.class).acceptDelayed(this::unloadEmptyWorlds, 5, TimeUnit.MINUTES);
+    public void started(final EngineChangedState<Started> event) {
+        event.applicationContext().get(TaskRunner.class).acceptDelayed(() -> this.unloadEmptyWorlds(event.applicationContext()), 5, TimeUnit.MINUTES);
     }
 
     @Listener
-    public void on(PlayerPortalEvent event) {
+    public void on(final PlayerPortalEvent event) {
         if (event.usesPortal() && event.destination().world().name().equals(this.config.worldTarget())) {
             event.usesPortal(false);
-            event.destination(Location.of(this.config.portalPosition(), event.destination().world()));
+            event.destination(Location.of(event.applicationContext(), this.config.portalPosition(), event.destination().world()));
         }
     }
 
-    private void unloadEmptyWorlds() {
-        this.context.get(Worlds.class).loadedWorlds()
+    private void unloadEmptyWorlds(final ApplicationContext context) {
+        context.get(Worlds.class).loadedWorlds()
                 .stream()
                 .filter(world -> world.playerCount() == 0)
                 .filter(world -> this.config.unloadBlacklist().contains(world.name()))
                 .limit(this.config.unloadLimit())
                 .forEach(World::unload);
-        this.context.get(TaskRunner.class).acceptDelayed(this::unloadEmptyWorlds, this.config.unloadDelay(), TimeUnit.MINUTES);
+        context.get(TaskRunner.class).acceptDelayed(() -> this.unloadEmptyWorlds(context), this.config.unloadDelay(), TimeUnit.MINUTES);
     }
 }

@@ -18,9 +18,9 @@
 package org.dockbox.hartshorn.server.minecraft.packets.real;
 
 import org.dockbox.hartshorn.di.annotations.inject.Required;
+import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.server.minecraft.packets.Packet;
 import org.dockbox.hartshorn.server.minecraft.packets.data.Weather;
-import org.dockbox.hartshorn.util.Reflect;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -34,7 +34,7 @@ public abstract class ChangeGameStatePacket extends Packet {
     private Weather weather = Weather.CLEAR;
 
     @Override
-    protected Class<?> internalGetPacketType() {
-        return Reflect.lookup("net.minecraft.network.play.server.SPacketChangeGameState");
+    protected TypeContext<?> internalGetPacketType() {
+        return TypeContext.lookup("net.minecraft.network.play.server.SPacketChangeGameState");
     }
 }

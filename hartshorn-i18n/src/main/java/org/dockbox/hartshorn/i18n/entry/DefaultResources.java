@@ -19,29 +19,30 @@ package org.dockbox.hartshorn.i18n.entry;
 
 import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.di.annotations.service.Service;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.i18n.annotations.Resource;
 import org.dockbox.hartshorn.i18n.common.ResourceEntry;
 
 @Service(owner = Hartshorn.class)
 public interface DefaultResources {
 
-    static DefaultResources instance() {
-        return Hartshorn.context().get(DefaultResources.class);
+    static DefaultResources instance(final ApplicationContext context) {
+        return context.get(DefaultResources.class);
     }
 
-    @org.dockbox.hartshorn.i18n.annotations.Resource(value = "$3[] $1", key = "prefix")
+    @Resource(value = "$3[] $1", key = "prefix")
     ResourceEntry prefix();
 
-    @org.dockbox.hartshorn.i18n.annotations.Resource(value = "$4An unknown occurred. $3{0}", key = "caught")
+    @Resource(value = "$4An unknown occurred. $3{0}", key = "caught")
     ResourceEntry unknownError(String message);
 
-    @org.dockbox.hartshorn.i18n.annotations.Resource(value = "$4Cannot apply to this type", key = "caught.failedbinding")
+    @Resource(value = "$4Cannot apply to this type", key = "caught.failedbinding")
     ResourceEntry bindingFailure();
 
-    @org.dockbox.hartshorn.i18n.annotations.Resource(value = "$4Reference to object lost", key = "caught.reference.lost")
+    @Resource(value = "$4Reference to object lost", key = "caught.reference.lost")
     ResourceEntry referenceLost();
 
-    @org.dockbox.hartshorn.i18n.annotations.Resource(value = "Unknown", key = "source.unknown")
+    @Resource(value = "Unknown", key = "source.unknown")
     ResourceEntry unknown();
 
     @Resource(value = "$4{0}", key = "hartshorn.exception")

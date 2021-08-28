@@ -1,25 +1,39 @@
+/*
+ * Copyright (C) 2020 Guus Lieben
+ *
+ * This framework is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 2.1 of the
+ * License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See
+ * the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
+ */
+
 package org.dockbox.hartshorn.di;
 
-import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.di.binding.BindingHierarchy;
 import org.dockbox.hartshorn.di.binding.Bindings;
+import org.dockbox.hartshorn.di.binding.ContextDrivenProvider;
 import org.dockbox.hartshorn.di.binding.Provider;
 import org.dockbox.hartshorn.di.binding.Providers;
-import org.dockbox.hartshorn.di.binding.StaticProvider;
-import org.dockbox.hartshorn.test.HartshornRunner;
+import org.dockbox.hartshorn.test.ApplicationAwareTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.Map.Entry;
 
-@ExtendWith(HartshornRunner.class)
-public class BindingHierarchyTests {
+public class BindingHierarchyTests extends ApplicationAwareTest {
 
     @Test
     void testToString() {
-        final BindingHierarchy<Contract> hierarchy = new NativeBindingHierarchy<>(Key.of(Contract.class));
+        final BindingHierarchy<Contract> hierarchy = new NativeBindingHierarchy<>(Key.of(Contract.class), this.context());
         hierarchy.add(0, Providers.of(ImplementationA.class));
         hierarchy.add(1, Providers.of(ImplementationB.class));
         hierarchy.add(2, Providers.of(ImplementationC.class));
@@ -29,7 +43,7 @@ public class BindingHierarchyTests {
 
     @Test
     void testToStringNamed() {
-        final BindingHierarchy<Contract> hierarchy = new NativeBindingHierarchy<>(Key.of(Contract.class, Bindings.named("sample")));
+        final BindingHierarchy<Contract> hierarchy = new NativeBindingHierarchy<>(Key.of(Contract.class, Bindings.named("sample")), this.context());
         hierarchy.add(0, Providers.of(ImplementationA.class));
         hierarchy.add(1, Providers.of(ImplementationB.class));
         hierarchy.add(2, Providers.of(ImplementationC.class));
@@ -39,7 +53,7 @@ public class BindingHierarchyTests {
 
     @Test
     void testIteratorIsSorted() {
-        final BindingHierarchy<Contract> hierarchy = new NativeBindingHierarchy<>(Key.of(Contract.class));
+        final BindingHierarchy<Contract> hierarchy = new NativeBindingHierarchy<>(Key.of(Contract.class), this.context());
         hierarchy.add(0, Providers.of(ImplementationA.class));
         hierarchy.add(1, Providers.of(ImplementationB.class));
         hierarchy.add(2, Providers.of(ImplementationC.class));
@@ -56,33 +70,33 @@ public class BindingHierarchyTests {
     void testApplicationContextHierarchyControl() {
         final Key<Contract> key = Key.of(Contract.class);
 
-        final BindingHierarchy<Contract> secondHierarchy = new NativeBindingHierarchy<>(key);
+        final BindingHierarchy<Contract> secondHierarchy = new NativeBindingHierarchy<>(key, this.context());
         secondHierarchy.add(2, Providers.of(ImplementationC.class));
 
-        Hartshorn.context().hierarchy(key)
+        this.context().hierarchy(key)
                 .add(0, Providers.of(ImplementationA.class))
                 .add(1, Providers.of(ImplementationB.class))
                 .merge(secondHierarchy);
 
-        final BindingHierarchy<Contract> hierarchy = Hartshorn.context().hierarchy(key);
+        final BindingHierarchy<Contract> hierarchy = this.context().hierarchy(key);
         Assertions.assertNotNull(hierarchy);
 
         Assertions.assertEquals(3, hierarchy.size());
 
         final Exceptional<Provider<Contract>> priorityZero = hierarchy.get(0);
         Assertions.assertTrue(priorityZero.present());
-        Assertions.assertTrue(priorityZero.get() instanceof StaticProvider);
-        Assertions.assertEquals(((StaticProvider<Contract>) priorityZero.get()).target(), ImplementationA.class);
+        Assertions.assertTrue(priorityZero.get() instanceof ContextDrivenProvider);
+        Assertions.assertEquals(((ContextDrivenProvider<Contract>) priorityZero.get()).context().type(), ImplementationA.class);
 
         final Exceptional<Provider<Contract>> priorityOne = hierarchy.get(1);
         Assertions.assertTrue(priorityOne.present());
-        Assertions.assertTrue(priorityOne.get() instanceof StaticProvider);
-        Assertions.assertEquals(((StaticProvider<Contract>) priorityOne.get()).target(), ImplementationB.class);
+        Assertions.assertTrue(priorityOne.get() instanceof ContextDrivenProvider);
+        Assertions.assertEquals(((ContextDrivenProvider<Contract>) priorityOne.get()).context().type(), ImplementationB.class);
 
         final Exceptional<Provider<Contract>> priorityTwo = hierarchy.get(2);
         Assertions.assertTrue(priorityTwo.present());
-        Assertions.assertTrue(priorityTwo.get() instanceof StaticProvider);
-        Assertions.assertEquals(((StaticProvider<Contract>) priorityTwo.get()).target(), ImplementationC.class);
+        Assertions.assertTrue(priorityTwo.get() instanceof ContextDrivenProvider);
+        Assertions.assertEquals(((ContextDrivenProvider<Contract>) priorityTwo.get()).context().type(), ImplementationC.class);
     }
 
     @Test
@@ -92,16 +106,16 @@ public class BindingHierarchyTests {
         class LocalImpl implements LocalContract {
         }
 
-        Hartshorn.context().bind(Key.of(LocalContract.class), LocalImpl.class);
+        this.context().bind(Key.of(LocalContract.class), LocalImpl.class);
 
-        final BindingHierarchy<LocalContract> hierarchy = Hartshorn.context().hierarchy(Key.of(LocalContract.class));
+        final BindingHierarchy<LocalContract> hierarchy = this.context().hierarchy(Key.of(LocalContract.class));
         Assertions.assertNotNull(hierarchy);
         Assertions.assertEquals(1, hierarchy.size());
 
         final Exceptional<Provider<LocalContract>> provider = hierarchy.get(-1);
         Assertions.assertTrue(provider.present());
-        Assertions.assertTrue(provider.get() instanceof StaticProvider);
-        Assertions.assertEquals(((StaticProvider<LocalContract>) provider.get()).target(), LocalImpl.class);
+        Assertions.assertTrue(provider.get() instanceof ContextDrivenProvider);
+        Assertions.assertEquals(((ContextDrivenProvider<LocalContract>) provider.get()).context().type(), LocalImpl.class);
     }
 
     private interface Contract {

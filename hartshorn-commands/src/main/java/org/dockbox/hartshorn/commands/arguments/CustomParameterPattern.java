@@ -17,18 +17,17 @@
 
 package org.dockbox.hartshorn.commands.arguments;
 
-import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.api.exceptions.Except;
 import org.dockbox.hartshorn.commands.CommandParameterResources;
 import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.commands.annotations.Parameter;
 import org.dockbox.hartshorn.commands.context.ArgumentConverterContext;
 import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
+import org.dockbox.hartshorn.di.context.element.ConstructorContext;
+import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.util.HartshornUtils;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -50,32 +49,32 @@ public interface CustomParameterPattern {
      *
      * @return An instance of {@code T}, wrapped in a {@link Exceptional}, or {@link Exceptional#empty()} if {@code null}
      */
-    default <T> Exceptional<T> request(Class<T> type, CommandSource source, String raw) {
-        Exceptional<Boolean> preconditionsMatch = this.preconditionsMatch(type, source, raw);
+    default <T> Exceptional<T> request(final TypeContext<T> type, final CommandSource source, final String raw) {
+        final Exceptional<Boolean> preconditionsMatch = this.preconditionsMatch(type, source, raw);
         if (preconditionsMatch.caught()) return Exceptional.of(preconditionsMatch.error());
 
-        List<String> rawArguments = this.splitArguments(raw);
-        List<Class<?>> argumentTypes = HartshornUtils.emptyList();
-        List<Object> arguments = HartshornUtils.emptyList();
+        final List<String> rawArguments = this.splitArguments(raw);
+        final List<TypeContext<?>> argumentTypes = HartshornUtils.emptyList();
+        final List<Object> arguments = HartshornUtils.emptyList();
 
-        for (String rawArgument : rawArguments) {
-            Exceptional<String> argumentIdentifier = this.parseIdentifier(rawArgument);
+        for (final String rawArgument : rawArguments) {
+            final Exceptional<String> argumentIdentifier = this.parseIdentifier(rawArgument);
             if (argumentIdentifier.absent()) {
                 // If a non-pattern argument is required, the converter needs to be looked up by type instead of by its identifier. This will be done when the constructor is being looked up
                 argumentTypes.add(null);
                 arguments.add(rawArgument);
                 continue;
             }
-            String typeIdentifier = argumentIdentifier.get();
+            final String typeIdentifier = argumentIdentifier.get();
 
-            Exceptional<ArgumentConverter<?>> converter = Hartshorn.context()
+            final Exceptional<ArgumentConverter<?>> converter = source.applicationContext()
                     .first(ArgumentConverterContext.class)
                     .flatMap(context -> context.converter(typeIdentifier));
 
             if (converter.absent())
-                return Exceptional.of(new IllegalArgumentException(Hartshorn.context()
+                return Exceptional.of(new IllegalArgumentException(source.applicationContext()
                         .get(CommandParameterResources.class)
-                        .missingConverter(type.getCanonicalName())
+                        .missingConverter(type.qualifiedName())
                         .asString())
                 );
 
@@ -84,52 +83,45 @@ public interface CustomParameterPattern {
         }
 
 
-        return this.constructor(argumentTypes, arguments, type, source).map(constructor -> {
-            try {
-                return constructor.newInstance(arguments.toArray(new Object[0]));
-            }
-            catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
-                Except.handle(e);
-                return null;
-            }
-        });
+        return this.constructor(argumentTypes, arguments, type, source)
+                .flatMap(constructor -> constructor.createInstance(arguments.toArray(new Object[0])));
     }
 
-    <T> Exceptional<Boolean> preconditionsMatch(Class<T> type, CommandSource source, String raw);
+    <T> Exceptional<Boolean> preconditionsMatch(TypeContext<T> type, CommandSource source, String raw);
 
     List<String> splitArguments(String raw);
 
     Exceptional<String> parseIdentifier(String argument);
 
-    default <T> Exceptional<Constructor<T>> constructor(List<Class<?>> argumentTypes, List<Object> arguments, Class<T> type, CommandSource source) {
-        //noinspection unchecked
-        for (Constructor<T> declaredConstructor : (Constructor<T>[]) type.getDeclaredConstructors()) {
-            Class<?>[] parameterTypes = declaredConstructor.getParameterTypes();
-            if (parameterTypes.length != arguments.size()) continue;
+    default <T> Exceptional<ConstructorContext<T>> constructor(final List<TypeContext<?>> argumentTypes, final List<Object> arguments, final TypeContext<T> type, final CommandSource source) {
+        for (final ConstructorContext<T> constructor : type.constructors()) {
+            if (constructor.parameterCount() != arguments.size()) continue;
+            final LinkedList<TypeContext<?>> parameters = constructor.parameterTypes();
 
             boolean passed = true;
-            for (int i = 0; i < parameterTypes.length; i++) {
-                Class<?> parameterType = parameterTypes[i];
-                Class<?> requiredType = argumentTypes.get(i);
-                if (requiredType == null) {
-                    final Exceptional<? extends ArgumentConverter<?>> converter = Hartshorn.context()
+            for (int i = 0; i < parameters.size(); i++) {
+                final TypeContext<?> parameter = parameters.get(i);
+                final TypeContext<?> argument = argumentTypes.get(i);
+
+                if (argument == null) {
+                    final Exceptional<? extends ArgumentConverter<?>> converter = source.applicationContext()
                             .first(ArgumentConverterContext.class)
-                            .flatMap(context -> context.converter(parameterType));
+                            .flatMap(context -> context.converter(parameter));
                     if (converter.present()) {
-                        Exceptional<?> result = converter.get().convert(source, (String) arguments.get(i));
+                        final Exceptional<?> result = converter.get().convert(source, (String) arguments.get(i));
                         if (result.present()) {
                             arguments.set(i, result.get());
                             continue; // Generic type, will be parsed later
                         }
                     }
                 }
-                else if (parameterType.equals(requiredType)) continue;
+                else if (parameter.equals(argument)) continue;
 
                 passed = false;
                 break; // Parameter is not what we expected, do not continue
             }
-            if (passed) return Exceptional.of(declaredConstructor);
+            if (passed) return Exceptional.of(constructor);
         }
-        return Exceptional.of(new IllegalArgumentException(Hartshorn.context().get(CommandParameterResources.class).notEnoughArgs().asString()));
+        return Exceptional.of(new IllegalArgumentException(source.applicationContext().get(CommandParameterResources.class).notEnoughArgs().asString()));
     }
 }

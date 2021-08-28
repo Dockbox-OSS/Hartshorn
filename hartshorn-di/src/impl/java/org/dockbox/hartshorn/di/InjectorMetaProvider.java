@@ -18,52 +18,61 @@
 package org.dockbox.hartshorn.di;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.api.domain.MetaProvider;
-import org.dockbox.hartshorn.api.domain.TypedOwnerImpl;
 import org.dockbox.hartshorn.api.domain.TypedOwner;
+import org.dockbox.hartshorn.api.domain.TypedOwnerImpl;
 import org.dockbox.hartshorn.di.annotations.component.Component;
 import org.dockbox.hartshorn.di.binding.Bindings;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
+import org.dockbox.hartshorn.di.context.element.MethodContext;
+import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.di.services.ComponentContainer;
-import org.dockbox.hartshorn.util.Reflect;
 
 import javax.inject.Singleton;
 import javax.persistence.Entity;
 
+import lombok.AllArgsConstructor;
+
+@AllArgsConstructor
 public class InjectorMetaProvider implements MetaProvider {
 
+    private final ApplicationContext context;
+
     @Override
-    public TypedOwner lookup(final Class<?> type) {
-        final Exceptional<Entity> annotated = Reflect.annotation(type, Entity.class);
+    public TypedOwner lookup(final TypeContext<?> type) {
+        final Exceptional<Entity> annotated = type.annotation(Entity.class);
         if (annotated.present()) {
             return TypedOwnerImpl.of(annotated.get().name());
         }
         else {
-            final Exceptional<ComponentContainer> container = ApplicationContextAware.instance().context().locator().container(type);
+            final Exceptional<ComponentContainer> container = this.context.locator().container(type);
             if (container.present()) {
                 final ComponentContainer service = container.get();
-                if (Reflect.notVoid(service.owner())) return this.lookup(service.owner());
+                if (!service.owner().isVoid()) return this.lookup(service.owner());
                 else {
                     if (!"".equals(service.id())) return TypedOwnerImpl.of(service.id());
                 }
             }
         }
-        return TypedOwnerImpl.of(Bindings.serviceId(type));
+        return TypedOwnerImpl.of(Bindings.serviceId(this.context, type));
     }
 
     @Override
-    public boolean singleton(final Class<?> type) {
-        if (Reflect.annotation(type, Singleton.class).present()) return true;
+    public boolean singleton(final TypeContext<?> type) {
+        if (type.annotation(Singleton.class).present()) return true;
 
-        return ApplicationContextAware.instance()
-                .context()
-                .locator()
+        return this.context.locator()
                 .container(type)
                 .map(ComponentContainer::singleton)
                 .or(false);
     }
 
     @Override
-    public boolean component(final Class<?> type) {
-        return Reflect.annotation(type, Component.class).present();
+    public boolean singleton(final MethodContext<?, ?> method) {
+        return method.annotation(Singleton.class).present();
+    }
+
+    @Override
+    public boolean isComponent(final TypeContext<?> type) {
+        return type.annotation(Component.class).present();
     }
 }

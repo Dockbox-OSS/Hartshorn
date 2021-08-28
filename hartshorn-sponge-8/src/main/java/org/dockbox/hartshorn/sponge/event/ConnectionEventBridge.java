@@ -36,36 +36,36 @@ import org.spongepowered.api.event.network.ServerSideConnectionEvent.Join;
 
 import java.net.InetSocketAddress;
 
-@Posting(value = {
+@Posting({
         PlayerAuthEvent.class,
         PlayerJoinEvent.class,
         PlayerLeaveEvent.class,
         PacketEvent.class,
         PlayerSettingsChangedEvent.class
 })
-public class ConnectionEventBridge implements EventBridge {
+public class ConnectionEventBridge extends EventBridge {
 
     @Listener
-    public void on(Auth event) {
+    public void on(final Auth event) {
         final InetSocketAddress address = event.connection().address();
         final InetSocketAddress host = event.connection().virtualHost();
         this.post(new PlayerAuthEvent(address, host), event);
     }
 
     @Listener
-    public void on(Join event) {
+    public void on(final Join event) {
         final Player player = SpongeAdapter.fromSponge(event.player());
         this.post(new PlayerJoinEvent(player), event);
     }
 
     @Listener
-    public void on(Disconnect event) {
+    public void on(final Disconnect event) {
         final Player player = SpongeAdapter.fromSponge(event.player());
         this.post(new PlayerLeaveEvent(player), event);
     }
 
     @Listener
-    public void on(PlayerChangeClientSettingsEvent event) {
+    public void on(final PlayerChangeClientSettingsEvent event) {
         final Player player = SpongeAdapter.fromSponge(event.player());
         this.post(new PlayerSettingsChangedEvent(player, new GameSettingsImpl(Language.of(event.locale()))), event);
     }
@@ -76,7 +76,7 @@ public class ConnectionEventBridge implements EventBridge {
      * @param event
      *         The event
      */
-    public void on(Void event) {
+    public void on(final Void event) {
         throw new NotImplementedException();
     }
 

@@ -77,7 +77,7 @@ public class CommandParserImpl implements CommandParser {
         return Exceptional.of(new CommandContextImpl(command,
                 parsedElements,
                 parsedFlags,
-                source, HartshornUtils.singletonList(containerContext.permission())));
+                source, HartshornUtils.singletonList(containerContext.permission()), source.applicationContext()));
     }
 
     private List<CommandParameter<?>> parse(final List<CommandElement<?>> elements, final List<String> tokens, final CommandSource source) throws ParsingException {

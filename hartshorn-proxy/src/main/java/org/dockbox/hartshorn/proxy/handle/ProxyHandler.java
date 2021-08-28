@@ -22,6 +22,7 @@ import com.google.common.collect.Multimap;
 
 import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.exceptions.ApplicationException;
+import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.proxy.ProxyAttribute;
 
 import java.lang.reflect.InvocationTargetException;
@@ -34,7 +35,6 @@ import java.util.List;
 
 import javassist.util.proxy.MethodHandler;
 import javassist.util.proxy.ProxyFactory;
-import lombok.AccessLevel;
 import lombok.Getter;
 
 public class ProxyHandler<T> implements MethodHandler {
@@ -42,7 +42,7 @@ public class ProxyHandler<T> implements MethodHandler {
     private final Multimap<Method, ProxyAttribute<T, ?>> handlers = ArrayListMultimap.create();
     private final T instance;
 
-    @Getter(AccessLevel.PROTECTED)
+    @Getter
     private final Class<T> type;
 
     public ProxyHandler(final T instance) {
@@ -54,6 +54,10 @@ public class ProxyHandler<T> implements MethodHandler {
     public ProxyHandler(final T instance, final Class<T> type) {
         this.instance = instance;
         this.type = type;
+    }
+
+    public ProxyHandler(final T instance, final TypeContext<T> type) {
+        this(instance, type.type());
     }
 
     @SafeVarargs

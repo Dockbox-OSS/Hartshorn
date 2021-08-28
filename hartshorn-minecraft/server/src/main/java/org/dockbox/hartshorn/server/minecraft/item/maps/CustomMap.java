@@ -17,8 +17,8 @@
 
 package org.dockbox.hartshorn.server.minecraft.item.maps;
 
-import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Identifiable;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.server.minecraft.item.Item;
 import org.dockbox.hartshorn.util.images.MultiSizedImage;
 
@@ -27,16 +27,16 @@ import java.util.Map;
 
 public interface CustomMap extends Item {
 
-    static CustomMap of(BufferedImage image, Identifiable source) {
-        return Hartshorn.context().get(CustomMapService.class).create(image, source);
+    static CustomMap of(final ApplicationContext context, final BufferedImage image, final Identifiable source) {
+        return context.get(CustomMapService.class).create(image, source);
     }
 
-    static CustomMap of(byte[] image, Identifiable source) {
-        return Hartshorn.context().get(CustomMapService.class).create(image, source);
+    static CustomMap of(final ApplicationContext context, final byte[] image, final Identifiable source) {
+        return context.get(CustomMapService.class).create(image, source);
     }
 
-    static Map<Integer[], CustomMap> of(MultiSizedImage image, Identifiable source) {
-        return Hartshorn.context().get(CustomMapService.class).create(image, source);
+    static Map<Integer[], CustomMap> of(final ApplicationContext context, final MultiSizedImage image, final Identifiable source) {
+        return context.get(CustomMapService.class).create(image, source);
     }
 
     Identifiable owner();

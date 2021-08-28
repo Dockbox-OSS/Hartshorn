@@ -18,29 +18,27 @@
 package org.dockbox.hartshorn.persistence;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.persistence.mapping.GenericType;
+import org.dockbox.hartshorn.di.GenericType;
 import org.dockbox.hartshorn.persistence.registry.Registry;
 import org.dockbox.hartshorn.persistence.registry.RegistryColumn;
-import org.dockbox.hartshorn.test.HartshornRunner;
+import org.dockbox.hartshorn.test.ApplicationAwareTest;
 import org.dockbox.hartshorn.test.files.JUnitFileManager;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 
-@ExtendWith(HartshornRunner.class)
-public class DataStructuresSerializersTests {
+public class DataStructuresSerializersTests extends ApplicationAwareTest {
 
     @Test
     public void testThatRegistryCanBeSerialised() {
         Assertions.assertDoesNotThrow(() -> {
-            File copy = File.createTempFile("tmp", null);
-            Path tempFile = copy.toPath();
+            final File copy = File.createTempFile("tmp", null);
+            final Path tempFile = copy.toPath();
 
-            FileManager fm = new JUnitFileManager();
+            final FileManager fm = this.context().get(JUnitFileManager.class);
 
             fm.write(tempFile, this.buildTestRegistry());
         });
@@ -66,18 +64,18 @@ public class DataStructuresSerializersTests {
 
     @Test
     public void testThatRegistryCanBeDeserialised() throws IOException {
-        File copy = File.createTempFile("tmp", null);
-        Path tempFile = copy.toPath();
+        final File copy = File.createTempFile("tmp", null);
+        final Path tempFile = copy.toPath();
 
-        FileManager fm = new JUnitFileManager();
+        final FileManager fm = this.context().get(JUnitFileManager.class);
 
         fm.write(tempFile, this.buildTestRegistry());
-        Exceptional<Registry<Registry<String>>> registry = fm.read(tempFile, new GenericType<>() {
+        final Exceptional<Registry<Registry<String>>> registry = fm.read(tempFile, new GenericType<>() {
         });
         Assertions.assertTrue(registry.present());
 
-        Registry<Registry<String>> reg = registry.get();
-        RegistryColumn<RegistryColumn<String>> result = reg.matchingColumns(TestIdentifier.BRICK)
+        final Registry<Registry<String>> reg = registry.get();
+        final RegistryColumn<RegistryColumn<String>> result = reg.matchingColumns(TestIdentifier.BRICK)
                 .mapTo(r -> r.matchingColumns(TestIdentifier.FULLBLOCK));
 
         Assertions.assertTrue(result.first().get().contains("Brick Fullblock1"));

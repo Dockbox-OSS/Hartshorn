@@ -18,14 +18,15 @@
 package org.dockbox.hartshorn.api.keys;
 
 import org.dockbox.hartshorn.api.Hartshorn;
+import org.dockbox.hartshorn.di.context.element.TypeContext;
 
 public final class StoredPersistentKey extends TypedPersistentDataKey<Object> {
 
-    private StoredPersistentKey(String id) {
-        super(id, id, Hartshorn.context().meta().lookup(Hartshorn.class), Object.class);
+    private StoredPersistentKey(final String id) {
+        super(id, ctx -> ctx.meta().lookup(TypeContext.of(Hartshorn.class)), TypeContext.of(Object.class));
     }
 
-    public static StoredPersistentKey of(String name) {
+    public static StoredPersistentKey of(final String name) {
         return new StoredPersistentKey(name);
     }
 }

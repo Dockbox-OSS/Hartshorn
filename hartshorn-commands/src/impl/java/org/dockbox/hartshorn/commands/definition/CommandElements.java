@@ -19,10 +19,10 @@ package org.dockbox.hartshorn.commands.definition;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.commands.CommandSource;
+import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.i18n.permissions.Permission;
 import org.dockbox.hartshorn.util.HartshornUtils;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Locale;
 import java.util.Map;
@@ -54,7 +54,7 @@ public final class CommandElements {
      *
      * @return The enum command element
      */
-    public static <E extends Enum<E>> CommandElement<E> enumElement(String name, Permission permission, Class<E> type, boolean optional) {
+    public static <E extends Enum<E>> CommandElement<E> enumElement(final String name, final Permission permission, final TypeContext<E> type, final boolean optional) {
         return new EnumCommandElement<>(name, permission, type, optional);
     }
 
@@ -65,13 +65,13 @@ public final class CommandElements {
         private final Map<String, E> values;
         private final boolean optional;
 
-        private EnumCommandElement(String name, Permission permission, Class<E> type, boolean optional) {
+        private EnumCommandElement(final String name, final Permission permission, final TypeContext<E> type, final boolean optional) {
             this.name = name;
             this.permission = permission;
-            this.values = Arrays.stream(type.getEnumConstants())
+            this.values = type.enumConstants().stream()
                     .collect(Collectors.toMap(value -> value.name().toLowerCase(),
                             Function.identity(), (value, value2) -> {
-                                throw new UnsupportedOperationException(type.getCanonicalName() + " contains more than one enum constant "
+                                throw new UnsupportedOperationException(type.qualifiedName() + " contains more than one enum constant "
                                         + "with the same name, only differing by capitalization, which is unsupported.");
                             }
                     ));
@@ -94,12 +94,12 @@ public final class CommandElements {
         }
 
         @Override
-        public Exceptional<E> parse(CommandSource source, String argument) {
+        public Exceptional<E> parse(final CommandSource source, final String argument) {
             return Exceptional.of(this.values.get(argument.toLowerCase()));
         }
 
         @Override
-        public Collection<String> suggestions(CommandSource source, String argument) {
+        public Collection<String> suggestions(final CommandSource source, final String argument) {
             return HartshornUtils.asUnmodifiableCollection(this.values.keySet()).stream()
                     .filter(value -> value.toLowerCase(Locale.ROOT).startsWith(argument.toLowerCase(Locale.ROOT)))
                     .toList();

@@ -32,15 +32,15 @@ import org.spongepowered.api.event.entity.SpawnEntityEvent;
 
 // TODO: Player summon entity event
 @Posting({ SummonEntityEvent.class, PlayerSummonEntityEvent.class })
-public class EntityEventBridge implements EventBridge {
+public class EntityEventBridge extends EventBridge {
 
     @Listener
-    public void on(SpawnEntityEvent.Pre event) {
-        SpawnType spawnType = event.context().get(EventContextKeys.SPAWN_TYPE)
+    public void on(final SpawnEntityEvent.Pre event) {
+        final SpawnType spawnType = event.context().get(EventContextKeys.SPAWN_TYPE)
                 .orElseGet(SpawnTypes.CUSTOM);
 
         final SpawnSource source = SpongeAdapter.fromSponge(spawnType);
-        for (Entity entity : event.entities()) {
+        for (final Entity entity : event.entities()) {
             final org.dockbox.hartshorn.server.minecraft.entities.Entity target = SpongeAdapter.fromSponge(entity);
             final Cancellable cancellable = new SummonEntityEvent(target, source).post();
 

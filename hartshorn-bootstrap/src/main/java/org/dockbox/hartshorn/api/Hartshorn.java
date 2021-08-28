@@ -18,7 +18,8 @@
 package org.dockbox.hartshorn.api;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.di.context.ApplicationContext;
+import org.dockbox.hartshorn.di.annotations.context.LogExclude;
+import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +32,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
 
-/** The global {@link Hartshorn} instance used to grant access to various components. */
+/**
+ * The utility type to grant easy access to static components and constants.
+ */
+@LogExclude
 public final class Hartshorn {
 
     /**
@@ -54,29 +58,11 @@ public final class Hartshorn {
     /**
      * The semantic version of the current/latest release of Hartshorn
      */
-    public static final String VERSION = "4.1.1";
+    public static final String VERSION = "4.1.3";
 
     private static final Map<String, Logger> LOGGERS = HartshornUtils.emptyConcurrentMap();
 
     private Hartshorn() {}
-
-    /**
-     * Gets the current {@link ApplicationContext} associated with the active {@link #server()}.
-     *
-     * @return The active context
-     */
-    public static ApplicationContext context() {
-        return server().context();
-    }
-
-    /**
-     * Gets the instance of {@link Hartshorn}.
-     *
-     * @return The {@link Hartshorn} instance
-     */
-    public static HartshornBootstrap server() {
-        return HartshornBootstrap.instance();
-    }
 
     /**
      * Gets a log instance representing the calling type.
@@ -84,11 +70,18 @@ public final class Hartshorn {
      * @return The {@link Logger}
      */
     public static Logger log() {
-        return internalLog();
-    }
+        StackTraceElement element = null;
+        for (final StackTraceElement ste : Thread.currentThread().getStackTrace()) {
+            if (ste.getModuleName() != null && ste.getModuleName().startsWith("java.")) continue;
+            else if (TypeContext.lookup(ste.getClassName()).annotation(LogExclude.class).present()) continue;
+            else {
+                element = ste;
+                break;
+            }
+        }
 
-    static Logger internalLog() {
-        final StackTraceElement element = Thread.currentThread().getStackTrace()[3];
+        if (element == null) throw new IllegalStateException("Could not determine caller from stacktrace");
+
         final String className = element.getClassName();
         if (LOGGERS.containsKey(className)) return LOGGERS.get(className);
 
@@ -137,3 +130,4 @@ public final class Hartshorn {
         }
     }
 }
+

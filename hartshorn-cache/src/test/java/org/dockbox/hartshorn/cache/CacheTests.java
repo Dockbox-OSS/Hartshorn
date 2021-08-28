@@ -17,24 +17,21 @@
 
 package org.dockbox.hartshorn.cache;
 
-import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.test.HartshornRunner;
+import org.dockbox.hartshorn.test.ApplicationAwareTest;
 import org.dockbox.hartshorn.test.util.JUnitCacheManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.Collection;
 import java.util.List;
 
-@ExtendWith(HartshornRunner.class)
-public class CacheTests {
+public class CacheTests extends ApplicationAwareTest {
 
     @Test
     void testCacheIsReused() {
-        TestCacheService service = Hartshorn.context().get(TestCacheService.class);
+        final TestCacheService service = this.context().get(TestCacheService.class);
         List<String> cached = service.cachedObjects();
         Assertions.assertNotNull(cached);
         Assertions.assertFalse(cached.isEmpty());
@@ -54,42 +51,42 @@ public class CacheTests {
 
     @Test
     void testCacheCanBeUpdated() {
-        TestCacheService service = Hartshorn.context().get(TestCacheService.class);
+        final TestCacheService service = this.context().get(TestCacheService.class);
         List<String> cached = service.cachedObjects();
         Assertions.assertEquals(1, cached.size());
-        String first = cached.get(0);
+        final String first = cached.get(0);
 
         service.updateCache("second value");
         cached = service.cachedObjects();
         Assertions.assertEquals(2, cached.size());
 
-        String newFirst = cached.get(0);
+        final String newFirst = cached.get(0);
         Assertions.assertEquals(first, newFirst);
 
-        String second = cached.get(1);
+        final String second = cached.get(1);
         Assertions.assertEquals("second value", second);
     }
 
     @Test
     void testCacheCanBeEvicted() {
-        TestCacheService service = Hartshorn.context().get(TestCacheService.class);
+        final TestCacheService service = this.context().get(TestCacheService.class);
         List<String> cached = service.cachedObjects();
-        String first = cached.get(0);
+        final String first = cached.get(0);
 
         service.evict();
         cached = service.cachedObjects();
-        String second = cached.get(0);
+        final String second = cached.get(0);
         Assertions.assertNotEquals(first, second);
     }
 
     @Test
     void testCacheCanBeUpdatedThroughManager() {
-        TestCacheService service = Hartshorn.context().get(TestCacheService.class);
-        List<String> cached = service.cachedObjects();
+        final TestCacheService service = this.context().get(TestCacheService.class);
+        final List<String> cached = service.cachedObjects();
         Assertions.assertEquals(1, cached.size());
-        String first = cached.get(0);
+        final String first = cached.get(0);
 
-        final CacheManager cacheManager = Hartshorn.context().get(CacheManager.class);
+        final CacheManager cacheManager = this.context().get(CacheManager.class);
         cacheManager.update("sample", "second value");
 
         final Cache<Object> cache = cacheManager.get("sample").get();
@@ -99,22 +96,22 @@ public class CacheTests {
         final List<Object> objects = (List<Object>) content.get();
         Assertions.assertEquals(2, objects.size());
 
-        String newFirst = (String) objects.get(0);
+        final String newFirst = (String) objects.get(0);
         Assertions.assertEquals(first, newFirst);
 
-        String second = (String) objects.get(1);
+        final String second = (String) objects.get(1);
         Assertions.assertEquals("second value", second);
     }
 
     @Test
     void testCacheCanBeEvictedThroughManager() {
         // Initial population through source service
-        TestCacheService service = Hartshorn.context().get(TestCacheService.class);
-        List<String> cached = service.cachedObjects();
+        final TestCacheService service = this.context().get(TestCacheService.class);
+        final List<String> cached = service.cachedObjects();
         Assertions.assertNotNull(cached);
         Assertions.assertFalse(cached.isEmpty());
 
-        final CacheManager cacheManager = Hartshorn.context().get(CacheManager.class);
+        final CacheManager cacheManager = this.context().get(CacheManager.class);
         cacheManager.evict("sample");
 
         final Cache<Object> cache = cacheManager.get("sample").get();
@@ -124,6 +121,6 @@ public class CacheTests {
 
     @AfterEach
     void reset() {
-        Hartshorn.context().get(JUnitCacheManager.class).reset();
+        this.context().get(JUnitCacheManager.class).reset();
     }
 }

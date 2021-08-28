@@ -23,6 +23,7 @@ import org.dockbox.hartshorn.server.minecraft.dimension.Block;
 import org.dockbox.hartshorn.server.minecraft.dimension.Chunk;
 import org.dockbox.hartshorn.server.minecraft.dimension.position.Location;
 import org.dockbox.hartshorn.server.minecraft.dimension.world.World;
+import org.dockbox.hartshorn.sponge.SpongeContextCarrier;
 import org.dockbox.hartshorn.sponge.util.SpongeAdapter;
 import org.dockbox.hartshorn.sponge.util.SpongeUtil;
 import org.dockbox.hartshorn.util.HartshornUtils;
@@ -41,7 +42,7 @@ import java.util.function.BiFunction;
 
 import lombok.Getter;
 
-public class SpongeWorld extends World implements SpongeDimension {
+public class SpongeWorld extends World implements SpongeDimension, SpongeContextCarrier {
 
     @Getter private final ResourceKey key;
 

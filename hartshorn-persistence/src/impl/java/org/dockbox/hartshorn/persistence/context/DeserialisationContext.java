@@ -17,6 +17,8 @@
 
 package org.dockbox.hartshorn.persistence.context;
 
+import org.dockbox.hartshorn.di.context.element.TypeContext;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -24,6 +26,6 @@ import lombok.Getter;
 @AllArgsConstructor
 public class DeserialisationContext extends SerialisationContext {
 
-    private final Class<?> type;
+    private final TypeContext<?> type;
 
 }

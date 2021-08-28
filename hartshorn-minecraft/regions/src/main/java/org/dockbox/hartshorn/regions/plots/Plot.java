@@ -17,7 +17,6 @@
 
 package org.dockbox.hartshorn.regions.plots;
 
-import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.regions.MembershipRegion;
 import org.dockbox.hartshorn.regions.RegionService;
@@ -27,8 +26,8 @@ import org.dockbox.hartshorn.server.minecraft.dimension.world.World;
 
 public interface Plot extends MembershipRegion {
 
-    static Exceptional<Plot> from(World world, int x, int y) {
-        return Hartshorn.context().get(RegionService.class).first(world, x, y, Plot.class);
+    static Exceptional<Plot> from(final World world, final int x, final int y) {
+        return world.applicationContext().get(RegionService.class).first(world, x, y, Plot.class);
     }
 
     int x();

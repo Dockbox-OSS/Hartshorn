@@ -17,11 +17,13 @@
 
 package org.dockbox.hartshorn.events.parents;
 
-import org.dockbox.hartshorn.api.Hartshorn;
+import org.dockbox.hartshorn.di.ContextCarrier;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
+import org.dockbox.hartshorn.di.context.Context;
 import org.dockbox.hartshorn.events.EventBus;
 
 /** A low level type which is used when subscribing to, posting, or modifying events. */
-public interface Event {
+public interface Event extends Context, ContextCarrier {
 
     /**
      * Posts the event directly to the implementation of [EventBus], obtained through
@@ -30,7 +32,9 @@ public interface Event {
      * @return Itself
      */
     default Event post() {
-        Hartshorn.context().get(EventBus.class).post(this);
+        this.applicationContext().get(EventBus.class).post(this);
         return this;
     }
+
+    Event with(ApplicationContext context);
 }

@@ -17,44 +17,39 @@
 
 package org.dockbox.hartshorn.playersettings.service;
 
-import org.dockbox.hartshorn.api.exceptions.Except;
+import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.di.GenericType;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
+import org.dockbox.hartshorn.di.context.element.FieldContext;
+import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.di.services.ServiceProcessor;
 import org.dockbox.hartshorn.playersettings.Setting;
 import org.dockbox.hartshorn.playersettings.annotations.UseSettings;
-import org.dockbox.hartshorn.util.Reflect;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.util.List;
 
 public class SettingsProcessor implements ServiceProcessor<UseSettings> {
 
     @Override
-    public boolean preconditions(Class<?> type) {
-        return !Reflect.fieldsLike(type, Setting.class).isEmpty();
+    public boolean preconditions(final ApplicationContext context, final TypeContext<?> type) {
+        return !type.fieldsOf(Setting.class).isEmpty();
     }
 
     @Override
-    public <T> void process(ApplicationContext context, Class<T> type) {
-        SettingsContext settingsContext = context.first(SettingsContext.class).get();
+    public <T> void process(final ApplicationContext context, final TypeContext<T> type) {
+        final SettingsContext settingsContext = context.first(SettingsContext.class).get();
 
-        final List<Field> fields = Reflect.fieldsLike(type, Setting.class);
-        for (Field field : fields) {
-            try {
-                final int modifiers = field.getModifiers();
-                if (!Modifier.isPublic(modifiers)) throw new IllegalStateException("Expected Setting field '" + field.getName() + "' in " + type.getSimpleName() + " to be public");
-                if (!Modifier.isStatic(modifiers)) throw new IllegalStateException("Expected Setting field '" + field.getName() + "' in " + type.getSimpleName() + " to be static");
-                if (!Modifier.isFinal(modifiers)) throw new IllegalStateException("Expected Setting field '" + field.getName() + "' in " + type.getSimpleName() + " to be final");
+        final List<FieldContext<Setting<?>>> fields = type.fieldsOf(new GenericType<>() {
+        });
+        for (final FieldContext<Setting<?>> field : fields) {
+            if (field.isPublic()) throw new IllegalStateException("Expected Setting field '" + field.name() + "' in " + type.name() + " to be public");
+            if (field.isStatic()) throw new IllegalStateException("Expected Setting field '" + field.name() + "' in " + type.name() + " to be static");
+            if (field.isFinal()) throw new IllegalStateException("Expected Setting field '" + field.name() + "' in " + type.name() + " to be final");
 
-                final Setting<?> setting = (Setting<?>) field.get(null);
-                if (setting == null) throw new IllegalStateException("Expected Setting field '" + field.getName() + "' in " + type.getSimpleName() + " to be non-null");
+            final Exceptional<Setting<?>> setting = field.getStatic();
+            if (setting.absent()) throw new IllegalStateException("Expected Setting field '" + field.name() + "' in " + type.name() + " to be non-null");
 
-                settingsContext.add(setting);
-            }
-            catch (IllegalAccessException | ClassCastException e) {
-                Except.handle(e);
-            }
+            settingsContext.add(setting.get());
         }
     }
 

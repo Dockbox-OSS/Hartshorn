@@ -17,19 +17,16 @@
 
 package org.dockbox.hartshorn.proxy;
 
-import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.proxy.compiler.Compiler;
-import org.dockbox.hartshorn.test.HartshornRunner;
+import org.dockbox.hartshorn.test.ApplicationAwareTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.lang.reflect.Method;
 import java.util.Map;
 
-@ExtendWith(HartshornRunner.class)
-public class CompilerTests {
+public class CompilerTests extends ApplicationAwareTest {
 
     static final String SURFACE_JAVA = "package org.dockbox.hartshorn.proxy.compiler;"
             + "public class FlyingClass {"
@@ -81,8 +78,8 @@ public class CompilerTests {
 
     @Test
     public void surfaceTest() throws NoSuchMethodException {
-        Class<?> flying = Hartshorn.context().get(Compiler.class).compile(SURFACE_JAVA).rethrow().get();
-        Object flyingInstance = Hartshorn.context().get(flying);
+        Class<?> flying = this.context().get(Compiler.class).compile(SURFACE_JAVA).rethrow().get();
+        Object flyingInstance = this.context().get(flying);
 
         Assertions.assertEquals("FlyingClass", flying.getSimpleName());
         Assertions.assertNotNull(flying.getMethod("dirty"));

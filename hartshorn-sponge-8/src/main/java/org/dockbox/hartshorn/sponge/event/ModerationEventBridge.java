@@ -46,7 +46,7 @@ import java.net.InetAddress;
 import java.time.LocalDateTime;
 
 @SuppressWarnings("DuplicatedCode")
-@Posting(value = {
+@Posting({
         // Ban events
         PlayerBannedEvent.class,
         IpBannedEvent.class,
@@ -61,10 +61,10 @@ import java.time.LocalDateTime;
         PlayerWarningExpired.class,
         PlayerNotedEvent.class
 })
-public class ModerationEventBridge implements EventBridge {
+public class ModerationEventBridge extends EventBridge {
 
     @Listener
-    public void on(BanUserEvent event) {
+    public void on(final BanUserEvent event) {
         final Player player = SpongeAdapter.toSponge(event.user());
         final Profile ban = event.ban();
         final Exceptional<LocalDateTime> expiration = Exceptional.of(ban.expirationDate()).map(LocalDateTime::from);
@@ -74,7 +74,7 @@ public class ModerationEventBridge implements EventBridge {
     }
 
     @Listener
-    public void on(BanIpEvent event) {
+    public void on(final BanIpEvent event) {
         final IP ban = event.ban();
         final InetAddress address = ban.address();
         final Exceptional<LocalDateTime> expiration = Exceptional.of(ban.expirationDate()).map(LocalDateTime::from);
@@ -84,7 +84,7 @@ public class ModerationEventBridge implements EventBridge {
     }
 
     @Listener
-    public void on(PardonUserEvent event) {
+    public void on(final PardonUserEvent event) {
         final Player player = SpongeAdapter.toSponge(event.user());
         final Profile ban = event.ban();
         final Exceptional<LocalDateTime> expiration = Exceptional.of(ban.expirationDate()).map(LocalDateTime::from);
@@ -94,7 +94,7 @@ public class ModerationEventBridge implements EventBridge {
     }
 
     @Listener
-    public void on(PardonIpEvent event) {
+    public void on(final PardonIpEvent event) {
         final IP ban = event.ban();
         final InetAddress address = ban.address();
         final Exceptional<LocalDateTime> expiration = Exceptional.of(ban.expirationDate()).map(LocalDateTime::from);
@@ -104,7 +104,7 @@ public class ModerationEventBridge implements EventBridge {
     }
 
     @Listener
-    public void on(KickPlayerEvent event) {
+    public void on(final KickPlayerEvent event) {
         final Player player = SpongeAdapter.fromSponge(event.player());
         final Exceptional<String> reason = Exceptional.of(event.message()).map(SpongeAdapter::fromSponge).map(Text::toPlain);
         this.post(new KickEvent(player, null, reason), event);
@@ -116,7 +116,7 @@ public class ModerationEventBridge implements EventBridge {
      * @param event
      *         The event
      */
-    public void on(Void event) {
+    public void on(final Void event) {
         throw new NotImplementedException();
     }
 

@@ -18,10 +18,9 @@
 package org.dockbox.hartshorn.api.keys;
 
 import org.dockbox.hartshorn.api.CheckedFunction;
-import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.domain.TypedOwner;
-import org.dockbox.hartshorn.util.Reflect;
+import org.dockbox.hartshorn.di.context.element.TypeContext;
 
 import java.util.Locale;
 import java.util.function.BiConsumer;
@@ -47,8 +46,12 @@ public final class Keys {
      *
      * @return the persistent data key
      */
-    public static <T> PersistentDataKey<T> persistent(Class<T> type, String name, Class<?> owningClass) {
-        return Keys.persistent(type, name, Hartshorn.context().meta().lookup(owningClass));
+    public static <T> PersistentDataKey<T> persistent(final Class<T> type, final String name, final Class<?> owningClass) {
+        final TypeContext<T> context = TypeContext.of(type);
+        if (!context.isNative())
+            throw new RuntimeException("Unsupported data type for persistent key: " + context.qualifiedName());
+
+        return new TypedPersistentDataKey<>(Keys.id(name), ctx -> ctx.meta().lookup(TypeContext.of(owningClass)), context);
     }
 
     /**
@@ -65,32 +68,31 @@ public final class Keys {
      *
      * @return the persistent data key
      */
-    public static <T> PersistentDataKey<T> persistent(Class<T> type, String name, TypedOwner owner) {
-        if (!Reflect.isNative(type))
-            throw new RuntimeException("Unsupported data type for persistent key: " + type.getCanonicalName());
+    public static <T> PersistentDataKey<T> persistent(final Class<T> type, final String name, final TypedOwner owner) {
+        final TypeContext<T> context = TypeContext.of(type);
+        if (!context.isNative())
+            throw new RuntimeException("Unsupported data type for persistent key: " + context.qualifiedName());
 
-        return new TypedPersistentDataKey<>(name, Keys.id(name, owner), owner, type);
+        return new TypedPersistentDataKey<>(Keys.id(name), ctx -> owner, context);
     }
 
     /**
-     * Convert the given name to a valid ID, merging its owner ID and the name in the following format:
+     * Convert the given name to a valid ID in the following format:
      * <pre>{@code
-     * Sample Item -> $ownerId:sample_item
+     * Sample Item -> sample_item
      * }</pre>
      *
      * @param name
      *         the name
-     * @param owner
-     *         the owner
      *
      * @return the string
      */
-    public static String id(String name, TypedOwner owner) {
+    public static String id(String name) {
         name = name.toLowerCase(Locale.ROOT).replaceAll("[ .]", "").replaceAll("-", "_");
-        return owner.id() + ':' + name;
+        return name;
     }
 
-    public static <K, A> KeyBuilder<K, A> builder(Class<K> target, Class<A> type) {
+    public static <K, A> KeyBuilder<K, A> builder(final Class<K> target, final Class<A> type) {
         return new KeyBuilder<>();
     }
 
@@ -117,7 +119,7 @@ public final class Keys {
             return this;
         }
 
-        public KeyBuilder<K, A> withSetter(BiConsumer<K, A> setter) {
+        public KeyBuilder<K, A> withSetter(final BiConsumer<K, A> setter) {
             this.setter = (k, a) -> {
                 setter.accept(k, a);
                 return TransactionResult.success();
@@ -125,22 +127,22 @@ public final class Keys {
             return this;
         }
 
-        public KeyBuilder<K, A> withSetterResult(BiFunction<K, A, TransactionResult> setter) {
+        public KeyBuilder<K, A> withSetterResult(final BiFunction<K, A, TransactionResult> setter) {
             this.setter = setter;
             return this;
         }
 
-        public KeyBuilder<K, A> withGetterSafe(Function<K, Exceptional<A>> getter) {
+        public KeyBuilder<K, A> withGetterSafe(final Function<K, Exceptional<A>> getter) {
             this.getter = getter;
             return this;
         }
 
-        public KeyBuilder<K, A> withGetter(CheckedFunction<K, A> getter) {
+        public KeyBuilder<K, A> withGetter(final CheckedFunction<K, A> getter) {
             this.getter = k -> Exceptional.of(() -> getter.apply(k));
             return this;
         }
 
-        public RemovableKeyBuilder<K, A> withRemover(Consumer<K> remover) {
+        public RemovableKeyBuilder<K, A> withRemover(final Consumer<K> remover) {
             return new RemovableKeyBuilder<K, A>()
                     .withSetterResult(this.setter)
                     .withGetterSafe(this.getter)
@@ -161,7 +163,7 @@ public final class Keys {
         }
 
         @Override
-        public RemovableKeyBuilder<K, A> withRemover(Consumer<K> remover) {
+        public RemovableKeyBuilder<K, A> withRemover(final Consumer<K> remover) {
             this.remover = remover;
             return this;
         }

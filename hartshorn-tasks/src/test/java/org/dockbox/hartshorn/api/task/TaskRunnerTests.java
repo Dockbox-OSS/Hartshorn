@@ -17,25 +17,22 @@
 
 package org.dockbox.hartshorn.api.task;
 
-import org.dockbox.hartshorn.api.Hartshorn;
-import org.dockbox.hartshorn.test.HartshornRunner;
+import org.dockbox.hartshorn.test.ApplicationAwareTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-@ExtendWith(HartshornRunner.class)
-public class TaskRunnerTests {
+public class TaskRunnerTests extends ApplicationAwareTest {
 
     private final CountDownLatch lock = new CountDownLatch(1);
 
     @Test
     void testTaskRunsSync() {
-        TaskRunner runner = Hartshorn.context().get(TaskRunner.class);
+        final TaskRunner runner = this.context().get(TaskRunner.class);
         final boolean[] activated = { false };
-        Task task = () -> activated[0] = true;
+        final Task task = () -> activated[0] = true;
         runner.accept(task);
 
         Assertions.assertTrue(activated[0]);
@@ -44,9 +41,9 @@ public class TaskRunnerTests {
     @SuppressWarnings("ResultOfMethodCallIgnored")
     @Test
     void testTaskRunsDelayed() throws InterruptedException {
-        TaskRunner runner = Hartshorn.context().get(TaskRunner.class);
+        final TaskRunner runner = this.context().get(TaskRunner.class);
         final boolean[] activated = { false };
-        Task task = () -> activated[0] = true;
+        final Task task = () -> activated[0] = true;
         runner.acceptDelayed(task, 5, TimeUnit.MILLISECONDS);
 
         this.lock.await(25, TimeUnit.MILLISECONDS);

@@ -22,5 +22,5 @@ import org.dockbox.hartshorn.worldedit.events.WorldEditCopyEvent;
 import org.dockbox.hartshorn.worldedit.events.WorldEditPasteEvent;
 
 @Posting({ WorldEditCopyEvent.class, WorldEditPasteEvent.class })
-public class WorldEditEventBridge implements EventBridge {
+public class WorldEditEventBridge extends EventBridge {
 }

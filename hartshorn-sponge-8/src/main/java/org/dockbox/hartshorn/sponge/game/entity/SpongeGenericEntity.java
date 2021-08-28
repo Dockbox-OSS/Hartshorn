@@ -20,6 +20,7 @@ package org.dockbox.hartshorn.sponge.game.entity;
 import net.minecraft.world.entity.Entity;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.sponge.SpongeContextCarrier;
 import org.spongepowered.api.entity.EntityType;
 
 import java.lang.ref.WeakReference;
@@ -27,7 +28,7 @@ import java.lang.ref.WeakReference;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-public class SpongeGenericEntity implements SpongeEntity<Entity, org.spongepowered.api.entity.Entity> {
+public class SpongeGenericEntity implements SpongeEntity<Entity, org.spongepowered.api.entity.Entity>, SpongeContextCarrier {
 
     private final WeakReference<org.spongepowered.api.entity.Entity> entity;
 

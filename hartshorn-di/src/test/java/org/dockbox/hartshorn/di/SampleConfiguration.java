@@ -17,12 +17,13 @@
 
 package org.dockbox.hartshorn.di;
 
-import org.dockbox.hartshorn.di.types.SampleImplementation;
-import org.dockbox.hartshorn.di.types.SampleInterface;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
+import test.types.SampleImplementation;
+import test.types.SampleInterface;
 
 public class SampleConfiguration extends InjectConfiguration {
     @Override
-    public void collect() {
+    public void collect(final ApplicationContext context) {
         this.bind(Key.of(SampleInterface.class), SampleImplementation.class);
     }
 }

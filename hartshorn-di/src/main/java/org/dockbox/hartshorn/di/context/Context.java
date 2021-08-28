@@ -29,7 +29,7 @@ public interface Context {
 
     <C extends Context> void add(String name, C context);
 
-    <C extends Context> Exceptional<C> first(Class<C> context);
+    <C extends Context> Exceptional<C> first(ApplicationContext applicationContext, Class<C> context);
 
     Exceptional<Context> first(String name);
 

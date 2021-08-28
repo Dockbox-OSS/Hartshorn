@@ -24,17 +24,18 @@ import org.dockbox.hartshorn.commands.annotations.Command;
 import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
 import org.dockbox.hartshorn.commands.definition.CommandDefinition;
 import org.dockbox.hartshorn.commands.definition.CommandElement;
+import org.dockbox.hartshorn.commands.definition.CommandElementImpl;
 import org.dockbox.hartshorn.commands.definition.CommandElements;
 import org.dockbox.hartshorn.commands.definition.CommandFlag;
 import org.dockbox.hartshorn.commands.definition.CommandFlagElement;
-import org.dockbox.hartshorn.commands.definition.GroupCommandElement;
-import org.dockbox.hartshorn.commands.definition.CommandElementImpl;
 import org.dockbox.hartshorn.commands.definition.CommandFlagImpl;
+import org.dockbox.hartshorn.commands.definition.GroupCommandElement;
 import org.dockbox.hartshorn.di.binding.Bindings;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.di.context.DefaultContext;
+import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.i18n.permissions.Permission;
 import org.dockbox.hartshorn.util.HartshornUtils;
-import org.dockbox.hartshorn.util.Reflect;
 
 import java.util.List;
 import java.util.regex.MatchResult;
@@ -125,9 +126,11 @@ public class CommandDefinitionContextImpl extends DefaultContext implements Comm
     private final Permission permission;
     private final Command command;
     private final CommandDefinition definition;
+    private final ApplicationContext context;
 
-    public CommandDefinitionContextImpl(Command command) {
+    public CommandDefinitionContextImpl(final ApplicationContext context, final Command command) {
         this.command = command;
+        this.context = context;
         this.permission = this.getOrDefault();
         if (!"".equals(this.arguments())) {
             this.definition = this.parseElements(this.arguments(), this.permission);
@@ -142,37 +145,37 @@ public class CommandDefinitionContextImpl extends DefaultContext implements Comm
 
         if ("".equals(raw)) {
             raw = Hartshorn.PROJECT_ID + '.'
-                    + Bindings.serviceId(this.parent()).replaceAll("-", ".") + '.'
+                    + Bindings.serviceId(this.context, this.parent()).replaceAll("-", ".") + '.'
                     + this.aliases().get(0);
         }
 
-        return Permission.of(raw);
+        return Permission.of(this.context, raw);
     }
 
-    protected CommandDefinition parseElements(CharSequence arguments, Permission permission) {
-        List<CommandElement<?>> elements = HartshornUtils.emptyList();
-        List<CommandFlag> flags = HartshornUtils.emptyList();
+    protected CommandDefinition parseElements(final CharSequence arguments, final Permission permission) {
+        final List<CommandElement<?>> elements = HartshornUtils.emptyList();
+        final List<CommandFlag> flags = HartshornUtils.emptyList();
 
-        Matcher genericArgumentMatcher = GENERIC_ARGUMENT.matcher(arguments);
+        final Matcher genericArgumentMatcher = GENERIC_ARGUMENT.matcher(arguments);
         while (genericArgumentMatcher.find()) {
 
-            String part = genericArgumentMatcher.group();
-            Matcher argumentMatcher = ARGUMENT.matcher(part);
+            final String part = genericArgumentMatcher.group();
+            final Matcher argumentMatcher = ARGUMENT.matcher(part);
             if (argumentMatcher.matches()) {
-                CommandDefinition definition = this.extractArguments(argumentMatcher, permission);
+                final CommandDefinition definition = this.extractArguments(argumentMatcher, permission);
                 final List<CommandElement<?>> commandElements = definition.elements();
                 if (commandElements.isEmpty()) continue;
                 if (commandElements.size() == 1) elements.add(commandElements.get(0));
                 else elements.add(new GroupCommandElement(commandElements, definition.optional()));
             }
             else {
-                Matcher flagMatcher = FLAG.matcher(part);
+                final Matcher flagMatcher = FLAG.matcher(part);
                 flags.addAll(this.generateFlags(flagMatcher, permission));
             }
         }
 
         for (int i = 0; i < elements.size(); i++) {
-            CommandElement<?> element = elements.get(i);
+            final CommandElement<?> element = elements.get(i);
             if (element.size() == -1 && i != elements.size() - 1) {
                 throw new IllegalStateException("Cannot request arguments after joining remaining elements");
             }
@@ -181,24 +184,24 @@ public class CommandDefinitionContextImpl extends DefaultContext implements Comm
         return new CommandDefinition(true, elements, flags);
     }
 
-    private CommandDefinition extractArguments(MatchResult argumentMatcher, Permission permission) {
-        boolean optional = '[' == argumentMatcher.group(1).charAt(0);
-        String elementValue = argumentMatcher.group(2);
+    private CommandDefinition extractArguments(final MatchResult argumentMatcher, final Permission permission) {
+        final boolean optional = '[' == argumentMatcher.group(1).charAt(0);
+        final String elementValue = argumentMatcher.group(2);
 
         CommandDefinition definition = this.parseElements(elementValue, permission);
 
         if (definition.elements().isEmpty() && definition.flags().isEmpty()) {
-            CommandElement<?> element = this.generateElement(argumentMatcher.group(2), permission, optional);
+            final CommandElement<?> element = this.generateElement(argumentMatcher.group(2), permission, optional);
             definition = new CommandDefinition(optional, HartshornUtils.asList(element), HartshornUtils.emptyList());
         }
 
         return definition;
     }
 
-    protected CommandElement<?> generateElement(String definition, Permission permission, boolean optional) {
+    protected CommandElement<?> generateElement(final String definition, final Permission permission, final boolean optional) {
         String type = DEFAULT_TYPE;
-        String name;
-        Matcher elementValue = ELEMENT_VALUE.matcher(definition);
+        final String name;
+        final Matcher elementValue = ELEMENT_VALUE.matcher(definition);
         Permission elementPermission = permission;
         if (!elementValue.matches() || 0 == elementValue.groupCount())
             Except.handle("Unknown argument specification " + definition + ", use Type or Name{Type} or Name{Type:Permission}");
@@ -208,7 +211,7 @@ public class CommandDefinitionContextImpl extends DefaultContext implements Comm
         group matched.
         */
         if (1 <= elementValue.groupCount()) {
-            String g1 = elementValue.group(1);
+            final String g1 = elementValue.group(1);
             if (1 == elementValue.groupCount()) type = g1;
             name = g1;
         }
@@ -226,29 +229,28 @@ public class CommandDefinitionContextImpl extends DefaultContext implements Comm
         defaults to HartshornInformation#GLOBAL_OVERRIDE if none is explicitly specified).
         */
         if (3 <= elementValue.groupCount() && null != elementValue.group(3))
-            elementPermission = Permission.of(elementValue.group(3));
+            elementPermission = Permission.of(this.context, elementValue.group(3));
 
         return this.lookupElement(type, name, elementPermission, optional);
     }
 
-    private <E extends Enum<E>> CommandElement<?> lookupElement(String type, String name, Permission permission, boolean optional) {
-        Exceptional<ArgumentConverter<?>> converter = Hartshorn.context()
+    private <E extends Enum<E>> CommandElement<?> lookupElement(final String type, final String name, final Permission permission, final boolean optional) {
+        final Exceptional<ArgumentConverter<?>> converter = this.context
                 .first(ArgumentConverterContext.class)
                 .flatMap(context -> context.converter(type.toLowerCase()));
         if (converter.present()) {
             return new CommandElementImpl<>(converter.get(), name, permission, optional, converter.get().size());
         }
         else {
-            Class<?> clazz = Reflect.lookup(type);
-            if (clazz == null) {
+            final TypeContext<?> lookup = TypeContext.lookup(type);
+            if (lookup.isVoid()) {
                 Except.handle("No argument of type `" + type + "` can be read");
                 return null;
             }
 
-            if (clazz.isEnum()) {
+            if (lookup.isEnum()) {
                 //noinspection unchecked
-                Class<E> enumType = (Class<E>) clazz;
-                return CommandElements.enumElement(name, permission, enumType, optional);
+                return CommandElements.enumElement(name, permission, (TypeContext<E>) lookup, optional);
             }
             else {
                 Hartshorn.log().warn("Type '" + type.toLowerCase() + "' is not supported, using default value");
@@ -257,8 +259,8 @@ public class CommandDefinitionContextImpl extends DefaultContext implements Comm
         }
     }
 
-    private List<CommandFlag> generateFlags(Matcher flagMatcher, Permission defaultPermission) {
-        List<CommandFlag> flags = HartshornUtils.emptyList();
+    private List<CommandFlag> generateFlags(final Matcher flagMatcher, final Permission defaultPermission) {
+        final List<CommandFlag> flags = HartshornUtils.emptyList();
         if (flagMatcher.matches()) {
             flags.add(this.parseFlag(
                     flagMatcher.group(1),
@@ -269,14 +271,14 @@ public class CommandDefinitionContextImpl extends DefaultContext implements Comm
         return flags;
     }
 
-    private CommandFlag parseFlag(String name, String type, Permission defaultPermission) {
+    private CommandFlag parseFlag(String name, final String type, final Permission defaultPermission) {
         if (null == type) {
-            int at;
+            final int at;
             /* See syntax definition of DefaultCommandBus#FLAG */
             if (0 <= (at = name.indexOf(':'))) {
                 name = name.substring(0, at);
-                String permission = name.substring(at + 1);
-                return new CommandFlagImpl(name, Permission.of(permission));
+                final String permission = name.substring(at + 1);
+                return new CommandFlagImpl(name, Permission.of(this.context, permission));
             }
             else {
                 return new CommandFlagImpl(name);
@@ -291,8 +293,8 @@ public class CommandDefinitionContextImpl extends DefaultContext implements Comm
     }
 
     @Override
-    public boolean matches(String command) {
-        for (String candidate : this.aliases()) {
+    public boolean matches(final String command) {
+        for (final String candidate : this.aliases()) {
             if (command.startsWith(candidate)) {
                 if (!command.contains(" ")) return this.requiredElements().isEmpty();
                 else return true;
@@ -323,8 +325,8 @@ public class CommandDefinitionContextImpl extends DefaultContext implements Comm
     }
 
     @Override
-    public Class<?> parent() {
-        return this.command.parent();
+    public TypeContext<?> parent() {
+        return TypeContext.of(this.command.parent());
     }
 
     @Override
@@ -338,8 +340,8 @@ public class CommandDefinitionContextImpl extends DefaultContext implements Comm
     }
 
     @Override
-    public Exceptional<CommandFlag> flag(String name) {
-        for (CommandFlag flag : this.flags()) {
+    public Exceptional<CommandFlag> flag(final String name) {
+        for (final CommandFlag flag : this.flags()) {
             if (flag.name().equals(name)) return Exceptional.of(flag);
         }
         return Exceptional.empty();

@@ -20,6 +20,7 @@ package org.dockbox.hartshorn.commands.definition;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.commands.service.CommandParameter;
+import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.util.HartshornUtils;
 
 import java.util.Collection;
@@ -46,7 +47,7 @@ public interface ArgumentConverter<T> {
      *
      * @return The type reference
      */
-    Class<T> type();
+    TypeContext<T> type();
 
     /**
      * Converts a given raw argument into type <code>T</code>. The provided

@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.api.keys;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.exceptions.Except;
+import org.dockbox.hartshorn.di.ContextCarrier;
 import org.dockbox.hartshorn.i18n.entry.DefaultResources;
 
 /**
@@ -31,7 +32,7 @@ import org.dockbox.hartshorn.i18n.entry.DefaultResources;
  *         The type which the {@link Key} can modify.
  */
 @SuppressWarnings({ "unchecked", "rawtypes" })
-public interface KeyHolder<T extends KeyHolder> {
+public interface KeyHolder<T extends KeyHolder> extends ContextCarrier {
 
     /**
      * Apply a given value of type {@code A} using a given {@link Key} type to the implementation of
@@ -49,13 +50,13 @@ public interface KeyHolder<T extends KeyHolder> {
      * @return The transaction result. If the transaction failed the {@link TransactionResult} will
      *         provide a {@link TransactionResult#message() message}.
      */
-    default <A> TransactionResult set(Key<T, A> key, A appliedValue) {
+    default <A> TransactionResult set(final Key<T, A> key, final A appliedValue) {
         try {
             return key.set((T) this, appliedValue);
         }
-        catch (ClassCastException e) {
+        catch (final ClassCastException e) {
             Except.handle("Attempted to apply " + key + " to non-supporting type " + this, e);
-            return TransactionResult.fail(DefaultResources.instance().bindingFailure());
+            return TransactionResult.fail(DefaultResources.instance(this.applicationContext()).bindingFailure());
         }
     }
 
@@ -74,11 +75,11 @@ public interface KeyHolder<T extends KeyHolder> {
      *         ClassCastException} if <em>this</em> does not match the constraint of the given {@link
      *         Key}.
      */
-    default <A, K extends T> Exceptional<A> get(Key<K, A> key) {
+    default <A, K extends T> Exceptional<A> get(final Key<K, A> key) {
         return key.get((K) this);
     }
 
-    default <A> void remove(RemovableKey<T, A> key) {
+    default <A> void remove(final RemovableKey<T, A> key) {
         key.remove((T) this);
     }
 }

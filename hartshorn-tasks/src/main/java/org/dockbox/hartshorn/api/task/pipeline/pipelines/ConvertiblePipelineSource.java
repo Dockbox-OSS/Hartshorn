@@ -18,6 +18,7 @@
 package org.dockbox.hartshorn.api.task.pipeline.pipelines;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -29,7 +30,7 @@ public class ConvertiblePipelineSource<I> extends ConvertiblePipeline<I, I> {
      * @param inputClass
      *         The {@link Class} of the {@code I} input type
      */
-    public ConvertiblePipelineSource(Class<I> inputClass) {
+    public ConvertiblePipelineSource(final Class<I> inputClass) {
         super(inputClass);
     }
 
@@ -44,8 +45,8 @@ public class ConvertiblePipelineSource<I> extends ConvertiblePipeline<I, I> {
      * @return An {@link Exceptional} containing the {@code I} output
      */
     @Override
-    public Exceptional<I> process(@NotNull I input, @Nullable Throwable throwable) {
-        Exceptional<I> exceptionalInput = Exceptional.of(input, throwable);
+    public Exceptional<I> process(@NotNull final I input, @Nullable final Throwable throwable) {
+        final Exceptional<I> exceptionalInput = Exceptional.of(input, throwable);
         return super.process(exceptionalInput);
     }
 }

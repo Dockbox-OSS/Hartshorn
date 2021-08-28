@@ -17,9 +17,9 @@
 
 package org.dockbox.hartshorn.commands;
 
-import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Identifiable;
 import org.dockbox.hartshorn.api.domain.tuple.Tristate;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.i18n.PermissionHolder;
 import org.dockbox.hartshorn.i18n.common.Language;
 import org.dockbox.hartshorn.i18n.common.ResourceEntry;
@@ -30,20 +30,16 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
+import javax.inject.Singleton;
+
+@Singleton
 public abstract class SystemSubject implements CommandSource, PermissionHolder, Identifiable {
 
     @SuppressWarnings("ConstantDeclaredInAbstractClass")
     public static final UUID UNIQUE_ID = new UUID(0, 0);
-    protected static SystemSubject instance;
 
-    protected SystemSubject() {
-        if (null != instance) return;
-        instance = this;
-    }
-
-    public static SystemSubject instance() {
-        if (null == instance) return Hartshorn.context().get(SystemSubject.class);
-        return instance;
+    public static SystemSubject instance(final ApplicationContext context) {
+        return context.get(SystemSubject.class);
     }
 
     @Override
@@ -52,19 +48,19 @@ public abstract class SystemSubject implements CommandSource, PermissionHolder, 
     }
 
     @Override
-    public void language(Language language) {
+    public void language(final Language language) {
         // Nothing happens
     }
 
     @Override
-    public void send(@NotNull ResourceEntry text) {
-        Text formattedValue = text.translate().asText();
+    public void send(@NotNull final ResourceEntry text) {
+        final Text formattedValue = text.translate().asText();
         this.send(formattedValue);
     }
 
     @Override
-    public void sendWithPrefix(@NotNull ResourceEntry text) {
-        Text formattedValue = text.translate().asText();
+    public void sendWithPrefix(@NotNull final ResourceEntry text) {
+        final Text formattedValue = text.translate().asText();
         this.sendWithPrefix(formattedValue);
     }
 
@@ -85,44 +81,44 @@ public abstract class SystemSubject implements CommandSource, PermissionHolder, 
     }
 
     @Override
-    public boolean hasPermission(@NotNull String permission) {
+    public boolean hasPermission(@NotNull final String permission) {
         return true;
     }
 
     @Override
-    public boolean hasAnyPermission(@NotNull String @NotNull ... permissions) {
+    public boolean hasAnyPermission(@NotNull final String @NotNull ... permissions) {
         return true;
     }
 
     @Override
-    public boolean hasAllPermissions(@NotNull String @NotNull ... permissions) {
+    public boolean hasAllPermissions(@NotNull final String @NotNull ... permissions) {
         return true;
     }
 
     @Override
-    public boolean hasPermission(@NotNull Permission permission) {
+    public boolean hasPermission(@NotNull final Permission permission) {
         return true;
     }
 
     @Override
-    public boolean hasAnyPermission(@NotNull Permission @NotNull ... permissions) {
+    public boolean hasAnyPermission(@NotNull final Permission @NotNull ... permissions) {
         return true;
     }
 
     @Override
-    public boolean hasAllPermissions(@NotNull Permission @NotNull ... permissions) {
+    public boolean hasAllPermissions(@NotNull final Permission @NotNull ... permissions) {
         return true;
     }
 
     @Override
-    public void permission(@NotNull String permission, Tristate state) {}
+    public void permission(@NotNull final String permission, final Tristate state) {}
 
     @Override
-    public void permissions(Tristate state, @NotNull String @NotNull ... permissions) {}
+    public void permissions(final Tristate state, @NotNull final String @NotNull ... permissions) {}
 
     @Override
-    public void permission(@NotNull Permission permission, Tristate state) {}
+    public void permission(@NotNull final Permission permission, final Tristate state) {}
 
     @Override
-    public void permissions(Tristate state, @NotNull Permission @NotNull ... permissions) {}
+    public void permissions(final Tristate state, @NotNull final Permission @NotNull ... permissions) {}
 }

@@ -20,22 +20,21 @@ package org.dockbox.hartshorn.persistence.table;
 import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.annotations.Property;
 import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.api.exceptions.ApplicationException;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
+import org.dockbox.hartshorn.di.context.element.ConstructorContext;
+import org.dockbox.hartshorn.di.context.element.FieldContext;
+import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.persistence.PersistentCapable;
 import org.dockbox.hartshorn.persistence.PersistentModel;
 import org.dockbox.hartshorn.persistence.exceptions.EmptyEntryException;
 import org.dockbox.hartshorn.persistence.exceptions.IdentifierMismatchException;
 import org.dockbox.hartshorn.persistence.exceptions.UnknownIdentifierException;
 import org.dockbox.hartshorn.util.HartshornUtils;
-import org.dockbox.hartshorn.util.Reflect;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -63,7 +62,7 @@ import lombok.Getter;
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class Table {
 
-    private static final Map<Class<?>, List<ColumnIdentifier<?>>> DEFINITIONS = HartshornUtils.emptyMap();
+    private static final Map<TypeContext<?>, List<ColumnIdentifier<?>>> DEFINITIONS = HartshornUtils.emptyMap();
     private final List<TableRow> rows;
     @Getter private final ColumnIdentifier<?>[] identifiers;
 
@@ -75,36 +74,36 @@ public class Table {
      * @param columns
      *         The column identifiers
      */
-    public Table(ColumnIdentifier<?>... columns) {
+    public Table(final ColumnIdentifier<?>... columns) {
         this.identifiers = columns;
         this.rows = HartshornUtils.emptyConcurrentList();
     }
 
-    public Table(Collection<ColumnIdentifier<?>> columns) {
+    public Table(final Collection<ColumnIdentifier<?>> columns) {
         this.identifiers = columns.toArray(new ColumnIdentifier[0]);
         this.rows = HartshornUtils.emptyConcurrentList();
     }
 
-    private static <T> List<TableRow> matching(TableRow row, Table otherTable, ColumnIdentifier<T> column) {
-        Exceptional<?> exceptionalValue = row.value(column);
+    private static <T> List<TableRow> matching(final TableRow row, final Table otherTable, final ColumnIdentifier<T> column) {
+        final Exceptional<?> exceptionalValue = row.value(column);
         // No way to join on value if it is not present. Technically this should not be possible as a
         // NPE
         // is typically thrown if a null value is added to a row.
         if (exceptionalValue.absent())
             throw new IndexOutOfBoundsException("No value present for " + column.name());
-        T expectedValue = (T) exceptionalValue.get();
+        final T expectedValue = (T) exceptionalValue.get();
 
         return otherTable.where(column, expectedValue).rows();
     }
 
     private static void populateAtColumn(
-            Merge merge,
-            boolean populateEmptyEntries,
-            Iterable<TableRow> matchingRows,
-            TableRow joinedRow,
-            ColumnIdentifier<?> identifier
+            final Merge merge,
+            final boolean populateEmptyEntries,
+            final Iterable<TableRow> matchingRows,
+            final TableRow joinedRow,
+            final ColumnIdentifier<?> identifier
     ) throws EmptyEntryException {
-        for (TableRow matchingRow : matchingRows) {
+        for (final TableRow matchingRow : matchingRows) {
             /*
              * If there is already a value present on this row, look up if we want to keep the existing,
              * or use the new value.
@@ -125,23 +124,28 @@ public class Table {
         }
     }
 
-    public static Table of(Class<?> type) {
+    public static Table of(final TypeContext<?> type) {
         if (!DEFINITIONS.containsKey(type)) {
             final List<ColumnIdentifier<?>> identifiers = HartshornUtils.emptyList();
-            for (Field field : type.getDeclaredFields()) {
-                if (Modifier.isTransient(field.getModifiers())) continue;
+            for (final FieldContext<?> field : type.fields()) {
+                if (field.isTransient()) continue;
 
-                final String name = Reflect.fieldName(field);
-                identifiers.add(new ColumnIdentifierImpl<>(name, field.getType()));
+                String name = field.name();
+                final Exceptional<Property> annotation = field.annotation(Property.class);
+                if (annotation.present()) {
+                    if (HartshornUtils.notEmpty(annotation.get().value())) name = annotation.get().value();
+                }
+
+                identifiers.add(new ColumnIdentifierImpl<>(name, field.type()));
             }
             DEFINITIONS.put(type, identifiers);
         }
         return new Table(DEFINITIONS.getOrDefault(type, HartshornUtils.emptyList()));
     }
 
-    public static <T> Table of(Class<T> type, T... defaultEntries) {
+    public static <T> Table of(final TypeContext<T> type, final T... defaultEntries) {
         final Table table = Table.of(type);
-        for (T entry : defaultEntries) {
+        for (final T entry : defaultEntries) {
             table.addRow(entry);
         }
         return table;
@@ -168,37 +172,31 @@ public class Table {
      *         when there are not enough fields present to satiate the column identifiers present in this
      *         table.
      */
-    public void addRow(Object object) {
+    public void addRow(final Object object) {
         if (object instanceof PersistentCapable persistentCapable) {
             this.addRow(persistentCapable.model());
             return;
         }
 
-        TableRow row = new TableRow();
-
-        for (Field field : object.getClass().getDeclaredFields()) {
-            field.setAccessible(true);
-            final Exceptional<Property> annotation = Reflect.annotation(field, Property.class);
+        final TableRow row = new TableRow();
+        final TypeContext<Object> type = TypeContext.of(object);
+        for (final FieldContext<?> field : type.fields()) {
+            final Exceptional<Property> annotation = field.annotation(Property.class);
             if (!(annotation.present() && annotation.get().ignore())) {
                 try {
-                    ColumnIdentifier columnIdentifier = null;
-
-                    // Try to grab the column identifier from the Identifier annotation of the field (if
-                    // present)
-                    Exceptional<Property> identifier = Reflect.annotation(field, Property.class);
-                    if (identifier.present() && !"".equals(identifier.get().value())) columnIdentifier = this.identifier(identifier.get().value());
+                    ColumnIdentifier columnIdentifier = annotation.map(property -> this.identifier(property.value())).orNull();
 
                     // If no Identifier annotation was present, try to grab it using the field name
-                    if (null == columnIdentifier) columnIdentifier = this.identifier(field.getName());
+                    if (null == columnIdentifier) columnIdentifier = this.identifier(field.name());
 
                     // No column identifier was found
                     if (null == columnIdentifier)
                         throw new UnknownIdentifierException(
-                                "Unknown column identifier for field named : " + field.getName());
+                                "Unknown column identifier for field named : " + field.name());
 
-                    row.add(columnIdentifier, field.get(object));
+                    row.add(columnIdentifier, field.get(object).orNull());
                 }
-                catch (IllegalAccessError | ClassCastException | IllegalAccessException e) {
+                catch (final IllegalAccessError | ClassCastException e) {
                     throw new IllegalArgumentException(e);
                 }
             }
@@ -211,8 +209,8 @@ public class Table {
     }
 
     @Nullable
-    public ColumnIdentifier identifier(@NonNls String fieldName) throws ClassCastException {
-        for (ColumnIdentifier columnIdentifier : this.identifiers) {
+    public ColumnIdentifier identifier(@NonNls final String fieldName) throws ClassCastException {
+        for (final ColumnIdentifier columnIdentifier : this.identifiers) {
             if (columnIdentifier.name().equalsIgnoreCase(fieldName)) {
                 return columnIdentifier;
             }
@@ -233,15 +231,15 @@ public class Table {
      *         When the amount of values does not meet the amount of column
      *         headers, or when the data type of the object does not match the expected type.
      */
-    public void addRow(Object... values) {
+    public void addRow(final Object... values) {
         if (values.length != this.identifiers.length)
             throw new IllegalArgumentException(
                     "Amount of given values does not meet amount of column headers");
 
-        TableRow row = new TableRow();
+        final TableRow row = new TableRow();
         for (int i = 0; i < this.identifiers.length; i++) {
-            ColumnIdentifier identifier = this.identifiers[i];
-            Object value = values[i];
+            final ColumnIdentifier identifier = this.identifiers[i];
+            final Object value = values[i];
             row.add(identifier, value);
         }
         this.rows.add(row);
@@ -268,24 +266,24 @@ public class Table {
      *         When a row causes a {@link IdentifierMismatchException}.
      *         Typically this is never thrown unless changes were made from another thread.
      */
-    public <T> Table where(ColumnIdentifier<T> column, T filter) {
+    public <T> Table where(final ColumnIdentifier<T> column, final T filter) {
         if (!this.hasColumn(column))
             throw new UnknownIdentifierException("Cannot look up a column that does not exist");
 
-        Collection<TableRow> filteredRows = HartshornUtils.emptyList();
-        for (TableRow row : this.rows) {
-            Exceptional<T> value = row.value(column);
+        final Collection<TableRow> filteredRows = HartshornUtils.emptyList();
+        for (final TableRow row : this.rows) {
+            final Exceptional<T> value = row.value(column);
             if (!value.present()) continue;
             if (value.get() == filter || value.get().equals(filter)) {
                 filteredRows.add(row);
             }
         }
-        Table lookupTable = new Table(this.identifiers);
-        for (TableRow filteredRow : filteredRows) {
+        final Table lookupTable = new Table(this.identifiers);
+        for (final TableRow filteredRow : filteredRows) {
             try {
                 lookupTable.addRow(filteredRow);
             }
-            catch (IdentifierMismatchException e) {
+            catch (final IdentifierMismatchException e) {
                 throw new IllegalArgumentException(e);
             }
         }
@@ -311,22 +309,22 @@ public class Table {
      * @throws IdentifierMismatchException
      *         When a identifier does not exist across both tables
      */
-    public <T> Table join(@NotNull Table otherTable, ColumnIdentifier<T> column, Merge merge)
+    public <T> Table join(@NotNull final Table otherTable, final ColumnIdentifier<T> column, final Merge merge)
             throws EmptyEntryException, IdentifierMismatchException {
         return this.join(otherTable, column, merge, false);
     }
 
     private void tryPopulateMissingEntry(
-            @NotNull Table otherTable,
-            boolean populateEmptyEntries,
-            Iterable<ColumnIdentifier<?>> mergedIdentifiers,
-            Table joinedTable,
-            TableRow row
+            @NotNull final Table otherTable,
+            final boolean populateEmptyEntries,
+            final Iterable<ColumnIdentifier<?>> mergedIdentifiers,
+            final Table joinedTable,
+            final TableRow row
     ) throws IdentifierMismatchException {
         if (!Arrays.equals(this.identifiers(), otherTable.identifiers())) {
             if (populateEmptyEntries) {
-                for (ColumnIdentifier<?> identifier : mergedIdentifiers) {
-                    Exceptional<?> exceptionalValue = row.value(identifier);
+                for (final ColumnIdentifier<?> identifier : mergedIdentifiers) {
+                    final Exceptional<?> exceptionalValue = row.value(identifier);
                     exceptionalValue
                             .present(value -> row.add(identifier, value))
                             .absent(() -> row.add(identifier, null));
@@ -369,26 +367,26 @@ public class Table {
      *         When a identifier does not exist across both tables
      */
     public <T> Table join(
-            @NotNull Table otherTable,
-            ColumnIdentifier<T> column,
-            Merge merge,
-            boolean populateEmptyEntries
+            @NotNull final Table otherTable,
+            final ColumnIdentifier<T> column,
+            final Merge merge,
+            final boolean populateEmptyEntries
     ) throws EmptyEntryException, IdentifierMismatchException {
         if (this.hasColumn(column) && otherTable.hasColumn(column)) {
 
-            List<ColumnIdentifier<?>> mergedIdentifiers = HartshornUtils.emptyList();
-            for (ColumnIdentifier<?> identifier : HartshornUtils.addAll(this.identifiers(), otherTable.identifiers())) {
+            final List<ColumnIdentifier<?>> mergedIdentifiers = HartshornUtils.emptyList();
+            for (final ColumnIdentifier<?> identifier : HartshornUtils.addAll(this.identifiers(), otherTable.identifiers())) {
                 if (mergedIdentifiers.contains(identifier)) continue;
                 mergedIdentifiers.add(identifier);
             }
 
-            Table joinedTable = new Table(mergedIdentifiers.toArray(new ColumnIdentifier<?>[0]));
-            for (TableRow row : this.rows()) {
+            final Table joinedTable = new Table(mergedIdentifiers.toArray(new ColumnIdentifier<?>[0]));
+            for (final TableRow row : this.rows()) {
                 try {
                     this.populateMatchingRows(
                             otherTable, column, merge, populateEmptyEntries, joinedTable, row);
                 }
-                catch (IllegalArgumentException e) {
+                catch (final IllegalArgumentException e) {
                     continue;
                 }
             }
@@ -397,7 +395,7 @@ public class Table {
             It is possible not all foreign rows had a matching value, if that is the case we will add them here if
             possible (if the foreign table has no additional identifiers which we cannot populate here.
             */
-            for (TableRow row : otherTable.rows())
+            for (final TableRow row : otherTable.rows())
                 this.populateMissingEntries(otherTable, column, populateEmptyEntries, mergedIdentifiers, joinedTable, row);
 
             return joinedTable;
@@ -406,40 +404,40 @@ public class Table {
     }
 
     private <T> void populateMatchingRows(
-            @NotNull Table otherTable,
-            ColumnIdentifier<T> column,
-            Merge merge,
-            boolean populateEmptyEntries,
-            Table joinedTable,
-            TableRow row
+            @NotNull final Table otherTable,
+            final ColumnIdentifier<T> column,
+            final Merge merge,
+            final boolean populateEmptyEntries,
+            final Table joinedTable,
+            final TableRow row
     ) throws EmptyEntryException, IdentifierMismatchException {
-        List<TableRow> matchingRows = Table.matching(row, otherTable, column);
+        final List<TableRow> matchingRows = Table.matching(row, otherTable, column);
 
-        TableRow joinedRow = new TableRow();
-        for (ColumnIdentifier<?> identifier : this.identifiers())
+        final TableRow joinedRow = new TableRow();
+        for (final ColumnIdentifier<?> identifier : this.identifiers())
             joinedRow.add(identifier, row.value(identifier).get());
 
-        for (ColumnIdentifier<?> identifier : otherTable.identifiers())
+        for (final ColumnIdentifier<?> identifier : otherTable.identifiers())
             Table.populateAtColumn(merge, populateEmptyEntries, matchingRows, joinedRow, identifier);
 
         joinedTable.addRow(joinedRow);
     }
 
     private <T> void populateMissingEntries(
-            @NotNull Table otherTable,
-            ColumnIdentifier<T> column,
-            boolean populateEmptyEntries,
-            Iterable<ColumnIdentifier<?>> mergedIdentifiers,
-            Table joinedTable,
-            TableRow row
+            @NotNull final Table otherTable,
+            final ColumnIdentifier<T> column,
+            final boolean populateEmptyEntries,
+            final Iterable<ColumnIdentifier<?>> mergedIdentifiers,
+            final Table joinedTable,
+            final TableRow row
     ) {
         try {
-            List<TableRow> matchingRows = Table.matching(row, joinedTable, column);
+            final List<TableRow> matchingRows = Table.matching(row, joinedTable, column);
             if (matchingRows.isEmpty())
                 this.tryPopulateMissingEntry(
                         otherTable, populateEmptyEntries, mergedIdentifiers, joinedTable, row);
         }
-        catch (IdentifierMismatchException ignored) {
+        catch (final IdentifierMismatchException ignored) {
         }
     }
 
@@ -452,12 +450,12 @@ public class Table {
      *
      * @return Return the new table with only the selected columns
      */
-    public Table select(ColumnIdentifier<?>... columns) {
-        Table table = new Table(columns);
+    public Table select(final ColumnIdentifier<?>... columns) {
+        final Table table = new Table(columns);
 
         this.rows.forEach(row -> {
-            TableRow tmpRow = new TableRow();
-            for (ColumnIdentifier<?> column : columns) {
+            final TableRow tmpRow = new TableRow();
+            for (final ColumnIdentifier<?> column : columns) {
                 row.columns().stream()
                         .filter(column::equals)
                         .forEach(tCol -> tmpRow.add(column, row.value(column).get()));
@@ -465,7 +463,7 @@ public class Table {
             try {
                 table.addRow(tmpRow);
             }
-            catch (IdentifierMismatchException e) {
+            catch (final IdentifierMismatchException e) {
                 throw new IllegalArgumentException(e);
             }
         });
@@ -485,14 +483,14 @@ public class Table {
      *         When there is a column mismatch between the row and the
      *         table
      */
-    public void addRow(TableRow row) throws IdentifierMismatchException {
+    public void addRow(final TableRow row) throws IdentifierMismatchException {
         // Check if the row has the same amount of column as this table
         if (row.columns().size() != this.identifiers.length)
             throw new IdentifierMismatchException(
                     "The row does not have the same amount of columns as the table");
 
         // Check if the row has the same columns with the same order
-        for (ColumnIdentifier<?> column : row.columns()) {
+        for (final ColumnIdentifier<?> column : row.columns()) {
             if (!this.hasColumn(column)) {
                 throw new IdentifierMismatchException(
                         "Column '" + column.name() + "' is not contained in table");
@@ -510,8 +508,8 @@ public class Table {
      *
      * @return Whether or not the column is present
      */
-    public boolean hasColumn(ColumnIdentifier<?> column) {
-        for (ColumnIdentifier<?> identifier : this.identifiers) {
+    public boolean hasColumn(final ColumnIdentifier<?> column) {
+        for (final ColumnIdentifier<?> identifier : this.identifiers) {
             if (identifier == column || identifier.equals(column)) return true;
         }
         return false;
@@ -563,18 +561,18 @@ public class Table {
      *         When the table does not contain the given column, or the data
      *         type is not a {@link Comparable}
      */
-    public <T extends Comparable> void orderBy(ColumnIdentifier<T> column, Order order) {
+    public <T extends Comparable> void orderBy(final ColumnIdentifier<T> column, final Order order) {
         if (!this.hasColumn(column))
             throw new IllegalArgumentException(
                     "Table does not contains column named : " + column.name());
 
-        if (!Reflect.assigns(Comparable.class, column.type()))
+        if (!column.type().childOf(Comparable.class))
             throw new IllegalArgumentException(
                     "Column does not contain a comparable data type : " + column.name());
 
         this.rows.sort((r1, r2) -> {
-            Comparable c1 = r1.value(column).get();
-            Comparable c2 = r2.value(column).get();
+            final Comparable c1 = r1.value(column).get();
+            final Comparable c2 = r2.value(column).get();
             return Order.ASC == order ? c1.compareTo(c2) : c2.compareTo(c1);
         });
     }
@@ -587,8 +585,8 @@ public class Table {
      *
      * @return Whether or not the row is present
      */
-    public boolean hasRow(TableRow row) {
-        for (TableRow tableRow : this.rows()) {
+    public boolean hasRow(final TableRow row) {
+        for (final TableRow tableRow : this.rows()) {
             if (tableRow == row) {
                 return true;
             }
@@ -605,50 +603,46 @@ public class Table {
         return HartshornUtils.asUnmodifiableList(this.rows);
     }
 
-    public <T extends PersistentCapable<M>, M extends PersistentModel<T>> List<T> restore(Class<M> type) {
+    public <T extends PersistentCapable<M>, M extends PersistentModel<T>> List<T> restore(final ApplicationContext context, final TypeContext<M> type) {
         final List<M> rows = this.rows(type);
-        return rows.stream().map(PersistentModel::restore).toList();
+        return rows.stream().map(model -> model.restore(context)).toList();
     }
 
-    public <T> List<T> rows(Class<T> type) {
-        List<T> items = HartshornUtils.emptyList();
+    public <T> List<T> rows(final TypeContext<T> type) {
+        final List<T> items = HartshornUtils.emptyList();
 
-        try {
-            final Constructor<T> constructor = type.getConstructor();
-            constructor.setAccessible(true);
-            for (TableRow row : this.rows) {
-                try {
-                    final T instance = constructor.newInstance();
-                    final Map<String, Object> data = row.data().entrySet().stream().collect(Collectors.toMap(e -> e.getKey().name(), Entry::getValue));
-                    items.add(Reflect.populate(instance, data));
-                }
-                catch (ApplicationException e) {
-                    Hartshorn.log().warn("Skipping row " + row + ": " + e.getMessage());
-                }
-            }
+        final Exceptional<ConstructorContext<T>> constructor = type.defaultConstructor();
+        if (constructor.absent()) {
+            Hartshorn.log().warn("Could not convert rows to type " + type.name() + " as no base constructor exists");
+            return items;
         }
-        catch (InvocationTargetException | NoSuchMethodException | InstantiationException | IllegalAccessException e) {
-            Hartshorn.log().warn("Could not convert rows to type " + type.getSimpleName() + " as no base constructor exists");
+
+        for (final TableRow row : this.rows) {
+            final Exceptional<T> instance = constructor.get().createInstance();
+            if (instance.present()) {
+                final Map<String, Object> data = row.data().entrySet().stream().collect(Collectors.toMap(e -> e.getKey().name(), Entry::getValue));
+                type.populate(instance.get(), data);
+            }
         }
         return items;
     }
 
-    public void forEach(Consumer<TableRow> consumer) {
+    public void forEach(final Consumer<TableRow> consumer) {
         this.rows().forEach(consumer);
     }
 
     @Override
     public String toString() {
-        List<List<String>> rows = HartshornUtils.emptyList();
-        List<String> headers = HartshornUtils.emptyList();
-        for (ColumnIdentifier<?> identifier : this.identifiers) {
+        final List<List<String>> rows = HartshornUtils.emptyList();
+        final List<String> headers = HartshornUtils.emptyList();
+        for (final ColumnIdentifier<?> identifier : this.identifiers) {
             headers.add(identifier.name());
         }
         rows.add(headers);
-        for (TableRow row : this.rows) {
-            List<String> rowValues = HartshornUtils.emptyList();
+        for (final TableRow row : this.rows) {
+            final List<String> rowValues = HartshornUtils.emptyList();
             // In order of identifiers to ensure values are ordered
-            for (ColumnIdentifier<?> identifier : this.identifiers) {
+            for (final ColumnIdentifier<?> identifier : this.identifiers) {
                 rowValues.add(String.valueOf(row.value(identifier).orNull()));
             }
             rows.add(rowValues);

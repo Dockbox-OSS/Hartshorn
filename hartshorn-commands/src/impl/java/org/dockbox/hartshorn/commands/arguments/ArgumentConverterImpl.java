@@ -20,6 +20,7 @@ package org.dockbox.hartshorn.commands.arguments;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.commands.service.CommandParameter;
+import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.util.HartshornUtils;
 
 import java.util.Collection;
@@ -38,7 +39,7 @@ public final class ArgumentConverterImpl<T> extends DefaultArgumentConverter<T> 
     private final BiFunction<CommandSource, String, Exceptional<T>> converter;
     private final BiFunction<CommandSource, String, Collection<String>> suggestionProvider;
 
-    private ArgumentConverterImpl(final Class<T> type, final int size, final BiFunction<CommandSource, String, Exceptional<T>> converter, final BiFunction<CommandSource, String, Collection<String>> suggestionProvider, final String... keys) {
+    private ArgumentConverterImpl(final TypeContext<T> type, final int size, final BiFunction<CommandSource, String, Exceptional<T>> converter, final BiFunction<CommandSource, String, Collection<String>> suggestionProvider, final String... keys) {
         super(type, size, keys);
         this.converter = converter;
         this.suggestionProvider = suggestionProvider;
@@ -60,7 +61,7 @@ public final class ArgumentConverterImpl<T> extends DefaultArgumentConverter<T> 
      * @return A new {@link CommandValueConverterBuilder} with the provided type and keys.
      */
     public static <T> CommandValueConverterBuilder<T> builder(final Class<T> type, final String... keys) {
-        return new CommandValueConverterBuilder<>(type, keys);
+        return new CommandValueConverterBuilder<>(TypeContext.of(type), keys);
     }    @Override
     public Exceptional<T> convert(final CommandSource source, final CommandParameter<String> value) {
         return this.convert(source, value.value());
@@ -74,12 +75,12 @@ public final class ArgumentConverterImpl<T> extends DefaultArgumentConverter<T> 
      */
     public static final class CommandValueConverterBuilder<T> {
         private final String[] keys;
-        private final Class<T> type;
+        private final TypeContext<T> type;
         private int size;
         private BiFunction<CommandSource, String, Exceptional<T>> converter = (source, in) -> Exceptional.empty();
         private BiFunction<CommandSource, String, Collection<String>> suggestionProvider = (source, in) -> HartshornUtils.emptyList();
 
-        private CommandValueConverterBuilder(final Class<T> type, final String... keys) {
+        private CommandValueConverterBuilder(final TypeContext<T> type, final String... keys) {
             this.type = type;
             this.keys = keys;
             this.size = 1;

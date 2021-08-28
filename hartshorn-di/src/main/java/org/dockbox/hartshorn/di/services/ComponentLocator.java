@@ -19,8 +19,8 @@ package org.dockbox.hartshorn.di.services;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.di.ComponentType;
+import org.dockbox.hartshorn.di.context.element.TypeContext;
 
-import java.lang.annotation.Annotation;
 import java.util.Collection;
 
 public interface ComponentLocator {
@@ -31,7 +31,5 @@ public interface ComponentLocator {
 
     Collection<ComponentContainer> containers(ComponentType functional);
 
-    Exceptional<ComponentContainer> container(Class<?> type);
-
-    Collection<Class<? extends Annotation>> decorators();
+    Exceptional<ComponentContainer> container(TypeContext<?> type);
 }

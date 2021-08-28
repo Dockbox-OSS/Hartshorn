@@ -17,6 +17,7 @@
 
 package org.dockbox.hartshorn.di;
 
+import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.di.inject.Binder;
 import org.dockbox.hartshorn.di.inject.DelegatedBinder;
 
@@ -26,7 +27,7 @@ public abstract class InjectConfiguration implements DelegatedBinder {
 
     @Setter private Binder binder;
 
-    public abstract void collect();
+    public abstract void collect(ApplicationContext context);
 
     public final Binder binder() {
         if (this.binder == null) throw new IllegalStateException("No binder provided!");

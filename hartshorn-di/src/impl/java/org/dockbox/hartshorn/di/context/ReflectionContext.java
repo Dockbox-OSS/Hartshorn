@@ -17,8 +17,6 @@
 
 package org.dockbox.hartshorn.di.context;
 
-import org.dockbox.hartshorn.util.PrefixContext;
-
 public class ReflectionContext extends PrefixContext implements DelegatingContext<DefaultContext> {
 
     private final DefaultContext context;

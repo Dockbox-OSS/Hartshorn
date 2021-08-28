@@ -17,16 +17,15 @@
 
 package org.dockbox.hartshorn.di.services;
 
+import org.dockbox.hartshorn.di.Activatable;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
+import org.dockbox.hartshorn.di.context.element.TypeContext;
 
 import java.lang.annotation.Annotation;
 
-public interface ServiceProcessor<A extends Annotation> {
+public interface ServiceProcessor<A extends Annotation> extends Activatable<A> {
 
-    boolean preconditions(Class<?> type);
+    boolean preconditions(ApplicationContext context, TypeContext<?> type);
 
-    <T> void process(ApplicationContext context, Class<T> type);
-
-    Class<A> activator();
-
+    <T> void process(ApplicationContext context, TypeContext<T> type);
 }

@@ -17,11 +17,12 @@
 
 package org.dockbox.hartshorn.di;
 
+import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.di.properties.Attribute;
 
 @FunctionalInterface
 public interface InjectFunction<T> {
 
-    T apply(T instance, Class<T> type, Attribute<?>... properties);
+    T apply(T instance, TypeContext<T> type, Attribute<?>... properties);
 
 }

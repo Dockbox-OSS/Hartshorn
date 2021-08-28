@@ -18,9 +18,9 @@
 package org.dockbox.hartshorn.server.minecraft.packets.real;
 
 import org.dockbox.hartshorn.di.annotations.inject.Required;
+import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.server.minecraft.entities.Entity;
 import org.dockbox.hartshorn.server.minecraft.packets.Packet;
-import org.dockbox.hartshorn.util.Reflect;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -34,7 +34,7 @@ public abstract class SpawnEntityPacket extends Packet {
     private Entity entity;
 
     @Override
-    protected Class<?> internalGetPacketType() {
-        return Reflect.lookup("net.minecraft.network.play.server.SPacketSpawnGlobalEntity");
+    protected TypeContext<?> internalGetPacketType() {
+        return TypeContext.lookup("net.minecraft.network.play.server.SPacketSpawnGlobalEntity");
     }
 }

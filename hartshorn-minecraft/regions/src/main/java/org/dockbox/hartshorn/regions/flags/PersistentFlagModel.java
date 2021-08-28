@@ -17,12 +17,12 @@
 
 package org.dockbox.hartshorn.regions.flags;
 
-import org.dockbox.hartshorn.api.Hartshorn;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
+import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.i18n.common.Language;
 import org.dockbox.hartshorn.i18n.common.ResourceEntry;
 import org.dockbox.hartshorn.i18n.common.ResourceEntryModel;
 import org.dockbox.hartshorn.persistence.PersistentModel;
-import org.dockbox.hartshorn.util.Reflect;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -43,7 +43,7 @@ public class PersistentFlagModel {
     private String descriptionLanguage;
     private String type;
 
-    public PersistentFlagModel(String id, ResourceEntry description, String type) {
+    public PersistentFlagModel(final String id, final ResourceEntry description, final String type) {
         this.id = id;
         this.descriptionKey = description.key();
         this.descriptionFallback = description.asString();
@@ -51,12 +51,12 @@ public class PersistentFlagModel {
         this.type = type;
     }
 
-    public RegionFlag<?> restore() {
-        final Class<?> flagType = Reflect.lookup(this.type);
+    public RegionFlag<?> restore(final ApplicationContext context) {
+        final TypeContext<?> flagType = TypeContext.lookup(this.type);
 
-        if (Reflect.assigns(RegionFlag.class, flagType)) {
+        if (flagType.childOf(RegionFlag.class)) {
             final PersistentModel<ResourceEntry> description = new ResourceEntryModel(this.descriptionKey, this.descriptionFallback, Language.valueOf(this.descriptionLanguage));
-            return (RegionFlag<?>) Hartshorn.context().get(flagType, this.id, description.restore());
+            return (RegionFlag<?>) context.get(flagType, this.id, description.restore(context));
         }
         return null;
     }
@@ -67,7 +67,7 @@ public class PersistentFlagModel {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) return true;
         if (!(o instanceof PersistentFlagModel that)) return false;
         return this.id.equals(that.id);

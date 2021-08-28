@@ -17,12 +17,13 @@
 
 package org.dockbox.hartshorn.proxy.service;
 
+import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.di.context.DefaultContext;
+import org.dockbox.hartshorn.di.context.element.MethodContext;
+import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.di.properties.Attribute;
-import org.dockbox.hartshorn.util.Reflect;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
 
 import lombok.Getter;
 
@@ -30,23 +31,21 @@ import lombok.Getter;
 public class MethodProxyContextImpl<T> extends DefaultContext implements MethodProxyContext<T> {
 
     private final T instance;
-    private final Class<T> type;
-    private final Method method;
+    private final TypeContext<T> type;
+    private final MethodContext<?, T> method;
     private final Attribute<?>[] properties;
-    private final Annotation[] annotations;
-    private final Class<?> returnType;
+    private final ApplicationContext context;
 
-    public MethodProxyContextImpl(final T instance, final Class<T> type, final Method method, final Attribute<?>[] properties) {
+    public MethodProxyContextImpl(final ApplicationContext context, final T instance, final TypeContext<T> type, final MethodContext<?, T> method, final Attribute<?>[] properties) {
+        this.context = context;
         this.instance = instance;
         this.type = type;
         this.method = method;
         this.properties = properties;
-        this.annotations = method.getAnnotations();
-        this.returnType = method.getReturnType();
     }
 
     @Override
     public <A extends Annotation> A annotation(final Class<A> annotation) {
-        return Reflect.annotation(this.method, annotation).orNull();
+        return this.method.annotation(annotation).orNull();
     }
 }

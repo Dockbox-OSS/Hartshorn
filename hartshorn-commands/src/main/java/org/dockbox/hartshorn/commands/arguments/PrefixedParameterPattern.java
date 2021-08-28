@@ -20,8 +20,8 @@ package org.dockbox.hartshorn.commands.arguments;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.commands.annotations.Parameter;
+import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.i18n.common.ResourceEntry;
-import org.dockbox.hartshorn.util.Reflect;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,11 +33,11 @@ import java.util.List;
 public abstract class PrefixedParameterPattern implements CustomParameterPattern {
 
     @Override
-    public <T> Exceptional<Boolean> preconditionsMatch(Class<T> type, CommandSource source, String raw) {
+    public <T> Exceptional<Boolean> preconditionsMatch(final TypeContext<T> type, final CommandSource source, final String raw) {
         return Exceptional.of(() -> {
                     String prefix = this.prefix() + "";
                     if (this.requiresTypeName()) {
-                        String parameterName = Reflect.annotation(type, Parameter.class).get().value();
+                        final String parameterName = type.annotation(Parameter.class).get().value();
                         prefix = this.prefix() + parameterName;
                     }
                     return raw.startsWith(prefix);
@@ -49,12 +49,12 @@ public abstract class PrefixedParameterPattern implements CustomParameterPattern
     }
 
     @Override
-    public List<String> splitArguments(String raw) {
-        String group = raw.substring(raw.indexOf(this.opening()));
-        List<String> arguments = new ArrayList<>();
+    public List<String> splitArguments(final String raw) {
+        final String group = raw.substring(raw.indexOf(this.opening()));
+        final List<String> arguments = new ArrayList<>();
         StringBuilder current = new StringBuilder();
         int openCount = 0;
-        for (char c : group.toCharArray()) {
+        for (final char c : group.toCharArray()) {
             current.append(c);
             if (this.opening() == c) {
                 openCount++;
@@ -62,7 +62,7 @@ public abstract class PrefixedParameterPattern implements CustomParameterPattern
             else if (this.closing() == c) {
                 openCount--;
                 if (0 == openCount) {
-                    String out = current.toString();
+                    final String out = current.toString();
                     arguments.add(out.substring(1, out.length() - 1));
                     current = new StringBuilder();
                 }
@@ -72,7 +72,7 @@ public abstract class PrefixedParameterPattern implements CustomParameterPattern
     }
 
     @Override
-    public Exceptional<String> parseIdentifier(String argument) {
+    public Exceptional<String> parseIdentifier(final String argument) {
         return Exceptional.of(() -> argument.startsWith(this.prefix() + ""),
                 () -> argument.substring(1, argument.indexOf(this.opening())),
                 () -> new IllegalArgumentException(this.wrongFormat().asString())

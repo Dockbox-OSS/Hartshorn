@@ -28,7 +28,7 @@ public abstract class CancellableRegionEvent extends RegionEvent implements Canc
 
     @Getter @Setter private boolean cancelled = false;
 
-    protected CancellableRegionEvent(Region region) {
+    protected CancellableRegionEvent(final Region region) {
         super(region);
     }
 

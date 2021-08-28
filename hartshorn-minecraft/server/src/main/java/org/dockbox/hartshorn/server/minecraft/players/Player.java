@@ -26,6 +26,7 @@ import org.dockbox.hartshorn.api.keys.Keys;
 import org.dockbox.hartshorn.api.keys.PersistentDataHolder;
 import org.dockbox.hartshorn.api.keys.PersistentDataKey;
 import org.dockbox.hartshorn.commands.CommandSource;
+import org.dockbox.hartshorn.di.ContextCarrier;
 import org.dockbox.hartshorn.i18n.PermissionHolder;
 import org.dockbox.hartshorn.i18n.common.Language;
 import org.dockbox.hartshorn.i18n.permissions.Permission;
@@ -44,13 +45,13 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
-public abstract class Player extends AbstractIdentifiable implements CommandSource, PermissionHolder, Locatable, InventoryHolder, PacketReceiver, PersistentDataHolder, Entity {
+public abstract class Player extends AbstractIdentifiable implements CommandSource, PermissionHolder, Locatable, InventoryHolder, PacketReceiver, PersistentDataHolder, Entity, ContextCarrier {
 
     public static final PersistentDataKey<Integer> LANGUAGE = Keys.persistent(Integer.class, "HartshornPlayerLanguage", Hartshorn.class);
     // An empty context targets only global permissions
     private static final PermissionContext GLOBAL = PermissionContext.builder().build();
 
-    protected Player(@NotNull UUID uniqueId, @NotNull String name) {
+    protected Player(@NotNull final UUID uniqueId, @NotNull final String name) {
         super(uniqueId, name);
     }
 
@@ -66,7 +67,7 @@ public abstract class Player extends AbstractIdentifiable implements CommandSour
     }
 
     @Override
-    public boolean summon(Location location) {
+    public boolean summon(final Location location) {
         throw new UnsupportedOperationException("Cannot re-summon players");
     }
 
@@ -98,47 +99,47 @@ public abstract class Player extends AbstractIdentifiable implements CommandSour
     }
 
     @Override
-    public boolean hasAnyPermission(@NotNull String @NotNull ... permissions) {
-        for (String permission : permissions) {
+    public boolean hasAnyPermission(@NotNull final String @NotNull ... permissions) {
+        for (final String permission : permissions) {
             if (this.hasPermission(permission)) return true;
         }
         return false;
     }
 
     @Override
-    public boolean hasAllPermissions(@NotNull String @NotNull ... permissions) {
-        for (String permission : permissions) {
+    public boolean hasAllPermissions(@NotNull final String @NotNull ... permissions) {
+        for (final String permission : permissions) {
             if (!this.hasPermission(permission)) return false;
         }
         return true;
     }
 
     @Override
-    public boolean hasAnyPermission(@NotNull Permission @NotNull ... permissions) {
-        for (Permission permission : permissions) {
+    public boolean hasAnyPermission(@NotNull final Permission @NotNull ... permissions) {
+        for (final Permission permission : permissions) {
             if (this.hasPermission(permission)) return true;
         }
         return false;
     }
 
     @Override
-    public boolean hasAllPermissions(@NotNull Permission @NotNull ... permissions) {
-        for (Permission permission : permissions) {
+    public boolean hasAllPermissions(@NotNull final Permission @NotNull ... permissions) {
+        for (final Permission permission : permissions) {
             if (!this.hasPermission(permission)) return false;
         }
         return true;
     }
 
     @Override
-    public void permissions(Tristate state, @NotNull String @NotNull ... permissions) {
-        for (String permission : permissions) {
+    public void permissions(final Tristate state, @NotNull final String @NotNull ... permissions) {
+        for (final String permission : permissions) {
             this.permission(permission, state);
         }
     }
 
     @Override
-    public void permissions(Tristate state, @NotNull Permission @NotNull ... permissions) {
-        for (Permission permission : permissions) {
+    public void permissions(final Tristate state, @NotNull final Permission @NotNull ... permissions) {
+        for (final Permission permission : permissions) {
             this.permission(permission, state);
         }
     }
@@ -149,7 +150,7 @@ public abstract class Player extends AbstractIdentifiable implements CommandSour
     }
 
     @Override
-    public void language(Language language) {
+    public void language(final Language language) {
         this.set(LANGUAGE, language.ordinal());
     }
 
@@ -166,7 +167,7 @@ public abstract class Player extends AbstractIdentifiable implements CommandSour
 
     @SuppressWarnings("OverlyStrongTypeCast")
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (null == obj) return false;
         if (obj instanceof Player) return this.uniqueId().equals(((Player) obj).uniqueId());
         return false;

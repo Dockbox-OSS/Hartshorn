@@ -29,7 +29,6 @@ import org.dockbox.hartshorn.cache.context.CacheMethodContextImpl;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.proxy.handle.ProxyFunction;
 import org.dockbox.hartshorn.proxy.service.MethodProxyContext;
-import org.dockbox.hartshorn.util.Reflect;
 
 import java.util.Collection;
 import java.util.List;
@@ -42,9 +41,9 @@ import java.util.List;
 public class CachedMethodModifier extends CacheServiceModifier<Cached> {
 
     @Override
-    protected <T, R> ProxyFunction<T, R> process(ApplicationContext context, MethodProxyContext<T> methodContext, CacheContext cacheContext) {
+    protected <T, R> ProxyFunction<T, R> process(final ApplicationContext context, final MethodProxyContext<T> methodContext, final CacheContext cacheContext) {
         return (instance, args, proxyContext) -> {
-            Cache<Object> cache = cacheContext.cache();
+            final Cache<Object> cache = cacheContext.cache();
 
             final Exceptional<Collection<Object>> content = cache.get();
 
@@ -55,7 +54,7 @@ public class CachedMethodModifier extends CacheServiceModifier<Cached> {
                     cache.populate(out);
                     return out;
                 }
-                catch (ApplicationException e) {
+                catch (final ApplicationException e) {
                     Except.handle(e);
                     return null;
                 }
@@ -64,14 +63,14 @@ public class CachedMethodModifier extends CacheServiceModifier<Cached> {
     }
 
     @Override
-    protected CacheMethodContext context(MethodProxyContext<?> context) {
+    protected CacheMethodContext context(final MethodProxyContext<?> context) {
         final Cached cached = context.annotation(Cached.class);
         return new CacheMethodContextImpl(cached.manager(), cached.value(), Expiration.of(cached.expires()));
     }
 
     @Override
-    public <T> boolean preconditions(ApplicationContext context, MethodProxyContext<T> methodContext) {
-        return Reflect.assigns(Collection.class, methodContext.returnType());
+    public <T> boolean preconditions(final ApplicationContext context, final MethodProxyContext<T> methodContext) {
+        return methodContext.method().returnType().childOf(Collection.class);
     }
 
     @Override

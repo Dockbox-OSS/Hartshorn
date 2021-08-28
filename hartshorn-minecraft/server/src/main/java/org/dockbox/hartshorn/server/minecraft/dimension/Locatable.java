@@ -18,17 +18,18 @@
 package org.dockbox.hartshorn.server.minecraft.dimension;
 
 import org.dockbox.hartshorn.api.domain.Subject;
+import org.dockbox.hartshorn.di.ContextCarrier;
 import org.dockbox.hartshorn.server.minecraft.dimension.position.Location;
 import org.dockbox.hartshorn.server.minecraft.dimension.world.World;
 
-public interface Locatable extends Subject {
+public interface Locatable extends Subject, ContextCarrier {
 
     Location location();
 
     World world();
 
-    default boolean location(World world) {
-        return this.location(Location.of(world));
+    default boolean location(final World world) {
+        return this.location(Location.of(this.applicationContext(), world));
     }
 
     boolean location(Location location);

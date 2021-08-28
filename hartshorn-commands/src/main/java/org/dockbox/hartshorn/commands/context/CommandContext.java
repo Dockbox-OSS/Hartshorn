@@ -20,6 +20,7 @@ package org.dockbox.hartshorn.commands.context;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.commands.service.CommandParameter;
+import org.dockbox.hartshorn.di.ContextCarrier;
 import org.dockbox.hartshorn.i18n.permissions.Permission;
 import org.jetbrains.annotations.UnmodifiableView;
 
@@ -30,7 +31,7 @@ import java.util.List;
  * command execution. This context provides access to parsed arguments, flags and other
  * related command context.
  */
-public interface CommandContext extends ParserContext {
+public interface CommandContext extends ParserContext, ContextCarrier {
 
     /**
      * Gets the argument or flag associated with the given <code>key</code>, if it exists. If

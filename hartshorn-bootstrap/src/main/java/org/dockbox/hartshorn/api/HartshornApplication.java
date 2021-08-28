@@ -28,8 +28,9 @@ import org.dockbox.hartshorn.di.Modifier;
 import org.dockbox.hartshorn.di.annotations.activate.Activator;
 import org.dockbox.hartshorn.di.annotations.inject.InjectConfig;
 import org.dockbox.hartshorn.di.annotations.inject.InjectPhase;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
+import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.util.HartshornUtils;
-import org.dockbox.hartshorn.util.Reflect;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -62,8 +63,8 @@ public class HartshornApplication {
      * @param modifiers
      *         The modifiers to use when bootstrapping
      */
-    public static void create(final Class<?> activator, final Modifier... modifiers) {
-        lazy(activator, modifiers).run();
+    public static ApplicationContext create(final Class<?> activator, final Modifier... modifiers) {
+        return lazy(activator, modifiers).load();
     }
 
     /**
@@ -79,7 +80,7 @@ public class HartshornApplication {
      *
      * @return A {@link Runnable} to initialize the application
      */
-    public static Runnable lazy(final Class<?> activator, final Modifier... modifiers) {
+    public static HartshornLoader lazy(final Class<?> activator, final Modifier... modifiers) {
         try {
             Hartshorn.log().info("Starting " + Hartshorn.PROJECT_NAME + " with activator " + activator.getSimpleName());
             final long start = System.currentTimeMillis();
@@ -121,6 +122,7 @@ public class HartshornApplication {
                 injectableBootstrap.init();
                 final long initTime = System.currentTimeMillis() - initStart;
                 Hartshorn.log().info("Started " + Hartshorn.PROJECT_NAME + " in " + (creationTime + initTime) + "ms (" + creationTime + "ms creation, " + initTime + "ms init)");
+                return injectableBootstrap.context();
             };
         }
         catch (final InvocationTargetException | NoSuchMethodException | InstantiationException | IllegalAccessException e) {
@@ -132,11 +134,11 @@ public class HartshornApplication {
     }
 
     private static Activator verifyActivator(final Class<?> activator) {
-        final Exceptional<Activator> annotation = Reflect.annotation(activator, Activator.class);
+        final Exceptional<Activator> annotation = TypeContext.of(activator).annotation(Activator.class);
         if (annotation.absent())
             throw new IllegalArgumentException("Application type should be decorated with @Activator");
 
-        if (Reflect.isAbstract(activator))
+        if (TypeContext.of(activator).isAbstract())
             throw new IllegalArgumentException("Bootstrap type cannot be abstract, got " + activator.getSimpleName());
 
         return annotation.get();

@@ -52,29 +52,34 @@ public abstract class PaginatedPaneBuilder extends DefaultPaneBuilder<PaginatedP
     private final Collection<Element> elements = HartshornUtils.emptyList();
 
     public static final Function<PaginatedPane, Element> FIRST = paginated -> Element.of(
-            Item.of(ItemTypes.PAPER).displayName(Text.of("First")).amount(1),
+            paginated.applicationContext(),
+            Item.of(paginated.applicationContext(), ItemTypes.PAPER).displayName(Text.of("First")).amount(1),
             ctx -> handle(ctx, pane -> 0)
     );
     public static final Function<PaginatedPane, Element> PREVIOUS = paginated -> {
         final int previous = Math.max(paginated.page() - 1, 0);
         return Element.of(
-                Item.of(ItemTypes.PAPER).displayName(Text.of("Previous")).amount(previous + 1),
+                paginated.applicationContext(),
+                Item.of(paginated.applicationContext(), ItemTypes.PAPER).displayName(Text.of("Previous")).amount(previous + 1),
                 ctx -> handle(ctx, pane -> previous)
         );
     };
     public static final Function<PaginatedPane, Element> CURRENT = paginated -> Element.of(
-            Item.of(ItemTypes.PAPER).displayName(Text.of("Current")).amount(paginated.page() + 1),
+            paginated.applicationContext(),
+            Item.of(paginated.applicationContext(), ItemTypes.PAPER).displayName(Text.of("Current")).amount(paginated.page() + 1),
             ctx -> handle(ctx, PaginatedPane::page)
     );
     public static final Function<PaginatedPane, Element> NEXT = paginated -> {
         final int next = Math.min(paginated.page() + 1, paginated.pages() - 1);
         return Element.of(
-                Item.of(ItemTypes.PAPER).displayName(Text.of("Next")).amount(next + 1),
+                paginated.applicationContext(),
+                Item.of(paginated.applicationContext(), ItemTypes.PAPER).displayName(Text.of("Next")).amount(next + 1),
                 ctx -> handle(ctx, pane -> next)
         );
     };
     public static final Function<PaginatedPane, Element> LAST = paginated -> Element.of(
-            Item.of(ItemTypes.PAPER).displayName(Text.of("Last")).amount(paginated.pages()),
+            paginated.applicationContext(),
+            Item.of(paginated.applicationContext(), ItemTypes.PAPER).displayName(Text.of("Last")).amount(paginated.pages()),
             ctx -> handle(ctx, pane -> pane.pages() - 1)
     );
 
@@ -86,6 +91,10 @@ public abstract class PaginatedPaneBuilder extends DefaultPaneBuilder<PaginatedP
             Tuple.of(5, NEXT),
             Tuple.of(6, LAST)
     );
+
+    public PaginatedPaneBuilder() {
+
+    }
 
     private static boolean handle(final ClickContext context, final Function<PaginatedPane, Integer> action) {
         if (context.pane() instanceof PaginatedPane paginated) {

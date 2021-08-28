@@ -25,11 +25,11 @@ import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.command.ExecuteCommandEvent;
 
 @Posting(NativeCommandEvent.class)
-public class CommandEventBridge implements EventBridge {
+public class CommandEventBridge extends EventBridge {
 
     @Listener
-    public void on(ExecuteCommandEvent.Pre event) {
-        CommandSource source = SpongeAdapter.fromSponge(event.commandCause().subject()).orNull();
+    public void on(final ExecuteCommandEvent.Pre event) {
+        final CommandSource source = SpongeAdapter.fromSponge(event.commandCause().subject()).orNull();
         this.post(new NativeCommandEvent(
                 source,
                 event.originalCommand(),

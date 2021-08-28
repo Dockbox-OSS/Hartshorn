@@ -17,18 +17,18 @@
 
 package org.dockbox.hartshorn.i18n.permissions;
 
-import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.i18n.common.Formattable;
 
 public interface Permission extends Formattable {
 
-    static Permission of(String node) {
-        return Hartshorn.context().get(Permission.class, node);
+    static Permission of(final ApplicationContext context, final String node) {
+        return context.get(Permission.class, node);
     }
 
-    static Permission of(String key, PermissionContext context) {
-        return Hartshorn.context().get(Permission.class, key, context);
+    static Permission of(final ApplicationContext context, final String key, final PermissionContext permissionContext) {
+        return context.get(Permission.class, key, permissionContext);
     }
 
     String get();

@@ -18,7 +18,14 @@
 package org.dockbox.hartshorn.server.minecraft.packets;
 
 import org.dockbox.hartshorn.api.exceptions.Except;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
+import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.jetbrains.annotations.Nullable;
+
+import javax.inject.Inject;
+
+import lombok.AccessLevel;
+import lombok.Getter;
 
 /**
  * Represents a packet instance which can be sent to a {@link
@@ -26,20 +33,24 @@ import org.jetbrains.annotations.Nullable;
  */
 public abstract class Packet {
 
+    @Inject
+    @Getter(AccessLevel.PROTECTED)
+    private ApplicationContext context;
+
     /**
      * Gets the type of the native packet type (typically prefixed by {@code net.minecraft}).
      *
      * @return The {@link Class}, or {@code null}.
      */
-    public @Nullable Class<?> nativeType() {
+    public @Nullable TypeContext<?> nativeType() {
         try {
             return this.internalGetPacketType();
         }
-        catch (Exception e) {
+        catch (final Exception e) {
             Except.handle(e);
             return null;
         }
     }
 
-    protected abstract Class<?> internalGetPacketType();
+    protected abstract TypeContext<?> internalGetPacketType();
 }

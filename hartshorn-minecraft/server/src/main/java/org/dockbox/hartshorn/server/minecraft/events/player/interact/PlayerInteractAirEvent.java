@@ -17,6 +17,7 @@
 
 package org.dockbox.hartshorn.server.minecraft.events.player.interact;
 
+import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.server.minecraft.dimension.Block;
 import org.dockbox.hartshorn.server.minecraft.players.ClickType;
 import org.dockbox.hartshorn.server.minecraft.players.Hand;
@@ -24,7 +25,7 @@ import org.dockbox.hartshorn.server.minecraft.players.Player;
 
 public class PlayerInteractAirEvent extends PlayerInteractEvent<Block> {
 
-    public PlayerInteractAirEvent(final Player player, final Hand hand, final ClickType clickType) {
-        super(player, hand, clickType, Block.empty());
+    public PlayerInteractAirEvent(final ApplicationContext context, final Player player, final Hand hand, final ClickType clickType) {
+        super(player, hand, clickType, Block.empty(context));
     }
 }

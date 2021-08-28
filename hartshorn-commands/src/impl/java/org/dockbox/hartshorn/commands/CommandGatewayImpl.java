@@ -20,7 +20,6 @@ package org.dockbox.hartshorn.commands;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 
-import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.commands.annotations.Command;
 import org.dockbox.hartshorn.commands.context.CommandContext;
@@ -31,11 +30,12 @@ import org.dockbox.hartshorn.commands.exceptions.ParsingException;
 import org.dockbox.hartshorn.commands.extension.CommandExecutorExtension;
 import org.dockbox.hartshorn.commands.extension.ExtensionResult;
 import org.dockbox.hartshorn.di.annotations.inject.Binds;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
+import org.dockbox.hartshorn.di.context.element.MethodContext;
+import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.util.HartshornUtils;
-import org.dockbox.hartshorn.util.Reflect;
 import org.jetbrains.annotations.UnmodifiableView;
 
-import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.List;
 
@@ -59,6 +59,8 @@ public class CommandGatewayImpl implements CommandGateway {
     private CommandParser parser;
     @Inject
     private CommandResources resources;
+    @Inject
+    private ApplicationContext context;
 
     @Override
     public void accept(final CommandSource source, final String command) throws ParsingException {
@@ -112,11 +114,10 @@ public class CommandGatewayImpl implements CommandGateway {
     }
 
     @Override
-    public void register(final Class<?> type) {
-        final Collection<Method> methods = Reflect.methods(type, Command.class);
-        if (methods.isEmpty()) return;
-
-        for (final Method method : methods) this.register(method, type);
+    public void register(final TypeContext<?> type) {
+        for (final MethodContext<?, ?> method : type.flatMethods(Command.class)) {
+            this.register(method, type);
+        }
     }
 
     @Override
@@ -125,8 +126,9 @@ public class CommandGatewayImpl implements CommandGateway {
         if (container.absent()) throw new IllegalArgumentException("Executor contexts should contain at least one container context");
 
         final List<String> aliases;
-        final Exceptional<Command> annotated = Reflect.annotation(context.parent(), Command.class);
-        if (Reflect.notVoid(context.parent()) && annotated.present()) {
+        final TypeContext<?> typeContext = context.parent();
+        final Exceptional<Command> annotated = typeContext.annotation(Command.class);
+        if (!typeContext.isVoid() && annotated.present()) {
             aliases = HartshornUtils.asUnmodifiableList(annotated.get().value());
         }
         else if (!container.get().aliases().isEmpty()) {
@@ -139,7 +141,7 @@ public class CommandGatewayImpl implements CommandGateway {
         for (final String alias : aliases) {
             contexts().put(alias, context);
         }
-        Hartshorn.context().add(context);
+        this.context.add(context);
     }
 
     @Override
@@ -178,8 +180,8 @@ public class CommandGatewayImpl implements CommandGateway {
         this.extensions.add(extension);
     }
 
-    private void register(final Method method, final Class<?> type) {
-        this.register(new MethodCommandExecutorContext(method, type));
+    private void register(final MethodContext<?, ?> method, final TypeContext<?> type) {
+        this.register(new MethodCommandExecutorContext(this.context, method, type));
     }
 
     /**

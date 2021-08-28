@@ -17,30 +17,36 @@
 
 package org.dockbox.hartshorn.di.context;
 
-import org.dockbox.hartshorn.api.domain.MetaProvider;
+import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.di.InjectionPoint;
+import org.dockbox.hartshorn.di.Key;
+import org.dockbox.hartshorn.di.MetaProvider;
 import org.dockbox.hartshorn.di.ProvisionFailure;
+import org.dockbox.hartshorn.di.annotations.context.LogExclude;
+import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.di.inject.InjectionModifier;
 import org.dockbox.hartshorn.di.properties.Attribute;
 import org.dockbox.hartshorn.di.services.ComponentLocator;
 import org.dockbox.hartshorn.di.services.ServiceProcessor;
+import org.slf4j.Logger;
 
 import java.lang.annotation.Annotation;
 import java.util.List;
 
+@LogExclude
 public interface ApplicationContext extends ApplicationBinder, HartshornContext {
 
     void add(InjectionPoint<?> property);
 
-    <T> T create(Class<T> type, T typeInstance, Attribute<?>... properties);
+    <T> T create(Key<T> type, T typeInstance, Attribute<?>... properties);
 
-    <T> T inject(Class<T> type, T typeInstance, Attribute<?>... properties);
+    <T> T inject(Key<T> type, T typeInstance, Attribute<?>... properties);
 
     <T> void enable(T typeInstance);
 
-    <T> T raw(Class<T> type) throws ProvisionFailure;
+    <T> T raw(TypeContext<T> type) throws ProvisionFailure;
 
-    <T> T raw(Class<T> type, boolean populate) throws ProvisionFailure;
+    <T> T raw(TypeContext<T> type, boolean populate) throws ProvisionFailure;
 
     void add(ServiceProcessor<?> processor);
 
@@ -56,5 +62,18 @@ public interface ApplicationContext extends ApplicationBinder, HartshornContext 
 
     MetaProvider meta();
 
+    ApplicationEnvironment environment();
+
     void reset();
+
+    default Logger log() {
+        return this.environment().application().log();
+    }
+
+    default <C extends Context> Exceptional<C> first(final Class<C> context) {
+        return this.first(this, context);
+    }
+
+    @Override
+    <C extends Context> Exceptional<C> first(ApplicationContext applicationContext, Class<C> context);
 }

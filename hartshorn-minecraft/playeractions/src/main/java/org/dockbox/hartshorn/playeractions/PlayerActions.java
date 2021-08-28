@@ -59,14 +59,14 @@ public class PlayerActions {
     private List<String> whitelist;
 
     @Listener
-    public void on(PlayerTeleportEvent event) {
+    public void on(final PlayerTeleportEvent event) {
         this.verifySpectatorTeleportation(event);
         this.verifyPlotAccess(event);
     }
 
-    private void verifySpectatorTeleportation(PlayerTeleportEvent event) {
+    private void verifySpectatorTeleportation(final PlayerTeleportEvent event) {
         if (event.subject().gamemode() == Gamemode.SPECTATOR) {
-            if (event.subject().hasPermission(PlayerActionPermissions.SPECTATOR_BYPASS)) return;
+            if (event.subject().hasPermission("hartshorn.playeractions.bypass.spectator")) return;
             if (this.whitelist.contains(event.origin().world().name())) return;
 
             event.cancelled(true);
@@ -74,13 +74,13 @@ public class PlayerActions {
         }
     }
 
-    private void verifyPlotAccess(PlayerTeleportEvent event) {
-        Player player = event.subject();
-        Location target = event.destination();
-        Exceptional<Plot> plotTarget = target.get(PlotKeys.PLOT);
+    private void verifyPlotAccess(final PlayerTeleportEvent event) {
+        final Player player = event.subject();
+        final Location target = event.destination();
+        final Exceptional<Plot> plotTarget = target.get(PlotKeys.PLOT);
 
         if (plotTarget.absent()) return;
-        Plot plot = plotTarget.get();
+        final Plot plot = plotTarget.get();
         if (plot.hasMembership(player, RegionMembership.DENIED)) {
             event.cancelled(true);
             player.sendWithPrefix(this.resources.deniedFromPlot());
@@ -88,20 +88,20 @@ public class PlayerActions {
     }
 
     @Listener
-    public void on(PlayerInteractEntityEvent event) {
+    public void on(final PlayerInteractEntityEvent event) {
         if (event.entity() instanceof Player) return; // Allowed
-        Player player = event.subject();
+        final Player player = event.subject();
         event.cancelled(this.cancelEvent(player, event.entity()));
     }
 
-    private boolean cancelEvent(Player player, Entity entity) {
-        Exceptional<Plot> targetPlot = entity.location().get(PlotKeys.PLOT);
+    private boolean cancelEvent(final Player player, final Entity entity) {
+        final Exceptional<Plot> targetPlot = entity.location().get(PlotKeys.PLOT);
         if (targetPlot.absent()) {
             player.sendWithPrefix(this.resources.outsidePlot());
             return true;
         }
         else {
-            Plot plot = targetPlot.get();
+            final Plot plot = targetPlot.get();
             if (!plot.hasAnyMembership(player, RegionMembership.MEMBER, RegionMembership.TRUSTED, RegionMembership.OWNER)) {
                 player.sendWithPrefix(this.resources.interactionError());
                 return true;
@@ -111,18 +111,18 @@ public class PlayerActions {
     }
 
     @Listener
-    public void on(PlayerSummonEntityEvent event) {
-        Player player = event.player();
-        SpawnSource source = event.source();
+    public void on(final PlayerSummonEntityEvent event) {
+        final Player player = event.player();
+        final SpawnSource source = event.source();
         if (SpawnSource.PLACEMENT.equals(source) || SpawnSource.SPAWN_EGG.equals(source)) {
             event.cancelled(this.cancelEvent(player, event.entity()));
         }
     }
 
     @Listener
-    public void on(PlayerMoveEvent event) {
+    public void on(final PlayerMoveEvent event) {
         if (event instanceof PlayerTeleportEvent) return; // Allow players to teleport out of the world
-        if (event.subject().hasPermission(PlayerActionPermissions.NAVIGATE_DEFAULT_WORLD)) return;
+        if (event.subject().hasPermission("hartshorn.playeractions.navigate")) return;
 
         if (event.subject().world().worldUniqueId().equals(this.worlds.rootUniqueId())) {
             event.cancelled(true);
@@ -131,7 +131,7 @@ public class PlayerActions {
     }
 
     @Listener
-    public void on(PlayerSettingsChangedEvent event) {
+    public void on(final PlayerSettingsChangedEvent event) {
         final Player target = event.subject();
 
         final Boolean receiving = PlayerSettings.RECEIVING_NOTIFICATIONS.get(target);
@@ -141,7 +141,7 @@ public class PlayerActions {
             final Language preferenceLanguage = target.language();
 
             if (!settingsLanguage.equals(preferenceLanguage)) {
-                Text notification = this.resources.languageNotification(settingsLanguage.nameLocalized())
+                final Text notification = this.resources.languageNotification(settingsLanguage.nameLocalized())
                         .translate(target)
                         .asText();
 

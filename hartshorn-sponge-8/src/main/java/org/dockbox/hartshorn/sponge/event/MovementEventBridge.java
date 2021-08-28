@@ -39,24 +39,24 @@ import org.spongepowered.api.event.entity.ChangeEntityWorldEvent.Reposition;
 import org.spongepowered.api.event.entity.living.player.RespawnPlayerEvent;
 import org.spongepowered.api.world.portal.Portal;
 
-@Posting(value = {
+@Posting({
         PlayerSpawnEvent.class,
         PlayerTeleportEvent.class,
         PlayerWarpEvent.class,
         PlayerSwitchWorldEvent.class,
         PlayerPortalEvent.class
 })
-public class MovementEventBridge implements EventBridge {
+public class MovementEventBridge extends EventBridge {
 
     @Listener
-    public void on(RespawnPlayerEvent event) {
+    public void on(final RespawnPlayerEvent event) {
         final Player player = SpongeAdapter.fromSponge(event.entity());
         final SpongeWorld world = SpongeAdapter.fromSponge(event.destinationWorld());
-        this.post(new PlayerSpawnEvent(player, Location.of(world)), event);
+        this.post(new PlayerSpawnEvent(player, Location.of(this.applicationContext(), world)), event);
     }
 
     @Listener
-    public void on(ChangeEntityWorldEvent event) {
+    public void on(final ChangeEntityWorldEvent event) {
         final Entity entity = event.entity();
         if (entity instanceof ServerPlayer serverPlayer) {
             final Player player = SpongeAdapter.fromSponge(serverPlayer);
@@ -71,16 +71,16 @@ public class MovementEventBridge implements EventBridge {
         }
     }
 
-    private void portal(ChangeEntityWorldEvent event, Player player, Portal portal) {
+    private void portal(final ChangeEntityWorldEvent event, final Player player, final Portal portal) {
         final Location origin = SpongeAdapter.fromSponge(portal.origin());
-        final Location destination = Exceptional.of(portal.destination()).map(SpongeAdapter::fromSponge).or(Location.empty());
+        final Location destination = Exceptional.of(portal.destination()).map(SpongeAdapter::fromSponge).or(Location.empty(this.applicationContext()));
         final PortalType portalType = SpongeAdapter.fromSponge(portal.type());
 
         this.post(new PlayerPortalEvent(player, origin, destination, true, portalType), event);
     }
 
     @Listener
-    public void on(Reposition event) {
+    public void on(final Reposition event) {
         final Entity entity = event.entity();
         if (entity instanceof ServerPlayer serverPlayer) {
             final Player player = SpongeAdapter.fromSponge(serverPlayer);
@@ -91,8 +91,8 @@ public class MovementEventBridge implements EventBridge {
             final Vector3N destinationPosition = SpongeAdapter.fromSponge(event.destinationPosition());
 
             this.post(new PlayerTeleportEvent(player,
-                    Location.of(originPosition, originWorld),
-                    Location.of(destinationPosition, destinationWorld)
+                    Location.of(this.applicationContext(), originPosition, originWorld),
+                    Location.of(this.applicationContext(), destinationPosition, destinationWorld)
             ), event);
         }
     }
@@ -103,7 +103,7 @@ public class MovementEventBridge implements EventBridge {
      * @param event
      *         The event
      */
-    public void on(Void event) {
+    public void on(final Void event) {
 
     }
 

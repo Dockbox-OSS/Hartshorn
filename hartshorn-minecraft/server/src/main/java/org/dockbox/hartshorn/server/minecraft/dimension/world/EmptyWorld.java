@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.server.minecraft.dimension.world;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.domain.tuple.Vector3N;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.server.minecraft.dimension.Block;
 import org.dockbox.hartshorn.server.minecraft.dimension.Chunk;
 import org.dockbox.hartshorn.server.minecraft.dimension.position.Location;
@@ -30,9 +31,16 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.function.Predicate;
 
+import lombok.Getter;
+
 final class EmptyWorld extends World {
-    EmptyWorld() {
+
+    @Getter
+    private final ApplicationContext applicationContext;
+
+    EmptyWorld(final ApplicationContext context) {
         super(HartshornUtils.EMPTY_UUID, "Empty", false, Vector3N.empty(), -1, Gamemode.OTHER);
+        this.applicationContext = context;
     }
 
     @Override
@@ -66,27 +74,27 @@ final class EmptyWorld extends World {
     }
 
     @Override
-    public Vector3N floor(Vector3N position) {
+    public Vector3N floor(final Vector3N position) {
         return Vector3N.empty();
     }
 
     @Override
-    public boolean has(Vector3N position) {
+    public boolean has(final Vector3N position) {
         return false;
     }
 
     @Override
-    public Exceptional<Block> block(Vector3N position) {
+    public Exceptional<Block> block(final Vector3N position) {
         return Exceptional.empty();
     }
 
     @Override
-    public boolean block(Vector3N position, Block item) {
+    public boolean block(final Vector3N position, final Block item) {
         return false;
     }
 
     @Override
-    public void gamerule(String key, String value) {}
+    public void gamerule(final String key, final String value) {}
 
     @Override
     public Map<String, String> gamerules() {
@@ -99,17 +107,17 @@ final class EmptyWorld extends World {
     }
 
     @Override
-    public Collection<Entity> entities(Predicate<Entity> predicate) {
+    public Collection<Entity> entities(final Predicate<Entity> predicate) {
         return HartshornUtils.emptyList();
     }
 
     @Override
-    public Exceptional<Chunk> chunk(Location location) {
+    public Exceptional<Chunk> chunk(final Location location) {
         return Exceptional.empty();
     }
 
     @Override
-    public Exceptional<Chunk> chunk(Vector3N position) {
+    public Exceptional<Chunk> chunk(final Vector3N position) {
         return Exceptional.empty();
     }
 

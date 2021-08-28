@@ -21,16 +21,17 @@ import com.google.inject.Inject;
 
 import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.HartshornApplication;
+import org.dockbox.hartshorn.api.HartshornLoader;
 import org.dockbox.hartshorn.api.MetaProviderImpl;
-import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.di.DefaultModifiers;
 import org.dockbox.hartshorn.di.MetaProviderModifier;
 import org.dockbox.hartshorn.di.annotations.activate.Activator;
 import org.dockbox.hartshorn.di.annotations.inject.InjectConfig;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
+import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.sponge.event.EventBridge;
 import org.dockbox.hartshorn.sponge.game.SpongeComposite;
 import org.dockbox.hartshorn.sponge.inject.SpongeInjector;
-import org.dockbox.hartshorn.util.Reflect;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.DataHolder;
 import org.spongepowered.api.data.DataRegistration;
@@ -45,7 +46,9 @@ import org.spongepowered.plugin.jvm.Plugin;
 public class Sponge8Application {
 
     protected static Sponge8Application instance;
-    protected Runnable init;
+    protected HartshornLoader loader;
+    // Safe to expose as there will only ever be one Sponge instance
+    protected ApplicationContext context;
 
     // Uses Sponge injection
     @Inject
@@ -53,8 +56,7 @@ public class Sponge8Application {
 
     public Sponge8Application() {
         Sponge8Application.instance = this;
-        Exceptional.of("");
-        this.init = HartshornApplication.lazy(Sponge8Application.class,
+        this.loader = HartshornApplication.lazy(Sponge8Application.class,
                 DefaultModifiers.ACTIVATE_ALL,
                 new MetaProviderModifier(MetaProviderImpl::new)
         );
@@ -64,12 +66,16 @@ public class Sponge8Application {
         return instance.container;
     }
 
+    public static ApplicationContext context() {
+        return instance.context;
+    }
+
     @Listener
     public void on(final ConstructPluginEvent event) {
-        this.init.run();
+        this.context = this.loader.load();
 
-        for (final Class<? extends EventBridge> bridge : Reflect.children(EventBridge.class)) {
-            Sponge.eventManager().registerListeners(this.container, Hartshorn.context().get(bridge));
+        for (final TypeContext<? extends EventBridge> bridge : this.context.environment().children(EventBridge.class)) {
+            Sponge.eventManager().registerListeners(this.container, this.context.get(bridge));
         }
     }
 

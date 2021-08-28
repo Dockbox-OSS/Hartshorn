@@ -17,7 +17,6 @@
 
 package org.dockbox.hartshorn.server.minecraft.entities;
 
-import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.server.minecraft.dimension.position.Location;
 
 /**
@@ -44,7 +43,7 @@ public final class EntityTypes {
 
         private final Class<T> provider;
 
-        EntityType(Class<T> provider) {
+        EntityType(final Class<T> provider) {
             this.provider = provider;
         }
 
@@ -57,8 +56,8 @@ public final class EntityTypes {
          *
          * @return The new {@link Entity} instance.
          */
-        public T create(Location location) {
-            return Hartshorn.context().get(this.provider, location);
+        public T create(final Location location) {
+            return location.applicationContext().get(this.provider, location);
         }
     }
 }

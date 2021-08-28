@@ -17,11 +17,12 @@
 
 package org.dockbox.hartshorn.persistence;
 
-import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.domain.TypedOwner;
+import org.dockbox.hartshorn.di.GenericType;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
+import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.di.properties.AttributeHolder;
-import org.dockbox.hartshorn.persistence.mapping.GenericType;
 
 import java.nio.file.Path;
 
@@ -43,7 +44,9 @@ public interface FileManager extends AttributeHolder {
      */
     Path dataFile(TypedOwner owner);
 
-    default Path configFile(Class<?> owner) {
+    ApplicationContext context();
+
+    default Path configFile(final Class<?> owner) {
         return this.configFile(this.owner(owner));
     }
 
@@ -58,11 +61,11 @@ public interface FileManager extends AttributeHolder {
      */
     Path configFile(TypedOwner owner);
 
-    default TypedOwner owner(Class<?> type) {
-        return Hartshorn.context().meta().lookup(type);
+    default TypedOwner owner(final Class<?> type) {
+        return this.context().meta().lookup(TypeContext.of(type));
     }
 
-    default Path dataFile(Class<?> owner, String file) {
+    default Path dataFile(final Class<?> owner, final String file) {
         return this.dataFile(this.owner(owner), file);
     }
 
@@ -79,7 +82,7 @@ public interface FileManager extends AttributeHolder {
      */
     Path dataFile(TypedOwner owner, String file);
 
-    default Path configFile(Class<?> owner, String file) {
+    default Path configFile(final Class<?> owner, final String file) {
         return this.configFile(this.owner(owner), file);
     }
 
@@ -133,7 +136,7 @@ public interface FileManager extends AttributeHolder {
      */
     <T> Exceptional<Boolean> write(Path file, T content);
 
-    default Path data(Class<?> owner) {
+    default Path data(final Class<?> owner) {
         return this.data(this.owner(owner));
     }
 
@@ -146,7 +149,7 @@ public interface FileManager extends AttributeHolder {
      *
      * @return A {@link Path} reference to the data directory
      */
-    default Path data(TypedOwner owner) {
+    default Path data(final TypedOwner owner) {
         return this.data().resolve(owner.id());
     }
 
@@ -193,7 +196,7 @@ public interface FileManager extends AttributeHolder {
      */
     Path plugins();
 
-    default Path serviceConfig(Class<?> owner) {
+    default Path serviceConfig(final Class<?> owner) {
         return this.serviceConfig(this.owner(owner));
     }
 
@@ -206,7 +209,7 @@ public interface FileManager extends AttributeHolder {
      *
      * @return A {@link Path} reference to the configuration directory
      */
-    default Path serviceConfig(TypedOwner owner) {
+    default Path serviceConfig(final TypedOwner owner) {
         return this.serviceConfigs().resolve(owner.id());
     }
 

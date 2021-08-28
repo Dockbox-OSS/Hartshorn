@@ -17,12 +17,13 @@
 
 package org.dockbox.hartshorn.proxy;
 
-import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.annotations.PostBootstrap;
 import org.dockbox.hartshorn.api.annotations.UseBootstrap;
 import org.dockbox.hartshorn.api.exceptions.Except;
 import org.dockbox.hartshorn.di.InjectionPoint;
 import org.dockbox.hartshorn.di.annotations.service.Service;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
+import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.di.properties.Attribute;
 import org.dockbox.hartshorn.proxy.handle.ProxyHandler;
 
@@ -32,12 +33,12 @@ import java.lang.reflect.InvocationTargetException;
 public class ProxyInjectionService {
 
     @PostBootstrap
-    public void prepareInjectionPoints() {
-        ProxyableBootstrap.boostrapDelegates();
-        Hartshorn.context().add(InjectionPoint.of(Object.class, (instance, type, properties) -> {
-            ProxyHandler<Object> handler = new ProxyHandler<>(instance, type);
+    public void prepareInjectionPoints(final ApplicationContext context) {
+        ProxyableBootstrap.boostrapDelegates(context);
+        context.add(InjectionPoint.of(TypeContext.of(Object.class), (instance, type, properties) -> {
+            final ProxyHandler<Object> handler = new ProxyHandler<>(instance, type);
             boolean proxy = false;
-            for (Attribute<?> property : properties) {
+            for (final Attribute<?> property : properties) {
                 if (property instanceof ProxyAttribute) {
                     //noinspection unchecked
                     handler.delegate((ProxyAttribute<Object, ?>) property);
@@ -48,7 +49,7 @@ public class ProxyInjectionService {
                 try {
                     return handler.proxy();
                 }
-                catch (InvocationTargetException | NoSuchMethodException | InstantiationException | IllegalAccessException e) {
+                catch (final InvocationTargetException | NoSuchMethodException | InstantiationException | IllegalAccessException e) {
                     Except.handle(e);
                 }
             }

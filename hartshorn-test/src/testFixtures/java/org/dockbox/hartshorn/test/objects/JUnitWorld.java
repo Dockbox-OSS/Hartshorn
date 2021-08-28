@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.test.objects;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.domain.tuple.Vector3N;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.server.minecraft.dimension.Block;
 import org.dockbox.hartshorn.server.minecraft.dimension.Chunk;
 import org.dockbox.hartshorn.server.minecraft.dimension.position.Location;
@@ -42,11 +43,13 @@ public class JUnitWorld extends World {
     private final Map<UUID, Entity> entities = HartshornUtils.emptyMap();
 
     @Getter private final Map<String, String> gamerules = HartshornUtils.emptyMap();
+    @Getter private final ApplicationContext applicationContext;
     @Getter private boolean loaded;
 
-    public JUnitWorld(UUID worldUniqueId, String name, boolean loadOnStartup, @NotNull Vector3N spawnPosition, long seed, Gamemode defaultGamemode) {
+    public JUnitWorld(final ApplicationContext context, final UUID worldUniqueId, final String name, final boolean loadOnStartup, @NotNull final Vector3N spawnPosition, final long seed, final Gamemode defaultGamemode) {
         super(worldUniqueId, name, loadOnStartup, spawnPosition, seed, defaultGamemode);
         this.loaded = loadOnStartup;
+        this.applicationContext = context;
     }
 
     @Override
@@ -60,33 +63,33 @@ public class JUnitWorld extends World {
     }
 
     @Override
-    public Vector3N floor(Vector3N position) {
+    public Vector3N floor(final Vector3N position) {
         return Vector3N.of(position.xD(), 64, position.zD());
     }
 
     @Override
-    public boolean has(Vector3N position) {
+    public boolean has(final Vector3N position) {
         return this.blocks.containsKey(position);
     }
 
     @Override
-    public Exceptional<Block> block(Vector3N position) {
+    public Exceptional<Block> block(final Vector3N position) {
         return Exceptional.of(this.blocks.getOrDefault(position, null));
     }
 
     @Override
-    public boolean block(Vector3N position, Block block) {
+    public boolean block(final Vector3N position, final Block block) {
         this.blocks.put(position, block);
         return true;
     }
 
     @Override
-    public Exceptional<Chunk> chunk(Location location) {
+    public Exceptional<Chunk> chunk(final Location location) {
         return Exceptional.empty();
     }
 
     @Override
-    public Exceptional<Chunk> chunk(Vector3N position) {
+    public Exceptional<Chunk> chunk(final Vector3N position) {
         return Exceptional.empty();
     }
 
@@ -106,7 +109,7 @@ public class JUnitWorld extends World {
     }
 
     @Override
-    public Collection<Entity> entities(Predicate<Entity> predicate) {
+    public Collection<Entity> entities(final Predicate<Entity> predicate) {
         return this.entities().stream().filter(predicate).toList();
     }
 
@@ -123,15 +126,15 @@ public class JUnitWorld extends World {
     }
 
     @Override
-    public void gamerule(String key, String value) {
+    public void gamerule(final String key, final String value) {
         this.gamerules.put(key, value);
     }
 
-    public void addEntity(Entity entity) {
+    public void addEntity(final Entity entity) {
         this.entities.put(entity.uniqueId(), entity);
     }
 
-    public void destroyEntity(UUID uuid) {
+    public void destroyEntity(final UUID uuid) {
         this.entities.remove(uuid);
     }
 }
