@@ -31,10 +31,13 @@ import org.jetbrains.annotations.Nullable;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import lombok.Getter;
+
 public class TypeFactoryImpl implements TypeFactory {
 
     @Inject
-    private ApplicationContext context;
+    @Getter
+    private ApplicationContext applicationContext;
     private Attribute<?>[] properties;
 
     public TypeFactoryImpl() {
@@ -48,19 +51,19 @@ public class TypeFactoryImpl implements TypeFactory {
             if (property instanceof BindingMetaAttribute bindingMeta) named = bindingMeta.value();
         }
 
-        Exceptional<BoundContext<T, T>> binding = ApplicationContextAware.instance().context().firstWire(type, named);
+        Exceptional<BoundContext<T, T>> binding = this.applicationContext.firstWire(type, named);
         if (binding.absent()) {
             if (type.isAbstract()) throw new IllegalStateException("Could not autowire " + type.qualifiedName() + " as there is no active binding for it");
             else {
                 final BoundContext<T, T> context = new ConstructorBoundContext<>(Key.of(type, Bindings.named("")), type);
-                ApplicationContextAware.instance().context().add(context);
+                this.applicationContext.add(context);
                 binding = Exceptional.of(context);
             }
         }
         final Exceptional<BoundContext<T, T>> finalBinding = binding;
 
         return Exceptional.of(() -> {
-            final T instance = finalBinding.get().create(this.context, arguments);
+            final T instance = finalBinding.get().create(this.applicationContext, arguments);
             Bindings.enable(instance, this.properties);
             return instance;
         }).orNull();
@@ -68,7 +71,7 @@ public class TypeFactoryImpl implements TypeFactory {
 
     @Override
     public TypeFactory with(final Attribute<?>... properties) {
-        final TypeFactoryImpl clone = this.context.get(TypeFactoryImpl.class);
+        final TypeFactoryImpl clone = this.applicationContext.get(TypeFactoryImpl.class);
         clone.properties = HartshornUtils.merge(this.properties, properties);
         return clone;
     }

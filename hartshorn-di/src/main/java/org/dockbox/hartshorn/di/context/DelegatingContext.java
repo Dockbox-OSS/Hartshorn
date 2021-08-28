@@ -41,8 +41,8 @@ public interface DelegatingContext<D extends Context> extends Context {
     }
 
     @Override
-    default <C extends Context> Exceptional<C> first(final Class<C> context) {
-        return this.get().first(context);
+    default <C extends Context> Exceptional<C> first(final ApplicationContext applicationContext, final Class<C> context) {
+        return this.get().first(applicationContext, context);
     }
 
     @Override

@@ -17,7 +17,6 @@
 
 package org.dockbox.hartshorn.di.services;
 
-import org.dockbox.hartshorn.di.ApplicationContextAware;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.di.inject.InjectionModifier;
@@ -30,7 +29,7 @@ public abstract class ServiceModifier<A extends Annotation> implements Injection
 
     @Override
     public <T> boolean preconditions(final ApplicationContext context, final TypeContext<T> type, @Nullable final T instance, final Attribute<?>... properties) {
-        return ApplicationContextAware.instance().context().locator().container(type).present()
+        return context.locator().container(type).present()
                 && this.modifies(context, type, instance, properties);
     }
 

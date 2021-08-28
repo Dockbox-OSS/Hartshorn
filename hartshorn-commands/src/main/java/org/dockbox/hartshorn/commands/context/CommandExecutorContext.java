@@ -21,7 +21,7 @@ import org.dockbox.hartshorn.commands.CommandExecutor;
 import org.dockbox.hartshorn.commands.CommandParser;
 import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
-import org.dockbox.hartshorn.di.context.Context;
+import org.dockbox.hartshorn.di.context.CarrierContext;
 import org.dockbox.hartshorn.di.context.element.AnnotatedElementContext;
 import org.dockbox.hartshorn.di.context.element.TypeContext;
 
@@ -32,7 +32,7 @@ import java.util.List;
  * The context related to a {@link CommandExecutor}, containing information which is typically
  * required before a command is executed.
  */
-public interface CommandExecutorContext extends Context {
+public interface CommandExecutorContext extends CarrierContext {
 
     /**
      * Gets the {@link CommandExecutor} which is capable of executing a command.

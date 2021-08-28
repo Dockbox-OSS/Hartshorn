@@ -44,7 +44,7 @@ public abstract class AbstractPersistenceServiceModifier<M extends Annotation, C
 
     @Override
     public <T, R> ProxyFunction<T, R> process(final ApplicationContext context, final MethodProxyContext<T> methodContext) {
-        final Exceptional<C> serialisationContext = methodContext.first(this.contextType());
+        final Exceptional<C> serialisationContext = methodContext.first(context, this.contextType());
         if (serialisationContext.absent()) throw new IllegalStateException("Expected additional context to be present");
 
         final C ctx = serialisationContext.get();

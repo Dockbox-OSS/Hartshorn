@@ -125,7 +125,7 @@ public class EventBusImpl implements EventBus {
 
     @Override
     public void post(final Event event, final TypeContext<?> target) {
-        if (event.first(ApplicationContext.class).absent()) event.add(this.context);
+        if (event.first(this.context, ApplicationContext.class).absent()) event.add(this.context);
         this.handlerRegistry.handler(TypeContext.of(event)).post(event, target);
     }
 

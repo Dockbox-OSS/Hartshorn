@@ -28,7 +28,7 @@ import org.dockbox.hartshorn.commands.definition.CommandElement;
 import org.dockbox.hartshorn.commands.events.CommandEvent;
 import org.dockbox.hartshorn.commands.events.CommandEvent.Before;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
-import org.dockbox.hartshorn.di.context.DefaultContext;
+import org.dockbox.hartshorn.di.context.DefaultCarrierContext;
 import org.dockbox.hartshorn.di.context.element.AnnotatedElementContext;
 import org.dockbox.hartshorn.di.context.element.MethodContext;
 import org.dockbox.hartshorn.di.context.element.ParameterContext;
@@ -53,9 +53,9 @@ import lombok.Getter;
  */
 @Getter(AccessLevel.PROTECTED)
 @Posting({ CommandEvent.Before.class, CommandEvent.After.class })
-public class MethodCommandExecutorContext<T> extends DefaultContext implements CommandExecutorContext {
+public class MethodCommandExecutorContext<T> extends DefaultCarrierContext implements CommandExecutorContext {
 
-    private final ApplicationContext context;
+    @Getter private final ApplicationContext applicationContext;
     private final MethodContext<?, T> method;
     private final TypeContext<T> type;
     private final List<String> parentAliases;
@@ -68,11 +68,12 @@ public class MethodCommandExecutorContext<T> extends DefaultContext implements C
     private Map<String, CommandParameterContext> parameters;
 
     public MethodCommandExecutorContext(final ApplicationContext context, final MethodContext<?, T> method, final TypeContext<T> type) {
+        super(context);
         final Exceptional<Command> annotated = method.annotation(Command.class);
         if (annotated.absent()) {
             throw new IllegalArgumentException("Provided method is not a command handler");
         }
-        this.context = context;
+        this.applicationContext = context;
         this.method = method;
         this.type = type;
         this.command = annotated.get();
@@ -87,7 +88,7 @@ public class MethodCommandExecutorContext<T> extends DefaultContext implements C
             this.isChild = false;
         }
 
-        this.add(new CommandDefinitionContextImpl(this.context, this.command));
+        this.add(new CommandDefinitionContextImpl(this.applicationContext, this.command));
 
         this.parentAliases = HartshornUtils.emptyList();
         if (this.parent != null) {
@@ -112,16 +113,16 @@ public class MethodCommandExecutorContext<T> extends DefaultContext implements C
     @Override
     public CommandExecutor executor() {
         return (ctx) -> {
-            final Cancellable before = new Before(ctx.source(), ctx).with(this.context).post();
+            final Cancellable before = new Before(ctx.source(), ctx).with(this.applicationContext).post();
             if (before.cancelled()) {
-                final ResourceEntry cancelled = this.context.get(CommandResources.class).cancelled();
+                final ResourceEntry cancelled = this.applicationContext.get(CommandResources.class).cancelled();
                 ctx.source().send(cancelled);
             }
 
-            final T instance = this.context.get(this.type());
+            final T instance = this.applicationContext.get(this.type());
             final List<Object> arguments = this.arguments(ctx);
             this.method.invoke(instance, arguments.toArray());
-            new CommandEvent.After(ctx.source(), ctx).with(this.context).post();
+            new CommandEvent.After(ctx.source(), ctx).with(this.applicationContext).post();
         };
     }
 

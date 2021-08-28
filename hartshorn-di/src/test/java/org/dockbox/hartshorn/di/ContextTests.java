@@ -37,7 +37,7 @@ public class ContextTests extends ApplicationAwareTest {
 
         context.add(child);
 
-        final Exceptional<TestContext> first = context.first(TestContext.class);
+        final Exceptional<TestContext> first = context.first(this.context(), TestContext.class);
         Assertions.assertTrue(first.present());
         Assertions.assertSame(child, first.get());
     }
@@ -129,7 +129,7 @@ public class ContextTests extends ApplicationAwareTest {
     @Test
     void testAutoCreatingContext() {
         final Context context = new TestContext();
-        final Exceptional<AutoCreatingContext> first = context.first(AutoCreatingContext.class);
+        final Exceptional<AutoCreatingContext> first = context.first(this.context(), AutoCreatingContext.class);
         Assertions.assertTrue(first.present());
     }
 

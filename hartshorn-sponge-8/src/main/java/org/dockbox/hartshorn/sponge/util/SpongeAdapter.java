@@ -157,7 +157,6 @@ public final class SpongeAdapter {
 
     public static org.dockbox.hartshorn.server.minecraft.entities.Entity fromSponge(final Entity entity) {
         final EntityType<?> type = entity.type();
-        // TODO: Better switching
         if (type == EntityTypes.PLAYER.get()) {
             return new SpongePlayer(entity.uniqueId(), ((ServerPlayer) entity).name());
         }

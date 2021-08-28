@@ -56,8 +56,9 @@ public class NativeBindingHierarchy<C> implements BindingHierarchy<C> {
 
     @Override
     public BindingHierarchy<C> add(final int priority, final Provider<C> provider) {
-        if (this.bindings.containsKey(priority)) {
-            ApplicationContextAware.instance().log().warn(("There is already a provider for %s with priority %d. It will be overwritten! " +
+        // Default providers may be overwritten without further warnings
+        if (this.bindings.containsKey(priority) && priority != -1) {
+            this.applicationContext().log().warn(("There is already a provider for %s with priority %d. It will be overwritten! " +
                     "To avoid unexpected behavior, ensure the priority is not already present. Current hierarchy: %s").formatted(this.key()
                     .contract().getSimpleName(), priority, this));
         }

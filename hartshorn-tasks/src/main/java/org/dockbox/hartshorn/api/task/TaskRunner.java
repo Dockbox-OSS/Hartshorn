@@ -17,14 +17,14 @@
 
 package org.dockbox.hartshorn.api.task;
 
-import org.dockbox.hartshorn.di.ApplicationContextAware;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
 
 import java.util.concurrent.TimeUnit;
 
 public abstract class TaskRunner {
 
-    public static TaskRunner create() {
-        return ApplicationContextAware.instance().context().get(TaskRunner.class);
+    public static TaskRunner create(final ApplicationContext context) {
+        return context.get(TaskRunner.class);
     }
 
     public abstract void accept(Task task);

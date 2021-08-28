@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.di.binding;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.exceptions.ApplicationException;
-import org.dockbox.hartshorn.di.ApplicationContextAware;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.di.properties.Attribute;
 import org.dockbox.hartshorn.di.properties.AttributeHolder;
@@ -61,12 +61,12 @@ public final class Bindings {
         return Exceptional.empty();
     }
 
-    public static String serviceId(final TypeContext<?> type) {
-        return serviceId(type, false);
+    public static String serviceId(final ApplicationContext context, final TypeContext<?> type) {
+        return serviceId(context, type, false);
     }
 
-    public static String serviceId(final TypeContext<?> type, final boolean ignoreExisting) {
-        final Exceptional<ComponentContainer> container = ApplicationContextAware.instance().context().locator().container(type);
+    public static String serviceId(final ApplicationContext context, final TypeContext<?> type, final boolean ignoreExisting) {
+        final Exceptional<ComponentContainer> container = context.locator().container(type);
         if (!ignoreExisting && container.present()) {
             final String id = container.get().id();
             if (!"".equals(id)) return id;
@@ -80,8 +80,8 @@ public final class Bindings {
         return String.join("-", parts).toLowerCase(Locale.ROOT);
     }
 
-    public static String serviceName(final TypeContext<?> type, final boolean ignoreExisting) {
-        final Exceptional<ComponentContainer> container = ApplicationContextAware.instance().context().locator().container(type);
+    public static String serviceName(final ApplicationContext context, final TypeContext<?> type, final boolean ignoreExisting) {
+        final Exceptional<ComponentContainer> container = context.locator().container(type);
         if (!ignoreExisting && container.present()) {
             final String name = container.get().name();
             if (!"".equals(name)) return name;

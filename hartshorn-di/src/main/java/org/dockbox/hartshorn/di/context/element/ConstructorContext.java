@@ -56,20 +56,7 @@ public class ConstructorContext<T> extends ExecutableElementContext<Constructor<
 
     private void prepareHandle() {
         if (this.invoker == null) {
-//            try {
-//                final MethodHandle handle = MethodHandles.lookup().unreflectConstructor(this.constructor);
-//                this.invoker = args -> Exceptional.of(() -> {
-//                    try {
-//                        return (T) handle.invokeExact(args);
-//                    }
-//                    catch (final Throwable e) {
-//                        throw new ApplicationException(e);
-//                    }
-//                });
-//            }
-//            catch (final IllegalAccessException e) {
-                this.invoker = args -> Exceptional.of(() -> this.constructor.newInstance(args));
-//            }
+            this.invoker = args -> Exceptional.of(() -> this.constructor.newInstance(args));
         }
     }
 

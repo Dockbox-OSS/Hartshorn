@@ -26,7 +26,6 @@ import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.events.EventBus;
 import org.dockbox.hartshorn.events.EventWrapper;
 import org.dockbox.hartshorn.server.minecraft.events.packet.PacketEvent;
-import org.dockbox.hartshorn.util.Reflect;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -46,11 +45,10 @@ class PacketValidationService {
             final TypeContext<?> parameterType = method.parameterTypes().get(0);
             if (parameterType.childOf(PacketEvent.class)) {
 
-                // TODO: Rework into MethodContext
                 final Type genericParameterType = method.method().getGenericParameterTypes()[0];
                 if (genericParameterType instanceof ParameterizedType parameterizedType) {
                     final Type actualType = parameterizedType.getActualTypeArguments()[0];
-                    if (actualType instanceof Class && Reflect.assigns(Packet.class, (Class<?>) actualType)) {
+                    if (actualType instanceof Class && TypeContext.of((Class<?>) actualType).childOf(Packet.class)) {
                         //noinspection unchecked
                         packetContext.add((Class<? extends Packet>) actualType);
                     }

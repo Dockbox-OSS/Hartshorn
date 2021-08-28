@@ -20,11 +20,14 @@ package org.dockbox.hartshorn.cache;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.task.TaskRunner;
 import org.dockbox.hartshorn.di.annotations.inject.Binds;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.di.properties.Attribute;
 import org.dockbox.hartshorn.di.properties.AttributeHolder;
 import org.dockbox.hartshorn.util.HartshornUtils;
 
 import java.util.Collection;
+
+import javax.inject.Inject;
 
 /**
  * Default implementation of {@link Cache}.
@@ -36,6 +39,9 @@ public class CacheImpl<T> implements Cache<T>, AttributeHolder {
 
     private Expiration expiration;
     private Collection<T> content;
+
+    @Inject
+    private ApplicationContext applicationContext;
 
     @Override
     public Exceptional<Collection<T>> get() {
@@ -62,7 +68,7 @@ public class CacheImpl<T> implements Cache<T>, AttributeHolder {
     private void scheduleEviction() {
         // Negative amounts are considered non-expiring
         if (this.expiration.amount() > 0) {
-            TaskRunner.create().acceptDelayed(this::evict, this.expiration.amount(), this.expiration.unit());
+            TaskRunner.create(this.applicationContext).acceptDelayed(this::evict, this.expiration.amount(), this.expiration.unit());
         }
     }
 

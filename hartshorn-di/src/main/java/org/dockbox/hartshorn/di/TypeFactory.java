@@ -21,7 +21,7 @@ import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.di.properties.Attribute;
 import org.dockbox.hartshorn.di.properties.UseFactory;
 
-public interface TypeFactory {
+public interface TypeFactory extends ContextCarrier {
 
     static UseFactory use(final Object... varargs) {
         return new UseFactory(varargs);

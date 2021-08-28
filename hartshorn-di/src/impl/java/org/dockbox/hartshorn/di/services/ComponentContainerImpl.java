@@ -57,14 +57,14 @@ public class ComponentContainerImpl implements ComponentContainer {
     @Override
     public String id() {
         final String id = this.annotation.id();
-        if ("".equals(id)) return Bindings.serviceId(this.component, true);
+        if ("".equals(id)) return Bindings.serviceId(this.context, this.component, true);
         return id;
     }
 
     @Override
     public String name() {
         final String name = this.annotation.name();
-        if ("".equals(name)) return Bindings.serviceName(this.component, true);
+        if ("".equals(name)) return Bindings.serviceName(this.context, this.component, true);
         return name;
     }
 

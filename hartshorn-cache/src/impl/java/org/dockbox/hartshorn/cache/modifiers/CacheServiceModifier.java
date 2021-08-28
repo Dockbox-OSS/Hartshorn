@@ -54,7 +54,7 @@ public abstract class CacheServiceModifier<A extends Annotation> extends Service
                 name = annotation.get().value();
             }
             else {
-                name = Bindings.serviceId(methodContext.type());
+                name = Bindings.serviceId(context, methodContext.type());
             }
         }
 

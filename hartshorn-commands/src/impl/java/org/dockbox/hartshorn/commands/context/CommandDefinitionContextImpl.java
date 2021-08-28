@@ -145,7 +145,7 @@ public class CommandDefinitionContextImpl extends DefaultContext implements Comm
 
         if ("".equals(raw)) {
             raw = Hartshorn.PROJECT_ID + '.'
-                    + Bindings.serviceId(this.parent()).replaceAll("-", ".") + '.'
+                    + Bindings.serviceId(this.context, this.parent()).replaceAll("-", ".") + '.'
                     + this.aliases().get(0);
         }
 

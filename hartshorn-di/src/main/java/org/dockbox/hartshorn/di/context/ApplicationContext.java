@@ -17,6 +17,7 @@
 
 package org.dockbox.hartshorn.di.context;
 
+import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.di.InjectionPoint;
 import org.dockbox.hartshorn.di.MetaProvider;
 import org.dockbox.hartshorn.di.ProvisionFailure;
@@ -68,4 +69,10 @@ public interface ApplicationContext extends ApplicationBinder, HartshornContext 
         return this.environment().application().log();
     }
 
+    default <C extends Context> Exceptional<C> first(final Class<C> context) {
+        return this.first(this, context);
+    }
+
+    @Override
+    <C extends Context> Exceptional<C> first(ApplicationContext applicationContext, Class<C> context);
 }

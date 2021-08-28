@@ -53,7 +53,7 @@ public class InjectorMetaProvider implements MetaProvider {
                 }
             }
         }
-        return TypedOwnerImpl.of(Bindings.serviceId(type));
+        return TypedOwnerImpl.of(Bindings.serviceId(this.context, type));
     }
 
     @Override

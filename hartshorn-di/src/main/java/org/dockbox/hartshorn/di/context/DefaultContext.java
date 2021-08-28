@@ -21,7 +21,6 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.di.ApplicationContextAware;
 import org.dockbox.hartshorn.di.annotations.context.AutoCreating;
 import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.util.HartshornUtils;
@@ -53,13 +52,13 @@ public abstract class DefaultContext implements Context {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <C extends Context> Exceptional<C> first(final Class<C> context) {
+    public <C extends Context> Exceptional<C> first(final ApplicationContext applicationContext, final Class<C> context) {
         return Exceptional.of(this.contexts.stream()
                         .filter(c -> TypeContext.of(c).childOf(context))
                         .findFirst())
                 .orElse(() -> {
                     if (TypeContext.of(context).annotation(AutoCreating.class).present()) {
-                        final C created = ApplicationContextAware.instance().context().get(context);
+                        final C created = applicationContext.get(context);
                         this.add(created);
                         return created;
                     }

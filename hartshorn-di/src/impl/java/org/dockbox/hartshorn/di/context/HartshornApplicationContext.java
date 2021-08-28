@@ -162,7 +162,7 @@ public class HartshornApplicationContext extends ManagedHartshornContext {
             throw e.runtime();
         }
 
-        final MetaProvider meta = ApplicationContextAware.instance().context().meta();
+        final MetaProvider meta = this.meta();
         // Ensure the order of resolution is to first resolve the instance singleton state, and only after check the type state.
         // Typically the implementation decided whether it should be a singleton, so this cuts time complexity in half.
         if (instance != null && (meta.singleton(TypeContext.of(instance)) || meta.singleton(type)))
@@ -196,7 +196,7 @@ public class HartshornApplicationContext extends ManagedHartshornContext {
                     final Exceptional<T> rawCandidate = instanceCandidate.orElse(() -> this.raw(type));
                     if (rawCandidate.absent()) {
                         final Throwable finalCause = cause;
-                        return ApplicationContextAware.instance().proxy(type, typeInstance).rethrow().orThrow(() -> finalCause);
+                        return this.environment().application().proxy(type, typeInstance).rethrow().orThrow(() -> finalCause);
                     }
                     else {
                         return rawCandidate.get();
@@ -210,7 +210,7 @@ public class HartshornApplicationContext extends ManagedHartshornContext {
         catch (final Throwable e) {
             // Services can have no explicit implementation even if they are abstract.
             // Typically these services are expected to be populated through injection points later in time.
-            if (type.isAbstract() && ApplicationContextAware.instance().context().meta().isComponent(type)) return null;
+            if (type.isAbstract() && this.meta().isComponent(type)) return null;
             throw new ApplicationException(e).runtime();
         }
     }
@@ -311,7 +311,7 @@ public class HartshornApplicationContext extends ManagedHartshornContext {
 
     @Override
     public <T> T invoke(final MethodContext<T, ?> method) {
-        return this.invoke((MethodContext<? extends T, Object>) method, ApplicationContextAware.instance().context().get(method.parent()));
+        return this.invoke((MethodContext<? extends T, Object>) method, this.get(method.parent()));
     }
 
     @Override
@@ -323,10 +323,10 @@ public class HartshornApplicationContext extends ManagedHartshornContext {
             final TypeContext<?> parameter = parameters.get(i);
             final Exceptional<Named> annotation = parameter.annotation(Named.class);
             if (annotation.present()) {
-                invokingParameters[i] = ApplicationContextAware.instance().context().get(parameter, annotation.get());
+                invokingParameters[i] = this.get(parameter, annotation.get());
             }
             else {
-                invokingParameters[i] = ApplicationContextAware.instance().context().get(parameter);
+                invokingParameters[i] = this.get(parameter);
             }
         }
         try {
