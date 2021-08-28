@@ -18,6 +18,7 @@
 package org.dockbox.hartshorn.server.minecraft.item;
 
 import org.dockbox.hartshorn.api.Hartshorn;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.di.context.DefaultContext;
 import org.dockbox.hartshorn.util.HartshornUtils;
 
@@ -32,22 +33,22 @@ import lombok.Getter;
 public class ItemContext extends DefaultContext {
 
     @Getter private final List<String> items;
-
     @Getter private final List<String> blocks;
 
     private final Map<String, Supplier<Item>> custom = HartshornUtils.emptyConcurrentMap();
 
-    public Item custom(String identifier) {
-        return this.custom.getOrDefault(identifier, () -> Item.of(ItemTypes.AIR)).get();
+    public Item custom(final ApplicationContext context, final String identifier) {
+        return this.custom.getOrDefault(identifier, () -> Item.of(context, ItemTypes.AIR)).get();
     }
 
-    public ItemContext register(String identifier, Item item) {
+    public ItemContext register(final String identifier, final Item item) {
         return this.register(identifier, () -> item);
     }
 
-    public ItemContext register(String identifier, Supplier<Item> item) {
+    public ItemContext register(final String identifier, final Supplier<Item> item) {
         if (this.custom.containsKey(identifier))
             Hartshorn.log().warn("Overwriting custom item identifier '" + identifier + "'");
+
         this.custom.put(identifier, item);
         return this;
     }

@@ -17,49 +17,47 @@
 
 package org.dockbox.hartshorn.di;
 
+import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.di.properties.Attribute;
-import org.dockbox.hartshorn.util.Reflect;
 
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public final class InjectionPoint<T> {
 
-    private final Class<T> type;
+    private final TypeContext<T> type;
     private final InjectFunction<T> point;
 
-    private InjectionPoint(final Class<T> type, final InjectFunction<T> point) {
+    private InjectionPoint(final TypeContext<T> type, final InjectFunction<T> point) {
         this.type = type;
         this.point = point;
     }
 
-    public static <T> InjectionPoint<T> of(final Class<T> type, final Function<T, T> point) {
+    public static <T> InjectionPoint<T> of(final TypeContext<T> type, final Function<T, T> point) {
         return new InjectionPoint<>(type, (instance, it, properties) -> point.apply(instance));
     }
 
-    public static <T> InjectionPoint<T> of(final Class<T> type, final BiFunction<T, Attribute<?>[], T> point) {
+    public static <T> InjectionPoint<T> of(final TypeContext<T> type, final BiFunction<T, Attribute<?>[], T> point) {
         return new InjectionPoint<>(type, (instance, it, properties) -> point.apply(instance, properties));
     }
 
-    public static <T> InjectionPoint<T> of(final Class<T> type, final InjectFunction<T> point) {
+    public static <T> InjectionPoint<T> of(final TypeContext<T> type, final InjectFunction<T> point) {
         return new InjectionPoint<>(type, point);
     }
 
-    public boolean accepts(final Class<?> type) {
-        return Reflect.assigns(this.type, type);
+    public boolean accepts(final TypeContext<?> type) {
+        return type.childOf(this.type);
     }
 
     public T apply(final T instance) {
-        //noinspection unchecked
-        return this.apply(instance, (Class<T>) instance.getClass());
+        return this.apply(instance, TypeContext.of(instance));
     }
 
-    public T apply(final T instance, final Class<T> type, final Attribute<?>... properties) {
+    public T apply(final T instance, final TypeContext<T> type, final Attribute<?>... properties) {
         return this.point.apply(instance, type, properties);
     }
 
     public T apply(final T instance, final Attribute<?>... properties) {
-        //noinspection unchecked
-        return this.apply(instance, (Class<T>) instance.getClass(), properties);
+        return this.apply(instance, TypeContext.of(instance), properties);
     }
 }

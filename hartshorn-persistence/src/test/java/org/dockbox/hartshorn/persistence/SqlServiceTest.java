@@ -18,14 +18,12 @@
 package org.dockbox.hartshorn.persistence;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.api.exceptions.ApplicationException;
 import org.dockbox.hartshorn.persistence.hibernate.HibernateSqlService;
 import org.dockbox.hartshorn.persistence.properties.ConnectionAttribute;
 import org.dockbox.hartshorn.persistence.properties.Remote;
-import org.dockbox.hartshorn.test.HartshornRunner;
+import org.dockbox.hartshorn.test.ApplicationAwareTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Assumptions;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -35,8 +33,7 @@ import java.nio.file.Path;
 import java.util.Set;
 import java.util.stream.Stream;
 
-@ExtendWith(HartshornRunner.class)
-class SqlServiceTest {
+class SqlServiceTest extends ApplicationAwareTest {
 
     public static Stream<Arguments> dialects() {
         return Stream.of(
@@ -44,11 +41,11 @@ class SqlServiceTest {
         );
     }
 
-    protected static Path directory(String prefix) {
+    protected static Path directory(final String prefix) {
         try {
             return Files.createTempDirectory(prefix);
         }
-        catch (Exception e) {
+        catch (final Exception e) {
             Assumptions.assumeTrue(false);
             //noinspection ReturnOfNull
             return null;
@@ -57,7 +54,7 @@ class SqlServiceTest {
 
     @ParameterizedTest
     @MethodSource("dialects")
-    public void testJpaSave(Remote remote, Object target) throws ApplicationException {
+    public void testJpaSave(final Remote remote, final Object target) {
         final SqlService sql = this.sql(remote, target);
         sql.save(new User("Guus"));
         sql.save(new User("Simon"));
@@ -66,22 +63,18 @@ class SqlServiceTest {
         final Set<User> users = sql.findAll(User.class);
         Assertions.assertFalse(users.isEmpty());
 
-        for (User user : users) {
+        for (final User user : users) {
             Assertions.assertNotEquals(0, user.id());
         }
     }
 
-    protected SqlService sql(Remote remote, Object target) throws ApplicationException {
-        SqlService man = new HibernateSqlService();
-        final ConnectionAttribute property = ConnectionAttribute.of(remote, target, "", "");
-        man.apply(property);
-        man.enable();
-        return man;
+    protected SqlService sql(final Remote remote, final Object target) {
+        return this.context().get(HibernateSqlService.class, ConnectionAttribute.of(remote, target, "", ""));
     }
 
     @ParameterizedTest
     @MethodSource("dialects")
-    void testJpaDelete(Remote remote, Object target) throws ApplicationException {
+    void testJpaDelete(final Remote remote, final Object target) {
         final SqlService sql = this.sql(remote, target);
         final User guus = new User("Guus");
         sql.save(guus);
@@ -92,14 +85,14 @@ class SqlServiceTest {
         final Set<User> users = sql.findAll(User.class);
         Assertions.assertFalse(users.isEmpty());
 
-        for (User user : users) {
+        for (final User user : users) {
             Assertions.assertNotEquals("Guus", user.name());
         }
     }
 
     @ParameterizedTest
     @MethodSource("dialects")
-    void testJpaPersists(Remote remote, Object target) throws ApplicationException {
+    void testJpaPersists(final Remote remote, final Object target) {
         final SqlService sql = this.sql(remote, target);
         final User user = new User("Guus");
         Assertions.assertEquals(0, user.id());
@@ -110,7 +103,7 @@ class SqlServiceTest {
 
     @ParameterizedTest
     @MethodSource("dialects")
-    void testJpaUpdate(Remote remote, Object target) throws ApplicationException {
+    void testJpaUpdate(final Remote remote, final Object target) {
         final SqlService sql = this.sql(remote, target);
         final User guus = new User("Guus");
 

@@ -17,6 +17,7 @@
 
 package org.dockbox.hartshorn.server.minecraft.inventory;
 
+import org.dockbox.hartshorn.di.ContextCarrier;
 import org.dockbox.hartshorn.server.minecraft.dimension.Block;
 import org.dockbox.hartshorn.server.minecraft.item.Item;
 import org.dockbox.hartshorn.server.minecraft.item.ItemTypes;
@@ -25,7 +26,7 @@ import java.util.Collection;
 import java.util.function.Predicate;
 
 /** Represents an inventory UI */
-public interface Inventory {
+public interface Inventory extends ContextCarrier {
 
     /**
      * Returns {@code true} if the inventory contains the given {@link Item}, otherwise {@code false}.
@@ -35,7 +36,7 @@ public interface Inventory {
      *
      * @return {@code true} if the inventory contains the item, otherwise {@code false}
      */
-    default boolean contains(Item item) {
+    default boolean contains(final Item item) {
         return 0 < this.count(item);
     }
 
@@ -50,7 +51,7 @@ public interface Inventory {
      *
      * @return The total quantity of the item
      */
-    default int count(Item item) {
+    default int count(final Item item) {
         return this.items().stream()
                 .filter(inventoryItem -> inventoryItem.equals(item))
                 .mapToInt(Item::amount)
@@ -73,11 +74,11 @@ public interface Inventory {
      *
      * @return All items which match the given filter.
      */
-    default Collection<Item> findMatching(Predicate<Item> filter) {
+    default Collection<Item> findMatching(final Predicate<Item> filter) {
         return this.items().stream().filter(filter).toList();
     }
 
-    default boolean give(Block block) {
+    default boolean give(final Block block) {
         return block.item().map(this::give).or(false);
     }
 

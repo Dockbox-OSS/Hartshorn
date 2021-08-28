@@ -23,6 +23,7 @@ import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.di.InjectConfiguration;
 import org.dockbox.hartshorn.di.Modifier;
 import org.dockbox.hartshorn.di.annotations.inject.InjectPhase;
+import org.dockbox.hartshorn.di.context.element.TypeContext;
 
 import java.lang.annotation.Annotation;
 import java.util.Collection;
@@ -41,7 +42,12 @@ public class SampleBootstrap extends HartshornBootstrap {
     }
 
     @Override
-    public <T> Exceptional<T> proxy(final Class<T> type, final T instance) {
+    public <T> Exceptional<T> proxy(final TypeContext<T> type, final T instance) {
+        return Exceptional.empty();
+    }
+
+    @Override
+    public <T> Exceptional<TypeContext<T>> real(final T instance) {
         return Exceptional.empty();
     }
 }

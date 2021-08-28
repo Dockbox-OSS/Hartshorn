@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.server.minecraft.item;
 
-import org.dockbox.hartshorn.api.Hartshorn;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.server.minecraft.item.maps.CustomMap;
 import org.dockbox.hartshorn.server.minecraft.item.maps.CustomMapService;
 
@@ -39,7 +39,7 @@ public class PersistentCustomMapModelImpl extends PersistentItemModelImpl {
     }
 
     @Override
-    public Item restore() {
-        return this.repopulate(Hartshorn.context().get(CustomMapService.class).from(this.mapId));
+    public Item restore(final ApplicationContext context) {
+        return this.repopulate(context.get(CustomMapService.class).from(this.mapId));
     }
 }

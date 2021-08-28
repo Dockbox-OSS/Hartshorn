@@ -18,13 +18,13 @@
 package org.dockbox.hartshorn.i18n.text.persistence;
 
 import org.dockbox.hartshorn.api.Hartshorn;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.i18n.text.Text;
 import org.dockbox.hartshorn.i18n.text.actions.ClickAction;
 import org.dockbox.hartshorn.i18n.text.actions.CommandAction;
 import org.dockbox.hartshorn.i18n.text.actions.HoverAction;
 import org.dockbox.hartshorn.i18n.text.actions.ShiftClickAction;
 import org.dockbox.hartshorn.persistence.PersistentModel;
-import org.dockbox.hartshorn.util.Reflect;
 
 import lombok.Getter;
 
@@ -44,20 +44,19 @@ public class PersistentTextModel implements PersistentModel<Text> {
     private ActionTypes hoverAction;
     private String hoverActionResult;
 
-    public PersistentTextModel(Text text) {
+    public PersistentTextModel(final Text text) {
         this.content = text.toLegacy();
         this.extractClickAction(text);
         this.extractShiftClickAction(text);
         this.extractHoverAction(text);
     }
 
-    protected void extractClickAction(Text text) {
-        ClickAction<?> clickAction = text.onClick();
+    protected void extractClickAction(final Text text) {
+        final ClickAction<?> clickAction = text.onClick();
         if (clickAction == null) return;
-
         this.clickActionResult = String.valueOf(clickAction.result());
         if (clickAction instanceof ClickAction.ChangePage) this.clickAction = ActionTypes.CHANGE_PAGE;
-        else if (Reflect.lookup("org.dockbox.hartshorn.commands.CommandAction").isInstance(clickAction)) this.clickAction = ActionTypes.RUN_COMMAND;
+        else if (clickAction instanceof CommandAction) this.clickAction = ActionTypes.RUN_COMMAND;
         else if (clickAction instanceof ClickAction.OpenUrl) this.clickAction = ActionTypes.OPEN_URL;
         else if (clickAction instanceof ClickAction.SuggestCommand) this.clickAction = ActionTypes.SUGGEST_COMMAND;
         else if (clickAction instanceof ClickAction.ExecuteCallback) {
@@ -67,8 +66,8 @@ public class PersistentTextModel implements PersistentModel<Text> {
         else this.clickAction = ActionTypes.NONE;
     }
 
-    protected void extractShiftClickAction(Text text) {
-        ShiftClickAction<?> shiftClickAction = text.onShiftClick();
+    protected void extractShiftClickAction(final Text text) {
+        final ShiftClickAction<?> shiftClickAction = text.onShiftClick();
         if (shiftClickAction == null) return;
 
         this.shiftClickActionResult = String.valueOf(shiftClickAction.result());
@@ -76,8 +75,8 @@ public class PersistentTextModel implements PersistentModel<Text> {
         else this.shiftClickAction = ActionTypes.NONE;
     }
 
-    protected void extractHoverAction(Text text) {
-        HoverAction<?> hoverAction = text.onHover();
+    protected void extractHoverAction(final Text text) {
+        final HoverAction<?> hoverAction = text.onHover();
         if (hoverAction == null) return;
 
         this.hoverActionResult = String.valueOf(hoverAction.result());
@@ -91,8 +90,8 @@ public class PersistentTextModel implements PersistentModel<Text> {
     }
 
     @Override
-    public Text restore() {
-        Text text = Text.of(this.content);
+    public Text restore(final ApplicationContext context) {
+        final Text text = Text.of(this.content);
         switch (this.clickAction) {
             case CHANGE_PAGE:
                 text.onClick(ClickAction.changePage(Integer.parseInt(this.clickActionResult)));
@@ -102,7 +101,7 @@ public class PersistentTextModel implements PersistentModel<Text> {
                 break;
             case RUN_COMMAND:
                 // Commands are optional actions if the Command module is present
-                text.onClick(Hartshorn.context().get(CommandAction.class, this.clickActionResult));
+                text.onClick(context.get(CommandAction.class, this.clickActionResult));
                 break;
             case OPEN_URL:
                 text.onClick(ClickAction.openUrl(this.clickActionResult));

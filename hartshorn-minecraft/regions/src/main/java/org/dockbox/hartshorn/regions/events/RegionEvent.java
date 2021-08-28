@@ -17,23 +17,23 @@
 
 package org.dockbox.hartshorn.regions.events;
 
-import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.events.EventBus;
-import org.dockbox.hartshorn.events.parents.Event;
+import org.dockbox.hartshorn.events.parents.ContextCarrierEvent;
 import org.dockbox.hartshorn.regions.Region;
+import org.jetbrains.annotations.NotNull;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public abstract class RegionEvent implements Event {
+public abstract class RegionEvent extends ContextCarrierEvent {
 
     private final Region region;
 
     @Override
-    public RegionEvent post() {
-        Hartshorn.context().get(EventBus.class).post(this);
+    public @NotNull RegionEvent post() {
+        this.applicationContext().get(EventBus.class).post(this);
         return this;
     }
 }

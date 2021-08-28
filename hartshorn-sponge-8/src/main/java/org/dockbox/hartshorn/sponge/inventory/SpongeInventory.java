@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.sponge.inventory;
 
 import org.dockbox.hartshorn.api.CheckedFunction;
 import org.dockbox.hartshorn.server.minecraft.item.Item;
-import org.dockbox.hartshorn.sponge.util.SpongeConvert;
+import org.dockbox.hartshorn.sponge.util.SpongeAdapter;
 import org.spongepowered.api.item.inventory.Inventory;
 import org.spongepowered.api.item.inventory.Slot;
 
@@ -29,10 +29,10 @@ import java.util.stream.Collectors;
 
 public interface SpongeInventory {
 
-    CheckedFunction<Slot, Item> SLOT_LOOKUP = slot -> SpongeConvert.fromSponge(slot.peek());
-    Function<Slot, Item> SLOT_LOOKUP_FN = slot -> SpongeConvert.fromSponge(slot.peek());
+    CheckedFunction<Slot, Item> SLOT_LOOKUP = slot -> SpongeAdapter.fromSponge(slot.peek());
+    Function<Slot, Item> SLOT_LOOKUP_FN = slot -> SpongeAdapter.fromSponge(slot.peek());
 
-    default Collection<Item> items(Inventory inventory) {
+    default Collection<Item> items(final Inventory inventory) {
         return inventory.slots().stream()
                 .map(SLOT_LOOKUP_FN)
                 .collect(Collectors.toList());

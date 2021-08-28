@@ -17,9 +17,9 @@
 
 package org.dockbox.hartshorn.discord.events;
 
-import org.dockbox.hartshorn.events.parents.Event;
+import org.dockbox.hartshorn.events.parents.ContextCarrierEvent;
 
 /** The abstract type which can be used to listen to all Discord related events. */
-public interface DiscordEvent extends Event {
+public abstract class DiscordEvent extends ContextCarrierEvent {
 
 }

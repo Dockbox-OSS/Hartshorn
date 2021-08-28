@@ -30,16 +30,16 @@ public class DaveTriggers {
 
     @Getter private final List<DaveTrigger> triggers = HartshornUtils.emptyList();
 
-    public Exceptional<DaveTrigger> matching(String message) {
+    public Exceptional<DaveTrigger> matching(final String message) {
         return DaveUtils.findMatching(this, message);
     }
 
-    public void add(DaveTrigger trigger) {
+    public void add(final DaveTrigger trigger) {
         this.triggers.add(trigger);
     }
 
-    public Exceptional<DaveTrigger> find(@NonNls String id) {
-        for (DaveTrigger trigger : this.triggers) {
+    public Exceptional<DaveTrigger> find(@NonNls final String id) {
+        for (final DaveTrigger trigger : this.triggers) {
             if (trigger.id().equals(id)) return Exceptional.of(trigger);
         }
         return Exceptional.empty();

@@ -17,7 +17,6 @@
 
 package org.dockbox.hartshorn.events.parents;
 
-import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.events.EventBus;
 import org.jetbrains.annotations.NotNull;
 
@@ -45,7 +44,7 @@ public interface Cancellable extends Event {
     @Override
     @NotNull
     default Cancellable post() {
-        Hartshorn.context().get(EventBus.class).post(this);
+        this.applicationContext().get(EventBus.class).post(this);
         return this;
     }
 }

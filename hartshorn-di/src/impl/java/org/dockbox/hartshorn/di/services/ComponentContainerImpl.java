@@ -23,8 +23,9 @@ import org.dockbox.hartshorn.di.annotations.component.Component;
 import org.dockbox.hartshorn.di.annotations.service.Service;
 import org.dockbox.hartshorn.di.annotations.service.ServiceActivator;
 import org.dockbox.hartshorn.di.binding.Bindings;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
+import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.util.HartshornUtils;
-import org.dockbox.hartshorn.util.Reflect;
 
 import java.lang.annotation.Annotation;
 import java.util.List;
@@ -35,17 +36,19 @@ import lombok.Getter;
 public class ComponentContainerImpl implements ComponentContainer {
 
     private final Component annotation;
-    private final Class<?> component;
+    private final TypeContext<?> component;
     private final List<Class<? extends Annotation>> activators = HartshornUtils.emptyList();
+    private final ApplicationContext context;
 
-    public ComponentContainerImpl(final Class<?> component) {
-        final Exceptional<Component> annotated = Reflect.annotation(component, Component.class);
+    public ComponentContainerImpl(final ApplicationContext context, final TypeContext<?> component) {
+        final Exceptional<Component> annotated = component.annotation(Component.class);
         if (annotated.absent()) throw new IllegalArgumentException("Provided component candidate has no assigned decorator");
 
         this.component = component;
         this.annotation = annotated.get();
+        this.context = context;
 
-        final Exceptional<Service> service = Reflect.annotation(component, Service.class);
+        final Exceptional<Service> service = component.annotation(Service.class);
         if (service.present()) {
             this.activators.addAll(HartshornUtils.asList(service.get().activators()));
         }
@@ -54,14 +57,14 @@ public class ComponentContainerImpl implements ComponentContainer {
     @Override
     public String id() {
         final String id = this.annotation.id();
-        if ("".equals(id)) return Bindings.serviceId(this.component, true);
+        if ("".equals(id)) return Bindings.serviceId(this.context, this.component, true);
         return id;
     }
 
     @Override
     public String name() {
         final String name = this.annotation.name();
-        if ("".equals(name)) return Bindings.serviceName(this.component, true);
+        if ("".equals(name)) return Bindings.serviceName(this.context, this.component, true);
         return name;
     }
 
@@ -71,13 +74,13 @@ public class ComponentContainerImpl implements ComponentContainer {
     }
 
     @Override
-    public Class<?> type() {
+    public TypeContext<?> type() {
         return this.component;
     }
 
     @Override
-    public Class<?> owner() {
-        return this.annotation.owner();
+    public TypeContext<?> owner() {
+        return TypeContext.of(this.annotation.owner());
     }
 
     @Override
@@ -92,7 +95,7 @@ public class ComponentContainerImpl implements ComponentContainer {
 
     @Override
     public boolean hasActivator(final Class<? extends Annotation> activator) {
-        if (!Reflect.annotation(activator, ServiceActivator.class).present())
+        if (!TypeContext.of(activator).annotation(ServiceActivator.class).present())
             throw new IllegalArgumentException("Requested activator " + activator.getSimpleName() + " is not decorated with @ServiceActivator");
 
         return this.activators().contains(activator);

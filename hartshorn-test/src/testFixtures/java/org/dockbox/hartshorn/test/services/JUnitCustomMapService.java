@@ -20,6 +20,7 @@ package org.dockbox.hartshorn.test.services;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.domain.Identifiable;
 import org.dockbox.hartshorn.commands.SystemSubject;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.server.minecraft.item.DefaultCustomMapService;
 import org.dockbox.hartshorn.server.minecraft.item.Item;
 import org.dockbox.hartshorn.server.minecraft.item.maps.CustomMap;
@@ -30,41 +31,46 @@ import java.awt.image.BufferedImage;
 import java.util.Collection;
 import java.util.List;
 
+import javax.inject.Inject;
+
 public class JUnitCustomMapService extends DefaultCustomMapService {
 
     private static final List<CustomMap> maps = HartshornUtils.emptyConcurrentList();
 
+    @Inject
+    private ApplicationContext context;
+
     @Override
-    public CustomMap create(BufferedImage image, Identifiable source) {
-        CustomMap map = new JUnitCustomMap(source, maps.size());
+    public CustomMap create(final BufferedImage image, final Identifiable source) {
+        final CustomMap map = this.context.get(JUnitCustomMap.class, source, maps.size());
         maps.add(map);
         return map;
     }
 
     @Override
-    public CustomMap create(byte[] image, Identifiable source) {
-        CustomMap map = new JUnitCustomMap(source, maps.size());
+    public CustomMap create(final byte[] image, final Identifiable source) {
+        final CustomMap map = this.context.get(JUnitCustomMap.class, source, maps.size());
         maps.add(map);
         return map;
     }
 
     @Override
-    public CustomMap from(int id) {
+    public CustomMap from(final int id) {
         if (maps.size() > id) {
             return maps.get(id);
         }
-        return new JUnitCustomMap(SystemSubject.instance(), id);
+        return this.context.get(JUnitCustomMap.class, SystemSubject.instance(this.context), id);
     }
 
     @Override
-    public Collection<CustomMap> all(Identifiable source) {
+    public Collection<CustomMap> all(final Identifiable source) {
         return maps.stream()
                 .filter(map -> map.owner().equals(source))
                 .toList();
     }
 
     @Override
-    public Exceptional<CustomMap> from(Item item) {
+    public Exceptional<CustomMap> from(final Item item) {
         return Exceptional.empty();
     }
 }

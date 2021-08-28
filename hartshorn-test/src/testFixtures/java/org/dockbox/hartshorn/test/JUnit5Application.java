@@ -24,8 +24,8 @@ import org.dockbox.hartshorn.di.DefaultModifiers;
 import org.dockbox.hartshorn.di.MetaProviderModifier;
 import org.dockbox.hartshorn.di.annotations.activate.Activator;
 import org.dockbox.hartshorn.di.annotations.inject.InjectConfig;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.test.util.JUnitInjector;
-import org.dockbox.hartshorn.util.Reflect;
 
 import java.lang.reflect.Field;
 
@@ -36,16 +36,12 @@ public final class JUnit5Application {
 
     @Getter private static final JUnitInformation information = new JUnitInformation();
 
-    public static void prepareBootstrap() throws NoSuchFieldException, IllegalAccessException {
+    public static ApplicationContext prepareBootstrap() throws NoSuchFieldException, IllegalAccessException {
         final Field instance = ApplicationContextAware.class.getDeclaredField("instance");
         instance.setAccessible(true);
         instance.set(null, null);
 
-        final Field context = Reflect.class.getDeclaredField("context");
-        context.setAccessible(true);
-        context.set(null, null);
-
-        HartshornApplication.create(JUnit5Application.class,
+        return HartshornApplication.create(JUnit5Application.class,
                 DefaultModifiers.ACTIVATE_ALL,
                 new MetaProviderModifier(MetaProviderImpl::new)
         );

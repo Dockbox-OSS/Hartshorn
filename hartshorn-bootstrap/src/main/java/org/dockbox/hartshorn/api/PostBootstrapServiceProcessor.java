@@ -20,28 +20,28 @@ package org.dockbox.hartshorn.api;
 import org.dockbox.hartshorn.api.annotations.PostBootstrap;
 import org.dockbox.hartshorn.api.annotations.UseBootstrap;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
+import org.dockbox.hartshorn.di.context.element.MethodContext;
+import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.di.services.ServiceProcessor;
-import org.dockbox.hartshorn.util.Reflect;
 
-import java.lang.reflect.Method;
 import java.util.Collection;
 
 public class PostBootstrapServiceProcessor implements ServiceProcessor<UseBootstrap> {
 
     @Override
-    public boolean preconditions(final Class<?> type) {
-        final boolean activated = Hartshorn.context().locator().container(type)
+    public boolean preconditions(final ApplicationContext context, final TypeContext<?> type) {
+        final boolean activated = context.locator().container(type)
                 .map(serviceContainer -> serviceContainer.hasActivator(UseBootstrap.class))
                 .or(false);
-        final boolean hasPosts = !Reflect.methods(type, PostBootstrap.class).isEmpty();
+        final boolean hasPosts = !type.flatMethods(PostBootstrap.class).isEmpty();
         return activated && hasPosts;
     }
 
     @Override
-    public <T> void process(final ApplicationContext context, final Class<T> type) {
-        final Collection<Method> methods = Reflect.methods(type, PostBootstrap.class);
-        for (final Method method : methods) {
-            HartshornBootstrap.instance().addPostBootstrapActivation(method);
+    public <T> void process(final ApplicationContext context, final TypeContext<T> type) {
+        final Collection<MethodContext<?, T>> methods = type.flatMethods(PostBootstrap.class);
+        for (final MethodContext<?, T> method : methods) {
+            context.environment().application().addActivation(method);
         }
     }
 

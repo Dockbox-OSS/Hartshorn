@@ -23,8 +23,9 @@ import org.dockbox.hartshorn.server.minecraft.item.Item;
 import org.dockbox.hartshorn.server.minecraft.players.inventory.AbstractInventoryRow;
 import org.dockbox.hartshorn.server.minecraft.players.inventory.InventoryRow;
 import org.dockbox.hartshorn.server.minecraft.players.inventory.PlayerInventory;
+import org.dockbox.hartshorn.sponge.SpongeContextCarrier;
 import org.dockbox.hartshorn.sponge.game.SpongePlayer;
-import org.dockbox.hartshorn.sponge.util.SpongeConvert;
+import org.dockbox.hartshorn.sponge.util.SpongeAdapter;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.item.inventory.ItemStack;
@@ -36,7 +37,7 @@ import org.spongepowered.api.item.inventory.transaction.InventoryTransactionResu
 
 import java.util.Collection;
 
-public class SpongePlayerInventory extends PlayerInventory implements SpongeInventory {
+public class SpongePlayerInventory extends PlayerInventory implements SpongeInventory, SpongeContextCarrier {
 
     private static final int inventorySize = 36;
     private final SpongePlayer player;
@@ -47,12 +48,12 @@ public class SpongePlayerInventory extends PlayerInventory implements SpongeInve
 
     @Override
     public Item slot(final int row, final int column) {
-        return this.internalGetSlot(row, column).map(SLOT_LOOKUP).get(AbstractInventoryRow.AIR);
+        return this.internalGetSlot(row, column).map(SLOT_LOOKUP).get(() -> AbstractInventoryRow.AIR.apply(this.applicationContext()));
     }
 
     @Override
     public void slot(final Item item, final int row, final int column) {
-        this.internalGetSlot(row, column).present(slot -> slot.set(SpongeConvert.toSponge(item)));
+        this.internalGetSlot(row, column).present(slot -> slot.set(SpongeAdapter.toSponge(item)));
     }
 
     private Exceptional<org.spongepowered.api.item.inventory.Slot> internalGetSlot(
@@ -71,12 +72,12 @@ public class SpongePlayerInventory extends PlayerInventory implements SpongeInve
 
     @Override
     public Item slot(final Slot slot) {
-        return this.internalGetSlot(slot).map(SLOT_LOOKUP).get(AbstractInventoryRow.AIR);
+        return this.internalGetSlot(slot).map(SLOT_LOOKUP).get(() -> AbstractInventoryRow.AIR.apply(this.applicationContext()));
     }
 
     @Override
     public void slot(final Item item, final Slot slotType) {
-        this.internalGetSlot(slotType).present(slot -> slot.set(SpongeConvert.toSponge(item)));
+        this.internalGetSlot(slotType).present(slot -> slot.set(SpongeAdapter.toSponge(item)));
     }
 
     @Override
@@ -87,19 +88,19 @@ public class SpongePlayerInventory extends PlayerInventory implements SpongeInve
     private Exceptional<org.spongepowered.api.item.inventory.Slot> internalGetSlot(final Slot slot) {
         return this.player.player().map(player -> {
             final EquipmentInventory equipment = player.inventory().equipment();
-            final EquipmentType equipmentType = SpongeConvert.toSponge(slot);
+            final EquipmentType equipmentType = SpongeAdapter.toSponge(slot);
             return equipment.slot(equipmentType).orElse(null);
         });
     }
 
     @Override
     public void slot(final Item item, final int index) {
-        this.internalGetSlot(index).present(slot -> slot.set(SpongeConvert.toSponge(item)));
+        this.internalGetSlot(index).present(slot -> slot.set(SpongeAdapter.toSponge(item)));
     }
 
     @Override
     public Item slot(final int index) {
-        return this.internalGetSlot(index).map(SLOT_LOOKUP).get(AbstractInventoryRow.AIR);
+        return this.internalGetSlot(index).map(SLOT_LOOKUP).get(() -> AbstractInventoryRow.AIR.apply(this.applicationContext()));
     }
 
     private Exceptional<org.spongepowered.api.item.inventory.Slot> internalGetSlot(final int index) {
@@ -126,7 +127,7 @@ public class SpongePlayerInventory extends PlayerInventory implements SpongeInve
         return this.inventory()
                 .map(inventory -> inventory.slots()
                         .stream()
-                        .map(slot -> SpongeConvert.fromSponge(slot.peek()))
+                        .map(slot -> SpongeAdapter.fromSponge(slot.peek()))
                         .map(Item.class::cast)
                         .toList())
                 .orElse(HartshornUtils::emptyList)
@@ -137,7 +138,7 @@ public class SpongePlayerInventory extends PlayerInventory implements SpongeInve
     public boolean give(final Item item) {
         return this.player.player().map(player -> {
             final org.spongepowered.api.item.inventory.entity.PlayerInventory inventory = player.inventory();
-            final ItemStack stack = SpongeConvert.toSponge(item);
+            final ItemStack stack = SpongeAdapter.toSponge(item);
             final InventoryTransactionResult result = inventory.hotbar().offer(stack);
             if (Type.SUCCESS == result.type()) return true;
             else return Type.SUCCESS == inventory.offer(stack).type();

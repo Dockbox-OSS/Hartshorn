@@ -26,7 +26,6 @@ import org.dockbox.hartshorn.api.task.pipeline.pipes.ComplexPipe;
 import org.dockbox.hartshorn.api.task.pipeline.pipes.IPipe;
 import org.dockbox.hartshorn.api.task.pipeline.pipes.StandardPipe;
 import org.dockbox.hartshorn.util.HartshornUtils;
-import org.dockbox.hartshorn.util.Reflect;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -153,7 +152,7 @@ public abstract class AbstractPipeline<P, I> {
      */
     @PartialApi
     protected Exceptional<I> processPipe(final IPipe<I, I> pipe, Exceptional<I> exceptionalInput) {
-        if (!this.cancellable() && Reflect.assigns(CancellablePipe.class, pipe.type())) {
+        if (!this.cancellable() && pipe.type().childOf(CancellablePipe.class)) {
             throw new IllegalPipeException(
                     "Attempted to add a CancellablePipe to an uncancellable pipeline.");
         }
@@ -162,12 +161,12 @@ public abstract class AbstractPipeline<P, I> {
         final Exceptional<I> finalInput = exceptionalInput;
 
         exceptionalInput = Exceptional.of(() -> {
-            if (Reflect.assigns(ComplexPipe.class, pipe.type())) {
+            if (pipe.type().childOf(ComplexPipe.class)) {
                 final ComplexPipe<I, I> complexPipe = (ComplexPipe<I, I>) pipe;
                 return complexPipe.apply(
                         this, finalInput.orNull(), finalInput.unsafeError());
             }
-            else if (Reflect.assigns(StandardPipe.class, pipe.type())) {
+            else if (pipe.type().childOf(StandardPipe.class)) {
                 final StandardPipe<I, I> standardPipe = (StandardPipe<I, I>) pipe;
                 return standardPipe.apply(finalInput);
             }

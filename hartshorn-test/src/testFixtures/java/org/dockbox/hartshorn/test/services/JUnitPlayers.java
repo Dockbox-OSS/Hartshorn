@@ -20,39 +20,30 @@ package org.dockbox.hartshorn.test.services;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.server.minecraft.players.Player;
 import org.dockbox.hartshorn.server.minecraft.players.Players;
-import org.dockbox.hartshorn.test.objects.living.JUnitPlayer;
 import org.dockbox.hartshorn.util.HartshornUtils;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 public class JUnitPlayers implements Players {
 
-    private static final String PLAYER_ONE_NAME = "PlayerOne";
-    public static final Player PLAYER_ONE = new JUnitPlayer(UUID.randomUUID(), PLAYER_ONE_NAME);
-    private static final String PLAYER_TWO_NAME = "PlayerTwo";
-    public static final Player PLAYER_TWO = new JUnitPlayer(UUID.randomUUID(), PLAYER_TWO_NAME);
-    private static final String PLAYER_THREE_NAME = "PlayerThree";
-    public static final Player PLAYER_THREE = new JUnitPlayer(UUID.randomUUID(), PLAYER_THREE_NAME);
+    private final Set<Player> players = HartshornUtils.emptyConcurrentSet();
 
     @Override
     public List<Player> onlinePlayers() {
-        return HartshornUtils.asList(Player::online, PLAYER_ONE, PLAYER_TWO, PLAYER_THREE);
+        return HartshornUtils.asUnmodifiableList(this.players.stream().filter(Player::online).toList());
     }
 
     @Override
-    public Exceptional<Player> player(String name) {
-        if (PLAYER_ONE_NAME.equals(name)) return Exceptional.of(PLAYER_ONE);
-        else if (PLAYER_TWO_NAME.equals(name)) return Exceptional.of(PLAYER_TWO);
-        else if (PLAYER_THREE_NAME.equals(name)) return Exceptional.of(PLAYER_THREE);
+    public Exceptional<Player> player(final String name) {
+        for (final Player player : this.players) if (player.name().equalsIgnoreCase(name)) return Exceptional.of(player);
         return Exceptional.empty();
     }
 
     @Override
-    public Exceptional<Player> player(UUID uuid) {
-        if (PLAYER_ONE.uniqueId().equals(uuid)) return Exceptional.of(PLAYER_ONE);
-        else if (PLAYER_TWO.uniqueId().equals(uuid)) return Exceptional.of(PLAYER_TWO);
-        else if (PLAYER_THREE.uniqueId().equals(uuid)) return Exceptional.of(PLAYER_THREE);
+    public Exceptional<Player> player(final UUID uuid) {
+        for (final Player player : this.players) if (player.uniqueId().equals(uuid)) return Exceptional.of(player);
         return Exceptional.empty();
     }
 }

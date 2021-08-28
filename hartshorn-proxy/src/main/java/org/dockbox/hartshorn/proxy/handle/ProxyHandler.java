@@ -21,10 +21,13 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 
 import org.dockbox.hartshorn.api.Hartshorn;
+import org.dockbox.hartshorn.api.exceptions.ApplicationException;
+import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.proxy.ProxyAttribute;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -32,7 +35,6 @@ import java.util.List;
 
 import javassist.util.proxy.MethodHandler;
 import javassist.util.proxy.ProxyFactory;
-import lombok.AccessLevel;
 import lombok.Getter;
 
 public class ProxyHandler<T> implements MethodHandler {
@@ -40,42 +42,49 @@ public class ProxyHandler<T> implements MethodHandler {
     private final Multimap<Method, ProxyAttribute<T, ?>> handlers = ArrayListMultimap.create();
     private final T instance;
 
-    @Getter(AccessLevel.PROTECTED)
+    @Getter
     private final Class<T> type;
 
-    public ProxyHandler(T instance) {
+    public ProxyHandler(final T instance) {
         this.instance = instance;
         //noinspection unchecked
         this.type = (Class<T>) instance.getClass();
     }
 
-    public ProxyHandler(T instance, Class<T> type) {
+    public ProxyHandler(final T instance, final Class<T> type) {
         this.instance = instance;
         this.type = type;
     }
 
-    @SafeVarargs
-    public final void delegate(ProxyAttribute<T, ?>... properties) {
-        for (ProxyAttribute<T, ?> property : properties) this.delegate(property);
+    public ProxyHandler(final T instance, final TypeContext<T> type) {
+        this(instance, type.type());
     }
 
-    public void delegate(ProxyAttribute<T, ?> property) {
+    @SafeVarargs
+    public final void delegate(final ProxyAttribute<T, ?>... properties) {
+        for (final ProxyAttribute<T, ?> property : properties) this.delegate(property);
+    }
+
+    public void delegate(final ProxyAttribute<T, ?> property) {
+        if (Modifier.isFinal(property.target().getModifiers()))
+            throw new ApplicationException("Cannot proxy final method " + property.target().getName()).runtime();
+        
         this.handlers.put(property.target(), property);
     }
 
     @Override
-    public Object invoke(Object self, Method thisMethod, Method proceed, Object[] args) throws Throwable {
+    public Object invoke(final Object self, final Method thisMethod, final Method proceed, final Object[] args) throws Throwable {
         // The handler listens for all methods, while not all methods are proxied
         if (this.handlers.containsKey(thisMethod)) {
-            Collection<ProxyAttribute<T, ?>> properties = this.handlers.get(thisMethod);
+            final Collection<ProxyAttribute<T, ?>> properties = this.handlers.get(thisMethod);
             Object returnValue = null;
             // Sort the list so all properties are prioritised. The phase at which the property will be
             // delegated does not matter here, as out-of-phase properties are not performed.
-            List<ProxyAttribute<T, ?>> toSort = new ArrayList<>(properties);
+            final List<ProxyAttribute<T, ?>> toSort = new ArrayList<>(properties);
             toSort.sort(Comparator.comparingInt(ProxyAttribute::priority));
 
             // Phase is sorted in execution order (HEAD, OVERWRITE, TAIL)
-            for (Phase phase : Phase.values())
+            for (final Phase phase : Phase.values())
                 returnValue = this.enterPhase(phase, toSort, args, thisMethod, proceed, self, returnValue);
 
             return returnValue;
@@ -99,19 +108,19 @@ public class ProxyHandler<T> implements MethodHandler {
     }
 
     private Object enterPhase(
-            Phase at,
-            Iterable<ProxyAttribute<T, ?>> properties,
-            Object[] args,
-            Method thisMethod,
-            Method proceed,
-            Object self,
+            final Phase at,
+            final Iterable<ProxyAttribute<T, ?>> properties,
+            final Object[] args,
+            final Method thisMethod,
+            final Method proceed,
+            final Object self,
             Object returnValue
     ) throws InvocationTargetException, IllegalAccessException {
         // Used to ensure the target is performed if there is no OVERWRITE phase hook
         boolean target = true;
-        for (ProxyAttribute<T, ?> property : properties) {
+        for (final ProxyAttribute<T, ?> property : properties) {
             if (at == property.phase()) {
-                Object result = property.delegate(this.instance, proceed, self, args);
+                final Object result = property.delegate(this.instance, proceed, self, args);
                 if (property.overwriteResult() && !Void.TYPE.equals(thisMethod.getReturnType())) {
                     // A proxy returning null typically indicates the use of a non-returning function, for
                     // annotation  properties this is handled internally, however proxy types should carry
@@ -126,7 +135,7 @@ public class ProxyHandler<T> implements MethodHandler {
             }
         }
         if (Phase.OVERWRITE == at && target) {
-            Object result = thisMethod.invoke(this.instance, args);
+            final Object result = thisMethod.invoke(this.instance, args);
             if (null == returnValue) returnValue = result;
         }
         return returnValue;
@@ -136,8 +145,9 @@ public class ProxyHandler<T> implements MethodHandler {
         if (this.type().isInterface()) {
             return new ProxyInterfaceHandler<>(this).proxy();
         }
-        ProxyFactory factory = new ProxyFactory();
+        final ProxyFactory factory = new ProxyFactory();
         factory.setSuperclass(this.type());
+        factory.setFilter(ProxyHandler.this.handlers::containsKey);
 
         //noinspection unchecked
         return (T) factory.create(new Class<?>[0], new Object[0], this);

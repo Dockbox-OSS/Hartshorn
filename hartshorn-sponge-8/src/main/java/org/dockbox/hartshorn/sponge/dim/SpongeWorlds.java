@@ -20,7 +20,7 @@ package org.dockbox.hartshorn.sponge.dim;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.server.minecraft.dimension.Worlds;
 import org.dockbox.hartshorn.server.minecraft.dimension.world.World;
-import org.dockbox.hartshorn.sponge.util.SpongeConvert;
+import org.dockbox.hartshorn.sponge.util.SpongeAdapter;
 import org.dockbox.hartshorn.sponge.util.SpongeUtil;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.spongepowered.api.ResourceKey;
@@ -36,7 +36,7 @@ public class SpongeWorlds implements Worlds {
     @Override
     public List<World> loadedWorlds() {
         return Sponge.server().worldManager().worlds().stream()
-                .map(SpongeConvert::fromSponge)
+                .map(SpongeAdapter::fromSponge)
                 .map(World.class::cast)
                 .toList();
     }
@@ -50,14 +50,14 @@ public class SpongeWorlds implements Worlds {
     public Exceptional<World> world(String name) {
         return Exceptional.of(this.worlds().stream()
                         .filter(world -> world.key().value().equals(name)).findFirst())
-                .map(SpongeConvert::fromSponge);
+                .map(SpongeAdapter::fromSponge);
     }
 
     @Override
     public Exceptional<World> world(UUID uuid) {
         return Exceptional.of(this.worlds().stream()
                         .filter(world -> world.uniqueId().equals(uuid)).findFirst())
-                .map(SpongeConvert::fromSponge);
+                .map(SpongeAdapter::fromSponge);
     }
 
     @Override
@@ -78,7 +78,7 @@ public class SpongeWorlds implements Worlds {
     private List<ServerWorldProperties> worlds() {
         List<ServerWorldProperties> uuids = HartshornUtils.emptyList();
         for (ResourceKey worldKey : Sponge.server().worldManager().worldKeys()) {
-            final Exceptional<ServerWorldProperties> properties = SpongeUtil.awaitOption(Sponge.server().worldManager().loadProperties(worldKey));
+            final Exceptional<ServerWorldProperties> properties = SpongeUtil.awaitSafe(Sponge.server().worldManager().loadProperties(worldKey));
             properties.present(uuids::add);
         }
         return HartshornUtils.asUnmodifiableList(uuids);

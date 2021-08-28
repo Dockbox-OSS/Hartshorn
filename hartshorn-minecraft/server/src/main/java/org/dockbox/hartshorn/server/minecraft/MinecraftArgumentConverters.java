@@ -17,11 +17,11 @@
 
 package org.dockbox.hartshorn.server.minecraft;
 
-import org.dockbox.hartshorn.api.Hartshorn;
+import org.dockbox.hartshorn.api.annotations.PartialApi;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.domain.tuple.Vector3N;
-import org.dockbox.hartshorn.commands.arguments.DefaultArgumentConverters;
 import org.dockbox.hartshorn.commands.arguments.ArgumentConverterImpl;
+import org.dockbox.hartshorn.commands.arguments.DefaultArgumentConverters;
 import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
 import org.dockbox.hartshorn.di.annotations.service.Service;
 import org.dockbox.hartshorn.server.minecraft.dimension.Block;
@@ -39,9 +39,10 @@ import java.util.UUID;
 @Service
 public final class MinecraftArgumentConverters {
 
+    @PartialApi
     public static final ArgumentConverter<World> WORLD = ArgumentConverterImpl.builder(World.class, "world")
-            .withConverter(in -> {
-                Worlds wss = Hartshorn.context().get(Worlds.class);
+            .withConverter((cs, in) -> {
+                Worlds wss = cs.applicationContext().get(Worlds.class);
                 Exceptional<World> world = wss.world(in);
                 return world.orElse(
                         () -> {
@@ -50,19 +51,21 @@ public final class MinecraftArgumentConverters {
                         });
             }).build();
 
+    @PartialApi
     public static final ArgumentConverter<Location> LOCATION = ArgumentConverterImpl.builder(Location.class, "location", "position", "pos")
             .withConverter((cs, in) -> {
                 String[] xyzw = in.split(",");
                 String xyz = String.join(",", xyzw[0], xyzw[1], xyzw[2]);
                 Vector3N vec = DefaultArgumentConverters.VECTOR.convert(cs, xyz).or(Vector3N.of(0, 0, 0));
-                World world = WORLD.convert(cs, xyzw[3]).or(World.empty());
+                World world = WORLD.convert(cs, xyzw[3]).or(World.empty(cs.applicationContext()));
 
-                return Exceptional.of(Location.of(vec, world));
+                return Exceptional.of(Location.of(cs.applicationContext(), vec, world));
             }).build();
 
+    @PartialApi
     public static final ArgumentConverter<Player> PLAYER = ArgumentConverterImpl.builder(Player.class, "player", "user")
-            .withConverter(in -> {
-                Players pss = Hartshorn.context().get(Players.class);
+            .withConverter((cs, in) -> {
+                Players pss = cs.applicationContext().get(Players.class);
                 Exceptional<Player> player = pss.player(in);
                 return player.orElse(() -> {
                     try {
@@ -74,23 +77,25 @@ public final class MinecraftArgumentConverters {
                         return null;
                     }
                 });
-            }).withSuggestionProvider(in -> Hartshorn.context().get(Players.class).onlinePlayers().stream()
+            }).withSuggestionProvider((cs, in) -> cs.applicationContext().get(Players.class).onlinePlayers().stream()
                     .map(Player::name)
                     .filter(n -> n.startsWith(in))
                     .toList())
             .build();
 
+    @PartialApi
     public static final ArgumentConverter<Item> ITEM = ArgumentConverterImpl.builder(Item.class, "item")
-            .withConverter(in -> Exceptional.of(Item.of(in)))
-            .withSuggestionProvider(in -> Hartshorn.context()
+            .withConverter((cs, in) -> Exceptional.of(Item.of(cs.applicationContext(), in)))
+            .withSuggestionProvider((cs, in) -> cs.applicationContext()
                     .first(ItemContext.class)
                     .map(ItemContext::items)
                     .orElse(HartshornUtils::emptyList).get())
             .build();
 
+    @PartialApi
     public static final ArgumentConverter<Block> BLOCK = ArgumentConverterImpl.builder(Block.class, "block")
-            .withConverter(in -> Exceptional.of(Block.of(in)))
-            .withSuggestionProvider(in -> Hartshorn.context()
+            .withConverter((cs, in) -> Exceptional.of(Block.of(cs.applicationContext(), in)))
+            .withSuggestionProvider((cs, in) -> cs.applicationContext()
                     .first(ItemContext.class)
                     .map(ItemContext::blocks)
                     .orElse(HartshornUtils::emptyList).get())

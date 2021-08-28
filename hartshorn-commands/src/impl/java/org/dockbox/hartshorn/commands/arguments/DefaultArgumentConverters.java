@@ -17,7 +17,6 @@
 
 package org.dockbox.hartshorn.commands.arguments;
 
-import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.domain.tuple.Vector3N;
 import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
@@ -126,14 +125,14 @@ public final class DefaultArgumentConverters {
             .build();
 
     public static final ArgumentConverter<ResourceEntry> RESOURCE = ArgumentConverterImpl.builder(ResourceEntry.class, "resource", "i18n", "translation")
-            .withConverter(in -> {
-                ResourceService rs = Hartshorn.context().get(ResourceService.class);
+            .withConverter((src, in) -> {
+                ResourceService rs = src.applicationContext().get(ResourceService.class);
                 String validKey = rs.createValidKey(in);
 
                 Exceptional<? extends ResourceEntry> or = rs.get(validKey);
                 if (or.present()) return or.map(ResourceEntry.class::cast);
 
-                return Hartshorn.context().get(ResourceService.class).get(validKey);
+                return src.applicationContext().get(ResourceService.class).get(validKey);
             }).build();
 
     public static final ArgumentConverter<Text> TEXT = ArgumentConverterImpl.builder(Text.class, "text")
@@ -141,11 +140,11 @@ public final class DefaultArgumentConverters {
             .build();
 
     public static final ArgumentConverter<ComponentContainer> SERVICE = ArgumentConverterImpl.builder(ComponentContainer.class, "service")
-            .withConverter(in -> Exceptional.of(Hartshorn.context()
+            .withConverter((src, in) -> Exceptional.of(src.applicationContext()
                     .locator().containers().stream()
                     .filter(container -> container.id().equalsIgnoreCase(in))
                     .findFirst()))
-            .withSuggestionProvider((in) -> Hartshorn.context()
+            .withSuggestionProvider((src, in) -> src.applicationContext()
                     .locator().containers().stream()
                     .map(ComponentContainer::id)
                     .filter(id -> id.toLowerCase(Locale.ROOT).startsWith(in.toLowerCase(Locale.ROOT)))

@@ -17,33 +17,30 @@
 
 package org.dockbox.hartshorn.proxy;
 
-import org.dockbox.hartshorn.api.Hartshorn;
+import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.proxy.handle.ProxyHandler;
 import org.dockbox.hartshorn.proxy.types.ConcreteProxyTarget;
 import org.dockbox.hartshorn.proxy.types.FinalProxyTarget;
 import org.dockbox.hartshorn.proxy.types.GlobalProxyTarget;
 import org.dockbox.hartshorn.proxy.types.ProviderService;
 import org.dockbox.hartshorn.proxy.types.SampleType;
-import org.dockbox.hartshorn.test.HartshornRunner;
-import org.dockbox.hartshorn.util.Reflect;
+import org.dockbox.hartshorn.test.ApplicationAwareTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.lang.reflect.InvocationTargetException;
 
-@ExtendWith(HartshornRunner.class)
-public class ProxyTests {
+public class ProxyTests extends ApplicationAwareTest {
 
     @Test
     void testConcreteMethodsCanBeProxied() throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
-        ProxyAttribute<ConcreteProxyTarget, String> property = ProxyAttribute.of(
+        final ProxyAttribute<ConcreteProxyTarget, String> property = ProxyAttribute.of(
                 ConcreteProxyTarget.class,
                 ConcreteProxyTarget.class.getMethod("name"),
                 (instance, args, proxyContext) -> "Hartshorn");
-        ProxyHandler<ConcreteProxyTarget> handler = new ProxyHandler<>(new ConcreteProxyTarget());
+        final ProxyHandler<ConcreteProxyTarget> handler = new ProxyHandler<>(new ConcreteProxyTarget());
         handler.delegate(property);
-        ConcreteProxyTarget proxy = handler.proxy();
+        final ConcreteProxyTarget proxy = handler.proxy();
 
         Assertions.assertNotNull(proxy);
         Assertions.assertNotNull(proxy.name());
@@ -52,13 +49,15 @@ public class ProxyTests {
 
     @Test
     void testFinalMethodsCanNotBeProxied() throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
-        ProxyAttribute<FinalProxyTarget, String> property = ProxyAttribute.of(
+        final ProxyAttribute<FinalProxyTarget, String> property = ProxyAttribute.of(
                 FinalProxyTarget.class,
                 FinalProxyTarget.class.getMethod("name"),
                 (instance, args, proxyContext) -> "Hartshorn");
-        ProxyHandler<FinalProxyTarget> handler = new ProxyHandler<>(new FinalProxyTarget());
-        handler.delegate(property);
-        FinalProxyTarget proxy = handler.proxy();
+        final ProxyHandler<FinalProxyTarget> handler = new ProxyHandler<>(new FinalProxyTarget());
+        Assertions.assertThrows(RuntimeException.class, () -> handler.delegate(property));
+
+        // Ensure the exception isn't thrown after registration
+        final FinalProxyTarget proxy = handler.proxy();
 
         Assertions.assertNotNull(proxy);
         Assertions.assertNotNull(proxy.name());
@@ -68,11 +67,11 @@ public class ProxyTests {
 
     @Test
     void testProviderPropertiesAreApplied() throws NoSuchMethodException {
-        ProxyAttribute<ConcreteProxyTarget, String> property = ProxyAttribute.of(
+        final ProxyAttribute<ConcreteProxyTarget, String> property = ProxyAttribute.of(
                 ConcreteProxyTarget.class,
                 ConcreteProxyTarget.class.getMethod("name"),
                 (instance, args, proxyContext) -> "Hartshorn");
-        ConcreteProxyTarget proxy = Hartshorn.context().get(ConcreteProxyTarget.class, property);
+        final ConcreteProxyTarget proxy = this.context().get(ConcreteProxyTarget.class, property);
 
         Assertions.assertNotNull(proxy);
         Assertions.assertNotNull(proxy.name());
@@ -81,14 +80,14 @@ public class ProxyTests {
 
     @Test
     void testGlobalProxiesCanApply() {
-        GlobalProxyTarget target = Hartshorn.context().get(GlobalProxyTarget.class);
-        Assertions.assertTrue(Reflect.isProxy(target));
+        final GlobalProxyTarget target = this.context().get(GlobalProxyTarget.class);
+        Assertions.assertTrue(TypeContext.of(target).isProxy());
         Assertions.assertEquals("GlobalHartshorn", target.name());
     }
 
     @Test
     void testProviderService() {
-        ProviderService service = Hartshorn.context().get(ProviderService.class);
+        final ProviderService service = this.context().get(ProviderService.class);
         final SampleType type = service.get();
         Assertions.assertNotNull(type);
     }

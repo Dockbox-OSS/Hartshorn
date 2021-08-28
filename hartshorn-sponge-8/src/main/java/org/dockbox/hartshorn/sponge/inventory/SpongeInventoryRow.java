@@ -21,7 +21,7 @@ import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.server.minecraft.item.Item;
 import org.dockbox.hartshorn.server.minecraft.players.inventory.AbstractInventoryRow;
 import org.dockbox.hartshorn.sponge.game.SpongePlayer;
-import org.dockbox.hartshorn.sponge.util.SpongeConvert;
+import org.dockbox.hartshorn.sponge.util.SpongeAdapter;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.item.inventory.transaction.InventoryTransactionResult.Type;
@@ -32,22 +32,22 @@ public class SpongeInventoryRow extends AbstractInventoryRow implements SpongeIn
 
     private final SpongePlayer player;
 
-    public SpongeInventoryRow(SpongePlayerInventory inventory, int rowIndex, SpongePlayer player) {
+    public SpongeInventoryRow(final SpongePlayerInventory inventory, final int rowIndex, final SpongePlayer player) {
         super(rowIndex, inventory);
         this.player = player;
     }
 
     @Override
-    public void slot(Item item, int index) {
-        this.internalGetSlot(index).present(slot -> slot.set(SpongeConvert.toSponge(item)));
+    public void slot(final Item item, final int index) {
+        this.internalGetSlot(index).present(slot -> slot.set(SpongeAdapter.toSponge(item)));
     }
 
     @Override
-    public Item slot(int index) {
-        return this.internalGetSlot(index).map(SLOT_LOOKUP).get(AIR);
+    public Item slot(final int index) {
+        return this.internalGetSlot(index).map(SLOT_LOOKUP).get(() -> AIR.apply(this.applicationContext()));
     }
 
-    private Exceptional<org.spongepowered.api.item.inventory.Slot> internalGetSlot(int index) {
+    private Exceptional<org.spongepowered.api.item.inventory.Slot> internalGetSlot(final int index) {
         return this.internalGetRow().map(row -> row.slot(index).orElse(null));
     }
 
@@ -64,9 +64,9 @@ public class SpongeInventoryRow extends AbstractInventoryRow implements SpongeIn
     }
 
     @Override
-    public boolean give(Item item) {
+    public boolean give(final Item item) {
         return this.internalGetRow().map(row -> {
-            ItemStack stack = SpongeConvert.toSponge(item);
+            final ItemStack stack = SpongeAdapter.toSponge(item);
             return Type.SUCCESS == row.offer(stack).type();
         }).or(false);
     }

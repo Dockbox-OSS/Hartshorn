@@ -17,20 +17,25 @@
 
 package org.dockbox.hartshorn.regions.flags;
 
+import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.i18n.common.ResourceEntry;
 
 import java.util.Objects;
 
+import javax.inject.Inject;
+
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 @Getter
-@AllArgsConstructor(access = AccessLevel.PROTECTED)
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class AbstractRegionFlag<T> implements RegionFlag<T> {
 
     private final String id;
     private final ResourceEntry description;
+
+    @Inject @Getter private ApplicationContext applicationContext;
 
     @Override
     public int hashCode() {

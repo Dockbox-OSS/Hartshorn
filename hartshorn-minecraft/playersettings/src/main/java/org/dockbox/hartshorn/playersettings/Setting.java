@@ -17,37 +17,41 @@
 
 package org.dockbox.hartshorn.playersettings;
 
-import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.TypedOwner;
-import org.dockbox.hartshorn.api.keys.Keys;
 import org.dockbox.hartshorn.api.keys.PersistentDataHolder;
 import org.dockbox.hartshorn.api.keys.PersistentDataKey;
 import org.dockbox.hartshorn.api.keys.TypedPersistentDataKey;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
+import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.i18n.common.ResourceEntry;
 import org.dockbox.hartshorn.i18n.entry.FakeResource;
 import org.dockbox.hartshorn.server.minecraft.item.Item;
 import org.dockbox.hartshorn.server.minecraft.item.ItemTypes;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import lombok.Getter;
-
 public class Setting<T> extends TypedPersistentDataKey<T> {
 
-    @Getter private final ResourceEntry resource;
-    @Getter private final ResourceEntry description;
+    private final Function<ApplicationContext, ResourceEntry> resource;
+    private final Function<ApplicationContext, ResourceEntry> description;
 
-    private final Function<T, ResourceEntry> converter;
+    private final BiFunction<ApplicationContext, T, ResourceEntry> converter;
     private final Supplier<T> defaultValue;
-    private final Supplier<Item> display;
+    private final Function<ApplicationContext, Item> display;
     private final Consumer<PersistentDataHolder> action;
 
-    public Setting(Class<T> type, String id, ResourceEntry name, ResourceEntry description, TypedOwner owner, Function<T, ResourceEntry> converter, Supplier<T> defaultValue,
-                   Supplier<Item> display, Consumer<PersistentDataHolder> action) {
-        super(name.plain(), id, owner, type);
+    public Setting(final TypeContext<T> type, final String id, final Function<ApplicationContext, ResourceEntry> name,
+                   final Function<ApplicationContext, ResourceEntry> description,
+                   final Function<ApplicationContext, TypedOwner> owner,
+                   final BiFunction<ApplicationContext, T, ResourceEntry> converter,
+                   final Supplier<T> defaultValue,
+                   final Function<ApplicationContext, Item> display,
+                   final Consumer<PersistentDataHolder> action) {
+        super(id, owner, type);
         this.resource = name;
         this.description = description;
         this.converter = converter;
@@ -56,16 +60,24 @@ public class Setting<T> extends TypedPersistentDataKey<T> {
         this.action = action;
     }
 
-    public static <T> SettingBuilder<T> of(Class<T> type) {
+    public ResourceEntry resource(final ApplicationContext context) {
+        return this.resource.apply(context);
+    }
+
+    public ResourceEntry description(final ApplicationContext context) {
+        return this.description.apply(context);
+    }
+
+    public static <T> SettingBuilder<T> of(final Class<T> type) {
         return new SettingBuilder<>(type);
     }
 
-    protected ResourceEntry convert(T value) {
-        return this.converter.apply(value);
+    protected ResourceEntry convert(final ApplicationContext context, final T value) {
+        return this.converter.apply(context, value);
     }
 
-    public Item item() {
-        return this.display.get();
+    public Item item(final ApplicationContext context) {
+        return this.display.apply(context);
     }
 
     /**
@@ -79,7 +91,7 @@ public class Setting<T> extends TypedPersistentDataKey<T> {
      * @return The set value, default value, or null
      */
     @Nullable
-    public T get(PersistentDataHolder holder) {
+    public T get(final PersistentDataHolder holder) {
         return holder.get(this).orElse(this.defaultValue::get).orNull();
     }
 
@@ -90,82 +102,84 @@ public class Setting<T> extends TypedPersistentDataKey<T> {
     public static final class SettingBuilder<T> {
 
         private String id;
-        private TypedOwner owner;
-        private Class<T> type;
-        private ResourceEntry resource;
-        private ResourceEntry description;
-        private Function<T, ResourceEntry> converter = o -> new FakeResource(String.valueOf(o));
+        private Function<ApplicationContext, TypedOwner> owner;
+        private TypeContext<T> type;
+        private Function<ApplicationContext, ResourceEntry> resource;
+        private Function<ApplicationContext, ResourceEntry> description;
+        private BiFunction<ApplicationContext, T, ResourceEntry> converter = (ctx, o) -> new FakeResource(String.valueOf(o));
         private Supplier<T> defaultValue;
-        private Supplier<Item> display = () -> Item.of(ItemTypes.BARRIER);
+        private Function<ApplicationContext, Item> display = ctx -> Item.of(ctx, ItemTypes.BARRIER);
         private Consumer<PersistentDataHolder> action = holder -> {};
 
-        private SettingBuilder(Class<T> type) {
-            this.type = type;
+        private SettingBuilder(final Class<T> type) {
+            this.type = TypeContext.of(type);
         }
 
-        public SettingBuilder<T> owner(TypedOwner owner) {
-            this.owner = owner;
+        public SettingBuilder<T> owner(final TypedOwner owner) {
+            this.owner = ctx -> owner;
             return this;
         }
 
-        public SettingBuilder<T> owner(Class<?> owner) {
-            this.owner = Hartshorn.context().meta().lookup(owner);
+        public SettingBuilder<T> owner(final Class<?> owner) {
+            this.owner = ctx -> ctx.meta().lookup(TypeContext.of(owner));
             return this;
         }
 
-        public SettingBuilder<T> resource(ResourceEntry resource) {
+        public SettingBuilder<T> resource(final Function<ApplicationContext, ResourceEntry> resource) {
             this.resource = resource;
             return this;
         }
 
-        public SettingBuilder<T> description(ResourceEntry description) {
+        public SettingBuilder<T> description(final Function<ApplicationContext, ResourceEntry> description) {
             this.description = description;
             return this;
         }
 
-        public SettingBuilder<T> converter(Function<T, ResourceEntry> converter) {
+        public SettingBuilder<T> converter(final BiFunction<ApplicationContext, T, ResourceEntry> converter) {
             this.converter = converter;
             return this;
         }
 
-        public SettingBuilder<T> defaultValue(Supplier<T> defaultValue) {
+        public SettingBuilder<T> defaultValue(final Supplier<T> defaultValue) {
             this.defaultValue = defaultValue;
             return this;
         }
 
-        public SettingBuilder<T> display(Supplier<Item> display) {
+        public SettingBuilder<T> display(final Function<ApplicationContext, Item> display) {
             this.display = display;
             return this;
         }
 
-        public SettingBuilder<T> from(PersistentDataKey<T> key) {
+        public SettingBuilder<T> from(final PersistentDataKey<T> key) {
             return this.id(key.id()).type(key.type());
         }
 
-        public SettingBuilder<T> type(Class<T> type) {
+        public SettingBuilder<T> type(final Class<T> type) {
+            return this.type(TypeContext.of(type));
+        }
+
+        public SettingBuilder<T> type(final TypeContext<T> type) {
             this.type = type;
             return this;
         }
 
-        public SettingBuilder<T> id(String id) {
+        public SettingBuilder<T> id(final String id) {
             this.id = id;
             return this;
         }
 
-        public SettingBuilder<T> action(Consumer<PersistentDataHolder> action) {
+        public SettingBuilder<T> action(final Consumer<PersistentDataHolder> action) {
             this.action = action;
             return this;
         }
 
         public Setting<T> ok() {
+            if (this.id == null) throw new IllegalArgumentException("ID should be specified");
             if (this.type == null) throw new IllegalArgumentException("Type should be specified");
             if (this.owner == null) throw new IllegalArgumentException("Owned should be specified");
             if (this.resource == null) throw new IllegalArgumentException("Resource should be specified");
             if (this.description == null) throw new IllegalArgumentException("Description should be specified");
             if (this.defaultValue == null) throw new IllegalArgumentException("Default value should be specified");
-            if (this.id == null) {
-                this.id = Keys.id(this.resource.plain(), this.owner);
-            }
 
             return new Setting<>(
                     this.type,

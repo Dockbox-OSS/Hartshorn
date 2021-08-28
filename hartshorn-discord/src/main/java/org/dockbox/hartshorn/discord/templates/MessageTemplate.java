@@ -19,19 +19,19 @@ package org.dockbox.hartshorn.discord.templates;
 
 import net.dv8tion.jda.api.entities.Message;
 
-import org.dockbox.hartshorn.api.Hartshorn;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.i18n.text.Text;
 
 public interface MessageTemplate extends Template<Message> {
 
-    static MessageTemplate create(Text content) {
-        MessageTemplate template = create();
+    static MessageTemplate create(final ApplicationContext context, final Text content) {
+        final MessageTemplate template = create(context);
         template.content(content);
         return template;
     }
 
-    static MessageTemplate create() {
-        return Hartshorn.context().get(MessageTemplate.class);
+    static MessageTemplate create(final ApplicationContext context) {
+        return context.get(MessageTemplate.class);
     }
 
     MessageTemplate content(Text content);

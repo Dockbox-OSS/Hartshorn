@@ -24,7 +24,8 @@ import org.dockbox.hartshorn.di.annotations.inject.Bound;
 import org.dockbox.hartshorn.server.minecraft.dimension.position.Location;
 import org.dockbox.hartshorn.server.minecraft.entities.ArmorStand;
 import org.dockbox.hartshorn.server.minecraft.entities.ArmorStandInventory;
-import org.dockbox.hartshorn.sponge.util.SpongeConvert;
+import org.dockbox.hartshorn.sponge.SpongeContextCarrier;
+import org.dockbox.hartshorn.sponge.util.SpongeAdapter;
 import org.dockbox.hartshorn.sponge.util.SpongeUtil;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.spongepowered.api.data.Key;
@@ -39,7 +40,7 @@ import java.util.Map;
 @Binds(ArmorStand.class)
 public class SpongeArmorStand
         extends SpongeCloneableEntityReference<ArmorStand, net.minecraft.world.entity.decoration.ArmorStand, org.spongepowered.api.entity.living.ArmorStand>
-        implements ArmorStand {
+        implements ArmorStand, SpongeContextCarrier {
 
     private static final Map<Limbs, Key<Value<Vector3d>>> limbs = HartshornUtils.<Limbs, Key<Value<Vector3d>>>mapBuilder()
             .add(Limbs.HEAD, Keys.HEAD_ROTATION)
@@ -50,22 +51,22 @@ public class SpongeArmorStand
             .get();
 
     @Bound
-    public SpongeArmorStand(Location location) {
+    public SpongeArmorStand(final Location location) {
         super(location);
     }
 
-    public SpongeArmorStand(org.spongepowered.api.entity.living.ArmorStand entity) {
+    public SpongeArmorStand(final org.spongepowered.api.entity.living.ArmorStand entity) {
         super(entity);
     }
 
     @Override
-    public Vector3N rotation(Limbs limb) {
-        return SpongeUtil.get(this.entity(), limbs.get(limb), SpongeConvert::fromSponge, Vector3N::empty);
+    public Vector3N rotation(final Limbs limb) {
+        return SpongeUtil.get(this.entity(), limbs.get(limb), SpongeAdapter::fromSponge, Vector3N::empty);
     }
 
     @Override
-    public void rotation(Limbs limb, Vector3N rotation) {
-        this.entity().present(entity -> entity.offer(limbs.get(limb), SpongeConvert.toSpongeDouble(rotation)));
+    public void rotation(final Limbs limb, final Vector3N rotation) {
+        this.entity().present(entity -> entity.offer(limbs.get(limb), SpongeAdapter.toSpongeDouble(rotation)));
     }
 
     @Override
@@ -74,7 +75,7 @@ public class SpongeArmorStand
     }
 
     @Override
-    public SpongeArmorStand baseplate(boolean baseplate) {
+    public SpongeArmorStand baseplate(final boolean baseplate) {
         this.entity().present(entity -> entity.offer(Keys.HAS_BASE_PLATE, baseplate));
         return this;
     }
@@ -85,7 +86,7 @@ public class SpongeArmorStand
     }
 
     @Override
-    public SpongeArmorStand small(boolean small) {
+    public SpongeArmorStand small(final boolean small) {
         this.entity().present(entity -> entity.offer(Keys.IS_SMALL, small));
         return this;
     }
@@ -96,7 +97,7 @@ public class SpongeArmorStand
     }
 
     @Override
-    public SpongeArmorStand arms(boolean arms) {
+    public SpongeArmorStand arms(final boolean arms) {
         this.entity().present(entity -> entity.offer(Keys.HAS_ARMS, arms));
         return this;
     }
@@ -107,7 +108,7 @@ public class SpongeArmorStand
     }
 
     @Override
-    public ArmorStand from(org.spongepowered.api.entity.living.ArmorStand entity) {
+    public ArmorStand from(final org.spongepowered.api.entity.living.ArmorStand entity) {
         return new SpongeArmorStand(entity);
     }
 

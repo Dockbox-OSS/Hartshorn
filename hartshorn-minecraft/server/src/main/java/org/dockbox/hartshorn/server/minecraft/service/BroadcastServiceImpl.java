@@ -17,8 +17,8 @@
 
 package org.dockbox.hartshorn.server.minecraft.service;
 
-import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.di.annotations.inject.Binds;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.i18n.permissions.Permission;
 import org.dockbox.hartshorn.i18n.text.Text;
 import org.dockbox.hartshorn.server.minecraft.players.Player;
@@ -27,40 +27,46 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Predicate;
 
+import javax.inject.Inject;
+
 @Binds(BroadcastService.class)
 public class BroadcastServiceImpl implements BroadcastService {
+    
+    @Inject
+    private ApplicationContext context;
+    
     @Override
     public void broadcastPublic(@NotNull final Text message) {
-        Hartshorn.context().get(Players.class).onlinePlayers().forEach(message::send);
+        this.context.get(Players.class).onlinePlayers().forEach(message::send);
     }
 
     @Override
     public void broadcastWithFilter(@NotNull final Text message, @NotNull final Predicate<Player> filter) {
-        BroadcastServiceImpl.sendWithPredicate(message, filter);
+        this.sendWithPredicate(message, filter);
     }
 
     @Override
     public void broadcastForPermission(@NotNull final Text message, @NotNull final Permission permission) {
-        BroadcastServiceImpl.sendWithPredicate(message, p -> p.hasPermission(permission));
+        this.sendWithPredicate(message, p -> p.hasPermission(permission));
     }
 
     @Override
     public void broadcastForPermission(@NotNull final Text message, @NotNull final String permission) {
-        BroadcastServiceImpl.sendWithPredicate(message, p -> p.hasPermission(permission));
+        this.sendWithPredicate(message, p -> p.hasPermission(permission));
     }
 
     @Override
     public void broadcastForPermissionWithFilter(@NotNull final Text message, @NotNull final Permission permission, @NotNull final Predicate<Player> filter) {
-        BroadcastServiceImpl.sendWithPredicate(message, p -> p.hasPermission(permission) && filter.test(p));
+        this.sendWithPredicate(message, p -> p.hasPermission(permission) && filter.test(p));
     }
 
     @Override
     public void broadcastForPermissionWithFilter(@NotNull final Text message, @NotNull final String permission, @NotNull final Predicate<Player> filter) {
-        BroadcastServiceImpl.sendWithPredicate(message, p -> p.hasPermission(permission) && filter.test(p));
+        this.sendWithPredicate(message, p -> p.hasPermission(permission) && filter.test(p));
     }
 
-    private static void sendWithPredicate(final Text message, final Predicate<Player> filter) {
-        Hartshorn.context().get(Players.class).onlinePlayers().stream()
+    private void sendWithPredicate(final Text message, final Predicate<Player> filter) {
+        this.context.get(Players.class).onlinePlayers().stream()
                 .filter(filter)
                 .forEach(message::send);
     }

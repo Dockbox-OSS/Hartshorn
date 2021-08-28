@@ -23,9 +23,10 @@ import org.dockbox.hartshorn.api.keys.PersistentDataHolder;
 import org.dockbox.hartshorn.api.keys.PersistentDataKey;
 import org.dockbox.hartshorn.api.keys.StoredPersistentKey;
 import org.dockbox.hartshorn.api.keys.TransactionResult;
+import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.i18n.entry.DefaultResources;
+import org.dockbox.hartshorn.sponge.SpongeContextCarrier;
 import org.dockbox.hartshorn.util.HartshornUtils;
-import org.dockbox.hartshorn.util.Reflect;
 import org.spongepowered.api.ResourceKey;
 import org.spongepowered.api.data.DataHolder;
 import org.spongepowered.api.data.DataTransactionResult;
@@ -35,7 +36,7 @@ import org.spongepowered.api.data.value.Value.Immutable;
 
 import java.util.Map;
 
-public interface SpongeComposite extends PersistentDataHolder {
+public interface SpongeComposite extends PersistentDataHolder, SpongeContextCarrier {
 
     Key<MapValue<String, Object>> COMPOSITE = Key.fromMap(
             ResourceKey.of(Hartshorn.PROJECT_ID, "composite"),
@@ -46,8 +47,8 @@ public interface SpongeComposite extends PersistentDataHolder {
     default <T> Exceptional<T> get(final PersistentDataKey<T> dataKey) {
         final Map<String, Object> data = this.raw();
 
-        final Object value = data.get(dataKey.id());
-        if (value != null && Reflect.assigns(dataKey.type(), value.getClass())) {
+        final Object value = data.get(this.id(dataKey));
+        if (value != null && TypeContext.of(value).childOf(dataKey.type())) {
             //noinspection unchecked
             return Exceptional.of(() -> (T) value);
         }
@@ -58,19 +59,19 @@ public interface SpongeComposite extends PersistentDataHolder {
     default <T> TransactionResult set(final PersistentDataKey<T> dataKey, final T value) {
         return this.holder().map(composite -> {
             final Map<String, Object> data = this.raw();
-            data.put(dataKey.id(), value);
+            data.put(this.id(dataKey), value);
 
             final DataTransactionResult result = composite.offer(COMPOSITE, data);
             if (result.isSuccessful()) return TransactionResult.success();
-            else return TransactionResult.fail(DefaultResources.instance().bindingFailure());
-        }).get(() -> TransactionResult.fail(DefaultResources.instance().referenceLost()));
+            else return TransactionResult.fail(DefaultResources.instance(this.applicationContext()).bindingFailure());
+        }).get(() -> TransactionResult.fail(DefaultResources.instance(this.applicationContext()).referenceLost()));
     }
 
     @Override
     default <T> void remove(final PersistentDataKey<T> dataKey) {
         this.holder().present(composite -> {
             final Map<String, Object> data = this.raw();
-            data.remove(dataKey.id());
+            data.remove(this.id(dataKey));
             composite.offer(COMPOSITE, data);
         });
     }
@@ -89,6 +90,10 @@ public interface SpongeComposite extends PersistentDataHolder {
             data.put(key, dataValue);
         }
         return data;
+    }
+
+    private String id(final PersistentDataKey<?> key) {
+        return "%s_%s".formatted(key.ownerId(this.applicationContext()), key.id());
     }
 
     private Map<String, Object> raw() {

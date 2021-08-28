@@ -18,6 +18,7 @@
 package org.dockbox.hartshorn.cache.annotations;
 
 import org.dockbox.hartshorn.di.annotations.service.Service;
+import org.dockbox.hartshorn.util.annotations.AliasFor;
 import org.dockbox.hartshorn.util.annotations.Extends;
 
 import java.lang.annotation.ElementType;
@@ -37,5 +38,6 @@ import java.lang.annotation.Target;
 @Extends(Service.class)
 @Service(activators = UseCaching.class)
 public @interface CacheService {
+    @AliasFor("id")
     String value();
 }

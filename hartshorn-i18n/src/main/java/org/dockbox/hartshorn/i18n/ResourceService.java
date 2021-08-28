@@ -18,13 +18,14 @@
 package org.dockbox.hartshorn.i18n;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.di.ContextCarrier;
 import org.dockbox.hartshorn.i18n.common.Language;
 import org.dockbox.hartshorn.i18n.common.ResourceEntry;
 import org.dockbox.hartshorn.i18n.entry.Resource;
 
 import java.util.Map;
 
-public interface ResourceService {
+public interface ResourceService extends ContextCarrier {
 
     Map<String, String> translations(Language lang);
 

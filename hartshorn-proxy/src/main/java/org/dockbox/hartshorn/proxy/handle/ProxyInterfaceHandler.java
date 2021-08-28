@@ -27,12 +27,12 @@ public class ProxyInterfaceHandler<T> implements InvocationHandler {
 
     @Getter private final ProxyHandler<T> handler;
 
-    public ProxyInterfaceHandler(ProxyHandler<T> handler) {
+    public ProxyInterfaceHandler(final ProxyHandler<T> handler) {
         this.handler = handler;
     }
 
     @Override
-    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+    public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
         return this.handler.invoke(null, method, null, args);
     }
 

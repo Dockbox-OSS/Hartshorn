@@ -17,19 +17,19 @@
 
 package org.dockbox.hartshorn.di;
 
-import org.dockbox.hartshorn.api.domain.MetaProvider;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
 
-import java.util.function.Supplier;
+import java.util.function.Function;
 
 public class MetaProviderModifier implements Modifier {
 
-    private final MetaProvider provider;
+    private final Function<ApplicationContext, MetaProvider> provider;
 
-    public MetaProviderModifier(final Supplier<MetaProvider> provider) {
-        this.provider = provider.get();
+    public MetaProviderModifier(final Function<ApplicationContext, MetaProvider> provider) {
+        this.provider = provider;
     }
 
-    public MetaProvider provider() {
-        return this.provider;
+    public MetaProvider provider(final ApplicationContext context) {
+        return this.provider.apply(context);
     }
 }

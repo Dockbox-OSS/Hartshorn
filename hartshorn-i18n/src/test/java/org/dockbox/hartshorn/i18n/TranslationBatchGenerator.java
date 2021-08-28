@@ -17,24 +17,23 @@
 
 package org.dockbox.hartshorn.i18n;
 
-import org.dockbox.hartshorn.api.Hartshorn;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
+import org.dockbox.hartshorn.di.context.element.MethodContext;
+import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.di.services.ComponentContainer;
 import org.dockbox.hartshorn.i18n.annotations.Resource;
-import org.dockbox.hartshorn.test.HartshornRunner;
+import org.dockbox.hartshorn.test.JUnit5Application;
 import org.dockbox.hartshorn.util.HartshornUtils;
-import org.dockbox.hartshorn.util.Reflect;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.StringReader;
-import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -84,60 +83,60 @@ public final class TranslationBatchGenerator {
             "#", "");
     private static final SimpleDateFormat SDF = new SimpleDateFormat("ddMMyyyy");
 
-    public static void main(String[] args) throws Exception {
-        new HartshornRunner().beforeAll(null);
-        final Map<String, String> batches = migrateBatches();
-        String date = SDF.format(new Date());
+    public static void main(final String[] args) throws Exception {
+        final ApplicationContext context = JUnit5Application.prepareBootstrap();
+        final Map<String, String> batches = migrateBatches(context);
+        final String date = SDF.format(new Date());
         final Path outputPath = existingBatch().toPath().resolve("batches/" + date);
         outputPath.toFile().mkdirs();
         outputPath.toFile().mkdir();
 
-        for (Entry<String, String> entry : batches.entrySet()) {
-            String file = entry.getKey();
-            String content = entry.getValue();
+        for (final Entry<String, String> entry : batches.entrySet()) {
+            final String file = entry.getKey();
+            final String content = entry.getValue();
             final Path out = outputPath.resolve(file);
             out.toFile().createNewFile();
 
-            OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(out.toFile()), StandardCharsets.UTF_8);
+            final OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(out.toFile()), StandardCharsets.UTF_8);
             writer.write(content);
             writer.close();
         }
     }
 
     // File content identified by file name
-    private static Map<String, String> migrateBatches() throws IOException {
-        final String batch = TranslationBatchGenerator.createBatch();
-        Properties properties = new Properties();
+    private static Map<String, String> migrateBatches(final ApplicationContext context) throws IOException {
+        final String batch = TranslationBatchGenerator.createBatch(context);
+        final Properties properties = new Properties();
         properties.load(new StringReader(batch));
 
-        Map<String, String> files = HartshornUtils.emptyMap();
+        final Map<String, String> files = HartshornUtils.emptyMap();
 
-        for (File file : TranslationBatchGenerator.existingFiles()) {
+        for (final File file : TranslationBatchGenerator.existingFiles()) {
             final List<String> strings = Files.readAllLines(file.toPath(), StandardCharsets.UTF_8);
-            Properties cache = new Properties();
+            final Properties cache = new Properties();
             cache.load(new StringReader(batch));
 
-            for (String string : strings) {
+            for (final String string : strings) {
                 final String[] property = string.split("=");
-                String key = property[0];
+                final String key = property[0];
                 if (key.startsWith("$")) continue;
-                String value = String.join("=", HartshornUtils.arraySubset(property, 1, property.length - 1));
+                final String value = String.join("=", HartshornUtils.arraySubset(property, 1, property.length - 1));
                 if (properties.containsKey(key)) {
                     // Override any existing, drop retired translations
                     cache.setProperty(key, value);
                 }
             }
 
-            List<String> content = HartshornUtils.emptyList();
+            final List<String> content = HartshornUtils.emptyList();
             cache.forEach((key, value) -> {
-                String next = String.valueOf(key) + '=' + value;
+                final String next = String.valueOf(key) + '=' + value;
                 content.add(next);
             });
 
             Collections.sort(content);
             final List<String> output = HartshornUtils.merge(HEADER, content);
 
-            String fileOut = String.join("\n", output);
+            final String fileOut = String.join("\n", output);
             files.put(file.getName(), fileOut);
         }
         return files;
@@ -153,10 +152,10 @@ public final class TranslationBatchGenerator {
                 .toFile();
     }
 
-    private static String createBatch() {
-        final Map<String, String> collect = collect();
-        List<String> entries = HartshornUtils.emptyList();
-        for (Entry<String, String> entry : collect.entrySet()) {
+    private static String createBatch(final ApplicationContext context) {
+        final Map<String, String> collect = collect(context);
+        final List<String> entries = HartshornUtils.emptyList();
+        for (final Entry<String, String> entry : collect.entrySet()) {
             if (entry.getValue().contains("\n")) continue;
             if (BLACKLIST.contains(entry.getKey())) continue;
             String next = entry.getKey() + '=' + entry.getValue();
@@ -177,16 +176,14 @@ public final class TranslationBatchGenerator {
         else throw new IllegalStateException("Existing batch could not be found");
     }
 
-    public static Map<String, String> collect() {
-        Map<String, String> batch = HartshornUtils.emptyMap();
-        int i = 0;
-        for (ComponentContainer container : Hartshorn.context().locator().containers()) {
-            final Class<?> type = container.type();
-            final Collection<Method> methods = Reflect.methods(type, Resource.class);
-            for (Method method : methods) {
-                i++;
-                final Resource annotation = Reflect.annotation(method, Resource.class).get();
-                final String key = I18N.key(type, method);
+    public static Map<String, String> collect(final ApplicationContext context) {
+        final Map<String, String> batch = HartshornUtils.emptyMap();
+        for (final ComponentContainer container : context.locator().containers()) {
+            final TypeContext<?> type = container.type();
+            final List<? extends MethodContext<?, ?>> methods = type.flatMethods(Resource.class);
+            for (final MethodContext<?, ?> method : methods) {
+                final Resource annotation = method.annotation(Resource.class).get();
+                final String key = I18N.key(context, type, method);
                 batch.put(key, annotation.value());
             }
         }

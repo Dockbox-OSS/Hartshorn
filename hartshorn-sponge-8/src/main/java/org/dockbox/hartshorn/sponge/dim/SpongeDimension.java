@@ -23,7 +23,8 @@ import org.dockbox.hartshorn.server.minecraft.dimension.Block;
 import org.dockbox.hartshorn.server.minecraft.dimension.BlockDimension;
 import org.dockbox.hartshorn.server.minecraft.dimension.EntityHolding;
 import org.dockbox.hartshorn.server.minecraft.entities.Entity;
-import org.dockbox.hartshorn.sponge.util.SpongeConvert;
+import org.dockbox.hartshorn.sponge.SpongeContextCarrier;
+import org.dockbox.hartshorn.sponge.util.SpongeAdapter;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.util.AABB;
@@ -33,7 +34,7 @@ import org.spongepowered.math.vector.Vector3i;
 import java.util.Collection;
 import java.util.function.Predicate;
 
-public interface SpongeDimension extends BlockDimension, EntityHolding {
+public interface SpongeDimension extends BlockDimension, EntityHolding, SpongeContextCarrier {
 
     @Override
     default Collection<Entity> entities() {
@@ -41,54 +42,54 @@ public interface SpongeDimension extends BlockDimension, EntityHolding {
     }
 
     @Override
-    default Collection<Entity> entities(Predicate<Entity> predicate) {
+    default Collection<Entity> entities(final Predicate<Entity> predicate) {
         return this.serverWorld().entities(this.aabb(), entity -> {
-            Entity hartshornEntity = SpongeConvert.fromSponge(entity);
+            final Entity hartshornEntity = SpongeAdapter.fromSponge(entity);
             return predicate.test(hartshornEntity);
-        }).stream().map(SpongeConvert::fromSponge).toList();
+        }).stream().map(SpongeAdapter::fromSponge).toList();
     }
 
     private AABB aabb() {
         return AABB.of(
-                SpongeConvert.toSponge(this.minimumPosition()),
-                SpongeConvert.toSponge(this.maximumPosition())
+                SpongeAdapter.toSponge(this.minimumPosition()),
+                SpongeAdapter.toSponge(this.maximumPosition())
         );
     }
 
     @Override
     default Vector3N minimumPosition() {
-        return SpongeConvert.fromSponge(this.serverWorld().min().toDouble());
+        return SpongeAdapter.fromSponge(this.serverWorld().min().toDouble());
     }
 
     @Override
     default Vector3N maximumPosition() {
-        return SpongeConvert.fromSponge(this.serverWorld().max().toDouble());
+        return SpongeAdapter.fromSponge(this.serverWorld().max().toDouble());
     }
 
     @Override
-    default Vector3N floor(Vector3N position) {
-        Vector3i floor = this.serverWorld().highestPositionAt(SpongeConvert.toSponge(position).toInt());
-        return SpongeConvert.fromSponge(floor);
+    default Vector3N floor(final Vector3N position) {
+        final Vector3i floor = this.serverWorld().highestPositionAt(SpongeAdapter.toSponge(position).toInt());
+        return SpongeAdapter.fromSponge(floor);
     }
 
     @Override
-    default boolean has(Vector3N position) {
-        Vector3i loc = SpongeConvert.toSponge(position);
+    default boolean has(final Vector3N position) {
+        final Vector3i loc = SpongeAdapter.toSponge(position);
         return this.serverWorld().contains(loc);
     }
 
     @Override
-    default Exceptional<Block> block(Vector3N position) {
-        Vector3i loc = SpongeConvert.toSponge(position);
-        BlockState blockState = this.serverWorld().block(loc);
-        if (blockState.type() == BlockTypes.AIR.get()) return Exceptional.of(Block.empty());
-        return Exceptional.of(new SpongeBlock(SpongeConvert.toSnapshot(blockState)));
+    default Exceptional<Block> block(final Vector3N position) {
+        final Vector3i loc = SpongeAdapter.toSponge(position);
+        final BlockState blockState = this.serverWorld().block(loc);
+        if (blockState.type() == BlockTypes.AIR.get()) return Exceptional.of(Block.empty(this.applicationContext()));
+        return Exceptional.of(new SpongeBlock(SpongeAdapter.toSnapshot(blockState)));
     }
 
     @Override
-    default boolean block(Vector3N position, Block block) {
-        Vector3i loc = SpongeConvert.toSponge(position);
-        Exceptional<BlockState> state = SpongeConvert.toSponge(block);
+    default boolean block(final Vector3N position, final Block block) {
+        final Vector3i loc = SpongeAdapter.toSponge(position);
+        final Exceptional<BlockState> state = SpongeAdapter.toSponge(block);
         if (state.absent()) return false;
         return this.serverWorld().setBlock(loc, state.get());
     }

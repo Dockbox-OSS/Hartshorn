@@ -17,7 +17,8 @@
 
 package org.dockbox.hartshorn.server.minecraft.inventory.pane;
 
-import org.dockbox.hartshorn.api.Hartshorn;
+import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.server.minecraft.inventory.Element;
 import org.dockbox.hartshorn.server.minecraft.inventory.InventoryLayout;
 import org.dockbox.hartshorn.server.minecraft.inventory.builder.StaticPaneBuilder;
@@ -35,8 +36,8 @@ public interface StaticPane extends Pane {
      *
      * @return The builder
      */
-    static StaticPaneBuilder builder(InventoryLayout layout) {
-        return Hartshorn.context().get(StaticPaneBuilder.class, new LayoutAttribute(layout));
+    static StaticPaneBuilder builder(final ApplicationContext context, final InventoryLayout layout) {
+        return context.get(StaticPaneBuilder.class, new LayoutAttribute(layout));
     }
 
     /**
@@ -58,6 +59,21 @@ public interface StaticPane extends Pane {
      *         The position index.
      */
     void set(Item item, int index);
+
+    /**
+     * Gets a snapshot of the {@link Item} at the given index, or {@link org.dockbox.hartshorn.server.minecraft.item.ItemTypes#AIR}.
+     * If no slot exists at the given index, {@link Exceptional#empty()} is returned.
+     * @param index The position index.
+     * @return The item, if the slot exists.
+     */
+    Exceptional<Item> get(int index);
+
+    /**
+     * Gets the output of the pane, if the {@link org.dockbox.hartshorn.server.minecraft.inventory.InventoryType}
+     * supports it.
+     * @return The output item, if supported.
+     */
+    Exceptional<Item> output();
 
     /**
      * Updates the pane. This will update the pane even if it is open to a player. This will not close

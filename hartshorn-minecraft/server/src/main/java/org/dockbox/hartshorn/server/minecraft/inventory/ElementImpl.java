@@ -20,10 +20,10 @@ package org.dockbox.hartshorn.server.minecraft.inventory;
 import org.dockbox.hartshorn.api.annotations.PartialApi;
 import org.dockbox.hartshorn.di.annotations.inject.Binds;
 import org.dockbox.hartshorn.di.annotations.inject.Bound;
+import org.dockbox.hartshorn.server.minecraft.inventory.context.ClickContext;
 import org.dockbox.hartshorn.server.minecraft.item.Item;
-import org.dockbox.hartshorn.server.minecraft.players.Player;
 
-import java.util.function.Consumer;
+import java.util.function.Function;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -33,15 +33,23 @@ import lombok.Getter;
 public class ElementImpl implements Element {
 
     @Getter private final Item item;
-    private Consumer<Player> onClick;
+    private Function<ClickContext, Boolean> onClick;
 
     @Override
-    public void onClick(final Consumer<Player> onClick) {
+    public void onClick(final Function<ClickContext, Boolean> onClick) {
         this.onClick = onClick;
     }
 
     @PartialApi
-    public void perform(final Player player) {
-        this.onClick.accept(player);
+    @Override
+    public boolean perform(final ClickContext player) {
+        if (this.listening() && player != null)
+            return this.onClick.apply(player);
+        return true;
+    }
+
+    @Override
+    public boolean listening() {
+        return this.onClick != null;
     }
 }

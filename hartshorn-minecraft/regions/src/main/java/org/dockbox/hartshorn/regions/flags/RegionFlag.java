@@ -17,11 +17,11 @@
 
 package org.dockbox.hartshorn.regions.flags;
 
-import org.dockbox.hartshorn.api.Hartshorn;
+import org.dockbox.hartshorn.di.ContextCarrier;
 import org.dockbox.hartshorn.i18n.common.ResourceEntry;
 import org.dockbox.hartshorn.regions.RegionService;
 
-public interface RegionFlag<T> {
+public interface RegionFlag<T> extends ContextCarrier {
 
     String serialize(T object);
 
@@ -30,7 +30,7 @@ public interface RegionFlag<T> {
     Class<T> type();
 
     default void register() {
-        Hartshorn.context().get(RegionService.class).register(this);
+        this.applicationContext().get(RegionService.class).register(this);
     }
 
     default PersistentFlagModel model() {

@@ -17,6 +17,8 @@
 
 package org.dockbox.hartshorn.api.task.pipeline.pipes;
 
+import org.dockbox.hartshorn.di.context.element.TypeContext;
+
 public interface IPipe<I, O> {
     /**
      * If this method is overridden, you can then call it to get the {@link Class} of the pipe, even
@@ -25,7 +27,7 @@ public interface IPipe<I, O> {
      * @return The {@link Class} of the pipe.
      */
     @SuppressWarnings("rawtypes")
-    default Class<? extends IPipe> type() {
-        return IPipe.class;
+    default TypeContext<? extends IPipe> type() {
+        return TypeContext.of(IPipe.class);
     }
 }

@@ -17,6 +17,7 @@
 
 package org.dockbox.hartshorn.events.handle;
 
+import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.events.parents.Event;
 import org.dockbox.hartshorn.util.HartshornUtils;
 
@@ -26,9 +27,9 @@ import lombok.Getter;
 
 public final class EventHandlerRegistry {
 
-    @Getter private final Map<Class<? extends Event>, EventHandler> handlers = HartshornUtils.emptyMap();
+    @Getter private final Map<TypeContext<? extends Event>, EventHandler> handlers = HartshornUtils.emptyMap();
 
-    public EventHandler handler(Class<? extends Event> type) {
+    public EventHandler handler(TypeContext<? extends Event> type) {
         EventHandler handler = this.handlers.get(type);
         if (null == handler) {
             this.computeHierarchy(handler = new EventHandler(type));

@@ -17,25 +17,25 @@
 
 package org.dockbox.hartshorn.proxy.service;
 
+import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.di.context.Context;
+import org.dockbox.hartshorn.di.context.element.MethodContext;
+import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.di.properties.Attribute;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
 
 public interface MethodProxyContext<T> extends Context {
 
     T instance();
 
-    Class<T> type();
+    TypeContext<T> type();
 
-    Method method();
+    MethodContext<?, T> method();
 
     Attribute<?>[] properties();
 
-    Annotation[] annotations();
-
     <A extends Annotation> A annotation(Class<A> annotation);
 
-    Class<?> returnType();
+    ApplicationContext context();
 }

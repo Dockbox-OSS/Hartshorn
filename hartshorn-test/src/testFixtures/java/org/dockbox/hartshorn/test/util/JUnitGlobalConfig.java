@@ -18,7 +18,7 @@
 package org.dockbox.hartshorn.test.util;
 
 import org.dockbox.hartshorn.api.config.GlobalConfig;
-import org.dockbox.hartshorn.api.exceptions.ExceptionLevels;
+import org.dockbox.hartshorn.api.exceptions.ExceptionLevel;
 
 public class JUnitGlobalConfig implements GlobalConfig {
 
@@ -28,12 +28,7 @@ public class JUnitGlobalConfig implements GlobalConfig {
     }
 
     @Override
-    public ExceptionLevels level() {
-        return ExceptionLevels.MINIMAL;
-    }
-
-    @Override
-    public String version() {
-        return "dev";
+    public ExceptionLevel level() {
+        return ExceptionLevel.MINIMAL;
     }
 }

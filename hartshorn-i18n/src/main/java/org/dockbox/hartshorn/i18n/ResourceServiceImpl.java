@@ -20,6 +20,7 @@ package org.dockbox.hartshorn.i18n;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.exceptions.Except;
 import org.dockbox.hartshorn.di.annotations.inject.Binds;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.i18n.common.Language;
 import org.dockbox.hartshorn.i18n.common.ResourceEntry;
 import org.dockbox.hartshorn.i18n.entry.Resource;
@@ -33,13 +34,19 @@ import java.util.Map.Entry;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
+
+import lombok.Getter;
 
 @Singleton
 @Binds(ResourceService.class)
 public class ResourceServiceImpl implements ResourceService {
 
     protected static final Map<Language, ResourceBundle> bundles = HartshornUtils.emptyConcurrentMap();
+    @Inject
+    @Getter
+    private ApplicationContext applicationContext;
 
     public ResourceServiceImpl() {
         if (bundles.isEmpty()) {
@@ -115,11 +122,11 @@ public class ResourceServiceImpl implements ResourceService {
             final Map<String, String> translations = this.translations(Language.EN_US);
             if (translations.containsKey(finalKey)) {
                 final String knownValue = translations.get(finalKey);
-                return new Resource(knownValue, finalKey);
+                return new Resource(this.applicationContext(), knownValue, finalKey);
             }
             else {
                 if (createIfAbsent && null != value) {
-                    return new Resource(value, key);
+                    return new Resource(this.applicationContext(), value, key);
                 }
                 else {
                     throw new IllegalStateException("Missing translation for " + finalKey);

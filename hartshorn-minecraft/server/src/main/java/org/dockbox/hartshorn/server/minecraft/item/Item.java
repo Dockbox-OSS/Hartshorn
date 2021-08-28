@@ -17,10 +17,10 @@
 
 package org.dockbox.hartshorn.server.minecraft.item;
 
-import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.keys.KeyHolder;
 import org.dockbox.hartshorn.api.keys.PersistentDataHolder;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.i18n.common.Language;
 import org.dockbox.hartshorn.i18n.text.Text;
 import org.dockbox.hartshorn.persistence.PersistentCapable;
@@ -33,8 +33,8 @@ import java.util.Set;
 
 public interface Item extends KeyHolder<Item>, PersistentDataHolder, PersistentCapable<PersistentItemModel> {
 
-    static Item of(ItemTypes itemType) {
-        return of(itemType.id());
+    static Item of(final ApplicationContext context, final ItemTypes itemType) {
+        return of(context, itemType.id());
     }
 
     /**
@@ -43,14 +43,14 @@ public interface Item extends KeyHolder<Item>, PersistentDataHolder, PersistentC
      *
      * @return The item instance, or {@link ItemTypes#AIR}
      */
-    static Item of(@NonNls String id) {
+    static Item of(final ApplicationContext context, @NonNls final String id) {
         // No need to filter air, can directly return it here.
-        if (ItemTypes.AIR.id().equals(id)) return Hartshorn.context().get(Item.class, id);
+        if (ItemTypes.AIR.id().equals(id)) return context.get(Item.class, id);
 
-        return Hartshorn.context().first(ItemContext.class)
-                .map(context -> context.custom(id))
+        return context.first(ItemContext.class)
+                .map(itemContext -> itemContext.custom(context, id))
                 .filter(item -> !item.isAir())
-                .or(Hartshorn.context().get(Item.class, id));
+                .or(context.get(Item.class, id));
     }
 
     boolean isAir();

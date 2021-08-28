@@ -24,21 +24,21 @@ import org.dockbox.hartshorn.i18n.common.ResourceEntry;
 public class DoubleFlag extends AbstractRegionFlag<Double> {
 
     @Bound
-    public DoubleFlag(String id, ResourceEntry description) {
+    public DoubleFlag(final String id, final ResourceEntry description) {
         super(id, description);
     }
 
     @Override
-    public String serialize(Double object) {
+    public String serialize(final Double object) {
         return String.valueOf(object);
     }
 
     @Override
-    public Double restore(String raw) {
+    public Double restore(final String raw) {
         try {
             return Double.parseDouble(raw);
         }
-        catch (NumberFormatException e) {
+        catch (final NumberFormatException e) {
             Except.handle("Could not restore number flag: " + this.id(), e);
             return -1D;
         }

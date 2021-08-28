@@ -17,7 +17,6 @@
 
 package org.dockbox.hartshorn.sponge.event;
 
-import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.events.annotations.Posting;
 import org.dockbox.hartshorn.server.minecraft.events.server.EngineChangedState;
 import org.dockbox.hartshorn.server.minecraft.events.server.ServerState.Loading;
@@ -44,50 +43,50 @@ import java.util.List;
 import java.util.Optional;
 
 @Posting(EngineChangedState.class)
-public class ServerEventBridge implements EventBridge {
+public class ServerEventBridge extends EventBridge {
 
     @Listener
-    public void on(StartingEngineEvent<?> event) {
+    public void on(final StartingEngineEvent<?> event) {
         new EngineChangedState<Starting>() {
         }.post();
     }
 
     @Listener
-    public void on(StartedEngineEvent<?> event) {
+    public void on(final StartedEngineEvent<?> event) {
         final List<String> items = this.collectIdContext(RegistryTypes.ITEM_TYPE);
         final List<String> blocks = this.collectIdContext(RegistryTypes.BLOCK_TYPE);
-        Hartshorn.context().add(new ItemContext(items, blocks));
+        this.applicationContext().add(new ItemContext(items, blocks));
 
         new EngineChangedState<Started>() {
         }.post();
     }
 
-    private List<String> collectIdContext(RegistryType<?> registryType) {
-        final Optional<? extends Registry<?>> itemTypeRegistry = Sponge.game().registries().findRegistry(registryType);
+    private List<String> collectIdContext(final RegistryType<?> registryType) {
+        final Optional<? extends Registry<?>> itemTypeRegistry = Sponge.game().findRegistry(registryType);
         if (itemTypeRegistry.isPresent()) {
             final Registry<?> registry = itemTypeRegistry.get();
             return registry.streamEntries().map(RegistryEntry::key).map(ResourceKey::asString).toList();
         }
         else {
-            Hartshorn.log().warn("Could not collect IDs from registry " + registryType.location().asString());
+            this.context().log().warn("Could not collect IDs from registry " + registryType.location().asString());
         }
         return HartshornUtils.emptyList();
     }
 
     @Listener
-    public void on(LoadedGameEvent event) {
+    public void on(final LoadedGameEvent event) {
         new EngineChangedState<Loading>() {
         }.post();
     }
 
     @Listener
-    public void on(StoppingEngineEvent<?> event) {
+    public void on(final StoppingEngineEvent<?> event) {
         new EngineChangedState<Stopping>() {
         }.post();
     }
 
     @Listener
-    public void on(RefreshGameEvent event) {
+    public void on(final RefreshGameEvent event) {
         new EngineChangedState<Reload>() {
         }.post();
         new EngineChangedState<Loading>() {

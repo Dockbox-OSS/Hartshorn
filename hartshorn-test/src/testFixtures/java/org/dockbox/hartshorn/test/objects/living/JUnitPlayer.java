@@ -17,11 +17,11 @@
 
 package org.dockbox.hartshorn.test.objects.living;
 
-import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.domain.tuple.Tristate;
 import org.dockbox.hartshorn.api.domain.tuple.Vector3N;
 import org.dockbox.hartshorn.api.exceptions.NotImplementedException;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.i18n.common.Language;
 import org.dockbox.hartshorn.i18n.common.ResourceEntry;
 import org.dockbox.hartshorn.i18n.permissions.Permission;
@@ -51,13 +51,16 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
+import javax.inject.Inject;
+
 import lombok.Getter;
 import lombok.Setter;
 
 // TODO: Modification events (teleport, kick, etc)
 public class JUnitPlayer extends Player implements JUnitPersistentDataHolder {
 
-    @Getter private final PlayerInventory inventory = new JUnitInventory();
+    @Getter private final PlayerInventory inventory;
+    @Getter private final ApplicationContext applicationContext;
     @Getter private Location location;
     @Setter private boolean gravity = true;
     @Setter private Block lookingAt = null;
@@ -71,11 +74,15 @@ public class JUnitPlayer extends Player implements JUnitPersistentDataHolder {
     @Getter @Setter private Vector3N rotation;
     @Getter @Setter private Gamemode gamemode = Gamemode.CREATIVE;
 
-    public JUnitPlayer(@NotNull final UUID uniqueId, @NotNull final String name) {
+    @Inject private JUnitPermissionRegistry permissionRegistry;
+
+    public JUnitPlayer(final ApplicationContext context, @NotNull final UUID uniqueId, @NotNull final String name) {
         super(uniqueId, name);
-        final Worlds worlds = Hartshorn.context().get(Worlds.class);
-        this.location(Location.of(0, 0, 0, worlds.world(worlds.rootUniqueId()).orNull()));
+        this.applicationContext = context;
+        final Worlds worlds = this.applicationContext().get(Worlds.class);
+        this.location(Location.of(this.applicationContext(), 0, 0, 0, worlds.world(worlds.rootUniqueId()).orNull()));
         ((JUnitWorld) this.world()).addEntity(this);
+        this.inventory = new JUnitInventory(context);
     }
 
     @Override
@@ -186,21 +193,21 @@ public class JUnitPlayer extends Player implements JUnitPersistentDataHolder {
 
     @Override
     public boolean hasPermission(final String permission) {
-        return JUnitPermissionRegistry.hasPermission(this, permission);
+        return this.permissionRegistry.hasPermission(this, permission);
     }
 
     @Override
     public boolean hasPermission(final Permission permission) {
-        return JUnitPermissionRegistry.hasPermission(this, permission);
+        return this.permissionRegistry.hasPermission(this, permission);
     }
 
     @Override
     public void permission(final String permission, final Tristate state) {
-        JUnitPermissionRegistry.permission(this, permission, state);
+        this.permissionRegistry.permission(this, permission, state);
     }
 
     @Override
     public void permission(final Permission permission, final Tristate state) {
-        JUnitPermissionRegistry.permission(this, permission, state);
+        this.permissionRegistry.permission(this, permission, state);
     }
 }

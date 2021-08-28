@@ -18,6 +18,7 @@
 package org.dockbox.hartshorn.i18n.common;
 
 import org.dockbox.hartshorn.api.annotations.Property;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.persistence.PersistentModel;
 
 import lombok.Getter;
@@ -28,7 +29,7 @@ public class PersistentLanguageModel implements PersistentModel<Language> {
     @Property(getter = "getCode", setter = "getCode")
     @Getter @Setter private String code;
 
-    public PersistentLanguageModel(String code) {
+    public PersistentLanguageModel(final String code) {
         this.code = code;
     }
 
@@ -38,7 +39,7 @@ public class PersistentLanguageModel implements PersistentModel<Language> {
     }
 
     @Override
-    public Language restore() {
+    public Language restore(final ApplicationContext context) {
         return Language.of(this.code());
     }
 }

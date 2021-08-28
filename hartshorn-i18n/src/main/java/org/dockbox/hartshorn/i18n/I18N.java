@@ -17,42 +17,41 @@
 
 package org.dockbox.hartshorn.i18n;
 
-import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.api.domain.MetaProvider;
 import org.dockbox.hartshorn.api.domain.TypedOwner;
+import org.dockbox.hartshorn.di.MetaProvider;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
+import org.dockbox.hartshorn.di.context.element.MethodContext;
+import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.i18n.annotations.Resource;
 import org.dockbox.hartshorn.util.HartshornUtils;
-import org.dockbox.hartshorn.util.Reflect;
-
-import java.lang.reflect.Method;
 
 public final class I18N {
 
     private I18N() {
     }
 
-    public static String key(Class<?> type, Method method) {
+    public static String key(final ApplicationContext context, final TypeContext<?> type, final MethodContext<?, ?> method) {
         String prefix = "";
 
-        final MetaProvider provider = Hartshorn.context().meta();
-        if (provider.component(type)) {
-            TypedOwner lookup = provider.lookup(type);
+        final MetaProvider provider = context.meta();
+        if (provider.isComponent(type)) {
+            final TypedOwner lookup = provider.lookup(type);
             if (lookup != null) prefix = lookup.id() + '.';
         }
 
         return extract(method, prefix);
     }
 
-    private static String extract(Method method, String prefix) {
-        final Exceptional<Resource> resource = Reflect.annotation(method, Resource.class);
+    private static String extract(final MethodContext<?, ?> method, final String prefix) {
+        final Exceptional<Resource> resource = method.annotation(Resource.class);
         if (resource.present()) {
-            String key = resource.get().key();
+            final String key = resource.get().key();
             if (!"".equals(key)) return key;
         }
-        String keyJoined = method.getName();
+        String keyJoined = method.name();
         if (keyJoined.startsWith("get")) keyJoined = keyJoined.substring(3);
-        String[] r = HartshornUtils.splitCapitals(keyJoined);
+        final String[] r = HartshornUtils.splitCapitals(keyJoined);
         return prefix + String.join(".", r).toLowerCase();
     }
 

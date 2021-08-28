@@ -24,7 +24,7 @@ import org.dockbox.hartshorn.di.annotations.inject.Bound;
 import org.dockbox.hartshorn.server.minecraft.dimension.position.Location;
 import org.dockbox.hartshorn.server.minecraft.dimension.world.World;
 import org.dockbox.hartshorn.sponge.game.SpongeComposite;
-import org.dockbox.hartshorn.sponge.util.SpongeConvert;
+import org.dockbox.hartshorn.sponge.util.SpongeAdapter;
 import org.spongepowered.api.data.DataHolder.Mutable;
 import org.spongepowered.api.world.server.ServerLocation;
 
@@ -55,7 +55,7 @@ public class SpongeLocation extends Location implements SpongeComposite {
 
     @Override
     public Exceptional<? extends Mutable> dataHolder() {
-        return Exceptional.of(() -> ServerLocation.of(this.world.key(), SpongeConvert.toSpongeDouble(this.position)));
+        return Exceptional.of(() -> ServerLocation.of(this.world.key(), SpongeAdapter.toSpongeDouble(this.position)));
     }
 
     @Override

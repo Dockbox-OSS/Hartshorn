@@ -17,6 +17,7 @@
 
 package org.dockbox.hartshorn.test.objects.inventory;
 
+import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.server.minecraft.entities.ArmorStandInventory;
 import org.dockbox.hartshorn.server.minecraft.inventory.Slot;
 import org.dockbox.hartshorn.server.minecraft.item.Item;
@@ -26,9 +27,14 @@ import org.dockbox.hartshorn.util.HartshornUtils;
 import java.util.Collection;
 import java.util.Map;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
 public class JUnitArmorStandInventory implements ArmorStandInventory {
 
     private final Map<Slot, Item> items = HartshornUtils.emptyMap();
+    @Getter private final ApplicationContext applicationContext;
 
     @Override
     public Collection<Item> items() {
@@ -36,8 +42,8 @@ public class JUnitArmorStandInventory implements ArmorStandInventory {
     }
 
     @Override
-    public boolean give(Item item) {
-        for (Slot slot : Slot.values()) {
+    public boolean give(final Item item) {
+        for (final Slot slot : Slot.values()) {
             if (!this.items.containsKey(slot)) {
                 this.slot(item, slot);
                 return true;
@@ -47,12 +53,12 @@ public class JUnitArmorStandInventory implements ArmorStandInventory {
     }
 
     @Override
-    public Item slot(Slot slot) {
-        return this.items.getOrDefault(slot, Item.of(ItemTypes.AIR));
+    public Item slot(final Slot slot) {
+        return this.items.getOrDefault(slot, Item.of(this.applicationContext(), ItemTypes.AIR));
     }
 
     @Override
-    public void slot(Item item, Slot slot) {
+    public void slot(final Item item, final Slot slot) {
         this.items.put(slot, item);
     }
 }

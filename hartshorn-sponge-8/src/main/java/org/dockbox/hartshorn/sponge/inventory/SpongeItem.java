@@ -30,7 +30,7 @@ import org.dockbox.hartshorn.server.minecraft.item.ReferencedItem;
 import org.dockbox.hartshorn.server.minecraft.players.Profile;
 import org.dockbox.hartshorn.sponge.game.SpongeComposite;
 import org.dockbox.hartshorn.sponge.game.SpongeProfile;
-import org.dockbox.hartshorn.sponge.util.SpongeConvert;
+import org.dockbox.hartshorn.sponge.util.SpongeAdapter;
 import org.dockbox.hartshorn.sponge.util.SpongeUtil;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.jetbrains.annotations.NotNull;
@@ -49,12 +49,12 @@ import java.util.stream.Collectors;
 
 public class SpongeItem extends ReferencedItem<ItemStack> implements SpongeComposite {
 
-    public SpongeItem(@NotNull ItemStack reference) {
+    public SpongeItem(@NotNull final ItemStack reference) {
         super(reference);
     }
 
     @Bound
-    public SpongeItem(String id) {
+    public SpongeItem(final String id) {
         super(id);
     }
 
@@ -76,8 +76,8 @@ public class SpongeItem extends ReferencedItem<ItemStack> implements SpongeCompo
     }
 
     @Override
-    protected ItemStack from(String id) {
-        ItemType type;
+    protected ItemStack from(final String id) {
+        final ItemType type;
         if (id.indexOf(':') >= 0) {
             type = SpongeUtil.fromNamespacedRegistry(RegistryTypes.ITEM_TYPE, id).orNull();
         }
@@ -96,14 +96,14 @@ public class SpongeItem extends ReferencedItem<ItemStack> implements SpongeCompo
     }
 
     @Override
-    public SpongeItem displayName(Text displayName) {
-        this.item().present(item -> item.offer(Keys.CUSTOM_NAME, SpongeConvert.toSponge(displayName)));
+    public SpongeItem displayName(final Text displayName) {
+        this.item().present(item -> item.offer(Keys.CUSTOM_NAME, SpongeAdapter.toSponge(displayName)));
         return this;
     }
 
     @Override
-    public Text displayName(Language language) {
-        return SpongeUtil.get(this.item(), Keys.CUSTOM_NAME, SpongeConvert::fromSponge, Text::of);
+    public Text displayName(final Language language) {
+        return SpongeUtil.get(this.item(), Keys.CUSTOM_NAME, SpongeAdapter::fromSponge, Text::of);
     }
 
     @Override
@@ -112,17 +112,17 @@ public class SpongeItem extends ReferencedItem<ItemStack> implements SpongeCompo
                 .map(item -> item.get(Keys.LORE)
                         .orElseGet(HartshornUtils::emptyList)
                         .stream()
-                        .map(SpongeConvert::fromSponge)
+                        .map(SpongeAdapter::fromSponge)
                         .toList()
                 ).orElse(HartshornUtils::emptyList)
                 .get();
     }
 
     @Override
-    public SpongeItem lore(List<Text> lore) {
+    public SpongeItem lore(final List<Text> lore) {
         this.item().present(item -> {
             final List<Component> components = lore.stream()
-                    .map(SpongeConvert::toSponge)
+                    .map(SpongeAdapter::toSponge)
                     .map(Component::asComponent)
                     .toList();
             item.offer(Keys.LORE, components);
@@ -136,7 +136,7 @@ public class SpongeItem extends ReferencedItem<ItemStack> implements SpongeCompo
     }
 
     @Override
-    public SpongeItem amount(int amount) {
+    public SpongeItem amount(final int amount) {
         this.item().present(item -> item.setQuantity(amount));
         return this;
     }
@@ -147,12 +147,12 @@ public class SpongeItem extends ReferencedItem<ItemStack> implements SpongeCompo
     }
 
     @Override
-    public void addLore(Text lore) {
+    public void addLore(final Text lore) {
         this.item().present(item -> {
             final List<Text> lines = this.lore();
             lines.add(lore);
             final List<Component> components = lines.stream()
-                    .map(SpongeConvert::toSponge)
+                    .map(SpongeAdapter::toSponge)
                     .map(Component::asComponent)
                     .toList();
             item.offer(Keys.LORE, components);
@@ -176,7 +176,7 @@ public class SpongeItem extends ReferencedItem<ItemStack> implements SpongeCompo
                     final List<Enchantment> applied = item.get(Keys.APPLIED_ENCHANTMENTS).orElseGet(HartshornUtils::emptyList);
                     final List<Enchantment> stored = item.get(Keys.STORED_ENCHANTMENTS).orElseGet(HartshornUtils::emptyList);
                     return HartshornUtils.merge(applied, stored).stream()
-                            .map(SpongeConvert::fromSponge)
+                            .map(SpongeAdapter::fromSponge)
                             .filter(Exceptional::present)
                             .map(Exceptional::get)
                             .collect(Collectors.toSet());
@@ -185,8 +185,8 @@ public class SpongeItem extends ReferencedItem<ItemStack> implements SpongeCompo
     }
 
     @Override
-    public void addEnchant(Enchant enchant) {
-        this.item().present(item -> SpongeConvert.toSponge(enchant)
+    public void addEnchant(final Enchant enchant) {
+        this.item().present(item -> SpongeAdapter.toSponge(enchant)
                 .present(enchantment -> item.transform(Keys.APPLIED_ENCHANTMENTS, list -> {
                     list.add(enchantment);
                     return list;
@@ -194,8 +194,8 @@ public class SpongeItem extends ReferencedItem<ItemStack> implements SpongeCompo
     }
 
     @Override
-    public void removeEnchant(Enchant enchant) {
-        this.item().present(item -> SpongeConvert.toSponge(enchant)
+    public void removeEnchant(final Enchant enchant) {
+        this.item().present(item -> SpongeAdapter.toSponge(enchant)
                 .present(enchantment -> item.transform(Keys.APPLIED_ENCHANTMENTS, list -> {
                     list.removeIf(e -> e.equals(enchantment));
                     return list;
@@ -213,7 +213,7 @@ public class SpongeItem extends ReferencedItem<ItemStack> implements SpongeCompo
     }
 
     @Override
-    public Item profile(Profile profile) {
+    public Item profile(final Profile profile) {
         if (this.isHead() && profile instanceof SpongeProfile spongeProfile) {
             this.item().present(item -> item.offer(Keys.GAME_PROFILE, spongeProfile.profile()));
         }

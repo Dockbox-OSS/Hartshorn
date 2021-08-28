@@ -56,7 +56,7 @@ public class DefaultServer {
         final PaginationBuilder paginationBuilder = this.context.get(PaginationBuilder.class);
 
         final List<Text> content = HartshornUtils.emptyList();
-        content.add(this.resources.infoHeader(Hartshorn.server().version()).translate(source).asText());
+        content.add(this.resources.infoHeader(Hartshorn.VERSION).translate(source).asText());
         content.add(this.resources.services().translate(source).asText());
 
         for (final ComponentContainer container : this.context.locator().containers()) {
@@ -84,7 +84,7 @@ public class DefaultServer {
     public void reload(final MessageReceiver src, final CommandContext ctx) {
         final EventBus eb = this.context.get(EventBus.class);
         eb.post(new EngineChangedState<Reload>() {
-        });
+        }.with(this.context));
         src.send(this.resources.reloadAll());
     }
 }

@@ -17,6 +17,8 @@
 
 package org.dockbox.hartshorn.persistence.table;
 
+import org.dockbox.hartshorn.di.context.element.TypeContext;
+
 import java.util.Objects;
 
 import lombok.AllArgsConstructor;
@@ -27,7 +29,12 @@ import lombok.Getter;
 public class ColumnIdentifierImpl<T> implements ColumnIdentifier<T> {
 
     private final String name;
-    private final Class<T> type;
+    private final TypeContext<T> type;
+
+    public ColumnIdentifierImpl(final String name, final Class<T> type) {
+        this.name = name;
+        this.type = TypeContext.of(type);
+    }
 
     @Override
     public int hashCode() {

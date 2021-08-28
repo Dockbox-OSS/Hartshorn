@@ -20,6 +20,7 @@ package org.dockbox.hartshorn.regions;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.domain.tuple.Vector3N;
 import org.dockbox.hartshorn.api.keys.KeyHolder;
+import org.dockbox.hartshorn.di.ContextCarrier;
 import org.dockbox.hartshorn.i18n.text.Text;
 import org.dockbox.hartshorn.regions.flags.RegionFlag;
 import org.dockbox.hartshorn.server.minecraft.dimension.position.Location;
@@ -28,7 +29,7 @@ import org.dockbox.hartshorn.server.minecraft.players.Player;
 
 import java.util.Map;
 
-public interface Region extends KeyHolder<Region> {
+public interface Region extends KeyHolder<Region>, ContextCarrier {
 
     long id();
 

@@ -17,22 +17,21 @@
 
 package org.dockbox.hartshorn.discord;
 
-import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
+import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.di.services.ServiceProcessor;
 import org.dockbox.hartshorn.discord.annotations.DiscordCommand;
 import org.dockbox.hartshorn.discord.annotations.UseDiscordCommands;
-import org.dockbox.hartshorn.util.Reflect;
 
 public class DiscordServiceProcessor implements ServiceProcessor<UseDiscordCommands> {
     @Override
-    public boolean preconditions(Class<?> type) {
-        return !Reflect.methods(type, DiscordCommand.class).isEmpty();
+    public boolean preconditions(final ApplicationContext context, final TypeContext<?> type) {
+        return !type.flatMethods(DiscordCommand.class).isEmpty();
     }
 
     @Override
-    public <T> void process(ApplicationContext context, Class<T> type) {
-        Hartshorn.context().get(DiscordUtils.class).registerCommandListener(type);
+    public <T> void process(final ApplicationContext context, final TypeContext<T> type) {
+        context.get(DiscordUtils.class).registerCommandListener(type);
     }
 
     @Override

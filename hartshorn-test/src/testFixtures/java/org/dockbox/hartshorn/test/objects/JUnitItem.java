@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.test.objects;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.di.annotations.inject.Bound;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.i18n.common.Language;
 import org.dockbox.hartshorn.i18n.text.Text;
 import org.dockbox.hartshorn.server.minecraft.item.Enchant;
@@ -32,6 +33,8 @@ import org.dockbox.hartshorn.util.HartshornUtils;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+
+import javax.inject.Inject;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -48,37 +51,34 @@ public class JUnitItem implements Item, JUnitPersistentDataHolder {
     @Getter private Text displayName;
     private boolean treatAsBlock = false;
 
-    @Bound
-    @Deprecated
-    public JUnitItem(String id, int meta) {
-        this.id = id;
-        this.displayName = Text.of(id);
-    }
+    @Inject
+    @Getter
+    private ApplicationContext applicationContext;
 
     @Bound
-    public JUnitItem(String id) {
+    public JUnitItem(final String id) {
         this.id = id;
         this.displayName = Text.of(id);
     }
 
     @Override
     public boolean isAir() {
-        return this.id().equals(Item.of(ItemTypes.AIR).id());
+        return this.id().equals(ItemTypes.AIR.id());
     }
 
     @Override
-    public Item displayName(Text displayName) {
+    public Item displayName(final Text displayName) {
         this.displayName = displayName;
         return this;
     }
 
     @Override
-    public Text displayName(Language language) {
+    public Text displayName(final Language language) {
         return this.displayName;
     }
 
     @Override
-    public JUnitItem lore(List<Text> lore) {
+    public JUnitItem lore(final List<Text> lore) {
         this.lore.clear();
         this.lore.addAll(lore);
         return this;
@@ -90,7 +90,7 @@ public class JUnitItem implements Item, JUnitPersistentDataHolder {
     }
 
     @Override
-    public void addLore(Text lore) {
+    public void addLore(final Text lore) {
         this.lore.add(lore);
     }
 
@@ -110,12 +110,12 @@ public class JUnitItem implements Item, JUnitPersistentDataHolder {
     }
 
     @Override
-    public void addEnchant(Enchant enchant) {
+    public void addEnchant(final Enchant enchant) {
         this.enchants.add(enchant);
     }
 
     @Override
-    public void removeEnchant(Enchant enchant) {
+    public void removeEnchant(final Enchant enchant) {
         this.enchants.remove(enchant);
     }
 
@@ -126,11 +126,11 @@ public class JUnitItem implements Item, JUnitPersistentDataHolder {
 
     @Override
     public boolean isHead() {
-        return Item.of(ItemTypes.SKELETON_SKULL).id().equals(this.id());
+        return ItemTypes.SKELETON_SKULL.id().equals(this.id());
     }
 
     @Override
-    public Item profile(Profile profile) {
+    public Item profile(final Profile profile) {
         if (this.isHead()) {
             this.profile = profile;
         }

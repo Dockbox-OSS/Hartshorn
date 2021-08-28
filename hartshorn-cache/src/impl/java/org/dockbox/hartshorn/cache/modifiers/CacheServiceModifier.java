@@ -24,13 +24,13 @@ import org.dockbox.hartshorn.cache.Expiration;
 import org.dockbox.hartshorn.cache.annotations.CacheService;
 import org.dockbox.hartshorn.cache.annotations.UseCaching;
 import org.dockbox.hartshorn.cache.context.CacheContext;
-import org.dockbox.hartshorn.cache.context.CacheMethodContext;
 import org.dockbox.hartshorn.cache.context.CacheContextImpl;
+import org.dockbox.hartshorn.cache.context.CacheMethodContext;
+import org.dockbox.hartshorn.di.binding.Bindings;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.proxy.handle.ProxyFunction;
 import org.dockbox.hartshorn.proxy.service.MethodProxyContext;
 import org.dockbox.hartshorn.proxy.service.ServiceAnnotatedMethodModifier;
-import org.dockbox.hartshorn.util.Reflect;
 
 import java.lang.annotation.Annotation;
 import java.util.function.Supplier;
@@ -44,25 +44,25 @@ import java.util.function.Supplier;
 public abstract class CacheServiceModifier<A extends Annotation> extends ServiceAnnotatedMethodModifier<A, UseCaching> {
 
     @Override
-    public <T, R> ProxyFunction<T, R> process(ApplicationContext context, MethodProxyContext<T> methodContext) {
-        CacheMethodContext cacheMethodContext = this.context(methodContext);
+    public <T, R> ProxyFunction<T, R> process(final ApplicationContext context, final MethodProxyContext<T> methodContext) {
+        final CacheMethodContext cacheMethodContext = this.context(methodContext);
         final CacheManager manager = context.get(cacheMethodContext.manager());
         String name = cacheMethodContext.name();
         if ("".equals(name)) {
-            final Exceptional<CacheService> annotation = Reflect.annotation(methodContext.type(), CacheService.class);
+            final Exceptional<CacheService> annotation = methodContext.type().annotation(CacheService.class);
             if (annotation.present()) {
                 name = annotation.get().value();
             }
             else {
-                throw new IllegalStateException("Service " + methodContext.type() + " contains cache targets but does not provide a valid ID");
+                name = Bindings.serviceId(context, methodContext.type());
             }
         }
 
         final Expiration expiration = cacheMethodContext.expiration();
-        String finalName = name;
+        final String finalName = name;
 
-        Supplier<Cache<?>> cacheSupplier = () -> {
-            Cache<Object> cache;
+        final Supplier<Cache<?>> cacheSupplier = () -> {
+            final Cache<Object> cache;
             if (expiration != null)
                 cache = manager.getOrCreate(finalName, expiration);
             else {
@@ -71,7 +71,7 @@ public abstract class CacheServiceModifier<A extends Annotation> extends Service
             return cache;
         };
 
-        CacheContext cacheContext = new CacheContextImpl(manager, cacheSupplier, name);
+        final CacheContext cacheContext = new CacheContextImpl(manager, cacheSupplier, name);
 
         return this.process(context, methodContext, cacheContext);
     }
@@ -81,7 +81,7 @@ public abstract class CacheServiceModifier<A extends Annotation> extends Service
     protected abstract <T, R> ProxyFunction<T, R> process(ApplicationContext context, MethodProxyContext<T> methodContext, CacheContext cacheContext);
 
     @Override
-    public <T> boolean preconditions(ApplicationContext context, MethodProxyContext<T> methodContext) {
+    public <T> boolean preconditions(final ApplicationContext context, final MethodProxyContext<T> methodContext) {
         return true;
     }
 

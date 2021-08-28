@@ -18,6 +18,7 @@
 package org.dockbox.hartshorn.di.services;
 
 import org.dockbox.hartshorn.di.ComponentType;
+import org.dockbox.hartshorn.di.context.element.TypeContext;
 
 import java.lang.annotation.Annotation;
 import java.util.List;
@@ -30,9 +31,9 @@ public interface ComponentContainer {
 
     boolean enabled();
 
-    Class<?> type();
+    TypeContext<?> type();
 
-    Class<?> owner();
+    TypeContext<?> owner();
 
     List<Class<? extends Annotation>> activators();
 

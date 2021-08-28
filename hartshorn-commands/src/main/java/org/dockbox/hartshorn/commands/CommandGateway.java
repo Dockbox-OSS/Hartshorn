@@ -22,6 +22,7 @@ import org.dockbox.hartshorn.commands.context.CommandContext;
 import org.dockbox.hartshorn.commands.context.CommandExecutorContext;
 import org.dockbox.hartshorn.commands.exceptions.ParsingException;
 import org.dockbox.hartshorn.commands.extension.CommandExecutorExtension;
+import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.jetbrains.annotations.UnmodifiableView;
 
@@ -66,7 +67,7 @@ public interface CommandGateway {
      * @param type
      *         The type containing {@link org.dockbox.hartshorn.commands.annotations.Command} methods.
      */
-    void register(Class<?> type);
+    void register(TypeContext<?> type);
 
     /**
      * Registers the given {@link CommandExecutorContext} to handle the associated command(s).

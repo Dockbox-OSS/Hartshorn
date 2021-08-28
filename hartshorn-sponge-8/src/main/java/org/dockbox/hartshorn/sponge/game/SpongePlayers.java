@@ -20,7 +20,7 @@ package org.dockbox.hartshorn.sponge.game;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.server.minecraft.players.Player;
 import org.dockbox.hartshorn.server.minecraft.players.Players;
-import org.dockbox.hartshorn.sponge.util.SpongeConvert;
+import org.dockbox.hartshorn.sponge.util.SpongeAdapter;
 import org.dockbox.hartshorn.sponge.util.SpongeUtil;
 import org.spongepowered.api.Sponge;
 
@@ -32,19 +32,19 @@ public class SpongePlayers implements Players {
     @Override
     public List<Player> onlinePlayers() {
         return Sponge.server().onlinePlayers().stream()
-                .map(SpongeConvert::fromSponge)
+                .map(SpongeAdapter::fromSponge)
                 .toList();
     }
 
     @Override
     public Exceptional<Player> player(String name) {
-        return SpongeUtil.awaitOption(Sponge.server().userManager().load(name))
-                .map(SpongeConvert::fromSponge);
+        return SpongeUtil.awaitSafe(Sponge.server().userManager().load(name))
+                .map(SpongeAdapter::fromSponge);
     }
 
     @Override
     public Exceptional<Player> player(UUID uuid) {
         return SpongeUtil.await(Sponge.server().userManager().loadOrCreate(uuid))
-                .map(SpongeConvert::fromSponge);
+                .map(SpongeAdapter::fromSponge);
     }
 }

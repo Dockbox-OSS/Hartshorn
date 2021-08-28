@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.api.config;
 
-import org.dockbox.hartshorn.api.exceptions.ExceptionLevels;
+import org.dockbox.hartshorn.api.exceptions.ExceptionLevel;
 
 /**
  * Contains the default configuration for bootstrap-related values.
@@ -32,17 +32,11 @@ public interface GlobalConfig {
     boolean stacktraces();
 
     /**
-     * Indicates the {@link ExceptionLevels level at which exceptions
+     * Indicates the {@link ExceptionLevel level at which exceptions
      * are logged}.
      *
      * @return The exception level
      */
-    ExceptionLevels level();
+    ExceptionLevel level();
 
-    /**
-     * Indicates the current version of Hartshorn.
-     *
-     * @return The current version.
-     */
-    String version();
 }

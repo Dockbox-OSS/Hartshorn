@@ -20,20 +20,18 @@ package org.dockbox.hartshorn.persistence.service;
 import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.persistence.FileManager;
 import org.dockbox.hartshorn.persistence.PersistentElement;
-import org.dockbox.hartshorn.test.HartshornRunner;
+import org.dockbox.hartshorn.test.ApplicationAwareTest;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.nio.file.Path;
 
-@ExtendWith(HartshornRunner.class)
-public class SerialisationTests {
+public class SerialisationTests extends ApplicationAwareTest {
 
     @Test
     void testToStringSerialisation() {
-        final PersistenceService service = Hartshorn.context().get(PersistenceService.class);
+        final PersistenceService service = this.context().get(PersistenceService.class);
         final PersistentElement element = new PersistentElement("sample");
         final String json = service.writeToString(element);
 
@@ -43,7 +41,7 @@ public class SerialisationTests {
 
     @Test
     void testFromStringDeserialisation() {
-        final PersistenceService service = Hartshorn.context().get(PersistenceService.class);
+        final PersistenceService service = this.context().get(PersistenceService.class);
         final String json = "{\"name\":\"sample\"}";
         final PersistentElement element = service.readFromString(json);
 
@@ -53,7 +51,7 @@ public class SerialisationTests {
 
     @Test
     void testToPathSerialisation() {
-        final PathPersistenceService service = Hartshorn.context().get(PathPersistenceService.class);
+        final PathPersistenceService service = this.context().get(PathPersistenceService.class);
         final PersistentElement element = new PersistentElement("sample");
         final boolean result = service.writeToPath(element, this.path());
 
@@ -61,12 +59,12 @@ public class SerialisationTests {
     }
 
     private Path path() {
-        return Hartshorn.context().get(FileManager.class).dataFile(Hartshorn.class, System.nanoTime() + "-persistence.tmp");
+        return this.context().get(FileManager.class).dataFile(Hartshorn.class, System.nanoTime() + "-persistence.tmp");
     }
 
     @Test
     void testFromPathDeserialisation() {
-        final PathPersistenceService service = Hartshorn.context().get(PathPersistenceService.class);
+        final PathPersistenceService service = this.context().get(PathPersistenceService.class);
         final PersistentElement element = new PersistentElement("sample");
         final Path path = this.path();
 
@@ -80,7 +78,7 @@ public class SerialisationTests {
 
     @Test
     void testToAnnotationPathSerialisation() {
-        final AnnotationPathPersistenceService service = Hartshorn.context().get(AnnotationPathPersistenceService.class);
+        final AnnotationPathPersistenceService service = this.context().get(AnnotationPathPersistenceService.class);
         final PersistentElement element = new PersistentElement("sample");
         final boolean result = service.writeToPath(element);
 
@@ -89,7 +87,7 @@ public class SerialisationTests {
 
     @Test
     void testFromAnnotationPathDeserialisation() {
-        final AnnotationPathPersistenceService service = Hartshorn.context().get(AnnotationPathPersistenceService.class);
+        final AnnotationPathPersistenceService service = this.context().get(AnnotationPathPersistenceService.class);
         final PersistentElement element = new PersistentElement("sample");
 
         final boolean result = service.writeToPath(element);

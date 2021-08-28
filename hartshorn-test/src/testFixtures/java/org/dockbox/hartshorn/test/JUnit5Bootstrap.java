@@ -18,9 +18,10 @@
 package org.dockbox.hartshorn.test;
 
 import org.dockbox.hartshorn.api.Hartshorn;
-import org.dockbox.hartshorn.server.minecraft.MinecraftServerBootstrap;
+import org.dockbox.hartshorn.di.context.element.TypeContext;
+import org.dockbox.hartshorn.proxy.ProxyApplicationBootstrap;
 
-public class JUnit5Bootstrap extends MinecraftServerBootstrap {
+public class JUnit5Bootstrap extends ProxyApplicationBootstrap {
 
     @Override
     public boolean isCI() {
@@ -28,7 +29,7 @@ public class JUnit5Bootstrap extends MinecraftServerBootstrap {
     }
 
     @Override
-    protected void handleMissingBinding(Class<?> type) {
-        Hartshorn.log().warn("Ignoring missing binding for " + type.getSimpleName());
+    protected void handleMissingBinding(final TypeContext<?> type) {
+        Hartshorn.log().warn("Ignoring missing binding for " + type.name());
     }
 }

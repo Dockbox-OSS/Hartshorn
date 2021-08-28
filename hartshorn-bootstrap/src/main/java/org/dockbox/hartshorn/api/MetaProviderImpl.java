@@ -17,9 +17,11 @@
 
 package org.dockbox.hartshorn.api;
 
-import org.dockbox.hartshorn.api.domain.TypedOwnerImpl;
 import org.dockbox.hartshorn.api.domain.TypedOwner;
+import org.dockbox.hartshorn.api.domain.TypedOwnerImpl;
 import org.dockbox.hartshorn.di.InjectorMetaProvider;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
+import org.dockbox.hartshorn.di.context.element.TypeContext;
 
 /**
  * An extension of {@link InjectorMetaProvider} which adds {@link Hartshorn}
@@ -28,9 +30,13 @@ import org.dockbox.hartshorn.di.InjectorMetaProvider;
  */
 public class MetaProviderImpl extends InjectorMetaProvider {
 
+    public MetaProviderImpl(final ApplicationContext context) {
+        super(context);
+    }
+
     @Override
-    public TypedOwner lookup(final Class<?> type) {
-        if (Hartshorn.class.equals(type)) {
+    public TypedOwner lookup(final TypeContext<?> type) {
+        if (type.is(Hartshorn.class)) {
             return TypedOwnerImpl.of(Hartshorn.PROJECT_ID);
         }
         return super.lookup(type);

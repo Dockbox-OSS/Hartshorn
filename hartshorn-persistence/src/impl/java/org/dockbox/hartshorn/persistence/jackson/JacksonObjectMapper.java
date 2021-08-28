@@ -34,26 +34,29 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLParser;
 
-import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.di.GenericType;
 import org.dockbox.hartshorn.di.annotations.component.Component;
 import org.dockbox.hartshorn.di.annotations.inject.Binds;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
+import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.persistence.DefaultObjectMapper;
 import org.dockbox.hartshorn.persistence.FileType;
 import org.dockbox.hartshorn.persistence.PersistentCapable;
 import org.dockbox.hartshorn.persistence.PersistentModel;
-import org.dockbox.hartshorn.persistence.mapping.GenericType;
 import org.dockbox.hartshorn.persistence.properties.PersistenceModifier;
-import org.dockbox.hartshorn.util.Reflect;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Type;
+import java.net.URL;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.function.Function;
 import java.util.function.Supplier;
+
+import javax.inject.Inject;
 
 import lombok.AllArgsConstructor;
 
@@ -65,12 +68,15 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
     protected ObjectMapper mapper;
     private Include include = Include.ALWAYS;
 
+    @Inject
+    private ApplicationContext context;
+
     public JacksonObjectMapper() {
         super(FileType.JSON);
     }
 
     @Override
-    public <T> Exceptional<T> read(String content, Class<T> type) {
+    public <T> Exceptional<T> read(final String content, final Class<T> type) {
         return this.readInternal(
                 type,
                 () -> this.correctPersistentCapable(content, type),
@@ -78,7 +84,7 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
     }
 
     @Override
-    public <T> Exceptional<T> read(Path path, Class<T> type) {
+    public <T> Exceptional<T> read(final Path path, final Class<T> type) {
         return this.readInternal(
                 type,
                 () -> this.correctPersistentCapable(path, type),
@@ -86,25 +92,42 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
     }
 
     @Override
-    public <T> Exceptional<T> read(String content, GenericType<T> type) {
+    public <T> Exceptional<T> read(final URL url, final Class<T> type) {
         return this.readInternal(
-                type.getType(),
-                () -> this.correctPersistentCapable(content, (Class<T>) type.getType()),
+                type,
+                () -> this.correctPersistentCapable(url, type),
+                () -> this.configureMapper().readValue(url, type));
+    }
+
+    @Override
+    public <T> Exceptional<T> read(final String content, final GenericType<T> type) {
+        return this.readInternal(
+                type.type(),
+                () -> this.correctPersistentCapable(content, (Class<T>) type.type()),
                 () -> this.configureMapper().readValue(content, new GenericTypeReference<>(type))
         );
     }
 
     @Override
-    public <T> Exceptional<T> read(Path path, GenericType<T> type) {
+    public <T> Exceptional<T> read(final Path path, final GenericType<T> type) {
         return this.readInternal(
-                type.getType(),
-                () -> this.correctPersistentCapable(path, (Class<T>) type.getType()),
+                type.type(),
+                () -> this.correctPersistentCapable(path, (Class<T>) type.type()),
                 () -> this.configureMapper().readValue(path.toFile(), new GenericTypeReference<>(type))
         );
     }
 
     @Override
-    public <T> Exceptional<Boolean> write(Path path, T content) {
+    public <T> Exceptional<T> read(final URL url, final GenericType<T> type) {
+        return this.readInternal(
+                type.type(),
+                () -> this.correctPersistentCapable(url, (Class<T>) type.type()),
+                () -> this.configureMapper().readValue(url, new GenericTypeReference<>(type))
+        );
+    }
+
+    @Override
+    public <T> Exceptional<Boolean> write(final Path path, final T content) {
         return this.writeInternal(
                 content,
                 () -> this.write(path, ((PersistentCapable<?>) content).model()),
@@ -115,7 +138,7 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
     }
 
     @Override
-    public <T> Exceptional<String> write(T content) {
+    public <T> Exceptional<String> write(final T content) {
         return this.writeInternal(
                         content,
                         () -> this.write(((PersistentCapable<?>) content).model()),
@@ -123,18 +146,18 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
                 .map(out -> out.replaceAll("\\r", ""));
     }
 
-    private <T> Exceptional<T> readInternal(Type type, Supplier<Exceptional<T>> capable, Callable<T> reader) {
+    private <T> Exceptional<T> readInternal(final Type type, final Supplier<Exceptional<T>> capable, final Callable<T> reader) {
         if (type instanceof Class) {
-            Exceptional<T> persistentCapable = capable.get();
+            final Exceptional<T> persistentCapable = capable.get();
             if (persistentCapable.present()) return persistentCapable;
         }
 
         return Exceptional.of(reader);
     }
 
-    private ObjectWriter writer(Object content) {
+    private ObjectWriter writer(final Object content) {
         ObjectWriter writer = this.configureMapper().writerWithDefaultPrettyPrinter();
-        final Exceptional<Component> annotated = Reflect.annotation(content.getClass(), Component.class);
+        final Exceptional<Component> annotated = TypeContext.of(content).annotation(Component.class);
 
         if (JacksonObjectMapper.roots.contains(this.fileType()) && annotated.present()) {
             final Component annotation = annotated.get();
@@ -143,19 +166,20 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
         return writer;
     }
 
-    private <T, R> Exceptional<R> writeInternal(T content, Supplier<Exceptional<R>> capable, Callable<R> writer) {
+    private <T, R> Exceptional<R> writeInternal(final T content, final Supplier<Exceptional<R>> capable, final Callable<R> writer) {
         if (content instanceof PersistentCapable) return capable.get();
         return Exceptional.of(writer);
     }
 
     @Override
-    public void fileType(FileType fileType) {
+    public JacksonObjectMapper fileType(final FileType fileType) {
         super.fileType(fileType);
         this.mapper = null;
+        return this;
     }
 
     @Override
-    protected void modify(PersistenceModifier modifier) {
+    protected void modify(final PersistenceModifier modifier) {
         this.include = switch (modifier) {
             case SKIP_EMPTY -> Include.NON_EMPTY;
             case SKIP_NULL -> Include.NON_NULL;
@@ -165,7 +189,7 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
     protected ObjectMapper configureMapper() {
         if (null == this.mapper) {
             this.mapper = this.mapper(this.fileType());
-            this.mapper.setAnnotationIntrospector(new PropertyAliasIntrospector());
+            this.mapper.setAnnotationIntrospector(new PropertyAliasIntrospector(this.context));
             this.mapper.enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES);
             this.mapper.enable(Feature.ALLOW_COMMENTS);
             this.mapper.enable(Feature.ALLOW_YAML_COMMENTS);
@@ -183,28 +207,32 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
         return this.mapper;
     }
 
-    protected ObjectMapper mapper(FileType fileType) {
-        for (JacksonObjectMapper.Mappers mapper : JacksonObjectMapper.Mappers.values()) {
+    protected ObjectMapper mapper(final FileType fileType) {
+        for (final JacksonObjectMapper.Mappers mapper : JacksonObjectMapper.Mappers.values()) {
             if (mapper.fileType.equals(fileType)) return (ObjectMapper) mapper.mapper.get();
         }
         return null; // Do not throw an exception here as subclasses may wish to extend functionality
     }
 
-    protected <T> Exceptional<T> correctPersistentCapable(Path file, Class<T> type) {
+    protected <T> Exceptional<T> correctPersistentCapable(final Path file, final Class<T> type) {
         return this.correctPersistentCapableInternal(type, model -> this.read(file, model));
     }
 
-    protected <T> Exceptional<T> correctPersistentCapable(String content, Class<T> type) {
+    protected <T> Exceptional<T> correctPersistentCapable(final String content, final Class<T> type) {
         return this.correctPersistentCapableInternal(type, model -> this.read(content, model));
     }
 
-    private <T, I> Exceptional<T> correctPersistentCapableInternal(Class<T> type, Function<Class<? extends PersistentModel<?>>, Exceptional<? extends PersistentModel<?>>> reader) {
-        if (Reflect.assigns(PersistentCapable.class, type)) {
+    protected <T> Exceptional<T> correctPersistentCapable(final URL url, final Class<T> type) {
+        return this.correctPersistentCapableInternal(type, model -> this.read(url, model));
+    }
+
+    private <T> Exceptional<T> correctPersistentCapableInternal(final Class<T> type, final Function<Class<? extends PersistentModel<?>>, Exceptional<? extends PersistentModel<?>>> reader) {
+        if (TypeContext.of(type).childOf(PersistentCapable.class)) {
             // Provision basis is required here, as injected types will typically pass in a interface type. If no injection point is available a
             // regular instance is created through available constructors.
-            Class<? extends PersistentModel<?>> modelType = ((PersistentCapable<?>) Hartshorn.context().get(type)).type();
-            @NotNull Exceptional<? extends PersistentModel<?>> model = reader.apply(modelType);
-            return model.map(PersistentModel::restore).map(out -> (T) out);
+            final Class<? extends PersistentModel<?>> modelType = ((PersistentCapable<?>) this.context.get(type)).type();
+            @NotNull final Exceptional<? extends PersistentModel<?>> model = reader.apply(modelType);
+            return model.map(m -> m.restore(this.context)).map(out -> (T) out);
         }
         return Exceptional.empty();
     }

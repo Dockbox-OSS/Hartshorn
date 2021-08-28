@@ -17,7 +17,6 @@
 
 package org.dockbox.hartshorn.test.util;
 
-import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.config.GlobalConfig;
 import org.dockbox.hartshorn.api.task.TaskRunner;
 import org.dockbox.hartshorn.cache.CacheManager;
@@ -25,8 +24,10 @@ import org.dockbox.hartshorn.commands.SystemSubject;
 import org.dockbox.hartshorn.config.ConfigurationManager;
 import org.dockbox.hartshorn.di.InjectConfiguration;
 import org.dockbox.hartshorn.di.Key;
-import org.dockbox.hartshorn.di.TypeFactoryImpl;
 import org.dockbox.hartshorn.di.TypeFactory;
+import org.dockbox.hartshorn.di.TypeFactoryImpl;
+import org.dockbox.hartshorn.di.annotations.context.LogExclude;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.discord.DiscordCommandSource;
 import org.dockbox.hartshorn.discord.DiscordUtils;
 import org.dockbox.hartshorn.persistence.FileManager;
@@ -52,10 +53,11 @@ import org.dockbox.hartshorn.test.services.JUnitPlayers;
 import org.dockbox.hartshorn.test.services.JUnitWorlds;
 import org.slf4j.Logger;
 
+@LogExclude
 public class JUnitInjector extends InjectConfiguration {
 
     @Override
-    public void collect() {
+    public void collect(final ApplicationContext context) {
         // Factory creation
         this.bind(Key.of(TypeFactory.class), TypeFactoryImpl.class);
 
@@ -81,7 +83,7 @@ public class JUnitInjector extends InjectConfiguration {
         this.manual(Key.of(ConfigurationManager.class), JUnitConfigurationManager.class);
 
         // Log is created from LoggerFactory externally
-        this.bind(Key.of(Logger.class), Hartshorn.log());
+        this.provide(Key.of(Logger.class), context::log);
 
         // Console is a constant singleton, to avoid recreation
         this.bind(Key.of(SystemSubject.class), new JUnitSystemSubject());

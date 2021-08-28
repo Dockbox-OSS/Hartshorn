@@ -18,8 +18,8 @@
 package org.dockbox.hartshorn.persistence.table;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.util.HartshornUtils;
-import org.dockbox.hartshorn.util.Reflect;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -43,15 +43,15 @@ public class TableRow {
      * @return The instance of this TableRow
      */
     @NotNull
-    public TableRow add(@NotNull ColumnIdentifier<?> column, @Nullable Object value) {
+    public TableRow add(@NotNull final ColumnIdentifier<?> column, @Nullable final Object value) {
         // Make sure both the Identifier and the Value are both the same type
-        if (null == value || Reflect.assigns(column.type(), value.getClass()))
+        if (null == value || TypeContext.of(value).childOf(column.type()))
             this.data.put(column, value);
         else
             throw new IllegalArgumentException(
                     String.format(
                             "The value: %s, is not of the correct type. (Expected: %s, but got %s)",
-                            value, column.type().getSimpleName(), value.getClass().getSimpleName()));
+                            value, column.type().name(), value.getClass().getSimpleName()));
         return this;
     }
 
@@ -65,7 +65,7 @@ public class TableRow {
      */
     @SuppressWarnings("unchecked")
     @NotNull
-    public <T> Exceptional<T> value(@NotNull ColumnIdentifier<T> column) {
+    public <T> Exceptional<T> value(@NotNull final ColumnIdentifier<T> column) {
         if (null == this.data.get(column)) return Exceptional.empty();
 
         return Exceptional.of((T) this.data.get(column));

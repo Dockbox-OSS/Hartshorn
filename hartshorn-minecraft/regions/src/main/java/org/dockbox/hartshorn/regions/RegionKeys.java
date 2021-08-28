@@ -17,7 +17,6 @@
 
 package org.dockbox.hartshorn.regions;
 
-import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.keys.Key;
 import org.dockbox.hartshorn.api.keys.Keys;
 import org.dockbox.hartshorn.server.minecraft.dimension.position.Location;
@@ -26,11 +25,11 @@ import org.dockbox.hartshorn.server.minecraft.players.Player;
 public final class RegionKeys {
 
     public static final Key<Location, Region> REGION = Keys.builder(Location.class, Region.class)
-            .withGetterSafe(loc -> Hartshorn.context().get(RegionService.class).first(loc, Region.class))
+            .withGetterSafe(loc -> loc.applicationContext().get(RegionService.class).first(loc, Region.class))
             .build();
 
     public static final Key<Player, Region> CURRENT_REGION = Keys.builder(Player.class, Region.class)
-            .withGetterSafe(player -> Hartshorn.context().get(RegionService.class).first(player, Region.class))
+            .withGetterSafe(player -> player.applicationContext().get(RegionService.class).first(player, Region.class))
             .build();
 
     private RegionKeys() {

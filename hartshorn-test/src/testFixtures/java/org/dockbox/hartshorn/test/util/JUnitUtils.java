@@ -17,6 +17,7 @@
 
 package org.dockbox.hartshorn.test.util;
 
+import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.test.objects.living.JUnitPlayer;
 import org.dockbox.hartshorn.util.HartshornUtils;
 
@@ -27,8 +28,8 @@ public final class JUnitUtils {
     private JUnitUtils() {
     }
 
-    public static JUnitPlayer mockPlayer() {
-        return new JUnitPlayer(UUID.randomUUID(), HartshornUtils.randomString(5, 10));
+    public static JUnitPlayer mockPlayer(final ApplicationContext context) {
+        return new JUnitPlayer(context, UUID.randomUUID(), HartshornUtils.randomString(5, 10));
     }
 
 }

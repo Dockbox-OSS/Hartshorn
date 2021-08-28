@@ -21,8 +21,6 @@ import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.domain.tuple.Tuple;
 import org.dockbox.hartshorn.api.domain.tuple.Vector3N;
 import org.dockbox.hartshorn.api.exceptions.ApplicationException;
-import org.dockbox.hartshorn.util.types.EmptyType;
-import org.dockbox.hartshorn.util.types.RejectingType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -195,9 +193,7 @@ public class HartshornUtilTests {
                 Arguments.of(HartshornUtils.asList("value"), false),
                 Arguments.of(HartshornUtils.emptyMap(), true),
                 Arguments.of(HartshornUtils.emptyConcurrentMap(), true),
-                Arguments.of(HartshornUtils.ofEntries(Tuple.of(1, "two")), false),
-                Arguments.of(new EmptyType(), true),
-                Arguments.of(new RejectingType(), false)
+                Arguments.of(HartshornUtils.ofEntries(Tuple.of(1, "two")), false)
         );
     }
 
@@ -294,7 +290,7 @@ public class HartshornUtilTests {
 
     @Test
     void testOfEntriesAddsAllEntries() {
-        Map<Integer, String> map = HartshornUtils.ofEntries(
+        final Map<Integer, String> map = HartshornUtils.ofEntries(
                 Tuple.of(1, "two"),
                 Tuple.of(2, "three")
         );
@@ -306,20 +302,20 @@ public class HartshornUtilTests {
 
     @Test
     void testOfEntriesIsEmptyWithNoEntries() {
-        Map<Object, Object> map = HartshornUtils.ofEntries();
+        final Map<Object, Object> map = HartshornUtils.ofEntries();
         Assertions.assertNotNull(map);
         Assertions.assertTrue(map.isEmpty());
     }
 
     @Test
     void testEmptyMapIsModifiable() {
-        Map<Object, Object> map = HartshornUtils.emptyMap();
+        final Map<Object, Object> map = HartshornUtils.emptyMap();
         Assertions.assertDoesNotThrow(() -> map.put(1, "two"));
     }
 
     @Test
     void testEntryKeepsValues() {
-        Entry<Integer, String> entry = HartshornUtils.entry(1, "two");
+        final Entry<Integer, String> entry = HartshornUtils.entry(1, "two");
         Assertions.assertNotNull(entry);
         Assertions.assertEquals(1, (int) entry.getKey());
         Assertions.assertEquals("two", entry.getValue());
@@ -327,22 +323,22 @@ public class HartshornUtilTests {
 
     @ParameterizedTest
     @MethodSource("modifiableCollections")
-    void testCollectionCanBeModified(Collection<String> collection) {
+    void testCollectionCanBeModified(final Collection<String> collection) {
         Assertions.assertNotNull(collection);
         Assertions.assertDoesNotThrow(() -> collection.add("another"));
     }
 
     @ParameterizedTest
     @MethodSource("unmodifiableCollections")
-    void testImmutableCollectionCannotBeModified(Collection<String> collection) {
+    void testImmutableCollectionCannotBeModified(final Collection<String> collection) {
         Assertions.assertNotNull(collection);
         Assertions.assertThrows(UnsupportedOperationException.class, () -> collection.add("another"));
     }
 
     @ParameterizedTest
     @MethodSource("capitalizeValues")
-    void testCapitalizeChangesOnlyFirstCharacter(String input, String expected) {
-        String value = HartshornUtils.capitalize(input);
+    void testCapitalizeChangesOnlyFirstCharacter(final String input, final String expected) {
+        final String value = HartshornUtils.capitalize(input);
         Assertions.assertNotNull(value);
         Assertions.assertEquals(expected, value);
     }
@@ -394,19 +390,19 @@ public class HartshornUtilTests {
 
     @ParameterizedTest
     @MethodSource("hexDigits")
-    void convertHexDigitsReturnsCorrectChar(int value, char expected) {
+    void convertHexDigitsReturnsCorrectChar(final int value, final char expected) {
         Assertions.assertEquals(expected, HartshornUtils.convertDigit(value));
     }
 
     @Test
     void testRangeMinAndMaxAreInclusive() {
-        int[] range = HartshornUtils.range(0, 10);
+        final int[] range = HartshornUtils.range(0, 10);
         Assertions.assertEquals(11, range.length);
     }
 
     @Test
     void testRangeIsOrdered() {
-        int[] range = HartshornUtils.range(0, 10);
+        final int[] range = HartshornUtils.range(0, 10);
         for (int i = 0; i <= 10; i++) {
             Assertions.assertEquals(i, range[i]);
         }
@@ -414,85 +410,85 @@ public class HartshornUtilTests {
 
     @Test
     void testShortenReturnsStringIfMaxIsLarger() {
-        String value = HartshornUtils.shorten("value", 10);
+        final String value = HartshornUtils.shorten("value", 10);
         Assertions.assertEquals("value", value);
     }
 
     @Test
     void testShortenReturnsShortStringIfMaxIsSmaller() {
-        String value = HartshornUtils.shorten("value", 3);
+        final String value = HartshornUtils.shorten("value", 3);
         Assertions.assertEquals("val", value);
     }
 
     @Test
     void testRepeatIsCorrect() {
-        String value = HartshornUtils.repeat("a", 3);
+        final String value = HartshornUtils.repeat("a", 3);
         Assertions.assertEquals("aaa", value);
     }
 
     @Test
     void testRepeatIsEmptyIfAmountIsZero() {
-        String value = HartshornUtils.repeat("a", 0);
+        final String value = HartshornUtils.repeat("a", 0);
         Assertions.assertEquals("", value);
     }
 
     @Test
     void testCountIsCorrect() {
-        int count = HartshornUtils.count("aaa", 'a');
+        final int count = HartshornUtils.count("aaa", 'a');
         Assertions.assertEquals(3, count);
     }
 
     @ParameterizedTest
     @MethodSource("wildcardInputs")
-    void testWildcardToRegexOutput(String wildcard, String regex) {
-        String outputRegex = HartshornUtils.wildcardToRegexString(wildcard);
+    void testWildcardToRegexOutput(final String wildcard, final String regex) {
+        final String outputRegex = HartshornUtils.wildcardToRegexString(wildcard);
         Assertions.assertNotNull(outputRegex);
         Assertions.assertEquals(regex, outputRegex);
     }
 
     @ParameterizedTest
     @MethodSource("levenshteinDistances")
-    void testLevenshteinDistance(String source, String target, int distance) {
-        int actualDistance = HartshornUtils.levenshteinDistance(source, target);
+    void testLevenshteinDistance(final String source, final String target, final int distance) {
+        final int actualDistance = HartshornUtils.levenshteinDistance(source, target);
         Assertions.assertEquals(distance, actualDistance);
     }
 
     @ParameterizedTest
     @MethodSource("levenshteinDistances")
-    void testDamerauLevenshteinDistance(String source, String target, int distance) {
-        int actualDistance = HartshornUtils.damerauLevenshteinDistance(source, target);
+    void testDamerauLevenshteinDistance(final String source, final String target, final int distance) {
+        final int actualDistance = HartshornUtils.damerauLevenshteinDistance(source, target);
         Assertions.assertEquals(distance, actualDistance);
     }
 
     @Test
     void testMinimumLongIsCorrect() {
-        long minimum = HartshornUtils.minimum(1L, 10L, 100L);
+        final long minimum = HartshornUtils.minimum(1L, 10L, 100L);
         Assertions.assertEquals(1L, minimum);
     }
 
     @Test
     void testMinimumDoubleIsCorrect() {
-        double minimum = HartshornUtils.minimum(1.5D, 1.0D, 1.3D);
+        final double minimum = HartshornUtils.minimum(1.5D, 1.0D, 1.3D);
         Assertions.assertEquals(1.0D, minimum);
     }
 
     @Test
     void testMaximumLongIsCorrect() {
-        long minimum = HartshornUtils.maximum(1L, 10L, 100L);
+        final long minimum = HartshornUtils.maximum(1L, 10L, 100L);
         Assertions.assertEquals(100L, minimum);
     }
 
     @Test
     void testMaximumDoubleIsCorrect() {
-        double minimum = HartshornUtils.maximum(1.5D, 1.0D, 1.3D);
+        final double minimum = HartshornUtils.maximum(1.5D, 1.0D, 1.3D);
         Assertions.assertEquals(1.5D, minimum);
     }
 
     @ParameterizedTest
     @MethodSource("capitalizeValues")
-    void testHashIgnoreCase(String first, String second) {
-        int firstHash = HartshornUtils.hashCodeIgnoreCase(first);
-        int secondHash = HartshornUtils.hashCodeIgnoreCase(second);
+    void testHashIgnoreCase(final String first, final String second) {
+        final int firstHash = HartshornUtils.hashCodeIgnoreCase(first);
+        final int secondHash = HartshornUtils.hashCodeIgnoreCase(second);
         Assertions.assertEquals(firstHash, secondHash);
     }
 
@@ -513,14 +509,14 @@ public class HartshornUtilTests {
 
     @Test
     void testArrayRemoveIsCorrect() {
-        Integer[] array = HartshornUtils.removeItem(new Integer[]{ 1, 2, 3, 4, 5 }, 2);
+        final Integer[] array = HartshornUtils.removeItem(new Integer[]{ 1, 2, 3, 4, 5 }, 2);
         Assertions.assertEquals(4, array.length);
         Assertions.assertNotEquals(3, array[2]);
     }
 
     @Test
     void testArraySubsetIsCorrect() {
-        Integer[] array = HartshornUtils.arraySubset(new Integer[]{ 1, 2, 3, 4, 5 }, 1, 3);
+        final Integer[] array = HartshornUtils.arraySubset(new Integer[]{ 1, 2, 3, 4, 5 }, 1, 3);
         Assertions.assertEquals(3, array.length);
         Assertions.assertNotEquals(1, array[0]);
         Assertions.assertNotEquals(5, array[2]);
@@ -528,8 +524,8 @@ public class HartshornUtilTests {
 
     @ParameterizedTest
     @MethodSource("roundingValues")
-    void testRoundIsCorrect(double original, double expected, int decimals) {
-        double rounded = HartshornUtils.round(original, decimals);
+    void testRoundIsCorrect(final double original, final double expected, final int decimals) {
+        final double rounded = HartshornUtils.round(original, decimals);
         Assertions.assertEquals(expected, rounded);
     }
 
@@ -550,13 +546,13 @@ public class HartshornUtilTests {
 
     @ParameterizedTest
     @MethodSource("regionValues")
-    void testIsInCuboidRegionVector(Vector3N min, Vector3N max, Vector3N vec, boolean inside) {
+    void testIsInCuboidRegionVector(final Vector3N min, final Vector3N max, final Vector3N vec, final boolean inside) {
         Assertions.assertEquals(inside, HartshornUtils.inCuboidRegion(min, max, vec));
     }
 
     @ParameterizedTest
     @MethodSource("regionValues")
-    void testIsInCuboidRegionInt(Vector3N min, Vector3N max, Vector3N vec, boolean inside) {
+    void testIsInCuboidRegionInt(final Vector3N min, final Vector3N max, final Vector3N vec, final boolean inside) {
         Assertions.assertEquals(inside, HartshornUtils.inCuboidRegion(
                 min.xI(), max.xI(),
                 min.yI(), max.yI(),
@@ -566,32 +562,32 @@ public class HartshornUtilTests {
 
     @ParameterizedTest
     @MethodSource("minimumValues")
-    void testMinimumPoint(Vector3N pos1, Vector3N pos2, Vector3N min) {
-        Vector3N minimumPoint = HartshornUtils.minimumPoint(pos1, pos2);
+    void testMinimumPoint(final Vector3N pos1, final Vector3N pos2, final Vector3N min) {
+        final Vector3N minimumPoint = HartshornUtils.minimumPoint(pos1, pos2);
         Assertions.assertEquals(min, minimumPoint);
     }
 
     @ParameterizedTest
     @MethodSource("maximumValues")
-    void testMaximumPoint(Vector3N pos1, Vector3N pos2, Vector3N max) {
-        Vector3N maximumPoint = HartshornUtils.maximumPoint(pos1, pos2);
+    void testMaximumPoint(final Vector3N pos1, final Vector3N pos2, final Vector3N max) {
+        final Vector3N maximumPoint = HartshornUtils.maximumPoint(pos1, pos2);
         Assertions.assertEquals(max, maximumPoint);
     }
 
     @Test
     void testToLocalDateTimeIsCorrect() {
-        Instant instant = Instant.ofEpochSecond(((20 * 365) + 5) * 24 * 60 * 60);// 20 years after 1970, correcting for 5x February 29
-        LocalDateTime expectedDate = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
-        LocalDateTime dateTime = HartshornUtils.toLocalDateTime(instant);
+        final Instant instant = Instant.ofEpochSecond(((20 * 365) + 5) * 24 * 60 * 60);// 20 years after 1970, correcting for 5x February 29
+        final LocalDateTime expectedDate = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
+        final LocalDateTime dateTime = HartshornUtils.toLocalDateTime(instant);
         Assertions.assertNotNull(dateTime);
         Assertions.assertEquals(expectedDate, dateTime);
     }
 
     @Test
     void testArrayMerge() {
-        Object[] arr1 = { 1, 2, 3 };
-        Object[] arr2 = { 4, 5, 6 };
-        Object[] merged = HartshornUtils.merge(arr1, arr2);
+        final Object[] arr1 = { 1, 2, 3 };
+        final Object[] arr2 = { 4, 5, 6 };
+        final Object[] merged = HartshornUtils.merge(arr1, arr2);
         for (int i = 0; i < 6; i++) {
             Assertions.assertEquals(i + 1, (int) merged[i]);
         }
@@ -599,9 +595,9 @@ public class HartshornUtilTests {
 
     @Test
     void testCollectionMerge() {
-        Collection<Integer> col1 = Arrays.asList(1, 2, 3);
-        Collection<Integer> col2 = Arrays.asList(4, 5, 6);
-        Collection<Integer> merged = HartshornUtils.merge(col1, col2);
+        final Collection<Integer> col1 = Arrays.asList(1, 2, 3);
+        final Collection<Integer> col2 = Arrays.asList(4, 5, 6);
+        final Collection<Integer> merged = HartshornUtils.merge(col1, col2);
 
         Assertions.assertEquals(6, merged.size());
         Assertions.assertTrue(merged.containsAll(Arrays.asList(1, 2, 3, 4, 5, 6)));
@@ -609,70 +605,70 @@ public class HartshornUtilTests {
 
     @Test
     void testArrayShallowCopy() {
-        Object[] arr1 = { 1, 2, 3 };
-        Object[] arr2 = HartshornUtils.shallowCopy(arr1);
+        final Object[] arr1 = { 1, 2, 3 };
+        final Object[] arr2 = HartshornUtils.shallowCopy(arr1);
         Assertions.assertNotSame(arr1, arr2);
         Assertions.assertArrayEquals(arr1, arr2);
     }
 
     @ParameterizedTest
     @MethodSource("emptyValues")
-    void testIsEmpty(Object obj, boolean empty) {
+    void testIsEmpty(final Object obj, final boolean empty) {
         Assertions.assertEquals(empty, HartshornUtils.empty(obj));
     }
 
     @ParameterizedTest
     @MethodSource("stringEqualityValues")
-    void testEqualsStrings(String s1, String s2, boolean equal) {
+    void testEqualsStrings(final String s1, final String s2, final boolean equal) {
         Assertions.assertEquals(equal, HartshornUtils.equals(s1, s2));
     }
 
     @ParameterizedTest
     @MethodSource("stringEqualityIgnoreCaseValues")
-    void testEqualsIgnoreCaseStrings(String s1, String s2, boolean equal) {
+    void testEqualsIgnoreCaseStrings(final String s1, final String s2, final boolean equal) {
         Assertions.assertEquals(equal, HartshornUtils.equalsIgnoreCase(s1, s2));
     }
 
     @ParameterizedTest
     @MethodSource("stringEqualityTrimValues")
-    void testEqualsTrimStrings(String s1, String s2, boolean equal) {
+    void testEqualsTrimStrings(final String s1, final String s2, final boolean equal) {
         Assertions.assertEquals(equal, HartshornUtils.equalsWithTrim(s1, s2));
     }
 
     @ParameterizedTest
     @MethodSource("stringEqualityTrimIgnoreCaseValues")
-    void testEqualsTrimIgnoreCaseStrings(String s1, String s2, boolean equal) {
+    void testEqualsTrimIgnoreCaseStrings(final String s1, final String s2, final boolean equal) {
         Assertions.assertEquals(equal, HartshornUtils.equalsIgnoreCaseWithTrim(s1, s2));
     }
 
     @ParameterizedTest
     @MethodSource("nonEqualValues")
-    void testNotEqual(Object o1, Object o2, boolean expected) {
+    void testNotEqual(final Object o1, final Object o2, final boolean expected) {
         Assertions.assertEquals(expected, HartshornUtils.notEqual(o1, o2));
     }
 
     @ParameterizedTest
     @MethodSource("equalValues")
-    void testEqual(Object o1, Object o2, boolean expected) {
+    void testEqual(final Object o1, final Object o2, final boolean expected) {
         Assertions.assertEquals(expected, HartshornUtils.equal(o1, o2));
     }
 
     @ParameterizedTest
     @MethodSource("sameValues")
-    void testSame(Object obj) {
+    void testSame(final Object obj) {
         Assertions.assertTrue(HartshornUtils.same(obj, obj));
     }
 
     @ParameterizedTest
     @MethodSource("contentValues")
-    void testHasContent(String s, boolean content) {
+    void testHasContent(final String s, final boolean content) {
         Assertions.assertEquals(content, HartshornUtils.hasContent(s));
     }
 
     @Test
     void testDoesNotThrow() {
         Assertions.assertTrue(HartshornUtils.doesNotThrow(() -> {
-            int i = 1 + 1;
+            final int i = 1 + 1;
         }));
         Assertions.assertFalse(HartshornUtils.doesNotThrow(() -> {
             throw new ApplicationException("error");
@@ -682,7 +678,7 @@ public class HartshornUtilTests {
     @Test
     void testDoesNotThrowSpecific() {
         Assertions.assertTrue(HartshornUtils.doesNotThrow(() -> {
-            int i = 1 + 1;
+            final int i = 1 + 1;
         }, Exception.class));
         Assertions.assertFalse(HartshornUtils.doesNotThrow(() -> {
             throw new UnsupportedOperationException("error");
@@ -695,7 +691,7 @@ public class HartshornUtilTests {
     @Test
     void testThrowsSpecific() {
         Assertions.assertFalse(HartshornUtils.throwsException(() -> {
-            int i = 1 + 1;
+            final int i = 1 + 1;
         }, Exception.class));
         Assertions.assertTrue(HartshornUtils.throwsException(() -> {
             throw new UnsupportedOperationException("error");
@@ -707,18 +703,18 @@ public class HartshornUtilTests {
 
     @ParameterizedTest
     @MethodSource("durations")
-    void testDurationOf(String in, long expected) {
-        Exceptional<Duration> duration = HartshornUtils.durationOf(in);
+    void testDurationOf(final String in, final long expected) {
+        final Exceptional<Duration> duration = HartshornUtils.durationOf(in);
         Assertions.assertTrue(duration.present());
         Assertions.assertEquals(expected, duration.get().getSeconds());
     }
 
     @Test
     void testToTableString() {
-        List<List<String>> rows = HartshornUtils.emptyList();
+        final List<List<String>> rows = HartshornUtils.emptyList();
         rows.add(HartshornUtils.asList("h1", "h2", "h3"));
         rows.add(HartshornUtils.asList("v1", "v2", "v3"));
-        String table = HartshornUtils.asTable(rows);
+        final String table = HartshornUtils.asTable(rows);
 
         Assertions.assertNotNull(table);
         Assertions.assertEquals("""

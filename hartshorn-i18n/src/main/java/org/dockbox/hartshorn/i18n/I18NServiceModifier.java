@@ -17,38 +17,32 @@
 
 package org.dockbox.hartshorn.i18n;
 
-import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.i18n.annotations.Resource;
 import org.dockbox.hartshorn.i18n.annotations.UseResources;
 import org.dockbox.hartshorn.i18n.common.ResourceEntry;
-import org.dockbox.hartshorn.proxy.exception.ProxyMethodBindingException;
 import org.dockbox.hartshorn.proxy.handle.ProxyFunction;
 import org.dockbox.hartshorn.proxy.service.MethodProxyContext;
 import org.dockbox.hartshorn.proxy.service.ServiceAnnotatedMethodModifier;
-import org.dockbox.hartshorn.util.Reflect;
 
 public class I18NServiceModifier extends ServiceAnnotatedMethodModifier<Resource, UseResources> {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T, R> ProxyFunction<T, R> process(ApplicationContext context, MethodProxyContext<T> methodContext) {
-        if (!Reflect.assigns(ResourceEntry.class, methodContext.returnType()))
-            throw new ProxyMethodBindingException(methodContext);
-
-        String key = I18N.key(methodContext.type(), methodContext.method());
-        Resource annotation = Reflect.annotation(methodContext.method(), Resource.class).get();
+    public <T, R> ProxyFunction<T, R> process(final ApplicationContext context, final MethodProxyContext<T> methodContext) {
+        final String key = I18N.key(context, methodContext.type(), methodContext.method());
+        final Resource annotation = methodContext.method().annotation(Resource.class).get();
 
         return (self, args, holder) -> {
             // Prevents NPE when formatting cached resources without arguments
-            Object[] objects = null == args ? new Object[0] : args;
-            return (R) Hartshorn.context().get(ResourceService.class).getOrCreate(key, annotation.value()).format(objects);
+            final Object[] objects = null == args ? new Object[0] : args;
+            return (R) context.get(ResourceService.class).getOrCreate(key, annotation.value()).format(objects);
         };
     }
 
     @Override
-    public <T> boolean preconditions(ApplicationContext context, MethodProxyContext<T> methodContext) {
-        return Reflect.assigns(ResourceEntry.class, methodContext.returnType());
+    public <T> boolean preconditions(final ApplicationContext context, final MethodProxyContext<T> methodContext) {
+        return methodContext.method().returnType().childOf(ResourceEntry.class);
     }
 
     @Override

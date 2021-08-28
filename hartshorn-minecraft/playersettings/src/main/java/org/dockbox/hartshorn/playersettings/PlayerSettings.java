@@ -17,10 +17,10 @@
 
 package org.dockbox.hartshorn.playersettings;
 
-import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.keys.PersistentDataHolder;
 import org.dockbox.hartshorn.commands.annotations.Command;
 import org.dockbox.hartshorn.di.annotations.service.Service;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.i18n.MessageReceiver;
 import org.dockbox.hartshorn.i18n.common.Language;
 import org.dockbox.hartshorn.i18n.common.ResourceEntry;
@@ -45,28 +45,31 @@ import java.util.List;
 public class PlayerSettings {
 
     public static final Setting<Integer> LANGUAGE = Setting.of(Integer.class)
+            .id("settings.language")
             .from(Player.LANGUAGE)
-            .resource(new Resource("Language", "settings.language"))
-            .description(new Resource("The language in which messages are displayed to you.", "settings.language.description"))
+            .resource(ctx -> new Resource(ctx, "Language", "settings.language"))
+            .description(ctx -> new Resource(ctx, "The language in which messages are displayed to you.", "settings.language.description"))
             .owner(PlayerSettings.class)
-            .converter(ordinal -> {
+            .converter((ctx, ordinal) -> {
                 Language language = Language.values()[ordinal];
                 return new FakeResource(language.nameLocalized());
             })
             .defaultValue(Language.EN_US::ordinal)
-            .display(() -> Item.of(ItemTypes.BOOK_AND_QUILL))
-            .ok();    public static final Setting<Boolean> RECEIVING_NOTIFICATIONS = Setting.of(Boolean.class)
-            .resource(new Resource("Receive notifications", "settings.notifications"))
-            .description(new Resource("Whether to receive server notifications, for example when you change your client-side language preferences.", "settings.notifications.description"))
+            .display(ctx -> Item.of(ctx, ItemTypes.BOOK_AND_QUILL))
+            .ok();
+
+    public static final Setting<Boolean> RECEIVING_NOTIFICATIONS = Setting.of(Boolean.class)
+            .id("settings.notifications")
+            .resource(ctx -> new Resource(ctx, "Receive notifications", "settings.notifications"))
+            .description(ctx -> new Resource(ctx, "Whether to receive server notifications, for example when you change your client-side language preferences.", "settings.notifications.description"))
             .owner(PlayerSettings.class)
-            .converter(value -> value ? new Resource("Yes", "yes") : new Resource("No", "no"))
+            .converter((ctx, value) -> value ? new Resource(ctx, "Yes", "yes") : new Resource(ctx, "No", "no"))
             .defaultValue(() -> true)
-            .display(() -> Item.of(ItemTypes.INK_SAC))
+            .display(ctx -> Item.of(ctx, ItemTypes.INK_SAC))
             .action(PlayerSettings::toggleNotifications)
             .ok();
-    private final List<Setting<?>> settings = HartshornUtils.emptyConcurrentList();
 
-    private static void toggleNotifications(PersistentDataHolder holder) {
+    private static void toggleNotifications(final PersistentDataHolder holder) {
         final Boolean receiving = RECEIVING_NOTIFICATIONS.get(holder);
         holder.set(RECEIVING_NOTIFICATIONS, !receiving);
         if (holder instanceof MessageReceiver) {
@@ -75,37 +78,39 @@ public class PlayerSettings {
     }
 
     @Command("settings")
-    public void settings(Player source) {
-        PaginatedPaneBuilder builder = InventoryLayout.builder(InventoryType.DOUBLE_CHEST)
+    public void settings(final Player source) {
+        final PaginatedPaneBuilder builder = InventoryLayout.builder(source.applicationContext(), InventoryType.DOUBLE_CHEST)
                 .toPaginatedPaneBuilder();
-        builder.title(new Resource("$1Settings", "settings").translate(source).asText());
+        builder.title(new Resource(source.applicationContext(), "$1Settings", "settings").translate(source).asText());
         final PaginatedPane pane = builder.build();
 
-        final List<Element> content = Hartshorn.context().first(SettingsContext.class).get().settings().stream()
-                .map(setting -> this.fromSetting(setting, source, pane))
+        final List<Element> content = source.applicationContext().first(SettingsContext.class).get().settings().stream()
+                .map(setting -> this.fromSetting(source.applicationContext(), setting, source, pane))
                 .toList();
         pane.elements(content);
 
         pane.open(source);
     }
 
-    private Element fromSetting(Setting<?> setting, Player source, Pane build) {
-        Item item = setting.item();
+    private Element fromSetting(final ApplicationContext context, final Setting<?> setting, final Player source, final Pane build) {
+        final Item item = setting.item(context);
         this.modify(item, setting, source);
-        return Element.of(item, player -> {
+        return Element.of(context, item, click -> {
+            final Player player = click.player();
             setting.action().accept(player);
             this.settings(player);
+            return false;
         });
     }
 
-    private void modify(Item item, Setting<?> setting, Player source) {
-        item.displayName(Text.of("$1", setting.resource().translate(source), " $3(", this.value(setting, source), "$3)"));
-        item.lore(HartshornUtils.singletonList(Text.of("$2", setting.description().translate(source))));
+    private void modify(final Item item, final Setting<?> setting, final Player source) {
+        item.displayName(Text.of("$1", setting.resource(source.applicationContext()).translate(source), " $3(", this.value(setting, source), "$3)"));
+        item.lore(HartshornUtils.singletonList(Text.of("$2", setting.description(source.applicationContext()).translate(source))));
     }
 
-    private <T> ResourceEntry value(Setting<T> setting, Player source) {
+    private <T> ResourceEntry value(final Setting<T> setting, final Player source) {
         final T o = setting.get(source);
-        return setting.convert(o).translate(source);
+        return setting.convert(source.applicationContext(), o).translate(source);
     }
 
 

@@ -18,13 +18,15 @@
 package org.dockbox.hartshorn.di.inject.wired;
 
 import org.dockbox.hartshorn.api.exceptions.ApplicationException;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
+import org.dockbox.hartshorn.di.context.element.TypeContext;
 
 public interface BoundContext<T, I extends T> {
 
     String name();
 
-    Class<T> contract();
+    TypeContext<T> contract();
 
-    T create(Object... arguments) throws ApplicationException;
+    T create(ApplicationContext context, Object... arguments) throws ApplicationException;
 
 }

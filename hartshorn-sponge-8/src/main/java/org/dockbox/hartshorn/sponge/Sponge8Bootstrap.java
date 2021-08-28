@@ -18,9 +18,10 @@
 package org.dockbox.hartshorn.sponge;
 
 import org.dockbox.hartshorn.api.Hartshorn;
-import org.dockbox.hartshorn.server.minecraft.MinecraftServerBootstrap;
+import org.dockbox.hartshorn.di.context.element.TypeContext;
+import org.dockbox.hartshorn.proxy.ProxyApplicationBootstrap;
 
-public class Sponge8Bootstrap extends MinecraftServerBootstrap {
+public class Sponge8Bootstrap extends ProxyApplicationBootstrap {
 
     @Override
     public boolean isCI() {
@@ -28,7 +29,7 @@ public class Sponge8Bootstrap extends MinecraftServerBootstrap {
     }
 
     @Override
-    protected void handleMissingBinding(final Class<?> type) {
-        Hartshorn.log().warn("No implementation exists for " + type.getSimpleName() + ", this will cause functionality to misbehave or not function!");
+    protected void handleMissingBinding(final TypeContext<?> type) {
+        Hartshorn.log().warn("No implementation exists for " + type.name() + ", this will cause functionality to misbehave or not function!");
     }
 }

@@ -23,28 +23,40 @@ import com.fasterxml.jackson.databind.introspect.JacksonAnnotationIntrospector;
 
 import org.dockbox.hartshorn.api.annotations.Property;
 import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.util.Reflect;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
+import org.dockbox.hartshorn.di.context.element.AnnotatedElementContext;
 
 import java.lang.reflect.AnnotatedElement;
 import java.util.function.Function;
 
+import lombok.AllArgsConstructor;
+
+@AllArgsConstructor
 public class PropertyAliasIntrospector extends JacksonAnnotationIntrospector {
 
+    private ApplicationContext context;
+
     @Override
-    public PropertyName findNameForSerialization(Annotated a) {
+    public PropertyName findNameForSerialization(final Annotated a) {
         return this.findName(a, super::findNameForSerialization);
     }
 
     @Override
-    public PropertyName findNameForDeserialization(Annotated a) {
+    public PropertyName findNameForDeserialization(final Annotated a) {
         return this.findName(a, super::findNameForDeserialization);
     }
 
-    private PropertyName findName(Annotated a, Function<Annotated, PropertyName> defaultValue) {
+    private PropertyName findName(final Annotated a, final Function<Annotated, PropertyName> defaultValue) {
         final AnnotatedElement annotated = a.getAnnotated();
-
         if (annotated != null) {
-            final Exceptional<Property> annotation = Reflect.annotation(annotated, Property.class);
+            final AnnotatedElementContext<?> context = new AnnotatedElementContext<>() {
+                @Override
+                protected AnnotatedElement element() {
+                    return annotated;
+                }
+            };
+
+            final Exceptional<Property> annotation = context.annotation(Property.class);
             if (annotation.present()) {
                 return new PropertyName(annotation.get().value());
             }

@@ -24,7 +24,6 @@ import org.dockbox.hartshorn.commands.annotations.Cooldown;
 import org.dockbox.hartshorn.commands.context.CommandContext;
 import org.dockbox.hartshorn.commands.context.CommandExecutorContext;
 import org.dockbox.hartshorn.util.HartshornUtils;
-import org.dockbox.hartshorn.util.Reflect;
 
 import javax.inject.Inject;
 
@@ -37,24 +36,24 @@ import javax.inject.Inject;
 public class CooldownExtension implements CommandExecutorExtension {
 
     @Inject
-    CommandResources resources;
+    private CommandResources resources;
 
     @Override
-    public ExtensionResult execute(CommandContext context, CommandExecutorContext executorContext) {
+    public ExtensionResult execute(final CommandContext context, final CommandExecutorContext executorContext) {
         final CommandSource sender = context.source();
         if (!(sender instanceof Identifiable)) return ExtensionResult.accept();
 
         final String id = this.id((Identifiable) sender, context);
         if (HartshornUtils.inCooldown(id)) return ExtensionResult.reject(this.resources.cooldownActive());
         else {
-            Cooldown cooldown = Reflect.annotation(executorContext.element(), Cooldown.class).get();
+            final Cooldown cooldown = executorContext.element().annotation(Cooldown.class).get();
             HartshornUtils.cooldown(id, cooldown.duration(), cooldown.unit());
             return ExtensionResult.accept();
         }
     }
 
     @Override
-    public boolean extend(CommandExecutorContext context) {
-        return Reflect.annotation(context.element(), Cooldown.class).present();
+    public boolean extend(final CommandExecutorContext context) {
+        return context.element().annotation(Cooldown.class).present();
     }
 }

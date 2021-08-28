@@ -21,25 +21,24 @@ import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.commands.arguments.CustomParameterPattern;
 import org.dockbox.hartshorn.commands.arguments.HashtagParameterPattern;
 import org.dockbox.hartshorn.commands.types.CuboidArgument;
+import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.i18n.common.ResourceEntry;
 import org.dockbox.hartshorn.i18n.entry.FakeResource;
-import org.dockbox.hartshorn.test.HartshornRunner;
+import org.dockbox.hartshorn.test.ApplicationAwareTest;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.List;
 
-@ExtendWith(HartshornRunner.class)
-public class HashtagParameterPatternTests {
+public class HashtagParameterPatternTests extends ApplicationAwareTest {
 
     @Test
     void testPreconditionsAcceptValidPattern() {
         final String pattern = "#cuboid[1]";
         final CustomParameterPattern parameterPattern = this.pattern();
 
-        final Exceptional<Boolean> result = parameterPattern.preconditionsMatch(CuboidArgument.class, null, pattern);
+        final Exceptional<Boolean> result = parameterPattern.preconditionsMatch(TypeContext.of(CuboidArgument.class), null, pattern);
 
         Assertions.assertTrue(result.present());
         Assertions.assertTrue(HartshornUtils.unwrap(result));
@@ -60,7 +59,7 @@ public class HashtagParameterPatternTests {
         final String pattern = "@cuboid[1]";
         final CustomParameterPattern parameterPattern = this.pattern();
 
-        final Exceptional<Boolean> result = parameterPattern.preconditionsMatch(CuboidArgument.class, null, pattern);
+        final Exceptional<Boolean> result = parameterPattern.preconditionsMatch(TypeContext.of(CuboidArgument.class), null, pattern);
 
         Assertions.assertTrue(result.present());
         Assertions.assertFalse(HartshornUtils.unwrap(result));
@@ -71,7 +70,7 @@ public class HashtagParameterPatternTests {
         final String pattern = "#sphere[1]";
         final CustomParameterPattern parameterPattern = this.pattern();
 
-        final Exceptional<Boolean> result = parameterPattern.preconditionsMatch(CuboidArgument.class, null, pattern);
+        final Exceptional<Boolean> result = parameterPattern.preconditionsMatch(TypeContext.of(CuboidArgument.class), null, pattern);
 
         Assertions.assertTrue(result.present());
         Assertions.assertFalse(HartshornUtils.unwrap(result));
@@ -104,7 +103,7 @@ public class HashtagParameterPatternTests {
         final String pattern = "#cuboid[1]";
         final CustomParameterPattern parameterPattern = this.pattern();
 
-        final Exceptional<CuboidArgument> result = parameterPattern.request(CuboidArgument.class, null, pattern);
+        final Exceptional<CuboidArgument> result = parameterPattern.request(TypeContext.of(CuboidArgument.class), SystemSubject.instance(this.context()), pattern);
 
         Assertions.assertTrue(result.present());
 

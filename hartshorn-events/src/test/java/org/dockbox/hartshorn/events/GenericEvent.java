@@ -17,13 +17,13 @@
 
 package org.dockbox.hartshorn.events;
 
-import org.dockbox.hartshorn.events.parents.Event;
+import org.dockbox.hartshorn.events.parents.ContextCarrierEvent;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public abstract class GenericEvent<T> implements Event {
+public abstract class GenericEvent<T> extends ContextCarrierEvent {
     private final T value;
 }

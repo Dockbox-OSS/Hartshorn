@@ -17,16 +17,16 @@
 
 package org.dockbox.hartshorn.commands.service;
 
+import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.exceptions.ApplicationException;
 import org.dockbox.hartshorn.commands.annotations.UseCommands;
 import org.dockbox.hartshorn.commands.context.ArgumentConverterContext;
 import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
+import org.dockbox.hartshorn.di.context.element.FieldContext;
+import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.di.services.ServiceProcessor;
-import org.dockbox.hartshorn.util.Reflect;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.util.List;
 
 /**
@@ -37,28 +37,22 @@ import java.util.List;
 public class ArgumentServiceProcessor implements ServiceProcessor<UseCommands> {
 
     @Override
-    public boolean preconditions(final Class<?> type) {
-        final List<Field> fields = Reflect.fieldsLike(type, ArgumentConverter.class);
-        return !fields.isEmpty();
+    public boolean preconditions(final ApplicationContext context, final TypeContext<?> type) {
+        return !type.fieldsOf(ArgumentConverter.class).isEmpty();
     }
 
+    @SuppressWarnings("rawtypes")
     @Override
-    public <T> void process(final ApplicationContext context, final Class<T> type) {
-        final List<Field> fields = Reflect.fieldsLike(type, ArgumentConverter.class);
+    public <T> void process(final ApplicationContext context, final TypeContext<T> type) {
+        final List<FieldContext<ArgumentConverter>> fields = type.fieldsOf(ArgumentConverter.class);
         context.first(ArgumentConverterContext.class).map(converterContext -> {
-            for (final Field field : fields) {
-                field.setAccessible(true);
-                if (Modifier.isStatic(field.getModifiers())) {
-                    try {
-                        final ArgumentConverter<?> converter = (ArgumentConverter<?>) field.get(null);
-                        converterContext.register(converter);
-                    }
-                    catch (final IllegalAccessException e) {
-                        throw new ApplicationException(e);
-                    }
+            for (final FieldContext<ArgumentConverter> field : fields) {
+                if (field.isStatic()) {
+                    final Exceptional<ArgumentConverter> converter = field.getStatic();
+                    converter.present(converterContext::register);
                 }
                 else {
-                    throw new ApplicationException(field.getName() + " should be static");
+                    throw new ApplicationException(field.name() + " should be static");
                 }
             }
             return null;

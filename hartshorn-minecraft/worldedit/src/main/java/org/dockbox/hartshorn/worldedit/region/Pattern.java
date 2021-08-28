@@ -17,18 +17,18 @@
 
 package org.dockbox.hartshorn.worldedit.region;
 
-import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.server.minecraft.players.Player;
 import org.dockbox.hartshorn.worldedit.WorldEditService;
 
 public interface Pattern {
 
-    static Exceptional<Pattern> parse(String pattern) {
-        return Hartshorn.context().get(WorldEditService.class).parsePattern(pattern, null);
+    static Exceptional<Pattern> parse(final ApplicationContext context, final String pattern) {
+        return context.get(WorldEditService.class).parsePattern(pattern, null);
     }
 
-    static Exceptional<Pattern> parse(String pattern, Player cause) {
-        return Hartshorn.context().get(WorldEditService.class).parsePattern(pattern, cause);
+    static Exceptional<Pattern> parse(final ApplicationContext context, final String pattern, final Player cause) {
+        return context.get(WorldEditService.class).parsePattern(pattern, cause);
     }
 }

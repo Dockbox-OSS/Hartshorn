@@ -19,38 +19,47 @@ package org.dockbox.hartshorn.sponge.game;
 
 import org.dockbox.hartshorn.api.exceptions.Except;
 import org.dockbox.hartshorn.commands.SystemSubject;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.i18n.entry.DefaultResources;
 import org.dockbox.hartshorn.i18n.text.Text;
 import org.dockbox.hartshorn.i18n.text.pagination.Pagination;
-import org.dockbox.hartshorn.sponge.util.SpongeConvert;
+import org.dockbox.hartshorn.sponge.util.SpongeAdapter;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.exception.CommandException;
 
+import javax.inject.Inject;
+
+import lombok.Getter;
+
 public class SpongeSystemSubject extends SystemSubject {
 
+    @Inject
+    @Getter
+    private ApplicationContext applicationContext;
+
     @Override
-    public void execute(String command) {
+    public void execute(final String command) {
         try {
             Sponge.server().commandManager().process(Sponge.systemSubject(), command);
         }
-        catch (CommandException e) {
+        catch (final CommandException e) {
             Except.handle(e);
         }
     }
 
     @Override
-    public void send(Text text) {
-        Sponge.systemSubject().sendMessage(SpongeConvert.toSponge(text));
+    public void send(final Text text) {
+        Sponge.systemSubject().sendMessage(SpongeAdapter.toSponge(text));
     }
 
     @Override
-    public void sendWithPrefix(Text text) {
-        final Text message = Text.of(DefaultResources.instance().prefix(), text);
-        Sponge.systemSubject().sendMessage(SpongeConvert.toSponge(message));
+    public void sendWithPrefix(final Text text) {
+        final Text message = Text.of(DefaultResources.instance(this.applicationContext()).prefix(), text);
+        Sponge.systemSubject().sendMessage(SpongeAdapter.toSponge(message));
     }
 
     @Override
-    public void send(Pagination pagination) {
-        SpongeConvert.toSponge(pagination).sendTo(Sponge.systemSubject());
+    public void send(final Pagination pagination) {
+        SpongeAdapter.toSponge(pagination).sendTo(Sponge.systemSubject());
     }
 }

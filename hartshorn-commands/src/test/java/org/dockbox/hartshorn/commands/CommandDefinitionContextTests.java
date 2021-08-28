@@ -17,7 +17,6 @@
 
 package org.dockbox.hartshorn.commands;
 
-import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.commands.annotations.Command;
 import org.dockbox.hartshorn.commands.context.CommandDefinitionContext;
@@ -28,73 +27,74 @@ import org.dockbox.hartshorn.commands.exceptions.ParsingException;
 import org.dockbox.hartshorn.commands.types.CommandValueEnum;
 import org.dockbox.hartshorn.commands.types.SampleCommand;
 import org.dockbox.hartshorn.commands.types.SampleCommandExtension;
-import org.dockbox.hartshorn.test.HartshornRunner;
+import org.dockbox.hartshorn.di.context.element.TypeContext;
+import org.dockbox.hartshorn.test.ApplicationAwareTest;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.lang.annotation.Annotation;
 import java.util.List;
 
-@ExtendWith(HartshornRunner.class)
-public class CommandDefinitionContextTests {
+public class CommandDefinitionContextTests extends ApplicationAwareTest {
+
+    private final TypeContext<SampleCommand> typeContext = TypeContext.of(SampleCommand.class);
 
     @Test
     void testParsingCanSucceed() {
-        CommandGateway gateway = Hartshorn.context().get(CommandGatewayImpl.class);
-        gateway.register(SampleCommand.class);
-        Assertions.assertDoesNotThrow(() -> gateway.accept(SystemSubject.instance(), "demo sub 1 --skip 1 2 3 4"));
+        final CommandGateway gateway = this.context().get(CommandGatewayImpl.class);
+        gateway.register(this.typeContext);
+        Assertions.assertDoesNotThrow(() -> gateway.accept(SystemSubject.instance(this.context()), "demo sub 1 --skip 1 2 3 4"));
     }
 
     @Test
     void testExtensionCanSucceed() {
-        CommandGateway gateway = Hartshorn.context().get(CommandGatewayImpl.class);
-        gateway.register(SampleCommand.class);
-        gateway.register(SampleCommandExtension.class);
-        Assertions.assertDoesNotThrow(() -> gateway.accept(SystemSubject.instance(), "demo second ThisIsMyName"));
+        final CommandGateway gateway = this.context().get(CommandGatewayImpl.class);
+        gateway.register(this.typeContext);
+        gateway.register(TypeContext.of(SampleCommandExtension.class));
+        Assertions.assertDoesNotThrow(() -> gateway.accept(SystemSubject.instance(this.context()), "demo second ThisIsMyName"));
     }
 
     @Test
     void testComplexParsingCanSucceed() {
-        CommandGateway gateway = Hartshorn.context().get(CommandGatewayImpl.class);
-        gateway.register(SampleCommand.class);
-        Assertions.assertDoesNotThrow(() -> gateway.accept(SystemSubject.instance(), "demo complex requiredArg optionalArg ONE --flag --vflag flagValue -s"));
+        final CommandGateway gateway = this.context().get(CommandGatewayImpl.class);
+        gateway.register(this.typeContext);
+        Assertions.assertDoesNotThrow(() -> gateway.accept(SystemSubject.instance(this.context()), "demo complex requiredArg optionalArg ONE --flag --vflag flagValue -s"));
     }
 
     @Test
     void testTooManyArguments() {
-        CommandGateway gateway = Hartshorn.context().get(CommandGatewayImpl.class);
-        gateway.register(SampleCommand.class);
-        Assertions.assertThrows(ParsingException.class, () -> gateway.accept(SystemSubject.instance(), "demo complex requiredArg optionalArg ONE thisArgumentIsOneTooMany"));
+        final CommandGateway gateway = this.context().get(CommandGatewayImpl.class);
+        gateway.register(this.typeContext);
+        Assertions.assertThrows(ParsingException.class, () -> gateway.accept(SystemSubject.instance(this.context()), "demo complex requiredArg optionalArg ONE thisArgumentIsOneTooMany"));
     }
 
     @Test
     void testNotEnoughArguments() {
-        CommandGateway gateway = Hartshorn.context().get(CommandGatewayImpl.class);
-        gateway.register(SampleCommand.class);
-        Assertions.assertThrows(ParsingException.class, () -> gateway.accept(SystemSubject.instance(), "demo complex")); // Missing required arg (and optional arguments)
+        final CommandGateway gateway = this.context().get(CommandGatewayImpl.class);
+        gateway.register(this.typeContext);
+        Assertions.assertThrows(ParsingException.class, () -> gateway.accept(SystemSubject.instance(this.context()), "demo complex")); // Missing required arg (and optional arguments)
     }
 
     @Test
     void testUnknownFlag() {
-        CommandGateway gateway = Hartshorn.context().get(CommandGatewayImpl.class);
-        gateway.register(SampleCommand.class);
-        Assertions.assertThrows(ParsingException.class, () -> gateway.accept(SystemSubject.instance(), "demo complex requiredArg optionalArg ONE --unknownFlag"));
+        final CommandGateway gateway = this.context().get(CommandGatewayImpl.class);
+        gateway.register(this.typeContext);
+        Assertions.assertThrows(ParsingException.class, () -> gateway.accept(SystemSubject.instance(this.context()), "demo complex requiredArg optionalArg ONE --unknownFlag"));
     }
 
     @Test
     void testArgumentParameters() {
-        CommandGateway gateway = Hartshorn.context().get(CommandGatewayImpl.class);
-        gateway.register(SampleCommand.class);
-        Assertions.assertDoesNotThrow(() -> gateway.accept(SystemSubject.instance(), "demo arguments requiredA optionalB --flag valueC"));
+        final CommandGateway gateway = this.context().get(CommandGatewayImpl.class);
+        gateway.register(this.typeContext);
+        Assertions.assertDoesNotThrow(() -> gateway.accept(SystemSubject.instance(this.context()), "demo arguments requiredA optionalB --flag valueC"));
     }
 
     @Test
     void testSpecificSuggestion() {
-        CommandGateway gateway = Hartshorn.context().get(CommandGatewayImpl.class);
-        gateway.register(SampleCommand.class);
-        final List<String> suggestions = gateway.suggestions(SystemSubject.instance(), "demo complex requiredArg optionalArg O");
+        final CommandGateway gateway = this.context().get(CommandGatewayImpl.class);
+        gateway.register(this.typeContext);
+        final List<String> suggestions = gateway.suggestions(SystemSubject.instance(this.context()), "demo complex requiredArg optionalArg O");
 
         Assertions.assertEquals(1, suggestions.size());
         Assertions.assertEquals("one", suggestions.get(0));
@@ -102,16 +102,16 @@ public class CommandDefinitionContextTests {
 
     @Test
     void testGroups() throws ParsingException {
-        CommandGateway gateway = Hartshorn.context().get(CommandGatewayImpl.class);
-        gateway.register(SampleCommand.class);
-        gateway.accept(SystemSubject.instance(), "demo group");
+        final CommandGateway gateway = this.context().get(CommandGatewayImpl.class);
+        gateway.register(this.typeContext);
+        gateway.accept(SystemSubject.instance(this.context()), "demo group");
     }
 
     @Test
     void testAllSuggestions() {
-        CommandGateway gateway = Hartshorn.context().get(CommandGatewayImpl.class);
-        gateway.register(SampleCommand.class);
-        final List<String> suggestions = gateway.suggestions(SystemSubject.instance(), "demo complex requiredArg optionalArg ");
+        final CommandGateway gateway = this.context().get(CommandGatewayImpl.class);
+        gateway.register(this.typeContext);
+        final List<String> suggestions = gateway.suggestions(SystemSubject.instance(this.context()), "demo complex requiredArg optionalArg ");
 
         Assertions.assertEquals(3, suggestions.size());
         Assertions.assertTrue(suggestions.containsAll(HartshornUtils.asList("one", "two", "three")));
@@ -119,8 +119,8 @@ public class CommandDefinitionContextTests {
 
     @Test
     void testContainerContext() {
-        Command command = this.createCommand();
-        final CommandDefinitionContext context = new CommandDefinitionContextImpl(command);
+        final Command command = this.createCommand();
+        final CommandDefinitionContext context = new CommandDefinitionContextImpl(this.context(), command);
 
         Assertions.assertEquals("demo", context.permission().get());
         Assertions.assertEquals(1, context.aliases().size());

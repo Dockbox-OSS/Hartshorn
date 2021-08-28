@@ -30,7 +30,7 @@ import org.dockbox.hartshorn.server.minecraft.events.player.interact.PlayerInter
 import org.dockbox.hartshorn.server.minecraft.players.ClickType;
 import org.dockbox.hartshorn.server.minecraft.players.Hand;
 import org.dockbox.hartshorn.server.minecraft.players.Player;
-import org.dockbox.hartshorn.sponge.util.SpongeConvert;
+import org.dockbox.hartshorn.sponge.util.SpongeAdapter;
 import org.spongepowered.api.data.type.HandType;
 import org.spongepowered.api.event.Event;
 import org.spongepowered.api.event.EventContextKeys;
@@ -43,7 +43,7 @@ import org.spongepowered.api.event.item.inventory.InteractItemEvent;
 import java.util.Optional;
 
 @Posting({ PlayerInteractAirEvent.class, PlayerInteractEntityEvent.class, PlayerInteractBlockEvent.class })
-public class InteractionEventBridge implements EventBridge {
+public class InteractionEventBridge extends EventBridge {
 
     @Listener
     public void on(final InteractEvent event) {
@@ -60,14 +60,14 @@ public class InteractionEventBridge implements EventBridge {
         final Exceptional<Player> player = this.player(event);
         if (player.absent()) return;
 
-        this.post(new PlayerInteractAirEvent(player.get(), hand.get(), type), event);
+        this.post(new PlayerInteractAirEvent(this.applicationContext(), player.get(), hand.get(), type), event);
     }
 
     private Exceptional<Hand> hand(final Event event) {
         final Optional<HandType> handType = event.context().get(EventContextKeys.USED_HAND);
         if (handType.isEmpty()) return Exceptional.empty();
 
-        final Hand hand = SpongeConvert.fromSponge(handType.get());
+        final Hand hand = SpongeAdapter.fromSponge(handType.get());
         return Exceptional.of(hand);
     }
 
@@ -80,10 +80,10 @@ public class InteractionEventBridge implements EventBridge {
 
         Vector3N point = Vector3N.empty();
         if (event instanceof InteractEntityEvent.Secondary.At at) {
-            point = SpongeConvert.fromSponge(at.interactionPoint());
+            point = SpongeAdapter.fromSponge(at.interactionPoint());
         }
 
-        final Entity entity = SpongeConvert.fromSponge(event.entity());
+        final Entity entity = SpongeAdapter.fromSponge(event.entity());
 
         final Exceptional<Hand> hand = this.hand(event);
         if (hand.absent()) return;
@@ -101,10 +101,10 @@ public class InteractionEventBridge implements EventBridge {
         else if (event instanceof InteractBlockEvent.Secondary) type = ClickType.SECONDARY;
         else return;
 
-        final BlockFace face = SpongeConvert.fromSponge(event.targetSide());
-        final Block block = SpongeConvert.fromSponge(event.block());
+        final BlockFace face = SpongeAdapter.fromSponge(event.targetSide());
+        final Block block = SpongeAdapter.fromSponge(event.block());
 
-        final Location location = event.block().location().map(SpongeConvert::fromSponge).orElseGet(Location::empty);
+        final Location location = event.block().location().map(SpongeAdapter::fromSponge).orElseGet(() -> Location.empty(this.applicationContext()));
 
         final Exceptional<Hand> hand = this.hand(event);
         if (hand.absent()) return;

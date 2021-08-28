@@ -20,7 +20,9 @@ package org.dockbox.hartshorn.discord;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.User;
 
-import org.dockbox.hartshorn.api.Hartshorn;
+import org.dockbox.hartshorn.di.ContextCarrier;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
+import org.dockbox.hartshorn.di.context.DefaultContext;
 import org.dockbox.hartshorn.i18n.common.ResourceEntry;
 import org.dockbox.hartshorn.i18n.text.Text;
 
@@ -31,27 +33,28 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class DiscordCommandContext {
+public class DiscordCommandContext extends DefaultContext implements ContextCarrier {
 
     private final User author;
     private final MessageChannel channel;
     private final LocalDateTime timeReceived;
     private final String command;
     private final String[] arguments;
+    @Getter private final ApplicationContext applicationContext;
 
-    public void sendToChannel(Text text) {
-        Hartshorn.context().get(DiscordUtils.class).sendToTextChannel(text, this.channel());
+    public void sendToChannel(final Text text) {
+        this.applicationContext().get(DiscordUtils.class).sendToTextChannel(text, this.channel());
     }
 
-    public void sendToChannel(ResourceEntry text) {
-        Hartshorn.context().get(DiscordUtils.class).sendToTextChannel(text, this.channel());
+    public void sendToChannel(final ResourceEntry text) {
+        this.applicationContext().get(DiscordUtils.class).sendToTextChannel(text, this.channel());
     }
 
-    public void sendToAuthor(Text text) {
-        Hartshorn.context().get(DiscordUtils.class).sendToUser(text, this.author());
+    public void sendToAuthor(final Text text) {
+        this.applicationContext().get(DiscordUtils.class).sendToUser(text, this.author());
     }
 
-    public void sendToAuthor(ResourceEntry text) {
-        Hartshorn.context().get(DiscordUtils.class).sendToUser(text, this.author());
+    public void sendToAuthor(final ResourceEntry text) {
+        this.applicationContext().get(DiscordUtils.class).sendToUser(text, this.author());
     }
 }

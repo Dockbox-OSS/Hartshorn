@@ -19,31 +19,40 @@ package org.dockbox.hartshorn.test.objects;
 
 import org.dockbox.hartshorn.api.exceptions.NotImplementedException;
 import org.dockbox.hartshorn.commands.SystemSubject;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.i18n.text.Text;
 import org.dockbox.hartshorn.i18n.text.pagination.Pagination;
 
+import javax.inject.Inject;
+
+import lombok.Getter;
+
 public class JUnitSystemSubject extends SystemSubject {
 
+    @Inject
+    @Getter
+    private ApplicationContext applicationContext;
+
     @Override
-    public void execute(String command) {
+    public void execute(final String command) {
         // TODO: CommandBus implementation
         throw new NotImplementedException();
     }
 
     @Override
-    public void send(Text text) {
+    public void send(final Text text) {
         // TODO: Test implementation, mocking client?
         throw new NotImplementedException();
     }
 
     @Override
-    public void sendWithPrefix(Text text) {
+    public void sendWithPrefix(final Text text) {
         // TODO: Test implementation, mocking client?
         throw new NotImplementedException();
     }
 
     @Override
-    public void send(Pagination pagination) {
+    public void send(final Pagination pagination) {
         // TODO: Test implementation, mocking client?
         throw new NotImplementedException();
     }

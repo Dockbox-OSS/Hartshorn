@@ -18,28 +18,38 @@
 package org.dockbox.hartshorn.sponge.event;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.events.parents.Cancellable;
 import org.dockbox.hartshorn.events.parents.Event;
 import org.dockbox.hartshorn.server.minecraft.players.Player;
-import org.dockbox.hartshorn.sponge.util.SpongeConvert;
+import org.dockbox.hartshorn.sponge.SpongeContextCarrier;
+import org.dockbox.hartshorn.sponge.util.SpongeAdapter;
 import org.spongepowered.api.entity.living.player.server.ServerPlayer;
 
 import java.util.Optional;
 
-public interface EventBridge {
+import javax.inject.Inject;
 
-    default void post(Event event, org.spongepowered.api.event.Event cause) {
-        final Event posted = event.post();
+import lombok.Getter;
+
+public abstract class EventBridge implements SpongeContextCarrier {
+
+    @Inject
+    @Getter
+    private ApplicationContext context;
+
+    protected void post(final Event event, final org.spongepowered.api.event.Event cause) {
+        final Event posted = event.with(this.applicationContext()).post();
         if (posted instanceof Cancellable cancellable && cause instanceof org.spongepowered.api.event.Cancellable causeCancellable) {
             if (cancellable.cancelled()) causeCancellable.setCancelled(true);
         }
     }
 
-    default Exceptional<Player> player(org.spongepowered.api.event.Event event) {
+    protected Exceptional<Player> player(final org.spongepowered.api.event.Event event) {
         final Optional<ServerPlayer> serverPlayer = event.cause().first(ServerPlayer.class);
         if (serverPlayer.isEmpty()) return Exceptional.empty();
 
-        final Player player = SpongeConvert.fromSponge(serverPlayer.get());
+        final Player player = SpongeAdapter.fromSponge(serverPlayer.get());
         return Exceptional.of(player);
     }
 

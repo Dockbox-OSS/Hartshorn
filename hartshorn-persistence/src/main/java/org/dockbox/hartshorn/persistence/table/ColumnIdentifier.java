@@ -17,9 +17,11 @@
 
 package org.dockbox.hartshorn.persistence.table;
 
+import org.dockbox.hartshorn.di.context.element.TypeContext;
+
 public interface ColumnIdentifier<T> {
 
     String name();
 
-    Class<T> type();
+    TypeContext<T> type();
 }

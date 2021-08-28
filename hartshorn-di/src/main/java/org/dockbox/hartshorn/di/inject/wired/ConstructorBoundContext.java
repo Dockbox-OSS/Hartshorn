@@ -18,13 +18,13 @@
 package org.dockbox.hartshorn.di.inject.wired;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.api.exceptions.ApplicationException;
 import org.dockbox.hartshorn.di.Key;
 import org.dockbox.hartshorn.di.annotations.inject.Bound;
-import org.dockbox.hartshorn.util.Reflect;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
+import org.dockbox.hartshorn.di.context.element.ConstructorContext;
+import org.dockbox.hartshorn.di.context.element.TypeContext;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
 import java.util.Collection;
 
 import javax.inject.Named;
@@ -37,7 +37,7 @@ import lombok.Getter;
 public class ConstructorBoundContext<T, I extends T> implements BoundContext<T, I> {
 
     private final Key<T> key;
-    private final Class<I> implementation;
+    private final TypeContext<I> implementation;
 
     @Override
     public String name() {
@@ -47,49 +47,43 @@ public class ConstructorBoundContext<T, I extends T> implements BoundContext<T, 
     }
 
     @Override
-    public Class<T> contract() {
+    public TypeContext<T> contract() {
         return this.key.contract();
     }
 
     @Override
-    public I create(final Object... arguments) {
-        final Class<?>[] argumentTypes = Arrays.stream(arguments).map(Object::getClass).toArray(Class<?>[]::new);
-        try {
-            final Collection<Constructor<I>> constructors = Reflect.constructors(this.implementation(), Bound.class);
-            Constructor<I> ctor = null;
-            for (final Constructor<I> constructor : constructors) {
-                if (constructor.getParameterTypes().length != arguments.length) continue;
-                boolean valid = true;
-                for (int i = 0; i < constructor.getParameterTypes().length; i++) {
-                    final Class<?> parameterType = constructor.getParameterTypes()[i];
-                    final Object argument = arguments[i];
-                    if (argument == null) {
-                        throw new IllegalArgumentException("Autowired parameters can not be null");
-                    }
-                    if (!Reflect.assigns(parameterType, argument.getClass())) {
-                        valid = false;
-                    }
+    public I create(final ApplicationContext context, final Object... arguments) throws ApplicationException {
+        final Collection<ConstructorContext<I>> constructors = this.implementation().boundConstructors();
+        ConstructorContext<I> ctor = null;
+        for (final ConstructorContext<I> constructor : constructors) {
+            if (constructor.parameterCount() != arguments.length) continue;
+            boolean valid = true;
+            for (int i = 0; i < constructor.parameters().size(); i++) {
+                final TypeContext<?> parameterType = constructor.parameterTypes().get(i);
+                final Object argument = arguments[i];
+                if (argument == null) {
+                    throw new IllegalArgumentException("Autowired parameters can not be null");
                 }
-                if (valid) {
-                    ctor = constructor;
-                    break;
+                if (!TypeContext.of(argument).childOf(parameterType)) {
+                    valid = false;
                 }
             }
-
-            if (ctor == null) {
-                throw new NoSuchMethodException("Available constructors do not meet expected parameter types");
-            }
-
-            final Exceptional<Bound> annotation = Reflect.annotation(ctor, Bound.class);
-            if (annotation.present()) {
-                return ctor.newInstance(arguments);
-            }
-            else {
-                throw new IllegalArgumentException("Could not autowire " + this.implementation().getCanonicalName() + " as the applicable constructor is not marked with @AutoWired");
+            if (valid) {
+                ctor = constructor;
+                break;
             }
         }
-        catch (final InvocationTargetException | NoSuchMethodException | InstantiationException | IllegalAccessException e) {
-            throw new IllegalArgumentException("Could not autowire " + this.implementation().getCanonicalName() + ", no constructor could be accessed", e);
+
+        if (ctor == null) {
+            throw new ApplicationException("Available constructors do not meet expected parameter types");
+        }
+
+        final Exceptional<Bound> annotation = ctor.annotation(Bound.class);
+        if (annotation.present()) {
+            return ctor.createInstance(arguments).orNull();
+        }
+        else {
+            throw new ApplicationException("Could not autowire " + this.implementation().qualifiedName() + " as the applicable constructor is not marked with @AutoWired");
         }
     }
 }

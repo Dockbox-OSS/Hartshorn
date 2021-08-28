@@ -17,31 +17,37 @@
 
 package org.dockbox.hartshorn.server.minecraft.players.inventory;
 
+import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.server.minecraft.item.Item;
 import org.dockbox.hartshorn.server.minecraft.item.ItemTypes;
 
-import java.util.function.Supplier;
+import java.util.function.Function;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
-@AllArgsConstructor
 public abstract class AbstractInventoryRow implements InventoryRow {
 
-    public static final Supplier<Item> AIR = () -> Item.of(ItemTypes.AIR);
+    public static final Function<ApplicationContext, Item> AIR = ctx -> Item.of(ctx, ItemTypes.AIR);
 
     private final int rowIndex;
     private final PlayerInventory inventory;
+    private final ApplicationContext applicationContext;
+
+    public AbstractInventoryRow(final int rowIndex, final PlayerInventory inventory) {
+        this.rowIndex = rowIndex;
+        this.inventory = inventory;
+        this.applicationContext = inventory.applicationContext();
+    }
 
     @Override
-    public Item slot(int row, int column) {
-        if (row != this.rowIndex) return Item.of(ItemTypes.AIR);
+    public Item slot(final int row, final int column) {
+        if (row != this.rowIndex) return Item.of(this.applicationContext(), ItemTypes.AIR);
         return this.slot(column);
     }
 
     @Override
-    public void slot(Item item, int row, int column) {
+    public void slot(final Item item, final int row, final int column) {
         if (row != this.rowIndex) return;
         this.slot(item, column);
     }

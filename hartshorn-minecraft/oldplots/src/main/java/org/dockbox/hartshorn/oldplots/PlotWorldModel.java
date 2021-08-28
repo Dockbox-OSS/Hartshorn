@@ -17,8 +17,8 @@
 
 package org.dockbox.hartshorn.oldplots;
 
-import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.server.minecraft.dimension.Worlds;
 import org.dockbox.hartshorn.server.minecraft.dimension.position.Location;
 
@@ -37,17 +37,17 @@ public class PlotWorldModel {
     private int zeroX;
     private int zeroZ;
 
-    public Exceptional<Location> location(int plotX, int plotZ) {
-        return Hartshorn.context().get(Worlds.class)
+    public Exceptional<Location> location(final ApplicationContext context, final int plotX, final int plotZ) {
+        return context.get(Worlds.class)
                 .world(this.name())
-                .map(world -> Location.of(this.x(plotX), this.height(), this.z(plotZ), world));
+                .map(world -> Location.of(context, this.x(plotX), this.height(), this.z(plotZ), world));
     }
 
-    public int x(int plotX) {
+    public int x(final int plotX) {
         return this.zeroX + (plotX * (this.size + this.road));
     }
 
-    public int z(int plotZ) {
+    public int z(final int plotZ) {
         return this.zeroZ + (plotZ * (this.size + this.road));
     }
 }

@@ -18,7 +18,7 @@
 package org.dockbox.hartshorn.config;
 
 import org.dockbox.hartshorn.api.config.GlobalConfig;
-import org.dockbox.hartshorn.api.exceptions.ExceptionLevels;
+import org.dockbox.hartshorn.api.exceptions.ExceptionLevel;
 import org.dockbox.hartshorn.config.annotations.Configuration;
 import org.dockbox.hartshorn.config.annotations.Value;
 
@@ -36,9 +36,6 @@ public class TargetGlobalConfig implements GlobalConfig {
     private boolean stacktraces;
 
     @Value(value = "hartshorn.exceptions.level", or = "FRIENDLY")
-    private ExceptionLevels level;
-
-    @Value("hartshorn.version")
-    private String version;
+    private ExceptionLevel level;
 
 }

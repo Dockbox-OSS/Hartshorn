@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.server.minecraft.inventory.pane;
 
-import org.dockbox.hartshorn.api.Hartshorn;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.server.minecraft.inventory.Element;
 import org.dockbox.hartshorn.server.minecraft.inventory.InventoryLayout;
 import org.dockbox.hartshorn.server.minecraft.inventory.builder.PaginatedPaneBuilder;
@@ -40,8 +40,8 @@ public interface PaginatedPane extends Pane {
      *
      * @return The builder
      */
-    static PaginatedPaneBuilder builder(InventoryLayout layout) {
-        return Hartshorn.context().get(PaginatedPaneBuilder.class, new LayoutAttribute(layout));
+    static PaginatedPaneBuilder builder(final ApplicationContext context, final InventoryLayout layout) {
+        return context.get(PaginatedPaneBuilder.class, new LayoutAttribute(layout));
     }
 
     /**
@@ -61,4 +61,7 @@ public interface PaginatedPane extends Pane {
      *         The elements
      */
     void elements(Collection<Element> elements);
+
+    int page();
+    int pages();
 }

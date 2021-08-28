@@ -18,6 +18,7 @@
 package org.dockbox.hartshorn.test.objects.inventory;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.server.minecraft.inventory.Slot;
 import org.dockbox.hartshorn.server.minecraft.item.Item;
 import org.dockbox.hartshorn.server.minecraft.item.ItemTypes;
@@ -29,6 +30,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import lombok.Getter;
+
 public class JUnitInventory extends PlayerInventory {
 
     private final Map<Integer, InventoryRow> rows = HartshornUtils.emptyMap();
@@ -37,13 +40,19 @@ public class JUnitInventory extends PlayerInventory {
     private final int rowCount = 3;
     private final int columnCount = 9;
 
-    @Override
-    public Item slot(Slot slot) {
-        return this.specialSlots.getOrDefault(slot, Item.of(ItemTypes.AIR));
+    @Getter private final ApplicationContext applicationContext;
+
+    public JUnitInventory(final ApplicationContext context) {
+        this.applicationContext = context;
     }
 
     @Override
-    public void slot(Item item, Slot slot) {
+    public Item slot(final Slot slot) {
+        return this.specialSlots.getOrDefault(slot, Item.of(this.applicationContext(), ItemTypes.AIR));
+    }
+
+    @Override
+    public void slot(final Item item, final Slot slot) {
         this.specialSlots.put(slot, item);
     }
 
@@ -53,33 +62,33 @@ public class JUnitInventory extends PlayerInventory {
     }
 
     @Override
-    public void slot(Item item, int index) {
+    public void slot(final Item item, final int index) {
         this.slot(item, this.rowIndex(index), this.columnIndex(index));
     }
 
     @Override
-    public Item slot(int index) {
+    public Item slot(final int index) {
         return this.slot(this.rowIndex(index), this.columnIndex(index));
     }
 
-    private int rowIndex(int index) {
+    private int rowIndex(final int index) {
         return (index - (index % 3)) / 9;
     }
 
-    private int columnIndex(int index) {
+    private int columnIndex(final int index) {
         return index % 9;
     }
 
     @Override
     public Collection<Item> items() {
-        List<Item> items = HartshornUtils.emptyList();
-        for (InventoryRow row : this.rows.values()) items.addAll(row.items());
+        final List<Item> items = HartshornUtils.emptyList();
+        for (final InventoryRow row : this.rows.values()) items.addAll(row.items());
         items.addAll(this.specialSlots.values());
         return HartshornUtils.asUnmodifiableList(items);
     }
 
     @Override
-    public boolean give(Item item) {
+    public boolean give(final Item item) {
         for (int row = 0; row < this.rowCount; row++) {
             for (int column = 0; column < this.columnCount; column++) {
                 if (this.slot(row, column).isAir()) {
@@ -92,17 +101,17 @@ public class JUnitInventory extends PlayerInventory {
     }
 
     @Override
-    public Item slot(int row, int column) {
+    public Item slot(final int row, final int column) {
         return this.rows.get(row).slot(column);
     }
 
     @Override
-    public void slot(Item item, int row, int column) {
+    public void slot(final Item item, final int row, final int column) {
         this.rows.get(row).slot(item, column);
     }
 
     @Override
-    public Exceptional<InventoryRow> row(int index) {
+    public Exceptional<InventoryRow> row(final int index) {
         if (index < this.rowCount) {
             return Exceptional.of(new JUnitInventoryRow(index, this));
         }

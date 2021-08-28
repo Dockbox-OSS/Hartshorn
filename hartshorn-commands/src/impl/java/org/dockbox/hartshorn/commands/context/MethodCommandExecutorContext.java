@@ -17,10 +17,8 @@
 
 package org.dockbox.hartshorn.commands.context;
 
-import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.domain.Subject;
-import org.dockbox.hartshorn.api.exceptions.Except;
 import org.dockbox.hartshorn.commands.CommandExecutor;
 import org.dockbox.hartshorn.commands.CommandParser;
 import org.dockbox.hartshorn.commands.CommandResources;
@@ -29,18 +27,20 @@ import org.dockbox.hartshorn.commands.annotations.Command;
 import org.dockbox.hartshorn.commands.definition.CommandElement;
 import org.dockbox.hartshorn.commands.events.CommandEvent;
 import org.dockbox.hartshorn.commands.events.CommandEvent.Before;
-import org.dockbox.hartshorn.di.context.DefaultContext;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
+import org.dockbox.hartshorn.di.context.DefaultCarrierContext;
+import org.dockbox.hartshorn.di.context.element.AnnotatedElementContext;
+import org.dockbox.hartshorn.di.context.element.MethodContext;
+import org.dockbox.hartshorn.di.context.element.ParameterContext;
+import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.events.annotations.Posting;
 import org.dockbox.hartshorn.events.parents.Cancellable;
 import org.dockbox.hartshorn.i18n.common.ResourceEntry;
 import org.dockbox.hartshorn.util.HartshornUtils;
-import org.dockbox.hartshorn.util.Reflect;
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.reflect.AnnotatedElement;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -53,10 +53,11 @@ import lombok.Getter;
  */
 @Getter(AccessLevel.PROTECTED)
 @Posting({ CommandEvent.Before.class, CommandEvent.After.class })
-public class MethodCommandExecutorContext extends DefaultContext implements CommandExecutorContext {
+public class MethodCommandExecutorContext<T> extends DefaultCarrierContext implements CommandExecutorContext {
 
-    private final Method method;
-    private final Class<?> type;
+    @Getter private final ApplicationContext applicationContext;
+    private final MethodContext<?, T> method;
+    private final TypeContext<T> type;
     private final List<String> parentAliases;
     private final Command command;
     @Nullable
@@ -64,16 +65,20 @@ public class MethodCommandExecutorContext extends DefaultContext implements Comm
     private final boolean isChild;
 
     @Getter(AccessLevel.NONE)
-    private Map<String, ParameterContext> parameters;
+    private Map<String, CommandParameterContext> parameters;
 
-    public MethodCommandExecutorContext(Method method, Class<?> type) {
-        final Exceptional<Command> annotated = Reflect.annotation(method, Command.class);
-        if (annotated.absent()) throw new IllegalArgumentException("Provided method is not a command handler");
+    public MethodCommandExecutorContext(final ApplicationContext context, final MethodContext<?, T> method, final TypeContext<T> type) {
+        super(context);
+        final Exceptional<Command> annotated = method.annotation(Command.class);
+        if (annotated.absent()) {
+            throw new IllegalArgumentException("Provided method is not a command handler");
+        }
+        this.applicationContext = context;
         this.method = method;
         this.type = type;
         this.command = annotated.get();
 
-        final Exceptional<Command> annotation = Reflect.annotation(type, Command.class);
+        final Exceptional<Command> annotation = type.annotation(Command.class);
         if (annotation.present()) {
             this.parent = annotation.get();
             this.isChild = true;
@@ -83,7 +88,7 @@ public class MethodCommandExecutorContext extends DefaultContext implements Comm
             this.isChild = false;
         }
 
-        this.add(new CommandDefinitionContextImpl(this.command));
+        this.add(new CommandDefinitionContextImpl(this.applicationContext, this.command));
 
         this.parentAliases = HartshornUtils.emptyList();
         if (this.parent != null) {
@@ -92,15 +97,15 @@ public class MethodCommandExecutorContext extends DefaultContext implements Comm
         this.parameters = this.parameters();
     }
 
-    private Map<String, ParameterContext> parameters() {
+    private Map<String, CommandParameterContext> parameters() {
         if (this.parameters == null) {
             this.parameters = HartshornUtils.emptyMap();
-            Parameter[] methodParameters = this.method.getParameters();
-
-            for (int i = 0; i < methodParameters.length; i++) {
-                Parameter parameter = methodParameters[i];
-                this.parameters.put(parameter.getName(), new ParameterContext(parameter, i));
+            final LinkedList<ParameterContext<?>> parameters = this.method.parameters();
+            for (int i = 0; i < parameters.size(); i++) {
+                final ParameterContext<?> parameter = parameters.get(i);
+                this.parameters.put(parameter.name(), new CommandParameterContext(parameter, i));
             }
+
         }
         return this.parameters;
     }
@@ -108,32 +113,27 @@ public class MethodCommandExecutorContext extends DefaultContext implements Comm
     @Override
     public CommandExecutor executor() {
         return (ctx) -> {
-            final Cancellable before = new Before(ctx.source(), ctx).post();
+            final Cancellable before = new Before(ctx.source(), ctx).with(this.applicationContext).post();
             if (before.cancelled()) {
-                final ResourceEntry cancelled = Hartshorn.context().get(CommandResources.class).cancelled();
+                final ResourceEntry cancelled = this.applicationContext.get(CommandResources.class).cancelled();
                 ctx.source().send(cancelled);
             }
 
-            final Object instance = Hartshorn.context().get(this.type());
+            final T instance = this.applicationContext.get(this.type());
             final List<Object> arguments = this.arguments(ctx);
-            try {
-                this.method.invoke(instance, arguments.toArray());
-                new CommandEvent.After(ctx.source(), ctx).post();
-            }
-            catch (IllegalAccessException | InvocationTargetException e) {
-                Except.handle(e);
-            }
+            this.method.invoke(instance, arguments.toArray());
+            new CommandEvent.After(ctx.source(), ctx).with(this.applicationContext).post();
         };
     }
 
     @Override
-    public boolean accepts(String command) {
+    public boolean accepts(final String command) {
         final CommandDefinitionContext context = this.definition();
         return context.matches(this.strip(command, true));
     }
 
     @Override
-    public String strip(String command, boolean parentOnly) {
+    public String strip(String command, final boolean parentOnly) {
         command = this.stripAny(command, this.parentAliases);
         if (!parentOnly) command = this.stripAny(command, this.definition().aliases());
         return command;
@@ -141,9 +141,9 @@ public class MethodCommandExecutorContext extends DefaultContext implements Comm
 
     @Override
     public List<String> aliases() {
-        List<String> aliases = HartshornUtils.emptyList();
-        for (String parentAlias : this.parentAliases()) {
-            for (String alias : this.command.value()) {
+        final List<String> aliases = HartshornUtils.emptyList();
+        for (final String parentAlias : this.parentAliases()) {
+            for (final String alias : this.command.value()) {
                 aliases.add(parentAlias + ' ' + alias);
             }
         }
@@ -151,24 +151,24 @@ public class MethodCommandExecutorContext extends DefaultContext implements Comm
     }
 
     @Override
-    public Class<?> parent() {
+    public TypeContext<?> parent() {
         return this.type;
     }
 
     @Override
-    public AnnotatedElement element() {
+    public AnnotatedElementContext<Method> element() {
         return this.method;
     }
 
     @Override
-    public List<String> suggestions(CommandSource source, String command, CommandParser parser) {
+    public List<String> suggestions(final CommandSource source, final String command, final CommandParser parser) {
         final String stripped = this.strip(command, false);
         final List<CommandElement<?>> elements = this.definition().elements();
         final List<String> tokens = HartshornUtils.asList(stripped.split(" "));
         if (command.endsWith(" ") && !"".equals(tokens.get(tokens.size() - 1))) tokens.add("");
 
         CommandElement<?> last = null;
-        for (CommandElement<?> element : elements) {
+        for (final CommandElement<?> element : elements) {
             int size = element.size();
             if (size == -1) return HartshornUtils.emptyList();
 
@@ -193,8 +193,8 @@ public class MethodCommandExecutorContext extends DefaultContext implements Comm
         return definition.get();
     }
 
-    private String stripAny(String command, Iterable<String> aliases) {
-        for (String alias : aliases) {
+    private String stripAny(String command, final Iterable<String> aliases) {
+        for (final String alias : aliases) {
             // Equality is expected when no required arguments are present afterwards
             if (command.equals(alias)) command = "";
             else if (command.startsWith(alias + ' ')) command = command.substring(alias.length() + 1);
@@ -202,18 +202,18 @@ public class MethodCommandExecutorContext extends DefaultContext implements Comm
         return command;
     }
 
-    private List<Object> arguments(CommandContext context) {
+    private List<Object> arguments(final CommandContext context) {
         final List<Object> arguments = HartshornUtils.list(this.parameters().size());
-        final Map<String, ParameterContext> parameters = this.parameters();
+        final Map<String, CommandParameterContext> parameters = this.parameters();
 
-        for (Entry<String, ParameterContext> entry : parameters.entrySet()) {
-            final ParameterContext parameterContext = entry.getValue();
-            final int index = parameterContext.index();
-            if (parameterContext.is(CommandContext.class)) arguments.set(index, context);
+        for (final Entry<String, CommandParameterContext> entry : parameters.entrySet()) {
+            final CommandParameterContext commandParameterContext = entry.getValue();
+            final int index = commandParameterContext.index();
+            if (commandParameterContext.is(CommandContext.class)) arguments.set(index, context);
             else {
                 @Nullable final Object object = context.get(entry.getKey());
                 // Target comparison is done last as this can target either the command source, or a parameter target
-                if (object == null && parameterContext.is(Subject.class)) arguments.set(index, context.source());
+                if (object == null && commandParameterContext.is(Subject.class)) arguments.set(index, context.source());
                 else arguments.set(index, object);
             }
         }

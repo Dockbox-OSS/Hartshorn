@@ -19,14 +19,13 @@ package org.dockbox.hartshorn.sponge.command;
 
 import net.kyori.adventure.text.Component;
 
-import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.exceptions.Except;
 import org.dockbox.hartshorn.commands.CommandGateway;
 import org.dockbox.hartshorn.commands.CommandGatewayImpl;
 import org.dockbox.hartshorn.commands.exceptions.ParsingException;
 import org.dockbox.hartshorn.sponge.Sponge8Application;
 import org.dockbox.hartshorn.sponge.event.EventBridge;
-import org.dockbox.hartshorn.sponge.util.SpongeConvert;
+import org.dockbox.hartshorn.sponge.util.SpongeAdapter;
 import org.spongepowered.api.command.Command;
 import org.spongepowered.api.command.Command.Parameterized;
 import org.spongepowered.api.command.CommandCompletion;
@@ -40,7 +39,7 @@ import org.spongepowered.api.event.lifecycle.RegisterCommandEvent;
 
 import java.util.Optional;
 
-public class SpongeCommandRegistrar implements EventBridge {
+public class SpongeCommandRegistrar extends EventBridge {
 
     @Listener
     public void onRegisterCommand(final RegisterCommandEvent<Parameterized> event) {
@@ -56,27 +55,27 @@ public class SpongeCommandRegistrar implements EventBridge {
         }
     }
 
-    private Value<String> parameter(String alias) {
+    private Value<String> parameter(final String alias) {
         return Parameter.remainingJoinedStrings().key(alias + "-arguments")
-                .completer((ctx, input) -> Hartshorn.context()
+                .completer((ctx, input) -> this.applicationContext()
                         .get(CommandGateway.class)
-                        .suggestions(SpongeConvert.fromSponge(ctx.cause().subject()).orNull(), alias + ' ' + input)
+                        .suggestions(SpongeAdapter.fromSponge(ctx.cause().subject()).orNull(), alias + ' ' + input)
                         .stream()
                         .map(CommandCompletion::of)
                         .toList()
                 ).terminal().optional().build();
     }
 
-    private CommandExecutor executor(String alias, Value<String> parameter) {
+    private CommandExecutor executor(final String alias, final Value<String> parameter) {
         return ctx -> {
             final Optional<String> arguments = ctx.one(parameter);
             try {
-                Hartshorn.context().get(CommandGateway.class).accept(
-                        SpongeConvert.fromSponge(ctx.cause().subject()).orNull(),
+                this.applicationContext().get(CommandGateway.class).accept(
+                        SpongeAdapter.fromSponge(ctx.cause().subject()).orNull(),
                         alias + arguments.map(a -> ' ' + a).orElse("")
                 );
             }
-            catch (ParsingException e) {
+            catch (final ParsingException e) {
                 Except.handle(e);
                 throw new CommandException(Component.text(e.getMessage()), e);
             }

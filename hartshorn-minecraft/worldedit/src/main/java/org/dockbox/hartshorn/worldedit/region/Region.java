@@ -17,8 +17,8 @@
 
 package org.dockbox.hartshorn.worldedit.region;
 
-import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.tuple.Vector3N;
+import org.dockbox.hartshorn.di.ContextCarrier;
 import org.dockbox.hartshorn.server.minecraft.dimension.world.World;
 import org.dockbox.hartshorn.server.minecraft.item.Item;
 import org.dockbox.hartshorn.server.minecraft.players.Player;
@@ -27,7 +27,7 @@ import org.dockbox.hartshorn.worldedit.WorldEditService;
 
 import java.util.Collection;
 
-public interface Region {
+public interface Region extends ContextCarrier {
 
     Vector3N minimum();
 
@@ -45,27 +45,27 @@ public interface Region {
 
     World world();
 
-    default void replace(Mask mask, Pattern pattern, Player cause) {
-        Hartshorn.context().get(WorldEditService.class).replace(this, mask, pattern, cause);
+    default void replace(final Mask mask, final Pattern pattern, final Player cause) {
+        this.applicationContext().get(WorldEditService.class).replace(this, mask, pattern, cause);
     }
 
-    default void set(Pattern pattern, Player cause) {
-        Hartshorn.context().get(WorldEditService.class).set(this, pattern, cause);
+    default void set(final Pattern pattern, final Player cause) {
+        this.applicationContext().get(WorldEditService.class).set(this, pattern, cause);
     }
 
-    default void replace(Item mask, Item pattern, Player cause) {
+    default void replace(final Item mask, final Item pattern, final Player cause) {
         this.replace(HartshornUtils.singletonList(mask), HartshornUtils.singletonList(pattern), cause);
     }
 
-    default void replace(Collection<Item> mask, Collection<Item> pattern, Player cause) {
-        Hartshorn.context().get(WorldEditService.class).replace(this, mask, pattern, cause);
+    default void replace(final Collection<Item> mask, final Collection<Item> pattern, final Player cause) {
+        this.applicationContext().get(WorldEditService.class).replace(this, mask, pattern, cause);
     }
 
-    default void set(Item pattern, Player cause) {
+    default void set(final Item pattern, final Player cause) {
         this.set(HartshornUtils.singletonList(pattern), cause);
     }
 
-    default void set(Collection<Item> pattern, Player cause) {
-        Hartshorn.context().get(WorldEditService.class).set(this, pattern, cause);
+    default void set(final Collection<Item> pattern, final Player cause) {
+        this.applicationContext().get(WorldEditService.class).set(this, pattern, cause);
     }
 }

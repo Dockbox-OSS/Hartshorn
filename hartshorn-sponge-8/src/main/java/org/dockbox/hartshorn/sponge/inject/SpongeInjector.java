@@ -17,7 +17,6 @@
 
 package org.dockbox.hartshorn.sponge.inject;
 
-import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.config.GlobalConfig;
 import org.dockbox.hartshorn.api.task.TaskRunner;
 import org.dockbox.hartshorn.cache.CacheManager;
@@ -28,8 +27,10 @@ import org.dockbox.hartshorn.config.ConfigurationManagerImpl;
 import org.dockbox.hartshorn.config.TargetGlobalConfig;
 import org.dockbox.hartshorn.di.InjectConfiguration;
 import org.dockbox.hartshorn.di.Key;
-import org.dockbox.hartshorn.di.TypeFactoryImpl;
 import org.dockbox.hartshorn.di.TypeFactory;
+import org.dockbox.hartshorn.di.TypeFactoryImpl;
+import org.dockbox.hartshorn.di.annotations.context.LogExclude;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.i18n.text.pagination.PaginationBuilder;
 import org.dockbox.hartshorn.i18n.text.pagination.PaginationBuilderImpl;
 import org.dockbox.hartshorn.persistence.FileManager;
@@ -47,10 +48,11 @@ import org.dockbox.hartshorn.sponge.util.SpongeFileManager;
 import org.dockbox.hartshorn.sponge.util.SpongeTaskRunner;
 import org.slf4j.Logger;
 
+@LogExclude
 public class SpongeInjector extends InjectConfiguration {
 
     @Override
-    public void collect() {
+    public void collect(final ApplicationContext context) {
         // Factory creation
         this.bind(Key.of(TypeFactory.class), TypeFactoryImpl.class);
 
@@ -82,7 +84,7 @@ public class SpongeInjector extends InjectConfiguration {
         this.manual(Key.of(ConfigurationManager.class), ConfigurationManagerImpl.class);
 
         // Log is created from LoggerFactory externally
-        this.bind(Key.of(Logger.class), Hartshorn.log());
+        this.provide(Key.of(Logger.class), context::log);
 
         // Console is a constant singleton, to avoid recreation
         this.bind(Key.of(SystemSubject.class), SpongeSystemSubject.class);
