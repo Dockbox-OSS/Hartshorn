@@ -1033,7 +1033,7 @@ public final class HartshornUtils {
             return false;
         }
         catch (final Throwable t) {
-            return Reflect.assigns(exception, t.getClass());
+            return exception.isAssignableFrom(t.getClass());
         }
     }
 

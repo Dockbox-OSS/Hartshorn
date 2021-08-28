@@ -19,11 +19,12 @@ package org.dockbox.hartshorn.api.task.pipeline.pipes;
 
 import org.dockbox.hartshorn.api.exceptions.ApplicationException;
 import org.dockbox.hartshorn.api.task.pipeline.pipelines.AbstractPipeline;
+import org.dockbox.hartshorn.di.context.element.TypeContext;
 
 @FunctionalInterface
 public interface ComplexPipe<I, O> extends IPipe<I, O> {
 
-    static <I, O> ComplexPipe<I, O> of(ComplexPipe<I, O> pipe) {
+    static <I, O> ComplexPipe<I, O> of(final ComplexPipe<I, O> pipe) {
         return pipe;
     }
 
@@ -31,7 +32,7 @@ public interface ComplexPipe<I, O> extends IPipe<I, O> {
 
     @SuppressWarnings("rawtypes")
     @Override
-    default Class<? extends IPipe> type() {
-        return ComplexPipe.class;
+    default TypeContext<? extends IPipe> type() {
+        return TypeContext.of(ComplexPipe.class);
     }
 }

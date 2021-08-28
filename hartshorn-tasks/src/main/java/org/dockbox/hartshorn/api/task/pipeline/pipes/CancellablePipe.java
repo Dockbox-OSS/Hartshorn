@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.api.task.pipeline.pipes;
 
 import org.dockbox.hartshorn.api.exceptions.ApplicationException;
 import org.dockbox.hartshorn.api.task.pipeline.pipelines.AbstractPipeline;
+import org.dockbox.hartshorn.di.context.element.TypeContext;
 
 @FunctionalInterface
 public interface CancellablePipe<I, O> extends ComplexPipe<I, O> {
@@ -36,7 +37,7 @@ public interface CancellablePipe<I, O> extends ComplexPipe<I, O> {
 
     @SuppressWarnings("rawtypes")
     @Override
-    default Class<CancellablePipe> type() {
-        return CancellablePipe.class;
+    default TypeContext<CancellablePipe> type() {
+        return TypeContext.of(CancellablePipe.class);
     }
 }

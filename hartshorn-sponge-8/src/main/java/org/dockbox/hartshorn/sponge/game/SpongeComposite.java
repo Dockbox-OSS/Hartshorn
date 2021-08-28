@@ -23,10 +23,10 @@ import org.dockbox.hartshorn.api.keys.PersistentDataHolder;
 import org.dockbox.hartshorn.api.keys.PersistentDataKey;
 import org.dockbox.hartshorn.api.keys.StoredPersistentKey;
 import org.dockbox.hartshorn.api.keys.TransactionResult;
+import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.i18n.entry.DefaultResources;
 import org.dockbox.hartshorn.sponge.SpongeContextCarrier;
 import org.dockbox.hartshorn.util.HartshornUtils;
-import org.dockbox.hartshorn.util.Reflect;
 import org.spongepowered.api.ResourceKey;
 import org.spongepowered.api.data.DataHolder;
 import org.spongepowered.api.data.DataTransactionResult;
@@ -48,7 +48,7 @@ public interface SpongeComposite extends PersistentDataHolder, SpongeContextCarr
         final Map<String, Object> data = this.raw();
 
         final Object value = data.get(this.id(dataKey));
-        if (value != null && Reflect.assigns(dataKey.type(), value.getClass())) {
+        if (value != null && TypeContext.of(value).childOf(dataKey.type())) {
             //noinspection unchecked
             return Exceptional.of(() -> (T) value);
         }

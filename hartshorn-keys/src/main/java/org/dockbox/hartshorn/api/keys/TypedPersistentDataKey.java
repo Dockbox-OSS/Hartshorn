@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.api.keys;
 
 import org.dockbox.hartshorn.api.domain.TypedOwner;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
+import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.jetbrains.annotations.NonNls;
 
 import java.util.Objects;
@@ -32,9 +33,9 @@ public class TypedPersistentDataKey<T> implements PersistentDataKey<T> {
     @NonNls
     private final String id;
     private final Function<ApplicationContext, TypedOwner> owner;
-    private final Class<T> type;
+    private final TypeContext<T> type;
 
-    public TypedPersistentDataKey(final String id, final Function<ApplicationContext, TypedOwner> owner, final Class<T> type) {
+    public TypedPersistentDataKey(final String id, final Function<ApplicationContext, TypedOwner> owner, final TypeContext<T> type) {
         this.id = id;
         this.owner = owner;
         this.type = type;

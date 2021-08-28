@@ -51,7 +51,7 @@ public final class Keys {
         if (!context.isNative())
             throw new RuntimeException("Unsupported data type for persistent key: " + context.qualifiedName());
 
-        return new TypedPersistentDataKey<>(Keys.id(name), ctx -> ctx.meta().lookup(TypeContext.of(owningClass)), type);
+        return new TypedPersistentDataKey<>(Keys.id(name), ctx -> ctx.meta().lookup(TypeContext.of(owningClass)), context);
     }
 
     /**
@@ -73,7 +73,7 @@ public final class Keys {
         if (!context.isNative())
             throw new RuntimeException("Unsupported data type for persistent key: " + context.qualifiedName());
 
-        return new TypedPersistentDataKey<>(Keys.id(name), ctx -> owner, type);
+        return new TypedPersistentDataKey<>(Keys.id(name), ctx -> owner, context);
     }
 
     /**

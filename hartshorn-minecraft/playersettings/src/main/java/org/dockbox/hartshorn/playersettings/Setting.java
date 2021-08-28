@@ -44,7 +44,7 @@ public class Setting<T> extends TypedPersistentDataKey<T> {
     private final Function<ApplicationContext, Item> display;
     private final Consumer<PersistentDataHolder> action;
 
-    public Setting(final Class<T> type, final String id, final Function<ApplicationContext, ResourceEntry> name,
+    public Setting(final TypeContext<T> type, final String id, final Function<ApplicationContext, ResourceEntry> name,
                    final Function<ApplicationContext, ResourceEntry> description,
                    final Function<ApplicationContext, TypedOwner> owner,
                    final BiFunction<ApplicationContext, T, ResourceEntry> converter,
@@ -103,7 +103,7 @@ public class Setting<T> extends TypedPersistentDataKey<T> {
 
         private String id;
         private Function<ApplicationContext, TypedOwner> owner;
-        private Class<T> type;
+        private TypeContext<T> type;
         private Function<ApplicationContext, ResourceEntry> resource;
         private Function<ApplicationContext, ResourceEntry> description;
         private BiFunction<ApplicationContext, T, ResourceEntry> converter = (ctx, o) -> new FakeResource(String.valueOf(o));
@@ -112,7 +112,7 @@ public class Setting<T> extends TypedPersistentDataKey<T> {
         private Consumer<PersistentDataHolder> action = holder -> {};
 
         private SettingBuilder(final Class<T> type) {
-            this.type = type;
+            this.type = TypeContext.of(type);
         }
 
         public SettingBuilder<T> owner(final TypedOwner owner) {
@@ -155,6 +155,10 @@ public class Setting<T> extends TypedPersistentDataKey<T> {
         }
 
         public SettingBuilder<T> type(final Class<T> type) {
+            return this.type(TypeContext.of(type));
+        }
+
+        public SettingBuilder<T> type(final TypeContext<T> type) {
             this.type = type;
             return this;
         }
