@@ -17,10 +17,10 @@
 
 package org.dockbox.hartshorn.test.services;
 
-import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.annotations.PostBootstrap;
 import org.dockbox.hartshorn.api.annotations.UseBootstrap;
 import org.dockbox.hartshorn.di.annotations.service.Service;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.server.minecraft.item.ItemContext;
 import org.dockbox.hartshorn.server.minecraft.item.ItemTypes;
 import org.dockbox.hartshorn.util.HartshornUtils;
@@ -31,11 +31,11 @@ import java.util.List;
 public class JUnitBootstrapService {
 
     @PostBootstrap
-    public void bootstrap() {
-        List<String> items = HartshornUtils.emptyList();
-        for (ItemTypes value : ItemTypes.values()) items.add(value.id());
-        final ItemContext context = new ItemContext(items, HartshornUtils.asList(ItemTypes.STONE.id()));
-        Hartshorn.context().add(context);
+    public void bootstrap(final ApplicationContext context) {
+        final List<String> items = HartshornUtils.emptyList();
+        for (final ItemTypes value : ItemTypes.values()) items.add(value.id());
+        final ItemContext itemContext = new ItemContext(items, HartshornUtils.asList(ItemTypes.STONE.id()));
+        context.add(itemContext);
     }
 
 }

@@ -15,7 +15,15 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.util.types;
+package test.types;
 
-public class RejectingType {
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
+public class InvalidSampleBoundType implements SampleInterface {
+
+    private final String name;
+
 }

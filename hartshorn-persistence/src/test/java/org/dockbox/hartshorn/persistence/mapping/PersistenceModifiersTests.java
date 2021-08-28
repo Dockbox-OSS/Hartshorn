@@ -17,22 +17,19 @@
 
 package org.dockbox.hartshorn.persistence.mapping;
 
-import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.persistence.properties.ModifiersAttribute;
 import org.dockbox.hartshorn.persistence.properties.PersistenceModifier;
-import org.dockbox.hartshorn.test.HartshornRunner;
+import org.dockbox.hartshorn.test.ApplicationAwareTest;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 
-@ExtendWith(HartshornRunner.class)
-public class PersistenceModifiersTests {
+public class PersistenceModifiersTests extends ApplicationAwareTest {
 
     @Test
     void testSkipEmptyKeepsNonEmpty() {
-        ObjectMapper mapper = Hartshorn.context().get(ObjectMapper.class, ModifiersAttribute.of(PersistenceModifier.SKIP_EMPTY));
+        final ObjectMapper mapper = this.context().get(ObjectMapper.class, ModifiersAttribute.of(PersistenceModifier.SKIP_EMPTY));
         final ModifierElement element = new ModifierElement(HartshornUtils.asList("sample", "other"));
         final Exceptional<String> out = mapper.write(element);
 
@@ -42,7 +39,7 @@ public class PersistenceModifiersTests {
 
     @Test
     void testSkipEmptySkipsEmpty() {
-        ObjectMapper mapper = Hartshorn.context().get(ObjectMapper.class, ModifiersAttribute.of(PersistenceModifier.SKIP_EMPTY));
+        final ObjectMapper mapper = this.context().get(ObjectMapper.class, ModifiersAttribute.of(PersistenceModifier.SKIP_EMPTY));
         final ModifierElement element = new ModifierElement(HartshornUtils.emptyList());
         final Exceptional<String> out = mapper.write(element);
 

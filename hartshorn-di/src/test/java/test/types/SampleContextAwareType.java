@@ -15,25 +15,17 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.di.types;
+package test.types;
 
-import org.dockbox.hartshorn.di.annotations.inject.Bound;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
 
 import javax.inject.Inject;
 
 import lombok.Getter;
 
-@Getter
-public class SampleBoundPopulatedType implements SampleInterface {
-
-    private final String name;
+public class SampleContextAwareType {
 
     @Inject
-    private SampleField field;
-
-    @Bound
-    public SampleBoundPopulatedType(final String name) {
-        this.name = name;
-    }
+    @Getter private ApplicationContext context;
 
 }

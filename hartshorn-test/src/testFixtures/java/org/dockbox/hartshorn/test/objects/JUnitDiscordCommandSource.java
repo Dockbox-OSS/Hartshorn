@@ -21,52 +21,60 @@ import net.dv8tion.jda.api.entities.TextChannel;
 
 import org.dockbox.hartshorn.api.exceptions.NotImplementedException;
 import org.dockbox.hartshorn.di.annotations.inject.Bound;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.discord.DiscordCommandSource;
 import org.dockbox.hartshorn.i18n.common.ResourceEntry;
 import org.dockbox.hartshorn.i18n.text.Text;
 import org.dockbox.hartshorn.i18n.text.pagination.Pagination;
 
+import javax.inject.Inject;
+
+import lombok.Getter;
+
 public class JUnitDiscordCommandSource implements DiscordCommandSource {
 
+    @Inject
+    @Getter
+    private ApplicationContext applicationContext;
     private final TextChannel textChannel;
 
     @Bound
-    public JUnitDiscordCommandSource(TextChannel textChannel) {
+    public JUnitDiscordCommandSource(final TextChannel textChannel) {
         this.textChannel = textChannel;
     }
 
     @Override
-    public void execute(String command) {
+    public void execute(final String command) {
         // TODO: Test implementation, mocking client?
         throw new NotImplementedException();
     }
 
     @Override
-    public void send(ResourceEntry text) {
+    public void send(final ResourceEntry text) {
         // TODO: Test implementation, mocking client?
         throw new NotImplementedException();
     }
 
     @Override
-    public void send(Text text) {
+    public void send(final Text text) {
         // TODO: Test implementation, mocking client?
         throw new NotImplementedException();
     }
 
     @Override
-    public void sendWithPrefix(ResourceEntry text) {
+    public void sendWithPrefix(final ResourceEntry text) {
         // TODO: Test implementation, mocking client?
         throw new NotImplementedException();
     }
 
     @Override
-    public void sendWithPrefix(Text text) {
+    public void sendWithPrefix(final Text text) {
         // TODO: Test implementation, mocking client?
         throw new NotImplementedException();
     }
 
     @Override
-    public void send(Pagination pagination) {
+    public void send(final Pagination pagination) {
         // TODO: Test implementation, mocking client?
         throw new NotImplementedException();
     }

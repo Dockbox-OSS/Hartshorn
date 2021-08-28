@@ -17,39 +17,33 @@
 
 package org.dockbox.hartshorn.di;
 
-import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.di.binding.Bindings;
+import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.di.properties.BindingMetaAttribute;
-import org.dockbox.hartshorn.di.types.InvalidSampleBoundType;
-import org.dockbox.hartshorn.di.types.PopulatedType;
-import org.dockbox.hartshorn.di.types.SampleBoundPopulatedType;
-import org.dockbox.hartshorn.di.types.SampleBoundType;
-import org.dockbox.hartshorn.di.types.SampleField;
-import org.dockbox.hartshorn.di.types.SampleFieldImplementation;
-import org.dockbox.hartshorn.di.types.SampleImplementation;
-import org.dockbox.hartshorn.di.types.SampleInterface;
-import org.dockbox.hartshorn.di.types.bound.SampleBoundAnnotatedImplementation;
-import org.dockbox.hartshorn.di.types.meta.SampleMetaAnnotatedImplementation;
-import org.dockbox.hartshorn.di.types.multi.SampleMultiAnnotatedImplementation;
-import org.dockbox.hartshorn.di.types.provision.ProvidedInterface;
-import org.dockbox.hartshorn.di.types.scan.SampleAnnotatedImplementation;
-import org.dockbox.hartshorn.test.HartshornRunner;
-import org.dockbox.hartshorn.util.Reflect;
+import org.dockbox.hartshorn.test.ApplicationAwareTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.stream.Stream;
 
-public class ApplicationContextTests {
+import test.types.InvalidSampleBoundType;
+import test.types.PopulatedType;
+import test.types.SampleBoundPopulatedType;
+import test.types.SampleBoundType;
+import test.types.SampleField;
+import test.types.SampleFieldImplementation;
+import test.types.SampleImplementation;
+import test.types.SampleInterface;
+import test.types.bound.SampleBoundAnnotatedImplementation;
+import test.types.meta.SampleMetaAnnotatedImplementation;
+import test.types.multi.SampleMultiAnnotatedImplementation;
+import test.types.provision.ProvidedInterface;
+import test.types.scan.SampleAnnotatedImplementation;
 
-    @RegisterExtension
-    static HartshornRunner hartshorn = HartshornRunner.builder()
-            .resetEach(true)
-            .build();
+public class ApplicationContextTests extends ApplicationAwareTest {
 
     private static Stream<Arguments> providers() {
         return Stream.of(
@@ -63,8 +57,8 @@ public class ApplicationContextTests {
 
     @Test
     public void testStaticBindingCanBeProvided() {
-        Hartshorn.context().bind(Key.of(SampleInterface.class), SampleImplementation.class);
-        final SampleInterface provided = Hartshorn.context().get(SampleInterface.class);
+        this.context().bind(Key.of(SampleInterface.class), SampleImplementation.class);
+        final SampleInterface provided = this.context().get(SampleInterface.class);
         Assertions.assertNotNull(provided);
 
         final Class<? extends SampleInterface> providedClass = provided.getClass();
@@ -75,8 +69,8 @@ public class ApplicationContextTests {
 
     @Test
     public void testStaticBindingWithMetaCanBeProvided() {
-        Hartshorn.context().bind(Key.of(SampleInterface.class, Bindings.named("demo")), SampleImplementation.class);
-        final SampleInterface provided = Hartshorn.context().get(SampleInterface.class, Bindings.named("demo"));
+        this.context().bind(Key.of(SampleInterface.class, Bindings.named("demo")), SampleImplementation.class);
+        final SampleInterface provided = this.context().get(SampleInterface.class, Bindings.named("demo"));
         Assertions.assertNotNull(provided);
 
         final Class<? extends SampleInterface> providedClass = provided.getClass();
@@ -87,8 +81,8 @@ public class ApplicationContextTests {
 
     @Test
     public void testInstanceBindingCanBeProvided() {
-        Hartshorn.context().bind(Key.of(SampleInterface.class), new SampleImplementation());
-        final SampleInterface provided = Hartshorn.context().get(SampleInterface.class);
+        this.context().bind(Key.of(SampleInterface.class), new SampleImplementation());
+        final SampleInterface provided = this.context().get(SampleInterface.class);
         Assertions.assertNotNull(provided);
 
         final Class<? extends SampleInterface> providedClass = provided.getClass();
@@ -99,8 +93,8 @@ public class ApplicationContextTests {
 
     @Test
     public void testInstanceBindingWithMetaCanBeProvided() {
-        Hartshorn.context().bind(Key.of(SampleInterface.class, Bindings.named("demo")), new SampleImplementation());
-        final SampleInterface provided = Hartshorn.context().get(SampleInterface.class, Bindings.named("demo"));
+        this.context().bind(Key.of(SampleInterface.class, Bindings.named("demo")), new SampleImplementation());
+        final SampleInterface provided = this.context().get(SampleInterface.class, Bindings.named("demo"));
         Assertions.assertNotNull(provided);
 
         final Class<? extends SampleInterface> providedClass = provided.getClass();
@@ -111,8 +105,8 @@ public class ApplicationContextTests {
 
     @Test
     public void testProviderBindingCanBeProvided() {
-        Hartshorn.context().provide(Key.of(SampleInterface.class), SampleImplementation::new);
-        final SampleInterface provided = Hartshorn.context().get(SampleInterface.class);
+        this.context().provide(Key.of(SampleInterface.class), SampleImplementation::new);
+        final SampleInterface provided = this.context().get(SampleInterface.class);
         Assertions.assertNotNull(provided);
 
         final Class<? extends SampleInterface> providedClass = provided.getClass();
@@ -123,8 +117,8 @@ public class ApplicationContextTests {
 
     @Test
     public void testProviderBindingWithMetaCanBeProvided() {
-        Hartshorn.context().provide(Key.of(SampleInterface.class, Bindings.named("demo")), SampleImplementation::new);
-        final SampleInterface provided = Hartshorn.context().get(SampleInterface.class, Bindings.named("demo"));
+        this.context().provide(Key.of(SampleInterface.class, Bindings.named("demo")), SampleImplementation::new);
+        final SampleInterface provided = this.context().get(SampleInterface.class, Bindings.named("demo"));
         Assertions.assertNotNull(provided);
 
         final Class<? extends SampleInterface> providedClass = provided.getClass();
@@ -135,9 +129,8 @@ public class ApplicationContextTests {
 
     @Test
     public void testScannedBindingCanBeProvided() {
-        // sub-package *.scan was added to prevent scan conflicts
-        Hartshorn.context().bind("org.dockbox.hartshorn.di.types.scan");
-        final SampleInterface provided = Hartshorn.context().get(SampleInterface.class);
+        this.context().bind("test.types.scan");
+        final SampleInterface provided = this.context().get(SampleInterface.class);
         Assertions.assertNotNull(provided);
 
         final Class<? extends SampleInterface> providedClass = provided.getClass();
@@ -148,13 +141,12 @@ public class ApplicationContextTests {
 
     @Test
     public void testScannedMetaBindingsCanBeProvided() {
-        // sub-package *.meta was added to prevent scan conflicts
-        Hartshorn.context().bind("org.dockbox.hartshorn.di.types.meta");
-        final SampleInterface sample = Hartshorn.context().get(SampleInterface.class);
-        Assertions.assertTrue(Reflect.isProxy(sample));
+        this.context().bind("test.types.meta");
+        final SampleInterface sample = this.context().get(SampleInterface.class);
+        Assertions.assertTrue(TypeContext.of(sample).isProxy());
         Assertions.assertThrows(AbstractMethodError.class, sample::name);
 
-        final SampleInterface provided = Hartshorn.context().get(SampleInterface.class, Bindings.named("meta"));
+        final SampleInterface provided = this.context().get(SampleInterface.class, Bindings.named("meta"));
         Assertions.assertNotNull(provided);
 
         final Class<? extends SampleInterface> providedClass = provided.getClass();
@@ -165,10 +157,8 @@ public class ApplicationContextTests {
 
     @Test
     public void testScannedMultiBindingsCanBeProvided() {
-        // sub-package *.multi was added to prevent scan conflicts
-        Hartshorn.context().bind("org.dockbox.hartshorn.di.types.multi");
-
-        final SampleInterface provided = Hartshorn.context().get(SampleInterface.class);
+        this.context().bind("test.types.multi");
+        final SampleInterface provided = this.context().get(SampleInterface.class);
         Assertions.assertNotNull(provided);
 
         final Class<? extends SampleInterface> providedClass = provided.getClass();
@@ -179,10 +169,8 @@ public class ApplicationContextTests {
 
     @Test
     public void testScannedMultiMetaBindingsCanBeProvided() {
-        // sub-package *.multi was added to prevent scan conflicts
-        Hartshorn.context().bind("org.dockbox.hartshorn.di.types.multi");
-
-        final SampleInterface provided = Hartshorn.context().get(SampleInterface.class, Bindings.named("meta"));
+        this.context().bind("test.types.multi");
+        final SampleInterface provided = this.context().get(SampleInterface.class, Bindings.named("meta"));
         Assertions.assertNotNull(provided);
 
         final Class<? extends SampleInterface> providedClass = provided.getClass();
@@ -193,8 +181,8 @@ public class ApplicationContextTests {
 
     @Test
     public void testConfigBindingCanBeProvided() {
-        Hartshorn.context().bind(new SampleConfiguration());
-        final SampleInterface provided = Hartshorn.context().get(SampleInterface.class);
+        this.context().bind(new SampleConfiguration());
+        final SampleInterface provided = this.context().get(SampleInterface.class);
         Assertions.assertNotNull(provided);
 
         final Class<? extends SampleInterface> providedClass = provided.getClass();
@@ -205,30 +193,30 @@ public class ApplicationContextTests {
 
     @Test
     public void testTypesCanBePopulated() {
-        Hartshorn.context().bind(Key.of(SampleInterface.class), SampleImplementation.class);
+        this.context().bind(Key.of(SampleInterface.class), SampleImplementation.class);
         final PopulatedType populatedType = new PopulatedType();
         Assertions.assertNull(populatedType.sampleInterface());
 
-        Hartshorn.context().populate(populatedType);
+        this.context().populate(populatedType);
         Assertions.assertNotNull(populatedType.sampleInterface());
         Assertions.assertEquals("Hartshorn", populatedType.sampleInterface().name());
     }
 
     @Test
     public void unboundTypesCanBeProvided() {
-        Hartshorn.context().bind(Key.of(SampleInterface.class), SampleImplementation.class);
-        final PopulatedType provided = Hartshorn.context().get(PopulatedType.class);
+        this.context().bind(Key.of(SampleInterface.class), SampleImplementation.class);
+        final PopulatedType provided = this.context().get(PopulatedType.class);
         Assertions.assertNotNull(provided);
         Assertions.assertNotNull(provided.sampleInterface());
     }
 
     @Test
     public void injectionPointsArePrioritised() {
-        Hartshorn.context().bind(Key.of(SampleInterface.class), SampleImplementation.class);
-        final InjectionPoint<SampleInterface> point = InjectionPoint.of(SampleInterface.class, $ -> new SampleAnnotatedImplementation());
-        Hartshorn.context().add(point);
+        this.context().bind(Key.of(SampleInterface.class), SampleImplementation.class);
+        final InjectionPoint<SampleInterface> point = InjectionPoint.of(TypeContext.of(SampleInterface.class), $ -> new SampleAnnotatedImplementation());
+        this.context().add(point);
 
-        final SampleInterface provided = Hartshorn.context().get(SampleInterface.class);
+        final SampleInterface provided = this.context().get(SampleInterface.class);
         Assertions.assertNotNull(provided);
         Assertions.assertEquals(SampleAnnotatedImplementation.class, provided.getClass());
     }
@@ -236,27 +224,23 @@ public class ApplicationContextTests {
     @Test
     public void invalidBoundTypesCannotBeBound() {
         Assertions.assertThrows(IllegalArgumentException.class, () ->
-                Hartshorn.context().manual(Key.of(SampleInterface.class), InvalidSampleBoundType.class)
+                this.context().manual(Key.of(SampleInterface.class), InvalidSampleBoundType.class)
         );
     }
 
     @Test
     public void boundTypesCanBeProvided() {
-        Hartshorn.context().manual(Key.of(SampleInterface.class), SampleBoundType.class);
-        Hartshorn.context().bind(Key.of(TypeFactory.class), TypeFactoryImpl.class);
+        this.context().manual(Key.of(SampleInterface.class), SampleBoundType.class);
 
-        final SampleInterface wired = Hartshorn.context().get(TypeFactory.class).create(SampleInterface.class, "BoundHartshorn");
+        final SampleInterface wired = this.context().get(TypeFactory.class).create(SampleInterface.class, "BoundHartshorn");
         Assertions.assertNotNull(wired);
         Assertions.assertEquals("BoundHartshorn", wired.name());
     }
 
     @Test
     public void testScannedBoundBindingsCanBeProvided() {
-        // sub-package *.bound was added to prevent scan conflicts
-        Hartshorn.context().bind("org.dockbox.hartshorn.di.types.bound");
-        Hartshorn.context().bind(Key.of(TypeFactory.class), TypeFactoryImpl.class);
-
-        final SampleInterface provided = Hartshorn.context().get(TypeFactory.class).create(SampleInterface.class, "BoundAnnotated");
+        this.context().bind("test.types.bound");
+        final SampleInterface provided = this.context().get(TypeFactory.class).create(SampleInterface.class, "BoundAnnotated");
         Assertions.assertNotNull(provided);
 
         final Class<? extends SampleInterface> providedClass = provided.getClass();
@@ -267,11 +251,10 @@ public class ApplicationContextTests {
 
     @Test
     public void boundTypesCanBeProvidedThroughFactoryProperty() {
-        Hartshorn.context().manual(Key.of(SampleInterface.class), SampleBoundType.class);
-        Hartshorn.context().manual(Key.of(SampleInterface.class), SampleBoundType.class);
-        Hartshorn.context().bind(Key.of(TypeFactory.class), TypeFactoryImpl.class);
+        this.context().manual(Key.of(SampleInterface.class), SampleBoundType.class);
+        this.context().manual(Key.of(SampleInterface.class), SampleBoundType.class);
 
-        final SampleInterface provided = Hartshorn.context().get(SampleInterface.class, TypeFactory.use("FactoryTyped"));
+        final SampleInterface provided = this.context().get(SampleInterface.class, TypeFactory.use("FactoryTyped"));
         Assertions.assertNotNull(provided);
 
         final Class<? extends SampleInterface> providedClass = provided.getClass();
@@ -282,10 +265,9 @@ public class ApplicationContextTests {
 
     @Test
     public void providerRedirectsVarargs() {
-        Hartshorn.context().manual(Key.of(SampleInterface.class), SampleBoundType.class);
-        Hartshorn.context().bind(Key.of(TypeFactory.class), TypeFactoryImpl.class);
+        this.context().manual(Key.of(SampleInterface.class), SampleBoundType.class);
 
-        final SampleInterface provided = Hartshorn.context().get(SampleInterface.class, "FactoryTyped");
+        final SampleInterface provided = this.context().get(SampleInterface.class, "FactoryTyped");
         Assertions.assertNotNull(provided);
 
         final Class<? extends SampleInterface> providedClass = provided.getClass();
@@ -296,11 +278,10 @@ public class ApplicationContextTests {
 
     @Test
     public void varargProvidedTypesArePopulated() {
-        Hartshorn.context().manual(Key.of(SampleInterface.class), SampleBoundPopulatedType.class);
-        Hartshorn.context().bind(Key.of(TypeFactory.class), TypeFactoryImpl.class);
-        Hartshorn.context().bind(Key.of(SampleField.class), SampleFieldImplementation.class);
+        this.context().manual(Key.of(SampleInterface.class), SampleBoundPopulatedType.class);
+        this.context().bind(Key.of(SampleField.class), SampleFieldImplementation.class);
 
-        final SampleInterface provided = Hartshorn.context().get(SampleInterface.class, "FactoryTyped");
+        final SampleInterface provided = this.context().get(SampleInterface.class, "FactoryTyped");
         Assertions.assertNotNull(provided);
         Assertions.assertTrue(provided instanceof SampleBoundPopulatedType);
         Assertions.assertNotNull(((SampleBoundPopulatedType) provided).field());
@@ -309,14 +290,13 @@ public class ApplicationContextTests {
 
     @Test
     public void injectionPointsAreAppliedToVarargProviders() {
-        Hartshorn.context().manual(Key.of(SampleInterface.class), SampleBoundType.class);
-        Hartshorn.context().bind(Key.of(TypeFactory.class), TypeFactoryImpl.class);
-        Hartshorn.context().bind(Key.of(SampleField.class), SampleFieldImplementation.class);
+        this.context().manual(Key.of(SampleInterface.class), SampleBoundType.class);
+        this.context().bind(Key.of(SampleField.class), SampleFieldImplementation.class);
 
-        final InjectionPoint<SampleInterface> point = InjectionPoint.of(SampleInterface.class, $ -> new SampleImplementation());
-        Hartshorn.context().add(point);
+        final InjectionPoint<SampleInterface> point = InjectionPoint.of(TypeContext.of(SampleInterface.class), $ -> new SampleImplementation());
+        this.context().add(point);
 
-        final SampleInterface provided = Hartshorn.context().get(SampleInterface.class, "FactoryTyped");
+        final SampleInterface provided = this.context().get(SampleInterface.class, "FactoryTyped");
         Assertions.assertFalse(provided instanceof SampleBoundType);
         Assertions.assertTrue(provided instanceof SampleImplementation);
     }
@@ -324,16 +304,15 @@ public class ApplicationContextTests {
     @ParameterizedTest
     @MethodSource("providers")
     void testProvidersCanApply(final String meta, final String name, final boolean field, final String fieldMeta, final boolean singleton) {
-        Hartshorn.context().bind("org.dockbox.hartshorn.di.types.provision");
-
+        this.context().bind("test.types.provision");
         if (field) {
-            if (fieldMeta == null) {Hartshorn.context().bind(Key.of(SampleField.class), SampleFieldImplementation.class);}
-            else Hartshorn.context().bind(Key.of(SampleField.class, Bindings.named(fieldMeta)), SampleFieldImplementation.class);
+            if (fieldMeta == null) {this.context().bind(Key.of(SampleField.class), SampleFieldImplementation.class);}
+            else this.context().bind(Key.of(SampleField.class, Bindings.named(fieldMeta)), SampleFieldImplementation.class);
         }
 
         final ProvidedInterface provided;
-        if (meta == null) provided = Hartshorn.context().get(ProvidedInterface.class);
-        else provided = Hartshorn.context().get(ProvidedInterface.class, Bindings.named(meta));
+        if (meta == null) provided = this.context().get(ProvidedInterface.class);
+        else provided = this.context().get(ProvidedInterface.class, Bindings.named(meta));
         Assertions.assertNotNull(provided);
 
         final String actual = provided.name();
@@ -342,8 +321,8 @@ public class ApplicationContextTests {
 
         if (singleton) {
             final ProvidedInterface second;
-            if (meta == null) second = Hartshorn.context().get(ProvidedInterface.class);
-            else second = Hartshorn.context().get(ProvidedInterface.class, Bindings.named(meta));
+            if (meta == null) second = this.context().get(ProvidedInterface.class);
+            else second = this.context().get(ProvidedInterface.class, Bindings.named(meta));
             Assertions.assertNotNull(second);
             Assertions.assertSame(provided, second);
         }
@@ -351,10 +330,8 @@ public class ApplicationContextTests {
 
     @Test
     void testBoundProviderCanSupply() {
-        Hartshorn.context().bind("org.dockbox.hartshorn.di.types.provision");
-        Hartshorn.context().bind(Key.of(TypeFactory.class), TypeFactoryImpl.class);
-
-        final ProvidedInterface provided = Hartshorn.context().get(ProvidedInterface.class, BindingMetaAttribute.of("bound"), TypeFactory.use("BoundProvision"));
+        this.context().bind("test.types.provision");
+        final ProvidedInterface provided = this.context().get(ProvidedInterface.class, BindingMetaAttribute.of("bound"), TypeFactory.use("BoundProvision"));
         Assertions.assertNotNull(provided);
         Assertions.assertEquals("BoundProvision", provided.name());
     }

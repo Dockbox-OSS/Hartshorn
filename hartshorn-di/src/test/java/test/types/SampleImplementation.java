@@ -15,16 +15,11 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.di.types;
+package test.types;
 
-import javax.inject.Inject;
-
-import lombok.Getter;
-
-@Getter
-public class PopulatedType {
-
-    @Inject
-    SampleInterface sampleInterface;
-
+public class SampleImplementation implements SampleInterface {
+    @Override
+    public String name() {
+        return "Hartshorn";
+    }
 }

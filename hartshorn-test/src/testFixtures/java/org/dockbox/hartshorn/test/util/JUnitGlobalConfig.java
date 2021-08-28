@@ -31,9 +31,4 @@ public class JUnitGlobalConfig implements GlobalConfig {
     public ExceptionLevels level() {
         return ExceptionLevels.MINIMAL;
     }
-
-    @Override
-    public String version() {
-        return "dev";
-    }
 }

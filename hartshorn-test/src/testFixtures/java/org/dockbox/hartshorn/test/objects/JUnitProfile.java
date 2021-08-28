@@ -34,14 +34,14 @@ public class JUnitProfile implements Profile {
     private Map<String, String> properties;
 
     @Bound
-    public JUnitProfile(Profile profile) {
+    public JUnitProfile(final Profile profile) {
         this(profile.uniqueId());
         if (profile instanceof JUnitProfile) this.properties = new HashMap<>(((JUnitProfile) profile).properties);
         else Hartshorn.log().warn("Could not copy profile properties as the provided profile is not an instance of JUnitProfile");
     }
 
     @Bound
-    public JUnitProfile(UUID uniqueId) {
+    public JUnitProfile(final UUID uniqueId) {
         this.uniqueId = uniqueId;
     }
 
@@ -51,12 +51,12 @@ public class JUnitProfile implements Profile {
     }
 
     @Override
-    public void property(String key, String value) {
+    public void property(final String key, final String value) {
         this.properties.put(key, value);
     }
 
     @Override
-    public JUnitProfile properties(Map<String, String> properties) {
+    public JUnitProfile properties(final Map<String, String> properties) {
         this.properties.putAll(properties);
         return this;
     }

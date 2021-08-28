@@ -15,15 +15,10 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.di.types.scan;
+package test.types;
 
-import org.dockbox.hartshorn.di.annotations.inject.Binds;
-import org.dockbox.hartshorn.di.types.SampleInterface;
+public interface SampleInterface {
 
-@Binds(SampleInterface.class)
-public class SampleAnnotatedImplementation implements SampleInterface {
-    @Override
-    public String name() {
-        return "AnnotatedHartshorn";
-    }
+    String name();
+
 }

@@ -15,12 +15,25 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.util.types;
+package test.types;
 
-public class EmptyType {
+import org.dockbox.hartshorn.di.annotations.inject.Bound;
 
-    public boolean empty() {
-        return true;
+import javax.inject.Inject;
+
+import lombok.Getter;
+
+@Getter
+public class SampleBoundPopulatedType implements SampleInterface {
+
+    private final String name;
+
+    @Inject
+    private SampleField field;
+
+    @Bound
+    public SampleBoundPopulatedType(final String name) {
+        this.name = name;
     }
 
 }

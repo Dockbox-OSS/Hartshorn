@@ -29,24 +29,22 @@ import org.dockbox.hartshorn.persistence.table.Merge;
 import org.dockbox.hartshorn.persistence.table.Order;
 import org.dockbox.hartshorn.persistence.table.Table;
 import org.dockbox.hartshorn.persistence.table.TableRow;
-import org.dockbox.hartshorn.test.HartshornRunner;
+import org.dockbox.hartshorn.test.ApplicationAwareTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.UUID;
 
-@ExtendWith(HartshornRunner.class)
-public class TableTests {
+public class TableTests extends ApplicationAwareTest {
 
     @Test
     public void testSelectColumnOfTable() {
-        Table table = this.createTestTable();
+        final Table table = this.createTestTable();
         table.addRow(new IdentifiedUser(1, "coulis"));
 
-        ColumnIdentifier<?>[] expectedColumns = { TestColumnIdentifiers.NAME };
+        final ColumnIdentifier<?>[] expectedColumns = { TestColumnIdentifiers.NAME };
 
-        Table selectedTable = table.select(TestColumnIdentifiers.NAME);
+        final Table selectedTable = table.select(TestColumnIdentifiers.NAME);
 
         // Check if table's identifiers have been removed properly
         Assertions.assertArrayEquals(expectedColumns, selectedTable.identifiers());
@@ -60,18 +58,18 @@ public class TableTests {
 
     @Test
     public void testWorkingIdentifiedFields() {
-        Table table = this.createTestTable();
+        final Table table = this.createTestTable();
         table.addRow(new IdentifiedUser(1, "coulis"));
 
         Assertions.assertEquals(1, table.rows().size());
-        TableRow row = table.rows().get(0);
+        final TableRow row = table.rows().get(0);
         Assertions.assertEquals("coulis", row.value(TestColumnIdentifiers.NAME).get());
     }
 
     @Test
     public void testWronglyIdentifiedFields() {
         Assertions.assertThrows(UnknownIdentifierException.class, () -> {
-            Table table = this.createTestTable();
+            final Table table = this.createTestTable();
             table.addRow(new WronglyIdentifiedUser(1, "coulis"));
         });
     }
@@ -79,49 +77,49 @@ public class TableTests {
     @Test
     public void testThrowsExceptionOnTypeMismatch() {
         Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            Table table = this.createTestTable();
+            final Table table = this.createTestTable();
             table.addRow("3", 1);
         });
     }
 
     @Test
     public void testAcceptsTypeFields() {
-        Table table = this.createTestTable();
+        final Table table = this.createTestTable();
         table.addRow(new User(1, "pumbas600"));
 
         Assertions.assertEquals(1, table.rows().size());
-        TableRow row = table.rows().get(0);
+        final TableRow row = table.rows().get(0);
         Assertions.assertEquals("pumbas600", row.value(TestColumnIdentifiers.NAME).get());
     }
 
     @Test
     public void testThrowsExceptionOnMissingTypeField() {
         Assertions.assertThrows(UnknownIdentifierException.class, () -> {
-            Table table = new Table(
+            final Table table = new Table(
                     TestColumnIdentifiers.NUMERAL_ID,
                     TestColumnIdentifiers.NAME,
                     TestColumnIdentifiers.UUID);
             table.addRow(new User(1, "pumbas600"));
 
             Assertions.assertEquals(1, table.rows().size());
-            TableRow row = table.rows().get(0);
+            final TableRow row = table.rows().get(0);
             Assertions.assertEquals("pumbas600", row.value(TestColumnIdentifiers.NAME).get());
         });
     }
 
     @Test
     public void testAcceptsValidVarargs() {
-        Table table = this.createTestTable();
+        final Table table = this.createTestTable();
         table.addRow(2, "Diggy");
 
         Assertions.assertEquals(1, table.rows().size());
-        TableRow row = table.rows().get(0);
+        final TableRow row = table.rows().get(0);
         Assertions.assertEquals("Diggy", row.value(TestColumnIdentifiers.NAME).get());
     }
 
     @Test
     public void testOrderByDesc() {
-        Table table = this.createTestTable();
+        final Table table = this.createTestTable();
         table.addRow(2, "Diggy");
         table.addRow(3, "pumbas600");
         table.addRow(1, "coulis");
@@ -133,7 +131,7 @@ public class TableTests {
 
     @Test
     public void testOrderByAsc() {
-        Table table = this.createTestTable();
+        final Table table = this.createTestTable();
         table.addRow(2, "Diggy");
         table.addRow(3, "pumbas600");
         table.addRow(1, "coulis");
@@ -146,7 +144,7 @@ public class TableTests {
     @Test
     public void testOrderByDoesNotAcceptInvalidColumn() {
         Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            Table table = this.createTestTable();
+            final Table table = this.createTestTable();
             table.addRow(2, "Diggy");
             table.orderBy(TestColumnIdentifiers.UUID, Order.ASC);
         });
@@ -154,43 +152,43 @@ public class TableTests {
 
     @Test
     public void testWhere() {
-        Table table = this.createTestTable();
+        final Table table = this.createTestTable();
         table.addRow(2, "Diggy");
         table.addRow(3, "pumbas600");
         table.addRow(1, "coulis");
 
-        Table where = table.where(TestColumnIdentifiers.NUMERAL_ID, 1);
+        final Table where = table.where(TestColumnIdentifiers.NUMERAL_ID, 1);
         Assertions.assertEquals(1, where.rows().size());
     }
 
     @Test
     public void testJoinPreferOriginal() throws EmptyEntryException, IdentifierMismatchException {
-        Table original = this.createTestTable();
+        final Table original = this.createTestTable();
         original.addRow(1, "coulis");
         original.addRow(2, "NotDiggy");
 
-        Table other = this.createTestTable();
+        final Table other = this.createTestTable();
         other.addRow(2, "Diggy");
         other.addRow(3, "pumbas600");
 
-        Table joined = original.join(other, TestColumnIdentifiers.NUMERAL_ID, Merge.PREFER_ORIGINAL);
-        Table whereLookup = joined.where(TestColumnIdentifiers.NUMERAL_ID, 2);
+        final Table joined = original.join(other, TestColumnIdentifiers.NUMERAL_ID, Merge.PREFER_ORIGINAL);
+        final Table whereLookup = joined.where(TestColumnIdentifiers.NUMERAL_ID, 2);
         Assertions.assertEquals(3, joined.rows().size());
         Assertions.assertEquals("NotDiggy", whereLookup.first().get().value(TestColumnIdentifiers.NAME).get());
     }
 
     @Test
     public void testJoinPreferForeign() throws EmptyEntryException, IdentifierMismatchException {
-        Table original = this.createTestTable();
+        final Table original = this.createTestTable();
         original.addRow(1, "coulis");
         original.addRow(2, "NotDiggy");
 
-        Table other = this.createTestTable();
+        final Table other = this.createTestTable();
         other.addRow(2, "Diggy");
         other.addRow(3, "pumbas600");
 
-        Table joined = original.join(other, TestColumnIdentifiers.NUMERAL_ID, Merge.PREFER_FOREIGN);
-        Table whereLookup = joined.where(TestColumnIdentifiers.NUMERAL_ID, 2);
+        final Table joined = original.join(other, TestColumnIdentifiers.NUMERAL_ID, Merge.PREFER_FOREIGN);
+        final Table whereLookup = joined.where(TestColumnIdentifiers.NUMERAL_ID, 2);
         Assertions.assertEquals(3, joined.rows().size());
         Assertions.assertEquals("Diggy", whereLookup.first().get().value(TestColumnIdentifiers.NAME).get());
     }
@@ -198,11 +196,11 @@ public class TableTests {
     @Test
     public void testJoinThrowsExceptionOnEmptyEntry() {
         Assertions.assertThrows(EmptyEntryException.class, () -> {
-            Table original = this.createTestTable();
+            final Table original = this.createTestTable();
             original.addRow(1, "coulis");
             original.addRow(2, "NotDiggy");
 
-            Table other = new Table(
+            final Table other = new Table(
                     TestColumnIdentifiers.NUMERAL_ID,
                     TestColumnIdentifiers.NAME,
                     TestColumnIdentifiers.UUID);
@@ -215,19 +213,19 @@ public class TableTests {
 
     @Test
     public void testJoinPopulatesNullOnEmptyEntry() throws EmptyEntryException, IdentifierMismatchException {
-        Table original = this.createTestTable();
+        final Table original = this.createTestTable();
         original.addRow(1, "coulis");
         original.addRow(2, "NotDiggy");
 
-        Table other = new Table(
+        final Table other = new Table(
                 TestColumnIdentifiers.NUMERAL_ID,
                 TestColumnIdentifiers.NAME,
                 TestColumnIdentifiers.UUID);
         other.addRow(2, "Diggy", UUID.randomUUID());
         other.addRow(3, "pumbas600", UUID.randomUUID());
 
-        Table joined = original.join(other, TestColumnIdentifiers.NUMERAL_ID, Merge.PREFER_FOREIGN, true);
-        Table whereLookup = joined.where(TestColumnIdentifiers.NUMERAL_ID, 1);
+        final Table joined = original.join(other, TestColumnIdentifiers.NUMERAL_ID, Merge.PREFER_FOREIGN, true);
+        final Table whereLookup = joined.where(TestColumnIdentifiers.NUMERAL_ID, 1);
         Assertions.assertFalse(
                 whereLookup.first().get().value(TestColumnIdentifiers.UUID).present());
     }

@@ -18,6 +18,8 @@
 package org.dockbox.hartshorn.test.util;
 
 import org.dockbox.hartshorn.api.domain.tuple.Tristate;
+import org.dockbox.hartshorn.di.annotations.service.Service;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.i18n.PermissionHolder;
 import org.dockbox.hartshorn.i18n.permissions.Permission;
 import org.dockbox.hartshorn.util.HartshornUtils;
@@ -26,22 +28,28 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.UUID;
 
-public final class JUnitPermissionRegistry {
+import javax.inject.Inject;
 
-    private static final Map<UUID, Collection<Permission>> permissions = HartshornUtils.emptyConcurrentMap();
+@Service
+public class JUnitPermissionRegistry {
+
+    @Inject
+    private ApplicationContext context;
+
+    private final Map<UUID, Collection<Permission>> permissions = HartshornUtils.emptyConcurrentMap();
 
     private JUnitPermissionRegistry() {
     }
 
-    public static void permission(PermissionHolder holder, Permission permission) {
-        permissions.putIfAbsent(holder.uniqueId(), HartshornUtils.emptyList());
-        permissions.get(holder.uniqueId()).add(permission);
+    public void permission(final PermissionHolder holder, final Permission permission) {
+        this.permissions.putIfAbsent(holder.uniqueId(), HartshornUtils.emptyList());
+        this.permissions.get(holder.uniqueId()).add(permission);
     }
 
     // Specific context
-    public static boolean hasPermission(PermissionHolder holder, Permission permission) {
-        if (permission.context().absent()) return hasPermission(holder, permission.get());
-        for (Permission abstractPermission : permissions.getOrDefault(holder.uniqueId(), HartshornUtils.emptyList())) {
+    public boolean hasPermission(final PermissionHolder holder, final Permission permission) {
+        if (permission.context().absent()) return this.hasPermission(holder, permission.get());
+        for (final Permission abstractPermission : this.permissions.getOrDefault(holder.uniqueId(), HartshornUtils.emptyList())) {
             if (abstractPermission.context().present() && abstractPermission.get().equals(permission.get())) {
                 if (abstractPermission.context().get().equals(permission.context().get())) return true;
             }
@@ -50,8 +58,8 @@ public final class JUnitPermissionRegistry {
     }
 
     // Global context
-    public static boolean hasPermission(PermissionHolder holder, String permission) {
-        for (Permission abstractPermission : permissions.getOrDefault(holder.uniqueId(), HartshornUtils.emptyList())) {
+    public boolean hasPermission(final PermissionHolder holder, final String permission) {
+        for (final Permission abstractPermission : this.permissions.getOrDefault(holder.uniqueId(), HartshornUtils.emptyList())) {
             if (abstractPermission.context().absent() && abstractPermission.get().equals(permission)) {
                 return true;
             }
@@ -59,26 +67,26 @@ public final class JUnitPermissionRegistry {
         return false;
     }
 
-    public static void permission(PermissionHolder holder, String permission, Tristate tristate) {
+    public void permission(final PermissionHolder holder, final String permission, final Tristate tristate) {
         if (tristate.booleanValue()) {
-            permissions.get(holder.uniqueId()).add(Permission.of(permission));
+            this.permissions.get(holder.uniqueId()).add(Permission.of(this.context, permission));
         }
         else
-            for (Permission abstractPermission : permissions.getOrDefault(holder.uniqueId(), HartshornUtils.emptyList())) {
+            for (final Permission abstractPermission : this.permissions.getOrDefault(holder.uniqueId(), HartshornUtils.emptyList())) {
                 if (abstractPermission.get().equals(permission) && abstractPermission.context().absent()) {
-                    permissions.get(holder.uniqueId()).remove(abstractPermission);
+                    this.permissions.get(holder.uniqueId()).remove(abstractPermission);
                 }
             }
     }
 
-    public static void permission(PermissionHolder holder, Permission permission, Tristate tristate) {
+    public void permission(final PermissionHolder holder, final Permission permission, final Tristate tristate) {
         if (tristate.booleanValue()) {
-            permissions.get(holder.uniqueId()).add(permission);
+            this.permissions.get(holder.uniqueId()).add(permission);
         }
         else
-            for (Permission abstractPermission : permissions.getOrDefault(holder.uniqueId(), HartshornUtils.emptyList())) {
+            for (final Permission abstractPermission : this.permissions.getOrDefault(holder.uniqueId(), HartshornUtils.emptyList())) {
                 if (abstractPermission.equals(permission)) {
-                    permissions.get(holder.uniqueId()).remove(abstractPermission);
+                    this.permissions.get(holder.uniqueId()).remove(abstractPermission);
                 }
             }
     }

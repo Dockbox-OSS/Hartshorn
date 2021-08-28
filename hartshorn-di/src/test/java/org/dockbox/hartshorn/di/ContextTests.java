@@ -22,15 +22,13 @@ import org.dockbox.hartshorn.di.annotations.context.AutoCreating;
 import org.dockbox.hartshorn.di.context.Context;
 import org.dockbox.hartshorn.di.context.DefaultContext;
 import org.dockbox.hartshorn.di.context.DefaultNamedContext;
-import org.dockbox.hartshorn.test.HartshornRunner;
+import org.dockbox.hartshorn.test.ApplicationAwareTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.List;
 
-@ExtendWith(HartshornRunner.class)
-public class ContextTests {
+public class ContextTests extends ApplicationAwareTest {
 
     @Test
     void testUnnamedContextFirst() {

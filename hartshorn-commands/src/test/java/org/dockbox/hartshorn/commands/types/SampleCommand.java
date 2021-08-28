@@ -25,26 +25,26 @@ import org.dockbox.hartshorn.commands.context.CommandContext;
 public class SampleCommand {
 
     @Command(arguments = "<remaining{remainingString}>")
-    public void parent(CommandContext context) {
+    public void parent(final CommandContext context) {
     }
 
     @Command(value = "sub", arguments = "<argument{Int}> --skip remainingInt")
-    public void sub(CommandContext context) {
+    public void sub(final CommandContext context) {
     }
 
     @Command(value = "sub sub", arguments = "<service{Service}>")
-    public void subsub(CommandContext context) {
+    public void subsub(final CommandContext context) {
     }
 
     @Command(value = "complex", arguments = "<required{String}> [optional{String}]  [enum{org.dockbox.hartshorn.commands.types.CommandValueEnum}] --flag --vflag String -s")
-    public void complex(CommandContext context) {
+    public void complex(final CommandContext context) {
     }
 
     @Command(value = "group", arguments = "[group <requiredA> <requiredB>]")
-    public void group(CommandContext context) {
+    public void group(final CommandContext context) {
     }
 
     @Command(value = "arguments", arguments = "<required{String}> [optional{String}] --flag String")
-    public void arguments(CommandSource source, CommandContext context, String required, String optional, String flag) {
+    public void arguments(final CommandSource source, final CommandContext context, final String required, final String optional, final String flag) {
     }
 }

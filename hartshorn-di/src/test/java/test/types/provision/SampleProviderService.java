@@ -15,15 +15,16 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.di.types.provision;
+package test.types.provision;
 
 import org.dockbox.hartshorn.di.annotations.inject.Bound;
 import org.dockbox.hartshorn.di.annotations.inject.Provider;
 import org.dockbox.hartshorn.di.annotations.service.Service;
-import org.dockbox.hartshorn.di.types.SampleField;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
+
+import test.types.SampleField;
 
 @Service
 public class SampleProviderService {

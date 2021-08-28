@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.events;
 
-import org.dockbox.hartshorn.events.parents.Event;
+import org.dockbox.hartshorn.events.parents.ContextCarrierEvent;
 
-public class SampleEvent implements Event {
+public class SampleEvent extends ContextCarrierEvent {
 }

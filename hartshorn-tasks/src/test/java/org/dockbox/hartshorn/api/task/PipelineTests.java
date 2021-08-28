@@ -36,7 +36,7 @@ public class PipelineTests {
 
     @Test
     public void genericPipelineTest() {
-        int result = new Pipeline<Integer>()
+        final int result = new Pipeline<Integer>()
                 .add(Pipe.of((input, throwable) -> input + 1))
                 .addVarargPipes(
                         Pipe.of((input, throwable) -> input * 2),
@@ -49,9 +49,9 @@ public class PipelineTests {
 
     @Test
     public void addingPipelinesTest() {
-        AbstractPipeline<String, String> pipeline = new Pipeline<String>().add(Pipe.of((input, throwable) -> "- " + input + " -"));
+        final AbstractPipeline<String, String> pipeline = new Pipeline<String>().add(Pipe.of((input, throwable) -> "- " + input + " -"));
 
-        String result = new Pipeline<String>()
+        final String result = new Pipeline<String>()
                 .add(Pipe.of((input, throwable) -> input.substring(0, 1).toUpperCase() + input.substring(1)))
                 .add(pipeline)
                 .processUnsafe("hi world");
@@ -61,7 +61,7 @@ public class PipelineTests {
 
     @Test
     public void passingInputForwardOnErrorTest() {
-        int output = new Pipeline<Integer>()
+        final int output = new Pipeline<Integer>()
                 .add(InputPipe.of(input -> 1 / input))
                 .add(StandardPipe.of(input -> input.or(1)))
                 .processUnsafe(0);
@@ -71,7 +71,7 @@ public class PipelineTests {
 
     @Test
     public void errorCatchingTest() {
-        int output = new Pipeline<Integer>()
+        final int output = new Pipeline<Integer>()
                 .add(InputPipe.of(input -> 1 / input))
                 .add(StandardPipe.of(
                         input -> {
@@ -99,7 +99,7 @@ public class PipelineTests {
 
     @Test
     public void returnCancelBehaviourTest() {
-        float output = new Pipeline<Float>()
+        final float output = new Pipeline<Float>()
                 .cancelBehaviour(CancelBehaviour.RETURN)
                 .add(InputPipe.of(input -> input + 1F))
                 .add(CancellablePipe.of(
@@ -115,7 +115,7 @@ public class PipelineTests {
 
     @Test
     public void discardCancelBehaviourTest() {
-        Exceptional<Float> output = new Pipeline<Float>()
+        final Exceptional<Float> output = new Pipeline<Float>()
                 .cancelBehaviour(CancelBehaviour.DISCARD)
                 .add(InputPipe.of(input -> input + 1F))
                 .add(CancellablePipe.of(
@@ -146,7 +146,7 @@ public class PipelineTests {
 
     @Test
     public void removingPipesTest() {
-        AbstractPipeline<Integer, Integer> pipeline = new Pipeline<Integer>()
+        final AbstractPipeline<Integer, Integer> pipeline = new Pipeline<Integer>()
                 .add(InputPipe.of(input -> input * 2))
                 .add(InputPipe.of(input -> input + 3))
                 .add(InputPipe.of(input -> input - 1));
@@ -164,7 +164,7 @@ public class PipelineTests {
     @SuppressWarnings("ReturnOfNull")
     @Test
     public void processingCollectionInputsTest() {
-        List<Integer> output = new Pipeline<Integer>()
+        final List<Integer> output = new Pipeline<Integer>()
                 .add(InputPipe.of(input -> 0 == input % 2 ? input : null))
                 .add(InputPipe.of(input -> input * 2))
                 .processAllSafe(Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10));

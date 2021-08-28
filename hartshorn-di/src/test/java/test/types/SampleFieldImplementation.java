@@ -15,17 +15,7 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.di.types;
+package test.types;
 
-import org.dockbox.hartshorn.di.context.ApplicationContext;
-
-import javax.inject.Inject;
-
-import lombok.Getter;
-
-public class SampleContextAwareType {
-
-    @Inject
-    @Getter private ApplicationContext context;
-
+public class SampleFieldImplementation implements SampleField {
 }

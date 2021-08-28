@@ -15,19 +15,16 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.di.types.bound;
+package test.types;
 
-import org.dockbox.hartshorn.di.annotations.inject.Binds;
 import org.dockbox.hartshorn.di.annotations.inject.Bound;
-import org.dockbox.hartshorn.di.types.SampleInterface;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-@Binds(SampleInterface.class)
 @Getter
 @AllArgsConstructor(onConstructor_ = @Bound)
-public class SampleBoundAnnotatedImplementation implements SampleInterface {
+public class SampleBoundType implements SampleInterface {
 
     private final String name;
 

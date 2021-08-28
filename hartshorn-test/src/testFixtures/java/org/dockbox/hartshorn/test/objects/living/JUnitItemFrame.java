@@ -19,12 +19,15 @@ package org.dockbox.hartshorn.test.objects.living;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.di.annotations.inject.Bound;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.server.minecraft.dimension.position.BlockFace;
 import org.dockbox.hartshorn.server.minecraft.dimension.position.Location;
 import org.dockbox.hartshorn.server.minecraft.entities.ItemFrame;
 import org.dockbox.hartshorn.server.minecraft.item.Item;
 
 import java.util.UUID;
+
+import javax.inject.Inject;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -34,20 +37,23 @@ public class JUnitItemFrame extends JUnitEntity<ItemFrame> implements ItemFrame,
     @Setter private Item displayedItem;
     @Getter @Setter private Rotation rotation = Rotation.TOP;
     @Getter @Setter private BlockFace blockFace = BlockFace.NORTH;
+    @Inject
+    @Getter
+    private ApplicationContext applicationContext;
 
-    public JUnitItemFrame(UUID uuid) {
+    public JUnitItemFrame(final ApplicationContext context, final UUID uuid) {
         super(uuid);
     }
 
     @Bound
-    public JUnitItemFrame(Location location) {
+    public JUnitItemFrame(final Location location) {
         super(UUID.randomUUID());
         this.location(location);
     }
 
     @Override
     public Exceptional<ItemFrame> copy() {
-        return Exceptional.of(new JUnitItemFrame(UUID.randomUUID()));
+        return Exceptional.of(new JUnitItemFrame(this.applicationContext(), UUID.randomUUID()));
     }
 
     @Override

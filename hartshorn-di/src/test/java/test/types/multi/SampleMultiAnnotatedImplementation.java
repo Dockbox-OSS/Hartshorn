@@ -15,7 +15,18 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.di.types;
+package test.types.multi;
 
-public interface SampleField {
+import org.dockbox.hartshorn.di.annotations.inject.Binds;
+import test.types.SampleInterface;
+
+import javax.inject.Named;
+
+@Binds(SampleInterface.class)
+@Binds(value = SampleInterface.class, named = @Named("meta"))
+public class SampleMultiAnnotatedImplementation implements SampleInterface {
+    @Override
+    public String name() {
+        return "MultiAnnotatedHartshorn";
+    }
 }

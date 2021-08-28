@@ -30,7 +30,7 @@ public class JUnitInventoryRow extends AbstractInventoryRow {
 
     private final Map<Integer, Item> slots = HartshornUtils.emptyMap();
 
-    public JUnitInventoryRow(int rowIndex, PlayerInventory inventory) {
+    public JUnitInventoryRow(final int rowIndex, final PlayerInventory inventory) {
         super(rowIndex, inventory);
     }
 
@@ -40,7 +40,7 @@ public class JUnitInventoryRow extends AbstractInventoryRow {
     }
 
     @Override
-    public boolean give(Item item) {
+    public boolean give(final Item item) {
         for (int i = 0; i < this.capacity(); i++) {
             if (this.slot(i).isAir()) {
                 this.slot(item, i);
@@ -51,12 +51,12 @@ public class JUnitInventoryRow extends AbstractInventoryRow {
     }
 
     @Override
-    public void slot(Item item, int index) {
+    public void slot(final Item item, final int index) {
         if (index < this.capacity()) this.slots.put(index, item);
     }
 
     @Override
-    public Item slot(int index) {
-        return this.slots.getOrDefault(index, Item.of(ItemTypes.AIR));
+    public Item slot(final int index) {
+        return this.slots.getOrDefault(index, Item.of(this.applicationContext(), ItemTypes.AIR));
     }
 }

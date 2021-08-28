@@ -20,10 +20,15 @@ package org.dockbox.hartshorn.test.objects;
 import org.dockbox.hartshorn.api.domain.tuple.Vector3N;
 import org.dockbox.hartshorn.di.annotations.inject.Binds;
 import org.dockbox.hartshorn.di.annotations.inject.Bound;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.server.minecraft.dimension.position.Location;
 import org.dockbox.hartshorn.server.minecraft.dimension.world.World;
 
 import java.util.UUID;
+
+import javax.inject.Inject;
+
+import lombok.Getter;
 
 @Binds(Location.class)
 public class JUnitLocation extends Location implements JUnitPersistentDataHolder {
@@ -32,24 +37,22 @@ public class JUnitLocation extends Location implements JUnitPersistentDataHolder
     private final World world;
     private final UUID uniqueId;
 
+    @Inject
+    @Getter
+    private ApplicationContext applicationContext;
+
     @Bound
-    public JUnitLocation(World world) {
+    public JUnitLocation(final World world) {
         this(world.spawnPosition(), world);
     }
 
     @Bound
-    public JUnitLocation(Vector3N position, World world) {
+    public JUnitLocation(final Vector3N position, final World world) {
         if (!(world instanceof JUnitWorld spongeWorld)) {
             throw new IllegalArgumentException("Provided world cannot be used as a JUnit reference");
         }
         this.world = spongeWorld;
         this.position = position;
-        this.uniqueId = UUID.randomUUID();
-    }
-
-    public JUnitLocation(Vector3N position, JUnitWorld world) {
-        this.position = position;
-        this.world = world;
         this.uniqueId = UUID.randomUUID();
     }
 
@@ -59,7 +62,7 @@ public class JUnitLocation extends Location implements JUnitPersistentDataHolder
     }
 
     @Override
-    public Location expand(Vector3N vector) {
+    public Location expand(final Vector3N vector) {
         return new JUnitLocation(this.position.expand(vector), this.world);
     }
 

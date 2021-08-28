@@ -15,17 +15,7 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.di.types.meta;
+package test.types;
 
-import org.dockbox.hartshorn.di.annotations.inject.Binds;
-import org.dockbox.hartshorn.di.types.SampleInterface;
-
-import javax.inject.Named;
-
-@Binds(value = SampleInterface.class, named = @Named("meta"))
-public class SampleMetaAnnotatedImplementation implements SampleInterface {
-    @Override
-    public String name() {
-        return "MetaAnnotatedHartshorn";
-    }
+public interface SampleField {
 }

@@ -18,8 +18,13 @@
 package org.dockbox.hartshorn.keys;
 
 import org.dockbox.hartshorn.api.keys.KeyHolder;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
 
 public class TestKeyHolder implements KeyHolder<TestKeyHolder> {
+    @Override
+    public ApplicationContext applicationContext() {
+        return null;
+    }
 
     // Nothing needs to be done here
 
