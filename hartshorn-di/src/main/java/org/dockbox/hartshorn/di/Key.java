@@ -29,23 +29,23 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public class Key<C> {
-    private final Class<C> contract;
+    private final TypeContext<C> contract;
     private final Named named;
 
     public static <C> Key<C> of(final TypeContext<C> contract) {
-        return new Key<>(contract.type(), null);
+        return of(contract, null);
     }
 
     public static <C> Key<C> of(final Class<C> contract) {
-        return new Key<>(contract, null);
+        return of(TypeContext.of(contract));
     }
 
     public static <C> Key<C> of(final TypeContext<C> contract, final Named named) {
-        return new Key<>(contract.type(), named);
+        return new Key<>(contract, named);
     }
 
     public static <C> Key<C> of(final Class<C> contract, final Named named) {
-        return new Key<>(contract, named);
+        return of(TypeContext.of(contract), named);
     }
 
     @Override

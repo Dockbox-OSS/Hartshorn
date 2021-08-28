@@ -48,7 +48,7 @@ public class ConstructorBoundContext<T, I extends T> implements BoundContext<T, 
 
     @Override
     public TypeContext<T> contract() {
-        return TypeContext.of(this.key.contract());
+        return this.key.contract();
     }
 
     @Override

@@ -60,7 +60,7 @@ public class NativeBindingHierarchy<C> implements BindingHierarchy<C> {
         if (this.bindings.containsKey(priority) && priority != -1) {
             this.applicationContext().log().warn(("There is already a provider for %s with priority %d. It will be overwritten! " +
                     "To avoid unexpected behavior, ensure the priority is not already present. Current hierarchy: %s").formatted(this.key()
-                    .contract().getSimpleName(), priority, this));
+                    .contract().name(), priority, this));
         }
         this.bindings.put(priority, provider);
         return this;
@@ -92,7 +92,7 @@ public class NativeBindingHierarchy<C> implements BindingHierarchy<C> {
 
     @Override
     public String toString() {
-        final String contract = this.key().contract().getSimpleName();
+        final String contract = this.key().contract().name();
         final Named named = this.key().named();
         String name = "";
         if (named != null) {

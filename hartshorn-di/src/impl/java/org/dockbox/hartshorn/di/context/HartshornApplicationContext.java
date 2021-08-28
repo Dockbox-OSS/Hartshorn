@@ -68,7 +68,7 @@ public class HartshornApplicationContext extends ManagedHartshornContext {
 
     private final ComponentLocator locator;
     private final List<Modifier> modifiers;
-    private final Map<TypeContext<?>, Object> singletons = HartshornUtils.emptyConcurrentMap();
+    private final Map<Key<?>, Object> singletons = HartshornUtils.emptyConcurrentMap();
     private final transient Set<BoundContext<?, ?>> bindings = HartshornUtils.emptyConcurrentSet();
     private final Map<Key<?>, BindingHierarchy<?>> hierarchies = HartshornUtils.emptyConcurrentMap();
     private MetaProvider metaProvider;
@@ -126,29 +126,28 @@ public class HartshornApplicationContext extends ManagedHartshornContext {
     }
 
     @Override
-    public <T> T get(final TypeContext<T> type, final Attribute<?>... properties) {
+    public <T> T get(final Key<T> key, final Attribute<?>... properties) {
         T instance = null;
 
-        // TODO: Convert to Key (including named)
-        if (this.singletons.containsKey(type)) return (T) this.singletons.get(type);
+        if (this.singletons.containsKey(key)) return (T) this.singletons.get(key);
 
         final Exceptional<Object[]> value = Bindings.lookup(UseFactory.class, properties);
         if (value.present()) {
-            instance = this.get(TypeFactory.class).with(properties).create(type, value.get());
+            instance = this.get(TypeFactory.class).with(properties).create(key.contract(), value.get());
         }
         else {
-            instance = this.create(type, instance, properties);
+            instance = this.create(key, instance, properties);
         }
 
         // Recreating field instances ensures all fields are created through bootstrapping, allowing injection
         // points to apply correctly
         this.populate(instance);
 
-        instance = this.inject(type, instance, properties);
+        instance = this.inject(key, instance, properties);
 
         for (final InjectionModifier<?> serviceModifier : this.injectionModifiers) {
-            if (serviceModifier.preconditions(this, type, instance, properties))
-                instance = serviceModifier.process(this, type, instance, properties);
+            if (serviceModifier.preconditions(this, key.contract(), instance, properties))
+                instance = serviceModifier.process(this, key.contract(), instance, properties);
         }
 
         // Enables all fields which are decorated with @Wired(enable=true)
@@ -165,11 +164,17 @@ public class HartshornApplicationContext extends ManagedHartshornContext {
         final MetaProvider meta = this.meta();
         // Ensure the order of resolution is to first resolve the instance singleton state, and only after check the type state.
         // Typically the implementation decided whether it should be a singleton, so this cuts time complexity in half.
-        if (instance != null && (meta.singleton(TypeContext.of(instance)) || meta.singleton(type)))
-            this.singletons.put(type, instance);
+        if (instance != null && (meta.singleton(TypeContext.of(instance)) || meta.singleton(key.contract())))
+            this.singletons.put(key, instance);
 
         // May be null, but we have used all possible injectors, it's up to the developer now
         return instance;
+    }
+
+    @Override
+    public <T> T get(final TypeContext<T> type, final Attribute<?>... properties) {
+        @Nullable final Exceptional<Named> meta = Bindings.lookup(BindingMetaAttribute.class, properties);
+        return this.get(Key.of(type, meta.orNull()), properties);
     }
 
     @Override
@@ -183,10 +188,11 @@ public class HartshornApplicationContext extends ManagedHartshornContext {
     }
 
     @Nullable
-    public <T> T create(final TypeContext<T> type, final T typeInstance, final Attribute<?>[] additionalProperties) {
+    public <T> T create(final Key<T> key, final T typeInstance, final Attribute<?>[] additionalProperties) {
+        final TypeContext<T> type = key.contract();
         try {
             if (null == typeInstance) {
-                final Exceptional<T> instanceCandidate = this.provide(type, additionalProperties);
+                final Exceptional<T> instanceCandidate = this.provide(key, additionalProperties);
                 Throwable cause = null;
                 if (instanceCandidate.caught()) {
                     cause = instanceCandidate.error();
@@ -225,12 +231,8 @@ public class HartshornApplicationContext extends ManagedHartshornContext {
         else return super.hasActivator(activator);
     }
 
-    public <T> Exceptional<T> provide(final TypeContext<T> type, final Attribute<?>... additionalProperties) {
-        return Exceptional.of(() -> {
-                    @Nullable final Exceptional<Named> meta = Bindings.lookup(BindingMetaAttribute.class, additionalProperties);
-                    if (meta.present()) return Key.of(type.type(), meta.get());
-                    else return Key.of(type.type());
-                })
+    public <T> Exceptional<T> provide(final Key<T> type, final Attribute<?>... additionalProperties) {
+        return Exceptional.of(type)
                 .map(this::hierarchy)
                 .flatMap(hierarchy -> {
                     // Will continue going through each provider until a provider was successful or no other providers remain

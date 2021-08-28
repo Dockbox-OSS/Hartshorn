@@ -17,6 +17,7 @@
 
 package org.dockbox.hartshorn.di.context;
 
+import org.dockbox.hartshorn.di.Key;
 import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.di.properties.Attribute;
 
@@ -29,6 +30,8 @@ public interface HartshornContext extends Context {
     }
 
     <T> T get(Class<T> type, Named named);
+
+    <T> T get(Key<T> key, final Attribute<?>... additionalProperties);
 
     default <T> T get(final TypeContext<T> type, final Attribute<?>... additionalProperties) {
         return this.get(type.type(), additionalProperties);

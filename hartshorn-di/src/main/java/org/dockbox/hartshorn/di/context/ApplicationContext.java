@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.di.context;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.di.InjectionPoint;
+import org.dockbox.hartshorn.di.Key;
 import org.dockbox.hartshorn.di.MetaProvider;
 import org.dockbox.hartshorn.di.ProvisionFailure;
 import org.dockbox.hartshorn.di.annotations.context.LogExclude;
@@ -37,9 +38,9 @@ public interface ApplicationContext extends ApplicationBinder, HartshornContext 
 
     void add(InjectionPoint<?> property);
 
-    <T> T create(TypeContext<T> type, T typeInstance, Attribute<?>... properties);
+    <T> T create(Key<T> type, T typeInstance, Attribute<?>... properties);
 
-    <T> T inject(TypeContext<T> type, T typeInstance, Attribute<?>... properties);
+    <T> T inject(Key<T> type, T typeInstance, Attribute<?>... properties);
 
     <T> void enable(T typeInstance);
 

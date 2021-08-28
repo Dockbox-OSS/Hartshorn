@@ -22,6 +22,7 @@ import org.dockbox.hartshorn.api.exceptions.ApplicationException;
 import org.dockbox.hartshorn.di.ApplicationContextAware;
 import org.dockbox.hartshorn.di.ComponentType;
 import org.dockbox.hartshorn.di.InjectionPoint;
+import org.dockbox.hartshorn.di.Key;
 import org.dockbox.hartshorn.di.ProvisionFailure;
 import org.dockbox.hartshorn.di.annotations.activate.Activator;
 import org.dockbox.hartshorn.di.annotations.inject.Enable;
@@ -86,17 +87,17 @@ public abstract class ManagedHartshornContext extends DefaultContext implements 
         if (null != property) this.injectionPoints.add(property);
     }
 
-    public abstract <T> T create(TypeContext<T> type, T typeInstance, Attribute<?>... properties);
+    public abstract <T> T create(Key<T> type, T typeInstance, Attribute<?>... properties);
 
-    public <T> T inject(final TypeContext<T> type, T typeInstance, final Attribute<?>... properties) {
+    public <T> T inject(final Key<T> key, T typeInstance, final Attribute<?>... properties) {
         for (final InjectionPoint<?> injectionPoint : this.injectionPoints) {
-            if (injectionPoint.accepts(type)) {
+            if (injectionPoint.accepts(key.contract())) {
                 try {
                     //noinspection unchecked
-                    typeInstance = ((InjectionPoint<T>) injectionPoint).apply(typeInstance, type, properties);
+                    typeInstance = ((InjectionPoint<T>) injectionPoint).apply(typeInstance, key.contract(), properties);
                 }
                 catch (final ClassCastException e) {
-                    log.warn("Attempted to apply injection point to incompatible type [" + type.qualifiedName() + "]");
+                    log.warn("Attempted to apply injection point to incompatible type [" + key.contract().qualifiedName() + "]");
                 }
             }
         }
