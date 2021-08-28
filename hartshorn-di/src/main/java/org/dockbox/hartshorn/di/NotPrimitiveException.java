@@ -15,15 +15,13 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.playeractions;
+package org.dockbox.hartshorn.di;
 
-import org.dockbox.hartshorn.i18n.permissions.Permission;
+import org.dockbox.hartshorn.di.context.element.TypeContext;
 
-public final class PlayerActionPermissions {
+public class NotPrimitiveException extends RuntimeException {
 
-    public static final Permission SPECTATOR_BYPASS = Permission.of("hartshorn.playeractions.bypass.spectator");
-    public static final Permission NAVIGATE_DEFAULT_WORLD = Permission.of("hartshorn.playeractions.navigate");
-
-    private PlayerActionPermissions() {
+    public NotPrimitiveException(final TypeContext<?> type) {
+        super(type.name() + " is not a primitive type");
     }
 }

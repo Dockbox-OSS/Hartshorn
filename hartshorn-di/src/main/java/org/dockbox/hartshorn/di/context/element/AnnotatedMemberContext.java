@@ -15,11 +15,23 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.di.preload;
+package org.dockbox.hartshorn.di.context.element;
 
-@FunctionalInterface
-public interface Preloadable {
+import org.dockbox.hartshorn.util.HartshornUtils;
 
-    void preload();
+import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.Member;
+import java.util.List;
 
+public abstract class AnnotatedMemberContext <A extends AnnotatedElement & Member> extends AnnotatedElementContext<A> implements ModifierCarrier {
+
+    private List<AccessModifier> modifiers;
+
+    @Override
+    public List<AccessModifier> modifiers() {
+        if (this.modifiers == null) {
+            this.modifiers = HartshornUtils.asUnmodifiableList(AccessModifier.from(this.element().getModifiers()));
+        }
+        return this.modifiers;
+    }
 }

@@ -18,6 +18,7 @@
 package org.dockbox.hartshorn.worldedit.region;
 
 import org.dockbox.hartshorn.api.domain.tuple.Vector3N;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.server.minecraft.dimension.world.World;
 import org.dockbox.hartshorn.util.HartshornUtils;
 
@@ -25,11 +26,13 @@ import lombok.Getter;
 
 public class CuboidRegion implements Region {
 
+    @Getter private final ApplicationContext applicationContext;
     @Getter private final World world;
     private final Vector3N from;
     private final Vector3N to;
 
-    public CuboidRegion(World world, Vector3N from, Vector3N to) {
+    public CuboidRegion(final ApplicationContext context, final World world, final Vector3N from, final Vector3N to) {
+        this.applicationContext = context;
         this.world = world;
         this.from = from;
         this.to = to;

@@ -40,7 +40,7 @@ public interface SpongeEntity
         <T extends Entity, S extends org.spongepowered.api.entity.Entity>
         extends org.dockbox.hartshorn.server.minecraft.entities.Entity, SpongeComposite {
 
-    abstract EntityType<S> type();
+    EntityType<S> type();
 
     default UUID uniqueId() {
         return this.spongeEntity().map(org.spongepowered.api.entity.Entity::uniqueId)
@@ -56,7 +56,7 @@ public interface SpongeEntity
         return SpongeUtil.get(this.spongeEntity(), Keys.DISPLAY_NAME, SpongeAdapter::fromSponge, Text::of);
     }
 
-    default SpongeEntity<T, S> displayName(Text displayName) {
+    default SpongeEntity<T, S> displayName(final Text displayName) {
         this.spongeEntity().present(entity -> entity.offer(Keys.DISPLAY_NAME, SpongeAdapter.toSponge(displayName)));
         return this;
     }
@@ -65,7 +65,7 @@ public interface SpongeEntity
         return this.spongeEntity().map(entity -> entity.get(Keys.HEALTH).orElse(0D)).or(0D);
     }
 
-    default SpongeEntity<T, S> health(double health) {
+    default SpongeEntity<T, S> health(final double health) {
         this.spongeEntity().present(entity -> entity.offer(Keys.HEALTH, health));
         return this;
     }
@@ -79,7 +79,7 @@ public interface SpongeEntity
         return this.bool(Keys.IS_INVISIBLE);
     }
 
-    default SpongeEntity<T, S> invisible(boolean visible) {
+    default SpongeEntity<T, S> invisible(final boolean visible) {
         this.bool(Keys.IS_INVISIBLE, visible);
         return this;
     }
@@ -88,7 +88,7 @@ public interface SpongeEntity
         return this.bool(Keys.INVULNERABLE);
     }
 
-    default SpongeEntity<T, S> invulnerable(boolean invulnerable) {
+    default SpongeEntity<T, S> invulnerable(final boolean invulnerable) {
         this.bool(Keys.INVULNERABLE, invulnerable);
         return this;
     }
@@ -97,12 +97,12 @@ public interface SpongeEntity
         return this.bool(Keys.IS_GRAVITY_AFFECTED);
     }
 
-    default SpongeEntity<T, S> gravity(boolean gravity) {
+    default SpongeEntity<T, S> gravity(final boolean gravity) {
         this.bool(Keys.IS_GRAVITY_AFFECTED, gravity);
         return this;
     }
 
-    default boolean summon(Location location) {
+    default boolean summon(final Location location) {
         if (!this.alive()) {
             return this.spongeEntity().map(entity -> {
                 final Exceptional<ServerLocation> serverLocation = SpongeAdapter.toSponge(location);
@@ -121,25 +121,27 @@ public interface SpongeEntity
         return true;
     }
 
-    default void bool(Key<Value<Boolean>> key, boolean value) {
+    default void bool(final Key<Value<Boolean>> key, final boolean value) {
         this.spongeEntity().present(entity -> entity.offer(key, value));
     }
 
-    default boolean bool(Key<Value<Boolean>> key) {
+    default boolean bool(final Key<Value<Boolean>> key) {
         return SpongeUtil.get(this.spongeEntity(), key, t -> t, () -> false);
     }
 
-    public abstract Exceptional<S> spongeEntity();    default Location location() {
+    Exceptional<S> spongeEntity();    default Location location() {
         return this.spongeEntity()
                 .map(S::serverLocation)
                 .map(SpongeAdapter::fromSponge)
-                .orElse(Location::empty)
+                .orElse(() -> Location.empty(this.applicationContext()))
                 .get();
     }
 
     default Exceptional<? extends Mutable> dataHolder() {
         return this.spongeEntity();
-    }    default boolean location(Location location) {
+    }
+
+    default boolean location(final Location location) {
         return this.spongeEntity().map(entity -> SpongeAdapter.toSponge(location)
                 .map(entity::setLocation).or(false)).or(false);
     }
@@ -152,13 +154,10 @@ public interface SpongeEntity
     default Exceptional<T> minecraftEntity() {
         //noinspection unchecked
         return this.spongeEntity().map(e -> (T) e);
-    }    default World world() {
-        return this.location().world();
     }
 
-
-
-
-
+    default World world() {
+        return this.location().world();
+    }
 
 }

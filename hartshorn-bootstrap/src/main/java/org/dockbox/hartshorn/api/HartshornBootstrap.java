@@ -26,30 +26,29 @@ import org.dockbox.hartshorn.api.exceptions.Except;
 import org.dockbox.hartshorn.di.InjectConfiguration;
 import org.dockbox.hartshorn.di.InjectableBootstrap;
 import org.dockbox.hartshorn.di.Modifier;
+import org.dockbox.hartshorn.di.annotations.context.LogExclude;
 import org.dockbox.hartshorn.di.annotations.inject.InjectPhase;
 import org.dockbox.hartshorn.di.annotations.inject.Required;
+import org.dockbox.hartshorn.di.context.element.MethodContext;
+import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.di.services.ComponentContainer;
 import org.dockbox.hartshorn.util.HartshornUtils;
-import org.dockbox.hartshorn.util.Reflect;
 import org.slf4j.Logger;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-import lombok.Getter;
-
 /**
  * The global bootstrapping component which instantiates all configured services and provides access
  * to server information.
  */
+@LogExclude
 public abstract class HartshornBootstrap extends InjectableBootstrap {
 
-    private final Set<Method> postBootstrapActivations = HartshornUtils.emptyConcurrentSet();
-    @Getter private String version;
+    private final Set<MethodContext<?, ?>> postBootstrapActivations = HartshornUtils.emptyConcurrentSet();
 
     /**
      * Returns the active instance of {@link HartshornBootstrap}, if any.
@@ -73,7 +72,6 @@ public abstract class HartshornBootstrap extends InjectableBootstrap {
         final GlobalConfig globalConfig = this.context().get(GlobalConfig.class);
         Except.useStackTraces(globalConfig.stacktraces());
         Except.with(globalConfig.level());
-        this.version = globalConfig.version();
     }
 
     /**
@@ -83,12 +81,12 @@ public abstract class HartshornBootstrap extends InjectableBootstrap {
     @Override
     public void init() {
         Hartshorn.log().info("Initialising Hartshorn v" + Hartshorn.VERSION);
-        for (final Method postBootstrapActivation : this.postBootstrapActivations) {
+        for (final MethodContext<?, ?> postBootstrapActivation : this.postBootstrapActivations) {
             this.context().invoke(postBootstrapActivation);
         }
         // Ensure all services requiring a platform implementation have one present
-        Reflect.types(Required.class).forEach(type -> {
-            if (Reflect.children(type).isEmpty()) {
+        this.context().environment().types(Required.class).forEach(type -> {
+            if (this.context().environment().children(type).isEmpty()) {
                 this.handleMissingBinding(type);
             }
         });
@@ -100,13 +98,13 @@ public abstract class HartshornBootstrap extends InjectableBootstrap {
      * @param type
      *         The required type
      */
-    protected void handleMissingBinding(final Class<?> type) {
-        throw new IllegalStateException("No implementation exists for [" + type.getCanonicalName() + "], this will cause functionality to misbehave or not function!");
+    protected void handleMissingBinding(final TypeContext<?> type) {
+        throw new IllegalStateException("No implementation exists for [" + type.qualifiedName() + "], this will cause functionality to misbehave or not function!");
     }
 
     @Override
     public Logger log() {
-        return Hartshorn.internalLog();
+        return Hartshorn.log();
     }
 
     /**
@@ -116,10 +114,10 @@ public abstract class HartshornBootstrap extends InjectableBootstrap {
      * @param method
      *         The method to activate
      */
-    void addPostBootstrapActivation(final Method method) {
+    void addPostBootstrapActivation(final MethodContext<?, ?> method) {
         Objects.requireNonNull(method);
-        final Class<?> type = method.getDeclaringClass();
-        final Exceptional<ComponentContainer> container = Hartshorn.context().locator().container(type);
+        final TypeContext<?> type = method.parent();
+        final Exceptional<ComponentContainer> container = this.context().locator().container(type);
 
         if (container.present()) {
             final ComponentContainer componentContainer = container.get();

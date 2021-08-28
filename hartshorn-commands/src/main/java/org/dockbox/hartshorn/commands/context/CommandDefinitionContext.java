@@ -22,6 +22,7 @@ import org.dockbox.hartshorn.commands.annotations.Command;
 import org.dockbox.hartshorn.commands.definition.CommandElement;
 import org.dockbox.hartshorn.commands.definition.CommandFlag;
 import org.dockbox.hartshorn.di.context.Context;
+import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.i18n.permissions.Permission;
 import org.dockbox.hartshorn.i18n.permissions.PermissionContext;
 
@@ -63,7 +64,7 @@ public interface CommandDefinitionContext extends Context {
      *
      * @return The parent/owner.
      */
-    Class<?> parent();
+    TypeContext<?> parent();
 
     /**
      * Gets all elements/arguments of a command, excluding flags. The typically represents the parsed

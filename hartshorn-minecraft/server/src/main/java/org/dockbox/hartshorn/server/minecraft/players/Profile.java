@@ -17,19 +17,19 @@
 
 package org.dockbox.hartshorn.server.minecraft.players;
 
-import org.dockbox.hartshorn.api.Hartshorn;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
 
 import java.util.Map;
 import java.util.UUID;
 
 public interface Profile {
 
-    static Profile of(UUID uuid) {
-        return Hartshorn.context().get(Profile.class, uuid);
+    static Profile of(final ApplicationContext context, final UUID uuid) {
+        return context.get(Profile.class, uuid);
     }
 
-    static Profile of(Profile profile) {
-        return Hartshorn.context().get(Profile.class, profile);
+    static Profile of(final ApplicationContext context, final Profile profile) {
+        return context.get(Profile.class, profile);
     }
 
     UUID uniqueId();

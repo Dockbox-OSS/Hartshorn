@@ -26,7 +26,6 @@ import org.dockbox.hartshorn.commands.context.CommandExecutorContext;
 import org.dockbox.hartshorn.i18n.text.Text;
 import org.dockbox.hartshorn.i18n.text.actions.ClickAction;
 import org.dockbox.hartshorn.i18n.text.actions.HoverAction;
-import org.dockbox.hartshorn.util.Reflect;
 
 import javax.inject.Inject;
 
@@ -41,13 +40,11 @@ public class ConfirmationExtension implements CommandExecutorExtension {
     private CommandResources resources;
 
     @Override
-    public ExtensionResult execute(CommandContext context, CommandExecutorContext executorContext) {
+    public ExtensionResult execute(final CommandContext context, final CommandExecutorContext executorContext) {
         final CommandSource sender = context.source();
         if (!(sender instanceof Identifiable)) return ExtensionResult.accept();
 
-        final String id = this.id((Identifiable) sender, context);
-
-        Runnable action = () -> executorContext.executor().execute(context);
+        final Runnable action = () -> executorContext.executor().execute(context);
         final Text confirmationText = this.resources.confirmCommand().translate(sender).asText();
         final Text confirmationHover = this.resources.confirmCommandHover().translate(sender).asText();
 
@@ -61,7 +58,7 @@ public class ConfirmationExtension implements CommandExecutorExtension {
     }
 
     @Override
-    public boolean extend(CommandExecutorContext context) {
-        return Reflect.annotation(context.element(), WithConfirmation.class).present();
+    public boolean extend(final CommandExecutorContext context) {
+        return context.element().annotation(WithConfirmation.class).present();
     }
 }

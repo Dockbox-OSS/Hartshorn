@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.dave;
 
 import net.dv8tion.jda.api.entities.TextChannel;
 
-import org.dockbox.hartshorn.api.Hartshorn;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.discord.DiscordUtils;
 import org.dockbox.hartshorn.i18n.text.Text;
 
@@ -31,8 +31,8 @@ public class DaveConfig {
 
     public DaveConfig() {}
 
-    public TextChannel channel() {
-        DiscordUtils du = Hartshorn.context().get(DiscordUtils.class);
+    public TextChannel channel(final ApplicationContext context) {
+        final DiscordUtils du = context.get(DiscordUtils.class);
         return du.jda().get().getTextChannelById(this.channelId);
     }
 

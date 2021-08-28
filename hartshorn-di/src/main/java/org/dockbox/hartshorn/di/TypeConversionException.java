@@ -15,36 +15,18 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.server.minecraft.inventory;
+package org.dockbox.hartshorn.di;
 
-import org.dockbox.hartshorn.server.minecraft.item.Item;
+import org.dockbox.hartshorn.di.context.element.TypeContext;
 
-import java.util.Collection;
+public class TypeConversionException extends Exception {
 
-public class AbstractArmorInventory implements SlotInventory {
 
-    @Override
-    public Collection<Item> items() {
-        return null;
+    public TypeConversionException(final Class<?> type, final String value) {
+        this(TypeContext.of(type), value);
     }
 
-    @Override
-    public boolean give(Item item) {
-        return false;
-    }
-
-    @Override
-    public Item slot(Slot slot) {
-        return null;
-    }
-
-    @Override
-    public void slot(Item item, Slot slot) {
-
-    }
-
-    @Override
-    public int capacity() {
-        return 0;
+    public TypeConversionException(final TypeContext<?> type, final String value) {
+        super("Could not convert '" + value + "' to type " + type.name());
     }
 }

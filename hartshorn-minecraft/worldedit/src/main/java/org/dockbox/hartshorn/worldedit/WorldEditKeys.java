@@ -17,7 +17,6 @@
 
 package org.dockbox.hartshorn.worldedit;
 
-import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.keys.Key;
 import org.dockbox.hartshorn.api.keys.Keys;
 import org.dockbox.hartshorn.server.minecraft.players.Player;
@@ -27,13 +26,13 @@ import org.dockbox.hartshorn.worldedit.region.Region;
 public final class WorldEditKeys {
 
     public static final Key<Player, Region> SELECTION = Keys.builder(Player.class, Region.class)
-            .withSetter((player, region) -> Hartshorn.context().get(WorldEditService.class).selection(player, region))
-            .withGetterSafe(player -> Hartshorn.context().get(WorldEditService.class).selection(player))
+            .withSetter((player, region) -> player.applicationContext().get(WorldEditService.class).selection(player, region))
+            .withGetterSafe(player -> player.applicationContext().get(WorldEditService.class).selection(player))
             .build();
 
     public static final Key<Player, Clipboard> CLIPBOARD = Keys.builder(Player.class, Clipboard.class)
-            .withSetter((player, clipboard) -> Hartshorn.context().get(WorldEditService.class).clipboard(player, clipboard))
-            .withGetterSafe(player -> Hartshorn.context().get(WorldEditService.class).clipboard(player))
+            .withSetter((player, clipboard) -> player.applicationContext().get(WorldEditService.class).clipboard(player, clipboard))
+            .withGetterSafe(player -> player.applicationContext().get(WorldEditService.class).clipboard(player))
             .build();
 
     private WorldEditKeys() {}

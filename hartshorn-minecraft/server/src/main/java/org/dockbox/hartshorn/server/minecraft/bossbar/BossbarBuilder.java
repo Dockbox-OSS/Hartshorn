@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.server.minecraft.bossbar;
 
-import org.dockbox.hartshorn.api.Hartshorn;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.i18n.text.Text;
 
 import java.util.UUID;
@@ -31,7 +31,7 @@ public final class BossbarBuilder {
 
     protected BossbarBuilder() {}
 
-    public BossbarBuilder withId(UUID id) {
+    public BossbarBuilder withId(final UUID id) {
         this.id = id.toString();
         return this;
     }
@@ -45,32 +45,32 @@ public final class BossbarBuilder {
                 .withStyle(this.style);
     }
 
-    public BossbarBuilder withStyle(BossbarStyle style) {
+    public BossbarBuilder withStyle(final BossbarStyle style) {
         this.style = style;
         return this;
     }
 
-    public BossbarBuilder withColor(BossbarColor color) {
+    public BossbarBuilder withColor(final BossbarColor color) {
         this.color = color;
         return this;
     }
 
-    public BossbarBuilder withText(Text text) {
+    public BossbarBuilder withText(final Text text) {
         this.text = text;
         return this;
     }
 
-    public BossbarBuilder withPercent(float percent) {
+    public BossbarBuilder withPercent(final float percent) {
         this.percent = percent;
         return this;
     }
 
-    public BossbarBuilder withId(String id) {
+    public BossbarBuilder withId(final String id) {
         this.id = id;
         return this;
     }
 
-    public Bossbar build() {
-        return Hartshorn.context().get(Bossbar.class, this.id, this.percent, this.text, this.color, this.style);
+    public Bossbar build(final ApplicationContext context) {
+        return context.get(Bossbar.class, this.id, this.percent, this.text, this.color, this.style);
     }
 }

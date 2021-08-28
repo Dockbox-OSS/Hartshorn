@@ -17,13 +17,13 @@
 
 package org.dockbox.hartshorn.api.keys;
 
+import org.dockbox.hartshorn.di.context.ApplicationContext;
+
 public interface PersistentDataKey<T> {
 
     Class<T> type();
 
-    String ownerId();
+    String ownerId(ApplicationContext context);
 
     String id();
-
-    String name();
 }

@@ -44,7 +44,7 @@ public class SpongeInventoryRow extends AbstractInventoryRow implements SpongeIn
 
     @Override
     public Item slot(final int index) {
-        return this.internalGetSlot(index).map(SLOT_LOOKUP).get(AIR);
+        return this.internalGetSlot(index).map(SLOT_LOOKUP).get(() -> AIR.apply(this.applicationContext()));
     }
 
     private Exceptional<org.spongepowered.api.item.inventory.Slot> internalGetSlot(final int index) {

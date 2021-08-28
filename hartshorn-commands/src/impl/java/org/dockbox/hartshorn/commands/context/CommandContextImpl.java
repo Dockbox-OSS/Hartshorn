@@ -20,6 +20,7 @@ package org.dockbox.hartshorn.commands.context;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.commands.service.CommandParameter;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.di.context.DefaultContext;
 import org.dockbox.hartshorn.i18n.permissions.Permission;
 import org.dockbox.hartshorn.util.HartshornUtils;
@@ -45,11 +46,15 @@ public class CommandContextImpl extends DefaultContext implements CommandContext
     @Getter(onMethod_ = @UnmodifiableView)
     private final List<Permission> permissions;
 
+    @Getter private final ApplicationContext applicationContext;
+
     @Override
     @UnmodifiableView
     public List<CommandParameter<?>> arguments() {
         return HartshornUtils.asUnmodifiableList(this.args);
-    }    @Override
+    }
+
+    @Override
     public <T> T get(String key) {
         return HartshornUtils.merge(this.args, this.flags)
                 .stream()
@@ -64,7 +69,9 @@ public class CommandContextImpl extends DefaultContext implements CommandContext
     @UnmodifiableView
     public List<CommandParameter<?>> flags() {
         return HartshornUtils.asUnmodifiableList(this.flags);
-    }    @Override
+    }
+
+    @Override
     public boolean has(String key) {
         return HartshornUtils.merge(this.args, this.flags)
                 .stream()
@@ -75,7 +82,9 @@ public class CommandContextImpl extends DefaultContext implements CommandContext
     @Override
     public String alias() {
         return this.command.split(" ")[0];
-    }    @Override
+    }
+
+    @Override
     public <T> Exceptional<T> find(String key) {
         return Exceptional.of(() -> this.get(key));
     }
@@ -100,10 +109,4 @@ public class CommandContextImpl extends DefaultContext implements CommandContext
     public String command() {
         return this.command;
     }
-
-
-
-
-
-
 }

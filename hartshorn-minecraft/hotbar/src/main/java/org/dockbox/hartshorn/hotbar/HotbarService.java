@@ -1,3 +1,20 @@
+/*
+ * Copyright (C) 2020 Guus Lieben
+ *
+ * This framework is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 2.1 of the
+ * License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See
+ * the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
+ */
+
 package org.dockbox.hartshorn.hotbar;
 
 import org.dockbox.hartshorn.api.domain.tuple.Tuple;
@@ -55,9 +72,9 @@ public abstract class HotbarService implements AttributeHolder {
     public void view(final Player source, final CommandContext context, final long id) {
         for (final Tuple<Long, InventoryRow> entry : this.cache()) {
             if (entry.key() == id) {
-                InventoryLayout.builder(InventoryType.DROPPER)
+                InventoryLayout.builder(source.applicationContext(), InventoryType.DROPPER)
                         .addElements(entry.value().items()
-                                .stream().map(item -> Element.of(item, ctx -> ctx.player().inventory().give(item)))
+                                .stream().map(item -> Element.of(source.applicationContext(), item, ctx -> ctx.player().inventory().give(item)))
                                 .toList()
                         ).toStaticPaneBuilder()
                         .title(Text.of("$1" + source.name() + "$2's hotbar"))

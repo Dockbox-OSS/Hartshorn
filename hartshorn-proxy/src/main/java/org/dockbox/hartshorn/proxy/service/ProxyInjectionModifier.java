@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.proxy.service;
 
 import org.dockbox.hartshorn.di.binding.Bindings;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
+import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.di.inject.InjectionModifier;
 import org.dockbox.hartshorn.di.properties.Attribute;
 import org.dockbox.hartshorn.proxy.ProxyAttribute;
@@ -32,27 +33,27 @@ import java.lang.reflect.InvocationTargetException;
 public class ProxyInjectionModifier implements InjectionModifier<UseProxying> {
 
     @Override
-    public <T> boolean preconditions(Class<T> type, @Nullable T instance, Attribute<?>... properties) {
+    public <T> boolean preconditions(final ApplicationContext context, final TypeContext<T> type, @Nullable final T instance, final Attribute<?>... properties) {
         // Unchecked as ProxyProperty has generic type parameters
         //noinspection unchecked
         return Bindings.has(ProxyAttribute.class, properties);
     }
 
     @Override
-    public <T> T process(ApplicationContext context, Class<T> type, @Nullable T instance, Attribute<?>... properties) {
+    public <T> T process(final ApplicationContext context, final TypeContext<T> type, @Nullable final T instance, final Attribute<?>... properties) {
         try {
-            ProxyHandler<T> handler = ProxyUtil.handler(type, instance);
+            final ProxyHandler<T> handler = ProxyUtil.handler(type, instance);
 
-            for (Attribute<?> property : properties) {
+            for (final Attribute<?> property : properties) {
                 if (property instanceof ProxyAttribute) {
                     //noinspection unchecked
-                    ProxyAttribute<T, ?> proxyAttribute = (ProxyAttribute<T, ?>) property;
+                    final ProxyAttribute<T, ?> proxyAttribute = (ProxyAttribute<T, ?>) property;
                     handler.delegate(proxyAttribute);
                 }
             }
             return handler.proxy();
         }
-        catch (InvocationTargetException | NoSuchMethodException | InstantiationException | IllegalAccessException | ClassCastException e) {
+        catch (final InvocationTargetException | NoSuchMethodException | InstantiationException | IllegalAccessException | ClassCastException e) {
             return instance;
         }
     }

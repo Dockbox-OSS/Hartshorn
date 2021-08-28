@@ -15,36 +15,44 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.util;
+package org.dockbox.hartshorn.di.context;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 
+import org.dockbox.hartshorn.di.AnnotationHelper;
+import org.dockbox.hartshorn.di.context.element.TypeContext;
+import org.dockbox.hartshorn.util.HartshornUtils;
 import org.reflections.Reflections;
 
 import java.lang.annotation.Annotation;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
-public class PrefixContext {
+public class PrefixContext extends DefaultContext {
 
     private final Map<String, Reflections> reflectedPrefixes = HartshornUtils.emptyConcurrentMap();
     private final Multimap<Class<? extends Annotation>, Class<? extends Annotation>> annotationHierarchy = ArrayListMultimap.create();
-    private final Map<Class<? extends Annotation>, Set<Class<? extends Annotation>>> compositeCache = HartshornUtils.emptyConcurrentMap();
 
-    public PrefixContext(Iterable<String> initialPrefixes) {
-        for (String initialPrefix : initialPrefixes) {
+    public PrefixContext(final Iterable<String> initialPrefixes) {
+        for (final String initialPrefix : initialPrefixes) {
             this.prefix(initialPrefix);
         }
     }
 
-    public void prefix(String prefix) {
+    public void prefix(final String prefix) {
         if (!this.reflectedPrefixes.containsKey(prefix))
             this.reflectedPrefixes.put(prefix, this.reflections(prefix));
     }
 
-    private Reflections reflections(String prefix) {
+    void reset() {
+        this.reflectedPrefixes.clear();
+        this.annotationHierarchy.clear();
+    }
+
+    private Reflections reflections(final String prefix) {
         if (!this.reflectedPrefixes.containsKey(prefix)) {
             this.reflectedPrefixes.put(prefix, new Reflections(prefix));
         }
@@ -67,7 +75,7 @@ public class PrefixContext {
      *
      * @return The annotated types
      */
-    public <A extends Annotation> Collection<Class<?>> types(Class<A> annotation) {
+    public <A extends Annotation> Collection<TypeContext<?>> types(final Class<A> annotation) {
         return this.types(annotation, false);
     }
 
@@ -85,23 +93,25 @@ public class PrefixContext {
      *
      * @return The annotated types
      */
-    public <A extends Annotation> Collection<Class<?>> types(Class<A> annotation, boolean skipParents) {
-        Set<Class<?>> types = HartshornUtils.emptySet();
+    public <A extends Annotation> Collection<TypeContext<?>> types(final Class<A> annotation, final boolean skipParents) {
+        final Set<TypeContext<?>> types = HartshornUtils.emptySet();
         final Set<Class<? extends Annotation>> extensions = this.extensions(annotation);
 
-        for (Reflections reflections : this.reflectedPrefixes.values()) {
-            for (Class<? extends Annotation> extension : extensions) {
-                types.addAll(reflections.getTypesAnnotatedWith(extension, !skipParents));
+        for (final Reflections reflections : this.reflectedPrefixes.values()) {
+            for (final Class<? extends Annotation> extension : extensions) {
+                for (final Class<?> type : reflections.getTypesAnnotatedWith(extension, !skipParents)) {
+                    types.add(TypeContext.of(type));
+                }
             }
         }
         return HartshornUtils.asList(types);
     }
 
-    private <A extends Annotation> Set<Class<? extends Annotation>> extensions(Class<A> annotation) {
+    private <A extends Annotation> Set<Class<? extends Annotation>> extensions(final Class<A> annotation) {
         if (this.annotationHierarchy.isEmpty()) {
-            for (Class<? extends Annotation> annotationType : this.children(Annotation.class)) {
-                for (Class<? extends Annotation> selfOrParent : AnnotationHelper.annotationHierarchy(annotationType)) {
-                    this.annotationHierarchy.put(selfOrParent, annotationType);
+            for (final TypeContext<? extends Annotation> annotationType : this.children(Annotation.class)) {
+                for (final Class<? extends Annotation> selfOrParent : AnnotationHelper.annotationHierarchy(annotationType.type())) {
+                    this.annotationHierarchy.put(selfOrParent, annotationType.type());
                 }
             }
         }
@@ -110,6 +120,10 @@ public class PrefixContext {
 
         if (hierarchy.isEmpty()) return HartshornUtils.asUnmodifiableSet(annotation);
         else return HartshornUtils.asUnmodifiableSet(hierarchy);
+    }
+
+    public <T> Collection<TypeContext<? extends T>> children(final Class<T> type) {
+        return this.children(TypeContext.of(type));
     }
 
     /**
@@ -123,12 +137,12 @@ public class PrefixContext {
      *
      * @return The list of sub-types, or a empty list
      */
-    public <T> Collection<Class<? extends T>> children(Class<T> parent) {
-        Set<Class<? extends T>> subTypes = HartshornUtils.emptySet();
-        for (Reflections reflections : this.reflectedPrefixes.values()) {
-            subTypes.addAll(reflections.getSubTypesOf(parent));
+    public <T> Collection<TypeContext<? extends T>> children(final TypeContext<T> parent) {
+        final Set<Class<? extends T>> subTypes = HartshornUtils.emptySet();
+        for (final Reflections reflections : this.reflectedPrefixes.values()) {
+            subTypes.addAll(reflections.getSubTypesOf(parent.type()));
         }
-        return HartshornUtils.asList(subTypes);
+        return HartshornUtils.asList(subTypes).stream().map(TypeContext::of).collect(Collectors.toList());
     }
 
 

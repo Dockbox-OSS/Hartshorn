@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.server.minecraft.item;
 
-import org.dockbox.hartshorn.api.Hartshorn;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.i18n.common.ResourceEntry;
 import org.dockbox.hartshorn.server.minecraft.MinecraftVersion;
 
@@ -241,12 +241,12 @@ public enum Enchantment {
     VANISHING_CURSE(1, EnchantmentResources::vanishingCurse, MinecraftVersion.MC1_16);
 
     private final int maximumLevel;
-    private final ResourceEntry nameResource;
+    private final Function<EnchantmentResources, ResourceEntry> nameResource;
     private final MinecraftVersion minimumMinecraftVersion;
 
-    Enchantment(int maximumLevel, Function<EnchantmentResources, ResourceEntry> resource, MinecraftVersion minimumMinecraftVersion) {
+    Enchantment(final int maximumLevel, final Function<EnchantmentResources, ResourceEntry> resource, final MinecraftVersion minimumMinecraftVersion) {
         this.maximumLevel = maximumLevel;
-        this.nameResource = resource.apply(Hartshorn.context().get(EnchantmentResources.class));
+        this.nameResource = resource;
         this.minimumMinecraftVersion = minimumMinecraftVersion;
     }
 
@@ -254,8 +254,8 @@ public enum Enchantment {
         return this.maximumLevel;
     }
 
-    public ResourceEntry resource() {
-        return this.nameResource;
+    public ResourceEntry resource(final ApplicationContext context) {
+        return this.nameResource.apply(context.get(EnchantmentResources.class));
     }
 
     public MinecraftVersion minimumVersion() {

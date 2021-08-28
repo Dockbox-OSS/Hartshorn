@@ -22,10 +22,9 @@ import com.google.common.collect.Multimap;
 import org.dockbox.hartshorn.di.annotations.inject.InjectPhase;
 import org.dockbox.hartshorn.di.context.HartshornApplicationContext;
 import org.dockbox.hartshorn.di.context.ManagedHartshornContext;
-import org.dockbox.hartshorn.di.context.ReflectionContext;
+import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.di.inject.InjectionModifier;
 import org.dockbox.hartshorn.di.services.ServiceProcessor;
-import org.dockbox.hartshorn.util.Reflect;
 import org.reflections.Reflections;
 
 import java.lang.annotation.Annotation;
@@ -35,19 +34,14 @@ import java.util.List;
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public abstract class InjectableBootstrap extends ApplicationContextAware implements ApplicationBootstrap {
 
-    private static InjectableBootstrap instance;
-
     public static InjectableBootstrap instance() {
         return (InjectableBootstrap) ApplicationContextAware.instance();
     }
 
     @Override
     public void create(final Collection<String> prefixes, final Class<?> activationSource, final List<Annotation> activators, final Multimap<InjectPhase, InjectConfiguration> configs, final Modifier... modifiers) {
-        super.create(new HartshornApplicationContext(activationSource, modifiers));
+        super.create(new HartshornApplicationContext(this, activationSource, prefixes, modifiers));
         Reflections.log = null; // Don't output Reflections
-
-        final ReflectionContext context = new ReflectionContext(prefixes);
-        Reflect.context(context);
 
         for (final Annotation activator : activators) {
             ((ManagedHartshornContext) this.context()).addActivator(activator);
@@ -63,10 +57,11 @@ public abstract class InjectableBootstrap extends ApplicationContextAware implem
         for (final InjectConfiguration config : configs.get(InjectPhase.LATE)) super.context().bind(config);
     }
 
+    // TODO: Clean up lookupProcessors and lookupModifiers
     private void lookupProcessors(final String prefix) {
-        final Collection<Class<? extends ServiceProcessor>> processors = Reflect.children(ServiceProcessor.class);
-        for (final Class<? extends ServiceProcessor> processor : processors) {
-            if (Reflect.isAbstract(processor)) continue;
+        final Collection<TypeContext<? extends ServiceProcessor>> processors = this.context().environment().children(ServiceProcessor.class);
+        for (final TypeContext<? extends ServiceProcessor> processor : processors) {
+            if (processor.isAbstract()) continue;
 
             final ServiceProcessor raw = super.context().raw(processor, false);
             if (this.context().hasActivator(raw.activator()))
@@ -75,9 +70,9 @@ public abstract class InjectableBootstrap extends ApplicationContextAware implem
     }
 
     private void lookupModifiers(final String prefix) {
-        final Collection<Class<? extends InjectionModifier>> modifiers = Reflect.children(InjectionModifier.class);
-        for (final Class<? extends InjectionModifier> modifier : modifiers) {
-            if (Reflect.isAbstract(modifier)) continue;
+        final Collection<TypeContext<? extends InjectionModifier>> modifiers = this.context().environment().children(InjectionModifier.class);
+        for (final TypeContext<? extends InjectionModifier> modifier : modifiers) {
+            if (modifier.isAbstract()) continue;
 
             final InjectionModifier raw = super.context().raw(modifier, false);
             if (this.context().hasActivator(raw.activator()))

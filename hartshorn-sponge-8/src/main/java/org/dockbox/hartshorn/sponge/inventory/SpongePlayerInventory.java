@@ -23,6 +23,7 @@ import org.dockbox.hartshorn.server.minecraft.item.Item;
 import org.dockbox.hartshorn.server.minecraft.players.inventory.AbstractInventoryRow;
 import org.dockbox.hartshorn.server.minecraft.players.inventory.InventoryRow;
 import org.dockbox.hartshorn.server.minecraft.players.inventory.PlayerInventory;
+import org.dockbox.hartshorn.sponge.SpongeContextCarrier;
 import org.dockbox.hartshorn.sponge.game.SpongePlayer;
 import org.dockbox.hartshorn.sponge.util.SpongeAdapter;
 import org.dockbox.hartshorn.util.HartshornUtils;
@@ -36,7 +37,7 @@ import org.spongepowered.api.item.inventory.transaction.InventoryTransactionResu
 
 import java.util.Collection;
 
-public class SpongePlayerInventory extends PlayerInventory implements SpongeInventory {
+public class SpongePlayerInventory extends PlayerInventory implements SpongeInventory, SpongeContextCarrier {
 
     private static final int inventorySize = 36;
     private final SpongePlayer player;
@@ -47,7 +48,7 @@ public class SpongePlayerInventory extends PlayerInventory implements SpongeInve
 
     @Override
     public Item slot(final int row, final int column) {
-        return this.internalGetSlot(row, column).map(SLOT_LOOKUP).get(AbstractInventoryRow.AIR);
+        return this.internalGetSlot(row, column).map(SLOT_LOOKUP).get(() -> AbstractInventoryRow.AIR.apply(this.applicationContext()));
     }
 
     @Override
@@ -71,7 +72,7 @@ public class SpongePlayerInventory extends PlayerInventory implements SpongeInve
 
     @Override
     public Item slot(final Slot slot) {
-        return this.internalGetSlot(slot).map(SLOT_LOOKUP).get(AbstractInventoryRow.AIR);
+        return this.internalGetSlot(slot).map(SLOT_LOOKUP).get(() -> AbstractInventoryRow.AIR.apply(this.applicationContext()));
     }
 
     @Override
@@ -99,7 +100,7 @@ public class SpongePlayerInventory extends PlayerInventory implements SpongeInve
 
     @Override
     public Item slot(final int index) {
-        return this.internalGetSlot(index).map(SLOT_LOOKUP).get(AbstractInventoryRow.AIR);
+        return this.internalGetSlot(index).map(SLOT_LOOKUP).get(() -> AbstractInventoryRow.AIR.apply(this.applicationContext()));
     }
 
     private Exceptional<org.spongepowered.api.item.inventory.Slot> internalGetSlot(final int index) {

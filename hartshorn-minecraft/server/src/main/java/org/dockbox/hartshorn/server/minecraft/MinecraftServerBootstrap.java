@@ -18,18 +18,11 @@
 package org.dockbox.hartshorn.server.minecraft;
 
 import org.dockbox.hartshorn.api.HartshornBootstrap;
-import org.dockbox.hartshorn.events.EventBus;
 import org.dockbox.hartshorn.proxy.ProxyApplicationBootstrap;
 
 public abstract class MinecraftServerBootstrap extends ProxyApplicationBootstrap {
 
     public static MinecraftServerBootstrap instance() {
         return (MinecraftServerBootstrap) HartshornBootstrap.instance();
-    }
-
-    @Override
-    public void init() {
-        EventBus bus = super.context().get(EventBus.class);
-        super.init();
     }
 }

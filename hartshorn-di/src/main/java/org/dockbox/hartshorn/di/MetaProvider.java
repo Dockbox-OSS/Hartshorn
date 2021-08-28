@@ -15,7 +15,11 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.api.domain;
+package org.dockbox.hartshorn.di;
+
+import org.dockbox.hartshorn.api.domain.TypedOwner;
+import org.dockbox.hartshorn.di.context.element.MethodContext;
+import org.dockbox.hartshorn.di.context.element.TypeContext;
 
 /**
  * The type responsible for providing metadata on given types.
@@ -31,7 +35,7 @@ public interface MetaProvider {
      *
      * @return The owner of the type
      */
-    TypedOwner lookup(Class<?> type);
+    TypedOwner lookup(TypeContext<?> type);
 
     /**
      * Looks up whether the given type is a singleton.
@@ -41,7 +45,8 @@ public interface MetaProvider {
      *
      * @return <code>true</code> if the type is a singleton, or <code>false</code>
      */
-    boolean singleton(Class<?> type);
+    boolean singleton(TypeContext<?> type);
+    boolean singleton(MethodContext<?, ?> method);
 
     /**
      * Looks up whether the given type is a component-like type. This only applies if
@@ -53,6 +58,6 @@ public interface MetaProvider {
      *
      * @return <code>true</code> if the type is a component-like type, or <code>false</code>
      */
-    boolean component(Class<?> type);
+    boolean isComponent(TypeContext<?> type);
 
 }

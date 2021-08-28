@@ -17,7 +17,6 @@
 
 package org.dockbox.hartshorn.server.minecraft.events.packet;
 
-import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.events.AbstractCancellableEvent;
 import org.dockbox.hartshorn.events.EventBus;
 import org.dockbox.hartshorn.server.minecraft.packets.Packet;
@@ -38,19 +37,19 @@ public abstract class PacketEvent<T extends Packet> extends AbstractCancellableE
     @Getter private T packet;
     @Getter private boolean isModified;
 
-    public PacketEvent(T packet, Player target) {
+    public PacketEvent(final T packet, final Player target) {
         this.packet = packet;
         this.target = target;
     }
 
-    public void packet(T packet) {
+    public void packet(final T packet) {
         this.isModified = true;
         this.packet = packet;
     }
 
     @Override
     public @NotNull PacketEvent<T> post() {
-        Hartshorn.context().get(EventBus.class).post(this);
+        this.applicationContext().get(EventBus.class).post(this);
         return this;
     }
 }

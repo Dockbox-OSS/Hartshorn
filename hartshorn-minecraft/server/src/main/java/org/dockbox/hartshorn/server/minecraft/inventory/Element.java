@@ -17,8 +17,8 @@
 
 package org.dockbox.hartshorn.server.minecraft.inventory;
 
-import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.annotations.PartialApi;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.server.minecraft.inventory.context.ClickContext;
 import org.dockbox.hartshorn.server.minecraft.item.Item;
 
@@ -41,12 +41,12 @@ public interface Element {
      *
      * @return The element.
      */
-    static Element of(final Item item) {
-        return of(item, true);
+    static Element of(final ApplicationContext context, final Item item) {
+        return of(context, item, true);
     }
 
-    static Element of(final Item item, final boolean modifiable) {
-        return of(item, p -> modifiable);
+    static Element of(final ApplicationContext context, final Item item, final boolean modifiable) {
+        return of(context, item, p -> modifiable);
     }
 
     /**
@@ -60,8 +60,8 @@ public interface Element {
      *
      * @return The element.
      */
-    static Element of(final Item item, final Function<ClickContext, Boolean> onClick) {
-        return Hartshorn.context().get(Element.class, item, onClick);
+    static Element of(final ApplicationContext context, final Item item, final Function<ClickContext, Boolean> onClick) {
+        return context.get(Element.class, item, onClick);
     }
 
     /**

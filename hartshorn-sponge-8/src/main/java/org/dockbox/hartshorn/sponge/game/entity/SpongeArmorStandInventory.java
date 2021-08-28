@@ -21,6 +21,7 @@ import org.dockbox.hartshorn.server.minecraft.entities.ArmorStandInventory;
 import org.dockbox.hartshorn.server.minecraft.inventory.Slot;
 import org.dockbox.hartshorn.server.minecraft.item.Item;
 import org.dockbox.hartshorn.server.minecraft.item.ItemTypes;
+import org.dockbox.hartshorn.sponge.SpongeContextCarrier;
 import org.dockbox.hartshorn.sponge.inventory.SpongeInventory;
 import org.dockbox.hartshorn.sponge.util.SpongeAdapter;
 import org.dockbox.hartshorn.util.HartshornUtils;
@@ -31,17 +32,17 @@ import org.spongepowered.api.item.inventory.equipment.EquipmentType;
 import java.util.Collection;
 import java.util.List;
 
-public class SpongeArmorStandInventory implements SpongeInventory, ArmorStandInventory {
+public class SpongeArmorStandInventory implements SpongeInventory, ArmorStandInventory, SpongeContextCarrier {
 
     private final SpongeArmorStand stand;
 
-    public SpongeArmorStandInventory(SpongeArmorStand stand) {
+    public SpongeArmorStandInventory(final SpongeArmorStand stand) {
         this.stand = stand;
     }
 
     @Override
     public Collection<Item> items() {
-        List<ItemStack> items = HartshornUtils.emptyList();
+        final List<ItemStack> items = HartshornUtils.emptyList();
         this.stand.entity().present(entity -> {
             items.add(entity.itemInHand(HandTypes.MAIN_HAND));
             items.add(entity.itemInHand(HandTypes.OFF_HAND));
@@ -58,13 +59,13 @@ public class SpongeArmorStandInventory implements SpongeInventory, ArmorStandInv
     }
 
     @Override
-    public boolean give(Item item) {
+    public boolean give(final Item item) {
         this.slot(item, Slot.MAIN_HAND);
         return true;
     }
 
     @Override
-    public Item slot(Slot slot) {
+    public Item slot(final Slot slot) {
         return this.stand.entity()
                 .map(entity -> SpongeAdapter.fromSponge(switch (slot) {
                     case HELMET -> entity.head();
@@ -75,12 +76,12 @@ public class SpongeArmorStandInventory implements SpongeInventory, ArmorStandInv
                     case OFF_HAND -> entity.itemInHand(HandTypes.OFF_HAND);
                 }))
                 .map(Item.class::cast)
-                .orElse(() -> Item.of(ItemTypes.AIR))
+                .orElse(() -> Item.of(this.applicationContext(), ItemTypes.AIR))
                 .get();
     }
 
     @Override
-    public void slot(Item item, Slot slot) {
+    public void slot(final Item item, final Slot slot) {
         this.stand.entity().present(entity -> {
             final ItemStack itemStack = SpongeAdapter.toSponge(item);
             final EquipmentType type = SpongeAdapter.toSponge(slot);

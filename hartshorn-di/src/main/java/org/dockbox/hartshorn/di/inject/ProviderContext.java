@@ -26,10 +26,10 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public class ProviderContext<T, C extends T> {
+public class ProviderContext<T> {
 
     private final Key<T> key;
     private final boolean singleton;
-    private final Supplier<C> provider;
+    private final Supplier<T> provider;
 
 }

@@ -22,6 +22,8 @@ import org.dockbox.hartshorn.commands.CommandParser;
 import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
 import org.dockbox.hartshorn.di.context.Context;
+import org.dockbox.hartshorn.di.context.element.AnnotatedElementContext;
+import org.dockbox.hartshorn.di.context.element.TypeContext;
 
 import java.lang.reflect.AnnotatedElement;
 import java.util.List;
@@ -89,7 +91,7 @@ public interface CommandExecutorContext extends Context {
      *
      * @return The parent of the command.
      */
-    Class<?> parent();
+    TypeContext<?> parent();
 
     /**
      * Gets the {@link AnnotatedElement} behind this executor. This element is typically a {@link java.lang.reflect.Method} but
@@ -97,7 +99,7 @@ public interface CommandExecutorContext extends Context {
      *
      * @return The annotated element.
      */
-    AnnotatedElement element();
+    AnnotatedElementContext<?> element();
 
     /**
      * Gets the suggestions to complete the currently incomplete argument or flag. This may either be an alias, or element value,

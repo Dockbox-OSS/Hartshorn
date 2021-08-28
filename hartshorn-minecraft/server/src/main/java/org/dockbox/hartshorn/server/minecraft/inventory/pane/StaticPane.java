@@ -17,8 +17,8 @@
 
 package org.dockbox.hartshorn.server.minecraft.inventory.pane;
 
-import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.server.minecraft.inventory.Element;
 import org.dockbox.hartshorn.server.minecraft.inventory.InventoryLayout;
 import org.dockbox.hartshorn.server.minecraft.inventory.builder.StaticPaneBuilder;
@@ -36,8 +36,8 @@ public interface StaticPane extends Pane {
      *
      * @return The builder
      */
-    static StaticPaneBuilder builder(final InventoryLayout layout) {
-        return Hartshorn.context().get(StaticPaneBuilder.class, new LayoutAttribute(layout));
+    static StaticPaneBuilder builder(final ApplicationContext context, final InventoryLayout layout) {
+        return context.get(StaticPaneBuilder.class, new LayoutAttribute(layout));
     }
 
     /**

@@ -21,8 +21,9 @@ import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.domain.TypedOwner;
 import org.dockbox.hartshorn.api.exceptions.ApplicationException;
+import org.dockbox.hartshorn.di.GenericType;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.di.properties.Attribute;
-import org.dockbox.hartshorn.persistence.mapping.GenericType;
 import org.dockbox.hartshorn.persistence.mapping.ObjectMapper;
 import org.dockbox.hartshorn.persistence.properties.ModifiersAttribute;
 import org.dockbox.hartshorn.util.HartshornUtils;
@@ -33,21 +34,29 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 
+import javax.inject.Inject;
+
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class DefaultAbstractFileManager implements FileManager {
 
-    private final ObjectMapper mapper;
+    @Inject
+    private ObjectMapper mapper;
 
-    protected DefaultAbstractFileManager() {
-        this.mapper = Hartshorn.context().get(ObjectMapper.class);
-    }
+    @Inject
+    @Getter
+    private ApplicationContext context;
 
-    public Path dataFile(Class<?> owner) {
+    public Path dataFile(final Class<?> owner) {
         return this.dataFile(this.owner(owner));
     }
 
     @NotNull
     @Override
-    public Path dataFile(@NotNull TypedOwner owner) {
+    public Path dataFile(@NotNull final TypedOwner owner) {
         return this.dataFile(owner, owner.id());
     }
 
@@ -57,51 +66,51 @@ public abstract class DefaultAbstractFileManager implements FileManager {
 
     @NotNull
     @Override
-    public Path configFile(@NotNull TypedOwner owner) {
+    public Path configFile(@NotNull final TypedOwner owner) {
         return this.configFile(owner, owner.id());
     }
 
     @NotNull
     @Override
-    public Path dataFile(@NotNull TypedOwner owner, @NotNull String file) {
+    public Path dataFile(@NotNull final TypedOwner owner, @NotNull final String file) {
         return this.createFileIfNotExists(this.fileType().asPath(this.data().resolve(owner.id()), file));
     }
 
     @NotNull
     @Override
-    public Path configFile(@NotNull TypedOwner owner, @NotNull String file) {
+    public Path configFile(@NotNull final TypedOwner owner, @NotNull final String file) {
         return this.createFileIfNotExists(this.fileType().asPath(this.serviceConfigs().resolve(owner.id()), file));
     }
 
     @Override
-    public <T> Exceptional<T> read(Path file, Class<T> type) {
+    public <T> Exceptional<T> read(final Path file, final Class<T> type) {
         return this.mapper.read(file, type);
     }
 
     @Override
-    public <T> Exceptional<T> read(Path file, GenericType<T> type) {
+    public <T> Exceptional<T> read(final Path file, final GenericType<T> type) {
         return this.mapper.read(file, type);
     }
 
     @Override
-    public <T> Exceptional<Boolean> write(Path file, T content) {
+    public <T> Exceptional<Boolean> write(final Path file, final T content) {
         return this.mapper.write(file, content);
     }
 
     @NotNull
     @Override
-    public Path createPathIfNotExists(@NotNull Path path) {
+    public Path createPathIfNotExists(@NotNull final Path path) {
         return HartshornUtils.createPathIfNotExists(path);
     }
 
     @NotNull
     @Override
-    public Path createFileIfNotExists(@NotNull Path file) {
+    public Path createFileIfNotExists(@NotNull final Path file) {
         return HartshornUtils.createFileIfNotExists(file);
     }
 
     @Override
-    public boolean move(Path sourceFile, Path targetFile) {
+    public boolean move(final Path sourceFile, final Path targetFile) {
         this.createFileIfNotExists(targetFile);
         try {
             Files.move(sourceFile, targetFile,
@@ -109,25 +118,25 @@ public abstract class DefaultAbstractFileManager implements FileManager {
                     StandardCopyOption.REPLACE_EXISTING);
             return true;
         }
-        catch (IOException e) {
+        catch (final IOException e) {
             return false;
         }
     }
 
     @Override
-    public boolean copy(Path sourceFile, Path targetFile) {
+    public boolean copy(final Path sourceFile, final Path targetFile) {
         this.createFileIfNotExists(targetFile);
         try {
             Files.copy(sourceFile, targetFile, StandardCopyOption.REPLACE_EXISTING);
             return true;
         }
-        catch (IOException e) {
+        catch (final IOException e) {
             return false;
         }
     }
 
     @Override
-    public boolean copyDefaultFile(String defaultFileName, Path targetFile) {
+    public boolean copyDefaultFile(final String defaultFileName, final Path targetFile) {
         if (targetFile.toFile().exists() && !HartshornUtils.empty(targetFile)) return false;
         return Hartshorn.resource(defaultFileName)
                 .map(resource -> this.copy(resource, targetFile))
@@ -135,7 +144,7 @@ public abstract class DefaultAbstractFileManager implements FileManager {
     }
 
     @Override
-    public void apply(Attribute<?> property) throws ApplicationException {
+    public void apply(final Attribute<?> property) throws ApplicationException {
         if (property instanceof FileTypeAttribute) {
             final FileType fileType = ((FileTypeAttribute) property).value();
 
@@ -151,7 +160,7 @@ public abstract class DefaultAbstractFileManager implements FileManager {
         }
     }
 
-    protected void fileType(FileType fileType) {
+    protected void fileType(final FileType fileType) {
         this.mapper.fileType(fileType);
     }
 }

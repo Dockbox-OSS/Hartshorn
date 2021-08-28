@@ -17,8 +17,8 @@
 
 package org.dockbox.hartshorn.config;
 
-import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
 
 import java.nio.file.Path;
 
@@ -36,8 +36,8 @@ public interface ConfigurationManager {
      *
      * @return The new {@link ConfigurationManager}
      */
-    static ConfigurationManager of(Path path) {
-        return Hartshorn.context().get(ConfigurationManager.class, path);
+    static ConfigurationManager of(final ApplicationContext context, final Path path) {
+        return context.get(ConfigurationManager.class, path);
     }
 
     /**

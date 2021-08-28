@@ -17,9 +17,9 @@
 
 package org.dockbox.hartshorn.events;
 
+import org.dockbox.hartshorn.di.context.element.MethodContext;
+import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.events.parents.Event;
-
-import java.lang.reflect.Method;
 
 public interface EventWrapper {
 
@@ -27,9 +27,9 @@ public interface EventWrapper {
 
     Object listener();
 
-    Class<? extends Event> eventType();
+    TypeContext<? extends Event> eventType();
 
-    Method method();
+    MethodContext<?, ?> method();
 
     int priority();
 }

@@ -15,8 +15,9 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.persistence.mapping;
+package org.dockbox.hartshorn.di;
 
+import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.ParameterizedType;
@@ -41,9 +42,20 @@ public abstract class GenericType<T> implements Comparable<GenericType<T>> {
         this._type = ((ParameterizedType) superClass).getActualTypeArguments()[0];
     }
 
-    public Type getType() {return this._type;}
+    public Type type() {
+        return this._type;
+    }
+
+    public Exceptional<Class<T>> asClass() {
+        final Type type = this.type();
+        if (type instanceof Class<?> clazz) //noinspection unchecked
+            return Exceptional.of((Class<T>) clazz);
+        return Exceptional.empty();
+    }
 
     @Override
-    public int compareTo(@NotNull GenericType<T> o) {return 0;}
+    public int compareTo(@NotNull GenericType<T> o) {
+        return 0;
+    }
 
 }

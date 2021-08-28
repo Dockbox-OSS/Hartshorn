@@ -21,26 +21,34 @@ import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.domain.tuple.Vector3N;
 import org.dockbox.hartshorn.api.keys.PersistentDataKey;
 import org.dockbox.hartshorn.api.keys.TransactionResult;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.i18n.entry.FakeResource;
 import org.dockbox.hartshorn.server.minecraft.dimension.world.World;
 import org.dockbox.hartshorn.util.HartshornUtils;
 
 import java.util.Map;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@AllArgsConstructor
 public class EmptyLocation extends Location {
 
+    @Getter
+    private ApplicationContext applicationContext;
+
     @Override
-    public <T> Exceptional<T> get(PersistentDataKey<T> dataKey) {
+    public <T> Exceptional<T> get(final PersistentDataKey<T> dataKey) {
         return Exceptional.empty();
     }
 
     @Override
-    public <T> TransactionResult set(PersistentDataKey<T> dataKey, T value) {
+    public <T> TransactionResult set(final PersistentDataKey<T> dataKey, final T value) {
         return TransactionResult.fail(new FakeResource("Empty resource"));
     }
 
     @Override
-    public <T> void remove(PersistentDataKey<T> dataKey) {
+    public <T> void remove(final PersistentDataKey<T> dataKey) {
         // Nothing happens
     }
 
@@ -55,12 +63,12 @@ public class EmptyLocation extends Location {
     }
 
     @Override
-    public Location expand(Vector3N vector) {
+    public Location expand(final Vector3N vector) {
         return this;
     }
 
     @Override
     public World world() {
-        return World.empty();
+        return World.empty(this.applicationContext());
     }
 }

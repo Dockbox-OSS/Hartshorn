@@ -17,13 +17,11 @@
 
 package org.dockbox.hartshorn.proxy.service;
 
-import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.di.binding.Bindings;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.proxy.annotations.Provided;
 import org.dockbox.hartshorn.proxy.annotations.UseProxying;
 import org.dockbox.hartshorn.proxy.handle.ProxyFunction;
-import org.dockbox.hartshorn.util.Reflect;
 
 public class ContextMethodModifier extends ServiceAnnotatedMethodModifier<Provided, UseProxying> {
     @Override
@@ -33,22 +31,22 @@ public class ContextMethodModifier extends ServiceAnnotatedMethodModifier<Provid
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T, R> ProxyFunction<T, R> process(ApplicationContext context, MethodProxyContext<T> methodContext) {
+    public <T, R> ProxyFunction<T, R> process(final ApplicationContext context, final MethodProxyContext<T> methodContext) {
         return (instance, args, proxyContext) -> {
             final Provided annotation = methodContext.annotation(Provided.class);
             final String name = annotation.value();
             if ("".equals(name)) {
-                return (R) Hartshorn.context().get(methodContext.returnType());
+                return (R) context.get(methodContext.method().returnType());
             }
             else {
-                return (R) Hartshorn.context().get(methodContext.returnType(), Bindings.named(name));
+                return (R) context.get(methodContext.method().returnType(), Bindings.named(name));
             }
         };
     }
 
     @Override
-    public <T> boolean preconditions(ApplicationContext context, MethodProxyContext<T> methodContext) {
-        return Reflect.notVoid(methodContext.returnType());
+    public <T> boolean preconditions(final ApplicationContext context, final MethodProxyContext<T> methodContext) {
+        return !methodContext.method().returnType().isVoid();
     }
 
     @Override

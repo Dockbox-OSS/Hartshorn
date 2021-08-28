@@ -17,6 +17,8 @@
 
 package org.dockbox.hartshorn.config.annotations;
 
+import org.dockbox.hartshorn.di.context.ApplicationEnvironment;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -51,7 +53,7 @@ public @interface Value {
 
     /**
      * The default value for the field, used when the result of {@link org.dockbox.hartshorn.config.ConfigurationManager#get(String)}
-     * returned <code>null</code>. Supports native types through {@link org.dockbox.hartshorn.util.Reflect#toPrimitive(Class, String)}.
+     * returned <code>null</code>. Supports native types through {@link ApplicationEnvironment#toPrimitive(Class, String)}.
      *
      * @return The string-based default value.
      */

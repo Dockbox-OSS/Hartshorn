@@ -31,7 +31,6 @@ import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.proxy.handle.ProxyFunction;
 import org.dockbox.hartshorn.proxy.service.MethodProxyContext;
 import org.dockbox.hartshorn.proxy.service.ServiceAnnotatedMethodModifier;
-import org.dockbox.hartshorn.util.Reflect;
 
 import java.lang.annotation.Annotation;
 import java.util.function.Supplier;
@@ -50,7 +49,7 @@ public abstract class CacheServiceModifier<A extends Annotation> extends Service
         final CacheManager manager = context.get(cacheMethodContext.manager());
         String name = cacheMethodContext.name();
         if ("".equals(name)) {
-            final Exceptional<CacheService> annotation = Reflect.annotation(methodContext.type(), CacheService.class);
+            final Exceptional<CacheService> annotation = methodContext.type().annotation(CacheService.class);
             if (annotation.present()) {
                 name = annotation.get().value();
             }

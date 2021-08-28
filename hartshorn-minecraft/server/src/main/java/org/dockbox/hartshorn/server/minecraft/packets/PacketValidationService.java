@@ -17,16 +17,17 @@
 
 package org.dockbox.hartshorn.server.minecraft.packets;
 
-import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.annotations.PostBootstrap;
 import org.dockbox.hartshorn.api.annotations.UseBootstrap;
 import org.dockbox.hartshorn.di.annotations.service.Service;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
+import org.dockbox.hartshorn.di.context.element.MethodContext;
+import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.events.EventBus;
 import org.dockbox.hartshorn.events.EventWrapper;
 import org.dockbox.hartshorn.server.minecraft.events.packet.PacketEvent;
 import org.dockbox.hartshorn.util.Reflect;
 
-import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Collection;
@@ -35,27 +36,29 @@ import java.util.Collection;
 class PacketValidationService {
 
     @PostBootstrap
-    public void addEventValidation() {
-        final EventBus bus = Hartshorn.context().get(EventBus.class);
-        final PacketContext context = new PacketContext();
+    public void addEventValidation(final ApplicationContext context) {
+        final EventBus bus = context.get(EventBus.class);
+        final PacketContext packetContext = new PacketContext();
 
         for (final EventWrapper wrapper : bus.invokers().values().stream().flatMap(Collection::stream).toList()) {
 
-            final Method method = wrapper.method();
-            final Class<?> parameterType = method.getParameterTypes()[0];
-            if (Reflect.assigns(PacketEvent.class, parameterType)) {
-                final Type genericParameterType = method.getGenericParameterTypes()[0];
+            final MethodContext<?, ?> method = wrapper.method();
+            final TypeContext<?> parameterType = method.parameterTypes().get(0);
+            if (parameterType.childOf(PacketEvent.class)) {
+
+                // TODO: Rework into MethodContext
+                final Type genericParameterType = method.method().getGenericParameterTypes()[0];
                 if (genericParameterType instanceof ParameterizedType parameterizedType) {
                     final Type actualType = parameterizedType.getActualTypeArguments()[0];
                     if (actualType instanceof Class && Reflect.assigns(Packet.class, (Class<?>) actualType)) {
                         //noinspection unchecked
-                        context.add((Class<? extends Packet>) actualType);
+                        packetContext.add((Class<? extends Packet>) actualType);
                     }
                 }
             }
 
         }
-        Hartshorn.context().add(context);
+        context.add(packetContext);
     }
 
 }

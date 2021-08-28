@@ -21,44 +21,46 @@ import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.annotations.PostBootstrap;
 import org.dockbox.hartshorn.api.annotations.UseBootstrap;
 import org.dockbox.hartshorn.di.annotations.service.Service;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
+import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.events.annotations.Posting;
 import org.dockbox.hartshorn.events.annotations.UseEvents;
 import org.dockbox.hartshorn.events.parents.Event;
 import org.dockbox.hartshorn.util.HartshornUtils;
-import org.dockbox.hartshorn.util.Reflect;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service(activators = { UseBootstrap.class, UseEvents.class })
 public class EventValidator {
 
     @PostBootstrap
-    public void validate() {
-        final List<Class<? extends Event>> allEvents = Reflect.children(Event.class)
+    public void validate(final ApplicationContext context) {
+        final List<TypeContext<? extends Event>> allEvents = context.environment().children(Event.class)
                 .stream()
-                .filter(type -> !Reflect.isAbstract(type))
+                .filter(type -> !type.isAbstract())
                 // Anonymous classes indicate the event carries type parameters when posted (e.g. EngineChangedState<State>)
                 // These are only created when the event is posted, so they can be ignored here, as they are not explicit
                 // definitions.
-                .filter(type -> !type.isAnonymousClass())
+                .filter(type -> !type.isAnonymous())
                 .toList();
-        final List<Class<? extends Event>> postedEvents = HartshornUtils.emptyList();
+        final List<TypeContext<? extends Event>> postedEvents = HartshornUtils.emptyList();
 
-        for (final Class<?> bridge : Reflect.types(Posting.class)) {
-            final Posting posting = Reflect.annotation(bridge, Posting.class).get();
-            postedEvents.addAll(Arrays.asList(posting.value()));
+        for (final TypeContext<?> bridge : context.environment().types(Posting.class)) {
+            final Posting posting = bridge.annotation(Posting.class).get();
+            postedEvents.addAll(Arrays.stream(posting.value()).map(TypeContext::of).collect(Collectors.toList()));
         }
 
-        final Set<Class<? extends Event>> difference = HartshornUtils.difference(allEvents, postedEvents);
+        final Set<TypeContext<? extends Event>> difference = HartshornUtils.difference(allEvents, postedEvents);
 
         if (!difference.isEmpty()) {
             final StringBuilder message = new StringBuilder(difference.size() + " events are not handled by any event bridge!");
 
-            if (!Hartshorn.server().isCI()) {
-                for (final Class<? extends Event> event : difference) {
-                    message.append("\n\t- ").append(event.getSimpleName());
+            if (!context.environment().isCI()) {
+                for (final TypeContext<? extends Event> event : difference) {
+                    message.append("\n\t- ").append(event.name());
                 }
             }
             Hartshorn.log().warn(message.toString());

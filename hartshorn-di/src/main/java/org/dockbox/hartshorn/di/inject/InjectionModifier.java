@@ -18,6 +18,7 @@
 package org.dockbox.hartshorn.di.inject;
 
 import org.dockbox.hartshorn.di.context.ApplicationContext;
+import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.di.properties.Attribute;
 import org.jetbrains.annotations.Nullable;
 
@@ -25,9 +26,9 @@ import java.lang.annotation.Annotation;
 
 public interface InjectionModifier<A extends Annotation> {
 
-    <T> boolean preconditions(Class<T> type, @Nullable T instance, Attribute<?>... properties);
+    <T> boolean preconditions(ApplicationContext context, TypeContext<T> type, @Nullable T instance, Attribute<?>... properties);
 
-    <T> T process(ApplicationContext context, Class<T> type, @Nullable T instance, Attribute<?>... properties);
+    <T> T process(ApplicationContext context, TypeContext<T> type, @Nullable T instance, Attribute<?>... properties);
 
     Class<A> activator();
 

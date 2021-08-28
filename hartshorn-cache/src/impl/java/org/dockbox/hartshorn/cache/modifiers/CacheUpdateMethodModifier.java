@@ -25,8 +25,6 @@ import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.proxy.handle.ProxyFunction;
 import org.dockbox.hartshorn.proxy.service.MethodProxyContext;
 
-import java.lang.reflect.Parameter;
-
 /**
  * The {@link org.dockbox.hartshorn.proxy.service.ServiceAnnotatedMethodModifier} responsible for {@link UpdateCache}
  * decorated methods. This delegates functionality to the underlying {@link org.dockbox.hartshorn.cache.CacheManager}
@@ -51,8 +49,7 @@ public class CacheUpdateMethodModifier extends CacheServiceModifier<UpdateCache>
 
     @Override
     public <T> boolean preconditions(final ApplicationContext context, final MethodProxyContext<T> methodContext) {
-        final Parameter[] parameters = methodContext.method().getParameters();
-        return parameters.length == 1;
+        return methodContext.method().parameters().size() == 1;
     }
 
     @Override

@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.server.minecraft.item;
 
 import org.dockbox.hartshorn.api.keys.PersistentDataKey;
 import org.dockbox.hartshorn.api.keys.StoredPersistentKey;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.i18n.text.Text;
 import org.dockbox.hartshorn.server.minecraft.item.persistence.PersistentItemModel;
 import org.dockbox.hartshorn.util.HartshornUtils;
@@ -62,8 +63,8 @@ public class PersistentItemModelImpl implements PersistentItemModel {
     }
 
     @Override
-    public Item restore() {
-        return this.repopulate(Item.of(this.id));
+    public Item restore(final ApplicationContext context) {
+        return this.repopulate(Item.of(context, this.id));
     }
 
     protected Item repopulate(final Item item) {

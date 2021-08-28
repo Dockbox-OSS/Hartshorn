@@ -47,5 +47,5 @@ import org.dockbox.hartshorn.regions.plots.events.merge.RegionAutoMergeEvent;
         ClearPlotEvent.class,
         DeletePlotEvent.class
 })
-public class PlotEventBridge implements EventBridge {
+public class PlotEventBridge extends EventBridge {
 }

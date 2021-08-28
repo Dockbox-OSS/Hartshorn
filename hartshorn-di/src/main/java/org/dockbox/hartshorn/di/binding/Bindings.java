@@ -20,6 +20,7 @@ package org.dockbox.hartshorn.di.binding;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.exceptions.ApplicationException;
 import org.dockbox.hartshorn.di.ApplicationContextAware;
+import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.di.properties.Attribute;
 import org.dockbox.hartshorn.di.properties.AttributeHolder;
 import org.dockbox.hartshorn.di.services.ComponentContainer;
@@ -60,18 +61,18 @@ public final class Bindings {
         return Exceptional.empty();
     }
 
-    public static String serviceId(final Class<?> type) {
+    public static String serviceId(final TypeContext<?> type) {
         return serviceId(type, false);
     }
 
-    public static String serviceId(final Class<?> type, final boolean ignoreExisting) {
+    public static String serviceId(final TypeContext<?> type, final boolean ignoreExisting) {
         final Exceptional<ComponentContainer> container = ApplicationContextAware.instance().context().locator().container(type);
         if (!ignoreExisting && container.present()) {
             final String id = container.get().id();
             if (!"".equals(id)) return id;
         }
 
-        String raw = type.getSimpleName();
+        String raw = type.name();
         if (raw.endsWith("Service")) {
             raw = raw.substring(0, raw.length() - 7);
         }
@@ -79,18 +80,14 @@ public final class Bindings {
         return String.join("-", parts).toLowerCase(Locale.ROOT);
     }
 
-    public static String serviceName(final Class<?> type) {
-        return serviceName(type, false);
-    }
-
-    public static String serviceName(final Class<?> type, final boolean ignoreExisting) {
+    public static String serviceName(final TypeContext<?> type, final boolean ignoreExisting) {
         final Exceptional<ComponentContainer> container = ApplicationContextAware.instance().context().locator().container(type);
         if (!ignoreExisting && container.present()) {
             final String name = container.get().name();
             if (!"".equals(name)) return name;
         }
 
-        String raw = type.getSimpleName();
+        String raw = type.name();
         if (raw.endsWith("Service")) {
             raw = raw.substring(0, raw.length() - 7);
         }

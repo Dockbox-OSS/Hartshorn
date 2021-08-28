@@ -55,12 +55,13 @@ import javax.inject.Inject;
 public class Dave implements AttributeHolder {
 
     public static final Setting<Boolean> MUTED_DAVE = Setting.of(Boolean.class)
-            .resource(new Resource("Muted Dave", "settings.dave.muted"))
-            .description(new Resource("Whether you will see Dave's responses", "settings.dave.muted.description"))
+            .id("dave.muted")
+            .resource(ctx -> new Resource(ctx, "Muted Dave", "settings.dave.muted"))
+            .description(ctx -> new Resource(ctx, "Whether you will see Dave's responses", "settings.dave.muted.description"))
             .owner(Dave.class)
-            .converter(value -> value ? new Resource("Yes", "yes") : new Resource("No", "no"))
+            .converter((ctx, value) -> value ? new Resource(ctx, "Yes", "yes") : new Resource(ctx, "No", "no"))
             .defaultValue(() -> false)
-            .display(() -> Item.of(ItemTypes.BOTTLE_O_ENCHANTING))
+            .display(ctx -> Item.of(ctx, ItemTypes.BOTTLE_O_ENCHANTING))
             .ok();
     public static final String DAVE_MUTE = "dave.mute";
     public static final String DAVE_REFRESH = "dave.refresh";
@@ -70,19 +71,17 @@ public class Dave implements AttributeHolder {
     private DaveTriggers triggers = new DaveTriggers();
     private DaveConfig config = new DaveConfig();
 
-    @Inject
-    private DaveResources resources;
-
-    @Inject
-    private ApplicationContext context;
+    @Inject private DaveResources resources;
+    @Inject private DaveUtils utils;
+    @Inject private ApplicationContext context;
 
     @Command(value = "mute", permission = Dave.DAVE_MUTE)
-    public void mute(Player player) {
-        DaveUtils.toggleMute(player);
+    public void mute(final Player player) {
+        this.utils.toggleMute(player);
     }
 
     @Command(value = "triggers", permission = Dave.DAVE_TRIGGERS)
-    public void triggers(CommandSource source) {
+    public void triggers(final CommandSource source) {
         this.context.get(PaginationBuilder.class)
                 .title(this.resources.triggerHeader().asText())
                 .content(this.triggers.triggers().stream()
@@ -96,23 +95,23 @@ public class Dave implements AttributeHolder {
     }
 
     @Command(value = "run", arguments = "<trigger{String}>", permission = Dave.DAVE_TRIGGER_RUN)
-    public void run(Player source, CommandContext context) {
-        String triggerId = context.get("trigger");
+    public void run(final Player source, final CommandContext context) {
+        final String triggerId = context.get("trigger");
         this.triggers.find(triggerId)
-                .present(trigger -> DaveUtils.performTrigger(source, source.name(), trigger, "", this.config))
+                .present(trigger -> this.utils.performTrigger(source, source.name(), trigger, "", this.config))
                 .absent(() -> source.send(this.resources.triggerNotfound(triggerId)));
     }
 
     @Command(value = "refresh", permission = Dave.DAVE_REFRESH)
-    public void refresh(CommandSource source) throws ApplicationException {
+    public void refresh(final CommandSource source) throws ApplicationException {
         Bindings.enable(this);
         source.sendWithPrefix(this.resources.reload());
     }
 
     @Override
     public void enable() {
-        FileManager fm = this.context.get(FileManager.class, FileTypeAttribute.of(FileType.YAML));
-        Path triggerFile = fm.dataFile(Dave.class, "triggers");
+        final FileManager fm = this.context.get(FileManager.class, FileTypeAttribute.of(FileType.YAML));
+        final Path triggerFile = fm.dataFile(Dave.class, "triggers");
         if (HartshornUtils.empty(triggerFile)) this.restoreTriggerFile(fm, triggerFile);
 
         fm.read(triggerFile, DaveTriggers.class).present(triggers -> {
@@ -120,25 +119,25 @@ public class Dave implements AttributeHolder {
             this.triggers = triggers;
         }).caught(e -> Hartshorn.log().warn("Could not load triggers for Dave"));
 
-        Path configFile = fm.configFile(Dave.class);
+        final Path configFile = fm.configFile(Dave.class);
         fm.read(configFile, DaveConfig.class)
                 .present(config -> this.config = config)
                 .caught(e -> Hartshorn.log().warn("Could not load config for Dave"));
     }
 
-    private void restoreTriggerFile(FileManager fm, Path triggerFile) {
+    private void restoreTriggerFile(final FileManager fm, final Path triggerFile) {
         fm.copyDefaultFile("dave_trigger.yml", triggerFile);
     }
 
     @Listener
-    public void on(EngineChangedState<Reload> event) throws ApplicationException {
+    public void on(final EngineChangedState<Reload> event) throws ApplicationException {
         Bindings.enable(this);
     }
 
     @Listener
-    public void on(SendChatEvent sendChatEvent) {
-        Player player = (Player) sendChatEvent.subject();
-        DaveUtils.findMatching(this.triggers, sendChatEvent.message().toPlain()).present(trigger -> this.context.get(TaskRunner.class).acceptDelayed(() -> DaveUtils.performTrigger(
+    public void on(final SendChatEvent sendChatEvent) {
+        final Player player = (Player) sendChatEvent.subject();
+        this.utils.findMatching(this.triggers, sendChatEvent.message().toPlain()).present(trigger -> this.context.get(TaskRunner.class).acceptDelayed(() -> this.utils.performTrigger(
                         player,
                         player.name(),
                         trigger,
@@ -149,9 +148,9 @@ public class Dave implements AttributeHolder {
     }
 
     @Listener
-    public void on(DiscordChatReceivedEvent chatEvent) {
-        if (chatEvent.channel().getId().equals(this.config.channel().getId())) {
-            DaveUtils.findMatching(this.triggers, chatEvent.message().getContentRaw()).present(trigger -> this.context.get(TaskRunner.class).acceptDelayed(() -> DaveUtils.performTrigger(
+    public void on(final DiscordChatReceivedEvent chatEvent) {
+        if (chatEvent.channel().getId().equals(this.config.channel(chatEvent.applicationContext()).getId())) {
+            this.utils.findMatching(this.triggers, chatEvent.message().getContentRaw()).present(trigger -> this.context.get(TaskRunner.class).acceptDelayed(() -> this.utils.performTrigger(
                             this.context.get(DiscordCommandSource.class, chatEvent.channel()),
                             chatEvent.author().getName(),
                             trigger,

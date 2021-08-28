@@ -29,6 +29,7 @@ import org.dockbox.hartshorn.server.minecraft.inventory.pane.PaginatedPane;
 import org.dockbox.hartshorn.server.minecraft.item.Item;
 import org.dockbox.hartshorn.server.minecraft.item.ItemTypes;
 import org.dockbox.hartshorn.server.minecraft.players.Player;
+import org.dockbox.hartshorn.sponge.SpongeContextCarrier;
 import org.dockbox.hartshorn.sponge.util.SpongeAdapter;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.spongepowered.api.entity.living.player.server.ServerPlayer;
@@ -43,7 +44,7 @@ import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
-public class SpongePaginatedPane implements PaginatedPane {
+public class SpongePaginatedPane implements PaginatedPane, SpongeContextCarrier {
 
     protected final InventoryMenu menu;
     private final InventoryType type;
@@ -66,7 +67,7 @@ public class SpongePaginatedPane implements PaginatedPane {
                 final Item item = Exceptional.of(slot.peekAt(0))
                         .map(SpongeAdapter::fromSponge)
                         .map(Item.class::cast)
-                        .orElse(ItemTypes.AIR::item)
+                        .orElse(() -> ItemTypes.AIR.item(this.applicationContext()))
                         .get();
 
                 final ClickContext context = new ClickContext(origin, item, this);

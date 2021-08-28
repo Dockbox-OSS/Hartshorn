@@ -17,9 +17,7 @@
 
 package org.dockbox.hartshorn.commands.context;
 
-import org.dockbox.hartshorn.util.Reflect;
-
-import java.lang.reflect.Parameter;
+import org.dockbox.hartshorn.di.context.element.ParameterContext;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -30,9 +28,9 @@ import lombok.Getter;
  */
 @AllArgsConstructor
 @Getter
-public class ParameterContext {
+public class CommandParameterContext {
 
-    private final Parameter parameter;
+    private final ParameterContext<?> parameter;
     private final int index;
 
     /**
@@ -43,8 +41,8 @@ public class ParameterContext {
      *
      * @return <code>true</code> if the provided type is equal or a supertype, else <code>false</code>
      */
-    public boolean is(Class<?> type) {
-        return Reflect.assigns(type, this.parameter().getType());
+    public boolean is(final Class<?> type) {
+        return this.parameter().type().childOf(type);
     }
 
 }

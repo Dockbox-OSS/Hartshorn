@@ -55,7 +55,7 @@ public class SpongeUtil {
 
     public static <T> T spongeReference(final RegistryType<T> registry, final String name) {
         return RegistryKey.of(registry, ResourceKey.sponge(name))
-                .asDefaultedReference(() -> Sponge.game().registries())
+                .asDefaultedReference(Sponge::game)
                 .get();
     }
 
@@ -66,7 +66,7 @@ public class SpongeUtil {
     }
 
     public static <T> Exceptional<T> fromRegistry(final RegistryType<T> value, final ResourceKey key) {
-        final Exceptional<Registry<T>> registry = Exceptional.of(Sponge.game().registries().findRegistry(value));
+        final Exceptional<Registry<T>> registry = Exceptional.of(Sponge.game().findRegistry(value));
         return registry.map(r -> {
             final Optional<RegistryEntry<T>> entry = r.findEntry(key);
             return entry.map(RegistryEntry::value).orElse(null);
@@ -86,7 +86,7 @@ public class SpongeUtil {
     }
 
     public static <T extends DefaultedRegistryValue> DefaultedRegistryReference<T> key(final RegistryType<T> type, final String key) {
-        return RegistryKey.of(type, ResourceKey.sponge(key)).asDefaultedReference(() -> Sponge.game().registries());
+        return RegistryKey.of(type, ResourceKey.sponge(key)).asDefaultedReference(Sponge::game);
     }
 
     public static <T, C> T get(

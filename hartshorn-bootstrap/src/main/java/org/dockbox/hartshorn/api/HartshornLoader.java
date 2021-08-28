@@ -15,11 +15,11 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.util.exceptions;
+package org.dockbox.hartshorn.api;
 
-public class NotPrimitiveException extends RuntimeException {
+import org.dockbox.hartshorn.di.context.ApplicationContext;
 
-    public NotPrimitiveException(Class<?> type) {
-        super(type.getSimpleName() + " is not a primitive type");
-    }
+@FunctionalInterface
+public interface HartshornLoader {
+    ApplicationContext load();
 }

@@ -17,10 +17,12 @@
 
 package org.dockbox.hartshorn.persistence;
 
+import org.dockbox.hartshorn.di.context.ApplicationContext;
+
 public interface PersistentModel<T extends PersistentCapable<? extends PersistentModel<T>>> {
 
     Class<? extends T> type();
 
-    T restore();
+    T restore(ApplicationContext context);
 
 }

@@ -17,6 +17,7 @@
 
 package org.dockbox.hartshorn.di;
 
+import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.di.properties.Attribute;
 import org.dockbox.hartshorn.di.properties.UseFactory;
 
@@ -26,7 +27,11 @@ public interface TypeFactory {
         return new UseFactory(varargs);
     }
 
-    <T> T create(Class<T> type, Object... arguments);
+    default <T> T create(final Class<T> type, final Object... arguments) {
+        return this.create(TypeContext.of(type), arguments);
+    }
+
+    <T> T create(TypeContext<T> type, Object... arguments);
 
     TypeFactory with(Attribute<?>... properties);
 

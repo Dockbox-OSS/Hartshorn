@@ -17,6 +17,7 @@
 
 package org.dockbox.hartshorn.i18n.common;
 
+import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.i18n.entry.Resource;
 import org.dockbox.hartshorn.persistence.PersistentModel;
 
@@ -37,7 +38,7 @@ public class ResourceEntryModel implements PersistentModel<ResourceEntry> {
     }
 
     @Override
-    public ResourceEntry restore() {
-        return new Resource(this.fallback, this.key, this.language);
+    public ResourceEntry restore(final ApplicationContext context) {
+        return new Resource(context, this.fallback, this.key, this.language);
     }
 }

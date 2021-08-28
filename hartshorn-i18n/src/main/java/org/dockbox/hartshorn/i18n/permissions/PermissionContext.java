@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.i18n.permissions;
 
-import org.dockbox.hartshorn.api.Hartshorn;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -42,7 +42,7 @@ public class PermissionContext {
     private PermissionContext() {
     }
 
-    private PermissionContext(String world) {
+    private PermissionContext(final String world) {
         this.world = world;
     }
 
@@ -50,7 +50,7 @@ public class PermissionContext {
         return new PermissionContextBuilder();
     }
 
-    public Permission toPermission(String key) {
-        return Hartshorn.context().get(Permission.class, key, this);
+    public Permission toPermission(final ApplicationContext context, final String key) {
+        return context.get(Permission.class, key, this);
     }
 }

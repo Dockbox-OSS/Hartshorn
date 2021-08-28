@@ -22,7 +22,7 @@ import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
 
-import org.dockbox.hartshorn.api.Hartshorn;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.discord.templates.MessageTemplate;
 import org.dockbox.hartshorn.i18n.text.Text;
 
@@ -30,8 +30,8 @@ import java.util.Collection;
 
 public interface DiscordPagination {
 
-    static DiscordPagination create() {
-        return Hartshorn.context().get(DiscordPagination.class);
+    static DiscordPagination create(final ApplicationContext context) {
+        return context.get(DiscordPagination.class);
     }
 
     void send(MessageChannel channel);

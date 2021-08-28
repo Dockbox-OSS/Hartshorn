@@ -39,10 +39,4 @@ public interface GlobalConfig {
      */
     ExceptionLevels level();
 
-    /**
-     * Indicates the current version of Hartshorn.
-     *
-     * @return The current version.
-     */
-    String version();
 }

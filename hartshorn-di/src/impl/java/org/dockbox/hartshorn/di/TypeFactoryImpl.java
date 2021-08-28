@@ -19,18 +19,22 @@ package org.dockbox.hartshorn.di;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.di.binding.Bindings;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
+import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.di.inject.wired.BoundContext;
 import org.dockbox.hartshorn.di.inject.wired.ConstructorBoundContext;
 import org.dockbox.hartshorn.di.properties.Attribute;
 import org.dockbox.hartshorn.di.properties.BindingMetaAttribute;
 import org.dockbox.hartshorn.util.HartshornUtils;
-import org.dockbox.hartshorn.util.Reflect;
 import org.jetbrains.annotations.Nullable;
 
+import javax.inject.Inject;
 import javax.inject.Named;
 
 public class TypeFactoryImpl implements TypeFactory {
 
+    @Inject
+    private ApplicationContext context;
     private Attribute<?>[] properties;
 
     public TypeFactoryImpl() {
@@ -38,7 +42,7 @@ public class TypeFactoryImpl implements TypeFactory {
     }
 
     @Override
-    public <T> T create(final Class<T> type, final Object... arguments) {
+    public <T> T create(final TypeContext<T> type, final Object... arguments) {
         @Nullable Named named = null;
         for (final Attribute<?> property : this.properties) {
             if (property instanceof BindingMetaAttribute bindingMeta) named = bindingMeta.value();
@@ -46,7 +50,7 @@ public class TypeFactoryImpl implements TypeFactory {
 
         Exceptional<BoundContext<T, T>> binding = ApplicationContextAware.instance().context().firstWire(type, named);
         if (binding.absent()) {
-            if (Reflect.isAbstract(type)) throw new IllegalStateException("Could not autowire " + type.getCanonicalName() + " as there is no active binding for it");
+            if (type.isAbstract()) throw new IllegalStateException("Could not autowire " + type.qualifiedName() + " as there is no active binding for it");
             else {
                 final BoundContext<T, T> context = new ConstructorBoundContext<>(Key.of(type, Bindings.named("")), type);
                 ApplicationContextAware.instance().context().add(context);
@@ -56,7 +60,7 @@ public class TypeFactoryImpl implements TypeFactory {
         final Exceptional<BoundContext<T, T>> finalBinding = binding;
 
         return Exceptional.of(() -> {
-            final T instance = finalBinding.get().create(arguments);
+            final T instance = finalBinding.get().create(this.context, arguments);
             Bindings.enable(instance, this.properties);
             return instance;
         }).orNull();
@@ -64,7 +68,7 @@ public class TypeFactoryImpl implements TypeFactory {
 
     @Override
     public TypeFactory with(final Attribute<?>... properties) {
-        final TypeFactoryImpl clone = new TypeFactoryImpl();
+        final TypeFactoryImpl clone = this.context.get(TypeFactoryImpl.class);
         clone.properties = HartshornUtils.merge(this.properties, properties);
         return clone;
     }

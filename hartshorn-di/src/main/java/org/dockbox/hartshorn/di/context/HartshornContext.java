@@ -17,20 +17,29 @@
 
 package org.dockbox.hartshorn.di.context;
 
+import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.di.properties.Attribute;
-
-import java.util.function.Consumer;
 
 import javax.inject.Named;
 
 public interface HartshornContext extends Context {
 
+    default <T> T get(final TypeContext<T> type, final Named named) {
+        return this.get(type.type(), named);
+    }
+
     <T> T get(Class<T> type, Named named);
+
+    default <T> T get(final TypeContext<T> type, final Attribute<?>... additionalProperties) {
+        return this.get(type.type(), additionalProperties);
+    }
 
     <T> T get(Class<T> type, Attribute<?>... additionalProperties);
 
-    <T> T get(Class<T> type, Object... varargs);
+    default <T> T get(final TypeContext<T> type, final Object... varargs) {
+        return this.get(type.type(), varargs);
+    }
 
-    <T> void with(Class<T> type, Consumer<T> consumer);
+    <T> T get(Class<T> type, Object... varargs);
 
 }

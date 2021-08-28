@@ -17,11 +17,12 @@
 
 package org.dockbox.hartshorn.api.keys;
 
-import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.TypedOwner;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.jetbrains.annotations.NonNls;
 
 import java.util.Objects;
+import java.util.function.Function;
 
 import lombok.Getter;
 
@@ -29,38 +30,32 @@ import lombok.Getter;
 public class TypedPersistentDataKey<T> implements PersistentDataKey<T> {
 
     @NonNls
-    private final String name;
-    @NonNls
     private final String id;
-    private final TypedOwner owner;
+    private final Function<ApplicationContext, TypedOwner> owner;
     private final Class<T> type;
 
-    public TypedPersistentDataKey(String name, String id, TypedOwner owner, Class<T> type) {
-        this.name = name;
+    public TypedPersistentDataKey(final String id, final Function<ApplicationContext, TypedOwner> owner, final Class<T> type) {
         this.id = id;
         this.owner = owner;
         this.type = type;
     }
 
     @Override
-    public String ownerId() {
-        return this.owner.id();
+    public String ownerId(final ApplicationContext context) {
+        return this.owner.apply(context).id();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.name, this.id, this.owner, this.type);
+        return Objects.hash(this.id, this.owner, this.type);
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) return true;
         if (!(o instanceof TypedPersistentDataKey<?> that)) return false;
 
         if (!this.id.equals(that.id)) return false;
-        if (!this.owner.equals(that.owner) &&
-                !this.owner.equals(Hartshorn.context().meta().lookup(Hartshorn.class)))
-            return false;
         return this.type.equals(that.type);
     }
 }

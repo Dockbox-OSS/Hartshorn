@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.di;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
+import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.slf4j.Logger;
 
 import lombok.Getter;
@@ -40,7 +41,9 @@ public abstract class ApplicationContextAware {
         this.context = context;
     }
 
-    public abstract <T> Exceptional<T> proxy(Class<T> type, T instance);
+    public abstract <T> Exceptional<T> proxy(TypeContext<T> type, T instance);
+
+    public abstract <T> Exceptional<TypeContext<T>> real(T instance);
 
     public abstract Logger log();
 

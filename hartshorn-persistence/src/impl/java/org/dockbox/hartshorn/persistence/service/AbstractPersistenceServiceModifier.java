@@ -20,6 +20,7 @@ package org.dockbox.hartshorn.persistence.service;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.domain.TypedOwner;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
+import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.di.services.ComponentContainer;
 import org.dockbox.hartshorn.persistence.FileManager;
 import org.dockbox.hartshorn.persistence.FileType;
@@ -30,7 +31,6 @@ import org.dockbox.hartshorn.persistence.mapping.ObjectMapper;
 import org.dockbox.hartshorn.proxy.handle.ProxyFunction;
 import org.dockbox.hartshorn.proxy.service.MethodProxyContext;
 import org.dockbox.hartshorn.proxy.service.ServiceAnnotatedMethodModifier;
-import org.dockbox.hartshorn.util.Reflect;
 
 import java.lang.annotation.Annotation;
 import java.nio.file.Path;
@@ -43,7 +43,7 @@ public abstract class AbstractPersistenceServiceModifier<M extends Annotation, C
     }
 
     @Override
-    public <T, R> ProxyFunction<T, R> process(ApplicationContext context, MethodProxyContext<T> methodContext) {
+    public <T, R> ProxyFunction<T, R> process(final ApplicationContext context, final MethodProxyContext<T> methodContext) {
         final Exceptional<C> serialisationContext = methodContext.first(this.contextType());
         if (serialisationContext.absent()) throw new IllegalStateException("Expected additional context to be present");
 
@@ -64,18 +64,18 @@ public abstract class AbstractPersistenceServiceModifier<M extends Annotation, C
 
     protected abstract <T, R> ProxyFunction<T, R> processString(ApplicationContext context, MethodProxyContext<T> methodContext, C serialisationContext);
 
-    protected ObjectMapper mapper(ApplicationContext context, C serialisationContext) {
+    protected ObjectMapper mapper(final ApplicationContext context, final C serialisationContext) {
         final ObjectMapper objectMapper = context.get(ObjectMapper.class);
         final FileType fileType = serialisationContext.fileType();
         objectMapper.fileType(fileType);
         return objectMapper;
     }
 
-    protected Path determineAnnotationPath(ApplicationContext context, MethodProxyContext<?> methodContext, PersistenceAnnotationContext annotationContext) {
-        Class<?> owner = annotationContext.file().owner();
+    protected Path determineAnnotationPath(final ApplicationContext context, final MethodProxyContext<?> methodContext, final PersistenceAnnotationContext annotationContext) {
+        TypeContext<?> owner = TypeContext.of(annotationContext.file().owner());
 
-        if (!Reflect.notVoid(owner)) {
-            final Exceptional<ComponentContainer> container = context.locator().container(methodContext.method().getDeclaringClass());
+        if (owner.isVoid()) {
+            final Exceptional<ComponentContainer> container = context.locator().container(methodContext.method().parent());
             if (container.present()) {
                 owner = container.get().owner();
             }

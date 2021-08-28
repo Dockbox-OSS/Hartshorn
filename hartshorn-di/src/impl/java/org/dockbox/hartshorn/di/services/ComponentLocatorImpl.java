@@ -18,13 +18,12 @@
 package org.dockbox.hartshorn.di.services;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.di.ApplicationContextAware;
 import org.dockbox.hartshorn.di.ComponentType;
 import org.dockbox.hartshorn.di.annotations.component.Component;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
+import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.util.HartshornUtils;
-import org.dockbox.hartshorn.util.Reflect;
 
-import java.lang.annotation.Annotation;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -32,25 +31,30 @@ import java.util.Map;
 public class ComponentLocatorImpl implements ComponentLocator {
 
     private static final Map<String, Collection<ComponentContainer>> cache = HartshornUtils.emptyConcurrentMap();
-    private static final List<Class<? extends Annotation>> decorators = HartshornUtils.emptyList();
+    private final ApplicationContext context;
+
+    public ComponentLocatorImpl(final ApplicationContext context) {
+        this.context = context;
+    }
 
     @Override
     public void register(final String prefix) {
         if (ComponentLocatorImpl.cache.containsKey(prefix)) return;
 
         final long start = System.currentTimeMillis();
-        Reflect.prefix(prefix);
-        final Collection<Class<?>> types = Reflect.types(Component.class);
+        this.context.environment().prefix(prefix);
+
+        final Collection<TypeContext<?>> types = this.context.environment().types(Component.class);
 
         final List<ComponentContainer> containers = types.stream()
-                .map(ComponentContainerImpl::new)
+                .map(type -> new ComponentContainerImpl(this.context, type))
                 .filter(ComponentContainerImpl::enabled)
                 .filter(container -> !container.type().isAnnotation()) // Exclude extended annotations
                 .map(ComponentContainer.class::cast)
                 .toList();
 
         final long duration = System.currentTimeMillis() - start;
-        ApplicationContextAware.instance().log().info("Collected %d types and %d components in %dms".formatted(types.size(), containers.size(), duration));
+        this.context.log().info("Collected %d types and %d components in %dms".formatted(types.size(), containers.size(), duration));
 
         ComponentLocatorImpl.cache.put(prefix, containers);
     }
@@ -68,23 +72,11 @@ public class ComponentLocatorImpl implements ComponentLocator {
     }
 
     @Override
-    public Exceptional<ComponentContainer> container(final Class<?> type) {
+    public Exceptional<ComponentContainer> container(final TypeContext<?> type) {
         return Exceptional.of(this.containers()
                 .stream()
                 .filter(container -> container.type().equals(type))
                 .findFirst()
         );
-    }
-
-    @Override
-    public Collection<Class<? extends Annotation>> decorators() {
-        if (decorators.isEmpty()) {
-            final Collection<Class<?>> annotations = Reflect.types(Component.class);
-            for (final Class<?> annotation : annotations) {
-                if (annotation.isAnnotation()) //noinspection unchecked
-                    decorators.add((Class<? extends Annotation>) annotation);
-            }
-        }
-        return decorators;
     }
 }

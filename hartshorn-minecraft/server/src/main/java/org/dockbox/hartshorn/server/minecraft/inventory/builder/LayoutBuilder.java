@@ -17,9 +17,9 @@
 
 package org.dockbox.hartshorn.server.minecraft.inventory.builder;
 
-import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.annotations.PartialApi;
 import org.dockbox.hartshorn.api.exceptions.ApplicationException;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.di.properties.Attribute;
 import org.dockbox.hartshorn.di.properties.AttributeHolder;
 import org.dockbox.hartshorn.server.minecraft.inventory.Element;
@@ -35,10 +35,14 @@ import org.dockbox.hartshorn.util.HartshornUtils;
 import java.util.Collection;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 public class LayoutBuilder implements AttributeHolder {
 
     private final Map<Integer, Element> elements = HartshornUtils.emptyConcurrentMap();
     private InventoryType type;
+    
+    @Inject private ApplicationContext context;
 
     @Override
     public void apply(final Attribute<?> property) {
@@ -54,7 +58,7 @@ public class LayoutBuilder implements AttributeHolder {
 
     @PartialApi
     public LayoutBuilder set(final Item item, final int index) {
-        return this.set(Element.of(item), index);
+        return this.set(Element.of(this.context, item), index);
     }
 
     @PartialApi
@@ -65,7 +69,7 @@ public class LayoutBuilder implements AttributeHolder {
 
     @PartialApi
     public LayoutBuilder set(final Item item, final int... indices) {
-        return this.set(Element.of(item), indices);
+        return this.set(Element.of(this.context, item), indices);
     }
 
     @PartialApi
@@ -78,7 +82,7 @@ public class LayoutBuilder implements AttributeHolder {
 
     @PartialApi
     public LayoutBuilder row(final Item item, final int index) {
-        return this.row(Element.of(item), index);
+        return this.row(Element.of(this.context, item), index);
     }
 
     @PartialApi
@@ -95,7 +99,7 @@ public class LayoutBuilder implements AttributeHolder {
 
     @PartialApi
     public LayoutBuilder column(final Item item, final int index) {
-        return this.column(Element.of(item), index);
+        return this.column(Element.of(this.context, item), index);
     }
 
     @PartialApi
@@ -109,7 +113,7 @@ public class LayoutBuilder implements AttributeHolder {
 
     @PartialApi
     public LayoutBuilder border(final Item item) {
-        return this.border(Element.of(item));
+        return this.border(Element.of(this.context, item));
     }
 
     @PartialApi
@@ -125,7 +129,7 @@ public class LayoutBuilder implements AttributeHolder {
 
     @PartialApi
     public LayoutBuilder fill(final Item item) {
-        return this.fill(Element.of(item));
+        return this.fill(Element.of(this.context, item));
     }
 
     @PartialApi
@@ -138,16 +142,16 @@ public class LayoutBuilder implements AttributeHolder {
 
     @PartialApi
     public PaginatedPaneBuilder toPaginatedPaneBuilder() {
-        return PaginatedPane.builder(this.build());
+        return PaginatedPane.builder(this.context, this.build());
     }
 
     @PartialApi
     public StaticPaneBuilder toStaticPaneBuilder() {
-        return StaticPane.builder(this.build());
+        return StaticPane.builder(this.context, this.build());
     }
 
     public InventoryLayout build() {
-        return Hartshorn.context().get(InventoryLayout.class, this.type, this.elements);
+        return this.context.get(InventoryLayout.class, this.type, this.elements);
     }
 
     public LayoutBuilder add(final Inventory inventory) {
@@ -175,6 +179,6 @@ public class LayoutBuilder implements AttributeHolder {
     }
 
     public LayoutBuilder add(final Item item) {
-        return this.add(Element.of(item));
+        return this.add(Element.of(this.context, item));
     }
 }

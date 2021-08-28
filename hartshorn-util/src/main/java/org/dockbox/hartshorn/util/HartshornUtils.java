@@ -121,13 +121,13 @@ public final class HartshornUtils {
      */
     @SafeVarargs
     @SuppressWarnings("varargs")
-    public static <K, V> Map<K, V> ofEntries(Entry<? extends K, ? extends V>... entries) {
+    public static <K, V> Map<K, V> ofEntries(final Entry<? extends K, ? extends V>... entries) {
         if (0 == entries.length) { // implicit null check of entries array
             return HartshornUtils.emptyMap();
         }
         else {
-            Map<K, V> map = HartshornUtils.emptyMap();
-            for (Entry<? extends K, ? extends V> entry : entries) {
+            final Map<K, V> map = HartshornUtils.emptyMap();
+            for (final Entry<? extends K, ? extends V> entry : entries) {
                 map.put(entry.getKey(), entry.getValue());
             }
             return map;
@@ -170,11 +170,11 @@ public final class HartshornUtils {
      * @return The entry
      * @see HartshornUtils#ofEntries(Entry[])
      */
-    public static <K, V> Entry<K, V> entry(K k, V v) {
+    public static <K, V> Entry<K, V> entry(final K k, final V v) {
         return new Tuple<>(k, v);
     }
 
-    public static <T> List<T> singletonList(T mockWorld) {
+    public static <T> List<T> singletonList(final T mockWorld) {
         return Collections.singletonList(mockWorld);
     }
 
@@ -193,24 +193,24 @@ public final class HartshornUtils {
     @UnmodifiableView
     @NotNull
     @SafeVarargs
-    public static <T> List<T> asUnmodifiableList(T... objects) {
+    public static <T> List<T> asUnmodifiableList(final T... objects) {
         return Collections.unmodifiableList(HartshornUtils.asList(objects));
     }
 
     @NotNull
     @SafeVarargs
-    public static <T> List<T> asList(T... objects) {
+    public static <T> List<T> asList(final T... objects) {
         return HartshornUtils.asList(Arrays.asList(objects));
     }
 
-    public static <T> List<T> asList(Collection<T> collection) {
+    public static <T> List<T> asList(final Collection<T> collection) {
         return new ArrayList<>(collection);
     }
 
     @SafeVarargs
-    public static <T> List<T> asList(Predicate<T> predicate, T... objects) {
-        List<T> list = HartshornUtils.emptyList();
-        for (T object : objects) {
+    public static <T> List<T> asList(final Predicate<T> predicate, final T... objects) {
+        final List<T> list = HartshornUtils.emptyList();
+        for (final T object : objects) {
             if (predicate.test(object)) list.add(object);
         }
         return list;
@@ -220,27 +220,27 @@ public final class HartshornUtils {
         return new ArrayList<>();
     }
 
-    public static <T> List<T> asUnmodifiableList(Collection<T> collection) {
+    public static <T> List<T> asUnmodifiableList(final Collection<T> collection) {
         return Collections.unmodifiableList(HartshornUtils.asList(collection));
     }
 
     @UnmodifiableView
     @NotNull
     @SafeVarargs
-    public static <T> Set<T> asUnmodifiableSet(T... objects) {
+    public static <T> Set<T> asUnmodifiableSet(final T... objects) {
         return Collections.unmodifiableSet(HartshornUtils.asSet(objects));
     }
 
     @NotNull
     @SafeVarargs
-    public static <T> Set<T> asSet(T... objects) {
+    public static <T> Set<T> asSet(final T... objects) {
         return new HashSet<>(HartshornUtils.asList(objects));
     }
 
     @SafeVarargs
-    public static <T> Set<T> asSet(Predicate<T> predicate, T... objects) {
-        Set<T> list = HartshornUtils.emptySet();
-        for (T object : objects) {
+    public static <T> Set<T> asSet(final Predicate<T> predicate, final T... objects) {
+        final Set<T> list = HartshornUtils.emptySet();
+        for (final T object : objects) {
             if (predicate.test(object)) list.add(object);
         }
         return list;
@@ -251,27 +251,27 @@ public final class HartshornUtils {
     }
 
     @SafeVarargs
-    public static <T> Collection<T> asUnmodifiableCollection(T... collection) {
+    public static <T> Collection<T> asUnmodifiableCollection(final T... collection) {
         return Collections.unmodifiableCollection(Arrays.asList(collection));
     }
 
-    public static <T> Collection<T> asUnmodifiableCollection(Collection<T> collection) {
+    public static <T> Collection<T> asUnmodifiableCollection(final Collection<T> collection) {
         return Collections.unmodifiableCollection(collection);
     }
 
-    public static <K, V> Map<K, V> asUnmodifiableMap(Map<K, V> map) {
+    public static <K, V> Map<K, V> asUnmodifiableMap(final Map<K, V> map) {
         return Collections.unmodifiableMap(map);
     }
 
     @UnmodifiableView
     @NotNull
-    public static <T> Set<T> asUnmodifiableSet(Collection<T> objects) {
+    public static <T> Set<T> asUnmodifiableSet(final Collection<T> objects) {
         return Set.copyOf(objects);
     }
 
     @UnmodifiableView
     @NotNull
-    public static <T> List<T> asUnmodifiableList(List<T> objects) {
+    public static <T> List<T> asUnmodifiableList(final List<T> objects) {
         return Collections.unmodifiableList(objects);
     }
 
@@ -286,7 +286,7 @@ public final class HartshornUtils {
      * @param timeUnit
      *         The time unit in which the duration is kept
      */
-    public static void cooldown(Object o, Long duration, TemporalUnit timeUnit) {
+    public static void cooldown(final Object o, final Long duration, final TemporalUnit timeUnit) {
         HartshornUtils.cooldown(o, duration, timeUnit, false);
     }
 
@@ -303,7 +303,7 @@ public final class HartshornUtils {
      * @param overwriteExisting
      *         Whether or not to overwrite existing cooldowns
      */
-    public static void cooldown(Object o, Long duration, TemporalUnit timeUnit, boolean overwriteExisting) {
+    public static void cooldown(final Object o, final Long duration, final TemporalUnit timeUnit, final boolean overwriteExisting) {
         if (HartshornUtils.inCooldown(o) && !overwriteExisting) return;
         activeCooldowns.put(o, new Triad<>(LocalDateTime.now(), duration, timeUnit));
     }
@@ -316,15 +316,15 @@ public final class HartshornUtils {
      *
      * @return true if a object is in a active cooldown queue. Otherwise false
      */
-    public static boolean inCooldown(Object o) {
+    public static boolean inCooldown(final Object o) {
         if (activeCooldowns.containsKey(o)) {
-            LocalDateTime now = LocalDateTime.now();
-            Triad<LocalDateTime, Long, TemporalUnit> cooldown = activeCooldowns.get(o);
-            LocalDateTime timeCooledDown = cooldown.first();
-            Long duration = cooldown.second();
-            TemporalUnit timeUnit = cooldown.third();
+            final LocalDateTime now = LocalDateTime.now();
+            final Triad<LocalDateTime, Long, TemporalUnit> cooldown = activeCooldowns.get(o);
+            final LocalDateTime timeCooledDown = cooldown.first();
+            final Long duration = cooldown.second();
+            final TemporalUnit timeUnit = cooldown.third();
 
-            LocalDateTime endTime = timeCooledDown.plus(duration, timeUnit);
+            final LocalDateTime endTime = timeCooledDown.plus(duration, timeUnit);
 
             return endTime.isAfter(now);
 
@@ -332,13 +332,13 @@ public final class HartshornUtils {
         else return false;
     }
 
-    public static String capitalize(String value) {
+    public static String capitalize(final String value) {
         return HartshornUtils.empty(value)
                 ? value
                 : (value.substring(0, 1).toUpperCase() + value.substring(1));
     }
 
-    public static boolean empty(String value) {
+    public static boolean empty(final String value) {
         return null == value || value.isEmpty();
     }
 
@@ -346,7 +346,7 @@ public final class HartshornUtils {
         return null == s ? 0 : s.length();
     }
 
-    public static int lastIndexOf(String path, char ch) {
+    public static int lastIndexOf(final String path, final char ch) {
         if (null == path) {
             return -1;
         }
@@ -354,34 +354,34 @@ public final class HartshornUtils {
     }
 
     @SuppressWarnings("MagicNumber")
-    public static char convertDigit(int value) {
+    public static char convertDigit(final int value) {
         return _hex[value & 0x0f];
     }
 
-    public static int[] range(int max) {
+    public static int[] range(final int max) {
         return HartshornUtils.range(0, max);
     }
 
-    public static int[] range(int min, int max) {
-        int[] range = new int[(max - min) + 1]; // +1 as both min and max are inclusive
+    public static int[] range(final int min, final int max) {
+        final int[] range = new int[(max - min) + 1]; // +1 as both min and max are inclusive
         for (int i = min; i <= max; i++) {
             range[i - min] = i;
         }
         return range;
     }
 
-    public static String shorten(String string, int maxLength) {
+    public static String shorten(final String string, final int maxLength) {
         if (string.length() < maxLength) return string;
         return string.substring(0, maxLength);
     }
 
-    public static int count(String s, char c) {
+    public static int count(final String s, final char c) {
         if (HartshornUtils.empty(s)) {
             return 0;
         }
 
         int count = 0;
-        int len = s.length();
+        final int len = s.length();
         for (int i = 0; i < len; i++) {
             if (s.charAt(i) == c) {
                 count++;
@@ -392,11 +392,11 @@ public final class HartshornUtils {
     }
 
     @NotNull
-    public static String wildcardToRegexString(@NotNull CharSequence wildcard) {
-        StringBuilder s = new StringBuilder(wildcard.length());
+    public static String wildcardToRegexString(@NotNull final CharSequence wildcard) {
+        final StringBuilder s = new StringBuilder(wildcard.length());
         s.append('^');
         for (int i = 0, is = wildcard.length(); i < is; i++) {
-            char c = wildcard.charAt(i);
+            final char c = wildcard.charAt(i);
             switch (c) {
                 case '*' -> s.append(".*");
                 case '?' -> s.append('.');
@@ -412,13 +412,13 @@ public final class HartshornUtils {
         return s.toString();
     }
 
-    public static int levenshteinDistance(@NonNls CharSequence source, @NonNls CharSequence target) {
-        int length = verifyContentLength(source, target);
+    public static int levenshteinDistance(@NonNls final CharSequence source, @NonNls final CharSequence target) {
+        final int length = verifyContentLength(source, target);
         if (-1 < length) return length;
 
         // create two work vectors of integer distances
-        int[] v0 = new int[target.length() + 1];
-        int[] v1 = new int[target.length() + 1];
+        final int[] v0 = new int[target.length() + 1];
+        final int[] v1 = new int[target.length() + 1];
 
         // initialize v0 (the previous row of distances)
         // this row is A[0][i]: edit distance for an empty s
@@ -427,8 +427,8 @@ public final class HartshornUtils {
             v0[i] = i;
         }
 
-        int sLen = source.length();
-        int tLen = target.length();
+        final int sLen = source.length();
+        final int tLen = target.length();
         for (int i = 0; i < sLen; i++) {
             // calculate v1 (current row distances) from the previous row v0
 
@@ -438,7 +438,7 @@ public final class HartshornUtils {
 
             // use formula to fill in the rest of the row
             for (int j = 0; j < tLen; j++) {
-                int cost = (source.charAt(i) == target.charAt(j)) ? 0 : 1;
+                final int cost = (source.charAt(i) == target.charAt(j)) ? 0 : 1;
                 v1[j + 1] = (int) HartshornUtils.minimum(v1[j] + 1, v0[j + 1] + 1, v0[j] + cost);
             }
 
@@ -449,7 +449,7 @@ public final class HartshornUtils {
         return v1[target.length()];
     }
 
-    private static int verifyContentLength(CharSequence source, CharSequence target) {
+    private static int verifyContentLength(final CharSequence source, final CharSequence target) {
         if (null == source || "".contentEquals(source)) {
             return null == target || "".contentEquals(target) ? 0 : target.length();
         }
@@ -459,8 +459,8 @@ public final class HartshornUtils {
         return -1;
     }
 
-    public static long minimum(long... values) {
-        int len = values.length;
+    public static long minimum(final long... values) {
+        final int len = values.length;
         long current = values[0];
         for (int i = 1; i < len; i++) current = Math.min(values[i], current);
         return current;
@@ -468,13 +468,13 @@ public final class HartshornUtils {
 
     @SuppressWarnings("OverlyComplexMethod")
     public static int damerauLevenshteinDistance(
-            @NonNls CharSequence source, @NonNls CharSequence target) {
-        int length = verifyContentLength(source, target);
+            @NonNls final CharSequence source, @NonNls final CharSequence target) {
+        final int length = verifyContentLength(source, target);
         if (-1 < length) return length;
 
-        int srcLen = source.length();
-        int targetLen = target.length();
-        int[][] distanceMatrix = new int[srcLen + 1][targetLen + 1];
+        final int srcLen = source.length();
+        final int targetLen = target.length();
+        final int[][] distanceMatrix = new int[srcLen + 1][targetLen + 1];
 
         // We need indexers from 0 to the length of the source string.
         // This sequential set of numbers will be the row "headers"
@@ -493,7 +493,7 @@ public final class HartshornUtils {
         for (int srcIndex = 1; srcIndex <= srcLen; srcIndex++) {
             for (int targetIndex = 1; targetIndex <= targetLen; targetIndex++) {
                 // If the current characters in both strings are equal
-                int cost = source.charAt(srcIndex - 1) == target.charAt(targetIndex - 1) ? 0 : 1;
+                final int cost = source.charAt(srcIndex - 1) == target.charAt(targetIndex - 1) ? 0 : 1;
 
                 // Find the current distance by determining the shortest path to a
                 // match (hence the 'minimum' calculation on distances).
@@ -532,9 +532,9 @@ public final class HartshornUtils {
     }
 
     @NotNull
-    public static String randomString(int minLen, int maxLen) {
-        StringBuilder s = new StringBuilder();
-        int length = minLen + random.nextInt(maxLen - minLen + 1);
+    public static String randomString(final int minLen, final int maxLen) {
+        final StringBuilder s = new StringBuilder();
+        final int length = minLen + random.nextInt(maxLen - minLen + 1);
         for (int i = 0; i < length; i++) {
             s.append(HartshornUtils.randomChar(0 == i));
         }
@@ -543,82 +543,82 @@ public final class HartshornUtils {
 
     @NotNull
     @SuppressWarnings({ "BooleanParameter", "MagicNumber" })
-    public static String randomChar(boolean upper) {
-        int r = random.nextInt(26);
+    public static String randomChar(final boolean upper) {
+        final int r = random.nextInt(26);
         return upper ? "" + (char) ((int) 'A' + r) : "" + (char) ((int) 'a' + r);
     }
 
     @NotNull
-    public static String createUtf8String(byte[] bytes) {
+    public static String createUtf8String(final byte[] bytes) {
         return HartshornUtils.createString(bytes, "UTF-8");
     }
 
     @NotNull
-    public static String createString(byte[] bytes, String encoding) {
+    public static String createString(final byte[] bytes, final String encoding) {
         try {
             return null == bytes ? "" : new String(bytes, encoding);
         }
-        catch (UnsupportedEncodingException e) {
+        catch (final UnsupportedEncodingException e) {
             throw new IllegalArgumentException(String.format("Encoding (%s) is not supported by your JVM", encoding), e);
         }
     }
 
-    public static byte[] bytesUTF8(String s) {
+    public static byte[] bytesUTF8(final String s) {
         return HartshornUtils.bytes(s, "UTF-8");
     }
 
-    public static byte[] bytes(String s, String encoding) {
+    public static byte[] bytes(final String s, final String encoding) {
         try {
             return null == s ? new byte[0] : s.getBytes(encoding);
         }
-        catch (UnsupportedEncodingException e) {
+        catch (final UnsupportedEncodingException e) {
             throw new IllegalArgumentException(String.format("Encoding (%s) is not supported by your JVM", encoding), e);
         }
     }
 
     @NotNull
-    public static String createUTF8String(byte[] bytes) {
+    public static String createUTF8String(final byte[] bytes) {
         return HartshornUtils.createString(bytes, "UTF-8");
     }
 
     @SuppressWarnings("MagicNumber")
-    public static int hashCodeIgnoreCase(CharSequence s) {
+    public static int hashCodeIgnoreCase(final CharSequence s) {
         if (null == s) return 0;
         int hash = 0;
-        int len = s.length();
+        final int len = s.length();
         for (int i = 0; i < len; i++) {
-            char c = Character.toLowerCase(s.charAt(i));
+            final char c = Character.toLowerCase(s.charAt(i));
             hash = 31 * hash + c;
         }
         return hash;
     }
 
-    public static long maximum(long... values) {
-        int len = values.length;
+    public static long maximum(final long... values) {
+        final int len = values.length;
         long current = values[0];
         for (int i = 1; i < len; i++) current = Math.max(values[i], current);
         return current;
     }
 
-    public static double minimum(double... values) {
-        int len = values.length;
+    public static double minimum(final double... values) {
+        final int len = values.length;
         double current = values[0];
         for (int i = 1; i < len; i++) current = Math.min(values[i], current);
         return current;
     }
 
-    public static double maximum(double... values) {
-        int len = values.length;
+    public static double maximum(final double... values) {
+        final int len = values.length;
         double current = values[0];
         for (int i = 1; i < len; i++) current = Math.max(values[i], current);
         return current;
     }
 
-    public static void assertContainsIgnoreCase(String source, String... contains) {
+    public static void assertContainsIgnoreCase(final String source, final String... contains) {
         String lowerSource = source.toLowerCase();
-        for (String contain : contains) {
-            int idx = lowerSource.indexOf(contain.toLowerCase());
-            String msg = "'" + contain + "' not found in '" + lowerSource + "'";
+        for (final String contain : contains) {
+            final int idx = lowerSource.indexOf(contain.toLowerCase());
+            final String msg = "'" + contain + "' not found in '" + lowerSource + "'";
             assert 0 <= idx : msg;
             lowerSource = lowerSource.substring(idx);
         }
@@ -634,9 +634,9 @@ public final class HartshornUtils {
     }
 
     @SuppressWarnings("unchecked")
-    public static <T> T[] removeItem(T[] array, int pos) {
-        int length = Array.getLength(array);
-        T[] dest = (T[]) Array.newInstance(array.getClass().getComponentType(), length - 1);
+    public static <T> T[] removeItem(final T[] array, final int pos) {
+        final int length = Array.getLength(array);
+        final T[] dest = (T[]) Array.newInstance(array.getClass().getComponentType(), length - 1);
 
         System.arraycopy(array, 0, dest, 0, pos);
         System.arraycopy(array, pos + 1, dest, pos, length - pos - 1);
@@ -644,14 +644,14 @@ public final class HartshornUtils {
     }
 
     // Both start and end are inclusive
-    public static <T> T[] arraySubset(T[] array, int start, int end) {
+    public static <T> T[] arraySubset(final T[] array, final int start, final int end) {
         return Arrays.copyOfRange(array, start, end + 1);
     }
 
     @SuppressWarnings({ "unchecked", "SuspiciousToArrayCall" })
-    public static <T> T[] toArray(Class<T> classToCastTo, Collection<?> c) {
-        T[] array = c.toArray((T[]) Array.newInstance(classToCastTo, c.size()));
-        Iterator<?> i = c.iterator();
+    public static <T> T[] toArray(final Class<T> classToCastTo, final Collection<?> c) {
+        final T[] array = c.toArray((T[]) Array.newInstance(classToCastTo, c.size()));
+        final Iterator<?> i = c.iterator();
         int idx = 0;
         while (i.hasNext()) {
             Array.set(array, idx++, i.next());
@@ -659,7 +659,7 @@ public final class HartshornUtils {
         return array;
     }
 
-    public static boolean empty(@NotNull Path file) {
+    public static boolean empty(@NotNull final Path file) {
         return !Files.exists(file) || 0 >= file.toFile().length();
     }
 
@@ -674,7 +674,7 @@ public final class HartshornUtils {
      *
      * @return The rounded {@code double}
      */
-    public static double round(double value, int decimalPlaces) {
+    public static double round(final double value, final int decimalPlaces) {
         if (Double.isNaN(value) || Double.isInfinite(value) || MAXIMUM_DECIMALS < decimalPlaces) {
             return value;
         }
@@ -685,18 +685,18 @@ public final class HartshornUtils {
     }
 
     @NotNull
-    public static Path createPathIfNotExists(@NotNull Path path) {
+    public static Path createPathIfNotExists(@NotNull final Path path) {
         if (!path.toFile().exists()) path.toFile().mkdirs();
         return path;
     }
 
-    public static Path createFileIfNotExists(@NotNull Path file) {
+    public static Path createFileIfNotExists(@NotNull final Path file) {
         if (!Files.exists(file)) {
             try {
                 Files.createDirectories(file.getParent());
                 Files.createFile(file);
             }
-            catch (IOException e) {
+            catch (final IOException e) {
                 throw new ImpossibleFileException(file, e);
             }
         }
@@ -704,11 +704,11 @@ public final class HartshornUtils {
     }
 
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-    public static boolean unwrap(Optional<Boolean> optional) {
+    public static boolean unwrap(final Optional<Boolean> optional) {
         return optional.isPresent() && optional.get();
     }
 
-    public static boolean unwrap(Exceptional<Boolean> exceptional) {
+    public static boolean unwrap(final Exceptional<Boolean> exceptional) {
         return exceptional.present() && exceptional.get();
     }
 
@@ -728,7 +728,7 @@ public final class HartshornUtils {
      * @return true if {@code vec} is inside the 3D cuboid region
      * @see HartshornUtils#inCuboidRegion(int, int, int, int, int, int, int, int, int)
      */
-    public static boolean inCuboidRegion(Vector3N min, Vector3N max, Vector3N vec) {
+    public static boolean inCuboidRegion(final Vector3N min, final Vector3N max, final Vector3N vec) {
         return HartshornUtils.inCuboidRegion(
                 min.xI(), max.xI(),
                 min.yI(), max.yI(),
@@ -766,40 +766,40 @@ public final class HartshornUtils {
      * @return true if the defined vector is inside the 3D cuboid region
      */
     @SuppressWarnings("OverlyComplexBooleanExpression")
-    public static boolean inCuboidRegion(int x_min, int x_max, int y_min, int y_max, int z_min, int z_max, int x, int y, int z) {
+    public static boolean inCuboidRegion(final int x_min, final int x_max, final int y_min, final int y_max, final int z_min, final int z_max, final int x, final int y, final int z) {
         return x_min <= x && x <= x_max
                 && y_min <= y && y <= y_max
                 && z_min <= z && z <= z_max;
     }
 
-    public static Vector3N minimumPoint(Vector3N pos1, Vector3N pos2) {
-        float minX = Math.min(pos1.xF(), pos2.xF());
-        float minY = Math.min(pos1.yF(), pos2.yF());
-        float minZ = Math.min(pos1.zF(), pos2.zF());
+    public static Vector3N minimumPoint(final Vector3N pos1, final Vector3N pos2) {
+        final float minX = Math.min(pos1.xF(), pos2.xF());
+        final float minY = Math.min(pos1.yF(), pos2.yF());
+        final float minZ = Math.min(pos1.zF(), pos2.zF());
         return Vector3N.of(minX, minY, minZ);
     }
 
-    public static Vector3N maximumPoint(Vector3N pos1, Vector3N pos2) {
-        float maxX = Math.max(pos1.xF(), pos2.xF());
-        float maxY = Math.max(pos1.yF(), pos2.yF());
-        float maxZ = Math.max(pos1.zF(), pos2.zF());
+    public static Vector3N maximumPoint(final Vector3N pos1, final Vector3N pos2) {
+        final float maxX = Math.max(pos1.xF(), pos2.xF());
+        final float maxY = Math.max(pos1.yF(), pos2.yF());
+        final float maxZ = Math.max(pos1.zF(), pos2.zF());
         return Vector3N.of(maxX, maxY, maxZ);
     }
 
-    public static Vector3N centerPoint(Vector3N pos1, Vector3N pos2) {
-        float centerX = (pos1.xF() + pos2.xF()) / 2;
-        float centerY = (pos1.yF() + pos2.yF()) / 2;
-        float centerZ = (pos1.zF() + pos2.zF()) / 2;
+    public static Vector3N centerPoint(final Vector3N pos1, final Vector3N pos2) {
+        final float centerX = (pos1.xF() + pos2.xF()) / 2;
+        final float centerY = (pos1.yF() + pos2.yF()) / 2;
+        final float centerZ = (pos1.zF() + pos2.zF()) / 2;
         return Vector3N.of(centerX, centerY, centerZ);
     }
 
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-    public static Exceptional<LocalDateTime> toLocalDateTime(Optional<Instant> optionalInstant) {
+    public static Exceptional<LocalDateTime> toLocalDateTime(final Optional<Instant> optionalInstant) {
         return Exceptional.of(optionalInstant).map(HartshornUtils::toLocalDateTime);
     }
 
     @NotNull
-    public static LocalDateTime toLocalDateTime(Instant dt) {
+    public static LocalDateTime toLocalDateTime(final Instant dt) {
         return LocalDateTime.ofInstant(dt, ZoneId.systemDefault());
     }
 
@@ -813,9 +813,9 @@ public final class HartshornUtils {
      *
      * @return the t [ ]
      */
-    public static <T> T[] merge(T[] arrayOne, T[] arrayTwo) {
-        List<T> merged = HartshornUtils.asList(arrayOne);
-        merged.addAll(HartshornUtils.asList(arrayTwo));
+    public static <T> T[] merge(final T[] arrayOne, final T[] arrayTwo) {
+        final Set<T> merged = HartshornUtils.asSet(arrayOne);
+        merged.addAll(HartshornUtils.asSet(arrayTwo));
         return merged.toArray(arrayOne);
     }
 
@@ -862,17 +862,15 @@ public final class HartshornUtils {
         return array.clone();
     }
 
-    public static boolean notEmpty(String value) {
+    public static boolean notEmpty(final String value) {
         return null != value && !value.isEmpty();
     }
 
-    public static boolean empty(Object object) {
+    public static boolean empty(final Object object) {
         if (null == object) return true;
         if (object instanceof String) return HartshornUtils.empty((String) object);
         else if (object instanceof Collection) return ((Collection<?>) object).isEmpty();
         else if (object instanceof Map) return ((Map<?, ?>) object).isEmpty();
-        else if (Reflect.has(object, "empty"))
-            return Reflect.<Boolean>run(object, "empty").or(false);
         else return false;
     }
 
@@ -908,22 +906,22 @@ public final class HartshornUtils {
         return s1.trim().equalsIgnoreCase(s2.trim());
     }
 
-    public static boolean notEqual(Object expected, Object actual) {
+    public static boolean notEqual(final Object expected, final Object actual) {
         return !HartshornUtils.equal(expected, actual);
     }
 
-    public static boolean equal(Object expected, Object actual) {
+    public static boolean equal(final Object expected, final Object actual) {
         if (null != expected || null != actual) {
             return !(null == expected || !expected.equals(actual));
         }
         return false;
     }
 
-    public static boolean notSame(Object expected, Object actual) {
+    public static boolean notSame(final Object expected, final Object actual) {
         return !HartshornUtils.same(expected, actual);
     }
 
-    public static boolean same(Object expected, Object actual) {
+    public static boolean same(final Object expected, final Object actual) {
         return expected == actual;
     }
 
@@ -935,10 +933,10 @@ public final class HartshornUtils {
         return (null == s) ? 0 : s.trim().length();
     }
 
-    public static boolean containsIgnoreCase(String source, String... contains) {
+    public static boolean containsIgnoreCase(final String source, final String... contains) {
         String lowerSource = source.toLowerCase();
-        for (String contain : contains) {
-            int idx = lowerSource.indexOf(contain.toLowerCase());
+        for (final String contain : contains) {
+            final int idx = lowerSource.indexOf(contain.toLowerCase());
             if (-1 == idx) {
                 return false;
             }
@@ -947,21 +945,21 @@ public final class HartshornUtils {
         return true;
     }
 
-    public static <T> boolean contains(T[] objects, T object) {
-        for (T t : objects) {
+    public static <T> boolean contains(final T[] objects, final T object) {
+        for (final T t : objects) {
             if (same(object, t)) return true;
         }
         return false;
     }
 
-    public static <T> boolean containsEqual(T[] objects, T object) {
-        for (T t : objects) {
+    public static <T> boolean containsEqual(final T[] objects, final T object) {
+        for (final T t : objects) {
             if (same(object, t) || equal(object, t)) return true;
         }
         return false;
     }
 
-    public static String strip(String s) {
+    public static String strip(final String s) {
         return s.replaceAll("[\n\r ]+", "").trim();
     }
 
@@ -979,7 +977,7 @@ public final class HartshornUtils {
      * @return true if the function does not throw a exception
      * @see HartshornUtils#throwsException(CheckedRunnable)
      */
-    public static boolean doesNotThrow(CheckedRunnable runnable) {
+    public static boolean doesNotThrow(final CheckedRunnable runnable) {
         return !HartshornUtils.throwsException(runnable);
     }
 
@@ -991,12 +989,12 @@ public final class HartshornUtils {
      *
      * @return true if the function throws a exception
      */
-    public static boolean throwsException(CheckedRunnable runnable) {
+    public static boolean throwsException(final CheckedRunnable runnable) {
         try {
             runnable.run();
             return false;
         }
-        catch (Throwable t) {
+        catch (final Throwable t) {
             return true;
         }
     }
@@ -1014,7 +1012,7 @@ public final class HartshornUtils {
      * @return true if the function does not throw a exception
      * @see HartshornUtils#throwsException(CheckedRunnable, Class)
      */
-    public static boolean doesNotThrow(CheckedRunnable runnable, Class<? extends Throwable> exception) {
+    public static boolean doesNotThrow(final CheckedRunnable runnable, final Class<? extends Throwable> exception) {
         return !HartshornUtils.throwsException(runnable, exception);
     }
 
@@ -1029,24 +1027,24 @@ public final class HartshornUtils {
      *
      * @return true if the function throws the expected exception
      */
-    public static boolean throwsException(CheckedRunnable runnable, Class<? extends Throwable> exception) {
+    public static boolean throwsException(final CheckedRunnable runnable, final Class<? extends Throwable> exception) {
         try {
             runnable.run();
             return false;
         }
-        catch (Throwable t) {
+        catch (final Throwable t) {
             return Reflect.assigns(exception, t.getClass());
         }
     }
 
-    public static Exceptional<Duration> durationOf(String in) {
+    public static Exceptional<Duration> durationOf(final String in) {
         // First, if just digits, return the number in seconds.
 
         if (HartshornUtils.minorTimeString.matcher(in).matches()) {
             return Exceptional.of(Duration.ofSeconds(Long.parseUnsignedLong(in)));
         }
 
-        Matcher m = HartshornUtils.timeString.matcher(in);
+        final Matcher m = HartshornUtils.timeString.matcher(in);
         if (m.matches()) {
             long time = HartshornUtils.durationAmount(m.group(2), HartshornUtils.secondsInWeek);
             time += HartshornUtils.durationAmount(m.group(4), HartshornUtils.secondsInDay);
@@ -1061,7 +1059,7 @@ public final class HartshornUtils {
         return Exceptional.empty();
     }
 
-    private static long durationAmount(@Nullable String g, int multipler) {
+    private static long durationAmount(@Nullable final String g, final int multipler) {
         if (null != g && !g.isEmpty()) {
             return multipler * Long.parseUnsignedLong(g);
         }
@@ -1070,73 +1068,73 @@ public final class HartshornUtils {
     }
 
     @SafeVarargs
-    public static <T> Collection<T> merge(Collection<T>... collections) {
-        Collection<T> merged = new ArrayList<>();
-        for (Collection<T> collection : collections) {
+    public static <T> Collection<T> merge(final Collection<T>... collections) {
+        final Collection<T> merged = HartshornUtils.emptySet();
+        for (final Collection<T> collection : collections) {
             merged.addAll(collection);
         }
         return merged;
     }
 
     @SafeVarargs
-    public static <T, R> Object[] all(Function<T, R> function, T... input) {
-        List<R> out = HartshornUtils.emptyList();
-        for (T t : input) {
+    public static <T, R> Object[] all(final Function<T, R> function, final T... input) {
+        final List<R> out = HartshornUtils.emptyList();
+        for (final T t : input) {
             out.add(function.apply(t));
         }
         return out.toArray();
     }
 
-    public static <T> Stream<T> stream(Iterable<T> iterable) {
+    public static <T> Stream<T> stream(final Iterable<T> iterable) {
         return stream(iterable.iterator());
     }
 
-    public static <T> Stream<T> stream(Iterator<T> tIterator) {
+    public static <T> Stream<T> stream(final Iterator<T> tIterator) {
         return StreamSupport.stream(Spliterators.spliteratorUnknownSize(tIterator, Spliterator.ORDERED), false);
     }
 
-    public static String asTable(List<List<String>> rows) {
-        int[] maxLengths = new int[rows.get(0).size()];
-        for (List<String> row : rows) {
+    public static String asTable(final List<List<String>> rows) {
+        final int[] maxLengths = new int[rows.get(0).size()];
+        for (final List<String> row : rows) {
             for (int i = 0; i < row.size(); i++) {
                 maxLengths[i] = Math.max(maxLengths[i], row.get(i).length());
             }
         }
 
-        StringBuilder formatBuilder = new StringBuilder();
-        for (int maxLength : maxLengths) {
+        final StringBuilder formatBuilder = new StringBuilder();
+        for (final int maxLength : maxLengths) {
             formatBuilder.append("%-").append(maxLength + 2).append("s");
         }
-        String format = formatBuilder.toString();
+        final String format = formatBuilder.toString();
 
-        StringBuilder result = new StringBuilder();
-        for (List<String> row : rows) {
+        final StringBuilder result = new StringBuilder();
+        for (final List<String> row : rows) {
             result.append(String.format(format, row.toArray(new Object[0]))).append("\n");
         }
         return result.toString();
     }
 
-    public static String wrap(String fullName, int max) {
-        int start = fullName.length() - max;
+    public static String wrap(final String fullName, final int max) {
+        final int start = fullName.length() - max;
         if (start < 0) return fullName + repeat(" ", -start);
         else return fullName.substring(start);
     }
 
     @NotNull
-    public static String repeat(String string, int amount) {
-        StringBuilder sb = new StringBuilder();
-        for (int ignored : HartshornUtils.range(1, amount)) sb.append(string);
+    public static String repeat(final String string, final int amount) {
+        final StringBuilder sb = new StringBuilder();
+        for (final int ignored : HartshornUtils.range(1, amount)) sb.append(string);
         return sb.toString();
     }
 
-    public static String[] splitCapitals(String s) {
+    public static String[] splitCapitals(final String s) {
         return s.split("(?=\\p{Lu})");
     }
 
-    public static String trimWith(char c, String s) {
+    public static String trimWith(final char c, final String s) {
         int len = s.length();
         int st = 0;
-        char[] val = s.toCharArray();
+        final char[] val = s.toCharArray();
 
         while ((st < len) && (val[st] <= c)) {
             st++;
@@ -1147,31 +1145,31 @@ public final class HartshornUtils {
         return ((st > 0) || (len < s.length())) ? s.substring(st, len) : s;
     }
 
-    public static <T> List<T> list(int size) {
-        List<T> list = new ArrayList<>();
+    public static <T> List<T> list(final int size) {
+        final List<T> list = new ArrayList<>();
         for (int i = 0; i < size; i++) list.add(null);
         return list;
     }
 
-    public static <T> Set<T> difference(Collection<T> collectionOne, Collection<T> collectionTwo) {
-        Set<T> diff = emptySet();
+    public static <T> Set<T> difference(final Collection<T> collectionOne, final Collection<T> collectionTwo) {
+        final Set<T> diff = emptySet();
         final SetView<T> differenceInOne = Sets.difference(asSet(collectionOne), asSet(collectionTwo));
         final SetView<T> differenceInTwo = Sets.difference(asSet(collectionTwo), asSet(collectionOne));
         return asSet(merge(differenceInOne, differenceInTwo));
     }
 
     @NotNull
-    public static <T> Set<T> asSet(Collection<T> collection) {
+    public static <T> Set<T> asSet(final Collection<T> collection) {
         return new HashSet<>(collection);
     }
 
-    public static <T> List<T> merge(Collection<T> collectionOne, Collection<T> collectionTwo) {
-        List<T> merged = HartshornUtils.asList(collectionOne);
-        merged.addAll(HartshornUtils.asList(collectionTwo));
-        return merged;
+    public static <T> List<T> merge(final Collection<T> collectionOne, final Collection<T> collectionTwo) {
+        final Set<T> merged = HartshornUtils.asSet(collectionOne);
+        merged.addAll(HartshornUtils.asSet(collectionTwo));
+        return HartshornUtils.asList(merged);
     }
 
-    public static Vector3N cuboidSize(Vector3N min, Vector3N max) {
+    public static Vector3N cuboidSize(final Vector3N min, final Vector3N max) {
         final double x = max.xD() - min.xD();
         final double y = max.yD() - min.yD();
         final double z = max.zD() - min.zD();

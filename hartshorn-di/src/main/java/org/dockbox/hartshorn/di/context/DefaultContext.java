@@ -23,8 +23,8 @@ import com.google.common.collect.Multimap;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.di.ApplicationContextAware;
 import org.dockbox.hartshorn.di.annotations.context.AutoCreating;
+import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.util.HartshornUtils;
-import org.dockbox.hartshorn.util.Reflect;
 
 import java.util.List;
 import java.util.Set;
@@ -55,10 +55,10 @@ public abstract class DefaultContext implements Context {
     @Override
     public <C extends Context> Exceptional<C> first(final Class<C> context) {
         return Exceptional.of(this.contexts.stream()
-                        .filter(c -> Reflect.assigns(context, c.getClass()))
+                        .filter(c -> TypeContext.of(c).childOf(context))
                         .findFirst())
                 .orElse(() -> {
-                    if (Reflect.has(context, AutoCreating.class)) {
+                    if (TypeContext.of(context).annotation(AutoCreating.class).present()) {
                         final C created = ApplicationContextAware.instance().context().get(context);
                         this.add(created);
                         return created;
@@ -77,7 +77,7 @@ public abstract class DefaultContext implements Context {
     @Override
     public <N extends Context> Exceptional<N> first(final String name, final Class<N> context) {
         return Exceptional.of(this.namedContexts.get(name).stream()
-                        .filter(c -> Reflect.assigns(context, c.getClass()))
+                        .filter(c -> TypeContext.of(c).childOf(context))
                         .findFirst())
                 .map(c -> (N) c);
     }
@@ -100,7 +100,7 @@ public abstract class DefaultContext implements Context {
     @Override
     public <N extends Context> List<N> all(final String name, final Class<N> context) {
         return this.namedContexts.get(name).stream()
-                .filter(c -> Reflect.assigns(context, c.getClass()))
+                .filter(c -> TypeContext.of(c).childOf(context))
                 .map(c -> (N) c)
                 .toList();
     }

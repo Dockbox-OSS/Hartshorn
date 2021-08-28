@@ -18,10 +18,9 @@
 package org.dockbox.hartshorn.di.inject.wired;
 
 import org.dockbox.hartshorn.api.exceptions.ApplicationException;
-import org.dockbox.hartshorn.di.ApplicationContextAware;
-
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
+import org.dockbox.hartshorn.di.context.element.MethodContext;
+import org.dockbox.hartshorn.di.context.element.TypeContext;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -30,18 +29,18 @@ import lombok.Getter;
 @AllArgsConstructor
 public class ProvisionBoundContext<T, I extends T> implements BoundContext<T, I> {
 
-    private final Class<T> contract;
-    private final Method provider;
+    private final TypeContext<T> contract;
+    private final MethodContext<I, ?> provider;
     private final String name;
 
     @Override
-    public T create(final Object... arguments) throws ApplicationException {
-        final Object service = ApplicationContextAware.instance().context().get(this.provider.getDeclaringClass());
+    public T create(final ApplicationContext context, final Object... arguments) throws ApplicationException {
+        final Object service = context.get(this.provider.parent());
         try {
             //noinspection unchecked
-            return (T) this.provider.invoke(service, arguments);
+            return ((MethodContext<T, Object>) this.provider).invoke(service, arguments).orNull();
         }
-        catch (final InvocationTargetException | IllegalAccessException | ClassCastException e) {
+        catch (final ClassCastException e) {
             throw new ApplicationException(e);
         }
     }

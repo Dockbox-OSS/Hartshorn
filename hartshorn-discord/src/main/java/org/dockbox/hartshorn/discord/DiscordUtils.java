@@ -26,6 +26,7 @@ import net.dv8tion.jda.api.entities.User;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.di.annotations.service.Service;
+import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.discord.templates.Template;
 import org.dockbox.hartshorn.i18n.common.ResourceEntry;
 import org.dockbox.hartshorn.i18n.text.Text;
@@ -59,7 +60,7 @@ public interface DiscordUtils {
 
     void sendToUser(Template<?> template, User user);
 
-    void registerCommandListener(Class<?> type);
+    void registerCommandListener(TypeContext<?> type);
 
     void post(String command, DiscordCommandContext context);
 }

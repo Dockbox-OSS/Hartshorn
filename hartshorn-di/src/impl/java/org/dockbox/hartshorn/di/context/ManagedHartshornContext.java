@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.di.context;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.exceptions.ApplicationException;
+import org.dockbox.hartshorn.di.ApplicationContextAware;
 import org.dockbox.hartshorn.di.ComponentType;
 import org.dockbox.hartshorn.di.InjectionPoint;
 import org.dockbox.hartshorn.di.ProvisionFailure;
@@ -26,18 +27,18 @@ import org.dockbox.hartshorn.di.annotations.activate.Activator;
 import org.dockbox.hartshorn.di.annotations.inject.Enable;
 import org.dockbox.hartshorn.di.annotations.service.ServiceActivator;
 import org.dockbox.hartshorn.di.binding.Bindings;
+import org.dockbox.hartshorn.di.binding.Providers;
+import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.di.inject.InjectionModifier;
 import org.dockbox.hartshorn.di.properties.Attribute;
 import org.dockbox.hartshorn.di.properties.AttributeHolder;
 import org.dockbox.hartshorn.di.services.ComponentContainer;
 import org.dockbox.hartshorn.di.services.ServiceProcessor;
 import org.dockbox.hartshorn.util.HartshornUtils;
-import org.dockbox.hartshorn.util.Reflect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Constructor;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -55,26 +56,29 @@ public abstract class ManagedHartshornContext extends DefaultContext implements 
 
     protected final transient Set<InjectionModifier<?>> injectionModifiers = HartshornUtils.emptyConcurrentSet();
     protected final transient Set<ServiceProcessor<?>> serviceProcessors = HartshornUtils.emptyConcurrentSet();
-    private final Set<Class<?>> services = HartshornUtils.emptyConcurrentSet();
 
     @Getter(AccessLevel.PROTECTED) private final Activator activator;
+    @Getter private final ApplicationEnvironment environment;
     private final List<Annotation> activators;
 
-    public ManagedHartshornContext(final Class<?> activationSource) {
-        final Exceptional<Activator> activator = Reflect.annotation(activationSource, Activator.class);
+    public ManagedHartshornContext(final ApplicationContextAware application, final Class<?> activationSource, final Collection<String> prefixes) {
+        this.environment = new ApplicationEnvironment(prefixes, application);
+        final TypeContext<?> typeContext = TypeContext.of(activationSource);
+        final Exceptional<Activator> activator = typeContext.annotation(Activator.class);
         if (activator.absent()) {
             throw new IllegalStateException("Activation source is not marked with @Activator");
         }
         this.activator = activator.get();
-        this.activators = Reflect.annotationsWith(activationSource, ServiceActivator.class);
+        this.activators = this.environment().annotationsWith(activationSource, ServiceActivator.class);
     }
 
     /**
      * Non-exposed method which can be used by bootstrapping services to register default activators.
      */
     public void addActivator(final Annotation annotation) {
-        if (Reflect.annotation(annotation.annotationType(), ServiceActivator.class).present())
+        if (TypeContext.of(annotation.annotationType()).annotation(ServiceActivator.class).present()) {
             this.activators.add(annotation);
+        }
     }
 
     @Override
@@ -82,9 +86,9 @@ public abstract class ManagedHartshornContext extends DefaultContext implements 
         if (null != property) this.injectionPoints.add(property);
     }
 
-    public abstract <T> T create(Class<T> type, T typeInstance, Attribute<?>... properties);
+    public abstract <T> T create(TypeContext<T> type, T typeInstance, Attribute<?>... properties);
 
-    public <T> T inject(final Class<T> type, T typeInstance, final Attribute<?>... properties) {
+    public <T> T inject(final TypeContext<T> type, T typeInstance, final Attribute<?>... properties) {
         for (final InjectionPoint<?> injectionPoint : this.injectionPoints) {
             if (injectionPoint.accepts(type)) {
                 try {
@@ -92,7 +96,7 @@ public abstract class ManagedHartshornContext extends DefaultContext implements 
                     typeInstance = ((InjectionPoint<T>) injectionPoint).apply(typeInstance, type, properties);
                 }
                 catch (final ClassCastException e) {
-                    log.warn("Attempted to apply injection point to incompatible type [" + type.getCanonicalName() + "]");
+                    log.warn("Attempted to apply injection point to incompatible type [" + type.qualifiedName() + "]");
                 }
             }
         }
@@ -101,24 +105,13 @@ public abstract class ManagedHartshornContext extends DefaultContext implements 
 
     public <T> void enable(final T typeInstance) {
         if (typeInstance == null) return;
-        Reflect.fields(typeInstance.getClass(), Inject.class).stream()
-                .filter(field -> Reflect.assigns(AttributeHolder.class, field.getType()))
+        TypeContext.unproxy(this, typeInstance).fields(Inject.class).stream()
+                .filter(field -> field.type().childOf(AttributeHolder.class))
                 .filter(field -> {
-                    final Exceptional<Enable> enable = Reflect.annotation(field, Enable.class);
+                    final Exceptional<Enable> enable = field.annotation(Enable.class);
                     return (enable.absent() || enable.get().value());
                 })
-                .map(field -> {
-                    try {
-                        // As we're enabling fields they may be accessed even if their
-                        // modifier indicates otherwise.
-                        field.setAccessible(true);
-                        return field.get(typeInstance);
-                    }
-                    catch (final IllegalAccessException e) {
-                        log.warn("Could not access field " + field.getName() + " in " + field.getDeclaringClass().getSimpleName());
-                        return null;
-                    }
-                })
+                .map(field -> field.get(typeInstance))
                 .filter(Objects::nonNull)
                 .forEach(injectableType -> {
                     try {
@@ -130,22 +123,24 @@ public abstract class ManagedHartshornContext extends DefaultContext implements 
                 });
     }
 
-    public <T> T raw(final Class<T> type) throws ProvisionFailure {
+    public <T> T raw(final TypeContext<T> type) throws ProvisionFailure {
         return this.raw(type, true);
     }
 
     @Override
-    public <T> T raw(final Class<T> type, final boolean populate) throws ProvisionFailure {
+    public <T> T raw(final TypeContext<T> type, final boolean populate) throws ProvisionFailure {
         try {
-            final Constructor<T> ctor = type.getDeclaredConstructor();
-            ctor.setAccessible(true);
-            final T t = ctor.newInstance();
-            if (populate) this.populate(t);
-            return t;
+            final Exceptional<T> instance = Providers.of(type).provide(this);
+            if (instance.present()) {
+                final T t = instance.get();
+                if (populate) this.populate(t);
+                return t;
+            }
         }
         catch (final Exception e) {
-            throw new ProvisionFailure("Could not provide raw instance of " + type.getSimpleName(), e);
+            throw new ProvisionFailure("Could not provide raw instance of " + type.name(), e);
         }
+        return null;
     }
 
     @Override
@@ -165,7 +160,7 @@ public abstract class ManagedHartshornContext extends DefaultContext implements 
 
     @Override
     public boolean hasActivator(final Class<? extends Annotation> activator) {
-        if (Reflect.annotation(activator, ServiceActivator.class).absent())
+        if (TypeContext.of(activator).annotation(ServiceActivator.class).absent())
             throw new IllegalArgumentException("Requested activator " + activator.getSimpleName() + " is not decorated with @ServiceActivator");
 
         return this.activators.stream()
@@ -180,18 +175,21 @@ public abstract class ManagedHartshornContext extends DefaultContext implements 
         return (A) this.activators.stream().filter(a -> a.annotationType().equals(activator)).findFirst().orElse(null);
     }
 
+    @Override
+    public void reset() {
+        this.environment.context().reset();
+    }
+
     protected void process(final String prefix) {
         this.locator().register(prefix);
         final Collection<ComponentContainer> containers = this.locator().containers(ComponentType.FUNCTIONAL);
         for (final ServiceProcessor<?> serviceProcessor : this.serviceProcessors) {
             for (final ComponentContainer container : containers) {
                 if (container.activators().stream().allMatch(this::hasActivator)) {
-                    final Class<?> service = container.type();
-                    if (serviceProcessor.preconditions(service)) serviceProcessor.process(this, service);
-                    this.services.add(service);
+                    final TypeContext<?> service = container.type();
+                    if (serviceProcessor.preconditions(this, service)) serviceProcessor.process(this, service);
                 }
             }
         }
     }
-
 }

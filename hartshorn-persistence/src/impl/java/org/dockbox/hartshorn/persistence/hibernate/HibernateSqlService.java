@@ -1,9 +1,27 @@
+/*
+ * Copyright (C) 2020 Guus Lieben
+ *
+ * This framework is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 2.1 of the
+ * License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See
+ * the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
+ */
+
 package org.dockbox.hartshorn.persistence.hibernate;
 
-import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.exceptions.ApplicationException;
 import org.dockbox.hartshorn.di.annotations.inject.Binds;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
+import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.di.properties.Attribute;
 import org.dockbox.hartshorn.persistence.SqlService;
 import org.dockbox.hartshorn.persistence.context.EntityContext;
@@ -21,8 +39,11 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import javax.inject.Inject;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+
+import lombok.Getter;
 
 @Binds(SqlService.class)
 public class HibernateSqlService implements SqlService {
@@ -30,13 +51,17 @@ public class HibernateSqlService implements SqlService {
     private final Configuration configuration = new Configuration();
     private SessionFactory factory;
 
+    @Inject
+    @Getter
+    private ApplicationContext applicationContext;
+
     @Override
     public boolean canEnable() {
         return this.factory == null;
     }
 
     @Override
-    public void apply(Attribute<?> property) throws ApplicationException {
+    public void apply(final Attribute<?> property) throws ApplicationException {
         if (property instanceof ConnectionAttribute connectionAttribute) {
             final PersistenceConnection connection = connectionAttribute.value();
             if (HartshornUtils.notEmpty(connection.username()) || HartshornUtils.notEmpty(connection.password())) {
@@ -54,7 +79,7 @@ public class HibernateSqlService implements SqlService {
         }
     }
 
-    protected String dialect(PersistenceConnection connection) throws ApplicationException {
+    protected String dialect(final PersistenceConnection connection) throws ApplicationException {
         //noinspection SwitchStatementWithTooFewBranches
         return switch (connection.remote()) {
             case DERBY -> "org.hibernate.dialect.DerbyTenSevenDialect";
@@ -64,12 +89,12 @@ public class HibernateSqlService implements SqlService {
 
     @Override
     public void enable() throws ApplicationException {
-        final Exceptional<EntityContext> context = Hartshorn.context().first(EntityContext.class);
+        final Exceptional<EntityContext> context = this.applicationContext().first(EntityContext.class);
         if (context.absent()) throw new IllegalStateException("Entities were not prepared, did the persistent type service start?");
 
-        final Collection<Class<?>> entities = context.get().entities();
-        for (Class<?> entity : entities) {
-            this.configuration.addAnnotatedClass(entity);
+        final Collection<TypeContext<?>> entities = context.get().entities();
+        for (final TypeContext<?> entity : entities) {
+            this.configuration.addAnnotatedClass(entity.type());
         }
 
         final Properties properties = this.configuration.getProperties();
@@ -82,19 +107,19 @@ public class HibernateSqlService implements SqlService {
         try {
             this.factory = this.configuration.buildSessionFactory();
         }
-        catch (Throwable e) {
+        catch (final Throwable e) {
             throw new ApplicationException(e);
         }
     }
 
     @Override
-    public void save(Object object) {
+    public void save(final Object object) {
         this.session(session -> {
             session.save(object);
         });
     }
 
-    private void session(Consumer<Session> consumer) {
+    private void session(final Consumer<Session> consumer) {
         final Session session = this.factory.openSession();
         session.beginTransaction();
         consumer.accept(session);
@@ -103,30 +128,30 @@ public class HibernateSqlService implements SqlService {
     }
 
     @Override
-    public void update(Object object) {
+    public void update(final Object object) {
         this.session(session -> {
             session.update(object);
         });
     }
 
     @Override
-    public void updateOrSave(Object object) {
+    public void updateOrSave(final Object object) {
         this.session(session -> {
             session.saveOrUpdate(object);
         });
     }
 
     @Override
-    public void delete(Object object) {
+    public void delete(final Object object) {
         this.session(session -> {
             session.delete(object);
         });
     }
 
     @Override
-    public <T> Set<T> findAll(Class<T> type) {
+    public <T> Set<T> findAll(final Class<T> type) {
         return this.session(session -> {
-            CriteriaBuilder builder = session.getCriteriaBuilder();
+            final CriteriaBuilder builder = session.getCriteriaBuilder();
             final CriteriaQuery<T> criteria = builder.createQuery(type);
             criteria.from(type);
             final List<T> data = session.createQuery(criteria).getResultList();
@@ -134,7 +159,7 @@ public class HibernateSqlService implements SqlService {
         });
     }
 
-    private <T> T session(Function<Session, T> function) {
+    private <T> T session(final Function<Session, T> function) {
         final Session session = this.factory.openSession();
         session.beginTransaction();
         final T result = function.apply(session);
@@ -144,7 +169,7 @@ public class HibernateSqlService implements SqlService {
     }
 
     @Override
-    public <T> Exceptional<T> findById(Class<T> type, Object id) {
+    public <T> Exceptional<T> findById(final Class<T> type, final Object id) {
         return this.session(session -> {
             return Exceptional.of(() -> session.find(type, id));
         });

@@ -26,7 +26,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class DiscordUserNicknameChangedEvent implements DiscordEvent {
+public class DiscordUserNicknameChangedEvent extends DiscordEvent {
 
     private final User user;
     private final Exceptional<String> oldNickname;

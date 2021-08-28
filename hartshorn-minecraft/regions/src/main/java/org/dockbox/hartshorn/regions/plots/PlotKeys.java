@@ -17,7 +17,6 @@
 
 package org.dockbox.hartshorn.regions.plots;
 
-import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.keys.Key;
 import org.dockbox.hartshorn.api.keys.Keys;
 import org.dockbox.hartshorn.regions.RegionService;
@@ -28,46 +27,46 @@ import org.dockbox.hartshorn.server.minecraft.players.Player;
 public final class PlotKeys {
 
     public static final Key<Location, Plot> PLOT = Keys.builder(Location.class, Plot.class)
-            .withGetterSafe(loc -> Hartshorn.context().get(RegionService.class).first(loc, Plot.class))
+            .withGetterSafe(loc -> loc.applicationContext().get(RegionService.class).first(loc, Plot.class))
             .build();
 
     public static final Key<Player, Plot> CURRENT_PLOT = Keys.builder(Player.class, Plot.class)
-            .withGetterSafe(player -> Hartshorn.context().get(RegionService.class).first(player, Plot.class))
+            .withGetterSafe(player -> player.applicationContext().get(RegionService.class).first(player, Plot.class))
             .build();
 
     // The filling of the plot between bedrock (if present) and the plot floor
     public static final Key<Plot, Item> FILLING = Keys.builder(Plot.class, Item.class)
-            .withSetter((plot, item) -> Hartshorn.context().get(PlotService.class).filling(plot, item))
+            .withSetter((plot, item) -> plot.applicationContext().get(PlotService.class).filling(plot, item))
             .build();
 
     // The plot floor
     public static final org.dockbox.hartshorn.api.keys.Key<Plot, Item> FLOOR = Keys.builder(Plot.class, Item.class)
-            .withSetter(((plot, item) -> Hartshorn.context().get(PlotService.class).filling(plot, item)))
+            .withSetter(((plot, item) -> plot.applicationContext().get(PlotService.class).filling(plot, item)))
             .build();
 
     // The filling of the plot between the plot floor and the build height limit
     public static final Key<Plot, Item> AIR = Keys.builder(Plot.class, Item.class)
-            .withSetter(((plot, item) -> Hartshorn.context().get(PlotService.class).filling(plot, item)))
+            .withSetter(((plot, item) -> plot.applicationContext().get(PlotService.class).filling(plot, item)))
             .build();
 
     // The filling of the entire plot
     public static final Key<Plot, Item> ALL = Keys.builder(Plot.class, Item.class)
-            .withSetter(((plot, item) -> Hartshorn.context().get(PlotService.class).filling(plot, item)))
+            .withSetter(((plot, item) -> plot.applicationContext().get(PlotService.class).filling(plot, item)))
             .build();
 
     // The filling of the top of the plot wall
     public static final Key<Plot, Item> WALL_BORDER = Keys.builder(Plot.class, Item.class)
-            .withSetter(((plot, item) -> Hartshorn.context().get(PlotService.class).filling(plot, item)))
+            .withSetter(((plot, item) -> plot.applicationContext().get(PlotService.class).filling(plot, item)))
             .build();
 
     // The filling of the plot wall between bedrock (if present) and the wall border
     public static final Key<Plot, Item> WALL_FILLING = Keys.builder(Plot.class, Item.class)
-            .withSetter(((plot, item) -> Hartshorn.context().get(PlotService.class).filling(plot, item)))
+            .withSetter(((plot, item) -> plot.applicationContext().get(PlotService.class).filling(plot, item)))
             .build();
 
     // The filling of the outer edges of the plot (including top) from the plot floor (inclusive)
     public static final Key<Plot, Item> OUTLINE = Keys.builder(Plot.class, Item.class)
-            .withSetter(((plot, item) -> Hartshorn.context().get(PlotService.class).filling(plot, item)))
+            .withSetter(((plot, item) -> plot.applicationContext().get(PlotService.class).filling(plot, item)))
             .build();
 
 }

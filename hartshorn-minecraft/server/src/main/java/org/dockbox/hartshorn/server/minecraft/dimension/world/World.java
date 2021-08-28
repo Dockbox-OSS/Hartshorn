@@ -17,8 +17,9 @@
 
 package org.dockbox.hartshorn.server.minecraft.dimension.world;
 
-import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.tuple.Vector3N;
+import org.dockbox.hartshorn.di.ContextCarrier;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.server.minecraft.dimension.BlockDimension;
 import org.dockbox.hartshorn.server.minecraft.dimension.ChunkHolder;
 import org.dockbox.hartshorn.server.minecraft.dimension.EntityHolding;
@@ -33,7 +34,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public abstract class World extends WorldProperties implements BlockDimension, EntityHolding, ChunkHolder {
+public abstract class World extends WorldProperties implements BlockDimension, EntityHolding, ChunkHolder, ContextCarrier {
 
     protected UUID worldUniqueId;
     protected String name;
@@ -51,12 +52,12 @@ public abstract class World extends WorldProperties implements BlockDimension, E
         this.name = name;
     }
 
-    public static World empty() {
-        return new EmptyWorld();
+    public static World empty(final ApplicationContext context) {
+        return new EmptyWorld(context);
     }
 
-    public static WorldBuilder builder() {
-        return Hartshorn.context().get(WorldBuilder.class);
+    public static WorldBuilder builder(final ApplicationContext context) {
+        return context.get(WorldBuilder.class);
     }
 
     public abstract int playerCount();

@@ -43,7 +43,7 @@ import org.spongepowered.api.event.item.inventory.InteractItemEvent;
 import java.util.Optional;
 
 @Posting({ PlayerInteractAirEvent.class, PlayerInteractEntityEvent.class, PlayerInteractBlockEvent.class })
-public class InteractionEventBridge implements EventBridge {
+public class InteractionEventBridge extends EventBridge {
 
     @Listener
     public void on(final InteractEvent event) {
@@ -60,7 +60,7 @@ public class InteractionEventBridge implements EventBridge {
         final Exceptional<Player> player = this.player(event);
         if (player.absent()) return;
 
-        this.post(new PlayerInteractAirEvent(player.get(), hand.get(), type), event);
+        this.post(new PlayerInteractAirEvent(this.applicationContext(), player.get(), hand.get(), type), event);
     }
 
     private Exceptional<Hand> hand(final Event event) {
@@ -104,7 +104,7 @@ public class InteractionEventBridge implements EventBridge {
         final BlockFace face = SpongeAdapter.fromSponge(event.targetSide());
         final Block block = SpongeAdapter.fromSponge(event.block());
 
-        final Location location = event.block().location().map(SpongeAdapter::fromSponge).orElseGet(Location::empty);
+        final Location location = event.block().location().map(SpongeAdapter::fromSponge).orElseGet(() -> Location.empty(this.applicationContext()));
 
         final Exceptional<Hand> hand = this.hand(event);
         if (hand.absent()) return;

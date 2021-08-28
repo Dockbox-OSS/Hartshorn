@@ -33,7 +33,7 @@ import org.dockbox.hartshorn.discord.events.DiscordUserNicknameChangedEvent;
 import org.dockbox.hartshorn.discord.events.DiscordUserUnbannedEvent;
 import org.dockbox.hartshorn.events.annotations.Posting;
 
-@Posting(value = {
+@Posting({
         DiscordChatReceivedEvent.class,
         DiscordUserUnbannedEvent.class,
         DiscordUserNicknameChangedEvent.class,
@@ -49,5 +49,5 @@ import org.dockbox.hartshorn.events.annotations.Posting;
         DiscordBotDisconnectedEvent.class,
         DiscordPrivateChatReceivedEvent.class
 })
-public class DiscordEventBridge implements EventBridge {
+public class DiscordEventBridge extends EventBridge {
 }

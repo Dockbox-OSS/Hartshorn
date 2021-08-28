@@ -38,7 +38,4 @@ public class TargetGlobalConfig implements GlobalConfig {
     @Value(value = "hartshorn.exceptions.level", or = "FRIENDLY")
     private ExceptionLevels level;
 
-    @Value("hartshorn.version")
-    private String version;
-
 }

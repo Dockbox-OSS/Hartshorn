@@ -15,11 +15,28 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.util.exceptions;
+package org.dockbox.hartshorn.di.context.element;
 
-public class TypeConversionException extends Exception {
+import java.util.List;
 
-    public TypeConversionException(Class<?> type, String value) {
-        super("Could not convert '" + value + "' to type " + type.getSimpleName());
+public interface ModifierCarrier {
+
+    List<AccessModifier> modifiers();
+
+    default boolean isAbstract() {
+        return this.has(AccessModifier.ABSTRACT);
     }
+
+    default boolean isPublic() {
+        return this.has(AccessModifier.PUBLIC);
+    }
+
+    default boolean isFinal() {
+        return this.has(AccessModifier.FINAL);
+    }
+
+    default boolean has(final AccessModifier modifier) {
+        return this.modifiers().contains(modifier);
+    }
+
 }

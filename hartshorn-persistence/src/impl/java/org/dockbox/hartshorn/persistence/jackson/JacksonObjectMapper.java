@@ -34,17 +34,17 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLParser;
 
-import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.di.GenericType;
 import org.dockbox.hartshorn.di.annotations.component.Component;
 import org.dockbox.hartshorn.di.annotations.inject.Binds;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
+import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.persistence.DefaultObjectMapper;
 import org.dockbox.hartshorn.persistence.FileType;
 import org.dockbox.hartshorn.persistence.PersistentCapable;
 import org.dockbox.hartshorn.persistence.PersistentModel;
-import org.dockbox.hartshorn.persistence.mapping.GenericType;
 import org.dockbox.hartshorn.persistence.properties.PersistenceModifier;
-import org.dockbox.hartshorn.util.Reflect;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Type;
@@ -56,6 +56,8 @@ import java.util.concurrent.Callable;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import javax.inject.Inject;
+
 import lombok.AllArgsConstructor;
 
 @SuppressWarnings("unchecked")
@@ -65,6 +67,9 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
     private static final List<FileType> roots = Collections.singletonList(FileType.XML);
     protected ObjectMapper mapper;
     private Include include = Include.ALWAYS;
+
+    @Inject
+    private ApplicationContext context;
 
     public JacksonObjectMapper() {
         super(FileType.JSON);
@@ -97,8 +102,8 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
     @Override
     public <T> Exceptional<T> read(final String content, final GenericType<T> type) {
         return this.readInternal(
-                type.getType(),
-                () -> this.correctPersistentCapable(content, (Class<T>) type.getType()),
+                type.type(),
+                () -> this.correctPersistentCapable(content, (Class<T>) type.type()),
                 () -> this.configureMapper().readValue(content, new GenericTypeReference<>(type))
         );
     }
@@ -106,8 +111,8 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
     @Override
     public <T> Exceptional<T> read(final Path path, final GenericType<T> type) {
         return this.readInternal(
-                type.getType(),
-                () -> this.correctPersistentCapable(path, (Class<T>) type.getType()),
+                type.type(),
+                () -> this.correctPersistentCapable(path, (Class<T>) type.type()),
                 () -> this.configureMapper().readValue(path.toFile(), new GenericTypeReference<>(type))
         );
     }
@@ -115,8 +120,8 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
     @Override
     public <T> Exceptional<T> read(final URL url, final GenericType<T> type) {
         return this.readInternal(
-                type.getType(),
-                () -> this.correctPersistentCapable(url, (Class<T>) type.getType()),
+                type.type(),
+                () -> this.correctPersistentCapable(url, (Class<T>) type.type()),
                 () -> this.configureMapper().readValue(url, new GenericTypeReference<>(type))
         );
     }
@@ -152,7 +157,7 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
 
     private ObjectWriter writer(final Object content) {
         ObjectWriter writer = this.configureMapper().writerWithDefaultPrettyPrinter();
-        final Exceptional<Component> annotated = Reflect.annotation(content.getClass(), Component.class);
+        final Exceptional<Component> annotated = TypeContext.of(content).annotation(Component.class);
 
         if (JacksonObjectMapper.roots.contains(this.fileType()) && annotated.present()) {
             final Component annotation = annotated.get();
@@ -184,7 +189,7 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
     protected ObjectMapper configureMapper() {
         if (null == this.mapper) {
             this.mapper = this.mapper(this.fileType());
-            this.mapper.setAnnotationIntrospector(new PropertyAliasIntrospector());
+            this.mapper.setAnnotationIntrospector(new PropertyAliasIntrospector(this.context));
             this.mapper.enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES);
             this.mapper.enable(Feature.ALLOW_COMMENTS);
             this.mapper.enable(Feature.ALLOW_YAML_COMMENTS);
@@ -222,12 +227,12 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
     }
 
     private <T> Exceptional<T> correctPersistentCapableInternal(final Class<T> type, final Function<Class<? extends PersistentModel<?>>, Exceptional<? extends PersistentModel<?>>> reader) {
-        if (Reflect.assigns(PersistentCapable.class, type)) {
+        if (TypeContext.of(type).childOf(PersistentCapable.class)) {
             // Provision basis is required here, as injected types will typically pass in a interface type. If no injection point is available a
             // regular instance is created through available constructors.
-            final Class<? extends PersistentModel<?>> modelType = ((PersistentCapable<?>) Hartshorn.context().get(type)).type();
+            final Class<? extends PersistentModel<?>> modelType = ((PersistentCapable<?>) this.context.get(type)).type();
             @NotNull final Exceptional<? extends PersistentModel<?>> model = reader.apply(modelType);
-            return model.map(PersistentModel::restore).map(out -> (T) out);
+            return model.map(m -> m.restore(this.context)).map(out -> (T) out);
         }
         return Exceptional.empty();
     }

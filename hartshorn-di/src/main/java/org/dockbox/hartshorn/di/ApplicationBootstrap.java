@@ -20,6 +20,7 @@ package org.dockbox.hartshorn.di;
 import com.google.common.collect.Multimap;
 
 import org.dockbox.hartshorn.di.annotations.inject.InjectPhase;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
 
 import java.lang.annotation.Annotation;
 import java.util.Collection;
@@ -30,6 +31,8 @@ public interface ApplicationBootstrap {
     void init();
 
     boolean isCI();
+
+    ApplicationContext context();
 
     void create(Collection<String> prefixes, Class<?> activationSource, List<Annotation> activators, Multimap<InjectPhase, InjectConfiguration> configs, Modifier... modifiers);
 

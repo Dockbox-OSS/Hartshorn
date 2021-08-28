@@ -17,6 +17,7 @@
 
 package org.dockbox.hartshorn.api.keys;
 
+import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.i18n.common.ResourceEntry;
 import org.dockbox.hartshorn.i18n.entry.DefaultResources;
 import org.dockbox.hartshorn.i18n.entry.FakeResource;
@@ -36,12 +37,12 @@ public final class TransactionResult {
         return TransactionResult.SUCCESS;
     }
 
-    public static TransactionResult fail(ResourceEntry message) {
+    public static TransactionResult fail(final ResourceEntry message) {
         return new TransactionResult(Status.FAILURE, message);
     }
 
-    public static TransactionResult fail(Throwable cause) {
-        return new TransactionResult(Status.FAILURE, DefaultResources.instance().exception(cause.getMessage()));
+    public static TransactionResult fail(final ApplicationContext context, final Throwable cause) {
+        return new TransactionResult(Status.FAILURE, DefaultResources.instance(context).exception(cause.getMessage()));
     }
 
     public boolean successful() {

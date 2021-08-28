@@ -17,6 +17,8 @@
 
 package org.dockbox.hartshorn.server.minecraft.item;
 
+import org.dockbox.hartshorn.di.context.ApplicationContext;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -1002,7 +1004,7 @@ public enum ItemTypes {
 
     @Getter private final String id;
 
-    public Item item() {
-        return Item.of(this);
+    public Item item(final ApplicationContext context) {
+        return Item.of(context, this);
     }
 }
