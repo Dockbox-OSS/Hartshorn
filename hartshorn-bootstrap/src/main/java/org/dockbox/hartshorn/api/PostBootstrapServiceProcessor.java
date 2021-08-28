@@ -41,7 +41,7 @@ public class PostBootstrapServiceProcessor implements ServiceProcessor<UseBootst
     public <T> void process(final ApplicationContext context, final TypeContext<T> type) {
         final Collection<MethodContext<?, T>> methods = type.flatMethods(PostBootstrap.class);
         for (final MethodContext<?, T> method : methods) {
-            HartshornBootstrap.instance().addPostBootstrapActivation(method);
+            context.environment().application().addActivation(method);
         }
     }
 

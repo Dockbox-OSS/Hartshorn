@@ -50,15 +50,6 @@ public abstract class HartshornBootstrap extends InjectableBootstrap {
 
     private final Set<MethodContext<?, ?>> postBootstrapActivations = HartshornUtils.emptyConcurrentSet();
 
-    /**
-     * Returns the active instance of {@link HartshornBootstrap}, if any.
-     *
-     * @return The active instance or <code>null</code>
-     */
-    public static HartshornBootstrap instance() {
-        return (HartshornBootstrap) InjectableBootstrap.instance();
-    }
-
     @Override
     public void create(final Collection<String> prefixes, final Class<?> activationSource, final List<Annotation> activators, final Multimap<InjectPhase, InjectConfiguration> configs, final Modifier... modifiers) {
         activators.add(new UseBootstrap() {
@@ -114,7 +105,8 @@ public abstract class HartshornBootstrap extends InjectableBootstrap {
      * @param method
      *         The method to activate
      */
-    void addPostBootstrapActivation(final MethodContext<?, ?> method) {
+    @Override
+    public void addActivation(final MethodContext<?, ?> method) {
         Objects.requireNonNull(method);
         final TypeContext<?> type = method.parent();
         final Exceptional<ComponentContainer> container = this.context().locator().container(type);

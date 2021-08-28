@@ -24,7 +24,7 @@ import org.slf4j.Logger;
 
 import lombok.Getter;
 
-public abstract class ApplicationContextAware {
+public abstract class ApplicationContextAware implements ApplicationBootstrap {
 
     private static ApplicationContextAware instance;
     @Getter private ApplicationContext context;
