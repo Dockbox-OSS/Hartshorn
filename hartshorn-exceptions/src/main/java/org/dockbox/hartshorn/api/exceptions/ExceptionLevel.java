@@ -18,19 +18,14 @@
 package org.dockbox.hartshorn.api.exceptions;
 
 import org.dockbox.hartshorn.api.TriConsumer;
-import org.dockbox.hartshorn.di.ApplicationContextAware;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 
-public enum ExceptionLevels implements ExceptionHandle {
-    FRIENDLY((message, exception, stacktrace) -> {
-        ApplicationContextAware.instance().context().get(ExceptionHelper.class).printFriendly(message, exception, stacktrace);
-    }),
-    MINIMAL((message, exception, stacktrace) -> {
-        ApplicationContextAware.instance().context().get(ExceptionHelper.class).printMinimal(message, exception, stacktrace);
-    }),
+public enum ExceptionLevel implements ExceptionHandle {
+    FRIENDLY(ExceptionHelper::printFriendly),
+    MINIMAL(ExceptionHelper::printMinimal),
     NATIVE((message, exception, stacktrace) -> {
         final Logger log = LoggerFactory.getLogger("Hartshorn::native");
         log.error(message);
@@ -39,7 +34,7 @@ public enum ExceptionLevels implements ExceptionHandle {
 
     private final TriConsumer<String, Throwable, Boolean> consumer;
 
-    ExceptionLevels(final TriConsumer<String, Throwable, Boolean> consumer) {
+    ExceptionLevel(final TriConsumer<String, Throwable, Boolean> consumer) {
         this.consumer = consumer;
     }
 

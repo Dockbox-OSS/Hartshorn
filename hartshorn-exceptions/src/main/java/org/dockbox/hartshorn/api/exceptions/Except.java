@@ -23,7 +23,7 @@ import java.util.concurrent.Callable;
 
 public final class Except {
 
-    private static ExceptionHandle handle = ExceptionLevels.FRIENDLY;
+    private static ExceptionHandle handle = ExceptionLevel.FRIENDLY;
     private static boolean stackTraces = true;
     private Except() {
     }
@@ -51,7 +51,8 @@ public final class Except {
     }
 
     /**
-     * Handles a given exception and message using the injected {@link ExceptionHelper} instance.
+     * Handles a given exception and message using the associated exception handler for the active
+     * {@link ExceptionHandle}.
      *
      * @param msg
      *         The message, usually provided by the developer causing the exception. Can be null.
