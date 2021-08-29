@@ -17,7 +17,15 @@
 
 package org.dockbox.hartshorn.di.context.element;
 
+import org.dockbox.hartshorn.util.HartshornUtils;
+
 import java.lang.reflect.Parameter;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.lang.reflect.WildcardType;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import lombok.Getter;
 
@@ -29,6 +37,7 @@ public class ParameterContext<T> extends AnnotatedElementContext<Parameter> {
 
     private String name;
     private TypeContext<T> type;
+    private List<TypeContext<?>> typeParameters;
 
     private ParameterContext(final Parameter parameter) {
         this.parameter = parameter;
@@ -56,5 +65,24 @@ public class ParameterContext<T> extends AnnotatedElementContext<Parameter> {
     @Override
     protected Parameter element() {
         return this.parameter;
+    }
+
+    public List<TypeContext<?>> typeParameters() {
+        if (this.typeParameters == null) {
+            final Type type = this.element().getParameterizedType();
+            if (type instanceof ParameterizedType parameterized) {
+                this.typeParameters = Arrays.stream(parameterized.getActualTypeArguments())
+                        .map(t -> {
+                            if (t instanceof WildcardType) return WildcardTypeContext.create();
+                            else if (t instanceof Class<?> clazz) return TypeContext.of(clazz);
+                            else return TypeContext.VOID;
+                        })
+                        .collect(Collectors.toList());
+            }
+            else {
+                this.typeParameters = HartshornUtils.emptyList();
+            }
+        }
+        return this.typeParameters;
     }
 }

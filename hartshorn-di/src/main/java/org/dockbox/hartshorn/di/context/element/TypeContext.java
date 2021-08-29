@@ -106,7 +106,7 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
     private Multimap<String, MethodContext<?, T>> methods;
     private Exceptional<ConstructorContext<T>> defaultConstructor;
 
-    private TypeContext(final Class<T> type) {
+    protected TypeContext(final Class<T> type) {
         if (TypeContext.class.equals(type)) {
             throw new IllegalArgumentException("TypeContext can not be reflected on");
         }
