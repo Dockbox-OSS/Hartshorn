@@ -29,4 +29,8 @@ public class TypeConversionException extends Exception {
     public TypeConversionException(final TypeContext<?> type, final String value) {
         super("Could not convert '" + value + "' to type " + type.name());
     }
+
+    public TypeConversionException(final TypeContext<?> type, final String value, final Throwable cause) {
+        super("Could not convert '" + value + "' to type " + type.name(), cause);
+    }
 }
