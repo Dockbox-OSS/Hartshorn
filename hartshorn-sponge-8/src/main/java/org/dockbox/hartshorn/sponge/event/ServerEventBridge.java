@@ -48,7 +48,7 @@ public class ServerEventBridge extends EventBridge {
     @Listener
     public void on(final StartingEngineEvent<?> event) {
         new EngineChangedState<Starting>() {
-        }.post();
+        }.with(this.context()).post();
     }
 
     @Listener
@@ -58,7 +58,7 @@ public class ServerEventBridge extends EventBridge {
         this.applicationContext().add(new ItemContext(items, blocks));
 
         new EngineChangedState<Started>() {
-        }.post();
+        }.with(this.context()).post();
     }
 
     private List<String> collectIdContext(final RegistryType<?> registryType) {
@@ -76,20 +76,20 @@ public class ServerEventBridge extends EventBridge {
     @Listener
     public void on(final LoadedGameEvent event) {
         new EngineChangedState<Loading>() {
-        }.post();
+        }.with(this.context()).post();
     }
 
     @Listener
     public void on(final StoppingEngineEvent<?> event) {
         new EngineChangedState<Stopping>() {
-        }.post();
+        }.with(this.context()).post();
     }
 
     @Listener
     public void on(final RefreshGameEvent event) {
         new EngineChangedState<Reload>() {
-        }.post();
+        }.with(this.context()).post();
         new EngineChangedState<Loading>() {
-        }.post();
+        }.with(this.context()).post();
     }
 }

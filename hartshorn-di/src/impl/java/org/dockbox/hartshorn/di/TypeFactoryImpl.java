@@ -62,11 +62,7 @@ public class TypeFactoryImpl implements TypeFactory {
         }
         final Exceptional<BoundContext<T, T>> finalBinding = binding;
 
-        return Exceptional.of(() -> {
-            final T instance = finalBinding.get().create(this.applicationContext, arguments);
-            Bindings.enable(instance, this.properties);
-            return instance;
-        }).orNull();
+        return Exceptional.of(() -> finalBinding.get().create(this.applicationContext, arguments)).orNull();
     }
 
     @Override

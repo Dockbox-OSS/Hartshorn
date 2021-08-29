@@ -19,9 +19,12 @@ package org.dockbox.hartshorn.config;
 
 import org.dockbox.hartshorn.api.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.api.exceptions.Except;
 import org.dockbox.hartshorn.config.annotations.Configuration;
 import org.dockbox.hartshorn.config.annotations.UseConfigurations;
 import org.dockbox.hartshorn.config.annotations.Value;
+import org.dockbox.hartshorn.di.NotPrimitiveException;
+import org.dockbox.hartshorn.di.TypeConversionException;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.di.context.element.FieldContext;
 import org.dockbox.hartshorn.di.context.element.TypeContext;
@@ -30,12 +33,14 @@ import org.dockbox.hartshorn.di.properties.Attribute;
 import org.dockbox.hartshorn.persistence.FileManager;
 import org.dockbox.hartshorn.persistence.FileType;
 import org.dockbox.hartshorn.persistence.FileTypeAttribute;
+import org.dockbox.hartshorn.util.HartshornUtils;
 import org.dockbox.hartshorn.util.exceptions.FieldAccessException;
-import org.dockbox.hartshorn.di.NotPrimitiveException;
-import org.dockbox.hartshorn.di.TypeConversionException;
 import org.jetbrains.annotations.Nullable;
 
 import java.nio.file.Path;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Looks up and populates fields annotated with {@link Value}. If the type is annotated with
@@ -82,13 +87,25 @@ public class ConfigurationServiceModifier implements InjectionModifier<UseConfig
                 Object fieldValue = configurationManager.get(value.value()).or(value.or());
 
                 if ((!field.type().childOf(String.class)) && (fieldValue instanceof String stringValue)) {
-                    fieldValue = TypeContext.toPrimitive(field.type(), stringValue);
+                    try {
+                        fieldValue = TypeContext.toPrimitive(field.type(), stringValue);
+                    } catch (final NotPrimitiveException e) {
+                        if (field.type().childOf(Collection.class)) {
+                            if ("".equals(stringValue)) {
+                                if (field.type().childOf(List.class)) fieldValue = HartshornUtils.emptyList();
+                                if (field.type().childOf(Set.class)) fieldValue = HartshornUtils.emptySet();
+                            } else {
+                                Hartshorn.log().warn("Cannot convert string '" + stringValue + "' to collection type");
+                            }
+                        }
+                        else throw e;
+                    }
                 }
-
                 field.set(instance, fieldValue);
             }
             catch (final FieldAccessException | TypeConversionException | NotPrimitiveException e) {
                 Hartshorn.log().warn("Could not prepare value field " + field.name() + " in " + instanceType.name());
+                Except.handle(e);
             }
         }
 

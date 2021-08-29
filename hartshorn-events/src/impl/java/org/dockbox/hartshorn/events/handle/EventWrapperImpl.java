@@ -65,7 +65,7 @@ public final class EventWrapperImpl<T> implements Comparable<EventWrapperImpl<T>
         this.method = method;
         this.priority = priority;
 
-        this.eventParameters = method.parameterTypes().get(0).typeParameters();
+        this.eventParameters = method.parameters().get(0).typeParameters();
     }
 
     /**
