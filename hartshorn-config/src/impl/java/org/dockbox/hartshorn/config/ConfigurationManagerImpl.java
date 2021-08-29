@@ -18,44 +18,46 @@
 package org.dockbox.hartshorn.config;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.api.exceptions.ApplicationException;
+import org.dockbox.hartshorn.di.GenericType;
 import org.dockbox.hartshorn.di.annotations.inject.Bound;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
+import org.dockbox.hartshorn.di.properties.AttributeHolder;
+import org.dockbox.hartshorn.persistence.FileManager;
 import org.dockbox.hartshorn.util.HartshornUtils;
-import org.yaml.snakeyaml.Yaml;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import lombok.Getter;
 
-public class ConfigurationManagerImpl implements ConfigurationManager {
+public class ConfigurationManagerImpl implements ConfigurationManager, AttributeHolder {
 
     private final Path path;
     private final String fileKey;
     @Getter private final Map<String, Map<String, Object>> cache = HartshornUtils.emptyConcurrentMap();
+    @Inject private ApplicationContext applicationContext;
 
     @Bound
     public ConfigurationManagerImpl(final Path path) {
         this.path = path;
         this.fileKey = this.fileKey();
+    }
 
-        try {
-            if (!this.cache.containsKey(this.fileKey)) {
-                final FileInputStream fileInputStream = new FileInputStream(this.path.toFile());
-                final Yaml yaml = new Yaml();
-                Map<String, Object> localCache = yaml.load(fileInputStream);
-                if (localCache == null) {
-                    localCache = HartshornUtils.emptyMap();
-                }
-                this.cache.put(this.fileKey, localCache);
-            }
-        }
-        catch (final FileNotFoundException e) {
-            throw new ApplicationException(e).runtime();
-        }
+    @Override
+    public boolean canEnable() {
+        return !this.cache.containsKey(this.fileKey);
+    }
+
+    @Override
+    public void enable() {
+        final FileManager fileManager = this.applicationContext.get(FileManager.class);
+        final Exceptional<HashMap<String, Object>> readCache = fileManager.read(this.path, new GenericType<>() {
+        });
+        final Map<String, Object> localCache = readCache.map(read -> (Map<String, Object>) read).orElse(HartshornUtils::emptyMap).get();
+        this.cache.put(this.fileKey, localCache);
     }
 
     protected String fileKey() {
