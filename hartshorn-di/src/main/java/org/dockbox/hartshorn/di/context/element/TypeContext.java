@@ -261,6 +261,7 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
     }
 
     public boolean childOf(final TypeContext<?> type) {
+        if (type instanceof WildcardTypeContext) return true;
         return this.childOf(type.type());
     }
 
