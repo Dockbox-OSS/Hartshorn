@@ -369,7 +369,7 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
         return this.type();
     }
 
-    public static <T> T toPrimitive(TypeContext<?> type, final String value) throws TypeConversionException {
+    public static <T> T toPrimitive(TypeContext<?> type, final String value) throws TypeConversionException, NotPrimitiveException {
         try {
             if (type.isEnum()) {
                 return (T) Enum.valueOf((Class<? extends Enum>) type.type(), String.valueOf(value).toUpperCase());
@@ -382,13 +382,16 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
                 }
                 if (!type.isPrimitive()) throw new NotPrimitiveException(type);
                 else {
-                    final Function<String, ?> converter = PRIMITIVE_FROM_STRING.get(type);
+                    final Function<String, ?> converter = PRIMITIVE_FROM_STRING.get(type.type());
                     return (T) converter.apply(value);
                 }
             }
         }
+        catch (final NotPrimitiveException e) {
+            throw e;
+        }
         catch (final Throwable t) {
-            throw new TypeConversionException(type, value);
+            throw new TypeConversionException(type, value, t);
         }
     }
 
