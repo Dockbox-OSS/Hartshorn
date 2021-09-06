@@ -73,7 +73,6 @@ public class HartshornApplicationContext extends ManagedHartshornContext {
     private final Map<Key<?>, BindingHierarchy<?>> hierarchies = HartshornUtils.emptyConcurrentMap();
     private MetaProvider metaProvider;
 
-
     public HartshornApplicationContext(final ApplicationContextAware application, final Class<?> activationSource, final Collection<String> prefixes, final Modifier... modifiers) {
         super(application, activationSource, prefixes);
 
@@ -354,7 +353,7 @@ public class HartshornApplicationContext extends ManagedHartshornContext {
             this.handleScanned(binder, binds, annotation);
         }
         else {
-            this.manual(Key.of(binds), binder.type());
+            this.bind(Key.of(binds), binder.type());
         }
     }
 
@@ -371,25 +370,22 @@ public class HartshornApplicationContext extends ManagedHartshornContext {
     }
 
     @Override
-    public <C> void provide(final Key<C> contract, final Supplier<C> supplier) {
+    public <C> void bind(final Key<C> contract, final Supplier<C> supplier) {
         this.inHierarchy(contract, hierarchy -> hierarchy.add(Providers.of(supplier)));
     }
 
     @Override
     public <C, T extends C> void bind(final Key<C> contract, final Class<? extends T> implementation) {
-        this.inHierarchy(contract, hierarchy -> hierarchy.add(Providers.of(TypeContext.of(implementation))));
+        final TypeContext<? extends T> context = TypeContext.of(implementation);
+        if (context.boundConstructors().isEmpty()) {
+            this.inHierarchy(contract, hierarchy -> hierarchy.add(Providers.of(context)));
+        } else {
+            this.bindings.add(new ConstructorBoundContext<>(contract, context));
+        }
     }
 
     @Override
     public <C, T extends C> void bind(final Key<C> contract, final T instance) {
         this.inHierarchy(contract, hierarchy -> hierarchy.add(Providers.of(instance)));
-    }
-
-    @Override
-    public <C, T extends C> void manual(final Key<C> contract, final Class<? extends T> implementation) {
-        final TypeContext<? extends T> type = TypeContext.of(implementation);
-        if (type.boundConstructors().isEmpty())
-            throw new IllegalArgumentException("Implementation should contain at least one constructor decorated with @Bound");
-        this.bindings.add(new ConstructorBoundContext<>(contract, type));
     }
 }

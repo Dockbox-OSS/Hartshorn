@@ -23,12 +23,9 @@ import java.util.function.Supplier;
 
 public interface Binder {
 
-    <C> void provide(Key<C> contract, Supplier<C> supplier);
+    <C> void bind(Key<C> contract, Supplier<C> supplier);
 
     <C, T extends C> void bind(Key<C> key, Class<? extends T> implementation);
 
     <C, T extends C> void bind(Key<C> key, T instance);
-
-    <C, T extends C> void manual(Key<C> key, Class<? extends T> implementation);
-
 }

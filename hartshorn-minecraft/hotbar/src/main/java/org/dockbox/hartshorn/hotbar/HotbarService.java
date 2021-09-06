@@ -91,6 +91,4 @@ public abstract class HotbarService implements AttributeHolder {
 
     @UpdateCache
     public abstract void save(Tuple<Long, InventoryRow> entry);
-
-
 }

@@ -48,52 +48,26 @@ import org.dockbox.hartshorn.sponge.util.SpongeFileManager;
 import org.dockbox.hartshorn.sponge.util.SpongeTaskRunner;
 import org.slf4j.Logger;
 
+import java.util.function.Supplier;
+
 @LogExclude
 public class SpongeInjector extends InjectConfiguration {
 
     @Override
     public void collect(final ApplicationContext context) {
-        // Factory creation
         this.bind(Key.of(TypeFactory.class), TypeFactoryImpl.class);
-
-        // Tasks
         this.bind(Key.of(TaskRunner.class), SpongeTaskRunner.class);
-
-        // Persistence
         this.bind(Key.of(FileManager.class), SpongeFileManager.class);
-
-        // Services
         this.bind(Key.of(Players.class), SpongePlayers.class);
         this.bind(Key.of(Worlds.class), SpongeWorlds.class);
-//        this.bind(Key.of(WorldEditService.class), SpongeWorldEditService.class);
-//        this.bind(Key.of(CustomMapService.class), SpongeCustomMapService.class);
-//        this.bind(Key.of(PlotService.class), SpongePlotSquaredService.class);
         this.bind(Key.of(CacheManager.class), CacheManagerImpl.class);
-
-        // Builder types
         this.bind(Key.of(PaginationBuilder.class), PaginationBuilderImpl.class);
-//        this.bind(Key.of(LayoutBuilder.class), SpongeLayoutBuilder.class);
-//        this.bind(Key.of(PaginatedPaneBuilder.class), SpongePaginatedPaneBuilder.class);
-//        this.bind(Key.of(StaticPaneBuilder.class), SpongeStaticPaneBuilder.class);
-
-        // Wired types - do NOT call directly!
-        this.manual(Key.of(Item.class), SpongeItem.class);
-//        this.manual(Key.of(Bossbar.class), SpongeBossbar.class);
-        this.manual(Key.of(Profile.class), SpongeProfile.class);
-//        this.manual(Key.of(DiscordCommandSource.class), MagiBridgeCommandSource.class);
-        this.manual(Key.of(ConfigurationManager.class), ConfigurationManagerImpl.class);
-
-        // Log is created from LoggerFactory externally
-        this.provide(Key.of(Logger.class), context::log);
-
-        // Console is a constant singleton, to avoid recreation
+        this.bind(Key.of(Item.class), SpongeItem.class);
+        this.bind(Key.of(Profile.class), SpongeProfile.class);
+        this.bind(Key.of(ConfigurationManager.class), ConfigurationManagerImpl.class);
         this.bind(Key.of(SystemSubject.class), SpongeSystemSubject.class);
-
-        // Packets
-//        this.bind(Key.of(ChangeGameStatePacket.class), NMSChangeGameStatePacket.class);
-//        this.bind(Key.of(SpawnEntityPacket.class), NMSSpawnEntityPacket.class);
-
         this.bind(Key.of(GlobalConfig.class), TargetGlobalConfig.class);
         this.bind(Key.of(MinecraftVersion.class), MinecraftVersion.MC1_16);
+        this.bind(Key.of(Logger.class), (Supplier<Logger>) context::log);
     }
 }
