@@ -269,11 +269,12 @@ public class HartshornApplicationContext extends ManagedHartshornContext {
     }
 
     @Override
-    public <T, I extends T> Exceptional<BoundContext<T, I>> firstWire(final TypeContext<T> contract, final Named property) {
+    public <T, I extends T> Exceptional<BoundContext<T, I>> firstWire(final Key<T> key) {
+        final Named named = key.named();
         for (final BoundContext<?, ?> binding : this.bindings) {
-            if (binding.contract().equals(contract)) {
+            if (binding.contract().equals(key.contract())) {
                 if (!"".equals(binding.name())) {
-                    if (property == null || !binding.name().equals(property.value())) continue;
+                    if (named == null || !binding.name().equals(named.value())) continue;
                 }
                 return Exceptional.of((BoundContext<T, I>) binding);
             }
