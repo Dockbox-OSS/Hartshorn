@@ -53,44 +53,31 @@ import org.dockbox.hartshorn.test.services.JUnitPlayers;
 import org.dockbox.hartshorn.test.services.JUnitWorlds;
 import org.slf4j.Logger;
 
+import java.util.function.Supplier;
+
 @LogExclude
 public class JUnitInjector extends InjectConfiguration {
 
     @Override
     public void collect(final ApplicationContext context) {
-        // Factory creation
         this.bind(Key.of(TypeFactory.class), TypeFactoryImpl.class);
-
-        // Tasks
         this.bind(Key.of(TaskRunner.class), JUnitTaskRunner.class);
-
-        // Persistence
         this.bind(Key.of(FileManager.class), JUnitFileManager.class);
-
-        // Services
         this.bind(Key.of(Players.class), JUnitPlayers.class);
         this.bind(Key.of(Worlds.class), JUnitWorlds.class);
         this.bind(Key.of(CustomMapService.class), JUnitCustomMapService.class);
         this.bind(Key.of(CacheManager.class), JUnitCacheManager.class);
-
-        // Wired types - do NOT call directly!
-        this.manual(Key.of(Item.class), JUnitItem.class);
-        this.manual(Key.of(Bossbar.class), JUnitBossbar.class);
-        this.manual(Key.of(Profile.class), JUnitProfile.class);
-        this.manual(Key.of(ItemFrame.class), JUnitItemFrame.class);
-        this.manual(Key.of(ArmorStand.class), JUnitArmorStand.class);
-        this.manual(Key.of(DiscordCommandSource.class), JUnitDiscordCommandSource.class);
-        this.manual(Key.of(ConfigurationManager.class), JUnitConfigurationManager.class);
-
-        // Log is created from LoggerFactory externally
-        this.provide(Key.of(Logger.class), context::log);
-
-        // Console is a constant singleton, to avoid recreation
+        this.bind(Key.of(Item.class), JUnitItem.class);
+        this.bind(Key.of(Bossbar.class), JUnitBossbar.class);
+        this.bind(Key.of(Profile.class), JUnitProfile.class);
+        this.bind(Key.of(ItemFrame.class), JUnitItemFrame.class);
+        this.bind(Key.of(ArmorStand.class), JUnitArmorStand.class);
+        this.bind(Key.of(DiscordCommandSource.class), JUnitDiscordCommandSource.class);
+        this.bind(Key.of(ConfigurationManager.class), JUnitConfigurationManager.class);
+        this.bind(Key.of(Logger.class), (Supplier<Logger>) context::log);
         this.bind(Key.of(SystemSubject.class), new JUnitSystemSubject());
-
         this.bind(Key.of(GlobalConfig.class), JUnitGlobalConfig.class);
         this.bind(Key.of(MinecraftVersion.class), MinecraftVersion.INDEV);
-
         this.bind(Key.of(DiscordUtils.class), JUnitDiscordUtils.class);
     }
 }

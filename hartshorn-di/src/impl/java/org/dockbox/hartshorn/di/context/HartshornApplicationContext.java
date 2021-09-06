@@ -73,7 +73,6 @@ public class HartshornApplicationContext extends ManagedHartshornContext {
     private final Map<Key<?>, BindingHierarchy<?>> hierarchies = HartshornUtils.emptyConcurrentMap();
     private MetaProvider metaProvider;
 
-
     public HartshornApplicationContext(final ApplicationContextAware application, final Class<?> activationSource, final Collection<String> prefixes, final Modifier... modifiers) {
         super(application, activationSource, prefixes);
 
@@ -270,11 +269,12 @@ public class HartshornApplicationContext extends ManagedHartshornContext {
     }
 
     @Override
-    public <T, I extends T> Exceptional<BoundContext<T, I>> firstWire(final TypeContext<T> contract, final Named property) {
+    public <T, I extends T> Exceptional<BoundContext<T, I>> firstWire(final Key<T> key) {
+        final Named named = key.named();
         for (final BoundContext<?, ?> binding : this.bindings) {
-            if (binding.contract().equals(contract)) {
+            if (binding.contract().equals(key.contract())) {
                 if (!"".equals(binding.name())) {
-                    if (property == null || !binding.name().equals(property.value())) continue;
+                    if (named == null || !binding.name().equals(named.value())) continue;
                 }
                 return Exceptional.of((BoundContext<T, I>) binding);
             }
@@ -354,7 +354,7 @@ public class HartshornApplicationContext extends ManagedHartshornContext {
             this.handleScanned(binder, binds, annotation);
         }
         else {
-            this.manual(Key.of(binds), binder.type());
+            this.bind(Key.of(binds), binder.type());
         }
     }
 
@@ -371,25 +371,23 @@ public class HartshornApplicationContext extends ManagedHartshornContext {
     }
 
     @Override
-    public <C> void provide(final Key<C> contract, final Supplier<C> supplier) {
+    public <C> void bind(final Key<C> contract, final Supplier<C> supplier) {
         this.inHierarchy(contract, hierarchy -> hierarchy.add(Providers.of(supplier)));
     }
 
     @Override
     public <C, T extends C> void bind(final Key<C> contract, final Class<? extends T> implementation) {
-        this.inHierarchy(contract, hierarchy -> hierarchy.add(Providers.of(TypeContext.of(implementation))));
+        final TypeContext<? extends T> context = TypeContext.of(implementation);
+        if (context.defaultConstructor().present() || !context.injectConstructors().isEmpty()) {
+            this.inHierarchy(contract, hierarchy -> hierarchy.add(Providers.of(context)));
+        }
+        if (!context.boundConstructors().isEmpty()) {
+            this.bindings.add(new ConstructorBoundContext<>(contract, context));
+        }
     }
 
     @Override
     public <C, T extends C> void bind(final Key<C> contract, final T instance) {
         this.inHierarchy(contract, hierarchy -> hierarchy.add(Providers.of(instance)));
-    }
-
-    @Override
-    public <C, T extends C> void manual(final Key<C> contract, final Class<? extends T> implementation) {
-        final TypeContext<? extends T> type = TypeContext.of(implementation);
-        if (type.boundConstructors().isEmpty())
-            throw new IllegalArgumentException("Implementation should contain at least one constructor decorated with @Bound");
-        this.bindings.add(new ConstructorBoundContext<>(contract, type));
     }
 }

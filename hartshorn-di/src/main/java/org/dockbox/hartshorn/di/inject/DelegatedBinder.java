@@ -24,8 +24,8 @@ import java.util.function.Supplier;
 public interface DelegatedBinder extends Binder {
 
     @Override
-    default <C> void provide(final Key<C> contract, final Supplier<C> supplier) {
-        this.binder().provide(contract, supplier);
+    default <C> void bind(final Key<C> contract, final Supplier<C> supplier) {
+        this.binder().bind(contract, supplier);
     }
 
     Binder binder();
@@ -39,10 +39,4 @@ public interface DelegatedBinder extends Binder {
     default <C, T extends C> void bind(final Key<C> contract, final T instance) {
         this.binder().bind(contract, instance);
     }
-
-    @Override
-    default <C, T extends C> void manual(final Key<C> contract, final Class<? extends T> implementation) {
-        this.binder().manual(contract, implementation);
-    }
-
 }

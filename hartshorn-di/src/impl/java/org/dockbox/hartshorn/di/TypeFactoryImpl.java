@@ -51,7 +51,7 @@ public class TypeFactoryImpl implements TypeFactory {
             if (property instanceof BindingMetaAttribute bindingMeta) named = bindingMeta.value();
         }
 
-        Exceptional<BoundContext<T, T>> binding = this.applicationContext.firstWire(type, named);
+        Exceptional<BoundContext<T, T>> binding = this.applicationContext.firstWire(Key.of(type, named));
         if (binding.absent()) {
             if (type.isAbstract()) throw new IllegalStateException("Could not autowire " + type.qualifiedName() + " as there is no active binding for it");
             else {
