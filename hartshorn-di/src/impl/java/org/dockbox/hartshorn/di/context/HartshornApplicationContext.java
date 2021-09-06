@@ -377,9 +377,10 @@ public class HartshornApplicationContext extends ManagedHartshornContext {
     @Override
     public <C, T extends C> void bind(final Key<C> contract, final Class<? extends T> implementation) {
         final TypeContext<? extends T> context = TypeContext.of(implementation);
-        if (context.boundConstructors().isEmpty()) {
+        if (context.defaultConstructor().present() || !context.injectConstructors().isEmpty()) {
             this.inHierarchy(contract, hierarchy -> hierarchy.add(Providers.of(context)));
-        } else {
+        }
+        if (!context.boundConstructors().isEmpty()) {
             this.bindings.add(new ConstructorBoundContext<>(contract, context));
         }
     }
