@@ -39,7 +39,7 @@ import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.lifecycle.ConstructPluginEvent;
 import org.spongepowered.api.event.lifecycle.RegisterDataEvent;
 import org.spongepowered.plugin.PluginContainer;
-import org.spongepowered.plugin.jvm.Plugin;
+import org.spongepowered.plugin.builtin.jvm.Plugin;
 
 @Plugin(Hartshorn.PROJECT_ID)
 @Activator(value = Sponge8Bootstrap.class, configs = @InjectConfig(SpongeInjector.class))
