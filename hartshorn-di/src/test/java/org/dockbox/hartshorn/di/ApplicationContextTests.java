@@ -17,8 +17,13 @@
 
 package org.dockbox.hartshorn.di;
 
+import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.di.binding.BindingHierarchy;
 import org.dockbox.hartshorn.di.binding.Bindings;
+import org.dockbox.hartshorn.di.binding.ContextDrivenProvider;
+import org.dockbox.hartshorn.di.binding.Provider;
 import org.dockbox.hartshorn.di.context.element.TypeContext;
+import org.dockbox.hartshorn.di.inject.wired.BoundContext;
 import org.dockbox.hartshorn.di.properties.BindingMetaAttribute;
 import org.dockbox.hartshorn.test.ApplicationAwareTest;
 import org.junit.jupiter.api.Assertions;
@@ -38,6 +43,7 @@ import test.types.SampleFieldImplementation;
 import test.types.SampleImplementation;
 import test.types.SampleInterface;
 import test.types.bound.SampleBoundAnnotatedImplementation;
+import test.types.dual.DualConstructableType;
 import test.types.meta.SampleMetaAnnotatedImplementation;
 import test.types.multi.SampleMultiAnnotatedImplementation;
 import test.types.provision.ProvidedInterface;
@@ -327,5 +333,22 @@ public class ApplicationContextTests extends ApplicationAwareTest {
         final ProvidedInterface provided = this.context().get(ProvidedInterface.class, BindingMetaAttribute.of("bound"), TypeFactory.use("BoundProvision"));
         Assertions.assertNotNull(provided);
         Assertions.assertEquals("BoundProvision", provided.name());
+    }
+
+    @Test
+    void testDualConstructableTypeCanBind() {
+        final Key<SampleInterface> key = Key.of(SampleInterface.class);
+        this.context().bind(key, DualConstructableType.class);
+        final BindingHierarchy<SampleInterface> hierarchy = this.context().hierarchy(key);
+
+        Assertions.assertEquals(1, hierarchy.size());
+
+        final Exceptional<Provider<SampleInterface>> provider = hierarchy.get(-1);
+        Assertions.assertTrue(provider.present());
+        Assertions.assertTrue(provider.get() instanceof ContextDrivenProvider);
+        Assertions.assertTrue(((ContextDrivenProvider<SampleInterface>) provider.get()).context().is(DualConstructableType.class));
+
+        final Exceptional<BoundContext<SampleInterface, SampleInterface>> boundContext = this.context().firstWire(key);
+        Assertions.assertTrue(boundContext.present());
     }
 }
