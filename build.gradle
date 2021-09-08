@@ -23,6 +23,7 @@ buildscript {
     }
     dependencies {
         classpath "io.franzbecker:gradle-lombok:$gradleLombokVersion"
+        classpath 'org.owasp:dependency-check-gradle:6.2.2'
     }
 }
 
@@ -32,6 +33,8 @@ plugins {
     id 'org.cadixdev.licenser' version "$licenserVersion"
     id 'io.freefair.aggregate-javadoc' version "$aggregateJavadocVersion"
 }
+
+apply plugin: 'org.owasp.dependencycheck'
 
 static def getVersionName() {
     return 'git rev-parse --verify --short HEAD'.execute().text.trim()
@@ -46,6 +49,12 @@ java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(16)
     }
+}
+
+dependencyCheck {
+    // Strict rule, even small vulnerabilities should be handled unless they are supressed
+    failBuildOnCVSS = 1
+    failOnError = true
 }
 
 subprojects { Project subProject ->
