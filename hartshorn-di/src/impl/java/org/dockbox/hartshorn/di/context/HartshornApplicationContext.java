@@ -29,7 +29,6 @@ import org.dockbox.hartshorn.di.MetaProvider;
 import org.dockbox.hartshorn.di.MetaProviderModifier;
 import org.dockbox.hartshorn.di.Modifier;
 import org.dockbox.hartshorn.di.NativeBindingHierarchy;
-import org.dockbox.hartshorn.di.TypeFactory;
 import org.dockbox.hartshorn.di.annotations.inject.Binds;
 import org.dockbox.hartshorn.di.annotations.inject.Combines;
 import org.dockbox.hartshorn.di.annotations.service.ServiceActivator;
@@ -42,8 +41,6 @@ import org.dockbox.hartshorn.di.context.element.MethodContext;
 import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.di.inject.InjectionModifier;
 import org.dockbox.hartshorn.di.inject.ProviderContext;
-import org.dockbox.hartshorn.di.inject.wired.BoundContext;
-import org.dockbox.hartshorn.di.inject.wired.ConstructorBoundContext;
 import org.dockbox.hartshorn.di.properties.Attribute;
 import org.dockbox.hartshorn.di.properties.BindingMetaAttribute;
 import org.dockbox.hartshorn.di.properties.UseFactory;
@@ -56,7 +53,6 @@ import java.lang.annotation.Annotation;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -69,7 +65,6 @@ public class HartshornApplicationContext extends ManagedHartshornContext {
     private final ComponentLocator locator;
     private final List<Modifier> modifiers;
     private final Map<Key<?>, Object> singletons = HartshornUtils.emptyConcurrentMap();
-    private final transient Set<BoundContext<?, ?>> bindings = HartshornUtils.emptyConcurrentSet();
     private final Map<Key<?>, BindingHierarchy<?>> hierarchies = HartshornUtils.emptyConcurrentMap();
     private MetaProvider metaProvider;
 
@@ -108,7 +103,6 @@ public class HartshornApplicationContext extends ManagedHartshornContext {
     public void reset() {
         super.reset();
         this.hierarchies.clear();
-        this.bindings.clear();
         this.contexts.clear();
         this.singletons.clear();
     }
@@ -126,17 +120,9 @@ public class HartshornApplicationContext extends ManagedHartshornContext {
 
     @Override
     public <T> T get(final Key<T> key, final Attribute<?>... properties) {
-        T instance = null;
-
         if (this.singletons.containsKey(key)) return (T) this.singletons.get(key);
 
-        final Exceptional<Object[]> value = Bindings.lookup(UseFactory.class, properties);
-        if (value.present()) {
-            instance = this.get(TypeFactory.class).with(properties).create(key.contract(), value.get());
-        }
-        else {
-            instance = this.create(key, instance, properties);
-        }
+        T instance = this.create(key, null, properties);
 
         // Recreating field instances ensures all fields are created through bootstrapping, allowing injection
         // points to apply correctly
@@ -183,7 +169,7 @@ public class HartshornApplicationContext extends ManagedHartshornContext {
 
     @Override
     public <T> T get(final Class<T> type, final Object... varargs) {
-        return this.get(type, TypeFactory.use(varargs));
+        return this.get(type, new UseFactory(varargs));
     }
 
     @Nullable
@@ -236,7 +222,7 @@ public class HartshornApplicationContext extends ManagedHartshornContext {
                 .flatMap(hierarchy -> {
                     // Will continue going through each provider until a provider was successful or no other providers remain
                     for (final Provider<T> provider : hierarchy.providers()) {
-                        final Exceptional<T> provided = provider.provide(this);
+                        final Exceptional<T> provided = provider.provide(this, additionalProperties);
                         if (provided.present()) return provided;
                     }
                     return Exceptional.empty();
@@ -269,20 +255,6 @@ public class HartshornApplicationContext extends ManagedHartshornContext {
     }
 
     @Override
-    public <T, I extends T> Exceptional<BoundContext<T, I>> firstWire(final Key<T> key) {
-        final Named named = key.named();
-        for (final BoundContext<?, ?> binding : this.bindings) {
-            if (binding.contract().equals(key.contract())) {
-                if (!"".equals(binding.name())) {
-                    if (named == null || !binding.name().equals(named.value())) continue;
-                }
-                return Exceptional.of((BoundContext<T, I>) binding);
-            }
-        }
-        return Exceptional.empty();
-    }
-
-    @Override
     public <T> T populate(final T instance) {
         if (null != instance) {
             for (final FieldContext<?> field : TypeContext.unproxy(this, instance).fields(Inject.class)) {
@@ -291,11 +263,6 @@ public class HartshornApplicationContext extends ManagedHartshornContext {
             }
         }
         return instance;
-    }
-
-    @Override
-    public void add(final BoundContext<?, ?> context) {
-        this.bindings.add(context);
     }
 
     @Override
@@ -382,7 +349,7 @@ public class HartshornApplicationContext extends ManagedHartshornContext {
             this.inHierarchy(contract, hierarchy -> hierarchy.add(Providers.of(context)));
         }
         if (!context.boundConstructors().isEmpty()) {
-            this.bindings.add(new ConstructorBoundContext<>(contract, context));
+            this.inHierarchy(contract, hierarchy -> hierarchy.addNext(Providers.bound(implementation)));
         }
     }
 

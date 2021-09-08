@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.di.binding;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
+import org.dockbox.hartshorn.di.properties.Attribute;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -31,7 +32,7 @@ public class InstanceProvider<T> implements Provider<T> {
     private final T instance;
 
     @Override
-    public Exceptional<T> provide(final ApplicationContext context) {
+    public Exceptional<T> provide(final ApplicationContext context, final Attribute<?>... attributes) {
         return Exceptional.of(this.instance);
     }
 }

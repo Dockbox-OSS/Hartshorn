@@ -18,6 +18,7 @@
 package org.dockbox.hartshorn.di.inject;
 
 import org.dockbox.hartshorn.di.Key;
+import org.dockbox.hartshorn.di.binding.BindingHierarchy;
 
 import java.util.function.Supplier;
 
@@ -38,5 +39,10 @@ public interface DelegatedBinder extends Binder {
     @Override
     default <C, T extends C> void bind(final Key<C> contract, final T instance) {
         this.binder().bind(contract, instance);
+    }
+
+    @Override
+    default <T> BindingHierarchy<T> hierarchy(final Key<T> key) {
+        return this.binder().hierarchy(key);
     }
 }

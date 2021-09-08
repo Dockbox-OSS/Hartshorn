@@ -58,11 +58,11 @@ public class BindingHierarchyTests extends ApplicationAwareTest {
         hierarchy.add(1, Providers.of(ImplementationB.class));
         hierarchy.add(2, Providers.of(ImplementationC.class));
 
-        int next = 0;
+        int next = 2;
         for (final Entry<Integer, Provider<Contract>> entry : hierarchy) {
             final Integer priority = entry.getKey();
             Assertions.assertEquals(next, priority.intValue());
-            next++;
+            next--;
         }
     }
 

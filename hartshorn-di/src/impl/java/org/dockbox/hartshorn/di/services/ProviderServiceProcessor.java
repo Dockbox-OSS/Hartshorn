@@ -21,13 +21,13 @@ import org.dockbox.hartshorn.di.Key;
 import org.dockbox.hartshorn.di.annotations.activate.UseServiceProvision;
 import org.dockbox.hartshorn.di.annotations.inject.Bound;
 import org.dockbox.hartshorn.di.annotations.inject.Provider;
+import org.dockbox.hartshorn.di.binding.BindingHierarchy;
 import org.dockbox.hartshorn.di.binding.Bindings;
+import org.dockbox.hartshorn.di.binding.Providers;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.di.context.element.MethodContext;
 import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.di.inject.ProviderContext;
-import org.dockbox.hartshorn.di.inject.wired.BoundContext;
-import org.dockbox.hartshorn.di.inject.wired.ProvisionBoundContext;
 
 import java.util.List;
 
@@ -49,8 +49,11 @@ public final class ProviderServiceProcessor implements ServiceProcessor<UseServi
             if (method.annotation(Bound.class).present()) {
                 if (singleton) throw new IllegalArgumentException("Cannot provide manually bound singleton provider " + method.returnType().name() + " at " + method.qualifiedName());
                 else {
-                    final BoundContext<?, ?> boundContext = new ProvisionBoundContext<>((TypeContext<Object>) method.returnType(), (MethodContext<Object, ?>) method, annotation.value());
-                    context.add(boundContext);
+                    final TypeContext<?> returnType = method.returnType();
+                    final org.dockbox.hartshorn.di.binding.Provider<?> provider = Providers.bound(returnType);
+                    ((BindingHierarchy<Object>) context
+                            .hierarchy(Key.of(returnType, Bindings.named(annotation.value()))))
+                            .addNext((org.dockbox.hartshorn.di.binding.Provider<Object>) provider);
                 }
             }
             else {
