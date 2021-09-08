@@ -1,4 +1,5 @@
 import java.time.LocalDate
+import org.spongepowered.gradle.plugin.config.PluginLoaders
 
 /*
  *  Copyright (C) 2020 Guus Lieben
@@ -20,7 +21,7 @@ import java.time.LocalDate
 plugins {
     id 'base'
     id 'java-library'
-    id 'org.spongepowered.gradle.plugin' version '1.1.1'
+    id 'org.spongepowered.gradle.plugin' version '2.0.0'
     id 'org.spongepowered.gradle.vanilla' version '0.2'
     id 'com.github.johnrengelman.shadow' version '7.0.0'
 }
@@ -48,10 +49,14 @@ minecraft {
 
 sponge {
     apiVersion("$spongeApiVersion")
+    license("LGPL-2.1")
+    loader {
+        name(PluginLoaders.JAVA_PLAIN)
+        version("1.0")
+    }
     plugin("$pluginId") {
-        loader(org.spongepowered.gradle.plugin.config.PluginLoaders.JAVA_PLAIN)
         displayName("$pluginName")
-        mainClass('org.dockbox.hartshorn.sponge.Sponge8Application')
+        entrypoint('org.dockbox.hartshorn.sponge.Sponge8Application')
     }
 }
 
