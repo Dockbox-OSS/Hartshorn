@@ -80,8 +80,10 @@ allprojects {
                 name 'Jitpack'
                 url 'https://jitpack.io'
             }
-            // TODO: Deprecated
-            jcenter()
+            maven {
+                name 'm2-dv8tion'
+                url 'https://m2.dv8tion.net/releases'
+            }
         }
 
         sourceSets {
