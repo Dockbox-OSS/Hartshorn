@@ -17,12 +17,20 @@
 
 package org.dockbox.hartshorn.api;
 
+import org.dockbox.hartshorn.api.annotations.PostBootstrap;
 import org.dockbox.hartshorn.api.annotations.UseBootstrap;
+import org.dockbox.hartshorn.di.ApplicationContextAware;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
+import org.dockbox.hartshorn.di.context.ApplicationEnvironment;
+import org.dockbox.hartshorn.di.context.element.MethodContext;
 import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.di.services.ServiceProcessor;
 import org.dockbox.hartshorn.test.ApplicationAwareTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class PostBootstrapServiceProcessorTests extends ApplicationAwareTest {
 
@@ -46,17 +54,22 @@ public class PostBootstrapServiceProcessorTests extends ApplicationAwareTest {
 
     @Test
     void testProcessorAddsPostBootstrapActivations() {
-        // TODO: Rewrite for single state
-//        final HartshornBootstrap bootstrap = Mockito.mock(HartshornBootstrap.class);
-//        Mockito.doAnswer(invocation -> {
-//            final MethodContext<?, ?> method = invocation.getArgument(0);
-//            Assertions.assertTrue(method.annotation(PostBootstrap.class).present());
-//            return null;
-//        }).when(bootstrap).addActivation(Mockito.any(MethodContext.class));
-//
-//        Mockito.mockStatic(HartshornBootstrap.class).when(HartshornBootstrap::instance).thenReturn(bootstrap);
-//
-//        final ServiceProcessor<UseBootstrap> processor = new PostBootstrapServiceProcessor();
-//        processor.process(null, TypeContext.of(ValidPostBootstrapService.class));
+        ApplicationContextAware application = Mockito.spy(this.context().environment().application());
+        ApplicationEnvironment environment = Mockito.spy(this.context().environment());
+        ApplicationContext context = Mockito.spy(this.context());
+
+        AtomicBoolean passed = new AtomicBoolean(false);
+        Mockito.doAnswer(invocation -> {
+            final MethodContext<?, ?> method = invocation.getArgument(0);
+            passed.set(method.annotation(PostBootstrap.class).present());
+            return null;
+        }).when(application).addActivation(Mockito.any());
+
+        Mockito.when(environment.application()).thenReturn(application);
+        Mockito.when(context.environment()).thenReturn(environment);
+
+        final ServiceProcessor<UseBootstrap> processor = new PostBootstrapServiceProcessor();
+        processor.process(context, TypeContext.of(ValidPostBootstrapService.class));
+        Assertions.assertTrue(passed.get());
     }
 }
