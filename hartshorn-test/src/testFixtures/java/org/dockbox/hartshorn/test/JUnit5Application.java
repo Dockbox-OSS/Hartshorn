@@ -24,14 +24,19 @@ import org.dockbox.hartshorn.di.DefaultModifiers;
 import org.dockbox.hartshorn.di.MetaProviderModifier;
 import org.dockbox.hartshorn.di.annotations.activate.Activator;
 import org.dockbox.hartshorn.di.annotations.inject.InjectConfig;
+import org.dockbox.hartshorn.di.annotations.inject.InjectPhase;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
+import org.dockbox.hartshorn.test.util.JUnitInjectOverrides;
 import org.dockbox.hartshorn.test.util.JUnitInjector;
 
 import java.lang.reflect.Field;
 
 import lombok.Getter;
 
-@Activator(value = JUnit5Bootstrap.class, configs = @InjectConfig(JUnitInjector.class))
+@Activator(value = JUnit5Bootstrap.class, configs = {
+        @InjectConfig(JUnitInjector.class),
+        @InjectConfig(value = JUnitInjectOverrides.class, phase = InjectPhase.LATE)
+})
 public final class JUnit5Application {
 
     @Getter private static final JUnitInformation information = new JUnitInformation();
