@@ -23,8 +23,3 @@ group = 'org.dockbox.hartshorn.sample'
 description 'Sample services for Hartshorn'
 
 apply from: "$rootDir/service-parent.gradle"
-
-dependencies {
-    compileOnly project(':hartshorn-minecraft:server')
-    compileOnly project(':hartshorn-minecraft:regions')
-}

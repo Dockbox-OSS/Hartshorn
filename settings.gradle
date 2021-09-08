@@ -19,7 +19,6 @@ rootProject.name = 'Hartshorn'
 gradle.startParameter.continueOnFailure = true
 
 includeAll(rootDir, '')
-includeAll(new File(rootDir, 'hartshorn-minecraft'), ':hartshorn-minecraft')
 
 def includeAll(File dir, String prefix, String... blacklist) {
     dir.listFiles().each {
