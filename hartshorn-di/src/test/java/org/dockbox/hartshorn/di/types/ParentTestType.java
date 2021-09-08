@@ -15,14 +15,15 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.util.annotations;
+package org.dockbox.hartshorn.di.types;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import org.dockbox.hartshorn.di.Demo;
 
-@Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.METHOD, ElementType.TYPE, ElementType.FIELD, ElementType.CONSTRUCTOR })
-public @interface Demo {
+public abstract class ParentTestType {
+
+    private final String parentField = "parentField";
+
+    @Demo
+    public void parentMethod() {}
+
 }

@@ -15,16 +15,22 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.util;
+package org.dockbox.hartshorn.di;
 
 import org.dockbox.hartshorn.util.annotations.AliasFor;
 import org.dockbox.hartshorn.util.annotations.Extends;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.List;
+
+import static java.util.stream.Collectors.toList;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.TYPE, ElementType.METHOD, ElementType.ANNOTATION_TYPE })
@@ -73,19 +79,18 @@ class MyClass {
     }
 }
 
-
 public class ReadMeInheritanceSampleTest {
     @Test
     public void test() throws NoSuchMethodException {
-//        Pet petAnnotation = AnnotationHelper.oneOrNull(MyClass.class, Pet.class);
-//        assertEquals("Tom", petAnnotation.name());
-//        assertTrue(AnnotationHelper.instanceOf(petAnnotation, Animal.class));
-//
-//        Animal animalAnnotation = AnnotationHelper.oneOrNull(MyClass.class, Animal.class);
-//        assertTrue(animalAnnotation.fluffy());
-//
-//        Method fooMethod = MyClass.class.getMethod("foo");
-//        List<Animal> animalAnnotations = AnnotationHelper.allOrEmpty(fooMethod, Animal.class);
-//        assertEquals(Arrays.asList("Spike", "Jerry"), animalAnnotations.stream().map(Animal::name).collect(toList()));
+        final Pet petAnnotation = AnnotationHelper.oneOrNull(MyClass.class, Pet.class);
+        Assertions.assertEquals("Tom", petAnnotation.name());
+        Assertions.assertTrue(AnnotationHelper.instanceOf(petAnnotation, Animal.class));
+
+        final Animal animalAnnotation = AnnotationHelper.oneOrNull(MyClass.class, Animal.class);
+        Assertions.assertTrue(animalAnnotation.fluffy());
+
+        final Method fooMethod = MyClass.class.getMethod("foo");
+        final List<Animal> animalAnnotations = AnnotationHelper.allOrEmpty(fooMethod, Animal.class);
+        Assertions.assertEquals(Arrays.asList("Spike", "Jerry"), animalAnnotations.stream().map(Animal::name).collect(toList()));
     }
 }

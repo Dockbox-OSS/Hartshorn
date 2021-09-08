@@ -443,6 +443,10 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
         return this.type().equals(type);
     }
 
+    public Exceptional<MethodContext<?, T>> method(final String name) {
+        return this.method(name, HartshornUtils.emptyList());
+    }
+
     public Exceptional<MethodContext<?, T>> method(final String name, final List<TypeContext<?>> arguments) {
         if (this.methods == null) {
             // Organizing the methods by name and arguments isn't worth the additional overhead for list comparisons,

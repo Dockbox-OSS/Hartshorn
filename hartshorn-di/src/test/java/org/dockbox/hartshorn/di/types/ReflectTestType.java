@@ -15,10 +15,10 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.util.types;
+package org.dockbox.hartshorn.di.types;
 
 import org.dockbox.hartshorn.api.annotations.Property;
-import org.dockbox.hartshorn.util.annotations.Demo;
+import org.dockbox.hartshorn.di.Demo;
 import org.junit.jupiter.api.Assertions;
 
 import java.util.Locale;

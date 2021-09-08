@@ -15,11 +15,12 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.util;
+package org.dockbox.hartshorn.di;
 
 
 import org.dockbox.hartshorn.util.annotations.AliasFor;
 import org.dockbox.hartshorn.util.annotations.CompositeOf;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.lang.annotation.ElementType;
@@ -73,12 +74,12 @@ class MyResource {
 public class ReadMeCompositionSampleTest {
     @Test
     public void test() throws NoSuchMethodException {
-//        Assertions.assertTrue(AnnotationHelper.annotationPresent(MyResource.class.getMethod("bar"), GET.class));
-//
-//        Path pathAnnotation = AnnotationHelper.oneOrNull(MyResource.class.getMethod("bar"), Path.class);
-//        assertEquals("/{id}", pathAnnotation.value());
-//
-//        Produces producesAnnotation = AnnotationHelper.oneOrNull(MyResource.class.getMethod("bar"), Produces.class);
-//        assertEquals("application/json", producesAnnotation.value());
+        Assertions.assertTrue(AnnotationHelper.annotationPresent(MyResource.class.getMethod("bar"), GET.class));
+
+        final Path pathAnnotation = AnnotationHelper.oneOrNull(MyResource.class.getMethod("bar"), Path.class);
+        Assertions.assertEquals("/{id}", pathAnnotation.value());
+
+        final Produces producesAnnotation = AnnotationHelper.oneOrNull(MyResource.class.getMethod("bar"), Produces.class);
+        Assertions.assertEquals("application/json", producesAnnotation.value());
     }
 }

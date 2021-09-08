@@ -15,10 +15,14 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.util;
+package org.dockbox.hartshorn.di;
 
 import org.dockbox.hartshorn.util.annotations.CompositeOf;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.platform.commons.util.ExceptionUtils;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -42,12 +46,12 @@ import java.lang.annotation.RetentionPolicy;
 public class CompositeToStringTest {
     @Test
     public void throwExceptionsWhenTwoAnnotationsAreFound() {
-//        Exception e = Assertions.assertThrows(Exception.class, () -> AnnotationHelper.oneOrNull(CompositeToStringTest.class, Router.class));
-//        MatcherAssert.assertThat(ExceptionUtils.readStackTrace(e), containsString("Found more than one annotation on class org.dockbox.hartshorn.util.CompositeToStringTest"));
+        final Exception e = Assertions.assertThrows(Exception.class, () -> AnnotationHelper.oneOrNull(CompositeToStringTest.class, Router.class));
+        MatcherAssert.assertThat(ExceptionUtils.readStackTrace(e), Matchers.containsString("Found more than one annotation on class org.dockbox.hartshorn.di.CompositeToStringTest"));
     }
 
     @Test
     public void canGetTwoRouters() {
-//        Assertions.assertEquals(2, AnnotationHelper.allOrEmpty(CompositeToStringTest.class, Router.class).size());
+        Assertions.assertEquals(2, AnnotationHelper.allOrEmpty(CompositeToStringTest.class, Router.class).size());
     }
 }
