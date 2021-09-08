@@ -18,6 +18,7 @@
 package org.dockbox.hartshorn.di;
 
 import org.dockbox.hartshorn.di.context.element.TypeContext;
+import org.dockbox.hartshorn.util.HartshornUtils;
 
 import java.util.Objects;
 
@@ -41,7 +42,10 @@ public class Key<C> {
     }
 
     public static <C> Key<C> of(final TypeContext<C> contract, final Named named) {
-        return new Key<>(contract, named);
+        if (named != null && !HartshornUtils.empty(named.value())) {
+            return new Key<>(contract, named);
+        }
+        return new Key<>(contract, null);
     }
 
     public static <C> Key<C> of(final Class<C> contract, final Named named) {
