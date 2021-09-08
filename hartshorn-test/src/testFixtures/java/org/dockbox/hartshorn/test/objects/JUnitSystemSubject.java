@@ -34,12 +34,6 @@ public class JUnitSystemSubject extends SystemSubject {
     private ApplicationContext applicationContext;
 
     @Override
-    public void execute(final String command) {
-        // TODO: CommandBus implementation
-        throw new NotImplementedException();
-    }
-
-    @Override
     public void send(final Text text) {
         // TODO: Test implementation, mocking client?
         throw new NotImplementedException();

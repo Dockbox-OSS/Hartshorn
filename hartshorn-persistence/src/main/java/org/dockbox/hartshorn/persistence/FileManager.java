@@ -177,25 +177,6 @@ public interface FileManager extends AttributeHolder {
      */
     Path root();
 
-    /**
-     * Get the base mods directory of a platform file system. The exact location is decided by the
-     * top-level implementation of this type.
-     *
-     * <p>Depending on the platform this directory may not be present.
-     *
-     * @return A {@link Exceptional} object containing either a {@link Path} reference to a directory,
-     *         or nothing.
-     */
-    Exceptional<Path> mods();
-
-    /**
-     * Get the base plugin directory of a platform file system. The exact location is decided by the
-     * top-level implementation of this type.
-     *
-     * @return A {@link Path} reference to a directory
-     */
-    Path plugins();
-
     default Path serviceConfig(final Class<?> owner) {
         return this.serviceConfig(this.owner(owner));
     }
@@ -210,7 +191,7 @@ public interface FileManager extends AttributeHolder {
      * @return A {@link Path} reference to the configuration directory
      */
     default Path serviceConfig(final TypedOwner owner) {
-        return this.serviceConfigs().resolve(owner.id());
+        return this.configs().resolve(owner.id());
     }
 
     /**
@@ -219,26 +200,7 @@ public interface FileManager extends AttributeHolder {
      *
      * @return A {@link Path} reference to a directory
      */
-    Path serviceConfigs();
-
-    /**
-     * Get the configuration folder for owners directory of a platform file system. The exact
-     * location is decided by the top-level implementation of this type.
-     *
-     * <p>Depending on the platform this directory may not be present.
-     *
-     * @return A {@link Exceptional} object containing either a {@link Path} reference to a directory,
-     *         or nothing.
-     */
-    Exceptional<Path> modConfigs();
-
-    /**
-     * Get the configuration folder for owners directory of a platform file system. The exact
-     * location is decided by the top-level implementation of this type.
-     *
-     * @return A {@link Path} reference to a directory
-     */
-    Path pluginConfigs();
+    Path configs();
 
     /**
      * Evaluates whether or not a given {@link Path} reference directory exists. If it exists nothing
