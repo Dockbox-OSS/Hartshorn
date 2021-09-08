@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.config;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.di.GenericType;
+import org.dockbox.hartshorn.di.annotations.inject.Binds;
 import org.dockbox.hartshorn.di.annotations.inject.Bound;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.di.properties.AttributeHolder;
@@ -33,6 +34,7 @@ import javax.inject.Inject;
 
 import lombok.Getter;
 
+@Binds(ConfigurationManager.class)
 public class ConfigurationManagerImpl implements ConfigurationManager, AttributeHolder {
 
     private final Path path;
