@@ -172,6 +172,23 @@ allprojects {
             testImplementation "org.slf4j:slf4j-api:$slf4jVersion"
             testImplementation "org.slf4j:slf4j-simple:$slf4jVersion"
         }
+
+        task copyArtifacts {
+            doLast {
+                def version = getVersionName()
+                def DIST_DEST_DIR = "$rootDir/hartshorn-assembly/distributions/$date"
+                def DIRT_SRC_DIR = "$buildDir/libs"
+
+                ant.mkdir(dir: DIST_DEST_DIR)
+                println("Copying all built files of ${it.name} version $version-$date to $DIST_DEST_DIR")
+                ant.copy(todir: DIST_DEST_DIR) {
+                    fileset dir: DIRT_SRC_DIR,
+                            includes: "*$version-$date*.jar"
+                }
+
+            }
+        }
+        build.finalizedBy copyArtifacts
     }
 }
 
