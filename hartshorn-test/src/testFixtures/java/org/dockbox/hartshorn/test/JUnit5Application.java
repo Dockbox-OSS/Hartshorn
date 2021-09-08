@@ -17,8 +17,8 @@
 
 package org.dockbox.hartshorn.test;
 
-import org.dockbox.hartshorn.api.HartshornApplication;
-import org.dockbox.hartshorn.api.MetaProviderImpl;
+import org.dockbox.hartshorn.boot.HartshornApplication;
+import org.dockbox.hartshorn.boot.MetaProviderImpl;
 import org.dockbox.hartshorn.di.ApplicationContextAware;
 import org.dockbox.hartshorn.di.DefaultModifiers;
 import org.dockbox.hartshorn.di.MetaProviderModifier;

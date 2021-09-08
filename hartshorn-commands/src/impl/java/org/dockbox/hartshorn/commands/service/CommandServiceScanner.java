@@ -17,8 +17,8 @@
 
 package org.dockbox.hartshorn.commands.service;
 
-import org.dockbox.hartshorn.api.annotations.PostBootstrap;
-import org.dockbox.hartshorn.api.annotations.UseBootstrap;
+import org.dockbox.hartshorn.boot.annotations.PostBootstrap;
+import org.dockbox.hartshorn.boot.annotations.UseBootstrap;
 import org.dockbox.hartshorn.commands.CommandGateway;
 import org.dockbox.hartshorn.commands.annotations.Command;
 import org.dockbox.hartshorn.commands.extension.CommandExecutorExtension;

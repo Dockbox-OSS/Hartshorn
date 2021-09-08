@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.config;
 
-import org.dockbox.hartshorn.api.config.GlobalConfig;
+import org.dockbox.hartshorn.boot.config.GlobalConfig;
 import org.dockbox.hartshorn.api.exceptions.ExceptionLevel;
 import org.dockbox.hartshorn.config.annotations.Configuration;
 import org.dockbox.hartshorn.config.annotations.Value;

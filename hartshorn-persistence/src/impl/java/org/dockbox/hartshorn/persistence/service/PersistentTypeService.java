@@ -17,8 +17,8 @@
 
 package org.dockbox.hartshorn.persistence.service;
 
-import org.dockbox.hartshorn.api.annotations.PostBootstrap;
-import org.dockbox.hartshorn.api.annotations.UseBootstrap;
+import org.dockbox.hartshorn.boot.annotations.PostBootstrap;
+import org.dockbox.hartshorn.boot.annotations.UseBootstrap;
 import org.dockbox.hartshorn.di.annotations.service.Service;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.di.context.element.TypeContext;
