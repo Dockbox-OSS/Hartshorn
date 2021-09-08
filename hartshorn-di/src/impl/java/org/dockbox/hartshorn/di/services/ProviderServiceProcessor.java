@@ -49,10 +49,9 @@ public final class ProviderServiceProcessor implements ServiceProcessor<UseServi
             if (method.annotation(Bound.class).present()) {
                 if (singleton) throw new IllegalArgumentException("Cannot provide manually bound singleton provider " + method.returnType().name() + " at " + method.qualifiedName());
                 else {
-                    final TypeContext<?> returnType = method.returnType();
-                    final org.dockbox.hartshorn.di.binding.Provider<?> provider = Providers.bound(returnType);
+                    final org.dockbox.hartshorn.di.binding.Provider<?> provider = Providers.bound(method);
                     ((BindingHierarchy<Object>) context
-                            .hierarchy(Key.of(returnType, Bindings.named(annotation.value()))))
+                            .hierarchy(Key.of(method.returnType(), Bindings.named(annotation.value()))))
                             .addNext((org.dockbox.hartshorn.di.binding.Provider<Object>) provider);
                 }
             }
