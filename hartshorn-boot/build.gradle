@@ -68,20 +68,4 @@ shadowJar {
     }
 }
 
-task copyArtifacts {
-    doLast {
-        def version = getVersionName()
-        def DIST_DEST_DIR = "$rootDir/hartshorn-assembly/distributions"
-        def DIRT_SRC_DIR = "$buildDir/libs"
-
-        ant.mkdir(dir: DIST_DEST_DIR)
-        println("Copying all built files to $DIST_DEST_DIR")
-        ant.copy(todir: DIST_DEST_DIR) {
-            fileset dir: DIRT_SRC_DIR,
-                    includes: "*$version-$date*.jar"
-        }
-
-    }
-}
-
 build.finalizedBy copyArtifacts
