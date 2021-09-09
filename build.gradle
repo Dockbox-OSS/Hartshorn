@@ -45,9 +45,6 @@ group project.pluginGroup
 description 'Common sources for Hartshorn services'
 def date = LocalDate.now().toString()
 
-sourceCompatibility = 16
-targetCompatibility = 16
-
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(16)
