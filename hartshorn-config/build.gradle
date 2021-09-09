@@ -18,6 +18,6 @@
 apply from: "$rootDir/parent.gradle"
 
 dependencies {
-    apiInclude project(':hartshorn-bootstrap')
-    apiInclude project(':hartshorn-persistence')
+    apiInclude 'org.dockbox.hartshorn:hartshorn-bootstrap'
+    apiInclude 'org.dockbox.hartshorn:hartshorn-persistence'
 }

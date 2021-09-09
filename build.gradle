@@ -83,6 +83,16 @@ subprojects { Project subProject ->
 
 allprojects {
     plugins.withType(JavaPlugin) {
+        configurations.all {
+            resolutionStrategy.dependencySubstitution {
+                rootDir.listFiles().each {
+                    if (it.isDirectory() && new File(it, 'build.gradle').exists()) {
+                        substitute module('org.dockbox.hartshorn:' + it.name) using project(":$it.name")
+                    }
+                }
+            }
+        }
+
         repositories {
             mavenCentral()
             maven {
@@ -191,5 +201,3 @@ allprojects {
         build.finalizedBy copyArtifacts
     }
 }
-
-wrapper { gradleVersion = '7.0' }

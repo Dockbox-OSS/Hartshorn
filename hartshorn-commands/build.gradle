@@ -18,10 +18,10 @@
 apply from: "$rootDir/parent.gradle"
 
 dependencies {
-    apiInclude project(':hartshorn-bootstrap')
-    apiInclude project(':hartshorn-i18n')
-    apiInclude project(':hartshorn-events')
-    apiInclude project(':hartshorn-proxy')
+    apiInclude 'org.dockbox.hartshorn:hartshorn-bootstrap'
+    apiInclude 'org.dockbox.hartshorn:hartshorn-i18n'
+    apiInclude 'org.dockbox.hartshorn:hartshorn-events'
+    apiInclude 'org.dockbox.hartshorn:hartshorn-proxy'
 
-    testImplementation project(':hartshorn-i18n').sourceSets.impl.output
+    testImplementation project(":hartshorn-i18n").sourceSets.impl.output
 }

@@ -1,11 +1,11 @@
 apply from: "$rootDir/parent.gradle"
 
 dependencies {
-    compileOnly project(':hartshorn-bootstrap')
-    compileOnly project(':hartshorn-i18n')
-    compileOnly project(':hartshorn-events')
-    compileOnly project(':hartshorn-config')
-    compileOnly project(':hartshorn-commands')
+    compileOnly 'org.dockbox.hartshorn:hartshorn-bootstrap'
+    compileOnly 'org.dockbox.hartshorn:hartshorn-i18n'
+    compileOnly 'org.dockbox.hartshorn:hartshorn-events'
+    compileOnly 'org.dockbox.hartshorn:hartshorn-config'
+    compileOnly 'org.dockbox.hartshorn:hartshorn-commands'
 
     apiInclude "com.github.ygimenez:Pagination-Utils:$discordPaginationVersion"
     apiShare("net.dv8tion:JDA:$jdaVersion") {

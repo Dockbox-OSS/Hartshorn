@@ -29,17 +29,8 @@ dependencies {
     rootDir.listFiles().each {
         if (it.directory && it.name.startsWith('hartshorn-') && new File(it, 'build.gradle').exists()) {
             if (!depBlacklist.contains(it.name)) {
-                testFixturesImplementation project(":${it.name}")
+                testFixturesImplementation "org.dockbox.hartshorn:${it.name}"
                 testFixturesImplementation project(":${it.name}").sourceSets.impl.output
-            }
-        }
-    }
-
-    new File(rootDir, 'hartshorn-minecraft').listFiles().each {
-        if (it.directory && new File(it, 'build.gradle').exists()) {
-            if (!depBlacklist.contains(it.name)) {
-                testFixturesImplementation project(":hartshorn-minecraft:${it.name}")
-                testFixturesImplementation project(":hartshorn-minecraft:${it.name}").sourceSets.impl.output
             }
         }
     }
