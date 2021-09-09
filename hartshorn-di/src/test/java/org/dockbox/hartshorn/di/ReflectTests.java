@@ -125,12 +125,11 @@ public class ReflectTests {
     @ParameterizedTest
     @MethodSource("fields")
     void testFieldValueReturnsValue(String field) {
-        // TODO: Not implemented (expects Getter)
-//        final ReflectTestType instance = new ReflectTestType();
-//        final TypeContext<ReflectTestType> type = TypeContext.of(instance);
-//        Exceptional<?> value = type.field(field).get().get(instance);
-//        Assertions.assertTrue(value.present());
-//        Assertions.assertEquals(field, value.get());
+        final ReflectTestType instance = new ReflectTestType();
+        final TypeContext<ReflectTestType> type = TypeContext.of(instance);
+        Exceptional<?> value = type.field(field).get().get(instance);
+        Assertions.assertTrue(value.present());
+        Assertions.assertEquals(field, value.get());
     }
 
     @ParameterizedTest
