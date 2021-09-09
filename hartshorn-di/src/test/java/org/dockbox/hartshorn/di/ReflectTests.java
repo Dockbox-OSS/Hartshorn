@@ -290,13 +290,12 @@ public class ReflectTests {
 
     @Test
     void testSetFieldUpdatesAccessorField() throws NoSuchFieldException, IllegalAccessException {
-        // TODO: Not implemented
-//        Field fieldRef = ReflectTestType.class.getDeclaredField("accessorField");
-//        ReflectTestType instance = new ReflectTestType();
-//        final FieldContext<?> field = FieldContext.of(fieldRef);
-//        field.set(instance, "newValue");
-//
-//        Assertions.assertTrue(instance.activatedSetter());
+        Field fieldRef = ReflectTestType.class.getDeclaredField("accessorField");
+        ReflectTestType instance = new ReflectTestType();
+        final FieldContext<?> field = FieldContext.of(fieldRef);
+        field.set(instance, "newValue");
+
+        Assertions.assertTrue(instance.activatedSetter());
     }
 
     @Test

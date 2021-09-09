@@ -59,6 +59,13 @@ public class FieldContext<T> extends AnnotatedMemberContext<Field> implements Mo
 
     public void set(final Object instance, final Object value) {
         if (this.setter == null) {
+            final Exceptional<Property> property = this.annotation(Property.class);
+            if (property.present() && !"".equals(property.get().setter())) {
+                final String setter = property.get().setter();
+                final Exceptional<? extends MethodContext<?, ?>> method = this.declaredBy().method(setter, HartshornUtils.asList(this.type()));
+                final MethodContext<?, Object> methodContext = (MethodContext<?, Object>) method.orThrow(() -> new ApplicationException("Setter for field '" + this.name() + "' (" + setter + ") does not exist!").runtime());
+                this.setter = (o, v) -> methodContext.invoke(instance, v);
+            } else {
                 this.setter = (o, v) -> {
                     try {
                         this.field.set(o, v);
@@ -67,6 +74,7 @@ public class FieldContext<T> extends AnnotatedMemberContext<Field> implements Mo
                         throw new ApplicationException("Cannot access field " + this.name()).runtime();
                     }
                 };
+            }
         }
         this.setter.accept(instance, (T) value);
     }
