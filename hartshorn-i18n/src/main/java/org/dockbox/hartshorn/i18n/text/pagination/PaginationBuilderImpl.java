@@ -17,8 +17,10 @@
 
 package org.dockbox.hartshorn.i18n.text.pagination;
 
+import org.dockbox.hartshorn.di.annotations.inject.Binds;
 import org.jetbrains.annotations.NotNull;
 
+@Binds(PaginationBuilder.class)
 public class PaginationBuilderImpl extends PaginationBuilder {
 
     @NotNull
