@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.persistence.table;
 
-import org.dockbox.hartshorn.api.Hartshorn;
+import org.dockbox.hartshorn.boot.Hartshorn;
 import org.dockbox.hartshorn.api.annotations.Property;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.di.context.ApplicationContext;

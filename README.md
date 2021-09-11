@@ -64,12 +64,14 @@ Additionally, the [wiki](https://github.com/GuusLieben/Hartshorn/wiki) contains 
 For example, `org.dockbox.hartshorn.common.ClassX` is tested in `org.dockbox.hartshorn.common.ClassXTests`
 
 ### Embedded server
-Hartshorn offers a embedded server which can be used when testing higher level components. To apply the embedded server to your tests, annotate your class as follows:
+Hartshorn offers a embedded server which can be used when testing higher level components. This provides a test specific `ApplicationContext` and clears Mockito caches for each test. To apply the embedded server to your tests, implement your test class as follows:
 ```java
-@ExtendWith(HartshornRunner.class)
-public class ComponentTests {
+public class ComponentTests extends ApplicationAwareTest {
     @Test
-    public void testHighLevelComponent() {...}
+    public void testHighLevelComponent() {
+        final ApplicationContext context = this.context();
+        // ...
+    }
 }
 ```
 

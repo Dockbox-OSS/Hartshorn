@@ -23,6 +23,7 @@ buildscript {
     }
     dependencies {
         classpath "io.franzbecker:gradle-lombok:$gradleLombokVersion"
+        classpath 'org.owasp:dependency-check-gradle:6.2.2'
     }
 }
 
@@ -32,6 +33,8 @@ plugins {
     id 'org.cadixdev.licenser' version "$licenserVersion"
     id 'io.freefair.aggregate-javadoc' version "$aggregateJavadocVersion"
 }
+
+apply plugin: 'org.owasp.dependencycheck'
 
 static def getVersionName() {
     return 'git rev-parse --verify --short HEAD'.execute().text.trim()
@@ -46,6 +49,12 @@ java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(16)
     }
+}
+
+dependencyCheck {
+    // Strict rule, even small vulnerabilities should be handled unless they are supressed
+    failBuildOnCVSS = 1
+    failOnError = true
 }
 
 subprojects { Project subProject ->
@@ -74,14 +83,26 @@ subprojects { Project subProject ->
 
 allprojects {
     plugins.withType(JavaPlugin) {
+        configurations.all {
+            resolutionStrategy.dependencySubstitution {
+                rootDir.listFiles().each {
+                    if (it.isDirectory() && new File(it, 'build.gradle').exists()) {
+                        substitute module('org.dockbox.hartshorn:' + it.name) using project(":$it.name")
+                    }
+                }
+            }
+        }
+
         repositories {
             mavenCentral()
             maven {
                 name 'Jitpack'
                 url 'https://jitpack.io'
             }
-            // TODO: Deprecated
-            jcenter()
+            maven {
+                name 'm2-dv8tion'
+                url 'https://m2.dv8tion.net/releases'
+            }
         }
 
         sourceSets {
@@ -161,7 +182,22 @@ allprojects {
             testImplementation "org.slf4j:slf4j-api:$slf4jVersion"
             testImplementation "org.slf4j:slf4j-simple:$slf4jVersion"
         }
+
+        task copyArtifacts {
+            doLast {
+                def version = getVersionName()
+                def DIST_DEST_DIR = "$rootDir/hartshorn-assembly/distributions/$date"
+                def DIRT_SRC_DIR = "$buildDir/libs"
+
+                ant.mkdir(dir: DIST_DEST_DIR)
+                println("Copying all built files of ${it.name} version $version-$date to $DIST_DEST_DIR")
+                ant.copy(todir: DIST_DEST_DIR) {
+                    fileset dir: DIRT_SRC_DIR,
+                            includes: "*$version-$date*.jar"
+                }
+
+            }
+        }
+        build.finalizedBy copyArtifacts
     }
 }
-
-wrapper { gradleVersion = '7.0' }

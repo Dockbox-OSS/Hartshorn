@@ -17,8 +17,8 @@
 
 package org.dockbox.hartshorn.proxy;
 
-import org.dockbox.hartshorn.api.annotations.PostBootstrap;
-import org.dockbox.hartshorn.api.annotations.UseBootstrap;
+import org.dockbox.hartshorn.boot.annotations.PostBootstrap;
+import org.dockbox.hartshorn.boot.annotations.UseBootstrap;
 import org.dockbox.hartshorn.api.exceptions.Except;
 import org.dockbox.hartshorn.di.InjectionPoint;
 import org.dockbox.hartshorn.di.annotations.service.Service;

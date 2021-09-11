@@ -21,6 +21,7 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.api.domain.tuple.Tristate;
 import org.dockbox.hartshorn.api.exceptions.ApplicationException;
 import org.dockbox.hartshorn.di.GenericType;
 import org.dockbox.hartshorn.di.NotPrimitiveException;
@@ -105,6 +106,7 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
     private List<ConstructorContext<T>> constructors;
     private Multimap<String, MethodContext<?, T>> methods;
     private Exceptional<ConstructorContext<T>> defaultConstructor;
+    private Tristate isProxy = Tristate.UNDEFINED;
 
     protected TypeContext(final Class<T> type) {
         if (TypeContext.class.equals(type)) {
@@ -159,6 +161,7 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
 
     public List<TypeContext<?>> interfaces() {
         if (this.interfaces == null) {
+            this.verifyMetadataAvailable();
             this.interfaces = Arrays.stream(this.type().getInterfaces())
                     .map(TypeContext::of)
                     .collect(Collectors.toList());
@@ -168,6 +171,7 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
 
     public TypeContext<?> parent() {
         if (this.parent == null) {
+            this.verifyMetadataAvailable();
             final Class<? super T> parent = this.type().getSuperclass();
             if (parent == null) this.parent = VOID;
             else this.parent = TypeContext.of(parent);
@@ -177,6 +181,7 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
 
     public List<MethodContext<?, T>> flatMethods() {
         if (this.flatMethods == null) {
+            this.verifyMetadataAvailable();
             final Method[] methods = this.type().getMethods();
             // Note that .getMethods does not include abstract methods, while .getDeclaredMethods does, as
             // abstract methods are as relevant as any other within this context they should be included.
@@ -198,6 +203,7 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
 
     public List<TypeContext<?>> typeParameters() {
         if (this.typeParameters == null) {
+            this.verifyMetadataAvailable();
             final Type genericSuper = this.type().getGenericSuperclass();
             if (genericSuper instanceof ParameterizedType parameterized) {
                 final Type[] arguments = parameterized.getActualTypeArguments();
@@ -248,8 +254,8 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
 
     private void collectFields() {
         if (this.fields.isEmpty()) {
+            this.verifyMetadataAvailable();
             for (final Field declared : this.type().getDeclaredFields()) {
-                // TODO: Declared fields from real type if this is a proxy
                 this.fields.put(declared.getName(), FieldContext.of(declared));
             }
             if (!(this.parent().isVoid() || Object.class.equals(this.parent().type()))) {
@@ -261,11 +267,13 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
     }
 
     public boolean childOf(final TypeContext<?> type) {
+        this.verifyMetadataAvailable();
         if (type instanceof WildcardTypeContext) return true;
         return this.childOf(type.type());
     }
 
     public boolean childOf(final Class<?> to) {
+        this.verifyMetadataAvailable();
         final Class<T> from = this.type();
 
         if (null == to || null == from) return false;
@@ -296,7 +304,10 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
     }
 
     public boolean isProxy() {
-        return isProxy(this.type());
+        if (Tristate.UNDEFINED == this.isProxy) {
+            this.isProxy = isProxy(this.type()) ? Tristate.TRUE : Tristate.FALSE;
+        }
+        return this.isProxy.booleanValue();
     }
 
     private static boolean isProxy(final Class<?> type) {
@@ -318,6 +329,7 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
 
     public List<ConstructorContext<T>> constructors() {
         if (this.constructors == null) {
+            this.verifyMetadataAvailable();
             this.constructors = Arrays.stream(this.type().getConstructors())
                     .map(constructor -> (Constructor<T>) constructor)
                     .map(ConstructorContext::of)
@@ -342,6 +354,7 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
 
     public Exceptional<ConstructorContext<T>> defaultConstructor() {
         if (this.defaultConstructor == null) {
+            this.verifyMetadataAvailable();
             this.defaultConstructor = Exceptional.of(() -> ConstructorContext.of(this.type.getDeclaredConstructor()));
         }
         return this.defaultConstructor;
@@ -357,6 +370,7 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
 
     public List<T> enumConstants() {
         if (this.enumConstants == null) {
+            this.verifyMetadataAvailable();
             if (!this.isEnum) this.enumConstants = HartshornUtils.asUnmodifiableList(HartshornUtils.emptyList());
             else {
                 this.enumConstants = HartshornUtils.asUnmodifiableList(this.type().getEnumConstants());
@@ -429,6 +443,10 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
         return this.type().equals(type);
     }
 
+    public Exceptional<MethodContext<?, T>> method(final String name) {
+        return this.method(name, HartshornUtils.emptyList());
+    }
+
     public Exceptional<MethodContext<?, T>> method(final String name, final List<TypeContext<?>> arguments) {
         if (this.methods == null) {
             // Organizing the methods by name and arguments isn't worth the additional overhead for list comparisons,
@@ -445,5 +463,9 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
             }
         }
         return Exceptional.empty();
+    }
+
+    private void verifyMetadataAvailable() {
+        if (this.isProxy()) throw new ApplicationException("Cannot collect metadata of proxied type").runtime();
     }
 }

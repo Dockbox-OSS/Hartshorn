@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.api.keys;
 
-import org.dockbox.hartshorn.api.Hartshorn;
+import org.dockbox.hartshorn.boot.Hartshorn;
 import org.dockbox.hartshorn.di.context.element.TypeContext;
 
 public final class StoredPersistentKey extends TypedPersistentDataKey<Object> {

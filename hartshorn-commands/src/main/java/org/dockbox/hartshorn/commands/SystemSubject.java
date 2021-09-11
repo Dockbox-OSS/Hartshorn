@@ -19,6 +19,8 @@ package org.dockbox.hartshorn.commands;
 
 import org.dockbox.hartshorn.api.domain.Identifiable;
 import org.dockbox.hartshorn.api.domain.tuple.Tristate;
+import org.dockbox.hartshorn.api.exceptions.Except;
+import org.dockbox.hartshorn.commands.exceptions.ParsingException;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.i18n.PermissionHolder;
 import org.dockbox.hartshorn.i18n.common.Language;
@@ -30,10 +32,14 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
 @Singleton
 public abstract class SystemSubject implements CommandSource, PermissionHolder, Identifiable {
+
+    @Inject
+    private ApplicationContext context;
 
     @SuppressWarnings("ConstantDeclaredInAbstractClass")
     public static final UUID UNIQUE_ID = new UUID(0, 0);
@@ -121,4 +127,14 @@ public abstract class SystemSubject implements CommandSource, PermissionHolder, 
 
     @Override
     public void permissions(final Tristate state, @NotNull final Permission @NotNull ... permissions) {}
+
+    @Override
+    public void execute(final String command) {
+        try {
+            this.context.get(CommandGateway.class).accept(this, command);
+        }
+        catch (final ParsingException e) {
+            Except.handle(e);
+        }
+    }
 }

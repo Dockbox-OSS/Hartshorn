@@ -17,17 +17,10 @@
 
 package org.dockbox.hartshorn.di.context;
 
-import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.di.InjectConfiguration;
-import org.dockbox.hartshorn.di.Key;
-import org.dockbox.hartshorn.di.binding.BindingHierarchy;
 import org.dockbox.hartshorn.di.context.element.MethodContext;
-import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.di.inject.Binder;
 import org.dockbox.hartshorn.di.inject.ProviderContext;
-import org.dockbox.hartshorn.di.inject.wired.BoundContext;
-
-import javax.inject.Named;
 
 public interface ApplicationBinder extends Binder {
 
@@ -35,17 +28,11 @@ public interface ApplicationBinder extends Binder {
 
     void bind(String prefix);
 
-    <T, I extends T> Exceptional<BoundContext<T, I>> firstWire(TypeContext<T> contract, Named property);
-
     <T> T populate(T type);
-
-    void add(BoundContext<?, ?> context);
 
     void add(ProviderContext<?> context);
 
     <T> T invoke(MethodContext<T, ?> method);
 
     <T, P> T invoke(MethodContext<T, P> method, P instance);
-
-    <T> BindingHierarchy<T> hierarchy(Key<T> key);
 }

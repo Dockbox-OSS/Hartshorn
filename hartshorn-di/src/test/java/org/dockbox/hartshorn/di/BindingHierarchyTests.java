@@ -58,11 +58,11 @@ public class BindingHierarchyTests extends ApplicationAwareTest {
         hierarchy.add(1, Providers.of(ImplementationB.class));
         hierarchy.add(2, Providers.of(ImplementationC.class));
 
-        int next = 0;
+        int next = 2;
         for (final Entry<Integer, Provider<Contract>> entry : hierarchy) {
             final Integer priority = entry.getKey();
             Assertions.assertEquals(next, priority.intValue());
-            next++;
+            next--;
         }
     }
 
@@ -101,11 +101,6 @@ public class BindingHierarchyTests extends ApplicationAwareTest {
 
     @Test
     void testContextCreatesHierarchy() {
-        interface LocalContract {
-        }
-        class LocalImpl implements LocalContract {
-        }
-
         this.context().bind(Key.of(LocalContract.class), LocalImpl.class);
 
         final BindingHierarchy<LocalContract> hierarchy = this.context().hierarchy(Key.of(LocalContract.class));
@@ -116,6 +111,11 @@ public class BindingHierarchyTests extends ApplicationAwareTest {
         Assertions.assertTrue(provider.present());
         Assertions.assertTrue(provider.get() instanceof ContextDrivenProvider);
         Assertions.assertEquals(((ContextDrivenProvider<LocalContract>) provider.get()).context().type(), LocalImpl.class);
+    }
+
+    interface LocalContract {
+    }
+    static class LocalImpl implements LocalContract {
     }
 
     private interface Contract {

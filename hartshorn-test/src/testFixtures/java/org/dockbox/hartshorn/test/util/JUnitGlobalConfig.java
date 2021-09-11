@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.test.util;
 
-import org.dockbox.hartshorn.api.config.GlobalConfig;
+import org.dockbox.hartshorn.boot.config.GlobalConfig;
 import org.dockbox.hartshorn.api.exceptions.ExceptionLevel;
 
 public class JUnitGlobalConfig implements GlobalConfig {

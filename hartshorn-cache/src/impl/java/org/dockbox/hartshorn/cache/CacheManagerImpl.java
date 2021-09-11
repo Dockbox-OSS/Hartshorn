@@ -18,6 +18,7 @@
 package org.dockbox.hartshorn.cache;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.di.annotations.inject.Binds;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.util.HartshornUtils;
 
@@ -32,6 +33,7 @@ import javax.inject.Inject;
  * @see CacheManager
  */
 @SuppressWarnings("unchecked")
+@Binds(CacheManager.class)
 public class CacheManagerImpl implements CacheManager {
 
     protected static final Map<String, Cache<?>> caches = HartshornUtils.emptyConcurrentMap();

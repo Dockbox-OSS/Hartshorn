@@ -24,26 +24,17 @@ import java.nio.file.Path;
 public class JUnitInformation {
 
     private final Path filePath;
-    private int onlinePlayerCount = 10;
 
     public JUnitInformation() {
         try {
             this.filePath = Files.createTempDirectory("hartshorn-");
         }
-        catch (IOException e) {
+        catch (final IOException e) {
             throw new RuntimeException(e);
         }
     }
 
     public Path path() {
         return this.filePath;
-    }
-
-    public int playerCount() {
-        return this.onlinePlayerCount;
-    }
-
-    public void playerCount(int onlinePlayerCount) {
-        this.onlinePlayerCount = onlinePlayerCount;
     }
 }

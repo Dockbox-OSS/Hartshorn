@@ -24,8 +24,8 @@ import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.function.Consumer;
 
 import lombok.AllArgsConstructor;
@@ -39,7 +39,7 @@ public class ContextWrappedHierarchy<C> implements BindingHierarchy<C> {
     private final Consumer<BindingHierarchy<C>> onUpdate;
 
     @Override
-    public Set<Provider<C>> providers() {
+    public List<Provider<C>> providers() {
         return this.real().providers();
     }
 
@@ -52,6 +52,12 @@ public class ContextWrappedHierarchy<C> implements BindingHierarchy<C> {
     @Override
     public BindingHierarchy<C> add(final int priority, final Provider<C> provider) {
         this.real = this.real().add(priority, provider);
+        return this.update();
+    }
+
+    @Override
+    public BindingHierarchy<C> addNext(final Provider<C> provider) {
+        this.real = this.real().addNext(provider);
         return this.update();
     }
 

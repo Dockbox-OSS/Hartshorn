@@ -17,7 +17,6 @@
 
 package org.dockbox.hartshorn.test.files;
 
-import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.persistence.DefaultAbstractFileManager;
 import org.dockbox.hartshorn.test.JUnit5Application;
 import org.jetbrains.annotations.NotNull;
@@ -42,28 +41,8 @@ public class JUnitFileManager extends DefaultAbstractFileManager {
     }
 
     @NotNull
-    public Exceptional<Path> mods() {
-        return Exceptional.of(this.createPathIfNotExists(this.root().resolve("mods/")));
-    }
-
-    @NotNull
-    public Path plugins() {
-        return this.createPathIfNotExists(this.root().resolve("plugins/"));
-    }
-
-    @NotNull
-    public Path serviceConfigs() {
-        return this.root().resolve("config/services/");
-    }
-
-    @NotNull
-    public Exceptional<Path> modConfigs() {
-        return Exceptional.of(this.root().resolve("config/"));
-    }
-
-    @NotNull
-    public Path pluginConfigs() {
-        return this.root().resolve("config/plugins/");
+    public Path configs() {
+        return this.root().resolve("config/");
     }
 
 }

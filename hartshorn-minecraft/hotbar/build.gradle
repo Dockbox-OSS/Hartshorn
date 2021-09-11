@@ -1,3 +1,0 @@
-dependencies {
-    apiInclude project(':hartshorn-cache')
-}

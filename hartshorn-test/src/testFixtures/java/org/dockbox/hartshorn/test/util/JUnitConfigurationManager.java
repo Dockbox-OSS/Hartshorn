@@ -29,12 +29,12 @@ public class JUnitConfigurationManager extends ConfigurationManagerImpl {
     public static Map<String, Object> cache = HartshornUtils.emptyConcurrentMap();
 
     @Bound
-    public JUnitConfigurationManager(Path path) {
+    public JUnitConfigurationManager(final Path path) {
         super(path);
         // Path is typically stored to obtain values from, during testing this is not required.
     }
 
-    public static void add(String key, Object value) {
+    public static void add(final String key, final Object value) {
         cache.put(key, value);
     }
 

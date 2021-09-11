@@ -18,17 +18,17 @@
 package org.dockbox.hartshorn.di.inject;
 
 import org.dockbox.hartshorn.di.Key;
+import org.dockbox.hartshorn.di.binding.BindingHierarchy;
 
 import java.util.function.Supplier;
 
 public interface Binder {
 
-    <C> void provide(Key<C> contract, Supplier<C> supplier);
+    <C> void bind(Key<C> contract, Supplier<C> supplier);
 
     <C, T extends C> void bind(Key<C> key, Class<? extends T> implementation);
 
     <C, T extends C> void bind(Key<C> key, T instance);
 
-    <C, T extends C> void manual(Key<C> key, Class<? extends T> implementation);
-
+    <T> BindingHierarchy<T> hierarchy(Key<T> key);
 }

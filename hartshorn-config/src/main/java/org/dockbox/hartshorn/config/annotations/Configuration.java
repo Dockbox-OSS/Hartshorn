@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.config.annotations;
 
-import org.dockbox.hartshorn.api.Hartshorn;
+import org.dockbox.hartshorn.boot.Hartshorn;
 import org.dockbox.hartshorn.di.annotations.component.Component;
 import org.dockbox.hartshorn.util.annotations.Extends;
 

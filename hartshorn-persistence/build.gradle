@@ -18,8 +18,8 @@
 apply from: "$rootDir/parent.gradle"
 
 dependencies {
-    apiInclude project(':hartshorn-bootstrap')
-    apiInclude project(':hartshorn-proxy')
+    apiInclude 'org.dockbox.hartshorn:hartshorn-bootstrap'
+    apiInclude 'org.dockbox.hartshorn:hartshorn-proxy'
 
     apiInclude "com.fasterxml.jackson.core:jackson-core:$jacksonVersion"
     include "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:$jacksonVersion"

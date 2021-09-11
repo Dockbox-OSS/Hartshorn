@@ -21,6 +21,7 @@ import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.di.context.element.ConstructorContext;
 import org.dockbox.hartshorn.di.context.element.TypeContext;
+import org.dockbox.hartshorn.di.properties.Attribute;
 
 import java.util.List;
 
@@ -37,28 +38,37 @@ public class ContextDrivenProvider<C> implements Provider<C> {
     }
 
     @Override
-    public Exceptional<C> provide(final ApplicationContext context) {
+    public final Exceptional<C> provide(final ApplicationContext context, final Attribute<?>... attributes) {
+        this.optimalConstructor = this.findOptimalConstructor().orNull();
+        return this.create(context, attributes);
+    }
+
+    protected Exceptional<? extends ConstructorContext<? extends C>> findOptimalConstructor() {
+        ConstructorContext<? extends C> optimalConstructor = null;
         final List<? extends ConstructorContext<? extends C>> constructors = this.context.injectConstructors();
         if (constructors.isEmpty()) {
             final Exceptional<? extends ConstructorContext<? extends C>> defaultConstructor = this.context.defaultConstructor();
             if (defaultConstructor.absent()) return Exceptional.empty();
-            else this.optimalConstructor = defaultConstructor.get();
+            else optimalConstructor = defaultConstructor.get();
         } else {
 
             /*
              An optimal constructor is the one with the highest amount of injectable parameters, so as many dependencies
              can be satiated at once.
              */
-            if (this.optimalConstructor == null) {
-                this.optimalConstructor = constructors.get(0);
+            if (optimalConstructor == null) {
+                optimalConstructor = constructors.get(0);
                 for (final ConstructorContext<? extends C> constructor : constructors) {
-                    if (this.optimalConstructor.parameterCount() < constructor.parameterCount()) {
-                        this.optimalConstructor = constructor;
+                    if (optimalConstructor.parameterCount() < constructor.parameterCount()) {
+                        optimalConstructor = constructor;
                     }
                 }
             }
         }
+        return Exceptional.of(optimalConstructor);
+    }
 
+    protected Exceptional<C> create(final ApplicationContext context, final Attribute<?>... attributes) {
         return Exceptional.of(() -> this.optimalConstructor.createInstance(context).orNull());
     }
 }
