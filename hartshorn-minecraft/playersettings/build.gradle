@@ -1,4 +1,0 @@
-dependencies {
-    apiInclude project(':hartshorn-keys')
-    apiInclude project(':hartshorn-i18n')
-}

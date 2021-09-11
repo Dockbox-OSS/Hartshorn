@@ -21,7 +21,6 @@ import org.dockbox.hartshorn.di.context.element.TypeContext;
 
 public class TypeConversionException extends Exception {
 
-
     public TypeConversionException(final Class<?> type, final String value) {
         this(TypeContext.of(type), value);
     }

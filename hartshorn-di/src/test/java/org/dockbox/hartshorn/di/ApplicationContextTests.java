@@ -20,11 +20,12 @@ package org.dockbox.hartshorn.di;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.di.binding.BindingHierarchy;
 import org.dockbox.hartshorn.di.binding.Bindings;
+import org.dockbox.hartshorn.di.binding.BoundFactoryProvider;
 import org.dockbox.hartshorn.di.binding.ContextDrivenProvider;
 import org.dockbox.hartshorn.di.binding.Provider;
 import org.dockbox.hartshorn.di.context.element.TypeContext;
-import org.dockbox.hartshorn.di.inject.wired.BoundContext;
 import org.dockbox.hartshorn.di.properties.BindingMetaAttribute;
+import org.dockbox.hartshorn.di.properties.UseFactory;
 import org.dockbox.hartshorn.test.ApplicationAwareTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -231,7 +232,7 @@ public class ApplicationContextTests extends ApplicationAwareTest {
     public void boundTypesCanBeProvided() {
         this.context().bind(Key.of(SampleInterface.class), SampleBoundType.class);
 
-        final SampleInterface wired = this.context().get(TypeFactory.class).create(SampleInterface.class, "BoundHartshorn");
+        final SampleInterface wired = this.context().get(SampleInterface.class, "BoundHartshorn");
         Assertions.assertNotNull(wired);
         Assertions.assertEquals("BoundHartshorn", wired.name());
     }
@@ -239,7 +240,7 @@ public class ApplicationContextTests extends ApplicationAwareTest {
     @Test
     public void testScannedBoundBindingsCanBeProvided() {
         this.context().bind("test.types.bound");
-        final SampleInterface provided = this.context().get(TypeFactory.class).create(SampleInterface.class, "BoundAnnotated");
+        final SampleInterface provided = this.context().get(SampleInterface.class, "BoundAnnotated");
         Assertions.assertNotNull(provided);
 
         final Class<? extends SampleInterface> providedClass = provided.getClass();
@@ -253,7 +254,7 @@ public class ApplicationContextTests extends ApplicationAwareTest {
         this.context().bind(Key.of(SampleInterface.class), SampleBoundType.class);
         this.context().bind(Key.of(SampleInterface.class), SampleBoundType.class);
 
-        final SampleInterface provided = this.context().get(SampleInterface.class, TypeFactory.use("FactoryTyped"));
+        final SampleInterface provided = this.context().get(SampleInterface.class, new UseFactory("FactoryTyped"));
         Assertions.assertNotNull(provided);
 
         final Class<? extends SampleInterface> providedClass = provided.getClass();
@@ -330,7 +331,7 @@ public class ApplicationContextTests extends ApplicationAwareTest {
     @Test
     void testBoundProviderCanSupply() {
         this.context().bind("test.types.provision");
-        final ProvidedInterface provided = this.context().get(ProvidedInterface.class, BindingMetaAttribute.of("bound"), TypeFactory.use("BoundProvision"));
+        final ProvidedInterface provided = this.context().get(ProvidedInterface.class, BindingMetaAttribute.of("bound"), new UseFactory("BoundProvision"));
         Assertions.assertNotNull(provided);
         Assertions.assertEquals("BoundProvision", provided.name());
     }
@@ -341,14 +342,16 @@ public class ApplicationContextTests extends ApplicationAwareTest {
         this.context().bind(key, DualConstructableType.class);
         final BindingHierarchy<SampleInterface> hierarchy = this.context().hierarchy(key);
 
-        Assertions.assertEquals(1, hierarchy.size());
+        Assertions.assertEquals(2, hierarchy.size());
 
         final Exceptional<Provider<SampleInterface>> provider = hierarchy.get(-1);
         Assertions.assertTrue(provider.present());
         Assertions.assertTrue(provider.get() instanceof ContextDrivenProvider);
         Assertions.assertTrue(((ContextDrivenProvider<SampleInterface>) provider.get()).context().is(DualConstructableType.class));
 
-        final Exceptional<BoundContext<SampleInterface, SampleInterface>> boundContext = this.context().firstWire(key);
-        Assertions.assertTrue(boundContext.present());
+        final Exceptional<Provider<SampleInterface>> boundProvider = hierarchy.get(0);
+        Assertions.assertTrue(boundProvider.present());
+        Assertions.assertTrue(boundProvider.get() instanceof BoundFactoryProvider);
+        Assertions.assertTrue(((BoundFactoryProvider<SampleInterface>) boundProvider.get()).context().is(DualConstructableType.class));
     }
 }

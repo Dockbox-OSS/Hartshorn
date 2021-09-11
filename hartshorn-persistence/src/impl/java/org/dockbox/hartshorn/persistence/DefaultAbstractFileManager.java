@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.persistence;
 
-import org.dockbox.hartshorn.api.Hartshorn;
+import org.dockbox.hartshorn.boot.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.domain.TypedOwner;
 import org.dockbox.hartshorn.api.exceptions.ApplicationException;
@@ -79,7 +79,7 @@ public abstract class DefaultAbstractFileManager implements FileManager {
     @NotNull
     @Override
     public Path configFile(@NotNull final TypedOwner owner, @NotNull final String file) {
-        return this.createFileIfNotExists(this.fileType().asPath(this.serviceConfigs().resolve(owner.id()), file));
+        return this.createFileIfNotExists(this.fileType().asPath(this.configs().resolve(owner.id()), file));
     }
 
     @Override

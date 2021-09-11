@@ -25,10 +25,10 @@ import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collections;
 import java.util.Iterator;
-import java.util.Map;
+import java.util.List;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
@@ -42,11 +42,11 @@ public class NativeBindingHierarchy<C> implements BindingHierarchy<C> {
 
     @Getter private final Key<C> key;
     @Getter private final ApplicationContext applicationContext;
-    private final Map<Integer, Provider<C>> bindings = new TreeMap<>();
+    private final TreeMap<Integer, Provider<C>> bindings = new TreeMap<>(Collections.reverseOrder());
 
     @Override
-    public Set<Provider<C>> providers() {
-        return HartshornUtils.asUnmodifiableSet(this.bindings.values());
+    public List<Provider<C>> providers() {
+        return HartshornUtils.asUnmodifiableList(this.bindings.values());
     }
 
     @Override
@@ -64,6 +64,13 @@ public class NativeBindingHierarchy<C> implements BindingHierarchy<C> {
         }
         this.bindings.put(priority, provider);
         return this;
+    }
+
+    @Override
+    public BindingHierarchy<C> addNext(final Provider<C> provider) {
+        int next = -1;
+        if (!this.bindings.isEmpty()) next = this.bindings.lastKey()+1;
+        return this.add(next, provider);
     }
 
     @Override
@@ -98,7 +105,12 @@ public class NativeBindingHierarchy<C> implements BindingHierarchy<C> {
         if (named != null) {
             name = "::" + named.value();
         }
-        final String hierarchy = this.bindings.entrySet().stream()
+
+        // The priorities are stored high to low, however we want to display them as low to high.
+        final List<Entry<Integer, Provider<C>>> entries = HartshornUtils.asList(this.bindings.entrySet());
+        Collections.reverse(entries);
+
+        final String hierarchy = entries.stream()
                 .map(entry -> {
                     final Provider<C> value = entry.getValue();
                     String target = value.toString();

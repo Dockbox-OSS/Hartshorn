@@ -1,4 +1,0 @@
-dependencies {
-    apiInclude project(':hartshorn-persistence')
-    apiInclude project(':hartshorn-minecraft:toolbinding')
-}

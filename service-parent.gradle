@@ -18,20 +18,20 @@
 apply from: "$rootDir/parent.gradle"
 
 dependencies {
-    apiInclude project(':hartshorn-bootstrap')
+    apiInclude 'org.dockbox.hartshorn:hartshorn-bootstrap'
 
     // Provide access to i18n for target communication
-    apiInclude project(':hartshorn-i18n')
+    apiInclude 'org.dockbox.hartshorn:hartshorn-i18n'
 
     // Provide access to persistence and entity models
-    apiInclude project(':hartshorn-persistence')
-    apiInclude project(':hartshorn-config')
+    apiInclude 'org.dockbox.hartshorn:hartshorn-persistence'
+    apiInclude 'org.dockbox.hartshorn:hartshorn-config'
 
     // Provide access to event and command listeners, which
     // cover 50% of the module use-cases
-    apiInclude project(':hartshorn-events')
-    apiInclude project(':hartshorn-commands')
+    apiInclude 'org.dockbox.hartshorn:hartshorn-events'
+    apiInclude 'org.dockbox.hartshorn:hartshorn-commands'
 
     // Provide access to exception handlers
-    apiInclude project(':hartshorn-exceptions')
+    apiInclude 'org.dockbox.hartshorn:hartshorn-exceptions'
 }

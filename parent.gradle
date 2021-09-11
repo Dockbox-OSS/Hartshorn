@@ -16,9 +16,9 @@
  */
 
 dependencies {
-    apiInclude project(':hartshorn-core')
-    apiInclude project(':hartshorn-util')
-    apiInclude project(':hartshorn-di')
-    apiInclude project(':hartshorn-exceptions')
-    apiInclude project(':hartshorn-bootstrap')
+    apiInclude 'org.dockbox.hartshorn:hartshorn-core'
+    apiInclude 'org.dockbox.hartshorn:hartshorn-util'
+    apiInclude 'org.dockbox.hartshorn:hartshorn-di'
+    apiInclude 'org.dockbox.hartshorn:hartshorn-exceptions'
+    apiInclude 'org.dockbox.hartshorn:hartshorn-bootstrap'
 }

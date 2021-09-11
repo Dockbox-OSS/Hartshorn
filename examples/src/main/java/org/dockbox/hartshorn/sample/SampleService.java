@@ -17,13 +17,11 @@
 
 package org.dockbox.hartshorn.sample;
 
-import org.dockbox.hartshorn.api.Hartshorn;
+import org.dockbox.hartshorn.boot.Hartshorn;
 import org.dockbox.hartshorn.commands.annotations.Command;
 import org.dockbox.hartshorn.commands.context.CommandContext;
 import org.dockbox.hartshorn.di.annotations.service.Service;
 import org.dockbox.hartshorn.events.annotations.Listener;
-import org.dockbox.hartshorn.server.minecraft.events.packet.PacketEvent;
-import org.dockbox.hartshorn.server.minecraft.packets.real.ChangeGameStatePacket;
 
 @Service
 public final class SampleService {
@@ -31,14 +29,16 @@ public final class SampleService {
     private SampleService() {}
 
     @Listener
-    public static void onGameStatePacket(final PacketEvent<ChangeGameStatePacket> packetEvent) {
-        Hartshorn.log().info("Sending a packet event to %s (GameStateChange: %s)".formatted(packetEvent.target().name(), packetEvent.packet().weather()));
+    public void onCreated(final CuboidCreatedEvent event) {
+        Hartshorn.log().info("Cuboid: " + event.cuboid());
     }
 
     // Uses the Custom Parameter from the Cuboid class, with a nested Shape parameter
     @Command(value = "demo", arguments = "<cuboid{Cuboid}>")
     public void buildCuboid(final CommandContext context, final Cuboid cuboid) {
-        Hartshorn.log().info("Cuboid: " + cuboid);
+        new CuboidCreatedEvent(cuboid)
+                .with(context.applicationContext())
+                .post();
     }
 
 }

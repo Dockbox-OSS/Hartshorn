@@ -44,7 +44,7 @@ public final class RunCommandAction {
     /**
      * A specialized {@link ClickAction} capable
      * of performing a given command. Requires the <code>result</code> to be provided when
-     * created through a {@link org.dockbox.hartshorn.di.TypeFactory}.
+     * created through a {@link org.dockbox.hartshorn.di.binding.BoundFactoryProvider}.
      */
     public static final class RunCommand extends CommandAction<String> {
 

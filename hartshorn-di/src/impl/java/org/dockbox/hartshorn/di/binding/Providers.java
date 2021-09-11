@@ -17,11 +17,25 @@
 
 package org.dockbox.hartshorn.di.binding;
 
+import org.dockbox.hartshorn.di.context.element.MethodContext;
 import org.dockbox.hartshorn.di.context.element.TypeContext;
 
 import java.util.function.Supplier;
 
 public class Providers {
+
+    @SuppressWarnings("unchecked")
+    public static <C> Provider<C> bound(final MethodContext<C, ?> method) {
+        return new BoundMethodProvider<>((MethodContext<C, Object>) method);
+    }
+
+    public static <C> Provider<C> bound(final TypeContext<? extends C> type) {
+        return new BoundFactoryProvider<>(type);
+    }
+
+    public static <C> Provider<C> bound(final Class<? extends C> type) {
+        return bound(TypeContext.of(type));
+    }
 
     public static <C> Provider<C> of(final TypeContext<? extends C> type) {
         return new ContextDrivenProvider<>(type);

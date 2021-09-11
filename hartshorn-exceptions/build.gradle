@@ -16,6 +16,6 @@
  */
 
 dependencies {
-    apiShare project(':hartshorn-core')
-    apiShare project(':hartshorn-di')
+    apiShare 'org.dockbox.hartshorn:hartshorn-core'
+    apiShare 'org.dockbox.hartshorn:hartshorn-di'
 }

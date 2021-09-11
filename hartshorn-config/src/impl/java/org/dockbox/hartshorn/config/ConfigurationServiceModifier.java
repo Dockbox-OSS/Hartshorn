@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.config;
 
-import org.dockbox.hartshorn.api.Hartshorn;
+import org.dockbox.hartshorn.boot.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.exceptions.Except;
 import org.dockbox.hartshorn.config.annotations.Configuration;

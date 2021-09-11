@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.test;
 
-import org.dockbox.hartshorn.api.Hartshorn;
+import org.dockbox.hartshorn.boot.Hartshorn;
 import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.proxy.ProxyApplicationBootstrap;
 

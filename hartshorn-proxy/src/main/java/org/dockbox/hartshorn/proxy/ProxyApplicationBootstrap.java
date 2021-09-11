@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.proxy;
 
-import org.dockbox.hartshorn.api.HartshornBootstrap;
+import org.dockbox.hartshorn.boot.HartshornBootstrap;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.proxy.handle.ProxyHandler;
