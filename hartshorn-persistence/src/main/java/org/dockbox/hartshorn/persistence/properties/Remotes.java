@@ -26,6 +26,7 @@ public enum Remotes implements Remote {
     DERBY(Path.class, path -> "jdbc:derby:directory:%s/db;create=true".formatted(path.toFile().getAbsolutePath()), "org.apache.derby.jdbc.EmbeddedDriver"),
     MYSQL(SQLRemoteServer.class, server -> connectionString("mysql", server), "com.mysql.jdbc.Driver"),
     POSTGRESQL(SQLRemoteServer.class, server -> connectionString("postgresql", server), "org.postgresql.Driver"),
+    MARIADB(SQLRemoteServer.class, server -> connectionString("mariadb", server), "org.mariadb.jdbc.Driver"),
     ;
 
     private final Class<?> target;

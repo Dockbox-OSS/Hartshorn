@@ -31,6 +31,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.testcontainers.containers.ContainerState;
 import org.testcontainers.containers.JdbcDatabaseContainer;
+import org.testcontainers.containers.MariaDBContainer;
 import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
@@ -49,11 +50,13 @@ class SqlServiceTest extends ApplicationAwareTest {
     // will be shared between test methods
     @Container private static final MySQLContainer<?> mySql = new MySQLContainer<>(MySQLContainer.NAME).withDatabaseName(DEFAULT_DATABASE);
     @Container private static final PostgreSQLContainer<?> postgreSql = new PostgreSQLContainer<>(PostgreSQLContainer.IMAGE).withDatabaseName(DEFAULT_DATABASE);
+    @Container private static final MariaDBContainer<?> mariaDb = new MariaDBContainer<>(MariaDBContainer.NAME).withDatabaseName(DEFAULT_DATABASE);
 
     public static Stream<Arguments> containers() {
         return Stream.of(
                 Arguments.of(mySql),
-                Arguments.of(postgreSql)
+                Arguments.of(postgreSql),
+                Arguments.of(mariaDb)
         );
     }
 
@@ -68,6 +71,7 @@ class SqlServiceTest extends ApplicationAwareTest {
                 Arguments.of(Remotes.DERBY, directory("derby")),
                 Arguments.of(Remotes.MYSQL, connection(Remotes.MYSQL, mySql, MySQLContainer.MYSQL_PORT)),
                 Arguments.of(Remotes.POSTGRESQL, connection(Remotes.POSTGRESQL, postgreSql, PostgreSQLContainer.POSTGRESQL_PORT)),
+                Arguments.of(Remotes.MARIADB, connection(Remotes.MARIADB, mariaDb, 3306))
         );
     }
 
