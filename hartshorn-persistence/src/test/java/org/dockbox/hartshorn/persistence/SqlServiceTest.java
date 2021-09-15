@@ -21,23 +21,47 @@ import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.persistence.hibernate.HibernateSqlService;
 import org.dockbox.hartshorn.persistence.properties.ConnectionAttribute;
 import org.dockbox.hartshorn.persistence.properties.Remote;
+import org.dockbox.hartshorn.persistence.properties.Remotes;
+import org.dockbox.hartshorn.persistence.properties.SQLRemoteServer;
 import org.dockbox.hartshorn.test.ApplicationAwareTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.testcontainers.containers.MySQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Set;
 import java.util.stream.Stream;
 
+@Testcontainers
 class SqlServiceTest extends ApplicationAwareTest {
+
+    protected static final String DEFAULT_DATABASE = "HartshornDb-" + System.nanoTime();
+
+    // will be shared between test methods
+    @Container
+    private static final MySQLContainer<?> mySql = new MySQLContainer<>(MySQLContainer.NAME).withDatabaseName(DEFAULT_DATABASE);
+
+    @Test
+    void testContainerStates() {
+        Assertions.assertTrue(mySql.isRunning());
+    }
 
     public static Stream<Arguments> dialects() {
         return Stream.of(
-                Arguments.of(Remote.DERBY, directory("derby"))
+                Arguments.of(Remotes.DERBY, directory("derby")),
+                Arguments.of(Remotes.MYSQL, ConnectionAttribute.of(
+                        Remotes.MYSQL,
+                        SQLRemoteServer.of("localhost", mySql.getMappedPort(MySQLContainer.MYSQL_PORT), DEFAULT_DATABASE),
+                        mySql.getUsername(),
+                        mySql.getPassword()
+                        ))
         );
     }
 
@@ -69,7 +93,9 @@ class SqlServiceTest extends ApplicationAwareTest {
     }
 
     protected SqlService sql(final Remote remote, final Object target) {
-        return this.context().get(HibernateSqlService.class, ConnectionAttribute.of(remote, target, "", ""));
+        if (target instanceof ConnectionAttribute attribute)
+            return this.context().get(HibernateSqlService.class, attribute);
+        else return this.context().get(HibernateSqlService.class, ConnectionAttribute.of(remote, target, "", ""));
     }
 
     @ParameterizedTest

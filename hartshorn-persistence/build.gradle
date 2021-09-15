@@ -32,4 +32,9 @@ dependencies {
     // SQL Extension dependencies
     include "org.hibernate:hibernate-core:$hibernateVersion"
     include "org.apache.derby:derby:$derbyVersion"
+
+    testImplementation 'mysql:mysql-connector-java:8.0.26'
+    testImplementation "org.testcontainers:testcontainers:1.16.0"
+    testImplementation "org.testcontainers:junit-jupiter:1.16.0"
+    testImplementation "org.testcontainers:mysql:1.16.0"
 }
