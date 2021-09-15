@@ -34,7 +34,11 @@ dependencies {
     include "org.apache.derby:derby:$derbyVersion"
 
     testImplementation 'mysql:mysql-connector-java:8.0.26'
+    testImplementation 'org.postgresql:postgresql:42.2.23'
+
     testImplementation "org.testcontainers:testcontainers:1.16.0"
     testImplementation "org.testcontainers:junit-jupiter:1.16.0"
+
     testImplementation "org.testcontainers:mysql:1.16.0"
+    testImplementation "org.testcontainers:postgresql:1.16.0"
 }

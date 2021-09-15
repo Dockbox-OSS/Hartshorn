@@ -87,6 +87,7 @@ public class HibernateSqlService implements SqlService {
             return switch (remotes) {
                 case DERBY -> "org.hibernate.dialect.DerbyTenSevenDialect";
                 case MYSQL -> "org.hibernate.dialect.MySQL8Dialect";
+                case POSTGRESQL -> "org.hibernate.dialect.PostgreSQL95Dialect";
                 default -> throw new ApplicationException("Unsupported native remote connection: " + remotes);
             };
         }

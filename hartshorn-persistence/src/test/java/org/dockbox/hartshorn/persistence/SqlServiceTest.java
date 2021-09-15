@@ -26,12 +26,13 @@ import org.dockbox.hartshorn.persistence.properties.SQLRemoteServer;
 import org.dockbox.hartshorn.test.ApplicationAwareTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Assumptions;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.testcontainers.containers.ContainerState;
 import org.testcontainers.containers.JdbcDatabaseContainer;
 import org.testcontainers.containers.MySQLContainer;
+import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
@@ -46,18 +47,27 @@ class SqlServiceTest extends ApplicationAwareTest {
     protected static final String DEFAULT_DATABASE = "HartshornDb_" + System.nanoTime();
 
     // will be shared between test methods
-    @Container
-    private static final MySQLContainer<?> mySql = new MySQLContainer<>(MySQLContainer.NAME).withDatabaseName(DEFAULT_DATABASE);
+    @Container private static final MySQLContainer<?> mySql = new MySQLContainer<>(MySQLContainer.NAME).withDatabaseName(DEFAULT_DATABASE);
+    @Container private static final PostgreSQLContainer<?> postgreSql = new PostgreSQLContainer<>(PostgreSQLContainer.IMAGE).withDatabaseName(DEFAULT_DATABASE);
 
-    @Test
-    void testContainerStates() {
-        Assertions.assertTrue(mySql.isRunning());
+    public static Stream<Arguments> containers() {
+        return Stream.of(
+                Arguments.of(mySql),
+                Arguments.of(postgreSql)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("containers")
+    void testContainerStates(ContainerState container) {
+        Assertions.assertTrue(container.isRunning());
     }
 
     public static Stream<Arguments> dialects() {
         return Stream.of(
                 Arguments.of(Remotes.DERBY, directory("derby")),
-                Arguments.of(Remotes.MYSQL, connection(Remotes.MYSQL, mySql, MySQLContainer.MYSQL_PORT))
+                Arguments.of(Remotes.MYSQL, connection(Remotes.MYSQL, mySql, MySQLContainer.MYSQL_PORT)),
+                Arguments.of(Remotes.POSTGRESQL, connection(Remotes.POSTGRESQL, postgreSql, PostgreSQLContainer.POSTGRESQL_PORT)),
         );
     }
 

@@ -23,10 +23,9 @@ import java.util.function.Function;
 import lombok.Getter;
 
 public enum Remotes implements Remote {
-    DERBY(Path.class, path -> "jdbc:derby:directory:%s/db;create=true".formatted(path.toFile().getAbsolutePath()),
-            "org.apache.derby.jdbc.EmbeddedDriver"),
-    MYSQL(SQLRemoteServer.class, server -> "jdbc:mysql://%s:%s/%s".formatted(server.server(), server.port(), server.database()),
-            "com.mysql.jdbc.Driver"),
+    DERBY(Path.class, path -> "jdbc:derby:directory:%s/db;create=true".formatted(path.toFile().getAbsolutePath()), "org.apache.derby.jdbc.EmbeddedDriver"),
+    MYSQL(SQLRemoteServer.class, server -> connectionString("mysql", server), "com.mysql.jdbc.Driver"),
+    POSTGRESQL(SQLRemoteServer.class, server -> connectionString("postgresql", server), "org.postgresql.Driver"),
     ;
 
     private final Class<?> target;
@@ -37,6 +36,10 @@ public enum Remotes implements Remote {
         this.target = target;
         this.urlGen = urlGen;
         this.driver = driver;
+    }
+
+    private static String connectionString(String type, SQLRemoteServer server) {
+        return "jdbc:%s://%s:%s/%s".formatted(type, server.server(), server.port(), server.database());
     }
 
     @Override
