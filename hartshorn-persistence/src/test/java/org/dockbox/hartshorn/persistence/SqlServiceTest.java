@@ -30,6 +30,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.testcontainers.containers.JdbcDatabaseContainer;
 import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -42,7 +43,7 @@ import java.util.stream.Stream;
 @Testcontainers
 class SqlServiceTest extends ApplicationAwareTest {
 
-    protected static final String DEFAULT_DATABASE = "HartshornDb-" + System.nanoTime();
+    protected static final String DEFAULT_DATABASE = "HartshornDb_" + System.nanoTime();
 
     // will be shared between test methods
     @Container
@@ -56,12 +57,15 @@ class SqlServiceTest extends ApplicationAwareTest {
     public static Stream<Arguments> dialects() {
         return Stream.of(
                 Arguments.of(Remotes.DERBY, directory("derby")),
-                Arguments.of(Remotes.MYSQL, ConnectionAttribute.of(
-                        Remotes.MYSQL,
-                        SQLRemoteServer.of("localhost", mySql.getMappedPort(MySQLContainer.MYSQL_PORT), DEFAULT_DATABASE),
-                        mySql.getUsername(),
-                        mySql.getPassword()
-                        ))
+                Arguments.of(Remotes.MYSQL, connection(Remotes.MYSQL, mySql, MySQLContainer.MYSQL_PORT))
+        );
+    }
+
+    protected static ConnectionAttribute connection(Remote remote, JdbcDatabaseContainer<?> container, int defaultPort) {
+        return ConnectionAttribute.of(remote,
+                SQLRemoteServer.of("localhost", container.getMappedPort(defaultPort), DEFAULT_DATABASE),
+                container.getUsername(),
+                container.getPassword()
         );
     }
 
