@@ -17,11 +17,22 @@
 
 package org.dockbox.hartshorn.persistence.properties;
 
-public interface Remote {
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
-    PersistenceConnection connection(Object target, String user, String password);
-    PersistenceConnection connection(String url, String user, String password);
-    String url(Object target);
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@Getter
+public class SQLRemoteServer {
+    private final String server;
+    private final int port;
+    private final String database;
 
-    String driver();
+    public static SQLRemoteServer of(String server, String database) {
+        return of(server, 3306, database);
+    }
+
+    public static SQLRemoteServer of(String server, int port, String database) {
+        return new SQLRemoteServer(server, port, database);
+    }
 }

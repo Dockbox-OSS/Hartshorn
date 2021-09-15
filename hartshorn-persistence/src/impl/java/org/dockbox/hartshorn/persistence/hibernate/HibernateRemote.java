@@ -15,13 +15,11 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.persistence.properties;
+package org.dockbox.hartshorn.persistence.hibernate;
 
-public interface Remote {
+import org.dockbox.hartshorn.persistence.properties.Remote;
+import org.hibernate.dialect.Dialect;
 
-    PersistenceConnection connection(Object target, String user, String password);
-    PersistenceConnection connection(String url, String user, String password);
-    String url(Object target);
-
-    String driver();
+public abstract class HibernateRemote implements Remote {
+    public abstract Class<? extends Dialect> dialect();
 }

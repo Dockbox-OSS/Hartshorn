@@ -27,6 +27,8 @@ import org.dockbox.hartshorn.persistence.SqlService;
 import org.dockbox.hartshorn.persistence.context.EntityContext;
 import org.dockbox.hartshorn.persistence.properties.ConnectionAttribute;
 import org.dockbox.hartshorn.persistence.properties.PersistenceConnection;
+import org.dockbox.hartshorn.persistence.properties.Remote;
+import org.dockbox.hartshorn.persistence.properties.Remotes;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -34,7 +36,7 @@ import org.hibernate.cfg.Configuration;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Properties;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -80,11 +82,18 @@ public class HibernateSqlService implements SqlService {
     }
 
     protected String dialect(final PersistenceConnection connection) throws ApplicationException {
-        //noinspection SwitchStatementWithTooFewBranches
-        return switch (connection.remote()) {
-            case DERBY -> "org.hibernate.dialect.DerbyTenSevenDialect";
-            default -> throw new ApplicationException("Unexpected value: " + connection.remote());
-        };
+        Remote remote = connection.remote();
+        if (remote instanceof Remotes remotes) {
+            return switch (remotes) {
+                case DERBY -> "org.hibernate.dialect.DerbyTenSevenDialect";
+                case MYSQL -> "org.hibernate.dialect.MySQL8Dialect";
+                default -> throw new ApplicationException("Unsupported native remote connection: " + remotes);
+            };
+        }
+        else if (remote instanceof HibernateRemote hibernateRemote) {
+            return hibernateRemote.dialect().getCanonicalName();
+        }
+        throw new ApplicationException("Unexpected remote connection: " + remote);
     }
 
     @Override
@@ -97,7 +106,7 @@ public class HibernateSqlService implements SqlService {
             this.configuration.addAnnotatedClass(entity.type());
         }
 
-        final Properties properties = this.configuration.getProperties();
+        final Map<Object, Object> properties = this.configuration.getProperties();
 
         // Early validation to ensure our configuration is valid
         if (properties.isEmpty()) throw new ApplicationException("Expected connection to be applied, ensure you provided a ConnectionProperty before enabling.");
