@@ -17,6 +17,12 @@
 
 package org.junit.runners.model;
 
+/**
+ * TestContainers has a hard dependency on this class and {@link org.junit.rules.TestRule}, both of which
+ * are only present in JUnit 4. However, these types are not used if the active environment is JUnit 5. This is
+ * purely a placeholder to avoid runtime classloader issues.
+ * @see <a href="https://github.com/testcontainers/testcontainers-java/issues/970">testcontainers/testcontainers-java #970</a>
+ */
 @SuppressWarnings("unused")
 public class Statement {
 }
