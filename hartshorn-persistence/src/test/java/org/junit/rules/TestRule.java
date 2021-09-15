@@ -15,13 +15,14 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.persistence.properties;
+package org.junit.rules;
 
-public interface Remote {
-
-    PersistenceConnection connection(Object target, String user, String password);
-    PersistenceConnection connection(String url, String user, String password);
-    String url(Object target);
-
-    String driver();
+/**
+ * TestContainers has a hard dependency on this class and {@link org.junit.runners.model.Statement}, both of which
+ * are only present in JUnit 4. However, these types are not used if the active environment is JUnit 5. This is
+ * purely a placeholder to avoid runtime classloader issues.
+ * @see <a href="https://github.com/testcontainers/testcontainers-java/issues/970">testcontainers/testcontainers-java #970</a>
+ */
+@SuppressWarnings("unused")
+public interface TestRule {
 }

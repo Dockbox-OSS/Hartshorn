@@ -32,4 +32,15 @@ dependencies {
     // SQL Extension dependencies
     include "org.hibernate:hibernate-core:$hibernateVersion"
     include "org.apache.derby:derby:$derbyVersion"
+
+    testImplementation "mysql:mysql-connector-java:$mySqlConnectorVersion"
+    testImplementation "org.postgresql:postgresql:$postgreSqlVersion"
+    testImplementation "org.mariadb.jdbc:mariadb-java-client:$mariaDbClientVersion"
+
+    testImplementation "org.testcontainers:testcontainers:$testContainersVersion"
+    testImplementation "org.testcontainers:junit-jupiter:$testContainersVersion"
+
+    testImplementation "org.testcontainers:mysql:$testContainersVersion"
+    testImplementation "org.testcontainers:postgresql:$testContainersVersion"
+    testImplementation "org.testcontainers:mariadb:$testContainersVersion"
 }
