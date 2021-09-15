@@ -20,6 +20,6 @@ package org.dockbox.hartshorn.persistence.hibernate;
 import org.dockbox.hartshorn.persistence.properties.Remote;
 import org.hibernate.dialect.Dialect;
 
-public abstract class HibernateRemote implements Remote {
-    public abstract Class<? extends Dialect> dialect();
+public interface HibernateRemote extends Remote {
+    Class<? extends Dialect> dialect();
 }

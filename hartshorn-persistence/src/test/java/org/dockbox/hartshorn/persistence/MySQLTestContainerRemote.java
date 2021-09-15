@@ -24,7 +24,7 @@ import org.dockbox.hartshorn.persistence.properties.SQLRemoteServer;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.dialect.MySQL57Dialect;
 
-public class MySQLTestContainerRemote extends HibernateRemote {
+public class MySQLTestContainerRemote implements HibernateRemote {
 
     private static final String format = "jdbc:tc:mysql:5.7.34://%s/%s";
 
