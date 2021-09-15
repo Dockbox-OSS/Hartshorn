@@ -33,14 +33,14 @@ dependencies {
     include "org.hibernate:hibernate-core:$hibernateVersion"
     include "org.apache.derby:derby:$derbyVersion"
 
-    testImplementation 'mysql:mysql-connector-java:8.0.26'
-    testImplementation 'org.postgresql:postgresql:42.2.23'
-    testImplementation 'org.mariadb.jdbc:mariadb-java-client:2.7.4'
+    testImplementation "mysql:mysql-connector-java:$mySqlConnectorVersion"
+    testImplementation "org.postgresql:postgresql:$postgreSqlVersion"
+    testImplementation "org.mariadb.jdbc:mariadb-java-client:$mariaDbClientVersion"
 
-    testImplementation "org.testcontainers:testcontainers:1.16.0"
-    testImplementation "org.testcontainers:junit-jupiter:1.16.0"
+    testImplementation "org.testcontainers:testcontainers:$testContainersVersion"
+    testImplementation "org.testcontainers:junit-jupiter:$testContainersVersion"
 
-    testImplementation "org.testcontainers:mysql:1.16.0"
-    testImplementation "org.testcontainers:postgresql:1.16.0"
-    testImplementation "org.testcontainers:mariadb:1.16.0"
+    testImplementation "org.testcontainers:mysql:$testContainersVersion"
+    testImplementation "org.testcontainers:postgresql:$testContainersVersion"
+    testImplementation "org.testcontainers:mariadb:$testContainersVersion"
 }
