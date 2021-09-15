@@ -38,6 +38,10 @@ public class ConnectionAttribute implements Attribute<PersistenceConnection> {
         return of(remote.connection(target, user, password));
     }
 
+    public static ConnectionAttribute of(Remote remote, String connectionString, String user, String password) {
+        return of(new PersistenceConnection(connectionString, user, password, remote));
+    }
+
     public static ConnectionAttribute of(PersistenceConnection connection) {
         return new ConnectionAttribute(connection);
     }
