@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.commands.exceptions;
 
-import org.dockbox.hartshorn.i18n.common.ResourceEntry;
+import org.dockbox.hartshorn.i18n.common.Message;
 
 /**
  * The exception thrown when a command could not be parsed. This can occur either during
@@ -25,14 +25,14 @@ import org.dockbox.hartshorn.i18n.common.ResourceEntry;
  */
 public class ParsingException extends Exception {
 
-    private final ResourceEntry resource;
+    private final Message resource;
 
-    public ParsingException(ResourceEntry resource) {
+    public ParsingException(Message resource) {
         super(resource.plain());
         this.resource = resource;
     }
 
-    public ParsingException(ResourceEntry resource, Throwable cause) {
+    public ParsingException(Message resource, Throwable cause) {
         super(resource.plain(), cause);
         this.resource = resource;
     }

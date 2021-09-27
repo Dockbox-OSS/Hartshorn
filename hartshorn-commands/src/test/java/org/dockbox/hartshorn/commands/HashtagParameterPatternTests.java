@@ -22,8 +22,8 @@ import org.dockbox.hartshorn.commands.arguments.CustomParameterPattern;
 import org.dockbox.hartshorn.commands.arguments.HashtagParameterPattern;
 import org.dockbox.hartshorn.commands.types.CuboidArgument;
 import org.dockbox.hartshorn.di.context.element.TypeContext;
-import org.dockbox.hartshorn.i18n.common.ResourceEntry;
-import org.dockbox.hartshorn.i18n.entry.FakeResource;
+import org.dockbox.hartshorn.i18n.common.Message;
+import org.dockbox.hartshorn.i18n.message.DetachedMessage;
 import org.dockbox.hartshorn.test.ApplicationAwareTest;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.junit.jupiter.api.Assertions;
@@ -47,9 +47,9 @@ public class HashtagParameterPatternTests extends ApplicationAwareTest {
     private HashtagParameterPattern pattern() {
         return new HashtagParameterPattern() {
             @Override
-            protected ResourceEntry wrongFormat() {
+            protected Message wrongFormat() {
                 // Override resources as these are otherwise requested through bound resource references
-                return new FakeResource("failed");
+                return new DetachedMessage("failed");
             }
         };
     }

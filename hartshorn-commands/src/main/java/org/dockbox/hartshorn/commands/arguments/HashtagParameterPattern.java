@@ -18,7 +18,7 @@
 package org.dockbox.hartshorn.commands.arguments;
 
 import org.dockbox.hartshorn.commands.CommandParameterResources;
-import org.dockbox.hartshorn.i18n.common.ResourceEntry;
+import org.dockbox.hartshorn.i18n.common.Message;
 
 import javax.inject.Inject;
 
@@ -59,7 +59,7 @@ public class HashtagParameterPattern extends PrefixedParameterPattern {
     }
 
     @Override
-    protected ResourceEntry wrongFormat() {
+    protected Message wrongFormat() {
         return this.resources.wrongHashtagPatternFormat();
     }
 }

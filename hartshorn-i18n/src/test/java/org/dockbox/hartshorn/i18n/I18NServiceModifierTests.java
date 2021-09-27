@@ -18,7 +18,7 @@
 package org.dockbox.hartshorn.i18n;
 
 import org.dockbox.hartshorn.di.context.element.TypeContext;
-import org.dockbox.hartshorn.i18n.common.ResourceEntry;
+import org.dockbox.hartshorn.i18n.common.Message;
 import org.dockbox.hartshorn.test.ApplicationAwareTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -34,7 +34,7 @@ public class I18NServiceModifierTests extends ApplicationAwareTest {
     @Test
     public void testResourceServiceReturnsValidResourceKey() {
         final ITestResources resources = this.context().get(ITestResources.class);
-        final ResourceEntry testEntry = resources.testEntry();
+        final Message testEntry = resources.testEntry();
 
         Assertions.assertNotNull(testEntry);
         Assertions.assertEquals("resource.test.entry", testEntry.key());
@@ -43,7 +43,7 @@ public class I18NServiceModifierTests extends ApplicationAwareTest {
     @Test
     public void testResourceServiceReturnsValidResourceValue() {
         final ITestResources resources = this.context().get(ITestResources.class);
-        final ResourceEntry testEntry = resources.testEntry();
+        final Message testEntry = resources.testEntry();
 
         Assertions.assertNotNull(testEntry);
         Assertions.assertEquals("Hello world!", testEntry.plain());
@@ -52,7 +52,7 @@ public class I18NServiceModifierTests extends ApplicationAwareTest {
     @Test
     public void testResourceServiceFormatsParamResource() {
         final ITestResources resources = this.context().get(ITestResources.class);
-        final ResourceEntry testEntry = resources.parameterTestEntry("world");
+        final Message testEntry = resources.parameterTestEntry("world");
 
         Assertions.assertNotNull(testEntry);
         Assertions.assertEquals("Hello world!", testEntry.plain());
@@ -61,7 +61,7 @@ public class I18NServiceModifierTests extends ApplicationAwareTest {
     @Test
     void testAbstractServiceAbstractMethodIsProxied() {
         final AbstractTestResources resources = this.context().get(AbstractTestResources.class);
-        final ResourceEntry testEntry = resources.abstractEntry();
+        final Message testEntry = resources.abstractEntry();
 
         Assertions.assertNotNull(testEntry);
         Assertions.assertEquals("Hello abstract world!", testEntry.plain());
@@ -70,7 +70,7 @@ public class I18NServiceModifierTests extends ApplicationAwareTest {
     @Test
     void testAbstractServiceConcreteMethodIsProxied() {
         final AbstractTestResources resources = this.context().get(AbstractTestResources.class);
-        final ResourceEntry testEntry = resources.concreteEntry();
+        final Message testEntry = resources.concreteEntry();
 
         Assertions.assertNotNull(testEntry);
         Assertions.assertEquals("Hello concrete world!", testEntry.plain());
@@ -79,7 +79,7 @@ public class I18NServiceModifierTests extends ApplicationAwareTest {
     @Test
     void testConcreteServiceMethodIsProxied() {
         final TestResources resources = this.context().get(TestResources.class);
-        final ResourceEntry testEntry = resources.testEntry();
+        final Message testEntry = resources.testEntry();
 
         Assertions.assertNotNull(testEntry);
         Assertions.assertEquals("Hello world!", testEntry.plain());

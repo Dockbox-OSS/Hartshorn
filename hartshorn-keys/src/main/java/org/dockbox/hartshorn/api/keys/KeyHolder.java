@@ -20,7 +20,7 @@ package org.dockbox.hartshorn.api.keys;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.exceptions.Except;
 import org.dockbox.hartshorn.di.ContextCarrier;
-import org.dockbox.hartshorn.i18n.entry.DefaultResources;
+import org.dockbox.hartshorn.i18n.message.DefaultResources;
 
 /**
  * Low-level interface which can be used to access and retrieve values from a implementation of this

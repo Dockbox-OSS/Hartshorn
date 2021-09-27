@@ -15,26 +15,11 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.i18n.entry;
+package org.dockbox.hartshorn.i18n.message;
 
-public final class ResourceColors {
-
-    private ResourceColors() {
-    }
-
-    public static char primary() {
-        return 'b';
-    }
-
-    public static char secondary() {
-        return '3';
-    }
-
-    public static char minor() {
-        return '7';
-    }
-
-    public static char error() {
-        return 'c';
-    }
+public interface MessageFormatting {
+    String primary();
+    String secondary();
+    String minor();
+    String error();
 }

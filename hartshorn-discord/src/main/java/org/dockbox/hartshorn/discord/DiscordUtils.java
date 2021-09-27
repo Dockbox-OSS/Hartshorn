@@ -28,7 +28,7 @@ import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.di.annotations.service.Service;
 import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.discord.templates.Template;
-import org.dockbox.hartshorn.i18n.common.ResourceEntry;
+import org.dockbox.hartshorn.i18n.common.Message;
 import org.dockbox.hartshorn.i18n.text.Text;
 
 @Service
@@ -46,7 +46,7 @@ public interface DiscordUtils {
 
     void sendToTextChannel(Text text, MessageChannel channel);
 
-    void sendToTextChannel(ResourceEntry text, MessageChannel channel);
+    void sendToTextChannel(Message text, MessageChannel channel);
 
     void sendToTextChannel(DiscordPagination pagination, MessageChannel channel);
 
@@ -54,7 +54,7 @@ public interface DiscordUtils {
 
     void sendToUser(Text text, User user);
 
-    void sendToUser(ResourceEntry text, User user);
+    void sendToUser(Message text, User user);
 
     void sendToUser(DiscordPagination pagination, User user);
 

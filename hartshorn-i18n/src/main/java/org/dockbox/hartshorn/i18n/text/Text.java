@@ -18,7 +18,7 @@
 package org.dockbox.hartshorn.i18n.text;
 
 import org.dockbox.hartshorn.i18n.MessageReceiver;
-import org.dockbox.hartshorn.i18n.common.ResourceEntry;
+import org.dockbox.hartshorn.i18n.common.Message;
 import org.dockbox.hartshorn.i18n.text.actions.ClickAction;
 import org.dockbox.hartshorn.i18n.text.actions.HoverAction;
 import org.dockbox.hartshorn.i18n.text.actions.ShiftClickAction;
@@ -46,7 +46,7 @@ public class Text implements PersistentCapable<PersistentTextModel> {
             final Object prim = objects[0];
 
             if (prim instanceof Text) this.text = ((Text) prim).toStringValue();
-            else if (prim instanceof ResourceEntry) this.text = ((ResourceEntry) prim).asString();
+            else if (prim instanceof Message) this.text = ((Message) prim).asString();
             else this.text = prim.toString();
 
             for (final char styleChar : styleChars.toCharArray()) {
@@ -56,7 +56,7 @@ public class Text implements PersistentCapable<PersistentTextModel> {
 
             for (final Object obj : objects) {
                 if (obj instanceof Text) this.extra.add((Text) obj);
-                else if (obj instanceof ResourceEntry) this.extra.add(of(((ResourceEntry) obj).asString()));
+                else if (obj instanceof Message) this.extra.add(of(((Message) obj).asString()));
                 else this.extra.add(of(obj));
             }
         }

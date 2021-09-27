@@ -15,13 +15,13 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.i18n.entry;
+package org.dockbox.hartshorn.i18n.message;
 
 import org.dockbox.hartshorn.boot.Hartshorn;
 import org.dockbox.hartshorn.di.annotations.service.Service;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.i18n.annotations.Resource;
-import org.dockbox.hartshorn.i18n.common.ResourceEntry;
+import org.dockbox.hartshorn.i18n.common.Message;
 
 @Service(owner = Hartshorn.class)
 public interface DefaultResources {
@@ -31,21 +31,21 @@ public interface DefaultResources {
     }
 
     @Resource(value = "$3[] $1", key = "prefix")
-    ResourceEntry prefix();
+    Message prefix();
 
     @Resource(value = "$4An unknown occurred. $3{0}", key = "caught")
-    ResourceEntry unknownError(String message);
+    Message unknownError(String message);
 
     @Resource(value = "$4Cannot apply to this type", key = "caught.failedbinding")
-    ResourceEntry bindingFailure();
+    Message bindingFailure();
 
     @Resource(value = "$4Reference to object lost", key = "caught.reference.lost")
-    ResourceEntry referenceLost();
+    Message referenceLost();
 
     @Resource(value = "Unknown", key = "source.unknown")
-    ResourceEntry unknown();
+    Message unknown();
 
     @Resource(value = "$4{0}", key = "hartshorn.exception")
-    ResourceEntry exception(String message);
+    Message exception(String message);
 
 }

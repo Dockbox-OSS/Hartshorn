@@ -23,7 +23,7 @@ import org.dockbox.hartshorn.api.exceptions.NotImplementedException;
 import org.dockbox.hartshorn.di.annotations.inject.Bound;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.discord.DiscordCommandSource;
-import org.dockbox.hartshorn.i18n.common.ResourceEntry;
+import org.dockbox.hartshorn.i18n.common.Message;
 import org.dockbox.hartshorn.i18n.text.Text;
 import org.dockbox.hartshorn.i18n.text.pagination.Pagination;
 
@@ -50,7 +50,7 @@ public class JUnitDiscordCommandSource implements DiscordCommandSource {
     }
 
     @Override
-    public void send(final ResourceEntry text) {
+    public void send(final Message text) {
         // TODO: Test implementation, mocking client?
         throw new NotImplementedException();
     }
@@ -62,7 +62,7 @@ public class JUnitDiscordCommandSource implements DiscordCommandSource {
     }
 
     @Override
-    public void sendWithPrefix(final ResourceEntry text) {
+    public void sendWithPrefix(final Message text) {
         // TODO: Test implementation, mocking client?
         throw new NotImplementedException();
     }

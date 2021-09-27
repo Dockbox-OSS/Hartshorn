@@ -30,7 +30,7 @@ import org.dockbox.hartshorn.commands.definition.GroupCommandElement;
 import org.dockbox.hartshorn.commands.exceptions.ParsingException;
 import org.dockbox.hartshorn.commands.service.CommandParameter;
 import org.dockbox.hartshorn.di.annotations.inject.Binds;
-import org.dockbox.hartshorn.i18n.common.ResourceEntry;
+import org.dockbox.hartshorn.i18n.common.Message;
 import org.dockbox.hartshorn.util.HartshornUtils;
 
 import java.util.Collection;
@@ -143,7 +143,7 @@ public class CommandParserImpl implements CommandParser {
 
     private Collection<CommandParameter<?>> parameter(final Exceptional<?> value, final String token, final String elementType, final String elementName, final CommandPartial partial, final CommandSource source) throws ParsingException {
         if (value.absent()) {
-            final ResourceEntry resource = this.resources.couldNotParse(elementType, elementName);
+            final Message resource = this.resources.couldNotParse(elementType, elementName);
             throw value.caught() ? new ParsingException(resource, value.error()) : new ParsingException(resource);
         }
         else {
