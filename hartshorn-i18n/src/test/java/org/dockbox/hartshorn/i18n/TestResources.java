@@ -19,12 +19,12 @@ package org.dockbox.hartshorn.i18n;
 
 import org.dockbox.hartshorn.di.annotations.service.Service;
 import org.dockbox.hartshorn.i18n.annotations.Resource;
-import org.dockbox.hartshorn.i18n.common.ResourceEntry;
+import org.dockbox.hartshorn.i18n.common.Message;
 
 @Service
 public class TestResources {
 
     @Resource("Hello world!")
-    public ResourceEntry testEntry() {return null;}
+    public Message testEntry() {return null;}
 
 }

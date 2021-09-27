@@ -18,7 +18,7 @@
 package org.dockbox.hartshorn.i18n.common;
 
 import org.dockbox.hartshorn.di.context.ApplicationContext;
-import org.dockbox.hartshorn.i18n.entry.Resource;
+import org.dockbox.hartshorn.i18n.entry.MessageTemplate;
 import org.dockbox.hartshorn.persistence.PersistentModel;
 
 import lombok.AllArgsConstructor;
@@ -26,19 +26,19 @@ import lombok.NoArgsConstructor;
 
 @AllArgsConstructor
 @NoArgsConstructor
-public class ResourceEntryModel implements PersistentModel<ResourceEntry> {
+public class ResourceEntryModel implements PersistentModel<Message> {
 
     private String key;
     private String fallback;
     private Language language;
 
     @Override
-    public Class<? extends ResourceEntry> type() {
-        return ResourceEntry.class;
+    public Class<? extends Message> type() {
+        return Message.class;
     }
 
     @Override
-    public ResourceEntry restore(final ApplicationContext context) {
-        return new Resource(context, this.fallback, this.key, this.language);
+    public Message restore(final ApplicationContext context) {
+        return new MessageTemplate(context, this.fallback, this.key, this.language);
     }
 }

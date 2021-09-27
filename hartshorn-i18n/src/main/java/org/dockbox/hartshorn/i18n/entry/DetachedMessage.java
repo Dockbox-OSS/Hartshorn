@@ -19,20 +19,20 @@ package org.dockbox.hartshorn.i18n.entry;
 
 import org.dockbox.hartshorn.i18n.MessageReceiver;
 import org.dockbox.hartshorn.i18n.common.Language;
-import org.dockbox.hartshorn.i18n.common.ResourceEntry;
+import org.dockbox.hartshorn.i18n.common.Message;
 import org.dockbox.hartshorn.i18n.text.Text;
 
-public class FakeResource implements ResourceEntry {
+public class DetachedMessage implements Message {
 
     private final String fake;
 
-    public FakeResource(String fake) {
-        this.fake = fake;
+    public DetachedMessage(String content) {
+        this.fake = content;
     }
 
     @Override
     public String key() {
-        return "hartshorn.fake";
+        return "hartshorn.detached";
     }
 
     @Override
@@ -51,22 +51,22 @@ public class FakeResource implements ResourceEntry {
     }
 
     @Override
-    public ResourceEntry translate(MessageReceiver receiver) {
+    public Message translate(MessageReceiver receiver) {
         return this;
     }
 
     @Override
-    public ResourceEntry translate(Language lang) {
+    public Message translate(Language lang) {
         return this;
     }
 
     @Override
-    public ResourceEntry translate() {
+    public Message translate() {
         return this;
     }
 
     @Override
-    public ResourceEntry format(Object... args) {
+    public Message format(Object... args) {
         return this;
     }
 

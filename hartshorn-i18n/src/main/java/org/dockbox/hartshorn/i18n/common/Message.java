@@ -21,19 +21,19 @@ import org.dockbox.hartshorn.i18n.MessageReceiver;
 import org.dockbox.hartshorn.i18n.text.Text;
 import org.dockbox.hartshorn.persistence.PersistentCapable;
 
-public interface ResourceEntry extends Formattable, PersistentCapable<ResourceEntryModel> {
+public interface Message extends Formattable, PersistentCapable<ResourceEntryModel> {
 
     Text asText();
 
     String plain();
 
-    ResourceEntry translate(MessageReceiver receiver);
+    Message translate(MessageReceiver receiver);
 
-    ResourceEntry translate(Language lang);
+    Message translate(Language lang);
 
-    ResourceEntry translate();
+    Message translate();
 
-    ResourceEntry format(Object... args);
+    Message format(Object... args);
 
     @Override
     default Class<? extends ResourceEntryModel> type() {

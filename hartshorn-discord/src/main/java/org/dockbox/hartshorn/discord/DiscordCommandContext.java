@@ -23,7 +23,7 @@ import net.dv8tion.jda.api.entities.User;
 import org.dockbox.hartshorn.di.ContextCarrier;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.di.context.DefaultContext;
-import org.dockbox.hartshorn.i18n.common.ResourceEntry;
+import org.dockbox.hartshorn.i18n.common.Message;
 import org.dockbox.hartshorn.i18n.text.Text;
 
 import java.time.LocalDateTime;
@@ -46,7 +46,7 @@ public class DiscordCommandContext extends DefaultContext implements ContextCarr
         this.applicationContext().get(DiscordUtils.class).sendToTextChannel(text, this.channel());
     }
 
-    public void sendToChannel(final ResourceEntry text) {
+    public void sendToChannel(final Message text) {
         this.applicationContext().get(DiscordUtils.class).sendToTextChannel(text, this.channel());
     }
 
@@ -54,7 +54,7 @@ public class DiscordCommandContext extends DefaultContext implements ContextCarr
         this.applicationContext().get(DiscordUtils.class).sendToUser(text, this.author());
     }
 
-    public void sendToAuthor(final ResourceEntry text) {
+    public void sendToAuthor(final Message text) {
         this.applicationContext().get(DiscordUtils.class).sendToUser(text, this.author());
     }
 }

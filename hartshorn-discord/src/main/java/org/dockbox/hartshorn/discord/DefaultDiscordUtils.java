@@ -28,7 +28,6 @@ import net.dv8tion.jda.api.entities.Category;
 import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.GuildChannel;
-import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.Role;
@@ -48,7 +47,7 @@ import org.dockbox.hartshorn.discord.annotations.DiscordCommand;
 import org.dockbox.hartshorn.discord.annotations.DiscordCommand.ListeningLevel;
 import org.dockbox.hartshorn.discord.templates.MessageTemplate;
 import org.dockbox.hartshorn.discord.templates.Template;
-import org.dockbox.hartshorn.i18n.common.ResourceEntry;
+import org.dockbox.hartshorn.i18n.common.Message;
 import org.dockbox.hartshorn.i18n.text.Text;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.jetbrains.annotations.NotNull;
@@ -76,7 +75,7 @@ public abstract class DefaultDiscordUtils implements DiscordUtils {
         return this.jda().map(jda -> {
             final TextChannel channel = jda.getTextChannelById(channelId);
             if (null == channel) return false;
-            final Message message = channel.retrieveMessageById(messageId).complete();
+            final net.dv8tion.jda.api.entities.Message message = channel.retrieveMessageById(messageId).complete();
             return null != message;
         }).or(false);
     }
@@ -101,7 +100,7 @@ public abstract class DefaultDiscordUtils implements DiscordUtils {
     }
 
     @Override
-    public void sendToTextChannel(@NotNull final ResourceEntry text, @NotNull final MessageChannel channel) {
+    public void sendToTextChannel(@NotNull final Message text, @NotNull final MessageChannel channel) {
         DefaultDiscordUtils.sendToTextChannel(text.plain(), channel);
     }
 
@@ -119,7 +118,7 @@ public abstract class DefaultDiscordUtils implements DiscordUtils {
 
                 final List<Page> pages = pagination.pages().stream()
                         .map(page -> {
-                            if (page instanceof Message) {
+                            if (page instanceof net.dv8tion.jda.api.entities.Message) {
                                 return new Page(PageType.TEXT, page);
                             }
                             else if (page instanceof MessageEmbed) {
@@ -128,7 +127,7 @@ public abstract class DefaultDiscordUtils implements DiscordUtils {
                             else throw new IllegalArgumentException("Pages of type '" + page.getClass().getName() + "' are not supported");
                         }).toList();
 
-                channel.sendMessage((Message) pages.get(0).getContent()).queue(success -> Pages.paginate(success, pages));
+                channel.sendMessage((net.dv8tion.jda.api.entities.Message) pages.get(0).getContent()).queue(success -> Pages.paginate(success, pages));
             }
             catch (final InvalidHandlerException e) {
                 Except.handle(e);
@@ -148,7 +147,7 @@ public abstract class DefaultDiscordUtils implements DiscordUtils {
     }
 
     @Override
-    public void sendToUser(@NotNull final ResourceEntry text, @NotNull final User user) {
+    public void sendToUser(@NotNull final Message text, @NotNull final User user) {
         DefaultDiscordUtils.sendToUser(text.plain(), user);
     }
 

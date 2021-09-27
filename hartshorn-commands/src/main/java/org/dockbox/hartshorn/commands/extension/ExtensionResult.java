@@ -18,8 +18,8 @@
 package org.dockbox.hartshorn.commands.extension;
 
 import org.dockbox.hartshorn.commands.CommandSource;
-import org.dockbox.hartshorn.i18n.common.ResourceEntry;
-import org.dockbox.hartshorn.i18n.entry.FakeResource;
+import org.dockbox.hartshorn.i18n.common.Message;
+import org.dockbox.hartshorn.i18n.entry.DetachedMessage;
 
 import lombok.AllArgsConstructor;
 
@@ -30,7 +30,7 @@ import lombok.AllArgsConstructor;
 public final class ExtensionResult {
 
     private final boolean proceed;
-    private final ResourceEntry reason;
+    private final Message reason;
     private final boolean send;
 
     /**
@@ -40,25 +40,25 @@ public final class ExtensionResult {
      * @return The {@link ExtensionResult}
      */
     public static ExtensionResult accept() {
-        return new ExtensionResult(true, new FakeResource(""), false);
+        return new ExtensionResult(true, new DetachedMessage(""), false);
     }
 
     /**
      * Gets a new {@link ExtensionResult} which rejects the {@link org.dockbox.hartshorn.commands.CommandExecutor} to
-     * proceed. This result will send the provided {@link ResourceEntry} to the {@link CommandSource}.
+     * proceed. This result will send the provided {@link Message} to the {@link CommandSource}.
      *
      * @param reason
      *         The reason
      *
      * @return The {@link ExtensionResult}
      */
-    public static ExtensionResult reject(ResourceEntry reason) {
+    public static ExtensionResult reject(Message reason) {
         return reject(reason, true);
     }
 
     /**
      * Gets a new {@link ExtensionResult} which rejects the {@link org.dockbox.hartshorn.commands.CommandExecutor} to
-     * proceed. This result will send the provided {@link ResourceEntry} to the {@link CommandSource}
+     * proceed. This result will send the provided {@link Message} to the {@link CommandSource}
      * if <code>send</code> is <code>true</code>.
      *
      * @param reason
@@ -68,7 +68,7 @@ public final class ExtensionResult {
      *
      * @return The {@link ExtensionResult}
      */
-    public static ExtensionResult reject(ResourceEntry reason, boolean send) {
+    public static ExtensionResult reject(Message reason, boolean send) {
         return new ExtensionResult(false, reason, send);
     }
 
@@ -89,7 +89,7 @@ public final class ExtensionResult {
      *
      * @return The reason
      */
-    public ResourceEntry reason() {
+    public Message reason() {
         return this.reason;
     }
 

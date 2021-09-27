@@ -35,7 +35,7 @@ import org.dockbox.hartshorn.di.context.element.ParameterContext;
 import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.events.annotations.Posting;
 import org.dockbox.hartshorn.events.parents.Cancellable;
-import org.dockbox.hartshorn.i18n.common.ResourceEntry;
+import org.dockbox.hartshorn.i18n.common.Message;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.jetbrains.annotations.Nullable;
 
@@ -115,7 +115,7 @@ public class MethodCommandExecutorContext<T> extends DefaultCarrierContext imple
         return (ctx) -> {
             final Cancellable before = new Before(ctx.source(), ctx).with(this.applicationContext).post();
             if (before.cancelled()) {
-                final ResourceEntry cancelled = this.applicationContext.get(CommandResources.class).cancelled();
+                final Message cancelled = this.applicationContext.get(CommandResources.class).cancelled();
                 ctx.source().send(cancelled);
             }
 

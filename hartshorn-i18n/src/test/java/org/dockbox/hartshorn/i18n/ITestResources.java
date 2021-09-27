@@ -19,15 +19,15 @@ package org.dockbox.hartshorn.i18n;
 
 import org.dockbox.hartshorn.di.annotations.service.Service;
 import org.dockbox.hartshorn.i18n.annotations.Resource;
-import org.dockbox.hartshorn.i18n.common.ResourceEntry;
+import org.dockbox.hartshorn.i18n.common.Message;
 
 @Service(id = "resource")
 public interface ITestResources {
 
     @Resource("Hello world!")
-    ResourceEntry testEntry();
+    Message testEntry();
 
     @Resource("Hello {0}!")
-    ResourceEntry parameterTestEntry(String name);
+    Message parameterTestEntry(String name);
 
 }

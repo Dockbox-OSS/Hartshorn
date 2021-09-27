@@ -24,7 +24,7 @@ import org.dockbox.hartshorn.di.annotations.service.Service;
 import org.dockbox.hartshorn.di.services.ComponentContainer;
 import org.dockbox.hartshorn.i18n.ResourceService;
 import org.dockbox.hartshorn.i18n.common.Language;
-import org.dockbox.hartshorn.i18n.common.ResourceEntry;
+import org.dockbox.hartshorn.i18n.common.Message;
 import org.dockbox.hartshorn.i18n.text.Text;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.jetbrains.annotations.NonNls;
@@ -124,13 +124,13 @@ public final class DefaultArgumentConverters {
             .withConverter(HartshornUtils::durationOf)
             .build();
 
-    public static final ArgumentConverter<ResourceEntry> RESOURCE = ArgumentConverterImpl.builder(ResourceEntry.class, "resource", "i18n", "translation")
+    public static final ArgumentConverter<Message> RESOURCE = ArgumentConverterImpl.builder(Message.class, "resource", "i18n", "translation")
             .withConverter((src, in) -> {
                 ResourceService rs = src.applicationContext().get(ResourceService.class);
                 String validKey = rs.createValidKey(in);
 
-                Exceptional<? extends ResourceEntry> or = rs.get(validKey);
-                if (or.present()) return or.map(ResourceEntry.class::cast);
+                Exceptional<? extends Message> or = rs.get(validKey);
+                if (or.present()) return or.map(Message.class::cast);
 
                 return src.applicationContext().get(ResourceService.class).get(validKey);
             }).build();

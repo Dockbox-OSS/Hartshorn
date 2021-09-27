@@ -19,18 +19,18 @@ package org.dockbox.hartshorn.discord;
 
 import org.dockbox.hartshorn.di.annotations.service.Service;
 import org.dockbox.hartshorn.i18n.annotations.Resource;
-import org.dockbox.hartshorn.i18n.common.ResourceEntry;
+import org.dockbox.hartshorn.i18n.common.Message;
 
 @Service(owner = DiscordUtils.class)
 public interface DiscordResources {
 
     @Resource("Sorry, I don't know what to do with that command!")
-    ResourceEntry commandUnknown();
+    Message commandUnknown();
 
     @Resource("You are not permitted to use that command!")
-    ResourceEntry commandNotPermitted();
+    Message commandNotPermitted();
 
     @Resource("Sorry, I could not start that command. Please report this in our support channel.")
-    ResourceEntry commandCaught();
+    Message commandCaught();
 
 }

@@ -22,7 +22,7 @@ import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.i18n.MessageReceiver;
 import org.dockbox.hartshorn.i18n.ResourceService;
 import org.dockbox.hartshorn.i18n.common.Language;
-import org.dockbox.hartshorn.i18n.common.ResourceEntry;
+import org.dockbox.hartshorn.i18n.common.Message;
 import org.dockbox.hartshorn.i18n.text.Text;
 import org.dockbox.hartshorn.util.HartshornUtils;
 
@@ -30,7 +30,7 @@ import java.util.Map;
 
 import lombok.Getter;
 
-public class Resource implements ResourceEntry, ContextCarrier {
+public class MessageTemplate implements Message, ContextCarrier {
 
     @Getter private final Language language;
     private final Object[] formattingArgs;
@@ -38,22 +38,24 @@ public class Resource implements ResourceEntry, ContextCarrier {
     private final Map<Language, String> resourceMap;
     private final String value;
     @Getter private final ApplicationContext applicationContext;
+    @Getter private final MessageFormatting formatting;
 
-    public Resource(final ApplicationContext context, final String value, final String key) {
+    public MessageTemplate(final ApplicationContext context, final String value, final String key) {
         this(context, value, key, Language.EN_US);
     }
 
-    public Resource(final ApplicationContext context, final String value, final String key, final Language language) {
+    public MessageTemplate(final ApplicationContext context, final String value, final String key, final Language language) {
         this(context, value, key, language, new Object[0]);
     }
 
-    public Resource(final ApplicationContext context, final String value, final String key, final Language language, final Object... args) {
+    public MessageTemplate(final ApplicationContext context, final String value, final String key, final Language language, final Object... args) {
         this.key = key;
         this.applicationContext = context;
         this.resourceMap = context.get(ResourceService.class).translations(this);
         this.value = this.resourceMap.getOrDefault(language, value);
         this.language = language;
         this.formattingArgs = args;
+        this.formatting = context.get(MessageFormatting.class);
     }
 
     @Override
@@ -72,25 +74,25 @@ public class Resource implements ResourceEntry, ContextCarrier {
     }
 
     @Override
-    public ResourceEntry translate(final MessageReceiver receiver) {
+    public Message translate(final MessageReceiver receiver) {
         return this.translate(receiver.language());
     }
 
     @Override
-    public ResourceEntry translate(final Language lang) {
+    public Message translate(final Language lang) {
         if (this.resourceMap.containsKey(lang))
-            return new Resource(this.applicationContext, this.resourceMap.get(lang), this.key(), lang, this.formattingArgs);
+            return new MessageTemplate(this.applicationContext, this.resourceMap.get(lang), this.key(), lang, this.formattingArgs);
         return this;
     }
 
     @Override
-    public ResourceEntry translate() {
+    public Message translate() {
         return this.translate(Language.EN_US);
     }
 
     @Override
-    public ResourceEntry format(final Object... args) {
-        return new Resource(this.applicationContext, this.value, this.key, this.language, args);
+    public Message format(final Object... args) {
+        return new MessageTemplate(this.applicationContext, this.value, this.key, this.language, args);
     }
 
     private String formatCustom() {
@@ -105,18 +107,18 @@ public class Resource implements ResourceEntry, ContextCarrier {
             if (0 == i) map.put("%s", arg);
         }
         temp = this.replaceFromMap(temp, map);
-        return Resource.parseColors(temp);
+        return this.parseColors(temp);
     }
 
-    public static String parseColors(final String m) {
+    protected String parseColors(final String m) {
         String temp = m;
         final char[] nativeFormats = "abcdef1234567890klmnor".toCharArray();
         for (final char c : nativeFormats)
             temp = temp.replace(String.format("&%s", c), String.format("\u00A7%s", c));
         return temp
-                .replace("$1", java.lang.String.format("\u00A7%s", ResourceColors.primary()))
-                .replace("$2", java.lang.String.format("\u00A7%s", ResourceColors.secondary()))
-                .replace("$3", java.lang.String.format("\u00A7%s", ResourceColors.minor()))
-                .replace("$4", java.lang.String.format("\u00A7%s", ResourceColors.error()));
+                .replace("$1", java.lang.String.format("\u00A7%s", this.formatting.primary()))
+                .replace("$2", java.lang.String.format("\u00A7%s", this.formatting.secondary()))
+                .replace("$3", java.lang.String.format("\u00A7%s", this.formatting.minor()))
+                .replace("$4", java.lang.String.format("\u00A7%s", this.formatting.error()));
     }
 }

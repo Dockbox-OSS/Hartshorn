@@ -24,7 +24,7 @@ import org.dockbox.hartshorn.commands.exceptions.ParsingException;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.i18n.PermissionHolder;
 import org.dockbox.hartshorn.i18n.common.Language;
-import org.dockbox.hartshorn.i18n.common.ResourceEntry;
+import org.dockbox.hartshorn.i18n.common.Message;
 import org.dockbox.hartshorn.i18n.permissions.Permission;
 import org.dockbox.hartshorn.i18n.permissions.PermissionContext;
 import org.dockbox.hartshorn.i18n.text.Text;
@@ -59,13 +59,13 @@ public abstract class SystemSubject implements CommandSource, PermissionHolder, 
     }
 
     @Override
-    public void send(@NotNull final ResourceEntry text) {
+    public void send(@NotNull final Message text) {
         final Text formattedValue = text.translate().asText();
         this.send(formattedValue);
     }
 
     @Override
-    public void sendWithPrefix(@NotNull final ResourceEntry text) {
+    public void sendWithPrefix(@NotNull final Message text) {
         final Text formattedValue = text.translate().asText();
         this.sendWithPrefix(formattedValue);
     }
