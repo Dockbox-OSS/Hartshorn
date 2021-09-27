@@ -42,6 +42,8 @@ import org.slf4j.LoggerFactory;
 import java.lang.annotation.Annotation;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 
@@ -57,6 +59,8 @@ public abstract class ManagedHartshornContext extends DefaultContext implements 
 
     protected final transient Set<InjectionModifier<?>> injectionModifiers = HartshornUtils.emptyConcurrentSet();
     protected final transient Set<ServiceProcessor<?>> serviceProcessors = HartshornUtils.emptyConcurrentSet();
+
+    protected final transient Map<String, Object> environmentValues = HartshornUtils.emptyConcurrentMap();
 
     @Getter(AccessLevel.PROTECTED) private final Activator activator;
     @Getter private final ApplicationEnvironment environment;
@@ -192,5 +196,27 @@ public abstract class ManagedHartshornContext extends DefaultContext implements 
                 }
             }
         }
+    }
+
+    @Override
+    public <T> Exceptional<T> property(String key) {
+        //noinspection unchecked
+        return Exceptional.of(() -> (T) this.environmentValues.getOrDefault(key, System.getenv(key)));
+    }
+
+    @Override
+    public boolean hasProperty(String key) {
+        return this.property(key).present();
+    }
+
+    @Override
+    public <T> void property(String key, T value) {
+        this.environmentValues.put(key, value);
+    }
+
+    @Override
+    public void properties(Map<String, Object> tree) {
+        for (Entry<String, Object> entry : tree.entrySet())
+            this.property(entry.getKey(), entry.getValue());
     }
 }
