@@ -19,8 +19,8 @@ package org.dockbox.hartshorn.api.keys;
 
 import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.i18n.common.Message;
-import org.dockbox.hartshorn.i18n.entry.DefaultResources;
-import org.dockbox.hartshorn.i18n.entry.DetachedMessage;
+import org.dockbox.hartshorn.i18n.message.DefaultResources;
+import org.dockbox.hartshorn.i18n.message.DetachedMessage;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.commands.extension;
 
 import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.i18n.common.Message;
-import org.dockbox.hartshorn.i18n.entry.DetachedMessage;
+import org.dockbox.hartshorn.i18n.message.DetachedMessage;
 
 import lombok.AllArgsConstructor;
 

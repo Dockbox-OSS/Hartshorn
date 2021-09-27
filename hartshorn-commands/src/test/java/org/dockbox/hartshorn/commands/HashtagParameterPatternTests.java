@@ -23,7 +23,7 @@ import org.dockbox.hartshorn.commands.arguments.HashtagParameterPattern;
 import org.dockbox.hartshorn.commands.types.CuboidArgument;
 import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.i18n.common.Message;
-import org.dockbox.hartshorn.i18n.entry.DetachedMessage;
+import org.dockbox.hartshorn.i18n.message.DetachedMessage;
 import org.dockbox.hartshorn.test.ApplicationAwareTest;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.junit.jupiter.api.Assertions;

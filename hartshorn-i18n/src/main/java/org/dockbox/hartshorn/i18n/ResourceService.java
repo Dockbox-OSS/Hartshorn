@@ -21,7 +21,7 @@ import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.di.ContextCarrier;
 import org.dockbox.hartshorn.i18n.common.Language;
 import org.dockbox.hartshorn.i18n.common.Message;
-import org.dockbox.hartshorn.i18n.entry.MessageTemplate;
+import org.dockbox.hartshorn.i18n.message.MessageTemplate;
 
 import java.util.Map;
 
