@@ -17,51 +17,11 @@
 
 package org.dockbox.hartshorn.config;
 
-import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.di.context.ApplicationContext;
-
-import java.nio.file.Path;
-
 /**
  * Manager type responsible for accessing configuration files and obtaining values
  * through key-based accessors.
  */
 public interface ConfigurationManager {
 
-    /**
-     * Creates a new {@link ConfigurationManager} for the given {@link Path}.
-     *
-     * @param path
-     *         The path referencing the configuration file.
-     *
-     * @return The new {@link ConfigurationManager}
-     */
-    static ConfigurationManager of(final ApplicationContext context, final Path path) {
-        return context.get(ConfigurationManager.class, path);
-    }
-
-    /**
-     * Attempts to obtain a single configuration value from the given key. Nested
-     * values are separated by a single period symbol. For example, in the configuration
-     * (JSON) below the deepest value is accessed with <code>config.nested.value</code>,
-     * returning the value 'A'
-     * <pre><code>
-     *     {
-     *         "config": {
-     *             "nested": {
-     *                 "value": "A"
-     *             }
-     *         }
-     *     }
-     * </code></pre>
-     *
-     * @param key
-     *         The key used to look up the value
-     * @param <T>
-     *         The expected type of the value
-     *
-     * @return The value if it exists, or {@link Exceptional#empty()}
-     */
-    <T> Exceptional<T> get(String key);
 
 }

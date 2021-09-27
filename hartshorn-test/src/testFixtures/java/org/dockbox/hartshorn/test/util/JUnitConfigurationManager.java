@@ -33,24 +33,4 @@ public class JUnitConfigurationManager extends ConfigurationManagerImpl {
         super(path);
         // Path is typically stored to obtain values from, during testing this is not required.
     }
-
-    public static void add(final String key, final Object value) {
-        cache.put(key, value);
-    }
-
-    public static void reset() {
-        cache.clear();
-    }
-
-    @Override
-    public Map<String, Map<String, Object>> cache() {
-        return HartshornUtils.ofEntries(
-                HartshornUtils.entry(this.fileKey(), cache)
-        );
-    }
-
-    @Override
-    protected String fileKey() {
-        return "junit";
-    }
 }

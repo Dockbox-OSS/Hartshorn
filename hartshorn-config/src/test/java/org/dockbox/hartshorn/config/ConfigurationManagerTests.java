@@ -18,9 +18,7 @@
 package org.dockbox.hartshorn.config;
 
 import org.dockbox.hartshorn.test.ApplicationAwareTest;
-import org.dockbox.hartshorn.test.util.JUnitConfigurationManager;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
@@ -28,14 +26,9 @@ import java.util.Map;
 
 public class ConfigurationManagerTests extends ApplicationAwareTest {
 
-    @BeforeEach
-    void reset() {
-        JUnitConfigurationManager.reset();
-    }
-
     @Test
     void testNormalValuesAreAccessible() {
-        JUnitConfigurationManager.add("demo", "Hartshorn");
+        this.context().property("demo", "Hartshorn");
         final ValueTyped typed = this.context().get(ValueTyped.class);
 
         Assertions.assertNotNull(typed.string());
@@ -46,7 +39,7 @@ public class ConfigurationManagerTests extends ApplicationAwareTest {
     void testNestedValuesAreAccessible() {
         final Map<String, Object> values = new HashMap<>();
         values.put("demo", "Hartshorn");
-        JUnitConfigurationManager.add("nested", values);
+        this.context().property("nested", values);
         final ValueTyped typed = this.context().get(ValueTyped.class);
 
         Assertions.assertNotNull(typed);

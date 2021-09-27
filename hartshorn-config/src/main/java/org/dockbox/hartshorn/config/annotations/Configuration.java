@@ -17,8 +17,7 @@
 
 package org.dockbox.hartshorn.config.annotations;
 
-import org.dockbox.hartshorn.boot.Hartshorn;
-import org.dockbox.hartshorn.di.annotations.component.Component;
+import org.dockbox.hartshorn.di.annotations.service.Service;
 import org.dockbox.hartshorn.util.annotations.Extends;
 
 import java.lang.annotation.ElementType;
@@ -33,10 +32,8 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-@Extends(Component.class)
-@Component(singleton = true)
+@Extends(Service.class)
 public @interface Configuration {
-    String source() default "";
-
-    Class<?> owner() default Hartshorn.class;
+    String source();
+    Class<?> owner();
 }
