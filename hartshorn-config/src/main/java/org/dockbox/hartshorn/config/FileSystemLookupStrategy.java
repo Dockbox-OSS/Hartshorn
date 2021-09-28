@@ -26,12 +26,12 @@ import org.dockbox.hartshorn.persistence.FileTypeAttribute;
 
 import java.net.URI;
 
-public class DataPathLookupStrategy implements ResourceLookupStrategy {
+import lombok.Getter;
 
-    @Override
-    public boolean accepts(ApplicationContext context, String path, TypeContext<?> owner) {
-        return true;
-    }
+public class FileSystemLookupStrategy implements ResourceLookupStrategy {
+
+    @Getter
+    private final String name = "fs";
 
     @Override
     public Exceptional<URI> lookup(ApplicationContext context, String path, TypeContext<?> owner, FileType fileType) {

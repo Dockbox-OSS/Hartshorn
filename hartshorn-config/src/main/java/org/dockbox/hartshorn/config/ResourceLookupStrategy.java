@@ -25,6 +25,6 @@ import org.dockbox.hartshorn.persistence.FileType;
 import java.net.URI;
 
 public interface ResourceLookupStrategy {
-    boolean accepts(ApplicationContext context, String path, TypeContext<?> owner);
+    String name();
     Exceptional<URI> lookup(ApplicationContext context, String path, TypeContext<?> owner, FileType fileType);
 }

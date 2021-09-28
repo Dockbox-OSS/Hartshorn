@@ -22,7 +22,7 @@ import org.dockbox.hartshorn.config.annotations.Value;
 
 import lombok.Getter;
 
-@Configuration(source = "$cp{junit}")
+@Configuration(source = "classpath:junit")
 public class DemoClasspathConfiguration {
 
     @Value("junit.cp")

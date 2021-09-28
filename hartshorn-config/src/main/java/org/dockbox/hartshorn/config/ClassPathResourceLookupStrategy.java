@@ -25,27 +25,16 @@ import org.dockbox.hartshorn.persistence.FileType;
 
 import java.net.URI;
 import java.nio.file.Path;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
+import lombok.Getter;
 
 public class ClassPathResourceLookupStrategy implements ResourceLookupStrategy {
 
-    private static final Pattern PATTERN = Pattern.compile("\\$cp\\{(.+)}");
-
-    @Override
-    public boolean accepts(ApplicationContext context, String path, TypeContext<?> owner) {
-        return PATTERN.asMatchPredicate().test(path);
-    }
+    @Getter
+    private final String name = "classpath";
 
     @Override
     public Exceptional<URI> lookup(ApplicationContext context, String path, TypeContext<?> owner, FileType fileType) {
-        return Exceptional.of(() -> {
-            Matcher matcher = PATTERN.matcher(path);
-            if (matcher.find()) {
-                String resource = fileType.asFileName(matcher.group(1));
-                return Hartshorn.resource(resource).map(Path::toUri).orNull();
-            }
-            return null;
-        });
+        return Hartshorn.resource(fileType.asFileName(path)).map(Path::toUri);
     }
 }

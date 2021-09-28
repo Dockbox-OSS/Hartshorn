@@ -11,18 +11,21 @@ import org.dockbox.hartshorn.util.HartshornUtils;
 
 import java.net.URI;
 import java.util.Map;
-import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ConfigurationServiceProcessor implements ServiceProcessor<UseConfigurations> {
 
-    private static final Set<ResourceLookupStrategy> strategies = HartshornUtils.emptyConcurrentSet();
+    private static final Pattern STRATEGY_PATTERN = Pattern.compile("(.+):(.+)");
+    private static final Map<String, ResourceLookupStrategy> strategies = HartshornUtils.emptyConcurrentMap();
 
     static {
         addStrategy(new ClassPathResourceLookupStrategy());
+        addStrategy(new FileSystemLookupStrategy());
     }
 
     public static void addStrategy(ResourceLookupStrategy strategy) {
-        strategies.add(strategy);
+        strategies.put(strategy.name(), strategy);
     }
 
     @Override
@@ -43,15 +46,16 @@ public class ConfigurationServiceProcessor implements ServiceProcessor<UseConfig
         TypeContext<?> owner = TypeContext.of(configuration.owner());
         FileType filetype = configuration.filetype();
 
-        URI config = null;
-        for (ResourceLookupStrategy strategy : strategies) {
-            if (strategy.accepts(context, source, owner)) {
-                config = strategy.lookup(context, source, owner, filetype).orNull();
-                break;
-            }
+        final Matcher matcher = STRATEGY_PATTERN.matcher(source);
+        ResourceLookupStrategy strategy = new FileSystemLookupStrategy();
+        if (matcher.find()) {
+            strategy = strategies.getOrDefault(matcher.group(1), strategy);
+            source = matcher.group(2);
         }
 
-        if (config == null) config = new DataPathLookupStrategy().lookup(context, source, owner, filetype).get();
+        URI config = strategy.lookup(context, source, owner, filetype).orNull();
+
+        if (config == null) config = new FileSystemLookupStrategy().lookup(context, source, owner, filetype).get();
         final Map<String, Object> cache = context.get(ObjectMapper.class)
                 .fileType(filetype)
                 .flat(config);
