@@ -27,8 +27,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.Map;
 
 public class ConfigurationManagerTests extends ApplicationAwareTest {
 
@@ -71,9 +69,7 @@ public class ConfigurationManagerTests extends ApplicationAwareTest {
 
     @Test
     void testNestedValuesAreAccessible() {
-        final Map<String, Object> values = new HashMap<>();
-        values.put("demo", "Hartshorn");
-        this.context().property("nested", values);
+        this.context().property("nested.demo", "Hartshorn");
         final ValueTyped typed = this.context().get(ValueTyped.class);
 
         Assertions.assertNotNull(typed);
