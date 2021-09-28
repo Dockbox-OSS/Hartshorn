@@ -43,6 +43,24 @@ public class ConfigurationManagerTests extends ApplicationAwareTest {
     }
 
     @Test
+    void testFsConfigurations() {
+        // Create and populate the file, as we have no way to define local files in tests (yet)
+        FileManager files = this.context().get(FileManager.class, FileTypeAttribute.of(FileType.YAML));
+        Path file = files.configFile(Hartshorn.class, "junit");
+        files.write(file, """
+                junit:
+                    fs: "This is a value"
+                    """);
+
+        new ConfigurationServiceProcessor().process(this.context(), TypeContext.of(DemoFSConfiguration.class));
+
+        DemoFSConfiguration configuration = this.context().get(DemoFSConfiguration.class);
+        Assertions.assertNotNull(configuration);
+        Assertions.assertNotNull(configuration.fileSystemValue());
+        Assertions.assertEquals("This is a value", configuration.fileSystemValue());
+    }
+
+    @Test
     void testNormalValuesAreAccessible() {
         this.context().property("demo", "Hartshorn");
         final ValueTyped typed = this.context().get(ValueTyped.class);
