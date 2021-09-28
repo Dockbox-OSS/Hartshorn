@@ -21,11 +21,16 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.core.JsonParser.Feature;
+import com.fasterxml.jackson.core.TreeNode;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.node.ValueNode;
 import com.fasterxml.jackson.dataformat.javaprop.JavaPropsMapper;
 import com.fasterxml.jackson.dataformat.toml.TomlMapper;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
@@ -35,6 +40,7 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLParser;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.api.exceptions.Except;
 import org.dockbox.hartshorn.di.GenericType;
 import org.dockbox.hartshorn.di.annotations.component.Component;
 import org.dockbox.hartshorn.di.annotations.inject.Binds;
@@ -45,13 +51,18 @@ import org.dockbox.hartshorn.persistence.FileType;
 import org.dockbox.hartshorn.persistence.PersistentCapable;
 import org.dockbox.hartshorn.persistence.PersistentModel;
 import org.dockbox.hartshorn.persistence.properties.PersistenceModifier;
+import org.dockbox.hartshorn.util.HartshornUtils;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
 import java.lang.reflect.Type;
 import java.net.URL;
 import java.nio.file.Path;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.Callable;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -73,6 +84,11 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
 
     public JacksonObjectMapper() {
         super(FileType.JSON);
+    }
+
+    @Override
+    public <T> Exceptional<T> read(String content, TypeContext<T> type) {
+        return super.read(content, type);
     }
 
     @Override
@@ -144,6 +160,33 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
                         () -> this.write(((PersistentCapable<?>) content).model()),
                         () -> this.writer(content).writeValueAsString(content))
                 .map(out -> out.replaceAll("\\r", ""));
+    }
+
+    @Override
+    public Map<String, Object> flat(String content) {
+        return this.flatInternal(() -> this.configureMapper().readTree(content));
+    }
+
+    @Override
+    public Map<String, Object> flat(Path path) {
+        return this.flatInternal(() -> this.configureMapper().readTree(path.toFile()));
+    }
+
+    @Override
+    public Map<String, Object> flat(URL url) {
+        return this.flatInternal(() -> this.configureMapper().readTree(url));
+    }
+
+    private Map<String, Object> flatInternal(FlatNodeSupplier node) {
+        Map<String, Object> flat = HartshornUtils.emptyMap();
+        try {
+            JsonNode jsonNode = node.get();
+            this.addKeys("", jsonNode, flat);
+            return flat;
+        } catch (IOException e) {
+            Except.handle(e);
+            return flat;
+        }
     }
 
     private <T> Exceptional<T> readInternal(final Type type, final Supplier<Exceptional<T>> capable, final Callable<T> reader) {
@@ -235,6 +278,27 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
             return model.map(m -> m.restore(this.context)).map(out -> (T) out);
         }
         return Exceptional.empty();
+    }
+
+    private void addKeys(String currentPath, TreeNode jsonNode, Map<String, Object> map) {
+        if (jsonNode.isObject()) {
+            ObjectNode objectNode = (ObjectNode) jsonNode;
+            Iterator<Entry<String, JsonNode>> iter = objectNode.fields();
+            String pathPrefix = currentPath.isEmpty() ? "" : currentPath + ".";
+
+            while (iter.hasNext()) {
+                Map.Entry<String, JsonNode> entry = iter.next();
+                this.addKeys(pathPrefix + entry.getKey(), entry.getValue(), map);
+            }
+        } else if (jsonNode.isArray()) {
+            ArrayNode arrayNode = (ArrayNode) jsonNode;
+            for (int i = 0; i < arrayNode.size(); i++) {
+                this.addKeys(currentPath + "[" + i + "]", arrayNode.get(i), map);
+            }
+        } else if (jsonNode.isValueNode()) {
+            ValueNode valueNode = (ValueNode) jsonNode;
+            map.put(currentPath, this.configureMapper().convertValue(valueNode, Object.class));
+        }
     }
 
     @AllArgsConstructor
