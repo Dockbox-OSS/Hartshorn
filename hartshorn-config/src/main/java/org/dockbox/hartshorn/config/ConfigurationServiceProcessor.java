@@ -1,21 +1,29 @@
 package org.dockbox.hartshorn.config;
 
-import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.config.annotations.Configuration;
 import org.dockbox.hartshorn.config.annotations.UseConfigurations;
-import org.dockbox.hartshorn.di.GenericType;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.di.services.ServiceProcessor;
-import org.dockbox.hartshorn.persistence.FileManager;
 import org.dockbox.hartshorn.persistence.FileType;
-import org.dockbox.hartshorn.persistence.FileTypeAttribute;
+import org.dockbox.hartshorn.persistence.mapping.ObjectMapper;
+import org.dockbox.hartshorn.util.HartshornUtils;
 
-import java.nio.file.Path;
-import java.util.HashMap;
+import java.net.URI;
 import java.util.Map;
+import java.util.Set;
 
 public class ConfigurationServiceProcessor implements ServiceProcessor<UseConfigurations> {
+
+    private static final Set<ResourceLookupStrategy> strategies = HartshornUtils.emptyConcurrentSet();
+
+    static {
+        addStrategy(new ClassPathResourceLookupStrategy());
+    }
+
+    public static void addStrategy(ResourceLookupStrategy strategy) {
+        strategies.add(strategy);
+    }
 
     @Override
     public Class<UseConfigurations> activator() {
@@ -31,18 +39,23 @@ public class ConfigurationServiceProcessor implements ServiceProcessor<UseConfig
     public <T> void process(ApplicationContext context, TypeContext<T> type) {
         final Configuration configuration = type.annotation(Configuration.class).get();
 
-        String file = configuration.source();
-        Class<?> owner = configuration.owner();
+        String source = configuration.source();
+        TypeContext<?> owner = TypeContext.of(configuration.owner());
+        FileType filetype = configuration.filetype();
 
-        final FileManager fileManager = context.get(FileManager.class, FileTypeAttribute.of(FileType.YAML));
-        final Path config = fileManager.configFile(owner, file);
+        URI config = null;
+        for (ResourceLookupStrategy strategy : strategies) {
+            if (strategy.accepts(context, source, owner)) {
+                config = strategy.lookup(context, source, owner, filetype).orNull();
+                break;
+            }
+        }
 
-        final Exceptional<HashMap<String, Object>> cache = fileManager.read(config, new GenericType<>() {
-        });
+        if (config == null) config = new DataPathLookupStrategy().lookup(context, source, owner, filetype).get();
+        final Map<String, Object> cache = context.get(ObjectMapper.class)
+                .fileType(filetype)
+                .flat(config);
 
-        if (cache.absent()) return;
-
-        final Map<String, Object> localCache = cache.map(read -> (Map<String, Object>) read).get();
-        context.properties(localCache);
+        context.properties(cache);
     }
 }
