@@ -17,14 +17,30 @@
 
 package org.dockbox.hartshorn.config;
 
+import org.dockbox.hartshorn.boot.Hartshorn;
+import org.dockbox.hartshorn.di.context.element.TypeContext;
+import org.dockbox.hartshorn.persistence.FileManager;
+import org.dockbox.hartshorn.persistence.FileType;
+import org.dockbox.hartshorn.persistence.FileTypeAttribute;
 import org.dockbox.hartshorn.test.ApplicationAwareTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
 public class ConfigurationManagerTests extends ApplicationAwareTest {
+
+    @Test
+    void testClassPathConfigurations() {
+        // Configuration is read from resources/junit.yml
+        DemoClasspathConfiguration configuration = this.context().get(DemoClasspathConfiguration.class);
+
+        Assertions.assertNotNull(configuration);
+        Assertions.assertNotNull(configuration.classPathValue());
+        Assertions.assertEquals("This is a value", configuration.classPathValue());
+    }
 
     @Test
     void testNormalValuesAreAccessible() {

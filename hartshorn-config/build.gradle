@@ -23,4 +23,10 @@ dependencies {
 
     apiInclude "com.fasterxml.jackson.core:jackson-core:$jacksonVersion"
     apiInclude "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:$jacksonVersion"
+
+    testImplementation "com.fasterxml.jackson.core:jackson-core:$jacksonVersion"
+    testImplementation "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:$jacksonVersion"
+    testImplementation "com.fasterxml.jackson.dataformat:jackson-dataformat-properties:$jacksonVersion"
+    testImplementation "com.fasterxml.jackson.dataformat:jackson-dataformat-toml:$jacksonVersion"
+    testImplementation "com.fasterxml.jackson.dataformat:jackson-dataformat-xml:$jacksonVersion"
 }
