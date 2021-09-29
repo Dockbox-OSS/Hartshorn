@@ -28,9 +28,27 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Component type to specify a source for field values annotated with {@link Value}.
+ * Component type to specify a source for a configuration file. This supports files with any registered
+ * {@link org.dockbox.hartshorn.config.ResourceLookupStrategy}. For example a {@link org.dockbox.hartshorn.config.ClassPathResourceLookupStrategy}
+ * will accept a source formatted as {@code classpath:filename}.
+ *
+ * <p>The {@link #source()} should not contain the file extension, this is automatically formatted based on the
+ * {@link #filetype()}. The {@link FileType} is also used to configure the underlying {@link org.dockbox.hartshorn.persistence.mapping.ObjectMapper}
+ * used to read the configuration file.
+ *
+ * <p>The example below will target demo.yml as a classpath resource.
+ * <pre>{@code
+ * @Configuration(source = "classpath:demo")
+ * public class SampleClassPathConfiguration {
+ *    @Value("sample.value")
+ *    private final String value = "default value if key does not exist";
+ * }
+ * }</pre>
  *
  * @see Value
+ * @see org.dockbox.hartshorn.persistence.mapping.ObjectMapper
+ * @see org.dockbox.hartshorn.config.ResourceLookupStrategy
+ * @see org.dockbox.hartshorn.config.ConfigurationServiceProcessor
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
