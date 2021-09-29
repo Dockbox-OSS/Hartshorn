@@ -34,7 +34,7 @@ import java.lang.annotation.Annotation;
 import java.util.List;
 
 @LogExclude
-public interface ApplicationContext extends ApplicationBinder, HartshornContext {
+public interface ApplicationContext extends ApplicationBinder, HartshornContext, ApplicationPropertyHolder {
 
     void add(InjectionPoint<?> property);
 

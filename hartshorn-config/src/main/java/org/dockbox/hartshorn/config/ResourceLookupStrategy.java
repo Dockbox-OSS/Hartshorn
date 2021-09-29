@@ -17,27 +17,19 @@
 
 package org.dockbox.hartshorn.config;
 
-import org.dockbox.hartshorn.boot.config.GlobalConfig;
-import org.dockbox.hartshorn.api.exceptions.ExceptionLevel;
+import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.config.annotations.Configuration;
-import org.dockbox.hartshorn.config.annotations.Value;
-import org.dockbox.hartshorn.di.annotations.inject.Binds;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
+import org.dockbox.hartshorn.di.context.element.TypeContext;
+import org.dockbox.hartshorn.persistence.FileType;
 
-import lombok.Getter;
+import java.net.URI;
 
 /**
- * Simple implementation of {@link GlobalConfig} using {@link Value} based
- * field population.
+ * Defines how a {@link Configuration#source() resource} is looked up while processing types annotated with
+ * {@link Configuration}.
  */
-@Getter
-@Configuration
-@Binds(GlobalConfig.class)
-public class TargetGlobalConfig implements GlobalConfig {
-
-    @Value(value = "hartshorn.exceptions.stacktraces", or = "true")
-    private boolean stacktraces;
-
-    @Value(value = "hartshorn.exceptions.level", or = "FRIENDLY")
-    private ExceptionLevel level;
-
+public interface ResourceLookupStrategy {
+    String name();
+    Exceptional<URI> lookup(ApplicationContext context, String path, TypeContext<?> owner, FileType fileType);
 }

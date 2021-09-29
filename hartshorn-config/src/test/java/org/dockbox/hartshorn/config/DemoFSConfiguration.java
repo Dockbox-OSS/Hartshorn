@@ -15,17 +15,22 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.test.util;
+package org.dockbox.hartshorn.config;
 
-import org.dockbox.hartshorn.config.ConfigurationManager;
-import org.dockbox.hartshorn.di.InjectConfiguration;
-import org.dockbox.hartshorn.di.Key;
-import org.dockbox.hartshorn.di.binding.Providers;
-import org.dockbox.hartshorn.di.context.ApplicationContext;
+import org.dockbox.hartshorn.config.annotations.Configuration;
+import org.dockbox.hartshorn.config.annotations.Value;
 
-public class JUnitInjectOverrides extends InjectConfiguration {
-    @Override
-    public void collect(final ApplicationContext context) {
-        this.hierarchy(Key.of(ConfigurationManager.class)).add(0, Providers.bound(JUnitConfigurationManager.class));
-    }
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@AllArgsConstructor
+@NoArgsConstructor
+@Configuration(source = "junit")
+public class DemoFSConfiguration {
+
+    @Value("junit.fs")
+    @Getter
+    private String fileSystemValue;
+
 }

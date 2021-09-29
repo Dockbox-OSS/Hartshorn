@@ -17,25 +17,50 @@
 
 package org.dockbox.hartshorn.config;
 
+import org.dockbox.hartshorn.boot.Hartshorn;
+import org.dockbox.hartshorn.di.context.element.TypeContext;
+import org.dockbox.hartshorn.persistence.FileManager;
+import org.dockbox.hartshorn.persistence.FileType;
+import org.dockbox.hartshorn.persistence.FileTypeAttribute;
 import org.dockbox.hartshorn.test.ApplicationAwareTest;
-import org.dockbox.hartshorn.test.util.JUnitConfigurationManager;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.nio.file.Path;
 
 public class ConfigurationManagerTests extends ApplicationAwareTest {
 
-    @BeforeEach
-    void reset() {
-        JUnitConfigurationManager.reset();
+    @Test
+    void testClassPathConfigurations() {
+        // Configuration is read from resources/junit.yml
+        DemoClasspathConfiguration configuration = this.context().get(DemoClasspathConfiguration.class);
+
+        Assertions.assertNotNull(configuration);
+        Assertions.assertNotNull(configuration.classPathValue());
+        Assertions.assertEquals("This is a value", configuration.classPathValue());
+    }
+
+    @Test
+    void testFsConfigurations() {
+        // Create and populate the file, as we have no way to define local files in tests (yet)
+        FileManager files = this.context().get(FileManager.class, FileTypeAttribute.of(FileType.YAML));
+        Path file = files.configFile(Hartshorn.class, "junit");
+        files.write(file, """
+                junit:
+                    fs: "This is a value"
+                    """);
+
+        new ConfigurationServiceProcessor().process(this.context(), TypeContext.of(DemoFSConfiguration.class));
+
+        DemoFSConfiguration configuration = this.context().get(DemoFSConfiguration.class);
+        Assertions.assertNotNull(configuration);
+        Assertions.assertNotNull(configuration.fileSystemValue());
+        Assertions.assertEquals("This is a value", configuration.fileSystemValue());
     }
 
     @Test
     void testNormalValuesAreAccessible() {
-        JUnitConfigurationManager.add("demo", "Hartshorn");
+        this.context().property("demo", "Hartshorn");
         final ValueTyped typed = this.context().get(ValueTyped.class);
 
         Assertions.assertNotNull(typed.string());
@@ -44,9 +69,7 @@ public class ConfigurationManagerTests extends ApplicationAwareTest {
 
     @Test
     void testNestedValuesAreAccessible() {
-        final Map<String, Object> values = new HashMap<>();
-        values.put("demo", "Hartshorn");
-        JUnitConfigurationManager.add("nested", values);
+        this.context().property("nested.demo", "Hartshorn");
         final ValueTyped typed = this.context().get(ValueTyped.class);
 
         Assertions.assertNotNull(typed);

@@ -15,11 +15,18 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.persistence.hibernate;
+package org.dockbox.hartshorn.config;
 
-import org.dockbox.hartshorn.persistence.properties.Remote;
-import org.hibernate.dialect.Dialect;
+import org.dockbox.hartshorn.config.annotations.Configuration;
+import org.dockbox.hartshorn.config.annotations.Value;
 
-public interface HibernateRemote extends Remote {
-    Class<? extends Dialect> dialect();
+import lombok.Getter;
+
+@Configuration(source = "classpath:junit")
+public class DemoClasspathConfiguration {
+
+    @Value("junit.cp")
+    @Getter
+    private String classPathValue;
+
 }

@@ -15,11 +15,13 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.persistence.hibernate;
+package org.dockbox.hartshorn.persistence.jackson;
 
-import org.dockbox.hartshorn.persistence.properties.Remote;
-import org.hibernate.dialect.Dialect;
+import com.fasterxml.jackson.databind.JsonNode;
 
-public interface HibernateRemote extends Remote {
-    Class<? extends Dialect> dialect();
+import java.io.IOException;
+
+@FunctionalInterface
+public interface FlatNodeSupplier {
+    JsonNode get() throws IOException;
 }

@@ -1,0 +1,4 @@
+hartshorn:
+  exceptions:
+    stacktraces: true
+    level: "friendly"

@@ -17,20 +17,27 @@
 
 package org.dockbox.hartshorn.config;
 
-/**
- * Thrown when a provided key cannot be found because it's too deeply nested. For example
- * when the key <code>a.b.c</code> is requested on the following (JSON) configuration:
- * <pre><code>
- *     {
- *         "a": {
- *             "b": "value"
- *         }
- *     }
- * </code></pre>
- */
-public class EndOfPropertyException extends RuntimeException {
+import org.dockbox.hartshorn.api.exceptions.ExceptionLevel;
+import org.dockbox.hartshorn.boot.config.GlobalConfig;
+import org.dockbox.hartshorn.config.annotations.Configuration;
+import org.dockbox.hartshorn.config.annotations.Value;
+import org.dockbox.hartshorn.di.annotations.inject.Binds;
 
-    public EndOfPropertyException(String property, String end) {
-        super(String.format("Could not locate %s. Deepest property found is %s", property, end));
-    }
+import lombok.Getter;
+
+/**
+ * Simple implementation of {@link GlobalConfig} using {@link Value} based
+ * field population.
+ */
+@Getter
+@Binds(GlobalConfig.class)
+@Configuration(source = "classpath:main")
+public class TargetGlobalConfig implements GlobalConfig {
+
+    @Value(value = "hartshorn.exceptions.stacktraces", or = "true")
+    private boolean stacktraces;
+
+    @Value(value = "hartshorn.exceptions.level", or = "FRIENDLY")
+    private ExceptionLevel level;
+
 }

@@ -17,10 +17,8 @@
 
 package org.dockbox.hartshorn.config;
 
-import org.dockbox.hartshorn.boot.Hartshorn;
-import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.exceptions.Except;
-import org.dockbox.hartshorn.config.annotations.Configuration;
+import org.dockbox.hartshorn.boot.Hartshorn;
 import org.dockbox.hartshorn.config.annotations.UseConfigurations;
 import org.dockbox.hartshorn.config.annotations.Value;
 import org.dockbox.hartshorn.di.NotPrimitiveException;
@@ -30,23 +28,16 @@ import org.dockbox.hartshorn.di.context.element.FieldContext;
 import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.di.inject.InjectionModifier;
 import org.dockbox.hartshorn.di.properties.Attribute;
-import org.dockbox.hartshorn.persistence.FileManager;
-import org.dockbox.hartshorn.persistence.FileType;
-import org.dockbox.hartshorn.persistence.FileTypeAttribute;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.dockbox.hartshorn.util.exceptions.FieldAccessException;
 import org.jetbrains.annotations.Nullable;
 
-import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
 /**
- * Looks up and populates fields annotated with {@link Value}. If the type is annotated with
- * {@link Configuration} in which a {@link Configuration#source() source} is configured, the
- * provided source is used. If the source is not explicitly configured, the default configuration
- * file is used.
+ * Looks up and populates fields annotated with {@link Value}.
  */
 public class ConfigurationServiceModifier implements InjectionModifier<UseConfigurations> {
 
@@ -67,24 +58,10 @@ public class ConfigurationServiceModifier implements InjectionModifier<UseConfig
         TypeContext<?> instanceType = type;
         if (instance != null) instanceType = TypeContext.of(instance);
 
-        String file = Hartshorn.PROJECT_ID;
-        Class<?> owner = Hartshorn.class;
-        final Exceptional<Configuration> annotated = instanceType.annotation(Configuration.class);
-        if (annotated.present()) {
-            final Configuration configuration = annotated.get();
-            file = configuration.source();
-            owner = configuration.owner();
-        }
-
-        final FileManager fileManager = context.get(FileManager.class, FileTypeAttribute.of(FileType.YAML));
-        final Path config = fileManager.configFile(owner, file);
-
-        final ConfigurationManager configurationManager = context.get(ConfigurationManager.class, config);
-
         for (final FieldContext<?> field : instanceType.fields(Value.class)) {
             try {
                 final Value value = field.annotation(Value.class).get();
-                Object fieldValue = configurationManager.get(value.value()).or(value.or());
+                Object fieldValue = context.property(value.value()).or(value.or());
 
                 if ((!field.type().childOf(String.class)) && (fieldValue instanceof String stringValue)) {
                     try {

@@ -20,4 +20,13 @@ apply from: "$rootDir/parent.gradle"
 dependencies {
     apiInclude 'org.dockbox.hartshorn:hartshorn-bootstrap'
     apiInclude 'org.dockbox.hartshorn:hartshorn-persistence'
+
+    apiInclude "com.fasterxml.jackson.core:jackson-core:$jacksonVersion"
+    apiInclude "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:$jacksonVersion"
+
+    testImplementation "com.fasterxml.jackson.core:jackson-core:$jacksonVersion"
+    testImplementation "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:$jacksonVersion"
+    testImplementation "com.fasterxml.jackson.dataformat:jackson-dataformat-properties:$jacksonVersion"
+    testImplementation "com.fasterxml.jackson.dataformat:jackson-dataformat-toml:$jacksonVersion"
+    testImplementation "com.fasterxml.jackson.dataformat:jackson-dataformat-xml:$jacksonVersion"
 }

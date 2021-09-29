@@ -17,10 +17,10 @@
 
 package org.dockbox.hartshorn.persistence;
 
-import org.dockbox.hartshorn.boot.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.domain.TypedOwner;
 import org.dockbox.hartshorn.api.exceptions.ApplicationException;
+import org.dockbox.hartshorn.boot.Hartshorn;
 import org.dockbox.hartshorn.di.GenericType;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.di.properties.Attribute;
@@ -29,6 +29,8 @@ import org.dockbox.hartshorn.persistence.properties.ModifiersAttribute;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -95,6 +97,16 @@ public abstract class DefaultAbstractFileManager implements FileManager {
     @Override
     public <T> Exceptional<Boolean> write(final Path file, final T content) {
         return this.mapper.write(file, content);
+    }
+
+    @Override
+    public Exceptional<Boolean> write(Path file, String content) {
+        return Exceptional.of(() -> {
+            BufferedWriter writer = new BufferedWriter(new FileWriter(file.toFile()));
+            writer.write(content);
+            writer.close();
+            return true;
+        }).orElse(() -> false);
     }
 
     @NotNull

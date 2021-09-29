@@ -65,6 +65,10 @@ public interface FileManager extends AttributeHolder {
         return this.context().meta().lookup(TypeContext.of(type));
     }
 
+    default Path dataFile(final TypeContext<?> owner, final String file) {
+        return this.dataFile(owner.type(), file);
+    }
+
     default Path dataFile(final Class<?> owner, final String file) {
         return this.dataFile(this.owner(owner), file);
     }
@@ -135,6 +139,8 @@ public interface FileManager extends AttributeHolder {
      *         Boolean} value should be false.
      */
     <T> Exceptional<Boolean> write(Path file, T content);
+
+    Exceptional<Boolean> write(Path file, String content);
 
     default Path data(final Class<?> owner) {
         return this.data(this.owner(owner));

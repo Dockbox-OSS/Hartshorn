@@ -15,30 +15,15 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.config;
+package org.dockbox.hartshorn.di.context;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.di.context.ApplicationContext;
 
-import java.nio.file.Path;
+import java.util.Map;
 
-/**
- * Manager type responsible for accessing configuration files and obtaining values
- * through key-based accessors.
- */
-public interface ConfigurationManager {
+public interface ApplicationPropertyHolder {
 
-    /**
-     * Creates a new {@link ConfigurationManager} for the given {@link Path}.
-     *
-     * @param path
-     *         The path referencing the configuration file.
-     *
-     * @return The new {@link ConfigurationManager}
-     */
-    static ConfigurationManager of(final ApplicationContext context, final Path path) {
-        return context.get(ConfigurationManager.class, path);
-    }
+    boolean hasProperty(String key);
 
     /**
      * Attempts to obtain a single configuration value from the given key. Nested
@@ -55,6 +40,8 @@ public interface ConfigurationManager {
      *     }
      * </code></pre>
      *
+     * <p>Configuration values can also represent system/environment variables.
+     *
      * @param key
      *         The key used to look up the value
      * @param <T>
@@ -62,6 +49,9 @@ public interface ConfigurationManager {
      *
      * @return The value if it exists, or {@link Exceptional#empty()}
      */
-    <T> Exceptional<T> get(String key);
+    <T> Exceptional<T> property(String key);
+
+    <T> void property(String key, T value);
+    void properties(Map<String, Object> tree);
 
 }
