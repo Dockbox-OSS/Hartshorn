@@ -19,9 +19,9 @@ package org.dockbox.hartshorn.config;
 
 import org.dockbox.hartshorn.api.exceptions.ExceptionLevel;
 import org.dockbox.hartshorn.boot.config.GlobalConfig;
+import org.dockbox.hartshorn.config.annotations.Configuration;
 import org.dockbox.hartshorn.config.annotations.Value;
 import org.dockbox.hartshorn.di.annotations.inject.Binds;
-import org.dockbox.hartshorn.di.annotations.service.Service;
 
 import lombok.Getter;
 
@@ -30,8 +30,8 @@ import lombok.Getter;
  * field population.
  */
 @Getter
-@Service
 @Binds(GlobalConfig.class)
+@Configuration(source = "classpath:main")
 public class TargetGlobalConfig implements GlobalConfig {
 
     @Value(value = "hartshorn.exceptions.stacktraces", or = "true")

@@ -34,12 +34,12 @@ import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 
-import org.dockbox.hartshorn.boot.Hartshorn;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.domain.tuple.Triad;
 import org.dockbox.hartshorn.api.exceptions.Except;
+import org.dockbox.hartshorn.boot.Hartshorn;
+import org.dockbox.hartshorn.config.annotations.Configuration;
 import org.dockbox.hartshorn.config.annotations.Value;
-import org.dockbox.hartshorn.di.annotations.service.Service;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.di.context.element.MethodContext;
 import org.dockbox.hartshorn.di.context.element.TypeContext;
@@ -57,7 +57,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-@Service
+@Configuration(source = "classpath:discord")
 @SuppressWarnings("ResultOfMethodCallIgnored")
 public abstract class DefaultDiscordUtils implements DiscordUtils {
 
