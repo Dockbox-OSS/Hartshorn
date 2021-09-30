@@ -42,6 +42,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 import javax.inject.Inject;
+import javax.persistence.Entity;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 
@@ -100,8 +101,13 @@ public class HibernateSqlService implements SqlService {
 
     @Override
     public void enable() throws ApplicationException {
-        final Exceptional<EntityContext> context = this.applicationContext().first(EntityContext.class);
-        if (context.absent()) throw new IllegalStateException("Entities were not prepared, did the persistent type service start?");
+        Exceptional<EntityContext> context = this.applicationContext().first(EntityContext.class);
+        if (context.absent()) {
+            final Collection<TypeContext<?>> entities = this.applicationContext.environment().types(Entity.class);
+            EntityContext entityContext = new EntityContext(entities);
+            this.applicationContext.add(entityContext);
+            context = Exceptional.of(entityContext);
+        }
 
         final Collection<TypeContext<?>> entities = context.get().entities();
         for (final TypeContext<?> entity : entities) {
