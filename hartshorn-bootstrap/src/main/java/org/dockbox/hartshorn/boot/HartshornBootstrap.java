@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.boot;
 
 import com.google.common.collect.Multimap;
 
+import org.dockbox.hartshorn.boot.ServerState.Started;
 import org.dockbox.hartshorn.boot.annotations.UseBootstrap;
 import org.dockbox.hartshorn.boot.config.GlobalConfig;
 import org.dockbox.hartshorn.api.domain.Exceptional;
@@ -81,6 +82,7 @@ public abstract class HartshornBootstrap extends InjectableBootstrap {
                 this.handleMissingBinding(type);
             }
         });
+        new EngineChangedState<Started>() {}.post();
     }
 
     /**

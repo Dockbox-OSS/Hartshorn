@@ -20,6 +20,7 @@ dependencies {
     apiInclude 'org.dockbox.hartshorn:hartshorn-util'
     apiInclude 'org.dockbox.hartshorn:hartshorn-di'
     apiInclude 'org.dockbox.hartshorn:hartshorn-exceptions'
+    apiInclude 'org.dockbox.hartshorn:hartshorn-events'
 
     apiShare project(":hartshorn-di").sourceSets.impl.output
 }
