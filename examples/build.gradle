@@ -23,3 +23,27 @@ group = 'org.dockbox.hartshorn.sample'
 description 'Sample services for Hartshorn'
 
 apply from: "$rootDir/service-parent.gradle"
+
+dependencies {
+    apiInclude "org.dockbox.hartshorn:hartshorn-boot"
+    apiInclude "org.dockbox.hartshorn:hartshorn-proxy"
+    apiInclude "org.dockbox.hartshorn:hartshorn-cache"
+    apiInclude "org.dockbox.hartshorn:hartshorn-tasks"
+
+    apiInclude "org.hibernate:hibernate-core:$hibernateVersion"
+    apiInclude "mysql:mysql-connector-java:$mySqlConnectorVersion"
+
+    apiInclude "com.fasterxml.jackson.core:jackson-core:$jacksonVersion"
+    apiInclude "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:$jacksonVersion"
+    apiInclude "com.fasterxml.jackson.dataformat:jackson-dataformat-properties:$jacksonVersion"
+    apiInclude "com.fasterxml.jackson.dataformat:jackson-dataformat-toml:$jacksonVersion"
+    apiInclude "com.fasterxml.jackson.dataformat:jackson-dataformat-xml:$jacksonVersion"
+
+    // Only required because this is affected by the global build file, in a real world application the above notation
+    // includes implementations as well as the API of each module.
+    rootDir.listFiles().each {
+        if ('examples' != it.name && it.directory && new File(it, 'build.gradle').exists()) {
+            apiInclude project(":${it.name}").sourceSets.impl.output
+        }
+    }
+}
