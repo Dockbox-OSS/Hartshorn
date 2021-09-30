@@ -22,7 +22,7 @@ import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.proxy.handle.ProxyHandler;
 
-public abstract class ProxyApplicationBootstrap extends HartshornBootstrap {
+public class ProxyApplicationBootstrap extends HartshornBootstrap {
 
     @Override
     public <T> Exceptional<T> proxy(final TypeContext<T> type, final T instance) {

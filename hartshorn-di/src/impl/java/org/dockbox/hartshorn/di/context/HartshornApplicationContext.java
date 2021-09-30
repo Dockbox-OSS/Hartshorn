@@ -46,6 +46,7 @@ import org.dockbox.hartshorn.di.properties.BindingMetaAttribute;
 import org.dockbox.hartshorn.di.properties.UseFactory;
 import org.dockbox.hartshorn.di.services.ComponentLocator;
 import org.dockbox.hartshorn.di.services.ComponentLocatorImpl;
+import org.dockbox.hartshorn.di.services.ServiceOrder;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.jetbrains.annotations.Nullable;
 
@@ -130,10 +131,7 @@ public class HartshornApplicationContext extends ManagedHartshornContext {
 
         instance = this.inject(key, instance, properties);
 
-        for (final InjectionModifier<?> serviceModifier : this.injectionModifiers) {
-            if (serviceModifier.preconditions(this, key.contract(), instance, properties))
-                instance = serviceModifier.process(this, key.contract(), instance, properties);
-        }
+        for (ServiceOrder order : ServiceOrder.values()) instance = this.modify(order, key, instance, properties);
 
         // Enables all fields which are decorated with @Wired(enable=true)
         this.enable(instance);
@@ -153,6 +151,14 @@ public class HartshornApplicationContext extends ManagedHartshornContext {
             this.singletons.put(key, instance);
 
         // May be null, but we have used all possible injectors, it's up to the developer now
+        return instance;
+    }
+
+    protected <T> T modify(ServiceOrder order, Key<T> key, T instance, Attribute<?>... properties) {
+        for (final InjectionModifier<?> serviceModifier : this.injectionModifiers.get(order)) {
+            if (serviceModifier.preconditions(this, key.contract(), instance, properties))
+                instance = serviceModifier.process(this, key.contract(), instance, properties);
+        }
         return instance;
     }
 

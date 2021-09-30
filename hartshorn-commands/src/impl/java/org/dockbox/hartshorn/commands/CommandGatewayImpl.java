@@ -33,6 +33,7 @@ import org.dockbox.hartshorn.di.annotations.inject.Binds;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.di.context.element.MethodContext;
 import org.dockbox.hartshorn.di.context.element.TypeContext;
+import org.dockbox.hartshorn.di.properties.AttributeHolder;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.jetbrains.annotations.UnmodifiableView;
 
@@ -50,7 +51,7 @@ import lombok.Getter;
  */
 @Singleton
 @Binds(CommandGateway.class)
-public class CommandGatewayImpl implements CommandGateway {
+public class CommandGatewayImpl implements CommandGateway, AttributeHolder {
 
     private static final transient Multimap<String, CommandExecutorContext> contexts = ArrayListMultimap.create();
     @Getter(AccessLevel.PROTECTED)
@@ -61,6 +62,18 @@ public class CommandGatewayImpl implements CommandGateway {
     private CommandResources resources;
     @Inject
     private ApplicationContext context;
+
+    @Override
+    public boolean canEnable() {
+        return this.extensions.isEmpty();
+    }
+
+    @Override
+    public void enable() {
+        for (final TypeContext<? extends CommandExecutorExtension> extension : this.context.environment().children(CommandExecutorExtension.class)) {
+            this.add(this.context.get(extension));
+        }
+    }
 
     @Override
     public void accept(final CommandSource source, final String command) throws ParsingException {
