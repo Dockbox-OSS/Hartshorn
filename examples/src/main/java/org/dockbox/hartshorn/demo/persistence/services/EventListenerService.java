@@ -17,10 +17,13 @@
 
 package org.dockbox.hartshorn.demo.persistence.services;
 
+import org.dockbox.hartshorn.boot.ServerState.Started;
+import org.dockbox.hartshorn.commands.CommandCLI;
 import org.dockbox.hartshorn.demo.persistence.domain.User;
 import org.dockbox.hartshorn.demo.persistence.events.UserCreatedEvent;
 import org.dockbox.hartshorn.di.annotations.service.Service;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
+import org.dockbox.hartshorn.events.EngineChangedState;
 import org.dockbox.hartshorn.events.annotations.Listener;
 
 @Service
@@ -31,6 +34,11 @@ public class EventListenerService {
         ApplicationContext context = event.applicationContext();
         User user = event.user();
         System.out.printf("Created a new user with name %s and age %s and id %s%n", user.name(), user.age(), user.id());
+    }
+
+    @Listener
+    public void on(EngineChangedState<Started> event) {
+        event.applicationContext().get(CommandCLI.class).open();
     }
 
 }
