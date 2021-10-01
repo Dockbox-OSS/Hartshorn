@@ -23,7 +23,7 @@ import org.dockbox.hartshorn.di.context.element.TypeContext;
 
 import java.lang.annotation.Annotation;
 
-public interface ServiceProcessor<A extends Annotation> extends Activatable<A> {
+public interface ServiceProcessor<A extends Annotation> extends Activatable<A>, OrderedServiceHandler{
 
     boolean preconditions(ApplicationContext context, TypeContext<?> type);
 

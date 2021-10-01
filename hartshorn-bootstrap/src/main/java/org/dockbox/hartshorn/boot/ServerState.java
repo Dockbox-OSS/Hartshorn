@@ -15,15 +15,8 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-apply from: "$rootDir/parent.gradle"
+package org.dockbox.hartshorn.boot;
 
-dependencies {
-    apiInclude 'org.dockbox.hartshorn:hartshorn-bootstrap'
-    apiInclude 'org.dockbox.hartshorn:hartshorn-i18n'
-    apiInclude 'org.dockbox.hartshorn:hartshorn-events'
-    apiInclude 'org.dockbox.hartshorn:hartshorn-proxy'
-
-    include 'org.dockbox.hartshorn:hartshorn-tasks'
-
-    testImplementation project(":hartshorn-i18n").sourceSets.impl.output
+public interface ServerState {
+    public interface Started extends ServerState {}
 }

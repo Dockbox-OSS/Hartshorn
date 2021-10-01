@@ -102,7 +102,8 @@ public class ProxyHandler<T> implements MethodHandler {
             else {
                 final StackTraceElement element = Thread.currentThread().getStackTrace()[3];
                 final String name = element.getMethodName();
-                throw new AbstractMethodError("Cannot invoke method '" + name + "' because it is abstract. This type is proxied, but no proxy property was found for the method.");
+                final String className = this.type == null ? "" : this.type.getSimpleName() + ".";
+                throw new AbstractMethodError("Cannot invoke method '" + className + name + "' because it is abstract. This type is proxied, but no proxy property was found for the method.");
             }
         }
     }

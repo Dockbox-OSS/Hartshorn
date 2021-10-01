@@ -17,6 +17,9 @@
 
 package org.dockbox.hartshorn.di.context;
 
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
+
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.exceptions.ApplicationException;
 import org.dockbox.hartshorn.di.ApplicationContextAware;
@@ -34,6 +37,7 @@ import org.dockbox.hartshorn.di.inject.InjectionModifier;
 import org.dockbox.hartshorn.di.properties.Attribute;
 import org.dockbox.hartshorn.di.properties.AttributeHolder;
 import org.dockbox.hartshorn.di.services.ComponentContainer;
+import org.dockbox.hartshorn.di.services.ServiceOrder;
 import org.dockbox.hartshorn.di.services.ServiceProcessor;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.slf4j.Logger;
@@ -57,8 +61,8 @@ public abstract class ManagedHartshornContext extends DefaultContext implements 
     protected static final Logger log = LoggerFactory.getLogger(ManagedHartshornContext.class);
     protected final transient Set<InjectionPoint<?>> injectionPoints = HartshornUtils.emptyConcurrentSet();
 
-    protected final transient Set<InjectionModifier<?>> injectionModifiers = HartshornUtils.emptyConcurrentSet();
-    protected final transient Set<ServiceProcessor<?>> serviceProcessors = HartshornUtils.emptyConcurrentSet();
+    protected final transient Multimap<ServiceOrder, InjectionModifier<?>> injectionModifiers = ArrayListMultimap.create();
+    protected final transient Multimap<ServiceOrder, ServiceProcessor<?>> serviceProcessors = ArrayListMultimap.create();
 
     protected final transient Map<String, Object> environmentValues = HartshornUtils.emptyConcurrentMap();
 
@@ -150,12 +154,12 @@ public abstract class ManagedHartshornContext extends DefaultContext implements 
 
     @Override
     public void add(final ServiceProcessor<?> processor) {
-        this.serviceProcessors.add(processor);
+        this.serviceProcessors.put(processor.order(), processor);
     }
 
     @Override
     public void add(final InjectionModifier<?> modifier) {
-        this.injectionModifiers.add(modifier);
+        this.injectionModifiers.put(modifier.order(), modifier);
     }
 
     @Override
@@ -188,7 +192,11 @@ public abstract class ManagedHartshornContext extends DefaultContext implements 
     protected void process(final String prefix) {
         this.locator().register(prefix);
         final Collection<ComponentContainer> containers = this.locator().containers(ComponentType.FUNCTIONAL);
-        for (final ServiceProcessor<?> serviceProcessor : this.serviceProcessors) {
+        for (ServiceOrder order : ServiceOrder.values()) this.process(order, containers);
+    }
+
+    protected void process(ServiceOrder order, Collection<ComponentContainer> containers) {
+        for (final ServiceProcessor<?> serviceProcessor : this.serviceProcessors.get(order)) {
             for (final ComponentContainer container : containers) {
                 if (container.activators().stream().allMatch(this::hasActivator)) {
                     final TypeContext<?> service = container.type();

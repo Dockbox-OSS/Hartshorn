@@ -17,31 +17,32 @@
 
 package org.dockbox.hartshorn.commands.service;
 
-import org.dockbox.hartshorn.boot.annotations.PostBootstrap;
 import org.dockbox.hartshorn.boot.annotations.UseBootstrap;
 import org.dockbox.hartshorn.commands.CommandGateway;
 import org.dockbox.hartshorn.commands.annotations.Command;
-import org.dockbox.hartshorn.commands.extension.CommandExecutorExtension;
 import org.dockbox.hartshorn.di.annotations.service.Service;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.di.context.element.TypeContext;
-import org.dockbox.hartshorn.di.services.ComponentContainer;
+import org.dockbox.hartshorn.di.services.ServiceProcessor;
 
 @Service(activators = UseBootstrap.class)
-public class CommandServiceScanner {
+public class CommandServiceScanner implements ServiceProcessor<UseBootstrap> {
 
-    @PostBootstrap
-    public void preload(final ApplicationContext context) {
-        final CommandGateway gateway = context.get(CommandGateway.class);
-        for (final ComponentContainer container : context.locator().containers()) {
-            if (!container.type().flatMethods(Command.class).isEmpty()) {
-                gateway.register(container.type());
-            }
-        }
-
-        for (final TypeContext<? extends CommandExecutorExtension> extension : context.environment().children(CommandExecutorExtension.class)) {
-            gateway.add(context.get(extension));
-        }
+    @Override
+    public Class<UseBootstrap> activator() {
+        return UseBootstrap.class;
     }
 
+    @Override
+    public boolean preconditions(ApplicationContext context, TypeContext<?> type) {
+        return !type.flatMethods(Command.class).isEmpty();
+    }
+
+    @Override
+    public <T> void process(ApplicationContext context, TypeContext<T> type) {
+        final CommandGateway gateway = context.get(CommandGateway.class);
+        if (!type.flatMethods(Command.class).isEmpty()) {
+            gateway.register(type);
+        }
+    }
 }

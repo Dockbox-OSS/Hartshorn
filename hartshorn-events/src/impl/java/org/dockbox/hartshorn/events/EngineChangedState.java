@@ -15,15 +15,10 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-apply from: "$rootDir/parent.gradle"
+package org.dockbox.hartshorn.events;
 
-dependencies {
-    apiInclude 'org.dockbox.hartshorn:hartshorn-bootstrap'
-    apiInclude 'org.dockbox.hartshorn:hartshorn-i18n'
-    apiInclude 'org.dockbox.hartshorn:hartshorn-events'
-    apiInclude 'org.dockbox.hartshorn:hartshorn-proxy'
+import org.dockbox.hartshorn.boot.ServerState;
+import org.dockbox.hartshorn.events.parents.ContextCarrierEvent;
 
-    include 'org.dockbox.hartshorn:hartshorn-tasks'
-
-    testImplementation project(":hartshorn-i18n").sourceSets.impl.output
+public abstract class EngineChangedState<T extends ServerState> extends ContextCarrierEvent {
 }

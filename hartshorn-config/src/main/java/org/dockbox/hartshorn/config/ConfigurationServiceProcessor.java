@@ -21,6 +21,7 @@ import org.dockbox.hartshorn.config.annotations.Configuration;
 import org.dockbox.hartshorn.config.annotations.UseConfigurations;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.di.context.element.TypeContext;
+import org.dockbox.hartshorn.di.services.ServiceOrder;
 import org.dockbox.hartshorn.di.services.ServiceProcessor;
 import org.dockbox.hartshorn.persistence.FileType;
 import org.dockbox.hartshorn.persistence.mapping.ObjectMapper;
@@ -86,5 +87,10 @@ public class ConfigurationServiceProcessor implements ServiceProcessor<UseConfig
                 .flat(config);
 
         context.properties(cache);
+    }
+
+    @Override
+    public ServiceOrder order() {
+        return ServiceOrder.FIRST;
     }
 }
