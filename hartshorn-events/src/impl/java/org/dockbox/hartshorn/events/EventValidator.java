@@ -67,7 +67,7 @@ public class EventValidator {
             Hartshorn.log().warn(message.toString());
         }
 
-        new EngineChangedState<Started>() {}.post();
+        new EngineChangedState<Started>() {}.with(context).post();
     }
 
 }
