@@ -25,6 +25,7 @@ import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.di.context.element.FieldContext;
 import org.dockbox.hartshorn.di.context.element.TypeContext;
+import org.dockbox.hartshorn.di.services.ServiceOrder;
 import org.dockbox.hartshorn.di.services.ServiceProcessor;
 
 import java.util.List;
@@ -62,5 +63,10 @@ public class ArgumentServiceProcessor implements ServiceProcessor<UseCommands> {
     @Override
     public Class<UseCommands> activator() {
         return UseCommands.class;
+    }
+
+    @Override
+    public ServiceOrder order() {
+        return ServiceOrder.FIRST;
     }
 }
