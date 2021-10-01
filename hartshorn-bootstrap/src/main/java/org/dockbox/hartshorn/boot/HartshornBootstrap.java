@@ -19,11 +19,10 @@ package org.dockbox.hartshorn.boot;
 
 import com.google.common.collect.Multimap;
 
-import org.dockbox.hartshorn.boot.ServerState.Started;
-import org.dockbox.hartshorn.boot.annotations.UseBootstrap;
-import org.dockbox.hartshorn.boot.config.GlobalConfig;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.exceptions.Except;
+import org.dockbox.hartshorn.boot.annotations.UseBootstrap;
+import org.dockbox.hartshorn.boot.config.GlobalConfig;
 import org.dockbox.hartshorn.di.InjectConfiguration;
 import org.dockbox.hartshorn.di.InjectableBootstrap;
 import org.dockbox.hartshorn.di.Modifier;
@@ -82,7 +81,6 @@ public abstract class HartshornBootstrap extends InjectableBootstrap {
                 this.handleMissingBinding(type);
             }
         });
-        new EngineChangedState<Started>() {}.post();
     }
 
     /**

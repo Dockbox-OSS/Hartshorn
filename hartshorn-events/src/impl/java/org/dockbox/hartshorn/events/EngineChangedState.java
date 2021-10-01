@@ -15,10 +15,10 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.di.services;
+package org.dockbox.hartshorn.events;
 
-public interface OrderedServiceHandler {
-    default ServiceOrder order() {
-        return ServiceOrder.NORMAL;
-    }
+import org.dockbox.hartshorn.boot.ServerState;
+import org.dockbox.hartshorn.events.parents.ContextCarrierEvent;
+
+public abstract class EngineChangedState<T extends ServerState> extends ContextCarrierEvent {
 }
