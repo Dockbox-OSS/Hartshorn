@@ -39,6 +39,8 @@ dependencies {
     apiInclude "com.fasterxml.jackson.dataformat:jackson-dataformat-toml:$jacksonVersion"
     apiInclude "com.fasterxml.jackson.dataformat:jackson-dataformat-xml:$jacksonVersion"
 
+    apiInclude "org.slf4j:slf4j-simple:$slf4jVersion"
+
     // Only required because this is affected by the global build file, in a real world application the above notation
     // includes implementations as well as the API of each module.
     rootDir.listFiles().each {
