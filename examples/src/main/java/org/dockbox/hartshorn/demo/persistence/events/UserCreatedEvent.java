@@ -18,11 +18,22 @@
 package org.dockbox.hartshorn.demo.persistence.events;
 
 import org.dockbox.hartshorn.demo.persistence.domain.User;
+import org.dockbox.hartshorn.demo.persistence.services.UserPersistence;
 import org.dockbox.hartshorn.events.parents.ContextCarrierEvent;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+/**
+ * A simple custom event which is posted by {@link UserPersistence}
+ * after a {@link User} has been created through {@link UserPersistence#createUser(String, int)}.
+ *
+ * <p>The {@link User#id() ID of the user} will be present when this event is posted.
+ *
+ * <p>Events which extend {@link ContextCarrierEvent} are enhanced with the active {@link org.dockbox.hartshorn.di.context.ApplicationContext}
+ * so you are able to obtain the active context from it directly using {@link ContextCarrierEvent#applicationContext()} as demonstrated
+ * by {@link org.dockbox.hartshorn.demo.persistence.services.EventListenerService#on(UserCreatedEvent)}.
+ */
 @Getter
 @AllArgsConstructor
 public class UserCreatedEvent extends ContextCarrierEvent {

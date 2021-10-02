@@ -19,8 +19,10 @@ package org.dockbox.hartshorn.demo.persistence;
 
 import org.dockbox.hartshorn.config.annotations.Configuration;
 import org.dockbox.hartshorn.config.annotations.Value;
+import org.dockbox.hartshorn.di.Key;
 import org.dockbox.hartshorn.di.annotations.inject.Provider;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
+import org.dockbox.hartshorn.persistence.FileType;
 import org.dockbox.hartshorn.persistence.SqlService;
 import org.dockbox.hartshorn.persistence.properties.ConnectionAttribute;
 import org.dockbox.hartshorn.persistence.properties.Remotes;
@@ -28,6 +30,24 @@ import org.dockbox.hartshorn.persistence.properties.SQLRemoteServer;
 
 import javax.inject.Singleton;
 
+/**
+ * A simple configuration service capable of loading a configuration file and providing a custom {@link SqlService}
+ * instance. {@link Configuration} is a extension of {@link org.dockbox.hartshorn.di.annotations.service.Service},
+ * and therefore has all abilities also found with {@link org.dockbox.hartshorn.di.annotations.service.Service}.
+ *
+ * <p>{@link Configuration} adds the ability to load configuration files through a configured {@link Configuration#source()}.
+ * By default, the {@link FileType} used to read the file is {@link FileType#YAML}, however this can be configured to
+ * use any {@link FileType} through {@link Configuration#filetype()}.
+ *
+ * <p>This configuration is loaded from the {@code persistence-demo.yml} file in the {@code src/main/resources} directory,
+ * which will thus be present on the classpath when the application is active. As this means the file will not be present
+ * in the local filesystem, the source is prefixes with {@code classpath:}. This allows the configuration activator to
+ * load the file from the classpath directly.
+ *
+ * <p>Values present in configurations are flattened and added to {@link ApplicationContext#property(String, Object) the application properties}.
+ * This allows you to use the configuration outside this type directly if required, however it is recommended to keep
+ * values restricted to the configuration service which defines them.
+ */
 @Configuration(source = "classpath:persistence-demo")
 public class PersistenceDemoConfiguration {
 
@@ -42,6 +62,17 @@ public class PersistenceDemoConfiguration {
     @Value("demo.persistence.db.password")
     private String password;
 
+    /**
+     * Provides a singleton instance of {@link SqlService} configured to use a MySQL database, of which the
+     * connection information is provided by the {@code persistence-demo.yml} file. As this is a {@link Singleton}
+     * provider, the result of this provider will be saved after it is first called.
+     *
+     * <p>{@link Provider} methods automatically register as the highest priority in the type's {@link org.dockbox.hartshorn.di.binding.BindingHierarchy}
+     * in the active {@link ApplicationContext}.
+     *
+     * @see ApplicationContext#hierarchy(Key)
+     * @see org.dockbox.hartshorn.di.binding.BindingHierarchy
+     */
     @Provider
     @Singleton
     public SqlService sql(ApplicationContext context) {

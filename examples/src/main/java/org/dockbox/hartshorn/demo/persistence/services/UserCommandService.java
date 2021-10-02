@@ -19,16 +19,33 @@ package org.dockbox.hartshorn.demo.persistence.services;
 
 import org.dockbox.hartshorn.commands.annotations.Command;
 import org.dockbox.hartshorn.commands.context.CommandContext;
+import org.dockbox.hartshorn.commands.context.CommandDefinitionContextImpl;
 import org.dockbox.hartshorn.di.annotations.service.Service;
 
 import javax.inject.Inject;
 
+/**
+ * A simple capable of handling commands. Any type annotated with {@link Service} (or an
+ * extension of it) is automatically registered to the {@link org.dockbox.hartshorn.commands.CommandGateway}
+ * if there are methods annotated with {@link Command}.
+ */
 @Service
 public class UserCommandService {
 
     @Inject
-    private UserPersistenceService persistenceService;
+    private UserPersistence persistenceService;
 
+    /**
+     * The method activated when the command {@code create <name> <age>} is correctly entered by a user
+     * (or other {@link java.io.InputStream}, depending on the {@link org.dockbox.hartshorn.commands.CommandCLI}).
+     *
+     * <p>The {@link Command#value()} indicates the command itself, excluding arguments. {@link Command#arguments()}
+     * indicates the arguments which are expected to be present. The way these are defined depends on the {@link org.dockbox.hartshorn.commands.CommandParser}
+     * which is used in the {@link org.dockbox.hartshorn.commands.CommandGateway}. By default this uses the {@link org.dockbox.hartshorn.commands.CommandParserImpl},
+     * which uses the definition context defined in {@link CommandDefinitionContextImpl}.
+     *
+     * @see CommandDefinitionContextImpl
+     */
     @Command(value = "create", arguments = "<name> <age{Int}>")
     public void create(CommandContext context) {
         String name = context.get("name");

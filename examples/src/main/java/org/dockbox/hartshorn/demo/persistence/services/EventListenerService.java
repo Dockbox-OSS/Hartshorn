@@ -26,16 +26,37 @@ import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.events.EngineChangedState;
 import org.dockbox.hartshorn.events.annotations.Listener;
 
+/**
+ * A simple service capable of listening to events. Any type annotated with {@link Service} (or an
+ * extension of it) is automatically subscribed if there are methods annotated with {@link Listener}.
+ */
 @Service
 public class EventListenerService {
 
+    /**
+     * The method activated when a new user is created and a {@link UserCreatedEvent} is fired. In this
+     * example this is done through {@link UserPersistence}.
+     */
     @Listener
     public void on(UserCreatedEvent event) {
         ApplicationContext context = event.applicationContext();
         User user = event.user();
-        System.out.printf("Created a new user with name %s and age %s and id %s%n", user.name(), user.age(), user.id());
+        context.log().info("Created a new user with name %s and age %s and id %s%n".formatted(user.name(), user.age(), user.id()));
     }
 
+    /**
+     * The method activated when the engine is done starting, this is done automatically when the application
+     * was bootstrapped through {@link org.dockbox.hartshorn.boot.HartshornApplication}.
+     *
+     * <p>In this example we wish to use the {@link CommandCLI} to be able to use the command line to enter commands.
+     * An example command has been provided by {@link UserCommandService}.
+     *
+     * <p>Note the use of the generic type parameter {@link Started} in the event. This causes this method to
+     * activate only when a {@link EngineChangedState} event is posted with this exact type parameter. When the
+     * posted parameter is another sub-class of {@link org.dockbox.hartshorn.boot.ServerState} this method will not
+     * activate. However, if the notation of this event changed to {@code EngineChangedState<?>} it would activate
+     * with any type parameter, as long as the event itself is a {@link EngineChangedState}.
+     */
     @Listener
     public void on(EngineChangedState<Started> event) {
         event.applicationContext().get(CommandCLI.class).open();
