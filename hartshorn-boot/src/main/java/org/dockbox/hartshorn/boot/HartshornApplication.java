@@ -22,6 +22,7 @@ import com.google.common.collect.Multimap;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.exceptions.Except;
+import org.dockbox.hartshorn.boot.ServerState.Started;
 import org.dockbox.hartshorn.di.ApplicationBootstrap;
 import org.dockbox.hartshorn.di.InjectConfiguration;
 import org.dockbox.hartshorn.di.Modifier;
@@ -30,6 +31,8 @@ import org.dockbox.hartshorn.di.annotations.inject.InjectConfig;
 import org.dockbox.hartshorn.di.annotations.inject.InjectPhase;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.di.context.element.TypeContext;
+import org.dockbox.hartshorn.events.EngineChangedState;
+import org.dockbox.hartshorn.events.annotations.UseEvents;
 import org.dockbox.hartshorn.util.HartshornUtils;
 
 import java.lang.reflect.Constructor;
@@ -122,7 +125,11 @@ public class HartshornApplication {
                 injectableBootstrap.init();
                 final long initTime = System.currentTimeMillis() - initStart;
                 Hartshorn.log().info("Started " + Hartshorn.PROJECT_NAME + " in " + (creationTime + initTime) + "ms (" + creationTime + "ms creation, " + initTime + "ms init)");
-                return injectableBootstrap.context();
+                final ApplicationContext context = injectableBootstrap.context();
+                if (context.hasActivator(UseEvents.class)) {
+                    new EngineChangedState<Started>() {}.with(context).post();
+                }
+                return context;
             };
         }
         catch (final InvocationTargetException | NoSuchMethodException | InstantiationException | IllegalAccessException e) {

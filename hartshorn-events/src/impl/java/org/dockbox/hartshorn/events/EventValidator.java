@@ -18,7 +18,6 @@
 package org.dockbox.hartshorn.events;
 
 import org.dockbox.hartshorn.boot.Hartshorn;
-import org.dockbox.hartshorn.boot.ServerState.Started;
 import org.dockbox.hartshorn.boot.annotations.PostBootstrap;
 import org.dockbox.hartshorn.boot.annotations.UseBootstrap;
 import org.dockbox.hartshorn.di.annotations.service.Service;
@@ -66,8 +65,6 @@ public class EventValidator {
             }
             Hartshorn.log().warn(message.toString());
         }
-
-        new EngineChangedState<Started>() {}.with(context).post();
     }
 
 }
