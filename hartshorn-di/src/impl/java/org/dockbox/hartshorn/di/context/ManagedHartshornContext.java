@@ -37,6 +37,7 @@ import org.dockbox.hartshorn.di.inject.InjectionModifier;
 import org.dockbox.hartshorn.di.properties.Attribute;
 import org.dockbox.hartshorn.di.properties.AttributeHolder;
 import org.dockbox.hartshorn.di.services.ComponentContainer;
+import org.dockbox.hartshorn.di.services.ServiceImpl;
 import org.dockbox.hartshorn.di.services.ServiceOrder;
 import org.dockbox.hartshorn.di.services.ServiceProcessor;
 import org.dockbox.hartshorn.util.HartshornUtils;
@@ -79,6 +80,7 @@ public abstract class ManagedHartshornContext extends DefaultContext implements 
         }
         this.activator = activator.get();
         this.activators = this.environment().annotationsWith(activationSource, ServiceActivator.class);
+        this.activators.add(new ServiceImpl());
     }
 
     /**
