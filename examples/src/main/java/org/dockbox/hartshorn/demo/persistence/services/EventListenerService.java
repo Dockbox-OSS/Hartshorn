@@ -41,7 +41,7 @@ public class EventListenerService {
     public void on(UserCreatedEvent event) {
         ApplicationContext context = event.applicationContext();
         User user = event.user();
-        context.log().info("Created a new user with name %s and age %s and id %s%n".formatted(user.name(), user.age(), user.id()));
+        context.log().info("Created a new user with name %s and age %s and id %s".formatted(user.name(), user.age(), user.id()));
     }
 
     /**
