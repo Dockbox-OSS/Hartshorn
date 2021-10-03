@@ -17,13 +17,18 @@
 
 package org.dockbox.hartshorn.di.services;
 
-import org.dockbox.hartshorn.di.Activatable;
+import org.dockbox.hartshorn.di.annotations.service.Service;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.di.context.element.TypeContext;
 
 import java.lang.annotation.Annotation;
 
-public interface ServiceProcessor<A extends Annotation> extends Activatable<A>, OrderedServiceHandler{
+public interface ServiceProcessor<A extends Annotation> extends ComponentProcessor<A> {
+
+    @Override
+    default boolean processable(ApplicationContext context, TypeContext<?> type) {
+        return type.annotation(Service.class).present() && this.preconditions(context, type);
+    }
 
     boolean preconditions(ApplicationContext context, TypeContext<?> type);
 

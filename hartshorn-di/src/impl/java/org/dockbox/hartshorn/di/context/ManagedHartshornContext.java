@@ -37,9 +37,9 @@ import org.dockbox.hartshorn.di.inject.InjectionModifier;
 import org.dockbox.hartshorn.di.properties.Attribute;
 import org.dockbox.hartshorn.di.properties.AttributeHolder;
 import org.dockbox.hartshorn.di.services.ComponentContainer;
+import org.dockbox.hartshorn.di.services.ComponentProcessor;
 import org.dockbox.hartshorn.di.services.ServiceImpl;
 import org.dockbox.hartshorn.di.services.ServiceOrder;
-import org.dockbox.hartshorn.di.services.ServiceProcessor;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,7 +63,7 @@ public abstract class ManagedHartshornContext extends DefaultContext implements 
     protected final transient Set<InjectionPoint<?>> injectionPoints = HartshornUtils.emptyConcurrentSet();
 
     protected final transient Multimap<ServiceOrder, InjectionModifier<?>> injectionModifiers = ArrayListMultimap.create();
-    protected final transient Multimap<ServiceOrder, ServiceProcessor<?>> serviceProcessors = ArrayListMultimap.create();
+    protected final transient Multimap<ServiceOrder, ComponentProcessor<?>> processors = ArrayListMultimap.create();
 
     protected final transient Map<String, Object> environmentValues = HartshornUtils.emptyConcurrentMap();
 
@@ -155,8 +155,8 @@ public abstract class ManagedHartshornContext extends DefaultContext implements 
     }
 
     @Override
-    public void add(final ServiceProcessor<?> processor) {
-        this.serviceProcessors.put(processor.order(), processor);
+    public void add(final ComponentProcessor<?> processor) {
+        this.processors.put(processor.order(), processor);
     }
 
     @Override
@@ -198,11 +198,11 @@ public abstract class ManagedHartshornContext extends DefaultContext implements 
     }
 
     protected void process(ServiceOrder order, Collection<ComponentContainer> containers) {
-        for (final ServiceProcessor<?> serviceProcessor : this.serviceProcessors.get(order)) {
+        for (final ComponentProcessor<?> serviceProcessor : this.processors.get(order)) {
             for (final ComponentContainer container : containers) {
                 if (container.activators().stream().allMatch(this::hasActivator)) {
                     final TypeContext<?> service = container.type();
-                    if (serviceProcessor.preconditions(this, service)) serviceProcessor.process(this, service);
+                    if (serviceProcessor.processable(this, service)) serviceProcessor.process(this, service);
                 }
             }
         }
