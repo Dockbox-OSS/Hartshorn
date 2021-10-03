@@ -27,6 +27,7 @@ apply from: "$rootDir/service-parent.gradle"
 sourceSets {
     persistence
     commands
+    caching
 }
 
 configurations {
@@ -34,11 +35,13 @@ configurations {
     implementation.extendsFrom(apiInclude)
     persistenceImplementation.extendsFrom(apiInclude)
     commandsImplementation.extendsFrom(apiInclude)
+    cachingImplementation.extendsFrom(apiInclude)
 
     processor
     annotationProcessor.extendsFrom(processor)
     persistenceAnnotationProcessor.extendsFrom(processor)
     commandsAnnotationProcessor.extendsFrom(processor)
+    cachingAnnotationProcessor.extendsFrom(processor)
 }
 
 dependencies {
