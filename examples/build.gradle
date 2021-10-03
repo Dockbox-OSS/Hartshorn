@@ -26,16 +26,19 @@ apply from: "$rootDir/service-parent.gradle"
 
 sourceSets {
     persistence
+    commands
 }
 
 configurations {
     apiInclude
     implementation.extendsFrom(apiInclude)
     persistenceImplementation.extendsFrom(apiInclude)
+    commandsImplementation.extendsFrom(apiInclude)
 
     processor
     annotationProcessor.extendsFrom(processor)
     persistenceAnnotationProcessor.extendsFrom(processor)
+    commandsAnnotationProcessor.extendsFrom(processor)
 }
 
 dependencies {
