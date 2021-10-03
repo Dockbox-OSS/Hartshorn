@@ -88,7 +88,7 @@ public class MethodCommandExecutorContext<T> extends DefaultCarrierContext imple
             this.isChild = false;
         }
 
-        this.add(new CommandDefinitionContextImpl(this.applicationContext, this.command));
+        this.add(new CommandDefinitionContextImpl(this.applicationContext, this.command, this.method));
 
         this.parentAliases = HartshornUtils.emptyList();
         if (this.parent != null) {
@@ -146,6 +146,9 @@ public class MethodCommandExecutorContext<T> extends DefaultCarrierContext imple
             for (final String alias : this.command.value()) {
                 aliases.add(parentAlias + ' ' + alias);
             }
+        }
+        if (aliases.isEmpty()) {
+            aliases.add(this.method().name());
         }
         return aliases;
     }
