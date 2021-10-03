@@ -117,6 +117,7 @@ public class MethodCommandExecutorContext<T> extends DefaultCarrierContext imple
             if (before.cancelled()) {
                 final Message cancelled = this.applicationContext.get(CommandResources.class).cancelled();
                 ctx.source().send(cancelled);
+                return;
             }
 
             final T instance = this.applicationContext.get(this.type());
