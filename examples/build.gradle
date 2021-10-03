@@ -24,12 +24,21 @@ description 'Sample services for Hartshorn'
 
 apply from: "$rootDir/service-parent.gradle"
 
-dependencies {
-    apiInclude "org.dockbox.hartshorn:hartshorn-boot"
-    apiInclude "org.dockbox.hartshorn:hartshorn-proxy"
-    apiInclude "org.dockbox.hartshorn:hartshorn-cache"
-    apiInclude "org.dockbox.hartshorn:hartshorn-tasks"
+sourceSets {
+    persistence
+}
 
+configurations {
+    apiInclude
+    implementation.extendsFrom(apiInclude)
+    persistenceImplementation.extendsFrom(apiInclude)
+
+    processor
+    annotationProcessor.extendsFrom(processor)
+    persistenceAnnotationProcessor.extendsFrom(processor)
+}
+
+dependencies {
     apiInclude "org.hibernate:hibernate-core:$hibernateVersion"
     apiInclude "mysql:mysql-connector-java:$mySqlConnectorVersion"
 
@@ -41,10 +50,13 @@ dependencies {
 
     apiInclude "org.slf4j:slf4j-simple:$slf4jVersion"
 
-    // Only required because this is affected by the global build file, in a real world application the above notation
-    // includes implementations as well as the API of each module.
+    processor "org.projectlombok:lombok:$lombokVersion"
+
+    // Only required because this is affected by the global build file, in a real world application you'd use
+    // implementation 'org.dockbox.hartshorn:hartshorn-{module}:{version}'.
     rootDir.listFiles().each {
         if ('examples' != it.name && it.directory && new File(it, 'build.gradle').exists()) {
+            apiInclude project(":${it.name}")
             apiInclude project(":${it.name}").sourceSets.impl.output
         }
     }
