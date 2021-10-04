@@ -22,6 +22,13 @@ import java.util.List;
 @CacheService("user-cache")
 public abstract class CachingService {
 
+    /**
+     * Gets a singleton list containing a single {@link User}. The user is always unique, and is modified with
+     * a {@link org.dockbox.hartshorn.api.keys.Key} indicating the time (in nanoseconds) when the user was last
+     * modified.
+     *
+     * <p>This method is cached, and will return the same value until the cache is evicted using {@link #evict()}.
+     */
     @Cached
     public List<User> getUsers(final ApplicationContext context) {
         final User user = new User(context, "Guus", 21);
@@ -30,9 +37,26 @@ public abstract class CachingService {
         return HartshornUtils.singletonList(user);
     }
 
+    /**
+     * Evicts the active cache, making it so {@link #getUsers(ApplicationContext)} will return a new value.
+     */
     @EvictCache
     public abstract void evict();
 
+    /**
+     * The method activated when the engine is done starting, this is done automatically when the application
+     * was bootstrapped through {@link org.dockbox.hartshorn.boot.HartshornApplication}.
+     *
+     * <p>This example showcases the behavior of {@link #getUsers(ApplicationContext)} by comparing the
+     * {@link KeyUtility#LAST_MODIFIED} {@link org.dockbox.hartshorn.api.keys.Key} on the first {@link User} in the
+     * {@link List} returned by {@link #getUsers(ApplicationContext)}.
+     *
+     * <p>Note the use of the generic type parameter {@link Started} in the event. This causes this method to
+     * activate only when a {@link EngineChangedState} event is posted with this exact type parameter. When the
+     * posted parameter is another sub-class of {@link org.dockbox.hartshorn.boot.ServerState} this method will not
+     * activate. However, if the notation of this event changed to {@code EngineChangedState<?>} it would activate
+     * with any type parameter, as long as the event itself is a {@link EngineChangedState}.v
+     */
     @Listener
     public void on(EngineChangedState<Started> event) {
         final User user = this.getUsers(event.applicationContext()).get(0);
