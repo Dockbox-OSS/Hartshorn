@@ -15,30 +15,18 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.sample;
+package org.dockbox.hartshorn.demo.commands.services;
 
-import org.dockbox.hartshorn.commands.annotations.Parameter;
+import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.commands.arguments.ArgumentConverterImpl;
+import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
+import org.dockbox.hartshorn.di.annotations.service.Service;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.ToString;
+@Service
+public class ArgumentConverterService {
 
-@Parameter("shape")
-@AllArgsConstructor
-@Getter
-@ToString
-public class Shape {
+    public static final ArgumentConverter<String> GREETER = ArgumentConverterImpl.builder(String.class, "greeting")
+            .withConverter(input -> Exceptional.of("Hello %s".formatted(input)))
+            .build();
 
-    private final String name;
-    private final int sides;
-
-    private Shape() {
-        this.name = "circle";
-        this.sides = 1;
-    }
-
-    public Shape(int sides) {
-        this.name = sides + "-sided shape";
-        this.sides = sides;
-    }
 }

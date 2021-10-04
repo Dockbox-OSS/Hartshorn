@@ -17,37 +17,46 @@
 
 package org.dockbox.hartshorn.commands.service;
 
-import org.dockbox.hartshorn.boot.annotations.PostBootstrap;
 import org.dockbox.hartshorn.boot.annotations.UseBootstrap;
 import org.dockbox.hartshorn.commands.annotations.Parameter;
+import org.dockbox.hartshorn.commands.annotations.UseCommands;
 import org.dockbox.hartshorn.commands.arguments.CustomParameterPattern;
 import org.dockbox.hartshorn.commands.arguments.DynamicPatternConverter;
 import org.dockbox.hartshorn.commands.context.ArgumentConverterContext;
 import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
-import org.dockbox.hartshorn.di.annotations.service.Service;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.di.context.element.TypeContext;
-
-import java.util.Collection;
+import org.dockbox.hartshorn.di.services.ComponentProcessor;
+import org.dockbox.hartshorn.di.services.ServiceOrder;
 
 /**
  * Scans for any type annotated with {@link Parameter} and registers a {@link DynamicPatternConverter}
  * for each type found. Requires the use of a {@link org.dockbox.hartshorn.di.InjectableBootstrap} and
  * presence of {@link UseBootstrap}.
  */
-@Service(activators = UseBootstrap.class)
-public class CommandParameters {
+public class CommandParameters implements ComponentProcessor<UseCommands> {
 
-    @PostBootstrap
-    public void preload(final ApplicationContext context) {
-        final Collection<TypeContext<?>> customParameters = context.environment().types(Parameter.class);
-        for (final TypeContext<?> customParameter : customParameters) {
-            final Parameter meta = customParameter.annotation(Parameter.class).get();
-            final CustomParameterPattern pattern = context.get(meta.pattern());
-            final String key = meta.value();
-            final ArgumentConverter<?> converter = new DynamicPatternConverter<>(customParameter, pattern, key);
-            context.first(ArgumentConverterContext.class).present(converterContext -> converterContext.register(converter));
-        }
+    @Override
+    public Class<UseCommands> activator() {
+        return UseCommands.class;
     }
 
+    @Override
+    public boolean processable(ApplicationContext context, TypeContext<?> type) {
+        return type.annotation(Parameter.class).present();
+    }
+
+    @Override
+    public <T> void process(ApplicationContext context, TypeContext<T> type) {
+        final Parameter meta = type.annotation(Parameter.class).get();
+        final CustomParameterPattern pattern = context.get(meta.pattern());
+        final String key = meta.value();
+        final ArgumentConverter<?> converter = new DynamicPatternConverter<>(type, pattern, key);
+        context.first(ArgumentConverterContext.class).present(converterContext -> converterContext.register(converter));
+    }
+
+    @Override
+    public ServiceOrder order() {
+        return ServiceOrder.EARLY;
+    }
 }

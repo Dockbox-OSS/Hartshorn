@@ -18,19 +18,42 @@
 package org.dockbox.hartshorn.di.services;
 
 import org.dockbox.hartshorn.di.annotations.service.Service;
-import org.dockbox.hartshorn.di.context.ApplicationContext;
-import org.dockbox.hartshorn.di.context.element.TypeContext;
 
 import java.lang.annotation.Annotation;
 
-public interface ServiceProcessor<A extends Annotation> extends ComponentProcessor<A> {
-
+public class ServiceImpl implements Service {
     @Override
-    default boolean processable(ApplicationContext context, TypeContext<?> type) {
-        return type.annotation(Service.class).present() && this.preconditions(context, type);
+    public String id() {
+        return "";
     }
 
-    boolean preconditions(ApplicationContext context, TypeContext<?> type);
+    @Override
+    public String name() {
+        return "";
+    }
 
-    <T> void process(ApplicationContext context, TypeContext<T> type);
+    @Override
+    public boolean enabled() {
+        return true;
+    }
+
+    @Override
+    public Class<?> owner() {
+        return Service.class;
+    }
+
+    @Override
+    public boolean singleton() {
+        return false;
+    }
+
+    @Override
+    public Class<? extends Annotation>[] activators() {
+        return new Class[0];
+    }
+
+    @Override
+    public Class<? extends Annotation> annotationType() {
+        return Service.class;
+    }
 }

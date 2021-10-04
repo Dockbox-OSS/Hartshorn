@@ -19,6 +19,10 @@ package org.dockbox.hartshorn.commands.annotations;
 
 import org.dockbox.hartshorn.commands.arguments.CustomParameterPattern;
 import org.dockbox.hartshorn.commands.arguments.HashtagParameterPattern;
+import org.dockbox.hartshorn.di.ComponentType;
+import org.dockbox.hartshorn.di.annotations.component.Component;
+import org.dockbox.hartshorn.util.annotations.AliasFor;
+import org.dockbox.hartshorn.util.annotations.Extends;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -33,10 +37,13 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
+@Extends(Component.class)
+@Component(type = ComponentType.FUNCTIONAL)
 public @interface Parameter {
 
     Class<? extends CustomParameterPattern> pattern() default HashtagParameterPattern.class;
 
+    @AliasFor("id")
     String value();
 
     String usage() default "";

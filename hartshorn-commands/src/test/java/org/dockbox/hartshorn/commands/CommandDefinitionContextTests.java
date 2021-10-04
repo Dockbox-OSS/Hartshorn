@@ -120,7 +120,7 @@ public class CommandDefinitionContextTests extends ApplicationAwareTest {
     @Test
     void testContainerContext() {
         final Command command = this.createCommand();
-        final CommandDefinitionContext context = new CommandDefinitionContextImpl(this.context(), command);
+        final CommandDefinitionContext context = new CommandDefinitionContextImpl(this.context(), command, null);
 
         Assertions.assertEquals("demo", context.permission().get());
         Assertions.assertEquals(1, context.aliases().size());

@@ -27,7 +27,7 @@ import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.di.inject.InjectionModifier;
 import org.dockbox.hartshorn.di.properties.Attribute;
 import org.dockbox.hartshorn.di.services.ComponentLocator;
-import org.dockbox.hartshorn.di.services.ServiceProcessor;
+import org.dockbox.hartshorn.di.services.ComponentProcessor;
 import org.slf4j.Logger;
 
 import java.lang.annotation.Annotation;
@@ -48,7 +48,7 @@ public interface ApplicationContext extends ApplicationBinder, HartshornContext,
 
     <T> T raw(TypeContext<T> type, boolean populate) throws ProvisionFailure;
 
-    void add(ServiceProcessor<?> processor);
+    void add(ComponentProcessor<?> processor);
 
     void add(InjectionModifier<?> modifier);
 

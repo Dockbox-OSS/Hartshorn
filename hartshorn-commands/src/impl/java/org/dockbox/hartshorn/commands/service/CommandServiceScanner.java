@@ -17,20 +17,20 @@
 
 package org.dockbox.hartshorn.commands.service;
 
-import org.dockbox.hartshorn.boot.annotations.UseBootstrap;
 import org.dockbox.hartshorn.commands.CommandGateway;
 import org.dockbox.hartshorn.commands.annotations.Command;
+import org.dockbox.hartshorn.commands.annotations.UseCommands;
 import org.dockbox.hartshorn.di.annotations.service.Service;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.di.services.ServiceProcessor;
 
-@Service(activators = UseBootstrap.class)
-public class CommandServiceScanner implements ServiceProcessor<UseBootstrap> {
+@Service(activators = UseCommands.class)
+public class CommandServiceScanner implements ServiceProcessor<UseCommands> {
 
     @Override
-    public Class<UseBootstrap> activator() {
-        return UseBootstrap.class;
+    public Class<UseCommands> activator() {
+        return UseCommands.class;
     }
 
     @Override

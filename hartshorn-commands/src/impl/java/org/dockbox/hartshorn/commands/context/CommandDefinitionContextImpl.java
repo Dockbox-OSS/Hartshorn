@@ -33,6 +33,7 @@ import org.dockbox.hartshorn.commands.definition.GroupCommandElement;
 import org.dockbox.hartshorn.di.binding.Bindings;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.di.context.DefaultContext;
+import org.dockbox.hartshorn.di.context.element.MethodContext;
 import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.i18n.permissions.Permission;
 import org.dockbox.hartshorn.util.HartshornUtils;
@@ -127,10 +128,12 @@ public class CommandDefinitionContextImpl extends DefaultContext implements Comm
     private final Command command;
     private final CommandDefinition definition;
     private final ApplicationContext context;
+    private final MethodContext<?, ?> method;
 
-    public CommandDefinitionContextImpl(final ApplicationContext context, final Command command) {
+    public CommandDefinitionContextImpl(final ApplicationContext context, final Command command, final MethodContext<?, ?> method) {
         this.command = command;
         this.context = context;
+        this.method = method;
         this.permission = this.getOrDefault();
         if (!"".equals(this.arguments())) {
             this.definition = this.parseElements(this.arguments(), this.permission);
@@ -311,7 +314,11 @@ public class CommandDefinitionContextImpl extends DefaultContext implements Comm
 
     @Override
     public List<String> aliases() {
-        return HartshornUtils.asUnmodifiableList(this.command.value());
+        final String[] command = this.command.value();
+        if (command.length == 0 || (command.length == 1 && command[0].equals(""))) {
+            return HartshornUtils.singletonList(this.method.name());
+        }
+        return HartshornUtils.asUnmodifiableList(command);
     }
 
     @Override

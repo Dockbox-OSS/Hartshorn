@@ -1,0 +1,6 @@
+speak This command was loaded by an input stream which reads commands.txt
+greet world
+greet world --exclaim true
+build #user[Guus][21]
+parent child 1 2
+parent child deep 5

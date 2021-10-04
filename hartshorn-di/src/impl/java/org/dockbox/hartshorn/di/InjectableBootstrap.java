@@ -25,7 +25,7 @@ import org.dockbox.hartshorn.di.context.HartshornApplicationContext;
 import org.dockbox.hartshorn.di.context.ManagedHartshornContext;
 import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.di.inject.InjectionModifier;
-import org.dockbox.hartshorn.di.services.ServiceProcessor;
+import org.dockbox.hartshorn.di.services.ComponentProcessor;
 import org.reflections.Reflections;
 
 import java.lang.annotation.Annotation;
@@ -45,7 +45,7 @@ public abstract class InjectableBootstrap extends ApplicationContextAware {
         }
         instance(this);
         for (final String prefix : prefixes) {
-            this.lookup(prefix, ServiceProcessor.class, ApplicationContext::add);
+            this.lookup(prefix, ComponentProcessor.class, ApplicationContext::add);
             this.lookup(prefix, InjectionModifier.class, ApplicationContext::add);
         }
 

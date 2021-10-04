@@ -23,3 +23,47 @@ group = 'org.dockbox.hartshorn.sample'
 description 'Sample services for Hartshorn'
 
 apply from: "$rootDir/service-parent.gradle"
+
+sourceSets {
+    persistence
+    commands
+    caching
+}
+
+configurations {
+    apiInclude
+    implementation.extendsFrom(apiInclude)
+    persistenceImplementation.extendsFrom(apiInclude)
+    commandsImplementation.extendsFrom(apiInclude)
+    cachingImplementation.extendsFrom(apiInclude)
+
+    processor
+    annotationProcessor.extendsFrom(processor)
+    persistenceAnnotationProcessor.extendsFrom(processor)
+    commandsAnnotationProcessor.extendsFrom(processor)
+    cachingAnnotationProcessor.extendsFrom(processor)
+}
+
+dependencies {
+    apiInclude "org.hibernate:hibernate-core:$hibernateVersion"
+    apiInclude "mysql:mysql-connector-java:$mySqlConnectorVersion"
+
+    apiInclude "com.fasterxml.jackson.core:jackson-core:$jacksonVersion"
+    apiInclude "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:$jacksonVersion"
+    apiInclude "com.fasterxml.jackson.dataformat:jackson-dataformat-properties:$jacksonVersion"
+    apiInclude "com.fasterxml.jackson.dataformat:jackson-dataformat-toml:$jacksonVersion"
+    apiInclude "com.fasterxml.jackson.dataformat:jackson-dataformat-xml:$jacksonVersion"
+
+    apiInclude "org.slf4j:slf4j-simple:$slf4jVersion"
+
+    processor "org.projectlombok:lombok:$lombokVersion"
+
+    // Only required because this is affected by the global build file, in a real world application you'd use
+    // implementation 'org.dockbox.hartshorn:hartshorn-{module}:{version}'.
+    rootDir.listFiles().each {
+        if ('examples' != it.name && it.directory && new File(it, 'build.gradle').exists()) {
+            apiInclude project(":${it.name}")
+            apiInclude project(":${it.name}").sourceSets.impl.output
+        }
+    }
+}
