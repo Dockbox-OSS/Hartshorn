@@ -46,7 +46,7 @@ public abstract class CacheServiceModifier<A extends Annotation> extends Service
     @Override
     public <T, R> ProxyFunction<T, R> process(final ApplicationContext context, final MethodProxyContext<T> methodContext) {
         final CacheMethodContext cacheMethodContext = this.context(methodContext);
-        final CacheManager manager = context.get(cacheMethodContext.manager());
+        final CacheManager manager = context.get(CacheManager.class);
         String name = cacheMethodContext.name();
         if ("".equals(name)) {
             final Exceptional<CacheService> annotation = methodContext.type().annotation(CacheService.class);

@@ -17,8 +17,6 @@
 
 package org.dockbox.hartshorn.cache.annotations;
 
-import org.dockbox.hartshorn.cache.CacheManager;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -37,12 +35,4 @@ public @interface EvictCache {
      * @return the cache ID
      */
     String value() default "";
-
-    /**
-     * Indicates the cache manager to use. This type can be provided through
-     * the active {@link org.dockbox.hartshorn.di.context.ApplicationContext}.
-     *
-     * @return the type of the cache manager to use
-     */
-    Class<? extends CacheManager> manager() default CacheManager.class;
 }

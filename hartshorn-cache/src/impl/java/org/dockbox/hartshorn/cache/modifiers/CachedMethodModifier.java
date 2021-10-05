@@ -65,7 +65,7 @@ public class CachedMethodModifier extends CacheServiceModifier<Cached> {
     @Override
     protected CacheMethodContext context(final MethodProxyContext<?> context) {
         final Cached cached = context.annotation(Cached.class);
-        return new CacheMethodContextImpl(cached.manager(), cached.value(), Expiration.of(cached.expires()));
+        return new CacheMethodContextImpl(cached.value(), Expiration.of(cached.expires()));
     }
 
     @Override

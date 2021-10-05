@@ -35,7 +35,7 @@ public class CacheUpdateMethodModifier extends CacheServiceModifier<UpdateCache>
     @Override
     protected CacheMethodContext context(final MethodProxyContext<?> context) {
         final UpdateCache update = context.annotation(UpdateCache.class);
-        return new CacheMethodContextImpl(update.manager(), update.value(), null);
+        return new CacheMethodContextImpl(update.value(), null);
     }
 
     @Override
