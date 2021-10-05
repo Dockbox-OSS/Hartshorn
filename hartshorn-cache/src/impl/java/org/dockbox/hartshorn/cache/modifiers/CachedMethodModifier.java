@@ -30,9 +30,6 @@ import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.proxy.handle.ProxyFunction;
 import org.dockbox.hartshorn.proxy.service.MethodProxyContext;
 
-import java.util.Collection;
-import java.util.List;
-
 /**
  * The {@link org.dockbox.hartshorn.proxy.service.ServiceAnnotatedMethodModifier} responsible for {@link Cached}
  * decorated methods. This delegates functionality to the underlying {@link org.dockbox.hartshorn.cache.CacheManager}
@@ -45,12 +42,12 @@ public class CachedMethodModifier extends CacheServiceModifier<Cached> {
         return (instance, args, proxyContext) -> {
             final Cache<Object> cache = cacheContext.cache();
 
-            final Exceptional<Collection<Object>> content = cache.get();
+            final Exceptional<Object> content = cache.get();
 
             //noinspection unchecked
             return (R) content.orElse(() -> {
                 try {
-                    final List<Object> out = proxyContext.invoke(args);
+                    final Object out = proxyContext.invoke(args);
                     cache.populate(out);
                     return out;
                 }
@@ -70,7 +67,7 @@ public class CachedMethodModifier extends CacheServiceModifier<Cached> {
 
     @Override
     public <T> boolean preconditions(final ApplicationContext context, final MethodProxyContext<T> methodContext) {
-        return methodContext.method().returnType().childOf(Collection.class);
+        return !methodContext.method().returnType().isVoid();
     }
 
     @Override

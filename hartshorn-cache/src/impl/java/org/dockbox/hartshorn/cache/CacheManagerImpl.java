@@ -22,10 +22,10 @@ import org.dockbox.hartshorn.di.annotations.inject.Binds;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.util.HartshornUtils;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.util.List;
 import java.util.Map;
-
-import javax.inject.Inject;
 
 /**
  * Default implementation of {@link CacheManager}.
@@ -34,32 +34,33 @@ import javax.inject.Inject;
  */
 @SuppressWarnings("unchecked")
 @Binds(CacheManager.class)
+@Singleton
 public class CacheManagerImpl implements CacheManager {
 
-    protected static final Map<String, Cache<?>> caches = HartshornUtils.emptyConcurrentMap();
+    protected final Map<String, Cache<?>> caches = HartshornUtils.emptyConcurrentMap();
 
     @Inject
     private ApplicationContext context;
 
     @Override
     public List<Cache<?>> caches() {
-        return HartshornUtils.asUnmodifiableList(CacheManagerImpl.caches.values());
+        return HartshornUtils.asUnmodifiableList(this.caches.values());
     }
 
     @Override
     public <T> Exceptional<Cache<T>> get(final String cache) {
-        return Exceptional.of(CacheManagerImpl.caches.get(cache)).map(c -> (Cache<T>) c);
+        return Exceptional.of(this.caches.get(cache)).map(c -> (Cache<T>) c);
     }
 
     @Override
     public <T> void update(final String cache, final T object) {
-        final Cache<T> c = (Cache<T>) CacheManagerImpl.caches.get(cache);
+        final Cache<T> c = (Cache<T>) this.caches.get(cache);
         if (null != c) c.update(object);
     }
 
     @Override
     public void evict(final String cache) {
-        final Cache<?> c = CacheManagerImpl.caches.get(cache);
+        final Cache<?> c = this.caches.get(cache);
         if (null != c) c.evict();
     }
 
@@ -68,7 +69,7 @@ public class CacheManagerImpl implements CacheManager {
         return this.get(name)
                 .orElse(() -> {
                     final Cache<Object> cache = this.context.get(Cache.class, new ExpirationAttribute(expiration));
-                    CacheManagerImpl.caches.put(name, cache);
+                    this.caches.put(name, cache);
                     return cache;
                 })
                 .map(c -> (Cache<T>) c)

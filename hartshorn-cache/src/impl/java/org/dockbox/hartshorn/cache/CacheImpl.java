@@ -23,9 +23,6 @@ import org.dockbox.hartshorn.di.annotations.inject.Binds;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.di.properties.Attribute;
 import org.dockbox.hartshorn.di.properties.AttributeHolder;
-import org.dockbox.hartshorn.util.HartshornUtils;
-
-import java.util.Collection;
 
 import javax.inject.Inject;
 
@@ -38,18 +35,18 @@ import javax.inject.Inject;
 public class CacheImpl<T> implements Cache<T>, AttributeHolder {
 
     private Expiration expiration;
-    private Collection<T> content;
+    private T content;
 
     @Inject
     private ApplicationContext applicationContext;
 
     @Override
-    public Exceptional<Collection<T>> get() {
+    public Exceptional<T> get() {
         return Exceptional.of(this.content);
     }
 
     @Override
-    public void populate(final Collection<T> content) {
+    public void populate(final T content) {
         if (this.content != null) throw new IllegalStateException("Cannot populate existing cache, ensure the existing content is evicted before repopulating.");
         else {
             this.content = content;
@@ -59,10 +56,7 @@ public class CacheImpl<T> implements Cache<T>, AttributeHolder {
 
     @Override
     public void update(final T object) {
-        if (this.content == null) {
-            this.populate(HartshornUtils.emptyList());
-        }
-        this.content.add(object);
+        this.content = object;
     }
 
     private void scheduleEviction() {

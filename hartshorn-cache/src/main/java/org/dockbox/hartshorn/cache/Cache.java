@@ -19,8 +19,6 @@ package org.dockbox.hartshorn.cache;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
 
-import java.util.Collection;
-
 /**
  * Represents a collection of entries of type <code>T</code>.
  *
@@ -35,7 +33,7 @@ public interface Cache<T> {
      *
      * @return The content of the cache, or {@link Exceptional#empty()}
      */
-    Exceptional<Collection<T>> get();
+    Exceptional<T> get();
 
     /**
      * Populates the cache with the given content. If the cache is
@@ -47,7 +45,7 @@ public interface Cache<T> {
      * @throws IllegalStateException
      *         When the cache is already populated.
      */
-    void populate(Collection<T> content);
+    void populate(T content);
 
     /**
      * Updates the cache by adding the provided object to the cache. If
