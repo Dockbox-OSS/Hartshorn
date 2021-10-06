@@ -17,10 +17,9 @@
 
 package org.dockbox.hartshorn.di.context;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
-
 import org.dockbox.hartshorn.di.AnnotationHelper;
+import org.dockbox.hartshorn.di.ArrayListMultiMap;
+import org.dockbox.hartshorn.di.MultiMap;
 import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.reflections.Reflections;
@@ -34,7 +33,7 @@ import java.util.stream.Collectors;
 public class PrefixContext extends DefaultContext {
 
     private final Map<String, Reflections> reflectedPrefixes = HartshornUtils.emptyConcurrentMap();
-    private final Multimap<Class<? extends Annotation>, Class<? extends Annotation>> annotationHierarchy = ArrayListMultimap.create();
+    private final MultiMap<Class<? extends Annotation>, Class<? extends Annotation>> annotationHierarchy = new ArrayListMultiMap<>();
 
     public PrefixContext(final Iterable<String> initialPrefixes) {
         for (final String initialPrefix : initialPrefixes) {
