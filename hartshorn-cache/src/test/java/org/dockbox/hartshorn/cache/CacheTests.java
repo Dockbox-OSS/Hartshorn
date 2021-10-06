@@ -27,6 +27,19 @@ import org.junit.jupiter.api.Test;
 public class CacheTests extends ApplicationAwareTest {
 
     @Test
+    void testEvictMethodIsCalled() {
+        final NonAbstractCacheService service = this.context().get(NonAbstractCacheService.class);
+        Assertions.assertTrue(service.evict());
+    }
+
+    @Test
+    void testUpdateMethodIsCalled() {
+        final NonAbstractCacheService service = this.context().get(NonAbstractCacheService.class);
+        long update = service.update(3L);
+        Assertions.assertEquals(6, update);
+    }
+
+    @Test
     void testCacheIsReused() {
         final TestCacheService service = this.context().get(TestCacheService.class);
         long first = service.getCachedTime();
