@@ -17,6 +17,8 @@
 
 package org.dockbox.hartshorn.cache.modifiers;
 
+import org.dockbox.hartshorn.api.exceptions.ApplicationException;
+import org.dockbox.hartshorn.api.exceptions.Except;
 import org.dockbox.hartshorn.cache.annotations.EvictCache;
 import org.dockbox.hartshorn.cache.context.CacheContext;
 import org.dockbox.hartshorn.cache.context.CacheMethodContext;
@@ -35,13 +37,18 @@ public class CacheEvictionMethodModifier extends CacheServiceModifier<EvictCache
     @Override
     protected CacheMethodContext context(MethodProxyContext<?> context) {
         final EvictCache evict = context.annotation(EvictCache.class);
-        return new CacheMethodContextImpl(evict.manager(), evict.value(), null);
+        return new CacheMethodContextImpl(evict.value(), null);
     }
 
     @Override
     protected <T, R> ProxyFunction<T, R> process(ApplicationContext context, MethodProxyContext<T> methodContext, CacheContext cacheContext) {
         return (instance, args, proxyContext) -> {
-            cacheContext.manager().evict(cacheContext.name());
+            try {
+                cacheContext.manager().evict(cacheContext.name());
+                return proxyContext.invoke(args);
+            } catch (ApplicationException e) {
+                Except.handle(e);
+            }
             return null; // Should be void anyway
         };
     }

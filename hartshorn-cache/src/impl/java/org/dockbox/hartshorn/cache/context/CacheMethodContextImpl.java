@@ -17,11 +17,9 @@
 
 package org.dockbox.hartshorn.cache.context;
 
-import org.dockbox.hartshorn.cache.CacheManager;
-import org.dockbox.hartshorn.cache.Expiration;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.dockbox.hartshorn.cache.Expiration;
 
 /**
  * Default implementation of {@link CacheMethodContext}.
@@ -31,9 +29,6 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class CacheMethodContextImpl implements CacheMethodContext {
-
-    private final Class<? extends CacheManager> manager;
     private final String name;
     private final Expiration expiration;
-
 }

@@ -17,6 +17,8 @@
 
 package org.dockbox.hartshorn.cache.modifiers;
 
+import org.dockbox.hartshorn.api.exceptions.ApplicationException;
+import org.dockbox.hartshorn.api.exceptions.Except;
 import org.dockbox.hartshorn.cache.annotations.UpdateCache;
 import org.dockbox.hartshorn.cache.context.CacheContext;
 import org.dockbox.hartshorn.cache.context.CacheMethodContext;
@@ -35,14 +37,19 @@ public class CacheUpdateMethodModifier extends CacheServiceModifier<UpdateCache>
     @Override
     protected CacheMethodContext context(final MethodProxyContext<?> context) {
         final UpdateCache update = context.annotation(UpdateCache.class);
-        return new CacheMethodContextImpl(update.manager(), update.value(), null);
+        return new CacheMethodContextImpl(update.value(), null);
     }
 
     @Override
     protected <T, R> ProxyFunction<T, R> process(final ApplicationContext context, final MethodProxyContext<T> methodContext, final CacheContext cacheContext) {
         return (instance, args, proxyContext) -> {
-            final Object o = args[0];
-            cacheContext.manager().update(cacheContext.name(), o);
+            try {
+                final Object o = args[0];
+                cacheContext.manager().update(cacheContext.name(), o);
+                return proxyContext.invoke(args);
+            } catch (ApplicationException e) {
+                Except.handle(e);
+            }
             return null; // Should be void anyway
         };
     }

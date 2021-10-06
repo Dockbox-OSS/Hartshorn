@@ -80,7 +80,7 @@ public final class ProxyAttribute<T, R> implements Attribute<Class<T>> {
         return this.target().getDeclaringClass();
     }
 
-    public R delegate(final T instance, final Method proceed, final Object self, final Object... args) {
+    public R delegate(final T instance, final MethodContext<?, ?> proceed, final Object self, final Object... args) {
         this.holder.cancelled(false);
         return this.delegate.delegate(instance, args, new ProxyContextImpl(proceed, this.holder, self));
     }

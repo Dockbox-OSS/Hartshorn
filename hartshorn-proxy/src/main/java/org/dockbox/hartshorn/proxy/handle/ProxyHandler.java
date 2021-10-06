@@ -20,8 +20,9 @@ package org.dockbox.hartshorn.proxy.handle;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 
-import org.dockbox.hartshorn.boot.Hartshorn;
 import org.dockbox.hartshorn.api.exceptions.ApplicationException;
+import org.dockbox.hartshorn.boot.Hartshorn;
+import org.dockbox.hartshorn.di.context.element.MethodContext;
 import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.proxy.ProxyAttribute;
 
@@ -121,7 +122,8 @@ public class ProxyHandler<T> implements MethodHandler {
         boolean target = true;
         for (final ProxyAttribute<T, ?> property : properties) {
             if (at == property.phase()) {
-                final Object result = property.delegate(this.instance, proceed, self, args);
+                MethodContext<?, ?> methodContext = proceed == null ? null : MethodContext.of(proceed);
+                final Object result = property.delegate(this.instance, methodContext, self, args);
                 if (property.overwriteResult() && !Void.TYPE.equals(thisMethod.getReturnType())) {
                     // A proxy returning null typically indicates the use of a non-returning function, for
                     // annotation  properties this is handled internally, however proxy types should carry
