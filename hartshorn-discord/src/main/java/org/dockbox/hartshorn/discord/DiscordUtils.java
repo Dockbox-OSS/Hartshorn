@@ -18,49 +18,34 @@
 package org.dockbox.hartshorn.discord;
 
 import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.entities.Category;
-import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.MessageChannel;
-import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.di.annotations.service.Service;
-import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.discord.templates.Template;
 import org.dockbox.hartshorn.i18n.common.Message;
 import org.dockbox.hartshorn.i18n.text.Text;
 
-@Service
 public interface DiscordUtils {
 
     Exceptional<JDA> jda();
 
-    Exceptional<TextChannel> globalChannel();
+    boolean exists(String messageId, String channelId);
 
-    boolean checkMessageExists(String messageId, String channelId);
+    void send(Text text, MessageChannel channel);
 
-    Exceptional<Category> loggingCategory();
+    void send(Message text, MessageChannel channel);
 
-    Exceptional<Guild> guild();
+    void send(DiscordPagination pagination, MessageChannel channel);
 
-    void sendToTextChannel(Text text, MessageChannel channel);
+    void send(Template<?> template, MessageChannel channel);
 
-    void sendToTextChannel(Message text, MessageChannel channel);
+    void send(Text text, User user);
 
-    void sendToTextChannel(DiscordPagination pagination, MessageChannel channel);
+    void send(Message text, User user);
 
-    void sendToTextChannel(Template<?> template, MessageChannel channel);
+    void send(DiscordPagination pagination, User user);
 
-    void sendToUser(Text text, User user);
+    void send(Template<?> template, User user);
 
-    void sendToUser(Message text, User user);
-
-    void sendToUser(DiscordPagination pagination, User user);
-
-    void sendToUser(Template<?> template, User user);
-
-    void registerCommandListener(TypeContext<?> type);
-
-    void post(String command, DiscordCommandContext context);
 }

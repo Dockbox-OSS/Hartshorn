@@ -43,18 +43,18 @@ public class DiscordCommandContext extends DefaultContext implements ContextCarr
     @Getter private final ApplicationContext applicationContext;
 
     public void sendToChannel(final Text text) {
-        this.applicationContext().get(DiscordUtils.class).sendToTextChannel(text, this.channel());
+        this.applicationContext().get(DiscordUtils.class).send(text, this.channel());
     }
 
     public void sendToChannel(final Message text) {
-        this.applicationContext().get(DiscordUtils.class).sendToTextChannel(text, this.channel());
+        this.applicationContext().get(DiscordUtils.class).send(text, this.channel());
     }
 
     public void sendToAuthor(final Text text) {
-        this.applicationContext().get(DiscordUtils.class).sendToUser(text, this.author());
+        this.applicationContext().get(DiscordUtils.class).send(text, this.author());
     }
 
     public void sendToAuthor(final Message text) {
-        this.applicationContext().get(DiscordUtils.class).sendToUser(text, this.author());
+        this.applicationContext().get(DiscordUtils.class).send(text, this.author());
     }
 }
