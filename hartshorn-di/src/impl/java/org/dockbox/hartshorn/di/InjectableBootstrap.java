@@ -17,8 +17,6 @@
 
 package org.dockbox.hartshorn.di;
 
-import com.google.common.collect.Multimap;
-
 import org.dockbox.hartshorn.di.annotations.inject.InjectPhase;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.di.context.HartshornApplicationContext;
@@ -36,7 +34,7 @@ import java.util.function.BiConsumer;
 public abstract class InjectableBootstrap extends ApplicationContextAware {
 
     @Override
-    public void create(final Collection<String> prefixes, final Class<?> activationSource, final List<Annotation> activators, final Multimap<InjectPhase, InjectConfiguration> configs, final Modifier... modifiers) {
+    public void create(final Collection<String> prefixes, final Class<?> activationSource, final List<Annotation> activators, final MultiMap<InjectPhase, InjectConfiguration> configs, final Modifier... modifiers) {
         super.create(new HartshornApplicationContext(this, activationSource, prefixes, modifiers));
         Reflections.log = null; // Don't output Reflections
 

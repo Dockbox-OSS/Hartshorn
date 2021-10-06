@@ -17,11 +17,10 @@
 
 package org.dockbox.hartshorn.proxy.handle;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
-
 import org.dockbox.hartshorn.api.exceptions.ApplicationException;
 import org.dockbox.hartshorn.boot.Hartshorn;
+import org.dockbox.hartshorn.di.ArrayListMultiMap;
+import org.dockbox.hartshorn.di.MultiMap;
 import org.dockbox.hartshorn.di.context.element.MethodContext;
 import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.proxy.ProxyAttribute;
@@ -40,7 +39,7 @@ import lombok.Getter;
 
 public class ProxyHandler<T> implements MethodHandler {
 
-    private final Multimap<Method, ProxyAttribute<T, ?>> handlers = ArrayListMultimap.create();
+    private final MultiMap<Method, ProxyAttribute<T, ?>> handlers = new ArrayListMultiMap<>();
     private final T instance;
 
     @Getter

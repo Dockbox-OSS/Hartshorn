@@ -17,15 +17,14 @@
 
 package org.dockbox.hartshorn.boot;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
-
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.exceptions.Except;
 import org.dockbox.hartshorn.boot.ServerState.Started;
 import org.dockbox.hartshorn.di.ApplicationBootstrap;
+import org.dockbox.hartshorn.di.ArrayListMultiMap;
 import org.dockbox.hartshorn.di.InjectConfiguration;
 import org.dockbox.hartshorn.di.Modifier;
+import org.dockbox.hartshorn.di.MultiMap;
 import org.dockbox.hartshorn.di.annotations.activate.Activator;
 import org.dockbox.hartshorn.di.annotations.inject.InjectConfig;
 import org.dockbox.hartshorn.di.annotations.inject.InjectPhase;
@@ -102,7 +101,7 @@ public class HartshornApplication {
 
             final String prefix = "".equals(annotation.prefix()) ? activator.getPackage().getName() : annotation.prefix();
 
-            final Multimap<InjectPhase, InjectConfiguration> configurations = ArrayListMultimap.create();
+            final MultiMap<InjectPhase, InjectConfiguration> configurations = new ArrayListMultiMap<>();
             for (final InjectConfig config : annotation.configs()) {
                 configurations.put(config.phase(), instance(config.value()));
             }

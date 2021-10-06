@@ -38,6 +38,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Stream;
 
 public class HartshornUtilTests {
@@ -285,6 +286,13 @@ public class HartshornUtilTests {
                 Arguments.of("2w3d", (2 * week) + (3 * day)),
                 Arguments.of("2w3d5h", (2 * week) + (3 * day) + (5 * hour)),
                 Arguments.of("17h21m13s", (17 * hour) + (21 * minute) + 13)
+        );
+    }
+
+    public static Stream<Arguments> differences() {
+        return Stream.of(
+                Arguments.of(HartshornUtils.asList("a", "b"), HartshornUtils.asList("a"), HartshornUtils.asList("b")),
+                Arguments.of(HartshornUtils.asList("a"), HartshornUtils.asList("a", "b"), HartshornUtils.asList("b"))
         );
     }
 
@@ -722,5 +730,14 @@ public class HartshornUtilTests {
                         v1  v2  v3 \s
                         """,
                 table);
+    }
+
+    @ParameterizedTest
+    @MethodSource("differences")
+    void testDifferenceInCollections(Collection<String> a, Collection<String> b, Collection<String> expected) {
+        Set<String> difference = HartshornUtils.difference(a, b);
+        Assertions.assertEquals(difference.size(), expected.size());
+        Assertions.assertTrue(difference.containsAll(expected));
+        Assertions.assertTrue(expected.containsAll(difference));
     }
 }

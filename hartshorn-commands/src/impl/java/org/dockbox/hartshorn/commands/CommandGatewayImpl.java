@@ -17,9 +17,6 @@
 
 package org.dockbox.hartshorn.commands;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
-
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.commands.annotations.Command;
 import org.dockbox.hartshorn.commands.context.CommandContext;
@@ -29,6 +26,8 @@ import org.dockbox.hartshorn.commands.context.MethodCommandExecutorContext;
 import org.dockbox.hartshorn.commands.exceptions.ParsingException;
 import org.dockbox.hartshorn.commands.extension.CommandExecutorExtension;
 import org.dockbox.hartshorn.commands.extension.ExtensionResult;
+import org.dockbox.hartshorn.di.ArrayListMultiMap;
+import org.dockbox.hartshorn.di.MultiMap;
 import org.dockbox.hartshorn.di.annotations.inject.Binds;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.di.context.element.MethodContext;
@@ -53,7 +52,7 @@ import lombok.Getter;
 @Binds(CommandGateway.class)
 public class CommandGatewayImpl implements CommandGateway, AttributeHolder {
 
-    private static final transient Multimap<String, CommandExecutorContext> contexts = ArrayListMultimap.create();
+    private static final transient MultiMap<String, CommandExecutorContext> contexts = new ArrayListMultiMap<>();
     @Getter(AccessLevel.PROTECTED)
     private final transient List<CommandExecutorExtension> extensions = HartshornUtils.emptyConcurrentList();
     @Inject
@@ -199,10 +198,8 @@ public class CommandGatewayImpl implements CommandGateway, AttributeHolder {
 
     /**
      * Gets all contexts stored by the gateway.
-     *
-     * @return
      */
-    public static Multimap<String, CommandExecutorContext> contexts() {
+    public static MultiMap<String, CommandExecutorContext> contexts() {
         return CommandGatewayImpl.contexts;
     }
 }

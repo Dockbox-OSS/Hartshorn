@@ -17,15 +17,14 @@
 
 package org.dockbox.hartshorn.di.context;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
-
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.exceptions.ApplicationException;
 import org.dockbox.hartshorn.di.ApplicationContextAware;
+import org.dockbox.hartshorn.di.ArrayListMultiMap;
 import org.dockbox.hartshorn.di.ComponentType;
 import org.dockbox.hartshorn.di.InjectionPoint;
 import org.dockbox.hartshorn.di.Key;
+import org.dockbox.hartshorn.di.MultiMap;
 import org.dockbox.hartshorn.di.ProvisionFailure;
 import org.dockbox.hartshorn.di.annotations.activate.Activator;
 import org.dockbox.hartshorn.di.annotations.inject.Enable;
@@ -62,8 +61,8 @@ public abstract class ManagedHartshornContext extends DefaultContext implements 
     protected static final Logger log = LoggerFactory.getLogger(ManagedHartshornContext.class);
     protected final transient Set<InjectionPoint<?>> injectionPoints = HartshornUtils.emptyConcurrentSet();
 
-    protected final transient Multimap<ServiceOrder, InjectionModifier<?>> injectionModifiers = ArrayListMultimap.create();
-    protected final transient Multimap<ServiceOrder, ComponentProcessor<?>> processors = ArrayListMultimap.create();
+    protected final transient MultiMap<ServiceOrder, InjectionModifier<?>> injectionModifiers = new ArrayListMultiMap<>();
+    protected final transient MultiMap<ServiceOrder, ComponentProcessor<?>> processors = new ArrayListMultiMap<>();
 
     protected final transient Map<String, Object> environmentValues = HartshornUtils.emptyConcurrentMap();
 
