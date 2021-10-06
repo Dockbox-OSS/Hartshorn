@@ -18,13 +18,12 @@
 package org.dockbox.hartshorn.proxy;
 
 import org.dockbox.hartshorn.api.exceptions.ApplicationException;
+import org.dockbox.hartshorn.di.context.element.MethodContext;
 import org.dockbox.hartshorn.proxy.handle.ProxyHolder;
-
-import java.lang.reflect.Method;
 
 public interface ProxyContext {
 
-    Method proceed();
+    MethodContext<?, ?> proceed();
 
     ProxyHolder holder();
 
