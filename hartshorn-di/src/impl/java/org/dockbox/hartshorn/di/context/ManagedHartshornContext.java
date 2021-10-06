@@ -229,4 +229,9 @@ public abstract class ManagedHartshornContext extends DefaultContext implements 
         for (Entry<String, Object> entry : tree.entrySet())
             this.property(entry.getKey(), entry.getValue());
     }
+
+    @Override
+    public Properties properties() {
+        return this.environmentValues;
+    }
 }
