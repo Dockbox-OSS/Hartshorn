@@ -35,8 +35,6 @@ dependencies {
         }
     }
 
-    testFixturesImplementation "com.google.guava:guava:$guavaVersion"
-
     testFixturesImplementation "org.jetbrains:annotations:$jetbrainsAnnotationsVersion"
 
     testFixturesImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"

@@ -151,7 +151,6 @@ allprojects {
         dependencies {
             // Typically included by platforms
             apiInclude "org.slf4j:slf4j-api:$slf4jVersion"
-            apiInclude "com.google.guava:guava:$guavaVersion"
             apiInclude "javax.persistence:javax.persistence-api:$javaxPersistenceVersion"
 
             // Compile/source dependencies
