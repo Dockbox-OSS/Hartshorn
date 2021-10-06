@@ -24,6 +24,6 @@ import org.dockbox.hartshorn.proxy.ProxyApplicationBootstrap;
 public class CachingDemoApplication {
 
     public static void main(String[] args) {
-        HartshornApplication.create(CachingDemoApplication.class);
+        HartshornApplication.create(CachingDemoApplication.class, args);
     }
 }

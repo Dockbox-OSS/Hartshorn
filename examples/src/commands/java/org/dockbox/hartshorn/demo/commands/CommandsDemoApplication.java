@@ -40,6 +40,6 @@ import org.dockbox.hartshorn.proxy.ProxyApplicationBootstrap;
 public class CommandsDemoApplication {
 
     public static void main(String[] args) {
-        HartshornApplication.create(CommandsDemoApplication.class);
+        HartshornApplication.create(CommandsDemoApplication.class, args);
     }
 }

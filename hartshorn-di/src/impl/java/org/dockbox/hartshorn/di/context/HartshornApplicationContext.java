@@ -56,6 +56,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -63,14 +65,18 @@ import javax.inject.Named;
 @SuppressWarnings("unchecked")
 public class HartshornApplicationContext extends ManagedHartshornContext {
 
+    private static final Pattern ARGUMENTS = Pattern.compile("-H([a-zA-Z0-9]+)=(.+)");
+
     private final ComponentLocator locator;
     private final List<Modifier> modifiers;
     private final Map<Key<?>, Object> singletons = HartshornUtils.emptyConcurrentMap();
     private final Map<Key<?>, BindingHierarchy<?>> hierarchies = HartshornUtils.emptyConcurrentMap();
     private MetaProvider metaProvider;
 
-    public HartshornApplicationContext(final ApplicationContextAware application, final Class<?> activationSource, final Collection<String> prefixes, final Modifier... modifiers) {
+    public HartshornApplicationContext(final ApplicationContextAware application, final Class<?> activationSource, final Collection<String> prefixes, final String[] args, final Modifier... modifiers) {
         super(application, activationSource, prefixes);
+
+        this.populateArguments(args);
 
         this.locator = new ComponentLocatorImpl(this);
         this.modifiers = HartshornUtils.asUnmodifiableList(modifiers);
@@ -79,6 +85,13 @@ public class HartshornApplicationContext extends ManagedHartshornContext {
         this.bind(Key.of(ApplicationContext.class), this);
         this.bind(Key.of(MetaProvider.class), this.metaProvider);
         this.bind(Key.of(ComponentLocator.class), this.locator());
+    }
+
+    private void populateArguments(String[] args) {
+        for (String arg: args) {
+            Matcher matcher = ARGUMENTS.matcher(arg);
+            if (matcher.find()) this.property(matcher.group(1), matcher.group(2));
+        }
     }
 
     protected void modify(final List<Modifier> modifiers) {

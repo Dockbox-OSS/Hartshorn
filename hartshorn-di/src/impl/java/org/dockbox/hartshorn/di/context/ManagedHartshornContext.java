@@ -49,6 +49,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.Properties;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -64,7 +65,7 @@ public abstract class ManagedHartshornContext extends DefaultContext implements 
     protected final transient MultiMap<ServiceOrder, InjectionModifier<?>> injectionModifiers = new ArrayListMultiMap<>();
     protected final transient MultiMap<ServiceOrder, ComponentProcessor<?>> processors = new ArrayListMultiMap<>();
 
-    protected final transient Map<String, Object> environmentValues = HartshornUtils.emptyConcurrentMap();
+    protected final transient Properties environmentValues = new Properties();
 
     @Getter(AccessLevel.PROTECTED) private final Activator activator;
     @Getter private final ApplicationEnvironment environment;

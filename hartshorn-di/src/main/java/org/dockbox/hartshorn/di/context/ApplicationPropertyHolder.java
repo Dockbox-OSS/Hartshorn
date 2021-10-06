@@ -52,6 +52,7 @@ public interface ApplicationPropertyHolder {
     <T> Exceptional<T> property(String key);
 
     <T> void property(String key, T value);
+
     void properties(Map<String, Object> tree);
 
 }

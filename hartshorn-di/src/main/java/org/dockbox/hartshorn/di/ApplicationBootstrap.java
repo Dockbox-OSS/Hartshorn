@@ -33,7 +33,7 @@ public interface ApplicationBootstrap {
 
     ApplicationContext context();
 
-    void create(Collection<String> prefixes, Class<?> activationSource, List<Annotation> activators, MultiMap<InjectPhase, InjectConfiguration> configs, Modifier... modifiers);
+    void create(Collection<String> prefixes, Class<?> activationSource, List<Annotation> activators, MultiMap<InjectPhase, InjectConfiguration> configs, String[] args, Modifier... modifiers);
 
     void addActivation(MethodContext<?, ?> method);
 }

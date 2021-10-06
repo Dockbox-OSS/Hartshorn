@@ -65,8 +65,8 @@ public class HartshornApplication {
      * @param modifiers
      *         The modifiers to use when bootstrapping
      */
-    public static ApplicationContext create(final Class<?> activator, final Modifier... modifiers) {
-        return lazy(activator, modifiers).load();
+    public static ApplicationContext create(final Class<?> activator, String[] args, final Modifier... modifiers) {
+        return lazy(activator, args, modifiers).load();
     }
 
     /**
@@ -82,7 +82,7 @@ public class HartshornApplication {
      *
      * @return A {@link Runnable} to initialize the application
      */
-    public static HartshornLoader lazy(final Class<?> activator, final Modifier... modifiers) {
+    public static HartshornLoader lazy(final Class<?> activator, String[] args, final Modifier... modifiers) {
         try {
             Hartshorn.log().info("Starting " + Hartshorn.PROJECT_NAME + " with activator " + activator.getSimpleName());
             final long start = System.currentTimeMillis();
@@ -116,6 +116,7 @@ public class HartshornApplication {
                     activator,
                     HartshornUtils.emptyList(),
                     configurations,
+                    args,
                     modifiers);
             final long creationTime = System.currentTimeMillis() - start;
 
@@ -125,6 +126,7 @@ public class HartshornApplication {
                 final long initTime = System.currentTimeMillis() - initStart;
                 Hartshorn.log().info("Started " + Hartshorn.PROJECT_NAME + " in " + (creationTime + initTime) + "ms (" + creationTime + "ms creation, " + initTime + "ms init)");
                 final ApplicationContext context = injectableBootstrap.context();
+
                 if (context.hasActivator(UseEvents.class)) {
                     new EngineChangedState<Started>() {}.with(context).post();
                 }
