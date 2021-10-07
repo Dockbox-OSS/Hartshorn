@@ -24,14 +24,6 @@ import org.slf4j.Logger;
 public class HartshornTests {
 
     @Test
-    void testLogReturnsCorrectFormat() {
-        final Logger log = Hartshorn.log();
-        final String name = log.getName();
-        Assertions.assertEquals(35, name.length());
-        Assertions.assertEquals("o.d.h.b.HartshornTests", name.trim());
-    }
-
-    @Test
     void testLoggersAreReused() {
         final Logger l1 = Hartshorn.log();
         final Logger l2 = Hartshorn.log();
