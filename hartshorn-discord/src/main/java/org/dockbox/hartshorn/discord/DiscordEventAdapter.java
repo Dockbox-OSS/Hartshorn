@@ -18,6 +18,7 @@ import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.discord.events.DiscordBotDisconnectedEvent;
 import org.dockbox.hartshorn.discord.events.DiscordBotReconnectedEvent;
 import org.dockbox.hartshorn.discord.events.DiscordChatDeletedEvent;
@@ -34,6 +35,8 @@ import org.dockbox.hartshorn.discord.events.DiscordUserNicknameChangedEvent;
 import org.dockbox.hartshorn.discord.events.DiscordUserUnbannedEvent;
 import org.dockbox.hartshorn.events.annotations.Posting;
 import org.jetbrains.annotations.NotNull;
+
+import javax.inject.Inject;
 
 @Posting(value = {
         // Bot specific events
@@ -56,14 +59,17 @@ import org.jetbrains.annotations.NotNull;
 })
 public class DiscordEventAdapter extends ListenerAdapter {
 
+    @Inject
+    private ApplicationContext context;
+    
     @Override
     public void onReconnected(@NotNull ReconnectedEvent event) {
-        new DiscordBotReconnectedEvent().post();
+        new DiscordBotReconnectedEvent().with(this.context).post();
     }
 
     @Override
     public void onDisconnect(@NotNull DisconnectEvent event) {
-        new DiscordBotDisconnectedEvent().post();
+        new DiscordBotDisconnectedEvent().with(this.context).post();
     }
 
     @Override
@@ -73,32 +79,32 @@ public class DiscordEventAdapter extends ListenerAdapter {
                 event.getMessage(),
                 event.getGuild(),
                 event.getChannel()
-        ).post();
+        ).with(this.context).post();
     }
 
     @Override
     public void onGuildMessageUpdate(@NotNull GuildMessageUpdateEvent event) {
-        new DiscordChatUpdatedEvent(event.getAuthor(), event.getMessage()).post();
+        new DiscordChatUpdatedEvent(event.getAuthor(), event.getMessage()).with(this.context).post();
     }
 
     @Override
     public void onGuildMessageDelete(@NotNull GuildMessageDeleteEvent event) {
-        new DiscordChatDeletedEvent(event.getMessageId()).post();
+        new DiscordChatDeletedEvent(event.getMessageId()).with(this.context).post();
     }
 
     @Override
     public void onPrivateMessageReceived(@NotNull PrivateMessageReceivedEvent event) {
-        new DiscordPrivateChatReceivedEvent(event.getAuthor(), event.getMessage()).post();
+        new DiscordPrivateChatReceivedEvent(event.getAuthor(), event.getMessage()).with(this.context).post();
     }
 
     @Override
     public void onPrivateMessageUpdate(@NotNull PrivateMessageUpdateEvent event) {
-        new DiscordPrivateChatUpdatedEvent(event.getAuthor(), event.getMessage()).post();
+        new DiscordPrivateChatUpdatedEvent(event.getAuthor(), event.getMessage()).with(this.context).post();
     }
 
     @Override
     public void onPrivateMessageDelete(@NotNull PrivateMessageDeleteEvent event) {
-        new DiscordPrivateChatDeletedEvent(event.getMessageId()).post();
+        new DiscordPrivateChatDeletedEvent(event.getMessageId()).with(this.context).post();
     }
 
     @Override
@@ -108,29 +114,29 @@ public class DiscordEventAdapter extends ListenerAdapter {
                 .queue(message -> {
                     User user = event.getUser();
                     if (null != user) {
-                        new DiscordReactionAddedEvent(user, message, event.getReaction()).post();
+                        new DiscordReactionAddedEvent(user, message, event.getReaction()).with(this.context).post();
                     }
                 });
     }
 
     @Override
     public void onGuildBan(@NotNull GuildBanEvent event) {
-        new DiscordUserBannedEvent(event.getUser(), event.getGuild()).post();
+        new DiscordUserBannedEvent(event.getUser(), event.getGuild()).with(this.context).post();
     }
 
     @Override
     public void onGuildUnban(@NotNull GuildUnbanEvent event) {
-        new DiscordUserUnbannedEvent(event.getUser(), event.getGuild()).post();
+        new DiscordUserUnbannedEvent(event.getUser(), event.getGuild()).with(this.context).post();
     }
 
     @Override
     public void onGuildMemberRemove(@NotNull GuildMemberRemoveEvent event) {
-        new DiscordUserLeftEvent(event.getUser(), event.getGuild()).post();
+        new DiscordUserLeftEvent(event.getUser(), event.getGuild()).with(this.context).post();
     }
 
     @Override
     public void onGuildMemberJoin(@NotNull GuildMemberJoinEvent event) {
-        new DiscordUserJoinedEvent(event.getUser(), event.getGuild()).post();
+        new DiscordUserJoinedEvent(event.getUser(), event.getGuild()).with(this.context).post();
     }
 
     @Override
@@ -139,6 +145,6 @@ public class DiscordEventAdapter extends ListenerAdapter {
                 event.getUser(),
                 Exceptional.of(event.getOldNickname()),
                 Exceptional.of(event.getNewNickname())
-        ).post();
+        ).with(this.context).post();
     }
 }
