@@ -46,6 +46,6 @@ import org.dockbox.hartshorn.proxy.ProxyApplicationBootstrap;
 public class PersistenceDemoApplication {
 
     public static void main(String[] args) {
-        HartshornApplication.create(PersistenceDemoApplication.class);
+        HartshornApplication.create(PersistenceDemoApplication.class, args);
     }
 }

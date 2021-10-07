@@ -20,6 +20,7 @@ package org.dockbox.hartshorn.di.context;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 
 import java.util.Map;
+import java.util.Properties;
 
 public interface ApplicationPropertyHolder {
 
@@ -52,6 +53,9 @@ public interface ApplicationPropertyHolder {
     <T> Exceptional<T> property(String key);
 
     <T> void property(String key, T value);
+
     void properties(Map<String, Object> tree);
+
+    Properties properties();
 
 }

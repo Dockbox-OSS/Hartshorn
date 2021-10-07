@@ -50,14 +50,14 @@ public abstract class HartshornBootstrap extends InjectableBootstrap {
     private final Set<MethodContext<?, ?>> postBootstrapActivations = HartshornUtils.emptyConcurrentSet();
 
     @Override
-    public void create(final Collection<String> prefixes, final Class<?> activationSource, final List<Annotation> activators, final MultiMap<InjectPhase, InjectConfiguration> configs, final Modifier... modifiers) {
+    public void create(final Collection<String> prefixes, final Class<?> activationSource, final List<Annotation> activators, final MultiMap<InjectPhase, InjectConfiguration> configs, String[] args, final Modifier... modifiers) {
         activators.add(new UseBootstrap() {
             @Override
             public Class<? extends Annotation> annotationType() {
                 return UseBootstrap.class;
             }
         });
-        super.create(prefixes, activationSource, activators, configs, modifiers);
+        super.create(prefixes, activationSource, activators, configs, args, modifiers);
 
         final GlobalConfig globalConfig = this.context().get(GlobalConfig.class);
         Except.useStackTraces(globalConfig.stacktraces());
