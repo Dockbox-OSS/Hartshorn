@@ -65,7 +65,7 @@ import javax.inject.Named;
 @SuppressWarnings("unchecked")
 public class HartshornApplicationContext extends ManagedHartshornContext {
 
-    private static final Pattern ARGUMENTS = Pattern.compile("-H([a-zA-Z0-9]+)=(.+)");
+    private static final Pattern ARGUMENTS = Pattern.compile("-H([a-zA-Z0-9\\.]+)=(.+)");
 
     private final ComponentLocator locator;
     private final List<Modifier> modifiers;
