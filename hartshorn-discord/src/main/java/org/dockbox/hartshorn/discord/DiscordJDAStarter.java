@@ -25,11 +25,12 @@ import org.dockbox.hartshorn.api.exceptions.ApplicationException;
 import org.dockbox.hartshorn.config.annotations.Value;
 import org.dockbox.hartshorn.di.annotations.inject.Provider;
 import org.dockbox.hartshorn.di.annotations.service.Service;
+import org.dockbox.hartshorn.discord.annotations.UseDiscordEvents;
 
 import javax.inject.Singleton;
 import javax.security.auth.login.LoginException;
 
-@Service
+@Service(activators = UseDiscordEvents.class)
 public class DiscordJDAStarter {
 
     private static final String TOKEN = "hartshorn.discord.token";
