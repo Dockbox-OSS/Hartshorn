@@ -80,18 +80,7 @@ public final class Hartshorn {
         final String className = element.getClassName();
         if (LOGGERS.containsKey(className)) return LOGGERS.get(className);
 
-        final String[] qualifiedClassName = className.split("\\.");
-        final StringBuilder fullName = new StringBuilder();
-
-        for (int i = 0; i < qualifiedClassName.length; i++) {
-            final String part = qualifiedClassName[i];
-            if (i > 0) fullName.append('.');
-            if (i == qualifiedClassName.length - 1) fullName.append(part);
-            else fullName.append(part.charAt(0));
-        }
-
-        final String name = HartshornUtils.wrap(fullName.toString(), 35);
-        final Logger logger = LoggerFactory.getLogger(name);
+        final Logger logger = LoggerFactory.getLogger(TypeContext.lookup(className).type());
         LOGGERS.put(className, logger);
         return logger;
     }
