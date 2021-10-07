@@ -36,7 +36,7 @@ public class SampleBootstrap extends HartshornBootstrap {
     }
 
     @Override
-    public void create(final Collection<String> prefixes, final Class<?> activationSource, final List<Annotation> activators, final MultiMap<InjectPhase, InjectConfiguration> configs, final Modifier... modifiers) {
+    public void create(final Collection<String> prefixes, final Class<?> activationSource, final List<Annotation> activators, final MultiMap<InjectPhase, InjectConfiguration> configs, String[] args, final Modifier... modifiers) {
         // This is only used for Application testing, do not actually create bootstrap instance
     }
 

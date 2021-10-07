@@ -34,8 +34,8 @@ import java.util.function.BiConsumer;
 public abstract class InjectableBootstrap extends ApplicationContextAware {
 
     @Override
-    public void create(final Collection<String> prefixes, final Class<?> activationSource, final List<Annotation> activators, final MultiMap<InjectPhase, InjectConfiguration> configs, final Modifier... modifiers) {
-        super.create(new HartshornApplicationContext(this, activationSource, prefixes, modifiers));
+    public void create(final Collection<String> prefixes, final Class<?> activationSource, final List<Annotation> activators, final MultiMap<InjectPhase, InjectConfiguration> configs, String[] args, final Modifier... modifiers) {
+        super.create(new HartshornApplicationContext(this, activationSource, prefixes, args, modifiers));
         Reflections.log = null; // Don't output Reflections
 
         for (final Annotation activator : activators) {

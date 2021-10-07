@@ -42,6 +42,7 @@ public final class JUnit5Application {
         instance.set(null, null);
 
         return HartshornApplication.create(JUnit5Application.class,
+                new String[0],
                 DefaultModifiers.ACTIVATE_ALL,
                 new MetaProviderModifier(MetaProviderImpl::new)
         );

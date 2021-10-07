@@ -44,12 +44,12 @@ public class DiscordPaginationImpl implements DiscordPagination {
 
     @Override
     public void send(final MessageChannel channel) {
-        this.context.get(DiscordUtils.class).sendToTextChannel(this, channel);
+        this.context.get(DiscordUtils.class).send(this, channel);
     }
 
     @Override
     public void send(final User user) {
-        this.context.get(DiscordUtils.class).sendToUser(this, user);
+        this.context.get(DiscordUtils.class).send(this, user);
     }
 
     @Override

@@ -67,6 +67,7 @@ public class HibernateSqlService implements SqlService {
     public void apply(final Attribute<?> property) throws ApplicationException {
         if (property instanceof ConnectionAttribute connectionAttribute) {
             final PersistenceConnection connection = connectionAttribute.value();
+
             if (HartshornUtils.notEmpty(connection.username()) || HartshornUtils.notEmpty(connection.password())) {
                 this.configuration.setProperty("hibernate.connection.username", connection.username());
                 this.configuration.setProperty("hibernate.connection.password", connection.password());
@@ -114,6 +115,7 @@ public class HibernateSqlService implements SqlService {
             this.configuration.addAnnotatedClass(entity.type());
         }
 
+        this.configuration.addProperties(this.applicationContext.properties());
         final Map<Object, Object> properties = this.configuration.getProperties();
 
         // Early validation to ensure our configuration is valid
