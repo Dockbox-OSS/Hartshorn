@@ -43,7 +43,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-@Binds(DiscordUtilsImpl.class)
+@Binds(DiscordUtils.class)
 public class DiscordUtilsImpl implements DiscordUtils {
 
     @Inject
@@ -55,6 +55,11 @@ public class DiscordUtilsImpl implements DiscordUtils {
     }
 
     @Override
+    public Exceptional<User> bot() {
+        return this.jda().map(JDA::getSelfUser);
+    }
+
+    @Override
     public boolean exists(final String messageId, final String channelId) {
         return this.jda().map(jda -> {
             final TextChannel channel = jda.getTextChannelById(channelId);
@@ -62,6 +67,11 @@ public class DiscordUtilsImpl implements DiscordUtils {
             final net.dv8tion.jda.api.entities.Message message = channel.retrieveMessageById(messageId).complete();
             return null != message;
         }).or(false);
+    }
+
+    @Override
+    public Exceptional<User> user(long id) {
+        return this.jda().map(jda -> jda.retrieveUserById(id).complete());
     }
 
     @Override
@@ -135,7 +145,7 @@ public class DiscordUtilsImpl implements DiscordUtils {
     }
 
     public static void send(@NotNull final CharSequence text, @NotNull final User user) {
-        user.openPrivateChannel().queue(channel -> channel.sendMessage(text));
+        send(text, user.openPrivateChannel().complete());
     }
 
     private static void send(@NotNull final CharSequence text, @NotNull final MessageChannel channel) {

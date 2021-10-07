@@ -30,7 +30,11 @@ public interface DiscordUtils {
 
     Exceptional<JDA> jda();
 
+    Exceptional<User> bot();
+
     boolean exists(String messageId, String channelId);
+
+    Exceptional<User> user(long id);
 
     void send(Text text, MessageChannel channel);
 
