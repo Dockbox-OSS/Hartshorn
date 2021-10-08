@@ -9,6 +9,8 @@ dependencies {
     include project(':hartshorn-events').sourceSets.impl.output
 
     include "javax.servlet:javax.servlet-api:$javaxServletVersion"
+    apiInclude "javax.servlet:javax.servlet-api:$javaxServletVersion"
+
     include "org.eclipse.jetty:jetty-servlet:$jettyVersion"
     include "org.eclipse.jetty:jetty-server:$jettyVersion"
 }
