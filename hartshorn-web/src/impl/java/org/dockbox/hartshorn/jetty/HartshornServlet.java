@@ -2,6 +2,7 @@ package org.dockbox.hartshorn.jetty;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.exceptions.Except;
+import org.dockbox.hartshorn.boot.Hartshorn;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.di.context.element.MethodContext;
 import org.dockbox.hartshorn.web.HttpMethod;
@@ -29,6 +30,7 @@ public class HartshornServlet extends HttpServlet {
 
     protected void handleIf(HttpMethod method, HttpServletRequest req, HttpServletResponse res) {
         if (method.equals(this.httpMethod)) {
+            res.addHeader("Hartshorn-Version", Hartshorn.VERSION);
             Exceptional<?> result = this.methodContext.invoke(this.context);
             if (result.present()) {
                 try {

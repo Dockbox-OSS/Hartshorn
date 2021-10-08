@@ -47,6 +47,7 @@ public class HartshornJettyErrorHandler extends ErrorHandler {
             PrintWriter writer = new PrintWriter(new OutputStreamWriter(out, charset));
 
             response.setCharacterEncoding(charset.name());
+            response.addHeader("Hartshorn-Version", Hartshorn.VERSION);
 
             Throwable th = (Throwable) request.getAttribute(RequestDispatcher.ERROR_EXCEPTION);
             RequestError error = new JettyRequestError(this.context, request, response, code, writer, message, th);
