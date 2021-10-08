@@ -7,7 +7,7 @@ import org.dockbox.hartshorn.web.error.RequestError;
 @Binds(ErrorServlet.class)
 public class JettyErrorServlet implements ErrorServlet {
     @Override
-    public void handle(RequestError error) {
+    public void handle(final RequestError error) {
         error.yieldDefaults(true);
     }
 }

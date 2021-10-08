@@ -24,7 +24,7 @@ public class JettyRequestError extends DefaultCarrierContext implements RequestE
     @Setter private String message;
     @Setter private boolean yieldDefaults = false;
 
-    public JettyRequestError(ApplicationContext applicationContext, HttpServletRequest request, HttpServletResponse response, int statusCode, PrintWriter writer, String message, Throwable cause) {
+    public JettyRequestError(final ApplicationContext applicationContext, final HttpServletRequest request, final HttpServletResponse response, final int statusCode, final PrintWriter writer, final String message, final Throwable cause) {
         super(applicationContext);
         this.request = request;
         this.response = response;

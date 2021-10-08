@@ -36,21 +36,21 @@ public class HartshornJettyErrorHandler extends ErrorHandler {
     private ErrorServlet errorServlet;
 
     @Override
-    protected void generateAcceptableResponse(Request baseRequest, HttpServletRequest request, HttpServletResponse response, int code, String message, String contentType)
+    protected void generateAcceptableResponse(final Request baseRequest, final HttpServletRequest request, final HttpServletResponse response, final int code, String message, final String contentType)
             throws IOException {
         if (message == null) message = HttpStatus.getMessage(code);
 
         try {
-            Charset charset = this.charSet(baseRequest, contentType);
-            ByteBuffer buffer = baseRequest.getResponse().getHttpOutput().getBuffer();
-            ByteBufferOutputStream out = new ByteBufferOutputStream(buffer);
-            PrintWriter writer = new PrintWriter(new OutputStreamWriter(out, charset));
+            final Charset charset = this.charSet(baseRequest, contentType);
+            final ByteBuffer buffer = baseRequest.getResponse().getHttpOutput().getBuffer();
+            final ByteBufferOutputStream out = new ByteBufferOutputStream(buffer);
+            final PrintWriter writer = new PrintWriter(new OutputStreamWriter(out, charset));
 
             response.setCharacterEncoding(charset.name());
             response.addHeader("Hartshorn-Version", Hartshorn.VERSION);
 
-            Throwable th = (Throwable) request.getAttribute(RequestDispatcher.ERROR_EXCEPTION);
-            RequestError error = new JettyRequestError(this.context, request, response, code, writer, message, th);
+            final Throwable th = (Throwable) request.getAttribute(RequestDispatcher.ERROR_EXCEPTION);
+            final RequestError error = new JettyRequestError(this.context, request, response, code, writer, message, th);
 
             this.errorServlet.handle(error);
             message = error.message();
@@ -60,7 +60,7 @@ public class HartshornJettyErrorHandler extends ErrorHandler {
             }
             writer.flush();
         }
-        catch (ApplicationException e) {
+        catch (final ApplicationException e) {
             Except.handle("Could not handle request error", e);
             throw new IOException("Server error");
         }
@@ -68,7 +68,7 @@ public class HartshornJettyErrorHandler extends ErrorHandler {
         baseRequest.getHttpChannel().sendResponseAndComplete();
     }
 
-    protected void writeDefaults(HttpServletRequest request, HttpServletResponse response, PrintWriter writer, int code, String message) {
+    protected void writeDefaults(final HttpServletRequest request, final HttpServletResponse response, final PrintWriter writer, final int code, final String message) {
         response.setContentType(Type.TEXT_PLAIN.asString());
         writer.write("HTTP ERROR ");
         writer.write(Integer.toString(code));
@@ -80,11 +80,11 @@ public class HartshornJettyErrorHandler extends ErrorHandler {
         writer.printf("MESSAGE: %s%n", message);
     }
 
-    protected Charset charSet(Request baseRequest, String contentType) {
+    protected Charset charSet(final Request baseRequest, final String contentType) {
         Charset charset = null;
-        List<String> acceptable = baseRequest.getHttpFields().getQualityCSV(HttpHeader.ACCEPT_CHARSET);
+        final List<String> acceptable = baseRequest.getHttpFields().getQualityCSV(HttpHeader.ACCEPT_CHARSET);
         if (!acceptable.isEmpty()) {
-            for (String name : acceptable) {
+            for (final String name : acceptable) {
                 if ("*".equals(name)) {
                     charset = StandardCharsets.UTF_8;
                     break;
@@ -93,7 +93,7 @@ public class HartshornJettyErrorHandler extends ErrorHandler {
                 try {
                     charset = Charset.forName(name);
                 }
-                catch (Exception e) {
+                catch (final Exception e) {
                     Except.handle(e);
                 }
             }
@@ -101,7 +101,7 @@ public class HartshornJettyErrorHandler extends ErrorHandler {
                 return StandardCharsets.UTF_8;
         }
 
-        MimeTypes.Type type;
+        final MimeTypes.Type type;
         switch (contentType) {
             case "text/html", "text/*", "*/*" -> {
                 type = MimeTypes.Type.TEXT_HTML;

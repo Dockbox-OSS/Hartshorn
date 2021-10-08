@@ -4,7 +4,7 @@ import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.di.context.DefaultCarrierContext;
 import org.dockbox.hartshorn.di.context.element.MethodContext;
-import org.dockbox.hartshorn.web.annotations.Request;
+import org.dockbox.hartshorn.web.annotations.HttpRequest;
 import org.dockbox.hartshorn.web.annotations.RestController;
 
 import lombok.Getter;
@@ -12,18 +12,18 @@ import lombok.Getter;
 public class RequestHandlerContext extends DefaultCarrierContext {
 
     @Getter private final MethodContext<?, ?> methodContext;
-    @Getter private final Request request;
+    @Getter private final HttpRequest httpRequest;
     @Getter private final String pathSpec;
 
-    public RequestHandlerContext(ApplicationContext applicationContext, MethodContext<?, ?> methodContext) {
+    public RequestHandlerContext(final ApplicationContext applicationContext, final MethodContext<?, ?> methodContext) {
         super(applicationContext);
         this.methodContext = methodContext;
-        Exceptional<Request> request = methodContext.annotation(Request.class);
+        final Exceptional<HttpRequest> request = methodContext.annotation(HttpRequest.class);
         if (request.absent()) throw new IllegalArgumentException(methodContext.parent().name() + "#" + methodContext.name() + " is not annotated with @Request or an extension of it.");
-        this.request = request.get();
+        this.httpRequest = request.get();
 
-        Exceptional<RestController> annotation = methodContext.parent().annotation(RestController.class);
-        String spec = this.request().value();
+        final Exceptional<RestController> annotation = methodContext.parent().annotation(RestController.class);
+        String spec = this.httpRequest().value();
         spec = spec.startsWith("/") ? spec : '/' + spec;
 
         if (annotation.present()) {
@@ -32,6 +32,6 @@ public class RequestHandlerContext extends DefaultCarrierContext {
             spec = root + spec;
         }
 
-        this.pathSpec = spec.startsWith("/") ? spec : '/' + spec;;
+        this.pathSpec = spec.startsWith("/") ? spec : '/' + spec;
     }
 }

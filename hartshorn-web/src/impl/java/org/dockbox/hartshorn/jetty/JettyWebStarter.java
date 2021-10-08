@@ -26,19 +26,19 @@ public class JettyWebStarter implements WebStarter {
     }
 
     @Override
-    public void start(int port) throws ApplicationException {
+    public void start(final int port) throws ApplicationException {
         try {
-            Server server = new Server(port);
+            final Server server = new Server(port);
             server.setHandler(this.handler);
             server.setErrorHandler(this.errorHandler());
             server.start();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new ApplicationException(e);
         }
     }
 
     @Override
-    public void register(RequestHandlerContext context) {
+    public void register(final RequestHandlerContext context) {
         this.handler.addServletWithMapping(this.createHolder(context), context.pathSpec());
     }
 
@@ -46,12 +46,12 @@ public class JettyWebStarter implements WebStarter {
         return this.context.get(HartshornJettyErrorHandler.class);
     }
 
-    protected ServletHolder createHolder(RequestHandlerContext context) {
+    protected ServletHolder createHolder(final RequestHandlerContext context) {
         return new ServletHolder(this.servlet(context));
     }
 
-    protected HartshornServlet servlet(RequestHandlerContext context) {
-        return new HartshornServlet(context.request().method(), context.methodContext(), context.applicationContext());
+    protected HartshornServlet servlet(final RequestHandlerContext context) {
+        return new HartshornServlet(context.httpRequest().method(), context.methodContext(), context.applicationContext());
     }
 
 }
