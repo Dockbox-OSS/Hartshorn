@@ -17,11 +17,12 @@
 
 package org.dockbox.hartshorn.commands.arguments;
 
-import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.commands.service.CommandParameter;
-import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.HartshornUtils;
+import org.dockbox.hartshorn.core.adapter.StringTypeAdapter;
+import org.dockbox.hartshorn.core.context.element.TypeContext;
+import org.dockbox.hartshorn.core.domain.Exceptional;
 
 import java.util.Collection;
 import java.util.function.BiFunction;
@@ -114,6 +115,11 @@ public final class ArgumentConverterImpl<T> extends DefaultArgumentConverter<T> 
          */
         public CommandValueConverterBuilder<T> withConverter(final BiFunction<CommandSource, String, Exceptional<T>> converter) {
             this.converter = converter;
+            return this;
+        }
+
+        public CommandValueConverterBuilder<T> withConverter(final StringTypeAdapter<T> adapter) {
+            this.converter = (source, in) -> adapter.adapt(in);
             return this;
         }
 
