@@ -16,10 +16,8 @@
  */
 
 dependencies {
-    apiInclude 'org.dockbox.hartshorn:hartshorn-core'
-    apiInclude 'org.dockbox.hartshorn:hartshorn-util'
-    apiInclude 'org.dockbox.hartshorn:hartshorn-di'
-    apiInclude 'org.dockbox.hartshorn:hartshorn-exceptions'
-
-    apiShare project(":hartshorn-di").sourceSets.impl.output
+    implementation 'org.dockbox.hartshorn:hartshorn-core'
+    implementation 'org.dockbox.hartshorn:hartshorn-util'
+    implementation 'org.dockbox.hartshorn:hartshorn-di'
+    implementation 'org.dockbox.hartshorn:hartshorn-exceptions'
 }

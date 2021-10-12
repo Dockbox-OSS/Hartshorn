@@ -31,42 +31,37 @@ sourceSets {
 }
 
 configurations {
-    apiInclude
-    implementation.extendsFrom(apiInclude)
-    persistenceImplementation.extendsFrom(apiInclude)
-    commandsImplementation.extendsFrom(apiInclude)
-    cachingImplementation.extendsFrom(apiInclude)
+    persistenceImplementation.extendsFrom(implementation)
+    commandsImplementation.extendsFrom(implementation)
+    cachingImplementation.extendsFrom(implementation)
 
-    processor
-    annotationProcessor.extendsFrom(processor)
-    persistenceAnnotationProcessor.extendsFrom(processor)
-    commandsAnnotationProcessor.extendsFrom(processor)
-    cachingAnnotationProcessor.extendsFrom(processor)
+    persistenceAnnotationProcessor.extendsFrom(annotationProcessor)
+    commandsAnnotationProcessor.extendsFrom(annotationProcessor)
+    cachingAnnotationProcessor.extendsFrom(annotationProcessor)
 }
 
 dependencies {
-    apiInclude "org.hibernate:hibernate-core:$hibernateVersion"
-    apiInclude "mysql:mysql-connector-java:$mySqlConnectorVersion"
+    implementation "org.hibernate:hibernate-core:$hibernateVersion"
+    implementation "mysql:mysql-connector-java:$mySqlConnectorVersion"
 
-    apiInclude "com.fasterxml.jackson.core:jackson-core:$jacksonVersion"
-    apiInclude "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:$jacksonVersion"
-    apiInclude "com.fasterxml.jackson.dataformat:jackson-dataformat-properties:$jacksonVersion"
-    apiInclude "com.fasterxml.jackson.dataformat:jackson-dataformat-toml:$jacksonVersion"
-    apiInclude "com.fasterxml.jackson.dataformat:jackson-dataformat-xml:$jacksonVersion"
+    implementation "com.fasterxml.jackson.core:jackson-core:$jacksonVersion"
+    implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:$jacksonVersion"
+    implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-properties:$jacksonVersion"
+    implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-toml:$jacksonVersion"
+    implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-xml:$jacksonVersion"
 
 
-    apiInclude "org.apache.logging.log4j:log4j-api:$log4jVersion"
-    apiInclude "org.apache.logging.log4j:log4j-core:$log4jVersion"
-    apiInclude "org.apache.logging.log4j:log4j-slf4j-impl:$log4jVersion"
+    implementation "org.apache.logging.log4j:log4j-api:$log4jVersion"
+    implementation "org.apache.logging.log4j:log4j-core:$log4jVersion"
+    implementation "org.apache.logging.log4j:log4j-slf4j-impl:$log4jVersion"
 
-    processor "org.projectlombok:lombok:$lombokVersion"
+    annotationProcessor "org.projectlombok:lombok:$lombokVersion"
 
     // Only required because this is affected by the global build file, in a real world application you'd use
     // implementation 'org.dockbox.hartshorn:hartshorn-{module}:{version}'.
     rootDir.listFiles().each {
         if ('examples' != it.name && it.directory && new File(it, 'build.gradle').exists()) {
-            apiInclude project(":${it.name}")
-            apiInclude project(":${it.name}").sourceSets.impl.output
+            implementation project(":${it.name}")
         }
     }
 }

@@ -16,9 +16,9 @@
  */
 
 dependencies {
-    apiInclude 'org.dockbox.hartshorn:hartshorn-core'
-    apiInclude 'org.dockbox.hartshorn:hartshorn-util'
-    apiInclude 'org.dockbox.hartshorn:hartshorn-di'
-    apiInclude 'org.dockbox.hartshorn:hartshorn-exceptions'
-    apiInclude 'org.dockbox.hartshorn:hartshorn-bootstrap'
+    implementation 'org.dockbox.hartshorn:hartshorn-core'
+    implementation 'org.dockbox.hartshorn:hartshorn-util'
+    implementation 'org.dockbox.hartshorn:hartshorn-di'
+    implementation 'org.dockbox.hartshorn:hartshorn-exceptions'
+    implementation 'org.dockbox.hartshorn:hartshorn-bootstrap'
 }

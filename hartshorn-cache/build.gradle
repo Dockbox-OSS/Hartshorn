@@ -18,6 +18,6 @@
 apply from: "$rootDir/parent.gradle"
 
 dependencies {
-    include 'org.dockbox.hartshorn:hartshorn-proxy'
-    include 'org.dockbox.hartshorn:hartshorn-tasks'
+    implementation 'org.dockbox.hartshorn:hartshorn-proxy'
+    implementation 'org.dockbox.hartshorn:hartshorn-tasks'
 }

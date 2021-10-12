@@ -16,11 +16,11 @@
  */
 
 dependencies {
-    apiShare 'org.dockbox.hartshorn:hartshorn-core'
-    apiShare 'org.dockbox.hartshorn:hartshorn-util'
+    implementation 'org.dockbox.hartshorn:hartshorn-core'
+    implementation 'org.dockbox.hartshorn:hartshorn-util'
 
     testImplementation 'org.dockbox.hartshorn:hartshorn-bootstrap'
 
-    apiShare "javax.inject:javax.inject:$javaxInjectVersion"
-    apiInclude "org.reflections:reflections:$reflectionsVersion"
+    api "javax.inject:javax.inject:$javaxInjectVersion"
+    implementation "org.reflections:reflections:$reflectionsVersion"
 }

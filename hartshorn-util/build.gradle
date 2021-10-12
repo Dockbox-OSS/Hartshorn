@@ -16,12 +16,8 @@
  */
 
 dependencies {
-    apiShare 'org.dockbox.hartshorn:hartshorn-core'
-
-    testImplementation project(":hartshorn-di").sourceSets.impl.output
-
-    apiInclude "org.reflections:reflections:$reflectionsVersion"
-
-    apiInclude "com.mortennobel:java-image-scaling:$imageScalingVersion"
-    apiInclude "com.jhlabs:filters:$jhlabsFiltersVersion"
+    implementation 'org.dockbox.hartshorn:hartshorn-core'
+    implementation "org.reflections:reflections:$reflectionsVersion"
+    implementation "com.mortennobel:java-image-scaling:$imageScalingVersion"
+    implementation "com.jhlabs:filters:$jhlabsFiltersVersion"
 }

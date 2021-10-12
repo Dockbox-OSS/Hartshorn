@@ -32,9 +32,7 @@ repositories {
 }
 
 configurations {
-    includeShadow
-    include.extendsFrom(includeShadow)
-    shadow.extendsFrom(includeShadow)
+    shadow.extendsFrom(implementation)
 }
 
 def ignoreProjects = ['examples', 'hartshorn-boot']
@@ -42,18 +40,17 @@ def ignoreProjects = ['examples', 'hartshorn-boot']
 dependencies {
     rootDir.listFiles().each {
         if ((!ignoreProjects.contains(it.name)) && it.directory && new File(it, 'build.gradle').exists()) {
-            includeShadow "org.dockbox.hartshorn:${it.name}"
-            includeShadow project(":${it.name}").sourceSets.impl.output
+            implementation "org.dockbox.hartshorn:${it.name}"
         }
     }
 
-    includeShadow "org.hibernate:hibernate-core:$hibernateVersion"
-    includeShadow "org.apache.derby:derby:$derbyVersion"
-    includeShadow "javax.xml.bind:jaxb-api:$javaxJaxbVersion"
+    implementation "org.hibernate:hibernate-core:$hibernateVersion"
+    implementation "org.apache.derby:derby:$derbyVersion"
+    implementation "javax.xml.bind:jaxb-api:$javaxJaxbVersion"
 
-    includeShadow "org.apache.logging.log4j:log4j-api:$log4jVersion"
-    includeShadow "org.apache.logging.log4j:log4j-core:$log4jVersion"
-    includeShadow "org.apache.logging.log4j:log4j-slf4j-impl:$log4jVersion"
+    implementation "org.apache.logging.log4j:log4j-api:$log4jVersion"
+    implementation "org.apache.logging.log4j:log4j-core:$log4jVersion"
+    implementation "org.apache.logging.log4j:log4j-slf4j-impl:$log4jVersion"
 }
 
 tasks.build {

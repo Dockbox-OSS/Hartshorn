@@ -18,20 +18,20 @@
 apply from: "$rootDir/parent.gradle"
 
 dependencies {
-    apiInclude 'org.dockbox.hartshorn:hartshorn-bootstrap'
-    apiInclude 'org.dockbox.hartshorn:hartshorn-proxy'
+    implementation 'org.dockbox.hartshorn:hartshorn-bootstrap'
+    implementation 'org.dockbox.hartshorn:hartshorn-proxy'
 
-    apiInclude "com.fasterxml.jackson.core:jackson-core:$jacksonVersion"
-    include "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:$jacksonVersion"
-    include "com.fasterxml.jackson.dataformat:jackson-dataformat-properties:$jacksonVersion"
-    include "com.fasterxml.jackson.dataformat:jackson-dataformat-toml:$jacksonVersion"
-    include "com.fasterxml.jackson.dataformat:jackson-dataformat-xml:$jacksonVersion"
+    implementation "com.fasterxml.jackson.core:jackson-core:$jacksonVersion"
+    implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:$jacksonVersion"
+    implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-properties:$jacksonVersion"
+    implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-toml:$jacksonVersion"
+    implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-xml:$jacksonVersion"
 
-    include "org.codehaus.woodstox:woodstox-core-asl:$woodstoxVersion"
+    implementation "org.codehaus.woodstox:woodstox-core-asl:$woodstoxVersion"
 
     // SQL Extension dependencies
-    include "org.hibernate:hibernate-core:$hibernateVersion"
-    include "org.apache.derby:derby:$derbyVersion"
+    implementation "org.hibernate:hibernate-core:$hibernateVersion"
+    implementation "org.apache.derby:derby:$derbyVersion"
 
     testImplementation "mysql:mysql-connector-java:$mySqlConnectorVersion"
     testImplementation "org.postgresql:postgresql:$postgreSqlVersion"
