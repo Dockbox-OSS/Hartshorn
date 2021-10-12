@@ -1,0 +1,14 @@
+plugins {
+    id 'war'
+}
+
+apply from: "$rootDir/parent.gradle"
+
+dependencies {
+    implementation 'org.dockbox.hartshorn:hartshorn-events'
+    implementation 'org.dockbox.hartshorn:hartshorn-config'
+    implementation 'org.dockbox.hartshorn:hartshorn-persistence'
+    implementation "org.eclipse.jetty:jetty-servlet:$jettyVersion"
+    implementation "org.eclipse.jetty:jetty-server:$jettyVersion"
+    api "javax.servlet:javax.servlet-api:$javaxServletVersion"
+}
