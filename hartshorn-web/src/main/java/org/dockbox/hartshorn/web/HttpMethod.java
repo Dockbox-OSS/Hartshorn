@@ -1,5 +1,9 @@
 package org.dockbox.hartshorn.web;
 
+import java.util.Locale;
+
+import javax.servlet.http.HttpServletRequest;
+
 public enum HttpMethod {
     GET,
     HEAD,
@@ -9,5 +13,10 @@ public enum HttpMethod {
     CONNECT,
     OPTIONS,
     TRACE,
-    PATCH
+    PATCH,
+    ;
+
+    public HttpMethod of(HttpServletRequest request) {
+        return HttpMethod.valueOf(request.getMethod().toUpperCase(Locale.ROOT));
+    }
 }
