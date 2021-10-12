@@ -86,8 +86,8 @@ allprojects {
         configurations.all {
             resolutionStrategy.dependencySubstitution {
                 rootDir.listFiles().each {
-                    if (it.isDirectory() && new File(it, 'build.gradle').exists()) {
-                        substitute module('org.dockbox.hartshorn:' + it.name) using project(":$it.name")
+                    if (it.isDirectory() && new File(it, "${it.name}.gradle").exists()) {
+                        substitute module("org.dockbox.hartshorn:${it.name}") using project(":$it.name")
                     }
                 }
             }

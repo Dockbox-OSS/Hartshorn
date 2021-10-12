@@ -39,7 +39,7 @@ def ignoreProjects = ['examples', 'hartshorn-boot']
 
 dependencies {
     rootDir.listFiles().each {
-        if ((!ignoreProjects.contains(it.name)) && it.directory && new File(it, 'build.gradle').exists()) {
+        if ((!ignoreProjects.contains(it.name)) && it.directory && new File(it, "${it.name}.gradle").exists()) {
             implementation "org.dockbox.hartshorn:${it.name}"
         }
     }

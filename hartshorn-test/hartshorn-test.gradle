@@ -27,7 +27,7 @@ def depBlacklist = ['hartshorn-test', 'examples']
 
 dependencies {
     rootDir.listFiles().each {
-        if (it.directory && it.name.startsWith('hartshorn-') && new File(it, 'build.gradle').exists()) {
+        if (it.directory && it.name.startsWith('hartshorn-') && new File(it, "${it.name}.gradle").exists()) {
             if (!depBlacklist.contains(it.name)) {
                 testFixturesImplementation "org.dockbox.hartshorn:${it.name}"
             }

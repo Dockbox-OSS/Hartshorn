@@ -20,10 +20,14 @@ gradle.startParameter.continueOnFailure = true
 
 includeAll(rootDir, '')
 
-def includeAll(File dir, String prefix, String... blacklist) {
+def includeAll(File dir, String prefix) {
     dir.listFiles().each {
-        if (!blacklist.contains(it.name) && it.directory && new File(it, 'build.gradle').exists()) {
-            include(prefix + ":${it.name}")
+        if (it.directory && new File(it, "${it.name}.gradle").exists()) {
+            include("${prefix}:${it.name}")
         }
     }
+}
+
+rootProject.children.each {project ->
+    project.buildFileName = "${project.name}.gradle"
 }

@@ -60,7 +60,7 @@ dependencies {
     // Only required because this is affected by the global build file, in a real world application you'd use
     // implementation 'org.dockbox.hartshorn:hartshorn-{module}:{version}'.
     rootDir.listFiles().each {
-        if ('examples' != it.name && it.directory && new File(it, 'build.gradle').exists()) {
+        if ('examples' != it.name && it.directory && new File(it, "${it.name}.gradle").exists()) {
             implementation project(":${it.name}")
         }
     }
