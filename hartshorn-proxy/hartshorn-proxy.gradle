@@ -1,0 +1,7 @@
+apply from: "$rootDir/parent.gradle"
+
+dependencies {
+    implementation 'org.dockbox.hartshorn:hartshorn-exceptions'
+    implementation 'org.dockbox.hartshorn:hartshorn-bootstrap'
+    implementation "org.reflections:reflections:$reflectionsVersion"
+}

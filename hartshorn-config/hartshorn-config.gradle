@@ -15,23 +15,16 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.cache;
+apply from: "$rootDir/parent.gradle"
 
-import org.dockbox.hartshorn.cache.annotations.CacheService;
-import org.dockbox.hartshorn.cache.annotations.EvictCache;
-import org.dockbox.hartshorn.cache.annotations.UpdateCache;
+dependencies {
+    implementation 'org.dockbox.hartshorn:hartshorn-bootstrap'
+    implementation 'org.dockbox.hartshorn:hartshorn-persistence'
 
-@CacheService("non-abstract")
-public class NonAbstractCacheService {
+    implementation "com.fasterxml.jackson.core:jackson-core:$jacksonVersion"
+    implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:$jacksonVersion"
 
-    @UpdateCache
-    public long update(long s) {
-        return s*2;
-    }
-
-    @EvictCache
-    public boolean evict() {
-        return true;
-    }
-
+    testImplementation "com.fasterxml.jackson.dataformat:jackson-dataformat-properties:$jacksonVersion"
+    testImplementation "com.fasterxml.jackson.dataformat:jackson-dataformat-toml:$jacksonVersion"
+    testImplementation "com.fasterxml.jackson.dataformat:jackson-dataformat-xml:$jacksonVersion"
 }

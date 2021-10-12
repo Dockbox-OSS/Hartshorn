@@ -15,23 +15,12 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.cache;
+dependencies {
+    implementation 'org.dockbox.hartshorn:hartshorn-core'
+    implementation 'org.dockbox.hartshorn:hartshorn-util'
 
-import org.dockbox.hartshorn.cache.annotations.CacheService;
-import org.dockbox.hartshorn.cache.annotations.EvictCache;
-import org.dockbox.hartshorn.cache.annotations.UpdateCache;
+    testImplementation 'org.dockbox.hartshorn:hartshorn-bootstrap'
 
-@CacheService("non-abstract")
-public class NonAbstractCacheService {
-
-    @UpdateCache
-    public long update(long s) {
-        return s*2;
-    }
-
-    @EvictCache
-    public boolean evict() {
-        return true;
-    }
-
+    api "javax.inject:javax.inject:$javaxInjectVersion"
+    implementation "org.reflections:reflections:$reflectionsVersion"
 }

@@ -15,23 +15,9 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.cache;
+apply from: "$rootDir/parent.gradle"
 
-import org.dockbox.hartshorn.cache.annotations.CacheService;
-import org.dockbox.hartshorn.cache.annotations.EvictCache;
-import org.dockbox.hartshorn.cache.annotations.UpdateCache;
-
-@CacheService("non-abstract")
-public class NonAbstractCacheService {
-
-    @UpdateCache
-    public long update(long s) {
-        return s*2;
-    }
-
-    @EvictCache
-    public boolean evict() {
-        return true;
-    }
-
+dependencies {
+    implementation 'org.dockbox.hartshorn:hartshorn-bootstrap'
+    implementation 'org.dockbox.hartshorn:hartshorn-tasks'
 }
