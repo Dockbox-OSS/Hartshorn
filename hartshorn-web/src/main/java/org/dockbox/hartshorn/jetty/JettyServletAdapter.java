@@ -8,6 +8,7 @@ import org.dockbox.hartshorn.di.context.element.MethodContext;
 import org.dockbox.hartshorn.di.context.element.ParameterContext;
 import org.dockbox.hartshorn.persistence.mapping.ObjectMapper;
 import org.dockbox.hartshorn.util.HartshornUtils;
+import org.dockbox.hartshorn.web.HttpAction;
 import org.dockbox.hartshorn.web.HttpMethod;
 import org.dockbox.hartshorn.web.annotations.RequestBody;
 import org.dockbox.hartshorn.web.annotations.RequestHeader;
@@ -25,7 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-public class HartshornServlet extends HttpServlet {
+public class JettyServletAdapter extends HttpServlet {
 
     private HttpMethod httpMethod;
     private MethodContext<?, ?> methodContext;
@@ -66,7 +67,7 @@ public class HartshornServlet extends HttpServlet {
         this.handleIf(HttpMethod.TRACE, req, res, super::doTrace);
     }
 
-    protected void handleIf(final HttpMethod method, final HttpServletRequest req, final HttpServletResponse res, final ServletFallback fallbackAction) throws ServletException, IOException {
+    protected void handleIf(final HttpMethod method, final HttpServletRequest req, final HttpServletResponse res, final HttpAction fallbackAction) throws ServletException, IOException {
         if (method.equals(this.httpMethod)) {
             res.addHeader("Hartshorn-Version", Hartshorn.VERSION);
 

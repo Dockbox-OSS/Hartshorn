@@ -3,7 +3,7 @@ package org.dockbox.hartshorn.jetty;
 import org.dockbox.hartshorn.api.exceptions.ApplicationException;
 import org.dockbox.hartshorn.di.annotations.inject.Binds;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
-import org.dockbox.hartshorn.jetty.error.HartshornJettyErrorHandler;
+import org.dockbox.hartshorn.jetty.error.JettyErrorAdapter;
 import org.dockbox.hartshorn.web.RequestHandlerContext;
 import org.dockbox.hartshorn.web.WebStarter;
 import org.eclipse.jetty.server.Server;
@@ -43,15 +43,15 @@ public class JettyWebStarter implements WebStarter {
     }
 
     protected ErrorHandler errorHandler() {
-        return this.context.get(HartshornJettyErrorHandler.class);
+        return this.context.get(JettyErrorAdapter.class);
     }
 
     protected ServletHolder createHolder(final RequestHandlerContext context) {
         return new ServletHolder(this.servlet(context));
     }
 
-    protected HartshornServlet servlet(final RequestHandlerContext context) {
-        return new HartshornServlet(context.httpRequest().method(), context.methodContext(), context.applicationContext());
+    protected JettyServletAdapter servlet(final RequestHandlerContext context) {
+        return new JettyServletAdapter(context.httpRequest().method(), context.methodContext(), context.applicationContext());
     }
 
 }

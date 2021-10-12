@@ -28,7 +28,7 @@ import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public class HartshornJettyErrorHandler extends ErrorHandler {
+public class JettyErrorAdapter extends ErrorHandler {
 
     @Inject
     private ApplicationContext context;
@@ -50,7 +50,7 @@ public class HartshornJettyErrorHandler extends ErrorHandler {
             response.addHeader("Hartshorn-Version", Hartshorn.VERSION);
 
             final Throwable th = (Throwable) request.getAttribute(RequestDispatcher.ERROR_EXCEPTION);
-            final RequestError error = new JettyRequestError(this.context, request, response, code, writer, message, th);
+            final RequestError error = new JettyRequestErrorImpl(this.context, request, response, code, writer, message, th);
 
             this.errorServlet.handle(error);
             message = error.message();
