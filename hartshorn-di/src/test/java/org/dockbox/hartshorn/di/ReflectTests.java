@@ -19,7 +19,6 @@ package org.dockbox.hartshorn.di;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.di.context.PrefixContext;
-import org.dockbox.hartshorn.di.context.ReflectionContext;
 import org.dockbox.hartshorn.di.context.element.ConstructorContext;
 import org.dockbox.hartshorn.di.context.element.FieldContext;
 import org.dockbox.hartshorn.di.context.element.MethodContext;
@@ -27,6 +26,7 @@ import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.di.types.ParentTestType;
 import org.dockbox.hartshorn.di.types.ReflectTestType;
 import org.dockbox.hartshorn.di.types.TestEnumType;
+import org.dockbox.hartshorn.test.ApplicationAwareTest;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -43,7 +43,7 @@ import java.util.stream.Stream;
 import javassist.util.proxy.ProxyFactory;
 
 @SuppressWarnings("ALL")
-public class ReflectTests {
+public class ReflectTests extends ApplicationAwareTest {
 
     private static Stream<Arguments> fields() {
         return Stream.of(
@@ -174,7 +174,7 @@ public class ReflectTests {
 
     @Test
     void testAnnotatedTypesReturnsAllInPrefix() {
-        final PrefixContext context = new ReflectionContext(HartshornUtils.asList("org.dockbox.hartshorn.di.types"));
+        final PrefixContext context = new PrefixContext(HartshornUtils.asList("org.dockbox.hartshorn.di.types"), this.context().environment());
         Collection<TypeContext<?>> types = context.types(Demo.class);
         Assertions.assertEquals(1, types.size());
         Assertions.assertEquals(ReflectTestType.class, types.iterator().next().type());
@@ -182,7 +182,7 @@ public class ReflectTests {
 
     @Test
     void testSubTypesReturnsAllSubTypes() {
-        final PrefixContext context = new ReflectionContext(HartshornUtils.asList("org.dockbox.hartshorn.di.types"));
+        final PrefixContext context = new PrefixContext(HartshornUtils.asList("org.dockbox.hartshorn.di.types"), this.context().environment());
         Collection<TypeContext<? extends ParentTestType>> types = context.children(ParentTestType.class);
         Assertions.assertEquals(1, types.size());
         Assertions.assertEquals(ReflectTestType.class, types.iterator().next().type());

@@ -24,6 +24,7 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class DefaultCarrierContext extends DefaultContext implements CarrierContext {
+
     @Getter private final ApplicationContext applicationContext;
 
     @Override

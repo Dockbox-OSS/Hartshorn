@@ -20,7 +20,6 @@ package org.dockbox.hartshorn.di;
 import org.dockbox.hartshorn.di.annotations.inject.InjectPhase;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.di.context.HartshornApplicationContext;
-import org.dockbox.hartshorn.di.context.ManagedHartshornContext;
 import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.di.inject.InjectionModifier;
 import org.dockbox.hartshorn.di.services.ComponentProcessor;
@@ -39,7 +38,7 @@ public abstract class InjectableBootstrap extends ApplicationContextAware {
         Reflections.log = null; // Don't output Reflections
 
         for (final Annotation activator : activators) {
-            ((ManagedHartshornContext) this.context()).addActivator(activator);
+            ((HartshornApplicationContext) this.context()).addActivator(activator);
         }
         instance(this);
         for (final String prefix : prefixes) {
