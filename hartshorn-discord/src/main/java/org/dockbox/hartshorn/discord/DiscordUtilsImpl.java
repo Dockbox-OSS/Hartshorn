@@ -33,6 +33,7 @@ import net.dv8tion.jda.api.entities.User;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.exceptions.Except;
 import org.dockbox.hartshorn.di.annotations.inject.Binds;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.discord.templates.MessageTemplate;
 import org.dockbox.hartshorn.discord.templates.Template;
 import org.dockbox.hartshorn.i18n.common.Message;
@@ -48,6 +49,9 @@ public class DiscordUtilsImpl implements DiscordUtils {
 
     @Inject
     private JDA jda;
+
+    @Inject
+    private ApplicationContext context;
 
     @Override
     public Exceptional<JDA> jda() {
@@ -70,18 +74,18 @@ public class DiscordUtilsImpl implements DiscordUtils {
     }
 
     @Override
-    public Exceptional<User> user(long id) {
+    public Exceptional<User> user(final long id) {
         return this.jda().map(jda -> jda.retrieveUserById(id).complete());
     }
 
     @Override
     public void send(@NotNull final Text text, @NotNull final MessageChannel channel) {
-        DiscordUtilsImpl.send(text.toPlain(), channel);
+        this.send(text.toPlain(), channel);
     }
 
     @Override
     public void send(@NotNull final Message text, @NotNull final MessageChannel channel) {
-        DiscordUtilsImpl.send(text.plain(), channel);
+        this.send(text.plain(), channel);
     }
 
     @Override
@@ -123,12 +127,12 @@ public class DiscordUtilsImpl implements DiscordUtils {
 
     @Override
     public void send(@NotNull final Text text, @NotNull final User user) {
-        DiscordUtilsImpl.send(text.toPlain(), user);
+        this.send(text.toPlain(), user);
     }
 
     @Override
     public void send(@NotNull final Message text, @NotNull final User user) {
-        DiscordUtilsImpl.send(text.plain(), user);
+        this.send(text.plain(), user);
     }
 
     @Override
@@ -139,16 +143,18 @@ public class DiscordUtilsImpl implements DiscordUtils {
     @Override
     public void send(final Template<?> template, final User user) {
         user.openPrivateChannel().queue(channel -> {
+            this.context.log().debug("Opened private channel with user " + user.getId());
             if (template instanceof MessageTemplate)
                 channel.sendMessage(((MessageTemplate) template).message());
         });
     }
 
-    public static void send(@NotNull final CharSequence text, @NotNull final User user) {
-        send(text, user.openPrivateChannel().complete());
+    public void send(@NotNull final CharSequence text, @NotNull final User user) {
+        this.send(text, user.openPrivateChannel().complete());
     }
 
-    private static void send(@NotNull final CharSequence text, @NotNull final MessageChannel channel) {
+    private void send(@NotNull final CharSequence text, @NotNull final MessageChannel channel) {
+        this.context.log().debug("Opened connection to channel %s (%s)".formatted(channel.getName(), channel.getId()));
         channel.sendMessage(text).queue();
     }
 }

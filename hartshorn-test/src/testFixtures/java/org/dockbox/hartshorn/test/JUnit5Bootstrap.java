@@ -24,11 +24,6 @@ import org.dockbox.hartshorn.proxy.ProxyApplicationBootstrap;
 public class JUnit5Bootstrap extends ProxyApplicationBootstrap {
 
     @Override
-    public boolean isCI() {
-        return true;
-    }
-
-    @Override
     protected void handleMissingBinding(final TypeContext<?> type) {
         Hartshorn.log().warn("Ignoring missing binding for " + type.name());
     }

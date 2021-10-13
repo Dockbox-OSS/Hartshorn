@@ -25,6 +25,7 @@ import org.dockbox.hartshorn.api.exceptions.ApplicationException;
 import org.dockbox.hartshorn.config.annotations.Value;
 import org.dockbox.hartshorn.di.annotations.inject.Provider;
 import org.dockbox.hartshorn.di.annotations.service.Service;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.discord.annotations.UseDiscordEvents;
 
 import javax.inject.Singleton;
@@ -40,13 +41,15 @@ public class DiscordJDAStarter {
 
     @Provider
     @Singleton
-    public JDA jda(DiscordEventAdapter adapter) throws ApplicationException {
+    public JDA jda(final DiscordEventAdapter adapter, final ApplicationContext context) throws ApplicationException {
         if (this.token == null) throw new ApplicationException("No value provided for '%s', cannot provide JDA instance.".formatted(TOKEN));
         try {
-            JDA jda = JDABuilder.createDefault(this.token).build().awaitStatus(Status.CONNECTED);
+            context.log().debug("Creating new JDA instance with token (" + this.token + "), awaiting valid connection state");
+            final JDA jda = JDABuilder.createDefault(this.token).build().awaitStatus(Status.CONNECTED);
+            context.log().debug("Connected to JDA, registering event adapter");
             jda.addEventListener(adapter);
             return jda;
-        } catch (LoginException | InterruptedException e) {
+        } catch (final LoginException | InterruptedException e) {
             throw new ApplicationException(e);
         }
     }
