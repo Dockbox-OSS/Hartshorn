@@ -40,7 +40,7 @@ public class FileSystemLookupStrategy implements ResourceLookupStrategy {
     private final String name = "fs";
 
     @Override
-    public Exceptional<URI> lookup(ApplicationContext context, String path, TypeContext<?> owner, FileType fileType) {
+    public Exceptional<URI> lookup(final ApplicationContext context, final String path, final TypeContext<?> owner, final FileType fileType) {
         return Exceptional.of(context.get(FileManager.class, FileTypeAttribute.of(fileType)).configFile(owner.type(), path).toUri());
     }
 }

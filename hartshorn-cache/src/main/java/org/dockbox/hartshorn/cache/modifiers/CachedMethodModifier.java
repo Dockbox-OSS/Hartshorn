@@ -46,6 +46,7 @@ public class CachedMethodModifier extends CacheServiceModifier<Cached> {
 
             //noinspection unchecked
             return (R) content.orElse(() -> {
+                context.log().debug("Cache " + cacheContext.name() + " has not been populated yet, or content has expired.");
                 try {
                     final Object out = proxyContext.invoke(args);
                     cache.populate(out);

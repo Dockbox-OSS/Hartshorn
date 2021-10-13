@@ -63,6 +63,8 @@ public class ConfigurationServiceModifier implements InjectionModifier<UseConfig
                 final Value value = field.annotation(Value.class).get();
                 Object fieldValue = context.property(value.value()).or(value.or());
 
+                context.log().debug("Populating value for configuration field " + field.name() + " in " + type.name() + " (type: " + field.type().name() + ", value: " + fieldValue);
+
                 if ((!field.type().childOf(String.class)) && (fieldValue instanceof String stringValue)) {
                     try {
                         fieldValue = TypeContext.toPrimitive(field.type(), stringValue);

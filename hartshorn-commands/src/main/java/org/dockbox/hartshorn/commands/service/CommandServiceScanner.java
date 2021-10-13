@@ -32,12 +32,12 @@ public class CommandServiceScanner implements ServiceProcessor<UseCommands> {
     }
 
     @Override
-    public boolean preconditions(ApplicationContext context, TypeContext<?> type) {
+    public boolean preconditions(final ApplicationContext context, final TypeContext<?> type) {
         return !type.flatMethods(Command.class).isEmpty();
     }
 
     @Override
-    public <T> void process(ApplicationContext context, TypeContext<T> type) {
+    public <T> void process(final ApplicationContext context, final TypeContext<T> type) {
         final CommandGateway gateway = context.get(CommandGateway.class);
         if (!type.flatMethods(Command.class).isEmpty()) {
             gateway.register(type);

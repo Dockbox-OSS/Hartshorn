@@ -72,6 +72,7 @@ public abstract class HartshornBootstrap extends InjectableBootstrap {
     public void init() {
         Hartshorn.log().info("Initialising Hartshorn v" + Hartshorn.VERSION);
         for (final MethodContext<?, ?> postBootstrapActivation : this.postBootstrapActivations) {
+            Hartshorn.log().debug("Invoking post-bootstrap activation " + postBootstrapActivation.qualifiedName());
             this.context().invoke(postBootstrapActivation);
         }
         // Ensure all services requiring a platform implementation have one present
@@ -114,17 +115,15 @@ public abstract class HartshornBootstrap extends InjectableBootstrap {
             final ComponentContainer componentContainer = container.get();
             final List<Class<? extends Annotation>> activators = componentContainer.activators();
 
-            if (componentContainer.hasActivator() && activators.stream().allMatch(this.context()::hasActivator))
+            if (componentContainer.hasActivator() && activators.stream().allMatch(this.context()::hasActivator)) {
+                Hartshorn.log().debug("Adding post-bootstrap activation " + method.qualifiedName());
                 this.postBootstrapActivations.add(method);
+            }
         }
     }
 
     @Override
     public boolean isCI() {
-        return System.getenv().containsKey("GITLAB_CI")
-                || System.getenv().containsKey("JENKINS_HOME")
-                || System.getenv().containsKey("TRAVIS")
-                || System.getenv().containsKey("GITHUB_ACTIONS")
-                || System.getenv().containsKey("APPVEYOR");
+        return HartshornUtils.isCI();
     }
 }

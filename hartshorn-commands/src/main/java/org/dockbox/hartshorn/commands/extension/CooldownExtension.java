@@ -44,7 +44,10 @@ public class CooldownExtension implements CommandExecutorExtension {
         if (!(sender instanceof Identifiable)) return ExtensionResult.accept();
 
         final String id = this.id((Identifiable) sender, context);
-        if (HartshornUtils.inCooldown(id)) return ExtensionResult.reject(this.resources.cooldownActive());
+        if (HartshornUtils.inCooldown(id)) {
+            context.applicationContext().log().debug("Executor with ID '%s' is in active cooldown, rejecting command execution of %s".formatted(id, context.command()));
+            return ExtensionResult.reject(this.resources.cooldownActive());
+        }
         else {
             final Cooldown cooldown = executorContext.element().annotation(Cooldown.class).get();
             HartshornUtils.cooldown(id, cooldown.duration(), cooldown.unit());

@@ -54,6 +54,7 @@ public class ConfirmationExtension implements CommandExecutorExtension {
 
         sender.send(confirmationText);
 
+        context.applicationContext().log().debug("Command " + context.command() + " requires confirmation, rejecting direct execution.");
         return ExtensionResult.reject(this.resources.confirmCommand(), false);
     }
 

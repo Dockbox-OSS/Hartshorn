@@ -35,7 +35,7 @@ public class GroupCommandElement implements CommandElement<List<CommandElement<?
     private final boolean optional;
     private final int size;
 
-    public GroupCommandElement(List<CommandElement<?>> elements, boolean optional) {
+    public GroupCommandElement(final List<CommandElement<?>> elements, final boolean optional) {
         this.elements = elements;
         final List<String> names = elements.stream().map(CommandElement::name).toList();
         this.name = "group: " + String.join(", ", names);
@@ -59,12 +59,12 @@ public class GroupCommandElement implements CommandElement<List<CommandElement<?
     }
 
     @Override
-    public Exceptional<List<CommandElement<?>>> parse(CommandSource source, String argument) {
+    public Exceptional<List<CommandElement<?>>> parse(final CommandSource source, final String argument) {
         return Exceptional.of(this.elements);
     }
 
     @Override
-    public Collection<String> suggestions(CommandSource source, String argument) {
+    public Collection<String> suggestions(final CommandSource source, final String argument) {
         throw new UnsupportedOperationException("Collecting suggestions from element groups is not supported, target singular elements instead.");
     }
 

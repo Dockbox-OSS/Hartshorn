@@ -37,7 +37,7 @@ public final class RunCommandAction {
      *
      * @return The new action
      */
-    public static RunCommand runCommand(String command) {
+    public static RunCommand runCommand(final String command) {
         return new RunCommand(command);
     }
 
@@ -49,7 +49,7 @@ public final class RunCommandAction {
     public static final class RunCommand extends CommandAction<String> {
 
         @Bound
-        private RunCommand(String result) {
+        private RunCommand(final String result) {
             super(result);
         }
     }

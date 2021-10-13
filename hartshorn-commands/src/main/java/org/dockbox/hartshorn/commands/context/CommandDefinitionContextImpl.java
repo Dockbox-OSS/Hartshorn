@@ -147,6 +147,7 @@ public class CommandDefinitionContextImpl extends DefaultContext implements Comm
         String raw = this.command.permission();
 
         if ("".equals(raw)) {
+            this.context.log().debug("Default permission is empty, generating permission for " + this.method.qualifiedName());
             raw = Hartshorn.PROJECT_ID + '.'
                     + Bindings.serviceId(this.context, this.parent()).replaceAll("-", ".") + '.'
                     + this.aliases().get(0);
@@ -165,6 +166,7 @@ public class CommandDefinitionContextImpl extends DefaultContext implements Comm
             final String part = genericArgumentMatcher.group();
             final Matcher argumentMatcher = ARGUMENT.matcher(part);
             if (argumentMatcher.matches()) {
+                this.context.log().debug("Matched argument definition partial " + part + " as explicit argument");
                 final CommandDefinition definition = this.extractArguments(argumentMatcher, permission);
                 final List<CommandElement<?>> commandElements = definition.elements();
                 if (commandElements.isEmpty()) continue;
@@ -172,6 +174,7 @@ public class CommandDefinitionContextImpl extends DefaultContext implements Comm
                 else elements.add(new GroupCommandElement(commandElements, definition.optional()));
             }
             else {
+                this.context.log().debug("Matched argument definition partial " + part + " as flag");
                 final Matcher flagMatcher = FLAG.matcher(part);
                 flags.addAll(this.generateFlags(flagMatcher, permission));
             }
@@ -234,6 +237,7 @@ public class CommandDefinitionContextImpl extends DefaultContext implements Comm
         if (3 <= elementValue.groupCount() && null != elementValue.group(3))
             elementPermission = Permission.of(this.context, elementValue.group(3));
 
+        this.context.log().debug("Determined type '%s', name '%s', and permission '%s' for %s argument (definition: %s)".formatted(type, name, elementPermission.get(), optional ? "optional" : "required", definition));
         return this.lookupElement(type, name, elementPermission, optional);
     }
 
@@ -242,6 +246,7 @@ public class CommandDefinitionContextImpl extends DefaultContext implements Comm
                 .first(ArgumentConverterContext.class)
                 .flatMap(context -> context.converter(type.toLowerCase()));
         if (converter.present()) {
+            this.context.log().debug("Found converter for element type " + type);
             return new CommandElementImpl<>(converter.get(), name, permission, optional, converter.get().size());
         }
         else {
@@ -252,6 +257,7 @@ public class CommandDefinitionContextImpl extends DefaultContext implements Comm
             }
 
             if (lookup.isEnum()) {
+                this.context.log().debug(type + " is an enum, creating explicit enum element.");
                 //noinspection unchecked
                 return CommandElements.enumElement(name, permission, (TypeContext<E>) lookup, optional);
             }
@@ -277,19 +283,21 @@ public class CommandDefinitionContextImpl extends DefaultContext implements Comm
     private CommandFlag parseFlag(String name, final String type, final Permission defaultPermission) {
         if (null == type) {
             final int at;
-            /* See syntax definition of DefaultCommandBus#FLAG */
+            /* See syntax definition of CommandDefinitionContextImpl#FLAG */
             if (0 <= (at = name.indexOf(':'))) {
                 name = name.substring(0, at);
                 final String permission = name.substring(at + 1);
+                this.context.log().debug("Determined flag definition for '%s' with explicit permission '%s'".formatted(name, permission));
                 return new CommandFlagImpl(name, Permission.of(this.context, permission));
             }
             else {
+                this.context.log().debug("Determined flag definition for '%s' without explicit permission".formatted(name));
                 return new CommandFlagImpl(name);
             }
         }
         else {
             if (0 <= name.indexOf(':')) {
-                Except.handle("Flag values do not support permissions at flag `" + name + "`. Permit the value instead");
+                this.context.log().warn("Flag values do not support permissions at flag `" + name + "`. Permit the value instead");
             }
             return new CommandFlagElement<>(this.lookupElement(type, name, defaultPermission, true));
         }

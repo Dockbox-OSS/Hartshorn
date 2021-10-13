@@ -103,13 +103,14 @@ public class HartshornApplication {
 
             final MultiMap<InjectPhase, InjectConfiguration> configurations = new ArrayListMultiMap<>();
             for (final InjectConfig config : annotation.configs()) {
+                Hartshorn.log().debug("Adding configuration " + config.value().getSimpleName() + " for phase " + config.phase());
                 configurations.put(config.phase(), instance(config.value()));
             }
 
             final List<String> prefixes = HartshornUtils.asList(Hartshorn.PACKAGE_PREFIX);
-            if (!prefix.startsWith(Hartshorn.PACKAGE_PREFIX)) prefixes.add(prefix);
-
-            Hartshorn.log().info("Default context prefix set to: " + prefix);
+            if (!prefix.startsWith(Hartshorn.PACKAGE_PREFIX)) {
+                prefixes.add(prefix);
+            }
 
             injectableBootstrap.create(
                     prefixes,

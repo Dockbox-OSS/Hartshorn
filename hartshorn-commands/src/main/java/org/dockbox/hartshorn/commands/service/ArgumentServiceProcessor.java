@@ -46,6 +46,7 @@ public class ArgumentServiceProcessor implements ServiceProcessor<UseCommands> {
     @Override
     public <T> void process(final ApplicationContext context, final TypeContext<T> type) {
         final List<FieldContext<ArgumentConverter>> fields = type.fieldsOf(ArgumentConverter.class);
+        context.log().debug("Found %d argument converters in %s".formatted(fields.size(), type.qualifiedName()));
         context.first(ArgumentConverterContext.class).map(converterContext -> {
             for (final FieldContext<ArgumentConverter> field : fields) {
                 if (field.isStatic()) {

@@ -30,6 +30,7 @@ import org.dockbox.hartshorn.commands.definition.GroupCommandElement;
 import org.dockbox.hartshorn.commands.exceptions.ParsingException;
 import org.dockbox.hartshorn.commands.service.CommandParameter;
 import org.dockbox.hartshorn.di.annotations.inject.Binds;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.i18n.common.Message;
 import org.dockbox.hartshorn.util.HartshornUtils;
 
@@ -55,6 +56,7 @@ public class CommandParserImpl implements CommandParser {
 
     @Override
     public Exceptional<CommandContext> parse(final String command, final CommandSource source, final CommandExecutorContext context) throws ParsingException {
+        final ApplicationContext applicationContext = context.applicationContext();
         final Exceptional<CommandDefinitionContext> container = context.first(CommandDefinitionContext.class);
         if (container.absent()) return Exceptional.empty();
 
@@ -64,13 +66,15 @@ public class CommandParserImpl implements CommandParser {
         final List<CommandParameter<?>> parsedElements = HartshornUtils.emptyList();
         final List<CommandParameter<?>> parsedFlags = HartshornUtils.emptyList();
 
-        // Ensure no aliases are left so they are not accidentally parsed
+        // Ensure no aliases are left, so they are not accidentally parsed
         String stripped = context.strip(command, false);
         // Strip all flags beforehand so elements can be parsed safely without flag interference
         stripped = this.stripFlags(stripped, parsedFlags, source, containerContext);
 
         final List<String> tokens = HartshornUtils.asList(stripped.split(" "));
         parsedElements.addAll(this.parse(elements, tokens, source));
+
+        applicationContext.log().debug("Parsed %d elements and %d flags for input %s".formatted(parsedElements.size(), parsedFlags.size(), command));
 
         if (!tokens.isEmpty() && !"".equals(tokens.get(0))) throw new ParsingException(this.resources.tooManyArguments());
 
