@@ -42,6 +42,11 @@ public class DiscordJDAStarter {
     @Provider
     @Singleton
     public JDA jda(final DiscordEventAdapter adapter, final ApplicationContext context) throws ApplicationException {
+        if (context.environment().isCI()) {
+            context.log().info("Detected CI environment, skipping JDA creation.");
+            return null;
+        }
+
         if (this.token == null) throw new ApplicationException("No value provided for '%s', cannot provide JDA instance.".formatted(TOKEN));
         try {
             context.log().debug("Creating new JDA instance with token (" + this.token + "), awaiting valid connection state");
