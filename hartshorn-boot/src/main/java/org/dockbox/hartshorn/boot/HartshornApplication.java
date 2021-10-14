@@ -17,8 +17,13 @@
 
 package org.dockbox.hartshorn.boot;
 
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.core.config.Configuration;
+import org.apache.logging.log4j.core.config.LoggerConfig;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.exceptions.Except;
+import org.dockbox.hartshorn.boot.LogLevelModifier.LogLevel;
 import org.dockbox.hartshorn.boot.ServerState.Started;
 import org.dockbox.hartshorn.di.ApplicationBootstrap;
 import org.dockbox.hartshorn.di.ArrayListMultiMap;
@@ -65,7 +70,7 @@ public class HartshornApplication {
      * @param modifiers
      *         The modifiers to use when bootstrapping
      */
-    public static ApplicationContext create(final Class<?> activator, String[] args, final Modifier... modifiers) {
+    public static ApplicationContext create(final Class<?> activator, final String[] args, final Modifier... modifiers) {
         return lazy(activator, args, modifiers).load();
     }
 
@@ -82,7 +87,11 @@ public class HartshornApplication {
      *
      * @return A {@link Runnable} to initialize the application
      */
-    public static HartshornLoader lazy(final Class<?> activator, String[] args, final Modifier... modifiers) {
+    public static HartshornLoader lazy(final Class<?> activator, final String[] args, final Modifier... modifiers) {
+        for (final Modifier modifier : modifiers) {
+            if (modifier instanceof LogLevelModifier levelModifier) setLogLevel(levelModifier.level());
+        }
+
         try {
             Hartshorn.log().info("Starting " + Hartshorn.PROJECT_NAME + " with activator " + activator.getSimpleName());
             final long start = System.currentTimeMillis();
@@ -140,6 +149,13 @@ public class HartshornApplication {
                 throw new RuntimeException("Hartshorn could not be bootstrapped, see cause for details", e);
             };
         }
+    }
+
+    public static void setLogLevel(final LogLevel level) {
+        final LoggerContext loggerContext = LoggerContext.getContext(false);
+        final Configuration configuration = loggerContext.getConfiguration();
+        final LoggerConfig loggerConfig = configuration.getLoggerConfig("org.dockbox.hartshorn");
+        loggerConfig.setLevel(Level.getLevel(level.name()));
     }
 
     private static Activator verifyActivator(final Class<?> activator) {
