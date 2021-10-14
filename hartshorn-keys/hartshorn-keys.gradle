@@ -15,9 +15,9 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-apply from: "$rootDir/parent.gradle"
-
 dependencies {
+    implementation 'org.dockbox.hartshorn:hartshorn-di'
+    implementation 'org.dockbox.hartshorn:hartshorn-core'
     implementation 'org.dockbox.hartshorn:hartshorn-i18n'
     implementation 'org.dockbox.hartshorn:hartshorn-util'
     implementation 'org.dockbox.hartshorn:hartshorn-bootstrap'

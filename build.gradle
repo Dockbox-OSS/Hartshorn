@@ -127,30 +127,22 @@ allprojects {
         }
 
         dependencies {
-            // Typically included by platforms
             implementation "org.slf4j:slf4j-api:$slf4jVersion"
+            implementation "org.projectlombok:lombok:$lombokVersion"
+            implementation("org.jetbrains:annotations:$jetbrainsAnnotationsVersion")
             implementation "javax.persistence:javax.persistence-api:$javaxPersistenceVersion"
 
-            // Compile/source dependencies
-            implementation("org.jetbrains:annotations:$jetbrainsAnnotationsVersion")
-
-            // Lombok
-            implementation "org.projectlombok:lombok:$lombokVersion"
             annotationProcessor "org.projectlombok:lombok:$lombokVersion"
             testAnnotationProcessor "org.projectlombok:lombok:$lombokVersion"
 
-            // Testing requirements
+            testImplementation testFixtures(project(":hartshorn-test"))
+            testImplementation "org.mockito:mockito-inline:$mockitoVersion"
+            testImplementation "org.hamcrest:java-hamcrest:$hamcrestVersion"
+            testImplementation "org.apache.logging.log4j:log4j-api:$log4jVersion"
+            testImplementation "org.apache.logging.log4j:log4j-core:$log4jVersion"
             testImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"
             testImplementation "org.junit.jupiter:junit-jupiter-params:$junitVersion"
             testImplementation "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
-            testImplementation "org.hamcrest:java-hamcrest:$hamcrestVersion"
-
-            testImplementation "org.mockito:mockito-inline:$mockitoVersion"
-
-            testImplementation testFixtures(project(":hartshorn-test"))
-
-            testImplementation "org.apache.logging.log4j:log4j-api:$log4jVersion"
-            testImplementation "org.apache.logging.log4j:log4j-core:$log4jVersion"
             testImplementation "org.apache.logging.log4j:log4j-slf4j-impl:$log4jVersion"
         }
 
