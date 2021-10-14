@@ -21,8 +21,10 @@ import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.util.HartshornUtils;
 
+import java.lang.invoke.MethodType;
 import java.lang.reflect.Method;
 import java.util.Map;
+import java.util.StringJoiner;
 import java.util.function.BiFunction;
 
 import lombok.Getter;
@@ -37,7 +39,7 @@ public class MethodContext<T, P> extends ExecutableElementContext<Method> implem
     private TypeContext<T> returnType;
     private TypeContext<P> parent;
     private BiFunction<P, Object[], Exceptional<T>> invoker;
-
+    private String qualifiedName;
 
     public MethodContext(final Method method) {
         this.method = method;
@@ -81,7 +83,15 @@ public class MethodContext<T, P> extends ExecutableElementContext<Method> implem
     }
 
     public String qualifiedName() {
-        return this.method().toGenericString();
+        if (this.qualifiedName == null) {
+            StringJoiner j = new StringJoiner(" ");
+            String shortSig = MethodType.methodType(this.method().getReturnType(), this.method().getParameterTypes()).toString();
+            int split = shortSig.lastIndexOf(')') + 1;
+            j.add(shortSig.substring(split)).add(this.method().getName() + shortSig.substring(0, split));
+            String k = j.toString();
+            this.qualifiedName = this.parent().name() + '#' + k.substring(k.indexOf(' ')+1);
+        }
+        return this.qualifiedName;
     }
 
     public Exceptional<T> invoke(final ApplicationContext context) {
