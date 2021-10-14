@@ -61,6 +61,8 @@ public abstract class CacheServiceModifier<A extends Annotation> extends Service
         final Expiration expiration = cacheMethodContext.expiration();
         final String finalName = name;
 
+        context.log().debug("Determined cache name '" + finalName + "' for " + methodContext.method().qualifiedName());
+
         final Supplier<Cache<?>> cacheSupplier = () -> {
             final Cache<Object> cache;
             if (expiration != null)

@@ -25,6 +25,7 @@ import org.dockbox.hartshorn.persistence.MultiElement;
 import org.dockbox.hartshorn.persistence.NestedElement;
 import org.dockbox.hartshorn.persistence.PersistentElement;
 import org.dockbox.hartshorn.persistence.jackson.JacksonObjectMapper;
+import org.dockbox.hartshorn.test.ApplicationAwareTest;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -33,7 +34,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.stream.Stream;
 
-public class ObjectMappingTests {
+public class ObjectMappingTests extends ApplicationAwareTest {
 
     private static Stream<Arguments> serialisationElements() {
         return Stream.of(
@@ -66,8 +67,8 @@ public class ObjectMappingTests {
 
     @ParameterizedTest
     @MethodSource("serialisationElements")
-    void testObjectSerialisation(FileType fileType, Element content, String expected) {
-        final ObjectMapper mapper = new JacksonObjectMapper();
+    void testObjectSerialisation(final FileType fileType, final Element content, final String expected) {
+        final ObjectMapper mapper = this.context().get(JacksonObjectMapper.class);
         mapper.fileType(fileType);
 
         content.name("sample");
@@ -79,8 +80,8 @@ public class ObjectMappingTests {
 
     @ParameterizedTest
     @MethodSource("serialisationElements")
-    void testObjectDeserialisation(FileType fileType, Element expected, String content) {
-        final ObjectMapper mapper = new JacksonObjectMapper();
+    void testObjectDeserialisation(final FileType fileType, final Element expected, final String content) {
+        final ObjectMapper mapper = this.context().get(JacksonObjectMapper.class);
         mapper.fileType(fileType);
         expected.name("sample");
 

@@ -59,7 +59,7 @@ public final class EventWrapperImpl<T> implements Comparable<EventWrapperImpl<T>
     @Getter private T listener;
 
     private EventWrapperImpl(final TypeContext<T> type, final TypeContext<? extends Event> eventType, final MethodContext<?, T> method, final int priority) {
-        this.listener = null;
+        this.listener = null; // Lazy loaded value
         this.listenerType = type;
         this.eventType = eventType;
         this.method = method;
@@ -95,10 +95,10 @@ public final class EventWrapperImpl<T> implements Comparable<EventWrapperImpl<T>
     @Override
     public void invoke(final Event event) throws SecurityException {
         if (this.filtersMatch(event)) {
+            event.applicationContext().log().debug("Invoking event " + TypeContext.of(event).name() + " to method context of " + this.method.qualifiedName());
             // Lazy initialisation to allow processors to register first
             if (this.listener == null) this.listener = event.applicationContext().get(this.listenerType);
-            final Runnable eventRunner = () -> this.method.invoke(this.listener, event);
-            eventRunner.run();
+            this.method.invoke(this.listener, event);
         }
     }
 
@@ -113,7 +113,6 @@ public final class EventWrapperImpl<T> implements Comparable<EventWrapperImpl<T>
                 if (!actualTypeArgument.childOf(eventParameter)) return false;
             }
         }
-
         return true;
     }
 

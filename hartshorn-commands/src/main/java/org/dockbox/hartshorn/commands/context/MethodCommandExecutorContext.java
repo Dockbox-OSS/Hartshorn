@@ -40,6 +40,7 @@ import org.dockbox.hartshorn.util.HartshornUtils;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Method;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -88,10 +89,11 @@ public class MethodCommandExecutorContext<T> extends DefaultCarrierContext imple
             this.isChild = false;
         }
 
-        this.add(new CommandDefinitionContextImpl(this.applicationContext, this.command, this.method));
+        this.add(new CommandDefinitionContextImpl(this.applicationContext(), this.command(), this.method()));
 
         this.parentAliases = HartshornUtils.emptyList();
         if (this.parent != null) {
+            context.log().debug("Parent for executor context of " + method.qualifiedName() + " found, including parent aliases");
             this.parentAliases.addAll(HartshornUtils.asList(this.parent.value()));
         }
         this.parameters = this.parameters();
@@ -100,7 +102,7 @@ public class MethodCommandExecutorContext<T> extends DefaultCarrierContext imple
     private Map<String, CommandParameterContext> parameters() {
         if (this.parameters == null) {
             this.parameters = HartshornUtils.emptyMap();
-            final LinkedList<ParameterContext<?>> parameters = this.method.parameters();
+            final LinkedList<ParameterContext<?>> parameters = this.method().parameters();
             for (int i = 0; i < parameters.size(); i++) {
                 final ParameterContext<?> parameter = parameters.get(i);
                 this.parameters.put(parameter.name(), new CommandParameterContext(parameter, i));
@@ -113,17 +115,19 @@ public class MethodCommandExecutorContext<T> extends DefaultCarrierContext imple
     @Override
     public CommandExecutor executor() {
         return (ctx) -> {
-            final Cancellable before = new Before(ctx.source(), ctx).with(this.applicationContext).post();
+            final Cancellable before = new Before(ctx.source(), ctx).with(this.applicationContext()).post();
             if (before.cancelled()) {
-                final Message cancelled = this.applicationContext.get(CommandResources.class).cancelled();
+                this.applicationContext().log().debug("Execution cancelled for " + this.method().qualifiedName());
+                final Message cancelled = this.applicationContext().get(CommandResources.class).cancelled();
                 ctx.source().send(cancelled);
                 return;
             }
 
-            final T instance = this.applicationContext.get(this.type());
+            final T instance = this.applicationContext().get(this.type());
             final List<Object> arguments = this.arguments(ctx);
-            this.method.invoke(instance, arguments.toArray());
-            new CommandEvent.After(ctx.source(), ctx).with(this.applicationContext).post();
+            this.applicationContext().log().debug("Invoking command method %s with %d arguments".formatted(this.method().qualifiedName(), arguments.size()));
+            this.method().invoke(instance, arguments.toArray());
+            new CommandEvent.After(ctx.source(), ctx).with(this.applicationContext()).post();
         };
     }
 
@@ -144,7 +148,7 @@ public class MethodCommandExecutorContext<T> extends DefaultCarrierContext imple
     public List<String> aliases() {
         final List<String> aliases = HartshornUtils.emptyList();
         for (final String parentAlias : this.parentAliases()) {
-            for (final String alias : this.command.value()) {
+            for (final String alias : this.command().value()) {
                 aliases.add(parentAlias + ' ' + alias);
             }
         }
@@ -161,12 +165,13 @@ public class MethodCommandExecutorContext<T> extends DefaultCarrierContext imple
 
     @Override
     public AnnotatedElementContext<Method> element() {
-        return this.method;
+        return this.method();
     }
 
     @Override
     public List<String> suggestions(final CommandSource source, final String command, final CommandParser parser) {
         final String stripped = this.strip(command, false);
+        this.applicationContext().log().debug("Collecting suggestions for stripped input %s (was %s)".formatted(stripped, command));
         final List<CommandElement<?>> elements = this.definition().elements();
         final List<String> tokens = HartshornUtils.asList(stripped.split(" "));
         if (command.endsWith(" ") && !"".equals(tokens.get(tokens.size() - 1))) tokens.add("");
@@ -187,8 +192,13 @@ public class MethodCommandExecutorContext<T> extends DefaultCarrierContext imple
             }
         }
 
-        if (last == null) return HartshornUtils.emptyList();
-        return HartshornUtils.asUnmodifiableList(last.suggestions(source, String.join(" ", tokens)));
+        if (last == null) {
+            this.applicationContext().log().debug("Could not locate last command element to collect suggestions");
+            return HartshornUtils.emptyList();
+        }
+        final Collection<String> suggestions = last.suggestions(source, String.join(" ", tokens));
+        this.applicationContext().log().debug("Found " + suggestions.size() + " suggestions");
+        return HartshornUtils.asUnmodifiableList(suggestions);
     }
 
     private CommandDefinitionContext definition() {

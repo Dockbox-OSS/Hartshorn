@@ -52,7 +52,7 @@ public final class ExtensionResult {
      *
      * @return The {@link ExtensionResult}
      */
-    public static ExtensionResult reject(Message reason) {
+    public static ExtensionResult reject(final Message reason) {
         return reject(reason, true);
     }
 
@@ -68,7 +68,7 @@ public final class ExtensionResult {
      *
      * @return The {@link ExtensionResult}
      */
-    public static ExtensionResult reject(Message reason, boolean send) {
+    public static ExtensionResult reject(final Message reason, final boolean send) {
         return new ExtensionResult(false, reason, send);
     }
 

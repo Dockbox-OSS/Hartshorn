@@ -93,6 +93,7 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
 
     @Override
     public <T> Exceptional<T> read(final String content, final Class<T> type) {
+        this.context.log().debug("Reading content from string value to type " + type.getName());
         return this.readInternal(
                 type,
                 () -> this.correctPersistentCapable(content, type),
@@ -101,6 +102,7 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
 
     @Override
     public <T> Exceptional<T> read(final Path path, final Class<T> type) {
+        this.context.log().debug("Reading content from path " + path + " to type " + type.getName());
         return this.readInternal(
                 type,
                 () -> this.correctPersistentCapable(path, type),
@@ -109,6 +111,7 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
 
     @Override
     public <T> Exceptional<T> read(final URL url, final Class<T> type) {
+        this.context.log().debug("Reading content from url " + url + " to type " + type.getName());
         return this.readInternal(
                 type,
                 () -> this.correctPersistentCapable(url, type),
@@ -117,6 +120,7 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
 
     @Override
     public <T> Exceptional<T> read(final String content, final GenericType<T> type) {
+        this.context.log().debug("Reading content from string value to type " + type.type().getTypeName());
         return this.readInternal(
                 type.type(),
                 () -> this.correctPersistentCapable(content, (Class<T>) type.type()),
@@ -126,6 +130,7 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
 
     @Override
     public <T> Exceptional<T> read(final Path path, final GenericType<T> type) {
+        this.context.log().debug("Reading content from path " + path + " to type " + type.type().getTypeName());
         return this.readInternal(
                 type.type(),
                 () -> this.correctPersistentCapable(path, (Class<T>) type.type()),
@@ -135,6 +140,7 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
 
     @Override
     public <T> Exceptional<T> read(final URL url, final GenericType<T> type) {
+        this.context.log().debug("Reading content from url " + url + " to type " + type.type().getTypeName());
         return this.readInternal(
                 type.type(),
                 () -> this.correctPersistentCapable(url, (Class<T>) type.type()),
@@ -144,6 +150,7 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
 
     @Override
     public <T> Exceptional<Boolean> write(final Path path, final T content) {
+        this.context.log().debug("Writing content of type " + TypeContext.of(content).name() + " to path " + path);
         return this.writeInternal(
                 content,
                 () -> this.write(path, ((PersistentCapable<?>) content).model()),
@@ -155,6 +162,7 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
 
     @Override
     public <T> Exceptional<String> write(final T content) {
+        this.context.log().debug("Writing content of type " + TypeContext.of(content).name() + " to string value");
         return this.writeInternal(
                         content,
                         () -> this.write(((PersistentCapable<?>) content).model()),
@@ -164,16 +172,19 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
 
     @Override
     public Map<String, Object> flat(String content) {
+        this.context.log().debug("Reading content from string value to flat tree model");
         return this.flatInternal(() -> this.configureMapper().readTree(content));
     }
 
     @Override
     public Map<String, Object> flat(Path path) {
+        this.context.log().debug("Reading content from path " + path + " to flat tree model");
         return this.flatInternal(() -> this.configureMapper().readTree(path.toFile()));
     }
 
     @Override
     public Map<String, Object> flat(URL url) {
+        this.context.log().debug("Reading content from url " + url + " to flat tree model");
         return this.flatInternal(() -> this.configureMapper().readTree(url));
     }
 
@@ -194,7 +205,6 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
             final Exceptional<T> persistentCapable = capable.get();
             if (persistentCapable.present()) return persistentCapable;
         }
-
         return Exceptional.of(reader);
     }
 
@@ -231,6 +241,7 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
 
     protected ObjectMapper configureMapper() {
         if (null == this.mapper) {
+            this.context.log().debug("Internal bject mapper was not configured yet, configuring now with filetype " + this.fileType());
             this.mapper = this.mapper(this.fileType());
             this.mapper.setAnnotationIntrospector(new PropertyAliasIntrospector(this.context));
             this.mapper.enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES);

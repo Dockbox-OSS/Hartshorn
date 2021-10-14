@@ -75,12 +75,14 @@ public abstract class DefaultAbstractFileManager implements FileManager {
     @NotNull
     @Override
     public Path dataFile(@NotNull final TypedOwner owner, @NotNull final String file) {
+        this.context().log().debug("Requesting data file '" + file + "' for " + owner.id());
         return this.createFileIfNotExists(this.fileType().asPath(this.data().resolve(owner.id()), file));
     }
 
     @NotNull
     @Override
     public Path configFile(@NotNull final TypedOwner owner, @NotNull final String file) {
+        this.context().log().debug("Requesting config file '" + file + "' for " + owner.id());
         return this.createFileIfNotExists(this.fileType().asPath(this.configs().resolve(owner.id()), file));
     }
 
@@ -102,6 +104,7 @@ public abstract class DefaultAbstractFileManager implements FileManager {
     @Override
     public Exceptional<Boolean> write(Path file, String content) {
         return Exceptional.of(() -> {
+            this.context().log().debug("Writing raw string content to " + file);
             BufferedWriter writer = new BufferedWriter(new FileWriter(file.toFile()));
             writer.write(content);
             writer.close();
@@ -123,6 +126,7 @@ public abstract class DefaultAbstractFileManager implements FileManager {
 
     @Override
     public boolean move(final Path sourceFile, final Path targetFile) {
+        this.context().log().debug("Moving " + sourceFile + " to " + targetFile);
         this.createFileIfNotExists(targetFile);
         try {
             Files.move(sourceFile, targetFile,
@@ -137,6 +141,7 @@ public abstract class DefaultAbstractFileManager implements FileManager {
 
     @Override
     public boolean copy(final Path sourceFile, final Path targetFile) {
+        this.context().log().debug("Copying " + sourceFile + " to " + targetFile);
         this.createFileIfNotExists(targetFile);
         try {
             Files.copy(sourceFile, targetFile, StandardCopyOption.REPLACE_EXISTING);

@@ -91,11 +91,13 @@ public class EventBusImpl implements EventBus {
     public void subscribe(final TypeContext<?> type) {
         if (!type.equals(type)) return;
         if (this.listenerToInvokers.containsKey(type)) {
-            return; // Already registered
+            this.context.log().debug(type.name() + " is already subscribed, skipping duplicate registration");
+            return; // Already subscribed
         }
 
         final Set<EventWrapper> invokers = this.invokers(type);
         if (invokers.isEmpty()) {
+            this.context.log().debug(type.name() + " has no event invokers, skipping registration");
             return; // Doesn't contain any listener methods
         }
         this.listenerToInvokers.put(type, invokers);
@@ -125,7 +127,10 @@ public class EventBusImpl implements EventBus {
 
     @Override
     public void post(final Event event, final TypeContext<?> target) {
-        if (event.first(this.context, ApplicationContext.class).absent()) event.add(this.context);
+        if (event.first(this.context, ApplicationContext.class).absent()) {
+            this.context.log().debug("Event " + TypeContext.of(event).name() + " was not enhanced with the active application context, adding it before handling event");
+            event.add(this.context);
+        }
         this.handlerRegistry.handler(TypeContext.of(event)).post(event, target);
     }
 

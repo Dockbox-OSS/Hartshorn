@@ -127,6 +127,8 @@ public final class ProxyableBootstrap {
         property.phase(target.at());
         property.priority(target.priority());
         property.overwriteResult(target.overwrite());
+        context.log().debug("Created proxy attribute for " + source.name() + " at phase " + target.at() + " with priority " + target.priority());
+
         final InjectionPoint<C> point = InjectionPoint.of(proxyTargetClass, instance -> {
             try {
                 final ProxyHandler<C> handler = new ProxyHandler<>(instance);

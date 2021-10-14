@@ -41,7 +41,8 @@ public class BoundFactoryProvider<C> extends ContextDrivenProvider<C> {
 
         ConstructorContext<? extends C> optimal = this.optimalConstructor();
         if (optimal == null) {
-            for (final ConstructorContext<? extends C> constructor : this.context().boundConstructors()) {
+            List<? extends ConstructorContext<? extends C>> boundConstructors = this.context().boundConstructors();
+            for (final ConstructorContext<? extends C> constructor : boundConstructors) {
                 boolean valid = true;
                 if (constructor.parameterCount() != arguments.length) continue;
 
@@ -61,7 +62,10 @@ public class BoundFactoryProvider<C> extends ContextDrivenProvider<C> {
                     break;
                 }
             }
-            if (optimal == null) return Exceptional.empty();
+            if (optimal == null) {
+                context.log().debug("Could not determine optimal constructor for factory provider for type " + this.context().name() + ", amount of bound constructors: " + boundConstructors.size());
+                return Exceptional.empty();
+            }
         }
 
         return optimal.createInstance(arguments).map(instance -> (C) instance);

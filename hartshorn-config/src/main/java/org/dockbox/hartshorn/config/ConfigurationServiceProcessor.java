@@ -50,7 +50,7 @@ public class ConfigurationServiceProcessor implements ServiceProcessor<UseConfig
         addStrategy(new FileSystemLookupStrategy());
     }
 
-    public static void addStrategy(ResourceLookupStrategy strategy) {
+    public static void addStrategy(final ResourceLookupStrategy strategy) {
         strategies.put(strategy.name(), strategy);
     }
 
@@ -60,17 +60,17 @@ public class ConfigurationServiceProcessor implements ServiceProcessor<UseConfig
     }
 
     @Override
-    public boolean preconditions(ApplicationContext context, TypeContext<?> type) {
+    public boolean preconditions(final ApplicationContext context, final TypeContext<?> type) {
         return type.annotation(Configuration.class).present();
     }
 
     @Override
-    public <T> void process(ApplicationContext context, TypeContext<T> type) {
+    public <T> void process(final ApplicationContext context, final TypeContext<T> type) {
         final Configuration configuration = type.annotation(Configuration.class).get();
 
         String source = configuration.source();
-        TypeContext<?> owner = TypeContext.of(configuration.owner());
-        FileType filetype = configuration.filetype();
+        final TypeContext<?> owner = TypeContext.of(configuration.owner());
+        final FileType filetype = configuration.filetype();
 
         final Matcher matcher = STRATEGY_PATTERN.matcher(source);
         ResourceLookupStrategy strategy = new FileSystemLookupStrategy();
@@ -79,6 +79,8 @@ public class ConfigurationServiceProcessor implements ServiceProcessor<UseConfig
             source = matcher.group(2);
         }
 
+        context.log().debug("Determined strategy " + TypeContext.of(strategy).name() + " for " + filetype.asFileName(source) + ", declared by " + type.name());
+
         URI config = strategy.lookup(context, source, owner, filetype).orNull();
 
         if (config == null) config = new FileSystemLookupStrategy().lookup(context, source, owner, filetype).get();
@@ -86,6 +88,7 @@ public class ConfigurationServiceProcessor implements ServiceProcessor<UseConfig
                 .fileType(filetype)
                 .flat(config);
 
+        context.log().debug("Located " + cache.size() + " in source " + filetype.asFileName(source));
         context.properties(cache);
     }
 

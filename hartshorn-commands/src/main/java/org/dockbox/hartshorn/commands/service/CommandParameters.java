@@ -42,12 +42,12 @@ public class CommandParameters implements ComponentProcessor<UseCommands> {
     }
 
     @Override
-    public boolean processable(ApplicationContext context, TypeContext<?> type) {
+    public boolean processable(final ApplicationContext context, final TypeContext<?> type) {
         return type.annotation(Parameter.class).present();
     }
 
     @Override
-    public <T> void process(ApplicationContext context, TypeContext<T> type) {
+    public <T> void process(final ApplicationContext context, final TypeContext<T> type) {
         final Parameter meta = type.annotation(Parameter.class).get();
         final CustomParameterPattern pattern = context.get(meta.pattern());
         final String key = meta.value();

@@ -1176,6 +1176,18 @@ public final class HartshornUtils {
         return Vector3N.of(x, y, z);
     }
 
+    public static boolean isCI() {
+        for (final StackTraceElement element : Thread.currentThread().getStackTrace()) {
+            if (element.getClassName().startsWith("org.junit.")) return true;
+        }
+
+        return System.getenv().containsKey("GITLAB_CI")
+                || System.getenv().containsKey("JENKINS_HOME")
+                || System.getenv().containsKey("TRAVIS")
+                || System.getenv().containsKey("GITHUB_ACTIONS")
+                || System.getenv().containsKey("APPVEYOR");
+    }
+
     public enum Provision {
         /** Uses the field name to process field information. */
         FIELD,

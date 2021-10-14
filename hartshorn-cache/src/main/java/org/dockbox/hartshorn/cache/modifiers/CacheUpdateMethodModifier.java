@@ -47,7 +47,7 @@ public class CacheUpdateMethodModifier extends CacheServiceModifier<UpdateCache>
                 final Object o = args[0];
                 cacheContext.manager().update(cacheContext.name(), o);
                 return proxyContext.invoke(args);
-            } catch (ApplicationException e) {
+            } catch (final ApplicationException e) {
                 Except.handle(e);
             }
             return null; // Should be void anyway

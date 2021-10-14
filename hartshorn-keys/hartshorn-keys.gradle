@@ -19,6 +19,7 @@ dependencies {
     implementation 'org.dockbox.hartshorn:hartshorn-di'
     implementation 'org.dockbox.hartshorn:hartshorn-core'
     implementation 'org.dockbox.hartshorn:hartshorn-i18n'
+    implementation 'org.dockbox.hartshorn:hartshorn-util'
     implementation 'org.dockbox.hartshorn:hartshorn-bootstrap'
     implementation 'org.dockbox.hartshorn:hartshorn-exceptions'
 }

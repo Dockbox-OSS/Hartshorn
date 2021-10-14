@@ -51,9 +51,8 @@ public class Compiler {
             String className = this.extractClassName(source);
             String packageName = this.extractPackage(source);
 
-            Compiler compiler = new Compiler();
-            Map<String, byte[]> result = compiler.compile(className + ".java", source);
-            return compiler.loadClass(packageName + '.' + className, result);
+            Map<String, byte[]> result = this.compile(className + ".java", source);
+            return this.loadClass(packageName + '.' + className, result);
         });
     }
 

@@ -102,7 +102,7 @@ public final class ArgumentConverterContext extends DefaultContext {
         for (String key : converter.keys()) {
             key = key.toLowerCase();
             if (this.converterMap.containsKey(key))
-                Hartshorn.log().warn("Duplicate argument key '" + key + "' found while registering converter, overwriting existing converter");
+                Hartshorn.log().debug("Duplicate argument key '" + key + "' found while registering converter, overwriting existing converter.");
             this.converterMap.put(key, converter);
         }
     }

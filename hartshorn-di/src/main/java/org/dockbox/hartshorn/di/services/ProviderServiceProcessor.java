@@ -42,6 +42,7 @@ public final class ProviderServiceProcessor implements ServiceProcessor<UseServi
     @Override
     public <T> void process(final ApplicationContext context, final TypeContext<T> type) {
         final List<MethodContext<?, T>> methods = type.flatMethods(Provider.class);
+        context.log().debug("Found " + methods.size() + " providers in " + type.name());
         for (final MethodContext<?, T> method : methods) {
             final boolean singleton = context.meta().singleton(method);
             final Provider annotation = method.annotation(Provider.class).get();

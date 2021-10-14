@@ -32,20 +32,18 @@ import lombok.Getter;
 public class ApplicationEnvironment {
 
     @Getter(AccessLevel.PACKAGE) private final PrefixContext context;
-    private final boolean isCI;
+    @Getter private final boolean isCI;
     @Getter private final ApplicationContextAware application;
 
     public ApplicationEnvironment(final Collection<String> prefixes, final ApplicationContextAware application) {
-        this.context = new PrefixContext(prefixes);
-        this.isCI = this.detectCI();
         this.application = application;
+        this.isCI = this.detectCI();
+        this.context = new PrefixContext(prefixes, this);
+        this.application().log().debug("Created new application environment (isCI: %s, prefixCount: %d)".formatted(this.isCI(), this.context().prefixes().size()));
     }
 
     private boolean detectCI() {
-        for (final StackTraceElement element : Thread.currentThread().getStackTrace()) {
-            if (element.getClassName().startsWith("org.junit.")) return true;
-        }
-        return false;
+        return HartshornUtils.isCI();
     }
 
     public void prefix(final String prefix) {
@@ -143,9 +141,5 @@ public class ApplicationEnvironment {
             }
         }
         return annotations;
-    }
-
-    public boolean isCI() {
-        return this.isCI;
     }
 }

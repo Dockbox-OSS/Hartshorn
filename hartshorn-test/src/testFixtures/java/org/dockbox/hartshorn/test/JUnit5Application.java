@@ -19,15 +19,12 @@ package org.dockbox.hartshorn.test;
 
 import org.dockbox.hartshorn.boot.HartshornApplication;
 import org.dockbox.hartshorn.boot.MetaProviderImpl;
-import org.dockbox.hartshorn.di.ApplicationContextAware;
 import org.dockbox.hartshorn.di.DefaultModifiers;
 import org.dockbox.hartshorn.di.MetaProviderModifier;
 import org.dockbox.hartshorn.di.annotations.activate.Activator;
 import org.dockbox.hartshorn.di.annotations.inject.InjectConfig;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.test.util.JUnitInjector;
-
-import java.lang.reflect.Field;
 
 import lombok.Getter;
 
@@ -36,11 +33,7 @@ public final class JUnit5Application {
 
     @Getter private static final JUnitInformation information = new JUnitInformation();
 
-    public static ApplicationContext prepareBootstrap() throws NoSuchFieldException, IllegalAccessException {
-        final Field instance = ApplicationContextAware.class.getDeclaredField("instance");
-        instance.setAccessible(true);
-        instance.set(null, null);
-
+    public static ApplicationContext prepareBootstrap() {
         return HartshornApplication.create(JUnit5Application.class,
                 new String[0],
                 DefaultModifiers.ACTIVATE_ALL,

@@ -53,25 +53,32 @@ public class SimpleCommandCLI implements CommandCLI {
     @Override
     public void open() {
         try (
-                InputStream input = this.input();
-                Scanner scanner = new Scanner(input)
+                final InputStream input = this.input();
+                final Scanner scanner = new Scanner(input)
         ) {
-            Runnable task = () -> {
+            final Runnable task = () -> {
+                this.context.log().debug("Starting command CLI input listener");
                 while (this.running()) {
                     final String next = scanner.nextLine();
                     try {
                         this.gateway.accept(this.source(), next);
                     }
-                    catch (ParsingException e) {
+                    catch (final ParsingException e) {
                         Except.handle(e);
                     }
                 }
             };
 
-            if (this.async()) this.threads.performAsync(task);
-            else task.run();
+            if (this.async()) {
+                this.context.log().debug("Performing startup task for command CLI asynchronously");
+                this.threads.performAsync(task);
+            }
+            else {
+                this.context.log().debug("Performing startup task for command CLI on current thread");
+                task.run();
+            }
         }
-        catch (IOException e) {
+        catch (final IOException e) {
             Except.handle(e);
         }
     }

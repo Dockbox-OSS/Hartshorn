@@ -43,7 +43,9 @@ public final class ArgumentConverterImpl<T> extends DefaultArgumentConverter<T> 
         super(type, size, keys);
         this.converter = converter;
         this.suggestionProvider = suggestionProvider;
-    }    @Override
+    }
+
+    @Override
     public Exceptional<T> convert(final CommandSource source, final String argument) {
         return this.converter.apply(source, argument);
     }
@@ -62,7 +64,9 @@ public final class ArgumentConverterImpl<T> extends DefaultArgumentConverter<T> 
      */
     public static <T> CommandValueConverterBuilder<T> builder(final Class<T> type, final String... keys) {
         return new CommandValueConverterBuilder<>(TypeContext.of(type), keys);
-    }    @Override
+    }
+
+    @Override
     public Exceptional<T> convert(final CommandSource source, final CommandParameter<String> value) {
         return this.convert(source, value.value());
     }
@@ -162,14 +166,10 @@ public final class ArgumentConverterImpl<T> extends DefaultArgumentConverter<T> 
         public ArgumentConverterImpl<T> build() {
             return new ArgumentConverterImpl<>(this.type, this.size, this.converter, this.suggestionProvider, this.keys);
         }
-    }    @Override
+    }
+
+    @Override
     public Collection<String> suggestions(final CommandSource source, final String argument) {
         return this.suggestionProvider.apply(source, argument);
     }
-
-
-
-
-
-
 }

@@ -68,13 +68,9 @@ public final class CommandElements {
         private EnumCommandElement(final String name, final Permission permission, final TypeContext<E> type, final boolean optional) {
             this.name = name;
             this.permission = permission;
-            this.values = type.enumConstants().stream()
-                    .collect(Collectors.toMap(value -> value.name().toLowerCase(),
-                            Function.identity(), (value, value2) -> {
-                                throw new UnsupportedOperationException(type.qualifiedName() + " contains more than one enum constant "
-                                        + "with the same name, only differing by capitalization, which is unsupported.");
-                            }
-                    ));
+            this.values = type.enumConstants().stream().collect(Collectors.toMap(value -> value.name().toLowerCase(), Function.identity(), (value, value2) -> {
+                throw new UnsupportedOperationException(type.qualifiedName() + " contains more than one enum constant with the same name, only differing by capitalization, which is unsupported.");
+            }));
             this.optional = optional;
         }
 

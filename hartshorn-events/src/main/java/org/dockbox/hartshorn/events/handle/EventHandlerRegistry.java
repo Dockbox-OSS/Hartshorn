@@ -39,15 +39,10 @@ public final class EventHandlerRegistry {
     }
 
     public void computeHierarchy(EventHandler subject) {
-        boolean associationFound = false;
         for (EventHandler handler : this.handlers.values()) {
             if (subject == handler) continue;
-            if (subject.subtypeOf(handler)) {
-                associationFound |= subject.addSuperTypeHandler(handler);
-            }
-            else if (handler.subtypeOf(subject)) {
-                associationFound |= handler.addSuperTypeHandler(subject);
-            }
+            if (subject.subtypeOf(handler)) subject.addSuperTypeHandler(handler);
+            else if (handler.subtypeOf(subject)) handler.addSuperTypeHandler(subject);
         }
     }
 }

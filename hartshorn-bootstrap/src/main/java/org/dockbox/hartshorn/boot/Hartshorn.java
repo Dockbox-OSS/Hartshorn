@@ -100,10 +100,16 @@ public final class Hartshorn {
     public static Exceptional<Path> resource(final String name) {
         try {
             final InputStream in = Hartshorn.class.getClassLoader().getResourceAsStream(name);
+            if (in == null) {
+                log().debug("Could not locate resource " + name);
+                return Exceptional.empty();
+            }
+
             final byte[] buffer = new byte[in.available()];
             in.read(buffer);
 
             final Path tempFile = Files.createTempFile(name, ".tmp");
+            log().debug("Writing compressed resource " + name + " to temporary file " + tempFile.toFile().getName());
             final OutputStream outStream = new FileOutputStream(tempFile.toFile());
             outStream.write(buffer);
 

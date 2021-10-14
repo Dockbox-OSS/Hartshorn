@@ -26,16 +26,7 @@ import lombok.Getter;
 
 public abstract class ApplicationContextAware implements ApplicationBootstrap {
 
-    private static ApplicationContextAware instance;
     @Getter private ApplicationContext context;
-
-    public static ApplicationContextAware instance() {
-        return instance;
-    }
-
-    protected static void instance(final ApplicationContextAware bootstrap) {
-        ApplicationContextAware.instance = bootstrap;
-    }
 
     public void create(final ApplicationContext context) {
         this.context = context;

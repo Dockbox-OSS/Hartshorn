@@ -24,6 +24,8 @@ import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.di.properties.Attribute;
 import org.dockbox.hartshorn.di.properties.AttributeHolder;
 
+import java.util.Locale;
+
 import javax.inject.Inject;
 
 /**
@@ -63,6 +65,7 @@ public class CacheImpl<T> implements Cache<T>, AttributeHolder {
         // Negative amounts are considered non-expiring
         if (this.expiration.amount() > 0) {
             TaskRunner.create(this.applicationContext).acceptDelayed(this::evict, this.expiration.amount(), this.expiration.unit());
+            this.applicationContext.log().debug("Scheduled eviction after %d %s".formatted(this.expiration.amount(), this.expiration.unit().name().toLowerCase(Locale.ROOT)));
         }
     }
 

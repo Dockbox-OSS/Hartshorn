@@ -55,7 +55,7 @@ public class CommandContextImpl extends DefaultContext implements CommandContext
     }
 
     @Override
-    public <T> T get(String key) {
+    public <T> T get(final String key) {
         return HartshornUtils.merge(this.args, this.flags)
                 .stream()
                 .map(CommandParameter.class::cast)
@@ -72,7 +72,7 @@ public class CommandContextImpl extends DefaultContext implements CommandContext
     }
 
     @Override
-    public boolean has(String key) {
+    public boolean has(final String key) {
         return HartshornUtils.merge(this.args, this.flags)
                 .stream()
                 .map(CommandParameter.class::cast)
@@ -85,12 +85,12 @@ public class CommandContextImpl extends DefaultContext implements CommandContext
     }
 
     @Override
-    public <T> Exceptional<T> find(String key) {
+    public <T> Exceptional<T> find(final String key) {
         return Exceptional.of(() -> this.get(key));
     }
 
     @Override
-    public <T> Exceptional<CommandParameter<T>> argument(String key) {
+    public <T> Exceptional<CommandParameter<T>> argument(final String key) {
         return Exceptional.of(this.args.stream()
                 .filter(arg -> arg.trimmedKey().equals(key))
                 .findFirst()
@@ -98,7 +98,7 @@ public class CommandContextImpl extends DefaultContext implements CommandContext
     }
 
     @Override
-    public <T> Exceptional<CommandParameter<T>> flag(String key) {
+    public <T> Exceptional<CommandParameter<T>> flag(final String key) {
         return Exceptional.of(this.flags.stream()
                 .filter(flag -> flag.trimmedKey().equals(key))
                 .findFirst()

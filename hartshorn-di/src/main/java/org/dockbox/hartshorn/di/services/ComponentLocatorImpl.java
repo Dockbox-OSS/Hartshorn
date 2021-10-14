@@ -41,6 +41,8 @@ public class ComponentLocatorImpl implements ComponentLocator {
     public void register(final String prefix) {
         if (ComponentLocatorImpl.cache.containsKey(prefix)) return;
 
+        this.context.log().debug("Registering prefix '" + prefix + "' for component locating");
+
         final long start = System.currentTimeMillis();
         this.context.environment().prefix(prefix);
 

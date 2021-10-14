@@ -39,7 +39,7 @@ public class ClassPathResourceLookupStrategy implements ResourceLookupStrategy {
     private final String name = "classpath";
 
     @Override
-    public Exceptional<URI> lookup(ApplicationContext context, String path, TypeContext<?> owner, FileType fileType) {
+    public Exceptional<URI> lookup(final ApplicationContext context, final String path, final TypeContext<?> owner, final FileType fileType) {
         return Hartshorn.resource(fileType.asFileName(path)).map(Path::toUri);
     }
 }

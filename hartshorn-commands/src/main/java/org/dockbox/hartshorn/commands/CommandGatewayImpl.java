@@ -52,7 +52,8 @@ import lombok.Getter;
 @Binds(CommandGateway.class)
 public class CommandGatewayImpl implements CommandGateway, AttributeHolder {
 
-    private static final transient MultiMap<String, CommandExecutorContext> contexts = new ArrayListMultiMap<>();
+    @Getter(AccessLevel.PROTECTED)
+    private final transient MultiMap<String, CommandExecutorContext> contexts = new ArrayListMultiMap<>();
     @Getter(AccessLevel.PROTECTED)
     private final transient List<CommandExecutorExtension> extensions = HartshornUtils.emptyConcurrentList();
     @Inject
@@ -70,6 +71,7 @@ public class CommandGatewayImpl implements CommandGateway, AttributeHolder {
     @Override
     public void enable() {
         for (final TypeContext<? extends CommandExecutorExtension> extension : this.context.environment().children(CommandExecutorExtension.class)) {
+            this.context.log().debug("Adding extension " + extension.name() + " to command gateway");
             this.add(this.context.get(extension));
         }
     }
@@ -83,13 +85,20 @@ public class CommandGatewayImpl implements CommandGateway, AttributeHolder {
             if (commandContext.present()) {
                 this.execute(context.get(), commandContext.get());
             }
+            else if (commandContext.caught()) {
+                commandContext.rethrow();
+            }
+            else {
+                this.context.log().warn("Could not parse command for input " + command + " but yielded no exceptions");
+            }
         }
     }
 
     private Exceptional<CommandExecutorContext> lookupContext(final String command) {
         final String alias = command.split(" ")[0];
         CommandExecutorContext bestContext = null;
-        for (final CommandExecutorContext context : contexts.get(alias)) {
+        this.context.log().debug("Looking up executor context for " + command + " in " + this.contexts.size() + " contexts");
+        for (final CommandExecutorContext context : this.contexts.get(alias)) {
             if (context.accepts(command)) {
                 if (bestContext == null) {
                     bestContext = context;
@@ -112,7 +121,10 @@ public class CommandGatewayImpl implements CommandGateway, AttributeHolder {
             if (extension.extend(context)) {
                 final ExtensionResult result = extension.execute(commandContext, context);
                 if (result.send()) commandContext.source().send(result.reason());
-                if (!result.proceed()) return;
+                if (!result.proceed()) {
+                    context.applicationContext().log().debug("Extension " + TypeContext.of(extension).name() + " rejected direct execution, cancelling command executor.");
+                    return;
+                }
             }
         }
         context.executor().execute(commandContext);
@@ -151,7 +163,7 @@ public class CommandGatewayImpl implements CommandGateway, AttributeHolder {
         }
 
         for (final String alias : aliases) {
-            contexts().put(alias, context);
+            this.contexts().put(alias, context);
         }
         this.context.add(context);
     }
@@ -166,7 +178,7 @@ public class CommandGatewayImpl implements CommandGateway, AttributeHolder {
             suggestions.addAll(context.get().suggestions(source, command, this.parser));
 
         final String alias = command.split(" ")[0];
-        final Collection<CommandExecutorContext> contexts = contexts().get(alias);
+        final Collection<CommandExecutorContext> contexts = this.contexts().get(alias);
         for (final CommandExecutorContext executorContext : contexts) {
             for (final String contextAlias : executorContext.aliases()) {
                 if (contextAlias.startsWith(command)) {
@@ -181,7 +193,7 @@ public class CommandGatewayImpl implements CommandGateway, AttributeHolder {
 
     @Override
     public Exceptional<CommandExecutorContext> get(final CommandContext context) {
-        for (final CommandExecutorContext executorContext : contexts().get(context.alias())) {
+        for (final CommandExecutorContext executorContext : this.contexts().get(context.alias())) {
             if (executorContext.accepts(context.command())) return Exceptional.of(executorContext);
         }
         return Exceptional.empty();
@@ -194,12 +206,5 @@ public class CommandGatewayImpl implements CommandGateway, AttributeHolder {
 
     private void register(final MethodContext<?, ?> method, final TypeContext<?> type) {
         this.register(new MethodCommandExecutorContext(this.context, method, type));
-    }
-
-    /**
-     * Gets all contexts stored by the gateway.
-     */
-    public static MultiMap<String, CommandExecutorContext> contexts() {
-        return CommandGatewayImpl.contexts;
     }
 }
