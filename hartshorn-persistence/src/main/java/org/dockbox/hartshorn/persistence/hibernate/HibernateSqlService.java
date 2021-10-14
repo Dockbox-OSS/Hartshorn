@@ -46,6 +46,7 @@ import javax.persistence.Entity;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 
 @Binds(SqlService.class)
@@ -57,6 +58,8 @@ public class HibernateSqlService implements SqlService {
     @Inject
     @Getter
     private ApplicationContext applicationContext;
+    @Getter(AccessLevel.PROTECTED)
+    private PersistenceConnection connection;
 
     @Override
     public boolean canEnable() {
@@ -66,18 +69,21 @@ public class HibernateSqlService implements SqlService {
     @Override
     public void apply(final Attribute<?> property) throws ApplicationException {
         if (property instanceof ConnectionAttribute connectionAttribute) {
-            final PersistenceConnection connection = connectionAttribute.value();
+            this.connection = connectionAttribute.value();
 
-            if (HartshornUtils.notEmpty(connection.username()) || HartshornUtils.notEmpty(connection.password())) {
-                this.configuration.setProperty("hibernate.connection.username", connection.username());
-                this.configuration.setProperty("hibernate.connection.password", connection.password());
+            if (HartshornUtils.notEmpty(this.connection.username()) || HartshornUtils.notEmpty(this.connection.password())) {
+                this.applicationContext().log().debug("Username or password were configured in the active connection, adding to Hibernate configuration");
+                this.configuration.setProperty("hibernate.connection.username", this.connection.username());
+                this.configuration.setProperty("hibernate.connection.password", this.connection.password());
             }
-            this.configuration.setProperty("hibernate.connection.url", connection.url());
+            this.configuration.setProperty("hibernate.connection.url", this.connection.url());
 
-            final String driver = connection.remote().driver();
-            final String dialect = this.dialect(connection);
+            final String driver = this.connection.remote().driver();
+            final String dialect = this.dialect(this.connection);
 
-            this.configuration.setProperty("hibernate.hbm2ddl.auto", "update");
+            this.applicationContext().log().debug("Determined driver: %s and dialect: %s".formatted(driver, dialect));
+
+            this.configuration.setProperty("hibernate.hbm2ddl.auto", (String) this.applicationContext().property("hibernate.hbm2ddl.auto").or("update"));
             this.configuration.setProperty("hibernate.connection.driver_class", driver);
             this.configuration.setProperty("hibernate.dialect", dialect);
         }
@@ -124,6 +130,7 @@ public class HibernateSqlService implements SqlService {
         if (!properties.containsKey("hibernate.dialect")) throw new ApplicationException("No dialect class provided! Ensure you provided a valid Remote instance");
 
         try {
+            this.applicationContext().log().debug("Building session factory for Hibernate service #%d".formatted(this.hashCode()));
             this.factory = this.configuration.buildSessionFactory();
         }
         catch (final Throwable e) {
@@ -139,9 +146,12 @@ public class HibernateSqlService implements SqlService {
     }
 
     private void session(final Consumer<Session> consumer) {
+        this.applicationContext().log().debug("Opening remote session to %s".formatted(this.connection().url()));
         final Session session = this.factory.openSession();
+        this.applicationContext().log().debug("Beginning transaction to %s".formatted(this.connection().url()));
         session.beginTransaction();
         consumer.accept(session);
+        this.applicationContext().log().debug("Committing transaction to %s".formatted(this.connection().url()));
         session.getTransaction().commit();
         session.close();
     }

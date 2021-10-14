@@ -22,11 +22,8 @@ import org.dockbox.hartshorn.events.parents.CancellableContextCarrierEvent;
 import lombok.Getter;
 import lombok.Setter;
 
-@SuppressWarnings("AbstractClassWithoutAbstractMethods")
 @Getter
 @Setter
 public abstract class AbstractCancellableEvent extends CancellableContextCarrierEvent {
-
     private boolean cancelled;
-
 }

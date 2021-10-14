@@ -48,6 +48,7 @@ public abstract class AbstractPersistenceServiceModifier<M extends Annotation, C
         if (serialisationContext.absent()) throw new IllegalStateException("Expected additional context to be present");
 
         final C ctx = serialisationContext.get();
+        context.log().debug("Processing persistence path of " + methodContext.method().name() + " with serialisation target " + ctx.target());
         return switch (ctx.target()) {
             case ANNOTATED_PATH -> this.processAnnotatedPath(context, methodContext, ctx);
             case PARAMETER_PATH -> this.processParameterPath(context, methodContext, ctx);

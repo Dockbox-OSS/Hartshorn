@@ -40,7 +40,7 @@ public abstract class InjectableBootstrap extends ApplicationContextAware {
         for (final Annotation activator : activators) {
             ((HartshornApplicationContext) this.context()).addActivator(activator);
         }
-        instance(this);
+
         for (final String prefix : prefixes) {
             this.lookup(prefix, ComponentProcessor.class, ApplicationContext::add);
             this.lookup(prefix, InjectionModifier.class, ApplicationContext::add);
