@@ -18,7 +18,8 @@
 apply from: "$rootDir/parent.gradle"
 
 dependencies {
-    implementation 'org.dockbox.hartshorn:hartshorn-bootstrap'
     implementation 'org.dockbox.hartshorn:hartshorn-i18n'
+    implementation 'org.dockbox.hartshorn:hartshorn-util'
+    implementation 'org.dockbox.hartshorn:hartshorn-bootstrap'
     implementation 'org.dockbox.hartshorn:hartshorn-exceptions'
 }
