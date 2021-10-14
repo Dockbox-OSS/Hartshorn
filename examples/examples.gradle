@@ -22,8 +22,6 @@ plugins {
 group = 'org.dockbox.hartshorn.sample'
 description 'Sample services for Hartshorn'
 
-apply from: "$rootDir/service-parent.gradle"
-
 sourceSets {
     persistence
     commands

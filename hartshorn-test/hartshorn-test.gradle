@@ -20,9 +20,6 @@ plugins {
     id 'java-test-fixtures'
 }
 
-group = 'org.dockbox.hartshorn.common'
-description 'Default implementations for Hartshorn'
-
 def depBlacklist = ['hartshorn-test', 'examples']
 
 dependencies {
@@ -34,18 +31,18 @@ dependencies {
         }
     }
 
-    testFixturesImplementation "org.jetbrains:annotations:$jetbrainsAnnotationsVersion"
-    testFixturesImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"
-    testFixturesImplementation "org.junit.jupiter:junit-jupiter-params:$junitVersion"
-    testFixturesImplementation "org.hamcrest:java-hamcrest:$hamcrestVersion"
-    testFixturesImplementation "org.mockito:mockito-inline:$mockitoVersion"
-    testFixturesImplementation "org.projectlombok:lombok:$lombokVersion"
     testFixturesImplementation "org.slf4j:slf4j-api:$slf4jVersion"
+    testFixturesImplementation "org.apache.derby:derby:$derbyVersion"
+    testFixturesImplementation "org.projectlombok:lombok:$lombokVersion"
+    testFixturesImplementation "org.mockito:mockito-inline:$mockitoVersion"
+    testFixturesImplementation "org.hamcrest:java-hamcrest:$hamcrestVersion"
+    testFixturesImplementation "org.hibernate:hibernate-core:$hibernateVersion"
     testFixturesImplementation "org.apache.logging.log4j:log4j-api:$log4jVersion"
     testFixturesImplementation "org.apache.logging.log4j:log4j-core:$log4jVersion"
+    testFixturesImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"
+    testFixturesImplementation "org.junit.jupiter:junit-jupiter-params:$junitVersion"
+    testFixturesImplementation "org.jetbrains:annotations:$jetbrainsAnnotationsVersion"
     testFixturesImplementation "org.apache.logging.log4j:log4j-slf4j-impl:$log4jVersion"
-    testFixturesImplementation "org.hibernate:hibernate-core:$hibernateVersion"
-    testFixturesImplementation "org.apache.derby:derby:$derbyVersion"
 
     testFixturesRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
     testFixturesAnnotationProcessor "org.projectlombok:lombok:$lombokVersion"

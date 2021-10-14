@@ -17,7 +17,7 @@
 
 dependencies {
     implementation 'org.dockbox.hartshorn:hartshorn-core'
+    implementation "com.jhlabs:filters:$jhlabsFiltersVersion"
     implementation "org.reflections:reflections:$reflectionsVersion"
     implementation "com.mortennobel:java-image-scaling:$imageScalingVersion"
-    implementation "com.jhlabs:filters:$jhlabsFiltersVersion"
 }

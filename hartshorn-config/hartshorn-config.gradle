@@ -15,10 +15,12 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-apply from: "$rootDir/parent.gradle"
-
 dependencies {
+    implementation 'org.dockbox.hartshorn:hartshorn-di'
+    implementation 'org.dockbox.hartshorn:hartshorn-util'
+    implementation 'org.dockbox.hartshorn:hartshorn-core'
     implementation 'org.dockbox.hartshorn:hartshorn-bootstrap'
+    implementation 'org.dockbox.hartshorn:hartshorn-exceptions'
     implementation 'org.dockbox.hartshorn:hartshorn-persistence'
 
     implementation "com.fasterxml.jackson.core:jackson-core:$jacksonVersion"

@@ -16,11 +16,9 @@
  */
 
 dependencies {
+    api "javax.inject:javax.inject:$javaxInjectVersion"
     implementation 'org.dockbox.hartshorn:hartshorn-core'
     implementation 'org.dockbox.hartshorn:hartshorn-util'
-
-    testImplementation 'org.dockbox.hartshorn:hartshorn-bootstrap'
-
-    api "javax.inject:javax.inject:$javaxInjectVersion"
     implementation "org.reflections:reflections:$reflectionsVersion"
+    testImplementation 'org.dockbox.hartshorn:hartshorn-bootstrap'
 }
