@@ -21,6 +21,7 @@ import org.dockbox.hartshorn.api.exceptions.ApplicationException;
 import org.dockbox.hartshorn.di.annotations.inject.Binds;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.jetty.error.JettyErrorAdapter;
+import org.dockbox.hartshorn.web.DefaultWebStarter;
 import org.dockbox.hartshorn.web.RequestHandlerContext;
 import org.dockbox.hartshorn.web.WebStarter;
 import org.eclipse.jetty.server.Server;
@@ -31,14 +32,14 @@ import org.eclipse.jetty.servlet.ServletHolder;
 import javax.inject.Inject;
 
 @Binds(WebStarter.class)
-public class JettyWebStarter implements WebStarter {
+public class JettyWebStarter extends DefaultWebStarter {
 
     @Inject
     private ApplicationContext context;
-
     private final ServletHandler handler;
 
     public JettyWebStarter() {
+        super();
         this.handler = new ServletHandler();
     }
 
@@ -68,7 +69,7 @@ public class JettyWebStarter implements WebStarter {
     }
 
     protected JettyServletAdapter servlet(final RequestHandlerContext context) {
-        return new JettyServletAdapter(context.httpRequest().method(), context.methodContext(), context.applicationContext());
+        return new JettyServletAdapter(this, context);
     }
 
 }

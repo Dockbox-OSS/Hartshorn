@@ -18,8 +18,13 @@
 package org.dockbox.hartshorn.web;
 
 import org.dockbox.hartshorn.api.exceptions.ApplicationException;
+import org.dockbox.hartshorn.web.processing.RequestArgumentProcessor;
+
+import java.util.Set;
 
 public interface WebStarter {
     void start(int port) throws ApplicationException;
     void register(RequestHandlerContext context);
+    void add(RequestArgumentProcessor<?> processor);
+    Set<RequestArgumentProcessor<?>> processors();
 }

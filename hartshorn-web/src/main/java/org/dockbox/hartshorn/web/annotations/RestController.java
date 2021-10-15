@@ -29,5 +29,5 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 @Extends(Service.class)
 public @interface RestController {
-    String value();
+    String value() default "";
 }
