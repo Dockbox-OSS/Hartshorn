@@ -20,8 +20,10 @@ package org.dockbox.hartshorn.web.processing;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.di.context.element.ParameterContext;
+import org.dockbox.hartshorn.persistence.FileType;
 import org.dockbox.hartshorn.persistence.mapping.ObjectMapper;
 import org.dockbox.hartshorn.web.annotations.RequestBody;
+import org.dockbox.hartshorn.web.annotations.http.HttpRequest;
 
 import java.util.stream.Collectors;
 
@@ -36,8 +38,9 @@ public class BodyRequestArgumentProcessor implements RequestArgumentProcessor<Re
     }
 
     @Override
-    public <T> Exceptional<T> process(ApplicationContext context, ParameterContext<T> parameter, HttpServletRequest request, HttpServletResponse response) {
-        ObjectMapper objectMapper = context.get(ObjectMapper.class);
+    public <T> Exceptional<T> process(final ApplicationContext context, final ParameterContext<T> parameter, final HttpServletRequest request, final HttpServletResponse response) {
+        final FileType bodyFormat = parameter.declaringElement().annotation(HttpRequest.class).get().bodyFormat();
+        final ObjectMapper objectMapper = context.get(ObjectMapper.class).fileType(bodyFormat);
         final Exceptional<String> body = Exceptional.of(() -> request.getReader().lines().collect(Collectors.joining(System.lineSeparator())));
         return body.flatMap(b -> objectMapper.read(b, parameter.type()));
     }

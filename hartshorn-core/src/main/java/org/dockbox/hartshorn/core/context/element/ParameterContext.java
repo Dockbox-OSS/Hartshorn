@@ -79,7 +79,6 @@ public class ParameterContext<T> extends AnnotatedElementContext<Parameter> impl
         );
     }
 
-    @Override
     public TypeContext<T> type() {
         if (this.type == null) {
             this.type = TypeContext.of((Class<T>) this.element().getType());

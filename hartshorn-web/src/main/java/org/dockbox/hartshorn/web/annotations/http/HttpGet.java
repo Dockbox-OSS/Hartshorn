@@ -17,6 +17,7 @@
 
 package org.dockbox.hartshorn.web.annotations.http;
 
+import org.dockbox.hartshorn.persistence.FileType;
 import org.dockbox.hartshorn.util.annotations.Extends;
 import org.dockbox.hartshorn.web.HttpMethod;
 
@@ -31,4 +32,6 @@ import java.lang.annotation.Target;
 @HttpRequest(method = HttpMethod.GET, value = "")
 public @interface HttpGet {
     String value();
+    FileType responseFormat() default FileType.JSON;
+    FileType bodyFormat() default FileType.JSON;
 }

@@ -26,8 +26,10 @@ import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.di.context.element.MethodContext;
 import org.dockbox.hartshorn.di.context.element.ParameterContext;
 import org.dockbox.hartshorn.di.context.element.TypeContext;
+import org.dockbox.hartshorn.di.properties.AttributeHolder;
 import org.dockbox.hartshorn.persistence.mapping.ObjectMapper;
 import org.dockbox.hartshorn.util.HartshornUtils;
+import org.dockbox.hartshorn.web.annotations.http.HttpRequest;
 import org.dockbox.hartshorn.web.processing.RequestArgumentProcessor;
 import org.eclipse.jetty.http.HttpStatus;
 
@@ -41,20 +43,28 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @Binds(ServletHandler.class)
-public class ServletHandler {
+public class ServletHandler implements AttributeHolder {
 
     private final WebStarter starter;
     private final HttpMethod httpMethod;
     private final MethodContext<?, ?> methodContext;
+    private final HttpRequest httpRequest;
 
     @Inject private ApplicationContext context;
     @Inject private ObjectMapper mapper;
 
     @Bound
-    public ServletHandler(WebStarter starter, HttpMethod httpMethod, MethodContext<?, ?> methodContext) {
+    public ServletHandler(final WebStarter starter, final HttpMethod httpMethod, final MethodContext<?, ?> methodContext) {
         this.starter = starter;
         this.httpMethod = httpMethod;
         this.methodContext = methodContext;
+        this.httpRequest = methodContext.annotation(HttpRequest.class)
+                .orThrow(() -> new IllegalArgumentException("Provided method is not annotated with @HttpRequest or an extension of that annotation (%s)".formatted(methodContext.qualifiedName())));
+    }
+
+    @Override
+    public void enable() {
+        this.mapper.fileType(this.httpRequest.responseFormat());
     }
 
     public void processRequest(final HttpMethod method, final HttpServletRequest req, final HttpServletResponse res, final HttpAction fallbackAction) throws ServletException, IOException {
@@ -69,7 +79,7 @@ public class ServletHandler {
                     if (String.class.equals(result.type())) {
                         res.getWriter().print(result.get());
                     } else {
-                        Exceptional<String> write = this.mapper.write(result.get());
+                        final Exceptional<String> write = this.mapper.write(result.get());
                         if (write.present()) res.getWriter().print(write.get());
                         else res.setStatus(HttpStatus.INTERNAL_SERVER_ERROR_500);
                     }
@@ -92,9 +102,9 @@ public class ServletHandler {
             if (TypeContext.of(req).childOf(parameter.type())) parameters.add(req);
             else if (TypeContext.of(res).childOf(parameter.type())) parameters.add(res);
             else {
-                for (RequestArgumentProcessor<?> processor : processors) {
+                for (final RequestArgumentProcessor<?> processor : processors) {
                     if (parameter.annotation(processor.annotation()).present() && processor.preconditions(this.context, parameter, req, res)) {
-                        Exceptional<?> output = processor.process(this.context, parameter, req, res);
+                        final Exceptional<?> output = processor.process(this.context, parameter, req, res);
                         if (output.present()) {
                             parameters.add(output.get());
                             continue parameter_loop;
