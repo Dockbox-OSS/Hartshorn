@@ -17,10 +17,11 @@
 
 package org.dockbox.hartshorn.boot;
 
+import org.dockbox.hartshorn.di.annotations.activate.UseServiceProvision;
 import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.di.services.ComponentContainer;
 import org.dockbox.hartshorn.test.ApplicationAwareTest;
-import org.dockbox.hartshorn.test.JUnit5Application;
+import org.dockbox.hartshorn.test.HartshornRunner;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -30,6 +31,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.util.Collection;
 import java.util.stream.Stream;
 
+@UseServiceProvision
 public class ComponentProvisionTests extends ApplicationAwareTest {
 
     /**
@@ -42,8 +44,10 @@ public class ComponentProvisionTests extends ApplicationAwareTest {
             ValidPostBootstrapService.class
     );
 
-    public static Stream<Arguments> components() throws NoSuchFieldException, IllegalAccessException {
-        return JUnit5Application.prepareBootstrap().locator()
+    public static Stream<Arguments> components() {
+        return HartshornRunner.createContext(ComponentProvisionTests.class)
+                .rethrow().get()
+                .locator()
                 .containers().stream()
                 .map(ComponentContainer::type)
                 .filter(type -> !excluded.contains(type.type()))

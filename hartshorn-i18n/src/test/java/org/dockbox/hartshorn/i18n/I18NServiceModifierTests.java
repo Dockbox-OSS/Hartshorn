@@ -18,11 +18,13 @@
 package org.dockbox.hartshorn.i18n;
 
 import org.dockbox.hartshorn.di.context.element.TypeContext;
+import org.dockbox.hartshorn.i18n.annotations.UseResources;
 import org.dockbox.hartshorn.i18n.common.Message;
 import org.dockbox.hartshorn.test.ApplicationAwareTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+@UseResources
 public class I18NServiceModifierTests extends ApplicationAwareTest {
 
     @Test

@@ -20,6 +20,7 @@ package org.dockbox.hartshorn.persistence.service;
 import org.dockbox.hartshorn.boot.Hartshorn;
 import org.dockbox.hartshorn.persistence.FileManager;
 import org.dockbox.hartshorn.persistence.PersistentElement;
+import org.dockbox.hartshorn.persistence.annotations.UsePersistence;
 import org.dockbox.hartshorn.test.ApplicationAwareTest;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.junit.jupiter.api.Assertions;
@@ -27,6 +28,7 @@ import org.junit.jupiter.api.Test;
 
 import java.nio.file.Path;
 
+@UsePersistence
 public class SerialisationTests extends ApplicationAwareTest {
 
     @Test

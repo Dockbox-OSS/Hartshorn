@@ -20,6 +20,7 @@ package org.dockbox.hartshorn.di;
 import org.dockbox.hartshorn.di.annotations.inject.InjectPhase;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.di.context.element.MethodContext;
+import org.dockbox.hartshorn.di.context.element.TypeContext;
 
 import java.lang.annotation.Annotation;
 import java.util.Collection;
@@ -33,7 +34,7 @@ public interface ApplicationBootstrap {
 
     ApplicationContext context();
 
-    void create(Collection<String> prefixes, Class<?> activationSource, List<Annotation> activators, MultiMap<InjectPhase, InjectConfiguration> configs, String[] args, Modifier... modifiers);
+    void create(Collection<String> prefixes, TypeContext<?> activationSource, List<Annotation> activators, MultiMap<InjectPhase, InjectConfiguration> configs, String[] args, Modifier... modifiers);
 
     void addActivation(MethodContext<?, ?> method);
 }

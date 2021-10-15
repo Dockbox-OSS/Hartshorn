@@ -103,10 +103,9 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
     private final Map<Key<?>, BindingHierarchy<?>> hierarchies = HartshornUtils.emptyConcurrentMap();
     private MetaProvider metaProvider;
 
-    public HartshornApplicationContext(final ApplicationContextAware application, final Class<?> activationSource, final Collection<String> prefixes, final String[] args, final Modifier... modifiers) {
+    public HartshornApplicationContext(final ApplicationContextAware application, final TypeContext<?> activationSource, final Collection<String> prefixes, final String[] args, final Modifier... modifiers) {
         this.environment = new ApplicationEnvironment(prefixes, application);
-        final TypeContext<?> typeContext = TypeContext.of(activationSource);
-        final Exceptional<Activator> activator = typeContext.annotation(Activator.class);
+        final Exceptional<Activator> activator = activationSource.annotation(Activator.class);
         if (activator.absent()) {
             throw new IllegalStateException("Activation source is not marked with @Activator");
         }

@@ -18,6 +18,7 @@
 package org.dockbox.hartshorn.di;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.di.annotations.activate.UseServiceProvision;
 import org.dockbox.hartshorn.di.binding.BindingHierarchy;
 import org.dockbox.hartshorn.di.binding.Bindings;
 import org.dockbox.hartshorn.di.binding.BoundFactoryProvider;
@@ -50,6 +51,7 @@ import test.types.multi.SampleMultiAnnotatedImplementation;
 import test.types.provision.ProvidedInterface;
 import test.types.scan.SampleAnnotatedImplementation;
 
+@UseServiceProvision
 public class ApplicationContextTests extends ApplicationAwareTest {
 
     private static Stream<Arguments> providers() {
