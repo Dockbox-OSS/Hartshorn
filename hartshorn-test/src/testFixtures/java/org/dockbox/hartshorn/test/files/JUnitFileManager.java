@@ -18,7 +18,7 @@
 package org.dockbox.hartshorn.test.files;
 
 import org.dockbox.hartshorn.persistence.DefaultAbstractFileManager;
-import org.dockbox.hartshorn.test.JUnit5Application;
+import org.dockbox.hartshorn.test.HartshornRunner;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;
@@ -37,7 +37,7 @@ public class JUnitFileManager extends DefaultAbstractFileManager {
 
     @NotNull
     public Path root() {
-        return JUnit5Application.information().path();
+        return HartshornRunner.information().path();
     }
 
     @NotNull

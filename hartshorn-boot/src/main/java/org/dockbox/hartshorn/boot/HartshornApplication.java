@@ -91,57 +91,13 @@ public class HartshornApplication {
         for (final Modifier modifier : modifiers) {
             if (modifier instanceof LogLevelModifier levelModifier) setLogLevel(levelModifier.level());
         }
+        final Activator annotation = verifyActivator(activator);
+        final Class<? extends ApplicationBootstrap> bootstrap = annotation.value();
 
+        Hartshorn.log().info("Requested bootstrap is " + bootstrap.getSimpleName());
         try {
-            Hartshorn.log().info("Starting " + Hartshorn.PROJECT_NAME + " with activator " + activator.getSimpleName());
-            final long start = System.currentTimeMillis();
-            final Activator annotation = verifyActivator(activator);
-            final Class<? extends ApplicationBootstrap> bootstrap = annotation.value();
-
-            Hartshorn.log().info("Requested bootstrap is " + bootstrap.getSimpleName());
-            final ApplicationBootstrap injectableBootstrap = instance(bootstrap);
-
-            if (!injectableBootstrap.isCI()) {
-                for (final String line : BANNER.split("\n")) {
-                    Hartshorn.log().info(line);
-                }
-                Hartshorn.log().info("");
-            }
-
-            final String prefix = "".equals(annotation.prefix()) ? activator.getPackage().getName() : annotation.prefix();
-
-            final MultiMap<InjectPhase, InjectConfiguration> configurations = new ArrayListMultiMap<>();
-            for (final InjectConfig config : annotation.configs()) {
-                Hartshorn.log().debug("Adding configuration " + config.value().getSimpleName() + " for phase " + config.phase());
-                configurations.put(config.phase(), instance(config.value()));
-            }
-
-            final List<String> prefixes = HartshornUtils.asList(Hartshorn.PACKAGE_PREFIX);
-            if (!prefix.startsWith(Hartshorn.PACKAGE_PREFIX)) {
-                prefixes.add(prefix);
-            }
-
-            injectableBootstrap.create(
-                    prefixes,
-                    activator,
-                    HartshornUtils.emptyList(),
-                    configurations,
-                    args,
-                    modifiers);
-            final long creationTime = System.currentTimeMillis() - start;
-
-            return () -> {
-                final long initStart = System.currentTimeMillis();
-                injectableBootstrap.init();
-                final long initTime = System.currentTimeMillis() - initStart;
-                Hartshorn.log().info("Started " + Hartshorn.PROJECT_NAME + " in " + (creationTime + initTime) + "ms (" + creationTime + "ms creation, " + initTime + "ms init)");
-                final ApplicationContext context = injectableBootstrap.context();
-
-                if (context.hasActivator(UseEvents.class)) {
-                    new EngineChangedState<Started>() {}.with(context).post();
-                }
-                return context;
-            };
+            final ApplicationBootstrap applicationBootstrap = instance(bootstrap);
+            return load(applicationBootstrap, annotation, TypeContext.of(activator), args, modifiers);
         }
         catch (final InvocationTargetException | NoSuchMethodException | InstantiationException | IllegalAccessException e) {
             Except.handle("Could not bootstrap application " + activator.getSimpleName(), e);
@@ -149,6 +105,60 @@ public class HartshornApplication {
                 throw new RuntimeException("Hartshorn could not be bootstrapped, see cause for details", e);
             };
         }
+    }
+
+    public static HartshornLoader load(
+            final ApplicationBootstrap injectableBootstrap,
+            final Activator annotation,
+            final TypeContext<?> activator,
+            final String[] args,
+            final Modifier... modifiers
+    ) throws InvocationTargetException, InstantiationException, IllegalAccessException, NoSuchMethodException {
+        Hartshorn.log().info("Starting " + Hartshorn.PROJECT_NAME + " with activator " + activator.name());
+        final long start = System.currentTimeMillis();
+
+        if (!injectableBootstrap.isCI()) {
+            for (final String line : BANNER.split("\n")) {
+                Hartshorn.log().info(line);
+            }
+            Hartshorn.log().info("");
+        }
+
+        final String prefix = "".equals(annotation.prefix()) ? activator.type().getPackage().getName() : annotation.prefix();
+
+        final MultiMap<InjectPhase, InjectConfiguration> configurations = new ArrayListMultiMap<>();
+        for (final InjectConfig config : annotation.configs()) {
+            Hartshorn.log().debug("Adding configuration " + config.value().getSimpleName() + " for phase " + config.phase());
+            configurations.put(config.phase(), instance(config.value()));
+        }
+
+        final List<String> prefixes = HartshornUtils.asList(Hartshorn.PACKAGE_PREFIX);
+        if (!prefix.startsWith(Hartshorn.PACKAGE_PREFIX)) {
+            prefixes.add(prefix);
+        }
+
+        injectableBootstrap.create(
+                prefixes,
+                activator,
+                HartshornUtils.emptyList(),
+                configurations,
+                args,
+                modifiers);
+        final long creationTime = System.currentTimeMillis() - start;
+
+        return () -> {
+            final long initStart = System.currentTimeMillis();
+            injectableBootstrap.init();
+            final long initTime = System.currentTimeMillis() - initStart;
+            Hartshorn.log().info("Started " + Hartshorn.PROJECT_NAME + " in " + (creationTime + initTime) + "ms (" + creationTime + "ms creation, " + initTime + "ms init)");
+            final ApplicationContext context = injectableBootstrap.context();
+
+            if (context.hasActivator(UseEvents.class)) {
+                new EngineChangedState<Started>() {
+                }.with(context).post();
+            }
+            return context;
+        };
     }
 
     public static void setLogLevel(final LogLevel level) {

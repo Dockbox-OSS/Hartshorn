@@ -133,9 +133,9 @@ public class ApplicationEnvironment {
         return supertypes;
     }
 
-    public List<Annotation> annotationsWith(final Class<?> type, final Class<? extends Annotation> annotation) {
+    public List<Annotation> annotationsWith(final TypeContext<?> type, final Class<? extends Annotation> annotation) {
         final List<Annotation> annotations = HartshornUtils.emptyList();
-        for (final Annotation typeAnnotation : type.getAnnotations()) {
+        for (final Annotation typeAnnotation : type.annotations()) {
             if (TypeContext.of(typeAnnotation.annotationType()).annotation(annotation).present()) {
                 annotations.add(typeAnnotation);
             }

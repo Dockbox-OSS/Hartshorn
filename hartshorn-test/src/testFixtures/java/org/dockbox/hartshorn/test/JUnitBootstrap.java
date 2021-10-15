@@ -21,7 +21,7 @@ import org.dockbox.hartshorn.boot.Hartshorn;
 import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.proxy.ProxyApplicationBootstrap;
 
-public class JUnit5Bootstrap extends ProxyApplicationBootstrap {
+public class JUnitBootstrap extends ProxyApplicationBootstrap {
 
     @Override
     protected void handleMissingBinding(final TypeContext<?> type) {
