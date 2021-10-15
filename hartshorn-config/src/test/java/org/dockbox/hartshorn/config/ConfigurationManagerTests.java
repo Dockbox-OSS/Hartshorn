@@ -18,6 +18,7 @@
 package org.dockbox.hartshorn.config;
 
 import org.dockbox.hartshorn.boot.Hartshorn;
+import org.dockbox.hartshorn.config.annotations.UseConfigurations;
 import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.persistence.FileManager;
 import org.dockbox.hartshorn.persistence.FileType;
@@ -28,6 +29,7 @@ import org.junit.jupiter.api.Test;
 
 import java.nio.file.Path;
 
+@UseConfigurations
 public class ConfigurationManagerTests extends ApplicationAwareTest {
 
     @Test

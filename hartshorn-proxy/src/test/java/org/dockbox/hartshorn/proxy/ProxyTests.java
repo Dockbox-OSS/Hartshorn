@@ -17,7 +17,9 @@
 
 package org.dockbox.hartshorn.proxy;
 
+import org.dockbox.hartshorn.di.annotations.activate.UseServiceProvision;
 import org.dockbox.hartshorn.di.context.element.TypeContext;
+import org.dockbox.hartshorn.proxy.annotations.UseProxying;
 import org.dockbox.hartshorn.proxy.handle.ProxyHandler;
 import org.dockbox.hartshorn.proxy.types.ConcreteProxyTarget;
 import org.dockbox.hartshorn.proxy.types.FinalProxyTarget;
@@ -30,6 +32,8 @@ import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.InvocationTargetException;
 
+@UseServiceProvision
+@UseProxying
 public class ProxyTests extends ApplicationAwareTest {
 
     @Test

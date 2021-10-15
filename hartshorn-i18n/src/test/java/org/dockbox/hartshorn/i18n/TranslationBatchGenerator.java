@@ -22,7 +22,7 @@ import org.dockbox.hartshorn.di.context.element.MethodContext;
 import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.di.services.ComponentContainer;
 import org.dockbox.hartshorn.i18n.annotations.Resource;
-import org.dockbox.hartshorn.test.JUnit5Application;
+import org.dockbox.hartshorn.test.HartshornRunner;
 import org.dockbox.hartshorn.util.HartshornUtils;
 
 import java.io.File;
@@ -84,7 +84,7 @@ public final class TranslationBatchGenerator {
     private static final SimpleDateFormat SDF = new SimpleDateFormat("ddMMyyyy");
 
     public static void main(final String[] args) throws Exception {
-        final ApplicationContext context = JUnit5Application.prepareBootstrap();
+        final ApplicationContext context = HartshornRunner.createContext(TranslationBatchGenerator.class).orNull();
         final Map<String, String> batches = migrateBatches(context);
         final String date = SDF.format(new Date());
         final Path outputPath = existingBatch().toPath().resolve("batches/" + date);

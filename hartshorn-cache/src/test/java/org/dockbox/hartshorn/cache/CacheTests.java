@@ -18,12 +18,14 @@
 package org.dockbox.hartshorn.cache;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.cache.annotations.UseCaching;
 import org.dockbox.hartshorn.test.ApplicationAwareTest;
 import org.dockbox.hartshorn.test.util.JUnitCacheManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+@UseCaching
 public class CacheTests extends ApplicationAwareTest {
 
     @Test
@@ -35,17 +37,17 @@ public class CacheTests extends ApplicationAwareTest {
     @Test
     void testUpdateMethodIsCalled() {
         final NonAbstractCacheService service = this.context().get(NonAbstractCacheService.class);
-        long update = service.update(3L);
+        final long update = service.update(3L);
         Assertions.assertEquals(6, update);
     }
 
     @Test
     void testCacheIsReused() {
         final TestCacheService service = this.context().get(TestCacheService.class);
-        long first = service.getCachedTime();
+        final long first = service.getCachedTime();
         Assertions.assertTrue(first > 0);
 
-        long second = service.getCachedTime();
+        final long second = service.getCachedTime();
         Assertions.assertEquals(first, second);
     }
 
@@ -63,9 +65,9 @@ public class CacheTests extends ApplicationAwareTest {
     @Test
     void testCacheCanBeEvicted() {
         final TestCacheService service = this.context().get(TestCacheService.class);
-        long first = service.getCachedTime();
+        final long first = service.getCachedTime();
         service.evict();
-        long second = service.getCachedTime();
+        final long second = service.getCachedTime();
         Assertions.assertNotEquals(first, second);
     }
 

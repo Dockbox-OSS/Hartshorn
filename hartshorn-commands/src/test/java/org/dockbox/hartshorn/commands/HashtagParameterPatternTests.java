@@ -18,6 +18,7 @@
 package org.dockbox.hartshorn.commands;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.commands.annotations.UseCommands;
 import org.dockbox.hartshorn.commands.arguments.CustomParameterPattern;
 import org.dockbox.hartshorn.commands.arguments.HashtagParameterPattern;
 import org.dockbox.hartshorn.commands.types.CuboidArgument;
@@ -31,6 +32,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
+@UseCommands
 public class HashtagParameterPatternTests extends ApplicationAwareTest {
 
     @Test
