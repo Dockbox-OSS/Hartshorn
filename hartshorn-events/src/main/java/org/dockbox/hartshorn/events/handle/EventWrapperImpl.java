@@ -17,11 +17,13 @@
 
 package org.dockbox.hartshorn.events.handle;
 
+import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
+import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.core.exceptions.Except;
 import org.dockbox.hartshorn.events.EventWrapper;
 import org.dockbox.hartshorn.events.parents.Event;
-import org.dockbox.hartshorn.core.HartshornUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Method;
@@ -95,10 +97,14 @@ public final class EventWrapperImpl<T> implements Comparable<EventWrapperImpl<T>
     @Override
     public void invoke(final Event event) throws SecurityException {
         if (this.filtersMatch(event)) {
-            event.applicationContext().log().debug("Invoking event " + TypeContext.of(event).name() + " to method context of " + this.method.qualifiedName());
+            final String eventName = TypeContext.of(event).name();
+            event.applicationContext().log().debug("Invoking event " + eventName + " to method context of " + this.method.qualifiedName());
             // Lazy initialisation to allow processors to register first
             if (this.listener == null) this.listener = event.applicationContext().get(this.listenerType);
-            this.method.invoke(this.listener, event);
+            final Exceptional<?> result = this.method.invoke(this.listener, event);
+            if (result.caught()) {
+                Except.handle("Could not finish event runner for " + eventName, result.error());
+            }
         }
     }
 
