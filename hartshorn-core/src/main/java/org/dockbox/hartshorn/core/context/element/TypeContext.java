@@ -103,6 +103,7 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
     private List<MethodContext<?, T>> flatMethods;
     private List<TypeContext<?>> typeParameters;
     private List<ConstructorContext<T>> constructors;
+    private Map<Class<?>, Annotation> annotations;
     private MultiMap<String, MethodContext<?, T>> methods;
     private Exceptional<ConstructorContext<T>> defaultConstructor;
     private Tristate isProxy = Tristate.UNDEFINED;
@@ -462,6 +463,23 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
             }
         }
         return Exceptional.empty();
+    }
+
+    @Override
+    protected Map<Class<?>, Annotation> validate() {
+        if (this.parent().isVoid()) return super.validate();
+        else if (this.annotations == null) {
+            final Map<Class<?>, Annotation> annotations = HartshornUtils.emptyMap();
+            Class<?> type = this.type();
+            while (type != null) {
+                for (final Annotation annotation : type.getDeclaredAnnotations()) {
+                    annotations.put(annotation.getClass(), annotation);
+                }
+                type = type.getSuperclass();
+            }
+            this.annotations = annotations;
+        }
+        return this.annotations;
     }
 
     public Exceptional<MethodContext<?, T>> method(final String name, final TypeContext<?>... arguments) {
