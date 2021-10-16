@@ -341,7 +341,7 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
         final MetaProvider meta = this.meta();
         // Ensure the order of resolution is to first resolve the instance singleton state, and only after check the type state.
         // Typically the implementation decided whether it should be a singleton, so this cuts time complexity in half.
-        if (instance != null && (meta.singleton(TypeContext.of(instance)) || meta.singleton(key.contract())))
+        if (instance != null && (meta.singleton(key.contract()) || meta.singleton(TypeContext.unproxy(this, instance))))
             this.singletons.put(key, instance);
 
         // May be null, but we have used all possible injectors, it's up to the developer now
