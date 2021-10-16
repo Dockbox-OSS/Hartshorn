@@ -414,9 +414,6 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
 
         if (this.modifiers.contains(DefaultModifiers.ACTIVATE_ALL)) return true;
         else {
-            if (TypeContext.of(activator).annotation(ServiceActivator.class).absent())
-                throw new IllegalArgumentException("Requested activator " + activator.getSimpleName() + " is not decorated with @ServiceActivator");
-
             return this.activators.stream()
                     .map(Annotation::annotationType)
                     .toList()
