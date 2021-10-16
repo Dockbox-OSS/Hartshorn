@@ -37,7 +37,7 @@ public abstract class DefaultWebStarter implements WebStarter {
     }
 
     @Override
-    public void add(RequestArgumentProcessor<?> processor) {
+    public void add(final RequestArgumentProcessor<?> processor) {
         this.processors().add(processor);
     }
 }

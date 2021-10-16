@@ -28,7 +28,9 @@ import org.dockbox.hartshorn.events.annotations.Listener;
 @Service(activators = UseBootstrap.class)
 public class ServerBootstrap {
 
-    @Value(value = "hartshorn.web.port", or = "8080")
+    public static final int DEFAULT_PORT = 8080;
+
+    @Value(value = "hartshorn.web.port", or = "" + DEFAULT_PORT)
     private int port;
 
     @Listener
