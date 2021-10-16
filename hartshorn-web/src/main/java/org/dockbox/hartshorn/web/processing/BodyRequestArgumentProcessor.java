@@ -37,11 +37,14 @@ public class BodyRequestArgumentProcessor implements RequestArgumentProcessor<Re
         return RequestBody.class;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public <T> Exceptional<T> process(final ApplicationContext context, final ParameterContext<T> parameter, final HttpServletRequest request, final HttpServletResponse response) {
+        final Exceptional<String> body = Exceptional.of(() -> request.getReader().lines().collect(Collectors.joining(System.lineSeparator())));
+        if (parameter.type().is(String.class))
+            return (Exceptional<T>) body;
         final FileType bodyFormat = parameter.declaringElement().annotation(HttpRequest.class).get().bodyFormat();
         final ObjectMapper objectMapper = context.get(ObjectMapper.class).fileType(bodyFormat);
-        final Exceptional<String> body = Exceptional.of(() -> request.getReader().lines().collect(Collectors.joining(System.lineSeparator())));
         return body.flatMap(b -> objectMapper.read(b, parameter.type()));
     }
 }
