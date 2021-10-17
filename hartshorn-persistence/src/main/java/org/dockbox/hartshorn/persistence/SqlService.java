@@ -23,13 +23,12 @@ import org.dockbox.hartshorn.di.properties.AttributeHolder;
 
 import java.util.Set;
 
+import javax.persistence.EntityManager;
+
 /**
  * Low-level interface for communicating with SQL databases.
- *
- * @param <T>
- *         The type of the target database source
  */
-public interface SqlService extends AttributeHolder, ContextCarrier {
+public interface SqlService extends AttributeHolder, ContextCarrier, EntityManager {
 
     void save(Object object);
 
