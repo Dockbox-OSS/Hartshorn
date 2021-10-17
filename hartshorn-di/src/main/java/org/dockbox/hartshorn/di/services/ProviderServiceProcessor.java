@@ -61,7 +61,7 @@ public final class ProviderServiceProcessor implements ServiceProcessor<UseServi
                         ? Key.of(method.returnType())
                         : Key.of(method.returnType(), Bindings.named(annotation.value()));
 
-                final ProviderContext<?> providerContext = new ProviderContext<>(((Key<Object>) key), singleton, () -> method.invoke(context).orNull());
+                final ProviderContext<?> providerContext = new ProviderContext<>(((Key<Object>) key), singleton, () -> method.invoke(context).rethrow().orNull());
                 context.add(providerContext);
             }
         }
