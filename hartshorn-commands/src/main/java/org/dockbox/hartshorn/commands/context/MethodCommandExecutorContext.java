@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.commands.context;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.domain.Subject;
+import org.dockbox.hartshorn.api.exceptions.Except;
 import org.dockbox.hartshorn.commands.CommandExecutor;
 import org.dockbox.hartshorn.commands.CommandParser;
 import org.dockbox.hartshorn.commands.CommandResources;
@@ -126,7 +127,7 @@ public class MethodCommandExecutorContext<T> extends DefaultCarrierContext imple
             final T instance = this.applicationContext().get(this.type());
             final List<Object> arguments = this.arguments(ctx);
             this.applicationContext().log().debug("Invoking command method %s with %d arguments".formatted(this.method().qualifiedName(), arguments.size()));
-            this.method().invoke(instance, arguments.toArray());
+            this.method().invoke(instance, arguments.toArray()).caught(error -> Except.handle("Encountered unexpected error while performing command executor", error));
             new CommandEvent.After(ctx.source(), ctx).with(this.applicationContext()).post();
         };
     }

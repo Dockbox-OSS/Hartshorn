@@ -54,7 +54,11 @@ public class MethodContext<T, P> extends ExecutableElementContext<Method> implem
 
     public Exceptional<T> invoke(final P instance, final Object... arguments) {
         if (this.invoker == null) {
-            this.invoker = (o, args) -> Exceptional.of(() -> (T) this.method().invoke(o, args));
+            this.invoker = (o, args) -> {
+                final Exceptional<T> result = Exceptional.of(() -> (T) this.method().invoke(o, args));
+                if (result.caught()) return Exceptional.of(result.orNull(), result.error().getCause());
+                return result;
+            };
         }
         return this.invoker.apply(instance, arguments);
     }
@@ -84,11 +88,11 @@ public class MethodContext<T, P> extends ExecutableElementContext<Method> implem
 
     public String qualifiedName() {
         if (this.qualifiedName == null) {
-            StringJoiner j = new StringJoiner(" ");
-            String shortSig = MethodType.methodType(this.method().getReturnType(), this.method().getParameterTypes()).toString();
-            int split = shortSig.lastIndexOf(')') + 1;
+            final StringJoiner j = new StringJoiner(" ");
+            final String shortSig = MethodType.methodType(this.method().getReturnType(), this.method().getParameterTypes()).toString();
+            final int split = shortSig.lastIndexOf(')') + 1;
             j.add(shortSig.substring(split)).add(this.method().getName() + shortSig.substring(0, split));
-            String k = j.toString();
+            final String k = j.toString();
             this.qualifiedName = this.parent().name() + '#' + k.substring(k.indexOf(' ')+1);
         }
         return this.qualifiedName;
