@@ -65,7 +65,11 @@ public class MethodContext<T, P> extends ExecutableElementContext<Method> implem
         if (this.invoker == null) {
             this.invoker = (o, args) -> {
                 final Exceptional<T> result = Exceptional.of(() -> (T) this.method().invoke(o, args));
-                if (result.caught()) return Exceptional.of(result.orNull(), result.error().getCause());
+                if (result.caught()) {
+                    Throwable cause = result.error();
+                    if (result.error().getCause() != null) cause = result.error().getCause();
+                    return Exceptional.of(result.orNull(), cause);
+                }
                 return result;
             };
         }
