@@ -17,6 +17,10 @@
 
 package org.dockbox.hartshorn.jetty;
 
+import org.dockbox.hartshorn.di.annotations.inject.Binds;
+import org.dockbox.hartshorn.di.annotations.inject.Bound;
+import org.dockbox.hartshorn.di.annotations.inject.Enable;
+import org.dockbox.hartshorn.persistence.properties.ModifiersAttribute;
 import org.dockbox.hartshorn.web.HttpMethod;
 import org.dockbox.hartshorn.web.RequestHandlerContext;
 import org.dockbox.hartshorn.web.ServletHandler;
@@ -29,11 +33,14 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+@Binds(JettyServletAdapter.class)
 public class JettyServletAdapter extends HttpServlet {
 
+    @Enable(delegate = ModifiersAttribute.class)
     private final ServletHandler handler;
-    
-    public JettyServletAdapter(WebStarter starter, RequestHandlerContext context) {
+
+    @Bound
+    public JettyServletAdapter(final WebStarter starter, final RequestHandlerContext context) {
         this.handler = context.applicationContext().get(ServletHandler.class, starter, context.httpRequest().method(), context.methodContext());
     }
 

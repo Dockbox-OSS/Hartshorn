@@ -20,7 +20,11 @@ package org.dockbox.hartshorn.jetty;
 import org.dockbox.hartshorn.api.exceptions.ApplicationException;
 import org.dockbox.hartshorn.di.annotations.inject.Binds;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
+import org.dockbox.hartshorn.di.properties.Attribute;
+import org.dockbox.hartshorn.di.properties.AttributeHolder;
+import org.dockbox.hartshorn.di.properties.UseFactory;
 import org.dockbox.hartshorn.jetty.error.JettyErrorAdapter;
+import org.dockbox.hartshorn.persistence.properties.ModifiersAttribute;
 import org.dockbox.hartshorn.web.DefaultWebStarter;
 import org.dockbox.hartshorn.web.RequestHandlerContext;
 import org.dockbox.hartshorn.web.WebStarter;
@@ -32,11 +36,11 @@ import org.eclipse.jetty.servlet.ServletHolder;
 import javax.inject.Inject;
 
 @Binds(WebStarter.class)
-public class JettyWebStarter extends DefaultWebStarter {
+public class JettyWebStarter extends DefaultWebStarter implements AttributeHolder {
 
-    @Inject
-    private ApplicationContext context;
-    private final ServletHandler handler;
+    @Inject private ApplicationContext context;
+    @Inject private final ServletHandler handler;
+    private ModifiersAttribute mappingModifier = ModifiersAttribute.of();
 
     public JettyWebStarter() {
         super();
@@ -60,6 +64,11 @@ public class JettyWebStarter extends DefaultWebStarter {
         this.handler.addServletWithMapping(this.createHolder(context), context.pathSpec());
     }
 
+    @Override
+    public void apply(final Attribute<?> property) {
+        if (property instanceof ModifiersAttribute modifier) this.mappingModifier = modifier;
+    }
+
     protected ErrorHandler errorHandler() {
         return this.context.get(JettyErrorAdapter.class);
     }
@@ -69,7 +78,7 @@ public class JettyWebStarter extends DefaultWebStarter {
     }
 
     protected JettyServletAdapter servlet(final RequestHandlerContext context) {
-        return new JettyServletAdapter(this, context);
+        return this.context.get(JettyServletAdapter.class, new UseFactory(this, context), this.mappingModifier);
     }
 
 }
