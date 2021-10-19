@@ -23,6 +23,7 @@ import org.dockbox.hartshorn.di.annotations.inject.Binds;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.di.properties.Attribute;
+import org.dockbox.hartshorn.persistence.DefaultSqlService;
 import org.dockbox.hartshorn.persistence.SqlService;
 import org.dockbox.hartshorn.persistence.context.EntityContext;
 import org.dockbox.hartshorn.persistence.properties.ConnectionAttribute;
@@ -35,22 +36,18 @@ import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
 import javax.inject.Inject;
 import javax.persistence.Entity;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
 
 import lombok.AccessLevel;
 import lombok.Getter;
 
 @Binds(SqlService.class)
-public class HibernateSqlService implements SqlService {
+public class HibernateSqlService extends DefaultSqlService<Session> {
 
     private final Configuration configuration = new Configuration();
     private SessionFactory factory;
@@ -58,6 +55,7 @@ public class HibernateSqlService implements SqlService {
     @Inject
     @Getter
     private ApplicationContext applicationContext;
+
     @Getter(AccessLevel.PROTECTED)
     private PersistenceConnection connection;
 
@@ -90,7 +88,7 @@ public class HibernateSqlService implements SqlService {
     }
 
     protected String dialect(final PersistenceConnection connection) throws ApplicationException {
-        Remote remote = connection.remote();
+        final Remote remote = connection.remote();
         if (remote instanceof Remotes remotes) {
             return switch (remotes) {
                 case DERBY -> "org.hibernate.dialect.DerbyTenSevenDialect";
@@ -111,7 +109,7 @@ public class HibernateSqlService implements SqlService {
         Exceptional<EntityContext> context = this.applicationContext().first(EntityContext.class);
         if (context.absent()) {
             final Collection<TypeContext<?>> entities = this.applicationContext.environment().types(Entity.class);
-            EntityContext entityContext = new EntityContext(entities);
+            final EntityContext entityContext = new EntityContext(entities);
             this.applicationContext.add(entityContext);
             context = Exceptional.of(entityContext);
         }
@@ -140,12 +138,39 @@ public class HibernateSqlService implements SqlService {
 
     @Override
     public void save(final Object object) {
-        this.session(session -> {
+        this.accept(session -> {
             session.save(object);
         });
     }
 
-    private void session(final Consumer<Session> consumer) {
+    @Override
+    public void update(final Object object) {
+        this.accept(session -> {
+            session.update(object);
+        });
+    }
+
+    @Override
+    public void updateOrSave(final Object object) {
+        this.accept(session -> {
+            session.saveOrUpdate(object);
+        });
+    }
+
+    @Override
+    public void delete(final Object object) {
+        this.accept(session -> {
+            session.delete(object);
+        });
+    }
+
+    @Override
+    public Session entityManager() {
+        return this.factory.openSession();
+    }
+
+    @Override
+    public void accept(final Consumer<Session> consumer) {
         this.applicationContext().log().debug("Opening remote session to %s".formatted(this.connection().url()));
         final Session session = this.factory.openSession();
         this.applicationContext().log().debug("Beginning transaction to %s".formatted(this.connection().url()));
@@ -157,50 +182,12 @@ public class HibernateSqlService implements SqlService {
     }
 
     @Override
-    public void update(final Object object) {
-        this.session(session -> {
-            session.update(object);
-        });
-    }
-
-    @Override
-    public void updateOrSave(final Object object) {
-        this.session(session -> {
-            session.saveOrUpdate(object);
-        });
-    }
-
-    @Override
-    public void delete(final Object object) {
-        this.session(session -> {
-            session.delete(object);
-        });
-    }
-
-    @Override
-    public <T> Set<T> findAll(final Class<T> type) {
-        return this.session(session -> {
-            final CriteriaBuilder builder = session.getCriteriaBuilder();
-            final CriteriaQuery<T> criteria = builder.createQuery(type);
-            criteria.from(type);
-            final List<T> data = session.createQuery(criteria).getResultList();
-            return HartshornUtils.asUnmodifiableSet(data);
-        });
-    }
-
-    private <T> T session(final Function<Session, T> function) {
+    public <T> T transform(final Function<Session, T> function) {
         final Session session = this.factory.openSession();
         session.beginTransaction();
         final T result = function.apply(session);
         session.getTransaction().commit();
         session.close();
         return result;
-    }
-
-    @Override
-    public <T> Exceptional<T> findById(final Class<T> type, final Object id) {
-        return this.session(session -> {
-            return Exceptional.of(() -> session.find(type, id));
-        });
     }
 }
