@@ -32,15 +32,18 @@ public class HeaderRequestArgumentProcessor implements RequestArgumentProcessor<
     }
 
     @Override
-    public boolean preconditions(ApplicationContext context, ParameterContext<?> parameter, HttpServletRequest request, HttpServletResponse response) {
+    public boolean preconditions(final ApplicationContext context, final ParameterContext<?> parameter, final HttpServletRequest request, final HttpServletResponse response) {
         return RequestArgumentProcessor.super.preconditions(context, parameter, request, response)
                 && (parameter.type().childOf(String.class) || parameter.type().childOf(int.class) || parameter.type().childOf(long.class));
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T> Exceptional<T> process(ApplicationContext context, ParameterContext<T> parameter, HttpServletRequest request, HttpServletResponse response) {
-        RequestHeader requestHeader = parameter.annotation(RequestHeader.class).get();
+    public <T> Exceptional<T> process(final ApplicationContext context, final ParameterContext<T> parameter, final HttpServletRequest request, final HttpServletResponse response) {
+        final RequestHeader requestHeader = parameter.annotation(RequestHeader.class).get();
+
+        if (!request.getHeaders(requestHeader.value()).hasMoreElements()) return Exceptional.empty();
+
         if (parameter.type().is(String.class)) return Exceptional.of(() -> (T) request.getHeader(requestHeader.value()));
         else if (parameter.type().is(int.class)) return Exceptional.of(() -> request.getIntHeader(requestHeader.value())).map(v -> (T) v);
         else if (parameter.type().is(long.class)) return Exceptional.of(() -> request.getDateHeader(requestHeader.value())).map(v -> (T) v);

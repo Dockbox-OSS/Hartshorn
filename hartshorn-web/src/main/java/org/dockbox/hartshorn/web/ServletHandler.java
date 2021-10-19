@@ -22,12 +22,14 @@ import org.dockbox.hartshorn.api.exceptions.Except;
 import org.dockbox.hartshorn.boot.Hartshorn;
 import org.dockbox.hartshorn.di.annotations.inject.Binds;
 import org.dockbox.hartshorn.di.annotations.inject.Bound;
+import org.dockbox.hartshorn.di.annotations.inject.Enable;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.di.context.element.MethodContext;
 import org.dockbox.hartshorn.di.context.element.ParameterContext;
 import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.di.properties.AttributeHolder;
 import org.dockbox.hartshorn.persistence.mapping.ObjectMapper;
+import org.dockbox.hartshorn.persistence.properties.ModifiersAttribute;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.dockbox.hartshorn.web.annotations.http.HttpRequest;
 import org.dockbox.hartshorn.web.processing.RequestArgumentProcessor;
@@ -50,8 +52,12 @@ public class ServletHandler implements AttributeHolder {
     private final MethodContext<?, ?> methodContext;
     private final HttpRequest httpRequest;
 
-    @Inject private ApplicationContext context;
-    @Inject private ObjectMapper mapper;
+    @Inject
+    private ApplicationContext context;
+
+    @Inject
+    @Enable(delegate = ModifiersAttribute.class)
+    private ObjectMapper mapper;
 
     @Bound
     public ServletHandler(final WebStarter starter, final HttpMethod httpMethod, final MethodContext<?, ?> methodContext) {
@@ -104,11 +110,9 @@ public class ServletHandler implements AttributeHolder {
             else {
                 for (final RequestArgumentProcessor<?> processor : processors) {
                     if (parameter.annotation(processor.annotation()).present() && processor.preconditions(this.context, parameter, req, res)) {
-                        final Exceptional<?> output = processor.process(this.context, parameter, req, res);
-                        if (output.present()) {
-                            parameters.add(output.get());
-                            continue parameter_loop;
-                        }
+                        final Exceptional<Object> output = processor.process(this.context, parameter, req, res).map(o -> (Object) o);
+                        parameters.add(output.orElse(() -> parameter.type().defaultOrNull()).orNull());
+                        continue parameter_loop;
                     }
                 }
                 parameters.add(this.context.get(parameter.type()));
