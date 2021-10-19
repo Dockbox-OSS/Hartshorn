@@ -42,4 +42,5 @@ public interface SqlService extends AttributeHolder, ContextCarrier, EntityManag
 
     <T> Exceptional<T> findById(Class<T> type, Object id);
 
+    EntityManager entityManager();
 }

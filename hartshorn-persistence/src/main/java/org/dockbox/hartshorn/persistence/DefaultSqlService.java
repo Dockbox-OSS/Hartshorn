@@ -59,15 +59,15 @@ public abstract class DefaultSqlService<EM extends EntityManager & AutoCloseable
     }
 
     public void flush() {
-        this.entityManager().flush();
+        throw this.unsupported();
     }
 
     public void setFlushMode(final FlushModeType flushMode) {
-        this.entityManager().setFlushMode(flushMode);
+        throw this.unsupported();
     }
 
     public FlushModeType getFlushMode() {
-        return this.entityManager().getFlushMode();
+        throw this.unsupported();
     }
 
     public void lock(final Object entity, final LockModeType lockMode) {
@@ -95,7 +95,7 @@ public abstract class DefaultSqlService<EM extends EntityManager & AutoCloseable
     }
 
     public void clear() {
-        this.entityManager().clear();
+        throw this.unsupported();
     }
 
     public void detach(final Object entity) {
@@ -107,15 +107,15 @@ public abstract class DefaultSqlService<EM extends EntityManager & AutoCloseable
     }
 
     public LockModeType getLockMode(final Object entity) {
-        return this.entityManager().getLockMode(entity);
+        throw this.unsupported();
     }
 
     public void setProperty(final String propertyName, final Object value) {
-        this.entityManager().setProperty(propertyName, value);
+        throw this.unsupported();
     }
 
     public Map<String, Object> getProperties() {
-        return this.entityManager().getProperties();
+        throw this.unsupported();
     }
 
     public Query createQuery(final String qlString) {
@@ -175,11 +175,11 @@ public abstract class DefaultSqlService<EM extends EntityManager & AutoCloseable
     }
 
     public void joinTransaction() {
-        this.entityManager().joinTransaction();
+        throw this.unsupported();
     }
 
     public boolean isJoinedToTransaction() {
-        return this.entityManager().isJoinedToTransaction();
+        throw this.unsupported();
     }
 
     public <T> T unwrap(final Class<T> cls) {
@@ -191,11 +191,11 @@ public abstract class DefaultSqlService<EM extends EntityManager & AutoCloseable
     }
 
     public void close() {
-        this.entityManager().close();
+        throw this.unsupported();
     }
 
     public boolean isOpen() {
-        return this.entityManager().isOpen();
+        throw this.unsupported();
     }
 
     public EntityTransaction getTransaction() {
@@ -250,5 +250,7 @@ public abstract class DefaultSqlService<EM extends EntityManager & AutoCloseable
 
     protected abstract <T> T transform(final Function<EM, T> function);
 
-    protected abstract EntityManager entityManager();
+    private UnsupportedOperationException unsupported() {
+        return new UnsupportedOperationException("Action is not supported, use #entityManager() instead");
+    }
 }
