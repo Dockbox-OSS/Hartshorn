@@ -154,40 +154,56 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
         return typeInstance;
     }
 
-    public <T> void enable(final T typeInstance, final Attribute<?>... properties) {
+    public <T> void enableFields(final T typeInstance, final Attribute<?>... properties) {
         if (typeInstance == null) return;
-        TypeContext.unproxy(this, typeInstance).fields(Enable.class).forEach(field -> {
-            // TODO GLieben #431, refactor to separate method
-            final Enable enable = field.annotation(Enable.class).get();
-            if (!enable.enable()) return;
+        final TypeContext<T> unproxied = TypeContext.unproxy(this, typeInstance);
 
-            final Exceptional<?> instance = field.get(typeInstance);
-            if (instance.absent()) return;
+        unproxied.fields(Enable.class)
+                .forEach(field -> this.enableField(field, typeInstance, properties));
 
-            final Object injectInstance = instance.get();
-
-            for (final Class<? extends Attribute<?>> delegatedAttribute : enable.delegate()) {
-                final Exceptional<? extends Attribute<?>> attribute = Bindings.first(delegatedAttribute, properties);
-                if (attribute.present()) {
-                    try {
-                        this.enable(injectInstance, properties);
-                        if (injectInstance instanceof AttributeHolder holder) {
-                            holder.apply(attribute.get());
+        unproxied.fields(Inject.class).stream()
+                .filter(field -> field.annotation(Enable.class).absent())
+                .forEach(field -> {
+                    final Exceptional<?> instance = field.get(typeInstance);
+                    if (instance.present()) {
+                        try {
+                            Bindings.enable(instance.get());
+                        }
+                        catch (final ApplicationException e) {
+                            throw new ApplicationException("Could not enable injected field " + field.name(), e).runtime();
                         }
                     }
-                    catch (final ApplicationException e) {
-                        throw new ApplicationException("Could not apply delegated attribute", e).runtime();
+                });
+    }
+
+    protected void enableField(final FieldContext<?> field, final Object typeInstance, final Attribute<?>... properties) {
+        final Enable enable = field.annotation(Enable.class).get();
+        if (enable.enable()) {
+            final Exceptional<?> instance = field.get(typeInstance);
+            if (instance.present()) {
+                final Object injectInstance = instance.get();
+                for (final Class<? extends Attribute<?>> delegatedAttribute : enable.delegate()) {
+                    final Exceptional<? extends Attribute<?>> attribute = Bindings.first(delegatedAttribute, properties);
+                    if (attribute.present()) {
+                        try {
+                            if (injectInstance instanceof AttributeHolder holder) {
+                                this.enableFields(injectInstance, attribute.get());
+                                holder.apply(attribute.get());
+                            }
+                        }
+                        catch (final ApplicationException e) {
+                            throw new ApplicationException("Could not apply delegated attribute", e).runtime();
+                        }
                     }
                 }
+                try {
+                    Bindings.enable(injectInstance);
+                }
+                catch (final ApplicationException e) {
+                    throw new ApplicationException("Could not enable manually marked (with @Enabled) field " + field.name(), e).runtime();
+                }
             }
-
-            try {
-                Bindings.enable(injectInstance);
-            }
-            catch (final ApplicationException e) {
-                throw new ApplicationException("Could not enable injected field " + field.name(), e).runtime();
-            }
-        });
+        }
     }
 
     public <T> T raw(final TypeContext<T> type) throws TypeProvisionException {
@@ -343,7 +359,7 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
         for (final ServiceOrder order : ServiceOrder.values()) instance = this.modify(order, key, instance, properties);
 
         // Enables all fields which are decorated with @Wired(enable=true)
-        this.enable(instance, properties);
+        this.enableFields(instance, properties);
 
         // Inject properties if applicable
         try {
