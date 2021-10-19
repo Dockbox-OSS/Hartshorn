@@ -27,51 +27,35 @@ import javax.persistence.metamodel.Metamodel;
 public abstract class DefaultSqlService<EM extends EntityManager & AutoCloseable> implements SqlService {
 
     public void persist(final Object entity) {
-        this.withEntityManager(em -> {
-            em.persist(entity);
-        });
+        this.accept(em -> em.persist(entity));
     }
 
     public <T> T merge(final T entity) {
-        return this.withEntityManager(em -> {
-            return em.merge(entity);
-        });
+        return this.transform(em -> em.merge(entity));
     }
 
     public void remove(final Object entity) {
-        this.withEntityManager(em -> {
-            em.remove(entity);
-        });
+        this.accept(em -> em.remove(entity));
     }
 
     public <T> T find(final Class<T> entityClass, final Object primaryKey) {
-        return this.withEntityManager(em -> {
-            return em.find(entityClass, primaryKey);
-        });
+        return this.transform(em -> em.find(entityClass, primaryKey));
     }
 
     public <T> T find(final Class<T> entityClass, final Object primaryKey, final Map<String, Object> properties) {
-        return this.withEntityManager(em -> {
-            return em.find(entityClass, primaryKey, properties);
-        });
+        return this.transform(em -> em.find(entityClass, primaryKey, properties));
     }
 
     public <T> T find(final Class<T> entityClass, final Object primaryKey, final LockModeType lockMode) {
-        return this.withEntityManager(em -> {
-            return em.find(entityClass, primaryKey, lockMode);
-        });
+        return this.transform(em -> em.find(entityClass, primaryKey, lockMode));
     }
 
     public <T> T find(final Class<T> entityClass, final Object primaryKey, final LockModeType lockMode, final Map<String, Object> properties) {
-        return this.withEntityManager(em -> {
-            return em.find(entityClass, primaryKey, lockMode, properties);
-        });
+        return this.transform(em -> em.find(entityClass, primaryKey, lockMode, properties));
     }
 
     public <T> T getReference(final Class<T> entityClass, final Object primaryKey) {
-        return this.withEntityManager(em -> {
-            return em.getReference(entityClass, primaryKey);
-        });
+        return this.transform(em -> em.getReference(entityClass, primaryKey));
     }
 
     public void flush() {
@@ -87,39 +71,27 @@ public abstract class DefaultSqlService<EM extends EntityManager & AutoCloseable
     }
 
     public void lock(final Object entity, final LockModeType lockMode) {
-        this.withEntityManager(em -> {
-            em.lock(entity, lockMode);
-        });
+        this.accept(em -> em.lock(entity, lockMode));
     }
 
     public void lock(final Object entity, final LockModeType lockMode, final Map<String, Object> properties) {
-        this.withEntityManager(em -> {
-            em.lock(entity, lockMode, properties);
-        });
+        this.accept(em -> em.lock(entity, lockMode, properties));
     }
 
     public void refresh(final Object entity) {
-        this.withEntityManager(em -> {
-            em.refresh(entity);
-        });
+        this.accept(em -> em.refresh(entity));
     }
 
     public void refresh(final Object entity, final Map<String, Object> properties) {
-        this.withEntityManager(em -> {
-            em.refresh(entity, properties);
-        });
+        this.accept(em -> em.refresh(entity, properties));
     }
 
     public void refresh(final Object entity, final LockModeType lockMode) {
-        this.withEntityManager(em -> {
-            em.refresh(entity, lockMode);
-        });
+        this.accept(em -> em.refresh(entity, lockMode));
     }
 
     public void refresh(final Object entity, final LockModeType lockMode, final Map<String, Object> properties) {
-        this.withEntityManager(em -> {
-            em.refresh(entity, lockMode, properties);
-        });
+        this.accept(em -> em.refresh(entity, lockMode, properties));
     }
 
     public void clear() {
@@ -131,9 +103,7 @@ public abstract class DefaultSqlService<EM extends EntityManager & AutoCloseable
     }
 
     public boolean contains(final Object entity) {
-        return this.withEntityManager(em -> {
-            return em.contains(entity);
-        });
+        return this.transform(em -> em.contains(entity));
     }
 
     public LockModeType getLockMode(final Object entity) {
@@ -262,25 +232,23 @@ public abstract class DefaultSqlService<EM extends EntityManager & AutoCloseable
 
     @Override
     public <T> Set<T> findAll(final Class<T> type) {
-        return this.withEntityManager(session -> {
-            final CriteriaBuilder builder = session.getCriteriaBuilder();
+        return this.transform(em -> {
+            final CriteriaBuilder builder = em.getCriteriaBuilder();
             final CriteriaQuery<T> criteria = builder.createQuery(type);
             criteria.from(type);
-            final List<T> data = session.createQuery(criteria).getResultList();
+            final List<T> data = em.createQuery(criteria).getResultList();
             return HartshornUtils.asUnmodifiableSet(data);
         });
     }
 
     @Override
     public <T> Exceptional<T> findById(final Class<T> type, final Object id) {
-        return this.withEntityManager(session -> {
-            return Exceptional.of(() -> session.find(type, id));
-        });
+        return this.transform(em -> Exceptional.of(() -> em.find(type, id)));
     }
 
-    protected abstract void withEntityManager(final Consumer<EM> consumer);
+    protected abstract void accept(final Consumer<EM> consumer);
 
-    protected abstract <T> T withEntityManager(final Function<EM, T> function);
+    protected abstract <T> T transform(final Function<EM, T> function);
 
     protected abstract EntityManager entityManager();
 }

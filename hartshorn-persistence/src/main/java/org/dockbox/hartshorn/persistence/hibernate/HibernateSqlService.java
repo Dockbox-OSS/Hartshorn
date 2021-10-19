@@ -138,28 +138,28 @@ public class HibernateSqlService extends DefaultSqlService<Session> {
 
     @Override
     public void save(final Object object) {
-        this.withEntityManager(session -> {
+        this.accept(session -> {
             session.save(object);
         });
     }
 
     @Override
     public void update(final Object object) {
-        this.withEntityManager(session -> {
+        this.accept(session -> {
             session.update(object);
         });
     }
 
     @Override
     public void updateOrSave(final Object object) {
-        this.withEntityManager(session -> {
+        this.accept(session -> {
             session.saveOrUpdate(object);
         });
     }
 
     @Override
     public void delete(final Object object) {
-        this.withEntityManager(session -> {
+        this.accept(session -> {
             session.delete(object);
         });
     }
@@ -170,7 +170,7 @@ public class HibernateSqlService extends DefaultSqlService<Session> {
     }
 
     @Override
-    public void withEntityManager(final Consumer<Session> consumer) {
+    public void accept(final Consumer<Session> consumer) {
         this.applicationContext().log().debug("Opening remote session to %s".formatted(this.connection().url()));
         final Session session = this.factory.openSession();
         this.applicationContext().log().debug("Beginning transaction to %s".formatted(this.connection().url()));
@@ -182,7 +182,7 @@ public class HibernateSqlService extends DefaultSqlService<Session> {
     }
 
     @Override
-    public <T> T withEntityManager(final Function<Session, T> function) {
+    public <T> T transform(final Function<Session, T> function) {
         final Session session = this.factory.openSession();
         session.beginTransaction();
         final T result = function.apply(session);
