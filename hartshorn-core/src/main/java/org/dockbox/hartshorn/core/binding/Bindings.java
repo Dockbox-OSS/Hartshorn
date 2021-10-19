@@ -61,6 +61,14 @@ public final class Bindings {
         return Exceptional.empty();
     }
 
+    @SuppressWarnings("unchecked")
+    public static <T extends Attribute<?>> Exceptional<T> first(final Class<T> type, final Attribute<?>... properties) {
+        for (final Attribute<?> property : properties) {
+            if (type.isInstance(property)) return Exceptional.of(() -> (T) property);
+        }
+        return Exceptional.empty();
+    }
+
     public static String serviceId(final ApplicationContext context, final TypeContext<?> type) {
         return serviceId(context, type, false);
     }

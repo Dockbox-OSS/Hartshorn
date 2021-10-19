@@ -238,6 +238,7 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
             case SKIP_NULL -> Include.NON_NULL;
             default -> throw new IllegalArgumentException("Unknown modifier: " + modifier);
         };
+        this.mapper = null;
     }
 
     protected ObjectMapper configureMapper() {

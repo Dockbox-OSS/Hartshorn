@@ -69,7 +69,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Objects;
 import java.util.Properties;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -155,24 +154,40 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
         return typeInstance;
     }
 
-    public <T> void enable(final T typeInstance) {
+    public <T> void enable(final T typeInstance, final Attribute<?>... properties) {
         if (typeInstance == null) return;
-        TypeContext.unproxy(this, typeInstance).fields(Inject.class).stream()
-                .filter(field -> field.type().childOf(AttributeHolder.class))
-                .filter(field -> {
-                    final Exceptional<Enable> enable = field.annotation(Enable.class);
-                    return (enable.absent() || enable.get().value());
-                })
-                .map(field -> field.get(typeInstance))
-                .filter(Objects::nonNull)
-                .forEach(injectableType -> {
+        TypeContext.unproxy(this, typeInstance).fields(Enable.class).forEach(field -> {
+            // TODO GLieben #431, refactor to separate method
+            final Enable enable = field.annotation(Enable.class).get();
+            if (!enable.enable()) return;
+
+            final Exceptional<?> instance = field.get(typeInstance);
+            if (instance.absent()) return;
+
+            final Object injectInstance = instance.get();
+
+            for (final Class<? extends Attribute<?>> delegatedAttribute : enable.delegate()) {
+                final Exceptional<? extends Attribute<?>> attribute = Bindings.first(delegatedAttribute, properties);
+                if (attribute.present()) {
                     try {
-                        Bindings.enable(injectableType);
+                        this.enable(injectInstance, properties);
+                        if (injectInstance instanceof AttributeHolder holder) {
+                            holder.apply(attribute.get());
+                        }
                     }
                     catch (final ApplicationException e) {
-                        throw e.runtime();
+                        throw new ApplicationException("Could not apply delegated attribute", e).runtime();
                     }
-                });
+                }
+            }
+
+            try {
+                Bindings.enable(injectInstance);
+            }
+            catch (final ApplicationException e) {
+                throw new ApplicationException("Could not enable injected field " + field.name(), e).runtime();
+            }
+        });
     }
 
     public <T> T raw(final TypeContext<T> type) throws TypeProvisionException {
@@ -328,7 +343,7 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
         for (final ServiceOrder order : ServiceOrder.values()) instance = this.modify(order, key, instance, properties);
 
         // Enables all fields which are decorated with @Wired(enable=true)
-        this.enable(instance);
+        this.enable(instance, properties);
 
         // Inject properties if applicable
         try {
