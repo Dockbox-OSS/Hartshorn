@@ -1,5 +1,6 @@
 package org.dockbox.hartshorn.web;
 
+import org.apache.http.Header;
 import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpDelete;
@@ -31,7 +32,7 @@ public abstract class RestIntegrationTest extends ApplicationAwareTest {
 
     protected static final String ADDRESS = "http://localhost:" + ServerBootstrap.DEFAULT_PORT;
 
-    protected CloseableHttpResponse request(final String uri, final HttpMethod method, final String body) throws IOException, InterruptedException {
+    protected CloseableHttpResponse request(final String uri, final HttpMethod method, final String body, Header... headers) throws IOException, InterruptedException {
         final CloseableHttpClient client = HttpClients.createDefault();
         final Function<String, HttpUriRequest> requestProvider = switch (method) {
             case GET -> HttpGet::new;
@@ -47,6 +48,10 @@ public abstract class RestIntegrationTest extends ApplicationAwareTest {
         final HttpUriRequest request = requestProvider.apply(ADDRESS + uri);
         if (body != null && request instanceof HttpEntityEnclosingRequest entityEnclosingRequest)
             entityEnclosingRequest.setEntity(new StringEntity(body));
+
+        for (Header header : headers) {
+            request.addHeader(header);
+        }
 
         return client.execute(request);
     }
