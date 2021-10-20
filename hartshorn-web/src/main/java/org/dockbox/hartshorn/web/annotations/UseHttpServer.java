@@ -27,5 +27,5 @@ import java.lang.annotation.Target;
 @ServiceActivator
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface UseWebStarter {
+public @interface UseHttpServer {
 }

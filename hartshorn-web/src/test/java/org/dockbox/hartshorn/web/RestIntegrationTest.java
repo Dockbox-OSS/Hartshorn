@@ -18,13 +18,13 @@ import org.dockbox.hartshorn.config.annotations.UseConfigurations;
 import org.dockbox.hartshorn.di.annotations.activate.UseServiceProvision;
 import org.dockbox.hartshorn.events.annotations.UseEvents;
 import org.dockbox.hartshorn.test.ApplicationAwareTest;
-import org.dockbox.hartshorn.web.annotations.UseWebStarter;
+import org.dockbox.hartshorn.web.annotations.UseHttpServer;
 
 import java.io.IOException;
 import java.util.function.Function;
 
 @UseEvents
-@UseWebStarter
+@UseHttpServer
 @UseConfigurations
 @UseServiceProvision
 public abstract class RestIntegrationTest extends ApplicationAwareTest {

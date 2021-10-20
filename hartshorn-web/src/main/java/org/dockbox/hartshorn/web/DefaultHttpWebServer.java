@@ -26,12 +26,12 @@ import java.util.Set;
 
 import lombok.Getter;
 
-public abstract class DefaultWebStarter implements WebStarter {
+public abstract class DefaultHttpWebServer implements HttpWebServer {
 
     @Getter
     private final Set<RequestArgumentProcessor<?>> processors = HartshornUtils.emptyConcurrentSet();
 
-    protected DefaultWebStarter() {
+    protected DefaultHttpWebServer() {
         this.add(new BodyRequestArgumentProcessor());
         this.add(new HeaderRequestArgumentProcessor());
     }

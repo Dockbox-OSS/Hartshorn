@@ -35,7 +35,7 @@ public class ServerBootstrap {
 
     @Listener
     public void on(final EngineChangedState<Started> event) throws ApplicationException {
-        final WebStarter starter = event.applicationContext().get(WebStarter.class);
+        final HttpWebServer starter = event.applicationContext().get(HttpWebServer.class);
         final ControllerContext controllerContext = event.applicationContext().first(ControllerContext.class).get();
         for (final RequestHandlerContext context : controllerContext.contexts()) {
             starter.register(context);

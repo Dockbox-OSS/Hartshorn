@@ -22,7 +22,7 @@ import org.dockbox.hartshorn.web.processing.RequestArgumentProcessor;
 
 import java.util.Set;
 
-public interface WebStarter {
+public interface HttpWebServer {
     void start(int port) throws ApplicationException;
     void register(RequestHandlerContext context);
     void add(RequestArgumentProcessor<?> processor);

@@ -24,7 +24,7 @@ import org.dockbox.hartshorn.persistence.properties.ModifiersAttribute;
 import org.dockbox.hartshorn.web.HttpMethod;
 import org.dockbox.hartshorn.web.RequestHandlerContext;
 import org.dockbox.hartshorn.web.ServletHandler;
-import org.dockbox.hartshorn.web.WebStarter;
+import org.dockbox.hartshorn.web.HttpWebServer;
 
 import java.io.IOException;
 
@@ -40,7 +40,7 @@ public class JettyServletAdapter extends HttpServlet {
     private final ServletHandler handler;
 
     @Bound
-    public JettyServletAdapter(final WebStarter starter, final RequestHandlerContext context) {
+    public JettyServletAdapter(final HttpWebServer starter, final RequestHandlerContext context) {
         this.handler = context.applicationContext().get(ServletHandler.class, starter, context.httpRequest().method(), context.methodContext());
     }
 

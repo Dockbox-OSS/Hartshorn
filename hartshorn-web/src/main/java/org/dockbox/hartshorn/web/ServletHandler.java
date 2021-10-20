@@ -47,7 +47,7 @@ import javax.servlet.http.HttpServletResponse;
 @Binds(ServletHandler.class)
 public class ServletHandler implements AttributeHolder {
 
-    private final WebStarter starter;
+    private final HttpWebServer starter;
     private final HttpMethod httpMethod;
     private final MethodContext<?, ?> methodContext;
     private final HttpRequest httpRequest;
@@ -60,7 +60,7 @@ public class ServletHandler implements AttributeHolder {
     private ObjectMapper mapper;
 
     @Bound
-    public ServletHandler(final WebStarter starter, final HttpMethod httpMethod, final MethodContext<?, ?> methodContext) {
+    public ServletHandler(final HttpWebServer starter, final HttpMethod httpMethod, final MethodContext<?, ?> methodContext) {
         this.starter = starter;
         this.httpMethod = httpMethod;
         this.methodContext = methodContext;

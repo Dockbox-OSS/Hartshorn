@@ -25,9 +25,9 @@ import org.dockbox.hartshorn.di.properties.AttributeHolder;
 import org.dockbox.hartshorn.di.properties.UseFactory;
 import org.dockbox.hartshorn.jetty.error.JettyErrorAdapter;
 import org.dockbox.hartshorn.persistence.properties.ModifiersAttribute;
-import org.dockbox.hartshorn.web.DefaultWebStarter;
+import org.dockbox.hartshorn.web.DefaultHttpWebServer;
 import org.dockbox.hartshorn.web.RequestHandlerContext;
-import org.dockbox.hartshorn.web.WebStarter;
+import org.dockbox.hartshorn.web.HttpWebServer;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.ErrorHandler;
 import org.eclipse.jetty.servlet.ServletHandler;
@@ -35,14 +35,14 @@ import org.eclipse.jetty.servlet.ServletHolder;
 
 import javax.inject.Inject;
 
-@Binds(WebStarter.class)
-public class JettyWebStarter extends DefaultWebStarter implements AttributeHolder {
+@Binds(HttpWebServer.class)
+public class JettyHttpWebServer extends DefaultHttpWebServer implements AttributeHolder {
 
     @Inject private ApplicationContext context;
     @Inject private final ServletHandler handler;
     private ModifiersAttribute mappingModifier = ModifiersAttribute.of();
 
-    public JettyWebStarter() {
+    public JettyHttpWebServer() {
         super();
         this.handler = new ServletHandler();
     }

@@ -22,12 +22,12 @@ import org.dockbox.hartshorn.di.context.element.MethodContext;
 import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.di.services.ServiceProcessor;
 import org.dockbox.hartshorn.web.annotations.http.HttpRequest;
-import org.dockbox.hartshorn.web.annotations.UseWebStarter;
+import org.dockbox.hartshorn.web.annotations.UseHttpServer;
 
-public class RestControllerProcessor implements ServiceProcessor<UseWebStarter> {
+public class RestControllerProcessor implements ServiceProcessor<UseHttpServer> {
     @Override
-    public Class<UseWebStarter> activator() {
-        return UseWebStarter.class;
+    public Class<UseHttpServer> activator() {
+        return UseHttpServer.class;
     }
 
     @Override
