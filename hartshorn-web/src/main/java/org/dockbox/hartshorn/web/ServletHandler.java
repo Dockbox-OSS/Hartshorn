@@ -20,6 +20,7 @@ package org.dockbox.hartshorn.web;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.exceptions.Except;
 import org.dockbox.hartshorn.boot.Hartshorn;
+import org.dockbox.hartshorn.config.annotations.Value;
 import org.dockbox.hartshorn.di.annotations.inject.Binds;
 import org.dockbox.hartshorn.di.annotations.inject.Bound;
 import org.dockbox.hartshorn.di.annotations.inject.Enable;
@@ -59,6 +60,9 @@ public class ServletHandler implements AttributeHolder {
     @Enable(delegate = ModifiersAttribute.class)
     private ObjectMapper mapper;
 
+    @Value(value = "hartshorn.web.headers.hartshorn", or = "true")
+    private boolean addHeader;
+
     @Bound
     public ServletHandler(final HttpWebServer starter, final HttpMethod httpMethod, final MethodContext<?, ?> methodContext) {
         this.starter = starter;
@@ -75,7 +79,7 @@ public class ServletHandler implements AttributeHolder {
 
     public void processRequest(final HttpMethod method, final HttpServletRequest req, final HttpServletResponse res, final HttpAction fallbackAction) throws ServletException, IOException {
         if (method == this.httpMethod) {
-            res.addHeader("Hartshorn-Version", Hartshorn.VERSION);
+            if (this.addHeader) res.addHeader("Hartshorn-Version", Hartshorn.VERSION);
 
             final Exceptional<?> result = this.methodContext.invoke(this.context, this.parameters(req, res));
             if (result.present()) {
