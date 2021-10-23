@@ -15,12 +15,12 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.jetty.error;
+package org.dockbox.hartshorn.jetty;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.di.context.DefaultCarrierContext;
-import org.dockbox.hartshorn.web.error.RequestError;
+import org.dockbox.hartshorn.web.RequestError;
 
 import java.io.PrintWriter;
 

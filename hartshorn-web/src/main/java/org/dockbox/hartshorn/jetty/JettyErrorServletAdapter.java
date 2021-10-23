@@ -15,27 +15,16 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.web.error;
+package org.dockbox.hartshorn.jetty;
 
-import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.di.context.CarrierContext;
+import org.dockbox.hartshorn.di.annotations.inject.Binds;
+import org.dockbox.hartshorn.web.servlet.ErrorServlet;
+import org.dockbox.hartshorn.web.RequestError;
 
-import java.io.PrintWriter;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-public interface RequestError extends CarrierContext {
-
-    PrintWriter writer();
-    HttpServletRequest request();
-    HttpServletResponse response();
-
-    int statusCode();
-    String message();
-    Exceptional<Throwable> cause();
-    boolean yieldDefaults();
-
-    RequestError message(String message);
-    RequestError yieldDefaults(boolean yieldDefaults);
+@Binds(ErrorServlet.class)
+public class JettyErrorServletAdapter implements ErrorServlet {
+    @Override
+    public void handle(final RequestError error) {
+        error.yieldDefaults(true);
+    }
 }

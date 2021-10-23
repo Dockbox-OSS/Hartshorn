@@ -15,9 +15,10 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.web.error;
+package org.dockbox.hartshorn.web.servlet;
 
 import org.dockbox.hartshorn.api.exceptions.ApplicationException;
+import org.dockbox.hartshorn.web.RequestError;
 
 public interface ErrorServlet {
     void handle(RequestError error) throws ApplicationException;

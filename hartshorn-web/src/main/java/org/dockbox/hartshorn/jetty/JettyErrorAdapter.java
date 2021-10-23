@@ -15,14 +15,14 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.jetty.error;
+package org.dockbox.hartshorn.jetty;
 
 import org.dockbox.hartshorn.api.exceptions.ApplicationException;
 import org.dockbox.hartshorn.api.exceptions.Except;
 import org.dockbox.hartshorn.boot.Hartshorn;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
-import org.dockbox.hartshorn.web.error.ErrorServlet;
-import org.dockbox.hartshorn.web.error.RequestError;
+import org.dockbox.hartshorn.web.servlet.ErrorServlet;
+import org.dockbox.hartshorn.web.RequestError;
 import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.jetty.http.MimeTypes;
