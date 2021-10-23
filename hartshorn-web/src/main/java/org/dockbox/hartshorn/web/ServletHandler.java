@@ -21,6 +21,7 @@ import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.exceptions.Except;
 import org.dockbox.hartshorn.boot.Hartshorn;
 import org.dockbox.hartshorn.config.annotations.Value;
+import org.dockbox.hartshorn.di.annotations.component.Component;
 import org.dockbox.hartshorn.di.annotations.inject.Binds;
 import org.dockbox.hartshorn.di.annotations.inject.Bound;
 import org.dockbox.hartshorn.di.annotations.inject.Enable;
@@ -45,6 +46,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+@Component
 @Binds(ServletHandler.class)
 public class ServletHandler implements AttributeHolder {
 
@@ -78,7 +80,8 @@ public class ServletHandler implements AttributeHolder {
     }
 
     public void processRequest(final HttpMethod method, final HttpServletRequest req, final HttpServletResponse res, final HttpAction fallbackAction) throws ServletException, IOException {
-        final String sessionId = req.getSession().getId();
+        final long start = System.currentTimeMillis();
+        final String sessionId = String.valueOf(req.hashCode());
         final String request = "%s %s".formatted(method, req.getRequestURI());
 
         if (method == this.httpMethod) {
@@ -96,13 +99,17 @@ public class ServletHandler implements AttributeHolder {
                     } else {
                         this.context.log().debug("Writing body to string for request %s".formatted(request));
                         final Exceptional<String> write = this.mapper.write(result.get());
-                        if (write.present()) res.getWriter().print(write.get());
+                        if (write.present()) {
+                            this.context.log().debug("Printing response body to response writer");
+                            res.getWriter().print(write.get());
+                        }
                         else {
                             res.setStatus(HttpStatus.INTERNAL_SERVER_ERROR_500);
                             if (write.caught()) Except.handle("Could not process response for request %s for session %s".formatted(request, sessionId), write.error());
                             else "Could not process response for request %s for session %s".formatted(request, sessionId);
                         }
                     }
+                    this.context.log().debug("Finished servlet handler for request %s with session %s in %dms".formatted(request, sessionId, System.currentTimeMillis() - start));
                     return;
                 }
                 catch (final IOException e) {
