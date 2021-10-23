@@ -18,39 +18,53 @@
 package org.dockbox.hartshorn.jetty;
 
 import org.dockbox.hartshorn.api.exceptions.ApplicationException;
+import org.dockbox.hartshorn.boot.Hartshorn;
 import org.dockbox.hartshorn.di.annotations.inject.Binds;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.di.properties.Attribute;
 import org.dockbox.hartshorn.di.properties.AttributeHolder;
 import org.dockbox.hartshorn.di.properties.UseFactory;
-import org.dockbox.hartshorn.jetty.error.JettyErrorAdapter;
 import org.dockbox.hartshorn.persistence.properties.ModifiersAttribute;
 import org.dockbox.hartshorn.web.DefaultHttpWebServer;
-import org.dockbox.hartshorn.web.RequestHandlerContext;
 import org.dockbox.hartshorn.web.HttpWebServer;
+import org.dockbox.hartshorn.web.RequestHandlerContext;
+import org.eclipse.jetty.server.Connector;
+import org.eclipse.jetty.server.HttpConfiguration;
+import org.eclipse.jetty.server.HttpConnectionFactory;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.handler.ErrorHandler;
-import org.eclipse.jetty.servlet.ServletHandler;
+import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
+import org.eclipse.jetty.util.thread.QueuedThreadPool;
 
 import javax.inject.Inject;
+
+import lombok.Getter;
 
 @Binds(HttpWebServer.class)
 public class JettyHttpWebServer extends DefaultHttpWebServer implements AttributeHolder {
 
-    @Inject private ApplicationContext context;
-    @Inject private final ServletHandler handler;
+    @Inject @Getter
+    private ApplicationContext context;
+    @Inject @Getter
+    private final ServletContextHandler handler;
     private ModifiersAttribute mappingModifier = ModifiersAttribute.of();
 
     public JettyHttpWebServer() {
         super();
-        this.handler = new ServletHandler();
+        this.handler = new ServletContextHandler(ServletContextHandler.SESSIONS);
+        this.handler.setContextPath("/");
     }
 
     @Override
     public void start(final int port) throws ApplicationException {
         try {
-            final Server server = new Server(port);
+            final QueuedThreadPool threadPool = new QueuedThreadPool();
+            threadPool.setName(Hartshorn.PROJECT_NAME);
+
+            final Server server = new Server(threadPool);
+            server.setConnectors(new Connector[]{ this.connector(server, port) });
             server.setHandler(this.handler);
             server.setErrorHandler(this.errorHandler());
             server.start();
@@ -61,12 +75,25 @@ public class JettyHttpWebServer extends DefaultHttpWebServer implements Attribut
 
     @Override
     public void register(final RequestHandlerContext context) {
-        this.handler.addServletWithMapping(this.createHolder(context), context.pathSpec());
+        this.handler.addServlet(this.createHolder(context), context.pathSpec());
     }
 
     @Override
     public void apply(final Attribute<?> property) {
         if (property instanceof ModifiersAttribute modifier) this.mappingModifier = modifier;
+    }
+
+    protected Connector connector(final Server server, final int port) {
+        final HttpConnectionFactory http11 = new HttpConnectionFactory(this.httpConfig());
+        final ServerConnector connector = new ServerConnector(server, 1, 1, http11);
+        connector.setHost("0.0.0.0");
+        connector.setAcceptQueueSize(128);
+        connector.setPort(port);
+        return connector;
+    }
+
+    protected HttpConfiguration httpConfig() {
+        return new HttpConfiguration();
     }
 
     protected ErrorHandler errorHandler() {
