@@ -45,8 +45,8 @@ public class HeaderRequestArgumentProcessor implements RequestArgumentProcessor<
         if (!request.getHeaders(requestHeader.value()).hasMoreElements()) return Exceptional.empty();
 
         if (parameter.type().is(String.class)) return Exceptional.of(() -> (T) request.getHeader(requestHeader.value()));
-        else if (parameter.type().is(int.class)) return Exceptional.of(() -> request.getIntHeader(requestHeader.value())).map(v -> (T) v);
-        else if (parameter.type().is(long.class)) return Exceptional.of(() -> request.getDateHeader(requestHeader.value())).map(v -> (T) v);
+        else if (parameter.type().childOf(int.class)) return Exceptional.of(() -> request.getIntHeader(requestHeader.value())).map(v -> (T) v);
+        else if (parameter.type().childOf(long.class)) return Exceptional.of(() -> request.getDateHeader(requestHeader.value())).map(v -> (T) v);
         return Exceptional.empty();
     }
 }
