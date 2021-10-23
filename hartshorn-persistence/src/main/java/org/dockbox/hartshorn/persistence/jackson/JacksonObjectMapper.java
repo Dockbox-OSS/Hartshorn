@@ -241,7 +241,7 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
 
     protected ObjectMapper configureMapper() {
         if (null == this.mapper) {
-            this.context.log().debug("Internal bject mapper was not configured yet, configuring now with filetype " + this.fileType());
+            this.context.log().debug("Internal object mapper was not configured yet, configuring now with filetype " + this.fileType());
             this.mapper = this.mapper(this.fileType());
             this.mapper.setAnnotationIntrospector(new PropertyAliasIntrospector(this.context));
             this.mapper.enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES);
