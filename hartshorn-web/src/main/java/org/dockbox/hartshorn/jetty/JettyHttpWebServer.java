@@ -93,7 +93,10 @@ public class JettyHttpWebServer extends DefaultHttpWebServer implements Attribut
     }
 
     protected HttpConfiguration httpConfig() {
-        return new HttpConfiguration();
+        final HttpConfiguration configuration = new HttpConfiguration();
+        configuration.setSendServerVersion(false);
+        configuration.setSendDateHeader(false);
+        return configuration;
     }
 
     protected ErrorHandler errorHandler() {
