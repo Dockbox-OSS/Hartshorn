@@ -1,5 +1,3 @@
-import java.time.LocalDate
-
 /*
  *  Copyright (C) 2020 Guus Lieben
  *
@@ -36,14 +34,8 @@ plugins {
 
 apply plugin: 'org.owasp.dependencycheck'
 
-static def getVersionName() {
-    return 'git rev-parse --verify --short HEAD'.execute().text.trim()
-}
-
-version = getVersionName()
-group project.pluginGroup
-description 'Common sources for Hartshorn services'
-def date = LocalDate.now().toString()
+version = projectVersion
+group project.projectGroup
 
 java {
     toolchain {
@@ -69,16 +61,20 @@ subprojects { Project subProject ->
         include '**/*.java'
     }
 
-    group project.pluginGroup
-    version = "${getVersionName()}-$date"
-
     sourceCompatibility = 16
     targetCompatibility = 16
+
+    group = projectGroup
+    version = projectVersion
+    archivesBaseName = subProject.name
+    description = "$projectName $projectVersion ($subProject.name)"
 
     tasks.build {
         dependsOn tasks.updateLicenses
         finalizedBy tasks.clean
     }
+
+    apply from: "$project.rootDir/gradle/publications.gradle"
 }
 
 allprojects {
@@ -148,15 +144,14 @@ allprojects {
 
         task copyArtifacts {
             doLast {
-                def version = getVersionName()
-                def DIST_DEST_DIR = "$rootDir/hartshorn-assembly/distributions/$date"
+                def version = projectVersion
+                def DIST_DEST_DIR = "$rootDir/hartshorn-assembly/distributions/$version"
                 def DIRT_SRC_DIR = "$buildDir/libs"
 
                 ant.mkdir(dir: DIST_DEST_DIR)
-                println("Copying all built files of ${it.name} version $version-$date to $DIST_DEST_DIR")
                 ant.copy(todir: DIST_DEST_DIR) {
                     fileset dir: DIRT_SRC_DIR,
-                            includes: "*$version-$date*.jar"
+                            includes: "*$version*.jar"
                 }
 
             }

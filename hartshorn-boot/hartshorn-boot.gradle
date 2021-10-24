@@ -1,5 +1,3 @@
-import java.time.LocalDate
-
 /*
  *  Copyright (C) 2020 Guus Lieben
  *
@@ -18,21 +16,8 @@ import java.time.LocalDate
  */
 
 plugins {
-    id 'base'
     id 'java-library'
-    id 'com.github.johnrengelman.shadow' version '7.0.0'
-}
-
-archivesBaseName = 'hartshorn-boot'
-description = 'Application boot for Hartshorn'
-def date = LocalDate.now().toString()
-
-repositories {
-    mavenCentral()
-}
-
-configurations {
-    shadow.extendsFrom(implementation)
+    id 'base'
 }
 
 def ignoreProjects = ['examples', 'hartshorn-boot']
@@ -51,14 +36,6 @@ dependencies {
     implementation "org.apache.logging.log4j:log4j-api:$log4jVersion"
     implementation "org.apache.logging.log4j:log4j-core:$log4jVersion"
     implementation "org.apache.logging.log4j:log4j-slf4j-impl:$log4jVersion"
-}
-
-tasks.build {
-    dependsOn tasks.shadowJar
-}
-
-shadowJar {
-    configurations = [project.configurations.shadow]
 }
 
 build.finalizedBy copyArtifacts

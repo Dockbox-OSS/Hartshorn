@@ -1,0 +1,89 @@
+apply plugin: 'maven-publish'
+
+java {
+    withSourcesJar()
+    withJavadocJar()
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+
+            pom {
+                afterEvaluate {
+                    name = project.name
+                }
+                url = "https://www.github.com/GuusLieben/Hartshorn/$project.name"
+                organization {
+                    name = "Hartshorn"
+                    url = "https://github.com/GuusLieben"
+                }
+                licenses {
+                    license {
+                        name = 'GNU Lesser General Public License v2.1'
+                        url = 'https://github.com/GuusLieben/Hartshorn/blob/develop/LICENSE'
+                        distribution = "repo"
+                    }
+                }
+                scm {
+                    url = 'https://www.github.com/GuusLieben/Hartshorn'
+                    connection = 'scm:git:git://github.com/GuusLieben/Hartshorn'
+                    developerConnection = 'scm:git:git://github.com/GuusLieben/Hartshorn'
+                }
+                developers {
+                    developer {
+                        id = "guuslieben"
+                        name = "Guus Lieben"
+                        email = "guuslieben@xendox.com"
+                    }
+                }
+                issueManagement {
+                    system = "GitHub"
+                    url = "https://www.github.com/GuusLieben/Hartshorn/issues"
+                }
+            }
+            versionMapping {
+                usage('java-api') {
+                    fromResolutionResult()
+                }
+                usage('java-runtime') {
+                    fromResolutionResult()
+                }
+            }
+        }
+    }
+    repositories {
+        maven {
+            def releasesRepoUrl = layout.buildDirectory.dir('repos/releases')
+            def snapshotsRepoUrl = layout.buildDirectory.dir('repos/snapshots')
+            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+        }
+    }
+}
+
+task copyPublications {
+    doLast {
+        def version = projectVersion
+        def DIST_DEST_DIR = "$rootDir/hartshorn-assembly/publications/$version"
+        def DIRT_SRC_DIR = "$buildDir/libs"
+        def POM_SRC_DIR = "$buildDir/publications/mavenJava"
+
+        ant.mkdir(dir: DIST_DEST_DIR)
+        ant.copy(todir: DIST_DEST_DIR) {
+            fileset dir: DIRT_SRC_DIR,
+                    includes: "$project.name-$version*"
+        }
+
+        file("$POM_SRC_DIR/pom-default.xml").renameTo(file("$POM_SRC_DIR/$project.name-pom.xml"))
+
+        ant.copy(todir: DIST_DEST_DIR) {
+            fileset dir: POM_SRC_DIR,
+                    includes: "$project.name-pom.xml"
+        }
+
+    }
+}
+
+publishToMavenLocal.dependsOn generatePomFileForMavenJavaPublication
+publishToMavenLocal.finalizedBy copyPublications
