@@ -25,10 +25,8 @@ import org.dockbox.hartshorn.di.Key;
 import org.dockbox.hartshorn.di.annotations.context.LogExclude;
 import org.dockbox.hartshorn.di.binding.Providers;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
-import org.dockbox.hartshorn.discord.DiscordCommandSource;
 import org.dockbox.hartshorn.persistence.FileManager;
 import org.dockbox.hartshorn.test.files.JUnitFileManager;
-import org.dockbox.hartshorn.test.objects.JUnitDiscordCommandSource;
 import org.dockbox.hartshorn.test.objects.JUnitSystemSubject;
 
 @LogExclude
@@ -36,8 +34,6 @@ public class JUnitInjector extends InjectConfiguration {
 
     @Override
     public void collect(final ApplicationContext context) {
-        this.bind(Key.of(DiscordCommandSource.class), JUnitDiscordCommandSource.class);
-
         // Overrides
         this.hierarchy(Key.of(SystemSubject.class)).add(0, Providers.of(JUnitSystemSubject.class));
         this.hierarchy(Key.of(GlobalConfig.class)).add(0, Providers.of(JUnitGlobalConfig.class));
