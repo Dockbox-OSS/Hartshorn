@@ -96,9 +96,9 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
     @Getter(AccessLevel.PROTECTED) private final Activator activator;
     @Getter private final ApplicationEnvironment environment;
 
-    private final List<Annotation> activators;
     private final ComponentLocator locator;
     private final List<Modifier> modifiers;
+    private final List<Annotation> activators = HartshornUtils.emptyList();
     private final Map<Key<?>, Object> singletons = HartshornUtils.emptyConcurrentMap();
     private final Map<Key<?>, BindingHierarchy<?>> hierarchies = HartshornUtils.emptyConcurrentMap();
     private MetaProvider metaProvider;
@@ -110,7 +110,7 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
             throw new IllegalStateException("Activation source is not marked with @Activator");
         }
         this.activator = activator.get();
-        this.activators = this.environment().annotationsWith(activationSource, ServiceActivator.class);
+        this.environment().annotationsWith(activationSource, ServiceActivator.class).forEach(this::addActivator);
         this.addActivator(new ServiceImpl());
 
         this.log().debug("Located %d service activators".formatted(this.activators().size()));
@@ -127,8 +127,10 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
     }
 
     public void addActivator(final Annotation annotation) {
+        if (this.activators.contains(annotation)) return;
         if (TypeContext.of(annotation.annotationType()).annotation(ServiceActivator.class).present()) {
             this.activators.add(annotation);
+            this.environment().annotationsWith(TypeContext.unproxy(this, annotation), ServiceActivator.class).forEach(this::addActivator);
         }
     }
 
