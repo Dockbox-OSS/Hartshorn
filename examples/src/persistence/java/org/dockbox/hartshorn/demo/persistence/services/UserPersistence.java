@@ -22,6 +22,7 @@ import org.dockbox.hartshorn.demo.persistence.events.UserCreatedEvent;
 import org.dockbox.hartshorn.di.annotations.component.Component;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.events.EventBus;
+import org.dockbox.hartshorn.events.annotations.Posting;
 import org.dockbox.hartshorn.persistence.SqlService;
 
 import javax.inject.Inject;
@@ -34,6 +35,8 @@ import javax.inject.Inject;
  * do not activate on components.
  */
 @Component
+/* Indicates this type is responsible for firing the UserCreated event. This serves solely to satisfy the EventValidator, so any unhandled events are noticed on startup */
+@Posting(UserCreatedEvent.class)
 public class UserPersistence {
 
     @Inject
@@ -49,8 +52,8 @@ public class UserPersistence {
      * a {@link UserCreatedEvent} is posted, activating {@link EventListenerService#on(UserCreatedEvent)} which
      * logs the action.
      */
-    public User createUser(String name, int age) {
-        User user = new User(name, age);
+    public User createUser(final String name, final int age) {
+        final User user = new User(name, age);
         this.sqlService.save(user);
         this.eventBus.post(new UserCreatedEvent(user));
         return user;

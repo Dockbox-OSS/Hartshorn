@@ -57,7 +57,7 @@ public class CommandService {
      * which is used in the command {@link #greet(CommandContext)}.
      */
     @Command(arguments = "<message{RemainingString}>")
-    public void speak(CommandContext context) {
+    public void speak(final CommandContext context) {
         context.applicationContext().log().info(context.get("message"));
     }
 
@@ -73,9 +73,9 @@ public class CommandService {
      * the flag is set to {@code true}, the message becomes 'Hello world!'.
      */
     @Command(arguments = "<greeting{Greeting}> --exclaim Boolean")
-    public void greet(CommandContext context) {
+    public void greet(final CommandContext context) {
         final Exceptional<CommandParameter<Boolean>> exclaim = context.flag("exclaim");
-        boolean doExclaim = exclaim.present() && exclaim.get().value();
+        final boolean doExclaim = exclaim.present() && exclaim.get().value();
         context.applicationContext().log().info(context.get("greeting") + (doExclaim ? "!" : ""));
     }
 
@@ -92,8 +92,8 @@ public class CommandService {
      * @see User
      */
     @Command(arguments = "<user{User}>")
-    public void build(CommandContext context) {
-        User user = context.get("user");
+    public void build(final CommandContext context) {
+        final User user = context.get("user");
         context.applicationContext().log().info("Built a new user named %s with age %s".formatted(user.name(), user.age()));
     }
 }

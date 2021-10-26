@@ -41,6 +41,8 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import lombok.Getter;
+
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -283,9 +285,10 @@ public final class AnnotationHelper {
         }
     }
 
-    private static class AnnotationInvocationHandler implements InvocationHandler {
+    public static class AnnotationInvocationHandler implements InvocationHandler {
         final Map<String, Object> cache;
         private final Class<?> klass;
+        @Getter
         private final Annotation annotation;
 
         public AnnotationInvocationHandler(final Class<?> klass, final Annotation annotation) {

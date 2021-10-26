@@ -50,7 +50,7 @@ public abstract class CachingService {
     public List<User> getUsers(final ApplicationContext context) {
         final User user = new User(context, "Guus", 21);
 
-        user.set(KeyUtility.LAST_MODIFIED, System.nanoTime());
+        user.set(KeyUtility.LAST_MODIFIED, System.currentTimeMillis());
         return HartshornUtils.singletonList(user);
     }
 
@@ -75,22 +75,22 @@ public abstract class CachingService {
      * with any type parameter, as long as the event itself is a {@link EngineChangedState}.v
      */
     @Listener
-    public void on(EngineChangedState<Started> event) {
+    public void on(final EngineChangedState<Started> event) {
         final User user = this.getUsers(event.applicationContext()).get(0);
         final long initial = user.get(KeyUtility.LAST_MODIFIED).or(-1L);
 
         final User user2 = this.getUsers(event.applicationContext()).get(0);
         final long beforeEviction = user2.get(KeyUtility.LAST_MODIFIED).or(-1L);
 
-        long difference = beforeEviction - initial;
-        event.applicationContext().log().info("(Before eviction) Users are the same: " + (user == user2) + ", modification time difference: " + difference);
+        final long difference = beforeEviction - initial;
+        event.applicationContext().log().info("(Before eviction) Users are the same: %s, modification time difference: %dms".formatted(user == user2, difference));
 
         this.evict();
 
         final User user3 = this.getUsers(event.applicationContext()).get(0);
         final long afterEviction = user3.get(KeyUtility.LAST_MODIFIED).or(-1L);
 
-        long evictedDifference = afterEviction - beforeEviction;
-        event.applicationContext().log().info("(After eviction) Users are the same: " + (user2 == user3) + ", modification time difference: " + evictedDifference);
+        final long evictedDifference = afterEviction - beforeEviction;
+        event.applicationContext().log().info("(After eviction) Users are the same: %s, modification time difference: %dms".formatted(user2 == user3, evictedDifference));
     }
 }

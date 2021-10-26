@@ -38,9 +38,9 @@ public class EventListenerService {
      * example this is done through {@link UserPersistence}.
      */
     @Listener
-    public void on(UserCreatedEvent event) {
-        ApplicationContext context = event.applicationContext();
-        User user = event.user();
+    public void on(final UserCreatedEvent event) {
+        final ApplicationContext context = event.applicationContext();
+        final User user = event.user();
         context.log().info("Created a new user with name %s and age %s and id %s".formatted(user.name(), user.age(), user.id()));
     }
 
@@ -58,7 +58,7 @@ public class EventListenerService {
      * with any type parameter, as long as the event itself is a {@link EngineChangedState}.
      */
     @Listener
-    public void on(EngineChangedState<Started> event) {
+    public void on(final EngineChangedState<Started> event) {
         event.applicationContext().get(CommandCLI.class).open();
     }
 

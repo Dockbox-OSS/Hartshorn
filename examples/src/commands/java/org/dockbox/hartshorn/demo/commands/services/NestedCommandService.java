@@ -34,9 +34,9 @@ public class NestedCommandService {
      * The method activated when the command {@code parent child <ints>} is correctly entered.
      */
     @Command(arguments = "<ints{RemainingInt}>")
-    public void child(CommandContext context) {
-        Integer[] ints = context.get("ints");
-        int sum = Arrays.stream(ints).mapToInt(Integer::intValue).sum();
+    public void child(final CommandContext context) {
+        final Integer[] ints = context.get("ints");
+        final int sum = Arrays.stream(ints).mapToInt(Integer::intValue).sum();
         context.applicationContext().log().info("Received: %s, sum of all elements is: %s".formatted(Arrays.toString(ints), sum));
     }
 
@@ -44,7 +44,7 @@ public class NestedCommandService {
      * The method activated when the command {@code parent child deep <number>} is correctly entered.
      */
     @Command(value = "child deep", arguments = "<number{Int}>")
-    public void deepChild(CommandContext context) {
+    public void deepChild(final CommandContext context) {
         final int number = context.get("number");
         context.applicationContext().log().info("This command was executed as a child command of a child command, argument: %d".formatted(number));
     }

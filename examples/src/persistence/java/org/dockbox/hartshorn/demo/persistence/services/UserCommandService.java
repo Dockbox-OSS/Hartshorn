@@ -47,9 +47,9 @@ public class UserCommandService {
      * @see CommandDefinitionContextImpl
      */
     @Command(value = "create", arguments = "<name> <age{Int}>")
-    public void create(CommandContext context) {
-        String name = context.get("name");
-        int age = context.get("age");
+    public void create(final CommandContext context) {
+        final String name = context.get("name");
+        final int age = context.get("age");
         this.persistenceService.createUser(name, age);
     }
 
