@@ -18,6 +18,7 @@
 package org.dockbox.hartshorn.config.annotations;
 
 import org.dockbox.hartshorn.di.annotations.service.ServiceActivator;
+import org.dockbox.hartshorn.persistence.annotations.UsePersistence;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -30,5 +31,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @ServiceActivator
+@UsePersistence
 public @interface UseConfigurations {
 }
