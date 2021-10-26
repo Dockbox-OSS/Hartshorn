@@ -19,11 +19,8 @@ package org.dockbox.hartshorn.demo.persistence;
 
 import org.dockbox.hartshorn.boot.HartshornApplication;
 import org.dockbox.hartshorn.commands.annotations.UseCommands;
-import org.dockbox.hartshorn.config.annotations.UseConfigurations;
 import org.dockbox.hartshorn.di.annotations.activate.Activator;
 import org.dockbox.hartshorn.di.annotations.activate.UseServiceProvision;
-import org.dockbox.hartshorn.events.annotations.UseEvents;
-import org.dockbox.hartshorn.persistence.annotations.UsePersistence;
 import org.dockbox.hartshorn.proxy.ProxyApplicationBootstrap;
 
 /**
@@ -31,11 +28,13 @@ import org.dockbox.hartshorn.proxy.ProxyApplicationBootstrap;
  * configured to enable only the required {@link org.dockbox.hartshorn.di.services.ServiceProcessor service processors}.
  * <p>For readability, each activator has been documented with a short description below.
  */
-@UseEvents /* Activates the EventServiceProcessor, enabling event listening */
-@UseCommands /* Activates the CommandServiceScanner, enabling command handling */
-@UsePersistence /* Activates the persistence of objects, pre-configuring ORMs */
-@UseConfigurations /* Activates the ConfigurationServiceProcessor and ConfigurationServiceModifier, pre-loading configurations and injecting values, respectively */
-@UseServiceProvision /* Activates the ProviderServiceProcessor, enabling custom provisioning with @Provider */
+
+/* Activates the CommandServiceScanner, enabling command handling and event listening, also activates
+   the ConfigurationServiceProcessor and ConfigurationServiceModifier, pre-loading configurations and
+   injecting values, respectively */
+@UseCommands
+/* Activates the ProviderServiceProcessor, enabling custom provisioning with @Provider */
+@UseServiceProvision
 
 /*
 * Indicates this type is an application activator, providing required metadata for your application. In this example only the
@@ -45,7 +44,7 @@ import org.dockbox.hartshorn.proxy.ProxyApplicationBootstrap;
 @Activator(ProxyApplicationBootstrap.class)
 public class PersistenceDemoApplication {
 
-    public static void main(String[] args) {
+    public static void main(final String[] args) {
         HartshornApplication.create(PersistenceDemoApplication.class, args);
     }
 }

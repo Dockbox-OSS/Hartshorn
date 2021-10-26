@@ -20,7 +20,6 @@ package org.dockbox.hartshorn.demo.commands;
 import org.dockbox.hartshorn.boot.HartshornApplication;
 import org.dockbox.hartshorn.commands.annotations.UseCommands;
 import org.dockbox.hartshorn.di.annotations.activate.Activator;
-import org.dockbox.hartshorn.events.annotations.UseEvents;
 import org.dockbox.hartshorn.proxy.ProxyApplicationBootstrap;
 
 /**
@@ -28,8 +27,7 @@ import org.dockbox.hartshorn.proxy.ProxyApplicationBootstrap;
  * configured to enable only the required {@link org.dockbox.hartshorn.di.services.ServiceProcessor service processors}.
  * <p>For readability, each activator has been documented with a short description below.
  */
-@UseEvents /* Activates the EventServiceProcessor, enabling event listening */
-@UseCommands /* Activates the CommandServiceScanner, enabling command handling */
+@UseCommands /* Activates the CommandServiceScanner, enabling command handling and event processing */
 
 /*
  * Indicates this type is an application activator, providing required metadata for your application. In this example only the
@@ -39,7 +37,7 @@ import org.dockbox.hartshorn.proxy.ProxyApplicationBootstrap;
 @Activator(ProxyApplicationBootstrap.class)
 public class CommandsDemoApplication {
 
-    public static void main(String[] args) {
+    public static void main(final String[] args) {
         HartshornApplication.create(CommandsDemoApplication.class, args);
     }
 }

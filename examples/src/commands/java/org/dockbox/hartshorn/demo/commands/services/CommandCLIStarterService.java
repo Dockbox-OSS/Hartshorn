@@ -49,7 +49,7 @@ public class CommandCLIStarterService {
      * with any type parameter, as long as the event itself is a {@link EngineChangedState}.
      */
     @Listener
-    public void on(EngineChangedState<Started> event) throws IOException {
+    public void on(final EngineChangedState<Started> event) throws IOException {
         final Exceptional<Path> commands = Hartshorn.resource("commands.txt");
         if (commands.present()) {
             final InputStream inputStream = Files.newInputStream(commands.get());

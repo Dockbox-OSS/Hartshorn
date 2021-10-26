@@ -40,7 +40,7 @@ import org.dockbox.hartshorn.proxy.ProxyApplicationBootstrap;
 @Activator(ProxyApplicationBootstrap.class)
 public class CachingDemoApplication {
 
-    public static void main(String[] args) {
+    public static void main(final String[] args) {
         HartshornApplication.create(CachingDemoApplication.class, args);
     }
 }
