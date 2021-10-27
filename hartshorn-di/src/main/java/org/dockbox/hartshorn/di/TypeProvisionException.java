@@ -17,8 +17,8 @@
 
 package org.dockbox.hartshorn.di;
 
-public class ProvisionFailure extends RuntimeException {
-    public ProvisionFailure(final String message, final Throwable cause) {
+public class TypeProvisionException extends RuntimeException {
+    public TypeProvisionException(final String message, final Throwable cause) {
         super(message, cause);
     }
 }

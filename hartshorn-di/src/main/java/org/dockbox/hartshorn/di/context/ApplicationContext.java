@@ -21,7 +21,7 @@ import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.di.InjectionPoint;
 import org.dockbox.hartshorn.di.Key;
 import org.dockbox.hartshorn.di.MetaProvider;
-import org.dockbox.hartshorn.di.ProvisionFailure;
+import org.dockbox.hartshorn.di.TypeProvisionException;
 import org.dockbox.hartshorn.di.annotations.context.LogExclude;
 import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.di.inject.InjectionModifier;
@@ -44,9 +44,9 @@ public interface ApplicationContext extends ApplicationBinder, HartshornContext,
 
     <T> void enable(T typeInstance);
 
-    <T> T raw(TypeContext<T> type) throws ProvisionFailure;
+    <T> T raw(TypeContext<T> type) throws TypeProvisionException;
 
-    <T> T raw(TypeContext<T> type, boolean populate) throws ProvisionFailure;
+    <T> T raw(TypeContext<T> type, boolean populate) throws TypeProvisionException;
 
     void add(ComponentProcessor<?> processor);
 

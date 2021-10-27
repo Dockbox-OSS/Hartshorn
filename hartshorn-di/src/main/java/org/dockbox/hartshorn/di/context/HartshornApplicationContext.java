@@ -33,7 +33,7 @@ import org.dockbox.hartshorn.di.MetaProviderModifier;
 import org.dockbox.hartshorn.di.Modifier;
 import org.dockbox.hartshorn.di.MultiMap;
 import org.dockbox.hartshorn.di.NativeBindingHierarchy;
-import org.dockbox.hartshorn.di.ProvisionFailure;
+import org.dockbox.hartshorn.di.TypeProvisionException;
 import org.dockbox.hartshorn.di.annotations.activate.Activator;
 import org.dockbox.hartshorn.di.annotations.inject.Binds;
 import org.dockbox.hartshorn.di.annotations.inject.Combines;
@@ -175,12 +175,12 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
                 });
     }
 
-    public <T> T raw(final TypeContext<T> type) throws ProvisionFailure {
+    public <T> T raw(final TypeContext<T> type) throws TypeProvisionException {
         return this.raw(type, true);
     }
 
     @Override
-    public <T> T raw(final TypeContext<T> type, final boolean populate) throws ProvisionFailure {
+    public <T> T raw(final TypeContext<T> type, final boolean populate) throws TypeProvisionException {
         try {
             final Exceptional<T> instance = Providers.of(type).provide(this);
             if (instance.present()) {
@@ -190,7 +190,7 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
             }
         }
         catch (final Exception e) {
-            throw new ProvisionFailure("Could not provide raw instance of " + type.name(), e);
+            throw new TypeProvisionException("Could not provide raw instance of " + type.name(), e);
         }
         return null;
     }
