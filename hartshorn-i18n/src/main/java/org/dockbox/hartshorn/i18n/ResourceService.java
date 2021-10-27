@@ -20,8 +20,8 @@ package org.dockbox.hartshorn.i18n;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.di.ContextCarrier;
 import org.dockbox.hartshorn.i18n.common.Language;
-import org.dockbox.hartshorn.i18n.common.ResourceEntry;
-import org.dockbox.hartshorn.i18n.entry.Resource;
+import org.dockbox.hartshorn.i18n.common.Message;
+import org.dockbox.hartshorn.i18n.message.MessageTemplate;
 
 import java.util.Map;
 
@@ -29,11 +29,11 @@ public interface ResourceService extends ContextCarrier {
 
     Map<String, String> translations(Language lang);
 
-    Map<Language, String> translations(Resource entry);
+    Map<Language, String> translations(MessageTemplate entry);
 
     String createValidKey(String raw);
 
-    Exceptional<ResourceEntry> get(String key);
+    Exceptional<Message> get(String key);
 
-    ResourceEntry getOrCreate(String key, String value);
+    Message getOrCreate(String key, String value);
 }

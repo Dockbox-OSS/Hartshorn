@@ -17,19 +17,26 @@
 
 package org.dockbox.hartshorn.boot;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
-
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.core.config.Configuration;
+import org.apache.logging.log4j.core.config.LoggerConfig;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.exceptions.Except;
+import org.dockbox.hartshorn.boot.LogLevelModifier.LogLevel;
+import org.dockbox.hartshorn.boot.ServerState.Started;
 import org.dockbox.hartshorn.di.ApplicationBootstrap;
+import org.dockbox.hartshorn.di.ArrayListMultiMap;
 import org.dockbox.hartshorn.di.InjectConfiguration;
 import org.dockbox.hartshorn.di.Modifier;
+import org.dockbox.hartshorn.di.MultiMap;
 import org.dockbox.hartshorn.di.annotations.activate.Activator;
 import org.dockbox.hartshorn.di.annotations.inject.InjectConfig;
 import org.dockbox.hartshorn.di.annotations.inject.InjectPhase;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.di.context.element.TypeContext;
+import org.dockbox.hartshorn.events.EngineChangedState;
+import org.dockbox.hartshorn.events.annotations.UseEvents;
 import org.dockbox.hartshorn.util.HartshornUtils;
 
 import java.lang.reflect.Constructor;
@@ -63,8 +70,8 @@ public class HartshornApplication {
      * @param modifiers
      *         The modifiers to use when bootstrapping
      */
-    public static ApplicationContext create(final Class<?> activator, final Modifier... modifiers) {
-        return lazy(activator, modifiers).load();
+    public static ApplicationContext create(final Class<?> activator, final String[] args, final Modifier... modifiers) {
+        return lazy(activator, args, modifiers).load();
     }
 
     /**
@@ -80,50 +87,17 @@ public class HartshornApplication {
      *
      * @return A {@link Runnable} to initialize the application
      */
-    public static HartshornLoader lazy(final Class<?> activator, final Modifier... modifiers) {
+    public static HartshornLoader lazy(final Class<?> activator, final String[] args, final Modifier... modifiers) {
+        for (final Modifier modifier : modifiers) {
+            if (modifier instanceof LogLevelModifier levelModifier) setLogLevel(levelModifier.level());
+        }
+        final Activator annotation = verifyActivator(activator);
+        final Class<? extends ApplicationBootstrap> bootstrap = annotation.value();
+
+        Hartshorn.log().info("Requested bootstrap is " + bootstrap.getSimpleName());
         try {
-            Hartshorn.log().info("Starting " + Hartshorn.PROJECT_NAME + " with activator " + activator.getSimpleName());
-            final long start = System.currentTimeMillis();
-            final Activator annotation = verifyActivator(activator);
-            final Class<? extends ApplicationBootstrap> bootstrap = annotation.value();
-
-            Hartshorn.log().info("Requested bootstrap is " + bootstrap.getSimpleName());
-            final ApplicationBootstrap injectableBootstrap = instance(bootstrap);
-
-            if (!injectableBootstrap.isCI()) {
-                for (final String line : BANNER.split("\n")) {
-                    Hartshorn.log().info(line);
-                }
-                Hartshorn.log().info("");
-            }
-
-            final String prefix = "".equals(annotation.prefix()) ? activator.getPackage().getName() : annotation.prefix();
-
-            final Multimap<InjectPhase, InjectConfiguration> configurations = ArrayListMultimap.create();
-            for (final InjectConfig config : annotation.configs()) {
-                configurations.put(config.phase(), instance(config.value()));
-            }
-
-            final List<String> prefixes = HartshornUtils.asList(Hartshorn.PACKAGE_PREFIX);
-            if (!prefix.startsWith(Hartshorn.PACKAGE_PREFIX)) prefixes.add(prefix);
-
-            Hartshorn.log().info("Default context prefix set to: " + prefix);
-
-            injectableBootstrap.create(
-                    prefixes,
-                    activator,
-                    HartshornUtils.emptyList(),
-                    configurations,
-                    modifiers);
-            final long creationTime = System.currentTimeMillis() - start;
-
-            return () -> {
-                final long initStart = System.currentTimeMillis();
-                injectableBootstrap.init();
-                final long initTime = System.currentTimeMillis() - initStart;
-                Hartshorn.log().info("Started " + Hartshorn.PROJECT_NAME + " in " + (creationTime + initTime) + "ms (" + creationTime + "ms creation, " + initTime + "ms init)");
-                return injectableBootstrap.context();
-            };
+            final ApplicationBootstrap applicationBootstrap = instance(bootstrap);
+            return load(applicationBootstrap, annotation, TypeContext.of(activator), args, modifiers);
         }
         catch (final InvocationTargetException | NoSuchMethodException | InstantiationException | IllegalAccessException e) {
             Except.handle("Could not bootstrap application " + activator.getSimpleName(), e);
@@ -131,6 +105,67 @@ public class HartshornApplication {
                 throw new RuntimeException("Hartshorn could not be bootstrapped, see cause for details", e);
             };
         }
+    }
+
+    public static HartshornLoader load(
+            final ApplicationBootstrap injectableBootstrap,
+            final Activator annotation,
+            final TypeContext<?> activator,
+            final String[] args,
+            final Modifier... modifiers
+    ) throws InvocationTargetException, InstantiationException, IllegalAccessException, NoSuchMethodException {
+        Hartshorn.log().info("Starting " + Hartshorn.PROJECT_NAME + " with activator " + activator.name());
+        final long start = System.currentTimeMillis();
+
+        if (!injectableBootstrap.isCI()) {
+            for (final String line : BANNER.split("\n")) {
+                Hartshorn.log().info(line);
+            }
+            Hartshorn.log().info("");
+        }
+
+        final String prefix = "".equals(annotation.prefix()) ? activator.type().getPackage().getName() : annotation.prefix();
+
+        final MultiMap<InjectPhase, InjectConfiguration> configurations = new ArrayListMultiMap<>();
+        for (final InjectConfig config : annotation.configs()) {
+            Hartshorn.log().debug("Adding configuration " + config.value().getSimpleName() + " for phase " + config.phase());
+            configurations.put(config.phase(), instance(config.value()));
+        }
+
+        final List<String> prefixes = HartshornUtils.asList(Hartshorn.PACKAGE_PREFIX);
+        if (!prefix.startsWith(Hartshorn.PACKAGE_PREFIX)) {
+            prefixes.add(prefix);
+        }
+
+        injectableBootstrap.create(
+                prefixes,
+                activator,
+                HartshornUtils.emptyList(),
+                configurations,
+                args,
+                modifiers);
+        final long creationTime = System.currentTimeMillis() - start;
+
+        return () -> {
+            final long initStart = System.currentTimeMillis();
+            injectableBootstrap.init();
+            final long initTime = System.currentTimeMillis() - initStart;
+            Hartshorn.log().info("Started " + Hartshorn.PROJECT_NAME + " in " + (creationTime + initTime) + "ms (" + creationTime + "ms creation, " + initTime + "ms init)");
+            final ApplicationContext context = injectableBootstrap.context();
+
+            if (context.hasActivator(UseEvents.class)) {
+                new EngineChangedState<Started>() {
+                }.with(context).post();
+            }
+            return context;
+        };
+    }
+
+    public static void setLogLevel(final LogLevel level) {
+        final LoggerContext loggerContext = LoggerContext.getContext(false);
+        final Configuration configuration = loggerContext.getConfiguration();
+        final LoggerConfig loggerConfig = configuration.getLoggerConfig("org.dockbox.hartshorn");
+        loggerConfig.setLevel(Level.getLevel(level.name()));
     }
 
     private static Activator verifyActivator(final Class<?> activator) {

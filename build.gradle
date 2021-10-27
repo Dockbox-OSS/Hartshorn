@@ -1,5 +1,3 @@
-import java.time.LocalDate
-
 /*
  *  Copyright (C) 2020 Guus Lieben
  *
@@ -36,14 +34,8 @@ plugins {
 
 apply plugin: 'org.owasp.dependencycheck'
 
-static def getVersionName() {
-    return 'git rev-parse --verify --short HEAD'.execute().text.trim()
-}
-
-version = getVersionName()
-group project.pluginGroup
-description 'Common sources for Hartshorn services'
-def date = LocalDate.now().toString()
+version = projectVersion
+group project.projectGroup
 
 java {
     toolchain {
@@ -69,16 +61,20 @@ subprojects { Project subProject ->
         include '**/*.java'
     }
 
-    group project.pluginGroup
-    version = "${getVersionName()}-$date"
-
     sourceCompatibility = 16
     targetCompatibility = 16
+
+    group = projectGroup
+    version = projectVersion
+    archivesBaseName = subProject.name
+    description = "$projectName $projectVersion ($subProject.name)"
 
     tasks.build {
         dependsOn tasks.updateLicenses
         finalizedBy tasks.clean
     }
+
+    apply from: "$project.rootDir/gradle/publications.gradle"
 }
 
 allprojects {
@@ -86,8 +82,8 @@ allprojects {
         configurations.all {
             resolutionStrategy.dependencySubstitution {
                 rootDir.listFiles().each {
-                    if (it.isDirectory() && new File(it, 'build.gradle').exists()) {
-                        substitute module('org.dockbox.hartshorn:' + it.name) using project(":$it.name")
+                    if (it.isDirectory() && new File(it, "${it.name}.gradle").exists()) {
+                        substitute module("org.dockbox.hartshorn:${it.name}") using project(":$it.name")
                     }
                 }
             }
@@ -105,39 +101,12 @@ allprojects {
             }
         }
 
-        sourceSets {
-            impl {
-                compileClasspath += main.output
-                runtimeClasspath += main.output
-            }
-            test {
-                compileClasspath += impl.output
-                runtimeClasspath += impl.output
-            }
-        }
-
         configurations {
-            include
-            implImplementation.extendsFrom(include)
-            testImplementation.extendsFrom(include)
-
-            apiInclude
-            include.extendsFrom(apiInclude)
-            implementation.extendsFrom(apiInclude)
-
-            apiShare
-            apiInclude.extendsFrom(apiShare)
-            api.extendsFrom(apiShare)
-
+            testImplementation.extendsFrom(implementation)
             all*.exclude group: 'junit', module: 'junit'
         }
 
-        compileJava {
-            options.compilerArgs << '-parameters'
-            options.encoding = 'UTF-8'
-        }
-
-        compileTestJava {
+        tasks.withType(JavaCompile) {
             options.compilerArgs << '-parameters'
             options.encoding = 'UTF-8'
         }
@@ -154,46 +123,35 @@ allprojects {
         }
 
         dependencies {
-            // Typically included by platforms
-            apiInclude "org.slf4j:slf4j-api:$slf4jVersion"
-            apiInclude "com.google.guava:guava:$guavaVersion"
-            apiInclude "javax.persistence:javax.persistence-api:$javaxPersistenceVersion"
-
-            // Compile/source dependencies
-            apiInclude("org.jetbrains:annotations:$jetbrainsAnnotationsVersion")
-
-            // Lombok
-            apiInclude "org.projectlombok:lombok:$lombokVersion"
+            implementation "org.slf4j:slf4j-api:$slf4jVersion"
+            implementation "org.projectlombok:lombok:$lombokVersion"
+            implementation("org.jetbrains:annotations:$jetbrainsAnnotationsVersion")
+            implementation "javax.persistence:javax.persistence-api:$javaxPersistenceVersion"
 
             annotationProcessor "org.projectlombok:lombok:$lombokVersion"
-            implAnnotationProcessor "org.projectlombok:lombok:$lombokVersion"
             testAnnotationProcessor "org.projectlombok:lombok:$lombokVersion"
 
-            // Testing requirements
+            testImplementation testFixtures(project(":hartshorn-test"))
+            testImplementation "org.mockito:mockito-inline:$mockitoVersion"
+            testImplementation "org.hamcrest:java-hamcrest:$hamcrestVersion"
+            testImplementation "org.apache.logging.log4j:log4j-api:$log4jVersion"
+            testImplementation "org.apache.logging.log4j:log4j-core:$log4jVersion"
             testImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"
             testImplementation "org.junit.jupiter:junit-jupiter-params:$junitVersion"
             testImplementation "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
-            testImplementation "org.hamcrest:java-hamcrest:$hamcrestVersion"
-
-            testImplementation "org.mockito:mockito-inline:$mockitoVersion"
-
-            testImplementation testFixtures(project(":hartshorn-test"))
-
-            testImplementation "org.slf4j:slf4j-api:$slf4jVersion"
-            testImplementation "org.slf4j:slf4j-simple:$slf4jVersion"
+            testImplementation "org.apache.logging.log4j:log4j-slf4j-impl:$log4jVersion"
         }
 
         task copyArtifacts {
             doLast {
-                def version = getVersionName()
-                def DIST_DEST_DIR = "$rootDir/hartshorn-assembly/distributions/$date"
+                def version = projectVersion
+                def DIST_DEST_DIR = "$rootDir/hartshorn-assembly/distributions/$version"
                 def DIRT_SRC_DIR = "$buildDir/libs"
 
                 ant.mkdir(dir: DIST_DEST_DIR)
-                println("Copying all built files of ${it.name} version $version-$date to $DIST_DEST_DIR")
                 ant.copy(todir: DIST_DEST_DIR) {
                     fileset dir: DIRT_SRC_DIR,
-                            includes: "*$version-$date*.jar"
+                            includes: "*$version*.jar"
                 }
 
             }

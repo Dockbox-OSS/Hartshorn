@@ -19,6 +19,9 @@ package org.dockbox.hartshorn.test.util;
 
 import org.dockbox.hartshorn.cache.CacheManagerImpl;
 
+import javax.inject.Singleton;
+
+@Singleton
 public class JUnitCacheManager extends CacheManagerImpl {
 
     public void reset() {

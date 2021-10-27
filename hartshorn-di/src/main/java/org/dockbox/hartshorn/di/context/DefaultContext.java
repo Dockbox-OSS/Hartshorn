@@ -17,10 +17,9 @@
 
 package org.dockbox.hartshorn.di.context;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
-
 import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.di.HashSetMultiMap;
+import org.dockbox.hartshorn.di.MultiMap;
 import org.dockbox.hartshorn.di.annotations.context.AutoCreating;
 import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.util.HartshornUtils;
@@ -31,7 +30,7 @@ import java.util.Set;
 public abstract class DefaultContext implements Context {
 
     protected final transient Set<Context> contexts = HartshornUtils.emptyConcurrentSet();
-    protected final transient Multimap<String, Context> namedContexts = HashMultimap.create();
+    protected final transient MultiMap<String, Context> namedContexts = new HashSetMultiMap<>();
 
     @Override
     public <C extends Context> void add(final C context) {
@@ -57,7 +56,9 @@ public abstract class DefaultContext implements Context {
                         .filter(c -> TypeContext.of(c).childOf(context))
                         .findFirst())
                 .orElse(() -> {
-                    if (TypeContext.of(context).annotation(AutoCreating.class).present()) {
+                    final TypeContext<C> typeContext = TypeContext.of(context);
+                    if (typeContext.annotation(AutoCreating.class).present()) {
+                        applicationContext.log().debug("Context with type " + typeContext.name() + " does not exist in current context (" + TypeContext.of(this).name() + "), but is marked to be automatically created");
                         final C created = applicationContext.get(context);
                         this.add(created);
                         return created;

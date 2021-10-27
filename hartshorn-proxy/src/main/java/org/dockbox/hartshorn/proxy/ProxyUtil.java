@@ -18,10 +18,12 @@
 package org.dockbox.hartshorn.proxy;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.di.AnnotationHelper.AnnotationInvocationHandler;
 import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.proxy.handle.ProxyHandler;
 import org.dockbox.hartshorn.proxy.handle.ProxyInterfaceHandler;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;
 
@@ -39,20 +41,25 @@ public class ProxyUtil {
         return handler.orElse(() -> new ProxyHandler<>(instance, type)).get();
     }
 
+    @SuppressWarnings("unchecked")
     public static <T> Exceptional<ProxyHandler<T>> handler(final T instance) {
         if (instance != null) {
             if (ProxyFactory.isProxyClass(instance.getClass())) {
                 final MethodHandler methodHandler = ProxyFactory.getHandler((javassist.util.proxy.Proxy) instance);
                 if (methodHandler instanceof ProxyHandler proxyHandler) {
-                    //noinspection unchecked
                     return Exceptional.of((ProxyHandler<T>) proxyHandler);
                 }
             }
             else if (Proxy.isProxyClass(instance.getClass())) {
                 final InvocationHandler invocationHandler = Proxy.getInvocationHandler(instance);
                 if (invocationHandler instanceof ProxyInterfaceHandler proxyInterfaceHandler) {
-                    //noinspection unchecked
                     return Exceptional.of(proxyInterfaceHandler.handler());
+                }
+                else if (invocationHandler instanceof AnnotationInvocationHandler annotationInvocationHandler) {
+                    return Exceptional.of(() -> new ProxyHandler<>((T) annotationInvocationHandler.annotation()));
+                }
+                else if (instance instanceof Annotation annotation) {
+                    return Exceptional.of(() -> new ProxyHandler<>(instance, (Class<T>) annotation.annotationType()));
                 }
             }
         }

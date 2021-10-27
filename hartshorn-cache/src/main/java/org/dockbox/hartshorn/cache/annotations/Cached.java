@@ -17,8 +17,6 @@
 
 package org.dockbox.hartshorn.cache.annotations;
 
-import org.dockbox.hartshorn.cache.CacheManager;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -48,12 +46,4 @@ public @interface Cached {
      * @return the lifetime
      */
     Expire expires() default @Expire(amount = -1, unit = TimeUnit.NANOSECONDS);
-
-    /**
-     * Indicates the cache manager to use. This type can be provided through
-     * the active {@link org.dockbox.hartshorn.di.context.ApplicationContext}.
-     *
-     * @return the type of the cache manager to use
-     */
-    Class<? extends CacheManager> manager() default CacheManager.class;
 }

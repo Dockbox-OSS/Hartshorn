@@ -58,7 +58,7 @@ public abstract class CommandEvent extends AbstractTargetEvent {
         }
 
         @Override
-        public Before with(ApplicationContext context) {
+        public Before with(final ApplicationContext context) {
             return (Before) super.with(context);
         }
     }

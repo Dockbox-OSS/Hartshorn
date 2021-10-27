@@ -17,11 +17,11 @@
 
 package org.dockbox.hartshorn.proxy.handle;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
-
-import org.dockbox.hartshorn.boot.Hartshorn;
 import org.dockbox.hartshorn.api.exceptions.ApplicationException;
+import org.dockbox.hartshorn.boot.Hartshorn;
+import org.dockbox.hartshorn.di.ArrayListMultiMap;
+import org.dockbox.hartshorn.di.MultiMap;
+import org.dockbox.hartshorn.di.context.element.MethodContext;
 import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.proxy.ProxyAttribute;
 
@@ -39,7 +39,7 @@ import lombok.Getter;
 
 public class ProxyHandler<T> implements MethodHandler {
 
-    private final Multimap<Method, ProxyAttribute<T, ?>> handlers = ArrayListMultimap.create();
+    private final MultiMap<Method, ProxyAttribute<T, ?>> handlers = new ArrayListMultiMap<>();
     private final T instance;
 
     @Getter
@@ -102,7 +102,8 @@ public class ProxyHandler<T> implements MethodHandler {
             else {
                 final StackTraceElement element = Thread.currentThread().getStackTrace()[3];
                 final String name = element.getMethodName();
-                throw new AbstractMethodError("Cannot invoke method '" + name + "' because it is abstract. This type is proxied, but no proxy property was found for the method.");
+                final String className = this.type == null ? "" : this.type.getSimpleName() + ".";
+                throw new AbstractMethodError("Cannot invoke method '" + className + name + "' because it is abstract. This type is proxied, but no proxy property was found for the method.");
             }
         }
     }
@@ -120,7 +121,8 @@ public class ProxyHandler<T> implements MethodHandler {
         boolean target = true;
         for (final ProxyAttribute<T, ?> property : properties) {
             if (at == property.phase()) {
-                final Object result = property.delegate(this.instance, proceed, self, args);
+                MethodContext<?, ?> methodContext = proceed == null ? null : MethodContext.of(proceed);
+                final Object result = property.delegate(this.instance, methodContext, self, args);
                 if (property.overwriteResult() && !Void.TYPE.equals(thisMethod.getReturnType())) {
                     // A proxy returning null typically indicates the use of a non-returning function, for
                     // annotation  properties this is handled internally, however proxy types should carry

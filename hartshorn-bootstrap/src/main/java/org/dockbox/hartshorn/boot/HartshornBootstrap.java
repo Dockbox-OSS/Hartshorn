@@ -17,15 +17,14 @@
 
 package org.dockbox.hartshorn.boot;
 
-import com.google.common.collect.Multimap;
-
-import org.dockbox.hartshorn.boot.annotations.UseBootstrap;
-import org.dockbox.hartshorn.boot.config.GlobalConfig;
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.exceptions.Except;
+import org.dockbox.hartshorn.boot.annotations.UseBootstrap;
+import org.dockbox.hartshorn.boot.config.GlobalConfig;
 import org.dockbox.hartshorn.di.InjectConfiguration;
 import org.dockbox.hartshorn.di.InjectableBootstrap;
 import org.dockbox.hartshorn.di.Modifier;
+import org.dockbox.hartshorn.di.MultiMap;
 import org.dockbox.hartshorn.di.annotations.context.LogExclude;
 import org.dockbox.hartshorn.di.annotations.inject.InjectPhase;
 import org.dockbox.hartshorn.di.annotations.inject.Required;
@@ -51,14 +50,14 @@ public abstract class HartshornBootstrap extends InjectableBootstrap {
     private final Set<MethodContext<?, ?>> postBootstrapActivations = HartshornUtils.emptyConcurrentSet();
 
     @Override
-    public void create(final Collection<String> prefixes, final Class<?> activationSource, final List<Annotation> activators, final Multimap<InjectPhase, InjectConfiguration> configs, final Modifier... modifiers) {
+    public void create(final Collection<String> prefixes, final TypeContext<?> activationSource, final List<Annotation> activators, final MultiMap<InjectPhase, InjectConfiguration> configs, String[] args, final Modifier... modifiers) {
         activators.add(new UseBootstrap() {
             @Override
             public Class<? extends Annotation> annotationType() {
                 return UseBootstrap.class;
             }
         });
-        super.create(prefixes, activationSource, activators, configs, modifiers);
+        super.create(prefixes, activationSource, activators, configs, args, modifiers);
 
         final GlobalConfig globalConfig = this.context().get(GlobalConfig.class);
         Except.useStackTraces(globalConfig.stacktraces());
@@ -73,6 +72,7 @@ public abstract class HartshornBootstrap extends InjectableBootstrap {
     public void init() {
         Hartshorn.log().info("Initialising Hartshorn v" + Hartshorn.VERSION);
         for (final MethodContext<?, ?> postBootstrapActivation : this.postBootstrapActivations) {
+            Hartshorn.log().debug("Invoking post-bootstrap activation " + postBootstrapActivation.qualifiedName());
             this.context().invoke(postBootstrapActivation);
         }
         // Ensure all services requiring a platform implementation have one present
@@ -115,17 +115,15 @@ public abstract class HartshornBootstrap extends InjectableBootstrap {
             final ComponentContainer componentContainer = container.get();
             final List<Class<? extends Annotation>> activators = componentContainer.activators();
 
-            if (componentContainer.hasActivator() && activators.stream().allMatch(this.context()::hasActivator))
+            if (componentContainer.hasActivator() && activators.stream().allMatch(this.context()::hasActivator)) {
+                Hartshorn.log().debug("Adding post-bootstrap activation " + method.qualifiedName());
                 this.postBootstrapActivations.add(method);
+            }
         }
     }
 
     @Override
     public boolean isCI() {
-        return System.getenv().containsKey("GITLAB_CI")
-                || System.getenv().containsKey("JENKINS_HOME")
-                || System.getenv().containsKey("TRAVIS")
-                || System.getenv().containsKey("GITHUB_ACTIONS")
-                || System.getenv().containsKey("APPVEYOR");
+        return HartshornUtils.isCI();
     }
 }

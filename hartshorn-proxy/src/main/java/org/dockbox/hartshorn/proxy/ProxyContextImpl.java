@@ -18,10 +18,8 @@
 package org.dockbox.hartshorn.proxy;
 
 import org.dockbox.hartshorn.api.exceptions.ApplicationException;
+import org.dockbox.hartshorn.di.context.element.MethodContext;
 import org.dockbox.hartshorn.proxy.handle.ProxyHolder;
-
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -30,17 +28,18 @@ import lombok.Getter;
 @AllArgsConstructor
 public class ProxyContextImpl implements ProxyContext {
 
-    private final Method proceed;
+    private final MethodContext<?, ?> proceed;
     private final ProxyHolder holder;
     private final Object self;
 
     @Override
     public <T> T invoke(final Object... args) throws ApplicationException {
         try {
+            if (this.proceed() == null || this.proceed().isAbstract()) return null;
             //noinspection unchecked
-            return (T) this.proceed().invoke(this.self(), args);
+            return (T) ((MethodContext<?, Object>) this.proceed()).invoke(this.self(), args).orNull();
         }
-        catch (final InvocationTargetException | IllegalAccessException | ClassCastException e) {
+        catch (final ClassCastException e) {
             throw new ApplicationException(e);
         }
     }

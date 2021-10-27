@@ -21,8 +21,10 @@ import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.util.HartshornUtils;
 
+import java.lang.invoke.MethodType;
 import java.lang.reflect.Method;
 import java.util.Map;
+import java.util.StringJoiner;
 import java.util.function.BiFunction;
 
 import lombok.Getter;
@@ -37,7 +39,7 @@ public class MethodContext<T, P> extends ExecutableElementContext<Method> implem
     private TypeContext<T> returnType;
     private TypeContext<P> parent;
     private BiFunction<P, Object[], Exceptional<T>> invoker;
-
+    private String qualifiedName;
 
     public MethodContext(final Method method) {
         this.method = method;
@@ -52,7 +54,11 @@ public class MethodContext<T, P> extends ExecutableElementContext<Method> implem
 
     public Exceptional<T> invoke(final P instance, final Object... arguments) {
         if (this.invoker == null) {
-            this.invoker = (o, args) -> Exceptional.of(() -> (T) this.method().invoke(o, args));
+            this.invoker = (o, args) -> {
+                final Exceptional<T> result = Exceptional.of(() -> (T) this.method().invoke(o, args));
+                if (result.caught()) return Exceptional.of(result.orNull(), result.error().getCause());
+                return result;
+            };
         }
         return this.invoker.apply(instance, arguments);
     }
@@ -81,14 +87,19 @@ public class MethodContext<T, P> extends ExecutableElementContext<Method> implem
     }
 
     public String qualifiedName() {
-        return this.method().toGenericString();
+        if (this.qualifiedName == null) {
+            final StringJoiner j = new StringJoiner(" ");
+            final String shortSig = MethodType.methodType(this.method().getReturnType(), this.method().getParameterTypes()).toString();
+            final int split = shortSig.lastIndexOf(')') + 1;
+            j.add(shortSig.substring(split)).add(this.method().getName() + shortSig.substring(0, split));
+            final String k = j.toString();
+            this.qualifiedName = this.parent().name() + '#' + k.substring(k.indexOf(' ') + 1);
+        }
+        return this.qualifiedName;
     }
 
     public Exceptional<T> invoke(final ApplicationContext context) {
-        final Object[] args = new Object[this.parameterCount()];
-        for (int i = 0; i < this.parameterCount(); i++) {
-            args[i] = context.get(this.parameterTypes().get(i));
-        }
+        final Object[] args = this.arguments(context);
         final P instance = context.get(this.parent());
         return this.invoke(instance, args);
     }

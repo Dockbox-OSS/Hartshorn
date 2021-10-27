@@ -18,6 +18,8 @@
 package org.dockbox.hartshorn.commands.annotations;
 
 import org.dockbox.hartshorn.di.annotations.service.ServiceActivator;
+import org.dockbox.hartshorn.events.annotations.UseEvents;
+import org.dockbox.hartshorn.i18n.annotations.UseResources;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -30,5 +32,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @ServiceActivator
+@UseResources
+@UseEvents
 public @interface UseCommands {
 }

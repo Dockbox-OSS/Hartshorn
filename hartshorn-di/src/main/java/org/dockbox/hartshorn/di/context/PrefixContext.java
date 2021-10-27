@@ -17,10 +17,9 @@
 
 package org.dockbox.hartshorn.di.context;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
-
 import org.dockbox.hartshorn.di.AnnotationHelper;
+import org.dockbox.hartshorn.di.ArrayListMultiMap;
+import org.dockbox.hartshorn.di.MultiMap;
 import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.reflections.Reflections;
@@ -31,20 +30,29 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import lombok.AccessLevel;
+import lombok.Getter;
+
 public class PrefixContext extends DefaultContext {
 
-    private final Map<String, Reflections> reflectedPrefixes = HartshornUtils.emptyConcurrentMap();
-    private final Multimap<Class<? extends Annotation>, Class<? extends Annotation>> annotationHierarchy = ArrayListMultimap.create();
+    @Getter(AccessLevel.PROTECTED)
+    private final ApplicationEnvironment environment;
 
-    public PrefixContext(final Iterable<String> initialPrefixes) {
+    private final Map<String, Reflections> reflectedPrefixes = HartshornUtils.emptyConcurrentMap();
+    private final MultiMap<Class<? extends Annotation>, Class<? extends Annotation>> annotationHierarchy = new ArrayListMultiMap<>();
+
+    public PrefixContext(final Iterable<String> initialPrefixes, final ApplicationEnvironment environment) {
+        this.environment = environment;
         for (final String initialPrefix : initialPrefixes) {
             this.prefix(initialPrefix);
         }
     }
 
     public void prefix(final String prefix) {
-        if (!this.reflectedPrefixes.containsKey(prefix))
+        if (!this.reflectedPrefixes.containsKey(prefix)) {
+            this.environment.application().log().debug("Registering and caching prefix '%s'".formatted(prefix));
             this.reflectedPrefixes.put(prefix, this.reflections(prefix));
+        }
     }
 
     void reset() {

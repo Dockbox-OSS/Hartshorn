@@ -18,104 +18,92 @@
 package org.dockbox.hartshorn.cache;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.cache.annotations.UseCaching;
 import org.dockbox.hartshorn.test.ApplicationAwareTest;
 import org.dockbox.hartshorn.test.util.JUnitCacheManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.Collection;
-import java.util.List;
-
+@UseCaching
 public class CacheTests extends ApplicationAwareTest {
+
+    @Test
+    void testEvictMethodIsCalled() {
+        final NonAbstractCacheService service = this.context().get(NonAbstractCacheService.class);
+        Assertions.assertTrue(service.evict());
+    }
+
+    @Test
+    void testUpdateMethodIsCalled() {
+        final NonAbstractCacheService service = this.context().get(NonAbstractCacheService.class);
+        final long update = service.update(3L);
+        Assertions.assertEquals(6, update);
+    }
 
     @Test
     void testCacheIsReused() {
         final TestCacheService service = this.context().get(TestCacheService.class);
-        List<String> cached = service.cachedObjects();
-        Assertions.assertNotNull(cached);
-        Assertions.assertFalse(cached.isEmpty());
+        final long first = service.getCachedTime();
+        Assertions.assertTrue(first > 0);
 
-        final String first = cached.get(0);
-        Assertions.assertNotNull(first);
-
-        cached = service.cachedObjects();
-        Assertions.assertNotNull(cached);
-        Assertions.assertFalse(cached.isEmpty());
-
-        final String second = cached.get(0);
-        Assertions.assertNotNull(second);
-
+        final long second = service.getCachedTime();
         Assertions.assertEquals(first, second);
     }
 
     @Test
     void testCacheCanBeUpdated() {
         final TestCacheService service = this.context().get(TestCacheService.class);
-        List<String> cached = service.cachedObjects();
-        Assertions.assertEquals(1, cached.size());
-        final String first = cached.get(0);
+        long cached = service.getCachedTime();
+        Assertions.assertTrue(cached > 0);
 
-        service.updateCache("second value");
-        cached = service.cachedObjects();
-        Assertions.assertEquals(2, cached.size());
-
-        final String newFirst = cached.get(0);
-        Assertions.assertEquals(first, newFirst);
-
-        final String second = cached.get(1);
-        Assertions.assertEquals("second value", second);
+        service.update(3);
+        cached = service.getCachedTime();
+        Assertions.assertEquals(3, cached);
     }
 
     @Test
     void testCacheCanBeEvicted() {
         final TestCacheService service = this.context().get(TestCacheService.class);
-        List<String> cached = service.cachedObjects();
-        final String first = cached.get(0);
-
+        final long first = service.getCachedTime();
         service.evict();
-        cached = service.cachedObjects();
-        final String second = cached.get(0);
+        final long second = service.getCachedTime();
         Assertions.assertNotEquals(first, second);
     }
 
     @Test
     void testCacheCanBeUpdatedThroughManager() {
         final TestCacheService service = this.context().get(TestCacheService.class);
-        final List<String> cached = service.cachedObjects();
-        Assertions.assertEquals(1, cached.size());
-        final String first = cached.get(0);
+        final long cached = service.getCachedTime();
+        Assertions.assertTrue(cached > 0);
 
         final CacheManager cacheManager = this.context().get(CacheManager.class);
-        cacheManager.update("sample", "second value");
+        cacheManager.update("sample", 3L);
 
-        final Cache<Object> cache = cacheManager.get("sample").get();
-        final Exceptional<Collection<Object>> content = cache.get();
+        final Exceptional<Cache<Long>> cache = cacheManager.get("sample");
+        Assertions.assertTrue(cache.present());
+
+        final Exceptional<Long> content = cache.get().get();
         Assertions.assertTrue(content.present());
 
-        final List<Object> objects = (List<Object>) content.get();
-        Assertions.assertEquals(2, objects.size());
-
-        final String newFirst = (String) objects.get(0);
-        Assertions.assertEquals(first, newFirst);
-
-        final String second = (String) objects.get(1);
-        Assertions.assertEquals("second value", second);
+        final long object = content.get();
+        Assertions.assertEquals(3, object);
     }
 
     @Test
     void testCacheCanBeEvictedThroughManager() {
         // Initial population through source service
         final TestCacheService service = this.context().get(TestCacheService.class);
-        final List<String> cached = service.cachedObjects();
-        Assertions.assertNotNull(cached);
-        Assertions.assertFalse(cached.isEmpty());
+        final long cached = service.getCachedTime();
+        Assertions.assertTrue(cached > 0);
 
         final CacheManager cacheManager = this.context().get(CacheManager.class);
         cacheManager.evict("sample");
 
-        final Cache<Object> cache = cacheManager.get("sample").get();
-        final Exceptional<Collection<Object>> content = cache.get();
+        final Exceptional<Cache<Long>> cache = cacheManager.get("sample");
+        Assertions.assertTrue(cache.present());
+
+        final Exceptional<Long> content = cache.get().get();
         Assertions.assertTrue(content.absent());
     }
 

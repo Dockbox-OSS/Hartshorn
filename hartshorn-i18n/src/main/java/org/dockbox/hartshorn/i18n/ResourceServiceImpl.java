@@ -22,8 +22,8 @@ import org.dockbox.hartshorn.api.exceptions.Except;
 import org.dockbox.hartshorn.di.annotations.inject.Binds;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.i18n.common.Language;
-import org.dockbox.hartshorn.i18n.common.ResourceEntry;
-import org.dockbox.hartshorn.i18n.entry.Resource;
+import org.dockbox.hartshorn.i18n.common.Message;
+import org.dockbox.hartshorn.i18n.message.MessageTemplate;
 import org.dockbox.hartshorn.util.HartshornUtils;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -84,7 +84,7 @@ public class ResourceServiceImpl implements ResourceService {
 
     @NotNull
     @Override
-    public Map<Language, String> translations(@NotNull final Resource entry) {
+    public Map<Language, String> translations(@NotNull final MessageTemplate entry) {
         final Map<Language, String> translations = HartshornUtils.emptyMap();
         for (final Entry<Language, ResourceBundle> bundle : ResourceServiceImpl.bundles.entrySet()) {
             try {
@@ -106,27 +106,27 @@ public class ResourceServiceImpl implements ResourceService {
 
     @NotNull
     @Override
-    public Exceptional<ResourceEntry> get(@NotNull final String key) {
+    public Exceptional<Message> get(@NotNull final String key) {
         return this.resource(key, null, false);
     }
 
     @Override
-    public ResourceEntry getOrCreate(final String key, final String value) {
+    public Message getOrCreate(final String key, final String value) {
         return this.resource(key, value, true).get();
     }
 
-    private Exceptional<ResourceEntry> resource(final String key, final String value, final boolean createIfAbsent) {
+    private Exceptional<Message> resource(final String key, final String value, final boolean createIfAbsent) {
         @NonNls
         @NotNull final String finalKey = this.createValidKey(key);
         return Exceptional.of(() -> {
             final Map<String, String> translations = this.translations(Language.EN_US);
             if (translations.containsKey(finalKey)) {
                 final String knownValue = translations.get(finalKey);
-                return new Resource(this.applicationContext(), knownValue, finalKey);
+                return new MessageTemplate(this.applicationContext(), knownValue, finalKey);
             }
             else {
                 if (createIfAbsent && null != value) {
-                    return new Resource(this.applicationContext(), value, key);
+                    return new MessageTemplate(this.applicationContext(), value, key);
                 }
                 else {
                     throw new IllegalStateException("Missing translation for " + finalKey);

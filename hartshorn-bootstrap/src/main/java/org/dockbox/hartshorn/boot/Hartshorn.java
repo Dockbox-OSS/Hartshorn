@@ -53,7 +53,7 @@ public final class Hartshorn {
     /**
      * The semantic version of the current/latest release of Hartshorn
      */
-    public static final String VERSION = "4.2.2";
+    public static final String VERSION = "4.2.3";
 
     private static final Map<String, Logger> LOGGERS = HartshornUtils.emptyConcurrentMap();
 
@@ -67,8 +67,9 @@ public final class Hartshorn {
     public static Logger log() {
         StackTraceElement element = null;
         for (final StackTraceElement ste : Thread.currentThread().getStackTrace()) {
-            if (ste.getModuleName() != null && ste.getModuleName().startsWith("java.")) continue;
-            else if (TypeContext.lookup(ste.getClassName()).annotation(LogExclude.class).present()) continue;
+            final boolean isJavaModule = ste.getModuleName() != null && ste.getModuleName().startsWith("java.");
+            final boolean isExcluded = TypeContext.lookup(ste.getClassName()).annotation(LogExclude.class).present();
+            if (isJavaModule || isExcluded) continue;
             else {
                 element = ste;
                 break;
@@ -80,18 +81,7 @@ public final class Hartshorn {
         final String className = element.getClassName();
         if (LOGGERS.containsKey(className)) return LOGGERS.get(className);
 
-        final String[] qualifiedClassName = className.split("\\.");
-        final StringBuilder fullName = new StringBuilder();
-
-        for (int i = 0; i < qualifiedClassName.length; i++) {
-            final String part = qualifiedClassName[i];
-            if (i > 0) fullName.append('.');
-            if (i == qualifiedClassName.length - 1) fullName.append(part);
-            else fullName.append(part.charAt(0));
-        }
-
-        final String name = HartshornUtils.wrap(fullName.toString(), 35);
-        final Logger logger = LoggerFactory.getLogger(name);
+        final Logger logger = LoggerFactory.getLogger(TypeContext.lookup(className).type());
         LOGGERS.put(className, logger);
         return logger;
     }
@@ -111,10 +101,17 @@ public final class Hartshorn {
     public static Exceptional<Path> resource(final String name) {
         try {
             final InputStream in = Hartshorn.class.getClassLoader().getResourceAsStream(name);
+            if (in == null) {
+                log().debug("Could not locate resource " + name);
+                return Exceptional.empty();
+            }
+
             final byte[] buffer = new byte[in.available()];
-            in.read(buffer);
+            final int bytes = in.read(buffer);
+            if (bytes == -1) return Exceptional.of(new IOException("Requested resource contained no context"));
 
             final Path tempFile = Files.createTempFile(name, ".tmp");
+            log().debug("Writing compressed resource " + name + " to temporary file " + tempFile.toFile().getName());
             final OutputStream outStream = new FileOutputStream(tempFile.toFile());
             outStream.write(buffer);
 

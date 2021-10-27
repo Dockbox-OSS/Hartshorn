@@ -17,9 +17,6 @@
 
 package org.dockbox.hartshorn.util;
 
-import com.google.common.collect.Sets;
-import com.google.common.collect.Sets.SetView;
-
 import org.dockbox.hartshorn.api.CheckedRunnable;
 import org.dockbox.hartshorn.api.domain.AbstractIdentifiable;
 import org.dockbox.hartshorn.api.domain.Exceptional;
@@ -63,6 +60,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
@@ -1152,9 +1150,11 @@ public final class HartshornUtils {
     }
 
     public static <T> Set<T> difference(final Collection<T> collectionOne, final Collection<T> collectionTwo) {
-        final Set<T> diff = emptySet();
-        final SetView<T> differenceInOne = Sets.difference(asSet(collectionOne), asSet(collectionTwo));
-        final SetView<T> differenceInTwo = Sets.difference(asSet(collectionTwo), asSet(collectionOne));
+        final BiFunction<Collection<T>, Collection<T>, List<T>> filter = (c1, c2) -> c1.stream()
+                .filter(element -> !c2.contains(element))
+                .toList();
+        final List<T> differenceInOne = filter.apply(collectionOne, collectionTwo);
+        final List<T> differenceInTwo = filter.apply(collectionTwo, collectionOne);
         return asSet(merge(differenceInOne, differenceInTwo));
     }
 
@@ -1163,17 +1163,23 @@ public final class HartshornUtils {
         return new HashSet<>(collection);
     }
 
-    public static <T> List<T> merge(final Collection<T> collectionOne, final Collection<T> collectionTwo) {
-        final Set<T> merged = HartshornUtils.asSet(collectionOne);
-        merged.addAll(HartshornUtils.asSet(collectionTwo));
-        return HartshornUtils.asList(merged);
-    }
-
     public static Vector3N cuboidSize(final Vector3N min, final Vector3N max) {
         final double x = max.xD() - min.xD();
         final double y = max.yD() - min.yD();
         final double z = max.zD() - min.zD();
         return Vector3N.of(x, y, z);
+    }
+
+    public static boolean isCI() {
+        for (final StackTraceElement element : Thread.currentThread().getStackTrace()) {
+            if (element.getClassName().startsWith("org.junit.")) return true;
+        }
+
+        return System.getenv().containsKey("GITLAB_CI")
+                || System.getenv().containsKey("JENKINS_HOME")
+                || System.getenv().containsKey("TRAVIS")
+                || System.getenv().containsKey("GITHUB_ACTIONS")
+                || System.getenv().containsKey("APPVEYOR");
     }
 
     public enum Provision {

@@ -23,6 +23,7 @@ import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.commands.annotations.Parameter;
 import org.dockbox.hartshorn.commands.context.ArgumentConverterContext;
 import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.di.context.element.ConstructorContext;
 import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.util.HartshornUtils;
@@ -50,16 +51,26 @@ public interface CustomParameterPattern {
      * @return An instance of {@code T}, wrapped in a {@link Exceptional}, or {@link Exceptional#empty()} if {@code null}
      */
     default <T> Exceptional<T> request(final TypeContext<T> type, final CommandSource source, final String raw) {
+        final ApplicationContext context = source.applicationContext();
         final Exceptional<Boolean> preconditionsMatch = this.preconditionsMatch(type, source, raw);
-        if (preconditionsMatch.caught()) return Exceptional.of(preconditionsMatch.error());
+        if (preconditionsMatch.caught()) {
+            context.log().debug("Preconditions yielded exception, rejecting raw argument " + raw);
+            return Exceptional.of(preconditionsMatch.error());
+        }
+        else if (!preconditionsMatch.get()) {
+            context.log().debug("Preconditions failed, rejecting raw argument " + raw);
+            return Exceptional.empty();
+        }
 
         final List<String> rawArguments = this.splitArguments(raw);
         final List<TypeContext<?>> argumentTypes = HartshornUtils.emptyList();
         final List<Object> arguments = HartshornUtils.emptyList();
 
         for (final String rawArgument : rawArguments) {
+            context.log().debug("Parsing raw argument " + rawArgument);
             final Exceptional<String> argumentIdentifier = this.parseIdentifier(rawArgument);
             if (argumentIdentifier.absent()) {
+                context.log().debug("Could not determine argument identifier for raw argument '%s', this is not a error as the value likely needs to be looked up by its type instead.".formatted(rawArgument));
                 // If a non-pattern argument is required, the converter needs to be looked up by type instead of by its identifier. This will be done when the constructor is being looked up
                 argumentTypes.add(null);
                 arguments.add(rawArgument);
@@ -67,21 +78,23 @@ public interface CustomParameterPattern {
             }
             final String typeIdentifier = argumentIdentifier.get();
 
-            final Exceptional<ArgumentConverter<?>> converter = source.applicationContext()
+            final Exceptional<ArgumentConverter<?>> converter = context
                     .first(ArgumentConverterContext.class)
-                    .flatMap(context -> context.converter(typeIdentifier));
+                    .flatMap(argumentConverterContext -> argumentConverterContext.converter(typeIdentifier));
 
-            if (converter.absent())
-                return Exceptional.of(new IllegalArgumentException(source.applicationContext()
+            if (converter.absent()) {
+                context.log().debug("Could not locate converter for identifier '%s'".formatted(typeIdentifier));
+                return Exceptional.of(new IllegalArgumentException(context
                         .get(CommandParameterResources.class)
                         .missingConverter(type.qualifiedName())
                         .asString())
                 );
+            }
 
+            context.log().debug("Found converter for identifier '%s'".formatted(typeIdentifier));
             argumentTypes.add(converter.get().type());
             arguments.add(converter.get().convert(source, rawArgument).orNull());
         }
-
 
         return this.constructor(argumentTypes, arguments, type, source)
                 .flatMap(constructor -> constructor.createInstance(arguments.toArray(new Object[0])));
@@ -120,7 +133,10 @@ public interface CustomParameterPattern {
                 passed = false;
                 break; // Parameter is not what we expected, do not continue
             }
-            if (passed) return Exceptional.of(constructor);
+            if (passed) {
+                source.applicationContext().log().debug("Found matching constructor for " + type.name() + " with " + argumentTypes.size() + " arguments.");
+                return Exceptional.of(constructor);
+            }
         }
         return Exceptional.of(new IllegalArgumentException(source.applicationContext().get(CommandParameterResources.class).notEnoughArgs().asString()));
     }

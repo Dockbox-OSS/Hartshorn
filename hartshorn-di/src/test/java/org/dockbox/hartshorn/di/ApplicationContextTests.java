@@ -18,6 +18,7 @@
 package org.dockbox.hartshorn.di;
 
 import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.di.annotations.activate.UseServiceProvision;
 import org.dockbox.hartshorn.di.binding.BindingHierarchy;
 import org.dockbox.hartshorn.di.binding.Bindings;
 import org.dockbox.hartshorn.di.binding.BoundFactoryProvider;
@@ -26,6 +27,8 @@ import org.dockbox.hartshorn.di.binding.Provider;
 import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.di.properties.BindingMetaAttribute;
 import org.dockbox.hartshorn.di.properties.UseFactory;
+import org.dockbox.hartshorn.di.types.ContextInjectedType;
+import org.dockbox.hartshorn.di.types.SampleContext;
 import org.dockbox.hartshorn.test.ApplicationAwareTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -50,6 +53,7 @@ import test.types.multi.SampleMultiAnnotatedImplementation;
 import test.types.provision.ProvidedInterface;
 import test.types.scan.SampleAnnotatedImplementation;
 
+@UseServiceProvision
 public class ApplicationContextTests extends ApplicationAwareTest {
 
     private static Stream<Arguments> providers() {
@@ -353,5 +357,21 @@ public class ApplicationContextTests extends ApplicationAwareTest {
         Assertions.assertTrue(boundProvider.present());
         Assertions.assertTrue(boundProvider.get() instanceof BoundFactoryProvider);
         Assertions.assertTrue(((BoundFactoryProvider<SampleInterface>) boundProvider.get()).context().is(DualConstructableType.class));
+    }
+
+    @Test
+    void testContextFieldsAreInjected() {
+        this.context().add(new SampleContext("InjectedContext"));
+        final ContextInjectedType instance = this.context().populate(new ContextInjectedType());
+        Assertions.assertNotNull(instance.context());
+        Assertions.assertEquals("InjectedContext", instance.context().name());
+    }
+
+    @Test
+    void testNamedContextFieldsAreInjected() {
+        this.context().add("another", new SampleContext("InjectedContext"));
+        final ContextInjectedType instance = this.context().populate(new ContextInjectedType());
+        Assertions.assertNotNull(instance.anotherContext());
+        Assertions.assertEquals("InjectedContext", instance.anotherContext().name());
     }
 }

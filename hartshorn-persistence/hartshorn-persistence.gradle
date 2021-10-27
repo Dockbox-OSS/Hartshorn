@@ -1,0 +1,42 @@
+/*
+ * Copyright (C) 2020 Guus Lieben
+ *
+ * This framework is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 2.1 of the
+ * License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See
+ * the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
+ */
+
+dependencies {
+    implementation 'org.dockbox.hartshorn:hartshorn-di'
+    implementation 'org.dockbox.hartshorn:hartshorn-util'
+    implementation 'org.dockbox.hartshorn:hartshorn-core'
+    implementation "org.apache.derby:derby:$derbyVersion"
+    implementation 'org.dockbox.hartshorn:hartshorn-proxy'
+    implementation 'org.dockbox.hartshorn:hartshorn-bootstrap'
+    implementation 'org.dockbox.hartshorn:hartshorn-exceptions'
+    implementation "org.hibernate:hibernate-core:$hibernateVersion"
+    implementation "com.fasterxml.jackson.core:jackson-core:$jacksonVersion"
+    implementation "org.codehaus.woodstox:woodstox-core-asl:$woodstoxVersion"
+    implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-xml:$jacksonVersion"
+    implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:$jacksonVersion"
+    implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-toml:$jacksonVersion"
+    implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-properties:$jacksonVersion"
+
+    testImplementation "org.postgresql:postgresql:$postgreSqlVersion"
+    testImplementation "org.testcontainers:mysql:$testContainersVersion"
+    testImplementation "org.testcontainers:mariadb:$testContainersVersion"
+    testImplementation "mysql:mysql-connector-java:$mySqlConnectorVersion"
+    testImplementation "org.testcontainers:postgresql:$testContainersVersion"
+    testImplementation "org.testcontainers:junit-jupiter:$testContainersVersion"
+    testImplementation "org.testcontainers:testcontainers:$testContainersVersion"
+    testImplementation "org.mariadb.jdbc:mariadb-java-client:$mariaDbClientVersion"
+}

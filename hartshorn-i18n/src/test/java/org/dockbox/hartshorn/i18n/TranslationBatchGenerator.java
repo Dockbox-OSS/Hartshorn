@@ -22,7 +22,7 @@ import org.dockbox.hartshorn.di.context.element.MethodContext;
 import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.di.services.ComponentContainer;
 import org.dockbox.hartshorn.i18n.annotations.Resource;
-import org.dockbox.hartshorn.test.JUnit5Application;
+import org.dockbox.hartshorn.test.HartshornRunner;
 import org.dockbox.hartshorn.util.HartshornUtils;
 
 import java.io.File;
@@ -34,6 +34,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -84,7 +85,7 @@ public final class TranslationBatchGenerator {
     private static final SimpleDateFormat SDF = new SimpleDateFormat("ddMMyyyy");
 
     public static void main(final String[] args) throws Exception {
-        final ApplicationContext context = JUnit5Application.prepareBootstrap();
+        final ApplicationContext context = HartshornRunner.createContext(TranslationBatchGenerator.class).orNull();
         final Map<String, String> batches = migrateBatches(context);
         final String date = SDF.format(new Date());
         final Path outputPath = existingBatch().toPath().resolve("batches/" + date);
@@ -134,7 +135,7 @@ public final class TranslationBatchGenerator {
             });
 
             Collections.sort(content);
-            final List<String> output = HartshornUtils.merge(HEADER, content);
+            final Collection<String> output = HartshornUtils.merge(HEADER, content);
 
             final String fileOut = String.join("\n", output);
             files.put(file.getName(), fileOut);

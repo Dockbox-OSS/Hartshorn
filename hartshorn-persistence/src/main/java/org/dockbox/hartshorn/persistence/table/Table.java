@@ -587,9 +587,7 @@ public class Table {
      */
     public boolean hasRow(final TableRow row) {
         for (final TableRow tableRow : this.rows()) {
-            if (tableRow == row) {
-                return true;
-            }
+            if (tableRow.equals(row)) return true;
         }
         return false;
     }

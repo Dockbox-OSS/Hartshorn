@@ -40,7 +40,9 @@ public final class I18N {
             if (lookup != null) prefix = lookup.id() + '.';
         }
 
-        return extract(method, prefix);
+        final String extracted = extract(method, prefix);
+        context.log().debug("Determined I18N key for %s: %s".formatted(method.qualifiedName(), extracted));
+        return extracted;
     }
 
     private static String extract(final MethodContext<?, ?> method, final String prefix) {

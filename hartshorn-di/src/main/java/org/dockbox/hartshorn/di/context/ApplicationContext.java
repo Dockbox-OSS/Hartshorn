@@ -21,20 +21,20 @@ import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.di.InjectionPoint;
 import org.dockbox.hartshorn.di.Key;
 import org.dockbox.hartshorn.di.MetaProvider;
-import org.dockbox.hartshorn.di.ProvisionFailure;
+import org.dockbox.hartshorn.di.TypeProvisionException;
 import org.dockbox.hartshorn.di.annotations.context.LogExclude;
 import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.di.inject.InjectionModifier;
 import org.dockbox.hartshorn.di.properties.Attribute;
 import org.dockbox.hartshorn.di.services.ComponentLocator;
-import org.dockbox.hartshorn.di.services.ServiceProcessor;
+import org.dockbox.hartshorn.di.services.ComponentProcessor;
 import org.slf4j.Logger;
 
 import java.lang.annotation.Annotation;
 import java.util.List;
 
 @LogExclude
-public interface ApplicationContext extends ApplicationBinder, HartshornContext {
+public interface ApplicationContext extends ApplicationBinder, HartshornContext, ApplicationPropertyHolder {
 
     void add(InjectionPoint<?> property);
 
@@ -44,11 +44,11 @@ public interface ApplicationContext extends ApplicationBinder, HartshornContext 
 
     <T> void enable(T typeInstance);
 
-    <T> T raw(TypeContext<T> type) throws ProvisionFailure;
+    <T> T raw(TypeContext<T> type) throws TypeProvisionException;
 
-    <T> T raw(TypeContext<T> type, boolean populate) throws ProvisionFailure;
+    <T> T raw(TypeContext<T> type, boolean populate) throws TypeProvisionException;
 
-    void add(ServiceProcessor<?> processor);
+    void add(ComponentProcessor<?> processor);
 
     void add(InjectionModifier<?> modifier);
 

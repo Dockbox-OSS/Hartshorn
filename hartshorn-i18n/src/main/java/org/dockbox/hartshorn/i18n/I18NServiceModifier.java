@@ -20,7 +20,7 @@ package org.dockbox.hartshorn.i18n;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.i18n.annotations.Resource;
 import org.dockbox.hartshorn.i18n.annotations.UseResources;
-import org.dockbox.hartshorn.i18n.common.ResourceEntry;
+import org.dockbox.hartshorn.i18n.common.Message;
 import org.dockbox.hartshorn.proxy.handle.ProxyFunction;
 import org.dockbox.hartshorn.proxy.service.MethodProxyContext;
 import org.dockbox.hartshorn.proxy.service.ServiceAnnotatedMethodModifier;
@@ -42,7 +42,7 @@ public class I18NServiceModifier extends ServiceAnnotatedMethodModifier<Resource
 
     @Override
     public <T> boolean preconditions(final ApplicationContext context, final MethodProxyContext<T> methodContext) {
-        return methodContext.method().returnType().childOf(ResourceEntry.class);
+        return methodContext.method().returnType().childOf(Message.class);
     }
 
     @Override

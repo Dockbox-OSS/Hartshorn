@@ -17,13 +17,12 @@
 
 package org.dockbox.hartshorn.di.context.element;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
-
 import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.api.domain.tuple.Tristate;
 import org.dockbox.hartshorn.api.exceptions.ApplicationException;
+import org.dockbox.hartshorn.di.ArrayListMultiMap;
 import org.dockbox.hartshorn.di.GenericType;
+import org.dockbox.hartshorn.di.MultiMap;
 import org.dockbox.hartshorn.di.NotPrimitiveException;
 import org.dockbox.hartshorn.di.TypeConversionException;
 import org.dockbox.hartshorn.di.annotations.inject.Bound;
@@ -104,7 +103,7 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
     private List<MethodContext<?, T>> flatMethods;
     private List<TypeContext<?>> typeParameters;
     private List<ConstructorContext<T>> constructors;
-    private Multimap<String, MethodContext<?, T>> methods;
+    private MultiMap<String, MethodContext<?, T>> methods;
     private Exceptional<ConstructorContext<T>> defaultConstructor;
     private Tristate isProxy = Tristate.UNDEFINED;
 
@@ -451,7 +450,7 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
         if (this.methods == null) {
             // Organizing the methods by name and arguments isn't worth the additional overhead for list comparisons,
             // so instead we only link it by name and perform the list comparison on request.
-            this.methods = ArrayListMultimap.create();
+            this.methods = new ArrayListMultiMap<>();
             for (final MethodContext<?, T> method : this.flatMethods()) {
                 this.methods.put(method.name(), method);
             }
@@ -463,6 +462,14 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
             }
         }
         return Exceptional.empty();
+    }
+
+    public Exceptional<MethodContext<?, T>> method(final String name, final TypeContext<?>... arguments) {
+        return this.method(name, Arrays.asList(arguments));
+    }
+
+    public Exceptional<MethodContext<?, T>> method(final String name, final Class<?>... arguments) {
+        return this.method(name, Arrays.stream(arguments).map(TypeContext::of).collect(Collectors.toList()));
     }
 
     private void verifyMetadataAvailable() {

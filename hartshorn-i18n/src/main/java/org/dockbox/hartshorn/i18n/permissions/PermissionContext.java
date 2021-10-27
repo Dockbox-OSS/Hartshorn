@@ -30,6 +30,7 @@ import lombok.Setter;
 @Builder
 @AllArgsConstructor
 @EqualsAndHashCode
+@Deprecated(since = "4.2.3")
 public class PermissionContext {
 
     private String user;
@@ -46,10 +47,12 @@ public class PermissionContext {
         this.world = world;
     }
 
+    @Deprecated(since = "4.2.3")
     public static PermissionContextBuilder builder() {
         return new PermissionContextBuilder();
     }
 
+    @Deprecated(since = "4.2.3")
     public Permission toPermission(final ApplicationContext context, final String key) {
         return context.get(Permission.class, key, this);
     }

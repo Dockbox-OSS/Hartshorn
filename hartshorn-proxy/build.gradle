@@ -1,9 +1,0 @@
-apply from: "$rootDir/parent.gradle"
-
-dependencies {
-    apiInclude 'org.dockbox.hartshorn:hartshorn-exceptions'
-    apiInclude 'org.dockbox.hartshorn:hartshorn-bootstrap'
-    apiInclude project(":hartshorn-di").sourceSets.impl.output
-
-    apiInclude "org.reflections:reflections:$reflectionsVersion"
-}

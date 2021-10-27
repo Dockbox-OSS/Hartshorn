@@ -17,21 +17,41 @@
 
 package org.dockbox.hartshorn.test;
 
+import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.boot.HartshornApplication;
+import org.dockbox.hartshorn.di.annotations.activate.Activator;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.mockito.Mockito;
 
+import java.util.Optional;
+
 import lombok.Getter;
 
 public class HartshornRunner implements BeforeEachCallback, AfterEachCallback{
 
+    @Getter private static final JUnitInformation information = new JUnitInformation();
+    @Getter private static final Activator activator = new JUnitActivator();
+
     @Getter private ApplicationContext activeContext;
 
     @Override
-    public void beforeEach(final ExtensionContext context) throws Exception {
-        this.activeContext = JUnit5Application.prepareBootstrap();
+    public void beforeEach(final ExtensionContext context) {
+        final Optional<Class<?>> testClass = context.getTestClass();
+        if (testClass.isEmpty()) throw new IllegalStateException("Test class was not provided to runner");
+
+        this.activeContext = createContext(testClass.get()).orNull();
+    }
+
+    public static Exceptional<ApplicationContext> createContext(final Class<?> activator) {
+        return Exceptional.of(() -> HartshornApplication.load(
+                new JUnitBootstrap(),
+                HartshornRunner.activator,
+                new JUnitActivatorContext<>(activator),
+                new String[0]
+        ).load());
     }
 
     @Override

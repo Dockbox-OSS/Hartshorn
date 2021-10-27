@@ -25,12 +25,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
-@SuppressWarnings("AbstractClassWithoutAbstractMethods")
 @AllArgsConstructor
 @Getter
 @Setter
 public abstract class AbstractTargetEvent extends ContextCarrierEvent implements Targetable {
-
     private Subject subject;
-
 }

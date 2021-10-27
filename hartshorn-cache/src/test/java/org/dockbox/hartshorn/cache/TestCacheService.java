@@ -21,20 +21,18 @@ import org.dockbox.hartshorn.cache.annotations.CacheService;
 import org.dockbox.hartshorn.cache.annotations.Cached;
 import org.dockbox.hartshorn.cache.annotations.EvictCache;
 import org.dockbox.hartshorn.cache.annotations.UpdateCache;
-import org.dockbox.hartshorn.util.HartshornUtils;
-
-import java.util.List;
 
 @CacheService("sample")
 public abstract class TestCacheService {
 
     @Cached
-    public List<String> cachedObjects() {
-        return HartshornUtils.asList(System.nanoTime() + "");
+    public long getCachedTime() {
+        // Return nanoseconds, as some tests evict and request within 1ms.
+        return System.nanoTime();
     }
 
     @UpdateCache
-    public abstract void updateCache(String s);
+    public abstract void update(long s);
 
     @EvictCache
     public abstract void evict();

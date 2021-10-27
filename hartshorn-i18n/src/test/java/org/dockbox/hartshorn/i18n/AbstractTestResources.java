@@ -19,15 +19,15 @@ package org.dockbox.hartshorn.i18n;
 
 import org.dockbox.hartshorn.di.annotations.service.Service;
 import org.dockbox.hartshorn.i18n.annotations.Resource;
-import org.dockbox.hartshorn.i18n.common.ResourceEntry;
+import org.dockbox.hartshorn.i18n.common.Message;
 
 @Service
 public abstract class AbstractTestResources {
 
     @Resource("Hello concrete world!")
-    public ResourceEntry concreteEntry() {return null;}
+    public Message concreteEntry() {return null;}
 
     @Resource("Hello abstract world!")
-    abstract ResourceEntry abstractEntry();
+    abstract Message abstractEntry();
 
 }
