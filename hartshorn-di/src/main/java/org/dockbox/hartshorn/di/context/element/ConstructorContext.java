@@ -48,10 +48,7 @@ public class ConstructorContext<T> extends ExecutableElementContext<Constructor<
 
     public Exceptional<T> createInstance(final ApplicationContext context) {
         this.prepareHandle();
-        final Object[] args = new Object[this.parameters().size()];
-        for (int i = 0; i < this.parameters().size(); i++) {
-            args[i] = context.get(this.parameters().get(i).type());
-        }
+        final Object[] args = this.arguments(context);
         return this.invoker.apply(args);
     }
 

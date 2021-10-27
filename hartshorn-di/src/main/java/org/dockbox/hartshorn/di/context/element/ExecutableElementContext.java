@@ -17,6 +17,10 @@
 
 package org.dockbox.hartshorn.di.context.element;
 
+import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.di.annotations.inject.Context;
+import org.dockbox.hartshorn.di.context.ApplicationContext;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Executable;
 import java.lang.reflect.Parameter;
@@ -51,5 +55,23 @@ public abstract class ExecutableElementContext<A extends Executable> extends Ann
 
     public int parameterCount() {
         return this.element().getParameterCount();
+    }
+
+    @SuppressWarnings("unchecked")
+    protected Object[] arguments(final ApplicationContext context) {
+        final Object[] args = new Object[this.parameterCount()];
+        for (int i = 0; i < this.parameterCount(); i++) {
+            final TypeContext<?> parameter = this.parameterTypes().get(i);
+            final Exceptional<Context> annotation = parameter.annotation(org.dockbox.hartshorn.di.annotations.inject.Context.class);
+            if (annotation.present() && parameter.childOf(org.dockbox.hartshorn.di.context.Context.class)) {
+                final String contextName = annotation.get().value();
+                if ("".equals(contextName)) args[i] = context.first((Class<? extends org.dockbox.hartshorn.di.context.Context>) parameter.type());
+                else context.first(contextName, (Class<? extends org.dockbox.hartshorn.di.context.Context>) parameter.type());
+            }
+            else {
+                args[i] = context.get(parameter);
+            }
+        }
+        return args;
     }
 }
