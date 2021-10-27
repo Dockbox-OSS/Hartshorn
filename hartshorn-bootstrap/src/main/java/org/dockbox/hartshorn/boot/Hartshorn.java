@@ -67,8 +67,9 @@ public final class Hartshorn {
     public static Logger log() {
         StackTraceElement element = null;
         for (final StackTraceElement ste : Thread.currentThread().getStackTrace()) {
-            if (ste.getModuleName() != null && ste.getModuleName().startsWith("java.")) continue;
-            else if (TypeContext.lookup(ste.getClassName()).annotation(LogExclude.class).present()) continue;
+            final boolean isJavaModule = ste.getModuleName() != null && ste.getModuleName().startsWith("java.");
+            final boolean isExcluded = TypeContext.lookup(ste.getClassName()).annotation(LogExclude.class).present();
+            if (isJavaModule || isExcluded) continue;
             else {
                 element = ste;
                 break;
@@ -106,7 +107,8 @@ public final class Hartshorn {
             }
 
             final byte[] buffer = new byte[in.available()];
-            in.read(buffer);
+            final int bytes = in.read(buffer);
+            if (bytes == -1) return Exceptional.of(new IOException("Requested resource contained no context"));
 
             final Path tempFile = Files.createTempFile(name, ".tmp");
             log().debug("Writing compressed resource " + name + " to temporary file " + tempFile.toFile().getName());
