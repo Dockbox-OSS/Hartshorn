@@ -1,5 +1,7 @@
 version = 1
 
+test_patterns = ["**/src/test/**", "**/src/testFixtures/**"]
+
 [[analyzers]]
 name = "java"
 enabled = true
