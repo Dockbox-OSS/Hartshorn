@@ -27,6 +27,8 @@ import org.dockbox.hartshorn.di.binding.Provider;
 import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.di.properties.BindingMetaAttribute;
 import org.dockbox.hartshorn.di.properties.UseFactory;
+import org.dockbox.hartshorn.di.types.ContextInjectedType;
+import org.dockbox.hartshorn.di.types.SampleContext;
 import org.dockbox.hartshorn.test.ApplicationAwareTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -355,5 +357,21 @@ public class ApplicationContextTests extends ApplicationAwareTest {
         Assertions.assertTrue(boundProvider.present());
         Assertions.assertTrue(boundProvider.get() instanceof BoundFactoryProvider);
         Assertions.assertTrue(((BoundFactoryProvider<SampleInterface>) boundProvider.get()).context().is(DualConstructableType.class));
+    }
+
+    @Test
+    void testContextFieldsAreInjected() {
+        this.context().add(new SampleContext("InjectedContext"));
+        final ContextInjectedType instance = this.context().populate(new ContextInjectedType());
+        Assertions.assertNotNull(instance.context());
+        Assertions.assertEquals("InjectedContext", instance.context().name());
+    }
+
+    @Test
+    void testNamedContextFieldsAreInjected() {
+        this.context().add("another", new SampleContext("InjectedContext"));
+        final ContextInjectedType instance = this.context().populate(new ContextInjectedType());
+        Assertions.assertNotNull(instance.anotherContext());
+        Assertions.assertEquals("InjectedContext", instance.anotherContext().name());
     }
 }
