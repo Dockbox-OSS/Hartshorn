@@ -19,7 +19,6 @@ package org.dockbox.hartshorn.commands.definition;
 
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.commands.CommandSource;
-import org.dockbox.hartshorn.i18n.permissions.Permission;
 import org.dockbox.hartshorn.core.HartshornUtils;
 
 import java.util.Collection;
@@ -61,11 +60,6 @@ public class CommandFlagElement<T> implements CommandFlag, CommandElement<T> {
     @Override
     public String name() {
         return HartshornUtils.trimWith('-', this.element.name());
-    }
-
-    @Override
-    public Exceptional<Permission> permission() {
-        return this.element.permission();
     }
 
     @Override

@@ -125,7 +125,6 @@ public class CommandDefinitionContextTests extends HartshornCommandTest {
         final Command command = this.createCommand();
         final CommandDefinitionContext context = new CommandDefinitionContextImpl(this.context(), command, null);
 
-        Assertions.assertEquals("demo", context.permission().get());
         Assertions.assertEquals(1, context.aliases().size());
         Assertions.assertEquals("demo", context.aliases().get(0));
 
@@ -179,11 +178,6 @@ public class CommandDefinitionContextTests extends HartshornCommandTest {
             @Override
             public String arguments() {
                 return "<required{String}> [optional{String}]  [enum{org.dockbox.hartshorn.commands.types.CommandValueEnum}] --flag --vflag String -s";
-            }
-
-            @Override
-            public String permission() {
-                return "demo";
             }
 
             @Override
