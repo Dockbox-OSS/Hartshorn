@@ -17,14 +17,22 @@
 
 package org.dockbox.hartshorn.di.context.element;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Executable;
 import java.lang.reflect.Parameter;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public abstract class ExecutableElementContext<A extends Executable> extends AnnotatedMemberContext<A> {
 
     private LinkedList<ParameterContext<?>> parameters;
+
+    public List<ParameterContext<?>> parameters(final Class<? extends Annotation> annotation) {
+        return this.parameters().stream()
+                .filter(parameter -> parameter.annotation(annotation).present())
+                .toList();
+    }
 
     public LinkedList<ParameterContext<?>> parameters() {
         if (this.parameters == null) {

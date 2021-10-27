@@ -25,10 +25,11 @@ import java.util.function.Function;
 
 import lombok.Getter;
 
-public class ConstructorContext<T> extends ExecutableElementContext<Constructor<T>> {
+public class ConstructorContext<T> extends ExecutableElementContext<Constructor<T>> implements TypedElementContext<T> {
 
     @Getter
     private final Constructor<T> constructor;
+    private TypeContext<T> type;
     private Function<Object[], Exceptional<T>> invoker;
 
     private ConstructorContext(final Constructor<T> constructor) {
@@ -54,6 +55,16 @@ public class ConstructorContext<T> extends ExecutableElementContext<Constructor<
         return this.invoker.apply(args);
     }
 
+    public TypeContext<T> type() {
+        if (this.type == null) this.type = TypeContext.of(this.element().getDeclaringClass());
+        return this.type;
+    }
+
+    @Override
+    public String name() {
+        return this.qualifiedName();
+    }
+
     private void prepareHandle() {
         if (this.invoker == null) {
             this.invoker = args -> Exceptional.of(() -> this.constructor.newInstance(args));
@@ -63,5 +74,10 @@ public class ConstructorContext<T> extends ExecutableElementContext<Constructor<
     @Override
     protected Constructor<T> element() {
         return this.constructor();
+    }
+
+    @Override
+    public String qualifiedName() {
+        return "Constructor[%s]".formatted(this.type().qualifiedName());
     }
 }
