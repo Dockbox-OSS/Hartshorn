@@ -30,18 +30,22 @@ public abstract class MultiMap<K, V> {
 
     protected abstract Collection<V> baseCollection();
 
-    public void put(K key, V value) {
+    public void putAll(final K key, final Collection<V> values) {
+        values.forEach(v -> this.put(key, v));
+    }
+
+    public void put(final K key, final V value) {
         this.map.computeIfAbsent(key, k -> this.baseCollection()).add(value);
     }
 
-    public void putIfAbsent(K key, V value) {
+    public void putIfAbsent(final K key, final V value) {
         this.map.computeIfAbsent(key, k -> this.baseCollection());
         if (!this.map.get(key).contains(value)) {
             this.map.get(key).add(value);
         }
     }
 
-    public Collection<V> get(Object key) {
+    public Collection<V> get(final Object key) {
         return this.map.getOrDefault(key, this.baseCollection());
     }
 
@@ -57,17 +61,17 @@ public abstract class MultiMap<K, V> {
         return this.map.values();
     }
 
-    public boolean containsKey(Object key) {
+    public boolean containsKey(final Object key) {
         return this.map.containsKey(key);
     }
 
-    public Collection<V> remove(Object key) {
+    public Collection<V> remove(final Object key) {
         return this.map.remove(key);
     }
 
     public int size() {
         int size = 0;
-        for (Collection<V> value : this.map.values()) {
+        for (final Collection<V> value : this.map.values()) {
             size += value.size();
         }
         return size;
@@ -81,14 +85,14 @@ public abstract class MultiMap<K, V> {
         this.map.clear();
     }
 
-    public boolean remove(K key, V value) {
+    public boolean remove(final K key, final V value) {
         if (this.map.get(key) != null)
             return this.map.get(key).remove(value);
 
         return false;
     }
 
-    public boolean replace(K key, V oldValue, V newValue) {
+    public boolean replace(final K key, final V oldValue, final V newValue) {
         if (this.map.get(key) != null) {
             if (this.map.get(key).remove(oldValue)) {
                 return this.map.get(key).add(newValue);

@@ -34,6 +34,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -134,7 +135,7 @@ public final class TranslationBatchGenerator {
             });
 
             Collections.sort(content);
-            final List<String> output = HartshornUtils.merge(HEADER, content);
+            final Collection<String> output = HartshornUtils.merge(HEADER, content);
 
             final String fileOut = String.join("\n", output);
             files.put(file.getName(), fileOut);
