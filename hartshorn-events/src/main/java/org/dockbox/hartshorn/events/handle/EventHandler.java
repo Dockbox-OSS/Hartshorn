@@ -22,7 +22,6 @@ import org.dockbox.hartshorn.di.context.element.TypeContext;
 import org.dockbox.hartshorn.events.EventWrapper;
 import org.dockbox.hartshorn.events.parents.Event;
 import org.dockbox.hartshorn.util.HartshornUtils;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Objects;
@@ -34,12 +33,9 @@ import java.util.stream.Collectors;
 public class EventHandler {
 
     private final TypeContext<? extends Event> eventType;
-
     private final Set<EventHandler> superTypeHandlers = HartshornUtils.emptySet();
-
     private final SortedSet<EventWrapperImpl<?>> invokers = new TreeSet<>(EventWrapperImpl.COMPARATOR);
-
-    private transient volatile EventWrapperImpl<?> @Nullable [] computedInvokerCache;
+    private transient EventWrapperImpl<?>[] computedInvokerCache;
 
     EventHandler(final TypeContext<? extends Event> eventType) {
         this.eventType = eventType;
