@@ -236,6 +236,7 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
         this.include = switch (modifier) {
             case SKIP_EMPTY -> Include.NON_EMPTY;
             case SKIP_NULL -> Include.NON_NULL;
+            default -> throw new IllegalArgumentException("Unknown modifier: " + modifier);
         };
     }
 
