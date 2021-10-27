@@ -21,19 +21,25 @@ import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.di.context.ApplicationContext;
 import org.dockbox.hartshorn.i18n.common.Formattable;
 
+@Deprecated(since = "4.2.3")
 public interface Permission extends Formattable {
 
+    @Deprecated(since = "4.2.3")
     static Permission of(final ApplicationContext context, final String node) {
         return context.get(Permission.class, node);
     }
 
+    @Deprecated(since = "4.2.3")
     static Permission of(final ApplicationContext context, final String key, final PermissionContext permissionContext) {
         return context.get(Permission.class, key, permissionContext);
     }
 
+    @Deprecated(since = "4.2.3")
     String get();
 
+    @Deprecated(since = "4.2.3")
     Exceptional<PermissionContext> context();
 
+    @Deprecated(since = "4.2.3")
     Permission withContext(PermissionContext context);
 }

@@ -22,6 +22,7 @@ import org.dockbox.hartshorn.di.annotations.inject.Binds;
 import org.dockbox.hartshorn.di.annotations.inject.Bound;
 
 @Binds(Permission.class)
+@Deprecated(since = "4.2.3")
 public class PermissionImpl implements Permission {
 
     private final String key;

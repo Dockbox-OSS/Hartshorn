@@ -117,16 +117,24 @@ public abstract class SystemSubject implements CommandSource, PermissionHolder, 
     }
 
     @Override
-    public void permission(@NotNull final String permission, final Tristate state) {}
+    public void permission(@NotNull final String permission, final Tristate state) {
+        // TODO #441 Remove permissions API
+    }
 
     @Override
-    public void permissions(final Tristate state, @NotNull final String @NotNull ... permissions) {}
+    public void permissions(final Tristate state, @NotNull final String @NotNull ... permissions) {
+        // TODO #441 Remove permissions API
+    }
 
     @Override
-    public void permission(@NotNull final Permission permission, final Tristate state) {}
+    public void permission(@NotNull final Permission permission, final Tristate state) {
+        // TODO #441 Remove permissions API
+    }
 
     @Override
-    public void permissions(final Tristate state, @NotNull final Permission @NotNull ... permissions) {}
+    public void permissions(final Tristate state, @NotNull final Permission @NotNull ... permissions) {
+        // TODO #441 Remove permissions API
+    }
 
     @Override
     public void execute(final String command) {

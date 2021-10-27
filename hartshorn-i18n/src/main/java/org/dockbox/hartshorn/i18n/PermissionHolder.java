@@ -21,30 +21,42 @@ import org.dockbox.hartshorn.api.domain.Identifiable;
 import org.dockbox.hartshorn.i18n.permissions.Permission;
 import org.dockbox.hartshorn.i18n.permissions.PermissionContext;
 
+@Deprecated(since = "4.2.3")
 public interface PermissionHolder extends Identifiable {
 
     // An empty context targets only global permissions
     PermissionContext GLOBAL = PermissionContext.builder().build();
 
+    @Deprecated(since = "4.2.3")
     PermissionContext activeContext();
 
+    @Deprecated(since = "4.2.3")
     boolean hasPermission(String permission);
 
+    @Deprecated(since = "4.2.3")
     boolean hasAnyPermission(String... permissions);
 
+    @Deprecated(since = "4.2.3")
     boolean hasAllPermissions(String... permissions);
 
+    @Deprecated(since = "4.2.3")
     boolean hasPermission(Permission permission);
 
+    @Deprecated(since = "4.2.3")
     boolean hasAnyPermission(Permission... permissions);
 
+    @Deprecated(since = "4.2.3")
     boolean hasAllPermissions(Permission... permissions);
 
+    @Deprecated(since = "4.2.3")
     void permission(String permission, org.dockbox.hartshorn.api.domain.tuple.Tristate state);
 
+    @Deprecated(since = "4.2.3")
     void permissions(org.dockbox.hartshorn.api.domain.tuple.Tristate state, String... permissions);
 
+    @Deprecated(since = "4.2.3")
     void permission(Permission permission, org.dockbox.hartshorn.api.domain.tuple.Tristate state);
 
+    @Deprecated(since = "4.2.3")
     void permissions(org.dockbox.hartshorn.api.domain.tuple.Tristate state, Permission... permissions);
 }
