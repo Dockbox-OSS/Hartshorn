@@ -19,6 +19,9 @@ package org.dockbox.hartshorn.di.context.element;
 
 import org.dockbox.hartshorn.util.HartshornUtils;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Executable;
+import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -30,13 +33,14 @@ import java.util.stream.Collectors;
 import lombok.Getter;
 
 @SuppressWarnings("unchecked")
-public class ParameterContext<T> extends AnnotatedElementContext<Parameter> {
+public class ParameterContext<T> extends AnnotatedElementContext<Parameter> implements TypedElementContext<T> {
 
     private final Parameter parameter;
     @Getter private final boolean isVarargs;
 
     private String name;
     private TypeContext<T> type;
+    private ExecutableElementContext<?> declaredBy;
     private List<TypeContext<?>> typeParameters;
 
     private ParameterContext(final Parameter parameter) {
@@ -48,6 +52,7 @@ public class ParameterContext<T> extends AnnotatedElementContext<Parameter> {
         return new ParameterContext<>(parameter);
     }
 
+    @Override
     public String name() {
         if (this.name == null) {
             this.name = this.element().getName();
@@ -55,6 +60,26 @@ public class ParameterContext<T> extends AnnotatedElementContext<Parameter> {
         return this.name;
     }
 
+    public ExecutableElementContext<?> declaredBy() {
+        if (this.declaredBy == null) {
+            final Executable executable = this.element().getDeclaringExecutable();
+            if (executable instanceof Method method) this.declaredBy = MethodContext.of(method);
+            else if (executable instanceof Constructor constructor) this.declaredBy = ConstructorContext.of(constructor);
+            else throw new RuntimeException("Unexpected executable type: " + executable.getName());
+        }
+        return this.declaredBy;
+    }
+
+    @Override
+    public String qualifiedName() {
+        return "%s -> %s[%s]".formatted(
+                this.declaredBy().qualifiedName(),
+                this.name(),
+                this.type().qualifiedName()
+        );
+    }
+
+    @Override
     public TypeContext<T> type() {
         if (this.type == null) {
             this.type = TypeContext.of((Class<T>) this.element().getType());

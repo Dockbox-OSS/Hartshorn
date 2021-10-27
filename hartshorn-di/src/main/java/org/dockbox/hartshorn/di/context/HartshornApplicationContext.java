@@ -37,6 +37,7 @@ import org.dockbox.hartshorn.di.ProvisionFailure;
 import org.dockbox.hartshorn.di.annotations.activate.Activator;
 import org.dockbox.hartshorn.di.annotations.inject.Binds;
 import org.dockbox.hartshorn.di.annotations.inject.Combines;
+import org.dockbox.hartshorn.di.annotations.inject.Context;
 import org.dockbox.hartshorn.di.annotations.inject.Enable;
 import org.dockbox.hartshorn.di.annotations.service.ServiceActivator;
 import org.dockbox.hartshorn.di.binding.BindingHierarchy;
@@ -465,12 +466,30 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
     @Override
     public <T> T populate(final T instance) {
         if (null != instance) {
-            for (final FieldContext<?> field : TypeContext.unproxy(this, instance).fields(Inject.class)) {
+            final TypeContext<T> unproxied = TypeContext.unproxy(this, instance);
+            for (final FieldContext<?> field : unproxied.fields(Inject.class)) {
                 final Object fieldInstance = this.get(field.type().type());
                 field.set(instance, fieldInstance);
             }
+            for (final FieldContext<?> field : unproxied.fields(Context.class)) {
+                this.populateContextField(field, instance);
+            }
         }
         return instance;
+    }
+
+    protected void populateContextField(final FieldContext<?> field, final Object instance) {
+        final TypeContext<?> type = field.type();
+        final Context annotation = field.annotation(Context.class).get();
+
+        final Exceptional<org.dockbox.hartshorn.di.context.Context> context;
+        if ("".equals(annotation.value())) {
+            context = this.first((Class<org.dockbox.hartshorn.di.context.Context>) type.type());
+        }
+        else {
+            context = this.first(annotation.value(), (Class<org.dockbox.hartshorn.di.context.Context>) type.type());
+        }
+        field.set(instance, context.orNull());
     }
 
     @Override

@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.Map;
 
 @SuppressWarnings("unchecked")
-public abstract class AnnotatedElementContext<A extends AnnotatedElement> extends DefaultContext {
+public abstract class AnnotatedElementContext<A extends AnnotatedElement> extends DefaultContext implements QualifiedElement {
 
     private Map<Class<?>, Annotation> annotations;
 

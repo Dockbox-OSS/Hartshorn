@@ -51,6 +51,11 @@ public class PropertyAliasIntrospector extends JacksonAnnotationIntrospector {
         if (annotated != null) {
             final AnnotatedElementContext<?> context = new AnnotatedElementContext<>() {
                 @Override
+                public String qualifiedName() {
+                    return a.getName();
+                }
+
+                @Override
                 protected AnnotatedElement element() {
                     return annotated;
                 }

@@ -93,16 +93,13 @@ public class MethodContext<T, P> extends ExecutableElementContext<Method> implem
             final int split = shortSig.lastIndexOf(')') + 1;
             j.add(shortSig.substring(split)).add(this.method().getName() + shortSig.substring(0, split));
             final String k = j.toString();
-            this.qualifiedName = this.parent().name() + '#' + k.substring(k.indexOf(' ')+1);
+            this.qualifiedName = this.parent().name() + '#' + k.substring(k.indexOf(' ') + 1);
         }
         return this.qualifiedName;
     }
 
     public Exceptional<T> invoke(final ApplicationContext context) {
-        final Object[] args = new Object[this.parameterCount()];
-        for (int i = 0; i < this.parameterCount(); i++) {
-            args[i] = context.get(this.parameterTypes().get(i));
-        }
+        final Object[] args = this.arguments(context);
         final P instance = context.get(this.parent());
         return this.invoke(instance, args);
     }

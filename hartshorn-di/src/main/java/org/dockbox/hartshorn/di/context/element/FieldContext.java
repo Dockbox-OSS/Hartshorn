@@ -30,7 +30,7 @@ import java.util.function.Function;
 import lombok.Getter;
 
 @SuppressWarnings("unchecked")
-public class FieldContext<T> extends AnnotatedMemberContext<Field> implements ModifierCarrier {
+public class FieldContext<T> extends AnnotatedMemberContext<Field> implements ModifierCarrier, TypedElementContext<T> {
 
     private static final Map<Field, FieldContext<?>> cache = HartshornUtils.emptyConcurrentMap();
 
@@ -99,10 +99,17 @@ public class FieldContext<T> extends AnnotatedMemberContext<Field> implements Mo
         return this.getter.apply(instance);
     }
 
+    @Override
     public String name() {
         return this.field().getName();
     }
 
+    @Override
+    public String qualifiedName() {
+        return "%s#%s[%s]".formatted(this.declaredBy().qualifiedName(), this.name(), this.type().qualifiedName());
+    }
+
+    @Override
     public TypeContext<T> type() {
         if (this.type == null) {
             this.type = (TypeContext<T>) TypeContext.of(this.field().getType());

@@ -1150,23 +1150,17 @@ public final class HartshornUtils {
     }
 
     public static <T> Set<T> difference(final Collection<T> collectionOne, final Collection<T> collectionTwo) {
-        BiFunction<Collection<T>, Collection<T>, List<T>> filter = (c1, c2) -> c1.stream()
+        final BiFunction<Collection<T>, Collection<T>, List<T>> filter = (c1, c2) -> c1.stream()
                 .filter(element -> !c2.contains(element))
                 .toList();
-        List<T> differenceInOne = filter.apply(collectionOne, collectionTwo);
-        List<T> differenceInTwo = filter.apply(collectionTwo, collectionOne);
+        final List<T> differenceInOne = filter.apply(collectionOne, collectionTwo);
+        final List<T> differenceInTwo = filter.apply(collectionTwo, collectionOne);
         return asSet(merge(differenceInOne, differenceInTwo));
     }
 
     @NotNull
     public static <T> Set<T> asSet(final Collection<T> collection) {
         return new HashSet<>(collection);
-    }
-
-    public static <T> List<T> merge(final Collection<T> collectionOne, final Collection<T> collectionTwo) {
-        final Set<T> merged = HartshornUtils.asSet(collectionOne);
-        merged.addAll(HartshornUtils.asSet(collectionTwo));
-        return HartshornUtils.asList(merged);
     }
 
     public static Vector3N cuboidSize(final Vector3N min, final Vector3N max) {
