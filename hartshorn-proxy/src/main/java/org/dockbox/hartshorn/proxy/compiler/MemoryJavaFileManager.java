@@ -31,7 +31,7 @@ class MemoryJavaFileManager extends ForwardingJavaFileManager<JavaFileManager> {
 
     final Map<String, byte[]> classBytes = new HashMap<>();
 
-    MemoryJavaFileManager(JavaFileManager fileManager) {
+    MemoryJavaFileManager(final JavaFileManager fileManager) {
         super(fileManager);
     }
 
@@ -40,8 +40,8 @@ class MemoryJavaFileManager extends ForwardingJavaFileManager<JavaFileManager> {
     }
 
     @Override
-    public JavaFileObject getJavaFileForOutput(JavaFileManager.Location location, String className, Kind kind,
-                                               FileObject sibling) throws IOException {
+    public JavaFileObject getJavaFileForOutput(final JavaFileManager.Location location, final String className, final Kind kind,
+                                               final FileObject sibling) throws IOException {
         if (kind == Kind.CLASS) {
             return new MemoryOutputJavaFileObject(this, className);
         }
@@ -52,6 +52,7 @@ class MemoryJavaFileManager extends ForwardingJavaFileManager<JavaFileManager> {
 
     @Override
     public void flush() {
+        // Nothing to flush
     }
 
     @Override
@@ -59,7 +60,7 @@ class MemoryJavaFileManager extends ForwardingJavaFileManager<JavaFileManager> {
         this.classBytes.clear();
     }
 
-    public JavaFileObject makeStringSource(String name, String code) {
+    public JavaFileObject makeStringSource(final String name, final String code) {
         return new MemoryInputJavaFileObject(name, code);
     }
 

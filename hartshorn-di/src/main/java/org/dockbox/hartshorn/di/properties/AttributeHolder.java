@@ -25,7 +25,11 @@ public interface AttributeHolder {
         return true;
     }
 
-    default void apply(final Attribute<?> property) throws ApplicationException {}
+    default void apply(final Attribute<?> property) throws ApplicationException {
+        // Optional implementation provided by inheritor
+    }
 
-    default void enable() throws ApplicationException {}
+    default void enable() throws ApplicationException {
+        // Optional implementation provided by inheritor
+    }
 }
