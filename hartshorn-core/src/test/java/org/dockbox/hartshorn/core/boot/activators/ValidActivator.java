@@ -18,7 +18,9 @@
 package org.dockbox.hartshorn.core.boot.activators;
 
 import org.dockbox.hartshorn.core.annotations.activate.Activator;
+import org.dockbox.hartshorn.core.annotations.inject.InjectConfig;
+import org.dockbox.hartshorn.testsuite.JUnitInjector;
 
-@Activator
+@Activator(configs = @InjectConfig(JUnitInjector.class))
 public class ValidActivator {
 }
