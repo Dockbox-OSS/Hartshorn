@@ -17,7 +17,9 @@
 
 package org.dockbox.hartshorn.web.annotations;
 
+import org.dockbox.hartshorn.config.annotations.UseConfigurations;
 import org.dockbox.hartshorn.core.annotations.service.ServiceActivator;
+import org.dockbox.hartshorn.events.annotations.UseEvents;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -27,5 +29,7 @@ import java.lang.annotation.Target;
 @ServiceActivator
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
+@UseEvents
+@UseConfigurations
 public @interface UseHttpServer {
 }
