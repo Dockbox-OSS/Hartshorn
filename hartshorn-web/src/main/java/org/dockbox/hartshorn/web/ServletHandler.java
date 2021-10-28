@@ -79,45 +79,48 @@ public class ServletHandler implements AttributeHolder {
         this.mapper.fileType(this.httpRequest.responseFormat());
     }
 
-    public void processRequest(final HttpMethod method, final HttpServletRequest req, final HttpServletResponse res, final HttpAction fallbackAction) throws ServletException, IOException {
-        final long start = System.currentTimeMillis();
-        final String sessionId = String.valueOf(req.hashCode());
-        final String request = "%s %s".formatted(method, req.getRequestURI());
+    public synchronized void processRequest(final HttpMethod method, final HttpServletRequest req, final HttpServletResponse res, final HttpAction fallbackAction) throws ServletException, IOException {
+        synchronized (this) {
+            final long start = System.currentTimeMillis();
+            final String sessionId = String.valueOf(req.hashCode());
+            final String request = "%s %s".formatted(method, req.getRequestURI());
 
-        if (method == this.httpMethod) {
-            if (this.addHeader) res.addHeader("Hartshorn-Version", Hartshorn.VERSION);
+            if (method == this.httpMethod) {
+                if (this.addHeader) res.addHeader("Hartshorn-Version", Hartshorn.VERSION);
 
-            final Exceptional<?> result = this.methodContext.invoke(this.context, this.parameters(req, res));
-            if (result.present()) {
-                this.context.log().debug("Request %s processed for session %s, writing response body".formatted(request, sessionId));
-                try {
-                    res.setStatus(HttpStatus.OK_200);
-                    res.setContentType("application/json");
-                    if (String.class.equals(result.type())) {
-                        this.context.log().debug("Returning plain body for request %s".formatted(request));
-                        res.getWriter().print(result.get());
-                    } else {
-                        this.context.log().debug("Writing body to string for request %s".formatted(request));
-                        final Exceptional<String> write = this.mapper.write(result.get());
-                        if (write.present()) {
-                            this.context.log().debug("Printing response body to response writer");
-                            res.getWriter().print(write.get());
+                final Exceptional<?> result = this.methodContext.invoke(this.context, this.parameters(req, res));
+                if (result.present()) {
+                    this.context.log().debug("Request %s processed for session %s, writing response body".formatted(request, sessionId));
+                    try {
+                        res.setStatus(HttpStatus.OK_200);
+                        res.setContentType("application/json");
+                        if (String.class.equals(result.type())) {
+                            this.context.log().debug("Returning plain body for request %s".formatted(request));
+                            res.getWriter().print(result.get());
                         }
                         else {
-                            res.setStatus(HttpStatus.INTERNAL_SERVER_ERROR_500);
-                            if (write.caught()) Except.handle("Could not process response for request %s for session %s".formatted(request, sessionId), write.error());
-                            else "Could not process response for request %s for session %s".formatted(request, sessionId);
+                            this.context.log().debug("Writing body to string for request %s".formatted(request));
+                            final Exceptional<String> write = this.mapper.write(result.get());
+                            if (write.present()) {
+                                this.context.log().debug("Printing response body to response writer");
+                                res.getWriter().print(write.get());
+                            }
+                            else {
+                                res.setStatus(HttpStatus.INTERNAL_SERVER_ERROR_500);
+                                if (write.caught()) Except.handle("Could not process response for request %s for session %s".formatted(request, sessionId), write.error());
+                                else "Could not process response for request %s for session %s".formatted(request, sessionId);
+                            }
                         }
+                        this.context.log().debug("Finished servlet handler for request %s with session %s in %dms".formatted(request, sessionId, System.currentTimeMillis() - start));
+                        return;
                     }
-                    this.context.log().debug("Finished servlet handler for request %s with session %s in %dms".formatted(request, sessionId, System.currentTimeMillis() - start));
-                    return;
-                }
-                catch (final IOException e) {
-                    Except.handle(e);
+                    catch (final IOException e) {
+                        Except.handle(e);
+                    }
                 }
             }
+            fallbackAction.fallback(req, res);
         }
-        fallbackAction.fallback(req, res);
     }
 
     protected List<Object> parameters(final HttpServletRequest req, final HttpServletResponse res) {
