@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.web.servlet;
 
-import org.dockbox.hartshorn.api.exceptions.ApplicationException;
+import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 import org.dockbox.hartshorn.web.RequestError;
 
 public interface ErrorServlet {

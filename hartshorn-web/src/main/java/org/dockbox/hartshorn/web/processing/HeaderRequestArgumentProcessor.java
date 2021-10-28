@@ -17,9 +17,9 @@
 
 package org.dockbox.hartshorn.web.processing;
 
-import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.di.context.ApplicationContext;
-import org.dockbox.hartshorn.di.context.element.ParameterContext;
+import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.core.context.ApplicationContext;
+import org.dockbox.hartshorn.core.context.element.ParameterContext;
 import org.dockbox.hartshorn.web.annotations.RequestHeader;
 
 import javax.servlet.http.HttpServletRequest;

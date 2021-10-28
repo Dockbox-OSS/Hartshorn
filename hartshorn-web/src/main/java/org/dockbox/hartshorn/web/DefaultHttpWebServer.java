@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.web;
 
-import org.dockbox.hartshorn.util.HartshornUtils;
+import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.web.processing.BodyRequestArgumentProcessor;
 import org.dockbox.hartshorn.web.processing.HeaderRequestArgumentProcessor;
 import org.dockbox.hartshorn.web.processing.RequestArgumentProcessor;

@@ -17,9 +17,9 @@
 
 package org.dockbox.hartshorn.jetty;
 
-import org.dockbox.hartshorn.di.annotations.inject.Binds;
-import org.dockbox.hartshorn.di.annotations.inject.Bound;
-import org.dockbox.hartshorn.di.annotations.inject.Enable;
+import org.dockbox.hartshorn.core.annotations.inject.Binds;
+import org.dockbox.hartshorn.core.annotations.inject.Bound;
+import org.dockbox.hartshorn.core.annotations.inject.Enable;
 import org.dockbox.hartshorn.persistence.properties.ModifiersAttribute;
 import org.dockbox.hartshorn.web.HttpMethod;
 import org.dockbox.hartshorn.web.RequestHandlerContext;

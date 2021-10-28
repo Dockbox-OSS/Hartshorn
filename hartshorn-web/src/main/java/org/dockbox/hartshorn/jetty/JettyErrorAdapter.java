@@ -17,12 +17,12 @@
 
 package org.dockbox.hartshorn.jetty;
 
-import org.dockbox.hartshorn.api.exceptions.ApplicationException;
-import org.dockbox.hartshorn.api.exceptions.Except;
-import org.dockbox.hartshorn.boot.Hartshorn;
-import org.dockbox.hartshorn.di.context.ApplicationContext;
-import org.dockbox.hartshorn.web.servlet.ErrorServlet;
+import org.dockbox.hartshorn.core.boot.Hartshorn;
+import org.dockbox.hartshorn.core.context.ApplicationContext;
+import org.dockbox.hartshorn.core.exceptions.ApplicationException;
+import org.dockbox.hartshorn.core.exceptions.Except;
 import org.dockbox.hartshorn.web.RequestError;
+import org.dockbox.hartshorn.web.servlet.ErrorServlet;
 import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.jetty.http.MimeTypes;

@@ -17,10 +17,10 @@
 
 package org.dockbox.hartshorn.web;
 
-import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.di.context.ApplicationContext;
-import org.dockbox.hartshorn.di.context.DefaultCarrierContext;
-import org.dockbox.hartshorn.di.context.element.MethodContext;
+import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.core.context.ApplicationContext;
+import org.dockbox.hartshorn.core.context.DefaultCarrierContext;
+import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.web.annotations.http.HttpRequest;
 import org.dockbox.hartshorn.web.annotations.RestController;
 

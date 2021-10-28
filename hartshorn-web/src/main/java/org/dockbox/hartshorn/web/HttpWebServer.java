@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.web;
 
-import org.dockbox.hartshorn.api.exceptions.ApplicationException;
+import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 import org.dockbox.hartshorn.web.processing.RequestArgumentProcessor;
 
 import java.util.Set;

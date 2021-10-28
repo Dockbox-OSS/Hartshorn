@@ -17,13 +17,13 @@
 
 package org.dockbox.hartshorn.jetty;
 
-import org.dockbox.hartshorn.api.exceptions.ApplicationException;
-import org.dockbox.hartshorn.boot.Hartshorn;
-import org.dockbox.hartshorn.di.annotations.inject.Binds;
-import org.dockbox.hartshorn.di.context.ApplicationContext;
-import org.dockbox.hartshorn.di.properties.Attribute;
-import org.dockbox.hartshorn.di.properties.AttributeHolder;
-import org.dockbox.hartshorn.di.properties.UseFactory;
+import org.dockbox.hartshorn.core.exceptions.ApplicationException;
+import org.dockbox.hartshorn.core.boot.Hartshorn;
+import org.dockbox.hartshorn.core.annotations.inject.Binds;
+import org.dockbox.hartshorn.core.context.ApplicationContext;
+import org.dockbox.hartshorn.core.properties.Attribute;
+import org.dockbox.hartshorn.core.properties.AttributeHolder;
+import org.dockbox.hartshorn.core.properties.UseFactory;
 import org.dockbox.hartshorn.persistence.properties.ModifiersAttribute;
 import org.dockbox.hartshorn.web.DefaultHttpWebServer;
 import org.dockbox.hartshorn.web.HttpWebServer;

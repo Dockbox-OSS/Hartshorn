@@ -17,9 +17,9 @@
 
 package org.dockbox.hartshorn.web;
 
-import org.dockbox.hartshorn.di.annotations.context.AutoCreating;
-import org.dockbox.hartshorn.di.context.DefaultContext;
-import org.dockbox.hartshorn.util.HartshornUtils;
+import org.dockbox.hartshorn.core.annotations.context.AutoCreating;
+import org.dockbox.hartshorn.core.context.DefaultContext;
+import org.dockbox.hartshorn.core.HartshornUtils;
 
 import java.util.Set;
 

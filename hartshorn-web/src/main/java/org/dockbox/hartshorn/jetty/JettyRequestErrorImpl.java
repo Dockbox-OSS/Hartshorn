@@ -17,9 +17,9 @@
 
 package org.dockbox.hartshorn.jetty;
 
-import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.di.context.ApplicationContext;
-import org.dockbox.hartshorn.di.context.DefaultCarrierContext;
+import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.core.context.ApplicationContext;
+import org.dockbox.hartshorn.core.context.DefaultCarrierContext;
 import org.dockbox.hartshorn.web.RequestError;
 
 import java.io.PrintWriter;

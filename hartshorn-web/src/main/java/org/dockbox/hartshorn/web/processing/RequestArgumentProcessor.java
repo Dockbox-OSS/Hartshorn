@@ -17,9 +17,9 @@
 
 package org.dockbox.hartshorn.web.processing;
 
-import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.di.context.ApplicationContext;
-import org.dockbox.hartshorn.di.context.element.ParameterContext;
+import org.dockbox.hartshorn.core.context.ApplicationContext;
+import org.dockbox.hartshorn.core.context.element.ParameterContext;
+import org.dockbox.hartshorn.core.domain.Exceptional;
 
 import java.lang.annotation.Annotation;
 
@@ -28,7 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 
 public interface RequestArgumentProcessor<A extends Annotation> {
     Class<A> annotation();
-    default boolean preconditions(ApplicationContext context, ParameterContext<?> parameter, HttpServletRequest request, HttpServletResponse response) {
+    default boolean preconditions(final ApplicationContext context, final ParameterContext<?> parameter, final HttpServletRequest request, final HttpServletResponse response) {
         return !(parameter.isVarargs() || parameter.type().isVoid());
     }
     <T> Exceptional<T> process(ApplicationContext context, ParameterContext<T> parameter, HttpServletRequest request, HttpServletResponse response);

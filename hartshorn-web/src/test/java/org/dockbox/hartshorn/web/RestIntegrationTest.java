@@ -16,7 +16,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.dockbox.hartshorn.config.annotations.UseConfigurations;
-import org.dockbox.hartshorn.di.annotations.activate.UseServiceProvision;
+import org.dockbox.hartshorn.core.annotations.activate.UseServiceProvision;
 import org.dockbox.hartshorn.events.annotations.UseEvents;
 import org.dockbox.hartshorn.test.ApplicationAwareTest;
 import org.dockbox.hartshorn.web.annotations.UseHttpServer;

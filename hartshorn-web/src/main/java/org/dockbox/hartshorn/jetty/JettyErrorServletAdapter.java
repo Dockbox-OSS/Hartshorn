@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.jetty;
 
-import org.dockbox.hartshorn.di.annotations.inject.Binds;
+import org.dockbox.hartshorn.core.annotations.inject.Binds;
 import org.dockbox.hartshorn.web.servlet.ErrorServlet;
 import org.dockbox.hartshorn.web.RequestError;
 

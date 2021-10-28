@@ -17,11 +17,11 @@
 
 package org.dockbox.hartshorn.web;
 
-import org.dockbox.hartshorn.api.exceptions.ApplicationException;
-import org.dockbox.hartshorn.boot.ServerState.Started;
-import org.dockbox.hartshorn.boot.annotations.UseBootstrap;
 import org.dockbox.hartshorn.config.annotations.Value;
-import org.dockbox.hartshorn.di.annotations.service.Service;
+import org.dockbox.hartshorn.core.annotations.service.Service;
+import org.dockbox.hartshorn.core.boot.ApplicationState.Started;
+import org.dockbox.hartshorn.core.boot.annotations.UseBootstrap;
+import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 import org.dockbox.hartshorn.events.EngineChangedState;
 import org.dockbox.hartshorn.events.annotations.Listener;
 

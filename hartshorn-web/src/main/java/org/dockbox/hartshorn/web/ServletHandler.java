@@ -17,22 +17,22 @@
 
 package org.dockbox.hartshorn.web;
 
-import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.api.exceptions.Except;
-import org.dockbox.hartshorn.boot.Hartshorn;
+import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.core.exceptions.Except;
+import org.dockbox.hartshorn.core.boot.Hartshorn;
 import org.dockbox.hartshorn.config.annotations.Value;
-import org.dockbox.hartshorn.di.annotations.component.Component;
-import org.dockbox.hartshorn.di.annotations.inject.Binds;
-import org.dockbox.hartshorn.di.annotations.inject.Bound;
-import org.dockbox.hartshorn.di.annotations.inject.Enable;
-import org.dockbox.hartshorn.di.context.ApplicationContext;
-import org.dockbox.hartshorn.di.context.element.MethodContext;
-import org.dockbox.hartshorn.di.context.element.ParameterContext;
-import org.dockbox.hartshorn.di.context.element.TypeContext;
-import org.dockbox.hartshorn.di.properties.AttributeHolder;
+import org.dockbox.hartshorn.core.annotations.inject.Enable;
+import org.dockbox.hartshorn.core.context.ApplicationContext;
+import org.dockbox.hartshorn.core.annotations.component.Component;
+import org.dockbox.hartshorn.core.annotations.inject.Binds;
+import org.dockbox.hartshorn.core.annotations.inject.Bound;
+import org.dockbox.hartshorn.core.context.element.MethodContext;
+import org.dockbox.hartshorn.core.context.element.ParameterContext;
+import org.dockbox.hartshorn.core.context.element.TypeContext;
+import org.dockbox.hartshorn.core.properties.AttributeHolder;
 import org.dockbox.hartshorn.persistence.mapping.ObjectMapper;
 import org.dockbox.hartshorn.persistence.properties.ModifiersAttribute;
-import org.dockbox.hartshorn.util.HartshornUtils;
+import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.web.annotations.http.HttpRequest;
 import org.dockbox.hartshorn.web.processing.RequestArgumentProcessor;
 import org.eclipse.jetty.http.HttpStatus;
