@@ -17,10 +17,10 @@
 
 package org.dockbox.hartshorn.commands.definition;
 
-import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.i18n.permissions.Permission;
-import org.dockbox.hartshorn.util.HartshornUtils;
+import org.dockbox.hartshorn.core.HartshornUtils;
 
 import java.util.Collection;
 
@@ -44,12 +44,12 @@ public class CommandFlagElement<T> implements CommandFlag, CommandElement<T> {
     }
 
     @Override
-    public Exceptional<T> parse(CommandSource source, String argument) {
+    public Exceptional<T> parse(final CommandSource source, final String argument) {
         return this.element.parse(source, argument);
     }
 
     @Override
-    public Collection<String> suggestions(CommandSource source, String argument) {
+    public Collection<String> suggestions(final CommandSource source, final String argument) {
         return this.element.suggestions(source, argument);
     }
 

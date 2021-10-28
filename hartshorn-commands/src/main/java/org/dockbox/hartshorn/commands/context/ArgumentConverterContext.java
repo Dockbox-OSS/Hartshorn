@@ -17,13 +17,13 @@
 
 package org.dockbox.hartshorn.commands.context;
 
-import org.dockbox.hartshorn.boot.Hartshorn;
-import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.core.boot.Hartshorn;
+import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
-import org.dockbox.hartshorn.di.annotations.context.AutoCreating;
-import org.dockbox.hartshorn.di.context.DefaultContext;
-import org.dockbox.hartshorn.di.context.element.TypeContext;
-import org.dockbox.hartshorn.util.HartshornUtils;
+import org.dockbox.hartshorn.core.annotations.context.AutoCreating;
+import org.dockbox.hartshorn.core.context.DefaultContext;
+import org.dockbox.hartshorn.core.context.element.TypeContext;
+import org.dockbox.hartshorn.core.HartshornUtils;
 
 import java.util.Map;
 

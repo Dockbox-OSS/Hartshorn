@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.events.listeners;
 
 import org.dockbox.hartshorn.events.GenericEvent;
 import org.dockbox.hartshorn.events.annotations.Listener;
-import org.dockbox.hartshorn.util.HartshornUtils;
+import org.dockbox.hartshorn.core.HartshornUtils;
 
 import java.util.List;
 
@@ -30,19 +30,19 @@ public class GenericEventListener {
     @Getter private static final List<Object> objects = HartshornUtils.emptyList();
 
     @Listener
-    public void onString(GenericEvent<String> event) {
+    public void onString(final GenericEvent<String> event) {
         if (event.value() instanceof String) return;
         throw new IllegalArgumentException("Expected type to be String, but got " + event.value().getClass());
     }
 
     @Listener
-    public void onInteger(GenericEvent<Integer> event) {
+    public void onInteger(final GenericEvent<Integer> event) {
         if (event.value() instanceof Integer) return;
         throw new IllegalArgumentException("Expected type to be Integer, but got " + event.value().getClass());
     }
 
     @Listener
-    public void on(GenericEvent<?> event) {
+    public void on(final GenericEvent<?> event) {
         objects.add(event.value());
     }
 

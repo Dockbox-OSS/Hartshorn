@@ -17,12 +17,12 @@
 
 package org.dockbox.hartshorn.persistence.mapping;
 
-import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.di.GenericType;
-import org.dockbox.hartshorn.di.context.element.TypeContext;
-import org.dockbox.hartshorn.di.properties.AttributeHolder;
+import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.core.GenericType;
+import org.dockbox.hartshorn.core.context.element.TypeContext;
+import org.dockbox.hartshorn.core.properties.AttributeHolder;
 import org.dockbox.hartshorn.persistence.FileType;
-import org.dockbox.hartshorn.util.HartshornUtils;
+import org.dockbox.hartshorn.core.HartshornUtils;
 
 import java.net.URI;
 import java.net.URL;

@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.config.annotations;
 
-import org.dockbox.hartshorn.di.context.element.TypeContext;
+import org.dockbox.hartshorn.core.context.element.TypeContext;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -26,7 +26,7 @@ import java.lang.annotation.Target;
 
 /**
  * Annotation used to indicate a field should be populated with the value obtained
- * from {@link org.dockbox.hartshorn.di.context.ApplicationPropertyHolder#property(String)} or the
+ * from {@link org.dockbox.hartshorn.core.context.ApplicationPropertyHolder#property(String)} or the
  * {@link #or() default value}.
  */
 @Retention(RetentionPolicy.RUNTIME)
@@ -52,8 +52,8 @@ public @interface Value {
     String value();
 
     /**
-     * The default value for the field, used when the result of {@link org.dockbox.hartshorn.di.context.ApplicationPropertyHolder#property(String)}
-     * returned <code>null</code>. Supports native types through {@link org.dockbox.hartshorn.di.context.element.TypeContext#toPrimitive(TypeContext, String)}.
+     * The default value for the field, used when the result of {@link org.dockbox.hartshorn.core.context.ApplicationPropertyHolder#property(String)}
+     * returned <code>null</code>. Supports native types through {@link org.dockbox.hartshorn.core.context.element.TypeContext#toPrimitive(TypeContext, String)}.
      *
      * @return The string-based default value.
      */

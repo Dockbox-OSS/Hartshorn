@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.i18n.common;
 
-import org.dockbox.hartshorn.di.context.ApplicationContext;
+import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.i18n.message.MessageTemplate;
 import org.dockbox.hartshorn.persistence.PersistentModel;
 

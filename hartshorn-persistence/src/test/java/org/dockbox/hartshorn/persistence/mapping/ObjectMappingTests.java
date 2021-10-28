@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.persistence.mapping;
 
-import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.persistence.Element;
 import org.dockbox.hartshorn.persistence.EntityElement;
 import org.dockbox.hartshorn.persistence.FileType;
@@ -25,8 +25,8 @@ import org.dockbox.hartshorn.persistence.MultiElement;
 import org.dockbox.hartshorn.persistence.NestedElement;
 import org.dockbox.hartshorn.persistence.PersistentElement;
 import org.dockbox.hartshorn.persistence.jackson.JacksonObjectMapper;
-import org.dockbox.hartshorn.test.ApplicationAwareTest;
-import org.dockbox.hartshorn.util.HartshornUtils;
+import org.dockbox.hartshorn.testsuite.ApplicationAwareTest;
+import org.dockbox.hartshorn.core.HartshornUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -87,7 +87,7 @@ public class ObjectMappingTests extends ApplicationAwareTest {
 
         final Exceptional<? extends Element> result = mapper.read(content, expected.getClass());
 
-        if (result.absent()) System.out.println(result.error().getMessage());
+        if (result.absent()) throw new RuntimeException(result.error().getMessage());
         Assertions.assertTrue(result.present());
         Assertions.assertEquals(expected.getClass(), result.type());
         Assertions.assertEquals(expected, result.get());

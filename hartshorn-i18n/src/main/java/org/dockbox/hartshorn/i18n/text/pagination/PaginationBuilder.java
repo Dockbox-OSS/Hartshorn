@@ -18,7 +18,7 @@
 package org.dockbox.hartshorn.i18n.text.pagination;
 
 import org.dockbox.hartshorn.i18n.text.Text;
-import org.dockbox.hartshorn.util.HartshornUtils;
+import org.dockbox.hartshorn.core.HartshornUtils;
 
 import java.util.List;
 

@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.persistence.table;
 
-import org.dockbox.hartshorn.di.context.element.TypeContext;
+import org.dockbox.hartshorn.core.context.element.TypeContext;
 
 import java.util.Objects;
 

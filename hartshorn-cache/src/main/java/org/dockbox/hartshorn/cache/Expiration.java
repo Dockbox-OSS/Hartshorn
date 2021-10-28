@@ -34,7 +34,7 @@ public class Expiration {
     private final int amount;
     private final TimeUnit unit;
 
-    public static Expiration of(Expire expire) {
+    public static Expiration of(final Expire expire) {
         return new Expiration(expire.amount(), expire.unit());
     }
 

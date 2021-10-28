@@ -17,9 +17,9 @@
 
 package org.dockbox.hartshorn.persistence;
 
-import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.di.ContextCarrier;
-import org.dockbox.hartshorn.di.properties.AttributeHolder;
+import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.core.context.ContextCarrier;
+import org.dockbox.hartshorn.core.properties.AttributeHolder;
 
 import java.util.Set;
 

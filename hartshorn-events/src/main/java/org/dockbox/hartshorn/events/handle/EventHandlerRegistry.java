@@ -17,9 +17,9 @@
 
 package org.dockbox.hartshorn.events.handle;
 
-import org.dockbox.hartshorn.di.context.element.TypeContext;
+import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.events.parents.Event;
-import org.dockbox.hartshorn.util.HartshornUtils;
+import org.dockbox.hartshorn.core.HartshornUtils;
 
 import java.util.Map;
 
@@ -29,7 +29,7 @@ public final class EventHandlerRegistry {
 
     @Getter private final Map<TypeContext<? extends Event>, EventHandler> handlers = HartshornUtils.emptyMap();
 
-    public EventHandler handler(TypeContext<? extends Event> type) {
+    public EventHandler handler(final TypeContext<? extends Event> type) {
         EventHandler handler = this.handlers.get(type);
         if (null == handler) {
             this.computeHierarchy(handler = new EventHandler(type));
@@ -38,8 +38,8 @@ public final class EventHandlerRegistry {
         return handler;
     }
 
-    public void computeHierarchy(EventHandler subject) {
-        for (EventHandler handler : this.handlers.values()) {
+    public void computeHierarchy(final EventHandler subject) {
+        for (final EventHandler handler : this.handlers.values()) {
             if (subject == handler) continue;
             if (subject.subtypeOf(handler)) subject.addSuperTypeHandler(handler);
             else if (handler.subtypeOf(subject)) handler.addSuperTypeHandler(subject);

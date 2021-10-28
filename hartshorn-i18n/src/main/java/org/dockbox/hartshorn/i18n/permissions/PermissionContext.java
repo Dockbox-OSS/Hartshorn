@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.i18n.permissions;
 
-import org.dockbox.hartshorn.di.context.ApplicationContext;
+import org.dockbox.hartshorn.core.context.ApplicationContext;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

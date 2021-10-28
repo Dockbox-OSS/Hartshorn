@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.commands;
 
-import org.dockbox.hartshorn.di.annotations.inject.Bound;
+import org.dockbox.hartshorn.core.annotations.inject.Bound;
 import org.dockbox.hartshorn.i18n.text.actions.ClickAction;
 import org.dockbox.hartshorn.i18n.text.actions.CommandAction;
 
@@ -44,7 +44,7 @@ public final class RunCommandAction {
     /**
      * A specialized {@link ClickAction} capable
      * of performing a given command. Requires the <code>result</code> to be provided when
-     * created through a {@link org.dockbox.hartshorn.di.binding.BoundFactoryProvider}.
+     * created through a {@link org.dockbox.hartshorn.core.binding.BoundFactoryProvider}.
      */
     public static final class RunCommand extends CommandAction<String> {
 

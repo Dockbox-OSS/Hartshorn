@@ -17,23 +17,22 @@
 
 package org.dockbox.hartshorn.commands;
 
-import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.commands.annotations.UseCommands;
 import org.dockbox.hartshorn.commands.arguments.CustomParameterPattern;
 import org.dockbox.hartshorn.commands.arguments.HashtagParameterPattern;
 import org.dockbox.hartshorn.commands.types.CuboidArgument;
-import org.dockbox.hartshorn.di.context.element.TypeContext;
+import org.dockbox.hartshorn.core.HartshornUtils;
+import org.dockbox.hartshorn.core.context.element.TypeContext;
+import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.i18n.common.Message;
 import org.dockbox.hartshorn.i18n.message.DetachedMessage;
-import org.dockbox.hartshorn.test.ApplicationAwareTest;
-import org.dockbox.hartshorn.util.HartshornUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
 @UseCommands
-public class HashtagParameterPatternTests extends ApplicationAwareTest {
+public class HashtagParameterPatternTests extends HartshornCommandTest {
 
     @Test
     void testPreconditionsAcceptValidPattern() {

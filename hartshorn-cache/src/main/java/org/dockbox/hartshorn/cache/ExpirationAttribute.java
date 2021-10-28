@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.cache;
 
-import org.dockbox.hartshorn.di.properties.Attribute;
+import org.dockbox.hartshorn.core.properties.Attribute;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

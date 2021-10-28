@@ -17,11 +17,11 @@
 
 package org.dockbox.hartshorn.commands;
 
-import org.dockbox.hartshorn.api.domain.Identifiable;
-import org.dockbox.hartshorn.api.domain.tuple.Tristate;
-import org.dockbox.hartshorn.api.exceptions.Except;
+import org.dockbox.hartshorn.core.domain.Identifiable;
+import org.dockbox.hartshorn.core.domain.tuple.Tristate;
+import org.dockbox.hartshorn.core.exceptions.Except;
 import org.dockbox.hartshorn.commands.exceptions.ParsingException;
-import org.dockbox.hartshorn.di.context.ApplicationContext;
+import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.i18n.PermissionHolder;
 import org.dockbox.hartshorn.i18n.common.Language;
 import org.dockbox.hartshorn.i18n.common.Message;

@@ -19,10 +19,10 @@ package org.dockbox.hartshorn.commands.annotations;
 
 import org.dockbox.hartshorn.commands.arguments.CustomParameterPattern;
 import org.dockbox.hartshorn.commands.arguments.HashtagParameterPattern;
-import org.dockbox.hartshorn.di.ComponentType;
-import org.dockbox.hartshorn.di.annotations.component.Component;
-import org.dockbox.hartshorn.util.annotations.AliasFor;
-import org.dockbox.hartshorn.util.annotations.Extends;
+import org.dockbox.hartshorn.core.ComponentType;
+import org.dockbox.hartshorn.core.annotations.component.Component;
+import org.dockbox.hartshorn.core.annotations.AliasFor;
+import org.dockbox.hartshorn.core.annotations.Extends;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

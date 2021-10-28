@@ -17,10 +17,10 @@
 
 package org.dockbox.hartshorn.demo.commands.services;
 
-import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.commands.arguments.ArgumentConverterImpl;
 import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
-import org.dockbox.hartshorn.di.annotations.service.Service;
+import org.dockbox.hartshorn.core.annotations.service.Service;
 
 @Service
 public class ArgumentConverterService {

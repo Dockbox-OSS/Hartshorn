@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.persistence;
 
-import org.dockbox.hartshorn.di.properties.Attribute;
+import org.dockbox.hartshorn.core.properties.Attribute;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -28,7 +28,7 @@ public final class FileTypeAttribute implements Attribute<FileType> {
 
     @Getter private final FileType value;
 
-    public static FileTypeAttribute of(FileType fileType) {
+    public static FileTypeAttribute of(final FileType fileType) {
         return new FileTypeAttribute(fileType);
     }
 }

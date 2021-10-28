@@ -18,7 +18,7 @@
 package org.dockbox.hartshorn.i18n.text.actions;
 
 public abstract class CommandAction<T> extends ClickAction<T> {
-    protected CommandAction(T result) {
+    protected CommandAction(final T result) {
         super(result);
     }
 }

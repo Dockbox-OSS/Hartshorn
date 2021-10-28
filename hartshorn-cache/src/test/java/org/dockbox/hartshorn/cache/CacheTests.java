@@ -17,16 +17,24 @@
 
 package org.dockbox.hartshorn.cache;
 
-import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.cache.annotations.UseCaching;
-import org.dockbox.hartshorn.test.ApplicationAwareTest;
-import org.dockbox.hartshorn.test.util.JUnitCacheManager;
+import org.dockbox.hartshorn.core.Key;
+import org.dockbox.hartshorn.core.binding.Providers;
+import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.testsuite.ApplicationAwareTest;
+import org.dockbox.hartshorn.testsuite.JUnitInjector;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 @UseCaching
 public class CacheTests extends ApplicationAwareTest {
+
+    @BeforeAll
+    public static void register() {
+        JUnitInjector.register(Key.of(CacheManager.class), Providers.of(JUnitCacheManager.class));
+    }
 
     @Test
     void testEvictMethodIsCalled() {

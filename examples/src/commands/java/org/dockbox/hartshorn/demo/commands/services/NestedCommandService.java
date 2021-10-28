@@ -23,7 +23,7 @@ import org.dockbox.hartshorn.commands.context.CommandContext;
 import java.util.Arrays;
 
 /**
- * A simple service capable of handling sub/child commands. {@link Command} is an extension of {@link org.dockbox.hartshorn.di.annotations.service.Service}.
+ * A simple service capable of handling sub/child commands. {@link Command} is an extension of {@link org.dockbox.hartshorn.core.annotations.service.Service}.
  * Services annotated with {@link Command} are able to register child commands, as each {@link Command} method in such a service
  * is registered as a child command.
  */

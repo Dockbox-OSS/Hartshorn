@@ -26,7 +26,7 @@ public class DetachedMessage implements Message {
 
     private final String fake;
 
-    public DetachedMessage(String content) {
+    public DetachedMessage(final String content) {
         this.fake = content;
     }
 
@@ -51,12 +51,12 @@ public class DetachedMessage implements Message {
     }
 
     @Override
-    public Message translate(MessageReceiver receiver) {
+    public Message translate(final MessageReceiver receiver) {
         return this;
     }
 
     @Override
-    public Message translate(Language lang) {
+    public Message translate(final Language lang) {
         return this;
     }
 
@@ -66,7 +66,7 @@ public class DetachedMessage implements Message {
     }
 
     @Override
-    public Message format(Object... args) {
+    public Message format(final Object... args) {
         return this;
     }
 

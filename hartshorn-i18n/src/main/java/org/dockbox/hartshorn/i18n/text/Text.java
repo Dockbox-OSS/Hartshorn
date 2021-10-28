@@ -24,7 +24,7 @@ import org.dockbox.hartshorn.i18n.text.actions.HoverAction;
 import org.dockbox.hartshorn.i18n.text.actions.ShiftClickAction;
 import org.dockbox.hartshorn.i18n.text.persistence.PersistentTextModel;
 import org.dockbox.hartshorn.persistence.PersistentCapable;
-import org.dockbox.hartshorn.util.HartshornUtils;
+import org.dockbox.hartshorn.core.HartshornUtils;
 
 import java.util.Arrays;
 import java.util.List;

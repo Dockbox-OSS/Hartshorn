@@ -17,8 +17,8 @@
 
 package org.dockbox.hartshorn.persistence.properties;
 
-import org.dockbox.hartshorn.di.properties.Attribute;
-import org.dockbox.hartshorn.util.HartshornUtils;
+import org.dockbox.hartshorn.core.properties.Attribute;
+import org.dockbox.hartshorn.core.HartshornUtils;
 
 import java.util.Set;
 

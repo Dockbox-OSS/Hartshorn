@@ -17,19 +17,19 @@
 
 package org.dockbox.hartshorn.config;
 
-import org.dockbox.hartshorn.api.exceptions.Except;
-import org.dockbox.hartshorn.boot.Hartshorn;
+import org.dockbox.hartshorn.core.exceptions.Except;
+import org.dockbox.hartshorn.core.boot.Hartshorn;
 import org.dockbox.hartshorn.config.annotations.UseConfigurations;
 import org.dockbox.hartshorn.config.annotations.Value;
-import org.dockbox.hartshorn.di.NotPrimitiveException;
-import org.dockbox.hartshorn.di.TypeConversionException;
-import org.dockbox.hartshorn.di.context.ApplicationContext;
-import org.dockbox.hartshorn.di.context.element.FieldContext;
-import org.dockbox.hartshorn.di.context.element.TypeContext;
-import org.dockbox.hartshorn.di.inject.InjectionModifier;
-import org.dockbox.hartshorn.di.properties.Attribute;
-import org.dockbox.hartshorn.util.HartshornUtils;
-import org.dockbox.hartshorn.util.exceptions.FieldAccessException;
+import org.dockbox.hartshorn.core.exceptions.NotPrimitiveException;
+import org.dockbox.hartshorn.core.exceptions.TypeConversionException;
+import org.dockbox.hartshorn.core.context.ApplicationContext;
+import org.dockbox.hartshorn.core.context.element.FieldContext;
+import org.dockbox.hartshorn.core.context.element.TypeContext;
+import org.dockbox.hartshorn.core.inject.InjectionModifier;
+import org.dockbox.hartshorn.core.properties.Attribute;
+import org.dockbox.hartshorn.core.HartshornUtils;
+import org.dockbox.hartshorn.core.exceptions.FieldAccessException;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;

@@ -17,19 +17,19 @@
 
 package org.dockbox.hartshorn.persistence.table;
 
-import org.dockbox.hartshorn.boot.Hartshorn;
-import org.dockbox.hartshorn.api.annotations.Property;
-import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.di.context.ApplicationContext;
-import org.dockbox.hartshorn.di.context.element.ConstructorContext;
-import org.dockbox.hartshorn.di.context.element.FieldContext;
-import org.dockbox.hartshorn.di.context.element.TypeContext;
+import org.dockbox.hartshorn.core.boot.Hartshorn;
+import org.dockbox.hartshorn.core.annotations.Property;
+import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.core.context.ApplicationContext;
+import org.dockbox.hartshorn.core.context.element.ConstructorContext;
+import org.dockbox.hartshorn.core.context.element.FieldContext;
+import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.persistence.PersistentCapable;
 import org.dockbox.hartshorn.persistence.PersistentModel;
 import org.dockbox.hartshorn.persistence.exceptions.EmptyEntryException;
 import org.dockbox.hartshorn.persistence.exceptions.IdentifierMismatchException;
 import org.dockbox.hartshorn.persistence.exceptions.UnknownIdentifierException;
-import org.dockbox.hartshorn.util.HartshornUtils;
+import org.dockbox.hartshorn.core.HartshornUtils;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

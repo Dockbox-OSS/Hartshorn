@@ -17,9 +17,9 @@
 
 package org.dockbox.hartshorn.cache.annotations;
 
-import org.dockbox.hartshorn.di.annotations.service.Service;
-import org.dockbox.hartshorn.util.annotations.AliasFor;
-import org.dockbox.hartshorn.util.annotations.Extends;
+import org.dockbox.hartshorn.core.annotations.service.Service;
+import org.dockbox.hartshorn.core.annotations.AliasFor;
+import org.dockbox.hartshorn.core.annotations.Extends;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

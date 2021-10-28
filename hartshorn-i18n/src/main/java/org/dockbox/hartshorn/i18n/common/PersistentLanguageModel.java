@@ -17,8 +17,8 @@
 
 package org.dockbox.hartshorn.i18n.common;
 
-import org.dockbox.hartshorn.api.annotations.Property;
-import org.dockbox.hartshorn.di.context.ApplicationContext;
+import org.dockbox.hartshorn.core.annotations.Property;
+import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.persistence.PersistentModel;
 
 import lombok.Getter;

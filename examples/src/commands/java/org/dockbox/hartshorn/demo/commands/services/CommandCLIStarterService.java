@@ -17,11 +17,13 @@
 
 package org.dockbox.hartshorn.demo.commands.services;
 
-import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.boot.Hartshorn;
-import org.dockbox.hartshorn.boot.ServerState.Started;
+import org.dockbox.hartshorn.core.boot.ApplicationState;
+import org.dockbox.hartshorn.core.boot.HartshornApplication;
+import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.core.boot.Hartshorn;
+import org.dockbox.hartshorn.core.boot.ApplicationState.Started;
 import org.dockbox.hartshorn.commands.CommandCLI;
-import org.dockbox.hartshorn.di.annotations.service.Service;
+import org.dockbox.hartshorn.core.annotations.service.Service;
 import org.dockbox.hartshorn.events.EngineChangedState;
 import org.dockbox.hartshorn.events.annotations.Listener;
 
@@ -35,7 +37,7 @@ public class CommandCLIStarterService {
 
     /**
      * The method activated when the engine is done starting, this is done automatically when the application
-     * was bootstrapped through {@link org.dockbox.hartshorn.boot.HartshornApplication}.
+     * was bootstrapped through {@link HartshornApplication}.
      *
      * <p>In this example we wish to use the {@link CommandCLI} to be able to the file {@code commands.txt} to
      * enter commands. This can be done by overriding the default {@link InputStream} of the {@link CommandCLI}.
@@ -44,7 +46,7 @@ public class CommandCLIStarterService {
      *
      * <p>Note the use of the generic type parameter {@link Started} in the event. This causes this method to
      * activate only when a {@link EngineChangedState} event is posted with this exact type parameter. When the
-     * posted parameter is another sub-class of {@link org.dockbox.hartshorn.boot.ServerState} this method will not
+     * posted parameter is another sub-class of {@link ApplicationState} this method will not
      * activate. However, if the notation of this event changed to {@code EngineChangedState<?>} it would activate
      * with any type parameter, as long as the event itself is a {@link EngineChangedState}.
      */

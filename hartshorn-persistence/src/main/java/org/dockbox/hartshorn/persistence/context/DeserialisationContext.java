@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.persistence.context;
 
-import org.dockbox.hartshorn.di.context.element.TypeContext;
+import org.dockbox.hartshorn.core.context.element.TypeContext;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

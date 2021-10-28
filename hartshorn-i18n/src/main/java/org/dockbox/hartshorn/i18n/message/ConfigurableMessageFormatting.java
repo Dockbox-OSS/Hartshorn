@@ -18,8 +18,8 @@
 package org.dockbox.hartshorn.i18n.message;
 
 import org.dockbox.hartshorn.config.annotations.Value;
-import org.dockbox.hartshorn.di.annotations.inject.Binds;
-import org.dockbox.hartshorn.di.annotations.service.Service;
+import org.dockbox.hartshorn.core.annotations.inject.Binds;
+import org.dockbox.hartshorn.core.annotations.service.Service;
 
 import lombok.Getter;
 

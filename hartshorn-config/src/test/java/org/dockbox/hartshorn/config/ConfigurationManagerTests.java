@@ -17,25 +17,25 @@
 
 package org.dockbox.hartshorn.config;
 
-import org.dockbox.hartshorn.boot.Hartshorn;
 import org.dockbox.hartshorn.config.annotations.UseConfigurations;
-import org.dockbox.hartshorn.di.context.element.TypeContext;
+import org.dockbox.hartshorn.core.boot.Hartshorn;
+import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.persistence.FileManager;
+import org.dockbox.hartshorn.persistence.FileManagerTest;
 import org.dockbox.hartshorn.persistence.FileType;
 import org.dockbox.hartshorn.persistence.FileTypeAttribute;
-import org.dockbox.hartshorn.test.ApplicationAwareTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.nio.file.Path;
 
 @UseConfigurations
-public class ConfigurationManagerTests extends ApplicationAwareTest {
+public class ConfigurationManagerTests extends FileManagerTest {
 
     @Test
     void testClassPathConfigurations() {
         // Configuration is read from resources/junit.yml
-        DemoClasspathConfiguration configuration = this.context().get(DemoClasspathConfiguration.class);
+        final DemoClasspathConfiguration configuration = this.context().get(DemoClasspathConfiguration.class);
 
         Assertions.assertNotNull(configuration);
         Assertions.assertNotNull(configuration.classPathValue());
@@ -45,8 +45,8 @@ public class ConfigurationManagerTests extends ApplicationAwareTest {
     @Test
     void testFsConfigurations() {
         // Create and populate the file, as we have no way to define local files in tests (yet)
-        FileManager files = this.context().get(FileManager.class, FileTypeAttribute.of(FileType.YAML));
-        Path file = files.configFile(Hartshorn.class, "junit");
+        final FileManager files = this.context().get(FileManager.class, FileTypeAttribute.of(FileType.YAML));
+        final Path file = files.configFile(Hartshorn.class, "junit");
         files.write(file, """
                 junit:
                     fs: "This is a value"
@@ -54,7 +54,7 @@ public class ConfigurationManagerTests extends ApplicationAwareTest {
 
         new ConfigurationServiceProcessor().process(this.context(), TypeContext.of(DemoFSConfiguration.class));
 
-        DemoFSConfiguration configuration = this.context().get(DemoFSConfiguration.class);
+        final DemoFSConfiguration configuration = this.context().get(DemoFSConfiguration.class);
         Assertions.assertNotNull(configuration);
         Assertions.assertNotNull(configuration.fileSystemValue());
         Assertions.assertEquals("This is a value", configuration.fileSystemValue());
