@@ -19,14 +19,14 @@ package org.dockbox.hartshorn.events;
 
 import org.dockbox.hartshorn.core.domain.Subject;
 import org.dockbox.hartshorn.events.parents.CancellableContextCarrierEvent;
-import org.dockbox.hartshorn.events.parents.Targetable;
+import org.dockbox.hartshorn.events.parents.SubjectHolder;
 
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public abstract class AbstractTargetCancellableEvent extends CancellableContextCarrierEvent implements Targetable {
+public abstract class AbstractTargetCancellableEvent extends CancellableContextCarrierEvent implements SubjectHolder {
     private boolean cancelled;
     private Subject subject;
 

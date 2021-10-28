@@ -15,10 +15,13 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.core;
+package org.dockbox.hartshorn.events.parents;
 
-import java.lang.annotation.Annotation;
+import org.dockbox.hartshorn.core.domain.Subject;
 
-public interface Activatable<A extends Annotation> {
-    Class<A> activator();
+public interface SubjectHolder {
+
+    Subject subject();
+
+    SubjectHolder subject(Subject subject);
 }
