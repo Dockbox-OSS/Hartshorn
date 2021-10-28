@@ -53,7 +53,7 @@ public interface ObjectMapper extends AttributeHolder {
 
     <T> Exceptional<T> read(URL url, Class<T> type);
 
-    default <T> Exceptional<T> read(URI uri, Class<T> type) {
+    default <T> Exceptional<T> read(final URI uri, final Class<T> type) {
         return Exceptional.of(() -> this.read(uri.toURL(), type).orNull());
     }
 
@@ -63,7 +63,7 @@ public interface ObjectMapper extends AttributeHolder {
 
     <T> Exceptional<T> read(URL url, GenericType<T> type);
 
-    default <T> Exceptional<T> read(URI uri, GenericType<T> type) {
+    default <T> Exceptional<T> read(final URI uri, final GenericType<T> type) {
         return Exceptional.of(() -> this.read(uri.toURL(), type).orNull());
     }
 
@@ -73,7 +73,7 @@ public interface ObjectMapper extends AttributeHolder {
 
     Map<String, Object> flat(URL url);
 
-    default Map<String, Object> flat(URI uri) {
+    default Map<String, Object> flat(final URI uri) {
         return Exceptional.of(() -> this.flat(uri.toURL())).or(HartshornUtils.emptyMap());
     }
 

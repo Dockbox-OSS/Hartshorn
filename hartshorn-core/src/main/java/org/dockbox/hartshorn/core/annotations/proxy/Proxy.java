@@ -37,7 +37,7 @@ import java.lang.annotation.Target;
 @Component(owner = ProxyInjectionService.class)
 public @interface Proxy {
     /**
-     * The target class for the proxy. Can be a interface, abstract, or concrete class.
+     * The target class for the proxy. Can be an interface, abstract, or concrete class.
      *
      * @return The target class
      */
@@ -52,7 +52,7 @@ public @interface Proxy {
     @Retention(RetentionPolicy.RUNTIME)
     @java.lang.annotation.Target(ElementType.METHOD)
     @interface Target {
-        /** Whether or not to overwrite the return value of the target method. */
+        /** Whether to overwrite the return value of the target method. */
         boolean overwrite() default true;
 
         /**

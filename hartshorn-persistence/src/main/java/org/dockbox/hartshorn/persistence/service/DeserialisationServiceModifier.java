@@ -75,7 +75,6 @@ public class DeserialisationServiceModifier extends AbstractPersistenceServiceMo
         return DeserialisationContext.class;
     }
 
-    @SuppressWarnings("unchecked")
     private <R> R wrapResult(final Exceptional<?> result, final MethodProxyContext<?> methodContext) {
         if (methodContext.method().returnType().childOf(Exceptional.class)) return (R) result;
         else return (R) result.orNull();

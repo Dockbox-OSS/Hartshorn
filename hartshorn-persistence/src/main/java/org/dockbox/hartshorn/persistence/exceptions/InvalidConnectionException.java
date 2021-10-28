@@ -20,7 +20,7 @@ package org.dockbox.hartshorn.persistence.exceptions;
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 
 public class InvalidConnectionException extends ApplicationException {
-    public InvalidConnectionException(String message, Throwable cause) {
+    public InvalidConnectionException(final String message, final Throwable cause) {
         super(message, cause);
     }
 }

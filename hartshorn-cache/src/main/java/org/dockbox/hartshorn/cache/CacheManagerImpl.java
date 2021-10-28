@@ -33,7 +33,6 @@ import javax.inject.Singleton;
  *
  * @see CacheManager
  */
-@SuppressWarnings("unchecked")
 @Binds(CacheManager.class)
 @Singleton
 public class CacheManagerImpl implements CacheManager {

@@ -22,16 +22,16 @@ import org.dockbox.hartshorn.i18n.text.Text;
 @SuppressWarnings("ClassReferencesSubclass")
 public class ShiftClickAction<R> extends TextAction<R> {
 
-    private ShiftClickAction(R result) {
+    private ShiftClickAction(final R result) {
         super(result);
     }
 
-    public static InsertText insertText(Text text) {
+    public static InsertText insertText(final Text text) {
         return new InsertText(text);
     }
 
     public static final class InsertText extends ShiftClickAction<Text> {
-        private InsertText(Text result) {
+        private InsertText(final Text result) {
             super(result);
         }
     }

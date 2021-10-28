@@ -21,7 +21,7 @@ import org.dockbox.hartshorn.core.context.ContextCarrier;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 
 /**
- * Low-level interface which can be used to access and retrieve values from a implementation of this
+ * Low-level interface which can be used to access and retrieve values from an implementation of this
  * interface using the {@link Key} type. This interface provides default implementations, expecting
  * the implementation is the type to be modified. For more complex implementations these methods can
  * be overridden.
@@ -29,7 +29,7 @@ import org.dockbox.hartshorn.core.domain.Exceptional;
  * @param <T>
  *         The type which the {@link Key} can modify.
  */
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@SuppressWarnings("rawtypes")
 public interface KeyHolder<T extends KeyHolder> extends ContextCarrier {
 
     /**

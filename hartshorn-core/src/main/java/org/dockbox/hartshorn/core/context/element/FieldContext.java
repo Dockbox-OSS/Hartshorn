@@ -29,7 +29,6 @@ import java.util.function.Function;
 
 import lombok.Getter;
 
-@SuppressWarnings("unchecked")
 public class FieldContext<T> extends AnnotatedMemberContext<Field> implements ModifierCarrier, TypedElementContext<T> {
 
     private static final Map<Field, FieldContext<?>> cache = HartshornUtils.emptyConcurrentMap();

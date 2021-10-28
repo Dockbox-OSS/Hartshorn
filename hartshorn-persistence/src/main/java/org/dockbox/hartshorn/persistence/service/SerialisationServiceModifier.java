@@ -66,7 +66,6 @@ public class SerialisationServiceModifier extends AbstractPersistenceServiceModi
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     protected <T, R> ProxyFunction<T, R> processString(final ApplicationContext context, final MethodProxyContext<T> methodContext, final SerialisationContext serialisationContext) {
         return (instance, args, proxyContext) -> {
             final Object content = args[0];
@@ -87,7 +86,6 @@ public class SerialisationServiceModifier extends AbstractPersistenceServiceModi
         return SerialisationContext.class;
     }
 
-    @SuppressWarnings("unchecked")
     private <R> R wrapBooleanResult(final Exceptional<Boolean> result, final MethodProxyContext<?> methodContext) {
         if (methodContext.method().returnType().childOf(Boolean.class))
             return (R) result.or(false);

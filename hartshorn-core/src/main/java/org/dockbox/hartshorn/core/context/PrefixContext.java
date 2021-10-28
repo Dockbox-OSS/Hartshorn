@@ -97,7 +97,7 @@ public class PrefixContext extends DefaultContext {
      * @param annotation
      *         The annotation expected to be present on one or more types
      * @param skipParents
-     *         Whether or not to include the type if supertypes are annotated
+     *         Whether to include the type if supertypes are annotated
      *
      * @return The annotated types
      */
@@ -143,7 +143,7 @@ public class PrefixContext extends DefaultContext {
      * @param <T>
      *         The type of the parent
      *
-     * @return The list of sub-types, or a empty list
+     * @return The list of sub-types, or an empty list
      */
     public <T> Collection<TypeContext<? extends T>> children(final TypeContext<T> parent) {
         final Set<Class<? extends T>> subTypes = HartshornUtils.emptySet();

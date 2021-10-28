@@ -49,7 +49,6 @@ public abstract class DefaultContext implements Context {
             this.namedContexts.put(name, context);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public <C extends Context> Exceptional<C> first(final ApplicationContext applicationContext, final Class<C> context) {
         return Exceptional.of(this.contexts.stream()
@@ -73,7 +72,6 @@ public abstract class DefaultContext implements Context {
         return Exceptional.of(this.namedContexts.get(name).stream().findFirst());
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public <N extends Context> Exceptional<N> first(final String name, final Class<N> context) {
         return Exceptional.of(this.namedContexts.get(name).stream()
@@ -82,7 +80,6 @@ public abstract class DefaultContext implements Context {
                 .map(c -> (N) c);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public <C extends Context> List<C> all(final Class<C> context) {
         return HartshornUtils.asUnmodifiableList(this.contexts.stream()
@@ -96,7 +93,6 @@ public abstract class DefaultContext implements Context {
         return HartshornUtils.asList(this.namedContexts.get(name));
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public <N extends Context> List<N> all(final String name, final Class<N> context) {
         return this.namedContexts.get(name).stream()

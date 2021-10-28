@@ -138,7 +138,7 @@ public final class ArgumentConverterImpl<T> extends DefaultArgumentConverter<T> 
         }
 
         /**
-         * Sets the suggestions provider of the converter, indicating how suggestions are generated based on a given {@link String}.
+         * Sets the suggestion provider of the converter, indicating how suggestions are generated based on a given {@link String}.
          *
          * @param suggestionProvider
          *         The suggestions provider
@@ -151,7 +151,7 @@ public final class ArgumentConverterImpl<T> extends DefaultArgumentConverter<T> 
         }
 
         /**
-         * Sets the suggestions provider of the converter, indicating how suggestions are generated based on a given {@link String} and
+         * Sets the suggestion provider of the converter, indicating how suggestions are generated based on a given {@link String} and
          * {@link CommandSource}.
          *
          * @param suggestionProvider

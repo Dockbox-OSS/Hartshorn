@@ -138,8 +138,8 @@ public class CommandGatewayImpl implements CommandGateway, AttributeHolder {
     }
 
     @Override
-    public void register(final TypeContext<?> type) {
-        for (final MethodContext<?, ?> method : type.flatMethods(Command.class)) {
+    public <T> void register(final TypeContext<T> type) {
+        for (final MethodContext<?, T> method : type.flatMethods(Command.class)) {
             this.register(method, type);
         }
     }
@@ -204,7 +204,7 @@ public class CommandGatewayImpl implements CommandGateway, AttributeHolder {
         this.extensions.add(extension);
     }
 
-    private void register(final MethodContext<?, ?> method, final TypeContext<?> type) {
-        this.register(new MethodCommandExecutorContext(this.context, method, type));
+    private <T> void register(final MethodContext<?, T> method, final TypeContext<T> type) {
+        this.register(new MethodCommandExecutorContext<>(this.context, method, type));
     }
 }

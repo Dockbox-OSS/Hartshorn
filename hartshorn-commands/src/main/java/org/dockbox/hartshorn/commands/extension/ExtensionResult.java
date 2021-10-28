@@ -83,7 +83,7 @@ public final class ExtensionResult {
     }
 
     /**
-     * Gets the reason a extension has been performed. This will only be sent to the
+     * Gets the reason an extension has been performed. This will only be sent to the
      * {@link CommandSource} if {@link #send()} is
      * <code>true</code>.
      *

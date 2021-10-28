@@ -54,16 +54,16 @@ public class ReflectTestType extends ParentTestType {
         return "accessorField";
     }
 
-    public void field(String value) {
+    public void field(final String value) {
         this.activatedSetter = true;
     }
 
-    public String publicMethod(String argument) {
+    public String publicMethod(final String argument) {
         Assertions.assertEquals("value", argument);
         return argument.toUpperCase(Locale.ROOT);
     }
 
-    public String privateMethod(String argument) {
+    public String privateMethod(final String argument) {
         Assertions.assertEquals("value", argument);
         return argument.toUpperCase(Locale.ROOT);
     }

@@ -41,7 +41,7 @@ public class UserCommandService {
      *
      * <p>The {@link Command#value()} indicates the command itself, excluding arguments. {@link Command#arguments()}
      * indicates the arguments which are expected to be present. The way these are defined depends on the {@link org.dockbox.hartshorn.commands.CommandParser}
-     * which is used in the {@link org.dockbox.hartshorn.commands.CommandGateway}. By default this uses the {@link org.dockbox.hartshorn.commands.CommandParserImpl},
+     * which is used in the {@link org.dockbox.hartshorn.commands.CommandGateway}. By default, this uses the {@link org.dockbox.hartshorn.commands.CommandParserImpl},
      * which uses the definition context defined in {@link CommandDefinitionContextImpl}.
      *
      * @see CommandDefinitionContextImpl

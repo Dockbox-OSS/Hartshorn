@@ -62,7 +62,7 @@ class SqlServiceTest extends ApplicationAwareTest {
 
     @ParameterizedTest
     @MethodSource("containers")
-    void testContainerStates(ContainerState container) {
+    void testContainerStates(final ContainerState container) {
         Assertions.assertTrue(container.isRunning());
     }
 
@@ -75,7 +75,7 @@ class SqlServiceTest extends ApplicationAwareTest {
         );
     }
 
-    protected static ConnectionAttribute connection(Remote remote, JdbcDatabaseContainer<?> container, int defaultPort) {
+    protected static ConnectionAttribute connection(final Remote remote, final JdbcDatabaseContainer<?> container, final int defaultPort) {
         return ConnectionAttribute.of(remote,
                 SQLRemoteServer.of("localhost", container.getMappedPort(defaultPort), DEFAULT_DATABASE),
                 container.getUsername(),

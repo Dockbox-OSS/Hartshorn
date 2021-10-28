@@ -32,7 +32,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * The type used to provide a argument pattern which can be used to construct types decorated with {@link Parameter}.
+ * The type used to provide an argument pattern which can be used to construct types decorated with {@link Parameter}.
  */
 public interface CustomParameterPattern {
 
@@ -42,7 +42,7 @@ public interface CustomParameterPattern {
      * @param type
      *         The target type to parse into
      * @param source
-     *         The source of the command, provided in case the parser is context sensitive
+     *         The source of the command, provided in case the parser is context-sensitive
      * @param raw
      *         The raw argument
      * @param <T>

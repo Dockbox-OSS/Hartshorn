@@ -53,7 +53,7 @@ public class ExceptionHelper {
      * @param exception
      *         The exception instance
      * @param stacktrace
-     *         Whether or not to print a stacktrace after the caught information
+     *         Whether to print a stacktrace after the caught information
      */
     public static void printFriendly(@NonNls @Nullable final String message, @Nullable final Throwable exception, final boolean stacktrace) {
         log.error(ExceptionHelper.separator);
@@ -93,7 +93,7 @@ public class ExceptionHelper {
      * @param exception
      *         The exception instance
      * @param stacktrace
-     *         Whether or not to print a stacktrace after the caught information
+     *         Whether to print a stacktrace after the caught information
      */
     public static void printMinimal(@NonNls @Nullable final String message, @Nullable final Throwable exception, final boolean stacktrace) {
         log.error(ExceptionHelper.separator);

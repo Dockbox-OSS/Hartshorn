@@ -28,12 +28,11 @@ import org.dockbox.hartshorn.persistence.PersistentModel;
 
 import lombok.Getter;
 
-@SuppressWarnings("FieldMayBeFinal")
 @Getter
 public class PersistentTextModel implements PersistentModel<Text> {
 
     // Legacy formatted
-    private String content;
+    private final String content;
 
     private ActionTypes clickAction;
     private String clickActionResult;
@@ -45,7 +44,7 @@ public class PersistentTextModel implements PersistentModel<Text> {
     private String hoverActionResult;
 
     public PersistentTextModel(final Text text) {
-        this.content = text.toLegacy();
+        this.content = text.toString();
         this.extractClickAction(text);
         this.extractShiftClickAction(text);
         this.extractHoverAction(text);
@@ -93,25 +92,14 @@ public class PersistentTextModel implements PersistentModel<Text> {
     public Text restore(final ApplicationContext context) {
         final Text text = Text.of(this.content);
         switch (this.clickAction) {
-            case CHANGE_PAGE:
-                text.onClick(ClickAction.changePage(Integer.parseInt(this.clickActionResult)));
-                break;
-            case EXECUTE_CALLBACK:
-                Hartshorn.log().warn("Attempted to deserialize callback for Text object. This is currently not supported.");
-                break;
-            case RUN_COMMAND:
-                // Commands are optional actions if the Command module is present
-                text.onClick(context.get(CommandAction.class, this.clickActionResult));
-                break;
-            case OPEN_URL:
-                text.onClick(ClickAction.openUrl(this.clickActionResult));
-                break;
-            case SUGGEST_COMMAND:
-                text.onClick(ClickAction.suggestCommand(this.clickActionResult));
-                break;
-            case NONE:
-            default:
-                break;
+            case CHANGE_PAGE -> text.onClick(ClickAction.changePage(Integer.parseInt(this.clickActionResult)));
+            case EXECUTE_CALLBACK -> Hartshorn.log().warn("Attempted to deserialize callback for Text object. This is currently not supported.");
+            case RUN_COMMAND ->
+                    // Commands are optional actions if the Command module is present
+                    text.onClick(context.get(CommandAction.class, this.clickActionResult));
+            case OPEN_URL -> text.onClick(ClickAction.openUrl(this.clickActionResult));
+            case SUGGEST_COMMAND -> text.onClick(ClickAction.suggestCommand(this.clickActionResult));
+            default -> {}
         }
 
         switch (this.shiftClickAction) {

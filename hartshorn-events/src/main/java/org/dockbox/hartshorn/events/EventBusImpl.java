@@ -81,7 +81,7 @@ public class EventBusImpl implements EventBus {
     }
 
     /**
-     * Subscribes all event listeners in a object instance. Typically event listeners are methods
+     * Subscribes all event listeners in an object instance. Typically, event listeners are methods
      * decorated with {@link Listener}.
      *
      * @param type
@@ -107,7 +107,7 @@ public class EventBusImpl implements EventBus {
     }
 
     /**
-     * Unsubscribes all event listeners in a object instance.
+     * Unsubscribes all event listeners in an object instance.
      *
      * @param type
      *         The instance of the listener
@@ -177,7 +177,7 @@ public class EventBusImpl implements EventBus {
      *   <li>Is decorated with {@link Listener}
      *   <li>Is not static
      *   <li>Is not abstract
-     *   <li>Has at least one parameter which is a subcless of {@link Event}
+     *   <li>Has at least one parameter which is a subclass of {@link Event}
      * </ul>
      *
      * @param method

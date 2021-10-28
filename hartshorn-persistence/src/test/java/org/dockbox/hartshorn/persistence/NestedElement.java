@@ -32,7 +32,7 @@ public class NestedElement implements Element {
 
     @Override
     @JsonIgnore
-    public NestedElement name(String name) {
+    public NestedElement name(final String name) {
         this.child.name(name);
         return this;
     }

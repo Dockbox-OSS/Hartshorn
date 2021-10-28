@@ -37,8 +37,8 @@ public class Pipeline<I> extends AbstractPipeline<I, I> {
      *         contain a throwable describing why
      */
     @Override
-    public Exceptional<I> process(@NotNull I input, @Nullable Throwable throwable) {
-        Exceptional<I> exceptionalInput = Exceptional.of(input, throwable);
+    public Exceptional<I> process(@NotNull final I input, @Nullable final Throwable throwable) {
+        final Exceptional<I> exceptionalInput = Exceptional.of(input, throwable);
 
         return this.process(exceptionalInput);
     }
@@ -55,15 +55,14 @@ public class Pipeline<I> extends AbstractPipeline<I, I> {
      * @return An {@link Exceptional} containing the output after it has been processed by the
      *         pipeline
      */
-    @SuppressWarnings("unchecked")
     @Override
     protected Exceptional<I> process(@NotNull Exceptional<I> exceptionalInput) {
-        for (IPipe<I, I> pipe : this.pipes()) {
+        for (final IPipe<I, I> pipe : this.pipes()) {
             exceptionalInput = super.processPipe(pipe, exceptionalInput);
 
             // If the pipelines been cancelled, stop processing any further pipes.
             if (this.cancelled()) {
-                // Reset it straight after its been detected for next time the pipeline's used.
+                // Reset it straight after it's been detected for next time the pipeline's used.
                 this.permit();
                 return Exceptional.of(
                         (I) super.cancelBehaviour().act(exceptionalInput.orNull()),

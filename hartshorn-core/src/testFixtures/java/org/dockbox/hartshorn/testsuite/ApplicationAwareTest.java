@@ -23,7 +23,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 public class ApplicationAwareTest {
 
     @RegisterExtension
-    HartshornRunner runner = new HartshornRunner();
+    final HartshornRunner runner = new HartshornRunner();
 
     protected ApplicationContext context() {
         final ApplicationContext activeContext = this.runner.activeContext();

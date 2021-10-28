@@ -18,7 +18,7 @@
 package org.dockbox.hartshorn.persistence.exceptions;
 
 public class UnknownIdentifierException extends RuntimeException {
-    public UnknownIdentifierException(String message) {
+    public UnknownIdentifierException(final String message) {
         super(message);
     }
 }

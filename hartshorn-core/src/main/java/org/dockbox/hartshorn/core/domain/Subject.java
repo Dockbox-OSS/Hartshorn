@@ -18,7 +18,7 @@
 package org.dockbox.hartshorn.core.domain;
 
 /**
- * Represents a single subject. Typically a subject will be an actor of any kind.
+ * Represents a single subject. Typically, a subject will be an actor of any kind.
  */
 public interface Subject {
 }

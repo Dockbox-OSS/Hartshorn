@@ -29,31 +29,31 @@ public class PriorityEventListener {
     @Getter private static Priority last = null;
 
     @Listener(Priority.FIRST)
-    public void onFirst(SampleEvent event) {
+    public void onFirst(final SampleEvent event) {
         Assertions.assertNull(PriorityEventListener.last);
         PriorityEventListener.last = Priority.FIRST;
     }
 
     @Listener(Priority.EARLY)
-    public void onEarly(SampleEvent event) {
+    public void onEarly(final SampleEvent event) {
         Assertions.assertEquals(PriorityEventListener.last, Priority.FIRST);
         PriorityEventListener.last = Priority.EARLY;
     }
 
     @Listener(Priority.NORMAL)
-    public void onNormal(SampleEvent event) {
+    public void onNormal(final SampleEvent event) {
         Assertions.assertEquals(PriorityEventListener.last, Priority.EARLY);
         PriorityEventListener.last = Priority.NORMAL;
     }
 
     @Listener(Priority.LATE)
-    public void onLate(SampleEvent event) {
+    public void onLate(final SampleEvent event) {
         Assertions.assertEquals(PriorityEventListener.last, Priority.NORMAL);
         PriorityEventListener.last = Priority.LATE;
     }
 
     @Listener(Priority.LAST)
-    public void onLast(SampleEvent event) {
+    public void onLast(final SampleEvent event) {
         Assertions.assertEquals(PriorityEventListener.last, Priority.LATE);
         PriorityEventListener.last = Priority.LAST;
     }

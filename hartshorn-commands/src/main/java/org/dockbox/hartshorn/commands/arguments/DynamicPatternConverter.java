@@ -27,7 +27,7 @@ import org.dockbox.hartshorn.core.HartshornUtils;
 import java.util.Collection;
 
 /**
- * The default converter for any type which can be constructed with a {@link CustomParameterPattern}. Typically
+ * The default converter for any type which can be constructed with a {@link CustomParameterPattern}. Typically,
  * this only applies to types decorated with {@link Parameter},
  * however this is not a requirement.
  *

@@ -27,7 +27,6 @@ import org.dockbox.hartshorn.core.services.ServiceAnnotatedMethodModifier;
 
 public class I18NServiceModifier extends ServiceAnnotatedMethodModifier<Resource, UseResources> {
 
-    @SuppressWarnings("unchecked")
     @Override
     public <T, R> ProxyFunction<T, R> process(final ApplicationContext context, final MethodProxyContext<T> methodContext) {
         final String key = I18N.key(context, methodContext.type(), methodContext.method());

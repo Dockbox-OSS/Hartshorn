@@ -17,7 +17,6 @@
 
 package org.dockbox.hartshorn.persistence;
 
-import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 import org.dockbox.hartshorn.core.properties.Attribute;
 import org.dockbox.hartshorn.persistence.mapping.ObjectMapper;
 import org.dockbox.hartshorn.persistence.properties.ModifiersAttribute;
@@ -43,7 +42,7 @@ public abstract class DefaultObjectMapper implements ObjectMapper {
     }
 
     @Override
-    public void apply(final Attribute<?> property) throws ApplicationException {
+    public void apply(final Attribute<?> property) {
         if (property instanceof ModifiersAttribute modifiersAttribute) {
             for (final PersistenceModifier modifier : modifiersAttribute.value()) this.modify(modifier);
         }

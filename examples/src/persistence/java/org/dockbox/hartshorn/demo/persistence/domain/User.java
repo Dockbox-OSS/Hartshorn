@@ -26,7 +26,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 /**
- * A simple JPA compatible user type with a auto-generated {@link #id()}.
+ * A simple JPA compatible user type with an auto-generated {@link #id()}.
  */
 @Entity
 @AllArgsConstructor

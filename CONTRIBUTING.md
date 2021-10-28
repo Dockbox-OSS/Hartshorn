@@ -24,9 +24,9 @@ You can open a new issue and search existing issues using the public [issue trac
 - Describe the issue you are experiencing
 - Describe how to reproduce the issue
 - Describe what you expect the correct behavior to be like
-- Include any warnings, arrors, stacktraces if applicable
+- Include any warnings, errors, stacktraces if applicable
 
-When a new issue is opened, be prepared to work with the developers investigating your issue. It is not uncommen additional
+When a new issue is opened, be prepared to work with the developers investigating your issue. It is not uncommon additional
 information is requested, and your assistance is crucial in providing a quick solution.  
 In general, the more detail you share about your issue the quicker it can be resolved. For example, providing a simple
 test case is exceptionally helpful.
@@ -110,7 +110,7 @@ We currently use a modified version of [Jetbrains' Java Style](https://www.jetbr
 for our coding convention.  
 The base repository has an [`Hartshorn Code Style.xml`](https://github.com/GuusLieben/Hartshorn/blob/hartshorn-main/Hartshorn%20Code%20Style.xml) file. If you use any Jetbrains IDE you can import this under `Editor > Code Style`.  
 Alternatively, you can also use the [.editorconfig](https://github.com/GuusLieben/Hartshorn/blob/hartshorn-main/.editorconfig.xml) file with any IDE that supports it.  
-Additionally you should use [`Hartshorn Code Inspections.xml`](https://github.com/GuusLieben/Hartshorn/blob/hartshorn-main/Hartshorn%20Code%20Inspections.xml), which can be imported under `Editor > Inspections`.
+Additionally, you should use [`Hartshorn Code Inspections.xml`](https://github.com/GuusLieben/Hartshorn/blob/hartshorn-main/Hartshorn%20Code%20Inspections.xml), which can be imported under `Editor > Inspections`.
 
 #### Type Naming
 Naming conventions follow [Oracle's Code Conventions for Java](https://www.oracle.com/java/technologies/javase/codeconventions-namingconventions.html#:~:text=Class%20names%20should%20be%20nouns,such%20as%20URL%20or%20HTML).
@@ -154,7 +154,7 @@ All JavaDocs follow the order:
 > @see {link}
 
 - Code examples are wrapped in `<pre>{@code ... }</pre>`
-- Additional paragraphes are wrapped in `<p> ... </p>`
+- Additional paragraphs are wrapped in `<p> ... </p>`
 - Lists are formatted using `<ul></ul>`
 - Descriptive links are formatted using `{@link org.dockbox.hartshorn.ClassY y}` (shows as `y`)
 

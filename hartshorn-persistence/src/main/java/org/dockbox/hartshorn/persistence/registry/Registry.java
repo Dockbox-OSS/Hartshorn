@@ -151,7 +151,7 @@ public class Registry<V> extends HashMap<String, RegistryColumn<V>> {
      *         A varargs of {@link RegistryIdentifier}s to return from the Registry if
      *         contained.
      *
-     * @return All the matching columns data combined into a single {@link RegistryColumn}. If no
+     * @return All data from the matching columns combined into a single {@link RegistryColumn}. If no
      *         matches are found, an empty {@link RegistryColumn} will be returned.
      */
     public RegistryColumn<V> matchingColumns(final RegistryIdentifier... columnIDs) {
@@ -332,7 +332,7 @@ public class Registry<V> extends HashMap<String, RegistryColumn<V>> {
      * Builds the registry hierarchy.
      *
      * @param builder
-     *         The {@link StringBuilder} being used to build the reistry heirarchy
+     *         The {@link StringBuilder} being used to build the registry hierarchy
      * @param indents
      *         The depth of the registry (Caused by nested registries)
      */

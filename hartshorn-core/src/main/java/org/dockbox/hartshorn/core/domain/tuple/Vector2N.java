@@ -31,7 +31,7 @@ public class Vector2N {
     protected Vector2N() {
     }
 
-    protected Vector2N(Number x, Number z) {
+    protected Vector2N(final Number x, final Number z) {
         this.x = x;
         this.z = z;
     }
@@ -56,7 +56,7 @@ public class Vector2N {
      *
      * @return The new {@link Vector3N}
      */
-    public static Vector2N of(Number x, Number z) {
+    public static Vector2N of(final Number x, final Number z) {
         return new Vector2N(x, z);
     }
 
@@ -79,7 +79,7 @@ public class Vector2N {
     }
 
     /**
-     * Gets the position on the x-axis as a integer.
+     * Gets the position on the x-axis as an integer.
      *
      * @return The x-position as integer
      */
@@ -115,7 +115,7 @@ public class Vector2N {
     }
 
     /**
-     * Gets the position on the z-axis as a integer.
+     * Gets the position on the z-axis as an integer.
      *
      * @return The z-position as integer
      */
@@ -138,7 +138,7 @@ public class Vector2N {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) return true;
         if (!(o instanceof Vector2N vector2N)) return false;
         return this.x.equals(vector2N.x) && this.z.equals(vector2N.z);

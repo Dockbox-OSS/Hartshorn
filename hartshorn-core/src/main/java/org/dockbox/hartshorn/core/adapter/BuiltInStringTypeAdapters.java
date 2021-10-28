@@ -30,21 +30,21 @@ public final class BuiltInStringTypeAdapters {
         return 1 == length ? Exceptional.of(in.charAt(0)) : Exceptional.empty();
     });
 
-    public static StringTypeAdapter<Boolean> BOOLEAN = StringTypeAdapterImpl.of(Boolean.class, in -> switch (in) {
+    public static final StringTypeAdapter<Boolean> BOOLEAN = StringTypeAdapterImpl.of(Boolean.class, in -> switch (in) {
         case "yes" -> Exceptional.of(true);
         case "no" -> Exceptional.of(false);
         default -> Exceptional.of(in).map(Boolean::parseBoolean);
     });
 
-    public static StringTypeAdapter<Double> DOUBLE = StringTypeAdapterImpl.of(Double.class, in -> Exceptional.of(in).map(Double::parseDouble));
+    public static final StringTypeAdapter<Double> DOUBLE = StringTypeAdapterImpl.of(Double.class, in -> Exceptional.of(in).map(Double::parseDouble));
 
-    public static StringTypeAdapter<Float> FLOAT = StringTypeAdapterImpl.of(Float.class, in -> Exceptional.of(in).map(Float::parseFloat));
+    public static final StringTypeAdapter<Float> FLOAT = StringTypeAdapterImpl.of(Float.class, in -> Exceptional.of(in).map(Float::parseFloat));
 
-    public static StringTypeAdapter<Integer> INTEGER = StringTypeAdapterImpl.of(Integer.class, in -> Exceptional.of(in).map(Integer::parseInt));
+    public static final StringTypeAdapter<Integer> INTEGER = StringTypeAdapterImpl.of(Integer.class, in -> Exceptional.of(in).map(Integer::parseInt));
 
-    public static StringTypeAdapter<Long> LONG = StringTypeAdapterImpl.of(Long.class, in -> Exceptional.of(in).map(Long::parseLong));
+    public static final StringTypeAdapter<Long> LONG = StringTypeAdapterImpl.of(Long.class, in -> Exceptional.of(in).map(Long::parseLong));
 
-    public static StringTypeAdapter<Short> SHORT = StringTypeAdapterImpl.of(Short.class, in -> Exceptional.of(in).map(Short::parseShort));
+    public static final StringTypeAdapter<Short> SHORT = StringTypeAdapterImpl.of(Short.class, in -> Exceptional.of(in).map(Short::parseShort));
 
-    public static StringTypeAdapter<UUID> UNIQUE_ID = StringTypeAdapterImpl.of(UUID.class, in -> Exceptional.of(in).map(UUID::fromString));
+    public static final StringTypeAdapter<UUID> UNIQUE_ID = StringTypeAdapterImpl.of(UUID.class, in -> Exceptional.of(in).map(UUID::fromString));
 }

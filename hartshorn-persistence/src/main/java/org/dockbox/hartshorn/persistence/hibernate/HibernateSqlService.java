@@ -17,11 +17,12 @@
 
 package org.dockbox.hartshorn.persistence.hibernate;
 
-import org.dockbox.hartshorn.core.domain.Exceptional;
-import org.dockbox.hartshorn.core.exceptions.ApplicationException;
+import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.core.annotations.inject.Binds;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
+import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 import org.dockbox.hartshorn.core.properties.Attribute;
 import org.dockbox.hartshorn.persistence.DefaultSqlService;
 import org.dockbox.hartshorn.persistence.SqlService;
@@ -30,7 +31,6 @@ import org.dockbox.hartshorn.persistence.properties.ConnectionAttribute;
 import org.dockbox.hartshorn.persistence.properties.PersistenceConnection;
 import org.dockbox.hartshorn.persistence.properties.Remote;
 import org.dockbox.hartshorn.persistence.properties.Remotes;
-import org.dockbox.hartshorn.core.HartshornUtils;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
@@ -138,30 +138,22 @@ public class HibernateSqlService extends DefaultSqlService<Session> {
 
     @Override
     public void save(final Object object) {
-        this.accept(session -> {
-            session.save(object);
-        });
+        this.accept(session -> session.save(object));
     }
 
     @Override
     public void update(final Object object) {
-        this.accept(session -> {
-            session.update(object);
-        });
+        this.accept(session -> session.update(object));
     }
 
     @Override
     public void updateOrSave(final Object object) {
-        this.accept(session -> {
-            session.saveOrUpdate(object);
-        });
+        this.accept(session -> session.saveOrUpdate(object));
     }
 
     @Override
     public void delete(final Object object) {
-        this.accept(session -> {
-            session.delete(object);
-        });
+        this.accept(session -> session.delete(object));
     }
 
     @Override

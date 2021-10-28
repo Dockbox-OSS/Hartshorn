@@ -26,8 +26,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public enum CancelBehaviour {
-    UNCANCELLABLE,
-    @SuppressWarnings("ReturnOfNull")
+    NON_CANCELLABLE,
     DISCARD(output -> null),
     CONVERT((output, converter) -> (null == converter) ? output : converter.apply(output)),
     RETURN(output -> output);
@@ -53,7 +52,7 @@ public enum CancelBehaviour {
     }
 
     /**
-     * Determines what should be returned by a {@link Pipeline} when its cancelled by calling the
+     * Determines what should be returned by a {@link Pipeline} when it's cancelled by calling the
      * {@link Function} on it.
      *
      * @param output
@@ -71,7 +70,7 @@ public enum CancelBehaviour {
     }
 
     /**
-     * Determines what should be returned by a {@link ConvertiblePipeline} when its cancelled by
+     * Determines what should be returned by a {@link ConvertiblePipeline} when it's cancelled by
      * calling the cancellable behaviours {@link Function} or {@link BiFunction} on it.
      *
      * @param output

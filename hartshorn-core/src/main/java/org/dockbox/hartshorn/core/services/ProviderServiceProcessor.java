@@ -38,7 +38,6 @@ public final class ProviderServiceProcessor implements ServiceProcessor<UseServi
         return !type.flatMethods(Provider.class).isEmpty();
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public <T> void process(final ApplicationContext context, final TypeContext<T> type) {
         final List<MethodContext<?, T>> methods = type.flatMethods(Provider.class);

@@ -51,7 +51,7 @@ import lombok.Getter;
  *
  * <p>Each table has a final set of column identifiers indicating their structure. Tables contain
  * {@link TableRow}s which can only be added if the row has the same identifiers as the table. If a
- * row has more, less, or mismatching column idenfitiers it cannot be added to the table.
+ * row has more, less, or mismatching column identifiers it cannot be added to the table.
  *
  * <p>Column identifiers are unique and should be implementations of {@link ColumnIdentifier} with a
  * generic type indicating the data type.
@@ -114,7 +114,7 @@ public class Table {
 
         /*
          * If there was no value filled by either this table instance, or the foreign table, try to
-         *  populate it with null. If that is not allowed throw a exception.
+         *  populate it with null. If that is not allowed throw an exception.
          */
         if (!joinedRow.value(identifier).present()) {
             if (populateEmptyEntries) joinedRow.add(identifier, null);
@@ -152,10 +152,9 @@ public class Table {
     }
 
     /**
-     * Generates a {@link TableRow} from a given object based on the objects {@link Field}s. By
-     * default the field name is used to look up a matching column identifier which is present inside
-     * the table. If the field is decorated with {@link Property} the contained {@link
-     * ColumnIdentifier} is used instead.
+     * Generates a {@link TableRow} from a given object based on the objects {@link Field}s. By default, the
+     * field name is used to look up a matching column identifier which is present inside the table. If the
+     * field is decorated with {@link Property} the contained {@link ColumnIdentifier} is used instead.
      *
      * <p>If the field is decorated with {@link Property} with {@link Property#ignore()} set to {@code true}
      * the field will not be converted to a column entry in the row. One attempt will be made to make the
@@ -220,8 +219,8 @@ public class Table {
 
     /**
      * Generates a {@link TableRow} from a given set of objects. The objects should be in the same
-     * order as the table's {@link Table#identifiers()}. If the data type of a object does not
-     * match up with its expected {@link ColumnIdentifier} a exception is thrown and the row is not
+     * order as the table's {@link Table#identifiers()}. If the data type of object does not
+     * match up with its expected {@link ColumnIdentifier} an exception is thrown and the row is not
      * inserted into the table.
      *
      * @param values
@@ -264,7 +263,7 @@ public class Table {
      * @return Returns the new table with the filter applied
      * @throws IllegalArgumentException
      *         When a row causes a {@link IdentifierMismatchException}.
-     *         Typically this is never thrown unless changes were made from another thread.
+     *         Typically, this is never thrown unless changes were made from another thread.
      */
     public <T> Table where(final ColumnIdentifier<T> column, final T filter) {
         if (!this.hasColumn(column))
@@ -305,9 +304,9 @@ public class Table {
      *
      * @return A new table with the joined rows
      * @throws EmptyEntryException
-     *         Thrown if a entry is empty and cannot be populated
+     *         Thrown if an entry is empty and cannot be populated
      * @throws IdentifierMismatchException
-     *         When a identifier does not exist across both tables
+     *         When an identifier does not exist across both tables
      */
     public <T> Table join(@NotNull final Table otherTable, final ColumnIdentifier<T> column, final Merge merge)
             throws EmptyEntryException, IdentifierMismatchException {
@@ -346,7 +345,7 @@ public class Table {
      * in both tables, the {@link Merge} behavior indicates which to keep.
      *
      * <p>If a row does not have a matching row in the other table while new columns are created,
-     * {@code populateEmptyEntries} indicates whether to treat this is a illegal state, or populate
+     * {@code populateEmptyEntries} indicates whether to treat this is an illegal state, or populate
      * the entry with null.
      *
      * @param <T>
@@ -358,13 +357,13 @@ public class Table {
      * @param merge
      *         The merge behavior
      * @param populateEmptyEntries
-     *         Whether or not empty entries should be populated (with null)
+     *         Whether empty entries should be populated (with null)
      *
      * @return A new table with the joined rows
      * @throws EmptyEntryException
-     *         Thrown if a entry is empty and cannot be populated
+     *         Thrown if an entry is empty and cannot be populated
      * @throws IdentifierMismatchException
-     *         When a identifier does not exist across both tables
+     *         When an identifier does not exist across both tables
      */
     public <T> Table join(
             @NotNull final Table otherTable,
@@ -393,7 +392,7 @@ public class Table {
 
             /*
             It is possible not all foreign rows had a matching value, if that is the case we will add them here if
-            possible (if the foreign table has no additional identifiers which we cannot populate here.
+            possible, if the foreign table has no additional identifiers which we cannot populate here.
             */
             for (final TableRow row : otherTable.rows())
                 this.populateMissingEntries(otherTable, column, populateEmptyEntries, mergedIdentifiers, joinedTable, row);
@@ -501,12 +500,12 @@ public class Table {
     }
 
     /**
-     * Returns whether or not the table contains the given {@link ColumnIdentifier}.
+     * Returns whether the table contains the given {@link ColumnIdentifier}.
      *
      * @param column
      *         The column
      *
-     * @return Whether or not the column is present
+     * @return Whether the column is present
      */
     public boolean hasColumn(final ColumnIdentifier<?> column) {
         for (final ColumnIdentifier<?> identifier : this.identifiers) {
@@ -546,7 +545,7 @@ public class Table {
 
     /**
      * Orders (sorts) a table based on a given column. Requires the data type of the {@link
-     * ColumnIdentifier} to be a implementation of {@link Comparable}. This modifies the existing
+     * ColumnIdentifier} to be an implementation of {@link Comparable}. This modifies the existing
      * table.
      *
      * @param <T>
@@ -578,12 +577,12 @@ public class Table {
     }
 
     /**
-     * Returns whether or not the table contains the given {@link TableRow}
+     * Returns whether the table contains the given {@link TableRow}
      *
      * @param row
      *         The row
      *
-     * @return Whether or not the row is present
+     * @return Whether the row is present
      */
     public boolean hasRow(final TableRow row) {
         for (final TableRow tableRow : this.rows()) {

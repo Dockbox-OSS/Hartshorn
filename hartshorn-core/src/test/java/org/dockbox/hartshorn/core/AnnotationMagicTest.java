@@ -81,7 +81,6 @@ enum InterceptType {
 }
 
 // This is not a typo. On case-insensitive OS, Get and GET in same compiler output directory might cause issues
-// NoClassDefFoundError: com/github/blindpirate/annotationmagic/Get (wrong name: com/github/blindpirate/annotationmagic/GET)
 @Retention(RetentionPolicy.RUNTIME)
 @Extends(Route.class)
 @interface Gett {

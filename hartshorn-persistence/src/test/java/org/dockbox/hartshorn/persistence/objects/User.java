@@ -19,10 +19,10 @@ package org.dockbox.hartshorn.persistence.objects;
 
 public class User {
 
-    public int numeralId;
-    public String name;
+    public final int numeralId;
+    public final String name;
 
-    public User(int numeralId, String name) {
+    public User(final int numeralId, final String name) {
         this.numeralId = numeralId;
         this.name = name;
     }

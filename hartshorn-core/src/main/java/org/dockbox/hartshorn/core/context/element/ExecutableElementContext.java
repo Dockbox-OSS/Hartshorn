@@ -57,7 +57,6 @@ public abstract class ExecutableElementContext<A extends Executable> extends Ann
         return this.element().getParameterCount();
     }
 
-    @SuppressWarnings("unchecked")
     protected Object[] arguments(final ApplicationContext context) {
         final Object[] args = new Object[this.parameterCount()];
         for (int i = 0; i < this.parameterCount(); i++) {

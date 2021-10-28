@@ -82,7 +82,6 @@ import javax.inject.Named;
 import lombok.AccessLevel;
 import lombok.Getter;
 
-@SuppressWarnings("unchecked")
 public class HartshornApplicationContext extends DefaultContext implements ApplicationContext {
 
     private static final Pattern ARGUMENTS = Pattern.compile("-H([a-zA-Z0-9\\.]+)=(.+)");
@@ -371,7 +370,7 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
 
         final MetaProvider meta = this.meta();
         // Ensure the order of resolution is to first resolve the instance singleton state, and only after check the type state.
-        // Typically the implementation decided whether it should be a singleton, so this cuts time complexity in half.
+        // Typically, the implementation decided whether it should be a singleton, so this cuts time complexity in half.
         if (instance != null && (meta.singleton(key.contract()) || meta.singleton(TypeContext.unproxy(this, instance))))
             this.singletons.put(key, instance);
 
@@ -431,7 +430,7 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
         }
         catch (final Throwable e) {
             // Services can have no explicit implementation even if they are abstract.
-            // Typically these services are expected to be populated through injection points later in time.
+            // Typically, these services are expected to be populated through injection points later in time.
             if (type.isAbstract() && this.meta().isComponent(type)) return null;
             throw new ApplicationException(e).runtime();
         }

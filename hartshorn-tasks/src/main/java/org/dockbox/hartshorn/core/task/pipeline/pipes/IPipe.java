@@ -22,7 +22,7 @@ import org.dockbox.hartshorn.core.context.element.TypeContext;
 public interface IPipe<I, O> {
     /**
      * If this method is overridden, you can then call it to get the {@link Class} of the pipe, even
-     * when created by a lamda expression.
+     * when created by a lambda expression.
      *
      * @return The {@link Class} of the pipe.
      */

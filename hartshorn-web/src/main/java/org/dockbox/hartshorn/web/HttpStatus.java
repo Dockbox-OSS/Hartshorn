@@ -121,8 +121,8 @@ public enum HttpStatus {
         return this.value + " " + this.name();
     }
 
-    public static HttpStatus of(int statusCode) {
-        for (HttpStatus status : VALUES) {
+    public static HttpStatus of(final int statusCode) {
+        for (final HttpStatus status : VALUES) {
             if (status.value == statusCode) return status;
         }
         return null;
@@ -139,9 +139,9 @@ public enum HttpStatus {
 
         private final int value;
 
-        public static Series resolve(int statusCode) {
-            int seriesCode = statusCode / 100;
-            for (Series series : values()) {
+        public static Series resolve(final int statusCode) {
+            final int seriesCode = statusCode / 100;
+            for (final Series series : values()) {
                 if (series.value == seriesCode) return series;
             }
             return null;

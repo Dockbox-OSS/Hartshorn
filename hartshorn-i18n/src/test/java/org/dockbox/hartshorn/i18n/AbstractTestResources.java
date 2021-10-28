@@ -25,7 +25,9 @@ import org.dockbox.hartshorn.i18n.common.Message;
 public abstract class AbstractTestResources {
 
     @Resource("Hello concrete world!")
-    public Message concreteEntry() {return null;}
+    public Message concreteEntry() {
+        return null;
+    }
 
     @Resource("Hello abstract world!")
     abstract Message abstractEntry();

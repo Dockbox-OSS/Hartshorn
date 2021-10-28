@@ -95,7 +95,7 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
             Tuple.of(short.class, 0)
     );
 
-    public static TypeContext<Void> VOID = TypeContext.of(Void.class);
+    public static final TypeContext<Void> VOID = TypeContext.of(Void.class);
 
     @Getter private final Class<T> type;
     @Getter private final boolean isVoid;

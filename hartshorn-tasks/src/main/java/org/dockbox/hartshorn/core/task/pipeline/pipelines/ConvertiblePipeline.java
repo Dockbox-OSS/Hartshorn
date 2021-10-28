@@ -44,7 +44,7 @@ public class ConvertiblePipeline<P, I> extends AbstractPipeline<P, I> {
 
     /**
      * A private constructor for the pipeline as all convertible pipelines should be instantiated
-     * initally as {@link ConvertiblePipelineSource}
+     * initially as {@link ConvertiblePipelineSource}
      *
      * @param inputClass
      *         The {@link Class} of the {@code I} input type
@@ -57,7 +57,7 @@ public class ConvertiblePipeline<P, I> extends AbstractPipeline<P, I> {
      * Internally calls {@link AbstractPipeline#add(IPipe[])} and returns itself.
      *
      * @param pipes
-     *         The non-null varargs of {@link IPipe}s to add to the pipeline
+     *         The non-null varargs of {@link IPipe pipes} to add to the pipeline
      *
      * @return Itself
      */
@@ -84,7 +84,7 @@ public class ConvertiblePipeline<P, I> extends AbstractPipeline<P, I> {
      * Internally calls {@link AbstractPipeline#add(AbstractPipeline)} and returns itself.
      *
      * @param pipeline
-     *         The non-null {@link AbstractPipeline} whos {@link IPipe}s should be added to
+     *         The non-null {@link AbstractPipeline} of which the {@link IPipe pipes} should be added to
      *         this pipeline
      *
      * @return Itself
@@ -110,7 +110,7 @@ public class ConvertiblePipeline<P, I> extends AbstractPipeline<P, I> {
         for (final IPipe<I, I> pipe : this.pipes()) {
             // If the pipelines been cancelled, stop processing any further pipes.
             if (super.cancelled()) {
-                // Only uncancel the pipeline straight away if there's no pipeline after this one
+                // Only permit the pipeline straight away if there's no pipeline after this one
                 // as it will be checked again in the processConverted method.
                 if (null == this.next()) super.permit();
                 return exceptionalInput;
@@ -201,14 +201,13 @@ public class ConvertiblePipeline<P, I> extends AbstractPipeline<P, I> {
      * @param input
      *         The non-null {@code P} input to be processed by the pipeline
      * @param throwable
-     *         An nullable {@link Throwable} that may have been thrown while processing the
+     *         A nullable {@link Throwable} that may have been thrown while processing the
      *         input
      * @param <K>
      *         The type of the next pipeline
      *
      * @return An {@link Exceptional} of type {@code K} containing the converted output
      */
-    @SuppressWarnings("unchecked")
     protected <K> Exceptional<K> processConverted(@NotNull final P input, @Nullable final Throwable throwable) {
         final Exceptional<I> result = this.process(input, throwable);
 
@@ -225,7 +224,7 @@ public class ConvertiblePipeline<P, I> extends AbstractPipeline<P, I> {
 
     /**
      * Converts the pipeline to a different type. <b>Note:</b> When you convert a pipeline, this
-     * automatically makes it uncancellable and so will throw an {@link IllegalPipelineException} if
+     * automatically makes it non-cancellable and so will throw an {@link IllegalPipelineException} if
      * you try and process an input with any {@link CancellablePipe}s in this pipeline.
      *
      * @param converter
@@ -251,7 +250,7 @@ public class ConvertiblePipeline<P, I> extends AbstractPipeline<P, I> {
     }
 
     /**
-     * Removes the current pipeline by clearing the {@link IPipe}s and any links with previous and
+     * Removes the current pipeline by clearing the {@link IPipe pipes} and any links with previous and
      * next pipelines.
      *
      * @param previousClass
@@ -261,7 +260,6 @@ public class ConvertiblePipeline<P, I> extends AbstractPipeline<P, I> {
      *
      * @return The previous pipeline. If there are no previous pipelines, then it returns itself
      */
-    @SuppressWarnings("unchecked")
     public <K> ConvertiblePipeline<P, K> remove(final Class<K> previousClass) {
         super.clear();
 

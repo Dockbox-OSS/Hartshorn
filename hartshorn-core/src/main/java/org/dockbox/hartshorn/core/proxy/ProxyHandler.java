@@ -120,7 +120,7 @@ public class ProxyHandler<T> implements MethodHandler {
         boolean target = true;
         for (final ProxyAttribute<T, ?> property : properties) {
             if (at == property.phase()) {
-                MethodContext<?, ?> methodContext = proceed == null ? null : MethodContext.of(proceed);
+                final MethodContext<?, ?> methodContext = proceed == null ? null : MethodContext.of(proceed);
                 final Object result = property.delegate(this.instance, methodContext, self, args);
                 if (property.overwriteResult() && !Void.TYPE.equals(thisMethod.getReturnType())) {
                     // A proxy returning null typically indicates the use of a non-returning function, for

@@ -27,7 +27,7 @@ public class TestExceptionHandle implements ExceptionHandle {
     private Throwable exception;
 
     @Override
-    public void handle(String message, Throwable exception, boolean stacktrace) {
+    public void handle(final String message, final Throwable exception, final boolean stacktrace) {
         this.message = message;
         this.exception = exception;
         this.stacktrace = stacktrace;

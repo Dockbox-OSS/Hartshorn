@@ -31,7 +31,7 @@ public class ModifiersAttribute implements Attribute<Set<PersistenceModifier>> {
 
     @Getter private final Set<PersistenceModifier> value;
 
-    public static ModifiersAttribute of(PersistenceModifier... modifiers) {
+    public static ModifiersAttribute of(final PersistenceModifier... modifiers) {
         return new ModifiersAttribute(HartshornUtils.asSet(modifiers));
     }
 }

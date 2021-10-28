@@ -43,7 +43,7 @@ public final class Hartshorn {
      */
     public static final String PACKAGE_PREFIX = "org.dockbox.hartshorn";
     /**
-     * The (human readable) display name of Hartshorn.
+     * The (human-readable) display name of Hartshorn.
      */
     public static final String PROJECT_NAME = "Hartshorn";
     /**
@@ -95,7 +95,7 @@ public final class Hartshorn {
      * @param name
      *         The name of the file to look up
      *
-     * @return The resource file wrapped in a {@link Exceptional}, or a appropriate {@link
+     * @return The resource file wrapped in a {@link Exceptional}, or an appropriate {@link
      *         Exceptional} (either none or providing the appropriate exception).
      */
     public static Exceptional<Path> resource(final String name) {

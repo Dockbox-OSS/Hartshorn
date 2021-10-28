@@ -25,7 +25,7 @@ import java.util.function.Function;
 
 /**
  * A low-level type which can be used in combination with a {@link KeyHolder} to dynamically apply,
- * retrieve, and remove values from types. The apply and retrieve functionality is inherited and
+ * retrieve, and remove values from types. The functionality to apply and retrieve is inherited and
  * unchanged from {@link Key}.
  *
  * @param <K>
@@ -48,15 +48,15 @@ public abstract class RemovableKey<K, A> extends Key<K, A> {
      * @param getter
      *         The getter, accepting one value, and returning another. The accepting value being
      *         the type to retrieve from, constrained using type parameter {@code K}. The return value
-     *         being the value retreived from the type, constrained using type parameter {@code A}.
+     *         being the value retrieved from the type, constrained using type parameter {@code A}.
      * @param remover
      *         The remover, accepting one value. The accepting value being the value to remove
      *         from, constrained using the type parameter {@code K}.
      */
     protected RemovableKey(
-            BiFunction<K, A, TransactionResult> setter,
-            Function<K, Exceptional<A>> getter,
-            Consumer<K> remover
+            final BiFunction<K, A, TransactionResult> setter,
+            final Function<K, Exceptional<A>> getter,
+            final Consumer<K> remover
     ) {
         super(setter, getter);
         this.remover = remover;
@@ -68,7 +68,7 @@ public abstract class RemovableKey<K, A> extends Key<K, A> {
      * @param keyType
      *         The data holder, constrained by type parameter {@code K}.
      */
-    public void remove(K keyType) {
+    public void remove(final K keyType) {
         this.remover.accept(keyType);
     }
 }

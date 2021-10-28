@@ -26,7 +26,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Service activator for the configurations module.
+ * Service activator for the configuration module.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)

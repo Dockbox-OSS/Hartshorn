@@ -99,7 +99,7 @@ public abstract class HartshornBootstrap extends InjectableBootstrap {
     }
 
     /**
-     * Registers the given method as a activation action which should run when bootstrapping
+     * Registers the given method as an activation action which should run when bootstrapping
      * completes. This requires all activators for the declaring class to be present.
      *
      * @param method

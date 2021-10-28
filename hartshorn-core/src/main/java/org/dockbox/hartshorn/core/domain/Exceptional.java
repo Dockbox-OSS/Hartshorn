@@ -40,8 +40,8 @@ import java.util.function.Supplier;
  * and {@link #present(java.util.function.Consumer) present()} (execute a block of code if the
  * value is present).
  *
- * <p>This is a extended type of {@link Optional}, providing additional support for {@link
- * Exception} checks and actions. Additionally it allows for more abilities to construct the type
+ * <p>This is an extended type of {@link Optional}, providing additional support for {@link
+ * Exception} checks and actions. Additionally, it allows for more abilities to construct the type
  * from a {@link CheckedSupplier}, {@link Optional} and to create from a {@link Throwable} instance.
  *
  * @param <T>
@@ -76,13 +76,13 @@ public final class Exceptional<T> {
 
     /**
      * Provides a {@link Exceptional} instance based on a provided {@link Optional} instance. If the
-     * optional contains a value, it is unwrapped and rewrapped in {@link Exceptional#of(Object)}. If
+     * optional contains a value, it is unwrapped and wrapped in {@link Exceptional#of(Object)}. If
      * the optional doesn't contain a value, {@link Exceptional#empty()} is returned.
      *
      * @param <T>
      *         The type parameter of the potential value
      * @param optional
-     *         The {@link Optional} instance to rewrap
+     *         The {@link Optional} instance to wrap
      *
      * @return The {@link Exceptional}
      */
@@ -223,7 +223,7 @@ public final class Exceptional<T> {
     }
 
     /**
-     * Return {@code true} if there is no value present, otherwise {@code false}. Acts as a inverse of
+     * Return {@code true} if there is no value present, otherwise {@code false}. Acts as an inverse of
      * {@link Exceptional#present()}.
      *
      * @return {@code true} if there is no value present, otherwise {@code false}
@@ -424,7 +424,7 @@ public final class Exceptional<T> {
 
     /**
      * If a value is present, apply the provided mapping function to it, and if the result is
-     * non-null, return an {@link Exceptional} describing the result. Otherwise return {@link
+     * non-null, return an {@link Exceptional} describing the result. Otherwise, return {@link
      * Exceptional#empty()}.
      *
      * <pre>{@code
@@ -591,7 +591,7 @@ public final class Exceptional<T> {
     }
 
     /**
-     * Returns the type of the value, if it is present. Otherwise returns {@code null}.
+     * Returns the type of the value, if it is present. Otherwise, returns {@code null}.
      *
      * @return The type of the value, or {@code null}
      */

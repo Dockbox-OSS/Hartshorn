@@ -26,7 +26,7 @@ import java.lang.annotation.Annotation;
 public interface ServiceProcessor<A extends Annotation> extends ComponentProcessor<A> {
 
     @Override
-    default boolean processable(ApplicationContext context, TypeContext<?> type) {
+    default boolean processable(final ApplicationContext context, final TypeContext<?> type) {
         return type.annotation(Service.class).present() && this.preconditions(context, type);
     }
 

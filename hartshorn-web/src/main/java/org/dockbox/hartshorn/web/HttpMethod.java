@@ -33,7 +33,7 @@ public enum HttpMethod {
     PATCH,
     ;
 
-    public HttpMethod of(HttpServletRequest request) {
+    public HttpMethod of(final HttpServletRequest request) {
         return HttpMethod.valueOf(request.getMethod().toUpperCase(Locale.ROOT));
     }
 }

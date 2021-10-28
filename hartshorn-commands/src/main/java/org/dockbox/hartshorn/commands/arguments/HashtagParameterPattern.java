@@ -24,7 +24,7 @@ import javax.inject.Inject;
 
 /**
  * Converts Hashtag-patterns into type instances used by command executors. The pattern follows the HashtagPatternParser from WorldEdit.
- * Patterns are expected to start with a hashtag (#) followed by the alias of the type which is ignored while parsing (due to the
+ * Patterns are expected to start with a hashtag (#) followed by the alias of the type which is ignored while parsing due to the
  * availability of the Class for the type. Arguments are to be surrounded with square brackets.
  *
  * <p>An example of this pattern is as follows: if we have a constructor for a Shape type
