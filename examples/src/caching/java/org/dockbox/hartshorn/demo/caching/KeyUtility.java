@@ -17,10 +17,10 @@
 
 package org.dockbox.hartshorn.demo.caching;
 
-import org.dockbox.hartshorn.api.keys.Key;
-import org.dockbox.hartshorn.api.keys.Keys;
+import org.dockbox.hartshorn.core.keys.Key;
+import org.dockbox.hartshorn.core.keys.Keys;
 import org.dockbox.hartshorn.demo.caching.domain.User;
-import org.dockbox.hartshorn.util.HartshornUtils;
+import org.dockbox.hartshorn.core.HartshornUtils;
 
 import java.util.Map;
 

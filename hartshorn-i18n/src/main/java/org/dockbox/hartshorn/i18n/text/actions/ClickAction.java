@@ -17,8 +17,8 @@
 
 package org.dockbox.hartshorn.i18n.text.actions;
 
-import org.dockbox.hartshorn.api.domain.Subject;
-import org.dockbox.hartshorn.api.exceptions.Except;
+import org.dockbox.hartshorn.core.domain.Subject;
+import org.dockbox.hartshorn.core.exceptions.Except;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -27,57 +27,57 @@ import java.util.function.Consumer;
 @SuppressWarnings("ClassReferencesSubclass")
 public class ClickAction<R> extends TextAction<R> {
 
-    protected ClickAction(R result) {
+    protected ClickAction(final R result) {
         super(result);
     }
 
-    public static OpenUrl openUrl(String raw) {
+    public static OpenUrl openUrl(final String raw) {
         try {
-            URL url = new URL(raw);
+            final URL url = new URL(raw);
             return openUrl(url);
         }
-        catch (MalformedURLException e) {
+        catch (final MalformedURLException e) {
             Except.handle(e);
             return new OpenUrl(null);
         }
     }
 
-    public static OpenUrl openUrl(URL url) {
+    public static OpenUrl openUrl(final URL url) {
         return new OpenUrl(url);
     }
 
-    public static ChangePage changePage(int page) {
+    public static ChangePage changePage(final int page) {
         return new ChangePage(page);
     }
 
-    public static SuggestCommand suggestCommand(String command) {
+    public static SuggestCommand suggestCommand(final String command) {
         return new SuggestCommand(command);
     }
 
-    public static ExecuteCallback executeCallback(Consumer<Subject> consumer) {
+    public static ExecuteCallback executeCallback(final Consumer<Subject> consumer) {
         return new ExecuteCallback(consumer);
     }
 
     public static final class OpenUrl extends ClickAction<URL> {
-        private OpenUrl(URL result) {
+        private OpenUrl(final URL result) {
             super(result);
         }
     }
 
     public static final class ChangePage extends ClickAction<Integer> {
-        private ChangePage(Integer result) {
+        private ChangePage(final Integer result) {
             super(result);
         }
     }
 
     public static final class SuggestCommand extends ClickAction<String> {
-        private SuggestCommand(String result) {
+        private SuggestCommand(final String result) {
             super(result);
         }
     }
 
     public static final class ExecuteCallback extends ClickAction<Consumer<Subject>> {
-        private ExecuteCallback(Consumer<Subject> result) {
+        private ExecuteCallback(final Consumer<Subject> result) {
             super(result);
         }
     }

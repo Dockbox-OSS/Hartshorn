@@ -17,14 +17,14 @@
 
 package org.dockbox.hartshorn.events;
 
-import org.dockbox.hartshorn.di.context.element.TypeContext;
+import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.events.annotations.Listener.Priority;
 import org.dockbox.hartshorn.events.listeners.BasicEventListener;
 import org.dockbox.hartshorn.events.listeners.GenericEventListener;
 import org.dockbox.hartshorn.events.listeners.PriorityEventListener;
 import org.dockbox.hartshorn.events.listeners.StaticEventListener;
 import org.dockbox.hartshorn.events.parents.Event;
-import org.dockbox.hartshorn.test.ApplicationAwareTest;
+import org.dockbox.hartshorn.testsuite.ApplicationAwareTest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

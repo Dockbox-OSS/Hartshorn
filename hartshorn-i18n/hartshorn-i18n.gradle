@@ -16,12 +16,7 @@
  */
 
 dependencies {
-    api 'org.dockbox.hartshorn:hartshorn-core'
     api 'org.dockbox.hartshorn:hartshorn-persistence'
-    implementation 'org.dockbox.hartshorn:hartshorn-di'
-    implementation 'org.dockbox.hartshorn:hartshorn-util'
-    implementation 'org.dockbox.hartshorn:hartshorn-proxy'
+    implementation 'org.dockbox.hartshorn:hartshorn-core'
     implementation 'org.dockbox.hartshorn:hartshorn-config'
-    implementation 'org.dockbox.hartshorn:hartshorn-bootstrap'
-    implementation 'org.dockbox.hartshorn:hartshorn-exceptions'
 }

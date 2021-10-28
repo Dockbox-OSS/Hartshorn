@@ -17,9 +17,9 @@
 
 package org.dockbox.hartshorn.i18n.permissions;
 
-import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.di.annotations.inject.Binds;
-import org.dockbox.hartshorn.di.annotations.inject.Bound;
+import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.core.annotations.inject.Binds;
+import org.dockbox.hartshorn.core.annotations.inject.Bound;
 
 @Binds(Permission.class)
 @Deprecated(since = "4.2.3")

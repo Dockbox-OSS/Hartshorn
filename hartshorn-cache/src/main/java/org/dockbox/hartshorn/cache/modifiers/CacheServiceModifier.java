@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.cache.modifiers;
 
-import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.cache.Cache;
 import org.dockbox.hartshorn.cache.CacheManager;
 import org.dockbox.hartshorn.cache.Expiration;
@@ -26,11 +26,11 @@ import org.dockbox.hartshorn.cache.annotations.UseCaching;
 import org.dockbox.hartshorn.cache.context.CacheContext;
 import org.dockbox.hartshorn.cache.context.CacheContextImpl;
 import org.dockbox.hartshorn.cache.context.CacheMethodContext;
-import org.dockbox.hartshorn.di.binding.Bindings;
-import org.dockbox.hartshorn.di.context.ApplicationContext;
-import org.dockbox.hartshorn.proxy.handle.ProxyFunction;
-import org.dockbox.hartshorn.proxy.service.MethodProxyContext;
-import org.dockbox.hartshorn.proxy.service.ServiceAnnotatedMethodModifier;
+import org.dockbox.hartshorn.core.binding.Bindings;
+import org.dockbox.hartshorn.core.context.ApplicationContext;
+import org.dockbox.hartshorn.core.proxy.ProxyFunction;
+import org.dockbox.hartshorn.core.context.MethodProxyContext;
+import org.dockbox.hartshorn.core.services.ServiceAnnotatedMethodModifier;
 
 import java.lang.annotation.Annotation;
 import java.util.function.Supplier;

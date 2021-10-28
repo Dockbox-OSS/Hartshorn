@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.persistence.properties;
 
-import org.dockbox.hartshorn.di.properties.Attribute;
+import org.dockbox.hartshorn.core.properties.Attribute;
 
 import java.nio.file.Path;
 

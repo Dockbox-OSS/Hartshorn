@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.commands.events;
 
 import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.commands.context.CommandContext;
-import org.dockbox.hartshorn.di.context.ApplicationContext;
+import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.events.AbstractTargetEvent;
 import org.dockbox.hartshorn.events.parents.Cancellable;
 import org.jetbrains.annotations.NotNull;

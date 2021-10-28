@@ -17,17 +17,17 @@
 
 package org.dockbox.hartshorn.commands;
 
-import org.dockbox.hartshorn.di.ContextCarrier;
+import org.dockbox.hartshorn.core.context.ContextCarrier;
 import org.dockbox.hartshorn.i18n.MessageReceiver;
 
 /**
- * Represents a single {@link org.dockbox.hartshorn.api.domain.Subject} capable
+ * Represents a single {@link org.dockbox.hartshorn.core.domain.Subject} capable
  * of executing commands.
  */
 public interface CommandSource extends MessageReceiver, ContextCarrier {
 
     /**
-     * Executes the given raw command as the {@link org.dockbox.hartshorn.api.domain.Subject}
+     * Executes the given raw command as the {@link org.dockbox.hartshorn.core.domain.Subject}
      * represented by this source.
      *
      * @param command

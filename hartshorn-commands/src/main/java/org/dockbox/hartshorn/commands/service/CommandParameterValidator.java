@@ -17,13 +17,13 @@
 
 package org.dockbox.hartshorn.commands.service;
 
-import org.dockbox.hartshorn.boot.annotations.PostBootstrap;
-import org.dockbox.hartshorn.boot.annotations.UseBootstrap;
-import org.dockbox.hartshorn.di.annotations.service.Service;
-import org.dockbox.hartshorn.di.context.ApplicationContext;
-import org.dockbox.hartshorn.di.context.element.MethodContext;
-import org.dockbox.hartshorn.di.context.element.ParameterContext;
-import org.dockbox.hartshorn.di.context.element.TypeContext;
+import org.dockbox.hartshorn.core.boot.annotations.PostBootstrap;
+import org.dockbox.hartshorn.core.boot.annotations.UseBootstrap;
+import org.dockbox.hartshorn.core.annotations.service.Service;
+import org.dockbox.hartshorn.core.context.ApplicationContext;
+import org.dockbox.hartshorn.core.context.element.MethodContext;
+import org.dockbox.hartshorn.core.context.element.ParameterContext;
+import org.dockbox.hartshorn.core.context.element.TypeContext;
 
 @Service(activators = UseBootstrap.class)
 public class CommandParameterValidator {

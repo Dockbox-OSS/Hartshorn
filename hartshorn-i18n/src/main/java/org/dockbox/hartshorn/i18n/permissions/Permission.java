@@ -17,8 +17,8 @@
 
 package org.dockbox.hartshorn.i18n.permissions;
 
-import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.di.context.ApplicationContext;
+import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.i18n.common.Formattable;
 
 @Deprecated(since = "4.2.3")

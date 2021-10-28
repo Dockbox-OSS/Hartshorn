@@ -29,7 +29,7 @@ import org.dockbox.hartshorn.persistence.table.Merge;
 import org.dockbox.hartshorn.persistence.table.Order;
 import org.dockbox.hartshorn.persistence.table.Table;
 import org.dockbox.hartshorn.persistence.table.TableRow;
-import org.dockbox.hartshorn.test.ApplicationAwareTest;
+import org.dockbox.hartshorn.testsuite.ApplicationAwareTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

@@ -17,9 +17,9 @@
 
 package org.dockbox.hartshorn.events.parents;
 
-import org.dockbox.hartshorn.di.context.ApplicationContext;
-import org.dockbox.hartshorn.di.context.Context;
-import org.dockbox.hartshorn.di.context.DefaultContext;
+import org.dockbox.hartshorn.core.context.ApplicationContext;
+import org.dockbox.hartshorn.core.context.Context;
+import org.dockbox.hartshorn.core.context.DefaultContext;
 import org.dockbox.hartshorn.events.EventBus;
 import org.jetbrains.annotations.NotNull;
 

@@ -17,7 +17,8 @@
 
 package org.dockbox.hartshorn.i18n;
 
-import org.dockbox.hartshorn.api.domain.Identifiable;
+import org.dockbox.hartshorn.core.domain.Identifiable;
+import org.dockbox.hartshorn.core.domain.tuple.Tristate;
 import org.dockbox.hartshorn.i18n.permissions.Permission;
 import org.dockbox.hartshorn.i18n.permissions.PermissionContext;
 
@@ -49,14 +50,14 @@ public interface PermissionHolder extends Identifiable {
     boolean hasAllPermissions(Permission... permissions);
 
     @Deprecated(since = "4.2.3")
-    void permission(String permission, org.dockbox.hartshorn.api.domain.tuple.Tristate state);
+    void permission(String permission, Tristate state);
 
     @Deprecated(since = "4.2.3")
-    void permissions(org.dockbox.hartshorn.api.domain.tuple.Tristate state, String... permissions);
+    void permissions(Tristate state, String... permissions);
 
     @Deprecated(since = "4.2.3")
-    void permission(Permission permission, org.dockbox.hartshorn.api.domain.tuple.Tristate state);
+    void permission(Permission permission, Tristate state);
 
     @Deprecated(since = "4.2.3")
-    void permissions(org.dockbox.hartshorn.api.domain.tuple.Tristate state, Permission... permissions);
+    void permissions(Tristate state, Permission... permissions);
 }

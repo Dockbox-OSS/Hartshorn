@@ -17,12 +17,10 @@
 
 package org.dockbox.hartshorn.persistence;
 
-import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.di.GenericType;
+import org.dockbox.hartshorn.core.GenericType;
+import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.persistence.registry.Registry;
 import org.dockbox.hartshorn.persistence.registry.RegistryColumn;
-import org.dockbox.hartshorn.test.ApplicationAwareTest;
-import org.dockbox.hartshorn.test.files.JUnitFileManager;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -30,7 +28,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 
-public class DataStructuresSerializersTests extends ApplicationAwareTest {
+public class DataStructuresSerializersTests extends FileManagerTest {
 
     @Test
     public void testThatRegistryCanBeSerialised() {

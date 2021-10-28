@@ -27,7 +27,7 @@ public class CuboidArgument {
 
     private final int size;
 
-    public CuboidArgument(int size) {
+    public CuboidArgument(final int size) {
         this.size = size;
     }
 }

@@ -16,10 +16,6 @@
  */
 
 dependencies {
-    implementation 'org.dockbox.hartshorn:hartshorn-di'
     implementation 'org.dockbox.hartshorn:hartshorn-core'
-    implementation 'org.dockbox.hartshorn:hartshorn-util'
-    implementation 'org.dockbox.hartshorn:hartshorn-proxy'
     implementation 'org.dockbox.hartshorn:hartshorn-tasks'
-    implementation 'org.dockbox.hartshorn:hartshorn-exceptions'
 }

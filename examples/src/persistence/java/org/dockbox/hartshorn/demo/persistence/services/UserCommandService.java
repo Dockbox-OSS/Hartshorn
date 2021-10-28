@@ -20,7 +20,7 @@ package org.dockbox.hartshorn.demo.persistence.services;
 import org.dockbox.hartshorn.commands.annotations.Command;
 import org.dockbox.hartshorn.commands.context.CommandContext;
 import org.dockbox.hartshorn.commands.context.CommandDefinitionContextImpl;
-import org.dockbox.hartshorn.di.annotations.service.Service;
+import org.dockbox.hartshorn.core.annotations.service.Service;
 
 import javax.inject.Inject;
 

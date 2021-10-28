@@ -17,13 +17,13 @@
 
 package org.dockbox.hartshorn.i18n;
 
-import org.dockbox.hartshorn.di.context.ApplicationContext;
+import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.i18n.annotations.Resource;
 import org.dockbox.hartshorn.i18n.annotations.UseResources;
 import org.dockbox.hartshorn.i18n.common.Message;
-import org.dockbox.hartshorn.proxy.handle.ProxyFunction;
-import org.dockbox.hartshorn.proxy.service.MethodProxyContext;
-import org.dockbox.hartshorn.proxy.service.ServiceAnnotatedMethodModifier;
+import org.dockbox.hartshorn.core.proxy.ProxyFunction;
+import org.dockbox.hartshorn.core.context.MethodProxyContext;
+import org.dockbox.hartshorn.core.services.ServiceAnnotatedMethodModifier;
 
 public class I18NServiceModifier extends ServiceAnnotatedMethodModifier<Resource, UseResources> {
 

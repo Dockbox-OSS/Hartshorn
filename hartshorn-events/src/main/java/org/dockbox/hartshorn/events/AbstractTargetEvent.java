@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.events;
 
-import org.dockbox.hartshorn.api.domain.Subject;
+import org.dockbox.hartshorn.core.domain.Subject;
 import org.dockbox.hartshorn.events.parents.ContextCarrierEvent;
 import org.dockbox.hartshorn.events.parents.Targetable;
 

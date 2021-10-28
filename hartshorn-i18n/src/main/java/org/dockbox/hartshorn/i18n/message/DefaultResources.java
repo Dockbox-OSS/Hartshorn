@@ -17,9 +17,9 @@
 
 package org.dockbox.hartshorn.i18n.message;
 
-import org.dockbox.hartshorn.boot.Hartshorn;
-import org.dockbox.hartshorn.di.annotations.service.Service;
-import org.dockbox.hartshorn.di.context.ApplicationContext;
+import org.dockbox.hartshorn.core.boot.Hartshorn;
+import org.dockbox.hartshorn.core.annotations.service.Service;
+import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.i18n.annotations.Resource;
 import org.dockbox.hartshorn.i18n.common.Message;
 
@@ -35,9 +35,6 @@ public interface DefaultResources {
 
     @Resource(value = "$4An unknown occurred. $3{0}", key = "caught")
     Message unknownError(String message);
-
-    @Resource(value = "$4Cannot apply to this type", key = "caught.failedbinding")
-    Message bindingFailure();
 
     @Resource(value = "$4Reference to object lost", key = "caught.reference.lost")
     Message referenceLost();

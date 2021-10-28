@@ -30,7 +30,7 @@ import lombok.Getter;
  *
  * <p>The {@link User#id() ID of the user} will be present when this event is posted.
  *
- * <p>Events which extend {@link ContextCarrierEvent} are enhanced with the active {@link org.dockbox.hartshorn.di.context.ApplicationContext}
+ * <p>Events which extend {@link ContextCarrierEvent} are enhanced with the active {@link org.dockbox.hartshorn.core.context.ApplicationContext}
  * so you are able to obtain the active context from it directly using {@link ContextCarrierEvent#applicationContext()} as demonstrated
  * by {@link org.dockbox.hartshorn.demo.persistence.services.EventListenerService#on(UserCreatedEvent)}.
  */

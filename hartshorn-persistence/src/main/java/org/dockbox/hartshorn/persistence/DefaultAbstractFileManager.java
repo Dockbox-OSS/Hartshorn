@@ -17,16 +17,16 @@
 
 package org.dockbox.hartshorn.persistence;
 
-import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.api.domain.TypedOwner;
-import org.dockbox.hartshorn.api.exceptions.ApplicationException;
-import org.dockbox.hartshorn.boot.Hartshorn;
-import org.dockbox.hartshorn.di.GenericType;
-import org.dockbox.hartshorn.di.context.ApplicationContext;
-import org.dockbox.hartshorn.di.properties.Attribute;
+import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.core.domain.TypedOwner;
+import org.dockbox.hartshorn.core.exceptions.ApplicationException;
+import org.dockbox.hartshorn.core.boot.Hartshorn;
+import org.dockbox.hartshorn.core.GenericType;
+import org.dockbox.hartshorn.core.context.ApplicationContext;
+import org.dockbox.hartshorn.core.properties.Attribute;
 import org.dockbox.hartshorn.persistence.mapping.ObjectMapper;
 import org.dockbox.hartshorn.persistence.properties.ModifiersAttribute;
-import org.dockbox.hartshorn.util.HartshornUtils;
+import org.dockbox.hartshorn.core.HartshornUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.BufferedWriter;
@@ -102,10 +102,10 @@ public abstract class DefaultAbstractFileManager implements FileManager {
     }
 
     @Override
-    public Exceptional<Boolean> write(Path file, String content) {
+    public Exceptional<Boolean> write(final Path file, final String content) {
         return Exceptional.of(() -> {
             this.context().log().debug("Writing raw string content to " + file);
-            BufferedWriter writer = new BufferedWriter(new FileWriter(file.toFile()));
+            final BufferedWriter writer = new BufferedWriter(new FileWriter(file.toFile()));
             writer.write(content);
             writer.close();
             return true;

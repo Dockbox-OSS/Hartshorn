@@ -17,13 +17,13 @@
 
 package org.dockbox.hartshorn.i18n;
 
-import org.dockbox.hartshorn.di.context.ApplicationContext;
-import org.dockbox.hartshorn.di.context.element.MethodContext;
-import org.dockbox.hartshorn.di.context.element.TypeContext;
-import org.dockbox.hartshorn.di.services.ComponentContainer;
+import org.dockbox.hartshorn.core.HartshornUtils;
+import org.dockbox.hartshorn.core.context.ApplicationContext;
+import org.dockbox.hartshorn.core.context.element.MethodContext;
+import org.dockbox.hartshorn.core.context.element.TypeContext;
+import org.dockbox.hartshorn.core.services.ComponentContainer;
 import org.dockbox.hartshorn.i18n.annotations.Resource;
-import org.dockbox.hartshorn.test.HartshornRunner;
-import org.dockbox.hartshorn.util.HartshornUtils;
+import org.dockbox.hartshorn.testsuite.HartshornRunner;
 
 import java.io.File;
 import java.io.FileOutputStream;
