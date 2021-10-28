@@ -1,11 +1,11 @@
 package org.dockbox.hartshorn.web;
 
-import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.context.element.ExecutableElementContext;
 import org.dockbox.hartshorn.core.context.element.ParameterContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
+import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.persistence.FileType;
-import org.dockbox.hartshorn.test.ApplicationAwareTest;
+import org.dockbox.hartshorn.testsuite.ApplicationAwareTest;
 import org.dockbox.hartshorn.web.annotations.RequestHeader;
 import org.dockbox.hartshorn.web.annotations.http.HttpRequest;
 import org.dockbox.hartshorn.web.processing.BodyRequestArgumentProcessor;
@@ -66,7 +66,7 @@ public class RequestArgumentProcessorTests extends ApplicationAwareTest {
         Mockito.when(httpRequest.bodyFormat()).thenReturn(fileType);
         Mockito.when(declaring.annotation(HttpRequest.class)).thenReturn(Exceptional.of(httpRequest));
         // Different order due to generic return type
-        Mockito.doReturn(declaring).when(context).declaringElement();
+        Mockito.doReturn(declaring).when(context).declaredBy();
 
         final Exceptional<Message> result = new BodyRequestArgumentProcessor().process(this.context(), context, request, null);
         Assertions.assertTrue(result.present());

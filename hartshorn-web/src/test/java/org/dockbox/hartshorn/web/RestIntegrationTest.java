@@ -18,7 +18,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.dockbox.hartshorn.config.annotations.UseConfigurations;
 import org.dockbox.hartshorn.core.annotations.activate.UseServiceProvision;
 import org.dockbox.hartshorn.events.annotations.UseEvents;
-import org.dockbox.hartshorn.test.ApplicationAwareTest;
+import org.dockbox.hartshorn.testsuite.ApplicationAwareTest;
 import org.dockbox.hartshorn.web.annotations.UseHttpServer;
 
 import java.io.IOException;
@@ -32,7 +32,7 @@ public abstract class RestIntegrationTest extends ApplicationAwareTest {
 
     protected static final String ADDRESS = "http://localhost:" + ServerBootstrap.DEFAULT_PORT;
 
-    protected CloseableHttpResponse request(final String uri, final HttpMethod method, final String body, Header... headers) throws IOException, InterruptedException {
+    protected CloseableHttpResponse request(final String uri, final HttpMethod method, final String body, final Header... headers) throws IOException {
         final CloseableHttpClient client = HttpClients.createDefault();
         final Function<String, HttpUriRequest> requestProvider = switch (method) {
             case GET -> HttpGet::new;
@@ -49,7 +49,7 @@ public abstract class RestIntegrationTest extends ApplicationAwareTest {
         if (body != null && request instanceof HttpEntityEnclosingRequest entityEnclosingRequest)
             entityEnclosingRequest.setEntity(new StringEntity(body));
 
-        for (Header header : headers) {
+        for (final Header header : headers) {
             request.addHeader(header);
         }
 
