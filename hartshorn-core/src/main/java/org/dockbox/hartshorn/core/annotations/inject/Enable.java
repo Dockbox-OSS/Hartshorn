@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.core.annotations.inject;
 
-import org.dockbox.hartshorn.di.properties.Attribute;
+import org.dockbox.hartshorn.core.properties.Attribute;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
