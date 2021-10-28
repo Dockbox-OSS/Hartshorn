@@ -33,7 +33,7 @@ import java.util.function.BiConsumer;
 public abstract class InjectableBootstrap extends ApplicationContextAware {
 
     @Override
-    public void create(final Collection<String> prefixes, final TypeContext<?> activationSource, final List<Annotation> activators, final MultiMap<InjectPhase, InjectConfiguration> configs, String[] args, final Modifier... modifiers) {
+    public void create(final Collection<String> prefixes, final TypeContext<?> activationSource, final List<Annotation> activators, final MultiMap<InjectPhase, InjectConfiguration> configs, final String[] args, final Modifier... modifiers) {
         super.create(new HartshornApplicationContext(this, activationSource, prefixes, args, modifiers));
         Reflections.log = null; // Don't output Reflections
 
@@ -51,7 +51,7 @@ public abstract class InjectableBootstrap extends ApplicationContextAware {
         for (final InjectConfiguration config : configs.get(InjectPhase.LATE)) super.context().bind(config);
     }
 
-    private <T extends Activatable<?>> void lookup(final String prefix, final Class<T> type, final BiConsumer<ApplicationContext, T> consumer) {
+    private <T extends ActivatorFiltered<?>> void lookup(final String prefix, final Class<T> type, final BiConsumer<ApplicationContext, T> consumer) {
         final Collection<TypeContext<? extends T>> children = this.context().environment().children(type);
         for (final TypeContext<? extends T> child : children) {
             if (child.isAbstract()) continue;

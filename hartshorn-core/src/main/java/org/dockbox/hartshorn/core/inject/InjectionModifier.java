@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.core.inject;
 
-import org.dockbox.hartshorn.core.Activatable;
+import org.dockbox.hartshorn.core.ActivatorFiltered;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.properties.Attribute;
@@ -26,7 +26,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.annotation.Annotation;
 
-public interface InjectionModifier<A extends Annotation> extends Activatable<A>, OrderedServiceHandler {
+public interface InjectionModifier<A extends Annotation> extends ActivatorFiltered<A>, OrderedServiceHandler {
 
     <T> boolean preconditions(ApplicationContext context, TypeContext<T> type, @Nullable T instance, Attribute<?>... properties);
 
