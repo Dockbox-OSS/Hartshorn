@@ -108,7 +108,7 @@ public class ServletHandler implements AttributeHolder {
                             else {
                                 res.setStatus(HttpStatus.INTERNAL_SERVER_ERROR_500);
                                 if (write.caught()) Except.handle("Could not process response for request %s for session %s".formatted(request, sessionId), write.error());
-                                else "Could not process response for request %s for session %s".formatted(request, sessionId);
+                                else Except.handle("Could not process response for request %s for session %s".formatted(request, sessionId));
                             }
                         }
                         this.context.log().debug("Finished servlet handler for request %s with session %s in %dms".formatted(request, sessionId, System.currentTimeMillis() - start));
