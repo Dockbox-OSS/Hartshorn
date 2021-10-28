@@ -54,17 +54,7 @@ public final class TranslationBatchGenerator {
             "class-resources.concrete.entry",
             "resource.parameter.test.entry",
             "resource.test.entry",
-            "test-resources.test.entry",
-            "server.confirm.true",
-            "server.confirm.false",
-
-            // Formatting only resources
-            "dave.discord.format",
-            "dave.trigger.single",
-            "hartshorn.exception",
-            "hartshorn.info.service.row",
-            "oldplots.list.single",
-            "prefix"
+            "test-resources.test.entry"
     );
     private static final List<String> HEADER = HartshornUtils.asList("#",
             "# Copyright (C) 2020 Guus Lieben",
