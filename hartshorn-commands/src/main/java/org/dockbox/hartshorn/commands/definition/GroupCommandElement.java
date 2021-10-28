@@ -19,7 +19,6 @@ package org.dockbox.hartshorn.commands.definition;
 
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.commands.CommandSource;
-import org.dockbox.hartshorn.i18n.permissions.Permission;
 
 import java.util.Collection;
 import java.util.List;
@@ -46,11 +45,6 @@ public class GroupCommandElement implements CommandElement<List<CommandElement<?
     @Override
     public String name() {
         return this.name;
-    }
-
-    @Override
-    public Exceptional<Permission> permission() {
-        return Exceptional.empty();
     }
 
     @Override

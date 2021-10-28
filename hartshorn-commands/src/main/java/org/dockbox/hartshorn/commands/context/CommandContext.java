@@ -21,10 +21,6 @@ import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.commands.service.CommandParameter;
 import org.dockbox.hartshorn.core.context.ContextCarrier;
-import org.dockbox.hartshorn.i18n.permissions.Permission;
-import org.jetbrains.annotations.UnmodifiableView;
-
-import java.util.List;
 
 /**
  * The context provided to a {@link org.dockbox.hartshorn.commands.CommandExecutor} during
@@ -111,14 +107,6 @@ public interface CommandContext extends ParserContext, ContextCarrier {
      * @return The {@link CommandSource} responsible for executing the command.
      */
     CommandSource source();
-
-    /**
-     * Gets the permissions required to execute this command.
-     *
-     * @return The required permissions.
-     */
-    @UnmodifiableView
-    List<Permission> permissions();
 
     /**
      * Gets the raw command as it was provided by the {@link #source()}. For example, if the command has

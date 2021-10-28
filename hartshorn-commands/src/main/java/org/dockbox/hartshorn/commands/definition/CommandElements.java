@@ -20,7 +20,6 @@ package org.dockbox.hartshorn.commands.definition;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
-import org.dockbox.hartshorn.i18n.permissions.Permission;
 import org.dockbox.hartshorn.core.HartshornUtils;
 
 import java.util.Collection;
@@ -43,8 +42,6 @@ public final class CommandElements {
      *
      * @param name
      *         The name of the element
-     * @param permission
-     *         The permission required for the element
      * @param type
      *         The (enum) type of the element
      * @param optional
@@ -54,20 +51,18 @@ public final class CommandElements {
      *
      * @return The enum command element
      */
-    public static <E extends Enum<E>> CommandElement<E> enumElement(final String name, final Permission permission, final TypeContext<E> type, final boolean optional) {
-        return new EnumCommandElement<>(name, permission, type, optional);
+    public static <E extends Enum<E>> CommandElement<E> enumElement(final String name, final TypeContext<E> type, final boolean optional) {
+        return new EnumCommandElement<>(name, type, optional);
     }
 
     private static class EnumCommandElement<E extends Enum<E>> implements CommandElement<E> {
 
         private final String name;
-        private final Permission permission;
         private final Map<String, E> values;
         private final boolean optional;
 
-        private EnumCommandElement(final String name, final Permission permission, final TypeContext<E> type, final boolean optional) {
+        private EnumCommandElement(final String name, final TypeContext<E> type, final boolean optional) {
             this.name = name;
-            this.permission = permission;
             this.values = type.enumConstants().stream().collect(Collectors.toMap(value -> value.name().toLowerCase(), Function.identity(), (value, value2) -> {
                 throw new UnsupportedOperationException(type.qualifiedName() + " contains more than one enum constant with the same name, only differing by capitalization, which is unsupported.");
             }));
@@ -77,11 +72,6 @@ public final class CommandElements {
         @Override
         public String name() {
             return this.name;
-        }
-
-        @Override
-        public Exceptional<Permission> permission() {
-            return Exceptional.of(this.permission);
         }
 
         @Override
