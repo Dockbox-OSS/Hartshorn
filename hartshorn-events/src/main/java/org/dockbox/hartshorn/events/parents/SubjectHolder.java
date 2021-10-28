@@ -19,9 +19,9 @@ package org.dockbox.hartshorn.events.parents;
 
 import org.dockbox.hartshorn.core.domain.Subject;
 
-public interface Targetable {
+public interface SubjectHolder {
 
     Subject subject();
 
-    Targetable subject(Subject subject);
+    SubjectHolder subject(Subject subject);
 }
