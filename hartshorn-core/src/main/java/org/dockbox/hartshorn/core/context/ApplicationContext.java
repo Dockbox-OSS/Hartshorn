@@ -42,7 +42,7 @@ public interface ApplicationContext extends ApplicationBinder, HartshornContext,
 
     <T> T inject(Key<T> type, T typeInstance, Attribute<?>... properties);
 
-    <T> void enable(T typeInstance);
+    <T> void enableFields(T typeInstance, Attribute<?>... properties);
 
     <T> T raw(TypeContext<T> type) throws TypeProvisionException;
 

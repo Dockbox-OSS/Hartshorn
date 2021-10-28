@@ -51,7 +51,7 @@ public class HartshornRunner implements BeforeEachCallback, AfterEachCallback{
                 HartshornRunner.activator,
                 new JUnitActivatorContext<>(activator),
                 new String[0]
-        ).load());
+        ).load()).rethrow();
     }
 
     @Override

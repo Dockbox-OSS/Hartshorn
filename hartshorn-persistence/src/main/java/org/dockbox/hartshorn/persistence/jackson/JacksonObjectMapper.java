@@ -87,7 +87,7 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
     }
 
     @Override
-    public <T> Exceptional<T> read(String content, TypeContext<T> type) {
+    public <T> Exceptional<T> read(final String content, final TypeContext<T> type) {
         return super.read(content, type);
     }
 
@@ -171,30 +171,30 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
     }
 
     @Override
-    public Map<String, Object> flat(String content) {
+    public Map<String, Object> flat(final String content) {
         this.context.log().debug("Reading content from string value to flat tree model");
         return this.flatInternal(() -> this.configureMapper().readTree(content));
     }
 
     @Override
-    public Map<String, Object> flat(Path path) {
+    public Map<String, Object> flat(final Path path) {
         this.context.log().debug("Reading content from path " + path + " to flat tree model");
         return this.flatInternal(() -> this.configureMapper().readTree(path.toFile()));
     }
 
     @Override
-    public Map<String, Object> flat(URL url) {
+    public Map<String, Object> flat(final URL url) {
         this.context.log().debug("Reading content from url " + url + " to flat tree model");
         return this.flatInternal(() -> this.configureMapper().readTree(url));
     }
 
-    private Map<String, Object> flatInternal(FlatNodeSupplier node) {
-        Map<String, Object> flat = HartshornUtils.emptyMap();
+    private Map<String, Object> flatInternal(final FlatNodeSupplier node) {
+        final Map<String, Object> flat = HartshornUtils.emptyMap();
         try {
-            JsonNode jsonNode = node.get();
+            final JsonNode jsonNode = node.get();
             this.addKeys("", jsonNode, flat);
             return flat;
-        } catch (IOException e) {
+        } catch (final IOException e) {
             Except.handle(e);
             return flat;
         }
@@ -236,8 +236,10 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
         this.include = switch (modifier) {
             case SKIP_EMPTY -> Include.NON_EMPTY;
             case SKIP_NULL -> Include.NON_NULL;
+            case SKIP_DEFAULT -> Include.NON_DEFAULT;
             default -> throw new IllegalArgumentException("Unknown modifier: " + modifier);
         };
+        this.mapper = null;
     }
 
     protected ObjectMapper configureMapper() {
@@ -292,23 +294,23 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
         return Exceptional.empty();
     }
 
-    private void addKeys(String currentPath, TreeNode jsonNode, Map<String, Object> map) {
+    private void addKeys(final String currentPath, final TreeNode jsonNode, final Map<String, Object> map) {
         if (jsonNode.isObject()) {
-            ObjectNode objectNode = (ObjectNode) jsonNode;
-            Iterator<Entry<String, JsonNode>> iter = objectNode.fields();
-            String pathPrefix = currentPath.isEmpty() ? "" : currentPath + ".";
+            final ObjectNode objectNode = (ObjectNode) jsonNode;
+            final Iterator<Entry<String, JsonNode>> iter = objectNode.fields();
+            final String pathPrefix = currentPath.isEmpty() ? "" : currentPath + ".";
 
             while (iter.hasNext()) {
-                Map.Entry<String, JsonNode> entry = iter.next();
+                final Map.Entry<String, JsonNode> entry = iter.next();
                 this.addKeys(pathPrefix + entry.getKey(), entry.getValue(), map);
             }
         } else if (jsonNode.isArray()) {
-            ArrayNode arrayNode = (ArrayNode) jsonNode;
+            final ArrayNode arrayNode = (ArrayNode) jsonNode;
             for (int i = 0; i < arrayNode.size(); i++) {
                 this.addKeys(currentPath + "[" + i + "]", arrayNode.get(i), map);
             }
         } else if (jsonNode.isValueNode()) {
-            ValueNode valueNode = (ValueNode) jsonNode;
+            final ValueNode valueNode = (ValueNode) jsonNode;
             map.put(currentPath, this.configureMapper().convertValue(valueNode, Object.class));
         }
     }

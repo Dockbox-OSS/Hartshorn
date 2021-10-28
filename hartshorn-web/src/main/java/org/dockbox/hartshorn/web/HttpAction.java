@@ -15,10 +15,15 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.persistence.properties;
+package org.dockbox.hartshorn.web;
 
-public enum PersistenceModifier {
-    SKIP_EMPTY,
-    SKIP_NULL,
-    SKIP_DEFAULT
+import java.io.IOException;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+@FunctionalInterface
+public interface HttpAction {
+    void fallback(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException;
 }

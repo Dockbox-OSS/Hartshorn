@@ -15,10 +15,21 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.persistence.properties;
+package org.dockbox.hartshorn.web.annotations;
 
-public enum PersistenceModifier {
-    SKIP_EMPTY,
-    SKIP_NULL,
-    SKIP_DEFAULT
+import org.dockbox.hartshorn.config.annotations.UseConfigurations;
+import org.dockbox.hartshorn.core.annotations.service.ServiceActivator;
+import org.dockbox.hartshorn.events.annotations.UseEvents;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+@ServiceActivator
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
+@UseEvents
+@UseConfigurations
+public @interface UseHttpServer {
 }

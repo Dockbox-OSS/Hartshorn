@@ -15,10 +15,23 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.persistence.properties;
+package org.dockbox.hartshorn.web;
 
-public enum PersistenceModifier {
-    SKIP_EMPTY,
-    SKIP_NULL,
-    SKIP_DEFAULT
+import org.dockbox.hartshorn.core.annotations.context.AutoCreating;
+import org.dockbox.hartshorn.core.context.DefaultContext;
+import org.dockbox.hartshorn.core.HartshornUtils;
+
+import java.util.Set;
+
+import lombok.Getter;
+
+@AutoCreating
+public class ControllerContext extends DefaultContext {
+
+    @Getter
+    private final Set<RequestHandlerContext> contexts = HartshornUtils.emptySet();
+
+    public void add(final RequestHandlerContext context) {
+        this.contexts.add(context);
+    }
 }

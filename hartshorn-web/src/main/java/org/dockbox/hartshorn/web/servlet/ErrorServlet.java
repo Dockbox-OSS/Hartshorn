@@ -15,10 +15,11 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.persistence.properties;
+package org.dockbox.hartshorn.web.servlet;
 
-public enum PersistenceModifier {
-    SKIP_EMPTY,
-    SKIP_NULL,
-    SKIP_DEFAULT
+import org.dockbox.hartshorn.core.exceptions.ApplicationException;
+import org.dockbox.hartshorn.web.RequestError;
+
+public interface ErrorServlet {
+    void handle(RequestError error) throws ApplicationException;
 }

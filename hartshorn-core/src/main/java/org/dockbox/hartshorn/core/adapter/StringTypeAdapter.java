@@ -15,10 +15,11 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.persistence.properties;
+package org.dockbox.hartshorn.core.adapter;
 
-public enum PersistenceModifier {
-    SKIP_EMPTY,
-    SKIP_NULL,
-    SKIP_DEFAULT
+import org.dockbox.hartshorn.core.domain.Exceptional;
+
+public interface StringTypeAdapter<T> {
+    Exceptional<T> adapt(String value);
+    Class<T> type();
 }

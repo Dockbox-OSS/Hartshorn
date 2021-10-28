@@ -30,30 +30,30 @@ import java.util.Map;
 @SuppressWarnings("unchecked")
 public abstract class AnnotatedElementContext<A extends AnnotatedElement> extends DefaultContext implements QualifiedElement {
 
-    private Map<Class<?>, Annotation> annotations;
+    private Map<Class<?>, Annotation> annotationCache;
 
     public List<Annotation> annotations() {
-        this.validate();
-        return HartshornUtils.asUnmodifiableList(this.annotations.values());
+        return HartshornUtils.asUnmodifiableList(this.validate().values());
     }
 
     public <T extends Annotation> Exceptional<T> annotation(final Class<T> annotation) {
-        this.validate();
-        if (this.annotations.containsKey(annotation))
-            return Exceptional.of(() -> (T) this.annotations.get(annotation));
+        final Map<Class<?>, Annotation> annotations = this.validate();
+        if (annotations.containsKey(annotation))
+            return Exceptional.of(() -> (T) annotations.get(annotation));
 
         final T oneOrNull = AnnotationHelper.oneOrNull(this.element(), annotation);
-        if (oneOrNull != null) this.annotations.put(annotation, oneOrNull);
+        if (oneOrNull != null) annotations.put(annotation, oneOrNull);
         return Exceptional.of(oneOrNull);
     }
 
-    private void validate() {
-        if (this.annotations == null) {
-            this.annotations = HartshornUtils.emptyConcurrentMap();
+    protected Map<Class<?>, Annotation> validate() {
+        if (this.annotationCache == null) {
+            this.annotationCache = HartshornUtils.emptyConcurrentMap();
             for (final Annotation annotation : this.element().getAnnotations()) {
-                this.annotations.put(annotation.getClass(), annotation);
+                this.annotationCache.put(annotation.getClass(), annotation);
             }
         }
+        return this.annotationCache;
     }
 
     protected abstract A element();

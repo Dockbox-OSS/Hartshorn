@@ -17,17 +17,18 @@
 
 package org.dockbox.hartshorn.core.context.element;
 
-import org.dockbox.hartshorn.core.domain.Exceptional;
-import org.dockbox.hartshorn.core.domain.tuple.Tristate;
-import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 import org.dockbox.hartshorn.core.ArrayListMultiMap;
 import org.dockbox.hartshorn.core.GenericType;
+import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.core.MultiMap;
-import org.dockbox.hartshorn.core.exceptions.NotPrimitiveException;
-import org.dockbox.hartshorn.core.exceptions.TypeConversionException;
 import org.dockbox.hartshorn.core.annotations.inject.Bound;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
-import org.dockbox.hartshorn.core.HartshornUtils;
+import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.core.domain.tuple.Tristate;
+import org.dockbox.hartshorn.core.domain.tuple.Tuple;
+import org.dockbox.hartshorn.core.exceptions.ApplicationException;
+import org.dockbox.hartshorn.core.exceptions.NotPrimitiveException;
+import org.dockbox.hartshorn.core.exceptions.TypeConversionException;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.annotation.Annotation;
@@ -58,30 +59,40 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
     private static final Map<Class<?>, TypeContext<?>> CACHE = HartshornUtils.emptyConcurrentMap();
 
     private static final Map<Class<?>, Class<?>> PRIMITIVE_WRAPPERS = HartshornUtils.ofEntries(
-            HartshornUtils.entry(boolean.class, Boolean.class),
-            HartshornUtils.entry(byte.class, Byte.class),
-            HartshornUtils.entry(char.class, Character.class),
-            HartshornUtils.entry(double.class, Double.class),
-            HartshornUtils.entry(float.class, Float.class),
-            HartshornUtils.entry(int.class, Integer.class),
-            HartshornUtils.entry(long.class, Long.class),
-            HartshornUtils.entry(short.class, Short.class)
+            Tuple.of(boolean.class, Boolean.class),
+            Tuple.of(byte.class, Byte.class),
+            Tuple.of(char.class, Character.class),
+            Tuple.of(double.class, Double.class),
+            Tuple.of(float.class, Float.class),
+            Tuple.of(int.class, Integer.class),
+            Tuple.of(long.class, Long.class),
+            Tuple.of(short.class, Short.class)
     );
     private static final Map<?, Function<String, ?>> PRIMITIVE_FROM_STRING = HartshornUtils.ofEntries(
-            HartshornUtils.entry(boolean.class, Boolean::valueOf),
-            HartshornUtils.entry(byte.class, Byte::valueOf),
-            HartshornUtils.entry(char.class, s -> s.charAt(0)),
-            HartshornUtils.entry(double.class, Double::valueOf),
-            HartshornUtils.entry(float.class, Float::valueOf),
-            HartshornUtils.entry(int.class, Integer::valueOf),
-            HartshornUtils.entry(long.class, Long::valueOf),
-            HartshornUtils.entry(short.class, Short::valueOf)
+            Tuple.of(boolean.class, Boolean::valueOf),
+            Tuple.of(byte.class, Byte::valueOf),
+            Tuple.of(char.class, s -> s.charAt(0)),
+            Tuple.of(double.class, Double::valueOf),
+            Tuple.of(float.class, Float::valueOf),
+            Tuple.of(int.class, Integer::valueOf),
+            Tuple.of(long.class, Long::valueOf),
+            Tuple.of(short.class, Short::valueOf)
     );
     private static final List<Class<?>> NATIVE_SUPPORTED = HartshornUtils.asList(
             boolean.class, byte.class, short.class,
             int.class, long.class, float.class, double.class,
             byte[].class, int[].class, long[].class,
             String.class, List.class, Map.class
+    );
+    private static final Map<Class<?>, Object> PRIMITIVE_DEFAULTS = HartshornUtils.ofEntries(
+            Tuple.of(boolean.class, false),
+            Tuple.of(byte.class, 0),
+            Tuple.of(char.class, '\u0000'),
+            Tuple.of(double.class, 0.0d),
+            Tuple.of(float.class, 0.0f),
+            Tuple.of(int.class, 0),
+            Tuple.of(long.class, 0L),
+            Tuple.of(short.class, 0)
     );
 
     public static TypeContext<Void> VOID = TypeContext.of(Void.class);
@@ -103,6 +114,7 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
     private List<MethodContext<?, T>> flatMethods;
     private List<TypeContext<?>> typeParameters;
     private List<ConstructorContext<T>> constructors;
+    private Map<Class<?>, Annotation> annotations;
     private MultiMap<String, MethodContext<?, T>> methods;
     private Exceptional<ConstructorContext<T>> defaultConstructor;
     private Tristate isProxy = Tristate.UNDEFINED;
@@ -464,6 +476,23 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
         return Exceptional.empty();
     }
 
+    @Override
+    protected Map<Class<?>, Annotation> validate() {
+        if (this.parent().isVoid()) return super.validate();
+        else if (this.annotations == null) {
+            final Map<Class<?>, Annotation> annotations = HartshornUtils.emptyMap();
+            Class<?> type = this.type();
+            while (type != null) {
+                for (final Annotation annotation : type.getDeclaredAnnotations()) {
+                    annotations.put(annotation.getClass(), annotation);
+                }
+                type = type.getSuperclass();
+            }
+            this.annotations = annotations;
+        }
+        return this.annotations;
+    }
+
     public Exceptional<MethodContext<?, T>> method(final String name, final TypeContext<?>... arguments) {
         return this.method(name, Arrays.asList(arguments));
     }
@@ -474,5 +503,10 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
 
     private void verifyMetadataAvailable() {
         if (this.isProxy()) throw new ApplicationException("Cannot collect metadata of proxied type").runtime();
+    }
+
+    public T defaultOrNull() {
+        if (!this.isPrimitive()) return null;
+        else return (T) PRIMITIVE_DEFAULTS.getOrDefault(this.type(), null);
     }
 }

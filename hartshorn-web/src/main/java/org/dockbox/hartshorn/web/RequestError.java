@@ -15,10 +15,27 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.persistence.properties;
+package org.dockbox.hartshorn.web;
 
-public enum PersistenceModifier {
-    SKIP_EMPTY,
-    SKIP_NULL,
-    SKIP_DEFAULT
+import org.dockbox.hartshorn.core.context.CarrierContext;
+import org.dockbox.hartshorn.core.domain.Exceptional;
+
+import java.io.PrintWriter;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+public interface RequestError extends CarrierContext {
+
+    PrintWriter writer();
+    HttpServletRequest request();
+    HttpServletResponse response();
+
+    int statusCode();
+    String message();
+    Exceptional<Throwable> cause();
+    boolean yieldDefaults();
+
+    RequestError message(String message);
+    RequestError yieldDefaults(boolean yieldDefaults);
 }

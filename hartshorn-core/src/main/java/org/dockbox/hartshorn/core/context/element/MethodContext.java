@@ -23,6 +23,7 @@ import org.dockbox.hartshorn.core.HartshornUtils;
 
 import java.lang.invoke.MethodType;
 import java.lang.reflect.Method;
+import java.util.Collection;
 import java.util.Map;
 import java.util.StringJoiner;
 import java.util.function.BiFunction;
@@ -52,11 +53,23 @@ public class MethodContext<T, P> extends ExecutableElementContext<Method> implem
         return new MethodContext<>(method);
     }
 
+    public Exceptional<T> invoke(final ApplicationContext context, final Collection<Object> arguments) {
+        return this.invoke(context.get(this.parent()), arguments);
+    }
+
+    public Exceptional<T> invoke(final P instance, final Collection<Object> arguments) {
+        return this.invoke(instance, arguments.toArray());
+    }
+
     public Exceptional<T> invoke(final P instance, final Object... arguments) {
         if (this.invoker == null) {
             this.invoker = (o, args) -> {
                 final Exceptional<T> result = Exceptional.of(() -> (T) this.method().invoke(o, args));
-                if (result.caught()) return Exceptional.of(result.orNull(), result.error().getCause());
+                if (result.caught()) {
+                    Throwable cause = result.error();
+                    if (result.error().getCause() != null) cause = result.error().getCause();
+                    return Exceptional.of(result.orNull(), cause);
+                }
                 return result;
             };
         }

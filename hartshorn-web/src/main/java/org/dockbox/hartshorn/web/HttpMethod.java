@@ -15,10 +15,25 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.persistence.properties;
+package org.dockbox.hartshorn.web;
 
-public enum PersistenceModifier {
-    SKIP_EMPTY,
-    SKIP_NULL,
-    SKIP_DEFAULT
+import java.util.Locale;
+
+import javax.servlet.http.HttpServletRequest;
+
+public enum HttpMethod {
+    GET,
+    HEAD,
+    POST,
+    PUT,
+    DELETE,
+    CONNECT,
+    OPTIONS,
+    TRACE,
+    PATCH,
+    ;
+
+    public HttpMethod of(HttpServletRequest request) {
+        return HttpMethod.valueOf(request.getMethod().toUpperCase(Locale.ROOT));
+    }
 }

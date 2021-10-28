@@ -15,10 +15,16 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.persistence.properties;
+package org.dockbox.hartshorn.jetty;
 
-public enum PersistenceModifier {
-    SKIP_EMPTY,
-    SKIP_NULL,
-    SKIP_DEFAULT
+import org.dockbox.hartshorn.core.annotations.inject.Binds;
+import org.dockbox.hartshorn.web.servlet.ErrorServlet;
+import org.dockbox.hartshorn.web.RequestError;
+
+@Binds(ErrorServlet.class)
+public class JettyErrorServletAdapter implements ErrorServlet {
+    @Override
+    public void handle(final RequestError error) {
+        error.yieldDefaults(true);
+    }
 }

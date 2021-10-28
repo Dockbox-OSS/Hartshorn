@@ -15,10 +15,16 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.persistence.properties;
+package org.dockbox.hartshorn.web;
 
-public enum PersistenceModifier {
-    SKIP_EMPTY,
-    SKIP_NULL,
-    SKIP_DEFAULT
+import org.dockbox.hartshorn.core.exceptions.ApplicationException;
+import org.dockbox.hartshorn.web.processing.RequestArgumentProcessor;
+
+import java.util.Set;
+
+public interface HttpWebServer {
+    void start(int port) throws ApplicationException;
+    void register(RequestHandlerContext context);
+    void add(RequestArgumentProcessor<?> processor);
+    Set<RequestArgumentProcessor<?>> processors();
 }
