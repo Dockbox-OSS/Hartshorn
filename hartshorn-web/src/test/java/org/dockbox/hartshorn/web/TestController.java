@@ -38,12 +38,12 @@ public class TestController {
     }
 
     @HttpGet("/header")
-    public String header(@RequestHeader("http-demo") String httpDemo) {
+    public String header(@RequestHeader("http-demo") final String httpDemo) {
         return httpDemo;
     }
 
     @HttpGet("/inject")
-    public boolean inject(ApplicationContext context) {
+    public boolean inject(final ApplicationContext context) {
         return context != null;
     }
 }

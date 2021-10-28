@@ -82,7 +82,7 @@ public final class ProxyableBootstrap {
                 .map(ParameterContext::type)
                 .collect(Collectors.toList());
 
-        // By default the name of the proxy method is used, however it's possible two methods proxy
+        // By default, the name of the proxy method is used, however it's possible two methods proxy
         // separate stages of
         // the same method, so the method names are different. The @Target annotation allows setting the
         // method name

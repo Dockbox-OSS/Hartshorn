@@ -32,7 +32,7 @@ import javax.inject.Singleton;
 
 /**
  * A simple configuration service capable of loading a configuration file and providing a custom {@link SqlService}
- * instance. {@link Configuration} is a extension of {@link org.dockbox.hartshorn.core.annotations.service.Service},
+ * instance. {@link Configuration} is an extension of {@link org.dockbox.hartshorn.core.annotations.service.Service},
  * and therefore has all abilities also found with {@link org.dockbox.hartshorn.core.annotations.service.Service}.
  *
  * <p>{@link Configuration} adds the ability to load configuration files through a configured {@link Configuration#source()}.
@@ -75,8 +75,8 @@ public class PersistenceDemoConfiguration {
      */
     @Provider
     @Singleton
-    public SqlService sql(ApplicationContext context) {
-        ConnectionAttribute connection = ConnectionAttribute.of(Remotes.MYSQL,
+    public SqlService sql(final ApplicationContext context) {
+        final ConnectionAttribute connection = ConnectionAttribute.of(Remotes.MYSQL,
                 SQLRemoteServer.of(this.host, this.port, this.database),
                 this.user, this.password
         );

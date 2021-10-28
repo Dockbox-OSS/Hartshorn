@@ -29,7 +29,7 @@ import java.util.function.Consumer;
 public interface ThreadUtils {
 
     /**
-     * Performs a given Runnable on a async thread, returning a Future object to be used for
+     * Performs a given Runnable on an async thread, returning a Future object to be used for
      * completion checks. The threads are usually provided by the underlying platform.
      *
      * @param runnable
@@ -40,15 +40,13 @@ public interface ThreadUtils {
     CompletableFuture<?> performAsync(Runnable runnable);
 
     /**
-     * Performs a given Runnable on a async thread, and blocks the current thread until it completes.
+     * Performs a given Runnable on an async thread, and blocks the current thread until it completes.
      * The threads are usually provided by the underlying platform.
      *
      * @param <T>
-     *         The return type of the callabe
+     *         The return type of the callable
      * @param callable
      *         The callable to use
-     *
-     * @return The Exceptional holding either the return value or a Exception
      */
     <T> void performAsync(Callable<T> callable, Consumer<Exceptional<T>> consumer);
 
@@ -57,11 +55,11 @@ public interface ThreadUtils {
      * The threads are usually provided by the underlying platform.
      *
      * @param <T>
-     *         The return type of the callabe
+     *         The return type of the callable
      * @param callable
      *         The callable to use
      *
-     * @return The Exceptional holding either the return value or a Exception
+     * @return The Exceptional holding either the return value or an Exception
      */
     <T> Exceptional<T> performSync(Callable<T> callable);
 }

@@ -39,7 +39,6 @@ public class ProxyUtil {
         return handler.orElse(() -> new ProxyHandler<>(instance, type)).get();
     }
 
-    @SuppressWarnings("unchecked")
     public static <T> Exceptional<ProxyHandler<T>> handler(final T instance) {
         if (instance != null) {
             if (ProxyFactory.isProxyClass(instance.getClass())) {

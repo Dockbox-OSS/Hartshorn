@@ -46,7 +46,7 @@ public class ConvertiblePipelineTests {
     }
 
     @Test
-    public void addingPipesToUncancellablePipelineTest() {
+    public void addingPipesToNonCancellablePipelineTest() {
         Assertions.assertThrows(IllegalPipeException.class, () ->
                 new ConvertiblePipelineSource<>(Integer.class)
                         .add(CancellablePipe.of(
@@ -101,7 +101,7 @@ public class ConvertiblePipelineTests {
         final int output = pipeline.processUnsafe(2F);
         Assertions.assertEquals(5, output);
 
-        // Does cancel - Will return a Float as its not converted.
+        // Does cancel - Will return a Float as it's not converted.
         final Exceptional<Integer> safeOutput = pipeline.process(0F);
         Assertions.assertTrue(safeOutput.present());
         Assertions.assertEquals(Float.class, safeOutput.type());
@@ -126,7 +126,7 @@ public class ConvertiblePipelineTests {
         final int output = pipeline.processUnsafe(2F);
         Assertions.assertEquals(5, output);
 
-        // Does cancel - Will return an none exceptional as output is discarded.
+        // Does cancel - Will return a none exceptional as output is discarded.
         final Exceptional<Integer> safeOutput = pipeline.process(0F);
         Assertions.assertFalse(safeOutput.present());
     }

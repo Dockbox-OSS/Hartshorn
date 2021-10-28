@@ -20,7 +20,7 @@ package org.dockbox.hartshorn.core.exceptions;
 import java.nio.file.Path;
 
 public class ImpossibleFileException extends RuntimeException {
-    public ImpossibleFileException(Path file, Throwable cause) {
+    public ImpossibleFileException(final Path file, final Throwable cause) {
         super("Could not create file '" + file.getFileName() + "'", cause);
     }
 }

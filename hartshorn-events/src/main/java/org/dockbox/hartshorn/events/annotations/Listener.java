@@ -26,7 +26,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * The interface to mark a method as a event listener.
+ * The interface to mark a method as an event listener.
  *
  * @see <a href="https://github.com/GuusLieben/Hartshorn/wiki/Events">Events</a>
  */

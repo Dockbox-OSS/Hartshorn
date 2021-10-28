@@ -37,7 +37,6 @@ public class HeaderRequestArgumentProcessor implements RequestArgumentProcessor<
                 && (parameter.type().childOf(String.class) || parameter.type().childOf(int.class) || parameter.type().childOf(long.class));
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public <T> Exceptional<T> process(final ApplicationContext context, final ParameterContext<T> parameter, final HttpServletRequest request, final HttpServletResponse response) {
         final RequestHeader requestHeader = parameter.annotation(RequestHeader.class).get();

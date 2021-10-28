@@ -73,7 +73,7 @@ public class CommandDefinitionContextImpl extends DefaultContext implements Comm
     /**
      * Each matching element represents a flag with either one or two groups. The first group (G1) is
      * required, and indicates the name of the flag. The second group (G2) is optional, and represents
-     * the value expected by the flag. G2 is a argument which can be parsed using {@link
+     * the value expected by the flag. G2 is an argument which can be parsed using {@link
      * CommandDefinitionContextImpl#ARGUMENT}.
      *
      * <p>Syntax:
@@ -86,8 +86,8 @@ public class CommandDefinitionContextImpl extends DefaultContext implements Comm
     private static final Pattern FLAG = Pattern.compile("-(-?\\w+)(?: ([^ -]+))?");
 
     /**
-     * Each matching element represents a argument with two groups. The first group (G1) indicates
-     * whether the argument is required or optional. The second group can either be a argument meta
+     * Each matching element represents an argument with two groups. The first group (G1) indicates
+     * whether the argument is required or optional. The second group can either be an argument meta
      * which can be parsed using {@link CommandDefinitionContextImpl#ELEMENT_VALUE}, or a simple value if {@link
      * CommandDefinitionContextImpl#ELEMENT_VALUE} returns no matches. Arguments can be grouped.
      *

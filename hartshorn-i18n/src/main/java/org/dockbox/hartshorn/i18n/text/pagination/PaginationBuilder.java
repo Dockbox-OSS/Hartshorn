@@ -32,32 +32,32 @@ public abstract class PaginationBuilder {
     protected int linesPerPage = -1;
     protected List<Text> content = HartshornUtils.emptyConcurrentList();
 
-    public PaginationBuilder padding(Text padding) {
+    public PaginationBuilder padding(final Text padding) {
         this.padding = padding;
         return this;
     }
 
-    public PaginationBuilder header(Text header) {
+    public PaginationBuilder header(final Text header) {
         this.header = header;
         return this;
     }
 
-    public PaginationBuilder footer(Text footer) {
+    public PaginationBuilder footer(final Text footer) {
         this.footer = footer;
         return this;
     }
 
-    public PaginationBuilder title(Text title) {
+    public PaginationBuilder title(final Text title) {
         this.title = title;
         return this;
     }
 
-    public PaginationBuilder linesPerPage(int linesPerPage) {
+    public PaginationBuilder linesPerPage(final int linesPerPage) {
         this.linesPerPage = linesPerPage;
         return this;
     }
 
-    public PaginationBuilder content(List<Text> content) {
+    public PaginationBuilder content(final List<Text> content) {
         this.content = content;
         return this;
     }

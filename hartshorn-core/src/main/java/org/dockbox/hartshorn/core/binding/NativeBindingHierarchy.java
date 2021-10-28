@@ -104,7 +104,7 @@ public class NativeBindingHierarchy<C> implements BindingHierarchy<C> {
             name = "::" + named.value();
         }
 
-        // The priorities are stored high to low, however we want to display them as low to high.
+        // The priorities are stored high to low, however we want to display them as low-to-high.
         final List<Entry<Integer, Provider<C>>> entries = HartshornUtils.asList(this.bindings.entrySet());
         Collections.reverse(entries);
 

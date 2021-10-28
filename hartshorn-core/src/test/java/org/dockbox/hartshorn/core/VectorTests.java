@@ -25,7 +25,7 @@ public class VectorTests {
 
     @Test
     void testXCanConvertType() {
-        Vector3N vec = Vector3N.of(1, 2, 3);
+        final Vector3N vec = Vector3N.of(1, 2, 3);
         Assertions.assertEquals(1, vec.xI());
         Assertions.assertEquals(1D, vec.xD());
         Assertions.assertEquals(1F, vec.xF());
@@ -34,7 +34,7 @@ public class VectorTests {
 
     @Test
     void testYCanConvertType() {
-        Vector3N vec = Vector3N.of(1, 2, 3);
+        final Vector3N vec = Vector3N.of(1, 2, 3);
         Assertions.assertEquals(2, vec.yI());
         Assertions.assertEquals(2D, vec.yD());
         Assertions.assertEquals(2F, vec.yF());
@@ -43,7 +43,7 @@ public class VectorTests {
 
     @Test
     void testZCanConvertType() {
-        Vector3N vec = Vector3N.of(1, 2, 3);
+        final Vector3N vec = Vector3N.of(1, 2, 3);
         Assertions.assertEquals(3, vec.zI());
         Assertions.assertEquals(3D, vec.zD());
         Assertions.assertEquals(3F, vec.zF());
@@ -52,8 +52,8 @@ public class VectorTests {
 
     @Test
     void testEqualsUsesValues() {
-        Vector3N vec = Vector3N.of(1, 2, 3);
-        Vector3N sec = Vector3N.of(1, 2, 3);
+        final Vector3N vec = Vector3N.of(1, 2, 3);
+        final Vector3N sec = Vector3N.of(1, 2, 3);
 
         Assertions.assertNotSame(vec, sec);
         Assertions.assertEquals(vec, sec);

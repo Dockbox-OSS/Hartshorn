@@ -87,7 +87,7 @@ public abstract class PrefixedParameterPattern implements CustomParameterPattern
     protected abstract char opening();
 
     /**
-     * The closing character of a argument.
+     * The closing character of an argument.
      *
      * @return The character
      */
@@ -108,7 +108,7 @@ public abstract class PrefixedParameterPattern implements CustomParameterPattern
     protected abstract boolean requiresTypeName();
 
     /**
-     * The resource to send to the {@link CommandSource} when a argument is not formatted correctly.
+     * The resource to send to the {@link CommandSource} when an argument is not formatted correctly.
      *
      * @return The resource
      */

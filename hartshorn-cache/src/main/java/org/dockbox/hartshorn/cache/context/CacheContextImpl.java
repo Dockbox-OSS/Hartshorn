@@ -41,7 +41,6 @@ public class CacheContextImpl implements CacheContext {
         this.supplier = supplier;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public <T> Cache<T> cache() {
         return (Cache<T>) this.supplier.get();

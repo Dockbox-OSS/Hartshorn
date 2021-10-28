@@ -25,7 +25,7 @@ import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 public interface OutputPipe<O> extends StandardPipe<O, O> {
 
     @Override
-    default O apply(Exceptional<O> input) throws ApplicationException {
+    default O apply(final Exceptional<O> input) throws ApplicationException {
         return this.run();
     }
 

@@ -114,7 +114,7 @@ public final class HartshornUtils {
      *
      * @return The new non-concurrent map
      * @throws NullPointerException
-     *         If a entry is null
+     *         If an entry is null
      * @see HartshornUtils#entry(Object, Object)
      */
     @SafeVarargs
@@ -270,7 +270,7 @@ public final class HartshornUtils {
     }
 
     /**
-     * Places a object in the cooldown queue for a given amount of time. If the object is already in
+     * Places an object in the cooldown queue for a given amount of time. If the object is already in
      * the cooldown queue it will not be overwritten and the existing queue position with be kept.
      *
      * @param o
@@ -285,7 +285,7 @@ public final class HartshornUtils {
     }
 
     /**
-     * Places a object in the cooldown queue for a given amount of time. If the object is already in
+     * Places an object in the cooldown queue for a given amount of time. If the object is already in
      * the cooldown queue it may be overwritten depending on the value of {@code overwriteExisting}.
      *
      * @param o
@@ -295,7 +295,7 @@ public final class HartshornUtils {
      * @param timeUnit
      *         The time unit in which the duration is kept
      * @param overwriteExisting
-     *         Whether or not to overwrite existing cooldowns
+     *         Whether to overwrite existing cooldowns
      */
     public static void cooldown(final Object o, final Long duration, final TemporalUnit timeUnit, final boolean overwriteExisting) {
         if (HartshornUtils.inCooldown(o) && !overwriteExisting) return;
@@ -303,12 +303,12 @@ public final class HartshornUtils {
     }
 
     /**
-     * Returns true if a object is in a active cooldown queue. Otherwise returns false
+     * Returns true if an object is in an active cooldown queue. Otherwise false
      *
      * @param o
      *         The object
      *
-     * @return true if a object is in a active cooldown queue. Otherwise false
+     * @return true if an object is in an active cooldown queue. Otherwise false
      */
     public static boolean inCooldown(final Object o) {
         if (activeCooldowns.containsKey(o)) {
@@ -508,7 +508,7 @@ public final class HartshornUtils {
                     continue;
                 }
 
-                // transposition check (if the current and previous
+                // transposition check if the current and previous
                 // character are switched around (e.g.: t[se]t and t[es]t)...
                 if (source.charAt(srcIndex - 1) == target.charAt(targetIndex - 2) && source.charAt(srcIndex - 2) == target.charAt(targetIndex - 1)) {
                     // What's the minimum cost between the current distance
@@ -536,7 +536,6 @@ public final class HartshornUtils {
     }
 
     @NotNull
-    @SuppressWarnings({ "BooleanParameter", "MagicNumber" })
     public static String randomChar(final boolean upper) {
         final int r = random.nextInt(26);
         return upper ? "" + (char) ((int) 'A' + r) : "" + (char) ((int) 'a' + r);
@@ -627,7 +626,6 @@ public final class HartshornUtils {
         return null == array ? 0 : Array.getLength(array);
     }
 
-    @SuppressWarnings("unchecked")
     public static <T> T[] removeItem(final T[] array, final int pos) {
         final int length = Array.getLength(array);
         final T[] dest = (T[]) Array.newInstance(array.getClass().getComponentType(), length - 1);
@@ -642,7 +640,6 @@ public final class HartshornUtils {
         return Arrays.copyOfRange(array, start, end + 1);
     }
 
-    @SuppressWarnings({ "unchecked", "SuspiciousToArrayCall" })
     public static <T> T[] toArray(final Class<T> classToCastTo, final Collection<?> c) {
         final T[] array = c.toArray((T[]) Array.newInstance(classToCastTo, c.size()));
         final Iterator<?> i = c.iterator();
@@ -825,7 +822,6 @@ public final class HartshornUtils {
      *
      * @return the t [ ]
      */
-    @SuppressWarnings("unchecked")
     public static <T> T[] addAll(final T[] array1, final T[] array2) {
         if (null == array1) {
             return HartshornUtils.shallowCopy(array2);
@@ -968,7 +964,7 @@ public final class HartshornUtils {
      * @param runnable
      *         The function to run
      *
-     * @return true if the function does not throw a exception
+     * @return true if the function does not throw an exception
      * @see HartshornUtils#throwsException(CheckedRunnable)
      */
     public static boolean doesNotThrow(final CheckedRunnable runnable) {
@@ -981,7 +977,7 @@ public final class HartshornUtils {
      * @param runnable
      *         The function to run
      *
-     * @return true if the function throws a exception
+     * @return true if the function throws an exception
      */
     public static boolean throwsException(final CheckedRunnable runnable) {
         try {
@@ -996,14 +992,14 @@ public final class HartshornUtils {
     /**
      * Returns true if a given {@link CheckedRunnable function} does not throw a specific type of
      * exception when ran. Acts as inverse of {@link HartshornUtils#throwsException(CheckedRunnable,
-     * Class)} )}.
+     * Class)}.
      *
      * @param runnable
      *         The function to run
      * @param exception
      *         The expected type of exception
      *
-     * @return true if the function does not throw a exception
+     * @return true if the function does not throw an exception
      * @see HartshornUtils#throwsException(CheckedRunnable, Class)
      */
     public static boolean doesNotThrow(final CheckedRunnable runnable, final Class<? extends Throwable> exception) {
@@ -1053,9 +1049,9 @@ public final class HartshornUtils {
         return Exceptional.empty();
     }
 
-    private static long durationAmount(@Nullable final String g, final int multipler) {
+    private static long durationAmount(@Nullable final String g, final int multiplier) {
         if (null != g && !g.isEmpty()) {
-            return multipler * Long.parseUnsignedLong(g);
+            return multiplier * Long.parseUnsignedLong(g);
         }
 
         return 0;

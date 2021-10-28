@@ -33,7 +33,6 @@ import lombok.Getter;
 /**
  * Simple implementation of {@link CommandContext}.
  */
-@SuppressWarnings("unchecked")
 @AllArgsConstructor
 public class CommandContextImpl extends DefaultContext implements CommandContext {
 

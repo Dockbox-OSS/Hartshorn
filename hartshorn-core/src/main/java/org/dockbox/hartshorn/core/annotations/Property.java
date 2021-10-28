@@ -23,14 +23,15 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * The interface to provide custom information to a object field when creating a object dynamically.
+ * The interface to provide custom information to an object field when creating an object dynamically.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 public @interface Property {
     /**
      * The alternative identifier for the field. For example a field called {@code firstName} which is
-     * being injected into by a property called {@code fn} could like like the following example:
+     * being injected into with a value of a property called {@code fn} could look like the following
+     * example:
      *
      * <pre>{@code
      * \@Property("fn")

@@ -34,7 +34,7 @@ import java.util.Objects;
 import lombok.Getter;
 
 /**
- * Wrapper type for future invokation of a {@link Method} listening for {@link Event} posting. This
+ * Wrapper type for future invocation of a {@link Method} listening for {@link Event} posting. This
  * type is responsible for filtering and invoking a {@link Method} when a supported {@link Event} is
  * fired.
  */
@@ -87,7 +87,6 @@ public final class EventWrapperImpl<T> implements Comparable<EventWrapperImpl<T>
         final List<EventWrapperImpl<T>> invokeWrappers = HartshornUtils.emptyConcurrentList();
         for (final TypeContext<?> param : method.parameterTypes()) {
             if (param.childOf(Event.class)) {
-                //noinspection unchecked
                 invokeWrappers.add(new EventWrapperImpl<>(type, (TypeContext<? extends Event>) param, method, priority));
             }
         }

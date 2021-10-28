@@ -18,7 +18,7 @@
 package org.dockbox.hartshorn.commands.definition;
 
 /**
- * Represents a single flag. Flags typically represent a option which is not
+ * Represents a single flag. Flags typically represent an option which is not
  * expected to be present by default, but allows commands to define custom
  * behavior.
  */

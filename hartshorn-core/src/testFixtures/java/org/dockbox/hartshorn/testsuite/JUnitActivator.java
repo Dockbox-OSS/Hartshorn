@@ -17,13 +17,12 @@
 
 package org.dockbox.hartshorn.testsuite;
 
-import org.dockbox.hartshorn.core.boot.Hartshorn;
 import org.dockbox.hartshorn.core.ApplicationBootstrap;
 import org.dockbox.hartshorn.core.InjectConfiguration;
 import org.dockbox.hartshorn.core.annotations.activate.Activator;
 import org.dockbox.hartshorn.core.annotations.inject.InjectConfig;
 import org.dockbox.hartshorn.core.annotations.inject.InjectPhase;
-import org.dockbox.hartshorn.testsuite.JUnitInjector;
+import org.dockbox.hartshorn.core.boot.Hartshorn;
 
 import java.lang.annotation.Annotation;
 

@@ -32,12 +32,12 @@ public class PersistenceAnnotationContext {
     FileType filetype;
     File file;
 
-    public PersistenceAnnotationContext(Serialise serialise) {
+    public PersistenceAnnotationContext(final Serialise serialise) {
         this.file = serialise.value();
         this.filetype = serialise.filetype();
     }
 
-    public PersistenceAnnotationContext(Deserialise deserialise) {
+    public PersistenceAnnotationContext(final Deserialise deserialise) {
         this.file = deserialise.value();
         this.filetype = deserialise.filetype();
     }

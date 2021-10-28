@@ -26,7 +26,7 @@ import java.util.Collection;
 import lombok.AllArgsConstructor;
 
 /**
- * Simple implementation of a value-based {@link CommandFlag}. Using a underlying
+ * Simple implementation of a value-based {@link CommandFlag}. Using an underlying
  * {@link CommandElement} to delegate value parsing.
  *
  * @param <T>

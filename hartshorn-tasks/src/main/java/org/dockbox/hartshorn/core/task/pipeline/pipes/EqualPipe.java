@@ -18,13 +18,12 @@
 package org.dockbox.hartshorn.core.task.pipeline.pipes;
 
 import org.dockbox.hartshorn.core.domain.Exceptional;
-import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 
 @FunctionalInterface
 public interface EqualPipe<O> extends StandardPipe<O, O> {
 
     @Override
-    default O apply(final Exceptional<O> input) throws ApplicationException {
+    default O apply(final Exceptional<O> input) {
         this.run();
         return input.orNull();
     }

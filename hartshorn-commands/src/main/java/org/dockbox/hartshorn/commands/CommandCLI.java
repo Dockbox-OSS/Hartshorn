@@ -18,13 +18,14 @@
 package org.dockbox.hartshorn.commands;
 
 import org.dockbox.hartshorn.core.boot.ApplicationState;
+import org.dockbox.hartshorn.events.EngineChangedState;
 
 import java.io.InputStream;
 
 /**
  * Represents a constant CLI which is capable of listening to command inputs. Commands may be entered through
  * any mean, like a command line, external event bus, or similar solutions. Should be activated after the engine
- * started, typically this can be done by listening for {@link org.dockbox.hartshorn.boot.EngineChangedState} with
+ * started, typically this can be done by listening for {@link EngineChangedState} with
  * {@link ApplicationState.Started} as its parameter.
  *
  * <p>For example

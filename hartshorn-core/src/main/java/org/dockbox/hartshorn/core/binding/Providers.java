@@ -24,7 +24,6 @@ import java.util.function.Supplier;
 
 public class Providers {
 
-    @SuppressWarnings("unchecked")
     public static <C> Provider<C> bound(final MethodContext<C, ?> method) {
         return new BoundMethodProvider<>((MethodContext<C, Object>) method);
     }

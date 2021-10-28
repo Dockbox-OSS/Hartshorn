@@ -77,7 +77,6 @@ public final class AnnotationHelper {
                 () -> annotations(element.getAnnotations(), targetAnnotationClass));
     }
 
-    @SuppressWarnings("unchecked")
     private static <T> T cached(final List<Object> keys, final Supplier<T> supplier) {
         Exceptional<Object> ret = cache.get(keys);
         if (ret == null) {
@@ -119,7 +118,6 @@ public final class AnnotationHelper {
         return result.stream();
     }
 
-    @SuppressWarnings("unchecked")
     private static <A extends Annotation> A examineAnnotation(Annotation actual, final Class<A> targetAnnotationClass) {
         actual = actualAnnotationBehindProxy(actual);
         // Two passes:
@@ -257,7 +255,7 @@ public final class AnnotationHelper {
         }
 
         @Override
-        public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
+        public Object invoke(final Object proxy, final Method method, final Object[] args) {
             if (method.getDeclaringClass() == AnnotationAdapter.class) {
                 return this.actual;
             }

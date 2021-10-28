@@ -30,7 +30,6 @@ import java.util.function.BiFunction;
 
 import lombok.Getter;
 
-@SuppressWarnings("unchecked")
 public class MethodContext<T, P> extends ExecutableElementContext<Method> implements ModifierCarrier {
 
     private static final Map<Method, MethodContext<?, ?>> cache = HartshornUtils.emptyConcurrentMap();

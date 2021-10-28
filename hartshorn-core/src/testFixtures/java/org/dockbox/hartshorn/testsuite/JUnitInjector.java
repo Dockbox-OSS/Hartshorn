@@ -33,7 +33,6 @@ public class JUnitInjector extends InjectConfiguration {
 
     private static final Map<Key<?>, Provider<?>> providers = HartshornUtils.emptyConcurrentMap();
 
-    @SuppressWarnings("unchecked")
     @Override
     public void collect(final ApplicationContext context) {
         // Overrides

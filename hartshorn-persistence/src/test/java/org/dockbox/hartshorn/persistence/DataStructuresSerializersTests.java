@@ -61,7 +61,7 @@ public class DataStructuresSerializersTests extends FileManagerTest {
     }
 
     @Test
-    public void testThatRegistryCanBeDeserialised() throws IOException {
+    public void testThatRegistryCanBeDeserialized() throws IOException {
         final File copy = File.createTempFile("tmp", null);
         final Path tempFile = copy.toPath();
 

@@ -35,7 +35,7 @@ public class User {
     private long id;
     @Setter private String name;
 
-    public User(String name) {
+    public User(final String name) {
         this.name = name;
     }
 }

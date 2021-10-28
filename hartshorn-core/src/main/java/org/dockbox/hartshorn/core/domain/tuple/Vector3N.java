@@ -20,7 +20,7 @@ package org.dockbox.hartshorn.core.domain.tuple;
 import java.util.Objects;
 
 /**
- * Represents a 3D point on a x-, y-, and z-axis. All axis points can be represented as any numeral
+ * Represents a 3D point on an x-, y-, and z-axis. All axis points can be represented as any numeral
  * value.
  */
 public class Vector3N extends Vector2N {
@@ -63,7 +63,7 @@ public class Vector3N extends Vector2N {
     }
 
     /**
-     * Gets the position on the y-axis as a integer.
+     * Gets the position on the y-axis as an integer.
      *
      * @return The y-position as integer
      */

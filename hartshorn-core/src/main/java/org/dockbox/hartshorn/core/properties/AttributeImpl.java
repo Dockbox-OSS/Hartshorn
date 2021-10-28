@@ -26,7 +26,6 @@ public class AttributeImpl<T> implements Attribute<T> {
 
     private final T value;
 
-    @SuppressWarnings("unchecked")
     public Class<T> type() {
         return (Class<T>) this.value().getClass();
     }

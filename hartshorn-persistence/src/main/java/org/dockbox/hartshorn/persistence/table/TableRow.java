@@ -38,7 +38,7 @@ public class TableRow {
      * @param column
      *         Indicates which columns to assign the value to
      * @param value
-     *         Indicates the valiue of the column
+     *         Indicates the value of the column
      *
      * @return The instance of this TableRow
      */
@@ -63,7 +63,6 @@ public class TableRow {
      *
      * @return Return a Nullable value of the asked column
      */
-    @SuppressWarnings("unchecked")
     @NotNull
     public <T> Exceptional<T> value(@NotNull final ColumnIdentifier<T> column) {
         if (null == this.data.get(column)) return Exceptional.empty();

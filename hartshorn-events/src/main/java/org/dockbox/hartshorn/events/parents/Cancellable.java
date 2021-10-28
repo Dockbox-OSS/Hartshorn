@@ -27,7 +27,7 @@ import org.jetbrains.annotations.NotNull;
 public interface Cancellable extends Event {
 
     /**
-     * Indicates whether or not the event is currently cancelled
+     * Indicates whether the event is currently cancelled
      *
      * @return The cancelled state
      */
@@ -37,7 +37,7 @@ public interface Cancellable extends Event {
      * Sets the cancelled state of the event
      *
      * @param cancelled
-     *         Whether or not the event should be cancelled
+     *         Whether the event should be cancelled
      */
     Cancellable cancelled(boolean cancelled);
 

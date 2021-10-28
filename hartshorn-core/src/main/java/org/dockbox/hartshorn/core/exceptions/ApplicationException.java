@@ -18,7 +18,7 @@
 package org.dockbox.hartshorn.core.exceptions;
 
 /**
- * Thrown when the application runs a validated problem. Typically this means an
+ * Thrown when the application runs a validated problem. Typically, this means an
  * exception was caught and is rethrown as a {@link ApplicationException} with the
  * original exception as cause.
  */

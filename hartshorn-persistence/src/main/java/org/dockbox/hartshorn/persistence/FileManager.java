@@ -27,9 +27,7 @@ import org.dockbox.hartshorn.core.properties.AttributeHolder;
 import java.nio.file.Path;
 
 /**
- * Low-level interface defining functionality to interact with Configurate based file types. While
- * this type encourages the usage of Configurate based instances, it is possible to create
- * implementations for alternative configuration libraries and/or frameworks.
+ * Low-level interface defining functionality to interact with physical or virtual files.
  */
 public interface FileManager extends AttributeHolder {
 
@@ -209,7 +207,7 @@ public interface FileManager extends AttributeHolder {
     Path configs();
 
     /**
-     * Evaluates whether or not a given {@link Path} reference directory exists. If it exists nothing
+     * Evaluates whether a given {@link Path} reference directory exists. If it exists nothing
      * is done. If it did not yet exist, the directory is created.
      *
      * @param path
@@ -220,7 +218,7 @@ public interface FileManager extends AttributeHolder {
     Path createPathIfNotExists(Path path);
 
     /**
-     * Evaluates whether or not a given {@link Path} reference file exists. If it exists nothing is
+     * Evaluates whether a given {@link Path} reference file exists. If it exists nothing is
      * done. If it did not yet exist, the directory is created.
      *
      * @param file

@@ -30,7 +30,6 @@ public class ContextMethodModifier extends ServiceAnnotatedMethodModifier<Provid
         return UseProxying.class;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public <T, R> ProxyFunction<T, R> process(final ApplicationContext context, final MethodProxyContext<T> methodContext) {
         return (instance, args, proxyContext) -> {

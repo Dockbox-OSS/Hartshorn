@@ -37,7 +37,6 @@ public class BodyRequestArgumentProcessor implements RequestArgumentProcessor<Re
         return RequestBody.class;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public <T> Exceptional<T> process(final ApplicationContext context, final ParameterContext<T> parameter, final HttpServletRequest request, final HttpServletResponse response) {
         final Exceptional<String> body = Exceptional.of(() -> request.getReader().lines().collect(Collectors.joining(System.lineSeparator())));

@@ -53,7 +53,6 @@ public final class Bindings {
         return false;
     }
 
-    @SuppressWarnings("unchecked")
     public static <A, T extends Attribute<A>> Exceptional<A> lookup(final Class<T> type, final Attribute<?>... properties) {
         for (final Attribute<?> property : properties) {
             if (type.isInstance(property)) return Exceptional.of(() -> (A) property.value());
@@ -61,7 +60,6 @@ public final class Bindings {
         return Exceptional.empty();
     }
 
-    @SuppressWarnings("unchecked")
     public static <T extends Attribute<?>> Exceptional<T> first(final Class<T> type, final Attribute<?>... properties) {
         for (final Attribute<?> property : properties) {
             if (type.isInstance(property)) return Exceptional.of(() -> (T) property);

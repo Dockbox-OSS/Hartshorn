@@ -43,7 +43,7 @@ public @interface Command {
     String[] value() default "";
 
     /**
-     * The arguments context for the command. If the default value is used no arguments will be validated,
+     * The argument context for the command. If the default value is used no arguments will be validated,
      * delivering the same result as making it equal to the primary alias.
      *
      * @return the argument context for the command.

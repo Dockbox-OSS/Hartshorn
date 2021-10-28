@@ -84,7 +84,7 @@ public class PipelineTests {
     }
 
     @Test
-    public void uncancellablePipelineTest() {
+    public void nonCancellablePipelineTest() {
         Assertions.assertThrows(IllegalPipeException.class, () ->
                 new Pipeline<Float>()
                         .add(InputPipe.of(input -> input + 1F))

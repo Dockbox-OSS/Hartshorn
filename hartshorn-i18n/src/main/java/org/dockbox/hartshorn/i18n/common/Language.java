@@ -46,8 +46,8 @@ public enum Language implements PersistentCapable<PersistentLanguageModel> {
     private final String nameEnglish;
     private final String nameLocalized;
 
-    public static Language of(String language) {
-        for (Language value : Language.values()) {
+    public static Language of(final String language) {
+        for (final Language value : Language.values()) {
             if (value.code.equals(language)
                     || value.nameEnglish.equals(language)
                     || value.nameLocalized.equals(language)) {
@@ -57,8 +57,8 @@ public enum Language implements PersistentCapable<PersistentLanguageModel> {
         return Language.EN_US;
     }
 
-    public static Language of(Locale locale) {
-        for (Language value : Language.values()) {
+    public static Language of(final Locale locale) {
+        for (final Language value : Language.values()) {
             // Compare based on language, as e.g. NL_NL will not match with Locale(nl, NL)
             if (value.locale().getLanguage().equalsIgnoreCase(locale.getLanguage())) return value;
         }

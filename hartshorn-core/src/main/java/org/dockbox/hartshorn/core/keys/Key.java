@@ -46,7 +46,7 @@ public abstract class Key<K, A> {
      * @param getter
      *         The getter, accepting one value, and returning another. The accepting value being
      *         the type to retrieve from, constrained using type parameter {@code K}. The return value
-     *         being the value retreived from the type, constrained using type parameter {@code A}.
+     *         being the value retrieved from the type, constrained using type parameter {@code A}.
      */
     protected Key(final BiFunction<K, A, TransactionResult> setter, final Function<K, Exceptional<A>> getter) {
         this.setter = setter;
@@ -82,7 +82,7 @@ public abstract class Key<K, A> {
 
     /**
      * Resolves the correct parent type for a given key, so it can be applied safely. This is useful
-     * when applying keys to supertypes which extend from multiple Keyholders. This method applies a constraint on the type, so
+     * when applying keys to supertypes which extend from multiple keyholders. This method applies a constraint on the type, so
      * that the supertype has to extend type parameter {@code K}, so we can ensure no {@link
      * ClassCastException} will be thrown. This also prevents us from applying a {@link Key} made for
      * type A to type B.
@@ -92,7 +92,6 @@ public abstract class Key<K, A> {
      *
      * @return The current instance, resolved for the supertype.
      */
-    @SuppressWarnings("unchecked")
     public <T extends K> Key<T, A> resolve() {
         return (Key<T, A>) this;
     }

@@ -22,7 +22,7 @@ import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 /**
  * Represents an operation that accepts a single input argument and returns no
  * result. Unlike most other functional interfaces, {@code CheckedConsumer} is
- * expected to operate via side-effects.
+ * expected to operate via side effects.
  *
  * @param <T>
  *         the type of the input to the operation

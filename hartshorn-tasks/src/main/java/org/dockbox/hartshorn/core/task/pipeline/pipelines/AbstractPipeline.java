@@ -39,13 +39,13 @@ public abstract class AbstractPipeline<P, I> {
 
     private final List<IPipe<I, I>> pipes = HartshornUtils.emptyList();
     private boolean isCancelled;
-    @Getter private CancelBehaviour cancelBehaviour = CancelBehaviour.UNCANCELLABLE;
+    @Getter private CancelBehaviour cancelBehaviour = CancelBehaviour.NON_CANCELLABLE;
 
     /**
      * Internally calls {@link AbstractPipeline#add(IPipe[])} and returns itself.
      *
      * @param pipes
-     *         The non-null varargs of {@link IPipe}s to add to the pipeline
+     *         The non-null varargs of {@link IPipe pipes} to add to the pipeline
      *
      * @return Itself
      */
@@ -56,11 +56,11 @@ public abstract class AbstractPipeline<P, I> {
     }
 
     /**
-     * Adds a non-null array of {@link IPipe}s to the pipeline by internally calling {@link
+     * Adds a non-null array of {@link IPipe pipes} to the pipeline by internally calling {@link
      * AbstractPipeline#add(Iterable)}.
      *
      * @param pipes
-     *         The non-null array of {@link IPipe}s to add to the pipeline
+     *         The non-null array of {@link IPipe pipes} to add to the pipeline
      *
      * @return Itself
      */
@@ -70,11 +70,11 @@ public abstract class AbstractPipeline<P, I> {
     }
 
     /**
-     * Adds a non-null {@link Iterable} of {@link IPipe}s to the pipeline by internally calling {@link
+     * Adds a non-null {@link Iterable} of {@link IPipe pipes} to the pipeline by internally calling {@link
      * AbstractPipeline#add} on each pipe.
      *
      * @param pipes
-     *         The non-null {@link Iterable} of {@link IPipe}s to add to the pipeline
+     *         The non-null {@link Iterable} of {@link IPipe pipes} to add to the pipeline
      *
      * @return Itself
      */
@@ -101,11 +101,11 @@ public abstract class AbstractPipeline<P, I> {
     }
 
     /**
-     * Adds a {@link AbstractPipeline}'s {@link IPipe}s to this current pipeline by internally calling
+     * Adds a {@link AbstractPipeline}'s {@link IPipe pipes} to this current pipeline by internally calling
      * {@link AbstractPipeline#add(Iterable)}.
      *
      * @param pipeline
-     *         The non-null {@link AbstractPipeline} whos {@link IPipe}s should be added to
+     *         The non-null {@link AbstractPipeline} of which the {@link IPipe pipes} should be added to
      *         this pipeline
      *
      * @return Itself
@@ -115,7 +115,7 @@ public abstract class AbstractPipeline<P, I> {
         return this.add(pipeline.pipes());
     }
 
-    /** @return An unmodifiabe list of the {@link IPipe}s in the pipeline */
+    /** @return An unmodifiable list of the {@link IPipe pipes} in the pipeline */
     @PartialApi
     public List<IPipe<I, I>> pipes() {
         return HartshornUtils.asUnmodifiableList(this.pipes);
@@ -137,7 +137,7 @@ public abstract class AbstractPipeline<P, I> {
     /**
      * A default method for processing a pipe, which handles converting the pipe, checking that
      * they're not illegal {@link CancellablePipe}s and passing forward the previous input if the pipe
-     * throws an caught.
+     * throws an exception.
      *
      * @param pipe
      *         The {@link IPipe} to be processed
@@ -154,7 +154,7 @@ public abstract class AbstractPipeline<P, I> {
     protected Exceptional<I> processPipe(final IPipe<I, I> pipe, Exceptional<I> exceptionalInput) {
         if (!this.cancellable() && pipe.type().childOf(CancellablePipe.class)) {
             throw new IllegalPipeException(
-                    "Attempted to add a CancellablePipe to an uncancellable pipeline.");
+                    "Attempted to add a CancellablePipe to an non-cancellable pipeline.");
         }
 
         // Create a temporary final version that can be used within the supplier.
@@ -175,7 +175,7 @@ public abstract class AbstractPipeline<P, I> {
             }
         });
 
-        // If there was an caught, the supplier won't have captured any input, so we'll try and
+        // If there was an exception, the supplier won't have captured any input, so we'll try and
         // pass the previous input forwards.
         if (exceptionalInput.caught()) {
             exceptionalInput = Exceptional.of(finalInput.orNull(), exceptionalInput.error());
@@ -186,7 +186,7 @@ public abstract class AbstractPipeline<P, I> {
     /** @return A boolean describing if the pipeline is cancellable or not */
     @PartialApi
     public boolean cancellable() {
-        return CancelBehaviour.UNCANCELLABLE != this.cancelBehaviour();
+        return CancelBehaviour.NON_CANCELLABLE != this.cancelBehaviour();
     }
 
     /**
@@ -302,13 +302,13 @@ public abstract class AbstractPipeline<P, I> {
         return inputs.stream().map(this::process).map(Exceptional::orNull).toList();
     }
 
-    /** Cancels the pipeline which prevents it from processing any further {@link IPipe}s. */
+    /** Cancels the pipeline which prevents it from processing any further {@link IPipe pipes}. */
     @PartialApi
     public void cancel() {
         if (this.cancellable()) this.isCancelled = true;
     }
 
-    /** Uncancels the pipeline. */
+    /** Permits the pipeline. */
     @PartialApi
     public void permit() {
         this.isCancelled = false;
@@ -321,7 +321,7 @@ public abstract class AbstractPipeline<P, I> {
     }
 
     /**
-     * Removes the last {@link IPipe} from the pipeline. If there are no {@link IPipe}s in the
+     * Removes the last {@link IPipe} from the pipeline. If there are no {@link IPipe pipes} in the
      * pipeline, this does nothing.
      */
     @PartialApi
@@ -343,13 +343,13 @@ public abstract class AbstractPipeline<P, I> {
         }
     }
 
-    /** @return The number of {@link IPipe}s in the pipeline */
+    /** @return The number of {@link IPipe pipes} in the pipeline */
     @PartialApi
     public int size() {
         return this.pipes.size();
     }
 
-    /** Removes all the {@link IPipe}s in the pipeline. */
+    /** Removes all the {@link IPipe pipes} in the pipeline. */
     @PartialApi
     public void clear() {
         this.pipes.clear();

@@ -32,7 +32,6 @@ import java.util.stream.Collectors;
 
 import lombok.Getter;
 
-@SuppressWarnings("unchecked")
 public class ParameterContext<T> extends AnnotatedElementContext<Parameter> implements TypedElementContext<T> {
 
     private final Parameter parameter;

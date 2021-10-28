@@ -42,7 +42,7 @@ public class Tuple<K, V> implements Entry<K, V> {
     private final K key;
     private final V value;
 
-    public static <K, V> Tuple<K, V> of(K key, V value) {
+    public static <K, V> Tuple<K, V> of(final K key, final V value) {
         return new Tuple<>(key, value);
     }
 
@@ -57,7 +57,7 @@ public class Tuple<K, V> implements Entry<K, V> {
     }
 
     @Override
-    public V setValue(V value) {
+    public V setValue(final V value) {
         throw new UnsupportedOperationException("Cannot modify final Tuple value");
     }
 }

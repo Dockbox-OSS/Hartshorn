@@ -49,7 +49,7 @@ public interface ParserContext extends Context {
     List<CommandParameter<?>> flags();
 
     /**
-     * Gets the alias of a command. Typically a raw command will contain both the alias and additional
+     * Gets the alias of a command. Typically, a raw command will contain both the alias and additional
      * arguments and flags. The result of this method is only the alias. For example the raw command:
      * <pre><code>
      *     "command argumentA --flagB"

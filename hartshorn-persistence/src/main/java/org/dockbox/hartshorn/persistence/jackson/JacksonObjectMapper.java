@@ -71,7 +71,6 @@ import javax.inject.Inject;
 
 import lombok.AllArgsConstructor;
 
-@SuppressWarnings("unchecked")
 @Binds(org.dockbox.hartshorn.persistence.mapping.ObjectMapper.class)
 public class JacksonObjectMapper extends DefaultObjectMapper {
 
@@ -285,7 +284,7 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
 
     private <T> Exceptional<T> correctPersistentCapableInternal(final Class<T> type, final Function<Class<? extends PersistentModel<?>>, Exceptional<? extends PersistentModel<?>>> reader) {
         if (TypeContext.of(type).childOf(PersistentCapable.class)) {
-            // Provision basis is required here, as injected types will typically pass in a interface type. If no injection point is available a
+            // Provision basis is required here, as injected types will typically pass in an interface type. If no injection point is available a
             // regular instance is created through available constructors.
             final Class<? extends PersistentModel<?>> modelType = ((PersistentCapable<?>) this.context.get(type)).type();
             @NotNull final Exceptional<? extends PersistentModel<?>> model = reader.apply(modelType);

@@ -21,12 +21,12 @@ import org.dockbox.hartshorn.core.annotations.Property;
 
 public class WronglyIdentifiedUser {
 
-    public int Id;
+    public final int Id;
 
     @Property("name")
-    public String displayedName;
+    public final String displayedName;
 
-    public WronglyIdentifiedUser(int id, String name) {
+    public WronglyIdentifiedUser(final int id, final String name) {
         this.Id = id;
         this.displayedName = name;
     }

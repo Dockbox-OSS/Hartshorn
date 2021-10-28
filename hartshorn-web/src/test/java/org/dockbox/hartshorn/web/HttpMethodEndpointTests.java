@@ -26,28 +26,28 @@ import java.io.IOException;
 public class HttpMethodEndpointTests extends RestIntegrationTest {
 
     @Test
-    void testGet() throws IOException, InterruptedException {
+    void testGet() throws IOException {
         final CloseableHttpResponse response = this.request("/get", HttpMethod.GET, "");
         RestAssert.assertStatus(HttpStatus.OK, response);
         RestAssert.assertBody("JUnit GET", response);
     }
 
     @Test
-    public void testPostWithBody() throws IOException, InterruptedException {
+    public void testPostWithBody() throws IOException {
         final CloseableHttpResponse response = this.request("/post", HttpMethod.POST, "Hello world!");
         RestAssert.assertStatus(HttpStatus.OK, response);
         RestAssert.assertBody("Hello world!", response);
     }
 
     @Test
-    void testGetWithHeader() throws IOException, InterruptedException {
+    void testGetWithHeader() throws IOException {
         final CloseableHttpResponse response = this.request("/header", HttpMethod.GET, "", new BasicHeader("http-demo", "Hello headers!"));
         RestAssert.assertStatus(HttpStatus.OK, response);
         RestAssert.assertBody("Hello headers!", response);
     }
 
     @Test
-    void testGetWithInject() throws IOException, InterruptedException {
+    void testGetWithInject() throws IOException {
         final CloseableHttpResponse response = this.request("/inject", HttpMethod.GET, "");
         RestAssert.assertStatus(HttpStatus.OK, response);
         RestAssert.assertBody("true", response);

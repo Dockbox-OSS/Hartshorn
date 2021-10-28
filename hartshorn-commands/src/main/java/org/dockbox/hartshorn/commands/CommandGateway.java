@@ -67,7 +67,7 @@ public interface CommandGateway {
      * @param type
      *         The type containing {@link org.dockbox.hartshorn.commands.annotations.Command} methods.
      */
-    void register(TypeContext<?> type);
+    <T> void register(TypeContext<T> type);
 
     /**
      * Registers the given {@link CommandExecutorContext} to handle the associated command(s).

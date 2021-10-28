@@ -23,12 +23,12 @@ import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 @FunctionalInterface
 public interface InputPipe<I, O> extends StandardPipe<I, O> {
 
-    static <I, O> InputPipe<I, O> of(InputPipe<I, O> pipe) {
+    static <I, O> InputPipe<I, O> of(final InputPipe<I, O> pipe) {
         return pipe;
     }
 
     @Override
-    default O apply(Exceptional<I> input) throws ApplicationException {
+    default O apply(final Exceptional<I> input) throws ApplicationException {
         return this.execute(input.orNull());
     }
 
