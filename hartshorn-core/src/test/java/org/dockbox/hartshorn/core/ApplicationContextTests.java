@@ -27,6 +27,7 @@ import org.dockbox.hartshorn.core.binding.Provider;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.properties.BindingMetaAttribute;
 import org.dockbox.hartshorn.core.properties.UseFactory;
+import org.dockbox.hartshorn.core.proxy.ExtendedProxy;
 import org.dockbox.hartshorn.core.types.ContextInjectedType;
 import org.dockbox.hartshorn.core.types.SampleContext;
 import org.dockbox.hartshorn.testsuite.ApplicationAwareTest;
@@ -64,6 +65,18 @@ public class ApplicationContextTests extends ApplicationAwareTest {
                 Arguments.of("namedField", "NamedFieldProvision", true, "named", false),
                 Arguments.of("singleton", "SingletonProvision", false, null, true)
         );
+    }
+
+    @Test
+    void testMethodCanDelegateToImplementation() {
+        final ExtendedProxy extendedProxy = this.context().get(ExtendedProxy.class);
+        Assertions.assertEquals("concrete", extendedProxy.name());
+    }
+
+    @Test
+    void testMethodOverrideDoesNotDelegateToImplementation() {
+        final ExtendedProxy extendedProxy = this.context().get(ExtendedProxy.class);
+        Assertions.assertEquals(21, extendedProxy.age());
     }
 
     @Test
