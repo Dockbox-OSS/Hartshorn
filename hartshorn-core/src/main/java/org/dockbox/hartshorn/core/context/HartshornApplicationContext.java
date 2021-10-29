@@ -103,6 +103,7 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
     private MetaProvider metaProvider;
 
     public HartshornApplicationContext(final ApplicationContextAware application, final TypeContext<?> activationSource, final Collection<String> prefixes, final String[] args, final Modifier... modifiers) {
+        this.singletons.put(Key.of(ApplicationContext.class), this);
         this.environment = new ApplicationEnvironment(prefixes, application);
         final Exceptional<Activator> activator = activationSource.annotation(Activator.class);
         if (activator.absent()) {
