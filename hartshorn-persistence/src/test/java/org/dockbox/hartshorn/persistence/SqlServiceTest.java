@@ -18,6 +18,7 @@
 package org.dockbox.hartshorn.persistence;
 
 import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.persistence.annotations.UsePersistence;
 import org.dockbox.hartshorn.persistence.properties.ConnectionAttribute;
 import org.dockbox.hartshorn.persistence.properties.Remote;
 import org.dockbox.hartshorn.persistence.properties.Remotes;
@@ -42,6 +43,7 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 @Testcontainers
+@UsePersistence
 class SqlServiceTest extends ApplicationAwareTest {
 
     protected static final String DEFAULT_DATABASE = "HartshornDb_" + System.nanoTime();
