@@ -26,7 +26,7 @@ public abstract class ServiceMethodModifier<A extends Annotation> extends Servic
         final ProxyHandler<T> handler = ProxyUtil.handler(type, instance);
 
         for (final MethodContext<?, T> method : methods) {
-            final MethodProxyContext<T> ctx = new MethodProxyContextImpl<>(context, instance, type, method, properties);
+            final MethodProxyContext<T> ctx = new MethodProxyContextImpl<>(context, instance, type, method, properties, handler);
 
             if (this.preconditions(context, ctx)) {
                 final ProxyFunction<T, Object> function = this.process(context, ctx);

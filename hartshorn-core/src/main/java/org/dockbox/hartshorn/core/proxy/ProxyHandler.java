@@ -20,6 +20,7 @@ package org.dockbox.hartshorn.core.proxy;
 import org.dockbox.hartshorn.core.ArrayListMultiMap;
 import org.dockbox.hartshorn.core.MultiMap;
 import org.dockbox.hartshorn.core.boot.Hartshorn;
+import org.dockbox.hartshorn.core.context.DefaultContext;
 import org.dockbox.hartshorn.core.context.element.FieldContext;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
@@ -37,7 +38,7 @@ import javassist.util.proxy.MethodHandler;
 import javassist.util.proxy.ProxyFactory;
 import lombok.Getter;
 
-public class ProxyHandler<T> implements MethodHandler {
+public class ProxyHandler<T> extends DefaultContext implements MethodHandler {
 
     private final MultiMap<Method, ProxyAttribute<T, ?>> handlers = new ArrayListMultiMap<>();
     private final T instance;
