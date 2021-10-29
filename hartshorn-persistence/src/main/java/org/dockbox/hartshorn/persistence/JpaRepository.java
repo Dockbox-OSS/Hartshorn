@@ -1,21 +1,26 @@
 package org.dockbox.hartshorn.persistence;
 
+import org.dockbox.hartshorn.core.context.ContextCarrier;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.properties.AttributeHolder;
 
 import java.util.Set;
 
-public interface JpaRepository extends AttributeHolder {
+import javax.persistence.EntityManager;
 
-    void save(Object object);
+public interface JpaRepository<T, ID> extends AttributeHolder, ContextCarrier {
 
-    void update(Object object);
+    void save(final T object);
 
-    void updateOrSave(Object object);
+    void update(T object);
 
-    void delete(Object object);
+    void updateOrSave(T object);
 
-    <T> Set<T> findAll(Class<T> type);
+    void delete(T object);
 
-    <T> Exceptional<T> findById(Class<T> type, Object id);
+    Set<T> findAll();
+
+    Exceptional<T> findById(ID id);
+
+    EntityManager entityManager();
 }

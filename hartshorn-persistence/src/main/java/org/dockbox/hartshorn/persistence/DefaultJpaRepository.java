@@ -12,26 +12,28 @@ import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 
-public interface DefaultJpaRepository<EM extends EntityManager & AutoCloseable> extends JpaRepository {
+public interface DefaultJpaRepository<EM extends EntityManager & AutoCloseable, T, ID> extends JpaRepository<T, ID> {
 
-    <T> T transform(final Function<EM, T> function);
+    <R> R transform(final Function<EM, R> function);
 
     void accept(final Consumer<EM> consumer);
 
     @Override
-    default  <T> Set<T> findAll(final Class<T> type) {
+    default Set<T> findAll() {
         return this.transform(em -> {
             final CriteriaBuilder builder = em.getCriteriaBuilder();
-            final CriteriaQuery<T> criteria = builder.createQuery(type);
-            criteria.from(type);
+            final CriteriaQuery<T> criteria = builder.createQuery(this.reify());
+            criteria.from(this.reify());
             final List<T> data = em.createQuery(criteria).getResultList();
             return HartshornUtils.asUnmodifiableSet(data);
         });
     }
 
     @Override
-    default <T> Exceptional<T> findById(final Class<T> type, final Object id) {
-        return this.transform(em -> Exceptional.of(() -> em.find(type, id)));
+    default Exceptional<T> findById(final ID id) {
+        return this.transform(em -> Exceptional.of(() -> em.find(this.reify(), id)));
     }
+
+    Class<T> reify();
 
 }

@@ -2,8 +2,8 @@ package org.dockbox.hartshorn.persistence.hibernate;
 
 import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.core.annotations.inject.Binds;
+import org.dockbox.hartshorn.core.annotations.inject.Bound;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
-import org.dockbox.hartshorn.core.context.ContextCarrier;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
@@ -26,14 +26,18 @@ import java.util.function.Function;
 
 import javax.inject.Inject;
 import javax.persistence.Entity;
+import javax.persistence.EntityManager;
 
 import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 @Binds(JpaRepository.class)
-public class HibernateJpaRepository implements DefaultJpaRepository<Session>, ContextCarrier {
+@RequiredArgsConstructor(onConstructor_ = @Bound)
+public class HibernateJpaRepository<T, ID> implements DefaultJpaRepository<Session, T, ID> {
 
     private final Configuration configuration = new Configuration();
+    private final Class<T> type;
 
     @Getter(AccessLevel.PROTECTED)
     private SessionFactory factory;
@@ -155,12 +159,22 @@ public class HibernateJpaRepository implements DefaultJpaRepository<Session>, Co
     }
 
     @Override
-    public <T> T transform(final Function<Session, T> function) {
+    public Class<T> reify() {
+        return this.type;
+    }
+
+    @Override
+    public <R> R transform(final Function<Session, R> function) {
         final Session session = this.factory().openSession();
         session.beginTransaction();
-        final T result = function.apply(session);
+        final R result = function.apply(session);
         session.getTransaction().commit();
         session.close();
         return result;
+    }
+
+    @Override
+    public EntityManager entityManager() {
+        return this.factory().openSession();
     }
 }
