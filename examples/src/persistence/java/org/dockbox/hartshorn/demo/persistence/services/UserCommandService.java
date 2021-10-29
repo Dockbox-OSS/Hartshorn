@@ -21,6 +21,7 @@ import org.dockbox.hartshorn.commands.annotations.Command;
 import org.dockbox.hartshorn.commands.context.CommandContext;
 import org.dockbox.hartshorn.commands.context.CommandDefinitionContextImpl;
 import org.dockbox.hartshorn.core.annotations.service.Service;
+import org.dockbox.hartshorn.demo.persistence.domain.User;
 
 import javax.inject.Inject;
 
@@ -50,7 +51,7 @@ public class UserCommandService {
     public void create(final CommandContext context) {
         final String name = context.get("name");
         final int age = context.get("age");
-        this.persistenceService.createUser(name, age);
+        this.persistenceService.save(new User(name, age));
     }
 
 }
