@@ -18,15 +18,15 @@
 package org.dockbox.hartshorn.demo.persistence.events;
 
 import org.dockbox.hartshorn.demo.persistence.domain.User;
-import org.dockbox.hartshorn.demo.persistence.services.UserPersistence;
+import org.dockbox.hartshorn.demo.persistence.services.UserRepository;
 import org.dockbox.hartshorn.events.parents.ContextCarrierEvent;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * A simple custom event which is posted by {@link UserPersistence}
- * after a {@link User} has been created through {@link UserPersistence#createUser(String, int)}.
+ * A simple custom event which is posted by {@link UserRepository}
+ * after a {@link User} has been created through {@link UserRepository#createUser(String, int)}.
  *
  * <p>The {@link User#id() ID of the user} will be present when this event is posted.
  *

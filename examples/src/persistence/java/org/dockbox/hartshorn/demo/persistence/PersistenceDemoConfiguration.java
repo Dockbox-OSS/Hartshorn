@@ -22,6 +22,7 @@ import org.dockbox.hartshorn.config.annotations.Value;
 import org.dockbox.hartshorn.core.Key;
 import org.dockbox.hartshorn.core.annotations.inject.Provider;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
+import org.dockbox.hartshorn.demo.persistence.services.UserRepository;
 import org.dockbox.hartshorn.persistence.FileType;
 import org.dockbox.hartshorn.persistence.SqlService;
 import org.dockbox.hartshorn.persistence.properties.ConnectionAttribute;
@@ -75,11 +76,11 @@ public class PersistenceDemoConfiguration {
      */
     @Provider
     @Singleton
-    public SqlService sql(final ApplicationContext context) {
+    public UserRepository sql(final ApplicationContext context) {
         final ConnectionAttribute connection = ConnectionAttribute.of(Remotes.MYSQL,
                 SQLRemoteServer.of(this.host, this.port, this.database),
                 this.user, this.password
         );
-        return context.get(SqlService.class, connection);
+        return context.get(UserRepository.class, connection);
     }
 }

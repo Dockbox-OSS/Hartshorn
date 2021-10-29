@@ -33,7 +33,7 @@ import javax.inject.Inject;
 public class UserCommandService {
 
     @Inject
-    private UserPersistence persistenceService;
+    private UserRepository persistenceService;
 
     /**
      * The method activated when the command {@code create <name> <age>} is correctly entered by a user
