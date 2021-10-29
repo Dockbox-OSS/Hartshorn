@@ -33,13 +33,13 @@ public class PostBootstrapServiceProcessor implements ServiceProcessor<UseBootst
         final boolean activated = context.locator().container(type)
                 .map(serviceContainer -> serviceContainer.hasActivator(UseBootstrap.class))
                 .or(false);
-        final boolean hasPosts = !type.flatMethods(PostBootstrap.class).isEmpty();
+        final boolean hasPosts = !type.methods(PostBootstrap.class).isEmpty();
         return activated && hasPosts;
     }
 
     @Override
     public <T> void process(final ApplicationContext context, final TypeContext<T> type) {
-        final Collection<MethodContext<?, T>> methods = type.flatMethods(PostBootstrap.class);
+        final Collection<MethodContext<?, T>> methods = type.methods(PostBootstrap.class);
         for (final MethodContext<?, T> method : methods) {
             context.environment().application().addActivation(method);
         }

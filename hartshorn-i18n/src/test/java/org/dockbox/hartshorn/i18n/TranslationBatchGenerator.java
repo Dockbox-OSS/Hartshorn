@@ -181,7 +181,7 @@ public final class TranslationBatchGenerator {
         final Map<String, String> batch = HartshornUtils.emptyMap();
         for (final ComponentContainer container : context.locator().containers()) {
             final TypeContext<?> type = container.type();
-            final List<? extends MethodContext<?, ?>> methods = type.flatMethods(Resource.class);
+            final List<? extends MethodContext<?, ?>> methods = type.methods(Resource.class);
             for (final MethodContext<?, ?> method : methods) {
                 final Resource annotation = method.annotation(Resource.class).get();
                 final String key = I18N.key(context, type, method);

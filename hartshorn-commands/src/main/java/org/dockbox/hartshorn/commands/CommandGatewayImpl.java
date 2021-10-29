@@ -139,7 +139,7 @@ public class CommandGatewayImpl implements CommandGateway, AttributeHolder {
 
     @Override
     public <T> void register(final TypeContext<T> type) {
-        for (final MethodContext<?, T> method : type.flatMethods(Command.class)) {
+        for (final MethodContext<?, T> method : type.methods(Command.class)) {
             this.register(method, type);
         }
     }

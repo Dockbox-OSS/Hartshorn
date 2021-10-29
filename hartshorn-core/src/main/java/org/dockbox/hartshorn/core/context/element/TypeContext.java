@@ -190,7 +190,7 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
         return this.parent;
     }
 
-    public List<MethodContext<?, T>> flatMethods() {
+    public List<MethodContext<?, T>> methods() {
         if (this.flatMethods == null) {
             this.verifyMetadataAvailable();
             final Method[] methods = this.type().getMethods();
@@ -206,8 +206,8 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
         return this.flatMethods;
     }
 
-    public List<MethodContext<?, T>> flatMethods(final Class<? extends Annotation> annotation) {
-        return this.flatMethods().stream()
+    public List<MethodContext<?, T>> methods(final Class<? extends Annotation> annotation) {
+        return this.methods().stream()
                 .filter(method -> method.annotation(annotation).present())
                 .toList();
     }
@@ -463,7 +463,7 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
             // Organizing the methods by name and arguments isn't worth the additional overhead for list comparisons,
             // so instead we only link it by name and perform the list comparison on request.
             this.methods = new ArrayListMultiMap<>();
-            for (final MethodContext<?, T> method : this.flatMethods()) {
+            for (final MethodContext<?, T> method : this.methods()) {
                 this.methods.put(method.name(), method);
             }
         }

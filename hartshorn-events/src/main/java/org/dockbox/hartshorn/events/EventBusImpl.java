@@ -160,7 +160,7 @@ public class EventBusImpl implements EventBus {
      */
     protected <T> Set<EventWrapper> invokers(final TypeContext<T> type) {
         final Set<EventWrapper> result = HartshornUtils.emptySet();
-        for (final MethodContext<?, T> method : type.flatMethods()) {
+        for (final MethodContext<?, T> method : type.methods()) {
             final Exceptional<Listener> annotation = method.annotation(Listener.class);
             if (annotation.present()) {
                 this.checkListenerMethod(method);
