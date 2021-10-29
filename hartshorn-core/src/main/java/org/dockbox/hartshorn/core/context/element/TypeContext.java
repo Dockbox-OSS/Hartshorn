@@ -113,6 +113,7 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
     private List<TypeContext<?>> interfaces;
     private List<MethodContext<?, T>> flatMethods;
     private List<TypeContext<?>> typeParameters;
+    private MultiMap<TypeContext<?>, TypeContext<?>> interfaceTypeParameters;
     private List<ConstructorContext<T>> constructors;
     private Map<Class<?>, Annotation> annotations;
     private MultiMap<String, MethodContext<?, T>> methods;
@@ -212,23 +213,49 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
                 .toList();
     }
 
+    public List<TypeContext<?>> typeParameters(final Class<?> superInterface) {
+        return this.typeParameters(TypeContext.of(superInterface));
+    }
+
+    public List<TypeContext<?>> typeParameters(final TypeContext<?> superInterface) {
+        if (!superInterface.isInterface()) throw new IllegalArgumentException("Provided type " + superInterface.name() + " is not a interface");
+        if (!this.childOf(superInterface)) throw new IllegalArgumentException("Provided interface " + superInterface.name() + " is not a super type of " + this.name());
+
+        if (this.interfaceTypeParameters == null) {
+            this.interfaceTypeParameters = new ArrayListMultiMap<>();
+            for (final Type genericSuper : this.type().getGenericInterfaces()) {
+                if (genericSuper instanceof ParameterizedType parameterized) {
+                    final Type raw = parameterized.getRawType();
+                    if (raw instanceof Class<?> clazz && superInterface.is(clazz)) {
+                        this.interfaceTypeParameters.putAll(superInterface, this.contextsFromParameterizedType(parameterized));
+                    }
+                }
+            }
+        }
+        return HartshornUtils.asUnmodifiableList(this.interfaceTypeParameters.get(superInterface));
+    }
+
     public List<TypeContext<?>> typeParameters() {
         if (this.typeParameters == null) {
             this.verifyMetadataAvailable();
             final Type genericSuper = this.type().getGenericSuperclass();
             if (genericSuper instanceof ParameterizedType parameterized) {
-                final Type[] arguments = parameterized.getActualTypeArguments();
-
-                this.typeParameters = Arrays.stream(arguments)
-                        .filter(Class.class::isInstance)
-                        .map(type -> (Class<?>) type)
-                        .map(TypeContext::of)
-                        .collect(Collectors.toList());
+                this.typeParameters = this.contextsFromParameterizedType(parameterized);
             } else {
                 this.typeParameters = HartshornUtils.emptyList();
             }
         }
         return this.typeParameters;
+    }
+
+    private List<TypeContext<?>> contextsFromParameterizedType(final ParameterizedType parameterizedType) {
+        final Type[] arguments = parameterizedType.getActualTypeArguments();
+
+        return Arrays.stream(arguments)
+                .filter(Class.class::isInstance)
+                .map(type -> (Class<?>) type)
+                .map(TypeContext::of)
+                .collect(Collectors.toList());
     }
 
     public Exceptional<FieldContext<?>> field(final String field) {
@@ -311,7 +338,11 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
     }
 
     public boolean isAbstract() {
-        return this.type.isInterface() || Modifier.isAbstract(this.type.getModifiers());
+        return this.isInterface() || Modifier.isAbstract(this.type().getModifiers());
+    }
+
+    public boolean isInterface() {
+        return this.type().isInterface();
     }
 
     public boolean isProxy() {
