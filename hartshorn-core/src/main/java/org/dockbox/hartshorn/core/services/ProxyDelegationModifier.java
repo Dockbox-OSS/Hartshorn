@@ -1,5 +1,6 @@
 package org.dockbox.hartshorn.core.services;
 
+import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.MethodProxyContext;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
@@ -11,14 +12,22 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.annotation.Annotation;
 import java.util.Collection;
+import java.util.Map;
 
 public abstract class ProxyDelegationModifier<P, A extends Annotation> extends ServiceMethodModifier<A> {
+
+    private final Map<Object, Attribute<?>[]> attributeCache = HartshornUtils.emptyConcurrentMap();
+    private final Map<Object, P> backedImplementations = HartshornUtils.emptyConcurrentMap();
 
     protected abstract Class<P> parentTarget();
 
     @Override
     protected <T> boolean modifies(final ApplicationContext context, final TypeContext<T> type, @Nullable final T instance, final Attribute<?>... properties) {
-        return type.childOf(this.parentTarget());
+        final boolean modifies = type.childOf(this.parentTarget());
+        if (modifies) {
+            this.attributeCache.put(instance, properties);
+        }
+        return modifies;
     }
 
     @Override
@@ -39,7 +48,11 @@ public abstract class ProxyDelegationModifier<P, A extends Annotation> extends S
         if (parentMethod.present()) {
             final MethodContext<?, P> parent = parentMethod.get();
             final R defaultValue = (R) parent.returnType().defaultOrNull();
-            return (instance, args, proxyContext) -> parent.invoke(context.get(this.parentTarget()), args).map((r -> (R) r)).orElse(() -> defaultValue).get();
+            final P concrete = this.backedImplementations.computeIfAbsent(methodContext.instance(), instance -> {
+                final Attribute<?>[] attributes = this.attributeCache.get(methodContext.instance());
+                return context.get(this.parentTarget(), attributes);
+            });
+            return (instance, args, proxyContext) -> parent.invoke(concrete, args).map((r -> (R) r)).orElse(() -> defaultValue).orNull();
         }
         else {
             context.log().error("Attempted to delegate method " + method.qualifiedName() + " but it was not find on the indicated parent " + parentContext.qualifiedName());
