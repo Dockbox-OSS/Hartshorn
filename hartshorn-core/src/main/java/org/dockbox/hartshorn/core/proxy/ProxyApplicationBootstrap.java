@@ -32,4 +32,9 @@ public class ProxyApplicationBootstrap extends HartshornBootstrap {
     public <T> Exceptional<TypeContext<T>> real(final T instance) {
         return ProxyUtil.handler(instance).map(ProxyHandler::type).map(TypeContext::of);
     }
+
+    @Override
+    public <T, P extends T> Exceptional<T> delegator(final TypeContext<T> type, final P instance) {
+        return ProxyUtil.delegator(type, instance);
+    }
 }

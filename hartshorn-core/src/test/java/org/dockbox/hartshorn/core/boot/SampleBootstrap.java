@@ -17,13 +17,12 @@
 
 package org.dockbox.hartshorn.core.boot;
 
-import org.dockbox.hartshorn.core.boot.HartshornBootstrap;
-import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.InjectConfiguration;
 import org.dockbox.hartshorn.core.Modifier;
 import org.dockbox.hartshorn.core.MultiMap;
 import org.dockbox.hartshorn.core.annotations.inject.InjectPhase;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
+import org.dockbox.hartshorn.core.domain.Exceptional;
 
 import java.lang.annotation.Annotation;
 import java.util.Collection;
@@ -48,6 +47,11 @@ public class SampleBootstrap extends HartshornBootstrap {
 
     @Override
     public <T> Exceptional<TypeContext<T>> real(final T instance) {
+        return Exceptional.empty();
+    }
+
+    @Override
+    public <T, P extends T> Exceptional<T> delegator(final TypeContext<T> type, final P instance) {
         return Exceptional.empty();
     }
 }
