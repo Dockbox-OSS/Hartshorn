@@ -8,6 +8,7 @@ import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 import org.dockbox.hartshorn.core.properties.Attribute;
+import org.dockbox.hartshorn.core.properties.AttributeHolder;
 import org.dockbox.hartshorn.persistence.DefaultJpaRepository;
 import org.dockbox.hartshorn.persistence.JpaRepository;
 import org.dockbox.hartshorn.persistence.context.EntityContext;
@@ -34,7 +35,7 @@ import lombok.RequiredArgsConstructor;
 
 @Binds(JpaRepository.class)
 @RequiredArgsConstructor(onConstructor_ = @Bound)
-public class HibernateJpaRepository<T, ID> implements DefaultJpaRepository<Session, T, ID> {
+public class HibernateJpaRepository<T, ID> implements DefaultJpaRepository<Session, T, ID>, AttributeHolder {
 
     private final Configuration configuration = new Configuration();
     private final Class<T> type;

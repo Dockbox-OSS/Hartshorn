@@ -2,13 +2,12 @@ package org.dockbox.hartshorn.persistence;
 
 import org.dockbox.hartshorn.core.context.ContextCarrier;
 import org.dockbox.hartshorn.core.domain.Exceptional;
-import org.dockbox.hartshorn.core.properties.AttributeHolder;
 
 import java.util.Set;
 
 import javax.persistence.EntityManager;
 
-public interface JpaRepository<T, ID> extends AttributeHolder, ContextCarrier {
+public interface JpaRepository<T, ID> extends ContextCarrier {
 
     void save(final T object);
 
