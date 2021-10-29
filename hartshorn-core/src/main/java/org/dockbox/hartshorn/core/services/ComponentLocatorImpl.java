@@ -17,20 +17,20 @@
 
 package org.dockbox.hartshorn.core.services;
 
-import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.core.ArrayListMultiMap;
 import org.dockbox.hartshorn.core.ComponentType;
+import org.dockbox.hartshorn.core.MultiMap;
 import org.dockbox.hartshorn.core.annotations.component.Component;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
-import org.dockbox.hartshorn.core.HartshornUtils;
+import org.dockbox.hartshorn.core.domain.Exceptional;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 public class ComponentLocatorImpl implements ComponentLocator {
 
-    private static final Map<String, Collection<ComponentContainer>> cache = HartshornUtils.emptyConcurrentMap();
+    private static final MultiMap<String, ComponentContainer> cache = new ArrayListMultiMap<>();
     private final ApplicationContext context;
 
     public ComponentLocatorImpl(final ApplicationContext context) {
@@ -58,7 +58,7 @@ public class ComponentLocatorImpl implements ComponentLocator {
         final long duration = System.currentTimeMillis() - start;
         this.context.log().info("Collected %d types and %d components in %dms".formatted(types.size(), containers.size(), duration));
 
-        ComponentLocatorImpl.cache.put(prefix, containers);
+        ComponentLocatorImpl.cache.putAll(prefix, containers);
     }
 
     @Override

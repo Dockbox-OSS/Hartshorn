@@ -35,7 +35,6 @@ public class ProxyContextImpl implements ProxyContext {
     public <T> T invoke(final Object... args) throws ApplicationException {
         try {
             if (this.proceed() == null || this.proceed().isAbstract()) return null;
-            //noinspection unchecked
             return (T) ((MethodContext<?, Object>) this.proceed()).invoke(this.self(), args).orNull();
         }
         catch (final ClassCastException e) {

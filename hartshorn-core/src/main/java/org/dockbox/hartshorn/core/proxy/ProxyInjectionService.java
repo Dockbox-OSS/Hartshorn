@@ -39,14 +39,13 @@ public class ProxyInjectionService {
             boolean proxy = false;
             for (final Attribute<?> property : properties) {
                 if (property instanceof ProxyAttribute) {
-                    //noinspection unchecked
                     handler.delegate((ProxyAttribute<Object, ?>) property);
                     proxy = true;
                 }
             }
             if (proxy) {
                 try {
-                    return handler.proxy();
+                    return handler.proxy(instance);
                 }
                 catch (final InvocationTargetException | NoSuchMethodException | InstantiationException | IllegalAccessException e) {
                     Except.handle(e);

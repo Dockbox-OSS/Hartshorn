@@ -132,7 +132,7 @@ public final class ProxyableBootstrap {
             try {
                 final ProxyHandler<C> handler = new ProxyHandler<>(instance);
                 handler.delegate(property);
-                return handler.proxy();
+                return handler.proxy(instance);
             }
             catch (final Throwable t) {
                 Except.handle(t);

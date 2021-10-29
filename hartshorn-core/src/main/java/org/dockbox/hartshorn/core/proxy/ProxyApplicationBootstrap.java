@@ -25,7 +25,7 @@ public class ProxyApplicationBootstrap extends HartshornBootstrap {
 
     @Override
     public <T> Exceptional<T> proxy(final TypeContext<T> type, final T instance) {
-        return Exceptional.of(() -> ProxyUtil.handler(type, instance).proxy());
+        return Exceptional.of(() -> ProxyUtil.handler(type, instance).proxy(instance));
     }
 
     @Override

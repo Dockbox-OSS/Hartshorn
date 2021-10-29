@@ -17,12 +17,13 @@
 
 package org.dockbox.hartshorn.core.proxy;
 
-import org.dockbox.hartshorn.core.exceptions.ApplicationException;
-import org.dockbox.hartshorn.core.boot.Hartshorn;
 import org.dockbox.hartshorn.core.ArrayListMultiMap;
 import org.dockbox.hartshorn.core.MultiMap;
+import org.dockbox.hartshorn.core.boot.Hartshorn;
+import org.dockbox.hartshorn.core.context.element.FieldContext;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
+import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -45,9 +46,7 @@ public class ProxyHandler<T> implements MethodHandler {
     private final Class<T> type;
 
     public ProxyHandler(final T instance) {
-        this.instance = instance;
-        //noinspection unchecked
-        this.type = (Class<T>) instance.getClass();
+        this(instance, (Class<T>) instance.getClass());
     }
 
     public ProxyHandler(final T instance, final Class<T> type) {
@@ -143,14 +142,31 @@ public class ProxyHandler<T> implements MethodHandler {
     }
 
     public T proxy() throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+        return this.proxy(null);
+    }
+
+    public T proxy(final T existing) throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         if (this.type().isInterface()) {
             return new ProxyInterfaceHandler<>(this).proxy();
         }
+
         final ProxyFactory factory = new ProxyFactory();
         factory.setSuperclass(this.type());
         factory.setFilter(ProxyHandler.this.handlers::containsKey);
 
-        //noinspection unchecked
-        return (T) factory.create(new Class<?>[0], new Object[0], this);
+        final T proxy = (T) factory.create(new Class<?>[0], new Object[0], this);
+        // New proxy instances
+        if (existing != null) this.restoreFields(existing, proxy);
+        return proxy;
+    }
+
+    private void restoreFields(final T existing, final T proxy) {
+        TypeContext<T> context = TypeContext.of(existing);
+        if (context.isProxy()) {
+            context = TypeContext.of(ProxyUtil.handler(this.type(), existing).type());
+        }
+        for (final FieldContext<?> field : context.fields()) {
+            field.set(proxy, field.get(existing).orNull());
+        }
     }
 }

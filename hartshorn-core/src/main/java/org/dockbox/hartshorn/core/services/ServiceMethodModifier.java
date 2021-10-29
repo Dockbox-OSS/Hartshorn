@@ -41,7 +41,8 @@ public abstract class ServiceMethodModifier<A extends Annotation> extends Servic
                 }
             }
         }
-        return Exceptional.of(handler::proxy).or(instance);
+
+        return Exceptional.of(() -> handler.proxy(instance)).or(instance);
     }
 
     protected abstract <T> Collection<MethodContext<?, T>> modifiableMethods(TypeContext<T> type);
