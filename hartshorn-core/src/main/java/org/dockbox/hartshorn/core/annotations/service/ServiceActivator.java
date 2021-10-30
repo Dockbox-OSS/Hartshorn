@@ -27,5 +27,5 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.ANNOTATION_TYPE)
 public @interface ServiceActivator {
-    String scanPackages() default Hartshorn.PACKAGE_PREFIX;
+    String[] scanPackages() default { Hartshorn.PACKAGE_PREFIX };
 }
