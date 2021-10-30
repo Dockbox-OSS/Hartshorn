@@ -35,6 +35,6 @@ public class ProxyApplicationBootstrap extends HartshornBootstrap {
 
     @Override
     public <T, P extends T> Exceptional<T> delegator(final TypeContext<T> type, final P instance) {
-        return ProxyUtil.delegator(type, instance);
+        return ProxyUtil.delegator(this.context(), type, instance);
     }
 }

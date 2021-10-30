@@ -18,21 +18,13 @@ import java.util.Collection;
 
 public abstract class ProxyDelegationModifier<P, A extends Annotation> extends ServiceMethodModifier<A> {
 
-    public static String attributesKey(final TypeContext<?> target) {
-        return "attributes" + target.qualifiedName();
-    }
-
-    public static String backingKey(final TypeContext<?> target) {
-        return "backingImplementation" + target.qualifiedName();
-    }
-
     protected abstract Class<P> parentTarget();
 
     @Override
     protected <T> boolean modifies(final ApplicationContext context, final TypeContext<T> type, @Nullable final T instance, final Attribute<?>... properties) {
         final boolean modifies = type.childOf(this.parentTarget());
         if (modifies) {
-            ProxyUtil.handler(type, instance).add(attributesKey(TypeContext.of(this.parentTarget())), new DelegatedAttributesContext(properties));
+            ProxyUtil.handler(type, instance).add(new DelegatedAttributesContext(properties));
         }
         return modifies;
     }
@@ -54,14 +46,14 @@ public abstract class ProxyDelegationModifier<P, A extends Annotation> extends S
         final Exceptional<MethodContext<?, P>> parentMethod = parentContext.method(method.name(), method.parameterTypes());
         final ProxyHandler<T> handler = methodContext.handler();
 
-        final String contextId = backingKey(parentContext);
-        final P concrete = (P) handler.first(contextId, BackingImplementationContext.class).orElse(() -> {
-            final Attribute<?>[] attributes = handler.first(attributesKey(parentContext), DelegatedAttributesContext.class).map(DelegatedAttributesContext::attributes).orElse(() -> new Attribute[0]).get();
-            final P concreteDelegator = this.concreteDelegator(context, (TypeContext<? extends P>) methodContext.type(), attributes);
-            final BackingImplementationContext<P> backingContext = new BackingImplementationContext<>(concreteDelegator);
-            handler.add(contextId, backingContext);
-            return backingContext;
-        }).get().implementation();
+        final BackingImplementationContext backing = handler.first(context, BackingImplementationContext.class).get();
+        final P concrete = backing.computeIfAbsent(this.parentTarget(), target -> {
+            final Attribute<?>[] attributes = handler.first(context, DelegatedAttributesContext.class)
+                    .map(DelegatedAttributesContext::attributes)
+                    .orElse(() -> new Attribute[0])
+                    .get();
+            return this.concreteDelegator(context, (TypeContext<? extends P>) methodContext.type(), attributes);
+        });
 
         if (parentMethod.present()) {
             final MethodContext<?, P> parent = parentMethod.get();
