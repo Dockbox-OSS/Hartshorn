@@ -125,8 +125,10 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
 
     public void addActivator(final Annotation annotation) {
         if (this.activators.contains(annotation)) return;
-        if (TypeContext.of(annotation.annotationType()).annotation(ServiceActivator.class).present()) {
+        final Exceptional<ServiceActivator> activator = TypeContext.of(annotation.annotationType()).annotation(ServiceActivator.class);
+        if (activator.present()) {
             this.activators.add(annotation);
+            this.environment().prefix(activator.get().scanPackages());
             this.environment().annotationsWith(TypeContext.unproxy(this, annotation), ServiceActivator.class).forEach(this::addActivator);
         }
     }
