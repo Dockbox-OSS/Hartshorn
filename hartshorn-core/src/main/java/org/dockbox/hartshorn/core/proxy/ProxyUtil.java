@@ -17,9 +17,11 @@
 
 package org.dockbox.hartshorn.core.proxy;
 
-import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.AnnotationHelper.AnnotationInvocationHandler;
+import org.dockbox.hartshorn.core.context.ApplicationContext;
+import org.dockbox.hartshorn.core.context.BackingImplementationContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
+import org.dockbox.hartshorn.core.domain.Exceptional;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
@@ -61,6 +63,12 @@ public class ProxyUtil {
             }
         }
         return Exceptional.empty();
+    }
+
+    public static <T, P extends T> Exceptional<T> delegator(final ApplicationContext context, final TypeContext<T> type, final P proxied) {
+        return ProxyUtil.handler(proxied)
+                .flatMap(handler -> handler.first(context, BackingImplementationContext.class))
+                .flatMap(backingContext -> backingContext.get(type.type()));
     }
 
 }

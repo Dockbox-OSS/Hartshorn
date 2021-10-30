@@ -59,7 +59,7 @@ public final class ProxyableBootstrap {
     }
 
     private static <T> void delegateMethods(final ApplicationContext context, final TypeContext<T> proxyClass) {
-        final List<? extends MethodContext<?, T>> targets = proxyClass.flatMethods(Target.class);
+        final List<? extends MethodContext<?, T>> targets = proxyClass.methods(Target.class);
 
         final Proxy proxy = proxyClass.annotation(Proxy.class).get();
         targets.forEach(target -> ProxyableBootstrap.delegateMethod(context, proxyClass, TypeContext.of(proxy.value()), target));
@@ -132,7 +132,7 @@ public final class ProxyableBootstrap {
             try {
                 final ProxyHandler<C> handler = new ProxyHandler<>(instance);
                 handler.delegate(property);
-                return handler.proxy();
+                return handler.proxy(instance);
             }
             catch (final Throwable t) {
                 Except.handle(t);

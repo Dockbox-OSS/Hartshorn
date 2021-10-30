@@ -1,31 +1,16 @@
-/*
- * Copyright (C) 2020 Guus Lieben
- *
- * This framework is free software; you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation, either version 2.1 of the
- * License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See
- * the GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
- */
-
 package org.dockbox.hartshorn.persistence.hibernate;
 
 import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.core.annotations.inject.Binds;
+import org.dockbox.hartshorn.core.annotations.inject.Bound;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 import org.dockbox.hartshorn.core.properties.Attribute;
-import org.dockbox.hartshorn.persistence.DefaultSqlService;
-import org.dockbox.hartshorn.persistence.SqlService;
+import org.dockbox.hartshorn.core.properties.AttributeHolder;
+import org.dockbox.hartshorn.persistence.DefaultJpaRepository;
+import org.dockbox.hartshorn.persistence.JpaRepository;
 import org.dockbox.hartshorn.persistence.context.EntityContext;
 import org.dockbox.hartshorn.persistence.properties.ConnectionAttribute;
 import org.dockbox.hartshorn.persistence.properties.PersistenceConnection;
@@ -42,19 +27,21 @@ import java.util.function.Function;
 
 import javax.inject.Inject;
 import javax.persistence.Entity;
+import javax.persistence.EntityManager;
 
 import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
-@Binds(SqlService.class)
-public class HibernateSqlService extends DefaultSqlService<Session> {
+@Binds(JpaRepository.class)
+@RequiredArgsConstructor(onConstructor_ = @Bound)
+public class HibernateJpaRepository<T, ID> implements DefaultJpaRepository<Session, T, ID>, AttributeHolder {
 
     private final Configuration configuration = new Configuration();
-    private SessionFactory factory;
+    private final Class<T> type;
 
-    @Inject
-    @Getter
-    private ApplicationContext applicationContext;
+    @Getter(AccessLevel.PROTECTED)
+    private SessionFactory factory;
 
     @Getter(AccessLevel.PROTECTED)
     private PersistenceConnection connection;
@@ -136,6 +123,10 @@ public class HibernateSqlService extends DefaultSqlService<Session> {
         }
     }
 
+    @Inject
+    @Getter
+    private ApplicationContext applicationContext;
+
     @Override
     public void save(final Object object) {
         this.accept(session -> session.save(object));
@@ -157,14 +148,9 @@ public class HibernateSqlService extends DefaultSqlService<Session> {
     }
 
     @Override
-    public Session entityManager() {
-        return this.factory.openSession();
-    }
-
-    @Override
     public void accept(final Consumer<Session> consumer) {
         this.applicationContext().log().debug("Opening remote session to %s".formatted(this.connection().url()));
-        final Session session = this.factory.openSession();
+        final Session session = this.factory().openSession();
         this.applicationContext().log().debug("Beginning transaction to %s".formatted(this.connection().url()));
         session.beginTransaction();
         consumer.accept(session);
@@ -174,12 +160,22 @@ public class HibernateSqlService extends DefaultSqlService<Session> {
     }
 
     @Override
-    public <T> T transform(final Function<Session, T> function) {
-        final Session session = this.factory.openSession();
+    public Class<T> reify() {
+        return this.type;
+    }
+
+    @Override
+    public <R> R transform(final Function<Session, R> function) {
+        final Session session = this.factory().openSession();
         session.beginTransaction();
-        final T result = function.apply(session);
+        final R result = function.apply(session);
         session.getTransaction().commit();
         session.close();
         return result;
+    }
+
+    @Override
+    public EntityManager entityManager() {
+        return this.factory().openSession();
     }
 }

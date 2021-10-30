@@ -18,7 +18,7 @@
 package org.dockbox.hartshorn.persistence;
 
 import org.dockbox.hartshorn.core.domain.Exceptional;
-import org.dockbox.hartshorn.persistence.hibernate.HibernateSqlService;
+import org.dockbox.hartshorn.persistence.annotations.UsePersistence;
 import org.dockbox.hartshorn.persistence.properties.ConnectionAttribute;
 import org.dockbox.hartshorn.persistence.properties.Remote;
 import org.dockbox.hartshorn.persistence.properties.Remotes;
@@ -43,6 +43,7 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 @Testcontainers
+@UsePersistence
 class SqlServiceTest extends ApplicationAwareTest {
 
     protected static final String DEFAULT_DATABASE = "HartshornDb_" + System.nanoTime();
@@ -97,12 +98,12 @@ class SqlServiceTest extends ApplicationAwareTest {
     @ParameterizedTest
     @MethodSource("dialects")
     public void testJpaSave(final Remote remote, final Object target) {
-        final SqlService sql = this.sql(remote, target);
+        final JpaRepository<User, Long> sql = this.sql(remote, target);
         sql.save(new User("Guus"));
         sql.save(new User("Simon"));
         sql.save(new User("Josh"));
 
-        final Set<User> users = sql.findAll(User.class);
+        final Set<User> users = sql.findAll();
         Assertions.assertFalse(users.isEmpty());
 
         for (final User user : users) {
@@ -110,23 +111,23 @@ class SqlServiceTest extends ApplicationAwareTest {
         }
     }
 
-    protected SqlService sql(final Remote remote, final Object target) {
+    protected JpaRepository<User, Long> sql(final Remote remote, final Object target) {
         if (target instanceof ConnectionAttribute attribute)
-            return this.context().get(HibernateSqlService.class, attribute);
-        else return this.context().get(HibernateSqlService.class, ConnectionAttribute.of(remote, target, "", ""));
+            return this.context().get(UserJpaRepository.class, attribute);
+        else return this.context().get(UserJpaRepository.class, ConnectionAttribute.of(remote, target, "", ""));
     }
 
     @ParameterizedTest
     @MethodSource("dialects")
     void testJpaDelete(final Remote remote, final Object target) {
-        final SqlService sql = this.sql(remote, target);
+        final JpaRepository<User, Long> sql = this.sql(remote, target);
         final User guus = new User("Guus");
         sql.save(guus);
         sql.save(new User("Simon"));
         sql.save(new User("Josh"));
         sql.delete(guus);
 
-        final Set<User> users = sql.findAll(User.class);
+        final Set<User> users = sql.findAll();
         Assertions.assertFalse(users.isEmpty());
 
         for (final User user : users) {
@@ -137,7 +138,7 @@ class SqlServiceTest extends ApplicationAwareTest {
     @ParameterizedTest
     @MethodSource("dialects")
     void testJpaPersists(final Remote remote, final Object target) {
-        final SqlService sql = this.sql(remote, target);
+        final JpaRepository<User, Long> sql = this.sql(remote, target);
         final User user = new User("Guus");
         Assertions.assertEquals(0, user.id());
 
@@ -148,14 +149,14 @@ class SqlServiceTest extends ApplicationAwareTest {
     @ParameterizedTest
     @MethodSource("dialects")
     void testJpaUpdate(final Remote remote, final Object target) {
-        final SqlService sql = this.sql(remote, target);
+        final JpaRepository<User, Long> sql = this.sql(remote, target);
         final User guus = new User("Guus");
 
         sql.save(guus);
         guus.name("NotGuus");
         sql.update(guus);
 
-        final Exceptional<User> persisted = sql.findById(User.class, guus.id());
+        final Exceptional<User> persisted = sql.findById(guus.id());
         Assertions.assertTrue(persisted.present());
         Assertions.assertEquals(persisted.get().name(), "NotGuus");
     }

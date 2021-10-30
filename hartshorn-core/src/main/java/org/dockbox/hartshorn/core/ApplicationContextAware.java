@@ -36,6 +36,8 @@ public abstract class ApplicationContextAware implements ApplicationBootstrap {
 
     public abstract <T> Exceptional<TypeContext<T>> real(T instance);
 
+    public abstract <T, P extends T> Exceptional<T> delegator(final TypeContext<T> type, P instance);
+
     public abstract Logger log();
 
 }

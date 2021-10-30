@@ -32,13 +32,13 @@ public class RestControllerProcessor implements ServiceProcessor<UseHttpServer> 
 
     @Override
     public boolean preconditions(final ApplicationContext context, final TypeContext<?> type) {
-        return !type.flatMethods(HttpRequest.class).isEmpty();
+        return !type.methods(HttpRequest.class).isEmpty();
     }
 
     @Override
     public <T> void process(final ApplicationContext context, final TypeContext<T> type) {
         final ControllerContext controllerContext = context.first(ControllerContext.class).get();
-        for (final MethodContext<?, T> method : type.flatMethods(HttpRequest.class)) {
+        for (final MethodContext<?, T> method : type.methods(HttpRequest.class)) {
             controllerContext.add(new RequestHandlerContext(context, method));
         }
     }

@@ -22,8 +22,9 @@ import org.dockbox.hartshorn.config.annotations.Value;
 import org.dockbox.hartshorn.core.Key;
 import org.dockbox.hartshorn.core.annotations.inject.Provider;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
+import org.dockbox.hartshorn.demo.persistence.services.UserRepository;
 import org.dockbox.hartshorn.persistence.FileType;
-import org.dockbox.hartshorn.persistence.SqlService;
+import org.dockbox.hartshorn.persistence.JpaRepository;
 import org.dockbox.hartshorn.persistence.properties.ConnectionAttribute;
 import org.dockbox.hartshorn.persistence.properties.Remotes;
 import org.dockbox.hartshorn.persistence.properties.SQLRemoteServer;
@@ -31,7 +32,7 @@ import org.dockbox.hartshorn.persistence.properties.SQLRemoteServer;
 import javax.inject.Singleton;
 
 /**
- * A simple configuration service capable of loading a configuration file and providing a custom {@link SqlService}
+ * A simple configuration service capable of loading a configuration file and providing a custom {@link JpaRepository}
  * instance. {@link Configuration} is an extension of {@link org.dockbox.hartshorn.core.annotations.service.Service},
  * and therefore has all abilities also found with {@link org.dockbox.hartshorn.core.annotations.service.Service}.
  *
@@ -63,7 +64,7 @@ public class PersistenceDemoConfiguration {
     private String password;
 
     /**
-     * Provides a singleton instance of {@link SqlService} configured to use a MySQL database, of which the
+     * Provides a singleton instance of {@link org.dockbox.hartshorn.persistence.JpaRepository} configured to use a MySQL database, of which the
      * connection information is provided by the {@code persistence-demo.yml} file. As this is a {@link Singleton}
      * provider, the result of this provider will be saved after it is first called.
      *
@@ -75,11 +76,11 @@ public class PersistenceDemoConfiguration {
      */
     @Provider
     @Singleton
-    public SqlService sql(final ApplicationContext context) {
+    public UserRepository sql(final ApplicationContext context) {
         final ConnectionAttribute connection = ConnectionAttribute.of(Remotes.MYSQL,
                 SQLRemoteServer.of(this.host, this.port, this.database),
                 this.user, this.password
         );
-        return context.get(SqlService.class, connection);
+        return context.get(UserRepository.class, connection);
     }
 }

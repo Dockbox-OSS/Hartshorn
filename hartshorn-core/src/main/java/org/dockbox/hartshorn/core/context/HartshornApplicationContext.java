@@ -17,13 +17,11 @@
 
 package org.dockbox.hartshorn.core.context;
 
-import org.dockbox.hartshorn.core.domain.Exceptional;
-import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 import org.dockbox.hartshorn.core.ApplicationContextAware;
 import org.dockbox.hartshorn.core.ArrayListMultiMap;
 import org.dockbox.hartshorn.core.ComponentType;
-import org.dockbox.hartshorn.core.binding.ContextWrappedHierarchy;
 import org.dockbox.hartshorn.core.DefaultModifiers;
+import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.core.InjectConfiguration;
 import org.dockbox.hartshorn.core.InjectionPoint;
 import org.dockbox.hartshorn.core.InjectorMetaProvider;
@@ -32,8 +30,6 @@ import org.dockbox.hartshorn.core.MetaProvider;
 import org.dockbox.hartshorn.core.MetaProviderModifier;
 import org.dockbox.hartshorn.core.Modifier;
 import org.dockbox.hartshorn.core.MultiMap;
-import org.dockbox.hartshorn.core.binding.NativeBindingHierarchy;
-import org.dockbox.hartshorn.core.exceptions.TypeProvisionException;
 import org.dockbox.hartshorn.core.annotations.activate.Activator;
 import org.dockbox.hartshorn.core.annotations.inject.Binds;
 import org.dockbox.hartshorn.core.annotations.inject.Combines;
@@ -42,11 +38,16 @@ import org.dockbox.hartshorn.core.annotations.inject.Enable;
 import org.dockbox.hartshorn.core.annotations.service.ServiceActivator;
 import org.dockbox.hartshorn.core.binding.BindingHierarchy;
 import org.dockbox.hartshorn.core.binding.Bindings;
+import org.dockbox.hartshorn.core.binding.ContextWrappedHierarchy;
+import org.dockbox.hartshorn.core.binding.NativeBindingHierarchy;
 import org.dockbox.hartshorn.core.binding.Provider;
 import org.dockbox.hartshorn.core.binding.Providers;
 import org.dockbox.hartshorn.core.context.element.FieldContext;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
+import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.core.exceptions.ApplicationException;
+import org.dockbox.hartshorn.core.exceptions.TypeProvisionException;
 import org.dockbox.hartshorn.core.inject.InjectionModifier;
 import org.dockbox.hartshorn.core.inject.ProviderContext;
 import org.dockbox.hartshorn.core.properties.Attribute;
@@ -59,10 +60,7 @@ import org.dockbox.hartshorn.core.services.ComponentLocatorImpl;
 import org.dockbox.hartshorn.core.services.ComponentProcessor;
 import org.dockbox.hartshorn.core.services.ServiceImpl;
 import org.dockbox.hartshorn.core.services.ServiceOrder;
-import org.dockbox.hartshorn.core.HartshornUtils;
 import org.jetbrains.annotations.Nullable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.lang.annotation.Annotation;
 import java.util.Collection;
@@ -85,7 +83,6 @@ import lombok.Getter;
 public class HartshornApplicationContext extends DefaultContext implements ApplicationContext {
 
     private static final Pattern ARGUMENTS = Pattern.compile("-H([a-zA-Z0-9\\.]+)=(.+)");
-    protected static final Logger log = LoggerFactory.getLogger(HartshornApplicationContext.class);
 
     protected final transient Set<InjectionPoint<?>> injectionPoints = HartshornUtils.emptyConcurrentSet();
     protected final transient MultiMap<ServiceOrder, InjectionModifier<?>> injectionModifiers = new ArrayListMultiMap<>();
@@ -103,6 +100,7 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
     private MetaProvider metaProvider;
 
     public HartshornApplicationContext(final ApplicationContextAware application, final TypeContext<?> activationSource, final Collection<String> prefixes, final String[] args, final Modifier... modifiers) {
+        this.singletons.put(Key.of(ApplicationContext.class), this);
         this.environment = new ApplicationEnvironment(prefixes, application);
         final Exceptional<Activator> activator = activationSource.annotation(Activator.class);
         if (activator.absent()) {
@@ -142,11 +140,10 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
         for (final InjectionPoint<?> injectionPoint : this.injectionPoints) {
             if (injectionPoint.accepts(key.contract())) {
                 try {
-                    //noinspection unchecked
                     typeInstance = ((InjectionPoint<T>) injectionPoint).apply(typeInstance, key.contract(), properties);
                 }
                 catch (final ClassCastException e) {
-                    log.warn("Attempted to apply injection point to incompatible type [" + key.contract().qualifiedName() + "]");
+                    this.log().warn("Attempted to apply injection point to incompatible type [" + key.contract().qualifiedName() + "]");
                 }
             }
         }
@@ -246,7 +243,6 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
 
     @Override
     public <A> A activator(final Class<A> activator) {
-        //noinspection unchecked
         return (A) this.activators.stream().filter(a -> a.annotationType().equals(activator)).findFirst().orElse(null);
     }
 
@@ -273,7 +269,6 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
 
     @Override
     public <T> Exceptional<T> property(final String key) {
-        //noinspection unchecked
         return Exceptional.of(() -> (T) this.environmentValues.getOrDefault(key, System.getenv(key)));
     }
 

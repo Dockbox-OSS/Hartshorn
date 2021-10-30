@@ -37,7 +37,7 @@ public class EventListenerService {
 
     /**
      * The method activated when a new user is created and a {@link UserCreatedEvent} is fired. In this
-     * example this is done through {@link UserPersistence}.
+     * example this is done through {@link UserRepository}.
      */
     @Listener
     public void on(final UserCreatedEvent event) {

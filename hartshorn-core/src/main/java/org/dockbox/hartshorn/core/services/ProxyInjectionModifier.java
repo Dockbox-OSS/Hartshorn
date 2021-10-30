@@ -34,8 +34,6 @@ public class ProxyInjectionModifier implements InjectionModifier<UseProxying> {
 
     @Override
     public <T> boolean preconditions(final ApplicationContext context, final TypeContext<T> type, @Nullable final T instance, final Attribute<?>... properties) {
-        // Unchecked as ProxyProperty has generic type parameters
-        //noinspection unchecked
         return Bindings.has(ProxyAttribute.class, properties);
     }
 
@@ -46,12 +44,11 @@ public class ProxyInjectionModifier implements InjectionModifier<UseProxying> {
 
             for (final Attribute<?> property : properties) {
                 if (property instanceof ProxyAttribute) {
-                    //noinspection unchecked
                     final ProxyAttribute<T, ?> proxyAttribute = (ProxyAttribute<T, ?>) property;
                     handler.delegate(proxyAttribute);
                 }
             }
-            return handler.proxy();
+            return handler.proxy(instance);
         }
         catch (final InvocationTargetException | NoSuchMethodException | InstantiationException | IllegalAccessException | ClassCastException e) {
             return instance;

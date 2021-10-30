@@ -45,7 +45,7 @@ public class ComponentContextInjectionProcessor extends ComponentValidator<Servi
             this.validate(field, type);
 
         final List<ExecutableElementContext<?>> constructors = type.injectConstructors().stream().map(c -> (ExecutableElementContext<?>) c).collect(Collectors.toList());
-        final List<ExecutableElementContext<?>> methods = type.flatMethods().stream().map(m -> (ExecutableElementContext<?>) m).collect(Collectors.toList());
+        final List<ExecutableElementContext<?>> methods = type.methods().stream().map(m -> (ExecutableElementContext<?>) m).collect(Collectors.toList());
         final Collection<ExecutableElementContext<?>> executables = HartshornUtils.merge(constructors, methods);
 
         for (final ExecutableElementContext<?> executable : executables)

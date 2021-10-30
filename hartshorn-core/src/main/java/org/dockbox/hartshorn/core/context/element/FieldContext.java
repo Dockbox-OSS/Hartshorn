@@ -95,7 +95,7 @@ public class FieldContext<T> extends AnnotatedMemberContext<Field> implements Mo
                 this.getter = o -> Exceptional.of(() -> (T) this.field.get(o));
             }
         }
-        return this.getter.apply(instance);
+        return this.getter.apply(instance).orElse(() -> this.type().defaultOrNull());
     }
 
     @Override

@@ -164,7 +164,7 @@ public class ReflectTests extends ApplicationAwareTest {
     @Test
     void testAnnotatedMethodsReturnsAllModifiers() {
         final TypeContext<ReflectTestType> type = TypeContext.of(ReflectTestType.class);
-        final List<MethodContext<?, ReflectTestType>> methods = type.flatMethods(Demo.class);
+        final List<MethodContext<?, ReflectTestType>> methods = type.methods(Demo.class);
         Assertions.assertEquals(3, methods.size());
 
         List<String> names = methods.stream().map(MethodContext::name).toList();
@@ -213,7 +213,7 @@ public class ReflectTests extends ApplicationAwareTest {
     @Test
     void testMethodsReturnsAllDeclaredAndParentMethods() throws NoSuchMethodException {
         final TypeContext<ReflectTestType> type = TypeContext.of(ReflectTestType.class);
-        final List<MethodContext<?, ReflectTestType>> methods = type.flatMethods();
+        final List<MethodContext<?, ReflectTestType>> methods = type.methods();
         boolean fail = true;
         for (MethodContext<?, ReflectTestType> method : methods) {
             if (method.name().equals("parentMethod")) fail = false;

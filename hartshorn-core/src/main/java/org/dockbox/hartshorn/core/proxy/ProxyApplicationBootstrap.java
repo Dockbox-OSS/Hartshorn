@@ -25,11 +25,16 @@ public class ProxyApplicationBootstrap extends HartshornBootstrap {
 
     @Override
     public <T> Exceptional<T> proxy(final TypeContext<T> type, final T instance) {
-        return Exceptional.of(() -> ProxyUtil.handler(type, instance).proxy());
+        return Exceptional.of(() -> ProxyUtil.handler(type, instance).proxy(instance));
     }
 
     @Override
     public <T> Exceptional<TypeContext<T>> real(final T instance) {
         return ProxyUtil.handler(instance).map(ProxyHandler::type).map(TypeContext::of);
+    }
+
+    @Override
+    public <T, P extends T> Exceptional<T> delegator(final TypeContext<T> type, final P instance) {
+        return ProxyUtil.delegator(this.context(), type, instance);
     }
 }

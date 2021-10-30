@@ -26,7 +26,7 @@ import org.dockbox.hartshorn.events.annotations.UseEvents;
 public class EventServiceProcessor implements ServiceProcessor<UseEvents> {
     @Override
     public boolean preconditions(final ApplicationContext context, final TypeContext<?> type) {
-        return !type.flatMethods(Listener.class).isEmpty();
+        return !type.methods(Listener.class).isEmpty();
     }
 
     @Override
