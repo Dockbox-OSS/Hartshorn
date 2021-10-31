@@ -17,6 +17,8 @@
 
 package org.dockbox.hartshorn.core.annotations.service;
 
+import org.dockbox.hartshorn.core.boot.Hartshorn;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -25,4 +27,5 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.ANNOTATION_TYPE)
 public @interface ServiceActivator {
+    String[] scanPackages() default { Hartshorn.PACKAGE_PREFIX };
 }
