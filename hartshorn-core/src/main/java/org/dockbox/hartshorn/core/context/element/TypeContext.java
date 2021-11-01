@@ -39,6 +39,7 @@ import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Proxy;
 import java.lang.reflect.Type;
+import java.lang.reflect.WildcardType;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -162,6 +163,12 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
         return context;
     }
 
+    protected static <T> TypeContext<T> of(final ParameterizedType type) {
+        final TypeContext<T> context = of((Class<T>) type.getRawType());
+        context.typeParameters = context.contextsFromParameterizedType(type);
+        return context;
+    }
+
     public static TypeContext<?> lookup(final String name) {
         try {
             return TypeContext.of(Class.forName(name));
@@ -252,9 +259,13 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
         final Type[] arguments = parameterizedType.getActualTypeArguments();
 
         return Arrays.stream(arguments)
-                .filter(Class.class::isInstance)
-                .map(type -> (Class<?>) type)
-                .map(TypeContext::of)
+                .filter(type -> type instanceof Class || type instanceof WildcardType)
+                .map(type -> {
+                    if (type instanceof Class clazz) return TypeContext.of(clazz);
+                    else if (type instanceof WildcardType wildcard) return WildcardTypeContext.create();
+                    else return TypeContext.VOID;
+                })
+                .map(type -> (TypeContext<?>) type)
                 .collect(Collectors.toList());
     }
 

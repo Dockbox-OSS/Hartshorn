@@ -22,4 +22,8 @@ public interface JpaRepository<T, ID> extends ContextCarrier {
     Exceptional<T> findById(ID id);
 
     EntityManager entityManager();
+
+    Class<T> reify();
+
+    void flush();
 }

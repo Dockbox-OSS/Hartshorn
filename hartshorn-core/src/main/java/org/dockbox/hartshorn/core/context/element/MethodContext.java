@@ -23,6 +23,8 @@ import org.dockbox.hartshorn.core.HartshornUtils;
 
 import java.lang.invoke.MethodType;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.Map;
 import java.util.StringJoiner;
@@ -37,6 +39,7 @@ public class MethodContext<T, P> extends ExecutableElementContext<Method> implem
     @Getter private final Method method;
 
     private TypeContext<T> returnType;
+    private TypeContext<T> genericReturnType;
     private TypeContext<P> parent;
     private BiFunction<P, Object[], Exceptional<T>> invoker;
     private String qualifiedName;
@@ -80,6 +83,15 @@ public class MethodContext<T, P> extends ExecutableElementContext<Method> implem
             this.returnType = (TypeContext<T>) TypeContext.of(this.method().getReturnType());
         }
         return this.returnType;
+    }
+
+    public TypeContext<T> genericReturnType() {
+        if (this.genericReturnType == null) {
+            final Type genericReturnType = this.method().getGenericReturnType();
+            if (genericReturnType instanceof Class clazz) this.genericReturnType = TypeContext.of(clazz);
+            else this.genericReturnType = TypeContext.of((ParameterizedType) genericReturnType);
+        }
+        return this.genericReturnType;
     }
 
     public TypeContext<P> parent() {
