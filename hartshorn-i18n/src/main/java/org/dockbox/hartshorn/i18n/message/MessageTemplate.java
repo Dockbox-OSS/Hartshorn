@@ -22,6 +22,7 @@ import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.i18n.MessageReceiver;
 import org.dockbox.hartshorn.i18n.ResourceService;
 import org.dockbox.hartshorn.i18n.common.Language;
+import org.dockbox.hartshorn.i18n.common.Languages;
 import org.dockbox.hartshorn.i18n.common.Message;
 import org.dockbox.hartshorn.i18n.text.Text;
 import org.dockbox.hartshorn.core.HartshornUtils;
@@ -41,7 +42,7 @@ public class MessageTemplate implements Message, ContextCarrier {
     @Getter private final MessageFormatting formatting;
 
     public MessageTemplate(final ApplicationContext context, final String value, final String key) {
-        this(context, value, key, Language.EN_US);
+        this(context, value, key, Languages.EN_US);
     }
 
     public MessageTemplate(final ApplicationContext context, final String value, final String key, final Language language) {
@@ -87,7 +88,7 @@ public class MessageTemplate implements Message, ContextCarrier {
 
     @Override
     public Message translate() {
-        return this.translate(Language.EN_US);
+        return this.translate(Languages.EN_US);
     }
 
     @Override

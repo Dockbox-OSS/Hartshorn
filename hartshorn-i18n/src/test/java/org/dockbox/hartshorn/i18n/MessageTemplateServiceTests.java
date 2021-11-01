@@ -20,6 +20,7 @@ package org.dockbox.hartshorn.i18n;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.i18n.common.Language;
+import org.dockbox.hartshorn.i18n.common.Languages;
 import org.dockbox.hartshorn.i18n.common.Message;
 import org.dockbox.hartshorn.i18n.message.MessageTemplate;
 import org.dockbox.hartshorn.testsuite.ApplicationAwareTest;
@@ -34,7 +35,7 @@ public class MessageTemplateServiceTests extends ApplicationAwareTest {
 
     private final ResourceService service = new ResourceServiceImpl() {
         static {
-            for (final Language value : Language.values()) bundles.put(value, createDemoBundle("Demo:" + value.code()));
+            for (final Language value : Languages.values()) bundles.put(value, createDemoBundle("Demo:" + value.code()));
         }
 
         @Override
@@ -86,7 +87,7 @@ public class MessageTemplateServiceTests extends ApplicationAwareTest {
         Assertions.assertTrue(demo.present());
 
         final Message entry = demo.get();
-        final Message formatted = entry.translate(Language.NL_NL);
+        final Message formatted = entry.translate(Languages.NL_NL);
 
         Assertions.assertNotSame(entry, formatted);
     }
@@ -97,7 +98,7 @@ public class MessageTemplateServiceTests extends ApplicationAwareTest {
         Assertions.assertTrue(demo.present());
 
         final MessageReceiver mock = Mockito.mock(MessageReceiver.class);
-        Mockito.when(mock.language()).thenReturn(Language.NL_NL);
+        Mockito.when(mock.language()).thenReturn(Languages.NL_NL);
 
         final Message entry = demo.get();
         final Message formatted = entry.translate(mock);
@@ -117,7 +118,7 @@ public class MessageTemplateServiceTests extends ApplicationAwareTest {
         final Exceptional<Message> demo = this.service.get("demo");
         Assertions.assertTrue(demo.present());
         final Message entry = demo.get();
-        for (final Language value : Language.values()) {
+        for (final Language value : Languages.values()) {
             Assertions.assertEquals("Demo:" + value.code(), entry.translate(value).plain());
         }
     }

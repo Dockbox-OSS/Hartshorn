@@ -22,6 +22,7 @@ import org.dockbox.hartshorn.core.exceptions.Except;
 import org.dockbox.hartshorn.core.annotations.inject.Binds;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.i18n.common.Language;
+import org.dockbox.hartshorn.i18n.common.Languages;
 import org.dockbox.hartshorn.i18n.common.Message;
 import org.dockbox.hartshorn.i18n.message.MessageTemplate;
 import org.dockbox.hartshorn.core.HartshornUtils;
@@ -50,7 +51,7 @@ public class ResourceServiceImpl implements ResourceService {
 
     public ResourceServiceImpl() {
         if (bundles.isEmpty()) {
-            for (final Language language : Language.values()) {
+            for (final Language language : Languages.values()) {
                 try {
                     final ResourceBundle bundle = ResourceBundle.getBundle("hartshorn.translations", language.locale());
                     ResourceServiceImpl.bundles.put(language, bundle);
@@ -119,7 +120,7 @@ public class ResourceServiceImpl implements ResourceService {
         @NonNls
         @NotNull final String finalKey = this.createValidKey(key);
         return Exceptional.of(() -> {
-            final Map<String, String> translations = this.translations(Language.EN_US);
+            final Map<String, String> translations = this.translations(Languages.EN_US);
             if (translations.containsKey(finalKey)) {
                 final String knownValue = translations.get(finalKey);
                 return new MessageTemplate(this.applicationContext(), knownValue, finalKey);

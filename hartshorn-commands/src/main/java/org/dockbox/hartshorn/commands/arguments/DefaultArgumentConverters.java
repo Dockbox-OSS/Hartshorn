@@ -26,6 +26,7 @@ import org.dockbox.hartshorn.core.domain.tuple.Vector3N;
 import org.dockbox.hartshorn.core.services.ComponentContainer;
 import org.dockbox.hartshorn.i18n.ResourceService;
 import org.dockbox.hartshorn.i18n.common.Language;
+import org.dockbox.hartshorn.i18n.common.Languages;
 import org.dockbox.hartshorn.i18n.common.Message;
 import org.dockbox.hartshorn.i18n.text.Text;
 import org.jetbrains.annotations.NonNls;
@@ -78,19 +79,19 @@ public final class DefaultArgumentConverters {
             .withConverter((@NonNls String in) -> {
                 Language lang;
                 try {
-                    lang = Language.valueOf(in);
+                    lang = Languages.valueOf(in);
                 }
                 catch (NullPointerException | IllegalArgumentException e) {
                     lang =
-                            Arrays.stream(Language.values())
+                            Arrays.stream(Languages.values())
                                     .filter(l -> l.nameEnglish().equals(in) || l.nameLocalized().equals(in))
                                     .findFirst()
-                                    .orElse(Language.EN_US);
+                                    .orElse(Languages.EN_US);
                 }
                 return Exceptional.of(lang);
             }).withSuggestionProvider(in -> {
                 List<String> suggestions = HartshornUtils.emptyList();
-                for (Language lang : Language.values()) {
+                for (Language lang : Languages.values()) {
                     suggestions.add(lang.code());
                     suggestions.add(lang.nameEnglish());
                     suggestions.add(lang.nameLocalized());
