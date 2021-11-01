@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.i18n.message;
 
 import org.dockbox.hartshorn.i18n.MessageReceiver;
 import org.dockbox.hartshorn.i18n.common.Language;
+import org.dockbox.hartshorn.i18n.common.Languages;
 import org.dockbox.hartshorn.i18n.common.Message;
 import org.dockbox.hartshorn.i18n.text.Text;
 
@@ -72,6 +73,6 @@ public class DetachedMessage implements Message {
 
     @Override
     public Language language() {
-        return Language.EN_US;
+        return Languages.EN_US;
     }
 }

@@ -22,6 +22,7 @@ import org.dockbox.hartshorn.core.exceptions.Except;
 import org.dockbox.hartshorn.commands.exceptions.ParsingException;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.i18n.common.Language;
+import org.dockbox.hartshorn.i18n.common.Languages;
 import org.dockbox.hartshorn.i18n.common.Message;
 import org.dockbox.hartshorn.i18n.text.Text;
 import org.jetbrains.annotations.NotNull;
@@ -46,7 +47,7 @@ public abstract class SystemSubject implements CommandSource, Identifiable {
 
     @Override
     public Language language() {
-        return Language.EN_US;
+        return Languages.EN_US;
     }
 
     @Override

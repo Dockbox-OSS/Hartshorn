@@ -17,20 +17,28 @@
 
 package org.dockbox.hartshorn.i18n.common;
 
-import org.dockbox.hartshorn.core.annotations.Property;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.persistence.PersistentModel;
 
-import lombok.Getter;
-import lombok.Setter;
+import java.util.Locale;
 
+import lombok.Data;
+
+@Data
 public class PersistentLanguageModel implements PersistentModel<Language> {
 
-    @Property(getter = "getCode", setter = "getCode")
-    @Getter @Setter private String code;
+    private String localeLang;
+    private String localeCountry;
+    private String code;
+    private String nameEnglish;
+    private String nameLocalized;
 
-    public PersistentLanguageModel(final String code) {
-        this.code = code;
+    public PersistentLanguageModel(final Language language) {
+        this.localeLang = language.locale().getLanguage();
+        this.localeCountry = language.locale().getCountry();
+        this.code = language.code();
+        this.nameEnglish = language.nameEnglish();
+        this.nameLocalized = language.nameLocalized();
     }
 
     @Override
@@ -40,6 +48,12 @@ public class PersistentLanguageModel implements PersistentModel<Language> {
 
     @Override
     public Language restore(final ApplicationContext context) {
-        return Language.of(this.code());
+        for (final Language value : Languages.values()) {
+            if (value.code().equals(this.code)) return value;
+        }
+        return new DefinedLanguage(
+                new Locale(this.localeLang, this.localeCountry),
+                this.code, this.nameEnglish, this.nameLocalized
+        );
     }
 }
