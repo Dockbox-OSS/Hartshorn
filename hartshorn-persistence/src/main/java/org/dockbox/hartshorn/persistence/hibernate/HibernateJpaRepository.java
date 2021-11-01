@@ -9,7 +9,6 @@ import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 import org.dockbox.hartshorn.core.properties.Attribute;
 import org.dockbox.hartshorn.core.properties.AttributeHolder;
-import org.dockbox.hartshorn.persistence.DefaultJpaRepository;
 import org.dockbox.hartshorn.persistence.JpaRepository;
 import org.dockbox.hartshorn.persistence.context.EntityContext;
 import org.dockbox.hartshorn.persistence.properties.ConnectionAttribute;
@@ -18,16 +17,21 @@ import org.dockbox.hartshorn.persistence.properties.Remote;
 import org.dockbox.hartshorn.persistence.properties.Remotes;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 
+import java.io.Closeable;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 import javax.inject.Inject;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -35,7 +39,7 @@ import lombok.RequiredArgsConstructor;
 
 @Binds(JpaRepository.class)
 @RequiredArgsConstructor(onConstructor_ = @Bound)
-public class HibernateJpaRepository<T, ID> implements DefaultJpaRepository<Session, T, ID>, AttributeHolder {
+public class HibernateJpaRepository<T, ID> implements JpaRepository<T, ID>, AttributeHolder, Closeable {
 
     private final Configuration configuration = new Configuration();
     private final Class<T> type;
@@ -45,6 +49,12 @@ public class HibernateJpaRepository<T, ID> implements DefaultJpaRepository<Sessi
 
     @Getter(AccessLevel.PROTECTED)
     private PersistenceConnection connection;
+
+    @Inject
+    @Getter
+    private ApplicationContext applicationContext;
+
+    private Session session;
 
     @Override
     public boolean canEnable() {
@@ -123,40 +133,48 @@ public class HibernateJpaRepository<T, ID> implements DefaultJpaRepository<Sessi
         }
     }
 
-    @Inject
-    @Getter
-    private ApplicationContext applicationContext;
-
     @Override
     public void save(final Object object) {
-        this.accept(session -> session.save(object));
+        this.performTransactional(session -> session.save(object));
     }
 
     @Override
     public void update(final Object object) {
-        this.accept(session -> session.update(object));
+        this.performTransactional(session -> session.update(object));
     }
 
     @Override
     public void updateOrSave(final Object object) {
-        this.accept(session -> session.saveOrUpdate(object));
+        this.performTransactional(session -> session.saveOrUpdate(object));
     }
 
     @Override
     public void delete(final Object object) {
-        this.accept(session -> session.delete(object));
+        this.performTransactional(session -> session.delete(object));
+    }
+
+    private void performTransactional(final Consumer<Session> action) {
+        final Session session = this.session();
+        final Transaction transaction = session.beginTransaction();
+        action.accept(session);
+        transaction.commit();
+        this.close();
     }
 
     @Override
-    public void accept(final Consumer<Session> consumer) {
-        this.applicationContext().log().debug("Opening remote session to %s".formatted(this.connection().url()));
-        final Session session = this.factory().openSession();
-        this.applicationContext().log().debug("Beginning transaction to %s".formatted(this.connection().url()));
-        session.beginTransaction();
-        consumer.accept(session);
-        this.applicationContext().log().debug("Committing transaction to %s".formatted(this.connection().url()));
-        session.getTransaction().commit();
-        session.close();
+    public Set<T> findAll() {
+        final Session session = this.session();
+        final CriteriaBuilder builder = session.getCriteriaBuilder();
+        final CriteriaQuery<T> criteria = builder.createQuery(this.reify());
+        criteria.from(this.reify());
+        final List<T> data = session.createQuery(criteria).getResultList();
+        return HartshornUtils.asUnmodifiableSet(data);
+    }
+
+    @Override
+    public Exceptional<T> findById(final ID id) {
+        final Session session = this.session();
+        return Exceptional.of(session.find(this.reify(), id));
     }
 
     @Override
@@ -165,17 +183,28 @@ public class HibernateJpaRepository<T, ID> implements DefaultJpaRepository<Sessi
     }
 
     @Override
-    public <R> R transform(final Function<Session, R> function) {
-        final Session session = this.factory().openSession();
-        session.beginTransaction();
-        final R result = function.apply(session);
-        session.getTransaction().commit();
-        session.close();
-        return result;
+    public void flush() {
+        if (this.session != null && this.session.isOpen()) {
+            this.session.flush();
+            this.close();
+        }
+    }
+
+    @Override
+    public void close() {
+        if (this.session != null && this.session.isOpen()) {
+            this.session.close();
+        }
     }
 
     @Override
     public EntityManager entityManager() {
+        return this.session();
+    }
+
+    public Session session() {
+        if (this.session != null && this.session.isOpen()) return this.session;
+        this.applicationContext().log().debug("Opening remote session to %s".formatted(this.connection().url()));
         return this.factory().openSession();
     }
 }
