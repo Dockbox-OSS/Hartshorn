@@ -2,6 +2,7 @@ package org.dockbox.hartshorn.persistence.context;
 
 import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.core.context.element.ParameterContext;
+import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.persistence.JpaRepository;
 import org.dockbox.hartshorn.persistence.annotations.Query;
 
@@ -15,13 +16,14 @@ import lombok.Getter;
 @AllArgsConstructor
 public class QueryContext {
 
-    private Query annotation;
-    private Object[] args;
-    private MethodContext<?, ?> method;
+    private final Query annotation;
+    private final Object[] args;
+    private final MethodContext<?, ?> method;
+    private final TypeContext<?> entityType;
 
-    @Getter private JpaRepository<?, ?> repository;
-    @Getter private boolean transactional;
-    @Getter private boolean modifiesEntity;
+    @Getter private final JpaRepository<?, ?> repository;
+    @Getter private final boolean transactional;
+    @Getter private final boolean modifiesEntity;
 
     public boolean automaticClear() {
         return this.annotation.automaticClear();
@@ -46,8 +48,14 @@ public class QueryContext {
 
     protected javax.persistence.Query persistenceQuery(final EntityManager entityManager, final Query query) throws IllegalArgumentException {
         return switch (query.type()) {
-            case JPQL -> entityManager.createQuery(query.value());
-            case NATIVE -> entityManager.createNativeQuery(query.value());
+            case JPQL -> {
+                if (this.modifiesEntity || this.entityType.isVoid()) yield entityManager.createQuery(query.value());
+                else yield entityManager.createQuery(query.value(), this.entityType.type());
+            }
+            case NATIVE -> {
+                if (this.modifiesEntity || this.entityType.isVoid()) yield entityManager.createNativeQuery(query.value());
+                else yield entityManager.createNativeQuery(query.value(), this.entityType.type());
+            }
             default -> throw new IllegalStateException("Unexpected value: " + query.type());
         };
     }

@@ -12,9 +12,13 @@ import org.dockbox.hartshorn.persistence.JpaRepository;
 import org.dockbox.hartshorn.persistence.QueryFunction;
 import org.dockbox.hartshorn.persistence.annotations.EntityModifier;
 import org.dockbox.hartshorn.persistence.annotations.Query;
+import org.dockbox.hartshorn.persistence.annotations.Query.QueryType;
 import org.dockbox.hartshorn.persistence.annotations.Transactional;
 import org.dockbox.hartshorn.persistence.annotations.UsePersistence;
 import org.dockbox.hartshorn.persistence.context.QueryContext;
+
+import java.util.Collection;
+import java.util.List;
 
 public class QueryModifier extends ServiceAnnotatedMethodModifier<Query, UsePersistence> {
 
@@ -42,12 +46,13 @@ public class QueryModifier extends ServiceAnnotatedMethodModifier<Query, UsePers
         final boolean transactional = method.annotation(Transactional.class).present();
         final boolean modifying = method.annotation(EntityModifier.class).present();
         final Query query = method.annotation(Query.class).get();
+        final TypeContext<?> entityType = this.entityType(method, query);
 
         return (T instance, Object[] args, ProxyContext proxyContext) -> {
             final JpaRepository<?, ?> repository = (JpaRepository<?, ?>) methodContext.instance();
             if (query.automaticFlush()) repository.flush();
 
-            final QueryContext queryContext = new QueryContext(query, args, method, repository, transactional, modifying);
+            final QueryContext queryContext = new QueryContext(query, args, method, entityType, repository, transactional, modifying);
 
             final Object result = function.execute(queryContext);
 
@@ -58,5 +63,23 @@ public class QueryModifier extends ServiceAnnotatedMethodModifier<Query, UsePers
     @Override
     public ServiceOrder order() {
         return ServiceOrder.LATE;
+    }
+
+    protected TypeContext<?> entityType(final MethodContext<?, ?> context, final Query query) {
+        final TypeContext<?> queryEntityType = TypeContext.of(query.entityType());
+        if (queryEntityType.isVoid()) {
+            final TypeContext<?> returnType = context.genericReturnType();
+            if (returnType.childOf(Collection.class)) {
+                final List<TypeContext<?>> typeParameters = returnType.typeParameters();
+                if (typeParameters.isEmpty()) {
+                    if (query.type() == QueryType.NATIVE)
+                        throw new IllegalStateException("Could not determine entity type of " + context.qualifiedName() + ". Alternatively, set the entityType in the @Query annotation on this method or change the query to JPQL.");
+                    else return TypeContext.VOID;
+                }
+                return typeParameters.get(0);
+            }
+            else return returnType;
+        }
+        else return queryEntityType;
     }
 }

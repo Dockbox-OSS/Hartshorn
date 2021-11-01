@@ -12,6 +12,7 @@ public @interface Query {
     QueryType type() default QueryType.JPQL;
     boolean automaticClear() default false;
     boolean automaticFlush() default false;
+    Class<?> entityType() default Void.class;
 
     public enum QueryType {
         JPQL,
