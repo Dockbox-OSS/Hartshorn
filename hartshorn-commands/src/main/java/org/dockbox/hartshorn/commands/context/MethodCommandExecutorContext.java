@@ -36,7 +36,7 @@ import org.dockbox.hartshorn.core.context.element.ParameterContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.events.annotations.Posting;
 import org.dockbox.hartshorn.events.parents.Cancellable;
-import org.dockbox.hartshorn.i18n.common.Message;
+import org.dockbox.hartshorn.i18n.Message;
 import org.dockbox.hartshorn.core.HartshornUtils;
 import org.jetbrains.annotations.Nullable;
 

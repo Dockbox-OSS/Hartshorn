@@ -15,17 +15,19 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.commands;
+package org.dockbox.hartshorn.i18n.annotations;
 
-import org.dockbox.hartshorn.core.annotations.inject.Binds;
-import org.dockbox.hartshorn.i18n.Message;
+import org.dockbox.hartshorn.config.annotations.UseConfigurations;
+import org.dockbox.hartshorn.core.annotations.service.ServiceActivator;
 
-@Binds(SystemSubject.class)
-public class ApplicationSystemSubject extends SystemSubject {
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-    @Override
-    public void send(final Message text) {
-        this.applicationContext().log().info("-> %s".formatted(text.string()));
-    }
-
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
+@ServiceActivator
+@UseConfigurations
+public @interface UseTranslations {
 }

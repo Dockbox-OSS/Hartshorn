@@ -15,17 +15,28 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.commands;
+package org.dockbox.hartshorn.i18n;
 
-import org.dockbox.hartshorn.core.annotations.inject.Binds;
-import org.dockbox.hartshorn.i18n.Message;
+import java.util.Locale;
 
-@Binds(SystemSubject.class)
-public class ApplicationSystemSubject extends SystemSubject {
+public interface Message {
 
-    @Override
-    public void send(final Message text) {
-        this.applicationContext().log().info("-> %s".formatted(text.string()));
-    }
+    Message translate(MessageReceiver receiver);
+
+    Message translate(Locale lang);
+
+    Message format(Locale language, Object... args);
+
+    Message format(Object... args);
+
+    String key();
+
+    String string();
+
+    Locale language();
+
+    Message merge(Locale primary, Message message);
+
+    Message detach();
 
 }

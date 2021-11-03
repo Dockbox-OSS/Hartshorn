@@ -17,10 +17,10 @@
 
 package org.dockbox.hartshorn.core.boot;
 
-import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.core.annotations.context.LogExclude;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
-import org.dockbox.hartshorn.core.HartshornUtils;
+import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -110,7 +110,9 @@ public final class Hartshorn {
             final int bytes = in.read(buffer);
             if (bytes == -1) return Exceptional.of(new IOException("Requested resource contained no context"));
 
-            final Path tempFile = Files.createTempFile(name, ".tmp");
+            final String[] parts = name.split("/");
+            final String fileName = parts[parts.length - 1];
+            final Path tempFile = Files.createTempFile(fileName, ".tmp");
             log().debug("Writing compressed resource " + name + " to temporary file " + tempFile.toFile().getName());
             final OutputStream outStream = new FileOutputStream(tempFile.toFile());
             outStream.write(buffer);

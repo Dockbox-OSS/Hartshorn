@@ -24,16 +24,10 @@ import org.dockbox.hartshorn.core.annotations.service.Service;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.domain.tuple.Vector3N;
 import org.dockbox.hartshorn.core.services.ComponentContainer;
-import org.dockbox.hartshorn.i18n.ResourceService;
-import org.dockbox.hartshorn.i18n.common.Language;
-import org.dockbox.hartshorn.i18n.common.Languages;
-import org.dockbox.hartshorn.i18n.common.Message;
-import org.dockbox.hartshorn.i18n.text.Text;
-import org.jetbrains.annotations.NonNls;
+import org.dockbox.hartshorn.i18n.Message;
+import org.dockbox.hartshorn.i18n.TranslationService;
 
 import java.time.Duration;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 import java.util.function.Function;
@@ -75,32 +69,6 @@ public final class DefaultArgumentConverters {
             .withConverter(BuiltInStringTypeAdapters.SHORT)
             .build();
 
-    public static final ArgumentConverter<Language> LANGUAGE = ArgumentConverterImpl.builder(Language.class, "lang", "language")
-            .withConverter((@NonNls String in) -> {
-                Language lang;
-                try {
-                    lang = Languages.valueOf(in);
-                }
-                catch (NullPointerException | IllegalArgumentException e) {
-                    lang =
-                            Arrays.stream(Languages.values())
-                                    .filter(l -> l.nameEnglish().equals(in) || l.nameLocalized().equals(in))
-                                    .findFirst()
-                                    .orElse(Languages.EN_US);
-                }
-                return Exceptional.of(lang);
-            }).withSuggestionProvider(in -> {
-                List<String> suggestions = HartshornUtils.emptyList();
-                for (Language lang : Languages.values()) {
-                    suggestions.add(lang.code());
-                    suggestions.add(lang.nameEnglish());
-                    suggestions.add(lang.nameLocalized());
-                }
-                return suggestions.stream()
-                        .filter(lang -> lang.toLowerCase().contains(in.toLowerCase()))
-                        .toList();
-            }).build();
-
     public static final ArgumentConverter<UUID> UNIQUE_ID = ArgumentConverterImpl.builder(UUID.class, "uuid", "uniqueId")
             .withConverter(BuiltInStringTypeAdapters.UNIQUE_ID)
             .build();
@@ -121,20 +89,11 @@ public final class DefaultArgumentConverters {
             .withConverter(HartshornUtils::durationOf)
             .build();
 
-    public static final ArgumentConverter<Message> RESOURCE = ArgumentConverterImpl.builder(Message.class, "resource", "i18n", "translation")
+    public static final ArgumentConverter<Message> MESSAGE = ArgumentConverterImpl.builder(Message.class, "resource", "i18n", "translation")
             .withConverter((src, in) -> {
-                ResourceService rs = src.applicationContext().get(ResourceService.class);
-                String validKey = rs.createValidKey(in);
-
-                Exceptional<? extends Message> or = rs.get(validKey);
-                if (or.present()) return or.map(Message.class::cast);
-
-                return src.applicationContext().get(ResourceService.class).get(validKey);
+                TranslationService rs = src.applicationContext().get(TranslationService.class);
+                return rs.get(in);
             }).build();
-
-    public static final ArgumentConverter<Text> TEXT = ArgumentConverterImpl.builder(Text.class, "text")
-            .withConverter(in -> Exceptional.of(Text.of(in)))
-            .build();
 
     public static final ArgumentConverter<ComponentContainer> SERVICE = ArgumentConverterImpl.builder(ComponentContainer.class, "service")
             .withConverter((src, in) -> Exceptional.of(src.applicationContext()

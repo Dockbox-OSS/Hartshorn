@@ -22,7 +22,8 @@ import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.services.ComponentContainer;
-import org.dockbox.hartshorn.i18n.annotations.Resource;
+import org.dockbox.hartshorn.i18n.annotations.InjectTranslation;
+import org.dockbox.hartshorn.i18n.services.TranslationInjectModifier;
 import org.dockbox.hartshorn.testsuite.HartshornRunner;
 
 import java.io.File;
@@ -44,7 +45,7 @@ import java.util.Properties;
 
 /**
  * Generator type which directly creates and outputs a translation batch based on
- * the currently registered Resource providers.
+ * the currently registered InjectTranslation providers.
  */
 public final class TranslationBatchGenerator {
 
@@ -54,17 +55,7 @@ public final class TranslationBatchGenerator {
             "class-resources.concrete.entry",
             "resource.parameter.test.entry",
             "resource.test.entry",
-            "test-resources.test.entry",
-            "server.confirm.true",
-            "server.confirm.false",
-
-            // Formatting only resources
-            "dave.discord.format",
-            "dave.trigger.single",
-            "hartshorn.exception",
-            "hartshorn.info.service.row",
-            "oldplots.list.single",
-            "prefix"
+            "test-resources.test.entry"
     );
     private static final List<String> HEADER = HartshornUtils.asList("#",
             "# Copyright (C) 2020 Guus Lieben",
@@ -181,14 +172,24 @@ public final class TranslationBatchGenerator {
         final Map<String, String> batch = HartshornUtils.emptyMap();
         for (final ComponentContainer container : context.locator().containers()) {
             final TypeContext<?> type = container.type();
-            final List<? extends MethodContext<?, ?>> methods = type.methods(Resource.class);
+            final List<? extends MethodContext<?, ?>> methods = type.methods(InjectTranslation.class);
             for (final MethodContext<?, ?> method : methods) {
-                final Resource annotation = method.annotation(Resource.class).get();
-                final String key = I18N.key(context, type, method);
+                final InjectTranslation annotation = method.annotation(InjectTranslation.class).get();
+                final String key = KeyGen.INSTANCE.key(context, type, method);
                 batch.put(key, annotation.value());
             }
         }
         return batch;
+    }
+
+    private static class KeyGen extends TranslationInjectModifier {
+
+        private static final KeyGen INSTANCE = new KeyGen();
+
+        @Override
+        public String key(final ApplicationContext context, final TypeContext<?> type, final MethodContext<?, ?> method) {
+            return super.key(context, type, method);
+        }
     }
 
 }

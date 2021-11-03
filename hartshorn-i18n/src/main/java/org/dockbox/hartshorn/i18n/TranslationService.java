@@ -15,17 +15,23 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.commands;
+package org.dockbox.hartshorn.i18n;
 
-import org.dockbox.hartshorn.core.annotations.inject.Binds;
-import org.dockbox.hartshorn.i18n.Message;
+import org.dockbox.hartshorn.core.context.ContextCarrier;
+import org.dockbox.hartshorn.core.domain.Exceptional;
 
-@Binds(SystemSubject.class)
-public class ApplicationSystemSubject extends SystemSubject {
+import javax.inject.Singleton;
 
-    @Override
-    public void send(final Message text) {
-        this.applicationContext().log().info("-> %s".formatted(text.string()));
-    }
+@Singleton
+public interface TranslationService extends ContextCarrier {
 
+    Exceptional<Message> get(String key);
+
+    Message getOrCreate(String key, String value);
+
+    void add(TranslationBundle bundle);
+
+    void add(Message message);
+
+    TranslationBundle bundle();
 }

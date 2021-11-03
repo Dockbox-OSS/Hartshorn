@@ -24,12 +24,13 @@ import org.dockbox.hartshorn.commands.types.CuboidArgument;
 import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
-import org.dockbox.hartshorn.i18n.common.Message;
-import org.dockbox.hartshorn.i18n.message.DetachedMessage;
+import org.dockbox.hartshorn.i18n.Message;
+import org.dockbox.hartshorn.i18n.MessageTemplate;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.Locale;
 
 @UseCommands
 public class HashtagParameterPatternTests extends HartshornCommandTest {
@@ -50,7 +51,7 @@ public class HashtagParameterPatternTests extends HartshornCommandTest {
             @Override
             protected Message wrongFormat() {
                 // Override resources as these are otherwise requested through bound resource references
-                return new DetachedMessage("failed");
+                return new MessageTemplate("failed", "test.failed", Locale.getDefault());
             }
         };
     }

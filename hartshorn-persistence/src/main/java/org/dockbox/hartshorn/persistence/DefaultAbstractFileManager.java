@@ -62,6 +62,7 @@ public abstract class DefaultAbstractFileManager implements FileManager {
         return this.dataFile(owner, owner.id());
     }
 
+    @Override
     public FileType fileType() {
         return this.mapper.fileType();
     }
@@ -177,7 +178,9 @@ public abstract class DefaultAbstractFileManager implements FileManager {
         }
     }
 
-    protected void fileType(final FileType fileType) {
+    @Override
+    public FileManager fileType(final FileType fileType) {
         this.mapper.fileType(fileType);
+        return this;
     }
 }

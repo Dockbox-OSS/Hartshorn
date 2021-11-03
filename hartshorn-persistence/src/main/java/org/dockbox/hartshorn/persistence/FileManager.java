@@ -48,6 +48,8 @@ public interface FileManager extends AttributeHolder {
         return this.configFile(this.owner(owner));
     }
 
+    FileType fileType();
+
     /**
      * Gets the default config file for a given {@link TypedOwner}. The exact location is decided by the
      * top-level implementation of this type.
@@ -264,4 +266,6 @@ public interface FileManager extends AttributeHolder {
      * @return true if the file was copied, otherwise false
      */
     boolean copyDefaultFile(String defaultFileName, Path targetFile);
+
+    FileManager fileType(FileType fileType);
 }

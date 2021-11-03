@@ -17,35 +17,13 @@
 
 package org.dockbox.hartshorn.commands;
 
-import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.exceptions.NotImplementedException;
-import org.dockbox.hartshorn.i18n.text.Text;
-import org.dockbox.hartshorn.i18n.text.pagination.Pagination;
-
-import javax.inject.Inject;
-
-import lombok.Getter;
+import org.dockbox.hartshorn.i18n.Message;
 
 public class JUnitSystemSubject extends SystemSubject {
 
-    @Inject
-    @Getter
-    private ApplicationContext applicationContext;
-
     @Override
-    public void send(final Text text) {
-        // TODO: Test implementation, mocking client?
-        throw new NotImplementedException();
-    }
-
-    @Override
-    public void sendWithPrefix(final Text text) {
-        // TODO: Test implementation, mocking client?
-        throw new NotImplementedException();
-    }
-
-    @Override
-    public void send(final Pagination pagination) {
+    public void send(final Message text) {
         // TODO: Test implementation, mocking client?
         throw new NotImplementedException();
     }

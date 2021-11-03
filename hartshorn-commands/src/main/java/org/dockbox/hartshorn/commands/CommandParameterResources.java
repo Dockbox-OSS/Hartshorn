@@ -18,19 +18,19 @@
 package org.dockbox.hartshorn.commands;
 
 import org.dockbox.hartshorn.core.annotations.service.Service;
-import org.dockbox.hartshorn.i18n.annotations.Resource;
-import org.dockbox.hartshorn.i18n.common.Message;
+import org.dockbox.hartshorn.i18n.annotations.InjectTranslation;
+import org.dockbox.hartshorn.i18n.Message;
 
 @Service(owner = CommandGateway.class)
 public interface CommandParameterResources {
 
-    @Resource(value = "Not enough arguments.", key = "missing_args")
+    @InjectTranslation(value = "Not enough arguments.", key = "missing_args")
     Message notEnoughArgs();
 
-    @Resource(value = "Pattern has to be formatted as #type[arg1][arg2][etc.]", key = "hashtag.wrong_format")
+    @InjectTranslation(value = "Pattern has to be formatted as #type[arg1][arg2][etc.]", key = "hashtag.wrong_format")
     Message wrongHashtagPatternFormat();
 
-    @Resource(value = "Parameter of type {0} has no register converter", key = "missing_converter")
+    @InjectTranslation(value = "Parameter of type {0} has no register converter", key = "missing_converter")
     Message missingConverter(String type);
 
 }
