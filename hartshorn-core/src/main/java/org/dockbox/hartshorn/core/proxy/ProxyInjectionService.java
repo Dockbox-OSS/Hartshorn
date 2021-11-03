@@ -32,7 +32,8 @@ public class ProxyInjectionService {
 
     @PostBootstrap
     public void prepareInjectionPoints(final ApplicationContext context) {
-        ProxyableBootstrap.boostrapDelegates(context);
+        final ProxyableBootstrap proxyableBootstrap = context.get(ProxyableBootstrap.class);
+        proxyableBootstrap.boostrapDelegates(context);
         context.add(InjectionPoint.of(TypeContext.of(Object.class), (instance, type, properties) -> {
             final ProxyHandler<Object> handler = context.environment().application().handler(type, instance);
             boolean proxy = false;
