@@ -20,17 +20,18 @@ package org.dockbox.hartshorn.i18n;
 import org.dockbox.hartshorn.core.context.ContextCarrier;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 
-import java.util.Map;
+import javax.inject.Singleton;
 
-public interface ResourceService extends ContextCarrier {
-
-    Map<String, String> translations(Language lang);
-
-    Map<Language, String> translations(MessageTemplate entry);
-
-    String createValidKey(String raw);
+@Singleton
+public interface TranslationService extends ContextCarrier {
 
     Exceptional<Message> get(String key);
 
     Message getOrCreate(String key, String value);
+
+    void add(TranslationBundle bundle);
+
+    void add(Message message);
+
+    TranslationBundle bundle();
 }

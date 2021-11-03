@@ -17,13 +17,15 @@
 
 package org.dockbox.hartshorn.i18n;
 
+import java.util.Locale;
+
 public interface Message {
 
     Message translate(MessageReceiver receiver);
 
-    Message translate(Language lang);
+    Message translate(Locale lang);
 
-    Message format(Language language, Object... args);
+    Message format(Locale language, Object... args);
 
     Message format(Object... args);
 
@@ -31,9 +33,9 @@ public interface Message {
 
     String string();
 
-    Language language();
+    Locale language();
 
-    Message merge(Language primary, Message message);
+    Message merge(Locale primary, Message message);
 
     Message detach();
 

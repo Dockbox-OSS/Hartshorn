@@ -19,11 +19,13 @@ package org.dockbox.hartshorn.i18n;
 
 import org.dockbox.hartshorn.core.domain.Subject;
 
+import java.util.Locale;
+
 public interface MessageReceiver extends Subject {
 
-    Language language();
+    Locale language();
 
-    void language(Language language);
+    void language(Locale language);
 
     void send(Message text);
 }

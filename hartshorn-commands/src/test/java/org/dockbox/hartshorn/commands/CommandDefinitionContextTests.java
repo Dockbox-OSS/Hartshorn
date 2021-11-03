@@ -30,7 +30,7 @@ import org.dockbox.hartshorn.commands.types.SampleCommandExtension;
 import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
-import org.dockbox.hartshorn.i18n.annotations.UseResources;
+import org.dockbox.hartshorn.i18n.annotations.UseTranslations;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -38,7 +38,7 @@ import java.lang.annotation.Annotation;
 import java.util.List;
 
 @UseCommands
-@UseResources
+@UseTranslations
 public class CommandDefinitionContextTests extends HartshornCommandTest {
 
     private final TypeContext<SampleCommand> typeContext = TypeContext.of(SampleCommand.class);

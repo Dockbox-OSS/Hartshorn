@@ -21,9 +21,8 @@ import org.dockbox.hartshorn.commands.exceptions.ParsingException;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.domain.Identifiable;
 import org.dockbox.hartshorn.core.exceptions.Except;
-import org.dockbox.hartshorn.i18n.Language;
-import org.dockbox.hartshorn.i18n.Languages;
 
+import java.util.Locale;
 import java.util.UUID;
 
 import javax.inject.Inject;
@@ -46,12 +45,12 @@ public abstract class SystemSubject implements CommandSource, Identifiable {
     }
 
     @Override
-    public Language language() {
-        return Languages.EN_US;
+    public Locale language() {
+        return Locale.getDefault();
     }
 
     @Override
-    public void language(final Language language) {
+    public void language(final Locale language) {
         // Nothing happens
     }
 

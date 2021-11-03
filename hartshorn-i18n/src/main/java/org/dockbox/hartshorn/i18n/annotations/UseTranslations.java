@@ -29,5 +29,5 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 @ServiceActivator
 @UseConfigurations
-public @interface UseResources {
+public @interface UseTranslations {
 }

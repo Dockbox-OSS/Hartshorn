@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.i18n;
 
 import org.dockbox.hartshorn.core.HartshornUtils;
 
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -26,14 +27,14 @@ import lombok.Getter;
 
 public class MessageTemplate implements Message {
 
-    @Getter private Language language;
+    @Getter private Locale language;
     @Getter private final String key;
 
-    private final Map<Language, Object[]> formattingArgs;
-    private final Map<Language, String> resourceMap;
+    private final Map<Locale, Object[]> formattingArgs;
+    private final Map<Locale, String> resourceMap;
     private final String defaultValue;
 
-    public MessageTemplate(final String value, final String key, final Language language, final Object... args) {
+    public MessageTemplate(final String value, final String key, final Locale language, final Object... args) {
         this.language = language;
         this.key = key;
 
@@ -47,7 +48,7 @@ public class MessageTemplate implements Message {
     }
 
     @Override
-    public Message merge(final Language language, final Message message) {
+    public Message merge(final Locale language, final Message message) {
         if (!this.key().equals(message.key()))
             throw new IllegalArgumentException("Key of provided message does not match existing message key, expected '" + this.key() + "' but received '" + message.key() + "'");
 
@@ -81,7 +82,7 @@ public class MessageTemplate implements Message {
     }
 
     @Override
-    public Message translate(final Language lang) {
+    public Message translate(final Locale lang) {
         this.language = lang;
         return this;
     }
@@ -92,7 +93,7 @@ public class MessageTemplate implements Message {
     }
 
     @Override
-    public Message format(final Language language, final Object... args) {
+    public Message format(final Locale language, final Object... args) {
         this.formattingArgs.put(language, args);
         return this;
     }
