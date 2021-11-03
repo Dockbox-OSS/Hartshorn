@@ -93,12 +93,13 @@ public class ServletHandler implements AttributeHolder {
                     this.context.log().debug("Request %s processed for session %s, writing response body".formatted(request, sessionId));
                     try {
                         res.setStatus(HttpStatus.OK_200);
-                        res.setContentType("application/json");
                         if (String.class.equals(result.type())) {
+                            res.setContentType("text/plain");
                             this.context.log().debug("Returning plain body for request %s".formatted(request));
                             res.getWriter().print(result.get());
                         }
                         else {
+                            res.setContentType("application/" + this.mapper.fileType().extension());
                             this.context.log().debug("Writing body to string for request %s".formatted(request));
                             final Exceptional<String> write = this.mapper.write(result.get());
                             if (write.present()) {
