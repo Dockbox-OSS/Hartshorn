@@ -18,11 +18,14 @@
 package org.dockbox.hartshorn.web;
 
 import org.dockbox.hartshorn.core.HartshornUtils;
-import org.dockbox.hartshorn.web.processing.BodyRequestArgumentProcessor;
-import org.dockbox.hartshorn.web.processing.HeaderRequestArgumentProcessor;
+import org.dockbox.hartshorn.core.services.parameter.ParameterLoader;
+import org.dockbox.hartshorn.web.processing.HttpRequestParameterLoaderContext;
 import org.dockbox.hartshorn.web.processing.RequestArgumentProcessor;
 
 import java.util.Set;
+
+import javax.inject.Inject;
+import javax.inject.Named;
 
 import lombok.Getter;
 
@@ -31,13 +34,9 @@ public abstract class DefaultHttpWebServer implements HttpWebServer {
     @Getter
     private final Set<RequestArgumentProcessor<?>> processors = HartshornUtils.emptyConcurrentSet();
 
-    protected DefaultHttpWebServer() {
-        this.add(new BodyRequestArgumentProcessor());
-        this.add(new HeaderRequestArgumentProcessor());
-    }
+    @Inject
+    @Getter
+    @Named("http_webserver")
+    private ParameterLoader<HttpRequestParameterLoaderContext> loader;
 
-    @Override
-    public void add(final RequestArgumentProcessor<?> processor) {
-        this.processors().add(processor);
-    }
 }

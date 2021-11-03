@@ -17,29 +17,26 @@
 
 package org.dockbox.hartshorn.web;
 
-import org.dockbox.hartshorn.core.domain.Exceptional;
-import org.dockbox.hartshorn.core.exceptions.Except;
-import org.dockbox.hartshorn.core.boot.Hartshorn;
 import org.dockbox.hartshorn.config.annotations.Value;
-import org.dockbox.hartshorn.core.annotations.inject.Enable;
-import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.annotations.component.Component;
 import org.dockbox.hartshorn.core.annotations.inject.Binds;
 import org.dockbox.hartshorn.core.annotations.inject.Bound;
+import org.dockbox.hartshorn.core.annotations.inject.Enable;
+import org.dockbox.hartshorn.core.boot.Hartshorn;
+import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
-import org.dockbox.hartshorn.core.context.element.ParameterContext;
-import org.dockbox.hartshorn.core.context.element.TypeContext;
+import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.core.exceptions.Except;
 import org.dockbox.hartshorn.core.properties.AttributeHolder;
+import org.dockbox.hartshorn.core.services.parameter.ParameterLoader;
 import org.dockbox.hartshorn.persistence.mapping.ObjectMapper;
 import org.dockbox.hartshorn.persistence.properties.ModifiersAttribute;
-import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.web.annotations.http.HttpRequest;
-import org.dockbox.hartshorn.web.processing.RequestArgumentProcessor;
+import org.dockbox.hartshorn.web.processing.HttpRequestParameterLoaderContext;
 import org.eclipse.jetty.http.HttpStatus;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Set;
 
 import javax.inject.Inject;
 import javax.servlet.ServletException;
@@ -88,7 +85,11 @@ public class ServletHandler implements AttributeHolder {
             if (method == this.httpMethod) {
                 if (this.addHeader) res.addHeader("Hartshorn-Version", Hartshorn.VERSION);
 
-                final Exceptional<?> result = this.methodContext.invoke(this.context, this.parameters(req, res));
+                final ParameterLoader<HttpRequestParameterLoaderContext> loader = this.starter.loader();
+                final HttpRequestParameterLoaderContext loaderContext = new HttpRequestParameterLoaderContext(this.methodContext, this.methodContext.parent(), null, this.context, req, res);
+                final List<Object> arguments = loader.loadArguments(loaderContext);
+
+                final Exceptional<?> result = this.methodContext.invoke(this.context, arguments);
                 if (result.present()) {
                     this.context.log().debug("Request %s processed for session %s, writing response body".formatted(request, sessionId));
                     try {
@@ -121,28 +122,5 @@ public class ServletHandler implements AttributeHolder {
             }
             fallbackAction.fallback(req, res);
         }
-    }
-
-    protected List<Object> parameters(final HttpServletRequest req, final HttpServletResponse res) {
-        final List<Object> parameters = HartshornUtils.emptyList();
-        final Set<RequestArgumentProcessor<?>> processors = this.starter.processors();
-
-        parameter_loop:
-        for (final ParameterContext<?> parameter : this.methodContext.parameters()) {
-            if (TypeContext.of(req).childOf(parameter.type())) parameters.add(req);
-            else if (TypeContext.of(res).childOf(parameter.type())) parameters.add(res);
-            else {
-                for (final RequestArgumentProcessor<?> processor : processors) {
-                    if (parameter.annotation(processor.annotation()).present() && processor.preconditions(this.context, parameter, req, res)) {
-                        final Exceptional<Object> output = processor.process(this.context, parameter, req, res).map(o -> (Object) o);
-                        parameters.add(output.orElse(() -> parameter.type().defaultOrNull()).orNull());
-                        continue parameter_loop;
-                    }
-                }
-                parameters.add(this.context.get(parameter.type()));
-            }
-        }
-
-        return parameters;
     }
 }
