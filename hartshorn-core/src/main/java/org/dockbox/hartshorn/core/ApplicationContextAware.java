@@ -20,6 +20,7 @@ package org.dockbox.hartshorn.core;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
+import org.dockbox.hartshorn.core.proxy.ProxyHandler;
 import org.slf4j.Logger;
 
 import lombok.Getter;
@@ -38,6 +39,9 @@ public abstract class ApplicationContextAware implements ApplicationBootstrap {
 
     public abstract <T, P extends T> Exceptional<T> delegator(final TypeContext<T> type, P instance);
 
+    public abstract <T, P extends T> Exceptional<T> delegator(final TypeContext<T> type, ProxyHandler<P> handler);
+
     public abstract Logger log();
 
+    public abstract <T> ProxyHandler<T> handler(final TypeContext<T> type, final T instance);
 }

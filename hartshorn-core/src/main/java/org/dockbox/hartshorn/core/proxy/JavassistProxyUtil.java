@@ -30,7 +30,7 @@ import java.lang.reflect.Proxy;
 import javassist.util.proxy.MethodHandler;
 import javassist.util.proxy.ProxyFactory;
 
-public class ProxyUtil {
+public class JavassistProxyUtil {
 
     public static <T> ProxyHandler<T> handler(final TypeContext<T> context, final T instance) {
         return handler(context.type(), instance);
@@ -38,7 +38,7 @@ public class ProxyUtil {
 
     public static <T> ProxyHandler<T> handler(final Class<T> type, final T instance) {
         final Exceptional<ProxyHandler<T>> handler = handler(instance);
-        return handler.orElse(() -> new ProxyHandler<>(instance, type)).get();
+        return handler.orElse(() -> new JavassistProxyHandler<>(instance, type)).get();
     }
 
     public static <T> Exceptional<ProxyHandler<T>> handler(final T instance) {
@@ -51,14 +51,14 @@ public class ProxyUtil {
             }
             else if (Proxy.isProxyClass(instance.getClass())) {
                 final InvocationHandler invocationHandler = Proxy.getInvocationHandler(instance);
-                if (invocationHandler instanceof ProxyInterfaceHandler proxyInterfaceHandler) {
+                if (invocationHandler instanceof JavaInterfaceProxyHandler proxyInterfaceHandler) {
                     return Exceptional.of(proxyInterfaceHandler.handler());
                 }
                 else if (invocationHandler instanceof AnnotationInvocationHandler annotationInvocationHandler) {
-                    return Exceptional.of(() -> new ProxyHandler<>((T) annotationInvocationHandler.annotation()));
+                    return Exceptional.of(() -> new JavassistProxyHandler<>((T) annotationInvocationHandler.annotation()));
                 }
                 else if (instance instanceof Annotation annotation) {
-                    return Exceptional.of(() -> new ProxyHandler<>(instance, (Class<T>) annotation.annotationType()));
+                    return Exceptional.of(() -> new JavassistProxyHandler<>(instance, (Class<T>) annotation.annotationType()));
                 }
             }
         }
@@ -66,9 +66,11 @@ public class ProxyUtil {
     }
 
     public static <T, P extends T> Exceptional<T> delegator(final ApplicationContext context, final TypeContext<T> type, final P proxied) {
-        return ProxyUtil.handler(proxied)
-                .flatMap(handler -> handler.first(context, BackingImplementationContext.class))
-                .flatMap(backingContext -> backingContext.get(type.type()));
+        return JavassistProxyUtil.handler(proxied).flatMap(handler -> delegator(context, type, handler));
+    }
+
+    public static <T, P extends T> Exceptional<T> delegator(final ApplicationContext context, final TypeContext<T> type, final ProxyHandler<P> handler) {
+        return handler.first(context, BackingImplementationContext.class).flatMap(backingContext -> backingContext.get(type.type()));
     }
 
 }

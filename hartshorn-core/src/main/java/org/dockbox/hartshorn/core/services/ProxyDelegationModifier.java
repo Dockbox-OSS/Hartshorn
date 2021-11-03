@@ -10,7 +10,7 @@ import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.properties.Attribute;
 import org.dockbox.hartshorn.core.proxy.ProxyFunction;
 import org.dockbox.hartshorn.core.proxy.ProxyHandler;
-import org.dockbox.hartshorn.core.proxy.ProxyUtil;
+import org.dockbox.hartshorn.core.proxy.JavassistProxyUtil;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.annotation.Annotation;
@@ -24,7 +24,7 @@ public abstract class ProxyDelegationModifier<P, A extends Annotation> extends S
     protected <T> boolean modifies(final ApplicationContext context, final TypeContext<T> type, @Nullable final T instance, final Attribute<?>... properties) {
         final boolean modifies = type.childOf(this.parentTarget());
         if (modifies) {
-            ProxyUtil.handler(type, instance).add(new DelegatedAttributesContext(properties));
+            JavassistProxyUtil.handler(type, instance).add(new DelegatedAttributesContext(properties));
         }
         return modifies;
     }

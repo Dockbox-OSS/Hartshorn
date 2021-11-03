@@ -17,19 +17,19 @@
 
 package org.dockbox.hartshorn.core.proxy;
 
-import org.dockbox.hartshorn.core.boot.Hartshorn;
-import org.dockbox.hartshorn.core.domain.Exceptional;
-import org.dockbox.hartshorn.core.exceptions.Except;
+import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.core.InjectionPoint;
+import org.dockbox.hartshorn.core.annotations.proxy.Instance;
+import org.dockbox.hartshorn.core.annotations.proxy.Proxy;
+import org.dockbox.hartshorn.core.annotations.proxy.Proxy.Target;
+import org.dockbox.hartshorn.core.boot.Hartshorn;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.core.context.element.ParameterContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
-import org.dockbox.hartshorn.core.annotations.proxy.Instance;
-import org.dockbox.hartshorn.core.annotations.proxy.Proxy;
-import org.dockbox.hartshorn.core.annotations.proxy.Proxy.Target;
+import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.exceptions.CancelProxyException;
-import org.dockbox.hartshorn.core.HartshornUtils;
+import org.dockbox.hartshorn.core.exceptions.Except;
 
 import java.util.Arrays;
 import java.util.List;
@@ -130,7 +130,7 @@ public final class ProxyableBootstrap {
 
         final InjectionPoint<C> point = InjectionPoint.of(proxyTargetClass, instance -> {
             try {
-                final ProxyHandler<C> handler = new ProxyHandler<>(instance);
+                final ProxyHandler<C> handler = context.environment().application().handler(proxyTargetClass, instance);;
                 handler.delegate(property);
                 return handler.proxy(instance);
             }

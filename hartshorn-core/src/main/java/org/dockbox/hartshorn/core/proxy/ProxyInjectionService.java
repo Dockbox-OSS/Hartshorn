@@ -17,16 +17,15 @@
 
 package org.dockbox.hartshorn.core.proxy;
 
-import org.dockbox.hartshorn.core.boot.annotations.PostBootstrap;
-import org.dockbox.hartshorn.core.boot.annotations.UseBootstrap;
-import org.dockbox.hartshorn.core.exceptions.Except;
 import org.dockbox.hartshorn.core.InjectionPoint;
 import org.dockbox.hartshorn.core.annotations.service.Service;
+import org.dockbox.hartshorn.core.boot.annotations.PostBootstrap;
+import org.dockbox.hartshorn.core.boot.annotations.UseBootstrap;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
+import org.dockbox.hartshorn.core.exceptions.ApplicationException;
+import org.dockbox.hartshorn.core.exceptions.Except;
 import org.dockbox.hartshorn.core.properties.Attribute;
-
-import java.lang.reflect.InvocationTargetException;
 
 @Service(activators = UseBootstrap.class)
 public class ProxyInjectionService {
@@ -35,7 +34,7 @@ public class ProxyInjectionService {
     public void prepareInjectionPoints(final ApplicationContext context) {
         ProxyableBootstrap.boostrapDelegates(context);
         context.add(InjectionPoint.of(TypeContext.of(Object.class), (instance, type, properties) -> {
-            final ProxyHandler<Object> handler = new ProxyHandler<>(instance, type);
+            final ProxyHandler<Object> handler = context.environment().application().handler(type, instance);
             boolean proxy = false;
             for (final Attribute<?> property : properties) {
                 if (property instanceof ProxyAttribute) {
@@ -47,7 +46,7 @@ public class ProxyInjectionService {
                 try {
                     return handler.proxy(instance);
                 }
-                catch (final InvocationTargetException | NoSuchMethodException | InstantiationException | IllegalAccessException e) {
+                catch (final ApplicationException e) {
                     Except.handle(e);
                 }
             }
