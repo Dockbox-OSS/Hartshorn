@@ -19,7 +19,6 @@ package org.dockbox.hartshorn.i18n;
 
 import org.dockbox.hartshorn.core.annotations.service.Service;
 import org.dockbox.hartshorn.i18n.annotations.Resource;
-import org.dockbox.hartshorn.i18n.common.Message;
 
 @Service
 public class TestResources {

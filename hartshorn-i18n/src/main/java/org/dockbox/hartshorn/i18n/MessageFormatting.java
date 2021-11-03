@@ -15,7 +15,7 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.i18n.message;
+package org.dockbox.hartshorn.i18n;
 
 public interface MessageFormatting {
     String primary();

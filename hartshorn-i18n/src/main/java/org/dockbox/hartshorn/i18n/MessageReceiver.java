@@ -18,10 +18,6 @@
 package org.dockbox.hartshorn.i18n;
 
 import org.dockbox.hartshorn.core.domain.Subject;
-import org.dockbox.hartshorn.i18n.common.Language;
-import org.dockbox.hartshorn.i18n.common.Message;
-import org.dockbox.hartshorn.i18n.text.Text;
-import org.dockbox.hartshorn.i18n.text.pagination.Pagination;
 
 public interface MessageReceiver extends Subject {
 
@@ -30,12 +26,4 @@ public interface MessageReceiver extends Subject {
     void language(Language language);
 
     void send(Message text);
-
-    void send(Text text);
-
-    void sendWithPrefix(Message text);
-
-    void sendWithPrefix(Text text);
-
-    void send(Pagination pagination);
 }

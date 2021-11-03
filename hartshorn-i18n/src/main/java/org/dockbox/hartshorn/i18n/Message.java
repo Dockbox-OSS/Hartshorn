@@ -15,39 +15,26 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.i18n.common;
+package org.dockbox.hartshorn.i18n;
 
-import org.dockbox.hartshorn.i18n.MessageReceiver;
-import org.dockbox.hartshorn.i18n.text.Text;
-import org.dockbox.hartshorn.persistence.PersistentCapable;
-
-public interface Message extends Formattable, PersistentCapable<ResourceEntryModel> {
-
-    Text asText();
-
-    String plain();
+public interface Message {
 
     Message translate(MessageReceiver receiver);
 
     Message translate(Language lang);
 
-    Message translate();
+    Message format(Language language, Object... args);
 
     Message format(Object... args);
 
-    @Override
-    default Class<? extends ResourceEntryModel> type() {
-        return ResourceEntryModel.class;
-    }
-
-    @Override
-    default ResourceEntryModel model() {
-        return new ResourceEntryModel(this.key(), this.asString(), this.language());
-    }
-
     String key();
 
-    String asString();
+    String string();
 
     Language language();
+
+    Message merge(Language primary, Message message);
+
+    Message detach();
+
 }

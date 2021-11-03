@@ -1,4 +1,4 @@
-package org.dockbox.hartshorn.i18n.common;
+package org.dockbox.hartshorn.i18n;
 
 import java.util.Locale;
 

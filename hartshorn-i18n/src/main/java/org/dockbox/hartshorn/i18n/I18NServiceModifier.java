@@ -20,7 +20,6 @@ package org.dockbox.hartshorn.i18n;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.i18n.annotations.Resource;
 import org.dockbox.hartshorn.i18n.annotations.UseResources;
-import org.dockbox.hartshorn.i18n.common.Message;
 import org.dockbox.hartshorn.core.proxy.ProxyFunction;
 import org.dockbox.hartshorn.core.context.MethodProxyContext;
 import org.dockbox.hartshorn.core.services.ServiceAnnotatedMethodModifier;

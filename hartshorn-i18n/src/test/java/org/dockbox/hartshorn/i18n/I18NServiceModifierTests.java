@@ -19,7 +19,6 @@ package org.dockbox.hartshorn.i18n;
 
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.i18n.annotations.UseResources;
-import org.dockbox.hartshorn.i18n.common.Message;
 import org.dockbox.hartshorn.testsuite.ApplicationAwareTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -48,7 +47,7 @@ public class I18NServiceModifierTests extends ApplicationAwareTest {
         final Message testEntry = resources.testEntry();
 
         Assertions.assertNotNull(testEntry);
-        Assertions.assertEquals("Hello world!", testEntry.plain());
+        Assertions.assertEquals("Hello world!", testEntry.string());
     }
 
     @Test
@@ -57,7 +56,7 @@ public class I18NServiceModifierTests extends ApplicationAwareTest {
         final Message testEntry = resources.parameterTestEntry("world");
 
         Assertions.assertNotNull(testEntry);
-        Assertions.assertEquals("Hello world!", testEntry.plain());
+        Assertions.assertEquals("Hello world!", testEntry.string());
     }
 
     @Test
@@ -66,7 +65,7 @@ public class I18NServiceModifierTests extends ApplicationAwareTest {
         final Message testEntry = resources.abstractEntry();
 
         Assertions.assertNotNull(testEntry);
-        Assertions.assertEquals("Hello abstract world!", testEntry.plain());
+        Assertions.assertEquals("Hello abstract world!", testEntry.string());
     }
 
     @Test
@@ -75,7 +74,7 @@ public class I18NServiceModifierTests extends ApplicationAwareTest {
         final Message testEntry = resources.concreteEntry();
 
         Assertions.assertNotNull(testEntry);
-        Assertions.assertEquals("Hello concrete world!", testEntry.plain());
+        Assertions.assertEquals("Hello concrete world!", testEntry.string());
     }
 
     @Test
@@ -84,6 +83,6 @@ public class I18NServiceModifierTests extends ApplicationAwareTest {
         final Message testEntry = resources.testEntry();
 
         Assertions.assertNotNull(testEntry);
-        Assertions.assertEquals("Hello world!", testEntry.plain());
+        Assertions.assertEquals("Hello world!", testEntry.string());
     }
 }

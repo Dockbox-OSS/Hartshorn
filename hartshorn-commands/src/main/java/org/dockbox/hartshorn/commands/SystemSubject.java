@@ -17,26 +17,26 @@
 
 package org.dockbox.hartshorn.commands;
 
-import org.dockbox.hartshorn.core.domain.Identifiable;
-import org.dockbox.hartshorn.core.exceptions.Except;
 import org.dockbox.hartshorn.commands.exceptions.ParsingException;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
-import org.dockbox.hartshorn.i18n.common.Language;
-import org.dockbox.hartshorn.i18n.common.Languages;
-import org.dockbox.hartshorn.i18n.common.Message;
-import org.dockbox.hartshorn.i18n.text.Text;
-import org.jetbrains.annotations.NotNull;
+import org.dockbox.hartshorn.core.domain.Identifiable;
+import org.dockbox.hartshorn.core.exceptions.Except;
+import org.dockbox.hartshorn.i18n.Language;
+import org.dockbox.hartshorn.i18n.Languages;
 
 import java.util.UUID;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import lombok.Getter;
+
 @Singleton
 public abstract class SystemSubject implements CommandSource, Identifiable {
 
     @Inject
-    private ApplicationContext context;
+    @Getter
+    private ApplicationContext applicationContext;
 
     @SuppressWarnings("ConstantDeclaredInAbstractClass")
     public static final UUID UNIQUE_ID = new UUID(0, 0);
@@ -56,18 +56,6 @@ public abstract class SystemSubject implements CommandSource, Identifiable {
     }
 
     @Override
-    public void send(@NotNull final Message text) {
-        final Text formattedValue = text.translate().asText();
-        this.send(formattedValue);
-    }
-
-    @Override
-    public void sendWithPrefix(@NotNull final Message text) {
-        final Text formattedValue = text.translate().asText();
-        this.sendWithPrefix(formattedValue);
-    }
-
-    @Override
     public UUID uniqueId() {
         return UNIQUE_ID;
     }
@@ -80,7 +68,7 @@ public abstract class SystemSubject implements CommandSource, Identifiable {
     @Override
     public void execute(final String command) {
         try {
-            this.context.get(CommandGateway.class).accept(this, command);
+            this.applicationContext.get(CommandGateway.class).accept(this, command);
         }
         catch (final ParsingException e) {
             Except.handle(e);

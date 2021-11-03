@@ -15,10 +15,27 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.i18n.text.actions;
+package org.dockbox.hartshorn.i18n;
 
-public abstract class CommandAction<T> extends ClickAction<T> {
-    protected CommandAction(final T result) {
-        super(result);
-    }
+import org.dockbox.hartshorn.config.annotations.Value;
+import org.dockbox.hartshorn.core.annotations.inject.Binds;
+import org.dockbox.hartshorn.core.annotations.service.Service;
+
+import lombok.Getter;
+
+@Service
+@Binds(MessageFormatting.class)
+public class ConfigurableMessageFormatting implements MessageFormatting {
+
+    @Getter @Value("hartshorn.i18n.primary")
+    private final String primary = "b";
+
+    @Getter @Value("hartshorn.i18n.primary")
+    private final String secondary = "b";
+
+    @Getter @Value("hartshorn.i18n.primary")
+    private final String minor = "b";
+
+    @Getter @Value("hartshorn.i18n.primary")
+    private final String error = "b";
 }

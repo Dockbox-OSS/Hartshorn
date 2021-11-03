@@ -31,7 +31,7 @@ import org.dockbox.hartshorn.commands.exceptions.ParsingException;
 import org.dockbox.hartshorn.commands.service.CommandParameter;
 import org.dockbox.hartshorn.core.annotations.inject.Binds;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
-import org.dockbox.hartshorn.i18n.common.Message;
+import org.dockbox.hartshorn.i18n.Message;
 import org.dockbox.hartshorn.core.HartshornUtils;
 
 import java.util.Collection;

@@ -87,7 +87,7 @@ public interface CustomParameterPattern {
                 return Exceptional.of(new IllegalArgumentException(context
                         .get(CommandParameterResources.class)
                         .missingConverter(type.qualifiedName())
-                        .asString())
+                        .string())
                 );
             }
 
@@ -138,6 +138,6 @@ public interface CustomParameterPattern {
                 return Exceptional.of(constructor);
             }
         }
-        return Exceptional.of(new IllegalArgumentException(source.applicationContext().get(CommandParameterResources.class).notEnoughArgs().asString()));
+        return Exceptional.of(new IllegalArgumentException(source.applicationContext().get(CommandParameterResources.class).notEnoughArgs().string()));
     }
 }

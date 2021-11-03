@@ -18,83 +18,53 @@
 package org.dockbox.hartshorn.i18n;
 
 import org.dockbox.hartshorn.core.domain.Exceptional;
-import org.dockbox.hartshorn.core.context.ApplicationContext;
-import org.dockbox.hartshorn.i18n.common.Language;
-import org.dockbox.hartshorn.i18n.common.Languages;
-import org.dockbox.hartshorn.i18n.common.Message;
-import org.dockbox.hartshorn.i18n.message.MessageTemplate;
 import org.dockbox.hartshorn.testsuite.ApplicationAwareTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import java.util.ListResourceBundle;
-import java.util.ResourceBundle;
-
 public class MessageTemplateServiceTests extends ApplicationAwareTest {
 
-    private final ResourceService service = new ResourceServiceImpl() {
-        static {
-            for (final Language value : Languages.values()) bundles.put(value, createDemoBundle("Demo:" + value.code()));
-        }
-
-        @Override
-        public ApplicationContext applicationContext() {
-            return MessageTemplateServiceTests.this.context();
-        }
-    };
-
-    private static ResourceBundle createDemoBundle(final String value) {
-        return new ListResourceBundle() {
-            @Override
-            protected Object[][] getContents() {
-                return new Object[][]{ { "demo", value } };
-            }
-        };
+    private TranslationBundle bundle() {
+        final Message english = new MessageTemplate("value", "demo", Languages.EN_US);
+        final Message dutch = new MessageTemplate("waarde", "demo", Languages.NL_NL);
+        final TranslationBundle bundle = new DefaultTranslationBundle();
+        bundle.register(english);
+        bundle.register(dutch);
+        return bundle;
     }
 
     @Test
     public void testResourcesCanBeFormatted() {
-        final Message entry = new MessageTemplate(this.context(), "Hello {0}!", "demo.formatted");
+        final Message entry = new MessageTemplate("Hello {0}!", "demo.formatted", Languages.EN_US);
         final Message formatted = entry.format("world");
 
         Assertions.assertNotNull(formatted);
-        Assertions.assertEquals("Hello world!", formatted.plain());
+        Assertions.assertEquals("Hello world!", formatted.string());
     }
 
     @Test
     public void testResourceReturnsCopyOnFormat() {
-        final Message entry = new MessageTemplate(this.context(), "Hello {0}!", "demo.formatted");
+        final Message entry = new MessageTemplate("Hello {0}!", "demo.formatted", Languages.EN_US);
         final Message formatted = entry.format("world");
 
-        Assertions.assertNotSame(entry, formatted);
-    }
-
-    @Test
-    public void testResourceReturnsCopyOnTranslate() {
-        final Exceptional<Message> demo = this.service.get("demo");
-        Assertions.assertTrue(demo.present());
-
-        final Message entry = demo.get();
-        final Message formatted = entry.translate();
-
-        Assertions.assertNotSame(entry, formatted);
+        Assertions.assertSame(entry, formatted);
     }
 
     @Test
     public void testResourceReturnsCopyOnTranslateLanguage() {
-        final Exceptional<Message> demo = this.service.get("demo");
+        final Exceptional<Message> demo = this.bundle().message("demo");
         Assertions.assertTrue(demo.present());
 
         final Message entry = demo.get();
         final Message formatted = entry.translate(Languages.NL_NL);
 
-        Assertions.assertNotSame(entry, formatted);
+        Assertions.assertSame(entry, formatted);
     }
 
     @Test
-    public void testResourceReturnsCopyOnTranslateMessageReceiver() {
-        final Exceptional<Message> demo = this.service.get("demo");
+    public void testResourceReturnsSelfOnTranslateMessageReceiver() {
+        final Exceptional<Message> demo = this.bundle().message("demo");
         Assertions.assertTrue(demo.present());
 
         final MessageReceiver mock = Mockito.mock(MessageReceiver.class);
@@ -103,24 +73,66 @@ public class MessageTemplateServiceTests extends ApplicationAwareTest {
         final Message entry = demo.get();
         final Message formatted = entry.translate(mock);
 
-        Assertions.assertNotSame(entry, formatted);
+        Assertions.assertSame(entry, formatted);
+    }
+
+    @Test
+    void testMessageReturnsCloneOnDetach() {
+        final Exceptional<Message> demo = this.bundle().message("demo");
+        Assertions.assertTrue(demo.present());
+
+        final Message message = demo.get();
+        final Message detach = message.detach();
+
+        Assertions.assertNotSame(message, detach);
     }
 
     @Test
     public void testResourceBundleUsesBundle() {
-        final Exceptional<Message> demo = this.service.get("demo");
+        final Exceptional<Message> demo = this.bundle().message("demo");
         Assertions.assertTrue(demo.present());
         Assertions.assertEquals("demo", demo.get().key());
     }
 
     @Test
     public void testResourceBundleKeepsTranslations() {
-        final Exceptional<Message> demo = this.service.get("demo");
+        final Exceptional<Message> demo = this.bundle().message("demo");
         Assertions.assertTrue(demo.present());
         final Message entry = demo.get();
-        for (final Language value : Languages.values()) {
-            Assertions.assertEquals("Demo:" + value.code(), entry.translate(value).plain());
-        }
+
+        Assertions.assertEquals("value", entry.translate(Languages.EN_US).string());
+        Assertions.assertEquals("waarde", entry.translate(Languages.NL_NL).string());
     }
 
+    @Test
+    void testMergedMessageKeepsAllLanguages() {
+        final Message messageA = new MessageTemplate("English", "message.a", Languages.EN_US);
+        final Message messageB = new MessageTemplate("Dutch", "message.a", Languages.NL_NL);
+        final Message merged = messageA.merge(Languages.EN_US, messageB);
+        Assertions.assertNotSame(messageA, merged);
+        Assertions.assertNotSame(messageB, merged);
+        Assertions.assertEquals("English", merged.string());
+        Assertions.assertEquals("English", merged.translate(Languages.EN_US).string());
+        Assertions.assertEquals("Dutch", merged.translate(Languages.NL_NL).string());
+    }
+
+    @Test
+    void testMergedMessageKeepsAllFormatting() {
+        final Message messageA = new MessageTemplate("Value: {0}", "message.a", Languages.EN_US, "Property");
+        final Message messageB = new MessageTemplate("Waarde: {0}", "message.a", Languages.NL_NL, "Eigenschap");
+        final Message merged = messageA.merge(Languages.EN_US, messageB);
+        Assertions.assertNotSame(messageA, merged);
+        Assertions.assertNotSame(messageB, merged);
+        Assertions.assertEquals("Value: Property", merged.translate(Languages.EN_US).string());
+        Assertions.assertEquals("Waarde: Eigenschap", merged.translate(Languages.NL_NL).string());
+
+        new MessageTemplate("Value: {0}", "key", Languages.EN_US, "Property")
+                .translate(Languages.NL_NL).format("Eigenschap");
+
+        final Message message = new MessageTemplate("Value: {0}", "key", Languages.EN_US)
+                .format(Languages.NL_NL, "Eigenschap")
+                .format(Languages.EN_US, "Property");
+        message.translate(Languages.NL_NL).string(); // Value: Eigenschap
+        message.translate(Languages.EN_US).string(); // Value: Property
+    }
 }

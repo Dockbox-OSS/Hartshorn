@@ -24,11 +24,10 @@ import org.dockbox.hartshorn.core.annotations.service.Service;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.domain.tuple.Vector3N;
 import org.dockbox.hartshorn.core.services.ComponentContainer;
+import org.dockbox.hartshorn.i18n.Language;
+import org.dockbox.hartshorn.i18n.Languages;
+import org.dockbox.hartshorn.i18n.Message;
 import org.dockbox.hartshorn.i18n.ResourceService;
-import org.dockbox.hartshorn.i18n.common.Language;
-import org.dockbox.hartshorn.i18n.common.Languages;
-import org.dockbox.hartshorn.i18n.common.Message;
-import org.dockbox.hartshorn.i18n.text.Text;
 import org.jetbrains.annotations.NonNls;
 
 import java.time.Duration;
@@ -131,10 +130,6 @@ public final class DefaultArgumentConverters {
 
                 return src.applicationContext().get(ResourceService.class).get(validKey);
             }).build();
-
-    public static final ArgumentConverter<Text> TEXT = ArgumentConverterImpl.builder(Text.class, "text")
-            .withConverter(in -> Exceptional.of(Text.of(in)))
-            .build();
 
     public static final ArgumentConverter<ComponentContainer> SERVICE = ArgumentConverterImpl.builder(ComponentContainer.class, "service")
             .withConverter((src, in) -> Exceptional.of(src.applicationContext()

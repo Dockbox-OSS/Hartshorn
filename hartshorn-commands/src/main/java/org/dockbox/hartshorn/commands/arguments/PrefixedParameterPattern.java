@@ -21,7 +21,7 @@ import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.commands.annotations.Parameter;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
-import org.dockbox.hartshorn.i18n.common.Message;
+import org.dockbox.hartshorn.i18n.Message;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +44,7 @@ public abstract class PrefixedParameterPattern implements CustomParameterPattern
                 },
                 () -> true,
                 () -> false,
-                () -> new IllegalArgumentException(this.wrongFormat().asString())
+                () -> new IllegalArgumentException(this.wrongFormat().string())
         );
     }
 
@@ -75,7 +75,7 @@ public abstract class PrefixedParameterPattern implements CustomParameterPattern
     public Exceptional<String> parseIdentifier(final String argument) {
         return Exceptional.of(() -> argument.startsWith(this.prefix() + ""),
                 () -> argument.substring(1, argument.indexOf(this.opening())),
-                () -> new IllegalArgumentException(this.wrongFormat().asString())
+                () -> new IllegalArgumentException(this.wrongFormat().string())
         );
     }
 
