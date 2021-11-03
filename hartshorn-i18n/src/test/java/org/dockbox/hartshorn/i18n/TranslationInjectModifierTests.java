@@ -18,13 +18,13 @@
 package org.dockbox.hartshorn.i18n;
 
 import org.dockbox.hartshorn.core.context.element.TypeContext;
-import org.dockbox.hartshorn.i18n.annotations.UseResources;
+import org.dockbox.hartshorn.i18n.annotations.UseTranslations;
 import org.dockbox.hartshorn.testsuite.ApplicationAwareTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-@UseResources
-public class I18NServiceModifierTests extends ApplicationAwareTest {
+@UseTranslations
+public class TranslationInjectModifierTests extends ApplicationAwareTest {
 
     @Test
     public void testResourceServiceIsProxied() {

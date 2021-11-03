@@ -18,16 +18,23 @@
 package org.dockbox.hartshorn.i18n;
 
 import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.i18n.annotations.UseTranslations;
 import org.dockbox.hartshorn.testsuite.ApplicationAwareTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import java.util.Locale;
+
+@UseTranslations
 public class MessageTemplateServiceTests extends ApplicationAwareTest {
 
+    private static final Locale NL_NL = new Locale("nl", "NL");
+    private static final Locale EN_US = Locale.US;
+    
     private TranslationBundle bundle() {
-        final Message english = new MessageTemplate("value", "demo", Languages.EN_US);
-        final Message dutch = new MessageTemplate("waarde", "demo", Languages.NL_NL);
+        final Message english = new MessageTemplate("value", "demo", EN_US);
+        final Message dutch = new MessageTemplate("waarde", "demo", NL_NL);
         final TranslationBundle bundle = new DefaultTranslationBundle();
         bundle.register(english);
         bundle.register(dutch);
@@ -36,7 +43,7 @@ public class MessageTemplateServiceTests extends ApplicationAwareTest {
 
     @Test
     public void testResourcesCanBeFormatted() {
-        final Message entry = new MessageTemplate("Hello {0}!", "demo.formatted", Languages.EN_US);
+        final Message entry = new MessageTemplate("Hello {0}!", "demo.formatted", EN_US);
         final Message formatted = entry.format("world");
 
         Assertions.assertNotNull(formatted);
@@ -45,7 +52,7 @@ public class MessageTemplateServiceTests extends ApplicationAwareTest {
 
     @Test
     public void testResourceReturnsCopyOnFormat() {
-        final Message entry = new MessageTemplate("Hello {0}!", "demo.formatted", Languages.EN_US);
+        final Message entry = new MessageTemplate("Hello {0}!", "demo.formatted", EN_US);
         final Message formatted = entry.format("world");
 
         Assertions.assertSame(entry, formatted);
@@ -57,7 +64,7 @@ public class MessageTemplateServiceTests extends ApplicationAwareTest {
         Assertions.assertTrue(demo.present());
 
         final Message entry = demo.get();
-        final Message formatted = entry.translate(Languages.NL_NL);
+        final Message formatted = entry.translate(NL_NL);
 
         Assertions.assertSame(entry, formatted);
     }
@@ -68,7 +75,7 @@ public class MessageTemplateServiceTests extends ApplicationAwareTest {
         Assertions.assertTrue(demo.present());
 
         final MessageReceiver mock = Mockito.mock(MessageReceiver.class);
-        Mockito.when(mock.language()).thenReturn(Languages.NL_NL);
+        Mockito.when(mock.language()).thenReturn(NL_NL);
 
         final Message entry = demo.get();
         final Message formatted = entry.translate(mock);
@@ -100,39 +107,49 @@ public class MessageTemplateServiceTests extends ApplicationAwareTest {
         Assertions.assertTrue(demo.present());
         final Message entry = demo.get();
 
-        Assertions.assertEquals("value", entry.translate(Languages.EN_US).string());
-        Assertions.assertEquals("waarde", entry.translate(Languages.NL_NL).string());
+        Assertions.assertEquals("value", entry.translate(EN_US).string());
+        Assertions.assertEquals("waarde", entry.translate(NL_NL).string());
     }
 
     @Test
     void testMergedMessageKeepsAllLanguages() {
-        final Message messageA = new MessageTemplate("English", "message.a", Languages.EN_US);
-        final Message messageB = new MessageTemplate("Dutch", "message.a", Languages.NL_NL);
-        final Message merged = messageA.merge(Languages.EN_US, messageB);
+        final Message messageA = new MessageTemplate("English", "message.a", EN_US);
+        final Message messageB = new MessageTemplate("Dutch", "message.a", NL_NL);
+        final Message merged = messageA.merge(EN_US, messageB);
         Assertions.assertNotSame(messageA, merged);
         Assertions.assertNotSame(messageB, merged);
         Assertions.assertEquals("English", merged.string());
-        Assertions.assertEquals("English", merged.translate(Languages.EN_US).string());
-        Assertions.assertEquals("Dutch", merged.translate(Languages.NL_NL).string());
+        Assertions.assertEquals("English", merged.translate(EN_US).string());
+        Assertions.assertEquals("Dutch", merged.translate(NL_NL).string());
     }
 
     @Test
     void testMergedMessageKeepsAllFormatting() {
-        final Message messageA = new MessageTemplate("Value: {0}", "message.a", Languages.EN_US, "Property");
-        final Message messageB = new MessageTemplate("Waarde: {0}", "message.a", Languages.NL_NL, "Eigenschap");
-        final Message merged = messageA.merge(Languages.EN_US, messageB);
+        final Message messageA = new MessageTemplate("Value: {0}", "message.a", EN_US, "Property");
+        final Message messageB = new MessageTemplate("Waarde: {0}", "message.a", NL_NL, "Eigenschap");
+        final Message merged = messageA.merge(EN_US, messageB);
         Assertions.assertNotSame(messageA, merged);
         Assertions.assertNotSame(messageB, merged);
-        Assertions.assertEquals("Value: Property", merged.translate(Languages.EN_US).string());
-        Assertions.assertEquals("Waarde: Eigenschap", merged.translate(Languages.NL_NL).string());
+        Assertions.assertEquals("Value: Property", merged.translate(EN_US).string());
+        Assertions.assertEquals("Waarde: Eigenschap", merged.translate(NL_NL).string());
 
-        new MessageTemplate("Value: {0}", "key", Languages.EN_US, "Property")
-                .translate(Languages.NL_NL).format("Eigenschap");
+        new MessageTemplate("Value: {0}", "key", EN_US, "Property")
+                .translate(NL_NL).format("Eigenschap");
 
-        final Message message = new MessageTemplate("Value: {0}", "key", Languages.EN_US)
-                .format(Languages.NL_NL, "Eigenschap")
-                .format(Languages.EN_US, "Property");
-        message.translate(Languages.NL_NL).string(); // Value: Eigenschap
-        message.translate(Languages.EN_US).string(); // Value: Property
+        final Message message = new MessageTemplate("Value: {0}", "key", EN_US)
+                .format(NL_NL, "Eigenschap")
+                .format(EN_US, "Property");
+
+        message.translate(NL_NL).string(); // Value: Eigenschap
+        message.translate(EN_US).string(); // Value: Property
+    }
+
+    @Test
+    void testTranslationProvidersGetRegistered() {
+        final TranslationService translationService = this.context().get(TranslationService.class);
+        final Exceptional<Message> message = translationService.get("lang.name");
+        Assertions.assertTrue(message.present());
+        Assertions.assertEquals("English", message.get().translate(EN_US).string());
+        Assertions.assertEquals("Nederlands", message.get().translate(NL_NL).string());
     }
 }
