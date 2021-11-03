@@ -18,8 +18,9 @@
 package org.dockbox.hartshorn.core.proxy;
 
 import org.dockbox.hartshorn.core.annotations.activate.UseServiceProvision;
-import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.annotations.proxy.UseProxying;
+import org.dockbox.hartshorn.core.context.element.TypeContext;
+import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 import org.dockbox.hartshorn.core.proxy.types.ConcreteProxyTarget;
 import org.dockbox.hartshorn.core.proxy.types.FinalProxyTarget;
 import org.dockbox.hartshorn.core.proxy.types.GlobalProxyTarget;
@@ -29,19 +30,17 @@ import org.dockbox.hartshorn.testsuite.ApplicationAwareTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.lang.reflect.InvocationTargetException;
-
 @UseServiceProvision
 @UseProxying
 public class ProxyTests extends ApplicationAwareTest {
 
     @Test
-    void testConcreteMethodsCanBeProxied() throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    void testConcreteMethodsCanBeProxied() throws ApplicationException, NoSuchMethodException {
         final ProxyAttribute<ConcreteProxyTarget, String> property = ProxyAttribute.of(
                 ConcreteProxyTarget.class,
                 ConcreteProxyTarget.class.getMethod("name"),
                 (instance, args, proxyContext) -> "Hartshorn");
-        final ProxyHandler<ConcreteProxyTarget> handler = new ProxyHandler<>(new ConcreteProxyTarget());
+        final ProxyHandler<ConcreteProxyTarget> handler = new JavassistProxyHandler<>(new ConcreteProxyTarget());
         handler.delegate(property);
         final ConcreteProxyTarget proxy = handler.proxy();
 
@@ -51,12 +50,12 @@ public class ProxyTests extends ApplicationAwareTest {
     }
 
     @Test
-    void testFinalMethodsCanNotBeProxied() throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    void testFinalMethodsCanNotBeProxied() throws ApplicationException, NoSuchMethodException {
         final ProxyAttribute<FinalProxyTarget, String> property = ProxyAttribute.of(
                 FinalProxyTarget.class,
                 FinalProxyTarget.class.getMethod("name"),
                 (instance, args, proxyContext) -> "Hartshorn");
-        final ProxyHandler<FinalProxyTarget> handler = new ProxyHandler<>(new FinalProxyTarget());
+        final ProxyHandler<FinalProxyTarget> handler = new JavassistProxyHandler<>(new FinalProxyTarget());
         Assertions.assertThrows(RuntimeException.class, () -> handler.delegate(property));
 
         // Ensure the exception isn't thrown after registration

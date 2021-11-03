@@ -8,9 +8,9 @@ import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.properties.Attribute;
-import org.dockbox.hartshorn.core.proxy.ProxyFunction;
 import org.dockbox.hartshorn.core.proxy.ProxyHandler;
-import org.dockbox.hartshorn.core.proxy.ProxyUtil;
+import org.dockbox.hartshorn.core.proxy.ProxyFunction;
+import org.dockbox.hartshorn.core.proxy.JavassistProxyUtil;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.annotation.Annotation;
@@ -24,7 +24,7 @@ public abstract class ProxyDelegationModifier<P, A extends Annotation> extends S
     protected <T> boolean modifies(final ApplicationContext context, final TypeContext<T> type, @Nullable final T instance, final Attribute<?>... properties) {
         final boolean modifies = type.childOf(this.parentTarget());
         if (modifies) {
-            ProxyUtil.handler(type, instance).add(new DelegatedAttributesContext(properties));
+            JavassistProxyUtil.handler(type, instance).add(new DelegatedAttributesContext(properties));
         }
         return modifies;
     }
@@ -44,7 +44,7 @@ public abstract class ProxyDelegationModifier<P, A extends Annotation> extends S
         final TypeContext<P> parentContext = TypeContext.of(this.parentTarget());
         final MethodContext<?, T> method = methodContext.method();
         final Exceptional<MethodContext<?, P>> parentMethod = parentContext.method(method.name(), method.parameterTypes());
-        final ProxyHandler<T> handler = methodContext.handler();
+        final ProxyHandler<P> handler = (ProxyHandler<P>) methodContext.handler();
 
         final BackingImplementationContext backing = handler.first(context, BackingImplementationContext.class).get();
         final P concrete = backing.computeIfAbsent(this.parentTarget(), target -> {
@@ -52,7 +52,7 @@ public abstract class ProxyDelegationModifier<P, A extends Annotation> extends S
                     .map(DelegatedAttributesContext::attributes)
                     .orElse(() -> new Attribute[0])
                     .get();
-            return this.concreteDelegator(context, (TypeContext<? extends P>) methodContext.type(), attributes);
+            return this.concreteDelegator(context, handler, (TypeContext<? extends P>) methodContext.type(), attributes);
         });
 
         if (parentMethod.present()) {
@@ -66,7 +66,7 @@ public abstract class ProxyDelegationModifier<P, A extends Annotation> extends S
         }
     }
 
-    protected P concreteDelegator(final ApplicationContext context, final TypeContext<? extends P> parent, final Attribute<?>... attributes) {
+    protected P concreteDelegator(final ApplicationContext context, final ProxyHandler<P> handler, final TypeContext<? extends P> parent, final Attribute<?>... attributes) {
         return context.get(this.parentTarget(), attributes);
     }
 }

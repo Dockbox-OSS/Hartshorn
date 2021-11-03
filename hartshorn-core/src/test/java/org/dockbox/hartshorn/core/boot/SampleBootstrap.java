@@ -23,6 +23,7 @@ import org.dockbox.hartshorn.core.MultiMap;
 import org.dockbox.hartshorn.core.annotations.inject.InjectPhase;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.core.proxy.ProxyHandler;
 
 import java.lang.annotation.Annotation;
 import java.util.Collection;
@@ -53,5 +54,15 @@ public class SampleBootstrap extends HartshornBootstrap {
     @Override
     public <T, P extends T> Exceptional<T> delegator(final TypeContext<T> type, final P instance) {
         return Exceptional.empty();
+    }
+
+    @Override
+    public <T, P extends T> Exceptional<T> delegator(final TypeContext<T> type, final ProxyHandler<P> handler) {
+        return Exceptional.empty();
+    }
+
+    @Override
+    public <T> ProxyHandler<T> handler(final TypeContext<T> type, final T instance) {
+        return null;
     }
 }

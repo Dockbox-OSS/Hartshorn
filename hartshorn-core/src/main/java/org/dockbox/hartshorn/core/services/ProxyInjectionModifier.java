@@ -21,14 +21,13 @@ import org.dockbox.hartshorn.core.annotations.proxy.UseProxying;
 import org.dockbox.hartshorn.core.binding.Bindings;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
+import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 import org.dockbox.hartshorn.core.inject.InjectionModifier;
 import org.dockbox.hartshorn.core.properties.Attribute;
-import org.dockbox.hartshorn.core.proxy.ProxyAttribute;
 import org.dockbox.hartshorn.core.proxy.ProxyHandler;
-import org.dockbox.hartshorn.core.proxy.ProxyUtil;
+import org.dockbox.hartshorn.core.proxy.ProxyAttribute;
+import org.dockbox.hartshorn.core.proxy.JavassistProxyUtil;
 import org.jetbrains.annotations.Nullable;
-
-import java.lang.reflect.InvocationTargetException;
 
 public class ProxyInjectionModifier implements InjectionModifier<UseProxying> {
 
@@ -40,7 +39,7 @@ public class ProxyInjectionModifier implements InjectionModifier<UseProxying> {
     @Override
     public <T> T process(final ApplicationContext context, final TypeContext<T> type, @Nullable final T instance, final Attribute<?>... properties) {
         try {
-            final ProxyHandler<T> handler = ProxyUtil.handler(type, instance);
+            final ProxyHandler<T> handler = JavassistProxyUtil.handler(type, instance);
 
             for (final Attribute<?> property : properties) {
                 if (property instanceof ProxyAttribute) {
@@ -50,7 +49,7 @@ public class ProxyInjectionModifier implements InjectionModifier<UseProxying> {
             }
             return handler.proxy(instance);
         }
-        catch (final InvocationTargetException | NoSuchMethodException | InstantiationException | IllegalAccessException | ClassCastException e) {
+        catch (final ApplicationException e) {
             return instance;
         }
     }
