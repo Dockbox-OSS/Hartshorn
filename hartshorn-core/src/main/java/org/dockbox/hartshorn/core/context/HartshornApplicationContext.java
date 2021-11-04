@@ -494,7 +494,10 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
         if (null != instance) {
             final TypeContext<T> unproxied = TypeContext.unproxy(this, instance);
             for (final FieldContext<?> field : unproxied.fields(Inject.class)) {
-                final Object fieldInstance = this.get(field.type().type());
+                Key<?> fieldKey = Key.of(field.type());
+                if (field.annotation(Named.class).present()) fieldKey = Key.of(field.type(), field.annotation(Named.class).get());
+
+                final Object fieldInstance = this.get(fieldKey);
                 field.set(instance, fieldInstance);
             }
             for (final FieldContext<?> field : unproxied.fields(Context.class)) {
