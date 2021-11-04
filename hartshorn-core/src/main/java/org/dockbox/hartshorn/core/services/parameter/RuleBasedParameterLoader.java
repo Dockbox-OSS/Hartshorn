@@ -29,8 +29,12 @@ public class RuleBasedParameterLoader<C extends ParameterLoaderContext> extends 
                     continue parameters;
                 }
             }
-            arguments.add(null);
+            arguments.add(this.loadDefault(parameter, context, args));
         }
         return arguments;
+    }
+
+    protected <T> T loadDefault(final ParameterContext<T> parameter, final C context, final Object... args) {
+        return parameter.type().defaultOrNull();
     }
 }
