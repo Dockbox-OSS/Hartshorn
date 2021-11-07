@@ -53,7 +53,6 @@ import org.dockbox.hartshorn.core.inject.ProviderContext;
 import org.dockbox.hartshorn.core.properties.Attribute;
 import org.dockbox.hartshorn.core.properties.AttributeHolder;
 import org.dockbox.hartshorn.core.properties.BindingMetaAttribute;
-import org.dockbox.hartshorn.core.properties.UseFactory;
 import org.dockbox.hartshorn.core.services.ComponentContainer;
 import org.dockbox.hartshorn.core.services.ComponentLocator;
 import org.dockbox.hartshorn.core.services.ComponentLocatorImpl;
@@ -396,11 +395,6 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
         return this.get(TypeContext.of(type), additionalProperties);
     }
 
-    @Override
-    public <T> T get(final Class<T> type, final Object... varargs) {
-        return this.get(type, new UseFactory(varargs));
-    }
-
     @Nullable
     public <T> T create(final Key<T> key, final T typeInstance, final Attribute<?>[] additionalProperties) {
         final TypeContext<T> type = key.contract();
@@ -605,7 +599,7 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
             this.inHierarchy(contract, hierarchy -> hierarchy.add(Providers.of(context)));
         }
         if (!context.boundConstructors().isEmpty()) {
-            this.inHierarchy(contract, hierarchy -> hierarchy.addNext(Providers.bound(implementation)));
+            this.inHierarchy(contract, hierarchy -> hierarchy.addNext(Providers.of(implementation)));
         }
     }
 

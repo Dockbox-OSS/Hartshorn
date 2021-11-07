@@ -24,18 +24,6 @@ import java.util.function.Supplier;
 
 public class Providers {
 
-    public static <C> Provider<C> bound(final MethodContext<C, ?> method) {
-        return new BoundMethodProvider<>((MethodContext<C, Object>) method);
-    }
-
-    public static <C> Provider<C> bound(final TypeContext<? extends C> type) {
-        return new BoundFactoryProvider<>(type);
-    }
-
-    public static <C> Provider<C> bound(final Class<? extends C> type) {
-        return bound(TypeContext.of(type));
-    }
-
     public static <C> Provider<C> of(final TypeContext<? extends C> type) {
         return new ContextDrivenProvider<>(type);
     }

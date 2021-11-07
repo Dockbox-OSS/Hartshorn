@@ -39,10 +39,4 @@ public interface HartshornContext extends Context {
 
     <T> T get(Class<T> type, Attribute<?>... additionalProperties);
 
-    default <T> T get(final TypeContext<T> type, final Object... varargs) {
-        return this.get(type.type(), varargs);
-    }
-
-    <T> T get(Class<T> type, Object... varargs);
-
 }
