@@ -30,18 +30,21 @@ import java.lang.reflect.Proxy;
 import javassist.util.proxy.MethodHandler;
 import javassist.util.proxy.ProxyFactory;
 
-public class JavassistProxyUtil {
+/**
+ * @see ProxyApplicationBootstrap
+ */
+class JavassistProxyUtil {
 
-    public static <T> ProxyHandler<T> handler(final TypeContext<T> context, final T instance) {
+    static <T> ProxyHandler<T> handler(final TypeContext<T> context, final T instance) {
         return handler(context.type(), instance);
     }
 
-    public static <T> ProxyHandler<T> handler(final Class<T> type, final T instance) {
+    static <T> ProxyHandler<T> handler(final Class<T> type, final T instance) {
         final Exceptional<ProxyHandler<T>> handler = handler(instance);
         return handler.orElse(() -> new JavassistProxyHandler<>(instance, type)).get();
     }
 
-    public static <T> Exceptional<ProxyHandler<T>> handler(final T instance) {
+    static <T> Exceptional<ProxyHandler<T>> handler(final T instance) {
         if (instance != null) {
             if (ProxyFactory.isProxyClass(instance.getClass())) {
                 final MethodHandler methodHandler = ProxyFactory.getHandler((javassist.util.proxy.Proxy) instance);
@@ -65,12 +68,11 @@ public class JavassistProxyUtil {
         return Exceptional.empty();
     }
 
-    public static <T, P extends T> Exceptional<T> delegator(final ApplicationContext context, final TypeContext<T> type, final P proxied) {
+    static <T, P extends T> Exceptional<T> delegator(final ApplicationContext context, final TypeContext<T> type, final P proxied) {
         return JavassistProxyUtil.handler(proxied).flatMap(handler -> delegator(context, type, handler));
     }
 
-    public static <T, P extends T> Exceptional<T> delegator(final ApplicationContext context, final TypeContext<T> type, final ProxyHandler<P> handler) {
+    static <T, P extends T> Exceptional<T> delegator(final ApplicationContext context, final TypeContext<T> type, final ProxyHandler<P> handler) {
         return handler.first(context, BackingImplementationContext.class).flatMap(backingContext -> backingContext.get(type.type()));
     }
-
 }

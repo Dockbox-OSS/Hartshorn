@@ -8,10 +8,9 @@ import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.exceptions.ProxyMethodBindingException;
 import org.dockbox.hartshorn.core.properties.Attribute;
-import org.dockbox.hartshorn.core.proxy.ProxyHandler;
 import org.dockbox.hartshorn.core.proxy.ProxyAttribute;
 import org.dockbox.hartshorn.core.proxy.ProxyFunction;
-import org.dockbox.hartshorn.core.proxy.JavassistProxyUtil;
+import org.dockbox.hartshorn.core.proxy.ProxyHandler;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.annotation.Annotation;
@@ -23,7 +22,7 @@ public abstract class ServiceMethodModifier<A extends Annotation> extends Servic
     public <T> T process(final ApplicationContext context, final TypeContext<T> type, @Nullable final T instance, final Attribute<?>... properties) {
         final Collection<MethodContext<?, T>> methods = this.modifiableMethods(type);
 
-        final ProxyHandler<T> handler = JavassistProxyUtil.handler(type, instance);
+        final ProxyHandler<T> handler = context.environment().application().handler(type, instance);
 
         for (final MethodContext<?, T> method : methods) {
             final MethodProxyContext<T> ctx = new MethodProxyContextImpl<>(context, instance, type, method, properties, handler);
