@@ -17,13 +17,12 @@
 
 package org.dockbox.hartshorn.jetty;
 
-import org.dockbox.hartshorn.core.exceptions.ApplicationException;
-import org.dockbox.hartshorn.core.boot.Hartshorn;
 import org.dockbox.hartshorn.core.annotations.inject.Binds;
+import org.dockbox.hartshorn.core.boot.Hartshorn;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
+import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 import org.dockbox.hartshorn.core.properties.Attribute;
 import org.dockbox.hartshorn.core.properties.AttributeHolder;
-import org.dockbox.hartshorn.core.properties.UseFactory;
 import org.dockbox.hartshorn.persistence.properties.ModifiersAttribute;
 import org.dockbox.hartshorn.web.DefaultHttpWebServer;
 import org.dockbox.hartshorn.web.HttpWebServer;
@@ -108,7 +107,8 @@ public class JettyHttpWebServer extends DefaultHttpWebServer implements Attribut
     }
 
     protected JettyServletAdapter servlet(final RequestHandlerContext context) {
-        return this.context.get(JettyServletAdapter.class, new UseFactory(this, context), this.mappingModifier);
+        // TODO #472/#473: Re-implement mapping modifier delegation
+        return this.context.get(JettyServletFactory.class).adapter(this, context);
     }
 
 }

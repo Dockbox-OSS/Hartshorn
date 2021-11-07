@@ -17,12 +17,10 @@
 
 package org.dockbox.hartshorn.persistence.service;
 
-import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.properties.Attribute;
 import org.dockbox.hartshorn.core.proxy.ProxyHandler;
-import org.dockbox.hartshorn.core.properties.UseFactory;
 import org.dockbox.hartshorn.core.services.ProxyDelegationModifier;
 import org.dockbox.hartshorn.persistence.JpaRepository;
 import org.dockbox.hartshorn.persistence.annotations.UsePersistence;
@@ -41,7 +39,6 @@ public class JpaRepositoryDelegationModifier extends ProxyDelegationModifier<Jpa
     @Override
     protected JpaRepository concreteDelegator(final ApplicationContext context, final ProxyHandler<JpaRepository> handler, final TypeContext<? extends JpaRepository> parent, final Attribute<?>... attributes) {
         final Class<?> type = parent.typeParameters(JpaRepository.class).get(0).type();
-        final Attribute[] typeAttributes = HartshornUtils.merge(attributes, new Attribute[]{ new UseFactory(type) });
-        return context.get(JpaRepository.class, typeAttributes);
+        return context.get(JpaRepositoryFactory.class).repository(type);
     }
 }

@@ -21,8 +21,8 @@ import org.dockbox.hartshorn.core.annotations.proxy.UseProxying;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.properties.Attribute;
-import org.dockbox.hartshorn.core.proxy.ProxyHandler;
 import org.dockbox.hartshorn.core.proxy.DelegatorAccessor;
+import org.dockbox.hartshorn.core.proxy.ProxyHandler;
 
 public class DelegatorAccessorDelegationModifier extends ProxyDelegationModifier<DelegatorAccessor, UseProxying> {
 
@@ -38,6 +38,6 @@ public class DelegatorAccessorDelegationModifier extends ProxyDelegationModifier
 
     @Override
     protected DelegatorAccessor concreteDelegator(final ApplicationContext context, final ProxyHandler<DelegatorAccessor> handler, final TypeContext<? extends DelegatorAccessor> parent, final Attribute<?>... attributes) {
-        return context.get(DelegatorAccessor.class, handler);
+        return context.get(AccessorFactory.class).delegatorAccessor(handler);
     }
 }

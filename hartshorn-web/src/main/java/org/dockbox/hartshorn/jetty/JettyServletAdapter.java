@@ -23,6 +23,7 @@ import org.dockbox.hartshorn.core.annotations.inject.Enable;
 import org.dockbox.hartshorn.persistence.properties.ModifiersAttribute;
 import org.dockbox.hartshorn.web.HttpMethod;
 import org.dockbox.hartshorn.web.RequestHandlerContext;
+import org.dockbox.hartshorn.web.ServletFactory;
 import org.dockbox.hartshorn.web.ServletHandler;
 import org.dockbox.hartshorn.web.HttpWebServer;
 
@@ -41,7 +42,8 @@ public class JettyServletAdapter extends HttpServlet {
 
     @Bound
     public JettyServletAdapter(final HttpWebServer starter, final RequestHandlerContext context) {
-        this.handler = context.applicationContext().get(ServletHandler.class, starter, context.httpRequest().method(), context.methodContext());
+        this.handler = context.applicationContext().get(ServletFactory.class)
+                .servletHandler(starter, context.httpRequest().method(), context.methodContext());
     }
 
     @Override
