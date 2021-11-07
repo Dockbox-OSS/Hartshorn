@@ -18,6 +18,7 @@
 package org.dockbox.hartshorn.commands.arguments;
 
 import org.dockbox.hartshorn.commands.context.CommandContext;
+import org.dockbox.hartshorn.commands.context.MethodCommandExecutorContext;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.ParameterLoaderContext;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
@@ -29,9 +30,13 @@ public class CommandParameterLoaderContext extends ParameterLoaderContext {
 
     @Getter
     private final CommandContext commandContext;
+    @Getter
+    private final MethodCommandExecutorContext<?> executorContext;
 
-    public CommandParameterLoaderContext(MethodContext<?, ?> method, TypeContext<?> type, Object instance, ApplicationContext applicationContext, CommandContext commandContext) {
+    public CommandParameterLoaderContext(final MethodContext<?, ?> method, final TypeContext<?> type, final Object instance, final ApplicationContext applicationContext, final CommandContext commandContext,
+                                         final MethodCommandExecutorContext<?> executorContext) {
         super(method, type, instance, applicationContext);
         this.commandContext = commandContext;
+        this.executorContext = executorContext;
     }
 }

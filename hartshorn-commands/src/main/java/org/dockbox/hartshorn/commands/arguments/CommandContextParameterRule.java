@@ -25,12 +25,12 @@ import org.dockbox.hartshorn.core.services.parameter.ParameterLoaderRule;
 public class CommandContextParameterRule implements ParameterLoaderRule<CommandParameterLoaderContext> {
 
     @Override
-    public boolean accepts(ParameterContext<?> parameter, CommandParameterLoaderContext context, Object... args) {
+    public boolean accepts(final ParameterContext<?> parameter, final CommandParameterLoaderContext context, final Object... args) {
         return TypeContext.of(context.commandContext()).childOf(parameter.type());
     }
 
     @Override
-    public <T> Exceptional<T> load(ParameterContext<T> parameter, CommandParameterLoaderContext context, Object... args) {
+    public <T> Exceptional<T> load(final ParameterContext<T> parameter, final CommandParameterLoaderContext context, final Object... args) {
         return Exceptional.of((T) context.commandContext());
     }
 }
