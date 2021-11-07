@@ -22,6 +22,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
+@Deprecated(since = "4.2.3", forRemoval = true)
 public class AttributeImpl<T> implements Attribute<T> {
 
     private final T value;

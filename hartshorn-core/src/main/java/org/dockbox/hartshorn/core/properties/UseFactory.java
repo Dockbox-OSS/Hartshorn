@@ -17,6 +17,11 @@
 
 package org.dockbox.hartshorn.core.properties;
 
+/**
+ * @deprecated Will be replaced when <a href="https://github.com/GuusLieben/Hartshorn/issues/473">#473</a> is accepted.
+ * Also see <a href="https://github.com/GuusLieben/Hartshorn/issues/472">#472</a>
+ */
+@Deprecated(since = "4.2.3", forRemoval = true)
 public class UseFactory extends AttributeImpl<Object[]> {
     public UseFactory(final Object... use) {
         super(use);

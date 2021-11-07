@@ -19,16 +19,29 @@ package org.dockbox.hartshorn.core.properties;
 
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 
+/**
+ * @deprecated Use {@link Enableable} instead.
+ */
+@Deprecated(since = "4.2.3", forRemoval = true)
 public interface AttributeHolder {
 
+    /**
+     * @deprecated Use {@link Enableable#enable()} instead.
+     */
+    @Deprecated(since = "4.2.3", forRemoval = false)
     default boolean canEnable() {
         return true;
     }
 
+    @Deprecated(since = "4.2.3", forRemoval = true)
     default void apply(final Attribute<?> property) throws ApplicationException {
         // Optional implementation provided by inheritor
     }
 
+    /**
+     * @deprecated Use {@link Enableable#enable()} instead.
+     */
+    @Deprecated(since = "4.2.3", forRemoval = false)
     default void enable() throws ApplicationException {
         // Optional implementation provided by inheritor
     }

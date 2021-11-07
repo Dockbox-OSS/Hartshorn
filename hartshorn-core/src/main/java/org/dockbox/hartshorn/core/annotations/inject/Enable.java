@@ -28,6 +28,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 public @interface Enable {
     boolean enable() default true;
+    @Deprecated(since = "4.2.3", forRemoval = true)
     Class<? extends Attribute<?>>[] delegate() default {};
 }
 
