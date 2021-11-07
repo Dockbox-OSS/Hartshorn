@@ -17,16 +17,9 @@
 
 package org.dockbox.hartshorn.core;
 
-import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.annotations.activate.UseServiceProvision;
-import org.dockbox.hartshorn.core.binding.BindingHierarchy;
 import org.dockbox.hartshorn.core.binding.Bindings;
-import org.dockbox.hartshorn.core.binding.BoundFactoryProvider;
-import org.dockbox.hartshorn.core.binding.ContextDrivenProvider;
-import org.dockbox.hartshorn.core.binding.Provider;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
-import org.dockbox.hartshorn.core.properties.BindingMetaAttribute;
-import org.dockbox.hartshorn.core.properties.UseFactory;
 import org.dockbox.hartshorn.core.proxy.ExtendedProxy;
 import org.dockbox.hartshorn.core.types.ContextInjectedType;
 import org.dockbox.hartshorn.core.types.SampleContext;
@@ -41,14 +34,10 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import test.types.PopulatedType;
-import test.types.SampleBoundPopulatedType;
-import test.types.SampleBoundType;
 import test.types.SampleField;
 import test.types.SampleFieldImplementation;
 import test.types.SampleImplementation;
 import test.types.SampleInterface;
-import test.types.bound.SampleBoundAnnotatedImplementation;
-import test.types.dual.DualConstructableType;
 import test.types.meta.SampleMetaAnnotatedImplementation;
 import test.types.multi.SampleMultiAnnotatedImplementation;
 import test.types.provision.ProvidedInterface;
@@ -245,79 +234,6 @@ public class ApplicationContextTests extends ApplicationAwareTest {
         Assertions.assertEquals(SampleAnnotatedImplementation.class, provided.getClass());
     }
 
-    @Test
-    public void boundTypesCanBeProvided() {
-        this.context().bind(Key.of(SampleInterface.class), SampleBoundType.class);
-
-        final SampleInterface wired = this.context().get(SampleInterface.class, "BoundHartshorn");
-        Assertions.assertNotNull(wired);
-        Assertions.assertEquals("BoundHartshorn", wired.name());
-    }
-
-    @Test
-    public void testScannedBoundBindingsCanBeProvided() {
-        this.context().bind("test.types.bound");
-        final SampleInterface provided = this.context().get(SampleInterface.class, "BoundAnnotated");
-        Assertions.assertNotNull(provided);
-
-        final Class<? extends SampleInterface> providedClass = provided.getClass();
-        Assertions.assertEquals(SampleBoundAnnotatedImplementation.class, providedClass);
-
-        Assertions.assertEquals("BoundAnnotated", provided.name());
-    }
-
-    @Test
-    public void boundTypesCanBeProvidedThroughFactoryProperty() {
-        this.context().bind(Key.of(SampleInterface.class), SampleBoundType.class);
-        this.context().bind(Key.of(SampleInterface.class), SampleBoundType.class);
-
-        final SampleInterface provided = this.context().get(SampleInterface.class, new UseFactory("FactoryTyped"));
-        Assertions.assertNotNull(provided);
-
-        final Class<? extends SampleInterface> providedClass = provided.getClass();
-        Assertions.assertEquals(SampleBoundType.class, providedClass);
-
-        Assertions.assertEquals("FactoryTyped", provided.name());
-    }
-
-    @Test
-    public void providerRedirectsVarargs() {
-        this.context().bind(Key.of(SampleInterface.class), SampleBoundType.class);
-
-        final SampleInterface provided = this.context().get(SampleInterface.class, "FactoryTyped");
-        Assertions.assertNotNull(provided);
-
-        final Class<? extends SampleInterface> providedClass = provided.getClass();
-        Assertions.assertEquals(SampleBoundType.class, providedClass);
-
-        Assertions.assertEquals("FactoryTyped", provided.name());
-    }
-
-    @Test
-    public void varargProvidedTypesArePopulated() {
-        this.context().bind(Key.of(SampleInterface.class), SampleBoundPopulatedType.class);
-        this.context().bind(Key.of(SampleField.class), SampleFieldImplementation.class);
-
-        final SampleInterface provided = this.context().get(SampleInterface.class, "FactoryTyped");
-        Assertions.assertNotNull(provided);
-        Assertions.assertTrue(provided instanceof SampleBoundPopulatedType);
-        Assertions.assertNotNull(((SampleBoundPopulatedType) provided).field());
-        Assertions.assertTrue(((SampleBoundPopulatedType) provided).field() instanceof SampleFieldImplementation);
-    }
-
-    @Test
-    public void injectionPointsAreAppliedToVarargProviders() {
-        this.context().bind(Key.of(SampleInterface.class), SampleBoundType.class);
-        this.context().bind(Key.of(SampleField.class), SampleFieldImplementation.class);
-
-        final InjectionPoint<SampleInterface> point = InjectionPoint.of(TypeContext.of(SampleInterface.class), $ -> new SampleImplementation());
-        this.context().add(point);
-
-        final SampleInterface provided = this.context().get(SampleInterface.class, "FactoryTyped");
-        Assertions.assertFalse(provided instanceof SampleBoundType);
-        Assertions.assertTrue(provided instanceof SampleImplementation);
-    }
-
     @ParameterizedTest
     @MethodSource("providers")
     void testProvidersCanApply(final String meta, final String name, final boolean field, final String fieldMeta, final boolean singleton) {
@@ -346,33 +262,6 @@ public class ApplicationContextTests extends ApplicationAwareTest {
     }
 
     @Test
-    void testBoundProviderCanSupply() {
-        this.context().bind("test.types.provision");
-        final ProvidedInterface provided = this.context().get(ProvidedInterface.class, BindingMetaAttribute.of("bound"), new UseFactory("BoundProvision"));
-        Assertions.assertNotNull(provided);
-        Assertions.assertEquals("BoundProvision", provided.name());
-    }
-
-    @Test
-    void testDualConstructableTypeCanBind() {
-        final Key<SampleInterface> key = Key.of(SampleInterface.class);
-        this.context().bind(key, DualConstructableType.class);
-        final BindingHierarchy<SampleInterface> hierarchy = this.context().hierarchy(key);
-
-        Assertions.assertEquals(2, hierarchy.size());
-
-        final Exceptional<Provider<SampleInterface>> provider = hierarchy.get(-1);
-        Assertions.assertTrue(provider.present());
-        Assertions.assertTrue(provider.get() instanceof ContextDrivenProvider);
-        Assertions.assertTrue(((ContextDrivenProvider<SampleInterface>) provider.get()).context().is(DualConstructableType.class));
-
-        final Exceptional<Provider<SampleInterface>> boundProvider = hierarchy.get(0);
-        Assertions.assertTrue(boundProvider.present());
-        Assertions.assertTrue(boundProvider.get() instanceof BoundFactoryProvider);
-        Assertions.assertTrue(((BoundFactoryProvider<SampleInterface>) boundProvider.get()).context().is(DualConstructableType.class));
-    }
-
-    @Test
     void testContextFieldsAreInjected() {
         this.context().add(new SampleContext("InjectedContext"));
         final ContextInjectedType instance = this.context().populate(new ContextInjectedType());
@@ -386,5 +275,11 @@ public class ApplicationContextTests extends ApplicationAwareTest {
         final ContextInjectedType instance = this.context().populate(new ContextInjectedType());
         Assertions.assertNotNull(instance.anotherContext());
         Assertions.assertEquals("InjectedContext", instance.anotherContext().name());
+    }
+
+    @Test
+    void testFactoryProviderCanProvide() {
+        this.context().bind("test.types.factory");
+        final SampleInterface sample = this.context().get(SampleFactoryService.class).createSample("Factory");
     }
 }
