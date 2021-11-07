@@ -9,8 +9,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import lombok.AccessLevel;
+import lombok.Getter;
+
 public class RuleBasedParameterLoader<C extends ParameterLoaderContext> extends ParameterLoader<C>{
 
+    @Getter(AccessLevel.PROTECTED)
     private final Set<ParameterLoaderRule<C>> rules = HartshornUtils.emptyConcurrentSet();
 
     public RuleBasedParameterLoader add(final ParameterLoaderRule<C> rule) {
