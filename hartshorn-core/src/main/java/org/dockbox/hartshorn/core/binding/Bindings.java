@@ -23,6 +23,7 @@ import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.properties.Attribute;
 import org.dockbox.hartshorn.core.properties.AttributeHolder;
+import org.dockbox.hartshorn.core.properties.Enableable;
 import org.dockbox.hartshorn.core.services.ComponentContainer;
 import org.dockbox.hartshorn.core.HartshornUtils;
 
@@ -43,6 +44,9 @@ public final class Bindings {
         if (instance instanceof AttributeHolder injectable && injectable.canEnable()) {
             for (final Attribute<?> property : properties) injectable.apply(property);
             injectable.enable();
+        }
+        else if (instance instanceof Enableable enableable && enableable.canEnable()) {
+            enableable.enable();
         }
     }
 

@@ -18,6 +18,7 @@
 package org.dockbox.hartshorn.core.properties;
 
 @FunctionalInterface
+@Deprecated(since = "4.2.3", forRemoval = true)
 public interface Attribute<T> {
     T value();
 }
