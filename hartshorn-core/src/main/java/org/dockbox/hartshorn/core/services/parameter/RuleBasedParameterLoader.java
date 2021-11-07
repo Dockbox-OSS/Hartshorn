@@ -5,6 +5,7 @@ import org.dockbox.hartshorn.core.context.ParameterLoaderContext;
 import org.dockbox.hartshorn.core.context.element.ParameterContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -20,8 +21,10 @@ public class RuleBasedParameterLoader<C extends ParameterLoaderContext> extends 
     @Override
     public List<Object> loadArguments(final C context, final Object... args) {
         final List<Object> arguments = HartshornUtils.emptyList();
+        final LinkedList<ParameterContext<?>> parameters = context.method().parameters();
         parameters:
-        for (final ParameterContext<?> parameter : context.method().parameters()) {
+        for (int i = 0; i < parameters.size(); i++) {
+            final ParameterContext<?> parameter = parameters.get(i);
             for (final ParameterLoaderRule<C> rule : this.rules) {
                 if (rule.accepts(parameter, context, args)) {
                     final Exceptional<Object> argument = rule.load((ParameterContext<Object>) parameter, context, args);
@@ -29,12 +32,12 @@ public class RuleBasedParameterLoader<C extends ParameterLoaderContext> extends 
                     continue parameters;
                 }
             }
-            arguments.add(this.loadDefault(parameter, context, args));
+            arguments.add(this.loadDefault(parameter, i, context, args));
         }
         return arguments;
     }
 
-    protected <T> T loadDefault(final ParameterContext<T> parameter, final C context, final Object... args) {
+    protected <T> T loadDefault(final ParameterContext<T> parameter, final int index, final C context, final Object... args) {
         return parameter.type().defaultOrNull();
     }
 }

@@ -22,7 +22,7 @@ public class HttpServletParameterLoader extends RuleBasedParameterLoader<HttpReq
     }
 
     @Override
-    protected <T> T loadDefault(final ParameterContext<T> parameter, final HttpRequestParameterLoaderContext context, final Object... args) {
+    protected <T> T loadDefault(final ParameterContext<T> parameter, final int index, final HttpRequestParameterLoaderContext context, final Object... args) {
         return context.applicationContext().get(parameter.type());
     }
 }
