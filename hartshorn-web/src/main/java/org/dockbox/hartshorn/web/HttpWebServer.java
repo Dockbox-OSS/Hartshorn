@@ -19,10 +19,12 @@ package org.dockbox.hartshorn.web;
 
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 import org.dockbox.hartshorn.core.services.parameter.ParameterLoader;
+import org.dockbox.hartshorn.persistence.properties.PersistenceModifier;
 import org.dockbox.hartshorn.web.processing.HttpRequestParameterLoaderContext;
 
 public interface HttpWebServer {
     void start(int port) throws ApplicationException;
-    void register(RequestHandlerContext context);
+    HttpWebServer register(RequestHandlerContext context);
     ParameterLoader<HttpRequestParameterLoaderContext> loader();
+    HttpWebServer skipBehavior(PersistenceModifier modifier);
 }

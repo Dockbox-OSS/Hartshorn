@@ -17,16 +17,15 @@
 
 package org.dockbox.hartshorn.persistence;
 
+import org.dockbox.hartshorn.core.GenericType;
+import org.dockbox.hartshorn.core.HartshornUtils;
+import org.dockbox.hartshorn.core.boot.Hartshorn;
+import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.domain.TypedOwner;
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
-import org.dockbox.hartshorn.core.boot.Hartshorn;
-import org.dockbox.hartshorn.core.GenericType;
-import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.properties.Attribute;
 import org.dockbox.hartshorn.persistence.mapping.ObjectMapper;
-import org.dockbox.hartshorn.persistence.properties.ModifiersAttribute;
-import org.dockbox.hartshorn.core.HartshornUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.BufferedWriter;
@@ -172,9 +171,6 @@ public abstract class DefaultAbstractFileManager implements FileManager {
             else {
                 throw new IllegalArgumentException("Unsupported persistence type: " + fileType.type() + ", expected: " + PersistenceType.RAW);
             }
-        }
-        else if (property instanceof ModifiersAttribute) {
-            this.mapper.apply(property);
         }
     }
 

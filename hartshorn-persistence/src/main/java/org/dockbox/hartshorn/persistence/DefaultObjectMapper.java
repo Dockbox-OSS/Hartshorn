@@ -17,10 +17,7 @@
 
 package org.dockbox.hartshorn.persistence;
 
-import org.dockbox.hartshorn.core.properties.Attribute;
 import org.dockbox.hartshorn.persistence.mapping.ObjectMapper;
-import org.dockbox.hartshorn.persistence.properties.ModifiersAttribute;
-import org.dockbox.hartshorn.persistence.properties.PersistenceModifier;
 
 public abstract class DefaultObjectMapper implements ObjectMapper {
 
@@ -40,13 +37,4 @@ public abstract class DefaultObjectMapper implements ObjectMapper {
     public FileType fileType() {
         return this.fileType;
     }
-
-    @Override
-    public void apply(final Attribute<?> property) {
-        if (property instanceof ModifiersAttribute modifiersAttribute) {
-            for (final PersistenceModifier modifier : modifiersAttribute.value()) this.modify(modifier);
-        }
-    }
-
-    protected abstract void modify(PersistenceModifier modifier);
 }
