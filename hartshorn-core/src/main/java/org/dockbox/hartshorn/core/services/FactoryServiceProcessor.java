@@ -41,14 +41,14 @@ public class FactoryServiceProcessor implements ServiceProcessor<Service> {
     }
 
     @Override
-    public boolean preconditions(ApplicationContext context, TypeContext<?> type) {
+    public boolean preconditions(final ApplicationContext context, final TypeContext<?> type) {
         return !type.methods(Factory.class).isEmpty();
     }
 
     @Override
-    public <T> void process(ApplicationContext context, TypeContext<T> type) {
-        FactoryContext factoryContext = context.first(FactoryContext.class).get();
-        for (MethodContext<?, T> method : type.methods(Factory.class)) {
+    public <T> void process(final ApplicationContext context, final TypeContext<T> type) {
+        final FactoryContext factoryContext = context.first(FactoryContext.class).get();
+        for (final MethodContext<?, T> method : type.methods(Factory.class)) {
             final Factory annotation = method.annotation(Factory.class).get();
             Key<?> key = Key.of(method.returnType());
             if (!"".equals(annotation.value())) key = Key.of(method.returnType(), Bindings.named(annotation.value()));
@@ -78,5 +78,10 @@ public class FactoryServiceProcessor implements ServiceProcessor<Service> {
 
             factoryContext.register((MethodContext<Object, ?>) method, (ConstructorContext<Object>) matching);
         }
+    }
+
+    @Override
+    public ServiceOrder order() {
+        return ServiceOrder.FIRST;
     }
 }

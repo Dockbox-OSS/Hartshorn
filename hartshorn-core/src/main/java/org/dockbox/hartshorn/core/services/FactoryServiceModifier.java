@@ -49,7 +49,7 @@ public class FactoryServiceModifier extends ServiceAnnotatedMethodModifier<Facto
     public <T, R> ProxyFunction<T, R> process(final ApplicationContext context, final MethodProxyContext<T> methodContext) {
         final MethodContext<?, T> method = methodContext.method();
         if (method.isAbstract()) {
-            FactoryContext factoryContext = context.first(FactoryContext.class).get();
+            final FactoryContext factoryContext = context.first(FactoryContext.class).get();
             final ConstructorContext<?> constructor = factoryContext.get(method);
             return (instance, args, proxyContext) -> this.populateAndEnable(context, (R) constructor.createInstance(args).orNull());
         }

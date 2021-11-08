@@ -26,23 +26,7 @@ import lombok.Getter;
 public class ConnectionAttribute implements Attribute<PersistenceConnection> {
     @Getter private final PersistenceConnection value;
 
-    public static ConnectionAttribute of(final Object target) {
-        return of(target, "", "");
-    }
-
-    public static ConnectionAttribute of(final Object target, final String user, final String password) {
-        return of(Remotes.DERBY, target, user, password);
-    }
-
     public static ConnectionAttribute of(final Remote remote, final Object target, final String user, final String password) {
-        return of(remote.connection(target, user, password));
-    }
-
-    public static ConnectionAttribute of(final Remote remote, final String connectionString, final String user, final String password) {
-        return of(new PersistenceConnection(connectionString, user, password, remote));
-    }
-
-    public static ConnectionAttribute of(final PersistenceConnection connection) {
-        return new ConnectionAttribute(connection);
+        return new ConnectionAttribute(remote.connection(target, user, password));
     }
 }

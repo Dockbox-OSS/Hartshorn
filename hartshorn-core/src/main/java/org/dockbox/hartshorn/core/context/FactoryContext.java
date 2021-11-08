@@ -29,12 +29,12 @@ import java.util.NoSuchElementException;
 public class FactoryContext extends DefaultContext {
     private final Map<MethodContext<?, ?>, ConstructorContext<?>> bounds = HartshornUtils.emptyConcurrentMap();
 
-    public <T> void register(MethodContext<T, ?> method, ConstructorContext<T> constructor) {
+    public <T> void register(final MethodContext<T, ?> method, final ConstructorContext<T> constructor) {
         this.bounds.put(method, constructor);
     }
 
-    public <T> ConstructorContext<T> get(MethodContext<T, ?> method) {
-        ConstructorContext<?> constructor = this.bounds.get(method);
+    public <T> ConstructorContext<T> get(final MethodContext<T, ?> method) {
+        final ConstructorContext<?> constructor = this.bounds.get(method);
         if (constructor == null) throw new NoSuchElementException("No bound constructor present for method " + method.qualifiedName());
         return (ConstructorContext<T>) constructor;
     }

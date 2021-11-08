@@ -63,18 +63,16 @@ public abstract class ProxyDelegationModifier<P, A extends Annotation> extends S
         final ProxyHandler<P> handler = (ProxyHandler<P>) methodContext.handler();
 
         final BackingImplementationContext backing = handler.first(context, BackingImplementationContext.class).get();
-        final P concrete = backing.computeIfAbsent(this.parentTarget(), target -> {
-            final Attribute<?>[] attributes = handler.first(context, DelegatedAttributesContext.class)
-                    .map(DelegatedAttributesContext::attributes)
-                    .orElse(() -> new Attribute[0])
-                    .get();
-            return this.concreteDelegator(context, handler, (TypeContext<? extends P>) methodContext.type(), attributes);
-        });
+        final P concrete = backing.computeIfAbsent(this.parentTarget(), target -> this.concreteDelegator(context, handler, (TypeContext<? extends P>) methodContext.type()));
 
         if (parentMethod.present()) {
             final MethodContext<?, P> parent = parentMethod.get();
             final R defaultValue = (R) parent.returnType().defaultOrNull();
-            return (instance, args, proxyContext) -> parent.invoke(concrete, args).map((r -> (R) r)).orElse(() -> defaultValue).orNull();
+            return (instance, args, proxyContext) -> {
+                final R out = parent.invoke(concrete, args).map((r -> (R) r)).orElse(() -> defaultValue).orNull();
+                if (out == concrete) return (R) instance;
+                else return out;
+            };
         }
         else {
             context.log().error("Attempted to delegate method " + method.qualifiedName() + " but it was not find on the indicated parent " + parentContext.qualifiedName());
