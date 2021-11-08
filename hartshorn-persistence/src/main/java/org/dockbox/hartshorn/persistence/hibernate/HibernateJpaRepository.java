@@ -52,14 +52,18 @@ import javax.persistence.criteria.CriteriaQuery;
 
 import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
 @Binds(JpaRepository.class)
-@RequiredArgsConstructor(onConstructor_ = @Bound)
 public class HibernateJpaRepository<T, ID> implements JpaRepository<T, ID>, AttributeHolder, Closeable {
 
     private final Configuration configuration = new Configuration();
     private final Class<T> type;
+
+    /**
+     Temporary solution to work with factory-based provision, see #477.
+     */
+    @Deprecated(since = "4.2.3", forRemoval = true)
+    private final ConnectionAttribute connectionAttribute;
 
     @Getter(AccessLevel.PROTECTED)
     private SessionFactory factory;
@@ -72,6 +76,12 @@ public class HibernateJpaRepository<T, ID> implements JpaRepository<T, ID>, Attr
     private ApplicationContext applicationContext;
 
     private Session session;
+
+    @Bound
+    public HibernateJpaRepository(final Class<T> type, final ConnectionAttribute connectionAttribute) throws ApplicationException {
+        this.type = type;
+        this.connectionAttribute = connectionAttribute;
+    }
 
     @Override
     public boolean canEnable() {
@@ -120,6 +130,8 @@ public class HibernateJpaRepository<T, ID> implements JpaRepository<T, ID>, Attr
 
     @Override
     public void enable() throws ApplicationException {
+        this.apply(this.connectionAttribute);
+
         Exceptional<EntityContext> context = this.applicationContext().first(EntityContext.class);
         if (context.absent()) {
             final Collection<TypeContext<?>> entities = this.applicationContext.environment().types(Entity.class);
