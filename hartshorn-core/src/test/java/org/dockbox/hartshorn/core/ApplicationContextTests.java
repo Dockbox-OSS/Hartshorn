@@ -23,6 +23,7 @@ import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.proxy.ExtendedProxy;
 import org.dockbox.hartshorn.core.types.ContextInjectedType;
 import org.dockbox.hartshorn.core.types.SampleContext;
+import org.dockbox.hartshorn.core.types.User;
 import org.dockbox.hartshorn.testsuite.ApplicationAwareTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -279,7 +280,9 @@ public class ApplicationContextTests extends ApplicationAwareTest {
 
     @Test
     void testFactoryProviderCanProvide() {
-        this.context().bind("test.types.factory");
-        final SampleInterface sample = this.context().get(SampleFactoryService.class).createSample("Factory");
+        final User sample = this.context().get(SampleFactoryService.class).user("Factory");
+        Assertions.assertNotNull(sample);
+        Assertions.assertNotNull(sample.name());
+        Assertions.assertEquals("Factory", sample.name());
     }
 }
