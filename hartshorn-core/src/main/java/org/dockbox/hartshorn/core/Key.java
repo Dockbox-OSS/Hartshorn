@@ -62,4 +62,10 @@ public class Key<C> {
         if (!(o instanceof final Key<?> key)) return false;
         return this.contract.equals(key.contract) && Objects.equals(this.named, key.named);
     }
+
+    @Override
+    public String toString() {
+        return "Key<" + this.contract.name() +
+                ", " + this.named.value();
+    }
 }
