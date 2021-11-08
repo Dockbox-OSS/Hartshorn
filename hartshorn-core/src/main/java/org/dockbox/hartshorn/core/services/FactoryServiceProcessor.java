@@ -1,3 +1,20 @@
+/*
+ *  Copyright (C) 2020 Guus Lieben
+ *
+ *  This framework is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU Lesser General Public License as
+ *  published by the Free Software Foundation, either version 2.1 of the
+ *  License, or (at your option) any later version.
+ *
+ *  This library is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See
+ *  the GNU Lesser General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Lesser General Public License
+ *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
+ */
+
 package org.dockbox.hartshorn.core.services;
 
 import org.dockbox.hartshorn.core.HartshornUtils;
@@ -8,16 +25,15 @@ import org.dockbox.hartshorn.core.binding.Bindings;
 import org.dockbox.hartshorn.core.binding.ContextDrivenProvider;
 import org.dockbox.hartshorn.core.binding.Provider;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
-import org.dockbox.hartshorn.core.context.MethodProxyContext;
+import org.dockbox.hartshorn.core.context.FactoryContext;
 import org.dockbox.hartshorn.core.context.element.ConstructorContext;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
-import org.dockbox.hartshorn.core.proxy.ProxyFunction;
 
 import java.util.LinkedList;
 import java.util.Set;
 
-public class FactoryModifier extends ServiceAnnotatedMethodModifier<Factory, Service> {
+public class FactoryServiceProcessor implements ServiceProcessor<Service> {
 
     @Override
     public Class<Service> activator() {
@@ -25,19 +41,14 @@ public class FactoryModifier extends ServiceAnnotatedMethodModifier<Factory, Ser
     }
 
     @Override
-    public Class<Factory> annotation() {
-        return Factory.class;
+    public boolean preconditions(ApplicationContext context, TypeContext<?> type) {
+        return !type.methods(Factory.class).isEmpty();
     }
 
     @Override
-    public <T> boolean preconditions(final ApplicationContext context, final MethodProxyContext<T> methodContext) {
-        return !methodContext.method().returnType().isVoid();
-    }
-
-    @Override
-    public <T, R> ProxyFunction<T, R> process(final ApplicationContext context, final MethodProxyContext<T> methodContext) {
-        if (methodContext.method().isAbstract()) {
-            final MethodContext<?, T> method = methodContext.method();
+    public <T> void process(ApplicationContext context, TypeContext<T> type) {
+        FactoryContext factoryContext = context.first(FactoryContext.class).get();
+        for (MethodContext<?, T> method : type.methods(Factory.class)) {
             final Factory annotation = method.annotation(Factory.class).get();
             Key<?> key = Key.of(method.returnType());
             if (!"".equals(annotation.value())) key = Key.of(method.returnType(), Bindings.named(annotation.value()));
@@ -65,16 +76,7 @@ public class FactoryModifier extends ServiceAnnotatedMethodModifier<Factory, Ser
 
             if (matching == null) throw new IllegalStateException("No matching bound constructor found for " + key + " with parameters: " + method.parameterTypes());
 
-            final ConstructorContext<?> finalMatching = matching;
-            return (instance, args, proxyContext) -> (R) finalMatching.createInstance(args).orNull();
+            factoryContext.register((MethodContext<Object, ?>) method, (ConstructorContext<Object>) matching);
         }
-        else {
-            return (instance, args, proxyContext) -> (R) methodContext.method().invoke(instance, args);
-        }
-    }
-
-    @Override
-    public ServiceOrder order() {
-        return ServiceOrder.LAST;
     }
 }
