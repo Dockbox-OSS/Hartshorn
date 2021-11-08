@@ -15,22 +15,20 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.web.processing;
+package org.dockbox.hartshorn.web.processing.rules;
 
-import org.dockbox.hartshorn.core.domain.Exceptional;
-import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.ParameterContext;
+import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.core.services.parameter.AnnotatedParameterLoaderRule;
 import org.dockbox.hartshorn.persistence.FileType;
 import org.dockbox.hartshorn.persistence.mapping.ObjectMapper;
 import org.dockbox.hartshorn.web.annotations.RequestBody;
 import org.dockbox.hartshorn.web.annotations.http.HttpRequest;
+import org.dockbox.hartshorn.web.processing.HttpRequestParameterLoaderContext;
 
 import java.util.stream.Collectors;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-public class BodyRequestArgumentProcessor implements RequestArgumentProcessor<RequestBody> {
+public class BodyRequestParameterRule extends AnnotatedParameterLoaderRule<RequestBody, HttpRequestParameterLoaderContext> {
 
     @Override
     public Class<RequestBody> annotation() {
@@ -38,12 +36,12 @@ public class BodyRequestArgumentProcessor implements RequestArgumentProcessor<Re
     }
 
     @Override
-    public <T> Exceptional<T> process(final ApplicationContext context, final ParameterContext<T> parameter, final HttpServletRequest request, final HttpServletResponse response) {
-        final Exceptional<String> body = Exceptional.of(() -> request.getReader().lines().collect(Collectors.joining(System.lineSeparator())));
+    public <T> Exceptional<T> load(final ParameterContext<T> parameter, final HttpRequestParameterLoaderContext context, final Object... args) {
+        final Exceptional<String> body = Exceptional.of(() -> context.request().getReader().lines().collect(Collectors.joining(System.lineSeparator())));
         if (parameter.type().is(String.class))
             return (Exceptional<T>) body;
         final FileType bodyFormat = parameter.declaredBy().annotation(HttpRequest.class).get().bodyFormat();
-        final ObjectMapper objectMapper = context.get(ObjectMapper.class).fileType(bodyFormat);
+        final ObjectMapper objectMapper = context.applicationContext().get(ObjectMapper.class).fileType(bodyFormat);
         return body.flatMap(b -> objectMapper.read(b, parameter.type()));
     }
 }

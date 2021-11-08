@@ -164,7 +164,7 @@ public class EventBusImpl implements EventBus {
             final Exceptional<Listener> annotation = method.annotation(Listener.class);
             if (annotation.present()) {
                 this.checkListenerMethod(method);
-                result.addAll(EventWrapperImpl.create(type, method, annotation.get().value().priority()));
+                result.addAll(EventWrapperImpl.create(this.context, type, method, annotation.get().value().priority()));
             }
         }
         return result;

@@ -17,29 +17,39 @@
 
 package org.dockbox.hartshorn.core.proxy;
 
-import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.core.InjectionPoint;
 import org.dockbox.hartshorn.core.annotations.proxy.Instance;
 import org.dockbox.hartshorn.core.annotations.proxy.Proxy;
 import org.dockbox.hartshorn.core.annotations.proxy.Proxy.Target;
 import org.dockbox.hartshorn.core.boot.Hartshorn;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
+import org.dockbox.hartshorn.core.context.ParameterLoaderContext;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.core.context.element.ParameterContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.exceptions.CancelProxyException;
 import org.dockbox.hartshorn.core.exceptions.Except;
+import org.dockbox.hartshorn.core.services.parameter.GlobalProxyParameterLoader;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
 public final class ProxyableBootstrap {
 
     private ProxyableBootstrap() {}
 
-    static void boostrapDelegates(final ApplicationContext context) {
+    @Inject
+    @Named("global_proxy")
+    private  GlobalProxyParameterLoader loader;
+
+    private static final GlobalProxyParameterLoader parameterLoader = new GlobalProxyParameterLoader();
+
+    void boostrapDelegates(final ApplicationContext context) {
         Hartshorn.log().info("Scanning for proxy types in all context prefixes");
         context.environment().types(Proxy.class).forEach(proxy -> {
             Hartshorn.log().info("Processing global proxy " + proxy.qualifiedName());
@@ -54,18 +64,18 @@ public final class ProxyableBootstrap {
                 return;
             }
 
-            ProxyableBootstrap.delegateMethods(context, proxy);
+            this.delegateMethods(context, proxy);
         });
     }
 
-    private static <T> void delegateMethods(final ApplicationContext context, final TypeContext<T> proxyClass) {
+    private <T> void delegateMethods(final ApplicationContext context, final TypeContext<T> proxyClass) {
         final List<? extends MethodContext<?, T>> targets = proxyClass.methods(Target.class);
 
         final Proxy proxy = proxyClass.annotation(Proxy.class).get();
-        targets.forEach(target -> ProxyableBootstrap.delegateMethod(context, proxyClass, TypeContext.of(proxy.value()), target));
+        targets.forEach(target -> this.delegateMethod(context, proxyClass, TypeContext.of(proxy.value()), target));
     }
 
-    private static <T, C> void delegateMethod(final ApplicationContext context, final TypeContext<T> proxyClass, final TypeContext<C> proxyTargetClass, final MethodContext<?, T> source) {
+    private <T, C> void delegateMethod(final ApplicationContext context, final TypeContext<T> proxyClass, final TypeContext<C> proxyTargetClass, final MethodContext<?, T> source) {
         Hartshorn.log().info("Processing " + proxyClass.name() + "." + source.name());
         if (source.isAbstract()) {
             Hartshorn.log().warn("Proxy method cannot be abstract [" + source.name() + "]");
@@ -110,7 +120,8 @@ public final class ProxyableBootstrap {
         }
 
         final ProxyAttribute<C, ?> property = ProxyAttribute.of(proxyTargetClass, methodContext, (instance, args, proxyContext) -> {
-            final Object[] invokingArgs = ProxyableBootstrap.prepareArguments(context, source, args, instance);
+            final ParameterLoaderContext loaderContext = new ParameterLoaderContext(methodContext, proxyTargetClass, instance, context);
+            final List<Object> invokingArgs = parameterLoader.loadArguments(loaderContext, args);
             try {
                 return source.invoke(context.get(proxyClass), invokingArgs).orNull();
             }
@@ -140,14 +151,5 @@ public final class ProxyableBootstrap {
             return instance;
         });
         context.add(point);
-    }
-
-    private static Object[] prepareArguments(final ApplicationContext context, final MethodContext<?, ?> method, final Object[] args, final Object instance) {
-        final List<Object> arguments = HartshornUtils.emptyList();
-        if (method.parameterCount() >= 1 && method.parameters().get(0).annotation(Instance.class).present()) {
-            arguments.add(instance);
-        }
-        arguments.addAll(Arrays.asList(args));
-        return arguments.toArray();
     }
 }

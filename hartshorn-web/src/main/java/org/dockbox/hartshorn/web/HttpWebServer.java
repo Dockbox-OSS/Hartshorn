@@ -18,13 +18,11 @@
 package org.dockbox.hartshorn.web;
 
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
-import org.dockbox.hartshorn.web.processing.RequestArgumentProcessor;
-
-import java.util.Set;
+import org.dockbox.hartshorn.core.services.parameter.ParameterLoader;
+import org.dockbox.hartshorn.web.processing.HttpRequestParameterLoaderContext;
 
 public interface HttpWebServer {
     void start(int port) throws ApplicationException;
     void register(RequestHandlerContext context);
-    void add(RequestArgumentProcessor<?> processor);
-    Set<RequestArgumentProcessor<?>> processors();
+    ParameterLoader<HttpRequestParameterLoaderContext> loader();
 }
