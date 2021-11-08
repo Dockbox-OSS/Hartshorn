@@ -15,29 +15,15 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.core.binding;
+package org.dockbox.hartshorn.persistence.service;
 
-import org.dockbox.hartshorn.core.context.element.MethodContext;
-import org.dockbox.hartshorn.core.context.element.TypeContext;
+import org.dockbox.hartshorn.core.annotations.Factory;
+import org.dockbox.hartshorn.core.annotations.service.Service;
+import org.dockbox.hartshorn.persistence.JpaRepository;
+import org.dockbox.hartshorn.persistence.properties.ConnectionAttribute;
 
-import java.util.function.Supplier;
-
-public class Providers {
-
-    public static <C> Provider<C> of(final TypeContext<? extends C> type) {
-        return new ContextDrivenProvider<>(type);
-    }
-
-    public static <C> Provider<C> of(final Class<? extends C> type) {
-        return of(TypeContext.of(type));
-    }
-
-    public static <C> Provider<C> of(final C instance) {
-        return new InstanceProvider<>(instance);
-    }
-
-    public static <C> Provider<C> of(final Supplier<C> supplier) {
-        return new SupplierProvider<>(supplier);
-    }
-
+@Service
+public interface JpaRepositoryFactory {
+    @Factory
+    <T> JpaRepository<T, ?> repository(Class<T> type, ConnectionAttribute connectionAttribute);
 }

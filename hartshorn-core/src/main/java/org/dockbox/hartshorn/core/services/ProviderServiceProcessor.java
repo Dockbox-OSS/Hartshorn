@@ -19,11 +19,8 @@ package org.dockbox.hartshorn.core.services;
 
 import org.dockbox.hartshorn.core.Key;
 import org.dockbox.hartshorn.core.annotations.activate.UseServiceProvision;
-import org.dockbox.hartshorn.core.annotations.inject.Bound;
 import org.dockbox.hartshorn.core.annotations.inject.Provider;
-import org.dockbox.hartshorn.core.binding.BindingHierarchy;
 import org.dockbox.hartshorn.core.binding.Bindings;
-import org.dockbox.hartshorn.core.binding.Providers;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
@@ -46,23 +43,12 @@ public final class ProviderServiceProcessor implements ServiceProcessor<UseServi
             final boolean singleton = context.meta().singleton(method);
             final Provider annotation = method.annotation(Provider.class).get();
 
-            if (method.annotation(Bound.class).present()) {
-                if (singleton) throw new IllegalArgumentException("Cannot provide manually bound singleton provider " + method.returnType().name() + " at " + method.qualifiedName());
-                else {
-                    final org.dockbox.hartshorn.core.binding.Provider<?> provider = Providers.bound(method);
-                    ((BindingHierarchy<Object>) context
-                            .hierarchy(Key.of(method.returnType(), Bindings.named(annotation.value()))))
-                            .addNext((org.dockbox.hartshorn.core.binding.Provider<Object>) provider);
-                }
-            }
-            else {
-                final Key<?> key = "".equals(annotation.value())
-                        ? Key.of(method.returnType())
-                        : Key.of(method.returnType(), Bindings.named(annotation.value()));
+            final Key<?> key = "".equals(annotation.value())
+                    ? Key.of(method.returnType())
+                    : Key.of(method.returnType(), Bindings.named(annotation.value()));
 
-                final ProviderContext<?> providerContext = new ProviderContext<>(((Key<Object>) key), singleton, () -> method.invoke(context).rethrow().orNull());
-                context.add(providerContext);
-            }
+            final ProviderContext<?> providerContext = new ProviderContext<>(((Key<Object>) key), singleton, () -> method.invoke(context).rethrow().orNull());
+            context.add(providerContext);
         }
     }
 

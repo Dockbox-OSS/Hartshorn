@@ -15,29 +15,18 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.core.binding;
+package test.types.factory;
 
-import org.dockbox.hartshorn.core.context.element.MethodContext;
-import org.dockbox.hartshorn.core.context.element.TypeContext;
+import org.dockbox.hartshorn.core.annotations.inject.Binds;
+import org.dockbox.hartshorn.core.annotations.inject.Bound;
 
-import java.util.function.Supplier;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import test.types.SampleInterface;
 
-public class Providers {
-
-    public static <C> Provider<C> of(final TypeContext<? extends C> type) {
-        return new ContextDrivenProvider<>(type);
-    }
-
-    public static <C> Provider<C> of(final Class<? extends C> type) {
-        return of(TypeContext.of(type));
-    }
-
-    public static <C> Provider<C> of(final C instance) {
-        return new InstanceProvider<>(instance);
-    }
-
-    public static <C> Provider<C> of(final Supplier<C> supplier) {
-        return new SupplierProvider<>(supplier);
-    }
-
+@Binds(SampleInterface.class)
+@AllArgsConstructor(onConstructor_ = @Bound)
+public class FactorySampleImplementation implements SampleInterface {
+    @Getter
+    private final String name;
 }

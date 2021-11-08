@@ -15,15 +15,15 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.core.properties;
+package org.dockbox.hartshorn.core.services;
 
-/**
- * @deprecated Will be replaced when <a href="https://github.com/GuusLieben/Hartshorn/issues/473">#473</a> is accepted.
- * Also see <a href="https://github.com/GuusLieben/Hartshorn/issues/472">#472</a>
- */
-@Deprecated(since = "4.2.3", forRemoval = true)
-public class UseFactory extends AttributeImpl<Object[]> {
-    public UseFactory(final Object... use) {
-        super(use);
-    }
+import org.dockbox.hartshorn.core.annotations.Factory;
+import org.dockbox.hartshorn.core.annotations.service.Service;
+import org.dockbox.hartshorn.core.proxy.DelegatorAccessor;
+import org.dockbox.hartshorn.core.proxy.ProxyHandler;
+
+@Service
+interface AccessorFactory {
+    @Factory
+    <T> DelegatorAccessor<T> delegatorAccessor(ProxyHandler<T> handler);
 }

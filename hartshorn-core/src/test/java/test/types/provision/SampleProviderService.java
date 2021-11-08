@@ -17,7 +17,6 @@
 
 package test.types.provision;
 
-import org.dockbox.hartshorn.core.annotations.inject.Bound;
 import org.dockbox.hartshorn.core.annotations.inject.Provider;
 import org.dockbox.hartshorn.core.annotations.service.Service;
 
@@ -54,11 +53,4 @@ public class SampleProviderService {
     public ProvidedInterface singleton() {
         return () -> "SingletonProvision";
     }
-
-    @Provider("bound")
-    @Bound
-    public ProvidedInterface manual(final String name) {
-        return () -> name;
-    }
-
 }
