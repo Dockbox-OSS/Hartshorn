@@ -23,7 +23,6 @@ import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.persistence.FileManager;
 import org.dockbox.hartshorn.persistence.FileManagerTest;
 import org.dockbox.hartshorn.persistence.FileType;
-import org.dockbox.hartshorn.persistence.FileTypeAttribute;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -45,7 +44,7 @@ public class ConfigurationManagerTests extends FileManagerTest {
     @Test
     void testFsConfigurations() {
         // Create and populate the file, as we have no way to define local files in tests (yet)
-        final FileManager files = this.context().get(FileManager.class, FileTypeAttribute.of(FileType.YAML));
+        final FileManager files = this.context().get(FileManager.class).fileType(FileType.YAML);
         final Path file = files.configFile(Hartshorn.class, "junit");
         files.write(file, """
                 junit:

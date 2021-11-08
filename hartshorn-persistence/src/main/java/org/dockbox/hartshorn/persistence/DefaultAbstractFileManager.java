@@ -23,8 +23,6 @@ import org.dockbox.hartshorn.core.boot.Hartshorn;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.domain.TypedOwner;
-import org.dockbox.hartshorn.core.exceptions.ApplicationException;
-import org.dockbox.hartshorn.core.properties.Attribute;
 import org.dockbox.hartshorn.persistence.mapping.ObjectMapper;
 import org.jetbrains.annotations.NotNull;
 
@@ -161,22 +159,13 @@ public abstract class DefaultAbstractFileManager implements FileManager {
     }
 
     @Override
-    public void apply(final Attribute<?> property) throws ApplicationException {
-        if (property instanceof FileTypeAttribute) {
-            final FileType fileType = ((FileTypeAttribute) property).value();
-
-            if (fileType.type().equals(PersistenceType.RAW)) {
-                this.fileType(fileType);
-            }
-            else {
-                throw new IllegalArgumentException("Unsupported persistence type: " + fileType.type() + ", expected: " + PersistenceType.RAW);
-            }
-        }
-    }
-
-    @Override
     public FileManager fileType(final FileType fileType) {
-        this.mapper.fileType(fileType);
-        return this;
+        if (fileType.type() == PersistenceType.RAW) {
+            this.mapper.fileType(fileType);
+            return this;
+        }
+        else {
+            throw new IllegalArgumentException("Unsupported persistence type: " + fileType.type() + ", expected: " + PersistenceType.RAW);
+        }
     }
 }

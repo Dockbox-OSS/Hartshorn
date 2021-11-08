@@ -17,19 +17,18 @@
 
 package org.dockbox.hartshorn.persistence;
 
-import org.dockbox.hartshorn.core.domain.Exceptional;
-import org.dockbox.hartshorn.core.domain.TypedOwner;
 import org.dockbox.hartshorn.core.GenericType;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
-import org.dockbox.hartshorn.core.properties.AttributeHolder;
+import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.core.domain.TypedOwner;
 
 import java.nio.file.Path;
 
 /**
  * Low-level interface defining functionality to interact with physical or virtual files.
  */
-public interface FileManager extends AttributeHolder {
+public interface FileManager {
 
     /**
      * Gets the default data file for a given {@link TypedOwner}. The exact location is decided by the
