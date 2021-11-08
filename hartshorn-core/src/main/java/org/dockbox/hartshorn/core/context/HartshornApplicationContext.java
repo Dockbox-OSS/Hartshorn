@@ -52,7 +52,6 @@ import org.dockbox.hartshorn.core.inject.InjectionModifier;
 import org.dockbox.hartshorn.core.inject.ProviderContext;
 import org.dockbox.hartshorn.core.properties.Attribute;
 import org.dockbox.hartshorn.core.properties.AttributeHolder;
-import org.dockbox.hartshorn.core.properties.BindingMetaAttribute;
 import org.dockbox.hartshorn.core.services.ComponentContainer;
 import org.dockbox.hartshorn.core.services.ComponentLocator;
 import org.dockbox.hartshorn.core.services.ComponentLocatorImpl;
@@ -338,7 +337,7 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
 
     @Override
     public <T> T get(final Class<T> type, final Named named) {
-        return this.get(type, BindingMetaAttribute.of(named));
+        return this.get(Key.of(type, named));
     }
 
     @Override
@@ -386,8 +385,7 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
 
     @Override
     public <T> T get(final TypeContext<T> type, final Attribute<?>... properties) {
-        @Nullable final Exceptional<Named> meta = Bindings.lookup(BindingMetaAttribute.class, properties);
-        return this.get(Key.of(type, meta.orNull()), properties);
+        return this.get(Key.of(type), properties);
     }
 
     @Override
