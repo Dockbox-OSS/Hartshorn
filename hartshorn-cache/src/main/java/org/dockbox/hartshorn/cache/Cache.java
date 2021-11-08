@@ -61,5 +61,4 @@ public interface Cache<T> {
      * Evicts the cache, removing all content.
      */
     void evict();
-
 }
