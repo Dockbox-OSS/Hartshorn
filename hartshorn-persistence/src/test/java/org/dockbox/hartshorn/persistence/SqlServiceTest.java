@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.persistence;
 
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.persistence.annotations.UsePersistence;
-import org.dockbox.hartshorn.persistence.properties.ConnectionAttribute;
+import org.dockbox.hartshorn.persistence.properties.PersistenceConnection;
 import org.dockbox.hartshorn.persistence.properties.Remote;
 import org.dockbox.hartshorn.persistence.properties.Remotes;
 import org.dockbox.hartshorn.persistence.properties.SQLRemoteServer;
@@ -76,12 +76,9 @@ class SqlServiceTest extends ApplicationAwareTest {
         );
     }
 
-    protected static ConnectionAttribute connection(final Remote remote, final JdbcDatabaseContainer<?> container, final int defaultPort) {
-        return ConnectionAttribute.of(remote,
-                SQLRemoteServer.of("localhost", container.getMappedPort(defaultPort), DEFAULT_DATABASE),
-                container.getUsername(),
-                container.getPassword()
-        );
+    protected static PersistenceConnection connection(final Remote remote, final JdbcDatabaseContainer<?> container, final int defaultPort) {
+        SQLRemoteServer server = SQLRemoteServer.of("localhost", container.getMappedPort(defaultPort), DEFAULT_DATABASE);
+        return new PersistenceConnection(remote.url(server), container.getUsername(), container.getPassword(), remote);
     }
 
     protected static Path directory(final String prefix) {
@@ -112,9 +109,11 @@ class SqlServiceTest extends ApplicationAwareTest {
     }
 
     protected JpaRepository<User, Long> sql(final Remote remote, final Object target) {
-        if (target instanceof ConnectionAttribute attribute)
-            return this.context().get(UserJpaRepository.class, attribute);
-        else return this.context().get(UserJpaRepository.class, ConnectionAttribute.of(remote, target, "", ""));
+        // TODO Alternative
+        return null;
+//        if (target instanceof PersistenceConnection connection)
+//            return this.context().get(UserJpaRepository.class, connection);
+//        else return this.context().get(UserJpaRepository.class, ConnectionAttribute.of(remote, target, "", ""));
     }
 
     @ParameterizedTest
