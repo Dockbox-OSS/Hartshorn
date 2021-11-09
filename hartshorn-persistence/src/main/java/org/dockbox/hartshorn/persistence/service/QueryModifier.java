@@ -69,7 +69,7 @@ public class QueryModifier extends ServiceAnnotatedMethodModifier<Query, UsePers
             final JpaRepository<?, ?> repository = (JpaRepository<?, ?>) methodContext.instance();
             if (query.automaticFlush()) repository.flush();
 
-            final QueryContext queryContext = new QueryContext(query, args, method, entityType, repository, transactional, modifying);
+            final QueryContext queryContext = new QueryContext(query, args, method, entityType, context, repository, transactional, modifying);
 
             final Object result = function.execute(queryContext);
 

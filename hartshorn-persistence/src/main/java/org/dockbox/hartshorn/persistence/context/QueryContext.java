@@ -17,27 +17,31 @@
 
 package org.dockbox.hartshorn.persistence.context;
 
+import org.dockbox.hartshorn.core.Key;
+import org.dockbox.hartshorn.core.binding.Bindings;
+import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
-import org.dockbox.hartshorn.core.context.element.ParameterContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
-import org.dockbox.hartshorn.persistence.JpaRepository;
+import org.dockbox.hartshorn.core.services.parameter.ParameterLoader;
+import org.dockbox.hartshorn.persistence.jpa.JpaRepository;
 import org.dockbox.hartshorn.persistence.annotations.Query;
-
-import java.util.LinkedList;
 
 import javax.persistence.EntityManager;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class QueryContext {
+
+    private ParameterLoader<JpaParameterLoaderContext> parameterLoader;
 
     private final Query annotation;
     private final Object[] args;
     private final MethodContext<?, ?> method;
     private final TypeContext<?> entityType;
 
+    @Getter private final ApplicationContext applicationContext;
     @Getter private final JpaRepository<?, ?> repository;
     @Getter private final boolean transactional;
     @Getter private final boolean modifiesEntity;
@@ -52,14 +56,8 @@ public class QueryContext {
 
     public javax.persistence.Query query(final EntityManager entityManager) {
         final javax.persistence.Query persistenceQuery = this.persistenceQuery(entityManager, this.annotation);
-
-        final LinkedList<ParameterContext<?>> parameters = this.method.parameters();
-        for (int i = 0; i < parameters.size(); i++) {
-            final ParameterContext<?> parameter = parameters.get(i);
-            final Object value = this.args[i];
-            persistenceQuery.setParameter(parameter.name(), value);
-        }
-
+        JpaParameterLoaderContext loaderContext = new JpaParameterLoaderContext(this.method, this.entityType, null, this.applicationContext, persistenceQuery);
+        this.parameterLoader().loadArguments(loaderContext, this.args);
         return persistenceQuery;
     }
 
@@ -75,5 +73,12 @@ public class QueryContext {
             }
             default -> throw new IllegalStateException("Unexpected value: " + query.type());
         };
+    }
+
+    protected ParameterLoader<JpaParameterLoaderContext> parameterLoader() {
+        if (this.parameterLoader == null) {
+            this.parameterLoader = this.applicationContext().get(Key.of(ParameterLoader.class, Bindings.named("jpa_query")));
+        }
+        return this.parameterLoader;
     }
 }
