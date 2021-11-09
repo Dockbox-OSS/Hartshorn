@@ -19,12 +19,10 @@ package org.dockbox.hartshorn.core.services;
 
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.BackingImplementationContext;
-import org.dockbox.hartshorn.core.context.DelegatedAttributesContext;
 import org.dockbox.hartshorn.core.context.MethodProxyContext;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
-import org.dockbox.hartshorn.core.properties.Attribute;
 import org.dockbox.hartshorn.core.proxy.ProxyFunction;
 import org.dockbox.hartshorn.core.proxy.ProxyHandler;
 import org.jetbrains.annotations.Nullable;
@@ -37,12 +35,8 @@ public abstract class ProxyDelegationModifier<P, A extends Annotation> extends S
     protected abstract Class<P> parentTarget();
 
     @Override
-    protected <T> boolean modifies(final ApplicationContext context, final TypeContext<T> type, @Nullable final T instance, final Attribute<?>... properties) {
-        final boolean modifies = type.childOf(this.parentTarget());
-        if (modifies) {
-            context.environment().application().handler(type, instance).add(new DelegatedAttributesContext(properties));
-        }
-        return modifies;
+    protected <T> boolean modifies(final ApplicationContext context, final TypeContext<T> type, @Nullable final T instance) {
+        return type.childOf(this.parentTarget());
     }
 
     @Override
@@ -80,7 +74,7 @@ public abstract class ProxyDelegationModifier<P, A extends Annotation> extends S
         }
     }
 
-    protected P concreteDelegator(final ApplicationContext context, final ProxyHandler<P> handler, final TypeContext<? extends P> parent, final Attribute<?>... attributes) {
-        return context.get(this.parentTarget(), attributes);
+    protected P concreteDelegator(final ApplicationContext context, final ProxyHandler<P> handler, final TypeContext<? extends P> parent) {
+        return context.get(this.parentTarget());
     }
 }

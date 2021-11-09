@@ -18,34 +18,34 @@
 package org.dockbox.hartshorn.core.services;
 
 import org.dockbox.hartshorn.core.annotations.proxy.UseProxying;
-import org.dockbox.hartshorn.core.binding.Bindings;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 import org.dockbox.hartshorn.core.inject.InjectionModifier;
-import org.dockbox.hartshorn.core.properties.Attribute;
-import org.dockbox.hartshorn.core.proxy.ProxyAttribute;
 import org.dockbox.hartshorn.core.proxy.ProxyHandler;
 import org.jetbrains.annotations.Nullable;
 
 public class ProxyInjectionModifier implements InjectionModifier<UseProxying> {
 
     @Override
-    public <T> boolean preconditions(final ApplicationContext context, final TypeContext<T> type, @Nullable final T instance, final Attribute<?>... properties) {
-        return Bindings.has(ProxyAttribute.class, properties);
+    public <T> boolean preconditions(final ApplicationContext context, final TypeContext<T> type, @Nullable final T instance) {
+        // TODO Alternative
+        return false;
+//        return Bindings.has(ProxyAttribute.class, properties);
     }
 
     @Override
-    public <T> T process(final ApplicationContext context, final TypeContext<T> type, @Nullable final T instance, final Attribute<?>... properties) {
+    public <T> T process(final ApplicationContext context, final TypeContext<T> type, @Nullable final T instance) {
         try {
             final ProxyHandler<T> handler = context.environment().application().handler(type, instance);
 
-            for (final Attribute<?> property : properties) {
-                if (property instanceof ProxyAttribute) {
-                    final ProxyAttribute<T, ?> proxyAttribute = (ProxyAttribute<T, ?>) property;
-                    handler.delegate(proxyAttribute);
-                }
-            }
+            // TODO Alternative
+//            for (final Attribute<?> property : properties) {
+//                if (property instanceof ProxyAttribute) {
+//                    final ProxyAttribute<T, ?> proxyAttribute = (ProxyAttribute<T, ?>) property;
+//                    handler.delegate(proxyAttribute);
+//                }
+//            }
             return handler.proxy(instance);
         }
         catch (final ApplicationException e) {
