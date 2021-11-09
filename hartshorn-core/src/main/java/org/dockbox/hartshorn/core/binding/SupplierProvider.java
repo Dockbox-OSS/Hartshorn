@@ -17,9 +17,8 @@
 
 package org.dockbox.hartshorn.core.binding;
 
-import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
-import org.dockbox.hartshorn.core.properties.Attribute;
+import org.dockbox.hartshorn.core.domain.Exceptional;
 
 import java.util.function.Supplier;
 
@@ -34,7 +33,7 @@ public class SupplierProvider<C> implements Provider<C> {
     private final Supplier<C> supplier;
 
     @Override
-    public Exceptional<C> provide(final ApplicationContext context, final Attribute<?>... attributes) {
+    public Exceptional<C> provide(final ApplicationContext context) {
         return Exceptional.of(this.supplier::get);
     }
 }
