@@ -17,19 +17,19 @@
 
 package org.dockbox.hartshorn.persistence.mapping;
 
-import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.GenericType;
-import org.dockbox.hartshorn.core.context.element.TypeContext;
-import org.dockbox.hartshorn.core.properties.AttributeHolder;
-import org.dockbox.hartshorn.persistence.FileType;
 import org.dockbox.hartshorn.core.HartshornUtils;
+import org.dockbox.hartshorn.core.context.element.TypeContext;
+import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.persistence.FileType;
+import org.dockbox.hartshorn.persistence.properties.PersistenceModifier;
 
 import java.net.URI;
 import java.net.URL;
 import java.nio.file.Path;
 import java.util.Map;
 
-public interface ObjectMapper extends AttributeHolder {
+public interface ObjectMapper {
 
     default <T> Exceptional<T> read(final String content, final TypeContext<T> type) {
         return this.read(content, type.type());
@@ -84,5 +84,7 @@ public interface ObjectMapper extends AttributeHolder {
     ObjectMapper fileType(FileType fileType);
 
     FileType fileType();
+
+    ObjectMapper skipBehavior(PersistenceModifier modifier);
 
 }

@@ -21,9 +21,7 @@ import org.dockbox.hartshorn.core.annotations.inject.Binds;
 import org.dockbox.hartshorn.core.boot.Hartshorn;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
-import org.dockbox.hartshorn.core.properties.Attribute;
-import org.dockbox.hartshorn.core.properties.AttributeHolder;
-import org.dockbox.hartshorn.persistence.properties.ModifiersAttribute;
+import org.dockbox.hartshorn.persistence.properties.PersistenceModifier;
 import org.dockbox.hartshorn.web.DefaultHttpWebServer;
 import org.dockbox.hartshorn.web.HttpWebServer;
 import org.dockbox.hartshorn.web.RequestHandlerContext;
@@ -40,15 +38,17 @@ import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import javax.inject.Inject;
 
 import lombok.Getter;
+import lombok.Setter;
 
 @Binds(HttpWebServer.class)
-public class JettyHttpWebServer extends DefaultHttpWebServer implements AttributeHolder {
+public class JettyHttpWebServer extends DefaultHttpWebServer {
 
     @Inject @Getter
     private ApplicationContext context;
     @Inject @Getter
     private final ServletContextHandler handler;
-    private ModifiersAttribute mappingModifier = ModifiersAttribute.of();
+    @Setter
+    private PersistenceModifier skipBehavior = PersistenceModifier.SKIP_NONE;
 
     public JettyHttpWebServer() {
         super();
@@ -73,13 +73,9 @@ public class JettyHttpWebServer extends DefaultHttpWebServer implements Attribut
     }
 
     @Override
-    public void register(final RequestHandlerContext context) {
+    public JettyHttpWebServer register(final RequestHandlerContext context) {
         this.handler.addServlet(this.createHolder(context), context.pathSpec());
-    }
-
-    @Override
-    public void apply(final Attribute<?> property) {
-        if (property instanceof ModifiersAttribute modifier) this.mappingModifier = modifier;
+        return this;
     }
 
     protected Connector connector(final Server server, final int port) {
@@ -107,8 +103,9 @@ public class JettyHttpWebServer extends DefaultHttpWebServer implements Attribut
     }
 
     protected JettyServletAdapter servlet(final RequestHandlerContext context) {
-        // TODO #472/#473: Re-implement mapping modifier delegation
-        return this.context.get(JettyServletFactory.class).adapter(this, context);
+        JettyServletAdapter adapter = this.context.get(JettyServletFactory.class).adapter(this, context);
+        adapter.handler().mapper().skipBehavior(this.skipBehavior);
+        return adapter;
     }
 
 }

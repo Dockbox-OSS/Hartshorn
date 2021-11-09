@@ -20,7 +20,6 @@ package org.dockbox.hartshorn.core.services;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
-import org.dockbox.hartshorn.core.properties.Attribute;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.annotation.Annotation;
@@ -29,7 +28,7 @@ import java.util.Collection;
 public abstract class ServiceAnnotatedMethodModifier<M extends Annotation, A extends Annotation> extends ServiceMethodModifier<A> {
 
     @Override
-    protected <T> boolean modifies(final ApplicationContext context, final TypeContext<T> type, @Nullable final T instance, final Attribute<?>... properties) {
+    protected <T> boolean modifies(final ApplicationContext context, final TypeContext<T> type, @Nullable final T instance) {
         return !type.methods(this.annotation()).isEmpty();
     }
 

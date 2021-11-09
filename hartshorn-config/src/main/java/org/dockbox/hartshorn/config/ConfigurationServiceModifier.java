@@ -17,19 +17,18 @@
 
 package org.dockbox.hartshorn.config;
 
-import org.dockbox.hartshorn.core.exceptions.Except;
-import org.dockbox.hartshorn.core.boot.Hartshorn;
 import org.dockbox.hartshorn.config.annotations.UseConfigurations;
 import org.dockbox.hartshorn.config.annotations.Value;
-import org.dockbox.hartshorn.core.exceptions.NotPrimitiveException;
-import org.dockbox.hartshorn.core.exceptions.TypeConversionException;
+import org.dockbox.hartshorn.core.HartshornUtils;
+import org.dockbox.hartshorn.core.boot.Hartshorn;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.FieldContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
-import org.dockbox.hartshorn.core.inject.InjectionModifier;
-import org.dockbox.hartshorn.core.properties.Attribute;
-import org.dockbox.hartshorn.core.HartshornUtils;
+import org.dockbox.hartshorn.core.exceptions.Except;
 import org.dockbox.hartshorn.core.exceptions.FieldAccessException;
+import org.dockbox.hartshorn.core.exceptions.NotPrimitiveException;
+import org.dockbox.hartshorn.core.exceptions.TypeConversionException;
+import org.dockbox.hartshorn.core.inject.InjectionModifier;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
@@ -42,7 +41,7 @@ import java.util.Set;
 public class ConfigurationServiceModifier implements InjectionModifier<UseConfigurations> {
 
     @Override
-    public <T> boolean preconditions(final ApplicationContext context, final TypeContext<T> type, @Nullable final T instance, final Attribute<?>... properties) {
+    public <T> boolean preconditions(final ApplicationContext context, final TypeContext<T> type, @Nullable final T instance) {
         TypeContext<?> instanceType = type;
         if (instance != null) instanceType = TypeContext.of(instance);
         final boolean decorated = this.isAnnotated(context, instanceType);
@@ -54,7 +53,7 @@ public class ConfigurationServiceModifier implements InjectionModifier<UseConfig
     }
 
     @Override
-    public <T> T process(final ApplicationContext context, final TypeContext<T> type, @Nullable final T instance, final Attribute<?>... properties) {
+    public <T> T process(final ApplicationContext context, final TypeContext<T> type, @Nullable final T instance) {
         TypeContext<?> instanceType = type;
         if (instance != null) instanceType = TypeContext.of(instance);
 

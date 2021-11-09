@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.persistence;
 
 import org.dockbox.hartshorn.core.context.ContextCarrier;
 import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.persistence.properties.PersistenceConnection;
 
 import java.util.Set;
 
@@ -43,4 +44,6 @@ public interface JpaRepository<T, ID> extends ContextCarrier {
     Class<T> reify();
 
     void flush();
+
+    JpaRepository<T, ID> connection(PersistenceConnection connection);
 }

@@ -69,9 +69,9 @@ public class CacheManagerImpl implements CacheManager {
         return this.get(name)
                 .orElse(() -> {
                     this.context.log().debug("Cache '" + name + "' does not exist, creating new instance");
-                    final Cache<Object> cache = this.context.get(Cache.class, new ExpirationAttribute(expiration));
+                    final Cache<?> cache = this.context.get(CacheFactory.class).cache(expiration);
                     this.caches.put(name, cache);
-                    return cache;
+                    return (Cache<Object>) cache;
                 })
                 .map(c -> (Cache<T>) c)
                 .get();

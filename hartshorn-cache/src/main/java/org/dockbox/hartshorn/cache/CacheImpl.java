@@ -17,12 +17,12 @@
 
 package org.dockbox.hartshorn.cache;
 
-import org.dockbox.hartshorn.core.domain.Exceptional;
-import org.dockbox.hartshorn.core.task.TaskRunner;
 import org.dockbox.hartshorn.core.annotations.inject.Binds;
+import org.dockbox.hartshorn.core.annotations.inject.Bound;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
-import org.dockbox.hartshorn.core.properties.Attribute;
-import org.dockbox.hartshorn.core.properties.AttributeHolder;
+import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.core.Enableable;
+import org.dockbox.hartshorn.core.task.TaskRunner;
 
 import java.util.Locale;
 
@@ -34,13 +34,18 @@ import javax.inject.Inject;
  * @see Cache
  */
 @Binds(Cache.class)
-public class CacheImpl<T> implements Cache<T>, AttributeHolder {
+public class CacheImpl<T> implements Cache<T>, Enableable {
 
     private Expiration expiration;
     private T content;
 
     @Inject
     private ApplicationContext applicationContext;
+
+    @Bound
+    public CacheImpl(Expiration expiration) {
+        this.expiration = expiration;
+    }
 
     @Override
     public Exceptional<T> get() {
@@ -77,13 +82,6 @@ public class CacheImpl<T> implements Cache<T>, AttributeHolder {
     @Override
     public boolean canEnable() {
         return this.expiration == null;
-    }
-
-    @Override
-    public void apply(final Attribute<?> property) {
-        if (property instanceof ExpirationAttribute expirationAttribute) {
-            this.expiration = expirationAttribute.value();
-        }
     }
 
     @Override

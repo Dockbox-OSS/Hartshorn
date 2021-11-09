@@ -17,12 +17,11 @@
 
 package org.dockbox.hartshorn.config;
 
-import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
+import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.persistence.FileManager;
 import org.dockbox.hartshorn.persistence.FileType;
-import org.dockbox.hartshorn.persistence.FileTypeAttribute;
 
 import java.net.URI;
 
@@ -41,6 +40,6 @@ public class FileSystemLookupStrategy implements ResourceLookupStrategy {
 
     @Override
     public Exceptional<URI> lookup(final ApplicationContext context, final String path, final TypeContext<?> owner, final FileType fileType) {
-        return Exceptional.of(context.get(FileManager.class, FileTypeAttribute.of(fileType)).configFile(owner.type(), path).toUri());
+        return Exceptional.of(context.get(FileManager.class).fileType(fileType).configFile(owner.type(), path).toUri());
     }
 }

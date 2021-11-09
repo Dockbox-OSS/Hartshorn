@@ -17,10 +17,9 @@
 
 package org.dockbox.hartshorn.core.binding;
 
-import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
-import org.dockbox.hartshorn.core.properties.Attribute;
+import org.dockbox.hartshorn.core.domain.Exceptional;
 
 public interface Provider<T> {
-    Exceptional<T> provide(ApplicationContext context, Attribute<?>... attributes);
+    Exceptional<T> provide(ApplicationContext context);
 }

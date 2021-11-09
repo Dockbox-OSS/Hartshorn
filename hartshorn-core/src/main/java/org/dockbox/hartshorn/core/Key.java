@@ -65,7 +65,7 @@ public class Key<C> {
 
     @Override
     public String toString() {
-        return "Key<" + this.contract.name() +
-                ", " + this.named.value();
+        if (this.named == null) return "Key<" + this.contract.name() + ">";
+        else return "Key<" + this.contract.name() + ", " + this.named.value();
     }
 }

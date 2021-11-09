@@ -20,15 +20,15 @@ package org.dockbox.hartshorn.persistence.hibernate;
 import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.core.annotations.inject.Binds;
 import org.dockbox.hartshorn.core.annotations.inject.Bound;
+import org.dockbox.hartshorn.core.binding.Bindings;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
-import org.dockbox.hartshorn.core.properties.Attribute;
-import org.dockbox.hartshorn.core.properties.AttributeHolder;
+import org.dockbox.hartshorn.core.Enableable;
+import org.dockbox.hartshorn.core.exceptions.Except;
 import org.dockbox.hartshorn.persistence.JpaRepository;
 import org.dockbox.hartshorn.persistence.context.EntityContext;
-import org.dockbox.hartshorn.persistence.properties.ConnectionAttribute;
 import org.dockbox.hartshorn.persistence.properties.PersistenceConnection;
 import org.dockbox.hartshorn.persistence.properties.Remote;
 import org.dockbox.hartshorn.persistence.properties.Remotes;
@@ -40,7 +40,6 @@ import org.hibernate.cfg.Configuration;
 import java.io.Closeable;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 
@@ -54,16 +53,10 @@ import lombok.AccessLevel;
 import lombok.Getter;
 
 @Binds(JpaRepository.class)
-public class HibernateJpaRepository<T, ID> implements JpaRepository<T, ID>, AttributeHolder, Closeable {
+public class HibernateJpaRepository<T, ID> implements JpaRepository<T, ID>, Enableable, Closeable {
 
     private final Configuration configuration = new Configuration();
     private final Class<T> type;
-
-    /**
-     Temporary solution to work with factory-based provision, see #477.
-     */
-    @Deprecated(since = "4.2.3", forRemoval = true)
-    private final ConnectionAttribute connectionAttribute;
 
     @Getter(AccessLevel.PROTECTED)
     private SessionFactory factory;
@@ -78,37 +71,13 @@ public class HibernateJpaRepository<T, ID> implements JpaRepository<T, ID>, Attr
     private Session session;
 
     @Bound
-    public HibernateJpaRepository(final Class<T> type, final ConnectionAttribute connectionAttribute) throws ApplicationException {
+    public HibernateJpaRepository(final Class<T> type) {
         this.type = type;
-        this.connectionAttribute = connectionAttribute;
     }
 
     @Override
     public boolean canEnable() {
         return this.factory == null;
-    }
-
-    @Override
-    public void apply(final Attribute<?> property) throws ApplicationException {
-        if (property instanceof ConnectionAttribute connectionAttribute) {
-            this.connection = connectionAttribute.value();
-
-            if (HartshornUtils.notEmpty(this.connection.username()) || HartshornUtils.notEmpty(this.connection.password())) {
-                this.applicationContext().log().debug("Username or password were configured in the active connection, adding to Hibernate configuration");
-                this.configuration.setProperty("hibernate.connection.username", this.connection.username());
-                this.configuration.setProperty("hibernate.connection.password", this.connection.password());
-            }
-            this.configuration.setProperty("hibernate.connection.url", this.connection.url());
-
-            final String driver = this.connection.remote().driver();
-            final String dialect = this.dialect(this.connection);
-
-            this.applicationContext().log().debug("Determined driver: %s and dialect: %s".formatted(driver, dialect));
-
-            this.configuration.setProperty("hibernate.hbm2ddl.auto", (String) this.applicationContext().property("hibernate.hbm2ddl.auto").or("update"));
-            this.configuration.setProperty("hibernate.connection.driver_class", driver);
-            this.configuration.setProperty("hibernate.dialect", dialect);
-        }
     }
 
     protected String dialect(final PersistenceConnection connection) throws ApplicationException {
@@ -130,7 +99,21 @@ public class HibernateJpaRepository<T, ID> implements JpaRepository<T, ID>, Attr
 
     @Override
     public void enable() throws ApplicationException {
-        this.apply(this.connectionAttribute);
+        if (HartshornUtils.notEmpty(this.connection.username()) || HartshornUtils.notEmpty(this.connection.password())) {
+            this.applicationContext().log().debug("Username or password were configured in the active connection, adding to Hibernate configuration");
+            this.configuration.setProperty("hibernate.connection.username", this.connection.username());
+            this.configuration.setProperty("hibernate.connection.password", this.connection.password());
+        }
+        this.configuration.setProperty("hibernate.connection.url", this.connection.url());
+
+        final String driver = this.connection.remote().driver();
+        final String dialect = this.dialect(this.connection);
+
+        this.applicationContext().log().debug("Determined driver: %s and dialect: %s".formatted(driver, dialect));
+
+        this.configuration.setProperty("hibernate.hbm2ddl.auto", (String) this.applicationContext().property("hibernate.hbm2ddl.auto").or("update"));
+        this.configuration.setProperty("hibernate.connection.driver_class", driver);
+        this.configuration.setProperty("hibernate.dialect", dialect);
 
         Exceptional<EntityContext> context = this.applicationContext().first(EntityContext.class);
         if (context.absent()) {
@@ -146,12 +129,6 @@ public class HibernateJpaRepository<T, ID> implements JpaRepository<T, ID>, Attr
         }
 
         this.configuration.addProperties(this.applicationContext.properties());
-        final Map<Object, Object> properties = this.configuration.getProperties();
-
-        // Early validation to ensure our configuration is valid
-        if (properties.isEmpty()) throw new ApplicationException("Expected connection to be applied, ensure you provided a ConnectionProperty before enabling.");
-        if (!properties.containsKey("hibernate.connection.driver_class")) throw new ApplicationException("No driver class provided! Ensure you provided a valid Remote instance");
-        if (!properties.containsKey("hibernate.dialect")) throw new ApplicationException("No dialect class provided! Ensure you provided a valid Remote instance");
 
         try {
             this.applicationContext().log().debug("Building session factory for Hibernate service #%d".formatted(this.hashCode()));
@@ -217,6 +194,18 @@ public class HibernateJpaRepository<T, ID> implements JpaRepository<T, ID>, Attr
             this.session.flush();
             this.close();
         }
+    }
+
+    @Override
+    public JpaRepository<T, ID> connection(final PersistenceConnection connection) {
+        if (this.connection != null) throw new IllegalStateException("Connection has already been configured!");
+        this.connection = connection;
+        try {
+            Bindings.enable(this);
+        } catch (ApplicationException e) {
+            Except.handle(e);
+        }
+        return this;
     }
 
     @Override

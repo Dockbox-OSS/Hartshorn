@@ -21,16 +21,14 @@ import org.dockbox.hartshorn.config.annotations.Value;
 import org.dockbox.hartshorn.core.annotations.component.Component;
 import org.dockbox.hartshorn.core.annotations.inject.Binds;
 import org.dockbox.hartshorn.core.annotations.inject.Bound;
-import org.dockbox.hartshorn.core.annotations.inject.Enable;
 import org.dockbox.hartshorn.core.boot.Hartshorn;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.exceptions.Except;
-import org.dockbox.hartshorn.core.properties.AttributeHolder;
+import org.dockbox.hartshorn.core.Enableable;
 import org.dockbox.hartshorn.core.services.parameter.ParameterLoader;
 import org.dockbox.hartshorn.persistence.mapping.ObjectMapper;
-import org.dockbox.hartshorn.persistence.properties.ModifiersAttribute;
 import org.dockbox.hartshorn.web.annotations.http.HttpRequest;
 import org.dockbox.hartshorn.web.processing.HttpRequestParameterLoaderContext;
 import org.eclipse.jetty.http.HttpStatus;
@@ -43,9 +41,11 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import lombok.Getter;
+
 @Component
 @Binds(ServletHandler.class)
-public class ServletHandler implements AttributeHolder {
+public class ServletHandler implements Enableable {
 
     private final HttpWebServer starter;
     private final HttpMethod httpMethod;
@@ -56,7 +56,7 @@ public class ServletHandler implements AttributeHolder {
     private ApplicationContext context;
 
     @Inject
-    @Enable(delegate = ModifiersAttribute.class)
+    @Getter
     private ObjectMapper mapper;
 
     @Value(value = "hartshorn.web.headers.hartshorn", or = "true")

@@ -18,9 +18,7 @@
 package org.dockbox.hartshorn.core;
 
 import org.dockbox.hartshorn.core.context.element.TypeContext;
-import org.dockbox.hartshorn.core.properties.Attribute;
 
-import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public final class InjectionPoint<T> {
@@ -34,11 +32,7 @@ public final class InjectionPoint<T> {
     }
 
     public static <T> InjectionPoint<T> of(final TypeContext<T> type, final Function<T, T> point) {
-        return new InjectionPoint<>(type, (instance, it, properties) -> point.apply(instance));
-    }
-
-    public static <T> InjectionPoint<T> of(final TypeContext<T> type, final BiFunction<T, Attribute<?>[], T> point) {
-        return new InjectionPoint<>(type, (instance, it, properties) -> point.apply(instance, properties));
+        return new InjectionPoint<>(type, (instance, it) -> point.apply(instance));
     }
 
     public static <T> InjectionPoint<T> of(final TypeContext<T> type, final InjectFunction<T> point) {
@@ -53,11 +47,7 @@ public final class InjectionPoint<T> {
         return this.apply(instance, TypeContext.of(instance));
     }
 
-    public T apply(final T instance, final TypeContext<T> type, final Attribute<?>... properties) {
-        return this.point.apply(instance, type, properties);
-    }
-
-    public T apply(final T instance, final Attribute<?>... properties) {
-        return this.apply(instance, TypeContext.of(instance), properties);
+    public T apply(final T instance, final TypeContext<T> type) {
+        return this.point.apply(instance, type);
     }
 }

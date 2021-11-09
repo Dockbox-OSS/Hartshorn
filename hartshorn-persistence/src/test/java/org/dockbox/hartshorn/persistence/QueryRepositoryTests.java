@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.persistence;
 
 import org.dockbox.hartshorn.persistence.annotations.UsePersistence;
 import org.dockbox.hartshorn.persistence.objects.JpaUser;
-import org.dockbox.hartshorn.persistence.properties.ConnectionAttribute;
+import org.dockbox.hartshorn.persistence.properties.PersistenceConnection;
 import org.dockbox.hartshorn.persistence.properties.Remotes;
 import org.dockbox.hartshorn.persistence.properties.SQLRemoteServer;
 import org.dockbox.hartshorn.testsuite.ApplicationAwareTest;
@@ -41,17 +41,14 @@ public class QueryRepositoryTests extends ApplicationAwareTest {
     protected static final String DEFAULT_DATABASE = "HartshornDb_" + System.nanoTime();
     @Container private static final MySQLContainer<?> mySql = new MySQLContainer<>(MySQLContainer.NAME).withDatabaseName(DEFAULT_DATABASE);
 
-    protected static ConnectionAttribute connection() {
-        return ConnectionAttribute.of(Remotes.MYSQL,
-                SQLRemoteServer.of("localhost", mySql.getMappedPort(MySQLContainer.MYSQL_PORT), DEFAULT_DATABASE),
-                mySql.getUsername(),
-                mySql.getPassword()
-        );
+    protected static PersistenceConnection connection() {
+        SQLRemoteServer server = SQLRemoteServer.of("localhost", mySql.getMappedPort(MySQLContainer.MYSQL_PORT), DEFAULT_DATABASE);
+        return new PersistenceConnection(Remotes.MYSQL.url(server), mySql.getUsername(), mySql.getPassword(), Remotes.MYSQL);
     }
 
     @Test
     void testRepositoryDeleteAll() {
-        final UserQueryRepository repository = this.context().get(UserQueryRepository.class, connection());
+        final UserQueryRepository repository = (UserQueryRepository) this.context().get(UserQueryRepository.class).connection(connection());
         final JpaUser user = new JpaUser("JUnit", 17);
         repository.save(user);
         repository.deleteAll();
@@ -61,7 +58,7 @@ public class QueryRepositoryTests extends ApplicationAwareTest {
 
     @Test
     void testRepositoryQueries() {
-        final UserQueryRepository repository = this.context().get(UserQueryRepository.class, connection());
+        final UserQueryRepository repository = (UserQueryRepository) this.context().get(UserQueryRepository.class).connection(connection());
         repository.deleteAll();
         final JpaUser userA = new JpaUser("JUnit", 17);
         final JpaUser userB = new JpaUser("JUnitAdult", 21);
@@ -74,7 +71,7 @@ public class QueryRepositoryTests extends ApplicationAwareTest {
 
     @Test
     void testUpdateNonTransactional() {
-        final UserQueryRepository repository = this.context().get(UserQueryRepository.class, connection());
+        final UserQueryRepository repository = (UserQueryRepository) this.context().get(UserQueryRepository.class).connection(connection());
         final JpaUser user = new JpaUser("JUnit", 21);
         repository.save(user);
         Assertions.assertThrows(TransactionRequiredException.class, () -> repository.nonTransactionalEntityUpdate(user.id(), 22));
@@ -82,7 +79,7 @@ public class QueryRepositoryTests extends ApplicationAwareTest {
 
     @Test
     void testUpdateNonEntityModifier() {
-        final UserQueryRepository repository = this.context().get(UserQueryRepository.class, connection());
+        final UserQueryRepository repository = (UserQueryRepository) this.context().get(UserQueryRepository.class).connection(connection());
         final JpaUser user = new JpaUser("JUnit", 21);
         repository.save(user);
         Assertions.assertThrows(IllegalArgumentException.class, () -> repository.nonModifierEntityUpdate(user.id(), 22));
@@ -90,7 +87,7 @@ public class QueryRepositoryTests extends ApplicationAwareTest {
 
     @Test
     void testUpdateEntity() {
-        final UserQueryRepository repository = this.context().get(UserQueryRepository.class, connection());
+        final UserQueryRepository repository = (UserQueryRepository) this.context().get(UserQueryRepository.class).connection(connection());
         final JpaUser user = new JpaUser("JUnit", 21);
         repository.save(user);
         final int updated = repository.entityUpdate(user.id(), 22);

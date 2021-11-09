@@ -52,7 +52,7 @@ public abstract class DefaultContext implements Context {
     @Override
     public <C extends Context> Exceptional<C> first(final ApplicationContext applicationContext, final Class<C> context) {
         return Exceptional.of(this.contexts.stream()
-                        .filter(c -> TypeContext.of(c).childOf(context))
+                        .filter(c -> TypeContext.unproxy(applicationContext, c).childOf(context))
                         .findFirst())
                 .orElse(() -> {
                     final TypeContext<C> typeContext = TypeContext.of(context);

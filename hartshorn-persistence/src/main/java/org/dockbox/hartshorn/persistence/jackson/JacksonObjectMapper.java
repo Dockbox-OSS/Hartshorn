@@ -233,14 +233,16 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
     }
 
     @Override
-    protected void modify(final PersistenceModifier modifier) {
+    public JacksonObjectMapper skipBehavior(final PersistenceModifier modifier) {
         this.include = switch (modifier) {
             case SKIP_EMPTY -> Include.NON_EMPTY;
             case SKIP_NULL -> Include.NON_NULL;
             case SKIP_DEFAULT -> Include.NON_DEFAULT;
+            case SKIP_NONE -> Include.ALWAYS;
             default -> throw new IllegalArgumentException("Unknown modifier: " + modifier);
         };
         this.mapper = null;
+        return this;
     }
 
     protected ObjectMapper configureMapper() {

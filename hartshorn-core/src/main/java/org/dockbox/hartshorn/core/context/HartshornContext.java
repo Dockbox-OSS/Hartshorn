@@ -19,24 +19,27 @@ package org.dockbox.hartshorn.core.context;
 
 import org.dockbox.hartshorn.core.Key;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
-import org.dockbox.hartshorn.core.properties.Attribute;
 
 import javax.inject.Named;
 
 public interface HartshornContext extends Context {
 
     default <T> T get(final TypeContext<T> type, final Named named) {
-        return this.get(type.type(), named);
+        return this.get(Key.of(type, named));
     }
 
-    <T> T get(Class<T> type, Named named);
-
-    <T> T get(Key<T> key, final Attribute<?>... additionalProperties);
-
-    default <T> T get(final TypeContext<T> type, final Attribute<?>... additionalProperties) {
-        return this.get(type.type(), additionalProperties);
+    default <T> T get(Class<T> type, Named named) {
+        return this.get(Key.of(type, named));
     }
 
-    <T> T get(Class<T> type, Attribute<?>... additionalProperties);
+    <T> T get(Key<T> key);
+
+    default <T> T get(final TypeContext<T> type) {
+        return this.get(Key.of(type));
+    }
+
+    default <T> T get(Class<T> type) {
+        return this.get(Key.of(type));
+    };
 
 }

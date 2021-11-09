@@ -19,7 +19,6 @@ package org.dockbox.hartshorn.core.context;
 
 import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
-import org.dockbox.hartshorn.core.properties.Attribute;
 import org.dockbox.hartshorn.core.proxy.ProxyHandler;
 
 import java.lang.annotation.Annotation;
@@ -31,8 +30,6 @@ public interface MethodProxyContext<T> extends Context {
     TypeContext<T> type();
 
     MethodContext<?, T> method();
-
-    Attribute<?>[] properties();
 
     <A extends Annotation> A annotation(Class<A> annotation);
 
