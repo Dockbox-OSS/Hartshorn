@@ -18,6 +18,7 @@
 package org.dockbox.hartshorn.core.services;
 
 import org.dockbox.hartshorn.core.annotations.Factory;
+import org.dockbox.hartshorn.core.annotations.inject.Enable;
 import org.dockbox.hartshorn.core.annotations.service.Service;
 import org.dockbox.hartshorn.core.binding.Bindings;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
@@ -48,20 +49,21 @@ public class FactoryServiceModifier extends ServiceAnnotatedMethodModifier<Facto
     @Override
     public <T, R> ProxyFunction<T, R> process(final ApplicationContext context, final MethodProxyContext<T> methodContext) {
         final MethodContext<?, T> method = methodContext.method();
+        boolean enable = method.annotation(Enable.class).map(Enable::value).or(true);
         if (method.isAbstract()) {
             final FactoryContext factoryContext = context.first(FactoryContext.class).get();
             final ConstructorContext<?> constructor = factoryContext.get(method);
-            return (instance, args, proxyContext) -> this.populateAndEnable(context, (R) constructor.createInstance(args).orNull());
+            return (instance, args, proxyContext) -> this.processInstance(context, (R) constructor.createInstance(args).orNull(), enable);
         }
         else {
-            return (instance, args, proxyContext) -> this.populateAndEnable(context, (R) methodContext.method().invoke(instance, args).orNull());
+            return (instance, args, proxyContext) -> this.processInstance(context, (R) methodContext.method().invoke(instance, args).orNull(), enable);
         }
     }
 
-    private <T> T populateAndEnable(final ApplicationContext context, final T instance) {
+    private <T> T processInstance(final ApplicationContext context, final T instance, boolean enable) {
         try {
             context.populate(instance);
-            Bindings.enable(instance);
+            if (enable) Bindings.enable(instance);
             return instance;
         } catch (ApplicationException e) {
             throw e.runtime();
