@@ -25,7 +25,7 @@ import org.dockbox.hartshorn.core.proxy.ProxyContext;
 import org.dockbox.hartshorn.core.proxy.ProxyFunction;
 import org.dockbox.hartshorn.core.services.ServiceAnnotatedMethodModifier;
 import org.dockbox.hartshorn.core.services.ServiceOrder;
-import org.dockbox.hartshorn.persistence.JpaRepository;
+import org.dockbox.hartshorn.persistence.jpa.JpaRepository;
 import org.dockbox.hartshorn.persistence.QueryFunction;
 import org.dockbox.hartshorn.persistence.annotations.EntityModifier;
 import org.dockbox.hartshorn.persistence.annotations.Query;

@@ -21,6 +21,7 @@ import org.dockbox.hartshorn.core.annotations.service.Service;
 import org.dockbox.hartshorn.persistence.annotations.EntityModifier;
 import org.dockbox.hartshorn.persistence.annotations.Query;
 import org.dockbox.hartshorn.persistence.annotations.Transactional;
+import org.dockbox.hartshorn.persistence.jpa.JpaRepository;
 import org.dockbox.hartshorn.persistence.objects.JpaUser;
 
 import java.util.List;
