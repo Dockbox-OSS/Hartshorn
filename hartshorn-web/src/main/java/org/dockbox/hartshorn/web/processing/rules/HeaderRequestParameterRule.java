@@ -33,12 +33,12 @@ public class HeaderRequestParameterRule extends AnnotatedParameterLoaderRule<Req
     }
 
     @Override
-    public boolean accepts(final ParameterContext<?> parameter, final HttpRequestParameterLoaderContext context, final Object... args) {
-        return super.accepts(parameter, context, args) && (parameter.type().childOf(String.class) || parameter.type().childOf(int.class) || parameter.type().childOf(long.class));
+    public boolean accepts(final ParameterContext<?> parameter, int index, final HttpRequestParameterLoaderContext context, final Object... args) {
+        return super.accepts(parameter, index, context, args) && (parameter.type().childOf(String.class) || parameter.type().childOf(int.class) || parameter.type().childOf(long.class));
     }
 
     @Override
-    public <T> Exceptional<T> load(final ParameterContext<T> parameter, final HttpRequestParameterLoaderContext context, final Object... args) {
+    public <T> Exceptional<T> load(final ParameterContext<T> parameter, int index, final HttpRequestParameterLoaderContext context, final Object... args) {
         final RequestHeader requestHeader = parameter.annotation(RequestHeader.class).get();
 
         final HttpServletRequest request = context.request();

@@ -36,7 +36,7 @@ public class BodyRequestParameterRule extends AnnotatedParameterLoaderRule<Reque
     }
 
     @Override
-    public <T> Exceptional<T> load(final ParameterContext<T> parameter, final HttpRequestParameterLoaderContext context, final Object... args) {
+    public <T> Exceptional<T> load(final ParameterContext<T> parameter, int index, final HttpRequestParameterLoaderContext context, final Object... args) {
         final Exceptional<String> body = Exceptional.of(() -> context.request().getReader().lines().collect(Collectors.joining(System.lineSeparator())));
         if (parameter.type().is(String.class))
             return (Exceptional<T>) body;

@@ -66,7 +66,7 @@ public class RequestArgumentProcessorTests extends ApplicationAwareTest {
 
         final HttpRequestParameterLoaderContext loaderContext = new HttpRequestParameterLoaderContext(null, null, null, this.context(), request, null);
 
-        final Exceptional<String> result = new BodyRequestParameterRule().load(context, loaderContext);
+        final Exceptional<String> result = new BodyRequestParameterRule().load(context, 0, loaderContext);
         Assertions.assertTrue(result.present());
         Assertions.assertEquals("Unparsed body", result.get());
     }
@@ -90,7 +90,7 @@ public class RequestArgumentProcessorTests extends ApplicationAwareTest {
 
         final HttpRequestParameterLoaderContext loaderContext = new HttpRequestParameterLoaderContext(null, null, null, this.context(), request, null);
 
-        final Exceptional<Message> result = new BodyRequestParameterRule().load(context, loaderContext);
+        final Exceptional<Message> result = new BodyRequestParameterRule().load(context, 0, loaderContext);
         Assertions.assertTrue(result.present());
         Assertions.assertEquals("Hello world!", result.get().message());
     }
@@ -108,7 +108,7 @@ public class RequestArgumentProcessorTests extends ApplicationAwareTest {
 
         final HttpRequestParameterLoaderContext loaderContext = new HttpRequestParameterLoaderContext(null, null, null, this.context(), request, null);
 
-        final Exceptional<String> result = new HeaderRequestParameterRule().load(context, loaderContext);
+        final Exceptional<String> result = new HeaderRequestParameterRule().load(context, 0, loaderContext);
         Assertions.assertTrue(result.present());
         Assertions.assertEquals("Header!", result.get());
     }
@@ -126,7 +126,7 @@ public class RequestArgumentProcessorTests extends ApplicationAwareTest {
 
         final HttpRequestParameterLoaderContext loaderContext = new HttpRequestParameterLoaderContext(null, null, null, this.context(), request, null);
 
-        final Exceptional<Integer> result = new HeaderRequestParameterRule().load(context, loaderContext);
+        final Exceptional<Integer> result = new HeaderRequestParameterRule().load(context, 0, loaderContext);
         Assertions.assertTrue(result.present());
         Assertions.assertEquals(1, result.get().intValue());
     }

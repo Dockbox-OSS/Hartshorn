@@ -30,8 +30,8 @@ public class RuleBasedParameterLoader<C extends ParameterLoaderContext> extends 
         for (int i = 0; i < parameters.size(); i++) {
             final ParameterContext<?> parameter = parameters.get(i);
             for (final ParameterLoaderRule<C> rule : this.rules) {
-                if (rule.accepts(parameter, context, args)) {
-                    final Exceptional<Object> argument = rule.load((ParameterContext<Object>) parameter, context, args);
+                if (rule.accepts(parameter, i, context, args)) {
+                    final Exceptional<Object> argument = rule.load((ParameterContext<Object>) parameter, i, context, args);
                     arguments.add(argument.orNull());
                     continue parameters;
                 }

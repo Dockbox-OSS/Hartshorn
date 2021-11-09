@@ -8,12 +8,12 @@ import org.dockbox.hartshorn.web.processing.HttpRequestParameterLoaderContext;
 
 public class ServletResponseParameterRule implements ParameterLoaderRule<HttpRequestParameterLoaderContext> {
     @Override
-    public boolean accepts(final ParameterContext<?> parameter, final HttpRequestParameterLoaderContext context, final Object... args) {
+    public boolean accepts(final ParameterContext<?> parameter, int index, final HttpRequestParameterLoaderContext context, final Object... args) {
         return TypeContext.of(context.response()).childOf(parameter.type());
     }
 
     @Override
-    public <T> Exceptional<T> load(final ParameterContext<T> parameter, final HttpRequestParameterLoaderContext context, final Object... args) {
+    public <T> Exceptional<T> load(final ParameterContext<T> parameter, int index, final HttpRequestParameterLoaderContext context, final Object... args) {
         return Exceptional.of((T) context.response());
     }
 }
