@@ -21,7 +21,7 @@ import org.dockbox.hartshorn.core.annotations.inject.Binds;
 import org.dockbox.hartshorn.core.annotations.inject.Bound;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
-import org.dockbox.hartshorn.core.properties.Enableable;
+import org.dockbox.hartshorn.core.Enableable;
 import org.dockbox.hartshorn.core.task.TaskRunner;
 
 import java.util.Locale;
