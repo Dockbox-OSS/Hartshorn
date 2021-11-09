@@ -19,16 +19,14 @@ package org.dockbox.hartshorn.core.proxy;
 
 import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
-import org.dockbox.hartshorn.core.properties.Attribute;
+import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 
 import java.lang.reflect.Method;
-import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
 
 import lombok.Getter;
 import lombok.Setter;
 
-public final class ProxyAttribute<T, R> implements Attribute<Class<T>> {
+public final class MethodProxyContext<T, R> {
 
     @Getter private final Class<T> value;
     @Getter private final Method target;
@@ -39,45 +37,25 @@ public final class ProxyAttribute<T, R> implements Attribute<Class<T>> {
     @Setter private boolean overwriteResult = true;
     @Getter @Setter private int priority = 10;
 
-    private ProxyAttribute(final Class<T> type, final Method target, final ProxyFunction<T, R> delegate) {
+    private MethodProxyContext(final Class<T> type, final Method target, final ProxyFunction<T, R> delegate) {
         this.value = type;
         this.target = target;
         this.delegate = delegate;
     }
 
-    public static <T, R> ProxyAttribute<T, R> of(final TypeContext<T> type, final MethodContext<?, T> target, final BiFunction<T, Object[], R> proxyFunction) {
+    public static <T, R> MethodProxyContext<T, R> of(final TypeContext<T> type, final MethodContext<?, T> target, final ProxyFunction<T, R> proxyFunction) {
         return of(type.type(), target.method(), proxyFunction);
     }
 
-    public static <T, R> ProxyAttribute<T, R> of(final Class<T> type, final Method target, final BiFunction<T, Object[], R> proxyFunction) {
-        return new ProxyAttribute<>(type, target, (instance, args, proxyContext) -> proxyFunction.apply(instance, args));
-    }
-
-    public static <T, R> ProxyAttribute<T, R> of(final TypeContext<T> type, final MethodContext<?, T> target, final BiConsumer<T, Object[]> proxyFunction) {
-        return of(type.type(), target.method(), proxyFunction);
-    }
-
-    public static <T, R> ProxyAttribute<T, R> of(final Class<T> type, final Method target, final BiConsumer<T, Object[]> proxyFunction) {
-        return new ProxyAttribute<>(type, target, (instance, args, proxyContext) -> {
-            proxyFunction.accept(instance, args);
-            //noinspection ReturnOfNull
-            return null;
-        });
-    }
-
-    public static <T, R> ProxyAttribute<T, R> of(final TypeContext<T> type, final MethodContext<?, T> target, final ProxyFunction<T, R> proxyFunction) {
-        return of(type.type(), target.method(), proxyFunction);
-    }
-
-    public static <T, R> ProxyAttribute<T, R> of(final Class<T> type, final Method target, final ProxyFunction<T, R> proxyFunction) {
-        return new ProxyAttribute<>(type, target, proxyFunction);
+    public static <T, R> MethodProxyContext<T, R> of(final Class<T> type, final Method target, final ProxyFunction<T, R> proxyFunction) {
+        return new MethodProxyContext<>(type, target, proxyFunction);
     }
 
     public Class<?> targetClass() {
         return this.target().getDeclaringClass();
     }
 
-    public R delegate(final T instance, final MethodContext<?, ?> proceed, final Object self, final Object... args) {
+    public R delegate(final T instance, final MethodContext<?, ?> proceed, final Object self, final Object... args) throws ApplicationException {
         this.holder.cancelled(false);
         return this.delegate.delegate(instance, args, new ProxyContextImpl(proceed, this.holder, self));
     }

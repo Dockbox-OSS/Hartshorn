@@ -551,4 +551,8 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
         if (!this.isPrimitive()) return null;
         else return (T) PRIMITIVE_DEFAULTS.getOrDefault(this.type(), null);
     }
+
+    public boolean isFinal() {
+        return Modifier.isFinal(this.type().getModifiers());
+    }
 }

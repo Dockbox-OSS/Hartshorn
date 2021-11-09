@@ -23,7 +23,6 @@ import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 import org.dockbox.hartshorn.core.proxy.types.ConcreteProxyTarget;
 import org.dockbox.hartshorn.core.proxy.types.FinalProxyTarget;
-import org.dockbox.hartshorn.core.proxy.types.GlobalProxyTarget;
 import org.dockbox.hartshorn.core.proxy.types.ProviderService;
 import org.dockbox.hartshorn.core.proxy.types.SampleType;
 import org.dockbox.hartshorn.testsuite.ApplicationAwareTest;
@@ -36,7 +35,7 @@ public class ProxyTests extends ApplicationAwareTest {
 
     @Test
     void testConcreteMethodsCanBeProxied() throws ApplicationException, NoSuchMethodException {
-        final ProxyAttribute<ConcreteProxyTarget, String> property = ProxyAttribute.of(
+        final MethodProxyContext<ConcreteProxyTarget, String> property = MethodProxyContext.of(
                 ConcreteProxyTarget.class,
                 ConcreteProxyTarget.class.getMethod("name"),
                 (instance, args, proxyContext) -> "Hartshorn");
@@ -51,7 +50,7 @@ public class ProxyTests extends ApplicationAwareTest {
 
     @Test
     void testFinalMethodsCanNotBeProxied() throws ApplicationException, NoSuchMethodException {
-        final ProxyAttribute<FinalProxyTarget, String> property = ProxyAttribute.of(
+        final MethodProxyContext<FinalProxyTarget, String> property = MethodProxyContext.of(
                 FinalProxyTarget.class,
                 FinalProxyTarget.class.getMethod("name"),
                 (instance, args, proxyContext) -> "Hartshorn");
@@ -68,12 +67,15 @@ public class ProxyTests extends ApplicationAwareTest {
     }
 
     @Test
-    void testProviderPropertiesAreApplied() throws NoSuchMethodException {
-        final ProxyAttribute<ConcreteProxyTarget, String> property = ProxyAttribute.of(
+    void testProxyCanModifyMethods() throws NoSuchMethodException, ApplicationException {
+        final MethodProxyContext<ConcreteProxyTarget, String> methodProxyContext = MethodProxyContext.of(
                 ConcreteProxyTarget.class,
                 ConcreteProxyTarget.class.getMethod("name"),
                 (instance, args, proxyContext) -> "Hartshorn");
-        final ConcreteProxyTarget proxy = this.context().get(ConcreteProxyTarget.class, property);
+        final ConcreteProxyTarget concrete = this.context().get(ConcreteProxyTarget.class);
+        ProxyHandler<ConcreteProxyTarget> handler = this.context().environment().application().handler(TypeContext.of(ConcreteProxyTarget.class), concrete);
+        handler.delegate(methodProxyContext);
+        final ConcreteProxyTarget proxy = handler.proxy();
 
         Assertions.assertNotNull(proxy);
         Assertions.assertNotNull(proxy.name());
@@ -81,10 +83,12 @@ public class ProxyTests extends ApplicationAwareTest {
     }
 
     @Test
-    void testGlobalProxiesCanApply() {
-        final GlobalProxyTarget target = this.context().get(GlobalProxyTarget.class);
-        Assertions.assertTrue(TypeContext.of(target).isProxy());
-        Assertions.assertEquals("GlobalHartshorn", target.name());
+    void testProxyIsStoredInHandler() throws ApplicationException {
+        final ConcreteProxyTarget concrete = this.context().get(ConcreteProxyTarget.class);
+        ProxyHandler<ConcreteProxyTarget> handler = this.context().environment().application().handler(TypeContext.of(ConcreteProxyTarget.class), concrete);
+        Assertions.assertTrue(handler.proxyInstance().absent());
+        handler.proxy();
+        Assertions.assertTrue(handler.proxyInstance().present());
     }
 
     @Test
