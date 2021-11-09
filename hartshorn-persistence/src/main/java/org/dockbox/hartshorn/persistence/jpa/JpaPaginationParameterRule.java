@@ -17,25 +17,26 @@
 
 package org.dockbox.hartshorn.persistence.jpa;
 
-import org.dockbox.hartshorn.core.annotations.inject.Binds;
 import org.dockbox.hartshorn.core.context.element.ParameterContext;
-import org.dockbox.hartshorn.core.services.parameter.ParameterLoader;
-import org.dockbox.hartshorn.core.services.parameter.RuleBasedParameterLoader;
+import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.core.services.parameter.ParameterLoaderRule;
 import org.dockbox.hartshorn.persistence.context.JpaParameterLoaderContext;
 
-import javax.inject.Named;
+import javax.persistence.Query;
 
-@Binds(value = ParameterLoader.class, named = @Named("jpa_query"))
-public class JpaParameterLoader extends RuleBasedParameterLoader<JpaParameterLoaderContext> {
+public class JpaPaginationParameterRule implements ParameterLoaderRule<JpaParameterLoaderContext> {
 
-    public JpaParameterLoader() {
-        add(new JpaPaginationParameterRule());
+    @Override
+    public boolean accepts(ParameterContext<?> parameter, int index, JpaParameterLoaderContext context, Object... args) {
+        return parameter.type().childOf(Pagination.class);
     }
 
     @Override
-    protected <T> T loadDefault(ParameterContext<T> parameter, int index, JpaParameterLoaderContext context, Object... args) {
-        Object value = args[index];
-        context.query().setParameter(parameter.name(), value);
-        return super.loadDefault(parameter, index, context, args);
+    public <T> Exceptional<T> load(ParameterContext<T> parameter, int index, JpaParameterLoaderContext context, Object... args) {
+        Query query = context.query();
+        Pagination pagination = (Pagination) args[index];
+        if (pagination.max() != null) query.setMaxResults(pagination.max());
+        if (pagination.start() != null) query.setFirstResult(pagination.start());
+        return Exceptional.of((T) args[index]);
     }
 }
