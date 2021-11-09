@@ -50,8 +50,6 @@ import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 import org.dockbox.hartshorn.core.exceptions.TypeProvisionException;
 import org.dockbox.hartshorn.core.inject.InjectionModifier;
 import org.dockbox.hartshorn.core.inject.ProviderContext;
-import org.dockbox.hartshorn.core.properties.Attribute;
-import org.dockbox.hartshorn.core.properties.AttributeHolder;
 import org.dockbox.hartshorn.core.services.ComponentContainer;
 import org.dockbox.hartshorn.core.services.ComponentLocator;
 import org.dockbox.hartshorn.core.services.ComponentLocatorImpl;
@@ -138,11 +136,11 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
         if (null != property) this.injectionPoints.add(property);
     }
 
-    public <T> T inject(final Key<T> key, T typeInstance, final Attribute<?>... properties) {
+    public <T> T inject(final Key<T> key, T typeInstance) {
         for (final InjectionPoint<?> injectionPoint : this.injectionPoints) {
             if (injectionPoint.accepts(key.contract())) {
                 try {
-                    typeInstance = ((InjectionPoint<T>) injectionPoint).apply(typeInstance, key.contract(), properties);
+                    typeInstance = ((InjectionPoint<T>) injectionPoint).apply(typeInstance, key.contract());
                 }
                 catch (final ClassCastException e) {
                     this.log().warn("Attempted to apply injection point to incompatible type [" + key.contract().qualifiedName() + "]");
@@ -152,12 +150,12 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
         return typeInstance;
     }
 
-    public <T> void enableFields(final T typeInstance, final Attribute<?>... properties) {
+    public <T> void enableFields(final T typeInstance) {
         if (typeInstance == null) return;
         final TypeContext<T> unproxied = TypeContext.unproxy(this, typeInstance);
 
         unproxied.fields(Enable.class)
-                .forEach(field -> this.enableField(field, typeInstance, properties));
+                .forEach(field -> this.enableField(field, typeInstance));
 
         unproxied.fields(Inject.class).stream()
                 .filter(field -> field.annotation(Enable.class).absent())
@@ -174,26 +172,12 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
                 });
     }
 
-    protected void enableField(final FieldContext<?> field, final Object typeInstance, final Attribute<?>... properties) {
+    protected void enableField(final FieldContext<?> field, final Object typeInstance) {
         final Enable enable = field.annotation(Enable.class).get();
-        if (enable.enable()) {
+        if (enable.value()) {
             final Exceptional<?> instance = field.get(typeInstance);
             if (instance.present()) {
                 final Object injectInstance = instance.get();
-                for (final Class<? extends Attribute<?>> delegatedAttribute : enable.delegate()) {
-                    final Exceptional<? extends Attribute<?>> attribute = Bindings.first(delegatedAttribute, properties);
-                    if (attribute.present()) {
-                        try {
-                            if (injectInstance instanceof AttributeHolder holder) {
-                                this.enableFields(injectInstance, attribute.get());
-                                holder.apply(attribute.get());
-                            }
-                        }
-                        catch (final ApplicationException e) {
-                            throw new ApplicationException("Could not apply delegated attribute", e).runtime();
-                        }
-                    }
-                }
                 try {
                     Bindings.enable(injectInstance);
                 }
@@ -336,30 +320,25 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
     }
 
     @Override
-    public <T> T get(final Class<T> type, final Named named) {
-        return this.get(Key.of(type, named));
-    }
-
-    @Override
-    public <T> T get(final Key<T> key, final Attribute<?>... properties) {
+    public <T> T get(final Key<T> key) {
         if (this.singletons.containsKey(key)) return (T) this.singletons.get(key);
 
-        T instance = this.create(key, null, properties);
+        T instance = this.create(key, null);
 
         // Recreating field instances ensures all fields are created through bootstrapping, allowing injection
         // points to apply correctly
         this.populate(instance);
 
-        instance = this.inject(key, instance, properties);
+        instance = this.inject(key, instance);
 
-        for (final ServiceOrder order : ServiceOrder.values()) instance = this.modify(order, key, instance, properties);
+        for (final ServiceOrder order : ServiceOrder.values()) instance = this.modify(order, key, instance);
 
         // Enables all fields which are decorated with @Wired(enable=true)
-        this.enableFields(instance, properties);
+        this.enableFields(instance);
 
         // Inject properties if applicable
         try {
-            Bindings.enable(instance, properties);
+            Bindings.enable(instance);
         }
         catch (final ApplicationException e) {
             throw e.runtime();
@@ -375,30 +354,20 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
         return instance;
     }
 
-    protected <T> T modify(final ServiceOrder order, final Key<T> key, T instance, final Attribute<?>... properties) {
+    protected <T> T modify(final ServiceOrder order, final Key<T> key, T instance) {
         for (final InjectionModifier<?> serviceModifier : this.injectionModifiers.get(order)) {
-            if (serviceModifier.preconditions(this, key.contract(), instance, properties))
-                instance = serviceModifier.process(this, key.contract(), instance, properties);
+            if (serviceModifier.preconditions(this, key.contract(), instance))
+                instance = serviceModifier.process(this, key.contract(), instance);
         }
         return instance;
     }
 
-    @Override
-    public <T> T get(final TypeContext<T> type, final Attribute<?>... properties) {
-        return this.get(Key.of(type), properties);
-    }
-
-    @Override
-    public <T> T get(final Class<T> type, final Attribute<?>... additionalProperties) {
-        return this.get(TypeContext.of(type), additionalProperties);
-    }
-
     @Nullable
-    public <T> T create(final Key<T> key, final T typeInstance, final Attribute<?>[] additionalProperties) {
+    public <T> T create(final Key<T> key, final T typeInstance) {
         final TypeContext<T> type = key.contract();
         try {
             if (null == typeInstance) {
-                final Exceptional<T> instanceCandidate = this.provide(key, additionalProperties);
+                final Exceptional<T> instanceCandidate = this.provide(key);
                 Throwable cause = null;
                 if (instanceCandidate.caught()) {
                     cause = instanceCandidate.error();
@@ -442,13 +411,13 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
         }
     }
 
-    public <T> Exceptional<T> provide(final Key<T> type, final Attribute<?>... additionalProperties) {
+    public <T> Exceptional<T> provide(final Key<T> type) {
         return Exceptional.of(type)
                 .map(this::hierarchy)
                 .flatMap(hierarchy -> {
                     // Will continue going through each provider until a provider was successful or no other providers remain
                     for (final Provider<T> provider : hierarchy.providers()) {
-                        final Exceptional<T> provided = provider.provide(this, additionalProperties);
+                        final Exceptional<T> provided = provider.provide(this);
                         if (provided.present()) return provided;
                     }
                     return Exceptional.empty();

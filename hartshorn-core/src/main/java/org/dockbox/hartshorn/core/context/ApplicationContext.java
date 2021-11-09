@@ -17,15 +17,14 @@
 
 package org.dockbox.hartshorn.core.context;
 
-import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.InjectionPoint;
 import org.dockbox.hartshorn.core.Key;
 import org.dockbox.hartshorn.core.MetaProvider;
-import org.dockbox.hartshorn.core.exceptions.TypeProvisionException;
 import org.dockbox.hartshorn.core.annotations.context.LogExclude;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
+import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.core.exceptions.TypeProvisionException;
 import org.dockbox.hartshorn.core.inject.InjectionModifier;
-import org.dockbox.hartshorn.core.properties.Attribute;
 import org.dockbox.hartshorn.core.services.ComponentLocator;
 import org.dockbox.hartshorn.core.services.ComponentProcessor;
 import org.slf4j.Logger;
@@ -38,11 +37,11 @@ public interface ApplicationContext extends ApplicationBinder, HartshornContext,
 
     void add(InjectionPoint<?> property);
 
-    <T> T create(Key<T> type, T typeInstance, Attribute<?>... properties);
+    <T> T create(Key<T> type, T typeInstance);
 
-    <T> T inject(Key<T> type, T typeInstance, Attribute<?>... properties);
+    <T> T inject(Key<T> type, T typeInstance);
 
-    <T> void enableFields(T typeInstance, Attribute<?>... properties);
+    <T> void enableFields(T typeInstance);
 
     <T> T raw(TypeContext<T> type) throws TypeProvisionException;
 

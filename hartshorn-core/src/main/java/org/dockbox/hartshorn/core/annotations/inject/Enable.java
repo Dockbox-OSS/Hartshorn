@@ -17,8 +17,6 @@
 
 package org.dockbox.hartshorn.core.annotations.inject;
 
-import org.dockbox.hartshorn.core.properties.Attribute;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -27,8 +25,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 public @interface Enable {
-    boolean enable() default true;
-    @Deprecated(since = "4.2.3", forRemoval = true)
-    Class<? extends Attribute<?>>[] delegate() default {};
+    boolean value() default true;
 }
 
