@@ -24,7 +24,7 @@ import org.dockbox.hartshorn.core.annotations.inject.Provider;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.demo.persistence.services.UserRepository;
 import org.dockbox.hartshorn.persistence.FileType;
-import org.dockbox.hartshorn.persistence.JpaRepository;
+import org.dockbox.hartshorn.persistence.jpa.JpaRepository;
 import org.dockbox.hartshorn.persistence.properties.PersistenceConnection;
 import org.dockbox.hartshorn.persistence.properties.Remotes;
 import org.dockbox.hartshorn.persistence.properties.SQLRemoteServer;
@@ -64,7 +64,7 @@ public class PersistenceDemoConfiguration {
     private String password;
 
     /**
-     * Provides a singleton instance of {@link org.dockbox.hartshorn.persistence.JpaRepository} configured to use a MySQL database, of which the
+     * Provides a singleton instance of {@link JpaRepository} configured to use a MySQL database, of which the
      * connection information is provided by the {@code persistence-demo.yml} file. As this is a {@link Singleton}
      * provider, the result of this provider will be saved after it is first called.
      *

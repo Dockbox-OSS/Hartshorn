@@ -28,7 +28,7 @@ import org.dockbox.hartshorn.core.proxy.DelegatorAccessor;
 import org.dockbox.hartshorn.core.proxy.ProxyHandler;
 import org.dockbox.hartshorn.events.EventBus;
 import org.dockbox.hartshorn.events.annotations.Posting;
-import org.dockbox.hartshorn.persistence.JpaRepository;
+import org.dockbox.hartshorn.persistence.jpa.JpaRepository;
 
 import javax.inject.Inject;
 
