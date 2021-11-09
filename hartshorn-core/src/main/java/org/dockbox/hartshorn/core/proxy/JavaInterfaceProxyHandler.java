@@ -41,82 +41,83 @@ public class JavaInterfaceProxyHandler<T> implements InvocationHandler, ProxyHan
 
     @Override
     public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
-        return this.handler.invoke(null, method, null, args);
+        return this.handler().invoke(null, method, null, args);
     }
 
     public T proxy() {
-        return (T) Proxy.newProxyInstance(this.getClass().getClassLoader(), new Class[]{
-                this.handler.type().type()
+        T proxy = (T) Proxy.newProxyInstance(this.getClass().getClassLoader(), new Class[]{
+                this.handler().type().type()
         }, this);
+        this.handler().proxyInstance(proxy);
+        return proxy;
     }
 
     @Override
     public T proxy(final T existing) throws ApplicationException {
-        return this.handler.proxy(existing);
+        return this.handler().proxy(existing);
     }
 
     @Override
     public <C extends Context> void add(final C context) {
-        this.handler.add(context);
+        this.handler().add(context);
     }
 
     @Override
     public <N extends NamedContext> void add(final N context) {
-        this.handler.add(context);
+        this.handler().add(context);
     }
 
     @Override
     public <C extends Context> void add(final String name, final C context) {
-        this.handler.add(name, context);
+        this.handler().add(name, context);
     }
 
     @Override
     public <C extends Context> Exceptional<C> first(final ApplicationContext applicationContext, final Class<C> context) {
-        return this.handler.first(applicationContext, context);
+        return this.handler().first(applicationContext, context);
     }
 
     @Override
     public Exceptional<Context> first(final String name) {
-        return this.handler.first(name);
+        return this.handler().first(name);
     }
 
     @Override
     public <N extends Context> Exceptional<N> first(final String name, final Class<N> context) {
-        return this.handler.first(name, context);
+        return this.handler().first(name, context);
     }
 
     @Override
     public <C extends Context> List<C> all(final Class<C> context) {
-        return this.handler.all(context);
+        return this.handler().all(context);
     }
 
     @Override
     public List<Context> all(final String name) {
-        return this.handler.all(name);
+        return this.handler().all(name);
     }
 
     @Override
     public <N extends Context> List<N> all(final String name, final Class<N> context) {
-        return this.handler.all(name, context);
+        return this.handler().all(name, context);
     }
 
     @Override
     public TypeContext<T> type() {
-        return this.handler.type();
-    }
-
-    @SafeVarargs
-    @Override
-    public final void delegate(final ProxyAttribute<T, ?>... properties) {
-        this.handler.delegate(properties);
+        return this.handler().type();
     }
 
     @Override
-    public void delegate(final ProxyAttribute<T, ?> property) {
-        this.handler.delegate(property);
+    public void delegate(final MethodProxyContext<T, ?> property) {
+        this.handler().delegate(property);
+    }
+
+    @Override
+    public Exceptional<T> proxyInstance() {
+        return this.handler().proxyInstance();
     }
 
     public Object invoke(final Object self, final Method thisMethod, final Method proceed, final Object[] args) throws Throwable {
-        return this.handler.invoke(self, thisMethod, proceed, args);
+        return this.handler().invoke(self, thisMethod, proceed, args);
     }
 }

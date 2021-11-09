@@ -24,6 +24,7 @@ import org.dockbox.hartshorn.core.context.DefaultContext;
 import org.dockbox.hartshorn.core.context.element.FieldContext;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
+import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 
 import java.lang.reflect.InvocationTargetException;
@@ -40,8 +41,9 @@ import lombok.Getter;
 
 public class JavassistProxyHandler<T> extends DefaultContext implements ProxyHandler<T>, MethodHandler {
 
-    private final MultiMap<Method, ProxyAttribute<T, ?>> handlers = new ArrayListMultiMap<>();
+    private final MultiMap<Method, MethodProxyContext<T, ?>> handlers = new ArrayListMultiMap<>();
     private final T instance;
+    private T proxyInstance;
 
     @Getter
     private final TypeContext<T> type;
@@ -60,11 +62,12 @@ public class JavassistProxyHandler<T> extends DefaultContext implements ProxyHan
     }
 
     @SafeVarargs
-    public final void delegate(final ProxyAttribute<T, ?>... properties) {
-        for (final ProxyAttribute<T, ?> property : properties) this.delegate(property);
+    public final void delegate(final MethodProxyContext<T, ?>... properties) {
+        for (final MethodProxyContext<T, ?> property : properties) this.delegate(property);
     }
 
-    public void delegate(final ProxyAttribute<T, ?> property) {
+    @Override
+    public void delegate(final MethodProxyContext<T, ?> property) {
         if (Modifier.isFinal(property.target().getModifiers()))
             throw new ApplicationException("Cannot proxy final method " + property.target().getName()).runtime();
         
@@ -75,12 +78,12 @@ public class JavassistProxyHandler<T> extends DefaultContext implements ProxyHan
     public Object invoke(final Object self, final Method thisMethod, final Method proceed, final Object[] args) throws Throwable {
         // The handler listens for all methods, while not all methods are proxied
         if (this.handlers.containsKey(thisMethod)) {
-            final Collection<ProxyAttribute<T, ?>> properties = this.handlers.get(thisMethod);
+            final Collection<MethodProxyContext<T, ?>> properties = this.handlers.get(thisMethod);
             Object returnValue = null;
             // Sort the list so all properties are prioritised. The phase at which the property will be
             // delegated does not matter here, as out-of-phase properties are not performed.
-            final List<ProxyAttribute<T, ?>> toSort = new ArrayList<>(properties);
-            toSort.sort(Comparator.comparingInt(ProxyAttribute::priority));
+            final List<MethodProxyContext<T, ?>> toSort = new ArrayList<>(properties);
+            toSort.sort(Comparator.comparingInt(MethodProxyContext::priority));
 
             // Phase is sorted in execution order (HEAD, OVERWRITE, TAIL)
             for (final Phase phase : Phase.values())
@@ -96,7 +99,11 @@ public class JavassistProxyHandler<T> extends DefaultContext implements ProxyHan
                 target = proceed;
 
             if (target != null) {
-                return target.invoke(this.instance, args);
+                try {
+                    return target.invoke(this.instance, args);
+                } catch (InvocationTargetException e) {
+                    throw e.getCause();
+                }
             }
             else {
                 final StackTraceElement element = Thread.currentThread().getStackTrace()[3];
@@ -109,16 +116,16 @@ public class JavassistProxyHandler<T> extends DefaultContext implements ProxyHan
 
     private Object enterPhase(
             final Phase at,
-            final Iterable<ProxyAttribute<T, ?>> properties,
+            final Iterable<MethodProxyContext<T, ?>> properties,
             final Object[] args,
             final Method thisMethod,
             final Method proceed,
             final Object self,
             Object returnValue
-    ) throws InvocationTargetException, IllegalAccessException {
+    ) throws InvocationTargetException, IllegalAccessException, ApplicationException {
         // Used to ensure the target is performed if there is no OVERWRITE phase hook
         boolean target = true;
-        for (final ProxyAttribute<T, ?> property : properties) {
+        for (final MethodProxyContext<T, ?> property : properties) {
             if (at == property.phase()) {
                 final MethodContext<?, ?> methodContext = proceed == null ? null : MethodContext.of(proceed);
                 final Object result = property.delegate(this.instance, methodContext, self, args);
@@ -142,10 +149,12 @@ public class JavassistProxyHandler<T> extends DefaultContext implements ProxyHan
         return returnValue;
     }
 
+    @Override
     public T proxy() throws ApplicationException {
         return this.proxy(null);
     }
 
+    @Override
     public T proxy(final T existing) throws ApplicationException {
         if (this.type().isInterface()) {
             return new JavaInterfaceProxyHandler<>(this).proxy();
@@ -159,11 +168,21 @@ public class JavassistProxyHandler<T> extends DefaultContext implements ProxyHan
             final T proxy = (T) factory.create(new Class<?>[0], new Object[0], this);
             // New proxy instances
             if (existing != null) this.restoreFields(existing, proxy);
+            this.proxyInstance(proxy);
             return proxy;
         }
         catch (InvocationTargetException | NoSuchMethodException | InstantiationException | IllegalAccessException e) {
             throw new ApplicationException(e);
         }
+    }
+
+    @Override
+    public Exceptional<T> proxyInstance() {
+        return Exceptional.of(this.proxyInstance);
+    }
+
+    void proxyInstance(T proxyInstance) {
+        this.proxyInstance = proxyInstance;
     }
 
     private void restoreFields(final T existing, final T proxy) {

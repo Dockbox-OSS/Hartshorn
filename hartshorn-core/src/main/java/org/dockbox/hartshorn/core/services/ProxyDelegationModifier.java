@@ -63,9 +63,9 @@ public abstract class ProxyDelegationModifier<P, A extends Annotation> extends S
             final MethodContext<?, P> parent = parentMethod.get();
             final R defaultValue = (R) parent.returnType().defaultOrNull();
             return (instance, args, proxyContext) -> {
-                final R out = parent.invoke(concrete, args).map((r -> (R) r)).orElse(() -> defaultValue).orNull();
-                if (out == concrete) return (R) instance;
-                else return out;
+                R out = parent.invoke(concrete, args).map((r -> (R) r)).orElse(() -> defaultValue).orNull();
+                if (out == concrete) return (R) handler.proxyInstance().orNull();
+                return out;
             };
         }
         else {
