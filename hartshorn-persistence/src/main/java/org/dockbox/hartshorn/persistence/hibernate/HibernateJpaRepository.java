@@ -20,11 +20,13 @@ package org.dockbox.hartshorn.persistence.hibernate;
 import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.core.annotations.inject.Binds;
 import org.dockbox.hartshorn.core.annotations.inject.Bound;
+import org.dockbox.hartshorn.core.binding.Bindings;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 import org.dockbox.hartshorn.core.Enableable;
+import org.dockbox.hartshorn.core.exceptions.Except;
 import org.dockbox.hartshorn.persistence.JpaRepository;
 import org.dockbox.hartshorn.persistence.context.EntityContext;
 import org.dockbox.hartshorn.persistence.properties.PersistenceConnection;
@@ -198,6 +200,11 @@ public class HibernateJpaRepository<T, ID> implements JpaRepository<T, ID>, Enab
     public JpaRepository<T, ID> connection(final PersistenceConnection connection) {
         if (this.connection != null) throw new IllegalStateException("Connection has already been configured!");
         this.connection = connection;
+        try {
+            Bindings.enable(this);
+        } catch (ApplicationException e) {
+            Except.handle(e);
+        }
         return this;
     }
 
