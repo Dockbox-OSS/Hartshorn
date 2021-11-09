@@ -39,8 +39,6 @@ public class CommandServiceScanner implements ServiceProcessor<UseCommands> {
     @Override
     public <T> void process(final ApplicationContext context, final TypeContext<T> type) {
         final CommandGateway gateway = context.get(CommandGateway.class);
-        if (!type.methods(Command.class).isEmpty()) {
-            gateway.register(type);
-        }
+        gateway.register(type);
     }
 }
