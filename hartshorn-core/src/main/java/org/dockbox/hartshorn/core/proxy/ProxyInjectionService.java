@@ -25,7 +25,6 @@ import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 import org.dockbox.hartshorn.core.exceptions.Except;
-import org.dockbox.hartshorn.core.properties.Attribute;
 
 @Service(activators = UseBootstrap.class)
 public class ProxyInjectionService {
@@ -34,15 +33,16 @@ public class ProxyInjectionService {
     public void prepareInjectionPoints(final ApplicationContext context) {
         final ProxyableBootstrap proxyableBootstrap = context.get(ProxyableBootstrap.class);
         proxyableBootstrap.boostrapDelegates(context);
-        context.add(InjectionPoint.of(TypeContext.of(Object.class), (instance, type, properties) -> {
+        context.add(InjectionPoint.of(TypeContext.of(Object.class), (instance, type) -> {
             final ProxyHandler<Object> handler = context.environment().application().handler(type, instance);
             boolean proxy = false;
-            for (final Attribute<?> property : properties) {
-                if (property instanceof ProxyAttribute) {
-                    handler.delegate((ProxyAttribute<Object, ?>) property);
-                    proxy = true;
-                }
-            }
+            // TODO: Alternative
+//            for (final Attribute<?> property : properties) {
+//                if (property instanceof ProxyAttribute) {
+//                    handler.delegate((ProxyAttribute<Object, ?>) property);
+//                    proxy = true;
+//                }
+//            }
             if (proxy) {
                 try {
                     return handler.proxy(instance);
