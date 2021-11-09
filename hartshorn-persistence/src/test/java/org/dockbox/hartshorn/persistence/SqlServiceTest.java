@@ -69,7 +69,7 @@ class SqlServiceTest extends ApplicationAwareTest {
 
     public static Stream<Arguments> dialects() {
         return Stream.of(
-                Arguments.of(Remotes.DERBY, directory("derby")),
+                Arguments.of(Remotes.DERBY, directory(Remotes.DERBY, "derby")),
                 Arguments.of(Remotes.MYSQL, connection(Remotes.MYSQL, mySql, MySQLContainer.MYSQL_PORT)),
                 Arguments.of(Remotes.POSTGRESQL, connection(Remotes.POSTGRESQL, postgreSql, PostgreSQLContainer.POSTGRESQL_PORT)),
                 Arguments.of(Remotes.MARIADB, connection(Remotes.MARIADB, mariaDb, 3306))
@@ -81,9 +81,10 @@ class SqlServiceTest extends ApplicationAwareTest {
         return new PersistenceConnection(remote.url(server), container.getUsername(), container.getPassword(), remote);
     }
 
-    protected static Path directory(final String prefix) {
+    protected static PersistenceConnection directory(Remote remote, final String prefix) {
         try {
-            return Files.createTempDirectory(prefix);
+            Path dir = Files.createTempDirectory(prefix);
+            return new PersistenceConnection(remote.url(dir), "", "", remote);
         }
         catch (final Exception e) {
             Assumptions.assumeTrue(false);
@@ -94,8 +95,8 @@ class SqlServiceTest extends ApplicationAwareTest {
 
     @ParameterizedTest
     @MethodSource("dialects")
-    public void testJpaSave(final Remote remote, final Object target) {
-        final JpaRepository<User, Long> sql = this.sql(remote, target);
+    public void testJpaSave(final Remote remote, final PersistenceConnection target) {
+        final JpaRepository<User, Long> sql = this.sql(target);
         sql.save(new User("Guus"));
         sql.save(new User("Simon"));
         sql.save(new User("Josh"));
@@ -108,18 +109,14 @@ class SqlServiceTest extends ApplicationAwareTest {
         }
     }
 
-    protected JpaRepository<User, Long> sql(final Remote remote, final Object target) {
-        // TODO Alternative
-        return null;
-//        if (target instanceof PersistenceConnection connection)
-//            return this.context().get(UserJpaRepository.class, connection);
-//        else return this.context().get(UserJpaRepository.class, ConnectionAttribute.of(remote, target, "", ""));
+    protected JpaRepository<User, Long> sql(final PersistenceConnection target) {
+        return this.context().get(UserJpaRepository.class).connection(target);
     }
 
     @ParameterizedTest
     @MethodSource("dialects")
-    void testJpaDelete(final Remote remote, final Object target) {
-        final JpaRepository<User, Long> sql = this.sql(remote, target);
+    void testJpaDelete(final Remote remote, final PersistenceConnection target) {
+        final JpaRepository<User, Long> sql = this.sql(target);
         final User guus = new User("Guus");
         sql.save(guus);
         sql.save(new User("Simon"));
@@ -136,8 +133,8 @@ class SqlServiceTest extends ApplicationAwareTest {
 
     @ParameterizedTest
     @MethodSource("dialects")
-    void testJpaPersists(final Remote remote, final Object target) {
-        final JpaRepository<User, Long> sql = this.sql(remote, target);
+    void testJpaPersists(final Remote remote, final PersistenceConnection target) {
+        final JpaRepository<User, Long> sql = this.sql(target);
         final User user = new User("Guus");
         Assertions.assertEquals(0, user.id());
 
@@ -147,8 +144,8 @@ class SqlServiceTest extends ApplicationAwareTest {
 
     @ParameterizedTest
     @MethodSource("dialects")
-    void testJpaUpdate(final Remote remote, final Object target) {
-        final JpaRepository<User, Long> sql = this.sql(remote, target);
+    void testJpaUpdate(final Remote remote, final PersistenceConnection target) {
+        final JpaRepository<User, Long> sql = this.sql(target);
         final User guus = new User("Guus");
 
         sql.save(guus);
