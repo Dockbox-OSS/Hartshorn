@@ -17,29 +17,28 @@
 
 package org.dockbox.hartshorn.core.context;
 
+import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.core.boot.beta.HartshornApplicationManager;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
-import org.dockbox.hartshorn.core.HartshornUtils;
 
 import java.lang.annotation.Annotation;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import lombok.AccessLevel;
 import lombok.Getter;
 
 public class ApplicationEnvironment {
 
-    @Getter(AccessLevel.PACKAGE) private final PrefixContext context;
+    @Getter private final PrefixContext prefixContext;
     @Getter private final boolean isCI;
     @Getter private final HartshornApplicationManager application;
 
     public ApplicationEnvironment(final Collection<String> prefixes, final HartshornApplicationManager application) {
         this.application = application;
         this.isCI = this.detectCI();
-        this.context = new PrefixContext(prefixes, this);
-        this.application().log().debug("Created new application environment (isCI: %s, prefixCount: %d)".formatted(this.isCI(), this.context().prefixes().size()));
+        this.prefixContext = new PrefixContext(prefixes, this);
+        this.application().log().debug("Created new application environment (isCI: %s, prefixCount: %d)".formatted(this.isCI(), this.prefixContext().prefixes().size()));
     }
 
     private boolean detectCI() {
@@ -47,7 +46,7 @@ public class ApplicationEnvironment {
     }
 
     public void prefix(final String prefix) {
-        this.context.prefix(prefix);
+        this.prefixContext.prefix(prefix);
     }
 
     /**
@@ -63,7 +62,11 @@ public class ApplicationEnvironment {
      * @return The annotated types
      */
     public <A extends Annotation> Collection<TypeContext<?>> types(final Class<A> annotation) {
-        return this.context.types(annotation);
+        return this.prefixContext.types(annotation);
+    }
+
+    public <A extends Annotation> Collection<TypeContext<?>> types(final String prefix, final Class<A> annotation, final boolean skipParents) {
+        return this.prefixContext.types(prefix, annotation, skipParents);
     }
 
     /**
@@ -81,7 +84,7 @@ public class ApplicationEnvironment {
      * @return The annotated types
      */
     public <A extends Annotation> Collection<TypeContext<?>> types(final Class<A> annotation, final boolean skipParents) {
-        return this.context.types(annotation, skipParents);
+        return this.prefixContext.types(annotation, skipParents);
     }
 
     /**
@@ -96,11 +99,11 @@ public class ApplicationEnvironment {
      * @return The list of sub-types, or an empty list
      */
     public <T> Collection<TypeContext<? extends T>> children(final TypeContext<T> parent) {
-        return this.context.children(parent);
+        return this.prefixContext.children(parent);
     }
 
     public <T> Collection<TypeContext<? extends T>> children(final Class<T> parent) {
-        return this.context.children(parent);
+        return this.prefixContext.children(parent);
     }
 
     /**

@@ -37,13 +37,16 @@ public class HartshornApplicationConfigurator implements ApplicationConfigurator
     }
 
     @Override
-    public void apply(final ApplicationManager manager, Set<InjectConfiguration> configurations) {
+    public void apply(final ApplicationManager manager, final Set<InjectConfiguration> configurations) {
         for (final InjectConfiguration config : configurations)
             manager.applicationContext().bind(config);
     }
 
     @Override
-    public void bind(ApplicationManager manager, String prefix) {
+    public void bind(final ApplicationManager manager, final String prefix) {
+        for (final String scannedPrefix : manager.applicationContext().environment().prefixContext().prefixes()) {
+            if (prefix.startsWith(scannedPrefix) && !prefix.equals(scannedPrefix)) return;
+        }
         manager.applicationContext().bind(prefix);
     }
 
@@ -55,7 +58,7 @@ public class HartshornApplicationConfigurator implements ApplicationConfigurator
         return this.primitiveProperty(manager, "hartshorn.exceptions.stacktraces", boolean.class, true);
     }
 
-    protected <T> T primitiveProperty(final ApplicationManager manager, String property, Class<T> type, T defaultValue) {
+    protected <T> T primitiveProperty(final ApplicationManager manager, final String property, final Class<T> type, final T defaultValue) {
         return manager.applicationContext()
                 .property(property)
                 .map(value -> {
@@ -63,7 +66,7 @@ public class HartshornApplicationConfigurator implements ApplicationConfigurator
                         if (value instanceof String str)
                             return TypeContext.toPrimitive(TypeContext.of(type), str);
                         else return (T) value;
-                    } catch (TypeConversionException e) {
+                    } catch (final TypeConversionException e) {
                         throw new ApplicationException(e);
                     }
                 })

@@ -309,7 +309,7 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
 
     @Override
     public void reset() {
-        this.environment.context().reset();
+        this.environment.prefixContext().reset();
         this.hierarchies.clear();
         this.contexts.clear();
         this.singletons.clear();
@@ -436,19 +436,21 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
     public void bind(final String prefix) {
         this.environment().prefix(prefix);
 
-        final Collection<TypeContext<?>> binders = this.environment().types(Binds.class);
+        final Collection<TypeContext<?>> binders = this.environment().types(prefix, Binds.class, false);
+
         for (final TypeContext<?> binder : binders) {
             final Binds bindAnnotation = binder.annotation(Binds.class).get();
             this.handleBinder(binder, bindAnnotation);
         }
 
-        final Collection<TypeContext<?>> multiBinders = this.environment().types(Combines.class);
+        final Collection<TypeContext<?>> multiBinders = this.environment().types(prefix, Combines.class, false);
         for (final TypeContext<?> binder : multiBinders) {
             final Combines bindAnnotation = binder.annotation(Combines.class).get();
             for (final Binds annotation : bindAnnotation.value()) {
                 this.handleBinder(binder, annotation);
             }
         }
+
         this.process(prefix);
     }
 
@@ -578,7 +580,7 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
     }
 
     public void lookupActivatables() {
-        for (final String prefix : this.environment().context().prefixes()) {
+        for (final String prefix : this.environment().prefixContext().prefixes()) {
             this.lookup(prefix, ComponentProcessor.class, ApplicationContext::add);
             this.lookup(prefix, InjectionModifier.class, ApplicationContext::add);
         }

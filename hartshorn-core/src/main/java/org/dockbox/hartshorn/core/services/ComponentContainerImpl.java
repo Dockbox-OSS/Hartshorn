@@ -29,6 +29,7 @@ import org.dockbox.hartshorn.core.HartshornUtils;
 
 import java.lang.annotation.Annotation;
 import java.util.List;
+import java.util.Objects;
 
 import lombok.Getter;
 
@@ -109,5 +110,18 @@ public class ComponentContainerImpl implements ComponentContainer {
     @Override
     public ComponentType componentType() {
         return this.annotation.type();
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (o == null || this.getClass() != o.getClass()) return false;
+        final ComponentContainerImpl that = (ComponentContainerImpl) o;
+        return this.component.equals(that.component);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.component);
     }
 }

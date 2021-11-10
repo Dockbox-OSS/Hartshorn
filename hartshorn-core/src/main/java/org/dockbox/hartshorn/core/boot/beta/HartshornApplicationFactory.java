@@ -31,6 +31,7 @@ import org.dockbox.hartshorn.core.domain.Exceptional;
 
 import java.lang.annotation.Annotation;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -58,19 +59,19 @@ public class HartshornApplicationFactory implements ApplicationFactory<Hartshorn
     private final Set<String> prefixes = HartshornUtils.emptyConcurrentSet();
 
     @Override
-    public HartshornApplicationFactory modifiers(Modifier... modifiers) {
+    public HartshornApplicationFactory modifiers(final Modifier... modifiers) {
         this.modifiers.addAll(HartshornUtils.asSet(modifiers));
         return this.self();
     }
 
     @Override
-    public HartshornApplicationFactory modifier(Modifier modifier) {
+    public HartshornApplicationFactory modifier(final Modifier modifier) {
         this.modifiers.add(modifier);
         return this.self();
     }
 
     @Override
-    public HartshornApplicationFactory activator(TypeContext<?> activator) {
+    public HartshornApplicationFactory activator(final TypeContext<?> activator) {
         final Exceptional<Activator> annotation = activator.annotation(Activator.class);
         if (annotation.absent())
             throw new IllegalArgumentException("Application type should be decorated with @Activator");
@@ -83,43 +84,49 @@ public class HartshornApplicationFactory implements ApplicationFactory<Hartshorn
     }
 
     @Override
-    public HartshornApplicationFactory argument(String argument) {
+    public HartshornApplicationFactory argument(final String argument) {
         this.arguments.add(argument);
         return this.self();
     }
 
     @Override
-    public HartshornApplicationFactory arguments(String... args) {
+    public HartshornApplicationFactory arguments(final String... args) {
         this.arguments.addAll(HartshornUtils.asSet(args));
         return this.self();
     }
 
     @Override
-    public HartshornApplicationFactory serviceActivator(Annotation annotation) {
+    public HartshornApplicationFactory serviceActivators(final Set<Annotation> annotations) {
+        this.serviceActivators.addAll(annotations);
+        return this.self();
+    }
+
+    @Override
+    public HartshornApplicationFactory serviceActivator(final Annotation annotation) {
         this.serviceActivators.add(annotation);
         return this.self();
     }
 
     @Override
-    public HartshornApplicationFactory prefix(String prefix) {
+    public HartshornApplicationFactory prefix(final String prefix) {
         this.prefixes.add(prefix);
         return this.self();
     }
 
     @Override
-    public HartshornApplicationFactory prefixes(Set<String> prefixes) {
+    public HartshornApplicationFactory prefixes(final Set<String> prefixes) {
         this.prefixes.addAll(prefixes);
         return this.self();
     }
 
     @Override
-    public HartshornApplicationFactory prefixes(String... prefixes) {
+    public HartshornApplicationFactory prefixes(final String... prefixes) {
         this.prefixes.addAll(HartshornUtils.asSet(prefixes));
         return this.self();
     }
 
     @Override
-    public HartshornApplicationFactory configuration(InjectConfiguration injectConfiguration) {
+    public HartshornApplicationFactory configuration(final InjectConfiguration injectConfiguration) {
         this.injectConfigurations.add(injectConfiguration);
         return this.self();
     }
@@ -131,26 +138,26 @@ public class HartshornApplicationFactory implements ApplicationFactory<Hartshorn
         Hartshorn.log().info("Starting " + Hartshorn.PROJECT_NAME + " with activator " + this.activator.name());
 
         final long startTime = System.currentTimeMillis();
-        HartshornApplicationManager manager = new HartshornApplicationManager(this.applicationLogger, this.applicationProxier);
+        final HartshornApplicationManager manager = new HartshornApplicationManager(this.applicationLogger, this.applicationProxier);
 
-        HartshornApplicationContext applicationContext = new HartshornApplicationContext(manager, this.activator, this.prefixes, this.arguments, this.modifiers);
+        final HartshornApplicationContext applicationContext = new HartshornApplicationContext(manager, this.activator, this.prefixes, this.arguments, this.modifiers);
         manager.applicationContext(applicationContext);
 
-        ApplicationConfigurator configurator = this.applicationConfigurator;
+        final ApplicationConfigurator configurator = this.applicationConfigurator;
         configurator.configure(manager);
 
         final long createdTime = System.currentTimeMillis();
 
-        for (LifecycleObserver observer : manager.observers())
+        for (final LifecycleObserver observer : manager.observers())
             observer.onCreated(applicationContext);
 
-        for (Annotation serviceActivator : this.serviceActivators)
+        for (final Annotation serviceActivator : this.serviceActivators)
             applicationContext.addActivator(serviceActivator);
 
         applicationContext.lookupActivatables();
 
-        Activator activator = this.activatorAnnotation();
-        Set<InjectConfiguration> configurations = Arrays.stream(activator.configs())
+        final Activator activator = this.activatorAnnotation();
+        final Set<InjectConfiguration> configurations = Arrays.stream(activator.configs())
                 .map(InjectConfig::value)
                 .map(TypeContext::of)
                 .map(applicationContext::raw)
@@ -159,16 +166,20 @@ public class HartshornApplicationFactory implements ApplicationFactory<Hartshorn
         configurator.apply(manager, configurations);
         configurator.apply(manager, this.injectConfigurations);
 
-        for (String prefix : this.prefixes) configurator.bind(manager, prefix);
+        final Set<String> scanPackages = HartshornUtils.asSet(activator.scanPackages());
+        final Collection<String> scanPrefixes = HartshornUtils.merge(this.prefixes, scanPackages);
 
-        String activatorPrefix = activator.prefix();
-        if ("".equals(activatorPrefix))
-            activatorPrefix = this.activator.type().getPackageName();
+        if (activator.includeBasePackage())
+            scanPrefixes.add(this.activator.type().getPackageName());
 
-        if (!this.prefixes.contains(activatorPrefix))
-            configurator.bind(manager, activatorPrefix);
+        // Always load Hartshorn internals first
+        configurator.bind(manager, Hartshorn.PACKAGE_PREFIX);
 
-        for (LifecycleObserver observer : manager.observers())
+        for (final String prefix : scanPrefixes) {
+            configurator.bind(manager, prefix);
+        }
+
+        for (final LifecycleObserver observer : manager.observers())
             observer.onStarted(applicationContext);
 
         final long startedTime = System.currentTimeMillis();
@@ -191,8 +202,7 @@ public class HartshornApplicationFactory implements ApplicationFactory<Hartshorn
     }
 
     public HartshornApplicationFactory loadDefaults() {
-        return this.prefix(Hartshorn.PACKAGE_PREFIX)
-                .applicationLogger(new HartshornApplicationLogger())
+        return this.applicationLogger(new HartshornApplicationLogger())
                 .applicationConfigurator(new HartshornApplicationConfigurator())
                 .applicationProxier(new HartshornApplicationProxier())
                 .serviceActivator(new UseBootstrap() {

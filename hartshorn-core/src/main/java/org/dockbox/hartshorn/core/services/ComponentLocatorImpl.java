@@ -17,8 +17,8 @@
 
 package org.dockbox.hartshorn.core.services;
 
-import org.dockbox.hartshorn.core.ArrayListMultiMap;
 import org.dockbox.hartshorn.core.ComponentType;
+import org.dockbox.hartshorn.core.HashSetMultiMap;
 import org.dockbox.hartshorn.core.MultiMap;
 import org.dockbox.hartshorn.core.annotations.component.Component;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
@@ -30,7 +30,7 @@ import java.util.List;
 
 public class ComponentLocatorImpl implements ComponentLocator {
 
-    private static final MultiMap<String, ComponentContainer> cache = new ArrayListMultiMap<>();
+    private static final MultiMap<String, ComponentContainer> cache = new HashSetMultiMap<>();
     private final ApplicationContext context;
 
     public ComponentLocatorImpl(final ApplicationContext context) {
@@ -46,7 +46,7 @@ public class ComponentLocatorImpl implements ComponentLocator {
         final long start = System.currentTimeMillis();
         this.context.environment().prefix(prefix);
 
-        final Collection<TypeContext<?>> types = this.context.environment().types(Component.class);
+        final Collection<TypeContext<?>> types = this.context.environment().types(prefix, Component.class, false);
 
         final List<ComponentContainer> containers = types.stream()
                 .map(type -> new ComponentContainerImpl(this.context, type))
@@ -58,7 +58,6 @@ public class ComponentLocatorImpl implements ComponentLocator {
         final long duration = System.currentTimeMillis() - start;
         this.context.log().info("Collected %d types and %d components with prefix %s in %dms".formatted(types.size(), containers.size(), prefix, duration));
 
-        // TODO Fix duplicates, remove static cache
         ComponentLocatorImpl.cache.putAll(prefix, containers);
     }
 
