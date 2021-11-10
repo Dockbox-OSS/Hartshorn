@@ -380,6 +380,16 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
         return this.isNative;
     }
 
+    public boolean isArray() {
+        return this.type.isArray();
+    }
+
+    public Exceptional<TypeContext<?>> elementType() {
+        return this.isArray()
+                ? Exceptional.of(of(this.type().getComponentType()))
+                : Exceptional.of(new IllegalArgumentException("The reflected type must be an array to use this command"));
+    }
+
     public List<ConstructorContext<T>> constructors() {
         if (this.constructors == null) {
             this.verifyMetadataAvailable();
