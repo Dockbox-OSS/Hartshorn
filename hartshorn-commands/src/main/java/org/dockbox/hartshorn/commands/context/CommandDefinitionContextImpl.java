@@ -256,7 +256,7 @@ public class CommandDefinitionContextImpl extends DefaultContext implements Comm
             return new CommandFlagImpl(name);
         }
         else {
-            this.context.log().warn("Determined flag definition with type '%s' for '%s'".formatted(type, name));
+            this.context.log().debug("Determined flag definition with type '%s' for '%s'".formatted(type, name));
             return new CommandFlagElement<>(this.lookupElement(type, name, true));
         }
     }
