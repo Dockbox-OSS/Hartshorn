@@ -104,6 +104,7 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
     @Getter private final boolean isPrimitive;
     @Getter private final boolean isEnum;
     @Getter private final boolean isAnnotation;
+    @Getter private final boolean isArray;
 
     private final Map<String, FieldContext<?>> fields = HartshornUtils.emptyConcurrentMap();
 
@@ -119,6 +120,7 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
     private Map<Class<?>, Annotation> annotations;
     private MultiMap<String, MethodContext<?, T>> methods;
     private Exceptional<ConstructorContext<T>> defaultConstructor;
+    private Exceptional<TypeContext<?>> elementType;
     private Tristate isProxy = Tristate.UNDEFINED;
 
     protected TypeContext(final Class<T> type) {
@@ -131,6 +133,7 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
         this.isPrimitive = type.isPrimitive();
         this.isEnum = type.isEnum();
         this.isAnnotation = type.isAnnotation();
+        this.isArray = type.isArray();
     }
 
     public static <T> TypeContext<T> unproxy(final ApplicationContext context, final T instance) {
@@ -380,14 +383,14 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
         return this.isNative;
     }
 
-    public boolean isArray() {
-        return this.type().isArray();
-    }
-
     public Exceptional<TypeContext<?>> elementType() {
-        return this.isArray()
-                ? Exceptional.of(of(this.type().getComponentType()))
-                : Exceptional.of(new IllegalArgumentException("The reflected type must be an array to use this command"));
+        if (this.elementType == null) {
+            this.verifyMetadataAvailable();
+            this.elementType = this.isArray()
+                    ? Exceptional.of(of(this.type().getComponentType()))
+                    : Exceptional.of(new IllegalArgumentException("The reflected type must be an array to use this command"));
+        }
+        return this.elementType;
     }
 
     public List<ConstructorContext<T>> constructors() {
