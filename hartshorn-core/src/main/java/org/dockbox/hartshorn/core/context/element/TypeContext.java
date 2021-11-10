@@ -381,7 +381,7 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
     }
 
     public boolean isArray() {
-        return this.type.isArray();
+        return this.type().isArray();
     }
 
     public Exceptional<TypeContext<?>> elementType() {
