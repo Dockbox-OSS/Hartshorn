@@ -19,7 +19,6 @@ package org.dockbox.hartshorn.core.annotations.activate;
 
 import org.dockbox.hartshorn.core.ApplicationBootstrap;
 import org.dockbox.hartshorn.core.annotations.inject.InjectConfig;
-import org.dockbox.hartshorn.core.proxy.ProxyApplicationBootstrap;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -37,7 +36,7 @@ public @interface Activator {
     /**
      * @return The bootstrap type which should be used for the current activator.
      */
-    Class<? extends ApplicationBootstrap> value() default ProxyApplicationBootstrap.class;
+    Class<? extends ApplicationBootstrap> value() default ApplicationBootstrap.class;
 
     /**
      * @return The default prefix for the activator. If this is left empty the package of

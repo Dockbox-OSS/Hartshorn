@@ -17,6 +17,7 @@
 
 package org.dockbox.hartshorn.demo.persistence.services;
 
+import org.dockbox.hartshorn.core.boot.beta.HartshornApplicationManager;
 import org.dockbox.hartshorn.core.annotations.service.Service;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
@@ -53,7 +54,7 @@ public abstract class UserRepository implements JpaRepository<User, Long>, Deleg
      * are automatically delegated to the real repository which is attached to this {@link UserRepository} instance.
      *
      * <p>However, as this repository overrides the method, it will not be proxied. To still be able to use the backing
-     * {@link JpaRepository}, it is looked up through {@link org.dockbox.hartshorn.core.ApplicationContextAware#delegator(TypeContext, Object)}.
+     * {@link JpaRepository}, it is looked up through {@link HartshornApplicationManager#delegator(TypeContext, Object)}.
      * This is possible as backing implementations are attached as context to the {@link ProxyHandler}
      * responsible for this {@link JpaRepository}. Doing that manually would be less than preferable, so instead we
      * 'implement' {@link DelegatorAccessor} so we can access the delegator through there directly. Like the

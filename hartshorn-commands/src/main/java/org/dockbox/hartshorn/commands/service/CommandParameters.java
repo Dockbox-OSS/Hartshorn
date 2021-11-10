@@ -31,7 +31,7 @@ import org.dockbox.hartshorn.core.services.ServiceOrder;
 
 /**
  * Scans for any type annotated with {@link Parameter} and registers a {@link DynamicPatternConverter}
- * for each type found. Requires the use of a {@link org.dockbox.hartshorn.core.InjectableBootstrap} and
+ * for each type found. Requires the use of a {@link org.dockbox.hartshorn.core.boot.beta.ApplicationManager} and
  * presence of {@link UseBootstrap}.
  */
 public class CommandParameters implements ComponentProcessor<UseCommands> {

@@ -17,26 +17,30 @@
 
 package org.dockbox.hartshorn.commands.service;
 
-import org.dockbox.hartshorn.core.boot.annotations.PostBootstrap;
-import org.dockbox.hartshorn.core.boot.annotations.UseBootstrap;
+import org.dockbox.hartshorn.commands.annotations.UseCommands;
 import org.dockbox.hartshorn.core.annotations.service.Service;
+import org.dockbox.hartshorn.core.boot.beta.LifecycleObserver;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.core.context.element.ParameterContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 
-@Service(activators = UseBootstrap.class)
-public class CommandParameterValidator {
+@Service(activators = UseCommands.class)
+public class CommandParameterValidator implements LifecycleObserver {
 
-    @PostBootstrap
-    public void preload(final ApplicationContext context) {
-        final MethodContext<?, CommandParameterValidator> preload = TypeContext.of(this).method("preload", ApplicationContext.class).get();
-        final ParameterContext<?> parameter = preload.parameters().get(0);
-        if (!"context".equals(parameter.name())) {
-            context.log().warn("Parameter names are obfuscated, this will cause commands with @Parameter to be unable to inject arguments.");
-            context.log().warn("   Add -parameters to your compiler args to keep parameter names.");
-            context.log().warn("   See: https://docs.oracle.com/javase/tutorial/reflect/member/methodparameterreflection.html for more information.");
-        }
+    @Override
+    public void onCreated(ApplicationContext applicationContext) {
+        // Nothing happens
     }
 
+    @Override
+    public void onStarted(ApplicationContext applicationContext) {
+        final MethodContext<?, CommandParameterValidator> preload = TypeContext.of(this).method("onStarted", ApplicationContext.class).get();
+        final ParameterContext<?> parameter = preload.parameters().get(0);
+        if (!"applicationContext".equals(parameter.name())) {
+            applicationContext.log().warn("Parameter names are obfuscated, this will cause commands with @Parameter to be unable to inject arguments.");
+            applicationContext.log().warn("   Add -parameters to your compiler args to keep parameter names.");
+            applicationContext.log().warn("   See: https://docs.oracle.com/javase/tutorial/reflect/member/methodparameterreflection.html for more information.");
+        }
+    }
 }

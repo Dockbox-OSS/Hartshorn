@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.core.context;
 
-import org.dockbox.hartshorn.core.ApplicationContextAware;
+import org.dockbox.hartshorn.core.boot.beta.HartshornApplicationManager;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.HartshornUtils;
 
@@ -33,9 +33,9 @@ public class ApplicationEnvironment {
 
     @Getter(AccessLevel.PACKAGE) private final PrefixContext context;
     @Getter private final boolean isCI;
-    @Getter private final ApplicationContextAware application;
+    @Getter private final HartshornApplicationManager application;
 
-    public ApplicationEnvironment(final Collection<String> prefixes, final ApplicationContextAware application) {
+    public ApplicationEnvironment(final Collection<String> prefixes, final HartshornApplicationManager application) {
         this.application = application;
         this.isCI = this.detectCI();
         this.context = new PrefixContext(prefixes, this);

@@ -17,7 +17,8 @@
 
 package org.dockbox.hartshorn.core.context;
 
-import org.dockbox.hartshorn.core.ApplicationContextAware;
+import org.dockbox.hartshorn.core.ActivatorFiltered;
+import org.dockbox.hartshorn.core.boot.beta.HartshornApplicationManager;
 import org.dockbox.hartshorn.core.ArrayListMultiMap;
 import org.dockbox.hartshorn.core.ComponentType;
 import org.dockbox.hartshorn.core.DefaultModifiers;
@@ -65,6 +66,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
@@ -89,15 +91,15 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
     @Getter private final ApplicationEnvironment environment;
 
     private final ComponentLocator locator;
-    private final List<Modifier> modifiers;
-    private final List<Annotation> activators = HartshornUtils.emptyList();
+    private final Set<Modifier> modifiers;
+    private final Set<Annotation> activators = HartshornUtils.emptyConcurrentSet();
     private final Map<Key<?>, Object> singletons = HartshornUtils.emptyConcurrentMap();
     private final Map<Key<?>, BindingHierarchy<?>> hierarchies = HartshornUtils.emptyConcurrentMap();
     private MetaProvider metaProvider;
 
-    public HartshornApplicationContext(final ApplicationContextAware application, final TypeContext<?> activationSource, final Collection<String> prefixes, final String[] args, final Modifier... modifiers) {
+    public HartshornApplicationContext(final HartshornApplicationManager manager, final TypeContext<?> activationSource, final Set<String> prefixes, final Set<String> args, final Set<Modifier> modifiers) {
         this.singletons.put(Key.of(ApplicationContext.class), this);
-        this.environment = new ApplicationEnvironment(prefixes, application);
+        this.environment = new ApplicationEnvironment(prefixes, manager);
         final Exceptional<Activator> activator = activationSource.annotation(Activator.class);
         if (activator.absent()) {
             throw new IllegalStateException("Activation source is not marked with @Activator");
@@ -111,7 +113,7 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
         this.populateArguments(args);
 
         this.locator = new ComponentLocatorImpl(this);
-        this.modifiers = HartshornUtils.asUnmodifiableList(modifiers);
+        this.modifiers = modifiers;
         this.modify(this.modifiers);
 
         this.bind(Key.of(ApplicationContext.class), this);
@@ -279,14 +281,14 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
         return this.environmentValues;
     }
 
-    private void populateArguments(final String[] args) {
+    private void populateArguments(final Set<String> args) {
         for (final String arg: args) {
             final Matcher matcher = ARGUMENTS.matcher(arg);
             if (matcher.find()) this.property(matcher.group(1), matcher.group(2));
         }
     }
 
-    protected void modify(final List<Modifier> modifiers) {
+    protected void modify(final Set<Modifier> modifiers) {
         for (final Modifier modifier : modifiers) {
             if (modifier instanceof MetaProviderModifier metaProviderModifier) {
                 this.metaProvider = metaProviderModifier.provider(this);
@@ -573,5 +575,23 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
     @Override
     public <C, T extends C> void bind(final Key<C> contract, final T instance) {
         this.inHierarchy(contract, hierarchy -> hierarchy.add(Providers.of(instance)));
+    }
+
+    public void lookupActivatables() {
+        for (final String prefix : this.environment().context().prefixes()) {
+            this.lookup(prefix, ComponentProcessor.class, ApplicationContext::add);
+            this.lookup(prefix, InjectionModifier.class, ApplicationContext::add);
+        }
+    }
+
+    private <T extends ActivatorFiltered<?>> void lookup(final String prefix, final Class<T> type, final BiConsumer<ApplicationContext, T> consumer) {
+        final Collection<TypeContext<? extends T>> children = this.environment().children(type);
+        for (final TypeContext<? extends T> child : children) {
+            if (child.isAbstract()) continue;
+
+            final T raw = this.raw(child, false);
+            if (this.hasActivator(raw.activator()))
+                consumer.accept(this, raw);
+        }
     }
 }

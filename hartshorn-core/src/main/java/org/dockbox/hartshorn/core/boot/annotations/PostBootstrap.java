@@ -17,7 +17,6 @@
 
 package org.dockbox.hartshorn.core.boot.annotations;
 
-import org.dockbox.hartshorn.core.boot.HartshornBootstrap;
 import org.dockbox.hartshorn.core.annotations.service.Service;
 
 import java.lang.annotation.ElementType;
@@ -26,7 +25,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Indicates a method should be activated after {@link HartshornBootstrap} is done bootstrapping
+ * Indicates a method should be activated after {@link org.dockbox.hartshorn.core.ApplicationBootstrap} is done bootstrapping
  * the current instance. This requires the enclosing service to have its {@link Service#activators()} set to include {@link UseBootstrap}.
  */
 @Retention(RetentionPolicy.RUNTIME)

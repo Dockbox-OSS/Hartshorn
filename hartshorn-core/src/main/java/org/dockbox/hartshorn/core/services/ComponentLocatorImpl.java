@@ -56,8 +56,9 @@ public class ComponentLocatorImpl implements ComponentLocator {
                 .toList();
 
         final long duration = System.currentTimeMillis() - start;
-        this.context.log().info("Collected %d types and %d components in %dms".formatted(types.size(), containers.size(), duration));
+        this.context.log().info("Collected %d types and %d components with prefix %s in %dms".formatted(types.size(), containers.size(), prefix, duration));
 
+        // TODO Fix duplicates, remove static cache
         ComponentLocatorImpl.cache.putAll(prefix, containers);
     }
 

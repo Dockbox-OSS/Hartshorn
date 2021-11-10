@@ -28,21 +28,21 @@ public class HartshornApplicationTests {
 
     @Test
     void testCreationFailsWithAbsentDecorator() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> HartshornApplication.lazy(NonDecoratedActivator.class, new String[0]));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> HartshornApplication.create(NonDecoratedActivator.class, new String[0]));
     }
 
     @Test
     void testCreationFailsWithAbstractActivator() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> HartshornApplication.lazy(AbstractActivator.class, new String[0]));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> HartshornApplication.create(AbstractActivator.class, new String[0]));
     }
 
     @Test
     void testCreationFailsWithInterfaceActivator() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> HartshornApplication.lazy(InterfaceActivator.class, new String[0]));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> HartshornApplication.create(InterfaceActivator.class, new String[0]));
     }
 
     @Test
     void testCreationSucceedsWithValidActivator() {
-        Assertions.assertDoesNotThrow(() -> HartshornApplication.lazy(ValidActivator.class, new String[0]));
+        Assertions.assertDoesNotThrow(() -> HartshornApplication.create(ValidActivator.class, new String[0]));
     }
 }

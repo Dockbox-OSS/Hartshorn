@@ -17,7 +17,6 @@
 
 package org.dockbox.hartshorn.core.boot.annotations;
 
-import org.dockbox.hartshorn.core.boot.HartshornBootstrap;
 import org.dockbox.hartshorn.core.annotations.service.ServiceActivator;
 
 import java.lang.annotation.ElementType;
@@ -27,7 +26,7 @@ import java.lang.annotation.Target;
 
 /**
  * Service activator for bootstrap-dependent services. This activator is automatically injected
- * when the application is created through {@link HartshornBootstrap}.
+ * when the application is created through {@link org.dockbox.hartshorn.core.ApplicationBootstrap}.
  *
  * @see PostBootstrap
  */

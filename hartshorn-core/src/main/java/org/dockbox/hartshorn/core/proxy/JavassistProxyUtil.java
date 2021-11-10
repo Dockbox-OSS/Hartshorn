@@ -31,11 +31,11 @@ import javassist.util.proxy.MethodHandler;
 import javassist.util.proxy.ProxyFactory;
 
 /**
- * @see ProxyApplicationBootstrap
+ * @see org.dockbox.hartshorn.core.boot.beta.HartshornApplicationProxier
  */
-class JavassistProxyUtil {
+public class JavassistProxyUtil {
 
-    static <T> ProxyHandler<T> handler(final TypeContext<T> context, final T instance) {
+    public static <T> ProxyHandler<T> handler(final TypeContext<T> context, final T instance) {
         return handler(context.type(), instance);
     }
 
@@ -44,7 +44,7 @@ class JavassistProxyUtil {
         return handler.orElse(() -> new JavassistProxyHandler<>(instance, type)).get();
     }
 
-    static <T> Exceptional<ProxyHandler<T>> handler(final T instance) {
+    public static <T> Exceptional<ProxyHandler<T>> handler(final T instance) {
         if (instance != null) {
             if (ProxyFactory.isProxyClass(instance.getClass())) {
                 final MethodHandler methodHandler = ProxyFactory.getHandler((javassist.util.proxy.Proxy) instance);
@@ -68,11 +68,11 @@ class JavassistProxyUtil {
         return Exceptional.empty();
     }
 
-    static <T, P extends T> Exceptional<T> delegator(final ApplicationContext context, final TypeContext<T> type, final P proxied) {
+    public static <T, P extends T> Exceptional<T> delegator(final ApplicationContext context, final TypeContext<T> type, final P proxied) {
         return JavassistProxyUtil.handler(proxied).flatMap(handler -> delegator(context, type, handler));
     }
 
-    static <T, P extends T> Exceptional<T> delegator(final ApplicationContext context, final TypeContext<T> type, final ProxyHandler<P> handler) {
+    public static <T, P extends T> Exceptional<T> delegator(final ApplicationContext context, final TypeContext<T> type, final ProxyHandler<P> handler) {
         return handler.first(context, BackingImplementationContext.class).flatMap(backingContext -> backingContext.get(type.type()));
     }
 }
