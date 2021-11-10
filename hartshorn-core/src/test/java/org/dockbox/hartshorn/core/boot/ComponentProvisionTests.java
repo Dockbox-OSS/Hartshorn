@@ -22,27 +22,15 @@ import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.services.ComponentContainer;
 import org.dockbox.hartshorn.testsuite.ApplicationAwareTest;
 import org.dockbox.hartshorn.testsuite.HartshornRunner;
-import org.dockbox.hartshorn.core.HartshornUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.util.Collection;
 import java.util.stream.Stream;
 
 @UseServiceProvision
 public class ComponentProvisionTests extends ApplicationAwareTest {
-
-    /**
-     * Used to indicate which services should not be tested, typically because
-     * they are targeted by other tests and/or are intended to fail.
-     */
-    private static final Collection<Class<?>> excluded = HartshornUtils.asList(
-            UnactivatedPostBootstrapService.class,
-            EmptyPostBootstrapService.class,
-            ValidPostBootstrapService.class
-    );
 
     public static Stream<Arguments> components() {
         return HartshornRunner.createContext(ComponentProvisionTests.class)
@@ -50,7 +38,6 @@ public class ComponentProvisionTests extends ApplicationAwareTest {
                 .locator()
                 .containers().stream()
                 .map(ComponentContainer::type)
-                .filter(type -> !excluded.contains(type.type()))
                 .map(Arguments::of);
     }
 

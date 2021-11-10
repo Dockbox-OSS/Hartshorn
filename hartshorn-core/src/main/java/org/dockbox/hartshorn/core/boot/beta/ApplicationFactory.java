@@ -39,6 +39,8 @@ public interface ApplicationFactory<Self extends ApplicationFactory<Self, C>, C 
 
     Self serviceActivator(Annotation annotation);
 
+    Self serviceActivators(Set<Annotation> annotations);
+
     Self applicationConfigurator(ApplicationConfigurator applicationConfigurator);
 
     Self applicationProxier(ApplicationProxier applicationProxier);
