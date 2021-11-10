@@ -562,6 +562,7 @@ public final class HartshornUtils {
 
     public static byte[] bytes(final String s, final String encoding) {
         try {
+            // skipcq: JAVA-W0243
             return null == s ? new byte[0] : s.getBytes(encoding);
         }
         catch (final UnsupportedEncodingException e) {
@@ -920,6 +921,7 @@ public final class HartshornUtils {
     }
 
     public static int trimLength(final String s) {
+        // skipcq: JAVA-W0243
         return (null == s) ? 0 : s.trim().length();
     }
 
@@ -1132,6 +1134,7 @@ public final class HartshornUtils {
         while ((st < len) && (val[len - 1] <= c)) {
             len--;
         }
+        // skipcq: JAVA-W0243
         return ((st > 0) || (len < s.length())) ? s.substring(st, len) : s;
     }
 
