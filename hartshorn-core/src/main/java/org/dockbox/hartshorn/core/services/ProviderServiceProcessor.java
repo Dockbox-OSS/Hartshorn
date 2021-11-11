@@ -20,6 +20,7 @@ package org.dockbox.hartshorn.core.services;
 import org.dockbox.hartshorn.core.Key;
 import org.dockbox.hartshorn.core.annotations.activate.UseServiceProvision;
 import org.dockbox.hartshorn.core.annotations.inject.Provider;
+import org.dockbox.hartshorn.core.annotations.service.AutomaticActivation;
 import org.dockbox.hartshorn.core.binding.Bindings;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
@@ -28,6 +29,7 @@ import org.dockbox.hartshorn.core.inject.ProviderContext;
 
 import java.util.List;
 
+@AutomaticActivation
 public final class ProviderServiceProcessor implements ServiceProcessor<UseServiceProvision> {
 
     @Override

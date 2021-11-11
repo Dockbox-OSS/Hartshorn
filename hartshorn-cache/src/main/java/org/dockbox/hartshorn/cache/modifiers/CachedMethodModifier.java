@@ -17,6 +17,7 @@
 
 package org.dockbox.hartshorn.cache.modifiers;
 
+import org.dockbox.hartshorn.core.annotations.service.AutomaticActivation;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 import org.dockbox.hartshorn.core.exceptions.Except;
@@ -36,6 +37,7 @@ import org.dockbox.hartshorn.core.context.MethodProxyContext;
  * decorated methods. This delegates functionality to the underlying {@link org.dockbox.hartshorn.cache.CacheManager}
  * to store or obtain {@link Cache} entries.
  */
+@AutomaticActivation
 public class CachedMethodModifier extends CacheServiceModifier<Cached> {
 
     @Override

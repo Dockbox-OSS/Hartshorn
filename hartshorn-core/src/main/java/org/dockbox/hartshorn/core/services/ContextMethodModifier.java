@@ -19,11 +19,13 @@ package org.dockbox.hartshorn.core.services;
 
 import org.dockbox.hartshorn.core.annotations.proxy.Provided;
 import org.dockbox.hartshorn.core.annotations.proxy.UseProxying;
+import org.dockbox.hartshorn.core.annotations.service.AutomaticActivation;
 import org.dockbox.hartshorn.core.binding.Bindings;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.MethodProxyContext;
 import org.dockbox.hartshorn.core.proxy.ProxyFunction;
 
+@AutomaticActivation
 public class ContextMethodModifier extends ServiceAnnotatedMethodModifier<Provided, UseProxying> {
     @Override
     public Class<UseProxying> activator() {

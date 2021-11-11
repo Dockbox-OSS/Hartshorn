@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.core.services;
 
 import org.dockbox.hartshorn.core.annotations.Factory;
 import org.dockbox.hartshorn.core.annotations.inject.Enable;
+import org.dockbox.hartshorn.core.annotations.service.AutomaticActivation;
 import org.dockbox.hartshorn.core.annotations.service.Service;
 import org.dockbox.hartshorn.core.binding.Bindings;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
@@ -29,6 +30,7 @@ import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 import org.dockbox.hartshorn.core.proxy.ProxyFunction;
 
+@AutomaticActivation
 public class FactoryServiceModifier extends ServiceAnnotatedMethodModifier<Factory, Service> {
 
     @Override

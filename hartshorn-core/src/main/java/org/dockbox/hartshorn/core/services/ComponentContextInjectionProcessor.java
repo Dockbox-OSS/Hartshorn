@@ -17,6 +17,7 @@
 
 package org.dockbox.hartshorn.core.services;
 
+import org.dockbox.hartshorn.core.annotations.service.AutomaticActivation;
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 import org.dockbox.hartshorn.core.annotations.inject.Context;
 import org.dockbox.hartshorn.core.annotations.service.Service;
@@ -32,6 +33,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@AutomaticActivation
 public class ComponentContextInjectionProcessor extends ComponentValidator<Service>{
 
     @Override
