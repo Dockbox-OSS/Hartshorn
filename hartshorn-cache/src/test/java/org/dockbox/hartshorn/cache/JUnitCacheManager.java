@@ -17,9 +17,12 @@
 
 package org.dockbox.hartshorn.cache;
 
+import org.dockbox.hartshorn.core.annotations.inject.Binds;
+
 import javax.inject.Singleton;
 
 @Singleton
+@Binds(value = CacheManager.class, priority = 0)
 public class JUnitCacheManager extends CacheManagerImpl {
 
     public void reset() {

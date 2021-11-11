@@ -21,15 +21,15 @@ import org.dockbox.hartshorn.config.annotations.UseConfigurations;
 import org.dockbox.hartshorn.core.boot.Hartshorn;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.persistence.FileManager;
-import org.dockbox.hartshorn.persistence.FileManagerTest;
 import org.dockbox.hartshorn.persistence.FileType;
+import org.dockbox.hartshorn.testsuite.ApplicationAwareTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.nio.file.Path;
 
 @UseConfigurations
-public class ConfigurationManagerTests extends FileManagerTest {
+public class ConfigurationManagerTests extends ApplicationAwareTest {
 
     @Test
     void testClassPathConfigurations() {
