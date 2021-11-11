@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.core.context;
 
-import org.dockbox.hartshorn.core.boot.HartshornApplicationManager;
+import org.dockbox.hartshorn.core.boot.ApplicationManager;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 
 import java.lang.annotation.Annotation;
@@ -30,7 +30,7 @@ public interface ApplicationEnvironment {
 
     boolean isCI();
 
-    public HartshornApplicationManager manager();
+    public ApplicationManager manager();
 
     void prefix(String prefix);
 
