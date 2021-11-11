@@ -21,6 +21,7 @@ import org.dockbox.hartshorn.core.GenericType;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.persistence.registry.Registry;
 import org.dockbox.hartshorn.persistence.registry.RegistryColumn;
+import org.dockbox.hartshorn.testsuite.ApplicationAwareTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -28,7 +29,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 
-public class DataStructuresSerializersTests extends FileManagerTest {
+public class DataStructuresSerializersTests extends ApplicationAwareTest {
 
     @Test
     public void testThatRegistryCanBeSerialised() {

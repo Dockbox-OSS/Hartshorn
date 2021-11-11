@@ -17,11 +17,13 @@
 
 package org.dockbox.hartshorn.persistence;
 
+import org.dockbox.hartshorn.core.annotations.inject.Binds;
 import org.dockbox.hartshorn.testsuite.HartshornRunner;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;
 
+@Binds(value = FileManager.class, priority = 0)
 public class JUnitFileManager extends DefaultAbstractFileManager {
 
     @NotNull

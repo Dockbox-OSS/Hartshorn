@@ -26,6 +26,7 @@ import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.i18n.Message;
 import org.dockbox.hartshorn.i18n.MessageTemplate;
+import org.dockbox.hartshorn.testsuite.ApplicationAwareTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -33,7 +34,7 @@ import java.util.List;
 import java.util.Locale;
 
 @UseCommands
-public class HashtagParameterPatternTests extends HartshornCommandTest {
+public class HashtagParameterPatternTests extends ApplicationAwareTest {
 
     @Test
     void testPreconditionsAcceptValidPattern() {

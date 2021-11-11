@@ -26,4 +26,5 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 public @interface Provider {
     String value() default "";
+    int priority() default -1;
 }
