@@ -15,22 +15,28 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.commands.arguments;
+package org.dockbox.hartshorn.persistence.jpa;
 
 import org.dockbox.hartshorn.core.context.element.ParameterContext;
-import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.services.parameter.ParameterLoaderRule;
+import org.dockbox.hartshorn.persistence.context.JpaParameterLoaderContext;
 
-public class CommandContextParameterRule implements ParameterLoaderRule<CommandParameterLoaderContext> {
+import javax.persistence.Query;
+
+public class JpaPaginationParameterRule implements ParameterLoaderRule<JpaParameterLoaderContext> {
 
     @Override
-    public boolean accepts(final ParameterContext<?> parameter, int index, final CommandParameterLoaderContext context, final Object... args) {
-        return TypeContext.of(context.commandContext()).childOf(parameter.type());
+    public boolean accepts(ParameterContext<?> parameter, int index, JpaParameterLoaderContext context, Object... args) {
+        return parameter.type().childOf(Pagination.class);
     }
 
     @Override
-    public <T> Exceptional<T> load(final ParameterContext<T> parameter, int index, final CommandParameterLoaderContext context, final Object... args) {
-        return Exceptional.of((T) context.commandContext());
+    public <T> Exceptional<T> load(ParameterContext<T> parameter, int index, JpaParameterLoaderContext context, Object... args) {
+        Query query = context.query();
+        Pagination pagination = (Pagination) args[index];
+        if (pagination.max() != null) query.setMaxResults(pagination.max());
+        if (pagination.start() != null) query.setFirstResult(pagination.start());
+        return Exceptional.of((T) args[index]);
     }
 }

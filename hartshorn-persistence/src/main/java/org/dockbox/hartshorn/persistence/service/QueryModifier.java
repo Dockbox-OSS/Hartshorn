@@ -26,7 +26,7 @@ import org.dockbox.hartshorn.core.proxy.ProxyContext;
 import org.dockbox.hartshorn.core.proxy.ProxyFunction;
 import org.dockbox.hartshorn.core.services.ServiceAnnotatedMethodModifier;
 import org.dockbox.hartshorn.core.services.ServiceOrder;
-import org.dockbox.hartshorn.persistence.JpaRepository;
+import org.dockbox.hartshorn.persistence.jpa.JpaRepository;
 import org.dockbox.hartshorn.persistence.QueryFunction;
 import org.dockbox.hartshorn.persistence.annotations.EntityModifier;
 import org.dockbox.hartshorn.persistence.annotations.Query;
@@ -71,7 +71,7 @@ public class QueryModifier extends ServiceAnnotatedMethodModifier<Query, UsePers
             final JpaRepository<?, ?> repository = (JpaRepository<?, ?>) methodContext.instance();
             if (query.automaticFlush()) repository.flush();
 
-            final QueryContext queryContext = new QueryContext(query, args, method, entityType, repository, transactional, modifying);
+            final QueryContext queryContext = new QueryContext(query, args, method, entityType, context, repository, transactional, modifying);
 
             final Object result = function.execute(queryContext);
 

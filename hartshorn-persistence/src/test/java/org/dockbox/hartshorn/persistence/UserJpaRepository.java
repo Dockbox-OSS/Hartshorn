@@ -18,6 +18,7 @@
 package org.dockbox.hartshorn.persistence;
 
 import org.dockbox.hartshorn.core.annotations.service.Service;
+import org.dockbox.hartshorn.persistence.jpa.JpaRepository;
 
 @Service
 public interface UserJpaRepository extends JpaRepository<User, Long> {
