@@ -499,10 +499,10 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
         final Key<Object> key = (Key<Object>) context.key();
         this.inHierarchy(key, hierarchy -> {
             if (context.singleton()) {
-                hierarchy.add(Providers.of(context.provider().get()));
+                hierarchy.add(context.priority(), Providers.of(context.provider().get()));
             }
             else {
-                hierarchy.add(Providers.of((Supplier<Object>) context.provider()));
+                hierarchy.add(context.priority(), Providers.of((Supplier<Object>) context.provider()));
             }
         });
     }

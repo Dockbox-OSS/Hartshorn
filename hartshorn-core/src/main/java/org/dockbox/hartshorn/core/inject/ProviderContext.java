@@ -30,6 +30,7 @@ public class ProviderContext<T> {
 
     private final Key<T> key;
     private final boolean singleton;
+    private final int priority;
     private final Supplier<T> provider;
 
 }
