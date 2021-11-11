@@ -17,9 +17,11 @@
 
 package org.dockbox.hartshorn.core.services;
 
+import org.dockbox.hartshorn.core.annotations.service.AutomaticActivation;
 import org.dockbox.hartshorn.core.annotations.service.Service;
 import org.dockbox.hartshorn.core.context.ContextCarrier;
 
+@AutomaticActivation
 public class ContextCarrierDelegationModifier extends ProxyDelegationModifier<ContextCarrier, Service> {
     @Override
     public Class<Service> activator() {

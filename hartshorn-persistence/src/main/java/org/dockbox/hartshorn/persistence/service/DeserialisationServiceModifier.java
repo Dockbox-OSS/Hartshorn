@@ -17,6 +17,7 @@
 
 package org.dockbox.hartshorn.persistence.service;
 
+import org.dockbox.hartshorn.core.annotations.service.AutomaticActivation;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
@@ -31,6 +32,7 @@ import org.dockbox.hartshorn.core.context.MethodProxyContext;
 import java.io.File;
 import java.nio.file.Path;
 
+@AutomaticActivation
 public class DeserialisationServiceModifier extends AbstractPersistenceServiceModifier<Deserialise, DeserialisationContext> {
 
     @Override

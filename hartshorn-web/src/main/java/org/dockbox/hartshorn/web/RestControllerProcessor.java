@@ -17,6 +17,7 @@
 
 package org.dockbox.hartshorn.web;
 
+import org.dockbox.hartshorn.core.annotations.service.AutomaticActivation;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
@@ -24,6 +25,7 @@ import org.dockbox.hartshorn.core.services.ServiceProcessor;
 import org.dockbox.hartshorn.web.annotations.http.HttpRequest;
 import org.dockbox.hartshorn.web.annotations.UseHttpServer;
 
+@AutomaticActivation
 public class RestControllerProcessor implements ServiceProcessor<UseHttpServer> {
     @Override
     public Class<UseHttpServer> activator() {

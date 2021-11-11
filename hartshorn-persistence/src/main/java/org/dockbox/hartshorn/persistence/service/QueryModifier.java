@@ -17,6 +17,7 @@
 
 package org.dockbox.hartshorn.persistence.service;
 
+import org.dockbox.hartshorn.core.annotations.service.AutomaticActivation;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.MethodProxyContext;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
@@ -37,6 +38,7 @@ import org.dockbox.hartshorn.persistence.context.QueryContext;
 import java.util.Collection;
 import java.util.List;
 
+@AutomaticActivation
 public class QueryModifier extends ServiceAnnotatedMethodModifier<Query, UsePersistence> {
 
     @Override

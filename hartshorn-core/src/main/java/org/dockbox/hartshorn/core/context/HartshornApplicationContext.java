@@ -35,6 +35,7 @@ import org.dockbox.hartshorn.core.annotations.inject.Binds;
 import org.dockbox.hartshorn.core.annotations.inject.Combines;
 import org.dockbox.hartshorn.core.annotations.inject.Context;
 import org.dockbox.hartshorn.core.annotations.inject.Enable;
+import org.dockbox.hartshorn.core.annotations.service.AutomaticActivation;
 import org.dockbox.hartshorn.core.annotations.service.ServiceActivator;
 import org.dockbox.hartshorn.core.binding.BindingHierarchy;
 import org.dockbox.hartshorn.core.binding.Bindings;
@@ -599,9 +600,11 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
         for (final TypeContext<? extends T> child : children) {
             if (child.isAbstract()) continue;
 
-            final T raw = this.raw(child, false);
-            if (this.hasActivator(raw.activator()))
-                consumer.accept(this, raw);
+            if (child.annotation(AutomaticActivation.class).present()) {
+                final T raw = this.raw(child, false);
+                if (this.hasActivator(raw.activator()))
+                    consumer.accept(this, raw);
+            }
         }
     }
 }

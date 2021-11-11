@@ -20,6 +20,7 @@ package org.dockbox.hartshorn.core.services;
 import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.core.Key;
 import org.dockbox.hartshorn.core.annotations.Factory;
+import org.dockbox.hartshorn.core.annotations.service.AutomaticActivation;
 import org.dockbox.hartshorn.core.annotations.service.Service;
 import org.dockbox.hartshorn.core.binding.Bindings;
 import org.dockbox.hartshorn.core.binding.ContextDrivenProvider;
@@ -33,6 +34,7 @@ import org.dockbox.hartshorn.core.context.element.TypeContext;
 import java.util.LinkedList;
 import java.util.Set;
 
+@AutomaticActivation
 public class FactoryServiceProcessor implements ServiceProcessor<Service> {
 
     @Override

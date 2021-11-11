@@ -18,11 +18,13 @@
 package org.dockbox.hartshorn.core.services;
 
 import org.dockbox.hartshorn.core.annotations.proxy.UseProxying;
+import org.dockbox.hartshorn.core.annotations.service.AutomaticActivation;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.proxy.DelegatorAccessor;
 import org.dockbox.hartshorn.core.proxy.ProxyHandler;
 
+@AutomaticActivation
 public class DelegatorAccessorDelegationModifier extends ProxyDelegationModifier<DelegatorAccessor, UseProxying> {
 
     @Override

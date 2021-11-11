@@ -20,6 +20,7 @@ package org.dockbox.hartshorn.config;
 import org.dockbox.hartshorn.config.annotations.UseConfigurations;
 import org.dockbox.hartshorn.config.annotations.Value;
 import org.dockbox.hartshorn.core.HartshornUtils;
+import org.dockbox.hartshorn.core.annotations.service.AutomaticActivation;
 import org.dockbox.hartshorn.core.boot.Hartshorn;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.FieldContext;
@@ -38,6 +39,7 @@ import java.util.Set;
 /**
  * Looks up and populates fields annotated with {@link Value}.
  */
+@AutomaticActivation
 public class ConfigurationServiceModifier implements InjectionModifier<UseConfigurations> {
 
     @Override

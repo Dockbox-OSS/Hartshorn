@@ -17,6 +17,7 @@
 
 package org.dockbox.hartshorn.i18n.services;
 
+import org.dockbox.hartshorn.core.annotations.service.AutomaticActivation;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
@@ -27,6 +28,7 @@ import org.dockbox.hartshorn.i18n.TranslationService;
 import org.dockbox.hartshorn.i18n.annotations.TranslationProvider;
 import org.dockbox.hartshorn.i18n.annotations.UseTranslations;
 
+@AutomaticActivation
 public class LanguageProviderServiceProcessor implements ServiceProcessor<UseTranslations> {
 
     @Override

@@ -17,6 +17,7 @@
 
 package org.dockbox.hartshorn.cache.modifiers;
 
+import org.dockbox.hartshorn.core.annotations.service.AutomaticActivation;
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 import org.dockbox.hartshorn.core.exceptions.Except;
 import org.dockbox.hartshorn.cache.annotations.UpdateCache;
@@ -33,6 +34,7 @@ import org.dockbox.hartshorn.core.context.MethodProxyContext;
  * decorated methods. This delegates functionality to the underlying {@link org.dockbox.hartshorn.cache.CacheManager}
  * to update specific {@link org.dockbox.hartshorn.cache.Cache caches}.
  */
+@AutomaticActivation
 public class CacheUpdateMethodModifier extends CacheServiceModifier<UpdateCache> {
 
     @Override

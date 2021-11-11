@@ -17,6 +17,7 @@
 
 package org.dockbox.hartshorn.commands.service;
 
+import org.dockbox.hartshorn.core.annotations.service.AutomaticActivation;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 import org.dockbox.hartshorn.commands.annotations.UseCommands;
@@ -35,6 +36,7 @@ import java.util.List;
  * the {@link ArgumentConverterContext} contained in the {@link ApplicationContext}. Requires
  * the presence of {@link UseCommands}.
  */
+@AutomaticActivation
 public class ArgumentServiceProcessor implements ServiceProcessor<UseCommands> {
 
     @Override

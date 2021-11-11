@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.i18n.services;
 
 import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.core.MetaProvider;
+import org.dockbox.hartshorn.core.annotations.service.AutomaticActivation;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
@@ -32,6 +33,7 @@ import org.dockbox.hartshorn.core.proxy.ProxyFunction;
 import org.dockbox.hartshorn.core.context.MethodProxyContext;
 import org.dockbox.hartshorn.core.services.ServiceAnnotatedMethodModifier;
 
+@AutomaticActivation
 public class TranslationInjectModifier extends ServiceAnnotatedMethodModifier<InjectTranslation, UseTranslations> {
 
     @Override

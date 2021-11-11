@@ -17,9 +17,11 @@
 
 package org.dockbox.hartshorn.core.proxy;
 
+import org.dockbox.hartshorn.core.annotations.service.AutomaticActivation;
 import org.dockbox.hartshorn.core.annotations.service.Service;
 import org.dockbox.hartshorn.core.services.ProxyDelegationModifier;
 
+@AutomaticActivation
 public class DemoProxyDelegationModifier extends ProxyDelegationModifier<AbstractProxyParent, Service> {
     @Override
     public Class<Service> activator() {
