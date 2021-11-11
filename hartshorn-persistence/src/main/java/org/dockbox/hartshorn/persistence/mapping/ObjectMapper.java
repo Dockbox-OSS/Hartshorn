@@ -17,19 +17,19 @@
 
 package org.dockbox.hartshorn.persistence.mapping;
 
-import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.di.GenericType;
-import org.dockbox.hartshorn.di.context.element.TypeContext;
-import org.dockbox.hartshorn.di.properties.AttributeHolder;
+import org.dockbox.hartshorn.core.GenericType;
+import org.dockbox.hartshorn.core.HartshornUtils;
+import org.dockbox.hartshorn.core.context.element.TypeContext;
+import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.persistence.FileType;
-import org.dockbox.hartshorn.util.HartshornUtils;
+import org.dockbox.hartshorn.persistence.properties.PersistenceModifier;
 
 import java.net.URI;
 import java.net.URL;
 import java.nio.file.Path;
 import java.util.Map;
 
-public interface ObjectMapper extends AttributeHolder {
+public interface ObjectMapper {
 
     default <T> Exceptional<T> read(final String content, final TypeContext<T> type) {
         return this.read(content, type.type());
@@ -53,7 +53,7 @@ public interface ObjectMapper extends AttributeHolder {
 
     <T> Exceptional<T> read(URL url, Class<T> type);
 
-    default <T> Exceptional<T> read(URI uri, Class<T> type) {
+    default <T> Exceptional<T> read(final URI uri, final Class<T> type) {
         return Exceptional.of(() -> this.read(uri.toURL(), type).orNull());
     }
 
@@ -63,7 +63,7 @@ public interface ObjectMapper extends AttributeHolder {
 
     <T> Exceptional<T> read(URL url, GenericType<T> type);
 
-    default <T> Exceptional<T> read(URI uri, GenericType<T> type) {
+    default <T> Exceptional<T> read(final URI uri, final GenericType<T> type) {
         return Exceptional.of(() -> this.read(uri.toURL(), type).orNull());
     }
 
@@ -73,7 +73,7 @@ public interface ObjectMapper extends AttributeHolder {
 
     Map<String, Object> flat(URL url);
 
-    default Map<String, Object> flat(URI uri) {
+    default Map<String, Object> flat(final URI uri) {
         return Exceptional.of(() -> this.flat(uri.toURL())).or(HartshornUtils.emptyMap());
     }
 
@@ -84,5 +84,7 @@ public interface ObjectMapper extends AttributeHolder {
     ObjectMapper fileType(FileType fileType);
 
     FileType fileType();
+
+    ObjectMapper skipBehavior(PersistenceModifier modifier);
 
 }

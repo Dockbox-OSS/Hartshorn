@@ -17,20 +17,22 @@
 
 package org.dockbox.hartshorn.persistence.service;
 
-import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.di.context.ApplicationContext;
-import org.dockbox.hartshorn.di.context.element.TypeContext;
+import org.dockbox.hartshorn.core.annotations.service.AutomaticActivation;
+import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.core.context.ApplicationContext;
+import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.persistence.annotations.Deserialise;
 import org.dockbox.hartshorn.persistence.context.DeserialisationContext;
 import org.dockbox.hartshorn.persistence.context.PersistenceAnnotationContext;
 import org.dockbox.hartshorn.persistence.context.SerialisationTarget;
 import org.dockbox.hartshorn.persistence.mapping.ObjectMapper;
-import org.dockbox.hartshorn.proxy.handle.ProxyFunction;
-import org.dockbox.hartshorn.proxy.service.MethodProxyContext;
+import org.dockbox.hartshorn.core.proxy.ProxyFunction;
+import org.dockbox.hartshorn.core.context.MethodProxyContext;
 
 import java.io.File;
 import java.nio.file.Path;
 
+@AutomaticActivation
 public class DeserialisationServiceModifier extends AbstractPersistenceServiceModifier<Deserialise, DeserialisationContext> {
 
     @Override
@@ -75,7 +77,6 @@ public class DeserialisationServiceModifier extends AbstractPersistenceServiceMo
         return DeserialisationContext.class;
     }
 
-    @SuppressWarnings("unchecked")
     private <R> R wrapResult(final Exceptional<?> result, final MethodProxyContext<?> methodContext) {
         if (methodContext.method().returnType().childOf(Exceptional.class)) return (R) result;
         else return (R) result.orNull();

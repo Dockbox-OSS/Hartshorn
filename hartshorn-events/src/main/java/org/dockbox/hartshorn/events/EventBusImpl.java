@@ -17,16 +17,16 @@
 
 package org.dockbox.hartshorn.events;
 
-import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.di.annotations.inject.Binds;
-import org.dockbox.hartshorn.di.context.ApplicationContext;
-import org.dockbox.hartshorn.di.context.element.MethodContext;
-import org.dockbox.hartshorn.di.context.element.TypeContext;
+import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.core.annotations.inject.Binds;
+import org.dockbox.hartshorn.core.context.ApplicationContext;
+import org.dockbox.hartshorn.core.context.element.MethodContext;
+import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.events.annotations.Listener;
 import org.dockbox.hartshorn.events.handle.EventHandlerRegistry;
 import org.dockbox.hartshorn.events.handle.EventWrapperImpl;
 import org.dockbox.hartshorn.events.parents.Event;
-import org.dockbox.hartshorn.util.HartshornUtils;
+import org.dockbox.hartshorn.core.HartshornUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -81,7 +81,7 @@ public class EventBusImpl implements EventBus {
     }
 
     /**
-     * Subscribes all event listeners in a object instance. Typically event listeners are methods
+     * Subscribes all event listeners in an object instance. Typically, event listeners are methods
      * decorated with {@link Listener}.
      *
      * @param type
@@ -107,7 +107,7 @@ public class EventBusImpl implements EventBus {
     }
 
     /**
-     * Unsubscribes all event listeners in a object instance.
+     * Unsubscribes all event listeners in an object instance.
      *
      * @param type
      *         The instance of the listener
@@ -160,11 +160,11 @@ public class EventBusImpl implements EventBus {
      */
     protected <T> Set<EventWrapper> invokers(final TypeContext<T> type) {
         final Set<EventWrapper> result = HartshornUtils.emptySet();
-        for (final MethodContext<?, T> method : type.flatMethods()) {
+        for (final MethodContext<?, T> method : type.methods()) {
             final Exceptional<Listener> annotation = method.annotation(Listener.class);
             if (annotation.present()) {
                 this.checkListenerMethod(method);
-                result.addAll(EventWrapperImpl.create(type, method, annotation.get().value().priority()));
+                result.addAll(EventWrapperImpl.create(this.context, type, method, annotation.get().value().priority()));
             }
         }
         return result;
@@ -177,7 +177,7 @@ public class EventBusImpl implements EventBus {
      *   <li>Is decorated with {@link Listener}
      *   <li>Is not static
      *   <li>Is not abstract
-     *   <li>Has at least one parameter which is a subcless of {@link Event}
+     *   <li>Has at least one parameter which is a subclass of {@link Event}
      * </ul>
      *
      * @param method

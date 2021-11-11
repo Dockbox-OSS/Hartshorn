@@ -17,9 +17,8 @@
 
 package org.dockbox.hartshorn.commands.definition;
 
-import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.commands.CommandSource;
-import org.dockbox.hartshorn.i18n.permissions.Permission;
 
 import java.util.Collection;
 
@@ -35,18 +34,12 @@ public class CommandElementImpl<T> implements CommandElement<T> {
 
     private final ArgumentConverter<T> converter;
     private final String name;
-    private final Permission permission;
     private final boolean optional;
     private final int size;
 
     @Override
     public String name() {
         return this.name;
-    }
-
-    @Override
-    public Exceptional<Permission> permission() {
-        return Exceptional.of(this.permission);
     }
 
     @Override

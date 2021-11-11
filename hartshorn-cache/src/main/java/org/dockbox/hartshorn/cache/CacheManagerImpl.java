@@ -17,10 +17,10 @@
 
 package org.dockbox.hartshorn.cache;
 
-import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.di.annotations.inject.Binds;
-import org.dockbox.hartshorn.di.context.ApplicationContext;
-import org.dockbox.hartshorn.util.HartshornUtils;
+import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.core.annotations.inject.Binds;
+import org.dockbox.hartshorn.core.context.ApplicationContext;
+import org.dockbox.hartshorn.core.HartshornUtils;
 
 import java.util.List;
 import java.util.Map;
@@ -33,7 +33,6 @@ import javax.inject.Singleton;
  *
  * @see CacheManager
  */
-@SuppressWarnings("unchecked")
 @Binds(CacheManager.class)
 @Singleton
 public class CacheManagerImpl implements CacheManager {
@@ -70,9 +69,9 @@ public class CacheManagerImpl implements CacheManager {
         return this.get(name)
                 .orElse(() -> {
                     this.context.log().debug("Cache '" + name + "' does not exist, creating new instance");
-                    final Cache<Object> cache = this.context.get(Cache.class, new ExpirationAttribute(expiration));
+                    final Cache<?> cache = this.context.get(CacheFactory.class).cache(expiration);
                     this.caches.put(name, cache);
-                    return cache;
+                    return (Cache<Object>) cache;
                 })
                 .map(c -> (Cache<T>) c)
                 .get();

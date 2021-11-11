@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.cache;
 
-import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.core.domain.Exceptional;
 
 /**
  * Represents a collection of entries of type <code>T</code>.
@@ -61,5 +61,4 @@ public interface Cache<T> {
      * Evicts the cache, removing all content.
      */
     void evict();
-
 }

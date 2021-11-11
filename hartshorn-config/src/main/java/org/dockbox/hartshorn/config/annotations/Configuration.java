@@ -17,10 +17,10 @@
 
 package org.dockbox.hartshorn.config.annotations;
 
-import org.dockbox.hartshorn.boot.Hartshorn;
-import org.dockbox.hartshorn.di.annotations.service.Service;
+import org.dockbox.hartshorn.core.boot.Hartshorn;
+import org.dockbox.hartshorn.core.annotations.service.Service;
 import org.dockbox.hartshorn.persistence.FileType;
-import org.dockbox.hartshorn.util.annotations.Extends;
+import org.dockbox.hartshorn.core.annotations.Extends;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

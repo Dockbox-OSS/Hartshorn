@@ -17,10 +17,9 @@
 
 package org.dockbox.hartshorn.cache;
 
-import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.cache.annotations.UseCaching;
-import org.dockbox.hartshorn.test.ApplicationAwareTest;
-import org.dockbox.hartshorn.test.util.JUnitCacheManager;
+import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.testsuite.ApplicationAwareTest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

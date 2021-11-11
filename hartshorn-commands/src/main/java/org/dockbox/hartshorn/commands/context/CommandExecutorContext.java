@@ -21,9 +21,9 @@ import org.dockbox.hartshorn.commands.CommandExecutor;
 import org.dockbox.hartshorn.commands.CommandParser;
 import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
-import org.dockbox.hartshorn.di.context.CarrierContext;
-import org.dockbox.hartshorn.di.context.element.AnnotatedElementContext;
-import org.dockbox.hartshorn.di.context.element.TypeContext;
+import org.dockbox.hartshorn.core.context.CarrierContext;
+import org.dockbox.hartshorn.core.context.element.AnnotatedElementContext;
+import org.dockbox.hartshorn.core.context.element.TypeContext;
 
 import java.lang.reflect.AnnotatedElement;
 import java.util.List;

@@ -17,21 +17,18 @@
 
 package org.dockbox.hartshorn.persistence;
 
-import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.api.domain.TypedOwner;
-import org.dockbox.hartshorn.di.GenericType;
-import org.dockbox.hartshorn.di.context.ApplicationContext;
-import org.dockbox.hartshorn.di.context.element.TypeContext;
-import org.dockbox.hartshorn.di.properties.AttributeHolder;
+import org.dockbox.hartshorn.core.GenericType;
+import org.dockbox.hartshorn.core.context.ApplicationContext;
+import org.dockbox.hartshorn.core.context.element.TypeContext;
+import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.core.domain.TypedOwner;
 
 import java.nio.file.Path;
 
 /**
- * Low-level interface defining functionality to interact with Configurate based file types. While
- * this type encourages the usage of Configurate based instances, it is possible to create
- * implementations for alternative configuration libraries and/or frameworks.
+ * Low-level interface defining functionality to interact with physical or virtual files.
  */
-public interface FileManager extends AttributeHolder {
+public interface FileManager {
 
     /**
      * Gets the default data file for a given {@link TypedOwner}. The exact location is decided by the
@@ -49,6 +46,8 @@ public interface FileManager extends AttributeHolder {
     default Path configFile(final Class<?> owner) {
         return this.configFile(this.owner(owner));
     }
+
+    FileType fileType();
 
     /**
      * Gets the default config file for a given {@link TypedOwner}. The exact location is decided by the
@@ -209,7 +208,7 @@ public interface FileManager extends AttributeHolder {
     Path configs();
 
     /**
-     * Evaluates whether or not a given {@link Path} reference directory exists. If it exists nothing
+     * Evaluates whether a given {@link Path} reference directory exists. If it exists nothing
      * is done. If it did not yet exist, the directory is created.
      *
      * @param path
@@ -220,7 +219,7 @@ public interface FileManager extends AttributeHolder {
     Path createPathIfNotExists(Path path);
 
     /**
-     * Evaluates whether or not a given {@link Path} reference file exists. If it exists nothing is
+     * Evaluates whether a given {@link Path} reference file exists. If it exists nothing is
      * done. If it did not yet exist, the directory is created.
      *
      * @param file
@@ -266,4 +265,6 @@ public interface FileManager extends AttributeHolder {
      * @return true if the file was copied, otherwise false
      */
     boolean copyDefaultFile(String defaultFileName, Path targetFile);
+
+    FileManager fileType(FileType fileType);
 }

@@ -20,7 +20,8 @@ package org.dockbox.hartshorn.demo.persistence.services;
 import org.dockbox.hartshorn.commands.annotations.Command;
 import org.dockbox.hartshorn.commands.context.CommandContext;
 import org.dockbox.hartshorn.commands.context.CommandDefinitionContextImpl;
-import org.dockbox.hartshorn.di.annotations.service.Service;
+import org.dockbox.hartshorn.core.annotations.service.Service;
+import org.dockbox.hartshorn.demo.persistence.domain.User;
 
 import javax.inject.Inject;
 
@@ -33,7 +34,7 @@ import javax.inject.Inject;
 public class UserCommandService {
 
     @Inject
-    private UserPersistence persistenceService;
+    private UserRepository persistenceService;
 
     /**
      * The method activated when the command {@code create <name> <age>} is correctly entered by a user
@@ -41,7 +42,7 @@ public class UserCommandService {
      *
      * <p>The {@link Command#value()} indicates the command itself, excluding arguments. {@link Command#arguments()}
      * indicates the arguments which are expected to be present. The way these are defined depends on the {@link org.dockbox.hartshorn.commands.CommandParser}
-     * which is used in the {@link org.dockbox.hartshorn.commands.CommandGateway}. By default this uses the {@link org.dockbox.hartshorn.commands.CommandParserImpl},
+     * which is used in the {@link org.dockbox.hartshorn.commands.CommandGateway}. By default, this uses the {@link org.dockbox.hartshorn.commands.CommandParserImpl},
      * which uses the definition context defined in {@link CommandDefinitionContextImpl}.
      *
      * @see CommandDefinitionContextImpl
@@ -50,7 +51,7 @@ public class UserCommandService {
     public void create(final CommandContext context) {
         final String name = context.get("name");
         final int age = context.get("age");
-        this.persistenceService.createUser(name, age);
+        this.persistenceService.save(new User(name, age));
     }
 
 }

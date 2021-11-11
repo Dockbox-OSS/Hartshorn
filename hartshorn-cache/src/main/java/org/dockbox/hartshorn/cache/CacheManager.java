@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.cache;
 
-import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.core.domain.Exceptional;
 
 import java.util.List;
 

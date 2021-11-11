@@ -17,23 +17,26 @@
 
 package org.dockbox.hartshorn.commands.service;
 
-import org.dockbox.hartshorn.boot.annotations.UseBootstrap;
+import org.dockbox.hartshorn.core.annotations.service.AutomaticActivation;
+import org.dockbox.hartshorn.core.boot.ApplicationManager;
+import org.dockbox.hartshorn.core.annotations.UseBootstrap;
 import org.dockbox.hartshorn.commands.annotations.Parameter;
 import org.dockbox.hartshorn.commands.annotations.UseCommands;
 import org.dockbox.hartshorn.commands.arguments.CustomParameterPattern;
 import org.dockbox.hartshorn.commands.arguments.DynamicPatternConverter;
 import org.dockbox.hartshorn.commands.context.ArgumentConverterContext;
 import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
-import org.dockbox.hartshorn.di.context.ApplicationContext;
-import org.dockbox.hartshorn.di.context.element.TypeContext;
-import org.dockbox.hartshorn.di.services.ComponentProcessor;
-import org.dockbox.hartshorn.di.services.ServiceOrder;
+import org.dockbox.hartshorn.core.context.ApplicationContext;
+import org.dockbox.hartshorn.core.context.element.TypeContext;
+import org.dockbox.hartshorn.core.services.ComponentProcessor;
+import org.dockbox.hartshorn.core.services.ServiceOrder;
 
 /**
  * Scans for any type annotated with {@link Parameter} and registers a {@link DynamicPatternConverter}
- * for each type found. Requires the use of a {@link org.dockbox.hartshorn.di.InjectableBootstrap} and
+ * for each type found. Requires the use of a {@link ApplicationManager} and
  * presence of {@link UseBootstrap}.
  */
+@AutomaticActivation
 public class CommandParameters implements ComponentProcessor<UseCommands> {
 
     @Override

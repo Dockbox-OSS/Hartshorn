@@ -17,12 +17,15 @@
 
 package org.dockbox.hartshorn.demo.persistence.services;
 
-import org.dockbox.hartshorn.boot.ServerState.Started;
-import org.dockbox.hartshorn.commands.CommandCLI;
 import org.dockbox.hartshorn.demo.persistence.domain.User;
 import org.dockbox.hartshorn.demo.persistence.events.UserCreatedEvent;
-import org.dockbox.hartshorn.di.annotations.service.Service;
-import org.dockbox.hartshorn.di.context.ApplicationContext;
+
+import org.dockbox.hartshorn.commands.CommandCLI;
+import org.dockbox.hartshorn.core.annotations.service.Service;
+import org.dockbox.hartshorn.core.boot.ApplicationState;
+import org.dockbox.hartshorn.core.boot.ApplicationState.Started;
+import org.dockbox.hartshorn.core.boot.HartshornApplication;
+import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.events.EngineChangedState;
 import org.dockbox.hartshorn.events.annotations.Listener;
 
@@ -35,7 +38,7 @@ public class EventListenerService {
 
     /**
      * The method activated when a new user is created and a {@link UserCreatedEvent} is fired. In this
-     * example this is done through {@link UserPersistence}.
+     * example this is done through {@link UserRepository}.
      */
     @Listener
     public void on(final UserCreatedEvent event) {
@@ -46,20 +49,20 @@ public class EventListenerService {
 
     /**
      * The method activated when the engine is done starting, this is done automatically when the application
-     * was bootstrapped through {@link org.dockbox.hartshorn.boot.HartshornApplication}.
+     * was bootstrapped through {@link HartshornApplication}.
      *
      * <p>In this example we wish to use the {@link CommandCLI} to be able to use the command line to enter commands.
      * An example command has been provided by {@link UserCommandService}.
      *
      * <p>Note the use of the generic type parameter {@link Started} in the event. This causes this method to
      * activate only when a {@link EngineChangedState} event is posted with this exact type parameter. When the
-     * posted parameter is another sub-class of {@link org.dockbox.hartshorn.boot.ServerState} this method will not
+     * posted parameter is another sub-class of {@link ApplicationState} this method will not
      * activate. However, if the notation of this event changed to {@code EngineChangedState<?>} it would activate
      * with any type parameter, as long as the event itself is a {@link EngineChangedState}.
      */
     @Listener
     public void on(final EngineChangedState<Started> event) {
-        event.applicationContext().get(CommandCLI.class).open();
+        event.applicationContext().get(CommandCLI.class).async(true).open();
     }
 
 }

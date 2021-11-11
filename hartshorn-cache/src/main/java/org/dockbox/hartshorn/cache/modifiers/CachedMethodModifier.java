@@ -17,24 +17,27 @@
 
 package org.dockbox.hartshorn.cache.modifiers;
 
-import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.api.exceptions.ApplicationException;
-import org.dockbox.hartshorn.api.exceptions.Except;
+import org.dockbox.hartshorn.core.annotations.service.AutomaticActivation;
+import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.core.exceptions.ApplicationException;
+import org.dockbox.hartshorn.core.exceptions.Except;
 import org.dockbox.hartshorn.cache.Cache;
 import org.dockbox.hartshorn.cache.Expiration;
 import org.dockbox.hartshorn.cache.annotations.Cached;
 import org.dockbox.hartshorn.cache.context.CacheContext;
 import org.dockbox.hartshorn.cache.context.CacheMethodContext;
 import org.dockbox.hartshorn.cache.context.CacheMethodContextImpl;
-import org.dockbox.hartshorn.di.context.ApplicationContext;
-import org.dockbox.hartshorn.proxy.handle.ProxyFunction;
-import org.dockbox.hartshorn.proxy.service.MethodProxyContext;
+import org.dockbox.hartshorn.core.context.ApplicationContext;
+import org.dockbox.hartshorn.core.services.ServiceAnnotatedMethodModifier;
+import org.dockbox.hartshorn.core.proxy.ProxyFunction;
+import org.dockbox.hartshorn.core.context.MethodProxyContext;
 
 /**
- * The {@link org.dockbox.hartshorn.proxy.service.ServiceAnnotatedMethodModifier} responsible for {@link Cached}
+ * The {@link ServiceAnnotatedMethodModifier} responsible for {@link Cached}
  * decorated methods. This delegates functionality to the underlying {@link org.dockbox.hartshorn.cache.CacheManager}
  * to store or obtain {@link Cache} entries.
  */
+@AutomaticActivation
 public class CachedMethodModifier extends CacheServiceModifier<Cached> {
 
     @Override

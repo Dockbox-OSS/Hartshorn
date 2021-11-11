@@ -17,22 +17,24 @@
 
 package org.dockbox.hartshorn.persistence.service;
 
-import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.di.context.ApplicationContext;
-import org.dockbox.hartshorn.di.context.element.TypeContext;
-import org.dockbox.hartshorn.di.services.ComponentContainer;
+import org.dockbox.hartshorn.core.annotations.service.AutomaticActivation;
+import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.core.context.ApplicationContext;
+import org.dockbox.hartshorn.core.context.element.TypeContext;
+import org.dockbox.hartshorn.core.services.ComponentContainer;
 import org.dockbox.hartshorn.persistence.PersistenceType;
 import org.dockbox.hartshorn.persistence.annotations.Serialise;
 import org.dockbox.hartshorn.persistence.context.PersistenceAnnotationContext;
 import org.dockbox.hartshorn.persistence.context.SerialisationContext;
 import org.dockbox.hartshorn.persistence.context.SerialisationTarget;
 import org.dockbox.hartshorn.persistence.mapping.ObjectMapper;
-import org.dockbox.hartshorn.proxy.handle.ProxyFunction;
-import org.dockbox.hartshorn.proxy.service.MethodProxyContext;
+import org.dockbox.hartshorn.core.proxy.ProxyFunction;
+import org.dockbox.hartshorn.core.context.MethodProxyContext;
 
 import java.io.File;
 import java.nio.file.Path;
 
+@AutomaticActivation
 public class SerialisationServiceModifier extends AbstractPersistenceServiceModifier<Serialise, SerialisationContext> {
 
     @Override
@@ -66,7 +68,6 @@ public class SerialisationServiceModifier extends AbstractPersistenceServiceModi
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     protected <T, R> ProxyFunction<T, R> processString(final ApplicationContext context, final MethodProxyContext<T> methodContext, final SerialisationContext serialisationContext) {
         return (instance, args, proxyContext) -> {
             final Object content = args[0];
@@ -87,7 +88,6 @@ public class SerialisationServiceModifier extends AbstractPersistenceServiceModi
         return SerialisationContext.class;
     }
 
-    @SuppressWarnings("unchecked")
     private <R> R wrapBooleanResult(final Exceptional<Boolean> result, final MethodProxyContext<?> methodContext) {
         if (methodContext.method().returnType().childOf(Boolean.class))
             return (R) result.or(false);

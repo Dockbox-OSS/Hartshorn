@@ -28,11 +28,11 @@ public class SQLRemoteServer {
     private final int port;
     private final String database;
 
-    public static SQLRemoteServer of(String server, String database) {
+    public static SQLRemoteServer of(final String server, final String database) {
         return of(server, 3306, database);
     }
 
-    public static SQLRemoteServer of(String server, int port, String database) {
+    public static SQLRemoteServer of(final String server, final int port, final String database) {
         return new SQLRemoteServer(server, port, database);
     }
 }

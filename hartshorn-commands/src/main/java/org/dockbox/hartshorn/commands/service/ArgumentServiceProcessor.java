@@ -17,16 +17,17 @@
 
 package org.dockbox.hartshorn.commands.service;
 
-import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.api.exceptions.ApplicationException;
+import org.dockbox.hartshorn.core.annotations.service.AutomaticActivation;
+import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 import org.dockbox.hartshorn.commands.annotations.UseCommands;
 import org.dockbox.hartshorn.commands.context.ArgumentConverterContext;
 import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
-import org.dockbox.hartshorn.di.context.ApplicationContext;
-import org.dockbox.hartshorn.di.context.element.FieldContext;
-import org.dockbox.hartshorn.di.context.element.TypeContext;
-import org.dockbox.hartshorn.di.services.ServiceOrder;
-import org.dockbox.hartshorn.di.services.ServiceProcessor;
+import org.dockbox.hartshorn.core.context.ApplicationContext;
+import org.dockbox.hartshorn.core.context.element.FieldContext;
+import org.dockbox.hartshorn.core.context.element.TypeContext;
+import org.dockbox.hartshorn.core.services.ServiceOrder;
+import org.dockbox.hartshorn.core.services.ServiceProcessor;
 
 import java.util.List;
 
@@ -35,6 +36,7 @@ import java.util.List;
  * the {@link ArgumentConverterContext} contained in the {@link ApplicationContext}. Requires
  * the presence of {@link UseCommands}.
  */
+@AutomaticActivation
 public class ArgumentServiceProcessor implements ServiceProcessor<UseCommands> {
 
     @Override

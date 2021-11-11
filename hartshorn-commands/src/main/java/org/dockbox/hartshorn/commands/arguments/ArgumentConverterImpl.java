@@ -17,11 +17,12 @@
 
 package org.dockbox.hartshorn.commands.arguments;
 
-import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.commands.service.CommandParameter;
-import org.dockbox.hartshorn.di.context.element.TypeContext;
-import org.dockbox.hartshorn.util.HartshornUtils;
+import org.dockbox.hartshorn.core.HartshornUtils;
+import org.dockbox.hartshorn.core.adapter.StringTypeAdapter;
+import org.dockbox.hartshorn.core.context.element.TypeContext;
+import org.dockbox.hartshorn.core.domain.Exceptional;
 
 import java.util.Collection;
 import java.util.function.BiFunction;
@@ -117,6 +118,11 @@ public final class ArgumentConverterImpl<T> extends DefaultArgumentConverter<T> 
             return this;
         }
 
+        public CommandValueConverterBuilder<T> withConverter(final StringTypeAdapter<T> adapter) {
+            this.converter = (source, in) -> adapter.adapt(in);
+            return this;
+        }
+
         /**
          * Sets the converter function of the converter, indicating the behavior to convert a {@link String} into a possible
          * value of type <code>T</code>.
@@ -132,7 +138,7 @@ public final class ArgumentConverterImpl<T> extends DefaultArgumentConverter<T> 
         }
 
         /**
-         * Sets the suggestions provider of the converter, indicating how suggestions are generated based on a given {@link String}.
+         * Sets the suggestion provider of the converter, indicating how suggestions are generated based on a given {@link String}.
          *
          * @param suggestionProvider
          *         The suggestions provider
@@ -145,7 +151,7 @@ public final class ArgumentConverterImpl<T> extends DefaultArgumentConverter<T> 
         }
 
         /**
-         * Sets the suggestions provider of the converter, indicating how suggestions are generated based on a given {@link String} and
+         * Sets the suggestion provider of the converter, indicating how suggestions are generated based on a given {@link String} and
          * {@link CommandSource}.
          *
          * @param suggestionProvider

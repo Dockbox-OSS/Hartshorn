@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.persistence;
 
-import org.dockbox.hartshorn.di.context.ApplicationContext;
+import org.dockbox.hartshorn.core.context.ApplicationContext;
 
 public interface PersistentModel<T extends PersistentCapable<? extends PersistentModel<T>>> {
 

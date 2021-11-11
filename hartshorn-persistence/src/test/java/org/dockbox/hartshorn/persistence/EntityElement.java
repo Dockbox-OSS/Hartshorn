@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.persistence;
 
-import org.dockbox.hartshorn.di.annotations.component.Component;
+import org.dockbox.hartshorn.core.annotations.component.Component;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

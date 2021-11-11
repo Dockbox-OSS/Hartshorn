@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.persistence;
 
-import org.dockbox.hartshorn.api.domain.FileTypes;
+import org.dockbox.hartshorn.core.domain.FileTypes;
 
 import java.lang.annotation.Annotation;
 import java.nio.file.Path;
@@ -57,7 +57,7 @@ public enum FileType {
      *
      * @return The {@link Path} reference to a file
      */
-    public Path asPath(Path parent, String file) {
+    public Path asPath(final Path parent, final String file) {
         return parent.resolve(this.asFileName(file));
     }
 
@@ -70,7 +70,7 @@ public enum FileType {
      *
      * @return The generated filename with extension
      */
-    public String asFileName(String file) {
+    public String asFileName(final String file) {
         return file + '.' + this.extension;
     }
 

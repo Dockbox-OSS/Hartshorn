@@ -17,14 +17,10 @@
 
 package org.dockbox.hartshorn.commands.context;
 
-import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.commands.service.CommandParameter;
-import org.dockbox.hartshorn.di.ContextCarrier;
-import org.dockbox.hartshorn.i18n.permissions.Permission;
-import org.jetbrains.annotations.UnmodifiableView;
-
-import java.util.List;
+import org.dockbox.hartshorn.core.context.ContextCarrier;
 
 /**
  * The context provided to a {@link org.dockbox.hartshorn.commands.CommandExecutor} during
@@ -50,7 +46,7 @@ public interface CommandContext extends ParserContext, ContextCarrier {
     <T> T get(String key);
 
     /**
-     * Checks for the presence of a argument or flag associated with the given <code>key</code>.
+     * Checks for the presence of an argument or flag associated with the given <code>key</code>.
      *
      * @param key
      *         The key of the argument or flag
@@ -74,7 +70,7 @@ public interface CommandContext extends ParserContext, ContextCarrier {
     <T> Exceptional<T> find(String key);
 
     /**
-     * Gets the first {@link CommandParameter} in the form of a argument associated with the given
+     * Gets the first {@link CommandParameter} in the form of an argument associated with the given
      * <code>key</code>, if it exists. If the argument is not of type <code>T</code>, or does not exist,
      * {@link Exceptional#empty()} is returned instead. The {@link CommandParameter} contains both the
      * defined key and value of the argument.
@@ -111,14 +107,6 @@ public interface CommandContext extends ParserContext, ContextCarrier {
      * @return The {@link CommandSource} responsible for executing the command.
      */
     CommandSource source();
-
-    /**
-     * Gets the permissions required to execute this command.
-     *
-     * @return The required permissions.
-     */
-    @UnmodifiableView
-    List<Permission> permissions();
 
     /**
      * Gets the raw command as it was provided by the {@link #source()}. For example, if the command has

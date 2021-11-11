@@ -17,9 +17,7 @@
 
 package org.dockbox.hartshorn.commands.definition;
 
-import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.i18n.permissions.Permission;
-import org.dockbox.hartshorn.util.HartshornUtils;
+import org.dockbox.hartshorn.core.HartshornUtils;
 
 import lombok.AllArgsConstructor;
 
@@ -30,21 +28,10 @@ import lombok.AllArgsConstructor;
 public class CommandFlagImpl implements CommandFlag {
 
     private final String name;
-    private final Permission permission;
-
-    public CommandFlagImpl(final String name) {
-        this.name = name;
-        this.permission = null;
-    }
 
     @Override
     public String name() {
         return HartshornUtils.trimWith('-', this.name);
-    }
-
-    @Override
-    public Exceptional<Permission> permission() {
-        return Exceptional.of(this.permission);
     }
 
     @Override

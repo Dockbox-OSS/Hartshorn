@@ -19,21 +19,22 @@ package org.dockbox.hartshorn.demo.persistence;
 
 import org.dockbox.hartshorn.config.annotations.Configuration;
 import org.dockbox.hartshorn.config.annotations.Value;
-import org.dockbox.hartshorn.di.Key;
-import org.dockbox.hartshorn.di.annotations.inject.Provider;
-import org.dockbox.hartshorn.di.context.ApplicationContext;
+import org.dockbox.hartshorn.core.Key;
+import org.dockbox.hartshorn.core.annotations.inject.Provider;
+import org.dockbox.hartshorn.core.context.ApplicationContext;
+import org.dockbox.hartshorn.demo.persistence.services.UserRepository;
 import org.dockbox.hartshorn.persistence.FileType;
-import org.dockbox.hartshorn.persistence.SqlService;
-import org.dockbox.hartshorn.persistence.properties.ConnectionAttribute;
+import org.dockbox.hartshorn.persistence.jpa.JpaRepository;
+import org.dockbox.hartshorn.persistence.properties.PersistenceConnection;
 import org.dockbox.hartshorn.persistence.properties.Remotes;
 import org.dockbox.hartshorn.persistence.properties.SQLRemoteServer;
 
 import javax.inject.Singleton;
 
 /**
- * A simple configuration service capable of loading a configuration file and providing a custom {@link SqlService}
- * instance. {@link Configuration} is a extension of {@link org.dockbox.hartshorn.di.annotations.service.Service},
- * and therefore has all abilities also found with {@link org.dockbox.hartshorn.di.annotations.service.Service}.
+ * A simple configuration service capable of loading a configuration file and providing a custom {@link JpaRepository}
+ * instance. {@link Configuration} is an extension of {@link org.dockbox.hartshorn.core.annotations.service.Service},
+ * and therefore has all abilities also found with {@link org.dockbox.hartshorn.core.annotations.service.Service}.
  *
  * <p>{@link Configuration} adds the ability to load configuration files through a configured {@link Configuration#source()}.
  * By default, the {@link FileType} used to read the file is {@link FileType#YAML}, however this can be configured to
@@ -63,23 +64,20 @@ public class PersistenceDemoConfiguration {
     private String password;
 
     /**
-     * Provides a singleton instance of {@link SqlService} configured to use a MySQL database, of which the
+     * Provides a singleton instance of {@link JpaRepository} configured to use a MySQL database, of which the
      * connection information is provided by the {@code persistence-demo.yml} file. As this is a {@link Singleton}
      * provider, the result of this provider will be saved after it is first called.
      *
-     * <p>{@link Provider} methods automatically register as the highest priority in the type's {@link org.dockbox.hartshorn.di.binding.BindingHierarchy}
+     * <p>{@link Provider} methods automatically register as the highest priority in the type's {@link org.dockbox.hartshorn.core.binding.BindingHierarchy}
      * in the active {@link ApplicationContext}.
      *
      * @see ApplicationContext#hierarchy(Key)
-     * @see org.dockbox.hartshorn.di.binding.BindingHierarchy
+     * @see org.dockbox.hartshorn.core.binding.BindingHierarchy
      */
     @Provider
     @Singleton
-    public SqlService sql(ApplicationContext context) {
-        ConnectionAttribute connection = ConnectionAttribute.of(Remotes.MYSQL,
-                SQLRemoteServer.of(this.host, this.port, this.database),
-                this.user, this.password
-        );
-        return context.get(SqlService.class, connection);
+    public UserRepository sql(final ApplicationContext context) {
+        final PersistenceConnection connection = new PersistenceConnection(Remotes.MYSQL.url(SQLRemoteServer.of(this.host, this.port, this.database)), this.user, this.password, Remotes.MYSQL);
+        return (UserRepository) context.get(UserRepository.class).connection(connection);
     }
 }

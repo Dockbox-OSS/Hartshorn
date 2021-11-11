@@ -17,9 +17,9 @@
 
 package org.dockbox.hartshorn.events.parents;
 
-import org.dockbox.hartshorn.di.ContextCarrier;
-import org.dockbox.hartshorn.di.context.ApplicationContext;
-import org.dockbox.hartshorn.di.context.Context;
+import org.dockbox.hartshorn.core.context.ContextCarrier;
+import org.dockbox.hartshorn.core.context.ApplicationContext;
+import org.dockbox.hartshorn.core.context.Context;
 import org.dockbox.hartshorn.events.EventBus;
 
 /** A low level type which is used when subscribing to, posting, or modifying events. */

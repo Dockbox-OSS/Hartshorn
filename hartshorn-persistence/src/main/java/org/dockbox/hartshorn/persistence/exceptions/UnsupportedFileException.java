@@ -30,9 +30,9 @@ public class UnsupportedFileException extends Exception {
      * caught message.
      *
      * @param fileType
-     *         The filetype providing information about the unsupport file or {@link FileType}
+     *         The filetype providing information about the unsupported file or {@link FileType}
      */
-    public UnsupportedFileException(String fileType) {
+    public UnsupportedFileException(final String fileType) {
         super(fileType);
     }
 }

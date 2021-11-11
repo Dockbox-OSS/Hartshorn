@@ -25,7 +25,7 @@ public final class StaticEventListener {
     public static boolean fired = false;
 
     @Listener
-    public static void on(SampleEvent event) {
+    public static void on(final SampleEvent event) {
         StaticEventListener.fired = true;
     }
 }

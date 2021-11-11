@@ -17,9 +17,9 @@
 
 package org.dockbox.hartshorn.commands.annotations;
 
-import org.dockbox.hartshorn.di.annotations.service.Service;
-import org.dockbox.hartshorn.util.annotations.AliasFor;
-import org.dockbox.hartshorn.util.annotations.Extends;
+import org.dockbox.hartshorn.core.annotations.service.Service;
+import org.dockbox.hartshorn.core.annotations.AliasFor;
+import org.dockbox.hartshorn.core.annotations.Extends;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -43,21 +43,14 @@ public @interface Command {
     String[] value() default "";
 
     /**
-     * The arguments context for the command. If the default value is used no arguments will be validated,
+     * The argument context for the command. If the default value is used no arguments will be validated,
      * delivering the same result as making it equal to the primary alias.
      *
-     * @return the arguments context for the command.
+     * @return the argument context for the command.
      * @see <a
      *         href="https://github.com/GuusLieben/Hartshorn/wiki/Commands#defining-command-usage">Commands#defining-command-arguments</a>
      */
     String arguments() default "";
-
-    /**
-     * The permissions for the command.
-     *
-     * @return the permission required for the command.
-     */
-    String permission() default "";
 
     @AliasFor("owner")
     Class<?> parent() default Void.class;

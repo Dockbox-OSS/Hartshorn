@@ -17,14 +17,12 @@
 
 package org.dockbox.hartshorn.commands.context;
 
-import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.commands.annotations.Command;
 import org.dockbox.hartshorn.commands.definition.CommandElement;
 import org.dockbox.hartshorn.commands.definition.CommandFlag;
-import org.dockbox.hartshorn.di.context.Context;
-import org.dockbox.hartshorn.di.context.element.TypeContext;
-import org.dockbox.hartshorn.i18n.permissions.Permission;
-import org.dockbox.hartshorn.i18n.permissions.PermissionContext;
+import org.dockbox.hartshorn.core.context.Context;
+import org.dockbox.hartshorn.core.context.element.TypeContext;
 
 import java.util.List;
 
@@ -48,16 +46,6 @@ public interface CommandDefinitionContext extends Context {
      * @return The raw argument definition.
      */
     String arguments();
-
-    /**
-     * Gets the permission required for a command. This typically only carries a raw permission node
-     * without addition {@link PermissionContext}. This
-     * is typically either a direct representation of {@link Command#permission()} or a generated
-     * permission (created by the implementation of this context).
-     *
-     * @return The required permission.
-     */
-    Permission permission();
 
     /**
      * Gets the parent/owner of a command. If no explicit owner exists {@link Void} is returned instead.

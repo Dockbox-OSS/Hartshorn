@@ -17,12 +17,11 @@
 
 package org.dockbox.hartshorn.persistence;
 
-import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.di.GenericType;
+import org.dockbox.hartshorn.core.GenericType;
+import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.persistence.registry.Registry;
 import org.dockbox.hartshorn.persistence.registry.RegistryColumn;
-import org.dockbox.hartshorn.test.ApplicationAwareTest;
-import org.dockbox.hartshorn.test.files.JUnitFileManager;
+import org.dockbox.hartshorn.testsuite.ApplicationAwareTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -63,7 +62,7 @@ public class DataStructuresSerializersTests extends ApplicationAwareTest {
     }
 
     @Test
-    public void testThatRegistryCanBeDeserialised() throws IOException {
+    public void testThatRegistryCanBeDeserialized() throws IOException {
         final File copy = File.createTempFile("tmp", null);
         final Path tempFile = copy.toPath();
 

@@ -55,8 +55,8 @@ publishing {
     }
     repositories {
         maven {
-            def releasesRepoUrl = layout.buildDirectory.dir('repos/releases')
-            def snapshotsRepoUrl = layout.buildDirectory.dir('repos/snapshots')
+            final def releasesRepoUrl = layout.buildDirectory.dir('repos/releases')
+            final def snapshotsRepoUrl = layout.buildDirectory.dir('repos/snapshots')
             url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
         }
     }
@@ -64,10 +64,10 @@ publishing {
 
 task copyPublications {
     doLast {
-        def version = projectVersion
-        def DIST_DEST_DIR = "$rootDir/hartshorn-assembly/publications/$version"
-        def DIRT_SRC_DIR = "$buildDir/libs"
-        def POM_SRC_DIR = "$buildDir/publications/mavenJava"
+        final def version = projectVersion
+        final def DIST_DEST_DIR = "$rootDir/hartshorn-assembly/publications/$version"
+        final def DIRT_SRC_DIR = "$buildDir/libs"
+        final def POM_SRC_DIR = "$buildDir/publications/mavenJava"
 
         ant.mkdir(dir: DIST_DEST_DIR)
         ant.copy(todir: DIST_DEST_DIR) {
@@ -75,11 +75,11 @@ task copyPublications {
                     includes: "$project.name-$version*"
         }
 
-        file("$POM_SRC_DIR/pom-default.xml").renameTo(file("$POM_SRC_DIR/$project.name-pom.xml"))
+        file("$POM_SRC_DIR/pom-default.xml").renameTo(file("$POM_SRC_DIR/${project.name}.pom"))
 
         ant.copy(todir: DIST_DEST_DIR) {
             fileset dir: POM_SRC_DIR,
-                    includes: "$project.name-pom.xml"
+                    includes: "${project.name}.pom"
         }
 
     }

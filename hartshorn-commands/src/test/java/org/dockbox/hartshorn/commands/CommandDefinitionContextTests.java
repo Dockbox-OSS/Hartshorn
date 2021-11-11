@@ -17,7 +17,6 @@
 
 package org.dockbox.hartshorn.commands;
 
-import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.commands.annotations.Command;
 import org.dockbox.hartshorn.commands.annotations.UseCommands;
 import org.dockbox.hartshorn.commands.context.CommandDefinitionContext;
@@ -28,10 +27,11 @@ import org.dockbox.hartshorn.commands.exceptions.ParsingException;
 import org.dockbox.hartshorn.commands.types.CommandValueEnum;
 import org.dockbox.hartshorn.commands.types.SampleCommand;
 import org.dockbox.hartshorn.commands.types.SampleCommandExtension;
-import org.dockbox.hartshorn.di.context.element.TypeContext;
-import org.dockbox.hartshorn.i18n.annotations.UseResources;
-import org.dockbox.hartshorn.test.ApplicationAwareTest;
-import org.dockbox.hartshorn.util.HartshornUtils;
+import org.dockbox.hartshorn.core.HartshornUtils;
+import org.dockbox.hartshorn.core.context.element.TypeContext;
+import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.i18n.annotations.UseTranslations;
+import org.dockbox.hartshorn.testsuite.ApplicationAwareTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -39,7 +39,7 @@ import java.lang.annotation.Annotation;
 import java.util.List;
 
 @UseCommands
-@UseResources
+@UseTranslations
 public class CommandDefinitionContextTests extends ApplicationAwareTest {
 
     private final TypeContext<SampleCommand> typeContext = TypeContext.of(SampleCommand.class);
@@ -126,7 +126,6 @@ public class CommandDefinitionContextTests extends ApplicationAwareTest {
         final Command command = this.createCommand();
         final CommandDefinitionContext context = new CommandDefinitionContextImpl(this.context(), command, null);
 
-        Assertions.assertEquals("demo", context.permission().get());
         Assertions.assertEquals(1, context.aliases().size());
         Assertions.assertEquals("demo", context.aliases().get(0));
 
@@ -180,11 +179,6 @@ public class CommandDefinitionContextTests extends ApplicationAwareTest {
             @Override
             public String arguments() {
                 return "<required{String}> [optional{String}]  [enum{org.dockbox.hartshorn.commands.types.CommandValueEnum}] --flag --vflag String -s";
-            }
-
-            @Override
-            public String permission() {
-                return "demo";
             }
 
             @Override

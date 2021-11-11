@@ -17,11 +17,11 @@
 
 package org.dockbox.hartshorn.commands.arguments;
 
-import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.commands.annotations.Parameter;
-import org.dockbox.hartshorn.di.context.element.TypeContext;
-import org.dockbox.hartshorn.i18n.common.Message;
+import org.dockbox.hartshorn.core.context.element.TypeContext;
+import org.dockbox.hartshorn.i18n.Message;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +44,7 @@ public abstract class PrefixedParameterPattern implements CustomParameterPattern
                 },
                 () -> true,
                 () -> false,
-                () -> new IllegalArgumentException(this.wrongFormat().asString())
+                () -> new IllegalArgumentException(this.wrongFormat().string())
         );
     }
 
@@ -75,7 +75,7 @@ public abstract class PrefixedParameterPattern implements CustomParameterPattern
     public Exceptional<String> parseIdentifier(final String argument) {
         return Exceptional.of(() -> argument.startsWith(this.prefix() + ""),
                 () -> argument.substring(1, argument.indexOf(this.opening())),
-                () -> new IllegalArgumentException(this.wrongFormat().asString())
+                () -> new IllegalArgumentException(this.wrongFormat().string())
         );
     }
 
@@ -87,7 +87,7 @@ public abstract class PrefixedParameterPattern implements CustomParameterPattern
     protected abstract char opening();
 
     /**
-     * The closing character of a argument.
+     * The closing character of an argument.
      *
      * @return The character
      */
@@ -108,7 +108,7 @@ public abstract class PrefixedParameterPattern implements CustomParameterPattern
     protected abstract boolean requiresTypeName();
 
     /**
-     * The resource to send to the {@link CommandSource} when a argument is not formatted correctly.
+     * The resource to send to the {@link CommandSource} when an argument is not formatted correctly.
      *
      * @return The resource
      */

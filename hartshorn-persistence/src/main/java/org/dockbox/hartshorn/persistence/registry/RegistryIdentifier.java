@@ -20,7 +20,7 @@ package org.dockbox.hartshorn.persistence.registry;
 import org.jetbrains.annotations.NonNls;
 
 public interface RegistryIdentifier {
-    default boolean same(Object o) {
+    default boolean same(final Object o) {
         if (this == o) return true;
         if (!(o instanceof RegistryIdentifier that)) return false;
         return this.key().equals(that.key());

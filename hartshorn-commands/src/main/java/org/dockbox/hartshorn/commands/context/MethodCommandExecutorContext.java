@@ -17,27 +17,30 @@
 
 package org.dockbox.hartshorn.commands.context;
 
-import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.api.domain.Subject;
-import org.dockbox.hartshorn.api.exceptions.Except;
 import org.dockbox.hartshorn.commands.CommandExecutor;
 import org.dockbox.hartshorn.commands.CommandParser;
 import org.dockbox.hartshorn.commands.CommandResources;
 import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.commands.annotations.Command;
+import org.dockbox.hartshorn.commands.arguments.CommandParameterLoaderContext;
 import org.dockbox.hartshorn.commands.definition.CommandElement;
 import org.dockbox.hartshorn.commands.events.CommandEvent;
 import org.dockbox.hartshorn.commands.events.CommandEvent.Before;
-import org.dockbox.hartshorn.di.context.ApplicationContext;
-import org.dockbox.hartshorn.di.context.DefaultCarrierContext;
-import org.dockbox.hartshorn.di.context.element.AnnotatedElementContext;
-import org.dockbox.hartshorn.di.context.element.MethodContext;
-import org.dockbox.hartshorn.di.context.element.ParameterContext;
-import org.dockbox.hartshorn.di.context.element.TypeContext;
+import org.dockbox.hartshorn.core.HartshornUtils;
+import org.dockbox.hartshorn.core.Key;
+import org.dockbox.hartshorn.core.binding.Bindings;
+import org.dockbox.hartshorn.core.context.ApplicationContext;
+import org.dockbox.hartshorn.core.context.DefaultCarrierContext;
+import org.dockbox.hartshorn.core.context.element.AnnotatedElementContext;
+import org.dockbox.hartshorn.core.context.element.MethodContext;
+import org.dockbox.hartshorn.core.context.element.ParameterContext;
+import org.dockbox.hartshorn.core.context.element.TypeContext;
+import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.core.exceptions.Except;
+import org.dockbox.hartshorn.core.services.parameter.ParameterLoader;
 import org.dockbox.hartshorn.events.annotations.Posting;
 import org.dockbox.hartshorn.events.parents.Cancellable;
-import org.dockbox.hartshorn.i18n.common.Message;
-import org.dockbox.hartshorn.util.HartshornUtils;
+import org.dockbox.hartshorn.i18n.Message;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Method;
@@ -45,7 +48,6 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -68,6 +70,7 @@ public class MethodCommandExecutorContext<T> extends DefaultCarrierContext imple
 
     @Getter(AccessLevel.NONE)
     private Map<String, CommandParameterContext> parameters;
+    private final ParameterLoader<CommandParameterLoaderContext> parameterLoader;
 
     public MethodCommandExecutorContext(final ApplicationContext context, final MethodContext<?, T> method, final TypeContext<T> type) {
         super(context);
@@ -98,9 +101,10 @@ public class MethodCommandExecutorContext<T> extends DefaultCarrierContext imple
             this.parentAliases.addAll(HartshornUtils.asList(this.parent.value()));
         }
         this.parameters = this.parameters();
+        this.parameterLoader = context.get(Key.of(ParameterLoader.class, Bindings.named("command_loader")));
     }
 
-    private Map<String, CommandParameterContext> parameters() {
+    public Map<String, CommandParameterContext> parameters() {
         if (this.parameters == null) {
             this.parameters = HartshornUtils.emptyMap();
             final LinkedList<ParameterContext<?>> parameters = this.method().parameters();
@@ -125,7 +129,8 @@ public class MethodCommandExecutorContext<T> extends DefaultCarrierContext imple
             }
 
             final T instance = this.applicationContext().get(this.type());
-            final List<Object> arguments = this.arguments(ctx);
+            final CommandParameterLoaderContext loaderContext = new CommandParameterLoaderContext(this.method(), this.type(), null, this.applicationContext(), ctx, this);
+            final List<Object> arguments = this.parameterLoader().loadArguments(loaderContext);
             this.applicationContext().log().debug("Invoking command method %s with %d arguments".formatted(this.method().qualifiedName(), arguments.size()));
             this.method().invoke(instance, arguments.toArray()).caught(error -> Except.handle("Encountered unexpected error while performing command executor", error));
             new CommandEvent.After(ctx.source(), ctx).with(this.applicationContext()).post();
@@ -215,23 +220,5 @@ public class MethodCommandExecutorContext<T> extends DefaultCarrierContext imple
             else if (command.startsWith(alias + ' ')) command = command.substring(alias.length() + 1);
         }
         return command;
-    }
-
-    private List<Object> arguments(final CommandContext context) {
-        final List<Object> arguments = HartshornUtils.list(this.parameters().size());
-        final Map<String, CommandParameterContext> parameters = this.parameters();
-
-        for (final Entry<String, CommandParameterContext> entry : parameters.entrySet()) {
-            final CommandParameterContext commandParameterContext = entry.getValue();
-            final int index = commandParameterContext.index();
-            if (commandParameterContext.is(CommandContext.class)) arguments.set(index, context);
-            else {
-                @Nullable final Object object = context.get(entry.getKey());
-                // Target comparison is done last as this can target either the command source, or a parameter target
-                if (object == null && commandParameterContext.is(Subject.class)) arguments.set(index, context.source());
-                else arguments.set(index, object);
-            }
-        }
-        return arguments;
     }
 }

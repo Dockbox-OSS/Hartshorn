@@ -18,6 +18,8 @@
 package org.dockbox.hartshorn.persistence.properties;
 
 public enum PersistenceModifier {
+    SKIP_NONE,
     SKIP_EMPTY,
-    SKIP_NULL
+    SKIP_NULL,
+    SKIP_DEFAULT
 }

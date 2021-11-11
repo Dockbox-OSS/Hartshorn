@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.persistence.context;
 
-import org.dockbox.hartshorn.di.context.DefaultContext;
+import org.dockbox.hartshorn.core.context.DefaultContext;
 import org.dockbox.hartshorn.persistence.FileType;
 import org.jetbrains.annotations.Nullable;
 

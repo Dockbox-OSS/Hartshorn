@@ -17,11 +17,16 @@
 
 package org.dockbox.hartshorn.events.handle;
 
-import org.dockbox.hartshorn.di.context.element.MethodContext;
-import org.dockbox.hartshorn.di.context.element.TypeContext;
+import org.dockbox.hartshorn.core.HartshornUtils;
+import org.dockbox.hartshorn.core.binding.Bindings;
+import org.dockbox.hartshorn.core.context.ApplicationContext;
+import org.dockbox.hartshorn.core.context.element.MethodContext;
+import org.dockbox.hartshorn.core.context.element.TypeContext;
+import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.core.exceptions.Except;
+import org.dockbox.hartshorn.core.services.parameter.ParameterLoader;
 import org.dockbox.hartshorn.events.EventWrapper;
 import org.dockbox.hartshorn.events.parents.Event;
-import org.dockbox.hartshorn.util.HartshornUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Method;
@@ -32,7 +37,7 @@ import java.util.Objects;
 import lombok.Getter;
 
 /**
- * Wrapper type for future invokation of a {@link Method} listening for {@link Event} posting. This
+ * Wrapper type for future invocation of a {@link Method} listening for {@link Event} posting. This
  * type is responsible for filtering and invoking a {@link Method} when a supported {@link Event} is
  * fired.
  */
@@ -51,20 +56,30 @@ public final class EventWrapperImpl<T> implements Comparable<EventWrapperImpl<T>
         throw new AssertionError(); // ensures the comparator will never return 0 if the two wrapper
         // aren't equal
     };
-    @Getter private final TypeContext<T> listenerType;
+    @Getter private final ParameterLoader<EventParameterLoaderContext> parameterLoader;
     @Getter private final TypeContext<? extends Event> eventType;
     @Getter private final List<TypeContext<?>> eventParameters;
+    @Getter private final TypeContext<T> listenerType;
+    @Getter private final ApplicationContext context;
     @Getter private final MethodContext<?, T> method;
     @Getter private final int priority;
     @Getter private T listener;
 
-    private EventWrapperImpl(final TypeContext<T> type, final TypeContext<? extends Event> eventType, final MethodContext<?, T> method, final int priority) {
+    private EventWrapperImpl(
+            final ParameterLoader<EventParameterLoaderContext> parameterLoader,
+            final TypeContext<T> type,
+            final TypeContext<? extends Event> eventType,
+            final MethodContext<?, T> method,
+            final int priority,
+            final ApplicationContext context
+    ) {
+        this.context = context;
         this.listener = null; // Lazy loaded value
+        this.parameterLoader = parameterLoader;
         this.listenerType = type;
         this.eventType = eventType;
         this.method = method;
         this.priority = priority;
-
         this.eventParameters = method.parameters().get(0).typeParameters();
     }
 
@@ -81,12 +96,12 @@ public final class EventWrapperImpl<T> implements Comparable<EventWrapperImpl<T>
      *
      * @return The list of {@link EventWrapperImpl}s
      */
-    public static <T> List<EventWrapperImpl<T>> create(final TypeContext<T> type, final MethodContext<?, T> method, final int priority) {
+    public static <T> List<EventWrapperImpl<T>> create(final ApplicationContext context, final TypeContext<T> type, final MethodContext<?, T> method, final int priority) {
         final List<EventWrapperImpl<T>> invokeWrappers = HartshornUtils.emptyConcurrentList();
+        final ParameterLoader<EventParameterLoaderContext> parameterLoader = context.get(ParameterLoader.class, Bindings.named("event_loader"));
         for (final TypeContext<?> param : method.parameterTypes()) {
             if (param.childOf(Event.class)) {
-                //noinspection unchecked
-                invokeWrappers.add(new EventWrapperImpl<>(type, (TypeContext<? extends Event>) param, method, priority));
+                invokeWrappers.add(new EventWrapperImpl<>(parameterLoader, type, (TypeContext<? extends Event>) param, method, priority, context));
             }
         }
         return invokeWrappers;
@@ -95,10 +110,16 @@ public final class EventWrapperImpl<T> implements Comparable<EventWrapperImpl<T>
     @Override
     public void invoke(final Event event) throws SecurityException {
         if (this.filtersMatch(event)) {
-            event.applicationContext().log().debug("Invoking event " + TypeContext.of(event).name() + " to method context of " + this.method.qualifiedName());
+            final String eventName = TypeContext.of(event).name();
+            event.applicationContext().log().debug("Invoking event " + eventName + " to method context of " + this.method.qualifiedName());
             // Lazy initialisation to allow processors to register first
             if (this.listener == null) this.listener = event.applicationContext().get(this.listenerType);
-            this.method.invoke(this.listener, event);
+            final EventParameterLoaderContext loaderContext = new EventParameterLoaderContext(this.method, this.listenerType, this.listener, this.context, event);
+            final List<Object> arguments = this.parameterLoader().loadArguments(loaderContext);
+            final Exceptional<?> result = this.method.invoke(this.listener, arguments);
+            if (result.caught()) {
+                Except.handle("Could not finish event runner for " + eventName, result.error());
+            }
         }
     }
 

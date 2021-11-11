@@ -18,7 +18,7 @@
 package org.dockbox.hartshorn.commands.context;
 
 import org.dockbox.hartshorn.commands.service.CommandParameter;
-import org.dockbox.hartshorn.di.context.Context;
+import org.dockbox.hartshorn.core.context.Context;
 import org.jetbrains.annotations.UnmodifiableView;
 
 import java.util.List;
@@ -49,7 +49,7 @@ public interface ParserContext extends Context {
     List<CommandParameter<?>> flags();
 
     /**
-     * Gets the alias of a command. Typically a raw command will contain both the alias and additional
+     * Gets the alias of a command. Typically, a raw command will contain both the alias and additional
      * arguments and flags. The result of this method is only the alias. For example the raw command:
      * <pre><code>
      *     "command argumentA --flagB"

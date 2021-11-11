@@ -33,28 +33,28 @@ public enum Remotes implements Remote {
     private final Function<?, String> urlGen;
     @Getter private final String driver;
 
-    <T> Remotes(Class<T> target, Function<T, String> urlGen, String driver) {
+    <T> Remotes(final Class<T> target, final Function<T, String> urlGen, final String driver) {
         this.target = target;
         this.urlGen = urlGen;
         this.driver = driver;
     }
 
-    private static String connectionString(String type, SQLRemoteServer server) {
+    private static String connectionString(final String type, final SQLRemoteServer server) {
         return "jdbc:%s://%s:%s/%s".formatted(type, server.server(), server.port(), server.database());
     }
 
     @Override
-    public PersistenceConnection connection(Object target, String user, String password) {
+    public PersistenceConnection connection(final Object target, final String user, final String password) {
         return this.connection(this.url(target), user, password);
     }
 
     @Override
-    public PersistenceConnection connection(String url, String user, String password) {
+    public PersistenceConnection connection(final String url, final String user, final String password) {
         return new PersistenceConnection(url, user, password, this);
     }
 
     @Override
-    public String url(Object target) {
+    public String url(final Object target) {
         if (this.target.isInstance(target)) {
             //noinspection unchecked
             return ((Function<Object, String>) this.urlGen).apply(target);

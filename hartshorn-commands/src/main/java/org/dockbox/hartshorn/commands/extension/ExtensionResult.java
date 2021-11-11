@@ -18,8 +18,7 @@
 package org.dockbox.hartshorn.commands.extension;
 
 import org.dockbox.hartshorn.commands.CommandSource;
-import org.dockbox.hartshorn.i18n.common.Message;
-import org.dockbox.hartshorn.i18n.message.DetachedMessage;
+import org.dockbox.hartshorn.i18n.Message;
 
 import lombok.AllArgsConstructor;
 
@@ -40,7 +39,7 @@ public final class ExtensionResult {
      * @return The {@link ExtensionResult}
      */
     public static ExtensionResult accept() {
-        return new ExtensionResult(true, new DetachedMessage(""), false);
+        return new ExtensionResult(true, null, false);
     }
 
     /**
@@ -83,7 +82,7 @@ public final class ExtensionResult {
     }
 
     /**
-     * Gets the reason a extension has been performed. This will only be sent to the
+     * Gets the reason an extension has been performed. This will only be sent to the
      * {@link CommandSource} if {@link #send()} is
      * <code>true</code>.
      *

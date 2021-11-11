@@ -17,21 +17,17 @@
 
 package org.dockbox.hartshorn.commands.arguments;
 
-import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.api.domain.tuple.Vector3N;
 import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
-import org.dockbox.hartshorn.di.annotations.service.Service;
-import org.dockbox.hartshorn.di.services.ComponentContainer;
-import org.dockbox.hartshorn.i18n.ResourceService;
-import org.dockbox.hartshorn.i18n.common.Language;
-import org.dockbox.hartshorn.i18n.common.Message;
-import org.dockbox.hartshorn.i18n.text.Text;
-import org.dockbox.hartshorn.util.HartshornUtils;
-import org.jetbrains.annotations.NonNls;
+import org.dockbox.hartshorn.core.HartshornUtils;
+import org.dockbox.hartshorn.core.adapter.BuiltInStringTypeAdapters;
+import org.dockbox.hartshorn.core.annotations.service.Service;
+import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.core.domain.tuple.Vector3N;
+import org.dockbox.hartshorn.core.services.ComponentContainer;
+import org.dockbox.hartshorn.i18n.Message;
+import org.dockbox.hartshorn.i18n.TranslationService;
 
 import java.time.Duration;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 import java.util.function.Function;
@@ -41,71 +37,40 @@ import java.util.function.Function;
 public final class DefaultArgumentConverters {
 
     public static final ArgumentConverter<String> STRING = ArgumentConverterImpl.builder(String.class, "string")
-            .withConverter((Function<String, Exceptional<String>>) Exceptional::of)
+            .withConverter(BuiltInStringTypeAdapters.STRING)
             .build();
 
     public static final ArgumentConverter<Character> CHARACTER = ArgumentConverterImpl.builder(Character.class, "char", "character")
-            .withConverter(in -> {
-                int length = in.length();
-                return 1 == length ? Exceptional.of(in.charAt(0)) : Exceptional.empty();
-            }).build();
+            .withConverter(BuiltInStringTypeAdapters.CHARACTER)
+            .build();
 
     public static final ArgumentConverter<Boolean> BOOLEAN = ArgumentConverterImpl.builder(Boolean.class, "bool", "boolean")
-            .withConverter(in -> switch (in) {
-                case "yes" -> Exceptional.of(true);
-                case "no" -> Exceptional.of(false);
-                default -> Exceptional.of(in).map(Boolean::parseBoolean);
-            }).withSuggestionProvider(in -> HartshornUtils.asList("true", "false", "yes", "no"))
+            .withConverter(BuiltInStringTypeAdapters.BOOLEAN)
+            .withSuggestionProvider(in -> HartshornUtils.asList("true", "false", "yes", "no"))
             .build();
 
     public static final ArgumentConverter<Double> DOUBLE = ArgumentConverterImpl.builder(Double.class, "double")
-            .withConverter(in -> Exceptional.of(in).map(Double::parseDouble))
+            .withConverter(BuiltInStringTypeAdapters.DOUBLE)
             .build();
 
     public static final ArgumentConverter<Float> FLOAT = ArgumentConverterImpl.builder(Float.class, "float")
-            .withConverter(in -> Exceptional.of(in).map(Float::parseFloat))
+            .withConverter(BuiltInStringTypeAdapters.FLOAT)
             .build();
 
     public static final ArgumentConverter<Integer> INTEGER = ArgumentConverterImpl.builder(Integer.class, "int", "integer")
-            .withConverter(in -> Exceptional.of(in).map(Integer::parseInt))
+            .withConverter(BuiltInStringTypeAdapters.INTEGER)
             .build();
 
     public static final ArgumentConverter<Long> LONG = ArgumentConverterImpl.builder(Long.class, "long")
-            .withConverter(in -> Exceptional.of(in).map(Long::parseLong))
+            .withConverter(BuiltInStringTypeAdapters.LONG)
             .build();
 
     public static final ArgumentConverter<Short> SHORT = ArgumentConverterImpl.builder(Short.class, "short")
-            .withConverter(in -> Exceptional.of(in).map(Short::parseShort))
+            .withConverter(BuiltInStringTypeAdapters.SHORT)
             .build();
 
-    public static final ArgumentConverter<Language> LANGUAGE = ArgumentConverterImpl.builder(Language.class, "lang", "language")
-            .withConverter((@NonNls String in) -> {
-                Language lang;
-                try {
-                    lang = Language.valueOf(in);
-                }
-                catch (NullPointerException | IllegalArgumentException e) {
-                    lang =
-                            Arrays.stream(Language.values())
-                                    .filter(l -> l.nameEnglish().equals(in) || l.nameLocalized().equals(in))
-                                    .findFirst()
-                                    .orElse(Language.EN_US);
-                }
-                return Exceptional.of(lang);
-            }).withSuggestionProvider(in -> {
-                List<String> suggestions = HartshornUtils.emptyList();
-                for (Language lang : Language.values()) {
-                    suggestions.add(lang.code());
-                    suggestions.add(lang.nameEnglish());
-                    suggestions.add(lang.nameLocalized());
-                }
-                return suggestions.stream()
-                        .filter(lang -> lang.toLowerCase().contains(in.toLowerCase()))
-                        .toList();
-            }).build();
-
     public static final ArgumentConverter<UUID> UNIQUE_ID = ArgumentConverterImpl.builder(UUID.class, "uuid", "uniqueId")
-            .withConverter(in -> Exceptional.of(in).map(UUID::fromString))
+            .withConverter(BuiltInStringTypeAdapters.UNIQUE_ID)
             .build();
 
     public static final ArgumentConverter<Vector3N> VECTOR = ArgumentConverterImpl.builder(Vector3N.class, "vec3", "vector", "v3n")
@@ -124,20 +89,11 @@ public final class DefaultArgumentConverters {
             .withConverter(HartshornUtils::durationOf)
             .build();
 
-    public static final ArgumentConverter<Message> RESOURCE = ArgumentConverterImpl.builder(Message.class, "resource", "i18n", "translation")
+    public static final ArgumentConverter<Message> MESSAGE = ArgumentConverterImpl.builder(Message.class, "resource", "i18n", "translation")
             .withConverter((src, in) -> {
-                ResourceService rs = src.applicationContext().get(ResourceService.class);
-                String validKey = rs.createValidKey(in);
-
-                Exceptional<? extends Message> or = rs.get(validKey);
-                if (or.present()) return or.map(Message.class::cast);
-
-                return src.applicationContext().get(ResourceService.class).get(validKey);
+                TranslationService rs = src.applicationContext().get(TranslationService.class);
+                return rs.get(in);
             }).build();
-
-    public static final ArgumentConverter<Text> TEXT = ArgumentConverterImpl.builder(Text.class, "text")
-            .withConverter(in -> Exceptional.of(Text.of(in)))
-            .build();
 
     public static final ArgumentConverter<ComponentContainer> SERVICE = ArgumentConverterImpl.builder(ComponentContainer.class, "service")
             .withConverter((src, in) -> Exceptional.of(src.applicationContext()

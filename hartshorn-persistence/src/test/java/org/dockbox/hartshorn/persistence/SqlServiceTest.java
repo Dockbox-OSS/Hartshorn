@@ -17,13 +17,14 @@
 
 package org.dockbox.hartshorn.persistence;
 
-import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.persistence.hibernate.HibernateSqlService;
-import org.dockbox.hartshorn.persistence.properties.ConnectionAttribute;
+import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.persistence.annotations.UsePersistence;
+import org.dockbox.hartshorn.persistence.jpa.JpaRepository;
+import org.dockbox.hartshorn.persistence.properties.PersistenceConnection;
 import org.dockbox.hartshorn.persistence.properties.Remote;
 import org.dockbox.hartshorn.persistence.properties.Remotes;
 import org.dockbox.hartshorn.persistence.properties.SQLRemoteServer;
-import org.dockbox.hartshorn.test.ApplicationAwareTest;
+import org.dockbox.hartshorn.testsuite.ApplicationAwareTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -43,6 +44,7 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 @Testcontainers
+@UsePersistence
 class SqlServiceTest extends ApplicationAwareTest {
 
     protected static final String DEFAULT_DATABASE = "HartshornDb_" + System.nanoTime();
@@ -62,30 +64,28 @@ class SqlServiceTest extends ApplicationAwareTest {
 
     @ParameterizedTest
     @MethodSource("containers")
-    void testContainerStates(ContainerState container) {
+    void testContainerStates(final ContainerState container) {
         Assertions.assertTrue(container.isRunning());
     }
 
     public static Stream<Arguments> dialects() {
         return Stream.of(
-                Arguments.of(Remotes.DERBY, directory("derby")),
+                Arguments.of(Remotes.DERBY, directory(Remotes.DERBY, "derby")),
                 Arguments.of(Remotes.MYSQL, connection(Remotes.MYSQL, mySql, MySQLContainer.MYSQL_PORT)),
                 Arguments.of(Remotes.POSTGRESQL, connection(Remotes.POSTGRESQL, postgreSql, PostgreSQLContainer.POSTGRESQL_PORT)),
                 Arguments.of(Remotes.MARIADB, connection(Remotes.MARIADB, mariaDb, 3306))
         );
     }
 
-    protected static ConnectionAttribute connection(Remote remote, JdbcDatabaseContainer<?> container, int defaultPort) {
-        return ConnectionAttribute.of(remote,
-                SQLRemoteServer.of("localhost", container.getMappedPort(defaultPort), DEFAULT_DATABASE),
-                container.getUsername(),
-                container.getPassword()
-        );
+    protected static PersistenceConnection connection(final Remote remote, final JdbcDatabaseContainer<?> container, final int defaultPort) {
+        SQLRemoteServer server = SQLRemoteServer.of("localhost", container.getMappedPort(defaultPort), DEFAULT_DATABASE);
+        return new PersistenceConnection(remote.url(server), container.getUsername(), container.getPassword(), remote);
     }
 
-    protected static Path directory(final String prefix) {
+    protected static PersistenceConnection directory(Remote remote, final String prefix) {
         try {
-            return Files.createTempDirectory(prefix);
+            Path dir = Files.createTempDirectory(prefix);
+            return new PersistenceConnection(remote.url(dir), "", "", remote);
         }
         catch (final Exception e) {
             Assumptions.assumeTrue(false);
@@ -96,13 +96,13 @@ class SqlServiceTest extends ApplicationAwareTest {
 
     @ParameterizedTest
     @MethodSource("dialects")
-    public void testJpaSave(final Remote remote, final Object target) {
-        final SqlService sql = this.sql(remote, target);
+    public void testJpaSave(final Remote remote, final PersistenceConnection target) {
+        final JpaRepository<User, Long> sql = this.sql(target);
         sql.save(new User("Guus"));
         sql.save(new User("Simon"));
         sql.save(new User("Josh"));
 
-        final Set<User> users = sql.findAll(User.class);
+        final Set<User> users = sql.findAll();
         Assertions.assertFalse(users.isEmpty());
 
         for (final User user : users) {
@@ -110,23 +110,21 @@ class SqlServiceTest extends ApplicationAwareTest {
         }
     }
 
-    protected SqlService sql(final Remote remote, final Object target) {
-        if (target instanceof ConnectionAttribute attribute)
-            return this.context().get(HibernateSqlService.class, attribute);
-        else return this.context().get(HibernateSqlService.class, ConnectionAttribute.of(remote, target, "", ""));
+    protected JpaRepository<User, Long> sql(final PersistenceConnection target) {
+        return this.context().get(UserJpaRepository.class).connection(target);
     }
 
     @ParameterizedTest
     @MethodSource("dialects")
-    void testJpaDelete(final Remote remote, final Object target) {
-        final SqlService sql = this.sql(remote, target);
+    void testJpaDelete(final Remote remote, final PersistenceConnection target) {
+        final JpaRepository<User, Long> sql = this.sql(target);
         final User guus = new User("Guus");
         sql.save(guus);
         sql.save(new User("Simon"));
         sql.save(new User("Josh"));
         sql.delete(guus);
 
-        final Set<User> users = sql.findAll(User.class);
+        final Set<User> users = sql.findAll();
         Assertions.assertFalse(users.isEmpty());
 
         for (final User user : users) {
@@ -136,8 +134,8 @@ class SqlServiceTest extends ApplicationAwareTest {
 
     @ParameterizedTest
     @MethodSource("dialects")
-    void testJpaPersists(final Remote remote, final Object target) {
-        final SqlService sql = this.sql(remote, target);
+    void testJpaPersists(final Remote remote, final PersistenceConnection target) {
+        final JpaRepository<User, Long> sql = this.sql(target);
         final User user = new User("Guus");
         Assertions.assertEquals(0, user.id());
 
@@ -147,15 +145,15 @@ class SqlServiceTest extends ApplicationAwareTest {
 
     @ParameterizedTest
     @MethodSource("dialects")
-    void testJpaUpdate(final Remote remote, final Object target) {
-        final SqlService sql = this.sql(remote, target);
+    void testJpaUpdate(final Remote remote, final PersistenceConnection target) {
+        final JpaRepository<User, Long> sql = this.sql(target);
         final User guus = new User("Guus");
 
         sql.save(guus);
         guus.name("NotGuus");
         sql.update(guus);
 
-        final Exceptional<User> persisted = sql.findById(User.class, guus.id());
+        final Exceptional<User> persisted = sql.findById(guus.id());
         Assertions.assertTrue(persisted.present());
         Assertions.assertEquals(persisted.get().name(), "NotGuus");
     }

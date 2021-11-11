@@ -17,11 +17,11 @@
 
 package org.dockbox.hartshorn.events.handle;
 
-import org.dockbox.hartshorn.di.context.element.MethodContext;
-import org.dockbox.hartshorn.di.context.element.TypeContext;
+import org.dockbox.hartshorn.core.context.element.MethodContext;
+import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.events.EventWrapper;
 import org.dockbox.hartshorn.events.parents.Event;
-import org.dockbox.hartshorn.util.HartshornUtils;
+import org.dockbox.hartshorn.core.HartshornUtils;
 
 import java.util.List;
 import java.util.Objects;

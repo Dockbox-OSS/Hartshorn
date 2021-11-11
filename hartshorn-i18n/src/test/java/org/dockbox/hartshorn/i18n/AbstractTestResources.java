@@ -17,17 +17,18 @@
 
 package org.dockbox.hartshorn.i18n;
 
-import org.dockbox.hartshorn.di.annotations.service.Service;
-import org.dockbox.hartshorn.i18n.annotations.Resource;
-import org.dockbox.hartshorn.i18n.common.Message;
+import org.dockbox.hartshorn.core.annotations.service.Service;
+import org.dockbox.hartshorn.i18n.annotations.InjectTranslation;
 
 @Service
 public abstract class AbstractTestResources {
 
-    @Resource("Hello concrete world!")
-    public Message concreteEntry() {return null;}
+    @InjectTranslation("Hello concrete world!")
+    public Message concreteEntry() {
+        return null;
+    }
 
-    @Resource("Hello abstract world!")
+    @InjectTranslation("Hello abstract world!")
     abstract Message abstractEntry();
 
 }

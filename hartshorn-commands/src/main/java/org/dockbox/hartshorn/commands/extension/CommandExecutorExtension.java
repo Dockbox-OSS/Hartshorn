@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.commands.extension;
 
-import org.dockbox.hartshorn.api.domain.Identifiable;
+import org.dockbox.hartshorn.core.domain.Identifiable;
 import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.commands.context.CommandContext;
 import org.dockbox.hartshorn.commands.context.CommandExecutorContext;
@@ -66,9 +66,9 @@ public interface CommandExecutorExtension {
      *
      * @return The unique ID
      */
-    default String id(Identifiable sender, CommandContext context) {
-        UUID uuid = sender.uniqueId();
-        String alias = context.alias();
+    default String id(final Identifiable sender, final CommandContext context) {
+        final UUID uuid = sender.uniqueId();
+        final String alias = context.alias();
         return uuid + "$" + alias;
     }
 

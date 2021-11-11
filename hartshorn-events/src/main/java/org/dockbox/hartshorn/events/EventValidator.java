@@ -17,28 +17,38 @@
 
 package org.dockbox.hartshorn.events;
 
-import org.dockbox.hartshorn.boot.Hartshorn;
-import org.dockbox.hartshorn.boot.annotations.PostBootstrap;
-import org.dockbox.hartshorn.boot.annotations.UseBootstrap;
-import org.dockbox.hartshorn.di.annotations.service.Service;
-import org.dockbox.hartshorn.di.context.ApplicationContext;
-import org.dockbox.hartshorn.di.context.element.TypeContext;
+import org.dockbox.hartshorn.core.HartshornUtils;
+import org.dockbox.hartshorn.core.annotations.service.Service;
+import org.dockbox.hartshorn.core.boot.ApplicationState.Started;
+import org.dockbox.hartshorn.core.boot.Hartshorn;
+import org.dockbox.hartshorn.core.boot.LifecycleObserver;
+import org.dockbox.hartshorn.core.context.ApplicationContext;
+import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.events.annotations.Posting;
 import org.dockbox.hartshorn.events.annotations.UseEvents;
 import org.dockbox.hartshorn.events.parents.Event;
-import org.dockbox.hartshorn.util.HartshornUtils;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Service(activators = { UseBootstrap.class, UseEvents.class })
-public class EventValidator {
+@Service(activators = UseEvents.class)
+public class EventValidator implements LifecycleObserver {
 
-    @PostBootstrap
-    public void validate(final ApplicationContext context) {
-        final List<TypeContext<? extends Event>> allEvents = context.environment().children(Event.class)
+    @Override
+    public void onCreated(ApplicationContext applicationContext) {
+        // Nothing happens
+    }
+
+    @Override
+    public void onStarted(ApplicationContext applicationContext) {
+        if (applicationContext.hasActivator(UseEvents.class)) {
+            new EngineChangedState<Started>() {
+            }.with(applicationContext).post();
+        }
+
+        final List<TypeContext<? extends Event>> allEvents = applicationContext.environment().children(Event.class)
                 .stream()
                 .filter(type -> !type.isAbstract())
                 // Anonymous classes indicate the event carries type parameters when posted (e.g. EngineChangedState<State>)
@@ -48,7 +58,7 @@ public class EventValidator {
                 .toList();
         final List<TypeContext<? extends Event>> postedEvents = HartshornUtils.emptyList();
 
-        for (final TypeContext<?> bridge : context.environment().types(Posting.class)) {
+        for (final TypeContext<?> bridge : applicationContext.environment().types(Posting.class)) {
             final Posting posting = bridge.annotation(Posting.class).get();
             postedEvents.addAll(Arrays.stream(posting.value()).map(TypeContext::of).collect(Collectors.toList()));
         }
@@ -58,7 +68,7 @@ public class EventValidator {
         if (!difference.isEmpty()) {
             final StringBuilder message = new StringBuilder(difference.size() + " events are not handled by any event bridge!");
 
-            if (!context.environment().isCI()) {
+            if (!applicationContext.environment().isCI()) {
                 for (final TypeContext<? extends Event> event : difference) {
                     message.append("\n\t- ").append(event.name());
                 }
@@ -66,5 +76,4 @@ public class EventValidator {
             Hartshorn.log().warn(message.toString());
         }
     }
-
 }

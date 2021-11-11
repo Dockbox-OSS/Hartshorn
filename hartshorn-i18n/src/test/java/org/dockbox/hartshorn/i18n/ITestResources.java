@@ -17,17 +17,16 @@
 
 package org.dockbox.hartshorn.i18n;
 
-import org.dockbox.hartshorn.di.annotations.service.Service;
-import org.dockbox.hartshorn.i18n.annotations.Resource;
-import org.dockbox.hartshorn.i18n.common.Message;
+import org.dockbox.hartshorn.core.annotations.service.Service;
+import org.dockbox.hartshorn.i18n.annotations.InjectTranslation;
 
 @Service(id = "resource")
 public interface ITestResources {
 
-    @Resource("Hello world!")
+    @InjectTranslation("Hello world!")
     Message testEntry();
 
-    @Resource("Hello {0}!")
+    @InjectTranslation("Hello {0}!")
     Message parameterTestEntry(String name);
 
 }

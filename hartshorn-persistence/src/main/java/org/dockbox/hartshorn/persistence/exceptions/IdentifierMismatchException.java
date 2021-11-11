@@ -18,7 +18,7 @@
 package org.dockbox.hartshorn.persistence.exceptions;
 
 public class IdentifierMismatchException extends Exception {
-    public IdentifierMismatchException(String message) {
+    public IdentifierMismatchException(final String message) {
         super(message);
     }
 }

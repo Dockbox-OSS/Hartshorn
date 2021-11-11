@@ -17,10 +17,10 @@
 
 package org.dockbox.hartshorn.persistence.exceptions;
 
-import org.dockbox.hartshorn.api.exceptions.ApplicationException;
+import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 
 public class NoSuchTableException extends ApplicationException {
-    public NoSuchTableException(String tableName, Throwable e) {
+    public NoSuchTableException(final String tableName, final Throwable e) {
         super("Table '" + tableName + "' does not exist", e);
     }
 }

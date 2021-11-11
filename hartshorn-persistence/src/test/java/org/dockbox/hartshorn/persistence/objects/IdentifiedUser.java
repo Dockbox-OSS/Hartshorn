@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.persistence.objects;
 
-import org.dockbox.hartshorn.api.annotations.Property;
+import org.dockbox.hartshorn.core.annotations.Property;
 
 public class IdentifiedUser {
 
@@ -26,7 +26,7 @@ public class IdentifiedUser {
     @Property("name")
     public String displayedName;
 
-    public IdentifiedUser(int id, String name) {
+    public IdentifiedUser(final int id, final String name) {
         this.numeralId = id;
         this.displayedName = name;
     }

@@ -16,11 +16,7 @@
  */
 
 dependencies {
-    implementation 'org.dockbox.hartshorn:hartshorn-di'
-    implementation 'org.dockbox.hartshorn:hartshorn-util'
     implementation 'org.dockbox.hartshorn:hartshorn-core'
-    implementation 'org.dockbox.hartshorn:hartshorn-bootstrap'
-    implementation 'org.dockbox.hartshorn:hartshorn-exceptions'
     implementation 'org.dockbox.hartshorn:hartshorn-persistence'
 
     implementation "com.fasterxml.jackson.core:jackson-core:$jacksonVersion"
@@ -29,4 +25,5 @@ dependencies {
     testImplementation "com.fasterxml.jackson.dataformat:jackson-dataformat-properties:$jacksonVersion"
     testImplementation "com.fasterxml.jackson.dataformat:jackson-dataformat-toml:$jacksonVersion"
     testImplementation "com.fasterxml.jackson.dataformat:jackson-dataformat-xml:$jacksonVersion"
+    testImplementation project(':hartshorn-persistence').sourceSets.test.output
 }

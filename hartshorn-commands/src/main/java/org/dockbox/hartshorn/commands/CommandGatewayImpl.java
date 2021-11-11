@@ -17,7 +17,6 @@
 
 package org.dockbox.hartshorn.commands;
 
-import org.dockbox.hartshorn.api.domain.Exceptional;
 import org.dockbox.hartshorn.commands.annotations.Command;
 import org.dockbox.hartshorn.commands.context.CommandContext;
 import org.dockbox.hartshorn.commands.context.CommandDefinitionContext;
@@ -26,14 +25,15 @@ import org.dockbox.hartshorn.commands.context.MethodCommandExecutorContext;
 import org.dockbox.hartshorn.commands.exceptions.ParsingException;
 import org.dockbox.hartshorn.commands.extension.CommandExecutorExtension;
 import org.dockbox.hartshorn.commands.extension.ExtensionResult;
-import org.dockbox.hartshorn.di.ArrayListMultiMap;
-import org.dockbox.hartshorn.di.MultiMap;
-import org.dockbox.hartshorn.di.annotations.inject.Binds;
-import org.dockbox.hartshorn.di.context.ApplicationContext;
-import org.dockbox.hartshorn.di.context.element.MethodContext;
-import org.dockbox.hartshorn.di.context.element.TypeContext;
-import org.dockbox.hartshorn.di.properties.AttributeHolder;
-import org.dockbox.hartshorn.util.HartshornUtils;
+import org.dockbox.hartshorn.core.ArrayListMultiMap;
+import org.dockbox.hartshorn.core.HartshornUtils;
+import org.dockbox.hartshorn.core.MultiMap;
+import org.dockbox.hartshorn.core.annotations.inject.Binds;
+import org.dockbox.hartshorn.core.context.ApplicationContext;
+import org.dockbox.hartshorn.core.context.element.MethodContext;
+import org.dockbox.hartshorn.core.context.element.TypeContext;
+import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.core.Enableable;
 import org.jetbrains.annotations.UnmodifiableView;
 
 import java.util.Collection;
@@ -50,7 +50,7 @@ import lombok.Getter;
  */
 @Singleton
 @Binds(CommandGateway.class)
-public class CommandGatewayImpl implements CommandGateway, AttributeHolder {
+public class CommandGatewayImpl implements CommandGateway, Enableable {
 
     @Getter(AccessLevel.PROTECTED)
     private final transient MultiMap<String, CommandExecutorContext> contexts = new ArrayListMultiMap<>();
@@ -138,8 +138,8 @@ public class CommandGatewayImpl implements CommandGateway, AttributeHolder {
     }
 
     @Override
-    public void register(final TypeContext<?> type) {
-        for (final MethodContext<?, ?> method : type.flatMethods(Command.class)) {
+    public <T> void register(final TypeContext<T> type) {
+        for (final MethodContext<?, T> method : type.methods(Command.class)) {
             this.register(method, type);
         }
     }
@@ -204,7 +204,7 @@ public class CommandGatewayImpl implements CommandGateway, AttributeHolder {
         this.extensions.add(extension);
     }
 
-    private void register(final MethodContext<?, ?> method, final TypeContext<?> type) {
-        this.register(new MethodCommandExecutorContext(this.context, method, type));
+    private <T> void register(final MethodContext<?, T> method, final TypeContext<T> type) {
+        this.register(new MethodCommandExecutorContext<>(this.context, method, type));
     }
 }

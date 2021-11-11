@@ -28,6 +28,8 @@ import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.cfg.MapperBuilder;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.ValueNode;
@@ -39,19 +41,19 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLParser;
 
-import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.api.exceptions.Except;
-import org.dockbox.hartshorn.di.GenericType;
-import org.dockbox.hartshorn.di.annotations.component.Component;
-import org.dockbox.hartshorn.di.annotations.inject.Binds;
-import org.dockbox.hartshorn.di.context.ApplicationContext;
-import org.dockbox.hartshorn.di.context.element.TypeContext;
+import org.dockbox.hartshorn.core.GenericType;
+import org.dockbox.hartshorn.core.HartshornUtils;
+import org.dockbox.hartshorn.core.annotations.component.Component;
+import org.dockbox.hartshorn.core.annotations.inject.Binds;
+import org.dockbox.hartshorn.core.context.ApplicationContext;
+import org.dockbox.hartshorn.core.context.element.TypeContext;
+import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.core.exceptions.Except;
 import org.dockbox.hartshorn.persistence.DefaultObjectMapper;
 import org.dockbox.hartshorn.persistence.FileType;
 import org.dockbox.hartshorn.persistence.PersistentCapable;
 import org.dockbox.hartshorn.persistence.PersistentModel;
 import org.dockbox.hartshorn.persistence.properties.PersistenceModifier;
-import org.dockbox.hartshorn.util.HartshornUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -71,7 +73,6 @@ import javax.inject.Inject;
 
 import lombok.AllArgsConstructor;
 
-@SuppressWarnings("unchecked")
 @Binds(org.dockbox.hartshorn.persistence.mapping.ObjectMapper.class)
 public class JacksonObjectMapper extends DefaultObjectMapper {
 
@@ -87,7 +88,7 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
     }
 
     @Override
-    public <T> Exceptional<T> read(String content, TypeContext<T> type) {
+    public <T> Exceptional<T> read(final String content, final TypeContext<T> type) {
         return super.read(content, type);
     }
 
@@ -171,30 +172,30 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
     }
 
     @Override
-    public Map<String, Object> flat(String content) {
+    public Map<String, Object> flat(final String content) {
         this.context.log().debug("Reading content from string value to flat tree model");
         return this.flatInternal(() -> this.configureMapper().readTree(content));
     }
 
     @Override
-    public Map<String, Object> flat(Path path) {
+    public Map<String, Object> flat(final Path path) {
         this.context.log().debug("Reading content from path " + path + " to flat tree model");
         return this.flatInternal(() -> this.configureMapper().readTree(path.toFile()));
     }
 
     @Override
-    public Map<String, Object> flat(URL url) {
+    public Map<String, Object> flat(final URL url) {
         this.context.log().debug("Reading content from url " + url + " to flat tree model");
         return this.flatInternal(() -> this.configureMapper().readTree(url));
     }
 
-    private Map<String, Object> flatInternal(FlatNodeSupplier node) {
-        Map<String, Object> flat = HartshornUtils.emptyMap();
+    private Map<String, Object> flatInternal(final FlatNodeSupplier node) {
+        final Map<String, Object> flat = HartshornUtils.emptyMap();
         try {
-            JsonNode jsonNode = node.get();
+            final JsonNode jsonNode = node.get();
             this.addKeys("", jsonNode, flat);
             return flat;
-        } catch (IOException e) {
+        } catch (final IOException e) {
             Except.handle(e);
             return flat;
         }
@@ -232,39 +233,44 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
     }
 
     @Override
-    protected void modify(final PersistenceModifier modifier) {
+    public JacksonObjectMapper skipBehavior(final PersistenceModifier modifier) {
         this.include = switch (modifier) {
             case SKIP_EMPTY -> Include.NON_EMPTY;
             case SKIP_NULL -> Include.NON_NULL;
+            case SKIP_DEFAULT -> Include.NON_DEFAULT;
+            case SKIP_NONE -> Include.ALWAYS;
             default -> throw new IllegalArgumentException("Unknown modifier: " + modifier);
         };
+        this.mapper = null;
+        return this;
     }
 
     protected ObjectMapper configureMapper() {
         if (null == this.mapper) {
             this.context.log().debug("Internal object mapper was not configured yet, configuring now with filetype " + this.fileType());
-            this.mapper = this.mapper(this.fileType());
-            this.mapper.setAnnotationIntrospector(new PropertyAliasIntrospector(this.context));
-            this.mapper.enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES);
-            this.mapper.enable(Feature.ALLOW_COMMENTS);
-            this.mapper.enable(Feature.ALLOW_YAML_COMMENTS);
-            this.mapper.enable(SerializationFeature.INDENT_OUTPUT);
-            this.mapper.enable(SerializationFeature.WRITE_SINGLE_ELEM_ARRAYS_UNWRAPPED);
-            this.mapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
-            this.mapper.enable(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS);
-            this.mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+            final MapperBuilder<?, ?> builder = this.mapper(this.fileType());
+            builder.annotationIntrospector(new PropertyAliasIntrospector(this.context));
+            builder.enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES);
+            builder.enable(Feature.ALLOW_COMMENTS);
+            builder.enable(Feature.ALLOW_YAML_COMMENTS);
+            builder.enable(SerializationFeature.INDENT_OUTPUT);
+            builder.enable(SerializationFeature.WRITE_SINGLE_ELEM_ARRAYS_UNWRAPPED);
+            builder.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
+            builder.enable(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS);
+            builder.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
             // As Lombok generates fluent style getters/setters, these are not picked up by Jackson which
             // would otherwise cause it to fail due to it recognizing the object as an empty bean, even
             // if it is not empty.
-            this.mapper.setVisibility(PropertyAccessor.FIELD, Visibility.ANY);
-            this.mapper.setSerializationInclusion(this.include);
+            builder.visibility(PropertyAccessor.FIELD, Visibility.ANY);
+            builder.serializationInclusion(this.include);
+            this.mapper = builder.build();
         }
         return this.mapper;
     }
 
-    protected ObjectMapper mapper(final FileType fileType) {
+    protected MapperBuilder<?, ?> mapper(final FileType fileType) {
         for (final JacksonObjectMapper.Mappers mapper : JacksonObjectMapper.Mappers.values()) {
-            if (mapper.fileType.equals(fileType)) return (ObjectMapper) mapper.mapper.get();
+            if (mapper.fileType.equals(fileType)) return (MapperBuilder<?, ?>) mapper.mapper.get();
         }
         return null; // Do not throw an exception here as subclasses may wish to extend functionality
     }
@@ -283,7 +289,7 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
 
     private <T> Exceptional<T> correctPersistentCapableInternal(final Class<T> type, final Function<Class<? extends PersistentModel<?>>, Exceptional<? extends PersistentModel<?>>> reader) {
         if (TypeContext.of(type).childOf(PersistentCapable.class)) {
-            // Provision basis is required here, as injected types will typically pass in a interface type. If no injection point is available a
+            // Provision basis is required here, as injected types will typically pass in an interface type. If no injection point is available a
             // regular instance is created through available constructors.
             final Class<? extends PersistentModel<?>> modelType = ((PersistentCapable<?>) this.context.get(type)).type();
             @NotNull final Exceptional<? extends PersistentModel<?>> model = reader.apply(modelType);
@@ -292,43 +298,43 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
         return Exceptional.empty();
     }
 
-    private void addKeys(String currentPath, TreeNode jsonNode, Map<String, Object> map) {
+    private void addKeys(final String currentPath, final TreeNode jsonNode, final Map<String, Object> map) {
         if (jsonNode.isObject()) {
-            ObjectNode objectNode = (ObjectNode) jsonNode;
-            Iterator<Entry<String, JsonNode>> iter = objectNode.fields();
-            String pathPrefix = currentPath.isEmpty() ? "" : currentPath + ".";
+            final ObjectNode objectNode = (ObjectNode) jsonNode;
+            final Iterator<Entry<String, JsonNode>> iter = objectNode.fields();
+            final String pathPrefix = currentPath.isEmpty() ? "" : currentPath + ".";
 
             while (iter.hasNext()) {
-                Map.Entry<String, JsonNode> entry = iter.next();
+                final Map.Entry<String, JsonNode> entry = iter.next();
                 this.addKeys(pathPrefix + entry.getKey(), entry.getValue(), map);
             }
         } else if (jsonNode.isArray()) {
-            ArrayNode arrayNode = (ArrayNode) jsonNode;
+            final ArrayNode arrayNode = (ArrayNode) jsonNode;
             for (int i = 0; i < arrayNode.size(); i++) {
                 this.addKeys(currentPath + "[" + i + "]", arrayNode.get(i), map);
             }
         } else if (jsonNode.isValueNode()) {
-            ValueNode valueNode = (ValueNode) jsonNode;
+            final ValueNode valueNode = (ValueNode) jsonNode;
             map.put(currentPath, this.configureMapper().convertValue(valueNode, Object.class));
         }
     }
 
     @AllArgsConstructor
     private enum Mappers {
-        JSON(FileType.JSON, ObjectMapper::new),
+        JSON(FileType.JSON, JsonMapper::builder),
         YAML(FileType.YAML, () -> {
             final YAMLFactory yamlFactory = new YAMLFactory();
             yamlFactory.enable(YAMLGenerator.Feature.MINIMIZE_QUOTES);
             yamlFactory.disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER);
             yamlFactory.disable(YAMLParser.Feature.EMPTY_STRING_AS_NULL);
-            return new YAMLMapper(yamlFactory);
+            return YAMLMapper.builder(yamlFactory);
         }),
-        PROPERTIES(FileType.PROPERTIES, JavaPropsMapper::new),
-        TOML(FileType.TOML, TomlMapper::new),
-        XML(FileType.XML, XmlMapper::new),
+        PROPERTIES(FileType.PROPERTIES, JavaPropsMapper::builder),
+        TOML(FileType.TOML, TomlMapper::builder),
+        XML(FileType.XML, XmlMapper::builder),
         ;
 
         private final FileType fileType;
-        private final Supplier<? super ObjectMapper> mapper;
+        private final Supplier<? super MapperBuilder<?, ?>> mapper;
     }
 }

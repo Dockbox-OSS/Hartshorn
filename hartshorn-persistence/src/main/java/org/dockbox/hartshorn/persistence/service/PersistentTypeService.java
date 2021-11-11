@@ -17,11 +17,10 @@
 
 package org.dockbox.hartshorn.persistence.service;
 
-import org.dockbox.hartshorn.boot.annotations.PostBootstrap;
-import org.dockbox.hartshorn.boot.annotations.UseBootstrap;
-import org.dockbox.hartshorn.di.annotations.service.Service;
-import org.dockbox.hartshorn.di.context.ApplicationContext;
-import org.dockbox.hartshorn.di.context.element.TypeContext;
+import org.dockbox.hartshorn.core.annotations.service.Service;
+import org.dockbox.hartshorn.core.boot.LifecycleObserver;
+import org.dockbox.hartshorn.core.context.ApplicationContext;
+import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.persistence.annotations.UsePersistence;
 import org.dockbox.hartshorn.persistence.context.EntityContext;
 
@@ -29,12 +28,17 @@ import java.util.Collection;
 
 import javax.persistence.Entity;
 
-@Service(activators = { UsePersistence.class, UseBootstrap.class })
-public class PersistentTypeService {
+@Service(activators = UsePersistence.class)
+public class PersistentTypeService implements LifecycleObserver {
 
-    @PostBootstrap
-    public void scan(final ApplicationContext context) {
-        final Collection<TypeContext<?>> entities = context.environment().types(Entity.class);
-        context.add(new EntityContext(entities));
+    @Override
+    public void onCreated(ApplicationContext applicationContext) {
+        // Nothing happens
+    }
+
+    @Override
+    public void onStarted(ApplicationContext applicationContext) {
+        final Collection<TypeContext<?>> entities = applicationContext.environment().types(Entity.class);
+        applicationContext.add(new EntityContext(entities));
     }
 }

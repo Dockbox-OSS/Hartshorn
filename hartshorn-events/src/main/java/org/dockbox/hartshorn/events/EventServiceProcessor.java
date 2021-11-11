@@ -17,16 +17,18 @@
 
 package org.dockbox.hartshorn.events;
 
-import org.dockbox.hartshorn.di.context.ApplicationContext;
-import org.dockbox.hartshorn.di.context.element.TypeContext;
-import org.dockbox.hartshorn.di.services.ServiceProcessor;
+import org.dockbox.hartshorn.core.annotations.service.AutomaticActivation;
+import org.dockbox.hartshorn.core.context.ApplicationContext;
+import org.dockbox.hartshorn.core.context.element.TypeContext;
+import org.dockbox.hartshorn.core.services.ServiceProcessor;
 import org.dockbox.hartshorn.events.annotations.Listener;
 import org.dockbox.hartshorn.events.annotations.UseEvents;
 
+@AutomaticActivation
 public class EventServiceProcessor implements ServiceProcessor<UseEvents> {
     @Override
     public boolean preconditions(final ApplicationContext context, final TypeContext<?> type) {
-        return !type.flatMethods(Listener.class).isEmpty();
+        return !type.methods(Listener.class).isEmpty();
     }
 
     @Override

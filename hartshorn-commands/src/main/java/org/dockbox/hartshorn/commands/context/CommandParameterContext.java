@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.commands.context;
 
-import org.dockbox.hartshorn.di.context.element.ParameterContext;
+import org.dockbox.hartshorn.core.context.element.ParameterContext;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

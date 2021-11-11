@@ -44,16 +44,18 @@ java {
 }
 
 dependencyCheck {
-    // Strict rule, even small vulnerabilities should be handled unless they are supressed
+    // Strict rule, even small vulnerabilities should be handled unless they are suppressed
     failBuildOnCVSS = 1
     failOnError = true
 }
 
-subprojects { Project subProject ->
+subprojects { final Project subProject ->
     apply plugin: 'java'
     apply plugin: 'java-library'
     apply plugin: 'maven-publish'
+    apply plugin: 'java-test-fixtures'
     apply plugin: 'org.cadixdev.licenser'
+
 
     license {
         header = rootProject.file("HEADER.txt")
@@ -103,6 +105,7 @@ allprojects {
 
         configurations {
             testImplementation.extendsFrom(implementation)
+            testFixturesImplementation.extendsFrom(implementation)
             all*.exclude group: 'junit', module: 'junit'
         }
 
@@ -131,7 +134,7 @@ allprojects {
             annotationProcessor "org.projectlombok:lombok:$lombokVersion"
             testAnnotationProcessor "org.projectlombok:lombok:$lombokVersion"
 
-            testImplementation testFixtures(project(":hartshorn-test"))
+            testImplementation testFixtures(project(":hartshorn-core"))
             testImplementation "org.mockito:mockito-inline:$mockitoVersion"
             testImplementation "org.hamcrest:java-hamcrest:$hamcrestVersion"
             testImplementation "org.apache.logging.log4j:log4j-api:$log4jVersion"
@@ -144,9 +147,9 @@ allprojects {
 
         task copyArtifacts {
             doLast {
-                def version = projectVersion
-                def DIST_DEST_DIR = "$rootDir/hartshorn-assembly/distributions/$version"
-                def DIRT_SRC_DIR = "$buildDir/libs"
+                final def version = projectVersion
+                final def DIST_DEST_DIR = "$rootDir/hartshorn-assembly/distributions/$version"
+                final def DIRT_SRC_DIR = "$buildDir/libs"
 
                 ant.mkdir(dir: DIST_DEST_DIR)
                 ant.copy(todir: DIST_DEST_DIR) {

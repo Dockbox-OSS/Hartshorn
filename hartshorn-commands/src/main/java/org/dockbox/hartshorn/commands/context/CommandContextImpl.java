@@ -17,13 +17,12 @@
 
 package org.dockbox.hartshorn.commands.context;
 
-import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.commands.service.CommandParameter;
-import org.dockbox.hartshorn.di.context.ApplicationContext;
-import org.dockbox.hartshorn.di.context.DefaultContext;
-import org.dockbox.hartshorn.i18n.permissions.Permission;
-import org.dockbox.hartshorn.util.HartshornUtils;
+import org.dockbox.hartshorn.core.context.ApplicationContext;
+import org.dockbox.hartshorn.core.context.DefaultContext;
+import org.dockbox.hartshorn.core.HartshornUtils;
 import org.jetbrains.annotations.UnmodifiableView;
 
 import java.util.List;
@@ -34,7 +33,6 @@ import lombok.Getter;
 /**
  * Simple implementation of {@link CommandContext}.
  */
-@SuppressWarnings("unchecked")
 @AllArgsConstructor
 public class CommandContextImpl extends DefaultContext implements CommandContext {
 
@@ -43,8 +41,6 @@ public class CommandContextImpl extends DefaultContext implements CommandContext
     private final List<CommandParameter<?>> flags;
 
     @Getter private final CommandSource source;
-    @Getter(onMethod_ = @UnmodifiableView)
-    private final List<Permission> permissions;
 
     @Getter private final ApplicationContext applicationContext;
 

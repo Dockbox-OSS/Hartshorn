@@ -18,7 +18,7 @@
 package org.dockbox.hartshorn.persistence.exceptions;
 
 public class EmptyEntryException extends Exception {
-    public EmptyEntryException(String message) {
+    public EmptyEntryException(final String message) {
         super(message);
     }
 }

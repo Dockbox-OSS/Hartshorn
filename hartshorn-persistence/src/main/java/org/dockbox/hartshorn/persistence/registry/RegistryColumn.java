@@ -17,8 +17,8 @@
 
 package org.dockbox.hartshorn.persistence.registry;
 
-import org.dockbox.hartshorn.api.domain.Exceptional;
-import org.dockbox.hartshorn.util.HartshornUtils;
+import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.core.HartshornUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -32,7 +32,7 @@ public class RegistryColumn<T> extends ArrayList<T> {
         super();
     }
 
-    public RegistryColumn(Collection<T> values) {
+    public RegistryColumn(final Collection<T> values) {
         this.addAll(HartshornUtils.asList(values));
     }
 
@@ -45,7 +45,7 @@ public class RegistryColumn<T> extends ArrayList<T> {
      *
      * @return Itself
      */
-    public RegistryColumn<T> removeValueIf(Predicate<? super T> filter) {
+    public RegistryColumn<T> removeValueIf(final Predicate<? super T> filter) {
         this.removeIf(filter);
         return this;
     }
@@ -61,10 +61,10 @@ public class RegistryColumn<T> extends ArrayList<T> {
      *
      * @return A new RegistryColumn which contains the mapped values of the previous RegistryColumn.
      */
-    public <K> RegistryColumn<K> mapTo(Function<? super T, K> mapper) {
-        RegistryColumn<K> result = new RegistryColumn<>();
+    public <K> RegistryColumn<K> mapTo(final Function<? super T, K> mapper) {
+        final RegistryColumn<K> result = new RegistryColumn<>();
 
-        for (T value : this) {
+        for (final T value : this) {
             result.add(mapper.apply(value));
         }
         return result;
@@ -82,10 +82,10 @@ public class RegistryColumn<T> extends ArrayList<T> {
      *
      * @return A new RegistryColumn which contains all the values of the collections.
      */
-    public <K> RegistryColumn<K> mapToSingleList(Function<? super T, ? extends Collection<K>> mapper) {
-        RegistryColumn<K> result = new RegistryColumn<>();
+    public <K> RegistryColumn<K> mapToSingleList(final Function<? super T, ? extends Collection<K>> mapper) {
+        final RegistryColumn<K> result = new RegistryColumn<>();
 
-        for (T value : this) {
+        for (final T value : this) {
             result.addAll(mapper.apply(value));
         }
         return result;
@@ -103,13 +103,12 @@ public class RegistryColumn<T> extends ArrayList<T> {
      * @return A new RegistryColumn which contains all the values of the previous RegistryColumn that
      *         could be converted.
      */
-    public <K extends T> RegistryColumn<K> convertTo(Class<K> clazz) {
-        RegistryColumn<K> result = new RegistryColumn<>();
+    public <K extends T> RegistryColumn<K> convertTo(final Class<K> clazz) {
+        final RegistryColumn<K> result = new RegistryColumn<>();
 
-        for (T value : this) {
+        for (final T value : this) {
             if (clazz.isInstance(value)) {
-                @SuppressWarnings("unchecked")
-                K convertedValue = (K) value;
+                @SuppressWarnings("unchecked") final K convertedValue = (K) value;
                 result.add(convertedValue);
             }
         }
@@ -125,8 +124,8 @@ public class RegistryColumn<T> extends ArrayList<T> {
      *
      * @return An {@link Exceptional} containing the value of the first match, if one is found.
      */
-    public Exceptional<T> firstMatch(Predicate<? super T> predicate) {
-        for (T value : this) {
+    public Exceptional<T> firstMatch(final Predicate<? super T> predicate) {
+        for (final T value : this) {
             if (predicate.test(value)) return Exceptional.of(value);
         }
         return Exceptional.empty();
@@ -151,7 +150,7 @@ public class RegistryColumn<T> extends ArrayList<T> {
      * @return An {@link Exceptional} containing the element at the provided index in the
      *         RegistryColumn, if one is found.
      */
-    public Exceptional<T> safe(int index) {
+    public Exceptional<T> safe(final int index) {
         return Exceptional.of(() -> this.get(index));
     }
 }

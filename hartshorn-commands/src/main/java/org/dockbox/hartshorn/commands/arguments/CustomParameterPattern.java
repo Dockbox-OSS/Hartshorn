@@ -17,22 +17,22 @@
 
 package org.dockbox.hartshorn.commands.arguments;
 
-import org.dockbox.hartshorn.api.domain.Exceptional;
+import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.commands.CommandParameterResources;
 import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.commands.annotations.Parameter;
 import org.dockbox.hartshorn.commands.context.ArgumentConverterContext;
 import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
-import org.dockbox.hartshorn.di.context.ApplicationContext;
-import org.dockbox.hartshorn.di.context.element.ConstructorContext;
-import org.dockbox.hartshorn.di.context.element.TypeContext;
-import org.dockbox.hartshorn.util.HartshornUtils;
+import org.dockbox.hartshorn.core.context.ApplicationContext;
+import org.dockbox.hartshorn.core.context.element.ConstructorContext;
+import org.dockbox.hartshorn.core.context.element.TypeContext;
+import org.dockbox.hartshorn.core.HartshornUtils;
 
 import java.util.LinkedList;
 import java.util.List;
 
 /**
- * The type used to provide a argument pattern which can be used to construct types decorated with {@link Parameter}.
+ * The type used to provide an argument pattern which can be used to construct types decorated with {@link Parameter}.
  */
 public interface CustomParameterPattern {
 
@@ -42,7 +42,7 @@ public interface CustomParameterPattern {
      * @param type
      *         The target type to parse into
      * @param source
-     *         The source of the command, provided in case the parser is context sensitive
+     *         The source of the command, provided in case the parser is context-sensitive
      * @param raw
      *         The raw argument
      * @param <T>
@@ -87,7 +87,7 @@ public interface CustomParameterPattern {
                 return Exceptional.of(new IllegalArgumentException(context
                         .get(CommandParameterResources.class)
                         .missingConverter(type.qualifiedName())
-                        .asString())
+                        .string())
                 );
             }
 
@@ -138,6 +138,6 @@ public interface CustomParameterPattern {
                 return Exceptional.of(constructor);
             }
         }
-        return Exceptional.of(new IllegalArgumentException(source.applicationContext().get(CommandParameterResources.class).notEnoughArgs().asString()));
+        return Exceptional.of(new IllegalArgumentException(source.applicationContext().get(CommandParameterResources.class).notEnoughArgs().string()));
     }
 }

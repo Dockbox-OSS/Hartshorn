@@ -16,7 +16,5 @@
  */
 
 dependencies {
-    implementation 'org.dockbox.hartshorn:hartshorn-di'
     implementation 'org.dockbox.hartshorn:hartshorn-core'
-    implementation 'org.dockbox.hartshorn:hartshorn-util'
 }
