@@ -25,14 +25,20 @@ import org.dockbox.hartshorn.core.annotations.inject.InjectConfig;
 import org.dockbox.hartshorn.core.annotations.proxy.UseProxying;
 import org.dockbox.hartshorn.core.boot.Hartshorn;
 import org.dockbox.hartshorn.core.boot.annotations.UseBootstrap;
+import org.dockbox.hartshorn.core.context.ApplicationContext;
+import org.dockbox.hartshorn.core.context.ApplicationEnvironment;
 import org.dockbox.hartshorn.core.context.HartshornApplicationContext;
+import org.dockbox.hartshorn.core.context.HartshornApplicationEnvironment;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.core.services.ComponentLocator;
+import org.dockbox.hartshorn.core.services.ComponentLocatorImpl;
 
 import java.lang.annotation.Annotation;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import lombok.Getter;
@@ -49,6 +55,10 @@ public class HartshornApplicationFactory implements ApplicationFactory<Hartshorn
     private ApplicationProxier applicationProxier;
     @Setter
     private ApplicationLogger applicationLogger;
+    @Setter
+    private Function<ApplicationManager, ApplicationEnvironment> applicationEnvironment;
+    @Setter
+    private Function<ApplicationContext, ComponentLocator> componentLocator;
 
     private TypeContext<?> activator;
 
@@ -139,8 +149,9 @@ public class HartshornApplicationFactory implements ApplicationFactory<Hartshorn
 
         final long startTime = System.currentTimeMillis();
         final HartshornApplicationManager manager = new HartshornApplicationManager(this.applicationLogger, this.applicationProxier);
+        final ApplicationEnvironment environment = this.applicationEnvironment.apply(manager);
 
-        final HartshornApplicationContext applicationContext = new HartshornApplicationContext(manager, this.activator, this.prefixes, this.arguments, this.modifiers);
+        final HartshornApplicationContext applicationContext = new HartshornApplicationContext(environment, this.componentLocator, this.activator, this.prefixes, this.arguments, this.modifiers);
         manager.applicationContext(applicationContext);
 
         final ApplicationConfigurator configurator = this.applicationConfigurator;
@@ -205,6 +216,8 @@ public class HartshornApplicationFactory implements ApplicationFactory<Hartshorn
         return this.applicationLogger(new HartshornApplicationLogger())
                 .applicationConfigurator(new HartshornApplicationConfigurator())
                 .applicationProxier(new HartshornApplicationProxier())
+                .applicationEnvironment(manager -> new HartshornApplicationEnvironment(this.prefixes, manager))
+                .componentLocator(ComponentLocatorImpl::new)
                 .serviceActivator(new UseBootstrap() {
                     @Override
                     public Class<? extends Annotation> annotationType() {

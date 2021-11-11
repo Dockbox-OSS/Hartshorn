@@ -18,7 +18,6 @@
 package org.dockbox.hartshorn.core.context;
 
 import org.dockbox.hartshorn.core.ActivatorFiltered;
-import org.dockbox.hartshorn.core.boot.beta.HartshornApplicationManager;
 import org.dockbox.hartshorn.core.ArrayListMultiMap;
 import org.dockbox.hartshorn.core.ComponentType;
 import org.dockbox.hartshorn.core.DefaultModifiers;
@@ -43,6 +42,10 @@ import org.dockbox.hartshorn.core.binding.ContextWrappedHierarchy;
 import org.dockbox.hartshorn.core.binding.NativeBindingHierarchy;
 import org.dockbox.hartshorn.core.binding.Provider;
 import org.dockbox.hartshorn.core.binding.Providers;
+import org.dockbox.hartshorn.core.boot.beta.ApplicationLogger;
+import org.dockbox.hartshorn.core.boot.beta.ApplicationManager;
+import org.dockbox.hartshorn.core.boot.beta.ApplicationProxier;
+import org.dockbox.hartshorn.core.boot.beta.LifecycleObservable;
 import org.dockbox.hartshorn.core.context.element.FieldContext;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
@@ -53,7 +56,6 @@ import org.dockbox.hartshorn.core.inject.InjectionModifier;
 import org.dockbox.hartshorn.core.inject.ProviderContext;
 import org.dockbox.hartshorn.core.services.ComponentContainer;
 import org.dockbox.hartshorn.core.services.ComponentLocator;
-import org.dockbox.hartshorn.core.services.ComponentLocatorImpl;
 import org.dockbox.hartshorn.core.services.ComponentProcessor;
 import org.dockbox.hartshorn.core.services.ServiceImpl;
 import org.dockbox.hartshorn.core.services.ServiceOrder;
@@ -68,6 +70,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -97,9 +100,10 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
     private final Map<Key<?>, BindingHierarchy<?>> hierarchies = HartshornUtils.emptyConcurrentMap();
     private MetaProvider metaProvider;
 
-    public HartshornApplicationContext(final HartshornApplicationManager manager, final TypeContext<?> activationSource, final Set<String> prefixes, final Set<String> args, final Set<Modifier> modifiers) {
+    public HartshornApplicationContext(final ApplicationEnvironment environment, final Function<ApplicationContext, ComponentLocator> componentLocator,
+                                       final TypeContext<?> activationSource, final Set<String> prefixes, final Set<String> args, final Set<Modifier> modifiers) {
         this.singletons.put(Key.of(ApplicationContext.class), this);
-        this.environment = new ApplicationEnvironment(prefixes, manager);
+        this.environment = environment;
         final Exceptional<Activator> activator = activationSource.annotation(Activator.class);
         if (activator.absent()) {
             throw new IllegalStateException("Activation source is not marked with @Activator");
@@ -112,13 +116,17 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
 
         this.populateArguments(args);
 
-        this.locator = new ComponentLocatorImpl(this);
+        this.locator = componentLocator.apply(this);
         this.modifiers = modifiers;
         this.modify(this.modifiers);
 
         this.bind(Key.of(ApplicationContext.class), this);
         this.bind(Key.of(MetaProvider.class), this.metaProvider);
         this.bind(Key.of(ComponentLocator.class), this.locator());
+        this.bind(Key.of(ApplicationManager.class), this.environment().manager());
+        this.bind(Key.of(ApplicationLogger.class), this.environment().manager());
+        this.bind(Key.of(ApplicationProxier.class), this.environment().manager());
+        this.bind(Key.of(LifecycleObservable.class), this.environment().manager());
     }
 
     public void addActivator(final Annotation annotation) {
@@ -379,7 +387,7 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
                     final Exceptional<T> rawCandidate = instanceCandidate.orElse(() -> this.raw(type));
                     if (rawCandidate.absent()) {
                         final Throwable finalCause = cause;
-                        return this.environment().application().proxy(type, typeInstance).rethrow().orThrow(() -> finalCause);
+                        return this.environment().manager().proxy(type, typeInstance).rethrow().orThrow(() -> finalCause);
                     }
                     else {
                         return rawCandidate.get();
