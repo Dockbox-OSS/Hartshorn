@@ -39,6 +39,6 @@ public class DelegatorAccessorImpl<T> implements DelegatorAccessor<T> {
     public <A> Exceptional<A> delegator(final Class<A> type) {
         if (!this.handler.type().childOf(type)) return Exceptional.empty();
         final TypeContext<A> typeContext = TypeContext.of(type);
-        return this.context.environment().application().delegator(typeContext, (ProxyHandler<A>) this.handler);
+        return this.context.environment().manager().delegator(typeContext, (ProxyHandler<A>) this.handler);
     }
 }

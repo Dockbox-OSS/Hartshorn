@@ -18,22 +18,27 @@
 package org.dockbox.hartshorn.testsuite;
 
 import org.dockbox.hartshorn.core.annotations.activate.Activator;
-import org.dockbox.hartshorn.core.boot.HartshornApplication;
+import org.dockbox.hartshorn.core.annotations.service.ServiceActivator;
+import org.dockbox.hartshorn.core.boot.HartshornApplicationFactory;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
+import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.mockito.Mockito;
 
+import java.lang.annotation.Annotation;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import lombok.Getter;
 
+@Activator
 public class HartshornRunner implements BeforeEachCallback, AfterEachCallback{
 
     @Getter private static final JUnitInformation information = new JUnitInformation();
-    @Getter private static final Activator activator = new JUnitActivator();
 
     @Getter private ApplicationContext activeContext;
 
@@ -46,12 +51,16 @@ public class HartshornRunner implements BeforeEachCallback, AfterEachCallback{
     }
 
     public static Exceptional<ApplicationContext> createContext(final Class<?> activator) {
-        return Exceptional.of(() -> HartshornApplication.load(
-                new JUnitBootstrap(),
-                HartshornRunner.activator,
-                new JUnitActivatorContext<>(activator),
-                new String[0]
-        ).load()).rethrow();
+        final Set<Annotation> serviceActivators = TypeContext.of(activator).annotations().stream()
+                .filter(annotation -> TypeContext.of(annotation.annotationType()).annotation(ServiceActivator.class).present())
+                .collect(Collectors.toSet());
+
+        return Exceptional.of(() -> new HartshornApplicationFactory()
+                .loadDefaults()
+                .serviceActivators(serviceActivators)
+                .configuration(new JUnitInjector())
+                .activator(TypeContext.of(HartshornRunner.class))
+                .create());
     }
 
     @Override

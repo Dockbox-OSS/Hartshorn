@@ -73,7 +73,7 @@ public class ProxyTests extends ApplicationAwareTest {
                 ConcreteProxyTarget.class.getMethod("name"),
                 (instance, args, proxyContext) -> "Hartshorn");
         final ConcreteProxyTarget concrete = this.context().get(ConcreteProxyTarget.class);
-        ProxyHandler<ConcreteProxyTarget> handler = this.context().environment().application().handler(TypeContext.of(ConcreteProxyTarget.class), concrete);
+        ProxyHandler<ConcreteProxyTarget> handler = this.context().environment().manager().handler(TypeContext.of(ConcreteProxyTarget.class), concrete);
         handler.delegate(methodProxyContext);
         final ConcreteProxyTarget proxy = handler.proxy();
 
@@ -85,7 +85,7 @@ public class ProxyTests extends ApplicationAwareTest {
     @Test
     void testProxyIsStoredInHandler() throws ApplicationException {
         final ConcreteProxyTarget concrete = this.context().get(ConcreteProxyTarget.class);
-        ProxyHandler<ConcreteProxyTarget> handler = this.context().environment().application().handler(TypeContext.of(ConcreteProxyTarget.class), concrete);
+        ProxyHandler<ConcreteProxyTarget> handler = this.context().environment().manager().handler(TypeContext.of(ConcreteProxyTarget.class), concrete);
         Assertions.assertTrue(handler.proxyInstance().absent());
         handler.proxy();
         Assertions.assertTrue(handler.proxyInstance().present());

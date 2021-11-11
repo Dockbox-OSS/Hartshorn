@@ -15,21 +15,17 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.core.boot.annotations;
+package org.dockbox.hartshorn.demo.rest;
 
-import org.dockbox.hartshorn.core.boot.HartshornBootstrap;
-import org.dockbox.hartshorn.core.annotations.service.Service;
+import org.dockbox.hartshorn.core.annotations.activate.Activator;
+import org.dockbox.hartshorn.core.boot.HartshornApplication;
+import org.dockbox.hartshorn.web.annotations.UseHttpServer;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+@Activator
+@UseHttpServer
+public class RestDemoApplication {
 
-/**
- * Indicates a method should be activated after {@link HartshornBootstrap} is done bootstrapping
- * the current instance. This requires the enclosing service to have its {@link Service#activators()} set to include {@link UseBootstrap}.
- */
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
-public @interface PostBootstrap {
+    public static void main(String[] args) {
+        HartshornApplication.create(RestDemoApplication.class, args);
+    }
 }

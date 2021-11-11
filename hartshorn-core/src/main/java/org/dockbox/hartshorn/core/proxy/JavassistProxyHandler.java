@@ -19,7 +19,6 @@ package org.dockbox.hartshorn.core.proxy;
 
 import org.dockbox.hartshorn.core.ArrayListMultiMap;
 import org.dockbox.hartshorn.core.MultiMap;
-import org.dockbox.hartshorn.core.boot.Hartshorn;
 import org.dockbox.hartshorn.core.context.DefaultContext;
 import org.dockbox.hartshorn.core.context.element.FieldContext;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
@@ -129,15 +128,8 @@ public class JavassistProxyHandler<T> extends DefaultContext implements ProxyHan
             if (at == property.phase()) {
                 final MethodContext<?, ?> methodContext = proceed == null ? null : MethodContext.of(proceed);
                 final Object result = property.delegate(this.instance, methodContext, self, args);
-                if (property.overwriteResult() && !Void.TYPE.equals(thisMethod.getReturnType())) {
-                    // A proxy returning null typically indicates the use of a non-returning function, for
-                    // annotation  properties this is handled internally, however proxy types should carry
-                    // the annotation value to ensure no results will be overwritten. Null values may cause
-                    // the initial target return value to be used instead if no other phase hook changes the
-                    // final return value.
-                    if (null == result) Hartshorn.log().warn("Proxy method for '" + thisMethod.getName() + "' returned null while overwriting results!");
+                if (property.overwriteResult() && !Void.TYPE.equals(thisMethod.getReturnType()))
                     returnValue = result;
-                }
                 // If at least one overwrite is present,
                 if (Phase.OVERWRITE == at) target = false;
             }

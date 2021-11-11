@@ -50,7 +50,7 @@ public class PrefixContext extends DefaultContext {
 
     public void prefix(final String prefix) {
         if (!this.reflectedPrefixes.containsKey(prefix)) {
-            this.environment.application().log().debug("Registering and caching prefix '%s'".formatted(prefix));
+            this.environment.manager().log().debug("Registering and caching prefix '%s'".formatted(prefix));
             this.reflectedPrefixes.put(prefix, this.reflections(prefix));
         }
     }
@@ -87,6 +87,19 @@ public class PrefixContext extends DefaultContext {
         return this.types(annotation, false);
     }
 
+    public <A extends Annotation> Collection<TypeContext<?>> types(final String prefix, final Class<A> annotation, final boolean skipParents) {
+        final Reflections reflections = this.reflectedPrefixes.get(prefix);
+        final Set<Class<? extends Annotation>> extensions = this.extensions(annotation);
+        final Set<TypeContext<?>> types = HartshornUtils.emptySet();
+
+        for (final Class<? extends Annotation> extension : extensions) {
+            for (final Class<?> type : reflections.getTypesAnnotatedWith(extension, !skipParents)) {
+                types.add(TypeContext.of(type));
+            }
+        }
+        return types;
+    }
+
     /**
      * Gets types decorated with a given annotation, both classes and annotationsWith. The prefix is
      * typically a package. If the annotation is present on a parent of the type, it will only be
@@ -102,17 +115,9 @@ public class PrefixContext extends DefaultContext {
      * @return The annotated types
      */
     public <A extends Annotation> Collection<TypeContext<?>> types(final Class<A> annotation, final boolean skipParents) {
-        final Set<TypeContext<?>> types = HartshornUtils.emptySet();
-        final Set<Class<? extends Annotation>> extensions = this.extensions(annotation);
-
-        for (final Reflections reflections : this.reflectedPrefixes.values()) {
-            for (final Class<? extends Annotation> extension : extensions) {
-                for (final Class<?> type : reflections.getTypesAnnotatedWith(extension, !skipParents)) {
-                    types.add(TypeContext.of(type));
-                }
-            }
-        }
-        return HartshornUtils.asList(types);
+        return this.reflectedPrefixes.keySet().stream()
+                .flatMap(prefix -> this.types(prefix, annotation, skipParents).stream())
+                .collect(Collectors.toSet());
     }
 
     private <A extends Annotation> Set<Class<? extends Annotation>> extensions(final Class<A> annotation) {
@@ -152,6 +157,5 @@ public class PrefixContext extends DefaultContext {
         }
         return HartshornUtils.asList(subTypes).stream().map(TypeContext::of).collect(Collectors.toList());
     }
-
 
 }

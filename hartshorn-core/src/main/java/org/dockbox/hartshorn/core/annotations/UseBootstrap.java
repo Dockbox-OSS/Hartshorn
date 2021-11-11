@@ -15,28 +15,22 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.core.boot.config;
+package org.dockbox.hartshorn.core.annotations;
 
-import org.dockbox.hartshorn.core.exceptions.ExceptionLevel;
+import org.dockbox.hartshorn.core.annotations.service.ServiceActivator;
+import org.dockbox.hartshorn.core.boot.HartshornApplicationFactory;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * Contains the default configuration for bootstrap-related values.
+ * Service activator for bootstrap-dependent services. This activator is automatically injected
+ * when the application is created through {@link HartshornApplicationFactory}.
  */
-public interface GlobalConfig {
-
-    /**
-     * Indicates whether to print stacktraces when exceptions occur.
-     *
-     * @return Whether to print stacktraces
-     */
-    boolean stacktraces();
-
-    /**
-     * Indicates the {@link ExceptionLevel level at which exceptions
-     * are logged}.
-     *
-     * @return The exception level
-     */
-    ExceptionLevel level();
-
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
+@ServiceActivator
+public @interface UseBootstrap {
 }

@@ -22,8 +22,6 @@ import org.dockbox.hartshorn.core.InjectConfiguration;
 import org.dockbox.hartshorn.core.Key;
 import org.dockbox.hartshorn.core.annotations.context.LogExclude;
 import org.dockbox.hartshorn.core.binding.Provider;
-import org.dockbox.hartshorn.core.binding.Providers;
-import org.dockbox.hartshorn.core.boot.config.GlobalConfig;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 
 import java.util.Map;
@@ -36,7 +34,6 @@ public class JUnitInjector extends InjectConfiguration {
     @Override
     public void collect(final ApplicationContext context) {
         // Overrides
-        this.hierarchy(Key.of(GlobalConfig.class)).add(0, Providers.of(JUnitGlobalConfig.class));
         providers.forEach((key, provider) -> {
             final Key<Object> safeKey = (Key<Object>) key;
             final Provider<Object> safeProvider = (Provider<Object>) provider;

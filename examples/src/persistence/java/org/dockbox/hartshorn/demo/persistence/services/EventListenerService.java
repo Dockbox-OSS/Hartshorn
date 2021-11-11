@@ -17,13 +17,14 @@
 
 package org.dockbox.hartshorn.demo.persistence.services;
 
-import org.dockbox.hartshorn.core.boot.ApplicationState;
-import org.dockbox.hartshorn.core.boot.ApplicationState.Started;
-import org.dockbox.hartshorn.commands.CommandCLI;
-import org.dockbox.hartshorn.core.boot.HartshornApplication;
 import org.dockbox.hartshorn.demo.persistence.domain.User;
 import org.dockbox.hartshorn.demo.persistence.events.UserCreatedEvent;
+
+import org.dockbox.hartshorn.commands.CommandCLI;
 import org.dockbox.hartshorn.core.annotations.service.Service;
+import org.dockbox.hartshorn.core.boot.ApplicationState;
+import org.dockbox.hartshorn.core.boot.ApplicationState.Started;
+import org.dockbox.hartshorn.core.boot.HartshornApplication;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.events.EngineChangedState;
 import org.dockbox.hartshorn.events.annotations.Listener;
@@ -61,7 +62,7 @@ public class EventListenerService {
      */
     @Listener
     public void on(final EngineChangedState<Started> event) {
-        event.applicationContext().get(CommandCLI.class).open();
+        event.applicationContext().get(CommandCLI.class).async(true).open();
     }
 
 }

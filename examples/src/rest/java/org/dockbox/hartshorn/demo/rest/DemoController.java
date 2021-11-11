@@ -15,24 +15,17 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.core.boot.annotations;
+package org.dockbox.hartshorn.demo.rest;
 
-import org.dockbox.hartshorn.core.boot.HartshornBootstrap;
-import org.dockbox.hartshorn.core.annotations.service.ServiceActivator;
+import org.dockbox.hartshorn.web.annotations.RequestHeader;
+import org.dockbox.hartshorn.web.annotations.RestController;
+import org.dockbox.hartshorn.web.annotations.http.HttpGet;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+@RestController
+public class DemoController {
 
-/**
- * Service activator for bootstrap-dependent services. This activator is automatically injected
- * when the application is created through {@link HartshornBootstrap}.
- *
- * @see PostBootstrap
- */
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-@ServiceActivator
-public @interface UseBootstrap {
+    @HttpGet("/hello")
+    public String hello(@RequestHeader("demo") final String name) {
+        return "Hello " + name;
+    }
 }
