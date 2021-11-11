@@ -19,10 +19,11 @@ package org.dockbox.hartshorn.core.boot;
 
 import org.dockbox.hartshorn.core.Modifier;
 
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-@AllArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class LogLevelModifier implements Modifier {
 
     public enum LogLevel {
@@ -36,6 +37,9 @@ public class LogLevelModifier implements Modifier {
         ALL,
     }
 
-    @Getter LogLevel level;
+    @Getter private final LogLevel level;
 
+    public static LogLevelModifier of(final LogLevel level) {
+        return new LogLevelModifier(level);
+    }
 }

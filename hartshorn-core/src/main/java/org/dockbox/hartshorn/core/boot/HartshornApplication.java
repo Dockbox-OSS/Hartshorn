@@ -21,11 +21,9 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.config.LoggerConfig;
-import org.dockbox.hartshorn.core.ApplicationBootstrap;
 import org.dockbox.hartshorn.core.Modifier;
 import org.dockbox.hartshorn.core.annotations.activate.Activator;
 import org.dockbox.hartshorn.core.boot.LogLevelModifier.LogLevel;
-import org.dockbox.hartshorn.core.boot.beta.HartshornApplicationFactory;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
@@ -35,17 +33,13 @@ import java.lang.reflect.InvocationTargetException;
 /**
  * Application starter for Hartshorn applications. This takes a single type annotated with {@link Activator}
  * which provides application metadata, and a set of {@link Modifier modifiers}.
- * <p>The starter uses the provided {@link ApplicationBootstrap} reference to use for bootstrapping the
- * application.
  */
 public final class HartshornApplication {
 
     private HartshornApplication() {}
 
     /**
-     * Creates the bootstrapped server instance using the provided {@link Activator} metadata. If no valid
-     * {@link ApplicationBootstrap} is provided the application will not be started. This directly initializes
-     * the application.
+     * Creates the bootstrapped server instance using the provided {@link Activator} metadata.
      *
      * @param activator
      *         The activator type, providing application metadata
