@@ -15,7 +15,7 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.core.boot.beta;
+package org.dockbox.hartshorn.core.boot;
 
 import org.dockbox.hartshorn.core.InjectConfiguration;
 import org.dockbox.hartshorn.core.Modifier;

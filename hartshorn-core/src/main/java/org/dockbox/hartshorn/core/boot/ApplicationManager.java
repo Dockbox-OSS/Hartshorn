@@ -15,9 +15,10 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.core.boot.beta;
+package org.dockbox.hartshorn.core.boot;
 
-@FunctionalInterface
-public interface LifecycleObservable {
-    void register(LifecycleObserver observer);
+import org.dockbox.hartshorn.core.context.ContextCarrier;
+
+public interface ApplicationManager extends ContextCarrier, ApplicationLogger, ApplicationProxier, LifecycleObservable {
+    boolean isCI();
 }

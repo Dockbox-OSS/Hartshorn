@@ -17,7 +17,8 @@
 
 package org.dockbox.hartshorn.commands.service;
 
-import org.dockbox.hartshorn.core.boot.annotations.UseBootstrap;
+import org.dockbox.hartshorn.core.boot.ApplicationManager;
+import org.dockbox.hartshorn.core.annotations.UseBootstrap;
 import org.dockbox.hartshorn.commands.annotations.Parameter;
 import org.dockbox.hartshorn.commands.annotations.UseCommands;
 import org.dockbox.hartshorn.commands.arguments.CustomParameterPattern;
@@ -31,7 +32,7 @@ import org.dockbox.hartshorn.core.services.ServiceOrder;
 
 /**
  * Scans for any type annotated with {@link Parameter} and registers a {@link DynamicPatternConverter}
- * for each type found. Requires the use of a {@link org.dockbox.hartshorn.core.boot.beta.ApplicationManager} and
+ * for each type found. Requires the use of a {@link ApplicationManager} and
  * presence of {@link UseBootstrap}.
  */
 public class CommandParameters implements ComponentProcessor<UseCommands> {

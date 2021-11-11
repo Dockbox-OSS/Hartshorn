@@ -17,8 +17,8 @@
 
 package org.dockbox.hartshorn.core.services;
 
-import org.dockbox.hartshorn.core.boot.annotations.UseBootstrap;
-import org.dockbox.hartshorn.core.boot.beta.LifecycleObserver;
+import org.dockbox.hartshorn.core.annotations.UseBootstrap;
+import org.dockbox.hartshorn.core.boot.LifecycleObserver;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 

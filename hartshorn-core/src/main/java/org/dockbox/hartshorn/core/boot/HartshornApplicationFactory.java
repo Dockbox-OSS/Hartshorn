@@ -15,7 +15,7 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.core.boot.beta;
+package org.dockbox.hartshorn.core.boot;
 
 import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.core.InjectConfiguration;
@@ -23,8 +23,7 @@ import org.dockbox.hartshorn.core.Modifier;
 import org.dockbox.hartshorn.core.annotations.activate.Activator;
 import org.dockbox.hartshorn.core.annotations.inject.InjectConfig;
 import org.dockbox.hartshorn.core.annotations.proxy.UseProxying;
-import org.dockbox.hartshorn.core.boot.Hartshorn;
-import org.dockbox.hartshorn.core.boot.annotations.UseBootstrap;
+import org.dockbox.hartshorn.core.annotations.UseBootstrap;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.ApplicationEnvironment;
 import org.dockbox.hartshorn.core.context.HartshornApplicationContext;

@@ -15,9 +15,10 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.core.boot.annotations;
+package org.dockbox.hartshorn.core.annotations;
 
 import org.dockbox.hartshorn.core.annotations.service.ServiceActivator;
+import org.dockbox.hartshorn.core.boot.HartshornApplicationFactory;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -26,9 +27,7 @@ import java.lang.annotation.Target;
 
 /**
  * Service activator for bootstrap-dependent services. This activator is automatically injected
- * when the application is created through {@link org.dockbox.hartshorn.core.ApplicationBootstrap}.
- *
- * @see PostBootstrap
+ * when the application is created through {@link HartshornApplicationFactory}.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)

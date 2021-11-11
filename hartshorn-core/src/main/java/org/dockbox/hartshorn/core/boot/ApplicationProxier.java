@@ -15,17 +15,22 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.core.boot.beta;
+package org.dockbox.hartshorn.core.boot;
 
-import org.dockbox.hartshorn.core.annotations.context.LogExclude;
-import org.dockbox.hartshorn.core.boot.Hartshorn;
-import org.slf4j.Logger;
+import org.dockbox.hartshorn.core.context.element.TypeContext;
+import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.core.proxy.ProxyHandler;
 
-@LogExclude
-public class HartshornApplicationLogger implements ApplicationLogger {
+public interface ApplicationProxier {
 
-    @Override
-    public Logger log() {
-        return Hartshorn.log();
-    }
+    <T> Exceptional<T> proxy(TypeContext<T> type, T instance);
+
+    <T> Exceptional<TypeContext<T>> real(T instance);
+
+    <T, P extends T> Exceptional<T> delegator(final TypeContext<T> type, P instance);
+
+    <T, P extends T> Exceptional<T> delegator(final TypeContext<T> type, ProxyHandler<P> handler);
+
+    <T> ProxyHandler<T> handler(final TypeContext<T> type, final T instance);
+
 }

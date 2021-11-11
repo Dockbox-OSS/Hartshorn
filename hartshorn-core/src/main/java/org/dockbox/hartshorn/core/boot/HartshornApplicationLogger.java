@@ -15,14 +15,16 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.core.boot.beta;
+package org.dockbox.hartshorn.core.boot;
 
-import org.dockbox.hartshorn.core.InjectConfiguration;
+import org.dockbox.hartshorn.core.annotations.context.LogExclude;
+import org.slf4j.Logger;
 
-import java.util.Set;
+@LogExclude
+public class HartshornApplicationLogger implements ApplicationLogger {
 
-public interface ApplicationConfigurator {
-    void configure(ApplicationManager manager);
-    void apply(ApplicationManager manager, Set<InjectConfiguration> configurations);
-    void bind(ApplicationManager manager, String prefix);
+    @Override
+    public Logger log() {
+        return Hartshorn.log();
+    }
 }

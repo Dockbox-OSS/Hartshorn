@@ -15,12 +15,11 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.core.boot.beta;
+package org.dockbox.hartshorn.core.boot;
 
-import org.dockbox.hartshorn.core.annotations.context.LogExclude;
-import org.slf4j.Logger;
+import org.dockbox.hartshorn.core.context.ApplicationContext;
 
-@LogExclude
-public interface ApplicationLogger {
-    Logger log();
+public interface LifecycleObserver {
+    void onCreated(ApplicationContext applicationContext);
+    void onStarted(ApplicationContext applicationContext);
 }

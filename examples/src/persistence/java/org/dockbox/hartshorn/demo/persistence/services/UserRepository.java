@@ -17,14 +17,15 @@
 
 package org.dockbox.hartshorn.demo.persistence.services;
 
-import org.dockbox.hartshorn.core.boot.beta.HartshornApplicationManager;
-import org.dockbox.hartshorn.core.annotations.service.Service;
-import org.dockbox.hartshorn.core.context.ApplicationContext;
-import org.dockbox.hartshorn.core.context.element.TypeContext;
-import org.dockbox.hartshorn.core.proxy.ProxyHandler;
-import org.dockbox.hartshorn.core.proxy.DelegatorAccessor;
 import org.dockbox.hartshorn.demo.persistence.domain.User;
 import org.dockbox.hartshorn.demo.persistence.events.UserCreatedEvent;
+
+import org.dockbox.hartshorn.core.annotations.service.Service;
+import org.dockbox.hartshorn.core.boot.HartshornApplicationManager;
+import org.dockbox.hartshorn.core.context.ApplicationContext;
+import org.dockbox.hartshorn.core.context.element.TypeContext;
+import org.dockbox.hartshorn.core.proxy.DelegatorAccessor;
+import org.dockbox.hartshorn.core.proxy.ProxyHandler;
 import org.dockbox.hartshorn.events.EventBus;
 import org.dockbox.hartshorn.events.annotations.Posting;
 import org.dockbox.hartshorn.persistence.JpaRepository;

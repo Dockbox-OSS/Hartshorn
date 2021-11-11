@@ -20,7 +20,7 @@ package org.dockbox.hartshorn.web;
 import org.dockbox.hartshorn.config.annotations.Value;
 import org.dockbox.hartshorn.core.annotations.service.Service;
 import org.dockbox.hartshorn.core.boot.ApplicationState.Started;
-import org.dockbox.hartshorn.core.boot.annotations.UseBootstrap;
+import org.dockbox.hartshorn.core.annotations.UseBootstrap;
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 import org.dockbox.hartshorn.events.EngineChangedState;
 import org.dockbox.hartshorn.events.annotations.Listener;

@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.core.context;
 
-import org.dockbox.hartshorn.core.boot.beta.HartshornApplicationManager;
+import org.dockbox.hartshorn.core.boot.HartshornApplicationManager;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 
 import java.lang.annotation.Annotation;

@@ -18,6 +18,7 @@
 package org.dockbox.hartshorn.core.proxy;
 
 import org.dockbox.hartshorn.core.AnnotationHelper.AnnotationInvocationHandler;
+import org.dockbox.hartshorn.core.boot.HartshornApplicationProxier;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.BackingImplementationContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
@@ -31,7 +32,7 @@ import javassist.util.proxy.MethodHandler;
 import javassist.util.proxy.ProxyFactory;
 
 /**
- * @see org.dockbox.hartshorn.core.boot.beta.HartshornApplicationProxier
+ * @see HartshornApplicationProxier
  */
 public class JavassistProxyUtil {
 

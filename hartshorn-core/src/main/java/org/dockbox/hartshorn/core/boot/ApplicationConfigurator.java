@@ -15,22 +15,14 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.core.boot.beta;
+package org.dockbox.hartshorn.core.boot;
 
-import org.dockbox.hartshorn.core.context.element.TypeContext;
-import org.dockbox.hartshorn.core.domain.Exceptional;
-import org.dockbox.hartshorn.core.proxy.ProxyHandler;
+import org.dockbox.hartshorn.core.InjectConfiguration;
 
-public interface ApplicationProxier {
+import java.util.Set;
 
-    <T> Exceptional<T> proxy(TypeContext<T> type, T instance);
-
-    <T> Exceptional<TypeContext<T>> real(T instance);
-
-    <T, P extends T> Exceptional<T> delegator(final TypeContext<T> type, P instance);
-
-    <T, P extends T> Exceptional<T> delegator(final TypeContext<T> type, ProxyHandler<P> handler);
-
-    <T> ProxyHandler<T> handler(final TypeContext<T> type, final T instance);
-
+public interface ApplicationConfigurator {
+    void configure(ApplicationManager manager);
+    void apply(ApplicationManager manager, Set<InjectConfiguration> configurations);
+    void bind(ApplicationManager manager, String prefix);
 }

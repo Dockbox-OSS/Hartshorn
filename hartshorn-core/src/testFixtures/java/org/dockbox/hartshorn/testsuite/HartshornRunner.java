@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.testsuite;
 
 import org.dockbox.hartshorn.core.annotations.activate.Activator;
 import org.dockbox.hartshorn.core.annotations.service.ServiceActivator;
-import org.dockbox.hartshorn.core.boot.beta.HartshornApplicationFactory;
+import org.dockbox.hartshorn.core.boot.HartshornApplicationFactory;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;

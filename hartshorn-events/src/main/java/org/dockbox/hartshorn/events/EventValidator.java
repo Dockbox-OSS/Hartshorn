@@ -21,7 +21,7 @@ import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.core.annotations.service.Service;
 import org.dockbox.hartshorn.core.boot.ApplicationState.Started;
 import org.dockbox.hartshorn.core.boot.Hartshorn;
-import org.dockbox.hartshorn.core.boot.beta.LifecycleObserver;
+import org.dockbox.hartshorn.core.boot.LifecycleObserver;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.events.annotations.Posting;
