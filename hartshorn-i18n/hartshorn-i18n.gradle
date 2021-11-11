@@ -15,6 +15,8 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
+apply from: "$project.rootDir/gradle/publications.gradle"
+
 dependencies {
     api 'org.dockbox.hartshorn:hartshorn-persistence'
     implementation 'org.dockbox.hartshorn:hartshorn-core'

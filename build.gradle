@@ -56,7 +56,6 @@ subprojects { final Project subProject ->
     apply plugin: 'java-test-fixtures'
     apply plugin: 'org.cadixdev.licenser'
 
-
     license {
         header = rootProject.file("HEADER.txt")
         ignoreFailures = true
@@ -75,8 +74,6 @@ subprojects { final Project subProject ->
         dependsOn tasks.updateLicenses
         finalizedBy tasks.clean
     }
-
-    apply from: "$project.rootDir/gradle/publications.gradle"
 }
 
 allprojects {
