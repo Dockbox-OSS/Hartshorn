@@ -20,10 +20,13 @@ package org.dockbox.hartshorn.core.boot;
 import org.dockbox.hartshorn.core.InjectConfiguration;
 import org.dockbox.hartshorn.core.Modifier;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
+import org.dockbox.hartshorn.core.context.ApplicationEnvironment;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
+import org.dockbox.hartshorn.core.services.ComponentLocator;
 
 import java.lang.annotation.Annotation;
 import java.util.Set;
+import java.util.function.Function;
 
 public interface ApplicationFactory<Self extends ApplicationFactory<Self, C>, C extends ApplicationContext> {
 
@@ -46,6 +49,10 @@ public interface ApplicationFactory<Self extends ApplicationFactory<Self, C>, C 
     Self applicationProxier(ApplicationProxier applicationProxier);
 
     Self applicationLogger(ApplicationLogger applicationLogger);
+
+    Self applicationEnvironment(Function<ApplicationManager, ApplicationEnvironment> applicationEnvironment);
+
+    Self componentLocator(Function<ApplicationContext, ComponentLocator> componentLocator);
 
     Self prefix(String prefix);
 
