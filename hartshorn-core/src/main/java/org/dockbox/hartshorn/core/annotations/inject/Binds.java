@@ -30,6 +30,6 @@ import javax.inject.Named;
 @Repeatable(Combines.class)
 public @interface Binds {
     Class<?> value();
-
+    int priority() default -1;
     Named named() default @Named;
 }

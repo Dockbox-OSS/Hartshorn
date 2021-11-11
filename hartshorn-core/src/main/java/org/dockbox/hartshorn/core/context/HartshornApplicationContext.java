@@ -563,7 +563,7 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
         else {
             key = Key.of(binds);
         }
-        this.inHierarchy(key, hierarchy -> hierarchy.add(Providers.of(binder)));
+        this.inHierarchy(key, hierarchy -> hierarchy.add(bindAnnotation.priority(), Providers.of(binder)));
     }
 
     @Override
