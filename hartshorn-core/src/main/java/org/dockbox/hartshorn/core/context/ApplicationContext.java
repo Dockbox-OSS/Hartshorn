@@ -66,7 +66,7 @@ public interface ApplicationContext extends ApplicationBinder, HartshornContext,
     void reset();
 
     default Logger log() {
-        return this.environment().application().log();
+        return this.environment().manager().log();
     }
 
     default <C extends Context> Exceptional<C> first(final Class<C> context) {

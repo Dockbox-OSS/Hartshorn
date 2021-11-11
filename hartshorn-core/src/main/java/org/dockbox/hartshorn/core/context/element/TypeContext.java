@@ -141,7 +141,7 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
             return (TypeContext<T>) VOID;
         }
         if (isProxy(instance.getClass())) {
-            return context.environment().application().real(instance)
+            return context.environment().manager().real(instance)
                     .orThrow(() -> new ApplicationException("Could not derive real type of instance " + instance).runtime());
         }
         else return of(instance);

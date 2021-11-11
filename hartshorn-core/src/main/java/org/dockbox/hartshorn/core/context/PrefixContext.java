@@ -50,7 +50,7 @@ public class PrefixContext extends DefaultContext {
 
     public void prefix(final String prefix) {
         if (!this.reflectedPrefixes.containsKey(prefix)) {
-            this.environment.application().log().debug("Registering and caching prefix '%s'".formatted(prefix));
+            this.environment.manager().log().debug("Registering and caching prefix '%s'".formatted(prefix));
             this.reflectedPrefixes.put(prefix, this.reflections(prefix));
         }
     }

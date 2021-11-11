@@ -37,7 +37,7 @@ public abstract class ServiceMethodModifier<A extends Annotation> extends Servic
     public <T> T process(final ApplicationContext context, final TypeContext<T> type, @Nullable final T instance) {
         final Collection<MethodContext<?, T>> methods = this.modifiableMethods(type);
 
-        final ProxyHandler<T> handler = context.environment().application().handler(type, instance);
+        final ProxyHandler<T> handler = context.environment().manager().handler(type, instance);
 
         for (final MethodContext<?, T> method : methods) {
             final org.dockbox.hartshorn.core.context.MethodProxyContext ctx = new MethodProxyContextImpl<>(context, instance, type, method, handler);

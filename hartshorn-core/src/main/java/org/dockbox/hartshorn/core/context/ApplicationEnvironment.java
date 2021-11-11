@@ -39,6 +39,9 @@ public class ApplicationEnvironment {
         this.isCI = this.detectCI();
         this.prefixContext = new PrefixContext(prefixes, this);
         this.application().log().debug("Created new application environment (isCI: %s, prefixCount: %d)".formatted(this.isCI(), this.prefixContext().prefixes().size()));
+    public HartshornApplicationManager manager() {
+        // TODO: Temporary placeholder
+        return this.application();
     }
 
     private boolean detectCI() {
@@ -48,6 +51,8 @@ public class ApplicationEnvironment {
     public void prefix(final String prefix) {
         this.prefixContext.prefix(prefix);
     }
+    }
+
 
     /**
      * Gets types decorated with a given annotation, both classes and annotationsWith. The prefix is

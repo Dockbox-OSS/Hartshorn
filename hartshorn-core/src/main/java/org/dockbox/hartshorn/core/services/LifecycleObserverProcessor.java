@@ -36,6 +36,6 @@ public class LifecycleObserverProcessor implements ServiceProcessor<UseBootstrap
 
     @Override
     public <T> void process(ApplicationContext context, TypeContext<T> type) {
-        context.environment().application().register((LifecycleObserver) context.get(type));
+        context.environment().manager().register((LifecycleObserver) context.get(type));
     }
 }
