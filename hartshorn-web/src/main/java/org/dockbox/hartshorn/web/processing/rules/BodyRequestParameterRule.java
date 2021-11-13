@@ -42,6 +42,7 @@ public class BodyRequestParameterRule extends AnnotatedParameterLoaderRule<Reque
             return (Exceptional<T>) body;
         final FileType bodyFormat = parameter.declaredBy().annotation(HttpRequest.class).get().bodyFormat();
         final ObjectMapper objectMapper = context.applicationContext().get(ObjectMapper.class).fileType(bodyFormat);
+
         return body.flatMap(b -> objectMapper.read(b, parameter.type()));
     }
 }
