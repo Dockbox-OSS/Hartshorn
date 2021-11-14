@@ -6,6 +6,7 @@ import org.dockbox.hartshorn.core.services.parameter.ParameterLoader;
 import org.dockbox.hartshorn.core.services.parameter.RuleBasedParameterLoader;
 import org.dockbox.hartshorn.web.processing.rules.BodyRequestParameterRule;
 import org.dockbox.hartshorn.web.processing.rules.HeaderRequestParameterRule;
+import org.dockbox.hartshorn.web.processing.rules.RequestQueryParameterRule;
 import org.dockbox.hartshorn.web.processing.rules.ServletRequestParameterRule;
 import org.dockbox.hartshorn.web.processing.rules.ServletResponseParameterRule;
 
@@ -17,6 +18,7 @@ public class HttpServletParameterLoader extends RuleBasedParameterLoader<HttpReq
     public HttpServletParameterLoader() {
         this.add(new BodyRequestParameterRule());
         this.add(new HeaderRequestParameterRule());
+        this.add(new RequestQueryParameterRule());
         this.add(new ServletRequestParameterRule());
         this.add(new ServletResponseParameterRule());
     }
