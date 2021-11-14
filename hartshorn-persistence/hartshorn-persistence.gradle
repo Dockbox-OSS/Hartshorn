@@ -19,6 +19,8 @@ apply from: "$project.rootDir/gradle/publications.gradle"
 
 dependencies {
     implementation 'org.dockbox.hartshorn:hartshorn-core'
+    api 'jakarta.activation:jakarta.activation-api:2.0.1'
+
     implementation "org.apache.derby:derby:$derbyVersion"
     implementation "org.hibernate:hibernate-core:$hibernateVersion"
     implementation "com.fasterxml.jackson.core:jackson-core:$jacksonVersion"

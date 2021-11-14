@@ -15,25 +15,8 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.demo.rest;
-
-import org.dockbox.hartshorn.web.annotations.RequestHeader;
-import org.dockbox.hartshorn.web.annotations.RequestParam;
-import org.dockbox.hartshorn.web.annotations.RestController;
-import org.dockbox.hartshorn.web.annotations.http.HttpGet;
-
-@RestController
-public class DemoController {
-
-    @HttpGet("/hello")
-    public String hello(@RequestHeader("demo") final String name) {
-        return "Hello " + name;
-    }
-
-    private int id = 0;
-
-    @HttpGet("/greeting")
-    public Greeting greeting(@RequestParam(value = "name", or = "World") final String name) {
-        return new Greeting("Hello, " + name + "! (" + (++id) + ")");
-    }
+module Hartshorn.examples.commands {
+    requires Hartshorn.hartshorn.commands.main;
+    requires Hartshorn.hartshorn.core.main;
+    requires Hartshorn.hartshorn.events.main;
 }

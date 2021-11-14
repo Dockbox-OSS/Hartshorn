@@ -18,7 +18,8 @@
 apply from: "$project.rootDir/gradle/publications.gradle"
 
 dependencies {
-    api "javax.inject:javax.inject:$javaxInjectVersion"
+    api group: 'jakarta.inject', name: 'jakarta.inject-api', version: '1.0.1'
+
     implementation "org.reflections:reflections:$reflectionsVersion"
     implementation "org.apache.logging.log4j:log4j-api:$log4jVersion"
     implementation "org.apache.logging.log4j:log4j-core:$log4jVersion"

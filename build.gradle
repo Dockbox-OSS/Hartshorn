@@ -88,6 +88,16 @@ allprojects {
             }
         }
 
+        compileJava {
+            inputs.property('moduleName', project.name)
+            doFirst {
+                options.compilerArgs = [
+                        '--module-path', classpath.asPath
+                ]
+                classpath = files()
+            }
+        }
+
         repositories {
             mavenCentral()
             maven {

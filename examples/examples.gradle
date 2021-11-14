@@ -26,16 +26,19 @@ sourceSets {
     persistence
     commands
     caching
+    rest
 }
 
 configurations {
     persistenceImplementation.extendsFrom(implementation)
     commandsImplementation.extendsFrom(implementation)
     cachingImplementation.extendsFrom(implementation)
+    restImplementation.extendsFrom(implementation)
 
     persistenceAnnotationProcessor.extendsFrom(annotationProcessor)
     commandsAnnotationProcessor.extendsFrom(annotationProcessor)
     cachingAnnotationProcessor.extendsFrom(annotationProcessor)
+    restAnnotationProcessor.extendsFrom(annotationProcessor)
 }
 
 dependencies {
