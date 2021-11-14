@@ -206,6 +206,16 @@ public final class AnnotationHelper {
 
             // search in super annotation type
             for (final Class<? extends Annotation> klass : hierarchy) {
+                try {
+                    final Method klassMethod = klass.getMethod(name);
+                    if (klassMethod != null) {
+                        final Object defaultValue = klassMethod.getDefaultValue();
+                        if (defaultValue != null) return Exceptional.of(defaultValue);
+                    }
+                } catch (final NoSuchMethodException ignored) {
+                    // Do not break yet, we might find it in a super class
+                }
+
                 final Annotation[] annotationsOnCurrentAnnotationClass = klass.getAnnotations();
                 for (final Annotation annotationOnCurrentAnnotationClass : annotationsOnCurrentAnnotationClass) {
                     if (hierarchy.contains(annotationOnCurrentAnnotationClass.annotationType())) {

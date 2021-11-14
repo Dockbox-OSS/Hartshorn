@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.core;
 
 import org.dockbox.hartshorn.core.annotations.activate.UseServiceProvision;
 import org.dockbox.hartshorn.core.binding.Bindings;
+import org.dockbox.hartshorn.core.boot.EmptyService;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.proxy.ExtendedProxy;
 import org.dockbox.hartshorn.core.types.ContextInjectedType;
@@ -284,5 +285,14 @@ public class ApplicationContextTests extends ApplicationAwareTest {
         Assertions.assertNotNull(sample);
         Assertions.assertNotNull(sample.name());
         Assertions.assertEquals("Factory", sample.name());
+    }
+
+    @Test
+    void servicesAreSingletonsByDefault() {
+        Assertions.assertTrue(this.context().meta().singleton(TypeContext.of(EmptyService.class)));
+
+        final EmptyService emptyService = this.context().get(EmptyService.class);
+        final EmptyService emptyService2 = this.context().get(EmptyService.class);
+        Assertions.assertSame(emptyService, emptyService2);
     }
 }
