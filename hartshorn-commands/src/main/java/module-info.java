@@ -20,6 +20,9 @@ module Hartshorn.hartshorn.commands.main {
     requires Hartshorn.hartshorn.events.main;
     requires Hartshorn.hartshorn.i18n.main;
     requires Hartshorn.hartshorn.tasks.main;
+    requires jakarta.inject;
+    requires lombok;
+    requires org.jetbrains.annotations;
 
     exports org.dockbox.hartshorn.commands;
     exports org.dockbox.hartshorn.commands.annotations;

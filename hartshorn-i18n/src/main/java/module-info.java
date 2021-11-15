@@ -19,6 +19,8 @@ module Hartshorn.hartshorn.i18n.main {
     requires Hartshorn.hartshorn.config.main;
     requires Hartshorn.hartshorn.core.main;
     requires Hartshorn.hartshorn.persistence.main;
+    requires jakarta.inject;
+    requires lombok;
 
     exports org.dockbox.hartshorn.i18n;
     exports org.dockbox.hartshorn.i18n.annotations;

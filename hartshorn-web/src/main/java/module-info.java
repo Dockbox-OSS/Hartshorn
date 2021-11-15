@@ -20,6 +20,15 @@ module Hartshorn.hartshorn.web.main {
     requires Hartshorn.hartshorn.core.main;
     requires Hartshorn.hartshorn.events.main;
     requires Hartshorn.hartshorn.persistence.main;
+    requires org.eclipse.jetty.http;
+    requires org.eclipse.jetty.io;
+    requires org.eclipse.jetty.server;
+    requires org.eclipse.jetty.util;
+    requires jakarta.servlet;
+    requires jakarta.inject;
+    requires lombok;
+    requires org.eclipse.jetty.servlet;
+    requires javax.servlet.api;
 
     exports org.dockbox.hartshorn.web.annotations;
     exports org.dockbox.hartshorn.web.annotations.http;

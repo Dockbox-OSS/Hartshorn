@@ -18,17 +18,18 @@
 apply from: "$project.rootDir/gradle/publications.gradle"
 
 dependencies {
-    implementation 'org.dockbox.hartshorn:hartshorn-core'
+    api 'org.dockbox.hartshorn:hartshorn-core'
     api 'jakarta.activation:jakarta.activation-api:2.0.1'
 
-    implementation "org.apache.derby:derby:$derbyVersion"
-    implementation "org.hibernate:hibernate-core:$hibernateVersion"
-    implementation "com.fasterxml.jackson.core:jackson-core:$jacksonVersion"
-    implementation "org.codehaus.woodstox:woodstox-core-asl:$woodstoxVersion"
-    implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-xml:$jacksonVersion"
-    implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:$jacksonVersion"
-    implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-toml:$jacksonVersion"
-    implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-properties:$jacksonVersion"
+    api "org.hibernate:hibernate-core:$hibernateVersion"
+    api "com.fasterxml.jackson.core:jackson-core:$jacksonVersion"
+    api "com.fasterxml.jackson.dataformat:jackson-dataformat-xml:$jacksonVersion"
+    api "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:$jacksonVersion"
+    api "com.fasterxml.jackson.dataformat:jackson-dataformat-toml:$jacksonVersion"
+    api "com.fasterxml.jackson.dataformat:jackson-dataformat-properties:$jacksonVersion"
+
+    compileOnly "org.apache.derby:derby:$derbyVersion"
+//    compileOnly "org.codehaus.woodstox:woodstox-core-asl:$woodstoxVersion"
 
     testImplementation "org.postgresql:postgresql:$postgreSqlVersion"
     testImplementation "org.testcontainers:mysql:$testContainersVersion"

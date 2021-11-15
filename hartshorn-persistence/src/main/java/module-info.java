@@ -26,6 +26,9 @@ module Hartshorn.hartshorn.persistence.main {
     requires org.jetbrains.annotations;
     requires jakarta.inject;
     requires lombok;
+    requires java.persistence;
+    requires org.hibernate.orm.core;
+    requires java.naming;
 
     exports org.dockbox.hartshorn.persistence;
     exports org.dockbox.hartshorn.persistence.annotations;

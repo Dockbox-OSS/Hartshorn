@@ -20,8 +20,8 @@ module Hartshorn.hartshorn.core.main {
     requires org.slf4j;
     requires org.jetbrains.annotations;
     requires javassist;
-    requires log4j.api;
-    requires log4j.core;
+    requires org.apache.logging.log4j.core;
+    requires org.apache.logging.log4j;
 
     exports org.dockbox.hartshorn.core;
     exports org.dockbox.hartshorn.core.adapter;

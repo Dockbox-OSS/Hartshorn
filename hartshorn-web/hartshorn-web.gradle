@@ -28,6 +28,7 @@ dependencies {
     implementation 'org.dockbox.hartshorn:hartshorn-persistence'
     implementation "org.eclipse.jetty:jetty-servlet:$jettyVersion"
     implementation "org.eclipse.jetty:jetty-server:$jettyVersion"
-    api "javax.servlet:javax.servlet-api:$javaxServletVersion"
+    implementation 'jakarta.servlet:jakarta.servlet-api:5.0.0'
+
     testImplementation 'org.apache.httpcomponents:httpclient:4.5.13'
 }

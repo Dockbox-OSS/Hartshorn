@@ -18,6 +18,8 @@
 module Hartshorn.hartshorn.config.main {
     requires Hartshorn.hartshorn.core.main;
     requires Hartshorn.hartshorn.persistence.main;
+    requires lombok;
+    requires org.jetbrains.annotations;
 
     exports org.dockbox.hartshorn.config.annotations;
 }
