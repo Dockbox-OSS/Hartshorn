@@ -28,9 +28,8 @@ dependencies {
     api "com.fasterxml.jackson.dataformat:jackson-dataformat-toml:$jacksonVersion"
     api "com.fasterxml.jackson.dataformat:jackson-dataformat-properties:$jacksonVersion"
 
-    compileOnly "org.apache.derby:derby:$derbyVersion"
-//    compileOnly "org.codehaus.woodstox:woodstox-core-asl:$woodstoxVersion"
-
+    testImplementation "org.codehaus.woodstox:woodstox-core-asl:$woodstoxVersion"
+    testImplementation "org.apache.derby:derby:$derbyVersion"
     testImplementation "org.postgresql:postgresql:$postgreSqlVersion"
     testImplementation "org.testcontainers:mysql:$testContainersVersion"
     testImplementation "org.testcontainers:mariadb:$testContainersVersion"
