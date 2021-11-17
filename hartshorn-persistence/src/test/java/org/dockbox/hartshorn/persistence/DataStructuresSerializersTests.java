@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.persistence;
 
 import org.dockbox.hartshorn.core.GenericType;
 import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.persistence.mapping.ObjectMapper;
 import org.dockbox.hartshorn.persistence.registry.Registry;
 import org.dockbox.hartshorn.persistence.registry.RegistryColumn;
 import org.dockbox.hartshorn.testsuite.ApplicationAwareTest;
@@ -37,9 +38,8 @@ public class DataStructuresSerializersTests extends ApplicationAwareTest {
             final File copy = File.createTempFile("tmp", null);
             final Path tempFile = copy.toPath();
 
-            final FileManager fm = this.context().get(JUnitFileManager.class);
-
-            fm.write(tempFile, this.buildTestRegistry());
+            final ObjectMapper objectMapper = this.context().get(ObjectMapper.class);
+            objectMapper.write(this.buildTestRegistry());
         });
     }
 
@@ -66,11 +66,14 @@ public class DataStructuresSerializersTests extends ApplicationAwareTest {
         final File copy = File.createTempFile("tmp", null);
         final Path tempFile = copy.toPath();
 
-        final FileManager fm = this.context().get(JUnitFileManager.class);
+        final ObjectMapper objectMapper = this.context().get(ObjectMapper.class);
 
-        fm.write(tempFile, this.buildTestRegistry());
-        final Exceptional<Registry<Registry<String>>> registry = fm.read(tempFile, new GenericType<>() {
-        });
+        final Exceptional<String> serializedRegistry = objectMapper.write(this.buildTestRegistry());
+        Assertions.assertTrue(serializedRegistry.present());
+
+        final String serialized = serializedRegistry.get();
+        final Exceptional<Registry<Registry<String>>> registry = objectMapper.read(serializedRegistry.get(), new GenericType<>() {});
+
         Assertions.assertTrue(registry.present());
 
         final Registry<Registry<String>> reg = registry.get();

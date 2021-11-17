@@ -17,22 +17,24 @@
 
 package org.dockbox.hartshorn.persistence.service;
 
+import org.dockbox.hartshorn.core.context.ApplicationContext;
+import org.dockbox.hartshorn.core.context.MethodProxyContext;
+import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.domain.TypedOwner;
-import org.dockbox.hartshorn.core.context.ApplicationContext;
-import org.dockbox.hartshorn.core.context.element.TypeContext;
+import org.dockbox.hartshorn.core.exceptions.ApplicationException;
+import org.dockbox.hartshorn.core.proxy.ProxyFunction;
 import org.dockbox.hartshorn.core.services.ComponentContainer;
-import org.dockbox.hartshorn.persistence.FileManager;
-import org.dockbox.hartshorn.persistence.FileType;
+import org.dockbox.hartshorn.core.services.ServiceAnnotatedMethodModifier;
+import org.dockbox.hartshorn.persistence.FileFormats;
 import org.dockbox.hartshorn.persistence.annotations.UsePersistence;
 import org.dockbox.hartshorn.persistence.context.PersistenceAnnotationContext;
 import org.dockbox.hartshorn.persistence.context.SerialisationContext;
 import org.dockbox.hartshorn.persistence.mapping.ObjectMapper;
-import org.dockbox.hartshorn.core.proxy.ProxyFunction;
-import org.dockbox.hartshorn.core.context.MethodProxyContext;
-import org.dockbox.hartshorn.core.services.ServiceAnnotatedMethodModifier;
 
+import java.io.IOException;
 import java.lang.annotation.Annotation;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 public abstract class AbstractPersistenceServiceModifier<M extends Annotation, C extends SerialisationContext> extends ServiceAnnotatedMethodModifier<M, UsePersistence> {
@@ -67,8 +69,8 @@ public abstract class AbstractPersistenceServiceModifier<M extends Annotation, C
 
     protected ObjectMapper mapper(final ApplicationContext context, final C serialisationContext) {
         final ObjectMapper objectMapper = context.get(ObjectMapper.class);
-        final FileType fileType = serialisationContext.fileType();
-        objectMapper.fileType(fileType);
+        final FileFormats fileFormat = serialisationContext.fileFormat();
+        objectMapper.fileType(fileFormat);
         return objectMapper;
     }
 
@@ -82,10 +84,23 @@ public abstract class AbstractPersistenceServiceModifier<M extends Annotation, C
             }
         }
 
-        final TypedOwner lookup = context.meta().lookup(owner);
-        final FileManager fileManager = context.get(FileManager.class);
+        Path root = context.environment().manager().applicationPath();
+        if (!owner.isVoid()) {
+            final TypedOwner typedOwner = context.meta().lookup(owner);
+            root = root.resolve(typedOwner.id());
+        }
 
-        if ("".equals(annotationContext.file().value())) return fileManager.dataFile(lookup);
-        else return fileManager.dataFile(lookup, annotationContext.file().value());
+        if (Files.notExists(root)) {
+            try {
+                Files.createDirectory(root);
+            }
+            catch (final IOException e) {
+                throw new ApplicationException(e).runtime();
+            }
+        }
+
+        if (!root.toFile().isDirectory()) throw new ApplicationException("Expected " + root + " to be a directory, but found a file instead").runtime();
+
+        return annotationContext.filetype().asPath(root, annotationContext.file().value());
     }
 }

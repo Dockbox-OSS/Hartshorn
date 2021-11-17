@@ -24,5 +24,5 @@ import java.lang.annotation.RetentionPolicy;
 public @interface File {
     Class<?> owner() default Void.class;
 
-    String value() default "";
+    String value();
 }

@@ -116,6 +116,8 @@ public final class Hartshorn {
             log().debug("Writing compressed resource " + name + " to temporary file " + tempFile.toFile().getName());
             final OutputStream outStream = new FileOutputStream(tempFile.toFile());
             outStream.write(buffer);
+            outStream.flush();
+            outStream.close();
 
             return Exceptional.of(tempFile);
         }

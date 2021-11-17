@@ -25,6 +25,7 @@ import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.proxy.ProxyHandler;
 import org.slf4j.Logger;
 
+import java.nio.file.Path;
 import java.util.Set;
 
 import lombok.Getter;
@@ -43,6 +44,7 @@ public class HartshornApplicationManager implements ApplicationManager {
 
     @Getter
     private final Set<LifecycleObserver> observers = HartshornUtils.emptyConcurrentSet();
+    private final ApplicationFSProvider applicationFSProvider;
 
     @Getter
     private ApplicationContext applicationContext;
@@ -52,7 +54,8 @@ public class HartshornApplicationManager implements ApplicationManager {
 
     public HartshornApplicationManager(
             final ApplicationLogger applicationLogger,
-            final ApplicationProxier applicationProxier
+            final ApplicationProxier applicationProxier,
+            final ApplicationFSProvider applicationFSProvider
     ) {
         if (applicationLogger instanceof ApplicationManaged applicationManaged)
             applicationManaged.applicationManager(this);
@@ -61,6 +64,10 @@ public class HartshornApplicationManager implements ApplicationManager {
         if (applicationProxier instanceof ApplicationManaged applicationManaged)
             applicationManaged.applicationManager(this);
         this.applicationProxier = applicationProxier;
+
+        if (applicationFSProvider instanceof ApplicationManaged applicationManaged)
+            applicationManaged.applicationManager(this);
+        this.applicationFSProvider = applicationFSProvider;
 
         if (!this.isCI()) this.printHeader();
     }
@@ -83,37 +90,42 @@ public class HartshornApplicationManager implements ApplicationManager {
     }
 
     @Override
-    public <T> Exceptional<T> proxy(TypeContext<T> type, T instance) {
+    public <T> Exceptional<T> proxy(final TypeContext<T> type, final T instance) {
         return this.applicationProxier.proxy(type, instance);
     }
 
     @Override
-    public <T> Exceptional<TypeContext<T>> real(T instance) {
+    public <T> Exceptional<TypeContext<T>> real(final T instance) {
         return this.applicationProxier.real(instance);
     }
 
     @Override
-    public <T, P extends T> Exceptional<T> delegator(TypeContext<T> type, P instance) {
+    public <T, P extends T> Exceptional<T> delegator(final TypeContext<T> type, final P instance) {
         return this.applicationProxier.delegator(type, instance);
     }
 
     @Override
-    public <T, P extends T> Exceptional<T> delegator(TypeContext<T> type, ProxyHandler<P> handler) {
+    public <T, P extends T> Exceptional<T> delegator(final TypeContext<T> type, final ProxyHandler<P> handler) {
         return this.applicationProxier.delegator(type, handler);
     }
 
     @Override
-    public <T> ProxyHandler<T> handler(TypeContext<T> type, T instance) {
+    public <T> ProxyHandler<T> handler(final TypeContext<T> type, final T instance) {
         return this.applicationProxier.handler(type, instance);
     }
 
-    public void applicationContext(ApplicationContext applicationContext) {
+    public void applicationContext(final ApplicationContext applicationContext) {
         if (this.applicationContext == null) this.applicationContext = applicationContext;
         else throw new IllegalArgumentException("Application context has already been configured");
     }
 
     @Override
-    public void register(LifecycleObserver observer) {
+    public void register(final LifecycleObserver observer) {
         this.observers.add(observer);
+    }
+
+    @Override
+    public Path applicationPath() {
+        return this.applicationFSProvider.applicationPath();
     }
 }

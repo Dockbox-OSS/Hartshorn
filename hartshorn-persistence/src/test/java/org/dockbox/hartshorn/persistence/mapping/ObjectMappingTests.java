@@ -20,7 +20,7 @@ package org.dockbox.hartshorn.persistence.mapping;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.persistence.Element;
 import org.dockbox.hartshorn.persistence.EntityElement;
-import org.dockbox.hartshorn.persistence.FileType;
+import org.dockbox.hartshorn.persistence.FileFormats;
 import org.dockbox.hartshorn.persistence.MultiElement;
 import org.dockbox.hartshorn.persistence.NestedElement;
 import org.dockbox.hartshorn.persistence.PersistentElement;
@@ -38,38 +38,38 @@ public class ObjectMappingTests extends ApplicationAwareTest {
 
     private static Stream<Arguments> serialisationElements() {
         return Stream.of(
-                Arguments.of(FileType.JSON, new PersistentElement(), "{\"name\":\"sample\"}"),
-                Arguments.of(FileType.YAML, new PersistentElement(), "name: sample"),
+                Arguments.of(FileFormats.JSON, new PersistentElement(), "{\"name\":\"sample\"}"),
+                Arguments.of(FileFormats.YAML, new PersistentElement(), "name: sample"),
                 // Note that the element is not an explicit entity, so no alias is used for the root element in XML
-                Arguments.of(FileType.XML, new PersistentElement(), "<PersistentElement><name>sample</name></PersistentElement>"),
-                Arguments.of(FileType.TOML, new PersistentElement(), "name='sample'"),
-                Arguments.of(FileType.PROPERTIES, new PersistentElement(), "name=sample"),
+                Arguments.of(FileFormats.XML, new PersistentElement(), "<PersistentElement><name>sample</name></PersistentElement>"),
+                Arguments.of(FileFormats.TOML, new PersistentElement(), "name='sample'"),
+                Arguments.of(FileFormats.PROPERTIES, new PersistentElement(), "name=sample"),
 
-                Arguments.of(FileType.JSON, new EntityElement(), "{\"name\":\"sample\"}"),
-                Arguments.of(FileType.YAML, new EntityElement(), "name: sample"),
-                Arguments.of(FileType.XML, new EntityElement(), "<entity><name>sample</name></entity>"),
-                Arguments.of(FileType.TOML, new EntityElement(), "name='sample'"),
-                Arguments.of(FileType.PROPERTIES, new EntityElement(), "name=sample"),
+                Arguments.of(FileFormats.JSON, new EntityElement(), "{\"name\":\"sample\"}"),
+                Arguments.of(FileFormats.YAML, new EntityElement(), "name: sample"),
+                Arguments.of(FileFormats.XML, new EntityElement(), "<entity><name>sample</name></entity>"),
+                Arguments.of(FileFormats.TOML, new EntityElement(), "name='sample'"),
+                Arguments.of(FileFormats.PROPERTIES, new EntityElement(), "name=sample"),
 
-                Arguments.of(FileType.JSON, new NestedElement(new EntityElement()), "{\"child\":{\"name\":\"sample\"}}"),
-                Arguments.of(FileType.YAML, new NestedElement(new EntityElement()), "child:\n  name: sample"),
-                Arguments.of(FileType.XML, new NestedElement(new EntityElement()), "<NestedElement><child><name>sample</name></child></NestedElement>"),
-                Arguments.of(FileType.TOML, new NestedElement(new EntityElement()), "child.name='sample'"),
-                Arguments.of(FileType.PROPERTIES, new NestedElement(new EntityElement()), "child.name=sample"),
+                Arguments.of(FileFormats.JSON, new NestedElement(new EntityElement()), "{\"child\":{\"name\":\"sample\"}}"),
+                Arguments.of(FileFormats.YAML, new NestedElement(new EntityElement()), "child:\n  name: sample"),
+                Arguments.of(FileFormats.XML, new NestedElement(new EntityElement()), "<NestedElement><child><name>sample</name></child></NestedElement>"),
+                Arguments.of(FileFormats.TOML, new NestedElement(new EntityElement()), "child.name='sample'"),
+                Arguments.of(FileFormats.PROPERTIES, new NestedElement(new EntityElement()), "child.name=sample"),
 
-                Arguments.of(FileType.JSON, new MultiElement(), "{\"name\":\"sample\",\"other\":\"sample\"}"),
-                Arguments.of(FileType.YAML, new MultiElement(), "name: sample\nother: sample"),
-                Arguments.of(FileType.XML, new MultiElement(), "<MultiElement><name>sample</name><other>sample</other></MultiElement>"),
-                Arguments.of(FileType.TOML, new MultiElement(), "name='sample'\nother='sample'"),
-                Arguments.of(FileType.PROPERTIES, new MultiElement(), "name=sample\nother=sample")
+                Arguments.of(FileFormats.JSON, new MultiElement(), "{\"name\":\"sample\",\"other\":\"sample\"}"),
+                Arguments.of(FileFormats.YAML, new MultiElement(), "name: sample\nother: sample"),
+                Arguments.of(FileFormats.XML, new MultiElement(), "<MultiElement><name>sample</name><other>sample</other></MultiElement>"),
+                Arguments.of(FileFormats.TOML, new MultiElement(), "name='sample'\nother='sample'"),
+                Arguments.of(FileFormats.PROPERTIES, new MultiElement(), "name=sample\nother=sample")
         );
     }
 
     @ParameterizedTest
     @MethodSource("serialisationElements")
-    void testObjectSerialisation(final FileType fileType, final Element content, final String expected) {
+    void testObjectSerialisation(final FileFormats fileFormat, final Element content, final String expected) {
         final ObjectMapper mapper = this.context().get(JacksonObjectMapper.class);
-        mapper.fileType(fileType);
+        mapper.fileType(fileFormat);
 
         content.name("sample");
         final Exceptional<String> result = mapper.write(content);
@@ -80,9 +80,9 @@ public class ObjectMappingTests extends ApplicationAwareTest {
 
     @ParameterizedTest
     @MethodSource("serialisationElements")
-    void testObjectDeserialisation(final FileType fileType, final Element expected, final String content) {
+    void testObjectDeserialisation(final FileFormats fileFormat, final Element expected, final String content) {
         final ObjectMapper mapper = this.context().get(JacksonObjectMapper.class);
-        mapper.fileType(fileType);
+        mapper.fileType(fileFormat);
         expected.name("sample");
 
         final Exceptional<? extends Element> result = mapper.read(content, expected.getClass());

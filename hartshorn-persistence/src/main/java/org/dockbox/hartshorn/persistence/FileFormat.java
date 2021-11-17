@@ -15,22 +15,10 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.core.domain;
+package org.dockbox.hartshorn.persistence;
 
-/**
- * Utility type containing filetype constants indicating the file extension
- * of each file type.
- */
-public final class FileTypes {
-
-    public static final String SQLITE = "sqlite";
-
-    public static final String YAML = "yml";
-    public static final String JSON = "json";
-    public static final String XML = "xml";
-    public static final String TOML = "toml";
-    public static final String PROPERTIES = "properties";
-
-    private FileTypes() {
-    }
+public interface FileFormat {
+    String extension();
+    DataStorageType type();
+    String asFileName(String file);
 }

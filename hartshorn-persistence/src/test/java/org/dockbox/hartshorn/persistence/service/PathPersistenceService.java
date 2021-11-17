@@ -20,6 +20,7 @@ package org.dockbox.hartshorn.persistence.service;
 import org.dockbox.hartshorn.core.annotations.service.Service;
 import org.dockbox.hartshorn.persistence.PersistentElement;
 import org.dockbox.hartshorn.persistence.annotations.Deserialise;
+import org.dockbox.hartshorn.persistence.annotations.File;
 import org.dockbox.hartshorn.persistence.annotations.Serialise;
 
 import java.nio.file.Path;
@@ -27,10 +28,10 @@ import java.nio.file.Path;
 @Service
 public interface PathPersistenceService {
 
-    @Serialise
+    @Serialise(path = @File("test"))
     boolean writeToPath(PersistentElement element, Path path);
 
-    @Deserialise
+    @Deserialise(path = @File("test"))
     PersistentElement readFromPath(Path path);
 
 }

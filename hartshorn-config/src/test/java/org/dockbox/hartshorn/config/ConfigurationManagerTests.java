@@ -18,10 +18,9 @@
 package org.dockbox.hartshorn.config;
 
 import org.dockbox.hartshorn.config.annotations.UseConfigurations;
-import org.dockbox.hartshorn.core.boot.Hartshorn;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
-import org.dockbox.hartshorn.persistence.FileManager;
-import org.dockbox.hartshorn.persistence.FileType;
+import org.dockbox.hartshorn.persistence.FileFormats;
+import org.dockbox.hartshorn.persistence.mapping.ObjectMapper;
 import org.dockbox.hartshorn.testsuite.ApplicationAwareTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -43,10 +42,9 @@ public class ConfigurationManagerTests extends ApplicationAwareTest {
 
     @Test
     void testFsConfigurations() {
-        // Create and populate the file, as we have no way to define local files in tests (yet)
-        final FileManager files = this.context().get(FileManager.class).fileType(FileType.YAML);
-        final Path file = files.configFile(Hartshorn.class, "junit");
-        files.write(file, """
+        final Path file = FileFormats.YAML.asPath(this.context().environment().manager().applicationPath(), "junit");
+        final ObjectMapper objectMapper = this.context().get(ObjectMapper.class);
+        objectMapper.write(file, """
                 junit:
                     fs: "This is a value"
                     """);

@@ -17,12 +17,6 @@
 
 package org.dockbox.hartshorn.persistence;
 
-import org.dockbox.hartshorn.core.context.ApplicationContext;
-
-public interface PersistentModel<T extends PersistentCapable<? extends PersistentModel<T>>> {
-
-    Class<? extends T> type();
-
-    T restore(ApplicationContext context);
-
+public enum DataStorageType {
+    RAW, DATABASE, OTHER
 }

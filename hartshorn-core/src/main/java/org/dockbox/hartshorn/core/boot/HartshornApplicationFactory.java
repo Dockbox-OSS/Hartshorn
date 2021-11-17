@@ -55,6 +55,8 @@ public class HartshornApplicationFactory implements ApplicationFactory<Hartshorn
     @Setter
     private ApplicationProxier applicationProxier;
     @Setter
+    private ApplicationFSProvider applicationFSProvider;
+    @Setter
     private ApplicationLogger applicationLogger;
     @Setter
     private Function<ApplicationManager, ApplicationEnvironment> applicationEnvironment;
@@ -163,7 +165,7 @@ public class HartshornApplicationFactory implements ApplicationFactory<Hartshorn
         Hartshorn.log().info("Starting " + Hartshorn.PROJECT_NAME + " with activator " + this.activator.name());
 
         final long startTime = System.currentTimeMillis();
-        final HartshornApplicationManager manager = new HartshornApplicationManager(this.applicationLogger, this.applicationProxier);
+        final HartshornApplicationManager manager = new HartshornApplicationManager(this.applicationLogger, this.applicationProxier, this.applicationFSProvider);
         final ApplicationEnvironment environment = this.applicationEnvironment.apply(manager);
 
         final HartshornApplicationContext applicationContext = new HartshornApplicationContext(environment, this.componentLocator, this.activator, this.prefixes, this.arguments, this.modifiers);
@@ -234,6 +236,7 @@ public class HartshornApplicationFactory implements ApplicationFactory<Hartshorn
         return this.applicationLogger(new HartshornApplicationLogger())
                 .applicationConfigurator(new HartshornApplicationConfigurator())
                 .applicationProxier(new HartshornApplicationProxier())
+                .applicationFSProvider(new HartshornApplicationFSProvider())
                 .applicationEnvironment(manager -> new HartshornApplicationEnvironment(this.prefixes, manager))
                 .componentLocator(ComponentLocatorImpl::new)
                 .serviceActivator(new UseBootstrap() {

@@ -21,7 +21,7 @@ import org.dockbox.hartshorn.core.GenericType;
 import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
-import org.dockbox.hartshorn.persistence.FileType;
+import org.dockbox.hartshorn.persistence.FileFormats;
 import org.dockbox.hartshorn.persistence.properties.PersistenceModifier;
 
 import java.net.URI;
@@ -81,9 +81,9 @@ public interface ObjectMapper {
 
     <T> Exceptional<String> write(T content);
 
-    ObjectMapper fileType(FileType fileType);
+    ObjectMapper fileType(FileFormats fileFormat);
 
-    FileType fileType();
+    FileFormats fileType();
 
     ObjectMapper skipBehavior(PersistenceModifier modifier);
 

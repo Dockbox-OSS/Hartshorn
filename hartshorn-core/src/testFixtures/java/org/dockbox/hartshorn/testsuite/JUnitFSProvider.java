@@ -15,33 +15,23 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.persistence;
+package org.dockbox.hartshorn.testsuite;
 
-import org.dockbox.hartshorn.core.annotations.inject.Binds;
+import org.dockbox.hartshorn.core.boot.ApplicationFSProvider;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
-@Binds(FileManager.class)
-public class LocalFileManager extends DefaultAbstractFileManager {
+import lombok.Getter;
 
-    @Override
-    public Path data() {
-        return this.root().resolve("data");
-    }
+public class JUnitFSProvider implements ApplicationFSProvider {
 
-    @Override
-    public Path logs() {
-        return this.root().resolve("logs");
-    }
+    @Getter
+    private final Path applicationPath;
 
-    @Override
-    public Path root() {
-        return Paths.get("");
-    }
-
-    @Override
-    public Path configs() {
-        return this.root().resolve("config");
+    public JUnitFSProvider() throws IOException {
+        this.applicationPath = Files.createTempDirectory("hartshorn");
+        this.applicationPath.toFile().deleteOnExit();
     }
 }

@@ -23,7 +23,7 @@ import org.dockbox.hartshorn.core.Key;
 import org.dockbox.hartshorn.core.annotations.inject.Provider;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.demo.persistence.services.UserRepository;
-import org.dockbox.hartshorn.persistence.FileType;
+import org.dockbox.hartshorn.persistence.FileFormats;
 import org.dockbox.hartshorn.persistence.jpa.JpaRepository;
 import org.dockbox.hartshorn.persistence.properties.PersistenceConnection;
 import org.dockbox.hartshorn.persistence.properties.Remotes;
@@ -37,8 +37,8 @@ import javax.inject.Singleton;
  * and therefore has all abilities also found with {@link org.dockbox.hartshorn.core.annotations.service.Service}.
  *
  * <p>{@link Configuration} adds the ability to load configuration files through a configured {@link Configuration#source()}.
- * By default, the {@link FileType} used to read the file is {@link FileType#YAML}, however this can be configured to
- * use any {@link FileType} through {@link Configuration#filetype()}.
+ * By default, the {@link FileFormats} used to read the file is {@link FileFormats#YAML}, however this can be configured to
+ * use any {@link FileFormats} through {@link Configuration#filetype()}.
  *
  * <p>This configuration is loaded from the {@code persistence-demo.yml} file in the {@code src/main/resources} directory,
  * which will thus be present on the classpath when the application is active. As this means the file will not be present

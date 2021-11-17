@@ -18,7 +18,7 @@
 package org.dockbox.hartshorn.i18n;
 
 import org.dockbox.hartshorn.core.domain.Exceptional;
-import org.dockbox.hartshorn.persistence.FileType;
+import org.dockbox.hartshorn.persistence.FileFormats;
 
 import java.nio.file.Path;
 import java.util.Locale;
@@ -48,7 +48,7 @@ public interface TranslationBundle {
 
     Set<Message> register(Map<String, String> messages, Locale locale);
 
-    Set<Message> register(Path source, Locale locale, FileType fileType);
+    Set<Message> register(Path source, Locale locale, FileFormats fileFormat);
 
     Set<Message> register(ResourceBundle resourceBundle);
 }
