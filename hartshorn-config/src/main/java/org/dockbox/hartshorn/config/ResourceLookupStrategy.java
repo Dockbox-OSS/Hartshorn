@@ -21,7 +21,7 @@ import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.config.annotations.Configuration;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
-import org.dockbox.hartshorn.persistence.FileType;
+import org.dockbox.hartshorn.persistence.FileFormats;
 
 import java.net.URI;
 
@@ -31,5 +31,5 @@ import java.net.URI;
  */
 public interface ResourceLookupStrategy {
     String name();
-    Exceptional<URI> lookup(ApplicationContext context, String path, TypeContext<?> owner, FileType fileType);
+    Exceptional<URI> lookup(ApplicationContext context, String path, TypeContext<?> owner, FileFormats fileFormat);
 }

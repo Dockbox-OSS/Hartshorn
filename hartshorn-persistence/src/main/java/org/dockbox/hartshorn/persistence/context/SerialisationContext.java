@@ -18,7 +18,7 @@
 package org.dockbox.hartshorn.persistence.context;
 
 import org.dockbox.hartshorn.core.context.DefaultContext;
-import org.dockbox.hartshorn.persistence.FileType;
+import org.dockbox.hartshorn.persistence.FileFormats;
 import org.jetbrains.annotations.Nullable;
 
 import java.nio.file.Path;
@@ -33,7 +33,7 @@ import lombok.Setter;
 public class SerialisationContext extends DefaultContext {
 
     private SerialisationTarget target;
-    private FileType fileType;
+    private FileFormats fileFormat;
 
     @Nullable
     private Path predeterminedPath;

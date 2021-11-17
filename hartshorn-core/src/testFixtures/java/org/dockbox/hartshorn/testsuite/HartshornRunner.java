@@ -57,6 +57,7 @@ public class HartshornRunner implements BeforeEachCallback, AfterEachCallback{
 
         return Exceptional.of(() -> new HartshornApplicationFactory()
                 .loadDefaults()
+                .applicationFSProvider(new JUnitFSProvider())
                 .serviceActivators(serviceActivators)
                 .activator(TypeContext.of(HartshornRunner.class))
                 .create());

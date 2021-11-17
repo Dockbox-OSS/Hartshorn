@@ -22,7 +22,7 @@ import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.services.ComponentContainer;
-import org.dockbox.hartshorn.persistence.PersistenceType;
+import org.dockbox.hartshorn.persistence.DataStorageType;
 import org.dockbox.hartshorn.persistence.annotations.Serialise;
 import org.dockbox.hartshorn.persistence.context.PersistenceAnnotationContext;
 import org.dockbox.hartshorn.persistence.context.SerialisationContext;
@@ -99,7 +99,7 @@ public class SerialisationServiceModifier extends AbstractPersistenceServiceModi
         if (methodContext.method().parameterCount() < 1) return false;
 
         final Serialise annotation = methodContext.annotation(Serialise.class);
-        if (!annotation.filetype().type().equals(PersistenceType.RAW)) return false;
+        if (!annotation.filetype().type().equals(DataStorageType.RAW)) return false;
 
         boolean hasPath = false;
         for (final TypeContext<?> parameter : methodContext.method().parameterTypes()) {
@@ -110,7 +110,7 @@ public class SerialisationServiceModifier extends AbstractPersistenceServiceModi
         }
 
         final SerialisationContext serialisationContext = new SerialisationContext();
-        serialisationContext.fileType(annotation.filetype());
+        serialisationContext.fileFormat(annotation.filetype());
         methodContext.add(serialisationContext);
 
         if (hasPath) {
@@ -118,7 +118,7 @@ public class SerialisationServiceModifier extends AbstractPersistenceServiceModi
             return methodContext.method().parameterCount() == 2;
         }
         else {
-            final TypeContext<?> owner = this.owner(context, TypeContext.of(annotation.value().owner()), methodContext);
+            final TypeContext<?> owner = this.owner(context, TypeContext.of(annotation.path().owner()), methodContext);
             if (!owner.isVoid()) {
                 serialisationContext.target(SerialisationTarget.ANNOTATED_PATH);
                 serialisationContext.predeterminedPath(this.determineAnnotationPath(

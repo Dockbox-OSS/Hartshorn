@@ -17,31 +17,26 @@
 
 package org.dockbox.hartshorn.persistence;
 
-import org.dockbox.hartshorn.core.domain.FileTypes;
-
-import java.lang.annotation.Annotation;
 import java.nio.file.Path;
 
-import javax.inject.Named;
-
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /** Enumerated values containing the file extensions for several commonly used file types. */
-@AllArgsConstructor
-public enum FileType {
-    // Database types
-    SQLITE(FileTypes.SQLITE, PersistenceType.DATABASE),
-
+public enum FileFormats implements FileFormat{
     // Raw/text types
-    YAML(FileTypes.YAML, PersistenceType.RAW),
-    JSON(FileTypes.JSON, PersistenceType.RAW),
-    XML(FileTypes.XML, PersistenceType.RAW),
-    TOML(FileTypes.TOML, PersistenceType.RAW),
-    PROPERTIES(FileTypes.PROPERTIES, PersistenceType.RAW);
+    YAML("yml", DataStorageType.RAW),
+    JSON("json", DataStorageType.RAW),
+    XML("xml", DataStorageType.RAW),
+    TOML("toml", DataStorageType.RAW),
+    PROPERTIES("properties", DataStorageType.RAW);
 
     @Getter private final String extension;
-    @Getter private final PersistenceType type;
+    @Getter private final DataStorageType type;
+
+    FileFormats(final String extension, final DataStorageType type) {
+        this.extension = extension;
+        this.type = type;
+    }
 
     /**
      * Converts a given filename (without the file extension present), combined with a {@link Path}
@@ -70,11 +65,8 @@ public enum FileType {
      *
      * @return The generated filename with extension
      */
+    @Override
     public String asFileName(final String file) {
         return file + '.' + this.extension;
-    }
-
-    public Class<? extends Annotation> format() {
-        return Named.class;
     }
 }

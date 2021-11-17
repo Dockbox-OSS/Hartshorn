@@ -15,8 +15,10 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.persistence;
+package org.dockbox.hartshorn.core.boot;
 
-public enum PersistenceType {
-    RAW, DATABASE, OTHER
+import java.nio.file.Path;
+
+public interface ApplicationFSProvider {
+    Path applicationPath();
 }

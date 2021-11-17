@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.web.annotations;
 
-import org.dockbox.hartshorn.persistence.FileType;
+import org.dockbox.hartshorn.persistence.FileFormats;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -27,5 +27,5 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.PARAMETER)
 public @interface RequestBody {
-    FileType value() default FileType.JSON;
+    FileFormats value() default FileFormats.JSON;
 }

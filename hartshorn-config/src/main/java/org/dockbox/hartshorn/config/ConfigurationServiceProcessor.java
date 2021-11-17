@@ -24,7 +24,7 @@ import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.services.ServiceOrder;
 import org.dockbox.hartshorn.core.services.ServiceProcessor;
-import org.dockbox.hartshorn.persistence.FileType;
+import org.dockbox.hartshorn.persistence.FileFormats;
 import org.dockbox.hartshorn.persistence.mapping.ObjectMapper;
 import org.dockbox.hartshorn.core.HartshornUtils;
 
@@ -72,7 +72,7 @@ public class ConfigurationServiceProcessor implements ServiceProcessor<UseConfig
 
         String source = configuration.source();
         final TypeContext<?> owner = TypeContext.of(configuration.owner());
-        final FileType filetype = configuration.filetype();
+        final FileFormats filetype = configuration.filetype();
 
         final Matcher matcher = STRATEGY_PATTERN.matcher(source);
         ResourceLookupStrategy strategy = new FileSystemLookupStrategy();

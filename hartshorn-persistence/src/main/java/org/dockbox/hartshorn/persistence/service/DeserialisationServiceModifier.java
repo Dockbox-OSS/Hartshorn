@@ -93,7 +93,7 @@ public class DeserialisationServiceModifier extends AbstractPersistenceServiceMo
         if (outputType == null) return false;
 
         final DeserialisationContext deserialisationContext = new DeserialisationContext(outputType);
-        deserialisationContext.fileType(annotation.filetype());
+        deserialisationContext.fileFormat(annotation.filetype());
         methodContext.add(deserialisationContext);
 
         if (methodContext.method().parameterCount() == 0) {

@@ -21,7 +21,7 @@ import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.core.annotations.inject.Binds;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
-import org.dockbox.hartshorn.persistence.FileType;
+import org.dockbox.hartshorn.persistence.FileFormats;
 import org.dockbox.hartshorn.persistence.mapping.ObjectMapper;
 
 import java.nio.file.Path;
@@ -102,8 +102,8 @@ public class DefaultTranslationBundle implements TranslationBundle {
     }
 
     @Override
-    public Set<Message> register(final Path source, final Locale locale, final FileType fileType) {
-        final ObjectMapper objectMapper = this.applicationContext.get(ObjectMapper.class).fileType(fileType);
+    public Set<Message> register(final Path source, final Locale locale, final FileFormats fileFormat) {
+        final ObjectMapper objectMapper = this.applicationContext.get(ObjectMapper.class).fileType(fileFormat);
         final Map<String, String> result = objectMapper.flat(source).entrySet()
                 .stream()
                 .collect(Collectors.toMap(Entry::getKey, e -> String.valueOf(e.getValue())));

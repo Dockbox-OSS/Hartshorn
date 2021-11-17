@@ -15,35 +15,14 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.persistence;
-
-import org.dockbox.hartshorn.core.annotations.inject.Binds;
-import org.dockbox.hartshorn.testsuite.HartshornRunner;
-import org.jetbrains.annotations.NotNull;
+package org.dockbox.hartshorn.core.boot;
 
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
-@Binds(value = FileManager.class, priority = 0)
-public class JUnitFileManager extends DefaultAbstractFileManager {
-
-    @NotNull
-    public Path data() {
-        return this.root().resolve("data/");
+public class HartshornApplicationFSProvider implements ApplicationFSProvider{
+    @Override
+    public Path applicationPath() {
+        return Paths.get("");
     }
-
-    @NotNull
-    public Path logs() {
-        return this.root().resolve("logs/");
-    }
-
-    @NotNull
-    public Path root() {
-        return HartshornRunner.information().path();
-    }
-
-    @NotNull
-    public Path configs() {
-        return this.root().resolve("config/");
-    }
-
 }

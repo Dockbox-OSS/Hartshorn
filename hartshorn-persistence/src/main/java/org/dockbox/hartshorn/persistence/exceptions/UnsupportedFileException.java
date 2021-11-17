@@ -17,10 +17,10 @@
 
 package org.dockbox.hartshorn.persistence.exceptions;
 
-import org.dockbox.hartshorn.persistence.FileType;
+import org.dockbox.hartshorn.persistence.FileFormats;
 
 /**
- * A checked {@link Exception}, thrown if a file or {@link FileType} is
+ * A checked {@link Exception}, thrown if a file or {@link FileFormats} is
  * not supported by an implementation.
  */
 public class UnsupportedFileException extends Exception {
@@ -30,7 +30,7 @@ public class UnsupportedFileException extends Exception {
      * caught message.
      *
      * @param fileType
-     *         The filetype providing information about the unsupported file or {@link FileType}
+     *         The filetype providing information about the unsupported file or {@link FileFormats}
      */
     public UnsupportedFileException(final String fileType) {
         super(fileType);

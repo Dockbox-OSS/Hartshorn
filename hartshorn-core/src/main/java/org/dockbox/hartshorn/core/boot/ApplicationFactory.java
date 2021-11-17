@@ -52,6 +52,8 @@ public interface ApplicationFactory<Self extends ApplicationFactory<Self, C>, C 
 
     Self applicationLogger(ApplicationLogger applicationLogger);
 
+    Self applicationFSProvider(ApplicationFSProvider applicationFSProvider);
+
     Self applicationEnvironment(Function<ApplicationManager, ApplicationEnvironment> applicationEnvironment);
 
     Self componentLocator(Function<ApplicationContext, ComponentLocator> componentLocator);

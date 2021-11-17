@@ -17,19 +17,16 @@
 
 package org.dockbox.hartshorn.persistence.table;
 
-import org.dockbox.hartshorn.core.boot.Hartshorn;
+import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.core.annotations.Property;
-import org.dockbox.hartshorn.core.domain.Exceptional;
-import org.dockbox.hartshorn.core.context.ApplicationContext;
+import org.dockbox.hartshorn.core.boot.Hartshorn;
 import org.dockbox.hartshorn.core.context.element.ConstructorContext;
 import org.dockbox.hartshorn.core.context.element.FieldContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
-import org.dockbox.hartshorn.persistence.PersistentCapable;
-import org.dockbox.hartshorn.persistence.PersistentModel;
+import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.persistence.exceptions.EmptyEntryException;
 import org.dockbox.hartshorn.persistence.exceptions.IdentifierMismatchException;
 import org.dockbox.hartshorn.persistence.exceptions.UnknownIdentifierException;
-import org.dockbox.hartshorn.core.HartshornUtils;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -172,11 +169,6 @@ public class Table {
      *         table.
      */
     public void addRow(final Object object) {
-        if (object instanceof PersistentCapable persistentCapable) {
-            this.addRow(persistentCapable.model());
-            return;
-        }
-
         final TableRow row = new TableRow();
         final TypeContext<Object> type = TypeContext.of(object);
         for (final FieldContext<?> field : type.fields()) {
@@ -598,11 +590,6 @@ public class Table {
      */
     public List<TableRow> rows() {
         return HartshornUtils.asUnmodifiableList(this.rows);
-    }
-
-    public <T extends PersistentCapable<M>, M extends PersistentModel<T>> List<T> restore(final ApplicationContext context, final TypeContext<M> type) {
-        final List<M> rows = this.rows(type);
-        return rows.stream().map(model -> model.restore(context)).toList();
     }
 
     public <T> List<T> rows(final TypeContext<T> type) {

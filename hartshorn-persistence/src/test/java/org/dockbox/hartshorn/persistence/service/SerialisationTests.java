@@ -17,12 +17,10 @@
 
 package org.dockbox.hartshorn.persistence.service;
 
-import org.dockbox.hartshorn.core.boot.Hartshorn;
-import org.dockbox.hartshorn.persistence.FileManager;
+import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.persistence.PersistentElement;
 import org.dockbox.hartshorn.persistence.annotations.UsePersistence;
 import org.dockbox.hartshorn.testsuite.ApplicationAwareTest;
-import org.dockbox.hartshorn.core.HartshornUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -61,7 +59,7 @@ public class SerialisationTests extends ApplicationAwareTest {
     }
 
     private Path path() {
-        return this.context().get(FileManager.class).dataFile(Hartshorn.class, System.nanoTime() + "-persistence.tmp");
+        return this.context().environment().manager().applicationPath().resolve(System.nanoTime() + "-persistence.tmp");
     }
 
     @Test
