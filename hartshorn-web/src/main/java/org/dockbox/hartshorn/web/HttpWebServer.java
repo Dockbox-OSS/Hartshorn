@@ -22,6 +22,7 @@ import org.dockbox.hartshorn.core.services.parameter.ParameterLoader;
 import org.dockbox.hartshorn.persistence.properties.PersistenceModifier;
 import org.dockbox.hartshorn.web.processing.HttpRequestParameterLoaderContext;
 
+import java.net.URI;
 
 import javax.inject.Singleton;
 
@@ -29,6 +30,7 @@ import javax.inject.Singleton;
 public interface HttpWebServer {
 
     public static String WEB_INF = "WEB-INF/";
+    public static String STATIC_CONTENT = WEB_INF + "static/";
 
     void start(int port) throws ApplicationException;
 
@@ -39,4 +41,8 @@ public interface HttpWebServer {
     ParameterLoader<HttpRequestParameterLoaderContext> loader();
 
     HttpWebServer skipBehavior(PersistenceModifier modifier);
+
+    HttpWebServer listStaticDirectories(boolean listDirectories);
+
+    HttpWebServer staticContent(URI location);
 }

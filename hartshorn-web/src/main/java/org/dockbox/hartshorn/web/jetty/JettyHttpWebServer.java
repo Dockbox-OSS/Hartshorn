@@ -62,26 +62,36 @@ public class JettyHttpWebServer extends DefaultHttpWebServer {
     private ApplicationContext context;
     @Inject @Getter
     private final ServletContextHandler handler;
+    @Getter
+    private final ResourceHandler resourceHandler;
     @Setter
     private PersistenceModifier skipBehavior = PersistenceModifier.SKIP_NONE;
+    private Server server;
 
     public JettyHttpWebServer() {
         super();
         this.handler = new ServletContextHandler(ServletContextHandler.SESSIONS);
         this.handler.setContextPath("/");
+        this.resourceHandler = new ResourceHandler();
+        this.staticContent(Hartshorn.class.getClassLoader().getResource(HttpWebServer.STATIC_CONTENT));
+        this.listStaticDirectories(true);
     }
 
     @Override
     public void start(final int port) throws ApplicationException {
         try {
+            if (this.server != null)
+                this.server.stop();
+
             final QueuedThreadPool threadPool = new QueuedThreadPool();
             threadPool.setName(Hartshorn.PROJECT_NAME);
 
-            final Server server = new Server(threadPool);
-            server.setConnectors(new Connector[]{ this.connector(server, port) });
-            server.setHandler(this.handler);
-            server.setErrorHandler(this.errorHandler());
-            server.start();
+            this.server = new Server(threadPool);
+            this.server.setConnectors(new Connector[]{ this.connector(this.server, port) });
+            final Handler handlerList = new HandlerList(this.resourceHandler, this.handler);
+            this.server.setHandler(handlerList);
+            this.server.setErrorHandler(this.errorHandler());
+            this.server.start();
         } catch (final Exception e) {
             throw new ApplicationException(e);
         }
@@ -100,6 +110,28 @@ public class JettyHttpWebServer extends DefaultHttpWebServer {
         final MvcServlet servlet = this.context.get(WebServletFactory.class).mvc((MethodContext<ViewTemplate, ?>) context.methodContext());
         final HttpWebServletAdapter adapter = new HttpWebServletAdapter(servlet);
         this.handler.addServlet(new ServletHolder(adapter), context.pathSpec());
+        return this;
+    }
+
+    @Override
+    public HttpWebServer listStaticDirectories(final boolean listDirectories) {
+        this.resourceHandler.setDirectoriesListed(listDirectories);
+        return this;
+    }
+
+    @Override
+    public HttpWebServer staticContent(final URI location) {
+        try {
+            return this.staticContent(location.toURL());
+        }
+        catch (final MalformedURLException e) {
+            Except.handle(e);
+        }
+        return this;
+    }
+
+    public HttpWebServer staticContent(final URL location) {
+        this.resourceHandler.setResourceBase(location.toExternalForm());
         return this;
     }
 
