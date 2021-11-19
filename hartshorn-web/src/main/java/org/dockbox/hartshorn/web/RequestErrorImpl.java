@@ -15,12 +15,11 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.jetty;
+package org.dockbox.hartshorn.web;
 
-import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.DefaultCarrierContext;
-import org.dockbox.hartshorn.web.RequestError;
+import org.dockbox.hartshorn.core.domain.Exceptional;
 
 import java.io.PrintWriter;
 
@@ -31,7 +30,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Getter
-public class JettyRequestErrorImpl extends DefaultCarrierContext implements RequestError {
+public class RequestErrorImpl extends DefaultCarrierContext implements RequestError {
 
     private final HttpServletRequest request;
     private final HttpServletResponse response;
@@ -41,7 +40,7 @@ public class JettyRequestErrorImpl extends DefaultCarrierContext implements Requ
     @Setter private String message;
     @Setter private boolean yieldDefaults = false;
 
-    public JettyRequestErrorImpl(final ApplicationContext applicationContext, final HttpServletRequest request, final HttpServletResponse response, final int statusCode, final PrintWriter writer, final String message, final Throwable cause) {
+    public RequestErrorImpl(final ApplicationContext applicationContext, final HttpServletRequest request, final HttpServletResponse response, final int statusCode, final PrintWriter writer, final String message, final Throwable cause) {
         super(applicationContext);
         this.request = request;
         this.response = response;

@@ -15,15 +15,18 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.jetty;
+package org.dockbox.hartshorn.web.annotations;
 
-import org.dockbox.hartshorn.core.annotations.Factory;
-import org.dockbox.hartshorn.core.annotations.service.Service;
-import org.dockbox.hartshorn.web.HttpWebServer;
-import org.dockbox.hartshorn.web.RequestHandlerContext;
+import org.dockbox.hartshorn.core.annotations.service.ServiceActivator;
 
-@Service
-public interface JettyServletFactory {
-    @Factory
-    JettyServletAdapter adapter(final HttpWebServer starter, final RequestHandlerContext context);
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+@ServiceActivator
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
+@UseHttpServer
+public @interface UseMvcServer {
 }

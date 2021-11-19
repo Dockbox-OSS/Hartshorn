@@ -15,21 +15,20 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.web.annotations;
+package org.dockbox.hartshorn.web.servlet;
 
-import org.dockbox.hartshorn.core.annotations.AliasFor;
+import org.dockbox.hartshorn.core.annotations.Factory;
 import org.dockbox.hartshorn.core.annotations.service.Service;
-import org.dockbox.hartshorn.core.annotations.Extends;
+import org.dockbox.hartshorn.core.context.element.MethodContext;
+import org.dockbox.hartshorn.web.HttpWebServer;
+import org.dockbox.hartshorn.web.RequestHandlerContext;
+import org.dockbox.hartshorn.web.mvc.ViewTemplate;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+@Service
+public interface WebServletFactory {
+    @Factory
+    WebServletImpl webServlet(final HttpWebServer starter, final RequestHandlerContext context);
 
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-@Extends(Service.class)
-public @interface RestController {
-    @AliasFor("pathSpec")
-    String value() default "";
+    @Factory
+    MvcServlet mvc(final MethodContext<ViewTemplate, ?> methodContext);
 }

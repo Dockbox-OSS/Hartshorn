@@ -15,16 +15,23 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.jetty;
+package org.dockbox.hartshorn.web;
 
-import org.dockbox.hartshorn.core.annotations.inject.Binds;
-import org.dockbox.hartshorn.web.servlet.ErrorServlet;
-import org.dockbox.hartshorn.web.RequestError;
+import org.dockbox.hartshorn.core.HartshornUtils;
+import org.dockbox.hartshorn.core.annotations.context.AutoCreating;
+import org.dockbox.hartshorn.core.context.DefaultContext;
 
-@Binds(ErrorServlet.class)
-public class JettyErrorServletAdapter implements ErrorServlet {
-    @Override
-    public void handle(final RequestError error) {
-        error.yieldDefaults(true);
+import java.util.Set;
+
+import lombok.Getter;
+
+@AutoCreating
+public class MvcControllerContext extends DefaultContext {
+
+    @Getter
+    private final Set<RequestHandlerContext> contexts = HartshornUtils.emptySet();
+
+    public void add(final RequestHandlerContext context) {
+        this.contexts.add(context);
     }
 }

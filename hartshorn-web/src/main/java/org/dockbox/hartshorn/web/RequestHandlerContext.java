@@ -17,12 +17,12 @@
 
 package org.dockbox.hartshorn.web;
 
-import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.DefaultCarrierContext;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
+import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.web.annotations.PathSpec;
 import org.dockbox.hartshorn.web.annotations.http.HttpRequest;
-import org.dockbox.hartshorn.web.annotations.RestController;
 
 import lombok.Getter;
 
@@ -39,12 +39,12 @@ public class RequestHandlerContext extends DefaultCarrierContext {
         if (request.absent()) throw new IllegalArgumentException(methodContext.parent().name() + "#" + methodContext.name() + " is not annotated with @Request or an extension of it.");
         this.httpRequest = request.get();
 
-        final Exceptional<RestController> annotation = methodContext.parent().annotation(RestController.class);
+        final Exceptional<PathSpec> annotation = methodContext.parent().annotation(PathSpec.class);
         String spec = this.httpRequest().value();
         spec = spec.startsWith("/") ? spec : '/' + spec;
 
         if (annotation.present()) {
-            String root = annotation.get().value();
+            String root = annotation.get().pathSpec();
             if (root.endsWith("/")) root = root.substring(0, root.length()-1);
             spec = root + spec;
         }

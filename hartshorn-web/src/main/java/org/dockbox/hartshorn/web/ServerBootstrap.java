@@ -18,29 +18,46 @@
 package org.dockbox.hartshorn.web;
 
 import org.dockbox.hartshorn.config.annotations.Value;
-import org.dockbox.hartshorn.core.annotations.service.Service;
-import org.dockbox.hartshorn.core.boot.ApplicationState.Started;
 import org.dockbox.hartshorn.core.annotations.UseBootstrap;
+import org.dockbox.hartshorn.core.annotations.service.Service;
+import org.dockbox.hartshorn.core.boot.LifecycleObserver;
+import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
-import org.dockbox.hartshorn.events.EngineChangedState;
-import org.dockbox.hartshorn.events.annotations.Listener;
+import org.dockbox.hartshorn.web.mvc.MVCInitializer;
 
 @Service(activators = UseBootstrap.class)
-public class ServerBootstrap {
+public class ServerBootstrap implements LifecycleObserver {
 
     public static final int DEFAULT_PORT = 8080;
 
     @Value(value = "hartshorn.web.port", or = "" + DEFAULT_PORT)
     private int port;
 
-    @Listener
-    public void on(final EngineChangedState<Started> event) throws ApplicationException {
-        final HttpWebServer starter = event.applicationContext().get(HttpWebServer.class);
-        final ControllerContext controllerContext = event.applicationContext().first(ControllerContext.class).get();
-        for (final RequestHandlerContext context : controllerContext.contexts()) {
-            starter.register(context);
-        }
-        starter.start(this.port);
+    @Override
+    public void onCreated(final ApplicationContext applicationContext) {
+        // Nothing happens
     }
 
+    @Override
+    public void onStarted(final ApplicationContext applicationContext) {
+        final HttpWebServer starter = applicationContext.get(HttpWebServer.class);
+
+        final ControllerContext controllerContext = applicationContext.first(ControllerContext.class).get();
+        for (final RequestHandlerContext context : controllerContext.contexts())
+            starter.register(context);
+
+        final MvcControllerContext mvcControllerContext = applicationContext.first(MvcControllerContext.class).get();
+        for (final RequestHandlerContext context : mvcControllerContext.contexts())
+            starter.registerMvc(context);
+
+        try {
+            final MVCInitializer initializer = applicationContext.get(MVCInitializer.class);
+            initializer.initialize(applicationContext);
+
+            starter.start(this.port);
+        }
+        catch (final ApplicationException e) {
+            throw e.runtime();
+        }
+    }
 }
