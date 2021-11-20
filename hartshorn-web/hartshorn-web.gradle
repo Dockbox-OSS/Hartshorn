@@ -22,12 +22,15 @@ plugins {
 apply from: "$project.rootDir/gradle/publications.gradle"
 
 dependencies {
+    api "javax.servlet:javax.servlet-api:$javaxServletVersion"
+
     implementation 'org.dockbox.hartshorn:hartshorn-core'
     implementation 'org.dockbox.hartshorn:hartshorn-config'
     implementation 'org.dockbox.hartshorn:hartshorn-events'
     implementation 'org.dockbox.hartshorn:hartshorn-persistence'
     implementation "org.eclipse.jetty:jetty-servlet:$jettyVersion"
     implementation "org.eclipse.jetty:jetty-server:$jettyVersion"
-    api "javax.servlet:javax.servlet-api:$javaxServletVersion"
+    implementation 'org.freemarker:freemarker:2.3.31' // TODO version config
+
     testImplementation 'org.apache.httpcomponents:httpclient:4.5.13'
 }

@@ -17,26 +17,13 @@
 
 package org.dockbox.hartshorn.web;
 
-import org.dockbox.hartshorn.core.exceptions.ApplicationException;
-import org.dockbox.hartshorn.core.services.parameter.ParameterLoader;
-import org.dockbox.hartshorn.persistence.properties.PersistenceModifier;
-import org.dockbox.hartshorn.web.processing.HttpRequestParameterLoaderContext;
+import org.dockbox.hartshorn.core.annotations.inject.Binds;
+import org.dockbox.hartshorn.web.servlet.ErrorServlet;
 
-
-import javax.inject.Singleton;
-
-@Singleton
-public interface HttpWebServer {
-
-    public static String WEB_INF = "WEB-INF/";
-
-    void start(int port) throws ApplicationException;
-
-    HttpWebServer register(RequestHandlerContext context);
-
-    HttpWebServer registerMvc(RequestHandlerContext context);
-
-    ParameterLoader<HttpRequestParameterLoaderContext> loader();
-
-    HttpWebServer skipBehavior(PersistenceModifier modifier);
+@Binds(ErrorServlet.class)
+public class ErrorServletImpl implements ErrorServlet {
+    @Override
+    public void handle(final RequestError error) {
+        error.yieldDefaults(true);
+    }
 }

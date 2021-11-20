@@ -22,6 +22,7 @@ import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.services.ServiceProcessor;
+import org.dockbox.hartshorn.web.annotations.RestController;
 import org.dockbox.hartshorn.web.annotations.http.HttpRequest;
 import org.dockbox.hartshorn.web.annotations.UseHttpServer;
 
@@ -34,7 +35,7 @@ public class RestControllerProcessor implements ServiceProcessor<UseHttpServer> 
 
     @Override
     public boolean preconditions(final ApplicationContext context, final TypeContext<?> type) {
-        return !type.methods(HttpRequest.class).isEmpty();
+        return type.annotation(RestController.class).present() && !type.methods(HttpRequest.class).isEmpty();
     }
 
     @Override

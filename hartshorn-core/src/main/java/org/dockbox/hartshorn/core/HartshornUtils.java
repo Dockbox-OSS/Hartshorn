@@ -695,6 +695,15 @@ public final class HartshornUtils {
         return file;
     }
 
+    public static String contentOrEmpty(@NotNull final Path file) {
+        try {
+            return Files.readString(file);
+        }
+        catch (final IOException ignored) {
+            return "";
+        }
+    }
+
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     public static boolean unwrap(final Optional<Boolean> optional) {
         return optional.isPresent() && optional.get();

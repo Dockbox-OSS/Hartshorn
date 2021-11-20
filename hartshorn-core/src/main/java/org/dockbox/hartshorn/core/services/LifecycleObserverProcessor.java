@@ -32,12 +32,12 @@ public class LifecycleObserverProcessor implements ServiceProcessor<UseBootstrap
     }
 
     @Override
-    public boolean preconditions(ApplicationContext context, TypeContext<?> type) {
+    public boolean preconditions(final ApplicationContext context, final TypeContext<?> type) {
         return type.childOf(LifecycleObserver.class);
     }
 
     @Override
-    public <T> void process(ApplicationContext context, TypeContext<T> type) {
+    public <T> void process(final ApplicationContext context, final TypeContext<T> type) {
         context.environment().manager().register((LifecycleObserver) context.get(type));
     }
 }

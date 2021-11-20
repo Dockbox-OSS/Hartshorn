@@ -34,8 +34,8 @@ public class RuleBasedParameterLoader<C extends ParameterLoaderContext> extends 
     @Getter(AccessLevel.PROTECTED)
     private final Set<ParameterLoaderRule<C>> rules = HartshornUtils.emptyConcurrentSet();
 
-    public RuleBasedParameterLoader add(final ParameterLoaderRule<C> rule) {
-        this.rules.add(rule);
+    public RuleBasedParameterLoader add(final ParameterLoaderRule<? super C> rule) {
+        this.rules.add((ParameterLoaderRule<C>) rule);
         return this;
     }
 
