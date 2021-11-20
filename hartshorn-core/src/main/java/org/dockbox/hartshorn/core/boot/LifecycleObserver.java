@@ -22,4 +22,5 @@ import org.dockbox.hartshorn.core.context.ApplicationContext;
 public interface LifecycleObserver {
     void onCreated(ApplicationContext applicationContext);
     void onStarted(ApplicationContext applicationContext);
+    void onExit(ApplicationContext applicationContext);
 }
