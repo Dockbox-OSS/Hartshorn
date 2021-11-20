@@ -119,7 +119,15 @@ public class ServletHandler implements Enableable {
                         throw new ApplicationException(e);
                     }
                 }
+                else {
+                    if (result.caught()) throw new ApplicationException(result.error());
+                    else {
+                        res.setStatus(HttpStatus.NO_CONTENT.value());
+                    }
+                    return;
+                }
             }
+
             fallbackAction.fallback(req, res);
         }
     }
