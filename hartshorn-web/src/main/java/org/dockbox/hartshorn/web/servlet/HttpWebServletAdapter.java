@@ -54,7 +54,7 @@ public class HttpWebServletAdapter extends HttpServlet {
         this.perform(this.webServlet::trace, req, res, super::doTrace);
     }
 
-    private void perform(final HttpServletAction action, final HttpServletRequest req, final HttpServletResponse res, final HttpServletFallback fallback) throws ServletException, IOException {
+    private synchronized void perform(final HttpServletAction action, final HttpServletRequest req, final HttpServletResponse res, final HttpServletFallback fallback) throws ServletException, IOException {
         try {
             this.applicationContext.log().debug("Received " + req.getMethod() + " " + req.getRequestURI());
             action.perform(req, res, this.wrap(fallback));
