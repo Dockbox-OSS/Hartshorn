@@ -20,27 +20,18 @@ package org.dockbox.hartshorn.web.jetty;
 import org.dockbox.hartshorn.core.annotations.inject.Binds;
 import org.dockbox.hartshorn.core.boot.Hartshorn;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
-import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 import org.dockbox.hartshorn.core.exceptions.Except;
 import org.dockbox.hartshorn.persistence.properties.PersistenceModifier;
 import org.dockbox.hartshorn.web.DefaultHttpWebServer;
 import org.dockbox.hartshorn.web.HttpWebServer;
-import org.dockbox.hartshorn.web.RequestHandlerContext;
-import org.dockbox.hartshorn.web.mvc.ViewTemplate;
-import org.dockbox.hartshorn.web.servlet.HttpWebServletAdapter;
-import org.dockbox.hartshorn.web.servlet.MvcServlet;
-import org.dockbox.hartshorn.web.servlet.WebServlet;
-import org.dockbox.hartshorn.web.servlet.WebServletFactory;
-import org.dockbox.hartshorn.web.servlet.WebServletImpl;
 import org.eclipse.jetty.server.Connector;
-import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.HttpConnectionFactory;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.handler.ErrorHandler;
-import org.eclipse.jetty.server.handler.HandlerList;
+import org.eclipse.jetty.server.handler.HandlerWrapper;
 import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
@@ -51,6 +42,7 @@ import java.net.URI;
 import java.net.URL;
 
 import javax.inject.Inject;
+import javax.servlet.Servlet;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -60,46 +52,89 @@ public class JettyHttpWebServer extends DefaultHttpWebServer {
 
     @Inject @Getter
     private ApplicationContext context;
-    @Inject @Getter
-    private final ServletContextHandler handler;
-    @Setter
+    @Getter
+    private final ServletContextHandler contextHandler;
+    @Getter
+    private final HandlerWrapper servletHandler;
+    @Getter @Setter
     private PersistenceModifier skipBehavior = PersistenceModifier.SKIP_NONE;
+    private Server server;
 
-    public JettyHttpWebServer() {
+    @Inject
+    public JettyHttpWebServer(final JettyResourceService resourceService) {
         super();
-        this.handler = new ServletContextHandler(ServletContextHandler.SESSIONS);
-        this.handler.setContextPath("/");
+        this.contextHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
+        this.contextHandler.setContextPath("/");
+        final URL staticContent = Hartshorn.class.getClassLoader().getResource(HttpWebServer.STATIC_CONTENT.substring(1));
+        if (staticContent == null) {
+            this.servletHandler = this.contextHandler;
+        } else {
+            this.servletHandler = new ResourceHandler(resourceService);
+            this.servletHandler.setHandler(this.contextHandler);
+            this.staticContent(staticContent);
+        }
+        this.listStaticDirectories(true);
     }
 
     @Override
     public void start(final int port) throws ApplicationException {
         try {
+            if (this.server != null)
+                this.server.stop();
+
             final QueuedThreadPool threadPool = new QueuedThreadPool();
             threadPool.setName(Hartshorn.PROJECT_NAME);
 
-            final Server server = new Server(threadPool);
-            server.setConnectors(new Connector[]{ this.connector(server, port) });
-            server.setHandler(this.handler);
-            server.setErrorHandler(this.errorHandler());
-            server.start();
+            this.server = new Server(threadPool);
+            this.server.setConnectors(new Connector[]{ this.connector(this.server, port) });
+            this.server.setHandler(this.servletHandler);
+            this.server.setErrorHandler(this.errorHandler());
+            this.server.start();
         } catch (final Exception e) {
             throw new ApplicationException(e);
         }
     }
 
     @Override
-    public JettyHttpWebServer register(final RequestHandlerContext context) {
-        final WebServlet servlet = this.servlet(context);
-        final HttpWebServletAdapter adapter = new HttpWebServletAdapter(servlet);
-        this.handler.addServlet(new ServletHolder(adapter), context.pathSpec());
+    public HttpWebServer register(final Servlet servlet, final String pathSpec) {
+        this.contextHandler.addServlet(new ServletHolder(servlet), pathSpec);
         return this;
     }
 
     @Override
-    public HttpWebServer registerMvc(final RequestHandlerContext context) {
-        final MvcServlet servlet = this.context.get(WebServletFactory.class).mvc((MethodContext<ViewTemplate, ?>) context.methodContext());
-        final HttpWebServletAdapter adapter = new HttpWebServletAdapter(servlet);
-        this.handler.addServlet(new ServletHolder(adapter), context.pathSpec());
+    public HttpWebServer listStaticDirectories(final boolean listDirectories) {
+        if (this.servletHandler instanceof ResourceHandler resourceHandler) {
+            resourceHandler.setDirectoriesListed(listDirectories);
+        }
+        return this;
+    }
+
+    @Override
+    public HttpWebServer staticContent(final URI location) {
+        try {
+            return this.staticContent(location.toURL());
+        }
+        catch (final MalformedURLException e) {
+            Except.handle(e);
+        }
+        return this;
+    }
+
+    @Override
+    public void stop() throws ApplicationException {
+        if (this.server != null) {
+            try {
+                this.server.stop();
+            } catch (final Exception e) {
+                throw new ApplicationException(e);
+            }
+        }
+    }
+
+    public HttpWebServer staticContent(final URL location) {
+        if (this.servletHandler instanceof ResourceHandler resourceHandler) {
+            resourceHandler.setResourceBase(location.toExternalForm());
+        }
         return this;
     }
 
@@ -121,11 +156,5 @@ public class JettyHttpWebServer extends DefaultHttpWebServer {
 
     protected ErrorHandler errorHandler() {
         return this.context.get(JettyErrorHandler.class);
-    }
-
-    protected WebServlet servlet(final RequestHandlerContext context) {
-        final WebServletImpl adapter = this.context.get(WebServletFactory.class).webServlet(this, context);
-        adapter.handler().mapper().skipBehavior(this.skipBehavior);
-        return adapter;
     }
 }
