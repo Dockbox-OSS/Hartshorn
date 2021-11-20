@@ -25,6 +25,7 @@ import org.dockbox.hartshorn.web.processing.HttpRequestParameterLoaderContext;
 import java.net.URI;
 
 import javax.inject.Singleton;
+import javax.servlet.Servlet;
 
 @Singleton
 public interface HttpWebServer {
@@ -34,13 +35,13 @@ public interface HttpWebServer {
 
     void start(int port) throws ApplicationException;
 
-    HttpWebServer register(RequestHandlerContext context);
-
-    HttpWebServer registerMvc(RequestHandlerContext context);
+    HttpWebServer register(Servlet servlet, String pathSpec);
 
     ParameterLoader<HttpRequestParameterLoaderContext> loader();
 
     HttpWebServer skipBehavior(PersistenceModifier modifier);
+
+    PersistenceModifier skipBehavior();
 
     HttpWebServer listStaticDirectories(boolean listDirectories);
 

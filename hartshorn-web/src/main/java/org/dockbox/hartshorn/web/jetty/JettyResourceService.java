@@ -1,5 +1,6 @@
 package org.dockbox.hartshorn.web.jetty;
 
+import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.exceptions.Except;
 import org.dockbox.hartshorn.web.HttpStatus;
 import org.dockbox.hartshorn.web.servlet.DirectoryServlet;
@@ -24,17 +25,22 @@ public class JettyResourceService extends ResourceService {
     @Inject
     private DirectoryServlet servlet;
 
+    @Inject
+    private ApplicationContext applicationContext;
+
     @Override
-    protected void sendDirectory(final HttpServletRequest request,
-                                 final HttpServletResponse response,
+    protected void sendDirectory(final HttpServletRequest req,
+                                 final HttpServletResponse res,
                                  final Resource resource,
                                  final String pathInContext)
             throws IOException {
         if (!this.isDirAllowed()) {
-            response.sendError(HttpStatus.FORBIDDEN.value());
+            res.sendError(HttpStatus.FORBIDDEN.value());
             return;
         }
-        this.servlet.handle(request, response, resource.getURI(), pathInContext);
+        this.applicationContext.log().debug("Received " + req.getMethod() + " " + req.getRequestURI());
+        this.servlet.handle(req, res, resource.getURI(), pathInContext);
+        this.applicationContext.log().debug("Request " + req.getMethod() + " " + req.getRequestURI() + " completed");
     }
 
     @Override
