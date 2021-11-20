@@ -18,37 +18,37 @@ public class HttpWebServletAdapter extends HttpServlet {
     private final WebServlet webServlet;
 
     @Override
-    protected void doGet(final HttpServletRequest req, final HttpServletResponse res) throws ServletException, IOException {
+    protected synchronized void doGet(final HttpServletRequest req, final HttpServletResponse res) throws ServletException, IOException {
         this.perform(this.webServlet::get, req, res, super::doGet);
     }
 
     @Override
-    protected void doHead(final HttpServletRequest req, final HttpServletResponse res) throws ServletException, IOException {
+    protected synchronized void doHead(final HttpServletRequest req, final HttpServletResponse res) throws ServletException, IOException {
         this.perform(this.webServlet::head, req, res, super::doHead);
     }
 
     @Override
-    protected void doPost(final HttpServletRequest req, final HttpServletResponse res) throws ServletException, IOException {
+    protected synchronized void doPost(final HttpServletRequest req, final HttpServletResponse res) throws ServletException, IOException {
         this.perform(this.webServlet::post, req, res, super::doPost);
     }
 
     @Override
-    protected void doPut(final HttpServletRequest req, final HttpServletResponse res) throws ServletException, IOException {
+    protected synchronized void doPut(final HttpServletRequest req, final HttpServletResponse res) throws ServletException, IOException {
         this.perform(this.webServlet::put, req, res, super::doPut);
     }
 
     @Override
-    protected void doDelete(final HttpServletRequest req, final HttpServletResponse res) throws ServletException, IOException {
+    protected synchronized void doDelete(final HttpServletRequest req, final HttpServletResponse res) throws ServletException, IOException {
         this.perform(this.webServlet::delete, req, res, super::doDelete);
     }
 
     @Override
-    protected void doOptions(final HttpServletRequest req, final HttpServletResponse res) throws ServletException, IOException {
+    protected synchronized void doOptions(final HttpServletRequest req, final HttpServletResponse res) throws ServletException, IOException {
         this.perform(this.webServlet::options, req, res, super::doOptions);
     }
 
     @Override
-    protected void doTrace(final HttpServletRequest req, final HttpServletResponse res) throws ServletException, IOException {
+    protected synchronized void doTrace(final HttpServletRequest req, final HttpServletResponse res) throws ServletException, IOException {
         this.perform(this.webServlet::trace, req, res, super::doTrace);
     }
 
