@@ -31,6 +31,7 @@ import org.eclipse.jetty.server.HttpConnectionFactory;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.handler.ErrorHandler;
+import org.eclipse.jetty.server.handler.HandlerWrapper;
 import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
@@ -52,9 +53,9 @@ public class JettyHttpWebServer extends DefaultHttpWebServer {
     @Inject @Getter
     private ApplicationContext context;
     @Getter
-    private final ServletContextHandler handler;
+    private final ServletContextHandler contextHandler;
     @Getter
-    private final ResourceHandler resourceHandler;
+    private final HandlerWrapper servletHandler;
     @Getter @Setter
     private PersistenceModifier skipBehavior = PersistenceModifier.SKIP_NONE;
     private Server server;
@@ -62,11 +63,16 @@ public class JettyHttpWebServer extends DefaultHttpWebServer {
     @Inject
     public JettyHttpWebServer(final JettyResourceService resourceService) {
         super();
-        this.handler = new ServletContextHandler(ServletContextHandler.SESSIONS);
-        this.handler.setContextPath("/");
-        this.resourceHandler = new ResourceHandler(resourceService);
-        this.resourceHandler.setHandler(this.handler);
-        this.staticContent(Hartshorn.class.getClassLoader().getResource(HttpWebServer.STATIC_CONTENT.substring(1)));
+        this.contextHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
+        this.contextHandler.setContextPath("/");
+        final URL staticContent = Hartshorn.class.getClassLoader().getResource(HttpWebServer.STATIC_CONTENT.substring(1));
+        if (staticContent == null) {
+            this.servletHandler = this.contextHandler;
+        } else {
+            this.servletHandler = new ResourceHandler(resourceService);
+            this.servletHandler.setHandler(this.contextHandler);
+            this.staticContent(staticContent);
+        }
         this.listStaticDirectories(true);
     }
 
@@ -81,7 +87,7 @@ public class JettyHttpWebServer extends DefaultHttpWebServer {
 
             this.server = new Server(threadPool);
             this.server.setConnectors(new Connector[]{ this.connector(this.server, port) });
-            this.server.setHandler(this.resourceHandler);
+            this.server.setHandler(this.servletHandler);
             this.server.setErrorHandler(this.errorHandler());
             this.server.start();
         } catch (final Exception e) {
@@ -91,13 +97,15 @@ public class JettyHttpWebServer extends DefaultHttpWebServer {
 
     @Override
     public HttpWebServer register(final Servlet servlet, final String pathSpec) {
-        this.handler.addServlet(new ServletHolder(servlet), pathSpec);
+        this.contextHandler.addServlet(new ServletHolder(servlet), pathSpec);
         return this;
     }
 
     @Override
     public HttpWebServer listStaticDirectories(final boolean listDirectories) {
-        this.resourceHandler.setDirectoriesListed(listDirectories);
+        if (this.servletHandler instanceof ResourceHandler resourceHandler) {
+            resourceHandler.setDirectoriesListed(listDirectories);
+        }
         return this;
     }
 
@@ -113,7 +121,9 @@ public class JettyHttpWebServer extends DefaultHttpWebServer {
     }
 
     public HttpWebServer staticContent(final URL location) {
-        this.resourceHandler.setResourceBase(location.toExternalForm());
+        if (this.servletHandler instanceof ResourceHandler resourceHandler) {
+            resourceHandler.setResourceBase(location.toExternalForm());
+        }
         return this;
     }
 
