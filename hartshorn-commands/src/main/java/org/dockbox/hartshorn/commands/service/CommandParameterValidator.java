@@ -29,12 +29,12 @@ import org.dockbox.hartshorn.core.context.element.TypeContext;
 public class CommandParameterValidator implements LifecycleObserver {
 
     @Override
-    public void onCreated(ApplicationContext applicationContext) {
+    public void onCreated(final ApplicationContext applicationContext) {
         // Nothing happens
     }
 
     @Override
-    public void onStarted(ApplicationContext applicationContext) {
+    public void onStarted(final ApplicationContext applicationContext) {
         final MethodContext<?, CommandParameterValidator> preload = TypeContext.of(this).method("onStarted", ApplicationContext.class).get();
         final ParameterContext<?> parameter = preload.parameters().get(0);
         if (!"applicationContext".equals(parameter.name())) {
@@ -42,5 +42,10 @@ public class CommandParameterValidator implements LifecycleObserver {
             applicationContext.log().warn("   Add -parameters to your compiler args to keep parameter names.");
             applicationContext.log().warn("   See: https://docs.oracle.com/javase/tutorial/reflect/member/methodparameterreflection.html for more information.");
         }
+    }
+
+    @Override
+    public void onExit(final ApplicationContext applicationContext) {
+        // Nothing happens
     }
 }

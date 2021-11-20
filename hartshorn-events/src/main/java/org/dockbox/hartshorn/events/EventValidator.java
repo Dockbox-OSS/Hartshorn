@@ -37,12 +37,12 @@ import java.util.stream.Collectors;
 public class EventValidator implements LifecycleObserver {
 
     @Override
-    public void onCreated(ApplicationContext applicationContext) {
+    public void onCreated(final ApplicationContext applicationContext) {
         // Nothing happens
     }
 
     @Override
-    public void onStarted(ApplicationContext applicationContext) {
+    public void onStarted(final ApplicationContext applicationContext) {
         if (applicationContext.hasActivator(UseEvents.class)) {
             new EngineChangedState<Started>() {
             }.with(applicationContext).post();
@@ -75,5 +75,10 @@ public class EventValidator implements LifecycleObserver {
             }
             Hartshorn.log().warn(message.toString());
         }
+    }
+
+    @Override
+    public void onExit(final ApplicationContext applicationContext) {
+        // Nothing happens
     }
 }

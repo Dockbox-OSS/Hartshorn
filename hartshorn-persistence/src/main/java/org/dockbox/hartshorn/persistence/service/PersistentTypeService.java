@@ -32,13 +32,18 @@ import javax.persistence.Entity;
 public class PersistentTypeService implements LifecycleObserver {
 
     @Override
-    public void onCreated(ApplicationContext applicationContext) {
+    public void onCreated(final ApplicationContext applicationContext) {
         // Nothing happens
     }
 
     @Override
-    public void onStarted(ApplicationContext applicationContext) {
+    public void onStarted(final ApplicationContext applicationContext) {
         final Collection<TypeContext<?>> entities = applicationContext.environment().types(Entity.class);
         applicationContext.add(new EntityContext(entities));
+    }
+
+    @Override
+    public void onExit(final ApplicationContext applicationContext) {
+        // Nothing happens
     }
 }

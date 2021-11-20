@@ -215,6 +215,11 @@ public class HartshornApplicationFactory implements ApplicationFactory<Hartshorn
 
         final long startedTime = System.currentTimeMillis();
 
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            for (final LifecycleObserver observer : manager.observers())
+                observer.onExit(applicationContext);
+        }));
+
         applicationContext.log().info("Started " + Hartshorn.PROJECT_NAME + " in " + (startedTime - startTime) + "ms (" + (createdTime - startTime) + "ms creation, " + (startedTime - createdTime) + "ms init)");
 
         return applicationContext;
