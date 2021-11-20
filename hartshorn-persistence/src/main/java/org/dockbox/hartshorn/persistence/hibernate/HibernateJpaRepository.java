@@ -222,7 +222,10 @@ public class HibernateJpaRepository<T, ID> implements JpaRepository<T, ID>, Enab
 
     public Session session() {
         if (this.session != null && this.session.isOpen()) return this.session;
-        this.applicationContext().log().debug("Opening remote session to %s".formatted(this.connection().url()));
+        final PersistenceConnection connection = this.connection();
+        if (connection == null) throw new IllegalStateException("Connection has not been configured!");
+
+        this.applicationContext().log().debug("Opening remote session to %s".formatted(connection.url()));
         return this.factory().openSession();
     }
 }
