@@ -17,6 +17,7 @@
 
 package org.dockbox.hartshorn.persistence.hibernate;
 
+import org.dockbox.hartshorn.core.Enableable;
 import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.core.annotations.inject.Binds;
 import org.dockbox.hartshorn.core.annotations.inject.Bound;
@@ -25,10 +26,9 @@ import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
-import org.dockbox.hartshorn.core.Enableable;
 import org.dockbox.hartshorn.core.exceptions.Except;
-import org.dockbox.hartshorn.persistence.jpa.JpaRepository;
 import org.dockbox.hartshorn.persistence.context.EntityContext;
+import org.dockbox.hartshorn.persistence.jpa.JpaRepository;
 import org.dockbox.hartshorn.persistence.properties.PersistenceConnection;
 import org.dockbox.hartshorn.persistence.properties.Remote;
 import org.dockbox.hartshorn.persistence.properties.Remotes;
@@ -42,6 +42,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 import javax.inject.Inject;
 import javax.persistence.Entity;
@@ -140,18 +141,27 @@ public class HibernateJpaRepository<T, ID> implements JpaRepository<T, ID>, Enab
     }
 
     @Override
-    public void save(final Object object) {
-        this.performTransactional(session -> session.save(object));
+    public Object save(final Object object) {
+        return this.transformTransactional(session -> {
+            session.save(object);
+            return object;
+        });
     }
 
     @Override
-    public void update(final Object object) {
-        this.performTransactional(session -> session.update(object));
+    public Object update(final Object object) {
+        return this.transformTransactional(session -> {
+            session.update(object);
+            return object;
+        });
     }
 
     @Override
-    public void updateOrSave(final Object object) {
-        this.performTransactional(session -> session.saveOrUpdate(object));
+    public Object updateOrSave(final Object object) {
+        return this.transformTransactional(session -> {
+            session.saveOrUpdate(object);
+            return object;
+        });
     }
 
     @Override
@@ -165,6 +175,15 @@ public class HibernateJpaRepository<T, ID> implements JpaRepository<T, ID>, Enab
         action.accept(session);
         transaction.commit();
         this.close();
+    }
+
+    private <R> R transformTransactional(final Function<Session, R> action) {
+        final Session session = this.session();
+        final Transaction transaction = session.beginTransaction();
+        final R out = action.apply(session);
+        transaction.commit();
+        this.close();
+        return out;
     }
 
     @Override
@@ -202,7 +221,7 @@ public class HibernateJpaRepository<T, ID> implements JpaRepository<T, ID>, Enab
         this.connection = connection;
         try {
             Bindings.enable(this);
-        } catch (ApplicationException e) {
+        } catch (final ApplicationException e) {
             Except.handle(e);
         }
         return this;

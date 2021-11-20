@@ -66,8 +66,9 @@ public abstract class UserRepository implements JpaRepository<User, Long>, Deleg
      * logs the action.
      */
     @Override
-    public void save(final User object) {
+    public User save(final User object) {
         this.delegator(JpaRepository.class).get().save(object);
         this.eventBus.post(new UserCreatedEvent(object));
+        return object;
     }
 }
