@@ -23,6 +23,5 @@ package org.junit.runners.model;
  * purely a placeholder to avoid runtime classloader issues.
  * @see <a href="https://github.com/testcontainers/testcontainers-java/issues/970">testcontainers/testcontainers-java #970</a>
  */
-@SuppressWarnings("unused")
 public class Statement {
 }

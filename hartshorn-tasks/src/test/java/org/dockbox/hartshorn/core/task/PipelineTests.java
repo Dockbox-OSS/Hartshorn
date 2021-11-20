@@ -161,7 +161,6 @@ public class PipelineTests {
         Assertions.assertEquals(11, output);
     }
 
-    @SuppressWarnings("ReturnOfNull")
     @Test
     public void processingCollectionInputsTest() {
         final List<Integer> output = new Pipeline<Integer>()

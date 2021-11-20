@@ -47,7 +47,6 @@ public class CachedMethodModifier extends CacheServiceModifier<Cached> {
 
             final Exceptional<Object> content = cache.get();
 
-            //noinspection unchecked
             return (R) content.orElse(() -> {
                 context.log().debug("Cache " + cacheContext.name() + " has not been populated yet, or content has expired.");
                 try {

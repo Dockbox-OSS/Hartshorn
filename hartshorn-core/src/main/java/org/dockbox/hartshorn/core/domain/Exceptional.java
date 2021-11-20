@@ -86,7 +86,6 @@ public final class Exceptional<T> {
      *
      * @return The {@link Exceptional}
      */
-    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     public static <T> Exceptional<T> of(final Optional<T> optional) {
         return optional.map(Exceptional::of).orElseGet(Exceptional::empty);
     }
@@ -117,8 +116,7 @@ public final class Exceptional<T> {
      * @return The none {@link Exceptional}
      */
     public static <T> Exceptional<T> empty() {
-        @SuppressWarnings("unchecked") final Exceptional<T> t = (Exceptional<T>) EMPTY;
-        return t;
+        return (Exceptional<T>) EMPTY;
     }
 
     /**

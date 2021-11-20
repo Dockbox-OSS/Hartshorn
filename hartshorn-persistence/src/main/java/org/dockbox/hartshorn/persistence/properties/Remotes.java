@@ -56,7 +56,6 @@ public enum Remotes implements Remote {
     @Override
     public String url(final Object target) {
         if (this.target.isInstance(target)) {
-            //noinspection unchecked
             return ((Function<Object, String>) this.urlGen).apply(target);
         }
         throw new IllegalArgumentException("Provided target was expected to be of type " + this.target.getSimpleName() + " but was: " + target);

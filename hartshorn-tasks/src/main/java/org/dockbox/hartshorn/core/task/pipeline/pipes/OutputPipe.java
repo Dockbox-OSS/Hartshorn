@@ -20,7 +20,6 @@ package org.dockbox.hartshorn.core.task.pipeline.pipes;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 
-@SuppressWarnings("InterfaceNeverImplemented") // API type
 @FunctionalInterface
 public interface OutputPipe<O> extends StandardPipe<O, O> {
 

@@ -23,7 +23,6 @@ import javax.inject.Named;
 
 import lombok.AllArgsConstructor;
 
-@SuppressWarnings("ClassExplicitlyAnnotation")
 @AllArgsConstructor
 public class NamedImpl implements Named {
 

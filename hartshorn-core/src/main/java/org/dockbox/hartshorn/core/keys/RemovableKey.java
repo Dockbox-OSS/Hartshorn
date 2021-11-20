@@ -33,7 +33,6 @@ import java.util.function.Function;
  * @param <A>
  *         The type parameter indicating the constraint for the value to be applied/retrieved.
  */
-@SuppressWarnings("AbstractClassWithoutAbstractMethods")
 public abstract class RemovableKey<K, A> extends Key<K, A> {
 
     private final Consumer<K> remover;

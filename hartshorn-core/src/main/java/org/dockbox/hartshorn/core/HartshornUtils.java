@@ -71,7 +71,6 @@ import java.util.stream.StreamSupport;
  * Wraps all utility classes to a common accessor. This way all {@code final} utility classes can be
  * accessed at once and indexed more easily.
  */
-@SuppressWarnings({ "unused", "OverlyComplexClass", "ResultOfMethodCallIgnored" })
 public final class HartshornUtils {
 
     /**
@@ -118,7 +117,6 @@ public final class HartshornUtils {
      * @see HartshornUtils#entry(Object, Object)
      */
     @SafeVarargs
-    @SuppressWarnings("varargs")
     public static <K, V> Map<K, V> ofEntries(final Entry<? extends K, ? extends V>... entries) {
         if (0 == entries.length) { // implicit null check of entries array
             return HartshornUtils.emptyMap();
@@ -347,7 +345,6 @@ public final class HartshornUtils {
         return path.lastIndexOf(ch);
     }
 
-    @SuppressWarnings("MagicNumber")
     public static char convertDigit(final int value) {
         return _hex[value & 0x0f];
     }
@@ -460,7 +457,6 @@ public final class HartshornUtils {
         return current;
     }
 
-    @SuppressWarnings("OverlyComplexMethod")
     public static int damerauLevenshteinDistance(
             @NonNls final CharSequence source, @NonNls final CharSequence target) {
         final int length = verifyContentLength(source, target);
@@ -575,7 +571,6 @@ public final class HartshornUtils {
         return HartshornUtils.createString(bytes, "UTF-8");
     }
 
-    @SuppressWarnings("MagicNumber")
     public static int hashCodeIgnoreCase(final CharSequence s) {
         if (null == s) return 0;
         int hash = 0;
@@ -694,7 +689,7 @@ public final class HartshornUtils {
         }
         return file;
     }
-
+    
     public static String contentOrEmpty(@NotNull final Path file) {
         try {
             return Files.readString(file);
@@ -704,7 +699,6 @@ public final class HartshornUtils {
         }
     }
 
-    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     public static boolean unwrap(final Optional<Boolean> optional) {
         return optional.isPresent() && optional.get();
     }
@@ -766,7 +760,6 @@ public final class HartshornUtils {
      *
      * @return true if the defined vector is inside the 3D cuboid region
      */
-    @SuppressWarnings("OverlyComplexBooleanExpression")
     public static boolean inCuboidRegion(final int x_min, final int x_max, final int y_min, final int y_max, final int z_min, final int z_max, final int x, final int y, final int z) {
         return x_min <= x && x <= x_max
                 && y_min <= y && y <= y_max
@@ -794,7 +787,6 @@ public final class HartshornUtils {
         return Vector3N.of(centerX, centerY, centerZ);
     }
 
-    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     public static Exceptional<LocalDateTime> toLocalDateTime(final Optional<Instant> optionalInstant) {
         return Exceptional.of(optionalInstant).map(HartshornUtils::toLocalDateTime);
     }
@@ -876,7 +868,6 @@ public final class HartshornUtils {
 
     public static boolean equals(@NonNls final String str1, @NonNls final String str2) {
         if (null == str1 || null == str2) {
-            //noinspection StringEquality
             return str1 == str2;
         }
         return str1.equals(str2);
@@ -884,7 +875,6 @@ public final class HartshornUtils {
 
     public static boolean equalsIgnoreCase(@NonNls final String s1, @NonNls final String s2) {
         if (null == s1 || null == s2) {
-            //noinspection StringEquality
             return s1 == s2;
         }
         return s1.equalsIgnoreCase(s2);
@@ -892,7 +882,6 @@ public final class HartshornUtils {
 
     public static boolean equalsWithTrim(@NonNls final String s1, @NonNls final String s2) {
         if (null == s1 || null == s2) {
-            //noinspection StringEquality
             return s1 == s2;
         }
         return s1.trim().equals(s2.trim());
@@ -900,7 +889,6 @@ public final class HartshornUtils {
 
     public static boolean equalsIgnoreCaseWithTrim(@NonNls final String s1, @NonNls final String s2) {
         if (null == s1 || null == s2) {
-            //noinspection StringEquality
             return s1 == s2;
         }
         return s1.trim().equalsIgnoreCase(s2.trim());

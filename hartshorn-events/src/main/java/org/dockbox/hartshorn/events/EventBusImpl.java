@@ -40,7 +40,6 @@ import javax.inject.Singleton;
  * A simple default implementation of {@link EventBus}, used for internal event posting and
  * handling.
  */
-@SuppressWarnings("EqualsWithItself")
 @Binds(EventBus.class)
 @Singleton
 public class EventBusImpl implements EventBus {

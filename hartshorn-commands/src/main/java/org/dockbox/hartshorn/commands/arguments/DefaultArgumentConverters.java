@@ -32,7 +32,6 @@ import java.util.Locale;
 import java.util.UUID;
 import java.util.function.Function;
 
-@SuppressWarnings({ "unused", "ClassWithTooManyFields" })
 @Service
 public final class DefaultArgumentConverters {
 

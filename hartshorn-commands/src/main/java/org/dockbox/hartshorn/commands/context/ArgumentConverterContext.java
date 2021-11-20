@@ -85,7 +85,6 @@ public final class ArgumentConverterContext extends DefaultContext {
      * @return The converter if it exists, or {@link Exceptional#empty()}
      */
     public <T> Exceptional<ArgumentConverter<T>> converter(final TypeContext<T> type) {
-        //noinspection unchecked
         return Exceptional.of(this.converterMap.values().stream()
                 .filter(converter -> type.childOf(converter.type()))
                 .map(converter -> (ArgumentConverter<T>) converter)

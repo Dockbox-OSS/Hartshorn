@@ -53,7 +53,6 @@ import java.util.regex.Pattern;
  * for this definition are explained at {@link CommandDefinitionContextImpl#ELEMENT_VALUE}. If no
  * explicit type is defined, {@link CommandDefinitionContextImpl#DEFAULT_TYPE} is used.
  */
-@SuppressWarnings("RegExpUnnecessaryNonCapturingGroup")
 public class CommandDefinitionContextImpl extends DefaultContext implements CommandDefinitionContext {
 
     /**
@@ -229,7 +228,6 @@ public class CommandDefinitionContextImpl extends DefaultContext implements Comm
 
             if (lookup.isEnum()) {
                 this.context.log().debug(type + " is an enum, creating explicit enum element.");
-                //noinspection unchecked
                 return CommandElements.enumElement(name, (TypeContext<E>) lookup, optional);
             }
             else {

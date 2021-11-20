@@ -37,7 +37,6 @@ public abstract class SystemSubject implements CommandSource, Identifiable {
     @Getter
     private ApplicationContext applicationContext;
 
-    @SuppressWarnings("ConstantDeclaredInAbstractClass")
     public static final UUID UNIQUE_ID = new UUID(0, 0);
 
     public static SystemSubject instance(final ApplicationContext context) {

@@ -163,7 +163,6 @@ public class CommandDefinitionContextTests extends ApplicationAwareTest {
     }
 
     private Command createCommand() {
-        //noinspection OverlyComplexAnonymousInnerClass
         return new Command() {
 
             @Override
