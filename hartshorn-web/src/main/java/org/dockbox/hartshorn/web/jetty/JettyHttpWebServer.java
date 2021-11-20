@@ -34,13 +34,11 @@ import org.dockbox.hartshorn.web.servlet.WebServlet;
 import org.dockbox.hartshorn.web.servlet.WebServletFactory;
 import org.dockbox.hartshorn.web.servlet.WebServletImpl;
 import org.eclipse.jetty.server.Connector;
-import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.HttpConnectionFactory;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.handler.ErrorHandler;
-import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
@@ -60,7 +58,7 @@ public class JettyHttpWebServer extends DefaultHttpWebServer {
 
     @Inject @Getter
     private ApplicationContext context;
-    @Inject @Getter
+    @Getter
     private final ServletContextHandler handler;
     @Getter
     private final ResourceHandler resourceHandler;
@@ -68,12 +66,14 @@ public class JettyHttpWebServer extends DefaultHttpWebServer {
     private PersistenceModifier skipBehavior = PersistenceModifier.SKIP_NONE;
     private Server server;
 
-    public JettyHttpWebServer() {
+    @Inject
+    public JettyHttpWebServer(final JettyResourceService resourceService) {
         super();
         this.handler = new ServletContextHandler(ServletContextHandler.SESSIONS);
         this.handler.setContextPath("/");
-        this.resourceHandler = new ResourceHandler();
-        this.staticContent(Hartshorn.class.getClassLoader().getResource(HttpWebServer.STATIC_CONTENT));
+        this.resourceHandler = new ResourceHandler(resourceService);
+        this.resourceHandler.setHandler(this.handler);
+        this.staticContent(Hartshorn.class.getClassLoader().getResource(HttpWebServer.STATIC_CONTENT.substring(1)));
         this.listStaticDirectories(true);
     }
 
@@ -88,8 +88,7 @@ public class JettyHttpWebServer extends DefaultHttpWebServer {
 
             this.server = new Server(threadPool);
             this.server.setConnectors(new Connector[]{ this.connector(this.server, port) });
-            final Handler handlerList = new HandlerList(this.resourceHandler, this.handler);
-            this.server.setHandler(handlerList);
+            this.server.setHandler(this.resourceHandler);
             this.server.setErrorHandler(this.errorHandler());
             this.server.start();
         } catch (final Exception e) {
