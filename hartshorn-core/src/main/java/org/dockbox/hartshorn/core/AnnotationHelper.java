@@ -83,7 +83,7 @@ public final class AnnotationHelper {
             ret = Exceptional.of(supplier::get);
             cache.put(keys, ret);
         }
-        ret.rethrow();
+        ret.rethrowUnchecked();
         return (T) ret.orNull();
     }
 

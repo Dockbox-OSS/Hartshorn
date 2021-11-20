@@ -388,7 +388,7 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
                     final Exceptional<T> rawCandidate = instanceCandidate.orElse(() -> this.raw(type));
                     if (rawCandidate.absent()) {
                         final Throwable finalCause = cause;
-                        return this.environment().manager().proxy(type, typeInstance).rethrow().orThrow(() -> finalCause);
+                        return this.environment().manager().proxy(type, typeInstance).rethrowUnchecked().orThrow(() -> finalCause);
                     }
                     else {
                         return rawCandidate.get();

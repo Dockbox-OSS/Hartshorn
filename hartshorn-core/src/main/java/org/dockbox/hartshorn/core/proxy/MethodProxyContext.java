@@ -19,7 +19,6 @@ package org.dockbox.hartshorn.core.proxy;
 
 import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
-import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 
 import java.lang.reflect.Method;
 
@@ -55,7 +54,7 @@ public final class MethodProxyContext<T, R> {
         return this.target().getDeclaringClass();
     }
 
-    public R delegate(final T instance, final MethodContext<?, ?> proceed, final Object self, final Object... args) throws ApplicationException {
+    public R delegate(final T instance, final MethodContext<?, ?> proceed, final Object self, final Object... args) throws Throwable {
         this.holder.cancelled(false);
         return this.delegate.delegate(instance, args, new ProxyContextImpl(proceed, this.holder, self));
     }

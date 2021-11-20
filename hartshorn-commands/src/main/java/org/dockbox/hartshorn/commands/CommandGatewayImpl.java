@@ -86,7 +86,7 @@ public class CommandGatewayImpl implements CommandGateway, Enableable {
                 this.execute(context.get(), commandContext.get());
             }
             else if (commandContext.caught()) {
-                commandContext.rethrow();
+                commandContext.rethrowUnchecked();
             }
             else {
                 this.context.log().warn("Could not parse command for input " + command + " but yielded no exceptions");

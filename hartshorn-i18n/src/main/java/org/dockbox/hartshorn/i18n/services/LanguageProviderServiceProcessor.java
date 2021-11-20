@@ -46,11 +46,11 @@ public class LanguageProviderServiceProcessor implements ServiceProcessor<UseTra
         final TranslationService translationService = context.get(TranslationService.class);
         for (final MethodContext<?, T> method : type.methods(TranslationProvider.class)) {
             if (method.returnType().childOf(TranslationBundle.class)) {
-                final TranslationBundle bundle = (TranslationBundle) method.invoke(context).rethrow().get();
+                final TranslationBundle bundle = (TranslationBundle) method.invoke(context).rethrowUnchecked().get();
                 translationService.add(bundle);
             }
             else if (method.returnType().childOf(Message.class)) {
-                final Message message = (Message) method.invoke(context).rethrow().get();
+                final Message message = (Message) method.invoke(context).rethrowUnchecked().get();
                 translationService.add(message);
             }
         }

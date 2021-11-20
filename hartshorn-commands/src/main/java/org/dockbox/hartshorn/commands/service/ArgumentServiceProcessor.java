@@ -60,7 +60,7 @@ public class ArgumentServiceProcessor implements ServiceProcessor<UseCommands> {
                 }
             }
             return null;
-        }).rethrow();
+        }).rethrowUnchecked();
     }
 
     @Override
