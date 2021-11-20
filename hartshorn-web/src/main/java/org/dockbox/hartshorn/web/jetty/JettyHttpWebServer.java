@@ -120,6 +120,17 @@ public class JettyHttpWebServer extends DefaultHttpWebServer {
         return this;
     }
 
+    @Override
+    public void stop() throws ApplicationException {
+        if (this.server != null) {
+            try {
+                this.server.stop();
+            } catch (final Exception e) {
+                throw new ApplicationException(e);
+            }
+        }
+    }
+
     public HttpWebServer staticContent(final URL location) {
         if (this.servletHandler instanceof ResourceHandler resourceHandler) {
             resourceHandler.setResourceBase(location.toExternalForm());

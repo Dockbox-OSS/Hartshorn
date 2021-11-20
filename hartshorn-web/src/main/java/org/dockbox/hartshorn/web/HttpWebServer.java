@@ -46,4 +46,6 @@ public interface HttpWebServer {
     HttpWebServer listStaticDirectories(boolean listDirectories);
 
     HttpWebServer staticContent(URI location);
+
+    void stop() throws ApplicationException;
 }

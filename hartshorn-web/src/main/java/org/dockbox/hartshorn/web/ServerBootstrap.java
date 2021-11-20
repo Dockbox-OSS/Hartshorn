@@ -25,6 +25,7 @@ import org.dockbox.hartshorn.core.boot.LifecycleObserver;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
+import org.dockbox.hartshorn.core.exceptions.Except;
 import org.dockbox.hartshorn.web.mvc.MVCInitializer;
 import org.dockbox.hartshorn.web.mvc.ViewTemplate;
 import org.dockbox.hartshorn.web.servlet.HttpWebServletAdapter;
@@ -52,6 +53,9 @@ public class ServerBootstrap implements LifecycleObserver {
     @Inject
     private WebServletFactory webServletFactory;
 
+    @Inject
+    private HttpWebServer webServer;
+
     @Override
     public void onCreated(final ApplicationContext applicationContext) {
         // Nothing happens
@@ -59,13 +63,11 @@ public class ServerBootstrap implements LifecycleObserver {
 
     @Override
     public void onStarted(final ApplicationContext applicationContext) {
-        final HttpWebServer starter = applicationContext.get(HttpWebServer.class);
-
         final Map<String, Servlet> servlets = HartshornUtils.emptyMap();
 
         final ControllerContext controllerContext = applicationContext.first(ControllerContext.class).get();
         for (final RequestHandlerContext context : controllerContext.contexts()) {
-            final WebServlet servlet = this.servlet(applicationContext, context, starter);
+            final WebServlet servlet = this.servlet(applicationContext, context, this.webServer);
             final Servlet adapter = new HttpWebServletAdapter(applicationContext, servlet);
             servlets.put(context.pathSpec(), adapter);
         }
@@ -77,18 +79,27 @@ public class ServerBootstrap implements LifecycleObserver {
             servlets.put(context.pathSpec(), adapter);
         }
 
-        servlets.forEach((path, servlet) -> starter.register(servlet, path));
+        servlets.forEach((path, servlet) -> this.webServer.register(servlet, path));
 
-        starter.listStaticDirectories(this.useDirectoryServlet);
+        this.webServer.listStaticDirectories(this.useDirectoryServlet);
 
         try {
             final MVCInitializer initializer = applicationContext.get(MVCInitializer.class);
             initializer.initialize(applicationContext);
 
-            starter.start(this.port);
+            this.webServer.start(this.port);
         }
         catch (final ApplicationException e) {
             throw e.runtime();
+        }
+    }
+
+    @Override
+    public void onExit(final ApplicationContext applicationContext) {
+        try {
+            this.webServer.stop();
+        } catch (final ApplicationException e) {
+            Except.handle(e);
         }
     }
 
