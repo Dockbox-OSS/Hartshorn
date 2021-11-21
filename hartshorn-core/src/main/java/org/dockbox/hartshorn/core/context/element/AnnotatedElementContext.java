@@ -36,7 +36,13 @@ public abstract class AnnotatedElementContext<A extends AnnotatedElement> extend
         return HartshornUtils.asUnmodifiableList(this.validate().values());
     }
 
+    public <T extends Annotation> Exceptional<T> annotation(final TypeContext<T> annotation) {
+        return this.annotation(annotation.type());
+    }
+
     public <T extends Annotation> Exceptional<T> annotation(final Class<T> annotation) {
+        if (!annotation.isAnnotation()) return Exceptional.empty();
+
         final Map<Class<?>, Annotation> annotations = this.validate();
         if (annotations.containsKey(annotation))
             return Exceptional.of(() -> (T) annotations.get(annotation));

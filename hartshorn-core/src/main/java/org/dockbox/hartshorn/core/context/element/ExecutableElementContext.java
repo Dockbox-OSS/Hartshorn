@@ -20,6 +20,7 @@ package org.dockbox.hartshorn.core.context.element;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.annotations.inject.Context;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
+import org.dockbox.hartshorn.core.domain.Named;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Executable;
@@ -28,7 +29,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public abstract class ExecutableElementContext<A extends Executable> extends AnnotatedMemberContext<A> {
+public abstract class ExecutableElementContext<A extends Executable> extends AnnotatedMemberContext<A> implements Named {
 
     private LinkedList<ParameterContext<?>> parameters;
 
