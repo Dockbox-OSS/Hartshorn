@@ -27,11 +27,11 @@ import javax.persistence.EntityManager;
 
 public interface JpaRepository<T, ID> extends ContextCarrier {
 
-    void save(final T object);
+    T save(final T object);
 
-    void update(T object);
+    T update(T object);
 
-    void updateOrSave(T object);
+    T updateOrSave(T object);
 
     void delete(T object);
 
