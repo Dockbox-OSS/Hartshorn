@@ -95,6 +95,16 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
             Tuple.of(long.class, 0L),
             Tuple.of(short.class, 0)
     );
+    private static final Map<Class<?>, Class<?>> WRAPPERS_TO_PRIMITIVE = HartshornUtils.ofEntries(
+            Tuple.of(Boolean.class, boolean.class),
+            Tuple.of(Byte.class, byte.class),
+            Tuple.of(Character.class, char.class),
+            Tuple.of(Double.class, double.class),
+            Tuple.of(Float.class, float.class),
+            Tuple.of(Integer.class, int.class),
+            Tuple.of(Long.class, long.class),
+            Tuple.of(Short.class, short.class)
+    );
 
     public static final TypeContext<Void> VOID = TypeContext.of(Void.class);
 
@@ -364,7 +374,7 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
 
     private static boolean isPrimitiveWrapper(final Class<?> targetClass, final Class<?> primitive) {
         if (!primitive.isPrimitive()) {
-            throw new IllegalArgumentException("First argument has to be isPrimitiveWrapper type");
+            throw new IllegalArgumentException("Second argument has to be primitive type");
         }
         return PRIMITIVE_WRAPPERS.get(primitive) == targetClass;
     }
@@ -567,8 +577,13 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
     }
 
     public T defaultOrNull() {
-        if (!this.isPrimitive()) return null;
-        else return (T) PRIMITIVE_DEFAULTS.getOrDefault(this.type(), null);
+        if (this.isPrimitive()) {
+            return (T) PRIMITIVE_DEFAULTS.getOrDefault(this.type(), null);
+        } else {
+            final Class<?> primitive = WRAPPERS_TO_PRIMITIVE.get(this.type());
+            if (primitive == null) return null;
+            else return (T) TypeContext.of(primitive).defaultOrNull();
+        }
     }
 
     public boolean isFinal() {
