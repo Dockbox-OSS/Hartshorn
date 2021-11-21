@@ -34,7 +34,7 @@ public class ComponentProvisionTests extends ApplicationAwareTest {
 
     public static Stream<Arguments> components() {
         return HartshornRunner.createContext(ComponentProvisionTests.class)
-                .rethrow().get()
+                .rethrowUnchecked().get()
                 .locator()
                 .containers().stream()
                 .map(ComponentContainer::type)

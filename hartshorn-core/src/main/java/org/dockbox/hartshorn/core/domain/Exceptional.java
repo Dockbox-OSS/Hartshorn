@@ -560,11 +560,17 @@ public final class Exceptional<T> {
      * @throws RuntimeException
      *         If {@code throwable} is not null and is rethrown
      */
-    public Exceptional<T> rethrow() {
+    public Exceptional<T> rethrowUnchecked() {
         if (null != this.throwable) {
             if (this.throwable instanceof RuntimeException) throw (RuntimeException) this.throwable;
             else throw new RuntimeException(this.throwable);
         }
+        return this;
+    }
+
+    public Exceptional<T> rethrow() throws Throwable {
+        if (null != this.throwable)
+            throw this.throwable;
         return this;
     }
 

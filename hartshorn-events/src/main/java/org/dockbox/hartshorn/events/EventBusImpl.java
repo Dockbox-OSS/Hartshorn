@@ -187,7 +187,7 @@ public class EventBusImpl implements EventBus {
      */
     protected void checkListenerMethod(final MethodContext<?, ?> method) throws IllegalArgumentException {
         for (final Function<MethodContext<?, ?>, Exceptional<Boolean>> validator : this.validators) {
-            final boolean result = validator.apply(method).rethrow().get();
+            final boolean result = validator.apply(method).rethrowUnchecked().get();
             if (!result) throw new IllegalArgumentException("Unspecified validation error while validating: " + method.qualifiedName());
         }
     }

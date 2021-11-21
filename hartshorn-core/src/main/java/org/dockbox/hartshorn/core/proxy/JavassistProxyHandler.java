@@ -121,7 +121,7 @@ public class JavassistProxyHandler<T> extends DefaultContext implements ProxyHan
             final Method proceed,
             final Object self,
             Object returnValue
-    ) throws InvocationTargetException, IllegalAccessException, ApplicationException {
+    ) throws Throwable {
         // Used to ensure the target is performed if there is no OVERWRITE phase hook
         boolean target = true;
         for (final MethodProxyContext<T, ?> property : properties) {

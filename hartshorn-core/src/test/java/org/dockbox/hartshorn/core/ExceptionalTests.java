@@ -420,7 +420,7 @@ public class ExceptionalTests {
         final Exceptional<String> exceptional = Exceptional.of(new Exception("error"));
 
         try {
-            exceptional.rethrow();
+            exceptional.rethrowUnchecked();
             Assertions.fail();
         }
         catch (final Throwable t) {
