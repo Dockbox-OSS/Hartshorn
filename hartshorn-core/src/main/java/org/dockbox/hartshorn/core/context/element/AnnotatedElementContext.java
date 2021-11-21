@@ -50,7 +50,7 @@ public abstract class AnnotatedElementContext<A extends AnnotatedElement> extend
         if (this.annotationCache == null) {
             this.annotationCache = HartshornUtils.emptyConcurrentMap();
             for (final Annotation annotation : this.element().getAnnotations()) {
-                this.annotationCache.put(annotation.getClass(), annotation);
+                this.annotationCache.put(annotation.annotationType(), annotation);
             }
         }
         return this.annotationCache;
