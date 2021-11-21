@@ -17,7 +17,8 @@
 
 package org.dockbox.hartshorn.core.context.element;
 
-public interface TypedElementContext<T> extends QualifiedElement {
+import org.dockbox.hartshorn.core.domain.Named;
+
+public interface TypedElementContext<T> extends QualifiedElement, Named {
     TypeContext<T> type();
-    String name();
 }
