@@ -127,4 +127,8 @@ public class MethodContext<T, P> extends ExecutableElementContext<Method> implem
         final P instance = context.get(this.parent());
         return this.invoke(instance, args);
     }
+
+    public boolean isProtected() {
+        return this.has(AccessModifier.PROTECTED);
+    }
 }
