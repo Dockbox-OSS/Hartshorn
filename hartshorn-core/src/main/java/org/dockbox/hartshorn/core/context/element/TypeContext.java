@@ -42,10 +42,12 @@ import java.lang.reflect.Type;
 import java.lang.reflect.WildcardType;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -113,7 +115,8 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
     private List<T> enumConstants;
     private TypeContext<?> parent;
     private List<TypeContext<?>> interfaces;
-    private List<MethodContext<?, T>> flatMethods;
+    private List<MethodContext<?, T>> declaredAndInheritedMethods;
+    private List<MethodContext<?, T>> declaredMethods;
     private List<TypeContext<?>> typeParameters;
     private MultiMap<TypeContext<?>, TypeContext<?>> interfaceTypeParameters;
     private List<ConstructorContext<T>> constructors;
@@ -202,19 +205,37 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
     }
 
     public List<MethodContext<?, T>> methods() {
-        if (this.flatMethods == null) {
+        if (this.declaredAndInheritedMethods == null) {
             this.verifyMetadataAvailable();
-            final Method[] methods = this.type().getMethods();
-            // Note that .getMethods does not include abstract methods, while .getDeclaredMethods does, as
-            // abstract methods are as relevant as any other within this context they should be included.
+            final Set<Method> allMethods = new HashSet<>();
             final Method[] declaredMethods = this.type().getDeclaredMethods();
-            final Method[] allMethods = HartshornUtils.merge(methods, declaredMethods);
-            this.flatMethods = Arrays.stream(allMethods)
+            final Method[] methods = this.type().getMethods();
+            if (!this.parent().isVoid()) {
+                final List<Method> superClassMethods = this.parent().methods().stream()
+                        .filter(m -> m.isPublic() || m.isProtected())
+                        .map(MethodContext::method).collect(Collectors.toList());
+                allMethods.addAll(superClassMethods);
+            }
+            allMethods.addAll(Arrays.asList(declaredMethods));
+            allMethods.addAll(Arrays.asList(methods));
+
+            this.declaredAndInheritedMethods = allMethods.stream()
                     .map(MethodContext::of)
-                    .map(ctx -> (MethodContext<?, T>) ctx)
-                    .collect(Collectors.toList());
+                    .map(method -> (MethodContext<?, T>) method)
+                    .collect(Collectors.toUnmodifiableList());
         }
-        return this.flatMethods;
+        return this.declaredAndInheritedMethods;
+    }
+
+    public List<MethodContext<?, T>> declaredMethods() {
+        if (this.declaredMethods == null) {
+            this.verifyMetadataAvailable();
+            this.declaredMethods = Arrays.stream(this.type().getDeclaredMethods())
+                    .map(MethodContext::of)
+                    .map(method -> (MethodContext<?, T>) method)
+                    .collect(Collectors.toUnmodifiableList());
+        }
+        return this.declaredMethods;
     }
 
     public List<MethodContext<?, T>> methods(final Class<? extends Annotation> annotation) {
