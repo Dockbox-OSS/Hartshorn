@@ -1,9 +1,13 @@
 package org.dockbox.hartshorn.core;
 
+import org.dockbox.hartshorn.core.annotations.activate.Activator;
 import org.dockbox.hartshorn.core.annotations.service.ServiceActivator;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.exceptions.TypeConversionException;
+import org.dockbox.hartshorn.core.types.AnnotatedElement;
 import org.dockbox.hartshorn.core.types.BoundUserImpl;
+import org.dockbox.hartshorn.core.types.ImplementationWithTP;
+import org.dockbox.hartshorn.core.types.InterfaceWithTP;
 import org.dockbox.hartshorn.core.types.TestEnumType;
 import org.dockbox.hartshorn.core.types.User;
 import org.junit.jupiter.api.Assertions;
@@ -13,6 +17,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.lang.annotation.Annotation;
+import java.util.List;
 import java.util.stream.Stream;
 
 public class ElementContextTests {
@@ -296,5 +301,52 @@ public class ElementContextTests {
     void testPrimitivesFromString(final Class<?> primitive, final String value, final Object real) throws TypeConversionException {
         final Object out = TypeContext.toPrimitive(TypeContext.of(primitive), value);
         Assertions.assertEquals(real, out);
+    }
+
+    @Test
+    void testTypeParametersWithoutSourceAreFromSuperclass() {
+        final TypeContext<ImplementationWithTP> typeContext = TypeContext.of(ImplementationWithTP.class);
+        final List<TypeContext<?>> typeParameters = typeContext.typeParameters();
+        Assertions.assertEquals(1, typeParameters.size());
+        Assertions.assertEquals(Integer.class, typeParameters.get(0).type());
+    }
+
+    @Test
+    void testTypeParametersThrowsIllegalArgumentOnNonInterface() {
+        final TypeContext<ImplementationWithTP> typeContext = TypeContext.of(ImplementationWithTP.class);
+        Assertions.assertThrows(IllegalArgumentException.class, () -> typeContext.typeParameters(Object.class));
+    }
+
+    @Test
+    void testTypeParametersWithSourceAreFromGivenSource() {
+        final TypeContext<ImplementationWithTP> typeContext = TypeContext.of(ImplementationWithTP.class);
+        final List<TypeContext<?>> typeParameters = typeContext.typeParameters(InterfaceWithTP.class);
+        Assertions.assertEquals(1, typeParameters.size());
+        Assertions.assertEquals(String.class, typeParameters.get(0).type());
+    }
+
+    @Test
+    void testTypeParametersWithSourceContextAreFromGivenSource() {
+        final TypeContext<ImplementationWithTP> typeContext = TypeContext.of(ImplementationWithTP.class);
+        final List<TypeContext<?>> typeParameters = typeContext.typeParameters(TypeContext.of(InterfaceWithTP.class));
+        Assertions.assertEquals(1, typeParameters.size());
+        Assertions.assertEquals(String.class, typeParameters.get(0).type());
+    }
+
+    @Test
+    void testAnnotatedTypeHasAnnotations() {
+        final TypeContext<AnnotatedElement> typeContext = TypeContext.of(AnnotatedElement.class);
+        Assertions.assertEquals(1, typeContext.annotations().size());
+        Assertions.assertEquals(Activator.class, typeContext.annotations().get(0).annotationType());
+    }
+
+    @Test
+    void testAnnotatedTypeCanGetAnnotationFromContext() {
+        Assertions.assertTrue(TypeContext.of(AnnotatedElement.class).annotation(TypeContext.of(Activator.class)).present());
+    }
+
+    @Test
+    void testAnnotatedTypeCanGetAnnotationFromAnnotation() {
+        Assertions.assertTrue(TypeContext.of(AnnotatedElement.class).annotation(Activator.class).present());
     }
 }
