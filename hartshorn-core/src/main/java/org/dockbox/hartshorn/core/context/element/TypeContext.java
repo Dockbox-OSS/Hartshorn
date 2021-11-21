@@ -475,18 +475,6 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
     }
 
     @Override
-    public boolean equals(final Object o) {
-        if (this == o) return true;
-        if (!(o instanceof final TypeContext<?> that)) return false;
-        return this.type.equals(that.type);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(this.type);
-    }
-
-    @Override
     public String toString() {
         return "TypeContext{%s}".formatted(this.type);
     }

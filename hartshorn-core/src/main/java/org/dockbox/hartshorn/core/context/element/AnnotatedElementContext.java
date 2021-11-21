@@ -26,6 +26,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public abstract class AnnotatedElementContext<A extends AnnotatedElement> extends DefaultContext implements QualifiedElement {
 
@@ -56,4 +57,17 @@ public abstract class AnnotatedElementContext<A extends AnnotatedElement> extend
     }
 
     protected abstract A element();
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (o == null || this.getClass() != o.getClass()) return false;
+        final AnnotatedElementContext<?> that = (AnnotatedElementContext<?>) o;
+        return this.element().equals(that.element());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.element());
+    }
 }
