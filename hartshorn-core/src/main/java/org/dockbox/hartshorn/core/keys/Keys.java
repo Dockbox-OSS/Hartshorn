@@ -96,7 +96,6 @@ public final class Keys {
         return new KeyBuilder<>();
     }
 
-    @SuppressWarnings("ClassReferencesSubclass")
     public static class KeyBuilder<K, A> {
 
         protected BiFunction<K, A, TransactionResult> setter;

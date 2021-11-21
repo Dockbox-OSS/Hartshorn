@@ -34,7 +34,6 @@ public class RegistryIdentifierImpl implements RegistryIdentifier {
     }
 
     // Intended to support RegistryIdentifier implementations
-    @SuppressWarnings({ "EqualsWhichDoesntCheckParameterClass", "EqualsDoesntCheckParameterClass" })
     @Override
     public boolean equals(final Object o) {
         return RegistryIdentifier.super.same(o);

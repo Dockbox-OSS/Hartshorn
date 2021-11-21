@@ -56,7 +56,6 @@ import lombok.Getter;
  * @author Simbolduc, GuusLieben
  * @since feature/S124
  */
-@SuppressWarnings({ "unchecked", "rawtypes" })
 public class Table {
 
     private static final Map<TypeContext<?>, List<ColumnIdentifier<?>>> DEFINITIONS = HartshornUtils.emptyMap();
@@ -140,6 +139,7 @@ public class Table {
         return new Table(DEFINITIONS.getOrDefault(type, HartshornUtils.emptyList()));
     }
 
+    @SafeVarargs
     public static <T> Table of(final TypeContext<T> type, final T... defaultEntries) {
         final Table table = Table.of(type);
         for (final T entry : defaultEntries) {

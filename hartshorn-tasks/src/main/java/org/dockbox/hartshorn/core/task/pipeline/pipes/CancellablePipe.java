@@ -35,7 +35,6 @@ public interface CancellablePipe<I, O> extends ComplexPipe<I, O> {
 
     O execute(Runnable cancelPipeline, I input, Throwable throwable) throws ApplicationException;
 
-    @SuppressWarnings("rawtypes")
     @Override
     default TypeContext<CancellablePipe> type() {
         return TypeContext.of(CancellablePipe.class);

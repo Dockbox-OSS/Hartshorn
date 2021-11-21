@@ -44,7 +44,6 @@ public class ArgumentServiceProcessor implements ServiceProcessor<UseCommands> {
         return !type.fieldsOf(ArgumentConverter.class).isEmpty();
     }
 
-    @SuppressWarnings("rawtypes")
     @Override
     public <T> void process(final ApplicationContext context, final TypeContext<T> type) {
         final List<FieldContext<ArgumentConverter>> fields = type.fieldsOf(ArgumentConverter.class);

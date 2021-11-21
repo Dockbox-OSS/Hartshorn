@@ -28,7 +28,6 @@ import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-@SuppressWarnings({ "UnusedReturnValue", "unused" })
 public class Registry<V> extends HashMap<String, RegistryColumn<V>> {
 
     public Registry() {}

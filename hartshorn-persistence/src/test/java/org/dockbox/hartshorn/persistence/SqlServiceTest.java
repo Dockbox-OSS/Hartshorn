@@ -78,18 +78,17 @@ class SqlServiceTest extends ApplicationAwareTest {
     }
 
     protected static PersistenceConnection connection(final Remote remote, final JdbcDatabaseContainer<?> container, final int defaultPort) {
-        SQLRemoteServer server = SQLRemoteServer.of("localhost", container.getMappedPort(defaultPort), DEFAULT_DATABASE);
+        final SQLRemoteServer server = SQLRemoteServer.of("localhost", container.getMappedPort(defaultPort), DEFAULT_DATABASE);
         return new PersistenceConnection(remote.url(server), container.getUsername(), container.getPassword(), remote);
     }
 
-    protected static PersistenceConnection directory(Remote remote, final String prefix) {
+    protected static PersistenceConnection directory(final Remote remote, final String prefix) {
         try {
-            Path dir = Files.createTempDirectory(prefix);
+            final Path dir = Files.createTempDirectory(prefix);
             return new PersistenceConnection(remote.url(dir), "", "", remote);
         }
         catch (final Exception e) {
             Assumptions.assumeTrue(false);
-            //noinspection ReturnOfNull
             return null;
         }
     }

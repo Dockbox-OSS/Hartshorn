@@ -38,7 +38,6 @@ public class TaskRunnerTests extends ApplicationAwareTest {
         Assertions.assertTrue(activated[0]);
     }
 
-    @SuppressWarnings("ResultOfMethodCallIgnored")
     @Test
     void testTaskRunsDelayed() throws InterruptedException {
         final TaskRunner runner = this.context().get(TaskRunner.class);

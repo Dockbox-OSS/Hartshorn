@@ -30,7 +30,6 @@ public interface ComplexPipe<I, O> extends IPipe<I, O> {
 
     O apply(AbstractPipeline<?, I> pipeline, I input, Throwable throwable) throws ApplicationException;
 
-    @SuppressWarnings("rawtypes")
     @Override
     default TypeContext<? extends IPipe> type() {
         return TypeContext.of(ComplexPipe.class);

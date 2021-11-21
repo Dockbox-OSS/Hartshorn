@@ -154,7 +154,6 @@ public class CommandParserImpl implements CommandParser {
         }
         else {
             if (partial instanceof GroupCommandElement) {
-                //noinspection unchecked
                 final List<CommandElement<?>> elements = (List<CommandElement<?>>) value.get();
                 final List<String> tokens = HartshornUtils.asList(token.split(" "));
                 return this.parse(elements, tokens, source);

@@ -25,7 +25,6 @@ import java.util.Locale;
 
 import lombok.Getter;
 
-@SuppressWarnings("FieldMayBeFinal")
 @Demo
 public class ReflectTestType extends ParentTestType {
 

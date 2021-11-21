@@ -21,7 +21,6 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
-@SuppressWarnings("SuspiciousMethodCalls")
 public abstract class MultiMap<K, V> {
 
     private final Map<K, Collection<V>> map = HartshornUtils.emptyMap();
@@ -99,4 +98,3 @@ public abstract class MultiMap<K, V> {
         return false;
     }
 }
- 

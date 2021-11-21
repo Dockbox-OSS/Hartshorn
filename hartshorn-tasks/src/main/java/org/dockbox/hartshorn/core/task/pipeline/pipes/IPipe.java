@@ -26,7 +26,6 @@ public interface IPipe<I, O> {
      *
      * @return The {@link Class} of the pipe.
      */
-    @SuppressWarnings("rawtypes")
     default TypeContext<? extends IPipe> type() {
         return TypeContext.of(IPipe.class);
     }

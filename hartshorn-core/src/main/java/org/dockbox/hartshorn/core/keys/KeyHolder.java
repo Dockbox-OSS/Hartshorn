@@ -29,7 +29,6 @@ import org.dockbox.hartshorn.core.domain.Exceptional;
  * @param <T>
  *         The type which the {@link Key} can modify.
  */
-@SuppressWarnings("rawtypes")
 public interface KeyHolder<T extends KeyHolder> extends ContextCarrier {
 
     /**

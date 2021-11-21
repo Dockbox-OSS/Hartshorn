@@ -54,7 +54,6 @@ import javax.inject.Inject;
 import javassist.util.proxy.ProxyFactory;
 import lombok.Getter;
 
-@SuppressWarnings({ "unchecked", "rawtypes" })
 public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
 
     private static final Map<Class<?>, TypeContext<?>> CACHE = HartshornUtils.emptyConcurrentMap();
@@ -329,7 +328,6 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
         final Class<T> from = this.type();
 
         if (null == to || null == from) return false;
-        //noinspection ConstantConditions
         if (to == from || to.equals(from)) return true;
 
         if (to.isAssignableFrom(from)) {

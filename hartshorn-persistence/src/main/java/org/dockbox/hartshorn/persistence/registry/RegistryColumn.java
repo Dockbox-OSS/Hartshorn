@@ -25,7 +25,6 @@ import java.util.Collection;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-@SuppressWarnings({ "UnusedReturnValue", "unused" })
 public class RegistryColumn<T> extends ArrayList<T> {
 
     public RegistryColumn() {
@@ -108,7 +107,7 @@ public class RegistryColumn<T> extends ArrayList<T> {
 
         for (final T value : this) {
             if (clazz.isInstance(value)) {
-                @SuppressWarnings("unchecked") final K convertedValue = (K) value;
+                final K convertedValue = (K) value;
                 result.add(convertedValue);
             }
         }

@@ -42,7 +42,6 @@ import java.util.stream.Stream;
 
 import javassist.util.proxy.ProxyFactory;
 
-@SuppressWarnings("ALL")
 public class ReflectTests extends ApplicationAwareTest {
 
     private static Stream<Arguments> fields() {
@@ -124,17 +123,17 @@ public class ReflectTests extends ApplicationAwareTest {
 
     @ParameterizedTest
     @MethodSource("fields")
-    void testFieldValueReturnsValue(String field) {
+    void testFieldValueReturnsValue(final String field) {
         final ReflectTestType instance = new ReflectTestType();
         final TypeContext<ReflectTestType> type = TypeContext.of(instance);
-        Exceptional<?> value = type.field(field).get().get(instance);
+        final Exceptional<?> value = type.field(field).get().get(instance);
         Assertions.assertTrue(value.present());
         Assertions.assertEquals(field, value.get());
     }
 
     @ParameterizedTest
     @MethodSource("methods")
-    void testRunMethodReturnsValue(String method) {
+    void testRunMethodReturnsValue(final String method) {
         final ReflectTestType instance = new ReflectTestType();
         final TypeContext<ReflectTestType> type = TypeContext.of(instance);
         final Exceptional<?> value = type.method(method, HartshornUtils.asList(TypeContext.of(String.class))).get().invoke(instance, "value");
@@ -144,7 +143,7 @@ public class ReflectTests extends ApplicationAwareTest {
 
     @ParameterizedTest
     @MethodSource("assignablePrimitives")
-    void testAssignableFromPrimitives(Class<?> primitive, Class<?> wrapper) {
+    void testAssignableFromPrimitives(final Class<?> primitive, final Class<?> wrapper) {
         final TypeContext<?> pt = TypeContext.of(primitive);
         final TypeContext<?> wt = TypeContext.of(wrapper);
         Assertions.assertTrue(pt.childOf(wt));
@@ -167,7 +166,7 @@ public class ReflectTests extends ApplicationAwareTest {
         final List<MethodContext<?, ReflectTestType>> methods = type.methods(Demo.class);
         Assertions.assertEquals(3, methods.size());
 
-        List<String> names = methods.stream().map(MethodContext::name).toList();
+        final List<String> names = methods.stream().map(MethodContext::name).toList();
         Assertions.assertTrue(names.contains("publicAnnotatedMethod"));
         Assertions.assertTrue(names.contains("privateAnnotatedMethod"));
     }
@@ -175,7 +174,7 @@ public class ReflectTests extends ApplicationAwareTest {
     @Test
     void testAnnotatedTypesReturnsAllInPrefix() {
         final PrefixContext context = new PrefixContext(HartshornUtils.asList("org.dockbox.hartshorn.core.types"), this.context().environment());
-        Collection<TypeContext<?>> types = context.types(Demo.class);
+        final Collection<TypeContext<?>> types = context.types(Demo.class);
         Assertions.assertEquals(1, types.size());
         Assertions.assertEquals(ReflectTestType.class, types.iterator().next().type());
     }
@@ -183,7 +182,7 @@ public class ReflectTests extends ApplicationAwareTest {
     @Test
     void testSubTypesReturnsAllSubTypes() {
         final PrefixContext context = new PrefixContext(HartshornUtils.asList("org.dockbox.hartshorn.core.types"), this.context().environment());
-        Collection<TypeContext<? extends ParentTestType>> types = context.children(ParentTestType.class);
+        final Collection<TypeContext<? extends ParentTestType>> types = context.children(ParentTestType.class);
         Assertions.assertEquals(1, types.size());
         Assertions.assertEquals(ReflectTestType.class, types.iterator().next().type());
     }
@@ -191,13 +190,13 @@ public class ReflectTests extends ApplicationAwareTest {
     @Test
     void testStaticFieldsReturnsAllModifiers() {
         final List<FieldContext<?>> fields = TypeContext.of(ReflectTestType.class).fields().stream()
-                .filter(field -> field.isStatic())
+                .filter(FieldContext::isStatic)
                 .collect(Collectors.toList());
         Assertions.assertEquals(2, fields.size());
     }
 
     @Test
-    void testHasAnnotationOnMethod() throws NoSuchMethodException {
+    void testHasAnnotationOnMethod() {
         final Exceptional<MethodContext<?, ReflectTestType>> method = TypeContext.of(ReflectTestType.class).method("publicAnnotatedMethod");
         Assertions.assertTrue(method.present());
         Assertions.assertTrue(method.get().annotation(Demo.class).present());
@@ -211,11 +210,11 @@ public class ReflectTests extends ApplicationAwareTest {
     }
 
     @Test
-    void testMethodsReturnsAllDeclaredAndParentMethods() throws NoSuchMethodException {
+    void testMethodsReturnsAllDeclaredAndParentMethods() {
         final TypeContext<ReflectTestType> type = TypeContext.of(ReflectTestType.class);
         final List<MethodContext<?, ReflectTestType>> methods = type.methods();
         boolean fail = true;
-        for (MethodContext<?, ReflectTestType> method : methods) {
+        for (final MethodContext<?, ReflectTestType> method : methods) {
             if (method.name().equals("parentMethod")) fail = false;
         }
         if (fail) Assertions.fail("Parent types were not included");
@@ -223,14 +222,14 @@ public class ReflectTests extends ApplicationAwareTest {
 
     @Test
     void testLookupReturnsClassIfPresent() {
-        TypeContext<?> lookup = TypeContext.lookup("org.dockbox.hartshorn.core.types.ReflectTestType");
+        final TypeContext<?> lookup = TypeContext.lookup("org.dockbox.hartshorn.core.types.ReflectTestType");
         Assertions.assertNotNull(lookup);
         Assertions.assertEquals(ReflectTestType.class, lookup.type());
     }
 
     @Test
     void testLookupReturnsNullIfAbsent() {
-        TypeContext<?> lookup = TypeContext.lookup("org.dockbox.hartshorn.util.AnotherClass");
+        final TypeContext<?> lookup = TypeContext.lookup("org.dockbox.hartshorn.util.AnotherClass");
         Assertions.assertEquals(TypeContext.VOID, lookup);
     }
 
@@ -256,7 +255,7 @@ public class ReflectTests extends ApplicationAwareTest {
 
     @ParameterizedTest
     @MethodSource("nonVoidTypes")
-    void testVoidIsFalseIfTypeIsNotVoid(Class<?> type) {
+    void testVoidIsFalseIfTypeIsNotVoid(final Class<?> type) {
         Assertions.assertFalse(TypeContext.of(type).isVoid());
     }
 
@@ -272,25 +271,25 @@ public class ReflectTests extends ApplicationAwareTest {
 
     @ParameterizedTest
     @MethodSource("fields")
-    void testHasFieldReturnsTrue(String field) {
+    void testHasFieldReturnsTrue(final String field) {
         Assertions.assertTrue(TypeContext.of(ReflectTestType.class).field(field).present());
     }
 
     @ParameterizedTest
     @MethodSource("fields")
-    void testFieldsConsumesAllFields(String field) {
+    void testFieldsConsumesAllFields(final String field) {
         boolean activated = false;
         final TypeContext<ReflectTestType> type = TypeContext.of(ReflectTestType.class);
-        for (FieldContext<?> fieldContext : type.fields()) {
+        for (final FieldContext<?> fieldContext : type.fields()) {
             if (fieldContext.name().equals(field)) activated = true;
         }
         Assertions.assertTrue(activated);
     }
 
     @Test
-    void testSetFieldUpdatesAccessorField() throws NoSuchFieldException, IllegalAccessException {
-        Field fieldRef = ReflectTestType.class.getDeclaredField("accessorField");
-        ReflectTestType instance = new ReflectTestType();
+    void testSetFieldUpdatesAccessorField() throws NoSuchFieldException {
+        final Field fieldRef = ReflectTestType.class.getDeclaredField("accessorField");
+        final ReflectTestType instance = new ReflectTestType();
         final FieldContext<?> field = FieldContext.of(fieldRef);
         field.set(instance, "newValue");
 
@@ -298,9 +297,9 @@ public class ReflectTests extends ApplicationAwareTest {
     }
 
     @Test
-    void testSetFieldUpdatesNormalField() throws NoSuchFieldException, IllegalAccessException {
-        Field fieldRef = ReflectTestType.class.getDeclaredField("publicField");
-        ReflectTestType instance = new ReflectTestType();
+    void testSetFieldUpdatesNormalField() throws NoSuchFieldException {
+        final Field fieldRef = ReflectTestType.class.getDeclaredField("publicField");
+        final ReflectTestType instance = new ReflectTestType();
         final FieldContext<?> field = FieldContext.of(fieldRef);
         field.set(instance, "newValue");
 
@@ -312,7 +311,7 @@ public class ReflectTests extends ApplicationAwareTest {
         final List<FieldContext<?>> fields = TypeContext.of(ReflectTestType.class).fields(Demo.class);
         Assertions.assertEquals(2, fields.size());
         int statics = 0;
-        for (FieldContext<?> field : fields) {
+        for (final FieldContext<?> field : fields) {
             if (field.isStatic()) statics++;
         }
         Assertions.assertEquals(1, statics);
@@ -326,8 +325,8 @@ public class ReflectTests extends ApplicationAwareTest {
     }
 
     @Test
-    void testIsProxyIsTrueIfTypeIsProxy() throws InstantiationException, IllegalAccessException {
-        Class<?> type = new ProxyFactory().createClass();
+    void testIsProxyIsTrueIfTypeIsProxy() {
+        final Class<?> type = new ProxyFactory().createClass();
         Assertions.assertTrue(TypeContext.of(type).isProxy());
     }
 
@@ -338,9 +337,9 @@ public class ReflectTests extends ApplicationAwareTest {
 
     @ParameterizedTest
     @MethodSource("primitiveValues")
-    void testStringToPrimitive(Class<?> type, String value, Object expected) throws TypeConversionException {
-        byte b = 0x0;
-        Object o = TypeContext.toPrimitive(TypeContext.of(type), value);
+    void testStringToPrimitive(final Class<?> type, final String value, final Object expected) throws TypeConversionException {
+        final byte b = 0x0;
+        final Object o = TypeContext.toPrimitive(TypeContext.of(type), value);
         Assertions.assertNotNull(o);
         Assertions.assertEquals(expected, o);
     }
