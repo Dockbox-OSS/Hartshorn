@@ -46,7 +46,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -546,7 +545,7 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
             Class<?> type = this.type();
             while (type != null) {
                 for (final Annotation annotation : type.getDeclaredAnnotations()) {
-                    annotations.put(annotation.getClass(), annotation);
+                    annotations.put(annotation.annotationType(), annotation);
                 }
                 type = type.getSuperclass();
             }
