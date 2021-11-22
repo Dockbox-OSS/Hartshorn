@@ -41,7 +41,7 @@ import java.util.Arrays;
  */
 public class ExceptionHelper {
 
-    private static final Logger log = LoggerFactory.getLogger("Hartshorn");
+    private static final Logger log = LoggerFactory.getLogger(ExceptionHelper.class);
     private static final String separator = "========================================";
 
     /**
@@ -59,7 +59,9 @@ public class ExceptionHelper {
         log.error(ExceptionHelper.separator);
         if (null != exception) {
             log.error("Exception: " + exception.getClass().getCanonicalName());
-            if (null != message && !message.isEmpty()) log.error("Message: " + message);
+            if (null != message && !message.isEmpty()) log.error("First message: " + message);
+            final String causeMessage = Except.causeMessage(exception);
+            if (null != causeMessage && !causeMessage.isEmpty()) log.error("Cause: " + causeMessage);
 
             if (0 < exception.getStackTrace().length) {
                 final StackTraceElement root = exception.getStackTrace()[0];

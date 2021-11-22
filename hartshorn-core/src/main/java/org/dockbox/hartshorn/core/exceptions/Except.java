@@ -74,4 +74,16 @@ public final class Except {
         return "No message provided";
     }
 
+    public static String causeMessage(final Throwable throwable) {
+        String message = throwable.getMessage();
+        Throwable next = throwable;
+        while (next != null) {
+            if (null != next.getMessage()) message = next.getMessage();
+            // Avoid infinitely looping if the throwable has itself as cause
+            if (!next.equals(throwable.getCause())) next = next.getCause();
+            else break;
+        }
+        return message;
+    }
+
 }
