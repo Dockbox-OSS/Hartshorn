@@ -35,7 +35,6 @@ import org.eclipse.jetty.server.handler.HandlerWrapper;
 import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
-import org.eclipse.jetty.util.thread.QueuedThreadPool;
 
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -58,7 +57,7 @@ public class JettyHttpWebServer extends DefaultHttpWebServer {
     private final HandlerWrapper servletHandler;
     @Getter @Setter
     private PersistenceModifier skipBehavior = PersistenceModifier.SKIP_NONE;
-    private Server server;
+    private JettyServer server;
 
     @Inject
     public JettyHttpWebServer(final JettyResourceService resourceService) {
@@ -82,10 +81,7 @@ public class JettyHttpWebServer extends DefaultHttpWebServer {
             if (this.server != null)
                 this.server.stop();
 
-            final QueuedThreadPool threadPool = new QueuedThreadPool();
-            threadPool.setName(Hartshorn.PROJECT_NAME);
-
-            this.server = new Server(threadPool);
+            this.server = this.context.get(JettyServer.class);
             this.server.setConnectors(new Connector[]{ this.connector(this.server, port) });
             this.server.setHandler(this.servletHandler);
             this.server.setErrorHandler(this.errorHandler());

@@ -80,7 +80,7 @@ public class HttpWebServletAdapter extends HttpServlet {
         catch (final ApplicationException e) {
             if (e.getCause() instanceof ServletException servletException) throw servletException;
             else if (e.getCause() instanceof IOException ioException) throw ioException;
-            else throw new ServletException(e);
+            else throw new ServletException(e.unwrap());
         }
     }
 
