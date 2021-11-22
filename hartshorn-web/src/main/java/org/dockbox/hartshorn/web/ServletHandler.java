@@ -92,7 +92,6 @@ public class ServletHandler implements Enableable {
                 if (result.present()) {
                     this.context.log().debug("Request %s processed for session %s, writing response body".formatted(request, sessionId));
                     try {
-                        res.setStatus(HttpStatus.OK.value());
                         if (String.class.equals(result.type())) {
                             res.setContentType("text/plain");
                             this.context.log().debug("Returning plain body for request %s".formatted(request));
