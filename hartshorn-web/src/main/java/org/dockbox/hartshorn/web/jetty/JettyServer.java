@@ -3,8 +3,8 @@ package org.dockbox.hartshorn.web.jetty;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 import org.dockbox.hartshorn.core.exceptions.Except;
+import org.dockbox.hartshorn.web.HttpStatus;
 import org.eclipse.jetty.http.HttpMethod;
-import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.jetty.server.HttpChannel;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Response;
@@ -33,7 +33,7 @@ public class JettyServer extends Server {
         if (HttpMethod.OPTIONS.is(request.getMethod()) || "*".equals(target)) {
             if (!HttpMethod.OPTIONS.is(request.getMethod())) {
                 request.setHandled(true);
-                response.sendError(HttpStatus.BAD_REQUEST_400);
+                response.sendError(HttpStatus.BAD_REQUEST.value());
             }
             else {
                 this.handleOptions(request, response);
@@ -55,7 +55,8 @@ public class JettyServer extends Server {
                 if (cause instanceof ApplicationException) cause = cause.getCause();
 
                 request.setAttribute(RequestDispatcher.ERROR_EXCEPTION, cause);
-                this.errorHandler.generateAcceptableResponse(request, request, response, org.dockbox.hartshorn.web.HttpStatus.INTERNAL_SERVER_ERROR.value(), cause.getMessage(), contentType);
+                response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+                this.errorHandler.generateAcceptableResponse(request, request, response, HttpStatus.INTERNAL_SERVER_ERROR.value(), cause.getMessage(), contentType);
             }
         }
     }
