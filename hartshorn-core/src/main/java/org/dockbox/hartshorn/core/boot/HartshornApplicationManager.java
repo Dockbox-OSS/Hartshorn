@@ -24,6 +24,7 @@ import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.proxy.ProxyHandler;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.nio.file.Path;
 import java.util.Set;
@@ -53,6 +54,7 @@ public class HartshornApplicationManager implements ApplicationManager {
     private final ApplicationProxier applicationProxier;
 
     public HartshornApplicationManager(
+            final TypeContext<?> activator,
             final ApplicationLogger applicationLogger,
             final ApplicationProxier applicationProxier,
             final ApplicationFSProvider applicationFSProvider
@@ -69,14 +71,15 @@ public class HartshornApplicationManager implements ApplicationManager {
             applicationManaged.applicationManager(this);
         this.applicationFSProvider = applicationFSProvider;
 
-        if (!this.isCI()) this.printHeader();
+        if (!this.isCI()) this.printHeader(activator);
     }
 
-    private void printHeader() {
+    private void printHeader(final TypeContext<?> activator) {
+        final Logger logger = LoggerFactory.getLogger(activator.type());
         for (final String line : BANNER.split("\n")) {
-            Hartshorn.log().info(line);
+            logger.info(line);
         }
-        Hartshorn.log().info("");
+        logger.info("");
     }
 
     @Override

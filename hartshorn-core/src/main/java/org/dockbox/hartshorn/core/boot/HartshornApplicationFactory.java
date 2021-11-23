@@ -34,6 +34,8 @@ import org.dockbox.hartshorn.core.inject.InjectionModifier;
 import org.dockbox.hartshorn.core.services.ComponentLocator;
 import org.dockbox.hartshorn.core.services.ComponentLocatorImpl;
 import org.dockbox.hartshorn.core.services.ComponentProcessor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.annotation.Annotation;
 import java.lang.management.ManagementFactory;
@@ -163,10 +165,12 @@ public class HartshornApplicationFactory implements ApplicationFactory<Hartshorn
     public HartshornApplicationContext create() {
         this.validate();
 
-        Hartshorn.log().info("Starting " + Hartshorn.PROJECT_NAME + " with activator " + this.activator.name());
+        final Logger logger = LoggerFactory.getLogger(this.activator.type());
+
+        logger.info("Starting " + Hartshorn.PROJECT_NAME + " with activator " + this.activator.name());
 
         final long applicationStartTimestamp = System.currentTimeMillis();
-        final HartshornApplicationManager manager = new HartshornApplicationManager(this.applicationLogger, this.applicationProxier, this.applicationFSProvider);
+        final HartshornApplicationManager manager = new HartshornApplicationManager(this.activator, this.applicationLogger, this.applicationProxier, this.applicationFSProvider);
         final ApplicationEnvironment environment = this.applicationEnvironment.apply(manager);
 
         final HartshornApplicationContext applicationContext = new HartshornApplicationContext(environment, this.componentLocator, this.activator, this.prefixes, this.arguments, this.modifiers);
@@ -221,7 +225,7 @@ public class HartshornApplicationFactory implements ApplicationFactory<Hartshorn
         final double startupTime = ((double) (applicationStartedTimestamp - applicationStartTimestamp)) / 1000;
         final double jvmUptime = ((double) ManagementFactory.getRuntimeMXBean().getUptime()) / 1000;
 
-        applicationContext.log().info("Started " + Hartshorn.PROJECT_NAME + " in " + startupTime + " seconds (JVM running for " + jvmUptime + ")");
+        logger.info("Started " + Hartshorn.PROJECT_NAME + " in " + startupTime + " seconds (JVM running for " + jvmUptime + ")");
 
         return applicationContext;
     }
