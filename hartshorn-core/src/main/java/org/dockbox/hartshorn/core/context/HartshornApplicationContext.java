@@ -167,20 +167,6 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
 
         unproxied.fields(Enable.class)
                 .forEach(field -> this.enableField(field, typeInstance));
-
-        unproxied.fields(Inject.class).stream()
-                .filter(field -> field.annotation(Enable.class).absent())
-                .forEach(field -> {
-                    final Exceptional<?> instance = field.get(typeInstance);
-                    if (instance.present()) {
-                        try {
-                            Bindings.enable(instance.get());
-                        }
-                        catch (final ApplicationException e) {
-                            throw new ApplicationException("Could not enable injected field " + field.name(), e).runtime();
-                        }
-                    }
-                });
     }
 
     protected void enableField(final FieldContext<?> field, final Object typeInstance) {
