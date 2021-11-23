@@ -158,9 +158,9 @@ public class ApplicationContextTests extends ApplicationAwareTest {
     @Test
     public void testScannedMetaBindingsCanBeProvided() {
         this.context().bind("test.types.meta");
+        // Ensure that the binding is not bound to the default name
         final SampleInterface sample = this.context().get(SampleInterface.class);
-        Assertions.assertTrue(TypeContext.of(sample).isProxy());
-        Assertions.assertThrows(AbstractMethodError.class, sample::name);
+        Assertions.assertNull(sample); // Non-component, so null
 
         final SampleInterface provided = this.context().get(SampleInterface.class, Bindings.named("meta"));
         Assertions.assertNotNull(provided);
