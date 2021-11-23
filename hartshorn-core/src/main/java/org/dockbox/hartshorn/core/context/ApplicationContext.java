@@ -37,7 +37,7 @@ public interface ApplicationContext extends ApplicationBinder, HartshornContext,
 
     void add(InjectionPoint<?> property);
 
-    <T> T create(Key<T> type, T typeInstance);
+    <T> T create(Key<T> type);
 
     <T> T inject(Key<T> type, T typeInstance);
 

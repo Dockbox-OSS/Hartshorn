@@ -90,6 +90,11 @@ public class HartshornApplicationManager implements ApplicationManager {
     }
 
     @Override
+    public <T> Exceptional<T> proxy(final TypeContext<T> type) {
+        return this.applicationProxier.proxy(type);
+    }
+
+    @Override
     public <T> Exceptional<T> proxy(final TypeContext<T> type, final T instance) {
         return this.applicationProxier.proxy(type, instance);
     }
