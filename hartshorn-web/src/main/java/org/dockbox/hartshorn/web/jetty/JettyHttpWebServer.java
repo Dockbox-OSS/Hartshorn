@@ -81,11 +81,13 @@ public class JettyHttpWebServer extends DefaultHttpWebServer {
             if (this.server != null)
                 this.server.stop();
 
+            this.context.log().info("Starting service [JettyServer]");
             this.server = this.context.get(JettyServer.class);
             this.server.setConnectors(new Connector[]{ this.connector(this.server, port) });
             this.server.setHandler(this.servletHandler);
             this.server.setErrorHandler(this.errorHandler());
             this.server.start();
+            this.context.log().info("Service [JettyServer] started on port [{}]", port);
         } catch (final Exception e) {
             throw new ApplicationException(e);
         }
