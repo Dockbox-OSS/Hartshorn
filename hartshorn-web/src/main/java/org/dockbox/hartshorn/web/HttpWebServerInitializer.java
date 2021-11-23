@@ -19,13 +19,14 @@ package org.dockbox.hartshorn.web;
 
 import org.dockbox.hartshorn.config.annotations.Value;
 import org.dockbox.hartshorn.core.HartshornUtils;
-import org.dockbox.hartshorn.core.annotations.UseBootstrap;
 import org.dockbox.hartshorn.core.annotations.service.Service;
 import org.dockbox.hartshorn.core.boot.LifecycleObserver;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 import org.dockbox.hartshorn.core.exceptions.Except;
+import org.dockbox.hartshorn.web.annotations.UseHttpServer;
+import org.dockbox.hartshorn.web.annotations.UseMvcServer;
 import org.dockbox.hartshorn.web.mvc.MVCInitializer;
 import org.dockbox.hartshorn.web.mvc.ViewTemplate;
 import org.dockbox.hartshorn.web.servlet.HttpWebServletAdapter;
@@ -39,8 +40,8 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.servlet.Servlet;
 
-@Service(activators = UseBootstrap.class)
-public class ServerBootstrap implements LifecycleObserver {
+@Service(activators = UseHttpServer.class)
+public class HttpWebServerInitializer implements LifecycleObserver {
 
     public static final int DEFAULT_PORT = 8080;
 
@@ -72,14 +73,18 @@ public class ServerBootstrap implements LifecycleObserver {
             servlets.put(context.pathSpec(), adapter);
         }
 
-        final MvcControllerContext mvcControllerContext = applicationContext.first(MvcControllerContext.class).get();
-        for (final RequestHandlerContext context : mvcControllerContext.contexts()) {
-            final MvcServlet servlet = this.webServletFactory.mvc((MethodContext<ViewTemplate, ?>) context.methodContext());
-            final Servlet adapter = new HttpWebServletAdapter(applicationContext, servlet);
-            servlets.put(context.pathSpec(), adapter);
+        if (applicationContext.hasActivator(UseMvcServer.class)) {
+            final MvcControllerContext mvcControllerContext = applicationContext.first(MvcControllerContext.class).get();
+            for (final RequestHandlerContext context : mvcControllerContext.contexts()) {
+                final MvcServlet servlet = this.webServletFactory.mvc((MethodContext<ViewTemplate, ?>) context.methodContext());
+                final Servlet adapter = new HttpWebServletAdapter(applicationContext, servlet);
+                servlets.put(context.pathSpec(), adapter);
+            }
         }
 
         servlets.forEach((path, servlet) -> this.webServer.register(servlet, path));
+
+        applicationContext.log().info("Located and registered " + servlets.size() + " servlet" + (servlets.size() == 1 ? "" : "s") + (this.useDirectoryServlet ? " and will serve static content" : ""));
 
         this.webServer.listStaticDirectories(this.useDirectoryServlet);
 
