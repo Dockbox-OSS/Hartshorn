@@ -10,11 +10,7 @@
         </encoder>
     </appender>
 
-    <logger name="org.dockbox.hartshorn" level="info" />
-    <logger name="org.reflections" level="warn" />
-    <logger name="org.eclipse.jetty" level="warn" />
-
-    <root level="error">
+    <root level="info">
         <appender-ref ref="STDOUT"/>
     </root>
 </configuration>
