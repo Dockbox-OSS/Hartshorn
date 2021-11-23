@@ -253,12 +253,11 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
     protected void process(final ServiceOrder order, final Collection<ComponentContainer> containers) {
         for (final ComponentProcessor<?> serviceProcessor : this.processors.get(order)) {
             for (final ComponentContainer container : containers) {
-                if (container.activators().stream().allMatch(this::hasActivator)) {
-                    final TypeContext<?> service = container.type();
-                    if (serviceProcessor.processable(this, service)) {
-                        this.log().debug("Processing component %s with registered processor %s in phase %s".formatted(container.id(), TypeContext.of(serviceProcessor).name(), order));
-                        serviceProcessor.process(this, service);
-                    }
+                final TypeContext<?> service = container.type();
+                if (serviceProcessor.processable(this, service)) {
+                    final long start = System.currentTimeMillis();
+                    this.log().debug("Processing component %s with registered processor %s in phase %s".formatted(container.id(), TypeContext.of(serviceProcessor).name(), order));
+                    serviceProcessor.process(this, service);
                 }
             }
         }
