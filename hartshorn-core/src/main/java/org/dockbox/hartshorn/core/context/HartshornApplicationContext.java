@@ -161,30 +161,6 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
         return typeInstance;
     }
 
-    public <T> void enableFields(final T typeInstance) {
-        if (typeInstance == null) return;
-        final TypeContext<T> unproxied = TypeContext.unproxy(this, typeInstance);
-
-        unproxied.fields(Enable.class)
-                .forEach(field -> this.enableField(field, typeInstance));
-    }
-
-    protected void enableField(final FieldContext<?> field, final Object typeInstance) {
-        final Enable enable = field.annotation(Enable.class).get();
-        if (enable.value()) {
-            final Exceptional<?> instance = field.get(typeInstance);
-            if (instance.present()) {
-                final Object injectInstance = instance.get();
-                try {
-                    Bindings.enable(injectInstance);
-                }
-                catch (final ApplicationException e) {
-                    throw new ApplicationException("Could not enable manually marked (with @Enabled) field " + field.name(), e).runtime();
-                }
-            }
-        }
-    }
-
     public <T> T raw(final TypeContext<T> type) throws TypeProvisionException {
         return this.raw(type, true);
     }
@@ -318,6 +294,10 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
 
     @Override
     public <T> T get(final Key<T> key) {
+        return this.get(key, true);
+    }
+
+    private <T> T get(final Key<T> key, final boolean enable) {
         if (this.singletons.containsKey(key)) return (T) this.singletons.get(key);
 
         T instance = this.create(key, null);
@@ -330,15 +310,14 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
 
         for (final ServiceOrder order : ServiceOrder.values()) instance = this.modify(order, key, instance);
 
-        // Enables all fields which are decorated with @Wired(enable=true)
-        this.enableFields(instance);
-
         // Inject properties if applicable
-        try {
-            Bindings.enable(instance);
-        }
-        catch (final ApplicationException e) {
-            throw e.runtime();
+        if (enable) {
+            try {
+                Bindings.enable(instance);
+            }
+            catch (final ApplicationException e) {
+                throw e.runtime();
+            }
         }
 
         final MetaProvider meta = this.meta();
@@ -457,7 +436,10 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
                 Key<?> fieldKey = Key.of(field.type());
                 if (field.annotation(Named.class).present()) fieldKey = Key.of(field.type(), field.annotation(Named.class).get());
 
-                final Object fieldInstance = this.get(fieldKey);
+                final Exceptional<Enable> enableAnnotation = field.annotation(Enable.class);
+                final boolean enable = !enableAnnotation.present() || enableAnnotation.get().value();
+
+                final Object fieldInstance = this.get(fieldKey, enable);
                 field.set(instance, fieldInstance);
             }
             for (final FieldContext<?> field : unproxied.fields(Context.class)) {
