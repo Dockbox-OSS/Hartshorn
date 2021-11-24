@@ -41,8 +41,6 @@ public interface ApplicationContext extends ApplicationBinder, HartshornContext,
 
     <T> T inject(Key<T> type, T typeInstance);
 
-    <T> void enableFields(T typeInstance);
-
     <T> T raw(TypeContext<T> type) throws TypeProvisionException;
 
     <T> T raw(TypeContext<T> type, boolean populate) throws TypeProvisionException;

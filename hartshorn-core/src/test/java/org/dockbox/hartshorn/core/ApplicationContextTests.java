@@ -24,6 +24,7 @@ import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.proxy.ExtendedProxy;
 import org.dockbox.hartshorn.core.types.ContextInjectedType;
 import org.dockbox.hartshorn.core.types.SampleContext;
+import org.dockbox.hartshorn.core.types.TypeWithEnabledInjectField;
 import org.dockbox.hartshorn.core.types.User;
 import org.dockbox.hartshorn.testsuite.ApplicationAwareTest;
 import org.junit.jupiter.api.Assertions;
@@ -168,6 +169,14 @@ public class ApplicationContextTests extends ApplicationAwareTest {
         Assertions.assertEquals(SampleMetaAnnotatedImplementation.class, providedClass);
 
         Assertions.assertEquals("MetaAnnotatedHartshorn", provided.name());
+    }
+
+    @Test
+    void testEnabledInjectDoesNotInjectTwice() {
+        final TypeWithEnabledInjectField instance = this.context().get(TypeWithEnabledInjectField.class);
+        Assertions.assertNotNull(instance);
+        Assertions.assertNotNull(instance.singletonEnableable());
+        Assertions.assertEquals(1, instance.singletonEnableable().enabled());
     }
 
     @Test
