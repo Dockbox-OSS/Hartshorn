@@ -55,6 +55,7 @@ import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 import org.dockbox.hartshorn.core.exceptions.TypeProvisionException;
 import org.dockbox.hartshorn.core.inject.InjectionModifier;
 import org.dockbox.hartshorn.core.inject.ProviderContext;
+import org.dockbox.hartshorn.core.proxy.ProxyLookup;
 import org.dockbox.hartshorn.core.services.ComponentContainer;
 import org.dockbox.hartshorn.core.services.ComponentLocator;
 import org.dockbox.hartshorn.core.services.ComponentProcessor;
@@ -127,18 +128,20 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
         this.bind(Key.of(ApplicationManager.class), this.environment().manager());
         this.bind(Key.of(ApplicationLogger.class), this.environment().manager());
         this.bind(Key.of(ApplicationProxier.class), this.environment().manager());
+        this.bind(Key.of(ProxyLookup.class), this.environment().manager());
         this.bind(Key.of(LifecycleObservable.class), this.environment().manager());
     }
 
     public void addActivator(final Annotation annotation) {
         if (this.activators.contains(annotation)) return;
-        final Exceptional<ServiceActivator> activator = TypeContext.of(annotation.annotationType()).annotation(ServiceActivator.class);
+        final TypeContext<? extends Annotation> annotationType = TypeContext.of(annotation.annotationType());
+        final Exceptional<ServiceActivator> activator = annotationType.annotation(ServiceActivator.class);
         if (activator.present()) {
             this.activators.add(annotation);
             for (final String scanPackage : activator.get().scanPackages()) {
                 this.environment().prefix(scanPackage);
             }
-            this.environment().annotationsWith(TypeContext.unproxy(this, annotation), ServiceActivator.class).forEach(this::addActivator);
+            this.environment().annotationsWith(annotationType, ServiceActivator.class).forEach(this::addActivator);
         }
     }
 
