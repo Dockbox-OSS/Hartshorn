@@ -39,4 +39,12 @@ public class ApplicationException extends Exception {
     public RuntimeException runtime() {
         return new RuntimeException(this);
     }
+
+    public Throwable unwrap() {
+        Throwable root = this;
+        while (root.getCause() instanceof ApplicationException applicationException && root.getCause() != root) {
+            root = root.getCause();
+        }
+        return root;
+    }
 }

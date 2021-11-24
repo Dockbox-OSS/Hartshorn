@@ -17,6 +17,8 @@
 
 package org.dockbox.hartshorn.web.jetty;
 
+import org.dockbox.hartshorn.config.annotations.Value;
+import org.dockbox.hartshorn.core.annotations.component.Component;
 import org.dockbox.hartshorn.core.boot.Hartshorn;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
@@ -46,12 +48,16 @@ import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+@Component
 public class JettyErrorHandler extends ErrorHandler {
 
     @Inject
     private ApplicationContext context;
     @Inject
     private ErrorServlet errorServlet;
+
+    @Value(value = "hartshorn.web.headers.hartshorn", or = "true")
+    private boolean addHeader;
 
     @Override
     protected void generateAcceptableResponse(final Request baseRequest, final HttpServletRequest request, final HttpServletResponse response, final int code, String message, final String contentType)
@@ -65,7 +71,7 @@ public class JettyErrorHandler extends ErrorHandler {
             final PrintWriter writer = new PrintWriter(new OutputStreamWriter(out, charset));
 
             response.setCharacterEncoding(charset.name());
-            response.addHeader("Hartshorn-Version", Hartshorn.VERSION);
+            if (this.addHeader) response.addHeader("Hartshorn-Version", Hartshorn.VERSION);
 
             final Throwable th = (Throwable) request.getAttribute(RequestDispatcher.ERROR_EXCEPTION);
             final RequestError error = new RequestErrorImpl(this.context, request, response, code, writer, message, th);

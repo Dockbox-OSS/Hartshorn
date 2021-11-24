@@ -92,7 +92,6 @@ public class ServletHandler implements Enableable {
                 if (result.present()) {
                     this.context.log().debug("Request %s processed for session %s, writing response body".formatted(request, sessionId));
                     try {
-                        res.setStatus(HttpStatus.OK.value());
                         if (String.class.equals(result.type())) {
                             res.setContentType("text/plain");
                             this.context.log().debug("Returning plain body for request %s".formatted(request));
@@ -119,7 +118,15 @@ public class ServletHandler implements Enableable {
                         throw new ApplicationException(e);
                     }
                 }
+                else {
+                    if (result.caught()) throw new ApplicationException(result.error());
+                    else {
+                        res.setStatus(HttpStatus.NO_CONTENT.value());
+                    }
+                    return;
+                }
             }
+
             fallbackAction.fallback(req, res);
         }
     }
