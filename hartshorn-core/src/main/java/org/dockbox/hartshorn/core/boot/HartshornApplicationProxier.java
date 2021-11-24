@@ -36,6 +36,11 @@ public class HartshornApplicationProxier implements ApplicationProxier, Applicat
     private ApplicationManager applicationManager;
     private final Set<ProxyLookup> proxyLookups = HartshornUtils.emptyConcurrentSet();
 
+    public HartshornApplicationProxier() {
+        this.proxyLookups.add(new NativeProxyLookup());
+        this.proxyLookups.add(new JavassistProxyLookup());
+    }
+
     @Override
     public <T> Exceptional<T> proxy(final TypeContext<T> type, final T instance) {
         return Exceptional.of(() -> JavassistProxyUtil.handler(type, instance).proxy(instance));
