@@ -1,0 +1,16 @@
+<configuration>
+    <!--Disable Logback default init output-->
+    <statusListener class="ch.qos.logback.core.status.NopStatusListener" />
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <withJansi>true</withJansi>
+        <!--Custom encoder to support process_id-->
+        <encoder class="org.dockbox.hartshorn.core.boot.logback.LogbackEncoder">
+            <pattern>%d{HH:mm:ss.SSS} %white([ %-15.15t]) @ %green(%process_id) -> %cyan(%-38.38logger{36}) %magenta(%-5level) - %msg%n
+            </pattern>
+        </encoder>
+    </appender>
+
+    <root level="info">
+        <appender-ref ref="STDOUT"/>
+    </root>
+</configuration>

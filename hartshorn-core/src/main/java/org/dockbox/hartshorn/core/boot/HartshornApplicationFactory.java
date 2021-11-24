@@ -20,10 +20,10 @@ package org.dockbox.hartshorn.core.boot;
 import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.core.InjectConfiguration;
 import org.dockbox.hartshorn.core.Modifier;
+import org.dockbox.hartshorn.core.annotations.UseBootstrap;
 import org.dockbox.hartshorn.core.annotations.activate.Activator;
 import org.dockbox.hartshorn.core.annotations.inject.InjectConfig;
 import org.dockbox.hartshorn.core.annotations.proxy.UseProxying;
-import org.dockbox.hartshorn.core.annotations.UseBootstrap;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.ApplicationEnvironment;
 import org.dockbox.hartshorn.core.context.HartshornApplicationContext;
@@ -34,8 +34,12 @@ import org.dockbox.hartshorn.core.inject.InjectionModifier;
 import org.dockbox.hartshorn.core.services.ComponentLocator;
 import org.dockbox.hartshorn.core.services.ComponentLocatorImpl;
 import org.dockbox.hartshorn.core.services.ComponentProcessor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.annotation.Annotation;
+import java.lang.management.ManagementFactory;
+import java.lang.management.RuntimeMXBean;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Set;
@@ -162,10 +166,16 @@ public class HartshornApplicationFactory implements ApplicationFactory<Hartshorn
     public HartshornApplicationContext create() {
         this.validate();
 
-        Hartshorn.log().info("Starting " + Hartshorn.PROJECT_NAME + " with activator " + this.activator.name());
+        final Logger logger = LoggerFactory.getLogger(this.activator.type());
+        final RuntimeMXBean runtimeMXBean = ManagementFactory.getRuntimeMXBean();
 
-        final long startTime = System.currentTimeMillis();
-        final HartshornApplicationManager manager = new HartshornApplicationManager(this.applicationLogger, this.applicationProxier, this.applicationFSProvider);
+        // Alternative to InetAddress.getLocalHost().getHostName()
+        final String host = runtimeMXBean.getName().split("@")[1];
+
+        logger.info("Starting application " + this.activator.name() + " on " + host + " using Java " + runtimeMXBean.getVmVersion() + " with PID " + runtimeMXBean.getPid());
+
+        final long applicationStartTimestamp = System.currentTimeMillis();
+        final HartshornApplicationManager manager = new HartshornApplicationManager(this.activator, this.applicationLogger, this.applicationProxier, this.applicationFSProvider);
         final ApplicationEnvironment environment = this.applicationEnvironment.apply(manager);
 
         final HartshornApplicationContext applicationContext = new HartshornApplicationContext(environment, this.componentLocator, this.activator, this.prefixes, this.arguments, this.modifiers);
@@ -173,8 +183,6 @@ public class HartshornApplicationFactory implements ApplicationFactory<Hartshorn
 
         final ApplicationConfigurator configurator = this.applicationConfigurator;
         configurator.configure(manager);
-
-        final long createdTime = System.currentTimeMillis();
 
         for (final LifecycleObserver observer : manager.observers())
             observer.onCreated(applicationContext);
@@ -206,21 +214,26 @@ public class HartshornApplicationFactory implements ApplicationFactory<Hartshorn
         // Always load Hartshorn internals first
         configurator.bind(manager, Hartshorn.PACKAGE_PREFIX);
 
-        for (final String prefix : scanPrefixes) {
+        for (final String prefix : scanPrefixes)
             configurator.bind(manager, prefix);
-        }
 
         for (final LifecycleObserver observer : manager.observers())
             observer.onStarted(applicationContext);
 
-        final long startedTime = System.currentTimeMillis();
+        final long applicationStartedTimestamp = System.currentTimeMillis();
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            for (final LifecycleObserver observer : manager.observers())
+            logger.info("Runtime shutting down, notifying observers");
+            for (final LifecycleObserver observer : manager.observers()) {
+                logger.debug("Notifying " + observer.getClass().getSimpleName() + " of shutdown");
                 observer.onExit(applicationContext);
+            }
         }));
 
-        applicationContext.log().info("Started " + Hartshorn.PROJECT_NAME + " in " + (startedTime - startTime) + "ms (" + (createdTime - startTime) + "ms creation, " + (startedTime - createdTime) + "ms init)");
+        final double startupTime = ((double) (applicationStartedTimestamp - applicationStartTimestamp)) / 1000;
+        final double jvmUptime = ((double) runtimeMXBean.getUptime()) / 1000;
+
+        logger.info("Started " + Hartshorn.PROJECT_NAME + " in " + startupTime + " seconds (JVM running for " + jvmUptime + ")");
 
         return applicationContext;
     }
