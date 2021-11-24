@@ -23,7 +23,7 @@ import org.dockbox.hartshorn.core.MetaProvider;
 import org.dockbox.hartshorn.core.annotations.context.LogExclude;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
-import org.dockbox.hartshorn.core.exceptions.TypeProvisionException;
+import org.dockbox.hartshorn.core.exceptions.BeanProvisionException;
 import org.dockbox.hartshorn.core.inject.InjectionModifier;
 import org.dockbox.hartshorn.core.services.ComponentLocator;
 import org.dockbox.hartshorn.core.services.ComponentProcessor;
@@ -41,9 +41,9 @@ public interface ApplicationContext extends ApplicationBinder, HartshornContext,
 
     <T> T inject(Key<T> type, T typeInstance);
 
-    <T> T raw(TypeContext<T> type) throws TypeProvisionException;
+    <T> T raw(TypeContext<T> type) throws BeanProvisionException;
 
-    <T> T raw(TypeContext<T> type, boolean populate) throws TypeProvisionException;
+    <T> T raw(TypeContext<T> type, boolean populate) throws BeanProvisionException;
 
     void add(ComponentProcessor<?> processor);
 

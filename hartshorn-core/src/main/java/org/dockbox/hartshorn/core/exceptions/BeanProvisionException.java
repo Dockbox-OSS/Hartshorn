@@ -17,8 +17,8 @@
 
 package org.dockbox.hartshorn.core.exceptions;
 
-public class TypeProvisionException extends RuntimeException {
-    public TypeProvisionException(final String message, final Throwable cause) {
+public class BeanProvisionException extends RuntimeException {
+    public BeanProvisionException(final String message, final Throwable cause) {
         super(message, cause);
     }
 }
