@@ -67,6 +67,7 @@ public class ContextDrivenProvider<C> implements Provider<C> {
     }
 
     protected Exceptional<C> create(final ApplicationContext context) {
-        return Exceptional.of(() -> this.optimalConstructor.createInstance(context).orNull());
+        if (this.optimalConstructor() == null) return Exceptional.empty();
+        return this.optimalConstructor().createInstance(context).rethrowUnchecked().map(instance -> (C) instance);
     }
 }

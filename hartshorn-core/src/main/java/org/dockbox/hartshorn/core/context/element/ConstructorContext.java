@@ -21,6 +21,7 @@ import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.function.Function;
 
 import lombok.Getter;
@@ -64,7 +65,14 @@ public class ConstructorContext<T> extends ExecutableElementContext<Constructor<
 
     private void prepareHandle() {
         if (this.invoker == null) {
-            this.invoker = args -> Exceptional.of(() -> this.constructor.newInstance(args));
+            this.invoker = args -> Exceptional.of(() -> {
+                try {
+                    return this.constructor.newInstance(args);
+                } catch (final InvocationTargetException e) {
+                    if (e.getCause() instanceof Exception ex) throw ex;
+                    throw e;
+                }
+            });
         }
     }
 

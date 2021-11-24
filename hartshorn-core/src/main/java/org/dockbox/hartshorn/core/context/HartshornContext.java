@@ -28,7 +28,7 @@ public interface HartshornContext extends Context {
         return this.get(Key.of(type, named));
     }
 
-    default <T> T get(Class<T> type, Named named) {
+    default <T> T get(final Class<T> type, final Named named) {
         return this.get(Key.of(type, named));
     }
 
@@ -38,8 +38,8 @@ public interface HartshornContext extends Context {
         return this.get(Key.of(type));
     }
 
-    default <T> T get(Class<T> type) {
+    default <T> T get(final Class<T> type) {
         return this.get(Key.of(type));
-    };
+    }
 
 }
