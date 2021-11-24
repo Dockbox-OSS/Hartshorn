@@ -78,7 +78,7 @@ public class SimpleCommandCLI implements CommandCLI {
 
         if (this.async()) {
             this.context.log().debug("Performing startup task for command CLI asynchronously");
-            this.threads.performAsync(task);
+            new Thread(task, "command_cli").start();
         } else {
             this.context.log().debug("Performing startup task for command CLI on current thread");
             task.run();
