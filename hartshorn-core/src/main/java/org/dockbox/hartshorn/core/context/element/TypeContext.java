@@ -29,6 +29,7 @@ import org.dockbox.hartshorn.core.domain.tuple.Tuple;
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 import org.dockbox.hartshorn.core.exceptions.NotPrimitiveException;
 import org.dockbox.hartshorn.core.exceptions.TypeConversionException;
+import org.dockbox.hartshorn.core.proxy.javassist.JavassistProxyUtil;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.annotation.Annotation;
@@ -37,7 +38,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Proxy;
 import java.lang.reflect.Type;
 import java.lang.reflect.WildcardType;
 import java.util.Arrays;
@@ -52,7 +52,6 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
-import javassist.util.proxy.ProxyFactory;
 import lombok.Getter;
 
 public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
@@ -151,7 +150,7 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
         if (instance == null) {
             return (TypeContext<T>) VOID;
         }
-        if (isProxy(instance.getClass())) {
+        if (context.environment().manager().isProxy(instance)) {
             return context.environment().manager().real(instance)
                     .orThrow(() -> new ApplicationException("Could not derive real type of instance " + instance).runtime());
         }
@@ -389,13 +388,9 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
 
     public boolean isProxy() {
         if (Tristate.UNDEFINED == this.isProxy) {
-            this.isProxy = isProxy(this.type()) ? Tristate.TRUE : Tristate.FALSE;
+            this.isProxy = JavassistProxyUtil.isProxy(this.type()) ? Tristate.TRUE : Tristate.FALSE;
         }
         return this.isProxy.booleanValue();
-    }
-
-    private static boolean isProxy(final Class<?> type) {
-        return (ProxyFactory.isProxyClass(type) || Proxy.isProxyClass(type));
     }
 
     public boolean isNative() {
@@ -573,7 +568,7 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
     }
 
     private void verifyMetadataAvailable() {
-        if (this.isProxy()) throw new ApplicationException("Cannot collect metadata of proxied type").runtime();
+        if (this.isProxy()) throw new ApplicationException("Cannot collect metadata of proxied type '%s'".formatted(this.qualifiedName())).runtime();
     }
 
     public T defaultOrNull() {
