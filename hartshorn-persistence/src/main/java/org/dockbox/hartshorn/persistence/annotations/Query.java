@@ -28,7 +28,7 @@ public @interface Query {
     String value();
     QueryType type() default QueryType.JPQL;
     boolean automaticClear() default false;
-    boolean automaticFlush() default false;
+    boolean automaticFlush() default true;
     Class<?> entityType() default Void.class;
 
     public enum QueryType {
