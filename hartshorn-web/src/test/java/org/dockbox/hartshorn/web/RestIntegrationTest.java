@@ -41,7 +41,7 @@ import java.util.function.Function;
 @UseHttpServer
 public abstract class RestIntegrationTest extends ApplicationAwareTest {
 
-    protected static final String ADDRESS = "http://localhost:" + ServerBootstrap.DEFAULT_PORT;
+    protected static final String ADDRESS = "http://localhost:" + HttpWebServerInitializer.DEFAULT_PORT;
 
     protected CloseableHttpResponse request(final String uri, final HttpMethod method, final String body, final Header... headers) throws IOException {
         final CloseableHttpClient client = HttpClients.createDefault();
