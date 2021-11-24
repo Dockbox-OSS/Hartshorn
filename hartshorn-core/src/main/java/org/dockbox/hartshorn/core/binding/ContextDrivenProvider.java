@@ -43,10 +43,11 @@ public class ContextDrivenProvider<C> implements Provider<C> {
     }
 
     protected Exceptional<? extends ConstructorContext<? extends C>> findOptimalConstructor() {
+        if (this.context().isAbstract()) return Exceptional.empty();
         if (this.optimalConstructor == null) {
-            final List<? extends ConstructorContext<? extends C>> constructors = this.context.injectConstructors();
+            final List<? extends ConstructorContext<? extends C>> constructors = this.context().injectConstructors();
             if (constructors.isEmpty()) {
-                final Exceptional<? extends ConstructorContext<? extends C>> defaultConstructor = this.context.defaultConstructor();
+                final Exceptional<? extends ConstructorContext<? extends C>> defaultConstructor = this.context().defaultConstructor();
                 if (defaultConstructor.absent()) return Exceptional.empty();
                 else this.optimalConstructor = defaultConstructor.get();
             } else {
@@ -67,6 +68,7 @@ public class ContextDrivenProvider<C> implements Provider<C> {
     }
 
     protected Exceptional<C> create(final ApplicationContext context) {
-        return Exceptional.of(() -> this.optimalConstructor.createInstance(context).orNull());
+        if (this.optimalConstructor() == null) return Exceptional.empty();
+        return this.optimalConstructor().createInstance(context).rethrowUnchecked().map(instance -> (C) instance);
     }
 }

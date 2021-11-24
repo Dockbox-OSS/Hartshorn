@@ -24,6 +24,8 @@ import org.dockbox.hartshorn.core.proxy.ProxyLookup;
 
 public interface ApplicationProxier extends ProxyLookup {
 
+    <T> Exceptional<T> proxy(TypeContext<T> type);
+
     <T> Exceptional<T> proxy(TypeContext<T> type, T instance);
 
     <T> Exceptional<TypeContext<T>> real(T instance);

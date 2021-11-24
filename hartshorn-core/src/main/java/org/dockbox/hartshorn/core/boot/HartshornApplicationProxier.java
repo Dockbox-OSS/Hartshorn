@@ -42,6 +42,11 @@ public class HartshornApplicationProxier implements ApplicationProxier, Applicat
     }
 
     @Override
+    public <T> Exceptional<T> proxy(final TypeContext<T> type) {
+        return this.proxy(type, null);
+    }
+
+    @Override
     public <T> Exceptional<T> proxy(final TypeContext<T> type, final T instance) {
         return Exceptional.of(() -> JavassistProxyUtil.handler(type, instance).proxy(instance));
     }

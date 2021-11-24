@@ -21,10 +21,14 @@ import org.dockbox.hartshorn.core.annotations.activate.UseServiceProvision;
 import org.dockbox.hartshorn.core.binding.Bindings;
 import org.dockbox.hartshorn.core.boot.EmptyService;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
+import org.dockbox.hartshorn.core.exceptions.BeanProvisionException;
 import org.dockbox.hartshorn.core.proxy.ExtendedProxy;
+import org.dockbox.hartshorn.core.types.ComponentType;
 import org.dockbox.hartshorn.core.types.ContextInjectedType;
+import org.dockbox.hartshorn.core.types.NonComponentType;
 import org.dockbox.hartshorn.core.types.SampleContext;
 import org.dockbox.hartshorn.core.types.TypeWithEnabledInjectField;
+import org.dockbox.hartshorn.core.types.TypeWithFailingConstructor;
 import org.dockbox.hartshorn.core.types.User;
 import org.dockbox.hartshorn.testsuite.ApplicationAwareTest;
 import org.junit.jupiter.api.Assertions;
@@ -158,9 +162,9 @@ public class ApplicationContextTests extends ApplicationAwareTest {
     @Test
     public void testScannedMetaBindingsCanBeProvided() {
         this.context().bind("test.types.meta");
+        // Ensure that the binding is not bound to the default name
         final SampleInterface sample = this.context().get(SampleInterface.class);
-        Assertions.assertTrue(TypeContext.of(sample).isProxy());
-        Assertions.assertThrows(AbstractMethodError.class, sample::name);
+        Assertions.assertNull(sample); // Non-component, so null
 
         final SampleInterface provided = this.context().get(SampleInterface.class, Bindings.named("meta"));
         Assertions.assertNotNull(provided);
@@ -303,5 +307,25 @@ public class ApplicationContextTests extends ApplicationAwareTest {
         final EmptyService emptyService = this.context().get(EmptyService.class);
         final EmptyService emptyService2 = this.context().get(EmptyService.class);
         Assertions.assertSame(emptyService, emptyService2);
+    }
+
+    @Test
+    void testNonComponentsAreNotProxied() {
+        final NonComponentType instance = this.context().get(NonComponentType.class);
+        Assertions.assertNull(instance);
+    }
+
+    @Test
+    void testComponentsAreProxiedWhenRegularProvisionFails() {
+        final ComponentType instance = this.context().get(ComponentType.class);
+        Assertions.assertNotNull(instance);
+        Assertions.assertTrue(this.context().environment().manager().isProxy(instance));
+    }
+
+    @Test
+    void testFailingConstructorIsRethrown() {
+        final BeanProvisionException exception = Assertions.assertThrows(BeanProvisionException.class, () -> this.context().get(TypeWithFailingConstructor.class));
+        Assertions.assertTrue(exception.getCause() instanceof IllegalStateException);
+        Assertions.assertEquals("This type cannot be instantiated", exception.getCause().getMessage());
     }
 }
