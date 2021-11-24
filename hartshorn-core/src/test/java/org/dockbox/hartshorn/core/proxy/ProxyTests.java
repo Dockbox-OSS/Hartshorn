@@ -21,6 +21,7 @@ import org.dockbox.hartshorn.core.annotations.activate.UseServiceProvision;
 import org.dockbox.hartshorn.core.annotations.proxy.UseProxying;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
+import org.dockbox.hartshorn.core.proxy.javassist.JavassistProxyHandler;
 import org.dockbox.hartshorn.core.proxy.types.ConcreteProxyTarget;
 import org.dockbox.hartshorn.core.proxy.types.FinalProxyTarget;
 import org.dockbox.hartshorn.core.proxy.types.ProviderService;

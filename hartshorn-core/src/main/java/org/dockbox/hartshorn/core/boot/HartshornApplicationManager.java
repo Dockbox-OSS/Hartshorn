@@ -32,6 +32,7 @@ import java.util.Set;
 import lombok.Getter;
 
 @LogExclude
+@Getter
 public class HartshornApplicationManager implements ApplicationManager {
 
     private static final String BANNER = """
@@ -43,15 +44,11 @@ public class HartshornApplicationManager implements ApplicationManager {
                                              -- Hartshorn v%s --
             """.formatted(Hartshorn.VERSION);
 
-    @Getter
     private final Set<LifecycleObserver> observers = HartshornUtils.emptyConcurrentSet();
     private final ApplicationFSProvider applicationFSProvider;
-
-    @Getter
-    private ApplicationContext applicationContext;
-
     private final ApplicationLogger applicationLogger;
     private final ApplicationProxier applicationProxier;
+    private ApplicationContext applicationContext;
 
     public HartshornApplicationManager(
             final TypeContext<?> activator,
@@ -130,5 +127,20 @@ public class HartshornApplicationManager implements ApplicationManager {
     @Override
     public Path applicationPath() {
         return this.applicationFSProvider.applicationPath();
+    }
+
+    @Override
+    public <T> Class<T> unproxy(final T instance) {
+        return this.applicationProxier.unproxy(instance);
+    }
+
+    @Override
+    public boolean isProxy(final Object instance) {
+        return this.applicationProxier.isProxy(instance);
+    }
+
+    @Override
+    public boolean isProxy(final Class<?> candidate) {
+        return this.applicationProxier.isProxy(candidate);
     }
 }

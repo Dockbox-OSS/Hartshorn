@@ -15,7 +15,7 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.core.proxy;
+package org.dockbox.hartshorn.core.proxy.javassist;
 
 import org.dockbox.hartshorn.core.AnnotationHelper.AnnotationInvocationHandler;
 import org.dockbox.hartshorn.core.boot.HartshornApplicationProxier;
@@ -23,6 +23,8 @@ import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.BackingImplementationContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.core.proxy.JavaInterfaceProxyHandler;
+import org.dockbox.hartshorn.core.proxy.ProxyHandler;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
@@ -35,6 +37,8 @@ import javassist.util.proxy.ProxyFactory;
  * @see HartshornApplicationProxier
  */
 public class JavassistProxyUtil {
+
+    private static final TypeContext<?> HIBERNATE_PROXY = TypeContext.lookup("org.hibernate.proxy.HibernateProxy");
 
     public static <T> ProxyHandler<T> handler(final TypeContext<T> context, final T instance) {
         return handler(context.type(), instance);
@@ -54,6 +58,7 @@ public class JavassistProxyUtil {
                 }
             }
             else if (Proxy.isProxyClass(instance.getClass())) {
+
                 final InvocationHandler invocationHandler = Proxy.getInvocationHandler(instance);
                 if (invocationHandler instanceof JavaInterfaceProxyHandler proxyInterfaceHandler) {
                     return Exceptional.of(proxyInterfaceHandler.handler());
@@ -75,5 +80,11 @@ public class JavassistProxyUtil {
 
     public static <T, P extends T> Exceptional<T> delegator(final ApplicationContext context, final TypeContext<T> type, final ProxyHandler<P> handler) {
         return handler.first(context, BackingImplementationContext.class).flatMap(backingContext -> backingContext.get(type.type()));
+    }
+
+    public static boolean isProxy(final Class<?> type) {
+        if (ProxyFactory.isProxyClass(type) || Proxy.isProxyClass(type)) return true;
+        if (!HIBERNATE_PROXY.isVoid()) HIBERNATE_PROXY.type().isAssignableFrom(type);
+        return false;
     }
 }
