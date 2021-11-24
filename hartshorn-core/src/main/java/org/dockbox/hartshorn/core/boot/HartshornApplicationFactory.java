@@ -184,9 +184,6 @@ public class HartshornApplicationFactory implements ApplicationFactory<Hartshorn
         final ApplicationConfigurator configurator = this.applicationConfigurator;
         configurator.configure(manager);
 
-        for (final LifecycleObserver observer : manager.observers())
-            observer.onCreated(applicationContext);
-
         for (final Annotation serviceActivator : this.serviceActivators)
             applicationContext.addActivator(serviceActivator);
 

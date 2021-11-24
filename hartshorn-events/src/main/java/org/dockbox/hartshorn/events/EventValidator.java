@@ -37,11 +37,6 @@ import java.util.stream.Collectors;
 public class EventValidator implements LifecycleObserver {
 
     @Override
-    public void onCreated(final ApplicationContext applicationContext) {
-        // Nothing happens
-    }
-
-    @Override
     public void onStarted(final ApplicationContext applicationContext) {
         if (applicationContext.hasActivator(UseEvents.class)) {
             new EngineChangedState<Started>() {

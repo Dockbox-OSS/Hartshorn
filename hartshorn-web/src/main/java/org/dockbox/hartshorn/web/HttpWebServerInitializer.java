@@ -58,11 +58,6 @@ public class HttpWebServerInitializer implements LifecycleObserver {
     private HttpWebServer webServer;
 
     @Override
-    public void onCreated(final ApplicationContext applicationContext) {
-        // Nothing happens
-    }
-
-    @Override
     public void onStarted(final ApplicationContext applicationContext) {
         final Map<String, Servlet> servlets = HartshornUtils.emptyMap();
 
