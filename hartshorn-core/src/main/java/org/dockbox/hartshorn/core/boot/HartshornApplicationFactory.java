@@ -39,6 +39,7 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.annotation.Annotation;
 import java.lang.management.ManagementFactory;
+import java.lang.management.RuntimeMXBean;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Set;
@@ -166,8 +167,12 @@ public class HartshornApplicationFactory implements ApplicationFactory<Hartshorn
         this.validate();
 
         final Logger logger = LoggerFactory.getLogger(this.activator.type());
+        final RuntimeMXBean runtimeMXBean = ManagementFactory.getRuntimeMXBean();
 
-        logger.info("Starting " + Hartshorn.PROJECT_NAME + " with activator " + this.activator.name());
+        // Alternative to InetAddress.getLocalHost().getHostName()
+        final String host = runtimeMXBean.getName().split("@")[1];
+
+        logger.info("Starting application " + this.activator.name() + " on " + host + " using Java " + runtimeMXBean.getVmVersion() + " with PID " + runtimeMXBean.getPid());
 
         final long applicationStartTimestamp = System.currentTimeMillis();
         final HartshornApplicationManager manager = new HartshornApplicationManager(this.activator, this.applicationLogger, this.applicationProxier, this.applicationFSProvider);
@@ -218,12 +223,15 @@ public class HartshornApplicationFactory implements ApplicationFactory<Hartshorn
         final long applicationStartedTimestamp = System.currentTimeMillis();
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            for (final LifecycleObserver observer : manager.observers())
+            logger.info("Runtime shutting down, notifying observers");
+            for (final LifecycleObserver observer : manager.observers()) {
+                logger.debug("Notifying " + observer.getClass().getSimpleName() + " of shutdown");
                 observer.onExit(applicationContext);
+            }
         }));
 
         final double startupTime = ((double) (applicationStartedTimestamp - applicationStartTimestamp)) / 1000;
-        final double jvmUptime = ((double) ManagementFactory.getRuntimeMXBean().getUptime()) / 1000;
+        final double jvmUptime = ((double) runtimeMXBean.getUptime()) / 1000;
 
         logger.info("Started " + Hartshorn.PROJECT_NAME + " in " + startupTime + " seconds (JVM running for " + jvmUptime + ")");
 
