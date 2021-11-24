@@ -29,11 +29,6 @@ import org.dockbox.hartshorn.core.context.element.TypeContext;
 public class CommandParameterValidator implements LifecycleObserver {
 
     @Override
-    public void onCreated(final ApplicationContext applicationContext) {
-        // Nothing happens
-    }
-
-    @Override
     public void onStarted(final ApplicationContext applicationContext) {
         final MethodContext<?, CommandParameterValidator> preload = TypeContext.of(this).method("onStarted", ApplicationContext.class).get();
         final ParameterContext<?> parameter = preload.parameters().get(0);

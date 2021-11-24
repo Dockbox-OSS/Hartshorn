@@ -15,7 +15,7 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.core.proxy;
+package org.dockbox.hartshorn.core.proxy.javassist;
 
 import org.dockbox.hartshorn.core.ArrayListMultiMap;
 import org.dockbox.hartshorn.core.MultiMap;
@@ -25,6 +25,10 @@ import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
+import org.dockbox.hartshorn.core.proxy.JavaInterfaceProxyHandler;
+import org.dockbox.hartshorn.core.proxy.MethodProxyContext;
+import org.dockbox.hartshorn.core.proxy.Phase;
+import org.dockbox.hartshorn.core.proxy.ProxyHandler;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -173,7 +177,7 @@ public class JavassistProxyHandler<T> extends DefaultContext implements ProxyHan
         return Exceptional.of(this.proxyInstance);
     }
 
-    void proxyInstance(T proxyInstance) {
+    public void proxyInstance(T proxyInstance) {
         this.proxyInstance = proxyInstance;
     }
 

@@ -23,6 +23,7 @@ import org.dockbox.hartshorn.core.context.NamedContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
+import org.dockbox.hartshorn.core.proxy.javassist.JavassistProxyHandler;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -45,7 +46,7 @@ public class JavaInterfaceProxyHandler<T> implements InvocationHandler, ProxyHan
     }
 
     public T proxy() {
-        T proxy = (T) Proxy.newProxyInstance(this.getClass().getClassLoader(), new Class[]{
+        final T proxy = (T) Proxy.newProxyInstance(this.getClass().getClassLoader(), new Class[]{
                 this.handler().type().type()
         }, this);
         this.handler().proxyInstance(proxy);
