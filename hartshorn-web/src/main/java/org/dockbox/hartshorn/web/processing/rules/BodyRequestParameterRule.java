@@ -20,8 +20,9 @@ package org.dockbox.hartshorn.web.processing.rules;
 import org.dockbox.hartshorn.core.context.element.ParameterContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.services.parameter.AnnotatedParameterLoaderRule;
-import org.dockbox.hartshorn.persistence.FileFormats;
+import org.dockbox.hartshorn.persistence.FileFormat;
 import org.dockbox.hartshorn.persistence.mapping.ObjectMapper;
+import org.dockbox.hartshorn.web.MediaType;
 import org.dockbox.hartshorn.web.annotations.RequestBody;
 import org.dockbox.hartshorn.web.annotations.http.HttpRequest;
 import org.dockbox.hartshorn.web.processing.HttpRequestParameterLoaderContext;
@@ -40,7 +41,9 @@ public class BodyRequestParameterRule extends AnnotatedParameterLoaderRule<Reque
         final Exceptional<String> body = Exceptional.of(() -> context.request().getReader().lines().collect(Collectors.joining(System.lineSeparator())));
         if (parameter.type().is(String.class))
             return (Exceptional<T>) body;
-        final FileFormats bodyFormat = parameter.declaredBy().annotation(HttpRequest.class).get().bodyFormat();
+        final MediaType mediaType = parameter.declaredBy().annotation(HttpRequest.class).get().consumes();
+        if (!mediaType.isSerializable()) return Exceptional.empty();
+        final FileFormat bodyFormat = mediaType.fileFormat().get();
         final ObjectMapper objectMapper = context.applicationContext().get(ObjectMapper.class).fileType(bodyFormat);
 
         return body.flatMap(b -> objectMapper.read(b, parameter.type()));
