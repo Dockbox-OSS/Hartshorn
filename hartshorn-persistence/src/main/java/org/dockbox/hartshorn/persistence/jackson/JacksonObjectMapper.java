@@ -50,6 +50,7 @@ import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.exceptions.Except;
 import org.dockbox.hartshorn.persistence.DefaultObjectMapper;
+import org.dockbox.hartshorn.persistence.FileFormat;
 import org.dockbox.hartshorn.persistence.FileFormats;
 import org.dockbox.hartshorn.persistence.properties.PersistenceModifier;
 
@@ -193,7 +194,7 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
     }
 
     @Override
-    public JacksonObjectMapper fileType(final FileFormats fileFormat) {
+    public JacksonObjectMapper fileType(final FileFormat fileFormat) {
         super.fileType(fileFormat);
         this.objectMapper = null;
         return this;
@@ -235,7 +236,7 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
         return this.objectMapper;
     }
 
-    protected MapperBuilder<?, ?> mapper(final FileFormats fileFormat) {
+    protected MapperBuilder<?, ?> mapper(final FileFormat fileFormat) {
         for (final JacksonObjectMapper.Mappers mapper : JacksonObjectMapper.Mappers.values()) {
             if (mapper.fileFormat.equals(fileFormat)) return (MapperBuilder<?, ?>) mapper.mapper.get();
         }

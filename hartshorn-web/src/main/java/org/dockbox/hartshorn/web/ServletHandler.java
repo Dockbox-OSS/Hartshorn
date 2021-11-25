@@ -71,8 +71,10 @@ public class ServletHandler implements Enableable {
     }
 
     @Override
-    public void enable() {
-        this.mapper.fileType(this.httpRequest.responseFormat());
+    public void enable() throws ApplicationException {
+        final MediaType mediaType = this.httpRequest.produces();
+        if (!mediaType.isSerializable()) throw new ApplicationException("Provided media type '" + mediaType.value() + "' is not serializable");
+        this.mapper.fileType(mediaType.fileFormat().get());
     }
 
     public synchronized void processRequest(final HttpMethod method, final HttpServletRequest req, final HttpServletResponse res, final HttpAction fallbackAction) throws ApplicationException {
@@ -93,12 +95,12 @@ public class ServletHandler implements Enableable {
                     this.context.log().debug("Request %s processed for session %s, writing response body".formatted(request, sessionId));
                     try {
                         if (String.class.equals(result.type())) {
-                            res.setContentType("text/plain");
+                            res.setContentType(MediaType.TEXT_PLAIN.value());
                             this.context.log().debug("Returning plain body for request %s".formatted(request));
                             res.getWriter().print(result.get());
                         }
                         else {
-                            res.setContentType("application/" + this.mapper.fileType().extension());
+                            res.setContentType(this.httpRequest.produces().value());
                             this.context.log().debug("Writing body to string for request %s".formatted(request));
                             final Exceptional<String> write = this.mapper.write(result.get());
                             if (write.present()) {
