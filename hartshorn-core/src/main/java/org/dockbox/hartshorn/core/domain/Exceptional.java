@@ -22,6 +22,7 @@ import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 import org.dockbox.hartshorn.core.function.CheckedBiFunction;
 import org.dockbox.hartshorn.core.function.CheckedFunction;
 import org.dockbox.hartshorn.core.function.CheckedSupplier;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.NoSuchElementException;
 import java.util.Objects;
@@ -51,6 +52,7 @@ public final class Exceptional<T> {
 
     private static final Exceptional<?> EMPTY = new Exceptional<>();
 
+    @Nullable
     private final T value;
     private final Throwable throwable;
 
@@ -97,7 +99,7 @@ public final class Exceptional<T> {
      *
      * @return The {@link Exceptional}
      */
-    public static <T> Exceptional<T> of(final T value) {
+    public static <T> Exceptional<T> of(@Nullable final T value) {
         return null == value ? empty() : new Exceptional<>(value);
     }
 
@@ -228,6 +230,7 @@ public final class Exceptional<T> {
      *
      * @return The value, if present, otherwise null
      */
+    @Nullable
     public T orNull() {
         return this.value;
     }
@@ -435,7 +438,7 @@ public final class Exceptional<T> {
      *
      * @return The {@link Exceptional}
      */
-    public static <T> Exceptional<T> of(final T value, final Throwable throwable) {
+    public static <T> Exceptional<T> of(@Nullable final T value, @Nullable final Throwable throwable) {
         if (null == value && null == throwable) return empty();
         else if (null == value) return of(throwable);
         else if (null == throwable) return of(value);
@@ -578,6 +581,7 @@ public final class Exceptional<T> {
      *
      * @return The type of the value, or {@code null}
      */
+    @Nullable
     public Class<?> type() {
         return this.present() ? this.value.getClass() : null;
     }
