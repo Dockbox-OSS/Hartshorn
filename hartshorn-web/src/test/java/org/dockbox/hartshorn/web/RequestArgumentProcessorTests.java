@@ -21,13 +21,12 @@ import org.dockbox.hartshorn.core.context.element.ExecutableElementContext;
 import org.dockbox.hartshorn.core.context.element.ParameterContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
-import org.dockbox.hartshorn.persistence.FileFormats;
 import org.dockbox.hartshorn.testsuite.ApplicationAwareTest;
 import org.dockbox.hartshorn.web.annotations.RequestHeader;
 import org.dockbox.hartshorn.web.annotations.http.HttpRequest;
+import org.dockbox.hartshorn.web.processing.HttpRequestParameterLoaderContext;
 import org.dockbox.hartshorn.web.processing.rules.BodyRequestParameterRule;
 import org.dockbox.hartshorn.web.processing.rules.HeaderRequestParameterRule;
-import org.dockbox.hartshorn.web.processing.HttpRequestParameterLoaderContext;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -48,11 +47,10 @@ public class RequestArgumentProcessorTests extends ApplicationAwareTest {
 
     public static Stream<Arguments> bodies() {
         return Stream.of(
-                Arguments.of("{\"message\":\"Hello world!\"}", FileFormats.JSON),
-                Arguments.of("message: 'Hello world!'", FileFormats.YAML),
-                Arguments.of("<message>Hello world!</message>", FileFormats.XML),
-                Arguments.of("message='Hello world!'", FileFormats.TOML),
-                Arguments.of("message=Hello world!", FileFormats.PROPERTIES)
+                Arguments.of("{\"message\":\"Hello world!\"}", MediaType.APPLICATION_JSON),
+                Arguments.of("message: 'Hello world!'", MediaType.APPLICATION_YAML),
+                Arguments.of("<message>Hello world!</message>", MediaType.APPLICATION_XML),
+                Arguments.of("message='Hello world!'", MediaType.APPLICATION_TOML)
         );
     }
 
@@ -73,7 +71,7 @@ public class RequestArgumentProcessorTests extends ApplicationAwareTest {
 
     @ParameterizedTest
     @MethodSource("bodies")
-    void testBodyIsParsedForAllFormats(final String body, final FileFormats fileFormat) throws IOException {
+    void testBodyIsParsedForAllFormats(final String body, final MediaType mediaType) throws IOException {
         final BufferedReader reader = new BufferedReader(new StringReader(body));
         final HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
         Mockito.when(request.getReader()).thenReturn(reader);
@@ -83,7 +81,7 @@ public class RequestArgumentProcessorTests extends ApplicationAwareTest {
 
         final ExecutableElementContext<?> declaring = Mockito.mock(ExecutableElementContext.class);
         final HttpRequest httpRequest = Mockito.mock(HttpRequest.class);
-        Mockito.when(httpRequest.bodyFormat()).thenReturn(fileFormat);
+        Mockito.when(httpRequest.consumes()).thenReturn(mediaType);
         Mockito.when(declaring.annotation(HttpRequest.class)).thenReturn(Exceptional.of(httpRequest));
         // Different order due to generic return type
         Mockito.doReturn(declaring).when(context).declaredBy();
