@@ -610,7 +610,7 @@ public final class Exceptional<T> {
     public Class<?> type() {
         return this.present() ? this.value.getClass() : null;
     }
-
+    
     /**
      * Checks if the value is present, and if it is, checks if it is equal to the given value.
      *
