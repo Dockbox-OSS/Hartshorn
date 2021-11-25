@@ -21,20 +21,20 @@ import org.dockbox.hartshorn.persistence.mapping.ObjectMapper;
 
 public abstract class DefaultObjectMapper implements ObjectMapper {
 
-    protected FileFormats fileFormat;
+    protected FileFormat fileFormat;
 
-    protected DefaultObjectMapper(final FileFormats fileFormat) {
+    protected DefaultObjectMapper(final FileFormat fileFormat) {
         this.fileFormat = fileFormat;
     }
 
     @Override
-    public ObjectMapper fileType(final FileFormats fileFormat) {
+    public ObjectMapper fileType(final FileFormat fileFormat) {
         this.fileFormat = fileFormat;
         return this;
     }
 
     @Override
-    public FileFormats fileType() {
+    public FileFormat fileType() {
         return this.fileFormat;
     }
 }
