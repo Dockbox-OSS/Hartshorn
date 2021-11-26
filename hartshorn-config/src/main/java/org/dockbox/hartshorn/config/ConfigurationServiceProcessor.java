@@ -24,8 +24,8 @@ import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.services.ServiceOrder;
 import org.dockbox.hartshorn.core.services.ServiceProcessor;
-import org.dockbox.hartshorn.persistence.FileFormats;
-import org.dockbox.hartshorn.persistence.mapping.ObjectMapper;
+import org.dockbox.hartshorn.data.FileFormats;
+import org.dockbox.hartshorn.data.mapping.ObjectMapper;
 import org.dockbox.hartshorn.core.HartshornUtils;
 
 import java.net.URI;

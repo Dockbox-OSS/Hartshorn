@@ -23,11 +23,11 @@ import org.dockbox.hartshorn.core.Key;
 import org.dockbox.hartshorn.core.annotations.inject.Provider;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.demo.persistence.services.UserRepository;
-import org.dockbox.hartshorn.persistence.FileFormats;
-import org.dockbox.hartshorn.persistence.jpa.JpaRepository;
-import org.dockbox.hartshorn.persistence.remote.MySQLRemote;
-import org.dockbox.hartshorn.persistence.remote.PersistenceConnection;
-import org.dockbox.hartshorn.persistence.remote.JdbcRemoteConfiguration;
+import org.dockbox.hartshorn.data.FileFormats;
+import org.dockbox.hartshorn.data.jpa.JpaRepository;
+import org.dockbox.hartshorn.data.remote.MySQLRemote;
+import org.dockbox.hartshorn.data.remote.PersistenceConnection;
+import org.dockbox.hartshorn.data.remote.JdbcRemoteConfiguration;
 
 import javax.inject.Singleton;
 

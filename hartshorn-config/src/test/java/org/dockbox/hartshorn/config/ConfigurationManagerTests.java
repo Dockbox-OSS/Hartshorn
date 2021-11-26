@@ -19,8 +19,8 @@ package org.dockbox.hartshorn.config;
 
 import org.dockbox.hartshorn.config.annotations.UseConfigurations;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
-import org.dockbox.hartshorn.persistence.FileFormats;
-import org.dockbox.hartshorn.persistence.mapping.ObjectMapper;
+import org.dockbox.hartshorn.data.FileFormats;
+import org.dockbox.hartshorn.data.mapping.ObjectMapper;
 import org.dockbox.hartshorn.testsuite.ApplicationAwareTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
