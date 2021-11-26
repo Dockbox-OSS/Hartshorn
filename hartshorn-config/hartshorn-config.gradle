@@ -19,7 +19,7 @@ apply from: "$project.rootDir/gradle/publications.gradle"
 
 dependencies {
     implementation 'org.dockbox.hartshorn:hartshorn-core'
-    implementation 'org.dockbox.hartshorn:hartshorn-persistence'
+    implementation 'org.dockbox.hartshorn:hartshorn-data'
 
     implementation "com.fasterxml.jackson.core:jackson-core:$jacksonVersion"
     implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:$jacksonVersion"
@@ -27,5 +27,5 @@ dependencies {
     testImplementation "com.fasterxml.jackson.dataformat:jackson-dataformat-properties:$jacksonVersion"
     testImplementation "com.fasterxml.jackson.dataformat:jackson-dataformat-toml:$jacksonVersion"
     testImplementation "com.fasterxml.jackson.dataformat:jackson-dataformat-xml:$jacksonVersion"
-    testImplementation project(':hartshorn-persistence').sourceSets.test.output
+    testImplementation project(':hartshorn-data').sourceSets.test.output
 }

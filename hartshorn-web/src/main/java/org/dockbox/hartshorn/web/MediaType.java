@@ -1,8 +1,8 @@
 package org.dockbox.hartshorn.web;
 
 import org.dockbox.hartshorn.core.domain.Exceptional;
-import org.dockbox.hartshorn.persistence.FileFormat;
-import org.dockbox.hartshorn.persistence.FileFormats;
+import org.dockbox.hartshorn.data.FileFormat;
+import org.dockbox.hartshorn.data.FileFormats;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

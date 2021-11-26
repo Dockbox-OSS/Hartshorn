@@ -18,7 +18,7 @@
 apply from: "$project.rootDir/gradle/publications.gradle"
 
 dependencies {
-    api 'org.dockbox.hartshorn:hartshorn-persistence'
+    api 'org.dockbox.hartshorn:hartshorn-data'
     implementation 'org.dockbox.hartshorn:hartshorn-core'
     implementation 'org.dockbox.hartshorn:hartshorn-config'
 }
