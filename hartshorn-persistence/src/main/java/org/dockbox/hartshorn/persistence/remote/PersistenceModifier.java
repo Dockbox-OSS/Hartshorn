@@ -15,11 +15,11 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.persistence.hibernate;
+package org.dockbox.hartshorn.persistence.remote;
 
-import org.dockbox.hartshorn.persistence.remote.Remote;
-import org.hibernate.dialect.Dialect;
-
-public interface HibernateRemote extends Remote {
-    Class<? extends Dialect> dialect();
+public enum PersistenceModifier {
+    SKIP_NONE,
+    SKIP_EMPTY,
+    SKIP_NULL,
+    SKIP_DEFAULT
 }

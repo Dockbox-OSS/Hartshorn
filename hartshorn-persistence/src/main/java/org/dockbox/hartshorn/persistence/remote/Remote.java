@@ -15,13 +15,9 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.persistence.properties;
+package org.dockbox.hartshorn.persistence.remote;
 
-public interface Remote {
-
-    PersistenceConnection connection(Object target, String user, String password);
-    PersistenceConnection connection(String url, String user, String password);
-    String url(Object target);
-
+public interface Remote<T> {
+    PersistenceConnection connection(T target, String user, String password);
     String driver();
 }

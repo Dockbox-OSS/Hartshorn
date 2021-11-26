@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.web;
 
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 import org.dockbox.hartshorn.core.services.parameter.ParameterLoader;
-import org.dockbox.hartshorn.persistence.properties.PersistenceModifier;
+import org.dockbox.hartshorn.persistence.remote.PersistenceModifier;
 import org.dockbox.hartshorn.web.processing.HttpRequestParameterLoaderContext;
 
 import java.net.URI;

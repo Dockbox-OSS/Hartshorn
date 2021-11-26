@@ -15,11 +15,24 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.persistence.properties;
+package org.dockbox.hartshorn.persistence.remote;
 
-public enum PersistenceModifier {
-    SKIP_NONE,
-    SKIP_EMPTY,
-    SKIP_NULL,
-    SKIP_DEFAULT
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@AllArgsConstructor
+@Getter
+public class PersistenceConnection {
+
+    private final String url;
+    private final String username;
+    private final String password;
+    private final Remote remote;
+
+    public <T> PersistenceConnection(T target, String username, String password, Remote<T> remote) {
+        this.url = remote.connection(target, username, password).url();
+        this.username = username;
+        this.password = password;
+        this.remote = remote;
+    }
 }

@@ -15,24 +15,23 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.persistence.properties;
+package org.dockbox.hartshorn.persistence.remote;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-@Getter
-public class SQLRemoteServer {
-    private final String server;
-    private final int port;
-    private final String database;
+public final class PostgreSQLRemote extends JdbcRemote {
 
-    public static SQLRemoteServer of(final String server, final String database) {
-        return of(server, 3306, database);
+    public static final PostgreSQLRemote INSTANCE = new PostgreSQLRemote();
+
+    @Override
+    protected String type() {
+        return "postgresql";
     }
 
-    public static SQLRemoteServer of(final String server, final int port, final String database) {
-        return new SQLRemoteServer(server, port, database);
+    @Override
+    public String driver() {
+        return "org.postgresql.Driver";
     }
 }

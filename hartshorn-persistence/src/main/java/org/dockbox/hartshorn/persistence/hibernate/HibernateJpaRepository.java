@@ -29,17 +29,25 @@ import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 import org.dockbox.hartshorn.core.exceptions.Except;
 import org.dockbox.hartshorn.persistence.context.EntityContext;
 import org.dockbox.hartshorn.persistence.jpa.JpaRepository;
-import org.dockbox.hartshorn.persistence.properties.PersistenceConnection;
-import org.dockbox.hartshorn.persistence.properties.Remote;
-import org.dockbox.hartshorn.persistence.properties.Remotes;
+import org.dockbox.hartshorn.persistence.remote.DerbyFileRemote;
+import org.dockbox.hartshorn.persistence.remote.MariaDbRemote;
+import org.dockbox.hartshorn.persistence.remote.MySQLRemote;
+import org.dockbox.hartshorn.persistence.remote.PersistenceConnection;
+import org.dockbox.hartshorn.persistence.remote.PostgreSQLRemote;
+import org.dockbox.hartshorn.persistence.remote.Remote;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.dialect.DerbyTenSevenDialect;
+import org.hibernate.dialect.MariaDB103Dialect;
+import org.hibernate.dialect.MySQL8Dialect;
+import org.hibernate.dialect.PostgreSQL95Dialect;
 
 import java.io.Closeable;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -56,6 +64,7 @@ import lombok.Getter;
 @Binds(JpaRepository.class)
 public class HibernateJpaRepository<T, ID> implements JpaRepository<T, ID>, Enableable, Closeable {
 
+    private final Map<Class<? extends Remote<?>>, String> dialects = HartshornUtils.emptyConcurrentMap();
     private final Configuration configuration = new Configuration();
     private final Class<T> type;
 
@@ -81,25 +90,34 @@ public class HibernateJpaRepository<T, ID> implements JpaRepository<T, ID>, Enab
         return this.factory == null;
     }
 
+    public void registerDialect(Class<? extends Remote<?>> remote, String dialectClass) {
+        this.dialects.put(remote, dialectClass);
+    }
+
     protected String dialect(final PersistenceConnection connection) throws ApplicationException {
         final Remote remote = connection.remote();
-        if (remote instanceof Remotes remotes) {
-            return switch (remotes) {
-                case DERBY -> "org.hibernate.dialect.DerbyTenSevenDialect";
-                case MYSQL -> "org.hibernate.dialect.MySQL8Dialect";
-                case POSTGRESQL -> "org.hibernate.dialect.PostgreSQL95Dialect";
-                case MARIADB -> "org.hibernate.dialect.MariaDB103Dialect";
-                default -> throw new ApplicationException("Unsupported native remote connection: " + remotes);
-            };
-        }
-        else if (remote instanceof HibernateRemote hibernateRemote) {
+
+        if (remote instanceof HibernateRemote hibernateRemote) {
             return hibernateRemote.dialect().getCanonicalName();
         }
+
+        String dialect = this.dialects.get(remote.getClass());
+        if (dialect != null) return dialect;
+
         throw new ApplicationException("Unexpected remote connection: " + remote);
+    }
+
+    protected void registerDefaultDialects() {
+        this.registerDialect(DerbyFileRemote.class, DerbyTenSevenDialect.class.getCanonicalName());
+        this.registerDialect(MySQLRemote.class, MySQL8Dialect.class.getCanonicalName());
+        this.registerDialect(PostgreSQLRemote.class, PostgreSQL95Dialect.class.getCanonicalName());
+        this.registerDialect(MariaDbRemote.class, MariaDB103Dialect.class.getCanonicalName());
     }
 
     @Override
     public void enable() throws ApplicationException {
+        this.registerDefaultDialects();
+
         if (HartshornUtils.notEmpty(this.connection.username()) || HartshornUtils.notEmpty(this.connection.password())) {
             this.applicationContext().log().debug("Username or password were configured in the active connection, adding to Hibernate configuration");
             this.configuration.setProperty("hibernate.connection.username", this.connection.username());

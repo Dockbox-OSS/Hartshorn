@@ -15,11 +15,18 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.persistence.hibernate;
+package org.dockbox.hartshorn.persistence.remote;
 
-import org.dockbox.hartshorn.persistence.remote.Remote;
-import org.hibernate.dialect.Dialect;
+public abstract class JdbcRemote implements Remote<JdbcRemoteConfiguration> {
 
-public interface HibernateRemote extends Remote {
-    Class<? extends Dialect> dialect();
+    protected String connectionString(JdbcRemoteConfiguration server) {
+        return "jdbc:%s://%s:%s/%s".formatted(this.type(), server.server(), server.port(), server.database());
+    }
+
+    protected abstract String type();
+
+    @Override
+    public PersistenceConnection connection(JdbcRemoteConfiguration target, String user, String password) {
+        return new PersistenceConnection(this.connectionString(target), user, password, this);
+    }
 }

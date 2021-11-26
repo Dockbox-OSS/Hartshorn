@@ -15,11 +15,23 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.persistence.hibernate;
+package org.dockbox.hartshorn.persistence.remote;
 
-import org.dockbox.hartshorn.persistence.remote.Remote;
-import org.hibernate.dialect.Dialect;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 
-public interface HibernateRemote extends Remote {
-    Class<? extends Dialect> dialect();
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+public final class MariaDbRemote extends JdbcRemote {
+
+    public static final MariaDbRemote INSTANCE = new MariaDbRemote();
+
+    @Override
+    protected String type() {
+        return "mariadb";
+    }
+
+    @Override
+    public String driver() {
+        return "org.mariadb.jdbc.Driver";
+    }
 }

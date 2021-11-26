@@ -15,18 +15,23 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.persistence.properties;
+package org.dockbox.hartshorn.persistence.remote;
 
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 
-@AllArgsConstructor
-@Getter
-public class PersistenceConnection {
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+public final class MySQLRemote extends JdbcRemote {
 
-    private final String url;
-    private final String username;
-    private final String password;
-    private final Remote remote;
+    public static final MySQLRemote INSTANCE = new MySQLRemote();
 
+    @Override
+    protected String type() {
+        return "mysql";
+    }
+
+    @Override
+    public String driver() {
+        return "com.mysql.cj.jdbc.Driver";
+    }
 }
