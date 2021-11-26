@@ -15,24 +15,9 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.persistence.properties;
+package org.dockbox.hartshorn.persistence.remote;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
-@Getter
-public class SQLRemoteServer {
-    private final String server;
-    private final int port;
-    private final String database;
-
-    public static SQLRemoteServer of(final String server, final String database) {
-        return of(server, 3306, database);
-    }
-
-    public static SQLRemoteServer of(final String server, final int port, final String database) {
-        return new SQLRemoteServer(server, port, database);
-    }
+public interface Remote<T> {
+    PersistenceConnection connection(T target, String user, String password);
+    String driver();
 }

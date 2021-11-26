@@ -52,7 +52,7 @@ import org.dockbox.hartshorn.core.exceptions.Except;
 import org.dockbox.hartshorn.persistence.DefaultObjectMapper;
 import org.dockbox.hartshorn.persistence.FileFormat;
 import org.dockbox.hartshorn.persistence.FileFormats;
-import org.dockbox.hartshorn.persistence.properties.PersistenceModifier;
+import org.dockbox.hartshorn.persistence.remote.PersistenceModifier;
 
 import java.io.FileWriter;
 import java.io.IOException;

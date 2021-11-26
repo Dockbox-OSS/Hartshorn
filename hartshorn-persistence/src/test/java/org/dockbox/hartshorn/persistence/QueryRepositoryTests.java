@@ -19,9 +19,9 @@ package org.dockbox.hartshorn.persistence;
 
 import org.dockbox.hartshorn.persistence.annotations.UsePersistence;
 import org.dockbox.hartshorn.persistence.objects.JpaUser;
-import org.dockbox.hartshorn.persistence.properties.PersistenceConnection;
-import org.dockbox.hartshorn.persistence.properties.Remotes;
-import org.dockbox.hartshorn.persistence.properties.SQLRemoteServer;
+import org.dockbox.hartshorn.persistence.remote.MySQLRemote;
+import org.dockbox.hartshorn.persistence.remote.PersistenceConnection;
+import org.dockbox.hartshorn.persistence.remote.JdbcRemoteConfiguration;
 import org.dockbox.hartshorn.testsuite.ApplicationAwareTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -42,8 +42,8 @@ public class QueryRepositoryTests extends ApplicationAwareTest {
     @Container private static final MySQLContainer<?> mySql = new MySQLContainer<>(MySQLContainer.NAME).withDatabaseName(DEFAULT_DATABASE);
 
     protected static PersistenceConnection connection() {
-        SQLRemoteServer server = SQLRemoteServer.of("localhost", mySql.getMappedPort(MySQLContainer.MYSQL_PORT), DEFAULT_DATABASE);
-        return new PersistenceConnection(Remotes.MYSQL.url(server), mySql.getUsername(), mySql.getPassword(), Remotes.MYSQL);
+        JdbcRemoteConfiguration server = JdbcRemoteConfiguration.of("localhost", mySql.getMappedPort(MySQLContainer.MYSQL_PORT), DEFAULT_DATABASE);
+        return MySQLRemote.INSTANCE.connection(server, mySql.getUsername(), mySql.getPassword());
     }
 
     @Test

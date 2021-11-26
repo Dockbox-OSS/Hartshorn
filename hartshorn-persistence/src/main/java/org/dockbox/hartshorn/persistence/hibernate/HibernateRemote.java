@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.persistence.hibernate;
 
-import org.dockbox.hartshorn.persistence.properties.Remote;
+import org.dockbox.hartshorn.persistence.remote.Remote;
 import org.hibernate.dialect.Dialect;
 
 public interface HibernateRemote extends Remote {
