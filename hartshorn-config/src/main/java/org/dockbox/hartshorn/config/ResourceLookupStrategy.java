@@ -21,7 +21,7 @@ import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.config.annotations.Configuration;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
-import org.dockbox.hartshorn.persistence.FileFormats;
+import org.dockbox.hartshorn.data.FileFormats;
 
 import java.net.URI;
 

@@ -18,7 +18,7 @@
 package org.dockbox.hartshorn.i18n;
 
 import org.dockbox.hartshorn.core.domain.Exceptional;
-import org.dockbox.hartshorn.persistence.FileFormats;
+import org.dockbox.hartshorn.data.FileFormats;
 
 import java.nio.file.Path;
 import java.util.Locale;

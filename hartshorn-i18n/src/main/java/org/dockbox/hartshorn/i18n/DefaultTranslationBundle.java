@@ -21,8 +21,8 @@ import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.core.annotations.inject.Binds;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
-import org.dockbox.hartshorn.persistence.FileFormats;
-import org.dockbox.hartshorn.persistence.mapping.ObjectMapper;
+import org.dockbox.hartshorn.data.FileFormats;
+import org.dockbox.hartshorn.data.mapping.ObjectMapper;
 
 import java.nio.file.Path;
 import java.util.Locale;

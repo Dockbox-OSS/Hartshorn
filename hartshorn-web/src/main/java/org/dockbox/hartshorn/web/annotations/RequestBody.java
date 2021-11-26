@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.web.annotations;
 
-import org.dockbox.hartshorn.persistence.FileFormats;
+import org.dockbox.hartshorn.data.FileFormats;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

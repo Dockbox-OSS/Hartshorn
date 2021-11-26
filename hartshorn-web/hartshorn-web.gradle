@@ -27,7 +27,7 @@ dependencies {
     implementation 'org.dockbox.hartshorn:hartshorn-core'
     implementation 'org.dockbox.hartshorn:hartshorn-config'
     implementation 'org.dockbox.hartshorn:hartshorn-events'
-    implementation 'org.dockbox.hartshorn:hartshorn-persistence'
+    implementation 'org.dockbox.hartshorn:hartshorn-data'
     implementation "org.eclipse.jetty:jetty-servlet:$jettyVersion"
     implementation "org.eclipse.jetty:jetty-server:$jettyVersion"
     implementation 'org.freemarker:freemarker:2.3.31' // TODO version config
