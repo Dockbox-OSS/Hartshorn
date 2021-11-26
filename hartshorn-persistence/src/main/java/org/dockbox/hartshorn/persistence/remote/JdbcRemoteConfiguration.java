@@ -15,11 +15,24 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.persistence.properties;
+package org.dockbox.hartshorn.persistence.remote;
 
-public enum PersistenceModifier {
-    SKIP_NONE,
-    SKIP_EMPTY,
-    SKIP_NULL,
-    SKIP_DEFAULT
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@Getter
+public final class JdbcRemoteConfiguration {
+    private final String server;
+    private final int port;
+    private final String database;
+
+    public static JdbcRemoteConfiguration of(final String server, final String database) {
+        return of(server, 3306, database);
+    }
+
+    public static JdbcRemoteConfiguration of(final String server, final int port, final String database) {
+        return new JdbcRemoteConfiguration(server, port, database);
+    }
 }

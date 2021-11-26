@@ -22,7 +22,7 @@ import org.dockbox.hartshorn.core.boot.Hartshorn;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 import org.dockbox.hartshorn.core.exceptions.Except;
-import org.dockbox.hartshorn.persistence.properties.PersistenceModifier;
+import org.dockbox.hartshorn.persistence.remote.PersistenceModifier;
 import org.dockbox.hartshorn.web.DefaultHttpWebServer;
 import org.dockbox.hartshorn.web.HttpWebServer;
 import org.eclipse.jetty.server.Connector;

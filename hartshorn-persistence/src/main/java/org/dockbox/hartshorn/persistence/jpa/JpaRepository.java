@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.persistence.jpa;
 
 import org.dockbox.hartshorn.core.context.ContextCarrier;
 import org.dockbox.hartshorn.core.domain.Exceptional;
-import org.dockbox.hartshorn.persistence.properties.PersistenceConnection;
+import org.dockbox.hartshorn.persistence.remote.PersistenceConnection;
 
 import java.util.Set;
 

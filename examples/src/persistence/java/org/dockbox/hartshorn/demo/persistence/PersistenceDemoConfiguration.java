@@ -25,9 +25,9 @@ import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.demo.persistence.services.UserRepository;
 import org.dockbox.hartshorn.persistence.FileFormats;
 import org.dockbox.hartshorn.persistence.jpa.JpaRepository;
-import org.dockbox.hartshorn.persistence.properties.PersistenceConnection;
-import org.dockbox.hartshorn.persistence.properties.Remotes;
-import org.dockbox.hartshorn.persistence.properties.SQLRemoteServer;
+import org.dockbox.hartshorn.persistence.remote.MySQLRemote;
+import org.dockbox.hartshorn.persistence.remote.PersistenceConnection;
+import org.dockbox.hartshorn.persistence.remote.JdbcRemoteConfiguration;
 
 import javax.inject.Singleton;
 
@@ -77,7 +77,8 @@ public class PersistenceDemoConfiguration {
     @Provider
     @Singleton
     public UserRepository sql(final ApplicationContext context) {
-        final PersistenceConnection connection = new PersistenceConnection(Remotes.MYSQL.url(SQLRemoteServer.of(this.host, this.port, this.database)), this.user, this.password, Remotes.MYSQL);
+        JdbcRemoteConfiguration configuration = JdbcRemoteConfiguration.of(this.host, this.port, this.database);
+        PersistenceConnection connection = MySQLRemote.INSTANCE.connection(configuration, this.user, this.password);
         return (UserRepository) context.get(UserRepository.class).connection(connection);
     }
 }

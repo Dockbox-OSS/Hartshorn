@@ -15,7 +15,7 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.persistence.properties;
+package org.dockbox.hartshorn.persistence.remote;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -29,4 +29,10 @@ public class PersistenceConnection {
     private final String password;
     private final Remote remote;
 
+    public <T> PersistenceConnection(T target, String username, String password, Remote<T> remote) {
+        this.url = remote.connection(target, username, password).url();
+        this.username = username;
+        this.password = password;
+        this.remote = remote;
+    }
 }
