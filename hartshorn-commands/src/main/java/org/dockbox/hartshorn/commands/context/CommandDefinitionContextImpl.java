@@ -17,24 +17,24 @@
 
 package org.dockbox.hartshorn.commands.context;
 
-import org.dockbox.hartshorn.core.boot.Hartshorn;
-import org.dockbox.hartshorn.core.domain.Exceptional;
-import org.dockbox.hartshorn.core.exceptions.Except;
 import org.dockbox.hartshorn.commands.annotations.Command;
 import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
 import org.dockbox.hartshorn.commands.definition.CommandDefinition;
 import org.dockbox.hartshorn.commands.definition.CommandElement;
 import org.dockbox.hartshorn.commands.definition.CommandElementImpl;
-import org.dockbox.hartshorn.commands.definition.CommandElements;
 import org.dockbox.hartshorn.commands.definition.CommandFlag;
 import org.dockbox.hartshorn.commands.definition.CommandFlagElement;
 import org.dockbox.hartshorn.commands.definition.CommandFlagImpl;
+import org.dockbox.hartshorn.commands.definition.EnumCommandElement;
 import org.dockbox.hartshorn.commands.definition.GroupCommandElement;
+import org.dockbox.hartshorn.core.HartshornUtils;
+import org.dockbox.hartshorn.core.boot.Hartshorn;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.DefaultContext;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
-import org.dockbox.hartshorn.core.HartshornUtils;
+import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.core.exceptions.Except;
 
 import java.util.List;
 import java.util.regex.MatchResult;
@@ -228,7 +228,7 @@ public class CommandDefinitionContextImpl extends DefaultContext implements Comm
 
             if (lookup.isEnum()) {
                 this.context.log().debug(type + " is an enum, creating explicit enum element.");
-                return CommandElements.enumElement(name, (TypeContext<E>) lookup, optional);
+                return EnumCommandElement.of(name, (TypeContext<E>) lookup, optional);
             }
             else {
                 Hartshorn.log().warn("Type '" + type.toLowerCase() + "' is not supported, using default value");
