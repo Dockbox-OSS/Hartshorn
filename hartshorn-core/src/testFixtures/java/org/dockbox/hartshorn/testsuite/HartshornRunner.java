@@ -38,8 +38,6 @@ import lombok.Getter;
 @Activator
 public class HartshornRunner implements BeforeEachCallback, AfterEachCallback{
 
-    @Getter private static final JUnitInformation information = new JUnitInformation();
-
     @Getter private ApplicationContext activeContext;
 
     @Override
