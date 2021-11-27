@@ -44,16 +44,16 @@ import java.util.regex.Pattern;
 @AutomaticActivation
 public class ConfigurationServiceProcessor implements ServiceProcessor<UseConfigurations> {
 
-    private static final Pattern STRATEGY_PATTERN = Pattern.compile("(.+):(.+)");
-    private static final Map<String, ResourceLookupStrategy> strategies = HartshornUtils.emptyConcurrentMap();
+    private final Pattern STRATEGY_PATTERN = Pattern.compile("(.+):(.+)");
+    private final Map<String, ResourceLookupStrategy> strategies = HartshornUtils.emptyConcurrentMap();
 
-    static {
-        addStrategy(new ClassPathResourceLookupStrategy());
-        addStrategy(new FileSystemLookupStrategy());
+    public ConfigurationServiceProcessor() {
+        this.addStrategy(new ClassPathResourceLookupStrategy());
+        this.addStrategy(new FileSystemLookupStrategy());
     }
 
-    public static void addStrategy(final ResourceLookupStrategy strategy) {
-        strategies.put(strategy.name(), strategy);
+    public void addStrategy(final ResourceLookupStrategy strategy) {
+        this.strategies.put(strategy.name(), strategy);
     }
 
     @Override
@@ -74,10 +74,10 @@ public class ConfigurationServiceProcessor implements ServiceProcessor<UseConfig
         final TypeContext<?> owner = TypeContext.of(configuration.owner());
         final FileFormats filetype = configuration.filetype();
 
-        final Matcher matcher = STRATEGY_PATTERN.matcher(source);
+        final Matcher matcher = this.STRATEGY_PATTERN.matcher(source);
         ResourceLookupStrategy strategy = new FileSystemLookupStrategy();
         if (matcher.find()) {
-            strategy = strategies.getOrDefault(matcher.group(1), strategy);
+            strategy = this.strategies.getOrDefault(matcher.group(1), strategy);
             source = matcher.group(2);
         }
 
