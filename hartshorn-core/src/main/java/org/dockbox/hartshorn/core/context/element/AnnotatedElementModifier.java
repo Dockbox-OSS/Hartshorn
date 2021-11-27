@@ -17,13 +17,25 @@
 
 package org.dockbox.hartshorn.core.context.element;
 
-/**
- * Acts as an extension of a given {@link QualifiedElement}, allowing you to modify protected values. Modifiers can not
- * modify private or final values. Any given modifier will only add or remove values like
- * {@link java.lang.annotation.Annotation annotations}, or change single non-final values. 
- * @param <E>
- */
-@FunctionalInterface
-public interface ElementModifier<E extends QualifiedElement> {
-    E element();
+import java.lang.annotation.Annotation;
+import java.lang.reflect.AnnotatedElement;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@AllArgsConstructor(staticName = "of")
+public final class AnnotatedElementModifier<A extends AnnotatedElement> implements ElementModifier<AnnotatedElementContext<A>> {
+
+    @Getter
+    private final AnnotatedElementContext<A> element;
+
+    public <T extends Annotation> void add(T annotation) {
+        if (annotation == null) return;
+        this.element().validate().put(annotation.annotationType(), annotation);
+    }
+
+    public <T extends Annotation> void remove(Class<T> annotation) {
+        if (!annotation.isAnnotation()) return;
+        this.element().validate().remove(annotation);
+    }
 }
