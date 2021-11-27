@@ -32,7 +32,8 @@ import java.util.stream.Collectors;
 
 import lombok.Getter;
 
-public class ParameterContext<T> extends AnnotatedElementContext<Parameter> implements TypedElementContext<T> {
+// skipcq: JAVA-W0100
+public final class ParameterContext<T> extends AnnotatedElementContext<Parameter> implements TypedElementContext<T> {
 
     private final Parameter parameter;
     @Getter private final boolean isVarargs;

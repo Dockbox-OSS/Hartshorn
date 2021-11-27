@@ -428,6 +428,7 @@ public class Table {
                 this.tryPopulateMissingEntry(
                         otherTable, populateEmptyEntries, mergedIdentifiers, joinedTable, row);
         }
+        // skipcq: JAVA-W0052
         catch (final IdentifierMismatchException ignored) {
         }
     }
