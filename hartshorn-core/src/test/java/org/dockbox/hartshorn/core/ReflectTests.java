@@ -17,12 +17,13 @@
 
 package org.dockbox.hartshorn.core;
 
-import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.context.PrefixContext;
+import org.dockbox.hartshorn.core.context.element.AnnotatedElementModifier;
 import org.dockbox.hartshorn.core.context.element.ConstructorContext;
 import org.dockbox.hartshorn.core.context.element.FieldContext;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
+import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.exceptions.TypeConversionException;
 import org.dockbox.hartshorn.core.types.ParentTestType;
 import org.dockbox.hartshorn.core.types.ReflectTestType;
@@ -34,7 +35,9 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -342,5 +345,59 @@ public class ReflectTests extends ApplicationAwareTest {
         final Object o = TypeContext.toPrimitive(TypeContext.of(type), value);
         Assertions.assertNotNull(o);
         Assertions.assertEquals(expected, o);
+    }
+
+    @Test
+    void testAddVirtualAnnotation() {
+        TypeContext<String> string = TypeContext.of(String.class);
+        Assertions.assertFalse(string.annotation(Demo.class).present());
+
+        Demo demo = new Demo() {
+            @Override
+            public Class<? extends Annotation> annotationType() {
+                return Demo.class;
+            }
+        };
+
+        AnnotatedElementModifier.of(string).add(demo);
+
+        Exceptional<Demo> annotation = string.annotation(Demo.class);
+        Assertions.assertTrue(annotation.present());
+        Assertions.assertSame(demo, annotation.get());
+    }
+
+    @Test
+    void testRemoveVirtualAnnotation() {
+        TypeContext<String> string = TypeContext.of(String.class);
+        Demo demo = new Demo() {
+            @Override
+            public Class<? extends Annotation> annotationType() {
+                return Demo.class;
+            }
+        };
+        AnnotatedElementModifier<Class<String>> modifier = AnnotatedElementModifier.of(string);
+        modifier.add(demo);
+        Assertions.assertTrue(string.annotation(Demo.class).present());
+
+        modifier.remove(Demo.class);
+        Assertions.assertFalse(string.annotation(Demo.class).present());
+    }
+
+    @Test
+    void testVirtualAnnotationToMethod() {
+        MethodContext<?, ReflectTests> method = TypeContext.of(ReflectTests.class).method("testVirtualAnnotationToMethod").get();
+        AnnotatedElementModifier<Method> modifier = AnnotatedElementModifier.of(method);
+        Demo demo = new Demo() {
+            @Override
+            public Class<? extends Annotation> annotationType() {
+                return Demo.class;
+            }
+        };
+
+        modifier.add(demo);
+        Assertions.assertTrue(method.annotation(Demo.class).present());
+
+        modifier.remove(Demo.class);
+        Assertions.assertFalse(method.annotation(Demo.class).present());
     }
 }
