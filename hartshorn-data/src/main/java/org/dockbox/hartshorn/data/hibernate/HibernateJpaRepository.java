@@ -116,6 +116,12 @@ public class HibernateJpaRepository<T, ID> implements JpaRepository<T, ID>, Enab
 
     @Override
     public void enable() throws ApplicationException {
+        if (this.connection == null) {
+            this.applicationContext().log().debug("No connection was set for JPA repository instance, using configuration values instead.");
+            HibernateRemoteImpl remote = this.applicationContext().get(HibernateRemoteImpl.class);
+            this.connection = new PersistenceConnection(remote.url(), remote.username(), remote.password(), remote);
+        }
+
         this.registerDefaultDialects();
 
         if (HartshornUtils.notEmpty(this.connection.username()) || HartshornUtils.notEmpty(this.connection.password())) {
