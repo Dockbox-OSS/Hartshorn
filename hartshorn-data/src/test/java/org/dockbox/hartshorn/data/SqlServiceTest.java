@@ -17,8 +17,13 @@
 
 package org.dockbox.hartshorn.data;
 
+import com.mysql.jdbc.Driver;
+
+import org.dockbox.hartshorn.core.Enableable;
 import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 import org.dockbox.hartshorn.data.annotations.UsePersistence;
+import org.dockbox.hartshorn.data.hibernate.HibernateJpaRepository;
 import org.dockbox.hartshorn.data.jpa.JpaRepository;
 import org.dockbox.hartshorn.data.remote.DerbyFileRemote;
 import org.dockbox.hartshorn.data.remote.MariaDbRemote;
@@ -27,9 +32,13 @@ import org.dockbox.hartshorn.data.remote.PersistenceConnection;
 import org.dockbox.hartshorn.data.remote.PostgreSQLRemote;
 import org.dockbox.hartshorn.data.remote.Remote;
 import org.dockbox.hartshorn.data.remote.JdbcRemoteConfiguration;
+import org.dockbox.hartshorn.data.service.JpaRepositoryFactory;
 import org.dockbox.hartshorn.testsuite.ApplicationAwareTest;
+import org.hibernate.Session;
+import org.hibernate.dialect.MySQL8Dialect;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -158,5 +167,30 @@ class SqlServiceTest extends ApplicationAwareTest {
         final Exceptional<User> persisted = sql.findById(guus.id());
         Assertions.assertTrue(persisted.present());
         Assertions.assertEquals(persisted.get().name(), "NotGuus");
+    }
+
+    @Test
+    void hibernateRepositoryUsesPropertiesIfNoConnectionExists() throws ApplicationException {
+        JpaRepositoryFactory factory = this.context().get(JpaRepositoryFactory.class);
+        JpaRepository<User, ?> repository = factory.repository(User.class);
+        Assertions.assertTrue(repository instanceof HibernateJpaRepository);
+
+        // Data API specific
+        this.context().property("hartshorn.data.username", mySql.getUsername());
+        this.context().property("hartshorn.data.password", mySql.getPassword());
+
+        String connectionUrl = "jdbc:mysql://%s:%s/%s".formatted(mySql.getHost(), mySql.getMappedPort(MySQLContainer.MYSQL_PORT), DEFAULT_DATABASE);
+        this.context().property("hartshorn.data.url", connectionUrl);
+
+        // Hibernate specific
+        this.context().property("hartshorn.data.hibernate.dialect", MySQL8Dialect.class.getCanonicalName());
+        this.context().property("hartshorn.data.hibernate.driver_class", Driver.class.getCanonicalName());
+
+        ((Enableable) repository).enable();
+
+        Session session = ((HibernateJpaRepository<User, ?>) repository).session();
+        Assertions.assertNotNull(session);
+
+        ((HibernateJpaRepository<User, ?>) repository).close();
     }
 }
