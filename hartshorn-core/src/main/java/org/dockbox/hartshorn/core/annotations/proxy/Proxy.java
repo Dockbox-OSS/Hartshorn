@@ -33,6 +33,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @Extends(Component.class)
+@Deprecated(since = "4.2.5", forRemoval = true)
 public @interface Proxy {
     /**
      * The target class for the proxy. Can be an interface, abstract, or concrete class.

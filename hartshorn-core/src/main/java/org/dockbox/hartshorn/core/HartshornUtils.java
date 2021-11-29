@@ -17,7 +17,6 @@
 
 package org.dockbox.hartshorn.core;
 
-import org.dockbox.hartshorn.core.domain.AbstractIdentifiable;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.domain.tuple.Triad;
 import org.dockbox.hartshorn.core.domain.tuple.Tuple;
@@ -93,7 +92,7 @@ public final class HartshornUtils {
     private static final int secondsInWeek = 7 * HartshornUtils.secondsInDay;
     /**
      * The globally 'empty' unique ID which can be used for empty implementations of {@link
-     * AbstractIdentifiable}.
+     * org.dockbox.hartshorn.core.domain.Identifiable}.
      */
     public static UUID EMPTY_UUID = UUID.fromString("00000000-1111-2222-3333-000000000000");
 

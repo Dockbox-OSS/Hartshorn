@@ -248,11 +248,6 @@ public class AnnotationMagicTest {
     }
 }
 
-@Route(regex = "jointRegex")
-@Joint
-class TestClassWithJointAnnotation {
-}
-
 @Joint2(path = "abc")
 @Route(regex = "jointRegex")
 class TestClassWithJointAnnotation2 {

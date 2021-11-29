@@ -27,6 +27,7 @@ import org.dockbox.hartshorn.core.exceptions.ApplicationException;
  * @param <T>
  *         the type of the input to the operation
  */
+@Deprecated(since = "4.2.5", forRemoval = true)
 public interface CheckedConsumer<T> {
     void accept(T t) throws ApplicationException;
 }

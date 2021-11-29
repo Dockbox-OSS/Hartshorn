@@ -20,6 +20,7 @@ package org.dockbox.hartshorn.core.boot;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 
 @FunctionalInterface
+@Deprecated(since = "4.2.5", forRemoval = true)
 public interface HartshornLoader {
     ApplicationContext load();
 }

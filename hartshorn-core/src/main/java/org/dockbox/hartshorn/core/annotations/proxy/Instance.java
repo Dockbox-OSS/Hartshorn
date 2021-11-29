@@ -29,5 +29,6 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.PARAMETER)
+@Deprecated(since = "4.2.5", forRemoval = true)
 public @interface Instance {
 }
