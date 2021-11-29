@@ -17,7 +17,9 @@
 
 package org.dockbox.hartshorn.data.exceptions;
 
-public class EmptyEntryException extends Exception {
+import org.dockbox.hartshorn.core.exceptions.ApplicationException;
+
+public class EmptyEntryException extends ApplicationException {
     public EmptyEntryException(final String message) {
         super(message);
     }

@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.core.exceptions;
 
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 
-public class TypeConversionException extends Exception {
+public class TypeConversionException extends ApplicationException {
 
     public TypeConversionException(final Class<?> type, final String value) {
         this(TypeContext.of(type), value);

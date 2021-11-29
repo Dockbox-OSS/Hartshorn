@@ -17,7 +17,9 @@
 
 package org.dockbox.hartshorn.data.exceptions;
 
-public class IdentifierMismatchException extends Exception {
+import org.dockbox.hartshorn.core.exceptions.ApplicationException;
+
+public class IdentifierMismatchException extends ApplicationException {
     public IdentifierMismatchException(final String message) {
         super(message);
     }
