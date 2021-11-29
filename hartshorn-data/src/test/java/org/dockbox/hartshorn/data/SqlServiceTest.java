@@ -28,6 +28,7 @@ import org.dockbox.hartshorn.data.jpa.JpaRepository;
 import org.dockbox.hartshorn.data.remote.DerbyFileRemote;
 import org.dockbox.hartshorn.data.remote.JdbcRemoteConfiguration;
 import org.dockbox.hartshorn.data.remote.MariaDbRemote;
+import org.dockbox.hartshorn.data.remote.MssqlRemote;
 import org.dockbox.hartshorn.data.remote.MySQLRemote;
 import org.dockbox.hartshorn.data.remote.PersistenceConnection;
 import org.dockbox.hartshorn.data.remote.PostgreSQLRemote;
@@ -44,6 +45,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.testcontainers.containers.ContainerState;
 import org.testcontainers.containers.JdbcDatabaseContainer;
+import org.testcontainers.containers.MSSQLServerContainer;
 import org.testcontainers.containers.MariaDBContainer;
 import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.containers.PostgreSQLContainer;
@@ -67,12 +69,14 @@ class SqlServiceTest extends ApplicationAwareTest {
     @Container private static final MySQLContainer<?> mySql = new MySQLContainer<>(MySQLContainer.NAME).withDatabaseName(DEFAULT_DATABASE);
     @Container private static final PostgreSQLContainer<?> postgreSql = new PostgreSQLContainer<>(PostgreSQLContainer.IMAGE).withDatabaseName(DEFAULT_DATABASE);
     @Container private static final MariaDBContainer<?> mariaDb = new MariaDBContainer<>(MariaDBContainer.NAME).withDatabaseName(DEFAULT_DATABASE);
+    @Container private static final MSSQLServerContainer<?> mssqlServer = new MSSQLServerContainer<>(MSSQLServerContainer.IMAGE).acceptLicense();
 
     public static Stream<Arguments> containers() {
         return Stream.of(
                 Arguments.of(mySql),
                 Arguments.of(postgreSql),
-                Arguments.of(mariaDb)
+                Arguments.of(mariaDb),
+                Arguments.of(mssqlServer)
         );
     }
 
@@ -87,7 +91,8 @@ class SqlServiceTest extends ApplicationAwareTest {
                 Arguments.of(directory(DerbyFileRemote.INSTANCE, "derby")),
                 Arguments.of(connection(MySQLRemote.INSTANCE, mySql, MySQLContainer.MYSQL_PORT)),
                 Arguments.of(connection(PostgreSQLRemote.INSTANCE, postgreSql, PostgreSQLContainer.POSTGRESQL_PORT)),
-                Arguments.of(connection(MariaDbRemote.INSTANCE, mariaDb, 3306))
+                Arguments.of(connection(MariaDbRemote.INSTANCE, mariaDb, 3306)),
+                Arguments.of(connection(MssqlRemote.INSTANCE, mssqlServer, MSSQLServerContainer.MS_SQL_SERVER_PORT))
         );
     }
 
