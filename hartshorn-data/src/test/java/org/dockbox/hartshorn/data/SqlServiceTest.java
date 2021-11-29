@@ -17,19 +17,28 @@
 
 package org.dockbox.hartshorn.data;
 
+import com.mysql.cj.jdbc.Driver;
+
+import org.dockbox.hartshorn.core.Enableable;
 import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 import org.dockbox.hartshorn.data.annotations.UsePersistence;
+import org.dockbox.hartshorn.data.hibernate.HibernateJpaRepository;
 import org.dockbox.hartshorn.data.jpa.JpaRepository;
 import org.dockbox.hartshorn.data.remote.DerbyFileRemote;
+import org.dockbox.hartshorn.data.remote.JdbcRemoteConfiguration;
 import org.dockbox.hartshorn.data.remote.MariaDbRemote;
 import org.dockbox.hartshorn.data.remote.MySQLRemote;
 import org.dockbox.hartshorn.data.remote.PersistenceConnection;
 import org.dockbox.hartshorn.data.remote.PostgreSQLRemote;
 import org.dockbox.hartshorn.data.remote.Remote;
-import org.dockbox.hartshorn.data.remote.JdbcRemoteConfiguration;
+import org.dockbox.hartshorn.data.service.JpaRepositoryFactory;
 import org.dockbox.hartshorn.testsuite.ApplicationAwareTest;
+import org.hibernate.Session;
+import org.hibernate.dialect.MySQL8Dialect;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -45,6 +54,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Set;
 import java.util.stream.Stream;
+
+import javax.persistence.EntityManager;
 
 @Testcontainers
 @UsePersistence
@@ -73,10 +84,10 @@ class SqlServiceTest extends ApplicationAwareTest {
 
     public static Stream<Arguments> dialects() {
         return Stream.of(
-                Arguments.of(DerbyFileRemote.INSTANCE, directory(DerbyFileRemote.INSTANCE, "derby")),
-                Arguments.of(MySQLRemote.INSTANCE, connection(MySQLRemote.INSTANCE, mySql, MySQLContainer.MYSQL_PORT)),
-                Arguments.of(PostgreSQLRemote.INSTANCE, connection(PostgreSQLRemote.INSTANCE, postgreSql, PostgreSQLContainer.POSTGRESQL_PORT)),
-                Arguments.of(MariaDbRemote.INSTANCE, connection(MariaDbRemote.INSTANCE, mariaDb, 3306))
+                Arguments.of(directory(DerbyFileRemote.INSTANCE, "derby")),
+                Arguments.of(connection(MySQLRemote.INSTANCE, mySql, MySQLContainer.MYSQL_PORT)),
+                Arguments.of(connection(PostgreSQLRemote.INSTANCE, postgreSql, PostgreSQLContainer.POSTGRESQL_PORT)),
+                Arguments.of(connection(MariaDbRemote.INSTANCE, mariaDb, 3306))
         );
     }
 
@@ -98,7 +109,7 @@ class SqlServiceTest extends ApplicationAwareTest {
 
     @ParameterizedTest
     @MethodSource("dialects")
-    public void testJpaSave(final Remote<?> remote, final PersistenceConnection target) {
+    public void testJpaSave(final PersistenceConnection target) {
         final JpaRepository<User, Long> sql = this.sql(target);
         sql.save(new User("Guus"));
         sql.save(new User("Simon"));
@@ -118,7 +129,7 @@ class SqlServiceTest extends ApplicationAwareTest {
 
     @ParameterizedTest
     @MethodSource("dialects")
-    void testJpaDelete(final Remote<?> remote, final PersistenceConnection target) {
+    void testJpaDelete(final PersistenceConnection target) {
         final JpaRepository<User, Long> sql = this.sql(target);
         final User guus = new User("Guus");
         sql.save(guus);
@@ -136,7 +147,7 @@ class SqlServiceTest extends ApplicationAwareTest {
 
     @ParameterizedTest
     @MethodSource("dialects")
-    void testJpaPersists(final Remote<?> remote, final PersistenceConnection target) {
+    void testJpaPersists(final PersistenceConnection target) {
         final JpaRepository<User, Long> sql = this.sql(target);
         final User user = new User("Guus");
         Assertions.assertEquals(0, user.id());
@@ -147,7 +158,7 @@ class SqlServiceTest extends ApplicationAwareTest {
 
     @ParameterizedTest
     @MethodSource("dialects")
-    void testJpaUpdate(final Remote<?> remote, final PersistenceConnection target) {
+    void testJpaUpdate(final PersistenceConnection target) {
         final JpaRepository<User, Long> sql = this.sql(target);
         final User guus = new User("Guus");
 
@@ -158,5 +169,49 @@ class SqlServiceTest extends ApplicationAwareTest {
         final Exceptional<User> persisted = sql.findById(guus.id());
         Assertions.assertTrue(persisted.present());
         Assertions.assertEquals(persisted.get().name(), "NotGuus");
+    }
+
+    @Test
+    void hibernateRepositoryUsesPropertiesIfNoConnectionExists() throws ApplicationException {
+        JpaRepositoryFactory factory = this.context().get(JpaRepositoryFactory.class);
+        JpaRepository<User, ?> repository = factory.repository(User.class);
+        Assertions.assertTrue(repository instanceof HibernateJpaRepository);
+
+        // Data API specific
+        this.context().property("hartshorn.data.username", mySql.getUsername());
+        this.context().property("hartshorn.data.password", mySql.getPassword());
+
+        String connectionUrl = "jdbc:mysql://%s:%s/%s".formatted(mySql.getHost(), mySql.getMappedPort(MySQLContainer.MYSQL_PORT), DEFAULT_DATABASE);
+        this.context().property("hartshorn.data.url", connectionUrl);
+
+        // Hibernate specific
+        this.context().property("hartshorn.data.hibernate.dialect", MySQL8Dialect.class.getCanonicalName());
+        this.context().property("hartshorn.data.hibernate.driver_class", Driver.class.getCanonicalName());
+
+        ((Enableable) repository).enable();
+
+        Session session = ((HibernateJpaRepository<User, ?>) repository).session();
+        Assertions.assertNotNull(session);
+
+        ((HibernateJpaRepository<User, ?>) repository).close();
+    }
+
+    @Test
+    void testAutomaticConnectionForUserRepository() {
+        // Data API specific
+        this.context().property("hartshorn.data.username", mySql.getUsername());
+        this.context().property("hartshorn.data.password", mySql.getPassword());
+
+        String connectionUrl = "jdbc:mysql://%s:%s/%s".formatted(mySql.getHost(), mySql.getMappedPort(MySQLContainer.MYSQL_PORT), DEFAULT_DATABASE);
+        this.context().property("hartshorn.data.url", connectionUrl);
+
+        // Hibernate specific
+        this.context().property("hartshorn.data.hibernate.dialect", MySQL8Dialect.class.getCanonicalName());
+        this.context().property("hartshorn.data.hibernate.driver_class", Driver.class.getCanonicalName());
+
+        UserJpaRepository repository = this.context().get(UserJpaRepository.class);
+
+        EntityManager em = repository.entityManager();
+        Assertions.assertNotNull(em);
     }
 }

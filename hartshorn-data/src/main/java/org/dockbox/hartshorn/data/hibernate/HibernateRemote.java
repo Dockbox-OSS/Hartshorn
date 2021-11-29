@@ -17,9 +17,14 @@
 
 package org.dockbox.hartshorn.data.hibernate;
 
+import org.dockbox.hartshorn.core.annotations.component.Component;
+import org.dockbox.hartshorn.data.remote.PersistenceConnection;
 import org.dockbox.hartshorn.data.remote.Remote;
 import org.hibernate.dialect.Dialect;
 
+@Component(singleton = true)
 public interface HibernateRemote extends Remote {
     Class<? extends Dialect> dialect();
+
+    PersistenceConnection connection();
 }

@@ -116,6 +116,12 @@ public class HibernateJpaRepository<T, ID> implements JpaRepository<T, ID>, Enab
 
     @Override
     public void enable() throws ApplicationException {
+        if (this.connection == null) {
+            this.applicationContext().log().debug("No connection was set for JPA repository instance, using configuration values instead.");
+            HibernateRemote remote = this.applicationContext().get(HibernateRemote.class);
+            this.connection = remote.connection();
+        }
+
         this.registerDefaultDialects();
 
         if (HartshornUtils.notEmpty(this.connection.username()) || HartshornUtils.notEmpty(this.connection.password())) {
@@ -249,6 +255,7 @@ public class HibernateJpaRepository<T, ID> implements JpaRepository<T, ID>, Enab
     public void close() {
         if (this.session != null && this.session.isOpen()) {
             this.session.close();
+            this.session = null;
         }
     }
 
@@ -259,10 +266,23 @@ public class HibernateJpaRepository<T, ID> implements JpaRepository<T, ID>, Enab
 
     public Session session() {
         if (this.session != null && this.session.isOpen()) return this.session;
+
+        // If the factory was not constructed at this point, the connection was not configured. This indicates the
+        // repository should fall back to constructing the default remote through the active HibernateRemote binding.
+        if (this.factory == null) {
+            try {
+                Bindings.enable(this);
+            } catch (ApplicationException e) {
+                throw e.runtime();
+            }
+        }
+
         final PersistenceConnection connection = this.connection();
         if (connection == null) throw new IllegalStateException("Connection has not been configured!");
 
         this.applicationContext().log().debug("Opening remote session to %s".formatted(connection.url()));
-        return this.factory().openSession();
+        this.session = this.factory().openSession();
+
+        return this.session;
     }
 }
