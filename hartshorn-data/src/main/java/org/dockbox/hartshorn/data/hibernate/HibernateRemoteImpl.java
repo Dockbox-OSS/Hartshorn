@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.data.hibernate;
 
-import org.dockbox.hartshorn.core.annotations.component.Component;
+import org.dockbox.hartshorn.core.annotations.inject.Binds;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.data.remote.PersistenceConnection;
@@ -27,8 +27,8 @@ import javax.inject.Inject;
 
 import lombok.Getter;
 
-@Component(singleton = true)
 @Getter
+@Binds(HibernateRemote.class)
 public class HibernateRemoteImpl implements HibernateRemote {
 
     private final String driver;
@@ -61,5 +61,10 @@ public class HibernateRemoteImpl implements HibernateRemote {
     @Override
     public PersistenceConnection connection(Object target, String user, String password) {
         throw new UnsupportedOperationException("Cannot create targeted connection from pre-configured remote.");
+    }
+
+    @Override
+    public PersistenceConnection connection() {
+        return new PersistenceConnection(this.url(), this.username(), this.password(), this);
     }
 }
