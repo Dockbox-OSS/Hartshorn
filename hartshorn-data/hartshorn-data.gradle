@@ -19,7 +19,6 @@ apply from: "$project.rootDir/gradle/publications.gradle"
 
 dependencies {
     implementation 'org.dockbox.hartshorn:hartshorn-core'
-    implementation "org.apache.derby:derby:$derbyVersion"
     implementation "org.hibernate:hibernate-core:$hibernateVersion"
     implementation "com.fasterxml.jackson.core:jackson-core:$jacksonVersion"
     implementation "org.codehaus.woodstox:woodstox-core-asl:$woodstoxVersion"
@@ -28,12 +27,19 @@ dependencies {
     implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-toml:$jacksonVersion"
     implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-properties:$jacksonVersion"
 
-    testImplementation "org.postgresql:postgresql:$postgreSqlVersion"
-    testImplementation "org.testcontainers:mysql:$testContainersVersion"
-    testImplementation "org.testcontainers:mariadb:$testContainersVersion"
-    testImplementation "mysql:mysql-connector-java:$mySqlConnectorVersion"
-    testImplementation "org.testcontainers:postgresql:$testContainersVersion"
+    // Test Containers
     testImplementation "org.testcontainers:junit-jupiter:$testContainersVersion"
     testImplementation "org.testcontainers:testcontainers:$testContainersVersion"
+
+    testImplementation "org.testcontainers:mysql:$testContainersVersion"
+    testImplementation "org.testcontainers:mariadb:$testContainersVersion"
+    testImplementation "org.testcontainers:postgresql:$testContainersVersion"
+    testImplementation "org.testcontainers:mssqlserver:$testContainersVersion"
+
+    // Drivers
+    testImplementation "mysql:mysql-connector-java:$mySqlConnectorVersion"
     testImplementation "org.mariadb.jdbc:mariadb-java-client:$mariaDbClientVersion"
+    testImplementation "org.postgresql:postgresql:$postgreSqlVersion"
+    testImplementation "com.microsoft.sqlserver:mssql-jdbc:$mssqlDriverVersion"
+    testImplementation "org.apache.derby:derby:$derbyVersion"
 }

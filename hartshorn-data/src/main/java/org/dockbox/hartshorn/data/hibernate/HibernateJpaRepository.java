@@ -31,6 +31,7 @@ import org.dockbox.hartshorn.data.context.EntityContext;
 import org.dockbox.hartshorn.data.jpa.JpaRepository;
 import org.dockbox.hartshorn.data.remote.DerbyFileRemote;
 import org.dockbox.hartshorn.data.remote.MariaDbRemote;
+import org.dockbox.hartshorn.data.remote.SqlServerRemote;
 import org.dockbox.hartshorn.data.remote.MySQLRemote;
 import org.dockbox.hartshorn.data.remote.PersistenceConnection;
 import org.dockbox.hartshorn.data.remote.PostgreSQLRemote;
@@ -43,6 +44,7 @@ import org.hibernate.dialect.DerbyTenSevenDialect;
 import org.hibernate.dialect.MariaDB103Dialect;
 import org.hibernate.dialect.MySQL8Dialect;
 import org.hibernate.dialect.PostgreSQL95Dialect;
+import org.hibernate.dialect.SQLServer2012Dialect;
 
 import java.io.Closeable;
 import java.util.Collection;
@@ -112,6 +114,7 @@ public class HibernateJpaRepository<T, ID> implements JpaRepository<T, ID>, Enab
         this.registerDialect(MySQLRemote.class, MySQL8Dialect.class.getCanonicalName());
         this.registerDialect(PostgreSQLRemote.class, PostgreSQL95Dialect.class.getCanonicalName());
         this.registerDialect(MariaDbRemote.class, MariaDB103Dialect.class.getCanonicalName());
+        this.registerDialect(SqlServerRemote.class, SQLServer2012Dialect.class.getCanonicalName());
     }
 
     @Override

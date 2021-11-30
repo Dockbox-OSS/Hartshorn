@@ -17,9 +17,26 @@
 
 package org.dockbox.hartshorn.data.remote;
 
-public enum PersistenceModifier {
-    SKIP_NONE,
-    SKIP_EMPTY,
-    SKIP_NULL,
-    SKIP_DEFAULT
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+public final class SqlServerRemote extends JdbcRemote {
+
+    public static final SqlServerRemote INSTANCE = new SqlServerRemote();
+
+    @Override
+    protected boolean includeDatabase() {
+        return false;
+    }
+
+    @Override
+    protected String type() {
+        return "sqlserver";
+    }
+
+    @Override
+    public String driver() {
+        return "com.microsoft.sqlserver.jdbc.SQLServerDriver";
+    }
 }

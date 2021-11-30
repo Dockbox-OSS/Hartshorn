@@ -20,10 +20,16 @@ package org.dockbox.hartshorn.data.remote;
 public abstract class JdbcRemote implements Remote<JdbcRemoteConfiguration> {
 
     protected String connectionString(JdbcRemoteConfiguration server) {
-        return "jdbc:%s://%s:%s/%s".formatted(this.type(), server.server(), server.port(), server.database());
+        String connectionString = "jdbc:%s://%s:%s".formatted(this.type(), server.server(), server.port());
+        if (this.includeDatabase()) connectionString = "%s/%s".formatted(connectionString, server.database());
+        return connectionString;
     }
 
     protected abstract String type();
+
+    protected boolean includeDatabase() {
+        return true;
+    }
 
     @Override
     public PersistenceConnection connection(JdbcRemoteConfiguration target, String user, String password) {
