@@ -17,22 +17,26 @@
 
 package org.dockbox.hartshorn.data.remote;
 
-public abstract class JdbcRemote implements Remote<JdbcRemoteConfiguration> {
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 
-    protected String connectionString(JdbcRemoteConfiguration server) {
-        String connectionString = "jdbc:%s://%s:%s".formatted(this.type(), server.server(), server.port());
-        if (this.includeDatabase()) connectionString = "%s/%s".formatted(connectionString, server.database());
-        return connectionString;
-    }
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+public final class SqlServerRemote extends JdbcRemote {
 
-    protected abstract String type();
+    public static final SqlServerRemote INSTANCE = new SqlServerRemote();
 
+    @Override
     protected boolean includeDatabase() {
-        return true;
+        return false;
     }
 
     @Override
-    public PersistenceConnection connection(JdbcRemoteConfiguration target, String user, String password) {
-        return new PersistenceConnection(this.connectionString(target), user, password, this);
+    protected String type() {
+        return "sqlserver";
+    }
+
+    @Override
+    public String driver() {
+        return "com.microsoft.sqlserver.jdbc.SQLServerDriver";
     }
 }
