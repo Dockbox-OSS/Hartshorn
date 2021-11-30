@@ -28,6 +28,7 @@ import org.dockbox.hartshorn.core.context.element.ParameterContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.context.element.TypedElementContext;
 import org.dockbox.hartshorn.core.HartshornUtils;
+import org.dockbox.hartshorn.core.exceptions.Except;
 
 import java.util.Collection;
 import java.util.List;
@@ -57,10 +58,10 @@ public class ComponentContextInjectionProcessor extends ComponentValidator<Servi
 
     private void validate(final TypedElementContext<?> context, final TypeContext<?> parent) {
         if (!context.type().childOf(org.dockbox.hartshorn.core.context.Context.class))
-            throw new ApplicationException("%s is annotated with %s but does not extend %s".formatted(
+            Except.unchecked(new ApplicationException("%s is annotated with %s but does not extend %s".formatted(
                     context.qualifiedName(),
                     Context.class.getSimpleName(),
                     org.dockbox.hartshorn.core.context.Context.class.getSimpleName())
-            ).runtime();
+            ));
     }
 }

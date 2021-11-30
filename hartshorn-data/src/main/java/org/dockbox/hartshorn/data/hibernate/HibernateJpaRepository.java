@@ -276,7 +276,7 @@ public class HibernateJpaRepository<T, ID> implements JpaRepository<T, ID>, Enab
             try {
                 Bindings.enable(this);
             } catch (ApplicationException e) {
-                throw e.runtime();
+                return Except.unchecked(e);
             }
         }
 

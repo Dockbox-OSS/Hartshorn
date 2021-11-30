@@ -27,6 +27,7 @@ import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.domain.tuple.Tristate;
 import org.dockbox.hartshorn.core.domain.tuple.Tuple;
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
+import org.dockbox.hartshorn.core.exceptions.Except;
 import org.dockbox.hartshorn.core.exceptions.NotPrimitiveException;
 import org.dockbox.hartshorn.core.exceptions.TypeConversionException;
 import org.dockbox.hartshorn.core.proxy.javassist.JavassistProxyUtil;
@@ -153,7 +154,7 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
         }
         if (context.environment().manager().isProxy(instance)) {
             return context.environment().manager().real(instance)
-                    .orThrow(() -> new ApplicationException("Could not derive real type of instance " + instance).runtime());
+                    .orThrowUnchecked(() -> new ApplicationException("Could not derive real type of instance " + instance));
         }
         else return of(instance);
     }
@@ -569,7 +570,7 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
     }
 
     private void verifyMetadataAvailable() {
-        if (this.isProxy()) throw new ApplicationException("Cannot collect metadata of proxied type '%s'".formatted(this.qualifiedName())).runtime();
+        if (this.isProxy()) Except.unchecked(new ApplicationException("Cannot collect metadata of proxied type '%s'".formatted(this.qualifiedName())));
     }
 
     public T defaultOrNull() {

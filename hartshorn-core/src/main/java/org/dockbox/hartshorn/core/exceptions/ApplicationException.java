@@ -36,13 +36,18 @@ public class ApplicationException extends Exception {
         super(cause);
     }
 
+    /**
+     * @return The current exception, wrapped in a {@link RuntimeException}.
+     * @deprecated Use {@link Except#unchecked(Throwable)} instead.
+     */
+    @Deprecated(since = "4.2.5", forRemoval = true)
     public RuntimeException runtime() {
         return new RuntimeException(this);
     }
 
     public Throwable unwrap() {
         Throwable root = this;
-        while (root.getCause() instanceof ApplicationException applicationException && root.getCause() != root) {
+        while (root.getCause() instanceof ApplicationException && root.getCause() != root) {
             root = root.getCause();
         }
         return root;

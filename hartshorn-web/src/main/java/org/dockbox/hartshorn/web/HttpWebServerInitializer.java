@@ -90,7 +90,7 @@ public class HttpWebServerInitializer implements LifecycleObserver {
             this.webServer.start(this.port);
         }
         catch (final ApplicationException e) {
-            throw e.runtime();
+            Except.unchecked(e);
         }
     }
 

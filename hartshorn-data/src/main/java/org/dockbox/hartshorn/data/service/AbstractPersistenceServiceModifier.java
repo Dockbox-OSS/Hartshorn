@@ -23,6 +23,7 @@ import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.domain.TypedOwner;
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
+import org.dockbox.hartshorn.core.exceptions.Except;
 import org.dockbox.hartshorn.core.proxy.ProxyFunction;
 import org.dockbox.hartshorn.core.services.ComponentContainer;
 import org.dockbox.hartshorn.core.services.ServiceAnnotatedMethodModifier;
@@ -95,11 +96,11 @@ public abstract class AbstractPersistenceServiceModifier<M extends Annotation, C
                 Files.createDirectory(root);
             }
             catch (final IOException e) {
-                throw new ApplicationException(e).runtime();
+                Except.unchecked(e);
             }
         }
 
-        if (!root.toFile().isDirectory()) throw new ApplicationException("Expected " + root + " to be a directory, but found a file instead").runtime();
+        if (!root.toFile().isDirectory()) Except.unchecked(new ApplicationException("Expected " + root + " to be a directory, but found a file instead"));
 
         return annotationContext.filetype().asPath(root, annotationContext.file().value());
     }
