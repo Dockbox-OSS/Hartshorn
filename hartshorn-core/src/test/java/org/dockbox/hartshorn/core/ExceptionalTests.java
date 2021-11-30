@@ -424,9 +424,8 @@ public class ExceptionalTests {
             Assertions.fail();
         }
         catch (final Throwable t) {
-            Assertions.assertTrue(t instanceof RuntimeException);
-            Assertions.assertNotNull(t.getCause());
-            Assertions.assertEquals("error", t.getCause().getMessage());
+            Assertions.assertTrue(t instanceof Exception);
+            Assertions.assertEquals("error", t.getMessage());
         }
     }
 
