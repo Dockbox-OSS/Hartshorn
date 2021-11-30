@@ -22,7 +22,6 @@ import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.data.FileFormat;
-import org.dockbox.hartshorn.data.remote.PersistenceModifier;
 
 import java.net.URI;
 import java.net.URL;
@@ -85,6 +84,6 @@ public interface ObjectMapper {
 
     FileFormat fileType();
 
-    ObjectMapper skipBehavior(PersistenceModifier modifier);
+    ObjectMapper skipBehavior(JsonInclusionRule modifier);
 
 }

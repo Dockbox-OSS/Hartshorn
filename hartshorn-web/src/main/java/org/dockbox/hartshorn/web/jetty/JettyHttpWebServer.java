@@ -22,7 +22,7 @@ import org.dockbox.hartshorn.core.boot.Hartshorn;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 import org.dockbox.hartshorn.core.exceptions.Except;
-import org.dockbox.hartshorn.data.remote.PersistenceModifier;
+import org.dockbox.hartshorn.data.mapping.JsonInclusionRule;
 import org.dockbox.hartshorn.web.DefaultHttpWebServer;
 import org.dockbox.hartshorn.web.HttpWebServer;
 import org.eclipse.jetty.server.Connector;
@@ -56,7 +56,7 @@ public class JettyHttpWebServer extends DefaultHttpWebServer {
     @Getter
     private final HandlerWrapper servletHandler;
     @Getter @Setter
-    private PersistenceModifier skipBehavior = PersistenceModifier.SKIP_NONE;
+    private JsonInclusionRule skipBehavior = JsonInclusionRule.SKIP_NONE;
     private JettyServer server;
 
     @Inject

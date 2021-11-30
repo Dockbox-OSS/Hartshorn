@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.web;
 
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 import org.dockbox.hartshorn.core.services.parameter.ParameterLoader;
-import org.dockbox.hartshorn.data.remote.PersistenceModifier;
+import org.dockbox.hartshorn.data.mapping.JsonInclusionRule;
 import org.dockbox.hartshorn.web.processing.HttpRequestParameterLoaderContext;
 
 import java.net.URI;
@@ -39,9 +39,9 @@ public interface HttpWebServer {
 
     ParameterLoader<HttpRequestParameterLoaderContext> loader();
 
-    HttpWebServer skipBehavior(PersistenceModifier modifier);
+    HttpWebServer skipBehavior(JsonInclusionRule modifier);
 
-    PersistenceModifier skipBehavior();
+    JsonInclusionRule skipBehavior();
 
     HttpWebServer listStaticDirectories(boolean listDirectories);
 

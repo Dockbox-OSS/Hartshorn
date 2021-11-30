@@ -52,7 +52,7 @@ import org.dockbox.hartshorn.core.exceptions.Except;
 import org.dockbox.hartshorn.data.DefaultObjectMapper;
 import org.dockbox.hartshorn.data.FileFormat;
 import org.dockbox.hartshorn.data.FileFormats;
-import org.dockbox.hartshorn.data.remote.PersistenceModifier;
+import org.dockbox.hartshorn.data.mapping.JsonInclusionRule;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -201,7 +201,7 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
     }
 
     @Override
-    public JacksonObjectMapper skipBehavior(final PersistenceModifier modifier) {
+    public JacksonObjectMapper skipBehavior(final JsonInclusionRule modifier) {
         this.include = switch (modifier) {
             case SKIP_EMPTY -> Include.NON_EMPTY;
             case SKIP_NULL -> Include.NON_NULL;
