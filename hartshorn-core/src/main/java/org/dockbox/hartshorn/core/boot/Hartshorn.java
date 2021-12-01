@@ -68,7 +68,7 @@ public final class Hartshorn {
         StackTraceElement element = null;
         for (final StackTraceElement ste : Thread.currentThread().getStackTrace()) {
             final boolean isJavaModule = ste.getModuleName() != null && ste.getModuleName().startsWith("java.");
-            final boolean isExcluded = TypeContext.lookup(ste.getClassName()).annotation(LogExclude.class).present();
+            final boolean isExcluded = TypeContext.lookup(ste.getClassName().split("\\$")[0]).annotation(LogExclude.class).present();
             if (isJavaModule || isExcluded) continue;
             else {
                 element = ste;
@@ -78,7 +78,7 @@ public final class Hartshorn {
 
         if (element == null) throw new IllegalStateException("Could not determine caller from stacktrace");
 
-        final String className = element.getClassName();
+        final String className = element.getClassName().split("\\$")[0];
         if (LOGGERS.containsKey(className)) return LOGGERS.get(className);
 
         final Logger logger = LoggerFactory.getLogger(TypeContext.lookup(className).type());
