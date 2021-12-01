@@ -17,9 +17,11 @@
 
 package org.dockbox.hartshorn.core.exceptions;
 
+import org.dockbox.hartshorn.core.annotations.context.LogExclude;
 import org.dockbox.hartshorn.core.function.CheckedRunnable;
 import org.jetbrains.annotations.Nullable;
 
+@LogExclude
 public final class Except {
 
     private static ExceptionHandle handle = ExceptionLevel.FRIENDLY;
@@ -74,16 +76,18 @@ public final class Except {
         return "No message provided";
     }
 
-    public static String causeMessage(final Throwable throwable) {
-        String message = throwable.getMessage();
-        Throwable next = throwable;
-        while (next != null) {
-            if (null != next.getMessage()) message = next.getMessage();
-            // Avoid infinitely looping if the throwable has itself as cause
-            if (!next.equals(throwable.getCause())) next = next.getCause();
-            else break;
-        }
-        return message;
+    /**
+     * Throw the provided {@link Throwable} as if it were unchecked. This treats the exception as if it were unchecked,
+     * and will not require it to be handled by javac. This is possible because of a side effect of type erasure, see
+     * the link below for more details. The return result is only used to mimic a return value when it is needed, as the
+     * <code>throws</code> cause is not enough to make the compiler know that the method will throw an exception.
+     *
+     * @param t The exception to throw.
+     * @param <T> The type of the exception.
+     * @throws T The exception to throw.
+     * @see <a href="https://blog.jooq.org/throw-checked-exceptions-like-runtime-exceptions-in-java/">Throw checked exceptions like runtime exceptions in Java</a>
+     */
+    public static <T extends Throwable, R> R unchecked(Throwable t) throws T {
+        throw (T) t;
     }
-
 }

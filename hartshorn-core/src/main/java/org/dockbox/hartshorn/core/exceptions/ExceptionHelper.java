@@ -17,10 +17,11 @@
 
 package org.dockbox.hartshorn.core.exceptions;
 
+import org.dockbox.hartshorn.core.annotations.context.LogExclude;
+import org.dockbox.hartshorn.core.boot.Hartshorn;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 
@@ -39,10 +40,8 @@ import java.util.Arrays;
  * NullPointerException: Foo bar
  * Stack: [...] * }</pre>
  */
-public class ExceptionHelper {
-
-    private static final Logger log = LoggerFactory.getLogger(ExceptionHelper.class);
-    private static final String separator = "========================================";
+@LogExclude
+public final class ExceptionHelper {
 
     /**
      * Prints the exception in a user-friendly manner. Usually providing as much detail as possible
@@ -55,32 +54,32 @@ public class ExceptionHelper {
      * @param stacktrace
      *         Whether to print a stacktrace after the caught information
      */
-    public static void printFriendly(@NonNls @Nullable final String message, @Nullable final Throwable exception, final boolean stacktrace) {
-        log.error(ExceptionHelper.separator);
+    public static void printFriendly(@NonNls @Nullable String message, @Nullable final Throwable exception, final boolean stacktrace) {
         if (null != exception) {
-            log.error("Exception: " + exception.getClass().getCanonicalName());
-            if (null != message && !message.isEmpty()) log.error("First message: " + message);
-            final String causeMessage = Except.causeMessage(exception);
-            if (null != causeMessage && !causeMessage.isEmpty()) log.error("Cause: " + causeMessage);
+            Logger log = Hartshorn.log();
 
+            String location = "";
             if (0 < exception.getStackTrace().length) {
                 final StackTraceElement root = exception.getStackTrace()[0];
                 final String line = 0 < root.getLineNumber() ? ":" + root.getLineNumber() : "(internal call)";
-                log.error("Location: " + root.getFileName() + line);
+                location = root.getFileName() + line;
+            }
 
-                if (stacktrace) {
-                    Throwable nextException = exception;
+            if (message == null) message = "";
+            log.error("Exception: " + exception.getClass().getCanonicalName() + " ("+ location +"): " + message);
 
-                    while (null != nextException) {
-                        final StackTraceElement[] trace = nextException.getStackTrace();
-                        log.error(nextException.getClass().getCanonicalName() + ": " + nextException.getMessage());
+            if (stacktrace) {
+                Throwable nextException = exception;
 
-                        for (final StackTraceElement element : trace) {
-                            final String elLine = 0 < element.getLineNumber() ? ":" + element.getLineNumber() : "(internal call)";
-                            log.error("  at " + element.getClassName() + "." + element.getMethodName() + elLine);
-                        }
-                        nextException = nextException.getCause();
+                while (null != nextException) {
+                    final StackTraceElement[] trace = nextException.getStackTrace();
+                    log.error(nextException.getClass().getCanonicalName() + ": " + nextException.getMessage());
+
+                    for (final StackTraceElement element : trace) {
+                        final String elLine = 0 < element.getLineNumber() ? ":" + element.getLineNumber() : "(internal call)";
+                        log.error("  at " + element.getClassName() + "." + element.getMethodName() + "(" + element.getFileName() + elLine + ")");
                     }
+                    nextException = nextException.getCause();
                 }
             }
         }
@@ -98,8 +97,8 @@ public class ExceptionHelper {
      *         Whether to print a stacktrace after the caught information
      */
     public static void printMinimal(@NonNls @Nullable final String message, @Nullable final Throwable exception, final boolean stacktrace) {
-        log.error(ExceptionHelper.separator);
         if (null != exception && null != message && !message.isEmpty()) {
+            Logger log = Hartshorn.log();
             log.error(exception.getClass().getSimpleName() + ": " + message);
             if (stacktrace) log.error(Arrays.toString(exception.getStackTrace()));
         }

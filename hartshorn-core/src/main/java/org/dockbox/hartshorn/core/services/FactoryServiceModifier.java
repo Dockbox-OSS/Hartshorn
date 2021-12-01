@@ -28,6 +28,7 @@ import org.dockbox.hartshorn.core.context.MethodProxyContext;
 import org.dockbox.hartshorn.core.context.element.ConstructorContext;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
+import org.dockbox.hartshorn.core.exceptions.Except;
 import org.dockbox.hartshorn.core.proxy.ProxyFunction;
 
 @AutomaticActivation
@@ -68,7 +69,7 @@ public class FactoryServiceModifier extends ServiceAnnotatedMethodModifier<Facto
             if (enable) Bindings.enable(instance);
             return instance;
         } catch (ApplicationException e) {
-            throw e.runtime();
+            return Except.unchecked(e);
         }
     }
 

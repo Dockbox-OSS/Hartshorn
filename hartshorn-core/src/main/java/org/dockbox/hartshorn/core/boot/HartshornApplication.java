@@ -23,6 +23,7 @@ import org.dockbox.hartshorn.core.boot.LogLevelModifier.LogLevel;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
+import org.dockbox.hartshorn.core.exceptions.Except;
 import org.slf4j.ILoggerFactory;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -55,7 +56,7 @@ public final class HartshornApplication {
             return load(TypeContext.of(activator), args, modifiers);
         }
         catch (final InvocationTargetException | NoSuchMethodException | InstantiationException | IllegalAccessException e) {
-            throw new ApplicationException("Could not bootstrap application " + activator.getSimpleName(), e).runtime();
+            return Except.unchecked(new ApplicationException("Could not bootstrap application " + activator.getSimpleName(), e));
         }
     }
 

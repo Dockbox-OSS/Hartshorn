@@ -17,12 +17,14 @@
 
 package org.dockbox.hartshorn.core.exceptions;
 
+import org.dockbox.hartshorn.core.annotations.context.LogExclude;
 import org.dockbox.hartshorn.core.function.TriConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 
+@LogExclude
 public enum ExceptionLevel implements ExceptionHandle {
     FRIENDLY(ExceptionHelper::printFriendly),
     MINIMAL(ExceptionHelper::printMinimal),

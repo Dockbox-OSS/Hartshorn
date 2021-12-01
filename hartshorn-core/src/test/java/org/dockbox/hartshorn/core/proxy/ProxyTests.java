@@ -56,7 +56,7 @@ public class ProxyTests extends ApplicationAwareTest {
                 FinalProxyTarget.class.getMethod("name"),
                 (instance, args, proxyContext) -> "Hartshorn");
         final ProxyHandler<FinalProxyTarget> handler = new JavassistProxyHandler<>(new FinalProxyTarget());
-        Assertions.assertThrows(RuntimeException.class, () -> handler.delegate(property));
+        Assertions.assertThrows(ApplicationException.class, () -> handler.delegate(property));
 
         // Ensure the exception isn't thrown after registration
         final FinalProxyTarget proxy = handler.proxy();

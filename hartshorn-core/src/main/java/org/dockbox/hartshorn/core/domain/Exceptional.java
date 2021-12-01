@@ -18,6 +18,7 @@
 package org.dockbox.hartshorn.core.domain;
 
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
+import org.dockbox.hartshorn.core.exceptions.Except;
 import org.dockbox.hartshorn.core.function.CheckedBiFunction;
 import org.dockbox.hartshorn.core.function.CheckedFunction;
 import org.dockbox.hartshorn.core.function.CheckedSupplier;
@@ -528,6 +529,18 @@ public final class Exceptional<T> {
         return null;
     }
 
+    public T orThrowUnchecked(final Supplier<Throwable> exceptionSupplier) {
+        if (null != this.value) {
+            return this.value;
+        }
+        else {
+            final Throwable exception = exceptionSupplier.get();
+            if (exception != null)
+                Except.unchecked(exception);
+        }
+        return null;
+    }
+
     /**
      * Return {@code true} if there is no throwable present, otherwise {@code false}.
      *
@@ -563,7 +576,7 @@ public final class Exceptional<T> {
     public Exceptional<T> rethrowUnchecked() {
         if (null != this.throwable) {
             if (this.throwable instanceof RuntimeException) throw (RuntimeException) this.throwable;
-            else throw new RuntimeException(this.throwable);
+            else Except.unchecked(this.throwable);
         }
         return this;
     }
