@@ -19,13 +19,13 @@ package org.dockbox.hartshorn.core.proxy.javassist;
 
 import org.dockbox.hartshorn.core.ArrayListMultiMap;
 import org.dockbox.hartshorn.core.MultiMap;
+import org.dockbox.hartshorn.core.boot.ExceptionHandler;
 import org.dockbox.hartshorn.core.context.DefaultContext;
 import org.dockbox.hartshorn.core.context.element.FieldContext;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
-import org.dockbox.hartshorn.core.exceptions.Except;
 import org.dockbox.hartshorn.core.proxy.JavaInterfaceProxyHandler;
 import org.dockbox.hartshorn.core.proxy.MethodProxyContext;
 import org.dockbox.hartshorn.core.proxy.Phase;
@@ -73,7 +73,7 @@ public class JavassistProxyHandler<T> extends DefaultContext implements ProxyHan
     @Override
     public void delegate(final MethodProxyContext<T, ?> property) {
         if (Modifier.isFinal(property.target().getModifiers()))
-            Except.unchecked(new ApplicationException("Cannot proxy final method " + property.target().getName()));
+            ExceptionHandler.unchecked(new ApplicationException("Cannot proxy final method " + property.target().getName()));
         
         this.handlers.put(property.target(), property);
     }

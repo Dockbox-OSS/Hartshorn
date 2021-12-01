@@ -17,8 +17,8 @@
 
 package org.dockbox.hartshorn.core.domain;
 
+import org.dockbox.hartshorn.core.boot.ExceptionHandler;
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
-import org.dockbox.hartshorn.core.exceptions.Except;
 import org.dockbox.hartshorn.core.function.CheckedBiFunction;
 import org.dockbox.hartshorn.core.function.CheckedFunction;
 import org.dockbox.hartshorn.core.function.CheckedSupplier;
@@ -536,7 +536,7 @@ public final class Exceptional<T> {
         else {
             final Throwable exception = exceptionSupplier.get();
             if (exception != null)
-                Except.unchecked(exception);
+                ExceptionHandler.unchecked(exception);
         }
         return null;
     }
@@ -576,7 +576,7 @@ public final class Exceptional<T> {
     public Exceptional<T> rethrowUnchecked() {
         if (null != this.throwable) {
             if (this.throwable instanceof RuntimeException) throw (RuntimeException) this.throwable;
-            else Except.unchecked(this.throwable);
+            else ExceptionHandler.unchecked(this.throwable);
         }
         return this;
     }

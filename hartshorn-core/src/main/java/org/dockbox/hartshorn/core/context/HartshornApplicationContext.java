@@ -46,6 +46,7 @@ import org.dockbox.hartshorn.core.binding.Providers;
 import org.dockbox.hartshorn.core.boot.ApplicationLogger;
 import org.dockbox.hartshorn.core.boot.ApplicationManager;
 import org.dockbox.hartshorn.core.boot.ApplicationProxier;
+import org.dockbox.hartshorn.core.boot.ExceptionHandler;
 import org.dockbox.hartshorn.core.boot.LifecycleObservable;
 import org.dockbox.hartshorn.core.context.element.FieldContext;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
@@ -53,7 +54,6 @@ import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 import org.dockbox.hartshorn.core.exceptions.BeanProvisionException;
-import org.dockbox.hartshorn.core.exceptions.Except;
 import org.dockbox.hartshorn.core.inject.InjectionModifier;
 import org.dockbox.hartshorn.core.inject.ProviderContext;
 import org.dockbox.hartshorn.core.proxy.ProxyLookup;
@@ -319,7 +319,7 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
                 Bindings.enable(instance);
             }
             catch (final ApplicationException e) {
-                Except.unchecked(e);
+                ExceptionHandler.unchecked(e);
             }
         }
 
@@ -561,5 +561,20 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
                     consumer.accept(this, raw);
             }
         }
+    }
+
+    @Override
+    public void handle(Throwable throwable) {
+        this.environment().manager().handle(throwable);
+    }
+
+    @Override
+    public void handle(String message, Throwable throwable) {
+        this.environment().manager().handle(message, throwable);
+    }
+
+    @Override
+    public ExceptionHandler stacktraces(boolean stacktraces) {
+        return this.environment().manager().stacktraces(stacktraces);
     }
 }

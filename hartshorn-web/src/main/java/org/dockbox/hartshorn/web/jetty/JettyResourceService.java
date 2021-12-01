@@ -18,7 +18,6 @@
 package org.dockbox.hartshorn.web.jetty;
 
 import org.dockbox.hartshorn.core.context.ApplicationContext;
-import org.dockbox.hartshorn.core.exceptions.Except;
 import org.dockbox.hartshorn.web.HttpStatus;
 import org.dockbox.hartshorn.web.servlet.DirectoryServlet;
 import org.eclipse.jetty.http.HttpContent;
@@ -138,7 +137,7 @@ public class JettyResourceService extends ResourceService {
         }
         catch (final IllegalArgumentException e)
         {
-            Except.handle(e);
+            this.applicationContext.handle(e);
             if (!response.isCommitted())
                 response.sendError(500, e.getMessage());
         }

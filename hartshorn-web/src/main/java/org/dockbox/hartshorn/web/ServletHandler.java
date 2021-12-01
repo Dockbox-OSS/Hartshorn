@@ -27,7 +27,6 @@ import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
-import org.dockbox.hartshorn.core.exceptions.Except;
 import org.dockbox.hartshorn.core.services.parameter.ParameterLoader;
 import org.dockbox.hartshorn.data.mapping.ObjectMapper;
 import org.dockbox.hartshorn.web.annotations.http.HttpRequest;
@@ -109,8 +108,8 @@ public class ServletHandler implements Enableable {
                             }
                             else {
                                 res.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-                                if (write.caught()) Except.handle("Could not process response for request %s for session %s".formatted(request, sessionId), write.error());
-                                else Except.handle("Could not process response for request %s for session %s".formatted(request, sessionId));
+                                if (write.caught()) this.context.handle("Could not process response for request %s for session %s".formatted(request, sessionId), write.error());
+                                else this.context.log().warn("Could not process response for request %s for session %s".formatted(request, sessionId));
                             }
                         }
                         this.context.log().debug("Finished servlet handler for request %s with session %s in %dms".formatted(request, sessionId, System.currentTimeMillis() - start));

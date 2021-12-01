@@ -17,18 +17,18 @@
 
 package org.dockbox.hartshorn.core.services;
 
-import org.dockbox.hartshorn.core.annotations.service.AutomaticActivation;
-import org.dockbox.hartshorn.core.exceptions.ApplicationException;
+import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.core.annotations.inject.Context;
+import org.dockbox.hartshorn.core.annotations.service.AutomaticActivation;
 import org.dockbox.hartshorn.core.annotations.service.Service;
+import org.dockbox.hartshorn.core.boot.ExceptionHandler;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.ExecutableElementContext;
 import org.dockbox.hartshorn.core.context.element.FieldContext;
 import org.dockbox.hartshorn.core.context.element.ParameterContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.context.element.TypedElementContext;
-import org.dockbox.hartshorn.core.HartshornUtils;
-import org.dockbox.hartshorn.core.exceptions.Except;
+import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 
 import java.util.Collection;
 import java.util.List;
@@ -58,7 +58,7 @@ public class ComponentContextInjectionProcessor extends ComponentValidator<Servi
 
     private void validate(final TypedElementContext<?> context, final TypeContext<?> parent) {
         if (!context.type().childOf(org.dockbox.hartshorn.core.context.Context.class))
-            Except.unchecked(new ApplicationException("%s is annotated with %s but does not extend %s".formatted(
+            ExceptionHandler.unchecked(new ApplicationException("%s is annotated with %s but does not extend %s".formatted(
                     context.qualifiedName(),
                     Context.class.getSimpleName(),
                     org.dockbox.hartshorn.core.context.Context.class.getSimpleName())

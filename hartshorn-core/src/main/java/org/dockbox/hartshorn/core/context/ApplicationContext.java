@@ -21,6 +21,7 @@ import org.dockbox.hartshorn.core.InjectionPoint;
 import org.dockbox.hartshorn.core.Key;
 import org.dockbox.hartshorn.core.MetaProvider;
 import org.dockbox.hartshorn.core.annotations.context.LogExclude;
+import org.dockbox.hartshorn.core.boot.ExceptionHandler;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.exceptions.BeanProvisionException;
@@ -33,7 +34,7 @@ import java.lang.annotation.Annotation;
 import java.util.List;
 
 @LogExclude
-public interface ApplicationContext extends ApplicationBinder, HartshornContext, ApplicationPropertyHolder {
+public interface ApplicationContext extends ApplicationBinder, HartshornContext, ApplicationPropertyHolder, ExceptionHandler {
 
     void add(InjectionPoint<?> property);
 

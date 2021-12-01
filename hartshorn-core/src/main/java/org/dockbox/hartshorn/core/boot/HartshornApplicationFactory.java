@@ -63,6 +63,8 @@ public class HartshornApplicationFactory implements ApplicationFactory<Hartshorn
     @Setter
     private ApplicationLogger applicationLogger;
     @Setter
+    private ExceptionHandler exceptionHandler;
+    @Setter
     private Function<ApplicationManager, ApplicationEnvironment> applicationEnvironment;
     @Setter
     private Function<ApplicationContext, ComponentLocator> componentLocator;
@@ -175,7 +177,13 @@ public class HartshornApplicationFactory implements ApplicationFactory<Hartshorn
         logger.info("Starting application " + this.activator.name() + " on " + host + " using Java " + runtimeMXBean.getVmVersion() + " with PID " + runtimeMXBean.getPid());
 
         final long applicationStartTimestamp = System.currentTimeMillis();
-        final HartshornApplicationManager manager = new HartshornApplicationManager(this.activator, this.applicationLogger, this.applicationProxier, this.applicationFSProvider);
+        final HartshornApplicationManager manager = new HartshornApplicationManager(
+                this.activator,
+                this.applicationLogger,
+                this.applicationProxier,
+                this.applicationFSProvider,
+                this.exceptionHandler
+        );
         final ApplicationEnvironment environment = this.applicationEnvironment.apply(manager);
 
         final HartshornApplicationContext applicationContext = new HartshornApplicationContext(environment, this.componentLocator, this.activator, this.prefixes, this.arguments, this.modifiers);

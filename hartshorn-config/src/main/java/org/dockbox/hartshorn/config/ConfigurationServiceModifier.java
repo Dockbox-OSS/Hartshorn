@@ -25,7 +25,6 @@ import org.dockbox.hartshorn.core.boot.Hartshorn;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.FieldContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
-import org.dockbox.hartshorn.core.exceptions.Except;
 import org.dockbox.hartshorn.core.exceptions.FieldAccessException;
 import org.dockbox.hartshorn.core.exceptions.NotPrimitiveException;
 import org.dockbox.hartshorn.core.exceptions.TypeConversionException;
@@ -85,7 +84,7 @@ public class ConfigurationServiceModifier implements InjectionModifier<UseConfig
             }
             catch (final FieldAccessException | TypeConversionException | NotPrimitiveException e) {
                 Hartshorn.log().warn("Could not prepare value field " + field.name() + " in " + instanceType.name());
-                Except.handle(e);
+                context.handle(e);
             }
         }
 
