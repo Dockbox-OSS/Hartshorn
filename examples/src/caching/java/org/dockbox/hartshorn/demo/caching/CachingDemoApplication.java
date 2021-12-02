@@ -37,7 +37,9 @@ import org.dockbox.hartshorn.events.annotations.UseEvents;
  * and use your own implementation here directly
  */
 @Activator
-public class CachingDemoApplication {
+public final class CachingDemoApplication {
+
+    private CachingDemoApplication() {}
 
     public static void main(final String[] args) {
         HartshornApplication.create(CachingDemoApplication.class, args);

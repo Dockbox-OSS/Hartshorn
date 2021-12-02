@@ -90,7 +90,7 @@ public class JavassistProxyHandler<T> extends DefaultContext implements ProxyHan
             toSort.sort(Comparator.comparingInt(MethodProxyContext::priority));
 
             // Phase is sorted in execution order (HEAD, OVERWRITE, TAIL)
-            for (final Phase phase : Phase.values())
+            for (final Phase phase : Phase.VALUES)
                 returnValue = this.enterPhase(phase, toSort, args, thisMethod, proceed, self, returnValue);
 
             return returnValue;

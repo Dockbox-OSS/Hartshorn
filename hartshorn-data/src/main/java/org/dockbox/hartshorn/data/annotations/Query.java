@@ -31,7 +31,7 @@ public @interface Query {
     boolean automaticFlush() default true;
     Class<?> entityType() default Void.class;
 
-    public enum QueryType {
+    enum QueryType {
         JPQL,
         NATIVE,
     }

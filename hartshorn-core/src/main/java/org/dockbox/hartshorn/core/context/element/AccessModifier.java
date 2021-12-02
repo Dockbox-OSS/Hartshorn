@@ -41,11 +41,14 @@ public enum AccessModifier {
     SYNCHRONIZED(Modifier::isSynchronized),
     VOLATILE(Modifier::isVolatile),
     ;
-    private Predicate<Integer> predicate;
+
+    public static final AccessModifier[] VALUES = AccessModifier.values();
+    
+    private final Predicate<Integer> predicate;
 
     public static List<AccessModifier> from(final int mod) {
         final List<AccessModifier> modifiers = new ArrayList<>();
-        for (final AccessModifier modifier : AccessModifier.values()) {
+        for (final AccessModifier modifier : VALUES) {
             if (modifier.predicate.test(mod)) modifiers.add(modifier);
         }
         return modifiers;

@@ -23,10 +23,11 @@ import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
 import org.dockbox.hartshorn.core.annotations.service.Service;
 
 @Service
-public class ArgumentConverterService {
+public final class ArgumentConverterService {
 
     public static final ArgumentConverter<String> GREETER = ArgumentConverterImpl.builder(String.class, "greeting")
             .withConverter(input -> Exceptional.of("Hello %s".formatted(input)))
             .build();
 
+    private ArgumentConverterService() {}
 }

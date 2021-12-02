@@ -27,7 +27,7 @@ import lombok.Getter;
 public class SingletonEnableable implements Enableable {
 
     @Getter
-    private int enabled = 0;
+    private int enabled;
 
     @Override
     public void enable() {

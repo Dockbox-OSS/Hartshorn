@@ -202,7 +202,7 @@ public class ElementContextTests {
     @Test
     public void enumConstantsCanBeObtained() {
         final TypeContext<TestEnumType> enumContext = TypeContext.of(TestEnumType.class);
-        Assertions.assertEquals(TestEnumType.values().length, enumContext.enumConstants().size());
+        Assertions.assertEquals(TestEnumType.VALUES.length, enumContext.enumConstants().size());
     }
 
     @Test

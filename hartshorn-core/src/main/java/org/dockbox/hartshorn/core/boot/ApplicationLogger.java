@@ -20,6 +20,7 @@ package org.dockbox.hartshorn.core.boot;
 import org.dockbox.hartshorn.core.annotations.context.LogExclude;
 import org.slf4j.Logger;
 
+@FunctionalInterface
 @LogExclude
 public interface ApplicationLogger {
     Logger log();

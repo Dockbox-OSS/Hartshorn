@@ -20,6 +20,7 @@ package org.dockbox.hartshorn.commands.definition;
 /**
  * Represents a part of a command, which is typically either an argument or flag.
  */
+@FunctionalInterface
 public interface CommandPartial {
 
     /**

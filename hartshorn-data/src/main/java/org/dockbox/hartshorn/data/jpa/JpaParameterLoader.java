@@ -29,7 +29,7 @@ import javax.inject.Named;
 public class JpaParameterLoader extends RuleBasedParameterLoader<JpaParameterLoaderContext> {
 
     public JpaParameterLoader() {
-        add(new JpaPaginationParameterRule());
+        this.add(new JpaPaginationParameterRule());
     }
 
     @Override

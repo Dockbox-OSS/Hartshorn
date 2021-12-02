@@ -22,6 +22,7 @@ import org.dockbox.hartshorn.core.annotations.AliasFor;
 import org.dockbox.hartshorn.core.annotations.CompositeOf;
 import org.dockbox.hartshorn.core.annotations.Extends;
 import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.commons.util.ExceptionUtils;
@@ -30,9 +31,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.Arrays;
 import java.util.List;
-
-import static java.util.stream.Collectors.toList;
-import static org.hamcrest.Matchers.containsString;
+import java.util.stream.Collectors;
 
 enum HttpMethod {
     GET,
@@ -236,15 +235,15 @@ public class AnnotationMagicTest {
 
         final Exception e = Assertions.assertThrows(RuntimeException.class,
                 () -> AnnotationHelper.oneOrNull(TestClassWithBaseAndRoute.class, WithoutDefault.class).value());
-        MatcherAssert.assertThat(ExceptionUtils.readStackTrace(e), containsString("Can't invoke org.dockbox.hartshorn.core.WithoutDefault.value() on composite annotation @org.dockbox.hartshorn.core.BaseAndRoute()"));
+        MatcherAssert.assertThat(ExceptionUtils.readStackTrace(e), Matchers.containsString("Can't invoke org.dockbox.hartshorn.core.WithoutDefault.value() on composite annotation @org.dockbox.hartshorn.core.BaseAndRoute()"));
     }
 
     @Test
     public void jointAnnotationsAreStrictlyOrdered() {
         final List<Route> routes = AnnotationHelper.allOrEmpty(TestClassWithJointAnnotation2.class, Route.class);
-        Assertions.assertEquals(Arrays.asList(HttpMethod.GET, HttpMethod.POST, HttpMethod.GET), routes.stream().map(Route::method).collect(toList()));
-        Assertions.assertEquals(Arrays.asList("abc", "abc", ""), routes.stream().map(Route::path).collect(toList()));
-        Assertions.assertEquals(Arrays.asList("", "", "jointRegex"), routes.stream().map(Route::regex).collect(toList()));
+        Assertions.assertEquals(Arrays.asList(HttpMethod.GET, HttpMethod.POST, HttpMethod.GET), routes.stream().map(Route::method).collect(Collectors.toList()));
+        Assertions.assertEquals(Arrays.asList("abc", "abc", ""), routes.stream().map(Route::path).collect(Collectors.toList()));
+        Assertions.assertEquals(Arrays.asList("", "", "jointRegex"), routes.stream().map(Route::regex).collect(Collectors.toList()));
     }
 }
 

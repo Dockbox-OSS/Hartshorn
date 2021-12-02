@@ -222,7 +222,8 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
             if (!this.parent().isVoid()) {
                 final List<Method> superClassMethods = this.parent().methods().stream()
                         .filter(m -> m.isPublic() || m.isProtected())
-                        .map(MethodContext::method).collect(Collectors.toList());
+                        .map(MethodContext::method)
+                        .toList();
                 allMethods.addAll(superClassMethods);
             }
             allMethods.addAll(Arrays.asList(declaredMethods));

@@ -34,7 +34,9 @@ import org.dockbox.hartshorn.core.annotations.activate.Activator;
  * and use your own implementation here directly
  */
 @Activator
-public class CommandsDemoApplication {
+public final class CommandsDemoApplication {
+
+    private CommandsDemoApplication() {}
 
     public static void main(final String[] args) {
         HartshornApplication.create(CommandsDemoApplication.class, args);

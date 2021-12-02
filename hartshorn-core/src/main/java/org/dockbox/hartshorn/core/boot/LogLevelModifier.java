@@ -24,7 +24,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class LogLevelModifier implements Modifier {
+public final class LogLevelModifier implements Modifier {
 
     public enum LogLevel {
         OFF,

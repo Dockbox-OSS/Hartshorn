@@ -31,7 +31,6 @@ import org.dockbox.hartshorn.events.parents.Event;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service(activators = UseEvents.class)
 public class EventValidator implements LifecycleObserver {
@@ -55,7 +54,7 @@ public class EventValidator implements LifecycleObserver {
 
         for (final TypeContext<?> bridge : applicationContext.environment().types(Posting.class)) {
             final Posting posting = bridge.annotation(Posting.class).get();
-            postedEvents.addAll(Arrays.stream(posting.value()).map(TypeContext::of).collect(Collectors.toList()));
+            postedEvents.addAll(Arrays.stream(posting.value()).map(TypeContext::of).toList());
         }
 
         final Set<TypeContext<? extends Event>> difference = HartshornUtils.difference(allEvents, postedEvents);

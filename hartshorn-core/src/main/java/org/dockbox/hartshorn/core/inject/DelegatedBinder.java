@@ -22,6 +22,7 @@ import org.dockbox.hartshorn.core.binding.BindingHierarchy;
 
 import java.util.function.Supplier;
 
+@FunctionalInterface
 public interface DelegatedBinder extends Binder {
 
     @Override

@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.core.context.element;
 
 import java.util.List;
 
+@FunctionalInterface
 public interface ModifierCarrier {
 
     List<AccessModifier> modifiers();

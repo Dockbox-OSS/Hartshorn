@@ -127,14 +127,14 @@ public class CommandParserImpl implements CommandParser {
             if (contextFlag.value()) {
                 if (contextFlag instanceof CommandFlagElement) {
                     final List<String> tokens = HartshornUtils.asList(command.split(" "));
-                    final int size = ((CommandFlagElement<?>) contextFlag).size();
+                    final int size = ((CommandElement<?>) contextFlag).size();
                     final int flagIndex = tokens.indexOf(nameUntrimmed);
                     final int i = flagIndex + 1;
                     final int end = size == -1 ? tokens.size() : i + size;
 
                     final String token = String.join(" ", tokens.subList(i, end)).trim();
 
-                    final Exceptional<?> value = ((CommandFlagElement<?>) contextFlag).parse(source, token);
+                    final Exceptional<?> value = ((CommandElement<?>) contextFlag).parse(source, token);
                     flags.addAll(this.parameter(value, token, "flag", name, contextFlag, source));
                     command = command.replace(flag, "");
                 }

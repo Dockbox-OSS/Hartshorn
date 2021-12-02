@@ -137,11 +137,12 @@ public enum HttpStatus {
         CLIENT_ERROR(4),
         SERVER_ERROR(5);
 
+        public static final Series[] VALUES = values();
         private final int value;
 
         public static Series resolve(final int statusCode) {
             final int seriesCode = statusCode / 100;
-            for (final Series series : values()) {
+            for (final Series series : Series.VALUES) {
                 if (series.value == seriesCode) return series;
             }
             return null;

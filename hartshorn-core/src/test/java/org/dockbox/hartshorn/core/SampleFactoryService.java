@@ -22,7 +22,8 @@ import org.dockbox.hartshorn.core.annotations.service.Service;
 import org.dockbox.hartshorn.core.types.User;
 
 @Service
+@FunctionalInterface
 public interface SampleFactoryService {
     @Factory
-    public User user(String name);
+    User user(String name);
 }

@@ -40,7 +40,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javassist.util.proxy.ProxyFactory;
@@ -194,7 +193,7 @@ public class ReflectTests extends ApplicationAwareTest {
     void testStaticFieldsReturnsAllModifiers() {
         final List<FieldContext<?>> fields = TypeContext.of(ReflectTestType.class).fields().stream()
                 .filter(FieldContext::isStatic)
-                .collect(Collectors.toList());
+                .toList();
         Assertions.assertEquals(2, fields.size());
     }
 
@@ -218,7 +217,7 @@ public class ReflectTests extends ApplicationAwareTest {
         final List<MethodContext<?, ReflectTestType>> methods = type.methods();
         boolean fail = true;
         for (final MethodContext<?, ReflectTestType> method : methods) {
-            if (method.name().equals("parentMethod")) fail = false;
+            if ("parentMethod".equals(method.name())) fail = false;
         }
         if (fail) Assertions.fail("Parent types were not included");
     }

@@ -18,5 +18,7 @@
 package org.dockbox.hartshorn.core.services;
 
 public enum ServiceOrder {
-    FIRST, EARLY, NORMAL, LATE, LAST
+    FIRST, EARLY, NORMAL, LATE, LAST;
+
+    public static final ServiceOrder[] VALUES = ServiceOrder.values();
 }

@@ -61,8 +61,8 @@ public class JettyResourceService extends ResourceService {
 
     @Override
     public boolean doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
-        String servletPath = null;
-        String pathInfo = null;
+        String servletPath;
+        String pathInfo;
         Enumeration<String> reqRanges = null;
         final boolean included = request.getAttribute(RequestDispatcher.INCLUDE_REQUEST_URI) != null;
         if (included)
@@ -119,7 +119,7 @@ public class JettyResourceService extends ResourceService {
             {
                 final String q = request.getQueryString();
                 pathInContext = pathInContext.substring(0, pathInContext.length() - 1);
-                if (q != null && q.length() != 0)
+                if (q != null && !q.isEmpty())
                     pathInContext += "?" + q;
                 response.sendRedirect(response.encodeRedirectURL(URIUtil.addPaths(request.getContextPath(), pathInContext)));
                 return true;

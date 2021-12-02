@@ -41,7 +41,7 @@ import org.dockbox.hartshorn.core.annotations.activate.UseServiceProvision;
 * and use your own implementation here directly
 */
 @Activator
-public class PersistenceDemoApplication {
+public final class PersistenceDemoApplication {
 
     public static void main(final String[] args) {
         HartshornApplication.create(PersistenceDemoApplication.class, args);

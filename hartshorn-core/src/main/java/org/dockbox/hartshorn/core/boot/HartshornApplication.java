@@ -28,7 +28,6 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
 import java.lang.management.ManagementFactory;
-import java.lang.reflect.InvocationTargetException;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
@@ -54,7 +53,7 @@ public final class HartshornApplication {
         try {
             return load(TypeContext.of(activator), args, modifiers);
         }
-        catch (final InvocationTargetException | NoSuchMethodException | InstantiationException | IllegalAccessException e) {
+        catch (final ReflectiveOperationException e) {
             return ExceptionHandler.unchecked(new ApplicationException("Could not bootstrap application " + activator.getSimpleName(), e));
         }
     }
@@ -63,7 +62,7 @@ public final class HartshornApplication {
             final TypeContext<?> activator,
             final String[] args,
             final Modifier... modifiers
-    ) throws InvocationTargetException, InstantiationException, IllegalAccessException, NoSuchMethodException {
+    ) throws ReflectiveOperationException {
         for (final Modifier modifier : modifiers)
             if (modifier instanceof LogLevelModifier levelModifier) setLogLevel(levelModifier.level());
 

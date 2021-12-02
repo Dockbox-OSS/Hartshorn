@@ -23,6 +23,7 @@ import java.net.URI;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+@FunctionalInterface
 public interface DirectoryServlet {
     void handle(HttpServletRequest request, HttpServletResponse response, URI uri, String path) throws IOException;
 }

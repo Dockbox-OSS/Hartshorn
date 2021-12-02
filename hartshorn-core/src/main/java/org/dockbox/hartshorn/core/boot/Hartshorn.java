@@ -69,8 +69,7 @@ public final class Hartshorn {
         for (final StackTraceElement ste : Thread.currentThread().getStackTrace()) {
             final boolean isJavaModule = ste.getModuleName() != null && ste.getModuleName().startsWith("java.");
             final boolean isExcluded = TypeContext.lookup(ste.getClassName().split("\\$")[0]).annotation(LogExclude.class).present();
-            if (isJavaModule || isExcluded) continue;
-            else {
+            if (!isJavaModule && !isExcluded) {
                 element = ste;
                 break;
             }

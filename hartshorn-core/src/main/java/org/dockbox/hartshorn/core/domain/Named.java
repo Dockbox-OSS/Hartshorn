@@ -17,6 +17,7 @@
 
 package org.dockbox.hartshorn.core.domain;
 
+@FunctionalInterface
 public interface Named {
     String name();
 }

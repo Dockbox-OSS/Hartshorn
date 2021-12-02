@@ -22,7 +22,9 @@ import org.dockbox.hartshorn.events.annotations.Listener;
 
 public final class StaticEventListener {
 
-    public static boolean fired = false;
+    public static boolean fired;
+
+    private StaticEventListener() {}
 
     @Listener
     public static void on(final SampleEvent event) {

@@ -47,4 +47,6 @@ public final class BuiltInStringTypeAdapters {
     public static final StringTypeAdapter<Short> SHORT = StringTypeAdapterImpl.of(Short.class, in -> Exceptional.of(in).map(Short::parseShort));
 
     public static final StringTypeAdapter<UUID> UNIQUE_ID = StringTypeAdapterImpl.of(UUID.class, in -> Exceptional.of(in).map(UUID::fromString));
+
+    private BuiltInStringTypeAdapters() {}
 }

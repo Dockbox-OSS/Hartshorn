@@ -22,6 +22,8 @@ public enum Phase {
     OVERWRITE,
     TAIL;
 
+    public static final Phase[] VALUES = Phase.values();
+
     public static Phase[] collect() {
         return new Phase[]{ HEAD, OVERWRITE, TAIL };
     }

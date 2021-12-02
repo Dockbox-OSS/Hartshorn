@@ -21,6 +21,7 @@ import org.dockbox.hartshorn.core.annotations.service.Service;
 import org.dockbox.hartshorn.core.annotations.proxy.Provided;
 
 @Service
+@FunctionalInterface
 public interface ProviderService {
 
     @Provided

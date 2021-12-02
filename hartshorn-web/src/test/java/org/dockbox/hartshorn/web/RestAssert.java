@@ -23,7 +23,9 @@ import org.junit.jupiter.api.Assertions;
 
 import java.io.IOException;
 
-public class RestAssert {
+public final class RestAssert {
+
+    private RestAssert() {}
 
     public static void assertStatus(final HttpStatus expected, final HttpResponse response) {
         Assertions.assertEquals(expected.value(), response.getStatusLine().getStatusCode());

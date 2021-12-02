@@ -142,9 +142,9 @@ public class ContextTests extends ApplicationAwareTest {
 
     static class NamedTestContext extends DefaultNamedContext {
 
-        public static final String NAME = "JUnitContext";
+        static final String NAME = "JUnitContext";
 
-        public NamedTestContext() {
+        NamedTestContext() {
             super(NAME);
         }
     }

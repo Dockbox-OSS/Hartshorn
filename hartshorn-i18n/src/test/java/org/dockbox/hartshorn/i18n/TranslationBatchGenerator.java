@@ -34,10 +34,10 @@ import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -73,12 +73,14 @@ public final class TranslationBatchGenerator {
             "# You should have received a copy of the GNU Lesser General Public License",
             "# along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.",
             "#", "");
-    private static final SimpleDateFormat SDF = new SimpleDateFormat("ddMMyyyy");
+    private static final DateTimeFormatter SDF = DateTimeFormatter.ofPattern("ddMMyyyy");
+
+    private TranslationBatchGenerator() {}
 
     public static void main(final String[] args) throws Exception {
         final ApplicationContext context = HartshornRunner.createContext(TranslationBatchGenerator.class).orNull();
         final Map<String, String> batches = migrateBatches(context);
-        final String date = SDF.format(new Date());
+        final String date = SDF.format(LocalDateTime.now());
         final Path outputPath = existingBatch().toPath().resolve("batches/" + date);
         outputPath.toFile().mkdirs();
         outputPath.toFile().mkdir();

@@ -88,7 +88,6 @@ public class EventBusImpl implements EventBus {
      */
     @Override
     public void subscribe(final TypeContext<?> type) {
-        if (!type.equals(type)) return;
         if (this.listenerToInvokers.containsKey(type)) {
             this.context.log().debug(type.name() + " is already subscribed, skipping duplicate registration");
             return; // Already subscribed
@@ -113,7 +112,6 @@ public class EventBusImpl implements EventBus {
      */
     @Override
     public void unsubscribe(final TypeContext<?> type) {
-        if (!type.equals(type)) return;
         final Set<EventWrapper> invokers = this.listenerToInvokers.remove(type);
         if (null == invokers || invokers.isEmpty()) {
             return; // Not registered

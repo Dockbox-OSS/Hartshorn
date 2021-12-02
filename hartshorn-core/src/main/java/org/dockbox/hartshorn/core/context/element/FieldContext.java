@@ -30,7 +30,7 @@ import java.util.function.Function;
 
 import lombok.Getter;
 
-public class FieldContext<T> extends AnnotatedMemberContext<Field> implements TypedElementContext<T> {
+public final class FieldContext<T> extends AnnotatedMemberContext<Field> implements TypedElementContext<T> {
 
     private static final Map<Field, FieldContext<?>> cache = HartshornUtils.emptyConcurrentMap();
 

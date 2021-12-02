@@ -42,7 +42,7 @@ public abstract class MultiMap<K, V> {
         }
     }
 
-    public Collection<V> get(final Object key) {
+    public Collection<V> get(final K key) {
         return this.map.getOrDefault(key, this.baseCollection());
     }
 
@@ -58,11 +58,11 @@ public abstract class MultiMap<K, V> {
         return this.map.values();
     }
 
-    public boolean containsKey(final Object key) {
+    public boolean containsKey(final K key) {
         return this.map.containsKey(key);
     }
 
-    public Collection<V> remove(final Object key) {
+    public Collection<V> remove(final K key) {
         return this.map.remove(key);
     }
 

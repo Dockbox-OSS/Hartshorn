@@ -36,7 +36,7 @@ import javax.inject.Inject;
 @Binds(Cache.class)
 public class CacheImpl<T> implements Cache<T>, Enableable {
 
-    private Expiration expiration;
+    private final Expiration expiration;
     private T content;
 
     @Inject

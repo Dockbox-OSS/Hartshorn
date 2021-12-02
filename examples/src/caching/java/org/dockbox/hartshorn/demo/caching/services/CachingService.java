@@ -89,7 +89,7 @@ public abstract class CachingService {
         this.evict();
 
         final User user3 = this.getUsers(event.applicationContext()).get(0);
-        final long afterEviction = this.lastModified.getOrDefault(user3, -1L);;
+        final long afterEviction = this.lastModified.getOrDefault(user3, -1L);
 
         final long evictedDifference = afterEviction - beforeEviction;
         event.applicationContext().log().info("(After eviction) Users are the same: %s, modification time difference: %dms".formatted(user2 == user3, evictedDifference));

@@ -31,7 +31,7 @@ import org.mockito.Mockito;
 import java.util.LinkedList;
 import java.util.List;
 
-public class ParameterLoaderRules {
+public class ParameterLoaderTests {
 
     @Test
     void testRuleBasedParameterLoadersCannotHaveDuplicateRules() {

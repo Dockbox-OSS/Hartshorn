@@ -32,7 +32,7 @@ import java.util.function.BiFunction;
 
 import lombok.Getter;
 
-public class MethodContext<T, P> extends ExecutableElementContext<Method> implements ModifierCarrier {
+public class MethodContext<T, P> extends ExecutableElementContext<Method> {
 
     private static final Map<Method, MethodContext<?, ?>> cache = HartshornUtils.emptyConcurrentMap();
 

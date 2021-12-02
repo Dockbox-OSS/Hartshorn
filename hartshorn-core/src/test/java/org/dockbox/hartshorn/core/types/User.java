@@ -17,6 +17,7 @@
 
 package org.dockbox.hartshorn.core.types;
 
+@FunctionalInterface
 public interface User {
     String name();
 }

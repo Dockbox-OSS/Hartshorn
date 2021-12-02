@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.core.context.element;
 
-public class WildcardTypeContext extends TypeContext<Void> {
+public final class WildcardTypeContext extends TypeContext<Void> {
 
     private WildcardTypeContext() {
         super(Void.class);

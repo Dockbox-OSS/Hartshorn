@@ -20,6 +20,7 @@ package org.dockbox.hartshorn.data.mapping;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.data.Element;
 import org.dockbox.hartshorn.data.EntityElement;
+import org.dockbox.hartshorn.data.FileFormat;
 import org.dockbox.hartshorn.data.FileFormats;
 import org.dockbox.hartshorn.data.MultiElement;
 import org.dockbox.hartshorn.data.NestedElement;
@@ -67,7 +68,7 @@ public class ObjectMappingTests extends ApplicationAwareTest {
 
     @ParameterizedTest
     @MethodSource("serialisationElements")
-    void testObjectSerialisation(final FileFormats fileFormat, final Element content, final String expected) {
+    void testObjectSerialisation(final FileFormat fileFormat, final Element content, final String expected) {
         final ObjectMapper mapper = this.context().get(JacksonObjectMapper.class);
         mapper.fileType(fileFormat);
 
@@ -80,7 +81,7 @@ public class ObjectMappingTests extends ApplicationAwareTest {
 
     @ParameterizedTest
     @MethodSource("serialisationElements")
-    void testObjectDeserialisation(final FileFormats fileFormat, final Element expected, final String content) {
+    void testObjectDeserialisation(final FileFormat fileFormat, final Element expected, final String content) {
         final ObjectMapper mapper = this.context().get(JacksonObjectMapper.class);
         mapper.fileType(fileFormat);
         expected.name("sample");

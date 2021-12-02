@@ -31,6 +31,4 @@ public interface ServiceProcessor<A extends Annotation> extends ComponentProcess
     }
 
     boolean preconditions(ApplicationContext context, TypeContext<?> type);
-
-    <T> void process(ApplicationContext context, TypeContext<T> type);
 }

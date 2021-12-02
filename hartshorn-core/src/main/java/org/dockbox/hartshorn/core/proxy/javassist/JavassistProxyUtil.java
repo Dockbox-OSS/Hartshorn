@@ -36,9 +36,11 @@ import javassist.util.proxy.ProxyFactory;
 /**
  * @see HartshornApplicationProxier
  */
-public class JavassistProxyUtil {
+public final class JavassistProxyUtil {
 
     private static final TypeContext<?> HIBERNATE_PROXY = TypeContext.lookup("org.hibernate.proxy.HibernateProxy");
+
+    private JavassistProxyUtil() {}
 
     public static <T> ProxyHandler<T> handler(final TypeContext<T> context, final T instance) {
         return handler(context.type(), instance);

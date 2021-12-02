@@ -123,7 +123,7 @@ public class CommandDefinitionContextTests extends ApplicationAwareTest {
 
     @Test
     void testContainerContext() {
-        final Command command = this.createCommand();
+        final Command command = new TestCommand();
         final CommandDefinitionContext context = new CommandDefinitionContextImpl(this.context(), command, null);
 
         Assertions.assertEquals(1, context.aliases().size());
@@ -162,28 +162,26 @@ public class CommandDefinitionContextTests extends ApplicationAwareTest {
         Assertions.assertEquals("s", shortFlag.name());
     }
 
-    private Command createCommand() {
-        return new Command() {
+    private static class TestCommand implements Command {
 
-            @Override
-            public Class<? extends Annotation> annotationType() {
-                return Command.class;
-            }
+        @Override
+        public Class<? extends Annotation> annotationType() {
+            return Command.class;
+        }
 
-            @Override
-            public String[] value() {
-                return new String[]{ "demo" };
-            }
+        @Override
+        public String[] value() {
+            return new String[]{ "demo" };
+        }
 
-            @Override
-            public String arguments() {
-                return "<required{String}> [optional{String}]  [enum{org.dockbox.hartshorn.commands.types.CommandValueEnum}] --flag --vflag String -s";
-            }
+        @Override
+        public String arguments() {
+            return "<required{String}> [optional{String}]  [enum{org.dockbox.hartshorn.commands.types.CommandValueEnum}] --flag --vflag String -s";
+        }
 
-            @Override
-            public Class<?> parent() {
-                return Void.class;
-            }
-        };
+        @Override
+        public Class<?> parent() {
+            return Void.class;
+        }
     }
 }

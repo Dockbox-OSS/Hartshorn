@@ -20,6 +20,7 @@ package org.dockbox.hartshorn.web.servlet;
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 import org.dockbox.hartshorn.web.RequestError;
 
+@FunctionalInterface
 public interface ErrorServlet {
     void handle(RequestError error) throws ApplicationException;
 }

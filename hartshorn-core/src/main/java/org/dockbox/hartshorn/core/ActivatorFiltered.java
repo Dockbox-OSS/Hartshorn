@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.core;
 
 import java.lang.annotation.Annotation;
 
+@FunctionalInterface
 public interface ActivatorFiltered<A extends Annotation> {
     Class<A> activator();
 }

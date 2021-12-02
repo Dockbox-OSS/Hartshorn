@@ -376,8 +376,9 @@ public class Table {
                     this.populateMatchingRows(
                             otherTable, column, merge, populateEmptyEntries, joinedTable, row);
                 }
-                catch (final IllegalArgumentException e) {
-                    continue;
+                catch (final IllegalArgumentException ignored) {
+                    // This is thrown when the row does not have a matching row in the other table
+                    // and new columns are created.
                 }
             }
 

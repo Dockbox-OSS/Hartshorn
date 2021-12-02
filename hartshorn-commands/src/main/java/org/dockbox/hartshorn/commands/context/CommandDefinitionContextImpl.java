@@ -278,7 +278,7 @@ public class CommandDefinitionContextImpl extends DefaultContext implements Comm
     @Override
     public List<String> aliases() {
         final String[] command = this.command.value();
-        if (command.length == 0 || (command.length == 1 && command[0].equals(""))) {
+        if (command.length == 0 || (command.length == 1 && "".equals(command[0]))) {
             return HartshornUtils.singletonList(this.method.name());
         }
         return HartshornUtils.asUnmodifiableList(command);

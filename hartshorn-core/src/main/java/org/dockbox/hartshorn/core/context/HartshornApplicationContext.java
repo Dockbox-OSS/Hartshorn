@@ -213,7 +213,7 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
         this.locator().register(prefix);
         final Collection<ComponentContainer> containers = this.locator().containers(ComponentType.FUNCTIONAL);
         this.log().debug("Located %d functional components in prefix %s".formatted(containers.size(), prefix));
-        for (final ServiceOrder order : ServiceOrder.values()) this.process(order, containers);
+        for (final ServiceOrder order : ServiceOrder.VALUES) this.process(order, containers);
     }
 
     protected void process(final ServiceOrder order, final Collection<ComponentContainer> containers) {
@@ -302,7 +302,7 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
 
         instance = this.inject(key, instance);
 
-        for (final ServiceOrder order : ServiceOrder.values()) instance = this.modify(order, key, instance);
+        for (final ServiceOrder order : ServiceOrder.VALUES) instance = this.modify(order, key, instance);
 
         // Inject properties if applicable
         if (enable) {

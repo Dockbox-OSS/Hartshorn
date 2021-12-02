@@ -236,8 +236,8 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
     }
 
     protected MapperBuilder<?, ?> mapper(final FileFormat fileFormat) {
-        for (final JacksonObjectMapper.Mappers mapper : JacksonObjectMapper.Mappers.values()) {
-            if (mapper.fileFormat.equals(fileFormat)) return (MapperBuilder<?, ?>) mapper.mapper.get();
+        for (final JacksonObjectMapper.Mappers mapper : Mappers.VALUES) {
+            if (mapper.fileFormat == fileFormat) return (MapperBuilder<?, ?>) mapper.mapper.get();
         }
         return null; // Do not throw an exception here as subclasses may wish to extend functionality
     }
@@ -280,6 +280,7 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
         XML(FileFormats.XML, XmlMapper::builder),
         ;
 
+        public static final Mappers[] VALUES = Mappers.values();
         private final FileFormats fileFormat;
         private final Supplier<? super MapperBuilder<?, ?>> mapper;
     }

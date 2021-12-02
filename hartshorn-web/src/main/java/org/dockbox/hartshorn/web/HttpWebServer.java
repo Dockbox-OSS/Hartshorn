@@ -30,8 +30,8 @@ import javax.servlet.Servlet;
 @Singleton
 public interface HttpWebServer {
 
-    public static String WEB_INF = "/WEB-INF/";
-    public static String STATIC_CONTENT = WEB_INF + "static/";
+    String WEB_INF = "/WEB-INF/";
+    String STATIC_CONTENT = WEB_INF + "static/";
 
     void start(int port) throws ApplicationException;
 

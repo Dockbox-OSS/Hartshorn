@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.core;
 
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 
+@FunctionalInterface
 public interface Enableable {
 
     default boolean canEnable() {

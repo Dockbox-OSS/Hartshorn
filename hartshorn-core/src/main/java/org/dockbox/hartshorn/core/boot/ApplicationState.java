@@ -18,5 +18,5 @@
 package org.dockbox.hartshorn.core.boot;
 
 public interface ApplicationState {
-    public interface Started extends ApplicationState {}
+    interface Started extends ApplicationState {}
 }

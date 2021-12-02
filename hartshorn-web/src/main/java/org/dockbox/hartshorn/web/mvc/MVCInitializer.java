@@ -25,7 +25,7 @@ import java.util.Set;
 
 public interface MVCInitializer {
 
-    public static final String TEMPLATE_ROOT = HttpWebServer.WEB_INF + "templates/";
+    String TEMPLATE_ROOT = HttpWebServer.WEB_INF + "templates/";
 
     void initialize(ApplicationContext applicationContext) throws ApplicationException;
     String transform(ViewTemplate template, ViewModel model) throws ApplicationException;

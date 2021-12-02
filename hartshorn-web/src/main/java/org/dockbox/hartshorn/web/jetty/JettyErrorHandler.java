@@ -126,20 +126,13 @@ public class JettyErrorHandler extends ErrorHandler {
 
         final MimeTypes.Type type;
         switch (contentType) {
-            case "text/html", "text/*", "*/*" -> {
-                type = MimeTypes.Type.TEXT_HTML;
+            case "text/html", "text/*", "*/*", "text/plain" -> {
                 if (charset == null)
                     charset = StandardCharsets.ISO_8859_1;
             }
             case "text/json", "application/json" -> {
-                type = MimeTypes.Type.TEXT_JSON;
                 if (charset == null)
                     charset = StandardCharsets.UTF_8;
-            }
-            case "text/plain" -> {
-                type = MimeTypes.Type.TEXT_PLAIN;
-                if (charset == null)
-                    charset = StandardCharsets.ISO_8859_1;
             }
             default -> charset = StandardCharsets.UTF_8;
         }

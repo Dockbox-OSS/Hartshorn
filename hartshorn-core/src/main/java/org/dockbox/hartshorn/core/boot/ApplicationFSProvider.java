@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.core.boot;
 
 import java.nio.file.Path;
 
+@FunctionalInterface
 public interface ApplicationFSProvider {
     Path applicationPath();
 }

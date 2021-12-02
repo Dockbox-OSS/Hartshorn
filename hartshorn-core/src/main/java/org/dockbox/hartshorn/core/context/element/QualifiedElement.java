@@ -17,6 +17,7 @@
 
 package org.dockbox.hartshorn.core.context.element;
 
+@FunctionalInterface
 public interface QualifiedElement {
     String qualifiedName();
 }

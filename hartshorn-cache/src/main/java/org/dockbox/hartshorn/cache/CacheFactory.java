@@ -20,6 +20,7 @@ package org.dockbox.hartshorn.cache;
 import org.dockbox.hartshorn.core.annotations.Factory;
 import org.dockbox.hartshorn.core.annotations.service.Service;
 
+@FunctionalInterface
 @Service
 public interface CacheFactory {
     @Factory

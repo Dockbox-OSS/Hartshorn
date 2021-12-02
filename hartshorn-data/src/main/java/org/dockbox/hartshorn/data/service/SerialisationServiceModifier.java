@@ -99,7 +99,7 @@ public class SerialisationServiceModifier extends AbstractPersistenceServiceModi
         if (methodContext.method().parameterCount() < 1) return false;
 
         final Serialise annotation = methodContext.annotation(Serialise.class);
-        if (!annotation.filetype().type().equals(DataStorageType.RAW)) return false;
+        if (annotation.filetype().type() != DataStorageType.RAW) return false;
 
         boolean hasPath = false;
         for (final TypeContext<?> parameter : methodContext.method().parameterTypes()) {

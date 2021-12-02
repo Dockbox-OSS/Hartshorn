@@ -20,7 +20,7 @@ package org.dockbox.hartshorn.testsuite;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-public class ApplicationAwareTest {
+public abstract class ApplicationAwareTest {
 
     @RegisterExtension
     final HartshornRunner runner = new HartshornRunner();

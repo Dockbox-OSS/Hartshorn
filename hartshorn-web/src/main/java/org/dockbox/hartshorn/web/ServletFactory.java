@@ -22,6 +22,7 @@ import org.dockbox.hartshorn.core.annotations.service.Service;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
 
 @Service
+@FunctionalInterface
 public interface ServletFactory {
     @Factory
     ServletHandler servletHandler(final HttpWebServer starter, final HttpMethod httpMethod, final MethodContext<?, ?> methodContext);

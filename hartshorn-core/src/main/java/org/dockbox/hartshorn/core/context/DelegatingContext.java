@@ -21,6 +21,7 @@ import org.dockbox.hartshorn.core.domain.Exceptional;
 
 import java.util.List;
 
+@FunctionalInterface
 @Deprecated(since = "4.2.5", forRemoval = true)
 public interface DelegatingContext<D extends Context> extends Context {
 

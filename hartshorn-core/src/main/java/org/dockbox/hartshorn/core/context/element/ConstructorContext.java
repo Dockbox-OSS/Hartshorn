@@ -26,7 +26,7 @@ import java.util.function.Function;
 
 import lombok.Getter;
 
-public class ConstructorContext<T> extends ExecutableElementContext<Constructor<T>> implements TypedElementContext<T> {
+public final class ConstructorContext<T> extends ExecutableElementContext<Constructor<T>> implements TypedElementContext<T> {
 
     @Getter
     private final Constructor<T> constructor;

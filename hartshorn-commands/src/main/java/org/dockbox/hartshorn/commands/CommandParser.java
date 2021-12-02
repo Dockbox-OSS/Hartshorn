@@ -26,6 +26,7 @@ import org.dockbox.hartshorn.commands.exceptions.ParsingException;
  * Parser type capable of parsing a given command into a new {@link CommandContext} based on the
  * source and executing context.
  */
+@FunctionalInterface
 public interface CommandParser {
 
     /**

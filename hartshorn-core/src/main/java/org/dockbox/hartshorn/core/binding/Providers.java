@@ -17,12 +17,13 @@
 
 package org.dockbox.hartshorn.core.binding;
 
-import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 
 import java.util.function.Supplier;
 
-public class Providers {
+public final class Providers {
+
+    private Providers() {}
 
     public static <C> Provider<C> of(final TypeContext<? extends C> type) {
         return new ContextDrivenProvider<>(type);

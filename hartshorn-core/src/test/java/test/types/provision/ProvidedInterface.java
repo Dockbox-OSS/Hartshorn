@@ -20,6 +20,7 @@ package test.types.provision;
 import test.types.SampleInterface;
 
 // Middle interface to avoid JUnit runner conflicts
+@FunctionalInterface
 public interface ProvidedInterface extends SampleInterface {
 
 }

@@ -42,13 +42,12 @@ import java.util.stream.Stream;
 
 import lombok.Getter;
 
-import static java.util.stream.Collectors.toList;
-
 /**
  * Offers fine-grained control over annotation composition and inheritance. This utility
  * class is forked from <a href="https://github.com/blindpirate/annotation-magic">AnnotationMagic</a>.
  */
 public final class AnnotationHelper {
+
     /**
      * The annotation-magic-lookup is a relatively expensive operation, so we'd better
      * cache the result as much as possible. In case you don't want the cached value to
@@ -56,6 +55,8 @@ public final class AnnotationHelper {
      * cache, to the constructor.
      */
     private static final Map<Object, Exceptional<Object>> cache = HartshornUtils.emptyConcurrentMap();
+
+    private AnnotationHelper() {}
 
     public static <A extends Annotation> A oneOrNull(final AnnotatedElement element, final Class<A> targetAnnotationClass) {
         return assertZeroOrOne(allOrEmpty(element, targetAnnotationClass), element);
@@ -92,7 +93,7 @@ public final class AnnotationHelper {
                 .flatMap(AnnotationHelper::expandAnnotation)
                 .map(annotation -> examineAnnotation(annotation, targetClass))
                 .filter(Objects::nonNull)
-                .collect(toList());
+                .collect(Collectors.toList());
     }
 
     private static Stream<Annotation> expandAnnotation(final Annotation annotation) {
@@ -248,6 +249,7 @@ public final class AnnotationHelper {
         }
     }
 
+    @FunctionalInterface
     interface AnnotationAdapter {
         Annotation actualAnnotation();
     }
