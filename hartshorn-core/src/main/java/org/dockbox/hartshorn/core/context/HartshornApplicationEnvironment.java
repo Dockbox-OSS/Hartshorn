@@ -24,7 +24,6 @@ import org.dockbox.hartshorn.core.context.element.TypeContext;
 import java.lang.annotation.Annotation;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 import lombok.Getter;
 
@@ -69,29 +68,6 @@ public class HartshornApplicationEnvironment implements ApplicationEnvironment {
     @Override
     public <T> Collection<TypeContext<? extends T>> children(final Class<T> parent) {
         return this.prefixContext.children(parent);
-    }
-
-    @Override
-    public Collection<Class<?>> parents(final Class<?> current) {
-        final Set<Class<?>> supertypes = HartshornUtils.emptySet();
-        final Set<Class<?>> next = HartshornUtils.emptySet();
-        final Class<?> superclass = current.getSuperclass();
-
-        if (Object.class != superclass && null != superclass) {
-            supertypes.add(superclass);
-            next.add(superclass);
-        }
-
-        for (final Class<?> interfaceClass : current.getInterfaces()) {
-            supertypes.add(interfaceClass);
-            next.add(interfaceClass);
-        }
-
-        for (final Class<?> cls : next) {
-            supertypes.addAll(this.parents(cls));
-        }
-
-        return supertypes;
     }
 
     @Override

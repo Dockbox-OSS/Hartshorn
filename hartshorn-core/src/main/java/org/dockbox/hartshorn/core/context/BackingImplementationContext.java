@@ -27,16 +27,36 @@ import java.util.function.Function;
 
 import lombok.Getter;
 
+/**
+ * Context type for {@link org.dockbox.hartshorn.core.proxy.ProxyHandler}s to use when storing backing implementation
+ * instances. Each backing implementation is stored based on its class, for example an instance of
+ * {@link org.dockbox.hartshorn.core.proxy.DelegatorAccessorImpl} will be stored under the key
+ * {@link org.dockbox.hartshorn.core.proxy.DelegatorAccessor}.
+ */
 @Getter
 @AutoCreating
 public class BackingImplementationContext extends DefaultContext {
 
     private final Map<Class<?>, Object> implementations = HartshornUtils.emptyConcurrentMap();
 
+    /**
+     * Gets the backing implementation instance for the given class, if it exists.
+     * @param type The class to get the backing implementation instance for.
+     * @param <P> The type of the backing implementation instance.
+     * @return The backing implementation instance for the given class, if it exists.
+     */
     public <P> Exceptional<P> get(final Class<P> type) {
         return Exceptional.of(() -> (P) this.implementations.get(type));
     }
 
+    /**
+     * Gets the backing implementation instance for the given class, if it exists. If it doesn't exist, it will be
+     * created using the given function.
+     * @param key The class to get the backing implementation instance for.
+     * @param mappingFunction The function to create the backing implementation instance if it doesn't exist.
+     * @param <P> The type of the backing implementation instance.
+     * @return The backing implementation instance for the given class.
+     */
     public <P> P computeIfAbsent(final Class<P> key, @NonNull final Function<? super Class<P>, P> mappingFunction) {
         return (P) this.implementations.computeIfAbsent(key, (Function<? super Class<?>, ?>) mappingFunction);
     }

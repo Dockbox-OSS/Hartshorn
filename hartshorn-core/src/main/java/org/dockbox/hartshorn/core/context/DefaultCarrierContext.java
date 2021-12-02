@@ -22,6 +22,10 @@ import org.dockbox.hartshorn.core.domain.Exceptional;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+/**
+ * The default implementation of {@link CarrierContext}. This implementation stores the active
+ * {@link ApplicationContext} directly as a field.
+ */
 @RequiredArgsConstructor
 public class DefaultCarrierContext extends DefaultContext implements CarrierContext {
 

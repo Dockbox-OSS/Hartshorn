@@ -24,6 +24,9 @@ import javax.inject.Singleton;
 
 import lombok.Getter;
 
+/**
+ * A concrete implementation of {@link ContextCarrier}.
+ */
 @Binds(ContextCarrier.class)
 @Singleton
 public class ConcreteContextCarrier implements ContextCarrier {

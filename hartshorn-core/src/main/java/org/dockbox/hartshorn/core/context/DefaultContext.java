@@ -17,6 +17,7 @@
 
 package org.dockbox.hartshorn.core.context;
 
+import org.dockbox.hartshorn.core.CustomMultiMap;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.HashSetMultiMap;
 import org.dockbox.hartshorn.core.MultiMap;
@@ -27,10 +28,14 @@ import org.dockbox.hartshorn.core.HartshornUtils;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * The default implementation of {@link Context}. This implementation uses a {@link HashSetMultiMap} to store the
+ * contexts.
+ */
 public abstract class DefaultContext implements Context {
 
     protected final transient Set<Context> contexts = HartshornUtils.emptyConcurrentSet();
-    protected final transient MultiMap<String, Context> namedContexts = new HashSetMultiMap<>();
+    protected final transient MultiMap<String, Context> namedContexts = new CustomMultiMap<>(HartshornUtils::emptyConcurrentSet);
 
     @Override
     public <C extends Context> void add(final C context) {

@@ -18,21 +18,47 @@
 package org.dockbox.hartshorn.core.context;
 
 import org.dockbox.hartshorn.core.InjectConfiguration;
-import org.dockbox.hartshorn.core.context.element.MethodContext;
+import org.dockbox.hartshorn.core.Key;
+import org.dockbox.hartshorn.core.annotations.inject.Binds;
+import org.dockbox.hartshorn.core.binding.BindingHierarchy;
 import org.dockbox.hartshorn.core.inject.Binder;
 import org.dockbox.hartshorn.core.inject.ProviderContext;
+import org.dockbox.hartshorn.core.services.ComponentModifier;
+import org.dockbox.hartshorn.core.services.ComponentProcessor;
 
+/**
+ * A specialized {@link Binder} that is used to bind prefixes and {@link InjectConfiguration}s. These configurations
+ * are typically used to configure an active {@link ApplicationContext}.
+ */
 public interface ApplicationBinder extends Binder {
 
+    /**
+     * Binds the given {@link InjectConfiguration}, which typically contains only static bindings.
+     *
+     * @param configuration The configuration to bind.
+     */
     void bind(InjectConfiguration configuration);
 
+    /**
+     * Binds the given prefix, which represents a package. The given prefix is scanned for  {@link ComponentProcessor}s
+     * and {@link ComponentModifier}s, as well as automatically bound types through {@link Binds} and its combined
+     * annotation {@link org.dockbox.hartshorn.core.annotations.inject.Combines}. The prefix is also registered to the
+     * active {@link ApplicationEnvironment}. After all components are registered, the located
+     * {@link ComponentProcessor}s are activated.
+     *
+     * @param prefix The prefix to bind.
+     */
     void bind(String prefix);
 
-    <T> T populate(T type);
-
-    void add(ProviderContext<?> context);
-
-    <T> T invoke(MethodContext<T, ?> method);
-
-    <T, P> T invoke(MethodContext<T, P> method, P instance);
+    /**
+     * Binds the given {@link ProviderContext} to the {@link Key} provided through {@link ProviderContext#key()}. The
+     * context is directly registered to the {@link BindingHierarchy} of the {@link Key}, using its
+     * {@link ProviderContext#priority()}. If the context is marked as a singleton provider through
+     * {@link ProviderContext#singleton()}, the {@link ProviderContext#provider()} is immediately called to obtain a
+     * singleton instance of type <code>T</code>.
+     *
+     * @param <T> The type of the provider context.
+     * @param context The context to bind.
+     */
+    <T> void add(ProviderContext<T> context);
 }

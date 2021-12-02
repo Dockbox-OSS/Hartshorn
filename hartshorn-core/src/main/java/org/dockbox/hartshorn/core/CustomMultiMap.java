@@ -15,31 +15,19 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.core.context;
+package org.dockbox.hartshorn.core;
 
-import org.dockbox.hartshorn.core.Key;
-import org.dockbox.hartshorn.core.context.element.TypeContext;
+import java.util.Collection;
+import java.util.function.Supplier;
 
-import javax.inject.Named;
+import lombok.Getter;
 
-public interface HartshornContext extends Context {
+public class CustomMultiMap<K, V> extends MultiMap<K, V> {
 
-    default <T> T get(final TypeContext<T> type, final Named named) {
-        return this.get(Key.of(type, named));
+    @Getter
+    private final Collection<V> baseCollection;
+
+    public CustomMultiMap(Supplier<Collection<V>> baseCollection) {
+        this.baseCollection = baseCollection.get();
     }
-
-    default <T> T get(final Class<T> type, final Named named) {
-        return this.get(Key.of(type, named));
-    }
-
-    <T> T get(Key<T> key);
-
-    default <T> T get(final TypeContext<T> type) {
-        return this.get(Key.of(type));
-    }
-
-    default <T> T get(final Class<T> type) {
-        return this.get(Key.of(type));
-    }
-
 }

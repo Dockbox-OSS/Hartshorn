@@ -55,11 +55,6 @@ public class PrefixContext extends DefaultContext {
         }
     }
 
-    void reset() {
-        this.reflectedPrefixes.clear();
-        this.annotationHierarchy.clear();
-    }
-
     private Reflections reflections(final String prefix) {
         if (!this.reflectedPrefixes.containsKey(prefix)) {
             this.reflectedPrefixes.put(prefix, new Reflections(prefix));
