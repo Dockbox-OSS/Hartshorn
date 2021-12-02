@@ -17,10 +17,10 @@
 
 package org.dockbox.hartshorn.core.task.pipeline;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.core.task.pipeline.pipelines.ConvertiblePipeline;
 import org.dockbox.hartshorn.core.task.pipeline.pipelines.Pipeline;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -41,12 +41,12 @@ public enum CancelBehaviour {
         this.biFunction = null;
     }
 
-    CancelBehaviour(@NotNull final Function<Object, Object> function) {
+    CancelBehaviour(@NonNull final Function<Object, Object> function) {
         this.function = function;
         this.biFunction = null;
     }
 
-    CancelBehaviour(@NotNull final BiFunction<Object, Function<Object, Object>, Object> function) {
+    CancelBehaviour(@NonNull final BiFunction<Object, Function<Object, Object>, Object> function) {
         this.function = null;
         this.biFunction = function;
     }

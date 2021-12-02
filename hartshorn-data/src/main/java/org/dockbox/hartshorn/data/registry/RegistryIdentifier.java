@@ -17,8 +17,6 @@
 
 package org.dockbox.hartshorn.data.registry;
 
-import org.jetbrains.annotations.NonNls;
-
 public interface RegistryIdentifier {
     default boolean same(final Object o) {
         if (this == o) return true;
@@ -26,7 +24,6 @@ public interface RegistryIdentifier {
         return this.key().equals(that.key());
     }
 
-    @NonNls
     default String key() {
         if (this.getClass().isEnum()) {
             return ((Enum<?>) this).name();

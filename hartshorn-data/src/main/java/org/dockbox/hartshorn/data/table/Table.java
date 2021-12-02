@@ -17,6 +17,7 @@
 
 package org.dockbox.hartshorn.data.table;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.core.annotations.Property;
 import org.dockbox.hartshorn.core.boot.Hartshorn;
@@ -27,9 +28,7 @@ import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.data.exceptions.EmptyEntryException;
 import org.dockbox.hartshorn.data.exceptions.IdentifierMismatchException;
 import org.dockbox.hartshorn.data.exceptions.UnknownIdentifierException;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
@@ -200,7 +199,7 @@ public class Table {
     }
 
     @Nullable
-    public ColumnIdentifier identifier(@NonNls final String fieldName) throws ClassCastException {
+    public ColumnIdentifier identifier(@NonNull final String fieldName) throws ClassCastException {
         for (final ColumnIdentifier columnIdentifier : this.identifiers) {
             if (columnIdentifier.name().equalsIgnoreCase(fieldName)) {
                 return columnIdentifier;
@@ -300,13 +299,13 @@ public class Table {
      * @throws IdentifierMismatchException
      *         When an identifier does not exist across both tables
      */
-    public <T> Table join(@NotNull final Table otherTable, final ColumnIdentifier<T> column, final Merge merge)
+    public <T> Table join(@NonNull final Table otherTable, final ColumnIdentifier<T> column, final Merge merge)
             throws EmptyEntryException, IdentifierMismatchException {
         return this.join(otherTable, column, merge, false);
     }
 
     private void tryPopulateMissingEntry(
-            @NotNull final Table otherTable,
+            @NonNull final Table otherTable,
             final boolean populateEmptyEntries,
             final Iterable<ColumnIdentifier<?>> mergedIdentifiers,
             final Table joinedTable,
@@ -358,7 +357,7 @@ public class Table {
      *         When an identifier does not exist across both tables
      */
     public <T> Table join(
-            @NotNull final Table otherTable,
+            @NonNull final Table otherTable,
             final ColumnIdentifier<T> column,
             final Merge merge,
             final boolean populateEmptyEntries
@@ -395,7 +394,7 @@ public class Table {
     }
 
     private <T> void populateMatchingRows(
-            @NotNull final Table otherTable,
+            @NonNull final Table otherTable,
             final ColumnIdentifier<T> column,
             final Merge merge,
             final boolean populateEmptyEntries,
@@ -415,7 +414,7 @@ public class Table {
     }
 
     private <T> void populateMissingEntries(
-            @NotNull final Table otherTable,
+            @NonNull final Table otherTable,
             final ColumnIdentifier<T> column,
             final boolean populateEmptyEntries,
             final Iterable<ColumnIdentifier<?>> mergedIdentifiers,

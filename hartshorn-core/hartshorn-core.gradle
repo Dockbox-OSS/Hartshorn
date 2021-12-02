@@ -30,7 +30,6 @@ dependencies {
     testFixturesImplementation "ch.qos.logback:logback-classic:1.3.0-alpha10"
     testFixturesImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"
     testFixturesImplementation "org.junit.jupiter:junit-jupiter-params:$junitVersion"
-    testFixturesImplementation "org.jetbrains:annotations:$jetbrainsAnnotationsVersion"
 
     testFixturesRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
     testFixturesAnnotationProcessor "org.projectlombok:lombok:$lombokVersion"

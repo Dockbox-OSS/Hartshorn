@@ -23,7 +23,6 @@ import org.dockbox.hartshorn.commands.service.CommandParameter;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.DefaultContext;
 import org.dockbox.hartshorn.core.HartshornUtils;
-import org.jetbrains.annotations.UnmodifiableView;
 
 import java.util.List;
 
@@ -45,7 +44,6 @@ public class CommandContextImpl extends DefaultContext implements CommandContext
     @Getter private final ApplicationContext applicationContext;
 
     @Override
-    @UnmodifiableView
     public List<CommandParameter<?>> arguments() {
         return HartshornUtils.asUnmodifiableList(this.args);
     }
@@ -62,7 +60,6 @@ public class CommandContextImpl extends DefaultContext implements CommandContext
     }
 
     @Override
-    @UnmodifiableView
     public List<CommandParameter<?>> flags() {
         return HartshornUtils.asUnmodifiableList(this.flags);
     }

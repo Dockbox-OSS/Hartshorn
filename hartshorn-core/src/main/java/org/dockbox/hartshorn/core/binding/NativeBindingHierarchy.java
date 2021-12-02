@@ -17,11 +17,11 @@
 
 package org.dockbox.hartshorn.core.binding;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.core.Key;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.Iterator;
@@ -122,7 +122,7 @@ public class NativeBindingHierarchy<C> implements BindingHierarchy<C> {
         return "Hierarchy[%s%s]: %s".formatted(contract, name, hierarchy);
     }
 
-    @NotNull
+    @NonNull
     @Override
     public Iterator<Entry<Integer, Provider<C>>> iterator() {
         return this.bindings.entrySet().iterator();

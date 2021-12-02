@@ -17,9 +17,9 @@
 
 package org.dockbox.hartshorn.core.task.pipeline.pipelines;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.core.domain.Exceptional;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 public class ConvertiblePipelineSource<I> extends ConvertiblePipeline<I, I> {
 
@@ -44,7 +44,7 @@ public class ConvertiblePipelineSource<I> extends ConvertiblePipeline<I, I> {
      * @return An {@link Exceptional} containing the {@code I} output
      */
     @Override
-    public Exceptional<I> process(@NotNull final I input, @Nullable final Throwable throwable) {
+    public Exceptional<I> process(@NonNull final I input, @Nullable final Throwable throwable) {
         final Exceptional<I> exceptionalInput = Exceptional.of(input, throwable);
         return super.process(exceptionalInput);
     }

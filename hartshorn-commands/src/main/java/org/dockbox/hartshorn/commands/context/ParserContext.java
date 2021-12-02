@@ -19,7 +19,6 @@ package org.dockbox.hartshorn.commands.context;
 
 import org.dockbox.hartshorn.commands.service.CommandParameter;
 import org.dockbox.hartshorn.core.context.Context;
-import org.jetbrains.annotations.UnmodifiableView;
 
 import java.util.List;
 
@@ -36,7 +35,6 @@ public interface ParserContext extends Context {
      *
      * @return All registered arguments.
      */
-    @UnmodifiableView
     List<CommandParameter<?>> arguments();
 
     /**
@@ -45,7 +43,6 @@ public interface ParserContext extends Context {
      *
      * @return All registered flags.
      */
-    @UnmodifiableView
     List<CommandParameter<?>> flags();
 
     /**

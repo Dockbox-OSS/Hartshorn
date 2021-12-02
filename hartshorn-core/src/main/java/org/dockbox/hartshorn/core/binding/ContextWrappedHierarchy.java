@@ -17,10 +17,10 @@
 
 package org.dockbox.hartshorn.core.binding;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.core.Key;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;
 import java.util.List;
@@ -86,7 +86,7 @@ public class ContextWrappedHierarchy<C> implements BindingHierarchy<C> {
         return this;
     }
 
-    @NotNull
+    @NonNull
     @Override
     public Iterator<Entry<Integer, Provider<C>>> iterator() {
         return this.real().iterator();

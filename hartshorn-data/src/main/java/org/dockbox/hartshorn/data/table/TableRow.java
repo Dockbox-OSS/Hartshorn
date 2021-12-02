@@ -17,11 +17,11 @@
 
 package org.dockbox.hartshorn.data.table;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.HartshornUtils;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.Map;
 import java.util.Set;
@@ -42,8 +42,8 @@ public class TableRow {
      *
      * @return The instance of this TableRow
      */
-    @NotNull
-    public TableRow add(@NotNull final ColumnIdentifier<?> column, @Nullable final Object value) {
+    @NonNull
+    public TableRow add(@NonNull final ColumnIdentifier<?> column, @Nullable final Object value) {
         // Make sure both the Identifier and the Value are both the same type
         if (null == value || TypeContext.of(value).childOf(column.type()))
             this.data.put(column, value);
@@ -63,21 +63,21 @@ public class TableRow {
      *
      * @return Return a Nullable value of the asked column
      */
-    @NotNull
-    public <T> Exceptional<T> value(@NotNull final ColumnIdentifier<T> column) {
+    @NonNull
+    public <T> Exceptional<T> value(@NonNull final ColumnIdentifier<T> column) {
         if (null == this.data.get(column)) return Exceptional.empty();
 
         return Exceptional.of((T) this.data.get(column));
     }
 
     /** @return Return a set of the values of the columns of the row */
-    @NotNull
+    @NonNull
     public Set<Object> values() {
         return HartshornUtils.asUnmodifiableSet(this.data.values());
     }
 
     /** @return Return a set of keys of the row */
-    @NotNull
+    @NonNull
     public Set<ColumnIdentifier<?>> columns() {
         return HartshornUtils.asUnmodifiableSet(this.data.keySet());
     }

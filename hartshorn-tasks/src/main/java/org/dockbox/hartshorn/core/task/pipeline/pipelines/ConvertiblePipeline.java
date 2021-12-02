@@ -17,6 +17,7 @@
 
 package org.dockbox.hartshorn.core.task.pipeline.pipelines;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.task.pipeline.CancelBehaviour;
 import org.dockbox.hartshorn.core.task.pipeline.PipelineDirection;
@@ -24,8 +25,7 @@ import org.dockbox.hartshorn.core.task.pipeline.exceptions.IllegalPipelineExcept
 import org.dockbox.hartshorn.core.task.pipeline.pipes.CancellablePipe;
 import org.dockbox.hartshorn.core.task.pipeline.pipes.IPipe;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.function.Function;
 
@@ -63,7 +63,7 @@ public class ConvertiblePipeline<P, I> extends AbstractPipeline<P, I> {
      */
     @SafeVarargs
     @Override
-    public final ConvertiblePipeline<P, I> add(@NotNull final IPipe<I, I>... pipes) {
+    public final ConvertiblePipeline<P, I> add(@NonNull final IPipe<I, I>... pipes) {
         return (ConvertiblePipeline<P, I>) super.add(pipes);
     }
 
@@ -76,7 +76,7 @@ public class ConvertiblePipeline<P, I> extends AbstractPipeline<P, I> {
      * @return Itself
      */
     @Override
-    public ConvertiblePipeline<P, I> add(@NotNull final IPipe<I, I> pipe) {
+    public ConvertiblePipeline<P, I> add(@NonNull final IPipe<I, I> pipe) {
         return (ConvertiblePipeline<P, I>) super.add(pipe);
     }
 
@@ -90,7 +90,7 @@ public class ConvertiblePipeline<P, I> extends AbstractPipeline<P, I> {
      * @return Itself
      */
     @Override
-    public ConvertiblePipeline<P, I> add(@NotNull final AbstractPipeline<?, I> pipeline) {
+    public ConvertiblePipeline<P, I> add(@NonNull final AbstractPipeline<?, I> pipeline) {
         return (ConvertiblePipeline<P, I>) super.add(pipeline);
     }
 
@@ -106,7 +106,7 @@ public class ConvertiblePipeline<P, I> extends AbstractPipeline<P, I> {
      * @return An {@link Exceptional} containing the output
      */
     @Override
-    protected Exceptional<I> process(@NotNull Exceptional<I> exceptionalInput) {
+    protected Exceptional<I> process(@NonNull Exceptional<I> exceptionalInput) {
         for (final IPipe<I, I> pipe : this.pipes()) {
             // If the pipelines been cancelled, stop processing any further pipes.
             if (super.cancelled()) {
@@ -152,7 +152,7 @@ public class ConvertiblePipeline<P, I> extends AbstractPipeline<P, I> {
      *         will contain a throwable describing why
      */
     @Override
-    public Exceptional<I> process(@NotNull final P input, @Nullable final Throwable throwable) {
+    public Exceptional<I> process(@NonNull final P input, @Nullable final Throwable throwable) {
         final Exceptional<I> exceptionalInput;
 
         // This should never be called, unless this class was used initially instead of
@@ -208,7 +208,7 @@ public class ConvertiblePipeline<P, I> extends AbstractPipeline<P, I> {
      *
      * @return An {@link Exceptional} of type {@code K} containing the converted output
      */
-    protected <K> Exceptional<K> processConverted(@NotNull final P input, @Nullable final Throwable throwable) {
+    protected <K> Exceptional<K> processConverted(@NonNull final P input, @Nullable final Throwable throwable) {
         final Exceptional<I> result = this.process(input, throwable);
 
         if (super.cancelled()) {
@@ -237,7 +237,7 @@ public class ConvertiblePipeline<P, I> extends AbstractPipeline<P, I> {
      *
      * @return A pipeline of the new type
      */
-    public <K> ConvertiblePipeline<P, K> convertPipeline(@NotNull final Function<? super I, K> converter, @NotNull final Class<K> outputClass) {
+    public <K> ConvertiblePipeline<P, K> convertPipeline(@NonNull final Function<? super I, K> converter, @NonNull final Class<K> outputClass) {
         this.converter = converter;
 
         final ConvertiblePipeline<P, K> nextPipeline = new ConvertiblePipeline<>(outputClass);

@@ -17,8 +17,8 @@
 
 package org.dockbox.hartshorn.core;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.core.domain.Exceptional;
-import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -54,7 +54,7 @@ public abstract class GenericType<T> implements Comparable<GenericType<T>> {
     }
 
     @Override
-    public int compareTo(@NotNull final GenericType<T> o) {
+    public int compareTo(@NonNull final GenericType<T> o) {
         return 0;
     }
 

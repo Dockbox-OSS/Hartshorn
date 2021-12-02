@@ -30,6 +30,7 @@ plugins {
     id 'java-library'
     id 'org.cadixdev.licenser' version "$licenserVersion"
     id 'io.freefair.aggregate-javadoc' version "$aggregateJavadocVersion"
+    id 'org.checkerframework' version '0.6.3'
 }
 
 apply plugin: 'org.owasp.dependencycheck'
@@ -54,6 +55,7 @@ subprojects { final Project subProject ->
     apply plugin: 'java-library'
     apply plugin: 'maven-publish'
     apply plugin: 'java-test-fixtures'
+    apply plugin: 'org.checkerframework'
     apply plugin: 'org.cadixdev.licenser'
 
     license {
@@ -125,7 +127,6 @@ allprojects {
         dependencies {
             implementation "org.slf4j:slf4j-api:$slf4jVersion"
             implementation "org.projectlombok:lombok:$lombokVersion"
-            implementation("org.jetbrains:annotations:$jetbrainsAnnotationsVersion")
             implementation "javax.persistence:javax.persistence-api:$javaxPersistenceVersion"
 
             annotationProcessor "org.projectlombok:lombok:$lombokVersion"

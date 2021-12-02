@@ -20,7 +20,7 @@ package org.dockbox.hartshorn.core.services;
 import org.dockbox.hartshorn.core.ComponentType;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
-import org.jetbrains.annotations.Nullable;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.lang.annotation.Annotation;
 

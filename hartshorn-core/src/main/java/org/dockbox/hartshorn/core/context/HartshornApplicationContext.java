@@ -17,6 +17,7 @@
 
 package org.dockbox.hartshorn.core.context;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.core.ActivatorFiltered;
 import org.dockbox.hartshorn.core.ArrayListMultiMap;
 import org.dockbox.hartshorn.core.ComponentType;
@@ -62,7 +63,6 @@ import org.dockbox.hartshorn.core.services.ComponentLocator;
 import org.dockbox.hartshorn.core.services.ComponentProcessor;
 import org.dockbox.hartshorn.core.services.ServiceImpl;
 import org.dockbox.hartshorn.core.services.ServiceOrder;
-import org.jetbrains.annotations.Nullable;
 
 import java.lang.annotation.Annotation;
 import java.util.Collection;
@@ -280,14 +280,6 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
         return this.metaProvider;
     }
 
-    @Override
-    public void reset() {
-        this.environment.prefixContext().reset();
-        this.hierarchies.clear();
-        this.contexts.clear();
-        this.singletons.clear();
-    }
-
     private <C> void inHierarchy(final Key<C> key, final Consumer<BindingHierarchy<C>> consumer) {
         final BindingHierarchy<C> hierarchy = (BindingHierarchy<C>) this.hierarchies.getOrDefault(key, new NativeBindingHierarchy<>(key, this));
         consumer.accept(hierarchy);
@@ -450,14 +442,14 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
     }
 
     @Override
-    public void add(final ProviderContext<?> context) {
-        final Key<Object> key = (Key<Object>) context.key();
+    public <T> void add(final ProviderContext<T> context) {
+        final Key<T> key = context.key();
         this.inHierarchy(key, hierarchy -> {
             if (context.singleton()) {
                 hierarchy.add(context.priority(), Providers.of(context.provider().get()));
             }
             else {
-                hierarchy.add(context.priority(), Providers.of((Supplier<Object>) context.provider()));
+                hierarchy.add(context.priority(), Providers.of(context.provider()));
             }
         });
     }

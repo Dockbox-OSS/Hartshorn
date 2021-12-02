@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.data.registry;
 
-import org.jetbrains.annotations.NotNull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -47,7 +47,7 @@ public class Registry<V> extends HashMap<String, RegistryColumn<V>> {
      *
      * @return Itself.
      */
-    public Registry<V> addRegistry(@NotNull final Map<RegistryIdentifier, RegistryColumn<V>> other) {
+    public Registry<V> addRegistry(@NonNull final Map<RegistryIdentifier, RegistryColumn<V>> other) {
         other.forEach(this::add);
         return this;
     }
@@ -67,7 +67,7 @@ public class Registry<V> extends HashMap<String, RegistryColumn<V>> {
         return this;
     }
 
-    public Registry<V> addRegistry(@NotNull final Registry<V> other) {
+    public Registry<V> addRegistry(@NonNull final Registry<V> other) {
         // Iterate over entries instead of using putAll to avoid overwriting existing
         // column values.
         for (final Entry<String, RegistryColumn<V>> column : other.entrySet()) {
@@ -83,7 +83,7 @@ public class Registry<V> extends HashMap<String, RegistryColumn<V>> {
      *
      * @return Itself.
      */
-    public Registry<V> removeColumns(@NotNull final RegistryIdentifier... columnIDs) {
+    public Registry<V> removeColumns(@NonNull final RegistryIdentifier... columnIDs) {
         for (final RegistryIdentifier columnID : columnIDs) {
             this.remove(columnID);
         }

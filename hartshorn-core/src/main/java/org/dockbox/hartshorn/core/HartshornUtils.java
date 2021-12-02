@@ -17,16 +17,14 @@
 
 package org.dockbox.hartshorn.core;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.domain.tuple.Triad;
 import org.dockbox.hartshorn.core.domain.tuple.Tuple;
 import org.dockbox.hartshorn.core.domain.tuple.Vector3N;
 import org.dockbox.hartshorn.core.exceptions.ImpossibleFileException;
 import org.dockbox.hartshorn.core.function.CheckedRunnable;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.UnmodifiableView;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -181,14 +179,13 @@ public final class HartshornUtils {
         return new ConcurrentHashMap<>();
     }
 
-    @UnmodifiableView
-    @NotNull
+    @NonNull
     @SafeVarargs
     public static <T> List<T> asUnmodifiableList(final T... objects) {
         return Collections.unmodifiableList(HartshornUtils.asList(objects));
     }
 
-    @NotNull
+    @NonNull
     @SafeVarargs
     public static <T> List<T> asList(final T... objects) {
         return HartshornUtils.asList(Arrays.asList(objects));
@@ -215,14 +212,13 @@ public final class HartshornUtils {
         return Collections.unmodifiableList(HartshornUtils.asList(collection));
     }
 
-    @UnmodifiableView
-    @NotNull
+    @NonNull
     @SafeVarargs
     public static <T> Set<T> asUnmodifiableSet(final T... objects) {
         return Collections.unmodifiableSet(HartshornUtils.asSet(objects));
     }
 
-    @NotNull
+    @NonNull
     @SafeVarargs
     public static <T> Set<T> asSet(final T... objects) {
         return new HashSet<>(HartshornUtils.asList(objects));
@@ -254,14 +250,12 @@ public final class HartshornUtils {
         return Collections.unmodifiableMap(map);
     }
 
-    @UnmodifiableView
-    @NotNull
+    @NonNull
     public static <T> Set<T> asUnmodifiableSet(final Collection<T> objects) {
         return Set.copyOf(objects);
     }
 
-    @UnmodifiableView
-    @NotNull
+    @NonNull
     public static <T> List<T> asUnmodifiableList(final List<T> objects) {
         return Collections.unmodifiableList(objects);
     }
@@ -381,8 +375,8 @@ public final class HartshornUtils {
         return count;
     }
 
-    @NotNull
-    public static String wildcardToRegexString(@NotNull final CharSequence wildcard) {
+    @NonNull
+    public static String wildcardToRegexString(@NonNull final CharSequence wildcard) {
         final StringBuilder s = new StringBuilder(wildcard.length());
         s.append('^');
         for (int i = 0, is = wildcard.length(); i < is; i++) {
@@ -402,7 +396,7 @@ public final class HartshornUtils {
         return s.toString();
     }
 
-    public static int levenshteinDistance(@NonNls final CharSequence source, @NonNls final CharSequence target) {
+    public static int levenshteinDistance(final CharSequence source, final CharSequence target) {
         final int length = verifyContentLength(source, target);
         if (-1 < length) return length;
 
@@ -456,8 +450,7 @@ public final class HartshornUtils {
         return current;
     }
 
-    public static int damerauLevenshteinDistance(
-            @NonNls final CharSequence source, @NonNls final CharSequence target) {
+    public static int damerauLevenshteinDistance(final CharSequence source, final CharSequence target) {
         final int length = verifyContentLength(source, target);
         if (-1 < length) return length;
 
@@ -520,7 +513,7 @@ public final class HartshornUtils {
         return distanceMatrix[srcLen][targetLen];
     }
 
-    @NotNull
+    @NonNull
     public static String randomString(final int minLen, final int maxLen) {
         final StringBuilder s = new StringBuilder();
         final int length = minLen + random.nextInt(maxLen - minLen + 1);
@@ -530,18 +523,18 @@ public final class HartshornUtils {
         return s.toString();
     }
 
-    @NotNull
+    @NonNull
     public static String randomChar(final boolean upper) {
         final int r = random.nextInt(26);
         return upper ? "" + (char) ((int) 'A' + r) : "" + (char) ((int) 'a' + r);
     }
 
-    @NotNull
+    @NonNull
     public static String createUtf8String(final byte[] bytes) {
         return HartshornUtils.createString(bytes, "UTF-8");
     }
 
-    @NotNull
+    @NonNull
     public static String createString(final byte[] bytes, final String encoding) {
         try {
             return null == bytes ? "" : new String(bytes, encoding);
@@ -565,7 +558,7 @@ public final class HartshornUtils {
         }
     }
 
-    @NotNull
+    @NonNull
     public static String createUTF8String(final byte[] bytes) {
         return HartshornUtils.createString(bytes, "UTF-8");
     }
@@ -645,7 +638,7 @@ public final class HartshornUtils {
         return array;
     }
 
-    public static boolean empty(@NotNull final Path file) {
+    public static boolean empty(@NonNull final Path file) {
         return !Files.exists(file) || 0 >= file.toFile().length();
     }
 
@@ -670,13 +663,13 @@ public final class HartshornUtils {
         return decimal.doubleValue();
     }
 
-    @NotNull
-    public static Path createPathIfNotExists(@NotNull final Path path) {
+    @NonNull
+    public static Path createPathIfNotExists(@NonNull final Path path) {
         if (!path.toFile().exists()) path.toFile().mkdirs();
         return path;
     }
 
-    public static Path createFileIfNotExists(@NotNull final Path file) {
+    public static Path createFileIfNotExists(@NonNull final Path file) {
         if (!Files.exists(file)) {
             try {
                 Files.createDirectories(file.getParent());
@@ -689,7 +682,7 @@ public final class HartshornUtils {
         return file;
     }
     
-    public static String contentOrEmpty(@NotNull final Path file) {
+    public static String contentOrEmpty(@NonNull final Path file) {
         try {
             return Files.readString(file);
         }
@@ -790,7 +783,7 @@ public final class HartshornUtils {
         return Exceptional.of(optionalInstant).map(HartshornUtils::toLocalDateTime);
     }
 
-    @NotNull
+    @NonNull
     public static LocalDateTime toLocalDateTime(final Instant dt) {
         return LocalDateTime.ofInstant(dt, ZoneId.systemDefault());
     }
@@ -865,28 +858,28 @@ public final class HartshornUtils {
         else return false;
     }
 
-    public static boolean equals(@NonNls final String str1, @NonNls final String str2) {
+    public static boolean equals(final String str1, final String str2) {
         if (null == str1 || null == str2) {
             return str1 == str2;
         }
         return str1.equals(str2);
     }
 
-    public static boolean equalsIgnoreCase(@NonNls final String s1, @NonNls final String s2) {
+    public static boolean equalsIgnoreCase(final String s1, final String s2) {
         if (null == s1 || null == s2) {
             return s1 == s2;
         }
         return s1.equalsIgnoreCase(s2);
     }
 
-    public static boolean equalsWithTrim(@NonNls final String s1, @NonNls final String s2) {
+    public static boolean equalsWithTrim(final String s1, final String s2) {
         if (null == s1 || null == s2) {
             return s1 == s2;
         }
         return s1.trim().equals(s2.trim());
     }
 
-    public static boolean equalsIgnoreCaseWithTrim(@NonNls final String s1, @NonNls final String s2) {
+    public static boolean equalsIgnoreCaseWithTrim(final String s1, final String s2) {
         if (null == s1 || null == s2) {
             return s1 == s2;
         }
@@ -1108,7 +1101,7 @@ public final class HartshornUtils {
         else return fullName.substring(start);
     }
 
-    @NotNull
+    @NonNull
     public static String repeat(final String string, final int amount) {
         final StringBuilder sb = new StringBuilder();
         for (final int ignored : HartshornUtils.range(1, amount)) sb.append(string);
@@ -1149,7 +1142,7 @@ public final class HartshornUtils {
         return asSet(merge(differenceInOne, differenceInTwo));
     }
 
-    @NotNull
+    @NonNull
     public static <T> Set<T> asSet(final Collection<T> collection) {
         return new HashSet<>(collection);
     }
@@ -1171,12 +1164,5 @@ public final class HartshornUtils {
                 || System.getenv().containsKey("TRAVIS")
                 || System.getenv().containsKey("GITHUB_ACTIONS")
                 || System.getenv().containsKey("APPVEYOR");
-    }
-
-    public enum Provision {
-        /** Uses the field name to process field information. */
-        FIELD,
-        /** Uses the field to process field information. */
-        FIELD_NAME
     }
 }

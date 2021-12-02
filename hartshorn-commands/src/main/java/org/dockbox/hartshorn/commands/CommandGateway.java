@@ -24,7 +24,6 @@ import org.dockbox.hartshorn.commands.exceptions.ParsingException;
 import org.dockbox.hartshorn.commands.extension.CommandExecutorExtension;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.HartshornUtils;
-import org.jetbrains.annotations.UnmodifiableView;
 
 import java.util.List;
 
@@ -89,7 +88,6 @@ public interface CommandGateway {
      *
      * @return The suggestions for the last argument, or {@link HartshornUtils#emptyList()}
      */
-    @UnmodifiableView
     List<String> suggestions(CommandSource source, String command);
 
     /**

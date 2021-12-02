@@ -17,6 +17,7 @@
 
 package org.dockbox.hartshorn.events;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.annotations.inject.Binds;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
@@ -27,7 +28,6 @@ import org.dockbox.hartshorn.events.handle.EventHandlerRegistry;
 import org.dockbox.hartshorn.events.handle.EventWrapperImpl;
 import org.dockbox.hartshorn.events.parents.Event;
 import org.dockbox.hartshorn.core.HartshornUtils;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 import java.util.Set;
@@ -138,7 +138,7 @@ public class EventBusImpl implements EventBus {
         this.post(event, null);
     }
 
-    @NotNull
+    @NonNull
     @Override
     public Map<TypeContext<?>, Set<EventWrapper>> invokers() {
         return this.listenerToInvokers;

@@ -17,6 +17,7 @@
 
 package org.dockbox.hartshorn.events.handle;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.core.Key;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
@@ -26,7 +27,6 @@ import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.services.parameter.ParameterLoader;
 import org.dockbox.hartshorn.events.EventWrapper;
 import org.dockbox.hartshorn.events.parents.Event;
-import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Method;
 import java.util.Comparator;
@@ -137,7 +137,7 @@ public final class EventWrapperImpl<T> implements Comparable<EventWrapperImpl<T>
     }
 
     @Override
-    public int compareTo(@NotNull final EventWrapperImpl o) {
+    public int compareTo(@NonNull final EventWrapperImpl o) {
         return COMPARATOR.compare(this, o);
     }
 

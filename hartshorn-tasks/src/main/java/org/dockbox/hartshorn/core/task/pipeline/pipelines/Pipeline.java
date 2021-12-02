@@ -17,10 +17,10 @@
 
 package org.dockbox.hartshorn.core.task.pipeline.pipelines;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.task.pipeline.pipes.IPipe;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 public class Pipeline<I> extends AbstractPipeline<I, I> {
 
@@ -37,7 +37,7 @@ public class Pipeline<I> extends AbstractPipeline<I, I> {
      *         contain a throwable describing why
      */
     @Override
-    public Exceptional<I> process(@NotNull final I input, @Nullable final Throwable throwable) {
+    public Exceptional<I> process(@NonNull final I input, @Nullable final Throwable throwable) {
         final Exceptional<I> exceptionalInput = Exceptional.of(input, throwable);
 
         return this.process(exceptionalInput);
@@ -56,7 +56,7 @@ public class Pipeline<I> extends AbstractPipeline<I, I> {
      *         pipeline
      */
     @Override
-    protected Exceptional<I> process(@NotNull Exceptional<I> exceptionalInput) {
+    protected Exceptional<I> process(@NonNull Exceptional<I> exceptionalInput) {
         for (final IPipe<I, I> pipe : this.pipes()) {
             exceptionalInput = super.processPipe(pipe, exceptionalInput);
 

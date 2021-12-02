@@ -17,6 +17,7 @@
 
 package org.dockbox.hartshorn.core.task.pipeline.pipelines;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.core.annotations.PartialApi;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.task.pipeline.CancelBehaviour;
@@ -26,8 +27,7 @@ import org.dockbox.hartshorn.core.task.pipeline.pipes.ComplexPipe;
 import org.dockbox.hartshorn.core.task.pipeline.pipes.IPipe;
 import org.dockbox.hartshorn.core.task.pipeline.pipes.StandardPipe;
 import org.dockbox.hartshorn.core.HartshornUtils;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -51,7 +51,7 @@ public abstract class AbstractPipeline<P, I> {
      */
     @SafeVarargs
     @PartialApi
-    public final AbstractPipeline<P, I> addVarargPipes(@NotNull final IPipe<I, I>... pipes) {
+    public final AbstractPipeline<P, I> addVarargPipes(@NonNull final IPipe<I, I>... pipes) {
         return this.add(pipes);
     }
 
@@ -65,7 +65,7 @@ public abstract class AbstractPipeline<P, I> {
      * @return Itself
      */
     @PartialApi
-    public AbstractPipeline<P, I> add(@NotNull final IPipe<I, I>[] pipes) {
+    public AbstractPipeline<P, I> add(@NonNull final IPipe<I, I>[] pipes) {
         return this.add(Arrays.asList(pipes));
     }
 
@@ -79,7 +79,7 @@ public abstract class AbstractPipeline<P, I> {
      * @return Itself
      */
     @PartialApi
-    public AbstractPipeline<P, I> add(@NotNull final Iterable<IPipe<I, I>> pipes) {
+    public AbstractPipeline<P, I> add(@NonNull final Iterable<IPipe<I, I>> pipes) {
         for (final IPipe<I, I> pipe : pipes) {
             this.add(pipe);
         }
@@ -95,7 +95,7 @@ public abstract class AbstractPipeline<P, I> {
      * @return Itself
      */
     @PartialApi
-    public AbstractPipeline<P, I> add(@NotNull final IPipe<I, I> pipe) {
+    public AbstractPipeline<P, I> add(@NonNull final IPipe<I, I> pipe) {
         this.pipes.add(pipe);
         return this;
     }
@@ -111,7 +111,7 @@ public abstract class AbstractPipeline<P, I> {
      * @return Itself
      */
     @PartialApi
-    public AbstractPipeline<P, I> add(@NotNull final AbstractPipeline<?, I> pipeline) {
+    public AbstractPipeline<P, I> add(@NonNull final AbstractPipeline<?, I> pipeline) {
         return this.add(pipeline.pipes());
     }
 
@@ -132,7 +132,7 @@ public abstract class AbstractPipeline<P, I> {
      *         pipeline
      */
     @PartialApi
-    protected abstract Exceptional<I> process(@NotNull Exceptional<I> exceptionalInput);
+    protected abstract Exceptional<I> process(@NonNull Exceptional<I> exceptionalInput);
 
     /**
      * A default method for processing a pipe, which handles converting the pipe, checking that
@@ -215,7 +215,7 @@ public abstract class AbstractPipeline<P, I> {
      *         without checking if its present
      */
     @PartialApi
-    public I processUnsafe(@NotNull final P input) {
+    public I processUnsafe(@NonNull final P input) {
         return this.process(input).orNull();
     }
 
@@ -246,7 +246,7 @@ public abstract class AbstractPipeline<P, I> {
      * @return An {@link Exceptional} of the output
      */
     @PartialApi
-    public abstract Exceptional<I> process(@NotNull P input, @Nullable Throwable throwable);
+    public abstract Exceptional<I> process(@NonNull P input, @Nullable Throwable throwable);
 
     /**
      * Processes a {@link Collection} of {@code P} inputs by internally calling {@link
@@ -261,7 +261,7 @@ public abstract class AbstractPipeline<P, I> {
      *         input
      */
     @PartialApi
-    public List<Exceptional<I>> processAll(@NotNull final Collection<P> inputs) {
+    public List<Exceptional<I>> processAll(@NonNull final Collection<P> inputs) {
         return inputs.stream().map(this::process).toList();
     }
 
@@ -277,7 +277,7 @@ public abstract class AbstractPipeline<P, I> {
      * @return A {@link List} containing the processed {@code I} output of each input, if not null
      */
     @PartialApi
-    public List<I> processAllSafe(@NotNull final Collection<P> inputs) {
+    public List<I> processAllSafe(@NonNull final Collection<P> inputs) {
         return inputs.stream()
                 .map(this::process)
                 .filter(Exceptional::present)
@@ -298,7 +298,7 @@ public abstract class AbstractPipeline<P, I> {
      *         null
      */
     @PartialApi
-    public List<I> processAllUnsafe(@NotNull final Collection<P> inputs) {
+    public List<I> processAllUnsafe(@NonNull final Collection<P> inputs) {
         return inputs.stream().map(this::process).map(Exceptional::orNull).toList();
     }
 

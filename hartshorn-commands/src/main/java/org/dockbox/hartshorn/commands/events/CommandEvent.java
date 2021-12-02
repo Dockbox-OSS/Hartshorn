@@ -17,12 +17,12 @@
 
 package org.dockbox.hartshorn.commands.events;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.commands.context.CommandContext;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.events.AbstractTargetEvent;
 import org.dockbox.hartshorn.events.parents.Cancellable;
-import org.jetbrains.annotations.NotNull;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -53,7 +53,7 @@ public abstract class CommandEvent extends AbstractTargetEvent {
         }
 
         @Override
-        public @NotNull Before post() {
+        public @NonNull Before post() {
             return (Before) super.post();
         }
 

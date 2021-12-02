@@ -17,8 +17,8 @@
 
 package org.dockbox.hartshorn.events.parents;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.events.EventBus;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * Low level event type which can be cancelled, usually this cancellable state is respected by the
@@ -42,7 +42,7 @@ public interface Cancellable extends Event {
     Cancellable cancelled(boolean cancelled);
 
     @Override
-    @NotNull
+    @NonNull
     default Cancellable post() {
         this.applicationContext().get(EventBus.class).post(this);
         return this;

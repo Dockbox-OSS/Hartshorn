@@ -34,7 +34,6 @@ import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.Enableable;
-import org.jetbrains.annotations.UnmodifiableView;
 
 import java.util.Collection;
 import java.util.List;
@@ -169,7 +168,6 @@ public class CommandGatewayImpl implements CommandGateway, Enableable {
     }
 
     @Override
-    @UnmodifiableView
     public List<String> suggestions(final CommandSource source, final String command) {
         final Exceptional<CommandExecutorContext> context = this.lookupContext(command);
         final List<String> suggestions = HartshornUtils.emptyList();
