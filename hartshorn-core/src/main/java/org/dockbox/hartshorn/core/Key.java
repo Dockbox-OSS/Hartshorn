@@ -17,6 +17,7 @@
 
 package org.dockbox.hartshorn.core;
 
+import org.dockbox.hartshorn.core.binding.NamedImpl;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 
 import java.util.Objects;
@@ -33,7 +34,7 @@ public class Key<C> {
     private final Named named;
 
     public static <C> Key<C> of(final TypeContext<C> contract) {
-        return of(contract, null);
+        return new Key<>(contract, null);
     }
 
     public static <C> Key<C> of(final Class<C> contract) {
@@ -49,6 +50,18 @@ public class Key<C> {
 
     public static <C> Key<C> of(final Class<C> contract, final Named named) {
         return of(TypeContext.of(contract), named);
+    }
+
+    public static <C> Key<C> of(final Class<C> contract, final String named) {
+        return of(TypeContext.of(contract), new NamedImpl(named));
+    }
+
+    public static <C> Key<C> of(final TypeContext<C> contract, final String named) {
+        return of(contract, new NamedImpl(named));
+    }
+
+    public Key<C> named(String name) {
+        return Key.of(this.contract(), name);
     }
 
     @Override

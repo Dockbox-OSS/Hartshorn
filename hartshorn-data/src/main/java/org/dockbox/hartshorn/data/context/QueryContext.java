@@ -18,13 +18,12 @@
 package org.dockbox.hartshorn.data.context;
 
 import org.dockbox.hartshorn.core.Key;
-import org.dockbox.hartshorn.core.binding.Bindings;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.services.parameter.ParameterLoader;
-import org.dockbox.hartshorn.data.jpa.JpaRepository;
 import org.dockbox.hartshorn.data.annotations.Query;
+import org.dockbox.hartshorn.data.jpa.JpaRepository;
 
 import javax.persistence.EntityManager;
 
@@ -77,7 +76,7 @@ public class QueryContext {
 
     protected ParameterLoader<JpaParameterLoaderContext> parameterLoader() {
         if (this.parameterLoader == null) {
-            this.parameterLoader = this.applicationContext().get(Key.of(ParameterLoader.class, Bindings.named("jpa_query")));
+            this.parameterLoader = this.applicationContext().get(Key.of(ParameterLoader.class, "jpa_query"));
         }
         return this.parameterLoader;
     }

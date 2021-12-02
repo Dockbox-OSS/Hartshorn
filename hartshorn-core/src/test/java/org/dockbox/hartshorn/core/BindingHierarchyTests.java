@@ -17,13 +17,12 @@
 
 package org.dockbox.hartshorn.core;
 
-import org.dockbox.hartshorn.core.binding.NativeBindingHierarchy;
-import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.binding.BindingHierarchy;
-import org.dockbox.hartshorn.core.binding.Bindings;
 import org.dockbox.hartshorn.core.binding.ContextDrivenProvider;
+import org.dockbox.hartshorn.core.binding.NativeBindingHierarchy;
 import org.dockbox.hartshorn.core.binding.Provider;
 import org.dockbox.hartshorn.core.binding.Providers;
+import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.testsuite.ApplicationAwareTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -44,7 +43,7 @@ public class BindingHierarchyTests extends ApplicationAwareTest {
 
     @Test
     void testToStringNamed() {
-        final BindingHierarchy<Contract> hierarchy = new NativeBindingHierarchy<>(Key.of(Contract.class, Bindings.named("sample")), this.context());
+        final BindingHierarchy<Contract> hierarchy = new NativeBindingHierarchy<>(Key.of(Contract.class, "sample"), this.context());
         hierarchy.add(0, Providers.of(ImplementationA.class));
         hierarchy.add(1, Providers.of(ImplementationB.class));
         hierarchy.add(2, Providers.of(ImplementationC.class));

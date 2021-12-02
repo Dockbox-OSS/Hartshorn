@@ -21,6 +21,7 @@ import org.dockbox.hartshorn.core.ActivatorFiltered;
 import org.dockbox.hartshorn.core.ArrayListMultiMap;
 import org.dockbox.hartshorn.core.ComponentType;
 import org.dockbox.hartshorn.core.DefaultModifiers;
+import org.dockbox.hartshorn.core.Enableable;
 import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.core.InjectConfiguration;
 import org.dockbox.hartshorn.core.InjectionPoint;
@@ -38,7 +39,6 @@ import org.dockbox.hartshorn.core.annotations.inject.Enable;
 import org.dockbox.hartshorn.core.annotations.service.AutomaticActivation;
 import org.dockbox.hartshorn.core.annotations.service.ServiceActivator;
 import org.dockbox.hartshorn.core.binding.BindingHierarchy;
-import org.dockbox.hartshorn.core.binding.Bindings;
 import org.dockbox.hartshorn.core.binding.ContextWrappedHierarchy;
 import org.dockbox.hartshorn.core.binding.NativeBindingHierarchy;
 import org.dockbox.hartshorn.core.binding.Provider;
@@ -221,7 +221,6 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
             for (final ComponentContainer container : containers) {
                 final TypeContext<?> service = container.type();
                 if (serviceProcessor.processable(this, service)) {
-                    final long start = System.currentTimeMillis();
                     this.log().debug("Processing component %s with registered processor %s in phase %s".formatted(container.id(), TypeContext.of(serviceProcessor).name(), order));
                     serviceProcessor.process(this, service);
                 }
@@ -316,7 +315,7 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
         // Inject properties if applicable
         if (enable) {
             try {
-                Bindings.enable(instance);
+                this.enable(instance);
             }
             catch (final ApplicationException e) {
                 ExceptionHandler.unchecked(e);
@@ -488,6 +487,13 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
         }
         catch (final Throwable e) {
             return null;
+        }
+    }
+
+    @Override
+    public void enable(Object instance) throws ApplicationException {
+        if (instance instanceof Enableable enableable && enableable.canEnable()) {
+            enableable.enable();
         }
     }
 

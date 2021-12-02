@@ -21,7 +21,6 @@ import org.dockbox.hartshorn.core.Enableable;
 import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.core.annotations.inject.Binds;
 import org.dockbox.hartshorn.core.annotations.inject.Bound;
-import org.dockbox.hartshorn.core.binding.Bindings;
 import org.dockbox.hartshorn.core.boot.ExceptionHandler;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
@@ -31,11 +30,11 @@ import org.dockbox.hartshorn.data.context.EntityContext;
 import org.dockbox.hartshorn.data.jpa.JpaRepository;
 import org.dockbox.hartshorn.data.remote.DerbyFileRemote;
 import org.dockbox.hartshorn.data.remote.MariaDbRemote;
-import org.dockbox.hartshorn.data.remote.SqlServerRemote;
 import org.dockbox.hartshorn.data.remote.MySQLRemote;
 import org.dockbox.hartshorn.data.remote.PersistenceConnection;
 import org.dockbox.hartshorn.data.remote.PostgreSQLRemote;
 import org.dockbox.hartshorn.data.remote.Remote;
+import org.dockbox.hartshorn.data.remote.SqlServerRemote;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -247,7 +246,7 @@ public class HibernateJpaRepository<T, ID> implements JpaRepository<T, ID>, Enab
         if (this.connection != null) throw new IllegalStateException("Connection has already been configured!");
         this.connection = connection;
         try {
-            Bindings.enable(this);
+            this.applicationContext().enable(this);
         } catch (final ApplicationException e) {
             this.applicationContext().handle(e);
         }
@@ -274,7 +273,7 @@ public class HibernateJpaRepository<T, ID> implements JpaRepository<T, ID>, Enab
         // repository should fall back to constructing the default remote through the active HibernateRemote binding.
         if (this.factory == null) {
             try {
-                Bindings.enable(this);
+                this.applicationContext().enable(this);
             } catch (ApplicationException e) {
                 return ExceptionHandler.unchecked(e);
             }

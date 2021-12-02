@@ -22,7 +22,6 @@ import org.dockbox.hartshorn.core.Key;
 import org.dockbox.hartshorn.core.annotations.Factory;
 import org.dockbox.hartshorn.core.annotations.service.AutomaticActivation;
 import org.dockbox.hartshorn.core.annotations.service.Service;
-import org.dockbox.hartshorn.core.binding.Bindings;
 import org.dockbox.hartshorn.core.binding.ContextDrivenProvider;
 import org.dockbox.hartshorn.core.binding.Provider;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
@@ -53,7 +52,7 @@ public class FactoryServiceProcessor implements ServiceProcessor<Service> {
         for (final MethodContext<?, T> method : type.methods(Factory.class)) {
             final Factory annotation = method.annotation(Factory.class).get();
             Key<?> key = Key.of(method.returnType());
-            if (!"".equals(annotation.value())) key = Key.of(method.returnType(), Bindings.named(annotation.value()));
+            if (!"".equals(annotation.value())) key = Key.of(method.returnType(), annotation.value());
 
             final Set<TypeContext<?>> types = HartshornUtils.emptySet();
             for (final Provider<?> provider : context.hierarchy(key).providers()) {

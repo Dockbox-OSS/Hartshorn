@@ -17,10 +17,10 @@
 
 package org.dockbox.hartshorn.core.services;
 
+import org.dockbox.hartshorn.core.Key;
 import org.dockbox.hartshorn.core.annotations.proxy.Provided;
 import org.dockbox.hartshorn.core.annotations.proxy.UseProxying;
 import org.dockbox.hartshorn.core.annotations.service.AutomaticActivation;
-import org.dockbox.hartshorn.core.binding.Bindings;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.MethodProxyContext;
 import org.dockbox.hartshorn.core.proxy.ProxyFunction;
@@ -37,12 +37,10 @@ public class ContextMethodModifier extends ServiceAnnotatedMethodModifier<Provid
         return (instance, args, proxyContext) -> {
             final Provided annotation = methodContext.annotation(Provided.class);
             final String name = annotation.value();
-            if ("".equals(name)) {
-                return (R) context.get(methodContext.method().returnType());
-            }
-            else {
-                return (R) context.get(methodContext.method().returnType(), Bindings.named(name));
-            }
+
+            Key<?> key = Key.of(methodContext.method().returnType());
+            if (!name.isEmpty()) key = key.named(name);
+            return (R) context.get(key);
         };
     }
 
