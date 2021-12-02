@@ -253,6 +253,7 @@ public class HartshornApplicationFactory implements ApplicationFactory<Hartshorn
         if (this.applicationProxier == null) throw new IllegalArgumentException("Application proxier is not set");
         if (this.applicationLogger == null) throw new IllegalArgumentException("Application logger is not set");
         if (this.activator == null) throw new IllegalArgumentException("Application activator is not set");
+        if (this.exceptionHandler == null) throw new IllegalArgumentException("Exception handler is not set");
     }
 
     public HartshornApplicationFactory loadDefaults() {
@@ -261,6 +262,7 @@ public class HartshornApplicationFactory implements ApplicationFactory<Hartshorn
                 .applicationProxier(new HartshornApplicationProxier())
                 .applicationFSProvider(new HartshornApplicationFSProvider())
                 .applicationEnvironment(manager -> new HartshornApplicationEnvironment(this.prefixes, manager))
+                .exceptionHandler(new HartshornExceptionHandler())
                 .componentLocator(ComponentLocatorImpl::new)
                 .serviceActivator(new UseBootstrap() {
                     @Override

@@ -28,10 +28,9 @@ public class ExceptTests extends ApplicationAwareTest {
 
     @Test
     public void testExceptKeepsPreferences() {
-        this.context().environment().manager().stacktraces(true);
-
         final TestExceptionHandle handle = new TestExceptionHandle();
         ((HartshornApplicationManager) this.context().environment().manager()).exceptionHandler(handle);
+        this.context().environment().manager().stacktraces(true);
 
         final Throwable throwable = new Exception("Test");
         this.context().handle("Test", throwable);
