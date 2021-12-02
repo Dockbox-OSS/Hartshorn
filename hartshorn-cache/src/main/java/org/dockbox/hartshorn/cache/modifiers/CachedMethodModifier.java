@@ -20,7 +20,6 @@ package org.dockbox.hartshorn.cache.modifiers;
 import org.dockbox.hartshorn.core.annotations.service.AutomaticActivation;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
-import org.dockbox.hartshorn.core.exceptions.Except;
 import org.dockbox.hartshorn.cache.Cache;
 import org.dockbox.hartshorn.cache.Expiration;
 import org.dockbox.hartshorn.cache.annotations.Cached;
@@ -55,7 +54,7 @@ public class CachedMethodModifier extends CacheServiceModifier<Cached> {
                     return out;
                 }
                 catch (final ApplicationException e) {
-                    Except.handle(e);
+                    context.handle(e);
                     return null;
                 }
             }).orNull(); // In case of void returns

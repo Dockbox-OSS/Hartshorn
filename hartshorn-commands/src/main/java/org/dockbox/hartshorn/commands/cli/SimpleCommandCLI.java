@@ -17,8 +17,6 @@
 
 package org.dockbox.hartshorn.commands.cli;
 
-import org.dockbox.hartshorn.core.exceptions.Except;
-import org.dockbox.hartshorn.core.task.ThreadUtils;
 import org.dockbox.hartshorn.commands.CommandCLI;
 import org.dockbox.hartshorn.commands.CommandGateway;
 import org.dockbox.hartshorn.commands.CommandSource;
@@ -26,6 +24,7 @@ import org.dockbox.hartshorn.commands.SystemSubject;
 import org.dockbox.hartshorn.commands.exceptions.ParsingException;
 import org.dockbox.hartshorn.core.annotations.inject.Binds;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
+import org.dockbox.hartshorn.core.task.ThreadUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -48,7 +47,7 @@ public class SimpleCommandCLI implements CommandCLI {
 
     @Getter
     @Setter
-    private boolean async = false;
+    private boolean async;
     @Getter
     @Setter
     private InputStream input = System.in;
@@ -68,11 +67,11 @@ public class SimpleCommandCLI implements CommandCLI {
                     try {
                         this.gateway.accept(this.source(), next);
                     } catch (final ParsingException e) {
-                        Except.handle(e);
+                        this.context.handle(e);
                     }
                 }
             } catch (final IOException e) {
-                Except.handle(e);
+                this.context.handle(e);
             }
         };
 

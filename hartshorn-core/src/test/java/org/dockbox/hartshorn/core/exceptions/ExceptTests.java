@@ -17,20 +17,23 @@
 
 package org.dockbox.hartshorn.core.exceptions;
 
+import org.dockbox.hartshorn.core.boot.ExceptionHandler;
+import org.dockbox.hartshorn.core.boot.HartshornApplicationManager;
+import org.dockbox.hartshorn.core.boot.HartshornExceptionHandler;
+import org.dockbox.hartshorn.testsuite.ApplicationAwareTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class ExceptTests {
+public class ExceptTests extends ApplicationAwareTest {
 
     @Test
     public void testExceptKeepsPreferences() {
-        Except.useStackTraces(true);
-
         final TestExceptionHandle handle = new TestExceptionHandle();
-        Except.with(handle);
+        ((HartshornApplicationManager) this.context().environment().manager()).exceptionHandler(handle);
+        this.context().environment().manager().stacktraces(true);
 
         final Throwable throwable = new Exception("Test");
-        Except.handle("Test", throwable);
+        this.context().handle("Test", throwable);
 
         Assertions.assertTrue(handle.stacktrace());
         Assertions.assertEquals("Test", handle.message());
@@ -40,10 +43,10 @@ public class ExceptTests {
     @Test
     public void testExceptUsesExceptionMessageIfNoneProvided() {
         final TestExceptionHandle handle = new TestExceptionHandle();
-        Except.with(handle);
+        ((HartshornApplicationManager) this.context().environment().manager()).exceptionHandler(handle);
 
         final Exception throwable = new Exception("Something broke!");
-        Except.handle(throwable);
+        this.context().handle(throwable);
 
         Assertions.assertSame(throwable, handle.exception());
         Assertions.assertEquals("Something broke!", handle.message());
@@ -52,11 +55,11 @@ public class ExceptTests {
     @Test
     public void testExceptUsesFirstExceptionMessageIfNoneProvided() {
         final TestExceptionHandle handle = new TestExceptionHandle();
-        Except.with(handle);
+        ((HartshornApplicationManager) this.context().environment().manager()).exceptionHandler(handle);
 
         final Exception cause = new Exception("I caused it!");
         final Exception throwable = new Exception("Something broke!", cause);
-        Except.handle(throwable);
+        this.context().handle(throwable);
 
         Assertions.assertSame(throwable, handle.exception());
         Assertions.assertEquals("Something broke!", handle.message());
@@ -64,26 +67,26 @@ public class ExceptTests {
 
     @Test
     public void testGetFirstUsesParentFirst() {
-        final ExceptionHandle handle = new TestExceptionHandle();
-        Except.with(handle);
+        final ExceptionHandler handle = new TestExceptionHandle();
+        ((HartshornApplicationManager) this.context().environment().manager()).exceptionHandler(handle);
 
         final Exception cause = new Exception("I caused it!");
         final Exception throwable = new Exception("Something broke!", cause);
 
-        final String message = Except.firstMessage(throwable);
+        final String message = HartshornExceptionHandler.firstMessage(throwable);
 
         Assertions.assertEquals("Something broke!", message);
     }
 
     @Test
     public void testGetFirstUsesCauseIfParentMessageAbsent() {
-        final ExceptionHandle handle = new TestExceptionHandle();
-        Except.with(handle);
+        final ExceptionHandler handle = new TestExceptionHandle();
+        ((HartshornApplicationManager) this.context().environment().manager()).exceptionHandler(handle);
 
         final Exception cause = new Exception("I caused it!");
         final Exception throwable = new Exception(null, cause);
 
-        final String message = Except.firstMessage(throwable);
+        final String message = HartshornExceptionHandler.firstMessage(throwable);
 
         Assertions.assertEquals("I caused it!", message);
     }

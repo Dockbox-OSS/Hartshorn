@@ -34,7 +34,6 @@ import org.dockbox.hartshorn.core.context.DefaultContext;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
-import org.dockbox.hartshorn.core.exceptions.Except;
 
 import java.util.List;
 import java.util.regex.MatchResult;
@@ -188,7 +187,7 @@ public class CommandDefinitionContextImpl extends DefaultContext implements Comm
         final String name;
         final Matcher elementValue = ELEMENT_VALUE.matcher(definition);
         if (!elementValue.matches() || 0 == elementValue.groupCount())
-            Except.handle("Unknown argument specification " + definition + ", use Type or Name{Type}");
+            this.context.log().warn("Unknown argument specification " + definition + ", use Type or Name{Type}");
 
         /*
         Group one specifies either the name of the value (if two or more groups are matched), or the type if only one
@@ -222,7 +221,7 @@ public class CommandDefinitionContextImpl extends DefaultContext implements Comm
         else {
             final TypeContext<?> lookup = TypeContext.lookup(type);
             if (lookup.isVoid()) {
-                Except.handle("No argument of type `" + type + "` can be read");
+                this.context.log().error("No argument of type `" + type + "` can be read");
                 return null;
             }
 

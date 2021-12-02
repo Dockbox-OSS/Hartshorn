@@ -17,17 +17,16 @@
 
 package org.dockbox.hartshorn.cache.modifiers;
 
-import org.dockbox.hartshorn.core.annotations.service.AutomaticActivation;
-import org.dockbox.hartshorn.core.exceptions.ApplicationException;
-import org.dockbox.hartshorn.core.exceptions.Except;
 import org.dockbox.hartshorn.cache.annotations.UpdateCache;
 import org.dockbox.hartshorn.cache.context.CacheContext;
 import org.dockbox.hartshorn.cache.context.CacheMethodContext;
 import org.dockbox.hartshorn.cache.context.CacheMethodContextImpl;
+import org.dockbox.hartshorn.core.annotations.service.AutomaticActivation;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
-import org.dockbox.hartshorn.core.services.ServiceAnnotatedMethodModifier;
-import org.dockbox.hartshorn.core.proxy.ProxyFunction;
 import org.dockbox.hartshorn.core.context.MethodProxyContext;
+import org.dockbox.hartshorn.core.exceptions.ApplicationException;
+import org.dockbox.hartshorn.core.proxy.ProxyFunction;
+import org.dockbox.hartshorn.core.services.ServiceAnnotatedMethodModifier;
 
 /**
  * The {@link ServiceAnnotatedMethodModifier} responsible for {@link UpdateCache}
@@ -51,7 +50,7 @@ public class CacheUpdateMethodModifier extends CacheServiceModifier<UpdateCache>
                 cacheContext.manager().update(cacheContext.name(), o);
                 return proxyContext.invoke(args);
             } catch (final ApplicationException e) {
-                Except.handle(e);
+                context.handle(e);
             }
             return null; // Should be void anyway
         };

@@ -22,11 +22,11 @@ import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.core.annotations.inject.Binds;
 import org.dockbox.hartshorn.core.annotations.inject.Bound;
 import org.dockbox.hartshorn.core.binding.Bindings;
+import org.dockbox.hartshorn.core.boot.ExceptionHandler;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
-import org.dockbox.hartshorn.core.exceptions.Except;
 import org.dockbox.hartshorn.data.context.EntityContext;
 import org.dockbox.hartshorn.data.jpa.JpaRepository;
 import org.dockbox.hartshorn.data.remote.DerbyFileRemote;
@@ -249,7 +249,7 @@ public class HibernateJpaRepository<T, ID> implements JpaRepository<T, ID>, Enab
         try {
             Bindings.enable(this);
         } catch (final ApplicationException e) {
-            Except.handle(e);
+            this.applicationContext().handle(e);
         }
         return this;
     }
@@ -276,7 +276,7 @@ public class HibernateJpaRepository<T, ID> implements JpaRepository<T, ID>, Enab
             try {
                 Bindings.enable(this);
             } catch (ApplicationException e) {
-                return Except.unchecked(e);
+                return ExceptionHandler.unchecked(e);
             }
         }
 

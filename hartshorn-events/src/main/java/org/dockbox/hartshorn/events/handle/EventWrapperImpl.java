@@ -23,7 +23,6 @@ import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
-import org.dockbox.hartshorn.core.exceptions.Except;
 import org.dockbox.hartshorn.core.services.parameter.ParameterLoader;
 import org.dockbox.hartshorn.events.EventWrapper;
 import org.dockbox.hartshorn.events.parents.Event;
@@ -118,7 +117,7 @@ public final class EventWrapperImpl<T> implements Comparable<EventWrapperImpl<T>
             final List<Object> arguments = this.parameterLoader().loadArguments(loaderContext);
             final Exceptional<?> result = this.method.invoke(this.listener, arguments);
             if (result.caught()) {
-                Except.handle("Could not finish event runner for " + eventName, result.error());
+                this.context().handle("Could not finish event runner for " + eventName, result.error());
             }
         }
     }

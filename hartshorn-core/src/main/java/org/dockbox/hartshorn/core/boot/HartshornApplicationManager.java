@@ -30,6 +30,7 @@ import java.nio.file.Path;
 import java.util.Set;
 
 import lombok.Getter;
+import lombok.Setter;
 
 @LogExclude
 @Getter
@@ -50,12 +51,16 @@ public class HartshornApplicationManager implements ApplicationManager {
     private final ApplicationProxier applicationProxier;
     private ApplicationContext applicationContext;
 
+    @Setter
+    private ExceptionHandler exceptionHandler;
+
     public HartshornApplicationManager(
             final TypeContext<?> activator,
             final ApplicationLogger applicationLogger,
             final ApplicationProxier applicationProxier,
-            final ApplicationFSProvider applicationFSProvider
-    ) {
+            final ApplicationFSProvider applicationFSProvider,
+            ExceptionHandler exceptionHandler) {
+        this.exceptionHandler = exceptionHandler;
         if (applicationLogger instanceof ApplicationManaged applicationManaged)
             applicationManaged.applicationManager(this);
         this.applicationLogger = applicationLogger;
@@ -147,5 +152,20 @@ public class HartshornApplicationManager implements ApplicationManager {
     @Override
     public boolean isProxy(final Class<?> candidate) {
         return this.applicationProxier.isProxy(candidate);
+    }
+
+    @Override
+    public void handle(Throwable throwable) {
+        this.exceptionHandler.handle(throwable);
+    }
+
+    @Override
+    public void handle(String message, Throwable throwable) {
+        this.exceptionHandler.handle(message, throwable);
+    }
+
+    @Override
+    public ExceptionHandler stacktraces(boolean stacktraces) {
+        return this.exceptionHandler.stacktraces(stacktraces);
     }
 }

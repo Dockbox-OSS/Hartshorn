@@ -17,19 +17,26 @@
 
 package org.dockbox.hartshorn.core.exceptions;
 
+import org.dockbox.hartshorn.core.boot.HartshornExceptionHandler;
+
 import lombok.Getter;
 
 @Getter
-public class TestExceptionHandle implements ExceptionHandle {
+public class TestExceptionHandle extends HartshornExceptionHandler {
 
     private boolean stacktrace;
     private String message;
     private Throwable exception;
 
     @Override
-    public void handle(final String message, final Throwable exception, final boolean stacktrace) {
+    public void handle(final String message, final Throwable throwable) {
         this.message = message;
-        this.exception = exception;
-        this.stacktrace = stacktrace;
+        this.exception = throwable;
+    }
+
+    @Override
+    public TestExceptionHandle stacktraces(boolean stacktraces) {
+        this.stacktrace = stacktraces;
+        return this;
     }
 }

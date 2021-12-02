@@ -20,8 +20,6 @@ package org.dockbox.hartshorn.core.boot;
 import org.dockbox.hartshorn.core.InjectConfiguration;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
-import org.dockbox.hartshorn.core.exceptions.Except;
-import org.dockbox.hartshorn.core.exceptions.ExceptionLevel;
 import org.dockbox.hartshorn.core.exceptions.TypeConversionException;
 import org.reflections.Reflections;
 
@@ -32,8 +30,7 @@ public class HartshornApplicationConfigurator implements ApplicationConfigurator
     @Override
     public void configure(final ApplicationManager manager) {
         Reflections.log = null; // Don't output Reflections
-        Except.useStackTraces(this.stacktraces(manager));
-        Except.with(this.level(manager));
+        manager.stacktraces(this.stacktraces(manager));
     }
 
     @Override
@@ -48,10 +45,6 @@ public class HartshornApplicationConfigurator implements ApplicationConfigurator
             if (prefix.startsWith(scannedPrefix) && !prefix.equals(scannedPrefix)) return;
         }
         manager.applicationContext().bind(prefix);
-    }
-
-    protected ExceptionLevel level(final ApplicationManager manager) {
-        return this.primitiveProperty(manager, "hartshorn.exceptions.level", ExceptionLevel.class, ExceptionLevel.FRIENDLY);
     }
 
     protected boolean stacktraces(final ApplicationManager manager) {

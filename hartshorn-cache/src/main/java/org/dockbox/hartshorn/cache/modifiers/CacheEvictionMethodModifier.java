@@ -19,7 +19,6 @@ package org.dockbox.hartshorn.cache.modifiers;
 
 import org.dockbox.hartshorn.core.annotations.service.AutomaticActivation;
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
-import org.dockbox.hartshorn.core.exceptions.Except;
 import org.dockbox.hartshorn.cache.annotations.EvictCache;
 import org.dockbox.hartshorn.cache.context.CacheContext;
 import org.dockbox.hartshorn.cache.context.CacheMethodContext;
@@ -50,7 +49,7 @@ public class CacheEvictionMethodModifier extends CacheServiceModifier<EvictCache
                 cacheContext.manager().evict(cacheContext.name());
                 return proxyContext.invoke(args);
             } catch (final ApplicationException e) {
-                Except.handle(e);
+                context.handle(e);
             }
             return null; // Should be void anyway
         };

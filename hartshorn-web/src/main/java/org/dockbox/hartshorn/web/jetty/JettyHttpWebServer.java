@@ -21,7 +21,6 @@ import org.dockbox.hartshorn.core.annotations.inject.Binds;
 import org.dockbox.hartshorn.core.boot.Hartshorn;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
-import org.dockbox.hartshorn.core.exceptions.Except;
 import org.dockbox.hartshorn.data.mapping.JsonInclusionRule;
 import org.dockbox.hartshorn.web.DefaultHttpWebServer;
 import org.dockbox.hartshorn.web.HttpWebServer;
@@ -113,7 +112,7 @@ public class JettyHttpWebServer extends DefaultHttpWebServer {
             return this.staticContent(location.toURL());
         }
         catch (final MalformedURLException e) {
-            Except.handle(e);
+            this.context().handle(e);
         }
         return this;
     }

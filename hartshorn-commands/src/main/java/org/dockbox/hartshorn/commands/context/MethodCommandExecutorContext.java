@@ -36,7 +36,6 @@ import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.core.context.element.ParameterContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
-import org.dockbox.hartshorn.core.exceptions.Except;
 import org.dockbox.hartshorn.core.services.parameter.ParameterLoader;
 import org.dockbox.hartshorn.events.annotations.Posting;
 import org.dockbox.hartshorn.events.parents.Cancellable;
@@ -132,7 +131,7 @@ public class MethodCommandExecutorContext<T> extends DefaultCarrierContext imple
             final CommandParameterLoaderContext loaderContext = new CommandParameterLoaderContext(this.method(), this.type(), null, this.applicationContext(), ctx, this);
             final List<Object> arguments = this.parameterLoader().loadArguments(loaderContext);
             this.applicationContext().log().debug("Invoking command method %s with %d arguments".formatted(this.method().qualifiedName(), arguments.size()));
-            this.method().invoke(instance, arguments.toArray()).caught(error -> Except.handle("Encountered unexpected error while performing command executor", error));
+            this.method().invoke(instance, arguments.toArray()).caught(error -> this.applicationContext().handle("Encountered unexpected error while performing command executor", error));
             new CommandEvent.After(ctx.source(), ctx).with(this.applicationContext()).post();
         };
     }

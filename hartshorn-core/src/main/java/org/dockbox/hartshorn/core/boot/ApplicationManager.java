@@ -19,6 +19,6 @@ package org.dockbox.hartshorn.core.boot;
 
 import org.dockbox.hartshorn.core.context.ContextCarrier;
 
-public interface ApplicationManager extends ContextCarrier, ApplicationLogger, ApplicationProxier, LifecycleObservable, ApplicationFSProvider {
+public interface ApplicationManager extends ContextCarrier, ApplicationLogger, ApplicationProxier, LifecycleObservable, ApplicationFSProvider, ExceptionHandler {
     boolean isCI();
 }

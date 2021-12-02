@@ -22,13 +22,13 @@ import org.dockbox.hartshorn.core.annotations.inject.Enable;
 import org.dockbox.hartshorn.core.annotations.service.AutomaticActivation;
 import org.dockbox.hartshorn.core.annotations.service.Service;
 import org.dockbox.hartshorn.core.binding.Bindings;
+import org.dockbox.hartshorn.core.boot.ExceptionHandler;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.FactoryContext;
 import org.dockbox.hartshorn.core.context.MethodProxyContext;
 import org.dockbox.hartshorn.core.context.element.ConstructorContext;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
-import org.dockbox.hartshorn.core.exceptions.Except;
 import org.dockbox.hartshorn.core.proxy.ProxyFunction;
 
 @AutomaticActivation
@@ -69,7 +69,7 @@ public class FactoryServiceModifier extends ServiceAnnotatedMethodModifier<Facto
             if (enable) Bindings.enable(instance);
             return instance;
         } catch (ApplicationException e) {
-            return Except.unchecked(e);
+            return ExceptionHandler.unchecked(e);
         }
     }
 

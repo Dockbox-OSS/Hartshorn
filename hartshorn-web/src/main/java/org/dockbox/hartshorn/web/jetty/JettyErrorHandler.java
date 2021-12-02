@@ -22,7 +22,6 @@ import org.dockbox.hartshorn.core.annotations.component.Component;
 import org.dockbox.hartshorn.core.boot.Hartshorn;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
-import org.dockbox.hartshorn.core.exceptions.Except;
 import org.dockbox.hartshorn.web.RequestError;
 import org.dockbox.hartshorn.web.RequestErrorImpl;
 import org.dockbox.hartshorn.web.servlet.ErrorServlet;
@@ -85,7 +84,7 @@ public class JettyErrorHandler extends ErrorHandler {
             writer.flush();
         }
         catch (final ApplicationException e) {
-            Except.handle("Could not handle request error", e);
+            this.context.handle("Could not handle request error", e);
             throw new IOException("Server error");
         }
 
@@ -118,7 +117,7 @@ public class JettyErrorHandler extends ErrorHandler {
                     charset = Charset.forName(name);
                 }
                 catch (final Exception e) {
-                    Except.handle(e);
+                    this.context.handle(e);
                 }
             }
             if (charset == null)

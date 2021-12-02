@@ -19,7 +19,6 @@ package org.dockbox.hartshorn.web.jetty;
 
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
-import org.dockbox.hartshorn.core.exceptions.Except;
 import org.dockbox.hartshorn.web.HttpStatus;
 import org.eclipse.jetty.http.HttpMethod;
 import org.eclipse.jetty.server.HttpChannel;
@@ -63,7 +62,7 @@ public class JettyServer extends Server {
                 this.handle(target, request, request, response);
             }
             catch (final Throwable e) {
-                Except.handle("Encountered unexpected exception while handling request", e);
+                this.applicationContext.handle("Encountered unexpected exception while handling request", e);
                 String contentType = response.getContentType();
                 if (contentType == null) contentType = "";
                 Throwable cause = e;

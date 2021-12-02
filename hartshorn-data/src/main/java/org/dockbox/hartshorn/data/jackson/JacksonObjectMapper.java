@@ -48,7 +48,6 @@ import org.dockbox.hartshorn.core.annotations.inject.Binds;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
-import org.dockbox.hartshorn.core.exceptions.Except;
 import org.dockbox.hartshorn.data.DefaultObjectMapper;
 import org.dockbox.hartshorn.data.FileFormat;
 import org.dockbox.hartshorn.data.FileFormats;
@@ -175,7 +174,7 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
             return flat;
         }
         catch (final IOException e) {
-            Except.handle(e);
+            this.context.handle(e);
             return flat;
         }
     }
