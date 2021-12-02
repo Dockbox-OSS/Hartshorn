@@ -18,7 +18,7 @@
 package org.dockbox.hartshorn.events.handle;
 
 import org.dockbox.hartshorn.core.HartshornUtils;
-import org.dockbox.hartshorn.core.binding.Bindings;
+import org.dockbox.hartshorn.core.Key;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
@@ -97,7 +97,7 @@ public final class EventWrapperImpl<T> implements Comparable<EventWrapperImpl<T>
      */
     public static <T> List<EventWrapperImpl<T>> create(final ApplicationContext context, final TypeContext<T> type, final MethodContext<?, T> method, final int priority) {
         final List<EventWrapperImpl<T>> invokeWrappers = HartshornUtils.emptyConcurrentList();
-        final ParameterLoader<EventParameterLoaderContext> parameterLoader = context.get(ParameterLoader.class, Bindings.named("event_loader"));
+        final ParameterLoader<EventParameterLoaderContext> parameterLoader = context.get(Key.of(ParameterLoader.class, "event_loader"));
         for (final TypeContext<?> param : method.parameterTypes()) {
             if (param.childOf(Event.class)) {
                 invokeWrappers.add(new EventWrapperImpl<>(parameterLoader, type, (TypeContext<? extends Event>) param, method, priority, context));

@@ -28,7 +28,6 @@ import org.dockbox.hartshorn.commands.events.CommandEvent;
 import org.dockbox.hartshorn.commands.events.CommandEvent.Before;
 import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.core.Key;
-import org.dockbox.hartshorn.core.binding.Bindings;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.DefaultCarrierContext;
 import org.dockbox.hartshorn.core.context.element.AnnotatedElementContext;
@@ -100,7 +99,7 @@ public class MethodCommandExecutorContext<T> extends DefaultCarrierContext imple
             this.parentAliases.addAll(HartshornUtils.asList(this.parent.value()));
         }
         this.parameters = this.parameters();
-        this.parameterLoader = context.get(Key.of(ParameterLoader.class, Bindings.named("command_loader")));
+        this.parameterLoader = context.get(Key.of(ParameterLoader.class, "command_loader"));
     }
 
     public Map<String, CommandParameterContext> parameters() {

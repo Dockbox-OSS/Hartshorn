@@ -18,10 +18,14 @@
 package org.dockbox.hartshorn.core.services;
 
 import org.dockbox.hartshorn.core.ComponentType;
+import org.dockbox.hartshorn.core.HartshornUtils;
+import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
+import org.dockbox.hartshorn.core.domain.Exceptional;
 
 import java.lang.annotation.Annotation;
 import java.util.List;
+import java.util.Locale;
 
 public interface ComponentContainer {
 
@@ -44,4 +48,38 @@ public interface ComponentContainer {
     boolean singleton();
 
     ComponentType componentType();
+
+    static String id(final ApplicationContext context, final TypeContext<?> type) {
+        return id(context, type, false);
+    }
+
+    static String id(final ApplicationContext context, final TypeContext<?> type, final boolean ignoreExisting) {
+        final Exceptional<ComponentContainer> container = context.locator().container(type);
+        if (!ignoreExisting && container.present()) {
+            final String id = container.get().id();
+            if (!"".equals(id)) return id;
+        }
+
+        String raw = type.name();
+        if (raw.endsWith("Service")) {
+            raw = raw.substring(0, raw.length() - 7);
+        }
+        final String[] parts = HartshornUtils.splitCapitals(raw);
+        return String.join("-", parts).toLowerCase(Locale.ROOT);
+    }
+
+    static String name(final ApplicationContext context, final TypeContext<?> type, final boolean ignoreExisting) {
+        final Exceptional<ComponentContainer> container = context.locator().container(type);
+        if (!ignoreExisting && container.present()) {
+            final String name = container.get().name();
+            if (!"".equals(name)) return name;
+        }
+
+        String raw = type.name();
+        if (raw.endsWith("Service")) {
+            raw = raw.substring(0, raw.length() - 7);
+        }
+        final String[] parts = HartshornUtils.splitCapitals(raw);
+        return HartshornUtils.capitalize(String.join(" ", parts));
+    }
 }

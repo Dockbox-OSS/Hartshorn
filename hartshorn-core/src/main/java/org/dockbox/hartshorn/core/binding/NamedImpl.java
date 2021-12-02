@@ -22,10 +22,12 @@ import java.lang.annotation.Annotation;
 import javax.inject.Named;
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 @AllArgsConstructor
 public class NamedImpl implements Named {
 
+    @Getter
     private final String value;
 
     @Override
@@ -45,10 +47,5 @@ public class NamedImpl implements Named {
 
     public String toString() {
         return "@" + Named.class.getName() + "(value=" + this.value + ")";
-    }
-
-    @Override
-    public String value() {
-        return this.value;
     }
 }

@@ -17,14 +17,13 @@
 
 package org.dockbox.hartshorn.core;
 
-import org.dockbox.hartshorn.core.domain.Exceptional;
-import org.dockbox.hartshorn.core.domain.TypedOwner;
-import org.dockbox.hartshorn.core.domain.TypedOwnerImpl;
 import org.dockbox.hartshorn.core.annotations.component.Component;
-import org.dockbox.hartshorn.core.binding.Bindings;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
+import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.core.domain.TypedOwner;
+import org.dockbox.hartshorn.core.domain.TypedOwnerImpl;
 import org.dockbox.hartshorn.core.services.ComponentContainer;
 
 import javax.inject.Singleton;
@@ -53,7 +52,7 @@ public class InjectorMetaProvider implements MetaProvider {
                 }
             }
         }
-        return TypedOwnerImpl.of(Bindings.serviceId(this.context, type));
+        return TypedOwnerImpl.of(ComponentContainer.id(this.context, type));
     }
 
     @Override

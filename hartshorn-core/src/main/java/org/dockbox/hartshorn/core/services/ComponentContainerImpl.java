@@ -17,15 +17,14 @@
 
 package org.dockbox.hartshorn.core.services;
 
-import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.ComponentType;
+import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.core.annotations.component.Component;
 import org.dockbox.hartshorn.core.annotations.service.Service;
 import org.dockbox.hartshorn.core.annotations.service.ServiceActivator;
-import org.dockbox.hartshorn.core.binding.Bindings;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
-import org.dockbox.hartshorn.core.HartshornUtils;
+import org.dockbox.hartshorn.core.domain.Exceptional;
 
 import java.lang.annotation.Annotation;
 import java.util.List;
@@ -58,14 +57,14 @@ public class ComponentContainerImpl implements ComponentContainer {
     @Override
     public String id() {
         final String id = this.annotation.id();
-        if ("".equals(id)) return Bindings.serviceId(this.context, this.component, true);
+        if ("".equals(id)) return ComponentContainer.id(this.context, this.component, true);
         return id;
     }
 
     @Override
     public String name() {
         final String name = this.annotation.name();
-        if ("".equals(name)) return Bindings.serviceName(this.context, this.component, true);
+        if ("".equals(name)) return ComponentContainer.name(this.context, this.component, true);
         return name;
     }
 

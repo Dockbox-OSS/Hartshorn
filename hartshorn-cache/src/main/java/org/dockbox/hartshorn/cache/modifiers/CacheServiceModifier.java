@@ -25,11 +25,11 @@ import org.dockbox.hartshorn.cache.annotations.UseCaching;
 import org.dockbox.hartshorn.cache.context.CacheContext;
 import org.dockbox.hartshorn.cache.context.CacheContextImpl;
 import org.dockbox.hartshorn.cache.context.CacheMethodContext;
-import org.dockbox.hartshorn.core.binding.Bindings;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.MethodProxyContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.proxy.ProxyFunction;
+import org.dockbox.hartshorn.core.services.ComponentContainer;
 import org.dockbox.hartshorn.core.services.ServiceAnnotatedMethodModifier;
 
 import java.lang.annotation.Annotation;
@@ -54,7 +54,7 @@ public abstract class CacheServiceModifier<A extends Annotation> extends Service
                 name = annotation.get().value();
             }
             else {
-                name = Bindings.serviceId(context, methodContext.type());
+                name = ComponentContainer.id(context, methodContext.type());
             }
         }
 

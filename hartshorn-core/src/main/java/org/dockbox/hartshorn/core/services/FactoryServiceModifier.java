@@ -21,7 +21,6 @@ import org.dockbox.hartshorn.core.annotations.Factory;
 import org.dockbox.hartshorn.core.annotations.inject.Enable;
 import org.dockbox.hartshorn.core.annotations.service.AutomaticActivation;
 import org.dockbox.hartshorn.core.annotations.service.Service;
-import org.dockbox.hartshorn.core.binding.Bindings;
 import org.dockbox.hartshorn.core.boot.ExceptionHandler;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.FactoryContext;
@@ -66,7 +65,7 @@ public class FactoryServiceModifier extends ServiceAnnotatedMethodModifier<Facto
     private <T> T processInstance(final ApplicationContext context, final T instance, boolean enable) {
         try {
             context.populate(instance);
-            if (enable) Bindings.enable(instance);
+            if (enable) context.enable(instance);
             return instance;
         } catch (ApplicationException e) {
             return ExceptionHandler.unchecked(e);

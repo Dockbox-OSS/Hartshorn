@@ -24,6 +24,7 @@ import org.dockbox.hartshorn.core.annotations.context.LogExclude;
 import org.dockbox.hartshorn.core.boot.ExceptionHandler;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 import org.dockbox.hartshorn.core.exceptions.BeanProvisionException;
 import org.dockbox.hartshorn.core.inject.InjectionModifier;
 import org.dockbox.hartshorn.core.services.ComponentLocator;
@@ -74,4 +75,6 @@ public interface ApplicationContext extends ApplicationBinder, HartshornContext,
 
     @Override
     <C extends Context> Exceptional<C> first(ApplicationContext applicationContext, Class<C> context);
+
+    void enable(Object instance) throws ApplicationException;
 }

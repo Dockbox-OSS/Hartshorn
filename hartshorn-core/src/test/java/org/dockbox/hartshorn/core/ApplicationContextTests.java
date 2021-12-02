@@ -18,7 +18,6 @@
 package org.dockbox.hartshorn.core;
 
 import org.dockbox.hartshorn.core.annotations.activate.UseServiceProvision;
-import org.dockbox.hartshorn.core.binding.Bindings;
 import org.dockbox.hartshorn.core.boot.EmptyService;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.exceptions.BeanProvisionException;
@@ -89,8 +88,9 @@ public class ApplicationContextTests extends ApplicationAwareTest {
 
     @Test
     public void testStaticBindingWithMetaCanBeProvided() {
-        this.context().bind(Key.of(SampleInterface.class, Bindings.named("demo")), SampleImplementation.class);
-        final SampleInterface provided = this.context().get(SampleInterface.class, Bindings.named("demo"));
+        Key<SampleInterface> key = Key.of(SampleInterface.class, "demo");
+        this.context().bind(key, SampleImplementation.class);
+        final SampleInterface provided = this.context().get(key);
         Assertions.assertNotNull(provided);
 
         final Class<? extends SampleInterface> providedClass = provided.getClass();
@@ -113,8 +113,9 @@ public class ApplicationContextTests extends ApplicationAwareTest {
 
     @Test
     public void testInstanceBindingWithMetaCanBeProvided() {
-        this.context().bind(Key.of(SampleInterface.class, Bindings.named("demo")), new SampleImplementation());
-        final SampleInterface provided = this.context().get(SampleInterface.class, Bindings.named("demo"));
+        Key<SampleInterface> key = Key.of(SampleInterface.class, "demo");
+        this.context().bind(key, new SampleImplementation());
+        final SampleInterface provided = this.context().get(key);
         Assertions.assertNotNull(provided);
 
         final Class<? extends SampleInterface> providedClass = provided.getClass();
@@ -137,8 +138,9 @@ public class ApplicationContextTests extends ApplicationAwareTest {
 
     @Test
     public void testProviderBindingWithMetaCanBeProvided() {
-        this.context().bind(Key.of(SampleInterface.class, Bindings.named("demo")), (Supplier<SampleInterface>) SampleImplementation::new);
-        final SampleInterface provided = this.context().get(SampleInterface.class, Bindings.named("demo"));
+        Key<SampleInterface> key = Key.of(SampleInterface.class, "demo");
+        this.context().bind(key, (Supplier<SampleInterface>) SampleImplementation::new);
+        final SampleInterface provided = this.context().get(key);
         Assertions.assertNotNull(provided);
 
         final Class<? extends SampleInterface> providedClass = provided.getClass();
@@ -166,7 +168,7 @@ public class ApplicationContextTests extends ApplicationAwareTest {
         final SampleInterface sample = this.context().get(SampleInterface.class);
         Assertions.assertNull(sample); // Non-component, so null
 
-        final SampleInterface provided = this.context().get(SampleInterface.class, Bindings.named("meta"));
+        final SampleInterface provided = this.context().get(Key.of(SampleInterface.class, "meta"));
         Assertions.assertNotNull(provided);
 
         final Class<? extends SampleInterface> providedClass = provided.getClass();
@@ -198,7 +200,7 @@ public class ApplicationContextTests extends ApplicationAwareTest {
     @Test
     public void testScannedMultiMetaBindingsCanBeProvided() {
         this.context().bind("test.types.multi");
-        final SampleInterface provided = this.context().get(SampleInterface.class, Bindings.named("meta"));
+        final SampleInterface provided = this.context().get(Key.of(SampleInterface.class, "meta"));
         Assertions.assertNotNull(provided);
 
         final Class<? extends SampleInterface> providedClass = provided.getClass();
@@ -255,12 +257,12 @@ public class ApplicationContextTests extends ApplicationAwareTest {
         this.context().bind("test.types.provision");
         if (field) {
             if (fieldMeta == null) {this.context().bind(Key.of(SampleField.class), SampleFieldImplementation.class);}
-            else this.context().bind(Key.of(SampleField.class, Bindings.named(fieldMeta)), SampleFieldImplementation.class);
+            else this.context().bind(Key.of(SampleField.class, fieldMeta), SampleFieldImplementation.class);
         }
 
         final ProvidedInterface provided;
         if (meta == null) provided = this.context().get(ProvidedInterface.class);
-        else provided = this.context().get(ProvidedInterface.class, Bindings.named(meta));
+        else provided = this.context().get(Key.of(ProvidedInterface.class, meta));
         Assertions.assertNotNull(provided);
 
         final String actual = provided.name();
@@ -270,7 +272,7 @@ public class ApplicationContextTests extends ApplicationAwareTest {
         if (singleton) {
             final ProvidedInterface second;
             if (meta == null) second = this.context().get(ProvidedInterface.class);
-            else second = this.context().get(ProvidedInterface.class, Bindings.named(meta));
+            else second = this.context().get(Key.of(ProvidedInterface.class, meta));
             Assertions.assertNotNull(second);
             Assertions.assertSame(provided, second);
         }
