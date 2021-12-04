@@ -35,6 +35,7 @@ import org.dockbox.hartshorn.data.remote.PersistenceConnection;
 import org.dockbox.hartshorn.data.remote.PostgreSQLRemote;
 import org.dockbox.hartshorn.data.remote.Remote;
 import org.dockbox.hartshorn.data.service.JpaRepositoryFactory;
+import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.hibernate.Session;
 import org.hibernate.dialect.MySQL8Dialect;
 import org.junit.jupiter.api.Assertions;
@@ -62,6 +63,7 @@ import javax.persistence.EntityManager;
 
 import lombok.Getter;
 
+@HartshornTest
 @Testcontainers
 @UsePersistence
 class SqlServiceTest {

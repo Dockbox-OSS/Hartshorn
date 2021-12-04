@@ -18,6 +18,7 @@
 package org.dockbox.hartshorn.core.task;
 
 import org.dockbox.hartshorn.core.context.ApplicationContext;
+import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -28,6 +29,7 @@ import javax.inject.Inject;
 
 import lombok.Getter;
 
+@HartshornTest
 public class TaskRunnerTests {
 
     @Inject

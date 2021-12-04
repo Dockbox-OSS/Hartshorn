@@ -25,7 +25,6 @@ import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
-import org.dockbox.hartshorn.core.domain.tuple.Tuple;
 import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -67,7 +66,8 @@ import javax.inject.Inject;
 @Activator
 public class HartshornExtension implements BeforeEachCallback, AfterEachCallback, ParameterResolver {
 
-    private Tuple<Method, ApplicationContext> activeContext;
+    private Method activeMethod;
+    private ApplicationContext applicationContext;
 
     @Override
     public void beforeEach(final ExtensionContext context) throws Exception {
@@ -85,14 +85,17 @@ public class HartshornExtension implements BeforeEachCallback, AfterEachCallback
         final Optional<Method> testMethod = context.getTestMethod();
         if (testMethod.isEmpty()) throw new IllegalStateException("Test method was not provided to runner");
 
-        this.activeContext = Tuple.of(testMethod.get(), applicationContext);
+        this.activeMethod = testMethod.get();
+        this.applicationContext = applicationContext;
     }
 
     @Override
     public void afterEach(final ExtensionContext context) {
         // To ensure static mocking does not affect other tests
         Mockito.clearAllCaches();
-        this.activeContext = null;
+
+        this.activeMethod = null;
+        this.applicationContext = null;
     }
 
     @Override
@@ -105,13 +108,13 @@ public class HartshornExtension implements BeforeEachCallback, AfterEachCallback
 
     @Override
     public Object resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
-        if (this.activeContext == null) throw new IllegalStateException("No active state present");
+        if (this.applicationContext == null) throw new IllegalStateException("No active state present");
 
         Optional<Method> testMethod = extensionContext.getTestMethod();
         if (testMethod.isEmpty()) throw new ParameterResolutionException("Test method was not provided to runner");
-        if (!testMethod.get().equals(this.activeContext.key())) throw new IllegalStateException("Active context is not the same as the test method");
+        if (!testMethod.get().equals(this.activeMethod)) throw new IllegalStateException("Active context is not the same as the test method");
 
-        return this.activeContext.value().get(parameterContext.getParameter().getType());
+        return this.applicationContext.get(parameterContext.getParameter().getType());
     }
 
     public static Exceptional<ApplicationContext> createContext(final Class<?> activator) throws IOException {
