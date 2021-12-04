@@ -32,15 +32,22 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.web.annotations.UseHttpServer;
+import org.junit.jupiter.api.AfterEach;
 
 import java.io.IOException;
 import java.util.function.Function;
 
+import javax.inject.Inject;
+
 @UseHttpServer
 @HartshornTest
 public abstract class RestIntegrationTest {
+
+    @Inject
+    private HttpWebServer server;
 
     protected static final String ADDRESS = "http://localhost:" + HttpWebServerInitializer.DEFAULT_PORT;
 
@@ -66,6 +73,15 @@ public abstract class RestIntegrationTest {
         }
 
         return client.execute(request);
+    }
+
+    @AfterEach
+    public void tearDown() throws ApplicationException {
+        // As the runtime doesn't exit when the test is finished due to Jetty remaining active in test
+        // environments, we need to manually stop the server. Instead of directly stopping the application,
+        // we only stop the server. This way the application shutdown hook is still executed without side
+        // effects.
+        this.server.stop();
     }
 
 }
