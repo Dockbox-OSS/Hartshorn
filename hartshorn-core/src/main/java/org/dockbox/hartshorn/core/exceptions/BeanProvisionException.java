@@ -17,6 +17,7 @@
 
 package org.dockbox.hartshorn.core.exceptions;
 
+@Deprecated(since = "4.2.5", forRemoval = true)
 public class BeanProvisionException extends RuntimeException {
     public BeanProvisionException(final String message, final Throwable cause) {
         super(message, cause);

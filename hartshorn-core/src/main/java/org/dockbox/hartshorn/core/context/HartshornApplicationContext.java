@@ -54,7 +54,6 @@ import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
-import org.dockbox.hartshorn.core.exceptions.BeanProvisionException;
 import org.dockbox.hartshorn.core.inject.ProviderContext;
 import org.dockbox.hartshorn.core.proxy.ProxyLookup;
 import org.dockbox.hartshorn.core.services.ComponentContainer;
@@ -174,12 +173,12 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
         return typeInstance;
     }
 
-    public <T> T raw(final TypeContext<T> type) throws BeanProvisionException {
+    public <T> T raw(final TypeContext<T> type) {
         return Providers.of(type).provide(this).rethrowUnchecked().orNull();
     }
 
     @Override
-    public <T> T raw(final TypeContext<T> type, final boolean populate) throws BeanProvisionException {
+    public <T> T raw(final TypeContext<T> type, final boolean populate) {
         try {
             final Exceptional<T> instance = Providers.of(type).provide(this);
             if (instance.present()) {
@@ -189,7 +188,7 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
             }
         }
         catch (final Exception e) {
-            throw new BeanProvisionException("Could not provide instance of " + type.name() + " through constructor injection", e);
+            ExceptionHandler.unchecked(e);
         }
         return null;
     }

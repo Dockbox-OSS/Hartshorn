@@ -21,7 +21,6 @@ import org.dockbox.hartshorn.core.annotations.activate.UseServiceProvision;
 import org.dockbox.hartshorn.core.boot.EmptyService;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
-import org.dockbox.hartshorn.core.exceptions.BeanProvisionException;
 import org.dockbox.hartshorn.core.proxy.ExtendedProxy;
 import org.dockbox.hartshorn.core.types.ComponentType;
 import org.dockbox.hartshorn.core.types.ContextInjectedType;
@@ -329,8 +328,6 @@ public class ApplicationContextTests {
 
     @Test
     void testFailingConstructorIsRethrown() {
-        final BeanProvisionException exception = Assertions.assertThrows(BeanProvisionException.class, () -> this.applicationContext().get(TypeWithFailingConstructor.class));
-        Assertions.assertTrue(exception.getCause() instanceof IllegalStateException);
-        Assertions.assertEquals("This type cannot be instantiated", exception.getCause().getMessage());
+        Assertions.assertThrows(IllegalStateException.class, () -> this.applicationContext().get(TypeWithFailingConstructor.class));
     }
 }

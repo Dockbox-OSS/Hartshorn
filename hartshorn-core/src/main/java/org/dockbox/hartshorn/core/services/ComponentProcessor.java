@@ -36,7 +36,6 @@ import java.lang.annotation.Annotation;
  * @since 4.2.5
  * @param <A> The activator annotation type.
  */
-@FunctionalInterface
 public interface ComponentProcessor<A extends Annotation> extends ActivatorFiltered<A>, OrderedComponentProcessor {
 
     /**

@@ -27,7 +27,6 @@ import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
-import org.dockbox.hartshorn.core.exceptions.BeanProvisionException;
 import org.dockbox.hartshorn.core.services.ComponentLocator;
 import org.dockbox.hartshorn.core.services.ComponentProcessor;
 import org.slf4j.Logger;
@@ -54,10 +53,10 @@ public interface ApplicationContext extends
 
     <T> T populate(T type);
 
-    <T> T raw(TypeContext<T> type) throws BeanProvisionException;
+    <T> T raw(TypeContext<T> type);
 
     @Deprecated(since = "4.2.5", forRemoval = true)
-    <T> T raw(TypeContext<T> type, boolean populate) throws BeanProvisionException;
+    <T> T raw(TypeContext<T> type, boolean populate);
 
     void add(ComponentProcessor<?> processor);
 
