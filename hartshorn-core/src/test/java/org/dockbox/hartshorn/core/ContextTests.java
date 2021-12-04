@@ -17,18 +17,28 @@
 
 package org.dockbox.hartshorn.core;
 
-import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.annotations.context.AutoCreating;
+import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.Context;
 import org.dockbox.hartshorn.core.context.DefaultContext;
 import org.dockbox.hartshorn.core.context.DefaultNamedContext;
-import org.dockbox.hartshorn.testsuite.ApplicationAwareTest;
+import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-public class ContextTests extends ApplicationAwareTest {
+import javax.inject.Inject;
+
+import lombok.Getter;
+
+@HartshornTest
+public class ContextTests {
+
+    @Inject
+    @Getter
+    private ApplicationContext applicationContext;
 
     @Test
     void testUnnamedContextFirst() {
@@ -37,7 +47,7 @@ public class ContextTests extends ApplicationAwareTest {
 
         context.add(child);
 
-        final Exceptional<TestContext> first = context.first(this.context(), TestContext.class);
+        final Exceptional<TestContext> first = context.first(this.applicationContext(), TestContext.class);
         Assertions.assertTrue(first.present());
         Assertions.assertSame(child, first.get());
     }
@@ -129,7 +139,7 @@ public class ContextTests extends ApplicationAwareTest {
     @Test
     void testAutoCreatingContext() {
         final Context context = new TestContext();
-        final Exceptional<AutoCreatingContext> first = context.first(this.context(), AutoCreatingContext.class);
+        final Exceptional<AutoCreatingContext> first = context.first(this.applicationContext(), AutoCreatingContext.class);
         Assertions.assertTrue(first.present());
     }
 

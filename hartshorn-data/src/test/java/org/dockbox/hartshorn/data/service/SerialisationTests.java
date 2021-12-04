@@ -18,20 +18,30 @@
 package org.dockbox.hartshorn.data.service;
 
 import org.dockbox.hartshorn.core.HartshornUtils;
+import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.data.PersistentElement;
 import org.dockbox.hartshorn.data.annotations.UsePersistence;
-import org.dockbox.hartshorn.testsuite.ApplicationAwareTest;
+import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.nio.file.Path;
 
+import javax.inject.Inject;
+
+import lombok.Getter;
+
+@HartshornTest
 @UsePersistence
-public class SerialisationTests extends ApplicationAwareTest {
+public class SerialisationTests {
+
+    @Inject
+    @Getter
+    private ApplicationContext applicationContext;
 
     @Test
     void testToStringSerialisation() {
-        final PersistenceService service = this.context().get(PersistenceService.class);
+        final PersistenceService service = this.applicationContext().get(PersistenceService.class);
         final PersistentElement element = new PersistentElement("sample");
         final String json = service.writeToString(element);
 
@@ -41,7 +51,7 @@ public class SerialisationTests extends ApplicationAwareTest {
 
     @Test
     void testFromStringDeserialisation() {
-        final PersistenceService service = this.context().get(PersistenceService.class);
+        final PersistenceService service = this.applicationContext().get(PersistenceService.class);
         final String json = "{\"name\":\"sample\"}";
         final PersistentElement element = service.readFromString(json);
 
@@ -51,7 +61,7 @@ public class SerialisationTests extends ApplicationAwareTest {
 
     @Test
     void testToPathSerialisation() {
-        final PathPersistenceService service = this.context().get(PathPersistenceService.class);
+        final PathPersistenceService service = this.applicationContext().get(PathPersistenceService.class);
         final PersistentElement element = new PersistentElement("sample");
         final boolean result = service.writeToPath(element, this.path());
 
@@ -59,12 +69,12 @@ public class SerialisationTests extends ApplicationAwareTest {
     }
 
     private Path path() {
-        return this.context().environment().manager().applicationPath().resolve(System.nanoTime() + "-persistence.tmp");
+        return this.applicationContext().environment().manager().applicationPath().resolve(System.nanoTime() + "-persistence.tmp");
     }
 
     @Test
     void testFromPathDeserialisation() {
-        final PathPersistenceService service = this.context().get(PathPersistenceService.class);
+        final PathPersistenceService service = this.applicationContext().get(PathPersistenceService.class);
         final PersistentElement element = new PersistentElement("sample");
         final Path path = this.path();
 
@@ -78,7 +88,7 @@ public class SerialisationTests extends ApplicationAwareTest {
 
     @Test
     void testToAnnotationPathSerialisation() {
-        final AnnotationPathPersistenceService service = this.context().get(AnnotationPathPersistenceService.class);
+        final AnnotationPathPersistenceService service = this.applicationContext().get(AnnotationPathPersistenceService.class);
         final PersistentElement element = new PersistentElement("sample");
         final boolean result = service.writeToPath(element);
 
@@ -87,7 +97,7 @@ public class SerialisationTests extends ApplicationAwareTest {
 
     @Test
     void testFromAnnotationPathDeserialisation() {
-        final AnnotationPathPersistenceService service = this.context().get(AnnotationPathPersistenceService.class);
+        final AnnotationPathPersistenceService service = this.applicationContext().get(AnnotationPathPersistenceService.class);
         final PersistentElement element = new PersistentElement("sample");
 
         final boolean result = service.writeToPath(element);

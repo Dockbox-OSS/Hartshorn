@@ -25,6 +25,9 @@ import java.nio.file.Path;
 
 import lombok.Getter;
 
+/**
+ * A {@link ApplicationFSProvider} that uses a temporary directory for the application's files.
+ */
 public class JUnitFSProvider implements ApplicationFSProvider {
 
     @Getter

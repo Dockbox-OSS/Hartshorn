@@ -17,6 +17,7 @@
 
 package org.dockbox.hartshorn.core;
 
+import org.dockbox.hartshorn.core.context.ApplicationEnvironment;
 import org.dockbox.hartshorn.core.context.PrefixContext;
 import org.dockbox.hartshorn.core.context.element.AnnotatedElementModifier;
 import org.dockbox.hartshorn.core.context.element.ConstructorContext;
@@ -28,7 +29,8 @@ import org.dockbox.hartshorn.core.exceptions.TypeConversionException;
 import org.dockbox.hartshorn.core.types.ParentTestType;
 import org.dockbox.hartshorn.core.types.ReflectTestType;
 import org.dockbox.hartshorn.core.types.TestEnumType;
-import org.dockbox.hartshorn.testsuite.ApplicationAwareTest;
+import org.dockbox.hartshorn.testsuite.HartshornTest;
+import org.dockbox.hartshorn.testsuite.InjectTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -42,9 +44,12 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Stream;
 
+import javax.inject.Inject;
+
 import javassist.util.proxy.ProxyFactory;
 
-public class ReflectTests extends ApplicationAwareTest {
+@HartshornTest
+public class ReflectTests {
 
     private static Stream<Arguments> fields() {
         return Stream.of(
@@ -173,17 +178,17 @@ public class ReflectTests extends ApplicationAwareTest {
         Assertions.assertTrue(names.contains("privateAnnotatedMethod"));
     }
 
-    @Test
-    void testAnnotatedTypesReturnsAllInPrefix() {
-        final PrefixContext context = new PrefixContext(HartshornUtils.asList("org.dockbox.hartshorn.core.types"), this.context().environment());
+    @InjectTest
+    void testAnnotatedTypesReturnsAllInPrefix(final ApplicationEnvironment environment) {
+        final PrefixContext context = new PrefixContext(HartshornUtils.asList("org.dockbox.hartshorn.core.types"), environment);
         final Collection<TypeContext<?>> types = context.types(Demo.class);
         Assertions.assertEquals(1, types.size());
         Assertions.assertEquals(ReflectTestType.class, types.iterator().next().type());
     }
 
-    @Test
-    void testSubTypesReturnsAllSubTypes() {
-        final PrefixContext context = new PrefixContext(HartshornUtils.asList("org.dockbox.hartshorn.core.types"), this.context().environment());
+    @InjectTest
+    void testSubTypesReturnsAllSubTypes(final ApplicationEnvironment environment) {
+        final PrefixContext context = new PrefixContext(HartshornUtils.asList("org.dockbox.hartshorn.core.types"), environment);
         final Collection<TypeContext<? extends ParentTestType>> types = context.children(ParentTestType.class);
         Assertions.assertEquals(1, types.size());
         Assertions.assertEquals(ReflectTestType.class, types.iterator().next().type());

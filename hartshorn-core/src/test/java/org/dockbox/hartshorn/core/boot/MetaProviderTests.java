@@ -17,18 +17,28 @@
 
 package org.dockbox.hartshorn.core.boot;
 
-import org.dockbox.hartshorn.core.domain.TypedOwner;
 import org.dockbox.hartshorn.core.MetaProvider;
+import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
-import org.dockbox.hartshorn.testsuite.ApplicationAwareTest;
+import org.dockbox.hartshorn.core.domain.TypedOwner;
+import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class MetaProviderTests extends ApplicationAwareTest {
+import javax.inject.Inject;
+
+import lombok.Getter;
+
+@HartshornTest
+public class MetaProviderTests {
+
+    @Inject
+    @Getter
+    private ApplicationContext applicationContext;
 
     @Test
     void testComponentTypeUsesComponentAlias() {
-        final MetaProvider lookup = new MetaProviderImpl(this.context());
+        final MetaProvider lookup = new MetaProviderImpl(this.applicationContext());
         final TypedOwner owner = lookup.lookup(TypeContext.of(EmptyComponent.class));
         Assertions.assertNotNull(owner);
         Assertions.assertEquals("component", owner.id());
@@ -36,7 +46,7 @@ public class MetaProviderTests extends ApplicationAwareTest {
 
     @Test
     void testUsesProjectId() {
-        final MetaProvider lookup = new MetaProviderImpl(this.context());
+        final MetaProvider lookup = new MetaProviderImpl(this.applicationContext());
         final TypedOwner owner = lookup.lookup(TypeContext.of(Hartshorn.class));
         Assertions.assertNotNull(owner);
         Assertions.assertEquals(Hartshorn.PROJECT_ID, owner.id());
@@ -45,7 +55,7 @@ public class MetaProviderTests extends ApplicationAwareTest {
 
     @Test
     void testServiceUsesServiceId() {
-        final MetaProvider lookup = new MetaProviderImpl(this.context());
+        final MetaProvider lookup = new MetaProviderImpl(this.applicationContext());
         final TypedOwner owner = lookup.lookup(TypeContext.of(EmptyService.class));
         Assertions.assertNotNull(owner);
         Assertions.assertEquals("empty", owner.id());
@@ -53,7 +63,7 @@ public class MetaProviderTests extends ApplicationAwareTest {
 
     @Test
     void testUnknownIsSelf() {
-        final MetaProvider lookup = new MetaProviderImpl(this.context());
+        final MetaProvider lookup = new MetaProviderImpl(this.applicationContext());
         final TypedOwner owner = lookup.lookup(TypeContext.VOID);
         Assertions.assertNotNull(owner);
         Assertions.assertEquals("void", owner.id());

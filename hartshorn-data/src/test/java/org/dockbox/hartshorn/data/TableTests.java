@@ -29,13 +29,12 @@ import org.dockbox.hartshorn.data.table.Merge;
 import org.dockbox.hartshorn.data.table.Order;
 import org.dockbox.hartshorn.data.table.Table;
 import org.dockbox.hartshorn.data.table.TableRow;
-import org.dockbox.hartshorn.testsuite.ApplicationAwareTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
 
-public class TableTests extends ApplicationAwareTest {
+public class TableTests {
 
     @Test
     public void testSelectColumnOfTable() {

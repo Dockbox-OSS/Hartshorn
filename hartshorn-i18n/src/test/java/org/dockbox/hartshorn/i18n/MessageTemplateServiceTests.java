@@ -17,17 +17,20 @@
 
 package org.dockbox.hartshorn.i18n;
 
+import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.i18n.annotations.UseTranslations;
-import org.dockbox.hartshorn.testsuite.ApplicationAwareTest;
+import org.dockbox.hartshorn.testsuite.HartshornTest;
+import org.dockbox.hartshorn.testsuite.InjectTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.util.Locale;
 
+@HartshornTest
 @UseTranslations
-public class MessageTemplateServiceTests extends ApplicationAwareTest {
+public class MessageTemplateServiceTests {
 
     private static final Locale NL_NL = new Locale("nl", "NL");
     private static final Locale EN_US = Locale.US;
@@ -144,9 +147,9 @@ public class MessageTemplateServiceTests extends ApplicationAwareTest {
         message.translate(EN_US).string(); // Value: Property
     }
 
-    @Test
-    void testTranslationProvidersGetRegistered() {
-        final TranslationService translationService = this.context().get(TranslationService.class);
+    @InjectTest
+    void testTranslationProvidersGetRegistered(final ApplicationContext applicationContext) {
+        final TranslationService translationService = applicationContext.get(TranslationService.class);
         final Exceptional<Message> message = translationService.get("lang.name");
         Assertions.assertTrue(message.present());
         Assertions.assertEquals("English", message.get().translate(EN_US).string());
