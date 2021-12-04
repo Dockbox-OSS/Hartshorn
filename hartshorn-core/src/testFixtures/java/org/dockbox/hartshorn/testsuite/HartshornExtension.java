@@ -65,7 +65,7 @@ import javax.inject.Inject;
  * @since 4.2.5
  */
 @Activator
-public class HartshornExtension implements BeforeEachCallback, AfterEachCallback {
+public class HartshornExtension implements BeforeEachCallback, AfterEachCallback, ParameterResolver {
 
     private Tuple<Method, ApplicationContext> activeContext;
 
@@ -93,6 +93,25 @@ public class HartshornExtension implements BeforeEachCallback, AfterEachCallback
         // To ensure static mocking does not affect other tests
         Mockito.clearAllCaches();
         this.activeContext = null;
+    }
+
+    @Override
+    public boolean supportsParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
+        Optional<Method> testMethod = extensionContext.getTestMethod();
+        if (testMethod.isEmpty()) return false;
+
+        return MethodContext.of(testMethod.get()).annotation(Inject.class).present();
+    }
+
+    @Override
+    public Object resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
+        if (this.activeContext == null) throw new IllegalStateException("No active state present");
+
+        Optional<Method> testMethod = extensionContext.getTestMethod();
+        if (testMethod.isEmpty()) throw new ParameterResolutionException("Test method was not provided to runner");
+        if (!testMethod.get().equals(this.activeContext.key())) throw new IllegalStateException("Active context is not the same as the test method");
+
+        return this.activeContext.value().get(parameterContext.getParameter().getType());
     }
 
     public static Exceptional<ApplicationContext> createContext(final Class<?> activator) throws IOException {
