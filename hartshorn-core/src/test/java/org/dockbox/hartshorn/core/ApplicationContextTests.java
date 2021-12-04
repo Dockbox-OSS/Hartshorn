@@ -254,17 +254,6 @@ public class ApplicationContextTests {
         Assertions.assertNotNull(provided.sampleInterface());
     }
 
-    @Test
-    public void injectionPointsArePrioritised() {
-        this.applicationContext().bind(Key.of(SampleInterface.class), SampleImplementation.class);
-        final InjectionPoint<SampleInterface> point = InjectionPoint.of(TypeContext.of(SampleInterface.class), $ -> new SampleAnnotatedImplementation());
-        this.applicationContext().add(point);
-
-        final SampleInterface provided = this.applicationContext().get(SampleInterface.class);
-        Assertions.assertNotNull(provided);
-        Assertions.assertEquals(SampleAnnotatedImplementation.class, provided.getClass());
-    }
-
     @ParameterizedTest
     @MethodSource("providers")
     void testProvidersCanApply(final String meta, final String name, final boolean field, final String fieldMeta, final boolean singleton) {

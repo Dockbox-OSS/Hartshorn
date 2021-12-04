@@ -15,23 +15,19 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.core.annotations.activate;
-
-import org.dockbox.hartshorn.core.annotations.service.ServiceActivator;
-import org.dockbox.hartshorn.core.services.ProviderServicePreProcessor;
-
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+package org.dockbox.hartshorn.core.services;
 
 /**
- * Service activator for {@link ProviderServicePreProcessor}.
- *
- * @see ProviderServicePreProcessor
+ * An interface which defines the methods for processing components in an ordered manner.
  */
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-@ServiceActivator
-public @interface UseServiceProvision {
+public interface OrderedComponentProcessor {
+
+    /**
+     * Returns the phase of when the component should be processed.
+     *
+     * @return The phase of when the component should be processed.
+     */
+    default ServiceOrder order() {
+        return ServiceOrder.NORMAL;
+    }
 }

@@ -15,23 +15,22 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.core.annotations.activate;
+package org.dockbox.hartshorn.core.services;
 
-import org.dockbox.hartshorn.core.annotations.service.ServiceActivator;
-import org.dockbox.hartshorn.core.services.ProviderServicePreProcessor;
+import org.dockbox.hartshorn.core.context.ApplicationContext;
+import org.dockbox.hartshorn.core.context.element.TypeContext;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.Annotation;
 
-/**
- * Service activator for {@link ProviderServicePreProcessor}.
- *
- * @see ProviderServicePreProcessor
- */
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-@ServiceActivator
-public @interface UseServiceProvision {
+public abstract class ComponentPreValidator<A extends Annotation> implements ComponentPreProcessor<A> {
+
+    @Override
+    public boolean modifies(final ApplicationContext context, final TypeContext<?> type) {
+        return true;
+    }
+
+    @Override
+    public final ServiceOrder order() {
+        return ServiceOrder.FIRST;
+    }
 }

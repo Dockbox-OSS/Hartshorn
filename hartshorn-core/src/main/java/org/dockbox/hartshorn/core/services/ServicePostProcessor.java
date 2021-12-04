@@ -15,22 +15,20 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.core;
+package org.dockbox.hartshorn.core.services;
+
+import org.dockbox.hartshorn.core.ComponentType;
+import org.dockbox.hartshorn.core.context.ApplicationContext;
+import org.dockbox.hartshorn.core.context.element.TypeContext;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.lang.annotation.Annotation;
 
-/**
- * An interface which can be used to indicate an activator is required for the implementing
- * class.
- *
- * @param <A> The annotation which is used to indicate the activator.
- *
- * @author Guus Lieben
- * @since 4.2.5
- * @see org.dockbox.hartshorn.core.services.ComponentPreProcessor
- * @see org.dockbox.hartshorn.core.services.ComponentPostProcessor
- */
-@FunctionalInterface
-public interface ActivatorFiltered<A extends Annotation> {
-    Class<A> activator();
+public abstract class ServicePostProcessor<A extends Annotation> implements ComponentPostProcessor<A> {
+
+    @Override
+    public <T> boolean preconditions(final ApplicationContext context, final TypeContext<T> type, @Nullable final T instance) {
+        return ComponentPostProcessor.super.preconditions(context, type, instance)
+                && context.locator().container(type).get().componentType() == ComponentType.FUNCTIONAL;
+    }
 }

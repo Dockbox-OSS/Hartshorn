@@ -15,32 +15,34 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.commands.service;
+package org.dockbox.hartshorn.web;
 
-import org.dockbox.hartshorn.commands.CommandGateway;
-import org.dockbox.hartshorn.commands.annotations.Command;
-import org.dockbox.hartshorn.commands.annotations.UseCommands;
 import org.dockbox.hartshorn.core.annotations.service.AutomaticActivation;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
+import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.services.ServicePreProcessor;
+import org.dockbox.hartshorn.web.annotations.RestController;
+import org.dockbox.hartshorn.web.annotations.http.HttpRequest;
+import org.dockbox.hartshorn.web.annotations.UseHttpServer;
 
 @AutomaticActivation
-public class CommandServiceScanner implements ServicePreProcessor<UseCommands> {
-
+public class RestControllerPreProcessor implements ServicePreProcessor<UseHttpServer> {
     @Override
-    public Class<UseCommands> activator() {
-        return UseCommands.class;
+    public Class<UseHttpServer> activator() {
+        return UseHttpServer.class;
     }
 
     @Override
     public boolean preconditions(final ApplicationContext context, final TypeContext<?> type) {
-        return !type.methods(Command.class).isEmpty();
+        return type.annotation(RestController.class).present() && !type.methods(HttpRequest.class).isEmpty();
     }
 
     @Override
     public <T> void process(final ApplicationContext context, final TypeContext<T> type) {
-        final CommandGateway gateway = context.get(CommandGateway.class);
-        gateway.register(type);
+        final ControllerContext controllerContext = context.first(ControllerContext.class).get();
+        for (final MethodContext<?, T> method : type.methods(HttpRequest.class)) {
+            controllerContext.add(new RequestHandlerContext(context, method));
+        }
     }
 }

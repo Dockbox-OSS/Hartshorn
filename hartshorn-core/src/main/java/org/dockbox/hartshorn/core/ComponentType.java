@@ -20,6 +20,8 @@ package org.dockbox.hartshorn.core;
 import org.dockbox.hartshorn.core.annotations.service.Service;
 import org.dockbox.hartshorn.core.services.ComponentContainer;
 import org.dockbox.hartshorn.core.annotations.component.Component;
+import org.dockbox.hartshorn.core.services.ComponentPostProcessor;
+import org.dockbox.hartshorn.core.services.ComponentPreProcessor;
 
 /**
  * Represents the type of a component, typically represented through {@link Component#type()} or
@@ -45,10 +47,10 @@ public enum ComponentType {
      * provided context. They can provide a wide range of functionality based on specific contexts. Services should
      * always be identified with {@link Service}, or an extension of it.
      *
-     * <p>Functional components can be processed by {@link org.dockbox.hartshorn.core.services.ComponentProcessor}s and
-     * be modified by {@link org.dockbox.hartshorn.core.services.ComponentModifier}s. In the case of services, the
-     * {@link org.dockbox.hartshorn.core.services.ComponentProcessor} and
-     * {@link org.dockbox.hartshorn.core.services.ComponentModifier} directly target service definitions.
+     * <p>Functional components can be processed by {@link ComponentPreProcessor}s and
+     * be modified by {@link ComponentPostProcessor}s. In the case of services, the
+     * {@link ComponentPreProcessor} and
+     * {@link ComponentPostProcessor} directly target service definitions.
      *
      * <p>As services are able to provide functionality based on a given context, all services are singletons by
      * default. This allows you to better optimize your application, and to ensure a state can safely be stored inside

@@ -28,7 +28,7 @@ import org.dockbox.hartshorn.commands.context.ArgumentConverterContext;
 import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
-import org.dockbox.hartshorn.core.services.ComponentProcessor;
+import org.dockbox.hartshorn.core.services.ComponentPreProcessor;
 import org.dockbox.hartshorn.core.services.ServiceOrder;
 
 /**
@@ -37,7 +37,7 @@ import org.dockbox.hartshorn.core.services.ServiceOrder;
  * presence of {@link UseBootstrap}.
  */
 @AutomaticActivation
-public class CommandParameters implements ComponentProcessor<UseCommands> {
+public class CommandParameters implements ComponentPreProcessor<UseCommands> {
 
     @Override
     public Class<UseCommands> activator() {
@@ -45,7 +45,7 @@ public class CommandParameters implements ComponentProcessor<UseCommands> {
     }
 
     @Override
-    public boolean processable(final ApplicationContext context, final TypeContext<?> type) {
+    public boolean modifies(final ApplicationContext context, final TypeContext<?> type) {
         return type.annotation(Parameter.class).present();
     }
 

@@ -30,10 +30,10 @@ import org.dockbox.hartshorn.core.context.HartshornApplicationContext;
 import org.dockbox.hartshorn.core.context.HartshornApplicationEnvironment;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
-import org.dockbox.hartshorn.core.inject.InjectionModifier;
 import org.dockbox.hartshorn.core.services.ComponentLocator;
 import org.dockbox.hartshorn.core.services.ComponentLocatorImpl;
-import org.dockbox.hartshorn.core.services.ComponentProcessor;
+import org.dockbox.hartshorn.core.services.ComponentPostProcessor;
+import org.dockbox.hartshorn.core.services.ComponentPreProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -76,8 +76,8 @@ public class HartshornApplicationFactory implements ApplicationFactory<Hartshorn
     private final Set<Modifier> modifiers = HartshornUtils.emptyConcurrentSet();
     private final Set<String> arguments = HartshornUtils.emptyConcurrentSet();
     private final Set<String> prefixes = HartshornUtils.emptyConcurrentSet();
-    private final Set<InjectionModifier<?>> injectionModifiers = HartshornUtils.emptyConcurrentSet();
-    private final Set<ComponentProcessor<?>> componentProcessors = HartshornUtils.emptyConcurrentSet();
+    private final Set<ComponentPostProcessor<?>> componentPostProcessors = HartshornUtils.emptyConcurrentSet();
+    private final Set<ComponentPreProcessor<?>> componentPreProcessors = HartshornUtils.emptyConcurrentSet();
 
     @Override
     public HartshornApplicationFactory modifiers(final Modifier... modifiers) {
@@ -123,14 +123,14 @@ public class HartshornApplicationFactory implements ApplicationFactory<Hartshorn
     }
 
     @Override
-    public HartshornApplicationFactory injectionModifier(final InjectionModifier<?> modifier) {
-        this.injectionModifiers.add(modifier);
+    public HartshornApplicationFactory postProcessor(final ComponentPostProcessor<?> modifier) {
+        this.componentPostProcessors.add(modifier);
         return this.self();
     }
 
     @Override
-    public HartshornApplicationFactory componentProcessor(final ComponentProcessor<?> processor) {
-        this.componentProcessors.add(processor);
+    public HartshornApplicationFactory preProcessor(final ComponentPreProcessor<?> processor) {
+        this.componentPreProcessors.add(processor);
         return this.self();
     }
 
@@ -197,8 +197,8 @@ public class HartshornApplicationFactory implements ApplicationFactory<Hartshorn
 
         applicationContext.lookupActivatables();
 
-        this.componentProcessors.forEach(applicationContext::add);
-        this.injectionModifiers.forEach(applicationContext::add);
+        this.componentPreProcessors.forEach(applicationContext::add);
+        this.componentPostProcessors.forEach(applicationContext::add);
 
         final Activator activator = this.activatorAnnotation();
         final Set<InjectConfiguration> configurations = Arrays.stream(activator.configs())

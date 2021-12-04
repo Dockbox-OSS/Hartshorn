@@ -55,11 +55,12 @@ import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 import org.dockbox.hartshorn.core.exceptions.BeanProvisionException;
-import org.dockbox.hartshorn.core.inject.InjectionModifier;
 import org.dockbox.hartshorn.core.inject.ProviderContext;
 import org.dockbox.hartshorn.core.proxy.ProxyLookup;
 import org.dockbox.hartshorn.core.services.ComponentContainer;
 import org.dockbox.hartshorn.core.services.ComponentLocator;
+import org.dockbox.hartshorn.core.services.ComponentPostProcessor;
+import org.dockbox.hartshorn.core.services.ComponentPreProcessor;
 import org.dockbox.hartshorn.core.services.ComponentProcessor;
 import org.dockbox.hartshorn.core.services.ServiceImpl;
 import org.dockbox.hartshorn.core.services.ServiceOrder;
@@ -89,8 +90,8 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
     private static final Pattern ARGUMENTS = Pattern.compile("-H([a-zA-Z0-9\\.]+)=(.+)");
 
     protected final transient Set<InjectionPoint<?>> injectionPoints = HartshornUtils.emptyConcurrentSet();
-    protected final transient MultiMap<ServiceOrder, InjectionModifier<?>> injectionModifiers = new ArrayListMultiMap<>();
-    protected final transient MultiMap<ServiceOrder, ComponentProcessor<?>> processors = new ArrayListMultiMap<>();
+    protected final transient MultiMap<ServiceOrder, ComponentPostProcessor<?>> postProcessors = new ArrayListMultiMap<>();
+    protected final transient MultiMap<ServiceOrder, ComponentPreProcessor<?>> preProcessors = new ArrayListMultiMap<>();
     protected final transient Properties environmentValues = new Properties();
 
     @Getter(AccessLevel.PROTECTED) private final Activator activator;
@@ -174,7 +175,7 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
     }
 
     public <T> T raw(final TypeContext<T> type) throws BeanProvisionException {
-        return this.raw(type, true);
+        return Providers.of(type).provide(this).rethrowUnchecked().orNull();
     }
 
     @Override
@@ -196,15 +197,19 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
     @Override
     public void add(final ComponentProcessor<?> processor) {
         final ServiceOrder order = processor.order();
-        this.processors.put(order, processor);
-        this.log().debug("Added " + TypeContext.of(processor).name() + " for component processing at phase " + order);
-    }
+        final String name = TypeContext.of(processor).name();
 
-    @Override
-    public void add(final InjectionModifier<?> modifier) {
-        final ServiceOrder order = modifier.order();
-        this.injectionModifiers.put(order, modifier);
-        this.log().debug("Added " + TypeContext.of(modifier).name() + " for component modification at phase " + order);
+        if (processor instanceof ComponentPostProcessor<?> postProcessor) {
+            this.postProcessors.put(order, postProcessor);
+            this.log().debug("Added " + name + " for component post-processing at phase " + order);
+        }
+        else if (processor instanceof ComponentPreProcessor<?> preProcessor) {
+            this.preProcessors.put(order, preProcessor);
+            this.log().debug("Added " + name + " for component pre-processing at phase " + order);
+        }
+        else {
+            this.log().warn("Unsupported component processor type [" + name + "]");
+        }
     }
 
     @Override
@@ -225,10 +230,10 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
     }
 
     protected void process(final ServiceOrder order, final Collection<ComponentContainer> containers) {
-        for (final ComponentProcessor<?> serviceProcessor : this.processors.get(order)) {
+        for (final ComponentPreProcessor<?> serviceProcessor : this.preProcessors.get(order)) {
             for (final ComponentContainer container : containers) {
                 final TypeContext<?> service = container.type();
-                if (serviceProcessor.processable(this, service)) {
+                if (serviceProcessor.modifies(this, service)) {
                     this.log().debug("Processing component %s with registered processor %s in phase %s".formatted(container.id(), TypeContext.of(serviceProcessor).name(), order));
                     serviceProcessor.process(this, service);
                 }
@@ -333,9 +338,9 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
     }
 
     protected <T> T modify(final ServiceOrder order, final Key<T> key, T instance) {
-        for (final InjectionModifier<?> serviceModifier : this.injectionModifiers.get(order)) {
-            if (serviceModifier.preconditions(this, key.contract(), instance))
-                instance = serviceModifier.process(this, key.contract(), instance);
+        for (final ComponentPostProcessor<?> postProcessor : this.postProcessors.get(order)) {
+            if (postProcessor.preconditions(this, key.contract(), instance))
+                instance = postProcessor.process(this, key.contract(), instance);
         }
         return instance;
     }
@@ -551,8 +556,8 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
 
     public void lookupActivatables() {
         for (final String prefix : this.environment().prefixContext().prefixes()) {
-            this.lookup(prefix, ComponentProcessor.class, ApplicationContext::add);
-            this.lookup(prefix, InjectionModifier.class, ApplicationContext::add);
+            this.lookup(prefix, ComponentPreProcessor.class, ApplicationContext::add);
+            this.lookup(prefix, ComponentPostProcessor.class, ApplicationContext::add);
         }
     }
 
@@ -562,7 +567,7 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
             if (child.isAbstract()) continue;
 
             if (child.annotation(AutomaticActivation.class).present()) {
-                final T raw = this.raw(child, false);
+                final T raw = this.raw(child);
                 if (this.hasActivator(raw.activator()))
                     consumer.accept(this, raw);
             }

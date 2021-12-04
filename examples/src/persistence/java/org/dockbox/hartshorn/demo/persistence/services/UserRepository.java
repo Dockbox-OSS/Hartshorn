@@ -17,6 +17,7 @@
 
 package org.dockbox.hartshorn.demo.persistence.services;
 
+import org.dockbox.hartshorn.core.services.ServicePreProcessor;
 import org.dockbox.hartshorn.demo.persistence.domain.User;
 import org.dockbox.hartshorn.demo.persistence.events.UserCreatedEvent;
 
@@ -36,7 +37,7 @@ import javax.inject.Inject;
  * A simple component providing utility functions through a combination of injected services. Note that
  * unlike a service, a component does not automatically register functional methods (e.g. those annotated
  * with {@link org.dockbox.hartshorn.commands.annotations.Command} or {@link org.dockbox.hartshorn.events.annotations.Listener})
- * and instead only allows field injection. This improves construction times, as {@link org.dockbox.hartshorn.core.services.ServiceProcessor service processors}
+ * and instead only allows field injection. This improves construction times, as {@link ServicePreProcessor service processors}
  * do not activate on components.
  */
 @Service

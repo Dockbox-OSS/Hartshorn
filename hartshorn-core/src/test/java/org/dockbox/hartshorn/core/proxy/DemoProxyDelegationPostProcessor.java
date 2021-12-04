@@ -15,23 +15,21 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.core.annotations.activate;
+package org.dockbox.hartshorn.core.proxy;
 
-import org.dockbox.hartshorn.core.annotations.service.ServiceActivator;
-import org.dockbox.hartshorn.core.services.ProviderServicePreProcessor;
+import org.dockbox.hartshorn.core.annotations.service.AutomaticActivation;
+import org.dockbox.hartshorn.core.annotations.service.Service;
+import org.dockbox.hartshorn.core.services.ProxyDelegationPostProcessor;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+@AutomaticActivation
+public class DemoProxyDelegationPostProcessor extends ProxyDelegationPostProcessor<AbstractProxyParent, Service> {
+    @Override
+    public Class<Service> activator() {
+        return Service.class;
+    }
 
-/**
- * Service activator for {@link ProviderServicePreProcessor}.
- *
- * @see ProviderServicePreProcessor
- */
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-@ServiceActivator
-public @interface UseServiceProvision {
+    @Override
+    protected Class<AbstractProxyParent> parentTarget() {
+        return AbstractProxyParent.class;
+    }
 }
