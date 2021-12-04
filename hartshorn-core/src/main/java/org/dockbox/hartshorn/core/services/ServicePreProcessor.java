@@ -15,11 +15,20 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.core.exceptions;
+package org.dockbox.hartshorn.core.services;
 
-@Deprecated(since = "4.2.5", forRemoval = true)
-public class BeanProvisionException extends RuntimeException {
-    public BeanProvisionException(final String message, final Throwable cause) {
-        super(message, cause);
+import org.dockbox.hartshorn.core.annotations.service.Service;
+import org.dockbox.hartshorn.core.context.ApplicationContext;
+import org.dockbox.hartshorn.core.context.element.TypeContext;
+
+import java.lang.annotation.Annotation;
+
+public interface ServicePreProcessor<A extends Annotation> extends ComponentPreProcessor<A> {
+
+    @Override
+    default boolean modifies(final ApplicationContext context, final TypeContext<?> type) {
+        return type.annotation(Service.class).present() && this.preconditions(context, type);
     }
+
+    boolean preconditions(ApplicationContext context, TypeContext<?> type);
 }

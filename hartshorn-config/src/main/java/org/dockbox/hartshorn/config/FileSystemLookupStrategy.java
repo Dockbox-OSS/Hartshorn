@@ -30,7 +30,7 @@ import lombok.Getter;
  * Looks up a resource through the local filesystem. The file directory is looked up based on the configuration path of
  * the {@link TypeContext owner}, typically this will be similar to {@code /config/{owner-id}/}.
  * <p>This strategy does not require the name to be present, as it is the default strategy used in
- * {@link ConfigurationServiceProcessor}.
+ * {@link ConfigurationServicePreProcessor}.
  */
 public class FileSystemLookupStrategy implements ResourceLookupStrategy {
 

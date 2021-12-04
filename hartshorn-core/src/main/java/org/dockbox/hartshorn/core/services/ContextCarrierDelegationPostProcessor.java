@@ -15,11 +15,21 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.core.exceptions;
+package org.dockbox.hartshorn.core.services;
 
-@Deprecated(since = "4.2.5", forRemoval = true)
-public class BeanProvisionException extends RuntimeException {
-    public BeanProvisionException(final String message, final Throwable cause) {
-        super(message, cause);
+import org.dockbox.hartshorn.core.annotations.service.AutomaticActivation;
+import org.dockbox.hartshorn.core.annotations.service.Service;
+import org.dockbox.hartshorn.core.context.ContextCarrier;
+
+@AutomaticActivation
+public class ContextCarrierDelegationPostProcessor extends ProxyDelegationPostProcessor<ContextCarrier, Service> {
+    @Override
+    public Class<Service> activator() {
+        return Service.class;
+    }
+
+    @Override
+    protected Class<ContextCarrier> parentTarget() {
+        return ContextCarrier.class;
     }
 }

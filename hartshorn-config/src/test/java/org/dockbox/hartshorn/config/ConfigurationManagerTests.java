@@ -59,7 +59,7 @@ public class ConfigurationManagerTests {
                     fs: "This is a value"
                     """);
 
-        new ConfigurationServiceProcessor().process(this.applicationContext(), TypeContext.of(DemoFSConfiguration.class));
+        new ConfigurationServicePreProcessor().process(this.applicationContext(), TypeContext.of(DemoFSConfiguration.class));
 
         final DemoFSConfiguration configuration = this.applicationContext().get(DemoFSConfiguration.class);
         Assertions.assertNotNull(configuration);

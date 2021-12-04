@@ -15,32 +15,30 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.commands.service;
+package org.dockbox.hartshorn.core.services;
 
-import org.dockbox.hartshorn.commands.CommandGateway;
-import org.dockbox.hartshorn.commands.annotations.Command;
-import org.dockbox.hartshorn.commands.annotations.UseCommands;
+import org.dockbox.hartshorn.core.annotations.proxy.UseProxying;
 import org.dockbox.hartshorn.core.annotations.service.AutomaticActivation;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
-import org.dockbox.hartshorn.core.services.ServicePreProcessor;
+import org.dockbox.hartshorn.core.proxy.DelegatorAccessor;
+import org.dockbox.hartshorn.core.proxy.ProxyHandler;
 
 @AutomaticActivation
-public class CommandServiceScanner implements ServicePreProcessor<UseCommands> {
+public class DelegatorAccessorDelegationPostProcessor extends ProxyDelegationPostProcessor<DelegatorAccessor, UseProxying> {
 
     @Override
-    public Class<UseCommands> activator() {
-        return UseCommands.class;
+    public Class<UseProxying> activator() {
+        return UseProxying.class;
     }
 
     @Override
-    public boolean preconditions(final ApplicationContext context, final TypeContext<?> type) {
-        return !type.methods(Command.class).isEmpty();
+    protected Class<DelegatorAccessor> parentTarget() {
+        return DelegatorAccessor.class;
     }
 
     @Override
-    public <T> void process(final ApplicationContext context, final TypeContext<T> type) {
-        final CommandGateway gateway = context.get(CommandGateway.class);
-        gateway.register(type);
+    protected DelegatorAccessor concreteDelegator(final ApplicationContext context, final ProxyHandler<DelegatorAccessor> handler, final TypeContext<? extends DelegatorAccessor> parent) {
+        return context.get(AccessorFactory.class).delegatorAccessor(handler);
     }
 }

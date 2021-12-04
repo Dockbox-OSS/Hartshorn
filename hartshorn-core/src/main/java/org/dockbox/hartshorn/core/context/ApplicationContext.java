@@ -21,13 +21,12 @@ import org.dockbox.hartshorn.core.InjectionPoint;
 import org.dockbox.hartshorn.core.Key;
 import org.dockbox.hartshorn.core.MetaProvider;
 import org.dockbox.hartshorn.core.annotations.context.LogExclude;
+import org.dockbox.hartshorn.core.boot.ApplicationLogger;
 import org.dockbox.hartshorn.core.boot.ExceptionHandler;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
-import org.dockbox.hartshorn.core.exceptions.BeanProvisionException;
-import org.dockbox.hartshorn.core.inject.InjectionModifier;
 import org.dockbox.hartshorn.core.services.ComponentLocator;
 import org.dockbox.hartshorn.core.services.ComponentProcessor;
 import org.slf4j.Logger;
@@ -36,23 +35,30 @@ import java.lang.annotation.Annotation;
 import java.util.List;
 
 @LogExclude
-public interface ApplicationContext extends ApplicationBinder, ComponentProvider, ApplicationPropertyHolder, ExceptionHandler {
+public interface ApplicationContext extends
+        ApplicationBinder,
+        ComponentProvider,
+        ApplicationPropertyHolder,
+        ExceptionHandler,
+        ApplicationLogger
+{
 
+    @Deprecated(since = "4.2.5", forRemoval = true)
     void add(InjectionPoint<?> property);
 
     <T> T create(Key<T> type);
 
+    @Deprecated(since = "4.2.5", forRemoval = true)
     <T> T inject(Key<T> type, T typeInstance);
 
     <T> T populate(T type);
 
-    <T> T raw(TypeContext<T> type) throws BeanProvisionException;
+    <T> T raw(TypeContext<T> type);
 
-    <T> T raw(TypeContext<T> type, boolean populate) throws BeanProvisionException;
+    @Deprecated(since = "4.2.5", forRemoval = true)
+    <T> T raw(TypeContext<T> type, boolean populate);
 
     void add(ComponentProcessor<?> processor);
-
-    void add(InjectionModifier<?> modifier);
 
     List<Annotation> activators();
 
@@ -70,6 +76,7 @@ public interface ApplicationContext extends ApplicationBinder, ComponentProvider
 
     <T, P> T invoke(MethodContext<T, P> method, P instance);
 
+    @Override
     default Logger log() {
         return this.environment().manager().log();
     }
@@ -77,9 +84,6 @@ public interface ApplicationContext extends ApplicationBinder, ComponentProvider
     default <C extends Context> Exceptional<C> first(final Class<C> context) {
         return this.first(this, context);
     }
-
-    @Override
-    <C extends Context> Exceptional<C> first(ApplicationContext applicationContext, Class<C> context);
 
     void enable(Object instance) throws ApplicationException;
 }

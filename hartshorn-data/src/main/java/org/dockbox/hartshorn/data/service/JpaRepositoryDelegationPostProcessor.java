@@ -15,32 +15,31 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.commands.service;
+package org.dockbox.hartshorn.data.service;
 
-import org.dockbox.hartshorn.commands.CommandGateway;
-import org.dockbox.hartshorn.commands.annotations.Command;
-import org.dockbox.hartshorn.commands.annotations.UseCommands;
 import org.dockbox.hartshorn.core.annotations.service.AutomaticActivation;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
-import org.dockbox.hartshorn.core.services.ServicePreProcessor;
+import org.dockbox.hartshorn.core.proxy.ProxyHandler;
+import org.dockbox.hartshorn.core.services.ProxyDelegationPostProcessor;
+import org.dockbox.hartshorn.data.jpa.JpaRepository;
+import org.dockbox.hartshorn.data.annotations.UsePersistence;
 
 @AutomaticActivation
-public class CommandServiceScanner implements ServicePreProcessor<UseCommands> {
-
+public class JpaRepositoryDelegationPostProcessor extends ProxyDelegationPostProcessor<JpaRepository, UsePersistence> {
     @Override
-    public Class<UseCommands> activator() {
-        return UseCommands.class;
+    public Class<UsePersistence> activator() {
+        return UsePersistence.class;
     }
 
     @Override
-    public boolean preconditions(final ApplicationContext context, final TypeContext<?> type) {
-        return !type.methods(Command.class).isEmpty();
+    protected Class<JpaRepository> parentTarget() {
+        return JpaRepository.class;
     }
 
     @Override
-    public <T> void process(final ApplicationContext context, final TypeContext<T> type) {
-        final CommandGateway gateway = context.get(CommandGateway.class);
-        gateway.register(type);
+    protected JpaRepository concreteDelegator(final ApplicationContext context, final ProxyHandler<JpaRepository> handler, final TypeContext<? extends JpaRepository> parent) {
+        final Class<?> type = parent.typeParameters(JpaRepository.class).get(0).type();
+        return context.get(JpaRepositoryFactory.class).repository(type);
     }
 }

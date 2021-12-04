@@ -21,7 +21,6 @@ import org.dockbox.hartshorn.core.annotations.activate.UseServiceProvision;
 import org.dockbox.hartshorn.core.boot.EmptyService;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
-import org.dockbox.hartshorn.core.exceptions.BeanProvisionException;
 import org.dockbox.hartshorn.core.proxy.ExtendedProxy;
 import org.dockbox.hartshorn.core.types.ComponentType;
 import org.dockbox.hartshorn.core.types.ContextInjectedType;
@@ -254,17 +253,6 @@ public class ApplicationContextTests {
         Assertions.assertNotNull(provided.sampleInterface());
     }
 
-    @Test
-    public void injectionPointsArePrioritised() {
-        this.applicationContext().bind(Key.of(SampleInterface.class), SampleImplementation.class);
-        final InjectionPoint<SampleInterface> point = InjectionPoint.of(TypeContext.of(SampleInterface.class), $ -> new SampleAnnotatedImplementation());
-        this.applicationContext().add(point);
-
-        final SampleInterface provided = this.applicationContext().get(SampleInterface.class);
-        Assertions.assertNotNull(provided);
-        Assertions.assertEquals(SampleAnnotatedImplementation.class, provided.getClass());
-    }
-
     @ParameterizedTest
     @MethodSource("providers")
     void testProvidersCanApply(final String meta, final String name, final boolean field, final String fieldMeta, final boolean singleton) {
@@ -340,8 +328,6 @@ public class ApplicationContextTests {
 
     @Test
     void testFailingConstructorIsRethrown() {
-        final BeanProvisionException exception = Assertions.assertThrows(BeanProvisionException.class, () -> this.applicationContext().get(TypeWithFailingConstructor.class));
-        Assertions.assertTrue(exception.getCause() instanceof IllegalStateException);
-        Assertions.assertEquals("This type cannot be instantiated", exception.getCause().getMessage());
+        Assertions.assertThrows(IllegalStateException.class, () -> this.applicationContext().get(TypeWithFailingConstructor.class));
     }
 }

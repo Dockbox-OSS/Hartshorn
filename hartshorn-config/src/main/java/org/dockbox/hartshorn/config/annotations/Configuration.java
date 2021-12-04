@@ -17,6 +17,7 @@
 
 package org.dockbox.hartshorn.config.annotations;
 
+import org.dockbox.hartshorn.config.ConfigurationServicePreProcessor;
 import org.dockbox.hartshorn.core.boot.Hartshorn;
 import org.dockbox.hartshorn.core.annotations.service.Service;
 import org.dockbox.hartshorn.data.FileFormats;
@@ -48,7 +49,7 @@ import java.lang.annotation.Target;
  * @see Value
  * @see org.dockbox.hartshorn.data.mapping.ObjectMapper
  * @see org.dockbox.hartshorn.config.ResourceLookupStrategy
- * @see org.dockbox.hartshorn.config.ConfigurationServiceProcessor
+ * @see ConfigurationServicePreProcessor
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)

@@ -22,9 +22,9 @@ import org.dockbox.hartshorn.core.Modifier;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.ApplicationEnvironment;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
-import org.dockbox.hartshorn.core.inject.InjectionModifier;
 import org.dockbox.hartshorn.core.services.ComponentLocator;
-import org.dockbox.hartshorn.core.services.ComponentProcessor;
+import org.dockbox.hartshorn.core.services.ComponentPostProcessor;
+import org.dockbox.hartshorn.core.services.ComponentPreProcessor;
 
 import java.lang.annotation.Annotation;
 import java.util.Set;
@@ -58,9 +58,9 @@ public interface ApplicationFactory<Self extends ApplicationFactory<Self, C>, C 
 
     Self componentLocator(Function<ApplicationContext, ComponentLocator> componentLocator);
 
-    Self injectionModifier(InjectionModifier<?> modifier);
+    Self postProcessor(ComponentPostProcessor<?> modifier);
 
-    Self componentProcessor(ComponentProcessor<?> processor);
+    Self preProcessor(ComponentPreProcessor<?> processor);
 
     Self prefix(String prefix);
 

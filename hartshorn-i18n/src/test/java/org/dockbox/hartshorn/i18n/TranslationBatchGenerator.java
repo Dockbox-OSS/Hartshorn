@@ -23,7 +23,7 @@ import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.services.ComponentContainer;
 import org.dockbox.hartshorn.i18n.annotations.InjectTranslation;
-import org.dockbox.hartshorn.i18n.services.TranslationInjectModifier;
+import org.dockbox.hartshorn.i18n.services.TranslationInjectPostProcessor;
 import org.dockbox.hartshorn.testsuite.HartshornExtension;
 
 import java.io.File;
@@ -184,7 +184,7 @@ public final class TranslationBatchGenerator {
         return batch;
     }
 
-    private static class KeyGen extends TranslationInjectModifier {
+    private static class KeyGen extends TranslationInjectPostProcessor {
 
         private static final KeyGen INSTANCE = new KeyGen();
 

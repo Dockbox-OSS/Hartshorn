@@ -15,11 +15,19 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.core.exceptions;
+package org.dockbox.hartshorn.core.services;
 
-@Deprecated(since = "4.2.5", forRemoval = true)
-public class BeanProvisionException extends RuntimeException {
-    public BeanProvisionException(final String message, final Throwable cause) {
-        super(message, cause);
+/**
+ * An interface which defines the methods for processing components in an ordered manner.
+ */
+public interface OrderedComponentProcessor {
+
+    /**
+     * Returns the phase of when the component should be processed.
+     *
+     * @return The phase of when the component should be processed.
+     */
+    default ServiceOrder order() {
+        return ServiceOrder.NORMAL;
     }
 }

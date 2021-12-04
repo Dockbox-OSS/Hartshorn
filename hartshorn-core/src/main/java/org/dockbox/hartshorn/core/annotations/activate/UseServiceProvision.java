@@ -18,6 +18,7 @@
 package org.dockbox.hartshorn.core.annotations.activate;
 
 import org.dockbox.hartshorn.core.annotations.service.ServiceActivator;
+import org.dockbox.hartshorn.core.services.ProviderServicePreProcessor;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -25,9 +26,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Service activator for {@link org.dockbox.hartshorn.core.services.ProviderServiceProcessor}.
+ * Service activator for {@link ProviderServicePreProcessor}.
  *
- * @see org.dockbox.hartshorn.core.services.ProviderServiceProcessor
+ * @see ProviderServicePreProcessor
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
