@@ -18,11 +18,12 @@
 package org.dockbox.hartshorn.data;
 
 import org.dockbox.hartshorn.core.GenericType;
+import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.data.mapping.ObjectMapper;
 import org.dockbox.hartshorn.data.registry.Registry;
 import org.dockbox.hartshorn.data.registry.RegistryColumn;
-import org.dockbox.hartshorn.testsuite.ApplicationAwareTest;
+import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -30,7 +31,16 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 
-public class DataStructuresSerializersTests extends ApplicationAwareTest {
+import javax.inject.Inject;
+
+import lombok.Getter;
+
+@HartshornTest
+public class DataStructuresSerializersTests {
+
+    @Inject
+    @Getter
+    private ApplicationContext applicationContext;
 
     @Test
     public void testThatRegistryCanBeSerialised() {
@@ -38,7 +48,7 @@ public class DataStructuresSerializersTests extends ApplicationAwareTest {
             final File copy = File.createTempFile("tmp", null);
             final Path tempFile = copy.toPath();
 
-            final ObjectMapper objectMapper = this.context().get(ObjectMapper.class);
+            final ObjectMapper objectMapper = this.applicationContext().get(ObjectMapper.class);
             objectMapper.write(this.buildTestRegistry());
         });
     }
@@ -66,7 +76,7 @@ public class DataStructuresSerializersTests extends ApplicationAwareTest {
         final File copy = File.createTempFile("tmp", null);
         final Path tempFile = copy.toPath();
 
-        final ObjectMapper objectMapper = this.context().get(ObjectMapper.class);
+        final ObjectMapper objectMapper = this.applicationContext().get(ObjectMapper.class);
 
         final Exceptional<String> serializedRegistry = objectMapper.write(this.buildTestRegistry());
         Assertions.assertTrue(serializedRegistry.present());

@@ -17,11 +17,11 @@
 
 package org.dockbox.hartshorn.web;
 
+import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.ExecutableElementContext;
 import org.dockbox.hartshorn.core.context.element.ParameterContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
-import org.dockbox.hartshorn.testsuite.ApplicationAwareTest;
 import org.dockbox.hartshorn.web.annotations.RequestHeader;
 import org.dockbox.hartshorn.web.annotations.http.HttpRequest;
 import org.dockbox.hartshorn.web.processing.HttpRequestParameterLoaderContext;
@@ -41,9 +41,16 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
-public class RequestArgumentProcessorTests extends ApplicationAwareTest {
+import lombok.Getter;
+
+public class RequestArgumentProcessorTests {
+
+    @Inject
+    @Getter
+    private ApplicationContext applicationContext;
 
     public static Stream<Arguments> bodies() {
         return Stream.of(
@@ -62,7 +69,7 @@ public class RequestArgumentProcessorTests extends ApplicationAwareTest {
         final ParameterContext<String> context = Mockito.mock(ParameterContext.class);
         Mockito.when(context.type()).thenReturn(TypeContext.of(String.class));
 
-        final HttpRequestParameterLoaderContext loaderContext = new HttpRequestParameterLoaderContext(null, null, null, this.context(), request, null);
+        final HttpRequestParameterLoaderContext loaderContext = new HttpRequestParameterLoaderContext(null, null, null, this.applicationContext(), request, null);
 
         final Exceptional<String> result = new BodyRequestParameterRule().load(context, 0, loaderContext);
         Assertions.assertTrue(result.present());
@@ -86,7 +93,7 @@ public class RequestArgumentProcessorTests extends ApplicationAwareTest {
         // Different order due to generic return type
         Mockito.doReturn(declaring).when(context).declaredBy();
 
-        final HttpRequestParameterLoaderContext loaderContext = new HttpRequestParameterLoaderContext(null, null, null, this.context(), request, null);
+        final HttpRequestParameterLoaderContext loaderContext = new HttpRequestParameterLoaderContext(null, null, null, this.applicationContext(), request, null);
 
         final Exceptional<Message> result = new BodyRequestParameterRule().load(context, 0, loaderContext);
         Assertions.assertTrue(result.present());
@@ -104,7 +111,7 @@ public class RequestArgumentProcessorTests extends ApplicationAwareTest {
         Mockito.when(requestHeader.value()).thenReturn("string-header");
         Mockito.when(context.annotation(RequestHeader.class)).thenReturn(Exceptional.of(requestHeader));
 
-        final HttpRequestParameterLoaderContext loaderContext = new HttpRequestParameterLoaderContext(null, null, null, this.context(), request, null);
+        final HttpRequestParameterLoaderContext loaderContext = new HttpRequestParameterLoaderContext(null, null, null, this.applicationContext(), request, null);
 
         final Exceptional<String> result = new HeaderRequestParameterRule().load(context, 0, loaderContext);
         Assertions.assertTrue(result.present());
@@ -122,7 +129,7 @@ public class RequestArgumentProcessorTests extends ApplicationAwareTest {
         Mockito.when(requestHeader.value()).thenReturn("int-header");
         Mockito.when(context.annotation(RequestHeader.class)).thenReturn(Exceptional.of(requestHeader));
 
-        final HttpRequestParameterLoaderContext loaderContext = new HttpRequestParameterLoaderContext(null, null, null, this.context(), request, null);
+        final HttpRequestParameterLoaderContext loaderContext = new HttpRequestParameterLoaderContext(null, null, null, this.applicationContext(), request, null);
 
         final Exceptional<Integer> result = new HeaderRequestParameterRule().load(context, 0, loaderContext);
         Assertions.assertTrue(result.present());

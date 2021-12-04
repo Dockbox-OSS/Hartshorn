@@ -17,20 +17,28 @@
 
 package org.dockbox.hartshorn.core.task;
 
-import org.dockbox.hartshorn.testsuite.ApplicationAwareTest;
+import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-public class TaskRunnerTests extends ApplicationAwareTest {
+import javax.inject.Inject;
+
+import lombok.Getter;
+
+public class TaskRunnerTests {
+
+    @Inject
+    @Getter
+    private ApplicationContext applicationContext;
 
     private final CountDownLatch lock = new CountDownLatch(1);
 
     @Test
     void testTaskRunsSync() {
-        final TaskRunner runner = this.context().get(TaskRunner.class);
+        final TaskRunner runner = this.applicationContext().get(TaskRunner.class);
         final boolean[] activated = { false };
         final Task task = () -> activated[0] = true;
         runner.accept(task);
@@ -40,7 +48,7 @@ public class TaskRunnerTests extends ApplicationAwareTest {
 
     @Test
     void testTaskRunsDelayed() throws InterruptedException {
-        final TaskRunner runner = this.context().get(TaskRunner.class);
+        final TaskRunner runner = this.applicationContext().get(TaskRunner.class);
         final boolean[] activated = { false };
         final Task task = () -> activated[0] = true;
         runner.acceptDelayed(task, 5, TimeUnit.MILLISECONDS);

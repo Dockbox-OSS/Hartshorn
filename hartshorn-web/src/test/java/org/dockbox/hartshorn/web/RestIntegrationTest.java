@@ -32,14 +32,15 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import org.dockbox.hartshorn.testsuite.ApplicationAwareTest;
+import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.web.annotations.UseHttpServer;
 
 import java.io.IOException;
 import java.util.function.Function;
 
 @UseHttpServer
-public abstract class RestIntegrationTest extends ApplicationAwareTest {
+@HartshornTest
+public abstract class RestIntegrationTest {
 
     protected static final String ADDRESS = "http://localhost:" + HttpWebServerInitializer.DEFAULT_PORT;
 

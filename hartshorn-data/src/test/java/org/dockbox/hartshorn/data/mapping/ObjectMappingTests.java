@@ -17,6 +17,8 @@
 
 package org.dockbox.hartshorn.data.mapping;
 
+import org.dockbox.hartshorn.core.HartshornUtils;
+import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.data.Element;
 import org.dockbox.hartshorn.data.EntityElement;
@@ -26,8 +28,7 @@ import org.dockbox.hartshorn.data.MultiElement;
 import org.dockbox.hartshorn.data.NestedElement;
 import org.dockbox.hartshorn.data.PersistentElement;
 import org.dockbox.hartshorn.data.jackson.JacksonObjectMapper;
-import org.dockbox.hartshorn.testsuite.ApplicationAwareTest;
-import org.dockbox.hartshorn.core.HartshornUtils;
+import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -35,7 +36,16 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.stream.Stream;
 
-public class ObjectMappingTests extends ApplicationAwareTest {
+import javax.inject.Inject;
+
+import lombok.Getter;
+
+@HartshornTest
+public class ObjectMappingTests {
+
+    @Inject
+    @Getter
+    private ApplicationContext applicationContext;
 
     private static Stream<Arguments> serialisationElements() {
         return Stream.of(
@@ -69,7 +79,7 @@ public class ObjectMappingTests extends ApplicationAwareTest {
     @ParameterizedTest
     @MethodSource("serialisationElements")
     void testObjectSerialisation(final FileFormat fileFormat, final Element content, final String expected) {
-        final ObjectMapper mapper = this.context().get(JacksonObjectMapper.class);
+        final ObjectMapper mapper = this.applicationContext().get(JacksonObjectMapper.class);
         mapper.fileType(fileFormat);
 
         content.name("sample");
@@ -82,7 +92,7 @@ public class ObjectMappingTests extends ApplicationAwareTest {
     @ParameterizedTest
     @MethodSource("serialisationElements")
     void testObjectDeserialisation(final FileFormat fileFormat, final Element expected, final String content) {
-        final ObjectMapper mapper = this.context().get(JacksonObjectMapper.class);
+        final ObjectMapper mapper = this.applicationContext().get(JacksonObjectMapper.class);
         mapper.fileType(fileFormat);
         expected.name("sample");
 

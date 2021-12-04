@@ -123,13 +123,21 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
         this.modifiers = modifiers;
         this.modify(this.modifiers);
 
+        this.registerDefaultBindings();
+    }
+
+    protected void registerDefaultBindings() {
+        this.bind(Key.of(ComponentProvider.class), this);
         this.bind(Key.of(ApplicationContext.class), this);
+
         this.bind(Key.of(MetaProvider.class), this.metaProvider);
         this.bind(Key.of(ComponentLocator.class), this.locator());
-        this.bind(Key.of(ApplicationManager.class), this.environment().manager());
+        this.bind(Key.of(ApplicationEnvironment.class), this.environment());
+
+        this.bind(Key.of(ProxyLookup.class), this.environment().manager());
         this.bind(Key.of(ApplicationLogger.class), this.environment().manager());
         this.bind(Key.of(ApplicationProxier.class), this.environment().manager());
-        this.bind(Key.of(ProxyLookup.class), this.environment().manager());
+        this.bind(Key.of(ApplicationManager.class), this.environment().manager());
         this.bind(Key.of(LifecycleObservable.class), this.environment().manager());
     }
 

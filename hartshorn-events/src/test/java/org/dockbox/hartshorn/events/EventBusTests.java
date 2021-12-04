@@ -17,6 +17,7 @@
 
 package org.dockbox.hartshorn.events;
 
+import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.events.annotations.Listener.Priority;
 import org.dockbox.hartshorn.events.listeners.BasicEventListener;
@@ -24,14 +25,23 @@ import org.dockbox.hartshorn.events.listeners.GenericEventListener;
 import org.dockbox.hartshorn.events.listeners.PriorityEventListener;
 import org.dockbox.hartshorn.events.listeners.StaticEventListener;
 import org.dockbox.hartshorn.events.parents.Event;
-import org.dockbox.hartshorn.testsuite.ApplicationAwareTest;
+import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-public class EventBusTests extends ApplicationAwareTest {
+import javax.inject.Inject;
+
+import lombok.Getter;
+
+@HartshornTest
+public class EventBusTests {
+
+    @Inject
+    @Getter
+    private ApplicationContext applicationContext;
 
     @Test
     public void testTypesCanSubscribe() {
@@ -41,7 +51,7 @@ public class EventBusTests extends ApplicationAwareTest {
     }
 
     private EventBus bus() {
-        return this.context().get(EventBusImpl.class);
+        return this.applicationContext().get(EventBusImpl.class);
     }
 
     @Test

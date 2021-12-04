@@ -60,6 +60,17 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
 
     private static final Map<Class<?>, TypeContext<?>> CACHE = HartshornUtils.emptyConcurrentMap();
 
+    /**
+     * Fields which should be ignored when detected. This can be for varying reasons, which should be
+     * documented on the entry in this array directly.
+     */
+    private static final Set<String> EXCLUDED_FIELDS = HartshornUtils.asSet(
+            /*
+             * This field is a synthetic field which is added by IntelliJ IDEA when running tests with
+             * coverage.
+            */
+            "__$lineHits$__"
+    );
     private static final Map<Class<?>, Class<?>> PRIMITIVE_WRAPPERS = HartshornUtils.ofEntries(
             Tuple.of(boolean.class, Boolean.class),
             Tuple.of(byte.class, Byte.class),
@@ -339,6 +350,9 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
         if (this.fields.isEmpty()) {
             this.verifyMetadataAvailable();
             for (final Field declared : this.type().getDeclaredFields()) {
+                if (TypeContext.EXCLUDED_FIELDS.contains(declared.getName()))
+                    continue;
+
                 this.fields.put(declared.getName(), FieldContext.of(declared));
             }
             if (!(this.parent().isVoid() || Object.class.equals(this.parent().type()))) {

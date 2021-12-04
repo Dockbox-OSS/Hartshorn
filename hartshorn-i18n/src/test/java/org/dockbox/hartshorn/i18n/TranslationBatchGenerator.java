@@ -24,7 +24,7 @@ import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.services.ComponentContainer;
 import org.dockbox.hartshorn.i18n.annotations.InjectTranslation;
 import org.dockbox.hartshorn.i18n.services.TranslationInjectModifier;
-import org.dockbox.hartshorn.testsuite.HartshornRunner;
+import org.dockbox.hartshorn.testsuite.HartshornExtension;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -78,7 +78,7 @@ public final class TranslationBatchGenerator {
     private TranslationBatchGenerator() {}
 
     public static void main(final String[] args) throws Exception {
-        final ApplicationContext context = HartshornRunner.createContext(TranslationBatchGenerator.class).orNull();
+        final ApplicationContext context = HartshornExtension.createContext(TranslationBatchGenerator.class).orNull();
         final Map<String, String> batches = migrateBatches(context);
         final String date = SDF.format(LocalDateTime.now());
         final Path outputPath = existingBatch().toPath().resolve("batches/" + date);

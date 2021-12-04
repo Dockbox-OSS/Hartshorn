@@ -18,22 +18,33 @@
 package org.dockbox.hartshorn.core.boot;
 
 import org.dockbox.hartshorn.core.annotations.activate.UseServiceProvision;
+import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.services.ComponentContainer;
-import org.dockbox.hartshorn.testsuite.ApplicationAwareTest;
-import org.dockbox.hartshorn.testsuite.HartshornRunner;
+import org.dockbox.hartshorn.testsuite.HartshornExtension;
+import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.io.IOException;
 import java.util.stream.Stream;
 
-@UseServiceProvision
-public class ComponentProvisionTests extends ApplicationAwareTest {
+import javax.inject.Inject;
 
-    public static Stream<Arguments> components() {
-        return HartshornRunner.createContext(ComponentProvisionTests.class)
+import lombok.Getter;
+
+@HartshornTest
+@UseServiceProvision
+public class ComponentProvisionTests {
+
+    @Inject
+    @Getter
+    private ApplicationContext applicationContext;
+
+    public static Stream<Arguments> components() throws IOException {
+        return HartshornExtension.createContext(ComponentProvisionTests.class)
                 .rethrowUnchecked().get()
                 .locator()
                 .containers().stream()
@@ -45,7 +56,7 @@ public class ComponentProvisionTests extends ApplicationAwareTest {
     @MethodSource("components")
     public void testComponentProvision(final TypeContext<?> component) {
         Assertions.assertDoesNotThrow(() -> {
-            final Object instance = this.context().get(component);
+            final Object instance = this.applicationContext().get(component);
             Assertions.assertNotNull(instance);
         });
     }
