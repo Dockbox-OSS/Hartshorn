@@ -22,8 +22,15 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * Repeater annotation for {@link Binds}.
+ *
+ * @see Binds
+ * @author Guus Lieben
+ * @since 4.1.0
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface Combines {
+public @interface BindsMultiple {
     Binds[] value();
 }

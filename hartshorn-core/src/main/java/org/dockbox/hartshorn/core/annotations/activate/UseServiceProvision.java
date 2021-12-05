@@ -29,6 +29,8 @@ import java.lang.annotation.Target;
  * Service activator for {@link ProviderServicePreProcessor}.
  *
  * @see ProviderServicePreProcessor
+ * @author Guus Lieben
+ * @since 4.1.0
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)

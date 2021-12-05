@@ -22,6 +22,19 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * Annotation to mark a constructor as bound. This means that the constructor arguments will
+ * not be injected through regular injection, and instead requires manual provision of
+ * arguments. This is implemented through {@link org.dockbox.hartshorn.core.annotations.Factory}
+ * services.
+ *
+ * @see org.dockbox.hartshorn.core.annotations.Factory
+ * @see org.dockbox.hartshorn.core.services.FactoryServicePreProcessor
+ * @see org.dockbox.hartshorn.core.services.FactoryServicePostProcessor
+ *
+ * @author Guus Lieben
+ * @since 4.1.0
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.CONSTRUCTOR)
 public @interface Bound {

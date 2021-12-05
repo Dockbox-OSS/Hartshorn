@@ -25,6 +25,15 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+/**
+ * A {@link StringTypeAdapter} implementation. This implementation uses a {@link Function} to convert the {@link String}
+ * to the desired type. This is useful when the conversion is not trivial, so that the converter can be defined in a
+ * field instead of requiring it to be implemented it in a separate class.
+ *
+ * @param <T> The type to convert to.
+ * @author Guus Lieben
+ * @since 4.2.4
+ */
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public final class StringTypeAdapterImpl<T> implements StringTypeAdapter<T> {
 
@@ -36,6 +45,14 @@ public final class StringTypeAdapterImpl<T> implements StringTypeAdapter<T> {
         return this.function.apply(value);
     }
 
+    /**
+     * Creates a new {@link StringTypeAdapterImpl} instance.
+     *
+     * @param type The type to convert to.
+     * @param function The function to use to convert the {@link String} to the desired type.
+     * @param <T> The type to convert to.
+     * @return The new {@link StringTypeAdapterImpl} instance.
+     */
     public static <T> StringTypeAdapterImpl<T> of(final Class<T> type, final Function<String, Exceptional<T>> function) {
         return new StringTypeAdapterImpl<>(type, function);
     }

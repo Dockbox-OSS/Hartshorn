@@ -22,6 +22,15 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * Indicates a type will always require a binding to be present.
+ *
+ * @deprecated If validation is required, a {@link org.dockbox.hartshorn.core.services.ComponentProcessor},
+ * or {@link org.dockbox.hartshorn.core.boot.LifecycleObserver} should be used instead.
+ *
+ * @author Guus Lieben
+ * @since Unknown
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @Deprecated(since = "4.2.5", forRemoval = true)

@@ -34,7 +34,7 @@ import org.dockbox.hartshorn.core.Modifier;
 import org.dockbox.hartshorn.core.MultiMap;
 import org.dockbox.hartshorn.core.annotations.activate.Activator;
 import org.dockbox.hartshorn.core.annotations.inject.Binds;
-import org.dockbox.hartshorn.core.annotations.inject.Combines;
+import org.dockbox.hartshorn.core.annotations.inject.BindsMultiple;
 import org.dockbox.hartshorn.core.annotations.inject.Context;
 import org.dockbox.hartshorn.core.annotations.inject.Enable;
 import org.dockbox.hartshorn.core.annotations.service.AutomaticActivation;
@@ -408,9 +408,9 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
             this.handleBinder(binder, bindAnnotation);
         }
 
-        final Collection<TypeContext<?>> multiBinders = this.environment().types(prefix, Combines.class, false);
+        final Collection<TypeContext<?>> multiBinders = this.environment().types(prefix, BindsMultiple.class, false);
         for (final TypeContext<?> binder : multiBinders) {
-            final Combines bindAnnotation = binder.annotation(Combines.class).get();
+            final BindsMultiple bindAnnotation = binder.annotation(BindsMultiple.class).get();
             for (final Binds annotation : bindAnnotation.value()) {
                 this.handleBinder(binder, annotation);
             }

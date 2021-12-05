@@ -20,6 +20,7 @@ package org.dockbox.hartshorn.core.context;
 import org.dockbox.hartshorn.core.InjectConfiguration;
 import org.dockbox.hartshorn.core.Key;
 import org.dockbox.hartshorn.core.annotations.inject.Binds;
+import org.dockbox.hartshorn.core.annotations.inject.BindsMultiple;
 import org.dockbox.hartshorn.core.binding.BindingHierarchy;
 import org.dockbox.hartshorn.core.inject.Binder;
 import org.dockbox.hartshorn.core.inject.ProviderContext;
@@ -42,7 +43,7 @@ public interface ApplicationBinder extends Binder {
     /**
      * Binds the given prefix, which represents a package. The given prefix is scanned for  {@link ComponentPreProcessor}s
      * and {@link ComponentPostProcessor}s, as well as automatically bound types through {@link Binds} and its combined
-     * annotation {@link org.dockbox.hartshorn.core.annotations.inject.Combines}. The prefix is also registered to the
+     * annotation {@link BindsMultiple}. The prefix is also registered to the
      * active {@link ApplicationEnvironment}. After all components are registered, the located
      * {@link ComponentPreProcessor}s are activated.
      *

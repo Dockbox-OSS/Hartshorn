@@ -17,11 +17,20 @@
 
 package org.dockbox.hartshorn.core.annotations.context;
 
+import org.dockbox.hartshorn.core.boot.Hartshorn;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * Annotation to exclude a class from being treated as a logging source. This only applies to loggers that
+ * are created through {@link Hartshorn#log()}.
+ *
+ * @author Guus Lieben
+ * @since 4.2.0
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface LogExclude {

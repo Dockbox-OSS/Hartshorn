@@ -25,11 +25,40 @@ import java.lang.annotation.Target;
 
 import javax.inject.Named;
 
+/**
+ * Indicates the annotated type is to be bound to the specified type. This creates a basic entry
+ * to the active {@link org.dockbox.hartshorn.core.binding.BindingHierarchy} for the specified
+ * target {@link org.dockbox.hartshorn.core.Key}. The {@link org.dockbox.hartshorn.core.Key} is
+ * created from the {@link #value()} and the {@link Named} value of {@link #named()}.
+ *
+ * <p>By default, the binding is created with the default priority of {@code -1}, but this can be
+ * changed by specifying the {@link #priority()} value.
+ *
+ * <p>This annotation can be repeated, to create multiple bindings for the different
+ * {@link org.dockbox.hartshorn.core.Key}s.
+ *
+ * @author Guus Lieben
+ * @since 4.1.0
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-@Repeatable(Combines.class)
+@Repeatable(BindsMultiple.class)
 public @interface Binds {
+    /**
+     * The type to bind to.
+     * @return The type to bind to.
+     */
     Class<?> value();
+
+    /**
+     * The priority of the binding.
+     * @return The priority of the binding.
+     */
     int priority() default -1;
+
+    /**
+     * The {@link Named} annotation to use for the binding {@link org.dockbox.hartshorn.core.Key}.
+     * @return The {@link Named} annotation to use for the binding {@link org.dockbox.hartshorn.core.Key}.
+     */
     Named named() default @Named;
 }

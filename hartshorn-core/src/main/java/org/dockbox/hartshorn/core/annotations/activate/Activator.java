@@ -27,6 +27,9 @@ import java.lang.annotation.Target;
 /**
  * Indicates a class can be used as activation source by providing the
  * required metadata.
+ *
+ * @author Guus Lieben
+ * @since 4.1.0
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)

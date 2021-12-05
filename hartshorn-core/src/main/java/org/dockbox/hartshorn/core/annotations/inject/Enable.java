@@ -22,6 +22,25 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * Indicates that the value of a field or method should be enabled through
+ * {@link org.dockbox.hartshorn.core.context.ApplicationContext#enable(Object)}.
+ *
+ * <p>If the annotated element is a field, the value of the field will be enabled,
+ * if it is not {@code null}.
+ *
+ * <p>If the annotated element is a method, the behavior is different depending on the
+ * responsible {@link org.dockbox.hartshorn.core.services.ComponentPostProcessor} which
+ * handles the method. Typically, this will indicate that the result of the method will
+ * be enabled.
+ *
+ * <p>If the value of {@link #value()} is {@code true}, the annotated element will be
+ * enabled. If the value is {@code false}, the annotated element will be not be enabled
+ * automatically.
+ *
+ * @author Guus Lieben
+ * @since 4.1.2
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD, ElementType.METHOD})
 public @interface Enable {
