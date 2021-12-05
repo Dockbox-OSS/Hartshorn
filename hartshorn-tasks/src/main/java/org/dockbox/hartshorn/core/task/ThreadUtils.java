@@ -32,8 +32,7 @@ public interface ThreadUtils {
      * Performs a given Runnable on an async thread, returning a Future object to be used for
      * completion checks. The threads are usually provided by the underlying platform.
      *
-     * @param runnable
-     *         The Runnable to run
+     * @param runnable The Runnable to run
      *
      * @return The Future object for completion checks
      */
@@ -43,10 +42,8 @@ public interface ThreadUtils {
      * Performs a given Runnable on an async thread, and blocks the current thread until it completes.
      * The threads are usually provided by the underlying platform.
      *
-     * @param <T>
-     *         The return type of the callable
-     * @param callable
-     *         The callable to use
+     * @param <T> The return type of the callable
+     * @param callable The callable to use
      */
     <T> void performAsync(Callable<T> callable, Consumer<Exceptional<T>> consumer);
 
@@ -54,10 +51,8 @@ public interface ThreadUtils {
      * Performs a given Runnable on a sync thread, and blocks the current thread until it completes.
      * The threads are usually provided by the underlying platform.
      *
-     * @param <T>
-     *         The return type of the callable
-     * @param callable
-     *         The callable to use
+     * @param <T> The return type of the callable
+     * @param callable The callable to use
      *
      * @return The Exceptional holding either the return value or an Exception
      */

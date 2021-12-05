@@ -25,5 +25,8 @@ package org.dockbox.hartshorn.core.context.element;
  */
 @FunctionalInterface
 public interface ElementModifier<E extends QualifiedElement> {
+    /**
+     * The element wrapped by this modifier. This is the element that will be modified.
+     */
     E element();
 }

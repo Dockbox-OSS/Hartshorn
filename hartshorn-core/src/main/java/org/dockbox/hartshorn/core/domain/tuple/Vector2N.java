@@ -49,10 +49,8 @@ public class Vector2N {
     /**
      * Creates a new {@link Vector2N} from the given values.
      *
-     * @param x
-     *         The x position of the {@link Vector2N}
-     * @param z
-     *         The z position of the {@link Vector2N}
+     * @param x The x position of the {@link Vector2N}
+     * @param z The z position of the {@link Vector2N}
      *
      * @return The new {@link Vector3N}
      */

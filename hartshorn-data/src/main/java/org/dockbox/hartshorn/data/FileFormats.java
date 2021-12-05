@@ -45,10 +45,8 @@ public enum FileFormats implements FileFormat{
      *
      * <p>Assumes the parent {@link Path} already exists.
      *
-     * @param parent
-     *         The parent directory
-     * @param file
-     *         The filename without a file extension present
+     * @param parent The parent directory
+     * @param file The filename without a file extension present
      *
      * @return The {@link Path} reference to a file
      */
@@ -60,8 +58,7 @@ public enum FileFormats implements FileFormat{
      * Converts a given filename (without the file extension present) to a {@link String} value
      * holding the correct format.
      *
-     * @param file
-     *         The filename without a file extension present
+     * @param file The filename without a file extension present
      *
      * @return The generated filename with extension
      */

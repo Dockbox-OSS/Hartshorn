@@ -44,16 +44,14 @@ public @interface Property {
 
     /**
      * The alternative setter for the field. When defined dynamic instance creators are able to
-     * attempt to find a method which accepts a value of the type of the provided value. This
-     * means it is possible to directly apply a given {@link String} value to {@link Integer}
-     * field. Note that type differences are only accepted when defined with {@link Property#accepts()}.
+     * attempt to find a method which accepts a value of the type of the provided value.
      *
      * <pre>{@code
      * \@Property(setter = "valueString")
      * private Integer id;
      *
-     * public void valueString(String value) {
-     * this.id = Integer.parseInt(value);
+     * public void setId(Integer id) {
+     *     this.id = id;
      * }
      * }</pre>
      *
@@ -61,15 +59,23 @@ public @interface Property {
      */
     String setter() default "";
 
+    /**
+     * The alternative getter for the field. When defined dynamic instance creators are able to
+     * attempt to find this method which returns a value of the type of the field.
+     *
+     * <pre>{@code
+     * \@Property(getter = "getId")
+     * private Integer id;
+     *
+     * public Integer getId() {
+     *     return this.id;
+     * }
+     * }</pre>
+     */
     String getter() default "";
 
     /**
-     * Marks the accepted value of the field. When defined this allows {@link Property#setter()} to
-     * accept a type different from the field type.
-     *
-     * @return the type to accept
+     * Whether the field should be ignored when creating an object.
      */
-    Class<?> accepts() default Void.class;
-
     boolean ignore() default false;
 }

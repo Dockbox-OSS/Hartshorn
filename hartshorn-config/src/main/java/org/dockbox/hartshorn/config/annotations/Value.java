@@ -38,12 +38,7 @@ public @interface Value {
      * period symbol. For example, in the configuration (JSON) below the deepest
      * value is accessed with <code>config.nested.value</code>, returning the value 'A'
      * <pre><code>
-     *     {
-     *         "config": {
-     *             "nested": {
-     *                 "value": "A"
-     *             }
-     *         }
+     *     { "config": {     "nested": {         "value": "A"     } }
      *     }
      * </code></pre>
      *

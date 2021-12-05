@@ -32,8 +32,7 @@ import java.util.function.Function;
  * Simple implementation of {@link org.dockbox.hartshorn.commands.definition.ArgumentConverter} using
  * functions to provide converter and suggestion behavior.
  *
- * @param <T>
- *         The type this converter can convert to
+ * @param <T> The type this converter can convert to
  */
 public final class ArgumentConverterImpl<T> extends DefaultArgumentConverter<T> {
 
@@ -54,12 +53,9 @@ public final class ArgumentConverterImpl<T> extends DefaultArgumentConverter<T> 
     /**
      * Creates a builder with the provided type and keys, with the default converter and suggestions provider.
      *
-     * @param type
-     *         The type the final converter should convert into.
-     * @param keys
-     *         The keys associated with the converter
-     * @param <T>
-     *         The type parameter of the type
+     * @param type The type the final converter should convert into.
+     * @param keys The keys associated with the converter
+     * @param <T> The type parameter of the type
      *
      * @return A new {@link CommandValueConverterBuilder} with the provided type and keys.
      */
@@ -75,8 +71,7 @@ public final class ArgumentConverterImpl<T> extends DefaultArgumentConverter<T> 
     /**
      * Builder type to create a new {@link ArgumentConverterImpl}.
      *
-     * @param <T>
-     *         The type the converter should convert into.
+     * @param <T> The type the converter should convert into.
      */
     public static final class CommandValueConverterBuilder<T> {
         private final String[] keys;
@@ -118,6 +113,9 @@ public final class ArgumentConverterImpl<T> extends DefaultArgumentConverter<T> 
             return this;
         }
 
+        /**
+         * @see #withConverter(BiFunction)
+         */
         public CommandValueConverterBuilder<T> withConverter(final StringTypeAdapter<T> adapter) {
             this.converter = (source, in) -> adapter.adapt(in);
             return this;

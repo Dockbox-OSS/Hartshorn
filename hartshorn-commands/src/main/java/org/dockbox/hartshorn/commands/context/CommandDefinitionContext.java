@@ -73,8 +73,7 @@ public interface CommandDefinitionContext extends Context {
     /**
      * Gets the definition of a flag, indicating its name and whether it expects a value.
      *
-     * @param name
-     *         The name of the flag.
+     * @param name The name of the flag.
      *
      * @return The flag definition, or {@link Exceptional#empty()}
      * @see CommandFlag#value()
@@ -85,8 +84,7 @@ public interface CommandDefinitionContext extends Context {
      * Checks if a provided raw command matches the contained definition. This typically validates the given
      * arguments, flags, and command alias.
      *
-     * @param command
-     *         The raw command.
+     * @param command The raw command.
      *
      * @return <code>true</code> if the command matches, else <code>false</code>
      */

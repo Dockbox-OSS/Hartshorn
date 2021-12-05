@@ -26,8 +26,8 @@ import org.dockbox.hartshorn.events.EventBus;
 public interface Event extends Context, ContextCarrier {
 
     /**
-     * Posts the event directly to the implementation of [EventBus], obtained through
-     * [HartshornUtils.INJECT.getInstance]
+     * Posts the event directly to the implementation of {@link EventBus}, obtained through
+     * the active {@link ApplicationContext}.
      *
      * @return Itself
      */
@@ -36,5 +36,12 @@ public interface Event extends Context, ContextCarrier {
         return this;
     }
 
+    /**
+     * Enhances the event with the given {@link ApplicationContext}, this acts as a setter for the
+     * {@link ApplicationContext}.
+     *
+     * @param context The context to enhance the event with
+     * @return Itself, for chaining
+     */
     Event with(ApplicationContext context);
 }

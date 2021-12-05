@@ -42,8 +42,7 @@ public class Registry<V> extends HashMap<String, RegistryColumn<V>> {
      * Adds another Registry to this one. If the added Registry contains the same {@link
      * RegistryIdentifier}s, then that data will be added to the existing columns.
      *
-     * @param other
-     *         The other Registry to add to this one.
+     * @param other The other Registry to add to this one.
      *
      * @return Itself.
      */
@@ -77,9 +76,7 @@ public class Registry<V> extends HashMap<String, RegistryColumn<V>> {
     }
 
     /**
-     * @param columnIDs
-     *         A varargs of {@link RegistryIdentifier}s to remove from the Registry if
-     *         contained.
+     * @param columnIDs A varargs of {@link RegistryIdentifier}s to remove from the Registry if contained.
      *
      * @return Itself.
      */
@@ -97,11 +94,8 @@ public class Registry<V> extends HashMap<String, RegistryColumn<V>> {
     /**
      * Returns the column if it exists, or creates a new column with the provided default values.
      *
-     * @param identifier
-     *         The {@link RegistryIdentifier} of the {@link RegistryColumn} to retrieve
-     * @param defaultValues
-     *         A varargs of {@code values} to add create the column with, if it doesn't
-     *         exist
+     * @param identifier The {@link RegistryIdentifier} of the {@link RegistryColumn} to retrieve
+     * @param defaultValues A varargs of {@code values} to add create the column with, if it doesn't exist
      *
      * @return The {@link RegistryColumn}
      */
@@ -114,9 +108,7 @@ public class Registry<V> extends HashMap<String, RegistryColumn<V>> {
     }
 
     /**
-     * @param columnIDs
-     *         A varargs of {@link RegistryIdentifier}s to check if contained in the
-     *         Registry.
+     * @param columnIDs A varargs of {@link RegistryIdentifier}s to check if contained in the Registry.
      *
      * @return True if all of the {@link RegistryIdentifier}s are contained, otherwise false.
      */
@@ -131,10 +123,8 @@ public class Registry<V> extends HashMap<String, RegistryColumn<V>> {
      * Adds a column of data to the Registry. <B>Note</B> this will override an existing column if
      * they share the same {@link RegistryIdentifier}
      *
-     * @param columnID
-     *         The {@link RegistryIdentifier} for which to add this data added under.
-     * @param values
-     *         A safe varargs of type {@code V} to be added.
+     * @param columnID The {@link RegistryIdentifier} for which to add this data added under.
+     * @param values A safe varargs of type {@code V} to be added.
      *
      * @return Itself.
      */
@@ -146,12 +136,9 @@ public class Registry<V> extends HashMap<String, RegistryColumn<V>> {
     /**
      * Gets all the matching columns in the Registry if contained.
      *
-     * @param columnIDs
-     *         A varargs of {@link RegistryIdentifier}s to return from the Registry if
-     *         contained.
+     * @param columnIDs A varargs of {@link RegistryIdentifier}s to return from the Registry if contained.
      *
-     * @return All data from the matching columns combined into a single {@link RegistryColumn}. If no
-     *         matches are found, an empty {@link RegistryColumn} will be returned.
+     * @return All data from the matching columns combined into a single {@link RegistryColumn}. If no matches are found, an empty {@link RegistryColumn} will be returned.
      */
     public RegistryColumn<V> matchingColumns(final RegistryIdentifier... columnIDs) {
         final RegistryColumn<V> result = new RegistryColumn<>();
@@ -167,10 +154,8 @@ public class Registry<V> extends HashMap<String, RegistryColumn<V>> {
      * Adds a column of data to the Registry. <B>Note</B> this will override an existing column if
      * they share the same {@link RegistryIdentifier}
      *
-     * @param columnID
-     *         The {@link RegistryIdentifier} for which to add this data added under.
-     * @param values
-     *         A collection of type {@code V} or its children to be added.
+     * @param columnID The {@link RegistryIdentifier} for which to add this data added under.
+     * @param values A collection of type {@code V} or its children to be added.
      *
      * @return Itself.
      */
@@ -182,10 +167,7 @@ public class Registry<V> extends HashMap<String, RegistryColumn<V>> {
     /**
      * Filter the Registry by its columns. Note this creates a new Registry and doesn't modify itself.
      *
-     * @param filter
-     *         The filter accepts a {@link RegistryIdentifier} and returns true to remove that
-     *         column, false to keep it. The columns which pass the filter are stored in a <b>new</b>
-     *         Registry.
+     * @param filter The filter accepts a {@link RegistryIdentifier} and returns true to remove that column, false to keep it. The columns which pass the filter are stored in a <b>new</b> Registry.
      *
      * @return The new Registry containing the filtered columns.
      */
@@ -213,10 +195,7 @@ public class Registry<V> extends HashMap<String, RegistryColumn<V>> {
     /**
      * Filter the Registry by its columns. Note this creates a new Registry and doesn't modify itself.
      *
-     * @param biFilter
-     *         The biFilter accepts a {@link RegistryIdentifier}, along with its {@link
-     *         RegistryColumn} and returns true to remove that column, false to keep it. The columns which
-     *         pass the filter are stored in a <b>new</b> Registry.
+     * @param biFilter The biFilter accepts a {@link RegistryIdentifier}, along with its {@link RegistryColumn} and returns true to remove that column, false to keep it. The columns which pass the filter are stored in a <b>new</b> Registry.
      *
      * @return The new Registry containing the filtered columns.
      */
@@ -235,11 +214,7 @@ public class Registry<V> extends HashMap<String, RegistryColumn<V>> {
     /**
      * Filter the Registry by its values. Note this creates a new Registry and doesn't modify itself.
      *
-     * @param filter
-     *         The filter accepts a value of type {@code V} or its parents and returns true to
-     *         remove that column, false to keep it. The values which pass the filter are stored in a
-     *         <b>new</b> Registry. If no values in a particular column pass the filter, it is still added
-     *         to the new Registry, it will simply contain no values.
+     * @param filter The filter accepts a value of type {@code V} or its parents and returns true to remove that column, false to keep it. The values which pass the filter are stored in a <b>new</b> Registry. If no values in a particular column pass the filter, it is still added to the new Registry, it will simply contain no values.
      *
      * @return The new Registry containing the filtered values.
      */
@@ -257,12 +232,7 @@ public class Registry<V> extends HashMap<String, RegistryColumn<V>> {
     /**
      * Filter the Registry by its values. Note this creates a new Registry and doesn't modify itself.
      *
-     * @param biFilter
-     *         The biFilter accepts a {@link RegistryIdentifier} (The columnID of the value),
-     *         along with a value of type {@code V} or its parents and returns true to remove that column,
-     *         false to keep it. The values which pass the filter are stored in a <b>new</b> Registry. If
-     *         no values in a particular column pass the filter, it is still added to the new Registry, it
-     *         will simply contain no values.
+     * @param biFilter The biFilter accepts a {@link RegistryIdentifier} (The columnID of the value), along with a value of type {@code V} or its parents and returns true to remove that column, false to keep it. The values which pass the filter are stored in a <b>new</b> Registry. If no values in a particular column pass the filter, it is still added to the new Registry, it will simply contain no values.
      *
      * @return The new Registry containing the filtered values.
      */
@@ -282,10 +252,8 @@ public class Registry<V> extends HashMap<String, RegistryColumn<V>> {
      * Adds data to the Registry. If the columnID does not exist, it creates a new column, otherwise
      * it adds the data to the existing column.
      *
-     * @param columnID
-     *         The {@link RegistryIdentifier} for which this data will be added to.
-     * @param values
-     *         A safe varargs of type {@code V} to be added.
+     * @param columnID The {@link RegistryIdentifier} for which this data will be added to.
+     * @param values A safe varargs of type {@code V} to be added.
      *
      * @return Itself.
      */
@@ -298,10 +266,8 @@ public class Registry<V> extends HashMap<String, RegistryColumn<V>> {
      * Adds data to the Registry. If the columnID does not exist, it creates a new column, otherwise
      * it adds the data to the existing column.
      *
-     * @param columnID
-     *         The {@link RegistryIdentifier} for which this data will be added to.
-     * @param values
-     *         A collection of type {@code V} or its children to be added.
+     * @param columnID The {@link RegistryIdentifier} for which this data will be added to.
+     * @param values A collection of type {@code V} or its children to be added.
      *
      * @return Itself.
      */
@@ -316,8 +282,7 @@ public class Registry<V> extends HashMap<String, RegistryColumn<V>> {
     }
 
     /**
-     * @return The registry in an easy to view manner, which displays the relationship between {@link
-     *         RegistryIdentifier}s and the values in the columns.
+     * @return The registry in an easy to view manner, which displays the relationship between {@link RegistryIdentifier}s and the values in the columns.
      */
     @Override
     public String toString() {
@@ -330,10 +295,8 @@ public class Registry<V> extends HashMap<String, RegistryColumn<V>> {
     /**
      * Builds the registry hierarchy.
      *
-     * @param builder
-     *         The {@link StringBuilder} being used to build the registry hierarchy
-     * @param indents
-     *         The depth of the registry (Caused by nested registries)
+     * @param builder The {@link StringBuilder} being used to build the registry hierarchy
+     * @param indents The depth of the registry (Caused by nested registries)
      */
     private void buildHierarchy(final StringBuilder builder, final int indents) {
         this.forEach((identifier, column) -> {

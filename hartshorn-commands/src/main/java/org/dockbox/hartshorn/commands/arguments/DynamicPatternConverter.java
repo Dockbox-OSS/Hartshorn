@@ -31,8 +31,7 @@ import java.util.List;
  * this only applies to types decorated with {@link Parameter},
  * however this is not a requirement.
  *
- * @param <T>
- *         The generic type
+ * @param <T> The generic type
  */
 public class DynamicPatternConverter<T> extends DefaultArgumentConverter<T> {
 

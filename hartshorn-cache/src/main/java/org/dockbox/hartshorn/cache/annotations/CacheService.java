@@ -38,6 +38,10 @@ import java.lang.annotation.Target;
 @Extends(Service.class)
 @Service(activators = UseCaching.class)
 public @interface CacheService {
+    /**
+     * The ID of the cache kept in the service. Also used as the ID of the
+     * service itself.
+     */
     @AliasFor("id")
     String value();
 }

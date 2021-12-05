@@ -32,17 +32,19 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 public @interface Activator {
 
+    /**
+     * Whether to include the base package of the activator class explicitely, or to only
+     * use the {@link #scanPackages() custom defined packages}.
+     */
     boolean includeBasePackage() default true;
 
     /**
-     * @return The default prefix for the activator. If this is left empty the package of
-     *         the activation source is used
+     * @return The default prefix for the activator. If this is left empty the package of the activation source is used
      */
     String[] scanPackages() default {};
 
     /**
-     * @return The applicable {@link InjectConfig configurations} which should be used for
-     *         this activator
+     * @return The applicable {@link InjectConfig configurations} which should be used for this activator
      */
     InjectConfig[] configs() default {};
 }

@@ -46,8 +46,7 @@ public final class ExtensionResult {
      * Gets a new {@link ExtensionResult} which rejects the {@link org.dockbox.hartshorn.commands.CommandExecutor} to
      * proceed. This result will send the provided {@link Message} to the {@link CommandSource}.
      *
-     * @param reason
-     *         The reason
+     * @param reason The reason
      *
      * @return The {@link ExtensionResult}
      */
@@ -60,10 +59,8 @@ public final class ExtensionResult {
      * proceed. This result will send the provided {@link Message} to the {@link CommandSource}
      * if <code>send</code> is <code>true</code>.
      *
-     * @param reason
-     *         The reason
-     * @param send
-     *         Whether to send the reason to the {@link CommandSource}
+     * @param reason The reason
+     * @param send Whether to send the reason to the {@link CommandSource}
      *
      * @return The {@link ExtensionResult}
      */

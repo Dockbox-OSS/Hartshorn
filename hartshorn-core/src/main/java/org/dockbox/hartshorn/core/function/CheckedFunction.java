@@ -23,15 +23,12 @@ import org.dockbox.hartshorn.core.exceptions.ApplicationException;
  * Extension of {@link java.util.function.Function} with the addition of a
  * <code>throws ApplicationException</code> clause.
  *
- * @param <T>
- *         the type of the first argument to the function
- * @param <R>
- *         the type of the result of the function
+ * @param <T> the type of the first argument to the function
+ * @param <R> the type of the result of the function
  *
  * @see java.util.function.Function
  */
 @FunctionalInterface
 public interface CheckedFunction<T, R> {
-
     R apply(T t) throws ApplicationException;
 }

@@ -18,8 +18,16 @@
 package org.dockbox.hartshorn.core.task.pipeline.pipes;
 
 import org.dockbox.hartshorn.core.context.element.TypeContext;
+import org.dockbox.hartshorn.core.task.pipeline.pipelines.AbstractPipeline;
 
+/**
+ * An interface for a pipe. This interface is used to define a pipe, which is the basic building block
+ * of a {@link AbstractPipeline pipeline}.
+ * @param <I> The input type of the pipe.
+ * @param <O> The output type of the pipe.
+ */
 public interface IPipe<I, O> {
+
     /**
      * If this method is overridden, you can then call it to get the {@link Class} of the pipe, even
      * when created by a lambda expression.

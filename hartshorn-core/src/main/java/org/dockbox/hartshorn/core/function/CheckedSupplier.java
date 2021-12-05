@@ -23,14 +23,11 @@ import org.dockbox.hartshorn.core.exceptions.ApplicationException;
  * Extension of {@link java.util.function.Supplier} with the addition of a
  * <code>throws ApplicationException</code> clause.
  *
- * @param <T>
- *         the type of results supplied by this supplier
+ * @param <T> the type of results supplied by this supplier
  *
  * @see java.util.function.Supplier
  */
 @FunctionalInterface
 public interface CheckedSupplier<T> {
-
     T get() throws ApplicationException;
-
 }

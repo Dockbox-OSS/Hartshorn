@@ -28,8 +28,7 @@ import lombok.Getter;
 /**
  * The default (abstract) implementation for {@link ArgumentConverter argument converters}.
  *
- * @param <T>
- *         The type the argument is converted into
+ * @param <T> The type the argument is converted into
  */
 public abstract class DefaultArgumentConverter<T> implements ArgumentConverter<T> {
 

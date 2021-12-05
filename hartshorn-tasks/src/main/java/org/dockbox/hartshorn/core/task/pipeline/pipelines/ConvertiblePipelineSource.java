@@ -26,8 +26,7 @@ public class ConvertiblePipelineSource<I> extends ConvertiblePipeline<I, I> {
     /**
      * Calls the super constructor to instantiate a new convertible pipeline.
      *
-     * @param inputClass
-     *         The {@link Class} of the {@code I} input type
+     * @param inputClass The {@link Class} of the {@code I} input type
      */
     public ConvertiblePipelineSource(final Class<I> inputClass) {
         super(inputClass);
@@ -36,10 +35,8 @@ public class ConvertiblePipelineSource<I> extends ConvertiblePipeline<I, I> {
     /**
      * Processes an input by first wrapping it in an {@link Exceptional}.
      *
-     * @param input
-     *         The non-null {@code I} input to be processed by the pipeline
-     * @param throwable
-     *         A nullable {@link Throwable} that may wish to be passed in
+     * @param input The non-null {@code I} input to be processed by the pipeline
+     * @param throwable A nullable {@link Throwable} that may wish to be passed in
      *
      * @return An {@link Exceptional} containing the {@code I} output
      */

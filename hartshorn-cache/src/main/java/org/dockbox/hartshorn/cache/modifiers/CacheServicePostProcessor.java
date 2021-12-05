@@ -38,8 +38,7 @@ import java.util.function.Supplier;
 /**
  * Common functionality for cache related {@link ServiceAnnotatedMethodPostProcessor modifiers}.
  *
- * @param <A>
- *         The cache-related annotation
+ * @param <A> The cache-related annotation
  */
 public abstract class CacheServicePostProcessor<A extends Annotation> extends ServiceAnnotatedMethodPostProcessor<A, UseCaching> {
 

@@ -35,10 +35,8 @@ public class TableRow {
     public TableRow() {}
 
     /**
-     * @param column
-     *         Indicates which columns to assign the value to
-     * @param value
-     *         Indicates the value of the column
+     * @param column Indicates which columns to assign the value to
+     * @param value Indicates the value of the column
      *
      * @return The instance of this TableRow
      */
@@ -56,10 +54,8 @@ public class TableRow {
     }
 
     /**
-     * @param column
-     *         Indicates which columns to get the value from
-     * @param <T>
-     *         Indicates what class type of object is used and returned
+     * @param column Indicates which columns to get the value from
+     * @param <T> Indicates what class type of object is used and returned
      *
      * @return Return a Nullable value of the asked column
      */

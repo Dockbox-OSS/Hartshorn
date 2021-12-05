@@ -27,8 +27,7 @@ import java.lang.reflect.Type;
  * Generic type reference, allowing for generic type reading. This is derived
  * from Jackson's TypeReference.
  *
- * @param <T>
- *         The generic type
+ * @param <T> The generic type
  */
 public abstract class GenericType<T> implements Comparable<GenericType<T>> {
 

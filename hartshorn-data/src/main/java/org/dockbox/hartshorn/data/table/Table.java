@@ -69,8 +69,7 @@ public class Table {
      * modified later unless a select action is performed, creating a split copy of this table
      * instance.
      *
-     * @param columns
-     *         The column identifiers
+     * @param columns The column identifiers
      */
     public Table(final ColumnIdentifier<?>... columns) {
         this.identifiers = columns;
@@ -158,16 +157,10 @@ public class Table {
      * the field will not be converted to a column entry in the row. One attempt will be made to make the
      * field accessible if it is not already.
      *
-     * @param object
-     *         Object to "try to" add as a row to the table
+     * @param object Object to "try to" add as a row to the table
      *
-     * @throws IllegalArgumentException
-     *         When a field cannot be accessed or cast correctly. Contains
-     *         the causing {@link Exception} as the cause.
-     * @throws UnknownIdentifierException
-     *         When no column identifier could be found or generated, or
-     *         when there are not enough fields present to satiate the column identifiers present in this
-     *         table.
+     * @throws IllegalArgumentException When a field cannot be accessed or cast correctly. Contains the causing {@link Exception} as the cause.
+     * @throws UnknownIdentifierException When no column identifier could be found or generated, or when there are not enough fields present to satiate the column identifiers present in this table.
      */
     public void addRow(final Object object) {
         final TableRow row = new TableRow();
@@ -216,12 +209,9 @@ public class Table {
      * match up with its expected {@link ColumnIdentifier} an exception is thrown and the row is not
      * inserted into the table.
      *
-     * @param values
-     *         Objects to "try to" add as rows to the table
+     * @param values Objects to "try to" add as rows to the table
      *
-     * @throws IllegalArgumentException
-     *         When the amount of values does not meet the amount of column
-     *         headers, or when the data type of the object does not match the expected type.
+     * @throws IllegalArgumentException When the amount of values does not meet the amount of column headers, or when the data type of the object does not match the expected type.
      */
     public void addRow(final Object... values) {
         if (values.length != this.identifiers.length)
@@ -246,17 +236,12 @@ public class Table {
      * table can be disposed of without affecting the other. Row references are shared between both
      * tables.
      *
-     * @param <T>
-     *         Indicates the class that both the Identifier and the Filter must have
-     * @param column
-     *         Indicates which column is used to search through the table
-     * @param filter
-     *         Indicates what value to search for
+     * @param <T> Indicates the class that both the Identifier and the Filter must have
+     * @param column Indicates which column is used to search through the table
+     * @param filter Indicates what value to search for
      *
      * @return Returns the new table with the filter applied
-     * @throws IllegalArgumentException
-     *         When a row causes a {@link IdentifierMismatchException}.
-     *         Typically, this is never thrown unless changes were made from another thread.
+     * @throws IllegalArgumentException When a row causes a {@link IdentifierMismatchException}. Typically, this is never thrown unless changes were made from another thread.
      */
     public <T> Table where(final ColumnIdentifier<T> column, final T filter) {
         if (!this.hasColumn(column))
@@ -286,20 +271,14 @@ public class Table {
      * Overloaded method for {@link #join(Table, ColumnIdentifier, Merge, boolean)}. Empty entries
      * will not be populated using this method.
      *
-     * @param <T>
-     *         The data type of the column
-     * @param otherTable
-     *         The other/foreign table
-     * @param column
-     *         The column to join on
-     * @param merge
-     *         The merge behavior
+     * @param <T> The data type of the column
+     * @param otherTable The other/foreign table
+     * @param column The column to join on
+     * @param merge The merge behavior
      *
      * @return A new table with the joined rows
-     * @throws EmptyEntryException
-     *         Thrown if an entry is empty and cannot be populated
-     * @throws IdentifierMismatchException
-     *         When an identifier does not exist across both tables
+     * @throws EmptyEntryException Thrown if an entry is empty and cannot be populated
+     * @throws IdentifierMismatchException When an identifier does not exist across both tables
      */
     public <T> Table join(@NonNull final Table otherTable, final ColumnIdentifier<T> column, final Merge merge)
             throws EmptyEntryException, IdentifierMismatchException {
@@ -341,22 +320,15 @@ public class Table {
      * {@code populateEmptyEntries} indicates whether to treat this is an illegal state, or populate
      * the entry with null.
      *
-     * @param <T>
-     *         The data type of the column
-     * @param otherTable
-     *         The other/foreign table
-     * @param column
-     *         The column to join on
-     * @param merge
-     *         The merge behavior
-     * @param populateEmptyEntries
-     *         Whether empty entries should be populated (with null)
+     * @param <T> The data type of the column
+     * @param otherTable The other/foreign table
+     * @param column The column to join on
+     * @param merge The merge behavior
+     * @param populateEmptyEntries Whether empty entries should be populated (with null)
      *
      * @return A new table with the joined rows
-     * @throws EmptyEntryException
-     *         Thrown if an entry is empty and cannot be populated
-     * @throws IdentifierMismatchException
-     *         When an identifier does not exist across both tables
+     * @throws EmptyEntryException Thrown if an entry is empty and cannot be populated
+     * @throws IdentifierMismatchException When an identifier does not exist across both tables
      */
     public <T> Table join(
             @NonNull final Table otherTable,
@@ -439,8 +411,7 @@ public class Table {
      * Selects only the given columns of a table. Returns a new table populated with all the rows in
      * the origin table, but only with the columns provided.
      *
-     * @param columns
-     *         Indicates the columns to select
+     * @param columns Indicates the columns to select
      *
      * @return Return the new table with only the selected columns
      */
@@ -470,12 +441,9 @@ public class Table {
      * more or less column identifiers it is not accepted into the table. If a row has a column which
      * is not contained in this table it is not accepted into the table.
      *
-     * @param row
-     *         The row object to add to the table
+     * @param row The row object to add to the table
      *
-     * @throws IdentifierMismatchException
-     *         When there is a column mismatch between the row and the
-     *         table
+     * @throws IdentifierMismatchException When there is a column mismatch between the row and the table
      */
     public void addRow(final TableRow row) throws IdentifierMismatchException {
         // Check if the row has the same amount of column as this table
@@ -497,8 +465,7 @@ public class Table {
     /**
      * Returns whether the table contains the given {@link ColumnIdentifier}.
      *
-     * @param column
-     *         The column
+     * @param column The column
      *
      * @return Whether the column is present
      */
@@ -543,17 +510,11 @@ public class Table {
      * ColumnIdentifier} to be an implementation of {@link Comparable}. This modifies the existing
      * table.
      *
-     * @param <T>
-     *         The type constraint indicating this method only accepts implementations of {@link
-     *         Comparable}
-     * @param column
-     *         Indicates the column to order by
-     * @param order
-     *         Indicates what way to order the table by
+     * @param <T> The type constraint indicating this method only accepts implementations of {@link Comparable}
+     * @param column Indicates the column to order by
+     * @param order Indicates what way to order the table by
      *
-     * @throws IllegalArgumentException
-     *         When the table does not contain the given column, or the data
-     *         type is not a {@link Comparable}
+     * @throws IllegalArgumentException When the table does not contain the given column, or the data type is not a {@link Comparable}
      */
     public <T extends Comparable> void orderBy(final ColumnIdentifier<T> column, final Order order) {
         if (!this.hasColumn(column))
@@ -574,8 +535,7 @@ public class Table {
     /**
      * Returns whether the table contains the given {@link TableRow}
      *
-     * @param row
-     *         The row
+     * @param row The row
      *
      * @return Whether the row is present
      */

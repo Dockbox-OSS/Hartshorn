@@ -27,8 +27,7 @@ import java.util.Collection;
  * Represents a single value-carrying command element. This can be either
  * a command argument, or a 'value' flag.
  *
- * @param <T>
- *         The type this element holds
+ * @param <T> The type this element holds
  */
 public interface CommandElement<T> extends CommandPartial {
 
@@ -45,10 +44,8 @@ public interface CommandElement<T> extends CommandPartial {
      * Converts a given raw argument into type <code>T</code>. The provided
      * {@link CommandSource} may provide additional context to the implementation.
      *
-     * @param source
-     *         The command source executing a command containing the argument
-     * @param argument
-     *         The raw argument without the associated key
+     * @param source The command source executing a command containing the argument
+     * @param argument The raw argument without the associated key
      *
      * @return The converted object of type <code>T</code>, or {@link Exceptional#empty()}
      */
@@ -60,12 +57,10 @@ public interface CommandElement<T> extends CommandPartial {
      * <p>For example, when possible values are: <code>one, two, three</code>, with the input
      * being <code>t</code>, the returned collection will be <code>two, three</code>.
      *
-     * @param source
-     *         The command source executing a command containing the argument
-     * @param argument
-     *         The incomplete raw argument
+     * @param source The command source executing a command containing the argument
+     * @param argument The incomplete raw argument
      *
-     * @return All suggested values, or {@link HartshornUtils#emptyList()}
+     * @return All suggested values, or empty {@link Collection}
      */
     Collection<String> suggestions(CommandSource source, String argument);
 

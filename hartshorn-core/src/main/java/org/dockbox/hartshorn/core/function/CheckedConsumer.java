@@ -24,8 +24,7 @@ import org.dockbox.hartshorn.core.exceptions.ApplicationException;
  * result. Unlike most other functional interfaces, {@code CheckedConsumer} is
  * expected to operate via side effects.
  *
- * @param <T>
- *         the type of the input to the operation
+ * @param <T> the type of the input to the operation
  */
 @FunctionalInterface
 @Deprecated(since = "4.2.5", forRemoval = true)

@@ -44,10 +44,8 @@ public final class HartshornApplication {
     /**
      * Creates the bootstrapped server instance using the provided {@link Activator} metadata.
      *
-     * @param activator
-     *         The activator type, providing application metadata
-     * @param modifiers
-     *         The modifiers to use when bootstrapping
+     * @param activator The activator type, providing application metadata
+     * @param modifiers The modifiers to use when bootstrapping
      */
     public static ApplicationContext create(final Class<?> activator, final String[] args, final Modifier... modifiers) {
         try {

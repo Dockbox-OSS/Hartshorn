@@ -91,11 +91,9 @@ public final class Hartshorn {
      * returned. If the requested file name is invalid, or {@code null}, a {@link Exceptional}
      * containing the appropriate exception is returned.
      *
-     * @param name
-     *         The name of the file to look up
+     * @param name The name of the file to look up
      *
-     * @return The resource file wrapped in a {@link Exceptional}, or an appropriate {@link
-     *         Exceptional} (either none or providing the appropriate exception).
+     * @return The resource file wrapped in a {@link Exceptional}, or an appropriate {@link Exceptional} (either none or providing the appropriate exception).
      */
     public static Exceptional<Path> resource(final String name) {
         try {

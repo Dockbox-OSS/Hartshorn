@@ -37,9 +37,7 @@ public class RegistryColumn<T> extends ArrayList<T> {
     /**
      * Filters the RegistryColumn based on the provided filter.
      *
-     * @param filter
-     *         The filter accepts a value of type {@code T} or its parents and returns false to
-     *         keep that value, true to remove it.
+     * @param filter The filter accepts a value of type {@code T} or its parents and returns false to keep that value, true to remove it.
      *
      * @return Itself
      */
@@ -51,11 +49,8 @@ public class RegistryColumn<T> extends ArrayList<T> {
     /**
      * Maps this registryColumn to another type.
      *
-     * @param mapper
-     *         The mapper accepts a value of type {@code T} or its parents and returns a value
-     *         of type {@code K}.
-     * @param <K>
-     *         The type of the new RegistryColumn.
+     * @param mapper The mapper accepts a value of type {@code T} or its parents and returns a value of type {@code K}.
+     * @param <K> The type of the new RegistryColumn.
      *
      * @return A new RegistryColumn which contains the mapped values of the previous RegistryColumn.
      */
@@ -72,11 +67,8 @@ public class RegistryColumn<T> extends ArrayList<T> {
      * Maps this registryColumn to a collection and then adds all the collections into a new single
      * RegistryColumn
      *
-     * @param mapper
-     *         The mapper accepts a value of type {@code T} or its parents and returns a
-     *         collection of type {@code K}.
-     * @param <K>
-     *         The type of the new RegistryColumn.
+     * @param mapper The mapper accepts a value of type {@code T} or its parents and returns a collection of type {@code K}.
+     * @param <K> The type of the new RegistryColumn.
      *
      * @return A new RegistryColumn which contains all the values of the collections.
      */
@@ -93,13 +85,10 @@ public class RegistryColumn<T> extends ArrayList<T> {
      * Attempts to cast the values to the specified type {@code K}. If the value is not an instance of
      * type {@code K} then it is not added to the resulting RegistryColumn.
      *
-     * @param clazz
-     *         The class of the type to convert to.
-     * @param <K>
-     *         The type of the new RegistryColumn
+     * @param clazz The class of the type to convert to.
+     * @param <K> The type of the new RegistryColumn
      *
-     * @return A new RegistryColumn which contains all the values of the previous RegistryColumn that
-     *         could be converted.
+     * @return A new RegistryColumn which contains all the values of the previous RegistryColumn that could be converted.
      */
     public <K extends T> RegistryColumn<K> convertTo(final Class<K> clazz) {
         final RegistryColumn<K> result = new RegistryColumn<>();
@@ -116,9 +105,7 @@ public class RegistryColumn<T> extends ArrayList<T> {
     /**
      * Finds the first value which matches the provided predicate.
      *
-     * @param predicate
-     *         The predicate takes in a value of type {@code T} or its parents and returns
-     *         true if that value is a match, otherwise it returns false.
+     * @param predicate The predicate takes in a value of type {@code T} or its parents and returns true if that value is a match, otherwise it returns false.
      *
      * @return An {@link Exceptional} containing the value of the first match, if one is found.
      */
@@ -132,8 +119,7 @@ public class RegistryColumn<T> extends ArrayList<T> {
     /**
      * Safely returns the first element in the RegistryColumn.
      *
-     * @return An {@link Exceptional} containing the first element in the RegistryColumn, if one is
-     *         found.
+     * @return An {@link Exceptional} containing the first element in the RegistryColumn, if one is found.
      */
     public Exceptional<T> first() {
         return this.safe(0);
@@ -142,11 +128,9 @@ public class RegistryColumn<T> extends ArrayList<T> {
     /**
      * Safely get an element by wrapping it within an {@link Exceptional}.
      *
-     * @param index
-     *         The index of the element to retrieve.
+     * @param index The index of the element to retrieve.
      *
-     * @return An {@link Exceptional} containing the element at the provided index in the
-     *         RegistryColumn, if one is found.
+     * @return An {@link Exceptional} containing the element at the provided index in the RegistryColumn, if one is found.
      */
     public Exceptional<T> safe(final int index) {
         return Exceptional.of(() -> this.get(index));

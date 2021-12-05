@@ -74,10 +74,8 @@ public class PrefixContext extends DefaultContext {
      * typically a package. If the annotation is present on a parent of the type, the highest level
      * member will be included.
      *
-     * @param <A>
-     *         The annotation constraint
-     * @param annotation
-     *         The annotation expected to be present on one or more types
+     * @param <A> The annotation constraint
+     * @param annotation The annotation expected to be present on one or more types
      *
      * @return The annotated types
      */
@@ -103,12 +101,9 @@ public class PrefixContext extends DefaultContext {
      * typically a package. If the annotation is present on a parent of the type, it will only be
      * included if {@code skipParents} is false.
      *
-     * @param <A>
-     *         The annotation constraint
-     * @param annotation
-     *         The annotation expected to be present on one or more types
-     * @param skipParents
-     *         Whether to include the type if supertypes are annotated
+     * @param <A> The annotation constraint
+     * @param annotation The annotation expected to be present on one or more types
+     * @param skipParents Whether to include the type if supertypes are annotated
      *
      * @return The annotated types
      */
@@ -141,10 +136,8 @@ public class PrefixContext extends DefaultContext {
      * Gets all sub-types of a given type. The prefix is typically a package. If no sub-types exist
      * for the given type, and empty list is returned.
      *
-     * @param parent
-     *         The parent type to scan for subclasses
-     * @param <T>
-     *         The type of the parent
+     * @param parent The parent type to scan for subclasses
+     * @param <T> The type of the parent
      *
      * @return The list of sub-types, or an empty list
      */

@@ -86,12 +86,9 @@ public final class EventWrapperImpl<T> implements Comparable<EventWrapperImpl<T>
      * Creates one or more {@link EventWrapperImpl}s (depending on how many event parameters are
      * present) for a given method and instance.
      *
-     * @param type
-     *         The type of the instance which is used when invoking the method.
-     * @param method
-     *         The method to store for invocation.
-     * @param priority
-     *         The priority at which the event is fired.
+     * @param type The type of the instance which is used when invoking the method.
+     * @param method The method to store for invocation.
+     * @param priority The priority at which the event is fired.
      *
      * @return The list of {@link EventWrapperImpl}s
      */

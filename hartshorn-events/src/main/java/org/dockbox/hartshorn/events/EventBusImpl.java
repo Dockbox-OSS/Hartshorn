@@ -85,8 +85,7 @@ public class EventBusImpl implements EventBus {
      * Subscribes all event listeners in an object instance. Typically, event listeners are methods
      * decorated with {@link Listener}.
      *
-     * @param type
-     *         The instance of the listener
+     * @param type The instance of the listener
      */
     @Override
     public void subscribe(final TypeContext<?> type) {
@@ -109,8 +108,7 @@ public class EventBusImpl implements EventBus {
     /**
      * Unsubscribes all event listeners in an object instance.
      *
-     * @param type
-     *         The instance of the listener
+     * @param type The instance of the listener
      */
     @Override
     public void unsubscribe(final TypeContext<?> type) {
@@ -152,8 +150,7 @@ public class EventBusImpl implements EventBus {
     /**
      * Gets all {@link EventWrapper} instances for a given listener instance.
      *
-     * @param type
-     *         The listener type
+     * @param type The listener type
      *
      * @return The invokers
      */
@@ -179,11 +176,9 @@ public class EventBusImpl implements EventBus {
      *   <li>Has at least one parameter which is a subclass of {@link Event}
      * </ul>
      *
-     * @param method
-     *         the method
+     * @param method the method
      *
-     * @throws IllegalArgumentException
-     *         the illegal argument exception
+     * @throws IllegalArgumentException the illegal argument exception
      */
     protected void checkListenerMethod(final MethodContext<?, ?> method) throws IllegalArgumentException {
         for (final Function<MethodContext<?, ?>, Exceptional<Boolean>> validator : this.validators) {

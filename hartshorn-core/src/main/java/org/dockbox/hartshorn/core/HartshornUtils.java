@@ -92,16 +92,12 @@ public final class HartshornUtils {
      * provided {@link HartshornUtils#emptyMap()} is returned. The constructed map is not concurrent.
      * Entries can easily be created using {@link HartshornUtils#entry(Object, Object)}
      *
-     * @param <K>
-     *         The (super)type of all keys in the entry set
-     * @param <V>
-     *         The (super)type of all values in the entry set
-     * @param entries
-     *         The entries to use while constructing a new map
+     * @param <K> The (super)type of all keys in the entry set
+     * @param <V> The (super)type of all values in the entry set
+     * @param entries The entries to use while constructing a new map
      *
      * @return The new non-concurrent map
-     * @throws NullPointerException
-     *         If an entry is null
+     * @throws NullPointerException If an entry is null
      * @see HartshornUtils#entry(Object, Object)
      */
     @SafeVarargs
@@ -122,13 +118,10 @@ public final class HartshornUtils {
      * Returns a new empty map. This should be used globally instead of instantiating maps manually.
      * The returned map is not concurrent.
      *
-     * @param <K>
-     *         The (super)type of the map key-set
-     * @param <V>
-     *         The (super)type of the map value-set
+     * @param <K> The (super)type of the map key-set
+     * @param <V> The (super)type of the map value-set
      *
      * @return The new map
-     * @see HartshornUtils#emptyConcurrentMap()
      */
     public static <K, V> Map<K, V> emptyMap() {
         return new HashMap<>();
@@ -138,14 +131,10 @@ public final class HartshornUtils {
      * Creates a new entry based on a given key and value combination. Both the key and value may be
      * null.
      *
-     * @param <K>
-     *         The type of the key
-     * @param <V>
-     *         The type of the value
-     * @param k
-     *         The key
-     * @param v
-     *         The value
+     * @param <K> The type of the key
+     * @param <V> The type of the value
+     * @param k The key
+     * @param v The value
      *
      * @return The entry
      * @see HartshornUtils#ofEntries(Entry[])
@@ -624,13 +613,10 @@ public final class HartshornUtils {
     }
 
     /**
-     * Rounds a {@code double} value to a specific amount of decimals, up to at most {@link
-     * HartshornUtils#MAXIMUM_DECIMALS the maximum amount of decimals}.
+     * Rounds a {@code double} value to a specific amount of decimals.
      *
-     * @param value
-     *         The {@code double} value to round
-     * @param decimalPlaces
-     *         The amount of decimal places
+     * @param value The {@code double} value to round
+     * @param decimalPlaces The amount of decimal places
      *
      * @return The rounded {@code double}
      */
@@ -691,12 +677,9 @@ public final class HartshornUtils {
      * cuboid, {@code min} represents point D, {@code max} represents point F, and {@code vec} is
      * represented by point I.
      *
-     * @param min
-     *         The minimum vector of the cuboid region
-     * @param max
-     *         The maximum vector of the cuboid region
-     * @param vec
-     *         The vector position in 3D space
+     * @param min The minimum vector of the cuboid region
+     * @param max The maximum vector of the cuboid region
+     * @param vec The vector position in 3D space
      *
      * @return true if {@code vec} is inside the 3D cuboid region
      * @see HartshornUtils#inCuboidRegion(int, int, int, int, int, int, int, int, int)
@@ -718,24 +701,15 @@ public final class HartshornUtils {
      * {@code min} represents point D, {@code max} represents point F, and {@code vec} is represented
      * by point I.
      *
-     * @param x_min
-     *         The position of the minimum vector on the X axis
-     * @param x_max
-     *         The position of the maximum vector on the X axis
-     * @param y_min
-     *         The position of the minimum vector on the Y axis
-     * @param y_max
-     *         The position of the maximum vector on the Y axis
-     * @param z_min
-     *         The position of the minimum vector on the Z axis
-     * @param z_max
-     *         The position of the maximum vector on the Z axis
-     * @param x
-     *         The position of the vector on the X axis
-     * @param y
-     *         The position of the vector on the Y axis
-     * @param z
-     *         The position of the vector on the Z axis
+     * @param x_min The position of the minimum vector on the X axis
+     * @param x_max The position of the maximum vector on the X axis
+     * @param y_min The position of the minimum vector on the Y axis
+     * @param y_max The position of the maximum vector on the Y axis
+     * @param z_min The position of the minimum vector on the Z axis
+     * @param z_max The position of the maximum vector on the Z axis
+     * @param x The position of the vector on the X axis
+     * @param y The position of the vector on the Y axis
+     * @param z The position of the vector on the Z axis
      *
      * @return true if the defined vector is inside the 3D cuboid region
      */
@@ -784,10 +758,8 @@ public final class HartshornUtils {
     /**
      * Merge t [ ].
      *
-     * @param arrayOne
-     *         the array one
-     * @param arrayTwo
-     *         the array two
+     * @param arrayOne the array one
+     * @param arrayTwo the array two
      *
      * @return the t [ ]
      */
@@ -801,12 +773,9 @@ public final class HartshornUtils {
     /**
      * Add all t [ ].
      *
-     * @param <T>
-     *         the type parameter
-     * @param array1
-     *         the array 1
-     * @param array2
-     *         the array 2
+     * @param <T> the type parameter
+     * @param array1 the array 1
+     * @param array2 the array 2
      *
      * @return the t [ ]
      */
@@ -827,10 +796,8 @@ public final class HartshornUtils {
     /**
      * Shallow copy t @ nullable [ ].
      *
-     * @param <T>
-     *         the type parameter
-     * @param array
-     *         the array
+     * @param <T> the type parameter
+     * @param array the array
      *
      * @return the t @ nullable [ ]
      */
@@ -963,8 +930,7 @@ public final class HartshornUtils {
      * Returns true if a given {@link CheckedRunnable function} does not throw any type of exception
      * when ran. Acts as inverse of {@link HartshornUtils#throwsException(CheckedRunnable)}.
      *
-     * @param runnable
-     *         The function to run
+     * @param runnable The function to run
      *
      * @return true if the function does not throw an exception
      * @see HartshornUtils#throwsException(CheckedRunnable)
@@ -976,8 +942,7 @@ public final class HartshornUtils {
     /**
      * Returns true if a given {@link CheckedRunnable function} throws any type of exception when ran.
      *
-     * @param runnable
-     *         The function to run
+     * @param runnable The function to run
      *
      * @return true if the function throws an exception
      */
@@ -996,10 +961,8 @@ public final class HartshornUtils {
      * exception when ran. Acts as inverse of {@link HartshornUtils#throwsException(CheckedRunnable,
      * Class)}.
      *
-     * @param runnable
-     *         The function to run
-     * @param exception
-     *         The expected type of exception
+     * @param runnable The function to run
+     * @param exception The expected type of exception
      *
      * @return true if the function does not throw an exception
      * @see HartshornUtils#throwsException(CheckedRunnable, Class)
@@ -1012,10 +975,8 @@ public final class HartshornUtils {
      * Returns true if a given {@link CheckedRunnable function} throws a specific type of exception
      * when ran.
      *
-     * @param runnable
-     *         The function to run
-     * @param exception
-     *         The expected type of exception
+     * @param runnable The function to run
+     * @param exception The expected type of exception
      *
      * @return true if the function throws the expected exception
      */
