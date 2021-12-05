@@ -35,6 +35,7 @@ import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.i18n.Message;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -65,16 +66,16 @@ public class CommandParserImpl implements CommandParser {
         final CommandDefinitionContext containerContext = container.get();
         final List<CommandElement<?>> elements = containerContext.elements();
 
-        final List<CommandParameter<?>> parsedElements = new ArrayList<>();
-        final List<CommandParameter<?>> parsedFlags = new ArrayList<>();
 
         // Ensure no aliases are left, so they are not accidentally parsed
         String stripped = context.strip(command, false);
+
         // Strip all flags beforehand so elements can be parsed safely without flag interference
+        final List<CommandParameter<?>> parsedFlags = new ArrayList<>();
         stripped = this.stripFlags(stripped, parsedFlags, source, containerContext);
 
-        final List<String> tokens = List.of(stripped.split(" "));
-        parsedElements.addAll(this.parse(elements, tokens, source));
+        final List<String> tokens = new ArrayList<>(Arrays.asList(stripped.split(" ")));
+        final List<CommandParameter<?>> parsedElements = new ArrayList<>(this.parse(elements, tokens, source));
 
         applicationContext.log().debug("Parsed %d elements and %d flags for input %s".formatted(parsedElements.size(), parsedFlags.size(), command));
 

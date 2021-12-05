@@ -22,6 +22,7 @@ import org.dockbox.hartshorn.core.Key;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -104,7 +105,7 @@ public class NativeBindingHierarchy<C> implements BindingHierarchy<C> {
         }
 
         // The priorities are stored high to low, however we want to display them as low-to-high.
-        final List<Entry<Integer, Provider<C>>> entries = List.copyOf(this.bindings.entrySet());
+        final List<Entry<Integer, Provider<C>>> entries = new ArrayList<>(this.bindings.entrySet());
         Collections.reverse(entries);
 
         final String hierarchy = entries.stream()

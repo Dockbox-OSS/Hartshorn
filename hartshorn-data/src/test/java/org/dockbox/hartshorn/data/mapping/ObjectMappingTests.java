@@ -85,7 +85,7 @@ public class ObjectMappingTests {
         final Exceptional<String> result = mapper.write(content);
 
         Assertions.assertTrue(result.present());
-        Assertions.assertEquals(expected, result.get());
+        Assertions.assertEquals(expected.replaceAll("[ \n]+", ""), result.get().replaceAll("[ \n\r]+", ""));
     }
 
     @ParameterizedTest
