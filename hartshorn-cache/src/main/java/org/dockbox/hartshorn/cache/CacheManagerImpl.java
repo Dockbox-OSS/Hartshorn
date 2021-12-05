@@ -17,13 +17,13 @@
 
 package org.dockbox.hartshorn.cache;
 
-import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.annotations.inject.Binds;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
-import org.dockbox.hartshorn.core.HartshornUtils;
+import org.dockbox.hartshorn.core.domain.Exceptional;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -37,14 +37,14 @@ import javax.inject.Singleton;
 @Singleton
 public class CacheManagerImpl implements CacheManager {
 
-    protected final Map<String, Cache<?>> caches = HartshornUtils.emptyConcurrentMap();
+    protected final Map<String, Cache<?>> caches = new ConcurrentHashMap<>();
 
     @Inject
     private ApplicationContext context;
 
     @Override
     public List<Cache<?>> caches() {
-        return HartshornUtils.asUnmodifiableList(this.caches.values());
+        return List.copyOf(this.caches.values());
     }
 
     @Override

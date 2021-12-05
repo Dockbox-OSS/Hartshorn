@@ -19,15 +19,15 @@ package org.dockbox.hartshorn.events.listeners;
 
 import org.dockbox.hartshorn.events.GenericEvent;
 import org.dockbox.hartshorn.events.annotations.Listener;
-import org.dockbox.hartshorn.core.HartshornUtils;
 
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import lombok.Getter;
 
 public class GenericEventListener {
 
-    @Getter private static final List<Object> objects = HartshornUtils.emptyList();
+    @Getter private static final List<Object> objects = new CopyOnWriteArrayList<>();
 
     @Listener
     public void onString(final GenericEvent<String> event) {

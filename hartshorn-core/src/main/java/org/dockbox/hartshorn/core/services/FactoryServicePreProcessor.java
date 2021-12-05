@@ -17,7 +17,6 @@
 
 package org.dockbox.hartshorn.core.services;
 
-import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.core.Key;
 import org.dockbox.hartshorn.core.annotations.Factory;
 import org.dockbox.hartshorn.core.annotations.service.AutomaticActivation;
@@ -30,6 +29,7 @@ import org.dockbox.hartshorn.core.context.element.ConstructorContext;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
 
@@ -54,7 +54,7 @@ public class FactoryServicePreProcessor implements ServicePreProcessor<Service> 
             Key<?> key = Key.of(method.returnType());
             if (!"".equals(annotation.value())) key = Key.of(method.returnType(), annotation.value());
 
-            final Set<TypeContext<?>> types = HartshornUtils.emptySet();
+            final Set<TypeContext<?>> types = new HashSet<>();
             for (final Provider<?> provider : context.hierarchy(key).providers()) {
                 if (provider instanceof ContextDrivenProvider contextDrivenProvider) {
                     types.add(contextDrivenProvider.context());

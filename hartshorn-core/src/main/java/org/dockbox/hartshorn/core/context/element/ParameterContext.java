@@ -17,8 +17,6 @@
 
 package org.dockbox.hartshorn.core.context.element;
 
-import org.dockbox.hartshorn.core.HartshornUtils;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Executable;
 import java.lang.reflect.Method;
@@ -104,7 +102,7 @@ public final class ParameterContext<T> extends AnnotatedElementContext<Parameter
                         .collect(Collectors.toList());
             }
             else {
-                this.typeParameters = HartshornUtils.emptyList();
+                this.typeParameters = List.of();
             }
         }
         return this.typeParameters;

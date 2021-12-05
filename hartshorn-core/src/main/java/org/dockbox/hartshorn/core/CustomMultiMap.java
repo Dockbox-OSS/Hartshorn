@@ -20,14 +20,16 @@ package org.dockbox.hartshorn.core;
 import java.util.Collection;
 import java.util.function.Supplier;
 
-import lombok.Getter;
-
 public class CustomMultiMap<K, V> extends MultiMap<K, V> {
 
-    @Getter
-    private final Collection<V> baseCollection;
+    private final Supplier<Collection<V>> baseCollection;
 
     public CustomMultiMap(Supplier<Collection<V>> baseCollection) {
-        this.baseCollection = baseCollection.get();
+        this.baseCollection = baseCollection;
+    }
+
+    @Override
+    protected Collection<V> baseCollection() {
+        return this.baseCollection.get();
     }
 }

@@ -31,11 +31,14 @@ import org.dockbox.hartshorn.data.exceptions.UnknownIdentifierException;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -71,12 +74,11 @@ public class Table {
      */
     public Table(final ColumnIdentifier<?>... columns) {
         this.identifiers = columns;
-        this.rows = HartshornUtils.emptyConcurrentList();
+        this.rows = new CopyOnWriteArrayList<>();
     }
 
     public Table(final Collection<ColumnIdentifier<?>> columns) {
-        this.identifiers = columns.toArray(new ColumnIdentifier[0]);
-        this.rows = HartshornUtils.emptyConcurrentList();
+        this(columns.toArray(new ColumnIdentifier[0]));
     }
 
     private static <T> List<TableRow> matching(final TableRow row, final Table otherTable, final ColumnIdentifier<T> column) {
@@ -121,7 +123,7 @@ public class Table {
 
     public static Table of(final TypeContext<?> type) {
         if (!DEFINITIONS.containsKey(type)) {
-            final List<ColumnIdentifier<?>> identifiers = HartshornUtils.emptyList();
+            final List<ColumnIdentifier<?>> identifiers = new ArrayList<>();
             for (final FieldContext<?> field : type.fields()) {
                 if (field.isTransient()) continue;
 
@@ -135,7 +137,7 @@ public class Table {
             }
             DEFINITIONS.put(type, identifiers);
         }
-        return new Table(DEFINITIONS.getOrDefault(type, HartshornUtils.emptyList()));
+        return new Table(DEFINITIONS.getOrDefault(type, List.of()));
     }
 
     @SafeVarargs
@@ -260,7 +262,7 @@ public class Table {
         if (!this.hasColumn(column))
             throw new UnknownIdentifierException("Cannot look up a column that does not exist");
 
-        final Collection<TableRow> filteredRows = HartshornUtils.emptyList();
+        final Collection<TableRow> filteredRows = new ArrayList<>();
         for (final TableRow row : this.rows) {
             final Exceptional<T> value = row.value(column);
             if (!value.present()) continue;
@@ -364,8 +366,8 @@ public class Table {
     ) throws EmptyEntryException, IdentifierMismatchException {
         if (this.hasColumn(column) && otherTable.hasColumn(column)) {
 
-            final List<ColumnIdentifier<?>> mergedIdentifiers = HartshornUtils.emptyList();
-            for (final ColumnIdentifier<?> identifier : HartshornUtils.addAll(this.identifiers(), otherTable.identifiers())) {
+            final List<ColumnIdentifier<?>> mergedIdentifiers = new ArrayList<>();
+            for (final ColumnIdentifier<?> identifier : HartshornUtils.merge(this.identifiers(), otherTable.identifiers())) {
                 if (mergedIdentifiers.contains(identifier)) continue;
                 mergedIdentifiers.add(identifier);
             }
@@ -590,11 +592,11 @@ public class Table {
      * @return Return the table's rows
      */
     public List<TableRow> rows() {
-        return HartshornUtils.asUnmodifiableList(this.rows);
+        return Collections.unmodifiableList(this.rows);
     }
 
     public <T> List<T> rows(final TypeContext<T> type) {
-        final List<T> items = HartshornUtils.emptyList();
+        final List<T> items = new ArrayList<>();
 
         final Exceptional<ConstructorContext<T>> constructor = type.defaultConstructor();
         if (constructor.absent()) {
@@ -609,7 +611,7 @@ public class Table {
                 type.populate(instance.get(), data);
             }
         }
-        return items;
+        return List.copyOf(items);
     }
 
     public void forEach(final Consumer<TableRow> consumer) {
@@ -618,14 +620,14 @@ public class Table {
 
     @Override
     public String toString() {
-        final List<List<String>> rows = HartshornUtils.emptyList();
-        final List<String> headers = HartshornUtils.emptyList();
+        final List<List<String>> rows = new ArrayList<>();
+        final List<String> headers = new ArrayList<>();
         for (final ColumnIdentifier<?> identifier : this.identifiers) {
             headers.add(identifier.name());
         }
         rows.add(headers);
         for (final TableRow row : this.rows) {
-            final List<String> rowValues = HartshornUtils.emptyList();
+            final List<String> rowValues = new ArrayList<>();
             // In order of identifiers to ensure values are ordered
             for (final ColumnIdentifier<?> identifier : this.identifiers) {
                 rowValues.add(String.valueOf(row.value(identifier).orNull()));

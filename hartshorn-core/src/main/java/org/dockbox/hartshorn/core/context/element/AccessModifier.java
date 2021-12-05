@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.core.context.element;
 
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -51,6 +52,6 @@ public enum AccessModifier {
         for (final AccessModifier modifier : VALUES) {
             if (modifier.predicate.test(mod)) modifiers.add(modifier);
         }
-        return modifiers;
+        return Collections.unmodifiableList(modifiers);
     }
 }

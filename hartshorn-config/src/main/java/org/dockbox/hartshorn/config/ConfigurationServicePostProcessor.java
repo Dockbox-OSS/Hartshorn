@@ -20,18 +20,18 @@ package org.dockbox.hartshorn.config;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.config.annotations.UseConfigurations;
 import org.dockbox.hartshorn.config.annotations.Value;
-import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.core.annotations.service.AutomaticActivation;
 import org.dockbox.hartshorn.core.boot.Hartshorn;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.FieldContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
-import org.dockbox.hartshorn.core.exceptions.FieldAccessException;
 import org.dockbox.hartshorn.core.exceptions.NotPrimitiveException;
 import org.dockbox.hartshorn.core.exceptions.TypeConversionException;
 import org.dockbox.hartshorn.core.services.ComponentPostProcessor;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -64,8 +64,8 @@ public class ConfigurationServicePostProcessor implements ComponentPostProcessor
                     } catch (final NotPrimitiveException e) {
                         if (field.type().childOf(Collection.class)) {
                             if ("".equals(stringValue)) {
-                                if (field.type().childOf(List.class)) fieldValue = HartshornUtils.emptyList();
-                                if (field.type().childOf(Set.class)) fieldValue = HartshornUtils.emptySet();
+                                if (field.type().childOf(List.class)) fieldValue = new ArrayList<>();
+                                if (field.type().childOf(Set.class)) fieldValue = new HashSet<>();
                             } else {
                                 Hartshorn.log().warn("Cannot convert string '" + stringValue + "' to collection type");
                             }
@@ -75,7 +75,7 @@ public class ConfigurationServicePostProcessor implements ComponentPostProcessor
                 }
                 field.set(instance, fieldValue);
             }
-            catch (final FieldAccessException | TypeConversionException | NotPrimitiveException e) {
+            catch (final TypeConversionException | NotPrimitiveException e) {
                 Hartshorn.log().warn("Could not prepare value field " + field.name() + " in " + instanceType.name());
                 context.handle(e);
             }

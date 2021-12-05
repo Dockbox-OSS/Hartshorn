@@ -18,10 +18,9 @@
 package org.dockbox.hartshorn.core.binding;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.core.Key;
-import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
+import org.dockbox.hartshorn.core.domain.Exceptional;
 
 import java.util.Collections;
 import java.util.Iterator;
@@ -44,7 +43,7 @@ public class NativeBindingHierarchy<C> implements BindingHierarchy<C> {
 
     @Override
     public List<Provider<C>> providers() {
-        return HartshornUtils.asUnmodifiableList(this.bindings.values());
+        return List.copyOf(this.bindings.values());
     }
 
     @Override
@@ -105,7 +104,7 @@ public class NativeBindingHierarchy<C> implements BindingHierarchy<C> {
         }
 
         // The priorities are stored high to low, however we want to display them as low-to-high.
-        final List<Entry<Integer, Provider<C>>> entries = HartshornUtils.asList(this.bindings.entrySet());
+        final List<Entry<Integer, Provider<C>>> entries = List.copyOf(this.bindings.entrySet());
         Collections.reverse(entries);
 
         final String hierarchy = entries.stream()

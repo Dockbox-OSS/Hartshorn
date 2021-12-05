@@ -17,9 +17,8 @@
 
 package org.dockbox.hartshorn.core.context.element;
 
-import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
-import org.dockbox.hartshorn.core.HartshornUtils;
+import org.dockbox.hartshorn.core.domain.Exceptional;
 
 import java.lang.invoke.MethodType;
 import java.lang.reflect.Method;
@@ -28,13 +27,14 @@ import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.Map;
 import java.util.StringJoiner;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiFunction;
 
 import lombok.Getter;
 
 public class MethodContext<T, P> extends ExecutableElementContext<Method> {
 
-    private static final Map<Method, MethodContext<?, ?>> cache = HartshornUtils.emptyConcurrentMap();
+    private static final Map<Method, MethodContext<?, ?>> cache = new ConcurrentHashMap<>();
 
     @Getter private final Method method;
 
@@ -52,7 +52,9 @@ public class MethodContext<T, P> extends ExecutableElementContext<Method> {
         if (cache.containsKey(method))
             return cache.get(method);
 
-        return new MethodContext<>(method);
+        MethodContext<Object, Object> context = new MethodContext<>(method);
+        cache.put(method, context);
+        return context;
     }
 
     public Exceptional<T> invoke(final ApplicationContext context, final Collection<Object> arguments) {

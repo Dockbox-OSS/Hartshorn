@@ -17,14 +17,14 @@
 
 package org.dockbox.hartshorn.commands.arguments;
 
-import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.commands.annotations.Parameter;
 import org.dockbox.hartshorn.commands.service.CommandParameter;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
-import org.dockbox.hartshorn.core.HartshornUtils;
+import org.dockbox.hartshorn.core.domain.Exceptional;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * The default converter for any type which can be constructed with a {@link CustomParameterPattern}. Typically,
@@ -55,6 +55,6 @@ public class DynamicPatternConverter<T> extends DefaultArgumentConverter<T> {
 
     @Override
     public Collection<String> suggestions(final CommandSource source, final String argument) {
-        return HartshornUtils.emptyList();
+        return List.of();
     }
 }

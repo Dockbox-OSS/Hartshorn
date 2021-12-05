@@ -17,7 +17,6 @@
 
 package org.dockbox.hartshorn.core.context;
 
-import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.core.annotations.context.AutoCreating;
 import org.dockbox.hartshorn.core.context.element.ConstructorContext;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
@@ -26,6 +25,7 @@ import org.dockbox.hartshorn.core.services.FactoryServicePreProcessor;
 
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * The context used by the {@link FactoryServicePreProcessor} and {@link FactoryServicePostProcessor}. This context keeps track
@@ -35,7 +35,7 @@ import java.util.NoSuchElementException;
 @AutoCreating
 public class FactoryContext extends DefaultContext {
 
-    private final Map<MethodContext<?, ?>, ConstructorContext<?>> bounds = HartshornUtils.emptyConcurrentMap();
+    private final Map<MethodContext<?, ?>, ConstructorContext<?>> bounds = new ConcurrentHashMap<>();
 
     /**
      * Associates a constructor with a method.

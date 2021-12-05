@@ -25,6 +25,7 @@ import org.dockbox.hartshorn.core.HartshornUtils;
 
 import java.lang.reflect.Field;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
@@ -32,7 +33,7 @@ import lombok.Getter;
 
 public final class FieldContext<T> extends AnnotatedMemberContext<Field> implements TypedElementContext<T> {
 
-    private static final Map<Field, FieldContext<?>> cache = HartshornUtils.emptyConcurrentMap();
+    private static final Map<Field, FieldContext<?>> cache = new ConcurrentHashMap<>();
 
     @Getter private final Field field;
 

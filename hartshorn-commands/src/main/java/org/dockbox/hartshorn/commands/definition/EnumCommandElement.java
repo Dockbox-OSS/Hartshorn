@@ -18,7 +18,6 @@
 package org.dockbox.hartshorn.commands.definition;
 
 import org.dockbox.hartshorn.commands.CommandSource;
-import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 
@@ -59,7 +58,7 @@ public final class EnumCommandElement<E extends Enum<E>> implements CommandEleme
 
     @Override
     public Collection<String> suggestions(final CommandSource source, final String argument) {
-        return HartshornUtils.asUnmodifiableCollection(this.values.keySet()).stream()
+        return this.values.keySet().stream()
                 .filter(value -> value.toLowerCase(Locale.ROOT).startsWith(argument.toLowerCase(Locale.ROOT)))
                 .toList();
     }

@@ -354,7 +354,7 @@ public class ElementContextTests {
     void testAnnotatedTypeHasAnnotations() {
         final TypeContext<AnnotatedElement> typeContext = TypeContext.of(AnnotatedElement.class);
         Assertions.assertEquals(1, typeContext.annotations().size());
-        Assertions.assertEquals(Activator.class, typeContext.annotations().get(0).annotationType());
+        Assertions.assertEquals(Activator.class, typeContext.annotations().iterator().next().annotationType());
     }
 
     @Test

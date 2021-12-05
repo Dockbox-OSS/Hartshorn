@@ -50,6 +50,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -65,7 +66,7 @@ import lombok.Getter;
 @Binds(JpaRepository.class)
 public class HibernateJpaRepository<T, ID> implements JpaRepository<T, ID>, Enableable, Closeable {
 
-    private final Map<Class<? extends Remote<?>>, String> dialects = HartshornUtils.emptyConcurrentMap();
+    private final Map<Class<? extends Remote<?>>, String> dialects = new ConcurrentHashMap<>();
     private final Configuration configuration = new Configuration();
     private final Class<T> type;
 
@@ -219,7 +220,7 @@ public class HibernateJpaRepository<T, ID> implements JpaRepository<T, ID>, Enab
         final CriteriaQuery<T> criteria = builder.createQuery(this.reify());
         criteria.from(this.reify());
         final List<T> data = session.createQuery(criteria).getResultList();
-        return HartshornUtils.asUnmodifiableSet(data);
+        return Set.copyOf(data);
     }
 
     @Override

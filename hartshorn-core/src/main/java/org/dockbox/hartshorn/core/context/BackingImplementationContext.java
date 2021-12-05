@@ -18,11 +18,11 @@
 package org.dockbox.hartshorn.core.context;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.core.annotations.context.AutoCreating;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
 import lombok.Getter;
@@ -37,7 +37,7 @@ import lombok.Getter;
 @AutoCreating
 public class BackingImplementationContext extends DefaultContext {
 
-    private final Map<Class<?>, Object> implementations = HartshornUtils.emptyConcurrentMap();
+    private final Map<Class<?>, Object> implementations = new ConcurrentHashMap<>();
 
     /**
      * Gets the backing implementation instance for the given class, if it exists.

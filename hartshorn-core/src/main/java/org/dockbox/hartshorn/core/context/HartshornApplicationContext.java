@@ -71,6 +71,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -99,8 +100,8 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
     private final ComponentLocator locator;
     private final Set<Modifier> modifiers;
     private final Set<Annotation> activators = HartshornUtils.emptyConcurrentSet();
-    private final Map<Key<?>, Object> singletons = HartshornUtils.emptyConcurrentMap();
-    private final Map<Key<?>, BindingHierarchy<?>> hierarchies = HartshornUtils.emptyConcurrentMap();
+    private final Map<Key<?>, Object> singletons = new ConcurrentHashMap<>();
+    private final Map<Key<?>, BindingHierarchy<?>> hierarchies = new ConcurrentHashMap<>();
     private MetaProvider metaProvider;
 
     public HartshornApplicationContext(final ApplicationEnvironment environment, final Function<ApplicationContext, ComponentLocator> componentLocator,
@@ -212,8 +213,8 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
     }
 
     @Override
-    public List<Annotation> activators() {
-        return HartshornUtils.asUnmodifiableList(this.activators);
+    public Set<Annotation> activators() {
+        return Set.copyOf(this.activators);
     }
 
     @Override

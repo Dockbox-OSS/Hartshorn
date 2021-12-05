@@ -18,7 +18,7 @@
 package org.dockbox.hartshorn.core.task.pipeline.pipelines;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.dockbox.hartshorn.core.annotations.PartialApi;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.task.pipeline.CancelBehaviour;
 import org.dockbox.hartshorn.core.task.pipeline.exceptions.IllegalPipeException;
@@ -26,18 +26,18 @@ import org.dockbox.hartshorn.core.task.pipeline.pipes.CancellablePipe;
 import org.dockbox.hartshorn.core.task.pipeline.pipes.ComplexPipe;
 import org.dockbox.hartshorn.core.task.pipeline.pipes.IPipe;
 import org.dockbox.hartshorn.core.task.pipeline.pipes.StandardPipe;
-import org.dockbox.hartshorn.core.HartshornUtils;
-import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import lombok.Getter;
 
 public abstract class AbstractPipeline<P, I> {
 
-    private final List<IPipe<I, I>> pipes = HartshornUtils.emptyList();
+    private final List<IPipe<I, I>> pipes = new CopyOnWriteArrayList<>();
     private boolean isCancelled;
     @Getter private CancelBehaviour cancelBehaviour = CancelBehaviour.NON_CANCELLABLE;
 
@@ -118,7 +118,7 @@ public abstract class AbstractPipeline<P, I> {
     /** @return An unmodifiable list of the {@link IPipe pipes} in the pipeline */
     @PartialApi
     public List<IPipe<I, I>> pipes() {
-        return HartshornUtils.asUnmodifiableList(this.pipes);
+        return Collections.unmodifiableList(this.pipes);
     }
 
     /**

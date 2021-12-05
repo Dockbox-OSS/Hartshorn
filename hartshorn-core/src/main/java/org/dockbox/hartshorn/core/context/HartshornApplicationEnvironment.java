@@ -22,6 +22,7 @@ import org.dockbox.hartshorn.core.boot.ApplicationManager;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 
 import java.lang.annotation.Annotation;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -72,12 +73,12 @@ public class HartshornApplicationEnvironment implements ApplicationEnvironment {
 
     @Override
     public List<Annotation> annotationsWith(final TypeContext<?> type, final Class<? extends Annotation> annotation) {
-        final List<Annotation> annotations = HartshornUtils.emptyList();
+        final Collection<Annotation> annotations = new ArrayList<>();
         for (final Annotation typeAnnotation : type.annotations()) {
             if (TypeContext.of(typeAnnotation.annotationType()).annotation(annotation).present()) {
                 annotations.add(typeAnnotation);
             }
         }
-        return annotations;
+        return List.copyOf(annotations);
     }
 }

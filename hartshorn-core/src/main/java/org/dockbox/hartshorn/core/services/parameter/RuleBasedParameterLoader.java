@@ -22,6 +22,7 @@ import org.dockbox.hartshorn.core.context.ParameterLoaderContext;
 import org.dockbox.hartshorn.core.context.element.ParameterContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -41,7 +42,7 @@ public class RuleBasedParameterLoader<C extends ParameterLoaderContext> extends 
 
     @Override
     public List<Object> loadArguments(final C context, final Object... args) {
-        final List<Object> arguments = HartshornUtils.emptyList();
+        final List<Object> arguments = new ArrayList<>();
         final LinkedList<ParameterContext<?>> parameters = context.method().parameters();
         parameters:
         for (int i = 0; i < parameters.size(); i++) {
@@ -55,7 +56,7 @@ public class RuleBasedParameterLoader<C extends ParameterLoaderContext> extends 
             }
             arguments.add(this.loadDefault(parameter, i, context, args));
         }
-        return arguments;
+        return List.copyOf(arguments);
     }
 
     protected <T> T loadDefault(final ParameterContext<T> parameter, final int index, final C context, final Object... args) {

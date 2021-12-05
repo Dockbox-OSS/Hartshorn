@@ -17,7 +17,6 @@
 
 package org.dockbox.hartshorn.commands.arguments;
 
-import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.commands.CommandParameterResources;
 import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.commands.annotations.Parameter;
@@ -26,8 +25,9 @@ import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.ConstructorContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
-import org.dockbox.hartshorn.core.HartshornUtils;
+import org.dockbox.hartshorn.core.domain.Exceptional;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -63,8 +63,8 @@ public interface CustomParameterPattern {
         }
 
         final List<String> rawArguments = this.splitArguments(raw);
-        final List<TypeContext<?>> argumentTypes = HartshornUtils.emptyList();
-        final List<Object> arguments = HartshornUtils.emptyList();
+        final List<TypeContext<?>> argumentTypes = new ArrayList<>();
+        final List<Object> arguments = new ArrayList<>();
 
         for (final String rawArgument : rawArguments) {
             context.log().debug("Parsing raw argument " + rawArgument);

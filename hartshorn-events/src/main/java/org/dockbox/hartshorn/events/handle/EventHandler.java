@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
 public class EventHandler {
 
     private final TypeContext<? extends Event> eventType;
-    private final Set<EventHandler> superTypeHandlers = HartshornUtils.emptySet();
+    private final Set<EventHandler> superTypeHandlers = HartshornUtils.emptyConcurrentSet();
     private final SortedSet<EventWrapperImpl<?>> invokers = new TreeSet<>(EventWrapperImpl.COMPARATOR);
     private transient EventWrapperImpl<?>[] computedInvokerCache;
 

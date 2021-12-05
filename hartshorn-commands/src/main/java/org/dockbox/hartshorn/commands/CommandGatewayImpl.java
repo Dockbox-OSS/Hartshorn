@@ -26,17 +26,19 @@ import org.dockbox.hartshorn.commands.exceptions.ParsingException;
 import org.dockbox.hartshorn.commands.extension.CommandExecutorExtension;
 import org.dockbox.hartshorn.commands.extension.ExtensionResult;
 import org.dockbox.hartshorn.core.ArrayListMultiMap;
-import org.dockbox.hartshorn.core.HartshornUtils;
+import org.dockbox.hartshorn.core.Enableable;
 import org.dockbox.hartshorn.core.MultiMap;
 import org.dockbox.hartshorn.core.annotations.inject.Binds;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
-import org.dockbox.hartshorn.core.Enableable;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -54,7 +56,7 @@ public class CommandGatewayImpl implements CommandGateway, Enableable {
     @Getter(AccessLevel.PROTECTED)
     private final transient MultiMap<String, CommandExecutorContext> contexts = new ArrayListMultiMap<>();
     @Getter(AccessLevel.PROTECTED)
-    private final transient List<CommandExecutorExtension> extensions = HartshornUtils.emptyConcurrentList();
+    private final transient List<CommandExecutorExtension> extensions = new CopyOnWriteArrayList<>();
     @Inject
     private CommandParser parser;
     @Inject
@@ -152,7 +154,7 @@ public class CommandGatewayImpl implements CommandGateway, Enableable {
         final TypeContext<?> typeContext = context.parent();
         final Exceptional<Command> annotated = typeContext.annotation(Command.class);
         if (!typeContext.isVoid() && annotated.present()) {
-            aliases = HartshornUtils.asUnmodifiableList(annotated.get().value());
+            aliases = List.of(annotated.get().value());
         }
         else if (!container.get().aliases().isEmpty()) {
             aliases = container.get().aliases();
@@ -170,7 +172,7 @@ public class CommandGatewayImpl implements CommandGateway, Enableable {
     @Override
     public List<String> suggestions(final CommandSource source, final String command) {
         final Exceptional<CommandExecutorContext> context = this.lookupContext(command);
-        final List<String> suggestions = HartshornUtils.emptyList();
+        final List<String> suggestions = new ArrayList<>();
 
         if (context.present())
             suggestions.addAll(context.get().suggestions(source, command, this.parser));
@@ -186,7 +188,7 @@ public class CommandGatewayImpl implements CommandGateway, Enableable {
             }
         }
 
-        return HartshornUtils.asUnmodifiableList(suggestions);
+        return Collections.unmodifiableList(suggestions);
     }
 
     @Override

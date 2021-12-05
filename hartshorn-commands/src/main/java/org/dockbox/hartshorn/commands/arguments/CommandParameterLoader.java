@@ -18,11 +18,12 @@
 package org.dockbox.hartshorn.commands.arguments;
 
 import org.dockbox.hartshorn.commands.context.CommandParameterContext;
-import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.core.annotations.inject.Binds;
 import org.dockbox.hartshorn.core.context.element.ParameterContext;
 import org.dockbox.hartshorn.core.services.parameter.ParameterLoader;
 import org.dockbox.hartshorn.core.services.parameter.RuleBasedParameterLoader;
+
+import java.util.ArrayList;
 
 import javax.inject.Named;
 
@@ -36,7 +37,7 @@ public class CommandParameterLoader extends RuleBasedParameterLoader<CommandPara
 
     @Override
     protected <T> T loadDefault(final ParameterContext<T> parameter, final int index, final CommandParameterLoaderContext context, final Object... args) {
-        final CommandParameterContext parameterContext = HartshornUtils.asList(context.executorContext().parameters().values()).get(index);
+        final CommandParameterContext parameterContext = new ArrayList<>(context.executorContext().parameters().values()).get(index);
         final Object out = context.commandContext().get(parameterContext.parameter().name());
         return out == null ? super.loadDefault(parameter, index, context, args) : (T) out;
     }

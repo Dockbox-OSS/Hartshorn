@@ -81,7 +81,7 @@ public class HartshornApplicationFactory implements ApplicationFactory<Hartshorn
 
     @Override
     public HartshornApplicationFactory modifiers(final Modifier... modifiers) {
-        this.modifiers.addAll(HartshornUtils.asSet(modifiers));
+        this.modifiers.addAll(Set.of(modifiers));
         return this.self();
     }
 
@@ -112,7 +112,7 @@ public class HartshornApplicationFactory implements ApplicationFactory<Hartshorn
 
     @Override
     public HartshornApplicationFactory arguments(final String... args) {
-        this.arguments.addAll(HartshornUtils.asSet(args));
+        this.arguments.addAll(Set.of(args));
         return this.self();
     }
 
@@ -154,7 +154,7 @@ public class HartshornApplicationFactory implements ApplicationFactory<Hartshorn
 
     @Override
     public HartshornApplicationFactory prefixes(final String... prefixes) {
-        this.prefixes.addAll(HartshornUtils.asSet(prefixes));
+        this.prefixes.addAll(Set.of(prefixes));
         return this.self();
     }
 
@@ -210,7 +210,7 @@ public class HartshornApplicationFactory implements ApplicationFactory<Hartshorn
         configurator.apply(manager, configurations);
         configurator.apply(manager, this.injectConfigurations);
 
-        final Set<String> scanPackages = HartshornUtils.asSet(activator.scanPackages());
+        final Set<String> scanPackages = Set.of(activator.scanPackages());
         final Collection<String> scanPrefixes = HartshornUtils.merge(this.prefixes, scanPackages);
 
         if (activator.includeBasePackage())

@@ -48,6 +48,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -58,13 +59,13 @@ import lombok.Getter;
 // skipcq: JAVA-W0100
 public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
 
-    private static final Map<Class<?>, TypeContext<?>> CACHE = HartshornUtils.emptyConcurrentMap();
+    private static final Map<Class<?>, TypeContext<?>> CACHE = new ConcurrentHashMap<>();
 
     /**
      * Fields which should be ignored when detected. This can be for varying reasons, which should be
      * documented on the entry in this array directly.
      */
-    private static final Set<String> EXCLUDED_FIELDS = HartshornUtils.asSet(
+    private static final Set<String> EXCLUDED_FIELDS = Set.of(
             /*
              * This field is a synthetic field which is added by IntelliJ IDEA when running tests with
              * coverage.
@@ -128,7 +129,7 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
     @Getter private final boolean isAnnotation;
     @Getter private final boolean isArray;
 
-    private final Map<String, FieldContext<?>> fields = HartshornUtils.emptyConcurrentMap();
+    private final Map<String, FieldContext<?>> fields = new ConcurrentHashMap<>();
 
     @Nullable
     private Boolean isNative;
@@ -284,7 +285,7 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
                 }
             }
         }
-        return HartshornUtils.asUnmodifiableList(this.interfaceTypeParameters.get(superInterface));
+        return List.copyOf(this.interfaceTypeParameters.get(superInterface));
     }
 
     public List<TypeContext<?>> typeParameters() {
@@ -294,7 +295,7 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
             if (genericSuper instanceof ParameterizedType parameterized) {
                 this.typeParameters = this.contextsFromParameterizedType(parameterized);
             } else {
-                this.typeParameters = HartshornUtils.emptyList();
+                this.typeParameters = List.of();
             }
         }
         return this.typeParameters;
@@ -324,7 +325,7 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
 
     public List<FieldContext<?>> fields() {
         this.collectFields();
-        return HartshornUtils.asUnmodifiableList(this.fields.values());
+        return List.copyOf(this.fields.values());
     }
 
     public List<FieldContext<?>> fields(final Class<? extends Annotation> annotation) {
@@ -342,7 +343,7 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
 
     public <P> List<FieldContext<P>> fieldsOf(final GenericType<P> type) {
         final Exceptional<Class<P>> real = type.asClass();
-        if (real.absent()) return HartshornUtils.emptyList();
+        if (real.absent()) return List.of();
         else return this.fieldsOf(real.get());
     }
 
@@ -477,9 +478,9 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
     public List<T> enumConstants() {
         if (this.enumConstants == null) {
             this.verifyMetadataAvailable();
-            if (!this.isEnum) this.enumConstants = HartshornUtils.asUnmodifiableList(HartshornUtils.emptyList());
+            if (!this.isEnum) this.enumConstants = List.of();
             else {
-                this.enumConstants = HartshornUtils.asUnmodifiableList(this.type().getEnumConstants());
+                this.enumConstants = List.of(this.type().getEnumConstants());
             }
         }
         return this.enumConstants;
@@ -538,7 +539,7 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
     }
 
     public Exceptional<MethodContext<?, T>> method(final String name) {
-        return this.method(name, HartshornUtils.emptyList());
+        return this.method(name, List.of());
     }
 
     public Exceptional<MethodContext<?, T>> method(final String name, final List<TypeContext<?>> arguments) {

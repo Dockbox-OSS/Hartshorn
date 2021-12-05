@@ -17,7 +17,6 @@
 
 package org.dockbox.hartshorn.data.mapping;
 
-import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.data.Element;
@@ -86,7 +85,7 @@ public class ObjectMappingTests {
         final Exceptional<String> result = mapper.write(content);
 
         Assertions.assertTrue(result.present());
-        Assertions.assertEquals(HartshornUtils.strip(expected), HartshornUtils.strip(result.get()));
+        Assertions.assertEquals(expected, result.get());
     }
 
     @ParameterizedTest

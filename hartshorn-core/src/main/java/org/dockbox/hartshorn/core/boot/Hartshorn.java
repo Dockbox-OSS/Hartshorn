@@ -17,7 +17,6 @@
 
 package org.dockbox.hartshorn.core.boot;
 
-import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.core.annotations.context.LogExclude;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
@@ -31,6 +30,7 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * The utility type to grant easy access to static components and constants.
@@ -55,7 +55,7 @@ public final class Hartshorn {
      */
     public static final String VERSION = "4.2.5";
 
-    private static final Map<String, Logger> LOGGERS = HartshornUtils.emptyConcurrentMap();
+    private static final Map<String, Logger> LOGGERS = new ConcurrentHashMap<>();
 
     private Hartshorn() {}
 

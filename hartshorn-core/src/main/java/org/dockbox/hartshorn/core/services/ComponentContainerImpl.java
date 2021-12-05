@@ -27,8 +27,10 @@ import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 
 import java.lang.annotation.Annotation;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import lombok.Getter;
 
@@ -37,7 +39,7 @@ public class ComponentContainerImpl implements ComponentContainer {
 
     private final Component annotation;
     private final TypeContext<?> component;
-    private final List<Class<? extends Annotation>> activators = HartshornUtils.emptyList();
+    private final List<Class<? extends Annotation>> activators = new CopyOnWriteArrayList<>();
     private final ApplicationContext context;
 
     public ComponentContainerImpl(final ApplicationContext context, final TypeContext<?> component) {
@@ -85,7 +87,7 @@ public class ComponentContainerImpl implements ComponentContainer {
 
     @Override
     public List<Class<? extends Annotation>> activators() {
-        return HartshornUtils.asUnmodifiableList(this.activators);
+        return Collections.unmodifiableList(this.activators);
     }
 
     @Override

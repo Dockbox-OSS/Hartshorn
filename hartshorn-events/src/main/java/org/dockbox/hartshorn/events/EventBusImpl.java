@@ -18,19 +18,21 @@
 package org.dockbox.hartshorn.events;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.core.annotations.inject.Binds;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
+import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.events.annotations.Listener;
 import org.dockbox.hartshorn.events.handle.EventHandlerRegistry;
 import org.dockbox.hartshorn.events.handle.EventWrapperImpl;
 import org.dockbox.hartshorn.events.parents.Event;
-import org.dockbox.hartshorn.core.HartshornUtils;
 
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
 import javax.inject.Inject;
@@ -44,10 +46,10 @@ import javax.inject.Singleton;
 @Singleton
 public class EventBusImpl implements EventBus {
 
-    protected final Set<Function<MethodContext<?, ?>, Exceptional<Boolean>>> validators = HartshornUtils.emptySet();
+    protected final Set<Function<MethodContext<?, ?>, Exceptional<Boolean>>> validators = HartshornUtils.emptyConcurrentSet();
 
     /** A map of all listening objects with their associated {@link EventWrapper}s. */
-    protected final Map<TypeContext<?>, Set<EventWrapper>> listenerToInvokers = HartshornUtils.emptyMap();
+    protected final Map<TypeContext<?>, Set<EventWrapper>> listenerToInvokers = new ConcurrentHashMap<>();
 
     /** The internal registry of handlers for each event. */
     protected final EventHandlerRegistry handlerRegistry = new EventHandlerRegistry();
@@ -156,7 +158,7 @@ public class EventBusImpl implements EventBus {
      * @return The invokers
      */
     protected <T> Set<EventWrapper> invokers(final TypeContext<T> type) {
-        final Set<EventWrapper> result = HartshornUtils.emptySet();
+        final Set<EventWrapper> result = new HashSet<>();
         for (final MethodContext<?, T> method : type.methods()) {
             final Exceptional<Listener> annotation = method.annotation(Listener.class);
             if (annotation.present()) {
@@ -164,7 +166,7 @@ public class EventBusImpl implements EventBus {
                 result.addAll(EventWrapperImpl.create(this.context, type, method, annotation.get().value().priority()));
             }
         }
-        return result;
+        return Set.copyOf(result);
     }
 
     /**

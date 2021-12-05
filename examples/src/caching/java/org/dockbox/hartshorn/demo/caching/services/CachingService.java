@@ -29,6 +29,7 @@ import org.dockbox.hartshorn.demo.caching.domain.User;
 import org.dockbox.hartshorn.events.EngineChangedState;
 import org.dockbox.hartshorn.events.annotations.Listener;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -53,7 +54,7 @@ public abstract class CachingService {
     public List<User> getUsers(final ApplicationContext context) {
         final User user = new User("Guus", 21);
         this.lastModified.put(user, System.currentTimeMillis());
-        return HartshornUtils.singletonList(user);
+        return Collections.singletonList(user);
     }
 
     /**

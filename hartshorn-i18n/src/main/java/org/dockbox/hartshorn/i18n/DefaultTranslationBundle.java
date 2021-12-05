@@ -17,7 +17,6 @@
 
 package org.dockbox.hartshorn.i18n;
 
-import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.core.annotations.inject.Binds;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
@@ -25,11 +24,13 @@ import org.dockbox.hartshorn.data.FileFormats;
 import org.dockbox.hartshorn.data.mapping.ObjectMapper;
 
 import java.nio.file.Path;
+import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -46,11 +47,11 @@ public class DefaultTranslationBundle implements TranslationBundle {
     @Getter @Setter
     private Locale primaryLanguage = Locale.getDefault();
 
-    private final Map<String, Message> messages = HartshornUtils.emptyConcurrentMap();
+    private final Map<String, Message> messages = new ConcurrentHashMap<>();
 
     @Override
     public Set<Message> messages() {
-        return HartshornUtils.asUnmodifiableSet(this.messages.values());
+        return Set.copyOf(this.messages.values());
     }
 
     @Override
@@ -95,10 +96,10 @@ public class DefaultTranslationBundle implements TranslationBundle {
 
     @Override
     public Set<Message> register(final Map<String, String> messages, final Locale locale) {
-        final Set<Message> registeredMessages = HartshornUtils.emptySet();
+        final Set<Message> registeredMessages = new HashSet<>();
         messages.forEach((key, value) -> registeredMessages.add(this.register(key, value, locale)));
         registeredMessages.forEach(this::register);
-        return HartshornUtils.asUnmodifiableSet(registeredMessages);
+        return Set.copyOf(registeredMessages);
     }
 
     @Override

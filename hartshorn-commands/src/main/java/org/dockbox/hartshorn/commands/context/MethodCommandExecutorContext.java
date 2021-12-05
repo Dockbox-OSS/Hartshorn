@@ -42,10 +42,12 @@ import org.dockbox.hartshorn.events.parents.Cancellable;
 import org.dockbox.hartshorn.i18n.Message;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -93,10 +95,10 @@ public class MethodCommandExecutorContext<T> extends DefaultCarrierContext imple
 
         this.add(new CommandDefinitionContextImpl(this.applicationContext(), this.command(), this.method()));
 
-        this.parentAliases = HartshornUtils.emptyList();
+        this.parentAliases = new CopyOnWriteArrayList<>();
         if (this.parent != null) {
             context.log().debug("Parent for executor context of " + method.qualifiedName() + " found, including parent aliases");
-            this.parentAliases.addAll(HartshornUtils.asList(this.parent.value()));
+            this.parentAliases.addAll(List.of(this.parent.value()));
         }
         this.parameters = this.parameters();
         this.parameterLoader = context.get(Key.of(ParameterLoader.class, "command_loader"));
@@ -150,7 +152,7 @@ public class MethodCommandExecutorContext<T> extends DefaultCarrierContext imple
 
     @Override
     public List<String> aliases() {
-        final List<String> aliases = HartshornUtils.emptyList();
+        final List<String> aliases = new ArrayList<>();
         for (final String parentAlias : this.parentAliases()) {
             for (final String alias : this.command().value()) {
                 aliases.add(parentAlias + ' ' + alias);
@@ -159,7 +161,7 @@ public class MethodCommandExecutorContext<T> extends DefaultCarrierContext imple
         if (aliases.isEmpty()) {
             aliases.add(this.method().name());
         }
-        return aliases;
+        return List.copyOf(aliases);
     }
 
     @Override
@@ -177,13 +179,13 @@ public class MethodCommandExecutorContext<T> extends DefaultCarrierContext imple
         final String stripped = this.strip(command, false);
         this.applicationContext().log().debug("Collecting suggestions for stripped input %s (was %s)".formatted(stripped, command));
         final List<CommandElement<?>> elements = this.definition().elements();
-        final List<String> tokens = HartshornUtils.asList(stripped.split(" "));
+        final List<String> tokens = new ArrayList<>(List.of(stripped.split(" ")));
         if (command.endsWith(" ") && !"".equals(tokens.get(tokens.size() - 1))) tokens.add("");
 
         CommandElement<?> last = null;
         for (final CommandElement<?> element : elements) {
             int size = element.size();
-            if (size == -1) return HartshornUtils.emptyList();
+            if (size == -1) return List.of();
 
             if (tokens.size() <= size) {
                 last = element;
@@ -198,11 +200,11 @@ public class MethodCommandExecutorContext<T> extends DefaultCarrierContext imple
 
         if (last == null) {
             this.applicationContext().log().debug("Could not locate last command element to collect suggestions");
-            return HartshornUtils.emptyList();
+            return List.of();
         }
         final Collection<String> suggestions = last.suggestions(source, String.join(" ", tokens));
         this.applicationContext().log().debug("Found " + suggestions.size() + " suggestions");
-        return HartshornUtils.asUnmodifiableList(suggestions);
+        return List.copyOf(suggestions);
     }
 
     private CommandDefinitionContext definition() {

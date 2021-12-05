@@ -27,7 +27,6 @@ import org.dockbox.hartshorn.commands.exceptions.ParsingException;
 import org.dockbox.hartshorn.commands.types.CommandValueEnum;
 import org.dockbox.hartshorn.commands.types.SampleCommand;
 import org.dockbox.hartshorn.commands.types.SampleCommandExtension;
-import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
@@ -128,7 +127,7 @@ public class CommandDefinitionContextTests {
         final List<String> suggestions = gateway.suggestions(SystemSubject.instance(this.applicationContext()), "demo complex requiredArg optionalArg ");
 
         Assertions.assertEquals(3, suggestions.size());
-        Assertions.assertTrue(suggestions.containsAll(HartshornUtils.asList("one", "two", "three")));
+        Assertions.assertTrue(suggestions.containsAll(List.of("one", "two", "three")));
     }
 
     @Test

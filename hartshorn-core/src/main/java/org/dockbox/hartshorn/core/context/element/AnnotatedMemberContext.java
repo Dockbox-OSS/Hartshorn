@@ -31,7 +31,7 @@ public abstract class AnnotatedMemberContext <A extends AnnotatedElement & Membe
     @Override
     public List<AccessModifier> modifiers() {
         if (this.modifiers == null) {
-            this.modifiers = HartshornUtils.asUnmodifiableList(AccessModifier.from(this.element().getModifiers()));
+            this.modifiers = AccessModifier.from(this.element().getModifiers());
         }
         return this.modifiers;
     }

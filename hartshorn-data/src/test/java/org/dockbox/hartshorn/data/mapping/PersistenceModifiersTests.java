@@ -24,6 +24,8 @@ import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
 import lombok.Getter;
@@ -48,7 +50,7 @@ public class PersistenceModifiersTests {
     @Test
     void testSkipEmptySkipsEmpty() {
         final ObjectMapper mapper = this.applicationContext().get(ObjectMapper.class).skipBehavior(JsonInclusionRule.SKIP_EMPTY);
-        final ModifierElement element = new ModifierElement(HartshornUtils.emptyList());
+        final ModifierElement element = new ModifierElement(List.of());
         final Exceptional<String> out = mapper.write(element);
 
         Assertions.assertTrue(out.present());

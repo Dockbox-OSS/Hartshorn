@@ -18,7 +18,6 @@
 package org.dockbox.hartshorn.data.registry;
 
 import org.dockbox.hartshorn.core.domain.Exceptional;
-import org.dockbox.hartshorn.core.HartshornUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -32,7 +31,7 @@ public class RegistryColumn<T> extends ArrayList<T> {
     }
 
     public RegistryColumn(final Collection<T> values) {
-        this.addAll(HartshornUtils.asList(values));
+        this.addAll(values);
     }
 
     /**

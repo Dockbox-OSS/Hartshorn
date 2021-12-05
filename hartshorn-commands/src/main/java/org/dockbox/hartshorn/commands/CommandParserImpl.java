@@ -17,7 +17,6 @@
 
 package org.dockbox.hartshorn.commands;
 
-import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.commands.context.CommandContext;
 import org.dockbox.hartshorn.commands.context.CommandContextImpl;
 import org.dockbox.hartshorn.commands.context.CommandDefinitionContext;
@@ -29,12 +28,15 @@ import org.dockbox.hartshorn.commands.definition.CommandPartial;
 import org.dockbox.hartshorn.commands.definition.GroupCommandElement;
 import org.dockbox.hartshorn.commands.exceptions.ParsingException;
 import org.dockbox.hartshorn.commands.service.CommandParameter;
+import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.core.annotations.inject.Binds;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
+import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.i18n.Message;
-import org.dockbox.hartshorn.core.HartshornUtils;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -63,15 +65,15 @@ public class CommandParserImpl implements CommandParser {
         final CommandDefinitionContext containerContext = container.get();
         final List<CommandElement<?>> elements = containerContext.elements();
 
-        final List<CommandParameter<?>> parsedElements = HartshornUtils.emptyList();
-        final List<CommandParameter<?>> parsedFlags = HartshornUtils.emptyList();
+        final List<CommandParameter<?>> parsedElements = new ArrayList<>();
+        final List<CommandParameter<?>> parsedFlags = new ArrayList<>();
 
         // Ensure no aliases are left, so they are not accidentally parsed
         String stripped = context.strip(command, false);
         // Strip all flags beforehand so elements can be parsed safely without flag interference
         stripped = this.stripFlags(stripped, parsedFlags, source, containerContext);
 
-        final List<String> tokens = HartshornUtils.asList(stripped.split(" "));
+        final List<String> tokens = List.of(stripped.split(" "));
         parsedElements.addAll(this.parse(elements, tokens, source));
 
         applicationContext.log().debug("Parsed %d elements and %d flags for input %s".formatted(parsedElements.size(), parsedFlags.size(), command));
@@ -87,7 +89,7 @@ public class CommandParserImpl implements CommandParser {
     }
 
     private List<CommandParameter<?>> parse(final List<CommandElement<?>> elements, final List<String> tokens, final CommandSource source) throws ParsingException {
-        final List<CommandParameter<?>> parameters = HartshornUtils.emptyList();
+        final List<CommandParameter<?>> parameters = new ArrayList<>();
         for (int i = 0; i < elements.size(); i++) {
             final CommandElement<?> element = elements.get(i);
             final int size = element.size();
@@ -126,7 +128,7 @@ public class CommandParserImpl implements CommandParser {
             final CommandFlag contextFlag = commandFlag.get();
             if (contextFlag.value()) {
                 if (contextFlag instanceof CommandFlagElement) {
-                    final List<String> tokens = HartshornUtils.asList(command.split(" "));
+                    final List<String> tokens = List.of(command.split(" "));
                     final int size = ((CommandElement<?>) contextFlag).size();
                     final int flagIndex = tokens.indexOf(nameUntrimmed);
                     final int i = flagIndex + 1;
@@ -155,11 +157,11 @@ public class CommandParserImpl implements CommandParser {
         else {
             if (partial instanceof GroupCommandElement) {
                 final List<CommandElement<?>> elements = (List<CommandElement<?>>) value.get();
-                final List<String> tokens = HartshornUtils.asList(token.split(" "));
+                final List<String> tokens = List.of(token.split(" "));
                 return this.parse(elements, tokens, source);
             }
             else {
-                return HartshornUtils.singletonList(new CommandParameter<>(value.get(), elementName));
+                return Collections.singletonList(new CommandParameter<>(value.get(), elementName));
             }
         }
     }

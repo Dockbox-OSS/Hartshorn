@@ -17,23 +17,23 @@
 
 package org.dockbox.hartshorn.core.context.element;
 
-import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.AnnotationHelper;
 import org.dockbox.hartshorn.core.context.DefaultContext;
-import org.dockbox.hartshorn.core.HartshornUtils;
+import org.dockbox.hartshorn.core.domain.Exceptional;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class AnnotatedElementContext<A extends AnnotatedElement> extends DefaultContext implements QualifiedElement {
 
     private Map<Class<?>, Annotation> annotationCache;
 
-    public List<Annotation> annotations() {
-        return HartshornUtils.asUnmodifiableList(this.validate().values());
+    public Set<Annotation> annotations() {
+        return Set.copyOf(this.validate().values());
     }
 
     public <T extends Annotation> Exceptional<T> annotation(final TypeContext<T> annotation) {
@@ -54,7 +54,7 @@ public abstract class AnnotatedElementContext<A extends AnnotatedElement> extend
 
     protected Map<Class<?>, Annotation> validate() {
         if (this.annotationCache == null) {
-            this.annotationCache = HartshornUtils.emptyConcurrentMap();
+            this.annotationCache = new ConcurrentHashMap<>();
             for (final Annotation annotation : this.element().getAnnotations()) {
                 this.annotationCache.put(annotation.annotationType(), annotation);
             }

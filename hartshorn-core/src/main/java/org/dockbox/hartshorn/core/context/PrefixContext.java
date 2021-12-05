@@ -18,16 +18,19 @@
 package org.dockbox.hartshorn.core.context;
 
 import org.dockbox.hartshorn.core.AnnotationHelper;
-import org.dockbox.hartshorn.core.ArrayListMultiMap;
+import org.dockbox.hartshorn.core.CustomMultiMap;
 import org.dockbox.hartshorn.core.MultiMap;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
-import org.dockbox.hartshorn.core.HartshornUtils;
 import org.reflections.Reflections;
 
 import java.lang.annotation.Annotation;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
 import lombok.AccessLevel;
@@ -38,8 +41,8 @@ public class PrefixContext extends DefaultContext {
     @Getter(AccessLevel.PROTECTED)
     private final ApplicationEnvironment environment;
 
-    private final Map<String, Reflections> reflectedPrefixes = HartshornUtils.emptyConcurrentMap();
-    private final MultiMap<Class<? extends Annotation>, Class<? extends Annotation>> annotationHierarchy = new ArrayListMultiMap<>();
+    private final Map<String, Reflections> reflectedPrefixes = new ConcurrentHashMap<>();
+    private final MultiMap<Class<? extends Annotation>, Class<? extends Annotation>> annotationHierarchy = new CustomMultiMap<>(CopyOnWriteArrayList::new);
 
     public PrefixContext(final Iterable<String> initialPrefixes, final ApplicationEnvironment environment) {
         this.environment = environment;
@@ -85,14 +88,14 @@ public class PrefixContext extends DefaultContext {
     public <A extends Annotation> Collection<TypeContext<?>> types(final String prefix, final Class<A> annotation, final boolean skipParents) {
         final Reflections reflections = this.reflectedPrefixes.get(prefix);
         final Set<Class<? extends Annotation>> extensions = this.extensions(annotation);
-        final Set<TypeContext<?>> types = HartshornUtils.emptySet();
+        final Set<TypeContext<?>> types = new HashSet<>();
 
         for (final Class<? extends Annotation> extension : extensions) {
             for (final Class<?> type : reflections.getTypesAnnotatedWith(extension, !skipParents)) {
                 types.add(TypeContext.of(type));
             }
         }
-        return types;
+        return Set.copyOf(types);
     }
 
     /**
@@ -126,8 +129,8 @@ public class PrefixContext extends DefaultContext {
 
         final Collection<Class<? extends Annotation>> hierarchy = this.annotationHierarchy.get(annotation);
 
-        if (hierarchy.isEmpty()) return HartshornUtils.asUnmodifiableSet(annotation);
-        else return HartshornUtils.asUnmodifiableSet(hierarchy);
+        if (hierarchy.isEmpty()) return Set.of(annotation);
+        else return Set.copyOf(hierarchy);
     }
 
     public <T> Collection<TypeContext<? extends T>> children(final Class<T> type) {
@@ -146,11 +149,11 @@ public class PrefixContext extends DefaultContext {
      * @return The list of sub-types, or an empty list
      */
     public <T> Collection<TypeContext<? extends T>> children(final TypeContext<T> parent) {
-        final Set<Class<? extends T>> subTypes = HartshornUtils.emptySet();
+        final Set<Class<? extends T>> subTypes = new HashSet<>();
         for (final Reflections reflections : this.reflectedPrefixes.values()) {
             subTypes.addAll(reflections.getSubTypesOf(parent.type()));
         }
-        return HartshornUtils.asList(subTypes).stream().map(TypeContext::of).collect(Collectors.toList());
+        return List.copyOf(subTypes).stream().map(TypeContext::of).collect(Collectors.toList());
     }
 
 }

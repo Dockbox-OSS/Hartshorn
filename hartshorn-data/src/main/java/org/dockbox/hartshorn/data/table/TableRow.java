@@ -73,13 +73,13 @@ public class TableRow {
     /** @return Return a set of the values of the columns of the row */
     @NonNull
     public Set<Object> values() {
-        return HartshornUtils.asUnmodifiableSet(this.data.values());
+        return Set.copyOf(this.data.values());
     }
 
     /** @return Return a set of keys of the row */
     @NonNull
     public Set<ColumnIdentifier<?>> columns() {
-        return HartshornUtils.asUnmodifiableSet(this.data.keySet());
+        return Set.copyOf(this.data.keySet());
     }
 
     @Override

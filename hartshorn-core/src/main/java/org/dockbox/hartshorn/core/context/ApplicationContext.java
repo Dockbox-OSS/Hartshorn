@@ -32,7 +32,7 @@ import org.dockbox.hartshorn.core.services.ComponentProcessor;
 import org.slf4j.Logger;
 
 import java.lang.annotation.Annotation;
-import java.util.List;
+import java.util.Set;
 
 @LogExclude
 public interface ApplicationContext extends
@@ -60,7 +60,7 @@ public interface ApplicationContext extends
 
     void add(ComponentProcessor<?> processor);
 
-    List<Annotation> activators();
+    Set<Annotation> activators();
 
     boolean hasActivator(Class<? extends Annotation> activator);
 

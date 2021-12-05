@@ -18,7 +18,6 @@
 package org.dockbox.hartshorn.events.handle;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.core.Key;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
@@ -32,6 +31,7 @@ import java.lang.reflect.Method;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import lombok.Getter;
 
@@ -96,7 +96,7 @@ public final class EventWrapperImpl<T> implements Comparable<EventWrapperImpl<T>
      * @return The list of {@link EventWrapperImpl}s
      */
     public static <T> List<EventWrapperImpl<T>> create(final ApplicationContext context, final TypeContext<T> type, final MethodContext<?, T> method, final int priority) {
-        final List<EventWrapperImpl<T>> invokeWrappers = HartshornUtils.emptyConcurrentList();
+        final List<EventWrapperImpl<T>> invokeWrappers = new CopyOnWriteArrayList<>();
         final ParameterLoader<EventParameterLoaderContext> parameterLoader = context.get(Key.of(ParameterLoader.class, "event_loader"));
         for (final TypeContext<?> param : method.parameterTypes()) {
             if (param.childOf(Event.class)) {

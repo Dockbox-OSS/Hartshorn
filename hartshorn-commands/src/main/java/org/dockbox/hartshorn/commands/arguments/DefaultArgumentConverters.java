@@ -28,6 +28,7 @@ import org.dockbox.hartshorn.i18n.Message;
 import org.dockbox.hartshorn.i18n.TranslationService;
 
 import java.time.Duration;
+import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 import java.util.function.Function;
@@ -45,7 +46,7 @@ public final class DefaultArgumentConverters {
 
     public static final ArgumentConverter<Boolean> BOOLEAN = ArgumentConverterImpl.builder(Boolean.class, "bool", "boolean")
             .withConverter(BuiltInStringTypeAdapters.BOOLEAN)
-            .withSuggestionProvider(in -> HartshornUtils.asList("true", "false", "yes", "no"))
+            .withSuggestionProvider(in -> List.of("true", "false", "yes", "no"))
             .build();
 
     public static final ArgumentConverter<Double> DOUBLE = ArgumentConverterImpl.builder(Double.class, "double")
@@ -123,4 +124,6 @@ public final class DefaultArgumentConverters {
             })
             .withSize(-1)
             .build();
+
+    private DefaultArgumentConverters() {}
 }

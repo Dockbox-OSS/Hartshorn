@@ -28,6 +28,7 @@ import org.dockbox.hartshorn.events.annotations.Posting;
 import org.dockbox.hartshorn.events.annotations.UseEvents;
 import org.dockbox.hartshorn.events.parents.Event;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -50,7 +51,7 @@ public class EventValidator implements LifecycleObserver {
                 // definitions.
                 .filter(type -> !type.isAnonymous())
                 .toList();
-        final List<TypeContext<? extends Event>> postedEvents = HartshornUtils.emptyList();
+        final List<TypeContext<? extends Event>> postedEvents = new ArrayList<>();
 
         for (final TypeContext<?> bridge : applicationContext.environment().types(Posting.class)) {
             final Posting posting = bridge.annotation(Posting.class).get();

@@ -19,11 +19,11 @@ package org.dockbox.hartshorn.commands.arguments;
 
 import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.commands.service.CommandParameter;
-import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.core.adapter.StringTypeAdapter;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -83,7 +83,7 @@ public final class ArgumentConverterImpl<T> extends DefaultArgumentConverter<T> 
         private final TypeContext<T> type;
         private int size;
         private BiFunction<CommandSource, String, Exceptional<T>> converter = (source, in) -> Exceptional.empty();
-        private BiFunction<CommandSource, String, Collection<String>> suggestionProvider = (source, in) -> HartshornUtils.emptyList();
+        private BiFunction<CommandSource, String, Collection<String>> suggestionProvider = (source, in) -> new ArrayList<>();;
 
         private CommandValueConverterBuilder(final TypeContext<T> type, final String... keys) {
             this.type = type;

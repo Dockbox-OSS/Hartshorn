@@ -26,15 +26,11 @@ import org.dockbox.hartshorn.i18n.Message;
  */
 public class ParsingException extends ApplicationException {
 
-    private final Message resource;
-
     public ParsingException(final Message resource) {
         super(resource.string());
-        this.resource = resource;
     }
 
     public ParsingException(final Message resource, final Throwable cause) {
         super(resource.string(), cause);
-        this.resource = resource;
     }
 }

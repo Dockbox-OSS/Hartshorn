@@ -23,9 +23,9 @@ import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
 import org.dockbox.hartshorn.core.annotations.context.AutoCreating;
 import org.dockbox.hartshorn.core.context.DefaultContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
-import org.dockbox.hartshorn.core.HartshornUtils;
 
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import lombok.Getter;
 
@@ -35,7 +35,7 @@ import lombok.Getter;
 @AutoCreating
 public final class ArgumentConverterContext extends DefaultContext {
 
-    @Getter private final transient Map<String, ArgumentConverter<?>> converterMap = HartshornUtils.emptyConcurrentMap();
+    @Getter private final transient Map<String, ArgumentConverter<?>> converterMap = new ConcurrentHashMap<>();
 
     /**
      * Indicates if any converter with the given <code>key</code> is registered.

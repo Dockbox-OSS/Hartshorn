@@ -54,7 +54,7 @@ public final class AnnotationHelper {
      * stay in memory forever, you can pass a customized cache implementation, like LRU
      * cache, to the constructor.
      */
-    private static final Map<Object, Exceptional<Object>> cache = HartshornUtils.emptyConcurrentMap();
+    private static final Map<Object, Exceptional<Object>> cache = new ConcurrentHashMap<>();
 
     private AnnotationHelper() {}
 

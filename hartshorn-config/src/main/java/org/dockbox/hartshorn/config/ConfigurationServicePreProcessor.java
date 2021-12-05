@@ -26,10 +26,10 @@ import org.dockbox.hartshorn.core.services.ServiceOrder;
 import org.dockbox.hartshorn.core.services.ServicePreProcessor;
 import org.dockbox.hartshorn.data.FileFormats;
 import org.dockbox.hartshorn.data.mapping.ObjectMapper;
-import org.dockbox.hartshorn.core.HartshornUtils;
 
 import java.net.URI;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -45,7 +45,7 @@ import java.util.regex.Pattern;
 public class ConfigurationServicePreProcessor implements ServicePreProcessor<UseConfigurations> {
 
     private final Pattern STRATEGY_PATTERN = Pattern.compile("(.+):(.+)");
-    private final Map<String, ResourceLookupStrategy> strategies = HartshornUtils.emptyConcurrentMap();
+    private final Map<String, ResourceLookupStrategy> strategies = new ConcurrentHashMap<>();
 
     public ConfigurationServicePreProcessor() {
         this.addStrategy(new ClassPathResourceLookupStrategy());

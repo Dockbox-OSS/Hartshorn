@@ -36,6 +36,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -121,7 +122,7 @@ public final class TranslationBatchGenerator {
                 }
             }
 
-            final List<String> content = HartshornUtils.emptyList();
+            final List<String> content = new ArrayList<>();
             cache.forEach((key, value) -> {
                 final String next = String.valueOf(key) + '=' + value;
                 content.add(next);
@@ -148,7 +149,7 @@ public final class TranslationBatchGenerator {
 
     private static String createBatch(final ApplicationContext context) {
         final Map<String, String> collect = collect(context);
-        final List<String> entries = HartshornUtils.emptyList();
+        final List<String> entries = new ArrayList<>();
         for (final Entry<String, String> entry : collect.entrySet()) {
             if (entry.getValue().contains("\n")) continue;
             if (BLACKLIST.contains(entry.getKey())) continue;

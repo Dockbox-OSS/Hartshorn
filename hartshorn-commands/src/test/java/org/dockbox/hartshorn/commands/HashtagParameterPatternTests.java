@@ -21,7 +21,6 @@ import org.dockbox.hartshorn.commands.annotations.UseCommands;
 import org.dockbox.hartshorn.commands.arguments.CustomParameterPattern;
 import org.dockbox.hartshorn.commands.arguments.HashtagParameterPattern;
 import org.dockbox.hartshorn.commands.types.CuboidArgument;
-import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
@@ -54,7 +53,7 @@ public class HashtagParameterPatternTests {
         final Exceptional<Boolean> result = parameterPattern.preconditionsMatch(TypeContext.of(CuboidArgument.class), null, pattern);
 
         Assertions.assertTrue(result.present());
-        Assertions.assertTrue(HartshornUtils.unwrap(result));
+        Assertions.assertTrue(result.get());
     }
 
     private HashtagParameterPattern pattern() {
@@ -75,7 +74,7 @@ public class HashtagParameterPatternTests {
         final Exceptional<Boolean> result = parameterPattern.preconditionsMatch(TypeContext.of(CuboidArgument.class), null, pattern);
 
         Assertions.assertTrue(result.present());
-        Assertions.assertFalse(HartshornUtils.unwrap(result));
+        Assertions.assertFalse(result.get());
     }
 
     @Test
@@ -86,7 +85,7 @@ public class HashtagParameterPatternTests {
         final Exceptional<Boolean> result = parameterPattern.preconditionsMatch(TypeContext.of(CuboidArgument.class), null, pattern);
 
         Assertions.assertTrue(result.present());
-        Assertions.assertFalse(HartshornUtils.unwrap(result));
+        Assertions.assertFalse(result.get());
     }
 
     @Test

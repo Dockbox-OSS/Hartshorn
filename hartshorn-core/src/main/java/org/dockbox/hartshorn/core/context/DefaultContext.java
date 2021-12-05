@@ -87,15 +87,15 @@ public abstract class DefaultContext implements Context {
 
     @Override
     public <C extends Context> List<C> all(final Class<C> context) {
-        return HartshornUtils.asUnmodifiableList(this.contexts.stream()
+        return this.contexts.stream()
                 .filter(c -> c.getClass().equals(context))
                 .map(c -> (C) c)
-                .toList());
+                .toList();
     }
 
     @Override
     public List<Context> all(final String name) {
-        return HartshornUtils.asList(this.namedContexts.get(name));
+        return List.copyOf(this.namedContexts.get(name));
     }
 
     @Override
