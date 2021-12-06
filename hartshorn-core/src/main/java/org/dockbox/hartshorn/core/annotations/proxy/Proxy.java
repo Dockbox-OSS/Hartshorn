@@ -29,6 +29,9 @@ import java.lang.annotation.Target;
 /**
  * The annotation used to mark a type as proxy executor. Proxy methods are still required to be
  * decorated with {@link Proxy.Target}. Any non-annotated method will be ignored.
+ *
+ * @author Guus Lieben
+ * @since 4.0.0
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)

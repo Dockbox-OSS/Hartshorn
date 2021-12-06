@@ -20,6 +20,7 @@ package org.dockbox.hartshorn.core.annotations.service;
 import org.dockbox.hartshorn.core.ComponentType;
 import org.dockbox.hartshorn.core.annotations.component.Component;
 import org.dockbox.hartshorn.core.annotations.Extends;
+import org.dockbox.hartshorn.core.proxy.ProxyHandler;
 
 import java.lang.annotation.Annotation;
 import java.lang.annotation.ElementType;
@@ -27,6 +28,19 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * Annotation to indicate a component is a functional component, better known as a service. A service is a component
+ * of which the methods, and thus functionality, can be directly modified through {@link ProxyHandler}s to allow for
+ * dynamic behavior of service definitions.
+ *
+ * <p>Services carries an additional {@link #activators()} attribute, which is used to indicate when a service should
+ * become active by default.
+ *
+ * <p>By default all services are {@link #singleton() singletons}.
+ *
+ * @author Guus Lieben
+ * @since 4.1.0
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @Extends(Component.class)
@@ -34,15 +48,45 @@ import java.lang.annotation.Target;
 @ServiceActivator
 public @interface Service {
 
+    /**
+     * @see Component#id()
+     * @return The id of the service.
+     */
     String id() default "";
 
+    /**
+     * @see Component#name()
+     * @return The name of the service.
+     */
     String name() default "";
 
+    /**
+     * @see Component#enabled()
+     * @return Whether the service is enabled.
+     * @deprecated See {@link Component#enabled()}
+     */
+    @Deprecated(since = "4.2.5", forRemoval = true)
     boolean enabled() default true;
 
+    /**
+     * @see Component#owner()
+     * @return The owner of the service.
+     */
     Class<?> owner() default Void.class;
 
+    /**
+     * @see Component#singleton()
+     * @return Whether the service is a singleton.
+     */
     boolean singleton() default true;
 
+    /**
+     * The activators required for this service to become active by default. If one or more activators are not present,
+     * the service will not be loaded.
+     *
+     * @return The activators required for this service to become active by default.
+     * @see ServiceActivator
+     * @see org.dockbox.hartshorn.core.services.ComponentLocator
+     */
     Class<? extends Annotation>[] activators() default Service.class;
 }
