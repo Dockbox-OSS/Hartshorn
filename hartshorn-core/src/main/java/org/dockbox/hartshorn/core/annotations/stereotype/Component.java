@@ -52,7 +52,7 @@ import java.lang.annotation.Target;
  *
  * <p>The following example shows how to annotate a class as a component:
  * <pre>{@code
- *      \@Component
+ *      @Component
  *      public class MyComponent {
  *          // ...
  *      }
