@@ -22,6 +22,6 @@ import org.dockbox.hartshorn.core.annotations.service.ServiceActivator;
 import java.lang.annotation.Retention;
 
 @Retention(java.lang.annotation.RetentionPolicy.RUNTIME)
-@ServiceActivator(scanPackages = "nz.pumbas.halpbot")
+@ServiceActivator(scanPackages = "com.example.application")
 public @interface UseDemo {
 }
