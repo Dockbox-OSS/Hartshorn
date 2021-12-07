@@ -131,6 +131,7 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
     protected void registerDefaultBindings() {
         this.bind(Key.of(ComponentProvider.class), this);
         this.bind(Key.of(ApplicationContext.class), this);
+        this.bind(Key.of(ActivatorSource.class), this);
 
         this.bind(Key.of(MetaProvider.class), this.metaProvider);
         this.bind(Key.of(ComponentLocator.class), this.locator());

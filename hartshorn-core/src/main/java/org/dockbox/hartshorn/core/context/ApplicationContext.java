@@ -31,21 +31,20 @@ import org.dockbox.hartshorn.core.services.ComponentLocator;
 import org.dockbox.hartshorn.core.services.ComponentProcessor;
 import org.slf4j.Logger;
 
-import java.lang.annotation.Annotation;
-import java.util.Set;
-
 @LogExclude
 public interface ApplicationContext extends
         ApplicationBinder,
         ComponentProvider,
         ApplicationPropertyHolder,
         ExceptionHandler,
-        ApplicationLogger
+        ApplicationLogger,
+        ActivatorSource
 {
 
     @Deprecated(since = "4.2.5", forRemoval = true)
     void add(InjectionPoint<?> property);
 
+    @Deprecated(since = "4.2.5", forRemoval = true)
     <T> T create(Key<T> type);
 
     @Deprecated(since = "4.2.5", forRemoval = true)
@@ -53,18 +52,13 @@ public interface ApplicationContext extends
 
     <T> T populate(T type);
 
+    @Deprecated(since = "4.2.5", forRemoval = true)
     <T> T raw(TypeContext<T> type);
 
     @Deprecated(since = "4.2.5", forRemoval = true)
     <T> T raw(TypeContext<T> type, boolean populate);
 
     void add(ComponentProcessor<?> processor);
-
-    Set<Annotation> activators();
-
-    boolean hasActivator(Class<? extends Annotation> activator);
-
-    <A> A activator(Class<A> activator);
 
     ComponentLocator locator();
 
