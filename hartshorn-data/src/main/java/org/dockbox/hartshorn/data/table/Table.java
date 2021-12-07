@@ -18,6 +18,7 @@
 package org.dockbox.hartshorn.data.table;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.core.annotations.Property;
 import org.dockbox.hartshorn.core.boot.Hartshorn;
@@ -28,7 +29,6 @@ import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.data.exceptions.EmptyEntryException;
 import org.dockbox.hartshorn.data.exceptions.IdentifierMismatchException;
 import org.dockbox.hartshorn.data.exceptions.UnknownIdentifierException;
-import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -58,6 +58,7 @@ import lombok.Getter;
  * @author Simbolduc, GuusLieben
  * @since feature/S124
  */
+@Deprecated
 public class Table {
 
     private static final Map<TypeContext<?>, List<ColumnIdentifier<?>>> DEFINITIONS = HartshornUtils.emptyMap();
