@@ -63,12 +63,15 @@ import org.dockbox.hartshorn.core.services.ComponentProcessor;
 import org.dockbox.hartshorn.core.services.ServiceOrder;
 
 import java.lang.annotation.Annotation;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
+import java.util.Queue;
 import java.util.Set;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -89,6 +92,7 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
     protected final transient MultiMap<ServiceOrder, ComponentPostProcessor<?>> postProcessors = new ArrayListMultiMap<>();
     protected final transient MultiMap<ServiceOrder, ComponentPreProcessor<?>> preProcessors = new ArrayListMultiMap<>();
     protected final transient Properties environmentValues = new Properties();
+    protected final transient Queue<String> prefixQueue = new ConcurrentLinkedQueue<>();
 
     @Getter(AccessLevel.PROTECTED) private final Activator activator;
     @Getter private final ApplicationEnvironment environment;
@@ -143,9 +147,7 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
         final Exceptional<ServiceActivator> activator = annotationType.annotation(ServiceActivator.class);
         if (activator.present()) {
             this.activators.add(annotation);
-            for (final String scanPackage : activator.get().scanPackages()) {
-                this.bind(scanPackage);
-            }
+            this.prefixQueue.addAll(Arrays.asList(activator.get().scanPackages()));
             this.environment().annotationsWith(annotationType, ServiceActivator.class).forEach(this::addActivator);
         }
     }
@@ -218,6 +220,11 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
     }
 
     public void process() {
+        String scan;
+        while ((scan = this.prefixQueue.poll()) != null) {
+            this.bind(scan);
+        }
+
         final Collection<ComponentContainer> containers = this.locator().containers(ComponentType.FUNCTIONAL);
         this.log().debug("Located %d functional components from classpath".formatted(containers.size()));
         for (final ServiceOrder order : ServiceOrder.VALUES) this.process(order, containers);
