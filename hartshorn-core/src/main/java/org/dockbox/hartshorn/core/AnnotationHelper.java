@@ -48,9 +48,7 @@ public final class AnnotationHelper {
 
     /**
      * The annotation-magic-lookup is a relatively expensive operation, so we'd better
-     * cache the result as much as possible. In case you don't want the cached value to
-     * stay in memory forever, you can pass a customized cache implementation, like LRU
-     * cache, to the constructor.
+     * cache the result as much as possible.
      */
     private static final Map<Object, Exceptional<Object>> cache = new ConcurrentHashMap<>();
 
@@ -106,15 +104,6 @@ public final class AnnotationHelper {
 
         return (A) Proxy.newProxyInstance(AnnotationHelper.class.getClassLoader(), new Class[]{ targetAnnotationClass, AnnotationAdapter.class },
                 new AnnotationAdapterProxy<>(actual, targetAnnotationClass, hierarchy));
-    }
-
-    private static int indexOf(final Annotation[] annotations, final Class<? extends Annotation> targetAnnotation) {
-        for (int i = 0; i < annotations.length; ++i) {
-            if (annotations[i].annotationType() == targetAnnotation) {
-                return i;
-            }
-        }
-        return -1;
     }
 
     private static Annotation actualAnnotationBehindProxy(final Annotation annotation) {
