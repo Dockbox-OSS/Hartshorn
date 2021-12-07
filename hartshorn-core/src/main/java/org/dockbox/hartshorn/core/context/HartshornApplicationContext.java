@@ -18,7 +18,6 @@
 package org.dockbox.hartshorn.core.context;
 
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.dockbox.hartshorn.core.ActivatorFiltered;
 import org.dockbox.hartshorn.core.ArrayListMultiMap;
 import org.dockbox.hartshorn.core.ComponentType;
 import org.dockbox.hartshorn.core.DefaultModifiers;
@@ -61,7 +60,6 @@ import org.dockbox.hartshorn.core.services.ComponentLocator;
 import org.dockbox.hartshorn.core.services.ComponentPostProcessor;
 import org.dockbox.hartshorn.core.services.ComponentPreProcessor;
 import org.dockbox.hartshorn.core.services.ComponentProcessor;
-import org.dockbox.hartshorn.core.services.ServiceImpl;
 import org.dockbox.hartshorn.core.services.ServiceOrder;
 
 import java.lang.annotation.Annotation;
@@ -71,7 +69,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -113,7 +110,6 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
         }
         this.activator = activator.get();
         this.environment().annotationsWith(activationSource, ServiceActivator.class).forEach(this::addActivator);
-        this.addActivator(new ServiceImpl());
 
         this.log().debug("Located %d service activators".formatted(this.activators().size()));
 
@@ -148,7 +144,7 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
         if (activator.present()) {
             this.activators.add(annotation);
             for (final String scanPackage : activator.get().scanPackages()) {
-                this.environment().prefix(scanPackage);
+                this.bind(scanPackage);
             }
             this.environment().annotationsWith(annotationType, ServiceActivator.class).forEach(this::addActivator);
         }
@@ -221,10 +217,9 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
         return (A) this.activators.stream().filter(a -> a.annotationType().equals(activator)).findFirst().orElse(null);
     }
 
-    protected void process(final String prefix) {
-        this.locator().register(prefix);
+    public void process() {
         final Collection<ComponentContainer> containers = this.locator().containers(ComponentType.FUNCTIONAL);
-        this.log().debug("Located %d functional components in prefix %s".formatted(containers.size(), prefix));
+        this.log().debug("Located %d functional components from classpath".formatted(containers.size()));
         for (final ServiceOrder order : ServiceOrder.VALUES) this.process(order, containers);
     }
 
@@ -398,7 +393,10 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
 
     @Override
     public void bind(final String prefix) {
-        this.environment().prefix(prefix);
+        if (this.environment().prefixContext().prefixes().contains(prefix)) return;
+
+        // Also registers to the active environment
+        this.locator().register(prefix);
 
         final Collection<TypeContext<?>> binders = this.environment().types(prefix, Binds.class, false);
 
@@ -414,8 +412,6 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
                 this.handleBinder(binder, annotation);
             }
         }
-
-        this.process(prefix);
     }
 
     @Override
@@ -554,21 +550,14 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
     }
 
     public void lookupActivatables() {
-        for (final String prefix : this.environment().prefixContext().prefixes()) {
-            this.lookup(prefix, ComponentPreProcessor.class, ApplicationContext::add);
-            this.lookup(prefix, ComponentPostProcessor.class, ApplicationContext::add);
-        }
-    }
+        final Collection<TypeContext<? extends ComponentProcessor>> children = this.environment().children(ComponentProcessor.class);
+        for (final TypeContext<? extends ComponentProcessor> processor : children) {
+            if (processor.isAbstract()) continue;
 
-    private <T extends ActivatorFiltered<?>> void lookup(final String prefix, final Class<T> type, final BiConsumer<ApplicationContext, T> consumer) {
-        final Collection<TypeContext<? extends T>> children = this.environment().children(type);
-        for (final TypeContext<? extends T> child : children) {
-            if (child.isAbstract()) continue;
-
-            if (child.annotation(AutomaticActivation.class).present()) {
-                final T raw = this.raw(child);
+            if (processor.annotation(AutomaticActivation.class).present()) {
+                final ComponentProcessor raw = this.get(processor);
                 if (this.hasActivator(raw.activator()))
-                    consumer.accept(this, raw);
+                    this.add(raw);
             }
         }
     }
