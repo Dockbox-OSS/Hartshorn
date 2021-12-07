@@ -17,10 +17,9 @@
 
 package org.dockbox.hartshorn.core;
 
-import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.annotations.AliasFor;
-import org.dockbox.hartshorn.core.annotations.CompositeOf;
 import org.dockbox.hartshorn.core.annotations.Extends;
+import org.dockbox.hartshorn.core.domain.Exceptional;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
@@ -31,7 +30,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -90,33 +88,9 @@ public final class AnnotationHelper {
 
     private static <A extends Annotation> List<A> annotations(final Annotation[] annotations, final Class<A> targetClass) {
         return Stream.of(annotations)
-                .flatMap(AnnotationHelper::expandAnnotation)
                 .map(annotation -> examineAnnotation(annotation, targetClass))
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
-    }
-
-    private static Stream<Annotation> expandAnnotation(final Annotation annotation) {
-        final Annotation[] annotationsOnTargetAnnotationType = annotation.annotationType().getAnnotations();
-
-        final int compositeOfIndex = indexOf(annotationsOnTargetAnnotationType, CompositeOf.class);
-        final int extendsIndex = indexOf(annotationsOnTargetAnnotationType, Extends.class);
-
-        if (compositeOfIndex == -1) {
-            return Stream.of(annotation);
-        }
-
-        final LinkedList<Annotation> result = Stream.of(((CompositeOf) annotationsOnTargetAnnotationType[compositeOfIndex]).value())
-                .map(klass -> (Annotation) Proxy.newProxyInstance(klass.getClassLoader(), new Class[]{ klass }, new AnnotationInvocationHandler(klass, annotation))).collect(Collectors.toCollection(LinkedList::new));
-        if (extendsIndex != -1) {
-            if (extendsIndex < compositeOfIndex) {
-                result.addFirst(annotation);
-            }
-            else {
-                result.add(annotation);
-            }
-        }
-        return result.stream();
     }
 
     private static <A extends Annotation> A examineAnnotation(Annotation actual, final Class<A> targetAnnotationClass) {
