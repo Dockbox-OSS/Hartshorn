@@ -20,6 +20,7 @@ package org.dockbox.hartshorn.core;
 import org.dockbox.hartshorn.core.annotations.activate.UseServiceProvision;
 import org.dockbox.hartshorn.core.boot.EmptyService;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
+import org.dockbox.hartshorn.core.context.HartshornApplicationContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.proxy.ExtendedProxy;
 import org.dockbox.hartshorn.core.types.ComponentType;
@@ -164,7 +165,11 @@ public class ApplicationContextTests {
 
     @Test
     public void testScannedBindingCanBeProvided() {
+        // This is a bit of a hack, but we need to ensure that the prefix binding is present and processed. Usually
+        // you'd do this through a service activator.
         this.applicationContext().bind("test.types.scan");
+        ((HartshornApplicationContext) this.applicationContext()).process();
+
         final SampleInterface provided = this.applicationContext().get(SampleInterface.class);
         Assertions.assertNotNull(provided);
 
@@ -176,7 +181,11 @@ public class ApplicationContextTests {
 
     @Test
     public void testScannedMetaBindingsCanBeProvided() {
+        // This is a bit of a hack, but we need to ensure that the prefix binding is present and processed. Usually
+        // you'd do this through a service activator.
         this.applicationContext().bind("test.types.meta");
+        ((HartshornApplicationContext) this.applicationContext()).process();
+
         // Ensure that the binding is not bound to the default name
         final SampleInterface sample = this.applicationContext().get(SampleInterface.class);
         Assertions.assertNull(sample); // Non-component, so null
@@ -200,7 +209,11 @@ public class ApplicationContextTests {
 
     @Test
     public void testScannedMultiBindingsCanBeProvided() {
+        // This is a bit of a hack, but we need to ensure that the prefix binding is present and processed. Usually
+        // you'd do this through a service activator.
         this.applicationContext().bind("test.types.multi");
+        ((HartshornApplicationContext) this.applicationContext()).process();
+
         final SampleInterface provided = this.applicationContext().get(SampleInterface.class);
         Assertions.assertNotNull(provided);
 
@@ -212,7 +225,11 @@ public class ApplicationContextTests {
 
     @Test
     public void testScannedMultiMetaBindingsCanBeProvided() {
+        // This is a bit of a hack, but we need to ensure that the prefix binding is present and processed. Usually
+        // you'd do this through a service activator.
         this.applicationContext().bind("test.types.multi");
+        ((HartshornApplicationContext) this.applicationContext()).process();
+
         final SampleInterface provided = this.applicationContext().get(Key.of(SampleInterface.class, "meta"));
         Assertions.assertNotNull(provided);
 
@@ -256,7 +273,11 @@ public class ApplicationContextTests {
     @ParameterizedTest
     @MethodSource("providers")
     void testProvidersCanApply(final String meta, final String name, final boolean field, final String fieldMeta, final boolean singleton) {
+        // This is a bit of a hack, but we need to ensure that the prefix binding is present and processed. Usually
+        // you'd do this through a service activator.
         this.applicationContext().bind("test.types.provision");
+        ((HartshornApplicationContext) this.applicationContext()).process();
+
         if (field) {
             if (fieldMeta == null) {this.applicationContext().bind(Key.of(SampleField.class), SampleFieldImplementation.class);}
             else this.applicationContext().bind(Key.of(SampleField.class, fieldMeta), SampleFieldImplementation.class);
