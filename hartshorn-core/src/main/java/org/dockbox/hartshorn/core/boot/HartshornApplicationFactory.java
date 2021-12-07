@@ -34,6 +34,7 @@ import org.dockbox.hartshorn.core.services.ComponentLocator;
 import org.dockbox.hartshorn.core.services.ComponentLocatorImpl;
 import org.dockbox.hartshorn.core.services.ComponentPostProcessor;
 import org.dockbox.hartshorn.core.services.ComponentPreProcessor;
+import org.dockbox.hartshorn.core.services.ServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -189,38 +190,42 @@ public class HartshornApplicationFactory implements ApplicationFactory<Hartshorn
         final HartshornApplicationContext applicationContext = new HartshornApplicationContext(environment, this.componentLocator, this.activator, this.prefixes, this.arguments, this.modifiers);
         manager.applicationContext(applicationContext);
 
+        applicationContext.addActivator(new ServiceImpl());
+
         final ApplicationConfigurator configurator = this.applicationConfigurator;
         configurator.configure(manager);
 
         for (final Annotation serviceActivator : this.serviceActivators)
             applicationContext.addActivator(serviceActivator);
 
-        applicationContext.lookupActivatables();
-
-        this.componentPreProcessors.forEach(applicationContext::add);
-        this.componentPostProcessors.forEach(applicationContext::add);
+        // Always load Hartshorn internals first
+        configurator.bind(manager, Hartshorn.PACKAGE_PREFIX);
 
         final Activator activator = this.activatorAnnotation();
-        final Set<InjectConfiguration> configurations = Arrays.stream(activator.configs())
-                .map(InjectConfig::value)
-                .map(TypeContext::of)
-                .map(applicationContext::raw)
-                .collect(Collectors.toSet());
-
-        configurator.apply(manager, configurations);
-        configurator.apply(manager, this.injectConfigurations);
-
         final Set<String> scanPackages = Set.of(activator.scanPackages());
         final Collection<String> scanPrefixes = HartshornUtils.merge(this.prefixes, scanPackages);
 
         if (activator.includeBasePackage())
             scanPrefixes.add(this.activator.type().getPackageName());
 
-        // Always load Hartshorn internals first
-        configurator.bind(manager, Hartshorn.PACKAGE_PREFIX);
+        final Set<InjectConfiguration> configurations = Arrays.stream(activator.configs())
+                .map(InjectConfig::value)
+                .map(TypeContext::of)
+                .map(applicationContext::get)
+                .collect(Collectors.toSet());
+
+        configurator.apply(manager, configurations);
+        configurator.apply(manager, this.injectConfigurations);
 
         for (final String prefix : scanPrefixes)
             configurator.bind(manager, prefix);
+
+        applicationContext.lookupActivatables();
+
+        this.componentPreProcessors.forEach(applicationContext::add);
+        applicationContext.process();
+
+        this.componentPostProcessors.forEach(applicationContext::add);
 
         for (final LifecycleObserver observer : manager.observers())
             observer.onStarted(applicationContext);
