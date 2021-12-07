@@ -18,8 +18,8 @@
 package org.dockbox.hartshorn.core.context;
 
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.dockbox.hartshorn.core.ArrayListMultiMap;
 import org.dockbox.hartshorn.core.ComponentType;
+import org.dockbox.hartshorn.core.CustomMultiMap;
 import org.dockbox.hartshorn.core.DefaultModifiers;
 import org.dockbox.hartshorn.core.Enableable;
 import org.dockbox.hartshorn.core.HartshornUtils;
@@ -90,8 +90,8 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
     private static final Pattern ARGUMENTS = Pattern.compile("-H([a-zA-Z0-9\\.]+)=(.+)");
 
     protected final transient Set<InjectionPoint<?>> injectionPoints = HartshornUtils.emptyConcurrentSet();
-    protected final transient MultiMap<ServiceOrder, ComponentPostProcessor<?>> postProcessors = new ArrayListMultiMap<>();
-    protected final transient MultiMap<ServiceOrder, ComponentPreProcessor<?>> preProcessors = new ArrayListMultiMap<>();
+    protected final transient MultiMap<ServiceOrder, ComponentPostProcessor<?>> postProcessors = new CustomMultiMap<>(HartshornUtils::emptyConcurrentSet);
+    protected final transient MultiMap<ServiceOrder, ComponentPreProcessor<?>> preProcessors = new CustomMultiMap<>(HartshornUtils::emptyConcurrentSet);
     protected final transient Properties environmentValues = new Properties();
     protected final transient Queue<String> prefixQueue = new ConcurrentLinkedQueue<>();
 
