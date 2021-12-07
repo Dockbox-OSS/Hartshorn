@@ -187,7 +187,7 @@ public class HartshornApplicationFactory implements ApplicationFactory<Hartshorn
         );
         final ApplicationEnvironment environment = this.applicationEnvironment.apply(manager);
 
-        final HartshornApplicationContext applicationContext = new HartshornApplicationContext(environment, this.componentLocator, this.activator, this.prefixes, this.arguments, this.modifiers);
+        final HartshornApplicationContext applicationContext = new HartshornApplicationContext(environment, this.componentLocator, this.activator, this.arguments, this.modifiers);
         manager.applicationContext(applicationContext);
 
         applicationContext.addActivator(new ServiceImpl());
