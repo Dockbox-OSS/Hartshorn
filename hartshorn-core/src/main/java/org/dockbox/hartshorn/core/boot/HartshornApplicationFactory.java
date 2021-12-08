@@ -220,6 +220,7 @@ public class HartshornApplicationFactory implements ApplicationFactory<Hartshorn
         for (final String prefix : scanPrefixes)
             configurator.bind(manager, prefix);
 
+        applicationContext.processPrefixQueue();
         applicationContext.lookupActivatables();
 
         this.componentPreProcessors.forEach(applicationContext::add);

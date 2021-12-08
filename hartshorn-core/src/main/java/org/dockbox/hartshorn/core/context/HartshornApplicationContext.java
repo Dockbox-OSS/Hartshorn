@@ -224,12 +224,15 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
         return (A) this.activators.stream().filter(a -> a.annotationType().equals(activator)).findFirst().orElse(null);
     }
 
-    public void process() {
+    public void processPrefixQueue() {
         String scan;
         while ((scan = this.prefixQueue.poll()) != null) {
             this.bind(scan);
         }
+    }
 
+    public void process() {
+        this.processPrefixQueue();
         final Collection<ComponentContainer> containers = this.locator().containers(ComponentType.FUNCTIONAL);
         this.log().debug("Located %d functional components from classpath".formatted(containers.size()));
         for (final ServiceOrder order : ServiceOrder.VALUES) this.process(order, containers);
@@ -567,9 +570,9 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
             if (processor.isAbstract()) continue;
 
             if (processor.annotation(AutomaticActivation.class).present()) {
-                final ComponentProcessor raw = this.get(processor);
-                if (this.hasActivator(raw.activator()))
-                    this.add(raw);
+                final ComponentProcessor componentProcessor = this.get(processor);
+                if (this.hasActivator(componentProcessor.activator()))
+                    this.add(componentProcessor);
             }
         }
     }
