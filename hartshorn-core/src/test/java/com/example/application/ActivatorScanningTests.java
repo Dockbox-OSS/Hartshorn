@@ -41,4 +41,20 @@ public class ActivatorScanningTests {
         Assertions.assertEquals("Demo", demo.demo());
         Assertions.assertTrue(demo instanceof DemoImpl);
     }
+
+    @InjectTest
+    void testServicesFromActivatorPrefixArePresent(final ApplicationContext applicationContext) {
+        DemoService demoService = applicationContext.get(DemoService.class);
+        Assertions.assertNotNull(demoService);
+        Assertions.assertTrue(applicationContext.environment().manager().isProxy(demoService));
+    }
+
+    @InjectTest
+    void testProcessorsFromActivatorPrefixIsPresentAndInjectedWithLocalValues(final ApplicationContext applicationContext) {
+        DemoProcessor demoProcessor = applicationContext.get(DemoProcessor.class);
+        Assertions.assertNotNull(demoProcessor);
+        Assertions.assertTrue(demoProcessor.demo() instanceof DemoImpl);
+        Assertions.assertNotNull(demoProcessor.demoService());
+        Assertions.assertTrue(applicationContext.environment().manager().isProxy(demoProcessor.demoService()));
+    }
 }
