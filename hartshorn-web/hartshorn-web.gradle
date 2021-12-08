@@ -30,7 +30,7 @@ dependencies {
     implementation 'org.dockbox.hartshorn:hartshorn-data'
     implementation "org.eclipse.jetty:jetty-servlet:$jettyVersion"
     implementation "org.eclipse.jetty:jetty-server:$jettyVersion"
-    implementation 'org.freemarker:freemarker:2.3.31' // TODO version config
+    implementation "org.freemarker:freemarker:$freeMarkerVersion"
 
-    testImplementation 'org.apache.httpcomponents:httpclient:4.5.13'
+    testImplementation "org.apache.httpcomponents:httpclient:$httpClientVersion"
 }
