@@ -35,6 +35,15 @@ import javax.inject.Named;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+/**
+ * The default implementation of the {@link BindingHierarchy} interface. This uses a specified {@link Key} to
+ * identify the binding hierarchy, and stores the bindings in a {@link TreeMap}.
+ *
+ * @param <C> The type of type to provide.
+ * @author Guus Lieben
+ * @since 4.1.2
+ * @see BindingHierarchy
+ */
 @RequiredArgsConstructor
 public class NativeBindingHierarchy<C> implements BindingHierarchy<C> {
 

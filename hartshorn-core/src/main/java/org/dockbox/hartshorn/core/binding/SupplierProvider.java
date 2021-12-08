@@ -26,6 +26,18 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+/**
+ * A {@link Supplier} that is able to provide instances using the given {@link Supplier}.
+ * If the {@link Supplier} is unable to provide an instance, an empty {@link Exceptional}
+ * will be returned without throwing an exception.
+ *
+ * @param <C> The type to be provided.
+ * @author Guus Lieben
+ * @since 4.1.2
+ * @see Provider
+ * @see InstanceProvider
+ * @see ContextDrivenProvider
+ */
 @AllArgsConstructor(access = AccessLevel.PACKAGE)
 @Getter
 public class SupplierProvider<C> implements Provider<C> {

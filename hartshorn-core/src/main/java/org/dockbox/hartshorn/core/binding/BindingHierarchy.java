@@ -33,7 +33,9 @@ import java.util.Map.Entry;
  * <p>This means hierarchies are always in a 'high to low' key order, meaning the highest priority
  * will be provided first.
  * <p>A hierarchy should be used to store the binding priorities for a specific type of type {@code C}.
- * @param <C>
+ * @param <C> The type of type {@code C} that the hierarchy is for.
+ * @author Guus Lieben
+ * @since 4.1.2
  */
 public interface BindingHierarchy<C> extends Iterable<Entry<Integer, Provider<C>>>, ContextCarrier {
 
