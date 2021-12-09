@@ -20,6 +20,14 @@ package org.dockbox.hartshorn.core.boot.logback;
 import ch.qos.logback.classic.PatternLayout;
 import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
 
+/**
+ * A custom {@link PatternLayoutEncoder} that allows for the use of the active process ID
+ * in the logback configuration, using the syntax {@code %process_id}.
+ *
+ * @author Guus Lieben
+ * @since 4.2.4
+ * @see LogbackPIDConverter
+ */
 public class LogbackEncoder extends PatternLayoutEncoder {
 
     @Override

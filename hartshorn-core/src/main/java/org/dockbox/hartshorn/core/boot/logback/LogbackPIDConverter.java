@@ -22,10 +22,17 @@ import java.lang.management.ManagementFactory;
 import ch.qos.logback.classic.pattern.ClassicConverter;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 
+/**
+ * Logback converter that provides the PID of the current process. This is used by the
+ * {@link LogbackEncoder} to offer the PID to the log message.
+ *
+ * @author Guus Lieben
+ * @since 4.2.4
+ * @see LogbackEncoder
+ */
 public class LogbackPIDConverter extends ClassicConverter {
 
-    private static final long PROCESS_ID =
-            ManagementFactory.getRuntimeMXBean().getPid();
+    private static final long PROCESS_ID = ManagementFactory.getRuntimeMXBean().getPid();
 
     @Override
     public String convert(final ILoggingEvent event) {
