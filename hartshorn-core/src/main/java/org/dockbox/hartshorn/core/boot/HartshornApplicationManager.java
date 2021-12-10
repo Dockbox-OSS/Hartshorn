@@ -59,7 +59,7 @@ public class HartshornApplicationManager implements ApplicationManager {
             final ApplicationLogger applicationLogger,
             final ApplicationProxier applicationProxier,
             final ApplicationFSProvider applicationFSProvider,
-            ExceptionHandler exceptionHandler) {
+            final ExceptionHandler exceptionHandler) {
         this.exceptionHandler = exceptionHandler;
         if (applicationLogger instanceof ApplicationManaged applicationManaged)
             applicationManaged.applicationManager(this);
@@ -155,17 +155,17 @@ public class HartshornApplicationManager implements ApplicationManager {
     }
 
     @Override
-    public void handle(Throwable throwable) {
+    public void handle(final Throwable throwable) {
         this.exceptionHandler.handle(throwable);
     }
 
     @Override
-    public void handle(String message, Throwable throwable) {
+    public void handle(final String message, final Throwable throwable) {
         this.exceptionHandler.handle(message, throwable);
     }
 
     @Override
-    public ExceptionHandler stacktraces(boolean stacktraces) {
+    public ExceptionHandler stacktraces(final boolean stacktraces) {
         return this.exceptionHandler.stacktraces(stacktraces);
     }
 }

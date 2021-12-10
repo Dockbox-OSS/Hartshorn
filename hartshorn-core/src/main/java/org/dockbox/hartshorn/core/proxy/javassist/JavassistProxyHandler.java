@@ -105,7 +105,8 @@ public class JavassistProxyHandler<T> extends DefaultContext implements ProxyHan
             if (target != null) {
                 try {
                     return target.invoke(this.instance, args);
-                } catch (InvocationTargetException e) {
+                }
+                catch (final InvocationTargetException e) {
                     throw e.getCause();
                 }
             }
@@ -168,7 +169,7 @@ public class JavassistProxyHandler<T> extends DefaultContext implements ProxyHan
             this.proxyInstance(proxy);
             return proxy;
         }
-        catch (InvocationTargetException | NoSuchMethodException | InstantiationException | IllegalAccessException e) {
+        catch (final InvocationTargetException | NoSuchMethodException | InstantiationException | IllegalAccessException e) {
             throw new ApplicationException(e);
         }
     }
@@ -178,7 +179,7 @@ public class JavassistProxyHandler<T> extends DefaultContext implements ProxyHan
         return Exceptional.of(this.proxyInstance);
     }
 
-    public void proxyInstance(T proxyInstance) {
+    public void proxyInstance(final T proxyInstance) {
         this.proxyInstance = proxyInstance;
     }
 

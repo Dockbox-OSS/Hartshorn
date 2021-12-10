@@ -42,7 +42,7 @@ import java.util.Set;
 public class ConfigurationServicePostProcessor implements ComponentPostProcessor<UseConfigurations> {
 
     @Override
-    public <T> boolean modifies(ApplicationContext context, TypeContext<T> type, @Nullable T instance) {
+    public <T> boolean modifies(final ApplicationContext context, final TypeContext<T> type, @Nullable final T instance) {
         return !type.fields(Value.class).isEmpty();
     }
 

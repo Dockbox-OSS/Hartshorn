@@ -28,7 +28,7 @@ public final class DerbyFileRemote implements Remote<Path> {
     public static final DerbyFileRemote INSTANCE = new DerbyFileRemote();
 
     @Override
-    public PersistenceConnection connection(Path target, String user, String password) {
+    public PersistenceConnection connection(final Path target, final String user, final String password) {
         return new PersistenceConnection(
                 "jdbc:derby:directory:%s/db;create=true".formatted(target.toFile().getAbsolutePath()),
                 user,

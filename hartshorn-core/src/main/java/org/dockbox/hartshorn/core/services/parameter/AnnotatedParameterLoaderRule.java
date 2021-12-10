@@ -27,7 +27,7 @@ public abstract class AnnotatedParameterLoaderRule<A extends Annotation, C exten
     protected abstract Class<A> annotation();
 
     @Override
-    public boolean accepts(final ParameterContext<?> parameter, int index, final C context, final Object... args) {
+    public boolean accepts(final ParameterContext<?> parameter, final int index, final C context, final Object... args) {
         return parameter.annotation(this.annotation()).present();
     }
 }

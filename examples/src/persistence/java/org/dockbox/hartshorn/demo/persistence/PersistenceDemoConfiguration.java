@@ -77,8 +77,8 @@ public class PersistenceDemoConfiguration {
     @Provider
     @Singleton
     public UserRepository sql(final ApplicationContext context) {
-        JdbcRemoteConfiguration configuration = JdbcRemoteConfiguration.of(this.host, this.port, this.database);
-        PersistenceConnection connection = MySQLRemote.INSTANCE.connection(configuration, this.user, this.password);
+        final JdbcRemoteConfiguration configuration = JdbcRemoteConfiguration.of(this.host, this.port, this.database);
+        final PersistenceConnection connection = MySQLRemote.INSTANCE.connection(configuration, this.user, this.password);
         return (UserRepository) context.get(UserRepository.class).connection(connection);
     }
 }

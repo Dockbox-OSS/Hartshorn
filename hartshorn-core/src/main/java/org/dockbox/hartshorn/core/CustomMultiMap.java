@@ -24,7 +24,7 @@ public class CustomMultiMap<K, V> extends MultiMap<K, V> {
 
     private final Supplier<Collection<V>> baseCollection;
 
-    public CustomMultiMap(Supplier<Collection<V>> baseCollection) {
+    public CustomMultiMap(final Supplier<Collection<V>> baseCollection) {
         this.baseCollection = baseCollection;
     }
 

@@ -31,7 +31,7 @@ public class JpaParameterLoaderContext extends ParameterLoaderContext {
     @Getter
     private final Query query;
 
-    public JpaParameterLoaderContext(MethodContext<?, ?> method, TypeContext<?> type, Object instance, ApplicationContext applicationContext, Query query) {
+    public JpaParameterLoaderContext(final MethodContext<?, ?> method, final TypeContext<?> type, final Object instance, final ApplicationContext applicationContext, final Query query) {
         super(method, type, instance, applicationContext);
         this.query = query;
     }

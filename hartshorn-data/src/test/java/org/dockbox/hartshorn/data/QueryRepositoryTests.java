@@ -51,7 +51,7 @@ public class QueryRepositoryTests {
     @Container private static final MySQLContainer<?> mySql = new MySQLContainer<>(MySQLContainer.NAME).withDatabaseName(DEFAULT_DATABASE);
 
     protected static PersistenceConnection connection() {
-        JdbcRemoteConfiguration server = JdbcRemoteConfiguration.of("localhost", mySql.getMappedPort(MySQLContainer.MYSQL_PORT), DEFAULT_DATABASE);
+        final JdbcRemoteConfiguration server = JdbcRemoteConfiguration.of("localhost", mySql.getMappedPort(MySQLContainer.MYSQL_PORT), DEFAULT_DATABASE);
         return MySQLRemote.INSTANCE.connection(server, mySql.getUsername(), mySql.getPassword());
     }
 

@@ -29,12 +29,12 @@ public final class AnnotatedElementModifier<A extends AnnotatedElement> implemen
     @Getter
     private final AnnotatedElementContext<A> element;
 
-    public <T extends Annotation> void add(T annotation) {
+    public <T extends Annotation> void add(final T annotation) {
         if (annotation == null) return;
         this.element().validate().put(annotation.annotationType(), annotation);
     }
 
-    public <T extends Annotation> void remove(Class<T> annotation) {
+    public <T extends Annotation> void remove(final Class<T> annotation) {
         if (!annotation.isAnnotation()) return;
         this.element().validate().remove(annotation);
     }

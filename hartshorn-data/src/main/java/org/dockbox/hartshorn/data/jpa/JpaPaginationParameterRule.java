@@ -27,14 +27,14 @@ import javax.persistence.Query;
 public class JpaPaginationParameterRule implements ParameterLoaderRule<JpaParameterLoaderContext> {
 
     @Override
-    public boolean accepts(ParameterContext<?> parameter, int index, JpaParameterLoaderContext context, Object... args) {
+    public boolean accepts(final ParameterContext<?> parameter, final int index, final JpaParameterLoaderContext context, final Object... args) {
         return parameter.type().childOf(Pagination.class);
     }
 
     @Override
-    public <T> Exceptional<T> load(ParameterContext<T> parameter, int index, JpaParameterLoaderContext context, Object... args) {
-        Query query = context.query();
-        Pagination pagination = (Pagination) args[index];
+    public <T> Exceptional<T> load(final ParameterContext<T> parameter, final int index, final JpaParameterLoaderContext context, final Object... args) {
+        final Query query = context.query();
+        final Pagination pagination = (Pagination) args[index];
         if (pagination.max() != null) query.setMaxResults(pagination.max());
         if (pagination.start() != null) query.setFirstResult(pagination.start());
         return Exceptional.of((T) args[index]);

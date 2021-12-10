@@ -24,12 +24,12 @@ import org.dockbox.hartshorn.core.services.parameter.ParameterLoaderRule;
 
 public class StringParameterRule implements ParameterLoaderRule<ParameterLoaderContext> {
     @Override
-    public boolean accepts(final ParameterContext<?> parameter, int index, final ParameterLoaderContext context, final Object... args) {
+    public boolean accepts(final ParameterContext<?> parameter, final int index, final ParameterLoaderContext context, final Object... args) {
         return parameter.type().is(String.class);
     }
 
     @Override
-    public <T> Exceptional<T> load(final ParameterContext<T> parameter, int index, final ParameterLoaderContext context, final Object... args) {
+    public <T> Exceptional<T> load(final ParameterContext<T> parameter, final int index, final ParameterLoaderContext context, final Object... args) {
         return Exceptional.of((T) "JUnit");
     }
 }

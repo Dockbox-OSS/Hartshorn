@@ -24,12 +24,12 @@ import org.dockbox.hartshorn.core.services.parameter.ParameterLoaderRule;
 
 public class EventParameterRule implements ParameterLoaderRule<EventParameterLoaderContext> {
     @Override
-    public boolean accepts(final ParameterContext<?> parameter, int index, final EventParameterLoaderContext context, final Object... args) {
+    public boolean accepts(final ParameterContext<?> parameter, final int index, final EventParameterLoaderContext context, final Object... args) {
         return TypeContext.of(context.event()).childOf(parameter.type());
     }
 
     @Override
-    public <T> Exceptional<T> load(final ParameterContext<T> parameter, int index, final EventParameterLoaderContext context, final Object... args) {
+    public <T> Exceptional<T> load(final ParameterContext<T> parameter, final int index, final EventParameterLoaderContext context, final Object... args) {
         return Exceptional.of((T) context.event());
     }
 }

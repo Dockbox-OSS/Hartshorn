@@ -48,12 +48,12 @@ import java.lang.annotation.Annotation;
 public interface ComponentPreProcessor<A extends Annotation> extends ComponentProcessor<A> {
 
     @Override
-    default <T> boolean modifies(ApplicationContext context, TypeContext<T> type, @Nullable T instance) {
+    default <T> boolean modifies(final ApplicationContext context, final TypeContext<T> type, @Nullable final T instance) {
         return this.modifies(context, type);
     }
 
     @Override
-    default <T> T process(ApplicationContext context, TypeContext<T> type, @Nullable T instance) {
+    default <T> T process(final ApplicationContext context, final TypeContext<T> type, @Nullable final T instance) {
         this.process(context, type);
         return instance;
     }

@@ -102,7 +102,7 @@ public class ApplicationContextTests {
 
     @Test
     public void testStaticBindingWithMetaCanBeProvided() {
-        Key<SampleInterface> key = Key.of(SampleInterface.class, "demo");
+        final Key<SampleInterface> key = Key.of(SampleInterface.class, "demo");
         this.applicationContext().bind(key, SampleImplementation.class);
         final SampleInterface provided = this.applicationContext().get(key);
         Assertions.assertNotNull(provided);
@@ -127,7 +127,7 @@ public class ApplicationContextTests {
 
     @Test
     public void testInstanceBindingWithMetaCanBeProvided() {
-        Key<SampleInterface> key = Key.of(SampleInterface.class, "demo");
+        final Key<SampleInterface> key = Key.of(SampleInterface.class, "demo");
         this.applicationContext().bind(key, new SampleImplementation());
         final SampleInterface provided = this.applicationContext().get(key);
         Assertions.assertNotNull(provided);
@@ -152,7 +152,7 @@ public class ApplicationContextTests {
 
     @Test
     public void testProviderBindingWithMetaCanBeProvided() {
-        Key<SampleInterface> key = Key.of(SampleInterface.class, "demo");
+        final Key<SampleInterface> key = Key.of(SampleInterface.class, "demo");
         this.applicationContext().bind(key, (Supplier<SampleInterface>) SampleImplementation::new);
         final SampleInterface provided = this.applicationContext().get(key);
         Assertions.assertNotNull(provided);

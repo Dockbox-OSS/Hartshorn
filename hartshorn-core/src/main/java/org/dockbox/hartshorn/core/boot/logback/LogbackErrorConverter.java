@@ -24,8 +24,8 @@ import ch.qos.logback.core.pattern.color.ForegroundCompositeConverterBase;
 
 public class LogbackErrorConverter extends ForegroundCompositeConverterBase<ILoggingEvent> {
     @Override
-    protected String getForegroundColorCode(ILoggingEvent event) {
-        Level level = event.getLevel();
+    protected String getForegroundColorCode(final ILoggingEvent event) {
+        final Level level = event.getLevel();
         if (level.toInt() == Level.ERROR_INT)
             return ANSIConstants.RED_FG;
         return ANSIConstants.DEFAULT_FG;

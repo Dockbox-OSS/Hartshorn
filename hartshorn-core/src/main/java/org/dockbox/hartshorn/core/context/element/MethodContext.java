@@ -52,7 +52,7 @@ public class MethodContext<T, P> extends ExecutableElementContext<Method> {
         if (cache.containsKey(method))
             return cache.get(method);
 
-        MethodContext<Object, Object> context = new MethodContext<>(method);
+        final MethodContext<Object, Object> context = new MethodContext<>(method);
         cache.put(method, context);
         return context;
     }

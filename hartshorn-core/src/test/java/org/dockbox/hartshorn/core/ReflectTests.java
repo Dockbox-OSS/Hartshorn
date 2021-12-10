@@ -351,10 +351,10 @@ public class ReflectTests {
 
     @Test
     void testAddVirtualAnnotation() {
-        TypeContext<String> string = TypeContext.of(String.class);
+        final TypeContext<String> string = TypeContext.of(String.class);
         Assertions.assertFalse(string.annotation(Demo.class).present());
 
-        Demo demo = new Demo() {
+        final Demo demo = new Demo() {
             @Override
             public Class<? extends Annotation> annotationType() {
                 return Demo.class;
@@ -363,21 +363,21 @@ public class ReflectTests {
 
         AnnotatedElementModifier.of(string).add(demo);
 
-        Exceptional<Demo> annotation = string.annotation(Demo.class);
+        final Exceptional<Demo> annotation = string.annotation(Demo.class);
         Assertions.assertTrue(annotation.present());
         Assertions.assertSame(demo, annotation.get());
     }
 
     @Test
     void testRemoveVirtualAnnotation() {
-        TypeContext<String> string = TypeContext.of(String.class);
-        Demo demo = new Demo() {
+        final TypeContext<String> string = TypeContext.of(String.class);
+        final Demo demo = new Demo() {
             @Override
             public Class<? extends Annotation> annotationType() {
                 return Demo.class;
             }
         };
-        AnnotatedElementModifier<Class<String>> modifier = AnnotatedElementModifier.of(string);
+        final AnnotatedElementModifier<Class<String>> modifier = AnnotatedElementModifier.of(string);
         modifier.add(demo);
         Assertions.assertTrue(string.annotation(Demo.class).present());
 
@@ -387,9 +387,9 @@ public class ReflectTests {
 
     @Test
     void testVirtualAnnotationToMethod() {
-        MethodContext<?, ReflectTests> method = TypeContext.of(ReflectTests.class).method("testVirtualAnnotationToMethod").get();
-        AnnotatedElementModifier<Method> modifier = AnnotatedElementModifier.of(method);
-        Demo demo = new Demo() {
+        final MethodContext<?, ReflectTests> method = TypeContext.of(ReflectTests.class).method("testVirtualAnnotationToMethod").get();
+        final AnnotatedElementModifier<Method> modifier = AnnotatedElementModifier.of(method);
+        final Demo demo = new Demo() {
             @Override
             public Class<? extends Annotation> annotationType() {
                 return Demo.class;

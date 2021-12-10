@@ -28,14 +28,14 @@ public class HartshornExceptionHandler implements ExceptionHandler {
     private boolean stacktraces;
 
     @Override
-    public void handle(Throwable throwable) {
+    public void handle(final Throwable throwable) {
         this.handle(firstMessage(throwable), throwable);
     }
 
     @Override
-    public void handle(String message, Throwable throwable) {
+    public void handle(String message, final Throwable throwable) {
         if (null != throwable) {
-            Logger log = Hartshorn.log();
+            final Logger log = Hartshorn.log();
 
             String location = "";
             if (0 < throwable.getStackTrace().length) {

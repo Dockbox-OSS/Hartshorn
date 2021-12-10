@@ -92,7 +92,7 @@ public class HibernateJpaRepository<T, ID> implements JpaRepository<T, ID>, Enab
         return this.factory == null;
     }
 
-    public void registerDialect(Class<? extends Remote<?>> remote, String dialectClass) {
+    public void registerDialect(final Class<? extends Remote<?>> remote, final String dialectClass) {
         this.dialects.put(remote, dialectClass);
     }
 
@@ -103,7 +103,7 @@ public class HibernateJpaRepository<T, ID> implements JpaRepository<T, ID>, Enab
             return hibernateRemote.dialect().getCanonicalName();
         }
 
-        String dialect = this.dialects.get(remote.getClass());
+        final String dialect = this.dialects.get(remote.getClass());
         if (dialect != null) return dialect;
 
         throw new ApplicationException("Unexpected remote connection: " + remote);
@@ -121,7 +121,7 @@ public class HibernateJpaRepository<T, ID> implements JpaRepository<T, ID>, Enab
     public void enable() throws ApplicationException {
         if (this.connection == null) {
             this.applicationContext().log().debug("No connection was set for JPA repository instance, using configuration values instead.");
-            HibernateRemote remote = this.applicationContext().get(HibernateRemote.class);
+            final HibernateRemote remote = this.applicationContext().get(HibernateRemote.class);
             this.connection = remote.connection();
         }
 
@@ -275,7 +275,7 @@ public class HibernateJpaRepository<T, ID> implements JpaRepository<T, ID>, Enab
         if (this.factory == null) {
             try {
                 this.applicationContext().enable(this);
-            } catch (ApplicationException e) {
+            } catch (final ApplicationException e) {
                 return ExceptionHandler.unchecked(e);
             }
         }

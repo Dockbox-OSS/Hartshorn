@@ -35,7 +35,7 @@ public class TestExceptionHandle extends HartshornExceptionHandler {
     }
 
     @Override
-    public TestExceptionHandle stacktraces(boolean stacktraces) {
+    public TestExceptionHandle stacktraces(final boolean stacktraces) {
         this.stacktrace = stacktraces;
         return this;
     }

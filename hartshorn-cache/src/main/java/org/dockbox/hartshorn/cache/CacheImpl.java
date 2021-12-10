@@ -43,7 +43,7 @@ public class CacheImpl<T> implements Cache<T>, Enableable {
     private ApplicationContext applicationContext;
 
     @Bound
-    public CacheImpl(Expiration expiration) {
+    public CacheImpl(final Expiration expiration) {
         this.expiration = expiration;
     }
 

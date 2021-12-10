@@ -84,7 +84,7 @@ public class ProxyTests {
                 ConcreteProxyTarget.class.getMethod("name"),
                 (instance, args, proxyContext) -> "Hartshorn");
         final ConcreteProxyTarget concrete = this.applicationContext().get(ConcreteProxyTarget.class);
-        ProxyHandler<ConcreteProxyTarget> handler = this.applicationContext().environment().manager().handler(TypeContext.of(ConcreteProxyTarget.class), concrete);
+        final ProxyHandler<ConcreteProxyTarget> handler = this.applicationContext().environment().manager().handler(TypeContext.of(ConcreteProxyTarget.class), concrete);
         handler.delegate(methodProxyContext);
         final ConcreteProxyTarget proxy = handler.proxy();
 
@@ -96,7 +96,7 @@ public class ProxyTests {
     @Test
     void testProxyIsStoredInHandler() throws ApplicationException {
         final ConcreteProxyTarget concrete = this.applicationContext().get(ConcreteProxyTarget.class);
-        ProxyHandler<ConcreteProxyTarget> handler = this.applicationContext().environment().manager().handler(TypeContext.of(ConcreteProxyTarget.class), concrete);
+        final ProxyHandler<ConcreteProxyTarget> handler = this.applicationContext().environment().manager().handler(TypeContext.of(ConcreteProxyTarget.class), concrete);
         Assertions.assertTrue(handler.proxyInstance().absent());
         handler.proxy();
         Assertions.assertTrue(handler.proxyInstance().present());

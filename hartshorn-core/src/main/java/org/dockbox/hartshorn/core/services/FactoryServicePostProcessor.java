@@ -51,7 +51,7 @@ public class FactoryServicePostProcessor extends ServiceAnnotatedMethodPostProce
     @Override
     public <T, R> ProxyFunction<T, R> process(final ApplicationContext context, final MethodProxyContext<T> methodContext) {
         final MethodContext<?, T> method = methodContext.method();
-        boolean enable = method.annotation(Enable.class).map(Enable::value).or(true);
+        final boolean enable = method.annotation(Enable.class).map(Enable::value).or(true);
         if (method.isAbstract()) {
             final FactoryContext factoryContext = context.first(FactoryContext.class).get();
             final ConstructorContext<?> constructor = factoryContext.get(method);
@@ -62,12 +62,12 @@ public class FactoryServicePostProcessor extends ServiceAnnotatedMethodPostProce
         }
     }
 
-    private <T> T processInstance(final ApplicationContext context, final T instance, boolean enable) {
+    private <T> T processInstance(final ApplicationContext context, final T instance, final boolean enable) {
         try {
             context.populate(instance);
             if (enable) context.enable(instance);
             return instance;
-        } catch (ApplicationException e) {
+        } catch (final ApplicationException e) {
             return ExceptionHandler.unchecked(e);
         }
     }

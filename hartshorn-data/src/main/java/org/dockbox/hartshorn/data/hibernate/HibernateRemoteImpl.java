@@ -43,10 +43,10 @@ public class HibernateRemoteImpl implements HibernateRemote {
         this.driver = (String) context.property("hartshorn.data.hibernate.driver_class").orNull();
         if (this.driver == null) throw new IllegalStateException("Driver class was not configured, expected hartshorn.data.hibernate.driver_class to be set, but got null");
 
-        String dialect = (String) context.property("hartshorn.data.hibernate.dialect").orNull();
+        final String dialect = (String) context.property("hartshorn.data.hibernate.dialect").orNull();
         if (dialect == null) throw new IllegalStateException("Dialect was not configured, expected hartshorn.data.hibernate.dialect to be set, but got null");
 
-        TypeContext<?> dialectContext = TypeContext.lookup(dialect);
+        final TypeContext<?> dialectContext = TypeContext.lookup(dialect);
         if (!dialectContext.childOf(Dialect.class)) throw new IllegalStateException("Expected dialect to be a subtype of " + Dialect.class.getCanonicalName());
 
         this.dialect = (Class<? extends Dialect>) dialectContext.type();
@@ -59,7 +59,7 @@ public class HibernateRemoteImpl implements HibernateRemote {
     }
 
     @Override
-    public PersistenceConnection connection(Object target, String user, String password) {
+    public PersistenceConnection connection(final Object target, final String user, final String password) {
         throw new UnsupportedOperationException("Cannot create targeted connection from pre-configured remote.");
     }
 

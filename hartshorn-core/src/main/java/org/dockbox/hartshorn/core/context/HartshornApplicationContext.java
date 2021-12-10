@@ -506,7 +506,7 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
     }
 
     @Override
-    public void enable(Object instance) throws ApplicationException {
+    public void enable(final Object instance) throws ApplicationException {
         if (instance instanceof Enableable enableable && enableable.canEnable()) {
             enableable.enable();
         }
@@ -578,17 +578,17 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
     }
 
     @Override
-    public void handle(Throwable throwable) {
+    public void handle(final Throwable throwable) {
         this.environment().manager().handle(throwable);
     }
 
     @Override
-    public void handle(String message, Throwable throwable) {
+    public void handle(final String message, final Throwable throwable) {
         this.environment().manager().handle(message, throwable);
     }
 
     @Override
-    public ExceptionHandler stacktraces(boolean stacktraces) {
+    public ExceptionHandler stacktraces(final boolean stacktraces) {
         return this.environment().manager().stacktraces(stacktraces);
     }
 }

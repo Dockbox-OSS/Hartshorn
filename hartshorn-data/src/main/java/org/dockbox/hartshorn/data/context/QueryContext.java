@@ -55,7 +55,7 @@ public class QueryContext {
 
     public javax.persistence.Query query(final EntityManager entityManager) {
         final javax.persistence.Query persistenceQuery = this.persistenceQuery(entityManager, this.annotation);
-        JpaParameterLoaderContext loaderContext = new JpaParameterLoaderContext(this.method, this.entityType, null, this.applicationContext, persistenceQuery);
+        final JpaParameterLoaderContext loaderContext = new JpaParameterLoaderContext(this.method, this.entityType, null, this.applicationContext, persistenceQuery);
         this.parameterLoader().loadArguments(loaderContext, this.args);
         return persistenceQuery;
     }

@@ -41,7 +41,7 @@ public abstract class AbstractPrefixContext<S> extends DefaultContext implements
     private final Map<String, S> prefixes = new ConcurrentHashMap<>();
     private final MultiMap<Class<? extends Annotation>, Class<? extends Annotation>> annotationHierarchy = new CustomMultiMap<>(CopyOnWriteArrayList::new);
 
-    protected AbstractPrefixContext(ApplicationEnvironment environment, Iterable<String> initialPrefixes) {
+    protected AbstractPrefixContext(final ApplicationEnvironment environment, final Iterable<String> initialPrefixes) {
         this.environment = environment;
         for (final String initialPrefix : initialPrefixes) {
             this.prefix(initialPrefix);
@@ -50,7 +50,7 @@ public abstract class AbstractPrefixContext<S> extends DefaultContext implements
 
     protected abstract S process(String prefix);
 
-    protected S get(String prefix) {
+    protected S get(final String prefix) {
         return this.prefixes.computeIfAbsent(prefix, this::process);
     }
 
@@ -59,7 +59,7 @@ public abstract class AbstractPrefixContext<S> extends DefaultContext implements
     }
 
     @Override
-    public void prefix(String prefix) {
+    public void prefix(final String prefix) {
         if (!this.prefixes.containsKey(prefix)) {
             this.environment.manager().log().debug("Registering and caching prefix '%s'".formatted(prefix));
             this.prefixes.put(prefix, this.process(prefix));

@@ -79,7 +79,7 @@ public class HartshornExtension implements BeforeEachCallback, AfterEachCallback
 
         applicationContext.bind(Key.of(HartshornExtension.class), this);
 
-        Optional<Object> testInstance = context.getTestInstance();
+        final Optional<Object> testInstance = context.getTestInstance();
         testInstance.ifPresent(applicationContext::populate);
 
         final Optional<Method> testMethod = context.getTestMethod();
@@ -99,18 +99,18 @@ public class HartshornExtension implements BeforeEachCallback, AfterEachCallback
     }
 
     @Override
-    public boolean supportsParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
-        Optional<Method> testMethod = extensionContext.getTestMethod();
+    public boolean supportsParameter(final ParameterContext parameterContext, final ExtensionContext extensionContext) throws ParameterResolutionException {
+        final Optional<Method> testMethod = extensionContext.getTestMethod();
         if (testMethod.isEmpty()) return false;
 
         return MethodContext.of(testMethod.get()).annotation(Inject.class).present();
     }
 
     @Override
-    public Object resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
+    public Object resolveParameter(final ParameterContext parameterContext, final ExtensionContext extensionContext) throws ParameterResolutionException {
         if (this.applicationContext == null) throw new IllegalStateException("No active state present");
 
-        Optional<Method> testMethod = extensionContext.getTestMethod();
+        final Optional<Method> testMethod = extensionContext.getTestMethod();
         if (testMethod.isEmpty()) throw new ParameterResolutionException("Test method was not provided to runner");
         if (!testMethod.get().equals(this.activeMethod)) throw new IllegalStateException("Active context is not the same as the test method");
 
@@ -120,7 +120,7 @@ public class HartshornExtension implements BeforeEachCallback, AfterEachCallback
     public static Exceptional<ApplicationContext> createContext(final Class<?> activator) throws IOException {
         TypeContext<?> applicationActivator = TypeContext.of(activator);
 
-        HartshornApplicationFactory factory = new HartshornApplicationFactory()
+        final HartshornApplicationFactory factory = new HartshornApplicationFactory()
                 .loadDefaults()
                 .applicationFSProvider(new JUnitFSProvider());
 
@@ -133,7 +133,7 @@ public class HartshornExtension implements BeforeEachCallback, AfterEachCallback
             factory.serviceActivators(serviceActivators);
         }
 
-        ApplicationContext context = factory.activator(applicationActivator).create();
+        final ApplicationContext context = factory.activator(applicationActivator).create();
         return Exceptional.of(context);
     }
 }

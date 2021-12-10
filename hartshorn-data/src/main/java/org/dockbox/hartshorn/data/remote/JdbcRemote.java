@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.data.remote;
 
 public abstract class JdbcRemote implements Remote<JdbcRemoteConfiguration> {
 
-    protected String connectionString(JdbcRemoteConfiguration server) {
+    protected String connectionString(final JdbcRemoteConfiguration server) {
         String connectionString = "jdbc:%s://%s:%s".formatted(this.type(), server.server(), server.port());
         if (this.includeDatabase()) connectionString = "%s/%s".formatted(connectionString, server.database());
         return connectionString;
@@ -32,7 +32,7 @@ public abstract class JdbcRemote implements Remote<JdbcRemoteConfiguration> {
     }
 
     @Override
-    public PersistenceConnection connection(JdbcRemoteConfiguration target, String user, String password) {
+    public PersistenceConnection connection(final JdbcRemoteConfiguration target, final String user, final String password) {
         return new PersistenceConnection(this.connectionString(target), user, password, this);
     }
 }

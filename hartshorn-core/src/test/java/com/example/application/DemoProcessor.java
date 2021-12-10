@@ -45,11 +45,11 @@ public class DemoProcessor implements ComponentPreProcessor<UseDemo> {
     }
 
     @Override
-    public boolean modifies(ApplicationContext context, TypeContext<?> type) {
+    public boolean modifies(final ApplicationContext context, final TypeContext<?> type) {
         return false;
     }
 
     @Override
-    public <T> void process(ApplicationContext context, TypeContext<T> type) {
+    public <T> void process(final ApplicationContext context, final TypeContext<T> type) {
     }
 }

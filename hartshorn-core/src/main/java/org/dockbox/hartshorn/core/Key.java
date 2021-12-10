@@ -60,7 +60,7 @@ public class Key<C> {
         return of(contract, new NamedImpl(named));
     }
 
-    public Key<C> named(String name) {
+    public Key<C> named(final String name) {
         return Key.of(this.contract(), name);
     }
 
