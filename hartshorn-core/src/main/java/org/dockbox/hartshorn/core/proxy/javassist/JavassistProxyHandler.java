@@ -96,8 +96,9 @@ public class JavassistProxyHandler<T> extends DefaultContext implements ProxyHan
                     returnValue = result;
             }
 
-            final Object result = thisMethod.invoke(this.instance, args);
-            if (null == returnValue) returnValue = result;
+            if (null == returnValue && this.instance != null) {
+                returnValue = thisMethod.invoke(this.instance, args);
+            }
 
             return returnValue;
         }
