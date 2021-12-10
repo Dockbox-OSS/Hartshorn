@@ -366,4 +366,14 @@ public class ElementContextTests {
     void testAnnotatedTypeCanGetAnnotationFromAnnotation() {
         Assertions.assertTrue(TypeContext.of(AnnotatedElement.class).annotation(Activator.class).present());
     }
+
+    @Test
+    void testTypeContextCanReflect() {
+        Assertions.assertDoesNotThrow(() -> TypeContext.of(TypeContext.class));
+    }
+
+    @Test
+    void testWrappedTypeContextIsTypeContext() {
+        Assertions.assertTrue(TypeContext.of(TypeContext.class).isTypeContext());
+    }
 }
