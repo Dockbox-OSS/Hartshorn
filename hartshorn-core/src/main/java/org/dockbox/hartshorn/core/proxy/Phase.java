@@ -17,6 +17,7 @@
 
 package org.dockbox.hartshorn.core.proxy;
 
+@Deprecated(since = "4.2.5", forRemoval = true)
 public enum Phase {
     HEAD,
     OVERWRITE,

@@ -53,6 +53,7 @@ public @interface Proxy {
      */
     @Retention(RetentionPolicy.RUNTIME)
     @java.lang.annotation.Target(ElementType.METHOD)
+    @Deprecated(since = "4.2.5", forRemoval = true)
     @interface Target {
         /** Whether to overwrite the return value of the target method. */
         boolean overwrite() default true;

@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.core.proxy.javassist;
 
-import org.dockbox.hartshorn.core.ArrayListMultiMap;
+import org.dockbox.hartshorn.core.CustomMultiMap;
 import org.dockbox.hartshorn.core.MultiMap;
 import org.dockbox.hartshorn.core.boot.ExceptionHandler;
 import org.dockbox.hartshorn.core.context.DefaultContext;
@@ -28,7 +28,6 @@ import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 import org.dockbox.hartshorn.core.proxy.JavaInterfaceProxyHandler;
 import org.dockbox.hartshorn.core.proxy.MethodProxyContext;
-import org.dockbox.hartshorn.core.proxy.Phase;
 import org.dockbox.hartshorn.core.proxy.ProxyHandler;
 
 import java.lang.reflect.InvocationTargetException;
@@ -38,6 +37,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import javassist.util.proxy.MethodHandler;
 import javassist.util.proxy.ProxyFactory;
@@ -45,7 +45,7 @@ import lombok.Getter;
 
 public class JavassistProxyHandler<T> extends DefaultContext implements ProxyHandler<T>, MethodHandler {
 
-    private final MultiMap<Method, MethodProxyContext<T, ?>> handlers = new ArrayListMultiMap<>();
+    private final MultiMap<Method, MethodProxyContext<T, ?>> handlers = new CustomMultiMap<>(CopyOnWriteArrayList::new);
     private final T instance;
     private T proxyInstance;
 
@@ -74,7 +74,7 @@ public class JavassistProxyHandler<T> extends DefaultContext implements ProxyHan
     public void delegate(final MethodProxyContext<T, ?> property) {
         if (Modifier.isFinal(property.target().getModifiers()))
             ExceptionHandler.unchecked(new ApplicationException("Cannot proxy final method " + property.target().getName()));
-        
+
         this.handlers.put(property.target(), property);
     }
 
@@ -89,9 +89,15 @@ public class JavassistProxyHandler<T> extends DefaultContext implements ProxyHan
             final List<MethodProxyContext<T, ?>> toSort = new ArrayList<>(properties);
             toSort.sort(Comparator.comparingInt(MethodProxyContext::priority));
 
-            // Phase is sorted in execution order (HEAD, OVERWRITE, TAIL)
-            for (final Phase phase : Phase.VALUES)
-                returnValue = this.enterPhase(phase, toSort, args, thisMethod, proceed, self, returnValue);
+            for (final MethodProxyContext<T, ?> property : properties) {
+                final MethodContext<?, ?> methodContext = proceed == null ? null : MethodContext.of(proceed);
+                final Object result = property.delegate(this.instance, methodContext, self, args);
+                if (property.overwriteResult() && !Void.TYPE.equals(thisMethod.getReturnType()))
+                    returnValue = result;
+            }
+
+            final Object result = thisMethod.invoke(this.instance, args);
+            if (null == returnValue) returnValue = result;
 
             return returnValue;
         }
@@ -117,34 +123,6 @@ public class JavassistProxyHandler<T> extends DefaultContext implements ProxyHan
                 throw new AbstractMethodError("Cannot invoke method '" + className + name + "' because it is abstract. This type is proxied, but no proxy property was found for the method.");
             }
         }
-    }
-
-    private Object enterPhase(
-            final Phase at,
-            final Iterable<MethodProxyContext<T, ?>> properties,
-            final Object[] args,
-            final Method thisMethod,
-            final Method proceed,
-            final Object self,
-            Object returnValue
-    ) throws Throwable {
-        // Used to ensure the target is performed if there is no OVERWRITE phase hook
-        boolean target = true;
-        for (final MethodProxyContext<T, ?> property : properties) {
-            if (at == property.phase()) {
-                final MethodContext<?, ?> methodContext = proceed == null ? null : MethodContext.of(proceed);
-                final Object result = property.delegate(this.instance, methodContext, self, args);
-                if (property.overwriteResult() && !Void.TYPE.equals(thisMethod.getReturnType()))
-                    returnValue = result;
-                // If at least one overwrite is present,
-                if (Phase.OVERWRITE == at) target = false;
-            }
-        }
-        if (Phase.OVERWRITE == at && target) {
-            final Object result = thisMethod.invoke(this.instance, args);
-            if (null == returnValue) returnValue = result;
-        }
-        return returnValue;
     }
 
     @Override

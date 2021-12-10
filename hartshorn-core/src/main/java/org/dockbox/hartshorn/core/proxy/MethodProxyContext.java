@@ -32,7 +32,9 @@ public final class MethodProxyContext<T, R> {
     private final ProxyFunction<T, R> delegate;
     private final ProxyHolder holder = new ProxyHolder();
 
+    @Deprecated(since = "4.2.5", forRemoval = true)
     @Getter @Setter private Phase phase = Phase.OVERWRITE;
+
     @Setter private boolean overwriteResult = true;
     @Getter @Setter private int priority = 10;
 
