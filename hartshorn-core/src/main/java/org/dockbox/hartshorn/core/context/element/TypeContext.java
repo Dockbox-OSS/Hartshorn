@@ -128,6 +128,7 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
     @Getter private final boolean isEnum;
     @Getter private final boolean isAnnotation;
     @Getter private final boolean isArray;
+    @Getter private final boolean isTypeContext;
 
     private final Map<String, FieldContext<?>> fields = new ConcurrentHashMap<>();
 
@@ -148,9 +149,6 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
     private Tristate isProxy = Tristate.UNDEFINED;
 
     protected TypeContext(final Class<T> type) {
-        if (TypeContext.class.equals(type)) {
-            throw new IllegalArgumentException("TypeContext can not be reflected on");
-        }
         this.type = type;
         this.isVoid = Void.TYPE.equals(type) || Void.class.equals(type);
         this.isAnonymous = type.isAnonymousClass();
@@ -158,6 +156,7 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
         this.isEnum = type.isEnum();
         this.isAnnotation = type.isAnnotation();
         this.isArray = type.isArray();
+        this.isTypeContext = TypeContext.class.isAssignableFrom(type);
     }
 
     public static <T> TypeContext<T> unproxy(final ApplicationContext context, final T instance) {
