@@ -17,6 +17,8 @@
 
 package org.dockbox.hartshorn.core;
 
+import org.dockbox.hartshorn.core.types.Person;
+
 import org.dockbox.hartshorn.core.annotations.activate.UseServiceProvision;
 import org.dockbox.hartshorn.core.boot.EmptyService;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
@@ -323,6 +325,13 @@ public class ApplicationContextTests {
         Assertions.assertNotNull(sample);
         Assertions.assertNotNull(sample.name());
         Assertions.assertEquals("Factory", sample.name());
+    }
+
+    @Test
+    void testFactoryAllowsPassThroughDefaults() {
+        final PassThroughFactory factoryDemo = this.applicationContext().get(PassThroughFactory.class);
+        final Person person = factoryDemo.create("Bob");
+        Assertions.assertNotNull(person);
     }
 
     @Test

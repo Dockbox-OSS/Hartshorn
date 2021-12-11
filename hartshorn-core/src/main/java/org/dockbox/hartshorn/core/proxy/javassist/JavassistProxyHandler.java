@@ -30,9 +30,12 @@ import org.dockbox.hartshorn.core.proxy.JavaInterfaceProxyHandler;
 import org.dockbox.hartshorn.core.proxy.MethodProxyContext;
 import org.dockbox.hartshorn.core.proxy.ProxyHandler;
 
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -106,12 +109,28 @@ public class JavassistProxyHandler<T> extends DefaultContext implements ProxyHan
             // If no handler is known, default to the original method. This is delegated to the instance
             // created, as it is typically created through Hartshorn's injectors and therefore DI dependent.
             Method target = thisMethod;
-            if (this.instance == null)
+            if (this.instance == null && thisMethod == null)
                 target = proceed;
 
             if (target != null) {
                 try {
-                    return target.invoke(this.instance, args);
+                    if (this.instance != null) {
+                        return target.invoke(this.instance, args);
+                    }
+                    else if (thisMethod.isDefault()) {
+                        return MethodHandles.lookup().findSpecial(
+                                this.type().type(),
+                                thisMethod.getName(),
+                                MethodType.methodType(thisMethod.getReturnType(), thisMethod.getParameterTypes()),
+                                this.type().type()
+                        ).bindTo(self).invokeWithArguments(args);
+                    }
+                    else if (!(self instanceof Proxy)){
+                        return target.invoke(self, args);
+                    }
+                    else {
+                        throw new IllegalArgumentException("Cannot invoke method " + thisMethod.getName() + " on proxy " + self.getClass().getName());
+                    }
                 }
                 catch (final InvocationTargetException e) {
                     throw e.getCause();
