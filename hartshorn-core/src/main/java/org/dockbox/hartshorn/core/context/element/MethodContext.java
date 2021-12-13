@@ -57,14 +57,6 @@ public class MethodContext<T, P> extends ExecutableElementContext<Method> {
         return context;
     }
 
-    public Exceptional<T> invoke(final ApplicationContext context, final Collection<Object> arguments) {
-        return this.invoke(context.get(this.parent()), arguments);
-    }
-
-    public Exceptional<T> invoke(final P instance, final Collection<Object> arguments) {
-        return this.invoke(instance, arguments.toArray());
-    }
-
     public Exceptional<T> invoke(final P instance, final Object... arguments) {
         if (this.invoker == null) {
             this.invoker = (o, args) -> {
@@ -78,6 +70,34 @@ public class MethodContext<T, P> extends ExecutableElementContext<Method> {
             };
         }
         return this.invoker.apply(instance, arguments);
+    }
+    
+    public Exceptional<T> invoke(final ApplicationContext context, final Collection<Object> arguments) {
+        return this.invoke(context.get(this.parent()), arguments);
+    }
+
+    public Exceptional<T> invoke(final P instance, final Collection<Object> arguments) {
+        return this.invoke(instance, arguments.toArray());
+    }
+
+    public Exceptional<T> invoke(final ApplicationContext context) {
+        final Object[] args = this.arguments(context);
+        final P instance = context.get(this.parent());
+        return this.invoke(instance, args);
+    }
+
+    public Exceptional<T> invokeStatic(final Object... arguments) {
+        if (this.has(AccessModifier.STATIC)) return this.invoke(null, arguments);
+        else return Exceptional.of(new IllegalAccessException("Method is not static"));
+    }
+
+    public Exceptional<T> invokeStatic(final Collection<Object> arguments) {
+        return this.invokeStatic(arguments.toArray());
+    }
+
+    public Exceptional<T> invokeStatic(final ApplicationContext context) {
+        final Object[] args = this.arguments(context);
+        return this.invokeStatic(args);
     }
 
     public TypeContext<T> returnType() {
@@ -122,12 +142,6 @@ public class MethodContext<T, P> extends ExecutableElementContext<Method> {
             this.qualifiedName = this.parent().name() + '#' + k.substring(k.indexOf(' ') + 1);
         }
         return this.qualifiedName;
-    }
-
-    public Exceptional<T> invoke(final ApplicationContext context) {
-        final Object[] args = this.arguments(context);
-        final P instance = context.get(this.parent());
-        return this.invoke(instance, args);
     }
 
     public boolean isProtected() {
