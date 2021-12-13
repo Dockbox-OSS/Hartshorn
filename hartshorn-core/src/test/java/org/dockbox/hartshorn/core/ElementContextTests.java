@@ -19,7 +19,10 @@ package org.dockbox.hartshorn.core;
 
 import org.dockbox.hartshorn.core.annotations.activate.Activator;
 import org.dockbox.hartshorn.core.annotations.service.ServiceActivator;
+import org.dockbox.hartshorn.core.context.element.AccessModifier;
+import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
+import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.exceptions.TypeConversionException;
 import org.dockbox.hartshorn.core.types.AnnotatedElement;
 import org.dockbox.hartshorn.core.types.BoundUserImpl;
@@ -376,4 +379,29 @@ public class ElementContextTests {
     void testWrappedTypeContextIsTypeContext() {
         Assertions.assertTrue(TypeContext.of(TypeContext.class).isTypeContext());
     }
+
+    @Test
+    void testStaticMethodCanInvokeStatic() {
+        final Exceptional<MethodContext<?, ElementContextTests>> test = TypeContext.of(this).method("testStatic");
+        Assertions.assertTrue(test.present());
+        final MethodContext<?, ElementContextTests> methodContext = test.get();
+        Assertions.assertTrue(methodContext.has(AccessModifier.STATIC));
+        final Exceptional<?> result = methodContext.invokeStatic();
+        Assertions.assertTrue(result.errorAbsent());
+    }
+
+    public static void testStatic() {}
+
+    @Test
+    void testNonStaticMethodCannotInvokeStatic() {
+        final Exceptional<MethodContext<?, ElementContextTests>> test = TypeContext.of(this).method("testNonStatic");
+        Assertions.assertTrue(test.present());
+        final MethodContext<?, ElementContextTests> methodContext = test.get();
+        Assertions.assertFalse(methodContext.has(AccessModifier.STATIC));
+        final Exceptional<?> result = methodContext.invokeStatic();
+        Assertions.assertTrue(result.caught());
+        Assertions.assertTrue(result.error() instanceof IllegalAccessException);
+    }
+
+    public void testNonStatic() {}
 }
