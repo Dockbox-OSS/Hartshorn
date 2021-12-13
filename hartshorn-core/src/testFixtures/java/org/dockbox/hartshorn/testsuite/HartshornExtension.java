@@ -20,12 +20,15 @@ package org.dockbox.hartshorn.testsuite;
 import org.dockbox.hartshorn.core.Key;
 import org.dockbox.hartshorn.core.annotations.activate.Activator;
 import org.dockbox.hartshorn.core.annotations.service.ServiceActivator;
+import org.dockbox.hartshorn.core.boot.ApplicationFactory;
 import org.dockbox.hartshorn.core.boot.HartshornApplicationFactory;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
+import org.dockbox.hartshorn.core.context.element.AccessModifier;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.junit.jupiter.api.extension.AfterEachCallback;
+import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.ParameterContext;
@@ -33,9 +36,10 @@ import org.junit.jupiter.api.extension.ParameterResolutionException;
 import org.junit.jupiter.api.extension.ParameterResolver;
 import org.mockito.Mockito;
 
-import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -64,10 +68,11 @@ import javax.inject.Inject;
  * @since 4.2.5
  */
 @Activator
-public class HartshornExtension implements BeforeEachCallback, AfterEachCallback, ParameterResolver {
+public class HartshornExtension implements BeforeEachCallback, AfterEachCallback, BeforeAllCallback, ParameterResolver {
 
     private Method activeMethod;
     private ApplicationContext applicationContext;
+    private static ApplicationFactory<?, ?> FACTORY;
 
     @Override
     public void beforeEach(final ExtensionContext context) throws Exception {
@@ -117,12 +122,10 @@ public class HartshornExtension implements BeforeEachCallback, AfterEachCallback
         return this.applicationContext.get(parameterContext.getParameter().getType());
     }
 
-    public static Exceptional<ApplicationContext> createContext(final Class<?> activator) throws IOException {
+    public static Exceptional<ApplicationContext> createContext(final Class<?> activator) {
         TypeContext<?> applicationActivator = TypeContext.of(activator);
 
-        final HartshornApplicationFactory factory = new HartshornApplicationFactory()
-                .loadDefaults()
-                .applicationFSProvider(new JUnitFSProvider());
+        final ApplicationFactory factory = HartshornExtension.FACTORY;
 
         if (applicationActivator.annotation(Activator.class).absent()) {
             applicationActivator = TypeContext.of(HartshornExtension.class);
@@ -135,5 +138,35 @@ public class HartshornExtension implements BeforeEachCallback, AfterEachCallback
 
         final ApplicationContext context = factory.activator(applicationActivator).create();
         return Exceptional.of(context);
+    }
+
+    @Override
+    public void beforeAll(final ExtensionContext context) throws Exception {
+        HartshornExtension.FACTORY = new HartshornApplicationFactory()
+                .loadDefaults()
+                .applicationFSProvider(new JUnitFSProvider());
+        if (context.getTestClass().isPresent()) {
+            final List<? extends MethodContext<?, ?>> factoryModifiers = TypeContext.of(context.getTestClass().get()).methods(HartshornFactory.class);
+            for (final MethodContext<?, ?> factoryModifier : factoryModifiers) {
+                if (!factoryModifier.has(AccessModifier.STATIC)) {
+                    throw new IllegalStateException("Factory modifiers must be static");
+                }
+                if (factoryModifier.returnType().childOf(ApplicationFactory.class)) {
+                    final LinkedList<TypeContext<?>> parameters = factoryModifier.parameterTypes();
+                    if (parameters.isEmpty()) {
+                        HartshornExtension.FACTORY = (ApplicationFactory<?, ?>) factoryModifier.invokeStatic().rethrowUnchecked().orNull();
+                    }
+                    else if (parameters.get(0).childOf(ApplicationFactory.class)) {
+                        HartshornExtension.FACTORY = (ApplicationFactory<?, ?>) factoryModifier.invoke(null, HartshornExtension.FACTORY).rethrowUnchecked().orNull();
+                    }
+                    else {
+                        throw new IllegalStateException("Invalid parameters for @HartshornFactory modifier, expected " + ApplicationFactory.class.getSimpleName() + " but got " + parameters.get(0).name());
+                    }
+                }
+                else {
+                    throw new IllegalStateException("Invalid return type for @HartshornFactory modifier, expected " + ApplicationFactory.class.getSimpleName() + " but got " + factoryModifier.returnType().name());
+                }
+            }
+        }
     }
 }
