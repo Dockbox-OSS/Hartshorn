@@ -28,7 +28,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.io.IOException;
 import java.util.stream.Stream;
 
 import javax.inject.Inject;
@@ -43,8 +42,8 @@ public class ComponentProvisionTests {
     @Getter
     private ApplicationContext applicationContext;
 
-    public static Stream<Arguments> components() throws IOException {
-        return HartshornExtension.createContext(ComponentProvisionTests.class)
+    public static Stream<Arguments> components() {
+        return HartshornExtension.createContext(new HartshornApplicationFactory().loadDefaults(), ComponentProvisionTests.class)
                 .rethrowUnchecked().get()
                 .locator()
                 .containers().stream()
