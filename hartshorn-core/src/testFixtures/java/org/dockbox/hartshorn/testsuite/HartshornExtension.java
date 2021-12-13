@@ -28,7 +28,6 @@ import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.junit.jupiter.api.extension.AfterEachCallback;
-import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.ParameterContext;
@@ -68,18 +67,19 @@ import javax.inject.Inject;
  * @since 4.2.5
  */
 @Activator
-public class HartshornExtension implements BeforeEachCallback, AfterEachCallback, BeforeAllCallback, ParameterResolver {
+public class HartshornExtension implements BeforeEachCallback, AfterEachCallback, ParameterResolver {
 
     private Method activeMethod;
     private ApplicationContext applicationContext;
-    private static ApplicationFactory<?, ?> FACTORY;
 
     @Override
     public void beforeEach(final ExtensionContext context) throws Exception {
+        final ApplicationFactory<?, ?> applicationFactory = this.prepareFactory(context);
+
         final Optional<Class<?>> testClass = context.getTestClass();
         if (testClass.isEmpty()) throw new IllegalStateException("Test class was not provided to runner");
 
-        final ApplicationContext applicationContext = createContext(testClass.get()).orNull();
+        final ApplicationContext applicationContext = createContext(applicationFactory, testClass.get()).orNull();
         if (applicationContext == null) throw new IllegalStateException("Could not create application context");
 
         applicationContext.bind(Key.of(HartshornExtension.class), this);
@@ -122,10 +122,8 @@ public class HartshornExtension implements BeforeEachCallback, AfterEachCallback
         return this.applicationContext.get(parameterContext.getParameter().getType());
     }
 
-    public static Exceptional<ApplicationContext> createContext(final Class<?> activator) {
+    public static Exceptional<ApplicationContext> createContext(final ApplicationFactory<?, ?> applicationFactory, final Class<?> activator) {
         TypeContext<?> applicationActivator = TypeContext.of(activator);
-
-        final ApplicationFactory factory = HartshornExtension.FACTORY;
 
         if (applicationActivator.annotation(Activator.class).absent()) {
             applicationActivator = TypeContext.of(HartshornExtension.class);
@@ -133,18 +131,18 @@ public class HartshornExtension implements BeforeEachCallback, AfterEachCallback
                     .filter(annotation -> TypeContext.of(annotation.annotationType()).annotation(ServiceActivator.class).present())
                     .collect(Collectors.toSet());
 
-            factory.serviceActivators(serviceActivators);
+            applicationFactory.serviceActivators(serviceActivators);
         }
 
-        final ApplicationContext context = factory.activator(applicationActivator).create();
+        final ApplicationContext context = applicationFactory.activator(applicationActivator).create();
         return Exceptional.of(context);
     }
 
-    @Override
-    public void beforeAll(final ExtensionContext context) throws Exception {
-        HartshornExtension.FACTORY = new HartshornApplicationFactory()
+    public ApplicationFactory<?, ?> prepareFactory(final ExtensionContext context) throws Exception {
+        ApplicationFactory<?, ?> applicationFactory = new HartshornApplicationFactory()
                 .loadDefaults()
                 .applicationFSProvider(new JUnitFSProvider());
+
         if (context.getTestClass().isPresent()) {
             final List<? extends MethodContext<?, ?>> factoryModifiers = TypeContext.of(context.getTestClass().get()).methods(HartshornFactory.class);
             for (final MethodContext<?, ?> factoryModifier : factoryModifiers) {
@@ -154,10 +152,10 @@ public class HartshornExtension implements BeforeEachCallback, AfterEachCallback
                 if (factoryModifier.returnType().childOf(ApplicationFactory.class)) {
                     final LinkedList<TypeContext<?>> parameters = factoryModifier.parameterTypes();
                     if (parameters.isEmpty()) {
-                        HartshornExtension.FACTORY = (ApplicationFactory<?, ?>) factoryModifier.invokeStatic().rethrowUnchecked().orNull();
+                        applicationFactory = (ApplicationFactory<?, ?>) factoryModifier.invokeStatic().rethrowUnchecked().orNull();
                     }
                     else if (parameters.get(0).childOf(ApplicationFactory.class)) {
-                        HartshornExtension.FACTORY = (ApplicationFactory<?, ?>) factoryModifier.invoke(null, HartshornExtension.FACTORY).rethrowUnchecked().orNull();
+                        applicationFactory = (ApplicationFactory<?, ?>) factoryModifier.invokeStatic(applicationFactory).rethrowUnchecked().orNull();
                     }
                     else {
                         throw new IllegalStateException("Invalid parameters for @HartshornFactory modifier, expected " + ApplicationFactory.class.getSimpleName() + " but got " + parameters.get(0).name());
@@ -168,5 +166,7 @@ public class HartshornExtension implements BeforeEachCallback, AfterEachCallback
                 }
             }
         }
+
+        return applicationFactory;
     }
 }
