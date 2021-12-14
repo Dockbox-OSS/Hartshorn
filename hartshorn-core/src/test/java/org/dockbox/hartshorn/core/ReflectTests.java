@@ -23,6 +23,7 @@ import org.dockbox.hartshorn.core.context.element.AnnotatedElementModifier;
 import org.dockbox.hartshorn.core.context.element.ConstructorContext;
 import org.dockbox.hartshorn.core.context.element.FieldContext;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
+import org.dockbox.hartshorn.core.context.element.MethodModifier;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.exceptions.TypeConversionException;
@@ -401,5 +402,55 @@ public class ReflectTests {
 
         modifier.remove(Demo.class);
         Assertions.assertFalse(method.annotation(Demo.class).present());
+    }
+
+    @Test
+    void testMethodInvokerCanBeChanged() {
+        final Exceptional<MethodContext<String, ReflectTests>> helloWorld = TypeContext.of(ReflectTests.class)
+                .method("helloWorld")
+                .map(method -> (MethodContext<String, ReflectTests>) method);
+        Assertions.assertTrue(helloWorld.present());
+        final MethodContext<String, ReflectTests> method = helloWorld.get();
+
+        final Exceptional<?> unmodifiedResult = method.invoke(this);
+        Assertions.assertTrue(unmodifiedResult.present());
+        Assertions.assertEquals("Hello World", unmodifiedResult.get());
+
+        final MethodModifier<String, ReflectTests> modifier = MethodModifier.of(method);
+        modifier.invoker((methodContext, instance, args) -> Exceptional.of("Goodbye World"));
+
+        final Exceptional<String> modifiedResult = method.invoke(this);
+        Assertions.assertTrue(modifiedResult.present());
+        Assertions.assertEquals("Goodbye World", modifiedResult.get());
+    }
+
+    @Test
+    void testMethodAccessorCanBeChanged() {
+        final Exceptional<MethodContext<String, ReflectTests>> helloWorld = TypeContext.of(ReflectTests.class)
+                .method("privateHelloWorld")
+                .map(method -> (MethodContext<String, ReflectTests>) method);
+        Assertions.assertTrue(helloWorld.present());
+        final MethodContext<String, ReflectTests> method = helloWorld.get();
+
+        final Exceptional<String> unmodifiedResult = method.invoke(this);
+        Assertions.assertTrue(unmodifiedResult.absent());
+        Assertions.assertTrue(unmodifiedResult.caught());
+        final Throwable error = unmodifiedResult.error();
+        Assertions.assertTrue(error instanceof IllegalAccessException);
+
+        final MethodModifier<String, ReflectTests> modifier = MethodModifier.of(method);
+        modifier.access(true);
+
+        final Exceptional<String> modifiedResult = method.invoke(this);
+        Assertions.assertTrue(modifiedResult.present());
+        Assertions.assertEquals("Hello World", modifiedResult.get());
+    }
+
+    private String privateHelloWorld() {
+        return "Hello World";
+    }
+
+    public String helloWorld() {
+        return "Hello World";
     }
 }

@@ -315,6 +315,7 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
 
     private <T> T get(final Key<T> key, final boolean enable) {
         if (this.singletons.containsKey(key)) return (T) this.singletons.get(key);
+        this.locator().validate(key);
 
         T instance = this.create(key);
 
