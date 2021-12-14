@@ -75,7 +75,7 @@ public class CooldownExtension implements CommandExecutorExtension {
      * @param duration The duration
      * @param timeUnit The time unit in which the duration is kept
      */
-    protected void cooldown(final Object o, final Long duration, final TemporalUnit timeUnit) {
+    protected void cooldown(final Object o, final long duration, final TemporalUnit timeUnit) {
         if (this.inCooldown(o)) return;
         this.activeCooldowns.put(o, new Triad<>(LocalDateTime.now(), duration, timeUnit));
     }
