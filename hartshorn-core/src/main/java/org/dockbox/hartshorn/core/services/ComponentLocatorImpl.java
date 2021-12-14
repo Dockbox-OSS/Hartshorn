@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.core.services;
 
 import org.dockbox.hartshorn.core.ComponentType;
 import org.dockbox.hartshorn.core.HashSetMultiMap;
+import org.dockbox.hartshorn.core.Key;
 import org.dockbox.hartshorn.core.MultiMap;
 import org.dockbox.hartshorn.core.annotations.component.Component;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
@@ -28,36 +29,39 @@ import org.dockbox.hartshorn.core.domain.Exceptional;
 import java.util.Collection;
 import java.util.List;
 
+import lombok.Getter;
+
 public class ComponentLocatorImpl implements ComponentLocator {
 
     private final MultiMap<String, ComponentContainer> cache = new HashSetMultiMap<>();
-    private final ApplicationContext context;
+    @Getter
+    private final ApplicationContext applicationContext;
 
-    public ComponentLocatorImpl(final ApplicationContext context) {
-        this.context = context;
+    public ComponentLocatorImpl(final ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
     }
 
     @Override
     public void register(final String prefix) {
         if (this.cache.containsKey(prefix)) return;
 
-        this.context.log().debug("Registering prefix '" + prefix + "' for component locating");
+        this.applicationContext().log().debug("Registering prefix '" + prefix + "' for component locating");
 
         final long start = System.currentTimeMillis();
-        this.context.environment().prefix(prefix);
+        this.applicationContext().environment().prefix(prefix);
 
-        final List<ComponentContainer> containers = this.context.environment()
+        final List<ComponentContainer> containers = this.applicationContext().environment()
                 .types(prefix, Component.class, false)
                 .stream()
-                .map(type -> new ComponentContainerImpl(this.context, type))
+                .map(type -> new ComponentContainerImpl(this.applicationContext(), type))
                 .filter(ComponentContainerImpl::enabled)
                 .filter(container -> !container.type().isAnnotation()) // Exclude extended annotations
                 .map(ComponentContainer.class::cast)
-                .filter(container -> container.activators().stream().allMatch(this.context::hasActivator))
+                .filter(container -> container.activators().stream().allMatch(this.applicationContext()::hasActivator))
                 .toList();
 
         final long duration = System.currentTimeMillis() - start;
-        this.context.log().info("Located %d components with prefix %s in %dms".formatted(containers.size(), prefix, duration));
+        this.applicationContext().log().info("Located %d components with prefix %s in %dms".formatted(containers.size(), prefix, duration));
 
         this.cache.putAll(prefix, containers);
     }
@@ -81,5 +85,13 @@ public class ComponentLocatorImpl implements ComponentLocator {
                 .filter(container -> container.type().equals(type))
                 .findFirst()
         );
+    }
+
+    @Override
+    public <T> void validate(final Key<T> key) {
+        final TypeContext<T> contract = key.contract();
+        if (contract.annotation(Component.class).present() && this.container(contract).absent()) {
+            this.applicationContext().log().warn("Component key '%s' is annotated with @Component, but is not registered.".formatted(contract.qualifiedName()));
+        }
     }
 }
