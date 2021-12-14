@@ -124,7 +124,7 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
     public <T> Exceptional<String> write(final T content) {
         this.context.log().debug("Writing content of type " + TypeContext.of(content).name() + " to string value");
         return Exceptional.of(() -> this.writer(content).writeValueAsString(content))
-                .map(out -> out.replaceAll("\\r", ""));
+                .map(out -> out.replace("\\r", ""));
     }
 
     protected Exceptional<Boolean> writePlain(final Path path, final String content) {
