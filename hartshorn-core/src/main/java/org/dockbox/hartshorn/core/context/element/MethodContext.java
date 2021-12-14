@@ -28,21 +28,28 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.StringJoiner;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.BiFunction;
 
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.Setter;
 
 public class MethodContext<T, P> extends ExecutableElementContext<Method> {
 
     private static final Map<Method, MethodContext<?, ?>> cache = new ConcurrentHashMap<>();
 
-    @Getter private final Method method;
+    @Setter(AccessLevel.PACKAGE)
+    private static MethodInvoker<?, ?> defaultInvoker = new ReflectionMethodInvoker<>();
+
+    @Getter
+    private final Method method;
 
     private TypeContext<T> returnType;
     private TypeContext<T> genericReturnType;
     private TypeContext<P> parent;
-    private BiFunction<P, Object[], Exceptional<T>> invoker;
     private String qualifiedName;
+
+    @Setter(AccessLevel.PACKAGE)
+    private MethodInvoker<T, P> invoker;
 
     public MethodContext(final Method method) {
         this.method = method;
@@ -59,17 +66,9 @@ public class MethodContext<T, P> extends ExecutableElementContext<Method> {
 
     public Exceptional<T> invoke(final P instance, final Object... arguments) {
         if (this.invoker == null) {
-            this.invoker = (o, args) -> {
-                final Exceptional<T> result = Exceptional.of(() -> (T) this.method().invoke(o, args));
-                if (result.caught()) {
-                    Throwable cause = result.error();
-                    if (result.error().getCause() != null) cause = result.error().getCause();
-                    return Exceptional.of(result.orNull(), cause);
-                }
-                return result;
-            };
+            this.invoker = (MethodInvoker<T, P>) defaultInvoker;
         }
-        return this.invoker.apply(instance, arguments);
+        return this.invoker.invoke(this, instance, arguments);
     }
     
     public Exceptional<T> invoke(final ApplicationContext context, final Collection<Object> arguments) {
