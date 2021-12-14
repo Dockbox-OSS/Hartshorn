@@ -62,7 +62,7 @@ public class HttpWebServerInitializer implements LifecycleObserver {
         final Map<String, Servlet> servlets = HartshornUtils.emptyMap();
 
         final ControllerContext controllerContext = applicationContext.first(ControllerContext.class).get();
-        for (final RequestHandlerContext context : controllerContext.contexts()) {
+        for (final RequestHandlerContext context : controllerContext.requestHandlerContexts()) {
             final WebServlet servlet = this.servlet(applicationContext, context, this.webServer);
             final Servlet adapter = new HttpWebServletAdapter(applicationContext, servlet);
             servlets.put(context.pathSpec(), adapter);
@@ -70,7 +70,7 @@ public class HttpWebServerInitializer implements LifecycleObserver {
 
         if (applicationContext.hasActivator(UseMvcServer.class)) {
             final MvcControllerContext mvcControllerContext = applicationContext.first(MvcControllerContext.class).get();
-            for (final RequestHandlerContext context : mvcControllerContext.contexts()) {
+            for (final RequestHandlerContext context : mvcControllerContext.requestHandlerContexts()) {
                 final MvcServlet servlet = this.webServletFactory.mvc((MethodContext<ViewTemplate, ?>) context.methodContext());
                 final Servlet adapter = new HttpWebServletAdapter(applicationContext, servlet);
                 servlets.put(context.pathSpec(), adapter);
