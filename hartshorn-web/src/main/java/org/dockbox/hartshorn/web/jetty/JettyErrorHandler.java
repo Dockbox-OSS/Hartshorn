@@ -55,8 +55,8 @@ public class JettyErrorHandler extends ErrorHandler {
     @Inject
     private ErrorServlet errorServlet;
 
-    @Value(value = "hartshorn.web.headers.hartshorn", or = "true")
-    private boolean addHeader;
+    @Value(value = "hartshorn.web.headers.hartshorn")
+    private boolean addHeader = true;
 
     @Override
     protected void generateAcceptableResponse(final Request baseRequest, final HttpServletRequest request, final HttpServletResponse response, final int code, String message, final String contentType)
