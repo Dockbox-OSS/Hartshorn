@@ -27,6 +27,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.nio.file.Path;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.inject.Inject;
 
@@ -48,6 +49,53 @@ public class ConfigurationManagerTests {
         Assertions.assertNotNull(configuration);
         Assertions.assertNotNull(configuration.classPathValue());
         Assertions.assertEquals("This is a value", configuration.classPathValue());
+    }
+
+    @Test
+    void testDefaultValuesAreUsedIfPropertyIsAbsent() {
+        final DemoClasspathConfiguration configuration = this.applicationContext().get(DemoClasspathConfiguration.class);
+
+        Assertions.assertNotNull(configuration);
+        Assertions.assertNotNull(configuration.classPathValueWithDefault());
+        Assertions.assertEquals("myDefaultValue", configuration.classPathValueWithDefault());
+    }
+
+    @Test
+    void testNumberValuesAreParsed() {
+        final DemoClasspathConfiguration configuration = this.applicationContext().get(DemoClasspathConfiguration.class);
+
+        Assertions.assertNotNull(configuration);
+        Assertions.assertEquals(1, configuration.number());
+    }
+
+    @Test
+    void testCollectionsAreParsed() {
+        final DemoClasspathConfiguration configuration = this.applicationContext().get(DemoClasspathConfiguration.class);
+
+        Assertions.assertNotNull(configuration);
+        Assertions.assertNotNull(configuration.list());
+        Assertions.assertEquals(3, configuration.list().size());
+    }
+
+    @Test
+    void testCollectionsAreSorted() {
+        final DemoClasspathConfiguration configuration = this.applicationContext().get(DemoClasspathConfiguration.class);
+
+        Assertions.assertNotNull(configuration);
+        Assertions.assertNotNull(configuration.copyOnWriteArrayList());
+        Assertions.assertEquals(1, (int) configuration.copyOnWriteArrayList().get(0));
+        Assertions.assertEquals(5, (int) configuration.copyOnWriteArrayList().get(1));
+        Assertions.assertEquals(3, (int) configuration.copyOnWriteArrayList().get(2));
+    }
+
+    @Test
+    void testCustomCollectionsAreConverted() {
+        final DemoClasspathConfiguration configuration = this.applicationContext().get(DemoClasspathConfiguration.class);
+
+        Assertions.assertNotNull(configuration);
+        Assertions.assertNotNull(configuration.copyOnWriteArrayList());
+        Assertions.assertEquals(3, configuration.copyOnWriteArrayList().size());
+        Assertions.assertTrue(configuration.copyOnWriteArrayList() instanceof CopyOnWriteArrayList);
     }
 
     @Test

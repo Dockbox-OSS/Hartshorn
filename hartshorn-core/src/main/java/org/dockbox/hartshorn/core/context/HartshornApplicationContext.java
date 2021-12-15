@@ -65,6 +65,7 @@ import org.dockbox.hartshorn.core.services.ServiceOrder;
 import java.lang.annotation.Annotation;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -78,6 +79,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -253,6 +255,27 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
     @Override
     public <T> Exceptional<T> property(final String key) {
         return Exceptional.of(() -> (T) this.environmentValues.getOrDefault(key, System.getenv(key)));
+    }
+
+    @Override
+    public <T> Exceptional<Collection<T>> properties(final String key) {
+        // List values are stored as key[0], key[1], ...
+        // We use regex to match this pattern, so we can restore the collection
+        final String regex = key + "\\[[0-9]+]";
+        final List<T> properties = this.environmentValues.entrySet().stream()
+                .filter(e -> {
+                    final String k = (String) e.getKey();
+                    return k.matches(regex);
+                })
+                // Sort the collection using the key, as these are formatted to contain the index this means we
+                // restore the original order of the collection.
+                .sorted(Comparator.comparing(e -> (String) e.getKey()))
+                .map(Entry::getValue)
+                .map(v -> (T) v)
+                .collect(Collectors.toList());
+
+        if (properties.isEmpty()) return Exceptional.empty();
+        return Exceptional.of(properties);
     }
 
     @Override

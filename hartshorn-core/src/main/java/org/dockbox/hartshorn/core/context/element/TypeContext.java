@@ -444,6 +444,21 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
         return this.constructors;
     }
 
+    public Exceptional<ConstructorContext<T>> constructor(final Class<?>... parameterTypes) {
+        return this.constructor(Arrays.asList(parameterTypes));
+    }
+
+    public Exceptional<ConstructorContext<T>> constructor(final List<Class<?>> parameterTypes) {
+        return Exceptional.of(this.constructors().stream()
+                .filter(constructor -> {
+                    final List<? extends Class<?>> parameters = constructor.parameterTypes().stream()
+                            .map(TypeContext::type)
+                            .collect(Collectors.toList());
+                    return parameters.equals(parameterTypes);
+                })
+                .findFirst());
+    }
+
     public List<ConstructorContext<T>> constructors(final Class<? extends Annotation> annotation) {
         return this.constructors().stream()
                 .filter(constructor -> constructor.annotation(annotation).present())

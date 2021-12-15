@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.core.context;
 
 import org.dockbox.hartshorn.core.domain.Exceptional;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.Properties;
 
@@ -39,8 +40,13 @@ public interface ApplicationPropertyHolder {
      * period symbol. For example, in the configuration (JSON) below the deepest value is accessed with
      * <code>config.nested.value</code>, returning the value 'A'
      * <pre><code>
-     *     { "config": {     "nested": {         "value": "A"     } }
+     * {
+     *   "config": {
+     *     "nested": {
+     *       "value": "A"
      *     }
+     *   }
+     * }
      * </code></pre>
      *
      * <p>Configuration values can also represent system/environment variables.
@@ -50,6 +56,23 @@ public interface ApplicationPropertyHolder {
      * @return The value if it exists, or {@link Exceptional#empty()}
      */
     <T> Exceptional<T> property(String key);
+
+    /**
+     * Attempts to obtain a collection of configuration values from the given key. For example, in the configuration
+     * (JSON) below the values are accessed with <code>config.values</code>, returning the values 'A', 'B', and 'C'
+     * <pre><code>
+     * {
+     *   "config": {
+     *     "values": [ "A", "B", "C" ]
+     *   }
+     * }
+     * </code></pre>
+     *
+     * @param key The key used to look up the values
+     * @param <T> The expected type of the values
+     * @return The values if they exist, or {@link Exceptional#empty()}
+     */
+    <T> Exceptional<Collection<T>> properties(String key);
 
     /**
      * Attempts to store a single configuration value from the given key. If there is already a value associated with
