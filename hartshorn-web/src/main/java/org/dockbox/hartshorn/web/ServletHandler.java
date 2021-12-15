@@ -57,8 +57,8 @@ public class ServletHandler implements Enableable {
     @Getter
     private ObjectMapper mapper;
 
-    @Value(value = "hartshorn.web.headers.hartshorn", or = "true")
-    private boolean addHeader;
+    @Value(value = "hartshorn.web.headers.hartshorn")
+    private boolean addHeader = true;
 
     @Bound
     public ServletHandler(final HttpWebServer starter, final HttpMethod httpMethod, final MethodContext<?, ?> methodContext) {

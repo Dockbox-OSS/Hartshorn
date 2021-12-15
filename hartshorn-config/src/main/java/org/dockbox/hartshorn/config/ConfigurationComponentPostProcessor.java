@@ -23,23 +23,21 @@ import org.dockbox.hartshorn.config.annotations.Value;
 import org.dockbox.hartshorn.core.annotations.service.AutomaticActivation;
 import org.dockbox.hartshorn.core.boot.Hartshorn;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
+import org.dockbox.hartshorn.core.context.element.ConstructorContext;
 import org.dockbox.hartshorn.core.context.element.FieldContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
+import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.exceptions.NotPrimitiveException;
 import org.dockbox.hartshorn.core.exceptions.TypeConversionException;
 import org.dockbox.hartshorn.core.services.ComponentPostProcessor;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 /**
  * Looks up and populates fields annotated with {@link Value}.
  */
 @AutomaticActivation
-public class ConfigurationServicePostProcessor implements ComponentPostProcessor<UseConfigurations> {
+public class ConfigurationComponentPostProcessor implements ComponentPostProcessor<UseConfigurations> {
 
     @Override
     public <T> boolean modifies(final ApplicationContext context, final TypeContext<T> type, @Nullable final T instance) {
@@ -53,27 +51,42 @@ public class ConfigurationServicePostProcessor implements ComponentPostProcessor
 
         for (final FieldContext<?> field : instanceType.fields(Value.class)) {
             try {
-                final Value value = field.annotation(Value.class).get();
-                Object fieldValue = context.property(value.value()).or(value.or());
+                final Value annotation = field.annotation(Value.class).get();
 
-                context.log().debug("Populating value for configuration field '%s' in %s (type: %s, value: %s)".formatted(field.name(), type.name(), field.type().name(), fieldValue));
+                final String key = annotation.value();
+                final Exceptional<?> property;
 
-                if ((!field.type().childOf(String.class)) && (fieldValue instanceof String stringValue)) {
-                    try {
-                        fieldValue = TypeContext.toPrimitive(field.type(), stringValue);
-                    } catch (final NotPrimitiveException e) {
-                        if (field.type().childOf(Collection.class)) {
-                            if ("".equals(stringValue)) {
-                                if (field.type().childOf(List.class)) fieldValue = new ArrayList<>();
-                                if (field.type().childOf(Set.class)) fieldValue = new HashSet<>();
-                            } else {
-                                Hartshorn.log().warn("Cannot convert string '" + stringValue + "' to collection type");
-                            }
+                if (field.type().childOf(Collection.class)) {
+                    final Exceptional<Collection<Object>> properties = context.properties(key);
+                    // If a specific type was specified
+                    if (!field.type().is(Collection.class)) {
+                        final Exceptional<? extends ConstructorContext<?>> constructor = field.type().constructor(Collection.class);
+                        if (constructor.absent()) throw new IllegalStateException("No compatible constructor found to convert collection to " + field.type().qualifiedName());
+                        else {
+                            final ConstructorContext<?> constructorContext = constructor.get();
+                            final Collection<?> collection = (Collection<?>) constructorContext.createInstance(properties.get()).orNull();
+                            property = Exceptional.of(collection);
                         }
-                        else throw e;
+                    } else {
+                        property = properties;
                     }
                 }
-                field.set(instance, fieldValue);
+                else {
+                    property = context.property(key);
+                }
+
+                if (property.absent()) {
+                    context.log().debug("Property {} for field {} is empty, but field has a default value, using default value (note this may be null)", key, field.name());
+                    continue;
+                }
+
+                Object value = property.get();
+                context.log().debug("Populating value for configuration field '%s' in %s (type: %s), value is not logged.".formatted(field.name(), type.name(), field.type().name()));
+
+                if ((!field.type().childOf(String.class)) && (value instanceof String stringValue)) {
+                    value = TypeContext.toPrimitive(field.type(), stringValue);
+                }
+                field.set(instance, value);
             }
             catch (final TypeConversionException | NotPrimitiveException e) {
                 Hartshorn.log().warn("Could not prepare value field " + field.name() + " in " + instanceType.name());

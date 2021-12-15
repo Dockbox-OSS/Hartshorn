@@ -26,8 +26,7 @@ import java.lang.annotation.Target;
 
 /**
  * Annotation used to indicate a field should be populated with the value obtained
- * from {@link org.dockbox.hartshorn.core.context.ApplicationPropertyHolder#property(String)} or the
- * {@link #or() default value}.
+ * from {@link org.dockbox.hartshorn.core.context.ApplicationPropertyHolder#property(String)}.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
@@ -52,5 +51,6 @@ public @interface Value {
      *
      * @return The string-based default value.
      */
+    @Deprecated(since = "4.2.5", forRemoval = true)
     String or() default "";
 }

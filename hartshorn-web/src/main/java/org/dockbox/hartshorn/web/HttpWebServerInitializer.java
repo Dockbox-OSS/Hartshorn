@@ -45,11 +45,11 @@ public class HttpWebServerInitializer implements LifecycleObserver {
 
     public static final int DEFAULT_PORT = 8080;
 
-    @Value(value = "hartshorn.web.port", or = "" + DEFAULT_PORT)
-    private int port;
+    @Value(value = "hartshorn.web.port")
+    private int port = DEFAULT_PORT;
 
-    @Value(value = "hartshorn.web.servlet.directory", or = "true")
-    private boolean useDirectoryServlet;
+    @Value(value = "hartshorn.web.servlet.directory")
+    private boolean useDirectoryServlet = true;
 
     @Inject
     private WebServletFactory webServletFactory;
