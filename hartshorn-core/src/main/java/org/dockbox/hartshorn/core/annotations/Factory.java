@@ -55,7 +55,7 @@ import java.lang.annotation.Target;
  * }</pre>
  *
  * @author Guus Lieben
- * @since 1.0.0
+ * @since 4.2.4
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(java.lang.annotation.ElementType.METHOD)

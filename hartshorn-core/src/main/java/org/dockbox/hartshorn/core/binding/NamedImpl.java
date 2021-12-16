@@ -29,6 +29,9 @@ import lombok.Getter;
 /**
  * An implementation of the {@link Named} annotation. This is used by {@link Key}s to allow for {@link String}
  * based names instead of always requiring a {@link Named} instance.
+ *
+ * @author Guus Lieben
+ * @since 4.1.0
  */
 @AllArgsConstructor
 public class NamedImpl implements Named {

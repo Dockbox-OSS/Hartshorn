@@ -20,8 +20,20 @@ package org.dockbox.hartshorn.core.boot;
 import org.dockbox.hartshorn.core.annotations.context.LogExclude;
 import org.slf4j.Logger;
 
+/**
+ * The {@link ApplicationLogger} is a wrapper for the {@link Logger} class. This allows for modification and validation
+ * of the logger used throughout an active application.
+ *
+ * @author Guus Lieben
+ * @since 4.2.4
+ */
 @FunctionalInterface
 @LogExclude
 public interface ApplicationLogger {
+
+    /**
+     * Gets the logger.
+     * @return The logger.
+     */
     Logger log();
 }

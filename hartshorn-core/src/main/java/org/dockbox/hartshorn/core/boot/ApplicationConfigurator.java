@@ -18,11 +18,43 @@
 package org.dockbox.hartshorn.core.boot;
 
 import org.dockbox.hartshorn.core.InjectConfiguration;
+import org.dockbox.hartshorn.core.context.ApplicationContext;
 
 import java.util.Set;
 
+/**
+ * The {@link ApplicationConfigurator} is responsible for configuring the {@link ApplicationManager}. Configuration
+ * actions can range from setting environment values to overriding internal components. Applications are configured
+ * in the {@link ApplicationFactory} after the manager and {@link ApplicationContext} have been created, but before
+ * active bindings are added.
+ *
+ * @author Guus Lieben
+ * @since 4.2.4
+ */
 public interface ApplicationConfigurator {
+
+    /**
+     * Early configuration actions performed after the {@link ApplicationContext} has been created, but before the
+     * active bindings are added.
+     * @param manager The {@link ApplicationManager} to configure.
+     */
     void configure(ApplicationManager manager);
+
+    /**
+     * Applies the given {@link InjectConfiguration}s to the given {@link ApplicationManager}. Configurations may be
+     * validated, modified, or applied to the {@link ApplicationContext}.
+     *
+     * @param manager The {@link ApplicationManager} to configure.
+     * @param configurations The {@link InjectConfiguration}s to apply.
+     */
     void apply(ApplicationManager manager, Set<InjectConfiguration> configurations);
+
+    /**
+     * Binds the given prefix to the given {@link ApplicationManager}. Prefixes may be validated, modified, or applied
+     * to the {@link ApplicationContext}.
+     *
+     * @param manager The {@link ApplicationManager} to configure.
+     * @param prefix The prefix to bind.
+     */
     void bind(ApplicationManager manager, String prefix);
 }
