@@ -29,20 +29,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.cfg.MapperBuilder;
-import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.ValueNode;
-import com.fasterxml.jackson.dataformat.javaprop.JavaPropsMapper;
-import com.fasterxml.jackson.dataformat.toml.TomlMapper;
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
-import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLParser;
 
 import org.dockbox.hartshorn.core.GenericType;
 import org.dockbox.hartshorn.core.HartshornUtils;
+import org.dockbox.hartshorn.core.Key;
 import org.dockbox.hartshorn.core.annotations.component.Component;
 import org.dockbox.hartshorn.core.annotations.inject.Binds;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
@@ -60,11 +53,8 @@ import java.nio.file.Path;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.function.Supplier;
 
 import javax.inject.Inject;
-
-import lombok.AllArgsConstructor;
 
 @Binds(org.dockbox.hartshorn.data.mapping.ObjectMapper.class)
 public class JacksonObjectMapper extends DefaultObjectMapper {
@@ -236,10 +226,9 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
     }
 
     protected MapperBuilder<?, ?> mapper(final FileFormat fileFormat) {
-        for (final JacksonObjectMapper.Mappers mapper : Mappers.VALUES) {
-            if (mapper.fileFormat == fileFormat) return (MapperBuilder<?, ?>) mapper.mapper.get();
-        }
-        return null; // Do not throw an exception here as subclasses may wish to extend functionality
+        final JacksonDataMapper dataMapper = this.context.get(Key.of(JacksonDataMapper.class, fileFormat.extension()));
+        // Do not throw an exception here as subclasses may wish to extend functionality
+        return dataMapper == null ? null : dataMapper.get();
     }
 
     private void addKeys(final String currentPath, final TreeNode jsonNode, final Map<String, Object> map) {
@@ -263,25 +252,5 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
             final ValueNode valueNode = (ValueNode) jsonNode;
             map.put(currentPath, this.configureMapper().convertValue(valueNode, Object.class));
         }
-    }
-
-    @AllArgsConstructor
-    private enum Mappers {
-        JSON(FileFormats.JSON, JsonMapper::builder),
-        YAML(FileFormats.YAML, () -> {
-            final YAMLFactory yamlFactory = new YAMLFactory();
-            yamlFactory.enable(YAMLGenerator.Feature.MINIMIZE_QUOTES);
-            yamlFactory.disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER);
-            yamlFactory.disable(YAMLParser.Feature.EMPTY_STRING_AS_NULL);
-            return YAMLMapper.builder(yamlFactory);
-        }),
-        PROPERTIES(FileFormats.PROPERTIES, JavaPropsMapper::builder),
-        TOML(FileFormats.TOML, TomlMapper::builder),
-        XML(FileFormats.XML, XmlMapper::builder),
-        ;
-
-        public static final Mappers[] VALUES = Mappers.values();
-        private final FileFormats fileFormat;
-        private final Supplier<? super MapperBuilder<?, ?>> mapper;
     }
 }
