@@ -41,9 +41,6 @@ public class HartshornApplicationConfigurator implements ApplicationConfigurator
 
     @Override
     public void bind(final ApplicationManager manager, final String prefix) {
-        for (final String scannedPrefix : manager.applicationContext().environment().prefixContext().prefixes()) {
-            if (prefix.startsWith(scannedPrefix) && !prefix.equals(scannedPrefix)) return;
-        }
         manager.applicationContext().bind(prefix);
     }
 

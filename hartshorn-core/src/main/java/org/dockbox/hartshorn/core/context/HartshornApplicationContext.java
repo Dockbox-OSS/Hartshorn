@@ -63,7 +63,6 @@ import org.dockbox.hartshorn.core.services.ComponentProcessor;
 import org.dockbox.hartshorn.core.services.ServiceOrder;
 
 import java.lang.annotation.Annotation;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
@@ -154,7 +153,9 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
         final Exceptional<ServiceActivator> activator = annotationType.annotation(ServiceActivator.class);
         if (activator.present()) {
             this.activators.add(annotation);
-            this.prefixQueue.addAll(Arrays.asList(activator.get().scanPackages()));
+            for (final String scan :activator.get().scanPackages()){
+                this.bind(scan);
+            }
             this.environment().annotationsWith(annotationType, ServiceActivator.class).forEach(this::addActivator);
         }
     }
@@ -229,7 +230,22 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
     public void processPrefixQueue() {
         String scan;
         while ((scan = this.prefixQueue.poll()) != null) {
-            this.bind(scan);
+            this.locator().register(scan);
+
+            final Collection<TypeContext<?>> binders = this.environment().types(scan, Binds.class, false);
+
+            for (final TypeContext<?> binder : binders) {
+                final Binds bindAnnotation = binder.annotation(Binds.class).get();
+                this.handleBinder(binder, bindAnnotation);
+            }
+
+            final Collection<TypeContext<?>> multiBinders = this.environment().types(scan, BindsMultiple.class, false);
+            for (final TypeContext<?> binder : multiBinders) {
+                final BindsMultiple bindAnnotation = binder.annotation(BindsMultiple.class).get();
+                for (final Binds annotation : bindAnnotation.value()) {
+                    this.handleBinder(binder, annotation);
+                }
+            }
         }
     }
 
@@ -432,25 +448,16 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
 
     @Override
     public void bind(final String prefix) {
-        if (this.environment().prefixContext().prefixes().contains(prefix)) return;
-
-        // Also registers to the active environment
-        this.locator().register(prefix);
-
-        final Collection<TypeContext<?>> binders = this.environment().types(prefix, Binds.class, false);
-
-        for (final TypeContext<?> binder : binders) {
-            final Binds bindAnnotation = binder.annotation(Binds.class).get();
-            this.handleBinder(binder, bindAnnotation);
-        }
-
-        final Collection<TypeContext<?>> multiBinders = this.environment().types(prefix, BindsMultiple.class, false);
-        for (final TypeContext<?> binder : multiBinders) {
-            final BindsMultiple bindAnnotation = binder.annotation(BindsMultiple.class).get();
-            for (final Binds annotation : bindAnnotation.value()) {
-                this.handleBinder(binder, annotation);
+        for (final String scannedPrefix : this.environment().prefixContext().prefixes()) {
+            if (prefix.startsWith(scannedPrefix)) return;
+            if (scannedPrefix.startsWith(prefix)) {
+                // If a previously scanned prefix is a prefix of the current prefix, it is more specific and should be ignored,
+                // as this prefix will include the specific prefix.
+                this.environment().prefixContext().prefixes().remove(scannedPrefix);
             }
         }
+        this.environment().prefix(prefix);
+        this.prefixQueue.add(prefix);
     }
 
     @Override
