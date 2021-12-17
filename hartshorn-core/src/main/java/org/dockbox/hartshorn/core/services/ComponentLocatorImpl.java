@@ -48,7 +48,6 @@ public class ComponentLocatorImpl implements ComponentLocator {
         this.applicationContext().log().debug("Registering prefix '" + prefix + "' for component locating");
 
         final long start = System.currentTimeMillis();
-        this.applicationContext().environment().prefix(prefix);
 
         final List<ComponentContainer> containers = this.applicationContext().environment()
                 .types(prefix, Component.class, false)
