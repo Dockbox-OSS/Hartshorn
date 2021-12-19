@@ -28,6 +28,7 @@ import java.nio.file.Path;
  */
 @FunctionalInterface
 public interface ApplicationFSProvider {
+
     /**
      * Returns the base- or working directory of the application.
      * @return The base- or working directory of the application.

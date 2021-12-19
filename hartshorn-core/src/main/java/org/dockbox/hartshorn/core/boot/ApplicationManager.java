@@ -19,6 +19,22 @@ package org.dockbox.hartshorn.core.boot;
 
 import org.dockbox.hartshorn.core.context.ContextCarrier;
 
+/**
+ * The {@link ApplicationManager} is responsible for managing the lifecycle of the application. It combines the
+ * most important parts of the application:
+ * <ul>
+ *     <li>The {@link ApplicationLogger}</li>
+ *     <li>The {@link ApplicationProxier}</li>
+ *     <li>The {@link LifecycleObservable}</li>
+ *     <li>The {@link ApplicationFSProvider}</li>
+ *     <li>The {@link ExceptionHandler}</li>
+ * </ul>
+ *
+ * <p>Additionally, the manager is capable of indicating whether an application is active in a CI environment or not.
+ *
+ * @author Guus Lieben
+ * @since 4.2.4
+ */
 public interface ApplicationManager extends ContextCarrier, ApplicationLogger, ApplicationProxier, LifecycleObservable, ApplicationFSProvider, ExceptionHandler {
     boolean isCI();
 }

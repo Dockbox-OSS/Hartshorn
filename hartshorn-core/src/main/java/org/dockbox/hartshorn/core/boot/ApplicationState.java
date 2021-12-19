@@ -17,6 +17,19 @@
 
 package org.dockbox.hartshorn.core.boot;
 
+import org.dockbox.hartshorn.core.context.ApplicationContext;
+
+/**
+ * Defines the state of the application, which is used to determine the application's behaviour through
+ * {@link LifecycleObserver}s.
+ *
+ * @author Guus Lieben
+ * @since 4.2.4
+ */
 public interface ApplicationState {
+    /**
+     * The state of the application when it is done starting up. This includes the lookup, initialization,
+     * and registration of components. This state is reached when the {@link ApplicationContext} is started.
+     */
     interface Started extends ApplicationState {}
 }

@@ -17,7 +17,26 @@
 
 package org.dockbox.hartshorn.core.boot;
 
+/**
+ * An application component that is directly bound to an active {@link ApplicationManager}. This is respected
+ * by the {@link ApplicationManager}, which will set itself as the component's manager when the component is
+ * used by the manager.
+ *
+ * @see ApplicationManager
+ * @see HartshornApplicationManager
+ * @author Guus Lieben
+ * @since 4.2.4
+ */
 public interface ApplicationManaged {
+
+    /**
+     * @return the {@link ApplicationManager} that is managing this component.
+     */
     ApplicationManager applicationManager();
+
+    /**
+     * Sets the {@link ApplicationManager} that is managing this component.
+     * @param applicationManager the {@link ApplicationManager} that is managing this component.
+     */
     void applicationManager(ApplicationManager applicationManager);
 }
