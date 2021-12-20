@@ -21,7 +21,6 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.config.annotations.UseConfigurations;
 import org.dockbox.hartshorn.config.annotations.Value;
 import org.dockbox.hartshorn.core.annotations.service.AutomaticActivation;
-import org.dockbox.hartshorn.core.boot.Hartshorn;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.ConstructorContext;
 import org.dockbox.hartshorn.core.context.element.FieldContext;
@@ -89,7 +88,7 @@ public class ConfigurationComponentPostProcessor implements ComponentPostProcess
                 field.set(instance, value);
             }
             catch (final TypeConversionException | NotPrimitiveException e) {
-                Hartshorn.log().warn("Could not prepare value field " + field.name() + " in " + instanceType.name());
+                context.log().warn("Could not prepare value field " + field.name() + " in " + instanceType.name());
                 context.handle(e);
             }
         }

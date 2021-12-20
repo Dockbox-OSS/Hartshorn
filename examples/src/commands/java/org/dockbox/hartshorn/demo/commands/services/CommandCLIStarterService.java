@@ -17,13 +17,12 @@
 
 package org.dockbox.hartshorn.demo.commands.services;
 
-import org.dockbox.hartshorn.core.boot.ApplicationState;
-import org.dockbox.hartshorn.core.boot.HartshornApplication;
-import org.dockbox.hartshorn.core.domain.Exceptional;
-import org.dockbox.hartshorn.core.boot.Hartshorn;
-import org.dockbox.hartshorn.core.boot.ApplicationState.Started;
 import org.dockbox.hartshorn.commands.CommandCLI;
 import org.dockbox.hartshorn.core.annotations.service.Service;
+import org.dockbox.hartshorn.core.boot.ApplicationState;
+import org.dockbox.hartshorn.core.boot.ApplicationState.Started;
+import org.dockbox.hartshorn.core.boot.HartshornApplication;
+import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.events.EngineChangedState;
 import org.dockbox.hartshorn.events.annotations.Listener;
 
@@ -52,7 +51,7 @@ public class CommandCLIStarterService {
      */
     @Listener
     public void on(final EngineChangedState<Started> event) throws IOException {
-        final Exceptional<Path> commands = Hartshorn.resource("commands.txt");
+        final Exceptional<Path> commands = event.applicationContext().resourceLocator().resource("commands.txt");
         if (commands.present()) {
             final InputStream inputStream = Files.newInputStream(commands.get());
             event.applicationContext().get(CommandCLI.class).input(inputStream).open();

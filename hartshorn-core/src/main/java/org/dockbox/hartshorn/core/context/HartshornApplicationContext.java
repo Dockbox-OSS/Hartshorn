@@ -46,6 +46,7 @@ import org.dockbox.hartshorn.core.binding.Providers;
 import org.dockbox.hartshorn.core.boot.ApplicationLogger;
 import org.dockbox.hartshorn.core.boot.ApplicationManager;
 import org.dockbox.hartshorn.core.boot.ApplicationProxier;
+import org.dockbox.hartshorn.core.boot.ClasspathResourceLocator;
 import org.dockbox.hartshorn.core.boot.ExceptionHandler;
 import org.dockbox.hartshorn.core.boot.LifecycleObservable;
 import org.dockbox.hartshorn.core.context.element.FieldContext;
@@ -100,6 +101,8 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
     @Getter private final ApplicationEnvironment environment;
 
     private final ComponentLocator locator;
+    @Getter
+    private final ClasspathResourceLocator resourceLocator;
     private final Set<Modifier> modifiers;
     private final Set<Annotation> activators = HartshornUtils.emptyConcurrentSet();
     private final Map<Key<?>, Object> singletons = new ConcurrentHashMap<>();
@@ -107,7 +110,8 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
     private MetaProvider metaProvider;
 
     public HartshornApplicationContext(final ApplicationEnvironment environment, final Function<ApplicationContext, ComponentLocator> componentLocator,
-                                       final TypeContext<?> activationSource, final Set<String> args, final Set<Modifier> modifiers) {
+                                       final Function<ApplicationContext, ClasspathResourceLocator> resourceLocator, final TypeContext<?> activationSource,
+                                       final Set<String> args, final Set<Modifier> modifiers) {
         this.singletons.put(Key.of(ApplicationContext.class), this);
 
         this.environment = environment;
@@ -123,6 +127,7 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
         this.populateArguments(args);
 
         this.locator = componentLocator.apply(this);
+        this.resourceLocator = resourceLocator.apply(this);
         this.modifiers = modifiers;
         this.modify(this.modifiers);
 

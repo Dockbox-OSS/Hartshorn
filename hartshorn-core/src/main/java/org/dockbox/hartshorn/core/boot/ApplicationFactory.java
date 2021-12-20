@@ -62,6 +62,8 @@ public interface ApplicationFactory<Self extends ApplicationFactory<Self, C>, C 
 
     Self preProcessor(ComponentPreProcessor<?> processor);
 
+    Self resourceLocator(Function<ApplicationContext, ClasspathResourceLocator> resourceLocator);
+
     Self prefix(String prefix);
 
     Self prefixes(String... prefixes);

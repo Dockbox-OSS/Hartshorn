@@ -17,15 +17,17 @@
 
 package org.dockbox.hartshorn.commands.context;
 
-import org.dockbox.hartshorn.core.boot.Hartshorn;
-import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
 import org.dockbox.hartshorn.core.annotations.context.AutoCreating;
+import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.DefaultContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
+import org.dockbox.hartshorn.core.domain.Exceptional;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
+import javax.inject.Inject;
 
 import lombok.Getter;
 
@@ -35,7 +37,11 @@ import lombok.Getter;
 @AutoCreating
 public final class ArgumentConverterContext extends DefaultContext {
 
-    @Getter private final transient Map<String, ArgumentConverter<?>> converterMap = new ConcurrentHashMap<>();
+    @Getter
+    private final transient Map<String, ArgumentConverter<?>> converterMap = new ConcurrentHashMap<>();
+
+    @Inject
+    private ApplicationContext applicationContext;
 
     /**
      * Indicates if any converter with the given <code>key</code> is registered.
@@ -95,7 +101,7 @@ public final class ArgumentConverterContext extends DefaultContext {
         for (String key : converter.keys()) {
             key = key.toLowerCase();
             if (this.converterMap.containsKey(key))
-                Hartshorn.log().debug("Duplicate argument key '" + key + "' found while registering converter, overwriting existing converter.");
+                this.applicationContext.log().debug("Duplicate argument key '" + key + "' found while registering converter, overwriting existing converter.");
             this.converterMap.put(key, converter);
         }
     }

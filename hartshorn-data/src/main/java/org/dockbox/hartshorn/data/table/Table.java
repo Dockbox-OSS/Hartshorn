@@ -21,7 +21,6 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.core.annotations.Property;
-import org.dockbox.hartshorn.core.boot.Hartshorn;
 import org.dockbox.hartshorn.core.context.element.ConstructorContext;
 import org.dockbox.hartshorn.core.context.element.FieldContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
@@ -561,8 +560,7 @@ public class Table {
 
         final Exceptional<ConstructorContext<T>> constructor = type.defaultConstructor();
         if (constructor.absent()) {
-            Hartshorn.log().warn("Could not convert rows to type " + type.name() + " as no base constructor exists");
-            return items;
+            throw new IllegalStateException("Could not convert rows to type " + type.name() + " as no base constructor exists");
         }
 
         for (final TableRow row : this.rows) {

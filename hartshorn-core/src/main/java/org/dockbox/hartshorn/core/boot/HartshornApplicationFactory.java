@@ -69,6 +69,8 @@ public class HartshornApplicationFactory implements ApplicationFactory<Hartshorn
     private Function<ApplicationManager, ApplicationEnvironment> applicationEnvironment;
     @Setter
     private Function<ApplicationContext, ComponentLocator> componentLocator;
+    @Setter
+    private Function<ApplicationContext, ClasspathResourceLocator> resourceLocator;
 
     private TypeContext<?> activator;
 
@@ -187,7 +189,7 @@ public class HartshornApplicationFactory implements ApplicationFactory<Hartshorn
         );
         final ApplicationEnvironment environment = this.applicationEnvironment.apply(manager);
 
-        final HartshornApplicationContext applicationContext = new HartshornApplicationContext(environment, this.componentLocator, this.activator, this.arguments, this.modifiers);
+        final HartshornApplicationContext applicationContext = new HartshornApplicationContext(environment, this.componentLocator, this.resourceLocator, this.activator, this.arguments, this.modifiers);
         manager.applicationContext(applicationContext);
 
         applicationContext.addActivator(new ServiceImpl());
@@ -270,6 +272,7 @@ public class HartshornApplicationFactory implements ApplicationFactory<Hartshorn
                 .applicationEnvironment(manager -> new HartshornApplicationEnvironment(this.prefixes, manager))
                 .exceptionHandler(new HartshornExceptionHandler())
                 .componentLocator(ComponentLocatorImpl::new)
+                .resourceLocator(HartshornClasspathResourceLocator::new)
                 .serviceActivator(new UseBootstrap() {
                     @Override
                     public Class<? extends Annotation> annotationType() {

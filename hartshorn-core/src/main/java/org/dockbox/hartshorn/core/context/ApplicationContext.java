@@ -22,6 +22,7 @@ import org.dockbox.hartshorn.core.Key;
 import org.dockbox.hartshorn.core.MetaProvider;
 import org.dockbox.hartshorn.core.annotations.context.LogExclude;
 import org.dockbox.hartshorn.core.boot.ApplicationLogger;
+import org.dockbox.hartshorn.core.boot.ClasspathResourceLocator;
 import org.dockbox.hartshorn.core.boot.ExceptionHandler;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
@@ -61,6 +62,8 @@ public interface ApplicationContext extends
     void add(ComponentProcessor<?> processor);
 
     ComponentLocator locator();
+
+    ClasspathResourceLocator resourceLocator();
 
     MetaProvider meta();
 

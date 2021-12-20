@@ -18,14 +18,18 @@
 package org.dockbox.hartshorn.core.boot;
 
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import lombok.Getter;
 import lombok.Setter;
 
-public class HartshornExceptionHandler implements ExceptionHandler {
+public class HartshornExceptionHandler implements ExceptionHandler, ApplicationManaged {
 
     @Getter @Setter
     private boolean stacktraces;
+
+    @Getter
+    private ApplicationManager applicationManager;
 
     @Override
     public void handle(final Throwable throwable) {
@@ -35,7 +39,7 @@ public class HartshornExceptionHandler implements ExceptionHandler {
     @Override
     public void handle(String message, final Throwable throwable) {
         if (null != throwable) {
-            final Logger log = Hartshorn.log();
+            final Logger log = this.applicationManager() != null ? this.applicationManager().log() : LoggerFactory.getLogger(HartshornExceptionHandler.class);
 
             String location = "";
             if (0 < throwable.getStackTrace().length) {
@@ -75,5 +79,11 @@ public class HartshornExceptionHandler implements ExceptionHandler {
             }
         }
         return "No message provided";
+    }
+
+    @Override
+    public void applicationManager(final ApplicationManager applicationManager) {
+        if (this.applicationManager == null) this.applicationManager = applicationManager;
+        else throw new IllegalArgumentException("Application manager has already been configured");
     }
 }
