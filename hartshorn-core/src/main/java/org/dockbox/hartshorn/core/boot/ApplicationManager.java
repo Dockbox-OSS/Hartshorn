@@ -17,6 +17,7 @@
 
 package org.dockbox.hartshorn.core.boot;
 
+import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.core.context.ContextCarrier;
 
 /**
@@ -36,5 +37,12 @@ import org.dockbox.hartshorn.core.context.ContextCarrier;
  * @since 4.2.4
  */
 public interface ApplicationManager extends ContextCarrier, ApplicationLogger, ApplicationProxier, LifecycleObservable, ApplicationFSProvider, ExceptionHandler {
+
+    /**
+     * Indicates whether the application is active in a CI environment or not. This can be determined by the presence of
+     * environment variables, or other means.
+     * @return {@literal true} if the application is active in a CI environment, {@literal false} otherwise.
+     * @see HartshornUtils#isCI()
+     */
     boolean isCI();
 }
