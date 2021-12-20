@@ -17,6 +17,7 @@
 
 package org.dockbox.hartshorn.core.context.element;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.core.ArrayListMultiMap;
 import org.dockbox.hartshorn.core.GenericType;
 import org.dockbox.hartshorn.core.HartshornUtils;
@@ -31,7 +32,6 @@ import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 import org.dockbox.hartshorn.core.exceptions.NotPrimitiveException;
 import org.dockbox.hartshorn.core.exceptions.TypeConversionException;
 import org.dockbox.hartshorn.core.proxy.javassist.JavassistProxyUtil;
-import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
@@ -138,6 +138,7 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
     private TypeContext<?> parent;
     private List<TypeContext<?>> interfaces;
     private List<MethodContext<?, T>> declaredAndInheritedMethods;
+    private List<MethodContext<?, T>> bridgeMethods;
     private List<MethodContext<?, T>> declaredMethods;
     private List<TypeContext<?>> typeParameters;
     private MultiMap<TypeContext<?>, TypeContext<?>> interfaceTypeParameters;
@@ -225,27 +226,43 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
     }
 
     public List<MethodContext<?, T>> methods() {
-        if (this.declaredAndInheritedMethods == null) {
-            this.verifyMetadataAvailable();
-            final Set<Method> allMethods = new HashSet<>();
-            final Method[] declaredMethods = this.type().getDeclaredMethods();
-            final Method[] methods = this.type().getMethods();
-            if (!this.parent().isVoid()) {
-                final List<Method> superClassMethods = this.parent().methods().stream()
-                        .filter(m -> m.isPublic() || m.isProtected())
-                        .map(MethodContext::method)
-                        .toList();
-                allMethods.addAll(superClassMethods);
-            }
-            allMethods.addAll(Arrays.asList(declaredMethods));
-            allMethods.addAll(Arrays.asList(methods));
-
-            this.declaredAndInheritedMethods = allMethods.stream()
-                    .map(MethodContext::of)
-                    .map(method -> (MethodContext<?, T>) method)
-                    .collect(Collectors.toUnmodifiableList());
-        }
+        if (this.declaredAndInheritedMethods == null) this.prepareMethods();
         return this.declaredAndInheritedMethods;
+    }
+
+    public List<MethodContext<?, T>> bridgeMethods() {
+        if (this.bridgeMethods == null) this.prepareMethods();
+        return this.bridgeMethods;
+    }
+
+    private void prepareMethods() {
+        this.verifyMetadataAvailable();
+        final Set<Method> allMethods = new HashSet<>();
+        final Method[] declaredMethods = this.type().getDeclaredMethods();
+        final Method[] methods = this.type().getMethods();
+        if (!this.parent().isVoid()) {
+            final List<Method> superClassMethods = this.parent().methods().stream()
+                    .filter(m -> m.isPublic() || m.isProtected())
+                    .map(MethodContext::method)
+                    .toList();
+            allMethods.addAll(superClassMethods);
+        }
+        allMethods.addAll(Arrays.asList(declaredMethods));
+        allMethods.addAll(Arrays.asList(methods));
+
+        // Close stream as operating on it twice is not allowed
+        final List<? extends MethodContext<?, T>> methodContexts = allMethods.stream()
+                .map(MethodContext::of)
+                .map(method -> (MethodContext<?, T>) method)
+                .toList();
+
+        this.declaredAndInheritedMethods = methodContexts.stream()
+                .filter(method -> !method.method().isBridge())
+                .collect(Collectors.toList());
+
+        this.bridgeMethods = methodContexts.stream()
+                .filter(method -> method.method().isBridge())
+                .collect(Collectors.toList());
     }
 
     public List<MethodContext<?, T>> declaredMethods() {

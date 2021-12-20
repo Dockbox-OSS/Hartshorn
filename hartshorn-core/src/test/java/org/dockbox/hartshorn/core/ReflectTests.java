@@ -17,6 +17,7 @@
 
 package org.dockbox.hartshorn.core;
 
+import org.dockbox.hartshorn.core.bridge.BridgeImpl;
 import org.dockbox.hartshorn.core.context.ApplicationEnvironment;
 import org.dockbox.hartshorn.core.context.ReflectionsPrefixContext;
 import org.dockbox.hartshorn.core.context.element.AnnotatedElementModifier;
@@ -224,6 +225,24 @@ public class ReflectTests {
             if ("parentMethod".equals(method.name())) fail = false;
         }
         if (fail) Assertions.fail("Parent types were not included");
+    }
+
+    @Test
+    void testTypeContextMethodsDoNotIncludeBridgeMethods() {
+        final TypeContext<BridgeImpl> bridge = TypeContext.of(BridgeImpl.class);
+        final List<MethodContext<?, BridgeImpl>> methods = bridge.methods();
+        for (final MethodContext<?, BridgeImpl> method : methods) {
+            Assertions.assertFalse(method.method().isBridge());
+        }
+    }
+
+    @Test
+    void testTypeContextBridgeMethodsCanBeObtained() {
+        final TypeContext<BridgeImpl> bridge = TypeContext.of(BridgeImpl.class);
+        final List<MethodContext<?, BridgeImpl>> methods = bridge.bridgeMethods();
+        Assertions.assertEquals(1, methods.size());
+        Assertions.assertEquals(Object.class, methods.get(0).returnType().type());
+        Assertions.assertTrue(methods.get(0).method().isBridge());
     }
 
     @Test
