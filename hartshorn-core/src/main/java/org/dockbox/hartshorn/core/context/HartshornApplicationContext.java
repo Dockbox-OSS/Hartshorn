@@ -20,16 +20,13 @@ package org.dockbox.hartshorn.core.context;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.core.ComponentType;
 import org.dockbox.hartshorn.core.CustomMultiMap;
-import org.dockbox.hartshorn.core.DefaultModifiers;
 import org.dockbox.hartshorn.core.Enableable;
 import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.core.InjectConfiguration;
 import org.dockbox.hartshorn.core.InjectionPoint;
-import org.dockbox.hartshorn.core.InjectorMetaProvider;
 import org.dockbox.hartshorn.core.Key;
 import org.dockbox.hartshorn.core.MetaProvider;
-import org.dockbox.hartshorn.core.MetaProviderModifier;
-import org.dockbox.hartshorn.core.Modifier;
+import org.dockbox.hartshorn.core.Modifiers;
 import org.dockbox.hartshorn.core.MultiMap;
 import org.dockbox.hartshorn.core.annotations.activate.Activator;
 import org.dockbox.hartshorn.core.annotations.inject.Binds;
@@ -103,15 +100,17 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
     private final ComponentLocator locator;
     @Getter
     private final ClasspathResourceLocator resourceLocator;
-    private final Set<Modifier> modifiers;
+    @Getter
+    private final Set<Modifiers> modifiers;
     private final Set<Annotation> activators = HartshornUtils.emptyConcurrentSet();
     private final Map<Key<?>, Object> singletons = new ConcurrentHashMap<>();
     private final Map<Key<?>, BindingHierarchy<?>> hierarchies = new ConcurrentHashMap<>();
-    private MetaProvider metaProvider;
+    private final MetaProvider metaProvider;
 
     public HartshornApplicationContext(final ApplicationEnvironment environment, final Function<ApplicationContext, ComponentLocator> componentLocator,
-                                       final Function<ApplicationContext, ClasspathResourceLocator> resourceLocator, final TypeContext<?> activationSource,
-                                       final Set<String> args, final Set<Modifier> modifiers) {
+                                       final Function<ApplicationContext, ClasspathResourceLocator> resourceLocator,
+                                       final Function<ApplicationContext, MetaProvider> metaProvider, final TypeContext<?> activationSource,
+                                       final Set<String> args, final Set<Modifiers> modifiers) {
         this.singletons.put(Key.of(ApplicationContext.class), this);
 
         this.environment = environment;
@@ -128,8 +127,8 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
 
         this.locator = componentLocator.apply(this);
         this.resourceLocator = resourceLocator.apply(this);
+        this.metaProvider = metaProvider.apply(this);
         this.modifiers = modifiers;
-        this.modify(this.modifiers);
 
         this.registerDefaultBindings();
     }
@@ -327,15 +326,6 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
         }
     }
 
-    protected void modify(final Set<Modifier> modifiers) {
-        for (final Modifier modifier : modifiers) {
-            if (modifier instanceof MetaProviderModifier metaProviderModifier) {
-                this.metaProvider = metaProviderModifier.provider(this);
-            }
-        }
-        if (this.metaProvider == null) this.metaProvider = new InjectorMetaProvider(this);
-    }
-
     @Override
     public ComponentLocator locator() {
         return this.locator;
@@ -423,7 +413,7 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
         if (annotation.absent())
             throw new IllegalArgumentException("Requested activator " + activator.getSimpleName() + " is not decorated with @ServiceActivator");
 
-        if (this.modifiers.contains(DefaultModifiers.ACTIVATE_ALL)) return true;
+        if (this.modifiers.contains(Modifiers.ACTIVATE_ALL)) return true;
         else {
             return this.activators.stream()
                     .map(Annotation::annotationType)

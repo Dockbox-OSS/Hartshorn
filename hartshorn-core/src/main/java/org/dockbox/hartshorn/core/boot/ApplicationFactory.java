@@ -17,8 +17,9 @@
 
 package org.dockbox.hartshorn.core.boot;
 
+import org.dockbox.hartshorn.core.MetaProvider;
+import org.dockbox.hartshorn.core.Modifiers;
 import org.dockbox.hartshorn.core.InjectConfiguration;
-import org.dockbox.hartshorn.core.Modifier;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.ApplicationEnvironment;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
@@ -32,9 +33,9 @@ import java.util.function.Function;
 
 public interface ApplicationFactory<Self extends ApplicationFactory<Self, C>, C extends ApplicationContext> {
 
-    Self modifiers(Modifier... modifiers);
+    Self modifiers(Modifiers... modifiers);
 
-    Self modifier(Modifier modifier);
+    Self modifier(Modifiers modifier);
 
     Self activator(TypeContext<?> activator);
 
@@ -58,9 +59,11 @@ public interface ApplicationFactory<Self extends ApplicationFactory<Self, C>, C 
 
     Self componentLocator(Function<ApplicationContext, ComponentLocator> componentLocator);
 
-    Self postProcessor(ComponentPostProcessor<?> modifier);
+    Self postProcessor(ComponentPostProcessor<?> postProcessor);
 
     Self preProcessor(ComponentPreProcessor<?> processor);
+
+    Self metaProvider(Function<ApplicationContext, MetaProvider> metaProvider);
 
     Self resourceLocator(Function<ApplicationContext, ClasspathResourceLocator> resourceLocator);
 

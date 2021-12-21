@@ -19,7 +19,9 @@ package org.dockbox.hartshorn.core.boot;
 
 import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.core.InjectConfiguration;
-import org.dockbox.hartshorn.core.Modifier;
+import org.dockbox.hartshorn.core.InjectorMetaProvider;
+import org.dockbox.hartshorn.core.MetaProvider;
+import org.dockbox.hartshorn.core.Modifiers;
 import org.dockbox.hartshorn.core.annotations.UseBootstrap;
 import org.dockbox.hartshorn.core.annotations.activate.Activator;
 import org.dockbox.hartshorn.core.annotations.inject.InjectConfig;
@@ -71,25 +73,27 @@ public class HartshornApplicationFactory implements ApplicationFactory<Hartshorn
     private Function<ApplicationContext, ComponentLocator> componentLocator;
     @Setter
     private Function<ApplicationContext, ClasspathResourceLocator> resourceLocator;
+    @Setter
+    private Function<ApplicationContext, MetaProvider> metaProvider;
 
     private TypeContext<?> activator;
 
     private final Set<InjectConfiguration> injectConfigurations = HartshornUtils.emptyConcurrentSet();
     private final Set<Annotation> serviceActivators = HartshornUtils.emptyConcurrentSet();
-    private final Set<Modifier> modifiers = HartshornUtils.emptyConcurrentSet();
+    private final Set<Modifiers> modifiers = HartshornUtils.emptyConcurrentSet();
     private final Set<String> arguments = HartshornUtils.emptyConcurrentSet();
     private final Set<String> prefixes = HartshornUtils.emptyConcurrentSet();
     private final Set<ComponentPostProcessor<?>> componentPostProcessors = HartshornUtils.emptyConcurrentSet();
     private final Set<ComponentPreProcessor<?>> componentPreProcessors = HartshornUtils.emptyConcurrentSet();
 
     @Override
-    public HartshornApplicationFactory modifiers(final Modifier... modifiers) {
+    public HartshornApplicationFactory modifiers(final Modifiers... modifiers) {
         this.modifiers.addAll(Set.of(modifiers));
         return this.self();
     }
 
     @Override
-    public HartshornApplicationFactory modifier(final Modifier modifier) {
+    public HartshornApplicationFactory modifier(final Modifiers modifier) {
         this.modifiers.add(modifier);
         return this.self();
     }
@@ -189,7 +193,15 @@ public class HartshornApplicationFactory implements ApplicationFactory<Hartshorn
         );
         final ApplicationEnvironment environment = this.applicationEnvironment.apply(manager);
 
-        final HartshornApplicationContext applicationContext = new HartshornApplicationContext(environment, this.componentLocator, this.resourceLocator, this.activator, this.arguments, this.modifiers);
+        final HartshornApplicationContext applicationContext = new HartshornApplicationContext(
+                environment,
+                this.componentLocator,
+                this.resourceLocator,
+                this.metaProvider,
+                this.activator,
+                this.arguments,
+                this.modifiers
+        );
         manager.applicationContext(applicationContext);
 
         applicationContext.addActivator(new ServiceImpl());
@@ -256,12 +268,14 @@ public class HartshornApplicationFactory implements ApplicationFactory<Hartshorn
     }
 
     private void validate() {
-        if (this.applicationConfigurator == null)
-            throw new IllegalArgumentException("Application configurator is not set");
+        if (this.applicationConfigurator == null) throw new IllegalArgumentException("Application configurator is not set");
         if (this.applicationProxier == null) throw new IllegalArgumentException("Application proxier is not set");
         if (this.applicationLogger == null) throw new IllegalArgumentException("Application logger is not set");
         if (this.activator == null) throw new IllegalArgumentException("Application activator is not set");
         if (this.exceptionHandler == null) throw new IllegalArgumentException("Exception handler is not set");
+        if (this.componentLocator == null) throw new IllegalArgumentException("Component locator is not set");
+        if (this.resourceLocator == null) throw new IllegalArgumentException("Resource locator is not set");
+        if (this.metaProvider == null) throw new IllegalArgumentException("Meta provider is not set");
     }
 
     public HartshornApplicationFactory loadDefaults() {
@@ -273,6 +287,7 @@ public class HartshornApplicationFactory implements ApplicationFactory<Hartshorn
                 .exceptionHandler(new HartshornExceptionHandler())
                 .componentLocator(ComponentLocatorImpl::new)
                 .resourceLocator(HartshornClasspathResourceLocator::new)
+                .metaProvider(InjectorMetaProvider::new)
                 .serviceActivator(new UseBootstrap() {
                     @Override
                     public Class<? extends Annotation> annotationType() {
