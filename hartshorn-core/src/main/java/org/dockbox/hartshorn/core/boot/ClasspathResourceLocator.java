@@ -24,6 +24,9 @@ import java.nio.file.Path;
 /**
  * A classpath resource locator. This class is used to locate resources in the classpath, and make them available to
  * the application.
+ *
+ * @author Guus Lieben
+ * @since 4.2.5
  */
 public interface ClasspathResourceLocator {
 

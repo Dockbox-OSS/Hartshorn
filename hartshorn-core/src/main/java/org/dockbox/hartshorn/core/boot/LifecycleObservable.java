@@ -17,7 +17,20 @@
 
 package org.dockbox.hartshorn.core.boot;
 
+/**
+ * A lifecycle observable is an object that can be observed for lifecycle events. The lifecycle events are defined by the
+ * {@link LifecycleObserver} interface.
+ *
+ * @author Guus Lieben
+ * @since 4.2.4
+ */
 @FunctionalInterface
 public interface LifecycleObservable {
+
+    /**
+     * Adds a lifecycle observer to this observable.
+     *
+     * @param observer the observer to add
+     */
     void register(LifecycleObserver observer);
 }

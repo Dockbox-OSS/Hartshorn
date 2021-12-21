@@ -29,6 +29,13 @@ import java.nio.file.Path;
 
 import lombok.AllArgsConstructor;
 
+/**
+ * The default implementation of {@link ClasspathResourceLocator}. This implementation will copy the resource to a temporary
+ * location and return the path to the temporary location.
+ *
+ * @author Guus Lieben
+ * @since 4.2.5
+ */
 @AllArgsConstructor
 public class HartshornClasspathResourceLocator implements ClasspathResourceLocator {
 
