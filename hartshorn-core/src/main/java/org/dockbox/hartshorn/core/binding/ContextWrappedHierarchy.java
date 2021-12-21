@@ -93,6 +93,7 @@ public class ContextWrappedHierarchy<C> implements BindingHierarchy<C> {
     /**
      * Updates the wrapped {@link BindingHierarchy} in the bound {@link ApplicationContext}. This behavior
      * may differ if the {@link #onUpdate} function was provided by an external source.
+     *
      * @return Itself, for chaining.
      */
     private BindingHierarchy<C> update() {
