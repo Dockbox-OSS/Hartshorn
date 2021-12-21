@@ -17,19 +17,28 @@
 
 package org.dockbox.hartshorn.core;
 
-import org.dockbox.hartshorn.core.context.ApplicationContext;
+/**
+ * A class that contains the default modifiers for the framework. Each entry may
+ * modify the behavior of the framework in a specific way.
+ *
+ * @author Guus Lieben
+ * @since 4.1.0
+ */
+public enum Modifiers {
+    /**
+     * Makes it so application activators do not need to have service activator
+     * annotationsWith present, and will indicate all activators are present when
+     * requested.
+     *
+     * @since 4.1.0
+     */
+    ACTIVATE_ALL,
 
-import java.util.function.Function;
-
-public class MetaProviderModifier implements Modifier {
-
-    private final Function<ApplicationContext, MetaProvider> provider;
-
-    public MetaProviderModifier(final Function<ApplicationContext, MetaProvider> provider) {
-        this.provider = provider;
-    }
-
-    public MetaProvider provider(final ApplicationContext context) {
-        return this.provider.apply(context);
-    }
+    /**
+     * Makes it so the logging level of the application is changed to {@code DEBUG}.
+     * This allows for finer logging and debugging.
+     *
+     * @since 4.2.5
+     */
+    DEBUG,
 }

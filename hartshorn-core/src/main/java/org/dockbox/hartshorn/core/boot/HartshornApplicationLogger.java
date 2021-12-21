@@ -18,13 +18,37 @@
 package org.dockbox.hartshorn.core.boot;
 
 import org.dockbox.hartshorn.core.annotations.context.LogExclude;
+import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @LogExclude
 public class HartshornApplicationLogger implements ApplicationLogger {
 
+    private final Map<String, Logger> loggers = new ConcurrentHashMap<>();
+
     @Override
     public Logger log() {
-        return Hartshorn.log();
+        StackTraceElement element = null;
+        for (final StackTraceElement ste : Thread.currentThread().getStackTrace()) {
+            final boolean isJavaModule = ste.getModuleName() != null && ste.getModuleName().startsWith("java.");
+            final boolean isExcluded = TypeContext.lookup(ste.getClassName().split("\\$")[0]).annotation(LogExclude.class).present();
+            if (!isJavaModule && !isExcluded) {
+                element = ste;
+                break;
+            }
+        }
+
+        if (element == null) throw new IllegalStateException("Could not determine caller from stacktrace");
+
+        final String className = element.getClassName().split("\\$")[0];
+        if (this.loggers.containsKey(className)) return this.loggers.get(className);
+
+        final Logger logger = LoggerFactory.getLogger(TypeContext.lookup(className).type());
+        this.loggers.put(className, logger);
+        return logger;
     }
 }

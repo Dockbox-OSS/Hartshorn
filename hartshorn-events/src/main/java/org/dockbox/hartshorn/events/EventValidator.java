@@ -68,7 +68,7 @@ public class EventValidator implements LifecycleObserver {
                     message.append("\n\t- ").append(event.name());
                 }
             }
-            Hartshorn.log().warn(message.toString());
+            applicationContext.log().warn(message.toString());
         }
     }
 

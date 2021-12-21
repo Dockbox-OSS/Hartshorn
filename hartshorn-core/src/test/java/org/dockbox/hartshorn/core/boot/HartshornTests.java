@@ -17,17 +17,19 @@
 
 package org.dockbox.hartshorn.core.boot;
 
-import org.dockbox.hartshorn.core.boot.Hartshorn;
+import org.dockbox.hartshorn.core.context.ApplicationContext;
+import org.dockbox.hartshorn.testsuite.HartshornTest;
+import org.dockbox.hartshorn.testsuite.InjectTest;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 
+@HartshornTest
 public class HartshornTests {
 
-    @Test
-    void testLoggersAreReused() {
-        final Logger l1 = Hartshorn.log();
-        final Logger l2 = Hartshorn.log();
+    @InjectTest
+    void testLoggersAreReused(final ApplicationContext applicationContext) {
+        final Logger l1 = applicationContext.log();
+        final Logger l2 = applicationContext.log();
 
         Assertions.assertNotNull(l1);
         Assertions.assertNotNull(l2);

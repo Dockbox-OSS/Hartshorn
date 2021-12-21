@@ -60,7 +60,10 @@ public class HartshornApplicationManager implements ApplicationManager {
             final ApplicationProxier applicationProxier,
             final ApplicationFSProvider applicationFSProvider,
             final ExceptionHandler exceptionHandler) {
+        if (applicationLogger instanceof ApplicationManaged applicationManaged)
+            applicationManaged.applicationManager(this);
         this.exceptionHandler = exceptionHandler;
+
         if (applicationLogger instanceof ApplicationManaged applicationManaged)
             applicationManaged.applicationManager(this);
         this.applicationLogger = applicationLogger;

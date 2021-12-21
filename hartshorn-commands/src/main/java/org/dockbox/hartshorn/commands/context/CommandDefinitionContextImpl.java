@@ -27,7 +27,6 @@ import org.dockbox.hartshorn.commands.definition.CommandFlagElement;
 import org.dockbox.hartshorn.commands.definition.CommandFlagImpl;
 import org.dockbox.hartshorn.commands.definition.EnumCommandElement;
 import org.dockbox.hartshorn.commands.definition.GroupCommandElement;
-import org.dockbox.hartshorn.core.boot.Hartshorn;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.DefaultContext;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
@@ -231,7 +230,7 @@ public class CommandDefinitionContextImpl extends DefaultContext implements Comm
                 return EnumCommandElement.of(name, (TypeContext<E>) lookup, optional);
             }
             else {
-                Hartshorn.log().warn("Type '" + type.toLowerCase() + "' is not supported, using default value");
+                this.context.log().warn("Type '" + type.toLowerCase() + "' is not supported, using default value");
                 return this.lookupElement(DEFAULT_TYPE, name, optional);
             }
         }
