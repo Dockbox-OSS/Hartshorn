@@ -50,7 +50,7 @@ import java.util.function.Function;
 public interface ApplicationFactory<Self extends ApplicationFactory<Self, C>, C extends ApplicationContext> {
 
     /**
-     * Modifiers to add to the application, such as {@link org.dockbox.hartshorn.core.Modifiers#ACTIVATE_ALL}.
+     * Modifiers to add to the application, such as {@link Modifiers#DEBUG}.
      *
      * @param modifiers The modifiers to add.
      * @return The {@link ApplicationFactory} instance.
@@ -58,7 +58,7 @@ public interface ApplicationFactory<Self extends ApplicationFactory<Self, C>, C 
     Self modifiers(Modifiers... modifiers);
 
     /**
-     * Adds a modifier to the application, such as {@link org.dockbox.hartshorn.core.Modifiers#ACTIVATE_ALL}.
+     * Adds a modifier to the application, such as {@link Modifiers#ACTIVATE_ALL}.
      *
      * @param modifier The modifier to add.
      * @return The {@link ApplicationFactory} instance.
