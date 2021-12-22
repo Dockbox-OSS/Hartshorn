@@ -61,6 +61,7 @@ import org.dockbox.hartshorn.core.services.ComponentProcessor;
 import org.dockbox.hartshorn.core.services.ServiceOrder;
 
 import java.lang.annotation.Annotation;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
@@ -353,13 +354,41 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
 
         T instance = this.create(key);
 
+        // Modify the instance during phase 1. This allows discarding the existing instance and replacing it with a new instance.
+        // See ServiceOrder#PHASE_1
+        for (final ServiceOrder order : ServiceOrder.PHASE_1) {
+            for (final ComponentPostProcessor<?> postProcessor : this.postProcessors.get(order)) {
+                if (postProcessor.preconditions(this, key.contract(), instance))
+                    instance = postProcessor.process(this, key.contract(), instance);
+            }
+        }
+
+        final MetaProvider meta = this.meta();
+        // Ensure the order of resolution is to first resolve the instance singleton state, and only after check the type state.
+        // Typically, the implementation decided whether it should be a singleton, so this cuts time complexity in half.
+        if (instance != null && (meta.singleton(key.contract()) || meta.singleton(TypeContext.unproxy(this, instance))))
+            this.singletons.put(key, instance);
+
         // Recreating field instances ensures all fields are created through bootstrapping, allowing injection
         // points to apply correctly
         this.populate(instance);
 
+        // deprecated, will be removed in future versions
         instance = this.inject(key, instance);
 
-        for (final ServiceOrder order : ServiceOrder.VALUES) instance = this.modify(order, key, instance);
+        // Modify the instance during phase 2. This does not allow discarding the existing instance.
+        // See ServiceOrder#PHASE_2
+        for (final ServiceOrder order : ServiceOrder.PHASE_2) {
+            for (final ComponentPostProcessor<?> postProcessor : this.postProcessors.get(order)) {
+                if (postProcessor.preconditions(this, key.contract(), instance)) {
+                    final T modified = postProcessor.process(this, key.contract(), instance);
+                    if (modified != instance) {
+                        throw new IllegalStateException(("Component %s was modified during phase %s (Phase 2) by %s. " +
+                                "Component processors are only able to discard existing instances in phases: %s").formatted(key.contract().name(), order.name(), TypeContext.of(postProcessor).name(), Arrays.toString(ServiceOrder.PHASE_2)));
+                    }
+                }
+            }
+        }
 
         // Inject properties if applicable
         if (enable) {
@@ -370,12 +399,6 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
                 ExceptionHandler.unchecked(e);
             }
         }
-
-        final MetaProvider meta = this.meta();
-        // Ensure the order of resolution is to first resolve the instance singleton state, and only after check the type state.
-        // Typically, the implementation decided whether it should be a singleton, so this cuts time complexity in half.
-        if (instance != null && (meta.singleton(key.contract()) || meta.singleton(TypeContext.unproxy(this, instance))))
-            this.singletons.put(key, instance);
 
         // May be null, but we have used all possible injectors, it's up to the developer now
         return instance;

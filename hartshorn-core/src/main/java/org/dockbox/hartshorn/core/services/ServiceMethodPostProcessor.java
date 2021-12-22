@@ -56,7 +56,10 @@ public abstract class ServiceMethodPostProcessor<A extends Annotation> extends S
             }
         }
 
-        return Exceptional.of(() -> handler.proxy(instance)).or(instance);
+        return Exceptional.of(() -> {
+            if (context.environment().manager().isProxy(instance)) return instance;
+            return handler.proxy(context, instance);
+        }).or(instance);
     }
 
     protected abstract <T> Collection<MethodContext<?, T>> modifiableMethods(TypeContext<T> type);
