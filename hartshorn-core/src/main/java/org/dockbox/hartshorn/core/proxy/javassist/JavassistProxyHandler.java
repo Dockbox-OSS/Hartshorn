@@ -17,16 +17,18 @@
 
 package org.dockbox.hartshorn.core.proxy.javassist;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.core.CustomMultiMap;
 import org.dockbox.hartshorn.core.MultiMap;
 import org.dockbox.hartshorn.core.boot.ExceptionHandler;
+import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.DefaultContext;
 import org.dockbox.hartshorn.core.context.element.FieldContext;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
-import org.dockbox.hartshorn.core.proxy.JavaInterfaceProxyHandler;
 import org.dockbox.hartshorn.core.proxy.MethodProxyContext;
 import org.dockbox.hartshorn.core.proxy.ProxyHandler;
 
@@ -44,37 +46,56 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import javassist.util.proxy.MethodHandler;
 import javassist.util.proxy.ProxyFactory;
+import javassist.util.proxy.ProxyFactory.UniqueName;
 import lombok.Getter;
 
 public class JavassistProxyHandler<T> extends DefaultContext implements ProxyHandler<T>, MethodHandler {
 
-    private final MultiMap<Method, MethodProxyContext<T, ?>> handlers = new CustomMultiMap<>(CopyOnWriteArrayList::new);
+    static {
+        ProxyFactory.nameGenerator = new UniqueName() {
+            private final String sep = "_$$_hh" + Integer.toHexString(this.hashCode() & 0xfff) + "_";
+            private int counter = 0;
+
+            @Override
+            public String get(final String classname) {
+                return classname + this.sep + Integer.toHexString(this.counter++);
+            }
+        };
+    }
+
+    // Delegated instance
+    @Nullable
     private final T instance;
+
+    // Proxy instance, there will only ever be one instance per handler, however it may be absent until #proxy is called
+    @Nullable
     private T proxyInstance;
 
     @Getter
     private final TypeContext<T> type;
 
-    public JavassistProxyHandler(final T instance) {
+    private final MultiMap<Method, MethodProxyContext<T, ?>> handlers = new CustomMultiMap<>(CopyOnWriteArrayList::new);
+
+    public JavassistProxyHandler(final @Nullable T instance) {
         this(instance, (Class<T>) instance.getClass());
     }
 
-    public JavassistProxyHandler(final T instance, final Class<T> type) {
+    public JavassistProxyHandler(final @Nullable T instance, final @NonNull Class<T> type) {
         this(instance, TypeContext.of(type));
     }
 
-    public JavassistProxyHandler(final T instance, final TypeContext<T> type) {
+    public JavassistProxyHandler(final @Nullable T instance, final @NonNull TypeContext<T> type) {
         this.instance = instance;
         this.type = type;
     }
 
     @SafeVarargs
-    public final void delegate(final MethodProxyContext<T, ?>... properties) {
+    public final void delegate(final @NonNull MethodProxyContext<T, ?> @NonNull... properties) {
         for (final MethodProxyContext<T, ?> property : properties) this.delegate(property);
     }
 
     @Override
-    public void delegate(final MethodProxyContext<T, ?> property) {
+    public void delegate(final @NonNull MethodProxyContext<T, ?> property) {
         if (Modifier.isFinal(property.target().getModifiers()))
             ExceptionHandler.unchecked(new ApplicationException("Cannot proxy final method " + property.target().getName()));
 
@@ -85,85 +106,134 @@ public class JavassistProxyHandler<T> extends DefaultContext implements ProxyHan
     public Object invoke(final Object self, final Method thisMethod, final Method proceed, final Object[] args) throws Throwable {
         // The handler listens for all methods, while not all methods are proxied
         if (this.handlers.containsKey(thisMethod)) {
-            final Collection<MethodProxyContext<T, ?>> properties = this.handlers.get(thisMethod);
-            Object returnValue = null;
-            // Sort the list so all properties are prioritised. The phase at which the property will be
-            // delegated does not matter here, as out-of-phase properties are not performed.
-            final List<MethodProxyContext<T, ?>> toSort = new ArrayList<>(properties);
-            toSort.sort(Comparator.comparingInt(MethodProxyContext::priority));
-
-            for (final MethodProxyContext<T, ?> property : properties) {
-                final MethodContext<?, ?> methodContext = proceed == null ? null : MethodContext.of(proceed);
-                final Object result = property.delegate(this.instance, methodContext, self, args);
-                if (property.overwriteResult() && !Void.TYPE.equals(thisMethod.getReturnType()))
-                    returnValue = result;
-            }
-
-            if (null == returnValue && this.instance != null) {
-                returnValue = thisMethod.invoke(this.instance, args);
-            }
-
-            return returnValue;
+            return this.invokeRegistered(self, thisMethod, proceed, args);
         }
         else {
-            // If no handler is known, default to the original method. This is delegated to the instance
-            // created, as it is typically created through Hartshorn's injectors and therefore DI dependent.
-            Method target = thisMethod;
-            if (this.instance == null && thisMethod == null)
-                target = proceed;
-
-            if (target != null) {
-                try {
-                    if (this.instance != null) {
-                        return target.invoke(this.instance, args);
-                    }
-                    else if (thisMethod.isDefault()) {
-                        return MethodHandles.lookup().findSpecial(
-                                this.type().type(),
-                                thisMethod.getName(),
-                                MethodType.methodType(thisMethod.getReturnType(), thisMethod.getParameterTypes()),
-                                this.type().type()
-                        ).bindTo(self).invokeWithArguments(args);
-                    }
-                    else if (!(self instanceof Proxy)){
-                        return target.invoke(self, args);
-                    }
-                    else {
-                        throw new IllegalArgumentException("Cannot invoke method " + thisMethod.getName() + " on proxy " + self.getClass().getName());
-                    }
-                }
-                catch (final InvocationTargetException e) {
-                    throw e.getCause();
-                }
-            }
-            else {
-                final StackTraceElement element = Thread.currentThread().getStackTrace()[3];
-                final String name = element.getMethodName();
-                final String className = this.type == null ? "" : this.type.name() + ".";
-                throw new AbstractMethodError("Cannot invoke method '" + className + name + "' because it is abstract. This type is proxied, but no proxy property was found for the method.");
-            }
+            return this.invokeUnregistered(self, thisMethod, proceed, args);
         }
     }
 
-    @Override
-    public T proxy() throws ApplicationException {
-        return this.proxy(null);
+    protected Object invokeRegistered(final Object self, final Method thisMethod, final Method proceed, final Object[] args) throws Throwable {
+        final Collection<MethodProxyContext<T, ?>> properties = this.handlers.get(thisMethod);
+        Object returnValue = null;
+        // Sort the list so all properties are prioritised. The phase at which the property will be
+        // delegated does not matter here, as out-of-phase properties are not performed.
+        final List<MethodProxyContext<T, ?>> toSort = new ArrayList<>(properties);
+        toSort.sort(Comparator.comparingInt(MethodProxyContext::priority));
+
+        for (final MethodProxyContext<T, ?> property : properties) {
+            final MethodContext<?, ?> methodContext = proceed == null ? null : MethodContext.of(proceed);
+            final Object result = property.delegate(this.instance, methodContext, self, args);
+            if (property.overwriteResult() && !Void.TYPE.equals(thisMethod.getReturnType()))
+                returnValue = result;
+        }
+
+        if (null == returnValue && this.instance != null) {
+            returnValue = thisMethod.invoke(this.instance, args);
+        }
+
+        return returnValue;
+    }
+
+    protected Object invokeUnregistered(final Object self, final Method thisMethod, final Method proceed, final Object[] args) throws Throwable {
+        // If no handler is known, default to the original method. This is delegated to the instance
+        // created, as it is typically created through Hartshorn's injectors and therefore DI dependent.
+        Method target = thisMethod;
+        if (this.instance == null && thisMethod == null)
+            target = proceed;
+
+        if (target != null) {
+            return this.invokeTarget(self, thisMethod, target, args);
+        }
+        else {
+            final StackTraceElement element = Thread.currentThread().getStackTrace()[3];
+            final String name = element.getMethodName();
+            final String className = this.type == null ? "" : this.type.name() + ".";
+            throw new AbstractMethodError("Cannot invoke method '" + className + name + "' because it is abstract. This type is proxied, but no proxy property was found for the method.");
+        }
+    }
+
+    protected Object invokeTarget(final Object self, final Method thisMethod, final Method target, final Object[] args) throws Throwable {
+        final Class<T> declaringType = this.type().type();
+
+        try {
+            // If the proxy associated with this handler has a delegate, use it.
+            if (this.instance != null) return this.invokeDelegate(target, args);
+
+            // If the method is default inside an interface, we cannot invoke it directly using a proxy instance. Instead we
+            // need to lookup the method on the class and invoke it through the method handle directly.
+            else if (thisMethod.isDefault()) return this.invokeDefault(declaringType, thisMethod, self, args);
+
+            // If the current target instance (self) is not a proxy, we can invoke the method directly using reflections.
+            else if (!(self instanceof Proxy || ProxyFactory.isProxyClass(self.getClass()))) return this.invokeSelf(self, target, args);
+
+            // If the target method is concrete in an abstract class, we cannot invoke the method directly using reflections.
+            // This solution uses private lookups to invoke the method, unreflecting the method first so it can be invoked using
+            // proxy instances.
+            else if (this.type().isAbstract() && !MethodContext.of(thisMethod).isAbstract()) return this.invokePrivate(declaringType, thisMethod, self, args);
+
+            // If none of the above conditions are met, we have no way to handle the method.
+            else throw new IllegalArgumentException("Cannot invoke method " + thisMethod.getName() + " on proxy " + self.getClass().getName());
+        }
+        catch (final InvocationTargetException e) {
+            throw e.getCause();
+        }
+    }
+
+    protected Object invokeDelegate(final Method target, final Object[] args) throws InvocationTargetException, IllegalAccessException {
+        return target.invoke(this.instance, args);
+    }
+
+    protected Object invokeSelf(final Object self, final Method target, final Object[] args) throws InvocationTargetException, IllegalAccessException {
+        return target.invoke(self, args);
+    }
+
+    protected Object invokeDefault(final Class<T> declaringType, final Method thisMethod, final Object self, final Object[] args) throws Throwable {
+        return MethodHandles.lookup().findSpecial(
+                declaringType,
+                thisMethod.getName(),
+                MethodType.methodType(thisMethod.getReturnType(), thisMethod.getParameterTypes()),
+                declaringType
+        ).bindTo(self).invokeWithArguments(args);
+    }
+
+    protected Object invokePrivate(final Class<T> declaringType, final Method thisMethod, final Object self, final Object[] args) throws Throwable {
+        return MethodHandles.privateLookupIn(declaringType, MethodHandles.lookup())
+                .in(declaringType)
+                .unreflectSpecial(thisMethod, declaringType)
+                .bindTo(self)
+                .invokeWithArguments(args);
     }
 
     @Override
-    public T proxy(final T existing) throws ApplicationException {
-        if (this.type().isInterface()) {
-            return new JavaInterfaceProxyHandler<>(this).proxy();
-        }
+    public T proxy(final ApplicationContext context) throws ApplicationException {
+        return this.proxy(context, null);
+    }
 
+    @Override
+    public T proxy(final ApplicationContext context, final T existing) throws ApplicationException {
+        // Proxy handlers can be reused, so we need to check if the proxy has already been created.
+        if (this.proxyInstance != null)
+            throw new IllegalStateException("Proxy already created, if you lost access to the original proxy instance, use #proxyInstance() instead. " +
+                    "If you wish to expand the existing proxy by registering new " + MethodProxyContext.class.getSimpleName() + "s, you do not need to call #proxy() again.");
+
+        if (this.type().isInterface()) return this.interfaceProxy(context);
+        return this.newProxy(context, existing);
+    }
+
+    protected T interfaceProxy(final ApplicationContext context) {
+        return new JavassistInterfaceHandler<>(this).proxy(context);
+    }
+
+    protected T newProxy(final ApplicationContext context, final T existing) throws ApplicationException {
         final ProxyFactory factory = new ProxyFactory();
         factory.setSuperclass(this.type().type());
-        factory.setFilter(JavassistProxyHandler.this.handlers::containsKey);
+        // As proxies can be expanded, we do not set a filter here early on.
 
         try {
             final T proxy = (T) factory.create(new Class<?>[0], new Object[0], this);
             // New proxy instances
-            if (existing != null) this.restoreFields(existing, proxy);
+            if (existing != null) this.restoreFields(context, existing, proxy);
             this.proxyInstance(proxy);
             return proxy;
         }
@@ -181,12 +251,11 @@ public class JavassistProxyHandler<T> extends DefaultContext implements ProxyHan
         this.proxyInstance = proxyInstance;
     }
 
-    private void restoreFields(final T existing, final T proxy) {
-        TypeContext<T> context = TypeContext.of(existing);
-        if (context.isProxy()) {
-            context = JavassistProxyUtil.handler(this.type(), existing).type();
-        }
-        for (final FieldContext<?> field : context.fields()) {
+    protected void restoreFields(final ApplicationContext context, final T existing, final T proxy) {
+        final TypeContext<T> typeContext = context.environment().manager().isProxy(existing)
+                ? this.type()
+                : TypeContext.of(this.instance);
+        for (final FieldContext<?> field : typeContext.fields()) {
             field.set(proxy, field.get(existing).orNull());
         }
     }

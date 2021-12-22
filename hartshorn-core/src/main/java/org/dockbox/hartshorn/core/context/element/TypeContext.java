@@ -31,7 +31,6 @@ import org.dockbox.hartshorn.core.domain.tuple.Tuple;
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 import org.dockbox.hartshorn.core.exceptions.NotPrimitiveException;
 import org.dockbox.hartshorn.core.exceptions.TypeConversionException;
-import org.dockbox.hartshorn.core.proxy.javassist.JavassistProxyUtil;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
@@ -39,6 +38,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Proxy;
 import java.lang.reflect.Type;
 import java.lang.reflect.WildcardType;
 import java.util.Arrays;
@@ -54,6 +54,7 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
+import javassist.util.proxy.ProxyFactory;
 import lombok.Getter;
 
 // skipcq: JAVA-W0100
@@ -422,7 +423,7 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
 
     public boolean isProxy() {
         if (Tristate.UNDEFINED == this.isProxy) {
-            this.isProxy = JavassistProxyUtil.isProxy(this.type()) ? Tristate.TRUE : Tristate.FALSE;
+            this.isProxy = Tristate.valueOf(ProxyFactory.isProxyClass(this.type) || Proxy.isProxyClass(this.type));
         }
         return this.isProxy.booleanValue();
     }

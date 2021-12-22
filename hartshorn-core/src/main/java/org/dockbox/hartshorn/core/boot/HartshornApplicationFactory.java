@@ -281,7 +281,7 @@ public class HartshornApplicationFactory implements ApplicationFactory<Hartshorn
     public HartshornApplicationFactory loadDefaults() {
         return this.applicationLogger(new HartshornApplicationLogger())
                 .applicationConfigurator(new HartshornApplicationConfigurator())
-                .applicationProxier(new HartshornApplicationProxier())
+                .applicationProxier(new JavassistApplicationProxier())
                 .applicationFSProvider(new HartshornApplicationFSProvider())
                 .applicationEnvironment(manager -> new HartshornApplicationEnvironment(this.prefixes, manager))
                 .exceptionHandler(new HartshornExceptionHandler())

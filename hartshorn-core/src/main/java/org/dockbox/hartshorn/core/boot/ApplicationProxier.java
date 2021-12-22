@@ -35,5 +35,4 @@ public interface ApplicationProxier extends ProxyLookup {
     <T, P extends T> Exceptional<T> delegator(final TypeContext<T> type, ProxyHandler<P> handler);
 
     <T> ProxyHandler<T> handler(final TypeContext<T> type, final T instance);
-
 }
