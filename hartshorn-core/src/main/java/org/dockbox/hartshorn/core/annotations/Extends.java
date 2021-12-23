@@ -17,8 +17,8 @@
 
 package org.dockbox.hartshorn.core.annotations;
 
-import org.dockbox.hartshorn.core.annotations.component.Component;
-import org.dockbox.hartshorn.core.annotations.service.Service;
+import org.dockbox.hartshorn.core.annotations.stereotype.Component;
+import org.dockbox.hartshorn.core.annotations.stereotype.Service;
 
 import java.lang.annotation.Annotation;
 import java.lang.annotation.ElementType;
