@@ -17,6 +17,7 @@
 
 package org.dockbox.hartshorn.core.context.element;
 
+import java.lang.reflect.Member;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,20 +27,77 @@ import java.util.function.Predicate;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 
+/**
+ * The access modifier of a class, method, or other {@link ModifierCarrier}. This is a basic bitmask
+ * of the {@link Modifier} constants. This enum and its contents serve as a way to easily interact with
+ * the {@link Modifier} constants through {@link TypeContext}s, {@link MethodContext}s, and other
+ * {@link ModifierCarrier}s.
+ *
+ * @author Guus Lieben
+ * @since 4.2.0
+ */
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public enum AccessModifier {
+    /**
+     * @see Modifier#PUBLIC
+     * @see Modifier#isPublic(int)
+     */
     PUBLIC(Modifier::isPublic),
+    /**
+     * @see Modifier#PROTECTED
+     * @see Modifier#isProtected(int)
+     */
     PROTECTED(Modifier::isProtected),
+    /**
+     * @see Modifier#PRIVATE
+     * @see Modifier#isPrivate(int)
+     */
     PRIVATE(Modifier::isPrivate),
 
+    /**
+     * @see Modifier#ABSTRACT
+     * @see Modifier#isAbstract(int)
+     */
     ABSTRACT(Modifier::isAbstract),
+    /**
+     * @see Modifier#FINAL
+     * @see Modifier#isFinal(int)
+     */
     FINAL(Modifier::isFinal),
+    /**
+     * @see Modifier#TRANSIENT
+     * @see Modifier#isTransient(int)
+     */
     TRANSIENT(Modifier::isTransient),
+    /**
+     * @see Modifier#INTERFACE
+     * @see Modifier#isInterface(int)
+     */
     INTERFACE(Modifier::isInterface),
+    /**
+     * @see Modifier#NATIVE
+     * @see Modifier#isNative(int)
+     */
     NATIVE(Modifier::isNative),
+    /**
+     * @see Modifier#STATIC
+     * @see Modifier#isStatic(int)
+     */
     STATIC(Modifier::isStatic),
+    /**
+     * @see Modifier#STRICT
+     * @see Modifier#isStrict(int)
+     */
     STRICT(Modifier::isStrict),
+    /**
+     * @see Modifier#SYNCHRONIZED
+     * @see Modifier#isSynchronized(int)
+     */
     SYNCHRONIZED(Modifier::isSynchronized),
+    /**
+     * @see Modifier#VOLATILE
+     * @see Modifier#isVolatile(int)
+     */
     VOLATILE(Modifier::isVolatile),
     ;
 
@@ -47,6 +105,13 @@ public enum AccessModifier {
     
     private final Predicate<Integer> predicate;
 
+    /**
+     * Returns a list of all {@link AccessModifier}s that are set in the given {@code modifiers}.
+     *
+     * @param mod The modifiers to check
+     * @return A list of all {@link AccessModifier}s that are set in the given {@code modifiers}.
+     * @see Member#getModifiers()
+     */
     public static List<AccessModifier> from(final int mod) {
         final List<AccessModifier> modifiers = new ArrayList<>();
         for (final AccessModifier modifier : VALUES) {

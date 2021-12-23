@@ -30,28 +30,106 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
+/**
+ * AnnotatedElementContext is a context that holds the annotations of an annotated element.
+ *
+ * <p>The context is a map of annotation type to annotation instance. The context is thread-safe.
+ *
+ * @param <A> The type of the annotated element
+ * @author Guus Lieben
+ * @since 4.2.0
+ */
 public abstract class AnnotatedElementContext<A extends AnnotatedElement> extends DefaultContext implements QualifiedElement {
 
     private Map<Class<?>, Annotation> annotationCache;
 
+    /**
+     * Returns the annotations of the annotated element.
+     *
+     * @return The annotations of the annotated element.
+     */
     public Set<Annotation> annotations() {
         return new HashSet<>(this.validate().values());
     }
 
+    /**
+     * Returns the annotations of the annotated element, when the annotation is annotated with the given
+     * annotation.
+     * <pre>{@code
+     * @ParentAnnotation
+     * public @interface MyAnnotation { }
+     * }</pre>
+     * <pre>{@code
+     * @MyAnnotation
+     * public class MyClass { }
+     * }</pre>
+     *
+     * <p>The following code will return the annotation {@code @MyAnnotation} of the class {@code MyClass}.
+     * <pre>{@code
+     * AnnotatedElementContext<MyClass> context = AnnotatedElementContext.of(MyClass.class);
+     * Set<Annotation> annotations = context.annotations(MyAnnotation.class);
+     * }</pre>
+     *
+     * @param annotation The annotation type
+     * @param <T> The type of the annotation
+     * @return The annotations of the annotated element, when the annotation is annotated with the given
+     * @see #annotations(Class)
+     */
     public <T extends Annotation> Set<Annotation> annotations(final TypeContext<T> annotation) {
         return this.annotations(annotation.type());
     }
 
+    /**
+     * Returns the annotations of the annotated element, when the annotation is annotated with the given
+     * annotation.
+     * <pre>{@code
+     * @ParentAnnotation
+     * public @interface MyAnnotation { }
+     * }</pre>
+     * <pre>{@code
+     * @MyAnnotation
+     * public class MyClass { }
+     * }</pre>
+     *
+     * <p>The following code will return the annotation {@code @MyAnnotation} of the class {@code MyClass}.
+     * <pre>{@code
+     * AnnotatedElementContext<MyClass> context = AnnotatedElementContext.of(MyClass.class);
+     * Set<Annotation> annotations = context.annotations(MyAnnotation.class);
+     * }</pre>
+     *
+     * @param annotation The annotation type
+     * @param <T> The type of the annotation
+     * @return The annotations of the annotated element, when the annotation is annotated with the given
+     * @see #annotations(TypeContext)
+     */
     public <T extends Annotation> Set<Annotation> annotations(final Class<T> annotation) {
         return this.annotations().stream()
                 .filter(a -> TypeContext.of(a.annotationType()).annotation(annotation).present())
                 .collect(Collectors.toSet());
     }
 
+    /**
+     * Returns the annotation associated with the given annotation {@link TypeContext}. If the annotation is
+     * not present, {@link Exceptional#empty()} is returned.
+     *
+     * @param annotation The annotation type
+     * @param <T> The type of the annotation
+     * @return The annotated element associated with the given {@link TypeContext}.
+     * @see #annotation(Class)
+     */
     public <T extends Annotation> Exceptional<T> annotation(final TypeContext<T> annotation) {
         return this.annotation(annotation.type());
     }
 
+    /**
+     * Returns the annotation associated with the given annotation type. If the annotation is not present,
+     * {@link Exceptional#empty()} is returned.
+     *
+     * @param annotation The annotation type
+     * @param <T> The type of the annotation
+     * @return The annotation associated with the given annotation type.
+     * @see #annotation(TypeContext)
+     */
     public <T extends Annotation> Exceptional<T> annotation(final Class<T> annotation) {
         if (!annotation.isAnnotation()) return Exceptional.empty();
 
@@ -64,6 +142,12 @@ public abstract class AnnotatedElementContext<A extends AnnotatedElement> extend
         return Exceptional.of(oneOrNull);
     }
 
+    /**
+     * Returns the annotation cache. If the cache is not present, a new cache is created. This method may be
+     * overridden to provide a custom cache implementation.
+     *
+     * @return The annotation cache.
+     */
     protected Map<Class<?>, Annotation> validate() {
         if (this.annotationCache == null) {
             this.annotationCache = new ConcurrentHashMap<>();
@@ -74,6 +158,11 @@ public abstract class AnnotatedElementContext<A extends AnnotatedElement> extend
         return this.annotationCache;
     }
 
+    /**
+     * Returns the annotated element represented by this context.
+     *
+     * @return The annotated element represented by this context.
+     */
     protected abstract A element();
 
     @Override
