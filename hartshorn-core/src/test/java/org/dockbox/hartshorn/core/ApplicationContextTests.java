@@ -17,17 +17,21 @@
 
 package org.dockbox.hartshorn.core;
 
-import org.dockbox.hartshorn.core.types.Person;
-
 import org.dockbox.hartshorn.core.annotations.activate.UseServiceProvision;
 import org.dockbox.hartshorn.core.boot.EmptyService;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.HartshornApplicationContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
+import org.dockbox.hartshorn.core.exceptions.CyclicComponentException;
 import org.dockbox.hartshorn.core.proxy.ExtendedProxy;
+import org.dockbox.hartshorn.core.types.CircularConstructorA;
+import org.dockbox.hartshorn.core.types.CircularConstructorB;
+import org.dockbox.hartshorn.core.types.CircularDependencyA;
+import org.dockbox.hartshorn.core.types.CircularDependencyB;
 import org.dockbox.hartshorn.core.types.ComponentType;
 import org.dockbox.hartshorn.core.types.ContextInjectedType;
 import org.dockbox.hartshorn.core.types.NonComponentType;
+import org.dockbox.hartshorn.core.types.Person;
 import org.dockbox.hartshorn.core.types.SampleContext;
 import org.dockbox.hartshorn.core.types.TypeWithEnabledInjectField;
 import org.dockbox.hartshorn.core.types.TypeWithFailingConstructor;
@@ -359,5 +363,23 @@ public class ApplicationContextTests {
     @Test
     void testFailingConstructorIsRethrown() {
         Assertions.assertThrows(IllegalStateException.class, () -> this.applicationContext().get(TypeWithFailingConstructor.class));
+    }
+
+    @Test
+    void testCircularDependenciesAreCorrectOnFieldInject() {
+        final CircularDependencyA a = Assertions.assertDoesNotThrow(() -> this.applicationContext().get(CircularDependencyA.class));
+        final CircularDependencyB b = Assertions.assertDoesNotThrow(() -> this.applicationContext().get(CircularDependencyB.class));
+
+        Assertions.assertNotNull(a);
+        Assertions.assertNotNull(b);
+
+        Assertions.assertSame(a, b.a());
+        Assertions.assertSame(b, a.b());
+    }
+
+    @Test
+    void testCircularDependenciesYieldExceptionOnConstructorInject() {
+        Assertions.assertThrows(CyclicComponentException.class, () -> this.applicationContext().get(CircularConstructorA.class));
+        Assertions.assertThrows(CyclicComponentException.class, () -> this.applicationContext().get(CircularConstructorB.class));
     }
 }
