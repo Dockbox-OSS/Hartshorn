@@ -25,7 +25,7 @@ import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.proxy.ProxyContext;
 import org.dockbox.hartshorn.core.proxy.ProxyFunction;
 import org.dockbox.hartshorn.core.services.ServiceAnnotatedMethodPostProcessor;
-import org.dockbox.hartshorn.core.services.ServiceOrder;
+import org.dockbox.hartshorn.core.services.ProcessingOrder;
 import org.dockbox.hartshorn.data.jpa.JpaRepository;
 import org.dockbox.hartshorn.data.QueryFunction;
 import org.dockbox.hartshorn.data.annotations.EntityModifier;
@@ -80,8 +80,8 @@ public class QueryPostProcessor extends ServiceAnnotatedMethodPostProcessor<Quer
     }
 
     @Override
-    public ServiceOrder order() {
-        return ServiceOrder.LATE;
+    public ProcessingOrder order() {
+        return ProcessingOrder.LATE;
     }
 
     protected TypeContext<?> entityType(final MethodContext<?, ?> context, final Query query) {

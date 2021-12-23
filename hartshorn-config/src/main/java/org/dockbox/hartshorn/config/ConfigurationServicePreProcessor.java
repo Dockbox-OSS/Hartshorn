@@ -22,7 +22,7 @@ import org.dockbox.hartshorn.config.annotations.UseConfigurations;
 import org.dockbox.hartshorn.core.annotations.activate.AutomaticActivation;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
-import org.dockbox.hartshorn.core.services.ServiceOrder;
+import org.dockbox.hartshorn.core.services.ProcessingOrder;
 import org.dockbox.hartshorn.core.services.ServicePreProcessor;
 import org.dockbox.hartshorn.data.FileFormats;
 import org.dockbox.hartshorn.data.mapping.ObjectMapper;
@@ -95,7 +95,7 @@ public class ConfigurationServicePreProcessor implements ServicePreProcessor<Use
     }
 
     @Override
-    public ServiceOrder order() {
-        return ServiceOrder.FIRST;
+    public ProcessingOrder order() {
+        return ProcessingOrder.FIRST;
     }
 }

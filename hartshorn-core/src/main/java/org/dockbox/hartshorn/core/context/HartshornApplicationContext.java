@@ -58,7 +58,7 @@ import org.dockbox.hartshorn.core.services.ComponentLocator;
 import org.dockbox.hartshorn.core.services.ComponentPostProcessor;
 import org.dockbox.hartshorn.core.services.ComponentPreProcessor;
 import org.dockbox.hartshorn.core.services.ComponentProcessor;
-import org.dockbox.hartshorn.core.services.ServiceOrder;
+import org.dockbox.hartshorn.core.services.ProcessingOrder;
 
 import java.lang.annotation.Annotation;
 import java.util.Arrays;
@@ -90,8 +90,8 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
     private static final Pattern ARGUMENTS = Pattern.compile("-H([a-zA-Z0-9\\.]+)=(.+)");
 
     protected final transient Set<InjectionPoint<?>> injectionPoints = HartshornUtils.emptyConcurrentSet();
-    protected final transient MultiMap<ServiceOrder, ComponentPostProcessor<?>> postProcessors = new CustomMultiMap<>(HartshornUtils::emptyConcurrentSet);
-    protected final transient MultiMap<ServiceOrder, ComponentPreProcessor<?>> preProcessors = new CustomMultiMap<>(HartshornUtils::emptyConcurrentSet);
+    protected final transient MultiMap<ProcessingOrder, ComponentPostProcessor<?>> postProcessors = new CustomMultiMap<>(HartshornUtils::emptyConcurrentSet);
+    protected final transient MultiMap<ProcessingOrder, ComponentPreProcessor<?>> preProcessors = new CustomMultiMap<>(HartshornUtils::emptyConcurrentSet);
     protected final transient Properties environmentValues = new Properties();
     protected final transient Queue<String> prefixQueue = new ConcurrentLinkedQueue<>();
 
@@ -206,7 +206,7 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
 
     @Override
     public void add(final ComponentProcessor<?> processor) {
-        final ServiceOrder order = processor.order();
+        final ProcessingOrder order = processor.order();
         final String name = TypeContext.of(processor).name();
 
         if (processor instanceof ComponentPostProcessor<?> postProcessor) {
@@ -258,10 +258,10 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
         this.processPrefixQueue();
         final Collection<ComponentContainer> containers = this.locator().containers(ComponentType.FUNCTIONAL);
         this.log().debug("Located %d functional components from classpath".formatted(containers.size()));
-        for (final ServiceOrder order : ServiceOrder.VALUES) this.process(order, containers);
+        for (final ProcessingOrder order : ProcessingOrder.VALUES) this.process(order, containers);
     }
 
-    protected void process(final ServiceOrder order, final Collection<ComponentContainer> containers) {
+    protected void process(final ProcessingOrder order, final Collection<ComponentContainer> containers) {
         for (final ComponentPreProcessor<?> serviceProcessor : this.preProcessors.get(order)) {
             for (final ComponentContainer container : containers) {
                 final TypeContext<?> service = container.type();
@@ -356,7 +356,7 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
 
         // Modify the instance during phase 1. This allows discarding the existing instance and replacing it with a new instance.
         // See ServiceOrder#PHASE_1
-        for (final ServiceOrder order : ServiceOrder.PHASE_1) {
+        for (final ProcessingOrder order : ProcessingOrder.PHASE_1) {
             for (final ComponentPostProcessor<?> postProcessor : this.postProcessors.get(order)) {
                 if (postProcessor.preconditions(this, key.contract(), instance))
                     instance = postProcessor.process(this, key.contract(), instance);
@@ -378,13 +378,13 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
 
         // Modify the instance during phase 2. This does not allow discarding the existing instance.
         // See ServiceOrder#PHASE_2
-        for (final ServiceOrder order : ServiceOrder.PHASE_2) {
+        for (final ProcessingOrder order : ProcessingOrder.PHASE_2) {
             for (final ComponentPostProcessor<?> postProcessor : this.postProcessors.get(order)) {
                 if (postProcessor.preconditions(this, key.contract(), instance)) {
                     final T modified = postProcessor.process(this, key.contract(), instance);
                     if (modified != instance) {
                         throw new IllegalStateException(("Component %s was modified during phase %s (Phase 2) by %s. " +
-                                "Component processors are only able to discard existing instances in phases: %s").formatted(key.contract().name(), order.name(), TypeContext.of(postProcessor).name(), Arrays.toString(ServiceOrder.PHASE_2)));
+                                "Component processors are only able to discard existing instances in phases: %s").formatted(key.contract().name(), order.name(), TypeContext.of(postProcessor).name(), Arrays.toString(ProcessingOrder.PHASE_2)));
                     }
                 }
             }
@@ -404,7 +404,7 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
         return instance;
     }
 
-    protected <T> T modify(final ServiceOrder order, final Key<T> key, T instance) {
+    protected <T> T modify(final ProcessingOrder order, final Key<T> key, T instance) {
         for (final ComponentPostProcessor<?> postProcessor : this.postProcessors.get(order)) {
             if (postProcessor.preconditions(this, key.contract(), instance))
                 instance = postProcessor.process(this, key.contract(), instance);

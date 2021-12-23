@@ -26,7 +26,7 @@ import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.FieldContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
-import org.dockbox.hartshorn.core.services.ServiceOrder;
+import org.dockbox.hartshorn.core.services.ProcessingOrder;
 import org.dockbox.hartshorn.core.services.ServicePreProcessor;
 
 import java.util.List;
@@ -68,7 +68,7 @@ public class ArgumentServicePreProcessor implements ServicePreProcessor<UseComma
     }
 
     @Override
-    public ServiceOrder order() {
-        return ServiceOrder.FIRST;
+    public ProcessingOrder order() {
+        return ProcessingOrder.FIRST;
     }
 }

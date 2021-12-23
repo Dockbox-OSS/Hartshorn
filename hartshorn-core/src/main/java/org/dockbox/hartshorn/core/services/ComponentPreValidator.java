@@ -30,7 +30,7 @@ public abstract class ComponentPreValidator<A extends Annotation> implements Com
     }
 
     @Override
-    public final ServiceOrder order() {
-        return ServiceOrder.FIRST;
+    public final ProcessingOrder order() {
+        return ProcessingOrder.FIRST;
     }
 }

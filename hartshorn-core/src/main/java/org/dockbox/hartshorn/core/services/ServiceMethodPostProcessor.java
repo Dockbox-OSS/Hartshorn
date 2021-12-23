@@ -76,7 +76,7 @@ public abstract class ServiceMethodPostProcessor<A extends Annotation> extends S
     }
 
     @Override
-    public ServiceOrder order() {
-        return ServiceOrder.EARLY;
+    public ProcessingOrder order() {
+        return ProcessingOrder.EARLY;
     }
 }

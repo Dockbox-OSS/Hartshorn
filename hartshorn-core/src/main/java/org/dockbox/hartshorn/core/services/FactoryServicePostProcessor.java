@@ -73,7 +73,7 @@ public class FactoryServicePostProcessor extends ServiceAnnotatedMethodPostProce
     }
 
     @Override
-    public ServiceOrder order() {
-        return ServiceOrder.LAST;
+    public ProcessingOrder order() {
+        return ProcessingOrder.LAST;
     }
 }

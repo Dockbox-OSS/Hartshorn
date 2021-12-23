@@ -29,7 +29,7 @@ import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.services.ComponentPreProcessor;
-import org.dockbox.hartshorn.core.services.ServiceOrder;
+import org.dockbox.hartshorn.core.services.ProcessingOrder;
 
 /**
  * Scans for any type annotated with {@link Parameter} and registers a {@link DynamicPatternConverter}
@@ -59,7 +59,7 @@ public class CommandParameters implements ComponentPreProcessor<UseCommands> {
     }
 
     @Override
-    public ServiceOrder order() {
-        return ServiceOrder.EARLY;
+    public ProcessingOrder order() {
+        return ProcessingOrder.EARLY;
     }
 }
