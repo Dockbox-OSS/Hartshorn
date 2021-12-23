@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.cache.annotations;
 
-import org.dockbox.hartshorn.core.annotations.service.Service;
+import org.dockbox.hartshorn.core.annotations.stereotype.Service;
 import org.dockbox.hartshorn.core.annotations.AliasFor;
 import org.dockbox.hartshorn.core.annotations.Extends;
 

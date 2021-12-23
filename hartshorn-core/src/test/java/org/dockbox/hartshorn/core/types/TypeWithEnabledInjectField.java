@@ -17,8 +17,8 @@
 
 package org.dockbox.hartshorn.core.types;
 
-import org.dockbox.hartshorn.core.annotations.component.Component;
 import org.dockbox.hartshorn.core.annotations.inject.Enable;
+import org.dockbox.hartshorn.core.annotations.stereotype.Component;
 
 import javax.inject.Inject;
 
@@ -31,5 +31,4 @@ public class TypeWithEnabledInjectField {
     @Enable
     @Getter
     private SingletonEnableable singletonEnableable;
-
 }

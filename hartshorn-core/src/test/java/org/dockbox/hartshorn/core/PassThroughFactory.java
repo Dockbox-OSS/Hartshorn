@@ -3,7 +3,7 @@ package org.dockbox.hartshorn.core;
 import org.dockbox.hartshorn.core.types.Person;
 
 import org.dockbox.hartshorn.core.annotations.Factory;
-import org.dockbox.hartshorn.core.annotations.service.Service;
+import org.dockbox.hartshorn.core.annotations.stereotype.Service;
 
 @Service
 public interface PassThroughFactory {

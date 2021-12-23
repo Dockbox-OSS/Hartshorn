@@ -17,8 +17,8 @@
 
 package org.dockbox.hartshorn.core.proxy.types;
 
-import org.dockbox.hartshorn.core.annotations.service.Service;
-import org.dockbox.hartshorn.core.annotations.proxy.Provided;
+import org.dockbox.hartshorn.core.annotations.stereotype.Service;
+import org.dockbox.hartshorn.core.annotations.inject.Provided;
 
 @Service
 @FunctionalInterface

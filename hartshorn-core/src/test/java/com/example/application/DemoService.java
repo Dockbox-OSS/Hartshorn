@@ -17,12 +17,8 @@
 
 package com.example.application;
 
-import org.dockbox.hartshorn.core.annotations.service.Service;
+import org.dockbox.hartshorn.core.annotations.stereotype.Service;
 
 @Service
 public interface DemoService {
-//    @Inject
-//    @Getter
-//    private Demo demo;
-    String hello();
 }

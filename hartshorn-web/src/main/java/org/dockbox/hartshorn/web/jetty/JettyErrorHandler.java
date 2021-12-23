@@ -18,7 +18,7 @@
 package org.dockbox.hartshorn.web.jetty;
 
 import org.dockbox.hartshorn.config.annotations.Value;
-import org.dockbox.hartshorn.core.annotations.component.Component;
+import org.dockbox.hartshorn.core.annotations.stereotype.Component;
 import org.dockbox.hartshorn.core.boot.Hartshorn;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;

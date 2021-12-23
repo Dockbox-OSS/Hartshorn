@@ -21,6 +21,7 @@ import org.dockbox.hartshorn.config.annotations.Configuration;
 import org.dockbox.hartshorn.config.annotations.Value;
 import org.dockbox.hartshorn.core.Key;
 import org.dockbox.hartshorn.core.annotations.inject.Provider;
+import org.dockbox.hartshorn.core.annotations.stereotype.Service;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.demo.persistence.services.UserRepository;
 import org.dockbox.hartshorn.data.FileFormats;
@@ -33,8 +34,8 @@ import javax.inject.Singleton;
 
 /**
  * A simple configuration service capable of loading a configuration file and providing a custom {@link JpaRepository}
- * instance. {@link Configuration} is an extension of {@link org.dockbox.hartshorn.core.annotations.service.Service},
- * and therefore has all abilities also found with {@link org.dockbox.hartshorn.core.annotations.service.Service}.
+ * instance. {@link Configuration} is an extension of {@link Service},
+ * and therefore has all abilities also found with {@link Service}.
  *
  * <p>{@link Configuration} adds the ability to load configuration files through a configured {@link Configuration#source()}.
  * By default, the {@link FileFormats} used to read the file is {@link FileFormats#YAML}, however this can be configured to

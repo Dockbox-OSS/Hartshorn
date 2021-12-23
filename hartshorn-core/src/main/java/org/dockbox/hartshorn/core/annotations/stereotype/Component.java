@@ -15,7 +15,7 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.core.annotations.component;
+package org.dockbox.hartshorn.core.annotations.stereotype;
 
 import org.dockbox.hartshorn.core.ComponentType;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
@@ -58,7 +58,7 @@ import java.lang.annotation.Target;
  *      }
  * }</pre>
  *
- * @see org.dockbox.hartshorn.core.annotations.service.Service
+ * @see Service
  * @see org.dockbox.hartshorn.core.services.ComponentLocator
  * @see org.dockbox.hartshorn.core.services.ComponentContainer
  * @see org.dockbox.hartshorn.core.services.ComponentProcessor

@@ -18,7 +18,7 @@
 package org.dockbox.hartshorn.demo.commands.services;
 
 import org.dockbox.hartshorn.commands.CommandCLI;
-import org.dockbox.hartshorn.core.annotations.service.Service;
+import org.dockbox.hartshorn.core.annotations.stereotype.Service;
 import org.dockbox.hartshorn.core.boot.ApplicationState;
 import org.dockbox.hartshorn.core.boot.ApplicationState.Started;
 import org.dockbox.hartshorn.core.boot.HartshornApplication;

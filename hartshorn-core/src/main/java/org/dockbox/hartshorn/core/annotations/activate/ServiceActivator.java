@@ -15,9 +15,10 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.core.annotations.service;
+package org.dockbox.hartshorn.core.annotations.activate;
 
 import org.dockbox.hartshorn.core.ActivatorFiltered;
+import org.dockbox.hartshorn.core.annotations.stereotype.Service;
 import org.dockbox.hartshorn.core.boot.Hartshorn;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.services.ComponentProcessor;

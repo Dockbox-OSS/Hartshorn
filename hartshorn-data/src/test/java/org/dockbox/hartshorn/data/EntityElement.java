@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.data;
 
-import org.dockbox.hartshorn.core.annotations.component.Component;
+import org.dockbox.hartshorn.core.annotations.stereotype.Component;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.config.annotations;
 
 import org.dockbox.hartshorn.config.ConfigurationServicePreProcessor;
 import org.dockbox.hartshorn.core.boot.Hartshorn;
-import org.dockbox.hartshorn.core.annotations.service.Service;
+import org.dockbox.hartshorn.core.annotations.stereotype.Service;
 import org.dockbox.hartshorn.data.FileFormats;
 import org.dockbox.hartshorn.core.annotations.Extends;
 

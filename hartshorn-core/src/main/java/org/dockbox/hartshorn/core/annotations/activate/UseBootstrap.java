@@ -15,9 +15,8 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.core.annotations.proxy;
+package org.dockbox.hartshorn.core.annotations.activate;
 
-import org.dockbox.hartshorn.core.annotations.service.ServiceActivator;
 import org.dockbox.hartshorn.core.boot.HartshornApplicationFactory;
 
 import java.lang.annotation.ElementType;
@@ -26,15 +25,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation to indicate that {@link Provided} methods can be proxied, and service implementations of
- * {@link org.dockbox.hartshorn.core.proxy.DelegatorAccessor} can be proxied to delegate functionality. This acts as
- * a service activator, and is loaded as a default in {@link HartshornApplicationFactory}.
- *
- * @author Guus Lieben
- * @since 4.1.0
+ * Service activator for bootstrap-dependent services. This activator is automatically injected
+ * when the application is created through {@link HartshornApplicationFactory}.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @ServiceActivator
-public @interface UseProxying {
+public @interface UseBootstrap {
 }

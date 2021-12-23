@@ -21,7 +21,7 @@ import org.dockbox.hartshorn.core.ComponentType;
 import org.dockbox.hartshorn.core.HashSetMultiMap;
 import org.dockbox.hartshorn.core.Key;
 import org.dockbox.hartshorn.core.MultiMap;
-import org.dockbox.hartshorn.core.annotations.component.Component;
+import org.dockbox.hartshorn.core.annotations.stereotype.Component;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;

@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.web;
 
 import org.dockbox.hartshorn.config.annotations.Value;
 import org.dockbox.hartshorn.core.Enableable;
-import org.dockbox.hartshorn.core.annotations.component.Component;
+import org.dockbox.hartshorn.core.annotations.stereotype.Component;
 import org.dockbox.hartshorn.core.annotations.inject.Binds;
 import org.dockbox.hartshorn.core.annotations.inject.Bound;
 import org.dockbox.hartshorn.core.boot.Hartshorn;

@@ -18,7 +18,7 @@
 package org.dockbox.hartshorn.core.services.parameter;
 
 import org.dockbox.hartshorn.core.annotations.inject.Binds;
-import org.dockbox.hartshorn.core.annotations.proxy.Instance;
+import org.dockbox.hartshorn.core.annotations.inject.Instance;
 import org.dockbox.hartshorn.core.context.ParameterLoaderContext;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
 

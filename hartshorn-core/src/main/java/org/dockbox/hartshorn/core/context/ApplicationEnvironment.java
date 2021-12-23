@@ -17,8 +17,9 @@
 
 package org.dockbox.hartshorn.core.context;
 
-import org.dockbox.hartshorn.core.annotations.UseBootstrap;
-import org.dockbox.hartshorn.core.annotations.proxy.UseProxying;
+import org.dockbox.hartshorn.core.annotations.activate.UseBootstrap;
+import org.dockbox.hartshorn.core.annotations.activate.ServiceActivator;
+import org.dockbox.hartshorn.core.annotations.activate.UseProxying;
 import org.dockbox.hartshorn.core.boot.ApplicationManager;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 
@@ -117,7 +118,7 @@ public interface ApplicationEnvironment {
 
     /**
      * Gets annotations of the given type, which are decorated with the given annotation. For example, if the given
-     * annotation is {@link org.dockbox.hartshorn.core.annotations.service.ServiceActivator} on the application
+     * annotation is {@link ServiceActivator} on the application
      * activator, the results will include all service activators like {@link UseBootstrap} and {@link UseProxying}.
      *
      * @param type The type to scan for annotations

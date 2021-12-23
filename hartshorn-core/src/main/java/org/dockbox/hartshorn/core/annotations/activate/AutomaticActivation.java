@@ -15,7 +15,7 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.core.annotations.service;
+package org.dockbox.hartshorn.core.annotations.activate;
 
 import java.lang.annotation.Annotation;
 import java.lang.annotation.ElementType;

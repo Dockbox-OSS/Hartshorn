@@ -17,7 +17,6 @@
 
 package org.dockbox.hartshorn.core.annotations.activate;
 
-import org.dockbox.hartshorn.core.annotations.service.ServiceActivator;
 import org.dockbox.hartshorn.core.services.ProviderServicePreProcessor;
 
 import java.lang.annotation.ElementType;

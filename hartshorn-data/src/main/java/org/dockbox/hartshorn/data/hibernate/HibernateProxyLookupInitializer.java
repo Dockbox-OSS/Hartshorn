@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.data.hibernate;
 
-import org.dockbox.hartshorn.core.annotations.service.Service;
+import org.dockbox.hartshorn.core.annotations.stereotype.Service;
 import org.dockbox.hartshorn.core.boot.ApplicationManager;
 import org.dockbox.hartshorn.core.boot.HartshornApplicationManager;
 import org.dockbox.hartshorn.core.boot.JavassistApplicationProxier;

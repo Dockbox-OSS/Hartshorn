@@ -21,6 +21,7 @@ import org.dockbox.hartshorn.cache.annotations.CacheService;
 import org.dockbox.hartshorn.cache.annotations.Cached;
 import org.dockbox.hartshorn.cache.annotations.EvictCache;
 import org.dockbox.hartshorn.core.HartshornUtils;
+import org.dockbox.hartshorn.core.annotations.stereotype.Service;
 import org.dockbox.hartshorn.core.boot.ApplicationState;
 import org.dockbox.hartshorn.core.boot.ApplicationState.Started;
 import org.dockbox.hartshorn.core.boot.HartshornApplication;
@@ -35,7 +36,7 @@ import java.util.Map;
 
 /**
  * A simple service capable of caching collections. If you only use automatic cache expiration through {@link Cached#expires()},
- * the service can also be annotated with {@link org.dockbox.hartshorn.core.annotations.service.Service}. However, if you want to
+ * the service can also be annotated with {@link Service}. However, if you want to
  * use {@link EvictCache} and/or {@link org.dockbox.hartshorn.cache.annotations.UpdateCache} as well, it is recommended to
  * annotate the service with {@link CacheService} to indicate the cache ID.
  */

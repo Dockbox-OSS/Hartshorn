@@ -17,6 +17,7 @@
 
 package org.dockbox.hartshorn.demo.caching;
 
+import org.dockbox.hartshorn.core.annotations.activate.ServiceActivator;
 import org.dockbox.hartshorn.core.boot.HartshornApplication;
 import org.dockbox.hartshorn.cache.annotations.UseCaching;
 import org.dockbox.hartshorn.core.annotations.activate.Activator;
@@ -25,7 +26,7 @@ import org.dockbox.hartshorn.events.annotations.UseEvents;
 
 
 /**
- * A simple application starter, with specific {@link org.dockbox.hartshorn.core.annotations.service.ServiceActivator service activators}
+ * A simple application starter, with specific {@link ServiceActivator service activators}
  * configured to enable only the required {@link ServicePreProcessor service processors}.
  * <p>For readability, each activator has been documented with a short description below.
  */

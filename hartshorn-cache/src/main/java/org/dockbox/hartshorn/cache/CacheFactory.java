@@ -18,7 +18,7 @@
 package org.dockbox.hartshorn.cache;
 
 import org.dockbox.hartshorn.core.annotations.Factory;
-import org.dockbox.hartshorn.core.annotations.service.Service;
+import org.dockbox.hartshorn.core.annotations.stereotype.Service;
 
 @FunctionalInterface
 @Service
