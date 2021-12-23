@@ -634,4 +634,8 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
     public boolean isFinal() {
         return Modifier.isFinal(this.type().getModifiers());
     }
+
+    public boolean isDeclaredIn(final String prefix) {
+        return this.type().getPackageName().startsWith(prefix);
+    }
 }

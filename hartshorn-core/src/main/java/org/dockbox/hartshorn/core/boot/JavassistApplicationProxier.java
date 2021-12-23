@@ -81,6 +81,32 @@ public class JavassistApplicationProxier implements ApplicationProxier, Applicat
     }
 
     @Override
+    public <T> Exceptional<ProxyHandler<T>> handler(final T instance) {
+        if (instance != null) {
+            if (ProxyFactory.isProxyClass(instance.getClass())) {
+                final MethodHandler methodHandler = ProxyFactory.getHandler((javassist.util.proxy.Proxy) instance);
+                if (methodHandler instanceof ProxyHandler proxyHandler) {
+                    return Exceptional.of((ProxyHandler<T>) proxyHandler);
+                }
+            }
+            else if (Proxy.isProxyClass(instance.getClass())) {
+
+                final InvocationHandler invocationHandler = Proxy.getInvocationHandler(instance);
+                if (invocationHandler instanceof JavassistInterfaceHandler proxyInterfaceHandler) {
+                    return Exceptional.of(proxyInterfaceHandler.handler());
+                }
+                else if (invocationHandler instanceof AnnotationInvocationHandler annotationInvocationHandler) {
+                    return Exceptional.of(() -> new JavassistProxyHandler<>((T) annotationInvocationHandler.annotation()));
+                }
+                else if (instance instanceof Annotation annotation) {
+                    return Exceptional.of(() -> new JavassistProxyHandler<>(instance, (Class<T>) annotation.annotationType()));
+                }
+            }
+        }
+        return Exceptional.empty();
+    }
+
+    @Override
     public void applicationManager(final ApplicationManager applicationManager) {
         if (this.applicationManager == null) this.applicationManager = applicationManager;
         else throw new IllegalArgumentException("Application manager has already been configured");
@@ -107,31 +133,6 @@ public class JavassistApplicationProxier implements ApplicationProxier, Applicat
     protected <T> ProxyHandler<T> handler(final Class<T> type, final T instance) {
         final Exceptional<ProxyHandler<T>> handler = this.handler(instance);
         return handler.orElse(() -> new JavassistProxyHandler<>(instance, type)).get();
-    }
-
-    protected <T> Exceptional<ProxyHandler<T>> handler(final T instance) {
-        if (instance != null) {
-            if (ProxyFactory.isProxyClass(instance.getClass())) {
-                final MethodHandler methodHandler = ProxyFactory.getHandler((javassist.util.proxy.Proxy) instance);
-                if (methodHandler instanceof ProxyHandler proxyHandler) {
-                    return Exceptional.of((ProxyHandler<T>) proxyHandler);
-                }
-            }
-            else if (Proxy.isProxyClass(instance.getClass())) {
-
-                final InvocationHandler invocationHandler = Proxy.getInvocationHandler(instance);
-                if (invocationHandler instanceof JavassistInterfaceHandler proxyInterfaceHandler) {
-                    return Exceptional.of(proxyInterfaceHandler.handler());
-                }
-                else if (invocationHandler instanceof AnnotationInvocationHandler annotationInvocationHandler) {
-                    return Exceptional.of(() -> new JavassistProxyHandler<>((T) annotationInvocationHandler.annotation()));
-                }
-                else if (instance instanceof Annotation annotation) {
-                    return Exceptional.of(() -> new JavassistProxyHandler<>(instance, (Class<T>) annotation.annotationType()));
-                }
-            }
-        }
-        return Exceptional.empty();
     }
 
     public void registerProxyLookup(final ProxyLookup lookup) {

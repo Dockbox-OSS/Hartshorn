@@ -17,26 +17,26 @@
 
 package org.dockbox.hartshorn.core.services;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.MethodProxyContextImpl;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
-import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.exceptions.ProxyMethodBindingException;
 import org.dockbox.hartshorn.core.proxy.MethodProxyContext;
 import org.dockbox.hartshorn.core.proxy.ProxyFunction;
 import org.dockbox.hartshorn.core.proxy.ProxyHandler;
-import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.lang.annotation.Annotation;
 import java.util.Collection;
 
-public abstract class ServiceMethodPostProcessor<A extends Annotation> extends ServicePostProcessor<A> {
+public abstract class ServiceMethodPostProcessor<A extends Annotation> extends FunctionalComponentPostProcessor<A> {
 
     @Override
     public <T> T process(final ApplicationContext context, final TypeContext<T> type, @Nullable final T instance) {
         final Collection<MethodContext<?, T>> methods = this.modifiableMethods(type);
 
+        // Will reuse existing handler of proxy
         final ProxyHandler<T> handler = context.environment().manager().handler(type, instance);
 
         for (final MethodContext<?, T> method : methods) {
@@ -56,13 +56,15 @@ public abstract class ServiceMethodPostProcessor<A extends Annotation> extends S
             }
         }
 
+        return instance;
         // TODO: Create a primary post processor which creates the proxy (when allowed), and only modify the existing proxy here.
         //  This should also add a precondition to check if the incoming instance is a proxy. If it is, we can modify it. If it is not,
         //  we can ignore the component and directly return the instance (yield a log message?).
-        return Exceptional.of(() -> {
-            if (context.environment().manager().isProxy(instance)) return instance;
-            return handler.proxy(context, instance);
-        }).or(instance);
+    }
+
+    @Override
+    public <T> boolean preconditions(final ApplicationContext context, final TypeContext<T> type, @Nullable final T instance) {
+        return super.preconditions(context, type, instance) && context.environment().manager().isProxy(instance);
     }
 
     protected abstract <T> Collection<MethodContext<?, T>> modifiableMethods(TypeContext<T> type);

@@ -31,6 +31,7 @@ import org.dockbox.hartshorn.core.types.CircularDependencyB;
 import org.dockbox.hartshorn.core.types.ComponentType;
 import org.dockbox.hartshorn.core.types.ContextInjectedType;
 import org.dockbox.hartshorn.core.types.NonComponentType;
+import org.dockbox.hartshorn.core.types.NonProxyComponentType;
 import org.dockbox.hartshorn.core.types.Person;
 import org.dockbox.hartshorn.core.types.SampleContext;
 import org.dockbox.hartshorn.core.types.TypeWithEnabledInjectField;
@@ -354,10 +355,16 @@ public class ApplicationContextTests {
     }
 
     @Test
-    void testComponentsAreProxiedWhenRegularProvisionFails() {
+    void testPermittedComponentsAreProxiedWhenRegularProvisionFails() {
         final ComponentType instance = this.applicationContext().get(ComponentType.class);
         Assertions.assertNotNull(instance);
         Assertions.assertTrue(this.applicationContext().environment().manager().isProxy(instance));
+    }
+
+    @Test
+    void testNonPermittedComponentsAreNotProxied() {
+        final NonProxyComponentType instance = this.applicationContext().get(NonProxyComponentType.class);
+        Assertions.assertNull(instance);
     }
 
     @Test

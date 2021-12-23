@@ -114,6 +114,11 @@ public class ComponentContainerImpl implements ComponentContainer {
     }
 
     @Override
+    public boolean permitsProxying() {
+        return this.annotation.permitProxying();
+    }
+
+    @Override
     public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || this.getClass() != o.getClass()) return false;

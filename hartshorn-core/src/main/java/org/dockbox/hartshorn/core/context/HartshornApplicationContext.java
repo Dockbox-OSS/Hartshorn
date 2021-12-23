@@ -52,6 +52,7 @@ import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 import org.dockbox.hartshorn.core.inject.ProviderContext;
+import org.dockbox.hartshorn.core.proxy.ProxyHandler;
 import org.dockbox.hartshorn.core.proxy.ProxyLookup;
 import org.dockbox.hartshorn.core.services.ComponentContainer;
 import org.dockbox.hartshorn.core.services.ComponentLocator;
@@ -424,9 +425,7 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
         if (raw.present())
             return raw.get();
 
-        if (type.isAbstract() && this.meta().isComponent(type))
-            return this.environment().manager().proxy(type).rethrowUnchecked().orNull();
-
+        // If the component is functional and permits proxying, a post processor will be able to proxy the instance
         return null;
     }
 
@@ -481,7 +480,11 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
     @Override
     public <T> T populate(final T instance) {
         if (null != instance) {
-            final TypeContext<T> unproxied = TypeContext.unproxy(this, instance);
+            T modifiableInstance = instance;
+            if (this.environment().manager().isProxy(instance)) {
+                modifiableInstance = this.environment().manager().handler(instance).flatMap(ProxyHandler::instance).or(modifiableInstance);
+            }
+            final TypeContext<T> unproxied = TypeContext.unproxy(this, modifiableInstance);
             for (final FieldContext<?> field : unproxied.fields(Inject.class)) {
                 Key<?> fieldKey = Key.of(field.type());
                 if (field.annotation(Named.class).present()) fieldKey = Key.of(field.type(), field.annotation(Named.class).get());
@@ -490,10 +493,10 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
                 final boolean enable = !enableAnnotation.present() || enableAnnotation.get().value();
 
                 final Object fieldInstance = this.get(fieldKey, enable);
-                field.set(instance, fieldInstance);
+                field.set(modifiableInstance, fieldInstance);
             }
             for (final FieldContext<?> field : unproxied.fields(Context.class)) {
-                this.populateContextField(field, instance);
+                this.populateContextField(field, modifiableInstance);
             }
         }
         return instance;

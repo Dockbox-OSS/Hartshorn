@@ -46,7 +46,12 @@ public class ConfigurationComponentPostProcessor implements ComponentPostProcess
     @Override
     public <T> T process(final ApplicationContext context, final TypeContext<T> type, @Nullable final T instance) {
         TypeContext<?> instanceType = type;
-        if (instance != null) instanceType = TypeContext.of(instance);
+        if (instance != null) instanceType = TypeContext.unproxy(context, instance);
+
+        T modifiableInstance = instance;
+        if (context.environment().manager().isProxy(instance)) {
+            modifiableInstance = context.environment().manager().handler(type, instance).instance().or(modifiableInstance);
+        }
 
         for (final FieldContext<?> field : instanceType.fields(Value.class)) {
             try {
@@ -85,7 +90,7 @@ public class ConfigurationComponentPostProcessor implements ComponentPostProcess
                 if ((!field.type().childOf(String.class)) && (value instanceof String stringValue)) {
                     value = TypeContext.toPrimitive(field.type(), stringValue);
                 }
-                field.set(instance, value);
+                field.set(modifiableInstance, value);
             }
             catch (final TypeConversionException | NotPrimitiveException e) {
                 context.log().warn("Could not prepare value field " + field.name() + " in " + instanceType.name());

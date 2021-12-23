@@ -119,6 +119,11 @@ public class JavassistInterfaceHandler<T> implements InvocationHandler, ProxyHan
         return this.handler().proxyInstance();
     }
 
+    @Override
+    public Exceptional<T> instance() {
+        return this.handler().instance();
+    }
+
     public Object invoke(final Object self, final Method thisMethod, final Method proceed, final Object[] args) throws Throwable {
         return this.handler().invoke(self, thisMethod, proceed, args);
     }

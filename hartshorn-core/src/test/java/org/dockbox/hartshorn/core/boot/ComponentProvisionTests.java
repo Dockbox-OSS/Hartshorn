@@ -48,6 +48,7 @@ public class ComponentProvisionTests {
                 .locator()
                 .containers().stream()
                 .map(ComponentContainer::type)
+                .filter(type -> !type.isDeclaredIn("org.dockbox.hartshorn.core.types"))
                 .map(Arguments::of);
     }
 

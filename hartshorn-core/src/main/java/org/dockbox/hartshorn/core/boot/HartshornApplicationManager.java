@@ -127,6 +127,11 @@ public class HartshornApplicationManager implements ApplicationManager {
         return this.applicationProxier.handler(type, instance);
     }
 
+    @Override
+    public <T> Exceptional<ProxyHandler<T>> handler(final T instance) {
+        return this.applicationProxier.handler(instance);
+    }
+
     public void applicationContext(final ApplicationContext applicationContext) {
         if (this.applicationContext == null) this.applicationContext = applicationContext;
         else throw new IllegalArgumentException("Application context has already been configured");
