@@ -21,4 +21,18 @@ public enum ServiceOrder {
     FIRST, EARLY, NORMAL, LATE, LAST;
 
     public static final ServiceOrder[] VALUES = ServiceOrder.values();
+
+    /**
+     * Indicates which service orders can be performed during phase 1. During this phase, component
+     * processors are allowed to discard existing instances and return new ones. This can be used to
+     * create proxy instances.
+     */
+    public static final ServiceOrder[] PHASE_1 = new ServiceOrder[] {FIRST, EARLY};
+
+    /**
+     * Indicates which service orders can be performed during phase 2. During this phase, component
+     * processors are not allowed to discard existing instances and return new ones. This limits the
+     * behavior of these processors to only return the same instance, albeit with different state.
+     */
+    public static final ServiceOrder[] PHASE_2 = new ServiceOrder[] {NORMAL, LATE, LAST};
 }

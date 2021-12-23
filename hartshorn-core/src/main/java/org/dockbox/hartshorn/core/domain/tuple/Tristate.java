@@ -35,4 +35,8 @@ public enum Tristate {
     public boolean booleanValue() {
         return this.booleanValue;
     }
+
+    public static Tristate valueOf(final boolean booleanValue) {
+        return booleanValue ? TRUE : FALSE;
+    }
 }

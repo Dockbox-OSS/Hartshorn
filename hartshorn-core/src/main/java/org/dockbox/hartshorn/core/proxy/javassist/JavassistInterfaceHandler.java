@@ -15,7 +15,7 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.core.proxy;
+package org.dockbox.hartshorn.core.proxy.javassist;
 
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.Context;
@@ -23,7 +23,8 @@ import org.dockbox.hartshorn.core.context.NamedContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
-import org.dockbox.hartshorn.core.proxy.javassist.JavassistProxyHandler;
+import org.dockbox.hartshorn.core.proxy.MethodProxyContext;
+import org.dockbox.hartshorn.core.proxy.ProxyHandler;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -32,11 +33,11 @@ import java.util.List;
 
 import lombok.Getter;
 
-public class JavaInterfaceProxyHandler<T> implements InvocationHandler, ProxyHandler<T> {
+public class JavassistInterfaceHandler<T> implements InvocationHandler, ProxyHandler<T> {
 
     @Getter private final JavassistProxyHandler<T> handler;
 
-    public JavaInterfaceProxyHandler(final JavassistProxyHandler<T> handler) {
+    public JavassistInterfaceHandler(final JavassistProxyHandler<T> handler) {
         this.handler = handler;
     }
 
@@ -45,7 +46,7 @@ public class JavaInterfaceProxyHandler<T> implements InvocationHandler, ProxyHan
         return this.handler().invoke(proxy, method, null, args);
     }
 
-    public T proxy() {
+    public T proxy(final ApplicationContext context) {
         final T proxy = (T) Proxy.newProxyInstance(this.getClass().getClassLoader(), new Class[]{
                 this.handler().type().type()
         }, this);
@@ -54,8 +55,8 @@ public class JavaInterfaceProxyHandler<T> implements InvocationHandler, ProxyHan
     }
 
     @Override
-    public T proxy(final T existing) throws ApplicationException {
-        return this.handler().proxy(existing);
+    public T proxy(final ApplicationContext context, final T existing) throws ApplicationException {
+        return this.handler().proxy(context, existing);
     }
 
     @Override

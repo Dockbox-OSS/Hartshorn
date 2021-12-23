@@ -52,7 +52,7 @@ public class ProxyTests {
                 (instance, args, proxyContext) -> "Hartshorn");
         final ProxyHandler<ConcreteProxyTarget> handler = new JavassistProxyHandler<>(new ConcreteProxyTarget());
         handler.delegate(property);
-        final ConcreteProxyTarget proxy = handler.proxy();
+        final ConcreteProxyTarget proxy = handler.proxy(this.applicationContext());
 
         Assertions.assertNotNull(proxy);
         Assertions.assertNotNull(proxy.name());
@@ -69,7 +69,7 @@ public class ProxyTests {
         Assertions.assertThrows(ApplicationException.class, () -> handler.delegate(property));
 
         // Ensure the exception isn't thrown after registration
-        final FinalProxyTarget proxy = handler.proxy();
+        final FinalProxyTarget proxy = handler.proxy(this.applicationContext());
 
         Assertions.assertNotNull(proxy);
         Assertions.assertNotNull(proxy.name());
@@ -86,7 +86,7 @@ public class ProxyTests {
         final ConcreteProxyTarget concrete = this.applicationContext().get(ConcreteProxyTarget.class);
         final ProxyHandler<ConcreteProxyTarget> handler = this.applicationContext().environment().manager().handler(TypeContext.of(ConcreteProxyTarget.class), concrete);
         handler.delegate(methodProxyContext);
-        final ConcreteProxyTarget proxy = handler.proxy();
+        final ConcreteProxyTarget proxy = handler.proxy(this.applicationContext());
 
         Assertions.assertNotNull(proxy);
         Assertions.assertNotNull(proxy.name());
@@ -98,7 +98,7 @@ public class ProxyTests {
         final ConcreteProxyTarget concrete = this.applicationContext().get(ConcreteProxyTarget.class);
         final ProxyHandler<ConcreteProxyTarget> handler = this.applicationContext().environment().manager().handler(TypeContext.of(ConcreteProxyTarget.class), concrete);
         Assertions.assertTrue(handler.proxyInstance().absent());
-        handler.proxy();
+        handler.proxy(this.applicationContext());
         Assertions.assertTrue(handler.proxyInstance().present());
     }
 
