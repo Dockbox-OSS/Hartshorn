@@ -24,7 +24,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.lang.annotation.Annotation;
 
-public abstract class ServicePostProcessor<A extends Annotation> implements ComponentPostProcessor<A> {
+public abstract class FunctionalComponentPostProcessor<A extends Annotation> implements ComponentPostProcessor<A> {
 
     @Override
     public <T> boolean preconditions(final ApplicationContext context, final TypeContext<T> type, @Nullable final T instance) {

@@ -128,4 +128,13 @@ public @interface Component {
      */
     @Deprecated(since = "4.2.5", forRemoval = true)
     boolean enabled() default true;
+
+    /**
+     * Indicates whether the component should be allowed to be proxied. Proxied components may be modified by changing
+     * the behavior of the proxy.
+     *
+     * @return {@code true} if the component should be proxied
+     * @see ComponentContainer#permitsProxying()
+     */
+    boolean permitProxying() default true;
 }

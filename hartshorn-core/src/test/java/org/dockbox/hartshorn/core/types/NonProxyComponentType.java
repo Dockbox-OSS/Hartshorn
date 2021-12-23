@@ -15,25 +15,10 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.core.proxy;
+package org.dockbox.hartshorn.core.types;
 
-import org.dockbox.hartshorn.core.context.ApplicationContext;
-import org.dockbox.hartshorn.core.context.Context;
-import org.dockbox.hartshorn.core.context.element.TypeContext;
-import org.dockbox.hartshorn.core.domain.Exceptional;
-import org.dockbox.hartshorn.core.exceptions.ApplicationException;
+import org.dockbox.hartshorn.core.annotations.stereotype.Component;
 
-public interface ProxyHandler<T> extends Context {
-
-    Exceptional<T> proxyInstance();
-
-    Exceptional<T> instance();
-
-    TypeContext<T> type();
-
-    void delegate(final MethodProxyContext<T, ?> property);
-
-    T proxy(ApplicationContext context) throws ApplicationException;
-
-    T proxy(ApplicationContext context, T existing) throws ApplicationException;
+@Component(permitProxying = false)
+public interface NonProxyComponentType {
 }

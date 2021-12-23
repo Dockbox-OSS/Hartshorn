@@ -181,11 +181,18 @@ public class JavassistProxyHandler<T> extends DefaultContext implements ProxyHan
     }
 
     protected Object invokeDelegate(final Method target, final Object[] args) throws InvocationTargetException, IllegalAccessException {
-        return target.invoke(this.instance, args);
+        return this.invokeAccessible(target, method -> method.invoke(this.instance, args));
     }
 
     protected Object invokeSelf(final Object self, final Method target, final Object[] args) throws InvocationTargetException, IllegalAccessException {
-        return target.invoke(self, args);
+        return this.invokeAccessible(target, method -> method.invoke(self, args));
+    }
+
+    protected Object invokeAccessible(final Method target, final MethodInvoker function) throws InvocationTargetException, IllegalAccessException{
+        target.setAccessible(true);
+        final Object result = function.invoke(target);
+        target.setAccessible(false);
+        return result;
     }
 
     protected Object invokeDefault(final Class<T> declaringType, final Method thisMethod, final Object self, final Object[] args) throws Throwable {
@@ -247,6 +254,11 @@ public class JavassistProxyHandler<T> extends DefaultContext implements ProxyHan
         return Exceptional.of(this.proxyInstance);
     }
 
+    @Override
+    public Exceptional<T> instance() {
+        return Exceptional.of(this.instance);
+    }
+
     public void proxyInstance(final T proxyInstance) {
         this.proxyInstance = proxyInstance;
     }
@@ -256,6 +268,7 @@ public class JavassistProxyHandler<T> extends DefaultContext implements ProxyHan
                 ? this.type()
                 : TypeContext.of(this.instance);
         for (final FieldContext<?> field : typeContext.fields()) {
+            if (field.isStatic()) continue;
             field.set(proxy, field.get(existing).orNull());
         }
     }

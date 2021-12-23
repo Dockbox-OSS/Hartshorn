@@ -53,6 +53,11 @@ public class ServiceImpl implements Service {
     }
 
     @Override
+    public boolean permitProxying() {
+        return true;
+    }
+
+    @Override
     public Class<? extends Annotation> annotationType() {
         return Service.class;
     }

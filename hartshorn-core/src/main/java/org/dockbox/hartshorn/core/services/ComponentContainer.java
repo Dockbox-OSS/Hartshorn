@@ -82,4 +82,6 @@ public interface ComponentContainer {
         final String[] parts = HartshornUtils.splitCapitals(raw);
         return HartshornUtils.capitalize(String.join(" ", parts));
     }
+
+    boolean permitsProxying();
 }

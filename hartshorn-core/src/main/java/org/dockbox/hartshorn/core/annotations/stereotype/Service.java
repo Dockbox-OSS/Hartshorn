@@ -89,4 +89,10 @@ public @interface Service {
      * @see org.dockbox.hartshorn.core.services.ComponentLocator
      */
     Class<? extends Annotation>[] activators() default Service.class;
+
+    /**
+     * @see Component#permitProxying()
+     * @return Whether the service is permitted to be proxied.
+     */
+    boolean permitProxying() default true;
 }
