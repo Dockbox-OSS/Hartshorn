@@ -23,6 +23,7 @@ import org.dockbox.hartshorn.core.domain.Exceptional;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -33,7 +34,7 @@ public abstract class AnnotatedElementContext<A extends AnnotatedElement> extend
     private Map<Class<?>, Annotation> annotationCache;
 
     public Set<Annotation> annotations() {
-        return Set.copyOf(this.validate().values());
+        return new HashSet<>(this.validate().values());
     }
 
     public <T extends Annotation> Exceptional<T> annotation(final TypeContext<T> annotation) {

@@ -70,6 +70,11 @@ public class MethodContext<T, P> extends ExecutableElementContext<Method> {
         }
         return this.invoker.invoke(this, instance, arguments);
     }
+
+    public Exceptional<T> invoke(final ApplicationContext context, final P instance) {
+        final Object[] args = this.arguments(context);
+        return this.invoke(instance, args);
+    }
     
     public Exceptional<T> invoke(final ApplicationContext context, final Collection<Object> arguments) {
         return this.invoke(context.get(this.parent()), arguments);

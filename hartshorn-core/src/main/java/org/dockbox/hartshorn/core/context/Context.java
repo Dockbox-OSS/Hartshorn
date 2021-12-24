@@ -17,6 +17,8 @@
 
 package org.dockbox.hartshorn.core.context;
 
+import org.dockbox.hartshorn.core.Key;
+import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 
 import java.util.List;
@@ -65,6 +67,31 @@ public interface Context {
     <C extends Context> Exceptional<C> first(ApplicationContext applicationContext, Class<C> context);
 
     /**
+     * Returns the first context of the given type and name. If it doesn't exist, but the context is annotated with
+     * {@link org.dockbox.hartshorn.core.annotations.context.AutoCreating}, it will be created using the provided
+     * {@link ApplicationContext}.
+     *
+     * @param applicationContext The application context to use when creating the context.
+     * @param context The type of the context.
+     * @param name The name of the context.
+     * @param <C> The type of the context.
+     * @return The first context of the given type and name.
+     */
+    <C extends Context> Exceptional<C> first(ApplicationContext applicationContext, Class<C> context, String name);
+
+    /**
+     * Returns the first context of the given type and name, which are represented by the given key. If it doesn't exist,
+     * but the context is annotated with {@link org.dockbox.hartshorn.core.annotations.context.AutoCreating}, it will be
+     * created using the provided {@link ApplicationContext}.
+     *
+     * @param applicationContext The application context to use when creating the context.
+     * @param context The key of the context.
+     * @param <C> The type of the context.
+     * @return The first context of the given type and name.
+     */
+    <C extends Context> Exceptional<C> first(ApplicationContext applicationContext, Key<C> context);
+
+    /**
      * Returns the first context of the given name.
      *
      * @param name The name of the context.
@@ -81,6 +108,10 @@ public interface Context {
      * @return The first named context of the given named and type, if it exists.
      */
     <N extends Context> Exceptional<N> first(String name, Class<N> context);
+
+    default <N extends Context> Exceptional<N> first(final String name, final TypeContext<N> context) {
+        return this.first(name, context.type());
+    }
 
     /**
      * Returns all contexts of the given type. If no contexts of the given type exist, an empty {@link List} will be

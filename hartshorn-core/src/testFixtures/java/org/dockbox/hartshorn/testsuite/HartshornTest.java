@@ -17,6 +17,8 @@
 
 package org.dockbox.hartshorn.testsuite;
 
+import org.dockbox.hartshorn.core.annotations.Extends;
+import org.dockbox.hartshorn.core.annotations.inject.Populate;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -42,6 +44,8 @@ import javax.inject.Inject;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @ExtendWith(HartshornExtension.class)
+@Extends(Populate.class)
+@Populate(executables = false)
 public @interface HartshornTest {
     Class<? extends Annotation>[] activators() default {};
 }

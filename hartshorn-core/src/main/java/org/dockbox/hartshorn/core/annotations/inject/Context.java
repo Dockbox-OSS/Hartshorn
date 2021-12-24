@@ -31,7 +31,7 @@ import java.lang.annotation.Target;
  * @since 4.2.3
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.METHOD, ElementType.CONSTRUCTOR, ElementType.FIELD})
+@Target({ElementType.FIELD, ElementType.PARAMETER})
 public @interface Context {
 
     /**

@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.core.proxy.javassist;
 
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.Context;
-import org.dockbox.hartshorn.core.context.NamedContext;
+import org.dockbox.hartshorn.core.context.DelegatingContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
@@ -29,11 +29,10 @@ import org.dockbox.hartshorn.core.proxy.ProxyHandler;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import java.util.List;
 
 import lombok.Getter;
 
-public class JavassistInterfaceHandler<T> implements InvocationHandler, ProxyHandler<T> {
+public class JavassistInterfaceHandler<T> implements InvocationHandler, ProxyHandler<T>, DelegatingContext {
 
     @Getter private final JavassistProxyHandler<T> handler;
 
@@ -60,48 +59,8 @@ public class JavassistInterfaceHandler<T> implements InvocationHandler, ProxyHan
     }
 
     @Override
-    public <C extends Context> void add(final C context) {
-        this.handler().add(context);
-    }
-
-    @Override
-    public <N extends NamedContext> void add(final N context) {
-        this.handler().add(context);
-    }
-
-    @Override
-    public <C extends Context> void add(final String name, final C context) {
-        this.handler().add(name, context);
-    }
-
-    @Override
-    public <C extends Context> Exceptional<C> first(final ApplicationContext applicationContext, final Class<C> context) {
-        return this.handler().first(applicationContext, context);
-    }
-
-    @Override
-    public Exceptional<Context> first(final String name) {
-        return this.handler().first(name);
-    }
-
-    @Override
-    public <N extends Context> Exceptional<N> first(final String name, final Class<N> context) {
-        return this.handler().first(name, context);
-    }
-
-    @Override
-    public <C extends Context> List<C> all(final Class<C> context) {
-        return this.handler().all(context);
-    }
-
-    @Override
-    public List<Context> all(final String name) {
-        return this.handler().all(name);
-    }
-
-    @Override
-    public <N extends Context> List<N> all(final String name, final Class<N> context) {
-        return this.handler().all(name, context);
+    public Context get() {
+        return this.handler();
     }
 
     @Override

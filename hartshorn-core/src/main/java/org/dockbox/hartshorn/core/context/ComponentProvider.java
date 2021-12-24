@@ -17,6 +17,7 @@
 
 package org.dockbox.hartshorn.core.context;
 
+import org.dockbox.hartshorn.core.Enableable;
 import org.dockbox.hartshorn.core.Key;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 
@@ -26,7 +27,7 @@ import javax.inject.Named;
  * A component provider is a class that is capable of providing components. Components are identified using
  * {@link Key keys}. Components can be either managed or unmanaged. Managed components are typically bound to an active
  * {@link ApplicationContext} and are therefore available to all components in the application. Unmanaged components are
- * typically not explicitely registered, and are treated as injectable beans.
+ * typically not explicitly registered, and are treated as injectable beans.
  */
 public interface ComponentProvider extends Context {
 
@@ -61,6 +62,16 @@ public interface ComponentProvider extends Context {
      * @return The component for the given key.
      */
     <T> T get(Key<T> key);
+
+    /**
+     * Returns the component for the given key. Unlike {@link #get(Key)}, this method will not run {@link Enableable#enable()}
+     * on the component if {@code enable} is false.
+     * @param key The key of the component to return.
+     * @param enable Whether to enable the component if it is an implementation of {@link Enableable}.
+     * @param <T> The type of the component to return.
+     * @return The component for the given key.
+     */
+    <T> T get(Key<T> key, boolean enable);
 
     /**
      * Returns the component for the given type.

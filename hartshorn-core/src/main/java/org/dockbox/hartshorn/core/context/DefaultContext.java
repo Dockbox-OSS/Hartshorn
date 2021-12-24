@@ -18,12 +18,13 @@
 package org.dockbox.hartshorn.core.context;
 
 import org.dockbox.hartshorn.core.CustomMultiMap;
-import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.core.HashSetMultiMap;
+import org.dockbox.hartshorn.core.Key;
 import org.dockbox.hartshorn.core.MultiMap;
 import org.dockbox.hartshorn.core.annotations.context.AutoCreating;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
-import org.dockbox.hartshorn.core.HartshornUtils;
+import org.dockbox.hartshorn.core.domain.Exceptional;
 
 import java.util.List;
 import java.util.Set;
@@ -62,7 +63,7 @@ public abstract class DefaultContext implements Context {
                 .orElse(() -> {
                     final TypeContext<C> typeContext = TypeContext.of(context);
                     if (typeContext.annotation(AutoCreating.class).present()) {
-                        applicationContext.log().debug("Context with type " + typeContext.name() + " does not exist in current context (" + TypeContext.of(this).name() + "), but is marked to be automatically created");
+                        applicationContext.log().debug("Context with key " + Key.of(context) + " does not exist in current context (" + TypeContext.of(this).name() + "), but is marked to be automatically created");
                         final C created = applicationContext.get(context);
                         this.add(created);
                         return created;
@@ -70,6 +71,30 @@ public abstract class DefaultContext implements Context {
                     else return null;
                 })
                 .map(c -> (C) c);
+    }
+
+    @Override
+    public <C extends Context> Exceptional<C> first(final ApplicationContext applicationContext, final Class<C> context, final String name) {
+        return Exceptional.of(this.namedContexts.get(name).stream()
+                        .filter(c -> TypeContext.of(c).childOf(context))
+                        .findFirst())
+                .orElse(() -> {
+                    final TypeContext<C> typeContext = TypeContext.of(context);
+                    if (typeContext.annotation(AutoCreating.class).present()) {
+                        applicationContext.log().debug("Context with key " + Key.of(context, name) + " does not exist in current context (" + TypeContext.of(this).name() + "), but is marked to be automatically created");
+                        final C created = applicationContext.get(context);
+                        this.add(name, created);
+                        return created;
+                    }
+                    else return null;
+                })
+                .map(c -> (C) c);
+    }
+
+    @Override
+    public <C extends Context> Exceptional<C> first(final ApplicationContext applicationContext, final Key<C> key) {
+        if (key.named() == null) return this.first(applicationContext, key.contract().type());
+        else return this.first(applicationContext, key.contract().type(), key.named().value());
     }
 
     @Override

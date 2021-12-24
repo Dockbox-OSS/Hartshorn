@@ -42,7 +42,7 @@ import java.lang.annotation.Target;
  * @since 4.1.2
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.FIELD, ElementType.METHOD})
+@Target({ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER})
 public @interface Enable {
     boolean value() default true;
 }

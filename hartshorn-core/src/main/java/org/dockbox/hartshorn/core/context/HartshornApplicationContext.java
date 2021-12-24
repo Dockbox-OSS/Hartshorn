@@ -35,6 +35,8 @@ import org.dockbox.hartshorn.core.annotations.inject.Context;
 import org.dockbox.hartshorn.core.annotations.inject.Enable;
 import org.dockbox.hartshorn.core.annotations.activate.AutomaticActivation;
 import org.dockbox.hartshorn.core.annotations.activate.ServiceActivator;
+import org.dockbox.hartshorn.core.annotations.inject.Populate;
+import org.dockbox.hartshorn.core.annotations.inject.Required;
 import org.dockbox.hartshorn.core.binding.BindingHierarchy;
 import org.dockbox.hartshorn.core.binding.ContextWrappedHierarchy;
 import org.dockbox.hartshorn.core.binding.NativeBindingHierarchy;
@@ -349,7 +351,8 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
         return this.get(key, true);
     }
 
-    private <T> T get(final Key<T> key, final boolean enable) {
+    @Override
+    public <T> T get(final Key<T> key, final boolean enable) {
         if (this.singletons.containsKey(key)) return (T) this.singletons.get(key);
         this.locator().validate(key);
 
@@ -485,19 +488,39 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
                 modifiableInstance = this.environment().manager().handler(instance).flatMap(ProxyHandler::instance).or(modifiableInstance);
             }
             final TypeContext<T> unproxied = TypeContext.unproxy(this, modifiableInstance);
-            for (final FieldContext<?> field : unproxied.fields(Inject.class)) {
-                Key<?> fieldKey = Key.of(field.type());
-                if (field.annotation(Named.class).present()) fieldKey = Key.of(field.type(), field.annotation(Named.class).get());
+            if (unproxied.annotation(Populate.class).map(Populate::fields).or(true))
+                modifiableInstance = this.populateFields(unproxied, modifiableInstance);
 
-                final Exceptional<Enable> enableAnnotation = field.annotation(Enable.class);
-                final boolean enable = !enableAnnotation.present() || enableAnnotation.get().value();
+            if (unproxied.annotation(Populate.class).map(Populate::executables).or(true))
+                modifiableInstance = this.populateMethods(unproxied, modifiableInstance);
+        }
+        return instance;
+    }
 
-                final Object fieldInstance = this.get(fieldKey, enable);
-                field.set(modifiableInstance, fieldInstance);
-            }
-            for (final FieldContext<?> field : unproxied.fields(Context.class)) {
-                this.populateContextField(field, modifiableInstance);
-            }
+    private <T> T populateMethods(final TypeContext<T> type, final T instance) {
+        for (final MethodContext<?, T> method : type.methods(Inject.class)) {
+            method.invoke(this, instance).rethrowUnchecked();
+        }
+        return instance;
+    }
+
+    private <T> T populateFields(final TypeContext<T> type, final T instance) {
+        for (final FieldContext<?> field : type.fields(Inject.class)) {
+            Key<?> fieldKey = Key.of(field.type());
+            if (field.annotation(Named.class).present()) fieldKey = Key.of(field.type(), field.annotation(Named.class).get());
+
+            final Exceptional<Enable> enableAnnotation = field.annotation(Enable.class);
+            final boolean enable = !enableAnnotation.present() || enableAnnotation.get().value();
+
+            final Object fieldInstance = this.get(fieldKey, enable);
+
+            final boolean required = field.annotation(Required.class).map(Required::value).or(false);
+            if (required && fieldInstance == null) return ExceptionHandler.unchecked(new ApplicationException("Field " + field.name() + " in " + type.qualifiedName() + " is required"));
+
+            field.set(instance, fieldInstance);
+        }
+        for (final FieldContext<?> field : type.fields(Context.class)) {
+            this.populateContextField(field, instance);
         }
         return instance;
     }
@@ -513,6 +536,10 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
         else {
             context = this.first(annotation.value(), (Class<org.dockbox.hartshorn.core.context.Context>) type.type());
         }
+
+        final boolean required = field.annotation(Required.class).map(Required::value).or(false);
+        if (required && context.absent()) ExceptionHandler.unchecked(new ApplicationException("Field " + field.name() + " in " + type.qualifiedName() + " is required"));
+
         field.set(instance, context.orNull());
     }
 

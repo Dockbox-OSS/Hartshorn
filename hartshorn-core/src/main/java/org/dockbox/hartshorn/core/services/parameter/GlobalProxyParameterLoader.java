@@ -20,7 +20,7 @@ package org.dockbox.hartshorn.core.services.parameter;
 import org.dockbox.hartshorn.core.annotations.inject.Binds;
 import org.dockbox.hartshorn.core.annotations.inject.Instance;
 import org.dockbox.hartshorn.core.context.ParameterLoaderContext;
-import org.dockbox.hartshorn.core.context.element.MethodContext;
+import org.dockbox.hartshorn.core.context.element.ExecutableElementContext;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,12 +29,13 @@ import java.util.List;
 
 import javax.inject.Named;
 
+@Deprecated(since = "4.2.5", forRemoval = true)
 @Binds(value = ParameterLoader.class, named = @Named("global_proxy"))
 public class GlobalProxyParameterLoader extends ParameterLoader<ParameterLoaderContext> {
 
     @Override
     public List<Object> loadArguments(final ParameterLoaderContext context, final Object... args) {
-        final MethodContext<?, ?> method = context.method();
+        final ExecutableElementContext<?> method = context.executable();
         final Collection<Object> arguments = new ArrayList<>();
         if (method.parameterCount() >= 1 && method.parameters().get(0).annotation(Instance.class).present()) {
             arguments.add(context.instance());

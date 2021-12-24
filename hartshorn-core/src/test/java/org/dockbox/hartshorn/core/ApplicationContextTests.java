@@ -22,6 +22,7 @@ import org.dockbox.hartshorn.core.boot.EmptyService;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.HartshornApplicationContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
+import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 import org.dockbox.hartshorn.core.exceptions.CyclicComponentException;
 import org.dockbox.hartshorn.core.proxy.ExtendedProxy;
 import org.dockbox.hartshorn.core.types.CircularConstructorA;
@@ -34,6 +35,9 @@ import org.dockbox.hartshorn.core.types.NonComponentType;
 import org.dockbox.hartshorn.core.types.NonProxyComponentType;
 import org.dockbox.hartshorn.core.types.Person;
 import org.dockbox.hartshorn.core.types.SampleContext;
+import org.dockbox.hartshorn.core.types.SetterInjectedComponent;
+import org.dockbox.hartshorn.core.types.SetterInjectedComponentWithAbsentBinding;
+import org.dockbox.hartshorn.core.types.SetterInjectedComponentWithNonRequiredAbsentBinding;
 import org.dockbox.hartshorn.core.types.TypeWithEnabledInjectField;
 import org.dockbox.hartshorn.core.types.TypeWithFailingConstructor;
 import org.dockbox.hartshorn.core.types.User;
@@ -388,5 +392,34 @@ public class ApplicationContextTests {
     void testCircularDependenciesYieldExceptionOnConstructorInject() {
         Assertions.assertThrows(CyclicComponentException.class, () -> this.applicationContext().get(CircularConstructorA.class));
         Assertions.assertThrows(CyclicComponentException.class, () -> this.applicationContext().get(CircularConstructorB.class));
+    }
+
+    @Test
+    void testSetterInjectionWithRegularComponent() {
+        final SetterInjectedComponent component = this.applicationContext().get(SetterInjectedComponent.class);
+        Assertions.assertNotNull(component);
+        Assertions.assertNotNull(component.component());
+    }
+
+    @Test
+    void testSetterInjectionWithAbsentRequiredComponent() {
+        Assertions.assertThrows(ApplicationException.class, () -> this.applicationContext().get(SetterInjectedComponentWithAbsentBinding.class));
+    }
+
+    @Test
+    void testSetterInjectionWithAbsentComponent() {
+        final var component = Assertions.assertDoesNotThrow(() -> this.applicationContext().get(SetterInjectedComponentWithNonRequiredAbsentBinding.class));
+        Assertions.assertNotNull(component);
+        Assertions.assertNull(component.person());
+    }
+
+    @Test
+    void testSetterInjectionWithContext() {
+        final SampleContext sampleContext = new SampleContext("setter");
+        this.applicationContext().add("setter", sampleContext);
+        final SetterInjectedComponent component = this.applicationContext().get(SetterInjectedComponent.class);
+        Assertions.assertNotNull(component);
+        Assertions.assertNotNull(component.context());
+        Assertions.assertSame(sampleContext, component.context());
     }
 }

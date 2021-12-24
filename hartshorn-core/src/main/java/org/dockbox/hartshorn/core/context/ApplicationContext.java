@@ -78,6 +78,10 @@ public interface ApplicationContext extends
         return this.environment().manager().log();
     }
 
+    default <C extends Context> Exceptional<C> first(final TypeContext<C> context) {
+        return this.first(context.type());
+    }
+
     default <C extends Context> Exceptional<C> first(final Class<C> context) {
         return this.first(this, context);
     }

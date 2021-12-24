@@ -44,7 +44,7 @@ public class RuleBasedParameterLoader<C extends ParameterLoaderContext> extends 
     @Override
     public List<Object> loadArguments(final C context, final Object... args) {
         final List<Object> arguments = new ArrayList<>();
-        final LinkedList<ParameterContext<?>> parameters = context.method().parameters();
+        final LinkedList<ParameterContext<?>> parameters = context.executable().parameters();
         parameters:
         for (int i = 0; i < parameters.size(); i++) {
             final ParameterContext<?> parameter = parameters.get(i);

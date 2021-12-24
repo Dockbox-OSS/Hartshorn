@@ -17,10 +17,10 @@
 
 package org.dockbox.hartshorn.core.context.element;
 
-import org.dockbox.hartshorn.core.domain.Exceptional;
-import org.dockbox.hartshorn.core.annotations.inject.Context;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
+import org.dockbox.hartshorn.core.context.ParameterLoaderContext;
 import org.dockbox.hartshorn.core.domain.Named;
+import org.dockbox.hartshorn.core.services.parameter.ExecutableElementContextParameterLoader;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Executable;
@@ -32,6 +32,7 @@ import java.util.stream.Collectors;
 public abstract class ExecutableElementContext<A extends Executable> extends AnnotatedMemberContext<A> implements Named {
 
     private LinkedList<ParameterContext<?>> parameters;
+    protected ExecutableElementContextParameterLoader parameterLoader = new ExecutableElementContextParameterLoader();
 
     public List<ParameterContext<?>> parameters(final Class<? extends Annotation> annotation) {
         return this.parameters().stream()
@@ -59,19 +60,7 @@ public abstract class ExecutableElementContext<A extends Executable> extends Ann
     }
 
     protected Object[] arguments(final ApplicationContext context) {
-        final Object[] args = new Object[this.parameterCount()];
-        for (int i = 0; i < this.parameterCount(); i++) {
-            final TypeContext<?> parameter = this.parameterTypes().get(i);
-            final Exceptional<Context> annotation = parameter.annotation(org.dockbox.hartshorn.core.annotations.inject.Context.class);
-            if (annotation.present() && parameter.childOf(org.dockbox.hartshorn.core.context.Context.class)) {
-                final String contextName = annotation.get().value();
-                if ("".equals(contextName)) args[i] = context.first((Class<? extends org.dockbox.hartshorn.core.context.Context>) parameter.type());
-                else context.first(contextName, (Class<? extends org.dockbox.hartshorn.core.context.Context>) parameter.type());
-            }
-            else {
-                args[i] = context.get(parameter);
-            }
-        }
-        return args;
+        final ParameterLoaderContext loaderContext = new ParameterLoaderContext(this, null, null, context);
+        return this.parameterLoader.loadArguments(loaderContext).toArray();
     }
 }
