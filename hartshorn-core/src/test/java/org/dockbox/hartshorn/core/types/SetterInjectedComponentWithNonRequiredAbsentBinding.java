@@ -8,11 +8,11 @@ public class SetterInjectedComponentWithNonRequiredAbsentBinding {
 
     @Getter
     @Inject
-    private Person person;
+    private NotImplemented object;
 
     @Inject
     // Person is bound, so this will result in a null value
-    public void setPerson(final Person person) {
-        this.person = person;
+    public void setObject(final NotImplemented object) {
+        this.object = object;
     }
 }

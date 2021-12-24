@@ -410,7 +410,7 @@ public class ApplicationContextTests {
     void testSetterInjectionWithAbsentComponent() {
         final var component = Assertions.assertDoesNotThrow(() -> this.applicationContext().get(SetterInjectedComponentWithNonRequiredAbsentBinding.class));
         Assertions.assertNotNull(component);
-        Assertions.assertNull(component.person());
+        Assertions.assertNull(component.object());
     }
 
     @Test

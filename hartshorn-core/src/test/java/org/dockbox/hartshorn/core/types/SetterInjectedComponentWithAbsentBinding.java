@@ -10,11 +10,10 @@ public class SetterInjectedComponentWithAbsentBinding {
 
     @Getter
     @Inject
-    private Person person;
+    private NotImplemented object;
 
     @Inject
-    // Person is bound, so this will result in a null value
-    public void setPerson(@Required final Person person) {
-        this.person = person;
+    public void setObject(@Required final NotImplemented object) {
+        this.object = object;
     }
 }
