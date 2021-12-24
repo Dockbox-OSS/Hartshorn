@@ -10,8 +10,6 @@ import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 
-import javax.inject.Named;
-
 public class ContextParameterLoaderRule implements ParameterLoaderRule<ParameterLoaderContext> {
 
     @Override
@@ -23,7 +21,7 @@ public class ContextParameterLoaderRule implements ParameterLoaderRule<Parameter
     public <T> Exceptional<T> load(final ParameterContext<T> parameter, final int index, final ParameterLoaderContext context, final Object... args) {
         final TypeContext<org.dockbox.hartshorn.core.context.Context> type = (TypeContext<org.dockbox.hartshorn.core.context.Context>) parameter.type();
         final ApplicationContext applicationContext = context.applicationContext();
-        final String name = parameter.annotation(Named.class).map(Named::value).orNull();
+        final String name = parameter.annotation(Context.class).map(Context::value).orNull();
 
         final Exceptional<org.dockbox.hartshorn.core.context.Context> out = name == null
                 ? applicationContext.first(type)
