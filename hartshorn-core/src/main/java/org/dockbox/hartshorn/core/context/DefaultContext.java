@@ -18,12 +18,13 @@
 package org.dockbox.hartshorn.core.context;
 
 import org.dockbox.hartshorn.core.CustomMultiMap;
-import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.core.HashSetMultiMap;
+import org.dockbox.hartshorn.core.Key;
 import org.dockbox.hartshorn.core.MultiMap;
 import org.dockbox.hartshorn.core.annotations.context.AutoCreating;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
-import org.dockbox.hartshorn.core.HartshornUtils;
+import org.dockbox.hartshorn.core.domain.Exceptional;
 
 import java.util.List;
 import java.util.Set;
@@ -56,14 +57,24 @@ public abstract class DefaultContext implements Context {
 
     @Override
     public <C extends Context> Exceptional<C> first(final ApplicationContext applicationContext, final Class<C> context) {
+        return this.first(applicationContext, Key.of(context));
+    }
+
+    @Override
+    public <C extends Context> Exceptional<C> first(final ApplicationContext applicationContext, final Class<C> context, final String name) {
+        return this.first(applicationContext, Key.of(context, name));
+    }
+
+    @Override
+    public <C extends Context> Exceptional<C> first(final ApplicationContext applicationContext, final Key<C> key) {
         return Exceptional.of(this.contexts.stream()
-                        .filter(c -> TypeContext.unproxy(applicationContext, c).childOf(context))
+                        .filter(c -> TypeContext.unproxy(applicationContext, c).childOf(key.contract()))
                         .findFirst())
                 .orElse(() -> {
-                    final TypeContext<C> typeContext = TypeContext.of(context);
+                    final TypeContext<C> typeContext = key.contract();
                     if (typeContext.annotation(AutoCreating.class).present()) {
-                        applicationContext.log().debug("Context with type " + typeContext.name() + " does not exist in current context (" + TypeContext.of(this).name() + "), but is marked to be automatically created");
-                        final C created = applicationContext.get(context);
+                        applicationContext.log().debug("Context with key " + key + " does not exist in current context (" + TypeContext.of(this).name() + "), but is marked to be automatically created");
+                        final C created = applicationContext.get(key);
                         this.add(created);
                         return created;
                     }

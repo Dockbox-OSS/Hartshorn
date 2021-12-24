@@ -23,16 +23,14 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Indicates a type will always require a binding to be present.
- *
- * @deprecated If validation is required, a {@link org.dockbox.hartshorn.core.services.ComponentProcessor},
- * or {@link org.dockbox.hartshorn.core.boot.LifecycleObserver} should be used instead.
+ * Indicates that a field or parameter is required. If the output of a binding is {@code null} during population phases, this will
+ * yield an exception.
  *
  * @author Guus Lieben
- * @since Unknown
+ * @since 4.2.5
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-@Deprecated(since = "4.2.5", forRemoval = true)
+@Target({ElementType.PARAMETER, ElementType.FIELD})
 public @interface Required {
+    boolean value() default true;
 }

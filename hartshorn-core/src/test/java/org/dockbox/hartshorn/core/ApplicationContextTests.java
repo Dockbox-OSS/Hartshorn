@@ -34,6 +34,7 @@ import org.dockbox.hartshorn.core.types.NonComponentType;
 import org.dockbox.hartshorn.core.types.NonProxyComponentType;
 import org.dockbox.hartshorn.core.types.Person;
 import org.dockbox.hartshorn.core.types.SampleContext;
+import org.dockbox.hartshorn.core.types.SetterInjectedComponent;
 import org.dockbox.hartshorn.core.types.TypeWithEnabledInjectField;
 import org.dockbox.hartshorn.core.types.TypeWithFailingConstructor;
 import org.dockbox.hartshorn.core.types.User;
@@ -388,5 +389,12 @@ public class ApplicationContextTests {
     void testCircularDependenciesYieldExceptionOnConstructorInject() {
         Assertions.assertThrows(CyclicComponentException.class, () -> this.applicationContext().get(CircularConstructorA.class));
         Assertions.assertThrows(CyclicComponentException.class, () -> this.applicationContext().get(CircularConstructorB.class));
+    }
+
+    @Test
+    void testSetterInjectionWithRegularComponent() {
+        final SetterInjectedComponent component = this.applicationContext().get(SetterInjectedComponent.class);
+        Assertions.assertNotNull(component);
+        Assertions.assertNotNull(component.component());
     }
 }
