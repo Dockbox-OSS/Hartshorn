@@ -133,7 +133,7 @@ public final class Exceptional<T> {
      * @return The {@link Exceptional}
      */
     @NonNull
-    public static <T> Exceptional<T> of(@NonNull final Callable<T> supplier) {
+    public static <T> Exceptional<T> of(@NonNull final Callable<@Nullable T> supplier) {
         try {
             return of(supplier.call());
         }
@@ -173,7 +173,11 @@ public final class Exceptional<T> {
      * @return The {@link Exceptional}
      */
     @NonNull
-    public static <T> Exceptional<T> of(@NonNull final Callable<Boolean> condition, @NonNull final Callable<T> ifTrue, @NonNull final Supplier<T> ifFalse, @NonNull final Supplier<Throwable> ifFalseException) {
+    public static <T> Exceptional<T> of(@NonNull final Callable<@NonNull Boolean> condition,
+                                        @NonNull final Callable<@Nullable T> ifTrue,
+                                        @NonNull final Supplier<@Nullable T> ifFalse,
+                                        @NonNull final Supplier<@Nullable Throwable> ifFalseException)
+    {
         try {
             if (condition.call()) return of(ifTrue);
             else return of(ifFalse.get(), ifFalseException.get());
@@ -254,7 +258,7 @@ public final class Exceptional<T> {
      * @see Exceptional#orNull()
      */
     @NonNull
-    public T or(@NonNull final T other) {
+    public T or(@Nullable final T other) {
         return null != this.value ? this.value : other;
     }
 
@@ -266,7 +270,7 @@ public final class Exceptional<T> {
      * @return The throwable, if present, otherwise {@code other}
      */
     @NonNull
-    public Throwable or(@NonNull final Throwable other) {
+    public Throwable or(@Nullable final Throwable other) {
         return null != this.throwable ? this.throwable : other;
     }
 
@@ -370,7 +374,7 @@ public final class Exceptional<T> {
      * @throws NullPointerException If a value is present and {@code defaultValue} is null
      */
     @NonNull
-    public Exceptional<T> orElse(@NonNull final CheckedSupplier<T> defaultValue) {
+    public Exceptional<T> orElse(@NonNull final CheckedSupplier<@Nullable T> defaultValue) {
         if (this.absent()) {
             try {
                 if (this.caught()) {
@@ -511,7 +515,7 @@ public final class Exceptional<T> {
      * @return The present value
      * @throws Throwable If there is no value present
      */
-    public T orThrowUnchecked(final Supplier<Throwable> exceptionSupplier) {
+    public T orThrowUnchecked(final Supplier<@Nullable Throwable> exceptionSupplier) {
         if (null != this.value) {
             return this.value;
         }
