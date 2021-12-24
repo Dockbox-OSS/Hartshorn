@@ -87,9 +87,9 @@ public final class ParameterContext<T> extends AnnotatedElementContext<Parameter
 
     public TypeContext<T> genericType() {
         if (this.genericType == null) {
-            final Type type = this.element().getParameterizedType();
+            final Type genericType = this.element().getParameterizedType();
 
-            if (type instanceof ParameterizedType parameterized) this.genericType = TypeContext.of(parameterized);
+            if (genericType instanceof ParameterizedType parameterized) this.genericType = TypeContext.of(parameterized);
             else this.genericType = this.type();
         }
         return this.genericType;
