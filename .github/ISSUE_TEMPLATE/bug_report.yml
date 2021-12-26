@@ -1,0 +1,25 @@
+name: 'Bug report'
+description: 'If you found a bug, please report it here.'
+labels: ['type: bug']
+body:
+  - type: input
+    id: version
+    attributes:
+      label: 'Version'
+      description: 'What is the earliest version the issue applies to? E.g. 4.0.0. If the issue applies to a snapshot or release candidate, please use the version number of the release candidate or snapshot.'
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: 'Problem/Opportunity'
+      description: 'Describe the problem you are trying to solve.'
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: 'Proposed solution'
+      description: 'Specify how you would like the solution to be developed. If you have a specific plan, please describe it here.'
+    validations:
+      required: false
