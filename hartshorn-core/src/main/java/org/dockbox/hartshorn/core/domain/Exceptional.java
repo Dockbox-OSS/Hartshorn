@@ -269,7 +269,7 @@ public final class Exceptional<T> {
      *
      * @return The throwable, if present, otherwise {@code other}
      */
-    @NonNull
+    @Nullable
     public Throwable or(@Nullable final Throwable other) {
         return null != this.throwable ? this.throwable : other;
     }
@@ -622,8 +622,8 @@ public final class Exceptional<T> {
      * @param other The value to check for equality
      * @return {@code true} if the value is present and equal to {@code other}, otherwise {@code false}
      */
-    public boolean equal(@NonNull final Object other) {
-        return this.present() && this.get().equals(other);
+    public boolean equal(@Nullable final Object other) {
+        return Objects.equals(this.value, other);
     }
 
     /**
