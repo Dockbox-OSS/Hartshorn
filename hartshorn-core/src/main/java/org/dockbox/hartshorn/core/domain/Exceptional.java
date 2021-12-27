@@ -49,6 +49,11 @@ import java.util.function.Supplier;
  * from a {@link CheckedSupplier}, {@link Optional} and to create from a {@link Throwable} instance.
  *
  * @param <T> the type parameter
+ *
+ * @author Guus Lieben
+ * @author Josh Jeffers
+ *
+ * @since 4.0.0
  */
 public final class Exceptional<T> {
 
@@ -194,7 +199,6 @@ public final class Exceptional<T> {
      * @param other A {@code Supplier} whose result is returned if no value is present
      *
      * @return The value if present otherwise the result of {@code other.get()}
-     * @throws NullPointerException if value is not present and {@code other} is null
      */
     @NonNull
     public T get(@NonNull final Supplier<@NonNull ? extends T> other) {
@@ -207,7 +211,6 @@ public final class Exceptional<T> {
      * @param consumer Block to be executed if a value is present
      *
      * @return The {@link Exceptional}, for chaining
-     * @throws NullPointerException If value is present and {@code consumer} is null
      */
     @NonNull
     public Exceptional<T> present(@NonNull final Consumer<@NonNull ? super T> consumer) {
@@ -231,7 +234,6 @@ public final class Exceptional<T> {
      * @param runnable Block to be executed if a value is empty
      *
      * @return The {@link Exceptional}, for chaining
-     * @throws NullPointerException If {@code runnable} is null
      */
     @NonNull
     public Exceptional<T> absent(@NonNull final Runnable runnable) {
@@ -257,7 +259,7 @@ public final class Exceptional<T> {
      * @return The value, if present, otherwise {@code other}
      * @see Exceptional#orNull()
      */
-    @NonNull
+    @Nullable
     public T or(@Nullable final T other) {
         return null != this.value ? this.value : other;
     }
@@ -285,7 +287,7 @@ public final class Exceptional<T> {
      * @param mapper A mapping function to apply to the value, if present
      *
      * @return The result of applying an {@link Exceptional}-bearing mapping function to the value of this {@link Exceptional}, if a value is present, otherwise {@link Exceptional#empty()}
-     * @throws NullPointerException If the mapping function is null or returns a null result
+     * @throws NullPointerException If the mapping function returns a null result
      */
     @NonNull
     public <U> Exceptional<U> flatMap(@NonNull final CheckedFunction<@NonNull ? super T, @NonNull Exceptional<U>> mapper) {
@@ -346,7 +348,7 @@ public final class Exceptional<T> {
      * @param mapper A mapping function to apply to the value and throwable, if present
      *
      * @return The result of applying an {@link Exceptional}-bearing mapping function to the value and throwable of this {@link Exceptional}, if a value is present, otherwise {@link Exceptional#empty()}
-     * @throws NullPointerException If the mapping function is null or returns a null result
+     * @throws NullPointerException If the mapping function returns a null result
      */
     @NonNull
     public <U> Exceptional<U> flatMap(@NonNull final CheckedBiFunction<@NonNull ? super T, @Nullable Throwable, @NonNull Exceptional<U>> mapper) {
@@ -371,7 +373,6 @@ public final class Exceptional<T> {
      * @param defaultValue A {@code Supplier} whose result is wrapped if no value is present
      *
      * @return The {@link Exceptional}, for chaining
-     * @throws NullPointerException If a value is present and {@code defaultValue} is null
      */
     @NonNull
     public Exceptional<T> orElse(@NonNull final CheckedSupplier<@Nullable T> defaultValue) {
@@ -398,7 +399,6 @@ public final class Exceptional<T> {
      * @param predicate A predicate to apply to the value, if present
      *
      * @return an {@link Exceptional} describing the value of this {@link Exceptional} if a value is present and the value matches the given predicate, otherwise {@link Exceptional#empty()}
-     * @throws NullPointerException If the predicate is null
      */
     @NonNull
     public Exceptional<T> filter(@NonNull final Predicate<@NonNull ? super T> predicate) {
@@ -424,7 +424,6 @@ public final class Exceptional<T> {
      * @param mapper A mapping function to apply to the value, if present
      *
      * @return an {@link Exceptional} describing the result of applying a mapping function to the value of this {@link Exceptional}, if a value is present, otherwise {@link Exceptional#empty()}
-     * @throws NullPointerException If the mapping function is null
      */
     @NonNull
     public <U> Exceptional<U> map(@NonNull final CheckedFunction<@NonNull ? super T, @Nullable ? extends U> mapper) {
@@ -475,7 +474,6 @@ public final class Exceptional<T> {
      * @param consumer The block to be executed if a throwable is present
      *
      * @return The {@link Exceptional}, for chaining
-     * @throws NullPointerException If throwable is present and {@code consumer} is null
      */
     @NonNull
     public Exceptional<T> caught(@NonNull final Consumer<@NonNull ? super Throwable> consumer) {
@@ -492,7 +490,7 @@ public final class Exceptional<T> {
      *
      * @return The present value
      * @throws X If there is no value present
-     * @throws NullPointerException If no value is present and {@code exceptionSupplier} is null
+     * @throws NoSuchElementException If the value and exception are both not present
      */
     @Nullable
     public <X extends Throwable> T orThrow(@NonNull final Supplier<@Nullable ? extends X> exceptionSupplier) throws X {
@@ -504,7 +502,9 @@ public final class Exceptional<T> {
             if (exception != null)
                 throw exception;
         }
-        return null;
+        // If we get here, both the exception and value are null. This will act as a shorthand
+        // for the NoSuchElementException that is thrown when calling get() on an empty Exceptional.
+        return this.get();
     }
 
     /**
@@ -514,6 +514,7 @@ public final class Exceptional<T> {
      * @param exceptionSupplier The supplier which will return the exception to be thrown.
      * @return The present value
      * @throws Throwable If there is no value present
+     * @throws NoSuchElementException If the value and exception are both not present
      */
     public T orThrowUnchecked(final Supplier<@Nullable Throwable> exceptionSupplier) {
         if (null != this.value) {
@@ -524,7 +525,9 @@ public final class Exceptional<T> {
             if (exception != null)
                 ExceptionHandler.unchecked(exception);
         }
-        return null;
+        // If we get here, both the exception and value are null. This will act as a shorthand
+        // for the NoSuchElementException that is thrown when calling get() on an empty Exceptional.
+        return this.get();
     }
 
     /**
@@ -542,7 +545,6 @@ public final class Exceptional<T> {
      * @param runnable Block to be executed if no throwable is present
      *
      * @return The {@link Exceptional}, for chaining
-     * @throws NullPointerException If {@code runnable} is null
      */
     @NonNull
     public Exceptional<T> ifErrorAbsent(@NonNull final Runnable runnable) {
@@ -555,7 +557,7 @@ public final class Exceptional<T> {
      * wrapped exception, otherwise do nothing.
      *
      * @return The {@link Exceptional}, for chaining
-     * @throws RuntimeException If {@code throwable} is not null and is rethrown
+     * @throws Throwable If {@code throwable} is not null and is rethrown
      */
     @NonNull
     public Exceptional<T> rethrowUnchecked() {
