@@ -608,7 +608,10 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
             Class<?> type = this.type();
             while (type != null) {
                 for (final Annotation annotation : type.getDeclaredAnnotations()) {
-                    annotations.put(annotation.annotationType(), annotation);
+                    // If it's a duplicate, the annotation was redefined in a higher level class. In this case we prefer
+                    // the one in the highest level class, so we ignore the one in the lower level, or parent, class.
+                    if (!annotations.containsKey(annotation.annotationType()))
+                        annotations.put(annotation.annotationType(), annotation);
                 }
                 type = type.getSuperclass();
             }

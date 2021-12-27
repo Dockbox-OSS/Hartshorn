@@ -17,6 +17,7 @@
 
 package org.dockbox.hartshorn.core;
 
+import org.dockbox.hartshorn.core.annotations.Base;
 import org.dockbox.hartshorn.core.bridge.BridgeImpl;
 import org.dockbox.hartshorn.core.context.ApplicationEnvironment;
 import org.dockbox.hartshorn.core.context.ReflectionsPrefixContext;
@@ -28,6 +29,7 @@ import org.dockbox.hartshorn.core.context.element.MethodModifier;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.exceptions.TypeConversionException;
+import org.dockbox.hartshorn.core.types.AnnotatedImpl;
 import org.dockbox.hartshorn.core.types.ParentTestType;
 import org.dockbox.hartshorn.core.types.ReflectTestType;
 import org.dockbox.hartshorn.core.types.TestEnumType;
@@ -471,5 +473,13 @@ public class ReflectTests {
 
     public String helloWorld() {
         return "Hello World";
+    }
+
+    @Test
+    void testRedefinedAnnotationsTakePriority() {
+        final TypeContext<AnnotatedImpl> typeContext = TypeContext.of(AnnotatedImpl.class);
+        final Exceptional<Base> annotation = typeContext.annotation(Base.class);
+        Assertions.assertTrue(annotation.present());
+        Assertions.assertEquals("impl", annotation.get().value());
     }
 }
