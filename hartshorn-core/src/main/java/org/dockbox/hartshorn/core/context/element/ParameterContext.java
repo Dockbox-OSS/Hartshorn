@@ -38,6 +38,7 @@ public final class ParameterContext<T> extends AnnotatedElementContext<Parameter
 
     private String name;
     private TypeContext<T> type;
+    private TypeContext<T> genericType;
     private ExecutableElementContext<?> declaredBy;
     private List<TypeContext<?>> typeParameters;
 
@@ -82,6 +83,16 @@ public final class ParameterContext<T> extends AnnotatedElementContext<Parameter
             this.type = TypeContext.of((Class<T>) this.element().getType());
         }
         return this.type;
+    }
+
+    public TypeContext<T> genericType() {
+        if (this.genericType == null) {
+            final Type genericType = this.element().getParameterizedType();
+
+            if (genericType instanceof ParameterizedType parameterized) this.genericType = TypeContext.of(parameterized);
+            else this.genericType = this.type();
+        }
+        return this.genericType;
     }
 
     @Override
