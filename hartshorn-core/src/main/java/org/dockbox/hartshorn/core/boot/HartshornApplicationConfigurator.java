@@ -21,7 +21,6 @@ import org.dockbox.hartshorn.core.InjectConfiguration;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 import org.dockbox.hartshorn.core.exceptions.TypeConversionException;
-import org.reflections.Reflections;
 
 import java.util.Set;
 
@@ -29,7 +28,6 @@ public class HartshornApplicationConfigurator implements ApplicationConfigurator
 
     @Override
     public void configure(final ApplicationManager manager) {
-        Reflections.log = null; // Don't output Reflections
         manager.stacktraces(this.stacktraces(manager));
     }
 
