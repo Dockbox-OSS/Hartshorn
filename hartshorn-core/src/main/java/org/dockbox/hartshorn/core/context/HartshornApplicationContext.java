@@ -648,7 +648,7 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
         for (final TypeContext<? extends ComponentProcessor> processor : children) {
             if (processor.isAbstract()) continue;
 
-            if (processor.annotation(AutomaticActivation.class).present()) {
+            if (processor.annotation(AutomaticActivation.class).map(AutomaticActivation::value).or(false)) {
                 final ComponentProcessor componentProcessor = this.get(processor);
                 if (this.hasActivator(componentProcessor.activator()))
                     this.add(componentProcessor);
