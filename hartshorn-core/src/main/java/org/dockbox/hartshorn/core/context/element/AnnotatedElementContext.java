@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 public abstract class AnnotatedElementContext<A extends AnnotatedElement> extends DefaultContext implements QualifiedElement {
 
@@ -35,6 +36,16 @@ public abstract class AnnotatedElementContext<A extends AnnotatedElement> extend
 
     public Set<Annotation> annotations() {
         return new HashSet<>(this.validate().values());
+    }
+
+    public <T extends Annotation> Set<Annotation> annotations(final TypeContext<T> annotation) {
+        return this.annotations(annotation.type());
+    }
+
+    public <T extends Annotation> Set<Annotation> annotations(final Class<T> annotation) {
+        return this.annotations().stream()
+                .filter(a -> TypeContext.of(a.annotationType()).annotation(annotation).present())
+                .collect(Collectors.toSet());
     }
 
     public <T extends Annotation> Exceptional<T> annotation(final TypeContext<T> annotation) {
