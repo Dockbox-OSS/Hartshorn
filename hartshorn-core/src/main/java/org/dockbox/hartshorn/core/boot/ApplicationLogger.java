@@ -25,7 +25,7 @@ import org.slf4j.Logger;
  * of the logger used throughout an active application.
  *
  * @author Guus Lieben
- * @since 4.2.4
+ * @since 21.9
  */
 @FunctionalInterface
 @LogExclude

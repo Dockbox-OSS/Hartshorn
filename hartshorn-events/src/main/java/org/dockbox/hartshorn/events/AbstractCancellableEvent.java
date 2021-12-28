@@ -24,7 +24,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@Deprecated(since = "4.2.5", forRemoval = true)
+@Deprecated(since = "22.1", forRemoval = true)
 public abstract class AbstractCancellableEvent extends CancellableContextCarrierEvent {
     private boolean cancelled;
 }

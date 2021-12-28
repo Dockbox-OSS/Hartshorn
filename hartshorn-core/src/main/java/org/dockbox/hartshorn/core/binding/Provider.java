@@ -28,7 +28,7 @@ import org.dockbox.hartshorn.core.domain.Exceptional;
  *
  * @param <T> The type instance to provide.
  * @author Guus Lieben
- * @since 4.1.2
+ * @since 21.4
  */
 @FunctionalInterface
 public interface Provider<T> {

@@ -40,7 +40,7 @@ import lombok.Setter;
  * is called on them.
  *
  * @author Guus Lieben
- * @since 4.2.4
+ * @since 21.9
  */
 @LogExclude
 @Getter

@@ -28,7 +28,7 @@ import java.lang.annotation.Target;
  * context does not exist in the active application context, the injected value will be {@code null}.
  *
  * @author Guus Lieben
- * @since 4.2.3
+ * @since 21.8
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD, ElementType.PARAMETER})

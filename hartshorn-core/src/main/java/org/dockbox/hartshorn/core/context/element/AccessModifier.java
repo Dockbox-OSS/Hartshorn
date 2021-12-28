@@ -34,7 +34,7 @@ import lombok.AllArgsConstructor;
  * {@link ModifierCarrier}s.
  *
  * @author Guus Lieben
- * @since 4.2.0
+ * @since 21.5
  */
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public enum AccessModifier {

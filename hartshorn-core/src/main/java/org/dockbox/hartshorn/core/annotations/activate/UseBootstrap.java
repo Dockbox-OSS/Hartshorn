@@ -29,7 +29,7 @@ import java.lang.annotation.Target;
  * when the application is created through {@link HartshornApplicationFactory}.
  *
  * @author Guus Lieben
- * @since 4.1.0
+ * @since 21.2
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)

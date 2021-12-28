@@ -37,7 +37,7 @@ import java.util.stream.Collectors;
  *
  * @param <A> The type of the annotated element
  * @author Guus Lieben
- * @since 4.2.0
+ * @since 21.5
  */
 public abstract class AnnotatedElementContext<A extends AnnotatedElement> extends DefaultContext implements QualifiedElement {
 

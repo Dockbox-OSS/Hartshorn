@@ -37,7 +37,7 @@ import lombok.Getter;
  *
  * @param <C> The type of the wrapped {@link BindingHierarchy}.
  * @author Guus Lieben
- * @since 4.1.2
+ * @since 21.4
  */
 @AllArgsConstructor
 public class ContextWrappedHierarchy<C> implements BindingHierarchy<C> {

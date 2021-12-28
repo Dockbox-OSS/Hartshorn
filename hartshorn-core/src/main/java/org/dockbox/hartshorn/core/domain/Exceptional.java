@@ -53,7 +53,7 @@ import java.util.function.Supplier;
  * @author Guus Lieben
  * @author Josh Jeffers
  *
- * @since 4.0.0
+ * @since 21.1
  */
 public final class Exceptional<T> {
 

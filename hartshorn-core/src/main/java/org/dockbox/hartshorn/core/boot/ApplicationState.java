@@ -24,7 +24,7 @@ import org.dockbox.hartshorn.core.context.ApplicationContext;
  * {@link LifecycleObserver}s.
  *
  * @author Guus Lieben
- * @since 4.2.4
+ * @since 21.9
  */
 public interface ApplicationState {
     /**

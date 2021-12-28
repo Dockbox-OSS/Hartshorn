@@ -29,7 +29,7 @@ import java.util.List;
 
 import javax.inject.Named;
 
-@Deprecated(since = "4.2.5", forRemoval = true)
+@Deprecated(since = "22.1", forRemoval = true)
 @ComponentBinding(value = ParameterLoader.class, named = @Named("global_proxy"))
 public class GlobalProxyParameterLoader extends ParameterLoader<ParameterLoaderContext> {
 

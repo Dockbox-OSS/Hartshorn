@@ -33,7 +33,7 @@ import java.lang.annotation.Annotation;
  * have an activator annotation, and a phase at which they are performed.
  *
  * @author Guus Lieben
- * @since 4.2.5
+ * @since 22.1
  * @param <A> The activator annotation type.
  */
 public interface ComponentProcessor<A extends Annotation> extends ActivatorFiltered<A>, OrderedComponentProcessor {

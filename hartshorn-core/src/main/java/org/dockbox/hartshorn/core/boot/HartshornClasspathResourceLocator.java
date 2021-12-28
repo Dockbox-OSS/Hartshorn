@@ -34,7 +34,7 @@ import lombok.AllArgsConstructor;
  * location and return the path to the temporary location.
  *
  * @author Guus Lieben
- * @since 4.2.5
+ * @since 22.1
  */
 @AllArgsConstructor
 public class HartshornClasspathResourceLocator implements ClasspathResourceLocator {

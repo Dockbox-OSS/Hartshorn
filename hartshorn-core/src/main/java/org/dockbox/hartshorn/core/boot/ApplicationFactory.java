@@ -45,7 +45,7 @@ import java.util.function.Function;
  * @param <Self> The type of the {@link ApplicationFactory}, used to implement the fluent API.
  * @param <C> The type of the {@link ApplicationContext} that is created.
  * @author Guus Lieben
- * @since 4.2.4
+ * @since 21.9
  */
 public interface ApplicationFactory<Self extends ApplicationFactory<Self, C>, C extends ApplicationContext> {
 

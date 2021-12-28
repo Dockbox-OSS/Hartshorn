@@ -27,7 +27,7 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
  * {@link LogbackEncoder} to offer the PID to the log message.
  *
  * @author Guus Lieben
- * @since 4.2.4
+ * @since 21.9
  * @see LogbackEncoder
  */
 public class LogbackPIDConverter extends ClassicConverter {

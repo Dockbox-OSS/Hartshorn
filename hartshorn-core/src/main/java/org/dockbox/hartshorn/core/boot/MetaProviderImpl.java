@@ -29,7 +29,7 @@ import org.dockbox.hartshorn.core.context.element.TypeContext;
  * decide whether this should be used.
  *
  * @author Guus Lieben
- * @since 4.2.4
+ * @since 21.9
  */
 public class MetaProviderImpl extends InjectorMetaProvider {
 

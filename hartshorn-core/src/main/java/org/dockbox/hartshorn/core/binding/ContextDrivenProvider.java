@@ -37,7 +37,7 @@ import lombok.Getter;
  * @param <C> The type of the class to create.
  *
  * @author Guus Lieben
- * @since 4.1.2
+ * @since 21.4
  * @see Provider
  * @see SupplierProvider
  * @see InstanceProvider

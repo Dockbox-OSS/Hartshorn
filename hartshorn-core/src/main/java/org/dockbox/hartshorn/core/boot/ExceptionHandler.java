@@ -21,7 +21,7 @@ package org.dockbox.hartshorn.core.boot;
  * The exception handler is used to handle exceptions that occur during the application lifecycle.
  *
  * @author Guus Lieben
- * @since 4.2.4
+ * @since 21.9
  */
 public interface ExceptionHandler {
 

@@ -29,7 +29,7 @@ import lombok.Setter;
  * stacktraces when {@link #stacktraces()} is {@code true}.
  *
  * @author Guus Lieben
- * @since 4.2.4
+ * @since 21.9
  */
 public class HartshornExceptionHandler implements ExceptionHandler, ApplicationManaged {
 

@@ -27,7 +27,7 @@ import java.lang.annotation.Target;
  * are created through {@link org.dockbox.hartshorn.core.boot.ApplicationLogger#log()}.
  *
  * @author Guus Lieben
- * @since 4.2.0
+ * @since 21.5
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)

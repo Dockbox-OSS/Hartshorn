@@ -30,7 +30,7 @@ import org.dockbox.hartshorn.core.services.ComponentPostProcessor;
  * to modify components.
  *
  * @author Guus Lieben
- * @since 4.2.4
+ * @since 21.9
  */
 public interface ApplicationProxier extends ProxyLookup {
 

@@ -25,7 +25,7 @@ package org.dockbox.hartshorn.core.boot;
  * @see ApplicationManager
  * @see HartshornApplicationManager
  * @author Guus Lieben
- * @since 4.2.4
+ * @since 21.9
  */
 public interface ApplicationManaged {
 

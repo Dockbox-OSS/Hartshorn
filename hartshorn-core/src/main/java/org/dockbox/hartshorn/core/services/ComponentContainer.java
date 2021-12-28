@@ -41,10 +41,10 @@ public interface ComponentContainer {
 
     List<Class<? extends Annotation>> activators();
 
-    @Deprecated(since = "4.2.5", forRemoval = true)
+    @Deprecated(since = "22.1", forRemoval = true)
     boolean hasActivator();
 
-    @Deprecated(since = "4.2.5", forRemoval = true)
+    @Deprecated(since = "22.1", forRemoval = true)
     boolean hasActivator(Class<? extends Annotation> activator);
 
     boolean singleton();

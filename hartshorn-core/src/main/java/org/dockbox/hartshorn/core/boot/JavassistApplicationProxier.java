@@ -46,7 +46,7 @@ import lombok.Getter;
  * original object. By default, this implementation uses {@link NativeProxyLookup} and {@link JavassistProxyLookup}.
  *
  * @author Guus Lieben
- * @since 4.2.4
+ * @since 21.9
  * @see ProxyLookup
  */
 public class JavassistApplicationProxier implements ApplicationProxier, ApplicationManaged {

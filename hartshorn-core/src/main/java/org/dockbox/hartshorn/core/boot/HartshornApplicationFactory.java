@@ -40,7 +40,7 @@ import lombok.Getter;
  * is called.
  *
  * @author Guus Lieben
- * @since 4.2.4
+ * @since 21.9
  *
  * @see HartshornApplicationLogger
  * @see HartshornApplicationConfigurator

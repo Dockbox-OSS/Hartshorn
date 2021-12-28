@@ -39,7 +39,7 @@ import java.lang.annotation.Target;
  * automatically.
  *
  * @author Guus Lieben
- * @since 4.1.2
+ * @since 21.4
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER})

@@ -47,7 +47,7 @@ import java.lang.annotation.Target;
  * annotation, then you can use the {@link AliasFor#target()} attribute.
  *
  * @author Guus Lieben
- * @since 4.1.0
+ * @since 21.2
  * @see Extends
  */
 @Retention(RetentionPolicy.RUNTIME)

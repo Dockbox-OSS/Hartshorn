@@ -22,7 +22,7 @@ package org.dockbox.hartshorn.core.boot;
  * {@link LifecycleObserver} interface.
  *
  * @author Guus Lieben
- * @since 4.2.4
+ * @since 21.9
  */
 @FunctionalInterface
 public interface LifecycleObservable {

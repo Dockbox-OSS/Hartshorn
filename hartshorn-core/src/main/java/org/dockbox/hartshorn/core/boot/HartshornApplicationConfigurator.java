@@ -31,7 +31,7 @@ import java.util.Set;
  * {@code hartshorn.exceptions.stacktraces} property to enable or disable stacktraces.
  *
  * @author Guus Lieben
- * @since 4.2.4
+ * @since 21.9
  */
 public class HartshornApplicationConfigurator implements ApplicationConfigurator {
 

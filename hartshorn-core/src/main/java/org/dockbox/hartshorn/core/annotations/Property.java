@@ -26,7 +26,7 @@ import java.lang.annotation.Target;
  * The interface to provide custom information to an object field when creating an object dynamically.
  *
  * @author Guus Lieben
- * @since 4.1.0
+ * @since 21.2
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)

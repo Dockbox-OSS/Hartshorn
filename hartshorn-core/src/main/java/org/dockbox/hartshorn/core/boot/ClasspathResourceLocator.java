@@ -26,7 +26,7 @@ import java.nio.file.Path;
  * the application.
  *
  * @author Guus Lieben
- * @since 4.2.5
+ * @since 22.1
  */
 public interface ClasspathResourceLocator {
 

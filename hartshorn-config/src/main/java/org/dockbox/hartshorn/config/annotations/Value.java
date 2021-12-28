@@ -51,6 +51,6 @@ public @interface Value {
      *
      * @return The string-based default value.
      */
-    @Deprecated(since = "4.2.5", forRemoval = true)
+    @Deprecated(since = "22.1", forRemoval = true)
     String or() default "";
 }

@@ -29,7 +29,7 @@ import java.util.Set;
  * active bindings are added.
  *
  * @author Guus Lieben
- * @since 4.2.4
+ * @since 21.9
  */
 public interface ApplicationConfigurator {
 

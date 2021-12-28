@@ -31,7 +31,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * on the current stacktrace is used.
  *
  * @author Guus Lieben
- * @since 4.2.4
+ * @since 21.9
  */
 @LogExclude
 public class HartshornApplicationLogger implements ApplicationLogger {

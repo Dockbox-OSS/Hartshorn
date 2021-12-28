@@ -34,7 +34,7 @@ import org.dockbox.hartshorn.core.context.ContextCarrier;
  * <p>Additionally, the manager is capable of indicating whether an application is active in a CI environment or not.
  *
  * @author Guus Lieben
- * @since 4.2.4
+ * @since 21.9
  */
 public interface ApplicationManager extends ContextCarrier, ApplicationLogger, ApplicationProxier, LifecycleObservable, ApplicationFSProvider, ExceptionHandler {
 

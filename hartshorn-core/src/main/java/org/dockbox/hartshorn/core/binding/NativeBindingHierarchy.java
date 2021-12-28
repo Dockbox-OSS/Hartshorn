@@ -41,7 +41,7 @@ import lombok.RequiredArgsConstructor;
  *
  * @param <C> The type of type to provide.
  * @author Guus Lieben
- * @since 4.1.2
+ * @since 21.4
  * @see BindingHierarchy
  */
 @RequiredArgsConstructor

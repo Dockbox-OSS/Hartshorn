@@ -36,7 +36,7 @@ import ch.qos.logback.classic.LoggerContext;
  * which provides application metadata, and a set of {@link Modifiers modifiers}.
  *
  * @author Guus Lieben
- * @since 4.1.0
+ * @since 21.2
  */
 public final class HartshornApplication {
 

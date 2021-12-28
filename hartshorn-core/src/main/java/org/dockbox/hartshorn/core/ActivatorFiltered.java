@@ -26,7 +26,7 @@ import java.lang.annotation.Annotation;
  * @param <A> The annotation which is used to indicate the activator.
  *
  * @author Guus Lieben
- * @since 4.2.5
+ * @since 22.1
  * @see org.dockbox.hartshorn.core.services.ComponentPreProcessor
  * @see org.dockbox.hartshorn.core.services.ComponentPostProcessor
  */

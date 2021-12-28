@@ -31,7 +31,7 @@ import lombok.Getter;
  * based names instead of always requiring a {@link Named} instance.
  *
  * @author Guus Lieben
- * @since 4.1.0
+ * @since 21.2
  */
 @AllArgsConstructor
 public class NamedImpl implements Named {

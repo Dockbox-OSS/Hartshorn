@@ -30,7 +30,7 @@ import lombok.Getter;
  * @param <A> The type of the annotated element represented by the modified {@link AnnotatedElementContext}.
  *
  * @author Guus Lieben
- * @since 4.2.5
+ * @since 22.1
  */
 @AllArgsConstructor(staticName = "of")
 public final class AnnotatedElementModifier<A extends AnnotatedElement> implements ElementModifier<AnnotatedElementContext<A>> {
