@@ -21,7 +21,7 @@ buildscript {
     }
     dependencies {
         classpath "io.franzbecker:gradle-lombok:$gradleLombokVersion"
-        classpath 'org.owasp:dependency-check-gradle:6.2.2'
+        classpath "org.owasp:dependency-check-gradle:$owaspDependencyCheckVersion"
     }
 }
 
@@ -29,8 +29,7 @@ plugins {
     id 'java'
     id 'java-library'
     id 'org.cadixdev.licenser' version "$licenserVersion"
-    id 'io.freefair.aggregate-javadoc' version "$aggregateJavadocVersion"
-    id 'org.checkerframework' version '0.6.3'
+    id 'org.checkerframework' version "$checkerFrameworkVersion"
 }
 
 apply plugin: 'org.owasp.dependencycheck'
