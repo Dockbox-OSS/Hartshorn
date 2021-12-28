@@ -17,10 +17,10 @@
 
 package org.dockbox.hartshorn.i18n.services;
 
+import org.dockbox.hartshorn.core.Key;
 import org.dockbox.hartshorn.core.annotations.activate.AutomaticActivation;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
-import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.services.ServicePreProcessor;
 import org.dockbox.hartshorn.i18n.Message;
 import org.dockbox.hartshorn.i18n.TranslationBundle;
@@ -37,14 +37,14 @@ public class LanguageProviderServicePreProcessor implements ServicePreProcessor<
     }
 
     @Override
-    public boolean preconditions(final ApplicationContext context, final TypeContext<?> type) {
-        return !type.methods(TranslationProvider.class).isEmpty();
+    public boolean preconditions(final ApplicationContext context, final Key<?> key) {
+        return !key.type().methods(TranslationProvider.class).isEmpty();
     }
 
     @Override
-    public <T> void process(final ApplicationContext context, final TypeContext<T> type) {
+    public <T> void process(final ApplicationContext context, final Key<T> key) {
         final TranslationService translationService = context.get(TranslationService.class);
-        for (final MethodContext<?, T> method : type.methods(TranslationProvider.class)) {
+        for (final MethodContext<?, T> method : key.type().methods(TranslationProvider.class)) {
             if (method.returnType().childOf(TranslationBundle.class)) {
                 final TranslationBundle bundle = (TranslationBundle) method.invoke(context).rethrowUnchecked().get();
                 translationService.add(bundle);

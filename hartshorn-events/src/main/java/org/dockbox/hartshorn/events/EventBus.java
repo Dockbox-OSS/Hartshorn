@@ -17,9 +17,9 @@
 
 package org.dockbox.hartshorn.events;
 
-import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.core.Key;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
-import org.dockbox.hartshorn.core.context.element.TypeContext;
+import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.events.parents.Event;
 
 import java.util.Map;
@@ -28,15 +28,15 @@ import java.util.function.Function;
 
 public interface EventBus {
 
-    void subscribe(TypeContext<?> object);
+    void subscribe(Key<?> object);
 
-    void unsubscribe(TypeContext<?> object);
+    void unsubscribe(Key<?> object);
 
-    void post(Event event, TypeContext<?> target);
+    void post(Event event, Key<?> target);
 
     void post(Event event);
 
-    Map<TypeContext<?>, Set<EventWrapper>> invokers();
+    Map<Key<?>, Set<EventWrapper>> invokers();
 
     void addValidationRule(Function<MethodContext<?, ?>, Exceptional<Boolean>> validator);
 }

@@ -17,8 +17,8 @@
 
 package org.dockbox.hartshorn.events;
 
+import org.dockbox.hartshorn.core.Key;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
-import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.events.annotations.Listener.Priority;
 import org.dockbox.hartshorn.events.listeners.BasicEventListener;
 import org.dockbox.hartshorn.events.listeners.GenericEventListener;
@@ -46,8 +46,8 @@ public class EventBusTests {
     @Test
     public void testTypesCanSubscribe() {
         final EventBus bus = this.bus();
-        bus.subscribe(TypeContext.of(BasicEventListener.class));
-        Assertions.assertTrue(bus.invokers().containsKey(TypeContext.of(BasicEventListener.class)));
+        bus.subscribe(Key.of(BasicEventListener.class));
+        Assertions.assertTrue(bus.invokers().containsKey(Key.of(BasicEventListener.class)));
     }
 
     private EventBus bus() {
@@ -57,7 +57,7 @@ public class EventBusTests {
     @Test
     public void testNonStaticMethodsCanListen() {
         final EventBus bus = this.bus();
-        bus.subscribe(TypeContext.of(BasicEventListener.class));
+        bus.subscribe(Key.of(BasicEventListener.class));
         bus.post(new SampleEvent());
         Assertions.assertTrue(BasicEventListener.fired);
     }
@@ -65,7 +65,7 @@ public class EventBusTests {
     @Test
     public void testStaticMethodsCanListen() {
         final EventBus bus = this.bus();
-        bus.subscribe(TypeContext.of(StaticEventListener.class));
+        bus.subscribe(Key.of(StaticEventListener.class));
         bus.post(new SampleEvent());
         Assertions.assertTrue(StaticEventListener.fired);
     }
@@ -73,7 +73,7 @@ public class EventBusTests {
     @Test
     public void testEventsArePostedInCorrectPriorityOrder() {
         final EventBus bus = this.bus();
-        bus.subscribe(TypeContext.of(PriorityEventListener.class));
+        bus.subscribe(Key.of(PriorityEventListener.class));
         bus.post(new SampleEvent());
         Assertions.assertEquals(Priority.LAST, PriorityEventListener.last());
     }
@@ -81,7 +81,7 @@ public class EventBusTests {
     @Test
     void testGenericEventsAreFiltered() {
         final EventBus bus = this.bus();
-        bus.subscribe(TypeContext.of(GenericEventListener.class));
+        bus.subscribe(Key.of(GenericEventListener.class));
         final Event event = new GenericEvent<>("String") {
         };
         Assertions.assertDoesNotThrow(() -> bus.post(event));
@@ -92,7 +92,7 @@ public class EventBusTests {
         final EventBus bus = this.bus();
         // Ensure the values have not been affected by previous tests
         GenericEventListener.objects().clear();
-        bus.subscribe(TypeContext.of(GenericEventListener.class));
+        bus.subscribe(Key.of(GenericEventListener.class));
         final Event stringEvent = new GenericEvent<>("String") {
         };
         final Event integerEvent = new GenericEvent<>(1) {

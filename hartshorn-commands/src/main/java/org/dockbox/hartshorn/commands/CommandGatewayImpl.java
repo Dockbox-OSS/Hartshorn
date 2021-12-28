@@ -27,6 +27,7 @@ import org.dockbox.hartshorn.commands.extension.CommandExecutorExtension;
 import org.dockbox.hartshorn.commands.extension.ExtensionResult;
 import org.dockbox.hartshorn.core.ArrayListMultiMap;
 import org.dockbox.hartshorn.core.Enableable;
+import org.dockbox.hartshorn.core.Key;
 import org.dockbox.hartshorn.core.MultiMap;
 import org.dockbox.hartshorn.core.annotations.inject.Binds;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
@@ -139,9 +140,9 @@ public class CommandGatewayImpl implements CommandGateway, Enableable {
     }
 
     @Override
-    public <T> void register(final TypeContext<T> type) {
-        for (final MethodContext<?, T> method : type.methods(Command.class)) {
-            this.register(method, type);
+    public <T> void register(final Key<T> key) {
+        for (final MethodContext<?, T> method : key.type().methods(Command.class)) {
+            this.register(method, key);
         }
     }
 
@@ -204,7 +205,7 @@ public class CommandGatewayImpl implements CommandGateway, Enableable {
         this.extensions.add(extension);
     }
 
-    private <T> void register(final MethodContext<?, T> method, final TypeContext<T> type) {
-        this.register(new MethodCommandExecutorContext<>(this.context, method, type));
+    private <T> void register(final MethodContext<?, T> method, final Key<T> key) {
+        this.register(new MethodCommandExecutorContext<>(this.context, method, key));
     }
 }

@@ -175,12 +175,12 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
 
     public <T> T inject(final Key<T> key, T typeInstance) {
         for (final InjectionPoint<?> injectionPoint : this.injectionPoints) {
-            if (injectionPoint.accepts(key.contract())) {
+            if (injectionPoint.accepts(key.type())) {
                 try {
-                    typeInstance = ((InjectionPoint<T>) injectionPoint).apply(typeInstance, key.contract());
+                    typeInstance = ((InjectionPoint<T>) injectionPoint).apply(typeInstance, key.type());
                 }
                 catch (final ClassCastException e) {
-                    this.log().warn("Attempted to apply injection point to incompatible type [" + key.contract().qualifiedName() + "]");
+                    this.log().warn("Attempted to apply injection point to incompatible type [" + key.type().qualifiedName() + "]");
                 }
             }
         }
@@ -268,9 +268,10 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
         for (final ComponentPreProcessor<?> serviceProcessor : this.preProcessors.get(order)) {
             for (final ComponentContainer container : containers) {
                 final TypeContext<?> service = container.type();
-                if (serviceProcessor.modifies(this, service)) {
+                final Key<?> key = Key.of(service);
+                if (serviceProcessor.modifies(this, key)) {
                     this.log().debug("Processing component %s with registered processor %s in phase %s".formatted(container.id(), TypeContext.of(serviceProcessor).name(), order));
-                    serviceProcessor.process(this, service);
+                    serviceProcessor.process(this, key);
                 }
             }
         }
@@ -362,15 +363,15 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
         // See ServiceOrder#PHASE_1
         for (final ProcessingOrder order : ProcessingOrder.PHASE_1) {
             for (final ComponentPostProcessor<?> postProcessor : this.postProcessors.get(order)) {
-                if (postProcessor.preconditions(this, key.contract(), instance))
-                    instance = postProcessor.process(this, key.contract(), instance);
+                if (postProcessor.preconditions(this, key, instance))
+                    instance = postProcessor.process(this, key, instance);
             }
         }
 
         final MetaProvider meta = this.meta();
         // Ensure the order of resolution is to first resolve the instance singleton state, and only after check the type state.
         // Typically, the implementation decided whether it should be a singleton, so this cuts time complexity in half.
-        if (instance != null && (meta.singleton(key.contract()) || meta.singleton(TypeContext.unproxy(this, instance))))
+        if (instance != null && (meta.singleton(key.type()) || meta.singleton(TypeContext.unproxy(this, instance))))
             this.singletons.put(key, instance);
 
         // Recreating field instances ensures all fields are created through bootstrapping, allowing injection
@@ -384,11 +385,11 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
         // See ServiceOrder#PHASE_2
         for (final ProcessingOrder order : ProcessingOrder.PHASE_2) {
             for (final ComponentPostProcessor<?> postProcessor : this.postProcessors.get(order)) {
-                if (postProcessor.preconditions(this, key.contract(), instance)) {
-                    final T modified = postProcessor.process(this, key.contract(), instance);
+                if (postProcessor.preconditions(this, key, instance)) {
+                    final T modified = postProcessor.process(this, key, instance);
                     if (modified != instance) {
                         throw new IllegalStateException(("Component %s was modified during phase %s (Phase 2) by %s. " +
-                                "Component processors are only able to discard existing instances in phases: %s").formatted(key.contract().name(), order.name(), TypeContext.of(postProcessor).name(), Arrays.toString(ProcessingOrder.PHASE_2)));
+                                "Component processors are only able to discard existing instances in phases: %s").formatted(key.type().name(), order.name(), TypeContext.of(postProcessor).name(), Arrays.toString(ProcessingOrder.PHASE_2)));
                     }
                 }
             }
@@ -410,8 +411,8 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
 
     protected <T> T modify(final ProcessingOrder order, final Key<T> key, T instance) {
         for (final ComponentPostProcessor<?> postProcessor : this.postProcessors.get(order)) {
-            if (postProcessor.preconditions(this, key.contract(), instance))
-                instance = postProcessor.process(this, key.contract(), instance);
+            if (postProcessor.preconditions(this, key, instance))
+                instance = postProcessor.process(this, key, instance);
         }
         return instance;
     }
@@ -422,7 +423,7 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
         if (provision.present())
             return provision.get();
 
-        final TypeContext<T> type = key.contract();
+        final TypeContext<T> type = key.type();
 
         final Exceptional<T> raw = Exceptional.of(() -> this.raw(type)).rethrowUnchecked();
         if (raw.present())
@@ -447,8 +448,8 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
         }
     }
 
-    public <T> Exceptional<T> provide(final Key<T> type) {
-        return Exceptional.of(type)
+    public <T> Exceptional<T> provide(final Key<T> key) {
+        return Exceptional.of(key)
                 .map(this::hierarchy)
                 .flatMap(hierarchy -> {
                     // Will continue going through each provider until a provider was successful or no other providers remain
@@ -599,25 +600,22 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
         else return new ContextWrappedHierarchy<>(hierarchy, this, updated -> this.hierarchies.put(key, updated));
     }
 
-    private <C, T extends C> void handleBinder(final TypeContext<T> binder, final Binds annotation) {
-        final TypeContext<C> binds = TypeContext.of((Class<C>) annotation.value());
+    private <T> void handleBinder(final TypeContext<T> implementer, final Binds annotation) {
+        final TypeContext<T> target = TypeContext.of((Class<T>) annotation.value());
 
-        if (binder.boundConstructors().isEmpty()) {
-            this.handleScanned(binder, binds, annotation);
+        if (implementer.boundConstructors().isEmpty()) {
+            this.handleScanned(implementer, target, annotation);
         }
         else {
-            this.bind(Key.of(binds), binder.type());
+            this.inHierarchy(Key.of(target), hierarchy -> hierarchy.add(annotation.priority(), Providers.of(implementer)));
         }
     }
 
     private <C> void handleScanned(final TypeContext<? extends C> binder, final TypeContext<C> binds, final Binds bindAnnotation) {
         final Named meta = bindAnnotation.named();
-        final Key<C> key;
+        Key<C> key = Key.of(binds);
         if (!"".equals(meta.value())) {
-            key = Key.of(binds, meta);
-        }
-        else {
-            key = Key.of(binds);
+            key = key.name(meta);
         }
         this.inHierarchy(key, hierarchy -> hierarchy.add(bindAnnotation.priority(), Providers.of(binder)));
     }
@@ -629,13 +627,7 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
 
     @Override
     public <C, T extends C> void bind(final Key<C> contract, final Class<? extends T> implementation) {
-        final TypeContext<? extends T> context = TypeContext.of(implementation);
-        if (context.defaultConstructor().present() || !context.injectConstructors().isEmpty()) {
-            this.inHierarchy(contract, hierarchy -> hierarchy.add(Providers.of(context)));
-        }
-        if (!context.boundConstructors().isEmpty()) {
-            this.inHierarchy(contract, hierarchy -> hierarchy.addNext(Providers.of(implementation)));
-        }
+        this.inHierarchy(contract, hierarchy -> hierarchy.add(Providers.of(implementation)));
     }
 
     @Override

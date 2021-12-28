@@ -17,11 +17,11 @@
 
 package org.dockbox.hartshorn.core.services;
 
-import org.dockbox.hartshorn.core.annotations.activate.UseBootstrap;
+import org.dockbox.hartshorn.core.Key;
 import org.dockbox.hartshorn.core.annotations.activate.AutomaticActivation;
+import org.dockbox.hartshorn.core.annotations.activate.UseBootstrap;
 import org.dockbox.hartshorn.core.boot.LifecycleObserver;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
-import org.dockbox.hartshorn.core.context.element.TypeContext;
 
 @AutomaticActivation
 public class LifecycleObserverPreProcessor implements ServicePreProcessor<UseBootstrap> {
@@ -32,12 +32,12 @@ public class LifecycleObserverPreProcessor implements ServicePreProcessor<UseBoo
     }
 
     @Override
-    public boolean preconditions(final ApplicationContext context, final TypeContext<?> type) {
-        return type.childOf(LifecycleObserver.class);
+    public boolean preconditions(final ApplicationContext context, final Key<?> key) {
+        return key.type().childOf(LifecycleObserver.class);
     }
 
     @Override
-    public <T> void process(final ApplicationContext context, final TypeContext<T> type) {
-        context.environment().manager().register((LifecycleObserver) context.get(type));
+    public <T> void process(final ApplicationContext context, final Key<T> key) {
+        context.environment().manager().register((LifecycleObserver) context.get(key));
     }
 }

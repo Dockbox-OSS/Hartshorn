@@ -18,9 +18,9 @@
 package org.dockbox.hartshorn.core.services;
 
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.dockbox.hartshorn.core.Key;
 import org.dockbox.hartshorn.core.annotations.activate.ServiceActivator;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
-import org.dockbox.hartshorn.core.context.element.TypeContext;
 
 import java.lang.annotation.Annotation;
 
@@ -48,13 +48,13 @@ import java.lang.annotation.Annotation;
 public interface ComponentPreProcessor<A extends Annotation> extends ComponentProcessor<A> {
 
     @Override
-    default <T> boolean modifies(final ApplicationContext context, final TypeContext<T> type, @Nullable final T instance) {
-        return this.modifies(context, type);
+    default <T> boolean modifies(final ApplicationContext context, final Key<T> key, @Nullable final T instance) {
+        return this.modifies(context, key);
     }
 
     @Override
-    default <T> T process(final ApplicationContext context, final TypeContext<T> type, @Nullable final T instance) {
-        this.process(context, type);
+    default <T> T process(final ApplicationContext context, final Key<T> key, @Nullable final T instance) {
+        this.process(context, key);
         return instance;
     }
 
@@ -63,22 +63,22 @@ public interface ComponentPreProcessor<A extends Annotation> extends ComponentPr
      * not exist yet, this method does not expect the <code>instance</code> to be specified.
      *
      * @param context The application context.
-     * @param type The type context of the component.
+     * @param key The type context of the component.
      * @return <code>true</code> if the component pre-processor modifies the component, <code>false</code>
      * otherwise.
-     * @see ComponentProcessor#modifies(ApplicationContext, TypeContext, Object)
-     * @see ComponentProcessor#preconditions(ApplicationContext, TypeContext, Object)
+     * @see ComponentProcessor#modifies(ApplicationContext, Key, Object)
+     * @see ComponentProcessor#preconditions(ApplicationContext, Key, Object)
      */
-    boolean modifies(ApplicationContext context, TypeContext<?> type);
+    boolean modifies(ApplicationContext context, Key<?> key);
 
     /**
      * Processes a given component. As component instances will not exist yet, this method does not expect
      * the <code>instance</code> to be specified.
      *
      * @param context The application context.
-     * @param type The type context of the component.
+     * @param key The type context of the component.
      * @param <T> The type of the component.
-     * @see ComponentProcessor#process(ApplicationContext, TypeContext, Object)
+     * @see ComponentProcessor#process(ApplicationContext, Key, Object)
      */
-    <T> void process(ApplicationContext context, TypeContext<T> type);
+    <T> void process(ApplicationContext context, Key<T> key);
 }

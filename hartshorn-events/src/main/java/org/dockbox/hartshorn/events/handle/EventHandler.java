@@ -17,11 +17,12 @@
 
 package org.dockbox.hartshorn.events.handle;
 
+import org.dockbox.hartshorn.core.HartshornUtils;
+import org.dockbox.hartshorn.core.Key;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.events.EventWrapper;
 import org.dockbox.hartshorn.events.parents.Event;
-import org.dockbox.hartshorn.core.HartshornUtils;
 
 import java.util.List;
 import java.util.Objects;
@@ -59,7 +60,7 @@ public class EventHandler {
         if (invoker instanceof EventWrapperImpl) this.invalidateCache(this.invokers.remove(invoker));
     }
 
-    public void post(final Event event, final TypeContext<?> target) {
+    public void post(final Event event, final Key<?> target) {
         EventWrapperImpl<?>[] cache = this.computedInvokerCache;
         if (null == cache) {
             synchronized (this) {

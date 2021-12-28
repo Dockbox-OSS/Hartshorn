@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.config;
 
 import org.dockbox.hartshorn.config.annotations.Configuration;
 import org.dockbox.hartshorn.config.annotations.UseConfigurations;
+import org.dockbox.hartshorn.core.Key;
 import org.dockbox.hartshorn.core.annotations.activate.AutomaticActivation;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
@@ -62,13 +63,13 @@ public class ConfigurationServicePreProcessor implements ServicePreProcessor<Use
     }
 
     @Override
-    public boolean preconditions(final ApplicationContext context, final TypeContext<?> type) {
-        return type.annotation(Configuration.class).present();
+    public boolean preconditions(final ApplicationContext context, final Key<?> key) {
+        return key.type().annotation(Configuration.class).present();
     }
 
     @Override
-    public <T> void process(final ApplicationContext context, final TypeContext<T> type) {
-        final Configuration configuration = type.annotation(Configuration.class).get();
+    public <T> void process(final ApplicationContext context, final Key<T> key) {
+        final Configuration configuration = key.type().annotation(Configuration.class).get();
 
         String source = configuration.source();
         final TypeContext<?> owner = TypeContext.of(configuration.owner());
@@ -81,7 +82,7 @@ public class ConfigurationServicePreProcessor implements ServicePreProcessor<Use
             source = matcher.group(2);
         }
 
-        context.log().debug("Determined strategy " + TypeContext.of(strategy).name() + " for " + filetype.asFileName(source) + ", declared by " + type.name());
+        context.log().debug("Determined strategy " + TypeContext.of(strategy).name() + " for " + filetype.asFileName(source) + ", declared by " + key.type().name());
 
         URI config = strategy.lookup(context, source, owner, filetype).orNull();
 

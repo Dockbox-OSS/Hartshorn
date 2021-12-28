@@ -18,6 +18,7 @@
 package org.dockbox.hartshorn.core.services;
 
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.dockbox.hartshorn.core.Key;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.MethodProxyContextImpl;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
@@ -33,7 +34,8 @@ import java.util.Collection;
 public abstract class ServiceMethodPostProcessor<A extends Annotation> extends FunctionalComponentPostProcessor<A> {
 
     @Override
-    public <T> T process(final ApplicationContext context, final TypeContext<T> type, @Nullable final T instance) {
+    public <T> T process(final ApplicationContext context, final Key<T> key, @Nullable final T instance) {
+        final TypeContext<T> type = key.type();
         final Collection<MethodContext<?, T>> methods = this.modifiableMethods(type);
 
         // Will reuse existing handler of proxy
@@ -63,8 +65,8 @@ public abstract class ServiceMethodPostProcessor<A extends Annotation> extends F
     }
 
     @Override
-    public <T> boolean preconditions(final ApplicationContext context, final TypeContext<T> type, @Nullable final T instance) {
-        return super.preconditions(context, type, instance) && context.environment().manager().isProxy(instance);
+    public <T> boolean preconditions(final ApplicationContext context, final Key<T> key, @Nullable final T instance) {
+        return super.preconditions(context, key, instance) && context.environment().manager().isProxy(instance);
     }
 
     protected abstract <T> Collection<MethodContext<?, T>> modifiableMethods(TypeContext<T> type);

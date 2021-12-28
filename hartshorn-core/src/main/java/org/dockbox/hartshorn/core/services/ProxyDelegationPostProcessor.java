@@ -17,6 +17,8 @@
 
 package org.dockbox.hartshorn.core.services;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.dockbox.hartshorn.core.Key;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.BackingImplementationContext;
 import org.dockbox.hartshorn.core.context.MethodProxyContext;
@@ -25,7 +27,6 @@ import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.proxy.ProxyFunction;
 import org.dockbox.hartshorn.core.proxy.ProxyHandler;
-import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.lang.annotation.Annotation;
 import java.util.Collection;
@@ -35,8 +36,8 @@ public abstract class ProxyDelegationPostProcessor<P, A extends Annotation> exte
     protected abstract Class<P> parentTarget();
 
     @Override
-    public <T> boolean modifies(final ApplicationContext context, final TypeContext<T> type, @Nullable final T instance) {
-        return type.childOf(this.parentTarget());
+    public <T> boolean modifies(final ApplicationContext context, final Key<T> key, @Nullable final T instance) {
+        return key.type().childOf(this.parentTarget());
     }
 
     @Override

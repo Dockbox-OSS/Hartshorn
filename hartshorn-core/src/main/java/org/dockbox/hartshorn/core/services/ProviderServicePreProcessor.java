@@ -32,23 +32,24 @@ import java.util.List;
 public final class ProviderServicePreProcessor implements ServicePreProcessor<UseServiceProvision> {
 
     @Override
-    public boolean preconditions(final ApplicationContext context, final TypeContext<?> type) {
-        return !type.methods(Provider.class).isEmpty();
+    public boolean preconditions(final ApplicationContext context, final Key<?> key) {
+        return !key.type().methods(Provider.class).isEmpty();
     }
 
     @Override
-    public <T> void process(final ApplicationContext context, final TypeContext<T> type) {
+    public <T> void process(final ApplicationContext context, final Key<T> key) {
+        final TypeContext<T> type = key.type();
         final List<MethodContext<?, T>> methods = type.methods(Provider.class);
         context.log().debug("Found " + methods.size() + " providers in " + type.name());
         for (final MethodContext<?, T> method : methods) {
             final boolean singleton = context.meta().singleton(method);
             final Provider annotation = method.annotation(Provider.class).get();
 
-            final Key<?> key = "".equals(annotation.value())
+            final Key<?> providerKey = "".equals(annotation.value())
                     ? Key.of(method.returnType())
                     : Key.of(method.returnType(), annotation.value());
 
-            final ProviderContext<?> providerContext = new ProviderContext<>(((Key<Object>) key), singleton, annotation.priority(), () -> method.invoke(context).rethrowUnchecked().orNull());
+            final ProviderContext<?> providerContext = new ProviderContext<>(((Key<Object>) providerKey), singleton, annotation.priority(), () -> method.invoke(context).rethrowUnchecked().orNull());
             context.add(providerContext);
         }
     }

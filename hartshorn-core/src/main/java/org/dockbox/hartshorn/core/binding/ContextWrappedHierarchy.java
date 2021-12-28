@@ -91,4 +91,9 @@ public class ContextWrappedHierarchy<C> implements BindingHierarchy<C> {
     public Iterator<Entry<Integer, Provider<C>>> iterator() {
         return this.real().iterator();
     }
+
+    @Override
+    public String toString() {
+        return this.real().toString();
+    }
 }

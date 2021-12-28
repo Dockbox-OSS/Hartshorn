@@ -18,8 +18,8 @@
 package org.dockbox.hartshorn.config;
 
 import org.dockbox.hartshorn.config.annotations.UseConfigurations;
+import org.dockbox.hartshorn.core.Key;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
-import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.data.FileFormats;
 import org.dockbox.hartshorn.data.mapping.ObjectMapper;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
@@ -107,7 +107,7 @@ public class ConfigurationManagerTests {
                     fs: "This is a value"
                     """);
 
-        new ConfigurationServicePreProcessor().process(this.applicationContext(), TypeContext.of(DemoFSConfiguration.class));
+        new ConfigurationServicePreProcessor().process(this.applicationContext(), Key.of(DemoFSConfiguration.class));
 
         final DemoFSConfiguration configuration = this.applicationContext().get(DemoFSConfiguration.class);
         Assertions.assertNotNull(configuration);

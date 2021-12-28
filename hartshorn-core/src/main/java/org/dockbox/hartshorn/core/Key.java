@@ -30,55 +30,59 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public class Key<C> {
-    private final TypeContext<C> contract;
-    private final Named named;
+    private final TypeContext<C> type;
+    private final Named name;
 
-    public static <C> Key<C> of(final TypeContext<C> contract) {
-        return new Key<>(contract, null);
+    public static <C> Key<C> of(final TypeContext<C> type) {
+        return new Key<>(type, null);
     }
 
-    public static <C> Key<C> of(final Class<C> contract) {
-        return of(TypeContext.of(contract));
+    public static <C> Key<C> of(final Class<C> type) {
+        return of(TypeContext.of(type));
     }
 
-    public static <C> Key<C> of(final TypeContext<C> contract, final Named named) {
-        if (named != null && !HartshornUtils.empty(named.value())) {
-            return new Key<>(contract, named);
+    public static <C> Key<C> of(final TypeContext<C> type, final Named name) {
+        if (name != null && !HartshornUtils.empty(name.value())) {
+            return new Key<>(type, name);
         }
-        return new Key<>(contract, null);
+        return new Key<>(type, null);
     }
 
-    public static <C> Key<C> of(final Class<C> contract, final Named named) {
-        return of(TypeContext.of(contract), named);
+    public static <C> Key<C> of(final Class<C> type, final Named name) {
+        return of(TypeContext.of(type), name);
     }
 
-    public static <C> Key<C> of(final Class<C> contract, final String named) {
-        return of(TypeContext.of(contract), new NamedImpl(named));
+    public static <C> Key<C> of(final Class<C> type, final String name) {
+        return of(TypeContext.of(type), new NamedImpl(name));
     }
 
-    public static <C> Key<C> of(final TypeContext<C> contract, final String named) {
-        return of(contract, new NamedImpl(named));
+    public static <C> Key<C> of(final TypeContext<C> type, final String name) {
+        return of(type, new NamedImpl(name));
     }
 
-    public Key<C> named(final String name) {
-        return Key.of(this.contract(), name);
+    public Key<C> name(final String name) {
+        return of(this.type(), name);
+    }
+
+    public Key<C> name(final Named name) {
+        return of(this.type(), name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.contract, this.named);
+        return Objects.hash(this.type, this.name);
     }
 
     @Override
     public boolean equals(final Object o) {
         if (this == o) return true;
         if (!(o instanceof final Key<?> key)) return false;
-        return this.contract.equals(key.contract) && Objects.equals(this.named, key.named);
+        return this.type.equals(key.type) && Objects.equals(this.name, key.name);
     }
 
     @Override
     public String toString() {
-        if (this.named == null) return "Key<" + this.contract.name() + ">";
-        else return "Key<" + this.contract.name() + ", " + this.named.value();
+        if (this.name == null) return "Key<" + this.type.name() + ">";
+        else return "Key<" + this.type.name() + ", " + this.name.value() + ">";
     }
 }

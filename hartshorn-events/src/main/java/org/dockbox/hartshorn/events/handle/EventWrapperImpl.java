@@ -58,7 +58,7 @@ public final class EventWrapperImpl<T> implements Comparable<EventWrapperImpl<T>
     @Getter private final ParameterLoader<EventParameterLoaderContext> parameterLoader;
     @Getter private final TypeContext<? extends Event> eventType;
     @Getter private final List<TypeContext<?>> eventParameters;
-    @Getter private final TypeContext<T> listenerType;
+    @Getter private final Key<T> listenerType;
     @Getter private final ApplicationContext context;
     @Getter private final MethodContext<?, T> method;
     @Getter private final int priority;
@@ -66,7 +66,7 @@ public final class EventWrapperImpl<T> implements Comparable<EventWrapperImpl<T>
 
     private EventWrapperImpl(
             final ParameterLoader<EventParameterLoaderContext> parameterLoader,
-            final TypeContext<T> type,
+            final Key<T> type,
             final TypeContext<? extends Event> eventType,
             final MethodContext<?, T> method,
             final int priority,
@@ -86,18 +86,18 @@ public final class EventWrapperImpl<T> implements Comparable<EventWrapperImpl<T>
      * Creates one or more {@link EventWrapperImpl}s (depending on how many event parameters are
      * present) for a given method and instance.
      *
-     * @param type The type of the instance which is used when invoking the method.
+     * @param key The type of the instance which is used when invoking the method.
      * @param method The method to store for invocation.
      * @param priority The priority at which the event is fired.
      *
      * @return The list of {@link EventWrapperImpl}s
      */
-    public static <T> List<EventWrapperImpl<T>> create(final ApplicationContext context, final TypeContext<T> type, final MethodContext<?, T> method, final int priority) {
+    public static <T> List<EventWrapperImpl<T>> create(final ApplicationContext context, final Key<T> key, final MethodContext<?, T> method, final int priority) {
         final List<EventWrapperImpl<T>> invokeWrappers = new CopyOnWriteArrayList<>();
         final ParameterLoader<EventParameterLoaderContext> parameterLoader = context.get(Key.of(ParameterLoader.class, "event_loader"));
         for (final TypeContext<?> param : method.parameterTypes()) {
             if (param.childOf(Event.class)) {
-                invokeWrappers.add(new EventWrapperImpl<>(parameterLoader, type, (TypeContext<? extends Event>) param, method, priority, context));
+                invokeWrappers.add(new EventWrapperImpl<>(parameterLoader, key, (TypeContext<? extends Event>) param, method, priority, context));
             }
         }
         return invokeWrappers;
@@ -110,7 +110,7 @@ public final class EventWrapperImpl<T> implements Comparable<EventWrapperImpl<T>
             event.applicationContext().log().debug("Invoking event " + eventName + " to method context of " + this.method.qualifiedName());
             // Lazy initialisation to allow processors to register first
             if (this.listener == null) this.listener = event.applicationContext().get(this.listenerType);
-            final EventParameterLoaderContext loaderContext = new EventParameterLoaderContext(this.method, this.listenerType, this.listener, this.context, event);
+            final EventParameterLoaderContext loaderContext = new EventParameterLoaderContext(this.method, this.listenerType.type(), this.listener, this.context, event);
             final List<Object> arguments = this.parameterLoader().loadArguments(loaderContext);
             final Exceptional<?> result = this.method.invoke(this.listener, arguments);
             if (result.caught()) {
@@ -163,8 +163,8 @@ public final class EventWrapperImpl<T> implements Comparable<EventWrapperImpl<T>
     @Override
     public String toString() {
         return String.format(
-                "InvokeWrapper{type=%s, eventType=%s, method=%s(%s), priority=%d}",
-                this.listenerType.name(),
+                "InvokeWrapper{key=%s, eventType=%s, method=%s(%s), priority=%d}",
+                this.listenerType,
                 this.eventType.name(),
                 this.method.name(),
                 this.eventType.name(),

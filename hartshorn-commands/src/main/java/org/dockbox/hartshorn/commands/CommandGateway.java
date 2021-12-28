@@ -21,7 +21,7 @@ import org.dockbox.hartshorn.commands.context.CommandContext;
 import org.dockbox.hartshorn.commands.context.CommandExecutorContext;
 import org.dockbox.hartshorn.commands.exceptions.ParsingException;
 import org.dockbox.hartshorn.commands.extension.CommandExecutorExtension;
-import org.dockbox.hartshorn.core.context.element.TypeContext;
+import org.dockbox.hartshorn.core.Key;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 
 import java.util.List;
@@ -56,9 +56,9 @@ public interface CommandGateway {
      * in the provided {@link Class type} as {@link CommandExecutor executors} capable of handling
      * the commands.
      *
-     * @param type The type containing {@link org.dockbox.hartshorn.commands.annotations.Command} methods.
+     * @param key The key containing {@link org.dockbox.hartshorn.commands.annotations.Command} methods.
      */
-    <T> void register(TypeContext<T> type);
+    <T> void register(Key<T> key);
 
     /**
      * Registers the given {@link CommandExecutorContext} to handle the associated command(s).

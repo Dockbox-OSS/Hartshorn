@@ -17,18 +17,18 @@
 
 package org.dockbox.hartshorn.core.services;
 
+import org.dockbox.hartshorn.core.Key;
 import org.dockbox.hartshorn.core.annotations.stereotype.Service;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
-import org.dockbox.hartshorn.core.context.element.TypeContext;
 
 import java.lang.annotation.Annotation;
 
 public interface ServicePreProcessor<A extends Annotation> extends ComponentPreProcessor<A> {
 
     @Override
-    default boolean modifies(final ApplicationContext context, final TypeContext<?> type) {
-        return type.annotation(Service.class).present() && this.preconditions(context, type);
+    default boolean modifies(final ApplicationContext context, final Key<?> key) {
+        return key.type().annotation(Service.class).present() && this.preconditions(context, key);
     }
 
-    boolean preconditions(ApplicationContext context, TypeContext<?> type);
+    boolean preconditions(ApplicationContext context, Key<?> key);
 }
