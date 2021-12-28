@@ -35,7 +35,7 @@ public class GlobalProxyParameterLoader extends ParameterLoader<ParameterLoaderC
 
     @Override
     public List<Object> loadArguments(final ParameterLoaderContext context, final Object... args) {
-        final ExecutableElementContext<?> method = context.executable();
+        final ExecutableElementContext<?, ?> method = context.executable();
         final Collection<Object> arguments = new ArrayList<>();
         if (method.parameterCount() >= 1 && method.parameters().get(0).annotation(Instance.class).present()) {
             arguments.add(context.instance());

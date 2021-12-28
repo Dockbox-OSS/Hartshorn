@@ -29,8 +29,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public abstract class ExecutableElementContext<A extends Executable> extends AnnotatedMemberContext<A> implements Named {
+public abstract class ExecutableElementContext<A extends Executable, P> extends AnnotatedMemberContext<A> implements Named {
 
+    private TypeContext<P> parent;
     private LinkedList<ParameterContext<?>> parameters;
     protected ExecutableElementContextParameterLoader parameterLoader = new ExecutableElementContextParameterLoader();
 
@@ -57,6 +58,13 @@ public abstract class ExecutableElementContext<A extends Executable> extends Ann
 
     public int parameterCount() {
         return this.element().getParameterCount();
+    }
+
+    public TypeContext<P> parent() {
+        if (this.parent == null) {
+            this.parent = (TypeContext<P>) TypeContext.of(this.element().getDeclaringClass());
+        }
+        return this.parent;
     }
 
     protected Object[] arguments(final ApplicationContext context) {

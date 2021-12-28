@@ -33,7 +33,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
-public class MethodContext<T, P> extends ExecutableElementContext<Method> {
+public class MethodContext<T, P> extends ExecutableElementContext<Method, P> {
 
     private static final Map<Method, MethodContext<?, ?>> cache = new ConcurrentHashMap<>();
 
@@ -45,7 +45,6 @@ public class MethodContext<T, P> extends ExecutableElementContext<Method> {
 
     private TypeContext<T> returnType;
     private TypeContext<T> genericReturnType;
-    private TypeContext<P> parent;
     private String qualifiedName;
 
     @Setter(AccessLevel.PACKAGE)
@@ -118,13 +117,6 @@ public class MethodContext<T, P> extends ExecutableElementContext<Method> {
             else this.genericReturnType = TypeContext.of((ParameterizedType) genericReturnType);
         }
         return this.genericReturnType;
-    }
-
-    public TypeContext<P> parent() {
-        if (this.parent == null) {
-            this.parent = (TypeContext<P>) TypeContext.of(this.method.getDeclaringClass());
-        }
-        return this.parent;
     }
 
     @Override
