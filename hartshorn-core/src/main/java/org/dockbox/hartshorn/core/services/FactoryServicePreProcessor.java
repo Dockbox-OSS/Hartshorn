@@ -29,9 +29,7 @@ import org.dockbox.hartshorn.core.context.element.ConstructorContext;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 
-import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.Set;
 
 @AutomaticActivation
 public class FactoryServicePreProcessor implements ServicePreProcessor<Service> {
@@ -49,35 +47,30 @@ public class FactoryServicePreProcessor implements ServicePreProcessor<Service> 
     @Override
     public <T> void process(final ApplicationContext context, final TypeContext<T> type) {
         final FactoryContext factoryContext = context.first(FactoryContext.class).get();
+
+        methods:
         for (final MethodContext<?, T> method : type.methods(Factory.class)) {
             final Factory annotation = method.annotation(Factory.class).get();
             Key<?> key = Key.of(method.returnType());
             if (!"".equals(annotation.value())) key = Key.of(method.returnType(), annotation.value());
 
-            final Set<TypeContext<?>> types = new HashSet<>();
             for (final Provider<?> provider : context.hierarchy(key).providers()) {
                 if (provider instanceof ContextDrivenProvider contextDrivenProvider) {
-                    types.add(contextDrivenProvider.context());
-                }
-            }
-            if (types.isEmpty()) throw new IllegalStateException("No provider found for " + key);
+                    final TypeContext<?> typeContext = ((ContextDrivenProvider<?>) provider).context();
 
-            ConstructorContext<?> matching = null;
-            candidates:
-            for (final TypeContext<?> typeContext : types) {
-                for (final ConstructorContext<?> constructor : typeContext.boundConstructors()) {
-                    final LinkedList<TypeContext<?>> constructorParemeters = constructor.parameterTypes();
-                    final LinkedList<TypeContext<?>> methodParameters = method.parameterTypes();
-                    if (methodParameters.equals(constructorParemeters)) {
-                        matching = constructor;
-                        break candidates;
+                    for (final ConstructorContext<?> constructor : typeContext.boundConstructors()) {
+                        final LinkedList<TypeContext<?>> constructorParameters = constructor.parameterTypes();
+                        final LinkedList<TypeContext<?>> methodParameters = method.parameterTypes();
+
+                        if (methodParameters.equals(constructorParameters)) {
+                            factoryContext.register((MethodContext<Object, ?>) method, (ConstructorContext<Object>) constructor);
+                            continue methods;
+                        }
                     }
                 }
             }
 
-            if (matching == null) throw new IllegalStateException("No matching bound constructor found for " + key + " with parameters: " + method.parameterTypes());
-
-            factoryContext.register((MethodContext<Object, ?>) method, (ConstructorContext<Object>) matching);
+            throw new IllegalStateException("No matching bound constructor found for " + key + " with parameters: " + method.parameterTypes());
         }
     }
 
