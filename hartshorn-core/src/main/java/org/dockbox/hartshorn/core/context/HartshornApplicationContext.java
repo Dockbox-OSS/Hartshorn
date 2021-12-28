@@ -600,25 +600,22 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
         else return new ContextWrappedHierarchy<>(hierarchy, this, updated -> this.hierarchies.put(key, updated));
     }
 
-    private <C, T extends C> void handleBinder(final TypeContext<T> binder, final Binds annotation) {
-        final TypeContext<C> binds = TypeContext.of((Class<C>) annotation.value());
+    private <T> void handleBinder(final TypeContext<T> implementer, final Binds annotation) {
+        final TypeContext<T> target = TypeContext.of((Class<T>) annotation.value());
 
-        if (binder.boundConstructors().isEmpty()) {
-            this.handleScanned(binder, binds, annotation);
+        if (implementer.boundConstructors().isEmpty()) {
+            this.handleScanned(implementer, target, annotation);
         }
         else {
-            this.bind(Key.of(binds), binder.type());
+            this.inHierarchy(Key.of(target), hierarchy -> hierarchy.add(annotation.priority(), Providers.of(implementer)));
         }
     }
 
     private <C> void handleScanned(final TypeContext<? extends C> binder, final TypeContext<C> binds, final Binds bindAnnotation) {
         final Named meta = bindAnnotation.named();
-        final Key<C> key;
+        Key<C> key = Key.of(binds);
         if (!"".equals(meta.value())) {
-            key = Key.of(binds, meta);
-        }
-        else {
-            key = Key.of(binds);
+            key = key.name(meta);
         }
         this.inHierarchy(key, hierarchy -> hierarchy.add(bindAnnotation.priority(), Providers.of(binder)));
     }
@@ -630,13 +627,7 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
 
     @Override
     public <C, T extends C> void bind(final Key<C> contract, final Class<? extends T> implementation) {
-        final TypeContext<? extends T> context = TypeContext.of(implementation);
-        if (context.defaultConstructor().present() || !context.injectConstructors().isEmpty()) {
-            this.inHierarchy(contract, hierarchy -> hierarchy.add(Providers.of(context)));
-        }
-        if (!context.boundConstructors().isEmpty()) {
-            this.inHierarchy(contract, hierarchy -> hierarchy.addNext(Providers.of(implementation)));
-        }
+        this.inHierarchy(contract, hierarchy -> hierarchy.add(Providers.of(implementation)));
     }
 
     @Override

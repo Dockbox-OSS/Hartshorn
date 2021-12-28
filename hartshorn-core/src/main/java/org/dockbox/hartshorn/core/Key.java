@@ -61,7 +61,11 @@ public class Key<C> {
     }
 
     public Key<C> name(final String name) {
-        return Key.of(this.type(), name);
+        return of(this.type(), name);
+    }
+
+    public Key<C> name(final Named name) {
+        return of(this.type(), name);
     }
 
     @Override
