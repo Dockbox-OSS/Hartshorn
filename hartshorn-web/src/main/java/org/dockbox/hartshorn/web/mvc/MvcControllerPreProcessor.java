@@ -17,6 +17,7 @@
 
 package org.dockbox.hartshorn.web.mvc;
 
+import org.dockbox.hartshorn.core.Key;
 import org.dockbox.hartshorn.core.annotations.activate.AutomaticActivation;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
@@ -37,14 +38,15 @@ public class MvcControllerPreProcessor implements ServicePreProcessor<UseMvcServ
     }
 
     @Override
-    public boolean preconditions(final ApplicationContext context, final TypeContext<?> type) {
+    public boolean preconditions(final ApplicationContext context, final Key<?> key) {
+        final TypeContext<?> type = key.type();
         return type.annotation(MvcController.class).present() && !type.methods(HttpRequest.class).isEmpty();
     }
 
     @Override
-    public <T> void process(final ApplicationContext context, final TypeContext<T> type) {
+    public <T> void process(final ApplicationContext context, final Key<T> key) {
         final MvcControllerContext controllerContext = context.first(MvcControllerContext.class).get();
-        for (final MethodContext<?, T> method : type.methods(HttpRequest.class)) {
+        for (final MethodContext<?, T> method : key.type().methods(HttpRequest.class)) {
             if (method.returnType().childOf(ViewTemplate.class)) {
                 final RequestHandlerContext handlerContext = new RequestHandlerContext(context, method);
                 controllerContext.add(handlerContext);

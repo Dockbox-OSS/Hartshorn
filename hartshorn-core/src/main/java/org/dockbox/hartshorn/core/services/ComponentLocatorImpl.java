@@ -88,7 +88,7 @@ public class ComponentLocatorImpl implements ComponentLocator {
 
     @Override
     public <T> void validate(final Key<T> key) {
-        final TypeContext<T> contract = key.contract();
+        final TypeContext<T> contract = key.type();
         if (contract.annotation(Component.class).present() && this.container(contract).absent()) {
             this.applicationContext().log().warn("Component key '%s' is annotated with @Component, but is not registered.".formatted(contract.qualifiedName()));
         }

@@ -17,9 +17,9 @@
 
 package org.dockbox.hartshorn.events;
 
+import org.dockbox.hartshorn.core.Key;
 import org.dockbox.hartshorn.core.annotations.activate.AutomaticActivation;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
-import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.services.ServicePreProcessor;
 import org.dockbox.hartshorn.events.annotations.Listener;
 import org.dockbox.hartshorn.events.annotations.UseEvents;
@@ -27,13 +27,13 @@ import org.dockbox.hartshorn.events.annotations.UseEvents;
 @AutomaticActivation
 public class EventServicePreProcessor implements ServicePreProcessor<UseEvents> {
     @Override
-    public boolean preconditions(final ApplicationContext context, final TypeContext<?> type) {
-        return !type.methods(Listener.class).isEmpty();
+    public boolean preconditions(final ApplicationContext context, final Key<?> key) {
+        return !key.type().methods(Listener.class).isEmpty();
     }
 
     @Override
-    public <T> void process(final ApplicationContext context, final TypeContext<T> type) {
-        context.get(EventBus.class).subscribe(type);
+    public <T> void process(final ApplicationContext context, final Key<T> key) {
+        context.get(EventBus.class).subscribe(key);
     }
 
     @Override

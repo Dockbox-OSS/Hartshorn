@@ -27,8 +27,8 @@ import org.dockbox.hartshorn.commands.exceptions.ParsingException;
 import org.dockbox.hartshorn.commands.types.CommandValueEnum;
 import org.dockbox.hartshorn.commands.types.SampleCommand;
 import org.dockbox.hartshorn.commands.types.SampleCommandExtension;
+import org.dockbox.hartshorn.core.Key;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
-import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.i18n.annotations.UseTranslations;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
@@ -51,7 +51,7 @@ public class CommandDefinitionContextTests {
     @Getter
     private ApplicationContext applicationContext;
 
-    private final TypeContext<SampleCommand> typeContext = TypeContext.of(SampleCommand.class);
+    private final Key<SampleCommand> typeContext = Key.of(SampleCommand.class);
 
     @Test
     void testParsingCanSucceed() {
@@ -64,7 +64,7 @@ public class CommandDefinitionContextTests {
     void testExtensionCanSucceed() {
         final CommandGateway gateway = this.applicationContext().get(CommandGatewayImpl.class);
         gateway.register(this.typeContext);
-        gateway.register(TypeContext.of(SampleCommandExtension.class));
+        gateway.register(Key.of(SampleCommandExtension.class));
         Assertions.assertDoesNotThrow(() -> gateway.accept(SystemSubject.instance(this.applicationContext()), "demo second ThisIsMyName"));
     }
 

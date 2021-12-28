@@ -20,6 +20,7 @@ package org.dockbox.hartshorn.config;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.config.annotations.UseConfigurations;
 import org.dockbox.hartshorn.config.annotations.Value;
+import org.dockbox.hartshorn.core.Key;
 import org.dockbox.hartshorn.core.annotations.activate.AutomaticActivation;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.ConstructorContext;
@@ -39,29 +40,29 @@ import java.util.Collection;
 public class ConfigurationComponentPostProcessor implements ComponentPostProcessor<UseConfigurations> {
 
     @Override
-    public <T> boolean modifies(final ApplicationContext context, final TypeContext<T> type, @Nullable final T instance) {
-        return !type.fields(Value.class).isEmpty();
+    public <T> boolean modifies(final ApplicationContext context, final Key<T> key, @Nullable final T instance) {
+        return !key.type().fields(Value.class).isEmpty();
     }
 
     @Override
-    public <T> T process(final ApplicationContext context, final TypeContext<T> type, @Nullable final T instance) {
-        TypeContext<?> instanceType = type;
+    public <T> T process(final ApplicationContext context, final Key<T> key, @Nullable final T instance) {
+        TypeContext<?> instanceType = key.type();
         if (instance != null) instanceType = TypeContext.unproxy(context, instance);
 
         T modifiableInstance = instance;
         if (context.environment().manager().isProxy(instance)) {
-            modifiableInstance = context.environment().manager().handler(type, instance).instance().or(modifiableInstance);
+            modifiableInstance = context.environment().manager().handler(key.type(), instance).instance().or(modifiableInstance);
         }
 
         for (final FieldContext<?> field : instanceType.fields(Value.class)) {
             try {
                 final Value annotation = field.annotation(Value.class).get();
 
-                final String key = annotation.value();
+                final String valueKey = annotation.value();
                 final Exceptional<?> property;
 
                 if (field.type().childOf(Collection.class)) {
-                    final Exceptional<Collection<Object>> properties = context.properties(key);
+                    final Exceptional<Collection<Object>> properties = context.properties(valueKey);
                     // If a specific type was specified
                     if (!field.type().is(Collection.class)) {
                         final Exceptional<? extends ConstructorContext<?>> constructor = field.type().constructor(Collection.class);
@@ -76,16 +77,16 @@ public class ConfigurationComponentPostProcessor implements ComponentPostProcess
                     }
                 }
                 else {
-                    property = context.property(key);
+                    property = context.property(valueKey);
                 }
 
                 if (property.absent()) {
-                    context.log().debug("Property {} for field {} is empty, but field has a default value, using default value (note this may be null)", key, field.name());
+                    context.log().debug("Property {} for field {} is empty, but field has a default value, using default value (note this may be null)", valueKey, field.name());
                     continue;
                 }
 
                 Object value = property.get();
-                context.log().debug("Populating value for configuration field '%s' in %s (type: %s), value is not logged.".formatted(field.name(), type.name(), field.type().name()));
+                context.log().debug("Populating value for configuration field '%s' in %s (key: %s), value is not logged.".formatted(field.name(), valueKey, field.type().name()));
 
                 if ((!field.type().childOf(String.class)) && (value instanceof String stringValue)) {
                     value = TypeContext.toPrimitive(field.type(), stringValue);

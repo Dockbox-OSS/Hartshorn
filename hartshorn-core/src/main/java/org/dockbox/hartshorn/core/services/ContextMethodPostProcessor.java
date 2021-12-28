@@ -40,7 +40,7 @@ public class ContextMethodPostProcessor extends ServiceAnnotatedMethodPostProces
             final String name = annotation.value();
 
             Key<?> key = Key.of(methodContext.method().returnType());
-            if (!name.isEmpty()) key = key.named(name);
+            if (!name.isEmpty()) key = key.name(name);
             return (R) context.get(key);
         };
     }

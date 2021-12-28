@@ -17,15 +17,15 @@
 
 package org.dockbox.hartshorn.commands.service;
 
-import org.dockbox.hartshorn.core.annotations.activate.AutomaticActivation;
-import org.dockbox.hartshorn.core.domain.Exceptional;
-import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 import org.dockbox.hartshorn.commands.annotations.UseCommands;
 import org.dockbox.hartshorn.commands.context.ArgumentConverterContext;
 import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
+import org.dockbox.hartshorn.core.Key;
+import org.dockbox.hartshorn.core.annotations.activate.AutomaticActivation;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.FieldContext;
-import org.dockbox.hartshorn.core.context.element.TypeContext;
+import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 import org.dockbox.hartshorn.core.services.ProcessingOrder;
 import org.dockbox.hartshorn.core.services.ServicePreProcessor;
 
@@ -40,14 +40,14 @@ import java.util.List;
 public class ArgumentServicePreProcessor implements ServicePreProcessor<UseCommands> {
 
     @Override
-    public boolean preconditions(final ApplicationContext context, final TypeContext<?> type) {
-        return !type.fieldsOf(ArgumentConverter.class).isEmpty();
+    public boolean preconditions(final ApplicationContext context, final Key<?> key) {
+        return !key.type().fieldsOf(ArgumentConverter.class).isEmpty();
     }
 
     @Override
-    public <T> void process(final ApplicationContext context, final TypeContext<T> type) {
-        final List<FieldContext<ArgumentConverter>> fields = type.fieldsOf(ArgumentConverter.class);
-        context.log().debug("Found %d argument converters in %s".formatted(fields.size(), type.qualifiedName()));
+    public <T> void process(final ApplicationContext context, final Key<T> key) {
+        final List<FieldContext<ArgumentConverter>> fields = key.type().fieldsOf(ArgumentConverter.class);
+        context.log().debug("Found %d argument converters in %s".formatted(fields.size(), key.type().qualifiedName()));
         context.first(ArgumentConverterContext.class).map(converterContext -> {
             for (final FieldContext<ArgumentConverter> field : fields) {
                 if (field.isStatic()) {

@@ -40,21 +40,21 @@ public class FactoryServicePreProcessor implements ServicePreProcessor<Service> 
     }
 
     @Override
-    public boolean preconditions(final ApplicationContext context, final TypeContext<?> type) {
-        return !type.methods(Factory.class).isEmpty();
+    public boolean preconditions(final ApplicationContext context, final Key<?> key) {
+        return !key.type().methods(Factory.class).isEmpty();
     }
 
     @Override
-    public <T> void process(final ApplicationContext context, final TypeContext<T> type) {
+    public <T> void process(final ApplicationContext context, final Key<T> key) {
         final FactoryContext factoryContext = context.first(FactoryContext.class).get();
 
         methods:
-        for (final MethodContext<?, T> method : type.methods(Factory.class)) {
+        for (final MethodContext<?, T> method : key.type().methods(Factory.class)) {
             final Factory annotation = method.annotation(Factory.class).get();
-            Key<?> key = Key.of(method.returnType());
-            if (!"".equals(annotation.value())) key = Key.of(method.returnType(), annotation.value());
+            Key<?> returnKey = Key.of(method.returnType());
+            if (!"".equals(annotation.value())) returnKey = returnKey.name(annotation.value());
 
-            for (final Provider<?> provider : context.hierarchy(key).providers()) {
+            for (final Provider<?> provider : context.hierarchy(returnKey).providers()) {
                 if (provider instanceof ContextDrivenProvider contextDrivenProvider) {
                     final TypeContext<?> typeContext = ((ContextDrivenProvider<?>) provider).context();
 
@@ -70,7 +70,7 @@ public class FactoryServicePreProcessor implements ServicePreProcessor<Service> 
                 }
             }
 
-            throw new IllegalStateException("No matching bound constructor found for " + key + " with parameters: " + method.parameterTypes());
+            throw new IllegalStateException("No matching bound constructor found for " + returnKey + " with parameters: " + method.parameterTypes());
         }
     }
 

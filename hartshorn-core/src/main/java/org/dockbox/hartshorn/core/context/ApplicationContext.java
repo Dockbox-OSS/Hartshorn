@@ -46,10 +46,10 @@ public interface ApplicationContext extends
     void add(InjectionPoint<?> property);
 
     @Deprecated(since = "4.2.5", forRemoval = true)
-    <T> T create(Key<T> type);
+    <T> T create(Key<T> key);
 
     @Deprecated(since = "4.2.5", forRemoval = true)
-    <T> T inject(Key<T> type, T typeInstance);
+    <T> T inject(Key<T> key, T typeInstance);
 
     <T> T populate(T type);
 

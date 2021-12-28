@@ -93,8 +93,8 @@ public abstract class DefaultContext implements Context {
 
     @Override
     public <C extends Context> Exceptional<C> first(final ApplicationContext applicationContext, final Key<C> key) {
-        if (key.named() == null) return this.first(applicationContext, key.contract().type());
-        else return this.first(applicationContext, key.contract().type(), key.named().value());
+        if (key.name() == null) return this.first(applicationContext, key.type().type());
+        else return this.first(applicationContext, key.type().type(), key.name().value());
     }
 
     @Override

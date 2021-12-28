@@ -41,13 +41,17 @@ public interface ComponentContainer {
 
     List<Class<? extends Annotation>> activators();
 
+    @Deprecated(since = "4.2.5", forRemoval = true)
     boolean hasActivator();
 
+    @Deprecated(since = "4.2.5", forRemoval = true)
     boolean hasActivator(Class<? extends Annotation> activator);
 
     boolean singleton();
 
     ComponentType componentType();
+
+    boolean permitsProxying();
 
     static String id(final ApplicationContext context, final TypeContext<?> type) {
         return id(context, type, false);
@@ -82,6 +86,4 @@ public interface ComponentContainer {
         final String[] parts = HartshornUtils.splitCapitals(raw);
         return HartshornUtils.capitalize(String.join(" ", parts));
     }
-
-    boolean permitsProxying();
 }

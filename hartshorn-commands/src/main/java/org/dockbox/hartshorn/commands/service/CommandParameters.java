@@ -17,17 +17,17 @@
 
 package org.dockbox.hartshorn.commands.service;
 
-import org.dockbox.hartshorn.core.annotations.activate.AutomaticActivation;
-import org.dockbox.hartshorn.core.boot.ApplicationManager;
-import org.dockbox.hartshorn.core.annotations.activate.UseBootstrap;
 import org.dockbox.hartshorn.commands.annotations.Parameter;
 import org.dockbox.hartshorn.commands.annotations.UseCommands;
 import org.dockbox.hartshorn.commands.arguments.CustomParameterPattern;
 import org.dockbox.hartshorn.commands.arguments.DynamicPatternConverter;
 import org.dockbox.hartshorn.commands.context.ArgumentConverterContext;
 import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
+import org.dockbox.hartshorn.core.Key;
+import org.dockbox.hartshorn.core.annotations.activate.AutomaticActivation;
+import org.dockbox.hartshorn.core.annotations.activate.UseBootstrap;
+import org.dockbox.hartshorn.core.boot.ApplicationManager;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
-import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.services.ComponentPreProcessor;
 import org.dockbox.hartshorn.core.services.ProcessingOrder;
 
@@ -45,16 +45,16 @@ public class CommandParameters implements ComponentPreProcessor<UseCommands> {
     }
 
     @Override
-    public boolean modifies(final ApplicationContext context, final TypeContext<?> type) {
-        return type.annotation(Parameter.class).present();
+    public boolean modifies(final ApplicationContext context, final Key<?> key) {
+        return key.type().annotation(Parameter.class).present();
     }
 
     @Override
-    public <T> void process(final ApplicationContext context, final TypeContext<T> type) {
-        final Parameter meta = type.annotation(Parameter.class).get();
+    public <T> void process(final ApplicationContext context, final Key<T> key) {
+        final Parameter meta = key.type().annotation(Parameter.class).get();
         final CustomParameterPattern pattern = context.get(meta.pattern());
-        final String key = meta.value();
-        final ArgumentConverter<?> converter = new DynamicPatternConverter<>(type, pattern, key);
+        final String parameterKey = meta.value();
+        final ArgumentConverter<?> converter = new DynamicPatternConverter<>(key.type(), pattern, parameterKey);
         context.first(ArgumentConverterContext.class).present(converterContext -> converterContext.register(converter));
     }
 

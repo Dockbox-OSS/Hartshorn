@@ -17,15 +17,15 @@
 
 package org.dockbox.hartshorn.core.services;
 
+import org.dockbox.hartshorn.core.Key;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
-import org.dockbox.hartshorn.core.context.element.TypeContext;
 
 import java.lang.annotation.Annotation;
 
 public abstract class ComponentPreValidator<A extends Annotation> implements ComponentPreProcessor<A> {
 
     @Override
-    public boolean modifies(final ApplicationContext context, final TypeContext<?> type) {
+    public boolean modifies(final ApplicationContext context, final Key<?> key) {
         return true;
     }
 

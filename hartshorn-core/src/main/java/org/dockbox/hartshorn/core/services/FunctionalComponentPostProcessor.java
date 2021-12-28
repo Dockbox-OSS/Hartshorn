@@ -17,18 +17,18 @@
 
 package org.dockbox.hartshorn.core.services;
 
-import org.dockbox.hartshorn.core.ComponentType;
-import org.dockbox.hartshorn.core.context.ApplicationContext;
-import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.dockbox.hartshorn.core.ComponentType;
+import org.dockbox.hartshorn.core.Key;
+import org.dockbox.hartshorn.core.context.ApplicationContext;
 
 import java.lang.annotation.Annotation;
 
 public abstract class FunctionalComponentPostProcessor<A extends Annotation> implements ComponentPostProcessor<A> {
 
     @Override
-    public <T> boolean preconditions(final ApplicationContext context, final TypeContext<T> type, @Nullable final T instance) {
-        return ComponentPostProcessor.super.preconditions(context, type, instance)
-                && context.locator().container(type).get().componentType() == ComponentType.FUNCTIONAL;
+    public <T> boolean preconditions(final ApplicationContext context, final Key<T> key, @Nullable final T instance) {
+        return ComponentPostProcessor.super.preconditions(context, key, instance)
+                && context.locator().container(key.type()).get().componentType() == ComponentType.FUNCTIONAL;
     }
 }

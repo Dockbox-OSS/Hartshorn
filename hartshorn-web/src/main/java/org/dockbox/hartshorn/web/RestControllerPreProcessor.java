@@ -17,14 +17,15 @@
 
 package org.dockbox.hartshorn.web;
 
+import org.dockbox.hartshorn.core.Key;
 import org.dockbox.hartshorn.core.annotations.activate.AutomaticActivation;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.services.ServicePreProcessor;
 import org.dockbox.hartshorn.web.annotations.RestController;
-import org.dockbox.hartshorn.web.annotations.http.HttpRequest;
 import org.dockbox.hartshorn.web.annotations.UseHttpServer;
+import org.dockbox.hartshorn.web.annotations.http.HttpRequest;
 
 @AutomaticActivation
 public class RestControllerPreProcessor implements ServicePreProcessor<UseHttpServer> {
@@ -34,14 +35,15 @@ public class RestControllerPreProcessor implements ServicePreProcessor<UseHttpSe
     }
 
     @Override
-    public boolean preconditions(final ApplicationContext context, final TypeContext<?> type) {
+    public boolean preconditions(final ApplicationContext context, final Key<?> key) {
+        final TypeContext<?> type = key.type();
         return type.annotation(RestController.class).present() && !type.methods(HttpRequest.class).isEmpty();
     }
 
     @Override
-    public <T> void process(final ApplicationContext context, final TypeContext<T> type) {
+    public <T> void process(final ApplicationContext context, final Key<T> key) {
         final ControllerContext controllerContext = context.first(ControllerContext.class).get();
-        for (final MethodContext<?, T> method : type.methods(HttpRequest.class)) {
+        for (final MethodContext<?, T> method : key.type().methods(HttpRequest.class)) {
             controllerContext.add(new RequestHandlerContext(context, method));
         }
     }
