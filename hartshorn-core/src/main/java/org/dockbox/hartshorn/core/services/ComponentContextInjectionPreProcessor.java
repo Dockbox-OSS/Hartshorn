@@ -47,11 +47,11 @@ public class ComponentContextInjectionPreProcessor extends ComponentPreValidator
         for (final FieldContext<?> field : type.fields(Context.class))
             this.validate(field, type);
 
-        final List<ExecutableElementContext<?>> constructors = type.injectConstructors().stream().map(c -> (ExecutableElementContext<?>) c).collect(Collectors.toList());
-        final List<ExecutableElementContext<?>> methods = type.methods().stream().map(m -> (ExecutableElementContext<?>) m).collect(Collectors.toList());
-        final Collection<ExecutableElementContext<?>> executables = HartshornUtils.merge(constructors, methods);
+        final List<ExecutableElementContext<?, ?>> constructors = type.injectConstructors().stream().map(c -> (ExecutableElementContext<?, ?>) c).collect(Collectors.toList());
+        final List<ExecutableElementContext<?, ?>> methods = type.methods().stream().map(m -> (ExecutableElementContext<?, ?>) m).collect(Collectors.toList());
+        final Collection<ExecutableElementContext<?, ?>> executables = HartshornUtils.merge(constructors, methods);
 
-        for (final ExecutableElementContext<?> executable : executables)
+        for (final ExecutableElementContext<?, ?> executable : executables)
             for (final ParameterContext<?> parameter : executable.parameters(Context.class))
                 this.validate(parameter, type);
     }

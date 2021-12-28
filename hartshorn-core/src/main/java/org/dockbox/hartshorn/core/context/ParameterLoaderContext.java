@@ -26,7 +26,7 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public class ParameterLoaderContext extends DefaultContext implements ContextCarrier {
-    private final ExecutableElementContext<?> executable;
+    private final ExecutableElementContext<?, ?> executable;
     private final TypeContext<?> type;
     private final Object instance;
     private final ApplicationContext applicationContext;

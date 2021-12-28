@@ -88,7 +88,7 @@ public class RequestArgumentProcessorTests {
         final ParameterContext<Message> context = Mockito.mock(ParameterContext.class);
         Mockito.when(context.type()).thenReturn(TypeContext.of(Message.class));
 
-        final ExecutableElementContext<?> declaring = Mockito.mock(ExecutableElementContext.class);
+        final ExecutableElementContext<?, ?> declaring = Mockito.mock(ExecutableElementContext.class);
         final HttpRequest httpRequest = Mockito.mock(HttpRequest.class);
         Mockito.when(httpRequest.consumes()).thenReturn(mediaType);
         Mockito.when(declaring.annotation(HttpRequest.class)).thenReturn(Exceptional.of(httpRequest));

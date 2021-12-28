@@ -39,7 +39,7 @@ public final class ParameterContext<T> extends AnnotatedElementContext<Parameter
     private String name;
     private TypeContext<T> type;
     private TypeContext<T> genericType;
-    private ExecutableElementContext<?> declaredBy;
+    private ExecutableElementContext<?, ?> declaredBy;
     private List<TypeContext<?>> typeParameters;
 
     private ParameterContext(final Parameter parameter) {
@@ -59,7 +59,7 @@ public final class ParameterContext<T> extends AnnotatedElementContext<Parameter
         return this.name;
     }
 
-    public ExecutableElementContext<?> declaredBy() {
+    public ExecutableElementContext<?, ?> declaredBy() {
         if (this.declaredBy == null) {
             final Executable executable = this.element().getDeclaringExecutable();
             if (executable instanceof Method method) this.declaredBy = MethodContext.of(method);
