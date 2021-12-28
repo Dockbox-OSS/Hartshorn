@@ -187,6 +187,9 @@ class SqlServiceTest {
 
     @Test
     void hibernateRepositoryUsesPropertiesIfNoConnectionExists() throws ApplicationException {
+        // TestContainers sometimes closes the connection after a test, so we need to make sure we have an active container
+        if (!mySql.isRunning()) mySql.start();
+
         final JpaRepositoryFactory factory = this.applicationContext().get(JpaRepositoryFactory.class);
         final JpaRepository<User, ?> repository = factory.repository(User.class);
         Assertions.assertTrue(repository instanceof HibernateJpaRepository);
@@ -212,6 +215,9 @@ class SqlServiceTest {
 
     @Test
     void testAutomaticConnectionForUserRepository() {
+        // TestContainers sometimes closes the connection after a test, so we need to make sure we have an active container
+        if (!mySql.isRunning()) mySql.start();
+
         // Data API specific
         this.applicationContext().property("hartshorn.data.username", mySql.getUsername());
         this.applicationContext().property("hartshorn.data.password", mySql.getPassword());
