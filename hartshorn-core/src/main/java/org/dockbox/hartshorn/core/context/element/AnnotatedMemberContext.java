@@ -17,13 +17,20 @@
 
 package org.dockbox.hartshorn.core.context.element;
 
-import org.dockbox.hartshorn.core.HartshornUtils;
-
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Member;
 import java.util.List;
 
-// skipcq: JAVA-W0100
+/**
+ * AnnotatedMemberContext is a context for annotated members. It is used as a base class for all contexts that are both {@link ModifierCarrier}s
+ * and {@link AnnotatedElementContext}s.
+ *
+ * @param <A> The type of the annotated element.
+ * @see AnnotatedElement
+ * @see Member
+ * @author Guus Lieben
+ * @since 21.5
+ */
 public abstract class AnnotatedMemberContext <A extends AnnotatedElement & Member> extends AnnotatedElementContext<A> implements ModifierCarrier {
 
     private List<AccessModifier> modifiers;

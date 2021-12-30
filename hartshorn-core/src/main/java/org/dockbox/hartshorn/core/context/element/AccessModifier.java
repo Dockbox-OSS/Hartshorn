@@ -33,6 +33,9 @@ import lombok.AllArgsConstructor;
  * the {@link Modifier} constants through {@link TypeContext}s, {@link MethodContext}s, and other
  * {@link ModifierCarrier}s.
  *
+ * @see Modifier
+ * @see ModifierCarrier
+ * @see Member#getModifiers()
  * @author Guus Lieben
  * @since 21.5
  */

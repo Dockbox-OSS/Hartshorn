@@ -33,9 +33,8 @@ import java.util.stream.Collectors;
 /**
  * AnnotatedElementContext is a context that holds the annotations of an annotated element.
  *
- * <p>The context is a map of annotation type to annotation instance. The context is thread-safe.
- *
  * @param <A> The type of the annotated element
+ * @see AnnotatedElement
  * @author Guus Lieben
  * @since 21.5
  */

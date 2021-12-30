@@ -28,7 +28,7 @@ import lombok.Getter;
  * virtual annotations. This does not modify the actual {@link AnnotatedElement} itself, but only the context.
  *
  * @param <A> The type of the annotated element represented by the modified {@link AnnotatedElementContext}.
- *
+ * @see AnnotatedElement
  * @author Guus Lieben
  * @since 22.1
  */

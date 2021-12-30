@@ -28,6 +28,15 @@ import java.util.function.Function;
 
 import lombok.Getter;
 
+/**
+ * A context element that represents a constructor. This context element can be used to instantiate a component, as well as provide information
+ * about the executable element properties as defined in {@link ExecutableElementContext}.
+ *
+ * @param <T> The type of the component that is instantiated by this constructor.
+ * @see Constructor
+ * @author Guus Lieben
+ * @since 21.5
+ */
 public final class ConstructorContext<T> extends ExecutableElementContext<Constructor<T>, T> implements TypedElementContext<T> {
 
     @Getter
@@ -39,15 +48,36 @@ public final class ConstructorContext<T> extends ExecutableElementContext<Constr
         this.constructor.setAccessible(true);
     }
 
+    /**
+     * Creates a new {@link ConstructorContext} instance from the given {@link Constructor}.
+     *
+     * @param constructor The constructor to create the context from.
+     * @param <T> The type of the component that is instantiated by this constructor.
+     * @return A new {@link ConstructorContext} instance.
+     */
     public static <T> ConstructorContext<T> of(final Constructor<T> constructor) {
         return new ConstructorContext<>(constructor);
     }
 
+    /**
+     * Invokes the constructor with the given arguments. This may be equal to calling {@link Constructor#newInstance(Object...)}, however it
+     * may also be a more efficient way of invoking the constructor depending on the active invoker function.
+     *
+     * @param args The arguments to pass to the constructor.
+     * @return The result of the invocation.
+     */
     public Exceptional<T> createInstance(final Object... args) {
         this.prepareHandle();
         return this.invoker.apply(args);
     }
 
+    /**
+     * Invokes the constructor with the required arguments. The arguments are determined by the provided {@link ApplicationContext}, and may be
+     * {@code null} if the required parameter type cannot be provided.
+     *
+     * @param context The application context to use for resolving the required arguments.
+     * @return The result of the invocation.
+     */
     public Exceptional<T> createInstance(final ApplicationContext context) {
         this.prepareHandle();
         try {
