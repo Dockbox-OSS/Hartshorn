@@ -26,6 +26,7 @@ import org.dockbox.hartshorn.core.context.element.ConstructorContext;
 import org.dockbox.hartshorn.core.context.element.FieldContext;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.core.context.element.MethodModifier;
+import org.dockbox.hartshorn.core.context.element.ParameterContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.exceptions.TypeConversionException;
@@ -482,4 +483,28 @@ public class ReflectTests {
         Assertions.assertTrue(annotation.present());
         Assertions.assertEquals("impl", annotation.get().value());
     }
+
+    @Test
+    public void genericTypeTests() {
+        final ParameterContext<?> parameter = TypeContext.of(this).method("genericTestMethod", List.class)
+                .get()
+                .parameters()
+                .get(0);
+
+        final TypeContext<?> first = parameter.genericType();
+
+        Assertions.assertTrue(first.is(List.class));
+        Assertions.assertEquals(1, first.typeParameters().size());
+
+        final TypeContext<?> second = first.typeParameters().get(0);
+        Assertions.assertTrue(second.is(List.class));
+        Assertions.assertEquals(1, second.typeParameters().size());
+
+        final TypeContext<?> third = second.typeParameters().get(0);
+        Assertions.assertTrue(third.is(String.class));
+        Assertions.assertEquals(0, third.typeParameters().size());
+    }
+
+    public void genericTestMethod(final List<List<String>> nestedGeneric) { }
+
 }

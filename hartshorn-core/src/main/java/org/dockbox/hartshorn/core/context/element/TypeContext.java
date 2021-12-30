@@ -192,7 +192,8 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
     }
 
     protected static <T> TypeContext<T> of(final ParameterizedType type) {
-        final TypeContext<T> context = of((Class<T>) type.getRawType());
+        // Use new TypeContext to avoid caching parameterized types.
+        final TypeContext<T> context = new TypeContext<>((Class<T>) type.getRawType());
         context.typeParameters = context.contextsFromParameterizedType(type);
         return context;
     }
@@ -322,10 +323,11 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
         final Type[] arguments = parameterizedType.getActualTypeArguments();
 
         return Arrays.stream(arguments)
-                .filter(type -> type instanceof Class || type instanceof WildcardType)
+                .filter(type -> type instanceof Class || type instanceof WildcardType || type instanceof ParameterizedType)
                 .map(type -> {
                     if (type instanceof Class clazz) return TypeContext.of(clazz);
                     else if (type instanceof WildcardType wildcard) return WildcardTypeContext.create();
+                    else if (type instanceof ParameterizedType parameterized) return TypeContext.of(parameterized);
                     else return TypeContext.VOID;
                 })
                 .map(type -> (TypeContext<?>) type)
