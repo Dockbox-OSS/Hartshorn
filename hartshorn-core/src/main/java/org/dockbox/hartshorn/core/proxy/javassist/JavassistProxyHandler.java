@@ -24,6 +24,7 @@ import org.dockbox.hartshorn.core.MultiMap;
 import org.dockbox.hartshorn.core.boot.ExceptionHandler;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.DefaultContext;
+import org.dockbox.hartshorn.core.context.ParameterLoaderContext;
 import org.dockbox.hartshorn.core.context.element.FieldContext;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
@@ -31,6 +32,7 @@ import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 import org.dockbox.hartshorn.core.proxy.MethodProxyContext;
 import org.dockbox.hartshorn.core.proxy.ProxyHandler;
+import org.dockbox.hartshorn.core.services.parameter.ParameterLoader;
 
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
@@ -110,12 +112,14 @@ public class JavassistProxyHandler<T> extends DefaultContext implements ProxyHan
 
     @Override
     public Object invoke(final Object self, final Method thisMethod, final Method proceed, final Object[] args) throws Throwable {
+        final Object[] arguments = this.resolveArgs(thisMethod, self, args);
+
         // The handler listens for all methods, while not all methods are proxied
         if (this.handlers.containsKey(thisMethod)) {
-            return this.invokeRegistered(self, thisMethod, proceed, args);
+            return this.invokeRegistered(self, thisMethod, proceed, arguments);
         }
         else {
-            return this.invokeUnregistered(self, thisMethod, proceed, args);
+            return this.invokeUnregistered(self, thisMethod, proceed, arguments);
         }
     }
 
@@ -149,6 +153,14 @@ public class JavassistProxyHandler<T> extends DefaultContext implements ProxyHan
             target = proceed;
 
         if (target != null) {
+            // If the target type is a class, whether it is abstract or not, we can invoke the native method directly. However, when
+            // the target type is an interface, this method is not defined, requiring us to perform our own equality check.
+            if (target.getName().equals("equals")
+                    && target.getDeclaringClass().equals(Object.class)
+                    && this.instance == null
+                    && this.type().isInterface()
+            ) return this.proxyEquals(args[0]);
+
             return this.invokeTarget(self, thisMethod, target, args);
         }
         else {
@@ -157,6 +169,12 @@ public class JavassistProxyHandler<T> extends DefaultContext implements ProxyHan
             final String className = this.type == null ? "" : this.type.name() + ".";
             throw new AbstractMethodError("Cannot invoke method '" + className + name + "' because it is abstract. This type is proxied, but no proxy property was found for the method.");
         }
+    }
+
+    protected boolean proxyEquals(final Object obj) {
+        if (obj == null) return false;
+        if (this.instance().map(instance -> instance.equals(obj)).or(false)) return true;
+        return this.proxyInstance().map(proxyInstance -> proxyInstance == obj).or(false);
     }
 
     protected Object invokeTarget(final Object self, final Method thisMethod, final Method target, final Object[] args) throws Throwable {
@@ -184,6 +202,12 @@ public class JavassistProxyHandler<T> extends DefaultContext implements ProxyHan
         catch (final InvocationTargetException e) {
             throw e.getCause();
         }
+    }
+
+    protected Object[] resolveArgs(final Method method, final Object instance, final Object[] args) {
+        final MethodContext<?, ?> methodContext = MethodContext.of(method);
+        final ParameterLoaderContext context = new ParameterLoaderContext(methodContext, methodContext.parent(), instance, this.applicationContext());
+        return this.parameterLoader.loadArguments(context, args).toArray();
     }
 
     protected Object invokeDelegate(final Method target, final Object[] args) throws InvocationTargetException, IllegalAccessException {

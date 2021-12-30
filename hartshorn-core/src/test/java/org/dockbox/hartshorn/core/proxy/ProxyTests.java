@@ -17,8 +17,9 @@
 
 package org.dockbox.hartshorn.core.proxy;
 
-import org.dockbox.hartshorn.core.annotations.activate.UseServiceProvision;
 import org.dockbox.hartshorn.core.annotations.activate.UseProxying;
+import org.dockbox.hartshorn.core.annotations.activate.UseServiceProvision;
+import org.dockbox.hartshorn.core.annotations.stereotype.Service;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
@@ -28,6 +29,7 @@ import org.dockbox.hartshorn.core.proxy.types.FinalProxyTarget;
 import org.dockbox.hartshorn.core.proxy.types.ProviderService;
 import org.dockbox.hartshorn.core.proxy.types.SampleType;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
+import org.dockbox.hartshorn.testsuite.InjectTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -108,4 +110,31 @@ public class ProxyTests {
         final SampleType type = service.get();
         Assertions.assertNotNull(type);
     }
+
+    @InjectTest
+    public void proxyEqualityTest(final ApplicationContext applicationContext) {
+        final DemoServiceA serviceA1 = applicationContext.get(DemoServiceA.class);
+        final DemoServiceA serviceA2 = applicationContext.get(DemoServiceA.class);
+
+        Assertions.assertEquals(serviceA1, serviceA2);
+
+        final DemoServiceB serviceB1 = applicationContext.get(DemoServiceB.class);
+        final DemoServiceB serviceB2 = applicationContext.get(DemoServiceB.class);
+
+        Assertions.assertEquals(serviceB1, serviceB2);
+
+        final DemoServiceC serviceC1 = applicationContext.get(DemoServiceC.class);
+        final DemoServiceC serviceC2 = applicationContext.get(DemoServiceC.class);
+
+        Assertions.assertEquals(serviceC1, serviceC2);
+    }
+
+    @Service
+    public static interface DemoServiceA { }
+
+    @Service
+    public static class DemoServiceB { }
+
+    @Service
+    public static abstract class DemoServiceC { }
 }
