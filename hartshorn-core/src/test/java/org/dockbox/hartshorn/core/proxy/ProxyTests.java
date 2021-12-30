@@ -50,9 +50,9 @@ public class ProxyTests {
                 ConcreteProxyTarget.class,
                 ConcreteProxyTarget.class.getMethod("name"),
                 (instance, args, proxyContext) -> "Hartshorn");
-        final ProxyHandler<ConcreteProxyTarget> handler = new JavassistProxyHandler<>(new ConcreteProxyTarget());
+        final ProxyHandler<ConcreteProxyTarget> handler = new JavassistProxyHandler<>(this.applicationContext(), new ConcreteProxyTarget());
         handler.delegate(property);
-        final ConcreteProxyTarget proxy = handler.proxy(this.applicationContext());
+        final ConcreteProxyTarget proxy = handler.proxy();
 
         Assertions.assertNotNull(proxy);
         Assertions.assertNotNull(proxy.name());
@@ -65,11 +65,11 @@ public class ProxyTests {
                 FinalProxyTarget.class,
                 FinalProxyTarget.class.getMethod("name"),
                 (instance, args, proxyContext) -> "Hartshorn");
-        final ProxyHandler<FinalProxyTarget> handler = new JavassistProxyHandler<>(new FinalProxyTarget());
+        final ProxyHandler<FinalProxyTarget> handler = new JavassistProxyHandler<>(this.applicationContext(), new FinalProxyTarget());
         Assertions.assertThrows(ApplicationException.class, () -> handler.delegate(property));
 
         // Ensure the exception isn't thrown after registration
-        final FinalProxyTarget proxy = handler.proxy(this.applicationContext());
+        final FinalProxyTarget proxy = handler.proxy();
 
         Assertions.assertNotNull(proxy);
         Assertions.assertNotNull(proxy.name());
@@ -86,7 +86,7 @@ public class ProxyTests {
         final ConcreteProxyTarget concrete = this.applicationContext().get(ConcreteProxyTarget.class);
         final ProxyHandler<ConcreteProxyTarget> handler = this.applicationContext().environment().manager().handler(TypeContext.of(ConcreteProxyTarget.class), concrete);
         handler.delegate(methodProxyContext);
-        final ConcreteProxyTarget proxy = handler.proxy(this.applicationContext());
+        final ConcreteProxyTarget proxy = handler.proxy();
 
         Assertions.assertNotNull(proxy);
         Assertions.assertNotNull(proxy.name());
@@ -98,7 +98,7 @@ public class ProxyTests {
         final ConcreteProxyTarget concrete = this.applicationContext().get(ConcreteProxyTarget.class);
         final ProxyHandler<ConcreteProxyTarget> handler = this.applicationContext().environment().manager().handler(TypeContext.of(ConcreteProxyTarget.class), concrete);
         Assertions.assertTrue(handler.proxyInstance().absent());
-        handler.proxy(this.applicationContext());
+        handler.proxy();
         Assertions.assertTrue(handler.proxyInstance().present());
     }
 

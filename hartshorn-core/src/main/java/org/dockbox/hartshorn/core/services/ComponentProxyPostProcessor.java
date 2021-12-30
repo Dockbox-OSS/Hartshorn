@@ -39,7 +39,7 @@ public class ComponentProxyPostProcessor implements ComponentPostProcessor<Servi
     public <T> T process(final ApplicationContext context, final Key<T> key, @Nullable final T instance) {
         try {
             final ProxyHandler<T> handler = context.environment().manager().handler(key.type(), instance);
-            return handler.proxy(context, instance);
+            return handler.proxy(instance);
         } catch (final ApplicationException e) {
             return ExceptionHandler.unchecked(e);
         }

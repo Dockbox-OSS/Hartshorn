@@ -72,19 +72,25 @@ public class JavassistProxyHandler<T> extends DefaultContext implements ProxyHan
     private T proxyInstance;
 
     @Getter
+    @NonNull
+    private final ApplicationContext applicationContext;
+
+    @Getter
     private final TypeContext<T> type;
 
     private final MultiMap<Method, MethodProxyContext<T, ?>> handlers = new CustomMultiMap<>(CopyOnWriteArrayList::new);
+    private final ParameterLoader<ParameterLoaderContext> parameterLoader = new UnproxyingParameterLoader();
 
-    public JavassistProxyHandler(final @Nullable T instance) {
-        this(instance, (Class<T>) instance.getClass());
+    public JavassistProxyHandler(final @NonNull ApplicationContext applicationContext, final @Nullable T instance) {
+        this(applicationContext, instance, (Class<T>) instance.getClass());
     }
 
-    public JavassistProxyHandler(final @Nullable T instance, final @NonNull Class<T> type) {
-        this(instance, TypeContext.of(type));
+    public JavassistProxyHandler(final @NonNull ApplicationContext applicationContext, final @Nullable T instance, final @NonNull Class<T> type) {
+        this(applicationContext, instance, TypeContext.of(type));
     }
 
-    public JavassistProxyHandler(final @Nullable T instance, final @NonNull TypeContext<T> type) {
+    public JavassistProxyHandler(final @NonNull ApplicationContext applicationContext, final @Nullable T instance, final @NonNull TypeContext<T> type) {
+        this.applicationContext = applicationContext;
         this.instance = instance;
         this.type = type;
     }
@@ -213,26 +219,26 @@ public class JavassistProxyHandler<T> extends DefaultContext implements ProxyHan
     }
 
     @Override
-    public T proxy(final ApplicationContext context) throws ApplicationException {
-        return this.proxy(context, null);
+    public T proxy() throws ApplicationException {
+        return this.proxy(null);
     }
 
     @Override
-    public T proxy(final ApplicationContext context, final T existing) throws ApplicationException {
+    public T proxy(final T existing) throws ApplicationException {
         // Proxy handlers can be reused, so we need to check if the proxy has already been created.
         if (this.proxyInstance != null)
             throw new IllegalStateException("Proxy already created, if you lost access to the original proxy instance, use #proxyInstance() instead. " +
                     "If you wish to expand the existing proxy by registering new " + MethodProxyContext.class.getSimpleName() + "s, you do not need to call #proxy() again.");
 
-        if (this.type().isInterface()) return this.interfaceProxy(context);
-        return this.newProxy(context, existing);
+        if (this.type().isInterface()) return this.interfaceProxy();
+        return this.newProxy(existing);
     }
 
-    protected T interfaceProxy(final ApplicationContext context) {
-        return new JavassistInterfaceHandler<>(this).proxy(context);
+    protected T interfaceProxy() {
+        return new JavassistInterfaceHandler<>(this).proxy();
     }
 
-    protected T newProxy(final ApplicationContext context, final T existing) throws ApplicationException {
+    protected T newProxy(final T existing) throws ApplicationException {
         final ProxyFactory factory = new ProxyFactory();
         factory.setSuperclass(this.type().type());
         // As proxies can be expanded, we do not set a filter here early on.
@@ -240,7 +246,7 @@ public class JavassistProxyHandler<T> extends DefaultContext implements ProxyHan
         try {
             final T proxy = (T) factory.create(new Class<?>[0], new Object[0], this);
             // New proxy instances
-            if (existing != null) this.restoreFields(context, existing, proxy);
+            if (existing != null) this.restoreFields(existing, proxy);
             this.proxyInstance(proxy);
             return proxy;
         }
@@ -263,8 +269,8 @@ public class JavassistProxyHandler<T> extends DefaultContext implements ProxyHan
         this.proxyInstance = proxyInstance;
     }
 
-    protected void restoreFields(final ApplicationContext context, final T existing, final T proxy) {
-        final TypeContext<T> typeContext = context.environment().manager().isProxy(existing)
+    protected void restoreFields(final T existing, final T proxy) {
+        final TypeContext<T> typeContext = this.applicationContext().environment().manager().isProxy(existing)
                 ? this.type()
                 : TypeContext.of(this.instance);
         for (final FieldContext<?> field : typeContext.fields()) {

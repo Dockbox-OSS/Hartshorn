@@ -17,13 +17,13 @@
 
 package org.dockbox.hartshorn.core.proxy;
 
-import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.Context;
+import org.dockbox.hartshorn.core.context.ContextCarrier;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 
-public interface ProxyHandler<T> extends Context {
+public interface ProxyHandler<T> extends Context, ContextCarrier {
 
     Exceptional<T> proxyInstance();
 
@@ -33,7 +33,7 @@ public interface ProxyHandler<T> extends Context {
 
     void delegate(final MethodProxyContext<T, ?> property);
 
-    T proxy(ApplicationContext context) throws ApplicationException;
+    T proxy() throws ApplicationException;
 
-    T proxy(ApplicationContext context, T existing) throws ApplicationException;
+    T proxy(T existing) throws ApplicationException;
 }

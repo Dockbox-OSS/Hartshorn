@@ -56,7 +56,7 @@ public class JavassistApplicationProxier implements ApplicationProxier, Applicat
 
     @Override
     public <T> Exceptional<T> proxy(final TypeContext<T> type, final T instance) {
-        return Exceptional.of(() -> this.handler(type, instance).proxy(this.applicationManager().applicationContext(), instance));
+        return Exceptional.of(() -> this.handler(type, instance).proxy(instance));
     }
 
     @Override
@@ -96,10 +96,10 @@ public class JavassistApplicationProxier implements ApplicationProxier, Applicat
                     return Exceptional.of(proxyInterfaceHandler.handler());
                 }
                 else if (invocationHandler instanceof AnnotationInvocationHandler annotationInvocationHandler) {
-                    return Exceptional.of(() -> new JavassistProxyHandler<>((T) annotationInvocationHandler.annotation()));
+                    return Exceptional.of(() -> new JavassistProxyHandler<>(this.applicationManager().applicationContext(), (T) annotationInvocationHandler.annotation()));
                 }
                 else if (instance instanceof Annotation annotation) {
-                    return Exceptional.of(() -> new JavassistProxyHandler<>(instance, (Class<T>) annotation.annotationType()));
+                    return Exceptional.of(() -> new JavassistProxyHandler<>(this.applicationManager().applicationContext(), instance, (Class<T>) annotation.annotationType()));
                 }
             }
         }
@@ -132,7 +132,7 @@ public class JavassistApplicationProxier implements ApplicationProxier, Applicat
 
     protected <T> ProxyHandler<T> handler(final Class<T> type, final T instance) {
         final Exceptional<ProxyHandler<T>> handler = this.handler(instance);
-        return handler.orElse(() -> new JavassistProxyHandler<>(instance, type)).get();
+        return handler.orElse(() -> new JavassistProxyHandler<>(this.applicationManager().applicationContext(), instance, type)).get();
     }
 
     public void registerProxyLookup(final ProxyLookup lookup) {

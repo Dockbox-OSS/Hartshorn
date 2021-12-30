@@ -45,7 +45,7 @@ public class JavassistInterfaceHandler<T> implements InvocationHandler, ProxyHan
         return this.handler().invoke(proxy, method, null, args);
     }
 
-    public T proxy(final ApplicationContext context) {
+    public T proxy() {
         final T proxy = (T) Proxy.newProxyInstance(this.getClass().getClassLoader(), new Class[]{
                 this.handler().type().type()
         }, this);
@@ -54,8 +54,8 @@ public class JavassistInterfaceHandler<T> implements InvocationHandler, ProxyHan
     }
 
     @Override
-    public T proxy(final ApplicationContext context, final T existing) throws ApplicationException {
-        return this.handler().proxy(context, existing);
+    public T proxy(final T existing) throws ApplicationException {
+        return this.handler().proxy(existing);
     }
 
     @Override
@@ -85,5 +85,10 @@ public class JavassistInterfaceHandler<T> implements InvocationHandler, ProxyHan
 
     public Object invoke(final Object self, final Method thisMethod, final Method proceed, final Object[] args) throws Throwable {
         return this.handler().invoke(self, thisMethod, proceed, args);
+    }
+
+    @Override
+    public ApplicationContext applicationContext() {
+        return this.handler().applicationContext();
     }
 }
