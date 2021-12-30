@@ -17,8 +17,9 @@
 
 package org.dockbox.hartshorn.core.proxy;
 
-import org.dockbox.hartshorn.core.annotations.activate.UseServiceProvision;
 import org.dockbox.hartshorn.core.annotations.activate.UseProxying;
+import org.dockbox.hartshorn.core.annotations.activate.UseServiceProvision;
+import org.dockbox.hartshorn.core.annotations.stereotype.Service;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
@@ -28,6 +29,7 @@ import org.dockbox.hartshorn.core.proxy.types.FinalProxyTarget;
 import org.dockbox.hartshorn.core.proxy.types.ProviderService;
 import org.dockbox.hartshorn.core.proxy.types.SampleType;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
+import org.dockbox.hartshorn.testsuite.InjectTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -50,9 +52,9 @@ public class ProxyTests {
                 ConcreteProxyTarget.class,
                 ConcreteProxyTarget.class.getMethod("name"),
                 (instance, args, proxyContext) -> "Hartshorn");
-        final ProxyHandler<ConcreteProxyTarget> handler = new JavassistProxyHandler<>(new ConcreteProxyTarget());
+        final ProxyHandler<ConcreteProxyTarget> handler = new JavassistProxyHandler<>(this.applicationContext(), new ConcreteProxyTarget());
         handler.delegate(property);
-        final ConcreteProxyTarget proxy = handler.proxy(this.applicationContext());
+        final ConcreteProxyTarget proxy = handler.proxy();
 
         Assertions.assertNotNull(proxy);
         Assertions.assertNotNull(proxy.name());
@@ -65,11 +67,11 @@ public class ProxyTests {
                 FinalProxyTarget.class,
                 FinalProxyTarget.class.getMethod("name"),
                 (instance, args, proxyContext) -> "Hartshorn");
-        final ProxyHandler<FinalProxyTarget> handler = new JavassistProxyHandler<>(new FinalProxyTarget());
+        final ProxyHandler<FinalProxyTarget> handler = new JavassistProxyHandler<>(this.applicationContext(), new FinalProxyTarget());
         Assertions.assertThrows(ApplicationException.class, () -> handler.delegate(property));
 
         // Ensure the exception isn't thrown after registration
-        final FinalProxyTarget proxy = handler.proxy(this.applicationContext());
+        final FinalProxyTarget proxy = handler.proxy();
 
         Assertions.assertNotNull(proxy);
         Assertions.assertNotNull(proxy.name());
@@ -86,7 +88,7 @@ public class ProxyTests {
         final ConcreteProxyTarget concrete = this.applicationContext().get(ConcreteProxyTarget.class);
         final ProxyHandler<ConcreteProxyTarget> handler = this.applicationContext().environment().manager().handler(TypeContext.of(ConcreteProxyTarget.class), concrete);
         handler.delegate(methodProxyContext);
-        final ConcreteProxyTarget proxy = handler.proxy(this.applicationContext());
+        final ConcreteProxyTarget proxy = handler.proxy();
 
         Assertions.assertNotNull(proxy);
         Assertions.assertNotNull(proxy.name());
@@ -98,7 +100,7 @@ public class ProxyTests {
         final ConcreteProxyTarget concrete = this.applicationContext().get(ConcreteProxyTarget.class);
         final ProxyHandler<ConcreteProxyTarget> handler = this.applicationContext().environment().manager().handler(TypeContext.of(ConcreteProxyTarget.class), concrete);
         Assertions.assertTrue(handler.proxyInstance().absent());
-        handler.proxy(this.applicationContext());
+        handler.proxy();
         Assertions.assertTrue(handler.proxyInstance().present());
     }
 
@@ -108,4 +110,31 @@ public class ProxyTests {
         final SampleType type = service.get();
         Assertions.assertNotNull(type);
     }
+
+    @InjectTest
+    public void proxyEqualityTest(final ApplicationContext applicationContext) {
+        final DemoServiceA serviceA1 = applicationContext.get(DemoServiceA.class);
+        final DemoServiceA serviceA2 = applicationContext.get(DemoServiceA.class);
+
+        Assertions.assertEquals(serviceA1, serviceA2);
+
+        final DemoServiceB serviceB1 = applicationContext.get(DemoServiceB.class);
+        final DemoServiceB serviceB2 = applicationContext.get(DemoServiceB.class);
+
+        Assertions.assertEquals(serviceB1, serviceB2);
+
+        final DemoServiceC serviceC1 = applicationContext.get(DemoServiceC.class);
+        final DemoServiceC serviceC2 = applicationContext.get(DemoServiceC.class);
+
+        Assertions.assertEquals(serviceC1, serviceC2);
+    }
+
+    @Service
+    public static interface DemoServiceA { }
+
+    @Service
+    public static class DemoServiceB { }
+
+    @Service
+    public static abstract class DemoServiceC { }
 }

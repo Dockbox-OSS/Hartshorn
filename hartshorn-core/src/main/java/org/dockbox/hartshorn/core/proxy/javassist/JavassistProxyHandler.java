@@ -24,6 +24,7 @@ import org.dockbox.hartshorn.core.MultiMap;
 import org.dockbox.hartshorn.core.boot.ExceptionHandler;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.DefaultContext;
+import org.dockbox.hartshorn.core.context.ParameterLoaderContext;
 import org.dockbox.hartshorn.core.context.element.FieldContext;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
@@ -31,6 +32,7 @@ import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 import org.dockbox.hartshorn.core.proxy.MethodProxyContext;
 import org.dockbox.hartshorn.core.proxy.ProxyHandler;
+import org.dockbox.hartshorn.core.services.parameter.ParameterLoader;
 
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
@@ -72,19 +74,25 @@ public class JavassistProxyHandler<T> extends DefaultContext implements ProxyHan
     private T proxyInstance;
 
     @Getter
+    @NonNull
+    private final ApplicationContext applicationContext;
+
+    @Getter
     private final TypeContext<T> type;
 
     private final MultiMap<Method, MethodProxyContext<T, ?>> handlers = new CustomMultiMap<>(CopyOnWriteArrayList::new);
+    private final ParameterLoader<ParameterLoaderContext> parameterLoader = new UnproxyingParameterLoader();
 
-    public JavassistProxyHandler(final @Nullable T instance) {
-        this(instance, (Class<T>) instance.getClass());
+    public JavassistProxyHandler(final @NonNull ApplicationContext applicationContext, final @Nullable T instance) {
+        this(applicationContext, instance, (Class<T>) instance.getClass());
     }
 
-    public JavassistProxyHandler(final @Nullable T instance, final @NonNull Class<T> type) {
-        this(instance, TypeContext.of(type));
+    public JavassistProxyHandler(final @NonNull ApplicationContext applicationContext, final @Nullable T instance, final @NonNull Class<T> type) {
+        this(applicationContext, instance, TypeContext.of(type));
     }
 
-    public JavassistProxyHandler(final @Nullable T instance, final @NonNull TypeContext<T> type) {
+    public JavassistProxyHandler(final @NonNull ApplicationContext applicationContext, final @Nullable T instance, final @NonNull TypeContext<T> type) {
+        this.applicationContext = applicationContext;
         this.instance = instance;
         this.type = type;
     }
@@ -104,12 +112,14 @@ public class JavassistProxyHandler<T> extends DefaultContext implements ProxyHan
 
     @Override
     public Object invoke(final Object self, final Method thisMethod, final Method proceed, final Object[] args) throws Throwable {
+        final Object[] arguments = this.resolveArgs(thisMethod, self, args);
+
         // The handler listens for all methods, while not all methods are proxied
         if (this.handlers.containsKey(thisMethod)) {
-            return this.invokeRegistered(self, thisMethod, proceed, args);
+            return this.invokeRegistered(self, thisMethod, proceed, arguments);
         }
         else {
-            return this.invokeUnregistered(self, thisMethod, proceed, args);
+            return this.invokeUnregistered(self, thisMethod, proceed, arguments);
         }
     }
 
@@ -143,6 +153,14 @@ public class JavassistProxyHandler<T> extends DefaultContext implements ProxyHan
             target = proceed;
 
         if (target != null) {
+            // If the target type is a class, whether it is abstract or not, we can invoke the native method directly. However, when
+            // the target type is an interface, this method is not defined, requiring us to perform our own equality check.
+            if (target.getName().equals("equals")
+                    && target.getDeclaringClass().equals(Object.class)
+                    && this.instance == null
+                    && this.type().isInterface()
+            ) return this.proxyEquals(args[0]);
+
             return this.invokeTarget(self, thisMethod, target, args);
         }
         else {
@@ -151,6 +169,12 @@ public class JavassistProxyHandler<T> extends DefaultContext implements ProxyHan
             final String className = this.type == null ? "" : this.type.name() + ".";
             throw new AbstractMethodError("Cannot invoke method '" + className + name + "' because it is abstract. This type is proxied, but no proxy property was found for the method.");
         }
+    }
+
+    protected boolean proxyEquals(final Object obj) {
+        if (obj == null) return false;
+        if (this.instance().map(instance -> instance.equals(obj)).or(false)) return true;
+        return this.proxyInstance().map(proxyInstance -> proxyInstance == obj).or(false);
     }
 
     protected Object invokeTarget(final Object self, final Method thisMethod, final Method target, final Object[] args) throws Throwable {
@@ -178,6 +202,12 @@ public class JavassistProxyHandler<T> extends DefaultContext implements ProxyHan
         catch (final InvocationTargetException e) {
             throw e.getCause();
         }
+    }
+
+    protected Object[] resolveArgs(final Method method, final Object instance, final Object[] args) {
+        final MethodContext<?, ?> methodContext = MethodContext.of(method);
+        final ParameterLoaderContext context = new ParameterLoaderContext(methodContext, methodContext.parent(), instance, this.applicationContext());
+        return this.parameterLoader.loadArguments(context, args).toArray();
     }
 
     protected Object invokeDelegate(final Method target, final Object[] args) throws InvocationTargetException, IllegalAccessException {
@@ -213,26 +243,26 @@ public class JavassistProxyHandler<T> extends DefaultContext implements ProxyHan
     }
 
     @Override
-    public T proxy(final ApplicationContext context) throws ApplicationException {
-        return this.proxy(context, null);
+    public T proxy() throws ApplicationException {
+        return this.proxy(null);
     }
 
     @Override
-    public T proxy(final ApplicationContext context, final T existing) throws ApplicationException {
+    public T proxy(final T existing) throws ApplicationException {
         // Proxy handlers can be reused, so we need to check if the proxy has already been created.
         if (this.proxyInstance != null)
             throw new IllegalStateException("Proxy already created, if you lost access to the original proxy instance, use #proxyInstance() instead. " +
                     "If you wish to expand the existing proxy by registering new " + MethodProxyContext.class.getSimpleName() + "s, you do not need to call #proxy() again.");
 
-        if (this.type().isInterface()) return this.interfaceProxy(context);
-        return this.newProxy(context, existing);
+        if (this.type().isInterface()) return this.interfaceProxy();
+        return this.newProxy(existing);
     }
 
-    protected T interfaceProxy(final ApplicationContext context) {
-        return new JavassistInterfaceHandler<>(this).proxy(context);
+    protected T interfaceProxy() {
+        return new JavassistInterfaceHandler<>(this).proxy();
     }
 
-    protected T newProxy(final ApplicationContext context, final T existing) throws ApplicationException {
+    protected T newProxy(final T existing) throws ApplicationException {
         final ProxyFactory factory = new ProxyFactory();
         factory.setSuperclass(this.type().type());
         // As proxies can be expanded, we do not set a filter here early on.
@@ -240,7 +270,7 @@ public class JavassistProxyHandler<T> extends DefaultContext implements ProxyHan
         try {
             final T proxy = (T) factory.create(new Class<?>[0], new Object[0], this);
             // New proxy instances
-            if (existing != null) this.restoreFields(context, existing, proxy);
+            if (existing != null) this.restoreFields(existing, proxy);
             this.proxyInstance(proxy);
             return proxy;
         }
@@ -263,8 +293,8 @@ public class JavassistProxyHandler<T> extends DefaultContext implements ProxyHan
         this.proxyInstance = proxyInstance;
     }
 
-    protected void restoreFields(final ApplicationContext context, final T existing, final T proxy) {
-        final TypeContext<T> typeContext = context.environment().manager().isProxy(existing)
+    protected void restoreFields(final T existing, final T proxy) {
+        final TypeContext<T> typeContext = this.applicationContext().environment().manager().isProxy(existing)
                 ? this.type()
                 : TypeContext.of(this.instance);
         for (final FieldContext<?> field : typeContext.fields()) {
