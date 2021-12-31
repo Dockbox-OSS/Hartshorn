@@ -30,7 +30,6 @@ public final class MethodProxyContext<T, R> {
     @Getter private final Class<T> value;
     @Getter private final Method target;
     private final ProxyFunction<T, R> delegate;
-    private final ProxyHolder holder = new ProxyHolder();
 
     @Deprecated(since = "4.2.5", forRemoval = true)
     @Getter @Setter private Phase phase = Phase.OVERWRITE;
@@ -56,13 +55,8 @@ public final class MethodProxyContext<T, R> {
         return this.target().getDeclaringClass();
     }
 
-    public R delegate(final T instance, final MethodContext<?, ?> proceed, final Object self, final Object... args) throws Throwable {
-        this.holder.cancelled(false);
-        return this.delegate.delegate(instance, args, new ProxyContextImpl(proceed, this.holder, self));
-    }
-
-    public boolean cancelled() {
-        return this.holder.cancelled();
+    public R delegate(final T instance, final ProxyHandler<T> handler, final MethodContext<?, ?> proceed, final Object self, final Object... args) throws Throwable {
+        return this.delegate.delegate(instance, args, new ProxyContextImpl(handler, proceed, self));
     }
 
     public boolean overwriteResult() {

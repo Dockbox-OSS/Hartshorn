@@ -21,7 +21,6 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.core.CustomMultiMap;
 import org.dockbox.hartshorn.core.MultiMap;
-import org.dockbox.hartshorn.core.boot.ExceptionHandler;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.DefaultContext;
 import org.dockbox.hartshorn.core.context.ParameterLoaderContext;
@@ -31,19 +30,21 @@ import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 import org.dockbox.hartshorn.core.proxy.MethodProxyContext;
+import org.dockbox.hartshorn.core.proxy.MethodWrapper;
+import org.dockbox.hartshorn.core.proxy.ProxyContext;
+import org.dockbox.hartshorn.core.proxy.ProxyContextImpl;
 import org.dockbox.hartshorn.core.proxy.ProxyHandler;
 import org.dockbox.hartshorn.core.services.parameter.ParameterLoader;
-
+import org.dockbox.hartshorn.core.proxy.WrappingPhase;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Proxy;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javassist.util.proxy.MethodHandler;
@@ -80,8 +81,9 @@ public class JavassistProxyHandler<T> extends DefaultContext implements ProxyHan
     @Getter
     private final TypeContext<T> type;
 
-    private final MultiMap<Method, MethodProxyContext<T, ?>> handlers = new CustomMultiMap<>(CopyOnWriteArrayList::new);
     private final ParameterLoader<ParameterLoaderContext> parameterLoader = new UnproxyingParameterLoader();
+    private final Map<Method, MethodProxyContext<T, ?>> handlers = new ConcurrentHashMap<>();
+    private final MultiMap<Method, MethodWrapper<T>> wrappers = new CustomMultiMap<>(CopyOnWriteArrayList::new);
 
     public JavassistProxyHandler(final @NonNull ApplicationContext applicationContext, final @Nullable T instance) {
         this(applicationContext, instance, (Class<T>) instance.getClass());
@@ -98,49 +100,66 @@ public class JavassistProxyHandler<T> extends DefaultContext implements ProxyHan
     }
 
     @SafeVarargs
-    public final void delegate(final @NonNull MethodProxyContext<T, ?> @NonNull... properties) {
+    public final void delegate(final @NonNull MethodProxyContext<T, ?> @NonNull ... properties) {
         for (final MethodProxyContext<T, ?> property : properties) this.delegate(property);
     }
 
     @Override
     public void delegate(final @NonNull MethodProxyContext<T, ?> property) {
         if (Modifier.isFinal(property.target().getModifiers()))
-            ExceptionHandler.unchecked(new ApplicationException("Cannot proxy final method " + property.target().getName()));
+            throw new IllegalArgumentException("Cannot proxy final method " + property.target().getName());
+
+        if (this.handlers.containsKey(property.target()))
+            throw new IllegalArgumentException("Cannot proxy method " + property.target().getName() + " twice");
 
         this.handlers.put(property.target(), property);
     }
 
     @Override
+    public void wrapper(final @NonNull MethodWrapper<T> wrapper) {
+        this.wrappers.put(wrapper.method().method(), wrapper);
+    }
+
+    @Override
     public Object invoke(final Object self, final Method thisMethod, final Method proceed, final Object[] args) throws Throwable {
+        final T wrappingInstance = this.instance == null ? (T) self : this.instance;
+        final MethodContext<?, T> methodContext = (MethodContext<?, T>) MethodContext.of(thisMethod);
+        final ProxyContext proxyContext = new ProxyContextImpl(this, proceed == null ? null : MethodContext.of(proceed), self);
+
         final Object[] arguments = this.resolveArgs(thisMethod, self, args);
 
+        this.performPhase(methodContext, wrappingInstance, arguments, proxyContext, WrappingPhase.BEFORE);
+
         // The handler listens for all methods, while not all methods are proxied
-        if (this.handlers.containsKey(thisMethod)) {
-            return this.invokeRegistered(self, thisMethod, proceed, arguments);
+        try {
+            final Object out = this.handlers.containsKey(thisMethod)
+                    ? this.invokeRegistered(self, thisMethod, proceed, arguments)
+                    : this.invokeUnregistered(self, thisMethod, proceed, arguments);
+
+            this.performPhase(methodContext, wrappingInstance, arguments, proxyContext, WrappingPhase.AFTER);
+
+            return out;
         }
-        else {
-            return this.invokeUnregistered(self, thisMethod, proceed, arguments);
+        catch (final Throwable e) {
+            this.performPhase(methodContext, wrappingInstance, arguments, proxyContext, WrappingPhase.THROWING);
+            throw e;
         }
     }
 
+    protected void performPhase(final @NonNull MethodContext<?, T> methodContext, final @NonNull T wrappingInstance, final @NonNull Object[] arguments, final @NonNull ProxyContext proxyContext, final @NonNull WrappingPhase phase) {
+        this.wrappers.get(methodContext.method()).stream()
+                .filter(wrapper -> wrapper.phase() == phase)
+                .forEach(wrapper -> wrapper.accept(methodContext, wrappingInstance, arguments, proxyContext));
+    }
+
     protected Object invokeRegistered(final Object self, final Method thisMethod, final Method proceed, final Object[] args) throws Throwable {
-        final Collection<MethodProxyContext<T, ?>> properties = this.handlers.get(thisMethod);
+        final MethodProxyContext<T, ?> context = this.handlers.get(thisMethod);
         Object returnValue = null;
-        // Sort the list so all properties are prioritised. The phase at which the property will be
-        // delegated does not matter here, as out-of-phase properties are not performed.
-        final List<MethodProxyContext<T, ?>> toSort = new ArrayList<>(properties);
-        toSort.sort(Comparator.comparingInt(MethodProxyContext::priority));
 
-        for (final MethodProxyContext<T, ?> property : properties) {
-            final MethodContext<?, ?> methodContext = proceed == null ? null : MethodContext.of(proceed);
-            final Object result = property.delegate(this.instance, methodContext, self, args);
-            if (property.overwriteResult() && !Void.TYPE.equals(thisMethod.getReturnType()))
-                returnValue = result;
-        }
-
-        if (null == returnValue && this.instance != null) {
-            returnValue = thisMethod.invoke(this.instance, args);
-        }
+        final MethodContext<?, ?> methodContext = proceed == null ? null : MethodContext.of(proceed);
+        final Object result = context.delegate(this.instance, this, methodContext, self, args);
+        if (context.overwriteResult() && !Void.TYPE.equals(thisMethod.getReturnType()))
+            returnValue = result;
 
         return returnValue;
     }
@@ -184,19 +203,19 @@ public class JavassistProxyHandler<T> extends DefaultContext implements ProxyHan
             // If the proxy associated with this handler has a delegate, use it.
             if (this.instance != null) return this.invokeDelegate(target, args);
 
-            // If the method is default inside an interface, we cannot invoke it directly using a proxy instance. Instead we
-            // need to lookup the method on the class and invoke it through the method handle directly.
+                // If the method is default inside an interface, we cannot invoke it directly using a proxy instance. Instead we
+                // need to lookup the method on the class and invoke it through the method handle directly.
             else if (thisMethod.isDefault()) return this.invokeDefault(declaringType, thisMethod, self, args);
 
-            // If the current target instance (self) is not a proxy, we can invoke the method directly using reflections.
+                // If the current target instance (self) is not a proxy, we can invoke the method directly using reflections.
             else if (!(self instanceof Proxy || ProxyFactory.isProxyClass(self.getClass()))) return this.invokeSelf(self, target, args);
 
-            // If the target method is concrete in an abstract class, we cannot invoke the method directly using reflections.
-            // This solution uses private lookups to invoke the method, unreflecting the method first so it can be invoked using
-            // proxy instances.
+                // If the target method is concrete in an abstract class, we cannot invoke the method directly using reflections.
+                // This solution uses private lookups to invoke the method, unreflecting the method first so it can be invoked using
+                // proxy instances.
             else if (this.type().isAbstract() && !MethodContext.of(thisMethod).isAbstract()) return this.invokePrivate(declaringType, thisMethod, self, args);
 
-            // If none of the above conditions are met, we have no way to handle the method.
+                // If none of the above conditions are met, we have no way to handle the method.
             else throw new IllegalArgumentException("Cannot invoke method " + thisMethod.getName() + " on proxy " + self.getClass().getName());
         }
         catch (final InvocationTargetException e) {
@@ -218,7 +237,7 @@ public class JavassistProxyHandler<T> extends DefaultContext implements ProxyHan
         return this.invokeAccessible(target, method -> method.invoke(self, args));
     }
 
-    protected Object invokeAccessible(final Method target, final MethodInvoker function) throws InvocationTargetException, IllegalAccessException{
+    protected Object invokeAccessible(final Method target, final MethodInvoker function) throws InvocationTargetException, IllegalAccessException {
         target.setAccessible(true);
         final Object result = function.invoke(target);
         target.setAccessible(false);

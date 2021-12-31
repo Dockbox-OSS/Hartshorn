@@ -27,8 +27,8 @@ import lombok.Getter;
 @AllArgsConstructor
 public class ProxyContextImpl implements ProxyContext {
 
+    private final ProxyHandler<?> handler;
     private final MethodContext<?, ?> proceed;
-    private final ProxyHolder holder;
     private final Object self;
 
     @Override

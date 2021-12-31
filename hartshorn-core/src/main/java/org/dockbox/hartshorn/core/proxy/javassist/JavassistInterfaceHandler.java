@@ -17,6 +17,7 @@
 
 package org.dockbox.hartshorn.core.proxy.javassist;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.Context;
 import org.dockbox.hartshorn.core.context.DelegatingContext;
@@ -24,6 +25,7 @@ import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 import org.dockbox.hartshorn.core.proxy.MethodProxyContext;
+import org.dockbox.hartshorn.core.proxy.MethodWrapper;
 import org.dockbox.hartshorn.core.proxy.ProxyHandler;
 
 import java.lang.reflect.InvocationHandler;
@@ -69,8 +71,13 @@ public class JavassistInterfaceHandler<T> implements InvocationHandler, ProxyHan
     }
 
     @Override
-    public void delegate(final MethodProxyContext<T, ?> property) {
+    public void delegate(@NonNull final MethodProxyContext<T, ?> property) {
         this.handler().delegate(property);
+    }
+
+    @Override
+    public void wrapper(@NonNull final MethodWrapper<T> wrapper) {
+        this.handler().wrapper(wrapper);
     }
 
     @Override

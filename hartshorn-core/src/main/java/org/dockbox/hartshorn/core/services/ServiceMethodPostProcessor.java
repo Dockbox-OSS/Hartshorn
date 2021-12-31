@@ -59,9 +59,6 @@ public abstract class ServiceMethodPostProcessor<A extends Annotation> extends F
         }
 
         return instance;
-        // TODO: Create a primary post processor which creates the proxy (when allowed), and only modify the existing proxy here.
-        //  This should also add a precondition to check if the incoming instance is a proxy. If it is, we can modify it. If it is not,
-        //  we can ignore the component and directly return the instance (yield a log message?).
     }
 
     @Override
