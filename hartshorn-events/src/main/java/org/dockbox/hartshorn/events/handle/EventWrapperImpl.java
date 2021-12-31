@@ -66,7 +66,7 @@ public final class EventWrapperImpl<T> implements Comparable<EventWrapperImpl<T>
 
     private EventWrapperImpl(
             final ParameterLoader<EventParameterLoaderContext> parameterLoader,
-            final Key<T> type,
+            final Key<T> key,
             final TypeContext<? extends Event> eventType,
             final MethodContext<?, T> method,
             final int priority,
@@ -75,7 +75,7 @@ public final class EventWrapperImpl<T> implements Comparable<EventWrapperImpl<T>
         this.context = context;
         this.listener = null; // Lazy loaded value
         this.parameterLoader = parameterLoader;
-        this.listenerType = type;
+        this.listenerType = key;
         this.eventType = eventType;
         this.method = method;
         this.priority = priority;
