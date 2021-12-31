@@ -21,7 +21,6 @@ import org.dockbox.hartshorn.core.annotations.inject.Binds;
 import org.dockbox.hartshorn.data.QueryFunction;
 import org.dockbox.hartshorn.data.context.QueryContext;
 import org.hibernate.Session;
-import org.hibernate.Transaction;
 
 import java.util.function.Function;
 
@@ -32,24 +31,9 @@ public class HibernateQueryFunction implements QueryFunction {
 
     @Override
     public Object execute(final QueryContext context) {
-        if (context.transactional()) return this.executeTransactional(context);
-        else return this.executeNonTransactional(context);
-    }
-
-    private Object executeNonTransactional(final QueryContext context) {
         return this.executeQuery(context, session -> {
             final Query query = context.query(session);
             return this.processQueryResult(context, query);
-        });
-    }
-
-    private Object executeTransactional(final QueryContext context) {
-        return this.executeQuery(context, session -> {
-            final Transaction transaction = session.beginTransaction();
-            final Query query = context.query(session);
-            final Object result = this.processQueryResult(context, query);
-            transaction.commit();
-            return result;
         });
     }
 

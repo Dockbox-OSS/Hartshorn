@@ -42,7 +42,6 @@ public class QueryContext {
 
     @Getter private final ApplicationContext applicationContext;
     @Getter private final JpaRepository<?, ?> repository;
-    @Getter private final boolean transactional;
     @Getter private final boolean modifiesEntity;
 
     public boolean automaticClear() {

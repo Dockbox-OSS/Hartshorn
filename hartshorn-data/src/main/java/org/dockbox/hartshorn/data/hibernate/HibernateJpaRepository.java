@@ -238,6 +238,8 @@ public class HibernateJpaRepository<T, ID> implements JpaRepository<T, ID>, Enab
     public void flush() {
         if (this.session != null && this.session.isOpen()) {
             this.session.flush();
+            final Transaction transaction = this.session().getTransaction();
+            if (transaction.isActive()) transaction.commit();
             this.close();
         }
     }
