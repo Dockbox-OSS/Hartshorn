@@ -68,7 +68,7 @@ public class ProxyTests {
                 FinalProxyTarget.class.getMethod("name"),
                 (instance, args, proxyContext) -> "Hartshorn");
         final ProxyHandler<FinalProxyTarget> handler = new JavassistProxyHandler<>(this.applicationContext(), new FinalProxyTarget());
-        Assertions.assertThrows(ApplicationException.class, () -> handler.delegate(property));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> handler.delegate(property));
 
         // Ensure the exception isn't thrown after registration
         final FinalProxyTarget proxy = handler.proxy();
