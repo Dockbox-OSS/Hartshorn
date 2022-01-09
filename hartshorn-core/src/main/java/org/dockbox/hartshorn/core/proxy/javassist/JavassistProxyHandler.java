@@ -30,19 +30,18 @@ import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 import org.dockbox.hartshorn.core.proxy.MethodProxyContext;
-import org.dockbox.hartshorn.core.proxy.MethodWrapper;
+import org.dockbox.hartshorn.core.proxy.ProxyMethodCallback;
 import org.dockbox.hartshorn.core.proxy.ProxyContext;
 import org.dockbox.hartshorn.core.proxy.ProxyContextImpl;
 import org.dockbox.hartshorn.core.proxy.ProxyHandler;
 import org.dockbox.hartshorn.core.services.parameter.ParameterLoader;
-import org.dockbox.hartshorn.core.proxy.WrappingPhase;
+import org.dockbox.hartshorn.core.proxy.CallbackPhase;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Proxy;
-import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -83,7 +82,7 @@ public class JavassistProxyHandler<T> extends DefaultContext implements ProxyHan
 
     private final ParameterLoader<ParameterLoaderContext> parameterLoader = new UnproxyingParameterLoader();
     private final Map<Method, MethodProxyContext<T, ?>> handlers = new ConcurrentHashMap<>();
-    private final MultiMap<Method, MethodWrapper<T>> wrappers = new CustomMultiMap<>(CopyOnWriteArrayList::new);
+    private final MultiMap<Method, ProxyMethodCallback<T>> callbacks = new CustomMultiMap<>(CopyOnWriteArrayList::new);
 
     public JavassistProxyHandler(final @NonNull ApplicationContext applicationContext, final @Nullable T instance) {
         this(applicationContext, instance, (Class<T>) instance.getClass());
@@ -116,19 +115,19 @@ public class JavassistProxyHandler<T> extends DefaultContext implements ProxyHan
     }
 
     @Override
-    public void wrapper(final @NonNull MethodWrapper<T> wrapper) {
-        this.wrappers.put(wrapper.method().method(), wrapper);
+    public void callback(final MethodContext<?, T> method, final @NonNull ProxyMethodCallback<T> callback) {
+        this.callbacks.put(method.method(), callback);
     }
 
     @Override
     public Object invoke(final Object self, final Method thisMethod, final Method proceed, final Object[] args) throws Throwable {
-        final T wrappingInstance = this.instance == null ? (T) self : this.instance;
+        final T callbackTarget = this.instance == null ? (T) self : this.instance;
         final MethodContext<?, T> methodContext = (MethodContext<?, T>) MethodContext.of(thisMethod);
         final ProxyContext proxyContext = new ProxyContextImpl(this, proceed == null ? null : MethodContext.of(proceed), self);
 
         final Object[] arguments = this.resolveArgs(thisMethod, self, args);
 
-        this.performPhase(methodContext, wrappingInstance, arguments, proxyContext, WrappingPhase.BEFORE);
+        this.performPhase(methodContext, callbackTarget, arguments, proxyContext, CallbackPhase.BEFORE);
 
         // The handler listens for all methods, while not all methods are proxied
         try {
@@ -136,20 +135,20 @@ public class JavassistProxyHandler<T> extends DefaultContext implements ProxyHan
                     ? this.invokeRegistered(self, thisMethod, proceed, arguments)
                     : this.invokeUnregistered(self, thisMethod, proceed, arguments);
 
-            this.performPhase(methodContext, wrappingInstance, arguments, proxyContext, WrappingPhase.AFTER);
+            this.performPhase(methodContext, callbackTarget, arguments, proxyContext, CallbackPhase.AFTER);
 
             return out;
         }
         catch (final Throwable e) {
-            this.performPhase(methodContext, wrappingInstance, arguments, proxyContext, WrappingPhase.THROWING);
+            this.performPhase(methodContext, callbackTarget, arguments, proxyContext, CallbackPhase.THROWING);
             throw e;
         }
     }
 
-    protected void performPhase(final @NonNull MethodContext<?, T> methodContext, final @NonNull T wrappingInstance, final @NonNull Object[] arguments, final @NonNull ProxyContext proxyContext, final @NonNull WrappingPhase phase) {
-        this.wrappers.get(methodContext.method()).stream()
-                .filter(wrapper -> wrapper.phase() == phase)
-                .forEach(wrapper -> wrapper.accept(methodContext, wrappingInstance, arguments, proxyContext));
+    protected void performPhase(final @NonNull MethodContext<?, T> methodContext, final @NonNull T instance, final @NonNull Object[] arguments, final @NonNull ProxyContext proxyContext, final @NonNull CallbackPhase phase) {
+        this.callbacks.get(methodContext.method()).stream()
+                .filter(callback -> callback.phase() == phase)
+                .forEach(callback -> callback.accept(methodContext, instance, arguments, proxyContext));
     }
 
     protected Object invokeRegistered(final Object self, final Method thisMethod, final Method proceed, final Object[] args) throws Throwable {

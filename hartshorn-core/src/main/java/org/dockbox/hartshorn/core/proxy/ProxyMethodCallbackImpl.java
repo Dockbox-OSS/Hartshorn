@@ -15,12 +15,21 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.core.proxy.javassist;
+package org.dockbox.hartshorn.core.proxy;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import org.dockbox.hartshorn.core.context.element.MethodContext;
 
-@FunctionalInterface
-public interface MethodInvoker {
-    Object invoke(Method method) throws InvocationTargetException, IllegalAccessException;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@AllArgsConstructor
+public class ProxyMethodCallbackImpl<T> implements ProxyMethodCallback<T> {
+
+    @Getter final CallbackPhase phase;
+    final ProxyCallback<T> function;
+
+    @Override
+    public void accept(final MethodContext<?, T> method, final T instance, final Object[] args, final ProxyContext context) {
+        this.function.accept(method, instance, args, context);
+    }
 }

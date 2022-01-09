@@ -1,3 +1,20 @@
+/*
+ * Copyright (C) 2020 Guus Lieben
+ *
+ * This framework is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 2.1 of the
+ * License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See
+ * the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
+ */
+
 package org.dockbox.hartshorn.data.service;
 
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -5,8 +22,8 @@ import org.dockbox.hartshorn.core.Key;
 import org.dockbox.hartshorn.core.annotations.activate.AutomaticActivation;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
-import org.dockbox.hartshorn.core.proxy.MethodWrapperFunction;
-import org.dockbox.hartshorn.core.services.PhasedMethodWrapperPostProcessor;
+import org.dockbox.hartshorn.core.proxy.ProxyCallback;
+import org.dockbox.hartshorn.core.services.PhasedProxyCallbackPostProcessor;
 import org.dockbox.hartshorn.data.TransactionFactory;
 import org.dockbox.hartshorn.data.TransactionManager;
 import org.dockbox.hartshorn.data.annotations.Transactional;
@@ -16,7 +33,7 @@ import org.dockbox.hartshorn.data.jpa.JpaRepository;
 import javax.persistence.EntityManager;
 
 @AutomaticActivation
-public class TransactionalMethodWrapperPostProcessor extends PhasedMethodWrapperPostProcessor<UsePersistence> {
+public class TransactionalProxyCallbackPostProcessor extends PhasedProxyCallbackPostProcessor<UsePersistence> {
 
     @Override
     public Class<UsePersistence> activator() {
@@ -34,7 +51,7 @@ public class TransactionalMethodWrapperPostProcessor extends PhasedMethodWrapper
     }
 
     @Override
-    public <T> MethodWrapperFunction<T> wrapBefore(final ApplicationContext context, final MethodContext<?, T> method, final Key<T> key, @Nullable final T instance) {
+    public <T> ProxyCallback<T> doBefore(final ApplicationContext context, final MethodContext<?, T> method, final Key<T> key, @Nullable final T instance) {
         final TransactionFactory transactionFactory = context.get(TransactionFactory.class);
 
         return (methodContext, target, args, proxyContext) -> {
@@ -49,16 +66,16 @@ public class TransactionalMethodWrapperPostProcessor extends PhasedMethodWrapper
     }
 
     @Override
-    public <T> MethodWrapperFunction<T> wrapAfter(final ApplicationContext context, final MethodContext<?, T> method, final Key<T> key, @Nullable final T instance) {
+    public <T> ProxyCallback<T> doAfter(final ApplicationContext context, final MethodContext<?, T> method, final Key<T> key, @Nullable final T instance) {
         return this.flushTarget();
     }
 
     @Override
-    public <T> MethodWrapperFunction<T> wrapAfterThrowing(final ApplicationContext context, final MethodContext<?, T> method, final Key<T> key, @Nullable final T instance) {
+    public <T> ProxyCallback<T> doAfterThrowing(final ApplicationContext context, final MethodContext<?, T> method, final Key<T> key, @Nullable final T instance) {
         return this.flushTarget();
     }
 
-    protected <T> MethodWrapperFunction<T> flushTarget() {
+    protected <T> ProxyCallback<T> flushTarget() {
         return (methodContext, target, args, proxyContext) -> {
             if (target instanceof JpaRepository jpaRepository) {
                 jpaRepository.flush();

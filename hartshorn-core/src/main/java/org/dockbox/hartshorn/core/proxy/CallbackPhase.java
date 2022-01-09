@@ -15,12 +15,10 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.core.proxy.javassist;
+package org.dockbox.hartshorn.core.proxy;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-
-@FunctionalInterface
-public interface MethodInvoker {
-    Object invoke(Method method) throws InvocationTargetException, IllegalAccessException;
+public enum CallbackPhase {
+    BEFORE,
+    AFTER,
+    THROWING,
 }
