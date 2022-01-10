@@ -1,18 +1,18 @@
 /*
- *  Copyright (C) 2020 Guus Lieben
+ * Copyright (C) 2020 Guus Lieben
  *
- *  This framework is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU Lesser General Public License as
- *  published by the Free Software Foundation, either version 2.1 of the
- *  License, or (at your option) any later version.
+ * This framework is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 2.1 of the
+ * License, or (at your option) any later version.
  *
- *  This library is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See
- *  the GNU Lesser General Public License for more details.
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See
+ * the GNU Lesser General Public License for more details.
  *
- *  You should have received a copy of the GNU Lesser General Public License
- *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
 package org.dockbox.hartshorn.core.context;
@@ -20,6 +20,7 @@ package org.dockbox.hartshorn.core.context;
 import org.dockbox.hartshorn.core.AnnotationHelper;
 import org.dockbox.hartshorn.core.CustomMultiMap;
 import org.dockbox.hartshorn.core.MultiMap;
+import org.dockbox.hartshorn.core.boot.ApplicationManager;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 
 import java.lang.annotation.Annotation;
@@ -36,16 +37,13 @@ import lombok.Getter;
 public abstract class AbstractPrefixContext<S> extends DefaultContext implements PrefixContext {
 
     @Getter(AccessLevel.PROTECTED)
-    private final ApplicationEnvironment environment;
+    private final ApplicationManager manager;
 
     private final Map<String, S> prefixes = new ConcurrentHashMap<>();
     private final MultiMap<Class<? extends Annotation>, Class<? extends Annotation>> annotationHierarchy = new CustomMultiMap<>(CopyOnWriteArrayList::new);
 
-    protected AbstractPrefixContext(final ApplicationEnvironment environment, final Iterable<String> initialPrefixes) {
-        this.environment = environment;
-        for (final String initialPrefix : initialPrefixes) {
-            this.prefix(initialPrefix);
-        }
+    protected AbstractPrefixContext(final ApplicationManager manager) {
+        this.manager = manager;
     }
 
     protected abstract S process(String prefix);
@@ -61,7 +59,7 @@ public abstract class AbstractPrefixContext<S> extends DefaultContext implements
     @Override
     public void prefix(final String prefix) {
         if (!this.prefixes.containsKey(prefix)) {
-            this.environment.manager().log().debug("Registering and caching prefix '%s'".formatted(prefix));
+            this.manager().log().debug("Registering and caching prefix '%s'".formatted(prefix));
             this.prefixes.put(prefix, this.process(prefix));
         }
     }

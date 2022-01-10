@@ -15,16 +15,10 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.core.context;
+package org.dockbox.hartshorn.core.boot;
 
-import java.lang.annotation.Annotation;
 import java.util.Set;
 
-public interface ActivatorSource {
-
-    Set<Annotation> activators();
-
-    boolean hasActivator(Class<? extends Annotation> activator);
-
-    <A> A activator(Class<A> activator);
+public interface ObservableApplicationManager extends ApplicationManager {
+    Set<LifecycleObserver> observers();
 }

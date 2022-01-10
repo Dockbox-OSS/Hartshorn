@@ -48,6 +48,7 @@ import org.dockbox.hartshorn.core.boot.ApplicationProxier;
 import org.dockbox.hartshorn.core.boot.ClasspathResourceLocator;
 import org.dockbox.hartshorn.core.boot.ExceptionHandler;
 import org.dockbox.hartshorn.core.boot.LifecycleObservable;
+import org.dockbox.hartshorn.core.boot.SelfActivatingApplicationContext;
 import org.dockbox.hartshorn.core.context.element.FieldContext;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
@@ -88,7 +89,7 @@ import javax.inject.Named;
 import lombok.AccessLevel;
 import lombok.Getter;
 
-public class HartshornApplicationContext extends DefaultContext implements ApplicationContext {
+public class HartshornApplicationContext extends DefaultContext implements SelfActivatingApplicationContext {
 
     private static final Pattern ARGUMENTS = Pattern.compile("-H([a-zA-Z0-9\\.]+)=(.+)");
 
@@ -155,6 +156,7 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
         this.bind(Key.of(LifecycleObservable.class), this.environment().manager());
     }
 
+    @Override
     public void addActivator(final Annotation annotation) {
         if (this.activators.contains(annotation)) return;
         final TypeContext<? extends Annotation> annotationType = TypeContext.of(annotation.annotationType());
@@ -235,6 +237,7 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
         return (A) this.activators.stream().filter(a -> a.annotationType().equals(activator)).findFirst().orElse(null);
     }
 
+    @Override
     public void processPrefixQueue() {
         String scan;
         while ((scan = this.prefixQueue.poll()) != null) {
@@ -257,6 +260,7 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
         }
     }
 
+    @Override
     public void process() {
         this.processPrefixQueue();
         final Collection<ComponentContainer> containers = this.locator().containers(ComponentType.FUNCTIONAL);
@@ -635,6 +639,7 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
         this.inHierarchy(contract, hierarchy -> hierarchy.add(Providers.of(instance)));
     }
 
+    @Override
     public void lookupActivatables() {
         final Collection<TypeContext<? extends ComponentProcessor>> children = this.environment().children(ComponentProcessor.class);
         for (final TypeContext<? extends ComponentProcessor> processor : children) {

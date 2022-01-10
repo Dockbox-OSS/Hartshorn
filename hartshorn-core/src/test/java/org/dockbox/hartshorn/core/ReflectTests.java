@@ -18,8 +18,9 @@
 package org.dockbox.hartshorn.core;
 
 import org.dockbox.hartshorn.core.annotations.Base;
+import org.dockbox.hartshorn.core.boot.ApplicationManager;
 import org.dockbox.hartshorn.core.bridge.BridgeImpl;
-import org.dockbox.hartshorn.core.context.ApplicationEnvironment;
+import org.dockbox.hartshorn.core.context.PrefixContext;
 import org.dockbox.hartshorn.core.context.ReflectionsPrefixContext;
 import org.dockbox.hartshorn.core.context.element.AnnotatedElementModifier;
 import org.dockbox.hartshorn.core.context.element.ConstructorContext;
@@ -182,16 +183,18 @@ public class ReflectTests {
     }
 
     @InjectTest
-    void testAnnotatedTypesReturnsAllInPrefix(final ApplicationEnvironment environment) {
-        final ReflectionsPrefixContext context = new ReflectionsPrefixContext(environment, HartshornUtils.asList("org.dockbox.hartshorn.core.types"));
+    void testAnnotatedTypesReturnsAllInPrefix(final ApplicationManager manager) {
+        final PrefixContext context = new ReflectionsPrefixContext(manager);
+        context.prefix("org.dockbox.hartshorn.core.types");
         final Collection<TypeContext<?>> types = context.types(Demo.class);
         Assertions.assertEquals(1, types.size());
         Assertions.assertEquals(ReflectTestType.class, types.iterator().next().type());
     }
 
     @InjectTest
-    void testSubTypesReturnsAllSubTypes(final ApplicationEnvironment environment) {
-        final ReflectionsPrefixContext context = new ReflectionsPrefixContext(environment, HartshornUtils.asList("org.dockbox.hartshorn.core.types"));
+    void testSubTypesReturnsAllSubTypes(final ApplicationManager manager) {
+        final PrefixContext context = new ReflectionsPrefixContext(manager);
+        context.prefix("org.dockbox.hartshorn.core.types");
         final Collection<TypeContext<? extends ParentTestType>> types = context.children(ParentTestType.class);
         Assertions.assertEquals(1, types.size());
         Assertions.assertEquals(ReflectTestType.class, types.iterator().next().type());

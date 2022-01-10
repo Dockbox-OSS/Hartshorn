@@ -17,8 +17,12 @@
 
 package org.dockbox.hartshorn.core.context;
 
+import org.dockbox.hartshorn.core.boot.ApplicationManager;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.reflections.Reflections;
+import org.reflections.scanners.Scanners;
+import org.reflections.util.ConfigurationBuilder;
+import org.reflections.util.FilterBuilder;
 
 import java.lang.annotation.Annotation;
 import java.util.Collection;
@@ -29,13 +33,18 @@ import java.util.stream.Collectors;
 
 public class ReflectionsPrefixContext extends AbstractPrefixContext<Reflections> {
 
-    public ReflectionsPrefixContext(final ApplicationEnvironment environment, final Iterable<String> initialPrefixes) {
-        super(environment, initialPrefixes);
+    public ReflectionsPrefixContext(final ApplicationManager manager) {
+        super(manager);
     }
 
     @Override
     protected Reflections process(final String prefix) {
-        return new Reflections(prefix);
+        final FilterBuilder inputsFilter = new FilterBuilder();
+        inputsFilter.includePackage(prefix);
+        return new Reflections(new ConfigurationBuilder()
+                .forPackage(prefix)
+                .setInputsFilter(inputsFilter)
+                .setScanners(Scanners.TypesAnnotated, Scanners.SubTypes));
     }
 
     @Override
@@ -44,11 +53,13 @@ public class ReflectionsPrefixContext extends AbstractPrefixContext<Reflections>
         final Set<Class<? extends Annotation>> extensions = this.extensions(annotation);
         final Set<TypeContext<?>> types = new HashSet<>();
 
+        this.manager().log().debug("Scanning for types with annotation {} in prefix {}", annotation.getName(), prefix);
         for (final Class<? extends Annotation> extension : extensions) {
             for (final Class<?> type : reflections.getTypesAnnotatedWith(extension, !skipParents)) {
                 types.add(TypeContext.of(type));
             }
         }
+        this.manager().log().debug("Found {} types with annotation {} in prefix {}", types.size(), annotation.getName(), prefix);
         return Set.copyOf(types);
     }
 
@@ -64,9 +75,11 @@ public class ReflectionsPrefixContext extends AbstractPrefixContext<Reflections>
     @Override
     public <T> Collection<TypeContext<? extends T>> children(final TypeContext<T> parent) {
         final Set<Class<? extends T>> subTypes = new HashSet<>();
+        this.manager().log().debug("Scanning for sub-types of {}", parent.type().getName());
         for (final Reflections reflections : this.all()) {
             subTypes.addAll(reflections.getSubTypesOf(parent.type()));
         }
+        this.manager().log().debug("Found {} sub-types of {}", subTypes.size(), parent.type().getName());
         return List.copyOf(subTypes).stream().map(TypeContext::of).collect(Collectors.toList());
     }
 }
