@@ -40,6 +40,9 @@ import javax.inject.Named;
  * <p>This annotation can be repeated, to create multiple bindings for the different
  * {@link org.dockbox.hartshorn.core.Key}s.
  *
+ * <p>This acts as a shortcut for components which implement a specific interface and wish to
+ * be bound to that interface.
+ *
  * @author Guus Lieben
  * @since 4.1.0
  */
@@ -47,15 +50,30 @@ import javax.inject.Named;
 @Target(ElementType.TYPE)
 @Extends(Component.class)
 public @interface ComponentBinding {
-    
+
+    /**
+     * @see Component#id()
+     */
     String id() default "";
 
+    /**
+     * @see Component#name()
+     */
     String name() default "";
 
+    /**
+     * @see Component#singleton()
+     */
     boolean singleton() default false;
 
+    /**
+     * @see Component#type()
+     */
     ComponentType type() default ComponentType.INJECTABLE;
 
+    /**
+     * @see Component#permitProxying()
+     */
     boolean permitProxying() default true;
 
     /**
