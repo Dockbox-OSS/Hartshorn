@@ -39,7 +39,7 @@ import java.lang.annotation.Target;
  * <p>By default all services are {@link #singleton() singletons}.
  *
  * @author Guus Lieben
- * @since 4.1.0
+ * @since 21.2
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
@@ -65,7 +65,7 @@ public @interface Service {
      * @return Whether the service is enabled.
      * @deprecated See {@link Component#enabled()}
      */
-    @Deprecated(since = "4.2.5", forRemoval = true)
+    @Deprecated(since = "22.1", forRemoval = true)
     boolean enabled() default true;
 
     /**

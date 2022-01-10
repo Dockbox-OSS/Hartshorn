@@ -17,9 +17,37 @@
 
 package org.dockbox.hartshorn.core.boot;
 
+/**
+ * The exception handler is used to handle exceptions that occur during the application lifecycle.
+ *
+ * @author Guus Lieben
+ * @since 21.9
+ */
 public interface ExceptionHandler {
+
+    /**
+     * Handles the given exception using the preferred behavior.
+     *
+     * @param throwable The exception to handle.
+     */
     void handle(Throwable throwable);
+
+    /**
+     * Handles the given exception using the preferred behavior. The given message may be included to provide more
+     * information about the exception.
+     *
+     * @param message The message to include in the exception.
+     * @param throwable The exception to handle.
+     */
     void handle(String message, Throwable throwable);
+
+    /**
+     * Whether to use stacktraces in the exception handler. This is useful for debugging purposes, but may be ignored
+     * by the exception handler.
+     *
+     * @param stacktraces Whether to use stacktraces.
+     * @return Itself, for chaining.
+     */
     ExceptionHandler stacktraces(boolean stacktraces);
 
     /**

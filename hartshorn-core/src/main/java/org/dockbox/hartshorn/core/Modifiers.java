@@ -22,7 +22,7 @@ package org.dockbox.hartshorn.core;
  * modify the behavior of the framework in a specific way.
  *
  * @author Guus Lieben
- * @since 4.1.0
+ * @since 21.2
  */
 public enum Modifiers {
     /**
@@ -30,7 +30,7 @@ public enum Modifiers {
      * annotationsWith present, and will indicate all activators are present when
      * requested.
      *
-     * @since 4.1.0
+     * @since 21.2
      */
     ACTIVATE_ALL,
 
@@ -38,7 +38,7 @@ public enum Modifiers {
      * Makes it so the logging level of the application is changed to {@code DEBUG}.
      * This allows for finer logging and debugging.
      *
-     * @since 4.2.5
+     * @since 22.1
      */
     DEBUG,
 }

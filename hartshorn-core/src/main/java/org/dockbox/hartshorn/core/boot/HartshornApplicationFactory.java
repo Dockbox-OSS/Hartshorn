@@ -21,6 +21,7 @@ import org.dockbox.hartshorn.core.InjectorMetaProvider;
 import org.dockbox.hartshorn.core.annotations.activate.Activator;
 import org.dockbox.hartshorn.core.annotations.activate.UseBootstrap;
 import org.dockbox.hartshorn.core.annotations.activate.UseProxying;
+import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.ApplicationEnvironment;
 import org.dockbox.hartshorn.core.context.HartshornApplicationContext;
 import org.dockbox.hartshorn.core.context.HartshornApplicationEnvironment;
@@ -31,6 +32,26 @@ import java.lang.annotation.Annotation;
 
 import lombok.Getter;
 
+/**
+ * The default implementation of the {@link HartshornApplicationFactory} interface. This implementation is responsible for
+ * creating the {@link ApplicationContext} and the {@link ApplicationEnvironment} instances.
+ *
+ * <p>This implementation uses the default implementations of all required components by default when {@link #loadDefaults()}
+ * is called.
+ *
+ * @author Guus Lieben
+ * @since 21.9
+ *
+ * @see HartshornApplicationLogger
+ * @see HartshornApplicationConfigurator
+ * @see JavassistApplicationProxier
+ * @see HartshornApplicationFSProvider
+ * @see HartshornApplicationEnvironment
+ * @see HartshornExceptionHandler
+ * @see ComponentLocatorImpl
+ * @see HartshornClasspathResourceLocator
+ * @see InjectorMetaProvider
+ */
 public class HartshornApplicationFactory extends AbstractActivatingApplicationFactory<HartshornApplicationFactory, HartshornApplicationContext, HartshornApplicationManager> {
 
     @Getter

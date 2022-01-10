@@ -42,7 +42,7 @@ import java.lang.annotation.Target;
  * when the application is initializing.
  *
  * @author Guus Lieben
- * @since 4.1.0
+ * @since 21.2
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.ANNOTATION_TYPE)

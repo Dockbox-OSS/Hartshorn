@@ -40,7 +40,7 @@ import java.lang.annotation.Annotation;
  *
  * @param <A> The type of the activator annotation.
  * @author Guus Lieben
- * @since 4.2.5
+ * @since 22.1
  */
 public interface ComponentPostProcessor<A extends Annotation> extends ComponentProcessor<A> {
 }

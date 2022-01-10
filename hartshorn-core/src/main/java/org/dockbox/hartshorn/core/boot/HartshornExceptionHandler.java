@@ -23,6 +23,14 @@ import org.slf4j.LoggerFactory;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * This class is used to handle exceptions that occur during the application lifecycle. This default implementation
+ * of the {@link ExceptionHandler} interface logs the exception to the {@link Logger} and is able to correctly display
+ * stacktraces when {@link #stacktraces()} is {@code true}.
+ *
+ * @author Guus Lieben
+ * @since 21.9
+ */
 public class HartshornExceptionHandler implements ExceptionHandler, ApplicationManaged {
 
     @Getter @Setter
@@ -68,6 +76,13 @@ public class HartshornExceptionHandler implements ExceptionHandler, ApplicationM
         }
     }
 
+    /**
+     * Returns the first message of the given {@link Throwable} or {@code null} if the given {@link Throwable} is
+     * {@code null}.
+     *
+     * @param throwable The {@link Throwable} to get the first message from.
+     * @return The first message of the given {@link Throwable} or {@code null}.
+     */
     public static String firstMessage(final Throwable throwable) {
         Throwable next = throwable;
         while (next != null) {

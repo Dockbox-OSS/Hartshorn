@@ -42,7 +42,7 @@ import java.lang.annotation.Annotation;
  * It is executed during application construction.
  *
  * @author Guus Lieben
- * @since 4.2.5
+ * @since 22.1
  * @param <A>
  */
 public interface ComponentPreProcessor<A extends Annotation> extends ComponentProcessor<A> {

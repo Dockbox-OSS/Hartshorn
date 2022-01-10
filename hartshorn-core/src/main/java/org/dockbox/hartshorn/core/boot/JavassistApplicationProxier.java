@@ -38,6 +38,17 @@ import javassist.util.proxy.MethodHandler;
 import javassist.util.proxy.ProxyFactory;
 import lombok.Getter;
 
+/**
+ * The default implementation of the {@link ApplicationProxier} interface. This implementation uses the JavaAssist
+ * library to create and manage proxies.
+ *
+ * <p>To support unproxying external proxy objects, this implementation uses {@link ProxyLookup}s to lookup the
+ * original object. By default, this implementation uses {@link NativeProxyLookup} and {@link JavassistProxyLookup}.
+ *
+ * @author Guus Lieben
+ * @since 21.9
+ * @see ProxyLookup
+ */
 public class JavassistApplicationProxier implements ApplicationProxier, ApplicationManaged {
 
     @Getter

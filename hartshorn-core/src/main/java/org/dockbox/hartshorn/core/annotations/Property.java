@@ -24,6 +24,9 @@ import java.lang.annotation.Target;
 
 /**
  * The interface to provide custom information to an object field when creating an object dynamically.
+ *
+ * @author Guus Lieben
+ * @since 21.2
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
@@ -34,7 +37,7 @@ public @interface Property {
      * example:
      *
      * <pre>{@code
-     * \@Property("fn")
+     * @Property("fn")
      * private String firstName;
      * }</pre>
      *
@@ -47,7 +50,7 @@ public @interface Property {
      * attempt to find a method which accepts a value of the type of the provided value.
      *
      * <pre>{@code
-     * \@Property(setter = "valueString")
+     * @Property(setter = "valueString")
      * private Integer id;
      *
      * public void setId(Integer id) {
@@ -64,7 +67,7 @@ public @interface Property {
      * attempt to find this method which returns a value of the type of the field.
      *
      * <pre>{@code
-     * \@Property(getter = "getId")
+     * @Property(getter = "getId")
      * private Integer id;
      *
      * public Integer getId() {

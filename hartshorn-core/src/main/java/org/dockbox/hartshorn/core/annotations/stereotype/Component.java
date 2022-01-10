@@ -52,7 +52,7 @@ import java.lang.annotation.Target;
  *
  * <p>The following example shows how to annotate a class as a component:
  * <pre>{@code
- *      \@Component
+ *      @Component
  *      public class MyComponent {
  *          // ...
  *      }
@@ -65,7 +65,7 @@ import java.lang.annotation.Target;
  * @see ComponentType
  *
  * @author Guus Lieben
- * @since 4.1.0
+ * @since 21.2
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
@@ -126,7 +126,7 @@ public @interface Component {
      * @deprecated No longer used, as the {@link org.dockbox.hartshorn.core.services.ComponentLocator}
      *             is responsible for enabling components.
      */
-    @Deprecated(since = "4.2.5", forRemoval = true)
+    @Deprecated(since = "22.1", forRemoval = true)
     boolean enabled() default true;
 
     /**

@@ -42,7 +42,7 @@ public class ApplicationException extends Exception {
      * @return The current exception, wrapped in a {@link RuntimeException}.
      * @deprecated Use {@link ExceptionHandler#unchecked(Throwable)} instead.
      */
-    @Deprecated(since = "4.2.5", forRemoval = true)
+    @Deprecated(since = "22.1", forRemoval = true)
     public RuntimeException runtime() {
         return new RuntimeException(this);
     }

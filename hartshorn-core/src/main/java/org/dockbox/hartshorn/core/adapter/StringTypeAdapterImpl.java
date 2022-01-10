@@ -32,7 +32,7 @@ import lombok.Getter;
  *
  * @param <T> The type to convert to.
  * @author Guus Lieben
- * @since 4.2.4
+ * @since 21.9
  */
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public final class StringTypeAdapterImpl<T> implements StringTypeAdapter<T> {

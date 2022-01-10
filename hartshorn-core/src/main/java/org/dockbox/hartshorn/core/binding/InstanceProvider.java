@@ -24,6 +24,17 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+/**
+ * A singleton-like provider, which uses an existing instance of type {@code T} to
+ * provide the requested instance.
+ *
+ * @param <T> The type of the instance to provide.
+ * @author Guus Lieben
+ * @since 21.4
+ * @see Provider
+ * @see SupplierProvider
+ * @see ContextDrivenProvider
+ */
 @AllArgsConstructor(access = AccessLevel.PACKAGE)
 @Getter
 public class InstanceProvider<T> implements Provider<T> {

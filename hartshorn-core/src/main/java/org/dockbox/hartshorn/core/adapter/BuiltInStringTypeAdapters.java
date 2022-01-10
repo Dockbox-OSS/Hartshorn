@@ -23,9 +23,10 @@ import java.util.UUID;
 
 /**
  * A collection of built-in string type adapters.
+ * 
  * @see StringTypeAdapter
  * @author Guus Lieben
- * @since 4.2.4
+ * @since 21.9
  */
 public final class BuiltInStringTypeAdapters {
 
@@ -46,7 +47,7 @@ public final class BuiltInStringTypeAdapters {
     });
 
     /**
-     * A boolean adapter, converting a string to a {@link Boolean}. If the input equals {@Code yes} or {@code true}, the
+     * A boolean adapter, converting a string to a {@link Boolean}. If the input equals {@code yes} or {@code true}, the
      * result is {@code true}. If the input equals {@code no} or {@code false}, the result is {@code false}. Otherwise,
      * the result is always {@code false}.
      */

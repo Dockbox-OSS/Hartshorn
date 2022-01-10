@@ -25,6 +25,14 @@ import org.slf4j.LoggerFactory;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * A {@link ApplicationLogger} implementation that uses the calling class as the logger name, provided the
+ * {@link LogExclude} annotation is not present on the calling class, in which case the next calling class
+ * on the current stacktrace is used.
+ *
+ * @author Guus Lieben
+ * @since 21.9
+ */
 @LogExclude
 public class HartshornApplicationLogger implements ApplicationLogger {
 

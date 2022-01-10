@@ -19,7 +19,27 @@ package org.dockbox.hartshorn.core.boot;
 
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 
+/**
+ * A lifecycle observer is notified when the application state changes. This can be used to implement
+ * application-wide logic that needs to be executed when the application starts or stops.
+ *
+ * @author Guus Lieben
+ * @since 21.9
+ */
 public interface LifecycleObserver {
+    /**
+     * Called when the application is started. This is called directly after the {@link ApplicationContext}
+     * has been created and configured.
+     *
+     * @param applicationContext The application context
+     */
     void onStarted(ApplicationContext applicationContext);
+
+    /**
+     * Called when the application is stopped. This is called directly when the {@link Runtime#getRuntime() runtime}
+     * is shutting down.
+     *
+     * @param applicationContext The application context
+     */
     void onExit(ApplicationContext applicationContext);
 }

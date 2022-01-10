@@ -22,6 +22,14 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * Annotation to indicate a method parameter should be unproxied, if the parameter is a proxy. If the parameter is not a proxy, the method should
+ * be called as normal. If the parameter is a proxy, but there is no underlying instance, the parameter will be transformed to {@code null}, unless
+ * {@link #fallbackToProxy()} is set to {@code true}, in which case the proxy instance will be provided to the method.
+ *
+ * @author Guus Lieben
+ * @since 22.1
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD, ElementType.PARAMETER})
 public @interface Unproxy {

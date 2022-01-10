@@ -31,7 +31,7 @@ import java.lang.annotation.Target;
  * a service activator, and is loaded as a default in {@link HartshornApplicationFactory}.
  *
  * @author Guus Lieben
- * @since 4.1.0
+ * @since 21.2
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)

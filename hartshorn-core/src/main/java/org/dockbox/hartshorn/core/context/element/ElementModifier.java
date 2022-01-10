@@ -21,7 +21,10 @@ package org.dockbox.hartshorn.core.context.element;
  * Acts as an extension of a given {@link QualifiedElement}, allowing you to modify protected values. Modifiers can not
  * modify private or final values. Any given modifier will only add or remove values like
  * {@link java.lang.annotation.Annotation annotations}, or change single non-final values. 
- * @param <E>
+ *
+ * @param <E> The type of the element to modify.
+ * @author Guus Lieben
+ * @since 22.1
  */
 @FunctionalInterface
 public interface ElementModifier<E extends QualifiedElement> {

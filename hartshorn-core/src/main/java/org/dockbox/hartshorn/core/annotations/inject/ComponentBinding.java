@@ -44,7 +44,7 @@ import javax.inject.Named;
  * be bound to that interface.
  *
  * @author Guus Lieben
- * @since 4.1.0
+ * @since 21.2
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)

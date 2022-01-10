@@ -31,12 +31,12 @@ import java.lang.annotation.Target;
  * decorated with {@link Proxy.Target}. Any non-annotated method will be ignored.
  *
  * @author Guus Lieben
- * @since 4.0.0
+ * @since 21.1
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @Extends(Component.class)
-@Deprecated(since = "4.2.5", forRemoval = true)
+@Deprecated(since = "22.1", forRemoval = true)
 public @interface Proxy {
     /**
      * The target class for the proxy. Can be an interface, abstract, or concrete class.
@@ -53,7 +53,7 @@ public @interface Proxy {
      */
     @Retention(RetentionPolicy.RUNTIME)
     @java.lang.annotation.Target(ElementType.METHOD)
-    @Deprecated(since = "4.2.5", forRemoval = true)
+    @Deprecated(since = "22.1", forRemoval = true)
     @interface Target {
         /** Whether to overwrite the return value of the target method. */
         boolean overwrite() default true;

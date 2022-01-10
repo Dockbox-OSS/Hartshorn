@@ -34,6 +34,9 @@ import ch.qos.logback.classic.LoggerContext;
 /**
  * Application starter for Hartshorn applications. This takes a single type annotated with {@link Activator}
  * which provides application metadata, and a set of {@link Modifiers modifiers}.
+ *
+ * @author Guus Lieben
+ * @since 21.2
  */
 public final class HartshornApplication {
 
@@ -44,6 +47,7 @@ public final class HartshornApplication {
      *
      * @param activator The activator type, providing application metadata
      * @param modifiers The modifiers to use when bootstrapping
+     * @see Modifiers
      */
     public static ApplicationContext create(final Class<?> activator, final String[] args, final Modifiers... modifiers) {
         for (final Modifiers modifier : modifiers)

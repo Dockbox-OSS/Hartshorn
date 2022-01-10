@@ -32,7 +32,7 @@ import lombok.Getter;
 public abstract class DefaultHttpWebServer implements HttpWebServer {
 
     @Getter
-    @Deprecated(since = "4.2.5", forRemoval = true)
+    @Deprecated(since = "22.1", forRemoval = true)
     private final Set<RequestArgumentProcessor<?>> processors = HartshornUtils.emptyConcurrentSet();
 
     @Inject

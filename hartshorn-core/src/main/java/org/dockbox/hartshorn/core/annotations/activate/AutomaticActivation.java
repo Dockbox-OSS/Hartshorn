@@ -30,7 +30,7 @@ import java.lang.annotation.Target;
  * @see org.dockbox.hartshorn.core.boot.ApplicationFactory#serviceActivator(Annotation)
  * @see org.dockbox.hartshorn.core.services.ComponentProcessor
  * @author Guus Lieben
- * @since 4.2.4
+ * @since 21.9
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)

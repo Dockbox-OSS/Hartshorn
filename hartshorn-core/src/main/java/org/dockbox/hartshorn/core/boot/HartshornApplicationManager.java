@@ -33,6 +33,15 @@ import java.util.Set;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * The default implementation of the {@link ApplicationManager} interface. This implementation delegates most functionality
+ * to concrete implementations of each of the {@link ApplicationManager} parent interfaces. If any of these implementations
+ * also implement {@link ApplicationManaged}, this implementation will ensure {@link ApplicationManaged#applicationManager(ApplicationManager)}
+ * is called on them.
+ *
+ * @author Guus Lieben
+ * @since 21.9
+ */
 @LogExclude
 @Getter
 public class HartshornApplicationManager implements ObservableApplicationManager, ModifiableContextCarrier {

@@ -26,13 +26,13 @@ import org.junit.jupiter.api.extension.RegisterExtension;
  * @deprecated Use {@link HartshornTest} instead. If the {@link ApplicationContext} is needed, it should be
  * added to the test class as an injected field.
  */
-@Deprecated(since = "4.2.5", forRemoval = true)
+@Deprecated(since = "22.1", forRemoval = true)
 public abstract class ApplicationAwareTest {
 
     @RegisterExtension
     final HartshornExtension runner = new HartshornExtension();
 
-    @Deprecated(since = "4.2.5", forRemoval = true)
+    @Deprecated(since = "22.1", forRemoval = true)
     protected ApplicationContext context() {
         final ApplicationContext activeContext = null;
         if (activeContext == null) {

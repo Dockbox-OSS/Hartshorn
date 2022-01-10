@@ -21,7 +21,7 @@ package org.dockbox.hartshorn.core.boot;
  * The utility type to grant easy access to project metadata.
  *
  * @author Guus Lieben
- * @since 4.0.0
+ * @since 21.1
  */
 public final class Hartshorn {
 
@@ -40,7 +40,7 @@ public final class Hartshorn {
     /**
      * The semantic version of the current/latest release of Hartshorn
      */
-    public static final String VERSION = "4.2.5";
+    public static final String VERSION = "22.1";
 
     private Hartshorn() {}
 }

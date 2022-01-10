@@ -27,6 +27,9 @@ import java.lang.annotation.Target;
 /**
  * Service activator for bootstrap-dependent services. This activator is automatically injected
  * when the application is created through {@link HartshornApplicationFactory}.
+ *
+ * @author Guus Lieben
+ * @since 21.2
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)

@@ -28,7 +28,7 @@ import java.lang.annotation.Target;
  * honor this behavior by default, other implementations may differ.
  *
  * @author Guus Lieben
- * @since 4.1.2
+ * @since 21.4
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)

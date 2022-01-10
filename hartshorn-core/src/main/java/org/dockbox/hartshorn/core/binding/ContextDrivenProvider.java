@@ -26,6 +26,22 @@ import java.util.List;
 
 import lombok.Getter;
 
+/**
+ * A {@link ContextDrivenProvider} is a {@link Provider} that uses a {@link ConstructorContext} to
+ * create a new instance of a class. The constructor is looked up based on its parameters, where the
+ * constructor with the most parameters is chosen in order to satisfy as many dependencies as possible.
+ *
+ * <p>If no injectable constructors can be found, the default constructro is used instead. If this
+ * constructor is not injectable, an {@link IllegalStateException} is thrown.
+ *
+ * @param <C> The type of the class to create.
+ *
+ * @author Guus Lieben
+ * @since 21.4
+ * @see Provider
+ * @see SupplierProvider
+ * @see InstanceProvider
+ */
 @Getter
 public class ContextDrivenProvider<C> implements Provider<C> {
 
@@ -48,7 +64,9 @@ public class ContextDrivenProvider<C> implements Provider<C> {
             final List<? extends ConstructorContext<? extends C>> constructors = this.context().injectConstructors();
             if (constructors.isEmpty()) {
                 final Exceptional<? extends ConstructorContext<? extends C>> defaultConstructor = this.context().defaultConstructor();
-                if (defaultConstructor.absent()) return Exceptional.empty();
+                if (defaultConstructor.absent()) {
+                    throw new IllegalStateException("No injectable constructors found for " + this.context().type());
+                }
                 else this.optimalConstructor = defaultConstructor.get();
             } else {
 

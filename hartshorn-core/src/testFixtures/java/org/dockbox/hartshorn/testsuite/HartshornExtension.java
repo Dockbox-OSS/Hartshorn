@@ -64,7 +64,7 @@ import javax.inject.Inject;
  * <p>This extension is automatically applied by the {@link HartshornTest} annotation.
  *
  * @author Guus Lieben
- * @since 4.2.5
+ * @since 22.1
  */
 @Activator
 public class HartshornExtension implements BeforeEachCallback, AfterEachCallback, ParameterResolver {

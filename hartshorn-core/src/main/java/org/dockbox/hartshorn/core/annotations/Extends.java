@@ -17,12 +17,30 @@
 
 package org.dockbox.hartshorn.core.annotations;
 
+import org.dockbox.hartshorn.core.annotations.stereotype.Component;
+import org.dockbox.hartshorn.core.annotations.stereotype.Service;
+
 import java.lang.annotation.Annotation;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * Marks that the annotated annotation extends another annotation, inheriting its attributes.
+ * Similar to class inheritance, if annotation X extends annotation Y, when searching Y
+ * annotation, X annotation will also be returned.
+ *
+ * <p>A common example of this inheritence is {@link Service}, which extends {@link Component}.
+ *
+ * <p>If an attribute in the extended (Component) annotation is also present in the extending
+ * (Service) annotation, the extending annotation will override the attribute value of the
+ * extended annotation.
+ *
+ * @author Guus Lieben
+ * @since 21.2
+ * @see AliasFor
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.ANNOTATION_TYPE)
 public @interface Extends {

@@ -139,29 +139,29 @@ public final class HartshornUtils {
      * @return The entry
      * @see HartshornUtils#ofEntries(Entry[])
      */
-    @Deprecated(since = "4.2.5", forRemoval = true)
+    @Deprecated(since = "22.1", forRemoval = true)
     public static <K, V> Entry<K, V> entry(final K k, final V v) {
         return new Tuple<>(k, v);
     }
 
-    @Deprecated(since = "4.2.5", forRemoval = true)
+    @Deprecated(since = "22.1", forRemoval = true)
     public static <T> List<T> singletonList(final T mockWorld) {
         return Collections.singletonList(mockWorld);
     }
 
-    @Deprecated(since = "4.2.5", forRemoval = true)
+    @Deprecated(since = "22.1", forRemoval = true)
     public static <T> List<T> emptyConcurrentList() {
         return new CopyOnWriteArrayList<>();
     }
 
-    @Deprecated(since = "4.2.5", forRemoval = true)
+    @Deprecated(since = "22.1", forRemoval = true)
     public static <K, V> ConcurrentMap<K, V> emptyConcurrentMap() {
         return new ConcurrentHashMap<>();
     }
 
     @NonNull
     @SafeVarargs
-    @Deprecated(since = "4.2.5", forRemoval = true)
+    @Deprecated(since = "22.1", forRemoval = true)
     public static <T> List<T> asUnmodifiableList(final T... objects) {
         return List.of(objects);
     }
@@ -176,13 +176,13 @@ public final class HartshornUtils {
         return new ArrayList<>(Arrays.asList(objects));
     }
 
-    @Deprecated(since = "4.2.5", forRemoval = true)
+    @Deprecated(since = "22.1", forRemoval = true)
     public static <T> List<T> asList(final Collection<T> collection) {
         return new ArrayList<>(collection);
     }
 
     @SafeVarargs
-    @Deprecated(since = "4.2.5", forRemoval = true)
+    @Deprecated(since = "22.1", forRemoval = true)
     public static <T> List<T> asList(final Predicate<T> predicate, final T... objects) {
         final List<T> list = new ArrayList<>();
         for (final T object : objects) {
@@ -191,32 +191,32 @@ public final class HartshornUtils {
         return list;
     }
 
-    @Deprecated(since = "4.2.5", forRemoval = true)
+    @Deprecated(since = "22.1", forRemoval = true)
     public static <T> List<T> emptyList() {
         return new ArrayList<>();
     }
 
-    @Deprecated(since = "4.2.5", forRemoval = true)
+    @Deprecated(since = "22.1", forRemoval = true)
     public static <T> List<T> asUnmodifiableList(final Collection<T> collection) {
         return List.copyOf(collection);
     }
 
     @NonNull
     @SafeVarargs
-    @Deprecated(since = "4.2.5", forRemoval = true)
+    @Deprecated(since = "22.1", forRemoval = true)
     public static <T> Set<T> asUnmodifiableSet(final T... objects) {
         return Set.of(objects);
     }
 
     @NonNull
     @SafeVarargs
-    @Deprecated(since = "4.2.5", forRemoval = true)
+    @Deprecated(since = "22.1", forRemoval = true)
     public static <T> Set<T> asSet(final T... objects) {
         return new HashSet<>(HartshornUtils.asList(objects));
     }
 
     @SafeVarargs
-    @Deprecated(since = "4.2.5", forRemoval = true)
+    @Deprecated(since = "22.1", forRemoval = true)
     public static <T> Set<T> asSet(final Predicate<T> predicate, final T... objects) {
         final Set<T> list = new HashSet<>();
         for (final T object : objects) {
@@ -225,35 +225,35 @@ public final class HartshornUtils {
         return list;
     }
 
-    @Deprecated(since = "4.2.5", forRemoval = true)
+    @Deprecated(since = "22.1", forRemoval = true)
     public static <T> Set<T> emptySet() {
         return new HashSet<>();
     }
 
     @SafeVarargs
-    @Deprecated(since = "4.2.5", forRemoval = true)
+    @Deprecated(since = "22.1", forRemoval = true)
     public static <T> Collection<T> asUnmodifiableCollection(final T... collection) {
         return Collections.unmodifiableCollection(Arrays.asList(collection));
     }
 
-    @Deprecated(since = "4.2.5", forRemoval = true)
+    @Deprecated(since = "22.1", forRemoval = true)
     public static <T> Collection<T> asUnmodifiableCollection(final Collection<T> collection) {
         return Collections.unmodifiableCollection(collection);
     }
 
-    @Deprecated(since = "4.2.5", forRemoval = true)
+    @Deprecated(since = "22.1", forRemoval = true)
     public static <K, V> Map<K, V> asUnmodifiableMap(final Map<K, V> map) {
         return Collections.unmodifiableMap(map);
     }
 
     @NonNull
-    @Deprecated(since = "4.2.5", forRemoval = true)
+    @Deprecated(since = "22.1", forRemoval = true)
     public static <T> Set<T> asUnmodifiableSet(final Collection<T> objects) {
         return Set.copyOf(objects);
     }
 
     @NonNull
-    @Deprecated(since = "4.2.5", forRemoval = true)
+    @Deprecated(since = "22.1", forRemoval = true)
     public static <T> List<T> asUnmodifiableList(final List<T> objects) {
         return Collections.unmodifiableList(objects);
     }
@@ -268,12 +268,12 @@ public final class HartshornUtils {
         return null == value || value.isEmpty();
     }
 
-    @Deprecated(since = "4.2.5", forRemoval = true)
+    @Deprecated(since = "22.1", forRemoval = true)
     public static int length(final CharSequence s) {
         return null == s ? 0 : s.length();
     }
 
-    @Deprecated(since = "4.2.5", forRemoval = true)
+    @Deprecated(since = "22.1", forRemoval = true)
     public static int lastIndexOf(final String path, final char ch) {
         if (null == path) {
             return -1;
@@ -281,17 +281,17 @@ public final class HartshornUtils {
         return path.lastIndexOf(ch);
     }
 
-    @Deprecated(since = "4.2.5", forRemoval = true)
+    @Deprecated(since = "22.1", forRemoval = true)
     public static char convertDigit(final int value) {
         return _hex[value & 0x0f];
     }
 
-    @Deprecated(since = "4.2.5", forRemoval = true)
+    @Deprecated(since = "22.1", forRemoval = true)
     public static int[] range(final int max) {
         return HartshornUtils.range(0, max);
     }
 
-    @Deprecated(since = "4.2.5", forRemoval = true)
+    @Deprecated(since = "22.1", forRemoval = true)
     public static int[] range(final int min, final int max) {
         final int[] range = new int[(max - min) + 1]; // +1 as both min and max are inclusive
         for (int i = min; i <= max; i++) {
@@ -300,13 +300,13 @@ public final class HartshornUtils {
         return range;
     }
 
-    @Deprecated(since = "4.2.5", forRemoval = true)
+    @Deprecated(since = "22.1", forRemoval = true)
     public static String shorten(final String string, final int maxLength) {
         if (string.length() < maxLength) return string;
         return string.substring(0, maxLength);
     }
 
-    @Deprecated(since = "4.2.5", forRemoval = true)
+    @Deprecated(since = "22.1", forRemoval = true)
     public static int count(final String s, final char c) {
         if (HartshornUtils.empty(s)) {
             return 0;
@@ -324,7 +324,7 @@ public final class HartshornUtils {
     }
 
     @NonNull
-    @Deprecated(since = "4.2.5", forRemoval = true)
+    @Deprecated(since = "22.1", forRemoval = true)
     public static String wildcardToRegexString(@NonNull final CharSequence wildcard) {
         final StringBuilder s = new StringBuilder(wildcard.length());
         s.append('^');
@@ -345,7 +345,7 @@ public final class HartshornUtils {
         return s.toString();
     }
 
-    @Deprecated(since = "4.2.5", forRemoval = true)
+    @Deprecated(since = "22.1", forRemoval = true)
     public static int levenshteinDistance(final CharSequence source, final CharSequence target) {
         final int length = verifyContentLength(source, target);
         if (-1 < length) return length;
@@ -383,7 +383,7 @@ public final class HartshornUtils {
         return v1[target.length()];
     }
 
-    @Deprecated(since = "4.2.5", forRemoval = true)
+    @Deprecated(since = "22.1", forRemoval = true)
     private static int verifyContentLength(final CharSequence source, final CharSequence target) {
         if (null == source || "".contentEquals(source)) {
             return null == target || "".contentEquals(target) ? 0 : target.length();
@@ -394,7 +394,7 @@ public final class HartshornUtils {
         return -1;
     }
 
-    @Deprecated(since = "4.2.5", forRemoval = true)
+    @Deprecated(since = "22.1", forRemoval = true)
     public static long minimum(final long... values) {
         final int len = values.length;
         long current = values[0];
@@ -402,7 +402,7 @@ public final class HartshornUtils {
         return current;
     }
 
-    @Deprecated(since = "4.2.5", forRemoval = true)
+    @Deprecated(since = "22.1", forRemoval = true)
     public static int damerauLevenshteinDistance(final CharSequence source, final CharSequence target) {
         final int length = verifyContentLength(source, target);
         if (-1 < length) return length;
@@ -467,7 +467,7 @@ public final class HartshornUtils {
     }
 
     @NonNull
-    @Deprecated(since = "4.2.5", forRemoval = true)
+    @Deprecated(since = "22.1", forRemoval = true)
     public static String randomString(final int minLen, final int maxLen) {
         final StringBuilder s = new StringBuilder();
         final int length = minLen + random.nextInt(maxLen - minLen + 1);
@@ -478,20 +478,20 @@ public final class HartshornUtils {
     }
 
     @NonNull
-    @Deprecated(since = "4.2.5", forRemoval = true)
+    @Deprecated(since = "22.1", forRemoval = true)
     public static String randomChar(final boolean upper) {
         final int r = random.nextInt(26);
         return upper ? "" + (char) ((int) 'A' + r) : "" + (char) ((int) 'a' + r);
     }
 
     @NonNull
-    @Deprecated(since = "4.2.5", forRemoval = true)
+    @Deprecated(since = "22.1", forRemoval = true)
     public static String createUtf8String(final byte[] bytes) {
         return HartshornUtils.createString(bytes, "UTF-8");
     }
 
     @NonNull
-    @Deprecated(since = "4.2.5", forRemoval = true)
+    @Deprecated(since = "22.1", forRemoval = true)
     public static String createString(final byte[] bytes, final String encoding) {
         try {
             return null == bytes ? "" : new String(bytes, encoding);
@@ -501,12 +501,12 @@ public final class HartshornUtils {
         }
     }
 
-    @Deprecated(since = "4.2.5", forRemoval = true)
+    @Deprecated(since = "22.1", forRemoval = true)
     public static byte[] bytesUTF8(final String s) {
         return HartshornUtils.bytes(s, "UTF-8");
     }
 
-    @Deprecated(since = "4.2.5", forRemoval = true)
+    @Deprecated(since = "22.1", forRemoval = true)
     public static byte[] bytes(final String s, final String encoding) {
         try {
             // skipcq: JAVA-W0243
@@ -518,12 +518,12 @@ public final class HartshornUtils {
     }
 
     @NonNull
-    @Deprecated(since = "4.2.5", forRemoval = true)
+    @Deprecated(since = "22.1", forRemoval = true)
     public static String createUTF8String(final byte[] bytes) {
         return HartshornUtils.createString(bytes, "UTF-8");
     }
 
-    @Deprecated(since = "4.2.5", forRemoval = true)
+    @Deprecated(since = "22.1", forRemoval = true)
     public static int hashCodeIgnoreCase(final CharSequence s) {
         if (null == s) return 0;
         int hash = 0;
@@ -535,7 +535,7 @@ public final class HartshornUtils {
         return hash;
     }
 
-    @Deprecated(since = "4.2.5", forRemoval = true)
+    @Deprecated(since = "22.1", forRemoval = true)
     public static long maximum(final long... values) {
         final int len = values.length;
         long current = values[0];
@@ -543,7 +543,7 @@ public final class HartshornUtils {
         return current;
     }
 
-    @Deprecated(since = "4.2.5", forRemoval = true)
+    @Deprecated(since = "22.1", forRemoval = true)
     public static double minimum(final double... values) {
         final int len = values.length;
         double current = values[0];
@@ -551,7 +551,7 @@ public final class HartshornUtils {
         return current;
     }
 
-    @Deprecated(since = "4.2.5", forRemoval = true)
+    @Deprecated(since = "22.1", forRemoval = true)
     public static double maximum(final double... values) {
         final int len = values.length;
         double current = values[0];
@@ -559,7 +559,7 @@ public final class HartshornUtils {
         return current;
     }
 
-    @Deprecated(since = "4.2.5", forRemoval = true)
+    @Deprecated(since = "22.1", forRemoval = true)
     public static void assertContainsIgnoreCase(final String source, final String... contains) {
         String lowerSource = source.toLowerCase();
         for (final String contain : contains) {
@@ -570,18 +570,18 @@ public final class HartshornUtils {
         }
     }
 
-    @Deprecated(since = "4.2.5", forRemoval = true)
+    @Deprecated(since = "22.1", forRemoval = true)
     public static Throwable deepestException(Throwable e) {
         while (null != e.getCause()) e = e.getCause();
         return e;
     }
 
-    @Deprecated(since = "4.2.5", forRemoval = true)
+    @Deprecated(since = "22.1", forRemoval = true)
     public static int size(final Object... array) {
         return null == array ? 0 : Array.getLength(array);
     }
 
-    @Deprecated(since = "4.2.5", forRemoval = true)
+    @Deprecated(since = "22.1", forRemoval = true)
     public static <T> T[] removeItem(final T[] array, final int pos) {
         final int length = Array.getLength(array);
         final T[] dest = (T[]) Array.newInstance(array.getClass().getComponentType(), length - 1);
@@ -596,7 +596,7 @@ public final class HartshornUtils {
         return Arrays.copyOfRange(array, start, end + 1);
     }
 
-    @Deprecated(since = "4.2.5", forRemoval = true)
+    @Deprecated(since = "22.1", forRemoval = true)
     public static <T> T[] toArray(final Class<T> classToCastTo, final Collection<?> c) {
         final T[] array = c.toArray((T[]) Array.newInstance(classToCastTo, c.size()));
         final Iterator<?> i = c.iterator();
@@ -607,7 +607,7 @@ public final class HartshornUtils {
         return array;
     }
 
-    @Deprecated(since = "4.2.5", forRemoval = true)
+    @Deprecated(since = "22.1", forRemoval = true)
     public static boolean empty(@NonNull final Path file) {
         return !Files.exists(file) || 0 >= file.toFile().length();
     }
@@ -620,7 +620,7 @@ public final class HartshornUtils {
      *
      * @return The rounded {@code double}
      */
-    @Deprecated(since = "4.2.5", forRemoval = true)
+    @Deprecated(since = "22.1", forRemoval = true)
     public static double round(final double value, final int decimalPlaces) {
         if (Double.isNaN(value) || Double.isInfinite(value)) {
             return value;
@@ -632,13 +632,13 @@ public final class HartshornUtils {
     }
 
     @NonNull
-    @Deprecated(since = "4.2.5", forRemoval = true)
+    @Deprecated(since = "22.1", forRemoval = true)
     public static Path createPathIfNotExists(@NonNull final Path path) {
         if (!path.toFile().exists()) path.toFile().mkdirs();
         return path;
     }
 
-    @Deprecated(since = "4.2.5", forRemoval = true)
+    @Deprecated(since = "22.1", forRemoval = true)
     public static Path createFileIfNotExists(@NonNull final Path file) {
         if (!Files.exists(file)) {
             try {
@@ -661,12 +661,12 @@ public final class HartshornUtils {
         }
     }
 
-    @Deprecated(since = "4.2.5", forRemoval = true)
+    @Deprecated(since = "22.1", forRemoval = true)
     public static boolean unwrap(final Optional<Boolean> optional) {
         return optional.isPresent() && optional.get();
     }
 
-    @Deprecated(since = "4.2.5", forRemoval = true)
+    @Deprecated(since = "22.1", forRemoval = true)
     public static boolean unwrap(final Exceptional<Boolean> exceptional) {
         return exceptional.present() && exceptional.get();
     }
@@ -684,7 +684,7 @@ public final class HartshornUtils {
      * @return true if {@code vec} is inside the 3D cuboid region
      * @see HartshornUtils#inCuboidRegion(int, int, int, int, int, int, int, int, int)
      */
-    @Deprecated(since = "4.2.5", forRemoval = true)
+    @Deprecated(since = "22.1", forRemoval = true)
     public static boolean inCuboidRegion(final Vector3N min, final Vector3N max, final Vector3N vec) {
         return HartshornUtils.inCuboidRegion(
                 min.xI(), max.xI(),
@@ -713,14 +713,14 @@ public final class HartshornUtils {
      *
      * @return true if the defined vector is inside the 3D cuboid region
      */
-    @Deprecated(since = "4.2.5", forRemoval = true)
+    @Deprecated(since = "22.1", forRemoval = true)
     public static boolean inCuboidRegion(final int x_min, final int x_max, final int y_min, final int y_max, final int z_min, final int z_max, final int x, final int y, final int z) {
         return x_min <= x && x <= x_max
                 && y_min <= y && y <= y_max
                 && z_min <= z && z <= z_max;
     }
 
-    @Deprecated(since = "4.2.5", forRemoval = true)
+    @Deprecated(since = "22.1", forRemoval = true)
     public static Vector3N minimumPoint(final Vector3N pos1, final Vector3N pos2) {
         final float minX = Math.min(pos1.xF(), pos2.xF());
         final float minY = Math.min(pos1.yF(), pos2.yF());
@@ -728,7 +728,7 @@ public final class HartshornUtils {
         return Vector3N.of(minX, minY, minZ);
     }
 
-    @Deprecated(since = "4.2.5", forRemoval = true)
+    @Deprecated(since = "22.1", forRemoval = true)
     public static Vector3N maximumPoint(final Vector3N pos1, final Vector3N pos2) {
         final float maxX = Math.max(pos1.xF(), pos2.xF());
         final float maxY = Math.max(pos1.yF(), pos2.yF());
@@ -736,7 +736,7 @@ public final class HartshornUtils {
         return Vector3N.of(maxX, maxY, maxZ);
     }
 
-    @Deprecated(since = "4.2.5", forRemoval = true)
+    @Deprecated(since = "22.1", forRemoval = true)
     public static Vector3N centerPoint(final Vector3N pos1, final Vector3N pos2) {
         final float centerX = (pos1.xF() + pos2.xF()) / 2;
         final float centerY = (pos1.yF() + pos2.yF()) / 2;
@@ -744,13 +744,13 @@ public final class HartshornUtils {
         return Vector3N.of(centerX, centerY, centerZ);
     }
 
-    @Deprecated(since = "4.2.5", forRemoval = true)
+    @Deprecated(since = "22.1", forRemoval = true)
     public static Exceptional<LocalDateTime> toLocalDateTime(final Optional<Instant> optionalInstant) {
         return Exceptional.of(optionalInstant).map(HartshornUtils::toLocalDateTime);
     }
 
     @NonNull
-    @Deprecated(since = "4.2.5", forRemoval = true)
+    @Deprecated(since = "22.1", forRemoval = true)
     public static LocalDateTime toLocalDateTime(final Instant dt) {
         return LocalDateTime.ofInstant(dt, ZoneId.systemDefault());
     }
@@ -779,7 +779,7 @@ public final class HartshornUtils {
      *
      * @return the t [ ]
      */
-    @Deprecated(since = "4.2.5", forRemoval = true)
+    @Deprecated(since = "22.1", forRemoval = true)
     public static <T> T[] addAll(final T[] array1, final T[] array2) {
         if (null == array1) {
             return HartshornUtils.shallowCopy(array2);
@@ -801,7 +801,7 @@ public final class HartshornUtils {
      *
      * @return the t @ nullable [ ]
      */
-    @Deprecated(since = "4.2.5", forRemoval = true)
+    @Deprecated(since = "22.1", forRemoval = true)
     public static <T> T @Nullable [] shallowCopy(final T[] array) {
         if (null == array) {
             return null;
@@ -813,7 +813,7 @@ public final class HartshornUtils {
         return null != value && !value.isEmpty();
     }
 
-    @Deprecated(since = "4.2.5", forRemoval = true)
+    @Deprecated(since = "22.1", forRemoval = true)
     public static boolean empty(final Object object) {
         if (null == object) return true;
         if (object instanceof String) return HartshornUtils.empty((String) object);
@@ -822,7 +822,7 @@ public final class HartshornUtils {
         else return false;
     }
 
-    @Deprecated(since = "4.2.5", forRemoval = true)
+    @Deprecated(since = "22.1", forRemoval = true)
     public static boolean equals(final String str1, final String str2) {
         if (null == str1 || null == str2) {
             return str1 == str2;
@@ -830,7 +830,7 @@ public final class HartshornUtils {
         return str1.equals(str2);
     }
 
-    @Deprecated(since = "4.2.5", forRemoval = true)
+    @Deprecated(since = "22.1", forRemoval = true)
     public static boolean equalsIgnoreCase(final String s1, final String s2) {
         if (null == s1 || null == s2) {
             return s1 == s2;
@@ -838,7 +838,7 @@ public final class HartshornUtils {
         return s1.equalsIgnoreCase(s2);
     }
 
-    @Deprecated(since = "4.2.5", forRemoval = true)
+    @Deprecated(since = "22.1", forRemoval = true)
     public static boolean equalsWithTrim(final String s1, final String s2) {
         if (null == s1 || null == s2) {
             return s1 == s2;
@@ -846,7 +846,7 @@ public final class HartshornUtils {
         return s1.trim().equals(s2.trim());
     }
 
-    @Deprecated(since = "4.2.5", forRemoval = true)
+    @Deprecated(since = "22.1", forRemoval = true)
     public static boolean equalsIgnoreCaseWithTrim(final String s1, final String s2) {
         if (null == s1 || null == s2) {
             return s1 == s2;
@@ -854,12 +854,12 @@ public final class HartshornUtils {
         return s1.trim().equalsIgnoreCase(s2.trim());
     }
 
-    @Deprecated(since = "4.2.5", forRemoval = true)
+    @Deprecated(since = "22.1", forRemoval = true)
     public static boolean notEqual(final Object expected, final Object actual) {
         return !HartshornUtils.equal(expected, actual);
     }
 
-    @Deprecated(since = "4.2.5", forRemoval = true)
+    @Deprecated(since = "22.1", forRemoval = true)
     public static boolean equal(final Object expected, final Object actual) {
         if (null != expected || null != actual) {
             return !(null == expected || !expected.equals(actual));
@@ -867,28 +867,28 @@ public final class HartshornUtils {
         return false;
     }
 
-    @Deprecated(since = "4.2.5", forRemoval = true)
+    @Deprecated(since = "22.1", forRemoval = true)
     public static boolean notSame(final Object expected, final Object actual) {
         return !HartshornUtils.same(expected, actual);
     }
 
-    @Deprecated(since = "4.2.5", forRemoval = true)
+    @Deprecated(since = "22.1", forRemoval = true)
     public static boolean same(final Object expected, final Object actual) {
         return expected == actual;
     }
 
-    @Deprecated(since = "4.2.5", forRemoval = true)
+    @Deprecated(since = "22.1", forRemoval = true)
     public static boolean hasContent(final String s) {
         return !(0 == HartshornUtils.trimLength(s)); // faster than returning !empty()
     }
 
-    @Deprecated(since = "4.2.5", forRemoval = true)
+    @Deprecated(since = "22.1", forRemoval = true)
     public static int trimLength(final String s) {
         // skipcq: JAVA-W0243
         return (null == s) ? 0 : s.trim().length();
     }
 
-    @Deprecated(since = "4.2.5", forRemoval = true)
+    @Deprecated(since = "22.1", forRemoval = true)
     public static boolean containsIgnoreCase(final String source, final String... contains) {
         String lowerSource = source.toLowerCase();
         for (final String contain : contains) {
@@ -901,7 +901,7 @@ public final class HartshornUtils {
         return true;
     }
 
-    @Deprecated(since = "4.2.5", forRemoval = true)
+    @Deprecated(since = "22.1", forRemoval = true)
     public static <T> boolean contains(final T[] objects, final T object) {
         for (final T t : objects) {
             if (same(object, t)) return true;
@@ -909,7 +909,7 @@ public final class HartshornUtils {
         return false;
     }
 
-    @Deprecated(since = "4.2.5", forRemoval = true)
+    @Deprecated(since = "22.1", forRemoval = true)
     public static <T> boolean containsEqual(final T[] objects, final T object) {
         for (final T t : objects) {
             if (same(object, t) || equal(object, t)) return true;
@@ -921,7 +921,7 @@ public final class HartshornUtils {
         return s.replaceAll("[\n\r ]+", "").trim();
     }
 
-    @Deprecated(since = "4.2.5", forRemoval = true)
+    @Deprecated(since = "22.1", forRemoval = true)
     public static boolean empty(final Object... array) {
         return null == array || 0 == Array.getLength(array);
     }
@@ -1067,7 +1067,7 @@ public final class HartshornUtils {
         return result.toString();
     }
 
-    @Deprecated(since = "4.2.5", forRemoval = true)
+    @Deprecated(since = "22.1", forRemoval = true)
     public static String wrap(final String fullName, final int max) {
         final int start = fullName.length() - max;
         if (start < 0) return fullName + repeat(" ", -start);
@@ -1075,7 +1075,7 @@ public final class HartshornUtils {
     }
 
     @NonNull
-    @Deprecated(since = "4.2.5", forRemoval = true)
+    @Deprecated(since = "22.1", forRemoval = true)
     public static String repeat(final String string, final int amount) {
         final StringBuilder sb = new StringBuilder();
         for (final int ignored : HartshornUtils.range(1, amount)) sb.append(string);

@@ -24,7 +24,7 @@ import org.dockbox.hartshorn.core.InjectConfiguration;
  * {@link InjectConfiguration}s to the application instance.
  *
  * @author Guus Lieben
- * @since 4.1.0
+ * @since 21.2
  */
 public @interface InjectConfig {
 
