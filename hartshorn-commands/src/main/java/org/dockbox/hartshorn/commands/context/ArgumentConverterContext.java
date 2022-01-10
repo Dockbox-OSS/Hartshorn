@@ -17,15 +17,17 @@
 
 package org.dockbox.hartshorn.commands.context;
 
-import org.dockbox.hartshorn.core.boot.Hartshorn;
-import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
 import org.dockbox.hartshorn.core.annotations.context.AutoCreating;
+import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.DefaultContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
-import org.dockbox.hartshorn.core.HartshornUtils;
+import org.dockbox.hartshorn.core.domain.Exceptional;
 
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+import javax.inject.Inject;
 
 import lombok.Getter;
 
@@ -35,13 +37,16 @@ import lombok.Getter;
 @AutoCreating
 public final class ArgumentConverterContext extends DefaultContext {
 
-    @Getter private final transient Map<String, ArgumentConverter<?>> converterMap = HartshornUtils.emptyConcurrentMap();
+    @Getter
+    private final transient Map<String, ArgumentConverter<?>> converterMap = new ConcurrentHashMap<>();
+
+    @Inject
+    private ApplicationContext applicationContext;
 
     /**
      * Indicates if any converter with the given <code>key</code> is registered.
      *
-     * @param key
-     *         The key to use during lookup
+     * @param key The key to use during lookup
      *
      * @return <code>true</code> if a converter exists, or else <code>false</code>
      */
@@ -52,8 +57,7 @@ public final class ArgumentConverterContext extends DefaultContext {
     /**
      * Gets the converter associated with the registered <code>key</code>, if it exists.
      *
-     * @param key
-     *         The key to use during lookup
+     * @param key The key to use during lookup
      *
      * @return The converter if it exists, or {@link Exceptional#empty()}
      */
@@ -64,8 +68,7 @@ public final class ArgumentConverterContext extends DefaultContext {
     /**
      * Indicates if any registered converter is able to convert into the given <code>type</code>.
      *
-     * @param type
-     *         The type the converter should convert into.
+     * @param type The type the converter should convert into.
      *
      * @return <code>true</code> if a converter exists, or else <code>false</code>
      */
@@ -77,15 +80,12 @@ public final class ArgumentConverterContext extends DefaultContext {
      * Gets the (first) converter which is able to convert into the given <code>type</code>, if it
      * exists.
      *
-     * @param type
-     *         The type the converter should convert into.
-     * @param <T>
-     *         The type parameter of the type
+     * @param type The type the converter should convert into.
+     * @param <T> The type parameter of the type
      *
      * @return The converter if it exists, or {@link Exceptional#empty()}
      */
     public <T> Exceptional<ArgumentConverter<T>> converter(final TypeContext<T> type) {
-        //noinspection unchecked
         return Exceptional.of(this.converterMap.values().stream()
                 .filter(converter -> type.childOf(converter.type()))
                 .map(converter -> (ArgumentConverter<T>) converter)
@@ -95,14 +95,13 @@ public final class ArgumentConverterContext extends DefaultContext {
     /**
      * Registers the given {@link ArgumentConverter} to the current context.
      *
-     * @param converter
-     *         The converter to register
+     * @param converter The converter to register
      */
     public void register(final ArgumentConverter<?> converter) {
         for (String key : converter.keys()) {
             key = key.toLowerCase();
             if (this.converterMap.containsKey(key))
-                Hartshorn.log().debug("Duplicate argument key '" + key + "' found while registering converter, overwriting existing converter.");
+                this.applicationContext.log().debug("Duplicate argument key '" + key + "' found while registering converter, overwriting existing converter.");
             this.converterMap.put(key, converter);
         }
     }

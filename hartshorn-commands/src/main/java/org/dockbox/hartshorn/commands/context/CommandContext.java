@@ -34,22 +34,18 @@ public interface CommandContext extends ParserContext, ContextCarrier {
      * no argument or flag with the given <code>key</code> exists, <code>null</code> is returned
      * instead. The value of the argument is cast to type <code>T</code>.
      *
-     * @param key
-     *         The key of the argument or flag
-     * @param <T>
-     *         The expected type of the argument or flag
+     * @param key The key of the argument or flag
+     * @param <T> The expected type of the argument or flag
      *
      * @return The argument or flag, or <code>null</code>
-     * @throws ClassCastException
-     *         If the argument or flag is not of type <code>T</code>
+     * @throws ClassCastException If the argument or flag is not of type <code>T</code>
      */
     <T> T get(String key);
 
     /**
      * Checks for the presence of an argument or flag associated with the given <code>key</code>.
      *
-     * @param key
-     *         The key of the argument or flag
+     * @param key The key of the argument or flag
      *
      * @return <code>true</code> if a argument or flag exists, else <code>false</code>
      */
@@ -60,10 +56,8 @@ public interface CommandContext extends ParserContext, ContextCarrier {
      * value of the argument is cast to type <code>T</code>. If the argument or flag is not of type
      * <code>T</code>, or does not exist, {@link Exceptional#empty()} is returned instead.
      *
-     * @param key
-     *         The key of the argument or flag
-     * @param <T>
-     *         The expected type of the argument or flag
+     * @param key The key of the argument or flag
+     * @param <T> The expected type of the argument or flag
      *
      * @return The argument or flag wrapped in a {@link Exceptional}, or {@link Exceptional#empty()}
      */
@@ -75,10 +69,8 @@ public interface CommandContext extends ParserContext, ContextCarrier {
      * {@link Exceptional#empty()} is returned instead. The {@link CommandParameter} contains both the
      * defined key and value of the argument.
      *
-     * @param key
-     *         The key of the argument
-     * @param <T>
-     *         The expected type of the argument
+     * @param key The key of the argument
+     * @param <T> The expected type of the argument
      *
      * @return The argument wrapped in a {@link Exceptional}, or {@link Exceptional#empty()}
      */
@@ -90,10 +82,8 @@ public interface CommandContext extends ParserContext, ContextCarrier {
      * {@link Exceptional#empty()} is returned instead. The {@link CommandParameter} contains both the
      * defined key and value of the flag.
      *
-     * @param key
-     *         The key of the flag
-     * @param <T>
-     *         The expected type of the flag
+     * @param key The key of the flag
+     * @param <T> The expected type of the flag
      *
      * @return The flag wrapped in a {@link Exceptional}, or {@link Exceptional#empty()}
      */

@@ -18,13 +18,13 @@
 package org.dockbox.hartshorn.core.task;
 
 import org.dockbox.hartshorn.core.domain.Exceptional;
-import org.dockbox.hartshorn.core.annotations.inject.Binds;
+import org.dockbox.hartshorn.core.annotations.inject.ComponentBinding;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
-@Binds(ThreadUtils.class)
+@ComponentBinding(ThreadUtils.class)
 public class ThreadUtilsImpl implements ThreadUtils {
 
     @Override

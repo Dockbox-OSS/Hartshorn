@@ -17,9 +17,10 @@
 
 package org.dockbox.hartshorn.config.annotations;
 
+import org.dockbox.hartshorn.config.ConfigurationServicePreProcessor;
 import org.dockbox.hartshorn.core.boot.Hartshorn;
-import org.dockbox.hartshorn.core.annotations.service.Service;
-import org.dockbox.hartshorn.persistence.FileType;
+import org.dockbox.hartshorn.core.annotations.stereotype.Service;
+import org.dockbox.hartshorn.data.FileFormats;
 import org.dockbox.hartshorn.core.annotations.Extends;
 
 import java.lang.annotation.ElementType;
@@ -33,7 +34,7 @@ import java.lang.annotation.Target;
  * will accept a source formatted as {@code classpath:filename}.
  *
  * <p>The {@link #source()} should not contain the file extension, this is automatically formatted based on the
- * {@link #filetype()}. The {@link FileType} is also used to configure the underlying {@link org.dockbox.hartshorn.persistence.mapping.ObjectMapper}
+ * {@link #filetype()}. The {@link FileFormats} is also used to configure the underlying {@link org.dockbox.hartshorn.data.mapping.ObjectMapper}
  * used to read the configuration file.
  *
  * <p>The example below will target demo.yml as a classpath resource.
@@ -46,9 +47,9 @@ import java.lang.annotation.Target;
  * }</pre>
  *
  * @see Value
- * @see org.dockbox.hartshorn.persistence.mapping.ObjectMapper
+ * @see org.dockbox.hartshorn.data.mapping.ObjectMapper
  * @see org.dockbox.hartshorn.config.ResourceLookupStrategy
- * @see org.dockbox.hartshorn.config.ConfigurationServiceProcessor
+ * @see ConfigurationServicePreProcessor
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
@@ -56,5 +57,5 @@ import java.lang.annotation.Target;
 public @interface Configuration {
     String source();
     Class<?> owner() default Hartshorn.class;
-    FileType filetype() default FileType.YAML;
+    FileFormats filetype() default FileFormats.YAML;
 }

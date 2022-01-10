@@ -17,19 +17,20 @@
 
 package org.dockbox.hartshorn.core.services;
 
-import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.ComponentType;
-import org.dockbox.hartshorn.core.annotations.component.Component;
-import org.dockbox.hartshorn.core.annotations.service.Service;
-import org.dockbox.hartshorn.core.annotations.service.ServiceActivator;
-import org.dockbox.hartshorn.core.binding.Bindings;
+import org.dockbox.hartshorn.core.HartshornUtils;
+import org.dockbox.hartshorn.core.annotations.stereotype.Component;
+import org.dockbox.hartshorn.core.annotations.stereotype.Service;
+import org.dockbox.hartshorn.core.annotations.activate.ServiceActivator;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
-import org.dockbox.hartshorn.core.HartshornUtils;
+import org.dockbox.hartshorn.core.domain.Exceptional;
 
 import java.lang.annotation.Annotation;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import lombok.Getter;
 
@@ -38,7 +39,7 @@ public class ComponentContainerImpl implements ComponentContainer {
 
     private final Component annotation;
     private final TypeContext<?> component;
-    private final List<Class<? extends Annotation>> activators = HartshornUtils.emptyList();
+    private final List<Class<? extends Annotation>> activators = new CopyOnWriteArrayList<>();
     private final ApplicationContext context;
 
     public ComponentContainerImpl(final ApplicationContext context, final TypeContext<?> component) {
@@ -58,14 +59,14 @@ public class ComponentContainerImpl implements ComponentContainer {
     @Override
     public String id() {
         final String id = this.annotation.id();
-        if ("".equals(id)) return Bindings.serviceId(this.context, this.component, true);
+        if ("".equals(id)) return ComponentContainer.id(this.context, this.component, true);
         return id;
     }
 
     @Override
     public String name() {
         final String name = this.annotation.name();
-        if ("".equals(name)) return Bindings.serviceName(this.context, this.component, true);
+        if ("".equals(name)) return ComponentContainer.name(this.context, this.component, true);
         return name;
     }
 
@@ -86,7 +87,7 @@ public class ComponentContainerImpl implements ComponentContainer {
 
     @Override
     public List<Class<? extends Annotation>> activators() {
-        return HartshornUtils.asUnmodifiableList(this.activators);
+        return Collections.unmodifiableList(this.activators);
     }
 
     @Override
@@ -110,6 +111,11 @@ public class ComponentContainerImpl implements ComponentContainer {
     @Override
     public ComponentType componentType() {
         return this.annotation.type();
+    }
+
+    @Override
+    public boolean permitsProxying() {
+        return this.annotation.permitProxying();
     }
 
     @Override

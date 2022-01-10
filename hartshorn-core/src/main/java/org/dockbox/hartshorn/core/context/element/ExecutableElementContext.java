@@ -17,9 +17,10 @@
 
 package org.dockbox.hartshorn.core.context.element;
 
-import org.dockbox.hartshorn.core.domain.Exceptional;
-import org.dockbox.hartshorn.core.annotations.inject.Context;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
+import org.dockbox.hartshorn.core.context.ParameterLoaderContext;
+import org.dockbox.hartshorn.core.domain.Named;
+import org.dockbox.hartshorn.core.services.parameter.ExecutableElementContextParameterLoader;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Executable;
@@ -28,10 +29,27 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public abstract class ExecutableElementContext<A extends Executable> extends AnnotatedMemberContext<A> {
+/**
+ * The {@link ExecutableElementContext} represents an executable element. Executable elements are methods and constructors.
+ * The primary function of an executable element is to accept parameters, and optionally yield a result. The executable
+ * cannot be invoked directly through the {@link ExecutableElementContext}, but through the appropriate implementations.
+ *
+ * @param <A> The type of the executable element.
+ * @param <P> The type of the parent of the executable element.
+ * @see java.lang.reflect.Constructor
+ * @see ConstructorContext
+ * @see java.lang.reflect.Method
+ * @see MethodContext
+ * @author Guus Lieben
+ * @since 21.5
+ */
+public abstract class ExecutableElementContext<A extends Executable, P> extends AnnotatedMemberContext<A> implements Named {
 
+    private TypeContext<P> parent;
     private LinkedList<ParameterContext<?>> parameters;
+    protected ExecutableElementContextParameterLoader parameterLoader = new ExecutableElementContextParameterLoader();
 
+    // TODO #584: Continue documentation here
     public List<ParameterContext<?>> parameters(final Class<? extends Annotation> annotation) {
         return this.parameters().stream()
                 .filter(parameter -> parameter.annotation(annotation).present())
@@ -57,20 +75,15 @@ public abstract class ExecutableElementContext<A extends Executable> extends Ann
         return this.element().getParameterCount();
     }
 
-    protected Object[] arguments(final ApplicationContext context) {
-        final Object[] args = new Object[this.parameterCount()];
-        for (int i = 0; i < this.parameterCount(); i++) {
-            final TypeContext<?> parameter = this.parameterTypes().get(i);
-            final Exceptional<Context> annotation = parameter.annotation(org.dockbox.hartshorn.core.annotations.inject.Context.class);
-            if (annotation.present() && parameter.childOf(org.dockbox.hartshorn.core.context.Context.class)) {
-                final String contextName = annotation.get().value();
-                if ("".equals(contextName)) args[i] = context.first((Class<? extends org.dockbox.hartshorn.core.context.Context>) parameter.type());
-                else context.first(contextName, (Class<? extends org.dockbox.hartshorn.core.context.Context>) parameter.type());
-            }
-            else {
-                args[i] = context.get(parameter);
-            }
+    public TypeContext<P> parent() {
+        if (this.parent == null) {
+            this.parent = (TypeContext<P>) TypeContext.of(this.element().getDeclaringClass());
         }
-        return args;
+        return this.parent;
+    }
+
+    protected Object[] arguments(final ApplicationContext context) {
+        final ParameterLoaderContext loaderContext = new ParameterLoaderContext(this, null, null, context);
+        return this.parameterLoader.loadArguments(loaderContext).toArray();
     }
 }

@@ -20,13 +20,27 @@ package org.dockbox.hartshorn.config;
 import org.dockbox.hartshorn.config.annotations.Configuration;
 import org.dockbox.hartshorn.config.annotations.Value;
 
+import java.util.Collection;
+import java.util.concurrent.CopyOnWriteArrayList;
+
 import lombok.Getter;
 
+@Getter
 @Configuration(source = "classpath:junit")
 public class DemoClasspathConfiguration {
 
     @Value("junit.cp")
-    @Getter
     private String classPathValue;
 
+    @Value("junit.unset")
+    private String classPathValueWithDefault = "myDefaultValue";
+
+    @Value("junit.number")
+    private int number;
+
+    @Value("junit.list")
+    private Collection<Integer> list;
+
+    @Value("junit.list")
+    private CopyOnWriteArrayList<Integer> copyOnWriteArrayList;
 }

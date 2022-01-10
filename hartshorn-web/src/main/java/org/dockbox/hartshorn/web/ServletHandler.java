@@ -18,33 +18,29 @@
 package org.dockbox.hartshorn.web;
 
 import org.dockbox.hartshorn.config.annotations.Value;
-import org.dockbox.hartshorn.core.annotations.component.Component;
-import org.dockbox.hartshorn.core.annotations.inject.Binds;
+import org.dockbox.hartshorn.core.Enableable;
 import org.dockbox.hartshorn.core.annotations.inject.Bound;
+import org.dockbox.hartshorn.core.annotations.inject.ComponentBinding;
 import org.dockbox.hartshorn.core.boot.Hartshorn;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
-import org.dockbox.hartshorn.core.exceptions.Except;
-import org.dockbox.hartshorn.core.Enableable;
+import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 import org.dockbox.hartshorn.core.services.parameter.ParameterLoader;
-import org.dockbox.hartshorn.persistence.mapping.ObjectMapper;
+import org.dockbox.hartshorn.data.mapping.ObjectMapper;
 import org.dockbox.hartshorn.web.annotations.http.HttpRequest;
 import org.dockbox.hartshorn.web.processing.HttpRequestParameterLoaderContext;
-import org.eclipse.jetty.http.HttpStatus;
 
 import java.io.IOException;
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import lombok.Getter;
 
-@Component
-@Binds(ServletHandler.class)
+@ComponentBinding(ServletHandler.class)
 public class ServletHandler implements Enableable {
 
     private final HttpWebServer starter;
@@ -59,8 +55,8 @@ public class ServletHandler implements Enableable {
     @Getter
     private ObjectMapper mapper;
 
-    @Value(value = "hartshorn.web.headers.hartshorn", or = "true")
-    private boolean addHeader;
+    @Value(value = "hartshorn.web.headers.hartshorn")
+    private boolean addHeader = true;
 
     @Bound
     public ServletHandler(final HttpWebServer starter, final HttpMethod httpMethod, final MethodContext<?, ?> methodContext) {
@@ -72,11 +68,13 @@ public class ServletHandler implements Enableable {
     }
 
     @Override
-    public void enable() {
-        this.mapper.fileType(this.httpRequest.responseFormat());
+    public void enable() throws ApplicationException {
+        final MediaType mediaType = this.httpRequest.produces();
+        if (!mediaType.isSerializable()) throw new ApplicationException("Provided media type '" + mediaType.value() + "' is not serializable");
+        this.mapper.fileType(mediaType.fileFormat().get());
     }
 
-    public synchronized void processRequest(final HttpMethod method, final HttpServletRequest req, final HttpServletResponse res, final HttpAction fallbackAction) throws ServletException, IOException {
+    public synchronized void processRequest(final HttpMethod method, final HttpServletRequest req, final HttpServletResponse res, final HttpAction fallbackAction) throws ApplicationException {
         synchronized (this) {
             final long start = System.currentTimeMillis();
             final String sessionId = String.valueOf(req.hashCode());
@@ -93,14 +91,13 @@ public class ServletHandler implements Enableable {
                 if (result.present()) {
                     this.context.log().debug("Request %s processed for session %s, writing response body".formatted(request, sessionId));
                     try {
-                        res.setStatus(HttpStatus.OK_200);
                         if (String.class.equals(result.type())) {
-                            res.setContentType("text/plain");
+                            res.setContentType(MediaType.TEXT_PLAIN.value());
                             this.context.log().debug("Returning plain body for request %s".formatted(request));
                             res.getWriter().print(result.get());
                         }
                         else {
-                            res.setContentType("application/" + this.mapper.fileType().extension());
+                            res.setContentType(this.httpRequest.produces().value());
                             this.context.log().debug("Writing body to string for request %s".formatted(request));
                             final Exceptional<String> write = this.mapper.write(result.get());
                             if (write.present()) {
@@ -108,19 +105,27 @@ public class ServletHandler implements Enableable {
                                 res.getWriter().print(write.get());
                             }
                             else {
-                                res.setStatus(HttpStatus.INTERNAL_SERVER_ERROR_500);
-                                if (write.caught()) Except.handle("Could not process response for request %s for session %s".formatted(request, sessionId), write.error());
-                                else Except.handle("Could not process response for request %s for session %s".formatted(request, sessionId));
+                                res.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+                                if (write.caught()) this.context.handle("Could not process response for request %s for session %s".formatted(request, sessionId), write.error());
+                                else this.context.log().warn("Could not process response for request %s for session %s".formatted(request, sessionId));
                             }
                         }
                         this.context.log().debug("Finished servlet handler for request %s with session %s in %dms".formatted(request, sessionId, System.currentTimeMillis() - start));
                         return;
                     }
                     catch (final IOException e) {
-                        Except.handle(e);
+                        throw new ApplicationException(e);
                     }
                 }
+                else {
+                    if (result.caught()) throw new ApplicationException(result.error());
+                    else {
+                        res.setStatus(HttpStatus.NO_CONTENT.value());
+                    }
+                    return;
+                }
             }
+
             fallbackAction.fallback(req, res);
         }
     }

@@ -27,6 +27,5 @@ import org.dockbox.hartshorn.core.exceptions.ApplicationException;
  */
 @FunctionalInterface
 public interface CheckedRunnable {
-
     void run() throws ApplicationException;
 }

@@ -19,12 +19,33 @@ package org.dockbox.hartshorn.web;
 
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 import org.dockbox.hartshorn.core.services.parameter.ParameterLoader;
-import org.dockbox.hartshorn.persistence.properties.PersistenceModifier;
+import org.dockbox.hartshorn.data.mapping.JsonInclusionRule;
 import org.dockbox.hartshorn.web.processing.HttpRequestParameterLoaderContext;
 
+import java.net.URI;
+
+import javax.inject.Singleton;
+import javax.servlet.Servlet;
+
+@Singleton
 public interface HttpWebServer {
+
+    String WEB_INF = "/WEB-INF/";
+    String STATIC_CONTENT = WEB_INF + "static/";
+
     void start(int port) throws ApplicationException;
-    HttpWebServer register(RequestHandlerContext context);
+
+    HttpWebServer register(Servlet servlet, String pathSpec);
+
     ParameterLoader<HttpRequestParameterLoaderContext> loader();
-    HttpWebServer skipBehavior(PersistenceModifier modifier);
+
+    HttpWebServer skipBehavior(JsonInclusionRule modifier);
+
+    JsonInclusionRule skipBehavior();
+
+    HttpWebServer listStaticDirectories(boolean listDirectories);
+
+    HttpWebServer staticContent(URI location);
+
+    void stop() throws ApplicationException;
 }

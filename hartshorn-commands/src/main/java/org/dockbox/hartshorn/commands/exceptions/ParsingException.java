@@ -17,23 +17,20 @@
 
 package org.dockbox.hartshorn.commands.exceptions;
 
+import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 import org.dockbox.hartshorn.i18n.Message;
 
 /**
  * The exception thrown when a command could not be parsed. This can occur either during
  * the creation of a command definition or {@link org.dockbox.hartshorn.commands.context.CommandContext}.
  */
-public class ParsingException extends Exception {
-
-    private final Message resource;
+public class ParsingException extends ApplicationException {
 
     public ParsingException(final Message resource) {
         super(resource.string());
-        this.resource = resource;
     }
 
     public ParsingException(final Message resource, final Throwable cause) {
         super(resource.string(), cause);
-        this.resource = resource;
     }
 }

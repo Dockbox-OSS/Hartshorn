@@ -17,33 +17,43 @@
 
 package org.dockbox.hartshorn.core;
 
-import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.core.annotations.Base;
+import org.dockbox.hartshorn.core.boot.ApplicationManager;
+import org.dockbox.hartshorn.core.bridge.BridgeImpl;
 import org.dockbox.hartshorn.core.context.PrefixContext;
+import org.dockbox.hartshorn.core.context.ReflectionsPrefixContext;
+import org.dockbox.hartshorn.core.context.element.AnnotatedElementModifier;
 import org.dockbox.hartshorn.core.context.element.ConstructorContext;
 import org.dockbox.hartshorn.core.context.element.FieldContext;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
+import org.dockbox.hartshorn.core.context.element.MethodModifier;
+import org.dockbox.hartshorn.core.context.element.ParameterContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
+import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.exceptions.TypeConversionException;
+import org.dockbox.hartshorn.core.types.AnnotatedImpl;
 import org.dockbox.hartshorn.core.types.ParentTestType;
 import org.dockbox.hartshorn.core.types.ReflectTestType;
 import org.dockbox.hartshorn.core.types.TestEnumType;
-import org.dockbox.hartshorn.testsuite.ApplicationAwareTest;
+import org.dockbox.hartshorn.testsuite.HartshornTest;
+import org.dockbox.hartshorn.testsuite.InjectTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javassist.util.proxy.ProxyFactory;
 
-@SuppressWarnings("ALL")
-public class ReflectTests extends ApplicationAwareTest {
+@HartshornTest
+public class ReflectTests {
 
     private static Stream<Arguments> fields() {
         return Stream.of(
@@ -124,17 +134,17 @@ public class ReflectTests extends ApplicationAwareTest {
 
     @ParameterizedTest
     @MethodSource("fields")
-    void testFieldValueReturnsValue(String field) {
+    void testFieldValueReturnsValue(final String field) {
         final ReflectTestType instance = new ReflectTestType();
         final TypeContext<ReflectTestType> type = TypeContext.of(instance);
-        Exceptional<?> value = type.field(field).get().get(instance);
+        final Exceptional<?> value = type.field(field).get().get(instance);
         Assertions.assertTrue(value.present());
         Assertions.assertEquals(field, value.get());
     }
 
     @ParameterizedTest
     @MethodSource("methods")
-    void testRunMethodReturnsValue(String method) {
+    void testRunMethodReturnsValue(final String method) {
         final ReflectTestType instance = new ReflectTestType();
         final TypeContext<ReflectTestType> type = TypeContext.of(instance);
         final Exceptional<?> value = type.method(method, HartshornUtils.asList(TypeContext.of(String.class))).get().invoke(instance, "value");
@@ -144,7 +154,7 @@ public class ReflectTests extends ApplicationAwareTest {
 
     @ParameterizedTest
     @MethodSource("assignablePrimitives")
-    void testAssignableFromPrimitives(Class<?> primitive, Class<?> wrapper) {
+    void testAssignableFromPrimitives(final Class<?> primitive, final Class<?> wrapper) {
         final TypeContext<?> pt = TypeContext.of(primitive);
         final TypeContext<?> wt = TypeContext.of(wrapper);
         Assertions.assertTrue(pt.childOf(wt));
@@ -167,23 +177,25 @@ public class ReflectTests extends ApplicationAwareTest {
         final List<MethodContext<?, ReflectTestType>> methods = type.methods(Demo.class);
         Assertions.assertEquals(3, methods.size());
 
-        List<String> names = methods.stream().map(MethodContext::name).toList();
+        final List<String> names = methods.stream().map(MethodContext::name).toList();
         Assertions.assertTrue(names.contains("publicAnnotatedMethod"));
         Assertions.assertTrue(names.contains("privateAnnotatedMethod"));
     }
 
-    @Test
-    void testAnnotatedTypesReturnsAllInPrefix() {
-        final PrefixContext context = new PrefixContext(HartshornUtils.asList("org.dockbox.hartshorn.core.types"), this.context().environment());
-        Collection<TypeContext<?>> types = context.types(Demo.class);
+    @InjectTest
+    void testAnnotatedTypesReturnsAllInPrefix(final ApplicationManager manager) {
+        final PrefixContext context = new ReflectionsPrefixContext(manager);
+        context.prefix("org.dockbox.hartshorn.core.types");
+        final Collection<TypeContext<?>> types = context.types(Demo.class);
         Assertions.assertEquals(1, types.size());
         Assertions.assertEquals(ReflectTestType.class, types.iterator().next().type());
     }
 
-    @Test
-    void testSubTypesReturnsAllSubTypes() {
-        final PrefixContext context = new PrefixContext(HartshornUtils.asList("org.dockbox.hartshorn.core.types"), this.context().environment());
-        Collection<TypeContext<? extends ParentTestType>> types = context.children(ParentTestType.class);
+    @InjectTest
+    void testSubTypesReturnsAllSubTypes(final ApplicationManager manager) {
+        final PrefixContext context = new ReflectionsPrefixContext(manager);
+        context.prefix("org.dockbox.hartshorn.core.types");
+        final Collection<TypeContext<? extends ParentTestType>> types = context.children(ParentTestType.class);
         Assertions.assertEquals(1, types.size());
         Assertions.assertEquals(ReflectTestType.class, types.iterator().next().type());
     }
@@ -191,13 +203,13 @@ public class ReflectTests extends ApplicationAwareTest {
     @Test
     void testStaticFieldsReturnsAllModifiers() {
         final List<FieldContext<?>> fields = TypeContext.of(ReflectTestType.class).fields().stream()
-                .filter(field -> field.isStatic())
-                .collect(Collectors.toList());
+                .filter(FieldContext::isStatic)
+                .toList();
         Assertions.assertEquals(2, fields.size());
     }
 
     @Test
-    void testHasAnnotationOnMethod() throws NoSuchMethodException {
+    void testHasAnnotationOnMethod() {
         final Exceptional<MethodContext<?, ReflectTestType>> method = TypeContext.of(ReflectTestType.class).method("publicAnnotatedMethod");
         Assertions.assertTrue(method.present());
         Assertions.assertTrue(method.get().annotation(Demo.class).present());
@@ -211,26 +223,44 @@ public class ReflectTests extends ApplicationAwareTest {
     }
 
     @Test
-    void testMethodsReturnsAllDeclaredAndParentMethods() throws NoSuchMethodException {
+    void testMethodsReturnsAllDeclaredAndParentMethods() {
         final TypeContext<ReflectTestType> type = TypeContext.of(ReflectTestType.class);
         final List<MethodContext<?, ReflectTestType>> methods = type.methods();
         boolean fail = true;
-        for (MethodContext<?, ReflectTestType> method : methods) {
-            if (method.name().equals("parentMethod")) fail = false;
+        for (final MethodContext<?, ReflectTestType> method : methods) {
+            if ("parentMethod".equals(method.name())) fail = false;
         }
         if (fail) Assertions.fail("Parent types were not included");
     }
 
     @Test
+    void testTypeContextMethodsDoNotIncludeBridgeMethods() {
+        final TypeContext<BridgeImpl> bridge = TypeContext.of(BridgeImpl.class);
+        final List<MethodContext<?, BridgeImpl>> methods = bridge.methods();
+        for (final MethodContext<?, BridgeImpl> method : methods) {
+            Assertions.assertFalse(method.method().isBridge());
+        }
+    }
+
+    @Test
+    void testTypeContextBridgeMethodsCanBeObtained() {
+        final TypeContext<BridgeImpl> bridge = TypeContext.of(BridgeImpl.class);
+        final List<MethodContext<?, BridgeImpl>> methods = bridge.bridgeMethods();
+        Assertions.assertEquals(1, methods.size());
+        Assertions.assertEquals(Object.class, methods.get(0).returnType().type());
+        Assertions.assertTrue(methods.get(0).method().isBridge());
+    }
+
+    @Test
     void testLookupReturnsClassIfPresent() {
-        TypeContext<?> lookup = TypeContext.lookup("org.dockbox.hartshorn.core.types.ReflectTestType");
+        final TypeContext<?> lookup = TypeContext.lookup("org.dockbox.hartshorn.core.types.ReflectTestType");
         Assertions.assertNotNull(lookup);
         Assertions.assertEquals(ReflectTestType.class, lookup.type());
     }
 
     @Test
     void testLookupReturnsNullIfAbsent() {
-        TypeContext<?> lookup = TypeContext.lookup("org.dockbox.hartshorn.util.AnotherClass");
+        final TypeContext<?> lookup = TypeContext.lookup("org.dockbox.hartshorn.util.AnotherClass");
         Assertions.assertEquals(TypeContext.VOID, lookup);
     }
 
@@ -256,7 +286,7 @@ public class ReflectTests extends ApplicationAwareTest {
 
     @ParameterizedTest
     @MethodSource("nonVoidTypes")
-    void testVoidIsFalseIfTypeIsNotVoid(Class<?> type) {
+    void testVoidIsFalseIfTypeIsNotVoid(final Class<?> type) {
         Assertions.assertFalse(TypeContext.of(type).isVoid());
     }
 
@@ -272,25 +302,25 @@ public class ReflectTests extends ApplicationAwareTest {
 
     @ParameterizedTest
     @MethodSource("fields")
-    void testHasFieldReturnsTrue(String field) {
+    void testHasFieldReturnsTrue(final String field) {
         Assertions.assertTrue(TypeContext.of(ReflectTestType.class).field(field).present());
     }
 
     @ParameterizedTest
     @MethodSource("fields")
-    void testFieldsConsumesAllFields(String field) {
+    void testFieldsConsumesAllFields(final String field) {
         boolean activated = false;
         final TypeContext<ReflectTestType> type = TypeContext.of(ReflectTestType.class);
-        for (FieldContext<?> fieldContext : type.fields()) {
+        for (final FieldContext<?> fieldContext : type.fields()) {
             if (fieldContext.name().equals(field)) activated = true;
         }
         Assertions.assertTrue(activated);
     }
 
     @Test
-    void testSetFieldUpdatesAccessorField() throws NoSuchFieldException, IllegalAccessException {
-        Field fieldRef = ReflectTestType.class.getDeclaredField("accessorField");
-        ReflectTestType instance = new ReflectTestType();
+    void testSetFieldUpdatesAccessorField() throws NoSuchFieldException {
+        final Field fieldRef = ReflectTestType.class.getDeclaredField("accessorField");
+        final ReflectTestType instance = new ReflectTestType();
         final FieldContext<?> field = FieldContext.of(fieldRef);
         field.set(instance, "newValue");
 
@@ -298,9 +328,9 @@ public class ReflectTests extends ApplicationAwareTest {
     }
 
     @Test
-    void testSetFieldUpdatesNormalField() throws NoSuchFieldException, IllegalAccessException {
-        Field fieldRef = ReflectTestType.class.getDeclaredField("publicField");
-        ReflectTestType instance = new ReflectTestType();
+    void testSetFieldUpdatesNormalField() throws NoSuchFieldException {
+        final Field fieldRef = ReflectTestType.class.getDeclaredField("publicField");
+        final ReflectTestType instance = new ReflectTestType();
         final FieldContext<?> field = FieldContext.of(fieldRef);
         field.set(instance, "newValue");
 
@@ -312,7 +342,7 @@ public class ReflectTests extends ApplicationAwareTest {
         final List<FieldContext<?>> fields = TypeContext.of(ReflectTestType.class).fields(Demo.class);
         Assertions.assertEquals(2, fields.size());
         int statics = 0;
-        for (FieldContext<?> field : fields) {
+        for (final FieldContext<?> field : fields) {
             if (field.isStatic()) statics++;
         }
         Assertions.assertEquals(1, statics);
@@ -326,8 +356,8 @@ public class ReflectTests extends ApplicationAwareTest {
     }
 
     @Test
-    void testIsProxyIsTrueIfTypeIsProxy() throws InstantiationException, IllegalAccessException {
-        Class<?> type = new ProxyFactory().createClass();
+    void testIsProxyIsTrueIfTypeIsProxy() {
+        final Class<?> type = new ProxyFactory().createClass();
         Assertions.assertTrue(TypeContext.of(type).isProxy());
     }
 
@@ -338,10 +368,146 @@ public class ReflectTests extends ApplicationAwareTest {
 
     @ParameterizedTest
     @MethodSource("primitiveValues")
-    void testStringToPrimitive(Class<?> type, String value, Object expected) throws TypeConversionException {
-        byte b = 0x0;
-        Object o = TypeContext.toPrimitive(TypeContext.of(type), value);
+    void testStringToPrimitive(final Class<?> type, final String value, final Object expected) throws TypeConversionException {
+        final byte b = 0x0;
+        final Object o = TypeContext.toPrimitive(TypeContext.of(type), value);
         Assertions.assertNotNull(o);
         Assertions.assertEquals(expected, o);
     }
+
+    @Test
+    void testAddVirtualAnnotation() {
+        final TypeContext<String> string = TypeContext.of(String.class);
+        Assertions.assertFalse(string.annotation(Demo.class).present());
+
+        final Demo demo = new Demo() {
+            @Override
+            public Class<? extends Annotation> annotationType() {
+                return Demo.class;
+            }
+        };
+
+        AnnotatedElementModifier.of(string).add(demo);
+
+        final Exceptional<Demo> annotation = string.annotation(Demo.class);
+        Assertions.assertTrue(annotation.present());
+        Assertions.assertSame(demo, annotation.get());
+    }
+
+    @Test
+    void testRemoveVirtualAnnotation() {
+        final TypeContext<String> string = TypeContext.of(String.class);
+        final Demo demo = new Demo() {
+            @Override
+            public Class<? extends Annotation> annotationType() {
+                return Demo.class;
+            }
+        };
+        final AnnotatedElementModifier<Class<String>> modifier = AnnotatedElementModifier.of(string);
+        modifier.add(demo);
+        Assertions.assertTrue(string.annotation(Demo.class).present());
+
+        modifier.remove(Demo.class);
+        Assertions.assertFalse(string.annotation(Demo.class).present());
+    }
+
+    @Test
+    void testVirtualAnnotationToMethod() {
+        final MethodContext<?, ReflectTests> method = TypeContext.of(ReflectTests.class).method("testVirtualAnnotationToMethod").get();
+        final AnnotatedElementModifier<Method> modifier = AnnotatedElementModifier.of(method);
+        final Demo demo = new Demo() {
+            @Override
+            public Class<? extends Annotation> annotationType() {
+                return Demo.class;
+            }
+        };
+
+        modifier.add(demo);
+        Assertions.assertTrue(method.annotation(Demo.class).present());
+
+        modifier.remove(Demo.class);
+        Assertions.assertFalse(method.annotation(Demo.class).present());
+    }
+
+    @Test
+    void testMethodInvokerCanBeChanged() {
+        final Exceptional<MethodContext<String, ReflectTests>> helloWorld = TypeContext.of(ReflectTests.class)
+                .method("helloWorld")
+                .map(method -> (MethodContext<String, ReflectTests>) method);
+        Assertions.assertTrue(helloWorld.present());
+        final MethodContext<String, ReflectTests> method = helloWorld.get();
+
+        final Exceptional<?> unmodifiedResult = method.invoke(this);
+        Assertions.assertTrue(unmodifiedResult.present());
+        Assertions.assertEquals("Hello World", unmodifiedResult.get());
+
+        final MethodModifier<String, ReflectTests> modifier = MethodModifier.of(method);
+        modifier.invoker((methodContext, instance, args) -> Exceptional.of("Goodbye World"));
+
+        final Exceptional<String> modifiedResult = method.invoke(this);
+        Assertions.assertTrue(modifiedResult.present());
+        Assertions.assertEquals("Goodbye World", modifiedResult.get());
+    }
+
+    @Test
+    void testMethodAccessorCanBeChanged() {
+        final Exceptional<MethodContext<String, ReflectTests>> helloWorld = TypeContext.of(ReflectTests.class)
+                .method("privateHelloWorld")
+                .map(method -> (MethodContext<String, ReflectTests>) method);
+        Assertions.assertTrue(helloWorld.present());
+        final MethodContext<String, ReflectTests> method = helloWorld.get();
+
+        final Exceptional<String> unmodifiedResult = method.invoke(this);
+        Assertions.assertTrue(unmodifiedResult.absent());
+        Assertions.assertTrue(unmodifiedResult.caught());
+        final Throwable error = unmodifiedResult.error();
+        Assertions.assertTrue(error instanceof IllegalAccessException);
+
+        final MethodModifier<String, ReflectTests> modifier = MethodModifier.of(method);
+        modifier.access(true);
+
+        final Exceptional<String> modifiedResult = method.invoke(this);
+        Assertions.assertTrue(modifiedResult.present());
+        Assertions.assertEquals("Hello World", modifiedResult.get());
+    }
+
+    private String privateHelloWorld() {
+        return "Hello World";
+    }
+
+    public String helloWorld() {
+        return "Hello World";
+    }
+
+    @Test
+    void testRedefinedAnnotationsTakePriority() {
+        final TypeContext<AnnotatedImpl> typeContext = TypeContext.of(AnnotatedImpl.class);
+        final Exceptional<Base> annotation = typeContext.annotation(Base.class);
+        Assertions.assertTrue(annotation.present());
+        Assertions.assertEquals("impl", annotation.get().value());
+    }
+
+    @Test
+    public void genericTypeTests() {
+        final ParameterContext<?> parameter = TypeContext.of(this).method("genericTestMethod", List.class)
+                .get()
+                .parameters()
+                .get(0);
+
+        final TypeContext<?> first = parameter.genericType();
+
+        Assertions.assertTrue(first.is(List.class));
+        Assertions.assertEquals(1, first.typeParameters().size());
+
+        final TypeContext<?> second = first.typeParameters().get(0);
+        Assertions.assertTrue(second.is(List.class));
+        Assertions.assertEquals(1, second.typeParameters().size());
+
+        final TypeContext<?> third = second.typeParameters().get(0);
+        Assertions.assertTrue(third.is(String.class));
+        Assertions.assertEquals(0, third.typeParameters().size());
+    }
+
+    public void genericTestMethod(final List<List<String>> nestedGeneric) { }
+
 }

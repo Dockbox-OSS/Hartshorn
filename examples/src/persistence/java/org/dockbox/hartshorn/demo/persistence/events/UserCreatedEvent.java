@@ -26,7 +26,7 @@ import lombok.Getter;
 
 /**
  * A simple custom event which is posted by {@link UserRepository}
- * after a {@link User} has been created through {@link UserRepository#createUser(String, int)}.
+ * after a {@link User} has been created through {@link UserRepository#save(User)}.
  *
  * <p>The {@link User#id() ID of the user} will be present when this event is posted.
  *

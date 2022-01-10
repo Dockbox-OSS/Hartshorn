@@ -17,10 +17,10 @@
 
 package org.dockbox.hartshorn.core.binding;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.core.Key;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;
 import java.util.List;
@@ -30,6 +30,15 @@ import java.util.function.Consumer;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+/**
+ * A {@link ContextWrappedHierarchy} is a {@link BindingHierarchy} that wraps another {@link BindingHierarchy}
+ * and binds to an active {@link ApplicationContext}. If the wrapped {@link BindingHierarchy} is updated, the
+ * wrapped {@link BindingHierarchy} is updated as well, and directly updated in the bound {@link ApplicationContext}.
+ *
+ * @param <C> The type of the wrapped {@link BindingHierarchy}.
+ * @author Guus Lieben
+ * @since 21.4
+ */
 @AllArgsConstructor
 public class ContextWrappedHierarchy<C> implements BindingHierarchy<C> {
 
@@ -81,14 +90,25 @@ public class ContextWrappedHierarchy<C> implements BindingHierarchy<C> {
         return this.real().key();
     }
 
+    /**
+     * Updates the wrapped {@link BindingHierarchy} in the bound {@link ApplicationContext}. This behavior
+     * may differ if the {@link #onUpdate} function was provided by an external source.
+     *
+     * @return Itself, for chaining.
+     */
     private BindingHierarchy<C> update() {
         this.onUpdate.accept(this.real());
         return this;
     }
 
-    @NotNull
+    @NonNull
     @Override
     public Iterator<Entry<Integer, Provider<C>>> iterator() {
         return this.real().iterator();
+    }
+
+    @Override
+    public String toString() {
+        return this.real().toString();
     }
 }

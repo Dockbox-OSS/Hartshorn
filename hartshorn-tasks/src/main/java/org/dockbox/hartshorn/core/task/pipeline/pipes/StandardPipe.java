@@ -30,7 +30,6 @@ public interface StandardPipe<I, O> extends IPipe<I, O> {
 
     O apply(Exceptional<I> input) throws ApplicationException;
 
-    @SuppressWarnings("rawtypes")
     @Override
     default TypeContext<? extends IPipe> type() {
         return TypeContext.of(StandardPipe.class);

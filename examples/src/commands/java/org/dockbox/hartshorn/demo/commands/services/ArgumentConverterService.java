@@ -20,13 +20,14 @@ package org.dockbox.hartshorn.demo.commands.services;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.commands.arguments.ArgumentConverterImpl;
 import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
-import org.dockbox.hartshorn.core.annotations.service.Service;
+import org.dockbox.hartshorn.core.annotations.stereotype.Service;
 
 @Service
-public class ArgumentConverterService {
+public final class ArgumentConverterService {
 
     public static final ArgumentConverter<String> GREETER = ArgumentConverterImpl.builder(String.class, "greeting")
             .withConverter(input -> Exceptional.of("Hello %s".formatted(input)))
             .build();
 
+    private ArgumentConverterService() {}
 }

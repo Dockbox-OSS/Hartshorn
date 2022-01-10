@@ -17,14 +17,14 @@
 
 package org.dockbox.hartshorn.commands.context;
 
-import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.commands.service.CommandParameter;
+import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.DefaultContext;
-import org.dockbox.hartshorn.core.HartshornUtils;
-import org.jetbrains.annotations.UnmodifiableView;
+import org.dockbox.hartshorn.core.domain.Exceptional;
 
+import java.util.Collections;
 import java.util.List;
 
 import lombok.AllArgsConstructor;
@@ -45,9 +45,8 @@ public class CommandContextImpl extends DefaultContext implements CommandContext
     @Getter private final ApplicationContext applicationContext;
 
     @Override
-    @UnmodifiableView
     public List<CommandParameter<?>> arguments() {
-        return HartshornUtils.asUnmodifiableList(this.args);
+        return Collections.unmodifiableList(this.args);
     }
 
     @Override
@@ -62,9 +61,8 @@ public class CommandContextImpl extends DefaultContext implements CommandContext
     }
 
     @Override
-    @UnmodifiableView
     public List<CommandParameter<?>> flags() {
-        return HartshornUtils.asUnmodifiableList(this.flags);
+        return Collections.unmodifiableList(this.flags);
     }
 
     @Override

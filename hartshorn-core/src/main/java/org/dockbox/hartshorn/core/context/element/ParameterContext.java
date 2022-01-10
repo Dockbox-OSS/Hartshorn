@@ -17,8 +17,6 @@
 
 package org.dockbox.hartshorn.core.context.element;
 
-import org.dockbox.hartshorn.core.HartshornUtils;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Executable;
 import java.lang.reflect.Method;
@@ -32,14 +30,16 @@ import java.util.stream.Collectors;
 
 import lombok.Getter;
 
-public class ParameterContext<T> extends AnnotatedElementContext<Parameter> implements TypedElementContext<T> {
+// skipcq: JAVA-W0100
+public final class ParameterContext<T> extends AnnotatedElementContext<Parameter> implements TypedElementContext<T> {
 
     private final Parameter parameter;
     @Getter private final boolean isVarargs;
 
     private String name;
     private TypeContext<T> type;
-    private ExecutableElementContext<?> declaredBy;
+    private TypeContext<T> genericType;
+    private ExecutableElementContext<?, ?> declaredBy;
     private List<TypeContext<?>> typeParameters;
 
     private ParameterContext(final Parameter parameter) {
@@ -59,7 +59,7 @@ public class ParameterContext<T> extends AnnotatedElementContext<Parameter> impl
         return this.name;
     }
 
-    public ExecutableElementContext<?> declaredBy() {
+    public ExecutableElementContext<?, ?> declaredBy() {
         if (this.declaredBy == null) {
             final Executable executable = this.element().getDeclaringExecutable();
             if (executable instanceof Method method) this.declaredBy = MethodContext.of(method);
@@ -85,6 +85,16 @@ public class ParameterContext<T> extends AnnotatedElementContext<Parameter> impl
         return this.type;
     }
 
+    public TypeContext<T> genericType() {
+        if (this.genericType == null) {
+            final Type genericType = this.element().getParameterizedType();
+
+            if (genericType instanceof ParameterizedType parameterized) this.genericType = TypeContext.of(parameterized);
+            else this.genericType = this.type();
+        }
+        return this.genericType;
+    }
+
     @Override
     protected Parameter element() {
         return this.parameter;
@@ -103,7 +113,7 @@ public class ParameterContext<T> extends AnnotatedElementContext<Parameter> impl
                         .collect(Collectors.toList());
             }
             else {
-                this.typeParameters = HartshornUtils.emptyList();
+                this.typeParameters = List.of();
             }
         }
         return this.typeParameters;

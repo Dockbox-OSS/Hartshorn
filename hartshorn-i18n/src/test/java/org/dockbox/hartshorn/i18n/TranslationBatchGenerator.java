@@ -18,13 +18,15 @@
 package org.dockbox.hartshorn.i18n;
 
 import org.dockbox.hartshorn.core.HartshornUtils;
+import org.dockbox.hartshorn.core.annotations.activate.AutomaticActivation;
+import org.dockbox.hartshorn.core.boot.HartshornApplicationFactory;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.services.ComponentContainer;
 import org.dockbox.hartshorn.i18n.annotations.InjectTranslation;
-import org.dockbox.hartshorn.i18n.services.TranslationInjectModifier;
-import org.dockbox.hartshorn.testsuite.HartshornRunner;
+import org.dockbox.hartshorn.i18n.services.TranslationInjectPostProcessor;
+import org.dockbox.hartshorn.testsuite.HartshornExtension;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -34,10 +36,11 @@ import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -73,12 +76,14 @@ public final class TranslationBatchGenerator {
             "# You should have received a copy of the GNU Lesser General Public License",
             "# along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.",
             "#", "");
-    private static final SimpleDateFormat SDF = new SimpleDateFormat("ddMMyyyy");
+    private static final DateTimeFormatter SDF = DateTimeFormatter.ofPattern("ddMMyyyy");
+
+    private TranslationBatchGenerator() {}
 
     public static void main(final String[] args) throws Exception {
-        final ApplicationContext context = HartshornRunner.createContext(TranslationBatchGenerator.class).orNull();
+        final ApplicationContext context = HartshornExtension.createContext(new HartshornApplicationFactory().loadDefaults(), TranslationBatchGenerator.class).orNull();
         final Map<String, String> batches = migrateBatches(context);
-        final String date = SDF.format(new Date());
+        final String date = SDF.format(LocalDateTime.now());
         final Path outputPath = existingBatch().toPath().resolve("batches/" + date);
         outputPath.toFile().mkdirs();
         outputPath.toFile().mkdir();
@@ -119,7 +124,7 @@ public final class TranslationBatchGenerator {
                 }
             }
 
-            final List<String> content = HartshornUtils.emptyList();
+            final List<String> content = new ArrayList<>();
             cache.forEach((key, value) -> {
                 final String next = String.valueOf(key) + '=' + value;
                 content.add(next);
@@ -146,7 +151,7 @@ public final class TranslationBatchGenerator {
 
     private static String createBatch(final ApplicationContext context) {
         final Map<String, String> collect = collect(context);
-        final List<String> entries = HartshornUtils.emptyList();
+        final List<String> entries = new ArrayList<>();
         for (final Entry<String, String> entry : collect.entrySet()) {
             if (entry.getValue().contains("\n")) continue;
             if (BLACKLIST.contains(entry.getKey())) continue;
@@ -182,7 +187,8 @@ public final class TranslationBatchGenerator {
         return batch;
     }
 
-    private static class KeyGen extends TranslationInjectModifier {
+    @AutomaticActivation(false)
+    private static class KeyGen extends TranslationInjectPostProcessor {
 
         private static final KeyGen INSTANCE = new KeyGen();
 

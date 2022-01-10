@@ -27,7 +27,6 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.concurrent.Callable;
 
-@SuppressWarnings("ResultOfMethodCallIgnored")
 public class ExceptionalTests {
 
     @Test
@@ -421,13 +420,12 @@ public class ExceptionalTests {
         final Exceptional<String> exceptional = Exceptional.of(new Exception("error"));
 
         try {
-            exceptional.rethrow();
+            exceptional.rethrowUnchecked();
             Assertions.fail();
         }
         catch (final Throwable t) {
-            Assertions.assertTrue(t instanceof RuntimeException);
-            Assertions.assertNotNull(t.getCause());
-            Assertions.assertEquals("error", t.getCause().getMessage());
+            Assertions.assertTrue(t instanceof Exception);
+            Assertions.assertEquals("error", t.getMessage());
         }
     }
 

@@ -18,9 +18,8 @@
 package org.dockbox.hartshorn.events;
 
 import org.dockbox.hartshorn.core.HartshornUtils;
-import org.dockbox.hartshorn.core.annotations.service.Service;
+import org.dockbox.hartshorn.core.annotations.stereotype.Service;
 import org.dockbox.hartshorn.core.boot.ApplicationState.Started;
-import org.dockbox.hartshorn.core.boot.Hartshorn;
 import org.dockbox.hartshorn.core.boot.LifecycleObserver;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
@@ -28,21 +27,16 @@ import org.dockbox.hartshorn.events.annotations.Posting;
 import org.dockbox.hartshorn.events.annotations.UseEvents;
 import org.dockbox.hartshorn.events.parents.Event;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service(activators = UseEvents.class)
 public class EventValidator implements LifecycleObserver {
 
     @Override
-    public void onCreated(ApplicationContext applicationContext) {
-        // Nothing happens
-    }
-
-    @Override
-    public void onStarted(ApplicationContext applicationContext) {
+    public void onStarted(final ApplicationContext applicationContext) {
         if (applicationContext.hasActivator(UseEvents.class)) {
             new EngineChangedState<Started>() {
             }.with(applicationContext).post();
@@ -56,11 +50,11 @@ public class EventValidator implements LifecycleObserver {
                 // definitions.
                 .filter(type -> !type.isAnonymous())
                 .toList();
-        final List<TypeContext<? extends Event>> postedEvents = HartshornUtils.emptyList();
+        final List<TypeContext<? extends Event>> postedEvents = new ArrayList<>();
 
         for (final TypeContext<?> bridge : applicationContext.environment().types(Posting.class)) {
             final Posting posting = bridge.annotation(Posting.class).get();
-            postedEvents.addAll(Arrays.stream(posting.value()).map(TypeContext::of).collect(Collectors.toList()));
+            postedEvents.addAll(Arrays.stream(posting.value()).map(TypeContext::of).toList());
         }
 
         final Set<TypeContext<? extends Event>> difference = HartshornUtils.difference(allEvents, postedEvents);
@@ -73,7 +67,12 @@ public class EventValidator implements LifecycleObserver {
                     message.append("\n\t- ").append(event.name());
                 }
             }
-            Hartshorn.log().warn(message.toString());
+            applicationContext.log().warn(message.toString());
         }
+    }
+
+    @Override
+    public void onExit(final ApplicationContext applicationContext) {
+        // Nothing happens
     }
 }

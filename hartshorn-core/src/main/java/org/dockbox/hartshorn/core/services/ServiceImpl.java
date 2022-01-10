@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.core.services;
 
-import org.dockbox.hartshorn.core.annotations.service.Service;
+import org.dockbox.hartshorn.core.annotations.stereotype.Service;
 
 import java.lang.annotation.Annotation;
 
@@ -50,6 +50,11 @@ public class ServiceImpl implements Service {
     @Override
     public Class<? extends Annotation>[] activators() {
         return new Class[0];
+    }
+
+    @Override
+    public boolean permitProxying() {
+        return true;
     }
 
     @Override

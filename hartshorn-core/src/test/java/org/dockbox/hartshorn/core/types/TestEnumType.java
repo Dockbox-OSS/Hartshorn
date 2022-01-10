@@ -18,5 +18,7 @@
 package org.dockbox.hartshorn.core.types;
 
 public enum TestEnumType {
-    A, B, C
+    A, B, C;
+
+    public static final TestEnumType[] VALUES = TestEnumType.values();
 }

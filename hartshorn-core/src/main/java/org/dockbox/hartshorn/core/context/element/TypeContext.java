@@ -17,11 +17,13 @@
 
 package org.dockbox.hartshorn.core.context.element;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.core.ArrayListMultiMap;
 import org.dockbox.hartshorn.core.GenericType;
 import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.core.MultiMap;
 import org.dockbox.hartshorn.core.annotations.inject.Bound;
+import org.dockbox.hartshorn.core.boot.ExceptionHandler;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.domain.tuple.Tristate;
@@ -29,7 +31,6 @@ import org.dockbox.hartshorn.core.domain.tuple.Tuple;
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 import org.dockbox.hartshorn.core.exceptions.NotPrimitiveException;
 import org.dockbox.hartshorn.core.exceptions.TypeConversionException;
-import org.jetbrains.annotations.Nullable;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
@@ -42,10 +43,12 @@ import java.lang.reflect.Type;
 import java.lang.reflect.WildcardType;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Objects;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -54,11 +57,22 @@ import javax.inject.Inject;
 import javassist.util.proxy.ProxyFactory;
 import lombok.Getter;
 
-@SuppressWarnings({ "unchecked", "rawtypes" })
+// skipcq: JAVA-W0100
 public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
 
-    private static final Map<Class<?>, TypeContext<?>> CACHE = HartshornUtils.emptyConcurrentMap();
+    private static final Map<Class<?>, TypeContext<?>> CACHE = new ConcurrentHashMap<>();
 
+    /**
+     * Fields which should be ignored when detected. This can be for varying reasons, which should be
+     * documented on the entry in this array directly.
+     */
+    private static final Set<String> EXCLUDED_FIELDS = Set.of(
+            /*
+             * This field is a synthetic field which is added by IntelliJ IDEA when running tests with
+             * coverage.
+            */
+            "__$lineHits$__"
+    );
     private static final Map<Class<?>, Class<?>> PRIMITIVE_WRAPPERS = HartshornUtils.ofEntries(
             Tuple.of(boolean.class, Boolean.class),
             Tuple.of(byte.class, Byte.class),
@@ -95,6 +109,16 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
             Tuple.of(long.class, 0L),
             Tuple.of(short.class, 0)
     );
+    private static final Map<Class<?>, Class<?>> WRAPPERS_TO_PRIMITIVE = HartshornUtils.ofEntries(
+            Tuple.of(Boolean.class, boolean.class),
+            Tuple.of(Byte.class, byte.class),
+            Tuple.of(Character.class, char.class),
+            Tuple.of(Double.class, double.class),
+            Tuple.of(Float.class, float.class),
+            Tuple.of(Integer.class, int.class),
+            Tuple.of(Long.class, long.class),
+            Tuple.of(Short.class, short.class)
+    );
 
     public static final TypeContext<Void> VOID = TypeContext.of(Void.class);
 
@@ -105,15 +129,18 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
     @Getter private final boolean isEnum;
     @Getter private final boolean isAnnotation;
     @Getter private final boolean isArray;
+    @Getter private final boolean isTypeContext;
 
-    private final Map<String, FieldContext<?>> fields = HartshornUtils.emptyConcurrentMap();
+    private final Map<String, FieldContext<?>> fields = new ConcurrentHashMap<>();
 
     @Nullable
     private Boolean isNative;
     private List<T> enumConstants;
     private TypeContext<?> parent;
     private List<TypeContext<?>> interfaces;
-    private List<MethodContext<?, T>> flatMethods;
+    private List<MethodContext<?, T>> declaredAndInheritedMethods;
+    private List<MethodContext<?, T>> bridgeMethods;
+    private List<MethodContext<?, T>> declaredMethods;
     private List<TypeContext<?>> typeParameters;
     private MultiMap<TypeContext<?>, TypeContext<?>> interfaceTypeParameters;
     private List<ConstructorContext<T>> constructors;
@@ -124,9 +151,6 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
     private Tristate isProxy = Tristate.UNDEFINED;
 
     protected TypeContext(final Class<T> type) {
-        if (TypeContext.class.equals(type)) {
-            throw new IllegalArgumentException("TypeContext can not be reflected on");
-        }
         this.type = type;
         this.isVoid = Void.TYPE.equals(type) || Void.class.equals(type);
         this.isAnonymous = type.isAnonymousClass();
@@ -134,15 +158,16 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
         this.isEnum = type.isEnum();
         this.isAnnotation = type.isAnnotation();
         this.isArray = type.isArray();
+        this.isTypeContext = TypeContext.class.isAssignableFrom(type);
     }
 
     public static <T> TypeContext<T> unproxy(final ApplicationContext context, final T instance) {
         if (instance == null) {
             return (TypeContext<T>) VOID;
         }
-        if (isProxy(instance.getClass())) {
+        if (context.environment().manager().isProxy(instance)) {
             return context.environment().manager().real(instance)
-                    .orThrow(() -> new ApplicationException("Could not derive real type of instance " + instance).runtime());
+                    .orThrowUnchecked(() -> new ApplicationException("Could not derive real type of instance " + instance));
         }
         else return of(instance);
     }
@@ -167,7 +192,8 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
     }
 
     protected static <T> TypeContext<T> of(final ParameterizedType type) {
-        final TypeContext<T> context = of((Class<T>) type.getRawType());
+        // Use new TypeContext to avoid caching parameterized types.
+        final TypeContext<T> context = new TypeContext<>((Class<T>) type.getRawType());
         context.typeParameters = context.contextsFromParameterizedType(type);
         return context;
     }
@@ -202,19 +228,54 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
     }
 
     public List<MethodContext<?, T>> methods() {
-        if (this.flatMethods == null) {
-            this.verifyMetadataAvailable();
-            final Method[] methods = this.type().getMethods();
-            // Note that .getMethods does not include abstract methods, while .getDeclaredMethods does, as
-            // abstract methods are as relevant as any other within this context they should be included.
-            final Method[] declaredMethods = this.type().getDeclaredMethods();
-            final Method[] allMethods = HartshornUtils.merge(methods, declaredMethods);
-            this.flatMethods = Arrays.stream(allMethods)
-                    .map(MethodContext::of)
-                    .map(ctx -> (MethodContext<?, T>) ctx)
-                    .collect(Collectors.toList());
+        if (this.declaredAndInheritedMethods == null) this.prepareMethods();
+        return this.declaredAndInheritedMethods;
+    }
+
+    public List<MethodContext<?, T>> bridgeMethods() {
+        if (this.bridgeMethods == null) this.prepareMethods();
+        return this.bridgeMethods;
+    }
+
+    private void prepareMethods() {
+        this.verifyMetadataAvailable();
+        final Set<Method> allMethods = new HashSet<>();
+        final Method[] declaredMethods = this.type().getDeclaredMethods();
+        final Method[] methods = this.type().getMethods();
+        if (!this.parent().isVoid()) {
+            final List<Method> superClassMethods = this.parent().methods().stream()
+                    .filter(m -> m.isPublic() || m.isProtected())
+                    .map(MethodContext::method)
+                    .toList();
+            allMethods.addAll(superClassMethods);
         }
-        return this.flatMethods;
+        allMethods.addAll(Arrays.asList(declaredMethods));
+        allMethods.addAll(Arrays.asList(methods));
+
+        // Close stream as operating on it twice is not allowed
+        final List<? extends MethodContext<?, T>> methodContexts = allMethods.stream()
+                .map(MethodContext::of)
+                .map(method -> (MethodContext<?, T>) method)
+                .toList();
+
+        this.declaredAndInheritedMethods = methodContexts.stream()
+                .filter(method -> !method.method().isBridge())
+                .collect(Collectors.toList());
+
+        this.bridgeMethods = methodContexts.stream()
+                .filter(method -> method.method().isBridge())
+                .collect(Collectors.toList());
+    }
+
+    public List<MethodContext<?, T>> declaredMethods() {
+        if (this.declaredMethods == null) {
+            this.verifyMetadataAvailable();
+            this.declaredMethods = Arrays.stream(this.type().getDeclaredMethods())
+                    .map(MethodContext::of)
+                    .map(method -> (MethodContext<?, T>) method)
+                    .collect(Collectors.toUnmodifiableList());
+        }
+        return this.declaredMethods;
     }
 
     public List<MethodContext<?, T>> methods(final Class<? extends Annotation> annotation) {
@@ -242,7 +303,7 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
                 }
             }
         }
-        return HartshornUtils.asUnmodifiableList(this.interfaceTypeParameters.get(superInterface));
+        return List.copyOf(this.interfaceTypeParameters.get(superInterface));
     }
 
     public List<TypeContext<?>> typeParameters() {
@@ -252,7 +313,7 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
             if (genericSuper instanceof ParameterizedType parameterized) {
                 this.typeParameters = this.contextsFromParameterizedType(parameterized);
             } else {
-                this.typeParameters = HartshornUtils.emptyList();
+                this.typeParameters = List.of();
             }
         }
         return this.typeParameters;
@@ -262,10 +323,11 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
         final Type[] arguments = parameterizedType.getActualTypeArguments();
 
         return Arrays.stream(arguments)
-                .filter(type -> type instanceof Class || type instanceof WildcardType)
+                .filter(type -> type instanceof Class || type instanceof WildcardType || type instanceof ParameterizedType)
                 .map(type -> {
                     if (type instanceof Class clazz) return TypeContext.of(clazz);
                     else if (type instanceof WildcardType wildcard) return WildcardTypeContext.create();
+                    else if (type instanceof ParameterizedType parameterized) return TypeContext.of(parameterized);
                     else return TypeContext.VOID;
                 })
                 .map(type -> (TypeContext<?>) type)
@@ -282,7 +344,7 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
 
     public List<FieldContext<?>> fields() {
         this.collectFields();
-        return HartshornUtils.asUnmodifiableList(this.fields.values());
+        return List.copyOf(this.fields.values());
     }
 
     public List<FieldContext<?>> fields(final Class<? extends Annotation> annotation) {
@@ -300,7 +362,7 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
 
     public <P> List<FieldContext<P>> fieldsOf(final GenericType<P> type) {
         final Exceptional<Class<P>> real = type.asClass();
-        if (real.absent()) return HartshornUtils.emptyList();
+        if (real.absent()) return List.of();
         else return this.fieldsOf(real.get());
     }
 
@@ -308,6 +370,9 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
         if (this.fields.isEmpty()) {
             this.verifyMetadataAvailable();
             for (final Field declared : this.type().getDeclaredFields()) {
+                if (TypeContext.EXCLUDED_FIELDS.contains(declared.getName()))
+                    continue;
+
                 this.fields.put(declared.getName(), FieldContext.of(declared));
             }
             if (!(this.parent().isVoid() || Object.class.equals(this.parent().type()))) {
@@ -316,6 +381,14 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
                 }
             }
         }
+    }
+
+    public boolean parentOf(final Class<?> to) {
+        return this.parentOf(TypeContext.of(to));
+    }
+
+    public boolean parentOf(final TypeContext<?> type) {
+        return type.childOf(this);
     }
 
     public boolean childOf(final TypeContext<?> type) {
@@ -329,7 +402,6 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
         final Class<T> from = this.type();
 
         if (null == to || null == from) return false;
-        //noinspection ConstantConditions
         if (to == from || to.equals(from)) return true;
 
         if (to.isAssignableFrom(from)) {
@@ -346,7 +418,7 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
 
     private static boolean isPrimitiveWrapper(final Class<?> targetClass, final Class<?> primitive) {
         if (!primitive.isPrimitive()) {
-            throw new IllegalArgumentException("First argument has to be isPrimitiveWrapper type");
+            throw new IllegalArgumentException("Second argument has to be primitive type");
         }
         return PRIMITIVE_WRAPPERS.get(primitive) == targetClass;
     }
@@ -361,13 +433,9 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
 
     public boolean isProxy() {
         if (Tristate.UNDEFINED == this.isProxy) {
-            this.isProxy = isProxy(this.type()) ? Tristate.TRUE : Tristate.FALSE;
+            this.isProxy = Tristate.valueOf(ProxyFactory.isProxyClass(this.type) || Proxy.isProxyClass(this.type));
         }
         return this.isProxy.booleanValue();
-    }
-
-    private static boolean isProxy(final Class<?> type) {
-        return (ProxyFactory.isProxyClass(type) || Proxy.isProxyClass(type));
     }
 
     public boolean isNative() {
@@ -404,6 +472,21 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
         return this.constructors;
     }
 
+    public Exceptional<ConstructorContext<T>> constructor(final Class<?>... parameterTypes) {
+        return this.constructor(Arrays.asList(parameterTypes));
+    }
+
+    public Exceptional<ConstructorContext<T>> constructor(final List<Class<?>> parameterTypes) {
+        return Exceptional.of(this.constructors().stream()
+                .filter(constructor -> {
+                    final List<? extends Class<?>> parameters = constructor.parameterTypes().stream()
+                            .map(TypeContext::type)
+                            .collect(Collectors.toList());
+                    return parameters.equals(parameterTypes);
+                })
+                .findFirst());
+    }
+
     public List<ConstructorContext<T>> constructors(final Class<? extends Annotation> annotation) {
         return this.constructors().stream()
                 .filter(constructor -> constructor.annotation(annotation).present())
@@ -437,9 +520,9 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
     public List<T> enumConstants() {
         if (this.enumConstants == null) {
             this.verifyMetadataAvailable();
-            if (!this.isEnum) this.enumConstants = HartshornUtils.asUnmodifiableList(HartshornUtils.emptyList());
+            if (!this.isEnum) this.enumConstants = List.of();
             else {
-                this.enumConstants = HartshornUtils.asUnmodifiableList(this.type().getEnumConstants());
+                this.enumConstants = List.of(this.type().getEnumConstants());
             }
         }
         return this.enumConstants;
@@ -477,18 +560,6 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
     }
 
     @Override
-    public boolean equals(final Object o) {
-        if (this == o) return true;
-        if (!(o instanceof final TypeContext<?> that)) return false;
-        return this.type.equals(that.type);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(this.type);
-    }
-
-    @Override
     public String toString() {
         return "TypeContext{%s}".formatted(this.type);
     }
@@ -510,7 +581,7 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
     }
 
     public Exceptional<MethodContext<?, T>> method(final String name) {
-        return this.method(name, HartshornUtils.emptyList());
+        return this.method(name, List.of());
     }
 
     public Exceptional<MethodContext<?, T>> method(final String name, final List<TypeContext<?>> arguments) {
@@ -539,7 +610,10 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
             Class<?> type = this.type();
             while (type != null) {
                 for (final Annotation annotation : type.getDeclaredAnnotations()) {
-                    annotations.put(annotation.getClass(), annotation);
+                    // If it's a duplicate, the annotation was redefined in a higher level class. In this case we prefer
+                    // the one in the highest level class, so we ignore the one in the lower level, or parent, class.
+                    if (!annotations.containsKey(annotation.annotationType()))
+                        annotations.put(annotation.annotationType(), annotation);
                 }
                 type = type.getSuperclass();
             }
@@ -557,15 +631,24 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
     }
 
     private void verifyMetadataAvailable() {
-        if (this.isProxy()) throw new ApplicationException("Cannot collect metadata of proxied type").runtime();
+        if (this.isProxy()) ExceptionHandler.unchecked(new ApplicationException("Cannot collect metadata of proxied type '%s'".formatted(this.qualifiedName())));
     }
 
     public T defaultOrNull() {
-        if (!this.isPrimitive()) return null;
-        else return (T) PRIMITIVE_DEFAULTS.getOrDefault(this.type(), null);
+        if (this.isPrimitive()) {
+            return (T) PRIMITIVE_DEFAULTS.getOrDefault(this.type(), null);
+        } else {
+            final Class<?> primitive = WRAPPERS_TO_PRIMITIVE.get(this.type());
+            if (primitive == null) return null;
+            else return (T) TypeContext.of(primitive).defaultOrNull();
+        }
     }
 
     public boolean isFinal() {
         return Modifier.isFinal(this.type().getModifiers());
+    }
+
+    public boolean isDeclaredIn(final String prefix) {
+        return this.type().getPackageName().startsWith(prefix);
     }
 }

@@ -21,20 +21,29 @@ import org.dockbox.hartshorn.commands.annotations.UseCommands;
 import org.dockbox.hartshorn.commands.arguments.CustomParameterPattern;
 import org.dockbox.hartshorn.commands.arguments.HashtagParameterPattern;
 import org.dockbox.hartshorn.commands.types.CuboidArgument;
-import org.dockbox.hartshorn.core.HartshornUtils;
+import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.i18n.Message;
 import org.dockbox.hartshorn.i18n.MessageTemplate;
-import org.dockbox.hartshorn.testsuite.ApplicationAwareTest;
+import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.Locale;
 
+import javax.inject.Inject;
+
+import lombok.Getter;
+
 @UseCommands
-public class HashtagParameterPatternTests extends ApplicationAwareTest {
+@HartshornTest
+public class HashtagParameterPatternTests {
+
+    @Inject
+    @Getter
+    private ApplicationContext applicationContext;
 
     @Test
     void testPreconditionsAcceptValidPattern() {
@@ -44,7 +53,7 @@ public class HashtagParameterPatternTests extends ApplicationAwareTest {
         final Exceptional<Boolean> result = parameterPattern.preconditionsMatch(TypeContext.of(CuboidArgument.class), null, pattern);
 
         Assertions.assertTrue(result.present());
-        Assertions.assertTrue(HartshornUtils.unwrap(result));
+        Assertions.assertTrue(result.get());
     }
 
     private HashtagParameterPattern pattern() {
@@ -65,7 +74,7 @@ public class HashtagParameterPatternTests extends ApplicationAwareTest {
         final Exceptional<Boolean> result = parameterPattern.preconditionsMatch(TypeContext.of(CuboidArgument.class), null, pattern);
 
         Assertions.assertTrue(result.present());
-        Assertions.assertFalse(HartshornUtils.unwrap(result));
+        Assertions.assertFalse(result.get());
     }
 
     @Test
@@ -76,7 +85,7 @@ public class HashtagParameterPatternTests extends ApplicationAwareTest {
         final Exceptional<Boolean> result = parameterPattern.preconditionsMatch(TypeContext.of(CuboidArgument.class), null, pattern);
 
         Assertions.assertTrue(result.present());
-        Assertions.assertFalse(HartshornUtils.unwrap(result));
+        Assertions.assertFalse(result.get());
     }
 
     @Test
@@ -106,7 +115,7 @@ public class HashtagParameterPatternTests extends ApplicationAwareTest {
         final String pattern = "#cuboid[1]";
         final CustomParameterPattern parameterPattern = this.pattern();
 
-        final Exceptional<CuboidArgument> result = parameterPattern.request(TypeContext.of(CuboidArgument.class), SystemSubject.instance(this.context()), pattern);
+        final Exceptional<CuboidArgument> result = parameterPattern.request(TypeContext.of(CuboidArgument.class), SystemSubject.instance(this.applicationContext()), pattern);
 
         Assertions.assertTrue(result.present());
 
@@ -114,3 +123,4 @@ public class HashtagParameterPatternTests extends ApplicationAwareTest {
         Assertions.assertEquals(1, cuboid.size());
     }
 }
+

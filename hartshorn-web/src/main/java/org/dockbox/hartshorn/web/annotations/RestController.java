@@ -17,7 +17,8 @@
 
 package org.dockbox.hartshorn.web.annotations;
 
-import org.dockbox.hartshorn.core.annotations.service.Service;
+import org.dockbox.hartshorn.core.annotations.AliasFor;
+import org.dockbox.hartshorn.core.annotations.stereotype.Service;
 import org.dockbox.hartshorn.core.annotations.Extends;
 
 import java.lang.annotation.ElementType;
@@ -29,5 +30,6 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 @Extends(Service.class)
 public @interface RestController {
+    @AliasFor("pathSpec")
     String value() default "";
 }

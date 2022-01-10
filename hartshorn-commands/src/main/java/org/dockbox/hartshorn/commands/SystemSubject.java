@@ -20,7 +20,6 @@ package org.dockbox.hartshorn.commands;
 import org.dockbox.hartshorn.commands.exceptions.ParsingException;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.domain.Identifiable;
-import org.dockbox.hartshorn.core.exceptions.Except;
 
 import java.util.Locale;
 import java.util.UUID;
@@ -37,7 +36,6 @@ public abstract class SystemSubject implements CommandSource, Identifiable {
     @Getter
     private ApplicationContext applicationContext;
 
-    @SuppressWarnings("ConstantDeclaredInAbstractClass")
     public static final UUID UNIQUE_ID = new UUID(0, 0);
 
     public static SystemSubject instance(final ApplicationContext context) {
@@ -70,7 +68,7 @@ public abstract class SystemSubject implements CommandSource, Identifiable {
             this.applicationContext.get(CommandGateway.class).accept(this, command);
         }
         catch (final ParsingException e) {
-            Except.handle(e);
+            this.applicationContext.handle(e);
         }
     }
 }

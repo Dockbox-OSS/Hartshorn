@@ -17,10 +17,9 @@
 
 package org.dockbox.hartshorn.core;
 
-import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.annotations.AliasFor;
-import org.dockbox.hartshorn.core.annotations.CompositeOf;
 import org.dockbox.hartshorn.core.annotations.Extends;
+import org.dockbox.hartshorn.core.domain.Exceptional;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
@@ -31,7 +30,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -42,20 +40,19 @@ import java.util.stream.Stream;
 
 import lombok.Getter;
 
-import static java.util.stream.Collectors.toList;
-
 /**
  * Offers fine-grained control over annotation composition and inheritance. This utility
  * class is forked from <a href="https://github.com/blindpirate/annotation-magic">AnnotationMagic</a>.
  */
 public final class AnnotationHelper {
+
     /**
      * The annotation-magic-lookup is a relatively expensive operation, so we'd better
-     * cache the result as much as possible. In case you don't want the cached value to
-     * stay in memory forever, you can pass a customized cache implementation, like LRU
-     * cache, to the constructor.
+     * cache the result as much as possible.
      */
-    private static final Map<Object, Exceptional<Object>> cache = HartshornUtils.emptyConcurrentMap();
+    private static final Map<Object, Exceptional<Object>> cache = new ConcurrentHashMap<>();
+
+    private AnnotationHelper() {}
 
     public static <A extends Annotation> A oneOrNull(final AnnotatedElement element, final Class<A> targetAnnotationClass) {
         return assertZeroOrOne(allOrEmpty(element, targetAnnotationClass), element);
@@ -83,39 +80,15 @@ public final class AnnotationHelper {
             ret = Exceptional.of(supplier::get);
             cache.put(keys, ret);
         }
-        ret.rethrow();
+        ret.rethrowUnchecked();
         return (T) ret.orNull();
     }
 
     private static <A extends Annotation> List<A> annotations(final Annotation[] annotations, final Class<A> targetClass) {
         return Stream.of(annotations)
-                .flatMap(AnnotationHelper::expandAnnotation)
                 .map(annotation -> examineAnnotation(annotation, targetClass))
                 .filter(Objects::nonNull)
-                .collect(toList());
-    }
-
-    private static Stream<Annotation> expandAnnotation(final Annotation annotation) {
-        final Annotation[] annotationsOnTargetAnnotationType = annotation.annotationType().getAnnotations();
-
-        final int compositeOfIndex = indexOf(annotationsOnTargetAnnotationType, CompositeOf.class);
-        final int extendsIndex = indexOf(annotationsOnTargetAnnotationType, Extends.class);
-
-        if (compositeOfIndex == -1) {
-            return Stream.of(annotation);
-        }
-
-        final LinkedList<Annotation> result = Stream.of(((CompositeOf) annotationsOnTargetAnnotationType[compositeOfIndex]).value())
-                .map(klass -> (Annotation) Proxy.newProxyInstance(klass.getClassLoader(), new Class[]{ klass }, new AnnotationInvocationHandler(klass, annotation))).collect(Collectors.toCollection(LinkedList::new));
-        if (extendsIndex != -1) {
-            if (extendsIndex < compositeOfIndex) {
-                result.addFirst(annotation);
-            }
-            else {
-                result.add(annotation);
-            }
-        }
-        return result.stream();
+                .collect(Collectors.toList());
     }
 
     private static <A extends Annotation> A examineAnnotation(Annotation actual, final Class<A> targetAnnotationClass) {
@@ -131,15 +104,6 @@ public final class AnnotationHelper {
 
         return (A) Proxy.newProxyInstance(AnnotationHelper.class.getClassLoader(), new Class[]{ targetAnnotationClass, AnnotationAdapter.class },
                 new AnnotationAdapterProxy<>(actual, targetAnnotationClass, hierarchy));
-    }
-
-    private static int indexOf(final Annotation[] annotations, final Class<? extends Annotation> targetAnnotation) {
-        for (int i = 0; i < annotations.length; ++i) {
-            if (annotations[i].annotationType() == targetAnnotation) {
-                return i;
-            }
-        }
-        return -1;
     }
 
     private static Annotation actualAnnotationBehindProxy(final Annotation annotation) {
@@ -206,6 +170,16 @@ public final class AnnotationHelper {
 
             // search in super annotation type
             for (final Class<? extends Annotation> klass : hierarchy) {
+                try {
+                    final Method klassMethod = klass.getMethod(name);
+                    if (klassMethod != null) {
+                        final Object defaultValue = klassMethod.getDefaultValue();
+                        if (defaultValue != null) return Exceptional.of(defaultValue);
+                    }
+                } catch (final NoSuchMethodException ignored) {
+                    // Do not break yet, we might find it in a super class
+                }
+
                 final Annotation[] annotationsOnCurrentAnnotationClass = klass.getAnnotations();
                 for (final Annotation annotationOnCurrentAnnotationClass : annotationsOnCurrentAnnotationClass) {
                     if (hierarchy.contains(annotationOnCurrentAnnotationClass.annotationType())) {
@@ -238,6 +212,7 @@ public final class AnnotationHelper {
         }
     }
 
+    @FunctionalInterface
     interface AnnotationAdapter {
         Annotation actualAnnotation();
     }

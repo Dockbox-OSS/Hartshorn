@@ -17,11 +17,11 @@
 
 package org.dockbox.hartshorn.events.parents;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.Context;
 import org.dockbox.hartshorn.core.context.DefaultContext;
 import org.dockbox.hartshorn.events.EventBus;
-import org.jetbrains.annotations.NotNull;
 
 public abstract class ContextCarrierEvent extends DefaultContext implements Event {
 
@@ -53,7 +53,7 @@ public abstract class ContextCarrierEvent extends DefaultContext implements Even
     }
 
     @Override
-    public @NotNull Event post() {
+    public @NonNull Event post() {
         this.applicationContext().get(EventBus.class).post(this);
         return this;
     }

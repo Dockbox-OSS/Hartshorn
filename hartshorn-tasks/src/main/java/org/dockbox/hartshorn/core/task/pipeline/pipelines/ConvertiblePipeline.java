@@ -17,6 +17,7 @@
 
 package org.dockbox.hartshorn.core.task.pipeline.pipelines;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.task.pipeline.CancelBehaviour;
 import org.dockbox.hartshorn.core.task.pipeline.PipelineDirection;
@@ -24,8 +25,7 @@ import org.dockbox.hartshorn.core.task.pipeline.exceptions.IllegalPipelineExcept
 import org.dockbox.hartshorn.core.task.pipeline.pipes.CancellablePipe;
 import org.dockbox.hartshorn.core.task.pipeline.pipes.IPipe;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.function.Function;
 
@@ -46,8 +46,7 @@ public class ConvertiblePipeline<P, I> extends AbstractPipeline<P, I> {
      * A private constructor for the pipeline as all convertible pipelines should be instantiated
      * initially as {@link ConvertiblePipelineSource}
      *
-     * @param inputClass
-     *         The {@link Class} of the {@code I} input type
+     * @param inputClass The {@link Class} of the {@code I} input type
      */
     protected ConvertiblePipeline(final Class<I> inputClass) {
         this.inputClass = TypeContext.of(inputClass);
@@ -56,41 +55,37 @@ public class ConvertiblePipeline<P, I> extends AbstractPipeline<P, I> {
     /**
      * Internally calls {@link AbstractPipeline#add(IPipe[])} and returns itself.
      *
-     * @param pipes
-     *         The non-null varargs of {@link IPipe pipes} to add to the pipeline
+     * @param pipes The non-null varargs of {@link IPipe pipes} to add to the pipeline
      *
      * @return Itself
      */
     @SafeVarargs
     @Override
-    public final ConvertiblePipeline<P, I> add(@NotNull final IPipe<I, I>... pipes) {
+    public final ConvertiblePipeline<P, I> add(@NonNull final IPipe<I, I>... pipes) {
         return (ConvertiblePipeline<P, I>) super.add(pipes);
     }
 
     /**
      * Internally calls {@link AbstractPipeline#add(IPipe)} and returns itself.
      *
-     * @param pipe
-     *         The non-null {@link IPipe} to add to the pipeline
+     * @param pipe The non-null {@link IPipe} to add to the pipeline
      *
      * @return Itself
      */
     @Override
-    public ConvertiblePipeline<P, I> add(@NotNull final IPipe<I, I> pipe) {
+    public ConvertiblePipeline<P, I> add(@NonNull final IPipe<I, I> pipe) {
         return (ConvertiblePipeline<P, I>) super.add(pipe);
     }
 
     /**
      * Internally calls {@link AbstractPipeline#add(AbstractPipeline)} and returns itself.
      *
-     * @param pipeline
-     *         The non-null {@link AbstractPipeline} of which the {@link IPipe pipes} should be added to
-     *         this pipeline
+     * @param pipeline The non-null {@link AbstractPipeline} of which the {@link IPipe pipes} should be added to this pipeline
      *
      * @return Itself
      */
     @Override
-    public ConvertiblePipeline<P, I> add(@NotNull final AbstractPipeline<?, I> pipeline) {
+    public ConvertiblePipeline<P, I> add(@NonNull final AbstractPipeline<?, I> pipeline) {
         return (ConvertiblePipeline<P, I>) super.add(pipeline);
     }
 
@@ -99,14 +94,12 @@ public class ConvertiblePipeline<P, I> extends AbstractPipeline<P, I> {
      * Exceptional)} on each {@link IPipe} in the pipeline and then returns the output wrapped in an
      * {@link Exceptional}.
      *
-     * @param exceptionalInput
-     *         A non-null {@link Exceptional} which contains the input value and
-     *         throwable
+     * @param exceptionalInput A non-null {@link Exceptional} which contains the input value and throwable
      *
      * @return An {@link Exceptional} containing the output
      */
     @Override
-    protected Exceptional<I> process(@NotNull Exceptional<I> exceptionalInput) {
+    protected Exceptional<I> process(@NonNull Exceptional<I> exceptionalInput) {
         for (final IPipe<I, I> pipe : this.pipes()) {
             // If the pipelines been cancelled, stop processing any further pipes.
             if (super.cancelled()) {
@@ -125,8 +118,7 @@ public class ConvertiblePipeline<P, I> extends AbstractPipeline<P, I> {
      * Sets the cancel behaviour to be used by the entire pipeline by internally calling {@link
      * ConvertiblePipeline#cancelBehaviour(CancelBehaviour, PipelineDirection)}.
      *
-     * @param cancelBehaviour
-     *         A {@link CancelBehaviour} describing the cancellability of the pipeline
+     * @param cancelBehaviour A {@link CancelBehaviour} describing the cancellability of the pipeline
      *
      * @return Itself
      */
@@ -143,16 +135,13 @@ public class ConvertiblePipeline<P, I> extends AbstractPipeline<P, I> {
      * used as the source of the pipeline, then it will attempt to cast the {@code P} input to {@code
      * I}.
      *
-     * @param input
-     *         The non-null input value
-     * @param throwable
-     *         The nullable input {@link Throwable}
+     * @param input The non-null input value
+     * @param throwable The nullable input {@link Throwable}
      *
-     * @return An {@link Exceptional} containing the {@code I} output. If the output is not present it
-     *         will contain a throwable describing why
+     * @return An {@link Exceptional} containing the {@code I} output. If the output is not present it will contain a throwable describing why
      */
     @Override
-    public Exceptional<I> process(@NotNull final P input, @Nullable final Throwable throwable) {
+    public Exceptional<I> process(@NonNull final P input, @Nullable final Throwable throwable) {
         final Exceptional<I> exceptionalInput;
 
         // This should never be called, unless this class was used initially instead of
@@ -198,17 +187,13 @@ public class ConvertiblePipeline<P, I> extends AbstractPipeline<P, I> {
      * ConvertiblePipeline#process(Object, Throwable)} and then converting the output using the
      * converter provided in {@link ConvertiblePipeline#convertPipeline(Function, Class)}.
      *
-     * @param input
-     *         The non-null {@code P} input to be processed by the pipeline
-     * @param throwable
-     *         A nullable {@link Throwable} that may have been thrown while processing the
-     *         input
-     * @param <K>
-     *         The type of the next pipeline
+     * @param input The non-null {@code P} input to be processed by the pipeline
+     * @param throwable A nullable {@link Throwable} that may have been thrown while processing the input
+     * @param <K> The type of the next pipeline
      *
      * @return An {@link Exceptional} of type {@code K} containing the converted output
      */
-    protected <K> Exceptional<K> processConverted(@NotNull final P input, @Nullable final Throwable throwable) {
+    protected <K> Exceptional<K> processConverted(@NonNull final P input, @Nullable final Throwable throwable) {
         final Exceptional<I> result = this.process(input, throwable);
 
         if (super.cancelled()) {
@@ -227,17 +212,13 @@ public class ConvertiblePipeline<P, I> extends AbstractPipeline<P, I> {
      * automatically makes it non-cancellable and so will throw an {@link IllegalPipelineException} if
      * you try and process an input with any {@link CancellablePipe}s in this pipeline.
      *
-     * @param converter
-     *         A non-null {@link Function} that takes in an {@code I} input and returns a
-     *         converted {@code K} output
-     * @param outputClass
-     *         A non-null {@link Class} of the type of the new pipeline
-     * @param <K>
-     *         The type of the new pipeline
+     * @param converter A non-null {@link Function} that takes in an {@code I} input and returns a converted {@code K} output
+     * @param outputClass A non-null {@link Class} of the type of the new pipeline
+     * @param <K> The type of the new pipeline
      *
      * @return A pipeline of the new type
      */
-    public <K> ConvertiblePipeline<P, K> convertPipeline(@NotNull final Function<? super I, K> converter, @NotNull final Class<K> outputClass) {
+    public <K> ConvertiblePipeline<P, K> convertPipeline(@NonNull final Function<? super I, K> converter, @NonNull final Class<K> outputClass) {
         this.converter = converter;
 
         final ConvertiblePipeline<P, K> nextPipeline = new ConvertiblePipeline<>(outputClass);
@@ -253,10 +234,8 @@ public class ConvertiblePipeline<P, I> extends AbstractPipeline<P, I> {
      * Removes the current pipeline by clearing the {@link IPipe pipes} and any links with previous and
      * next pipelines.
      *
-     * @param previousClass
-     *         The {@link Class} of the previous pipeline's input
-     * @param <K>
-     *         The type of the previous pipeline's input
+     * @param previousClass The {@link Class} of the previous pipeline's input
+     * @param <K> The type of the previous pipeline's input
      *
      * @return The previous pipeline. If there are no previous pipelines, then it returns itself
      */
@@ -317,8 +296,7 @@ public class ConvertiblePipeline<P, I> extends AbstractPipeline<P, I> {
     /**
      * Setter function to set the next pipeline.
      *
-     * @param nextPipeline
-     *         The next pipeline
+     * @param nextPipeline The next pipeline
      */
     protected void next(@Nullable final ConvertiblePipeline<P, ?> nextPipeline) {
         this.nextPipeline = nextPipeline;
@@ -327,8 +305,7 @@ public class ConvertiblePipeline<P, I> extends AbstractPipeline<P, I> {
     /**
      * Setter function to set the previous pipeline.
      *
-     * @param previousPipeline
-     *         The previous pipeline
+     * @param previousPipeline The previous pipeline
      */
     protected void previous(@Nullable final ConvertiblePipeline<P, ?> previousPipeline) {
         this.previousPipeline = previousPipeline;
@@ -344,11 +321,8 @@ public class ConvertiblePipeline<P, I> extends AbstractPipeline<P, I> {
      * Propagates the cancel behaviour throughout all the linked pipelines in a particular {@link
      * PipelineDirection}.
      *
-     * @param cancelBehaviour
-     *         The {@link CancelBehaviour} to be used by the pipeline
-     * @param direction
-     *         The {@link PipelineDirection} that the cancel behaviour needs to be passed
-     *         along
+     * @param cancelBehaviour The {@link CancelBehaviour} to be used by the pipeline
+     * @param direction The {@link PipelineDirection} that the cancel behaviour needs to be passed along
      */
     protected void cancelBehaviour(final CancelBehaviour cancelBehaviour, final PipelineDirection direction) {
         super.cancelBehaviour(cancelBehaviour);

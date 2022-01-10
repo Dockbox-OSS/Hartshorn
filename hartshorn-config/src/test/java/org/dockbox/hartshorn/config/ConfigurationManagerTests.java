@@ -18,23 +18,33 @@
 package org.dockbox.hartshorn.config;
 
 import org.dockbox.hartshorn.config.annotations.UseConfigurations;
-import org.dockbox.hartshorn.core.boot.Hartshorn;
-import org.dockbox.hartshorn.core.context.element.TypeContext;
-import org.dockbox.hartshorn.persistence.FileManager;
-import org.dockbox.hartshorn.persistence.FileType;
-import org.dockbox.hartshorn.testsuite.ApplicationAwareTest;
+import org.dockbox.hartshorn.core.Key;
+import org.dockbox.hartshorn.core.context.ApplicationContext;
+import org.dockbox.hartshorn.data.FileFormats;
+import org.dockbox.hartshorn.data.mapping.ObjectMapper;
+import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.nio.file.Path;
+import java.util.concurrent.CopyOnWriteArrayList;
 
+import javax.inject.Inject;
+
+import lombok.Getter;
+
+@HartshornTest
 @UseConfigurations
-public class ConfigurationManagerTests extends ApplicationAwareTest {
+public class ConfigurationManagerTests {
+
+    @Inject
+    @Getter
+    private ApplicationContext applicationContext;
 
     @Test
     void testClassPathConfigurations() {
         // Configuration is read from resources/junit.yml
-        final DemoClasspathConfiguration configuration = this.context().get(DemoClasspathConfiguration.class);
+        final DemoClasspathConfiguration configuration = this.applicationContext().get(DemoClasspathConfiguration.class);
 
         Assertions.assertNotNull(configuration);
         Assertions.assertNotNull(configuration.classPathValue());
@@ -42,18 +52,64 @@ public class ConfigurationManagerTests extends ApplicationAwareTest {
     }
 
     @Test
+    void testDefaultValuesAreUsedIfPropertyIsAbsent() {
+        final DemoClasspathConfiguration configuration = this.applicationContext().get(DemoClasspathConfiguration.class);
+
+        Assertions.assertNotNull(configuration);
+        Assertions.assertNotNull(configuration.classPathValueWithDefault());
+        Assertions.assertEquals("myDefaultValue", configuration.classPathValueWithDefault());
+    }
+
+    @Test
+    void testNumberValuesAreParsed() {
+        final DemoClasspathConfiguration configuration = this.applicationContext().get(DemoClasspathConfiguration.class);
+
+        Assertions.assertNotNull(configuration);
+        Assertions.assertEquals(1, configuration.number());
+    }
+
+    @Test
+    void testCollectionsAreParsed() {
+        final DemoClasspathConfiguration configuration = this.applicationContext().get(DemoClasspathConfiguration.class);
+
+        Assertions.assertNotNull(configuration);
+        Assertions.assertNotNull(configuration.list());
+        Assertions.assertEquals(3, configuration.list().size());
+    }
+
+    @Test
+    void testCollectionsAreSorted() {
+        final DemoClasspathConfiguration configuration = this.applicationContext().get(DemoClasspathConfiguration.class);
+
+        Assertions.assertNotNull(configuration);
+        Assertions.assertNotNull(configuration.copyOnWriteArrayList());
+        Assertions.assertEquals(1, (int) configuration.copyOnWriteArrayList().get(0));
+        Assertions.assertEquals(5, (int) configuration.copyOnWriteArrayList().get(1));
+        Assertions.assertEquals(3, (int) configuration.copyOnWriteArrayList().get(2));
+    }
+
+    @Test
+    void testCustomCollectionsAreConverted() {
+        final DemoClasspathConfiguration configuration = this.applicationContext().get(DemoClasspathConfiguration.class);
+
+        Assertions.assertNotNull(configuration);
+        Assertions.assertNotNull(configuration.copyOnWriteArrayList());
+        Assertions.assertEquals(3, configuration.copyOnWriteArrayList().size());
+        Assertions.assertTrue(configuration.copyOnWriteArrayList() instanceof CopyOnWriteArrayList);
+    }
+
+    @Test
     void testFsConfigurations() {
-        // Create and populate the file, as we have no way to define local files in tests (yet)
-        final FileManager files = this.context().get(FileManager.class).fileType(FileType.YAML);
-        final Path file = files.configFile(Hartshorn.class, "junit");
-        files.write(file, """
+        final Path file = FileFormats.YAML.asPath(this.applicationContext().environment().manager().applicationPath(), "junit");
+        final ObjectMapper objectMapper = this.applicationContext().get(ObjectMapper.class);
+        objectMapper.write(file, """
                 junit:
                     fs: "This is a value"
                     """);
 
-        new ConfigurationServiceProcessor().process(this.context(), TypeContext.of(DemoFSConfiguration.class));
+        new ConfigurationServicePreProcessor().process(this.applicationContext(), Key.of(DemoFSConfiguration.class));
 
-        final DemoFSConfiguration configuration = this.context().get(DemoFSConfiguration.class);
+        final DemoFSConfiguration configuration = this.applicationContext().get(DemoFSConfiguration.class);
         Assertions.assertNotNull(configuration);
         Assertions.assertNotNull(configuration.fileSystemValue());
         Assertions.assertEquals("This is a value", configuration.fileSystemValue());
@@ -61,8 +117,8 @@ public class ConfigurationManagerTests extends ApplicationAwareTest {
 
     @Test
     void testNormalValuesAreAccessible() {
-        this.context().property("demo", "Hartshorn");
-        final ValueTyped typed = this.context().get(ValueTyped.class);
+        this.applicationContext().property("demo", "Hartshorn");
+        final ValueTyped typed = this.applicationContext().get(ValueTyped.class);
 
         Assertions.assertNotNull(typed.string());
         Assertions.assertEquals("Hartshorn", typed.string());
@@ -70,8 +126,8 @@ public class ConfigurationManagerTests extends ApplicationAwareTest {
 
     @Test
     void testNestedValuesAreAccessible() {
-        this.context().property("nested.demo", "Hartshorn");
-        final ValueTyped typed = this.context().get(ValueTyped.class);
+        this.applicationContext().property("nested.demo", "Hartshorn");
+        final ValueTyped typed = this.applicationContext().get(ValueTyped.class);
 
         Assertions.assertNotNull(typed);
         Assertions.assertNotNull(typed.nestedString());

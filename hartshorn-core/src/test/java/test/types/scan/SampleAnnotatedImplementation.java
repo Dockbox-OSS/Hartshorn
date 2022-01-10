@@ -17,10 +17,10 @@
 
 package test.types.scan;
 
-import org.dockbox.hartshorn.core.annotations.inject.Binds;
+import org.dockbox.hartshorn.core.annotations.inject.ComponentBinding;
 import test.types.SampleInterface;
 
-@Binds(SampleInterface.class)
+@ComponentBinding(SampleInterface.class)
 public class SampleAnnotatedImplementation implements SampleInterface {
     @Override
     public String name() {

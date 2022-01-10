@@ -17,17 +17,17 @@
 
 package org.dockbox.hartshorn.web;
 
+import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.ExecutableElementContext;
 import org.dockbox.hartshorn.core.context.element.ParameterContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
-import org.dockbox.hartshorn.persistence.FileType;
-import org.dockbox.hartshorn.testsuite.ApplicationAwareTest;
+import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.web.annotations.RequestHeader;
 import org.dockbox.hartshorn.web.annotations.http.HttpRequest;
+import org.dockbox.hartshorn.web.processing.HttpRequestParameterLoaderContext;
 import org.dockbox.hartshorn.web.processing.rules.BodyRequestParameterRule;
 import org.dockbox.hartshorn.web.processing.rules.HeaderRequestParameterRule;
-import org.dockbox.hartshorn.web.processing.HttpRequestParameterLoaderContext;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -42,17 +42,24 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
-public class RequestArgumentProcessorTests extends ApplicationAwareTest {
+import lombok.Getter;
+
+@HartshornTest
+public class RequestArgumentProcessorTests {
+
+    @Inject
+    @Getter
+    private ApplicationContext applicationContext;
 
     public static Stream<Arguments> bodies() {
         return Stream.of(
-                Arguments.of("{\"message\":\"Hello world!\"}", FileType.JSON),
-                Arguments.of("message: 'Hello world!'", FileType.YAML),
-                Arguments.of("<message>Hello world!</message>", FileType.XML),
-                Arguments.of("message='Hello world!'", FileType.TOML),
-                Arguments.of("message=Hello world!", FileType.PROPERTIES)
+                Arguments.of("{\"message\":\"Hello world!\"}", MediaType.APPLICATION_JSON),
+                Arguments.of("message: 'Hello world!'", MediaType.APPLICATION_YAML),
+                Arguments.of("<message>Hello world!</message>", MediaType.APPLICATION_XML),
+                Arguments.of("message='Hello world!'", MediaType.APPLICATION_TOML)
         );
     }
 
@@ -64,7 +71,7 @@ public class RequestArgumentProcessorTests extends ApplicationAwareTest {
         final ParameterContext<String> context = Mockito.mock(ParameterContext.class);
         Mockito.when(context.type()).thenReturn(TypeContext.of(String.class));
 
-        final HttpRequestParameterLoaderContext loaderContext = new HttpRequestParameterLoaderContext(null, null, null, this.context(), request, null);
+        final HttpRequestParameterLoaderContext loaderContext = new HttpRequestParameterLoaderContext(null, null, null, this.applicationContext(), request, null);
 
         final Exceptional<String> result = new BodyRequestParameterRule().load(context, 0, loaderContext);
         Assertions.assertTrue(result.present());
@@ -73,7 +80,7 @@ public class RequestArgumentProcessorTests extends ApplicationAwareTest {
 
     @ParameterizedTest
     @MethodSource("bodies")
-    void testBodyIsParsedForAllFormats(final String body, final FileType fileType) throws IOException {
+    void testBodyIsParsedForAllFormats(final String body, final MediaType mediaType) throws IOException {
         final BufferedReader reader = new BufferedReader(new StringReader(body));
         final HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
         Mockito.when(request.getReader()).thenReturn(reader);
@@ -81,14 +88,14 @@ public class RequestArgumentProcessorTests extends ApplicationAwareTest {
         final ParameterContext<Message> context = Mockito.mock(ParameterContext.class);
         Mockito.when(context.type()).thenReturn(TypeContext.of(Message.class));
 
-        final ExecutableElementContext<?> declaring = Mockito.mock(ExecutableElementContext.class);
+        final ExecutableElementContext<?, ?> declaring = Mockito.mock(ExecutableElementContext.class);
         final HttpRequest httpRequest = Mockito.mock(HttpRequest.class);
-        Mockito.when(httpRequest.bodyFormat()).thenReturn(fileType);
+        Mockito.when(httpRequest.consumes()).thenReturn(mediaType);
         Mockito.when(declaring.annotation(HttpRequest.class)).thenReturn(Exceptional.of(httpRequest));
         // Different order due to generic return type
         Mockito.doReturn(declaring).when(context).declaredBy();
 
-        final HttpRequestParameterLoaderContext loaderContext = new HttpRequestParameterLoaderContext(null, null, null, this.context(), request, null);
+        final HttpRequestParameterLoaderContext loaderContext = new HttpRequestParameterLoaderContext(null, null, null, this.applicationContext(), request, null);
 
         final Exceptional<Message> result = new BodyRequestParameterRule().load(context, 0, loaderContext);
         Assertions.assertTrue(result.present());
@@ -106,7 +113,7 @@ public class RequestArgumentProcessorTests extends ApplicationAwareTest {
         Mockito.when(requestHeader.value()).thenReturn("string-header");
         Mockito.when(context.annotation(RequestHeader.class)).thenReturn(Exceptional.of(requestHeader));
 
-        final HttpRequestParameterLoaderContext loaderContext = new HttpRequestParameterLoaderContext(null, null, null, this.context(), request, null);
+        final HttpRequestParameterLoaderContext loaderContext = new HttpRequestParameterLoaderContext(null, null, null, this.applicationContext(), request, null);
 
         final Exceptional<String> result = new HeaderRequestParameterRule().load(context, 0, loaderContext);
         Assertions.assertTrue(result.present());
@@ -124,7 +131,7 @@ public class RequestArgumentProcessorTests extends ApplicationAwareTest {
         Mockito.when(requestHeader.value()).thenReturn("int-header");
         Mockito.when(context.annotation(RequestHeader.class)).thenReturn(Exceptional.of(requestHeader));
 
-        final HttpRequestParameterLoaderContext loaderContext = new HttpRequestParameterLoaderContext(null, null, null, this.context(), request, null);
+        final HttpRequestParameterLoaderContext loaderContext = new HttpRequestParameterLoaderContext(null, null, null, this.applicationContext(), request, null);
 
         final Exceptional<Integer> result = new HeaderRequestParameterRule().load(context, 0, loaderContext);
         Assertions.assertTrue(result.present());

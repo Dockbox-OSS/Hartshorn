@@ -17,10 +17,12 @@
 
 package org.dockbox.hartshorn.core.context;
 
+import org.dockbox.hartshorn.core.Key;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 
 import java.util.List;
 
+@FunctionalInterface
 public interface DelegatingContext<D extends Context> extends Context {
 
     @Override
@@ -42,6 +44,16 @@ public interface DelegatingContext<D extends Context> extends Context {
 
     @Override
     default <C extends Context> Exceptional<C> first(final ApplicationContext applicationContext, final Class<C> context) {
+        return this.get().first(applicationContext, context);
+    }
+
+    @Override
+    default <C extends Context> Exceptional<C> first(final ApplicationContext applicationContext, final Class<C> context, final String name) {
+        return this.get().first(applicationContext, context, name);
+    }
+
+    @Override
+    default <C extends Context> Exceptional<C> first(final ApplicationContext applicationContext, final Key<C> context) {
         return this.get().first(applicationContext, context);
     }
 

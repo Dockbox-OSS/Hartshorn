@@ -17,13 +17,12 @@
 
 package org.dockbox.hartshorn.web;
 
-import java.io.IOException;
+import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @FunctionalInterface
 public interface HttpAction {
-    void fallback(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException;
+    void fallback(HttpServletRequest request, HttpServletResponse response) throws ApplicationException;
 }

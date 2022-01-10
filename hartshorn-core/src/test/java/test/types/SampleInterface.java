@@ -17,8 +17,7 @@
 
 package test.types;
 
+@FunctionalInterface
 public interface SampleInterface {
-
     String name();
-
 }

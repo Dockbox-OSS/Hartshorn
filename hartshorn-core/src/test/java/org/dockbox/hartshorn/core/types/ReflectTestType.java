@@ -25,7 +25,6 @@ import java.util.Locale;
 
 import lombok.Getter;
 
-@SuppressWarnings("FieldMayBeFinal")
 @Demo
 public class ReflectTestType extends ParentTestType {
 
@@ -41,9 +40,9 @@ public class ReflectTestType extends ParentTestType {
     @Property(getter = "field", setter = "field")
     private String accessorField;
     /* TEST UTILITIES, DO NOT TEST AGAINST */
-    @Getter private boolean activatedSetter = false;
-    @Getter private boolean activatedMethod = false;
-    @Getter private boolean activatedConstructor = false;
+    @Getter private boolean activatedSetter;
+    @Getter private boolean activatedMethod;
+    @Getter private boolean activatedConstructor;
 
     @Demo
     public ReflectTestType() {

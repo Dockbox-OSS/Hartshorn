@@ -17,25 +17,24 @@
 
 package org.dockbox.hartshorn.commands.context;
 
-import org.dockbox.hartshorn.core.boot.Hartshorn;
-import org.dockbox.hartshorn.core.domain.Exceptional;
-import org.dockbox.hartshorn.core.exceptions.Except;
 import org.dockbox.hartshorn.commands.annotations.Command;
 import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
 import org.dockbox.hartshorn.commands.definition.CommandDefinition;
 import org.dockbox.hartshorn.commands.definition.CommandElement;
 import org.dockbox.hartshorn.commands.definition.CommandElementImpl;
-import org.dockbox.hartshorn.commands.definition.CommandElements;
 import org.dockbox.hartshorn.commands.definition.CommandFlag;
 import org.dockbox.hartshorn.commands.definition.CommandFlagElement;
 import org.dockbox.hartshorn.commands.definition.CommandFlagImpl;
+import org.dockbox.hartshorn.commands.definition.EnumCommandElement;
 import org.dockbox.hartshorn.commands.definition.GroupCommandElement;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.DefaultContext;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
-import org.dockbox.hartshorn.core.HartshornUtils;
+import org.dockbox.hartshorn.core.domain.Exceptional;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
@@ -53,7 +52,6 @@ import java.util.regex.Pattern;
  * for this definition are explained at {@link CommandDefinitionContextImpl#ELEMENT_VALUE}. If no
  * explicit type is defined, {@link CommandDefinitionContextImpl#DEFAULT_TYPE} is used.
  */
-@SuppressWarnings("RegExpUnnecessaryNonCapturingGroup")
 public class CommandDefinitionContextImpl extends DefaultContext implements CommandDefinitionContext {
 
     /**
@@ -132,13 +130,13 @@ public class CommandDefinitionContextImpl extends DefaultContext implements Comm
             this.definition = this.parseElements(this.arguments());
         }
         else {
-            this.definition = new CommandDefinition(true, HartshornUtils.emptyList(), HartshornUtils.emptyList());
+            this.definition = new CommandDefinition(true, List.of(), List.of());
         }
     }
 
     protected CommandDefinition parseElements(final CharSequence arguments) {
-        final List<CommandElement<?>> elements = HartshornUtils.emptyList();
-        final List<CommandFlag> flags = HartshornUtils.emptyList();
+        final List<CommandElement<?>> elements = new ArrayList<>();
+        final List<CommandFlag> flags = new ArrayList<>();
 
         final Matcher genericArgumentMatcher = GENERIC_ARGUMENT.matcher(arguments);
         while (genericArgumentMatcher.find()) {
@@ -178,7 +176,7 @@ public class CommandDefinitionContextImpl extends DefaultContext implements Comm
 
         if (definition.elements().isEmpty() && definition.flags().isEmpty()) {
             final CommandElement<?> element = this.generateElement(argumentMatcher.group(2), optional);
-            definition = new CommandDefinition(optional, HartshornUtils.asList(element), HartshornUtils.emptyList());
+            definition = new CommandDefinition(optional, List.of(element), List.of());
         }
 
         return definition;
@@ -189,7 +187,7 @@ public class CommandDefinitionContextImpl extends DefaultContext implements Comm
         final String name;
         final Matcher elementValue = ELEMENT_VALUE.matcher(definition);
         if (!elementValue.matches() || 0 == elementValue.groupCount())
-            Except.handle("Unknown argument specification " + definition + ", use Type or Name{Type}");
+            this.context.log().warn("Unknown argument specification " + definition + ", use Type or Name{Type}");
 
         /*
         Group one specifies either the name of the value (if two or more groups are matched), or the type if only one
@@ -223,24 +221,23 @@ public class CommandDefinitionContextImpl extends DefaultContext implements Comm
         else {
             final TypeContext<?> lookup = TypeContext.lookup(type);
             if (lookup.isVoid()) {
-                Except.handle("No argument of type `" + type + "` can be read");
+                this.context.log().error("No argument of type `" + type + "` can be read");
                 return null;
             }
 
             if (lookup.isEnum()) {
                 this.context.log().debug(type + " is an enum, creating explicit enum element.");
-                //noinspection unchecked
-                return CommandElements.enumElement(name, (TypeContext<E>) lookup, optional);
+                return EnumCommandElement.of(name, (TypeContext<E>) lookup, optional);
             }
             else {
-                Hartshorn.log().warn("Type '" + type.toLowerCase() + "' is not supported, using default value");
+                this.context.log().warn("Type '" + type.toLowerCase() + "' is not supported, using default value");
                 return this.lookupElement(DEFAULT_TYPE, name, optional);
             }
         }
     }
 
     private List<CommandFlag> generateFlags(final Matcher flagMatcher) {
-        final List<CommandFlag> flags = HartshornUtils.emptyList();
+        final List<CommandFlag> flags = new ArrayList<>();
         if (flagMatcher.matches()) {
             flags.add(this.parseFlag(
                     flagMatcher.group(1),
@@ -281,10 +278,10 @@ public class CommandDefinitionContextImpl extends DefaultContext implements Comm
     @Override
     public List<String> aliases() {
         final String[] command = this.command.value();
-        if (command.length == 0 || (command.length == 1 && command[0].equals(""))) {
-            return HartshornUtils.singletonList(this.method.name());
+        if (command.length == 0 || (command.length == 1 && "".equals(command[0]))) {
+            return Collections.singletonList(this.method.name());
         }
-        return HartshornUtils.asUnmodifiableList(command);
+        return List.of(command);
     }
 
     @Override

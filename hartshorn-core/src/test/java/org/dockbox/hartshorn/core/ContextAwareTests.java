@@ -19,19 +19,28 @@ package org.dockbox.hartshorn.core;
 
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.services.ComponentLocator;
-import test.types.SampleContextAwareType;
-import org.dockbox.hartshorn.testsuite.ApplicationAwareTest;
+import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class ContextAwareTests extends ApplicationAwareTest {
+import javax.inject.Inject;
+
+import lombok.Getter;
+import test.types.SampleContextAwareType;
+
+@HartshornTest
+public class ContextAwareTests {
+
+    @Inject
+    @Getter
+    private ApplicationContext applicationContext;
 
     @Test
     void testApplicationContextIsBound() {
-        final ApplicationContext applicationContext = this.context().get(ApplicationContext.class);
+        final ApplicationContext applicationContext = this.applicationContext().get(ApplicationContext.class);
         Assertions.assertNotNull(applicationContext);
 
-        final SampleContextAwareType sampleContextAwareType = this.context().get(SampleContextAwareType.class);
+        final SampleContextAwareType sampleContextAwareType = this.applicationContext().get(SampleContextAwareType.class);
         Assertions.assertNotNull(sampleContextAwareType);
         Assertions.assertNotNull(sampleContextAwareType.context());
 
@@ -40,10 +49,10 @@ public class ContextAwareTests extends ApplicationAwareTest {
 
     @Test
     void testMetaProviderIsBound() {
-        final MetaProvider metaProvider = this.context().get(MetaProvider.class);
+        final MetaProvider metaProvider = this.applicationContext().get(MetaProvider.class);
         Assertions.assertNotNull(metaProvider);
 
-        final MetaProvider directMetaProvider = this.context().meta();
+        final MetaProvider directMetaProvider = this.applicationContext().meta();
         Assertions.assertNotNull(directMetaProvider);
 
         Assertions.assertSame(metaProvider, directMetaProvider);
@@ -51,10 +60,10 @@ public class ContextAwareTests extends ApplicationAwareTest {
 
     @Test
     void testServiceLocatorIsBound() {
-        final ComponentLocator componentLocator = this.context().get(ComponentLocator.class);
+        final ComponentLocator componentLocator = this.applicationContext().get(ComponentLocator.class);
         Assertions.assertNotNull(componentLocator);
 
-        final ComponentLocator directComponentLocator = this.context().locator();
+        final ComponentLocator directComponentLocator = this.applicationContext().locator();
         Assertions.assertNotNull(directComponentLocator);
 
         Assertions.assertSame(componentLocator, directComponentLocator);

@@ -22,9 +22,9 @@ import org.dockbox.hartshorn.core.context.element.MethodContext;
 
 public interface ProxyContext {
 
-    MethodContext<?, ?> proceed();
+    ProxyHandler<?> handler();
 
-    ProxyHolder holder();
+    MethodContext<?, ?> proceed();
 
     <T> T invoke(Object... args) throws ApplicationException;
 

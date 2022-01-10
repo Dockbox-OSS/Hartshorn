@@ -17,15 +17,17 @@
 
 package org.dockbox.hartshorn.demo.caching;
 
+import org.dockbox.hartshorn.core.annotations.activate.ServiceActivator;
 import org.dockbox.hartshorn.core.boot.HartshornApplication;
 import org.dockbox.hartshorn.cache.annotations.UseCaching;
 import org.dockbox.hartshorn.core.annotations.activate.Activator;
+import org.dockbox.hartshorn.core.services.ServicePreProcessor;
 import org.dockbox.hartshorn.events.annotations.UseEvents;
 
 
 /**
- * A simple application starter, with specific {@link org.dockbox.hartshorn.core.annotations.service.ServiceActivator service activators}
- * configured to enable only the required {@link org.dockbox.hartshorn.core.services.ServiceProcessor service processors}.
+ * A simple application starter, with specific {@link ServiceActivator service activators}
+ * configured to enable only the required {@link ServicePreProcessor service processors}.
  * <p>For readability, each activator has been documented with a short description below.
  */
 @UseEvents /* Activates the EventServiceProcessor, enabling event listening */
@@ -37,7 +39,9 @@ import org.dockbox.hartshorn.events.annotations.UseEvents;
  * and use your own implementation here directly
  */
 @Activator
-public class CachingDemoApplication {
+public final class CachingDemoApplication {
+
+    private CachingDemoApplication() {}
 
     public static void main(final String[] args) {
         HartshornApplication.create(CachingDemoApplication.class, args);

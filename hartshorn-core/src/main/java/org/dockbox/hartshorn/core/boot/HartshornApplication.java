@@ -17,22 +17,26 @@
 
 package org.dockbox.hartshorn.core.boot;
 
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.core.LoggerContext;
-import org.apache.logging.log4j.core.config.Configuration;
-import org.apache.logging.log4j.core.config.LoggerConfig;
-import org.dockbox.hartshorn.core.Modifier;
+import org.dockbox.hartshorn.core.Modifiers;
 import org.dockbox.hartshorn.core.annotations.activate.Activator;
-import org.dockbox.hartshorn.core.boot.LogLevelModifier.LogLevel;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
-import org.dockbox.hartshorn.core.exceptions.ApplicationException;
+import org.slf4j.ILoggerFactory;
+import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 
-import java.lang.reflect.InvocationTargetException;
+import java.lang.management.ManagementFactory;
+
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
+import ch.qos.logback.classic.LoggerContext;
 
 /**
  * Application starter for Hartshorn applications. This takes a single type annotated with {@link Activator}
- * which provides application metadata, and a set of {@link Modifier modifiers}.
+ * which provides application metadata, and a set of {@link Modifiers modifiers}.
+ *
+ * @author Guus Lieben
+ * @since 21.2
  */
 public final class HartshornApplication {
 
@@ -41,40 +45,35 @@ public final class HartshornApplication {
     /**
      * Creates the bootstrapped server instance using the provided {@link Activator} metadata.
      *
-     * @param activator
-     *         The activator type, providing application metadata
-     * @param modifiers
-     *         The modifiers to use when bootstrapping
+     * @param activator The activator type, providing application metadata
+     * @param modifiers The modifiers to use when bootstrapping
+     * @see Modifiers
      */
-    public static ApplicationContext create(final Class<?> activator, final String[] args, final Modifier... modifiers) {
-        try {
-            return load(TypeContext.of(activator), args, modifiers);
-        }
-        catch (final InvocationTargetException | NoSuchMethodException | InstantiationException | IllegalAccessException e) {
-            throw new ApplicationException("Could not bootstrap application " + activator.getSimpleName(), e).runtime();
-        }
-    }
+    public static ApplicationContext create(final Class<?> activator, final String[] args, final Modifiers... modifiers) {
+        for (final Modifiers modifier : modifiers)
+            if (modifier == Modifiers.DEBUG) setDebugActive();
 
-    public static ApplicationContext load(
-            final TypeContext<?> activator,
-            final String[] args,
-            final Modifier... modifiers
-    ) throws InvocationTargetException, InstantiationException, IllegalAccessException, NoSuchMethodException {
-        for (final Modifier modifier : modifiers)
-            if (modifier instanceof LogLevelModifier levelModifier) setLogLevel(levelModifier.level());
+        MDC.put("process_id", ManagementFactory.getRuntimeMXBean().getName());
 
         return new HartshornApplicationFactory()
                 .loadDefaults()
-                .activator(activator)
+                .activator(TypeContext.of(activator))
                 .arguments(args)
                 .modifiers(modifiers)
                 .create();
     }
 
-    public static void setLogLevel(final LogLevel level) {
-        final LoggerContext loggerContext = LoggerContext.getContext(false);
-        final Configuration configuration = loggerContext.getConfiguration();
-        final LoggerConfig loggerConfig = configuration.getLoggerConfig("org.dockbox.hartshorn");
-        loggerConfig.setLevel(Level.getLevel(level.name()));
+    private static void setDebugActive() {
+        final ILoggerFactory factory = LoggerFactory.getILoggerFactory();
+
+        if (factory instanceof LoggerContext loggerContext) {
+            for (final Logger logger : loggerContext.getLoggerList()) {
+                logger.setLevel(Level.DEBUG);
+            }
+        }
+        else {
+            final Logger rootLogger = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+            rootLogger.setLevel(Level.DEBUG);
+        }
     }
 }

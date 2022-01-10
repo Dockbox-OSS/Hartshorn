@@ -26,6 +26,7 @@ import java.lang.annotation.Annotation;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+@Deprecated(since = "22.1", forRemoval = true)
 public interface RequestArgumentProcessor<A extends Annotation> {
     Class<A> annotation();
     default boolean preconditions(final ApplicationContext context, final ParameterContext<?> parameter, final HttpServletRequest request, final HttpServletResponse response) {

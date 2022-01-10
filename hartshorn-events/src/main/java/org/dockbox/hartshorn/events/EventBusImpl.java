@@ -17,38 +17,38 @@
 
 package org.dockbox.hartshorn.events;
 
-import org.dockbox.hartshorn.core.domain.Exceptional;
-import org.dockbox.hartshorn.core.annotations.inject.Binds;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.dockbox.hartshorn.core.HartshornUtils;
+import org.dockbox.hartshorn.core.Key;
+import org.dockbox.hartshorn.core.annotations.inject.ComponentBinding;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
+import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.events.annotations.Listener;
 import org.dockbox.hartshorn.events.handle.EventHandlerRegistry;
 import org.dockbox.hartshorn.events.handle.EventWrapperImpl;
 import org.dockbox.hartshorn.events.parents.Event;
-import org.dockbox.hartshorn.core.HartshornUtils;
-import org.jetbrains.annotations.NotNull;
 
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
 /**
  * A simple default implementation of {@link EventBus}, used for internal event posting and
  * handling.
  */
-@SuppressWarnings("EqualsWithItself")
-@Binds(EventBus.class)
-@Singleton
+@ComponentBinding(value = EventBus.class, singleton = true)
 public class EventBusImpl implements EventBus {
 
-    protected final Set<Function<MethodContext<?, ?>, Exceptional<Boolean>>> validators = HartshornUtils.emptySet();
+    protected final Set<Function<MethodContext<?, ?>, Exceptional<Boolean>>> validators = HartshornUtils.emptyConcurrentSet();
 
     /** A map of all listening objects with their associated {@link EventWrapper}s. */
-    protected final Map<TypeContext<?>, Set<EventWrapper>> listenerToInvokers = HartshornUtils.emptyMap();
+    protected final Map<Key<?>, Set<EventWrapper>> listenerToInvokers = new ConcurrentHashMap<>();
 
     /** The internal registry of handlers for each event. */
     protected final EventHandlerRegistry handlerRegistry = new EventHandlerRegistry();
@@ -84,23 +84,21 @@ public class EventBusImpl implements EventBus {
      * Subscribes all event listeners in an object instance. Typically, event listeners are methods
      * decorated with {@link Listener}.
      *
-     * @param type
-     *         The instance of the listener
+     * @param key The key of the listener
      */
     @Override
-    public void subscribe(final TypeContext<?> type) {
-        if (!type.equals(type)) return;
-        if (this.listenerToInvokers.containsKey(type)) {
-            this.context.log().debug(type.name() + " is already subscribed, skipping duplicate registration");
+    public void subscribe(final Key<?> key) {
+        if (this.listenerToInvokers.containsKey(key)) {
+            this.context.log().debug(key + " is already subscribed, skipping duplicate registration");
             return; // Already subscribed
         }
 
-        final Set<EventWrapper> invokers = this.invokers(type);
+        final Set<EventWrapper> invokers = this.invokers(key);
         if (invokers.isEmpty()) {
-            this.context.log().debug(type.name() + " has no event invokers, skipping registration");
+            this.context.log().debug(key + " has no event invokers, skipping registration");
             return; // Doesn't contain any listener methods
         }
-        this.listenerToInvokers.put(type, invokers);
+        this.listenerToInvokers.put(key, invokers);
         for (final EventWrapper invoker : invokers) {
             this.handlerRegistry.handler(invoker.eventType()).subscribe(invoker);
         }
@@ -109,13 +107,11 @@ public class EventBusImpl implements EventBus {
     /**
      * Unsubscribes all event listeners in an object instance.
      *
-     * @param type
-     *         The instance of the listener
+     * @param key The instance of the listener
      */
     @Override
-    public void unsubscribe(final TypeContext<?> type) {
-        if (!type.equals(type)) return;
-        final Set<EventWrapper> invokers = this.listenerToInvokers.remove(type);
+    public void unsubscribe(final Key<?> key) {
+        final Set<EventWrapper> invokers = this.listenerToInvokers.remove(key);
         if (null == invokers || invokers.isEmpty()) {
             return; // Not registered
         }
@@ -126,7 +122,7 @@ public class EventBusImpl implements EventBus {
     }
 
     @Override
-    public void post(final Event event, final TypeContext<?> target) {
+    public void post(final Event event, final Key<?> target) {
         if (event.first(this.context, ApplicationContext.class).absent()) {
             this.context.log().debug("Event " + TypeContext.of(event).name() + " was not enhanced with the active application context, adding it before handling event");
             event.add(this.context);
@@ -139,9 +135,9 @@ public class EventBusImpl implements EventBus {
         this.post(event, null);
     }
 
-    @NotNull
+    @NonNull
     @Override
-    public Map<TypeContext<?>, Set<EventWrapper>> invokers() {
+    public Map<Key<?>, Set<EventWrapper>> invokers() {
         return this.listenerToInvokers;
     }
 
@@ -153,21 +149,20 @@ public class EventBusImpl implements EventBus {
     /**
      * Gets all {@link EventWrapper} instances for a given listener instance.
      *
-     * @param type
-     *         The listener type
+     * @param key The listener type
      *
      * @return The invokers
      */
-    protected <T> Set<EventWrapper> invokers(final TypeContext<T> type) {
-        final Set<EventWrapper> result = HartshornUtils.emptySet();
-        for (final MethodContext<?, T> method : type.methods()) {
+    protected <T> Set<EventWrapper> invokers(final Key<T> key) {
+        final Set<EventWrapper> result = new HashSet<>();
+        for (final MethodContext<?, T> method : key.type().methods()) {
             final Exceptional<Listener> annotation = method.annotation(Listener.class);
             if (annotation.present()) {
                 this.checkListenerMethod(method);
-                result.addAll(EventWrapperImpl.create(this.context, type, method, annotation.get().value().priority()));
+                result.addAll(EventWrapperImpl.create(this.context, key, method, annotation.get().value().priority()));
             }
         }
-        return result;
+        return Set.copyOf(result);
     }
 
     /**
@@ -180,15 +175,13 @@ public class EventBusImpl implements EventBus {
      *   <li>Has at least one parameter which is a subclass of {@link Event}
      * </ul>
      *
-     * @param method
-     *         the method
+     * @param method the method
      *
-     * @throws IllegalArgumentException
-     *         the illegal argument exception
+     * @throws IllegalArgumentException the illegal argument exception
      */
     protected void checkListenerMethod(final MethodContext<?, ?> method) throws IllegalArgumentException {
         for (final Function<MethodContext<?, ?>, Exceptional<Boolean>> validator : this.validators) {
-            final boolean result = validator.apply(method).rethrow().get();
+            final boolean result = validator.apply(method).rethrowUnchecked().get();
             if (!result) throw new IllegalArgumentException("Unspecified validation error while validating: " + method.qualifiedName());
         }
     }

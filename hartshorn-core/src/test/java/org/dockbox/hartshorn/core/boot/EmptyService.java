@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.core.boot;
 
-import org.dockbox.hartshorn.core.annotations.service.Service;
+import org.dockbox.hartshorn.core.annotations.stereotype.Service;
 
 @Service
 public class EmptyService {

@@ -19,6 +19,18 @@ package org.dockbox.hartshorn.core;
 
 import java.lang.annotation.Annotation;
 
+/**
+ * An interface which can be used to indicate an activator is required for the implementing
+ * class.
+ *
+ * @param <A> The annotation which is used to indicate the activator.
+ *
+ * @author Guus Lieben
+ * @since 22.1
+ * @see org.dockbox.hartshorn.core.services.ComponentPreProcessor
+ * @see org.dockbox.hartshorn.core.services.ComponentPostProcessor
+ */
+@FunctionalInterface
 public interface ActivatorFiltered<A extends Annotation> {
     Class<A> activator();
 }

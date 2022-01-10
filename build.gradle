@@ -21,7 +21,7 @@ buildscript {
     }
     dependencies {
         classpath "io.franzbecker:gradle-lombok:$gradleLombokVersion"
-        classpath 'org.owasp:dependency-check-gradle:6.2.2'
+        classpath "org.owasp:dependency-check-gradle:$owaspDependencyCheckVersion"
     }
 }
 
@@ -29,7 +29,7 @@ plugins {
     id 'java'
     id 'java-library'
     id 'org.cadixdev.licenser' version "$licenserVersion"
-    id 'io.freefair.aggregate-javadoc' version "$aggregateJavadocVersion"
+    id 'org.checkerframework' version "$checkerFrameworkVersion"
 }
 
 apply plugin: 'org.owasp.dependencycheck'
@@ -54,8 +54,8 @@ subprojects { final Project subProject ->
     apply plugin: 'java-library'
     apply plugin: 'maven-publish'
     apply plugin: 'java-test-fixtures'
+    apply plugin: 'org.checkerframework'
     apply plugin: 'org.cadixdev.licenser'
-
 
     license {
         header = rootProject.file("HEADER.txt")
@@ -75,8 +75,6 @@ subprojects { final Project subProject ->
         dependsOn tasks.updateLicenses
         finalizedBy tasks.clean
     }
-
-    apply from: "$project.rootDir/gradle/publications.gradle"
 }
 
 allprojects {
@@ -128,7 +126,6 @@ allprojects {
         dependencies {
             implementation "org.slf4j:slf4j-api:$slf4jVersion"
             implementation "org.projectlombok:lombok:$lombokVersion"
-            implementation("org.jetbrains:annotations:$jetbrainsAnnotationsVersion")
             implementation "javax.persistence:javax.persistence-api:$javaxPersistenceVersion"
 
             annotationProcessor "org.projectlombok:lombok:$lombokVersion"
@@ -137,12 +134,10 @@ allprojects {
             testImplementation testFixtures(project(":hartshorn-core"))
             testImplementation "org.mockito:mockito-inline:$mockitoVersion"
             testImplementation "org.hamcrest:java-hamcrest:$hamcrestVersion"
-            testImplementation "org.apache.logging.log4j:log4j-api:$log4jVersion"
-            testImplementation "org.apache.logging.log4j:log4j-core:$log4jVersion"
+            testImplementation "ch.qos.logback:logback-classic:$logbackVersion"
             testImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"
             testImplementation "org.junit.jupiter:junit-jupiter-params:$junitVersion"
             testImplementation "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
-            testImplementation "org.apache.logging.log4j:log4j-slf4j-impl:$log4jVersion"
         }
 
         task copyArtifacts {

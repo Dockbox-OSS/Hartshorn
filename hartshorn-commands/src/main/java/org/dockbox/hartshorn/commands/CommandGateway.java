@@ -17,14 +17,12 @@
 
 package org.dockbox.hartshorn.commands;
 
-import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.commands.context.CommandContext;
 import org.dockbox.hartshorn.commands.context.CommandExecutorContext;
 import org.dockbox.hartshorn.commands.exceptions.ParsingException;
 import org.dockbox.hartshorn.commands.extension.CommandExecutorExtension;
-import org.dockbox.hartshorn.core.context.element.TypeContext;
-import org.dockbox.hartshorn.core.HartshornUtils;
-import org.jetbrains.annotations.UnmodifiableView;
+import org.dockbox.hartshorn.core.Key;
+import org.dockbox.hartshorn.core.domain.Exceptional;
 
 import java.util.List;
 
@@ -37,25 +35,19 @@ public interface CommandGateway {
      * Performs a command based on the given {@link CommandSource} and raw <code>command</code>.
      * The way the provided <code>command</code> is parsed depends on the underlying {@link CommandParser}.
      *
-     * @param source
-     *         The {@link CommandSource} performing the command
-     * @param command
-     *         The raw command
+     * @param source The {@link CommandSource} performing the command
+     * @param command The raw command
      *
-     * @throws ParsingException
-     *         If the provided command could not be parsed or no associated
-     *         {@link CommandExecutor} could be found
+     * @throws ParsingException If the provided command could not be parsed or no associated {@link CommandExecutor} could be found
      */
     void accept(CommandSource source, String command) throws ParsingException;
 
     /**
      * Performs a command based on the given {@link CommandContext}.
      *
-     * @param context
-     *         The parsed {@link CommandContext}
+     * @param context The parsed {@link CommandContext}
      *
-     * @throws ParsingException
-     *         If the provided context has no associated {@link CommandExecutor}
+     * @throws ParsingException If the provided context has no associated {@link CommandExecutor}
      */
     void accept(CommandContext context) throws ParsingException;
 
@@ -64,16 +56,14 @@ public interface CommandGateway {
      * in the provided {@link Class type} as {@link CommandExecutor executors} capable of handling
      * the commands.
      *
-     * @param type
-     *         The type containing {@link org.dockbox.hartshorn.commands.annotations.Command} methods.
+     * @param key The key containing {@link org.dockbox.hartshorn.commands.annotations.Command} methods.
      */
-    <T> void register(TypeContext<T> type);
+    <T> void register(Key<T> key);
 
     /**
      * Registers the given {@link CommandExecutorContext} to handle the associated command(s).
      *
-     * @param context
-     *         The context
+     * @param context The context
      */
     void register(CommandExecutorContext context);
 
@@ -82,21 +72,17 @@ public interface CommandGateway {
      * the {@link org.dockbox.hartshorn.commands.definition.CommandElement} associated with the last argument
      * in the command.
      *
-     * @param source
-     *         The {@link CommandSource} executing the command
-     * @param command
-     *         The raw command
+     * @param source The {@link CommandSource} executing the command
+     * @param command The raw command
      *
-     * @return The suggestions for the last argument, or {@link HartshornUtils#emptyList()}
+     * @return The suggestions for the last argument, or empty {@link List}
      */
-    @UnmodifiableView
     List<String> suggestions(CommandSource source, String command);
 
     /**
      * Gets the (first) {@link CommandExecutorContext} which accepts the given {@link CommandContext}.
      *
-     * @param context
-     *         The context to apply
+     * @param context The context to apply
      *
      * @return The first {@link CommandExecutorContext}, or {@link Exceptional#empty()}
      */
@@ -106,8 +92,7 @@ public interface CommandGateway {
      * Adds the given {@link CommandExecutorExtension} to any {@link CommandExecutorContext} stored in the
      * gateway.
      *
-     * @param extension
-     *         The extension to add
+     * @param extension The extension to add
      */
     void add(CommandExecutorExtension extension);
 

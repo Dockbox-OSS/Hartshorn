@@ -1,5 +1,4 @@
-# <img alt="Hartshorn" src="./hartshorn-assembly/images/logo.png" height="100" /> Hartshorn <img src="https://github.com/GuusLieben/Hartshorn/actions/workflows/hartshorn.yml/badge.svg"> <a href="https://deepsource.io/gh/GuusLieben/Hartshorn/?ref=repository-badge" target="_blank"><img alt="DeepSource" title="DeepSource" src="https://deepsource.io/gh/GuusLieben/Hartshorn.svg/?label=active+issues"/></a>
-
+# <img alt="Hartshorn" src="./hartshorn-assembly/images/logo.png" height="100" /> Hartshorn <img src="https://github.com/GuusLieben/Hartshorn/actions/workflows/hartshorn.yml/badge.svg">
 Hartshorn is a platform agnostic plugin/extension framework providing advanced utilities to develop against a variety of platforms.
 
 ## Maven configuration

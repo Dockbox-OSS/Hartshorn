@@ -19,6 +19,18 @@ package org.dockbox.hartshorn.core.annotations.inject;
 
 import org.dockbox.hartshorn.core.InjectConfiguration;
 
+/**
+ * Used by {@link org.dockbox.hartshorn.core.annotations.activate.Activator} to add default
+ * {@link InjectConfiguration}s to the application instance.
+ *
+ * @author Guus Lieben
+ * @since 21.2
+ */
 public @interface InjectConfig {
+
+    /**
+     * The {@link InjectConfiguration} to add to the application instance.
+     * @return The {@link InjectConfiguration} to add to the application instance.
+     */
     Class<? extends InjectConfiguration> value();
 }

@@ -21,58 +21,70 @@ import org.dockbox.hartshorn.core.InjectionPoint;
 import org.dockbox.hartshorn.core.Key;
 import org.dockbox.hartshorn.core.MetaProvider;
 import org.dockbox.hartshorn.core.annotations.context.LogExclude;
+import org.dockbox.hartshorn.core.boot.ApplicationLogger;
+import org.dockbox.hartshorn.core.boot.ClasspathResourceLocator;
+import org.dockbox.hartshorn.core.boot.ExceptionHandler;
+import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
-import org.dockbox.hartshorn.core.exceptions.TypeProvisionException;
-import org.dockbox.hartshorn.core.inject.InjectionModifier;
+import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 import org.dockbox.hartshorn.core.services.ComponentLocator;
 import org.dockbox.hartshorn.core.services.ComponentProcessor;
 import org.slf4j.Logger;
 
-import java.lang.annotation.Annotation;
-import java.util.List;
-
 @LogExclude
-public interface ApplicationContext extends ApplicationBinder, HartshornContext, ApplicationPropertyHolder {
+public interface ApplicationContext extends
+        ApplicationBinder,
+        ComponentProvider,
+        ApplicationPropertyHolder,
+        ExceptionHandler,
+        ApplicationLogger,
+        ActivatorSource
+{
 
+    @Deprecated(since = "22.1", forRemoval = true)
     void add(InjectionPoint<?> property);
 
-    <T> T create(Key<T> type, T typeInstance);
+    @Deprecated(since = "22.1", forRemoval = true)
+    <T> T create(Key<T> key);
 
-    <T> T inject(Key<T> type, T typeInstance);
+    @Deprecated(since = "22.1", forRemoval = true)
+    <T> T inject(Key<T> key, T typeInstance);
 
-    <T> void enableFields(T typeInstance);
+    <T> T populate(T type);
 
-    <T> T raw(TypeContext<T> type) throws TypeProvisionException;
+    @Deprecated(since = "22.1", forRemoval = true)
+    <T> T raw(TypeContext<T> type);
 
-    <T> T raw(TypeContext<T> type, boolean populate) throws TypeProvisionException;
+    @Deprecated(since = "22.1", forRemoval = true)
+    <T> T raw(TypeContext<T> type, boolean populate);
 
     void add(ComponentProcessor<?> processor);
 
-    void add(InjectionModifier<?> modifier);
-
-    List<Annotation> activators();
-
-    boolean hasActivator(Class<? extends Annotation> activator);
-
-    <A> A activator(Class<A> activator);
-
     ComponentLocator locator();
+
+    ClasspathResourceLocator resourceLocator();
 
     MetaProvider meta();
 
     ApplicationEnvironment environment();
 
-    void reset();
+    <T> T invoke(MethodContext<T, ?> method);
 
+    <T, P> T invoke(MethodContext<T, P> method, P instance);
+
+    @Override
     default Logger log() {
         return this.environment().manager().log();
+    }
+
+    default <C extends Context> Exceptional<C> first(final TypeContext<C> context) {
+        return this.first(context.type());
     }
 
     default <C extends Context> Exceptional<C> first(final Class<C> context) {
         return this.first(this, context);
     }
 
-    @Override
-    <C extends Context> Exceptional<C> first(ApplicationContext applicationContext, Class<C> context);
+    void enable(Object instance) throws ApplicationException;
 }

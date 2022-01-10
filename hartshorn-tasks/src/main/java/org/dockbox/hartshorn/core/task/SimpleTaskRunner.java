@@ -17,13 +17,13 @@
 
 package org.dockbox.hartshorn.core.task;
 
-import org.dockbox.hartshorn.core.annotations.inject.Binds;
+import org.dockbox.hartshorn.core.annotations.inject.ComponentBinding;
 
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-@Binds(TaskRunner.class)
+@ComponentBinding(TaskRunner.class)
 public class SimpleTaskRunner extends TaskRunner {
 
     @Override

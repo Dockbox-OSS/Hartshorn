@@ -22,8 +22,7 @@ import org.dockbox.hartshorn.core.domain.Exceptional;
 /**
  * Represents a collection of entries of type <code>T</code>.
  *
- * @param <T>
- *         The type of object stored in the cache.
+ * @param <T> The type of object stored in the cache.
  */
 public interface Cache<T> {
 
@@ -39,11 +38,9 @@ public interface Cache<T> {
      * Populates the cache with the given content. If the cache is
      * already populated the new content is rejected.
      *
-     * @param content
-     *         The content to populate the cache with.
+     * @param content The content to populate the cache with.
      *
-     * @throws IllegalStateException
-     *         When the cache is already populated.
+     * @throws IllegalStateException When the cache is already populated.
      */
     void populate(T content);
 
@@ -52,8 +49,7 @@ public interface Cache<T> {
      * the cache has not been populated, this will initialize an empty
      * cache before adding the object.
      *
-     * @param object
-     *         The object to add.
+     * @param object The object to add.
      */
     void update(T object);
 

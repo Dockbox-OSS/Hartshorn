@@ -17,10 +17,13 @@
 
 package org.dockbox.hartshorn.core.proxy;
 
+@Deprecated(since = "22.1", forRemoval = true)
 public enum Phase {
     HEAD,
     OVERWRITE,
     TAIL;
+
+    public static final Phase[] VALUES = Phase.values();
 
     public static Phase[] collect() {
         return new Phase[]{ HEAD, OVERWRITE, TAIL };

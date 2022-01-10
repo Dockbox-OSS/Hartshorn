@@ -1,4 +1,5 @@
 apply plugin: 'maven-publish'
+apply plugin: 'signing'
 
 java {
     withSourcesJar()
@@ -12,9 +13,11 @@ publishing {
 
             pom {
                 afterEvaluate {
-                    name = project.name
+                    name = project.description
+                    description = project.description
+                    url = "https://github.com/GuusLieben"
                 }
-                url = "https://www.github.com/GuusLieben/Hartshorn/$project.name"
+
                 organization {
                     name = "Hartshorn"
                     url = "https://github.com/GuusLieben"
@@ -54,12 +57,21 @@ publishing {
         }
     }
     repositories {
-        maven {
-            final def releasesRepoUrl = layout.buildDirectory.dir('repos/releases')
-            final def snapshotsRepoUrl = layout.buildDirectory.dir('repos/snapshots')
-            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+        repositories {
+            maven {
+                name = "ossrh"
+                url = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
+                credentials {
+                    username = project.findProperty('ossrh.username')
+                    password = project.findProperty('ossrh.password')
+                }
+            }
         }
     }
+}
+
+signing {
+    sign publishing.publications.mavenJava
 }
 
 task copyPublications {
@@ -76,10 +88,11 @@ task copyPublications {
         }
 
         file("$POM_SRC_DIR/pom-default.xml").renameTo(file("$POM_SRC_DIR/${project.name}.pom"))
+        file("$POM_SRC_DIR/pom-default.xml.asc").renameTo(file("$POM_SRC_DIR/${project.name}.pom.asc"))
 
         ant.copy(todir: DIST_DEST_DIR) {
             fileset dir: POM_SRC_DIR,
-                    includes: "${project.name}.pom"
+                    includes: "${project.name}.pom**"
         }
 
     }

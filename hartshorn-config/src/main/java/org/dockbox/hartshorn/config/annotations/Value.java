@@ -26,8 +26,7 @@ import java.lang.annotation.Target;
 
 /**
  * Annotation used to indicate a field should be populated with the value obtained
- * from {@link org.dockbox.hartshorn.core.context.ApplicationPropertyHolder#property(String)} or the
- * {@link #or() default value}.
+ * from {@link org.dockbox.hartshorn.core.context.ApplicationPropertyHolder#property(String)}.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
@@ -38,12 +37,7 @@ public @interface Value {
      * period symbol. For example, in the configuration (JSON) below the deepest
      * value is accessed with <code>config.nested.value</code>, returning the value 'A'
      * <pre><code>
-     *     {
-     *         "config": {
-     *             "nested": {
-     *                 "value": "A"
-     *             }
-     *         }
+     *     { "config": {     "nested": {         "value": "A"     } }
      *     }
      * </code></pre>
      *
@@ -57,5 +51,6 @@ public @interface Value {
      *
      * @return The string-based default value.
      */
+    @Deprecated(since = "22.1", forRemoval = true)
     String or() default "";
 }

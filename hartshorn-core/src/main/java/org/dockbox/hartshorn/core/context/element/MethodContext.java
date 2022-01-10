@@ -17,9 +17,8 @@
 
 package org.dockbox.hartshorn.core.context.element;
 
-import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
-import org.dockbox.hartshorn.core.HartshornUtils;
+import org.dockbox.hartshorn.core.domain.Exceptional;
 
 import java.lang.invoke.MethodType;
 import java.lang.reflect.Method;
@@ -28,21 +27,28 @@ import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.Map;
 import java.util.StringJoiner;
-import java.util.function.BiFunction;
+import java.util.concurrent.ConcurrentHashMap;
 
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.Setter;
 
-public class MethodContext<T, P> extends ExecutableElementContext<Method> implements ModifierCarrier {
+public class MethodContext<T, P> extends ExecutableElementContext<Method, P> {
 
-    private static final Map<Method, MethodContext<?, ?>> cache = HartshornUtils.emptyConcurrentMap();
+    private static final Map<Method, MethodContext<?, ?>> cache = new ConcurrentHashMap<>();
 
-    @Getter private final Method method;
+    @Setter(AccessLevel.PACKAGE)
+    private static MethodInvoker<?, ?> defaultInvoker = new ReflectionMethodInvoker<>();
+
+    @Getter
+    private final Method method;
 
     private TypeContext<T> returnType;
     private TypeContext<T> genericReturnType;
-    private TypeContext<P> parent;
-    private BiFunction<P, Object[], Exceptional<T>> invoker;
     private String qualifiedName;
+
+    @Setter(AccessLevel.PACKAGE)
+    private MethodInvoker<T, P> invoker;
 
     public MethodContext(final Method method) {
         this.method = method;
@@ -52,9 +58,23 @@ public class MethodContext<T, P> extends ExecutableElementContext<Method> implem
         if (cache.containsKey(method))
             return cache.get(method);
 
-        return new MethodContext<>(method);
+        final MethodContext<Object, Object> context = new MethodContext<>(method);
+        cache.put(method, context);
+        return context;
     }
 
+    public Exceptional<T> invoke(final P instance, final Object... arguments) {
+        if (this.invoker == null) {
+            this.invoker = (MethodInvoker<T, P>) defaultInvoker;
+        }
+        return this.invoker.invoke(this, instance, arguments);
+    }
+
+    public Exceptional<T> invoke(final ApplicationContext context, final P instance) {
+        final Object[] args = this.arguments(context);
+        return this.invoke(instance, args);
+    }
+    
     public Exceptional<T> invoke(final ApplicationContext context, final Collection<Object> arguments) {
         return this.invoke(context.get(this.parent()), arguments);
     }
@@ -63,19 +83,24 @@ public class MethodContext<T, P> extends ExecutableElementContext<Method> implem
         return this.invoke(instance, arguments.toArray());
     }
 
-    public Exceptional<T> invoke(final P instance, final Object... arguments) {
-        if (this.invoker == null) {
-            this.invoker = (o, args) -> {
-                final Exceptional<T> result = Exceptional.of(() -> (T) this.method().invoke(o, args));
-                if (result.caught()) {
-                    Throwable cause = result.error();
-                    if (result.error().getCause() != null) cause = result.error().getCause();
-                    return Exceptional.of(result.orNull(), cause);
-                }
-                return result;
-            };
-        }
-        return this.invoker.apply(instance, arguments);
+    public Exceptional<T> invoke(final ApplicationContext context) {
+        final Object[] args = this.arguments(context);
+        final P instance = context.get(this.parent());
+        return this.invoke(instance, args);
+    }
+
+    public Exceptional<T> invokeStatic(final Object... arguments) {
+        if (this.has(AccessModifier.STATIC)) return this.invoke(null, arguments);
+        else return Exceptional.of(new IllegalAccessException("Method is not static"));
+    }
+
+    public Exceptional<T> invokeStatic(final Collection<Object> arguments) {
+        return this.invokeStatic(arguments.toArray());
+    }
+
+    public Exceptional<T> invokeStatic(final ApplicationContext context) {
+        final Object[] args = this.arguments(context);
+        return this.invokeStatic(args);
     }
 
     public TypeContext<T> returnType() {
@@ -92,13 +117,6 @@ public class MethodContext<T, P> extends ExecutableElementContext<Method> implem
             else this.genericReturnType = TypeContext.of((ParameterizedType) genericReturnType);
         }
         return this.genericReturnType;
-    }
-
-    public TypeContext<P> parent() {
-        if (this.parent == null) {
-            this.parent = (TypeContext<P>) TypeContext.of(this.method.getDeclaringClass());
-        }
-        return this.parent;
     }
 
     @Override
@@ -122,9 +140,7 @@ public class MethodContext<T, P> extends ExecutableElementContext<Method> implem
         return this.qualifiedName;
     }
 
-    public Exceptional<T> invoke(final ApplicationContext context) {
-        final Object[] args = this.arguments(context);
-        final P instance = context.get(this.parent());
-        return this.invoke(instance, args);
+    public boolean isProtected() {
+        return this.has(AccessModifier.PROTECTED);
     }
 }

@@ -17,16 +17,26 @@
 
 package org.dockbox.hartshorn.core.binding;
 
+import org.dockbox.hartshorn.core.Key;
+
 import java.lang.annotation.Annotation;
 
 import javax.inject.Named;
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 
-@SuppressWarnings("ClassExplicitlyAnnotation")
+/**
+ * An implementation of the {@link Named} annotation. This is used by {@link Key}s to allow for {@link String}
+ * based names instead of always requiring a {@link Named} instance.
+ *
+ * @author Guus Lieben
+ * @since 21.2
+ */
 @AllArgsConstructor
 public class NamedImpl implements Named {
 
+    @Getter
     private final String value;
 
     @Override
@@ -34,22 +44,20 @@ public class NamedImpl implements Named {
         return Named.class;
     }
 
+    @Override
     public int hashCode() {
         // This is specified in java.lang.Annotation.
         return (127 * "value".hashCode()) ^ this.value.hashCode();
     }
 
+    @Override
     public boolean equals(final Object o) {
         if (!(o instanceof Named other)) return false;
         return this.value.equals(other.value());
     }
 
+    @Override
     public String toString() {
         return "@" + Named.class.getName() + "(value=" + this.value + ")";
-    }
-
-    @Override
-    public String value() {
-        return this.value;
     }
 }

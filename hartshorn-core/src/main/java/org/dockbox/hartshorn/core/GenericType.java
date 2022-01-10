@@ -17,8 +17,8 @@
 
 package org.dockbox.hartshorn.core;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.core.domain.Exceptional;
-import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -27,8 +27,7 @@ import java.lang.reflect.Type;
  * Generic type reference, allowing for generic type reading. This is derived
  * from Jackson's TypeReference.
  *
- * @param <T>
- *         The generic type
+ * @param <T> The generic type
  */
 public abstract class GenericType<T> implements Comparable<GenericType<T>> {
 
@@ -48,13 +47,13 @@ public abstract class GenericType<T> implements Comparable<GenericType<T>> {
 
     public Exceptional<Class<T>> asClass() {
         final Type type = this.type();
-        if (type instanceof Class<?> clazz) //noinspection unchecked
+        if (type instanceof Class<?> clazz)
             return Exceptional.of((Class<T>) clazz);
         return Exceptional.empty();
     }
 
     @Override
-    public int compareTo(@NotNull final GenericType<T> o) {
+    public int compareTo(@NonNull final GenericType<T> o) {
         return 0;
     }
 

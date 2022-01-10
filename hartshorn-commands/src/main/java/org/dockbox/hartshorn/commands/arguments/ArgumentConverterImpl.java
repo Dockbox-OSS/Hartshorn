@@ -19,11 +19,11 @@ package org.dockbox.hartshorn.commands.arguments;
 
 import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.commands.service.CommandParameter;
-import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.core.adapter.StringTypeAdapter;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -32,8 +32,7 @@ import java.util.function.Function;
  * Simple implementation of {@link org.dockbox.hartshorn.commands.definition.ArgumentConverter} using
  * functions to provide converter and suggestion behavior.
  *
- * @param <T>
- *         The type this converter can convert to
+ * @param <T> The type this converter can convert to
  */
 public final class ArgumentConverterImpl<T> extends DefaultArgumentConverter<T> {
 
@@ -54,12 +53,9 @@ public final class ArgumentConverterImpl<T> extends DefaultArgumentConverter<T> 
     /**
      * Creates a builder with the provided type and keys, with the default converter and suggestions provider.
      *
-     * @param type
-     *         The type the final converter should convert into.
-     * @param keys
-     *         The keys associated with the converter
-     * @param <T>
-     *         The type parameter of the type
+     * @param type The type the final converter should convert into.
+     * @param keys The keys associated with the converter
+     * @param <T> The type parameter of the type
      *
      * @return A new {@link CommandValueConverterBuilder} with the provided type and keys.
      */
@@ -75,15 +71,14 @@ public final class ArgumentConverterImpl<T> extends DefaultArgumentConverter<T> 
     /**
      * Builder type to create a new {@link ArgumentConverterImpl}.
      *
-     * @param <T>
-     *         The type the converter should convert into.
+     * @param <T> The type the converter should convert into.
      */
     public static final class CommandValueConverterBuilder<T> {
         private final String[] keys;
         private final TypeContext<T> type;
         private int size;
         private BiFunction<CommandSource, String, Exceptional<T>> converter = (source, in) -> Exceptional.empty();
-        private BiFunction<CommandSource, String, Collection<String>> suggestionProvider = (source, in) -> HartshornUtils.emptyList();
+        private BiFunction<CommandSource, String, Collection<String>> suggestionProvider = (source, in) -> new ArrayList<>();;
 
         private CommandValueConverterBuilder(final TypeContext<T> type, final String... keys) {
             this.type = type;
@@ -118,6 +113,9 @@ public final class ArgumentConverterImpl<T> extends DefaultArgumentConverter<T> 
             return this;
         }
 
+        /**
+         * @see #withConverter(BiFunction)
+         */
         public CommandValueConverterBuilder<T> withConverter(final StringTypeAdapter<T> adapter) {
             this.converter = (source, in) -> adapter.adapt(in);
             return this;

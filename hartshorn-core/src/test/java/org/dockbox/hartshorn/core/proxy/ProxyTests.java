@@ -17,21 +17,34 @@
 
 package org.dockbox.hartshorn.core.proxy;
 
+import org.dockbox.hartshorn.core.annotations.activate.UseProxying;
 import org.dockbox.hartshorn.core.annotations.activate.UseServiceProvision;
-import org.dockbox.hartshorn.core.annotations.proxy.UseProxying;
+import org.dockbox.hartshorn.core.annotations.stereotype.Service;
+import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
+import org.dockbox.hartshorn.core.proxy.javassist.JavassistProxyHandler;
 import org.dockbox.hartshorn.core.proxy.types.ConcreteProxyTarget;
 import org.dockbox.hartshorn.core.proxy.types.FinalProxyTarget;
 import org.dockbox.hartshorn.core.proxy.types.ProviderService;
 import org.dockbox.hartshorn.core.proxy.types.SampleType;
-import org.dockbox.hartshorn.testsuite.ApplicationAwareTest;
+import org.dockbox.hartshorn.testsuite.HartshornTest;
+import org.dockbox.hartshorn.testsuite.InjectTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import javax.inject.Inject;
+
+import lombok.Getter;
+
 @UseServiceProvision
 @UseProxying
-public class ProxyTests extends ApplicationAwareTest {
+@HartshornTest
+public class ProxyTests {
+
+    @Inject
+    @Getter
+    private ApplicationContext applicationContext;
 
     @Test
     void testConcreteMethodsCanBeProxied() throws ApplicationException, NoSuchMethodException {
@@ -39,7 +52,7 @@ public class ProxyTests extends ApplicationAwareTest {
                 ConcreteProxyTarget.class,
                 ConcreteProxyTarget.class.getMethod("name"),
                 (instance, args, proxyContext) -> "Hartshorn");
-        final ProxyHandler<ConcreteProxyTarget> handler = new JavassistProxyHandler<>(new ConcreteProxyTarget());
+        final ProxyHandler<ConcreteProxyTarget> handler = new JavassistProxyHandler<>(this.applicationContext(), new ConcreteProxyTarget());
         handler.delegate(property);
         final ConcreteProxyTarget proxy = handler.proxy();
 
@@ -54,8 +67,8 @@ public class ProxyTests extends ApplicationAwareTest {
                 FinalProxyTarget.class,
                 FinalProxyTarget.class.getMethod("name"),
                 (instance, args, proxyContext) -> "Hartshorn");
-        final ProxyHandler<FinalProxyTarget> handler = new JavassistProxyHandler<>(new FinalProxyTarget());
-        Assertions.assertThrows(RuntimeException.class, () -> handler.delegate(property));
+        final ProxyHandler<FinalProxyTarget> handler = new JavassistProxyHandler<>(this.applicationContext(), new FinalProxyTarget());
+        Assertions.assertThrows(IllegalArgumentException.class, () -> handler.delegate(property));
 
         // Ensure the exception isn't thrown after registration
         final FinalProxyTarget proxy = handler.proxy();
@@ -72,8 +85,8 @@ public class ProxyTests extends ApplicationAwareTest {
                 ConcreteProxyTarget.class,
                 ConcreteProxyTarget.class.getMethod("name"),
                 (instance, args, proxyContext) -> "Hartshorn");
-        final ConcreteProxyTarget concrete = this.context().get(ConcreteProxyTarget.class);
-        ProxyHandler<ConcreteProxyTarget> handler = this.context().environment().manager().handler(TypeContext.of(ConcreteProxyTarget.class), concrete);
+        final ConcreteProxyTarget concrete = this.applicationContext().get(ConcreteProxyTarget.class);
+        final ProxyHandler<ConcreteProxyTarget> handler = this.applicationContext().environment().manager().handler(TypeContext.of(ConcreteProxyTarget.class), concrete);
         handler.delegate(methodProxyContext);
         final ConcreteProxyTarget proxy = handler.proxy();
 
@@ -84,8 +97,8 @@ public class ProxyTests extends ApplicationAwareTest {
 
     @Test
     void testProxyIsStoredInHandler() throws ApplicationException {
-        final ConcreteProxyTarget concrete = this.context().get(ConcreteProxyTarget.class);
-        ProxyHandler<ConcreteProxyTarget> handler = this.context().environment().manager().handler(TypeContext.of(ConcreteProxyTarget.class), concrete);
+        final ConcreteProxyTarget concrete = this.applicationContext().get(ConcreteProxyTarget.class);
+        final ProxyHandler<ConcreteProxyTarget> handler = this.applicationContext().environment().manager().handler(TypeContext.of(ConcreteProxyTarget.class), concrete);
         Assertions.assertTrue(handler.proxyInstance().absent());
         handler.proxy();
         Assertions.assertTrue(handler.proxyInstance().present());
@@ -93,8 +106,35 @@ public class ProxyTests extends ApplicationAwareTest {
 
     @Test
     void testProviderService() {
-        final ProviderService service = this.context().get(ProviderService.class);
+        final ProviderService service = this.applicationContext().get(ProviderService.class);
         final SampleType type = service.get();
         Assertions.assertNotNull(type);
     }
+
+    @InjectTest
+    public void proxyEqualityTest(final ApplicationContext applicationContext) {
+        final DemoServiceA serviceA1 = applicationContext.get(DemoServiceA.class);
+        final DemoServiceA serviceA2 = applicationContext.get(DemoServiceA.class);
+
+        Assertions.assertEquals(serviceA1, serviceA2);
+
+        final DemoServiceB serviceB1 = applicationContext.get(DemoServiceB.class);
+        final DemoServiceB serviceB2 = applicationContext.get(DemoServiceB.class);
+
+        Assertions.assertEquals(serviceB1, serviceB2);
+
+        final DemoServiceC serviceC1 = applicationContext.get(DemoServiceC.class);
+        final DemoServiceC serviceC2 = applicationContext.get(DemoServiceC.class);
+
+        Assertions.assertEquals(serviceC1, serviceC2);
+    }
+
+    @Service
+    public static interface DemoServiceA { }
+
+    @Service
+    public static class DemoServiceB { }
+
+    @Service
+    public static abstract class DemoServiceC { }
 }

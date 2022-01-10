@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.i18n;
 
-import org.dockbox.hartshorn.core.annotations.service.Service;
+import org.dockbox.hartshorn.core.annotations.stereotype.Service;
 import org.dockbox.hartshorn.i18n.annotations.InjectTranslation;
 
 @Service(id = "resource")

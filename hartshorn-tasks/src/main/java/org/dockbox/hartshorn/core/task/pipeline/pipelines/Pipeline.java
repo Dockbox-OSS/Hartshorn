@@ -17,10 +17,10 @@
 
 package org.dockbox.hartshorn.core.task.pipeline.pipelines;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.task.pipeline.pipes.IPipe;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 public class Pipeline<I> extends AbstractPipeline<I, I> {
 
@@ -28,16 +28,13 @@ public class Pipeline<I> extends AbstractPipeline<I, I> {
      * Processes an input by first wrapping it in an {@link Exceptional} and calling {@link
      * Pipeline#process(Exceptional)} on it.
      *
-     * @param input
-     *         The non-null {@code I} input value
-     * @param throwable
-     *         The nullable input {@link Throwable}
+     * @param input The non-null {@code I} input value
+     * @param throwable The nullable input {@link Throwable}
      *
-     * @return An {@link Exceptional} containing the output. If the output is not present it will
-     *         contain a throwable describing why
+     * @return An {@link Exceptional} containing the output. If the output is not present it will contain a throwable describing why
      */
     @Override
-    public Exceptional<I> process(@NotNull final I input, @Nullable final Throwable throwable) {
+    public Exceptional<I> process(@NonNull final I input, @Nullable final Throwable throwable) {
         final Exceptional<I> exceptionalInput = Exceptional.of(input, throwable);
 
         return this.process(exceptionalInput);
@@ -48,15 +45,12 @@ public class Pipeline<I> extends AbstractPipeline<I, I> {
      * Exceptional)} on each {@link IPipe} in the pipeline and then returns the output wrapped in an
      * {@link Exceptional}.
      *
-     * @param exceptionalInput
-     *         A non-null {@link Exceptional} which contains the input value and
-     *         throwable
+     * @param exceptionalInput A non-null {@link Exceptional} which contains the input value and throwable
      *
-     * @return An {@link Exceptional} containing the output after it has been processed by the
-     *         pipeline
+     * @return An {@link Exceptional} containing the output after it has been processed by the pipeline
      */
     @Override
-    protected Exceptional<I> process(@NotNull Exceptional<I> exceptionalInput) {
+    protected Exceptional<I> process(@NonNull Exceptional<I> exceptionalInput) {
         for (final IPipe<I, I> pipe : this.pipes()) {
             exceptionalInput = super.processPipe(pipe, exceptionalInput);
 

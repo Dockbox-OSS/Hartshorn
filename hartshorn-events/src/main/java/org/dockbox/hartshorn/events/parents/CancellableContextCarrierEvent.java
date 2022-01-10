@@ -17,12 +17,12 @@
 
 package org.dockbox.hartshorn.events.parents;
 
-import org.jetbrains.annotations.NotNull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public abstract class CancellableContextCarrierEvent extends ContextCarrierEvent implements Cancellable {
 
     @Override
-    public @NotNull Cancellable post() {
+    public @NonNull Cancellable post() {
         return (Cancellable) super.post();
     }
 }

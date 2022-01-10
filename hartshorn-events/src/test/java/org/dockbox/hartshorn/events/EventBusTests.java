@@ -17,37 +17,47 @@
 
 package org.dockbox.hartshorn.events;
 
-import org.dockbox.hartshorn.core.context.element.TypeContext;
+import org.dockbox.hartshorn.core.Key;
+import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.events.annotations.Listener.Priority;
 import org.dockbox.hartshorn.events.listeners.BasicEventListener;
 import org.dockbox.hartshorn.events.listeners.GenericEventListener;
 import org.dockbox.hartshorn.events.listeners.PriorityEventListener;
 import org.dockbox.hartshorn.events.listeners.StaticEventListener;
 import org.dockbox.hartshorn.events.parents.Event;
-import org.dockbox.hartshorn.testsuite.ApplicationAwareTest;
+import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-public class EventBusTests extends ApplicationAwareTest {
+import javax.inject.Inject;
+
+import lombok.Getter;
+
+@HartshornTest
+public class EventBusTests {
+
+    @Inject
+    @Getter
+    private ApplicationContext applicationContext;
 
     @Test
     public void testTypesCanSubscribe() {
         final EventBus bus = this.bus();
-        bus.subscribe(TypeContext.of(BasicEventListener.class));
-        Assertions.assertTrue(bus.invokers().containsKey(TypeContext.of(BasicEventListener.class)));
+        bus.subscribe(Key.of(BasicEventListener.class));
+        Assertions.assertTrue(bus.invokers().containsKey(Key.of(BasicEventListener.class)));
     }
 
     private EventBus bus() {
-        return this.context().get(EventBusImpl.class);
+        return this.applicationContext().get(EventBusImpl.class);
     }
 
     @Test
     public void testNonStaticMethodsCanListen() {
         final EventBus bus = this.bus();
-        bus.subscribe(TypeContext.of(BasicEventListener.class));
+        bus.subscribe(Key.of(BasicEventListener.class));
         bus.post(new SampleEvent());
         Assertions.assertTrue(BasicEventListener.fired);
     }
@@ -55,7 +65,7 @@ public class EventBusTests extends ApplicationAwareTest {
     @Test
     public void testStaticMethodsCanListen() {
         final EventBus bus = this.bus();
-        bus.subscribe(TypeContext.of(StaticEventListener.class));
+        bus.subscribe(Key.of(StaticEventListener.class));
         bus.post(new SampleEvent());
         Assertions.assertTrue(StaticEventListener.fired);
     }
@@ -63,7 +73,7 @@ public class EventBusTests extends ApplicationAwareTest {
     @Test
     public void testEventsArePostedInCorrectPriorityOrder() {
         final EventBus bus = this.bus();
-        bus.subscribe(TypeContext.of(PriorityEventListener.class));
+        bus.subscribe(Key.of(PriorityEventListener.class));
         bus.post(new SampleEvent());
         Assertions.assertEquals(Priority.LAST, PriorityEventListener.last());
     }
@@ -71,7 +81,7 @@ public class EventBusTests extends ApplicationAwareTest {
     @Test
     void testGenericEventsAreFiltered() {
         final EventBus bus = this.bus();
-        bus.subscribe(TypeContext.of(GenericEventListener.class));
+        bus.subscribe(Key.of(GenericEventListener.class));
         final Event event = new GenericEvent<>("String") {
         };
         Assertions.assertDoesNotThrow(() -> bus.post(event));
@@ -82,7 +92,7 @@ public class EventBusTests extends ApplicationAwareTest {
         final EventBus bus = this.bus();
         // Ensure the values have not been affected by previous tests
         GenericEventListener.objects().clear();
-        bus.subscribe(TypeContext.of(GenericEventListener.class));
+        bus.subscribe(Key.of(GenericEventListener.class));
         final Event stringEvent = new GenericEvent<>("String") {
         };
         final Event integerEvent = new GenericEvent<>(1) {

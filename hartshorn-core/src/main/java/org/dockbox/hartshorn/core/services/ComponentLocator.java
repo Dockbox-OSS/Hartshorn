@@ -17,9 +17,10 @@
 
 package org.dockbox.hartshorn.core.services;
 
-import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.ComponentType;
+import org.dockbox.hartshorn.core.Key;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
+import org.dockbox.hartshorn.core.domain.Exceptional;
 
 import java.util.Collection;
 
@@ -32,4 +33,6 @@ public interface ComponentLocator {
     Collection<ComponentContainer> containers(ComponentType functional);
 
     Exceptional<ComponentContainer> container(TypeContext<?> type);
+
+    <T> void validate(Key<T> key);
 }

@@ -17,145 +17,25 @@
 
 package org.dockbox.hartshorn.core.context;
 
-import org.dockbox.hartshorn.core.AnnotationHelper;
-import org.dockbox.hartshorn.core.ArrayListMultiMap;
-import org.dockbox.hartshorn.core.MultiMap;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
-import org.dockbox.hartshorn.core.HartshornUtils;
-import org.reflections.Reflections;
 
 import java.lang.annotation.Annotation;
 import java.util.Collection;
-import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
-import lombok.AccessLevel;
-import lombok.Getter;
+public interface PrefixContext extends Context {
 
-public class PrefixContext extends DefaultContext {
+    void prefix(String prefix);
 
-    @Getter(AccessLevel.PROTECTED)
-    private final ApplicationEnvironment environment;
+    Set<String> prefixes();
 
-    private final Map<String, Reflections> reflectedPrefixes = HartshornUtils.emptyConcurrentMap();
-    private final MultiMap<Class<? extends Annotation>, Class<? extends Annotation>> annotationHierarchy = new ArrayListMultiMap<>();
+    <A extends Annotation> Collection<TypeContext<?>> types(final Class<A> annotation);
 
-    public PrefixContext(final Iterable<String> initialPrefixes, final ApplicationEnvironment environment) {
-        this.environment = environment;
-        for (final String initialPrefix : initialPrefixes) {
-            this.prefix(initialPrefix);
-        }
-    }
+    <A extends Annotation> Collection<TypeContext<?>> types(final Class<A> annotation, final boolean skipParents);
 
-    public void prefix(final String prefix) {
-        if (!this.reflectedPrefixes.containsKey(prefix)) {
-            this.environment.manager().log().debug("Registering and caching prefix '%s'".formatted(prefix));
-            this.reflectedPrefixes.put(prefix, this.reflections(prefix));
-        }
-    }
+    <A extends Annotation> Collection<TypeContext<?>> types(final String prefix, final Class<A> annotation, final boolean skipParents);
 
-    void reset() {
-        this.reflectedPrefixes.clear();
-        this.annotationHierarchy.clear();
-    }
+    <T> Collection<TypeContext<? extends T>> children(final Class<T> type);
 
-    private Reflections reflections(final String prefix) {
-        if (!this.reflectedPrefixes.containsKey(prefix)) {
-            this.reflectedPrefixes.put(prefix, new Reflections(prefix));
-        }
-        return this.reflectedPrefixes.get(prefix);
-    }
-
-    public Set<String> prefixes() {
-        return this.reflectedPrefixes.keySet();
-    }
-
-    /**
-     * Gets types decorated with a given annotation, both classes and annotationsWith. The prefix is
-     * typically a package. If the annotation is present on a parent of the type, the highest level
-     * member will be included.
-     *
-     * @param <A>
-     *         The annotation constraint
-     * @param annotation
-     *         The annotation expected to be present on one or more types
-     *
-     * @return The annotated types
-     */
-    public <A extends Annotation> Collection<TypeContext<?>> types(final Class<A> annotation) {
-        return this.types(annotation, false);
-    }
-
-    public <A extends Annotation> Collection<TypeContext<?>> types(final String prefix, final Class<A> annotation, final boolean skipParents) {
-        final Reflections reflections = this.reflectedPrefixes.get(prefix);
-        final Set<Class<? extends Annotation>> extensions = this.extensions(annotation);
-        final Set<TypeContext<?>> types = HartshornUtils.emptySet();
-
-        for (final Class<? extends Annotation> extension : extensions) {
-            for (final Class<?> type : reflections.getTypesAnnotatedWith(extension, !skipParents)) {
-                types.add(TypeContext.of(type));
-            }
-        }
-        return types;
-    }
-
-    /**
-     * Gets types decorated with a given annotation, both classes and annotationsWith. The prefix is
-     * typically a package. If the annotation is present on a parent of the type, it will only be
-     * included if {@code skipParents} is false.
-     *
-     * @param <A>
-     *         The annotation constraint
-     * @param annotation
-     *         The annotation expected to be present on one or more types
-     * @param skipParents
-     *         Whether to include the type if supertypes are annotated
-     *
-     * @return The annotated types
-     */
-    public <A extends Annotation> Collection<TypeContext<?>> types(final Class<A> annotation, final boolean skipParents) {
-        return this.reflectedPrefixes.keySet().stream()
-                .flatMap(prefix -> this.types(prefix, annotation, skipParents).stream())
-                .collect(Collectors.toSet());
-    }
-
-    private <A extends Annotation> Set<Class<? extends Annotation>> extensions(final Class<A> annotation) {
-        if (this.annotationHierarchy.isEmpty()) {
-            for (final TypeContext<? extends Annotation> annotationType : this.children(Annotation.class)) {
-                for (final Class<? extends Annotation> selfOrParent : AnnotationHelper.annotationHierarchy(annotationType.type())) {
-                    this.annotationHierarchy.put(selfOrParent, annotationType.type());
-                }
-            }
-        }
-
-        final Collection<Class<? extends Annotation>> hierarchy = this.annotationHierarchy.get(annotation);
-
-        if (hierarchy.isEmpty()) return HartshornUtils.asUnmodifiableSet(annotation);
-        else return HartshornUtils.asUnmodifiableSet(hierarchy);
-    }
-
-    public <T> Collection<TypeContext<? extends T>> children(final Class<T> type) {
-        return this.children(TypeContext.of(type));
-    }
-
-    /**
-     * Gets all sub-types of a given type. The prefix is typically a package. If no sub-types exist
-     * for the given type, and empty list is returned.
-     *
-     * @param parent
-     *         The parent type to scan for subclasses
-     * @param <T>
-     *         The type of the parent
-     *
-     * @return The list of sub-types, or an empty list
-     */
-    public <T> Collection<TypeContext<? extends T>> children(final TypeContext<T> parent) {
-        final Set<Class<? extends T>> subTypes = HartshornUtils.emptySet();
-        for (final Reflections reflections : this.reflectedPrefixes.values()) {
-            subTypes.addAll(reflections.getSubTypesOf(parent.type()));
-        }
-        return HartshornUtils.asList(subTypes).stream().map(TypeContext::of).collect(Collectors.toList());
-    }
-
+    <T> Collection<TypeContext<? extends T>> children(final TypeContext<T> parent);
 }

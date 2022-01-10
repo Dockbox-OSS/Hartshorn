@@ -17,17 +17,16 @@
 
 package org.dockbox.hartshorn.core.task.pipeline.pipelines;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.core.domain.Exceptional;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 public class ConvertiblePipelineSource<I> extends ConvertiblePipeline<I, I> {
 
     /**
      * Calls the super constructor to instantiate a new convertible pipeline.
      *
-     * @param inputClass
-     *         The {@link Class} of the {@code I} input type
+     * @param inputClass The {@link Class} of the {@code I} input type
      */
     public ConvertiblePipelineSource(final Class<I> inputClass) {
         super(inputClass);
@@ -36,15 +35,13 @@ public class ConvertiblePipelineSource<I> extends ConvertiblePipeline<I, I> {
     /**
      * Processes an input by first wrapping it in an {@link Exceptional}.
      *
-     * @param input
-     *         The non-null {@code I} input to be processed by the pipeline
-     * @param throwable
-     *         A nullable {@link Throwable} that may wish to be passed in
+     * @param input The non-null {@code I} input to be processed by the pipeline
+     * @param throwable A nullable {@link Throwable} that may wish to be passed in
      *
      * @return An {@link Exceptional} containing the {@code I} output
      */
     @Override
-    public Exceptional<I> process(@NotNull final I input, @Nullable final Throwable throwable) {
+    public Exceptional<I> process(@NonNull final I input, @Nullable final Throwable throwable) {
         final Exceptional<I> exceptionalInput = Exceptional.of(input, throwable);
         return super.process(exceptionalInput);
     }

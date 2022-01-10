@@ -30,8 +30,7 @@ public interface MetaProvider {
      * Looks up the owner of the given type. If no explicit owner exists, the
      * type itself is used as owner.
      *
-     * @param type
-     *         The type to look up
+     * @param type The type to look up
      *
      * @return The owner of the type
      */
@@ -40,8 +39,7 @@ public interface MetaProvider {
     /**
      * Looks up whether the given type is a singleton.
      *
-     * @param type
-     *         The type to look up
+     * @param type The type to look up
      *
      * @return <code>true</code> if the type is a singleton, or <code>false</code>
      */
@@ -53,8 +51,7 @@ public interface MetaProvider {
      * the dependency injection module is present, if it is not this should always
      * return <code>false</code>.
      *
-     * @param type
-     *         The type to look up
+     * @param type The type to look up
      *
      * @return <code>true</code> if the type is a component-like type, or <code>false</code>
      */

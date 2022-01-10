@@ -22,7 +22,15 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * Indicates that a field or parameter is required. If the output of a binding is {@code null} during population phases, this will
+ * yield an exception.
+ *
+ * @author Guus Lieben
+ * @since 22.1
+ */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
+@Target({ElementType.PARAMETER, ElementType.FIELD})
 public @interface Required {
+    boolean value() default true;
 }

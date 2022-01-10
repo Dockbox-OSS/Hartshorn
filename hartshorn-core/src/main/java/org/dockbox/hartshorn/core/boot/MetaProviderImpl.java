@@ -27,6 +27,9 @@ import org.dockbox.hartshorn.core.context.element.TypeContext;
  * An extension of {@link InjectorMetaProvider} which adds {@link Hartshorn}
  * as a valid {@link TypedOwner}. It is up to the final implementation to
  * decide whether this should be used.
+ *
+ * @author Guus Lieben
+ * @since 21.9
  */
 public class MetaProviderImpl extends InjectorMetaProvider {
 

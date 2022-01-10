@@ -32,8 +32,7 @@ public final class TypedOwnerImpl implements TypedOwner {
     /**
      * Creates a new {@link TypedOwnerImpl} from the given ID.
      *
-     * @param id
-     *         The ID of the owner
+     * @param id The ID of the owner
      *
      * @return The new {@link TypedOwner}
      */

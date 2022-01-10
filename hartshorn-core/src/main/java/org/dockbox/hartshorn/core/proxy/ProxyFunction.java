@@ -17,10 +17,7 @@
 
 package org.dockbox.hartshorn.core.proxy;
 
-import org.dockbox.hartshorn.core.exceptions.ApplicationException;
-
 @FunctionalInterface
 public interface ProxyFunction<T, R> {
-
-    R delegate(T instance, Object[] args, ProxyContext context) throws ApplicationException;
+    R delegate(T instance, Object[] args, ProxyContext context) throws Throwable;
 }

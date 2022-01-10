@@ -29,8 +29,7 @@ import java.util.List;
 /**
  * Responsible for converting a raw string input to the specified type <code>T</code>.
  *
- * @param <T>
- *         The type this converter can convert into
+ * @param <T> The type this converter can convert into
  */
 public interface ArgumentConverter<T> {
 
@@ -53,10 +52,8 @@ public interface ArgumentConverter<T> {
      * Converts a given raw argument into type <code>T</code>. The provided
      * {@link CommandSource} may provide additional context to the implementation.
      *
-     * @param source
-     *         The command source executing a command containing the argument
-     * @param argument
-     *         The raw argument without the associated key
+     * @param source The command source executing a command containing the argument
+     * @param argument The raw argument without the associated key
      *
      * @return The converted object of type <code>T</code>, or {@link Exceptional#empty()}
      */
@@ -68,10 +65,8 @@ public interface ArgumentConverter<T> {
      * used to obtain it. The provided {@link CommandSource} may provide additional
      * context to the implementation.
      *
-     * @param source
-     *         The command source executing a command containing the argument
-     * @param value
-     *         The argument with the associated key
+     * @param source The command source executing a command containing the argument
+     * @param value The argument with the associated key
      *
      * @return The converted object of type <code>T</code>, or {@link Exceptional#empty()}
      */
@@ -83,12 +78,10 @@ public interface ArgumentConverter<T> {
      * <p>For example, when possible values are: <code>one, two, three</code>, with the input
      * being <code>t</code>, the returned collection will be <code>two, three</code>.
      *
-     * @param source
-     *         The command source executing a command containing the argument
-     * @param argument
-     *         The incomplete raw argument
+     * @param source The command source executing a command containing the argument
+     * @param argument The incomplete raw argument
      *
-     * @return All suggested values, or {@link HartshornUtils#emptyList()}
+     * @return All suggested values, or empty {@link List}
      */
     Collection<String> suggestions(CommandSource source, String argument);
 

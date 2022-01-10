@@ -29,8 +29,7 @@ import lombok.AllArgsConstructor;
  * Simple implementation of a value-based {@link CommandFlag}. Using an underlying
  * {@link CommandElement} to delegate value parsing.
  *
- * @param <T>
- *         The type of the expected value
+ * @param <T> The type of the expected value
  */
 @AllArgsConstructor
 public class CommandFlagElement<T> implements CommandFlag, CommandElement<T> {

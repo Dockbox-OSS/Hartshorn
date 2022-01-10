@@ -17,28 +17,26 @@
 
 package org.dockbox.hartshorn.core.context;
 
-import org.dockbox.hartshorn.core.ActivatorFiltered;
-import org.dockbox.hartshorn.core.ArrayListMultiMap;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.core.ComponentType;
-import org.dockbox.hartshorn.core.DefaultModifiers;
+import org.dockbox.hartshorn.core.CustomMultiMap;
+import org.dockbox.hartshorn.core.Enableable;
 import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.core.InjectConfiguration;
 import org.dockbox.hartshorn.core.InjectionPoint;
-import org.dockbox.hartshorn.core.InjectorMetaProvider;
 import org.dockbox.hartshorn.core.Key;
 import org.dockbox.hartshorn.core.MetaProvider;
-import org.dockbox.hartshorn.core.MetaProviderModifier;
-import org.dockbox.hartshorn.core.Modifier;
+import org.dockbox.hartshorn.core.Modifiers;
 import org.dockbox.hartshorn.core.MultiMap;
 import org.dockbox.hartshorn.core.annotations.activate.Activator;
-import org.dockbox.hartshorn.core.annotations.inject.Binds;
-import org.dockbox.hartshorn.core.annotations.inject.Combines;
+import org.dockbox.hartshorn.core.annotations.activate.AutomaticActivation;
+import org.dockbox.hartshorn.core.annotations.activate.ServiceActivator;
+import org.dockbox.hartshorn.core.annotations.inject.ComponentBinding;
 import org.dockbox.hartshorn.core.annotations.inject.Context;
 import org.dockbox.hartshorn.core.annotations.inject.Enable;
-import org.dockbox.hartshorn.core.annotations.service.AutomaticActivation;
-import org.dockbox.hartshorn.core.annotations.service.ServiceActivator;
+import org.dockbox.hartshorn.core.annotations.inject.Populate;
+import org.dockbox.hartshorn.core.annotations.inject.Required;
 import org.dockbox.hartshorn.core.binding.BindingHierarchy;
-import org.dockbox.hartshorn.core.binding.Bindings;
 import org.dockbox.hartshorn.core.binding.ContextWrappedHierarchy;
 import org.dockbox.hartshorn.core.binding.NativeBindingHierarchy;
 import org.dockbox.hartshorn.core.binding.Provider;
@@ -46,35 +44,43 @@ import org.dockbox.hartshorn.core.binding.Providers;
 import org.dockbox.hartshorn.core.boot.ApplicationLogger;
 import org.dockbox.hartshorn.core.boot.ApplicationManager;
 import org.dockbox.hartshorn.core.boot.ApplicationProxier;
+import org.dockbox.hartshorn.core.boot.ClasspathResourceLocator;
+import org.dockbox.hartshorn.core.boot.ExceptionHandler;
 import org.dockbox.hartshorn.core.boot.LifecycleObservable;
+import org.dockbox.hartshorn.core.boot.SelfActivatingApplicationContext;
 import org.dockbox.hartshorn.core.context.element.FieldContext;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
-import org.dockbox.hartshorn.core.exceptions.TypeProvisionException;
-import org.dockbox.hartshorn.core.inject.InjectionModifier;
 import org.dockbox.hartshorn.core.inject.ProviderContext;
+import org.dockbox.hartshorn.core.proxy.ProxyHandler;
+import org.dockbox.hartshorn.core.proxy.ProxyLookup;
 import org.dockbox.hartshorn.core.services.ComponentContainer;
 import org.dockbox.hartshorn.core.services.ComponentLocator;
+import org.dockbox.hartshorn.core.services.ComponentPostProcessor;
+import org.dockbox.hartshorn.core.services.ComponentPreProcessor;
 import org.dockbox.hartshorn.core.services.ComponentProcessor;
-import org.dockbox.hartshorn.core.services.ServiceImpl;
-import org.dockbox.hartshorn.core.services.ServiceOrder;
-import org.jetbrains.annotations.Nullable;
+import org.dockbox.hartshorn.core.services.ProcessingOrder;
 
 import java.lang.annotation.Annotation;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
+import java.util.Queue;
 import java.util.Set;
-import java.util.function.BiConsumer;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -82,28 +88,35 @@ import javax.inject.Named;
 import lombok.AccessLevel;
 import lombok.Getter;
 
-public class HartshornApplicationContext extends DefaultContext implements ApplicationContext {
+public class HartshornApplicationContext extends DefaultContext implements SelfActivatingApplicationContext {
 
     private static final Pattern ARGUMENTS = Pattern.compile("-H([a-zA-Z0-9\\.]+)=(.+)");
 
     protected final transient Set<InjectionPoint<?>> injectionPoints = HartshornUtils.emptyConcurrentSet();
-    protected final transient MultiMap<ServiceOrder, InjectionModifier<?>> injectionModifiers = new ArrayListMultiMap<>();
-    protected final transient MultiMap<ServiceOrder, ComponentProcessor<?>> processors = new ArrayListMultiMap<>();
+    protected final transient MultiMap<ProcessingOrder, ComponentPostProcessor<?>> postProcessors = new CustomMultiMap<>(HartshornUtils::emptyConcurrentSet);
+    protected final transient MultiMap<ProcessingOrder, ComponentPreProcessor<?>> preProcessors = new CustomMultiMap<>(HartshornUtils::emptyConcurrentSet);
     protected final transient Properties environmentValues = new Properties();
+    protected final transient Queue<String> prefixQueue = new ConcurrentLinkedQueue<>();
 
     @Getter(AccessLevel.PROTECTED) private final Activator activator;
     @Getter private final ApplicationEnvironment environment;
 
     private final ComponentLocator locator;
-    private final Set<Modifier> modifiers;
+    @Getter
+    private final ClasspathResourceLocator resourceLocator;
+    @Getter
+    private final Set<Modifiers> modifiers;
     private final Set<Annotation> activators = HartshornUtils.emptyConcurrentSet();
-    private final Map<Key<?>, Object> singletons = HartshornUtils.emptyConcurrentMap();
-    private final Map<Key<?>, BindingHierarchy<?>> hierarchies = HartshornUtils.emptyConcurrentMap();
-    private MetaProvider metaProvider;
+    private final Map<Key<?>, Object> singletons = new ConcurrentHashMap<>();
+    private final Map<Key<?>, BindingHierarchy<?>> hierarchies = new ConcurrentHashMap<>();
+    private final MetaProvider metaProvider;
 
     public HartshornApplicationContext(final ApplicationEnvironment environment, final Function<ApplicationContext, ComponentLocator> componentLocator,
-                                       final TypeContext<?> activationSource, final Set<String> prefixes, final Set<String> args, final Set<Modifier> modifiers) {
+                                       final Function<ApplicationContext, ClasspathResourceLocator> resourceLocator,
+                                       final Function<ApplicationContext, MetaProvider> metaProvider, final TypeContext<?> activationSource,
+                                       final Set<String> args, final Set<Modifiers> modifiers) {
         this.singletons.put(Key.of(ApplicationContext.class), this);
+
         this.environment = environment;
         final Exceptional<Activator> activator = activationSource.annotation(Activator.class);
         if (activator.absent()) {
@@ -111,34 +124,48 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
         }
         this.activator = activator.get();
         this.environment().annotationsWith(activationSource, ServiceActivator.class).forEach(this::addActivator);
-        this.addActivator(new ServiceImpl());
 
         this.log().debug("Located %d service activators".formatted(this.activators().size()));
 
         this.populateArguments(args);
 
         this.locator = componentLocator.apply(this);
+        this.resourceLocator = resourceLocator.apply(this);
+        this.metaProvider = metaProvider.apply(this);
         this.modifiers = modifiers;
-        this.modify(this.modifiers);
 
+        this.registerDefaultBindings();
+    }
+
+    protected void registerDefaultBindings() {
+        this.bind(Key.of(ComponentProvider.class), this);
         this.bind(Key.of(ApplicationContext.class), this);
+        this.bind(Key.of(ActivatorSource.class), this);
+        this.bind(Key.of(ApplicationPropertyHolder.class), this);
+        this.bind(Key.of(ApplicationBinder.class), this);
+
         this.bind(Key.of(MetaProvider.class), this.metaProvider);
         this.bind(Key.of(ComponentLocator.class), this.locator());
-        this.bind(Key.of(ApplicationManager.class), this.environment().manager());
+        this.bind(Key.of(ApplicationEnvironment.class), this.environment());
+
+        this.bind(Key.of(ProxyLookup.class), this.environment().manager());
         this.bind(Key.of(ApplicationLogger.class), this.environment().manager());
         this.bind(Key.of(ApplicationProxier.class), this.environment().manager());
+        this.bind(Key.of(ApplicationManager.class), this.environment().manager());
         this.bind(Key.of(LifecycleObservable.class), this.environment().manager());
     }
 
+    @Override
     public void addActivator(final Annotation annotation) {
         if (this.activators.contains(annotation)) return;
-        final Exceptional<ServiceActivator> activator = TypeContext.of(annotation.annotationType()).annotation(ServiceActivator.class);
+        final TypeContext<? extends Annotation> annotationType = TypeContext.of(annotation.annotationType());
+        final Exceptional<ServiceActivator> activator = annotationType.annotation(ServiceActivator.class);
         if (activator.present()) {
             this.activators.add(annotation);
-            for (final String scanPackage : activator.get().scanPackages()) {
-                this.environment().prefix(scanPackage);
+            for (final String scan :activator.get().scanPackages()){
+                this.bind(scan);
             }
-            this.environment().annotationsWith(TypeContext.unproxy(this, annotation), ServiceActivator.class).forEach(this::addActivator);
+            this.environment().annotationsWith(annotationType, ServiceActivator.class).forEach(this::addActivator);
         }
     }
 
@@ -149,62 +176,24 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
 
     public <T> T inject(final Key<T> key, T typeInstance) {
         for (final InjectionPoint<?> injectionPoint : this.injectionPoints) {
-            if (injectionPoint.accepts(key.contract())) {
+            if (injectionPoint.accepts(key.type())) {
                 try {
-                    typeInstance = ((InjectionPoint<T>) injectionPoint).apply(typeInstance, key.contract());
+                    typeInstance = ((InjectionPoint<T>) injectionPoint).apply(typeInstance, key.type());
                 }
                 catch (final ClassCastException e) {
-                    this.log().warn("Attempted to apply injection point to incompatible type [" + key.contract().qualifiedName() + "]");
+                    this.log().warn("Attempted to apply injection point to incompatible type [" + key.type().qualifiedName() + "]");
                 }
             }
         }
         return typeInstance;
     }
 
-    public <T> void enableFields(final T typeInstance) {
-        if (typeInstance == null) return;
-        final TypeContext<T> unproxied = TypeContext.unproxy(this, typeInstance);
-
-        unproxied.fields(Enable.class)
-                .forEach(field -> this.enableField(field, typeInstance));
-
-        unproxied.fields(Inject.class).stream()
-                .filter(field -> field.annotation(Enable.class).absent())
-                .forEach(field -> {
-                    final Exceptional<?> instance = field.get(typeInstance);
-                    if (instance.present()) {
-                        try {
-                            Bindings.enable(instance.get());
-                        }
-                        catch (final ApplicationException e) {
-                            throw new ApplicationException("Could not enable injected field " + field.name(), e).runtime();
-                        }
-                    }
-                });
-    }
-
-    protected void enableField(final FieldContext<?> field, final Object typeInstance) {
-        final Enable enable = field.annotation(Enable.class).get();
-        if (enable.value()) {
-            final Exceptional<?> instance = field.get(typeInstance);
-            if (instance.present()) {
-                final Object injectInstance = instance.get();
-                try {
-                    Bindings.enable(injectInstance);
-                }
-                catch (final ApplicationException e) {
-                    throw new ApplicationException("Could not enable manually marked (with @Enabled) field " + field.name(), e).runtime();
-                }
-            }
-        }
-    }
-
-    public <T> T raw(final TypeContext<T> type) throws TypeProvisionException {
-        return this.raw(type, true);
+    public <T> T raw(final TypeContext<T> type) {
+        return Providers.of(type).provide(this).rethrowUnchecked().orNull();
     }
 
     @Override
-    public <T> T raw(final TypeContext<T> type, final boolean populate) throws TypeProvisionException {
+    public <T> T raw(final TypeContext<T> type, final boolean populate) {
         try {
             final Exceptional<T> instance = Providers.of(type).provide(this);
             if (instance.present()) {
@@ -214,28 +203,32 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
             }
         }
         catch (final Exception e) {
-            throw new TypeProvisionException("Could not provide raw instance of " + type.name(), e);
+            ExceptionHandler.unchecked(e);
         }
         return null;
     }
 
     @Override
     public void add(final ComponentProcessor<?> processor) {
-        final ServiceOrder order = processor.order();
-        this.processors.put(order, processor);
-        this.log().debug("Added " + TypeContext.of(processor).name() + " for component processing at phase " + order);
+        final ProcessingOrder order = processor.order();
+        final String name = TypeContext.of(processor).name();
+
+        if (processor instanceof ComponentPostProcessor<?> postProcessor) {
+            this.postProcessors.put(order, postProcessor);
+            this.log().debug("Added " + name + " for component post-processing at phase " + order);
+        }
+        else if (processor instanceof ComponentPreProcessor<?> preProcessor) {
+            this.preProcessors.put(order, preProcessor);
+            this.log().debug("Added " + name + " for component pre-processing at phase " + order);
+        }
+        else {
+            this.log().warn("Unsupported component processor type [" + name + "]");
+        }
     }
 
     @Override
-    public void add(final InjectionModifier<?> modifier) {
-        final ServiceOrder order = modifier.order();
-        this.injectionModifiers.put(order, modifier);
-        this.log().debug("Added " + TypeContext.of(modifier).name() + " for component modification at phase " + order);
-    }
-
-    @Override
-    public List<Annotation> activators() {
-        return HartshornUtils.asUnmodifiableList(this.activators);
+    public Set<Annotation> activators() {
+        return Set.copyOf(this.activators);
     }
 
     @Override
@@ -243,22 +236,37 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
         return (A) this.activators.stream().filter(a -> a.annotationType().equals(activator)).findFirst().orElse(null);
     }
 
-    protected void process(final String prefix) {
-        this.locator().register(prefix);
-        final Collection<ComponentContainer> containers = this.locator().containers(ComponentType.FUNCTIONAL);
-        this.log().debug("Located %d functional components in prefix %s".formatted(containers.size(), prefix));
-        for (final ServiceOrder order : ServiceOrder.values()) this.process(order, containers);
+    @Override
+    public void processPrefixQueue() {
+        String scan;
+        while ((scan = this.prefixQueue.poll()) != null) {
+            this.locator().register(scan);
+
+            final Collection<TypeContext<?>> binders = this.environment().types(scan, ComponentBinding.class, false);
+
+            for (final TypeContext<?> binder : binders) {
+                final ComponentBinding bindAnnotation = binder.annotation(ComponentBinding.class).get();
+                this.handleBinder(binder, bindAnnotation);
+            }
+        }
     }
 
-    protected void process(final ServiceOrder order, final Collection<ComponentContainer> containers) {
-        for (final ComponentProcessor<?> serviceProcessor : this.processors.get(order)) {
+    @Override
+    public void process() {
+        this.processPrefixQueue();
+        final Collection<ComponentContainer> containers = this.locator().containers(ComponentType.FUNCTIONAL);
+        this.log().debug("Located %d functional components from classpath".formatted(containers.size()));
+        for (final ProcessingOrder order : ProcessingOrder.VALUES) this.process(order, containers);
+    }
+
+    protected void process(final ProcessingOrder order, final Collection<ComponentContainer> containers) {
+        for (final ComponentPreProcessor<?> serviceProcessor : this.preProcessors.get(order)) {
             for (final ComponentContainer container : containers) {
-                if (container.activators().stream().allMatch(this::hasActivator)) {
-                    final TypeContext<?> service = container.type();
-                    if (serviceProcessor.processable(this, service)) {
-                        this.log().debug("Processing component %s with registered processor %s in phase %s".formatted(container.id(), TypeContext.of(serviceProcessor).name(), order));
-                        serviceProcessor.process(this, service);
-                    }
+                final TypeContext<?> service = container.type();
+                final Key<?> key = Key.of(service);
+                if (serviceProcessor.modifies(this, key)) {
+                    this.log().debug("Processing component %s with registered processor %s in phase %s".formatted(container.id(), TypeContext.of(serviceProcessor).name(), order));
+                    serviceProcessor.process(this, key);
                 }
             }
         }
@@ -267,6 +275,27 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
     @Override
     public <T> Exceptional<T> property(final String key) {
         return Exceptional.of(() -> (T) this.environmentValues.getOrDefault(key, System.getenv(key)));
+    }
+
+    @Override
+    public <T> Exceptional<Collection<T>> properties(final String key) {
+        // List values are stored as key[0], key[1], ...
+        // We use regex to match this pattern, so we can restore the collection
+        final String regex = key + "\\[[0-9]+]";
+        final List<T> properties = this.environmentValues.entrySet().stream()
+                .filter(e -> {
+                    final String k = (String) e.getKey();
+                    return k.matches(regex);
+                })
+                // Sort the collection using the key, as these are formatted to contain the index this means we
+                // restore the original order of the collection.
+                .sorted(Comparator.comparing(e -> (String) e.getKey()))
+                .map(Entry::getValue)
+                .map(v -> (T) v)
+                .collect(Collectors.toList());
+
+        if (properties.isEmpty()) return Exceptional.empty();
+        return Exceptional.of(properties);
     }
 
     @Override
@@ -291,19 +320,10 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
     }
 
     private void populateArguments(final Set<String> args) {
-        for (final String arg: args) {
+        for (final String arg : args) {
             final Matcher matcher = ARGUMENTS.matcher(arg);
             if (matcher.find()) this.property(matcher.group(1), matcher.group(2));
         }
-    }
-
-    protected void modify(final Set<Modifier> modifiers) {
-        for (final Modifier modifier : modifiers) {
-            if (modifier instanceof MetaProviderModifier metaProviderModifier) {
-                this.metaProvider = metaProviderModifier.provider(this);
-            }
-        }
-        if (this.metaProvider == null) this.metaProvider = new InjectorMetaProvider(this);
     }
 
     @Override
@@ -316,14 +336,6 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
         return this.metaProvider;
     }
 
-    @Override
-    public void reset() {
-        this.environment.prefixContext().reset();
-        this.hierarchies.clear();
-        this.contexts.clear();
-        this.singletons.clear();
-    }
-
     private <C> void inHierarchy(final Key<C> key, final Consumer<BindingHierarchy<C>> consumer) {
         final BindingHierarchy<C> hierarchy = (BindingHierarchy<C>) this.hierarchies.getOrDefault(key, new NativeBindingHierarchy<>(key, this));
         consumer.accept(hierarchy);
@@ -332,79 +344,88 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
 
     @Override
     public <T> T get(final Key<T> key) {
+        return this.get(key, true);
+    }
+
+    @Override
+    public <T> T get(final Key<T> key, final boolean enable) {
         if (this.singletons.containsKey(key)) return (T) this.singletons.get(key);
+        this.locator().validate(key);
 
-        T instance = this.create(key, null);
+        T instance = this.create(key);
 
-        // Recreating field instances ensures all fields are created through bootstrapping, allowing injection
-        // points to apply correctly
-        this.populate(instance);
-
-        instance = this.inject(key, instance);
-
-        for (final ServiceOrder order : ServiceOrder.values()) instance = this.modify(order, key, instance);
-
-        // Enables all fields which are decorated with @Wired(enable=true)
-        this.enableFields(instance);
-
-        // Inject properties if applicable
-        try {
-            Bindings.enable(instance);
-        }
-        catch (final ApplicationException e) {
-            throw e.runtime();
+        // Modify the instance during phase 1. This allows discarding the existing instance and replacing it with a new instance.
+        // See ServiceOrder#PHASE_1
+        for (final ProcessingOrder order : ProcessingOrder.PHASE_1) {
+            for (final ComponentPostProcessor<?> postProcessor : this.postProcessors.get(order)) {
+                if (postProcessor.preconditions(this, key, instance))
+                    instance = postProcessor.process(this, key, instance);
+            }
         }
 
         final MetaProvider meta = this.meta();
         // Ensure the order of resolution is to first resolve the instance singleton state, and only after check the type state.
         // Typically, the implementation decided whether it should be a singleton, so this cuts time complexity in half.
-        if (instance != null && (meta.singleton(key.contract()) || meta.singleton(TypeContext.unproxy(this, instance))))
+        if (instance != null && (meta.singleton(key.type()) || meta.singleton(TypeContext.unproxy(this, instance))))
             this.singletons.put(key, instance);
+
+        // Recreating field instances ensures all fields are created through bootstrapping, allowing injection
+        // points to apply correctly
+        this.populate(instance);
+
+        // deprecated, will be removed in future versions
+        instance = this.inject(key, instance);
+
+        // Modify the instance during phase 2. This does not allow discarding the existing instance.
+        // See ServiceOrder#PHASE_2
+        for (final ProcessingOrder order : ProcessingOrder.PHASE_2) {
+            for (final ComponentPostProcessor<?> postProcessor : this.postProcessors.get(order)) {
+                if (postProcessor.preconditions(this, key, instance)) {
+                    final T modified = postProcessor.process(this, key, instance);
+                    if (modified != instance) {
+                        throw new IllegalStateException(("Component %s was modified during phase %s (Phase 2) by %s. " +
+                                "Component processors are only able to discard existing instances in phases: %s").formatted(key.type().name(), order.name(), TypeContext.of(postProcessor).name(), Arrays.toString(ProcessingOrder.PHASE_2)));
+                    }
+                }
+            }
+        }
+
+        // Inject properties if applicable
+        if (enable) {
+            try {
+                this.enable(instance);
+            }
+            catch (final ApplicationException e) {
+                ExceptionHandler.unchecked(e);
+            }
+        }
 
         // May be null, but we have used all possible injectors, it's up to the developer now
         return instance;
     }
 
-    protected <T> T modify(final ServiceOrder order, final Key<T> key, T instance) {
-        for (final InjectionModifier<?> serviceModifier : this.injectionModifiers.get(order)) {
-            if (serviceModifier.preconditions(this, key.contract(), instance))
-                instance = serviceModifier.process(this, key.contract(), instance);
+    protected <T> T modify(final ProcessingOrder order, final Key<T> key, T instance) {
+        for (final ComponentPostProcessor<?> postProcessor : this.postProcessors.get(order)) {
+            if (postProcessor.preconditions(this, key, instance))
+                instance = postProcessor.process(this, key, instance);
         }
         return instance;
     }
 
     @Nullable
-    public <T> T create(final Key<T> key, final T typeInstance) {
-        final TypeContext<T> type = key.contract();
-        try {
-            if (null == typeInstance) {
-                final Exceptional<T> instanceCandidate = this.provide(key);
-                Throwable cause = null;
-                if (instanceCandidate.caught()) {
-                    cause = instanceCandidate.error();
-                }
+    public <T> T create(final Key<T> key) {
+        final Exceptional<T> provision = this.provide(key).rethrowUnchecked();
+        if (provision.present())
+            return provision.get();
 
-                if (instanceCandidate.absent()) {
-                    final Exceptional<T> rawCandidate = instanceCandidate.orElse(() -> this.raw(type));
-                    if (rawCandidate.absent()) {
-                        final Throwable finalCause = cause;
-                        return this.environment().manager().proxy(type, typeInstance).rethrow().orThrow(() -> finalCause);
-                    }
-                    else {
-                        return rawCandidate.get();
-                    }
-                }
+        final TypeContext<T> type = key.type();
 
-                return instanceCandidate.get();
-            }
-            return typeInstance;
-        }
-        catch (final Throwable e) {
-            // Services can have no explicit implementation even if they are abstract.
-            // Typically, these services are expected to be populated through injection points later in time.
-            if (type.isAbstract() && this.meta().isComponent(type)) return null;
-            throw new ApplicationException(e).runtime();
-        }
+        final Exceptional<T> raw = Exceptional.of(() -> this.raw(type)).rethrowUnchecked();
+        if (raw.present())
+            return raw.get();
+
+        // If the component is functional and permits proxying, a post processor will be able to proxy the instance
+        return null;
     }
 
     @Override
@@ -413,7 +434,7 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
         if (annotation.absent())
             throw new IllegalArgumentException("Requested activator " + activator.getSimpleName() + " is not decorated with @ServiceActivator");
 
-        if (this.modifiers.contains(DefaultModifiers.ACTIVATE_ALL)) return true;
+        if (this.modifiers.contains(Modifiers.ACTIVATE_ALL)) return true;
         else {
             return this.activators.stream()
                     .map(Annotation::annotationType)
@@ -422,8 +443,8 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
         }
     }
 
-    public <T> Exceptional<T> provide(final Key<T> type) {
-        return Exceptional.of(type)
+    public <T> Exceptional<T> provide(final Key<T> key) {
+        return Exceptional.of(key)
                 .map(this::hierarchy)
                 .flatMap(hierarchy -> {
                     // Will continue going through each provider until a provider was successful or no other providers remain
@@ -443,40 +464,59 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
 
     @Override
     public void bind(final String prefix) {
-        this.environment().prefix(prefix);
-
-        final Collection<TypeContext<?>> binders = this.environment().types(prefix, Binds.class, false);
-
-        for (final TypeContext<?> binder : binders) {
-            final Binds bindAnnotation = binder.annotation(Binds.class).get();
-            this.handleBinder(binder, bindAnnotation);
-        }
-
-        final Collection<TypeContext<?>> multiBinders = this.environment().types(prefix, Combines.class, false);
-        for (final TypeContext<?> binder : multiBinders) {
-            final Combines bindAnnotation = binder.annotation(Combines.class).get();
-            for (final Binds annotation : bindAnnotation.value()) {
-                this.handleBinder(binder, annotation);
+        for (final String scannedPrefix : this.environment().prefixContext().prefixes()) {
+            if (prefix.startsWith(scannedPrefix)) return;
+            if (scannedPrefix.startsWith(prefix)) {
+                // If a previously scanned prefix is a prefix of the current prefix, it is more specific and should be ignored,
+                // as this prefix will include the specific prefix.
+                this.environment().prefixContext().prefixes().remove(scannedPrefix);
             }
         }
-
-        this.process(prefix);
+        this.environment().prefix(prefix);
+        this.prefixQueue.add(prefix);
     }
 
     @Override
     public <T> T populate(final T instance) {
         if (null != instance) {
-            final TypeContext<T> unproxied = TypeContext.unproxy(this, instance);
-            for (final FieldContext<?> field : unproxied.fields(Inject.class)) {
-                Key<?> fieldKey = Key.of(field.type());
-                if (field.annotation(Named.class).present()) fieldKey = Key.of(field.type(), field.annotation(Named.class).get());
+            T modifiableInstance = instance;
+            if (this.environment().manager().isProxy(instance)) {
+                modifiableInstance = this.environment().manager().handler(instance).flatMap(ProxyHandler::instance).or(modifiableInstance);
+            }
+            final TypeContext<T> unproxied = TypeContext.unproxy(this, modifiableInstance);
+            if (unproxied.annotation(Populate.class).map(Populate::fields).or(true))
+                modifiableInstance = this.populateFields(unproxied, modifiableInstance);
 
-                final Object fieldInstance = this.get(fieldKey);
-                field.set(instance, fieldInstance);
-            }
-            for (final FieldContext<?> field : unproxied.fields(Context.class)) {
-                this.populateContextField(field, instance);
-            }
+            if (unproxied.annotation(Populate.class).map(Populate::executables).or(true))
+                modifiableInstance = this.populateMethods(unproxied, modifiableInstance);
+        }
+        return instance;
+    }
+
+    private <T> T populateMethods(final TypeContext<T> type, final T instance) {
+        for (final MethodContext<?, T> method : type.methods(Inject.class)) {
+            method.invoke(this, instance).rethrowUnchecked();
+        }
+        return instance;
+    }
+
+    private <T> T populateFields(final TypeContext<T> type, final T instance) {
+        for (final FieldContext<?> field : type.fields(Inject.class)) {
+            Key<?> fieldKey = Key.of(field.type());
+            if (field.annotation(Named.class).present()) fieldKey = Key.of(field.type(), field.annotation(Named.class).get());
+
+            final Exceptional<Enable> enableAnnotation = field.annotation(Enable.class);
+            final boolean enable = !enableAnnotation.present() || enableAnnotation.get().value();
+
+            final Object fieldInstance = this.get(fieldKey, enable);
+
+            final boolean required = field.annotation(Required.class).map(Required::value).or(false);
+            if (required && fieldInstance == null) return ExceptionHandler.unchecked(new ApplicationException("Field " + field.name() + " in " + type.qualifiedName() + " is required"));
+
+            field.set(instance, fieldInstance);
+        }
+        for (final FieldContext<?> field : type.fields(Context.class)) {
+            this.populateContextField(field, instance);
         }
         return instance;
     }
@@ -492,18 +532,22 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
         else {
             context = this.first(annotation.value(), (Class<org.dockbox.hartshorn.core.context.Context>) type.type());
         }
+
+        final boolean required = field.annotation(Required.class).map(Required::value).or(false);
+        if (required && context.absent()) ExceptionHandler.unchecked(new ApplicationException("Field " + field.name() + " in " + type.qualifiedName() + " is required"));
+
         field.set(instance, context.orNull());
     }
 
     @Override
-    public void add(final ProviderContext<?> context) {
-        final Key<Object> key = (Key<Object>) context.key();
+    public <T> void add(final ProviderContext<T> context) {
+        final Key<T> key = context.key();
         this.inHierarchy(key, hierarchy -> {
             if (context.singleton()) {
                 hierarchy.add(context.priority(), Providers.of(context.provider().get()));
             }
             else {
-                hierarchy.add(context.priority(), Providers.of((Supplier<Object>) context.provider()));
+                hierarchy.add(context.priority(), Providers.of(context.provider()));
             }
         });
     }
@@ -537,6 +581,13 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
     }
 
     @Override
+    public void enable(final Object instance) throws ApplicationException {
+        if (instance instanceof Enableable enableable && enableable.canEnable()) {
+            enableable.enable();
+        }
+    }
+
+    @Override
     public <T> BindingHierarchy<T> hierarchy(final Key<T> key) {
         final BindingHierarchy<T> hierarchy = (BindingHierarchy<T>) this.hierarchies.getOrDefault(key, new NativeBindingHierarchy<>(key, this));
         // onUpdate callback is purely so updates will still be saved even if the reference is lost
@@ -544,25 +595,22 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
         else return new ContextWrappedHierarchy<>(hierarchy, this, updated -> this.hierarchies.put(key, updated));
     }
 
-    private <C, T extends C> void handleBinder(final TypeContext<T> binder, final Binds annotation) {
-        final TypeContext<C> binds = TypeContext.of((Class<C>) annotation.value());
+    private <T> void handleBinder(final TypeContext<T> implementer, final ComponentBinding annotation) {
+        final TypeContext<T> target = TypeContext.of((Class<T>) annotation.value());
 
-        if (binder.boundConstructors().isEmpty()) {
-            this.handleScanned(binder, binds, annotation);
+        if (implementer.boundConstructors().isEmpty()) {
+            this.handleScanned(implementer, target, annotation);
         }
         else {
-            this.bind(Key.of(binds), binder.type());
+            this.inHierarchy(Key.of(target), hierarchy -> hierarchy.add(annotation.priority(), Providers.of(implementer)));
         }
     }
 
-    private <C> void handleScanned(final TypeContext<? extends C> binder, final TypeContext<C> binds, final Binds bindAnnotation) {
+    private <C> void handleScanned(final TypeContext<? extends C> binder, final TypeContext<C> binds, final ComponentBinding bindAnnotation) {
         final Named meta = bindAnnotation.named();
-        final Key<C> key;
+        Key<C> key = Key.of(binds);
         if (!"".equals(meta.value())) {
-            key = Key.of(binds, meta);
-        }
-        else {
-            key = Key.of(binds);
+            key = key.name(meta);
         }
         this.inHierarchy(key, hierarchy -> hierarchy.add(bindAnnotation.priority(), Providers.of(binder)));
     }
@@ -574,13 +622,7 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
 
     @Override
     public <C, T extends C> void bind(final Key<C> contract, final Class<? extends T> implementation) {
-        final TypeContext<? extends T> context = TypeContext.of(implementation);
-        if (context.defaultConstructor().present() || !context.injectConstructors().isEmpty()) {
-            this.inHierarchy(contract, hierarchy -> hierarchy.add(Providers.of(context)));
-        }
-        if (!context.boundConstructors().isEmpty()) {
-            this.inHierarchy(contract, hierarchy -> hierarchy.addNext(Providers.of(implementation)));
-        }
+        this.inHierarchy(contract, hierarchy -> hierarchy.add(Providers.of(implementation)));
     }
 
     @Override
@@ -588,23 +630,32 @@ public class HartshornApplicationContext extends DefaultContext implements Appli
         this.inHierarchy(contract, hierarchy -> hierarchy.add(Providers.of(instance)));
     }
 
+    @Override
     public void lookupActivatables() {
-        for (final String prefix : this.environment().prefixContext().prefixes()) {
-            this.lookup(prefix, ComponentProcessor.class, ApplicationContext::add);
-            this.lookup(prefix, InjectionModifier.class, ApplicationContext::add);
+        final Collection<TypeContext<? extends ComponentProcessor>> children = this.environment().children(ComponentProcessor.class);
+        for (final TypeContext<? extends ComponentProcessor> processor : children) {
+            if (processor.isAbstract()) continue;
+
+            if (processor.annotation(AutomaticActivation.class).map(AutomaticActivation::value).or(false)) {
+                final ComponentProcessor componentProcessor = this.get(processor);
+                if (this.hasActivator(componentProcessor.activator()))
+                    this.add(componentProcessor);
+            }
         }
     }
 
-    private <T extends ActivatorFiltered<?>> void lookup(final String prefix, final Class<T> type, final BiConsumer<ApplicationContext, T> consumer) {
-        final Collection<TypeContext<? extends T>> children = this.environment().children(type);
-        for (final TypeContext<? extends T> child : children) {
-            if (child.isAbstract()) continue;
+    @Override
+    public void handle(final Throwable throwable) {
+        this.environment().manager().handle(throwable);
+    }
 
-            if (child.annotation(AutomaticActivation.class).present()) {
-                final T raw = this.raw(child, false);
-                if (this.hasActivator(raw.activator()))
-                    consumer.accept(this, raw);
-            }
-        }
+    @Override
+    public void handle(final String message, final Throwable throwable) {
+        this.environment().manager().handle(message, throwable);
+    }
+
+    @Override
+    public ExceptionHandler stacktraces(final boolean stacktraces) {
+        return this.environment().manager().stacktraces(stacktraces);
     }
 }

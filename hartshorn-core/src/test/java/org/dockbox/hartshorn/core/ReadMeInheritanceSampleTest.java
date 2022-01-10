@@ -29,8 +29,7 @@ import java.lang.annotation.Target;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
-
-import static java.util.stream.Collectors.toList;
+import java.util.stream.Collectors;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.TYPE, ElementType.METHOD, ElementType.ANNOTATION_TYPE })
@@ -91,6 +90,6 @@ public class ReadMeInheritanceSampleTest {
 
         final Method fooMethod = MyClass.class.getMethod("foo");
         final List<Animal> animalAnnotations = AnnotationHelper.allOrEmpty(fooMethod, Animal.class);
-        Assertions.assertEquals(Arrays.asList("Spike", "Jerry"), animalAnnotations.stream().map(Animal::name).collect(toList()));
+        Assertions.assertEquals(Arrays.asList("Spike", "Jerry"), animalAnnotations.stream().map(Animal::name).collect(Collectors.toList()));
     }
 }

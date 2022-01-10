@@ -29,9 +29,9 @@ import lombok.Getter;
 public class ControllerContext extends DefaultContext {
 
     @Getter
-    private final Set<RequestHandlerContext> contexts = HartshornUtils.emptySet();
+    private final Set<RequestHandlerContext> requestHandlerContexts = HartshornUtils.emptyConcurrentSet();
 
     public void add(final RequestHandlerContext context) {
-        this.contexts.add(context);
+        this.requestHandlerContexts.add(context);
     }
 }

@@ -21,24 +21,25 @@ import org.dockbox.hartshorn.config.annotations.Configuration;
 import org.dockbox.hartshorn.config.annotations.Value;
 import org.dockbox.hartshorn.core.Key;
 import org.dockbox.hartshorn.core.annotations.inject.Provider;
+import org.dockbox.hartshorn.core.annotations.stereotype.Service;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.demo.persistence.services.UserRepository;
-import org.dockbox.hartshorn.persistence.FileType;
-import org.dockbox.hartshorn.persistence.jpa.JpaRepository;
-import org.dockbox.hartshorn.persistence.properties.PersistenceConnection;
-import org.dockbox.hartshorn.persistence.properties.Remotes;
-import org.dockbox.hartshorn.persistence.properties.SQLRemoteServer;
+import org.dockbox.hartshorn.data.FileFormats;
+import org.dockbox.hartshorn.data.jpa.JpaRepository;
+import org.dockbox.hartshorn.data.remote.MySQLRemote;
+import org.dockbox.hartshorn.data.remote.PersistenceConnection;
+import org.dockbox.hartshorn.data.remote.JdbcRemoteConfiguration;
 
 import javax.inject.Singleton;
 
 /**
  * A simple configuration service capable of loading a configuration file and providing a custom {@link JpaRepository}
- * instance. {@link Configuration} is an extension of {@link org.dockbox.hartshorn.core.annotations.service.Service},
- * and therefore has all abilities also found with {@link org.dockbox.hartshorn.core.annotations.service.Service}.
+ * instance. {@link Configuration} is an extension of {@link Service},
+ * and therefore has all abilities also found with {@link Service}.
  *
  * <p>{@link Configuration} adds the ability to load configuration files through a configured {@link Configuration#source()}.
- * By default, the {@link FileType} used to read the file is {@link FileType#YAML}, however this can be configured to
- * use any {@link FileType} through {@link Configuration#filetype()}.
+ * By default, the {@link FileFormats} used to read the file is {@link FileFormats#YAML}, however this can be configured to
+ * use any {@link FileFormats} through {@link Configuration#filetype()}.
  *
  * <p>This configuration is loaded from the {@code persistence-demo.yml} file in the {@code src/main/resources} directory,
  * which will thus be present on the classpath when the application is active. As this means the file will not be present
@@ -77,7 +78,8 @@ public class PersistenceDemoConfiguration {
     @Provider
     @Singleton
     public UserRepository sql(final ApplicationContext context) {
-        final PersistenceConnection connection = new PersistenceConnection(Remotes.MYSQL.url(SQLRemoteServer.of(this.host, this.port, this.database)), this.user, this.password, Remotes.MYSQL);
+        final JdbcRemoteConfiguration configuration = JdbcRemoteConfiguration.of(this.host, this.port, this.database);
+        final PersistenceConnection connection = MySQLRemote.INSTANCE.connection(configuration, this.user, this.password);
         return (UserRepository) context.get(UserRepository.class).connection(connection);
     }
 }

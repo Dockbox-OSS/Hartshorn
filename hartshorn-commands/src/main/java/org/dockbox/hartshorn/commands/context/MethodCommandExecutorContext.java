@@ -17,6 +17,7 @@
 
 package org.dockbox.hartshorn.commands.context;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.commands.CommandExecutor;
 import org.dockbox.hartshorn.commands.CommandParser;
 import org.dockbox.hartshorn.commands.CommandResources;
@@ -28,7 +29,6 @@ import org.dockbox.hartshorn.commands.events.CommandEvent;
 import org.dockbox.hartshorn.commands.events.CommandEvent.Before;
 import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.core.Key;
-import org.dockbox.hartshorn.core.binding.Bindings;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.DefaultCarrierContext;
 import org.dockbox.hartshorn.core.context.element.AnnotatedElementContext;
@@ -36,18 +36,18 @@ import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.core.context.element.ParameterContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
-import org.dockbox.hartshorn.core.exceptions.Except;
 import org.dockbox.hartshorn.core.services.parameter.ParameterLoader;
 import org.dockbox.hartshorn.events.annotations.Posting;
 import org.dockbox.hartshorn.events.parents.Cancellable;
 import org.dockbox.hartshorn.i18n.Message;
-import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -61,7 +61,7 @@ public class MethodCommandExecutorContext<T> extends DefaultCarrierContext imple
 
     @Getter private final ApplicationContext applicationContext;
     private final MethodContext<?, T> method;
-    private final TypeContext<T> type;
+    private final Key<T> key;
     private final List<String> parentAliases;
     private final Command command;
     @Nullable
@@ -72,7 +72,7 @@ public class MethodCommandExecutorContext<T> extends DefaultCarrierContext imple
     private Map<String, CommandParameterContext> parameters;
     private final ParameterLoader<CommandParameterLoaderContext> parameterLoader;
 
-    public MethodCommandExecutorContext(final ApplicationContext context, final MethodContext<?, T> method, final TypeContext<T> type) {
+    public MethodCommandExecutorContext(final ApplicationContext context, final MethodContext<?, T> method, final Key<T> key) {
         super(context);
         final Exceptional<Command> annotated = method.annotation(Command.class);
         if (annotated.absent()) {
@@ -80,10 +80,10 @@ public class MethodCommandExecutorContext<T> extends DefaultCarrierContext imple
         }
         this.applicationContext = context;
         this.method = method;
-        this.type = type;
+        this.key = key;
         this.command = annotated.get();
 
-        final Exceptional<Command> annotation = type.annotation(Command.class);
+        final Exceptional<Command> annotation = key.type().annotation(Command.class);
         if (annotation.present()) {
             this.parent = annotation.get();
             this.isChild = true;
@@ -95,13 +95,13 @@ public class MethodCommandExecutorContext<T> extends DefaultCarrierContext imple
 
         this.add(new CommandDefinitionContextImpl(this.applicationContext(), this.command(), this.method()));
 
-        this.parentAliases = HartshornUtils.emptyList();
+        this.parentAliases = new CopyOnWriteArrayList<>();
         if (this.parent != null) {
             context.log().debug("Parent for executor context of " + method.qualifiedName() + " found, including parent aliases");
-            this.parentAliases.addAll(HartshornUtils.asList(this.parent.value()));
+            this.parentAliases.addAll(List.of(this.parent.value()));
         }
         this.parameters = this.parameters();
-        this.parameterLoader = context.get(Key.of(ParameterLoader.class, Bindings.named("command_loader")));
+        this.parameterLoader = context.get(Key.of(ParameterLoader.class, "command_loader"));
     }
 
     public Map<String, CommandParameterContext> parameters() {
@@ -128,11 +128,11 @@ public class MethodCommandExecutorContext<T> extends DefaultCarrierContext imple
                 return;
             }
 
-            final T instance = this.applicationContext().get(this.type());
-            final CommandParameterLoaderContext loaderContext = new CommandParameterLoaderContext(this.method(), this.type(), null, this.applicationContext(), ctx, this);
+            final T instance = this.applicationContext().get(this.key());
+            final CommandParameterLoaderContext loaderContext = new CommandParameterLoaderContext(this.method(), this.key().type(), null, this.applicationContext(), ctx, this);
             final List<Object> arguments = this.parameterLoader().loadArguments(loaderContext);
             this.applicationContext().log().debug("Invoking command method %s with %d arguments".formatted(this.method().qualifiedName(), arguments.size()));
-            this.method().invoke(instance, arguments.toArray()).caught(error -> Except.handle("Encountered unexpected error while performing command executor", error));
+            this.method().invoke(instance, arguments.toArray()).caught(error -> this.applicationContext().handle("Encountered unexpected error while performing command executor", error));
             new CommandEvent.After(ctx.source(), ctx).with(this.applicationContext()).post();
         };
     }
@@ -152,7 +152,7 @@ public class MethodCommandExecutorContext<T> extends DefaultCarrierContext imple
 
     @Override
     public List<String> aliases() {
-        final List<String> aliases = HartshornUtils.emptyList();
+        final List<String> aliases = new ArrayList<>();
         for (final String parentAlias : this.parentAliases()) {
             for (final String alias : this.command().value()) {
                 aliases.add(parentAlias + ' ' + alias);
@@ -161,12 +161,12 @@ public class MethodCommandExecutorContext<T> extends DefaultCarrierContext imple
         if (aliases.isEmpty()) {
             aliases.add(this.method().name());
         }
-        return aliases;
+        return List.copyOf(aliases);
     }
 
     @Override
     public TypeContext<?> parent() {
-        return this.type;
+        return this.key.type();
     }
 
     @Override
@@ -179,13 +179,13 @@ public class MethodCommandExecutorContext<T> extends DefaultCarrierContext imple
         final String stripped = this.strip(command, false);
         this.applicationContext().log().debug("Collecting suggestions for stripped input %s (was %s)".formatted(stripped, command));
         final List<CommandElement<?>> elements = this.definition().elements();
-        final List<String> tokens = HartshornUtils.asList(stripped.split(" "));
+        final List<String> tokens = new ArrayList<>(List.of(stripped.split(" ")));
         if (command.endsWith(" ") && !"".equals(tokens.get(tokens.size() - 1))) tokens.add("");
 
         CommandElement<?> last = null;
         for (final CommandElement<?> element : elements) {
             int size = element.size();
-            if (size == -1) return HartshornUtils.emptyList();
+            if (size == -1) return List.of();
 
             if (tokens.size() <= size) {
                 last = element;
@@ -200,11 +200,11 @@ public class MethodCommandExecutorContext<T> extends DefaultCarrierContext imple
 
         if (last == null) {
             this.applicationContext().log().debug("Could not locate last command element to collect suggestions");
-            return HartshornUtils.emptyList();
+            return List.of();
         }
         final Collection<String> suggestions = last.suggestions(source, String.join(" ", tokens));
         this.applicationContext().log().debug("Found " + suggestions.size() + " suggestions");
-        return HartshornUtils.asUnmodifiableList(suggestions);
+        return List.copyOf(suggestions);
     }
 
     private CommandDefinitionContext definition() {

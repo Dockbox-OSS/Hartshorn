@@ -17,12 +17,12 @@
 
 package org.dockbox.hartshorn.core.binding;
 
-import org.dockbox.hartshorn.core.HartshornUtils;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.core.Key;
-import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
-import org.jetbrains.annotations.NotNull;
+import org.dockbox.hartshorn.core.domain.Exceptional;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -35,6 +35,15 @@ import javax.inject.Named;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+/**
+ * The default implementation of the {@link BindingHierarchy} interface. This uses a specified {@link Key} to
+ * identify the binding hierarchy, and stores the bindings in a {@link TreeMap}.
+ *
+ * @param <C> The type of type to provide.
+ * @author Guus Lieben
+ * @since 21.4
+ * @see BindingHierarchy
+ */
 @RequiredArgsConstructor
 public class NativeBindingHierarchy<C> implements BindingHierarchy<C> {
 
@@ -44,7 +53,7 @@ public class NativeBindingHierarchy<C> implements BindingHierarchy<C> {
 
     @Override
     public List<Provider<C>> providers() {
-        return HartshornUtils.asUnmodifiableList(this.bindings.values());
+        return List.copyOf(this.bindings.values());
     }
 
     @Override
@@ -58,7 +67,7 @@ public class NativeBindingHierarchy<C> implements BindingHierarchy<C> {
         if (this.bindings.containsKey(priority) && priority != -1) {
             this.applicationContext().log().warn(("There is already a provider for %s with priority %d. It will be overwritten! " +
                     "To avoid unexpected behavior, ensure the priority is not already present. Current hierarchy: %s").formatted(this.key()
-                    .contract().name(), priority, this));
+                    .type().name(), priority, this));
         }
         this.bindings.put(priority, provider);
         return this;
@@ -97,15 +106,15 @@ public class NativeBindingHierarchy<C> implements BindingHierarchy<C> {
 
     @Override
     public String toString() {
-        final String contract = this.key().contract().name();
-        final Named named = this.key().named();
+        final String contract = this.key().type().name();
+        final Named named = this.key().name();
         String name = "";
         if (named != null) {
             name = "::" + named.value();
         }
 
         // The priorities are stored high to low, however we want to display them as low-to-high.
-        final List<Entry<Integer, Provider<C>>> entries = HartshornUtils.asList(this.bindings.entrySet());
+        final List<Entry<Integer, Provider<C>>> entries = new ArrayList<>(this.bindings.entrySet());
         Collections.reverse(entries);
 
         final String hierarchy = entries.stream()
@@ -122,7 +131,7 @@ public class NativeBindingHierarchy<C> implements BindingHierarchy<C> {
         return "Hierarchy[%s%s]: %s".formatted(contract, name, hierarchy);
     }
 
-    @NotNull
+    @NonNull
     @Override
     public Iterator<Entry<Integer, Provider<C>>> iterator() {
         return this.bindings.entrySet().iterator();

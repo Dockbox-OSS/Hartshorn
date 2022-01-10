@@ -26,21 +26,22 @@ import org.dockbox.hartshorn.commands.exceptions.ParsingException;
 import org.dockbox.hartshorn.commands.extension.CommandExecutorExtension;
 import org.dockbox.hartshorn.commands.extension.ExtensionResult;
 import org.dockbox.hartshorn.core.ArrayListMultiMap;
-import org.dockbox.hartshorn.core.HartshornUtils;
+import org.dockbox.hartshorn.core.Enableable;
+import org.dockbox.hartshorn.core.Key;
 import org.dockbox.hartshorn.core.MultiMap;
-import org.dockbox.hartshorn.core.annotations.inject.Binds;
+import org.dockbox.hartshorn.core.annotations.inject.ComponentBinding;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
-import org.dockbox.hartshorn.core.Enableable;
-import org.jetbrains.annotations.UnmodifiableView;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -48,14 +49,13 @@ import lombok.Getter;
 /**
  * Simple implementation of {@link CommandGateway}.
  */
-@Singleton
-@Binds(CommandGateway.class)
+@ComponentBinding(value = CommandGateway.class, singleton = true)
 public class CommandGatewayImpl implements CommandGateway, Enableable {
 
     @Getter(AccessLevel.PROTECTED)
     private final transient MultiMap<String, CommandExecutorContext> contexts = new ArrayListMultiMap<>();
     @Getter(AccessLevel.PROTECTED)
-    private final transient List<CommandExecutorExtension> extensions = HartshornUtils.emptyConcurrentList();
+    private final transient List<CommandExecutorExtension> extensions = new CopyOnWriteArrayList<>();
     @Inject
     private CommandParser parser;
     @Inject
@@ -86,7 +86,7 @@ public class CommandGatewayImpl implements CommandGateway, Enableable {
                 this.execute(context.get(), commandContext.get());
             }
             else if (commandContext.caught()) {
-                commandContext.rethrow();
+                commandContext.rethrowUnchecked();
             }
             else {
                 this.context.log().warn("Could not parse command for input " + command + " but yielded no exceptions");
@@ -138,9 +138,9 @@ public class CommandGatewayImpl implements CommandGateway, Enableable {
     }
 
     @Override
-    public <T> void register(final TypeContext<T> type) {
-        for (final MethodContext<?, T> method : type.methods(Command.class)) {
-            this.register(method, type);
+    public <T> void register(final Key<T> key) {
+        for (final MethodContext<?, T> method : key.type().methods(Command.class)) {
+            this.register(method, key);
         }
     }
 
@@ -153,7 +153,7 @@ public class CommandGatewayImpl implements CommandGateway, Enableable {
         final TypeContext<?> typeContext = context.parent();
         final Exceptional<Command> annotated = typeContext.annotation(Command.class);
         if (!typeContext.isVoid() && annotated.present()) {
-            aliases = HartshornUtils.asUnmodifiableList(annotated.get().value());
+            aliases = List.of(annotated.get().value());
         }
         else if (!container.get().aliases().isEmpty()) {
             aliases = container.get().aliases();
@@ -169,10 +169,9 @@ public class CommandGatewayImpl implements CommandGateway, Enableable {
     }
 
     @Override
-    @UnmodifiableView
     public List<String> suggestions(final CommandSource source, final String command) {
         final Exceptional<CommandExecutorContext> context = this.lookupContext(command);
-        final List<String> suggestions = HartshornUtils.emptyList();
+        final List<String> suggestions = new ArrayList<>();
 
         if (context.present())
             suggestions.addAll(context.get().suggestions(source, command, this.parser));
@@ -188,7 +187,7 @@ public class CommandGatewayImpl implements CommandGateway, Enableable {
             }
         }
 
-        return HartshornUtils.asUnmodifiableList(suggestions);
+        return Collections.unmodifiableList(suggestions);
     }
 
     @Override
@@ -204,7 +203,7 @@ public class CommandGatewayImpl implements CommandGateway, Enableable {
         this.extensions.add(extension);
     }
 
-    private <T> void register(final MethodContext<?, T> method, final TypeContext<T> type) {
-        this.register(new MethodCommandExecutorContext<>(this.context, method, type));
+    private <T> void register(final MethodContext<?, T> method, final Key<T> key) {
+        this.register(new MethodCommandExecutorContext<>(this.context, method, key));
     }
 }

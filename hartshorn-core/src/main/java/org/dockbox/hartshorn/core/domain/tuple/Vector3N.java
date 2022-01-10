@@ -49,12 +49,9 @@ public class Vector3N extends Vector2N {
     /**
      * Creates a new {@link Vector3N} from the given values.
      *
-     * @param x
-     *         The x position of the {@link Vector3N}
-     * @param y
-     *         The y position of the {@link Vector3N}
-     * @param z
-     *         The z position of the {@link Vector3N}
+     * @param x The x position of the {@link Vector3N}
+     * @param y The y position of the {@link Vector3N}
+     * @param z The z position of the {@link Vector3N}
      *
      * @return The new {@link Vector3N}
      */
@@ -86,8 +83,7 @@ public class Vector3N extends Vector2N {
      * to [1,2,3] the output {@link Vector3N} is [12,14,16]. Both {@link Vector3N vectors} can
      * contain negative values.
      *
-     * @param vector
-     *         The {@link Vector3N} containing the expansion values
+     * @param vector The {@link Vector3N} containing the expansion values
      *
      * @return The expanded {@link Vector3N}
      */

@@ -17,10 +17,11 @@
 
 package org.dockbox.hartshorn.demo.persistence.services;
 
+import org.dockbox.hartshorn.core.services.ServicePreProcessor;
 import org.dockbox.hartshorn.demo.persistence.domain.User;
 import org.dockbox.hartshorn.demo.persistence.events.UserCreatedEvent;
 
-import org.dockbox.hartshorn.core.annotations.service.Service;
+import org.dockbox.hartshorn.core.annotations.stereotype.Service;
 import org.dockbox.hartshorn.core.boot.HartshornApplicationManager;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
@@ -28,7 +29,7 @@ import org.dockbox.hartshorn.core.proxy.DelegatorAccessor;
 import org.dockbox.hartshorn.core.proxy.ProxyHandler;
 import org.dockbox.hartshorn.events.EventBus;
 import org.dockbox.hartshorn.events.annotations.Posting;
-import org.dockbox.hartshorn.persistence.jpa.JpaRepository;
+import org.dockbox.hartshorn.data.jpa.JpaRepository;
 
 import javax.inject.Inject;
 
@@ -36,7 +37,7 @@ import javax.inject.Inject;
  * A simple component providing utility functions through a combination of injected services. Note that
  * unlike a service, a component does not automatically register functional methods (e.g. those annotated
  * with {@link org.dockbox.hartshorn.commands.annotations.Command} or {@link org.dockbox.hartshorn.events.annotations.Listener})
- * and instead only allows field injection. This improves construction times, as {@link org.dockbox.hartshorn.core.services.ServiceProcessor service processors}
+ * and instead only allows field injection. This improves construction times, as {@link ServicePreProcessor service processors}
  * do not activate on components.
  */
 @Service
@@ -66,8 +67,9 @@ public abstract class UserRepository implements JpaRepository<User, Long>, Deleg
      * logs the action.
      */
     @Override
-    public void save(final User object) {
+    public User save(final User object) {
         this.delegator(JpaRepository.class).get().save(object);
         this.eventBus.post(new UserCreatedEvent(object));
+        return object;
     }
 }

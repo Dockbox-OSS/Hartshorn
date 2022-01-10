@@ -26,12 +26,9 @@ import lombok.Data;
  * <p>There is no meaning attached to values in this class, it can be used for any purpose. Triple
  * exhibits value semantics, i.e. two triples are equal if all three components are equal.
  *
- * @param <A>
- *         type of the first value.
- * @param <B>
- *         type of the second value.
- * @param <C>
- *         type of the third value.
+ * @param <A> type of the first value.
+ * @param <B> type of the second value.
+ * @param <C> type of the third value.
  */
 @Data
 @AllArgsConstructor

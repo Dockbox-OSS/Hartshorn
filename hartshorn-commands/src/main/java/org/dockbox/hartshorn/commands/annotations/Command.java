@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.commands.annotations;
 
-import org.dockbox.hartshorn.core.annotations.service.Service;
+import org.dockbox.hartshorn.core.annotations.stereotype.Service;
 import org.dockbox.hartshorn.core.annotations.AliasFor;
 import org.dockbox.hartshorn.core.annotations.Extends;
 
@@ -47,11 +47,13 @@ public @interface Command {
      * delivering the same result as making it equal to the primary alias.
      *
      * @return the argument context for the command.
-     * @see <a
-     *         href="https://github.com/GuusLieben/Hartshorn/wiki/Commands#defining-command-usage">Commands#defining-command-arguments</a>
+     * @see <a href="https://github.com/GuusLieben/Hartshorn/wiki/Commands#defining-command-usage">Commands#defining-command-arguments</a>
      */
     String arguments() default "";
 
+    /**
+     * The parent command for the command. When specified, the command will be executed as a sub-command.
+     */
     @AliasFor("owner")
     Class<?> parent() default Void.class;
 }

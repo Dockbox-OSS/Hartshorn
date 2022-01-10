@@ -22,8 +22,21 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * Annotation for injecting a {@link org.dockbox.hartshorn.core.context.Context} into a class. The context is
+ * obtained through the responsible {@link org.dockbox.hartshorn.core.context.ApplicationContext}. If the
+ * context does not exist in the active application context, the injected value will be {@code null}.
+ *
+ * @author Guus Lieben
+ * @since 21.8
+ */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.METHOD, ElementType.CONSTRUCTOR, ElementType.FIELD})
+@Target({ElementType.FIELD, ElementType.PARAMETER})
 public @interface Context {
+
+    /**
+     * The name of the context to inject. If left empty the name will be ignored.
+     * @return The name of the context to inject.
+     */
     String value() default "";
 }

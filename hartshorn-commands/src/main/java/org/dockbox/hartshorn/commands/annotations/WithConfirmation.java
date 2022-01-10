@@ -28,5 +28,6 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
+@Deprecated(since = "22.1", forRemoval = true)
 public @interface WithConfirmation {
 }

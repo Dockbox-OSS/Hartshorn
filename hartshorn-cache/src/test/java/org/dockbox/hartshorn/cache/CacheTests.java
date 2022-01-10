@@ -18,31 +18,41 @@
 package org.dockbox.hartshorn.cache;
 
 import org.dockbox.hartshorn.cache.annotations.UseCaching;
+import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
-import org.dockbox.hartshorn.testsuite.ApplicationAwareTest;
+import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import javax.inject.Inject;
+
+import lombok.Getter;
+
 @UseCaching
-public class CacheTests extends ApplicationAwareTest {
+@HartshornTest
+public class CacheTests {
+
+    @Inject
+    @Getter
+    private ApplicationContext applicationContext;
 
     @Test
     void testEvictMethodIsCalled() {
-        final NonAbstractCacheService service = this.context().get(NonAbstractCacheService.class);
+        final NonAbstractCacheService service = this.applicationContext().get(NonAbstractCacheService.class);
         Assertions.assertTrue(service.evict());
     }
 
     @Test
     void testUpdateMethodIsCalled() {
-        final NonAbstractCacheService service = this.context().get(NonAbstractCacheService.class);
+        final NonAbstractCacheService service = this.applicationContext().get(NonAbstractCacheService.class);
         final long update = service.update(3L);
         Assertions.assertEquals(6, update);
     }
 
     @Test
     void testCacheIsReused() {
-        final TestCacheService service = this.context().get(TestCacheService.class);
+        final TestCacheService service = this.applicationContext().get(TestCacheService.class);
         final long first = service.getCachedTime();
         Assertions.assertTrue(first > 0);
 
@@ -52,7 +62,7 @@ public class CacheTests extends ApplicationAwareTest {
 
     @Test
     void testCacheCanBeUpdated() {
-        final TestCacheService service = this.context().get(TestCacheService.class);
+        final TestCacheService service = this.applicationContext().get(TestCacheService.class);
         long cached = service.getCachedTime();
         Assertions.assertTrue(cached > 0);
 
@@ -63,7 +73,7 @@ public class CacheTests extends ApplicationAwareTest {
 
     @Test
     void testCacheCanBeEvicted() {
-        final TestCacheService service = this.context().get(TestCacheService.class);
+        final TestCacheService service = this.applicationContext().get(TestCacheService.class);
         final long first = service.getCachedTime();
         service.evict();
         final long second = service.getCachedTime();
@@ -72,11 +82,11 @@ public class CacheTests extends ApplicationAwareTest {
 
     @Test
     void testCacheCanBeUpdatedThroughManager() {
-        final TestCacheService service = this.context().get(TestCacheService.class);
+        final TestCacheService service = this.applicationContext().get(TestCacheService.class);
         final long cached = service.getCachedTime();
         Assertions.assertTrue(cached > 0);
 
-        final CacheManager cacheManager = this.context().get(CacheManager.class);
+        final CacheManager cacheManager = this.applicationContext().get(CacheManager.class);
         cacheManager.update("sample", 3L);
 
         final Exceptional<Cache<Long>> cache = cacheManager.get("sample");
@@ -92,11 +102,11 @@ public class CacheTests extends ApplicationAwareTest {
     @Test
     void testCacheCanBeEvictedThroughManager() {
         // Initial population through source service
-        final TestCacheService service = this.context().get(TestCacheService.class);
+        final TestCacheService service = this.applicationContext().get(TestCacheService.class);
         final long cached = service.getCachedTime();
         Assertions.assertTrue(cached > 0);
 
-        final CacheManager cacheManager = this.context().get(CacheManager.class);
+        final CacheManager cacheManager = this.applicationContext().get(CacheManager.class);
         cacheManager.evict("sample");
 
         final Exceptional<Cache<Long>> cache = cacheManager.get("sample");
@@ -108,6 +118,6 @@ public class CacheTests extends ApplicationAwareTest {
 
     @AfterEach
     void reset() {
-        this.context().get(JUnitCacheManager.class).reset();
+        this.applicationContext().get(JUnitCacheManager.class).reset();
     }
 }

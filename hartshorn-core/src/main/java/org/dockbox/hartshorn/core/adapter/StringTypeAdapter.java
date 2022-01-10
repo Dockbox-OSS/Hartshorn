@@ -19,7 +19,28 @@ package org.dockbox.hartshorn.core.adapter;
 
 import org.dockbox.hartshorn.core.domain.Exceptional;
 
+/**
+ * A type adapter that converts a string to a potential value of type {@code T}. If the conversion fails,
+ * {@link Exceptional#empty()} is returned.
+ *
+ * @param <T> The type to convert to
+ * @author Guus Lieben
+ * @since 21.9
+ */
 public interface StringTypeAdapter<T> {
+    /**
+     * Converts a string to a potential value of type {@code T}. If the conversion fails, {@link Exceptional#empty()} is
+     * returned.
+     *
+     * @param value The string to convert
+     * @return The converted value
+     */
     Exceptional<T> adapt(String value);
+
+    /**
+     * Gets the target type of the current adapter.
+     *
+     * @return The target type
+     */
     Class<T> type();
 }

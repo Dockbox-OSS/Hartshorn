@@ -17,13 +17,15 @@
 
 package org.dockbox.hartshorn.demo.commands;
 
+import org.dockbox.hartshorn.core.annotations.activate.ServiceActivator;
 import org.dockbox.hartshorn.core.boot.HartshornApplication;
 import org.dockbox.hartshorn.commands.annotations.UseCommands;
 import org.dockbox.hartshorn.core.annotations.activate.Activator;
+import org.dockbox.hartshorn.core.services.ServicePreProcessor;
 
 /**
- * A simple application starter, with specific {@link org.dockbox.hartshorn.core.annotations.service.ServiceActivator service activators}
- * configured to enable only the required {@link org.dockbox.hartshorn.core.services.ServiceProcessor service processors}.
+ * A simple application starter, with specific {@link ServiceActivator service activators}
+ * configured to enable only the required {@link ServicePreProcessor service processors}.
  * <p>For readability, each activator has been documented with a short description below.
  */
 @UseCommands /* Activates the CommandServiceScanner, enabling command handling and event processing */
@@ -34,7 +36,9 @@ import org.dockbox.hartshorn.core.annotations.activate.Activator;
  * and use your own implementation here directly
  */
 @Activator
-public class CommandsDemoApplication {
+public final class CommandsDemoApplication {
+
+    private CommandsDemoApplication() {}
 
     public static void main(final String[] args) {
         HartshornApplication.create(CommandsDemoApplication.class, args);

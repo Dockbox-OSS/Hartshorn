@@ -17,15 +17,14 @@
 
 package org.dockbox.hartshorn.commands.cli;
 
-import org.dockbox.hartshorn.core.exceptions.Except;
-import org.dockbox.hartshorn.core.task.ThreadUtils;
 import org.dockbox.hartshorn.commands.CommandCLI;
 import org.dockbox.hartshorn.commands.CommandGateway;
 import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.commands.SystemSubject;
 import org.dockbox.hartshorn.commands.exceptions.ParsingException;
-import org.dockbox.hartshorn.core.annotations.inject.Binds;
+import org.dockbox.hartshorn.core.annotations.inject.ComponentBinding;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
+import org.dockbox.hartshorn.core.task.ThreadUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -36,64 +35,68 @@ import javax.inject.Inject;
 import lombok.Getter;
 import lombok.Setter;
 
-@Binds(CommandCLI.class)
+@ComponentBinding(CommandCLI.class)
 public class SimpleCommandCLI implements CommandCLI {
 
-    @Inject private ApplicationContext context;
-    @Inject private CommandGateway gateway;
-    @Inject private ThreadUtils threads;
+    @Inject
+    private ApplicationContext context;
+    @Inject
+    private CommandGateway gateway;
+    @Inject
+    private ThreadUtils threads;
 
-    @Getter @Setter
-    private boolean async = false;
-    @Getter @Setter
+    @Getter
+    @Setter
+    private boolean async;
+    @Getter
+    @Setter
     private InputStream input = System.in;
     @Setter
     private CommandSource source;
 
     @Override
     public void open() {
-        try (
-                final InputStream input = this.input();
-                final Scanner scanner = new Scanner(input)
-        ) {
-            final Runnable task = () -> {
+        final Runnable task = () -> {
+            try (
+                    final InputStream input = this.input();
+                    final Scanner scanner = new Scanner(input)
+            ) {
                 this.context.log().debug("Starting command CLI input listener");
                 while (this.running()) {
                     final String next = scanner.nextLine();
                     try {
                         this.gateway.accept(this.source(), next);
-                    }
-                    catch (final ParsingException e) {
-                        Except.handle(e);
+                    } catch (final ParsingException e) {
+                        this.context.handle(e);
                     }
                 }
-            };
+            } catch (final IOException e) {
+                this.context.handle(e);
+            }
+        };
 
-            if (this.async()) {
-                this.context.log().debug("Performing startup task for command CLI asynchronously");
-                this.threads.performAsync(task);
-            }
-            else {
-                this.context.log().debug("Performing startup task for command CLI on current thread");
-                task.run();
-            }
-        }
-        catch (final IOException e) {
-            Except.handle(e);
+        if (this.async()) {
+            this.context.log().debug("Performing startup task for command CLI asynchronously");
+            new Thread(task, "command_cli").start();
+        } else {
+            this.context.log().debug("Performing startup task for command CLI on current thread");
+            task.run();
         }
     }
 
     /**
-     * Indicates whether the command input is still active. If this method returns {@code false} the CLI closes.
-     * @return Whether to keep the CLI alive.
+     Indicates whether the command input is still active. If this method returns {@code false} the CLI closes.
+
+     @return Whether to keep the CLI alive.
      */
     protected boolean running() {
         return true;
     }
 
     /**
-     * Gets the {@link CommandSource} which is used to execute commands for the current CLI session.
-     * @return The source to execute commands.
+     Gets the {@link CommandSource} which is used to execute commands for the current CLI session.
+
+     @return The source to execute commands.
      */
     protected CommandSource source() {
         return SystemSubject.instance(this.context);

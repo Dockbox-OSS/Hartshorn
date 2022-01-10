@@ -17,8 +17,8 @@
 
 package org.dockbox.hartshorn.web.annotations.http;
 
-import org.dockbox.hartshorn.persistence.FileType;
 import org.dockbox.hartshorn.web.HttpMethod;
+import org.dockbox.hartshorn.web.MediaType;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -30,6 +30,6 @@ import java.lang.annotation.Target;
 public @interface HttpRequest {
     String value();
     HttpMethod method();
-    FileType responseFormat() default FileType.JSON;
-    FileType bodyFormat() default FileType.JSON;
+    MediaType produces() default MediaType.APPLICATION_JSON;
+    MediaType consumes() default MediaType.APPLICATION_JSON;
 }

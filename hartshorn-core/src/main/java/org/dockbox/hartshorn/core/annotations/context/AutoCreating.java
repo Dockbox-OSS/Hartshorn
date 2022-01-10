@@ -26,6 +26,9 @@ import java.lang.annotation.Target;
  * Indicates a {@link org.dockbox.hartshorn.core.context.Context} type should be
  * automatically created when it is looked up. Subtypes of {@link org.dockbox.hartshorn.core.context.DefaultContext}
  * honor this behavior by default, other implementations may differ.
+ *
+ * @author Guus Lieben
+ * @since 21.4
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
