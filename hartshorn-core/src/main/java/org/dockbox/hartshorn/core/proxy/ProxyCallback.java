@@ -17,28 +17,8 @@
 
 package org.dockbox.hartshorn.core.proxy;
 
-import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
-@Getter
-@AllArgsConstructor
-public class ProxyContextImpl implements ProxyContext {
-
-    private final ProxyHandler<?> handler;
-    private final MethodContext<?, ?> proceed;
-    private final Object self;
-
-    @Override
-    public <T> T invoke(final Object... args) throws ApplicationException {
-        try {
-            if (this.proceed() == null || this.proceed().isAbstract()) return null;
-            return (T) ((MethodContext<?, Object>) this.proceed()).invoke(this.self(), args).orNull();
-        }
-        catch (final ClassCastException e) {
-            throw new ApplicationException(e);
-        }
-    }
+public interface ProxyCallback<T> {
+    void accept(MethodContext<?, T> method, T instance, Object[] args, ProxyContext context);
 }

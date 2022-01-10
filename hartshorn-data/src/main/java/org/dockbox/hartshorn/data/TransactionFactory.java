@@ -15,17 +15,15 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.core.proxy;
+package org.dockbox.hartshorn.data;
 
-import org.dockbox.hartshorn.core.exceptions.ApplicationException;
-import org.dockbox.hartshorn.core.context.element.MethodContext;
+import org.dockbox.hartshorn.core.annotations.Factory;
+import org.dockbox.hartshorn.core.annotations.stereotype.Service;
 
-public interface ProxyContext {
+import javax.persistence.EntityManager;
 
-    ProxyHandler<?> handler();
-
-    MethodContext<?, ?> proceed();
-
-    <T> T invoke(Object... args) throws ApplicationException;
-
+@Service
+public interface TransactionFactory {
+    @Factory
+    TransactionManager manager(EntityManager entityManager);
 }

@@ -24,9 +24,8 @@ import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.proxy.ProxyContext;
 import org.dockbox.hartshorn.core.proxy.ProxyFunction;
-import org.dockbox.hartshorn.core.services.ServiceAnnotatedMethodPostProcessor;
 import org.dockbox.hartshorn.core.services.ProcessingOrder;
-import org.dockbox.hartshorn.data.jpa.JpaRepository;
+import org.dockbox.hartshorn.core.services.ServiceAnnotatedMethodPostProcessor;
 import org.dockbox.hartshorn.data.QueryFunction;
 import org.dockbox.hartshorn.data.annotations.EntityModifier;
 import org.dockbox.hartshorn.data.annotations.Query;
@@ -34,6 +33,7 @@ import org.dockbox.hartshorn.data.annotations.Query.QueryType;
 import org.dockbox.hartshorn.data.annotations.Transactional;
 import org.dockbox.hartshorn.data.annotations.UsePersistence;
 import org.dockbox.hartshorn.data.context.QueryContext;
+import org.dockbox.hartshorn.data.jpa.JpaRepository;
 
 import java.util.Collection;
 import java.util.List;
@@ -62,16 +62,16 @@ public class QueryPostProcessor extends ServiceAnnotatedMethodPostProcessor<Quer
     public <T, R> ProxyFunction<T, R> process(final ApplicationContext context, final MethodProxyContext<T> methodContext) {
         final MethodContext<?, T> method = methodContext.method();
         final QueryFunction function = context.get(QueryFunction.class);
-        final boolean transactional = method.annotation(Transactional.class).present();
         final boolean modifying = method.annotation(EntityModifier.class).present();
+        final boolean transactional = method.annotation(Transactional.class).present();
         final Query query = method.annotation(Query.class).get();
         final TypeContext<?> entityType = this.entityType(method, query);
 
         return (T instance, Object[] args, ProxyContext proxyContext) -> {
             final JpaRepository<?, ?> repository = (JpaRepository<?, ?>) methodContext.instance();
-            if (query.automaticFlush()) repository.flush();
+            if (query.automaticFlush() && !transactional) repository.flush();
 
-            final QueryContext queryContext = new QueryContext(query, args, method, entityType, context, repository, transactional, modifying);
+            final QueryContext queryContext = new QueryContext(query, args, method, entityType, context, repository, modifying);
 
             final Object result = function.execute(queryContext);
 

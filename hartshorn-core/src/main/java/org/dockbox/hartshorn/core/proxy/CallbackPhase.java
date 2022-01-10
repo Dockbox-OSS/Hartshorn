@@ -17,15 +17,8 @@
 
 package org.dockbox.hartshorn.core.proxy;
 
-import org.dockbox.hartshorn.core.exceptions.ApplicationException;
-import org.dockbox.hartshorn.core.context.element.MethodContext;
-
-public interface ProxyContext {
-
-    ProxyHandler<?> handler();
-
-    MethodContext<?, ?> proceed();
-
-    <T> T invoke(Object... args) throws ApplicationException;
-
+public enum CallbackPhase {
+    BEFORE,
+    AFTER,
+    THROWING,
 }

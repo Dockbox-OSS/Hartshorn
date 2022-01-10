@@ -15,17 +15,12 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.core.proxy;
+package org.dockbox.hartshorn.data;
 
-import lombok.Getter;
-import lombok.Setter;
+public interface TransactionManager {
+    public void beginTransaction();
 
-/**
- * The type passed into proxy functions. Cancellability is unused internally, but may be used by
- * functions.
- */
-public class ProxyHolder {
+    public void commitTransaction();
 
-    @Getter @Setter private boolean cancelled;
-
+    public void rollbackTransaction();
 }

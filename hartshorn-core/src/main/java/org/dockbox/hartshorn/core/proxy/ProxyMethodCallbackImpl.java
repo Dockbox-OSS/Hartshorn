@@ -17,28 +17,19 @@
 
 package org.dockbox.hartshorn.core.proxy;
 
-import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-@Getter
 @AllArgsConstructor
-public class ProxyContextImpl implements ProxyContext {
+public class ProxyMethodCallbackImpl<T> implements ProxyMethodCallback<T> {
 
-    private final ProxyHandler<?> handler;
-    private final MethodContext<?, ?> proceed;
-    private final Object self;
+    @Getter final CallbackPhase phase;
+    final ProxyCallback<T> function;
 
     @Override
-    public <T> T invoke(final Object... args) throws ApplicationException {
-        try {
-            if (this.proceed() == null || this.proceed().isAbstract()) return null;
-            return (T) ((MethodContext<?, Object>) this.proceed()).invoke(this.self(), args).orNull();
-        }
-        catch (final ClassCastException e) {
-            throw new ApplicationException(e);
-        }
+    public void accept(final MethodContext<?, T> method, final T instance, final Object[] args, final ProxyContext context) {
+        this.function.accept(method, instance, args, context);
     }
 }
