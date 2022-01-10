@@ -60,7 +60,6 @@ import test.types.SampleFieldImplementation;
 import test.types.SampleImplementation;
 import test.types.SampleInterface;
 import test.types.meta.SampleMetaAnnotatedImplementation;
-import test.types.multi.SampleMultiAnnotatedImplementation;
 import test.types.provision.ProvidedInterface;
 import test.types.scan.SampleAnnotatedImplementation;
 
