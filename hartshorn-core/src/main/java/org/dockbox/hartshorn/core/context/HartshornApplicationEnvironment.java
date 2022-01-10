@@ -34,10 +34,10 @@ public class HartshornApplicationEnvironment implements ApplicationEnvironment {
     @Getter private final boolean isCI;
     @Getter private final ApplicationManager manager;
 
-    public HartshornApplicationEnvironment(final Collection<String> prefixes, final ApplicationManager manager) {
+    public HartshornApplicationEnvironment(final PrefixContext prefixContext, final ApplicationManager manager) {
         this.manager = manager;
         this.isCI = HartshornUtils.isCI();
-        this.prefixContext = new ReflectionsPrefixContext(this, prefixes);
+        this.prefixContext = prefixContext;
         this.manager().log().debug("Created new application environment (isCI: %s, prefixCount: %d)".formatted(this.isCI(), this.prefixContext().prefixes().size()));
     }
 

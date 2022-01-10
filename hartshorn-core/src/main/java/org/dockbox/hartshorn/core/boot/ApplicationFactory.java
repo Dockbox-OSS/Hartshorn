@@ -22,6 +22,7 @@ import org.dockbox.hartshorn.core.Modifiers;
 import org.dockbox.hartshorn.core.InjectConfiguration;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.ApplicationEnvironment;
+import org.dockbox.hartshorn.core.context.PrefixContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.services.ComponentLocator;
 import org.dockbox.hartshorn.core.services.ComponentPostProcessor;
@@ -29,6 +30,7 @@ import org.dockbox.hartshorn.core.services.ComponentPreProcessor;
 
 import java.lang.annotation.Annotation;
 import java.util.Set;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public interface ApplicationFactory<Self extends ApplicationFactory<Self, C>, C extends ApplicationContext> {
@@ -55,7 +57,7 @@ public interface ApplicationFactory<Self extends ApplicationFactory<Self, C>, C 
 
     Self applicationFSProvider(ApplicationFSProvider applicationFSProvider);
 
-    Self applicationEnvironment(Function<ApplicationManager, ApplicationEnvironment> applicationEnvironment);
+    Self applicationEnvironment(BiFunction<PrefixContext, ApplicationManager, ApplicationEnvironment> applicationEnvironment);
 
     Self componentLocator(Function<ApplicationContext, ComponentLocator> componentLocator);
 
@@ -66,6 +68,10 @@ public interface ApplicationFactory<Self extends ApplicationFactory<Self, C>, C 
     Self metaProvider(Function<ApplicationContext, MetaProvider> metaProvider);
 
     Self resourceLocator(Function<ApplicationContext, ClasspathResourceLocator> resourceLocator);
+
+    Self exceptionHandler(ExceptionHandler exceptionHandler);
+
+    Self prefixContext(Function<ApplicationManager, PrefixContext> prefixContext);
 
     Self prefix(String prefix);
 

@@ -20,6 +20,7 @@ package org.dockbox.hartshorn.core.boot;
 import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.core.annotations.context.LogExclude;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
+import org.dockbox.hartshorn.core.context.ModifiableContextCarrier;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.proxy.ProxyHandler;
@@ -34,7 +35,7 @@ import lombok.Setter;
 
 @LogExclude
 @Getter
-public class HartshornApplicationManager implements ApplicationManager {
+public class HartshornApplicationManager implements ObservableApplicationManager, ModifiableContextCarrier {
 
     private static final String BANNER = """
                  _   _            _       _                     \s
@@ -132,9 +133,10 @@ public class HartshornApplicationManager implements ApplicationManager {
         return this.applicationProxier.handler(instance);
     }
 
-    public void applicationContext(final ApplicationContext applicationContext) {
+    public HartshornApplicationManager applicationContext(final ApplicationContext applicationContext) {
         if (this.applicationContext == null) this.applicationContext = applicationContext;
         else throw new IllegalArgumentException("Application context has already been configured");
+        return this;
     }
 
     @Override

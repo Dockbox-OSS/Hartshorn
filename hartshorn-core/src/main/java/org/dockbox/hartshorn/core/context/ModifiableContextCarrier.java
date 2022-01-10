@@ -17,14 +17,6 @@
 
 package org.dockbox.hartshorn.core.context;
 
-import java.lang.annotation.Annotation;
-import java.util.Set;
-
-public interface ActivatorSource {
-
-    Set<Annotation> activators();
-
-    boolean hasActivator(Class<? extends Annotation> activator);
-
-    <A> A activator(Class<A> activator);
+public interface ModifiableContextCarrier extends ContextCarrier {
+    public ModifiableContextCarrier applicationContext(ApplicationContext context);
 }
