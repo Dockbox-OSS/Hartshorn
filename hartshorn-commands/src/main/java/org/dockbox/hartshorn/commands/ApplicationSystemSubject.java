@@ -17,10 +17,10 @@
 
 package org.dockbox.hartshorn.commands;
 
-import org.dockbox.hartshorn.core.annotations.inject.Binds;
+import org.dockbox.hartshorn.core.annotations.inject.ComponentBinding;
 import org.dockbox.hartshorn.i18n.Message;
 
-@Binds(SystemSubject.class)
+@ComponentBinding(SystemSubject.class)
 public class ApplicationSystemSubject extends SystemSubject {
 
     @Override

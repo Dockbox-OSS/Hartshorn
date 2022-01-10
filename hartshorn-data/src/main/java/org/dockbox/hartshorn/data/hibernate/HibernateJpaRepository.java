@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.data.hibernate;
 
 import org.dockbox.hartshorn.core.Enableable;
 import org.dockbox.hartshorn.core.HartshornUtils;
-import org.dockbox.hartshorn.core.annotations.inject.Binds;
+import org.dockbox.hartshorn.core.annotations.inject.ComponentBinding;
 import org.dockbox.hartshorn.core.annotations.inject.Bound;
 import org.dockbox.hartshorn.core.boot.ExceptionHandler;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
@@ -63,7 +63,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import lombok.AccessLevel;
 import lombok.Getter;
 
-@Binds(JpaRepository.class)
+@ComponentBinding(JpaRepository.class)
 public class HibernateJpaRepository<T, ID> implements JpaRepository<T, ID>, Enableable, Closeable {
 
     private final Map<Class<? extends Remote<?>>, String> dialects = new ConcurrentHashMap<>();

@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.core.services.parameter;
 
-import org.dockbox.hartshorn.core.annotations.inject.Binds;
+import org.dockbox.hartshorn.core.annotations.inject.ComponentBinding;
 import org.dockbox.hartshorn.core.annotations.inject.Instance;
 import org.dockbox.hartshorn.core.context.ParameterLoaderContext;
 import org.dockbox.hartshorn.core.context.element.ExecutableElementContext;
@@ -30,7 +30,7 @@ import java.util.List;
 import javax.inject.Named;
 
 @Deprecated(since = "4.2.5", forRemoval = true)
-@Binds(value = ParameterLoader.class, named = @Named("global_proxy"))
+@ComponentBinding(value = ParameterLoader.class, named = @Named("global_proxy"))
 public class GlobalProxyParameterLoader extends ParameterLoader<ParameterLoaderContext> {
 
     @Override

@@ -49,6 +49,7 @@ public class ComponentProvisionTests {
                 .containers().stream()
                 .map(ComponentContainer::type)
                 .filter(type -> !type.isDeclaredIn("org.dockbox.hartshorn.core.types"))
+                .filter(type -> type.boundConstructors().size() != type.constructors().size())
                 .map(Arguments::of);
     }
 

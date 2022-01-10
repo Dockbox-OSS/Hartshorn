@@ -17,12 +17,12 @@
 
 package test.types.meta;
 
-import org.dockbox.hartshorn.core.annotations.inject.Binds;
+import org.dockbox.hartshorn.core.annotations.inject.ComponentBinding;
 import test.types.SampleInterface;
 
 import javax.inject.Named;
 
-@Binds(value = SampleInterface.class, named = @Named("meta"))
+@ComponentBinding(value = SampleInterface.class, named = @Named("meta"))
 public class SampleMetaAnnotatedImplementation implements SampleInterface {
     @Override
     public String name() {

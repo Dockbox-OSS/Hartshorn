@@ -19,9 +19,8 @@ package org.dockbox.hartshorn.web;
 
 import org.dockbox.hartshorn.config.annotations.Value;
 import org.dockbox.hartshorn.core.Enableable;
-import org.dockbox.hartshorn.core.annotations.stereotype.Component;
-import org.dockbox.hartshorn.core.annotations.inject.Binds;
 import org.dockbox.hartshorn.core.annotations.inject.Bound;
+import org.dockbox.hartshorn.core.annotations.inject.ComponentBinding;
 import org.dockbox.hartshorn.core.boot.Hartshorn;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
@@ -41,8 +40,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import lombok.Getter;
 
-@Component
-@Binds(ServletHandler.class)
+@ComponentBinding(ServletHandler.class)
 public class ServletHandler implements Enableable {
 
     private final HttpWebServer starter;

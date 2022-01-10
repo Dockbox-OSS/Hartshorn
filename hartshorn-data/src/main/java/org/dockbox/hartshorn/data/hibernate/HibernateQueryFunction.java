@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.data.hibernate;
 
-import org.dockbox.hartshorn.core.annotations.inject.Binds;
+import org.dockbox.hartshorn.core.annotations.inject.ComponentBinding;
 import org.dockbox.hartshorn.data.QueryFunction;
 import org.dockbox.hartshorn.data.context.QueryContext;
 import org.hibernate.Session;
@@ -26,7 +26,7 @@ import java.util.function.Function;
 
 import javax.persistence.Query;
 
-@Binds(QueryFunction.class)
+@ComponentBinding(QueryFunction.class)
 public class HibernateQueryFunction implements QueryFunction {
 
     @Override

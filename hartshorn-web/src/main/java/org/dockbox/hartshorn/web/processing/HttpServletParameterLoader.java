@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.web.processing;
 
-import org.dockbox.hartshorn.core.annotations.inject.Binds;
+import org.dockbox.hartshorn.core.annotations.inject.ComponentBinding;
 import org.dockbox.hartshorn.core.context.element.ParameterContext;
 import org.dockbox.hartshorn.core.services.parameter.ParameterLoader;
 import org.dockbox.hartshorn.core.services.parameter.RuleBasedParameterLoader;
@@ -29,7 +29,7 @@ import org.dockbox.hartshorn.web.processing.rules.ServletResponseParameterRule;
 
 import javax.inject.Named;
 
-@Binds(value = ParameterLoader.class, named = @Named("http_webserver"))
+@ComponentBinding(value = ParameterLoader.class, named = @Named("http_webserver"))
 public class HttpServletParameterLoader extends RuleBasedParameterLoader<HttpRequestParameterLoaderContext> {
 
     public HttpServletParameterLoader() {

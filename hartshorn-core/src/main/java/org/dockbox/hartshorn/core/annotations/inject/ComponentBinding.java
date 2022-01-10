@@ -17,8 +17,11 @@
 
 package org.dockbox.hartshorn.core.annotations.inject;
 
+import org.dockbox.hartshorn.core.ComponentType;
+import org.dockbox.hartshorn.core.annotations.Extends;
+import org.dockbox.hartshorn.core.annotations.stereotype.Component;
+
 import java.lang.annotation.ElementType;
-import java.lang.annotation.Repeatable;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
@@ -42,8 +45,19 @@ import javax.inject.Named;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-@Repeatable(BindsMultiple.class)
-public @interface Binds {
+@Extends(Component.class)
+public @interface ComponentBinding {
+    
+    String id() default "";
+
+    String name() default "";
+
+    boolean singleton() default false;
+
+    ComponentType type() default ComponentType.INJECTABLE;
+
+    boolean permitProxying() default true;
+
     /**
      * The type to bind to.
      * @return The type to bind to.

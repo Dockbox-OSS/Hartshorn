@@ -20,7 +20,7 @@ package org.dockbox.hartshorn.events;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.core.Key;
-import org.dockbox.hartshorn.core.annotations.inject.Binds;
+import org.dockbox.hartshorn.core.annotations.inject.ComponentBinding;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
@@ -37,14 +37,12 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
 /**
  * A simple default implementation of {@link EventBus}, used for internal event posting and
  * handling.
  */
-@Binds(EventBus.class)
-@Singleton
+@ComponentBinding(value = EventBus.class, singleton = true)
 public class EventBusImpl implements EventBus {
 
     protected final Set<Function<MethodContext<?, ?>, Exceptional<Boolean>>> validators = HartshornUtils.emptyConcurrentSet();
