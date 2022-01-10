@@ -29,7 +29,7 @@ import org.dockbox.hartshorn.commands.definition.GroupCommandElement;
 import org.dockbox.hartshorn.commands.exceptions.ParsingException;
 import org.dockbox.hartshorn.commands.service.CommandParameter;
 import org.dockbox.hartshorn.core.HartshornUtils;
-import org.dockbox.hartshorn.core.annotations.inject.Binds;
+import org.dockbox.hartshorn.core.annotations.inject.ComponentBinding;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.i18n.Message;
@@ -47,7 +47,7 @@ import javax.inject.Inject;
 /**
  * Simple implementation of {@link CommandParser}.
  */
-@Binds(CommandParser.class)
+@ComponentBinding(CommandParser.class)
 public class CommandParserImpl implements CommandParser {
 
     // Note the difference between this and SimpleCommandContainerContext.FLAG, here a space is expected before the flag

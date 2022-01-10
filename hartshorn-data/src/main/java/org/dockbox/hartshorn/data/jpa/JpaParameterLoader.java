@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.data.jpa;
 
-import org.dockbox.hartshorn.core.annotations.inject.Binds;
+import org.dockbox.hartshorn.core.annotations.inject.ComponentBinding;
 import org.dockbox.hartshorn.core.context.element.ParameterContext;
 import org.dockbox.hartshorn.core.services.parameter.ParameterLoader;
 import org.dockbox.hartshorn.core.services.parameter.RuleBasedParameterLoader;
@@ -25,7 +25,7 @@ import org.dockbox.hartshorn.data.context.JpaParameterLoaderContext;
 
 import javax.inject.Named;
 
-@Binds(value = ParameterLoader.class, named = @Named("jpa_query"))
+@ComponentBinding(value = ParameterLoader.class, named = @Named("jpa_query"))
 public class JpaParameterLoader extends RuleBasedParameterLoader<JpaParameterLoaderContext> {
 
     public JpaParameterLoader() {

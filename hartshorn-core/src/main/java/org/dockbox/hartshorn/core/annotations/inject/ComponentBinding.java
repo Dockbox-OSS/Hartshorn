@@ -17,8 +17,11 @@
 
 package org.dockbox.hartshorn.core.annotations.inject;
 
+import org.dockbox.hartshorn.core.ComponentType;
+import org.dockbox.hartshorn.core.annotations.Extends;
+import org.dockbox.hartshorn.core.annotations.stereotype.Component;
+
 import java.lang.annotation.ElementType;
-import java.lang.annotation.Repeatable;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
@@ -37,13 +40,42 @@ import javax.inject.Named;
  * <p>This annotation can be repeated, to create multiple bindings for the different
  * {@link org.dockbox.hartshorn.core.Key}s.
  *
+ * <p>This acts as a shortcut for components which implement a specific interface and wish to
+ * be bound to that interface.
+ *
  * @author Guus Lieben
  * @since 4.1.0
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-@Repeatable(BindsMultiple.class)
-public @interface Binds {
+@Extends(Component.class)
+public @interface ComponentBinding {
+
+    /**
+     * @see Component#id()
+     */
+    String id() default "";
+
+    /**
+     * @see Component#name()
+     */
+    String name() default "";
+
+    /**
+     * @see Component#singleton()
+     */
+    boolean singleton() default false;
+
+    /**
+     * @see Component#type()
+     */
+    ComponentType type() default ComponentType.INJECTABLE;
+
+    /**
+     * @see Component#permitProxying()
+     */
+    boolean permitProxying() default true;
+
     /**
      * The type to bind to.
      * @return The type to bind to.

@@ -17,18 +17,16 @@
 
 package org.dockbox.hartshorn.core.context;
 
-import org.dockbox.hartshorn.core.annotations.inject.Binds;
+import org.dockbox.hartshorn.core.annotations.inject.ComponentBinding;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
 import lombok.Getter;
 
 /**
  * A concrete implementation of {@link ContextCarrier}.
  */
-@Binds(ContextCarrier.class)
-@Singleton
+@ComponentBinding(value = ContextCarrier.class, singleton = true)
 public class ConcreteContextCarrier implements ContextCarrier {
     @Inject
     @Getter

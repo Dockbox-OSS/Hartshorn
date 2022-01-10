@@ -18,7 +18,7 @@
 package org.dockbox.hartshorn.web.mvc.freemarker;
 
 import org.dockbox.hartshorn.core.HartshornUtils;
-import org.dockbox.hartshorn.core.annotations.inject.Binds;
+import org.dockbox.hartshorn.core.annotations.inject.ComponentBinding;
 import org.dockbox.hartshorn.core.boot.Hartshorn;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
@@ -36,16 +36,13 @@ import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.util.Set;
 
-import javax.inject.Singleton;
-
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import freemarker.template.TemplateExceptionHandler;
 import freemarker.template.TemplateModelException;
 
-@Singleton
-@Binds(MVCInitializer.class)
+@ComponentBinding(value = MVCInitializer.class, singleton = true)
 public class FreeMarkerMVCInitializer implements MVCInitializer {
 
     private Configuration configuration;

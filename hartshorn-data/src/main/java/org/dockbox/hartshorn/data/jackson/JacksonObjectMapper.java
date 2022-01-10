@@ -37,7 +37,7 @@ import org.dockbox.hartshorn.core.GenericType;
 import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.core.Key;
 import org.dockbox.hartshorn.core.annotations.stereotype.Component;
-import org.dockbox.hartshorn.core.annotations.inject.Binds;
+import org.dockbox.hartshorn.core.annotations.inject.ComponentBinding;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
@@ -56,7 +56,7 @@ import java.util.Map.Entry;
 
 import javax.inject.Inject;
 
-@Binds(org.dockbox.hartshorn.data.mapping.ObjectMapper.class)
+@ComponentBinding(org.dockbox.hartshorn.data.mapping.ObjectMapper.class)
 public class JacksonObjectMapper extends DefaultObjectMapper {
 
     private Include include = Include.ALWAYS;

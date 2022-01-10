@@ -29,12 +29,11 @@ import org.dockbox.hartshorn.core.MetaProvider;
 import org.dockbox.hartshorn.core.Modifiers;
 import org.dockbox.hartshorn.core.MultiMap;
 import org.dockbox.hartshorn.core.annotations.activate.Activator;
-import org.dockbox.hartshorn.core.annotations.inject.Binds;
-import org.dockbox.hartshorn.core.annotations.inject.BindsMultiple;
-import org.dockbox.hartshorn.core.annotations.inject.Context;
-import org.dockbox.hartshorn.core.annotations.inject.Enable;
 import org.dockbox.hartshorn.core.annotations.activate.AutomaticActivation;
 import org.dockbox.hartshorn.core.annotations.activate.ServiceActivator;
+import org.dockbox.hartshorn.core.annotations.inject.ComponentBinding;
+import org.dockbox.hartshorn.core.annotations.inject.Context;
+import org.dockbox.hartshorn.core.annotations.inject.Enable;
 import org.dockbox.hartshorn.core.annotations.inject.Populate;
 import org.dockbox.hartshorn.core.annotations.inject.Required;
 import org.dockbox.hartshorn.core.binding.BindingHierarchy;
@@ -243,19 +242,11 @@ public class HartshornApplicationContext extends DefaultContext implements SelfA
         while ((scan = this.prefixQueue.poll()) != null) {
             this.locator().register(scan);
 
-            final Collection<TypeContext<?>> binders = this.environment().types(scan, Binds.class, false);
+            final Collection<TypeContext<?>> binders = this.environment().types(scan, ComponentBinding.class, false);
 
             for (final TypeContext<?> binder : binders) {
-                final Binds bindAnnotation = binder.annotation(Binds.class).get();
+                final ComponentBinding bindAnnotation = binder.annotation(ComponentBinding.class).get();
                 this.handleBinder(binder, bindAnnotation);
-            }
-
-            final Collection<TypeContext<?>> multiBinders = this.environment().types(scan, BindsMultiple.class, false);
-            for (final TypeContext<?> binder : multiBinders) {
-                final BindsMultiple bindAnnotation = binder.annotation(BindsMultiple.class).get();
-                for (final Binds annotation : bindAnnotation.value()) {
-                    this.handleBinder(binder, annotation);
-                }
             }
         }
     }
@@ -604,7 +595,7 @@ public class HartshornApplicationContext extends DefaultContext implements SelfA
         else return new ContextWrappedHierarchy<>(hierarchy, this, updated -> this.hierarchies.put(key, updated));
     }
 
-    private <T> void handleBinder(final TypeContext<T> implementer, final Binds annotation) {
+    private <T> void handleBinder(final TypeContext<T> implementer, final ComponentBinding annotation) {
         final TypeContext<T> target = TypeContext.of((Class<T>) annotation.value());
 
         if (implementer.boundConstructors().isEmpty()) {
@@ -615,7 +606,7 @@ public class HartshornApplicationContext extends DefaultContext implements SelfA
         }
     }
 
-    private <C> void handleScanned(final TypeContext<? extends C> binder, final TypeContext<C> binds, final Binds bindAnnotation) {
+    private <C> void handleScanned(final TypeContext<? extends C> binder, final TypeContext<C> binds, final ComponentBinding bindAnnotation) {
         final Named meta = bindAnnotation.named();
         Key<C> key = Key.of(binds);
         if (!"".equals(meta.value())) {

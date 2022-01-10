@@ -17,11 +17,11 @@
 
 package org.dockbox.hartshorn.commands;
 
-import org.dockbox.hartshorn.core.annotations.inject.Binds;
+import org.dockbox.hartshorn.core.annotations.inject.ComponentBinding;
 import org.dockbox.hartshorn.core.exceptions.NotImplementedException;
 import org.dockbox.hartshorn.i18n.Message;
 
-@Binds(value = SystemSubject.class, priority = 0)
+@ComponentBinding(value = SystemSubject.class, priority = 0)
 public class JUnitSystemSubject extends SystemSubject {
 
     @Override

@@ -29,7 +29,7 @@ import org.dockbox.hartshorn.core.ArrayListMultiMap;
 import org.dockbox.hartshorn.core.Enableable;
 import org.dockbox.hartshorn.core.Key;
 import org.dockbox.hartshorn.core.MultiMap;
-import org.dockbox.hartshorn.core.annotations.inject.Binds;
+import org.dockbox.hartshorn.core.annotations.inject.ComponentBinding;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
@@ -42,7 +42,6 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -50,8 +49,7 @@ import lombok.Getter;
 /**
  * Simple implementation of {@link CommandGateway}.
  */
-@Singleton
-@Binds(CommandGateway.class)
+@ComponentBinding(value = CommandGateway.class, singleton = true)
 public class CommandGatewayImpl implements CommandGateway, Enableable {
 
     @Getter(AccessLevel.PROTECTED)

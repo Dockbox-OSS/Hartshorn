@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.cache;
 
-import org.dockbox.hartshorn.core.annotations.inject.Binds;
+import org.dockbox.hartshorn.core.annotations.inject.ComponentBinding;
 import org.dockbox.hartshorn.core.annotations.inject.Bound;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
@@ -33,7 +33,7 @@ import javax.inject.Inject;
  *
  * @see Cache
  */
-@Binds(Cache.class)
+@ComponentBinding(Cache.class)
 public class CacheImpl<T> implements Cache<T>, Enableable {
 
     private final Expiration expiration;

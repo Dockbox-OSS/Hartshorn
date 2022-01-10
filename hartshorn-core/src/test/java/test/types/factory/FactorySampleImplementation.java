@@ -17,14 +17,14 @@
 
 package test.types.factory;
 
-import org.dockbox.hartshorn.core.annotations.inject.Binds;
+import org.dockbox.hartshorn.core.annotations.inject.ComponentBinding;
 import org.dockbox.hartshorn.core.annotations.inject.Bound;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import test.types.SampleInterface;
 
-@Binds(SampleInterface.class)
+@ComponentBinding(value = SampleInterface.class, permitProxying = false)
 @AllArgsConstructor(onConstructor_ = @Bound)
 public class FactorySampleImplementation implements SampleInterface {
     @Getter

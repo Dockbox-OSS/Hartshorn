@@ -17,7 +17,7 @@
 
 package org.dockbox.hartshorn.web.jetty;
 
-import org.dockbox.hartshorn.core.annotations.inject.Binds;
+import org.dockbox.hartshorn.core.annotations.inject.ComponentBinding;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.web.HttpStatus;
 import org.dockbox.hartshorn.web.HttpWebServer;
@@ -32,7 +32,7 @@ import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@Binds(DirectoryServlet.class)
+@ComponentBinding(DirectoryServlet.class)
 public class JettyDirectoryServlet implements DirectoryServlet {
 
     @Inject

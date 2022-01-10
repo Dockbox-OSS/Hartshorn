@@ -17,9 +17,9 @@
 
 package org.dockbox.hartshorn.core.proxy;
 
-import org.dockbox.hartshorn.core.annotations.inject.Binds;
+import org.dockbox.hartshorn.core.annotations.inject.ComponentBinding;
 
-@Binds(AbstractProxyParent.class)
+@ComponentBinding(AbstractProxyParent.class)
 public class ConcreteProxyImplementation implements AbstractProxyParent {
     @Override
     public String name() {

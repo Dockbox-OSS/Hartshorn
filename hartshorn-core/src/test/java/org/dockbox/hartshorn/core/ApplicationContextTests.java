@@ -60,7 +60,6 @@ import test.types.SampleFieldImplementation;
 import test.types.SampleImplementation;
 import test.types.SampleInterface;
 import test.types.meta.SampleMetaAnnotatedImplementation;
-import test.types.multi.SampleMultiAnnotatedImplementation;
 import test.types.provision.ProvidedInterface;
 import test.types.scan.SampleAnnotatedImplementation;
 
@@ -216,38 +215,6 @@ public class ApplicationContextTests {
         Assertions.assertNotNull(instance);
         Assertions.assertNotNull(instance.singletonEnableable());
         Assertions.assertEquals(1, instance.singletonEnableable().enabled());
-    }
-
-    @Test
-    public void testScannedMultiBindingsCanBeProvided() {
-        // This is a bit of a hack, but we need to ensure that the prefix binding is present and processed. Usually
-        // you'd do this through a service activator.
-        this.applicationContext().bind("test.types.multi");
-        ((HartshornApplicationContext) this.applicationContext()).process();
-
-        final SampleInterface provided = this.applicationContext().get(SampleInterface.class);
-        Assertions.assertNotNull(provided);
-
-        final Class<? extends SampleInterface> providedClass = provided.getClass();
-        Assertions.assertEquals(SampleMultiAnnotatedImplementation.class, providedClass);
-
-        Assertions.assertEquals("MultiAnnotatedHartshorn", provided.name());
-    }
-
-    @Test
-    public void testScannedMultiMetaBindingsCanBeProvided() {
-        // This is a bit of a hack, but we need to ensure that the prefix binding is present and processed. Usually
-        // you'd do this through a service activator.
-        this.applicationContext().bind("test.types.multi");
-        ((HartshornApplicationContext) this.applicationContext()).process();
-
-        final SampleInterface provided = this.applicationContext().get(Key.of(SampleInterface.class, "meta"));
-        Assertions.assertNotNull(provided);
-
-        final Class<? extends SampleInterface> providedClass = provided.getClass();
-        Assertions.assertEquals(SampleMultiAnnotatedImplementation.class, providedClass);
-
-        Assertions.assertEquals("MultiAnnotatedHartshorn", provided.name());
     }
 
     @Test

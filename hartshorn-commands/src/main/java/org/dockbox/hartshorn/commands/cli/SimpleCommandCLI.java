@@ -22,7 +22,7 @@ import org.dockbox.hartshorn.commands.CommandGateway;
 import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.commands.SystemSubject;
 import org.dockbox.hartshorn.commands.exceptions.ParsingException;
-import org.dockbox.hartshorn.core.annotations.inject.Binds;
+import org.dockbox.hartshorn.core.annotations.inject.ComponentBinding;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.task.ThreadUtils;
 
@@ -35,7 +35,7 @@ import javax.inject.Inject;
 import lombok.Getter;
 import lombok.Setter;
 
-@Binds(CommandCLI.class)
+@ComponentBinding(CommandCLI.class)
 public class SimpleCommandCLI implements CommandCLI {
 
     @Inject
