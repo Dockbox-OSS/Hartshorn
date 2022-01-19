@@ -48,9 +48,6 @@ public interface ApplicationContext extends
     @Deprecated(since = "22.1", forRemoval = true)
     <T> T create(Key<T> key);
 
-    @Deprecated(since = "22.1", forRemoval = true)
-    <T> T inject(Key<T> key, T typeInstance);
-
     <T> T populate(T type);
 
     @Deprecated(since = "22.1", forRemoval = true)
