@@ -396,4 +396,12 @@ public class ApplicationContextTests {
     void loggerCanBeInjected(final Logger logger) {
         Assertions.assertNotNull(logger);
     }
+
+    @Test
+    void testStringProvision() {
+        final Key<String> key = Key.of(String.class, "license");
+        this.applicationContext.bind(key, "MIT");
+        final String license = this.applicationContext.get(key);
+        Assertions.assertEquals("MIT", license);
+    }
 }

@@ -29,6 +29,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 
 public final class FieldContext<T> extends AnnotatedMemberContext<Field> implements TypedElementContext<T> {
@@ -36,6 +37,7 @@ public final class FieldContext<T> extends AnnotatedMemberContext<Field> impleme
     private static final Map<Field, FieldContext<?>> cache = new ConcurrentHashMap<>();
 
     @Getter private final Field field;
+    @Getter(AccessLevel.PROTECTED) private final boolean accessible;
 
     private TypeContext<?> declaredBy;
     private TypeContext<T> type;
@@ -45,7 +47,7 @@ public final class FieldContext<T> extends AnnotatedMemberContext<Field> impleme
 
     private FieldContext(final Field field) {
         this.field = field;
-        this.field.setAccessible(true);
+        this.accessible = this.field.trySetAccessible();
     }
 
     public static Exceptional<FieldContext<?>> of(final TypeContext<?> type, final String field) {
@@ -60,6 +62,9 @@ public final class FieldContext<T> extends AnnotatedMemberContext<Field> impleme
     }
 
     public void set(final Object instance, final Object value) {
+        // Silently fail if field is not accessible
+        if (!this.accessible()) return;
+
         if (this.setter == null) {
             final Exceptional<Property> property = this.annotation(Property.class);
             if (property.present() && !"".equals(property.get().setter())) {
@@ -86,6 +91,10 @@ public final class FieldContext<T> extends AnnotatedMemberContext<Field> impleme
     }
 
     public Exceptional<T> get(final Object instance) {
+        // Silently fail if field is not accessible
+        if (!this.accessible())
+            return Exceptional.of(new ApplicationException("Field '" + this.name() + "' is not accessible!"));
+
         if (this.getter == null) {
             final Exceptional<Property> property = this.annotation(Property.class);
             if (property.present() && !"".equals(property.get().getter())) {
