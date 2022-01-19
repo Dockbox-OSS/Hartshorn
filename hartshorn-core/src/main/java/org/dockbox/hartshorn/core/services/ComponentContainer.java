@@ -53,6 +53,8 @@ public interface ComponentContainer {
 
     boolean permitsProxying();
 
+    boolean permitsProcessing();
+
     static String id(final ApplicationContext context, final TypeContext<?> type) {
         return id(context, type, false);
     }

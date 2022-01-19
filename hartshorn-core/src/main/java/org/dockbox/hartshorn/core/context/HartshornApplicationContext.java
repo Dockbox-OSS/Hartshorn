@@ -356,13 +356,16 @@ public class HartshornApplicationContext extends DefaultContext implements SelfA
         this.locator().validate(key);
 
         T instance = this.create(key);
+        final boolean doProcess = this.locator().container(key.type()).map(ComponentContainer::permitsProcessing).or(false);
 
         // Modify the instance during phase 1. This allows discarding the existing instance and replacing it with a new instance.
         // See ServiceOrder#PHASE_1
-        for (final ProcessingOrder order : ProcessingOrder.PHASE_1) {
-            for (final ComponentPostProcessor<?> postProcessor : this.postProcessors.get(order)) {
-                if (postProcessor.preconditions(this, key, instance))
-                    instance = postProcessor.process(this, key, instance);
+        if (doProcess) {
+            for (final ProcessingOrder order : ProcessingOrder.PHASE_1) {
+                for (final ComponentPostProcessor<?> postProcessor : this.postProcessors.get(order)) {
+                    if (postProcessor.preconditions(this, key, instance))
+                        instance = postProcessor.process(this, key, instance);
+                }
             }
         }
 
@@ -381,13 +384,15 @@ public class HartshornApplicationContext extends DefaultContext implements SelfA
 
         // Modify the instance during phase 2. This does not allow discarding the existing instance.
         // See ServiceOrder#PHASE_2
-        for (final ProcessingOrder order : ProcessingOrder.PHASE_2) {
-            for (final ComponentPostProcessor<?> postProcessor : this.postProcessors.get(order)) {
-                if (postProcessor.preconditions(this, key, instance)) {
-                    final T modified = postProcessor.process(this, key, instance);
-                    if (modified != instance) {
-                        throw new IllegalStateException(("Component %s was modified during phase %s (Phase 2) by %s. " +
-                                "Component processors are only able to discard existing instances in phases: %s").formatted(key.type().name(), order.name(), TypeContext.of(postProcessor).name(), Arrays.toString(ProcessingOrder.PHASE_2)));
+        if (doProcess) {
+            for (final ProcessingOrder order : ProcessingOrder.PHASE_2) {
+                for (final ComponentPostProcessor<?> postProcessor : this.postProcessors.get(order)) {
+                    if (postProcessor.preconditions(this, key, instance)) {
+                        final T modified = postProcessor.process(this, key, instance);
+                        if (modified != instance) {
+                            throw new IllegalStateException(("Component %s was modified during phase %s (Phase 2) by %s. " +
+                                    "Component processors are only able to discard existing instances in phases: %s").formatted(key.type().name(), order.name(), TypeContext.of(postProcessor).name(), Arrays.toString(ProcessingOrder.PHASE_2)));
+                        }
                     }
                 }
             }
@@ -404,14 +409,6 @@ public class HartshornApplicationContext extends DefaultContext implements SelfA
         }
 
         // May be null, but we have used all possible injectors, it's up to the developer now
-        return instance;
-    }
-
-    protected <T> T modify(final ProcessingOrder order, final Key<T> key, T instance) {
-        for (final ComponentPostProcessor<?> postProcessor : this.postProcessors.get(order)) {
-            if (postProcessor.preconditions(this, key, instance))
-                instance = postProcessor.process(this, key, instance);
-        }
         return instance;
     }
 

@@ -137,4 +137,12 @@ public @interface Component {
      * @see ComponentContainer#permitsProxying()
      */
     boolean permitProxying() default true;
+
+    /**
+     * Indicates whether the component should be allowed to be processed by {@link org.dockbox.hartshorn.core.services.ComponentProcessor}s.
+     * Processed components may be modified by changing the behavior or content of the component.
+     *
+     * @return {@code true} if the component should be processed
+     */
+    boolean permitProcessing() default true;
 }
