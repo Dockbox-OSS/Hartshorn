@@ -62,6 +62,7 @@ import org.dockbox.hartshorn.core.services.ComponentPostProcessor;
 import org.dockbox.hartshorn.core.services.ComponentPreProcessor;
 import org.dockbox.hartshorn.core.services.ComponentProcessor;
 import org.dockbox.hartshorn.core.services.ProcessingOrder;
+import org.slf4j.Logger;
 
 import java.lang.annotation.Annotation;
 import java.util.Arrays;
@@ -153,6 +154,8 @@ public class HartshornApplicationContext extends DefaultContext implements SelfA
         this.bind(Key.of(ApplicationProxier.class), this.environment().manager());
         this.bind(Key.of(ApplicationManager.class), this.environment().manager());
         this.bind(Key.of(LifecycleObservable.class), this.environment().manager());
+
+        this.bind(Key.of(Logger.class), (Supplier<Logger>) this::log);
     }
 
     @Override

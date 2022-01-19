@@ -42,11 +42,13 @@ import org.dockbox.hartshorn.core.types.TypeWithEnabledInjectField;
 import org.dockbox.hartshorn.core.types.TypeWithFailingConstructor;
 import org.dockbox.hartshorn.core.types.User;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
+import org.dockbox.hartshorn.testsuite.InjectTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.slf4j.Logger;
 
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -388,5 +390,10 @@ public class ApplicationContextTests {
         Assertions.assertNotNull(component);
         Assertions.assertNotNull(component.context());
         Assertions.assertSame(sampleContext, component.context());
+    }
+
+    @InjectTest
+    void loggerCanBeInjected(final Logger logger) {
+        Assertions.assertNotNull(logger);
     }
 }
