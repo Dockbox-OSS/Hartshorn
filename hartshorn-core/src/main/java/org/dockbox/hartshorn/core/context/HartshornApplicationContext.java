@@ -165,7 +165,7 @@ public class HartshornApplicationContext extends DefaultContext implements SelfA
         final Exceptional<ServiceActivator> activator = annotationType.annotation(ServiceActivator.class);
         if (activator.present()) {
             this.activators.add(annotation);
-            for (final String scan :activator.get().scanPackages()){
+            for (final String scan : activator.get().scanPackages()) {
                 this.bind(scan);
             }
             this.environment().annotationsWith(annotationType, ServiceActivator.class).forEach(this::addActivator);
@@ -175,20 +175,6 @@ public class HartshornApplicationContext extends DefaultContext implements SelfA
     @Override
     public void add(final InjectionPoint<?> property) {
         if (null != property) this.injectionPoints.add(property);
-    }
-
-    public <T> T inject(final Key<T> key, T typeInstance) {
-        for (final InjectionPoint<?> injectionPoint : this.injectionPoints) {
-            if (injectionPoint.accepts(key.type())) {
-                try {
-                    typeInstance = ((InjectionPoint<T>) injectionPoint).apply(typeInstance, key.type());
-                }
-                catch (final ClassCastException e) {
-                    this.log().warn("Attempted to apply injection point to incompatible type [" + key.type().qualifiedName() + "]");
-                }
-            }
-        }
-        return typeInstance;
     }
 
     public <T> T raw(final TypeContext<T> type) {
@@ -356,7 +342,31 @@ public class HartshornApplicationContext extends DefaultContext implements SelfA
         this.locator().validate(key);
 
         T instance = this.create(key);
-        final boolean doProcess = this.locator().container(key.type()).map(ComponentContainer::permitsProcessing).or(false);
+
+        final Exceptional<ComponentContainer> container = this.locator().container(key.type());
+        if (container.present()) {
+            instance = this.process(key, instance, container.get());
+        }
+        else {
+            this.populateAndStore(key, instance);
+        }
+
+        // Inject properties if applicable
+        if (enable) {
+            try {
+                this.enable(instance);
+            }
+            catch (final ApplicationException e) {
+                ExceptionHandler.unchecked(e);
+            }
+        }
+
+        // May be null, but we have used all possible injectors, it's up to the developer now
+        return instance;
+    }
+
+    protected <T> T process(final Key<T> key, T instance, final ComponentContainer container) {
+        final boolean doProcess = container.permitsProcessing();
 
         // Modify the instance during phase 1. This allows discarding the existing instance and replacing it with a new instance.
         // See ServiceOrder#PHASE_1
@@ -369,18 +379,7 @@ public class HartshornApplicationContext extends DefaultContext implements SelfA
             }
         }
 
-        final MetaProvider meta = this.meta();
-        // Ensure the order of resolution is to first resolve the instance singleton state, and only after check the type state.
-        // Typically, the implementation decided whether it should be a singleton, so this cuts time complexity in half.
-        if (instance != null && (meta.singleton(key.type()) || meta.singleton(TypeContext.unproxy(this, instance))))
-            this.singletons.put(key, instance);
-
-        // Recreating field instances ensures all fields are created through bootstrapping, allowing injection
-        // points to apply correctly
-        this.populate(instance);
-
-        // deprecated, will be removed in future versions
-        instance = this.inject(key, instance);
+        this.populateAndStore(key, instance);
 
         // Modify the instance during phase 2. This does not allow discarding the existing instance.
         // See ServiceOrder#PHASE_2
@@ -398,18 +397,19 @@ public class HartshornApplicationContext extends DefaultContext implements SelfA
             }
         }
 
-        // Inject properties if applicable
-        if (enable) {
-            try {
-                this.enable(instance);
-            }
-            catch (final ApplicationException e) {
-                ExceptionHandler.unchecked(e);
-            }
-        }
-
-        // May be null, but we have used all possible injectors, it's up to the developer now
         return instance;
+    }
+
+    protected <T> T populateAndStore(final Key<T> key, final T instance) {
+        final MetaProvider meta = this.meta();
+        // Ensure the order of resolution is to first resolve the instance singleton state, and only after check the type state.
+        // Typically, the implementation decided whether it should be a singleton, so this cuts time complexity in half.
+        if (instance != null && (meta.singleton(key.type()) || meta.singleton(TypeContext.unproxy(this, instance))))
+            this.singletons.put(key, instance);
+
+        // Recreating field instances ensures all fields are created through bootstrapping, allowing injection
+        // points to apply correctly
+        return this.populate(instance);
     }
 
     @Nullable
