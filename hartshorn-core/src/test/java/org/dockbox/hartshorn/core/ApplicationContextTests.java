@@ -32,6 +32,7 @@ import org.dockbox.hartshorn.core.types.CircularDependencyB;
 import org.dockbox.hartshorn.core.types.ComponentType;
 import org.dockbox.hartshorn.core.types.ContextInjectedType;
 import org.dockbox.hartshorn.core.types.NonComponentType;
+import org.dockbox.hartshorn.core.types.NonProcessableType;
 import org.dockbox.hartshorn.core.types.NonProxyComponentType;
 import org.dockbox.hartshorn.core.types.Person;
 import org.dockbox.hartshorn.core.types.SampleContext;
@@ -403,5 +404,12 @@ public class ApplicationContextTests {
         this.applicationContext.bind(key, "MIT");
         final String license = this.applicationContext.get(key);
         Assertions.assertEquals("MIT", license);
+    }
+
+    @Test
+    void testNonProcessableComponent() {
+        final NonProcessableType nonProcessableType = this.applicationContext().get(NonProcessableType.class);
+        Assertions.assertNotNull(nonProcessableType);
+        Assertions.assertNull(nonProcessableType.nonNullIfProcessed());
     }
 }
