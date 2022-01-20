@@ -53,7 +53,6 @@ public class ComponentLocatorImpl implements ComponentLocator {
                 .types(prefix, Component.class, false)
                 .stream()
                 .map(type -> new ComponentContainerImpl(this.applicationContext(), type))
-                .filter(ComponentContainerImpl::enabled)
                 .filter(container -> !container.type().isAnnotation()) // Exclude extended annotations
                 .map(ComponentContainer.class::cast)
                 .filter(container -> container.activators().stream().allMatch(this.applicationContext()::hasActivator))

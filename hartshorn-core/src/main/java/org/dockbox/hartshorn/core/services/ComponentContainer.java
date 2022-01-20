@@ -33,19 +33,11 @@ public interface ComponentContainer {
 
     String name();
 
-    boolean enabled();
-
     TypeContext<?> type();
 
     TypeContext<?> owner();
 
     List<Class<? extends Annotation>> activators();
-
-    @Deprecated(since = "22.1", forRemoval = true)
-    boolean hasActivator();
-
-    @Deprecated(since = "22.1", forRemoval = true)
-    boolean hasActivator(Class<? extends Annotation> activator);
 
     boolean singleton();
 

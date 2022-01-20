@@ -46,8 +46,6 @@ import java.lang.annotation.Target;
  *         there will only ever be one managed instance of the component known to the active {@link ApplicationContext}.</li>
  *     <li>{@link #type()} - The type of the component. This is used to indicate whether the component is a functional
  *         component, and thus modifiable, or if it should only be injected into.</li>
- *     <li>{@link #enabled()} - Indicates whether the component should be automatically enabled. By default, this only
- *         modifies the activation through the active {@link org.dockbox.hartshorn.core.services.ComponentLocator}.</li>
  * </ul>
  *
  * <p>The following example shows how to annotate a class as a component:
@@ -116,18 +114,6 @@ public @interface Component {
      * @see ComponentContainer#type()
      */
     ComponentType type() default ComponentType.INJECTABLE;
-
-    /**
-     * Indicates whether the component should be automatically enabled. By default, this only
-     * modifies the activation through the active {@link org.dockbox.hartshorn.core.services.ComponentLocator}.
-     *
-     * @return {@code true} if the component should be automatically enabled
-     * @see ComponentContainer#enabled()
-     * @deprecated No longer used, as the {@link org.dockbox.hartshorn.core.services.ComponentLocator}
-     *             is responsible for enabling components.
-     */
-    @Deprecated(since = "22.1", forRemoval = true)
-    boolean enabled() default true;
 
     /**
      * Indicates whether the component should be allowed to be proxied. Proxied components may be modified by changing

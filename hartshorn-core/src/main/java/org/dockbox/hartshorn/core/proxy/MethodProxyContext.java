@@ -31,9 +31,6 @@ public final class MethodProxyContext<T, R> {
     @Getter private final Method target;
     private final ProxyFunction<T, R> delegate;
 
-    @Deprecated(since = "22.1", forRemoval = true)
-    @Getter @Setter private Phase phase = Phase.OVERWRITE;
-
     @Setter private boolean overwriteResult = true;
     @Getter @Setter private int priority = 10;
 

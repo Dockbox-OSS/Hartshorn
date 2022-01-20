@@ -17,8 +17,6 @@
 
 package org.dockbox.hartshorn.core.exceptions;
 
-import org.dockbox.hartshorn.core.boot.ExceptionHandler;
-
 /**
  * Thrown when the application runs a validated problem. Typically, this means an
  * exception was caught and is rethrown as a {@link ApplicationException} with the
@@ -36,15 +34,6 @@ public class ApplicationException extends Exception {
 
     public ApplicationException(final Throwable cause) {
         super(cause);
-    }
-
-    /**
-     * @return The current exception, wrapped in a {@link RuntimeException}.
-     * @deprecated Use {@link ExceptionHandler#unchecked(Throwable)} instead.
-     */
-    @Deprecated(since = "22.1", forRemoval = true)
-    public RuntimeException runtime() {
-        return new RuntimeException(this);
     }
 
     /**

@@ -61,14 +61,6 @@ public @interface Service {
     String name() default "";
 
     /**
-     * @see Component#enabled()
-     * @return Whether the service is enabled.
-     * @deprecated See {@link Component#enabled()}
-     */
-    @Deprecated(since = "22.1", forRemoval = true)
-    boolean enabled() default true;
-
-    /**
      * @see Component#owner()
      * @return The owner of the service.
      */

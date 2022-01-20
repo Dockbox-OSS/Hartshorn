@@ -148,12 +148,6 @@ public class HartshornUtilTests {
     }
 
     @Test
-    void testMinimumLongIsCorrect() {
-        final long minimum = HartshornUtils.minimum(1L, 10L, 100L);
-        Assertions.assertEquals(1L, minimum);
-    }
-
-    @Test
     void testArrayMerge() {
         final Object[] arr1 = { 1, 2, 3 };
         final Object[] arr2 = { 4, 5, 6 };
@@ -171,20 +165,6 @@ public class HartshornUtilTests {
 
         Assertions.assertEquals(6, merged.size());
         Assertions.assertTrue(merged.containsAll(Arrays.asList(1, 2, 3, 4, 5, 6)));
-    }
-
-    @Test
-    void testArrayShallowCopy() {
-        final Object[] arr1 = { 1, 2, 3 };
-        final Object[] arr2 = HartshornUtils.shallowCopy(arr1);
-        Assertions.assertNotSame(arr1, arr2);
-        Assertions.assertArrayEquals(arr1, arr2);
-    }
-
-    @ParameterizedTest
-    @MethodSource("equalValues")
-    void testEqual(final Object o1, final Object o2, final boolean expected) {
-        Assertions.assertEquals(expected, HartshornUtils.equal(o1, o2));
     }
 
     @Test

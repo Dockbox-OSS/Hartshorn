@@ -17,8 +17,6 @@
 
 package org.dockbox.hartshorn.core.context;
 
-import org.dockbox.hartshorn.core.InjectionPoint;
-import org.dockbox.hartshorn.core.Key;
 import org.dockbox.hartshorn.core.MetaProvider;
 import org.dockbox.hartshorn.core.annotations.context.LogExclude;
 import org.dockbox.hartshorn.core.boot.ApplicationLogger;
@@ -42,19 +40,7 @@ public interface ApplicationContext extends
         ActivatorSource
 {
 
-    @Deprecated(since = "22.1", forRemoval = true)
-    void add(InjectionPoint<?> property);
-
-    @Deprecated(since = "22.1", forRemoval = true)
-    <T> T create(Key<T> key);
-
     <T> T populate(T type);
-
-    @Deprecated(since = "22.1", forRemoval = true)
-    <T> T raw(TypeContext<T> type);
-
-    @Deprecated(since = "22.1", forRemoval = true)
-    <T> T raw(TypeContext<T> type, boolean populate);
 
     void add(ComponentProcessor<?> processor);
 
