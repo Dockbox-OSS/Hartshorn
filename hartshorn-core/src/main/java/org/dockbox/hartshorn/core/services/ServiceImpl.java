@@ -33,11 +33,6 @@ public class ServiceImpl implements Service {
     }
 
     @Override
-    public boolean enabled() {
-        return true;
-    }
-
-    @Override
     public Class<?> owner() {
         return Service.class;
     }

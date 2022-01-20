@@ -17,12 +17,8 @@
 
 package org.dockbox.hartshorn.web;
 
-import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.core.services.parameter.ParameterLoader;
 import org.dockbox.hartshorn.web.processing.HttpRequestParameterLoaderContext;
-import org.dockbox.hartshorn.web.processing.RequestArgumentProcessor;
-
-import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -30,10 +26,6 @@ import javax.inject.Named;
 import lombok.Getter;
 
 public abstract class DefaultHttpWebServer implements HttpWebServer {
-
-    @Getter
-    @Deprecated(since = "22.1", forRemoval = true)
-    private final Set<RequestArgumentProcessor<?>> processors = HartshornUtils.emptyConcurrentSet();
 
     @Inject
     @Getter

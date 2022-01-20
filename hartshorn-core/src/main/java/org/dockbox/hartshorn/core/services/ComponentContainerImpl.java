@@ -21,7 +21,6 @@ import org.dockbox.hartshorn.core.ComponentType;
 import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.core.annotations.stereotype.Component;
 import org.dockbox.hartshorn.core.annotations.stereotype.Service;
-import org.dockbox.hartshorn.core.annotations.activate.ServiceActivator;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
@@ -71,11 +70,6 @@ public class ComponentContainerImpl implements ComponentContainer {
     }
 
     @Override
-    public boolean enabled() {
-        return this.annotation.enabled();
-    }
-
-    @Override
     public TypeContext<?> type() {
         return this.component;
     }
@@ -88,19 +82,6 @@ public class ComponentContainerImpl implements ComponentContainer {
     @Override
     public List<Class<? extends Annotation>> activators() {
         return Collections.unmodifiableList(this.activators);
-    }
-
-    @Override
-    public boolean hasActivator() {
-        return !(this.activators.isEmpty() || (this.activators.size() == 1 && Service.class.equals(this.activators.get(0))));
-    }
-
-    @Override
-    public boolean hasActivator(final Class<? extends Annotation> activator) {
-        if (!TypeContext.of(activator).annotation(ServiceActivator.class).present())
-            throw new IllegalArgumentException("Requested activator " + activator.getSimpleName() + " is not decorated with @ServiceActivator");
-
-        return this.activators().contains(activator);
     }
 
     @Override

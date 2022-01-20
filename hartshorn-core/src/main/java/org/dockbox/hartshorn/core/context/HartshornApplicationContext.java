@@ -172,29 +172,8 @@ public class HartshornApplicationContext extends DefaultContext implements SelfA
         }
     }
 
-    @Override
-    public void add(final InjectionPoint<?> property) {
-        if (null != property) this.injectionPoints.add(property);
-    }
-
     public <T> T raw(final TypeContext<T> type) {
         return Providers.of(type).provide(this).rethrowUnchecked().orNull();
-    }
-
-    @Override
-    public <T> T raw(final TypeContext<T> type, final boolean populate) {
-        try {
-            final Exceptional<T> instance = Providers.of(type).provide(this);
-            if (instance.present()) {
-                final T t = instance.get();
-                if (populate) this.populate(t);
-                return t;
-            }
-        }
-        catch (final Exception e) {
-            ExceptionHandler.unchecked(e);
-        }
-        return null;
     }
 
     @Override

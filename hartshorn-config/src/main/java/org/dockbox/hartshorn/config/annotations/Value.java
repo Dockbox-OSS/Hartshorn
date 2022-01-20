@@ -17,8 +17,6 @@
 
 package org.dockbox.hartshorn.config.annotations;
 
-import org.dockbox.hartshorn.core.context.element.TypeContext;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -44,13 +42,4 @@ public @interface Value {
      * @return The configuration key.
      */
     String value();
-
-    /**
-     * The default value for the field, used when the result of {@link org.dockbox.hartshorn.core.context.ApplicationPropertyHolder#property(String)}
-     * returned <code>null</code>. Supports native types through {@link org.dockbox.hartshorn.core.context.element.TypeContext#toPrimitive(TypeContext, String)}.
-     *
-     * @return The string-based default value.
-     */
-    @Deprecated(since = "22.1", forRemoval = true)
-    String or() default "";
 }
