@@ -1,0 +1,13 @@
+dependencies {
+    implementation 'org.dockbox.hartshorn:hartshorn-core'
+
+    implementation "org.slf4j:slf4j-api:$slf4jVersion"
+    implementation "org.projectlombok:lombok:$lombokVersion"
+    implementation "org.mockito:mockito-inline:$mockitoVersion"
+    implementation "org.hamcrest:java-hamcrest:$hamcrestVersion"
+    implementation "ch.qos.logback:logback-classic:$logbackVersion"
+    implementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"
+    implementation "org.junit.jupiter:junit-jupiter-params:$junitVersion"
+
+    runtimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
+}

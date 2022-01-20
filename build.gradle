@@ -103,7 +103,6 @@ allprojects {
 
         configurations {
             testImplementation.extendsFrom(implementation)
-            testFixturesImplementation.extendsFrom(implementation)
             all*.exclude group: 'junit', module: 'junit'
         }
 
@@ -131,7 +130,7 @@ allprojects {
             annotationProcessor "org.projectlombok:lombok:$lombokVersion"
             testAnnotationProcessor "org.projectlombok:lombok:$lombokVersion"
 
-            testImplementation testFixtures(project(":hartshorn-core"))
+            testImplementation project(":hartshorn-test-suite")
             testImplementation "org.mockito:mockito-inline:$mockitoVersion"
             testImplementation "org.hamcrest:java-hamcrest:$hamcrestVersion"
             testImplementation "ch.qos.logback:logback-classic:$logbackVersion"
