@@ -17,12 +17,12 @@
 package org.dockbox.hartshorn.core.services;
 
 import org.dockbox.hartshorn.core.Key;
-import org.dockbox.hartshorn.core.annotations.inject.Provided;
-import org.dockbox.hartshorn.core.annotations.activate.UseProxying;
 import org.dockbox.hartshorn.core.annotations.activate.AutomaticActivation;
+import org.dockbox.hartshorn.core.annotations.activate.UseProxying;
+import org.dockbox.hartshorn.core.annotations.inject.Provided;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.MethodProxyContext;
-import org.dockbox.hartshorn.core.proxy.ProxyFunction;
+import org.dockbox.hartshorn.core.proxy.MethodInterceptor;
 
 @AutomaticActivation
 public class ContextMethodPostProcessor extends ServiceAnnotatedMethodInterceptorPostProcessor<Provided, UseProxying> {
@@ -33,8 +33,8 @@ public class ContextMethodPostProcessor extends ServiceAnnotatedMethodIntercepto
     }
 
     @Override
-    public <T, R> ProxyFunction<T, R> process(final ApplicationContext context, final MethodProxyContext<T> methodContext) {
-        return (instance, args, proxyContext) -> {
+    public <T, R> MethodInterceptor<T> process(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext processingContext) {
+        return interceptorContext -> {
             final Provided annotation = methodContext.annotation(Provided.class);
             final String name = annotation.value();
 
@@ -45,7 +45,7 @@ public class ContextMethodPostProcessor extends ServiceAnnotatedMethodIntercepto
     }
 
     @Override
-    public <T> boolean preconditions(final ApplicationContext context, final MethodProxyContext<T> methodContext) {
+    public <T> boolean preconditions(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext processingContext) {
         return !methodContext.method().returnType().isVoid();
     }
 

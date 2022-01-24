@@ -17,7 +17,8 @@
 package org.dockbox.hartshorn.core.proxy;
 
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
-import org.dockbox.hartshorn.core.context.element.MethodContext;
+
+import java.util.concurrent.Callable;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -26,17 +27,16 @@ import lombok.Getter;
 @AllArgsConstructor
 public class ProxyContextImpl implements ProxyContext {
 
-    private final ProxyHandler<?> handler;
-    private final MethodContext<?, ?> proceed;
+    private final Callable<?> proceed;
     private final Object self;
 
     @Override
     public <T> T invoke(final Object... args) throws ApplicationException {
         try {
-            if (this.proceed() == null || this.proceed().isAbstract()) return null;
-            return (T) ((MethodContext<?, Object>) this.proceed()).invoke(this.self(), args).orNull();
+            if (this.proceed() == null) return null;
+            return (T) this.proceed().call();
         }
-        catch (final ClassCastException e) {
+        catch (final Exception e) {
             throw new ApplicationException(e);
         }
     }

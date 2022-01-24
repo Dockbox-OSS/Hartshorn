@@ -31,6 +31,7 @@ public class HibernateProxyLookupInitializer implements LifecycleObserver {
     public void onStarted(final ApplicationContext applicationContext) {
         final ApplicationManager manager = applicationContext.environment().manager();
         if (manager instanceof DelegatingApplicationManager applicationManager) {
+            // TODO: Bytebuddy support
             if (applicationManager.applicationProxier() instanceof JavassistApplicationProxier applicationProxier) {
                 applicationProxier.registerProxyLookup(new HibernateProxyLookup());
             }

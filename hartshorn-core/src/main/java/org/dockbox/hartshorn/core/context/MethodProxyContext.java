@@ -18,7 +18,6 @@ package org.dockbox.hartshorn.core.context;
 
 import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
-import org.dockbox.hartshorn.core.proxy.ProxyHandler;
 
 import java.lang.annotation.Annotation;
 
@@ -33,6 +32,4 @@ public interface MethodProxyContext<T> extends Context {
     <A extends Annotation> A annotation(Class<A> annotation);
 
     ApplicationContext context();
-
-    ProxyHandler<T> handler();
 }

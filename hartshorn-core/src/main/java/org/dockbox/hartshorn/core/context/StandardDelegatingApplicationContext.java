@@ -298,7 +298,6 @@ public class StandardDelegatingApplicationContext extends DefaultContext impleme
         return this.metaProvider;
     }
 
-
     @Override
     public boolean hasActivator(final Class<? extends Annotation> activator) {
         final Exceptional<ServiceActivator> annotation = TypeContext.of(activator).annotation(ServiceActivator.class);
@@ -333,8 +332,6 @@ public class StandardDelegatingApplicationContext extends DefaultContext impleme
         this.environment().prefix(prefix);
         this.prefixQueue.add(prefix);
     }
-
-
 
     @Override
     public <T> void add(final ProviderContext<T> context) {

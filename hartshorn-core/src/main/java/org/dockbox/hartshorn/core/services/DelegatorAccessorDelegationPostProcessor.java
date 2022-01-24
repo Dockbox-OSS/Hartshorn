@@ -16,15 +16,21 @@
 
 package org.dockbox.hartshorn.core.services;
 
-import org.dockbox.hartshorn.core.annotations.activate.UseProxying;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.dockbox.hartshorn.core.Key;
 import org.dockbox.hartshorn.core.annotations.activate.AutomaticActivation;
+import org.dockbox.hartshorn.core.annotations.activate.UseProxying;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
+import org.dockbox.hartshorn.core.context.MethodProxyContext;
+import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.proxy.DelegatorAccessor;
-import org.dockbox.hartshorn.core.proxy.ProxyHandler;
+import org.dockbox.hartshorn.core.proxy.MethodInterceptor;
+
+import java.util.Collection;
 
 @AutomaticActivation
-public class DelegatorAccessorDelegationPostProcessor extends ProxyDelegationPostProcessor<DelegatorAccessor, UseProxying> {
+public class DelegatorAccessorDelegationPostProcessor extends ServiceMethodPostProcessor<UseProxying> {
 
     @Override
     public Class<UseProxying> activator() {
@@ -32,12 +38,26 @@ public class DelegatorAccessorDelegationPostProcessor extends ProxyDelegationPos
     }
 
     @Override
-    protected Class<DelegatorAccessor> parentTarget() {
-        return DelegatorAccessor.class;
+    public <T> boolean modifies(final ApplicationContext context, final Key<T> key, @Nullable final T instance) {
+        return instance instanceof DelegatorAccessor || key.type().childOf(DelegatorAccessor.class);
     }
 
     @Override
-    protected DelegatorAccessor concreteDelegator(final ApplicationContext context, final ProxyHandler<DelegatorAccessor> handler, final TypeContext<? extends DelegatorAccessor> parent) {
-        return context.get(AccessorFactory.class).delegatorAccessor(handler);
+    protected <T> Collection<MethodContext<?, T>> modifiableMethods(final TypeContext<T> type) {
+        return type.methods().stream()
+                .filter(method -> method.parent().is(DelegatorAccessor.class))
+                .toList();
+    }
+
+    @Override
+    public <T> boolean preconditions(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext processingContext) {
+        return methodContext.method().isAbstract();
+    }
+
+    @Override
+    public <T, R> MethodInterceptor<T> process(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext processingContext) {
+        return interceptorContext -> context.environment()
+                .manager()
+                .delegate(TypeContext.of(DelegatorAccessor.class), (DelegatorAccessor) interceptorContext.instance());
     }
 }

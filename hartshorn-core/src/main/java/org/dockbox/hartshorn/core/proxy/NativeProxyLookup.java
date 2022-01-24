@@ -17,7 +17,6 @@
 package org.dockbox.hartshorn.core.proxy;
 
 import org.dockbox.hartshorn.core.AnnotationHelper.AnnotationInvocationHandler;
-import org.dockbox.hartshorn.core.proxy.javassist.JavassistInterfaceHandler;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
@@ -28,10 +27,7 @@ public class NativeProxyLookup implements ProxyLookup {
     @Override
     public <T> Class<T> unproxy(final T instance) {
         final InvocationHandler invocationHandler = Proxy.getInvocationHandler(instance);
-        if (invocationHandler instanceof JavassistInterfaceHandler proxyInterfaceHandler) {
-            return proxyInterfaceHandler.handler().type().type();
-        }
-        else if (invocationHandler instanceof AnnotationInvocationHandler annotationInvocationHandler) {
+        if (invocationHandler instanceof AnnotationInvocationHandler annotationInvocationHandler) {
             return (Class<T>) annotationInvocationHandler.annotation().annotationType();
         }
         else if (instance instanceof Annotation annotation) {

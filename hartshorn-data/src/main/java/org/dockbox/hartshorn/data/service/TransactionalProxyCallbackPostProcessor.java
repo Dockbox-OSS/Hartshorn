@@ -53,7 +53,7 @@ public class TransactionalProxyCallbackPostProcessor extends PhasedProxyCallback
     public <T> ProxyCallback<T> doBefore(final ApplicationContext context, final MethodContext<?, T> method, final Key<T> key, @Nullable final T instance) {
         final TransactionFactory transactionFactory = context.get(TransactionFactory.class);
 
-        return (methodContext, target, args, proxyContext) -> {
+        return (methodContext, target, args) -> {
             if (target instanceof JpaRepository jpaRepository) {
                 final EntityManager entityManager = jpaRepository.entityManager();
                 final TransactionManager manager = transactionFactory.manager(entityManager);
@@ -75,7 +75,7 @@ public class TransactionalProxyCallbackPostProcessor extends PhasedProxyCallback
     }
 
     protected <T> ProxyCallback<T> flushTarget() {
-        return (methodContext, target, args, proxyContext) -> {
+        return (methodContext, target, args) -> {
             if (target instanceof JpaRepository jpaRepository) {
                 jpaRepository.flush();
             }

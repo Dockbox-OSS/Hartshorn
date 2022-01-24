@@ -17,8 +17,8 @@
 package org.dockbox.hartshorn.core.services;
 
 import org.dockbox.hartshorn.core.annotations.Factory;
-import org.dockbox.hartshorn.core.annotations.inject.Enable;
 import org.dockbox.hartshorn.core.annotations.activate.AutomaticActivation;
+import org.dockbox.hartshorn.core.annotations.inject.Enable;
 import org.dockbox.hartshorn.core.annotations.stereotype.Service;
 import org.dockbox.hartshorn.core.boot.ExceptionHandler;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
@@ -28,7 +28,7 @@ import org.dockbox.hartshorn.core.context.element.ConstructorContext;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
-import org.dockbox.hartshorn.core.proxy.ProxyFunction;
+import org.dockbox.hartshorn.core.proxy.MethodInterceptor;
 
 @AutomaticActivation
 public class FactoryServicePostProcessor extends ServiceAnnotatedMethodInterceptorPostProcessor<Factory, Service> {
@@ -44,31 +44,32 @@ public class FactoryServicePostProcessor extends ServiceAnnotatedMethodIntercept
     }
 
     @Override
-    public <T> boolean preconditions(final ApplicationContext context, final MethodProxyContext<T> methodContext) {
+    public <T> boolean preconditions(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext processingContext) {
         return !methodContext.method().returnType().isVoid();
     }
 
     @Override
-    public <T, R> ProxyFunction<T, R> process(final ApplicationContext context, final MethodProxyContext<T> methodContext) {
+    public <T, R> MethodInterceptor<T> process(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext processingContext) {
         final MethodContext<?, T> method = methodContext.method();
         final boolean enable = method.annotation(Enable.class).map(Enable::value).or(true);
         if (method.isAbstract()) {
             final FactoryContext factoryContext = context.first(FactoryContext.class).get();
+
             final Exceptional<? extends ConstructorContext<?>> constructorCandidate = factoryContext.get(method);
             if (constructorCandidate.present()) {
                 final ConstructorContext<?> constructor = constructorCandidate.get();
-                return (instance, args, proxyContext) -> this.processInstance(context, (R) constructor.createInstance(args).orNull(), enable);
+                return interceptorContext -> this.processInstance(context, (R) constructor.createInstance(interceptorContext.args()).orNull(), enable);
             } else {
                 final Factory factory = method.annotation(Factory.class).get();
                 if (factory.required()) {
                     throw new IllegalStateException("No factory found for " + method.qualifiedName());
                 } else {
-                    return (instance, args, proxyContext) -> null;
+                    return interceptorContext -> null;
                 }
             }
         }
         else {
-            return (instance, args, proxyContext) -> this.processInstance(context, (R) methodContext.method().invoke(instance, args).orNull(), enable);
+            return interceptorContext -> this.processInstance(context, (R) methodContext.method().invoke(interceptorContext.instance(), interceptorContext.args()).orNull(), enable);
         }
     }
 

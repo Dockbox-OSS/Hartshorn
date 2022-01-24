@@ -18,7 +18,6 @@ package org.dockbox.hartshorn.core.context;
 
 import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
-import org.dockbox.hartshorn.core.proxy.ProxyHandler;
 
 import java.lang.annotation.Annotation;
 
@@ -33,7 +32,6 @@ public class MethodProxyContextImpl<T> extends DefaultContext implements MethodP
     private final T instance;
     private final TypeContext<T> type;
     private final MethodContext<?, T> method;
-    private final ProxyHandler<T> handler;
 
     @Override
     public <A extends Annotation> A annotation(final Class<A> annotation) {

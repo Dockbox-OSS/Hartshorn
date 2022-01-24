@@ -17,18 +17,19 @@
 package org.dockbox.hartshorn.data.service;
 
 import org.dockbox.hartshorn.core.annotations.activate.AutomaticActivation;
-import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
+import org.dockbox.hartshorn.core.context.MethodProxyContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
+import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.core.proxy.MethodInterceptor;
 import org.dockbox.hartshorn.core.services.ComponentContainer;
+import org.dockbox.hartshorn.core.services.ComponentProcessingContext;
 import org.dockbox.hartshorn.data.DataStorageType;
 import org.dockbox.hartshorn.data.annotations.Serialise;
 import org.dockbox.hartshorn.data.context.PersistenceAnnotationContext;
 import org.dockbox.hartshorn.data.context.SerialisationContext;
 import org.dockbox.hartshorn.data.context.SerialisationTarget;
 import org.dockbox.hartshorn.data.mapping.ObjectMapper;
-import org.dockbox.hartshorn.core.proxy.ProxyFunction;
-import org.dockbox.hartshorn.core.context.MethodProxyContext;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -37,10 +38,10 @@ import java.nio.file.Path;
 public class SerialisationServicePostProcessor extends AbstractPersistenceServicePostProcessor<Serialise, SerialisationContext> {
 
     @Override
-    protected <T, R> ProxyFunction<T, R> processAnnotatedPath(final ApplicationContext context, final MethodProxyContext<T> methodContext, final SerialisationContext serialisationContext) {
-        return (instance, args, proxyContext) -> {
+    protected <T, R> MethodInterceptor<T> processAnnotatedPath(final ApplicationContext context, final MethodProxyContext<T> methodContext, final SerialisationContext serialisationContext) {
+        return interceptorContext -> {
             final Path target = serialisationContext.predeterminedPath();
-            final Object content = args[0];
+            final Object content = interceptorContext.args()[0];
             final ObjectMapper objectMapper = this.mapper(context, serialisationContext);
             final Exceptional<Boolean> result = objectMapper.write(target, content);
             return this.wrapBooleanResult(result, methodContext);
@@ -48,11 +49,11 @@ public class SerialisationServicePostProcessor extends AbstractPersistenceServic
     }
 
     @Override
-    protected <T, R> ProxyFunction<T, R> processParameterPath(final ApplicationContext context, final MethodProxyContext<T> methodContext, final SerialisationContext serialisationContext) {
-        return (instance, args, proxyContext) -> {
+    protected <T, R> MethodInterceptor<T> processParameterPath(final ApplicationContext context, final MethodProxyContext<T> methodContext, final SerialisationContext serialisationContext) {
+        return interceptorContext -> {
             Path target = null;
             Object content = null;
-            for (final Object arg : args) {
+            for (final Object arg : interceptorContext.args()) {
                 if (arg instanceof Path) target = (Path) arg;
                 else if (arg instanceof File) target = ((File) arg).toPath();
                 else content = arg;
@@ -67,9 +68,9 @@ public class SerialisationServicePostProcessor extends AbstractPersistenceServic
     }
 
     @Override
-    protected <T, R> ProxyFunction<T, R> processString(final ApplicationContext context, final MethodProxyContext<T> methodContext, final SerialisationContext serialisationContext) {
-        return (instance, args, proxyContext) -> {
-            final Object content = args[0];
+    protected <T, R> MethodInterceptor<T> processString(final ApplicationContext context, final MethodProxyContext<T> methodContext, final SerialisationContext serialisationContext) {
+        return interceptorContext -> {
+            final Object content = interceptorContext.args()[0];
             final ObjectMapper objectMapper = this.mapper(context, serialisationContext);
 
             final Exceptional<String> result = objectMapper.write(content);
@@ -94,7 +95,7 @@ public class SerialisationServicePostProcessor extends AbstractPersistenceServic
     }
 
     @Override
-    public <T> boolean preconditions(final ApplicationContext context, final MethodProxyContext<T> methodContext) {
+    public <T> boolean preconditions(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext processingContext) {
         if (methodContext.method().parameterCount() < 1) return false;
 
         final Serialise annotation = methodContext.annotation(Serialise.class);

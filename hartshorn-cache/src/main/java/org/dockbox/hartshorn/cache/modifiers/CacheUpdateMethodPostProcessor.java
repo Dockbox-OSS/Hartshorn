@@ -24,8 +24,9 @@ import org.dockbox.hartshorn.core.annotations.activate.AutomaticActivation;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.MethodProxyContext;
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
-import org.dockbox.hartshorn.core.proxy.ProxyFunction;
 import org.dockbox.hartshorn.core.services.ServiceAnnotatedMethodInterceptorPostProcessor;
+import org.dockbox.hartshorn.core.proxy.MethodInterceptor;
+import org.dockbox.hartshorn.core.services.ComponentProcessingContext;
 
 /**
  * The {@link ServiceAnnotatedMethodInterceptorPostProcessor} responsible for {@link UpdateCache}
@@ -42,21 +43,21 @@ public class CacheUpdateMethodPostProcessor extends CacheServicePostProcessor<Up
     }
 
     @Override
-    protected <T, R> ProxyFunction<T, R> process(final ApplicationContext context, final MethodProxyContext<T> methodContext, final CacheContext cacheContext) {
-        return (instance, args, proxyContext) -> {
+    protected <T, R> MethodInterceptor<T> process(final ApplicationContext context, final MethodProxyContext<T> methodContext, final CacheContext cacheContext) {
+        return interceptorContext -> {
             try {
-                final Object o = args[0];
+                final Object o = interceptorContext.args()[0];
                 cacheContext.manager().update(cacheContext.name(), o);
-                return proxyContext.invoke(args);
+                return interceptorContext.invokeDefault();
             } catch (final ApplicationException e) {
                 context.handle(e);
+                return methodContext.method().returnType().defaultOrNull();
             }
-            return null; // Should be void anyway
         };
     }
 
     @Override
-    public <T> boolean preconditions(final ApplicationContext context, final MethodProxyContext<T> methodContext) {
+    public <T> boolean preconditions(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext processingContext) {
         return methodContext.method().parameters().size() == 1;
     }
 

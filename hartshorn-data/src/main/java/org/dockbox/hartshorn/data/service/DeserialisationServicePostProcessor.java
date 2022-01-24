@@ -17,16 +17,17 @@
 package org.dockbox.hartshorn.data.service;
 
 import org.dockbox.hartshorn.core.annotations.activate.AutomaticActivation;
-import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
+import org.dockbox.hartshorn.core.context.MethodProxyContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
+import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.core.proxy.MethodInterceptor;
+import org.dockbox.hartshorn.core.services.ComponentProcessingContext;
 import org.dockbox.hartshorn.data.annotations.Deserialise;
 import org.dockbox.hartshorn.data.context.DeserialisationContext;
 import org.dockbox.hartshorn.data.context.PersistenceAnnotationContext;
 import org.dockbox.hartshorn.data.context.SerialisationTarget;
 import org.dockbox.hartshorn.data.mapping.ObjectMapper;
-import org.dockbox.hartshorn.core.proxy.ProxyFunction;
-import org.dockbox.hartshorn.core.context.MethodProxyContext;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -35,8 +36,8 @@ import java.nio.file.Path;
 public class DeserialisationServicePostProcessor extends AbstractPersistenceServicePostProcessor<Deserialise, DeserialisationContext> {
 
     @Override
-    protected <T, R> ProxyFunction<T, R> processAnnotatedPath(final ApplicationContext context, final MethodProxyContext<T> methodContext, final DeserialisationContext serialisationContext) {
-        return (instance, args, proxyContext) -> {
+    protected <T, R> MethodInterceptor<T> processAnnotatedPath(final ApplicationContext context, final MethodProxyContext<T> methodContext, final DeserialisationContext serialisationContext) {
+        return interceptorContext -> {
             final Path path = serialisationContext.predeterminedPath();
             final ObjectMapper objectMapper = this.mapper(context, serialisationContext);
 
@@ -46,9 +47,10 @@ public class DeserialisationServicePostProcessor extends AbstractPersistenceServ
     }
 
     @Override
-    protected <T, R> ProxyFunction<T, R> processParameterPath(final ApplicationContext context, final MethodProxyContext<T> methodContext, final DeserialisationContext serialisationContext) {
-        return (instance, args, proxyContext) -> {
+    protected <T, R> MethodInterceptor<T> processParameterPath(final ApplicationContext context, final MethodProxyContext<T> methodContext, final DeserialisationContext serialisationContext) {
+        return interceptorContext -> {
             final Path path;
+            final Object[] args = interceptorContext.args();
             if (args[0] instanceof Path) path = (Path) args[0];
             else if (args[0] instanceof File) path = ((File) args[0]).toPath();
             else throw new IllegalArgumentException("Expected one argument to be a subtype of File or Path");
@@ -61,9 +63,9 @@ public class DeserialisationServicePostProcessor extends AbstractPersistenceServ
     }
 
     @Override
-    protected <T, R> ProxyFunction<T, R> processString(final ApplicationContext context, final MethodProxyContext<T> methodContext, final DeserialisationContext serialisationContext) {
-        return (instance, args, proxyContext) -> {
-            final String raw = (String) args[0];
+    protected <T, R> MethodInterceptor<T> processString(final ApplicationContext context, final MethodProxyContext<T> methodContext, final DeserialisationContext serialisationContext) {
+        return interceptorContext -> {
+            final String raw = (String) interceptorContext.args()[0];
             final ObjectMapper objectMapper = this.mapper(context, serialisationContext);
 
             final Exceptional<?> result = objectMapper.read(raw, serialisationContext.type());
@@ -82,7 +84,7 @@ public class DeserialisationServicePostProcessor extends AbstractPersistenceServ
     }
 
     @Override
-    public <T> boolean preconditions(final ApplicationContext context, final MethodProxyContext<T> methodContext) {
+    public <T> boolean preconditions(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext processingContext) {
         if (methodContext.method().parameterCount() > 1) return false;
         if (methodContext.method().returnType().isVoid()) return false;
 

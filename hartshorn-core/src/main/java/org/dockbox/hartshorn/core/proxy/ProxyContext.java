@@ -17,13 +17,12 @@
 package org.dockbox.hartshorn.core.proxy;
 
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
-import org.dockbox.hartshorn.core.context.element.MethodContext;
+
+import java.util.concurrent.Callable;
 
 public interface ProxyContext {
 
-    ProxyHandler<?> handler();
-
-    MethodContext<?, ?> proceed();
+    Callable<?> proceed();
 
     <T> T invoke(Object... args) throws ApplicationException;
 

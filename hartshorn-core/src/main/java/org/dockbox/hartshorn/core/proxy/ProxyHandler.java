@@ -16,15 +16,14 @@
 
 package org.dockbox.hartshorn.core.proxy;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.core.context.Context;
 import org.dockbox.hartshorn.core.context.ContextCarrier;
-import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 
+@Deprecated
 public interface ProxyHandler<T> extends Context, ContextCarrier {
 
     Exceptional<T> proxyInstance();
@@ -32,10 +31,6 @@ public interface ProxyHandler<T> extends Context, ContextCarrier {
     Exceptional<T> instance();
 
     TypeContext<T> type();
-
-    void delegate(@NonNull MethodProxyContext<T, ?> property);
-
-    void callback(MethodContext<?, T> method, @NonNull ProxyMethodCallback<T> callback);
 
     T proxy() throws ApplicationException;
 

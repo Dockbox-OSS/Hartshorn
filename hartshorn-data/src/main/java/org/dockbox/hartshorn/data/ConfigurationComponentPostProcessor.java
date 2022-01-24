@@ -48,11 +48,6 @@ public class ConfigurationComponentPostProcessor implements ComponentPostProcess
         TypeContext<?> instanceType = key.type();
         if (instance != null) instanceType = TypeContext.unproxy(context, instance);
 
-        T modifiableInstance = instance;
-        if (context.environment().manager().isProxy(instance)) {
-            modifiableInstance = context.environment().manager().handler(key.type(), instance).instance().or(modifiableInstance);
-        }
-
         final ValueLookup valueLookup = context.get(ValueLookup.class);
 
         for (final FieldContext<?> field : instanceType.fields(Value.class)) {
@@ -91,7 +86,7 @@ public class ConfigurationComponentPostProcessor implements ComponentPostProcess
                 if ((!field.type().childOf(String.class)) && (value instanceof String stringValue)) {
                     value = TypeContext.toPrimitive(field.type(), stringValue);
                 }
-                field.set(modifiableInstance, value);
+                field.set(instance, value);
             }
             catch (final TypeConversionException | NotPrimitiveException e) {
                 context.log().warn("Could not prepare value field " + field.name() + " in " + instanceType.name());

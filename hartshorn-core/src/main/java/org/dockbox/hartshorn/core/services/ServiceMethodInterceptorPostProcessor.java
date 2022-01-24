@@ -23,9 +23,8 @@ import org.dockbox.hartshorn.core.context.MethodProxyContextImpl;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.exceptions.ProxyMethodBindingException;
-import org.dockbox.hartshorn.core.proxy.MethodProxyContext;
-import org.dockbox.hartshorn.core.proxy.ProxyFunction;
-import org.dockbox.hartshorn.core.proxy.ProxyHandler;
+import org.dockbox.hartshorn.core.proxy.MethodInterceptor;
+import org.dockbox.hartshorn.core.proxy.ProxyFactory;
 
 import java.lang.annotation.Annotation;
 import java.util.Collection;
@@ -34,21 +33,23 @@ public abstract class ServiceMethodInterceptorPostProcessor<A extends Annotation
 
     @Override
     public <T> T process(final ApplicationContext context, final Key<T> key, @Nullable final T instance) {
+        throw new UnsupportedOperationException("Processing service methods without a context is not supported");
+    }
+
+    @Override
+    public <T> T process(final ApplicationContext context, final Key<T> key, @Nullable final T instance, final ComponentProcessingContext processingContext) {
         final TypeContext<T> type = key.type();
         final Collection<MethodContext<?, T>> methods = this.modifiableMethods(type);
 
-        // Will reuse existing handler of proxy
-        final ProxyHandler<T> handler = context.environment().manager().handler(type, instance);
+        final ProxyFactory factory = processingContext.get(Key.of(ProxyFactory.class));
+        if (factory == null) return instance;
 
         for (final MethodContext<?, T> method : methods) {
-            final org.dockbox.hartshorn.core.context.MethodProxyContext ctx = new MethodProxyContextImpl<>(context, instance, type, method, handler);
+            final org.dockbox.hartshorn.core.context.MethodProxyContext ctx = new MethodProxyContextImpl<>(context, instance, type, method);
 
-            if (this.preconditions(context, ctx)) {
-                final ProxyFunction<T, Object> function = this.process(context, ctx);
-                if (function != null) {
-                    final MethodProxyContext<T, ?> property = MethodProxyContext.of(type, method, function);
-                    handler.delegate(property);
-                }
+            if (this.preconditions(context, ctx, processingContext)) {
+                final MethodInterceptor<Object> function = this.process(context, ctx, processingContext);
+                if (function != null) factory.intercept(method, function);
             }
             else {
                 if (this.failOnPrecondition()) {
@@ -60,16 +61,11 @@ public abstract class ServiceMethodInterceptorPostProcessor<A extends Annotation
         return instance;
     }
 
-    @Override
-    public <T> boolean preconditions(final ApplicationContext context, final Key<T> key, @Nullable final T instance) {
-        return super.preconditions(context, key, instance) && context.environment().manager().isProxy(instance);
-    }
-
     protected abstract <T> Collection<MethodContext<?, T>> modifiableMethods(TypeContext<T> type);
 
-    public abstract <T> boolean preconditions(ApplicationContext context, org.dockbox.hartshorn.core.context.MethodProxyContext<T> methodContext);
+    public abstract <T> boolean preconditions(ApplicationContext context, org.dockbox.hartshorn.core.context.MethodProxyContext<T> methodContext, ComponentProcessingContext processingContext);
 
-    public abstract <T, R> ProxyFunction<T, R> process(ApplicationContext context, org.dockbox.hartshorn.core.context.MethodProxyContext<T> methodContext);
+    public abstract <T, R> MethodInterceptor<T> process(ApplicationContext context, org.dockbox.hartshorn.core.context.MethodProxyContext<T> methodContext, ComponentProcessingContext processingContext);
 
     public boolean failOnPrecondition() {
         return true;

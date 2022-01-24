@@ -16,19 +16,19 @@
 
 package org.dockbox.hartshorn.cache.modifiers;
 
-import org.dockbox.hartshorn.core.annotations.activate.AutomaticActivation;
-import org.dockbox.hartshorn.core.domain.Exceptional;
-import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 import org.dockbox.hartshorn.cache.Cache;
 import org.dockbox.hartshorn.cache.Expiration;
 import org.dockbox.hartshorn.cache.annotations.Cached;
 import org.dockbox.hartshorn.cache.context.CacheContext;
 import org.dockbox.hartshorn.cache.context.CacheMethodContext;
 import org.dockbox.hartshorn.cache.context.CacheMethodContextImpl;
+import org.dockbox.hartshorn.core.annotations.activate.AutomaticActivation;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
-import org.dockbox.hartshorn.core.services.ServiceAnnotatedMethodInterceptorPostProcessor;
-import org.dockbox.hartshorn.core.proxy.ProxyFunction;
 import org.dockbox.hartshorn.core.context.MethodProxyContext;
+import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.core.proxy.MethodInterceptor;
+import org.dockbox.hartshorn.core.services.ComponentProcessingContext;
+import org.dockbox.hartshorn.core.services.ServiceAnnotatedMethodInterceptorPostProcessor;
 
 /**
  * The {@link ServiceAnnotatedMethodInterceptorPostProcessor} responsible for {@link Cached}
@@ -39,20 +39,20 @@ import org.dockbox.hartshorn.core.context.MethodProxyContext;
 public class CachedMethodPostProcessor extends CacheServicePostProcessor<Cached> {
 
     @Override
-    protected <T, R> ProxyFunction<T, R> process(final ApplicationContext context, final MethodProxyContext<T> methodContext, final CacheContext cacheContext) {
-        return (instance, args, proxyContext) -> {
+    protected <T, R> MethodInterceptor<T> process(final ApplicationContext context, final MethodProxyContext<T> methodContext, final CacheContext cacheContext) {
+        return (interceptorContext) -> {
             final Cache<Object> cache = cacheContext.cache();
 
             final Exceptional<Object> content = cache.get();
 
-            return (R) content.orElse(() -> {
+            return content.orElse(() -> {
                 context.log().debug("Cache " + cacheContext.name() + " has not been populated yet, or content has expired.");
                 try {
-                    final Object out = proxyContext.invoke(args);
+                    final Object out = interceptorContext.invokeDefault();
                     cache.populate(out);
                     return out;
                 }
-                catch (final ApplicationException e) {
+                catch (final Throwable e) {
                     context.handle(e);
                     return null;
                 }
@@ -67,7 +67,7 @@ public class CachedMethodPostProcessor extends CacheServicePostProcessor<Cached>
     }
 
     @Override
-    public <T> boolean preconditions(final ApplicationContext context, final MethodProxyContext<T> methodContext) {
+    public <T> boolean preconditions(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext processingContext) {
         return !methodContext.method().returnType().isVoid();
     }
 
