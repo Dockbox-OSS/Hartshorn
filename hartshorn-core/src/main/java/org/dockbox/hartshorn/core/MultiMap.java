@@ -27,6 +27,10 @@ public abstract class MultiMap<K, V> {
 
     protected abstract Collection<V> baseCollection();
 
+    public Collection<V> allValues() {
+        return this.values().stream().flatMap(Collection::stream).toList();
+    }
+
     public void putAll(final K key, final Collection<V> values) {
         values.forEach(v -> this.put(key, v));
     }
