@@ -15,14 +15,20 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.hartshorn.core.types;
+package test.types.provision;
 
-import org.dockbox.hartshorn.core.annotations.stereotype.Component;
+import org.dockbox.hartshorn.core.annotations.inject.Provider;
+import org.dockbox.hartshorn.core.annotations.stereotype.Service;
 
-import lombok.Getter;
+import javax.inject.Singleton;
 
-@Component(permitProcessing = false, permitProxying = false)
-public class NonProcessableType {
-    @Getter
-    private String nonNullIfProcessed;
+@Service
+public class FieldProviderService {
+
+    @Provider("field")
+    private final ProvidedInterface field = () -> "Field";
+
+    @Singleton
+    @Provider("singletonField")
+    private final ProvidedInterface singletonField = () -> "Field";
 }

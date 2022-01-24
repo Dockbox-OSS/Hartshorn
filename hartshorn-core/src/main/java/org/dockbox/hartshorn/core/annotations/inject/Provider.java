@@ -43,7 +43,7 @@ import java.lang.annotation.Target;
  * @since 21.2
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
+@Target({ElementType.METHOD, ElementType.FIELD})
 public @interface Provider {
     String value() default "";
     int priority() default -1;
