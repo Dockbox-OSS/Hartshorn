@@ -52,6 +52,7 @@ public class ComponentLocatorImpl implements ComponentLocator {
         final List<ComponentContainer> containers = this.applicationContext().environment()
                 .types(prefix, Component.class, false)
                 .stream()
+                .filter(type -> this.cache.allValues().stream().noneMatch(container -> container.type().equals(type)))
                 .map(type -> new ComponentContainerImpl(this.applicationContext(), type))
                 .filter(container -> !container.type().isAnnotation()) // Exclude extended annotations
                 .map(ComponentContainer.class::cast)
