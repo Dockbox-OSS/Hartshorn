@@ -17,9 +17,9 @@
 
 package org.dockbox.hartshorn.core;
 
-import org.dockbox.hartshorn.core.domain.TypedOwner;
-import org.dockbox.hartshorn.core.context.element.MethodContext;
+import org.dockbox.hartshorn.core.context.element.AnnotatedElementContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
+import org.dockbox.hartshorn.core.domain.TypedOwner;
 
 /**
  * The type responsible for providing metadata on given types.
@@ -44,7 +44,7 @@ public interface MetaProvider {
      * @return <code>true</code> if the type is a singleton, or <code>false</code>
      */
     boolean singleton(TypeContext<?> type);
-    boolean singleton(MethodContext<?, ?> method);
+    boolean singleton(AnnotatedElementContext<?> element);
 
     /**
      * Looks up whether the given type is a component-like type. This only applies if

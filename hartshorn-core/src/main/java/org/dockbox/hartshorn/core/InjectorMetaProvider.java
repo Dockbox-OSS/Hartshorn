@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.core;
 
 import org.dockbox.hartshorn.core.annotations.stereotype.Component;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
-import org.dockbox.hartshorn.core.context.element.MethodContext;
+import org.dockbox.hartshorn.core.context.element.AnnotatedElementContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.domain.TypedOwner;
@@ -66,8 +66,8 @@ public class InjectorMetaProvider implements MetaProvider {
     }
 
     @Override
-    public boolean singleton(final MethodContext<?, ?> method) {
-        return method.annotation(Singleton.class).present();
+    public boolean singleton(final AnnotatedElementContext<?> element) {
+        return element.annotation(Singleton.class).present();
     }
 
     @Override
