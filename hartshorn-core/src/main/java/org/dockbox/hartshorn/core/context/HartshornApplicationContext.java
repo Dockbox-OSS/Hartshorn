@@ -71,11 +71,11 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.PriorityQueue;
 import java.util.Properties;
 import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -91,13 +91,14 @@ import lombok.Getter;
 
 public class HartshornApplicationContext extends DefaultContext implements SelfActivatingApplicationContext {
 
+    public static Comparator<String> PREFIX_PRIORITY_COMPARATOR = Comparator.naturalOrder();
     private static final Pattern ARGUMENTS = Pattern.compile("-H([a-zA-Z0-9\\.]+)=(.+)");
 
     protected final transient Set<InjectionPoint<?>> injectionPoints = HartshornUtils.emptyConcurrentSet();
     protected final transient MultiMap<ProcessingOrder, ComponentPostProcessor<?>> postProcessors = new CustomMultiMap<>(HartshornUtils::emptyConcurrentSet);
     protected final transient MultiMap<ProcessingOrder, ComponentPreProcessor<?>> preProcessors = new CustomMultiMap<>(HartshornUtils::emptyConcurrentSet);
     protected final transient Properties environmentValues = new Properties();
-    protected final transient Queue<String> prefixQueue = new ConcurrentLinkedQueue<>();
+    protected final transient Queue<String> prefixQueue = new PriorityQueue<>(PREFIX_PRIORITY_COMPARATOR);
 
     @Getter(AccessLevel.PROTECTED) private final Activator activator;
     @Getter private final ApplicationEnvironment environment;
@@ -206,16 +207,20 @@ public class HartshornApplicationContext extends DefaultContext implements SelfA
 
     @Override
     public void processPrefixQueue() {
-        String scan;
-        while ((scan = this.prefixQueue.poll()) != null) {
-            this.locator().register(scan);
+        String next;
+        while ((next = this.prefixQueue.poll()) != null) {
+            this.processPrefix(next);
+        }
+    }
 
-            final Collection<TypeContext<?>> binders = this.environment().types(scan, ComponentBinding.class, false);
+    protected void processPrefix(final String prefix) {
+        this.locator().register(prefix);
 
-            for (final TypeContext<?> binder : binders) {
-                final ComponentBinding bindAnnotation = binder.annotation(ComponentBinding.class).get();
-                this.handleBinder(binder, bindAnnotation);
-            }
+        final Collection<TypeContext<?>> binders = this.environment().types(prefix, ComponentBinding.class, false);
+
+        for (final TypeContext<?> binder : binders) {
+            final ComponentBinding bindAnnotation = binder.annotation(ComponentBinding.class).get();
+            this.handleBinder(binder, bindAnnotation);
         }
     }
 
