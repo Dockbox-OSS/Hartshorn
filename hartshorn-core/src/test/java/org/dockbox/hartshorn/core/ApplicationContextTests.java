@@ -63,6 +63,7 @@ import test.types.SampleFieldImplementation;
 import test.types.SampleImplementation;
 import test.types.SampleInterface;
 import test.types.meta.SampleMetaAnnotatedImplementation;
+import test.types.provision.FieldProviderService;
 import test.types.provision.ProvidedInterface;
 import test.types.scan.SampleAnnotatedImplementation;
 
@@ -78,8 +79,8 @@ public class ApplicationContextTests {
         return Stream.of(
                 Arguments.of(null, "Provision", false, null, false),
                 Arguments.of("named", "NamedProvision", false, null, false),
-                Arguments.of("field", "FieldProvision", true, null, false),
-                Arguments.of("namedField", "NamedFieldProvision", true, "named", false),
+                Arguments.of("parameter", "ParameterProvision", true, null, false),
+                Arguments.of("namedParameter", "NamedParameterProvision", true, "named", false),
                 Arguments.of("singleton", "SingletonProvision", false, null, true)
         );
     }
@@ -280,6 +281,29 @@ public class ApplicationContextTests {
             Assertions.assertNotNull(second);
             Assertions.assertSame(provided, second);
         }
+    }
+
+    @Test
+    void testFieldProviders() {
+        this.applicationContext().bind("test.types.provision");
+        ((HartshornApplicationContext) this.applicationContext()).process();
+        final ProvidedInterface field = this.applicationContext().get(Key.of(ProvidedInterface.class, "field"));
+        Assertions.assertNotNull(field);
+        Assertions.assertEquals("Field", field.name());
+    }
+
+    @Test
+    void testSingletonFieldProviders() {
+        this.applicationContext().bind("test.types.provision");
+        ((HartshornApplicationContext) this.applicationContext()).process();
+        this.applicationContext().get(FieldProviderService.class);
+        final ProvidedInterface field = this.applicationContext().get(Key.of(ProvidedInterface.class, "singletonField"));
+        Assertions.assertNotNull(field);
+
+        final ProvidedInterface field2 = this.applicationContext().get(Key.of(ProvidedInterface.class, "singletonField"));
+        Assertions.assertNotNull(field2);
+
+        Assertions.assertSame(field, field2);
     }
 
     @Test

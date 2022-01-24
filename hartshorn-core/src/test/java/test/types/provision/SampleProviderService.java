@@ -38,14 +38,14 @@ public class SampleProviderService {
         return () -> "NamedProvision";
     }
 
-    @Provider("field")
-    public ProvidedInterface withField(final SampleField field) {
-        return () -> "FieldProvision";
+    @Provider("parameter")
+    public ProvidedInterface withParameter(final SampleField field) {
+        return () -> "ParameterProvision";
     }
 
-    @Provider("namedField")
+    @Provider("namedParameter")
     public ProvidedInterface withNamedField(@Named("named") final SampleField field) {
-        return () -> "NamedFieldProvision";
+        return () -> "NamedParameterProvision";
     }
 
     @Singleton
