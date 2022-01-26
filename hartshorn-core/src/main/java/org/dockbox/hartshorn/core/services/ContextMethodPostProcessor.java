@@ -26,7 +26,7 @@ import org.dockbox.hartshorn.core.context.MethodProxyContext;
 import org.dockbox.hartshorn.core.proxy.ProxyFunction;
 
 @AutomaticActivation
-public class ContextMethodPostProcessor extends ServiceAnnotatedMethodPostProcessor<Provided, UseProxying> {
+public class ContextMethodPostProcessor extends ServiceAnnotatedMethodInterceptorPostProcessor<Provided, UseProxying> {
 
     @Override
     public Class<UseProxying> activator() {

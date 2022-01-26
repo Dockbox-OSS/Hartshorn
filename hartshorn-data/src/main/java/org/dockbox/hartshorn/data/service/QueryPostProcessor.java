@@ -25,7 +25,7 @@ import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.proxy.ProxyContext;
 import org.dockbox.hartshorn.core.proxy.ProxyFunction;
 import org.dockbox.hartshorn.core.services.ProcessingOrder;
-import org.dockbox.hartshorn.core.services.ServiceAnnotatedMethodPostProcessor;
+import org.dockbox.hartshorn.core.services.ServiceAnnotatedMethodInterceptorPostProcessor;
 import org.dockbox.hartshorn.data.QueryFunction;
 import org.dockbox.hartshorn.data.annotations.EntityModifier;
 import org.dockbox.hartshorn.data.annotations.Query;
@@ -39,7 +39,7 @@ import java.util.Collection;
 import java.util.List;
 
 @AutomaticActivation
-public class QueryPostProcessor extends ServiceAnnotatedMethodPostProcessor<Query, UsePersistence> {
+public class QueryPostProcessor extends ServiceAnnotatedMethodInterceptorPostProcessor<Query, UsePersistence> {
 
     @Override
     public Class<UsePersistence> activator() {

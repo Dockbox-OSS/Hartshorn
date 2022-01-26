@@ -31,7 +31,7 @@ import org.dockbox.hartshorn.core.proxy.ProxyHandler;
 import java.lang.annotation.Annotation;
 import java.util.Collection;
 
-public abstract class ServiceMethodPostProcessor<A extends Annotation> extends FunctionalComponentPostProcessor<A> {
+public abstract class ServiceMethodInterceptorPostProcessor<A extends Annotation> extends FunctionalComponentPostProcessor<A> {
 
     @Override
     public <T> T process(final ApplicationContext context, final Key<T> key, @Nullable final T instance) {
