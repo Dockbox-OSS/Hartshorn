@@ -20,7 +20,6 @@ package org.dockbox.hartshorn.demo.caching.services;
 import org.dockbox.hartshorn.cache.annotations.CacheService;
 import org.dockbox.hartshorn.cache.annotations.Cached;
 import org.dockbox.hartshorn.cache.annotations.EvictCache;
-import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.core.annotations.stereotype.Service;
 import org.dockbox.hartshorn.core.boot.ApplicationState;
 import org.dockbox.hartshorn.core.boot.ApplicationState.Started;
@@ -33,6 +32,7 @@ import org.dockbox.hartshorn.events.annotations.Listener;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * A simple service capable of caching collections. If you only use automatic cache expiration through {@link Cached#expires()},
@@ -43,7 +43,7 @@ import java.util.Map;
 @CacheService("user-cache")
 public abstract class CachingService {
 
-    private final Map<User, Long> lastModified = HartshornUtils.emptyMap();
+    private final Map<User, Long> lastModified = new ConcurrentHashMap<>();
 
     /**
      * Gets a singleton list containing a single {@link User}. The user is always unique, and is stored alongside

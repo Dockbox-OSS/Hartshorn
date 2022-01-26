@@ -111,12 +111,6 @@ public class HartshornUtilTests {
         Assertions.assertTrue(map.isEmpty());
     }
 
-    @Test
-    void testEmptyMapIsModifiable() {
-        final Map<Object, Object> map = HartshornUtils.emptyMap();
-        Assertions.assertDoesNotThrow(() -> map.put(1, "two"));
-    }
-
     @ParameterizedTest
     @MethodSource("modifiableCollections")
     void testCollectionCanBeModified(final Collection<String> collection) {

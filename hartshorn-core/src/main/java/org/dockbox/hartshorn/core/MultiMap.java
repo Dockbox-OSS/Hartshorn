@@ -20,10 +20,11 @@ package org.dockbox.hartshorn.core;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class MultiMap<K, V> {
 
-    private final Map<K, Collection<V>> map = HartshornUtils.emptyMap();
+    private final Map<K, Collection<V>> map = new ConcurrentHashMap<>();
 
     protected abstract Collection<V> baseCollection();
 

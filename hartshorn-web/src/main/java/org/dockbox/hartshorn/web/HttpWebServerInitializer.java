@@ -18,7 +18,6 @@
 package org.dockbox.hartshorn.web;
 
 import org.dockbox.hartshorn.config.annotations.Value;
-import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.core.annotations.stereotype.Service;
 import org.dockbox.hartshorn.core.boot.ExceptionHandler;
 import org.dockbox.hartshorn.core.boot.LifecycleObserver;
@@ -35,6 +34,7 @@ import org.dockbox.hartshorn.web.servlet.WebServlet;
 import org.dockbox.hartshorn.web.servlet.WebServletFactory;
 import org.dockbox.hartshorn.web.servlet.WebServletImpl;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -59,7 +59,7 @@ public class HttpWebServerInitializer implements LifecycleObserver {
 
     @Override
     public void onStarted(final ApplicationContext applicationContext) {
-        final Map<String, Servlet> servlets = HartshornUtils.emptyMap();
+        final Map<String, Servlet> servlets = new HashMap<>();
 
         final ControllerContext controllerContext = applicationContext.first(ControllerContext.class).get();
         for (final RequestHandlerContext context : controllerContext.requestHandlerContexts()) {
