@@ -20,6 +20,5 @@ apply from: "$project.rootDir/gradle/publications.gradle"
 dependencies {
     implementation 'org.dockbox.hartshorn:hartshorn-core'
     implementation 'org.dockbox.hartshorn:hartshorn-i18n'
-    implementation 'org.dockbox.hartshorn:hartshorn-tasks'
     implementation 'org.dockbox.hartshorn:hartshorn-events'
 }

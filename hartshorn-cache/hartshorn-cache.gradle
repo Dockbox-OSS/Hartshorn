@@ -19,5 +19,4 @@ apply from: "$project.rootDir/gradle/publications.gradle"
 
 dependencies {
     implementation 'org.dockbox.hartshorn:hartshorn-core'
-    implementation 'org.dockbox.hartshorn:hartshorn-tasks'
 }

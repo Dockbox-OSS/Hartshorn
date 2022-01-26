@@ -24,7 +24,6 @@ import org.dockbox.hartshorn.commands.SystemSubject;
 import org.dockbox.hartshorn.commands.exceptions.ParsingException;
 import org.dockbox.hartshorn.core.annotations.inject.ComponentBinding;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
-import org.dockbox.hartshorn.core.task.ThreadUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -42,8 +41,6 @@ public class SimpleCommandCLI implements CommandCLI {
     private ApplicationContext context;
     @Inject
     private CommandGateway gateway;
-    @Inject
-    private ThreadUtils threads;
 
     @Getter
     @Setter

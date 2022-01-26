@@ -20,6 +20,7 @@ package org.dockbox.hartshorn.core.task;
 import org.dockbox.hartshorn.core.task.pipeline.pipelines.Pipeline;
 import org.dockbox.hartshorn.core.task.pipeline.pipes.EqualPipe;
 
+@Deprecated(forRemoval = true, since = "22.2")
 public abstract class PipelineTask extends AbstractTask {
 
     private final Pipeline<Void> pipeline;

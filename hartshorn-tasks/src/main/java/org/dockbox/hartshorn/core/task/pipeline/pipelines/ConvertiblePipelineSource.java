@@ -21,6 +21,10 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
+/**
+ * @deprecated Moved to https://github.com/GuusLieben/JPipelines
+ */
+@Deprecated(forRemoval = true, since = "22.2")
 public class ConvertiblePipelineSource<I> extends ConvertiblePipeline<I, I> {
 
     /**

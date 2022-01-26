@@ -21,6 +21,10 @@ import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 import org.dockbox.hartshorn.core.task.pipeline.pipelines.AbstractPipeline;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 
+/**
+ * @deprecated Moved to https://github.com/GuusLieben/JPipelines
+ */
+@Deprecated(forRemoval = true, since = "22.2")
 @FunctionalInterface
 public interface ComplexPipe<I, O> extends IPipe<I, O> {
 

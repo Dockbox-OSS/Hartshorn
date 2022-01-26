@@ -26,6 +26,7 @@ import java.util.function.Consumer;
 /**
  * A low-level interface for easy thread-based actions.
  */
+@Deprecated(forRemoval = true, since = "22.2")
 public interface ThreadUtils {
 
     /**
