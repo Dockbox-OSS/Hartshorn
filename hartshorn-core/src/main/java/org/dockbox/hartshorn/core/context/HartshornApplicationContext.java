@@ -92,7 +92,7 @@ import lombok.Getter;
 public class HartshornApplicationContext extends DefaultContext implements SelfActivatingApplicationContext {
 
     public static Comparator<String> PREFIX_PRIORITY_COMPARATOR = Comparator.naturalOrder();
-    private static final Pattern ARGUMENTS = Pattern.compile("-H([a-zA-Z0-9\\.]+)=(.+)");
+    private static final Pattern ARGUMENTS = Pattern.compile("--([a-zA-Z0-9\\.]+)=(.+)");
 
     protected final transient Set<InjectionPoint<?>> injectionPoints = HartshornUtils.emptyConcurrentSet();
     protected final transient MultiMap<ProcessingOrder, ComponentPostProcessor<?>> postProcessors = new CustomMultiMap<>(HartshornUtils::emptyConcurrentSet);

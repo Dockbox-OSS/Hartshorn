@@ -27,7 +27,7 @@ public class HartshornFactoryTests {
 
     @HartshornFactory
     public static ApplicationFactory<?, ?> factory(final ApplicationFactory<?, ?> factory) {
-        return factory.argument("-Hfactory.modified=true");
+        return factory.argument("--factory.modified=true");
     }
 
     @InjectTest
