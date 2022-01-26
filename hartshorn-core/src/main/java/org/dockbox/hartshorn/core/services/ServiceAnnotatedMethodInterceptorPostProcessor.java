@@ -26,7 +26,7 @@ import org.dockbox.hartshorn.core.context.element.TypeContext;
 import java.lang.annotation.Annotation;
 import java.util.Collection;
 
-public abstract class ServiceAnnotatedMethodPostProcessor<M extends Annotation, A extends Annotation> extends FunctionalComponentPostProcessor<A> {
+public abstract class ServiceAnnotatedMethodInterceptorPostProcessor<M extends Annotation, A extends Annotation> extends ServiceMethodInterceptorPostProcessor<A> {
 
     @Override
     public <T> boolean modifies(final ApplicationContext context, final Key<T> key, @Nullable final T instance) {
@@ -36,18 +36,6 @@ public abstract class ServiceAnnotatedMethodPostProcessor<M extends Annotation, 
     public abstract Class<M> annotation();
 
     @Override
-    public <T> T process(final ApplicationContext context, final Key<T> key, @Nullable final T instance) {
-        final TypeContext<T> type = key.type();
-        final Collection<MethodContext<?, T>> methods = this.modifiableMethods(type);
-
-        for (final MethodContext<?, T> method : methods) {
-            this.process(context, key, instance, method);
-        }
-        return instance;
-    }
-
-    protected abstract <T> T process(final ApplicationContext context, final Key<T> key, @Nullable final T instance, final MethodContext<?, T> method);
-
     protected <T> Collection<MethodContext<?, T>> modifiableMethods(final TypeContext<T> type) {
         return type.methods(this.annotation());
     }

@@ -26,7 +26,7 @@ import org.dockbox.hartshorn.core.domain.TypedOwner;
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 import org.dockbox.hartshorn.core.proxy.ProxyFunction;
 import org.dockbox.hartshorn.core.services.ComponentContainer;
-import org.dockbox.hartshorn.core.services.ServiceAnnotatedMethodPostProcessor;
+import org.dockbox.hartshorn.core.services.ServiceAnnotatedMethodInterceptorPostProcessor;
 import org.dockbox.hartshorn.data.FileFormats;
 import org.dockbox.hartshorn.data.annotations.UsePersistence;
 import org.dockbox.hartshorn.data.context.PersistenceAnnotationContext;
@@ -38,7 +38,7 @@ import java.lang.annotation.Annotation;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public abstract class AbstractPersistenceServicePostProcessor<M extends Annotation, C extends SerialisationContext> extends ServiceAnnotatedMethodPostProcessor<M, UsePersistence> {
+public abstract class AbstractPersistenceServicePostProcessor<M extends Annotation, C extends SerialisationContext> extends ServiceAnnotatedMethodInterceptorPostProcessor<M, UsePersistence> {
 
     @Override
     public Class<UsePersistence> activator() {

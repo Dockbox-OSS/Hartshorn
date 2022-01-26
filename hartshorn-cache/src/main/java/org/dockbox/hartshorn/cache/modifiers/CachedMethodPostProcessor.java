@@ -27,12 +27,12 @@ import org.dockbox.hartshorn.cache.context.CacheContext;
 import org.dockbox.hartshorn.cache.context.CacheMethodContext;
 import org.dockbox.hartshorn.cache.context.CacheMethodContextImpl;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
-import org.dockbox.hartshorn.core.services.ServiceAnnotatedMethodPostProcessor;
+import org.dockbox.hartshorn.core.services.ServiceAnnotatedMethodInterceptorPostProcessor;
 import org.dockbox.hartshorn.core.proxy.ProxyFunction;
 import org.dockbox.hartshorn.core.context.MethodProxyContext;
 
 /**
- * The {@link ServiceAnnotatedMethodPostProcessor} responsible for {@link Cached}
+ * The {@link ServiceAnnotatedMethodInterceptorPostProcessor} responsible for {@link Cached}
  * decorated methods. This delegates functionality to the underlying {@link org.dockbox.hartshorn.cache.CacheManager}
  * to store or obtain {@link Cache} entries.
  */

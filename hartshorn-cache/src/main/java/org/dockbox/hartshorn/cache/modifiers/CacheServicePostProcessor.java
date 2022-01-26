@@ -30,17 +30,17 @@ import org.dockbox.hartshorn.core.context.MethodProxyContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.proxy.ProxyFunction;
 import org.dockbox.hartshorn.core.services.ComponentContainer;
-import org.dockbox.hartshorn.core.services.ServiceAnnotatedMethodPostProcessor;
+import org.dockbox.hartshorn.core.services.ServiceAnnotatedMethodInterceptorPostProcessor;
 
 import java.lang.annotation.Annotation;
 import java.util.function.Supplier;
 
 /**
- * Common functionality for cache related {@link ServiceAnnotatedMethodPostProcessor modifiers}.
+ * Common functionality for cache related {@link ServiceAnnotatedMethodInterceptorPostProcessor modifiers}.
  *
  * @param <A> The cache-related annotation
  */
-public abstract class CacheServicePostProcessor<A extends Annotation> extends ServiceAnnotatedMethodPostProcessor<A, UseCaching> {
+public abstract class CacheServicePostProcessor<A extends Annotation> extends ServiceAnnotatedMethodInterceptorPostProcessor<A, UseCaching> {
 
     @Override
     public <T, R> ProxyFunction<T, R> process(final ApplicationContext context, final MethodProxyContext<T> methodContext) {

@@ -31,7 +31,7 @@ import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 import org.dockbox.hartshorn.core.proxy.ProxyFunction;
 
 @AutomaticActivation
-public class FactoryServicePostProcessor extends ServiceAnnotatedMethodPostProcessor<Factory, Service> {
+public class FactoryServicePostProcessor extends ServiceAnnotatedMethodInterceptorPostProcessor<Factory, Service> {
 
     @Override
     public Class<Service> activator() {

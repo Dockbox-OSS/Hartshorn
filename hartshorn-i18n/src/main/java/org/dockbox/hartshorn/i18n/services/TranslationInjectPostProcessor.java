@@ -31,10 +31,10 @@ import org.dockbox.hartshorn.i18n.annotations.InjectTranslation;
 import org.dockbox.hartshorn.i18n.annotations.UseTranslations;
 import org.dockbox.hartshorn.core.proxy.ProxyFunction;
 import org.dockbox.hartshorn.core.context.MethodProxyContext;
-import org.dockbox.hartshorn.core.services.ServiceAnnotatedMethodPostProcessor;
+import org.dockbox.hartshorn.core.services.ServiceAnnotatedMethodInterceptorPostProcessor;
 
 @AutomaticActivation
-public class TranslationInjectPostProcessor extends ServiceAnnotatedMethodPostProcessor<InjectTranslation, UseTranslations> {
+public class TranslationInjectPostProcessor extends ServiceAnnotatedMethodInterceptorPostProcessor<InjectTranslation, UseTranslations> {
 
     @Override
     public <T, R> ProxyFunction<T, R> process(final ApplicationContext context, final MethodProxyContext<T> methodContext) {

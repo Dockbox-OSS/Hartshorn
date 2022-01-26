@@ -31,7 +31,7 @@ import org.dockbox.hartshorn.core.proxy.ProxyHandler;
 import java.lang.annotation.Annotation;
 import java.util.Collection;
 
-public abstract class ProxyDelegationPostProcessor<P, A extends Annotation> extends ServiceMethodPostProcessor<A> {
+public abstract class ProxyDelegationPostProcessor<P, A extends Annotation> extends ServiceMethodInterceptorPostProcessor<A> {
 
     protected abstract Class<P> parentTarget();
 
