@@ -17,8 +17,7 @@
 
 package org.dockbox.hartshorn.i18n;
 
-import org.dockbox.hartshorn.core.HartshornUtils;
-
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -38,10 +37,10 @@ public class MessageTemplate implements Message {
         this.language = language;
         this.key = key;
 
-        this.formattingArgs = HartshornUtils.emptyMap();
+        this.formattingArgs = new HashMap<>();
         this.formattingArgs.put(this.language(), args);
 
-        this.resourceMap = HartshornUtils.emptyMap();
+        this.resourceMap = new HashMap<>();
         this.resourceMap.put(language, value);
 
         this.defaultValue = value;
@@ -103,7 +102,7 @@ public class MessageTemplate implements Message {
         final String temp = this.safeValue();
         final Object[] args = this.formattingArgs.getOrDefault(this.language(), new Object[0]);
         if (0 == args.length) return temp;
-        final Map<String, String> map = HartshornUtils.emptyMap();
+        final Map<String, String> map = new HashMap<>();
 
         for (int i = 0; i < args.length; i++) {
             final String arg = "" + args[i];

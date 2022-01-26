@@ -41,6 +41,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -106,7 +107,7 @@ public final class TranslationBatchGenerator {
         final Properties properties = new Properties();
         properties.load(new StringReader(batch));
 
-        final Map<String, String> files = HartshornUtils.emptyMap();
+        final Map<String, String> files = new HashMap<>();
 
         for (final File file : TranslationBatchGenerator.existingFiles()) {
             final List<String> strings = Files.readAllLines(file.toPath(), StandardCharsets.UTF_8);
@@ -174,7 +175,7 @@ public final class TranslationBatchGenerator {
     }
 
     public static Map<String, String> collect(final ApplicationContext context) {
-        final Map<String, String> batch = HartshornUtils.emptyMap();
+        final Map<String, String> batch = new HashMap<>();
         for (final ComponentContainer container : context.locator().containers()) {
             final TypeContext<?> type = container.type();
             final List<? extends MethodContext<?, ?>> methods = type.methods(InjectTranslation.class);

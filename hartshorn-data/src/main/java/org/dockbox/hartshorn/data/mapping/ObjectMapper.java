@@ -18,7 +18,6 @@
 package org.dockbox.hartshorn.data.mapping;
 
 import org.dockbox.hartshorn.core.GenericType;
-import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.data.FileFormat;
@@ -26,6 +25,7 @@ import org.dockbox.hartshorn.data.FileFormat;
 import java.net.URI;
 import java.net.URL;
 import java.nio.file.Path;
+import java.util.HashMap;
 import java.util.Map;
 
 public interface ObjectMapper {
@@ -73,7 +73,7 @@ public interface ObjectMapper {
     Map<String, Object> flat(URL url);
 
     default Map<String, Object> flat(final URI uri) {
-        return Exceptional.of(() -> this.flat(uri.toURL())).or(HartshornUtils.emptyMap());
+        return Exceptional.of(() -> this.flat(uri.toURL())).or(new HashMap<>());
     }
 
     <T> Exceptional<Boolean> write(Path path, T content);

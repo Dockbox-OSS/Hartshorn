@@ -43,6 +43,7 @@ import java.lang.reflect.Type;
 import java.lang.reflect.WildcardType;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -606,7 +607,7 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
     protected Map<Class<?>, Annotation> validate() {
         if (this.parent().isVoid()) return super.validate();
         else if (this.annotations == null) {
-            final Map<Class<?>, Annotation> annotations = HartshornUtils.emptyMap();
+            final Map<Class<?>, Annotation> annotations = new HashMap<>();
             Class<?> type = this.type();
             while (type != null) {
                 for (final Annotation annotation : type.getDeclaredAnnotations()) {

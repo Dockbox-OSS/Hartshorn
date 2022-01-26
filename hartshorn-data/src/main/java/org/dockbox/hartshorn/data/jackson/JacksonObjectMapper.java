@@ -34,10 +34,9 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.ValueNode;
 
 import org.dockbox.hartshorn.core.GenericType;
-import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.core.Key;
-import org.dockbox.hartshorn.core.annotations.stereotype.Component;
 import org.dockbox.hartshorn.core.annotations.inject.ComponentBinding;
+import org.dockbox.hartshorn.core.annotations.stereotype.Component;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
@@ -50,6 +49,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Path;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -157,7 +157,7 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
     }
 
     private Map<String, Object> flatInternal(final FlatNodeSupplier node) {
-        final Map<String, Object> flat = HartshornUtils.emptyMap();
+        final Map<String, Object> flat = new HashMap<>();
         try {
             final JsonNode jsonNode = node.get();
             this.addKeys("", jsonNode, flat);

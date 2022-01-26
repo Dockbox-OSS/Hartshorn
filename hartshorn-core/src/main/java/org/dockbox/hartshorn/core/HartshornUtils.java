@@ -75,7 +75,7 @@ public final class HartshornUtils {
 
     /**
      * Constructs a new unique map from a given set of {@link Entry entries}. If no entries are
-     * provided {@link HartshornUtils#emptyMap()} is returned. The constructed map is not concurrent.
+     * provided an empty {@link Map} is returned. The constructed map is not concurrent.
      * Entries can easily be created using {@link org.dockbox.hartshorn.core.domain.tuple.Tuple#of(Object, Object)}
      *
      * @param <K> The (super)type of all keys in the entry set
@@ -89,28 +89,15 @@ public final class HartshornUtils {
     @SafeVarargs
     public static <K, V> Map<K, V> ofEntries(final Entry<? extends K, ? extends V>... entries) {
         if (0 == entries.length) { // implicit null check of entries array
-            return HartshornUtils.emptyMap();
+            return new HashMap<>();
         }
         else {
-            final Map<K, V> map = HartshornUtils.emptyMap();
+            final Map<K, V> map = new HashMap<>();
             for (final Entry<? extends K, ? extends V> entry : entries) {
                 map.put(entry.getKey(), entry.getValue());
             }
             return map;
         }
-    }
-
-    /**
-     * Returns a new empty map. This should be used globally instead of instantiating maps manually.
-     * The returned map is not concurrent.
-     *
-     * @param <K> The (super)type of the map key-set
-     * @param <V> The (super)type of the map value-set
-     *
-     * @return The new map
-     */
-    public static <K, V> Map<K, V> emptyMap() {
-        return new HashMap<>();
     }
 
     public static <T> Set<T> emptyConcurrentSet() {

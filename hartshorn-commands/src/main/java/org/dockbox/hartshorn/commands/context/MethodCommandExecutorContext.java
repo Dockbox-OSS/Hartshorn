@@ -27,7 +27,6 @@ import org.dockbox.hartshorn.commands.arguments.CommandParameterLoaderContext;
 import org.dockbox.hartshorn.commands.definition.CommandElement;
 import org.dockbox.hartshorn.commands.events.CommandEvent;
 import org.dockbox.hartshorn.commands.events.CommandEvent.Before;
-import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.core.Key;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.DefaultCarrierContext;
@@ -44,6 +43,7 @@ import org.dockbox.hartshorn.i18n.Message;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -106,7 +106,7 @@ public class MethodCommandExecutorContext<T> extends DefaultCarrierContext imple
 
     public Map<String, CommandParameterContext> parameters() {
         if (this.parameters == null) {
-            this.parameters = HartshornUtils.emptyMap();
+            this.parameters = new HashMap<>();
             final LinkedList<ParameterContext<?>> parameters = this.method().parameters();
             for (int i = 0; i < parameters.size(); i++) {
                 final ParameterContext<?> parameter = parameters.get(i);

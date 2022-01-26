@@ -19,15 +19,15 @@ package org.dockbox.hartshorn.events.handle;
 
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.events.parents.Event;
-import org.dockbox.hartshorn.core.HartshornUtils;
 
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import lombok.Getter;
 
 public final class EventHandlerRegistry {
 
-    @Getter private final Map<TypeContext<? extends Event>, EventHandler> handlers = HartshornUtils.emptyMap();
+    @Getter private final Map<TypeContext<? extends Event>, EventHandler> handlers = new ConcurrentHashMap<>();
 
     public EventHandler handler(final TypeContext<? extends Event> type) {
         EventHandler handler = this.handlers.get(type);
