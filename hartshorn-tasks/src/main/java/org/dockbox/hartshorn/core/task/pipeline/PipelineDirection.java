@@ -17,6 +17,10 @@
 
 package org.dockbox.hartshorn.core.task.pipeline;
 
+/**
+ * @deprecated Moved to https://github.com/GuusLieben/JPipelines
+ */
+@Deprecated(forRemoval = true, since = "22.2")
 public enum PipelineDirection {
     FORWARD,
     BACKWARD,

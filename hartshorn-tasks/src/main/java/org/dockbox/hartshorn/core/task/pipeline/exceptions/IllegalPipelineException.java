@@ -17,6 +17,10 @@
 
 package org.dockbox.hartshorn.core.task.pipeline.exceptions;
 
+/**
+ * @deprecated Moved to https://github.com/GuusLieben/JPipelines
+ */
+@Deprecated(forRemoval = true, since = "22.2")
 public class IllegalPipelineException extends RuntimeException {
 
     public IllegalPipelineException(final String errorMessage, final Throwable throwable) {

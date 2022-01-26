@@ -23,6 +23,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+@Deprecated(forRemoval = true, since = "22.2")
 @ComponentBinding(TaskRunner.class)
 public class SimpleTaskRunner extends TaskRunner {
 

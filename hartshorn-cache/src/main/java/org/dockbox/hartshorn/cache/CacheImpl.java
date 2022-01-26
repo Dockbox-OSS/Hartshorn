@@ -22,9 +22,10 @@ import org.dockbox.hartshorn.core.annotations.inject.Bound;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.Enableable;
-import org.dockbox.hartshorn.core.task.TaskRunner;
 
 import java.util.Locale;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 import javax.inject.Inject;
 
@@ -69,7 +70,8 @@ public class CacheImpl<T> implements Cache<T>, Enableable {
     private void scheduleEviction() {
         // Negative amounts are considered non-expiring
         if (this.expiration.amount() > 0) {
-            TaskRunner.create(this.applicationContext).acceptDelayed(this::evict, this.expiration.amount(), this.expiration.unit());
+            final ScheduledExecutorService executor = new ScheduledThreadPoolExecutor(1);
+            executor.schedule(this::evict, this.expiration.amount(), this.expiration.unit());
             this.applicationContext.log().debug("Scheduled eviction after %d %s".formatted(this.expiration.amount(), this.expiration.unit().name().toLowerCase(Locale.ROOT)));
         }
     }

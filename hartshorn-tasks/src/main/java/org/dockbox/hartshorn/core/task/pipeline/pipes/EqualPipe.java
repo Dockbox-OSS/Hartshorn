@@ -19,6 +19,10 @@ package org.dockbox.hartshorn.core.task.pipeline.pipes;
 
 import org.dockbox.hartshorn.core.domain.Exceptional;
 
+/**
+ * @deprecated Moved to https://github.com/GuusLieben/JPipelines
+ */
+@Deprecated(forRemoval = true, since = "22.2")
 @FunctionalInterface
 public interface EqualPipe<O> extends StandardPipe<O, O> {
 

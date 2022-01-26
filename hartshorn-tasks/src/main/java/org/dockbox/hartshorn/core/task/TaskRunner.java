@@ -21,6 +21,7 @@ import org.dockbox.hartshorn.core.context.ApplicationContext;
 
 import java.util.concurrent.TimeUnit;
 
+@Deprecated(forRemoval = true, since = "22.2")
 public abstract class TaskRunner {
 
     public static TaskRunner create(final ApplicationContext context) {

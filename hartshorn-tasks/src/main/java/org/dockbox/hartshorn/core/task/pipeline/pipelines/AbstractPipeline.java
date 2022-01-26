@@ -43,7 +43,9 @@ import lombok.Getter;
  * nullable.
  * @param <P> The input type of the pipeline.
  * @param <I> The input type of the first pipe.
+ * @deprecated Moved to https://github.com/GuusLieben/JPipelines
  */
+@Deprecated(forRemoval = true, since = "22.2")
 public abstract class AbstractPipeline<P, I> {
 
     private final List<IPipe<I, I>> pipes = new CopyOnWriteArrayList<>();

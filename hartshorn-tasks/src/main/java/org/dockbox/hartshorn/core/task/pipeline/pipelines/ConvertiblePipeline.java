@@ -29,6 +29,10 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.function.Function;
 
+/**
+ * @deprecated Moved to https://github.com/GuusLieben/JPipelines
+ */
+@Deprecated(forRemoval = true, since = "22.2")
 public class ConvertiblePipeline<P, I> extends AbstractPipeline<P, I> {
 
     private final TypeContext<I> inputClass;

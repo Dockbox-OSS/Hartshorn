@@ -22,6 +22,10 @@ import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.task.pipeline.pipes.IPipe;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
+/**
+ * @deprecated Moved to https://github.com/GuusLieben/JPipelines
+ */
+@Deprecated(forRemoval = true, since = "22.2")
 public class Pipeline<I> extends AbstractPipeline<I, I> {
 
     /**

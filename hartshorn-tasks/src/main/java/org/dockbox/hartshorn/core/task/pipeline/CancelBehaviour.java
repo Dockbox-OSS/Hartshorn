@@ -25,6 +25,10 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
+/**
+ * @deprecated Moved to https://github.com/GuusLieben/JPipelines
+ */
+@Deprecated(forRemoval = true, since = "22.2")
 public enum CancelBehaviour {
     NON_CANCELLABLE,
     DISCARD(output -> null),

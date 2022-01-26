@@ -17,6 +17,7 @@
 
 package org.dockbox.hartshorn.core.task;
 
+@Deprecated(forRemoval = true, since = "22.2")
 @FunctionalInterface
 public interface Task {
 

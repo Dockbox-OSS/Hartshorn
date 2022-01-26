@@ -24,6 +24,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
+@Deprecated(forRemoval = true, since = "22.2")
 @ComponentBinding(ThreadUtils.class)
 public class ThreadUtilsImpl implements ThreadUtils {
 

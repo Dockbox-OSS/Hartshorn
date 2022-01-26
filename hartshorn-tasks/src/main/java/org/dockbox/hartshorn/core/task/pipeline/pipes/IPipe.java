@@ -25,7 +25,9 @@ import org.dockbox.hartshorn.core.task.pipeline.pipelines.AbstractPipeline;
  * of a {@link AbstractPipeline pipeline}.
  * @param <I> The input type of the pipe.
  * @param <O> The output type of the pipe.
+ * @deprecated Moved to https://github.com/GuusLieben/JPipelines
  */
+@Deprecated(forRemoval = true, since = "22.2")
 public interface IPipe<I, O> {
 
     /**
