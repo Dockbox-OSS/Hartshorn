@@ -43,6 +43,11 @@ public class ServiceImpl implements Service {
     }
 
     @Override
+    public boolean lazy() {
+        return false;
+    }
+
+    @Override
     public Class<? extends Annotation>[] activators() {
         return new Class[0];
     }

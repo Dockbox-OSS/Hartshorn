@@ -18,7 +18,6 @@
 package org.dockbox.hartshorn.web.annotations;
 
 import org.dockbox.hartshorn.core.annotations.AliasFor;
-import org.dockbox.hartshorn.core.annotations.stereotype.Service;
 import org.dockbox.hartshorn.core.annotations.Extends;
 
 import java.lang.annotation.ElementType;
@@ -28,7 +27,7 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-@Extends(Service.class)
+@Extends(PathSpec.class)
 public @interface RestController {
     @AliasFor("pathSpec")
     String value() default "";

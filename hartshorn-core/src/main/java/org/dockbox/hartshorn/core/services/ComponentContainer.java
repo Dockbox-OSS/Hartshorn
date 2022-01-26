@@ -41,6 +41,8 @@ public interface ComponentContainer {
 
     boolean singleton();
 
+    boolean lazy();
+
     ComponentType componentType();
 
     boolean permitsProxying();
