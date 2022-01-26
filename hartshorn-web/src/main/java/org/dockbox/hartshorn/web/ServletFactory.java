@@ -20,8 +20,9 @@ package org.dockbox.hartshorn.web;
 import org.dockbox.hartshorn.core.annotations.Factory;
 import org.dockbox.hartshorn.core.annotations.stereotype.Service;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
+import org.dockbox.hartshorn.web.annotations.UseHttpServer;
 
-@Service
+@Service(activators = UseHttpServer.class)
 @FunctionalInterface
 public interface ServletFactory {
     @Factory

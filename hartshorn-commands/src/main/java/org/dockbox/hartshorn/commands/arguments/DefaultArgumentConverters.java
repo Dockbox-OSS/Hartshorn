@@ -17,6 +17,7 @@
 
 package org.dockbox.hartshorn.commands.arguments;
 
+import org.dockbox.hartshorn.commands.annotations.UseCommands;
 import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
 import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.core.adapter.BuiltInStringTypeAdapters;
@@ -33,7 +34,7 @@ import java.util.Locale;
 import java.util.UUID;
 import java.util.function.Function;
 
-@Service
+@Service(activators = UseCommands.class)
 public final class DefaultArgumentConverters {
 
     public static final ArgumentConverter<String> STRING = ArgumentConverterImpl.builder(String.class, "string")

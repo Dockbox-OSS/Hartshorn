@@ -20,9 +20,10 @@ package org.dockbox.hartshorn.data.service;
 import org.dockbox.hartshorn.core.annotations.Factory;
 import org.dockbox.hartshorn.core.annotations.inject.Enable;
 import org.dockbox.hartshorn.core.annotations.stereotype.Service;
+import org.dockbox.hartshorn.data.annotations.UsePersistence;
 import org.dockbox.hartshorn.data.jpa.JpaRepository;
 
-@Service
+@Service(activators = UsePersistence.class)
 public interface JpaRepositoryFactory {
     @Factory
     @Enable(false)
