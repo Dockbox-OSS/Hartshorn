@@ -34,7 +34,7 @@ import java.util.Locale;
 import java.util.UUID;
 import java.util.function.Function;
 
-@Service(activators = UseCommands.class)
+@Service(activators = UseCommands.class, permitProxying = false)
 public final class DefaultArgumentConverters {
 
     public static final ArgumentConverter<String> STRING = ArgumentConverterImpl.builder(String.class, "string")
