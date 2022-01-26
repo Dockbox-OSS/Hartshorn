@@ -46,7 +46,7 @@ public abstract class ServiceAnnotatedMethodPostProcessor<M extends Annotation, 
         return instance;
     }
 
-    protected abstract <T> T process(final ApplicationContext context, final Key<T> key, @Nullable final T instance, final MethodContext<?, T> method);
+    protected abstract <T> void process(final ApplicationContext context, final Key<T> key, @Nullable final T instance, final MethodContext<?, T> method);
 
     protected <T> Collection<MethodContext<?, T>> modifiableMethods(final TypeContext<T> type) {
         return type.methods(this.annotation());
