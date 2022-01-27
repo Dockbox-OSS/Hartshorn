@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.demo.persistence.services;
 import org.dockbox.hartshorn.demo.persistence.domain.User;
 import org.dockbox.hartshorn.demo.persistence.events.UserCreatedEvent;
 
-import org.dockbox.hartshorn.commands.CommandCLI;
+import org.dockbox.hartshorn.commands.CommandListener;
 import org.dockbox.hartshorn.core.annotations.stereotype.Service;
 import org.dockbox.hartshorn.core.boot.ApplicationState;
 import org.dockbox.hartshorn.core.boot.ApplicationState.Started;
@@ -50,7 +50,7 @@ public class EventListenerService {
      * The method activated when the engine is done starting, this is done automatically when the application
      * was bootstrapped through {@link HartshornApplication}.
      *
-     * <p>In this example we wish to use the {@link CommandCLI} to be able to use the command line to enter commands.
+     * <p>In this example we wish to use the {@link CommandListener} to be able to use the command line to enter commands.
      * An example command has been provided by {@link UserCommandService}.
      *
      * <p>Note the use of the generic type parameter {@link Started} in the event. This causes this method to
@@ -61,7 +61,7 @@ public class EventListenerService {
      */
     @Listener
     public void on(final EngineChangedState<Started> event) {
-        event.applicationContext().get(CommandCLI.class).async(true).open();
+        event.applicationContext().get(CommandListener.class).async(true).open();
     }
 
 }

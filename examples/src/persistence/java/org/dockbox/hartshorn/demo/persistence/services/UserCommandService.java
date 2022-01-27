@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.demo.persistence.services;
 
+import org.dockbox.hartshorn.commands.CommandListener;
 import org.dockbox.hartshorn.commands.annotations.Command;
 import org.dockbox.hartshorn.commands.context.CommandContext;
 import org.dockbox.hartshorn.commands.context.CommandDefinitionContextImpl;
@@ -37,7 +38,7 @@ public class UserCommandService {
 
     /**
      * The method activated when the command {@code create <name> <age>} is correctly entered by a user
-     * (or other {@link java.io.InputStream}, depending on the {@link org.dockbox.hartshorn.commands.CommandCLI}).
+     * (or other {@link java.io.InputStream}, depending on the {@link CommandListener}).
      *
      * <p>The {@link Command#value()} indicates the command itself, excluding arguments. {@link Command#arguments()}
      * indicates the arguments which are expected to be present. The way these are defined depends on the {@link org.dockbox.hartshorn.commands.CommandParser}

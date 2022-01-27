@@ -14,27 +14,22 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.commands.cli;
+package org.dockbox.hartshorn.commands;
 
-import org.dockbox.hartshorn.commands.CommandCLI;
-import org.dockbox.hartshorn.commands.CommandGateway;
-import org.dockbox.hartshorn.commands.CommandSource;
-import org.dockbox.hartshorn.commands.SystemSubject;
 import org.dockbox.hartshorn.commands.exceptions.ParsingException;
-import org.dockbox.hartshorn.core.annotations.inject.ComponentBinding;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Scanner;
+import java.util.concurrent.Executors;
 
 import javax.inject.Inject;
 
 import lombok.Getter;
 import lombok.Setter;
 
-@ComponentBinding(CommandCLI.class)
-public class SimpleCommandCLI implements CommandCLI {
+public class CommandListenerImpl implements CommandListener {
 
     @Inject
     private ApplicationContext context;
@@ -52,7 +47,19 @@ public class SimpleCommandCLI implements CommandCLI {
 
     @Override
     public void open() {
-        final Runnable task = () -> {
+        final Runnable task = this.createTask();
+
+        if (this.async()) {
+            this.context.log().debug("Performing startup task for command CLI asynchronously");
+            Executors.newSingleThreadExecutor().submit(task);
+        } else {
+            this.context.log().debug("Performing startup task for command CLI on current thread");
+            task.run();
+        }
+    }
+
+    protected Runnable createTask() {
+        return () -> {
             try (
                     final InputStream input = this.input();
                     final Scanner scanner = new Scanner(input)
@@ -70,14 +77,6 @@ public class SimpleCommandCLI implements CommandCLI {
                 this.context.handle(e);
             }
         };
-
-        if (this.async()) {
-            this.context.log().debug("Performing startup task for command CLI asynchronously");
-            new Thread(task, "command_cli").start();
-        } else {
-            this.context.log().debug("Performing startup task for command CLI on current thread");
-            task.run();
-        }
     }
 
     /**

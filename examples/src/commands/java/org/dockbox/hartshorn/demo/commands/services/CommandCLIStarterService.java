@@ -16,7 +16,8 @@
 
 package org.dockbox.hartshorn.demo.commands.services;
 
-import org.dockbox.hartshorn.commands.CommandCLI;
+import org.dockbox.hartshorn.commands.CommandListener;
+import org.dockbox.hartshorn.commands.CommandListenerImpl;
 import org.dockbox.hartshorn.core.annotations.stereotype.Service;
 import org.dockbox.hartshorn.core.boot.ApplicationState;
 import org.dockbox.hartshorn.core.boot.ApplicationState.Started;
@@ -37,9 +38,9 @@ public class CommandCLIStarterService {
      * The method activated when the engine is done starting, this is done automatically when the application
      * was bootstrapped through {@link HartshornApplication}.
      *
-     * <p>In this example we wish to use the {@link CommandCLI} to be able to the file {@code commands.txt} to
-     * enter commands. This can be done by overriding the default {@link InputStream} of the {@link CommandCLI}.
-     * In this case the default implementation is {@link org.dockbox.hartshorn.commands.cli.SimpleCommandCLI}, which
+     * <p>In this example we wish to use the {@link CommandListener} to be able to the file {@code commands.txt} to
+     * enter commands. This can be done by overriding the default {@link InputStream} of the {@link CommandListener}.
+     * In this case the default implementation is {@link CommandListenerImpl}, which
      * uses {@link System#in}.
      *
      * <p>Note the use of the generic type parameter {@link Started} in the event. This causes this method to
@@ -53,7 +54,7 @@ public class CommandCLIStarterService {
         final Exceptional<Path> commands = event.applicationContext().resourceLocator().resource("commands.txt");
         if (commands.present()) {
             final InputStream inputStream = Files.newInputStream(commands.get());
-            event.applicationContext().get(CommandCLI.class).input(inputStream).open();
+            event.applicationContext().get(CommandListener.class).input(inputStream).open();
         }
     }
 }
