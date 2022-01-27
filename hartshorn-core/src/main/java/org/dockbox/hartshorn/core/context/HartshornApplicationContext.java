@@ -368,8 +368,8 @@ public class HartshornApplicationContext extends DefaultContext implements SelfA
         T result = instance;
         for (final ProcessingOrder order : orders) {
             for (final ComponentPostProcessor<?> postProcessor : this.postProcessors.get(order)) {
-                if (postProcessor.preconditions(this, key, instance)) {
-                    final T modified = postProcessor.process(this, key, instance);
+                if (postProcessor.preconditions(this, key, result)) {
+                    final T modified = postProcessor.process(this, key, result);
                     if (modifiable) result = modified;
                     else if (!modifiable && modified != instance) {
                         throw new IllegalStateException(("Component %s was modified during phase %s by %s. " +
