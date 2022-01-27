@@ -29,6 +29,8 @@ import org.dockbox.hartshorn.core.services.ComponentLocator;
 import org.dockbox.hartshorn.core.services.ComponentProcessor;
 import org.slf4j.Logger;
 
+import java.io.Closeable;
+
 @LogExclude
 public interface ApplicationContext extends
         ApplicationBinder,
@@ -36,7 +38,8 @@ public interface ApplicationContext extends
         ApplicationPropertyHolder,
         ExceptionHandler,
         ApplicationLogger,
-        ActivatorSource
+        ActivatorSource,
+        Closeable
 {
 
     <T> T populate(T type);
