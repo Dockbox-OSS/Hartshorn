@@ -46,6 +46,8 @@ import org.dockbox.hartshorn.core.boot.ApplicationProxier;
 import org.dockbox.hartshorn.core.boot.ClasspathResourceLocator;
 import org.dockbox.hartshorn.core.boot.ExceptionHandler;
 import org.dockbox.hartshorn.core.boot.LifecycleObservable;
+import org.dockbox.hartshorn.core.boot.LifecycleObserver;
+import org.dockbox.hartshorn.core.boot.ObservableApplicationManager;
 import org.dockbox.hartshorn.core.boot.SelfActivatingApplicationContext;
 import org.dockbox.hartshorn.core.context.element.FieldContext;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
@@ -640,5 +642,21 @@ public class HartshornApplicationContext extends DefaultContext implements SelfA
     @Override
     public ExceptionHandler stacktraces(final boolean stacktraces) {
         return this.environment().manager().stacktraces(stacktraces);
+    }
+
+    @Override
+    public void close() {
+        this.log().info("Runtime shutting down, notifying observers");
+        final ApplicationManager manager = this.environment().manager();
+        if (manager instanceof ObservableApplicationManager observable) {
+            for (final LifecycleObserver observer : observable.observers()) {
+                this.log().debug("Notifying " + observer.getClass().getSimpleName() + " of shutdown");
+                try {
+                    observer.onExit(this);
+                } catch (final Throwable e) {
+                    this.log().error("Error notifying " + observer.getClass().getSimpleName() + " of shutdown", e);
+                }
+            }
+        }
     }
 }

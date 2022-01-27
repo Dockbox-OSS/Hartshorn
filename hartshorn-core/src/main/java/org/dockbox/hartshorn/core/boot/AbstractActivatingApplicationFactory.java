@@ -30,6 +30,7 @@ import org.dockbox.hartshorn.core.services.ServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
@@ -154,10 +155,10 @@ public abstract class AbstractActivatingApplicationFactory<
 
     protected void registerHooks(final C applicationContext, final M manager) {
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            this.logger().info("Runtime shutting down, notifying observers");
-            for (final LifecycleObserver observer : manager.observers()) {
-                this.logger().debug("Notifying " + observer.getClass().getSimpleName() + " of shutdown");
-                observer.onExit(applicationContext);
+            try {
+                applicationContext.close();
+            } catch (final IOException e) {
+                this.logger().error("Failed to close application context", e);
             }
         }, "ShutdownHook"));
     }
