@@ -27,4 +27,9 @@ import java.lang.annotation.RetentionPolicy;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface PathSpec {
     String pathSpec() default "";
+
+    /**
+     * @see Service#lazy()
+     */
+    boolean lazy() default false;
 }

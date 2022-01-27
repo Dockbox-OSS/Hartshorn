@@ -19,10 +19,11 @@ package org.dockbox.hartshorn.data;
 
 import org.dockbox.hartshorn.core.annotations.Factory;
 import org.dockbox.hartshorn.core.annotations.stereotype.Service;
+import org.dockbox.hartshorn.data.annotations.UsePersistence;
 
 import javax.persistence.EntityManager;
 
-@Service
+@Service(activators = UsePersistence.class)
 public interface TransactionFactory {
     @Factory
     TransactionManager manager(EntityManager entityManager);

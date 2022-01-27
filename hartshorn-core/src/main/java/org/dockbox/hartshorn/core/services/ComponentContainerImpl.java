@@ -90,6 +90,11 @@ public class ComponentContainerImpl implements ComponentContainer {
     }
 
     @Override
+    public boolean lazy() {
+        return this.annotation.lazy();
+    }
+
+    @Override
     public ComponentType componentType() {
         return this.annotation.type();
     }

@@ -107,6 +107,17 @@ public @interface Component {
     boolean singleton() default false;
 
     /**
+     * Indicates whether a component should be created after the application context has been initialized.
+     * When this is {@code true} the component will be created after the application context has been
+     * initialized, as long as {@link #singleton()} is {@code true}. If {@link #singleton()} is {@code false},
+     * the component will always be lazy-loaded.
+     *
+     * @return {@code true} if the component should be created after the application context has been initialized
+     * @see ComponentContainer#lazy()
+     */
+    boolean lazy() default true;
+
+    /**
      * The type of the component. This is used to indicate whether the component is a functional
      * component, and thus modifiable, or if it should only be injected into.
      *

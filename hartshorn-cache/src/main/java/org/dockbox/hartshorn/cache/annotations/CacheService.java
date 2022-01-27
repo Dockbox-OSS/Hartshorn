@@ -44,4 +44,9 @@ public @interface CacheService {
      */
     @AliasFor("id")
     String value();
+
+    /**
+     * @see Service#lazy()
+     */
+    boolean lazy() default false;
 }

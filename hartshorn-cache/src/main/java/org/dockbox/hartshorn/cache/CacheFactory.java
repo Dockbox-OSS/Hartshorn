@@ -17,11 +17,12 @@
 
 package org.dockbox.hartshorn.cache;
 
+import org.dockbox.hartshorn.cache.annotations.UseCaching;
 import org.dockbox.hartshorn.core.annotations.Factory;
 import org.dockbox.hartshorn.core.annotations.stereotype.Service;
 
 @FunctionalInterface
-@Service
+@Service(activators = UseCaching.class)
 public interface CacheFactory {
     @Factory
     Cache<?> cache(Expiration expiration);

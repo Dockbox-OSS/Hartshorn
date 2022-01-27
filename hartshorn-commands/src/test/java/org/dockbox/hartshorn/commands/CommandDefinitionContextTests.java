@@ -192,5 +192,10 @@ public class CommandDefinitionContextTests {
         public Class<?> parent() {
             return Void.class;
         }
+
+        @Override
+        public boolean lazy() {
+            return false;
+        }
     }
 }

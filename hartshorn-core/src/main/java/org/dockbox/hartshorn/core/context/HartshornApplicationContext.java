@@ -433,7 +433,7 @@ public class HartshornApplicationContext extends DefaultContext implements SelfA
                 .flatMap(hierarchy -> {
                     // Will continue going through each provider until a provider was successful or no other providers remain
                     for (final Provider<T> provider : hierarchy.providers()) {
-                        final Exceptional<T> provided = provider.provide(this);
+                        final Exceptional<T> provided = provider.provide(this).rethrowUnchecked();
                         if (provided.present()) return provided;
                     }
                     return Exceptional.empty();

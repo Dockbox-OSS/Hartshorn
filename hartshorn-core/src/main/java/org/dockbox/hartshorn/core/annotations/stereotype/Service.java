@@ -73,6 +73,12 @@ public @interface Service {
     boolean singleton() default true;
 
     /**
+     * @see Component#lazy()
+     * @return Whether the service is lazy.
+     */
+    boolean lazy() default false;
+
+    /**
      * The activators required for this service to become active by default. If one or more activators are not present,
      * the service will not be loaded.
      *

@@ -17,6 +17,7 @@
 
 package org.dockbox.hartshorn.core.boot;
 
+import org.dockbox.hartshorn.core.ComponentType;
 import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.core.InjectConfiguration;
 import org.dockbox.hartshorn.core.annotations.activate.Activator;
@@ -25,6 +26,7 @@ import org.dockbox.hartshorn.core.context.ApplicationEnvironment;
 import org.dockbox.hartshorn.core.context.ModifiableContextCarrier;
 import org.dockbox.hartshorn.core.context.PrefixContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
+import org.dockbox.hartshorn.core.services.ComponentContainer;
 import org.dockbox.hartshorn.core.services.ServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -122,9 +124,13 @@ public abstract class AbstractActivatingApplicationFactory<
         for (final LifecycleObserver observer : manager.observers())
             observer.onStarted(applicationContext);
 
+        for (final ComponentContainer container : applicationContext.locator().containers(ComponentType.FUNCTIONAL)) {
+            if (container.singleton() && !container.lazy()) {
+                applicationContext.get(container.type());
+            }
+        }
+
         final long applicationStartedTimestamp = System.currentTimeMillis();
-
-
 
         final double startupTime = ((double) (applicationStartedTimestamp - applicationStartTimestamp)) / 1000;
         final double jvmUptime = ((double) runtimeMXBean.getUptime()) / 1000;
@@ -154,7 +160,7 @@ public abstract class AbstractActivatingApplicationFactory<
                 this.logger().debug("Notifying " + observer.getClass().getSimpleName() + " of shutdown");
                 observer.onExit(applicationContext);
             }
-        }));
+        }, "ShutdownHook"));
     }
 
     public abstract Self loadDefaults();

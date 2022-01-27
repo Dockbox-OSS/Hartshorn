@@ -22,9 +22,10 @@ import org.dockbox.hartshorn.core.annotations.stereotype.Service;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.web.HttpWebServer;
 import org.dockbox.hartshorn.web.RequestHandlerContext;
+import org.dockbox.hartshorn.web.annotations.UseHttpServer;
 import org.dockbox.hartshorn.web.mvc.ViewTemplate;
 
-@Service
+@Service(activators = UseHttpServer.class)
 public interface WebServletFactory {
     @Factory
     WebServletImpl webServlet(final HttpWebServer starter, final RequestHandlerContext context);

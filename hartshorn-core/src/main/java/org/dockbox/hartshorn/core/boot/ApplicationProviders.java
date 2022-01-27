@@ -17,6 +17,7 @@
 
 package org.dockbox.hartshorn.core.boot;
 
+import org.dockbox.hartshorn.core.annotations.activate.UseBootstrap;
 import org.dockbox.hartshorn.core.annotations.context.LogExclude;
 import org.dockbox.hartshorn.core.annotations.inject.Provider;
 import org.dockbox.hartshorn.core.annotations.stereotype.Service;
@@ -30,7 +31,7 @@ import org.slf4j.Logger;
  * @author Guus Lieben
  * @since 21.7
  */
-@Service
+@Service(activators = UseBootstrap.class)
 @LogExclude
 public class ApplicationProviders {
 

@@ -18,11 +18,12 @@
 package org.dockbox.hartshorn.core.services;
 
 import org.dockbox.hartshorn.core.annotations.Factory;
+import org.dockbox.hartshorn.core.annotations.activate.UseProxying;
 import org.dockbox.hartshorn.core.annotations.stereotype.Service;
 import org.dockbox.hartshorn.core.proxy.DelegatorAccessor;
 import org.dockbox.hartshorn.core.proxy.ProxyHandler;
 
-@Service
+@Service(activators = UseProxying.class)
 interface AccessorFactory {
     @Factory
     <T> DelegatorAccessor<T> delegatorAccessor(ProxyHandler<T> handler);
