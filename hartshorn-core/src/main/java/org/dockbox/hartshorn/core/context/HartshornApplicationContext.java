@@ -353,34 +353,32 @@ public class HartshornApplicationContext extends DefaultContext implements SelfA
 
         // Modify the instance during phase 1. This allows discarding the existing instance and replacing it with a new instance.
         // See ServiceOrder#PHASE_1
-        if (doProcess) {
-            for (final ProcessingOrder order : ProcessingOrder.PHASE_1) {
-                for (final ComponentPostProcessor<?> postProcessor : this.postProcessors.get(order)) {
-                    if (postProcessor.preconditions(this, key, instance))
-                        instance = postProcessor.process(this, key, instance);
-                }
-            }
-        }
+        if (doProcess) instance = this.process(key, instance, ProcessingOrder.PHASE_1, true);
 
         this.populateAndStore(key, instance);
 
         // Modify the instance during phase 2. This does not allow discarding the existing instance.
         // See ServiceOrder#PHASE_2
-        if (doProcess) {
-            for (final ProcessingOrder order : ProcessingOrder.PHASE_2) {
-                for (final ComponentPostProcessor<?> postProcessor : this.postProcessors.get(order)) {
-                    if (postProcessor.preconditions(this, key, instance)) {
-                        final T modified = postProcessor.process(this, key, instance);
-                        if (modified != instance) {
-                            throw new IllegalStateException(("Component %s was modified during phase %s (Phase 2) by %s. " +
-                                    "Component processors are only able to discard existing instances in phases: %s").formatted(key.type().name(), order.name(), TypeContext.of(postProcessor).name(), Arrays.toString(ProcessingOrder.PHASE_2)));
-                        }
+        if (doProcess) this.process(key, instance, ProcessingOrder.PHASE_2, false);
+
+        return instance;
+    }
+
+    protected <T> T process(final Key<T> key, final T instance, final ProcessingOrder[] orders, final boolean modifiable) {
+        T result = instance;
+        for (final ProcessingOrder order : orders) {
+            for (final ComponentPostProcessor<?> postProcessor : this.postProcessors.get(order)) {
+                if (postProcessor.preconditions(this, key, result)) {
+                    final T modified = postProcessor.process(this, key, result);
+                    if (modifiable) result = modified;
+                    else if (!modifiable && modified != instance) {
+                        throw new IllegalStateException(("Component %s was modified during phase %s by %s. " +
+                                "Component processors are only able to discard existing instances in phases: %s").formatted(key.type().name(), order.name(), TypeContext.of(postProcessor).name(), Arrays.toString(ProcessingOrder.PHASE_2)));
                     }
                 }
             }
         }
-
-        return instance;
+        return result;
     }
 
     protected <T> T populateAndStore(final Key<T> key, final T instance) {

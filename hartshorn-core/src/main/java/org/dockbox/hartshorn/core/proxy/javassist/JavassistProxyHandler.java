@@ -201,20 +201,20 @@ public class JavassistProxyHandler<T> extends DefaultContext implements ProxyHan
             // If the proxy associated with this handler has a delegate, use it.
             if (this.instance != null) return this.invokeDelegate(target, args);
 
-                // If the method is default inside an interface, we cannot invoke it directly using a proxy instance. Instead we
-                // need to lookup the method on the class and invoke it through the method handle directly.
+            // If the method is default inside an interface, we cannot invoke it directly using a proxy instance. Instead we
+            // need to lookup the method on the class and invoke it through the method handle directly.
             else if (thisMethod.isDefault()) return this.invokeDefault(declaringType, thisMethod, self, args);
 
-                // If the current target instance (self) is not a proxy, we can invoke the method directly using reflections.
+            // If the current target instance (self) is not a proxy, we can invoke the method directly using reflections.
             else if (!(self instanceof Proxy || ProxyFactory.isProxyClass(self.getClass()))) return this.invokeSelf(self, target, args);
 
-                // If the target method is concrete in an abstract class, we cannot invoke the method directly using reflections.
-                // This solution uses private lookups to invoke the method, unreflecting the method first so it can be invoked using
-                // proxy instances.
+            // If the target method is concrete in an abstract class, we cannot invoke the method directly using reflections.
+            // This solution uses private lookups to invoke the method, unreflecting the method first so it can be invoked using
+            // proxy instances.
             else if (this.type().isAbstract() && !MethodContext.of(thisMethod).isAbstract()) return this.invokePrivate(declaringType, thisMethod, self, args);
 
-                // If none of the above conditions are met, we have no way to handle the method.
-            else throw new IllegalArgumentException("Cannot invoke method " + thisMethod.getName() + " on proxy " + self.getClass().getName());
+            // If none of the above conditions are met, we have no way to handle the method.
+            else throw new IllegalArgumentException("Cannot invoke method " + thisMethod.getName() + " on proxy " + this.type().qualifiedName());
         }
         catch (final InvocationTargetException e) {
             throw e.getCause();
