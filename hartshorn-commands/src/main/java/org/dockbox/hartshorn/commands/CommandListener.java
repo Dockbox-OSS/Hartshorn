@@ -22,7 +22,7 @@ import org.dockbox.hartshorn.events.EngineChangedState;
 import java.io.InputStream;
 
 /**
- * Represents a constant CLI which is capable of listening to command inputs. Commands may be entered through
+ * Represents a constant listener which is capable of listening to command inputs. Commands may be entered through
  * any mean, like a command line, external event bus, or similar solutions. Should be activated after the engine
  * started, typically this can be done by listening for {@link EngineChangedState} with
  * {@link ApplicationState.Started} as its parameter.
@@ -35,10 +35,10 @@ import java.io.InputStream;
  * }
  * }</pre>
  */
-public interface CommandCLI {
+public interface CommandListener {
     void open();
 
-    CommandCLI async(boolean async);
-    CommandCLI input(InputStream stream);
-    CommandCLI source(CommandSource source);
+    CommandListener async(boolean async);
+    CommandListener input(InputStream stream);
+    CommandListener source(CommandSource source);
 }
