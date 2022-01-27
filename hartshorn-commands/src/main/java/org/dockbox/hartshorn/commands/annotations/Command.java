@@ -56,4 +56,9 @@ public @interface Command {
      */
     @AliasFor("owner")
     Class<?> parent() default Void.class;
+
+    /**
+     * @see Service#lazy()
+     */
+    boolean lazy() default false;
 }

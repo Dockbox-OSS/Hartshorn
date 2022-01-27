@@ -26,11 +26,10 @@ import lombok.NoArgsConstructor;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Configuration(source = "junit")
+@Configuration(source = "junit", lazy = true)
 public class DemoFSConfiguration {
 
     @Value("junit.fs")
     @Getter
     private String fileSystemValue;
-
 }

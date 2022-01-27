@@ -56,6 +56,13 @@ import java.lang.annotation.Target;
 @Extends(Service.class)
 public @interface Configuration {
     String source();
+
     Class<?> owner() default Hartshorn.class;
+
     FileFormats filetype() default FileFormats.YAML;
+
+    /**
+     * @see Service#lazy()
+     */
+    boolean lazy() default false;
 }
