@@ -64,6 +64,13 @@ public class MethodInterceptorContext<T, R> {
         return this.method;
     }
 
+    public <A> A arg(final int index) {
+        if (index < 0 || index >= this.args.length) {
+            throw new IndexOutOfBoundsException("Index " + index + " is out of bounds");
+        }
+        return (A) this.args[index];
+    }
+
     /**
      * Returns the arguments which were originally passed to the intercepted method.
      * @return the arguments which were originally passed to the intercepted method

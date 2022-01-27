@@ -1,0 +1,36 @@
+/*
+ * Copyright 2019-2022 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.dockbox.hartshorn.jms.parameter;
+
+import org.dockbox.hartshorn.util.Exceptional;
+import org.dockbox.hartshorn.util.parameter.ParameterLoaderRule;
+import org.dockbox.hartshorn.util.reflect.ParameterContext;
+
+import javax.jms.Message;
+
+public class JMSMessageParameterLoader implements ParameterLoaderRule<JMSParameterLoaderContext> {
+    @Override
+    public boolean accepts(final ParameterContext<?> parameter, final int index, final JMSParameterLoaderContext context, final Object... args) {
+        final Message message = context.message();
+        return parameter.type().parentOf(message.getClass());
+    }
+
+    @Override
+    public <T> Exceptional<T> load(final ParameterContext<T> parameter, final int index, final JMSParameterLoaderContext context, final Object... args) {
+        return Exceptional.of(() -> (T) context.message());
+    }
+}
