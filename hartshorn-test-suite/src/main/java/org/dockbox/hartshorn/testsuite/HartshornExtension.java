@@ -149,6 +149,10 @@ public class HartshornExtension implements BeforeEachCallback, AfterEachCallback
                     throw new IllegalStateException("Factory modifiers must be static");
                 }
                 if (factoryModifier.returnType().childOf(ApplicationFactory.class)) {
+
+                    final Method jlrMethod = factoryModifier.method();
+                    if (!jlrMethod.canAccess(null)) jlrMethod.setAccessible(true);
+
                     final LinkedList<TypeContext<?>> parameters = factoryModifier.parameterTypes();
                     if (parameters.isEmpty()) {
                         applicationFactory = (ApplicationFactory<?, ?>) factoryModifier.invokeStatic().rethrowUnchecked().orNull();
@@ -159,6 +163,8 @@ public class HartshornExtension implements BeforeEachCallback, AfterEachCallback
                     else {
                         throw new IllegalStateException("Invalid parameters for @HartshornFactory modifier, expected " + ApplicationFactory.class.getSimpleName() + " but got " + parameters.get(0).name());
                     }
+
+                    jlrMethod.setAccessible(false);
                 }
                 else {
                     throw new IllegalStateException("Invalid return type for @HartshornFactory modifier, expected " + ApplicationFactory.class.getSimpleName() + " but got " + factoryModifier.returnType().name());
