@@ -34,7 +34,7 @@ import java.io.Closeable;
 @LogExclude
 public interface ApplicationContext extends
         ApplicationBinder,
-        ComponentProvider,
+        HierarchicalComponentProvider,
         ApplicationPropertyHolder,
         ExceptionHandler,
         ApplicationLogger,

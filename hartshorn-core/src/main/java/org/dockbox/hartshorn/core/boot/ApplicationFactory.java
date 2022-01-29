@@ -24,6 +24,8 @@ import org.dockbox.hartshorn.core.annotations.activate.ServiceActivator;
 import org.dockbox.hartshorn.core.context.ActivatorSource;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.ApplicationEnvironment;
+import org.dockbox.hartshorn.core.context.ComponentPopulator;
+import org.dockbox.hartshorn.core.context.ComponentProvider;
 import org.dockbox.hartshorn.core.context.PrefixContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.services.ComponentLocator;
@@ -211,6 +213,24 @@ public interface ApplicationFactory<Self extends ApplicationFactory<Self, C>, C 
      * @see PrefixContext
      */
     Self prefixContext(Function<ApplicationManager, PrefixContext> prefixContext);
+
+    /**
+     * Sets the {@link ComponentProvider} to use. The component provider is responsible for providing components and services
+     * to the application. This acts as the primary component provider.
+     *
+     * @param componentProvider The component provider to use.
+     * @return The {@link ApplicationFactory} instance.
+     */
+    Self componentProvider(Function<ApplicationContext, ComponentProvider> componentProvider);
+
+    /**
+     * Sets the {@link ComponentPopulator} to use. The component populator is responsible for populating components and services
+     * created by the component provider.
+     *
+     * @param componentPopulator The component populator to use.
+     * @return The {@link ApplicationFactory} instance.
+     */
+    Self componentPopulator(Function<ApplicationContext, ComponentPopulator> componentPopulator);
 
     /**
      * Registers a custom {@link ComponentPostProcessor}. Unlike automatically activated {@link ComponentPostProcessor}s,

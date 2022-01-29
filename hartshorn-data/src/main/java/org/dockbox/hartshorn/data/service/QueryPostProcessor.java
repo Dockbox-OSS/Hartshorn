@@ -79,7 +79,7 @@ public class QueryPostProcessor extends ServiceAnnotatedMethodInterceptorPostPro
     }
 
     @Override
-    public ProcessingOrder order() {
+    public Integer order() {
         return ProcessingOrder.LATE;
     }
 

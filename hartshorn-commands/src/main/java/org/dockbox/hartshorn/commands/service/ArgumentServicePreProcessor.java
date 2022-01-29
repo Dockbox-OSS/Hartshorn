@@ -67,7 +67,7 @@ public class ArgumentServicePreProcessor implements ServicePreProcessor<UseComma
     }
 
     @Override
-    public ProcessingOrder order() {
+    public Integer order() {
         return ProcessingOrder.FIRST;
     }
 }

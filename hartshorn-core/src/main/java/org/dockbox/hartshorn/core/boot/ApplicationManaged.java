@@ -22,7 +22,7 @@ package org.dockbox.hartshorn.core.boot;
  * used by the manager.
  *
  * @see ApplicationManager
- * @see HartshornApplicationManager
+ * @see DelegatingApplicationManager
  * @author Guus Lieben
  * @since 21.9
  */

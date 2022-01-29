@@ -36,7 +36,7 @@ import lombok.AllArgsConstructor;
  * @since 22.1
  */
 @AllArgsConstructor
-public class HartshornClasspathResourceLocator implements ClasspathResourceLocator {
+public class ClassLoaderClasspathResourceLocator implements ClasspathResourceLocator {
 
     private final ApplicationContext applicationContext;
 

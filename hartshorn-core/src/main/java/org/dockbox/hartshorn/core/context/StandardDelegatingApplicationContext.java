@@ -16,13 +16,10 @@
 
 package org.dockbox.hartshorn.core.context;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
-import org.dockbox.hartshorn.core.ComponentType;
-import org.dockbox.hartshorn.core.CustomMultiMap;
+import org.dockbox.hartshorn.core.CustomMultiTreeMap;
 import org.dockbox.hartshorn.core.Enableable;
 import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.core.InjectConfiguration;
-import org.dockbox.hartshorn.core.InjectionPoint;
 import org.dockbox.hartshorn.core.Key;
 import org.dockbox.hartshorn.core.MetaProvider;
 import org.dockbox.hartshorn.core.Modifiers;
@@ -31,14 +28,7 @@ import org.dockbox.hartshorn.core.annotations.activate.Activator;
 import org.dockbox.hartshorn.core.annotations.activate.AutomaticActivation;
 import org.dockbox.hartshorn.core.annotations.activate.ServiceActivator;
 import org.dockbox.hartshorn.core.annotations.inject.ComponentBinding;
-import org.dockbox.hartshorn.core.annotations.inject.Context;
-import org.dockbox.hartshorn.core.annotations.inject.Enable;
-import org.dockbox.hartshorn.core.annotations.inject.Populate;
-import org.dockbox.hartshorn.core.annotations.inject.Required;
 import org.dockbox.hartshorn.core.binding.BindingHierarchy;
-import org.dockbox.hartshorn.core.binding.ContextWrappedHierarchy;
-import org.dockbox.hartshorn.core.binding.NativeBindingHierarchy;
-import org.dockbox.hartshorn.core.binding.Provider;
 import org.dockbox.hartshorn.core.binding.Providers;
 import org.dockbox.hartshorn.core.boot.ApplicationLogger;
 import org.dockbox.hartshorn.core.boot.ApplicationManager;
@@ -49,24 +39,20 @@ import org.dockbox.hartshorn.core.boot.LifecycleObservable;
 import org.dockbox.hartshorn.core.boot.LifecycleObserver;
 import org.dockbox.hartshorn.core.boot.ObservableApplicationManager;
 import org.dockbox.hartshorn.core.boot.SelfActivatingApplicationContext;
-import org.dockbox.hartshorn.core.context.element.FieldContext;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 import org.dockbox.hartshorn.core.inject.ProviderContext;
-import org.dockbox.hartshorn.core.proxy.ProxyHandler;
 import org.dockbox.hartshorn.core.proxy.ProxyLookup;
 import org.dockbox.hartshorn.core.services.ComponentContainer;
 import org.dockbox.hartshorn.core.services.ComponentLocator;
 import org.dockbox.hartshorn.core.services.ComponentPostProcessor;
 import org.dockbox.hartshorn.core.services.ComponentPreProcessor;
 import org.dockbox.hartshorn.core.services.ComponentProcessor;
-import org.dockbox.hartshorn.core.services.ProcessingOrder;
 import org.slf4j.Logger;
 
 import java.lang.annotation.Annotation;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
@@ -76,7 +62,6 @@ import java.util.PriorityQueue;
 import java.util.Properties;
 import java.util.Queue;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -84,42 +69,44 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import javax.inject.Inject;
 import javax.inject.Named;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-
-public class HartshornApplicationContext extends DefaultContext implements SelfActivatingApplicationContext {
+public class StandardDelegatingApplicationContext extends DefaultContext implements SelfActivatingApplicationContext, HierarchicalComponentProvider {
 
     public static Comparator<String> PREFIX_PRIORITY_COMPARATOR = Comparator.naturalOrder();
+
     private static final Pattern ARGUMENTS = Pattern.compile("--([a-zA-Z0-9\\.]+)=(.+)");
 
-    protected final transient Set<InjectionPoint<?>> injectionPoints = HartshornUtils.emptyConcurrentSet();
-    protected final transient MultiMap<ProcessingOrder, ComponentPostProcessor<?>> postProcessors = new CustomMultiMap<>(HartshornUtils::emptyConcurrentSet);
-    protected final transient MultiMap<ProcessingOrder, ComponentPreProcessor<?>> preProcessors = new CustomMultiMap<>(HartshornUtils::emptyConcurrentSet);
-    protected final transient Properties environmentValues = new Properties();
+    protected final transient MultiMap<Integer, ComponentPreProcessor<?>> preProcessors = new CustomMultiTreeMap<>(HartshornUtils::emptyConcurrentSet);
     protected final transient Queue<String> prefixQueue = new PriorityQueue<>(PREFIX_PRIORITY_COMPARATOR);
+    protected final transient Properties environmentValues = new Properties();
 
-    @Getter(AccessLevel.PROTECTED) private final Activator activator;
-    @Getter private final ApplicationEnvironment environment;
+    private final transient StandardComponentProvider componentProvider;
 
-    private final ComponentLocator locator;
-    @Getter
-    private final ClasspathResourceLocator resourceLocator;
-    @Getter
     private final Set<Modifiers> modifiers;
     private final Set<Annotation> activators = HartshornUtils.emptyConcurrentSet();
-    private final Map<Key<?>, Object> singletons = new ConcurrentHashMap<>();
-    private final Map<Key<?>, BindingHierarchy<?>> hierarchies = new ConcurrentHashMap<>();
+
+    private final ApplicationEnvironment environment;
+    private final ClasspathResourceLocator resourceLocator;
+    private final ComponentPopulator componentPopulator;
+    private final ComponentLocator locator;
     private final MetaProvider metaProvider;
+    private final Activator activator;
 
-    public HartshornApplicationContext(final ApplicationEnvironment environment, final Function<ApplicationContext, ComponentLocator> componentLocator,
-                                       final Function<ApplicationContext, ClasspathResourceLocator> resourceLocator,
-                                       final Function<ApplicationContext, MetaProvider> metaProvider, final TypeContext<?> activationSource,
-                                       final Set<String> args, final Set<Modifiers> modifiers) {
-        this.singletons.put(Key.of(ApplicationContext.class), this);
+    public StandardDelegatingApplicationContext(final ApplicationEnvironment environment,
+                                                final Function<ApplicationContext, ComponentLocator> componentLocator,
+                                                final Function<ApplicationContext, ClasspathResourceLocator> resourceLocator,
+                                                final Function<ApplicationContext, MetaProvider> metaProvider,
+                                                final Function<ApplicationContext, ComponentProvider> componentProvider,
+                                                final Function<ApplicationContext, ComponentPopulator> componentPopulator,
+                                                final TypeContext<?> activationSource,
+                                                final Set<String> args,
+                                                final Set<Modifiers> modifiers) {
 
+        this.componentProvider = new HierarchicalApplicationComponentProvider(this);
+        this.componentPopulator = new ContextualComponentPopulator(this);
+
+        this.componentProvider.singleton(Key.of(ApplicationContext.class), this);
         this.environment = environment;
         final Exceptional<Activator> activator = activationSource.annotation(Activator.class);
         if (activator.absent()) {
@@ -147,9 +134,14 @@ public class HartshornApplicationContext extends DefaultContext implements SelfA
         this.bind(Key.of(ApplicationPropertyHolder.class), this);
         this.bind(Key.of(ApplicationBinder.class), this);
 
-        this.bind(Key.of(MetaProvider.class), this.metaProvider);
+        this.bind(Key.of(ComponentPopulator.class), this.componentPopulator);
+        this.bind(Key.of(StandardComponentProvider.class), this.componentProvider);
+        this.bind(Key.of(ComponentProvider.class), this.componentProvider);
+
+        this.bind(Key.of(MetaProvider.class), this.meta());
         this.bind(Key.of(ComponentLocator.class), this.locator());
         this.bind(Key.of(ApplicationEnvironment.class), this.environment());
+        this.bind(Key.of(ClasspathResourceLocator.class), this.resourceLocator());
 
         this.bind(Key.of(ProxyLookup.class), this.environment().manager());
         this.bind(Key.of(ApplicationLogger.class), this.environment().manager());
@@ -174,21 +166,17 @@ public class HartshornApplicationContext extends DefaultContext implements SelfA
         }
     }
 
-    public <T> T raw(final TypeContext<T> type) {
-        return Providers.of(type).provide(this).rethrowUnchecked().orNull();
-    }
-
     @Override
     public void add(final ComponentProcessor<?> processor) {
-        final ProcessingOrder order = processor.order();
+        final Integer order = processor.order();
         final String name = TypeContext.of(processor).name();
 
         if (processor instanceof ComponentPostProcessor<?> postProcessor) {
-            this.postProcessors.put(order, postProcessor);
+            this.componentProvider.postProcessor(postProcessor);
             this.log().debug("Added " + name + " for component post-processing at phase " + order);
         }
         else if (processor instanceof ComponentPreProcessor<?> preProcessor) {
-            this.preProcessors.put(order, preProcessor);
+            this.preProcessors.put(preProcessor.order(), preProcessor);
             this.log().debug("Added " + name + " for component pre-processing at phase " + order);
         }
         else {
@@ -228,18 +216,18 @@ public class HartshornApplicationContext extends DefaultContext implements SelfA
     @Override
     public void process() {
         this.processPrefixQueue();
-        final Collection<ComponentContainer> containers = this.locator().containers(ComponentType.FUNCTIONAL);
-        this.log().debug("Located %d functional components from classpath".formatted(containers.size()));
-        for (final ProcessingOrder order : ProcessingOrder.VALUES) this.process(order, containers);
+        final Collection<ComponentContainer> containers = this.locator().containers();
+        this.log().debug("Located %d components from classpath".formatted(containers.size()));
+        this.process(containers);
     }
 
-    protected void process(final ProcessingOrder order, final Collection<ComponentContainer> containers) {
-        for (final ComponentPreProcessor<?> serviceProcessor : this.preProcessors.get(order)) {
+    protected void process(final Collection<ComponentContainer> containers) {
+        for (final ComponentPreProcessor<?> serviceProcessor : this.preProcessors.allValues()) {
             for (final ComponentContainer container : containers) {
                 final TypeContext<?> service = container.type();
                 final Key<?> key = Key.of(service);
                 if (serviceProcessor.modifies(this, key)) {
-                    this.log().debug("Processing component %s with registered processor %s in phase %s".formatted(container.id(), TypeContext.of(serviceProcessor).name(), order));
+                    this.log().debug("Processing component %s with registered processor %s".formatted(container.id(), TypeContext.of(serviceProcessor).name()));
                     serviceProcessor.process(this, key);
                 }
             }
@@ -310,106 +298,6 @@ public class HartshornApplicationContext extends DefaultContext implements SelfA
         return this.metaProvider;
     }
 
-    private <C> void inHierarchy(final Key<C> key, final Consumer<BindingHierarchy<C>> consumer) {
-        final BindingHierarchy<C> hierarchy = (BindingHierarchy<C>) this.hierarchies.getOrDefault(key, new NativeBindingHierarchy<>(key, this));
-        consumer.accept(hierarchy);
-        this.hierarchies.put(key, hierarchy);
-    }
-
-    @Override
-    public <T> T get(final Key<T> key) {
-        return this.get(key, true);
-    }
-
-    @Override
-    public <T> T get(final Key<T> key, final boolean enable) {
-        if (this.singletons.containsKey(key)) return (T) this.singletons.get(key);
-        this.locator().validate(key);
-
-        T instance = this.create(key);
-
-        final Exceptional<ComponentContainer> container = this.locator().container(key.type());
-        if (container.present()) {
-            instance = this.process(key, instance, container.get());
-        }
-        else {
-            this.populateAndStore(key, instance);
-        }
-
-        // Inject properties if applicable
-        if (enable) {
-            try {
-                this.enable(instance);
-            }
-            catch (final ApplicationException e) {
-                ExceptionHandler.unchecked(e);
-            }
-        }
-
-        // May be null, but we have used all possible injectors, it's up to the developer now
-        return instance;
-    }
-
-    protected <T> T process(final Key<T> key, T instance, final ComponentContainer container) {
-        final boolean doProcess = container.permitsProcessing();
-
-        // Modify the instance during phase 1. This allows discarding the existing instance and replacing it with a new instance.
-        // See ServiceOrder#PHASE_1
-        if (doProcess) instance = this.process(key, instance, ProcessingOrder.PHASE_1, true);
-
-        this.populateAndStore(key, instance);
-
-        // Modify the instance during phase 2. This does not allow discarding the existing instance.
-        // See ServiceOrder#PHASE_2
-        if (doProcess) this.process(key, instance, ProcessingOrder.PHASE_2, false);
-
-        return instance;
-    }
-
-    protected <T> T process(final Key<T> key, final T instance, final ProcessingOrder[] orders, final boolean modifiable) {
-        T result = instance;
-        for (final ProcessingOrder order : orders) {
-            for (final ComponentPostProcessor<?> postProcessor : this.postProcessors.get(order)) {
-                if (postProcessor.preconditions(this, key, result)) {
-                    final T modified = postProcessor.process(this, key, result);
-                    if (modifiable) result = modified;
-                    else if (!modifiable && modified != instance) {
-                        throw new IllegalStateException(("Component %s was modified during phase %s by %s. " +
-                                "Component processors are only able to discard existing instances in phases: %s").formatted(key.type().name(), order.name(), TypeContext.of(postProcessor).name(), Arrays.toString(ProcessingOrder.PHASE_2)));
-                    }
-                }
-            }
-        }
-        return result;
-    }
-
-    protected <T> T populateAndStore(final Key<T> key, final T instance) {
-        final MetaProvider meta = this.meta();
-        // Ensure the order of resolution is to first resolve the instance singleton state, and only after check the type state.
-        // Typically, the implementation decided whether it should be a singleton, so this cuts time complexity in half.
-        if (instance != null && (meta.singleton(key.type()) || meta.singleton(TypeContext.unproxy(this, instance))))
-            this.singletons.put(key, instance);
-
-        // Recreating field instances ensures all fields are created through bootstrapping, allowing injection
-        // points to apply correctly
-        return this.populate(instance);
-    }
-
-    @Nullable
-    public <T> T create(final Key<T> key) {
-        final Exceptional<T> provision = this.provide(key).rethrowUnchecked();
-        if (provision.present())
-            return provision.get();
-
-        final TypeContext<T> type = key.type();
-
-        final Exceptional<T> raw = Exceptional.of(() -> this.raw(type)).rethrowUnchecked();
-        if (raw.present())
-            return raw.get();
-
-        // If the component is functional and permits proxying, a post processor will be able to proxy the instance
-        return null;
-    }
 
     @Override
     public boolean hasActivator(final Class<? extends Annotation> activator) {
@@ -424,19 +312,6 @@ public class HartshornApplicationContext extends DefaultContext implements SelfA
                     .toList()
                     .contains(activator);
         }
-    }
-
-    public <T> Exceptional<T> provide(final Key<T> key) {
-        return Exceptional.of(key)
-                .map(this::hierarchy)
-                .flatMap(hierarchy -> {
-                    // Will continue going through each provider until a provider was successful or no other providers remain
-                    for (final Provider<T> provider : hierarchy.providers()) {
-                        final Exceptional<T> provided = provider.provide(this).rethrowUnchecked();
-                        if (provided.present()) return provided;
-                    }
-                    return Exceptional.empty();
-                });
     }
 
     @Override
@@ -459,73 +334,12 @@ public class HartshornApplicationContext extends DefaultContext implements SelfA
         this.prefixQueue.add(prefix);
     }
 
-    @Override
-    public <T> T populate(final T instance) {
-        if (null != instance) {
-            T modifiableInstance = instance;
-            if (this.environment().manager().isProxy(instance)) {
-                modifiableInstance = this.environment().manager().handler(instance).flatMap(ProxyHandler::instance).or(modifiableInstance);
-            }
-            final TypeContext<T> unproxied = TypeContext.unproxy(this, modifiableInstance);
-            if (unproxied.annotation(Populate.class).map(Populate::fields).or(true))
-                modifiableInstance = this.populateFields(unproxied, modifiableInstance);
 
-            if (unproxied.annotation(Populate.class).map(Populate::executables).or(true))
-                modifiableInstance = this.populateMethods(unproxied, modifiableInstance);
-        }
-        return instance;
-    }
-
-    private <T> T populateMethods(final TypeContext<T> type, final T instance) {
-        for (final MethodContext<?, T> method : type.methods(Inject.class)) {
-            method.invoke(this, instance).rethrowUnchecked();
-        }
-        return instance;
-    }
-
-    private <T> T populateFields(final TypeContext<T> type, final T instance) {
-        for (final FieldContext<?> field : type.fields(Inject.class)) {
-            Key<?> fieldKey = Key.of(field.type());
-            if (field.annotation(Named.class).present()) fieldKey = Key.of(field.type(), field.annotation(Named.class).get());
-
-            final Exceptional<Enable> enableAnnotation = field.annotation(Enable.class);
-            final boolean enable = !enableAnnotation.present() || enableAnnotation.get().value();
-
-            final Object fieldInstance = this.get(fieldKey, enable);
-
-            final boolean required = field.annotation(Required.class).map(Required::value).or(false);
-            if (required && fieldInstance == null) return ExceptionHandler.unchecked(new ApplicationException("Field " + field.name() + " in " + type.qualifiedName() + " is required"));
-
-            field.set(instance, fieldInstance);
-        }
-        for (final FieldContext<?> field : type.fields(Context.class)) {
-            this.populateContextField(field, instance);
-        }
-        return instance;
-    }
-
-    protected void populateContextField(final FieldContext<?> field, final Object instance) {
-        final TypeContext<?> type = field.type();
-        final Context annotation = field.annotation(Context.class).get();
-
-        final Exceptional<org.dockbox.hartshorn.core.context.Context> context;
-        if ("".equals(annotation.value())) {
-            context = this.first((Class<org.dockbox.hartshorn.core.context.Context>) type.type());
-        }
-        else {
-            context = this.first(annotation.value(), (Class<org.dockbox.hartshorn.core.context.Context>) type.type());
-        }
-
-        final boolean required = field.annotation(Required.class).map(Required::value).or(false);
-        if (required && context.absent()) ExceptionHandler.unchecked(new ApplicationException("Field " + field.name() + " in " + type.qualifiedName() + " is required"));
-
-        field.set(instance, context.orNull());
-    }
 
     @Override
     public <T> void add(final ProviderContext<T> context) {
         final Key<T> key = context.key();
-        this.inHierarchy(key, hierarchy -> {
+        this.componentProvider.inHierarchy(key, hierarchy -> {
             if (context.singleton()) {
                 hierarchy.add(context.priority(), Providers.of(context.provider().get()));
             }
@@ -533,6 +347,11 @@ public class HartshornApplicationContext extends DefaultContext implements SelfA
                 hierarchy.add(context.priority(), Providers.of(context.provider()));
             }
         });
+    }
+
+    @Override
+    public <T> T populate(final T type) {
+        return this.componentPopulator.populate(type);
     }
 
     @Override
@@ -570,14 +389,6 @@ public class HartshornApplicationContext extends DefaultContext implements SelfA
         }
     }
 
-    @Override
-    public <T> BindingHierarchy<T> hierarchy(final Key<T> key) {
-        final BindingHierarchy<T> hierarchy = (BindingHierarchy<T>) this.hierarchies.getOrDefault(key, new NativeBindingHierarchy<>(key, this));
-        // onUpdate callback is purely so updates will still be saved even if the reference is lost
-        if (hierarchy instanceof ContextWrappedHierarchy) return hierarchy;
-        else return new ContextWrappedHierarchy<>(hierarchy, this, updated -> this.hierarchies.put(key, updated));
-    }
-
     private <T> void handleBinder(final TypeContext<T> implementer, final ComponentBinding annotation) {
         final TypeContext<T> target = TypeContext.of((Class<T>) annotation.value());
 
@@ -585,7 +396,7 @@ public class HartshornApplicationContext extends DefaultContext implements SelfA
             this.handleScanned(implementer, target, annotation);
         }
         else {
-            this.inHierarchy(Key.of(target), hierarchy -> hierarchy.add(annotation.priority(), Providers.of(implementer)));
+            this.componentProvider.inHierarchy(Key.of(target), hierarchy -> hierarchy.add(annotation.priority(), Providers.of(implementer)));
         }
     }
 
@@ -595,22 +406,7 @@ public class HartshornApplicationContext extends DefaultContext implements SelfA
         if (!"".equals(meta.value())) {
             key = key.name(meta);
         }
-        this.inHierarchy(key, hierarchy -> hierarchy.add(bindAnnotation.priority(), Providers.of(binder)));
-    }
-
-    @Override
-    public <C> void bind(final Key<C> contract, final Supplier<C> supplier) {
-        this.inHierarchy(contract, hierarchy -> hierarchy.add(Providers.of(supplier)));
-    }
-
-    @Override
-    public <C, T extends C> void bind(final Key<C> contract, final Class<? extends T> implementation) {
-        this.inHierarchy(contract, hierarchy -> hierarchy.add(Providers.of(implementation)));
-    }
-
-    @Override
-    public <C, T extends C> void bind(final Key<C> contract, final T instance) {
-        this.inHierarchy(contract, hierarchy -> hierarchy.add(Providers.of(instance)));
+        this.componentProvider.inHierarchy(key, hierarchy -> hierarchy.add(bindAnnotation.priority(), Providers.of(binder)));
     }
 
     @Override
@@ -656,5 +452,63 @@ public class HartshornApplicationContext extends DefaultContext implements SelfA
                 }
             }
         }
+    }
+
+    @Override
+    public <T> T get(final Key<T> key) {
+        return this.componentProvider.get(key);
+    }
+
+    @Override
+    public <T> T get(final Key<T> key, final boolean enable) {
+        return this.componentProvider.get(key, enable);
+    }
+
+    @Override
+    public <C> void bind(final Key<C> contract, final Supplier<C> supplier) {
+        this.componentProvider.bind(contract, supplier);
+    }
+
+    @Override
+    public <C, T extends C> void bind(final Key<C> key, final Class<? extends T> implementation) {
+        this.componentProvider.bind(key, implementation);
+    }
+
+    @Override
+    public <C, T extends C> void bind(final Key<C> key, final T instance) {
+        this.componentProvider.bind(key, instance);
+    }
+
+
+    public ClasspathResourceLocator resourceLocator() {
+        return this.resourceLocator;
+    }
+
+    protected Activator activator() {
+        return this.activator;
+    }
+
+    @Override
+    public ApplicationEnvironment environment() {
+        return this.environment;
+    }
+
+    public Set<Modifiers> modifiers() {
+        return this.modifiers;
+    }
+
+    @Override
+    public <T, C extends T> void singleton(final Key<T> key, final C instance) {
+
+    }
+
+    @Override
+    public <C> void inHierarchy(final Key<C> key, final Consumer<BindingHierarchy<C>> consumer) {
+        this.componentProvider.inHierarchy(key, consumer);
+    }
+
+    @Override
+    public <T> BindingHierarchy<T> hierarchy(final Key<T> key) {
+        return this.componentProvider.hierarchy(key);
     }
 }

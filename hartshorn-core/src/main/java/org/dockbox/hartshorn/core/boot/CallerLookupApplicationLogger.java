@@ -33,7 +33,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @since 21.9
  */
 @LogExclude
-public class HartshornApplicationLogger implements ApplicationLogger {
+public class CallerLookupApplicationLogger implements ApplicationLogger {
 
     private final Map<String, Logger> loggers = new ConcurrentHashMap<>();
 

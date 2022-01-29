@@ -58,7 +58,7 @@ public class CommandParameters implements ComponentPreProcessor<UseCommands> {
     }
 
     @Override
-    public ProcessingOrder order() {
+    public Integer order() {
         return ProcessingOrder.EARLY;
     }
 }

@@ -14,28 +14,20 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.core.exceptions;
+package org.dockbox.hartshorn.core.boot;
 
-import org.dockbox.hartshorn.core.boot.LoggingExceptionHandler;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
-import lombok.Getter;
-
-@Getter
-public class TestExceptionHandle extends LoggingExceptionHandler {
-
-    private boolean stacktrace;
-    private String message;
-    private Throwable exception;
-
+/**
+ * A {@link ApplicationFSProviderImpl} that uses the current working directory as the root.
+ *
+ * @author Guus Lieben
+ * @since 21.9
+ */
+public class ApplicationFSProviderImpl implements ApplicationFSProvider{
     @Override
-    public void handle(final String message, final Throwable throwable) {
-        this.message = message;
-        this.exception = throwable;
-    }
-
-    @Override
-    public TestExceptionHandle stacktraces(final boolean stacktraces) {
-        this.stacktrace = stacktraces;
-        return this;
+    public Path applicationPath() {
+        return Paths.get("");
     }
 }

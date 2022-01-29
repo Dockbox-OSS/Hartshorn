@@ -51,7 +51,7 @@ public class ComponentProxyPostProcessor implements ComponentPostProcessor<Servi
     }
 
     @Override
-    public ProcessingOrder order() {
-        return ProcessingOrder.FIRST;
+    public Integer order() {
+        return Integer.MIN_VALUE / 2;
     }
 }

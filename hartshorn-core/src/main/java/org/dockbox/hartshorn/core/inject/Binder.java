@@ -17,7 +17,6 @@
 package org.dockbox.hartshorn.core.inject;
 
 import org.dockbox.hartshorn.core.Key;
-import org.dockbox.hartshorn.core.binding.BindingHierarchy;
 
 import java.util.function.Supplier;
 
@@ -29,5 +28,5 @@ public interface Binder {
 
     <C, T extends C> void bind(Key<C> key, T instance);
 
-    <T> BindingHierarchy<T> hierarchy(Key<T> key);
+    <T, C extends T> void singleton(final Key<T> key, final C instance);
 }

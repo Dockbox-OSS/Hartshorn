@@ -16,22 +16,27 @@
 
 package org.dockbox.hartshorn.core.services;
 
-public enum ProcessingOrder {
-    FIRST, EARLY, NORMAL, LATE, LAST;
+import java.util.function.Predicate;
 
-    public static final ProcessingOrder[] VALUES = ProcessingOrder.values();
+public class ProcessingOrder {
+
+    public static final int FIRST = -256;
+    public static final int EARLY = -128;
+    public static final int NORMAL = 0;
+    public static final int LATE = 128;
+    public static final int LAST = 256;
 
     /**
      * Indicates which service orders can be performed during phase 1. During this phase, component
      * processors are allowed to discard existing instances and return new ones. This can be used to
      * create proxy instances.
      */
-    public static final ProcessingOrder[] PHASE_1 = new ProcessingOrder[] {FIRST, EARLY};
+    public static final Predicate<Integer> PHASE_1 = i -> i < 0;
 
     /**
      * Indicates which service orders can be performed during phase 2. During this phase, component
      * processors are not allowed to discard existing instances and return new ones. This limits the
      * behavior of these processors to only return the same instance, albeit with different state.
      */
-    public static final ProcessingOrder[] PHASE_2 = new ProcessingOrder[] {NORMAL, LATE, LAST};
+    public static final Predicate<Integer> PHASE_2 = i -> i >= 0;
 }
