@@ -23,6 +23,8 @@ import org.dockbox.hartshorn.core.Modifiers;
 import org.dockbox.hartshorn.core.annotations.activate.Activator;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.ApplicationEnvironment;
+import org.dockbox.hartshorn.core.context.ComponentPopulator;
+import org.dockbox.hartshorn.core.context.ComponentProvider;
 import org.dockbox.hartshorn.core.context.PrefixContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
@@ -50,6 +52,8 @@ public abstract class AbstractApplicationFactory<Self extends ApplicationFactory
     protected Function<ApplicationContext, ComponentLocator> componentLocator;
     protected Function<ApplicationContext, ClasspathResourceLocator> resourceLocator;
     protected Function<ApplicationContext, MetaProvider> metaProvider;
+    protected Function<ApplicationContext, ComponentProvider> componentProvider;
+    protected Function<ApplicationContext, ComponentPopulator> componentPopulator;
     protected Function<ApplicationManager, PrefixContext> prefixContext;
 
     protected TypeContext<?> activator;
@@ -204,6 +208,18 @@ public abstract class AbstractApplicationFactory<Self extends ApplicationFactory
     @Override
     public Self prefixContext(final Function<ApplicationManager, PrefixContext> prefixContext) {
         this.prefixContext = prefixContext;
+        return this.self();
+    }
+
+    @Override
+    public Self componentProvider(final Function<ApplicationContext, ComponentProvider> componentProvider) {
+        this.componentProvider = componentProvider;
+        return this.self();
+    }
+
+    @Override
+    public Self componentPopulator(final Function<ApplicationContext, ComponentPopulator> componentPopulator) {
+        this.componentPopulator = componentPopulator;
         return this.self();
     }
 }

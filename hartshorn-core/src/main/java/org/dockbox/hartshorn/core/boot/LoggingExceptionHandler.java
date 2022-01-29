@@ -30,7 +30,7 @@ import lombok.Setter;
  * @author Guus Lieben
  * @since 21.9
  */
-public class HartshornExceptionHandler implements ExceptionHandler, ApplicationManaged {
+public class LoggingExceptionHandler implements ExceptionHandler, ApplicationManaged {
 
     @Getter @Setter
     private boolean stacktraces;
@@ -46,7 +46,7 @@ public class HartshornExceptionHandler implements ExceptionHandler, ApplicationM
     @Override
     public void handle(String message, final Throwable throwable) {
         if (null != throwable) {
-            final Logger log = this.applicationManager() != null ? this.applicationManager().log() : LoggerFactory.getLogger(HartshornExceptionHandler.class);
+            final Logger log = this.applicationManager() != null ? this.applicationManager().log() : LoggerFactory.getLogger(LoggingExceptionHandler.class);
 
             String location = "";
             if (0 < throwable.getStackTrace().length) {

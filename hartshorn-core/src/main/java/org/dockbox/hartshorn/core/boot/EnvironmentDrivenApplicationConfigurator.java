@@ -32,7 +32,7 @@ import java.util.Set;
  * @author Guus Lieben
  * @since 21.9
  */
-public class HartshornApplicationConfigurator implements ApplicationConfigurator {
+public class EnvironmentDrivenApplicationConfigurator implements ApplicationConfigurator {
 
     @Override
     public void configure(final ApplicationManager manager) {

@@ -43,7 +43,7 @@ import lombok.Setter;
  */
 @LogExclude
 @Getter
-public class HartshornApplicationManager implements ObservableApplicationManager, ModifiableContextCarrier {
+public class DelegatingApplicationManager implements ObservableApplicationManager, ModifiableContextCarrier {
 
     private static final String BANNER = """
                  _   _            _       _                     \s
@@ -63,7 +63,7 @@ public class HartshornApplicationManager implements ObservableApplicationManager
     @Setter
     private ExceptionHandler exceptionHandler;
 
-    public HartshornApplicationManager(
+    public DelegatingApplicationManager(
             final TypeContext<?> activator,
             final ApplicationLogger applicationLogger,
             final ApplicationProxier applicationProxier,
@@ -141,7 +141,7 @@ public class HartshornApplicationManager implements ObservableApplicationManager
         return this.applicationProxier.handler(instance);
     }
 
-    public HartshornApplicationManager applicationContext(final ApplicationContext applicationContext) {
+    public DelegatingApplicationManager applicationContext(final ApplicationContext applicationContext) {
         if (this.applicationContext == null) this.applicationContext = applicationContext;
         else throw new IllegalArgumentException("Application context has already been configured");
         return this;

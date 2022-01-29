@@ -26,7 +26,7 @@ public interface OrderedComponentProcessor {
      *
      * @return The phase of when the component should be processed.
      */
-    default ProcessingOrder order() {
+    default Integer order() {
         return ProcessingOrder.NORMAL;
     }
 }

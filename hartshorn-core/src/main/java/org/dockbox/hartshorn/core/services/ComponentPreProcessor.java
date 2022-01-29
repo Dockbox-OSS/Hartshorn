@@ -48,13 +48,12 @@ public interface ComponentPreProcessor<A extends Annotation> extends ComponentPr
 
     @Override
     default <T> boolean modifies(final ApplicationContext context, final Key<T> key, @Nullable final T instance) {
-        return this.modifies(context, key);
+        throw new UnsupportedOperationException("Component pre-processor does not support instance processing, use modifies(ApplicationContext, Key) instead.");
     }
 
     @Override
     default <T> T process(final ApplicationContext context, final Key<T> key, @Nullable final T instance) {
-        this.process(context, key);
-        return instance;
+        throw new UnsupportedOperationException("Component pre-processor does not support instance processing, use process(ApplicationContext, Key) instead.");
     }
 
     /**

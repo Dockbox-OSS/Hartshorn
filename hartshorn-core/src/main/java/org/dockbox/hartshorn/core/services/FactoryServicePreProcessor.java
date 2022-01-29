@@ -74,7 +74,7 @@ public class FactoryServicePreProcessor implements ServicePreProcessor<Service> 
     }
 
     @Override
-    public ProcessingOrder order() {
+    public Integer order() {
         return ProcessingOrder.FIRST;
     }
 }

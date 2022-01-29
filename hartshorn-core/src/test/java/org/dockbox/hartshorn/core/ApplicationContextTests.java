@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.core;
 import org.dockbox.hartshorn.core.annotations.activate.UseServiceProvision;
 import org.dockbox.hartshorn.core.boot.EmptyService;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
-import org.dockbox.hartshorn.core.context.HartshornApplicationContext;
+import org.dockbox.hartshorn.core.context.StandardDelegatingApplicationContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 import org.dockbox.hartshorn.core.exceptions.CyclicComponentException;
@@ -181,7 +181,7 @@ public class ApplicationContextTests {
         // This is a bit of a hack, but we need to ensure that the prefix binding is present and processed. Usually
         // you'd do this through a service activator.
         this.applicationContext().bind("test.types.scan");
-        ((HartshornApplicationContext) this.applicationContext()).process();
+        ((StandardDelegatingApplicationContext) this.applicationContext()).process();
 
         final SampleInterface provided = this.applicationContext().get(SampleInterface.class);
         Assertions.assertNotNull(provided);
@@ -197,7 +197,7 @@ public class ApplicationContextTests {
         // This is a bit of a hack, but we need to ensure that the prefix binding is present and processed. Usually
         // you'd do this through a service activator.
         this.applicationContext().bind("test.types.meta");
-        ((HartshornApplicationContext) this.applicationContext()).process();
+        ((StandardDelegatingApplicationContext) this.applicationContext()).process();
 
         // Ensure that the binding is not bound to the default name
         final SampleInterface sample = this.applicationContext().get(SampleInterface.class);
@@ -257,7 +257,7 @@ public class ApplicationContextTests {
         // This is a bit of a hack, but we need to ensure that the prefix binding is present and processed. Usually
         // you'd do this through a service activator.
         this.applicationContext().bind("test.types.provision");
-        ((HartshornApplicationContext) this.applicationContext()).process();
+        ((StandardDelegatingApplicationContext) this.applicationContext()).process();
 
         if (field) {
             if (fieldMeta == null) {this.applicationContext().bind(Key.of(SampleField.class), SampleFieldImplementation.class);}
@@ -285,7 +285,7 @@ public class ApplicationContextTests {
     @Test
     void testFieldProviders() {
         this.applicationContext().bind("test.types.provision");
-        ((HartshornApplicationContext) this.applicationContext()).process();
+        ((StandardDelegatingApplicationContext) this.applicationContext()).process();
         final ProvidedInterface field = this.applicationContext().get(Key.of(ProvidedInterface.class, "field"));
         Assertions.assertNotNull(field);
         Assertions.assertEquals("Field", field.name());
@@ -294,7 +294,7 @@ public class ApplicationContextTests {
     @Test
     void testSingletonFieldProviders() {
         this.applicationContext().bind("test.types.provision");
-        ((HartshornApplicationContext) this.applicationContext()).process();
+        ((StandardDelegatingApplicationContext) this.applicationContext()).process();
         this.applicationContext().get(FieldProviderService.class);
         final ProvidedInterface field = this.applicationContext().get(Key.of(ProvidedInterface.class, "singletonField"));
         Assertions.assertNotNull(field);

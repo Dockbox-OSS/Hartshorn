@@ -17,11 +17,9 @@
 package org.dockbox.hartshorn.core.inject;
 
 import org.dockbox.hartshorn.core.Key;
-import org.dockbox.hartshorn.core.binding.BindingHierarchy;
 
 import java.util.function.Supplier;
 
-@FunctionalInterface
 public interface DelegatedBinder extends Binder {
 
     @Override
@@ -42,7 +40,7 @@ public interface DelegatedBinder extends Binder {
     }
 
     @Override
-    default <T> BindingHierarchy<T> hierarchy(final Key<T> key) {
-        return this.binder().hierarchy(key);
+    default <T, C extends T> void singleton(final Key<T> key, final C instance) {
+        this.binder().singleton(key, instance);
     }
 }

@@ -14,28 +14,10 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.core.exceptions;
+package org.dockbox.hartshorn.core.context;
 
-import org.dockbox.hartshorn.core.boot.LoggingExceptionHandler;
+import org.dockbox.hartshorn.core.services.ComponentPostProcessor;
 
-import lombok.Getter;
-
-@Getter
-public class TestExceptionHandle extends LoggingExceptionHandler {
-
-    private boolean stacktrace;
-    private String message;
-    private Throwable exception;
-
-    @Override
-    public void handle(final String message, final Throwable throwable) {
-        this.message = message;
-        this.exception = throwable;
-    }
-
-    @Override
-    public TestExceptionHandle stacktraces(final boolean stacktraces) {
-        this.stacktrace = stacktraces;
-        return this;
-    }
+public interface ProcessableComponentProvider extends ComponentProvider {
+    void postProcessor(ComponentPostProcessor<?> postProcessor);
 }

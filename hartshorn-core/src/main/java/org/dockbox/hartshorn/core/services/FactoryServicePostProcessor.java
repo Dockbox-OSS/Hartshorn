@@ -72,7 +72,7 @@ public class FactoryServicePostProcessor extends ServiceAnnotatedMethodIntercept
     }
 
     @Override
-    public ProcessingOrder order() {
+    public Integer order() {
         return ProcessingOrder.LAST;
     }
 }

@@ -14,28 +14,23 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.core.exceptions;
+package org.dockbox.hartshorn.core;
 
-import org.dockbox.hartshorn.core.boot.LoggingExceptionHandler;
+import java.util.Collection;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.function.Supplier;
 
-import lombok.Getter;
+public class CustomMultiTreeMap<K extends Comparable<K>, V> extends CustomMultiMap<K, V> {
 
-@Getter
-public class TestExceptionHandle extends LoggingExceptionHandler {
+    private final Map<K, Collection<V>> map = new TreeMap<>();
 
-    private boolean stacktrace;
-    private String message;
-    private Throwable exception;
-
-    @Override
-    public void handle(final String message, final Throwable throwable) {
-        this.message = message;
-        this.exception = throwable;
+    public CustomMultiTreeMap(final Supplier<Collection<V>> baseCollection) {
+        super(baseCollection);
     }
 
     @Override
-    public TestExceptionHandle stacktraces(final boolean stacktraces) {
-        this.stacktrace = stacktraces;
-        return this;
+    protected Map<K, Collection<V>> map() {
+        return this.map;
     }
 }

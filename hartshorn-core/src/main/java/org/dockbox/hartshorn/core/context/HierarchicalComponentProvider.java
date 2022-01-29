@@ -14,28 +14,17 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.core.exceptions;
+package org.dockbox.hartshorn.core.context;
 
-import org.dockbox.hartshorn.core.boot.LoggingExceptionHandler;
+import org.dockbox.hartshorn.core.Key;
+import org.dockbox.hartshorn.core.binding.BindingHierarchy;
+import org.dockbox.hartshorn.core.inject.Binder;
 
-import lombok.Getter;
+import java.util.function.Consumer;
 
-@Getter
-public class TestExceptionHandle extends LoggingExceptionHandler {
+public interface HierarchicalComponentProvider extends ComponentProvider, Binder {
 
-    private boolean stacktrace;
-    private String message;
-    private Throwable exception;
+    <C> void inHierarchy(final Key<C> key, final Consumer<BindingHierarchy<C>> consumer);
 
-    @Override
-    public void handle(final String message, final Throwable throwable) {
-        this.message = message;
-        this.exception = throwable;
-    }
-
-    @Override
-    public TestExceptionHandle stacktraces(final boolean stacktraces) {
-        this.stacktrace = stacktraces;
-        return this;
-    }
+    <T> BindingHierarchy<T> hierarchy(Key<T> key);
 }

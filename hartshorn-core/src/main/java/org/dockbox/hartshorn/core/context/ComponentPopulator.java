@@ -14,20 +14,8 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.core.boot;
+package org.dockbox.hartshorn.core.context;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
-/**
- * A {@link HartshornApplicationFSProvider} that uses the current working directory as the root.
- *
- * @author Guus Lieben
- * @since 21.9
- */
-public class HartshornApplicationFSProvider implements ApplicationFSProvider{
-    @Override
-    public Path applicationPath() {
-        return Paths.get("");
-    }
+public interface ComponentPopulator {
+    <T> T populate(T type);
 }

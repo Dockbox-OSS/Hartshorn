@@ -72,4 +72,9 @@ public final class ProviderServicePreProcessor implements ServicePreProcessor<Us
     public Class<UseServiceProvision> activator() {
         return UseServiceProvision.class;
     }
+
+    @Override
+    public Integer order() {
+        return Integer.MIN_VALUE / 2;
+    }
 }

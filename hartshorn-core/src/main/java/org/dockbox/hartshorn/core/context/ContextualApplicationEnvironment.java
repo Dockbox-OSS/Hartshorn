@@ -27,13 +27,13 @@ import java.util.List;
 
 import lombok.Getter;
 
-public class HartshornApplicationEnvironment implements ApplicationEnvironment {
+public class ContextualApplicationEnvironment implements ApplicationEnvironment {
 
     @Getter private final PrefixContext prefixContext;
     @Getter private final boolean isCI;
     @Getter private final ApplicationManager manager;
 
-    public HartshornApplicationEnvironment(final PrefixContext prefixContext, final ApplicationManager manager) {
+    public ContextualApplicationEnvironment(final PrefixContext prefixContext, final ApplicationManager manager) {
         this.manager = manager;
         this.isCI = HartshornUtils.isCI();
         this.prefixContext = prefixContext;
