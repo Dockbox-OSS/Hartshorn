@@ -210,9 +210,7 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
             builder.enable(Feature.ALLOW_COMMENTS);
             builder.enable(Feature.ALLOW_YAML_COMMENTS);
             builder.enable(SerializationFeature.INDENT_OUTPUT);
-            builder.enable(SerializationFeature.WRITE_SINGLE_ELEM_ARRAYS_UNWRAPPED);
             builder.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
-            builder.enable(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS);
             builder.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
             // As Lombok generates fluent style getters/setters, these are not picked up by Jackson which
             // would otherwise cause it to fail due to it recognizing the object as an empty bean, even
