@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.config;
+package org.dockbox.hartshorn.data;
 
-import org.dockbox.hartshorn.config.annotations.Configuration;
-import org.dockbox.hartshorn.config.annotations.UseConfigurations;
 import org.dockbox.hartshorn.core.Key;
 import org.dockbox.hartshorn.core.annotations.activate.AutomaticActivation;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
+import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.core.services.ComponentPreProcessor;
 import org.dockbox.hartshorn.core.services.ProcessingOrder;
-import org.dockbox.hartshorn.core.services.ServicePreProcessor;
-import org.dockbox.hartshorn.data.FileFormats;
+import org.dockbox.hartshorn.data.annotations.Configuration;
+import org.dockbox.hartshorn.data.annotations.UseConfigurations;
 import org.dockbox.hartshorn.data.mapping.ObjectMapper;
 
 import java.net.URI;
@@ -42,7 +42,7 @@ import java.util.regex.Pattern;
  * defaults to {@link FileSystemLookupStrategy}.
  */
 @AutomaticActivation
-public class ConfigurationServicePreProcessor implements ServicePreProcessor<UseConfigurations> {
+public class ConfigurationServicePreProcessor implements ComponentPreProcessor<UseConfigurations> {
 
     private final Pattern STRATEGY_PATTERN = Pattern.compile("(.+):(.+)");
     private final Map<String, ResourceLookupStrategy> strategies = new ConcurrentHashMap<>();
@@ -62,7 +62,7 @@ public class ConfigurationServicePreProcessor implements ServicePreProcessor<Use
     }
 
     @Override
-    public boolean preconditions(final ApplicationContext context, final Key<?> key) {
+    public boolean modifies(final ApplicationContext context, final Key<?> key) {
         return key.type().annotation(Configuration.class).present();
     }
 
@@ -72,7 +72,12 @@ public class ConfigurationServicePreProcessor implements ServicePreProcessor<Use
 
         String source = configuration.source();
         final TypeContext<?> owner = TypeContext.of(configuration.owner());
-        final FileFormats filetype = configuration.filetype();
+
+        final FileFormats format = FileFormats.lookup(source);
+
+        if (format == null) {
+            throw new IllegalArgumentException("Unknown file format: " + source + ", declared by " + key.type().name());
+        }
 
         final Matcher matcher = this.STRATEGY_PATTERN.matcher(source);
         ResourceLookupStrategy strategy = new FileSystemLookupStrategy();
@@ -81,16 +86,20 @@ public class ConfigurationServicePreProcessor implements ServicePreProcessor<Use
             source = matcher.group(2);
         }
 
-        context.log().debug("Determined strategy " + TypeContext.of(strategy).name() + " for " + filetype.asFileName(source) + ", declared by " + key.type().name());
+        context.log().debug("Determined strategy " + TypeContext.of(strategy).name() + " for " + format.asFileName(source) + ", declared by " + key.type().name());
 
-        URI config = strategy.lookup(context, source, owner, filetype).orNull();
+        final Exceptional<URI> config = strategy.lookup(context, source, owner, format);
 
-        if (config == null) config = new FileSystemLookupStrategy().lookup(context, source, owner, filetype).get();
+        if (config.absent()) {
+            context.log().warn("Could not find configuration file " + source + " for " + key.type().name());
+            return;
+        }
+
         final Map<String, Object> cache = context.get(ObjectMapper.class)
-                .fileType(filetype)
-                .flat(config);
+                .fileType(format)
+                .flat(config.get());
 
-        context.log().debug("Located " + cache.size() + " in source " + filetype.asFileName(source));
+        context.log().debug("Located " + cache.size() + " in source " + format.asFileName(source));
         context.properties(cache);
     }
 

@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.config;
+package org.dockbox.hartshorn.data;
 
-import org.dockbox.hartshorn.config.annotations.Configuration;
-import org.dockbox.hartshorn.config.annotations.Value;
+import org.dockbox.hartshorn.data.annotations.Value;
+import org.dockbox.hartshorn.core.annotations.stereotype.Service;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
-@AllArgsConstructor
-@NoArgsConstructor
-@Configuration(source = "junit", lazy = true)
-public class DemoFSConfiguration {
+@Getter
+@Service(singleton = false)
+public class ValueTyped {
 
-    @Value("junit.fs")
-    @Getter
-    private String fileSystemValue;
+    @Value("demo")
+    private String string;
+
+    @Value("nested.demo")
+    private String nestedString;
+
 }

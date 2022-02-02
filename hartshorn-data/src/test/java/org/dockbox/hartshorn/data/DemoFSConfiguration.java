@@ -14,22 +14,23 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.config.annotations;
+package org.dockbox.hartshorn.data;
 
-import org.dockbox.hartshorn.core.annotations.activate.ServiceActivator;
-import org.dockbox.hartshorn.data.annotations.UsePersistence;
+import org.dockbox.hartshorn.data.annotations.Configuration;
+import org.dockbox.hartshorn.data.annotations.Value;
+import org.dockbox.hartshorn.core.annotations.stereotype.Component;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-/**
- * Service activator for the configuration module.
- */
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-@ServiceActivator
-@UsePersistence
-public @interface UseConfigurations {
+@AllArgsConstructor
+@NoArgsConstructor
+@Component
+@Configuration(source = "junit.yml")
+public class DemoFSConfiguration {
+
+    @Value("junit.fs")
+    @Getter
+    private String fileSystemValue;
 }

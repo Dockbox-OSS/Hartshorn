@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.config.annotations;
+package org.dockbox.hartshorn.data.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

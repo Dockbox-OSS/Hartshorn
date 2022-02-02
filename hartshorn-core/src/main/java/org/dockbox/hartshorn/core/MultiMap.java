@@ -23,7 +23,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class MultiMap<K, V> {
 
-    private Map<K, Collection<V>> map;
+    protected Map<K, Collection<V>> map;
 
     protected Map<K, Collection<V>> map() {
         if (this.map == null) {

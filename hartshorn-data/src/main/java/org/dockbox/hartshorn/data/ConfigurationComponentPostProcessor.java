@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.config;
+package org.dockbox.hartshorn.data;
 
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.dockbox.hartshorn.config.annotations.UseConfigurations;
-import org.dockbox.hartshorn.config.annotations.Value;
+import org.dockbox.hartshorn.data.annotations.UseConfigurations;
+import org.dockbox.hartshorn.data.annotations.Value;
 import org.dockbox.hartshorn.core.Key;
 import org.dockbox.hartshorn.core.annotations.activate.AutomaticActivation;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
@@ -53,6 +53,8 @@ public class ConfigurationComponentPostProcessor implements ComponentPostProcess
             modifiableInstance = context.environment().manager().handler(key.type(), instance).instance().or(modifiableInstance);
         }
 
+        final ValueLookup valueLookup = context.get(ValueLookup.class);
+
         for (final FieldContext<?> field : instanceType.fields(Value.class)) {
             try {
                 final Value annotation = field.annotation(Value.class).get();
@@ -61,22 +63,21 @@ public class ConfigurationComponentPostProcessor implements ComponentPostProcess
                 final Exceptional<?> property;
 
                 if (field.type().childOf(Collection.class)) {
-                    final Exceptional<Collection<Object>> properties = context.properties(valueKey);
-                    // If a specific type was specified
+                    final Collection<?> values = valueLookup.getValues(valueKey);
                     if (!field.type().is(Collection.class)) {
                         final Exceptional<? extends ConstructorContext<?>> constructor = field.type().constructor(Collection.class);
                         if (constructor.absent()) throw new IllegalStateException("No compatible constructor found to convert collection to " + field.type().qualifiedName());
                         else {
                             final ConstructorContext<?> constructorContext = constructor.get();
-                            final Collection<?> collection = (Collection<?>) constructorContext.createInstance(properties.get()).orNull();
+                            final Collection<?> collection = (Collection<?>) constructorContext.createInstance(values).orNull();
                             property = Exceptional.of(collection);
                         }
                     } else {
-                        property = properties;
+                        property = Exceptional.of(values);
                     }
                 }
                 else {
-                    property = context.property(valueKey);
+                    property = valueLookup.getValue(valueKey);
                 }
 
                 if (property.absent()) {

@@ -16,18 +16,18 @@
 
 package org.dockbox.hartshorn.demo.persistence;
 
-import org.dockbox.hartshorn.config.annotations.Configuration;
-import org.dockbox.hartshorn.config.annotations.Value;
 import org.dockbox.hartshorn.core.Key;
 import org.dockbox.hartshorn.core.annotations.inject.Provider;
+import org.dockbox.hartshorn.core.annotations.stereotype.Component;
 import org.dockbox.hartshorn.core.annotations.stereotype.Service;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
-import org.dockbox.hartshorn.demo.persistence.services.UserRepository;
-import org.dockbox.hartshorn.data.FileFormats;
+import org.dockbox.hartshorn.data.annotations.Configuration;
+import org.dockbox.hartshorn.data.annotations.Value;
 import org.dockbox.hartshorn.data.jpa.JpaRepository;
+import org.dockbox.hartshorn.data.remote.JdbcRemoteConfiguration;
 import org.dockbox.hartshorn.data.remote.MySQLRemote;
 import org.dockbox.hartshorn.data.remote.PersistenceConnection;
-import org.dockbox.hartshorn.data.remote.JdbcRemoteConfiguration;
+import org.dockbox.hartshorn.demo.persistence.services.UserRepository;
 
 import javax.inject.Singleton;
 
@@ -37,8 +37,6 @@ import javax.inject.Singleton;
  * and therefore has all abilities also found with {@link Service}.
  *
  * <p>{@link Configuration} adds the ability to load configuration files through a configured {@link Configuration#source()}.
- * By default, the {@link FileFormats} used to read the file is {@link FileFormats#YAML}, however this can be configured to
- * use any {@link FileFormats} through {@link Configuration#filetype()}.
  *
  * <p>This configuration is loaded from the {@code persistence-demo.yml} file in the {@code src/main/resources} directory,
  * which will thus be present on the classpath when the application is active. As this means the file will not be present
@@ -49,6 +47,7 @@ import javax.inject.Singleton;
  * This allows you to use the configuration outside this type directly if required, however it is recommended to keep
  * values restricted to the configuration service which defines them.
  */
+@Component
 @Configuration(source = "classpath:persistence-demo")
 public class PersistenceDemoConfiguration {
 

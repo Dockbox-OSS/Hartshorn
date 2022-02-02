@@ -14,24 +14,21 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.core;
+package org.dockbox.hartshorn.data.annotations;
 
-import java.util.Collection;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.function.Supplier;
+import org.dockbox.hartshorn.core.annotations.activate.ServiceActivator;
 
-public class CustomMultiTreeMap<K extends Comparable<K>, V> extends CustomMultiMap<K, V> {
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-    public CustomMultiTreeMap(final Supplier<Collection<V>> baseCollection) {
-        super(baseCollection);
-    }
-
-    @Override
-    protected Map<K, Collection<V>> map() {
-        if (this.map == null) {
-            this.map = new TreeMap<>();
-        }
-        return this.map;
-    }
+/**
+ * Service activator for the configuration module.
+ */
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
+@ServiceActivator
+@UsePersistence
+public @interface UseConfigurations {
 }
