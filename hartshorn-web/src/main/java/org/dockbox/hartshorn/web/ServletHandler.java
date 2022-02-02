@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.web;
 
-import org.dockbox.hartshorn.config.annotations.Value;
+import org.dockbox.hartshorn.data.annotations.Value;
 import org.dockbox.hartshorn.core.Enableable;
 import org.dockbox.hartshorn.core.annotations.inject.Bound;
 import org.dockbox.hartshorn.core.annotations.inject.ComponentBinding;

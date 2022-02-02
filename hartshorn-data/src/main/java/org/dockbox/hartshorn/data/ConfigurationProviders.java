@@ -14,21 +14,18 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.config;
+package org.dockbox.hartshorn.data;
 
-import org.dockbox.hartshorn.config.annotations.Value;
+import org.dockbox.hartshorn.core.annotations.inject.Provider;
 import org.dockbox.hartshorn.core.annotations.stereotype.Service;
+import org.dockbox.hartshorn.core.context.ApplicationContext;
+import org.dockbox.hartshorn.data.annotations.UseConfigurations;
 
-import lombok.Getter;
+@Service(activators = UseConfigurations.class)
+public class ConfigurationProviders {
 
-@Getter
-@Service(singleton = false)
-public class ValueTyped {
-
-    @Value("demo")
-    private String string;
-
-    @Value("nested.demo")
-    private String nestedString;
-
+    @Provider
+    public ValueLookup valueLookup(final ApplicationContext applicationContext) {
+        return applicationContext.get(ContextPropertyValueLookup.class);
+    }
 }

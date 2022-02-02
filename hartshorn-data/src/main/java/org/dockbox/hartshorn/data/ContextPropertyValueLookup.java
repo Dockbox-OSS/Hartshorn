@@ -14,21 +14,28 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.config;
+package org.dockbox.hartshorn.data;
 
-import org.dockbox.hartshorn.core.domain.Exceptional;
-import org.dockbox.hartshorn.config.annotations.Configuration;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
-import org.dockbox.hartshorn.core.context.element.TypeContext;
-import org.dockbox.hartshorn.data.FileFormats;
+import org.dockbox.hartshorn.core.domain.Exceptional;
 
-import java.net.URI;
+import java.util.ArrayList;
+import java.util.Collection;
 
-/**
- * Defines how a {@link Configuration#source() resource} is looked up while processing types annotated with
- * {@link Configuration}.
- */
-public interface ResourceLookupStrategy {
-    String name();
-    Exceptional<URI> lookup(ApplicationContext context, String path, TypeContext<?> owner, FileFormats fileFormat);
+import javax.inject.Inject;
+
+public class ContextPropertyValueLookup implements ValueLookup {
+
+    @Inject
+    private ApplicationContext applicationContext;
+
+    @Override
+    public Exceptional<?> getValue(final String key) {
+        return this.applicationContext.property(key);
+    }
+
+    @Override
+    public Collection<?> getValues(final String key) {
+        return this.applicationContext.properties(key).orElse(ArrayList::new).get();
+    }
 }

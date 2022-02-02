@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.config;
+package org.dockbox.hartshorn.data;
 
-import org.dockbox.hartshorn.config.annotations.Configuration;
-import org.dockbox.hartshorn.config.annotations.Value;
+import org.dockbox.hartshorn.data.annotations.Configuration;
+import org.dockbox.hartshorn.data.annotations.Value;
+import org.dockbox.hartshorn.core.annotations.stereotype.Component;
 
 import java.util.Collection;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -25,7 +26,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import lombok.Getter;
 
 @Getter
-@Configuration(source = "classpath:junit")
+@Component
+@Configuration(source = "classpath:junit.yml")
 public class DemoClasspathConfiguration {
 
     @Value("junit.cp")

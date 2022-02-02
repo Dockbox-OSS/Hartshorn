@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.i18n.annotations;
 
-import org.dockbox.hartshorn.config.annotations.UseConfigurations;
+import org.dockbox.hartshorn.data.annotations.UseConfigurations;
 import org.dockbox.hartshorn.core.annotations.activate.ServiceActivator;
 
 import java.lang.annotation.ElementType;

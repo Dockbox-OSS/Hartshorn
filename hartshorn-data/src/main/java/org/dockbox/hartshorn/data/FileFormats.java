@@ -21,20 +21,42 @@ import java.nio.file.Path;
 import lombok.Getter;
 
 /** Enumerated values containing the file extensions for several commonly used file types. */
-public enum FileFormats implements FileFormat{
+public enum FileFormats implements FileFormat {
     // Raw/text types
-    YAML("yml", DataStorageType.RAW),
-    JSON("json", DataStorageType.RAW),
-    XML("xml", DataStorageType.RAW),
-    TOML("toml", DataStorageType.RAW),
-    PROPERTIES("properties", DataStorageType.RAW);
+    YAML(DataStorageType.RAW, "yml", "yaml"),
+    JSON(DataStorageType.RAW, "json"),
+    XML(DataStorageType.RAW, "xml"),
+    TOML(DataStorageType.RAW, "toml"),
+    PROPERTIES(DataStorageType.RAW, "properties");
 
     @Getter private final String extension;
     @Getter private final DataStorageType type;
+    private final String[] aliases;
 
-    FileFormats(final String extension, final DataStorageType type) {
+    FileFormats(final DataStorageType type, final String extension, final String... aliases) {
         this.extension = extension;
         this.type = type;
+        this.aliases = aliases;
+    }
+
+    public static FileFormats lookup(final String source) {
+        final int i = source.lastIndexOf('.');
+        if (i == -1) {
+            return null;
+        }
+        final String extension = source.substring(i + 1);
+        for (final FileFormats format : FileFormats.values()) {
+            if (format.extension.equalsIgnoreCase(extension)) {
+                return format;
+            } else {
+                for (final String alias : format.aliases) {
+                    if (alias.equalsIgnoreCase(extension)) {
+                        return format;
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     /**

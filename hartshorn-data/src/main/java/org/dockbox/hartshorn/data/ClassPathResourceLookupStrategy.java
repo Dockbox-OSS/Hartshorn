@@ -14,30 +14,29 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.config;
+package org.dockbox.hartshorn.data;
 
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
-import org.dockbox.hartshorn.data.FileFormats;
 
 import java.net.URI;
+import java.nio.file.Path;
 
 import lombok.Getter;
 
 /**
- * Looks up a resource through the local filesystem. The file directory is looked up based on the configuration path of
- * the {@link TypeContext owner}, typically this will be similar to {@code /config/{owner-id}/}.
- * <p>This strategy does not require the name to be present, as it is the default strategy used in
- * {@link ConfigurationServicePreProcessor}.
+ * Looks up a resource through the classpath. The packaged resource is copied to a temporary file, created and managed
+ * by {@link org.dockbox.hartshorn.core.boot.ClasspathResourceLocator#resource(String)}. This requires the strategy name to be
+ * configured to be equal to {@code classpath:{resource_name}}.
  */
-public class FileSystemLookupStrategy implements ResourceLookupStrategy {
+public class ClassPathResourceLookupStrategy implements ResourceLookupStrategy {
 
     @Getter
-    private final String name = "fs";
+    private final String name = "classpath";
 
     @Override
     public Exceptional<URI> lookup(final ApplicationContext context, final String path, final TypeContext<?> owner, final FileFormats fileFormat) {
-        return Exceptional.of(fileFormat.asPath(context.environment().manager().applicationPath(), path).toUri());
+        return context.resourceLocator().resource(path).map(Path::toUri);
     }
 }

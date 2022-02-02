@@ -14,24 +14,20 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.core;
+package org.dockbox.hartshorn.data;
 
-import java.util.Collection;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.function.Supplier;
+import org.dockbox.hartshorn.core.context.ApplicationContext;
+import org.dockbox.hartshorn.core.context.element.TypeContext;
+import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.data.annotations.Configuration;
 
-public class CustomMultiTreeMap<K extends Comparable<K>, V> extends CustomMultiMap<K, V> {
+import java.net.URI;
 
-    public CustomMultiTreeMap(final Supplier<Collection<V>> baseCollection) {
-        super(baseCollection);
-    }
-
-    @Override
-    protected Map<K, Collection<V>> map() {
-        if (this.map == null) {
-            this.map = new TreeMap<>();
-        }
-        return this.map;
-    }
+/**
+ * Defines how a {@link Configuration#source() resource} is looked up while processing types annotated with
+ * {@link Configuration}.
+ */
+public interface ResourceLookupStrategy {
+    String name();
+    Exceptional<URI> lookup(ApplicationContext context, String path, TypeContext<?> owner, FileFormats fileFormat);
 }

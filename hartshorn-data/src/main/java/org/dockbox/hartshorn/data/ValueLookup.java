@@ -14,24 +14,13 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.core;
+package org.dockbox.hartshorn.data;
+
+import org.dockbox.hartshorn.core.domain.Exceptional;
 
 import java.util.Collection;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.function.Supplier;
 
-public class CustomMultiTreeMap<K extends Comparable<K>, V> extends CustomMultiMap<K, V> {
-
-    public CustomMultiTreeMap(final Supplier<Collection<V>> baseCollection) {
-        super(baseCollection);
-    }
-
-    @Override
-    protected Map<K, Collection<V>> map() {
-        if (this.map == null) {
-            this.map = new TreeMap<>();
-        }
-        return this.map;
-    }
+public interface ValueLookup {
+    public Exceptional<?> getValue(String key);
+    public Collection<?> getValues(String key);
 }
