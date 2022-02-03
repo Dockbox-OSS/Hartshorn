@@ -67,7 +67,9 @@ public class HttpWebServerInitializer implements LifecycleObserver {
             servlets.put(context.pathSpec(), adapter);
         }
 
-        if (applicationContext.hasActivator(UseMvcServer.class)) {
+        final boolean initializeMvcComponents = applicationContext.hasActivator(UseMvcServer.class);
+
+        if (initializeMvcComponents) {
             final MvcControllerContext mvcControllerContext = applicationContext.first(MvcControllerContext.class).get();
             for (final RequestHandlerContext context : mvcControllerContext.requestHandlerContexts()) {
                 final MvcServlet servlet = this.webServletFactory.mvc((MethodContext<ViewTemplate, ?>) context.methodContext());
@@ -82,10 +84,16 @@ public class HttpWebServerInitializer implements LifecycleObserver {
 
         this.webServer.listStaticDirectories(this.useDirectoryServlet);
 
-        try {
-            final MVCInitializer initializer = applicationContext.get(MVCInitializer.class);
-            initializer.initialize(applicationContext);
+        if (initializeMvcComponents) {
+            try {
+                final MVCInitializer initializer = applicationContext.get(MVCInitializer.class);
+                initializer.initialize(applicationContext);
+            } catch (final ApplicationException e) {
+                applicationContext.handle("Failed to initialize MVC components", e);
+            }
+        }
 
+        try {
             this.webServer.start(this.port);
         }
         catch (final ApplicationException e) {
