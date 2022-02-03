@@ -66,4 +66,11 @@ public @interface Factory {
      * @return The name of the {@link org.dockbox.hartshorn.core.Key} to use.
      */
     String value() default "";
+
+    /**
+     * Indicate whether the factory method should fail if there is no binding for the bound type. If
+     * this is set to {@code true}, the factory method will throw an exception if there is no binding
+     * for the bound type. If this is set to {@code false}, the factory method will return {@code null}.
+     */
+    boolean required() default true;
 }

@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.core.context;
 import org.dockbox.hartshorn.core.annotations.context.AutoCreating;
 import org.dockbox.hartshorn.core.context.element.ConstructorContext;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
+import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.services.FactoryServicePostProcessor;
 import org.dockbox.hartshorn.core.services.FactoryServicePreProcessor;
 
@@ -56,9 +57,8 @@ public class FactoryContext extends DefaultContext {
      * @return The constructor associated with the given method.
      * @throws NoSuchElementException If no constructor is associated with the method.
      */
-    public <T> ConstructorContext<T> get(final MethodContext<T, ?> method) {
+    public <T> Exceptional<ConstructorContext<T>> get(final MethodContext<T, ?> method) {
         final ConstructorContext<?> constructor = this.bounds.get(method);
-        if (constructor == null) throw new NoSuchElementException("No bound constructor present for method " + method.qualifiedName());
-        return (ConstructorContext<T>) constructor;
+        return Exceptional.of((ConstructorContext<T>) constructor);
     }
 }
