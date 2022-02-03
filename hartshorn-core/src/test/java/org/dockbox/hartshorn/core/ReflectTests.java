@@ -28,6 +28,7 @@ import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.core.context.element.MethodModifier;
 import org.dockbox.hartshorn.core.context.element.ParameterContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
+import org.dockbox.hartshorn.core.context.element.WildcardTypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.exceptions.TypeConversionException;
 import org.dockbox.hartshorn.core.types.AnnotatedImpl;
@@ -509,4 +510,22 @@ public class ReflectTests {
 
     public void genericTestMethod(final List<List<String>> nestedGeneric) { }
 
+    public void methodWithWildcardUpperbounds(final List<? extends String> list) { }
+
+    @Test
+    void testWildcardsWithUpperBounds() {
+        final ParameterContext<?> parameter = TypeContext.of(this).method("methodWithWildcardUpperbounds", List.class)
+                .get()
+                .parameters()
+                .get(0);
+
+        final TypeContext<?> first = parameter.genericType();
+
+        Assertions.assertTrue(first.is(List.class));
+        Assertions.assertEquals(1, first.typeParameters().size());
+
+        final TypeContext<?> second = first.typeParameters().get(0);
+        Assertions.assertTrue(second.is(String.class));
+        Assertions.assertFalse(second instanceof WildcardTypeContext);
+    }
 }
