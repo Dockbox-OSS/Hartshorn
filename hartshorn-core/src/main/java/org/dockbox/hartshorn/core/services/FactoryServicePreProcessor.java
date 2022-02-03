@@ -69,7 +69,8 @@ public class FactoryServicePreProcessor implements ServicePreProcessor<Service> 
                 }
             }
 
-            throw new IllegalStateException("No matching bound constructor found for " + returnKey + " with parameters: " + method.parameterTypes());
+            if (annotation.required())
+                throw new IllegalStateException("No matching bound constructor found for " + returnKey + " with parameters: " + method.parameterTypes());
         }
     }
 

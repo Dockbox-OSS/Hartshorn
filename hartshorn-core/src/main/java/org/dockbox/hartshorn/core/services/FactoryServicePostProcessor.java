@@ -26,6 +26,7 @@ import org.dockbox.hartshorn.core.context.FactoryContext;
 import org.dockbox.hartshorn.core.context.MethodProxyContext;
 import org.dockbox.hartshorn.core.context.element.ConstructorContext;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
+import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 import org.dockbox.hartshorn.core.proxy.ProxyFunction;
 
@@ -53,8 +54,18 @@ public class FactoryServicePostProcessor extends ServiceAnnotatedMethodIntercept
         final boolean enable = method.annotation(Enable.class).map(Enable::value).or(true);
         if (method.isAbstract()) {
             final FactoryContext factoryContext = context.first(FactoryContext.class).get();
-            final ConstructorContext<?> constructor = factoryContext.get(method);
-            return (instance, args, proxyContext) -> this.processInstance(context, (R) constructor.createInstance(args).orNull(), enable);
+            final Exceptional<? extends ConstructorContext<?>> constructorCandidate = factoryContext.get(method);
+            if (constructorCandidate.present()) {
+                final ConstructorContext<?> constructor = constructorCandidate.get();
+                return (instance, args, proxyContext) -> this.processInstance(context, (R) constructor.createInstance(args).orNull(), enable);
+            } else {
+                final Factory factory = method.annotation(Factory.class).get();
+                if (factory.required()) {
+                    throw new IllegalStateException("No factory found for " + method.qualifiedName());
+                } else {
+                    return (instance, args, proxyContext) -> null;
+                }
+            }
         }
         else {
             return (instance, args, proxyContext) -> this.processInstance(context, (R) methodContext.method().invoke(instance, args).orNull(), enable);
