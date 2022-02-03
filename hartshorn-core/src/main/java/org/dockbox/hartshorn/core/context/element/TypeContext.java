@@ -179,6 +179,12 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
         return of((Class<T>) instance.getClass());
     }
 
+    public static <T> TypeContext<T> of(final Type type) {
+        if (type instanceof Class<?>) return of((Class<T>) type);
+        if (type instanceof ParameterizedType parameterizedType) return of((ParameterizedType) type);
+        throw new RuntimeException("Unexpected type " + type);
+    }
+
     public static <T> TypeContext<T> of(final Class<T> type) {
         if (type == null) {
             return (TypeContext<T>) VOID;
@@ -326,7 +332,12 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
                 .filter(type -> type instanceof Class || type instanceof WildcardType || type instanceof ParameterizedType)
                 .map(type -> {
                     if (type instanceof Class clazz) return TypeContext.of(clazz);
-                    else if (type instanceof WildcardType wildcard) return WildcardTypeContext.create();
+                    else if (type instanceof WildcardType wildcard) {
+                        if (wildcard.getUpperBounds() != null && wildcard.getUpperBounds().length > 0) {
+                            return TypeContext.of(wildcard.getUpperBounds()[0]);
+                        }
+                        return WildcardTypeContext.create();
+                    }
                     else if (type instanceof ParameterizedType parameterized) return TypeContext.of(parameterized);
                     else return TypeContext.VOID;
                 })
