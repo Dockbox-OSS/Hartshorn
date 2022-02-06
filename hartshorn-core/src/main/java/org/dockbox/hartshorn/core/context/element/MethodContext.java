@@ -32,7 +32,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
-public class MethodContext<T, P> extends ExecutableElementContext<Method, P> {
+public class MethodContext<T, P> extends ExecutableElementContext<Method, P> implements ObtainableElement<T>, TypedElementContext<T> {
 
     private static final Map<Method, MethodContext<?, ?>> cache = new ConcurrentHashMap<>();
 
@@ -73,7 +73,7 @@ public class MethodContext<T, P> extends ExecutableElementContext<Method, P> {
         final Object[] args = this.arguments(context);
         return this.invoke(instance, args);
     }
-    
+
     public Exceptional<T> invoke(final ApplicationContext context, final Collection<Object> arguments) {
         return this.invoke(context.get(this.parent()), arguments);
     }
@@ -141,5 +141,20 @@ public class MethodContext<T, P> extends ExecutableElementContext<Method, P> {
 
     public boolean isProtected() {
         return this.has(AccessModifier.PROTECTED);
+    }
+
+    @Override
+    public Exceptional<T> obtain(final ApplicationContext applicationContext) {
+        return this.invoke(applicationContext);
+    }
+
+    @Override
+    public TypeContext<T> type() {
+        return this.returnType();
+    }
+
+    @Override
+    public TypeContext<T> genericType() {
+        return this.genericReturnType();
     }
 }

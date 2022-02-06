@@ -111,6 +111,11 @@ public final class ConstructorContext<T> extends ExecutableElementContext<Constr
     }
 
     @Override
+    public TypeContext<T> genericType() {
+        return this.type();
+    }
+
+    @Override
     public String name() {
         return this.qualifiedName();
     }

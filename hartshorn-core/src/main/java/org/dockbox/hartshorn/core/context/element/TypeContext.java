@@ -57,7 +57,6 @@ import javax.inject.Inject;
 import javassist.util.proxy.ProxyFactory;
 import lombok.Getter;
 
-// skipcq: JAVA-W0100
 public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
 
     private static final Map<Class<?>, TypeContext<?>> CACHE = new ConcurrentHashMap<>();
