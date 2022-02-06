@@ -67,8 +67,8 @@ public final class ProviderServicePreProcessor implements ServicePreProcessor<Us
     private <T extends AnnotatedElementContext<?> & ObtainableElement<?>> void processInstanceBinding(final ApplicationContext context, final T element, final Function<T, TypeContext<?>> type) {
         final boolean singleton = context.meta().singleton(element);
         final Provider annotation = element.annotation(Provider.class).get();
-        final Key<?> providerKey = Key.of(type.apply(element), annotation.value());
-        final ProviderContext<?> providerContext = new ProviderContext<>(((Key<Object>) providerKey), singleton, annotation.priority(), () -> element.obtain(context).rethrowUnchecked().orNull());
+        final Key<?> key = Key.of(type.apply(element), annotation.value());
+        final ProviderContext<?> providerContext = new ProviderContext<>(((Key<Object>) key), singleton, annotation.priority(), () -> element.obtain(context).rethrowUnchecked().orNull());
 
         context.add(providerContext);
     }
@@ -78,6 +78,13 @@ public final class ProviderServicePreProcessor implements ServicePreProcessor<Us
         final Provider annotation = element.annotation(Provider.class).get();
         final Key<R> key = Key.of(typeContext, annotation.value());
 
+        if (context.meta().singleton(element)) {
+            final C target = element.obtain(context).rethrowUnchecked().orNull();
+            final ProviderContext<R> providerContext = new ProviderContext<>(key, true, annotation.priority(), () -> context.get(target));
+            context.add(providerContext);
+            return;
+        }
+
         context.bind(key, element.obtain(context).get());
     }
 
@@ -85,6 +92,13 @@ public final class ProviderServicePreProcessor implements ServicePreProcessor<Us
         final TypeContext<R> typeContext = (TypeContext<R>) generic.typeParameters().get(0);
         final Provider annotation = element.annotation(Provider.class).get();
         final Key<R> key = Key.of(typeContext, annotation.value());
+
+        if (context.meta().singleton(element)) {
+            final C target = element.obtain(context).rethrowUnchecked().orNull();
+            final ProviderContext<R> providerContext = new ProviderContext<>(key, true, annotation.priority(), () -> context.get(target));
+            context.add(providerContext);
+            return;
+        }
 
         context.bind(key, element.obtain(context).get().type());
     }
