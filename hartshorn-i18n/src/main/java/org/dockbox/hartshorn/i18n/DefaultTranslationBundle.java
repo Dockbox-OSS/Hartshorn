@@ -16,7 +16,6 @@
 
 package org.dockbox.hartshorn.i18n;
 
-import org.dockbox.hartshorn.core.annotations.inject.ComponentBinding;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.data.FileFormats;
@@ -37,7 +36,6 @@ import javax.inject.Inject;
 import lombok.Getter;
 import lombok.Setter;
 
-@ComponentBinding(TranslationBundle.class)
 public class DefaultTranslationBundle implements TranslationBundle {
 
     @Inject

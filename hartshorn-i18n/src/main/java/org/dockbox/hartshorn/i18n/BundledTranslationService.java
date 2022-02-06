@@ -16,7 +16,6 @@
 
 package org.dockbox.hartshorn.i18n;
 
-import org.dockbox.hartshorn.core.annotations.inject.ComponentBinding;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 
@@ -24,7 +23,6 @@ import javax.inject.Inject;
 
 import lombok.Getter;
 
-@ComponentBinding(TranslationService.class)
 public class BundledTranslationService implements TranslationService {
 
     @Inject

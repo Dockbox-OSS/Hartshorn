@@ -16,7 +16,6 @@
 
 package org.dockbox.hartshorn.web.jetty;
 
-import org.dockbox.hartshorn.core.annotations.inject.ComponentBinding;
 import org.dockbox.hartshorn.core.boot.Hartshorn;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
@@ -44,7 +43,6 @@ import javax.servlet.Servlet;
 import lombok.Getter;
 import lombok.Setter;
 
-@ComponentBinding(HttpWebServer.class)
 public class JettyHttpWebServer extends DefaultHttpWebServer {
 
     @Inject @Getter

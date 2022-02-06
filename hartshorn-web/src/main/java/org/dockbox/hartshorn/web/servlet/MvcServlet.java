@@ -16,7 +16,6 @@
 
 package org.dockbox.hartshorn.web.servlet;
 
-import org.dockbox.hartshorn.core.annotations.inject.ComponentBinding;
 import org.dockbox.hartshorn.core.annotations.inject.Bound;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
@@ -38,7 +37,6 @@ import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@ComponentBinding(MvcServlet.class)
 public class MvcServlet implements WebServlet {
 
     private final MethodContext<ViewTemplate, ?> methodContext;

@@ -28,7 +28,6 @@ import org.dockbox.hartshorn.core.ArrayListMultiMap;
 import org.dockbox.hartshorn.core.Enableable;
 import org.dockbox.hartshorn.core.Key;
 import org.dockbox.hartshorn.core.MultiMap;
-import org.dockbox.hartshorn.core.annotations.inject.ComponentBinding;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
@@ -48,7 +47,6 @@ import lombok.Getter;
 /**
  * Simple implementation of {@link CommandGateway}.
  */
-@ComponentBinding(value = CommandGateway.class, singleton = true)
 public class CommandGatewayImpl implements CommandGateway, Enableable {
 
     @Getter(AccessLevel.PROTECTED)

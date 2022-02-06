@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.data;
 import org.dockbox.hartshorn.core.GenericType;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.data.annotations.UsePersistence;
 import org.dockbox.hartshorn.data.mapping.ObjectMapper;
 import org.dockbox.hartshorn.data.registry.Registry;
 import org.dockbox.hartshorn.data.registry.RegistryColumn;
@@ -35,6 +36,7 @@ import javax.inject.Inject;
 import lombok.Getter;
 
 @HartshornTest
+@UsePersistence
 public class DataStructuresSerializersTests {
 
     @Inject

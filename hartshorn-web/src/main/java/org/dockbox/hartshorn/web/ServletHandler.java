@@ -16,16 +16,15 @@
 
 package org.dockbox.hartshorn.web;
 
-import org.dockbox.hartshorn.data.annotations.Value;
 import org.dockbox.hartshorn.core.Enableable;
 import org.dockbox.hartshorn.core.annotations.inject.Bound;
-import org.dockbox.hartshorn.core.annotations.inject.ComponentBinding;
 import org.dockbox.hartshorn.core.boot.Hartshorn;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 import org.dockbox.hartshorn.core.services.parameter.ParameterLoader;
+import org.dockbox.hartshorn.data.annotations.Value;
 import org.dockbox.hartshorn.data.mapping.ObjectMapper;
 import org.dockbox.hartshorn.web.annotations.http.HttpRequest;
 import org.dockbox.hartshorn.web.processing.HttpRequestParameterLoaderContext;
@@ -39,7 +38,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import lombok.Getter;
 
-@ComponentBinding(ServletHandler.class)
 public class ServletHandler implements Enableable {
 
     private final HttpWebServer starter;

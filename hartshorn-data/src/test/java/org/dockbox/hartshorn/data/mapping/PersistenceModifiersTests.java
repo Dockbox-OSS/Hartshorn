@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.data.mapping;
 import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.data.annotations.UsePersistence;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -30,6 +31,7 @@ import javax.inject.Inject;
 import lombok.Getter;
 
 @HartshornTest
+@UsePersistence
 public class PersistenceModifiersTests {
 
     @Inject

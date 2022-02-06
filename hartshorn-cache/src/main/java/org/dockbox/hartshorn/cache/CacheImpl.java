@@ -16,11 +16,10 @@
 
 package org.dockbox.hartshorn.cache;
 
-import org.dockbox.hartshorn.core.annotations.inject.ComponentBinding;
+import org.dockbox.hartshorn.core.Enableable;
 import org.dockbox.hartshorn.core.annotations.inject.Bound;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
-import org.dockbox.hartshorn.core.Enableable;
 
 import java.util.Locale;
 import java.util.concurrent.ScheduledExecutorService;
@@ -33,7 +32,6 @@ import javax.inject.Inject;
  *
  * @see Cache
  */
-@ComponentBinding(Cache.class)
 public class CacheImpl<T> implements Cache<T>, Enableable {
 
     private final Expiration expiration;

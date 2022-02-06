@@ -16,14 +16,12 @@
 
 package org.dockbox.hartshorn.data.hibernate;
 
-import org.dockbox.hartshorn.core.annotations.inject.ComponentBinding;
 import org.dockbox.hartshorn.core.annotations.inject.Bound;
 import org.dockbox.hartshorn.data.TransactionManager;
 import org.hibernate.Session;
 
 import javax.persistence.EntityManager;
 
-@ComponentBinding(TransactionManager.class)
 public class HibernateTransactionManager implements TransactionManager {
 
     private final Session session;

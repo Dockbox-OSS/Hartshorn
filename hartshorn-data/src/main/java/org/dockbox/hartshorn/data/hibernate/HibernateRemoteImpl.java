@@ -16,7 +16,6 @@
 
 package org.dockbox.hartshorn.data.hibernate;
 
-import org.dockbox.hartshorn.core.annotations.inject.ComponentBinding;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.data.remote.PersistenceConnection;
@@ -27,7 +26,6 @@ import javax.inject.Inject;
 import lombok.Getter;
 
 @Getter
-@ComponentBinding(HibernateRemote.class)
 public class HibernateRemoteImpl implements HibernateRemote {
 
     private final String driver;

@@ -21,6 +21,7 @@ import org.dockbox.hartshorn.core.context.element.ExecutableElementContext;
 import org.dockbox.hartshorn.core.context.element.ParameterContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.data.annotations.UsePersistence;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.dockbox.hartshorn.web.annotations.RequestHeader;
 import org.dockbox.hartshorn.web.annotations.http.HttpRequest;
@@ -47,6 +48,7 @@ import javax.servlet.http.HttpServletRequest;
 import lombok.Getter;
 
 @HartshornTest
+@UsePersistence
 public class RequestArgumentProcessorTests {
 
     @Inject

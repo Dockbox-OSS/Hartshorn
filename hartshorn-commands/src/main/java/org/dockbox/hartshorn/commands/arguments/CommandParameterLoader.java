@@ -17,16 +17,11 @@
 package org.dockbox.hartshorn.commands.arguments;
 
 import org.dockbox.hartshorn.commands.context.CommandParameterContext;
-import org.dockbox.hartshorn.core.annotations.inject.ComponentBinding;
 import org.dockbox.hartshorn.core.context.element.ParameterContext;
-import org.dockbox.hartshorn.core.services.parameter.ParameterLoader;
 import org.dockbox.hartshorn.core.services.parameter.RuleBasedParameterLoader;
 
 import java.util.ArrayList;
 
-import javax.inject.Named;
-
-@ComponentBinding(value = ParameterLoader.class, named = @Named("command_loader"))
 public class CommandParameterLoader extends RuleBasedParameterLoader<CommandParameterLoaderContext> {
 
     public CommandParameterLoader() {
