@@ -16,10 +16,8 @@
 
 package org.dockbox.hartshorn.web;
 
-import org.dockbox.hartshorn.core.annotations.inject.ComponentBinding;
 import org.dockbox.hartshorn.web.servlet.ErrorServlet;
 
-@ComponentBinding(ErrorServlet.class)
 public class ErrorServletImpl implements ErrorServlet {
     @Override
     public void handle(final RequestError error) {

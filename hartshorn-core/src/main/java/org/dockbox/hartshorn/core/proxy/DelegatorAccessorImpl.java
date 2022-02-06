@@ -16,8 +16,8 @@
 
 package org.dockbox.hartshorn.core.proxy;
 
-import org.dockbox.hartshorn.core.annotations.inject.ComponentBinding;
 import org.dockbox.hartshorn.core.annotations.inject.Bound;
+import org.dockbox.hartshorn.core.annotations.stereotype.Component;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
@@ -26,7 +26,7 @@ import javax.inject.Inject;
 
 import lombok.RequiredArgsConstructor;
 
-@ComponentBinding(value = DelegatorAccessor.class, permitProxying = false)
+@Component(permitProxying = false)
 @RequiredArgsConstructor(onConstructor_ = @Bound)
 public class DelegatorAccessorImpl<T> implements DelegatorAccessor<T> {
 

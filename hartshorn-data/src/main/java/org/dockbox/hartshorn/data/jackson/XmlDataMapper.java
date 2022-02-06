@@ -19,13 +19,9 @@ package org.dockbox.hartshorn.data.jackson;
 import com.fasterxml.jackson.databind.cfg.MapperBuilder;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 
-import org.dockbox.hartshorn.core.annotations.inject.ComponentBinding;
 import org.dockbox.hartshorn.data.FileFormat;
 import org.dockbox.hartshorn.data.FileFormats;
 
-import javax.inject.Named;
-
-@ComponentBinding(value = JacksonDataMapper.class, named = @Named("xml"))
 public class XmlDataMapper implements JacksonDataMapper {
     @Override
     public FileFormat fileFormat() {

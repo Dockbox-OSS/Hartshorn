@@ -22,13 +22,9 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLParser;
 
-import org.dockbox.hartshorn.core.annotations.inject.ComponentBinding;
 import org.dockbox.hartshorn.data.FileFormat;
 import org.dockbox.hartshorn.data.FileFormats;
 
-import javax.inject.Named;
-
-@ComponentBinding(value = JacksonDataMapper.class, named = @Named("yml"))
 public class YamlDataMapper implements JacksonDataMapper {
     @Override
     public FileFormat fileFormat() {

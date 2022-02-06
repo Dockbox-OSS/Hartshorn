@@ -29,6 +29,6 @@ public interface WebServletFactory {
     @Factory
     WebServletImpl webServlet(final HttpWebServer starter, final RequestHandlerContext context);
 
-    @Factory
+    @Factory(required = false)
     MvcServlet mvc(final MethodContext<ViewTemplate, ?> methodContext);
 }

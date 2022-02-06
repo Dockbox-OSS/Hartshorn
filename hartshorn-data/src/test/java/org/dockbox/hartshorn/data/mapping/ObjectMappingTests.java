@@ -25,6 +25,7 @@ import org.dockbox.hartshorn.data.FileFormats;
 import org.dockbox.hartshorn.data.MultiElement;
 import org.dockbox.hartshorn.data.NestedElement;
 import org.dockbox.hartshorn.data.PersistentElement;
+import org.dockbox.hartshorn.data.annotations.UsePersistence;
 import org.dockbox.hartshorn.data.jackson.JacksonObjectMapper;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.junit.jupiter.api.Assertions;
@@ -39,6 +40,7 @@ import javax.inject.Inject;
 import lombok.Getter;
 
 @HartshornTest
+@UsePersistence
 public class ObjectMappingTests {
 
     @Inject

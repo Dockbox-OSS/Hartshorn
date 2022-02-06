@@ -16,15 +16,12 @@
 
 package org.dockbox.hartshorn.commands;
 
-import org.dockbox.hartshorn.core.annotations.inject.ComponentBinding;
 import org.dockbox.hartshorn.i18n.Message;
 
-@ComponentBinding(SystemSubject.class)
 public class ApplicationSystemSubject extends SystemSubject {
 
     @Override
     public void send(final Message text) {
         this.applicationContext().log().info("-> %s".formatted(text.string()));
     }
-
 }

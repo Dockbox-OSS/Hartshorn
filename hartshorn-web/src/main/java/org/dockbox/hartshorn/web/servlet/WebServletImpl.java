@@ -16,7 +16,6 @@
 
 package org.dockbox.hartshorn.web.servlet;
 
-import org.dockbox.hartshorn.core.annotations.inject.ComponentBinding;
 import org.dockbox.hartshorn.core.annotations.inject.Bound;
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 import org.dockbox.hartshorn.web.HttpAction;
@@ -31,7 +30,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import lombok.Getter;
 
-@ComponentBinding(WebServletImpl.class)
 public class WebServletImpl implements WebServlet {
 
     @Getter

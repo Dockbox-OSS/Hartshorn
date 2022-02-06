@@ -18,6 +18,7 @@ package org.dockbox.hartshorn.core.context.element;
 
 import org.dockbox.hartshorn.core.annotations.Property;
 import org.dockbox.hartshorn.core.boot.ExceptionHandler;
+import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 import org.dockbox.hartshorn.core.HartshornUtils;
@@ -31,7 +32,7 @@ import java.util.function.Function;
 import lombok.AccessLevel;
 import lombok.Getter;
 
-public final class FieldContext<T> extends AnnotatedMemberContext<Field> implements TypedElementContext<T> {
+public final class FieldContext<T> extends AnnotatedMemberContext<Field> implements TypedElementContext<T>, ObtainableElement<T> {
 
     private static final Map<Field, FieldContext<?>> cache = new ConcurrentHashMap<>();
 
@@ -40,6 +41,7 @@ public final class FieldContext<T> extends AnnotatedMemberContext<Field> impleme
 
     private TypeContext<?> declaredBy;
     private TypeContext<T> type;
+    private TypeContext<T> genericType;
 
     private Function<Object, Exceptional<T>> getter;
     private BiConsumer<Object, T> setter;
@@ -126,6 +128,14 @@ public final class FieldContext<T> extends AnnotatedMemberContext<Field> impleme
         return this.type;
     }
 
+    @Override
+    public TypeContext<T> genericType() {
+        if (this.genericType == null) {
+            this.genericType = TypeContext.of(this.field().getGenericType());
+        }
+        return this.genericType;
+    }
+
     public TypeContext<?> declaredBy() {
         if (this.declaredBy == null) {
             this.declaredBy = TypeContext.of(this.field().getDeclaringClass());
@@ -144,5 +154,10 @@ public final class FieldContext<T> extends AnnotatedMemberContext<Field> impleme
 
     public boolean isTransient() {
         return this.has(AccessModifier.TRANSIENT);
+    }
+
+    @Override
+    public Exceptional<T> obtain(final ApplicationContext applicationContext) {
+        return this.get(applicationContext.get(this.declaredBy()));
     }
 }

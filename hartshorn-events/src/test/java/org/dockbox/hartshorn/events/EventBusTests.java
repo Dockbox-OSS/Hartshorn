@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.events;
 import org.dockbox.hartshorn.core.Key;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.events.annotations.Listener.Priority;
+import org.dockbox.hartshorn.events.annotations.UseEvents;
 import org.dockbox.hartshorn.events.listeners.BasicEventListener;
 import org.dockbox.hartshorn.events.listeners.GenericEventListener;
 import org.dockbox.hartshorn.events.listeners.PriorityEventListener;
@@ -36,6 +37,7 @@ import javax.inject.Inject;
 import lombok.Getter;
 
 @HartshornTest
+@UseEvents
 public class EventBusTests {
 
     @Inject

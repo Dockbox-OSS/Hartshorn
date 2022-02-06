@@ -29,7 +29,6 @@ import java.util.stream.Collectors;
 
 import lombok.Getter;
 
-// skipcq: JAVA-W0100
 public final class ParameterContext<T> extends AnnotatedElementContext<Parameter> implements TypedElementContext<T> {
 
     private final Parameter parameter;
@@ -77,6 +76,7 @@ public final class ParameterContext<T> extends AnnotatedElementContext<Parameter
         );
     }
 
+    @Override
     public TypeContext<T> type() {
         if (this.type == null) {
             this.type = TypeContext.of((Class<T>) this.element().getType());
@@ -84,6 +84,7 @@ public final class ParameterContext<T> extends AnnotatedElementContext<Parameter
         return this.type;
     }
 
+    @Override
     public TypeContext<T> genericType() {
         if (this.genericType == null) {
             final Type genericType = this.element().getParameterizedType();

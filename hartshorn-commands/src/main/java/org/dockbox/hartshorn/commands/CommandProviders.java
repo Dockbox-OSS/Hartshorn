@@ -17,14 +17,40 @@
 package org.dockbox.hartshorn.commands;
 
 import org.dockbox.hartshorn.commands.annotations.UseCommands;
+import org.dockbox.hartshorn.commands.arguments.CommandParameterLoader;
 import org.dockbox.hartshorn.core.annotations.inject.Provider;
 import org.dockbox.hartshorn.core.annotations.stereotype.Service;
+import org.dockbox.hartshorn.core.services.parameter.ParameterLoader;
+
+import javax.inject.Singleton;
 
 @Service(activators = UseCommands.class)
 public class CommandProviders {
 
     @Provider
-    public CommandListener listener() {
-        return new CommandListenerImpl();
+    public Class<? extends CommandListener> listener() {
+        return CommandListenerImpl.class;
+    }
+
+    @Provider
+    @Singleton
+    public SystemSubject systemSubject() {
+        return new ApplicationSystemSubject();
+    }
+
+    @Provider
+    @Singleton
+    public Class<? extends CommandGateway> commandGateway() {
+        return CommandGatewayImpl.class;
+    }
+
+    @Provider
+    public Class<? extends CommandParser> commandParser() {
+        return CommandParserImpl.class;
+    }
+
+    @Provider("command_loader")
+    public ParameterLoader parameterLoader() {
+        return new CommandParameterLoader();
     }
 }
