@@ -16,7 +16,6 @@
 
 package org.dockbox.hartshorn.events.handle;
 
-import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.core.Key;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
@@ -28,12 +27,13 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 public class EventHandler {
 
     private final TypeContext<? extends Event> eventType;
-    private final Set<EventHandler> superTypeHandlers = HartshornUtils.emptyConcurrentSet();
+    private final Set<EventHandler> superTypeHandlers = ConcurrentHashMap.newKeySet();
     private final SortedSet<EventWrapperImpl<?>> invokers = new TreeSet<>(EventWrapperImpl.COMPARATOR);
     private transient EventWrapperImpl<?>[] computedInvokerCache;
 

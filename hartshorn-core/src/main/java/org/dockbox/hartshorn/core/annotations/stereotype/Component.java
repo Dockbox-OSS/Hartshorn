@@ -36,7 +36,7 @@ import java.lang.annotation.Target;
  * <ul>
  *     <li>{@link #id()} - The unique identifier of the component. This is used to identify the component in the framework.
  *         If not specified, the type of the component is used to generate a valid ID through
- *         {@link org.dockbox.hartshorn.core.services.ComponentContainer#id(ApplicationContext, TypeContext)}</li>
+ *         {@link org.dockbox.hartshorn.core.services.ComponentUtilities#id(ApplicationContext, TypeContext)}</li>
  *     <li>{@link #name()} - The name of the component. This is used to identify the component in the framework. If not
  *         specified, the name of the class is used.</li>
  *     <li>{@link #owner()} - The owner of the component. This is typically ignored internally, but can be used by services
@@ -71,7 +71,7 @@ public @interface Component {
     /**
      * The unique identifier of the component. This is used to identify the component in the framework.
      * If not specified, the type of the component is used to generate a valid ID through
-     * {@link org.dockbox.hartshorn.core.services.ComponentContainer#id(ApplicationContext, TypeContext)}
+     * {@link org.dockbox.hartshorn.core.services.ComponentUtilities#id(ApplicationContext, TypeContext)}
      *
      * @return The unique identifier of the component
      * @see ComponentContainer#id()

@@ -17,7 +17,6 @@
 package org.dockbox.hartshorn.core.services;
 
 import org.dockbox.hartshorn.core.ComponentType;
-import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.core.annotations.stereotype.Component;
 import org.dockbox.hartshorn.core.annotations.stereotype.Service;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
@@ -50,21 +49,21 @@ public class ComponentContainerImpl implements ComponentContainer {
 
         final Exceptional<Service> service = component.annotation(Service.class);
         if (service.present()) {
-            this.activators.addAll(HartshornUtils.asList(service.get().activators()));
+            this.activators.addAll(List.of(service.get().activators()));
         }
     }
 
     @Override
     public String id() {
-        final String id = this.annotation.id();
-        if ("".equals(id)) return ComponentContainer.id(this.context, this.component, true);
+        final String id = this.annotation().id();
+        if ("".equals(id)) return ComponentUtilities.id(this.context, this.component, true);
         return id;
     }
 
     @Override
     public String name() {
-        final String name = this.annotation.name();
-        if ("".equals(name)) return ComponentContainer.name(this.context, this.component, true);
+        final String name = this.annotation().name();
+        if ("".equals(name)) return ComponentUtilities.name(this.context, this.component, true);
         return name;
     }
 

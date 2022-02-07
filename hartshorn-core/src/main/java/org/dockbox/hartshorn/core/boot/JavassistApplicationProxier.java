@@ -17,14 +17,13 @@
 package org.dockbox.hartshorn.core.boot;
 
 import org.dockbox.hartshorn.core.AnnotationHelper.AnnotationInvocationHandler;
-import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.core.context.BackingImplementationContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
-import org.dockbox.hartshorn.core.proxy.javassist.JavassistInterfaceHandler;
 import org.dockbox.hartshorn.core.proxy.NativeProxyLookup;
 import org.dockbox.hartshorn.core.proxy.ProxyHandler;
 import org.dockbox.hartshorn.core.proxy.ProxyLookup;
+import org.dockbox.hartshorn.core.proxy.javassist.JavassistInterfaceHandler;
 import org.dockbox.hartshorn.core.proxy.javassist.JavassistProxyHandler;
 import org.dockbox.hartshorn.core.proxy.javassist.JavassistProxyLookup;
 
@@ -32,6 +31,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javassist.util.proxy.MethodHandler;
 import javassist.util.proxy.ProxyFactory;
@@ -52,7 +52,7 @@ public class JavassistApplicationProxier implements ApplicationProxier, Applicat
 
     @Getter
     private ApplicationManager applicationManager;
-    private final Set<ProxyLookup> proxyLookups = HartshornUtils.emptyConcurrentSet();
+    private final Set<ProxyLookup> proxyLookups = ConcurrentHashMap.newKeySet();
 
     public JavassistApplicationProxier() {
         this.proxyLookups.add(new NativeProxyLookup());

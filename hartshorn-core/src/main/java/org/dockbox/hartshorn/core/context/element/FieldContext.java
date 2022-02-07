@@ -21,9 +21,9 @@ import org.dockbox.hartshorn.core.boot.ExceptionHandler;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
-import org.dockbox.hartshorn.core.HartshornUtils;
 
 import java.lang.reflect.Field;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiConsumer;
@@ -70,7 +70,7 @@ public final class FieldContext<T> extends AnnotatedMemberContext<Field> impleme
             final Exceptional<Property> property = this.annotation(Property.class);
             if (property.present() && !"".equals(property.get().setter())) {
                 final String setter = property.get().setter();
-                final Exceptional<? extends MethodContext<?, ?>> method = this.declaredBy().method(setter, HartshornUtils.asList(this.type()));
+                final Exceptional<? extends MethodContext<?, ?>> method = this.declaredBy().method(setter, List.of(this.type()));
                 final MethodContext<?, Object> methodContext = (MethodContext<?, Object>) method.orThrowUnchecked(() -> new ApplicationException("Setter for field '" + this.name() + "' (" + setter + ") does not exist!"));
                 this.setter = (o, v) -> methodContext.invoke(instance, v);
             } else {

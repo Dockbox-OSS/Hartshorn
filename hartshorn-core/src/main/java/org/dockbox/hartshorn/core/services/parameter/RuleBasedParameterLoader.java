@@ -16,7 +16,6 @@
 
 package org.dockbox.hartshorn.core.services.parameter;
 
-import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.core.context.ParameterLoaderContext;
 import org.dockbox.hartshorn.core.context.element.ParameterContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
@@ -26,6 +25,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -33,7 +33,7 @@ import lombok.Getter;
 public class RuleBasedParameterLoader<C extends ParameterLoaderContext> extends ParameterLoader<C>{
 
     @Getter(AccessLevel.PROTECTED)
-    private final Set<ParameterLoaderRule<C>> rules = HartshornUtils.emptyConcurrentSet();
+    private final Set<ParameterLoaderRule<C>> rules = ConcurrentHashMap.newKeySet();
 
     public RuleBasedParameterLoader add(final ParameterLoaderRule<? super C> rule) {
         this.rules.add((ParameterLoaderRule<C>) rule);

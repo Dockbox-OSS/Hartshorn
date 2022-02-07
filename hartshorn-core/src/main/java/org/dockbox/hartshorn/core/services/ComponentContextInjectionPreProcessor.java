@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.core.services;
 
-import org.dockbox.hartshorn.core.HartshornUtils;
+import org.dockbox.hartshorn.core.CollectionUtilities;
 import org.dockbox.hartshorn.core.Key;
 import org.dockbox.hartshorn.core.annotations.activate.AutomaticActivation;
 import org.dockbox.hartshorn.core.annotations.inject.Context;
@@ -48,9 +48,15 @@ public class ComponentContextInjectionPreProcessor extends ComponentPreValidator
         for (final FieldContext<?> field : type.fields(Context.class))
             this.validate(field, key);
 
-        final List<ExecutableElementContext<?, ?>> constructors = type.injectConstructors().stream().map(c -> (ExecutableElementContext<?, ?>) c).collect(Collectors.toList());
-        final List<ExecutableElementContext<?, ?>> methods = type.methods().stream().map(m -> (ExecutableElementContext<?, ?>) m).collect(Collectors.toList());
-        final Collection<ExecutableElementContext<?, ?>> executables = HartshornUtils.merge(constructors, methods);
+        final List<ExecutableElementContext<?, ?>> constructors = type.injectConstructors().stream()
+                .map(c -> (ExecutableElementContext<?, ?>) c)
+                .collect(Collectors.toList());
+
+        final List<ExecutableElementContext<?, ?>> methods = type.methods().stream()
+                .map(m -> (ExecutableElementContext<?, ?>) m)
+                .collect(Collectors.toList());
+
+        final Collection<ExecutableElementContext<?, ?>> executables = CollectionUtilities.merge(constructors, methods);
 
         for (final ExecutableElementContext<?, ?> executable : executables)
             for (final ParameterContext<?> parameter : executable.parameters(Context.class))

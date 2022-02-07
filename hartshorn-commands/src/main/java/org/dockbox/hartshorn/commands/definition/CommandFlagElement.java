@@ -16,9 +16,9 @@
 
 package org.dockbox.hartshorn.commands.definition;
 
-import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.commands.CommandSource;
-import org.dockbox.hartshorn.core.HartshornUtils;
+import org.dockbox.hartshorn.core.StringUtilities;
+import org.dockbox.hartshorn.core.domain.Exceptional;
 
 import java.util.Collection;
 
@@ -57,7 +57,7 @@ public class CommandFlagElement<T> implements CommandFlag, CommandElement<T> {
 
     @Override
     public String name() {
-        return HartshornUtils.trimWith('-', this.element.name());
+        return StringUtilities.trimWith('-', this.element.name());
     }
 
     @Override

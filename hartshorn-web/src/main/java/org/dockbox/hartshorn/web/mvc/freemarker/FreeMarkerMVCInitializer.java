@@ -16,7 +16,6 @@
 
 package org.dockbox.hartshorn.web.mvc.freemarker;
 
-import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.core.boot.Hartshorn;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
@@ -32,6 +31,8 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Set;
 
 import javax.inject.Singleton;
@@ -82,7 +83,7 @@ public class FreeMarkerMVCInitializer implements MVCInitializer {
                 return new Template(name, stringView.template(), this.configuration);
             }
             else if (template instanceof FileViewTemplate fileView) {
-                final String content = HartshornUtils.contentOrEmpty(fileView.path());
+                final String content = this.contentOrEmpty(fileView.path());
                 return new Template(name, content, this.configuration);
             }
             else if (template instanceof ClassPathViewTemplate classPathView) {
@@ -93,6 +94,15 @@ public class FreeMarkerMVCInitializer implements MVCInitializer {
             }
         } catch (final IOException e) {
             throw new ApplicationException(e);
+        }
+    }
+
+    private String contentOrEmpty(final Path path) {
+        try {
+            return Files.readString(path);
+        }
+        catch (final IOException ignored) {
+            return "";
         }
     }
 

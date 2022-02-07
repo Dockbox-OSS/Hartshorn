@@ -18,7 +18,7 @@ package org.dockbox.hartshorn.commands.arguments;
 
 import org.dockbox.hartshorn.commands.annotations.UseCommands;
 import org.dockbox.hartshorn.commands.definition.ArgumentConverter;
-import org.dockbox.hartshorn.core.HartshornUtils;
+import org.dockbox.hartshorn.core.StringUtilities;
 import org.dockbox.hartshorn.core.adapter.BuiltInStringTypeAdapters;
 import org.dockbox.hartshorn.core.annotations.stereotype.Service;
 import org.dockbox.hartshorn.core.domain.Exceptional;
@@ -86,7 +86,7 @@ public final class DefaultArgumentConverters {
             .build();
 
     public static final ArgumentConverter<Duration> DURATION = ArgumentConverterImpl.builder(Duration.class, "duration")
-            .withConverter(HartshornUtils::durationOf)
+            .withConverter(StringUtilities::durationOf)
             .build();
 
     public static final ArgumentConverter<Message> MESSAGE = ArgumentConverterImpl.builder(Message.class, "resource", "i18n", "translation")

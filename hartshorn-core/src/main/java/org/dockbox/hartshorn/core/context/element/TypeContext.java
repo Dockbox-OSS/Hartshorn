@@ -18,8 +18,8 @@ package org.dockbox.hartshorn.core.context.element;
 
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.core.ArrayListMultiMap;
+import org.dockbox.hartshorn.core.CollectionUtilities;
 import org.dockbox.hartshorn.core.GenericType;
-import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.core.MultiMap;
 import org.dockbox.hartshorn.core.annotations.inject.Bound;
 import org.dockbox.hartshorn.core.boot.ExceptionHandler;
@@ -72,7 +72,7 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
             */
             "__$lineHits$__"
     );
-    private static final Map<Class<?>, Class<?>> PRIMITIVE_WRAPPERS = HartshornUtils.ofEntries(
+    private static final Map<Class<?>, Class<?>> PRIMITIVE_WRAPPERS = CollectionUtilities.ofEntries(
             Tuple.of(boolean.class, Boolean.class),
             Tuple.of(byte.class, Byte.class),
             Tuple.of(char.class, Character.class),
@@ -82,7 +82,7 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
             Tuple.of(long.class, Long.class),
             Tuple.of(short.class, Short.class)
     );
-    private static final Map<?, Function<String, ?>> PRIMITIVE_FROM_STRING = HartshornUtils.ofEntries(
+    private static final Map<?, Function<String, ?>> PRIMITIVE_FROM_STRING = CollectionUtilities.ofEntries(
             Tuple.of(boolean.class, Boolean::valueOf),
             Tuple.of(byte.class, Byte::valueOf),
             Tuple.of(char.class, s -> s.charAt(0)),
@@ -92,13 +92,13 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
             Tuple.of(long.class, Long::valueOf),
             Tuple.of(short.class, Short::valueOf)
     );
-    private static final List<Class<?>> NATIVE_SUPPORTED = HartshornUtils.asList(
+    private static final List<Class<?>> NATIVE_SUPPORTED = List.of(
             boolean.class, byte.class, short.class,
             int.class, long.class, float.class, double.class,
             byte[].class, int[].class, long[].class,
             String.class, List.class, Map.class
     );
-    private static final Map<Class<?>, Object> PRIMITIVE_DEFAULTS = HartshornUtils.ofEntries(
+    private static final Map<Class<?>, Object> PRIMITIVE_DEFAULTS = CollectionUtilities.ofEntries(
             Tuple.of(boolean.class, false),
             Tuple.of(byte.class, 0),
             Tuple.of(char.class, '\u0000'),
@@ -108,7 +108,7 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
             Tuple.of(long.class, 0L),
             Tuple.of(short.class, 0)
     );
-    private static final Map<Class<?>, Class<?>> WRAPPERS_TO_PRIMITIVE = HartshornUtils.ofEntries(
+    private static final Map<Class<?>, Class<?>> WRAPPERS_TO_PRIMITIVE = CollectionUtilities.ofEntries(
             Tuple.of(Boolean.class, boolean.class),
             Tuple.of(Byte.class, byte.class),
             Tuple.of(Character.class, char.class),

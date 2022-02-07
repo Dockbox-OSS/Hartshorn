@@ -27,7 +27,7 @@ import org.dockbox.hartshorn.commands.definition.CommandPartial;
 import org.dockbox.hartshorn.commands.definition.GroupCommandElement;
 import org.dockbox.hartshorn.commands.exceptions.ParsingException;
 import org.dockbox.hartshorn.commands.service.CommandParameter;
-import org.dockbox.hartshorn.core.HartshornUtils;
+import org.dockbox.hartshorn.core.StringUtilities;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.i18n.Message;
@@ -119,7 +119,7 @@ public class CommandParserImpl implements CommandParser {
         while (matcher.find()) {
             final String flag = matcher.group().trim();
             final String nameUntrimmed = flag.split(" ")[0];
-            final String name = HartshornUtils.trimWith('-', nameUntrimmed);
+            final String name = StringUtilities.trimWith('-', nameUntrimmed);
             final Exceptional<CommandFlag> commandFlag = context.flag(name);
             if (commandFlag.absent()) throw new ParsingException(this.resources.unknownFlag(name));
 

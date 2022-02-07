@@ -41,7 +41,7 @@ public class Key<C> {
     }
 
     public static <C> Key<C> of(final TypeContext<C> type, final Named name) {
-        if (name != null && !HartshornUtils.empty(name.value())) {
+        if (name != null && !StringUtilities.empty(name.value())) {
             return new Key<>(type, name);
         }
         return new Key<>(type, null);

@@ -17,7 +17,6 @@
 package org.dockbox.hartshorn.core;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.domain.tuple.Vector3N;
 import org.dockbox.hartshorn.core.function.CheckedRunnable;
@@ -35,15 +34,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Random;
 import java.util.Set;
 import java.util.Spliterator;
 import java.util.Spliterators;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiFunction;
 import java.util.function.Function;
-import java.util.regex.Matcher;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -52,23 +48,6 @@ import java.util.stream.StreamSupport;
  * accessed at once and indexed more easily.
  */
 public final class HartshornUtils {
-
-    private static final Random random = new Random();
-    private static final char[] _hex = {
-            '0', '1', '2', '3', '4', '5', '6', '7',
-            '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
-    };
-    private static final java.util.regex.Pattern minorTimeString = java.util.regex.Pattern.compile("^\\d+$");
-    private static final java.util.regex.Pattern timeString = java.util.regex.Pattern.compile("^((\\d+)w)?((\\d+)d)?((\\d+)h)?((\\d+)m)?((\\d+)s)?$");
-    private static final int secondsInMinute = 60;
-    private static final int secondsInHour = 60 * HartshornUtils.secondsInMinute;
-    private static final int secondsInDay = 24 * HartshornUtils.secondsInHour;
-    private static final int secondsInWeek = 7 * HartshornUtils.secondsInDay;
-    /**
-     * The globally 'empty' unique ID which can be used for empty implementations of {@link
-     * org.dockbox.hartshorn.core.domain.Identifiable}.
-     */
-    public static UUID EMPTY_UUID = UUID.fromString("00000000-1111-2222-3333-000000000000");
 
     private HartshornUtils() {}
 
@@ -84,7 +63,9 @@ public final class HartshornUtils {
      * @return The new non-concurrent map
      * @throws NullPointerException If an entry is null
      * @see org.dockbox.hartshorn.core.domain.tuple.Tuple#of(Object, Object)
+     * @deprecated Use {@link CollectionUtilities#ofEntries(Entry[])} instead.
      */
+    @Deprecated(since = "22.2", forRemoval = true)
     @SafeVarargs
     public static <K, V> Map<K, V> ofEntries(final Entry<? extends K, ? extends V>... entries) {
         if (0 == entries.length) { // implicit null check of entries array
@@ -99,31 +80,49 @@ public final class HartshornUtils {
         }
     }
 
+    /**
+     * @deprecated Use {@link ConcurrentHashMap#newKeySet()} instead.
+     */
+    @Deprecated(since = "22.2", forRemoval = true)
     public static <T> Set<T> emptyConcurrentSet() {
         return ConcurrentHashMap.newKeySet();
     }
 
+    /**
+     * @deprecated Use {@link List#of()} instead.
+     */
     @NonNull
     @SafeVarargs
+    @Deprecated(since = "22.2", forRemoval = true)
     public static <T> List<T> asList(final T... objects) {
         return new ArrayList<>(Arrays.asList(objects));
     }
 
+    /**
+     * @deprecated Use {@link StringUtilities#capitalize(String)} instead.
+     */
+    @Deprecated(since = "22.2", forRemoval = true)
     public static String capitalize(final String value) {
         return HartshornUtils.empty(value)
                 ? value
                 : (value.substring(0, 1).toUpperCase() + value.substring(1));
     }
 
+    /**
+     * @deprecated Use {@link StringUtilities#empty(String)} instead.
+     */
+    @Deprecated(since = "22.2", forRemoval = true)
     public static boolean empty(final String value) {
         return null == value || value.isEmpty();
     }
 
     // Both start and end are inclusive
+    @Deprecated(since = "22.2", forRemoval = true)
     public static <T> T[] arraySubset(final T[] array, final int start, final int end) {
         return Arrays.copyOfRange(array, start, end + 1);
     }
 
+    @Deprecated(since = "22.2", forRemoval = true)
     public static String contentOrEmpty(@NonNull final Path file) {
         try {
             return Files.readString(file);
@@ -141,6 +140,7 @@ public final class HartshornUtils {
      *
      * @return the t [ ]
      */
+    @Deprecated(since = "22.2", forRemoval = true)
     public static <T> T[] merge(final T[] arrayOne, final T[] arrayTwo) {
         final Set<T> merged = new HashSet<>();
         merged.addAll(Set.of(arrayOne));
@@ -148,10 +148,18 @@ public final class HartshornUtils {
         return merged.toArray(arrayOne);
     }
 
+    /**
+     * @deprecated Use {@link StringUtilities#notEmpty(String)} instead.
+     */
+    @Deprecated(since = "22.2", forRemoval = true)
     public static boolean notEmpty(final String value) {
         return null != value && !value.isEmpty();
     }
 
+    /**
+     * @deprecated Use {@link StringUtilities#strip(String)} instead.
+     */
+    @Deprecated(since = "22.2", forRemoval = true)
     public static String strip(final String s) {
         return s.replaceAll("[\n\r ]+", "").trim();
     }
@@ -165,6 +173,7 @@ public final class HartshornUtils {
      * @return true if the function does not throw an exception
      * @see HartshornUtils#throwsException(CheckedRunnable)
      */
+    @Deprecated(since = "22.2", forRemoval = true)
     public static boolean doesNotThrow(final CheckedRunnable runnable) {
         return !HartshornUtils.throwsException(runnable);
     }
@@ -176,6 +185,7 @@ public final class HartshornUtils {
      *
      * @return true if the function throws an exception
      */
+    @Deprecated(since = "22.2", forRemoval = true)
     public static boolean throwsException(final CheckedRunnable runnable) {
         try {
             runnable.run();
@@ -197,6 +207,7 @@ public final class HartshornUtils {
      * @return true if the function does not throw an exception
      * @see HartshornUtils#throwsException(CheckedRunnable, Class)
      */
+    @Deprecated(since = "22.2", forRemoval = true)
     public static boolean doesNotThrow(final CheckedRunnable runnable, final Class<? extends Throwable> exception) {
         return !HartshornUtils.throwsException(runnable, exception);
     }
@@ -210,6 +221,7 @@ public final class HartshornUtils {
      *
      * @return true if the function throws the expected exception
      */
+    @Deprecated(since = "22.2", forRemoval = true)
     public static boolean throwsException(final CheckedRunnable runnable, final Class<? extends Throwable> exception) {
         try {
             runnable.run();
@@ -220,36 +232,18 @@ public final class HartshornUtils {
         }
     }
 
+    /**
+     * @deprecated Use {@link StringUtilities#durationOf(String)} instead.
+     */
+    @Deprecated(since = "22.2", forRemoval = true)
     public static Exceptional<Duration> durationOf(final String in) {
-        // First, if just digits, return the number in seconds.
-
-        if (HartshornUtils.minorTimeString.matcher(in).matches()) {
-            return Exceptional.of(Duration.ofSeconds(Long.parseUnsignedLong(in)));
-        }
-
-        final Matcher m = HartshornUtils.timeString.matcher(in);
-        if (m.matches()) {
-            long time = HartshornUtils.durationAmount(m.group(2), HartshornUtils.secondsInWeek);
-            time += HartshornUtils.durationAmount(m.group(4), HartshornUtils.secondsInDay);
-            time += HartshornUtils.durationAmount(m.group(6), HartshornUtils.secondsInHour);
-            time += HartshornUtils.durationAmount(m.group(8), HartshornUtils.secondsInMinute);
-            time += HartshornUtils.durationAmount(m.group(10), 1);
-
-            if (0 < time) {
-                return Exceptional.of(Duration.ofSeconds(time));
-            }
-        }
         return Exceptional.empty();
     }
 
-    private static long durationAmount(@Nullable final String g, final int multiplier) {
-        if (null != g && !g.isEmpty()) {
-            return multiplier * Long.parseUnsignedLong(g);
-        }
-
-        return 0;
-    }
-
+    /**
+     * @deprecated Use {@link CollectionUtilities#merge(Collection[])} instead.
+     */
+    @Deprecated(since = "22.2", forRemoval = true)
     @SafeVarargs
     public static <T> Collection<T> merge(final Collection<T>... collections) {
         final Collection<T> merged = new HashSet<>();
@@ -260,6 +254,7 @@ public final class HartshornUtils {
     }
 
     @SafeVarargs
+    @Deprecated(since = "22.2", forRemoval = true)
     public static <T, R> Object[] all(final Function<T, R> function, final T... input) {
         final Collection<R> out = new ArrayList<>();
         for (final T t : input) {
@@ -268,14 +263,17 @@ public final class HartshornUtils {
         return out.toArray();
     }
 
+    @Deprecated(since = "22.2", forRemoval = true)
     public static <T> Stream<T> stream(final Iterable<T> iterable) {
         return stream(iterable.iterator());
     }
 
+    @Deprecated(since = "22.2", forRemoval = true)
     public static <T> Stream<T> stream(final Iterator<T> tIterator) {
         return StreamSupport.stream(Spliterators.spliteratorUnknownSize(tIterator, Spliterator.ORDERED), false);
     }
 
+    @Deprecated(since = "22.2", forRemoval = true)
     public static String asTable(final List<List<String>> rows) {
         final int[] maxLengths = new int[rows.get(0).size()];
         for (final List<String> row : rows) {
@@ -297,10 +295,18 @@ public final class HartshornUtils {
         return result.toString();
     }
 
+    /**
+     * @deprecated Use {@link StringUtilities#capitalize(String)} instead.
+     */
+    @Deprecated(since = "22.2", forRemoval = true)
     public static String[] splitCapitals(final String s) {
         return s.split("(?=\\p{Lu})");
     }
 
+    /**
+     * @deprecated Use {@link StringUtilities#trimWith(char, String)} instead.
+     */
+    @Deprecated(since = "22.2", forRemoval = true)
     public static String trimWith(final char c, final String s) {
         int len = s.length();
         int st = 0;
@@ -316,26 +322,33 @@ public final class HartshornUtils {
         return ((st > 0) || (len < s.length())) ? s.substring(st, len) : s;
     }
 
+    @Deprecated(since = "22.2", forRemoval = true)
     public static <T> List<T> list(final int size) {
         final List<T> list = new ArrayList<>();
         for (int i = 0; i < size; i++) list.add(null);
         return list;
     }
 
+    /**
+     * @deprecated Use {@link CollectionUtilities#difference(Collection, Collection)} instead.
+     */
+    @Deprecated(since = "22.2", forRemoval = true)
     public static <T> Set<T> difference(final Collection<T> collectionOne, final Collection<T> collectionTwo) {
         final BiFunction<Collection<T>, Collection<T>, List<T>> filter = (c1, c2) -> c1.stream()
                 .filter(element -> !c2.contains(element))
                 .toList();
         final List<T> differenceInOne = filter.apply(collectionOne, collectionTwo);
         final List<T> differenceInTwo = filter.apply(collectionTwo, collectionOne);
-        return asSet(merge(differenceInOne, differenceInTwo));
+        return Set.copyOf(CollectionUtilities.merge(differenceInOne, differenceInTwo));
     }
 
     @NonNull
+    @Deprecated(since = "22.2", forRemoval = true)
     public static <T> Set<T> asSet(final Collection<T> collection) {
         return new HashSet<>(collection);
     }
 
+    @Deprecated(since = "22.2", forRemoval = true)
     public static Vector3N cuboidSize(final Vector3N min, final Vector3N max) {
         final double x = max.xD() - min.xD();
         final double y = max.yD() - min.yD();
@@ -343,6 +356,7 @@ public final class HartshornUtils {
         return Vector3N.of(x, y, z);
     }
 
+    @Deprecated(since = "22.2", forRemoval = true)
     public static boolean isCI() {
         for (final StackTraceElement element : Thread.currentThread().getStackTrace()) {
             if (element.getClassName().startsWith("org.junit.")) return true;
