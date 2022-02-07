@@ -21,6 +21,7 @@ import org.dockbox.hartshorn.core.context.element.TypeContext;
 
 import java.lang.annotation.Annotation;
 import java.util.List;
+import java.util.Set;
 
 public interface ComponentContainer {
 
@@ -43,4 +44,6 @@ public interface ComponentContainer {
     boolean permitsProxying();
 
     boolean permitsProcessing();
+
+    Set<String> requiredTypes();
 }

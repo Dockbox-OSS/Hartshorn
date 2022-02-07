@@ -57,6 +57,11 @@ public class ServiceImpl implements Service {
     }
 
     @Override
+    public String[] requires() {
+        return new String[0];
+    }
+
+    @Override
     public Class<? extends Annotation> annotationType() {
         return Service.class;
     }

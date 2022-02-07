@@ -141,4 +141,18 @@ public @interface Component {
      * @return {@code true} if the component should be processed
      */
     boolean permitProcessing() default true;
+
+    /**
+     * Indicates one or more prefixed types which are required to be present on the classpath in order for the component
+     * to be loaded. This is used to prevent components from being loaded when they are not required. If one or more types
+     * are specified, the component will only be loaded if all the types are present on the classpath. If no types
+     * are specified, the component will always be loaded (assuming other conditions are met).
+     *
+     * <p>This requires the fully qualified class name to be specified. For example, if the class is named
+     * {@code com.example.MyComponent}, the type would be {@code com.example.MyComponent}. {@code MyComponent} or
+     * {@code com.example.MyComponent.class} are not valid.
+     *
+     * @return The required types.
+     */
+    String[] requires() default {};
 }

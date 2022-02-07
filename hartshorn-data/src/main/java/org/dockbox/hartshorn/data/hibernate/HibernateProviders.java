@@ -7,7 +7,7 @@ import org.dockbox.hartshorn.data.TransactionManager;
 import org.dockbox.hartshorn.data.annotations.UsePersistence;
 import org.dockbox.hartshorn.data.jpa.JpaRepository;
 
-@Service(activators = UsePersistence.class)
+@Service(activators = UsePersistence.class, requires = "org.hibernate.Hibernate")
 public class HibernateProviders {
 
     @Provider
