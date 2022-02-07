@@ -92,4 +92,10 @@ public @interface Service {
      * @return Whether the service is permitted to be proxied.
      */
     boolean permitProxying() default true;
+
+    /**
+     * @see Component#requires()
+     * @return The prefixes required by this service.
+     */
+    String[] requires() default {};
 }

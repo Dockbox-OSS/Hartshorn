@@ -6,7 +6,7 @@ import org.dockbox.hartshorn.web.HttpWebServer;
 import org.dockbox.hartshorn.web.annotations.UseHttpServer;
 import org.dockbox.hartshorn.web.servlet.DirectoryServlet;
 
-@Service(activators = UseHttpServer.class)
+@Service(activators = UseHttpServer.class, requires = "org.eclipse.jetty.server.Server")
 public class JettyProviders {
 
     @Provider

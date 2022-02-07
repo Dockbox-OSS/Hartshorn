@@ -7,7 +7,7 @@ import org.dockbox.hartshorn.web.mvc.MVCInitializer;
 
 import javax.inject.Singleton;
 
-@Service(activators = UseMvcServer.class)
+@Service(activators = UseMvcServer.class, requires = "freemarker.template.Template")
 public class FreeMarkerProviders {
 
     @Provider

@@ -27,6 +27,7 @@ import java.lang.annotation.Annotation;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import lombok.Getter;
@@ -74,7 +75,7 @@ public class ComponentContainerImpl implements ComponentContainer {
 
     @Override
     public TypeContext<?> owner() {
-        return TypeContext.of(this.annotation.owner());
+        return TypeContext.of(this.annotation().owner());
     }
 
     @Override
@@ -84,27 +85,32 @@ public class ComponentContainerImpl implements ComponentContainer {
 
     @Override
     public boolean singleton() {
-        return this.annotation.singleton();
+        return this.annotation().singleton();
     }
 
     @Override
     public boolean lazy() {
-        return this.annotation.lazy();
+        return this.annotation().lazy();
     }
 
     @Override
     public ComponentType componentType() {
-        return this.annotation.type();
+        return this.annotation().type();
     }
 
     @Override
     public boolean permitsProxying() {
-        return this.annotation.permitProxying();
+        return this.annotation().permitProxying();
     }
 
     @Override
     public boolean permitsProcessing() {
-        return this.annotation.permitProcessing();
+        return this.annotation().permitProcessing();
+    }
+
+    @Override
+    public Set<String> requiredTypes() {
+        return Set.of(this.annotation().requires());
     }
 
     @Override
