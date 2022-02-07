@@ -17,7 +17,6 @@
 package org.dockbox.hartshorn.events;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.core.Key;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
@@ -44,7 +43,7 @@ import javax.inject.Singleton;
 @Singleton
 public class EventBusImpl implements EventBus {
 
-    protected final Set<Function<MethodContext<?, ?>, Exceptional<Boolean>>> validators = HartshornUtils.emptyConcurrentSet();
+    protected final Set<Function<MethodContext<?, ?>, Exceptional<Boolean>>> validators = ConcurrentHashMap.newKeySet();
 
     /** A map of all listening objects with their associated {@link EventWrapper}s. */
     protected final Map<Key<?>, Set<EventWrapper>> listenerToInvokers = new ConcurrentHashMap<>();

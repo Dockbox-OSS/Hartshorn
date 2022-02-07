@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.data.service;
 
-import org.dockbox.hartshorn.core.HartshornUtils;
+import org.dockbox.hartshorn.core.StringUtilities;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.data.PersistentElement;
 import org.dockbox.hartshorn.data.annotations.UsePersistence;
@@ -45,7 +45,7 @@ public class SerialisationTests {
         final String json = service.writeToString(element);
 
         Assertions.assertNotNull(json);
-        Assertions.assertEquals("{\"name\":\"sample\"}", HartshornUtils.strip(json));
+        Assertions.assertEquals("{\"name\":\"sample\"}", StringUtilities.strip(json));
     }
 
     @Test

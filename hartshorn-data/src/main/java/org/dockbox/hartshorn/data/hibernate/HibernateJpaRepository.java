@@ -17,7 +17,7 @@
 package org.dockbox.hartshorn.data.hibernate;
 
 import org.dockbox.hartshorn.core.Enableable;
-import org.dockbox.hartshorn.core.HartshornUtils;
+import org.dockbox.hartshorn.core.StringUtilities;
 import org.dockbox.hartshorn.core.annotations.inject.Bound;
 import org.dockbox.hartshorn.core.boot.ExceptionHandler;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
@@ -124,7 +124,7 @@ public class HibernateJpaRepository<T, ID> implements JpaRepository<T, ID>, Enab
 
         this.registerDefaultDialects();
 
-        if (HartshornUtils.notEmpty(this.connection.username()) || HartshornUtils.notEmpty(this.connection.password())) {
+        if (StringUtilities.notEmpty(this.connection.username()) || StringUtilities.notEmpty(this.connection.password())) {
             this.applicationContext().log().debug("Username or password were configured in the active connection, adding to Hibernate configuration");
             this.configuration.setProperty("hibernate.connection.username", this.connection.username());
             this.configuration.setProperty("hibernate.connection.password", this.connection.password());

@@ -18,7 +18,6 @@ package org.dockbox.hartshorn.core.context;
 
 import org.dockbox.hartshorn.core.CustomMultiTreeMap;
 import org.dockbox.hartshorn.core.Enableable;
-import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.core.InjectConfiguration;
 import org.dockbox.hartshorn.core.Key;
 import org.dockbox.hartshorn.core.MetaProvider;
@@ -62,6 +61,7 @@ import java.util.PriorityQueue;
 import java.util.Properties;
 import java.util.Queue;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -77,14 +77,14 @@ public class StandardDelegatingApplicationContext extends DefaultContext impleme
 
     private static final Pattern ARGUMENTS = Pattern.compile("--([a-zA-Z0-9\\.]+)=(.+)");
 
-    protected final transient MultiMap<Integer, ComponentPreProcessor<?>> preProcessors = new CustomMultiTreeMap<>(HartshornUtils::emptyConcurrentSet);
+    protected final transient MultiMap<Integer, ComponentPreProcessor<?>> preProcessors = new CustomMultiTreeMap<>(ConcurrentHashMap::newKeySet);
     protected final transient Queue<String> prefixQueue = new PriorityQueue<>(PREFIX_PRIORITY_COMPARATOR);
     protected final transient Properties environmentValues = new Properties();
 
     private final transient StandardComponentProvider componentProvider;
 
     private final Set<Modifiers> modifiers;
-    private final Set<Annotation> activators = HartshornUtils.emptyConcurrentSet();
+    private final Set<Annotation> activators = ConcurrentHashMap.newKeySet();
 
     private final ApplicationEnvironment environment;
     private final ClasspathResourceLocator resourceLocator;

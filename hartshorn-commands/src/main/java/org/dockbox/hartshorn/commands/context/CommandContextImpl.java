@@ -18,7 +18,7 @@ package org.dockbox.hartshorn.commands.context;
 
 import org.dockbox.hartshorn.commands.CommandSource;
 import org.dockbox.hartshorn.commands.service.CommandParameter;
-import org.dockbox.hartshorn.core.HartshornUtils;
+import org.dockbox.hartshorn.core.CollectionUtilities;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.DefaultContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
@@ -50,7 +50,7 @@ public class CommandContextImpl extends DefaultContext implements CommandContext
 
     @Override
     public <T> T get(final String key) {
-        return HartshornUtils.merge(this.args, this.flags)
+        return CollectionUtilities.merge(this.args, this.flags)
                 .stream()
                 .map(CommandParameter.class::cast)
                 .filter(arg -> arg.trimmedKey().equals(key))
@@ -66,7 +66,7 @@ public class CommandContextImpl extends DefaultContext implements CommandContext
 
     @Override
     public boolean has(final String key) {
-        return HartshornUtils.merge(this.args, this.flags)
+        return CollectionUtilities.merge(this.args, this.flags)
                 .stream()
                 .map(CommandParameter.class::cast)
                 .anyMatch(arg -> arg.trimmedKey().equals(key));

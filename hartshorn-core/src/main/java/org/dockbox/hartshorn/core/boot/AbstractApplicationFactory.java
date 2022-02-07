@@ -16,7 +16,6 @@
 
 package org.dockbox.hartshorn.core.boot;
 
-import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.core.InjectConfiguration;
 import org.dockbox.hartshorn.core.MetaProvider;
 import org.dockbox.hartshorn.core.Modifiers;
@@ -34,6 +33,7 @@ import org.dockbox.hartshorn.core.services.ComponentPreProcessor;
 
 import java.lang.annotation.Annotation;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -58,13 +58,13 @@ public abstract class AbstractApplicationFactory<Self extends ApplicationFactory
 
     protected TypeContext<?> activator;
 
-    protected final Set<InjectConfiguration> injectConfigurations = HartshornUtils.emptyConcurrentSet();
-    protected final Set<Annotation> serviceActivators = HartshornUtils.emptyConcurrentSet();
-    protected final Set<Modifiers> modifiers = HartshornUtils.emptyConcurrentSet();
-    protected final Set<String> arguments = HartshornUtils.emptyConcurrentSet();
-    protected final Set<String> prefixes = HartshornUtils.emptyConcurrentSet();
-    protected final Set<ComponentPostProcessor<?>> componentPostProcessors = HartshornUtils.emptyConcurrentSet();
-    protected final Set<ComponentPreProcessor<?>> componentPreProcessors = HartshornUtils.emptyConcurrentSet();
+    protected final Set<InjectConfiguration> injectConfigurations = ConcurrentHashMap.newKeySet();
+    protected final Set<Annotation> serviceActivators = ConcurrentHashMap.newKeySet();
+    protected final Set<Modifiers> modifiers = ConcurrentHashMap.newKeySet();
+    protected final Set<String> arguments = ConcurrentHashMap.newKeySet();
+    protected final Set<String> prefixes = ConcurrentHashMap.newKeySet();
+    protected final Set<ComponentPostProcessor<?>> componentPostProcessors = ConcurrentHashMap.newKeySet();
+    protected final Set<ComponentPreProcessor<?>> componentPreProcessors = ConcurrentHashMap.newKeySet();
 
     @Override
     public Self modifiers(final Modifiers... modifiers) {

@@ -18,9 +18,9 @@ package org.dockbox.hartshorn.web;
 
 import org.dockbox.hartshorn.core.annotations.context.AutoCreating;
 import org.dockbox.hartshorn.core.context.DefaultContext;
-import org.dockbox.hartshorn.core.HartshornUtils;
 
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import lombok.Getter;
 
@@ -28,7 +28,7 @@ import lombok.Getter;
 public class ControllerContext extends DefaultContext {
 
     @Getter
-    private final Set<RequestHandlerContext> requestHandlerContexts = HartshornUtils.emptyConcurrentSet();
+    private final Set<RequestHandlerContext> requestHandlerContexts = ConcurrentHashMap.newKeySet();
 
     public void add(final RequestHandlerContext context) {
         this.requestHandlerContexts.add(context);

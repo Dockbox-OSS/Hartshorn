@@ -17,7 +17,7 @@
 package org.dockbox.hartshorn.commands.service;
 
 import org.dockbox.hartshorn.commands.context.CommandContext;
-import org.dockbox.hartshorn.core.HartshornUtils;
+import org.dockbox.hartshorn.core.StringUtilities;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -36,7 +36,7 @@ public class CommandParameter<T> {
     private final String key;
 
     public String trimmedKey() {
-        return HartshornUtils.trimWith('-', this.key());
+        return StringUtilities.trimWith('-', this.key());
     }
 
 }

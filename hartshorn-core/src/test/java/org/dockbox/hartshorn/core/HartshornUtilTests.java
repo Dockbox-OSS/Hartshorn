@@ -18,7 +18,6 @@ package org.dockbox.hartshorn.core;
 
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.domain.tuple.Tuple;
-import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -26,7 +25,6 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.time.Duration;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -40,15 +38,6 @@ public class HartshornUtilTests {
     private static final int hour = 60 * minute;
     private static final int day = 24 * hour;
     private static final int week = 7 * day;
-
-    private static Stream<Arguments> modifiableCollections() {
-        return Stream.of(
-                Arguments.of(HartshornUtils.asList("value", "other")),
-                Arguments.of(HartshornUtils.emptyConcurrentSet()),
-                Arguments.of(HartshornUtils.asSet(Arrays.asList("value", "other")))
-
-        );
-    }
 
     private static Stream<Arguments> capitalizeValues() {
         return Stream.of(
@@ -86,14 +75,14 @@ public class HartshornUtilTests {
 
     public static Stream<Arguments> differences() {
         return Stream.of(
-                Arguments.of(HartshornUtils.asList("a", "b"), HartshornUtils.asList("a"), HartshornUtils.asList("b")),
-                Arguments.of(HartshornUtils.asList("a"), HartshornUtils.asList("a", "b"), HartshornUtils.asList("b"))
+                Arguments.of(List.of("a", "b"), List.of("a"), List.of("b")),
+                Arguments.of(List.of("a"), List.of("a", "b"), List.of("b"))
         );
     }
 
     @Test
     void testOfEntriesAddsAllEntries() {
-        final Map<Integer, String> map = HartshornUtils.ofEntries(
+        final Map<Integer, String> map = CollectionUtilities.ofEntries(
                 Tuple.of(1, "two"),
                 Tuple.of(2, "three")
         );
@@ -105,22 +94,15 @@ public class HartshornUtilTests {
 
     @Test
     void testOfEntriesIsEmptyWithNoEntries() {
-        final Map<Object, Object> map = HartshornUtils.ofEntries();
+        final Map<Object, Object> map = CollectionUtilities.ofEntries();
         Assertions.assertNotNull(map);
         Assertions.assertTrue(map.isEmpty());
     }
 
     @ParameterizedTest
-    @MethodSource("modifiableCollections")
-    void testCollectionCanBeModified(final Collection<String> collection) {
-        Assertions.assertNotNull(collection);
-        Assertions.assertDoesNotThrow(() -> collection.add("another"));
-    }
-
-    @ParameterizedTest
     @MethodSource("capitalizeValues")
     void testCapitalizeChangesOnlyFirstCharacter(final String input, final String expected) {
-        final String value = HartshornUtils.capitalize(input);
+        final String value = StringUtilities.capitalize(input);
         Assertions.assertNotNull(value);
         Assertions.assertEquals(expected, value);
     }
@@ -141,88 +123,27 @@ public class HartshornUtilTests {
     }
 
     @Test
-    void testArrayMerge() {
-        final Object[] arr1 = { 1, 2, 3 };
-        final Object[] arr2 = { 4, 5, 6 };
-        final Object[] merged = HartshornUtils.merge(arr1, arr2);
-        for (int i = 0; i < 6; i++) {
-            Assertions.assertEquals(i + 1, (int) merged[i]);
-        }
-    }
-
-    @Test
     void testCollectionMerge() {
         final Collection<Integer> col1 = Arrays.asList(1, 2, 3);
         final Collection<Integer> col2 = Arrays.asList(4, 5, 6);
-        final Collection<Integer> merged = HartshornUtils.merge(col1, col2);
+        final Collection<Integer> merged = CollectionUtilities.merge(col1, col2);
 
         Assertions.assertEquals(6, merged.size());
         Assertions.assertTrue(merged.containsAll(Arrays.asList(1, 2, 3, 4, 5, 6)));
     }
 
-    @Test
-    void testDoesNotThrow() {
-        Assertions.assertTrue(HartshornUtils.doesNotThrow(() -> {
-            final int i = 1 + 1;
-        }));
-        Assertions.assertFalse(HartshornUtils.doesNotThrow(() -> {
-            throw new ApplicationException("error");
-        }));
-    }
-
-    @Test
-    void testDoesNotThrowSpecific() {
-        Assertions.assertTrue(HartshornUtils.doesNotThrow(() -> {
-            final int i = 1 + 1;
-        }, Exception.class));
-        Assertions.assertFalse(HartshornUtils.doesNotThrow(() -> {
-            throw new UnsupportedOperationException("error");
-        }, UnsupportedOperationException.class));
-        Assertions.assertTrue(HartshornUtils.doesNotThrow(() -> {
-            throw new IllegalArgumentException("error");
-        }, UnsupportedOperationException.class));
-    }
-
-    @Test
-    void testThrowsSpecific() {
-        Assertions.assertFalse(HartshornUtils.throwsException(() -> {
-            final int i = 1 + 1;
-        }, Exception.class));
-        Assertions.assertTrue(HartshornUtils.throwsException(() -> {
-            throw new UnsupportedOperationException("error");
-        }, UnsupportedOperationException.class));
-        Assertions.assertFalse(HartshornUtils.throwsException(() -> {
-            throw new IllegalArgumentException("error");
-        }, UnsupportedOperationException.class));
-    }
-
     @ParameterizedTest
     @MethodSource("durations")
     void testDurationOf(final String in, final long expected) {
-        final Exceptional<Duration> duration = HartshornUtils.durationOf(in);
+        final Exceptional<Duration> duration = StringUtilities.durationOf(in);
         Assertions.assertTrue(duration.present());
         Assertions.assertEquals(expected, duration.get().getSeconds());
-    }
-
-    @Test
-    void testToTableString() {
-        final List<List<String>> rows = new ArrayList<>();
-        rows.add(List.of("h1", "h2", "h3"));
-        rows.add(List.of("v1", "v2", "v3"));
-        final String table = HartshornUtils.asTable(rows);
-
-        Assertions.assertNotNull(table);
-        Assertions.assertEquals("""
-                        h1  h2  h3 \s
-                        v1  v2  v3 \s
-                        """,
-                table);
     }
 
     @ParameterizedTest
     @MethodSource("differences")
     void testDifferenceInCollections(final Collection<String> a, final Collection<String> b, final Collection<String> expected) {
-        final Set<String> difference = HartshornUtils.difference(a, b);
+        final Set<String> difference = CollectionUtilities.difference(a, b);
         Assertions.assertEquals(difference.size(), expected.size());
         Assertions.assertTrue(difference.containsAll(expected));
         Assertions.assertTrue(expected.containsAll(difference));

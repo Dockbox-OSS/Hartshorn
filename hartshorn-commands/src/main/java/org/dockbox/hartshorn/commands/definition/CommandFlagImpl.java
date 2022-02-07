@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.commands.definition;
 
-import org.dockbox.hartshorn.core.HartshornUtils;
+import org.dockbox.hartshorn.core.StringUtilities;
 
 import lombok.AllArgsConstructor;
 
@@ -30,7 +30,7 @@ public class CommandFlagImpl implements CommandFlag {
 
     @Override
     public String name() {
-        return HartshornUtils.trimWith('-', this.name);
+        return StringUtilities.trimWith('-', this.name);
     }
 
     @Override

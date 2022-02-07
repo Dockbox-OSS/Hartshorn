@@ -16,7 +16,6 @@
 
 package org.dockbox.hartshorn.core.context;
 
-import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.core.boot.ApplicationManager;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 
@@ -30,14 +29,18 @@ import lombok.Getter;
 public class ContextualApplicationEnvironment implements ApplicationEnvironment {
 
     @Getter private final PrefixContext prefixContext;
-    @Getter private final boolean isCI;
     @Getter private final ApplicationManager manager;
 
     public ContextualApplicationEnvironment(final PrefixContext prefixContext, final ApplicationManager manager) {
         this.manager = manager;
-        this.isCI = HartshornUtils.isCI();
         this.prefixContext = prefixContext;
         this.manager().log().debug("Created new application environment (isCI: %s, prefixCount: %d)".formatted(this.isCI(), this.prefixContext().prefixes().size()));
+    }
+
+
+    @Override
+    public boolean isCI() {
+        return this.manager.isCI();
     }
 
     @Override

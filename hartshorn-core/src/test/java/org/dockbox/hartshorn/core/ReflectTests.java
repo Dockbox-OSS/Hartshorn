@@ -147,7 +147,7 @@ public class ReflectTests {
     void testRunMethodReturnsValue(final String method) {
         final ReflectTestType instance = new ReflectTestType();
         final TypeContext<ReflectTestType> type = TypeContext.of(instance);
-        final Exceptional<?> value = type.method(method, HartshornUtils.asList(TypeContext.of(String.class))).get().invoke(instance, "value");
+        final Exceptional<?> value = type.method(method, List.of(TypeContext.of(String.class))).get().invoke(instance, "value");
         Assertions.assertTrue(value.present());
         Assertions.assertEquals("VALUE", value.get());
     }
@@ -266,7 +266,7 @@ public class ReflectTests {
 
     @Test
     void testHasMethodIsTrueIfMethodExists() {
-        Assertions.assertTrue(TypeContext.of(ReflectTestType.class).method("publicMethod", HartshornUtils.asList(TypeContext.of(String.class))).present());
+        Assertions.assertTrue(TypeContext.of(ReflectTestType.class).method("publicMethod", List.of(TypeContext.of(String.class))).present());
     }
 
     @Test
@@ -276,7 +276,7 @@ public class ReflectTests {
 
     @Test
     void testInstanceHasMethodIsTrueIfMethodExists() {
-        Assertions.assertTrue(TypeContext.of(new ReflectTestType()).method("publicMethod", HartshornUtils.asList(TypeContext.of(String.class))).present());
+        Assertions.assertTrue(TypeContext.of(new ReflectTestType()).method("publicMethod", List.of(TypeContext.of(String.class))).present());
     }
 
     @Test

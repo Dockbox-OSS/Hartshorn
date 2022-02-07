@@ -28,7 +28,7 @@ import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.MethodProxyContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.proxy.ProxyFunction;
-import org.dockbox.hartshorn.core.services.ComponentContainer;
+import org.dockbox.hartshorn.core.services.ComponentUtilities;
 import org.dockbox.hartshorn.core.services.ServiceAnnotatedMethodInterceptorPostProcessor;
 
 import java.lang.annotation.Annotation;
@@ -52,7 +52,7 @@ public abstract class CacheServicePostProcessor<A extends Annotation> extends Se
                 name = annotation.get().value();
             }
             else {
-                name = ComponentContainer.id(context, methodContext.type());
+                name = ComponentUtilities.id(context, methodContext.type());
             }
         }
 

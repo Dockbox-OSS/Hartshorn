@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.i18n;
 
-import org.dockbox.hartshorn.core.HartshornUtils;
+import org.dockbox.hartshorn.core.CollectionUtilities;
 import org.dockbox.hartshorn.core.annotations.activate.AutomaticActivation;
 import org.dockbox.hartshorn.core.boot.HartshornApplicationFactory;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
@@ -38,6 +38,7 @@ import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -52,7 +53,7 @@ import java.util.Properties;
  */
 public final class TranslationBatchGenerator {
 
-    private static final List<String> BLACKLIST = HartshornUtils.asList(
+    private static final List<String> BLACKLIST = List.of(
             // Test resources
             "class-resources.abstract.entry",
             "class-resources.concrete.entry",
@@ -60,7 +61,7 @@ public final class TranslationBatchGenerator {
             "resource.test.entry",
             "test-resources.test.entry"
     );
-    private static final List<String> HEADER = HartshornUtils.asList("#",
+    private static final List<String> HEADER = List.of("#",
             "# Copyright (C) 2020 Guus Lieben",
             "#",
             "# This framework is free software; you can redistribute it and/or modify",
@@ -117,7 +118,7 @@ public final class TranslationBatchGenerator {
                 final String[] property = string.split("=");
                 final String key = property[0];
                 if (key.startsWith("$")) continue;
-                final String value = String.join("=", HartshornUtils.arraySubset(property, 1, property.length - 1));
+                final String value = String.join("=", Arrays.copyOfRange(property, 1, property.length));
                 if (properties.containsKey(key)) {
                     // Override any existing, drop retired translations
                     cache.setProperty(key, value);
@@ -131,7 +132,7 @@ public final class TranslationBatchGenerator {
             });
 
             Collections.sort(content);
-            final Collection<String> output = HartshornUtils.merge(HEADER, content);
+            final Collection<String> output = CollectionUtilities.merge(HEADER, content);
 
             final String fileOut = String.join("\n", output);
             files.put(file.getName(), fileOut);
@@ -166,7 +167,7 @@ public final class TranslationBatchGenerator {
     private static List<File> existingFiles() {
         final File batch = TranslationBatchGenerator.existingBatch();
         if (batch.exists() && batch.isDirectory()) {
-            return HartshornUtils.asList(batch.listFiles()).stream()
+            return List.of(batch.listFiles()).stream()
                     .filter(f -> !f.isDirectory())
                     .toList();
         }

@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.data.mapping;
 
-import org.dockbox.hartshorn.core.HartshornUtils;
+import org.dockbox.hartshorn.core.StringUtilities;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.data.annotations.UsePersistence;
@@ -41,11 +41,11 @@ public class PersistenceModifiersTests {
     @Test
     void testSkipEmptyKeepsNonEmpty() {
         final ObjectMapper mapper = this.applicationContext().get(ObjectMapper.class).skipBehavior(JsonInclusionRule.SKIP_EMPTY);
-        final ModifierElement element = new ModifierElement(HartshornUtils.asList("sample", "other"));
+        final ModifierElement element = new ModifierElement(List.of("sample", "other"));
         final Exceptional<String> out = mapper.write(element);
 
         Assertions.assertTrue(out.present());
-        Assertions.assertEquals("{\"names\":[\"sample\",\"other\"]}", HartshornUtils.strip(out.get()));
+        Assertions.assertEquals("{\"names\":[\"sample\",\"other\"]}", StringUtilities.strip(out.get()));
     }
 
     @Test
@@ -55,6 +55,6 @@ public class PersistenceModifiersTests {
         final Exceptional<String> out = mapper.write(element);
 
         Assertions.assertTrue(out.present());
-        Assertions.assertEquals("{}", HartshornUtils.strip(out.get()));
+        Assertions.assertEquals("{}", StringUtilities.strip(out.get()));
     }
 }

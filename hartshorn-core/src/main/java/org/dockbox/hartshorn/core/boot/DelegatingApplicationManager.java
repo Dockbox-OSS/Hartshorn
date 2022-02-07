@@ -16,7 +16,6 @@
 
 package org.dockbox.hartshorn.core.boot;
 
-import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.core.annotations.context.LogExclude;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.ModifiableContextCarrier;
@@ -28,6 +27,7 @@ import org.slf4j.LoggerFactory;
 
 import java.nio.file.Path;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -54,10 +54,12 @@ public class DelegatingApplicationManager implements ObservableApplicationManage
                                              -- Hartshorn v%s --
             """.formatted(Hartshorn.VERSION);
 
-    private final Set<LifecycleObserver> observers = HartshornUtils.emptyConcurrentSet();
+    private final Set<LifecycleObserver> observers = ConcurrentHashMap.newKeySet();
     private final ApplicationFSProvider applicationFSProvider;
     private final ApplicationLogger applicationLogger;
     private final ApplicationProxier applicationProxier;
+    private final boolean isCI;
+
     private ApplicationContext applicationContext;
 
     @Setter
@@ -85,7 +87,21 @@ public class DelegatingApplicationManager implements ObservableApplicationManage
             applicationManaged.applicationManager(this);
         this.applicationFSProvider = applicationFSProvider;
 
+        this.isCI = this.checkCI();
+
         if (!this.isCI()) this.printHeader(activator);
+    }
+
+    protected boolean checkCI() {
+        for (final StackTraceElement element : Thread.currentThread().getStackTrace()) {
+            if (element.getClassName().startsWith("org.junit.")) return true;
+        }
+
+        return System.getenv().containsKey("GITLAB_CI")
+                || System.getenv().containsKey("JENKINS_HOME")
+                || System.getenv().containsKey("TRAVIS")
+                || System.getenv().containsKey("GITHUB_ACTIONS")
+                || System.getenv().containsKey("APPVEYOR");
     }
 
     private void printHeader(final TypeContext<?> activator) {
@@ -98,7 +114,7 @@ public class DelegatingApplicationManager implements ObservableApplicationManage
 
     @Override
     public boolean isCI() {
-        return HartshornUtils.isCI();
+        return this.isCI;
     }
 
     @Override

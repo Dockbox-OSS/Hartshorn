@@ -18,7 +18,6 @@ package org.dockbox.hartshorn.core.context;
 
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.core.CustomMultiTreeMap;
-import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.core.Key;
 import org.dockbox.hartshorn.core.MetaProvider;
 import org.dockbox.hartshorn.core.MultiMap;
@@ -48,7 +47,7 @@ public class HierarchicalApplicationComponentProvider extends DefaultContext imp
     private final transient Map<Key<?>, Object> singletons = new ConcurrentHashMap<>();
     private final transient Map<Key<?>, BindingHierarchy<?>> hierarchies = new ConcurrentHashMap<>();
 
-    protected final transient MultiMap<Integer, ComponentPostProcessor<?>> postProcessors = new CustomMultiTreeMap<>(HartshornUtils::emptyConcurrentSet);
+    protected final transient MultiMap<Integer, ComponentPostProcessor<?>> postProcessors = new CustomMultiTreeMap<>(ConcurrentHashMap::newKeySet);
 
     public HierarchicalApplicationComponentProvider(final ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;

@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.events;
 
-import org.dockbox.hartshorn.core.HartshornUtils;
+import org.dockbox.hartshorn.core.CollectionUtilities;
 import org.dockbox.hartshorn.core.annotations.stereotype.Service;
 import org.dockbox.hartshorn.core.boot.ApplicationState.Started;
 import org.dockbox.hartshorn.core.boot.LifecycleObserver;
@@ -56,7 +56,7 @@ public class EventValidator implements LifecycleObserver {
             postedEvents.addAll(Arrays.stream(posting.value()).map(TypeContext::of).toList());
         }
 
-        final Set<TypeContext<? extends Event>> difference = HartshornUtils.difference(allEvents, postedEvents);
+        final Set<TypeContext<? extends Event>> difference = CollectionUtilities.difference(allEvents, postedEvents);
 
         if (!difference.isEmpty()) {
             final StringBuilder message = new StringBuilder(difference.size() + " events are not handled by any event bridge!");

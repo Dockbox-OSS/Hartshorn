@@ -17,16 +17,17 @@
 package org.dockbox.hartshorn.core.context;
 
 import org.dockbox.hartshorn.core.CustomMultiMap;
-import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.core.HashSetMultiMap;
 import org.dockbox.hartshorn.core.Key;
 import org.dockbox.hartshorn.core.MultiMap;
+import org.dockbox.hartshorn.core.StringUtilities;
 import org.dockbox.hartshorn.core.annotations.context.AutoCreating;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * The default implementation of {@link Context}. This implementation uses a {@link HashSetMultiMap} to store the
@@ -34,8 +35,8 @@ import java.util.Set;
  */
 public abstract class DefaultContext implements Context {
 
-    protected final transient Set<Context> contexts = HartshornUtils.emptyConcurrentSet();
-    protected final transient MultiMap<String, Context> namedContexts = new CustomMultiMap<>(HartshornUtils::emptyConcurrentSet);
+    protected final transient Set<Context> contexts = ConcurrentHashMap.newKeySet();
+    protected final transient MultiMap<String, Context> namedContexts = new CustomMultiMap<>(ConcurrentHashMap::newKeySet);
 
     @Override
     public <C extends Context> void add(final C context) {
@@ -44,13 +45,13 @@ public abstract class DefaultContext implements Context {
 
     @Override
     public <N extends NamedContext> void add(final N context) {
-        if (context != null && HartshornUtils.notEmpty(context.name()))
+        if (context != null && StringUtilities.notEmpty(context.name()))
             this.namedContexts.put(context.name(), context);
     }
 
     @Override
     public <C extends Context> void add(final String name, final C context) {
-        if (context != null && HartshornUtils.notEmpty(name))
+        if (context != null && StringUtilities.notEmpty(name))
             this.namedContexts.put(name, context);
     }
 

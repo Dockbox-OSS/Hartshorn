@@ -24,6 +24,7 @@ import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.domain.TypedOwner;
 import org.dockbox.hartshorn.core.domain.TypedOwnerImpl;
 import org.dockbox.hartshorn.core.services.ComponentContainer;
+import org.dockbox.hartshorn.core.services.ComponentUtilities;
 
 import javax.inject.Singleton;
 import javax.persistence.Entity;
@@ -51,7 +52,7 @@ public class InjectorMetaProvider implements MetaProvider {
                 }
             }
         }
-        return TypedOwnerImpl.of(ComponentContainer.id(this.context, type));
+        return TypedOwnerImpl.of(ComponentUtilities.id(this.context, type));
     }
 
     @Override

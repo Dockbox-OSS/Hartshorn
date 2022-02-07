@@ -16,8 +16,8 @@
 
 package org.dockbox.hartshorn.core.boot;
 
+import org.dockbox.hartshorn.core.CollectionUtilities;
 import org.dockbox.hartshorn.core.ComponentType;
-import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.core.InjectConfiguration;
 import org.dockbox.hartshorn.core.annotations.activate.Activator;
 import org.dockbox.hartshorn.core.annotations.inject.InjectConfig;
@@ -96,7 +96,7 @@ public abstract class AbstractActivatingApplicationFactory<
 
         final Activator activator = this.activatorAnnotation();
         final Set<String> scanPackages = Set.of(activator.scanPackages());
-        final Collection<String> scanPrefixes = HartshornUtils.merge(this.prefixes, scanPackages);
+        final Collection<String> scanPrefixes = CollectionUtilities.merge(this.prefixes, scanPackages);
 
         if (activator.includeBasePackage())
             scanPrefixes.add(this.activator.type().getPackageName());
