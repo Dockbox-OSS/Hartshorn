@@ -22,8 +22,6 @@ import org.dockbox.hartshorn.core.annotations.inject.Provider;
 import org.dockbox.hartshorn.core.annotations.stereotype.Service;
 import org.dockbox.hartshorn.core.context.ConcreteContextCarrier;
 import org.dockbox.hartshorn.core.context.ContextCarrier;
-import org.dockbox.hartshorn.core.proxy.DelegatorAccessor;
-import org.dockbox.hartshorn.core.proxy.DelegatorAccessorImpl;
 
 import javax.inject.Singleton;
 
@@ -34,10 +32,5 @@ public class DefaultProviders {
     @Singleton
     public Class<? extends ContextCarrier> contextCarrier() {
         return ConcreteContextCarrier.class;
-    }
-
-    @Provider
-    public Class<? extends DelegatorAccessor> delegatorAccessor() {
-        return DelegatorAccessorImpl.class;
     }
 }
