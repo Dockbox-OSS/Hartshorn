@@ -45,7 +45,7 @@ public abstract class ServiceMethodInterceptorPostProcessor<A extends Annotation
         if (factory == null) return instance;
 
         for (final MethodContext<?, T> method : methods) {
-            final org.dockbox.hartshorn.core.context.MethodProxyContext ctx = new MethodProxyContextImpl<>(context, instance, type, method);
+            final org.dockbox.hartshorn.core.context.MethodProxyContext ctx = new MethodProxyContextImpl<>(context, type, method);
 
             if (this.preconditions(context, ctx, processingContext)) {
                 final MethodInterceptor<Object> function = this.process(context, ctx, processingContext);

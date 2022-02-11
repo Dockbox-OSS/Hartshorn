@@ -67,7 +67,7 @@ public class QueryPostProcessor extends ServiceAnnotatedMethodInterceptorPostPro
         final TypeContext<?> entityType = this.entityType(method, query);
 
         return interceptorContext -> {
-            final JpaRepository<?, ?> repository = (JpaRepository<?, ?>) methodContext.instance();
+            final JpaRepository<?, ?> repository = (JpaRepository<?, ?>) interceptorContext.instance();
             if (query.automaticFlush() && !transactional) repository.flush();
 
             final QueryContext queryContext = new QueryContext(query, interceptorContext.args(), method, entityType, context, repository, modifying);

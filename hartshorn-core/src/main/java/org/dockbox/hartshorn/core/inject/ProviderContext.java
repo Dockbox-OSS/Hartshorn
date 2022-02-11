@@ -31,5 +31,6 @@ public class ProviderContext<T> {
     private final boolean singleton;
     private final int priority;
     private final Supplier<T> provider;
+    private final boolean lazy;
 
 }

@@ -32,6 +32,8 @@ import org.dockbox.hartshorn.core.inject.ProviderContext;
 import java.util.List;
 import java.util.function.Function;
 
+import javax.inject.Singleton;
+
 @AutomaticActivation
 public final class ProviderServicePreProcessor implements ServicePreProcessor<UseServiceProvision> {
 
@@ -68,7 +70,7 @@ public final class ProviderServicePreProcessor implements ServicePreProcessor<Us
         final boolean singleton = context.meta().singleton(element);
         final Provider annotation = element.annotation(Provider.class).get();
         final Key<?> key = Key.of(type.apply(element), annotation.value());
-        final ProviderContext<?> providerContext = new ProviderContext<>(((Key<Object>) key), singleton, annotation.priority(), () -> element.obtain(context).rethrowUnchecked().orNull());
+        final ProviderContext<?> providerContext = new ProviderContext<>(((Key<Object>) key), singleton, annotation.priority(), () -> element.obtain(context).rethrowUnchecked().orNull(), annotation.lazy());
 
         context.add(providerContext);
     }
@@ -77,10 +79,11 @@ public final class ProviderServicePreProcessor implements ServicePreProcessor<Us
         final TypeContext<R> typeContext = (TypeContext<R>) generic.typeParameters().get(0);
         final Provider annotation = element.annotation(Provider.class).get();
         final Key<R> key = Key.of(typeContext, annotation.value());
+        final boolean singleton = element.annotation(Singleton.class).present();
 
         if (context.meta().singleton(element)) {
             final C target = element.obtain(context).rethrowUnchecked().orNull();
-            final ProviderContext<R> providerContext = new ProviderContext<>(key, true, annotation.priority(), () -> context.get(target));
+            final ProviderContext<R> providerContext = new ProviderContext<>(key, singleton, annotation.priority(), () -> context.get(target), annotation.lazy());
             context.add(providerContext);
             return;
         }
@@ -92,10 +95,11 @@ public final class ProviderServicePreProcessor implements ServicePreProcessor<Us
         final TypeContext<R> typeContext = (TypeContext<R>) generic.typeParameters().get(0);
         final Provider annotation = element.annotation(Provider.class).get();
         final Key<R> key = Key.of(typeContext, annotation.value());
+        final boolean singleton = element.annotation(Singleton.class).present();
 
         if (context.meta().singleton(element)) {
             final C target = element.obtain(context).rethrowUnchecked().orNull();
-            final ProviderContext<R> providerContext = new ProviderContext<>(key, true, annotation.priority(), () -> context.get(target));
+            final ProviderContext<R> providerContext = new ProviderContext<>(key, singleton, annotation.priority(), () -> context.get(target), annotation.lazy());
             context.add(providerContext);
             return;
         }

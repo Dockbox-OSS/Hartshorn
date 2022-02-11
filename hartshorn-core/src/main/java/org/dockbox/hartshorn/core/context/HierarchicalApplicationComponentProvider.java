@@ -85,8 +85,6 @@ public class HierarchicalApplicationComponentProvider extends DefaultContext imp
                 ExceptionHandler.unchecked(e);
             }
         }
-
-        // May be null, but we have used all possible injectors, it's up to the developer now
         return instance;
     }
 
@@ -179,7 +177,10 @@ public class HierarchicalApplicationComponentProvider extends DefaultContext imp
 
         if (container.permitsProxying()) {
             instance = this.finalize(key, instance, processingContext);
+            this.populateAndStore(key, instance);
         }
+
+        this.storeSingletons(key, instance);
 
         return instance;
     }
@@ -236,15 +237,18 @@ public class HierarchicalApplicationComponentProvider extends DefaultContext imp
     }
 
     protected <T> T populateAndStore(final Key<T> key, final T instance) {
+        this.storeSingletons(key, instance);
+        // Recreating field instances ensures all fields are created through bootstrapping, allowing injection
+        // points to apply correctly
+        return this.applicationContext().populate(instance);
+    }
+
+    protected <T> void storeSingletons(final Key<T> key, final T instance) {
         final MetaProvider meta = this.applicationContext().meta();
         // Ensure the order of resolution is to first resolve the instance singleton state, and only after check the type state.
         // Typically, the implementation decided whether it should be a singleton, so this cuts time complexity in half.
         if (instance != null && (meta.singleton(key.type()) || meta.singleton(TypeContext.unproxy(this.applicationContext(), instance))))
             this.singletons.put(key, instance);
-
-        // Recreating field instances ensures all fields are created through bootstrapping, allowing injection
-        // points to apply correctly
-        return this.applicationContext().populate(instance);
     }
 
     public void postProcessor(final ComponentPostProcessor<?> postProcessor) {

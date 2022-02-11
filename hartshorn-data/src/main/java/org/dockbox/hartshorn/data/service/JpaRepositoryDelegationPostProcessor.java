@@ -20,7 +20,6 @@ import org.dockbox.hartshorn.core.annotations.activate.AutomaticActivation;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.proxy.ProxyFactory;
-import org.dockbox.hartshorn.core.proxy.bytebuddy.BytebuddyProxyFactory;
 import org.dockbox.hartshorn.core.services.ProxyDelegationPostProcessor;
 import org.dockbox.hartshorn.data.annotations.UsePersistence;
 import org.dockbox.hartshorn.data.jpa.JpaRepository;
@@ -29,6 +28,7 @@ import java.util.List;
 
 @AutomaticActivation
 public class JpaRepositoryDelegationPostProcessor extends ProxyDelegationPostProcessor<JpaRepository, UsePersistence> {
+
     @Override
     public Class<UsePersistence> activator() {
         return UsePersistence.class;
@@ -41,7 +41,7 @@ public class JpaRepositoryDelegationPostProcessor extends ProxyDelegationPostPro
 
     @Override
     protected JpaRepository concreteDelegator(final ApplicationContext context, final ProxyFactory<JpaRepository, ?> handler, final TypeContext<? extends JpaRepository> parent) {
-        final List<TypeContext<?>> list = TypeContext.of(((BytebuddyProxyFactory) handler).type()).typeParameters(JpaRepository.class);
+        final List<TypeContext<?>> list = TypeContext.of(handler.type()).typeParameters(JpaRepository.class);
         final Class<?> type = list.get(0).type();
         return context.get(JpaRepositoryFactory.class).repository(type);
     }

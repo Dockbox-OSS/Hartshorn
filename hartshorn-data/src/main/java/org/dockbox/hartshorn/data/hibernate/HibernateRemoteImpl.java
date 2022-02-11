@@ -18,6 +18,7 @@ package org.dockbox.hartshorn.data.hibernate;
 
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
+import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.data.remote.PersistenceConnection;
 import org.hibernate.dialect.Dialect;
 
@@ -37,11 +38,13 @@ public class HibernateRemoteImpl implements HibernateRemote {
 
     @Inject
     public HibernateRemoteImpl(final ApplicationContext context) {
+        final Exceptional<String> remoteType = context.property("hartshorn.data.remote");
+
         this.driver = (String) context.property("hartshorn.data.hibernate.driver_class").orNull();
-        if (this.driver == null) throw new IllegalStateException("Driver class was not configured, expected hartshorn.data.hibernate.driver_class to be set, but got null");
+        if (this.driver == null) throw new IllegalStateException("Driver class was not configured, expected hartshorn.data.hibernate.driver_class or hartshorn.data.remote to be set, but got null");
 
         final String dialect = (String) context.property("hartshorn.data.hibernate.dialect").orNull();
-        if (dialect == null) throw new IllegalStateException("Dialect was not configured, expected hartshorn.data.hibernate.dialect to be set, but got null");
+        if (dialect == null) throw new IllegalStateException("Dialect was not configured, expected hartshorn.data.hibernate.dialect or hartshorn.data.remote to be set, but got null");
 
         final TypeContext<?> dialectContext = TypeContext.lookup(dialect);
         if (!dialectContext.childOf(Dialect.class)) throw new IllegalStateException("Expected dialect to be a subtype of " + Dialect.class.getCanonicalName());

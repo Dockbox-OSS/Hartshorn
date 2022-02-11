@@ -20,6 +20,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.core.Key;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
+import org.dockbox.hartshorn.core.proxy.MethodWrapper;
 import org.dockbox.hartshorn.core.proxy.ProxyCallback;
 import org.dockbox.hartshorn.core.proxy.ProxyFactory;
 
@@ -45,22 +46,10 @@ public abstract class PhasedProxyCallbackPostProcessor<A extends Annotation> ext
             final ProxyCallback<T> before = this.doBefore(context, method, key, instance);
             final ProxyCallback<T> after = this.doAfter(context, method, key, instance);
             final ProxyCallback<T> afterThrowing = this.doAfterThrowing(context, method, key, instance);
+            final MethodWrapper<T> wrapper = MethodWrapper.of(before, after, afterThrowing);
 
             if (before != null || after != null || afterThrowing != null) {
-                factory.intercept(method, interceptorContext -> {
-                    final Object i = interceptorContext.instance();
-                    final Object[] args = interceptorContext.args();
-                    before.accept(method, (T) i, args);
-                    try {
-                        final Object result = interceptorContext.invokeDefault();
-                        after.accept(method, (T) i, args);
-                        return result;
-                    }
-                    catch (final Throwable throwable) {
-                        afterThrowing.accept(method, (T) i, args);
-                        return null;
-                    }
-                });
+                factory.intercept(method, wrapper);
             }
         }
 

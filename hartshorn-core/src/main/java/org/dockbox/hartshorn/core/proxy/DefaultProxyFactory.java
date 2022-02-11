@@ -1,0 +1,182 @@
+package org.dockbox.hartshorn.core.proxy;
+
+import org.dockbox.hartshorn.core.CustomMultiMap;
+import org.dockbox.hartshorn.core.MultiMap;
+import org.dockbox.hartshorn.core.context.ApplicationContext;
+import org.dockbox.hartshorn.core.context.ContextCarrier;
+import org.dockbox.hartshorn.core.context.element.MethodContext;
+import org.dockbox.hartshorn.core.context.element.TypeContext;
+import org.dockbox.hartshorn.core.domain.TypeMap;
+
+import java.lang.reflect.Method;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T, DefaultProxyFactory<T>>, ContextCarrier {
+
+    private static final String MANAGER_FIELD = "$__manager";
+    private static final String DELEGATE_FIELD = "$__delegate";
+
+    public static NameGenerator NAME_GENERATOR = new NameGenerator() {
+        private final String sep = "_$$_hh" + Integer.toHexString(this.hashCode() & 0xfff) + "_";
+        private int counter = 0;
+
+        @Override
+        public String get(final TypeContext<?> type) {
+            return this.get(type.type());
+        }
+
+        @Override
+        public String get(final Class<?> type) {
+            return this.get(type.getName());
+        }
+
+        @Override
+        public String get(final String type) {
+            return type + this.sep + Integer.toHexString(this.counter++);
+        }
+    };
+
+    // Delegates and interceptors
+    private final Map<Method, Object> delegates = new ConcurrentHashMap<>();
+    private final Map<Method, MethodInterceptor<T>> interceptors = new ConcurrentHashMap<>();
+    private final MultiMap<Method, MethodWrapper<T>> wrappers = new CustomMultiMap<>(ConcurrentHashMap::newKeySet);
+    private final TypeMap<Object> typeDelegates = new TypeMap<>();
+    private T typeDelegate;
+
+    // Proxy data
+    private final Class<T> type;
+    private final ApplicationContext applicationContext;
+
+    private boolean trackState = true;
+    private boolean modified;
+
+    public DefaultProxyFactory(final Class<T> type, final ApplicationContext applicationContext) {
+        this.type = type;
+        this.applicationContext = applicationContext;
+    }
+
+    protected void updateState() {
+        if (this.trackState) this.modified = true;
+    }
+
+    @Override
+    public DefaultProxyFactory<T> delegate(final T delegate) {
+        if (delegate != null) {
+            this.updateState();
+            for (final Method declaredMethod : this.type.getDeclaredMethods()) {
+                this.delegates.put(declaredMethod, delegate);
+            }
+            this.typeDelegate = delegate;
+        }
+        return this;
+    }
+
+    @Override
+    public <S> DefaultProxyFactory<T> delegate(final Class<S> type, final S delegate) {
+        if (type.isAssignableFrom(this.type)) {
+            this.updateState();
+            for (final Method declaredMethod : type.getDeclaredMethods()) {
+                this.delegates.put(declaredMethod, delegate);
+            }
+            this.typeDelegates.put((Class<Object>) type, delegate);
+        }
+        else {
+            throw new IllegalArgumentException(this.type.getName() + " does not " + (type.isInterface() ? "implement " : "extend ") + type);
+        }
+        return this;
+    }
+
+    @Override
+    public DefaultProxyFactory<T> delegate(final MethodContext<?, T> method, final T delegate) {
+        return this.delegate(method.method(), delegate);
+    }
+
+    @Override
+    public DefaultProxyFactory<T> delegate(final Method method, final T delegate) {
+        this.updateState();
+        this.delegates.put(method, delegate);
+        return this;
+    }
+
+    @Override
+    public DefaultProxyFactory<T> intercept(final MethodContext<?, T> method, final MethodInterceptor<T> interceptor) {
+        return this.intercept(method.method(), interceptor);
+    }
+
+    @Override
+    public DefaultProxyFactory<T> intercept(final Method method, final MethodInterceptor<T> interceptor) {
+        final MethodInterceptor<T> methodInterceptor;
+        if (this.interceptors.containsKey(method)) {
+            methodInterceptor = this.interceptors.get(method).andThen(interceptor);
+        }
+        else {
+            methodInterceptor = interceptor;
+        }
+        this.updateState();
+        this.interceptors.put(method, methodInterceptor);
+        return this;
+    }
+
+    @Override
+    public DefaultProxyFactory<T> intercept(final MethodContext<?, T> method, final MethodWrapper<T> wrapper) {
+        return this.intercept(method.method(), wrapper);
+    }
+
+    @Override
+    public DefaultProxyFactory<T> intercept(final Method method, final MethodWrapper<T> wrapper) {
+        this.updateState();
+        this.wrappers.put(method, wrapper);
+        return this;
+    }
+
+    @Override
+    public Class<T> type() {
+        return this.type;
+    }
+
+    @Override
+    public StateAwareProxyFactory<T, DefaultProxyFactory<T>> trackState(final boolean trackState) {
+        this.trackState = trackState;
+        return this;
+    }
+
+    @Override
+    public boolean modified() {
+        return this.modified;
+    }
+
+    @Override
+    public ApplicationContext applicationContext() {
+        return this.applicationContext;
+    }
+
+    @Override
+    public T typeDelegate() {
+        return this.typeDelegate;
+    }
+
+    @Override
+    public Map<Method, Object> delegates() {
+        return this.delegates;
+    }
+
+    @Override
+    public Map<Method, MethodInterceptor<T>> interceptors() {
+        return this.interceptors;
+    }
+
+    @Override
+    public TypeMap<Object> typeDelegates() {
+        return this.typeDelegates;
+    }
+
+    @Override
+    public MultiMap<Method, MethodWrapper<T>> wrappers() {
+        return this.wrappers;
+    }
+
+    public boolean trackState() {
+        return this.trackState;
+    }
+}

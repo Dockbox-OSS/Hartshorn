@@ -1,24 +1,31 @@
 package org.dockbox.hartshorn.core.proxy;
 
+import org.dockbox.hartshorn.core.MultiMap;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.domain.TypeMap;
 
 import java.lang.reflect.Method;
 import java.util.Map;
+import java.util.Set;
 
-public class LazyProxyManager<T> implements DelegateProxyManager<T> {
+public class LazyProxyManager<T> implements ProxyManager<T> {
 
-    private final Class<T> proxyClass;
+    private Class<T> proxyClass;
     private final Class<T> targetClass;
     private T proxy;
 
     private final Map<Method, ?> delegates;
     private final TypeMap<Object> typeDelegates;
-    private final Map<Method, MethodInterceptor> interceptors;
+    private final Map<Method, MethodInterceptor<T>> interceptors;
+    private final MultiMap<Method, MethodWrapper<T>> wrappers;
     private final T delegate;
 
+    public LazyProxyManager(final DefaultProxyFactory<T> proxyFactory) {
+        this(null, proxyFactory.type(), proxyFactory.typeDelegate(), proxyFactory.delegates(), proxyFactory.typeDelegates(), proxyFactory.interceptors(), proxyFactory.wrappers());
+    }
+
     public LazyProxyManager(final Class<T> proxyClass, final Class<T> targetClass, final T delegate, final Map<Method, ?> delegates, final TypeMap<Object> typeDelegates,
-                            final Map<Method, MethodInterceptor> interceptors) {
+                            final Map<Method, MethodInterceptor<T>> interceptors, final MultiMap<Method, MethodWrapper<T>> wrappers) {
         // TODO: ApplicationContext to validate incoming values
         this.proxyClass = proxyClass;
         this.targetClass = targetClass;
@@ -26,6 +33,7 @@ public class LazyProxyManager<T> implements DelegateProxyManager<T> {
         this.delegates = delegates;
         this.typeDelegates = typeDelegates;
         this.interceptors = interceptors;
+        this.wrappers = wrappers;
     }
 
     public void proxy(final T proxy) {
@@ -42,11 +50,17 @@ public class LazyProxyManager<T> implements DelegateProxyManager<T> {
 
     @Override
     public Class<T> proxyClass() {
+        if (this.proxyClass == null) {
+            this.proxyClass = (Class<T>) this.proxy().getClass();
+        }
         return this.proxyClass;
     }
 
     @Override
     public T proxy() {
+        if (this.proxy == null) {
+            throw new IllegalStateException("Proxy instance has not been set");
+        }
         return this.proxy;
     }
 
@@ -68,5 +82,10 @@ public class LazyProxyManager<T> implements DelegateProxyManager<T> {
     @Override
     public Exceptional<MethodInterceptor<T>> interceptor(final Method method) {
         return Exceptional.of(this.interceptors).map(map -> map.get(method));
+    }
+
+    @Override
+    public Set<MethodWrapper<T>> wrappers(final Method method) {
+        return Set.copyOf(this.wrappers.get(method));
     }
 }

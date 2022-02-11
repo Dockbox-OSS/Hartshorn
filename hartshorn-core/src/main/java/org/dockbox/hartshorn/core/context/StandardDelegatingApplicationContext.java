@@ -338,7 +338,12 @@ public class StandardDelegatingApplicationContext extends DefaultContext impleme
         final Key<T> key = context.key();
         this.componentProvider.inHierarchy(key, hierarchy -> {
             if (context.singleton()) {
-                hierarchy.add(context.priority(), Providers.of(context.provider().get()));
+                if (context.lazy()) {
+                    hierarchy.add(context.priority(), Providers.of(() -> context.provider().get()));
+                }
+                else {
+                    hierarchy.add(context.priority(), Providers.of(context.provider().get()));
+                }
             }
             else {
                 hierarchy.add(context.priority(), Providers.of(context.provider()));

@@ -23,6 +23,7 @@ import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.core.proxy.ProxyCallback;
 import org.dockbox.hartshorn.core.services.PhasedProxyCallbackPostProcessor;
+import org.dockbox.hartshorn.core.services.ProcessingOrder;
 import org.dockbox.hartshorn.data.TransactionFactory;
 import org.dockbox.hartshorn.data.TransactionManager;
 import org.dockbox.hartshorn.data.annotations.Transactional;
@@ -82,4 +83,8 @@ public class TransactionalProxyCallbackPostProcessor extends PhasedProxyCallback
         };
     }
 
+    @Override
+    public Integer order() {
+        return ProcessingOrder.LATE + 1;
+    }
 }

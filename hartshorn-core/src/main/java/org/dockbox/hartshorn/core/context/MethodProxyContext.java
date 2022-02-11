@@ -23,8 +23,6 @@ import java.lang.annotation.Annotation;
 
 public interface MethodProxyContext<T> extends Context {
 
-    T instance();
-
     TypeContext<T> type();
 
     MethodContext<?, T> method();

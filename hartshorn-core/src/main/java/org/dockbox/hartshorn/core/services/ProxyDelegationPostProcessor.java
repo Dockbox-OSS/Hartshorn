@@ -19,16 +19,12 @@ package org.dockbox.hartshorn.core.services;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.core.Key;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
-import org.dockbox.hartshorn.core.context.MethodProxyContext;
-import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
-import org.dockbox.hartshorn.core.proxy.MethodInterceptor;
 import org.dockbox.hartshorn.core.proxy.ProxyFactory;
 
 import java.lang.annotation.Annotation;
-import java.util.Collection;
 
-public abstract class ProxyDelegationPostProcessor<P, A extends Annotation> extends ServiceMethodInterceptorPostProcessor<A> {
+public abstract class ProxyDelegationPostProcessor<P, A extends Annotation> extends FunctionalComponentPostProcessor<A> {
 
     protected abstract Class<P> parentTarget();
 
@@ -38,20 +34,16 @@ public abstract class ProxyDelegationPostProcessor<P, A extends Annotation> exte
     }
 
     @Override
-    protected <T> Collection<MethodContext<?, T>> modifiableMethods(final TypeContext<T> type) {
-        return type.methods().stream().filter(method -> method.parent().is(this.parentTarget())).toList();
+    public <T> T process(final ApplicationContext context, final Key<T> key, @Nullable final T instance) {
+        throw new UnsupportedOperationException("Processing service methods without a context is not supported");
     }
 
     @Override
-    public <T> boolean preconditions(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext processingContext) {
-        return methodContext.method().parent().is(this.parentTarget());
-    }
-
-    @Override
-    public <T, R> MethodInterceptor<T> process(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext processingContext) {
-        final TypeContext<P> parentContext = TypeContext.of(this.parentTarget());
+    public <T> T process(final ApplicationContext context, final Key<T> key, @Nullable final T instance, final ComponentProcessingContext processingContext) {
         final ProxyFactory factory = processingContext.get(Key.of(ProxyFactory.class));
-        factory.delegate(methodContext.method().method(), this.concreteDelegator(context, factory, parentContext));
+        if (factory == null) return instance;
+
+        factory.delegate(this.parentTarget(), this.concreteDelegator(context, factory, TypeContext.of(this.parentTarget())));
         return null;
     }
 

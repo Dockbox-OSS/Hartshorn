@@ -50,7 +50,7 @@ public class MethodInterceptorContext<T> {
         return this.result();
     }
 
-    public Object invokeDefault(final Object... args) {
+    public Object invokeDefault(final Object... args) throws Throwable {
         if (this.customInvocation != null) {
             return this.customInvocation.call(args);
         }

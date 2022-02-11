@@ -29,7 +29,6 @@ import lombok.Getter;
 public class MethodProxyContextImpl<T> extends DefaultContext implements MethodProxyContext<T> {
 
     private final ApplicationContext context;
-    private final T instance;
     private final TypeContext<T> type;
     private final MethodContext<?, T> method;
 
