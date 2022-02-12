@@ -26,23 +26,14 @@ import org.dockbox.hartshorn.core.proxy.LazyProxyManager;
 import org.dockbox.hartshorn.core.proxy.Proxy;
 
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 
 import javassist.util.proxy.MethodHandler;
 import javassist.util.proxy.ProxyFactory;
 
 public class JavassistProxyFactory<T> extends DefaultProxyFactory<T> {
 
-    private static final Method managerAccessor;
-
     static {
-        try {
-            ProxyFactory.nameGenerator = classname -> DefaultProxyFactory.NAME_GENERATOR.get(classname);
-            managerAccessor = Proxy.class.getDeclaredMethod("manager");
-        }
-        catch (final NoSuchMethodException e) {
-            throw new IllegalStateException(e);
-        }
+        ProxyFactory.nameGenerator = classname -> DefaultProxyFactory.NAME_GENERATOR.get(classname);
     }
 
     public JavassistProxyFactory(final Class<T> type, final ApplicationContext applicationContext) {
@@ -53,7 +44,6 @@ public class JavassistProxyFactory<T> extends DefaultProxyFactory<T> {
     public Exceptional<T> proxy() throws ApplicationException {
         final LazyProxyManager<T> manager = new LazyProxyManager<>(this.applicationContext(), this);
         final MethodHandler methodHandler = new JavassistProxyMethodHandler(manager, this.applicationContext());
-        this.intercept(managerAccessor, context -> manager);
 
         final Exceptional<T> proxy = this.type().isInterface()
                 ? this.interfaceProxy(methodHandler)

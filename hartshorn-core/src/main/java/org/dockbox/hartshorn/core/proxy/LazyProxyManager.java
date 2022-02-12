@@ -24,6 +24,7 @@ import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.domain.TypeMap;
 
 import java.lang.reflect.Method;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -42,6 +43,17 @@ import java.util.concurrent.ConcurrentHashMap;
  * @since 22.2
  */
 public class LazyProxyManager<T> implements ProxyManager<T>, ContextCarrier {
+
+    private static final Method managerAccessor;
+
+    static {
+        try {
+            managerAccessor = Proxy.class.getDeclaredMethod("manager");
+        }
+        catch (final NoSuchMethodException e) {
+            throw new IllegalStateException(e);
+        }
+    }
 
     private final ApplicationContext applicationContext;
     private Class<T> proxyClass;
@@ -74,8 +86,10 @@ public class LazyProxyManager<T> implements ProxyManager<T>, ContextCarrier {
 
         this.delegates = new ConcurrentHashMap<>(delegates);
         this.typeDelegates = new TypeMap<>(typeDelegates);
-        this.interceptors = new ConcurrentHashMap<>(interceptors);
+        this.interceptors = new HashMap<>(interceptors);
         this.wrappers = new CustomMultiMap<>(ConcurrentHashMap::newKeySet, wrappers);
+
+        this.interceptors.put(managerAccessor, context -> this);
     }
 
     public void proxy(final T proxy) {
