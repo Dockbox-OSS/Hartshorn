@@ -1,3 +1,19 @@
+/*
+ * Copyright 2019-2022 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.dockbox.hartshorn.core.proxy;
 
 import org.dockbox.hartshorn.core.CustomMultiMap;
@@ -95,6 +111,12 @@ public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T
     @Override
     public DefaultProxyFactory<T> delegate(final Method method, final T delegate) {
         this.updateState();
+        if (delegate == null) {
+            throw new IllegalArgumentException("Delegate cannot be null");
+        }
+        if (!TypeContext.of(delegate).childOf(method.getDeclaringClass())) {
+            throw new IllegalArgumentException("Delegate must implement- or be of type " + method.getDeclaringClass().getName());
+        }
         this.delegates.put(method, delegate);
         return this;
     }
