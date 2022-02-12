@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.core.proxy;
 
+import org.dockbox.hartshorn.core.CustomMultiMap;
 import org.dockbox.hartshorn.core.MultiMap;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.ContextCarrier;
@@ -25,6 +26,7 @@ import org.dockbox.hartshorn.core.domain.TypeMap;
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * A lazy-loading proxy manager. This implementation tracks the proxy's delegates and interceptors, and allows
@@ -69,10 +71,11 @@ public class LazyProxyManager<T> implements ProxyManager<T>, ContextCarrier {
         this.proxyClass = proxyClass;
         this.targetClass = targetClass;
         this.delegate = delegate;
-        this.delegates = delegates;
-        this.typeDelegates = typeDelegates;
-        this.interceptors = interceptors;
-        this.wrappers = wrappers;
+
+        this.delegates = new ConcurrentHashMap<>(delegates);
+        this.typeDelegates = new TypeMap<>(typeDelegates);
+        this.interceptors = new ConcurrentHashMap<>(interceptors);
+        this.wrappers = new CustomMultiMap<>(ConcurrentHashMap::newKeySet, wrappers);
     }
 
     public void proxy(final T proxy) {

@@ -17,6 +17,7 @@
 package org.dockbox.hartshorn.core;
 
 import java.util.Collection;
+import java.util.Map.Entry;
 import java.util.function.Supplier;
 
 public class CustomMultiMap<K, V> extends MultiMap<K, V> {
@@ -25,6 +26,13 @@ public class CustomMultiMap<K, V> extends MultiMap<K, V> {
 
     public CustomMultiMap(final Supplier<Collection<V>> baseCollection) {
         this.baseCollection = baseCollection;
+    }
+
+    public <T> CustomMultiMap(final Supplier<Collection<V>> baseCollection, final MultiMap<K, V> map) {
+        this.baseCollection = baseCollection;
+        for (final Entry<K, Collection<V>> collection : map.entrySet()) {
+            this.putAll(collection.getKey(), collection.getValue());
+        }
     }
 
     @Override

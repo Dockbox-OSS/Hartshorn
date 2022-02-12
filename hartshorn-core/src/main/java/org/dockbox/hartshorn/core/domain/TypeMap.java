@@ -19,4 +19,11 @@ package org.dockbox.hartshorn.core.domain;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class TypeMap<T> extends ConcurrentHashMap<Class<T>, T> {
+
+    public TypeMap() {
+    }
+
+    public TypeMap(final TypeMap<T> map) {
+        super(map);
+    }
 }
