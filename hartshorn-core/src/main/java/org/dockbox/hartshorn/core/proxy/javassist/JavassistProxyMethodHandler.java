@@ -30,18 +30,23 @@ import org.dockbox.hartshorn.core.proxy.MethodWrapper;
 import org.dockbox.hartshorn.core.proxy.ProxyManager;
 import org.dockbox.hartshorn.core.services.parameter.ParameterLoader;
 
+import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javassist.util.proxy.MethodHandler;
 import javassist.util.proxy.ProxyFactory;
 
 public class JavassistProxyMethodHandler<T> implements MethodHandler, ContextCarrier {
+
+    private static final Map<Method, MethodHandle> METHOD_HANDLE_CACHE = new ConcurrentHashMap<>();
 
     private final ProxyManager<T> manager;
     private final ApplicationContext applicationContext;
@@ -79,7 +84,6 @@ public class JavassistProxyMethodHandler<T> implements MethodHandler, ContextCar
 
         try {
             final Object result;
-
             final Exceptional<MethodInterceptor<T>> interceptor = this.manager.interceptor(thisMethod);
             if (interceptor.present()) {
                 result = this.invokeInterceptor(interceptor.get(), callbackTarget, thisMethod, proceedCallable, customInvocation, arguments);
@@ -200,20 +204,33 @@ public class JavassistProxyMethodHandler<T> implements MethodHandler, ContextCar
     }
 
     protected Object invokeDefault(final Class<T> declaringType, final Method thisMethod, final Object self, final Object[] args) throws Throwable {
-        return MethodHandles.lookup().findSpecial(
-                declaringType,
-                thisMethod.getName(),
-                MethodType.methodType(thisMethod.getReturnType(), thisMethod.getParameterTypes()),
-                declaringType
-        ).bindTo(self).invokeWithArguments(args);
+        final MethodHandle handle;
+        if (METHOD_HANDLE_CACHE.containsKey(thisMethod)) {
+             handle = METHOD_HANDLE_CACHE.get(thisMethod);
+        } else {
+            handle = MethodHandles.lookup().findSpecial(
+                    declaringType,
+                    thisMethod.getName(),
+                    MethodType.methodType(thisMethod.getReturnType(), thisMethod.getParameterTypes()),
+                    declaringType
+            ).bindTo(self);
+            METHOD_HANDLE_CACHE.put(thisMethod, handle);
+        }
+        return handle.invokeWithArguments(args);
     }
 
     protected Object invokePrivate(final Class<T> declaringType, final Method thisMethod, final Object self, final Object[] args) throws Throwable {
-        return MethodHandles.privateLookupIn(declaringType, MethodHandles.lookup())
-                .in(declaringType)
-                .unreflectSpecial(thisMethod, declaringType)
-                .bindTo(self)
-                .invokeWithArguments(args);
+        final MethodHandle handle;
+        if (METHOD_HANDLE_CACHE.containsKey(thisMethod)) {
+            handle = METHOD_HANDLE_CACHE.get(thisMethod);
+        } else {
+            handle = MethodHandles.privateLookupIn(declaringType, MethodHandles.lookup())
+                    .in(declaringType)
+                    .unreflectSpecial(thisMethod, declaringType)
+                    .bindTo(self);
+            METHOD_HANDLE_CACHE.put(thisMethod, handle);
+        }
+        return handle.invokeWithArguments(args);
     }
 
     @Override
