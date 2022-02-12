@@ -16,11 +16,42 @@
 
 package org.dockbox.hartshorn.core.proxy;
 
+import org.dockbox.hartshorn.core.boot.ApplicationProxier;
+
+/**
+ * Proxy lookups are used to obtain the real type of a proxy, and identify potential proxy types and instances.
+ * Direct use of an implementation of this interface is not guaranteed to be accurate, and should be used with
+ * caution. It is recommended to use {@link ApplicationProxier} instead of directly using a specific implementation
+ * of this interface.
+ *
+ * @author Guus Lieben
+ * @since 22.2
+ */
 public interface ProxyLookup {
 
+    /**
+     * Get the real type of the given proxy. If the given instance is not a proxy, the given type is returned.
+     *
+     * @param instance the instance to get the real type of
+     * @param <T> the type of the instance
+     * @return the real type of the given instance
+     */
     <T> Class<T> unproxy(T instance);
 
+    /**
+     * Indicates whether the given instance is a proxy.
+     *
+     * @param instance the instance to check
+     * @return true if the given instance is a proxy, false otherwise
+     */
     boolean isProxy(Object instance);
+
+    /**
+     * Indicates whether the given type is a proxy type.
+     *
+     * @param candidate the type to check
+     * @return true if the given type is a proxy type, false otherwise
+     */
     boolean isProxy(Class<?> candidate);
 
 }
