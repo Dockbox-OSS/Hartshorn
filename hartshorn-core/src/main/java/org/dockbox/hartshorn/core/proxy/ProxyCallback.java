@@ -18,6 +18,16 @@ package org.dockbox.hartshorn.core.proxy;
 
 import org.dockbox.hartshorn.core.context.element.MethodContext;
 
+/**
+ * A callback interface for a proxy method. This interface is used to provide a callback mechanism
+ * for proxy methods, while remaining unaware of which phase of the proxy method invocation is
+ * currently being executed. This is useful for component processors, and is typically used to create
+ * a {@link MethodWrapper} for the proxy method.
+ *
+ * @param <T> the type of the proxy method
+ * @author Guus Lieben
+ * @since 22.2
+ */
 public interface ProxyCallback<T> {
     void accept(MethodContext<?, T> method, T instance, Object[] args);
 }

@@ -16,7 +16,22 @@
 
 package org.dockbox.hartshorn.core.proxy;
 
+/**
+ * A simple functional interface for custom invocation. This is used to provide custom arguments to the
+ * invocation. When used in conjunction with {@link MethodInterceptorContext}, this allows for fine-grained
+ * control over the invocation.
+ *
+ * @author Guus Lieben
+ * @since 22.2
+ */
 @FunctionalInterface
 public interface CustomInvocation {
+    /**
+     * Invoke the default method with the given arguments.
+     *
+     * @param args the arguments to use
+     * @return the result of the invocation
+     * @throws Exception if the invocation fails
+     */
     Object call(Object... args) throws Exception;
 }

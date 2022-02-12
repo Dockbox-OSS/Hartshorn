@@ -18,8 +18,33 @@ package org.dockbox.hartshorn.core.proxy;
 
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 
+/**
+ * The name generator is responsible for generating the name of the proxy class. The name is generated
+ * based on the type context or the type name. The way the name is generated is based on the implementation
+ * of the {@link NameGenerator} interface.
+ *
+ * @author Guus Lieben
+ * @since 22.2
+ */
 public interface NameGenerator {
+    /**
+     * Gets the name of the proxy class based on the type context.
+     * @param type The type context.
+     * @return The name of the proxy class.
+     */
     String get(TypeContext<?> type);
+
+    /**
+     * Gets the name of the proxy class based on the type class.
+     * @param type The type class.
+     * @return The name of the proxy class.
+     */
     String get(Class<?> type);
+
+    /**
+     * Gets the name of the proxy class based on the type name.
+     * @param type The type name.
+     * @return The name of the proxy class.
+     */
     String get(String type);
 }

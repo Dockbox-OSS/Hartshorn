@@ -26,6 +26,19 @@ import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * A lazy-loading proxy manager. This implementation tracks the proxy's delegates and interceptors, and allows
+ * the proxy to be set lazily. This is useful for when the manager is created in a context where the proxy is not
+ * yet available, such as when the proxy requires modification to access its manager before being constructed. The
+ * proxy is set lazily, and the manager is set when the proxy is created.
+ *
+ * <p>The manager will only allow the proxy to be set once, and will throw an exception if the proxy is set more
+ * than once. This is to prevent the proxy from being set multiple times, which can cause unexpected behavior.
+ *
+ * @param <T> the type of the proxy
+ * @author Guus Lieben
+ * @since 22.2
+ */
 public class LazyProxyManager<T> implements ProxyManager<T>, ContextCarrier {
 
     private final ApplicationContext applicationContext;

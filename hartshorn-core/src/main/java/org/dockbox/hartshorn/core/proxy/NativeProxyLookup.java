@@ -22,6 +22,13 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;
 
+/**
+ * A proxy lookup implementation that is capable of looking up native proxies. Native proxies are
+ * proxies that are created through the standard Java API, or through a {@link ProxyFactory}.
+ *
+ * @author Guus Lieben
+ * @since 22.2
+ */
 public class NativeProxyLookup implements ProxyLookup {
 
     @Override
@@ -33,16 +40,19 @@ public class NativeProxyLookup implements ProxyLookup {
         else if (instance instanceof Annotation annotation) {
             return (Class<T>) annotation.annotationType();
         }
+        else if (instance instanceof org.dockbox.hartshorn.core.proxy.Proxy proxy) {
+            return (Class<T>) proxy.manager().targetClass();
+        }
         return instance != null ? (Class<T>) instance.getClass() : null;
     }
 
     @Override
     public boolean isProxy(final Object instance) {
-        return instance != null && this.isProxy(instance.getClass());
+        return instance != null && (instance instanceof org.dockbox.hartshorn.core.proxy.Proxy || this.isProxy(instance.getClass()));
     }
 
     @Override
     public boolean isProxy(final Class<?> candidate) {
-        return Proxy.isProxyClass(candidate);
+        return Proxy.isProxyClass(candidate) || org.dockbox.hartshorn.core.proxy.Proxy.class.isAssignableFrom(candidate);
     }
 }

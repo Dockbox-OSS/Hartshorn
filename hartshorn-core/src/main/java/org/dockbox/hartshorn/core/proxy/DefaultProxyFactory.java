@@ -28,11 +28,29 @@ import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * The default implementation of {@link ProxyFactory}. This implementation is state-aware, as is suggested by its
+ * implementation of {@link StateAwareProxyFactory}. This means the factory can stop and start tracking state,
+ * which is useful for testing. This implementation keeps track of known delegates and interceptors, allowing them
+ * to be passed to the {@link ProxyManager} to manage proxies.
+ *
+ * <p>This implementation is unaware of any specific {@link ProxyManager} implementation, and therefore does not
+ * know how to create proxies. This is the responsibility of the implementing class.
+ *
+ * @param <T> The parent type of the proxy.
+ * @author Guus Lieben
+ * @since 22.2
+ */
 public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T, DefaultProxyFactory<T>>, ContextCarrier {
 
     private static final String MANAGER_FIELD = "$__manager";
     private static final String DELEGATE_FIELD = "$__delegate";
 
+    /**
+     * The {@link NameGenerator} used to generate names for the proxy classes. This is used to ensure that the
+     * generated proxy classes are unique. This field may be replaced at any time, and the factory will not be
+     * affected.
+     */
     public static NameGenerator NAME_GENERATOR = new NameGenerator() {
         private final String sep = "_$$_hh" + Integer.toHexString(this.hashCode() & 0xfff) + "_";
         private int counter = 0;
@@ -198,6 +216,10 @@ public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T
         return this.wrappers;
     }
 
+    /**
+     * Returns whether the factory is tracking its state.
+     * @return {@code true} if the factory is tracking its state, {@code false} otherwise.
+     */
     public boolean trackState() {
         return this.trackState;
     }

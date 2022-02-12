@@ -16,6 +16,18 @@
 
 package org.dockbox.hartshorn.core.proxy;
 
+/**
+ * The common parent of all proxies created by the {@link ProxyFactory}. This class
+ * is used to provide a common interface for all proxies, as well as provide easy
+ * access to the proxy's {@link ProxyManager}.
+ *
+ * @author Guus Lieben
+ * @since 22.2
+ */
 public interface Proxy {
+    /**
+     * Returns the {@link ProxyManager} that is responsible for this proxy.
+     * @return the {@link ProxyManager} that is responsible for this proxy
+     */
     ProxyManager manager();
 }
