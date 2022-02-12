@@ -58,7 +58,7 @@ subprojects { final Project subProject ->
 
     license {
         header = rootProject.file("HEADER.txt")
-        ignoreFailures = true
+        ignoreFailures = false
         include '**/*.java'
     }
 
