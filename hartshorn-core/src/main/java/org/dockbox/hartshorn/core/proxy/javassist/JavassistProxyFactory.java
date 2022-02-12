@@ -35,7 +35,7 @@ public class JavassistProxyFactory<T> extends DefaultProxyFactory<T> {
 
     @Override
     public Exceptional<T> proxy() throws ApplicationException {
-        final LazyProxyManager<T> manager = new LazyProxyManager<>(this);
+        final LazyProxyManager<T> manager = new LazyProxyManager<>(this.applicationContext(), this);
         final MethodHandler methodHandler = new JavassistProxyMethodHandler(manager, this.applicationContext());
         this.intercept(managerAccessor, context -> manager);
 

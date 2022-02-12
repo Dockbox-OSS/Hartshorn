@@ -19,7 +19,8 @@ package org.dockbox.hartshorn.core.annotations.stereotype;
 import org.dockbox.hartshorn.core.ComponentType;
 import org.dockbox.hartshorn.core.annotations.Extends;
 import org.dockbox.hartshorn.core.annotations.activate.ServiceActivator;
-import org.dockbox.hartshorn.core.proxy.ProxyHandler;
+import org.dockbox.hartshorn.core.proxy.Proxy;
+import org.dockbox.hartshorn.core.proxy.ProxyManager;
 
 import java.lang.annotation.Annotation;
 import java.lang.annotation.ElementType;
@@ -29,8 +30,9 @@ import java.lang.annotation.Target;
 
 /**
  * Annotation to indicate a component is a functional component, better known as a service. A service is a component
- * of which the methods, and thus functionality, can be directly modified through {@link ProxyHandler}s to allow for
- * dynamic behavior of service definitions.
+ * of which the methods, and thus functionality, can be directly modified through {@link ProxyManager}s to allow for
+ * dynamic behavior of service definitions. This transforms the service into a {@link Proxy} instance.
+ *
  *
  * <p>Services carries an additional {@link #activators()} attribute, which is used to indicate when a service should
  * become active by default.
