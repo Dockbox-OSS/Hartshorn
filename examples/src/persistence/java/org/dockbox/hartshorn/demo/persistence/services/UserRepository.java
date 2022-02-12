@@ -19,7 +19,6 @@ package org.dockbox.hartshorn.demo.persistence.services;
 import org.dockbox.hartshorn.core.annotations.inject.Required;
 import org.dockbox.hartshorn.core.annotations.stereotype.Service;
 import org.dockbox.hartshorn.core.domain.Exceptional;
-import org.dockbox.hartshorn.core.proxy.DelegatorAccessor;
 import org.dockbox.hartshorn.core.proxy.Proxy;
 import org.dockbox.hartshorn.core.proxy.ProxyManager;
 import org.dockbox.hartshorn.core.services.ServicePreProcessor;
@@ -43,7 +42,7 @@ import javax.inject.Inject;
 /* Indicates this type is responsible for firing the UserCreated event. This serves solely to satisfy the EventValidator, so any unhandled events are noticed on startup */
 @Posting(UserCreatedEvent.class)
 @Configuration(source = "classpath:persistence-demo.yml")
-public abstract class UserRepository implements JpaRepository<User, Long>, DelegatorAccessor<UserRepository> {
+public abstract class UserRepository implements JpaRepository<User, Long> {
 
     @Inject
     @Required
