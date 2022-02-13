@@ -192,7 +192,7 @@ public class HierarchicalApplicationComponentProvider extends DefaultContext imp
 
             if (instance != null) {
                 factory.trackState(false);
-                factory.delegate(instance);
+                factory.delegateAbstract(instance);
                 factory.trackState(true);
             }
             processingContext.put(Key.of(ProxyFactory.class), factory);

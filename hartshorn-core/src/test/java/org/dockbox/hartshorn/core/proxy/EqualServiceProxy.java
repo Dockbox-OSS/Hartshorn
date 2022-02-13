@@ -16,10 +16,13 @@
 
 package org.dockbox.hartshorn.core.proxy;
 
-import org.dockbox.hartshorn.core.annotations.Unproxy;
+import org.dockbox.hartshorn.core.annotations.stereotype.Service;
 
-public class EqualProxy {
-    public boolean test(final @Unproxy(fallbackToProxy = true) EqualProxy self) {
+@Service
+// Abstract to trigger basic delegate proxying, and ensure no delegate can exist
+public abstract class EqualServiceProxy {
+
+    public boolean test(final EqualServiceProxy self) {
         return this.equals(self);
     }
 }
