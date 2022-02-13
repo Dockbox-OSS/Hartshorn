@@ -32,7 +32,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Stream;
 
-public class HartshornUtilTests {
+public class UtilitiesTests {
 
     private static final int minute = 60;
     private static final int hour = 60 * minute;
@@ -109,17 +109,17 @@ public class HartshornUtilTests {
 
     @Test
     void testIsEmptyStringTrueIfNull() {
-        Assertions.assertTrue(HartshornUtils.empty((String) null));
+        Assertions.assertTrue(StringUtilities.empty((String) null));
     }
 
     @Test
     void testIsEmptyStringTrueIfEmpty() {
-        Assertions.assertTrue(HartshornUtils.empty(""));
+        Assertions.assertTrue(StringUtilities.empty(""));
     }
 
     @Test
     void testIsEmptyStringFalseIfContent() {
-        Assertions.assertFalse(HartshornUtils.empty("value"));
+        Assertions.assertFalse(StringUtilities.empty("value"));
     }
 
     @Test

@@ -17,7 +17,6 @@
 package org.dockbox.hartshorn.core.services;
 
 import org.dockbox.hartshorn.core.ComponentType;
-import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.core.HashSetMultiMap;
 import org.dockbox.hartshorn.core.Key;
 import org.dockbox.hartshorn.core.MultiMap;
@@ -29,6 +28,7 @@ import org.dockbox.hartshorn.core.domain.Exceptional;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import lombok.Getter;
 
@@ -37,7 +37,7 @@ public class ComponentLocatorImpl implements ComponentLocator {
     private final MultiMap<String, ComponentContainer> cache = new HashSetMultiMap<>();
     @Getter
     private final ApplicationContext applicationContext;
-    private final Set<ComponentActivationFilter> activationFilters = HartshornUtils.emptyConcurrentSet();
+    private final Set<ComponentActivationFilter> activationFilters = ConcurrentHashMap.newKeySet();
 
     public ComponentLocatorImpl(final ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;

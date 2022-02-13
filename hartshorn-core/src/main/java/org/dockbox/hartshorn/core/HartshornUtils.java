@@ -47,6 +47,7 @@ import java.util.stream.StreamSupport;
  * Wraps all utility classes to a common accessor. This way all {@code final} utility classes can be
  * accessed at once and indexed more easily.
  */
+@Deprecated(since = "22.2", forRemoval = true)
 public final class HartshornUtils {
 
     private HartshornUtils() {}
