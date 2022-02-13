@@ -14,21 +14,16 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.core.proxy;
+package org.dockbox.hartshorn.core.domain;
 
-import org.dockbox.hartshorn.core.annotations.activate.AutomaticActivation;
-import org.dockbox.hartshorn.core.annotations.stereotype.Service;
-import org.dockbox.hartshorn.core.services.ProxyDelegationPostProcessor;
+import java.util.concurrent.ConcurrentHashMap;
 
-@AutomaticActivation
-public class DemoProxyDelegationPostProcessor extends ProxyDelegationPostProcessor<InterfaceProxy, Service> {
-    @Override
-    public Class<Service> activator() {
-        return Service.class;
+public class TypeMap<T> extends ConcurrentHashMap<Class<T>, T> {
+
+    public TypeMap() {
     }
 
-    @Override
-    protected Class<InterfaceProxy> parentTarget() {
-        return InterfaceProxy.class;
+    public TypeMap(final TypeMap<T> map) {
+        super(map);
     }
 }

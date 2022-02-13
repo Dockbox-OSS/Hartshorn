@@ -21,8 +21,8 @@ import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.MethodProxyContext;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
-import org.dockbox.hartshorn.core.proxy.ProxyContext;
-import org.dockbox.hartshorn.core.proxy.ProxyFunction;
+import org.dockbox.hartshorn.core.proxy.MethodInterceptor;
+import org.dockbox.hartshorn.core.services.ComponentProcessingContext;
 import org.dockbox.hartshorn.core.services.ProcessingOrder;
 import org.dockbox.hartshorn.core.services.ServiceAnnotatedMethodInterceptorPostProcessor;
 import org.dockbox.hartshorn.data.QueryFunction;
@@ -51,14 +51,14 @@ public class QueryPostProcessor extends ServiceAnnotatedMethodInterceptorPostPro
     }
 
     @Override
-    public <T> boolean preconditions(final ApplicationContext context, final MethodProxyContext<T> methodContext) {
+    public <T> boolean preconditions(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext processingContext) {
         final MethodContext<?, T> method = methodContext.method();
         final TypeContext<T> parent = method.parent();
         return parent.childOf(JpaRepository.class);
     }
 
     @Override
-    public <T, R> ProxyFunction<T, R> process(final ApplicationContext context, final MethodProxyContext<T> methodContext) {
+    public <T, R> MethodInterceptor<T> process(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext processingContext) {
         final MethodContext<?, T> method = methodContext.method();
         final QueryFunction function = context.get(QueryFunction.class);
         final boolean modifying = method.annotation(EntityModifier.class).present();
@@ -66,15 +66,13 @@ public class QueryPostProcessor extends ServiceAnnotatedMethodInterceptorPostPro
         final Query query = method.annotation(Query.class).get();
         final TypeContext<?> entityType = this.entityType(method, query);
 
-        return (T instance, Object[] args, ProxyContext proxyContext) -> {
-            final JpaRepository<?, ?> repository = (JpaRepository<?, ?>) methodContext.instance();
+        return interceptorContext -> {
+            final JpaRepository<?, ?> repository = (JpaRepository<?, ?>) interceptorContext.instance();
             if (query.automaticFlush() && !transactional) repository.flush();
 
-            final QueryContext queryContext = new QueryContext(query, args, method, entityType, context, repository, modifying);
+            final QueryContext queryContext = new QueryContext(query, interceptorContext.args(), method, entityType, context, repository, modifying);
 
-            final Object result = function.execute(queryContext);
-
-            return (R) result;
+            return function.execute(queryContext);
         };
     }
 

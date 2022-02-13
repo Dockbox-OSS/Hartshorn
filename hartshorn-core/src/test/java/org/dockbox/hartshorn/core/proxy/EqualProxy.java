@@ -14,16 +14,12 @@
  * limitations under the License.
  */
 
-package org.dockbox.hartshorn.core.services;
+package org.dockbox.hartshorn.core.proxy;
 
-import org.dockbox.hartshorn.core.annotations.Factory;
-import org.dockbox.hartshorn.core.annotations.activate.UseProxying;
-import org.dockbox.hartshorn.core.annotations.stereotype.Service;
-import org.dockbox.hartshorn.core.proxy.DelegatorAccessor;
-import org.dockbox.hartshorn.core.proxy.ProxyHandler;
+import org.dockbox.hartshorn.core.annotations.Unproxy;
 
-@Service(activators = UseProxying.class)
-interface AccessorFactory {
-    @Factory
-    <T> DelegatorAccessor<T> delegatorAccessor(ProxyHandler<T> handler);
+public class EqualProxy {
+    public boolean test(final @Unproxy EqualProxy self) {
+        return this.equals(self);
+    }
 }

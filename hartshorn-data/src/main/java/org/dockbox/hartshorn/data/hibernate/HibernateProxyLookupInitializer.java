@@ -19,7 +19,7 @@ package org.dockbox.hartshorn.data.hibernate;
 import org.dockbox.hartshorn.core.annotations.stereotype.Service;
 import org.dockbox.hartshorn.core.boot.ApplicationManager;
 import org.dockbox.hartshorn.core.boot.DelegatingApplicationManager;
-import org.dockbox.hartshorn.core.boot.JavassistApplicationProxier;
+import org.dockbox.hartshorn.core.boot.HartshornApplicationProxier;
 import org.dockbox.hartshorn.core.boot.LifecycleObserver;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.data.annotations.UsePersistence;
@@ -31,7 +31,7 @@ public class HibernateProxyLookupInitializer implements LifecycleObserver {
     public void onStarted(final ApplicationContext applicationContext) {
         final ApplicationManager manager = applicationContext.environment().manager();
         if (manager instanceof DelegatingApplicationManager applicationManager) {
-            if (applicationManager.applicationProxier() instanceof JavassistApplicationProxier applicationProxier) {
+            if (applicationManager.applicationProxier() instanceof HartshornApplicationProxier applicationProxier) {
                 applicationProxier.registerProxyLookup(new HibernateProxyLookup());
             }
         }

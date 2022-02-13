@@ -16,8 +16,5 @@
 
 package org.dockbox.hartshorn.core.proxy;
 
-public enum CallbackPhase {
-    BEFORE,
-    AFTER,
-    THROWING,
+public interface NamedAgedProxy extends NamedProxy, AgedProxy {
 }

@@ -56,6 +56,10 @@ public interface ComponentProcessor<A extends Annotation> extends ActivatorFilte
      */
     <T> T process(ApplicationContext context, Key<T> key, @Nullable T instance);
 
+    default <T> T process(final ApplicationContext context, final Key<T> key, @Nullable final T instance, final ComponentProcessingContext processingContext) {
+        return this.process(context, key, instance);
+    }
+
     /**
      * Determines whether the component processor should be called for the given component. By default,
      * the processor will only process components that are known to the application's {@link ComponentLocator}

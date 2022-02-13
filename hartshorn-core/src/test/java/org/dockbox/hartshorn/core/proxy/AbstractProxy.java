@@ -16,11 +16,12 @@
 
 package org.dockbox.hartshorn.core.proxy;
 
-import org.dockbox.hartshorn.core.context.element.MethodContext;
+import org.dockbox.hartshorn.core.annotations.stereotype.Service;
 
-public interface ProxyMethodCallback<T> {
-
-    void accept(MethodContext<?, T> method, T instance, Object[] args, ProxyContext context);
-
-    CallbackPhase phase();
+@Service
+public abstract class AbstractProxy implements InterfaceProxy {
+    @Override
+    public int age() {
+        return 21;
+    }
 }

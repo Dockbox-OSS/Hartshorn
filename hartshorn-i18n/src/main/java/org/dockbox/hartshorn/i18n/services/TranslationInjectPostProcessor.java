@@ -25,7 +25,8 @@ import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.domain.TypedOwner;
-import org.dockbox.hartshorn.core.proxy.ProxyFunction;
+import org.dockbox.hartshorn.core.proxy.MethodInterceptor;
+import org.dockbox.hartshorn.core.services.ComponentProcessingContext;
 import org.dockbox.hartshorn.core.services.ServiceAnnotatedMethodInterceptorPostProcessor;
 import org.dockbox.hartshorn.i18n.Message;
 import org.dockbox.hartshorn.i18n.TranslationService;
@@ -36,19 +37,20 @@ import org.dockbox.hartshorn.i18n.annotations.UseTranslations;
 public class TranslationInjectPostProcessor extends ServiceAnnotatedMethodInterceptorPostProcessor<InjectTranslation, UseTranslations> {
 
     @Override
-    public <T, R> ProxyFunction<T, R> process(final ApplicationContext context, final MethodProxyContext<T> methodContext) {
+    public <T, R> MethodInterceptor<T> process(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext processingContext) {
         final String key = this.key(context, methodContext.type(), methodContext.method());
         final InjectTranslation annotation = methodContext.method().annotation(InjectTranslation.class).get();
 
-        return (self, args, holder) -> {
+        return interceptorContext -> {
             // Prevents NPE when formatting cached resources without arguments
+            final Object[] args = interceptorContext.args();
             final Object[] objects = null == args ? new Object[0] : args;
             return (R) context.get(TranslationService.class).getOrCreate(key, annotation.value()).format(objects);
         };
     }
 
     @Override
-    public <T> boolean preconditions(final ApplicationContext context, final MethodProxyContext<T> methodContext) {
+    public <T> boolean preconditions(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext processingContext) {
         return methodContext.method().returnType().childOf(Message.class);
     }
 

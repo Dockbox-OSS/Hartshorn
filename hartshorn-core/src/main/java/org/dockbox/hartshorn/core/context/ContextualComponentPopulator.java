@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.core.context;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.core.Key;
 import org.dockbox.hartshorn.core.annotations.inject.Enable;
 import org.dockbox.hartshorn.core.annotations.inject.Populate;
@@ -26,7 +27,8 @@ import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
-import org.dockbox.hartshorn.core.proxy.ProxyHandler;
+import org.dockbox.hartshorn.core.function.CheckedFunction;
+import org.dockbox.hartshorn.core.proxy.ProxyManager;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -44,7 +46,10 @@ public class ContextualComponentPopulator implements ComponentPopulator, Context
         if (null != instance) {
             T modifiableInstance = instance;
             if (this.applicationContext().environment().manager().isProxy(instance)) {
-                modifiableInstance = this.applicationContext().environment().manager().handler(instance).flatMap(ProxyHandler::instance).or(modifiableInstance);
+                modifiableInstance = this.applicationContext().environment().manager()
+                        .manager(instance)
+                        .flatMap((CheckedFunction<ProxyManager<T>, @NonNull Exceptional<T>>) ProxyManager::delegate)
+                        .or(modifiableInstance);
             }
             final TypeContext<T> unproxied = TypeContext.unproxy(this.applicationContext(), modifiableInstance);
             if (unproxied.annotation(Populate.class).map(Populate::fields).or(true))

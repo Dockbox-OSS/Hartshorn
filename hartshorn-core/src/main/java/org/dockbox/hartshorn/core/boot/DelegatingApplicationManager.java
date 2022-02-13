@@ -21,7 +21,8 @@ import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.ModifiableContextCarrier;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
-import org.dockbox.hartshorn.core.proxy.ProxyHandler;
+import org.dockbox.hartshorn.core.proxy.ProxyManager;
+import org.dockbox.hartshorn.core.proxy.StateAwareProxyFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -123,38 +124,28 @@ public class DelegatingApplicationManager implements ObservableApplicationManage
     }
 
     @Override
-    public <T> Exceptional<T> proxy(final TypeContext<T> type) {
-        return this.applicationProxier.proxy(type);
-    }
-
-    @Override
-    public <T> Exceptional<T> proxy(final TypeContext<T> type, final T instance) {
-        return this.applicationProxier.proxy(type, instance);
-    }
-
-    @Override
     public <T> Exceptional<TypeContext<T>> real(final T instance) {
         return this.applicationProxier.real(instance);
     }
 
     @Override
-    public <T, P extends T> Exceptional<T> delegator(final TypeContext<T> type, final P instance) {
-        return this.applicationProxier.delegator(type, instance);
+    public <T> Exceptional<ProxyManager<T>> manager(final T instance) {
+        return this.applicationProxier.manager(instance);
     }
 
     @Override
-    public <T, P extends T> Exceptional<T> delegator(final TypeContext<T> type, final ProxyHandler<P> handler) {
-        return this.applicationProxier.delegator(type, handler);
+    public <D, T extends D> Exceptional<D> delegate(final TypeContext<D> type, final T instance) {
+        return this.applicationProxier.delegate(type, instance);
     }
 
     @Override
-    public <T> ProxyHandler<T> handler(final TypeContext<T> type, final T instance) {
-        return this.applicationProxier.handler(type, instance);
+    public <T> StateAwareProxyFactory<T, ?> factory(final TypeContext<T> type) {
+        return this.applicationProxier.factory(type);
     }
 
     @Override
-    public <T> Exceptional<ProxyHandler<T>> handler(final T instance) {
-        return this.applicationProxier.handler(instance);
+    public <T> StateAwareProxyFactory<T, ?> factory(final Class<T> type) {
+        return this.applicationProxier.factory(type);
     }
 
     public DelegatingApplicationManager applicationContext(final ApplicationContext applicationContext) {

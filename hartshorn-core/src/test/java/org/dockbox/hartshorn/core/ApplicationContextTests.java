@@ -23,7 +23,7 @@ import org.dockbox.hartshorn.core.context.StandardDelegatingApplicationContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 import org.dockbox.hartshorn.core.exceptions.CyclicComponentException;
-import org.dockbox.hartshorn.core.proxy.ExtendedProxy;
+import org.dockbox.hartshorn.core.proxy.AbstractProxy;
 import org.dockbox.hartshorn.core.types.CircularConstructorA;
 import org.dockbox.hartshorn.core.types.CircularConstructorB;
 import org.dockbox.hartshorn.core.types.CircularDependencyA;
@@ -91,14 +91,14 @@ public class ApplicationContextTests {
 
     @Test
     void testMethodCanDelegateToImplementation() {
-        final ExtendedProxy extendedProxy = this.applicationContext().get(ExtendedProxy.class);
-        Assertions.assertEquals("concrete", extendedProxy.name());
+        final AbstractProxy abstractProxy = this.applicationContext().get(AbstractProxy.class);
+        Assertions.assertEquals("concrete", abstractProxy.name());
     }
 
     @Test
     void testMethodOverrideDoesNotDelegateToImplementation() {
-        final ExtendedProxy extendedProxy = this.applicationContext().get(ExtendedProxy.class);
-        Assertions.assertEquals(21, extendedProxy.age());
+        final AbstractProxy abstractProxy = this.applicationContext().get(AbstractProxy.class);
+        Assertions.assertEquals(21, abstractProxy.age());
     }
 
     @Test

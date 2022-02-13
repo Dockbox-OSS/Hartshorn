@@ -30,8 +30,11 @@ import org.dockbox.hartshorn.core.boot.ExceptionHandler;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
+import org.dockbox.hartshorn.core.proxy.ProxyFactory;
+import org.dockbox.hartshorn.core.proxy.StateAwareProxyFactory;
 import org.dockbox.hartshorn.core.services.ComponentContainer;
 import org.dockbox.hartshorn.core.services.ComponentPostProcessor;
+import org.dockbox.hartshorn.core.services.ComponentProcessingContext;
 import org.dockbox.hartshorn.core.services.ProcessingOrder;
 
 import java.util.Map;
@@ -82,8 +85,6 @@ public class HierarchicalApplicationComponentProvider extends DefaultContext imp
                 ExceptionHandler.unchecked(e);
             }
         }
-
-        // May be null, but we have used all possible injectors, it's up to the developer now
         return instance;
     }
 
@@ -162,26 +163,67 @@ public class HierarchicalApplicationComponentProvider extends DefaultContext imp
     protected <T> T process(final Key<T> key, T instance, final ComponentContainer container) {
         final boolean doProcess = container.permitsProcessing();
 
+        final ComponentProcessingContext processingContext = this.prepareProcessingContext(key, instance, container);
+
         // Modify the instance during phase 1. This allows discarding the existing instance and replacing it with a new instance.
         // See ServiceOrder#PHASE_1
-        if (doProcess) instance = this.process(key, instance, ProcessingOrder.PHASE_1, true);
+        if (doProcess) instance = this.process(key, instance, ProcessingOrder.PHASE_1, true, processingContext);
 
-        this.populateAndStore(key, instance);
+        instance = this.populateAndStore(key, instance);
 
         // Modify the instance during phase 2. This does not allow discarding the existing instance.
         // See ServiceOrder#PHASE_2
-        if (doProcess) this.process(key, instance, ProcessingOrder.PHASE_2, false);
+        if (doProcess) this.process(key, instance, ProcessingOrder.PHASE_2, false, processingContext);
+
+        if (container.permitsProxying()) {
+            instance = this.finalize(key, instance, processingContext);
+            this.populateAndStore(key, instance);
+        }
+
+        this.storeSingletons(key, instance);
 
         return instance;
     }
 
-    protected <T> T process(final Key<T> key, final T instance, final Predicate<Integer> orders, final boolean modifiable) {
+    protected <T> ComponentProcessingContext prepareProcessingContext(final Key<T> key, final T instance, final ComponentContainer container) {
+        final ComponentProcessingContext processingContext = new ComponentProcessingContext(this.applicationContext());
+        if (container.permitsProxying()) {
+            final StateAwareProxyFactory<T, ?> factory = this.applicationContext().environment().manager().factory(key.type());
+
+            if (instance != null) {
+                factory.trackState(false);
+                factory.delegate(instance);
+                factory.trackState(true);
+            }
+            processingContext.put(Key.of(ProxyFactory.class), factory);
+        }
+        return processingContext;
+    }
+
+    protected <T> T finalize(final Key<T> key, final T instance, final ComponentProcessingContext context) {
+        if (context.containsKey(Key.of(ProxyFactory.class))) {
+            final ProxyFactory<T, ?> factory = context.get(Key.of(ProxyFactory.class));
+            try {
+                if (((StateAwareProxyFactory) factory).modified() || (instance == null && key.type().isAbstract())) {
+                    return factory.proxy().or(instance);
+                } else {
+                    return instance;
+                }
+            }
+            catch (final ApplicationException e) {
+                ExceptionHandler.unchecked(e);
+            }
+        }
+        return instance;
+    }
+
+    protected <T> T process(final Key<T> key, final T instance, final Predicate<Integer> orders, final boolean modifiable, final ComponentProcessingContext processingContext) {
         T result = instance;
         for (final Integer priority : this.postProcessors.keySet()) {
             if (orders.test(priority)) {
                 for (final ComponentPostProcessor<?> postProcessor : this.postProcessors.get(priority)) {
                     if (postProcessor.preconditions(this.applicationContext(), key, result)) {
-                        final T modified = postProcessor.process(this.applicationContext(), key, result);
+                        final T modified = postProcessor.process(this.applicationContext(), key, result, processingContext);
                         if (modifiable) result = modified;
                         else if (!modifiable && modified != instance) {
                             throw new IllegalStateException(("Component %s was modified during phase with priority %s by %s. " +
@@ -195,15 +237,18 @@ public class HierarchicalApplicationComponentProvider extends DefaultContext imp
     }
 
     protected <T> T populateAndStore(final Key<T> key, final T instance) {
+        this.storeSingletons(key, instance);
+        // Recreating field instances ensures all fields are created through bootstrapping, allowing injection
+        // points to apply correctly
+        return this.applicationContext().populate(instance);
+    }
+
+    protected <T> void storeSingletons(final Key<T> key, final T instance) {
         final MetaProvider meta = this.applicationContext().meta();
         // Ensure the order of resolution is to first resolve the instance singleton state, and only after check the type state.
         // Typically, the implementation decided whether it should be a singleton, so this cuts time complexity in half.
         if (instance != null && (meta.singleton(key.type()) || meta.singleton(TypeContext.unproxy(this.applicationContext(), instance))))
             this.singletons.put(key, instance);
-
-        // Recreating field instances ensures all fields are created through bootstrapping, allowing injection
-        // points to apply correctly
-        return this.applicationContext().populate(instance);
     }
 
     public void postProcessor(final ComponentPostProcessor<?> postProcessor) {

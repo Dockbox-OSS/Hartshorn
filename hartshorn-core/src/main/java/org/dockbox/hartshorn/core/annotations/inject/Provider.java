@@ -46,4 +46,5 @@ import java.lang.annotation.Target;
 public @interface Provider {
     String value() default "";
     int priority() default -1;
+    boolean lazy() default false;
 }

@@ -46,10 +46,10 @@ import lombok.Getter;
  *
  * @see CallerLookupApplicationLogger
  * @see EnvironmentDrivenApplicationConfigurator
- * @see JavassistApplicationProxier
  * @see ApplicationFSProviderImpl
  * @see ContextualApplicationEnvironment
  * @see LoggingExceptionHandler
+ * @see HartshornApplicationProxier
  * @see ComponentLocatorImpl
  * @see ClassLoaderClasspathResourceLocator
  * @see InjectorMetaProvider
@@ -63,7 +63,7 @@ public class HartshornApplicationFactory extends AbstractActivatingApplicationFa
     public HartshornApplicationFactory loadDefaults() {
         return this.applicationLogger(new CallerLookupApplicationLogger())
                 .applicationConfigurator(new EnvironmentDrivenApplicationConfigurator())
-                .applicationProxier(new JavassistApplicationProxier())
+                .applicationProxier(new HartshornApplicationProxier())
                 .applicationFSProvider(new ApplicationFSProviderImpl())
                 .applicationEnvironment(ContextualApplicationEnvironment::new)
                 .exceptionHandler(new LoggingExceptionHandler())

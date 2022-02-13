@@ -16,19 +16,6 @@
 
 package org.dockbox.hartshorn.core.proxy;
 
-import org.dockbox.hartshorn.core.context.element.MethodContext;
-
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
-@AllArgsConstructor
-public class ProxyMethodCallbackImpl<T> implements ProxyMethodCallback<T> {
-
-    @Getter final CallbackPhase phase;
-    final ProxyCallback<T> function;
-
-    @Override
-    public void accept(final MethodContext<?, T> method, final T instance, final Object[] args, final ProxyContext context) {
-        this.function.accept(method, instance, args, context);
-    }
+public interface AgedProxy {
+    int age();
 }

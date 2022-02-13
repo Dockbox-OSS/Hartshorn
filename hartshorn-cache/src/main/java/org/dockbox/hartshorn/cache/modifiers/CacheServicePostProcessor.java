@@ -27,9 +27,10 @@ import org.dockbox.hartshorn.cache.context.CacheMethodContext;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.MethodProxyContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
-import org.dockbox.hartshorn.core.proxy.ProxyFunction;
 import org.dockbox.hartshorn.core.services.ComponentUtilities;
 import org.dockbox.hartshorn.core.services.ServiceAnnotatedMethodInterceptorPostProcessor;
+import org.dockbox.hartshorn.core.proxy.MethodInterceptor;
+import org.dockbox.hartshorn.core.services.ComponentProcessingContext;
 
 import java.lang.annotation.Annotation;
 import java.util.function.Supplier;
@@ -42,7 +43,7 @@ import java.util.function.Supplier;
 public abstract class CacheServicePostProcessor<A extends Annotation> extends ServiceAnnotatedMethodInterceptorPostProcessor<A, UseCaching> {
 
     @Override
-    public <T, R> ProxyFunction<T, R> process(final ApplicationContext context, final MethodProxyContext<T> methodContext) {
+    public <T, R> MethodInterceptor<T> process(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext processingContext) {
         final CacheMethodContext cacheMethodContext = this.context(methodContext);
         final CacheManager manager = context.get(CacheManager.class);
         String name = cacheMethodContext.name();
@@ -78,10 +79,10 @@ public abstract class CacheServicePostProcessor<A extends Annotation> extends Se
 
     protected abstract CacheMethodContext context(MethodProxyContext<?> context);
 
-    protected abstract <T, R> ProxyFunction<T, R> process(ApplicationContext context, MethodProxyContext<T> methodContext, CacheContext cacheContext);
+    protected abstract <T, R> MethodInterceptor<T> process(ApplicationContext context, MethodProxyContext<T> methodContext, CacheContext cacheContext);
 
     @Override
-    public <T> boolean preconditions(final ApplicationContext context, final MethodProxyContext<T> methodContext) {
+    public <T> boolean preconditions(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext processingContext) {
         return true;
     }
 

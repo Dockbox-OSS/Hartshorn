@@ -19,18 +19,12 @@ package org.dockbox.hartshorn.core.services;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.core.Key;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
-import org.dockbox.hartshorn.core.context.BackingImplementationContext;
-import org.dockbox.hartshorn.core.context.MethodProxyContext;
-import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
-import org.dockbox.hartshorn.core.domain.Exceptional;
-import org.dockbox.hartshorn.core.proxy.ProxyFunction;
-import org.dockbox.hartshorn.core.proxy.ProxyHandler;
+import org.dockbox.hartshorn.core.proxy.ProxyFactory;
 
 import java.lang.annotation.Annotation;
-import java.util.Collection;
 
-public abstract class ProxyDelegationPostProcessor<P, A extends Annotation> extends ServiceMethodInterceptorPostProcessor<A> {
+public abstract class ProxyDelegationPostProcessor<P, A extends Annotation> extends FunctionalComponentPostProcessor<A> {
 
     protected abstract Class<P> parentTarget();
 
@@ -40,41 +34,20 @@ public abstract class ProxyDelegationPostProcessor<P, A extends Annotation> exte
     }
 
     @Override
-    protected <T> Collection<MethodContext<?, T>> modifiableMethods(final TypeContext<T> type) {
-        return type.methods().stream().filter(method -> method.parent().is(this.parentTarget())).toList();
+    public <T> T process(final ApplicationContext context, final Key<T> key, @Nullable final T instance) {
+        throw new UnsupportedOperationException("Processing service methods without a context is not supported");
     }
 
     @Override
-    public <T> boolean preconditions(final ApplicationContext context, final MethodProxyContext<T> methodContext) {
-        return methodContext.method().parent().is(this.parentTarget());
+    public <T> T process(final ApplicationContext context, final Key<T> key, @Nullable final T instance, final ComponentProcessingContext processingContext) {
+        final ProxyFactory factory = processingContext.get(Key.of(ProxyFactory.class));
+        if (factory == null) return instance;
+
+        factory.delegate(this.parentTarget(), this.concreteDelegator(context, factory, TypeContext.of(this.parentTarget())));
+        return null;
     }
 
-    @Override
-    public <T, R> ProxyFunction<T, R> process(final ApplicationContext context, final MethodProxyContext<T> methodContext) {
-        final TypeContext<P> parentContext = TypeContext.of(this.parentTarget());
-        final MethodContext<?, T> method = methodContext.method();
-        final Exceptional<MethodContext<?, P>> parentMethod = parentContext.method(method.name(), method.parameterTypes());
-        final ProxyHandler<P> handler = (ProxyHandler<P>) methodContext.handler();
-
-        final BackingImplementationContext backing = handler.first(context, BackingImplementationContext.class).get();
-        final P concrete = backing.computeIfAbsent(this.parentTarget(), target -> this.concreteDelegator(context, handler, (TypeContext<? extends P>) methodContext.type()));
-
-        if (parentMethod.present()) {
-            final MethodContext<?, P> parent = parentMethod.get();
-            final R defaultValue = (R) parent.returnType().defaultOrNull();
-            return (instance, args, proxyContext) -> {
-                final R out = parent.invoke(concrete, args).rethrow().map((r -> (R) r)).orElse(() -> defaultValue).orNull();
-                if (out == concrete) return (R) handler.proxyInstance().orNull();
-                return out;
-            };
-        }
-        else {
-            context.log().error("Attempted to delegate method " + method.qualifiedName() + " but it was not find on the indicated parent " + parentContext.qualifiedName());
-            return null;
-        }
-    }
-
-    protected P concreteDelegator(final ApplicationContext context, final ProxyHandler<P> handler, final TypeContext<? extends P> parent) {
+    protected P concreteDelegator(final ApplicationContext context, final ProxyFactory<P, ?> handler, final TypeContext<? extends P> parent) {
         return context.get(this.parentTarget());
     }
 }

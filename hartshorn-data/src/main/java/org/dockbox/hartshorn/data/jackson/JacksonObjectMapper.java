@@ -43,6 +43,7 @@ import org.dockbox.hartshorn.data.FileFormat;
 import org.dockbox.hartshorn.data.FileFormats;
 import org.dockbox.hartshorn.data.mapping.JsonInclusionRule;
 
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
@@ -158,12 +159,14 @@ public class JacksonObjectMapper extends DefaultObjectMapper {
         try {
             final JsonNode jsonNode = node.get();
             this.addKeys("", jsonNode, flat);
-            return flat;
+        }
+        catch (final FileNotFoundException e) {
+            this.context.log().warn("File not found: " + e.getMessage());
         }
         catch (final IOException e) {
             this.context.handle(e);
-            return flat;
         }
+        return flat;
     }
 
     private ObjectWriter writer(final Object content) {

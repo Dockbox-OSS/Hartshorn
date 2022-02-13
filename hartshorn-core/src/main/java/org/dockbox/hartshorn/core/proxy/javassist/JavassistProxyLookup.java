@@ -16,7 +16,6 @@
 
 package org.dockbox.hartshorn.core.proxy.javassist;
 
-import org.dockbox.hartshorn.core.proxy.ProxyHandler;
 import org.dockbox.hartshorn.core.proxy.ProxyLookup;
 
 import javassist.util.proxy.MethodHandler;
@@ -27,8 +26,8 @@ public class JavassistProxyLookup implements ProxyLookup {
     @Override
     public <T> Class<T> unproxy(final T instance) {
         final MethodHandler methodHandler = ProxyFactory.getHandler((javassist.util.proxy.Proxy) instance);
-        if (methodHandler instanceof ProxyHandler proxyHandler) {
-            return proxyHandler.type().type();
+        if (methodHandler instanceof JavassistProxyMethodHandler proxyHandler) {
+            return proxyHandler.manager().targetClass();
         }
         return instance != null ? (Class<T>) instance.getClass() : null;
     }

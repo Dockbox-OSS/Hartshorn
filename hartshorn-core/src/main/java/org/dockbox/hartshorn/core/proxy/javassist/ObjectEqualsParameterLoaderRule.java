@@ -16,10 +16,12 @@
 
 package org.dockbox.hartshorn.core.proxy.javassist;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.core.context.ParameterLoaderContext;
 import org.dockbox.hartshorn.core.context.element.ParameterContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
-import org.dockbox.hartshorn.core.proxy.ProxyHandler;
+import org.dockbox.hartshorn.core.function.CheckedFunction;
+import org.dockbox.hartshorn.core.proxy.ProxyManager;
 import org.dockbox.hartshorn.core.services.parameter.ParameterLoaderRule;
 
 public class ObjectEqualsParameterLoaderRule implements ParameterLoaderRule<ParameterLoaderContext> {
@@ -31,7 +33,7 @@ public class ObjectEqualsParameterLoaderRule implements ParameterLoaderRule<Para
     @Override
     public <T> Exceptional<T> load(final ParameterContext<T> parameter, final int index, final ParameterLoaderContext context, final Object... args) {
         final Object argument = args[index];
-        final Exceptional<ProxyHandler<Object>> handler = context.applicationContext().environment().manager().handler(argument);
-        return handler.flatMap(ProxyHandler::instance).orElse(() -> argument).map(a -> (T) a);
+        final Exceptional<ProxyManager<Object>> handler = context.applicationContext().environment().manager().manager(argument);
+        return handler.flatMap((CheckedFunction<ProxyManager<Object>, @NonNull Exceptional<Object>>) ProxyManager::delegate).orElse(() -> argument).map(a -> (T) a);
     }
 }

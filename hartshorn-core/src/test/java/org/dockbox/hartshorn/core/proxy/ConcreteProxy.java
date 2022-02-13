@@ -18,8 +18,8 @@ package org.dockbox.hartshorn.core.proxy;
 
 import org.dockbox.hartshorn.core.annotations.inject.ComponentBinding;
 
-@ComponentBinding(AbstractProxyParent.class)
-public class ConcreteProxyImplementation implements AbstractProxyParent {
+@ComponentBinding(InterfaceProxy.class)
+public class ConcreteProxy implements InterfaceProxy {
     @Override
     public String name() {
         return "concrete";

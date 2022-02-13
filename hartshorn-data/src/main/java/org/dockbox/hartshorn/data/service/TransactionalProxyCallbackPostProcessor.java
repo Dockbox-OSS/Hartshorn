@@ -23,6 +23,7 @@ import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
 import org.dockbox.hartshorn.core.proxy.ProxyCallback;
 import org.dockbox.hartshorn.core.services.PhasedProxyCallbackPostProcessor;
+import org.dockbox.hartshorn.core.services.ProcessingOrder;
 import org.dockbox.hartshorn.data.TransactionFactory;
 import org.dockbox.hartshorn.data.TransactionManager;
 import org.dockbox.hartshorn.data.annotations.Transactional;
@@ -53,7 +54,7 @@ public class TransactionalProxyCallbackPostProcessor extends PhasedProxyCallback
     public <T> ProxyCallback<T> doBefore(final ApplicationContext context, final MethodContext<?, T> method, final Key<T> key, @Nullable final T instance) {
         final TransactionFactory transactionFactory = context.get(TransactionFactory.class);
 
-        return (methodContext, target, args, proxyContext) -> {
+        return (methodContext, target, args) -> {
             if (target instanceof JpaRepository jpaRepository) {
                 final EntityManager entityManager = jpaRepository.entityManager();
                 final TransactionManager manager = transactionFactory.manager(entityManager);
@@ -75,11 +76,15 @@ public class TransactionalProxyCallbackPostProcessor extends PhasedProxyCallback
     }
 
     protected <T> ProxyCallback<T> flushTarget() {
-        return (methodContext, target, args, proxyContext) -> {
+        return (methodContext, target, args) -> {
             if (target instanceof JpaRepository jpaRepository) {
                 jpaRepository.flush();
             }
         };
     }
 
+    @Override
+    public Integer order() {
+        return ProcessingOrder.LATE + 1;
+    }
 }

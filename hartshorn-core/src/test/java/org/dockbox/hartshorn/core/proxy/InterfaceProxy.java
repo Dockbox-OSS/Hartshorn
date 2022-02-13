@@ -16,7 +16,7 @@
 
 package org.dockbox.hartshorn.core.proxy;
 
-public interface AbstractProxyParent {
+public interface InterfaceProxy {
     String name();
     int age();
 }

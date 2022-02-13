@@ -31,6 +31,7 @@ import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 import org.dockbox.hartshorn.core.exceptions.NotPrimitiveException;
 import org.dockbox.hartshorn.core.exceptions.TypeConversionException;
 
+import java.beans.PropertyDescriptor;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -660,5 +661,14 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
 
     public boolean isDeclaredIn(final String prefix) {
         return this.type().getPackageName().startsWith(prefix);
+    }
+
+    public PropertyDescriptor[] propertyDescriptors() {
+        // TODO
+        return new PropertyDescriptor[0];
+    }
+
+    public @Nullable PropertyDescriptor propertyDescriptor(final String propertyName) {
+        return null;
     }
 }

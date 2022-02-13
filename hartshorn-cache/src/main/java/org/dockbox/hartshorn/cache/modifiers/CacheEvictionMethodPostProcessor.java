@@ -16,16 +16,16 @@
 
 package org.dockbox.hartshorn.cache.modifiers;
 
-import org.dockbox.hartshorn.core.annotations.activate.AutomaticActivation;
-import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 import org.dockbox.hartshorn.cache.annotations.EvictCache;
 import org.dockbox.hartshorn.cache.context.CacheContext;
 import org.dockbox.hartshorn.cache.context.CacheMethodContext;
 import org.dockbox.hartshorn.cache.context.CacheMethodContextImpl;
+import org.dockbox.hartshorn.core.annotations.activate.AutomaticActivation;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
-import org.dockbox.hartshorn.core.services.ServiceAnnotatedMethodInterceptorPostProcessor;
-import org.dockbox.hartshorn.core.proxy.ProxyFunction;
 import org.dockbox.hartshorn.core.context.MethodProxyContext;
+import org.dockbox.hartshorn.core.exceptions.ApplicationException;
+import org.dockbox.hartshorn.core.proxy.MethodInterceptor;
+import org.dockbox.hartshorn.core.services.ServiceAnnotatedMethodInterceptorPostProcessor;
 
 /**
  * The {@link ServiceAnnotatedMethodInterceptorPostProcessor} responsible for {@link EvictCache}
@@ -42,11 +42,11 @@ public class CacheEvictionMethodPostProcessor extends CacheServicePostProcessor<
     }
 
     @Override
-    protected <T, R> ProxyFunction<T, R> process(final ApplicationContext context, final MethodProxyContext<T> methodContext, final CacheContext cacheContext) {
-        return (instance, args, proxyContext) -> {
+    protected <T, R> MethodInterceptor<T> process(final ApplicationContext context, final MethodProxyContext<T> methodContext, final CacheContext cacheContext) {
+        return interceptorContext -> {
             try {
                 cacheContext.manager().evict(cacheContext.name());
-                return proxyContext.invoke(args);
+                return interceptorContext.invokeDefault();
             } catch (final ApplicationException e) {
                 context.handle(e);
             }

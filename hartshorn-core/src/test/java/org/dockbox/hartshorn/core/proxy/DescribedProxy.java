@@ -16,7 +16,6 @@
 
 package org.dockbox.hartshorn.core.proxy;
 
-@FunctionalInterface
-public interface ProxyFunction<T, R> {
-    R delegate(T instance, Object[] args, ProxyContext context) throws Throwable;
+public interface DescribedProxy {
+    String description();
 }
