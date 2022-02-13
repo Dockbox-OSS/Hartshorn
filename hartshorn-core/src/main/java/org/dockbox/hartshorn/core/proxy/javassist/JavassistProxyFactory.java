@@ -16,6 +16,7 @@
 
 package org.dockbox.hartshorn.core.proxy.javassist;
 
+import org.dockbox.hartshorn.core.CollectionUtilities;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.FieldContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
@@ -56,22 +57,25 @@ public class JavassistProxyFactory<T> extends DefaultProxyFactory<T> {
     protected Exceptional<T> concreteOrAbstractProxy(final MethodHandler methodHandler) throws ApplicationException {
         final ProxyFactory factory = new ProxyFactory();
         factory.setSuperclass(this.type());
-        factory.setInterfaces(new Class[] { Proxy.class});
+
+        final Class[] interfaces = CollectionUtilities.merge(new Class[]{ Proxy.class }, this.interfaces().toArray(new Class[0]));
+        factory.setInterfaces(interfaces);
 
         try {
             final T proxy = (T) factory.create(new Class<?>[0], new Object[0], methodHandler);
             if (this.typeDelegate() != null) this.restoreFields(this.typeDelegate(), proxy);
             return Exceptional.of(proxy);
         }
-        catch (final InvocationTargetException | NoSuchMethodException | InstantiationException | IllegalAccessException e) {
+        catch (final RuntimeException | InvocationTargetException | NoSuchMethodException | InstantiationException | IllegalAccessException e) {
             throw new ApplicationException(e);
         }
     }
 
     protected Exceptional<T> interfaceProxy(final MethodHandler methodHandler) throws ApplicationException {
+        final Class[] interfaces = CollectionUtilities.merge(new Class[]{ this.type(), Proxy.class }, this.interfaces().toArray(new Class[0]));
         final T proxy = (T) java.lang.reflect.Proxy.newProxyInstance(
                 this.type().getClassLoader(),
-                new Class[] { this.type(), Proxy.class },
+                interfaces,
                 (final var self, final var method, final var args) -> methodHandler.invoke(self, method, null, args));
         return Exceptional.of(proxy);
     }

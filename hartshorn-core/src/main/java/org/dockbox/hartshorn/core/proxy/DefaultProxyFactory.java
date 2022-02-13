@@ -26,6 +26,7 @@ import org.dockbox.hartshorn.core.domain.TypeMap;
 
 import java.lang.reflect.Method;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -76,6 +77,7 @@ public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T
     private final Map<Method, MethodInterceptor<T>> interceptors = new ConcurrentHashMap<>();
     private final MultiMap<Method, MethodWrapper<T>> wrappers = new CustomMultiMap<>(ConcurrentHashMap::newKeySet);
     private final TypeMap<Object> typeDelegates = new TypeMap<>();
+    private final Set<Class<?>> interfaces = ConcurrentHashMap.newKeySet();
     private T typeDelegate;
 
     // Proxy data
@@ -171,6 +173,18 @@ public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T
     }
 
     @Override
+    public DefaultProxyFactory<T> implement(final Class<?>... interfaces) {
+        for (final Class<?> anInterface : interfaces) {
+            if (!anInterface.isInterface()) {
+                throw new IllegalArgumentException(anInterface.getName() + " is not an interface");
+            }
+            if (Proxy.class.equals(anInterface)) continue;
+            this.interfaces.add(anInterface);
+        }
+        return this;
+    }
+
+    @Override
     public Class<T> type() {
         return this.type;
     }
@@ -214,6 +228,11 @@ public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T
     @Override
     public MultiMap<Method, MethodWrapper<T>> wrappers() {
         return this.wrappers;
+    }
+
+    @Override
+    public Set<Class<?>> interfaces() {
+        return this.interfaces;
     }
 
     /**

@@ -137,7 +137,7 @@ public final class HartshornUtils {
      *
      * @param arrayOne the array one
      * @param arrayTwo the array two
-     *
+     * @deprecated Use {@link CollectionUtilities#merge(Object[], Object[])} instead.
      * @return the t [ ]
      */
     @Deprecated(since = "22.2", forRemoval = true)

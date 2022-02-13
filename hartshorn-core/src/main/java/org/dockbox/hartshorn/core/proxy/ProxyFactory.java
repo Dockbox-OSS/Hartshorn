@@ -26,6 +26,7 @@ import org.dockbox.hartshorn.core.services.ComponentProcessingContext;
 
 import java.lang.reflect.Method;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * The entrypoint for creating proxy objects. This class is responsible for creating proxy objects for
@@ -270,6 +271,18 @@ public interface ProxyFactory<T, F extends ProxyFactory<T, F>> {
     F intercept(Method method, MethodWrapper<T> wrapper);
 
     /**
+     * Implements the given interfaces on the proxy. This will add the given interfaces to the list of
+     * interfaces that the proxy implements. This will not replace existing interfaces. This will not
+     * affect the interfaces that the proxy implements directly. This will not affect implemented methods,
+     * and new interface methods will have to be implemented manually either through delegation or
+     * intercepting.
+     *
+     * @param interfaces The interfaces to implement
+     * @return This factory
+     */
+    F implement(Class<?>... interfaces);
+
+    /**
      * Creates a proxy instance of the active {@link #type()} and returns it. This will create a new proxy,
      * as well as a new {@link ProxyManager} responsible for managing the proxy. The proxy will be created
      * with all currently known behaviors.
@@ -329,4 +342,12 @@ public interface ProxyFactory<T, F extends ProxyFactory<T, F>> {
      * @return All known delegates, or an empty map
      */
     TypeMap<Object> typeDelegates();
+
+    /**
+     * Gets all currently known interfaces. This will return an empty set if no interfaces were set. This
+     * will not include {@link Proxy}.
+     *
+     * @return All known interfaces, or an empty set
+     */
+    Set<Class<?>> interfaces();
 }

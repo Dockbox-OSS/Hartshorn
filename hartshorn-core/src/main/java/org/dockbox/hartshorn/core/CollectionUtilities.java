@@ -63,6 +63,13 @@ public final class CollectionUtilities {
         return merged;
     }
 
+    public static <T> T[] merge(final T[] arrayOne, final T[] arrayTwo) {
+        final Set<T> merged = new HashSet<>();
+        merged.addAll(Set.of(arrayOne));
+        merged.addAll(Set.of(arrayTwo));
+        return merged.toArray(arrayOne);
+    }
+
     public static <T> Set<T> difference(final Collection<T> collectionOne, final Collection<T> collectionTwo) {
         final BiFunction<Collection<T>, Collection<T>, List<T>> filter = (c1, c2) -> c1.stream()
                 .filter(element -> !c2.contains(element))
