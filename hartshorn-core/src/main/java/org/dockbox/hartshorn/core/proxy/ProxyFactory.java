@@ -198,6 +198,16 @@ public interface ProxyFactory<T, F extends ProxyFactory<T, F>> {
     F delegate(T delegate);
 
     /**
+     * Delegates all abstract methods defined by the active {@link #type()} to the given delegate
+     * instance. This targets a backing implementation, not the original instance. Unlike {@link #delegate(Object)}
+     * this will only delegate methods that do not already have a concrete implementation.
+     *
+     * @param delegate The delegate instance
+     * @return This factory
+     */
+    F delegateAbstract(T delegate);
+
+    /**
      * Delegates all methods defined by the given {@code type} to the given delegate instance. This
      * targets a backing implementation, not the original instance.
      *

@@ -95,7 +95,12 @@ public class JavassistProxyMethodHandler<T> implements MethodHandler, ContextCar
                     result = this.invokeDelegate(delegate.get(), callbackTarget, thisMethod, arguments);
                 }
                 else {
-                    result = this.invokeUnregistered(self, thisMethod, proceed, arguments);
+                    if (callbackTarget == self && proceed != null) {
+                        result = proceed.invoke(callbackTarget, arguments);
+                    }
+                    else {
+                        result = this.invokeUnregistered(self, thisMethod, proceed, arguments);
+                    }
                 }
             }
 
@@ -216,8 +221,9 @@ public class JavassistProxyMethodHandler<T> implements MethodHandler, ContextCar
     protected Object invokeDefault(final Class<T> declaringType, final Method thisMethod, final Object self, final Object[] args) throws Throwable {
         final MethodHandle handle;
         if (METHOD_HANDLE_CACHE.containsKey(thisMethod)) {
-             handle = METHOD_HANDLE_CACHE.get(thisMethod);
-        } else {
+            handle = METHOD_HANDLE_CACHE.get(thisMethod);
+        }
+        else {
             handle = MethodHandles.lookup().findSpecial(
                     declaringType,
                     thisMethod.getName(),
@@ -233,7 +239,8 @@ public class JavassistProxyMethodHandler<T> implements MethodHandler, ContextCar
         final MethodHandle handle;
         if (METHOD_HANDLE_CACHE.containsKey(thisMethod)) {
             handle = METHOD_HANDLE_CACHE.get(thisMethod);
-        } else {
+        }
+        else {
             handle = MethodHandles.privateLookupIn(declaringType, MethodHandles.lookup())
                     .in(declaringType)
                     .unreflectSpecial(thisMethod, declaringType)

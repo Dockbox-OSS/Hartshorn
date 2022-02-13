@@ -339,15 +339,21 @@ public class ProxyTests {
     public static abstract class DemoServiceC { }
 
     @Test
-    void testUnproxyingProxySelfEquality() throws ApplicationException {
+    void testConcreteProxySelfEquality() throws ApplicationException {
         final ProxyFactory<EqualProxy, ?> factory = this.applicationContext.environment().manager().factory(EqualProxy.class);
-        factory.delegate(new EqualProxy()); // Simulate the proxy being created by the application context
         final Exceptional<EqualProxy> proxy = factory.proxy();
         Assertions.assertTrue(proxy.present());
 
         final EqualProxy proxyInstance = proxy.get();
         Assertions.assertEquals(proxyInstance, proxyInstance);
         Assertions.assertTrue(proxyInstance.test(proxyInstance));
+    }
+
+    @Test
+    void testServiceSelfEquality() {
+        final EqualServiceProxy service = this.applicationContext.get(EqualServiceProxy.class);
+        Assertions.assertEquals(service, service);
+        Assertions.assertTrue(service.test(service));
     }
 
     @Test

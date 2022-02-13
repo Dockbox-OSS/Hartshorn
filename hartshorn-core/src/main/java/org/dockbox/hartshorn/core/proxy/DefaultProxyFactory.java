@@ -25,6 +25,7 @@ import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.TypeMap;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -102,6 +103,20 @@ public abstract class DefaultProxyFactory<T> implements StateAwareProxyFactory<T
             this.updateState();
             for (final Method declaredMethod : this.type.getDeclaredMethods()) {
                 this.delegates.put(declaredMethod, delegate);
+            }
+            this.typeDelegate = delegate;
+        }
+        return this;
+    }
+
+    @Override
+    public DefaultProxyFactory<T> delegateAbstract(final T delegate) {
+        if (delegate != null) {
+            this.updateState();
+            for (final Method declaredMethod : this.type.getDeclaredMethods()) {
+                if (declaredMethod.getModifiers() == Modifier.ABSTRACT && !declaredMethod.isDefault()) {
+                    this.delegates.put(declaredMethod, delegate);
+                }
             }
             this.typeDelegate = delegate;
         }
