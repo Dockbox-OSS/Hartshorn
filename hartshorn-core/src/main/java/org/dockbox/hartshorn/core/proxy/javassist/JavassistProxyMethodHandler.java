@@ -36,6 +36,7 @@ import java.lang.invoke.MethodType;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
@@ -173,7 +174,16 @@ public class JavassistProxyMethodHandler<T> implements MethodHandler, ContextCar
             else if (targetType.isAbstract() && !MethodContext.of(thisMethod).isAbstract()) return this.invokePrivate(targetClass, thisMethod, self, args);
 
                 // If none of the above conditions are met, we have no way to handle the method.
-            else throw new IllegalArgumentException("Cannot invoke method " + thisMethod.getName() + " on proxy " + targetType.qualifiedName());
+            else {
+                final MethodContext<?, ?> localMethodContext = MethodContext.of(thisMethod);
+                final MethodContext<?, ?> targetMethodContext = MethodContext.of(target);
+                final TypeContext<Object> selfContext = TypeContext.of(self);
+                throw new IllegalStateException("Could not invoke local method " + localMethodContext.qualifiedName()
+                        + " (targeting " + targetMethodContext.qualifiedName() + ") on proxy "
+                        + targetType.qualifiedName() + " of qualified type " + selfContext.qualifiedName() + "(isProxy=" + this.applicationContext().environment().manager().isProxy(self) + ")"
+                        + " with arguments " + Arrays.toString(args) + ". " +
+                        "This typically indicates that there is no appropriate proxy property (delegate or interceptor for the method.");
+            }
         }
         catch (final InvocationTargetException e) {
             throw e.getCause();
