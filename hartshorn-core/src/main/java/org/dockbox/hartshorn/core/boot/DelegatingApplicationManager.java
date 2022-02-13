@@ -143,6 +143,11 @@ public class DelegatingApplicationManager implements ObservableApplicationManage
         return this.applicationProxier.factory(type);
     }
 
+    @Override
+    public <T> StateAwareProxyFactory<T, ?> factory(final Class<T> type) {
+        return this.applicationProxier.factory(type);
+    }
+
     public DelegatingApplicationManager applicationContext(final ApplicationContext applicationContext) {
         if (this.applicationContext == null) this.applicationContext = applicationContext;
         else throw new IllegalArgumentException("Application context has already been configured");

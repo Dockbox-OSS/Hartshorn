@@ -51,4 +51,6 @@ public interface ApplicationProxier extends ProxyLookup {
     <D, T extends D> Exceptional<D> delegate(TypeContext<D> type, T instance);
 
     <T> StateAwareProxyFactory<T, ?> factory(TypeContext<T> type);
+
+    <T> StateAwareProxyFactory<T, ?> factory(Class<T> type);
 }

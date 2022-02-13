@@ -75,7 +75,12 @@ public class HartshornApplicationProxier implements ApplicationProxier, Applicat
 
     @Override
     public <T> StateAwareProxyFactory<T, ?> factory(final TypeContext<T> type) {
-        return new JavassistProxyFactory<>(type.type(), this.applicationManager().applicationContext());
+        return this.factory(type.type());
+    }
+
+    @Override
+    public <T> StateAwareProxyFactory<T, ?> factory(final Class<T> type) {
+        return new JavassistProxyFactory<>(type, this.applicationManager().applicationContext());
     }
 
     @Override
