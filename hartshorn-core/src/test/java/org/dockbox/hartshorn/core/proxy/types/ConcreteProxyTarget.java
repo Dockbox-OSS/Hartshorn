@@ -17,9 +17,7 @@
 package org.dockbox.hartshorn.core.proxy.types;
 
 public class ConcreteProxyTarget {
-
     public String name() {
         return "NotHartshorn";
     }
-
 }

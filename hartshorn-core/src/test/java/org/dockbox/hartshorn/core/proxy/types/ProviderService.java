@@ -22,8 +22,6 @@ import org.dockbox.hartshorn.core.annotations.inject.Provided;
 @Service
 @FunctionalInterface
 public interface ProviderService {
-
     @Provided
     SampleType get();
-
 }

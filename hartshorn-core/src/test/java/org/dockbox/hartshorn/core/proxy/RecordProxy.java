@@ -16,19 +16,14 @@
 
 package org.dockbox.hartshorn.core.proxy;
 
-import org.dockbox.hartshorn.core.annotations.activate.AutomaticActivation;
-import org.dockbox.hartshorn.core.annotations.stereotype.Service;
-import org.dockbox.hartshorn.core.services.ProxyDelegationPostProcessor;
-
-@AutomaticActivation
-public class DemoProxyDelegationPostProcessor extends ProxyDelegationPostProcessor<InterfaceProxy, Service> {
+public record RecordProxy() implements InterfaceProxy {
     @Override
-    public Class<Service> activator() {
-        return Service.class;
+    public String name() {
+        return "Record";
     }
 
     @Override
-    protected Class<InterfaceProxy> parentTarget() {
-        return InterfaceProxy.class;
+    public int age() {
+        return 1;
     }
 }

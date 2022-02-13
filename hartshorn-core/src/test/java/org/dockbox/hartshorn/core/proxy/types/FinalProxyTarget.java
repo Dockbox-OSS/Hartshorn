@@ -21,5 +21,4 @@ public class FinalProxyTarget {
     public final String name() {
         return "NotHartshorn";
     }
-
 }

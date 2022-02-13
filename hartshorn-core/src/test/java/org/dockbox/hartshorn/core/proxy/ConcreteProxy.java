@@ -16,12 +16,17 @@
 
 package org.dockbox.hartshorn.core.proxy;
 
-import org.dockbox.hartshorn.core.annotations.stereotype.Service;
+import org.dockbox.hartshorn.core.annotations.inject.ComponentBinding;
 
-@Service
-public abstract class ExtendedProxy implements AbstractProxyParent {
+@ComponentBinding(InterfaceProxy.class)
+public class ConcreteProxy implements InterfaceProxy {
+    @Override
+    public String name() {
+        return "concrete";
+    }
+
     @Override
     public int age() {
-        return 21;
+        return -1;
     }
 }

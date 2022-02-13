@@ -16,7 +16,12 @@
 
 package org.dockbox.hartshorn.core.proxy;
 
-public interface AbstractProxyParent {
-    String name();
-    int age();
+import org.dockbox.hartshorn.core.annotations.stereotype.Service;
+
+@Service
+public abstract class AbstractProxy implements InterfaceProxy {
+    @Override
+    public int age() {
+        return 21;
+    }
 }
