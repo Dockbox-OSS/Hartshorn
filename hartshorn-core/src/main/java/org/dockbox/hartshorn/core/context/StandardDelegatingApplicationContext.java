@@ -481,7 +481,6 @@ public class StandardDelegatingApplicationContext extends DefaultContext impleme
         this.componentProvider.bind(key, instance);
     }
 
-
     public ClasspathResourceLocator resourceLocator() {
         return this.resourceLocator;
     }
@@ -501,7 +500,7 @@ public class StandardDelegatingApplicationContext extends DefaultContext impleme
 
     @Override
     public <T, C extends T> void singleton(final Key<T> key, final C instance) {
-
+        this.componentProvider.singleton(key, instance);
     }
 
     @Override
