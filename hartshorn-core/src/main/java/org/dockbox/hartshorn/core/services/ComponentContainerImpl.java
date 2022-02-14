@@ -100,7 +100,7 @@ public class ComponentContainerImpl implements ComponentContainer {
 
     @Override
     public boolean permitsProxying() {
-        return this.annotation().permitProxying();
+        return this.permitsProcessing() && this.annotation().permitProxying();
     }
 
     @Override
