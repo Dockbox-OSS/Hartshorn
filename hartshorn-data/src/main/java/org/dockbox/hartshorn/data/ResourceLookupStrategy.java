@@ -17,17 +17,19 @@
 package org.dockbox.hartshorn.data;
 
 import org.dockbox.hartshorn.core.context.ApplicationContext;
-import org.dockbox.hartshorn.core.context.element.TypeContext;
-import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.data.annotations.Configuration;
 
 import java.net.URI;
+import java.util.Set;
 
 /**
- * Defines how a {@link Configuration#source() resource} is looked up while processing types annotated with
+ * Defines how a {@link Configuration#value() resource} is looked up while processing types annotated with
  * {@link Configuration}.
  */
 public interface ResourceLookupStrategy {
     String name();
-    Exceptional<URI> lookup(ApplicationContext context, String path, TypeContext<?> owner, FileFormats fileFormat);
+
+    Set<URI> lookup(ApplicationContext context, String path);
+
+    URI baseUrl(ApplicationContext context);
 }

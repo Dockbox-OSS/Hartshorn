@@ -27,7 +27,7 @@ import lombok.Getter;
 
 @Getter
 @Component
-@Configuration(source = "classpath:junit.yml")
+@Configuration({ "fs:junit", "classpath:junit" })
 public class DemoClasspathConfiguration {
 
     @Value("junit.cp")

@@ -20,15 +20,16 @@ import org.dockbox.hartshorn.core.Key;
 import org.dockbox.hartshorn.core.annotations.activate.AutomaticActivation;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
-import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.services.ComponentPreProcessor;
 import org.dockbox.hartshorn.core.services.ProcessingOrder;
 import org.dockbox.hartshorn.data.annotations.Configuration;
 import org.dockbox.hartshorn.data.annotations.UseConfigurations;
 import org.dockbox.hartshorn.data.mapping.ObjectMapper;
 
+import java.io.File;
 import java.net.URI;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -37,7 +38,7 @@ import java.util.regex.Pattern;
  * Processes all services annotated with {@link Configuration} by loading the indicated file and registering the
  * properties to {@link ApplicationContext#property(String, Object)}. To support different file sources
  * {@link ResourceLookupStrategy strategies} are used. Each strategy is able to define behavior specific to sources
- * defined with its name. Strategies can be indicated in the {@link Configuration#source()} of a {@link Configuration}
+ * defined with its name. Strategies can be indicated in the {@link Configuration#value()} of a {@link Configuration}
  * in the format {@code strategy_name:source_name}. If a strategy is not registered, or no name is defined, behavior
  * defaults to {@link FileSystemLookupStrategy}.
  */
@@ -70,37 +71,67 @@ public class ConfigurationServicePreProcessor implements ComponentPreProcessor<U
     public <T> void process(final ApplicationContext context, final Key<T> key) {
         final Configuration configuration = key.type().annotation(Configuration.class).get();
 
-        String source = configuration.source();
-        final TypeContext<?> owner = TypeContext.of(configuration.owner());
+        final String[] sources = configuration.value();
 
-        final FileFormats format = FileFormats.lookup(source);
-
-        if (format == null) {
-            throw new IllegalArgumentException("Unknown file format: " + source + ", declared by " + key.type().name());
+        for (final String source : sources) {
+            if (this.processSource(source, context, key)) return;
+            context.log().debug("Skipped configuration source '{}', proceeding to next source if available", source);
         }
 
-        final Matcher matcher = this.STRATEGY_PATTERN.matcher(source);
+        if (configuration.failOnMissing()) {
+            throw new IllegalStateException("None of the configured sources in " + key.type().name() + " were found");
+        } else {
+            context.log().warn("None of the configured sources in {} were found, proceeding without configuration", key.type().name());
+        }
+    }
+
+    private <T> boolean processSource(final String source, final ApplicationContext context, final Key<T> key) {
+        String matchedSource = source;
+        final Matcher matcher = this.STRATEGY_PATTERN.matcher(matchedSource);
         ResourceLookupStrategy strategy = new FileSystemLookupStrategy();
         if (matcher.find()) {
             strategy = this.strategies.getOrDefault(matcher.group(1), strategy);
-            source = matcher.group(2);
+            matchedSource = matcher.group(2);
+        }
+        context.log().debug("Determined strategy " + TypeContext.of(strategy).name() + " for " + matchedSource + ", declared by " + key.type().name());
+
+        final Set<URI> config = strategy.lookup(context, matchedSource);
+        if (config.isEmpty()) {
+            context.log().warn("No configuration file found for " + key.type().name());
+            return false;
+        }
+        else if (config.size() > 1) {
+            context.log().warn("Found multiple configuration files for " + key.type().name() + ": " + config);
         }
 
-        context.log().debug("Determined strategy " + TypeContext.of(strategy).name() + " for " + format.asFileName(source) + ", declared by " + key.type().name());
+        for (final URI uri : config) {
+            final FileFormat format = this.lookupFileFormat(uri, matchedSource, context, strategy);
 
-        final Exceptional<URI> config = strategy.lookup(context, source, owner, format);
+            if (format == null) {
+                context.log().error("Unknown file format: " + matchedSource + ", declared by " + key.type().name());
+                return false;
+            }
 
-        if (config.absent()) {
-            context.log().warn("Could not find configuration file " + source + " for " + key.type().name());
-            return;
+            final Map<String, Object> cache = context.get(ObjectMapper.class)
+                    .fileType(format)
+                    .flat(uri);
+
+            context.log().debug("Located " + cache.size() + " properties in " + uri.getPath());
+            context.properties(cache);
         }
+        return true;
+    }
 
-        final Map<String, Object> cache = context.get(ObjectMapper.class)
-                .fileType(format)
-                .flat(config.get());
-
-        context.log().debug("Located " + cache.size() + " in source " + format.asFileName(source));
-        context.properties(cache);
+    protected FileFormat lookupFileFormat(final URI uri, final String source, final ApplicationContext context, final ResourceLookupStrategy strategy) {
+        // If the source has a file extension, use that
+        final FileFormats lookup = FileFormats.lookup(source);
+        if (lookup != null) {
+            return lookup;
+        }
+        else {
+            final String fileName = new File(uri).getName();
+            return FileFormats.lookup(fileName);
+        }
     }
 
     @Override

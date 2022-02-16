@@ -18,7 +18,9 @@ package org.dockbox.hartshorn.core.boot;
 
 import org.dockbox.hartshorn.core.domain.Exceptional;
 
+import java.net.URI;
 import java.nio.file.Path;
+import java.util.Set;
 
 /**
  * A classpath resource locator. This class is used to locate resources in the classpath, and make them available to
@@ -40,4 +42,8 @@ public interface ClasspathResourceLocator {
      * @return The resource file wrapped in a {@link Exceptional}, or an appropriate {@link Exceptional} (either none or providing the appropriate exception).
      */
     Exceptional<Path> resource(final String name);
+
+    Set<Path> resources(final String name);
+
+    URI classpathUri();
 }

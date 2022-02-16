@@ -18,9 +18,13 @@ package org.dockbox.hartshorn.data;
 
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
-import org.dockbox.hartshorn.core.domain.Exceptional;
 
+import java.io.File;
 import java.net.URI;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import lombok.Getter;
 
@@ -36,7 +40,20 @@ public class FileSystemLookupStrategy implements ResourceLookupStrategy {
     private final String name = "fs";
 
     @Override
-    public Exceptional<URI> lookup(final ApplicationContext context, final String path, final TypeContext<?> owner, final FileFormats fileFormat) {
-        return Exceptional.of(context.environment().manager().applicationPath().resolve(path).toUri());
+    public Set<URI> lookup(final ApplicationContext context, final String path) {
+        final File resolved = context.environment().manager().applicationPath().resolve(path).toFile();
+        if (resolved.exists()) return Collections.singleton(resolved.toURI());
+
+        final File[] children = resolved.getParentFile().listFiles((dir, file) -> file.startsWith(path));
+        if (children != null) {
+            return Arrays.stream(children).map(File::toURI).collect(Collectors.toUnmodifiableSet());
+        }
+
+        return Collections.emptySet();
+    }
+
+    @Override
+    public URI baseUrl(final ApplicationContext context) {
+        return context.environment().manager().applicationPath().toUri();
     }
 }

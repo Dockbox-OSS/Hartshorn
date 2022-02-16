@@ -17,17 +17,17 @@
 package org.dockbox.hartshorn.data;
 
 import org.dockbox.hartshorn.core.context.ApplicationContext;
-import org.dockbox.hartshorn.core.context.element.TypeContext;
-import org.dockbox.hartshorn.core.domain.Exceptional;
 
 import java.net.URI;
 import java.nio.file.Path;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import lombok.Getter;
 
 /**
  * Looks up a resource through the classpath. The packaged resource is copied to a temporary file, created and managed
- * by {@link org.dockbox.hartshorn.core.boot.ClasspathResourceLocator#resource(String)}. This requires the strategy name to be
+ * by {@link org.dockbox.hartshorn.core.boot.ClasspathResourceLocator#resources(String)}. This requires the strategy name to be
  * configured to be equal to {@code classpath:{resource_name}}.
  */
 public class ClassPathResourceLookupStrategy implements ResourceLookupStrategy {
@@ -36,7 +36,12 @@ public class ClassPathResourceLookupStrategy implements ResourceLookupStrategy {
     private final String name = "classpath";
 
     @Override
-    public Exceptional<URI> lookup(final ApplicationContext context, final String path, final TypeContext<?> owner, final FileFormats fileFormat) {
-        return context.resourceLocator().resource(path).map(Path::toUri);
+    public Set<URI> lookup(final ApplicationContext context, final String path) {
+        return context.resourceLocator().resources(path).stream().map(Path::toUri).collect(Collectors.toSet());
+    }
+
+    @Override
+    public URI baseUrl(final ApplicationContext context) {
+        return context.resourceLocator().classpathUri();
     }
 }

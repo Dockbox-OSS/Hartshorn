@@ -27,7 +27,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Component
-@Configuration(source = "junit.yml")
+@Configuration("junit.yml")
 public class DemoFSConfiguration {
 
     @Value("junit.fs")
