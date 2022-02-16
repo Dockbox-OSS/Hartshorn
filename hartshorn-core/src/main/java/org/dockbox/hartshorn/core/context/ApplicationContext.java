@@ -1,24 +1,21 @@
 /*
- * Copyright (C) 2020 Guus Lieben
+ * Copyright 2019-2022 the original author or authors.
  *
- * This framework is free software; you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation, either version 2.1 of the
- * License, or (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See
- * the GNU Lesser General Public License for more details.
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.dockbox.hartshorn.core.context;
 
-import org.dockbox.hartshorn.core.InjectionPoint;
-import org.dockbox.hartshorn.core.Key;
 import org.dockbox.hartshorn.core.MetaProvider;
 import org.dockbox.hartshorn.core.annotations.context.LogExclude;
 import org.dockbox.hartshorn.core.boot.ApplicationLogger;
@@ -32,32 +29,20 @@ import org.dockbox.hartshorn.core.services.ComponentLocator;
 import org.dockbox.hartshorn.core.services.ComponentProcessor;
 import org.slf4j.Logger;
 
+import java.io.Closeable;
+
 @LogExclude
 public interface ApplicationContext extends
         ApplicationBinder,
-        ComponentProvider,
+        HierarchicalComponentProvider,
         ApplicationPropertyHolder,
         ExceptionHandler,
         ApplicationLogger,
-        ActivatorSource
+        ActivatorSource,
+        Closeable
 {
 
-    @Deprecated(since = "22.1", forRemoval = true)
-    void add(InjectionPoint<?> property);
-
-    @Deprecated(since = "22.1", forRemoval = true)
-    <T> T create(Key<T> key);
-
-    @Deprecated(since = "22.1", forRemoval = true)
-    <T> T inject(Key<T> key, T typeInstance);
-
     <T> T populate(T type);
-
-    @Deprecated(since = "22.1", forRemoval = true)
-    <T> T raw(TypeContext<T> type);
-
-    @Deprecated(since = "22.1", forRemoval = true)
-    <T> T raw(TypeContext<T> type, boolean populate);
 
     void add(ComponentProcessor<?> processor);
 

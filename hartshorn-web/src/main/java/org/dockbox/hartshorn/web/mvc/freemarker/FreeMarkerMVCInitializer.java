@@ -1,24 +1,21 @@
 /*
- * Copyright (C) 2020 Guus Lieben
+ * Copyright 2019-2022 the original author or authors.
  *
- * This framework is free software; you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation, either version 2.1 of the
- * License, or (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See
- * the GNU Lesser General Public License for more details.
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.dockbox.hartshorn.web.mvc.freemarker;
 
-import org.dockbox.hartshorn.core.HartshornUtils;
-import org.dockbox.hartshorn.core.annotations.inject.ComponentBinding;
 import org.dockbox.hartshorn.core.boot.Hartshorn;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
@@ -34,7 +31,11 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Set;
+
+import javax.inject.Singleton;
 
 import freemarker.template.Configuration;
 import freemarker.template.Template;
@@ -42,7 +43,7 @@ import freemarker.template.TemplateException;
 import freemarker.template.TemplateExceptionHandler;
 import freemarker.template.TemplateModelException;
 
-@ComponentBinding(value = MVCInitializer.class, singleton = true)
+@Singleton
 public class FreeMarkerMVCInitializer implements MVCInitializer {
 
     private Configuration configuration;
@@ -82,7 +83,7 @@ public class FreeMarkerMVCInitializer implements MVCInitializer {
                 return new Template(name, stringView.template(), this.configuration);
             }
             else if (template instanceof FileViewTemplate fileView) {
-                final String content = HartshornUtils.contentOrEmpty(fileView.path());
+                final String content = this.contentOrEmpty(fileView.path());
                 return new Template(name, content, this.configuration);
             }
             else if (template instanceof ClassPathViewTemplate classPathView) {
@@ -93,6 +94,15 @@ public class FreeMarkerMVCInitializer implements MVCInitializer {
             }
         } catch (final IOException e) {
             throw new ApplicationException(e);
+        }
+    }
+
+    private String contentOrEmpty(final Path path) {
+        try {
+            return Files.readString(path);
+        }
+        catch (final IOException ignored) {
+            return "";
         }
     }
 

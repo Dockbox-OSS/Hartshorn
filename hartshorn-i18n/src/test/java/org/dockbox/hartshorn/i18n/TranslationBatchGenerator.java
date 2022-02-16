@@ -1,23 +1,22 @@
 /*
- * Copyright (C) 2020 Guus Lieben
+ * Copyright 2019-2022 the original author or authors.
  *
- * This framework is free software; you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation, either version 2.1 of the
- * License, or (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See
- * the GNU Lesser General Public License for more details.
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.dockbox.hartshorn.i18n;
 
-import org.dockbox.hartshorn.core.HartshornUtils;
+import org.dockbox.hartshorn.core.CollectionUtilities;
 import org.dockbox.hartshorn.core.annotations.activate.AutomaticActivation;
 import org.dockbox.hartshorn.core.boot.HartshornApplicationFactory;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
@@ -39,8 +38,10 @@ import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -52,7 +53,7 @@ import java.util.Properties;
  */
 public final class TranslationBatchGenerator {
 
-    private static final List<String> BLACKLIST = HartshornUtils.asList(
+    private static final List<String> BLACKLIST = List.of(
             // Test resources
             "class-resources.abstract.entry",
             "class-resources.concrete.entry",
@@ -60,7 +61,7 @@ public final class TranslationBatchGenerator {
             "resource.test.entry",
             "test-resources.test.entry"
     );
-    private static final List<String> HEADER = HartshornUtils.asList("#",
+    private static final List<String> HEADER = List.of("#",
             "# Copyright (C) 2020 Guus Lieben",
             "#",
             "# This framework is free software; you can redistribute it and/or modify",
@@ -106,7 +107,7 @@ public final class TranslationBatchGenerator {
         final Properties properties = new Properties();
         properties.load(new StringReader(batch));
 
-        final Map<String, String> files = HartshornUtils.emptyMap();
+        final Map<String, String> files = new HashMap<>();
 
         for (final File file : TranslationBatchGenerator.existingFiles()) {
             final List<String> strings = Files.readAllLines(file.toPath(), StandardCharsets.UTF_8);
@@ -117,7 +118,7 @@ public final class TranslationBatchGenerator {
                 final String[] property = string.split("=");
                 final String key = property[0];
                 if (key.startsWith("$")) continue;
-                final String value = String.join("=", HartshornUtils.arraySubset(property, 1, property.length - 1));
+                final String value = String.join("=", Arrays.copyOfRange(property, 1, property.length));
                 if (properties.containsKey(key)) {
                     // Override any existing, drop retired translations
                     cache.setProperty(key, value);
@@ -131,7 +132,7 @@ public final class TranslationBatchGenerator {
             });
 
             Collections.sort(content);
-            final Collection<String> output = HartshornUtils.merge(HEADER, content);
+            final Collection<String> output = CollectionUtilities.merge(HEADER, content);
 
             final String fileOut = String.join("\n", output);
             files.put(file.getName(), fileOut);
@@ -166,7 +167,7 @@ public final class TranslationBatchGenerator {
     private static List<File> existingFiles() {
         final File batch = TranslationBatchGenerator.existingBatch();
         if (batch.exists() && batch.isDirectory()) {
-            return HartshornUtils.asList(batch.listFiles()).stream()
+            return List.of(batch.listFiles()).stream()
                     .filter(f -> !f.isDirectory())
                     .toList();
         }
@@ -174,7 +175,7 @@ public final class TranslationBatchGenerator {
     }
 
     public static Map<String, String> collect(final ApplicationContext context) {
-        final Map<String, String> batch = HartshornUtils.emptyMap();
+        final Map<String, String> batch = new HashMap<>();
         for (final ComponentContainer container : context.locator().containers()) {
             final TypeContext<?> type = container.type();
             final List<? extends MethodContext<?, ?>> methods = type.methods(InjectTranslation.class);

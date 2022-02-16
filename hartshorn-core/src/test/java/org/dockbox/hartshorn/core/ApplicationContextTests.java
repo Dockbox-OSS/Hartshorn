@@ -1,18 +1,17 @@
 /*
- * Copyright (C) 2020 Guus Lieben
+ * Copyright 2019-2022 the original author or authors.
  *
- * This framework is free software; you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation, either version 2.1 of the
- * License, or (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See
- * the GNU Lesser General Public License for more details.
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.dockbox.hartshorn.core;
@@ -20,11 +19,11 @@ package org.dockbox.hartshorn.core;
 import org.dockbox.hartshorn.core.annotations.activate.UseServiceProvision;
 import org.dockbox.hartshorn.core.boot.EmptyService;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
-import org.dockbox.hartshorn.core.context.HartshornApplicationContext;
+import org.dockbox.hartshorn.core.context.StandardDelegatingApplicationContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 import org.dockbox.hartshorn.core.exceptions.CyclicComponentException;
-import org.dockbox.hartshorn.core.proxy.ExtendedProxy;
+import org.dockbox.hartshorn.core.proxy.AbstractProxy;
 import org.dockbox.hartshorn.core.types.CircularConstructorA;
 import org.dockbox.hartshorn.core.types.CircularConstructorB;
 import org.dockbox.hartshorn.core.types.CircularDependencyA;
@@ -32,6 +31,7 @@ import org.dockbox.hartshorn.core.types.CircularDependencyB;
 import org.dockbox.hartshorn.core.types.ComponentType;
 import org.dockbox.hartshorn.core.types.ContextInjectedType;
 import org.dockbox.hartshorn.core.types.NonComponentType;
+import org.dockbox.hartshorn.core.types.NonProcessableType;
 import org.dockbox.hartshorn.core.types.NonProxyComponentType;
 import org.dockbox.hartshorn.core.types.Person;
 import org.dockbox.hartshorn.core.types.SampleContext;
@@ -42,11 +42,13 @@ import org.dockbox.hartshorn.core.types.TypeWithEnabledInjectField;
 import org.dockbox.hartshorn.core.types.TypeWithFailingConstructor;
 import org.dockbox.hartshorn.core.types.User;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
+import org.dockbox.hartshorn.testsuite.InjectTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.slf4j.Logger;
 
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -60,6 +62,7 @@ import test.types.SampleFieldImplementation;
 import test.types.SampleImplementation;
 import test.types.SampleInterface;
 import test.types.meta.SampleMetaAnnotatedImplementation;
+import test.types.provision.FieldProviderService;
 import test.types.provision.ProvidedInterface;
 import test.types.scan.SampleAnnotatedImplementation;
 
@@ -75,8 +78,8 @@ public class ApplicationContextTests {
         return Stream.of(
                 Arguments.of(null, "Provision", false, null, false),
                 Arguments.of("named", "NamedProvision", false, null, false),
-                Arguments.of("field", "FieldProvision", true, null, false),
-                Arguments.of("namedField", "NamedFieldProvision", true, "named", false),
+                Arguments.of("parameter", "ParameterProvision", true, null, false),
+                Arguments.of("namedParameter", "NamedParameterProvision", true, "named", false),
                 Arguments.of("singleton", "SingletonProvision", false, null, true)
         );
     }
@@ -88,14 +91,14 @@ public class ApplicationContextTests {
 
     @Test
     void testMethodCanDelegateToImplementation() {
-        final ExtendedProxy extendedProxy = this.applicationContext().get(ExtendedProxy.class);
-        Assertions.assertEquals("concrete", extendedProxy.name());
+        final AbstractProxy abstractProxy = this.applicationContext().get(AbstractProxy.class);
+        Assertions.assertEquals("concrete", abstractProxy.name());
     }
 
     @Test
     void testMethodOverrideDoesNotDelegateToImplementation() {
-        final ExtendedProxy extendedProxy = this.applicationContext().get(ExtendedProxy.class);
-        Assertions.assertEquals(21, extendedProxy.age());
+        final AbstractProxy abstractProxy = this.applicationContext().get(AbstractProxy.class);
+        Assertions.assertEquals(21, abstractProxy.age());
     }
 
     @Test
@@ -178,7 +181,7 @@ public class ApplicationContextTests {
         // This is a bit of a hack, but we need to ensure that the prefix binding is present and processed. Usually
         // you'd do this through a service activator.
         this.applicationContext().bind("test.types.scan");
-        ((HartshornApplicationContext) this.applicationContext()).process();
+        ((StandardDelegatingApplicationContext) this.applicationContext()).process();
 
         final SampleInterface provided = this.applicationContext().get(SampleInterface.class);
         Assertions.assertNotNull(provided);
@@ -194,7 +197,7 @@ public class ApplicationContextTests {
         // This is a bit of a hack, but we need to ensure that the prefix binding is present and processed. Usually
         // you'd do this through a service activator.
         this.applicationContext().bind("test.types.meta");
-        ((HartshornApplicationContext) this.applicationContext()).process();
+        ((StandardDelegatingApplicationContext) this.applicationContext()).process();
 
         // Ensure that the binding is not bound to the default name
         final SampleInterface sample = this.applicationContext().get(SampleInterface.class);
@@ -254,7 +257,7 @@ public class ApplicationContextTests {
         // This is a bit of a hack, but we need to ensure that the prefix binding is present and processed. Usually
         // you'd do this through a service activator.
         this.applicationContext().bind("test.types.provision");
-        ((HartshornApplicationContext) this.applicationContext()).process();
+        ((StandardDelegatingApplicationContext) this.applicationContext()).process();
 
         if (field) {
             if (fieldMeta == null) {this.applicationContext().bind(Key.of(SampleField.class), SampleFieldImplementation.class);}
@@ -277,6 +280,29 @@ public class ApplicationContextTests {
             Assertions.assertNotNull(second);
             Assertions.assertSame(provided, second);
         }
+    }
+
+    @Test
+    void testFieldProviders() {
+        this.applicationContext().bind("test.types.provision");
+        ((StandardDelegatingApplicationContext) this.applicationContext()).process();
+        final ProvidedInterface field = this.applicationContext().get(Key.of(ProvidedInterface.class, "field"));
+        Assertions.assertNotNull(field);
+        Assertions.assertEquals("Field", field.name());
+    }
+
+    @Test
+    void testSingletonFieldProviders() {
+        this.applicationContext().bind("test.types.provision");
+        ((StandardDelegatingApplicationContext) this.applicationContext()).process();
+        this.applicationContext().get(FieldProviderService.class);
+        final ProvidedInterface field = this.applicationContext().get(Key.of(ProvidedInterface.class, "singletonField"));
+        Assertions.assertNotNull(field);
+
+        final ProvidedInterface field2 = this.applicationContext().get(Key.of(ProvidedInterface.class, "singletonField"));
+        Assertions.assertNotNull(field2);
+
+        Assertions.assertSame(field, field2);
     }
 
     @Test
@@ -388,5 +414,25 @@ public class ApplicationContextTests {
         Assertions.assertNotNull(component);
         Assertions.assertNotNull(component.context());
         Assertions.assertSame(sampleContext, component.context());
+    }
+
+    @InjectTest
+    void loggerCanBeInjected(final Logger logger) {
+        Assertions.assertNotNull(logger);
+    }
+
+    @Test
+    void testStringProvision() {
+        final Key<String> key = Key.of(String.class, "license");
+        this.applicationContext.bind(key, "MIT");
+        final String license = this.applicationContext.get(key);
+        Assertions.assertEquals("MIT", license);
+    }
+
+    @Test
+    void testNonProcessableComponent() {
+        final NonProcessableType nonProcessableType = this.applicationContext().get(NonProcessableType.class);
+        Assertions.assertNotNull(nonProcessableType);
+        Assertions.assertNull(nonProcessableType.nonNullIfProcessed());
     }
 }

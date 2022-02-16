@@ -1,18 +1,17 @@
 /*
- * Copyright (C) 2020 Guus Lieben
+ * Copyright 2019-2022 the original author or authors.
  *
- * This framework is free software; you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation, either version 2.1 of the
- * License, or (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See
- * the GNU Lesser General Public License for more details.
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.dockbox.hartshorn.core;
@@ -20,79 +19,91 @@ package org.dockbox.hartshorn.core;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class MultiMap<K, V> {
 
-    private final Map<K, Collection<V>> map = HartshornUtils.emptyMap();
+    protected Map<K, Collection<V>> map;
+
+    protected Map<K, Collection<V>> map() {
+        if (this.map == null) {
+            this.map = new ConcurrentHashMap<>();
+        }
+        return this.map;
+    }
 
     protected abstract Collection<V> baseCollection();
+
+    public Collection<V> allValues() {
+        return this.values().stream().flatMap(Collection::stream).toList();
+    }
 
     public void putAll(final K key, final Collection<V> values) {
         values.forEach(v -> this.put(key, v));
     }
 
     public void put(final K key, final V value) {
-        this.map.computeIfAbsent(key, k -> this.baseCollection()).add(value);
+        this.map().computeIfAbsent(key, k -> this.baseCollection()).add(value);
     }
 
     public void putIfAbsent(final K key, final V value) {
-        this.map.computeIfAbsent(key, k -> this.baseCollection());
-        if (!this.map.get(key).contains(value)) {
-            this.map.get(key).add(value);
+        this.map().computeIfAbsent(key, k -> this.baseCollection());
+        if (!this.map().get(key).contains(value)) {
+            this.map().get(key).add(value);
         }
     }
 
     public Collection<V> get(final K key) {
-        return this.map.getOrDefault(key, this.baseCollection());
+        return this.map().getOrDefault(key, this.baseCollection());
     }
 
     public Set<K> keySet() {
-        return this.map.keySet();
+        return this.map().keySet();
     }
 
     public Set<Map.Entry<K, Collection<V>>> entrySet() {
-        return this.map.entrySet();
+        return this.map().entrySet();
     }
 
     public Collection<Collection<V>> values() {
-        return this.map.values();
+        return this.map().values();
     }
 
     public boolean containsKey(final K key) {
-        return this.map.containsKey(key);
+        return this.map().containsKey(key);
     }
 
     public Collection<V> remove(final K key) {
-        return this.map.remove(key);
+        return this.map().remove(key);
     }
 
     public int size() {
         int size = 0;
-        for (final Collection<V> value : this.map.values()) {
+        for (final Collection<V> value : this.map().values()) {
             size += value.size();
         }
         return size;
     }
 
     public boolean isEmpty() {
-        return this.map.isEmpty();
+        return this.map().isEmpty();
     }
 
     public void clear() {
-        this.map.clear();
+        this.map().clear();
     }
 
     public boolean remove(final K key, final V value) {
-        if (this.map.get(key) != null)
-            return this.map.get(key).remove(value);
+        if (this.map().get(key) != null)
+            return this.map().get(key).remove(value);
 
         return false;
     }
 
     public boolean replace(final K key, final V oldValue, final V newValue) {
-        if (this.map.get(key) != null) {
-            if (this.map.get(key).remove(oldValue)) {
-                return this.map.get(key).add(newValue);
+        if (this.map().get(key) != null) {
+            if (this.map().get(key).remove(oldValue)) {
+                return this.map().get(key).add(newValue);
             }
         }
         return false;

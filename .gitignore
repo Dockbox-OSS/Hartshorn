@@ -18,3 +18,4 @@ module/src/test/resources/storage.db-journal
 *.log
 .jpb
 hartshorn-assembly/publications
+*/generated

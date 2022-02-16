@@ -1,35 +1,35 @@
 /*
- * Copyright (C) 2020 Guus Lieben
+ * Copyright 2019-2022 the original author or authors.
  *
- * This framework is free software; you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation, either version 2.1 of the
- * License, or (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See
- * the GNU Lesser General Public License for more details.
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.dockbox.hartshorn.data.service;
 
 import org.dockbox.hartshorn.core.annotations.activate.AutomaticActivation;
-import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
+import org.dockbox.hartshorn.core.context.MethodProxyContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
+import org.dockbox.hartshorn.core.domain.Exceptional;
+import org.dockbox.hartshorn.core.proxy.MethodInterceptor;
 import org.dockbox.hartshorn.core.services.ComponentContainer;
+import org.dockbox.hartshorn.core.services.ComponentProcessingContext;
 import org.dockbox.hartshorn.data.DataStorageType;
 import org.dockbox.hartshorn.data.annotations.Serialise;
 import org.dockbox.hartshorn.data.context.PersistenceAnnotationContext;
 import org.dockbox.hartshorn.data.context.SerialisationContext;
 import org.dockbox.hartshorn.data.context.SerialisationTarget;
 import org.dockbox.hartshorn.data.mapping.ObjectMapper;
-import org.dockbox.hartshorn.core.proxy.ProxyFunction;
-import org.dockbox.hartshorn.core.context.MethodProxyContext;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -38,10 +38,10 @@ import java.nio.file.Path;
 public class SerialisationServicePostProcessor extends AbstractPersistenceServicePostProcessor<Serialise, SerialisationContext> {
 
     @Override
-    protected <T, R> ProxyFunction<T, R> processAnnotatedPath(final ApplicationContext context, final MethodProxyContext<T> methodContext, final SerialisationContext serialisationContext) {
-        return (instance, args, proxyContext) -> {
+    protected <T, R> MethodInterceptor<T> processAnnotatedPath(final ApplicationContext context, final MethodProxyContext<T> methodContext, final SerialisationContext serialisationContext) {
+        return interceptorContext -> {
             final Path target = serialisationContext.predeterminedPath();
-            final Object content = args[0];
+            final Object content = interceptorContext.args()[0];
             final ObjectMapper objectMapper = this.mapper(context, serialisationContext);
             final Exceptional<Boolean> result = objectMapper.write(target, content);
             return this.wrapBooleanResult(result, methodContext);
@@ -49,11 +49,11 @@ public class SerialisationServicePostProcessor extends AbstractPersistenceServic
     }
 
     @Override
-    protected <T, R> ProxyFunction<T, R> processParameterPath(final ApplicationContext context, final MethodProxyContext<T> methodContext, final SerialisationContext serialisationContext) {
-        return (instance, args, proxyContext) -> {
+    protected <T, R> MethodInterceptor<T> processParameterPath(final ApplicationContext context, final MethodProxyContext<T> methodContext, final SerialisationContext serialisationContext) {
+        return interceptorContext -> {
             Path target = null;
             Object content = null;
-            for (final Object arg : args) {
+            for (final Object arg : interceptorContext.args()) {
                 if (arg instanceof Path) target = (Path) arg;
                 else if (arg instanceof File) target = ((File) arg).toPath();
                 else content = arg;
@@ -68,9 +68,9 @@ public class SerialisationServicePostProcessor extends AbstractPersistenceServic
     }
 
     @Override
-    protected <T, R> ProxyFunction<T, R> processString(final ApplicationContext context, final MethodProxyContext<T> methodContext, final SerialisationContext serialisationContext) {
-        return (instance, args, proxyContext) -> {
-            final Object content = args[0];
+    protected <T, R> MethodInterceptor<T> processString(final ApplicationContext context, final MethodProxyContext<T> methodContext, final SerialisationContext serialisationContext) {
+        return interceptorContext -> {
+            final Object content = interceptorContext.args()[0];
             final ObjectMapper objectMapper = this.mapper(context, serialisationContext);
 
             final Exceptional<String> result = objectMapper.write(content);
@@ -95,7 +95,7 @@ public class SerialisationServicePostProcessor extends AbstractPersistenceServic
     }
 
     @Override
-    public <T> boolean preconditions(final ApplicationContext context, final MethodProxyContext<T> methodContext) {
+    public <T> boolean preconditions(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext processingContext) {
         if (methodContext.method().parameterCount() < 1) return false;
 
         final Serialise annotation = methodContext.annotation(Serialise.class);

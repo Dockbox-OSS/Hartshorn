@@ -1,0 +1,6 @@
+junit:
+  cp: "This is a value"
+  list:
+    - 1
+    - 5
+    - 3

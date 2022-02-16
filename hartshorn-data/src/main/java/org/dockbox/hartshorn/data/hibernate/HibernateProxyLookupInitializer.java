@@ -1,26 +1,25 @@
 /*
- * Copyright (C) 2020 Guus Lieben
+ * Copyright 2019-2022 the original author or authors.
  *
- * This framework is free software; you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation, either version 2.1 of the
- * License, or (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See
- * the GNU Lesser General Public License for more details.
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.dockbox.hartshorn.data.hibernate;
 
 import org.dockbox.hartshorn.core.annotations.stereotype.Service;
 import org.dockbox.hartshorn.core.boot.ApplicationManager;
-import org.dockbox.hartshorn.core.boot.HartshornApplicationManager;
-import org.dockbox.hartshorn.core.boot.JavassistApplicationProxier;
+import org.dockbox.hartshorn.core.boot.DelegatingApplicationManager;
+import org.dockbox.hartshorn.core.boot.HartshornApplicationProxier;
 import org.dockbox.hartshorn.core.boot.LifecycleObserver;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.data.annotations.UsePersistence;
@@ -31,8 +30,8 @@ public class HibernateProxyLookupInitializer implements LifecycleObserver {
     @Override
     public void onStarted(final ApplicationContext applicationContext) {
         final ApplicationManager manager = applicationContext.environment().manager();
-        if (manager instanceof HartshornApplicationManager applicationManager) {
-            if (applicationManager.applicationProxier() instanceof JavassistApplicationProxier applicationProxier) {
+        if (manager instanceof DelegatingApplicationManager applicationManager) {
+            if (applicationManager.applicationProxier() instanceof HartshornApplicationProxier applicationProxier) {
                 applicationProxier.registerProxyLookup(new HibernateProxyLookup());
             }
         }

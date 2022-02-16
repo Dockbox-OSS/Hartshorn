@@ -1,26 +1,25 @@
 /*
- * Copyright (C) 2020 Guus Lieben
+ * Copyright 2019-2022 the original author or authors.
  *
- * This framework is free software; you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation, either version 2.1 of the
- * License, or (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See
- * the GNU Lesser General Public License for more details.
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.dockbox.hartshorn.core.context.element;
 
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.core.ArrayListMultiMap;
+import org.dockbox.hartshorn.core.CollectionUtilities;
 import org.dockbox.hartshorn.core.GenericType;
-import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.core.MultiMap;
 import org.dockbox.hartshorn.core.annotations.inject.Bound;
 import org.dockbox.hartshorn.core.boot.ExceptionHandler;
@@ -32,6 +31,7 @@ import org.dockbox.hartshorn.core.exceptions.ApplicationException;
 import org.dockbox.hartshorn.core.exceptions.NotPrimitiveException;
 import org.dockbox.hartshorn.core.exceptions.TypeConversionException;
 
+import java.beans.PropertyDescriptor;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -43,6 +43,7 @@ import java.lang.reflect.Type;
 import java.lang.reflect.WildcardType;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -57,7 +58,6 @@ import javax.inject.Inject;
 import javassist.util.proxy.ProxyFactory;
 import lombok.Getter;
 
-// skipcq: JAVA-W0100
 public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
 
     private static final Map<Class<?>, TypeContext<?>> CACHE = new ConcurrentHashMap<>();
@@ -73,7 +73,7 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
             */
             "__$lineHits$__"
     );
-    private static final Map<Class<?>, Class<?>> PRIMITIVE_WRAPPERS = HartshornUtils.ofEntries(
+    private static final Map<Class<?>, Class<?>> PRIMITIVE_WRAPPERS = CollectionUtilities.ofEntries(
             Tuple.of(boolean.class, Boolean.class),
             Tuple.of(byte.class, Byte.class),
             Tuple.of(char.class, Character.class),
@@ -83,7 +83,7 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
             Tuple.of(long.class, Long.class),
             Tuple.of(short.class, Short.class)
     );
-    private static final Map<?, Function<String, ?>> PRIMITIVE_FROM_STRING = HartshornUtils.ofEntries(
+    private static final Map<?, Function<String, ?>> PRIMITIVE_FROM_STRING = CollectionUtilities.ofEntries(
             Tuple.of(boolean.class, Boolean::valueOf),
             Tuple.of(byte.class, Byte::valueOf),
             Tuple.of(char.class, s -> s.charAt(0)),
@@ -93,13 +93,13 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
             Tuple.of(long.class, Long::valueOf),
             Tuple.of(short.class, Short::valueOf)
     );
-    private static final List<Class<?>> NATIVE_SUPPORTED = HartshornUtils.asList(
+    private static final List<Class<?>> NATIVE_SUPPORTED = List.of(
             boolean.class, byte.class, short.class,
             int.class, long.class, float.class, double.class,
             byte[].class, int[].class, long[].class,
             String.class, List.class, Map.class
     );
-    private static final Map<Class<?>, Object> PRIMITIVE_DEFAULTS = HartshornUtils.ofEntries(
+    private static final Map<Class<?>, Object> PRIMITIVE_DEFAULTS = CollectionUtilities.ofEntries(
             Tuple.of(boolean.class, false),
             Tuple.of(byte.class, 0),
             Tuple.of(char.class, '\u0000'),
@@ -109,7 +109,7 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
             Tuple.of(long.class, 0L),
             Tuple.of(short.class, 0)
     );
-    private static final Map<Class<?>, Class<?>> WRAPPERS_TO_PRIMITIVE = HartshornUtils.ofEntries(
+    private static final Map<Class<?>, Class<?>> WRAPPERS_TO_PRIMITIVE = CollectionUtilities.ofEntries(
             Tuple.of(Boolean.class, boolean.class),
             Tuple.of(Byte.class, byte.class),
             Tuple.of(Character.class, char.class),
@@ -177,6 +177,12 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
             return (TypeContext<T>) VOID;
         }
         return of((Class<T>) instance.getClass());
+    }
+
+    public static <T> TypeContext<T> of(final Type type) {
+        if (type instanceof Class<?>) return of((Class<T>) type);
+        if (type instanceof ParameterizedType parameterizedType) return of((ParameterizedType) type);
+        throw new RuntimeException("Unexpected type " + type);
     }
 
     public static <T> TypeContext<T> of(final Class<T> type) {
@@ -326,7 +332,12 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
                 .filter(type -> type instanceof Class || type instanceof WildcardType || type instanceof ParameterizedType)
                 .map(type -> {
                     if (type instanceof Class clazz) return TypeContext.of(clazz);
-                    else if (type instanceof WildcardType wildcard) return WildcardTypeContext.create();
+                    else if (type instanceof WildcardType wildcard) {
+                        if (wildcard.getUpperBounds() != null && wildcard.getUpperBounds().length > 0) {
+                            return TypeContext.of(wildcard.getUpperBounds()[0]);
+                        }
+                        return WildcardTypeContext.create();
+                    }
                     else if (type instanceof ParameterizedType parameterized) return TypeContext.of(parameterized);
                     else return TypeContext.VOID;
                 })
@@ -606,7 +617,7 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
     protected Map<Class<?>, Annotation> validate() {
         if (this.parent().isVoid()) return super.validate();
         else if (this.annotations == null) {
-            final Map<Class<?>, Annotation> annotations = HartshornUtils.emptyMap();
+            final Map<Class<?>, Annotation> annotations = new HashMap<>();
             Class<?> type = this.type();
             while (type != null) {
                 for (final Annotation annotation : type.getDeclaredAnnotations()) {
@@ -650,5 +661,14 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
 
     public boolean isDeclaredIn(final String prefix) {
         return this.type().getPackageName().startsWith(prefix);
+    }
+
+    public PropertyDescriptor[] propertyDescriptors() {
+        // TODO
+        return new PropertyDescriptor[0];
+    }
+
+    public @Nullable PropertyDescriptor propertyDescriptor(final String propertyName) {
+        return null;
     }
 }

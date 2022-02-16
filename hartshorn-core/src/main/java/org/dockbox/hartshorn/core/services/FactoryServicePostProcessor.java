@@ -1,25 +1,24 @@
 /*
- * Copyright (C) 2020 Guus Lieben
+ * Copyright 2019-2022 the original author or authors.
  *
- * This framework is free software; you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation, either version 2.1 of the
- * License, or (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See
- * the GNU Lesser General Public License for more details.
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.dockbox.hartshorn.core.services;
 
 import org.dockbox.hartshorn.core.annotations.Factory;
-import org.dockbox.hartshorn.core.annotations.inject.Enable;
 import org.dockbox.hartshorn.core.annotations.activate.AutomaticActivation;
+import org.dockbox.hartshorn.core.annotations.inject.Enable;
 import org.dockbox.hartshorn.core.annotations.stereotype.Service;
 import org.dockbox.hartshorn.core.boot.ExceptionHandler;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
@@ -27,11 +26,12 @@ import org.dockbox.hartshorn.core.context.FactoryContext;
 import org.dockbox.hartshorn.core.context.MethodProxyContext;
 import org.dockbox.hartshorn.core.context.element.ConstructorContext;
 import org.dockbox.hartshorn.core.context.element.MethodContext;
+import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.exceptions.ApplicationException;
-import org.dockbox.hartshorn.core.proxy.ProxyFunction;
+import org.dockbox.hartshorn.core.proxy.MethodInterceptor;
 
 @AutomaticActivation
-public class FactoryServicePostProcessor extends ServiceAnnotatedMethodPostProcessor<Factory, Service> {
+public class FactoryServicePostProcessor extends ServiceAnnotatedMethodInterceptorPostProcessor<Factory, Service> {
 
     @Override
     public Class<Service> activator() {
@@ -44,21 +44,32 @@ public class FactoryServicePostProcessor extends ServiceAnnotatedMethodPostProce
     }
 
     @Override
-    public <T> boolean preconditions(final ApplicationContext context, final MethodProxyContext<T> methodContext) {
+    public <T> boolean preconditions(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext processingContext) {
         return !methodContext.method().returnType().isVoid();
     }
 
     @Override
-    public <T, R> ProxyFunction<T, R> process(final ApplicationContext context, final MethodProxyContext<T> methodContext) {
+    public <T, R> MethodInterceptor<T> process(final ApplicationContext context, final MethodProxyContext<T> methodContext, final ComponentProcessingContext processingContext) {
         final MethodContext<?, T> method = methodContext.method();
         final boolean enable = method.annotation(Enable.class).map(Enable::value).or(true);
         if (method.isAbstract()) {
             final FactoryContext factoryContext = context.first(FactoryContext.class).get();
-            final ConstructorContext<?> constructor = factoryContext.get(method);
-            return (instance, args, proxyContext) -> this.processInstance(context, (R) constructor.createInstance(args).orNull(), enable);
+
+            final Exceptional<? extends ConstructorContext<?>> constructorCandidate = factoryContext.get(method);
+            if (constructorCandidate.present()) {
+                final ConstructorContext<?> constructor = constructorCandidate.get();
+                return interceptorContext -> this.processInstance(context, (R) constructor.createInstance(interceptorContext.args()).orNull(), enable);
+            } else {
+                final Factory factory = method.annotation(Factory.class).get();
+                if (factory.required()) {
+                    throw new IllegalStateException("No factory found for " + method.qualifiedName());
+                } else {
+                    return interceptorContext -> null;
+                }
+            }
         }
         else {
-            return (instance, args, proxyContext) -> this.processInstance(context, (R) methodContext.method().invoke(instance, args).orNull(), enable);
+            return interceptorContext -> this.processInstance(context, (R) methodContext.method().invoke(interceptorContext.instance(), interceptorContext.args()).orNull(), enable);
         }
     }
 
@@ -73,7 +84,7 @@ public class FactoryServicePostProcessor extends ServiceAnnotatedMethodPostProce
     }
 
     @Override
-    public ProcessingOrder order() {
+    public Integer order() {
         return ProcessingOrder.LAST;
     }
 }

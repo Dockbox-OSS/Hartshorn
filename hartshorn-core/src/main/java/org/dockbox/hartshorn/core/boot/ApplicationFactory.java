@@ -1,18 +1,17 @@
 /*
- * Copyright (C) 2020 Guus Lieben
+ * Copyright 2019-2022 the original author or authors.
  *
- * This framework is free software; you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation, either version 2.1 of the
- * License, or (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See
- * the GNU Lesser General Public License for more details.
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.dockbox.hartshorn.core.boot;
@@ -25,6 +24,8 @@ import org.dockbox.hartshorn.core.annotations.activate.ServiceActivator;
 import org.dockbox.hartshorn.core.context.ActivatorSource;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.ApplicationEnvironment;
+import org.dockbox.hartshorn.core.context.ComponentPopulator;
+import org.dockbox.hartshorn.core.context.ComponentProvider;
 import org.dockbox.hartshorn.core.context.PrefixContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.services.ComponentLocator;
@@ -212,6 +213,24 @@ public interface ApplicationFactory<Self extends ApplicationFactory<Self, C>, C 
      * @see PrefixContext
      */
     Self prefixContext(Function<ApplicationManager, PrefixContext> prefixContext);
+
+    /**
+     * Sets the {@link ComponentProvider} to use. The component provider is responsible for providing components and services
+     * to the application. This acts as the primary component provider.
+     *
+     * @param componentProvider The component provider to use.
+     * @return The {@link ApplicationFactory} instance.
+     */
+    Self componentProvider(Function<ApplicationContext, ComponentProvider> componentProvider);
+
+    /**
+     * Sets the {@link ComponentPopulator} to use. The component populator is responsible for populating components and services
+     * created by the component provider.
+     *
+     * @param componentPopulator The component populator to use.
+     * @return The {@link ApplicationFactory} instance.
+     */
+    Self componentPopulator(Function<ApplicationContext, ComponentPopulator> componentPopulator);
 
     /**
      * Registers a custom {@link ComponentPostProcessor}. Unlike automatically activated {@link ComponentPostProcessor}s,

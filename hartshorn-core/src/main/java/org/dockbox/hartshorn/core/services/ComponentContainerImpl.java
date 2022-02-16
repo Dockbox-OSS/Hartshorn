@@ -1,27 +1,24 @@
 /*
- * Copyright (C) 2020 Guus Lieben
+ * Copyright 2019-2022 the original author or authors.
  *
- * This framework is free software; you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation, either version 2.1 of the
- * License, or (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See
- * the GNU Lesser General Public License for more details.
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.dockbox.hartshorn.core.services;
 
 import org.dockbox.hartshorn.core.ComponentType;
-import org.dockbox.hartshorn.core.HartshornUtils;
 import org.dockbox.hartshorn.core.annotations.stereotype.Component;
 import org.dockbox.hartshorn.core.annotations.stereotype.Service;
-import org.dockbox.hartshorn.core.annotations.activate.ServiceActivator;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.element.TypeContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
@@ -30,6 +27,7 @@ import java.lang.annotation.Annotation;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import lombok.Getter;
@@ -52,27 +50,22 @@ public class ComponentContainerImpl implements ComponentContainer {
 
         final Exceptional<Service> service = component.annotation(Service.class);
         if (service.present()) {
-            this.activators.addAll(HartshornUtils.asList(service.get().activators()));
+            this.activators.addAll(List.of(service.get().activators()));
         }
     }
 
     @Override
     public String id() {
-        final String id = this.annotation.id();
-        if ("".equals(id)) return ComponentContainer.id(this.context, this.component, true);
+        final String id = this.annotation().id();
+        if ("".equals(id)) return ComponentUtilities.id(this.context, this.component, true);
         return id;
     }
 
     @Override
     public String name() {
-        final String name = this.annotation.name();
-        if ("".equals(name)) return ComponentContainer.name(this.context, this.component, true);
+        final String name = this.annotation().name();
+        if ("".equals(name)) return ComponentUtilities.name(this.context, this.component, true);
         return name;
-    }
-
-    @Override
-    public boolean enabled() {
-        return this.annotation.enabled();
     }
 
     @Override
@@ -82,7 +75,7 @@ public class ComponentContainerImpl implements ComponentContainer {
 
     @Override
     public TypeContext<?> owner() {
-        return TypeContext.of(this.annotation.owner());
+        return TypeContext.of(this.annotation().owner());
     }
 
     @Override
@@ -91,31 +84,33 @@ public class ComponentContainerImpl implements ComponentContainer {
     }
 
     @Override
-    public boolean hasActivator() {
-        return !(this.activators.isEmpty() || (this.activators.size() == 1 && Service.class.equals(this.activators.get(0))));
-    }
-
-    @Override
-    public boolean hasActivator(final Class<? extends Annotation> activator) {
-        if (!TypeContext.of(activator).annotation(ServiceActivator.class).present())
-            throw new IllegalArgumentException("Requested activator " + activator.getSimpleName() + " is not decorated with @ServiceActivator");
-
-        return this.activators().contains(activator);
-    }
-
-    @Override
     public boolean singleton() {
-        return this.annotation.singleton();
+        return this.annotation().singleton();
+    }
+
+    @Override
+    public boolean lazy() {
+        return this.annotation().lazy();
     }
 
     @Override
     public ComponentType componentType() {
-        return this.annotation.type();
+        return this.annotation().type();
     }
 
     @Override
     public boolean permitsProxying() {
-        return this.annotation.permitProxying();
+        return this.permitsProcessing() && this.annotation().permitProxying();
+    }
+
+    @Override
+    public boolean permitsProcessing() {
+        return this.annotation().permitProcessing();
+    }
+
+    @Override
+    public Set<String> requiredTypes() {
+        return Set.of(this.annotation().requires());
     }
 
     @Override

@@ -1,38 +1,42 @@
 /*
- * Copyright (C) 2020 Guus Lieben
+ * Copyright 2019-2022 the original author or authors.
  *
- * This framework is free software; you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation, either version 2.1 of the
- * License, or (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See
- * the GNU Lesser General Public License for more details.
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.dockbox.hartshorn.core.services;
 
-public enum ProcessingOrder {
-    FIRST, EARLY, NORMAL, LATE, LAST;
+import java.util.function.Predicate;
 
-    public static final ProcessingOrder[] VALUES = ProcessingOrder.values();
+public class ProcessingOrder {
+
+    public static final int FIRST = -256;
+    public static final int EARLY = -128;
+    public static final int NORMAL = 0;
+    public static final int LATE = 128;
+    public static final int LAST = 256;
 
     /**
      * Indicates which service orders can be performed during phase 1. During this phase, component
      * processors are allowed to discard existing instances and return new ones. This can be used to
      * create proxy instances.
      */
-    public static final ProcessingOrder[] PHASE_1 = new ProcessingOrder[] {FIRST, EARLY};
+    public static final Predicate<Integer> PHASE_1 = i -> i < 0;
 
     /**
      * Indicates which service orders can be performed during phase 2. During this phase, component
      * processors are not allowed to discard existing instances and return new ones. This limits the
      * behavior of these processors to only return the same instance, albeit with different state.
      */
-    public static final ProcessingOrder[] PHASE_2 = new ProcessingOrder[] {NORMAL, LATE, LAST};
+    public static final Predicate<Integer> PHASE_2 = i -> i >= 0;
 }

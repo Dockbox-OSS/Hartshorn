@@ -1,18 +1,17 @@
 /*
- * Copyright (C) 2020 Guus Lieben
+ * Copyright 2019-2022 the original author or authors.
  *
- * This framework is free software; you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation, either version 2.1 of the
- * License, or (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See
- * the GNU Lesser General Public License for more details.
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.dockbox.hartshorn.core.annotations.stereotype;
@@ -37,7 +36,7 @@ import java.lang.annotation.Target;
  * <ul>
  *     <li>{@link #id()} - The unique identifier of the component. This is used to identify the component in the framework.
  *         If not specified, the type of the component is used to generate a valid ID through
- *         {@link org.dockbox.hartshorn.core.services.ComponentContainer#id(ApplicationContext, TypeContext)}</li>
+ *         {@link org.dockbox.hartshorn.core.services.ComponentUtilities#id(ApplicationContext, TypeContext)}</li>
  *     <li>{@link #name()} - The name of the component. This is used to identify the component in the framework. If not
  *         specified, the name of the class is used.</li>
  *     <li>{@link #owner()} - The owner of the component. This is typically ignored internally, but can be used by services
@@ -46,8 +45,6 @@ import java.lang.annotation.Target;
  *         there will only ever be one managed instance of the component known to the active {@link ApplicationContext}.</li>
  *     <li>{@link #type()} - The type of the component. This is used to indicate whether the component is a functional
  *         component, and thus modifiable, or if it should only be injected into.</li>
- *     <li>{@link #enabled()} - Indicates whether the component should be automatically enabled. By default, this only
- *         modifies the activation through the active {@link org.dockbox.hartshorn.core.services.ComponentLocator}.</li>
  * </ul>
  *
  * <p>The following example shows how to annotate a class as a component:
@@ -74,7 +71,7 @@ public @interface Component {
     /**
      * The unique identifier of the component. This is used to identify the component in the framework.
      * If not specified, the type of the component is used to generate a valid ID through
-     * {@link org.dockbox.hartshorn.core.services.ComponentContainer#id(ApplicationContext, TypeContext)}
+     * {@link org.dockbox.hartshorn.core.services.ComponentUtilities#id(ApplicationContext, TypeContext)}
      *
      * @return The unique identifier of the component
      * @see ComponentContainer#id()
@@ -109,6 +106,17 @@ public @interface Component {
     boolean singleton() default false;
 
     /**
+     * Indicates whether a component should be created after the application context has been initialized.
+     * When this is {@code true} the component will be created after the application context has been
+     * initialized, as long as {@link #singleton()} is {@code true}. If {@link #singleton()} is {@code false},
+     * the component will always be lazy-loaded.
+     *
+     * @return {@code true} if the component should be created after the application context has been initialized
+     * @see ComponentContainer#lazy()
+     */
+    boolean lazy() default true;
+
+    /**
      * The type of the component. This is used to indicate whether the component is a functional
      * component, and thus modifiable, or if it should only be injected into.
      *
@@ -118,18 +126,6 @@ public @interface Component {
     ComponentType type() default ComponentType.INJECTABLE;
 
     /**
-     * Indicates whether the component should be automatically enabled. By default, this only
-     * modifies the activation through the active {@link org.dockbox.hartshorn.core.services.ComponentLocator}.
-     *
-     * @return {@code true} if the component should be automatically enabled
-     * @see ComponentContainer#enabled()
-     * @deprecated No longer used, as the {@link org.dockbox.hartshorn.core.services.ComponentLocator}
-     *             is responsible for enabling components.
-     */
-    @Deprecated(since = "22.1", forRemoval = true)
-    boolean enabled() default true;
-
-    /**
      * Indicates whether the component should be allowed to be proxied. Proxied components may be modified by changing
      * the behavior of the proxy.
      *
@@ -137,4 +133,26 @@ public @interface Component {
      * @see ComponentContainer#permitsProxying()
      */
     boolean permitProxying() default true;
+
+    /**
+     * Indicates whether the component should be allowed to be processed by {@link org.dockbox.hartshorn.core.services.ComponentProcessor}s.
+     * Processed components may be modified by changing the behavior or content of the component.
+     *
+     * @return {@code true} if the component should be processed
+     */
+    boolean permitProcessing() default true;
+
+    /**
+     * Indicates one or more prefixed types which are required to be present on the classpath in order for the component
+     * to be loaded. This is used to prevent components from being loaded when they are not required. If one or more types
+     * are specified, the component will only be loaded if all the types are present on the classpath. If no types
+     * are specified, the component will always be loaded (assuming other conditions are met).
+     *
+     * <p>This requires the fully qualified class name to be specified. For example, if the class is named
+     * {@code com.example.MyComponent}, the type would be {@code com.example.MyComponent}. {@code MyComponent} or
+     * {@code com.example.MyComponent.class} are not valid.
+     *
+     * @return The required types.
+     */
+    String[] requires() default {};
 }

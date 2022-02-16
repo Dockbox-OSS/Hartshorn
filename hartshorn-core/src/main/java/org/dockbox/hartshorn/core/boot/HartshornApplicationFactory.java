@@ -1,18 +1,17 @@
 /*
- * Copyright (C) 2020 Guus Lieben
+ * Copyright 2019-2022 the original author or authors.
  *
- * This framework is free software; you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation, either version 2.1 of the
- * License, or (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See
- * the GNU Lesser General Public License for more details.
+ * https://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.dockbox.hartshorn.core.boot;
@@ -21,10 +20,13 @@ import org.dockbox.hartshorn.core.InjectorMetaProvider;
 import org.dockbox.hartshorn.core.annotations.activate.Activator;
 import org.dockbox.hartshorn.core.annotations.activate.UseBootstrap;
 import org.dockbox.hartshorn.core.annotations.activate.UseProxying;
+import org.dockbox.hartshorn.core.annotations.activate.UseServiceProvision;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.context.ApplicationEnvironment;
-import org.dockbox.hartshorn.core.context.HartshornApplicationContext;
-import org.dockbox.hartshorn.core.context.HartshornApplicationEnvironment;
+import org.dockbox.hartshorn.core.context.ContextualComponentPopulator;
+import org.dockbox.hartshorn.core.context.StandardDelegatingApplicationContext;
+import org.dockbox.hartshorn.core.context.ContextualApplicationEnvironment;
+import org.dockbox.hartshorn.core.context.HierarchicalApplicationComponentProvider;
 import org.dockbox.hartshorn.core.context.ReflectionsPrefixContext;
 import org.dockbox.hartshorn.core.services.ComponentLocatorImpl;
 
@@ -42,33 +44,35 @@ import lombok.Getter;
  * @author Guus Lieben
  * @since 21.9
  *
- * @see HartshornApplicationLogger
- * @see HartshornApplicationConfigurator
- * @see JavassistApplicationProxier
- * @see HartshornApplicationFSProvider
- * @see HartshornApplicationEnvironment
- * @see HartshornExceptionHandler
+ * @see CallerLookupApplicationLogger
+ * @see EnvironmentDrivenApplicationConfigurator
+ * @see ApplicationFSProviderImpl
+ * @see ContextualApplicationEnvironment
+ * @see LoggingExceptionHandler
+ * @see HartshornApplicationProxier
  * @see ComponentLocatorImpl
- * @see HartshornClasspathResourceLocator
+ * @see ClassLoaderClasspathResourceLocator
  * @see InjectorMetaProvider
  */
-public class HartshornApplicationFactory extends AbstractActivatingApplicationFactory<HartshornApplicationFactory, HartshornApplicationContext, HartshornApplicationManager> {
+public class HartshornApplicationFactory extends AbstractActivatingApplicationFactory<HartshornApplicationFactory, StandardDelegatingApplicationContext, DelegatingApplicationManager> {
 
     @Getter
     private final HartshornApplicationFactory self = this;
 
     @Override
     public HartshornApplicationFactory loadDefaults() {
-        return this.applicationLogger(new HartshornApplicationLogger())
-                .applicationConfigurator(new HartshornApplicationConfigurator())
-                .applicationProxier(new JavassistApplicationProxier())
-                .applicationFSProvider(new HartshornApplicationFSProvider())
-                .applicationEnvironment(HartshornApplicationEnvironment::new)
-                .exceptionHandler(new HartshornExceptionHandler())
+        return this.applicationLogger(new CallerLookupApplicationLogger())
+                .applicationConfigurator(new EnvironmentDrivenApplicationConfigurator())
+                .applicationProxier(new HartshornApplicationProxier())
+                .applicationFSProvider(new ApplicationFSProviderImpl())
+                .applicationEnvironment(ContextualApplicationEnvironment::new)
+                .exceptionHandler(new LoggingExceptionHandler())
                 .prefixContext(ReflectionsPrefixContext::new)
                 .componentLocator(ComponentLocatorImpl::new)
-                .resourceLocator(HartshornClasspathResourceLocator::new)
+                .resourceLocator(ClassLoaderClasspathResourceLocator::new)
                 .metaProvider(InjectorMetaProvider::new)
+                .componentProvider(HierarchicalApplicationComponentProvider::new)
+                .componentPopulator(ContextualComponentPopulator::new)
                 .serviceActivator(new UseBootstrap() {
                     @Override
                     public Class<? extends Annotation> annotationType() {
@@ -79,6 +83,11 @@ public class HartshornApplicationFactory extends AbstractActivatingApplicationFa
                     public Class<? extends Annotation> annotationType() {
                         return UseProxying.class;
                     }
+                }).serviceActivator(new UseServiceProvision() {
+                    @Override
+                    public Class<? extends Annotation> annotationType() {
+                        return UseServiceProvision.class;
+                    }
                 });
     }
 
@@ -88,8 +97,8 @@ public class HartshornApplicationFactory extends AbstractActivatingApplicationFa
     }
 
     @Override
-    protected HartshornApplicationManager createManager() {
-        return new HartshornApplicationManager(
+    protected DelegatingApplicationManager createManager() {
+        return new DelegatingApplicationManager(
                 this.activator,
                 this.applicationLogger,
                 this.applicationProxier,
@@ -99,12 +108,14 @@ public class HartshornApplicationFactory extends AbstractActivatingApplicationFa
     }
 
     @Override
-    protected HartshornApplicationContext createContext(final ApplicationEnvironment environment) {
-        return new HartshornApplicationContext(
+    protected StandardDelegatingApplicationContext createContext(final ApplicationEnvironment environment) {
+        return new StandardDelegatingApplicationContext(
                 environment,
                 this.componentLocator,
                 this.resourceLocator,
                 this.metaProvider,
+                this.componentProvider,
+                this.componentPopulator,
                 this.activator,
                 this.arguments,
                 this.modifiers
