@@ -19,12 +19,15 @@ package org.dockbox.hartshorn.core.boot;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
 import org.dockbox.hartshorn.core.domain.Exceptional;
 
-import java.io.FileOutputStream;
+import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.file.Files;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import lombok.AllArgsConstructor;
 
@@ -42,30 +45,39 @@ public class ClassLoaderClasspathResourceLocator implements ClasspathResourceLoc
 
     @Override
     public Exceptional<Path> resource(final String name) {
+        return Exceptional.of(() -> Resources.getResourceAsFile(name)).map(File::toPath);
+    }
+
+    @Override
+    public Set<Path> resources(final String name) {
         try {
-            final InputStream in = Hartshorn.class.getClassLoader().getResourceAsStream(name);
-            if (in == null) {
-                this.applicationContext.log().debug("Could not locate resource " + name);
-                return Exceptional.empty();
+            final String normalizedPath = name.replaceAll("\\\\", "/");
+            final int lastIndex = normalizedPath.lastIndexOf("/");
+            final String path = lastIndex == -1 ? "" : normalizedPath.substring(0, lastIndex + 1);
+            final String fileName = lastIndex == -1 ? normalizedPath : normalizedPath.substring(lastIndex + 1);
+
+            final Set<File> files = new HashSet<>();
+            final Set<File> resources = Resources.getResourcesAsFiles(path);
+            for (final File parent : resources) {
+                final File[] filteredResources = parent.listFiles((dir, file) -> file.startsWith(fileName));
+                if (filteredResources != null)
+                    files.addAll(Arrays.asList(filteredResources));
             }
-
-            final byte[] buffer = new byte[in.available()];
-            final int bytes = in.read(buffer);
-            if (bytes == -1) return Exceptional.of(new IOException("Requested resource contained no context"));
-
-            final String[] parts = name.split("/");
-            final String fileName = parts[parts.length - 1];
-            final Path tempFile = Files.createTempFile(fileName, ".tmp");
-            this.applicationContext.log().debug("Writing compressed resource " + name + " to temporary file " + tempFile.toFile().getName());
-            final OutputStream outStream = new FileOutputStream(tempFile.toFile());
-            outStream.write(buffer);
-            outStream.flush();
-            outStream.close();
-
-            return Exceptional.of(tempFile);
+            return files.stream().map(File::toPath).collect(Collectors.toUnmodifiableSet());
         }
         catch (final NullPointerException | IOException e) {
-            return Exceptional.of(e);
+            return new HashSet<>();
+        }
+    }
+
+    @Override
+    public URI classpathUri() {
+        try {
+            return Hartshorn.class.getClassLoader().getResource("").toURI();
+        }
+        catch (final URISyntaxException e) {
+            this.applicationContext.handle("Could not look up classpath base", e);
+            return null;
         }
     }
 }
