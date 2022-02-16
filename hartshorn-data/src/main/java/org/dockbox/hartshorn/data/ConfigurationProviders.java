@@ -19,9 +19,11 @@ package org.dockbox.hartshorn.data;
 import org.dockbox.hartshorn.core.annotations.inject.Provider;
 import org.dockbox.hartshorn.core.annotations.stereotype.Service;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
+import org.dockbox.hartshorn.data.annotations.Configuration;
 import org.dockbox.hartshorn.data.annotations.UseConfigurations;
 
 @Service(activators = UseConfigurations.class)
+@Configuration("application")
 public class ConfigurationProviders {
 
     @Provider

@@ -17,8 +17,6 @@
 package org.dockbox.hartshorn.data.annotations;
 
 import org.dockbox.hartshorn.data.ConfigurationServicePreProcessor;
-import org.dockbox.hartshorn.core.boot.Hartshorn;
-import org.dockbox.hartshorn.data.FileFormats;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -30,11 +28,13 @@ import java.lang.annotation.Target;
  * {@link org.dockbox.hartshorn.data.ResourceLookupStrategy}. For example a {@link org.dockbox.hartshorn.data.ClassPathResourceLookupStrategy}
  * will accept a source formatted as {@code classpath:filename}.
  *
- * <p>The {@link #source()} should not contain the file extension, the file format is automatically adjusted based on available files.
+ * <p>The {@link #value()} does not have to include the file extension, the file format is automatically adjusted based on available files if
+ * no explicit file extension is provided.
  *
- * <p>The example below will target demo.yml as a classpath resource.
+ * <p>Assuming there is a file called `demo.yml` on the classpath, the following will adapt to {@link org.dockbox.hartshorn.data.FileFormats#YAML}.
  * <pre>{@code
- * @Configuration(source = "classpath:demo")
+ * @Component
+ * @Configuration("classpath:demo")
  * public class SampleClassPathConfiguration {
  *    @Value("sample.value")
  *    private final String value = "default value if key does not exist";
@@ -49,9 +49,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface Configuration {
-    String source();
-
-    Class<?> owner() default Hartshorn.class;
-
-    FileFormats filetype() default FileFormats.YAML;
+    String[] value();
+    boolean failOnMissing() default false;
 }

@@ -41,7 +41,7 @@ import javax.inject.Inject;
 @Service
 /* Indicates this type is responsible for firing the UserCreated event. This serves solely to satisfy the EventValidator, so any unhandled events are noticed on startup */
 @Posting(UserCreatedEvent.class)
-@Configuration(source = "classpath:persistence-demo.yml")
+@Configuration("classpath:persistence-demo.yml")
 public abstract class UserRepository implements JpaRepository<User, Long> {
 
     @Inject
