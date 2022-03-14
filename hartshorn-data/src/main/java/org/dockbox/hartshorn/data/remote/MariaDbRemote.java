@@ -16,13 +16,12 @@
 
 package org.dockbox.hartshorn.data.remote;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public final class MariaDbRemote extends JdbcRemote {
 
     public static final MariaDbRemote INSTANCE = new MariaDbRemote();
+
+    private MariaDbRemote() {
+    }
 
     @Override
     protected String type() {

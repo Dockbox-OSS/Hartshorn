@@ -18,14 +18,17 @@ package org.dockbox.hartshorn.data.registry;
 
 import java.util.Objects;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
-@AllArgsConstructor
-@Getter
 public class RegistryIdentifierImpl implements RegistryIdentifier {
 
     private final String key;
+
+    public RegistryIdentifierImpl(final String key) {
+        this.key = key;
+    }
+
+    public String key() {
+        return this.key;
+    }
 
     @Override
     public int hashCode() {

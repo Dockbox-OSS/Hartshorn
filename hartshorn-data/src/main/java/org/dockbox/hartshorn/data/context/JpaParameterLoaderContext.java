@@ -23,15 +23,16 @@ import org.dockbox.hartshorn.core.context.element.TypeContext;
 
 import javax.persistence.Query;
 
-import lombok.Getter;
-
 public class JpaParameterLoaderContext extends ParameterLoaderContext {
 
-    @Getter
     private final Query query;
 
     public JpaParameterLoaderContext(final MethodContext<?, ?> method, final TypeContext<?> type, final Object instance, final ApplicationContext applicationContext, final Query query) {
         super(method, type, instance, applicationContext);
         this.query = query;
+    }
+
+    public Query query() {
+        return this.query;
     }
 }

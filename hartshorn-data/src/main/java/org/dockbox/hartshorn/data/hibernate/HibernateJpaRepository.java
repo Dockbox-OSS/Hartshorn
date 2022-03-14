@@ -58,30 +58,34 @@ import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-
 public class HibernateJpaRepository<T, ID> implements JpaRepository<T, ID>, Enableable, Closeable {
 
     private final Map<Class<? extends Remote<?>>, String> dialects = new ConcurrentHashMap<>();
     private final Configuration configuration = new Configuration();
     private final Class<T> type;
 
-    @Getter(AccessLevel.PROTECTED)
     private SessionFactory factory;
-
-    @Getter(AccessLevel.PROTECTED)
     private PersistenceConnection connection;
+    private Session session;
 
     @Inject
-    @Getter
     private ApplicationContext applicationContext;
-
-    private Session session;
 
     @Bound
     public HibernateJpaRepository(final Class<T> type) {
         this.type = type;
+    }
+
+    protected SessionFactory factory() {
+        return this.factory;
+    }
+
+    protected PersistenceConnection connection() {
+        return this.connection;
+    }
+
+    public ApplicationContext applicationContext() {
+        return this.applicationContext;
     }
 
     @Override

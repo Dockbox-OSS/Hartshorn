@@ -16,16 +16,16 @@
 
 package org.dockbox.hartshorn.data.remote;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
-@Getter
 public final class JdbcRemoteConfiguration {
     private final String server;
     private final int port;
     private final String database;
+
+    private JdbcRemoteConfiguration(final String server, final int port, final String database) {
+        this.server = server;
+        this.port = port;
+        this.database = database;
+    }
 
     public static JdbcRemoteConfiguration of(final String server, final String database) {
         return of(server, 3306, database);
@@ -33,5 +33,17 @@ public final class JdbcRemoteConfiguration {
 
     public static JdbcRemoteConfiguration of(final String server, final int port, final String database) {
         return new JdbcRemoteConfiguration(server, port, database);
+    }
+
+    public String server() {
+        return this.server;
+    }
+
+    public int port() {
+        return this.port;
+    }
+
+    public String database() {
+        return this.database;
     }
 }

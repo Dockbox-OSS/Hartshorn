@@ -21,15 +21,15 @@ import org.dockbox.hartshorn.data.annotations.Deserialise;
 import org.dockbox.hartshorn.data.annotations.File;
 import org.dockbox.hartshorn.data.annotations.Serialise;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
-@AllArgsConstructor
-@Getter
 public class PersistenceAnnotationContext {
 
-    FileFormats filetype;
-    File file;
+    private final FileFormats filetype;
+    private final File file;
+
+    public PersistenceAnnotationContext(final FileFormats filetype, final File file) {
+        this.filetype = filetype;
+        this.file = file;
+    }
 
     public PersistenceAnnotationContext(final Serialise serialise) {
         this.file = serialise.path();
@@ -41,4 +41,11 @@ public class PersistenceAnnotationContext {
         this.filetype = deserialise.filetype();
     }
 
+    public FileFormats filetype() {
+        return this.filetype;
+    }
+
+    public File file() {
+        return this.file;
+    }
 }
