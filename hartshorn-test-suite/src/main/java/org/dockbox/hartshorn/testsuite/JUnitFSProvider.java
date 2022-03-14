@@ -22,15 +22,17 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import lombok.Getter;
-
 /**
  * A {@link ApplicationFSProvider} that uses a temporary directory for the application's files.
  */
 public class JUnitFSProvider implements ApplicationFSProvider {
 
-    @Getter
     private final Path applicationPath;
+
+    @Override
+    public Path applicationPath() {
+        return this.applicationPath;
+    }
 
     public JUnitFSProvider() throws IOException {
         this.applicationPath = Files.createTempDirectory("hartshorn");
