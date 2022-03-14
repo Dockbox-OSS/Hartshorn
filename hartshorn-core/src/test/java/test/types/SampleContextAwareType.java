@@ -20,11 +20,12 @@ import org.dockbox.hartshorn.core.context.ApplicationContext;
 
 import javax.inject.Inject;
 
-import lombok.Getter;
-
 public class SampleContextAwareType {
 
     @Inject
-    @Getter private ApplicationContext context;
+    private ApplicationContext context;
 
+    public ApplicationContext context() {
+        return this.context;
+    }
 }

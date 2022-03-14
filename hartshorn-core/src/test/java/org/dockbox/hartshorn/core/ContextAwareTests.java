@@ -24,22 +24,20 @@ import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
 
-import lombok.Getter;
 import test.types.SampleContextAwareType;
 
 @HartshornTest
 public class ContextAwareTests {
 
     @Inject
-    @Getter
     private ApplicationContext applicationContext;
 
     @Test
     void testApplicationContextIsBound() {
-        final ApplicationContext applicationContext = this.applicationContext().get(ApplicationContext.class);
+        final ApplicationContext applicationContext = this.applicationContext.get(ApplicationContext.class);
         Assertions.assertNotNull(applicationContext);
 
-        final SampleContextAwareType sampleContextAwareType = this.applicationContext().get(SampleContextAwareType.class);
+        final SampleContextAwareType sampleContextAwareType = this.applicationContext.get(SampleContextAwareType.class);
         Assertions.assertNotNull(sampleContextAwareType);
         Assertions.assertNotNull(sampleContextAwareType.context());
 
@@ -48,10 +46,10 @@ public class ContextAwareTests {
 
     @Test
     void testMetaProviderIsBound() {
-        final MetaProvider metaProvider = this.applicationContext().get(MetaProvider.class);
+        final MetaProvider metaProvider = this.applicationContext.get(MetaProvider.class);
         Assertions.assertNotNull(metaProvider);
 
-        final MetaProvider directMetaProvider = this.applicationContext().meta();
+        final MetaProvider directMetaProvider = this.applicationContext.meta();
         Assertions.assertNotNull(directMetaProvider);
 
         Assertions.assertSame(metaProvider, directMetaProvider);
@@ -59,10 +57,10 @@ public class ContextAwareTests {
 
     @Test
     void testServiceLocatorIsBound() {
-        final ComponentLocator componentLocator = this.applicationContext().get(ComponentLocator.class);
+        final ComponentLocator componentLocator = this.applicationContext.get(ComponentLocator.class);
         Assertions.assertNotNull(componentLocator);
 
-        final ComponentLocator directComponentLocator = this.applicationContext().locator();
+        final ComponentLocator directComponentLocator = this.applicationContext.locator();
         Assertions.assertNotNull(directComponentLocator);
 
         Assertions.assertSame(componentLocator, directComponentLocator);

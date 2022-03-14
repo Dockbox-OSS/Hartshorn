@@ -24,19 +24,23 @@ import org.dockbox.hartshorn.core.services.ComponentPreProcessor;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import lombok.Getter;
-
 @Singleton
 @AutomaticActivation
 public class DemoProcessor implements ComponentPreProcessor<UseDemo> {
 
     @Inject
-    @Getter
     private DemoService demoService;
 
     @Inject
-    @Getter
     private Demo demo;
+
+    public DemoService demoService() {
+        return this.demoService;
+    }
+
+    public Demo demo() {
+        return this.demo;
+    }
 
     @Override
     public Class<UseDemo> activator() {

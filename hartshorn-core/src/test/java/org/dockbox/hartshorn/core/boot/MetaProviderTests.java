@@ -26,14 +26,15 @@ import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
 
-import lombok.Getter;
-
 @HartshornTest
 public class MetaProviderTests {
 
     @Inject
-    @Getter
     private ApplicationContext applicationContext;
+
+    public ApplicationContext applicationContext() {
+        return this.applicationContext;
+    }
 
     @Test
     void testComponentTypeUsesComponentAlias() {

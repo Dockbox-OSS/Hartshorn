@@ -21,9 +21,6 @@ import org.dockbox.hartshorn.core.annotations.inject.Required;
 
 import javax.inject.Inject;
 
-import lombok.Getter;
-
-@Getter
 public class SetterInjectedComponent {
 
     private ComponentType component;
@@ -37,5 +34,13 @@ public class SetterInjectedComponent {
     @Inject
     public void setContext(@Context("setter") final SampleContext context) {
         this.context = context;
+    }
+
+    public ComponentType component() {
+        return this.component;
+    }
+
+    public SampleContext context() {
+        return this.context;
     }
 }

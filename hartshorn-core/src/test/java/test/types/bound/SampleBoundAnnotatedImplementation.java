@@ -16,18 +16,22 @@
 
 package test.types.bound;
 
-import org.dockbox.hartshorn.core.annotations.inject.ComponentBinding;
 import org.dockbox.hartshorn.core.annotations.inject.Bound;
+import org.dockbox.hartshorn.core.annotations.inject.ComponentBinding;
+
 import test.types.SampleInterface;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
 @ComponentBinding(value = SampleInterface.class, permitProxying = false)
-@Getter
-@AllArgsConstructor(onConstructor_ = @Bound)
 public class SampleBoundAnnotatedImplementation implements SampleInterface {
 
     private final String name;
 
+    @Bound
+    public SampleBoundAnnotatedImplementation(final String name) {
+        this.name = name;
+    }
+
+    public String name() {
+        return this.name;
+    }
 }

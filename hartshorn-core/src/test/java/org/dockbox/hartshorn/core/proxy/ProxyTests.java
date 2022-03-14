@@ -38,6 +38,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import java.lang.reflect.Method;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import javax.inject.Inject;
@@ -365,5 +366,15 @@ public class ProxyTests {
         final EqualInterfaceProxy proxyInstance = proxy.get();
         Assertions.assertEquals(proxyInstance, proxyInstance);
         Assertions.assertTrue(proxyInstance.test(proxyInstance));
+    }
+
+    @Test
+    void testLambdaCanBeProxied() throws NoSuchMethodException, ApplicationException {
+        // TODO: This test is not working.
+        final StateAwareProxyFactory<Supplier, ?> factory = this.applicationContext.environment().manager().factory(Supplier.class);
+        factory.intercept(Supplier.class.getMethod("get"), context -> "foo");
+        final Exceptional<Supplier> proxy = factory.proxy();
+        Assertions.assertTrue(proxy.present());
+        Assertions.assertEquals("foo", proxy.get().get());
     }
 }

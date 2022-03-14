@@ -31,14 +31,11 @@ import java.util.stream.Stream;
 
 import javax.inject.Inject;
 
-import lombok.Getter;
-
 @HartshornTest
 @UseServiceProvision
 public class ComponentProvisionTests {
 
     @Inject
-    @Getter
     private ApplicationContext applicationContext;
 
     public static Stream<Arguments> components() {
@@ -59,5 +56,9 @@ public class ComponentProvisionTests {
             final Object instance = this.applicationContext().get(component);
             Assertions.assertNotNull(instance);
         });
+    }
+
+    public ApplicationContext applicationContext() {
+        return this.applicationContext;
     }
 }

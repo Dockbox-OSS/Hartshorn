@@ -23,14 +23,15 @@ import org.dockbox.hartshorn.core.services.ServicePreProcessor;
 
 import javax.inject.Singleton;
 
-import lombok.Getter;
-
 @AutomaticActivation
 @Singleton
 public class DemoServicePreProcessor implements ServicePreProcessor<Demo> {
 
-    @Getter
     private int processed = 0;
+
+    public int processed() {
+        return this.processed;
+    }
 
     @Override
     public boolean preconditions(final ApplicationContext context, final Key<?> key) {

@@ -30,13 +30,10 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import lombok.Getter;
-
 @HartshornTest
 public class ContextTests {
 
     @Inject
-    @Getter
     private ApplicationContext applicationContext;
 
     @Test
@@ -46,7 +43,7 @@ public class ContextTests {
 
         context.add(child);
 
-        final Exceptional<TestContext> first = context.first(this.applicationContext(), TestContext.class);
+        final Exceptional<TestContext> first = context.first(this.applicationContext, TestContext.class);
         Assertions.assertTrue(first.present());
         Assertions.assertSame(child, first.get());
     }
@@ -138,7 +135,7 @@ public class ContextTests {
     @Test
     void testAutoCreatingContext() {
         final Context context = new TestContext();
-        final Exceptional<AutoCreatingContext> first = context.first(this.applicationContext(), AutoCreatingContext.class);
+        final Exceptional<AutoCreatingContext> first = context.first(this.applicationContext, AutoCreatingContext.class);
         Assertions.assertTrue(first.present());
     }
 

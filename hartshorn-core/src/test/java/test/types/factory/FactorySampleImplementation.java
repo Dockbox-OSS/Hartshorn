@@ -16,16 +16,23 @@
 
 package test.types.factory;
 
-import org.dockbox.hartshorn.core.annotations.inject.ComponentBinding;
 import org.dockbox.hartshorn.core.annotations.inject.Bound;
+import org.dockbox.hartshorn.core.annotations.inject.ComponentBinding;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 import test.types.SampleInterface;
 
 @ComponentBinding(value = SampleInterface.class, permitProxying = false)
-@AllArgsConstructor(onConstructor_ = @Bound)
 public class FactorySampleImplementation implements SampleInterface {
-    @Getter
+
     private final String name;
+
+    @Bound
+    public FactorySampleImplementation(final String name) {
+        this.name = name;
+    }
+
+    @Override
+    public String name() {
+        return this.name;
+    }
 }

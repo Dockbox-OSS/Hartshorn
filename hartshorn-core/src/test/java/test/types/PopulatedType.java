@@ -18,12 +18,11 @@ package test.types;
 
 import javax.inject.Inject;
 
-import lombok.Getter;
-
-@Getter
 public class PopulatedType {
-
     @Inject
-    SampleInterface sampleInterface;
+    private SampleInterface sampleInterface;
 
+    public SampleInterface sampleInterface() {
+        return this.sampleInterface;
+    }
 }
