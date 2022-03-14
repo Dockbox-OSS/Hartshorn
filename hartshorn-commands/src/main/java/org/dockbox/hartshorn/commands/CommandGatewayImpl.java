@@ -41,24 +41,28 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.inject.Inject;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-
 /**
  * Simple implementation of {@link CommandGateway}.
  */
 public class CommandGatewayImpl implements CommandGateway, Enableable {
 
-    @Getter(AccessLevel.PROTECTED)
     private final transient MultiMap<String, CommandExecutorContext> contexts = new ArrayListMultiMap<>();
-    @Getter(AccessLevel.PROTECTED)
     private final transient List<CommandExecutorExtension> extensions = new CopyOnWriteArrayList<>();
+
     @Inject
     private CommandParser parser;
     @Inject
     private CommandResources resources;
     @Inject
     private ApplicationContext context;
+
+    protected MultiMap<String, CommandExecutorContext> contexts() {
+        return this.contexts;
+    }
+
+    protected List<CommandExecutorExtension> extensions() {
+        return this.extensions;
+    }
 
     @Override
     public boolean canEnable() {

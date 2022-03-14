@@ -22,8 +22,6 @@ import org.dockbox.hartshorn.core.context.element.TypeContext;
 import java.util.Arrays;
 import java.util.List;
 
-import lombok.Getter;
-
 /**
  * The default (abstract) implementation for {@link ArgumentConverter argument converters}.
  *
@@ -32,7 +30,7 @@ import lombok.Getter;
 public abstract class DefaultArgumentConverter<T> implements ArgumentConverter<T> {
 
     private final String[] keys;
-    @Getter private final TypeContext<T> type;
+    private final TypeContext<T> type;
     private final int size;
 
     protected DefaultArgumentConverter(final TypeContext<T> type, final String... keys) {
@@ -45,6 +43,10 @@ public abstract class DefaultArgumentConverter<T> implements ArgumentConverter<T
         this.keys = keys;
         this.type = type;
         this.size = size;
+    }
+
+    public TypeContext<T> type() {
+        return this.type;
     }
 
     public List<String> keys() {

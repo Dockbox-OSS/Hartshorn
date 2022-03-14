@@ -22,18 +22,19 @@ import org.dockbox.hartshorn.core.domain.Exceptional;
 
 import java.util.Collection;
 
-import lombok.AllArgsConstructor;
-
 /**
  * Simple implementation of a value-based {@link CommandFlag}. Using an underlying
  * {@link CommandElement} to delegate value parsing.
  *
  * @param <T> The type of the expected value
  */
-@AllArgsConstructor
 public class CommandFlagElement<T> implements CommandFlag, CommandElement<T> {
 
     private final CommandElement<T> element;
+
+    public CommandFlagElement(final CommandElement<T> element) {
+        this.element = element;
+    }
 
     @Override
     public boolean optional() {

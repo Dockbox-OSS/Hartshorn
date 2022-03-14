@@ -26,19 +26,21 @@ import java.util.UUID;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import lombok.Getter;
-
 @Singleton
 public abstract class SystemSubject implements CommandSource, Identifiable {
 
     @Inject
-    @Getter
     private ApplicationContext applicationContext;
 
     public static final UUID UNIQUE_ID = new UUID(0, 0);
 
     public static SystemSubject instance(final ApplicationContext context) {
         return context.get(SystemSubject.class);
+    }
+
+    @Override
+    public ApplicationContext applicationContext() {
+        return this.applicationContext;
     }
 
     @Override
