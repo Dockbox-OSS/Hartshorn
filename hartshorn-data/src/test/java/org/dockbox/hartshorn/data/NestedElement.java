@@ -18,16 +18,22 @@ package org.dockbox.hartshorn.data;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
 public class NestedElement implements Element {
 
     private EntityElement child;
+
+    public NestedElement() {
+    }
+
+    public NestedElement(final EntityElement child) {
+        this.child = child;
+    }
+
+    @Override
+    @JsonIgnore
+    public String name() {
+        return this.child.name();
+    }
 
     @Override
     @JsonIgnore
@@ -36,9 +42,12 @@ public class NestedElement implements Element {
         return this;
     }
 
-    @Override
-    @JsonIgnore
-    public String name() {
-        return this.child.name();
+    public EntityElement child() {
+        return this.child;
+    }
+
+    public NestedElement child(final EntityElement child) {
+        this.child = child;
+        return this;
     }
 }

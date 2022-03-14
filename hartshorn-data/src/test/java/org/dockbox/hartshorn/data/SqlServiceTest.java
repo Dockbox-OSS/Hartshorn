@@ -28,11 +28,11 @@ import org.dockbox.hartshorn.data.jpa.JpaRepository;
 import org.dockbox.hartshorn.data.remote.DerbyFileRemote;
 import org.dockbox.hartshorn.data.remote.JdbcRemoteConfiguration;
 import org.dockbox.hartshorn.data.remote.MariaDbRemote;
-import org.dockbox.hartshorn.data.remote.SqlServerRemote;
 import org.dockbox.hartshorn.data.remote.MySQLRemote;
 import org.dockbox.hartshorn.data.remote.PersistenceConnection;
 import org.dockbox.hartshorn.data.remote.PostgreSQLRemote;
 import org.dockbox.hartshorn.data.remote.Remote;
+import org.dockbox.hartshorn.data.remote.SqlServerRemote;
 import org.dockbox.hartshorn.data.service.JpaRepositoryFactory;
 import org.dockbox.hartshorn.testsuite.HartshornTest;
 import org.hibernate.Session;
@@ -60,15 +60,12 @@ import java.util.stream.Stream;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 
-import lombok.Getter;
-
 @HartshornTest
 @Testcontainers
 @UsePersistence
 class SqlServiceTest {
 
     @Inject
-    @Getter
     private ApplicationContext applicationContext;
 
     protected static final String DEFAULT_DATABASE = "HartshornDb_" + System.nanoTime();
@@ -137,7 +134,7 @@ class SqlServiceTest {
     }
 
     protected JpaRepository<User, Long> sql(final PersistenceConnection target) {
-        return this.applicationContext().get(UserJpaRepository.class).connection(target);
+        return this.applicationContext.get(UserJpaRepository.class).connection(target);
     }
 
     @ParameterizedTest
@@ -189,20 +186,20 @@ class SqlServiceTest {
         // TestContainers sometimes closes the connection after a test, so we need to make sure we have an active container
         if (!mySql.isRunning()) mySql.start();
 
-        final JpaRepositoryFactory factory = this.applicationContext().get(JpaRepositoryFactory.class);
+        final JpaRepositoryFactory factory = this.applicationContext.get(JpaRepositoryFactory.class);
         final JpaRepository<User, ?> repository = factory.repository(User.class);
         Assertions.assertTrue(repository instanceof HibernateJpaRepository);
 
         // Data API specific
-        this.applicationContext().property("hartshorn.data.username", mySql.getUsername());
-        this.applicationContext().property("hartshorn.data.password", mySql.getPassword());
+        this.applicationContext.property("hartshorn.data.username", mySql.getUsername());
+        this.applicationContext.property("hartshorn.data.password", mySql.getPassword());
 
         final String connectionUrl = "jdbc:mysql://%s:%s/%s".formatted(mySql.getHost(), mySql.getMappedPort(MySQLContainer.MYSQL_PORT), DEFAULT_DATABASE);
-        this.applicationContext().property("hartshorn.data.url", connectionUrl);
+        this.applicationContext.property("hartshorn.data.url", connectionUrl);
 
         // Hibernate specific
-        this.applicationContext().property("hartshorn.data.hibernate.dialect", MySQL8Dialect.class.getCanonicalName());
-        this.applicationContext().property("hartshorn.data.hibernate.driver_class", Driver.class.getCanonicalName());
+        this.applicationContext.property("hartshorn.data.hibernate.dialect", MySQL8Dialect.class.getCanonicalName());
+        this.applicationContext.property("hartshorn.data.hibernate.driver_class", Driver.class.getCanonicalName());
 
         ((Enableable) repository).enable();
 
@@ -218,17 +215,17 @@ class SqlServiceTest {
         if (!mySql.isRunning()) mySql.start();
 
         // Data API specific
-        this.applicationContext().property("hartshorn.data.username", mySql.getUsername());
-        this.applicationContext().property("hartshorn.data.password", mySql.getPassword());
+        this.applicationContext.property("hartshorn.data.username", mySql.getUsername());
+        this.applicationContext.property("hartshorn.data.password", mySql.getPassword());
 
         final String connectionUrl = "jdbc:mysql://%s:%s/%s".formatted(mySql.getHost(), mySql.getMappedPort(MySQLContainer.MYSQL_PORT), DEFAULT_DATABASE);
-        this.applicationContext().property("hartshorn.data.url", connectionUrl);
+        this.applicationContext.property("hartshorn.data.url", connectionUrl);
 
         // Hibernate specific
-        this.applicationContext().property("hartshorn.data.hibernate.dialect", MySQL8Dialect.class.getCanonicalName());
-        this.applicationContext().property("hartshorn.data.hibernate.driver_class", Driver.class.getCanonicalName());
+        this.applicationContext.property("hartshorn.data.hibernate.dialect", MySQL8Dialect.class.getCanonicalName());
+        this.applicationContext.property("hartshorn.data.hibernate.driver_class", Driver.class.getCanonicalName());
 
-        final UserJpaRepository repository = this.applicationContext().get(UserJpaRepository.class);
+        final UserJpaRepository repository = this.applicationContext.get(UserJpaRepository.class);
 
         final EntityManager em = repository.entityManager();
         Assertions.assertNotNull(em);

@@ -16,15 +16,38 @@
 
 package org.dockbox.hartshorn.data;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import java.util.Objects;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
 public class PersistentElement implements Element {
 
     private String name;
 
+    public PersistentElement() {
+    }
+
+    public PersistentElement(final String name) {
+        this.name = name;
+    }
+
+    public String name() {
+        return this.name;
+    }
+
+    public PersistentElement name(final String name) {
+        this.name = name;
+        return this;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (o == null || this.getClass() != o.getClass()) return false;
+        final PersistentElement that = (PersistentElement) o;
+        return Objects.equals(this.name, that.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.name);
+    }
 }

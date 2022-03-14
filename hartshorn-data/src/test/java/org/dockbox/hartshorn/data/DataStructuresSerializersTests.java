@@ -33,14 +33,11 @@ import java.nio.file.Path;
 
 import javax.inject.Inject;
 
-import lombok.Getter;
-
 @HartshornTest
 @UsePersistence
 public class DataStructuresSerializersTests {
 
     @Inject
-    @Getter
     private ApplicationContext applicationContext;
 
     @Test
@@ -49,7 +46,7 @@ public class DataStructuresSerializersTests {
             final File copy = File.createTempFile("tmp", null);
             final Path tempFile = copy.toPath();
 
-            final ObjectMapper objectMapper = this.applicationContext().get(ObjectMapper.class);
+            final ObjectMapper objectMapper = this.applicationContext.get(ObjectMapper.class);
             objectMapper.write(this.buildTestRegistry());
         });
     }
@@ -77,7 +74,7 @@ public class DataStructuresSerializersTests {
         final File copy = File.createTempFile("tmp", null);
         final Path tempFile = copy.toPath();
 
-        final ObjectMapper objectMapper = this.applicationContext().get(ObjectMapper.class);
+        final ObjectMapper objectMapper = this.applicationContext.get(ObjectMapper.class);
 
         final Exceptional<String> serializedRegistry = objectMapper.write(this.buildTestRegistry());
         Assertions.assertTrue(serializedRegistry.present());

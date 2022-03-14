@@ -16,21 +16,18 @@
 
 package org.dockbox.hartshorn.data;
 
+import org.dockbox.hartshorn.core.annotations.stereotype.Component;
 import org.dockbox.hartshorn.data.annotations.Configuration;
 import org.dockbox.hartshorn.data.annotations.Value;
-import org.dockbox.hartshorn.core.annotations.stereotype.Component;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-
-@AllArgsConstructor
-@NoArgsConstructor
 @Component
 @Configuration("junit.yml")
 public class DemoFSConfiguration {
 
     @Value("junit.fs")
-    @Getter
     private String fileSystemValue;
+
+    public String fileSystemValue() {
+        return this.fileSystemValue;
+    }
 }

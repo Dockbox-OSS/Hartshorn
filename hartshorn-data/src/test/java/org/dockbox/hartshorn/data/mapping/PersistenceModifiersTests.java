@@ -28,19 +28,16 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import lombok.Getter;
-
 @HartshornTest
 @UsePersistence
 public class PersistenceModifiersTests {
 
     @Inject
-    @Getter
     private ApplicationContext applicationContext;
 
     @Test
     void testSkipEmptyKeepsNonEmpty() {
-        final ObjectMapper mapper = this.applicationContext().get(ObjectMapper.class).skipBehavior(JsonInclusionRule.SKIP_EMPTY);
+        final ObjectMapper mapper = this.applicationContext.get(ObjectMapper.class).skipBehavior(JsonInclusionRule.SKIP_EMPTY);
         final ModifierElement element = new ModifierElement(List.of("sample", "other"));
         final Exceptional<String> out = mapper.write(element);
 
@@ -50,7 +47,7 @@ public class PersistenceModifiersTests {
 
     @Test
     void testSkipEmptySkipsEmpty() {
-        final ObjectMapper mapper = this.applicationContext().get(ObjectMapper.class).skipBehavior(JsonInclusionRule.SKIP_EMPTY);
+        final ObjectMapper mapper = this.applicationContext.get(ObjectMapper.class).skipBehavior(JsonInclusionRule.SKIP_EMPTY);
         final ModifierElement element = new ModifierElement(List.of());
         final Exceptional<String> out = mapper.write(element);
 

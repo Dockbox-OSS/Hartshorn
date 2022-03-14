@@ -16,16 +16,13 @@
 
 package org.dockbox.hartshorn.data;
 
+import org.dockbox.hartshorn.core.annotations.stereotype.Component;
 import org.dockbox.hartshorn.data.annotations.Configuration;
 import org.dockbox.hartshorn.data.annotations.Value;
-import org.dockbox.hartshorn.core.annotations.stereotype.Component;
 
 import java.util.Collection;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import lombok.Getter;
-
-@Getter
 @Component
 @Configuration({ "fs:junit", "classpath:junit" })
 public class DemoClasspathConfiguration {
@@ -44,4 +41,24 @@ public class DemoClasspathConfiguration {
 
     @Value("junit.list")
     private CopyOnWriteArrayList<Integer> copyOnWriteArrayList;
+
+    public String classPathValue() {
+        return this.classPathValue;
+    }
+
+    public String classPathValueWithDefault() {
+        return this.classPathValueWithDefault;
+    }
+
+    public int number() {
+        return this.number;
+    }
+
+    public Collection<Integer> list() {
+        return this.list;
+    }
+
+    public CopyOnWriteArrayList<Integer> copyOnWriteArrayList() {
+        return this.copyOnWriteArrayList;
+    }
 }

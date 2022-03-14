@@ -20,21 +20,31 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
 @Entity(name = "users")
-@NoArgsConstructor
-@Getter
 public class User {
 
     @Id
     @GeneratedValue
     private long id;
-    @Setter private String name;
+    private String name;
+
+    public User() {
+    }
 
     public User(final String name) {
         this.name = name;
+    }
+
+    public long id() {
+        return this.id;
+    }
+
+    public String name() {
+        return this.name;
+    }
+
+    public User name(final String name) {
+        this.name = name;
+        return this;
     }
 }

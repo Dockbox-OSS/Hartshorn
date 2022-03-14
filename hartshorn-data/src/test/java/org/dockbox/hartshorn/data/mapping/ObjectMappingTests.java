@@ -37,14 +37,11 @@ import java.util.stream.Stream;
 
 import javax.inject.Inject;
 
-import lombok.Getter;
-
 @HartshornTest
 @UsePersistence
 public class ObjectMappingTests {
 
     @Inject
-    @Getter
     private ApplicationContext applicationContext;
 
     private static Stream<Arguments> serialisationElements() {
@@ -79,7 +76,7 @@ public class ObjectMappingTests {
     @ParameterizedTest
     @MethodSource("serialisationElements")
     void testObjectSerialisation(final FileFormat fileFormat, final Element content, final String expected) {
-        final ObjectMapper mapper = this.applicationContext().get(JacksonObjectMapper.class);
+        final ObjectMapper mapper = this.applicationContext.get(JacksonObjectMapper.class);
         mapper.fileType(fileFormat);
 
         content.name("sample");
@@ -92,7 +89,7 @@ public class ObjectMappingTests {
     @ParameterizedTest
     @MethodSource("serialisationElements")
     void testObjectDeserialisation(final FileFormat fileFormat, final Element expected, final String content) {
-        final ObjectMapper mapper = this.applicationContext().get(JacksonObjectMapper.class);
+        final ObjectMapper mapper = this.applicationContext.get(JacksonObjectMapper.class);
         mapper.fileType(fileFormat);
         expected.name("sample");
 

@@ -16,22 +16,37 @@
 
 package org.dockbox.hartshorn.data;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
 public class MultiElement implements Element {
 
     private String name;
     private String other;
 
+    public MultiElement() {
+    }
+
+    public MultiElement(final String name, final String other) {
+        this.name = name;
+        this.other = other;
+    }
+
+    @Override
+    public String name() {
+        return this.name;
+    }
+
+    @Override
     public MultiElement name(final String name) {
         this.name = name;
         this.other = name;
         return this;
     }
 
+    public String other() {
+        return this.other;
+    }
+
+    public MultiElement other(final String other) {
+        this.other = other;
+        return this;
+    }
 }
