@@ -16,6 +16,8 @@
 
 package org.dockbox.hartshorn.data;
 
+import java.util.Objects;
+
 public class MultiElement implements Element {
 
     private String name;
@@ -48,5 +50,18 @@ public class MultiElement implements Element {
     public MultiElement other(final String other) {
         this.other = other;
         return this;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (o == null || this.getClass() != o.getClass()) return false;
+        final MultiElement that = (MultiElement) o;
+        return Objects.equals(this.name, that.name) && Objects.equals(this.other, that.other);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.name, this.other);
     }
 }

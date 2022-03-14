@@ -16,7 +16,6 @@
 
 package org.dockbox.hartshorn.core.context;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.core.CustomMultiTreeMap;
 import org.dockbox.hartshorn.core.Enableable;
 import org.dockbox.hartshorn.core.InjectConfiguration;
@@ -80,7 +79,6 @@ public class StandardDelegatingApplicationContext extends DefaultContext impleme
 
     protected final transient MultiMap<Integer, ComponentPreProcessor<?>> preProcessors = new CustomMultiTreeMap<>(ConcurrentHashMap::newKeySet);
     protected final transient Queue<String> prefixQueue = new PriorityQueue<>(PREFIX_PRIORITY_COMPARATOR);
-    protected final transient Map<String, ScopedComponentProvider> providers = new ConcurrentHashMap<>();
     protected final transient Properties environmentValues = new Properties();
 
     private final transient StandardComponentProvider componentProvider;
@@ -104,10 +102,8 @@ public class StandardDelegatingApplicationContext extends DefaultContext impleme
                                                 final TypeContext<?> activationSource,
                                                 final Set<String> args,
                                                 final Set<Modifiers> modifiers) {
-        
-        this.componentProvider = new HierarchicalApplicationComponentProvider(this);
-        this.store(this.componentProvider);
 
+        this.componentProvider = new HierarchicalApplicationComponentProvider(this);
         this.componentPopulator = new ContextualComponentPopulator(this);
 
         this.componentProvider.singleton(Key.of(ApplicationContext.class), this);
@@ -515,25 +511,5 @@ public class StandardDelegatingApplicationContext extends DefaultContext impleme
     @Override
     public <T> BindingHierarchy<T> hierarchy(final Key<T> key) {
         return this.componentProvider.hierarchy(key);
-    }
-
-    @Override
-    public void store(final ScopedComponentProvider provider) {
-        final String key = provider.scope();
-        if (this.providers.containsKey(key)) {
-            throw new IllegalStateException("A provider for " + key + " already exists");
-        }
-        this.providers.put(key, provider);
-    }
-
-    @Override
-    @Nullable
-    public ScopedComponentProvider get(final String key) {
-        return this.providers.get(key);
-    }
-
-    @Override
-    public void remove(final String key) {
-        this.providers.remove(key);
     }
 }

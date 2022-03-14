@@ -258,9 +258,4 @@ public class HierarchicalApplicationComponentProvider extends DefaultContext imp
     public <T> T raw(final TypeContext<T> type) {
         return Providers.of(type).provide(this.applicationContext()).rethrowUnchecked().orNull();
     }
-
-    @Override
-    public String scope() {
-        return "application";
-    }
 }

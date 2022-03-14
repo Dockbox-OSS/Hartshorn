@@ -18,6 +18,8 @@ package org.dockbox.hartshorn.data;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import java.util.Objects;
+
 public class NestedElement implements Element {
 
     private EntityElement child;
@@ -49,5 +51,18 @@ public class NestedElement implements Element {
     public NestedElement child(final EntityElement child) {
         this.child = child;
         return this;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (o == null || this.getClass() != o.getClass()) return false;
+        final NestedElement that = (NestedElement) o;
+        return Objects.equals(this.child, that.child);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.child);
     }
 }

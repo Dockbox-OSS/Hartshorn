@@ -45,6 +45,7 @@ public class JettyHttpWebServer extends DefaultHttpWebServer {
     private final ServletContextHandler contextHandler;
     private final HandlerWrapper servletHandler;
 
+    @Inject
     private ApplicationContext context;
     private JsonInclusionRule skipBehavior = JsonInclusionRule.SKIP_NONE;
     private JettyServer server;
