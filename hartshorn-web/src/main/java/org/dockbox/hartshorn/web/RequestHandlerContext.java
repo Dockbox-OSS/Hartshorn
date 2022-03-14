@@ -23,13 +23,11 @@ import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.web.annotations.PathSpec;
 import org.dockbox.hartshorn.web.annotations.http.HttpRequest;
 
-import lombok.Getter;
-
 public class RequestHandlerContext extends DefaultCarrierContext {
 
-    @Getter private final MethodContext<?, ?> methodContext;
-    @Getter private final HttpRequest httpRequest;
-    @Getter private final String pathSpec;
+    private final MethodContext<?, ?> methodContext;
+    private final HttpRequest httpRequest;
+    private final String pathSpec;
 
     public RequestHandlerContext(final ApplicationContext applicationContext, final MethodContext<?, ?> methodContext) {
         super(applicationContext);
@@ -49,5 +47,17 @@ public class RequestHandlerContext extends DefaultCarrierContext {
         }
 
         this.pathSpec = spec.startsWith("/") ? spec : '/' + spec;
+    }
+
+    public MethodContext<?, ?> methodContext() {
+        return this.methodContext;
+    }
+
+    public HttpRequest httpRequest() {
+        return this.httpRequest;
+    }
+
+    public String pathSpec() {
+        return this.pathSpec;
     }
 }

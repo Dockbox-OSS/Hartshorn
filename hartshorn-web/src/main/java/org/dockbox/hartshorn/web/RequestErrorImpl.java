@@ -25,10 +25,6 @@ import java.io.PrintWriter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import lombok.Getter;
-import lombok.Setter;
-
-@Getter
 public class RequestErrorImpl extends DefaultCarrierContext implements RequestError {
 
     private final HttpServletRequest request;
@@ -36,8 +32,8 @@ public class RequestErrorImpl extends DefaultCarrierContext implements RequestEr
     private final int statusCode;
     private final PrintWriter writer;
     private final Exceptional<Throwable> cause;
-    @Setter private String message;
-    @Setter private boolean yieldDefaults;
+    private String message;
+    private boolean yieldDefaults;
 
     public RequestErrorImpl(final ApplicationContext applicationContext, final HttpServletRequest request, final HttpServletResponse response, final int statusCode, final PrintWriter writer, final String message, final Throwable cause) {
         super(applicationContext);
@@ -47,5 +43,52 @@ public class RequestErrorImpl extends DefaultCarrierContext implements RequestEr
         this.writer = writer;
         this.message = message;
         this.cause = Exceptional.of(cause, cause);
+    }
+
+    @Override
+    public RequestErrorImpl message(final String message) {
+        this.message = message;
+        return this;
+    }
+
+    @Override
+    public RequestErrorImpl yieldDefaults(final boolean yieldDefaults) {
+        this.yieldDefaults = yieldDefaults;
+        return this;
+    }
+
+    @Override
+    public HttpServletRequest request() {
+        return this.request;
+    }
+
+    @Override
+    public HttpServletResponse response() {
+        return this.response;
+    }
+
+    @Override
+    public int statusCode() {
+        return this.statusCode;
+    }
+
+    @Override
+    public PrintWriter writer() {
+        return this.writer;
+    }
+
+    @Override
+    public Exceptional<Throwable> cause() {
+        return this.cause;
+    }
+
+    @Override
+    public String message() {
+        return this.message;
+    }
+
+    @Override
+    public boolean yieldDefaults() {
+        return this.yieldDefaults;
     }
 }

@@ -22,13 +22,14 @@ import org.dockbox.hartshorn.core.context.DefaultContext;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import lombok.Getter;
-
 @AutoCreating
 public class MvcControllerContext extends DefaultContext {
 
-    @Getter
     private final Set<RequestHandlerContext> requestHandlerContexts = ConcurrentHashMap.newKeySet();
+
+    public Set<RequestHandlerContext> requestHandlerContexts() {
+        return this.requestHandlerContexts;
+    }
 
     public void add(final RequestHandlerContext context) {
         this.requestHandlerContexts.add(context);

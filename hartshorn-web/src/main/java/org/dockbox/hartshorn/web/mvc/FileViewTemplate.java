@@ -18,11 +18,15 @@ package org.dockbox.hartshorn.web.mvc;
 
 import java.nio.file.Path;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
-@AllArgsConstructor
-@Getter
 public class FileViewTemplate implements ViewTemplate {
+
     private final Path path;
+
+    public FileViewTemplate(final Path path) {
+        this.path = path;
+    }
+
+    public Path path() {
+        return this.path;
+    }
 }

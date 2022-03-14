@@ -28,17 +28,18 @@ import org.dockbox.hartshorn.web.ServletHandler;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import lombok.Getter;
-
 public class WebServletImpl implements WebServlet {
 
-    @Getter
     private final ServletHandler handler;
 
     @Bound
     public WebServletImpl(final HttpWebServer starter, final RequestHandlerContext context) {
         this.handler = context.applicationContext().get(ServletFactory.class)
                 .servletHandler(starter, context.httpRequest().method(), context.methodContext());
+    }
+
+    public ServletHandler handler() {
+        return this.handler;
     }
 
     @Override

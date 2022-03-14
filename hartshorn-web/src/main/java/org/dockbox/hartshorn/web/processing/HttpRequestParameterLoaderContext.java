@@ -24,9 +24,6 @@ import org.dockbox.hartshorn.core.context.element.TypeContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import lombok.Getter;
-
-@Getter
 public class HttpRequestParameterLoaderContext extends ParameterLoaderContext {
 
     private final HttpServletRequest request;
@@ -36,5 +33,13 @@ public class HttpRequestParameterLoaderContext extends ParameterLoaderContext {
         super(method, type, instance, applicationContext);
         this.request = request;
         this.response = response;
+    }
+
+    public HttpServletRequest request() {
+        return this.request;
+    }
+
+    public HttpServletResponse response() {
+        return this.response;
     }
 }

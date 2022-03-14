@@ -36,8 +36,6 @@ import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import lombok.Getter;
-
 public class ServletHandler implements Enableable {
 
     private final HttpWebServer starter;
@@ -49,7 +47,6 @@ public class ServletHandler implements Enableable {
     private ApplicationContext context;
 
     @Inject
-    @Getter
     private ObjectMapper mapper;
 
     @Value(value = "hartshorn.web.headers.hartshorn")
@@ -62,6 +59,10 @@ public class ServletHandler implements Enableable {
         this.methodContext = methodContext;
         this.httpRequest = methodContext.annotation(HttpRequest.class)
                 .orThrow(() -> new IllegalArgumentException("Provided method is not annotated with @HttpRequest or an extension of that annotation (%s)".formatted(methodContext.qualifiedName())));
+    }
+
+    public ObjectMapper mapper() {
+        return this.mapper;
     }
 
     @Override
