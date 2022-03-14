@@ -23,9 +23,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Predicate;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-
 /**
  * The access modifier of a class, method, or other {@link ModifierCarrier}. This is a basic bitmask
  * of the {@link Modifier} constants. This enum and its contents serve as a way to easily interact with
@@ -38,7 +35,6 @@ import lombok.AllArgsConstructor;
  * @author Guus Lieben
  * @since 21.5
  */
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public enum AccessModifier {
     /**
      * @see Modifier#PUBLIC
@@ -104,8 +100,12 @@ public enum AccessModifier {
     ;
 
     public static final AccessModifier[] VALUES = AccessModifier.values();
-    
+
     private final Predicate<Integer> predicate;
+
+    AccessModifier(final Predicate<Integer> predicate) {
+        this.predicate = predicate;
+    }
 
     /**
      * Returns a list of all {@link AccessModifier}s that are set in the given {@code modifiers}.

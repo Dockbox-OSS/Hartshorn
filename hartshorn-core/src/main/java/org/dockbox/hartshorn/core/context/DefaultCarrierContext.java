@@ -18,17 +18,21 @@ package org.dockbox.hartshorn.core.context;
 
 import org.dockbox.hartshorn.core.domain.Exceptional;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-
 /**
  * The default implementation of {@link CarrierContext}. This implementation stores the active
  * {@link ApplicationContext} directly as a field.
  */
-@RequiredArgsConstructor
 public class DefaultCarrierContext extends DefaultContext implements CarrierContext {
 
-    @Getter private final ApplicationContext applicationContext;
+    private final ApplicationContext applicationContext;
+
+    public DefaultCarrierContext(final ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
+    }
+
+    public ApplicationContext applicationContext() {
+        return this.applicationContext;
+    }
 
     @Override
     public <C extends Context> Exceptional<C> first(final Class<C> context) {

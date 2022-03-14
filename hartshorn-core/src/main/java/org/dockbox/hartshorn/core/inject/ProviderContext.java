@@ -20,11 +20,6 @@ import org.dockbox.hartshorn.core.Key;
 
 import java.util.function.Supplier;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-
-@Getter
-@RequiredArgsConstructor
 public class ProviderContext<T> {
 
     private final Key<T> key;
@@ -33,4 +28,31 @@ public class ProviderContext<T> {
     private final Supplier<T> provider;
     private final boolean lazy;
 
+    public ProviderContext(final Key<T> key, final boolean singleton, final int priority, final Supplier<T> provider, final boolean lazy) {
+        this.key = key;
+        this.singleton = singleton;
+        this.priority = priority;
+        this.provider = provider;
+        this.lazy = lazy;
+    }
+
+    public Key<T> key() {
+        return this.key;
+    }
+
+    public boolean singleton() {
+        return this.singleton;
+    }
+
+    public int priority() {
+        return this.priority;
+    }
+
+    public Supplier<T> provider() {
+        return this.provider;
+    }
+
+    public boolean lazy() {
+        return this.lazy;
+    }
 }

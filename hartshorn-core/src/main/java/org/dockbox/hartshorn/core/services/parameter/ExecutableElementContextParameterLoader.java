@@ -37,7 +37,7 @@ public class ExecutableElementContextParameterLoader extends RuleBasedParameterL
         final Named named = parameter.annotation(Named.class).orNull();
         final Key<T> key = Key.of(parameter.type(), named);
         final boolean enable = parameter.annotation(Enable.class).map(Enable::value).or(true);
-        final T out = context.applicationContext().get(key, enable);
+        final T out = context.provider().get(key, enable);
 
         final boolean required = parameter.annotation(Required.class).map(Required::value).or(false);
         if (required && out == null) return ExceptionHandler.unchecked(new ApplicationException("Parameter " + parameter.name() + " on " + parameter.declaredBy().qualifiedName() + " is required"));

@@ -16,14 +16,22 @@
 
 package org.dockbox.hartshorn.core.context.element;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
-@AllArgsConstructor(staticName = "of")
 public class MethodModifier<T, P> implements ElementModifier<MethodContext<T, P>> {
 
-    @Getter
     private final MethodContext<T, P> element;
+
+    private MethodModifier(final MethodContext<T, P> element) {
+        this.element = element;
+    }
+
+    public static <T, P> MethodModifier<T, P> of(final MethodContext<T, P> element) {
+        return new MethodModifier<>(element);
+    }
+
+    @Override
+    public MethodContext<T, P> element() {
+        return this.element;
+    }
 
     public void invoker(final MethodInvoker<T, P> invoker) {
         this.element.invoker(invoker);

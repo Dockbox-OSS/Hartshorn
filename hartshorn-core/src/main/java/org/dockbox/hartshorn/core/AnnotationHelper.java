@@ -37,8 +37,6 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import lombok.Getter;
-
 /**
  * Offers fine-grained control over annotation composition and inheritance. This utility
  * class is forked from <a href="https://github.com/blindpirate/annotation-magic">AnnotationMagic</a>.
@@ -257,15 +255,19 @@ public final class AnnotationHelper {
     }
 
     public static class AnnotationInvocationHandler implements InvocationHandler {
+
         final Map<String, Object> cache;
         private final Class<?> klass;
-        @Getter
         private final Annotation annotation;
 
         public AnnotationInvocationHandler(final Class<?> klass, final Annotation annotation) {
             this.klass = klass;
             this.annotation = annotation;
             this.cache = new HashMap<>();
+        }
+
+        public Annotation annotation() {
+            return this.annotation;
         }
 
         @Override

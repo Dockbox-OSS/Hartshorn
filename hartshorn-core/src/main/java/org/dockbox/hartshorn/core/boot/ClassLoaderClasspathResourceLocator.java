@@ -29,8 +29,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import lombok.AllArgsConstructor;
-
 /**
  * The default implementation of {@link ClasspathResourceLocator}. This implementation will copy the resource to a temporary
  * location and return the path to the temporary location.
@@ -38,10 +36,13 @@ import lombok.AllArgsConstructor;
  * @author Guus Lieben
  * @since 22.1
  */
-@AllArgsConstructor
 public class ClassLoaderClasspathResourceLocator implements ClasspathResourceLocator {
 
     private final ApplicationContext applicationContext;
+
+    public ClassLoaderClasspathResourceLocator(final ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
+    }
 
     @Override
     public Exceptional<Path> resource(final String name) {

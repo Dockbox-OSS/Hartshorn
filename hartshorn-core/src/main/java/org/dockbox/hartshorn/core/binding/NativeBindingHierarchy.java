@@ -31,9 +31,6 @@ import java.util.stream.Collectors;
 
 import javax.inject.Named;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-
 /**
  * The default implementation of the {@link BindingHierarchy} interface. This uses a specified {@link Key} to
  * identify the binding hierarchy, and stores the bindings in a {@link TreeMap}.
@@ -43,12 +40,24 @@ import lombok.RequiredArgsConstructor;
  * @since 21.4
  * @see BindingHierarchy
  */
-@RequiredArgsConstructor
 public class NativeBindingHierarchy<C> implements BindingHierarchy<C> {
 
-    @Getter private final Key<C> key;
-    @Getter private final ApplicationContext applicationContext;
+    private final Key<C> key;
+    private final ApplicationContext applicationContext;
     private final TreeMap<Integer, Provider<C>> bindings = new TreeMap<>(Collections.reverseOrder());
+
+    public NativeBindingHierarchy(final Key<C> key, final ApplicationContext applicationContext) {
+        this.key = key;
+        this.applicationContext = applicationContext;
+    }
+
+    public Key<C> key() {
+        return this.key;
+    }
+
+    public ApplicationContext applicationContext() {
+        return this.applicationContext;
+    }
 
     @Override
     public List<Provider<C>> providers() {

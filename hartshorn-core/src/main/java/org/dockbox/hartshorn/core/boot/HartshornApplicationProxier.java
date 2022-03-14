@@ -29,17 +29,18 @@ import org.dockbox.hartshorn.core.proxy.javassist.JavassistProxyLookup;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import lombok.Getter;
-
 public class HartshornApplicationProxier implements ApplicationProxier, ApplicationManaged {
 
-    @Getter
     private ApplicationManager applicationManager;
     private final Set<ProxyLookup> proxyLookups = ConcurrentHashMap.newKeySet();
 
     public HartshornApplicationProxier() {
         this.proxyLookups.add(new NativeProxyLookup());
         this.proxyLookups.add(new JavassistProxyLookup());
+    }
+
+    public ApplicationManager applicationManager() {
+        return this.applicationManager;
     }
 
     @Override

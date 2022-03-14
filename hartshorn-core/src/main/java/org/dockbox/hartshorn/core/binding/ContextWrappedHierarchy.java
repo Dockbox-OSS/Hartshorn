@@ -18,16 +18,13 @@ package org.dockbox.hartshorn.core.binding;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.core.Key;
-import org.dockbox.hartshorn.core.domain.Exceptional;
 import org.dockbox.hartshorn.core.context.ApplicationContext;
+import org.dockbox.hartshorn.core.domain.Exceptional;
 
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.function.Consumer;
-
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 
 /**
  * A {@link ContextWrappedHierarchy} is a {@link BindingHierarchy} that wraps another {@link BindingHierarchy}
@@ -38,12 +35,26 @@ import lombok.Getter;
  * @author Guus Lieben
  * @since 21.4
  */
-@AllArgsConstructor
 public class ContextWrappedHierarchy<C> implements BindingHierarchy<C> {
 
-    @Getter private BindingHierarchy<C> real;
-    @Getter private ApplicationContext applicationContext;
+    private BindingHierarchy<C> real;
+    private final ApplicationContext applicationContext;
     private final Consumer<BindingHierarchy<C>> onUpdate;
+
+    public ContextWrappedHierarchy(final BindingHierarchy<C> real, final ApplicationContext applicationContext, final Consumer<BindingHierarchy<C>> onUpdate) {
+        this.real = real;
+        this.applicationContext = applicationContext;
+        this.onUpdate = onUpdate;
+    }
+
+    public BindingHierarchy<C> real() {
+        return this.real;
+    }
+
+    @Override
+    public ApplicationContext applicationContext() {
+        return this.applicationContext;
+    }
 
     @Override
     public List<Provider<C>> providers() {

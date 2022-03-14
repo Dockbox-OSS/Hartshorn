@@ -18,13 +18,15 @@ package org.dockbox.hartshorn.core.context;
 
 import javax.inject.Inject;
 
-import lombok.Getter;
-
 /**
  * A concrete implementation of {@link ContextCarrier}.
  */
 public class ConcreteContextCarrier implements ContextCarrier {
+
     @Inject
-    @Getter
     private ApplicationContext applicationContext;
+
+    public ApplicationContext applicationContext() {
+        return this.applicationContext;
+    }
 }

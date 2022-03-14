@@ -35,6 +35,7 @@ import java.io.Closeable;
 public interface ApplicationContext extends
         ApplicationBinder,
         HierarchicalComponentProvider,
+        ScopedContextHolder,
         ApplicationPropertyHolder,
         ExceptionHandler,
         ApplicationLogger,

@@ -16,13 +16,19 @@
 
 package org.dockbox.hartshorn.core.context;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
 /**
  * A default implementation of {@link NamedContext}.
  */
-@AllArgsConstructor
 public abstract class DefaultNamedContext extends DefaultContext implements NamedContext {
-    @Getter private final String name;
+
+    private final String name;
+
+    public DefaultNamedContext(final String name) {
+        this.name = name;
+    }
+
+    @Override
+    public String name() {
+        return this.name;
+    }
 }

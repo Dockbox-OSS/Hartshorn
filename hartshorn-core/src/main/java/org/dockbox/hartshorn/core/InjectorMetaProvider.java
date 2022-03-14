@@ -29,12 +29,13 @@ import org.dockbox.hartshorn.core.services.ComponentUtilities;
 import javax.inject.Singleton;
 import javax.persistence.Entity;
 
-import lombok.AllArgsConstructor;
-
-@AllArgsConstructor
 public class InjectorMetaProvider implements MetaProvider {
 
     private final ApplicationContext context;
+
+    public InjectorMetaProvider(final ApplicationContext context) {
+        this.context = context;
+    }
 
     @Override
     public TypedOwner lookup(final TypeContext<?> type) {

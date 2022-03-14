@@ -30,12 +30,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import lombok.Getter;
-
 public class ComponentLocatorImpl implements ComponentLocator {
 
     private final MultiMap<String, ComponentContainer> cache = new HashSetMultiMap<>();
-    @Getter
     private final ApplicationContext applicationContext;
     private final Set<ComponentActivationFilter> activationFilters = ConcurrentHashMap.newKeySet();
 
@@ -52,6 +49,10 @@ public class ComponentLocatorImpl implements ComponentLocator {
     public void registerActivationFilter(final ComponentActivationFilter activationFilter) {
         if (activationFilter == null) return;
         this.activationFilters.add(activationFilter);
+    }
+
+    public ApplicationContext applicationContext() {
+        return this.applicationContext;
     }
 
     @Override

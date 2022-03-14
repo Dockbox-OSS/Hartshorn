@@ -28,29 +28,35 @@ import java.util.Map;
 import java.util.StringJoiner;
 import java.util.concurrent.ConcurrentHashMap;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.Setter;
-
 public class MethodContext<T, P> extends ExecutableElementContext<Method, P> implements ObtainableElement<T>, TypedElementContext<T> {
 
     private static final Map<Method, MethodContext<?, ?>> cache = new ConcurrentHashMap<>();
 
-    @Setter(AccessLevel.PACKAGE)
     private static MethodInvoker<?, ?> defaultInvoker = new ReflectionMethodInvoker<>();
 
-    @Getter
     private final Method method;
 
     private TypeContext<T> returnType;
     private TypeContext<T> genericReturnType;
     private String qualifiedName;
 
-    @Setter(AccessLevel.PACKAGE)
     private MethodInvoker<T, P> invoker;
 
     public MethodContext(final Method method) {
         this.method = method;
+    }
+
+    MethodContext invoker(final MethodInvoker<T, P> invoker) {
+        this.invoker = invoker;
+        return this;
+    }
+
+    public Method method() {
+        return this.method;
+    }
+
+    public static void defaultInvoker(final MethodInvoker<?, ?> defaultInvoker) {
+        MethodContext.defaultInvoker = defaultInvoker;
     }
 
     public static MethodContext<?, ?> of(final Method method) {

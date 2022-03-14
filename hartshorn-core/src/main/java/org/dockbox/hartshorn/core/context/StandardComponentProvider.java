@@ -16,5 +16,5 @@
 
 package org.dockbox.hartshorn.core.context;
 
-public interface StandardComponentProvider extends HierarchicalComponentProvider, ProcessableComponentProvider {
+public interface StandardComponentProvider extends HierarchicalComponentProvider, ProcessableComponentProvider, ScopedComponentProvider {
 }

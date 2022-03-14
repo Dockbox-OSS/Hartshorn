@@ -21,10 +21,6 @@ import org.dockbox.hartshorn.core.domain.Exceptional;
 
 import java.util.function.Supplier;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
 /**
  * A {@link Supplier} that is able to provide instances using the given {@link Supplier}.
  * If the {@link Supplier} is unable to provide an instance, an empty {@link Exceptional}
@@ -37,11 +33,17 @@ import lombok.Getter;
  * @see InstanceProvider
  * @see ContextDrivenProvider
  */
-@AllArgsConstructor(access = AccessLevel.PACKAGE)
-@Getter
 public class SupplierProvider<C> implements Provider<C> {
 
     private final Supplier<C> supplier;
+
+    SupplierProvider(final Supplier<C> supplier) {
+        this.supplier = supplier;
+    }
+
+    public Supplier<C> supplier() {
+        return this.supplier;
+    }
 
     @Override
     public Exceptional<C> provide(final ApplicationContext context) {

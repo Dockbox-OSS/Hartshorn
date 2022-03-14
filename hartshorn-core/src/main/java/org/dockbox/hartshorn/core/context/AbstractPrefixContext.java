@@ -30,12 +30,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-
 public abstract class AbstractPrefixContext<S> extends DefaultContext implements PrefixContext {
 
-    @Getter(AccessLevel.PROTECTED)
     private final ApplicationManager manager;
 
     private final Map<String, S> prefixes = new ConcurrentHashMap<>();
@@ -43,6 +39,10 @@ public abstract class AbstractPrefixContext<S> extends DefaultContext implements
 
     protected AbstractPrefixContext(final ApplicationManager manager) {
         this.manager = manager;
+    }
+
+    protected ApplicationManager manager() {
+        return this.manager;
     }
 
     protected abstract S process(String prefix);

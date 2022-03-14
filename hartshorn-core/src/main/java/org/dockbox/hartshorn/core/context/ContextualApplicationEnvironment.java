@@ -24,12 +24,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import lombok.Getter;
-
 public class ContextualApplicationEnvironment implements ApplicationEnvironment {
 
-    @Getter private final PrefixContext prefixContext;
-    @Getter private final ApplicationManager manager;
+    private final PrefixContext prefixContext;
+    private final ApplicationManager manager;
 
     public ContextualApplicationEnvironment(final PrefixContext prefixContext, final ApplicationManager manager) {
         this.manager = manager;
@@ -37,6 +35,15 @@ public class ContextualApplicationEnvironment implements ApplicationEnvironment 
         this.manager().log().debug("Created new application environment (isCI: %s, prefixCount: %d)".formatted(this.isCI(), this.prefixContext().prefixes().size()));
     }
 
+    @Override
+    public PrefixContext prefixContext() {
+        return this.prefixContext;
+    }
+
+    @Override
+    public ApplicationManager manager() {
+        return this.manager;
+    }
 
     @Override
     public boolean isCI() {

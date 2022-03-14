@@ -30,9 +30,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import lombok.Getter;
-
-@Getter
 public class ComponentContainerImpl implements ComponentContainer {
 
     private final Component annotation;
@@ -52,6 +49,18 @@ public class ComponentContainerImpl implements ComponentContainer {
         if (service.present()) {
             this.activators.addAll(List.of(service.get().activators()));
         }
+    }
+
+    public Component annotation() {
+        return this.annotation;
+    }
+
+    public TypeContext<?> component() {
+        return this.component;
+    }
+
+    public ApplicationContext context() {
+        return this.context;
     }
 
     @Override

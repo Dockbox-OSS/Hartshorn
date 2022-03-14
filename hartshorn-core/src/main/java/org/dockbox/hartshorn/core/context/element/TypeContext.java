@@ -56,7 +56,6 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 import javassist.util.proxy.ProxyFactory;
-import lombok.Getter;
 
 public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
 
@@ -122,14 +121,14 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
 
     public static final TypeContext<Void> VOID = TypeContext.of(Void.class);
 
-    @Getter private final Class<T> type;
-    @Getter private final boolean isVoid;
-    @Getter private final boolean isAnonymous;
-    @Getter private final boolean isPrimitive;
-    @Getter private final boolean isEnum;
-    @Getter private final boolean isAnnotation;
-    @Getter private final boolean isArray;
-    @Getter private final boolean isTypeContext;
+    private final Class<T> type;
+    private final boolean isVoid;
+    private final boolean isAnonymous;
+    private final boolean isPrimitive;
+    private final boolean isEnum;
+    private final boolean isAnnotation;
+    private final boolean isArray;
+    private final boolean isTypeContext;
 
     private final Map<String, FieldContext<?>> fields = new ConcurrentHashMap<>();
 
@@ -159,6 +158,38 @@ public class TypeContext<T> extends AnnotatedElementContext<Class<T>> {
         this.isAnnotation = type.isAnnotation();
         this.isArray = type.isArray();
         this.isTypeContext = TypeContext.class.isAssignableFrom(type);
+    }
+
+    public Class<T> type() {
+        return this.type;
+    }
+
+    public boolean isVoid() {
+        return this.isVoid;
+    }
+
+    public boolean isAnonymous() {
+        return this.isAnonymous;
+    }
+
+    public boolean isPrimitive() {
+        return this.isPrimitive;
+    }
+
+    public boolean isEnum() {
+        return this.isEnum;
+    }
+
+    public boolean isAnnotation() {
+        return this.isAnnotation;
+    }
+
+    public boolean isArray() {
+        return this.isArray;
+    }
+
+    public boolean isTypeContext() {
+        return this.isTypeContext;
     }
 
     public static <T> TypeContext<T> unproxy(final ApplicationContext context, final T instance) {
