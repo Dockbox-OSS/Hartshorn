@@ -34,14 +34,11 @@ import java.util.Locale;
 
 import javax.inject.Inject;
 
-import lombok.Getter;
-
 @UseCommands
 @HartshornTest
 public class HashtagParameterPatternTests {
 
     @Inject
-    @Getter
     private ApplicationContext applicationContext;
 
     @Test
@@ -114,7 +111,7 @@ public class HashtagParameterPatternTests {
         final String pattern = "#cuboid[1]";
         final CustomParameterPattern parameterPattern = this.pattern();
 
-        final Exceptional<CuboidArgument> result = parameterPattern.request(TypeContext.of(CuboidArgument.class), SystemSubject.instance(this.applicationContext()), pattern);
+        final Exceptional<CuboidArgument> result = parameterPattern.request(TypeContext.of(CuboidArgument.class), SystemSubject.instance(this.applicationContext), pattern);
 
         Assertions.assertTrue(result.present());
 
